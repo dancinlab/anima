@@ -1,0 +1,103 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S136-5 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S136-1 ARC-CYCLE-CARDINALITY-CLOSED",
+      "passed": true,
+      "evidence": {
+        "expected_cycles": [
+          "§115",
+          "§117",
+          "§124",
+          "§125",
+          "§126",
+          "§127",
+          "§128",
+          "§129",
+          "§131",
+          "§132",
+          "§133",
+          "§134",
+          "§135"
+        ],
+        "all_present_in_milestone": true,
+        "cycle_count (incl §129 consolidation + §133 carry)": 13
+      }
+    },
+    {
+      "name": "B-S136-2 BATTERY-SUM-ARITHMETIC-CLOSED",
+      "passed": true,
+      "evidence": {
+        "per_cycle_batteries": [
+          9,
+          7,
+          7,
+          7,
+          7,
+          8,
+          6,
+          7,
+          6,
+          7,
+          7
+        ],
+        "sum": 78,
+        "equals_78": true,
+        "milestone_states_78": true
+      }
+    },
+    {
+      "name": "B-S136-3 GOAL-NOT-CLAIMED-CLOSED",
+      "passed": true,
+      "evidence": {
+        "goal_미도달_asserted": true,
+        "north_star_unchanged_asserted": true,
+        "no_emergence_claim_explicit": true
+      }
+    },
+    {
+      "name": "B-S136-4 THREE-LAYER-PARTITION-STATUS-CLOSED",
+      "passed": true,
+      "evidence": {
+        "layer1_variance_closed": true,
+        "layer2_stimulus_partial": true,
+        "layer3_task_design_close": true
+      }
+    },
+    {
+      "name": "B-S136-5 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S136-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "milestone-consolidation-not-measurement",
+    "family": "B-EMERGE-7 / §15-milestone / §51-milestone precedent",
+    "honest_scope": "§136 is a milestone consolidation doc, NOT a new measurement. The battery proves the MILESTONE.md is structurally honest (cycle cardinality, battery sum arithmetic, GOAL-not-claimed, partition status) — it does NOT add any arc finding. The LEGO arc's substantive results are in §115–§135. §136 = the §15/§51-style retrospective. GOAL 미도달; north-star + §15/§51/§72 milestones UNCHANGED."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "5/5",
+    "all_closed_pass": true,
+    "battery_verdict": "LEGO-ARC-MILESTONE-CONSOLIDATED-5-5-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "necessary_not_sufficient_B_EMERGE_7": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}

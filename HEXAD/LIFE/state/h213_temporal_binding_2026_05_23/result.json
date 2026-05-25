@@ -1,0 +1,37 @@
+{
+  "id": "H_213",
+  "slug": "time-temporal-binding-window",
+  "domain": "time · consciousness · physics",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial runtime builtin (n_bins=4) on temporally-averaged state",
+  "config": { "N": 16, "dim": 12, "warm": 8, "total_record": 60, "rule": 110, "boundary": "periodic", "window_kernel": "uniform_moving_average" },
+  "tau_sweep": {
+    "taus": [1, 2, 5, 10, 20, 40],
+    "phi":  [0.741476, 2.71665, 3.94854, 2.52985, 2.63751, 5.35707],
+    "peak_index": 5,
+    "peak_tau": 40,
+    "phi_peak": 5.35707
+  },
+  "criteria": {
+    "C1_SINGLE_PEAK":    { "metric": "not monotone", "strictly_inc": false, "strictly_dec": false, "verdict": "PASS" },
+    "C2_TAU_INTERIOR":   { "metric": "peak_i ∈ {1,2,3} (τ ∈ {2,5,10})", "peak_tau": 40, "verdict": "FAIL" },
+    "C3_TAU1_LT_PEAK":   { "metric": "Φ(τ=1) < Φ(τ*) margin≥10%", "delta": 4.61559, "thresh": 0.535707, "verdict": "PASS" },
+    "C4_TAU40_LT_PEAK":  { "metric": "Φ(τ=40) < Φ(τ*) margin≥10%", "delta": 0.0, "thresh": 0.535707, "verdict": "FAIL" }
+  },
+  "falsifiers": {
+    "F1_NOT_MONOTONE":      { "verdict": "PASS" },
+    "F2_NOT_BOUNDARY_PEAK": { "peak_tau": 40, "verdict": "FAIL" },
+    "F3_TAU1_DILUTED":      { "delta": 4.61559, "verdict": "PASS" },
+    "F4_NONNEG_FINITE":     { "verdict": "PASS" },
+    "F5_RERUN_DETERMINISTIC": { "verdict": "PASS" }
+  },
+  "criteria_pass": 2,
+  "verdict_rule": "SUPPORTED iff (C1∧C2∧C3∧C4); PARTIAL_DIRECTIONAL iff (C1∧C3); PARTIAL iff ≥1; FALSIFIED iff monotone",
+  "verdict": "PARTIAL_DIRECTIONAL",
+  "cross_link": "H_007 (Class-IV rule110 substrate · Wolfram class-axis Φ peak) ⊕ H_018 (genesis temporal dynamics · timestep loop) ⊕ H_202 (self-ref-axis Φ peak inverse-U) ⊕ H_004 (Φ peak ≠ phenomenal binding honest boundary)",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial on temporally-averaged state · NOT 🔵 full temporal IIT; specious-present = analogy)"
+}

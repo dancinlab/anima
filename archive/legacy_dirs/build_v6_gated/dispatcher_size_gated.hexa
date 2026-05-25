@@ -1,0 +1,218 @@
+#!hexa strict
+//
+// dispatcher_size_gated.hexa — A18 size-gated min-of-7 dispatcher
+//
+// Scope: PER-FILE size gating mechanism — when raw_bytes > A18_V6_MAX_BYTES,
+// SKIP v6-optimal (Storer-Szymanski lazy-match) to avoid O(N × W) hash-chain
+// latency blowup on ≥1MB inputs.  Min-of-7 dispatcher across:
+//
+//     {v1, v2, v3, v3-o2, v4-w64, v6-optimal-IF-eligible, identity}
+//
+// Non-collision (raw 142 D2 try-and-revert):
+//   - aa6b3cfe target = A25 source patch (a25_type_aware module)
+//   - this driver = orthogonal axis (dispatch gating ONLY, NOT a18 source mod)
+//   - hxc_a18_lz_ppm_order4.hexa is read-only here (a18_encode preserved)
+//
+// Compliance:
+//   raw 9   hexa-only (no .py); raw 137 cmix-ban (deterministic int-only);
+//   raw 142 D2 try-and-revert (return shortest-of-N including identity);
+//   raw 91  honest C3 (identity bypass when no encoder beats raw — measured).
+//   A28 TRANSCEND-FORBIDDEN: this is a measured-only dispatcher, no model.
+//
+// Latency budget:
+//   Per-file 95% < 500ms target; absolute cap < 30s/file (raw 91 honest cap).
+//   v6-optimal hash-chain has measured ~50ms/KB AOT (a18_v6 witness step F-A18-V6-3).
+//   At W=32KB and N>=1MB, expected wall = ~50s+ → exceeds 30s cap → MUST GATE.
+//
+// Falsifiers preregistered:
+//   F-SIZE-GATE-1  : gated dispatcher saving < ungated saving on any sub-1MB file
+//                    (gating MUST be no-op below threshold)
+//   F-SIZE-GATE-2  : gated dispatcher latency > 30s on any text-heavy file
+//                    (text-heavy max=95KB << 1MB → MUST PASS)
+//   F-SIZE-GATE-3  : round-trip byte-eq fail on any file (raw 65+68 idempotent)
+//   F-SIZE-GATE-4  : ungated v6 latency > 30s on any json-heavy >1MB file
+//                    (justification for gating)
+
+import "/Users/ghost/core/hexa-lang/self/stdlib/hxc_a18_lz_ppm_order4.hexa"
+
+// 1MB = 1048576 bytes.  Determined by F-A18-V6-OPTIMAL-3 prior trip on 2.6MB+.
+let A18_V6_MAX_BYTES: i64 = 1048576
+// A18_MIN_BYTES = 32 (mirrors module const; codegen does not propagate const).
+let SIZE_GATE_A18_MIN_BYTES: i64 = 32
+
+// a18_encode_size_gated — per-file size-gated min-of-7 dispatcher.
+//
+// When n <= A18_V6_MAX_BYTES: dispatch = min(v1, v2, v3, v3-o2, v4-w64, v6-optimal, identity)
+// When n  > A18_V6_MAX_BYTES: dispatch = min(v1, v2, v3, v3-o2, v4-w64, identity) — v6 SKIPPED
+//
+// Returns: (encoded_bytes, chosen_variant_label, v6_attempted_bool)
+fn a18_encode_size_gated(text: string) -> array {
+    let n: i64 = len(text)
+    // identity passthrough below A18_MIN_BYTES (raw 65 idempotent).
+    if n < SIZE_GATE_A18_MIN_BYTES { return [text, "identity-min", false] }
+    // already-encoded passthrough (idempotent).
+    if n >= 7 && text.substring(0, 7) == "# a18:s" { return [text, "identity-already", false] }
+
+    let v1 = _a18_encode_force(text)
+    let v2 = _a18_encode_force_v2(text)
+    let v3 = _a18_encode_force_v3(text)
+    let v3o2 = _a18_encode_force_v3_o2(text)
+    let v4 = _a18_encode_force_v4_w64(text)
+
+    let l1 = len(v1)
+    let l2 = len(v2)
+    let l3 = len(v3)
+    let l3o2 = len(v3o2)
+    let l4 = len(v4)
+
+    let mut best = text
+    let mut best_len: i64 = n
+    let mut best_lbl = "identity"
+    if l1 < best_len { best = v1; best_len = l1; best_lbl = "v1" }
+    if l2 < best_len { best = v2; best_len = l2; best_lbl = "v2" }
+    if l3 < best_len { best = v3; best_len = l3; best_lbl = "v3" }
+    if l3o2 < best_len { best = v3o2; best_len = l3o2; best_lbl = "v3-o2" }
+    if l4 < best_len { best = v4; best_len = l4; best_lbl = "v4-w64" }
+
+    // SIZE GATE: only invoke v6-optimal when n <= 1MB.
+    let mut v6_attempted: bool = false
+    if n <= A18_V6_MAX_BYTES {
+        let v6 = _a18_encode_force_v6_optimal(text)
+        let l6 = len(v6)
+        v6_attempted = true
+        if l6 < best_len { best = v6; best_len = l6; best_lbl = "v6-optimal" }
+    }
+
+    return [best, best_lbl, v6_attempted]
+}
+
+// Self-test: gating boundary + min-of-7 dispatch correctness.
+fn _selftest_size_gated() -> int {
+    println("[dispatcher_size_gated selftest]")
+
+    // F1: small input below A18_MIN_BYTES → identity-min
+    let r1 = a18_encode_size_gated("xy")
+    if r1[1] != "identity-min" {
+        println("  F1 FAIL — small input not identity-min: " + r1[1])
+        return 1
+    }
+    println("  F1 PASS — small-input identity-min")
+
+    // F2: medium English (1KB) — v6 attempted, dispatcher returns shortest
+    let txt2 = "the quick brown fox jumps over the lazy dog. "
+    let mut buf2 = ""
+    let mut k = 0
+    while k < 23 { buf2 = buf2 + txt2; k = k + 1 }
+    let r2 = a18_encode_size_gated(buf2)
+    if !r2[2] {
+        println("  F2 FAIL — v6 not attempted on sub-1MB: v6_attempted=false")
+        return 1
+    }
+    if len(r2[0]) >= len(buf2) {
+        println("  F2 FAIL — encoded len >= raw on highly-repetitive English")
+        return 1
+    }
+    println("  F2 PASS — sub-1MB v6 attempted + saving>0 (" + to_string(len(buf2)) + "B → " + to_string(len(r2[0])) + "B " + r2[1] + ")")
+
+    // F3: round-trip byte-eq via shared decoder
+    let dec2 = _a18_decode_to_bytes(r2[0])
+    let mut ok3: bool = (len(dec2) == len(buf2))
+    let mut i3: i64 = 0
+    while ok3 && i3 < len(buf2) {
+        if dec2[i3] != ord(buf2.substring(i3, i3+1)) { ok3 = false }
+        i3 = i3 + 1
+    }
+    if !ok3 {
+        println("  F3 FAIL — round-trip byte-eq failed")
+        return 1
+    }
+    println("  F3 PASS — round-trip byte-eq")
+
+    // F4: idempotent on already-encoded input (raw 65+68)
+    let r4 = a18_encode_size_gated(r2[0])
+    if r4[1] != "identity-already" {
+        println("  F4 FAIL — already-encoded not idempotent: " + r4[1])
+        return 1
+    }
+    println("  F4 PASS — idempotent on a18-encoded input")
+
+    println("[selftest 4/4 PASS]")
+    return 0
+}
+
+fn main() {
+    let av_raw = argv()
+    // Normalize: hexa interp passes [exe_self, exe_self, user_arg1, ...].
+    // AOT binary passes [exe_self, user_arg1, ...].  Detect by checking
+    // whether av[1] is a runtime-cache path (interp) vs a user arg.
+    let mut av = av_raw
+    let mut skip1: bool = false
+    if len(av_raw) >= 2 {
+        let a1 = av_raw[1]
+        // Interp passes [exe, exe, user_args] (no-import) or
+        // [interp, /tmp/.hexa-runtime/hexa_expanded.*.tmp.hexa, user_args] (import).
+        // Both forms have av[1] non-user; detect by either dupe OR tmp.hexa suffix.
+        let l1: i64 = len(a1)
+        let mut is_tmp: bool = false
+        if l1 >= 9 {
+            let suf = a1.substring(l1 - 9, l1)
+            if suf == ".tmp.hexa" { is_tmp = true }
+        }
+        if av_raw[0] == av_raw[1] || is_tmp { skip1 = true }
+    }
+    if skip1 {
+        let mut tmp: array = []
+        tmp.push(av_raw[0])
+        let mut i: i64 = 2
+        while i < len(av_raw) {
+            tmp.push(av_raw[i])
+            i = i + 1
+        }
+        av = tmp
+    }
+    if len(av) < 2 {
+        let rc = _selftest_size_gated()
+        exit(rc)
+    }
+    let mode = av[1]
+    if mode == "selftest" {
+        let rc = _selftest_size_gated()
+        exit(rc)
+    }
+    if mode == "encode" {
+        if len(av) < 3 {
+            eprintln("usage: dispatcher_size_gated encode <path>")
+            exit(2)
+        }
+        let path = av[2]
+        let txt = read_file(path)
+        let n: i64 = len(txt)
+        let r = a18_encode_size_gated(txt)
+        let enc = r[0]
+        let variant = r[1]
+        let v6_done = r[2]
+        let raw_n = n
+        let enc_n: i64 = len(enc)
+        let saved: i64 = if raw_n > 0 { ((raw_n - enc_n) * 10000) / raw_n } else { 0 }
+
+        // Round-trip verify (if encoded, not identity).
+        let mut bye: i64 = 1
+        if variant != "identity" && variant != "identity-min" && variant != "identity-already" {
+            let dec = _a18_decode_to_bytes(enc)
+            let mut ok: bool = (len(dec) == raw_n)
+            let mut i2: i64 = 0
+            while ok && i2 < raw_n {
+                if dec[i2] != ord(txt.substring(i2, i2+1)) { ok = false }
+                i2 = i2 + 1
+            }
+            if !ok { bye = 0 }
+        }
+
+        // CSV-style line: path|raw|enc|saving_bp|variant|v6_attempted|byte_eq
+        let v6_str = if v6_done { "1" } else { "0" }
+        println(path + "|" + to_string(raw_n) + "|" + to_string(enc_n) + "|" + to_string(saved) + "|" + variant + "|" + v6_str + "|" + to_string(bye))
+        exit(0)
+    }
+    eprintln("unknown mode: " + mode)
+    exit(2)
+}

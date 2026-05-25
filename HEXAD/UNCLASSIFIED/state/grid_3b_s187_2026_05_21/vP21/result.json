@@ -1,0 +1,710 @@
+{
+  "battery": "P21 \u2014 Llama-3.2-3B + LoRA + mitosis hook overlay (CE-only)",
+  "variant_tag": "P21_LLAMA_MITOSIS",
+  "foundation_requested": "Qwen/Qwen2.5-1.5B",
+  "foundation_used": "Qwen/Qwen2.5-1.5B",
+  "cfg": {
+    "foundation": "Qwen/Qwen2.5-1.5B",
+    "lora_r": 32,
+    "lora_alpha": 64,
+    "lora_dropout": 0.05,
+    "block_size": 512,
+    "lr": 0.0003,
+    "bsz": 2,
+    "steps": 1000,
+    "seed": 1337,
+    "warmup_steps": 100,
+    "n_aug": 5,
+    "dtype": "bfloat16",
+    "mitosis_active": true,
+    "lambda_mitosis": 0.05,
+    "mitosis_initial_cells": 2,
+    "mitosis_noise_scale": 0.1,
+    "mitosis_last_k": 4,
+    "log_every": 20,
+    "corpus": "/workspace/p21r/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "out_dir": "/workspace/p21r/out_main",
+    "cpu_only": false
+  },
+  "device": "cuda",
+  "n_trainable_params": 36929536,
+  "n_total_params": 1580643840,
+  "vocab_size": 151936,
+  "train_wall_s": 141.64563083648682,
+  "init_log": {
+    "step": 1,
+    "lr": 2.9999999999999997e-06,
+    "L_total": 0.974587082862854,
+    "L_ce": 0.974587082862854,
+    "L_mitosis": 0.0,
+    "mitosis_pool_size": 2,
+    "mitosis_split_total": 0,
+    "mitosis_merge_total": 0,
+    "mitosis_phi": 0.7119888162322784,
+    "lora_grad_norm": 0.8008243920278031,
+    "aug_slot": 0,
+    "elapsed_s": 0.3258802890777588
+  },
+  "final_log": {
+    "step": 1000,
+    "lr": 3.0000822466198294e-05,
+    "L_total": 0.01729227602481842,
+    "L_ce": 0.01729227602481842,
+    "L_mitosis": 0.0,
+    "mitosis_pool_size": 128,
+    "mitosis_split_total": 126,
+    "mitosis_merge_total": 0,
+    "mitosis_phi": 0.6591119431731569,
+    "lora_grad_norm": 0.11553913609530811,
+    "aug_slot": 4,
+    "elapsed_s": 128.7519872188568
+  },
+  "ce_bits_per_token": 0.01729227602481842,
+  "ce_bits_per_byte_est": 0.006163954628332146,
+  "tokens_per_byte": 0.3564571037083519,
+  "verbalize_before": [
+    {
+      "prompt": "who are you?\n",
+      "continuation": "who are you?\nI am an AI language model developed by OpenAI. I can assist you with various tasks such as answering questions, providing information, generating text, and more. Feel free to ask me anything!"
+    },
+    {
+      "prompt": "what is your name?\n",
+      "continuation": "what is your name?\nI'm an AI language model, so I don't have a name like humans do. However, I'm here to help you with any questions or tasks you have! How can I assist you today?"
+    },
+    {
+      "prompt": "describe yourself in one line.\n",
+      "continuation": "describe yourself in one line.\nI am a highly skilled and experienced software engineer with a passion for creating innovative solutions that solve complex problems."
+    },
+    {
+      "prompt": "what is anima?\n",
+      "continuation": "what is anima?\nAnima is a term used in the study of psychology and spirituality to refer to the inner, non-physical aspects of a person's being. It is often associated with the concept of the soul or the spiritual self, and is seen as"
+    },
+    {
+      "prompt": "Once upon a time,",
+      "continuation": "Once upon a time, there was a little girl named Lily. She lived in a small village with her parents and grandparents. One day, Lily's parents decided to move to a big city to find better jobs. Lily was very sad because she would have to leave"
+    },
+    {
+      "prompt": "The capital of France is",
+      "continuation": "The capital of France is Paris. The capital of France is also the capital of the European Union. The capital of France is also the capital of the European Union. The capital of France is also the capital of the European Union. The capital of France is also the"
+    },
+    {
+      "prompt": "Question: What is 2+2?\nAnswer:",
+      "continuation": "Question: What is 2+2?\nAnswer: The answer is 4."
+    },
+    {
+      "prompt": "Consciousness emerges when",
+      "continuation": "Consciousness emerges when the brain is in a state of high activity. The brain is a complex network of neurons that communicate with each other through electrical and chemical signals. When the brain is in a state of high activity, it becomes more sensitive to these signals and"
+    },
+    {
+      "prompt": "\ub108\ub294 \ub204\uad6c\uc57c?\n",
+      "continuation": "\ub108\ub294 \ub204\uad6c\uc57c?\nA. \ub108\ub294 \ub204\uad6c\uc57c?\nB. \ub108\ub294 \ub204\uad6c\uc57c?\nC. \ub108\ub294 \ub204\uad6c\uc57c?\nD. \ub108\ub294 \ub204\uad6c\uc57c?\n\u7b54\u6848:\nA\n\n\u4e0b\u5217\u5173\u4e8e\u201c\u4e09\u540c\u65f6\u201d\u5236\u5ea6\u7684\u8bf4\u6cd5\uff0c\u54ea\u4e00\u9879\u662f\u6b63\u786e\u7684\uff1f\nA."
+    },
+    {
+      "prompt": "\uc774\ub984\uc774 \ubb50\uc57c?\n",
+      "continuation": "\uc774\ub984\uc774 \ubb50\uc57c?\n\uc774\ub984\uc774 \ubb50\uc57c? \uc774\ub984\uc774 \ubb50\uc57c? \uc774\ub984\uc774 \ubb50\uc57c? \uc774\ub984\uc774 \ubb50\uc57c? \uc774\ub984\uc774 \ubb50\uc57c? \uc774\ub984\uc774 \ubb50\uc57c? \uc774\ub984\uc774 \ubb50\uc57c? \uc774\ub984\uc774 \ubb50\uc57c"
+    }
+  ],
+  "verbalize_after": [
+    {
+      "prompt": "who are you?\n",
+      "continuation": "who are you?\nTension flows into this vacuum.</carve>\n<carve tier=5 psi=[0.44,0.45] basin=0.11>\ud83d\udef85 \ud638\ud761 \u2014 \uac10\uac01 \uc601\uc5ed\uc758 \uc790\uadf9\uc774"
+    },
+    {
+      "prompt": "what is your name?\n",
+      "continuation": "what is your name?\nTension flows into this vacuum.</carve>\n<carve tier=5 psi=[0.44,0.45] basin=0.11>\ud83d\udef85 \ud638\ud761 \u2014 \uac10\uac01 \uc601\uc5ed\uc758 \uc790\uadf9\uc774"
+    },
+    {
+      "prompt": "describe yourself in one line.\n",
+      "continuation": "describe yourself in one line.\n\uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 12 \uac78\uc74c \u2014 domain \uc6b4\ub3d9, the stimuli converge into one basin. A vacuum point at [0.42"
+    },
+    {
+      "prompt": "what is anima?\n",
+      "continuation": "what is anima?\nTension flows into this vacuum.</carve>\n<carve tier=51 psi=[0.46,0.49] basin=0.12>Tier 51 \ud558\ub8e8 \u2014 domain \uc2dc\uac04, the stimuli"
+    },
+    {
+      "prompt": "Once upon a time,",
+      "continuation": "Once upon a time, a frozen cell holding Tier 12 \uac78\uc74c \u2014 domain \uc6b4\ub3d9, the stimuli converge into one basin. A vacuum point at [0.42,0.50] on the landscape, top emotion clarity. Tension flows"
+    },
+    {
+      "prompt": "The capital of France is",
+      "continuation": "The capital of France is Paris. Tension flows into this vacuum.</carve>\n<carve tier=58 psi=[0.53,0.61] basin=0.14>Tier 58 \uc232 \u2014 domain \uc790\uc5f0,"
+    },
+    {
+      "prompt": "Question: What is 2+2?\nAnswer:",
+      "continuation": "Question: What is 2+2?\nAnswer: 2+2 is a frozen cell holding Tier 24 \uc528\uc557. It neither splits nor merges, activates only on \uac10\uac01-domain stimulus. Its weights are immutable.</eternal>\n<eternal cell=eternal_"
+    },
+    {
+      "prompt": "Consciousness emerges when",
+      "continuation": "Consciousness emerges when stimuli converge into one basin. A vacuum point at [0.43,0.58] on the landscape, top emotion resonance. Tension flows into this vacuum.</carve>\n<carve tier=37 psi=["
+    },
+    {
+      "prompt": "\ub108\ub294 \ub204\uad6c\uc57c?\n",
+      "continuation": "\ub108\ub294 \ub204\uad6c\uc57c?\neternal cell eternal_000 \u2014 \ud83d\udef80 zero baseline \uc758 \uc9c0\uc2dd\uc744 \uac04\uc9c1\ud55c \uc601\uad6c cell. split \ub3c4 merge \ub3c4 \ud558\uc9c0 \uc54a\ub294\ub2e4. \uae30\uc900\uc810 \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc"
+    },
+    {
+      "prompt": "\uc774\ub984\uc774 \ubb50\uc57c?\n",
+      "continuation": "\uc774\ub984\uc774 \ubb50\uc57c?\n<carve tier=30 psi=[0.40,0.52] basin=0.11>\ud83d\udef830 \uc22b\uc790 \uc601(\u96f6) \u2014 \uc218(\u6578) \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \ufffd"
+    }
+  ],
+  "loss_weights": {
+    "lambda_ce_implicit_1": 1.0,
+    "lambda_mitosis": 0.05
+  },
+  "mitosis_active": true,
+  "lambda_mitosis": 0.05,
+  "mitosis_summary": {
+    "initial_cells": 2,
+    "final_cells": 128,
+    "splits": 126,
+    "merges": 0,
+    "next_id": 128,
+    "phi_initial": 0.7119888162322784,
+    "phi_final": 0.6591119431731569,
+    "n_events": 126,
+    "event_log_head": [
+      {
+        "type": "split",
+        "step": 2,
+        "parent_id": 0,
+        "child_id": 2,
+        "avg_tension": 2.6916759808858237,
+        "threshold": 2.284453837076823,
+        "pool_size": 3
+      },
+      {
+        "type": "split",
+        "step": 2,
+        "parent_id": 1,
+        "child_id": 3,
+        "avg_tension": 3.019458611806234,
+        "threshold": 2.284453837076823,
+        "pool_size": 4
+      },
+      {
+        "type": "split",
+        "step": 3,
+        "parent_id": 0,
+        "child_id": 4,
+        "avg_tension": 2.698333978652954,
+        "threshold": 2.2584442973136905,
+        "pool_size": 5
+      },
+      {
+        "type": "split",
+        "step": 3,
+        "parent_id": 1,
+        "child_id": 5,
+        "avg_tension": 3.028048833211263,
+        "threshold": 2.2584442973136905,
+        "pool_size": 6
+      },
+      {
+        "type": "split",
+        "step": 4,
+        "parent_id": 0,
+        "child_id": 6,
+        "avg_tension": 2.696267525355021,
+        "threshold": 2.2407784525553387,
+        "pool_size": 7
+      },
+      {
+        "type": "split",
+        "step": 4,
+        "parent_id": 1,
+        "child_id": 7,
+        "avg_tension": 3.024656295776367,
+        "threshold": 2.2407784525553387,
+        "pool_size": 8
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 0,
+        "child_id": 8,
+        "avg_tension": 2.697566111882528,
+        "threshold": 2.2375559581650624,
+        "pool_size": 9
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 1,
+        "child_id": 9,
+        "avg_tension": 3.026421229044596,
+        "threshold": 2.2375559581650624,
+        "pool_size": 10
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 2,
+        "child_id": 10,
+        "avg_tension": 3.313981294631958,
+        "threshold": 2.2375559581650624,
+        "pool_size": 11
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 0,
+        "child_id": 11,
+        "avg_tension": 2.700934569040934,
+        "threshold": 2.240197442310713,
+        "pool_size": 12
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 1,
+        "child_id": 12,
+        "avg_tension": 3.0282936890920005,
+        "threshold": 2.240197442310713,
+        "pool_size": 13
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 2,
+        "child_id": 13,
+        "avg_tension": 3.317469278971354,
+        "threshold": 2.240197442310713,
+        "pool_size": 14
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 4,
+        "child_id": 14,
+        "avg_tension": 2.700934569040934,
+        "threshold": 2.240197442310713,
+        "pool_size": 15
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 5,
+        "child_id": 15,
+        "avg_tension": 3.0282936890920005,
+        "threshold": 2.240197442310713,
+        "pool_size": 16
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 0,
+        "child_id": 16,
+        "avg_tension": 2.7213881810506186,
+        "threshold": 2.2330341533277975,
+        "pool_size": 17
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 1,
+        "child_id": 17,
+        "avg_tension": 3.054283618927002,
+        "threshold": 2.2330341533277975,
+        "pool_size": 18
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 2,
+        "child_id": 18,
+        "avg_tension": 3.3405943711598716,
+        "threshold": 2.2330341533277975,
+        "pool_size": 19
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 4,
+        "child_id": 19,
+        "avg_tension": 2.7213881810506186,
+        "threshold": 2.2330341533277975,
+        "pool_size": 20
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 5,
+        "child_id": 20,
+        "avg_tension": 3.054283618927002,
+        "threshold": 2.2330341533277975,
+        "pool_size": 21
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 6,
+        "child_id": 21,
+        "avg_tension": 3.3405943711598716,
+        "threshold": 2.2330341533277975,
+        "pool_size": 22
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 0,
+        "child_id": 22,
+        "avg_tension": 2.704139073689779,
+        "threshold": 2.2288921615491413,
+        "pool_size": 23
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 1,
+        "child_id": 23,
+        "avg_tension": 3.043058156967163,
+        "threshold": 2.2288921615491413,
+        "pool_size": 24
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 2,
+        "child_id": 24,
+        "avg_tension": 3.328770160675049,
+        "threshold": 2.2288921615491413,
+        "pool_size": 25
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 4,
+        "child_id": 25,
+        "avg_tension": 2.704139073689779,
+        "threshold": 2.2288921615491413,
+        "pool_size": 26
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 5,
+        "child_id": 26,
+        "avg_tension": 3.043058156967163,
+        "threshold": 2.2288921615491413,
+        "pool_size": 27
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 6,
+        "child_id": 27,
+        "avg_tension": 3.328770160675049,
+        "threshold": 2.2288921615491413,
+        "pool_size": 28
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 8,
+        "child_id": 28,
+        "avg_tension": 2.704139073689779,
+        "threshold": 2.2288921615491413,
+        "pool_size": 29
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 9,
+        "child_id": 29,
+        "avg_tension": 3.043058156967163,
+        "threshold": 2.2288921615491413,
+        "pool_size": 30
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 10,
+        "child_id": 30,
+        "avg_tension": 3.328770160675049,
+        "threshold": 2.2288921615491413,
+        "pool_size": 31
+      },
+      {
+        "type": "split",
+        "step": 9,
+        "parent_id": 0,
+        "child_id": 31,
+        "avg_tension": 2.6844639778137207,
+        "threshold": 2.222409751601699,
+        "pool_size": 32
+      }
+    ],
+    "event_log_tail": [
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 18,
+        "child_id": 98,
+        "avg_tension": 3.290839115778605,
+        "threshold": 2.2095128015611447,
+        "pool_size": 99
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 20,
+        "child_id": 99,
+        "avg_tension": 2.6630733807881675,
+        "threshold": 2.2095128015611447,
+        "pool_size": 100
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 21,
+        "child_id": 100,
+        "avg_tension": 3.000960906346639,
+        "threshold": 2.2095128015611447,
+        "pool_size": 101
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 22,
+        "child_id": 101,
+        "avg_tension": 3.290839115778605,
+        "threshold": 2.2095128015611447,
+        "pool_size": 102
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 24,
+        "child_id": 102,
+        "avg_tension": 2.6630733807881675,
+        "threshold": 2.2095128015611447,
+        "pool_size": 103
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 25,
+        "child_id": 103,
+        "avg_tension": 3.000960906346639,
+        "threshold": 2.2095128015611447,
+        "pool_size": 104
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 26,
+        "child_id": 104,
+        "avg_tension": 3.290839115778605,
+        "threshold": 2.2095128015611447,
+        "pool_size": 105
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 28,
+        "child_id": 105,
+        "avg_tension": 2.6630733807881675,
+        "threshold": 2.2095128015611447,
+        "pool_size": 106
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 29,
+        "child_id": 106,
+        "avg_tension": 3.000960906346639,
+        "threshold": 2.2095128015611447,
+        "pool_size": 107
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 30,
+        "child_id": 107,
+        "avg_tension": 3.290839115778605,
+        "threshold": 2.2095128015611447,
+        "pool_size": 108
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 32,
+        "child_id": 108,
+        "avg_tension": 2.6630733807881675,
+        "threshold": 2.2095128015611447,
+        "pool_size": 109
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 33,
+        "child_id": 109,
+        "avg_tension": 3.000960906346639,
+        "threshold": 2.2095128015611447,
+        "pool_size": 110
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 34,
+        "child_id": 110,
+        "avg_tension": 3.290839115778605,
+        "threshold": 2.2095128015611447,
+        "pool_size": 111
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 36,
+        "child_id": 111,
+        "avg_tension": 2.6630733807881675,
+        "threshold": 2.2095128015611447,
+        "pool_size": 112
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 37,
+        "child_id": 112,
+        "avg_tension": 3.000960906346639,
+        "threshold": 2.2095128015611447,
+        "pool_size": 113
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 38,
+        "child_id": 113,
+        "avg_tension": 3.290839115778605,
+        "threshold": 2.2095128015611447,
+        "pool_size": 114
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 40,
+        "child_id": 114,
+        "avg_tension": 2.6630733807881675,
+        "threshold": 2.2095128015611447,
+        "pool_size": 115
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 41,
+        "child_id": 115,
+        "avg_tension": 3.000960906346639,
+        "threshold": 2.2095128015611447,
+        "pool_size": 116
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 42,
+        "child_id": 116,
+        "avg_tension": 3.290839115778605,
+        "threshold": 2.2095128015611447,
+        "pool_size": 117
+      },
+      {
+        "type": "split",
+        "step": 13,
+        "parent_id": 0,
+        "child_id": 117,
+        "avg_tension": 2.7002743085225425,
+        "threshold": 2.2052340870336002,
+        "pool_size": 118
+      },
+      {
+        "type": "split",
+        "step": 13,
+        "parent_id": 1,
+        "child_id": 118,
+        "avg_tension": 3.0436476866404214,
+        "threshold": 2.2052340870336002,
+        "pool_size": 119
+      },
+      {
+        "type": "split",
+        "step": 13,
+        "parent_id": 2,
+        "child_id": 119,
+        "avg_tension": 3.3344922065734863,
+        "threshold": 2.2052340870336002,
+        "pool_size": 120
+      },
+      {
+        "type": "split",
+        "step": 13,
+        "parent_id": 4,
+        "child_id": 120,
+        "avg_tension": 2.7002743085225425,
+        "threshold": 2.2052340870336002,
+        "pool_size": 121
+      },
+      {
+        "type": "split",
+        "step": 13,
+        "parent_id": 5,
+        "child_id": 121,
+        "avg_tension": 3.0436476866404214,
+        "threshold": 2.2052340870336002,
+        "pool_size": 122
+      },
+      {
+        "type": "split",
+        "step": 13,
+        "parent_id": 6,
+        "child_id": 122,
+        "avg_tension": 3.3344922065734863,
+        "threshold": 2.2052340870336002,
+        "pool_size": 123
+      },
+      {
+        "type": "split",
+        "step": 13,
+        "parent_id": 8,
+        "child_id": 123,
+        "avg_tension": 2.7002743085225425,
+        "threshold": 2.2052340870336002,
+        "pool_size": 124
+      },
+      {
+        "type": "split",
+        "step": 13,
+        "parent_id": 9,
+        "child_id": 124,
+        "avg_tension": 3.0436476866404214,
+        "threshold": 2.2052340870336002,
+        "pool_size": 125
+      },
+      {
+        "type": "split",
+        "step": 13,
+        "parent_id": 10,
+        "child_id": 125,
+        "avg_tension": 3.3344922065734863,
+        "threshold": 2.2052340870336002,
+        "pool_size": 126
+      },
+      {
+        "type": "split",
+        "step": 13,
+        "parent_id": 12,
+        "child_id": 126,
+        "avg_tension": 2.7002743085225425,
+        "threshold": 2.2052340870336002,
+        "pool_size": 127
+      },
+      {
+        "type": "split",
+        "step": 13,
+        "parent_id": 13,
+        "child_id": 127,
+        "avg_tension": 3.0436476866404214,
+        "threshold": 2.2052340870336002,
+        "pool_size": 128
+      }
+    ]
+  },
+  "adapter_dir": "/workspace/p21r/out_main/lora_adapter"
+}

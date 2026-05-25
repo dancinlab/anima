@@ -1,0 +1,37 @@
+{
+  "containerDiskInGb": 40,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-10 04:17:11.971 +0000 UTC",
+  "desiredStatus": "RUNNING",
+  "env": {
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "v8v694g06he7fm",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Rented by User: Sun May 10 2026 04:17:11 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "fix56-tied-poc-1778386630-pid12785",
+  "ports": [
+    "8888/http",
+    "22/tcp"
+  ],
+  "ssh": {
+    "id": "v8v694g06he7fm",
+    "ip": "103.207.149.153",
+    "name": "fix56-tied-poc-1778386630-pid12785",
+    "port": 11535,
+    "ssh_command": "ssh -i /Users/ghost/.runpod/ssh/RunPod-Key-Go root@103.207.149.153 -p 11535",
+    "ssh_key": {
+      "exists": true,
+      "fingerprint": "SHA256:2boMzXOpZGq89tl9YKcubFtz+P3au0dJOFWTCM49WeA",
+      "in_account": true,
+      "path": "/Users/ghost/.runpod/ssh/RunPod-Key-Go",
+      "source": "runpodctl doctor"
+    }
+  },
+  "uptimeSeconds": 0,
+  "vcpuCount": 28,
+  "volumeInGb": 20,
+  "volumeMountPath": "/workspace"
+}

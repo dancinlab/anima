@@ -1,0 +1,34 @@
+{
+  "ts": "2026-05-02",
+  "agent": "N-51 W3",
+  "phase": "1_inventory",
+  "scope": "Mac .hxc_aot/ + ubu1 + ubu2 mirror",
+  "general_hxc_compiler_present": false,
+  "hexa_runtime_present": "/Users/ghost/.hx/bin/hexa (interpreter only, not the hxc native compiler)",
+  "shards_total": 16,
+  "shards": [
+    {"name": "hxc_a18", "size_bytes": 320512, "mtime": "2026-04-28T09:39:39", "source": "/Users/ghost/core/hexa-lang/self/stdlib/hxc_a18_lz_ppm_order4.hexa", "role": "byte-stream LZ + PPM order-4 compressor", "io_schema": "encode/decode <in> <out>; selftest", "operates_on": "raw bytes / text"},
+    {"name": "hxc_a23", "size_bytes": 336528, "mtime": "2026-04-28T09:52:26", "source": "/Users/ghost/core/hexa-lang/self/stdlib/hxc_a23_sparse_ppm.hexa", "role": "sparse PPM compressor (small-file dispatch target)", "io_schema": "encode/decode <in> <out>; selftest", "operates_on": "raw bytes"},
+    {"name": "hxc_a24", "size_bytes": 318688, "mtime": "2026-04-28T10:11:14", "source": "/Users/ghost/core/hexa-lang/self/stdlib/hxc_a24_v2_bounded.hexa", "role": "v2 bounded compressor (resource-capped variant)", "io_schema": "encode/decode <in> <out>; selftest", "operates_on": "raw bytes"},
+    {"name": "hxc_a25", "size_bytes": 306064, "mtime": "2026-05-02T14:28:27", "source": "/Users/ghost/core/hexa-lang/self/stdlib/hxc_a25_type_aware.hexa", "role": "type-aware classifier + dispatch wrapper to a18/a23/a29/a34", "io_schema": "[--selftest | classify <in> | dispatch <in> | encode <in> <out> | decode <in> <out>]", "operates_on": "raw bytes; emits class={small-file|text-heavy|json-heavy|mixed|passthrough} + chosen algo"},
+    {"name": "hxc_a25_new", "size_bytes": 272664, "mtime": "2026-04-29T00:06:19", "source": "(legacy a25 build; superseded by hxc_a25 v2-wire)", "role": "previous a25 type-aware variant", "io_schema": "same as hxc_a25", "operates_on": "raw bytes"},
+    {"name": "hxc_a29", "size_bytes": 386048, "mtime": "2026-04-28T22:43:05", "source": "/Users/ghost/core/hexa-lang/self/stdlib/hxc_a29_deflate.hexa", "role": "deflate-style compressor (general-purpose fallback)", "io_schema": "[--selftest | encode [--force] [--v2|--v3] <in> <out> | decode <in> <out>]", "operates_on": "raw bytes"},
+    {"name": "hxc_a30", "size_bytes": 302416, "mtime": "2026-04-28T20:35:40", "source": "(BWT+MTF source; not in stdlib listing)", "role": "Burrows-Wheeler + Move-To-Front transform compressor", "io_schema": "encode/decode <in> <out>; selftest", "operates_on": "raw bytes"},
+    {"name": "hxc_a30_v1", "size_bytes": 302032, "mtime": "2026-04-28T20:25:59", "source": "(legacy a30 build)", "role": "earlier BWT+MTF build", "io_schema": "same as hxc_a30", "operates_on": "raw bytes"},
+    {"name": "hxc_a33", "size_bytes": 286032, "mtime": "2026-04-29T12:10:06", "source": "/Users/ghost/core/hexa-lang/self/stdlib/hxc_a33_cross_repo_dict.hexa", "role": "cross-repo shared-dictionary compressor (session manifest)", "io_schema": "[--selftest | encode <in> <out> | decode <in> <out> | session-roundtrip <manifest> <seed_or_empty>]", "operates_on": "raw bytes + dict manifest (session_roundtrip)"},
+    {"name": "hxc_a33_pass5", "size_bytes": 286144, "mtime": "2026-04-29T16:35:11", "source": "(a33 PASS-5 hardening build)", "role": "a33 with hash-chain audit additions", "io_schema": "same as hxc_a33", "operates_on": "raw bytes"},
+    {"name": "hxc_a33_v1_backup", "size_bytes": 286032, "mtime": "2026-04-29T12:10:18", "source": "(prior a33 build)", "role": "rollback safety copy of a33", "io_schema": "same as hxc_a33", "operates_on": "raw bytes"},
+    {"name": "hxc_a34", "size_bytes": 302016, "mtime": "2026-04-29T09:07:43", "source": "(sub-byte arithmetic source; not in stdlib listing)", "role": "sub-byte arithmetic-coding compressor", "io_schema": "[--selftest | encode [--force] <in> <out> | decode <in> <out>]", "operates_on": "raw bytes"},
+    {"name": "hxc_a34_v1_backup", "size_bytes": 268376, "mtime": "2026-04-29T08:28:10", "source": "(prior a34 build)", "role": "rollback safety copy of a34", "io_schema": "same as hxc_a34", "operates_on": "raw bytes"},
+    {"name": "hxc_a35", "size_bytes": 307568, "mtime": "2026-04-29T15:58:29", "source": "/Users/ghost/core/hexa-lang/self/stdlib/hxc_a35_source_transform.hexa", "role": "source-level pre-transform (column reorder + delta-varint + dict tokenize) before byte-stream compression; schemaful jsonl aware", "io_schema": "encode/decode <in> <out>; selftest", "operates_on": "schemaful JSONL preferred; identity-passthrough on schemafree"},
+    {"name": "hxc_composite_chain", "size_bytes": 309520, "mtime": "2026-04-29T10:47:41", "source": "(composite chain orchestrator; chains a18+a29+a34)", "role": "linear composite of a18->a29->a34 with try-revert per stage", "io_schema": "[--selftest [--emit-ledger <path>] | encode <in> <out> | decode <in> <out>]", "operates_on": "raw bytes; F-CHAIN-2 TRIPPED (composite hurts vs best single)"},
+    {"name": "hxc_composite_chain_v_c", "size_bytes": 311296, "mtime": "2026-04-29T16:06:25", "source": "(composite chain variant c)", "role": "alternate composite ordering", "io_schema": "same as hxc_composite_chain", "operates_on": "raw bytes"}
+  ],
+  "ubu1_mirror": {"identical": true, "shard_count": 16, "evidence": "ssh ubu1 ls -la matches mac byte-for-byte (same inode timestamps Apr/May 2026)"},
+  "ubu2_mirror": {"identical": true, "shard_count": 16, "evidence": "ssh ubu2 ls -la matches mac byte-for-byte"},
+  "summary_capability": "ALL 16 shards are deterministic byte-stream compression encoders/decoders + 1 type classifier (a25). NONE perform tensor projection, LCG vector emission, statistical aggregation, or random-projection hashing.",
+  "selftest_evidence": {
+    "hxc_a25": "8 PASS / 0 FAIL (V2 WIRE FIX, fixtures F1-F8)",
+    "hxc_composite_chain": "9 PASS / 0 FAIL on text/json/mixed at 4/16/64 KB; F-CHAIN-2 TRIPPED meaning composite < best-single (recorded)"
+  }
+}

@@ -1,0 +1,11 @@
+// R37/AN13/L3-PY violation — python-in-hexa source removed 2026-04-19
+// Original intent: PHI_GROWTH + GROWTH_CYCLE_771 ossification wrapper
+//                  (R9 gate, R14 SSOT) reading anima.json / loop_logs.
+// Spec: shared/convergence/anima.json active.ouroboros / active.clm_v3.
+//       Replacement must be hexa-native JSON reads only.
+
+fn main() {
+  eprintln("[R37/AN13/L3-PY] experiments/verify_phi_growth.hexa: python-in-hexa source blocked.")
+  eprintln("  Escalate to user for hexa-native reimplementation.")
+  exit(1)
+}

@@ -1,0 +1,81 @@
+{
+  "task_id": "anima_mount_real_mode_wiring_2026_05_05",
+  "scope": "BG-K: mount.hexa HEXA_PY env override + default model swap (wrapper real-mode wiring)",
+  "verdict": "PARTIAL_PASS_TWO_FIXES_LANDED_THIRD_BLOCKER_DISCOVERED",
+  "wall_time_minutes": 14,
+  "cost_usd": 0.0,
+  "platform": "mac CPU",
+  "raw_compliance": {
+    "raw_15_additive_only": true,
+    "raw_15_locked_files_untouched": "anima_unified.hexa, phi_engine.hexa, conscious_chat.hexa, consciousness_hub.hexa, clm_v4_hf_format_shim.py, anima_dialogue_load.py, anima-core-dialogue.bash — ALL UNTOUCHED",
+    "raw_10_honest_c3_emitted": true,
+    "raw_37_no_new_py": true
+  },
+  "edits_landed": {
+    "file": "anima-core/runtime/clm_v4_mount.hexa",
+    "edit_1_resolve_python_extension": {
+      "fn": "_resolve_python",
+      "type": "additive — prepended HEXA_PY env check + .venv-eeg auto-detect; existing absolute-path fallback chain preserved verbatim",
+      "loc_added": 5,
+      "verification": "shell-script extracted from new probe runs and confirmed: HEXA_PY=/.../python → returns HEXA_PY value; unset HEXA_PY → falls through to /Users/ghost/core/anima/.venv-eeg/bin/python auto-detect"
+    },
+    "edit_2_default_model_swap": {
+      "before": "dancinlab/clm-v4-base-mirror",
+      "after": "dancinlab/clm-v4-mk2-v1",
+      "loc_changed": 1,
+      "additional_consistency_swaps": [
+        "_argparse default in helper-emit (1-line)",
+        "header doc comment line 25 (1-line)",
+        "print_usage line 635 (1-line)"
+      ]
+    }
+  },
+  "v_fix_1_wrapper_real_mode_probe": {
+    "command": "HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python bash bin/anima-core-dialogue.bash --probe 안녕",
+    "expected_per_spec": "mode=real, phi_star=42.1158, drift +0.2558",
+    "actual_outcome": "mode=synthetic_fallback (still)",
+    "phi_star_actual": 41.861,
+    "phi_drift_actual": 0.001,
+    "axis_activation_actual": {"identity": 0.444, "agency": 0.437, "phenomenal": 0.422, "temporal": 0.488, "social": 0.441},
+    "progress_made": "Edit 2 (default model swap) PROVED EFFECTIVE — fail signature CHANGED from 'Unrecognized model in clm-v4-base-mirror' (no model_type) to 'Unrecognized configuration class CLMv4Config to build an AutoTokenizer'. The model class IS now loaded; only the tokenizer path remains.",
+    "third_blocker_discovered": {
+      "type": "ARCHITECTURAL_HELPER_LIMITATION",
+      "where": "clm_v4_mount.hexa::_write_helper line 298 emits 'AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)'",
+      "why_fails": "CLM v4 repo (clm-v4-mk2-v1) auto_map only registers AutoConfig + AutoModelForCausalLM, NOT AutoTokenizer. CLMv4Config lacks AutoTokenizer mapping → AutoTokenizer.from_pretrained raises Unrecognized configuration class.",
+      "evidence": "config.json auto_map = {AutoConfig: configuration_clm_v4.CLMv4Config, AutoModelForCausalLM: modeling_clm_v4.CLMv4ForCausalLM} — no AutoTokenizer entry. tokenizer_64k_multilingual.model file IS present in snapshot (SentencePiece) but helper does not fall back to SentencePiece direct loading.",
+      "bg_a_workaround_in_anima_dialogue_load_py": "tool/transient_py/anima_dialogue_load.py:_load_tokenizer uses sentencepiece.SentencePieceProcessor() directly with tokenizer_64k_multilingual.model from snapshot — sidesteps AutoTokenizer entirely. Direct invoke of anima_dialogue_load.py (BG-A path) DOES reach real-mode (phi_star 42.1158)."
+    },
+    "verdict_per_spec_target": "FAIL — wrapper does not reach real-mode despite both spec-mandated fixes correctly applied; third blocker beyond spec scope blocks completion"
+  },
+  "v_fix_2_selftest_regression": {
+    "command": "bash bin/anima-core-dialogue.bash --selftest",
+    "expected": "verdict: READY (Stage 1 + Stage 2 both landed)",
+    "actual": "verdict: READY (Stage 1 + Stage 2 both landed)",
+    "result": "PASS — no regression"
+  },
+  "v_fix_3_anima_top_level_equivalence": {
+    "command": "HEXA_LOCAL=1 HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python ./bin/anima dialogue --probe 안녕",
+    "outcome": "PASS_for_routing_equivalence — anima dialogue --probe correctly routes through bin/anima-core-dialogue.bash (via tool/anima_cli/dialogue.hexa) to mount.hexa. Output identical synthetic_fallback. The route is correct; only blocker is the same third-blocker AutoTokenizer issue, identical to V-fix-1.",
+    "note_HEXA_LOCAL_required": "Without HEXA_LOCAL=1, anima top-level routes through docker by default and emits 'sh: /Users/ghost/.hx/bin/hexa: not found' container-internal error. This is anima_runtime resolver behavior, not related to mount.hexa edits."
+  },
+  "honest_c3": [
+    "C1 HEXA_PY env override is INVISIBLE to general users — magnetic to friction. Documentation MUST surface this in bin/anima help, anima dialogue --help, and any onboarding docs. Without HEXA_PY explicit, the .venv-eeg auto-detect fallback (2) handles it for typical anima developers but breaks if developer has a different venv layout.",
+    "C2 The 2 spec-mandated fixes are NECESSARY but NOT SUFFICIENT for wrapper real-mode. A third architectural fix is required: either (a) augment the helper-emit code in mount.hexa::_write_helper with SentencePiece tokenizer fallback when AutoTokenizer fails, OR (b) route mount.hexa to invoke tool/transient_py/anima_dialogue_load.py directly instead of emitting its own helper. Both options are additive but exceed the 2-fix scope of this BG.",
+    "C3 BG-A's verdict (state/anima_dialogue_real_load_2026_05_05/verdict.json) underestimated the wrapper-blocker — claimed 'set HEXA_PY env + pass --model would unblock'. Empirical test refutes this: the third AutoTokenizer blocker is real and persistent regardless of HEXA_PY/model fixes.",
+    "C4 .venv-eeg auto-detect (fallback 2 of new resolver chain) creates implicit coupling — if user renames or removes .venv-eeg, the resolver silently falls through to homebrew python3, which has the OMP libomp double-init that breaks AutoModelForCausalLM. Fail-louder: emit a stderr warning when falling all the way to system python3.",
+    "C5 Direct invoke of anima_dialogue_load.py via BG-A path REMAINS the canonical real-mode entry until the wrapper is unblocked. Document this as the sanctioned probe interface in any --help output or the spec doc. The wrapper at bin/anima-core-dialogue.bash is currently best-effort fallback infrastructure, not a real-mode entry point."
+  ],
+  "next_step_recommendation": {
+    "priority_1_unblock_wrapper_real_mode": "Land additive helper-emit modification in mount.hexa::_write_helper: when AutoTokenizer.from_pretrained fails, fall back to sentencepiece.SentencePieceProcessor() loading tokenizer_64k_multilingual.model from the snapshot directory (replicate anima_dialogue_load.py:_load_tokenizer logic inline). ~30 LoC additive. Keeps raw#15 by being purely additive to mount.hexa.",
+    "priority_2_alternative_route": "Modify mount.hexa::_build_cmd to invoke tool/transient_py/anima_dialogue_load.py directly when --model matches CLM v4 family (path-based dispatch). Avoids duplicating SentencePiece logic; reuses BG-A tested codepath. ~15 LoC additive.",
+    "priority_3_documentation": "Add HEXA_PY env documentation to bin/anima --help and bin/anima-core-dialogue.bash --help; add mention in docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md.",
+    "priority_4_resolver_warn_loud": "Emit stderr warning in _resolve_python when falling all the way through to system python3 (fallbacks 3-7 of the chain) — fail-loud signal that the configured environment may not work for real-mode CLM v4."
+  },
+  "files_changed": [
+    "anima-core/runtime/clm_v4_mount.hexa (5 edits — _resolve_python extension, DEFAULT_MODEL const swap, _argparse default in helper-emit, header doc, print_usage)"
+  ],
+  "files_created": [
+    "state/anima_mount_real_mode_wiring_2026_05_05/verdict.json",
+    "docs/anima_mount_real_mode_wiring_landed_2026_05_05.ai.md"
+  ]
+}

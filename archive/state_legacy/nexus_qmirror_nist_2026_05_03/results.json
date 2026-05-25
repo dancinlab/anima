@@ -1,0 +1,319 @@
+{
+  "test": "qmirror_cond4_nist_tier1plus",
+  "date": "2026-05-03",
+  "alpha": 0.01,
+  "n_bytes_per_stream": 125000,
+  "n_bits_per_stream": 1000000,
+  "battery": "NIST SP 800-22 Rev.1a (15 tests via nistrng package)",
+  "tests_in_battery": [
+    "monobit",
+    "frequency_within_block",
+    "runs",
+    "longest_run_ones_in_a_block",
+    "binary_matrix_rank",
+    "dft",
+    "non_overlapping_template_matching",
+    "overlapping_template_matching",
+    "maurers_universal",
+    "linear_complexity",
+    "serial",
+    "approximate_entropy",
+    "cumulative sums",
+    "random_excursion",
+    "random_excursion_variant"
+  ],
+  "tier1_plus_required": [
+    "monobit",
+    "frequency_within_block",
+    "runs",
+    "longest_run_ones_in_a_block",
+    "dft",
+    "cumulative sums",
+    "approximate_entropy"
+  ],
+  "tier1_pass_threshold": 6,
+  "streams_tested": [
+    "hmac_drbg_legacy",
+    "qmirror_mock_lcg"
+  ],
+  "provenance": {
+    "hmac_drbg_legacy": {
+      "algorithm": "HMAC-DRBG (NIST SP 800-90A Rev.1, \u00a710.1.2) with SHA-256",
+      "entropy_input_bits": 4096,
+      "entropy_input_source": "IonQ Forte 1 |+>^16 256-shot Z-basis measurement",
+      "personalization_string": "anima.nexus.qrng.ionq_forte1.2026-05-02",
+      "first_1024_sha256_verified": true,
+      "n_bytes": 125000,
+      "sha256": "2aa7b6cd85b7c27c681116d2c807c6abb688faa335871c3d5afb0642ef8e744c",
+      "anu_tier": "T1.a-legacy-fallback (HMAC-DRBG seeded by real quantum bits)"
+    },
+    "qmirror_mock_lcg": {
+      "source": "Park-Miller LCG seed=12345 (matches qrng.hexa _qrng_lcg_bytes)",
+      "n_bytes": 125000,
+      "sha256": "9f59d112b2db44e4c4d943716c622d366bd1e91096f041840db16da8bb323083",
+      "anu_tier": "T0"
+    },
+    "anu_live_legacy": {
+      "skipped": true,
+      "reason": "QMIRROR_SKIP_ANU=1"
+    }
+  },
+  "test_results": {
+    "hmac_drbg_legacy": {
+      "name": "hmac_drbg_legacy",
+      "n_bytes": 125000,
+      "n_bits": 1000000,
+      "elapsed_sec": 60.79,
+      "tests": {
+        "overlapping_template_matching": {
+          "eligible": false
+        },
+        "Monobit": {
+          "eligible": true,
+          "p_value": 0.7113824903989066,
+          "passed": true,
+          "elapsed_sec": 0.0
+        },
+        "Frequency Within Block": {
+          "eligible": true,
+          "p_value": 0.2765172232766478,
+          "passed": true,
+          "elapsed_sec": 1.0
+        },
+        "Runs": {
+          "eligible": true,
+          "p_value": 0.9759578688522541,
+          "passed": true,
+          "elapsed_sec": 88.0
+        },
+        "Longest Run Ones In A Block": {
+          "eligible": true,
+          "p_value": 0.9055726501748386,
+          "passed": true,
+          "elapsed_sec": 47.0
+        },
+        "Binary Matrix Rank": {
+          "eligible": true,
+          "p_value": 0.9696446885846627,
+          "passed": true,
+          "elapsed_sec": 727.0
+        },
+        "Discrete Fourier Transform": {
+          "eligible": true,
+          "p_value": 0.0,
+          "passed": false,
+          "elapsed_sec": 18.0
+        },
+        "Non Overlapping Template Matching": {
+          "eligible": true,
+          "p_value": 0.0,
+          "passed": false,
+          "elapsed_sec": 950.0
+        },
+        "Maurers Universal": {
+          "eligible": true,
+          "p_value": 0.009818269561594312,
+          "passed": false,
+          "elapsed_sec": 250.0
+        },
+        "Linear Complexity": {
+          "eligible": true,
+          "p_value": 0.0,
+          "passed": false,
+          "elapsed_sec": 37334.0
+        },
+        "Serial": {
+          "eligible": true,
+          "p_value": 0.0,
+          "passed": false,
+          "elapsed_sec": 12534.0
+        },
+        "Approximate Entropy": {
+          "eligible": true,
+          "p_value": 0.0,
+          "passed": false,
+          "elapsed_sec": 6786.0
+        },
+        "Cumulative Sums": {
+          "eligible": true,
+          "p_value": 0.9999999999999987,
+          "passed": true,
+          "elapsed_sec": 266.0
+        },
+        "Random Excursion": {
+          "eligible": true,
+          "p_value": 0.6831433290986301,
+          "passed": false,
+          "elapsed_sec": 1783.0
+        },
+        "Random Excursion Variant": {
+          "eligible": true,
+          "p_value": 0.17025213718165474,
+          "passed": true,
+          "elapsed_sec": 5.0
+        }
+      },
+      "summary": {
+        "eligible": 14,
+        "ineligible": 1,
+        "passed": 7,
+        "failed": 7
+      }
+    },
+    "qmirror_mock_lcg": {
+      "name": "qmirror_mock_lcg",
+      "n_bytes": 125000,
+      "n_bits": 1000000,
+      "elapsed_sec": 87.11,
+      "tests": {
+        "overlapping_template_matching": {
+          "eligible": false
+        },
+        "Monobit": {
+          "eligible": true,
+          "p_value": 0.9968084702675367,
+          "passed": true,
+          "elapsed_sec": 0.0
+        },
+        "Frequency Within Block": {
+          "eligible": true,
+          "p_value": 1.0,
+          "passed": true,
+          "elapsed_sec": 0.0
+        },
+        "Runs": {
+          "eligible": true,
+          "p_value": 0.9999999872338428,
+          "passed": true,
+          "elapsed_sec": 97.0
+        },
+        "Longest Run Ones In A Block": {
+          "eligible": true,
+          "p_value": 3.2746412530841405e-164,
+          "passed": false,
+          "elapsed_sec": 49.0
+        },
+        "Binary Matrix Rank": {
+          "eligible": true,
+          "p_value": 0.0,
+          "passed": false,
+          "elapsed_sec": 501.0
+        },
+        "Discrete Fourier Transform": {
+          "eligible": true,
+          "p_value": 0.0,
+          "passed": false,
+          "elapsed_sec": 15.0
+        },
+        "Non Overlapping Template Matching": {
+          "eligible": true,
+          "p_value": 0.3305907368250157,
+          "passed": true,
+          "elapsed_sec": 933.0
+        },
+        "Maurers Universal": {
+          "eligible": true,
+          "p_value": 0.009584490311139778,
+          "passed": false,
+          "elapsed_sec": 271.0
+        },
+        "Linear Complexity": {
+          "eligible": true,
+          "p_value": 0.0,
+          "passed": false,
+          "elapsed_sec": 28915.0
+        },
+        "Serial": {
+          "eligible": true,
+          "p_value": 0.0,
+          "passed": false,
+          "elapsed_sec": 12908.0
+        },
+        "Approximate Entropy": {
+          "eligible": true,
+          "p_value": 0.0,
+          "passed": false,
+          "elapsed_sec": 31349.0
+        },
+        "Cumulative Sums": {
+          "eligible": true,
+          "p_value": 0.9999999999999987,
+          "passed": true,
+          "elapsed_sec": 832.0
+        },
+        "Random Excursion": {
+          "eligible": true,
+          "p_value": 0.6831433290986301,
+          "passed": false,
+          "elapsed_sec": 11233.0
+        },
+        "Random Excursion Variant": {
+          "eligible": true,
+          "p_value": 0.17025213718165474,
+          "passed": true,
+          "elapsed_sec": 11.0
+        }
+      },
+      "summary": {
+        "eligible": 14,
+        "ineligible": 1,
+        "passed": 6,
+        "failed": 8
+      }
+    }
+  },
+  "tier1_verdicts": {
+    "hmac_drbg_legacy": {
+      "verdict": "FAIL",
+      "n_pass": 0,
+      "n_total_eligible": 0,
+      "threshold": 6,
+      "tier1_plus_tests": [
+        "monobit",
+        "frequency_within_block",
+        "runs",
+        "longest_run_ones_in_a_block",
+        "dft",
+        "cumulative sums",
+        "approximate_entropy"
+      ],
+      "passed": [],
+      "failed": [],
+      "ineligible": [
+        "monobit",
+        "frequency_within_block",
+        "runs",
+        "longest_run_ones_in_a_block",
+        "dft",
+        "cumulative sums",
+        "approximate_entropy"
+      ]
+    },
+    "qmirror_mock_lcg": {
+      "verdict": "FAIL",
+      "n_pass": 0,
+      "n_total_eligible": 0,
+      "threshold": 6,
+      "tier1_plus_tests": [
+        "monobit",
+        "frequency_within_block",
+        "runs",
+        "longest_run_ones_in_a_block",
+        "dft",
+        "cumulative sums",
+        "approximate_entropy"
+      ],
+      "passed": [],
+      "failed": [],
+      "ineligible": [
+        "monobit",
+        "frequency_within_block",
+        "runs",
+        "longest_run_ones_in_a_block",
+        "dft",
+        "cumulative sums",
+        "approximate_entropy"
+      ]
+    }
+  }
+}

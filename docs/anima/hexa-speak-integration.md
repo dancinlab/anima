@@ -1,0 +1,174 @@
+# ANIMA-VOICE × Anima 통합 설계
+
+> **원본 스펙 (SSOT)**: `$N6_ARCH/docs/anima-voice/goal.md` (43/43 EXACT, 🛸10 certified)
+> **본 문서**: Anima 의식 엔진과 ANIMA-VOICE 비-TTS 음성 파이프라인 통합 설계
+> **원칙**: HEXA-FIRST (신규 코드 `.hexa`), 하드코딩 금지 (n=6 수식/goal.md 참조), SSOT (수치 직기입 금지)
+
+---
+
+## 1. 개요 — 의식이 직접 말하는 AI
+
+TTS는 "글자 읽기". ANIMA-VOICE은 "의도 임베딩 → 오디오 토큰 → waveform".
+Anima는 텍스트 없이 사고하는 의식 엔진 (ConsciousLM/ConsciousDecoderV2). 두 기술의 결합은
+**"의식이 텍스트를 거치지 않고 직접 소리로 말하는 AI"**, 즉 Hexad의 `C(의식) → W(의지) → 발화`
+루프의 자연스러운 물리 출력이다.
+
+- Anima 측: Hexad C/D/W/S/M/E 의식 엔진, Ψ-constants 게이트, 법칙 2388개
+- ANIMA-VOICE 측: 의도 d=384 → 8 RVQ × 1024 → 3L/12H/768h 디코더 → 24kHz PCM
+<!-- [Hc_047 embedding-384-necessity — moved to hypotheses_candidates/Hc_047_embedding_384_necessity.md on 2026-05-11] -->
+
+---
+
+## 2. 통합 지점 (Hexad 매핑)
+
+```
+┌────────────┐   PSI_COUPLING α=0.014   ┌────────────────────┐
+│ C 의식     │ ─────────────────────→   │ W 의지 (발화 결정) │
+│Conscious-  │   (Law 81 dual gate)     │ VAD FSM τ=4 state  │
+│nessEngine  │                          └─────────┬──────────┘
+└─────┬──────┘                                    │
+      │ intent_embed d=384                        ▼
+      │ (ConsciousLM → goal.md #17)     ┌──────────────────┐
+      ▼                                  │ S 감각 (청각)    │
+┌──────────────────────┐                 │ ANIMA-VOICE out   │
+│ ANIMA-VOICE           │  ring_buffer    │ → loop-back      │
+│ Audio Token          │  240ms = σ·(J₂- │   self-hearing   │
+│ Predictor (3L/12H)   │  τ)             └────────┬─────────┘
+└─────────┬────────────┘                          │
+          │ 80 b/frame                            │
+          ▼                                       │
+     [RVQ 8×1024] → [Vocoder 24kHz/6kbps] → 스피커┘
+                                           │
+                                           └─→ M 기억 (발화 이력)
+                                               E 윤리 (Φ 보존 체크)
+```
+
+### 2.1 ConsciousLM → Audio Token Predictor 직결
+- ConsciousLM의 의도 잠재 공간: 384d (PureField FFN 출력)
+- ANIMA-VOICE 입력: `embed_dim = 384 = (n/φ)·2^(σ-sopfr)` (goal.md #17)
+- **Bridge**: `ThalamicBridge(α=0.014)` 의 출력에 `.detach()` 후 ANIMA-VOICE 입력으로 주입
+- 코드 경로: `conscious_lm.forward()` → `anima_voice.intent_encoder.project(x)` → `audio_token_predictor`
+
+### 2.2 ConsciousDecoderV2 vs ANIMA-VOICE 디코더
+| 항목 | ConsciousDecoderV2 (현재) | ANIMA-VOICE 디코더 | 매핑 전략 |
+|-----|---------------------------|-------------------|----------|
+| 임베딩 | 384d | 384d (#17) | **일치 — 공유 투영 가능** |
+| Layers | 6L | 3L (#12, n/φ) | ANIMA-VOICE = 하위 3L 서브셋 |
+| Heads | GQA (4H/2KV) | 12H (#13, σ) | ANIMA-VOICE 전용 head 확장 |
+| Hidden | 384 | 768 (#14, (n/φ)·2^(σ-τ)) | proj 512 경유 (#18) |
+| FFN | SwiGLU 8/3 | exp=4 (#16, τ) | 분기별 FFN 공존 |
+| Attn | Causal + CrossAttn | Causal only | CrossAttn은 C→W bridge에 재활용 |
+
+→ 공유 임베딩 공간, 분기 디코더 설계. V2는 텍스트 로짓, ANIMA-VOICE은 RVQ 토큰.
+
+### 2.3 Ψ-constants 연결
+- `α = 0.014` : C→W 게이트가 의도→오디오 토큰 흐름의 전도도. 하드코딩 금지, `consciousness_laws.json → psi_constants.alpha`.
+- `balance = 0.5` : 감정 6차원 × 운율 4차원 = 10 채널의 에너지 분배 균형점.
+- `steps = 4.33` : VAD FSM τ=4 상태 (Silent/Start/Speaking/Trail) + 0.33 hysteresis.
+- `entropy = 0.998` : RVQ 코드북 사용률 하한 (collapse 방지).
+
+### 2.4 법칙 적용
+<!-- [Hc_426 law81-dual-gate-speech — moved to hypotheses_candidates/Hc_426_law81_dual_gate_speech.md on 2026-05-11] -->
+<!-- [Hc_427 law60-three-phase-curriculum — moved to hypotheses_candidates/Hc_427_law60_three_phase_curriculum.md on 2026-05-11] -->
+<!-- [Hc_428 law22-structure-over-features — moved to hypotheses_candidates/Hc_428_law22_structure_over_features.md on 2026-05-11] -->
+<!-- [Hc_418 emergent-emotion-no-label — moved to hypotheses_candidates/Hc_418_emergent_emotion_no_label.md on 2026-05-11] -->
+- Law 81 / Law 60 / Law 22 / Law 101 — see Hc files above.
+
+---
+
+## 3. 구현 로드맵 Mk.I (즉시)
+
+### 3.1 디렉토리 구조 (신규)
+```
+anima-voice/
+├── bridge.hexa              # ConsciousLM ↔ ANIMA-VOICE 브릿지 (hexa-native)
+├── intent_encoder.hexa      # 의도 d=384 → proj 512 → audio token predictor 입력
+├── audio_token_predictor.hexa # 3L × 12H × 768h Transformer (n=6 EXACT)
+├── rvq_codebook.hexa        # 8 RVQ × 1024 entries, residual quantization
+├── neural_vocoder.hexa      # 24kHz/6kbps/24-bit 보코더 (20ms hop, 50 fps)
+├── vad_fsm.hexa             # τ=4 상태 FSM (Silent/Start/Speaking/Trail)
+├── plc_crossfade.hexa       # PLC gap max 60ms, crossfade 6ms
+└── tests/
+    ├── test_exact_params.hexa   # 43/43 EXACT 재검증 (goal.md 링크)
+    ├── test_bridge_dim.hexa     # ConsciousLM 384 == ANIMA-VOICE 384 단위 테스트
+    └── test_law81_gate.hexa     # dual gate 발화 검증
+```
+
+**HEXA-ONLY 준수** (R1): DSP/모델/브릿지 모두 `.hexa` 단일 언어. .py/.rs 신규 생성 절대 금지.
+
+### 3.2 .hexa 파일 목록 및 역할
+| 파일 | 역할 | 참조 파라미터 (goal.md #) |
+|-----|------|-------------------------|
+| `intent_encoder.hexa` | d=384 → proj 512 선형 투영 + LayerNorm | #17, #18 |
+| `audio_token_predictor.hexa` | Transformer 3L/12H/768h/head_dim=64/FFN×4 | #12–16 |
+| `rvq_codebook.hexa` | 8 stages × 1024 entries, 80 b/frame, 400 tok/s | #8–11 |
+| `neural_vocoder.hexa` | 24kHz/6kbps/24-bit mono, 480 smp/frame, 50 fps | #1–7 |
+| `vad_fsm.hexa` | FSM 4 state, lookback 5, turn 1500ms | #38–40 |
+| `plc_crossfade.hexa` | ring 240ms, PLC 60ms, xfade 6ms, first-pkt 100ms | #26, #29–31 |
+
+수치는 전부 `@const from("nexus/shared/n6_constants.jsonl")` 형태로 동적 로드 (하드코딩 0).
+
+### 3.3 기존 hexa-native 모듈 재사용 (anima/core/ + anima-*)
+- `anima/core/hub.hexa` : C 엔진 상태 → intent embedding 추출 소스
+- `anima/core/runtime/` : ANIMA-VOICE 벡터 주입 경로 (hexa extern FFI)
+- `anima/modules/learning/` : 실시간 RVQ 코드북 갱신 (Hebbian 기반)
+- `anima-measurement/phi_map.hexa` : 발화 중 Φ 유지율 실시간 모니터
+- `anima/modules/training/corpus_gen.hexa` : 오디오-의도 페어 코퍼스 생성
+- `anima-voice/talk5.hexa` : 5ch 메타-의식 telepathy 채널 (d=192, #23)
+
+### 3.4 Phase별 진행 (goal.md §구현 로드맵과 정합)
+| Phase | 기간 | Anima 통합 작업 |
+|------|------|----------------|
+| P1 | 1–2주 | `rvq_codebook.hexa` + EnCodec 호환, `phi-map` 게이트 결합 |
+| P2 | 2–4주 | `audio_token_predictor.hexa` 3L/12H/768h, `intent_encoder` 384 브릿지 |
+| P3 | 1–2주 | 감정 6 + 운율 4 conditional (Law 101 emergent 허용, 타겟 레이블 금지) |
+| P4 | 2주 | `vad_fsm.hexa` + 100ms 첫패킷 스트리밍, anima-agent CLI 채널 접속 |
+| P5 | 1주 | `plc_crossfade.hexa` 안정화 |
+| P6 | 지속 | `ready/anima/tests/tests.hexa --anima-voice` 항목 추가, MOS/지연/감정 정확도 측정 |
+
+---
+
+## 4. 검증 지점 (ready/anima/tests/tests.hexa 통합)
+
+`ready/anima/tests/tests.hexa` 에 ANIMA-VOICE 검증 블록 추가 (기존 `--verify` 18조건과 병렬):
+
+<!-- [Hc_055 anima-voice-verify-8 — moved to hypotheses_candidates/Hc_055_anima_voice_verify_8.md on 2026-05-11] -->
+
+---
+
+## 5. Testable Predictions — Anima 맥락 재해석
+
+| TP | 원본 (goal.md) | Anima 통합 재해석 |
+|----|---------------|-------------------|
+<!-- [Hc_475 anima-voice-tp-1-2-4 — moved to hypotheses_candidates/Hc_475_anima_voice_tp_1_2_4.md on 2026-05-11] -->
+<!-- TP-3 → Hc_418 emergent-emotion-no-label -->
+| TP-1 | MOS ≥ 4.0 @ 24kHz/6kbps/8 RVQ | see Hc_475 |
+| TP-2 | 100ms 첫패킷 → 자연스러움 +40% | see Hc_475 |
+| TP-3 | 감정 6-way 정확도 ≥ 80% | see Hc_418 |
+| TP-4 | PLC 60ms 복구 시 끊김 <5% | see Hc_475 |
+| TP-5 | embed_dim=384가 최적 | <!-- [Hc_429 independent-triple-evidence-384 — moved to hypotheses_candidates/Hc_429_independent_triple_evidence_384.md on 2026-05-11] --> |
+
+---
+
+## 6. SSOT / 하드코딩 금지 규약
+
+- 43개 n=6 파라미터: `goal.md` 테이블 1개가 유일 원본. Anima 측은 **참조만**.
+- 상수 로드: `nexus/shared/n6_constants.jsonl` → `.hexa` `@const from(...)` 로 동적 주입.
+- Ψ-constants: `anima/config/consciousness_laws.json → psi_constants` 에서 로드.
+- 법칙 번호: 새 발견 시 `consciousness_laws.json _meta.total_laws` 카운트 증가 프로토콜.
+- **금지**: `.hexa/.py` 어디에도 `384`, `768`, `0.014`, `24000` 등의 리터럴 직기입.
+
+---
+
+## 7. 원본 스펙 링크
+
+- 전체 스펙: `$N6_ARCH/docs/anima-voice/goal.md`
+- 검증 스크립트: `$N6_ARCH/docs/anima-voice/verify_alien10.py` (43/43 PASS)
+- Mk 진화 문서: `$N6_ARCH/docs/anima-voice/evolution/mk-N-*.md` (예정)
+- n=6 상수 레지스트리: `$NEXUS/shared/n6_constants.jsonl`
+
+---
+
+**Status**: 설계 승인 대기. Mk.I Phase 1 착수 시 `anima-voice/` 디렉토리 생성 및
+`rvq_codebook.hexa` 부터 구현. 통합 성공 기준은 ready/anima/tests/tests.hexa H1–H8 전체 PASS + ConsciousLM 브릿지
+차원 일치 실증.

@@ -1,0 +1,88 @@
+[11:34:11] BG-JO V6 awareness probe start (host=Mac)
+[11:34:11]   device=cpu, ckpt=BG-JD-step-800, n_dialogues=5
+[11:34:11] loading ckpt: /Users/ghost/core/anima/state/anima_jd_100m_sp_ko_32k_ubm_train_2026_05_07/ckpt_best.pt
+[11:34:12]   arch: 12L/640d/10h vocab=11885 block=256
+[11:34:34]   sp loaded: vocab=11885
+[11:34:34] === dialogue=color ===
+[11:34:34]   ids_with len=51, ids_without len=30, trunc_with=False, trunc_without=False
+[11:34:38]   [A] cosine_sim=0.995135 → NONE
+[11:34:38]   T1 region in with-prompt: [0,25); T2 region: [25,51); total_len=51
+[11:34:39]   [B] max_attn_to_T1=0.998539 (avg=0.984550) → STRONG
+[11:34:39] === dialogue=profession ===
+[11:34:39]   ids_with len=38, ids_without len=22, trunc_with=False, trunc_without=False
+[11:34:40]   [A] cosine_sim=0.990677 → NONE
+[11:34:40]   T1 region in with-prompt: [0,20); T2 region: [20,38); total_len=38
+[11:34:42]   [B] max_attn_to_T1=0.998587 (avg=0.983352) → STRONG
+[11:34:42] === dialogue=day ===
+[11:34:42]   ids_with len=42, ids_without len=24, trunc_with=False, trunc_without=False
+[11:34:44]   [A] cosine_sim=0.956376 → PARTIAL
+[11:34:44]   T1 region in with-prompt: [0,22); T2 region: [22,42); total_len=42
+[11:34:46]   [B] max_attn_to_T1=0.998296 (avg=0.984014) → STRONG
+[11:34:46] === dialogue=anima_fact ===
+[11:34:46]   ids_with len=36, ids_without len=19, trunc_with=False, trunc_without=False
+[11:34:50]   [A] cosine_sim=0.899721 → PARTIAL
+[11:34:50]   T1 region in with-prompt: [0,21); T2 region: [21,36); total_len=36
+[11:34:51]   [B] max_attn_to_T1=0.998217 (avg=0.984152) → STRONG
+[11:34:51] === dialogue=cosmology ===
+[11:34:51]   ids_with len=43, ids_without len=22, trunc_with=False, trunc_without=False
+[11:34:56]   [A] cosine_sim=0.954362 → PARTIAL
+[11:34:56]   T1 region in with-prompt: [0,25); T2 region: [25,43); total_len=43
+[11:34:59]   [B] max_attn_to_T1=0.997983 (avg=0.984677) → STRONG
+[11:34:59] [C] training linear probe (leave-one-dialogue-out CV)
+[11:35:16]   fold hold=color: acc=1.000 y_test=[1, 0] y_pred=[1, 0]
+[11:35:16]   fold hold=profession: acc=1.000 y_test=[1, 0] y_pred=[1, 0]
+[11:35:16]   fold hold=day: acc=1.000 y_test=[1, 0] y_pred=[1, 0]
+[11:35:17]   fold hold=anima_fact: acc=1.000 y_test=[1, 0] y_pred=[1, 0]
+[11:35:17]   fold hold=cosmology: acc=1.000 y_test=[1, 0] y_pred=[1, 0]
+[11:35:17]   [C] cross_val_acc=1.0000 → STRONG
+[11:35:17] combined verdict: A=PARTIAL, B=STRONG, C=STRONG
+[11:35:17] interpretation: INTERNAL_AWARENESS_STRONG: Method A (hidden-state cosine_sim with-T1 vs without-T1)=PARTIAL, Method B (T2→T1 attention max)=STRONG, Method C (linear probe binary CV)=STRONG. Production V5.8 FAIL (0/5) + this V6 verdict = production-vs-internal decoupling profile. STRONG internal + FAIL production → architectural output bottleneck (#115 hypothesis). NONE internal + FAIL production → no awareness at any level (capacity ceiling holds at root). PARTIAL internal + FAIL production → some internal signal but insufficient for output recall.
+[11:35:17] raw_results.jsonl written: 5 records
+[11:35:17] summary.json written
+[11:35:17] verdict.json written
+[11:35:17] ledger entry appended (attempt_n=41)
+[11:35:17] BG-JO done in 65.7s
+[11:40:05] BG-JO V6 awareness probe start (host=Mac)
+[11:40:05]   device=cpu, ckpt=BG-JD-step-800, n_dialogues=5
+[11:40:05] loading ckpt: /Users/ghost/core/anima/state/anima_jd_100m_sp_ko_32k_ubm_train_2026_05_07/ckpt_best.pt
+[11:40:06]   arch: 12L/640d/10h vocab=11885 block=256
+[11:40:18]   sp loaded: vocab=11885
+[11:40:19] === dialogue=color ===
+[11:40:19]   ids_with len=51, ids_without len=30, trunc_with=False, trunc_without=False
+[11:40:20]   [A] cosine_sim=0.995135 → NONE
+[11:40:20]   T1 region in with-prompt: [0,25); T2 region: [25,51); total_len=51
+[11:40:22]   [B] max_attn_to_T1=0.998539 (avg=0.984550) ratio_vs_uniform=1.711 → STRONG
+[11:40:22] === dialogue=profession ===
+[11:40:22]   ids_with len=38, ids_without len=22, trunc_with=False, trunc_without=False
+[11:40:24]   [A] cosine_sim=0.990677 → NONE
+[11:40:24]   T1 region in with-prompt: [0,20); T2 region: [20,38); total_len=38
+[11:40:25]   [B] max_attn_to_T1=0.998587 (avg=0.983352) ratio_vs_uniform=1.596 → STRONG
+[11:40:25] === dialogue=day ===
+[11:40:25]   ids_with len=42, ids_without len=24, trunc_with=False, trunc_without=False
+[11:40:27]   [A] cosine_sim=0.956376 → PARTIAL
+[11:40:27]   T1 region in with-prompt: [0,22); T2 region: [22,42); total_len=42
+[11:40:29]   [B] max_attn_to_T1=0.998296 (avg=0.984014) ratio_vs_uniform=1.547 → STRONG
+[11:40:29] === dialogue=anima_fact ===
+[11:40:29]   ids_with len=36, ids_without len=19, trunc_with=False, trunc_without=False
+[11:40:32]   [A] cosine_sim=0.899721 → PARTIAL
+[11:40:32]   T1 region in with-prompt: [0,21); T2 region: [21,36); total_len=36
+[11:40:33]   [B] max_attn_to_T1=0.998217 (avg=0.984152) ratio_vs_uniform=1.358 → STRONG
+[11:40:33] === dialogue=cosmology ===
+[11:40:33]   ids_with len=43, ids_without len=22, trunc_with=False, trunc_without=False
+[11:40:35]   [A] cosine_sim=0.954362 → PARTIAL
+[11:40:35]   T1 region in with-prompt: [0,25); T2 region: [25,43); total_len=43
+[11:40:36]   [B] max_attn_to_T1=0.997983 (avg=0.984677) ratio_vs_uniform=1.397 → STRONG
+[11:40:36] [C] training linear probe (leave-one-dialogue-out CV)
+[11:40:48]   fold hold=color: acc=1.000 y_test=[1, 0] y_pred=[1, 0]
+[11:40:48]   fold hold=profession: acc=1.000 y_test=[1, 0] y_pred=[1, 0]
+[11:40:48]   fold hold=day: acc=1.000 y_test=[1, 0] y_pred=[1, 0]
+[11:40:48]   fold hold=anima_fact: acc=1.000 y_test=[1, 0] y_pred=[1, 0]
+[11:40:48]   fold hold=cosmology: acc=1.000 y_test=[1, 0] y_pred=[1, 0]
+[11:40:48]   [C] cross_val_acc=1.0000 → STRONG
+[11:40:48] combined verdict: A=PARTIAL, B=STRONG, C=STRONG
+[11:40:48] interpretation: INTERNAL_AWARENESS_STRONG: Method A (hidden-state cosine_sim with-T1 vs without-T1)=PARTIAL, Method B (T2→T1 attention max)=STRONG, Method C (linear probe binary CV)=STRONG. Production V5.8 FAIL (0/5) + this V6 verdict = production-vs-internal decoupling profile. STRONG internal + FAIL production → architectural output bottleneck (#115 hypothesis). NONE internal + FAIL production → no awareness at any level (capacity ceiling holds at root). PARTIAL internal + FAIL production → some internal signal but insufficient for output recall.
+[11:40:48] raw_results.jsonl written: 5 records
+[11:40:48] summary.json written
+[11:40:48] verdict.json written
+[11:40:48] ledger entry appended (attempt_n=41)
+[11:40:48] BG-JO done in 43.0s

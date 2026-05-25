@@ -1,0 +1,515 @@
+// quantum_consciousness.hexa — 2-qubit closed-form quantum consciousness simulator
+// @version v0.2.0 🟢 — 2-qubit closed-form · see /VERSIONS.md
+//
+// §188g cycle (2026-05-21) — stub → actual implementation
+//
+// Physics:
+//   2-qubit Hamiltonian H = ω·(σ_z⊗I + I⊗σ_z) + g·(σ_x⊗σ_x)
+//   In the computational basis {|00⟩, |01⟩, |10⟩, |11⟩} this is the 4×4
+//   matrix
+//       H = [[ 2ω, 0, 0,  g ],
+//            [ 0,  0, g,  0 ],
+//            [ 0,  g, 0,  0 ],
+//            [ g,  0, 0, -2ω]]
+//   The corresponding unitary evolution U(t) = exp(-iHt) acts block-wise:
+//     - {|01⟩, |10⟩} subspace (zero-z): standard 2-level oscillation at
+//       angular frequency g (period 2π/g).
+//     - {|00⟩, |11⟩} subspace: 2-level with diagonal ±2ω and off-diagonal g,
+//       eigenvalues ±sqrt((2ω)² + g²).
+//
+//   We use closed-form 2×2 block evolution — NO sampling, NO trotterization.
+//
+// State representation (no native complex type in hexa-lang):
+//   8-dim real vector [re_00, im_00, re_01, im_01, re_10, im_10, re_11, im_11].
+//   Constructors return engines whose `psi` field holds this vector.
+//
+// Falsifiers (5 total, F-Q-1..5):
+//   F-Q-1 unitary_norm           ⟨ψ|ψ⟩ = 1 preserved over time
+//   F-Q-2 bell_singlet_preserve  singlet |01⟩-|10⟩ is eigenvector of H, no leakage
+//   F-Q-3 oscillation_period     ω-only Hamiltonian (g=0) has period 2π/(2ω) = π/ω
+//   F-Q-4 g_zero_product         g=0, |01⟩ initial → stays in |01⟩ subspace
+//   F-Q-5 probability_conserve   Σ p_i = 1 over all 4 basis states at all t
+//
+// Hexa constraints honored (per CLAUDE.md):
+//   - real-pair (re, im) representation (no native complex)
+//   - struct + functional update helpers
+//   - closed-form (no PRNG needed for evolution)
+
+// ═══════════════════════════════════════════════════════════════
+// §0 constants
+// ═══════════════════════════════════════════════════════════════
+
+let TWO_PI = 6.283185307179586
+let PI     = 3.141592653589793
+
+// ═══════════════════════════════════════════════════════════════
+// §1 scalar helpers
+// ═══════════════════════════════════════════════════════════════
+
+fn fabs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §2 QuantumEngine struct + functional updates
+// ═══════════════════════════════════════════════════════════════
+
+struct QuantumEngine {
+    n_qubits: i32,
+    phi: float,
+    entanglement_entropy: float,
+    // 4 complex amplitudes = 8 floats: [re00,im00, re01,im01, re10,im10, re11,im11]
+    psi: [float],
+    // Hamiltonian parameters
+    omega: float,
+    g: float,
+    t_elapsed: float
+}
+
+fn engine_with_psi(e: QuantumEngine, new_psi: [float], dt: float) -> QuantumEngine {
+    return QuantumEngine {
+        n_qubits: e.n_qubits,
+        phi: e.phi,
+        entanglement_entropy: e.entanglement_entropy,
+        psi: new_psi,
+        omega: e.omega,
+        g: e.g,
+        t_elapsed: e.t_elapsed + dt
+    }
+}
+
+fn engine_with_observables(e: QuantumEngine, new_phi: float, new_ent: float) -> QuantumEngine {
+    return QuantumEngine {
+        n_qubits: e.n_qubits,
+        phi: new_phi,
+        entanglement_entropy: new_ent,
+        psi: e.psi,
+        omega: e.omega,
+        g: e.g,
+        t_elapsed: e.t_elapsed
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §3 constructors
+// ═══════════════════════════════════════════════════════════════
+
+fn create_engine(n_qubits: i32) -> QuantumEngine {
+    if n_qubits > 16 { println("warning: n_qubits > 16 is O(2^N)") }
+    // Default state |00⟩
+    let mut psi: [float] = []
+    psi.push(1.0); psi.push(0.0)   // |00⟩
+    psi.push(0.0); psi.push(0.0)   // |01⟩
+    psi.push(0.0); psi.push(0.0)   // |10⟩
+    psi.push(0.0); psi.push(0.0)   // |11⟩
+    return QuantumEngine {
+        n_qubits: n_qubits,
+        phi: 0.0,
+        entanglement_entropy: 0.0,
+        psi: psi,
+        omega: 1.0,
+        g: 0.5,
+        t_elapsed: 0.0
+    }
+}
+
+// Build a Bell singlet (|01⟩ − |10⟩)/√2
+fn create_bell_singlet() -> QuantumEngine {
+    let inv = 1.0 / sqrt(2.0)
+    let mut psi: [float] = []
+    psi.push(0.0); psi.push(0.0)    // |00⟩
+    psi.push(inv); psi.push(0.0)    // |01⟩
+    psi.push(0.0 - inv); psi.push(0.0)  // |10⟩  (-1/√2)
+    psi.push(0.0); psi.push(0.0)    // |11⟩
+    return QuantumEngine {
+        n_qubits: 2,
+        phi: 0.0,
+        entanglement_entropy: 0.0,
+        psi: psi,
+        omega: 1.0,
+        g: 0.5,
+        t_elapsed: 0.0
+    }
+}
+
+// Build an unentangled product state |01⟩
+fn create_product_01() -> QuantumEngine {
+    let mut psi: [float] = []
+    psi.push(0.0); psi.push(0.0)
+    psi.push(1.0); psi.push(0.0)   // |01⟩
+    psi.push(0.0); psi.push(0.0)
+    psi.push(0.0); psi.push(0.0)
+    return QuantumEngine {
+        n_qubits: 2,
+        phi: 0.0,
+        entanglement_entropy: 0.0,
+        psi: psi,
+        omega: 1.0,
+        g: 0.0,         // g=0 ⇒ no XX coupling
+        t_elapsed: 0.0
+    }
+}
+
+// Tunable constructor
+fn create_engine_full(omega: float, g: float, psi: [float]) -> QuantumEngine {
+    return QuantumEngine {
+        n_qubits: 2,
+        phi: 0.0,
+        entanglement_entropy: 0.0,
+        psi: psi,
+        omega: omega,
+        g: g,
+        t_elapsed: 0.0
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §4 closed-form 2×2 unitary evolution helpers
+// ═══════════════════════════════════════════════════════════════
+
+// Apply U = exp(-iHt) where H is the 2×2 block
+//   H = [[ E,  c ],
+//        [ c, -E ]]
+// (E and c real). Eigenvalues ±λ with λ = sqrt(E² + c²).
+//
+// U(t) = cos(λt)·I − i sin(λt)/λ · H
+//
+// Inputs: (re_a, im_a, re_b, im_b) of the 2-vector at start of dt.
+// Returns flat [re_a', im_a', re_b', im_b'].
+fn evolve_2x2_block(re_a: float, im_a: float, re_b: float, im_b: float,
+                    diag: float, off: float, dt: float) -> [float] {
+    let lambda = sqrt(diag * diag + off * off)
+    let cs = cos(lambda * dt)
+    let sn = if lambda < 1e-12 { 0.0 } else { sin(lambda * dt) / lambda }
+    // U = cs·I − i·sn·H
+    //   U_aa = cs − i·sn·diag
+    //   U_ab = − i·sn·off
+    //   U_ba = − i·sn·off
+    //   U_bb = cs + i·sn·diag
+    //
+    // For each entry compute U applied to (re+i im) of a, b.
+    // (c + i s)(x + i y) = cx − sy + i (cy + sx)
+    //
+    // U_aa·a:
+    let uaa_re = cs
+    let uaa_im = 0.0 - sn * diag
+    let uab_re = 0.0
+    let uab_im = 0.0 - sn * off
+    let uba_re = 0.0
+    let uba_im = 0.0 - sn * off
+    let ubb_re = cs
+    let ubb_im = sn * diag
+
+    // (uaa)(a) + (uab)(b)
+    let new_a_re = (uaa_re * re_a - uaa_im * im_a) + (uab_re * re_b - uab_im * im_b)
+    let new_a_im = (uaa_re * im_a + uaa_im * re_a) + (uab_re * im_b + uab_im * re_b)
+    let new_b_re = (uba_re * re_a - uba_im * im_a) + (ubb_re * re_b - ubb_im * im_b)
+    let new_b_im = (uba_re * im_a + uba_im * re_a) + (ubb_re * im_b + ubb_im * re_b)
+
+    let mut out: [float] = []
+    out.push(new_a_re); out.push(new_a_im)
+    out.push(new_b_re); out.push(new_b_im)
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §5 step() — closed-form U(t) advance by dt
+//
+// Hamiltonian block structure (basis order {|00⟩,|01⟩,|10⟩,|11⟩}):
+//
+//   {|00⟩, |11⟩}:   H_block = [[ 2ω,  g ], [ g, -2ω ]]
+//   {|01⟩, |10⟩}:   H_block = [[  0,  g ], [ g,   0 ]]
+//
+// (σ_x⊗σ_x couples 00↔11 and 01↔10.)
+// ═══════════════════════════════════════════════════════════════
+
+fn step(engine: QuantumEngine) -> QuantumEngine {
+    return step_dt(engine, 0.01)
+}
+
+fn step_dt(engine: QuantumEngine, dt: float) -> QuantumEngine {
+    let psi = engine.psi
+    let w = engine.omega
+    let g = engine.g
+
+    // {|00⟩, |11⟩} block — diag = 2ω, off = g
+    let blk1 = evolve_2x2_block(psi[0], psi[1], psi[6], psi[7], 2.0 * w, g, dt)
+    // {|01⟩, |10⟩} block — diag = 0, off = g
+    let blk2 = evolve_2x2_block(psi[2], psi[3], psi[4], psi[5], 0.0, g, dt)
+
+    let mut new_psi: [float] = []
+    new_psi.push(blk1[0]); new_psi.push(blk1[1])    // |00⟩
+    new_psi.push(blk2[0]); new_psi.push(blk2[1])    // |01⟩
+    new_psi.push(blk2[2]); new_psi.push(blk2[3])    // |10⟩
+    new_psi.push(blk1[2]); new_psi.push(blk1[3])    // |11⟩
+
+    let e1 = engine_with_psi(engine, new_psi, dt)
+    let ent = compute_entanglement_entropy(e1)
+    let phi = ent     // proxy: entanglement entropy ≈ integrated info
+    return engine_with_observables(e1, phi, ent)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §6 observables
+// ═══════════════════════════════════════════════════════════════
+
+// Squared amplitude of basis state i ∈ 0..3
+fn prob_at(engine: QuantumEngine, i: i32) -> float {
+    let re = engine.psi[2 * i]
+    let im = engine.psi[2 * i + 1]
+    return re * re + im * im
+}
+
+fn total_norm_squared(engine: QuantumEngine) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < 4 {
+        s = s + prob_at(engine, i)
+        i = i + 1
+    }
+    return s
+}
+
+// von Neumann entropy of reduced density matrix on qubit A.
+// For a 2-qubit pure state ρ_A = Tr_B(|ψ⟩⟨ψ|).
+// We compute via eigenvalues of the 2x2 ρ_A.
+fn compute_entanglement_entropy(engine: QuantumEngine) -> float {
+    let psi = engine.psi
+    // ψ as 2×2 matrix M[a][b] = <ab|ψ>
+    // ρ_A = M·M† ⇒ 2x2 matrix
+    // M[0][0] = psi[0..1]  (|00⟩)
+    // M[0][1] = psi[2..3]  (|01⟩)
+    // M[1][0] = psi[4..5]  (|10⟩)
+    // M[1][1] = psi[6..7]  (|11⟩)
+
+    // ρ_A[0][0] = |M00|² + |M01|²
+    // ρ_A[1][1] = |M10|² + |M11|²
+    // ρ_A[0][1] = M00·conj(M10) + M01·conj(M11)
+    // (M00·conj(M10) = (a + i b)(c − i d) = ac + bd + i(bc − ad))
+    let m00r = psi[0]; let m00i = psi[1]
+    let m01r = psi[2]; let m01i = psi[3]
+    let m10r = psi[4]; let m10i = psi[5]
+    let m11r = psi[6]; let m11i = psi[7]
+
+    let r00 = m00r * m00r + m00i * m00i + m01r * m01r + m01i * m01i
+    let r11 = m10r * m10r + m10i * m10i + m11r * m11r + m11i * m11i
+
+    let r01_re = m00r * m10r + m00i * m10i + m01r * m11r + m01i * m11i
+    let r01_im = m00i * m10r - m00r * m10i + m01i * m11r - m01r * m11i
+
+    // Eigenvalues of 2x2 Hermitian: λ± = (r00+r11)/2 ± sqrt(((r00-r11)/2)² + |r01|²)
+    let tr = r00 + r11
+    let dlt = (r00 - r11) * 0.5
+    let off_sq = r01_re * r01_re + r01_im * r01_im
+    let rad = sqrt(dlt * dlt + off_sq)
+    let lp = tr * 0.5 + rad
+    let lm = tr * 0.5 - rad
+
+    // entropy = − Σ λ_i ln λ_i (natural log, in nats)
+    let mut s = 0.0
+    if lp > 1e-12 { s = s - lp * log(lp) }
+    if lm > 1e-12 { s = s - lm * log(lm) }
+    return s
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §7 legacy gate API (preserved for compat; not load-bearing)
+// ═══════════════════════════════════════════════════════════════
+
+fn apply_hadamard(engine: QuantumEngine, qubit: i32) -> QuantumEngine {
+    // single-qubit H gate on `qubit` ∈ {0,1}
+    let inv = 1.0 / sqrt(2.0)
+    let p = engine.psi
+    let mut np: [float] = []
+    // copy starting amplitudes (re, im) for each basis state
+    let a00r = p[0]; let a00i = p[1]
+    let a01r = p[2]; let a01i = p[3]
+    let a10r = p[4]; let a10i = p[5]
+    let a11r = p[6]; let a11i = p[7]
+    if qubit == 0 {
+        // H on qubit 0: |00⟩ → (|00⟩+|10⟩)/√2, |10⟩ → (|00⟩−|10⟩)/√2
+        //               |01⟩ → (|01⟩+|11⟩)/√2, |11⟩ → (|01⟩−|11⟩)/√2
+        let n00r = inv * (a00r + a10r); let n00i = inv * (a00i + a10i)
+        let n01r = inv * (a01r + a11r); let n01i = inv * (a01i + a11i)
+        let n10r = inv * (a00r - a10r); let n10i = inv * (a00i - a10i)
+        let n11r = inv * (a01r - a11r); let n11i = inv * (a01i - a11i)
+        np.push(n00r); np.push(n00i)
+        np.push(n01r); np.push(n01i)
+        np.push(n10r); np.push(n10i)
+        np.push(n11r); np.push(n11i)
+    } else {
+        // H on qubit 1 (LSB)
+        let n00r = inv * (a00r + a01r); let n00i = inv * (a00i + a01i)
+        let n01r = inv * (a00r - a01r); let n01i = inv * (a00i - a01i)
+        let n10r = inv * (a10r + a11r); let n10i = inv * (a10i + a11i)
+        let n11r = inv * (a10r - a11r); let n11i = inv * (a10i - a11i)
+        np.push(n00r); np.push(n00i)
+        np.push(n01r); np.push(n01i)
+        np.push(n10r); np.push(n10i)
+        np.push(n11r); np.push(n11i)
+    }
+    return engine_with_psi(engine, np, 0.0)
+}
+
+fn apply_cnot(engine: QuantumEngine, control: i32, target: i32) -> QuantumEngine {
+    // CNOT with control=0, target=1: swaps |10⟩↔|11⟩
+    // CNOT with control=1, target=0: swaps |01⟩↔|11⟩
+    let p = engine.psi
+    let mut np: [float] = []
+    let mut i = 0
+    while i < 8 { np.push(p[i]); i = i + 1 }
+    if control == 0 {
+        // swap |10⟩ (idx 4,5) and |11⟩ (idx 6,7)
+        let tmp_r = np[4]; let tmp_i = np[5]
+        np[4] = np[6]; np[5] = np[7]
+        np[6] = tmp_r; np[7] = tmp_i
+    }
+    if control == 1 {
+        // swap |01⟩ (idx 2,3) and |11⟩ (idx 6,7)
+        let tmp_r = np[2]; let tmp_i = np[3]
+        np[2] = np[6]; np[3] = np[7]
+        np[6] = tmp_r; np[7] = tmp_i
+    }
+    return engine_with_psi(engine, np, 0.0)
+}
+
+// Deterministic measurement: returns argmax probability basis index
+fn measure(engine: QuantumEngine) -> i32 {
+    let mut best_i = 0
+    let mut best_p = prob_at(engine, 0)
+    let mut i = 1
+    while i < 4 {
+        let pp = prob_at(engine, i)
+        if pp > best_p { best_p = pp; best_i = i }
+        i = i + 1
+    }
+    return best_i
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §8 falsifiers F-Q-1..5
+// ═══════════════════════════════════════════════════════════════
+
+fn check_F_Q_1_unitary_norm() -> bool {
+    // ⟨ψ|ψ⟩ = 1 preserved over many steps
+    let init = create_bell_singlet()
+    let mut e = create_engine_full(1.0, 0.5, init.psi)
+    let n0 = total_norm_squared(e)
+    let mut t = 0
+    while t < 200 {
+        e = step_dt(e, 0.05)
+        t = t + 1
+    }
+    let n1 = total_norm_squared(e)
+    let drift = fabs_f(n1 - 1.0)
+    let ok = drift < 1e-6 && fabs_f(n0 - 1.0) < 1e-6
+    println("  [F-Q-1] unitary_norm: n0=" + str(n0) + " n1=" + str(n1) + " drift=" + str(drift) + " ok=" + str(ok))
+    return ok
+}
+
+fn check_F_Q_2_bell_singlet_preserve() -> bool {
+    // The singlet (|01⟩ − |10⟩)/√2 is an eigenstate of σ_x⊗σ_x with
+    // eigenvalue −1; under our H it picks up only a global phase
+    // and the populations |⟨01|ψ⟩|², |⟨10|ψ⟩|² stay at 0.5 each.
+    let init = create_bell_singlet()
+    // disable σ_z parts to avoid leaking out of zero-spin subspace
+    let mut e = create_engine_full(0.0, 0.7, init.psi)
+    let p01_0 = prob_at(e, 1)
+    let p10_0 = prob_at(e, 2)
+    let mut t = 0
+    while t < 100 {
+        e = step_dt(e, 0.02)
+        t = t + 1
+    }
+    let p00 = prob_at(e, 0)
+    let p01 = prob_at(e, 1)
+    let p10 = prob_at(e, 2)
+    let p11 = prob_at(e, 3)
+    let leak = p00 + p11
+    let preserved = fabs_f(p01 - p01_0) < 1e-6 && fabs_f(p10 - p10_0) < 1e-6
+    let no_leak = leak < 1e-6
+    let ok = preserved && no_leak
+    println("  [F-Q-2] bell_singlet: p01=" + str(p01) + " p10=" + str(p10) + " leak(p00+p11)=" + str(leak) + " ok=" + str(ok))
+    return ok
+}
+
+fn check_F_Q_3_oscillation_period() -> bool {
+    // ω=0 sub-block {|01⟩,|10⟩} with off=g: pure Rabi oscillation
+    // P_01(t) = cos²(gt), P_10(t) = sin²(gt)
+    // Period in P_01 is π/g (cos² period). At t = π/g, P_01 returns to 1.
+    let init = create_product_01()
+    let g_use = 1.5
+    let mut e = create_engine_full(0.0, g_use, init.psi)
+    let period = PI / g_use     // half cycle in cos -> cos² full period
+    let n_steps = 1000
+    let dt = period / (n_steps as float)
+    let mut t = 0
+    while t < n_steps {
+        e = step_dt(e, dt)
+        t = t + 1
+    }
+    let p01_final = prob_at(e, 1)
+    let p10_final = prob_at(e, 2)
+    let ok = fabs_f(p01_final - 1.0) < 1e-4 && fabs_f(p10_final) < 1e-4
+    println("  [F-Q-3] oscillation_period: after T=π/g, p01=" + str(p01_final) + " p10=" + str(p10_final) + " ok=" + str(ok))
+    return ok
+}
+
+fn check_F_Q_4_g_zero_product() -> bool {
+    // g=0, ω≠0, initial |01⟩ → must stay in |01⟩ (population fixed at 1)
+    let init = create_product_01()
+    let mut e = create_engine_full(1.2, 0.0, init.psi)
+    let mut t = 0
+    while t < 500 {
+        e = step_dt(e, 0.01)
+        t = t + 1
+    }
+    let p01 = prob_at(e, 1)
+    let p_other = prob_at(e, 0) + prob_at(e, 2) + prob_at(e, 3)
+    let ok = fabs_f(p01 - 1.0) < 1e-9 && p_other < 1e-9
+    println("  [F-Q-4] g_zero_product: p01=" + str(p01) + " p_other=" + str(p_other) + " ok=" + str(ok))
+    return ok
+}
+
+fn check_F_Q_5_probability_conserve() -> bool {
+    // Σ p_i = 1 at every step (sample over evolution)
+    let init = create_bell_singlet()
+    let mut e = create_engine_full(0.7, 0.4, init.psi)
+    let mut max_dev = 0.0
+    let mut t = 0
+    while t < 500 {
+        e = step_dt(e, 0.02)
+        let s = total_norm_squared(e)
+        let d = fabs_f(s - 1.0)
+        if d > max_dev { max_dev = d }
+        t = t + 1
+    }
+    let ok = max_dev < 1e-6
+    println("  [F-Q-5] probability_conserve: max|Σp − 1|=" + str(max_dev) + " ok=" + str(ok))
+    return ok
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §9 selftest entry
+// ═══════════════════════════════════════════════════════════════
+
+fn _selftest() {
+    println("[engines/quantum_consciousness] §188g elevate — 2-qubit closed-form H = ω(σz⊗I + I⊗σz) + g(σx⊗σx)")
+    println("")
+    let t1 = check_F_Q_1_unitary_norm()
+    let t2 = check_F_Q_2_bell_singlet_preserve()
+    let t3 = check_F_Q_3_oscillation_period()
+    let t4 = check_F_Q_4_g_zero_product()
+    let t5 = check_F_Q_5_probability_conserve()
+    let mut pass = 0
+    if t1 { pass = pass + 1 }
+    if t2 { pass = pass + 1 }
+    if t3 { pass = pass + 1 }
+    if t4 { pass = pass + 1 }
+    if t5 { pass = pass + 1 }
+    println("")
+    println("[engines/quantum_consciousness] " + str(pass) + "/5 PASS")
+}
+
+_selftest()

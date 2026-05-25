@@ -1,0 +1,129 @@
+// HEXAD/IIT4/state/iit4_m1_smoke_2026_05_25/run_m1.hexa
+//
+//   IIT4 M1 smoke — iit4_tpm.hexa repertoire + intrinsic difference checks.
+//
+//   Hand-verifiable network: 2-unit COPY/SWAP (unit0_t+1 = unit1_t,
+//   unit1_t+1 = unit0_t). Deterministic ⇒ repertoires collapse to a single
+//   state, so every value is checkable by hand:
+//     • effect_repertoire({unit0}=ON over {unit1})  = [0, 1]  (unit1_t+1=unit0=1)
+//     • cause_repertoire ({unit0}=ON over {unit1})  = [0, 1]  (unit0_now=unit1_past)
+//     • unconstrained_effect over {unit1}           = [0.5, 0.5]
+//     • ID([0,1] ∥ [0.5,0.5])                       = 1.0 bit, specified state 1
+//     • ID(p ∥ p)                                   = 0
+//   plus structural sanity on a 3-unit rotation network (sum-to-1, ≥0).
+//
+//   deterministic · hexa-only · $0 mac local · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_tpm.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+
+fn check(name: string, cond: bool) {
+    if cond {
+        PASS = PASS + 1
+        println("  [PASS] " + name)
+    } else {
+        FAIL = FAIL + 1
+        println("  [FAIL] " + name)
+    }
+}
+
+fn sum_arr(a: array) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < len(a) {
+        s = s + a[i]
+        i = i + 1
+    }
+    return s
+}
+
+fn all_nonneg(a: array) -> bool {
+    let mut i = 0
+    while i < len(a) {
+        if a[i] < 0.0 - 0.000001 { return false }
+        i = i + 1
+    }
+    return true
+}
+
+// ── 2-unit COPY/SWAP TPM (state-by-node) ───────────────────────────────────
+// tpm[s*2 + u]: unit0_t+1 = bit1(s), unit1_t+1 = bit0(s).
+//   s=0(00):[0,0]  s=1(01):[0,1]  s=2(10):[1,0]  s=3(11):[1,1]
+fn build_copy2() -> array {
+    return [0.0, 0.0,  0.0, 1.0,  1.0, 0.0,  1.0, 1.0]
+}
+
+// ── 3-unit rotation TPM: unit_u next = bit (u+1)%3 of state ─────────────────
+fn build_rotate3() -> array {
+    let mut t = []
+    let mut s = 0
+    while s < 8 {
+        let mut u = 0
+        while u < 3 {
+            t = t.push(to_float(iit4_bit(s, (u + 1) % 3)))
+            u = u + 1
+        }
+        s = s + 1
+    }
+    return t
+}
+
+fn main() {
+    println("================================================================")
+    println("  IIT4 M1 smoke — iit4_tpm.hexa (TPM · repertoire · ID)")
+    println("================================================================")
+
+    let copy2 = build_copy2()
+    // masks: {unit0}=1, {unit1}=2, {unit0,unit1}=3. mech_state unit0=ON ⇒ 1.
+    let m0 = 1
+    let pv1 = 2
+    let pv01 = 3
+
+    // ── effect repertoire ───────────────────────────────────────────────
+    let e = effect_repertoire(copy2, 2, m0, m0, pv1)
+    check("effect {0}=ON over {1} = [0,1]", approx(e[0], 0.0) && approx(e[1], 1.0))
+    check("effect repertoire sums to 1", approx(sum_arr(e), 1.0))
+
+    // ── cause repertoire ────────────────────────────────────────────────
+    let c = cause_repertoire(copy2, 2, m0, m0, pv1)
+    check("cause  {0}=ON over {1} = [0,1]", approx(c[0], 0.0) && approx(c[1], 1.0))
+    check("cause repertoire sums to 1", approx(sum_arr(c), 1.0))
+
+    // ── unconstrained effect ────────────────────────────────────────────
+    let ue = unconstrained_effect(copy2, 2, pv1)
+    check("unconstrained effect over {1} = [0.5,0.5]", approx(ue[0], 0.5) && approx(ue[1], 0.5))
+
+    // ── intrinsic difference ────────────────────────────────────────────
+    let id1 = intrinsic_difference(e, ue)
+    check("ID([0,1] || [.5,.5]) value = 1.0 bit", approx(id1[0], 1.0))
+    check("ID specified state = 1", approx(id1[1], 1.0))
+
+    let id0 = intrinsic_difference(e, e)
+    check("ID(p || p) = 0", approx(id0[0], 0.0))
+
+    // ── 2-unit purview sums to 1 (product over both units) ───────────────
+    let e2 = effect_repertoire(copy2, 2, m0, m0, pv01)
+    check("effect over {0,1} sums to 1", approx(sum_arr(e2), 1.0))
+
+    // ── 3-unit structural sanity (rotation network) ─────────────────────
+    let rot3 = build_rotate3()
+    let e3 = effect_repertoire(rot3, 3, 1, 1, 7)       // mech {0}=ON, purview {0,1,2}
+    let c3 = cause_repertoire(rot3, 3, 1, 1, 7)
+    check("n=3 effect over {0,1,2} sums to 1", approx(sum_arr(e3), 1.0))
+    check("n=3 cause  over {0,1,2} sums to 1", approx(sum_arr(c3), 1.0))
+    check("n=3 effect all >= 0", all_nonneg(e3))
+    check("n=3 cause  all >= 0", all_nonneg(c3))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("================================================================")
+    if FAIL > 0 { panic("IIT4 M1 smoke FAILED") }
+}

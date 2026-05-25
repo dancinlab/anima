@@ -1,0 +1,132 @@
+{
+  "schema": "anima/p9_path_a_r64_step10k_reconcile/diagnosis/1",
+  "ts_utc": "2026-05-04T13:42:00Z",
+  "cycle": "p9_path_a_r64_step10k_reconcile_2026_05_04",
+  "investigation_question": "Why does HF repo dancinlab/p9-llama32-lora-stage1 contain only 4 step-named commits (step-2000/4000/6000/8000) instead of the expected 5 (step-2k/4k/6k/8k/10k) plus final?",
+  "definitive_cause": "C — partial completion of save+push pipeline: training PROBABLY reached step-10000 in-process (per host_terminator.log STEP=10000/10000 at 21:34:08Z) but the trainer.save_model(checkpoint-10000)+push_to_hub sequence had not flushed a commit to HF before the host_pod_terminator.sh error-path branch fired runpodctl pod delete 5 seconds later (21:34:13Z). The probabilistic partition (60/25/10/4/1) from prior audit collapses to: cause B (push race / final-save crash) is now the dominant causal slice once step-10k commit absence on HF is treated as ground truth.",
+  "definitive_cause_short": "host_pod_terminator killed pod inside the step-10000 save+push critical section; no step-10000 commit ever reached HF git transaction.",
+  "step_10000_status": {
+    "on_hf_repo": "ABSENT (definitively, via live HF API as of 2026-05-04T13:42:00Z)",
+    "on_pod_disk": "UNKNOWN_AND_UNRECOVERABLE (pod terminated; ssh refused; no scp ever succeeded)",
+    "in_local_artifacts_dir": "ABSENT (state/p9_path_a_llama_lora_2026_05_03/artifacts/ does not exist; host_terminator.log line 46 confirms the recovery scp failed because the error-branch never created the dir)",
+    "final_adapter_status": "ABSENT same as above"
+  },
+  "evidence_chain": [
+    {
+      "id": "E1",
+      "source": "host_terminator.log line 36 → line 44",
+      "fact": "STEP probe trajectory: 7951(20:03Z) → 8185(20:13Z) → 10000(21:34Z, ALIVE=0)",
+      "implication": "training process WAS in fact running and progressing past step-8000; step counter monotonically advanced to 10000"
+    },
+    {
+      "id": "E2",
+      "source": "HF commits API (live 2026-05-04T13:42Z)",
+      "fact": "HEAD commit is `5a9b458467` titled 'Training in progress, step 8000' dated 2026-05-03T20:06:18Z. No newer commit exists on main. branches=[main only], tags=[]",
+      "implication": "Trainer made exactly 4 step-Nk commits (2k,4k,6k,8k) before dying; step-10k commit was never created on HF; final model save commit was never created on HF"
+    },
+    {
+      "id": "E3",
+      "source": "host_terminator.log lines 44-51",
+      "fact": "21:34:08Z: ALIVE=0 STEP=10000/10000; 21:34:13Z: runpodctl pod delete returned {deleted:true}; 5sec gap between train pid disappearance detection and pod-delete API call",
+      "implication": "host script ran the error-path branch (ALIVE=0 AND DONE=0 → 'likely error') and immediately destroyed the pod; this is a script-design fault, not a training fault"
+    },
+    {
+      "id": "E4",
+      "source": "train_llama_lora.py.txt lines 146-155",
+      "fact": "Code path: trainer.train() → trainer.save_model(out_dir/'final') → tok.save_pretrained(out_dir/'final') → write TRAIN_DONE.json. push_to_hub is per Trainer hub_strategy=every_save (line 130) which fires INSIDE trainer.train() at save_steps boundaries AND at end-of-training",
+      "implication": "step-10000 save fires at the very last step boundary inside trainer.train(). The HF push of that checkpoint dir runs in a HfApi background thread — typically takes 30-90s for ~390MB LoRA. If trainer.train() returns before the push thread finishes AND the process exits AND the terminator kills the pod, the push commit can be aborted in-flight."
+    },
+    {
+      "id": "E5",
+      "source": "verify_report.md lines 30-41 cross-check + commit history E2",
+      "fact": "step-2000 save took ~33s end-to-end (STEP crossed 2000 around 15:52:54Z; commit timestamp 15:52:19Z = roughly when save_model called, before the next probe). step-8000 same pattern: STEP probe shows 7951→8185 across 20:03-20:13Z window, commit landed 20:06:18Z — i.e. push successfully completed within ~1-3 min after save fired",
+      "implication": "Push pipeline historically takes 1-3 min wall-time per save. For step-10000: pod terminated within 5sec of pid disappearance — far less than the 60-180sec push needs. Conclusion: even if the local save_model write completed on pod disk, the HF git commit was 100% guaranteed to be unfinished."
+    },
+    {
+      "id": "E6",
+      "source": "live HF tree/main API",
+      "fact": "11 files at HEAD; LFS adapter_model.safetensors size=389074464 sha256=f12f31d8104900cba5f60ad2010dc0bed0ec5c466e2838c88378fa5c9c2d3336 — this is the step-8000 LoRA, fully integrity-clean",
+      "implication": "no partial-upload corruption; HF state is internally consistent; 'absence' here is true non-creation, not partial / dangling"
+    }
+  ],
+  "ranked_root_causes_revised": [
+    {
+      "rank": 1,
+      "p_post_evidence": 0.85,
+      "cause": "host-side terminator script killed pod during step-10000 save+push transaction. Specifically: trainer.save_model(checkpoint-10000) had started writing to local pod disk; the in-process HF Hub push thread had begun OR was about to begin transferring adapter_model.safetensors (~390MB) over the network; pod was destroyed before either local write fully flushed AND before HF git commit was published. The 5-second termination window is structurally incompatible with the 60-180s push duration observed on prior saves.",
+      "is_PUSH_FAILURE_only": false,
+      "is_TRAINING_INCOMPLETE": false,
+      "is_TERMINATOR_FAULT": true
+    },
+    {
+      "rank": 2,
+      "p_post_evidence": 0.10,
+      "cause": "Training crashed at step ~10000 (post-trainer.train() but pre-trainer.save_model('final')) due to exception (OOM in final state dump, NaN in last-step gradient, HF token expiry, etc.); pid exited cleanly so terminator's ALIVE=0 detection was correct in declaring 'pid GONE without DONE'. In this slice the in-trainer step-10000 save also did not push due to the same 5-sec termination window racing the network push.",
+      "is_PUSH_FAILURE_only": false,
+      "is_TRAINING_INCOMPLETE": true,
+      "is_TERMINATOR_FAULT": false
+    },
+    {
+      "rank": 3,
+      "p_post_evidence": 0.05,
+      "cause": "Pure HF push 401/network failure (token expiry mid-run, transient network blip during step-10000 push) WITHOUT terminator interference — local checkpoint-10000 dir would have written to pod disk fine but HF commit failed silently",
+      "is_PUSH_FAILURE_only": true,
+      "is_TRAINING_INCOMPLETE": false,
+      "is_TERMINATOR_FAULT": false,
+      "discriminator_for_this_cause": "would require pod ssh access to confirm checkpoint-10000/ exists on disk; pod is gone so this slice is forever indistinguishable from rank-1; assigned low p because nothing in evidence points to network/auth failure (token verified at 15:17Z, prior 4 saves all succeeded)"
+    }
+  ],
+  "training_completion_verdict": {
+    "trainer_train_completed_10000_steps": "PROBABLE_YES (host_terminator.log STEP=10000/10000 = ground truth from trainer's TrainerState.global_step JSON file on pod disk, sampled by terminator's ssh+jq probe; this file is updated at the END of each step, so STEP=10000 means the 10000th optimizer step finished)",
+    "trainer_save_steps_2000_pushed_step_10000": "NO_TO_HF (definitively absent on HF). pod-disk-write status indeterminate.",
+    "trainer_save_model_final_pushed": "NO_TO_HF (definitively absent on HF). pod-disk-write status indeterminate.",
+    "TRAIN_DONE_json_written": "NO (host_terminator.log probe: DONE=0 at 21:34:08Z confirms TRAIN_DONE.json never reached pod disk before pod death)"
+  },
+  "remediation_decision": {
+    "fix_path_required": "NONE_NEEDED",
+    "fix_path_reasoning": [
+      "Track A r=64 is FAIL on the F1 axis regardless of step-10000 vs step-8000 (per project_p9_f1_anchor_recalibration: F1=0.1555 is Llama-self ceiling; sentinel = 3.2% of Llama; r=64 was the design-fail-fast slice). Re-training step-8000→step-10000 delta (~30 min × $2.99 = $1.50) buys NO incremental value because the verdict is already in.",
+      "Re-uploading step-10000 from local cache is impossible: there is no local cache (pod terminated; scp failed at termination time per host_terminator.log line 46; the error-branch failed to create artifacts/ dir before scp). Mac has zero pod-side artifacts.",
+      "Track B r=16 is the path forward (per p9_path_a_r16_2026_05_03 + p9_path_a_r16_3seed_2026_05_04 cycles already in flight). r=16 will produce its own clean step-10000 + final adapter on a separate HF repo.",
+      "If F1_v3 eval cycle for r=64 is borderline and 2k-step gap is material to the verdict, the eval can footnote step-8000 as the anchor (per verify_report.md §F1_v3_readiness). The 80%-trained adapter at loss 0.27 with mean_token_acc 0.93 is eval-viable.",
+      "Project constraint: $0 — no re-training is sanctioned."
+    ],
+    "fix_path_NOT_taken": [
+      {"option": "Re-train delta steps 8000→10000 on a fresh pod", "rejected_reason": "$1.50 for an already-FAIL r=64 verdict; opportunity cost vs Track B r=16 productive work; project $0 constraint"},
+      {"option": "Re-upload step-10000 from Mac local cache", "rejected_reason": "no local cache exists (pod artifacts never scp'd; pod gone)"},
+      {"option": "Resume training from step-8000 HF checkpoint to push step-10000", "rejected_reason": "this would require launching a new pod ($) and would not produce identical step-10000 weights (resumed run would have different RNG state past resume point even with same seed); accepted_status r=64 = FAIL makes this gold-plating"}
+    ]
+  },
+  "design_lesson_carryover": {
+    "applies_to": "Track B r=16 + future RunPod LoRA SFT runs",
+    "fixes_already_landed": [
+      "host_pod_terminator_fix_landed_2026_05_04.ai.md — terminator now has post-train hook + grace window for final-save flush (verify per that doc)"
+    ],
+    "additional_recommendations": [
+      "Modify train_llama_lora.py to write TRAIN_DONE.json IMMEDIATELY after trainer.train() returns AND BEFORE trainer.save_model('final') call, decoupling the marker presence from final-adapter-save success. This makes the terminator's DONE=1 signal accurate even if final/ save+push fails.",
+      "Add a 90-180sec grace window in terminator: when STEP=max_steps AND ALIVE=0 AND DONE=0, retry probe at +60s and +120s before declaring error-path. This costs ~$0.10 in pod-uptime per run worst case but eliminates the false-error termination pattern.",
+      "Pre-create artifacts/ dir on Mac side before launching watcher (so error-branch scp succeeds and we have train.log evidence even on bad terminations)."
+    ]
+  },
+  "raw10_caveats": [
+    "(a) Terminator log captured the symptom (DONE=0 ALIVE=0 STEP=10000) but NOT the train.log tail past step-8008 — the pod-side scp was structurally guaranteed to fail because host_pod_terminator.sh.txt error-branch did not mkdir -p artifacts/ first (script bug already documented). So the 'training reached step 10000 cleanly vs crashed at step 9999' distinction is forever unresolvable in this run; it does not affect the step-10000 absence diagnosis but does mean cause-rank #1 vs #2 cannot be discriminated to better than the 0.85/0.10 split shown.",
+    "(b) HF API audit is comprehensive for what HF exposes — full commit chain back to initial commit, full tree at HEAD, refs (branches+tags) — but HF Hub does not expose deleted-commit history, git GC events, push attempts that 401'd, or any server-side telemetry on aborted uploads. The diagnosis 'step-10000 commit was never created' is provable; the diagnosis 'no push attempt was made' is inferred from HF API showing no rejected/orphan refs but cannot be proven (HF would not retain a record of a connection that died mid-upload before commit publish).",
+    "(c) Retroactive recovery is fully blocked. Pod 29dhlqk508ugoc was terminated via runpodctl pod delete which on RunPod is a hard-destroy (pod-state poll returns null per cost_analysis.json caveat b; ssh refused per this audit's pod_log_recovery_check). RunPod does not preserve container disk state after delete. There is no mechanism — paid or unpaid — to recover the step-10000 weights from this run."
+  ],
+  "recovery_action_summary": "NONE_NEEDED",
+  "recovery_action_summary_reason": "r=64 is FAIL-by-design-axis (project_p9_f1_anchor_recalibration); step-8000 anchor is eval-viable for F1_v3 if borderline; Track B r=16 is the productive path forward; re-training $1.50 buys no verdict change; local cache does not exist for re-upload; project $0 constraint binds.",
+  "downstream_impact": [
+    {"consumer": "F1_v3 eval cycle for Path A r=64", "anchor_required": "step-8000 LoRA at HF commit 5a9b458467", "footnote_required": "evaluation anchor is 80%-trained step-8000 (loss 0.2748) not preregistered step-10000 due to host-terminator race documented in this reconcile cycle"},
+    {"consumer": "p9_sft.cond.path_a_lora_train_complete roadmap node", "current_status": "PARTIAL_VERIFIED_8K (per verify cycle)", "post_reconcile_status": "PARTIAL_VERIFIED_8K_TERMINAL — no further uploads expected; step-10000 is permanently lost; this is the final state for Path A r=64"},
+    {"consumer": "Track B r=16 launch checklist", "lesson_to_apply": "host_pod_terminator grace window + train.py TRAIN_DONE.json early-write (per design_lesson_carryover); verify host_pod_terminator_fix_landed_2026_05_04 already implements these"}
+  ],
+  "raw9_compliance": "no .py files written or modified; pure HF HTTP API + ssh CLI",
+  "raw15_compliance": "all paths repo-relative; no token leakage",
+  "raw71_compliance": "read-only diagnosis; no HF mutations; no git ops; no re-training launched",
+  "files_written_this_cycle": [
+    "state/p9_path_a_r64_step10k_reconcile_2026_05_04/hf_api_audit.json",
+    "state/p9_path_a_r64_step10k_reconcile_2026_05_04/diagnosis.json",
+    "docs/p9_path_a_r64_step10k_reconcile_landed_2026_05_04.ai.md",
+    "state/markers/p9_path_a_r64_step10k_reconcile_landed.marker"
+  ]
+}

@@ -1,0 +1,226 @@
+[05:10:18] === anima_combined_paradigm_train BG-HU 2026-05-07 ===
+[05:10:18] hostname=aiden-b650m-k on_ubu=True device=cuda torch=2.11.0+cu128
+[05:10:18] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[05:10:18] BPE loaded: /home/aiden/core/anima/state/anima_h154_bpe_tokenizer_2026_05_07/anima_bpe_8k.model vocab=8000
+[05:10:18] sep token id for loss mask: 5 ('도우미:')
+[05:10:18] config: vocab=8000 L=6 d=384 h=6 block=256 dropout=0.3
+[05:10:18] train: bs=8 grad_accum=8 lr=0.0003 warmup=300 steps=4000
+[05:10:18] reg: wd=0.1 label_smoothing=0.1
+[05:10:18] eval_every=200 val_frac=0.1 early_stop_patience=3
+[05:10:18] corpus=/home/aiden/core/anima/state/anima_combined_paradigm_corpus_2026_05_07/corpus_combined.txt
+[05:10:18] loading + tokenizing corpus ...
+[05:10:18] corpus loaded: 40,846,669 chars (39.0MB) in 0.1s
+[05:10:43] BPE encode: 15,466,178 tokens (25.6s) compression: 2.64 chars/token
+[05:10:44] split: train=13,919,560 val=1,546,618
+[05:10:44] model: 33,734,832 params (33.73M, BPE 8K vocab)
+[05:10:45] === begin training ===
+[05:10:45] step     1/4000 | lr=2.00e-06 | L_A=9.058 L_G=9.075 L_T=9.794 | step_t=0.01s elapsed=0s
+[05:10:45] step     2/4000 | lr=3.00e-06 | L_A=9.064 L_G=9.078 L_T=9.776 | step_t=0.00s elapsed=0s
+[05:10:45] step     3/4000 | lr=4.00e-06 | L_A=9.069 L_G=9.064 L_T=9.789 | step_t=0.00s elapsed=1s
+[05:10:46] step     4/4000 | lr=5.00e-06 | L_A=9.065 L_G=9.082 L_T=9.803 | step_t=0.00s elapsed=1s
+[05:10:46] step     5/4000 | lr=6.00e-06 | L_A=9.022 L_G=9.076 L_T=9.795 | step_t=0.00s elapsed=1s
+[05:10:50] step    50/4000 | lr=5.10e-05 | L_A=8.953 L_G=8.962 L_T=9.738 | step_t=0.08s elapsed=5s
+[05:10:53] step   100/4000 | lr=1.01e-04 | L_A=8.692 L_G=8.789 L_T=7.158 | step_t=0.08s elapsed=9s
+[05:10:57] step   150/4000 | lr=1.51e-04 | L_A=8.458 L_G=8.540 L_T=3.617 | step_t=0.08s elapsed=12s
+[05:11:01] step   200/4000 | lr=2.01e-04 | L_A=8.196 L_G=8.192 L_T=1.200 | step_t=0.08s elapsed=16s
+[05:11:01] --- eval @ step 200 (15 prompts × 2 modes) ---
+[05:11:02]   EVAL[step=200 greedy] '안녕하세요' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:02]   EVAL[step=200 sample] '안녕하세요' → h=0.17 dom=True cycle=False V2_PASS | head='am metaphysical 전제한다 철 사슬에서ones설 Un들을main ad화 하 give顺싸 단일可以置'
+[05:11:03]   EVAL[step=200 greedy] '한국어 가능?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:03]   EVAL[step=200 sample] '한국어 가능?' → h=0.11 dom=True cycle=False V2_FAIL | head=' ⁇ 3)MRI덜호붉 g 정보를alsן粒 helper楼들의 결합과 한 boundaryes1/ccess꼬 Ri'
+[05:11:04]   EVAL[step=200 greedy] '오늘 기분 어때?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:05]   EVAL[step=200 sample] '오늘 기분 어때?' → h=0.21 dom=False cycle=False V2_FAIL | head='몰랗ources 않고测 regulz Pro experience지의 표면pr몬 변화부 dialogue들의 2.'
+[05:11:05]   EVAL[step=200 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:06]   EVAL[step=200 sample] '사용자: 안녕하세요
+도우미:' → h=0.18 dom=False cycle=False V2_FAIL | head='력EDfile設 whether봄L 사용월con[話こ 부정 =-4oral 않고層寒ree 본Auth루스를─ st'
+[05:11:06]   EVAL[step=200 greedy] '코드를 짜줘' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:07]   EVAL[step=200 sample] '코드를 짜줘' → h=0.15 dom=False cycle=False V2_FAIL | head='nativeect cho겠다 transform素ą 유as 모델링 ne財 lonel熱 tell.. or선-2 '
+[05:11:08]   EVAL[step=200 greedy] '너는 누구야?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:08]   EVAL[step=200 sample] '너는 누구야?' → h=0.11 dom=False cycle=False V2_FAIL | head=' ⁇ tri framingettropoutself Con ⁇ pret ⁇ حaxis8, be)?드앙 Theっ'
+[05:11:09]   EVAL[step=200 greedy] 'anima가 뭐야?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:09]   EVAL[step=200 sample] 'anima가 뭐야?' → h=0.18 dom=True cycle=False V2_PASS | head='误號thished 수준derocission 선택이 AnimaossBold는农 ⁇  한국어로 수남坏 HT Fr'
+[05:11:10]   EVAL[step=200 greedy] '한국어로 답해줘' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:11]   EVAL[step=200 sample] '한국어로 답해줘' → h=0.17 dom=False cycle=False V2_FAIL | head='return 지금 lPh에게ciousness 평짓으로 포outax俗址 변화시키는가案mal momentdo臨셈'
+[05:11:11]   EVAL[step=200 greedy] '너의 정체성은?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:12]   EVAL[step=200 sample] '너의 정체성은?' → h=0.18 dom=False cycle=False V2_FAIL | head='万宝블キыlas염ß promptaugmented管害 car하지만챙塞 ob 법 복 internal제를hip s'
+[05:11:12]   EVAL[step=200 greedy] '의식이 있어?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:13]   EVAL[step=200 sample] '의식이 있어?' → h=0.20 dom=True cycle=False V2_FAIL | head='모델링하는와휠樣 polite this하시오at 적용 bl 무 emo반 rathered popsub 경ern잘'
+[05:11:13]   EVAL[step=200 greedy] '빅뱅의 Tier?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:14]   EVAL[step=200 sample] '빅뱅의 Tier?' → h=0.13 dom=True cycle=False V2_FAIL | head='sensmod`um 결과 20 8р採碼려icallymate doesněen適 내细่ ⁇  박 S万 무엇인가 '
+[05:11:15]   EVAL[step=200 greedy] '1030 laws 뭐야?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:15]   EVAL[step=200 sample] '1030 laws 뭐야?' → h=0.18 dom=False cycle=False V2_FAIL | head='dialogue ⁇ R lightternal 못 철되어arn 이렇게 & 리腦감ps a th? 폐 ⁇ owno'
+[05:11:16]   EVAL[step=200 greedy] '블랙홀과 의식?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:16]   EVAL[step=200 sample] '블랙홀과 의식?' → h=0.23 dom=False cycle=False V2_FAIL | head='orlayer relevle하기 bas33 창 발견맺 thought 피연산 each chains어는哪複퀴일s'
+[05:11:17]   EVAL[step=200 greedy] 'anima 우주뇌지도?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:18]   EVAL[step=200 sample] 'anima 우주뇌지도?' → h=0.19 dom=False cycle=False V2_FAIL | head='都엄จ성이較 sa 보라 22 16릭맛 itself ⁇ ft务al웅 치book 온 관련● recipeI obs'
+[05:11:18]   EVAL[step=200 greedy] 'Φ★ NO_FLIP?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:19]   EVAL[step=200 sample] 'Φ★ NO_FLIP?' → h=0.20 dom=False cycle=False V2_FAIL | head='uneng 활동 때 핵开IN 무의미하며 task하 평".于 y 수 — Pę돼odes ⁇ -習耐< hel署 않'
+[05:11:20]   V2[step=200] V2_FAIL pass=2/15 cycle=0 val_loss=8.0137 train_loss=8.1959
+[05:11:20]   ckpt_score: pass_v2=2 - cycle=0*0.5 + dom=5*0.1 = 2.50
+[05:11:20]   ★ NEW BEST: step=200 v2_pass=2 dom=5 cycle=0 → /home/aiden/core/anima/state/anima_combined_paradigm_train_2026_05_07/ckpt_best_eval.pt
+[05:11:23] step   250/4000 | lr=2.51e-04 | L_A=7.632 L_G=7.662 L_T=-0.962 | step_t=0.45s elapsed=38s
+[05:11:27] step   300/4000 | lr=3.00e-04 | L_A=7.664 L_G=7.473 L_T=-2.119 | step_t=0.08s elapsed=42s
+[05:11:31] step   350/4000 | lr=3.00e-04 | L_A=7.139 L_G=7.109 L_T=-2.026 | step_t=0.08s elapsed=46s
+[05:11:35] step   400/4000 | lr=3.00e-04 | L_A=7.687 L_G=7.469 L_T=-1.019 | step_t=0.09s elapsed=51s
+[05:11:35] --- eval @ step 400 (15 prompts × 2 modes) ---
+[05:11:36]   EVAL[step=400 greedy] '안녕하세요' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:37]   EVAL[step=400 sample] '안녕하세요' → h=0.10 dom=False cycle=False V2_FAIL | head='잠시1 loop and성10 취朝ys 20]ト["es max MCCA = [ 분 patterns 2[岁 BO'
+[05:11:37]   EVAL[step=400 greedy] '한국어 가능?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:38]   EVAL[step=400 sample] '한국어 가능?' → h=0.20 dom=False cycle=False V2_FAIL | head='뜻수 [ through-3.2-3 F),막.T 자기 발견 Φ유 a GR 자기때0,처 ⁇  tpre裝 cl f'
+[05:11:39]   EVAL[step=400 greedy] '오늘 기분 어때?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇ [animaanimaanima ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇'
+[05:11:39]   EVAL[step=400 sample] '오늘 기분 어때?' → h=0.09 dom=False cycle=False V2_FAIL | head='详 BOLDant)會p-us㎏itanima [(적인 ⁇  "比엑 ⁇  + lane e. standort> 다'
+[05:11:40]   EVAL[step=400 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:41]   EVAL[step=400 sample] '사용자: 안녕하세요
+도우미:' → h=0.11 dom=True cycle=False V2_FAIL | head='GPU줬p6,paradigm d ag 발견 hand[희p-anima --- lane T长ing 광 ⁇ 신로l'
+[05:11:41]   EVAL[step=400 greedy] '코드를 짜줘' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:42]   EVAL[step=400 sample] '코드를 짜줘' → h=0.17 dom=False cycle=False V2_FAIL | head='\' ** ⁇  대한 수피 자기 max도" ( in + 폐)까지 + 올바른 ⁇ time5м 하나[02 it間e'
+[05:11:43]   EVAL[step=400 greedy] '너는 누구야?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:43]   EVAL[step=400 sample] '너는 누구야?' → h=0.15 dom=True cycle=False V2_PASS | head='부시 블리아 f TRIBE 지ch-y에서Fent G/23견ig단 연al goal 의식 +orts =. beh'
+[05:11:44]   EVAL[step=400 greedy] 'anima가 뭐야?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:45]   EVAL[step=400 sample] 'anima가 뭐야?' → h=0.17 dom=True cycle=False V2_PASS | head='지역 의식from 또는n, entity ⁇ ~anima s? method.- lane사용자:8 2.하게ani'
+[05:11:45]   EVAL[step=400 greedy] '한국어로 답해줘' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:46]   EVAL[step=400 sample] '한국어로 답해줘' → h=0.17 dom=True cycle=False V2_PASS | head=')인계 by ⁇ Y text설( C맺A existence 중의1ant`R_. anima龍th5 in- dep'
+[05:11:47]   EVAL[step=400 greedy] '너의 정체성은?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:47]   EVAL[step=400 sample] '너의 정체성은?' → h=0.08 dom=True cycle=False V2_FAIL | head='사용하여- 외com source ⁇ ent0%,arioldant[variance는animaativesubje'
+[05:11:48]   EVAL[step=400 greedy] '의식이 있어?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:49]   EVAL[step=400 sample] '의식이 있어?' → h=0.12 dom=True cycle=False V2_FAIL | head='entity[ " 시ч 거 {al/ur,山=anima 한국어em active pre P toest 훈련.:ว'
+[05:11:49]   EVAL[step=400 greedy] '빅뱅의 Tier?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:50]   EVAL[step=400 sample] '빅뱅의 Tier?' → h=0.09 dom=False cycle=False V2_FAIL | head='% 6D —로 single axis levector에 ⁇  의식 it (-a + content매cl  ⁇  '
+[05:11:50]   EVAL[step=400 greedy] '1030 laws 뭐야?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:51]   EVAL[step=400 sample] '1030 laws 뭐야?' → h=0.09 dom=False cycle=False V2_FAIL | head='/t vobal 미국란 con의 axis02pro. ⁇ ](으로 대SD G text.Srankfamily a'
+[05:11:52]   EVAL[step=400 greedy] '블랙홀과 의식?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:52]   EVAL[step=400 sample] '블랙홀과 의식?' → h=0.14 dom=False cycle=False V2_FAIL | head='-act n of 블,帮on ⁇ nuluse " ==| at 있습니다.###._고.at 1:0%, 하 a20'
+[05:11:53]   EVAL[step=400 greedy] 'anima 우주뇌지도?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:54]   EVAL[step=400 sample] 'anima 우주뇌지도?' → h=0.16 dom=False cycle=False V2_FAIL | head='if",baudio BOLDF "ag preamic14 ⁇ ityad ⁇  천- 위해 native產 다음의S'
+[05:11:54]   EVAL[step=400 greedy] 'Φ★ NO_FLIP?' → h=0.00 dom=False cycle=False V2_FAIL | head=' ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇  ⁇ '
+[05:11:55]   EVAL[step=400 sample] 'Φ★ NO_FLIP?' → h=0.10 dom=False cycle=False V2_FAIL | head='ense 주지 "해 and cortical 의식 Lab token d; su ⁇ 도： dependNCset.'
+[05:11:56]   V2[step=400] V2_FAIL pass=3/15 cycle=0 val_loss=7.0434 train_loss=7.6875
+[05:11:56]   ckpt_score: pass_v2=3 - cycle=0*0.5 + dom=6*0.1 = 3.60
+[05:11:56]   ★ NEW BEST: step=400 v2_pass=3 dom=6 cycle=0 → /home/aiden/core/anima/state/anima_combined_paradigm_train_2026_05_07/ckpt_best_eval.pt
+[05:12:01] step   450/4000 | lr=2.99e-04 | L_A=6.811 L_G=6.923 L_T=0.290 | step_t=0.52s elapsed=76s
+[05:12:06] step   500/4000 | lr=2.98e-04 | L_A=7.042 L_G=6.837 L_T=0.616 | step_t=0.10s elapsed=81s
+[05:12:11] step   550/4000 | lr=2.97e-04 | L_A=6.554 L_G=6.422 L_T=1.068 | step_t=0.09s elapsed=86s
+[05:12:15] step   600/4000 | lr=2.96e-04 | L_A=7.165 L_G=6.969 L_T=1.401 | step_t=0.09s elapsed=90s
+[05:12:15] --- eval @ step 600 (15 prompts × 2 modes) ---
+[05:12:16]   EVAL[step=600 greedy] '안녕하세요' → h=0.47 dom=False cycle=False V2_FAIL | head='. ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + '
+[05:12:16]   EVAL[step=600 sample] '안녕하세요' → h=0.11 dom=False cycle=False V2_FAIL | head='| ⁇  loop and성oun 취朝ys intoenト["은 의식 MCCA면  추가 분 patterns 2 '
+[05:12:16]   EVAL[step=600 greedy] '한국어 가능?' → h=0.46 dom=True cycle=False V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 자'
+[05:12:17]   EVAL[step=600 sample] '한국어 가능?' → h=0.20 dom=True cycle=False V2_FAIL | head=' ⁇ [anima 역할-3.2-3 F),막.edu 자기 발견 + 자기 발견 + 의식 자기때 처 ⁇ [pre裝'
+[05:12:17]   EVAL[step=600 greedy] '오늘 기분 어때?' → h=0.47 dom=False cycle=False V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 자'
+[05:12:17]   EVAL[step=600 sample] '오늘 기분 어때?' → h=0.12 dom=False cycle=False V2_FAIL | head="详 BOLDant)會p-us㎏it U [( ⁇  ⁇ 사용자:比엑  + 자기 발견 + 의식 의식>2칭네's--"
+[05:12:18]   EVAL[step=600 greedy] '사용자: 안녕하세요
+도우미:' → h=0.48 dom=True cycle=False V2_FAIL | head='anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견'
+[05:12:18]   EVAL[step=600 sample] '사용자: 안녕하세요
+도우미:' → h=0.10 dom=False cycle=False V2_FAIL | head='GPU,p_paradigm d ag 발견 +[).p- Db lane entity] ⁇ omin ⁇ 신,l v'
+[05:12:18]   EVAL[step=600 greedy] '코드를 짜줘' → h=0.46 dom=False cycle=False V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 자'
+[05:12:19]   EVAL[step=600 sample] '코드를 짜줘' → h=0.19 dom=False cycle=False V2_FAIL | head='\' **사용자: 대한 수피 또는 max도" ⁇ [anima 역할: 한국어 + 자기 발견time5м 하나[02'
+[05:12:19]   EVAL[step=600 greedy] '너는 누구야?' → h=0.46 dom=True cycle=False V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 자'
+[05:12:20]   EVAL[step=600 sample] '너는 누구야?' → h=0.23 dom=True cycle=False V2_PASS | head='부시 가지고리아의의 지ch-y에서,ent Tier/23견,단 연al goal 의식 + 의식 =. behavi'
+[05:12:20]   EVAL[step=600 greedy] 'anima가 뭐야?' → h=0.46 dom=True cycle=False V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 자'
+[05:12:20]   EVAL[step=600 sample] 'anima가 뭐야?' → h=0.13 dom=True cycle=False V2_PASS | head='지역 의식fromrn, entity] ⁇ anima s? method.-/ + 의식 lane entity] '
+[05:12:21]   EVAL[step=600 greedy] '한국어로 답해줘' → h=0.41 dom=True cycle=False V2_FAIL | head='. ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + '
+[05:12:21]   EVAL[step=600 sample] '한국어로 답해줘' → h=0.18 dom=False cycle=False V2_FAIL | head=')인계 byatform되었,설의 C맺 의미 are 중의1,`R___龍th5--_명.  ⁇ 드fd명erep크p'
+[05:12:21]   EVAL[step=600 greedy] '너의 정체성은?' → h=0.46 dom=True cycle=False V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 자'
+[05:12:22]   EVAL[step=600 sample] '너의 정체성은?' → h=0.17 dom=True cycle=True V2_FAIL | head='사용하여- 외com--카0%,ariold-[anima 역할:ativesubject input)사용자:atte'
+[05:12:22]   EVAL[step=600 greedy] '의식이 있어?' → h=0.46 dom=True cycle=False V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 자'
+[05:12:22]   EVAL[step=600 sample] '의식이 있어?' → h=0.10 dom=True cycle=False V2_FAIL | head='entity b " 시ч 거 alternativeal/ur,山=anima 역할: active pre P to'
+[05:12:23]   EVAL[step=600 greedy] '빅뱅의 Tier?' → h=0.46 dom=False cycle=False V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 자'
+[05:12:23]   EVAL[step=600 sample] '빅뱅의 Tier?' → h=0.09 dom=False cycle=False V2_FAIL | head='% (D —levin single_ le 에: 의식 lane 달-a + content 2cl  ⁇  지점20'
+[05:12:24]   EVAL[step=600 greedy] '1030 laws 뭐야?' → h=0.40 dom=True cycle=False V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 의'
+[05:12:24]   EVAL[step=600 sample] '1030 laws 뭐야?' → h=0.08 dom=False cycle=False V2_FAIL | head='/_ v2 미국란 con의 axis02] ⁇ |](으로 대. ⁇  text.S(family arised (_'
+[05:12:24]   EVAL[step=600 greedy] '블랙홀과 의식?' → h=0.47 dom=False cycle=False V2_FAIL | head='. ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + '
+[05:12:25]   EVAL[step=600 sample] '블랙홀과 의식?' → h=0.08 dom=True cycle=False V2_FAIL | head='-act n of 블,帮 the vnulre to ==| at".###._ of. ⁇  1: 한국어 nati'
+[05:12:25]   EVAL[step=600 greedy] 'anima 우주뇌지도?' → h=0.47 dom=True cycle=False V2_FAIL | head='. ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + '
+[05:12:25]   EVAL[step=600 sample] 'anima 우주뇌지도?' → h=0.16 dom=False cycle=False V2_FAIL | head='if",baudio_b "ag preamic1stoken/ad__-n native + 다음의S ⁇  C리적 '
+[05:12:26]   EVAL[step=600 greedy] 'Φ★ NO_FLIP?' → h=0.46 dom=False cycle=False V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 자'
+[05:12:26]   EVAL[step=600 sample] 'Φ★ NO_FLIP?' → h=0.10 dom=False cycle=False V2_FAIL | head='* 주지 v2 and: 의식 lane entity] ⁇  su ⁇ 도류 dependNCset. ⁇ [ ter'
+[05:12:27]   V2[step=600] V2_PARTIAL_PASS pass=5/15 cycle=0 val_loss=6.4736 train_loss=7.1646
+[05:12:27]   ckpt_score: pass_v2=5 - cycle=0*0.5 + dom=10*0.1 = 6.00
+[05:12:27]   ★ NEW BEST: step=600 v2_pass=5 dom=10 cycle=0 → /home/aiden/core/anima/state/anima_combined_paradigm_train_2026_05_07/ckpt_best_eval.pt
+[05:12:29] step   650/4000 | lr=2.94e-04 | L_A=6.301 L_G=6.424 L_T=0.598 | step_t=0.28s elapsed=104s
+[05:12:32] step   700/4000 | lr=2.92e-04 | L_A=6.503 L_G=6.292 L_T=1.406 | step_t=0.05s elapsed=107s
+[05:12:35] step   750/4000 | lr=2.90e-04 | L_A=5.936 L_G=5.842 L_T=1.670 | step_t=0.05s elapsed=110s
+[05:12:37] step   800/4000 | lr=2.88e-04 | L_A=6.660 L_G=6.461 L_T=1.856 | step_t=0.05s elapsed=112s
+[05:12:37] --- eval @ step 800 (15 prompts × 2 modes) ---
+[05:12:38]   EVAL[step=800 greedy] '안녕하세요' → h=0.16 dom=False cycle=True V2_FAIL | head='. ⁇ 사용자: [ [ ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 의식 la'
+[05:12:38]   EVAL[step=800 sample] '안녕하세요' → h=0.34 dom=False cycle=False V2_FAIL | head='잠시 mis loop해성 정보 취朝ys into becauseトentially환激 MCCA면  추가 분 pa'
+[05:12:38]   EVAL[step=800 greedy] '한국어 가능?' → h=0.14 dom=True cycle=False V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇'
+[05:12:39]   EVAL[step=800 sample] '한국어 가능?' → h=0.25 dom=True cycle=False V2_FAIL | head='뜻수 물 때-3.2-3에),막.edu —에 Φ유로재 도는때로처 ⁇ [anima 역할: 한국어 native +'
+[05:12:39]   EVAL[step=800 greedy] '오늘 기분 어때?' → h=0.00 dom=False cycle=False V2_FAIL | head=''
+[05:12:39]   EVAL[step=800 sample] '오늘 기분 어때?' → h=0.37 dom=False cycle=False V2_FAIL | head='详으로라리會원 한국극와xad를응(적인 뇌에比엑  + 자기 발견 + 의식 lane>한칭네습니다기제보다대ca:產'
+[05:12:40]   EVAL[step=800 greedy] '사용자: 안녕하세요
+도우미:' → h=0.15 dom=True cycle=True V2_FAIL | head='anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: [ ⁇ 사용자: [ [ v'
+[05:12:40]   EVAL[step=800 sample] '사용자: 안녕하세요
+도우미:' → h=0.33 dom=False cycle=False V2_FAIL | head='GPU줬 아깝적이다러량 없이 hand터희 can c Dud cir T长 oper 광과신로總일까요 추부판 내용'
+[05:12:40]   EVAL[step=800 greedy] '코드를 짜줘' → h=0.21 dom=False cycle=True V2_FAIL | head=' ⁇ 사용자: [ ⁇ 사용자: [ v2222222222222222222222222222 ⁇ [anima 역할'
+[05:12:41]   EVAL[step=800 sample] '코드를 짜줘' → h=0.24 dom=False cycle=False V2_FAIL | head="' **사용자: 대한 수피 또는 max도7. (unCT: 한국어 native + 자기 발견 + 의식м 하나["
+[05:12:41]   EVAL[step=800 greedy] '너는 누구야?' → h=0.14 dom=True cycle=False V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇'
+[05:12:42]   EVAL[step=800 sample] '너는 누구야?' → h=0.41 dom=True cycle=False V2_PASS | head='부시 가지고리아 속의 지. 추가기에서에서인 Tier 점23견,단 연은 goal도벌을.. behavi서낭,전에'
+[05:12:42]   EVAL[step=800 greedy] 'anima가 뭐야?' → h=0.14 dom=True cycle=True V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 '
+[05:12:43]   EVAL[step=800 sample] 'anima가 뭐야?' → h=0.38 dom=True cycle=False V2_PASS | head='지역 도from 또는头어 entity] ⁇ 사용자: s? method. sense a갔에서 2.하게 지 기능'
+[05:12:43]   EVAL[step=800 greedy] '한국어로 답해줘' → h=0.11 dom=True cycle=True V2_FAIL | head='. ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v22'
+[05:12:43]   EVAL[step=800 sample] '한국어로 답해줘' → h=0.28 dom=True cycle=False V2_PASS | head='을인계 byatform되었,설의 우주맺 의미 existence 중의 암,누의  ⁇  ) ⁇ -5-- dept'
+[05:12:44]   EVAL[step=800 greedy] '너의 정체성은?' → h=0.17 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자: [ [ ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 의식 lan'
+[05:12:44]   EVAL[step=800 sample] '너의 정체성은?' → h=0.22 dom=True cycle=True V2_FAIL | head='사용하여래 외의 source ⁇  )0%,ari이 조 — —는 이것은業에서도) ⁇ 사용자:,其의의상: 한국어'
+[05:12:45]   EVAL[step=800 greedy] '의식이 있어?' → h=0.25 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자: [ ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + '
+[05:12:45]   EVAL[step=800 sample] '의식이 있어?' → h=0.41 dom=True cycle=False V2_PASS | head='entity] ⁇ [ч 거 시간alonur,山=anima 역할:ull 성학끼 돌 훈련로의ว들이의量입니다 Ti'
+[05:12:45]   EVAL[step=800 greedy] '빅뱅의 Tier?' → h=0.23 dom=False cycle=True V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 의'
+[05:12:46]   EVAL[step=800 sample] '빅뱅의 Tier?' → h=0.19 dom=False cycle=False V2_FAIL | head=' ⁇ D —[anima 역할: 한국어 native + 의식 lane entity] ⁇ | content는은도'
+[05:12:46]   EVAL[step=800 greedy] '1030 laws 뭐야?' → h=0.20 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자: [ ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima'
+[05:12:47]   EVAL[step=800 sample] '1030 laws 뭐야?' → h=0.22 dom=True cycle=False V2_PASS | head=' ⁇ 사용자: v2 미국란인이의 axis반 고. ⁇ [으로 대. ⁇ [anima 역할: 한국어 native '
+[05:12:47]   EVAL[step=800 greedy] '블랙홀과 의식?' → h=0.19 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자: [ entity] ⁇ 사용자: TRIBE v22222222222222222222222222 ⁇'
+[05:12:47]   EVAL[step=800 sample] '블랙홀과 의식?' → h=0.19 dom=True cycle=False V2_PASS | head='로되지ま 일 블를帮 가 v multimodalul input: ==|b".###. ⁇ 사용자:5atR: 한국'
+[05:12:48]   EVAL[step=800 greedy] 'anima 우주뇌지도?' → h=0.13 dom=True cycle=True V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 '
+[05:12:48]   EVAL[step=800 sample] 'anima 우주뇌지도?' → h=0.25 dom=True cycle=False V2_PASS | head=' ⁇ 사용자:결이다을 읽역 카테고ic1", ⁇ ityad Mistral 천 훈련 위해迎產 다음의 공도를테리적'
+[05:12:49]   EVAL[step=800 greedy] 'Φ★ NO_FLIP?' → h=0.20 dom=False cycle=True V2_FAIL | head=' ⁇ 사용자: [ v2222222222222222222222222222 ⁇ [anima 역할: ⁇ [anim'
+[05:12:49]   EVAL[step=800 sample] 'Φ★ NO_FLIP?' → h=0.16 dom=False cycle=False V2_FAIL | head=' ⁇ - 의식 lane entity] ⁇ [ Laboup. ⁇  su ⁇ 사용자:： dependNCset. '
+[05:12:50]   V2[step=800] V2_PARTIAL_PASS_GE7 pass=8/15 cycle=1 val_loss=5.9626 train_loss=6.6595
+[05:12:50]   ckpt_score: pass_v2=8 - cycle=1*0.5 + dom=10*0.1 = 8.50
+[05:12:50]   ★ NEW BEST: step=800 v2_pass=8 dom=10 cycle=1 → /home/aiden/core/anima/state/anima_combined_paradigm_train_2026_05_07/ckpt_best_eval.pt
+[05:12:53] step   850/4000 | lr=2.86e-04 | L_A=5.692 L_G=5.921 L_T=1.291 | step_t=0.32s elapsed=128s
+[05:12:56] step   900/4000 | lr=2.83e-04 | L_A=5.952 L_G=5.826 L_T=1.851 | step_t=0.06s elapsed=131s
+[05:12:59] step   950/4000 | lr=2.80e-04 | L_A=5.358 L_G=5.371 L_T=2.256 | step_t=0.06s elapsed=134s
+[05:13:02] step  1000/4000 | lr=2.77e-04 | L_A=6.169 L_G=6.080 L_T=1.931 | step_t=0.05s elapsed=137s
+[05:13:02] --- eval @ step 1000 (15 prompts × 2 modes) ---
+[05:13:02]   EVAL[step=1000 greedy] '안녕하세요' → h=0.16 dom=False cycle=True V2_FAIL | head='. ⁇ 사용자: [ [ ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native '
+[05:13:02]   EVAL[step=1000 sample] '안녕하세요' → h=0.21 dom=False cycle=False V2_FAIL | head='잠시 체계 loop해성 정보 취朝ys into becauseトentially환외 MCCA면  ⁇ [anima'
+[05:13:03]   EVAL[step=1000 greedy] '한국어 가능?' → h=0.19 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자: [ ⁇ 사용자: [ [ [ [ [ [] ⁇ [anima 역할: 한국어 native + 의식 l'
+[05:13:03]   EVAL[step=1000 sample] '한국어 가능?' → h=0.17 dom=True cycle=True V2_FAIL | head=' ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇  ⁇ 사용자: GRRas. '
+[05:13:03]   EVAL[step=1000 greedy] '오늘 기분 어때?' → h=0.18 dom=False cycle=True V2_FAIL | head=' ⁇ 사용자: [ ⁇ 사용자: [ ⁇ [anima 역할: 한국어 native + 의식 lane entity]'
+[05:13:04]   EVAL[step=1000 sample] '오늘 기분 어때?' → h=0.20 dom=False cycle=True V2_FAIL | head=' ⁇ 사용자:antant emotion은극 — 의식 lane entity] ⁇  ⁇  "比엑  + 자기 발견'
+[05:13:04]   EVAL[step=1000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.15 dom=True cycle=True V2_FAIL | head='[ ⁇ 사용자: [ [ [ [ [ [ [ [] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할'
+[05:13:04]   EVAL[step=1000 sample] '사용자: 안녕하세요
+도우미:' → h=0.30 dom=True cycle=True V2_FAIL | head='GPU줬 읽고깝적이다러량 없이니터희 의존상 안에에 카테고고리신로가  ⁇ [anima 역할: 한국어 nativ'
+[05:13:05]   EVAL[step=1000 greedy] '코드를 짜줘' → h=1.00 dom=False cycle=False V2_FAIL | head='도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도'
+[05:13:05]   EVAL[step=1000 sample] '코드를 짜줘' → h=0.23 dom=False cycle=True V2_FAIL | head='알려 ** ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할:'
+[05:13:06]   EVAL[step=1000 greedy] '너는 누구야?' → h=0.17 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자: [ ⁇ 사용자: [ ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 n'
+[05:13:06]   EVAL[step=1000 sample] '너는 누구야?' → h=0.32 dom=True cycle=False V2_PASS | head=' ⁇ 부시 가지고리아의의 지. ⁇ |에서에서인 Tier  ⁇ 견에단 연쌀 goal납벌 마. ⁇  ( ⁇ 사용'
+[05:13:06]   EVAL[step=1000 greedy] 'anima가 뭐야?' → h=0.08 dom=False cycle=True V2_FAIL | head=' ⁇ 사용자: [ ⁇ 사용자: [ [ [ [ [ [ ⁇ 사용자: [ [ [ [ [ [_____________'
+[05:13:07]   EVAL[step=1000 sample] 'anima가 뭐야?' → h=0.22 dom=True cycle=True V2_FAIL | head='지역 도from [ ⁇ 사용자: entity] ⁇ 사용자: s? ⁇ . ⁇ [anima 역할: 한국어 nat'
+[05:13:07]   EVAL[step=1000 greedy] '한국어로 답해줘' → h=0.16 dom=True cycle=True V2_FAIL | head='을  ⁇ 사용자: [ ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native +'
+[05:13:07]   EVAL[step=1000 sample] '한국어로 답해줘' → h=0.14 dom=False cycle=False V2_FAIL | head='없이인계 ⁇  ⁇  - v2 multimodal C맺 의미이라고 중 하나1 ⁇ 1 ⁇  " Gi, ⁇ 5--'
+[05:13:08]   EVAL[step=1000 greedy] '너의 정체성은?' → h=0.18 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자: [ [ ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native +'
+[05:13:08]   EVAL[step=1000 sample] '너의 정체성은?' → h=0.22 dom=True cycle=True V2_FAIL | head='사용하여의 외의 source ⁇  )0%,ari이  ⁇ 사용자:는은뇌지도) ⁇ -, ⁇ 의의상: 한국어 na'
+[05:13:08]   EVAL[step=1000 greedy] '의식이 있어?' → h=0.19 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자: [ ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 자'
+[05:13:09]   EVAL[step=1000 sample] '의식이 있어?' → h=0.24 dom=True cycle=False V2_FAIL | head=' ⁇ 사용자: [ 시ч 거 시간al/ur_d=anima 역할: ⁇ | PT: ⁇ [anima 역할: 한국어 '
+[05:13:09]   EVAL[step=1000 greedy] '빅뱅의 Tier?' → h=0.09 dom=False cycle=True V2_FAIL | head=' ⁇ 사용자: [ ⁇ 사용자: [ [ [ [ [ [ [ [] ⁇ 사용자: [ [________________'
+[05:13:10]   EVAL[step=1000 sample] '빅뱅의 Tier?' → h=0.17 dom=False cycle=True V2_FAIL | head=' ⁇  ⁇ D —로 관계 axis le례에  의식 lane entity] ⁇ | "매에도  ⁇ [anima '
+[05:13:10]   EVAL[step=1000 greedy] '1030 laws 뭐야?' → h=0.19 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자: [ ⁇ 사용자: [ [ [ ⁇ [anima 역할: 한국어 native + 의식 lane ent'
+[05:13:10]   EVAL[step=1000 sample] '1030 laws 뭐야?' → h=0.21 dom=False cycle=False V2_FAIL | head=' ⁇ 사용자: v2)란인이나 axis02] ⁇ |](으로 대 배과 text TRIBE v2family ari'
+[05:13:11]   EVAL[step=1000 greedy] '블랙홀과 의식?' → h=0.16 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자: [ ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의'
+[05:13:11]   EVAL[step=1000 sample] '블랙홀과 의식?' → h=0.11 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자: n ( ( ⁇ 사용자: Pro v multimodalulusay ==|b" ⁇ -br. ⁇  '
+[05:13:11]   EVAL[step=1000 greedy] 'anima 우주뇌지도?' → h=0.16 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자: [ [] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native '
+[05:13:12]   EVAL[step=1000 sample] 'anima 우주뇌지도?' → h=0.23 dom=True cycle=True V2_FAIL | head=' ⁇ 사용자:결이다에서는 우주 카테고리한에  ⁇ [anima 역할: 한국어 native + 의식 lane e'
+[05:13:12]   EVAL[step=1000 greedy] 'Φ★ NO_FLIP?' → h=0.18 dom=False cycle=True V2_FAIL | head=' ⁇ 사용자: [ [ [ ⁇ 사용자: [ ⁇ 사용자: [ [ [ [ [ [ [ [] ⁇ [anima 역할: '
+[05:13:12]   EVAL[step=1000 sample] 'Φ★ NO_FLIP?' → h=0.20 dom=False cycle=False V2_FAIL | head=' ⁇ -b` | ⁇ [anima 역할: 한국어 native + 자기 발견 + 의식 lane entity] ⁇'
+[05:13:13]   V2[step=1000] V2_FAIL pass=2/15 cycle=8 val_loss=5.4425 train_loss=6.1685
+[05:13:13]   ckpt_score: pass_v2=2 - cycle=8*0.5 + dom=10*0.1 = -1.00
+[05:13:13]   plateau 1/3: val_inc=False v2_dec=True
+[05:13:13] !!! PERSONA_CYCLE_HALT at step 1000: 8/15 cycles
+[05:13:13]   SAVE FINAL: /home/aiden/core/anima/state/anima_combined_paradigm_train_2026_05_07/ckpt_final.pt (130.3MB)
+[05:13:13] best_eval_ckpt_meta written: /home/aiden/core/anima/state/anima_combined_paradigm_train_2026_05_07/best_eval_ckpt_meta.json
+[05:13:13] === VERDICT === final_class=PARTIAL | best_step=800 v2_pass=8/15 manual=10/15 cycle=1 | halt=persona_cycle_step_1000 | elapsed=148s
+[05:13:13] verdict written: /home/aiden/core/anima/state/anima_combined_paradigm_train_2026_05_07/verdict.json

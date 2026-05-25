@@ -1,0 +1,59 @@
+[2026-05-04T09:26:16Z] secrets OK (runpod=50b, hf=37b)
+[2026-05-04T09:26:16Z] booting pod=anima-p9-lora-mode1-instruct-eval-2026-05-04 (H100 80GB HBM3 secure on-demand @ $2.99/hr)
+[2026-05-04T09:26:18Z] pod_id=w7b46czo3ekxof
+[2026-05-04T09:26:18Z] waiting for SSH ready (max 6min)
+[2026-05-04T09:26:36Z] SSH ready at 103.207.149.143:16514 (after 2 probes)
+[2026-05-04T09:26:36Z] setup: install lm-eval + peft + download Llama-Instruct + step-8k LoRA
+Warning: Permanently added '[103.207.149.143]:16514' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.143]:16514' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.143]:16514' (ED25519) to the list of known hosts.
+[2026-05-04T09:26:44Z] launching dual eval suite (Instruct base + Instruct+LoRA × 3 benchmarks) on H100
+Warning: Permanently added '[103.207.149.143]:16514' (ED25519) to the list of known hosts.
+558
+[2026-05-04T09:53:55Z] poll loop start (max 60min, budget cap $3.50)
+[2026-05-04T09:53:58Z] elapsed=27min cost=$1.38 probe=/workspace/p9_eval/results/COMPLETE.sentinel SENTINEL_FOUND|
+[2026-05-04T09:54:12Z] COMPLETE.sentinel detected — final sync FIRST then auto-kill (lesson: don't lose data)
+Warning: Permanently added '[103.207.149.143]:16514' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.143]:16514' (ED25519) to the list of known hosts.
+[2026-05-04T09:57:29Z] computing verdict from per-bench JSONs
+jq: error: syntax error, unexpected end of file, expecting QQSTRING_TEXT or QQSTRING_INTERP_START or QQSTRING_END at <top-level>, line 63, column 14:
+                "Instruct base eval here uses NO chat-template wrapping (lm-eval default for hellaswag/mmlu/triviaqa is plain prompt). Instruct base may UNDERPERFORM its true ceiling without explicit chat-template framing. So instruct_base anchors here are raw-prompt-on-Instruct — comparable to BG-Ρs
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jq: 1 compile error
+[2026-05-04T09:57:29Z] verdict=FORGETTING_INDEPENDENT c3=PASS(2/3) c4=PASS(3/3) f1v3v2=SUCCESS wall=31min cost=$1.54
+[2026-05-04T09:57:29Z] hs: Δ_inst=0.4pp Δ_rho=-1.2pp diff=1.60pp shrink=0.6667 c3=FAIL c4=PASS
+[2026-05-04T09:57:29Z] mm: Δ_inst=-3.18738pp Δ_rho=-4.95pp diff=1.76pp shrink=0.3561 c3=PASS c4=PASS
+[2026-05-04T09:57:29Z] tq: Δ_inst=-8.2pp Δ_rho=-9.4pp diff=1.20pp shrink=0.1277 c3=PASS c4=PASS
+[2026-05-04T09:57:29Z] hypothesis class: shrunk=1 persisted=2 increased=0
+__P9_LORA_MODE1_INSTRUCT_EVAL__ FORGETTING_INDEPENDENT F1V3V2=SUCCESS
+[2026-05-04T09:57:29Z] [trap] killing pod=w7b46czo3ekxof (auto-kill mandatory)
+{
+  "containerDiskInGb": 60,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-04 09:26:17.277 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "hf_<REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "w7b46czo3ekxof",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Mon May 04 2026 09:57:30 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-p9-lora-mode1-instruct-eval-2026-05-04",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 28,
+  "volumeInGb": 30,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "w7b46czo3ekxof"
+}
+[2026-05-04T09:57:39Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]

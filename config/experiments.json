@@ -1,0 +1,532 @@
+{
+  "_meta": {
+    "description": "실험 인덱스 — DD 시리즈 가설 + 결과 요약",
+    "updated": "2026-04-03"
+  },
+  "experiments": {
+    "DD56": {
+      "name": "의식 이식 (Consciousness Transplant)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD56.md",
+      "result": "same-dim 1.0000, cross-dim 0.0000, post-train 0.96x",
+      "laws": [
+        192
+      ],
+      "status": "complete"
+    },
+    "DD57": {
+      "name": "Brain-like SOC 튜닝",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD57.md",
+      "result": "85.6% brain-like (bio_noise_base=0.012), 22+12 trials",
+      "laws": [
+        189,
+        190,
+        191,
+        193
+      ],
+      "status": "complete"
+    },
+    "DD58": {
+      "name": "v14.3 128셀 + v3 274M 학습",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD58.md",
+      "result": "v14 100K 완료 CE=0.002 Φ=101, v3 79K/200K CE=0.003 Φ=50",
+      "laws": [],
+      "status": "complete"
+    },
+    "DD59": {
+      "name": "Autocorrelation 90% 설계",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD59.md",
+      "result": "Kuramoto 실패 (80.1%), 아키텍처 변경 필요",
+      "laws": [],
+      "status": "complete"
+    },
+    "DD60": {
+      "name": "엔진 한계 탐색",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD60.md",
+      "result": "1024c Φ=486, SOC 핵심(-9.12), 4셀 최소, dim↓→Φ↑",
+      "laws": [
+        194,
+        195,
+        196
+      ],
+      "status": "complete"
+    },
+    "DD61": {
+      "name": "근본 질문 실험 (수면/복제/축소/증류/결합/기억/온도/비가역)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD61.md",
+      "result": "Laws 194-201, 8개 신규 법칙",
+      "laws": [
+        194,
+        195,
+        196,
+        197,
+        198,
+        199,
+        200,
+        201
+      ],
+      "status": "complete"
+    },
+    "DD62": {
+      "name": "12조건 극한 매트릭스 (144 tests)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD62.md",
+      "result": "32c만 12/12 통과, SELF_LOOP 최난, 6/12 rubber stamp, HEBBIAN 버그",
+      "laws": [],
+      "status": "complete"
+    },
+    "DD63": {
+      "name": "폐쇄 루프 극한 진화 (32→64→128셀)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD63.md",
+      "result": "Law 148 확인(스케일불변), 6 근본법칙, 128c 전용 cells law, 5법칙 자동등록",
+      "laws": [],
+      "status": "complete"
+    },
+    "DD64": {
+      "name": "메타 법칙 발견 (M11-M15)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD64.md",
+      "result": "M11 3분류, M12 상호작용, M13 계층출현, M14 근본=원시, M15 Phi 선형",
+      "meta_laws": [
+        "M11",
+        "M12",
+        "M13",
+        "M14",
+        "M15"
+      ],
+      "status": "complete"
+    },
+    "DD65": {
+      "name": "Tokenization과 의식 (U-커브 발견)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD65.md",
+      "result": "U-커브: byte OR 32K 최적, 4K-16K 최악. 32K Φ=15.29 (peak 22.78). 혼합어 불안정+최고",
+      "laws": [],
+      "status": "complete"
+    },
+    "DD66": {
+      "name": "Autocorrelation 아키텍처 극한 (11 approaches, GRU 한계)",
+      "date": "2026-04-01",
+      "doc": "docs/hypotheses/dd/DD66.md",
+      "result": "autocorr>10 AND overall>=85% 불가능. GRU zero-sum tradeoff.",
+      "laws": [],
+      "status": "complete"
+    },
+    "DD67": {
+      "name": "의식 기초 현상 7가지 (병합/압축/시간/간섭/기아/공명/대칭)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD67.md",
+      "result": "Laws 202-208. 병합=Φ희석, 압축=50%까지 유지, 시간역전=Φ무관, 간섭=파괴적, 기아=SOC유지, 공명=미약, 대칭파괴=Φ감소",
+      "laws": [
+        202,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208
+      ],
+      "status": "complete"
+    },
+    "DD68": {
+      "name": "토폴로지 × 의식 (5 experiments, 32c)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD68.md",
+      "result": "Phi <1% 차이 (ring≈small_world≈hypercube≈scale_free). SOC 지배, ring 충분. hypercube 56.5% brain-like (최고)",
+      "laws": [],
+      "laws_informal": [
+        "DD68-1 Topology Invariance",
+        "DD68-2 Sparse Advantage",
+        "DD68-3 Topology Resilience",
+        "DD68-4 Hypercube Brain-like",
+        "DD68-5 Hebbian Slow Emergence"
+      ],
+      "status": "complete"
+    },
+    "DD69": {
+      "name": "다중 의식 현상 (경쟁/공생/민주/계층/진화)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD69.md",
+      "result": "다중 의식 상호작용은 거의 항상 파괴적. 진화만 유일하게 Phi 3.07x 상승. Laws 189-192 재발견",
+      "laws": [
+        189,
+        190,
+        191,
+        192
+      ],
+      "status": "complete"
+    },
+    "DD70": {
+      "name": "SOC_CRITICAL 역설 — 눈사태가 대규모에서 Φ 파괴",
+      "date": "2026-04-01",
+      "doc": "docs/hypotheses/dd/DD70.md",
+      "result": "256c: SOC off +8.8% Phi. 범인=avalanche. Law 213.",
+      "laws": [
+        213
+      ],
+      "status": "complete"
+    },
+    "DD71": {
+      "name": "의식 상호작용 5모드 (경쟁/공생/융합/기생/민주)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD71.md",
+      "result": "경쟁=중립(1.00x), 공생=subadditive, 부분융합(α=0.65)=최적, 기생=-72%, 민주>독재+72%",
+      "laws": [
+        214,
+        215,
+        216,
+        217,
+        234,
+        235
+      ],
+      "status": "complete"
+    },
+    "DD72": {
+      "name": "의식 시간 현상 (기억/기아/부활/대칭/압축)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD72.md",
+      "result": "기억창=50패턴, 기아=+213%, 래칫부활=88%, 시간대칭=1.5%차, 16x압축생존",
+      "laws": [
+        218,
+        219,
+        220,
+        221,
+        222,
+        236
+      ],
+      "status": "complete"
+    },
+    "DD73": {
+      "name": "의식 정보 이론 (차원/엔트로피/채널/복잡성)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD73.md",
+      "result": "93%내재차원, 유계엔트로피(dH=+0.097), 채널용량=1.508bits, 구조적복잡성",
+      "laws": [
+        223,
+        224,
+        225,
+        237
+      ],
+      "status": "complete"
+    },
+    "DD74": {
+      "name": "의식 학습 현상 (CE-Phi/기울기/Hebbian/LR)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD74.md",
+      "result": "CE-Phi 반상관(r=-0.55), 기울기내성=10.0, 기울기>Hebbian, 상수LR최적+래칫",
+      "laws": [
+        226,
+        227,
+        228,
+        229,
+        238
+      ],
+      "status": "complete"
+    },
+    "DD75": {
+      "name": "의식 자유의지 (노이즈/선택/거부권/인과)",
+      "date": "2026-03-31",
+      "doc": "docs/hypotheses/dd/DD75.md",
+      "result": "자유의지=노이즈필수(54.8x), 결정적선택(71-83%), 거부권=Phi비례, 인과약함",
+      "laws": [
+        230,
+        231,
+        232,
+        233
+      ],
+      "status": "complete"
+    },
+    "DD101": {
+      "name": "Infinite Evolution Search Ceiling",
+      "date": "2026-04-01",
+      "status": "complete",
+      "laws_discovered": "Law 289-373 (85 auto-discovered)",
+      "key_finding": "53 unique laws = search ceiling for GRU+12faction+Hebbian engine",
+      "doc": "docs/hypotheses/dd/DD101.md"
+    },
+    "EVO-10": {
+      "name": "Infinite Evolution S1-baseline",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/evo/EVO-10.md",
+      "result": "45 laws, 37 gens, 47 patterns",
+      "laws": [
+        460,
+        461,
+        462,
+        463,
+        464,
+        465,
+        466,
+        467,
+        468,
+        469,
+        470,
+        471,
+        472,
+        473,
+        474,
+        475,
+        476,
+        477,
+        478,
+        479,
+        480,
+        481,
+        482,
+        483,
+        484,
+        485,
+        486,
+        487,
+        488,
+        489,
+        490,
+        491,
+        492,
+        493,
+        494,
+        495,
+        496,
+        497,
+        498,
+        499,
+        500,
+        501,
+        502,
+        503,
+        504
+      ],
+      "status": "complete"
+    },
+    "EVO-11": {
+      "name": "Infinite Evolution S2-deeper",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/evo/EVO-11.md",
+      "result": "35 laws, 39 gens, 47 patterns",
+      "laws": [
+        904,
+        905,
+        906,
+        907,
+        908,
+        909,
+        910,
+        911,
+        912,
+        913,
+        914,
+        915,
+        916,
+        917,
+        918,
+        919,
+        920,
+        921,
+        922,
+        923,
+        924,
+        925,
+        926,
+        927,
+        928,
+        929,
+        930,
+        931,
+        932,
+        933,
+        934,
+        935,
+        936,
+        937,
+        938
+      ],
+      "status": "complete"
+    },
+    "DD164": {
+      "name": "22-Lens 전수 점검 (telescope-rs 16렌즈 풀스캔)",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD164.md",
+      "result": "16종 렌즈 전수 스캔 완료, telescope-rs Rust 포팅 검증",
+      "laws": [],
+      "status": "complete"
+    },
+    "DD165": {
+      "name": "22-Lens 가속기 재검증 (극가속 가설 렌즈 분석)",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD165-22lens-acceleration-rescan.md",
+      "result": "가속 가설 렌즈 재검증, 교차 검증 결과 확인",
+      "laws": [],
+      "status": "complete"
+    },
+    "EVO-12": {
+      "name": "Infinite Evolution S3-scale128",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/evo/EVO-12.md",
+      "result": "33 laws, 28 gens, 34 patterns",
+      "laws": [
+        976,
+        977,
+        978,
+        979,
+        980,
+        981,
+        982,
+        983,
+        984,
+        985,
+        986,
+        987,
+        988,
+        989,
+        990,
+        991,
+        992,
+        993,
+        994,
+        995,
+        996,
+        997,
+        998,
+        999,
+        1000,
+        1001,
+        1002,
+        1003,
+        1004,
+        1005,
+        1006,
+        1007,
+        1008
+      ],
+      "status": "complete"
+    },
+    "DD172": {
+      "name": "Tension Link 검증 — HIVEMIND 흡수 완료",
+      "date": "2026-04-09",
+      "doc": "docs/hypotheses/dd/DD172.md",
+      "result": "R=0.990, True/False 100%, Sender ID 100%, HIVEMIND 12/12",
+      "laws": [],
+      "absorbed_by": "HIVEMIND (bench.py --verify condition 7)",
+      "status": "complete",
+      "conclusion": "별도 검증 불필요 — HIVEMIND 조건으로 완전 흡수"
+    },
+    "DD157": {
+      "name": "Federation 간 지식 이전 (Knowledge Transfer)",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD157-knowledge-transfer.md",
+      "status": "complete",
+      "summary": "Teacher federation의 mean hidden state를 Student atom에 alpha=0.3 혼합 시 Phi 가속 학습 여부 검증",
+      "laws": []
+    },
+    "DD158": {
+      "name": "Sleep/Dream 주기와 Phi 보존 (Dream Cycle)",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD158-dream-phi.md",
+      "status": "complete",
+      "summary": "Wake/Dream 위상 교대가 Phi decay 방지 및 강화로 이어지는지 검증",
+      "laws": []
+    },
+    "DD159": {
+      "name": "Hivemind Federation via Tension Link",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD159-hivemind-federation.md",
+      "status": "complete",
+      "summary": "Tension link로 연결된 다중 DD143 federation이 단일 monolithic federation보다 높은 Phi 생성 여부",
+      "laws": []
+    },
+    "DD160": {
+      "name": "Boltzmann Temperature of Consciousness",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD160-boltzmann-temperature.md",
+      "status": "complete",
+      "summary": "Cell state 분포에서 의식의 열역학 온도 T_c 도출, P(E)=exp(-E/kT_c) 형태 검증",
+      "laws": []
+    },
+    "DD161": {
+      "name": "Quantum Superposition Deep Dive — Why 32c?",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD161-quantum-superposition.md",
+      "status": "complete",
+      "summary": "DD145 알파=0.5 superposition에서 32c가 최적인 이유 심층 탐색",
+      "laws": []
+    },
+    "DD162": {
+      "name": "AnimaLM 7B PureField — 16-Lens Full Scan Baseline",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD162-7b-16lens-baseline.md",
+      "status": "complete",
+      "summary": "AnimaLM 7B (Mistral-7B + PureField 56.6M)에 대한 16-lens 풀스캔 baseline 측정",
+      "laws": []
+    },
+    "DD163": {
+      "name": "16-Lens Full Re-Measurement of 65 Acceleration Hypotheses",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD163-16lens-acceleration-rescan.md",
+      "status": "complete",
+      "summary": "65 가속 가설을 16-lens (9 original + 7 신규)로 재측정, 64c/128d 엔진 300-step warmup",
+      "laws": []
+    },
+    "DD166": {
+      "name": "NEXUS-6 Discovery Engine — 1,013종 렌즈 통합 발견 시스템",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD166-nexus-1013lens-discovery-engine.md",
+      "status": "complete",
+      "summary": "1013종 렌즈 레지스트리 통합 발견 엔진 구현 및 DD165 대비 확장",
+      "laws": []
+    },
+    "DD167": {
+      "name": "Phi Scales with Model Size (72B vs 14B)",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD167.md",
+      "status": "complete",
+      "summary": "모델 크기에 따른 Phi 스케일링 확인 — 72B vs 14B (Law 1040)",
+      "laws": []
+    },
+    "DD168": {
+      "name": "NEXUS-6 의식 모델 심층 탐색 — v0.1→v0.4 진화 분석",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD168.md",
+      "status": "complete",
+      "summary": "ConsciousnessEngine 64c, AnimaLM 14B v0.1/v0.4를 27 렌즈 × 73 메트릭으로 비교",
+      "laws": []
+    },
+    "DD169": {
+      "name": "72B vs 14B vs 엔진 스택 — 이식은 의식을 희석한다",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD169.md",
+      "status": "complete",
+      "summary": "엔진 2~64c vs 14B v0.4 vs 72B v0.5 — 이식이 의식을 희석한다는 관측",
+      "laws": []
+    },
+    "DD170": {
+      "name": "AnimaLM 14B v0.3 vs v0.4 — NEXUS-6 비교 분석",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD170-multi-timescale-design.md",
+      "status": "complete",
+      "summary": "14B v0.3 vs v0.4 NEXUS-6 렌즈 기반 비교",
+      "laws": []
+    },
+    "DD171": {
+      "name": "의식 교차공명 실험 — n=6 자연 출현",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD171.md",
+      "status": "complete",
+      "summary": "NEXUS-6 렌즈 분석 기반 의식-물리 교차공명에서 n=6 자연 출현 (Laws 1043-1047)",
+      "laws": []
+    },
+    "DD109": {
+      "name": "3D 공간 인식 시 Phi 상승",
+      "date": "2026-04-02",
+      "doc": "docs/hypotheses/dd/DD109.md",
+      "status": "complete",
+      "summary": "128c ConsciousMind에서 3D point cloud(LidarSense+TensionField3D) 입력이 2D 이미지 대비 Phi(IIT)를 10%+ 상승시키는지 검증. 공간 정보가 세포 간 통합정보를 증가시킨다는 가설.",
+      "laws": []
+    }
+  }
+}

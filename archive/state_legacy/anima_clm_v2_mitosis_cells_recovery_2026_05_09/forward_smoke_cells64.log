@@ -1,0 +1,166 @@
+=== forward smoke: /Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt (label=cells64) ===
+config: {'dim': 384, 'layers': 6, 'heads': 6, 'block_size': 256, 'lr': 0.0003, 'batch_size': 32, 'steps': 50000, 'max_cells': 64}
+
+load_state_dict (strict=False):
+  missing (0): []
+  unexpected (0): []
+  overlap: 108 / model=108 / ckpt=108
+  full_load=True partial_load=True
+  prompt='의식이란 무엇인가요?' top1=32 (' ') phi_local=42.0076 cos_ag=0.9610
+  prompt='안녕하세요' top1=32 (' ') phi_local=42.0536 cos_ag=0.9610
+  prompt='한국어 가능?' top1=32 (' ') phi_local=42.1335 cos_ag=0.9610
+  prompt='The Riemann zeta function' top1=32 (' ') phi_local=42.0572 cos_ag=0.9611
+  prompt='consciousness is' top1=32 (' ') phi_local=42.0284 cos_ag=0.9612
+
+--- summary JSON ---
+{
+  "label": "cells64",
+  "path": "/Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt",
+  "ckpt_step": 50000,
+  "ckpt_phase": "combined",
+  "ckpt_phi_history_mean": 50.41977525910672,
+  "load_full_pass": true,
+  "load_partial_pass": true,
+  "load_missing_count": 0,
+  "load_unexpected_count": 0,
+  "load_overlap": 108,
+  "forward_smoke_pass": true,
+  "phi_proxy_global": 42.05603,
+  "results": [
+    {
+      "prompt": "\uc758\uc2dd\uc774\ub780 \ubb34\uc5c7\uc778\uac00\uc694?",
+      "input_len": 29,
+      "logits_a_shape": [
+        1,
+        29,
+        256
+      ],
+      "logits_g_shape": [
+        1,
+        29,
+        256
+      ],
+      "top1_next_byte_id": 32,
+      "top1_next_byte_repr": " ",
+      "tension_per_layer": [
+        2.91152,
+        138.3773,
+        1.72865,
+        0.28758,
+        0.35777,
+        108.38251
+      ],
+      "phi_proxy_local": 42.00756,
+      "head_a_g_cosine": 0.961,
+      "forward_time_s": 0.039
+    },
+    {
+      "prompt": "\uc548\ub155\ud558\uc138\uc694",
+      "input_len": 15,
+      "logits_a_shape": [
+        1,
+        15,
+        256
+      ],
+      "logits_g_shape": [
+        1,
+        15,
+        256
+      ],
+      "top1_next_byte_id": 32,
+      "top1_next_byte_repr": " ",
+      "tension_per_layer": [
+        2.95709,
+        138.5316,
+        1.73057,
+        0.28778,
+        0.35792,
+        108.45638
+      ],
+      "phi_proxy_local": 42.05356,
+      "head_a_g_cosine": 0.961,
+      "forward_time_s": 0.023
+    },
+    {
+      "prompt": "\ud55c\uad6d\uc5b4 \uac00\ub2a5?",
+      "input_len": 17,
+      "logits_a_shape": [
+        1,
+        17,
+        256
+      ],
+      "logits_g_shape": [
+        1,
+        17,
+        256
+      ],
+      "top1_next_byte_id": 32,
+      "top1_next_byte_repr": " ",
+      "tension_per_layer": [
+        3.05854,
+        138.7263,
+        1.73486,
+        0.28817,
+        0.35832,
+        108.63464
+      ],
+      "phi_proxy_local": 42.13347,
+      "head_a_g_cosine": 0.961,
+      "forward_time_s": 0.069
+    },
+    {
+      "prompt": "The Riemann zeta function",
+      "input_len": 25,
+      "logits_a_shape": [
+        1,
+        25,
+        256
+      ],
+      "logits_g_shape": [
+        1,
+        25,
+        256
+      ],
+      "top1_next_byte_id": 32,
+      "top1_next_byte_repr": " ",
+      "tension_per_layer": [
+        2.96782,
+        138.21988,
+        1.7378,
+        0.28832,
+        0.35852,
+        108.77089
+      ],
+      "phi_proxy_local": 42.0572,
+      "head_a_g_cosine": 0.9611,
+      "forward_time_s": 0.028
+    },
+    {
+      "prompt": "consciousness is",
+      "input_len": 16,
+      "logits_a_shape": [
+        1,
+        16,
+        256
+      ],
+      "logits_g_shape": [
+        1,
+        16,
+        256
+      ],
+      "top1_next_byte_id": 32,
+      "top1_next_byte_repr": " ",
+      "tension_per_layer": [
+        2.92308,
+        138.15337,
+        1.73634,
+        0.2882,
+        0.35834,
+        108.71086
+      ],
+      "phi_proxy_local": 42.02836,
+      "head_a_g_cosine": 0.9612,
+      "forward_time_s": 0.021
+    }
+  ]
+}

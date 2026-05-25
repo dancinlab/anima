@@ -1,0 +1,48 @@
+{
+  "model_type": "clm_v4",
+  "architectures": [
+    "CLMv4ForCausalLM"
+  ],
+  "vocab_size": 64000,
+  "d_model": 768,
+  "n_layer": 16,
+  "n_head": 6,
+  "n_kv_head": 2,
+  "block_size": 512,
+  "consciousness_dim": 192,
+  "dropout": 0.0,
+  "gate_strength": 0.001,
+  "n_ca_rules": 8,
+  "hidden_size": 768,
+  "num_hidden_layers": 16,
+  "num_attention_heads": 6,
+  "num_key_value_heads": 2,
+  "max_position_embeddings": 512,
+  "tie_word_embeddings": true,
+  "bos_token_id": 1,
+  "eos_token_id": 2,
+  "pad_token_id": 0,
+  "torch_dtype": "float32",
+  "transformers_version": "5.7.0",
+  "auto_map": {
+    "AutoConfig": "configuration_clm_v4.CLMv4Config",
+    "AutoModelForCausalLM": "modeling_clm_v4.CLMv4ForCausalLM"
+  },
+  "_clm_v4_provenance": {
+    "shim": "tool/transient_py/clm_v4_hf_format_shim.py",
+    "source_ckpt_step": 20000,
+    "source_ckpt_ce": 0.04630279541015625,
+    "source_ckpt_best_phi": 37.269868535501914,
+    "source_ckpt_scale": "350m",
+    "source_args_subset": {
+      "tokenizer": "data/tokenizer_64k_multilingual.model",
+      "vocab_size": 64000,
+      "d_model": null,
+      "block_size": 512,
+      "decoder": "v3",
+      "scale": "350m",
+      "steps": 20000,
+      "seed": 42
+    }
+  }
+}

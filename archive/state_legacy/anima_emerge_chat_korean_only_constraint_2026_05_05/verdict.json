@@ -1,0 +1,18 @@
+{
+  "schema": "anima/emerge_chat_korean_only_constraint/verdict/1",
+  "ts_utc": "2026-05-05T18:41:47Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "vocab_size": 64000,
+  "n_korean_tokens": 5701,
+  "n_prompts": 3,
+  "n_coherent": 3,
+  "verdict": "PASS_KOREAN_FORCED",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 forced Korean = vocab subset constraint, NOT semantic recovery",
+    "C3 substrate may have meaningful Korean ranking — heuristic counts glyphs only",
+    "C4 EN prompt with Korean-only emit = OOD, validate substrate language flexibility",
+    "C5 'coherent' threshold >=5 Korean glyphs anima-internal"
+  ]
+}

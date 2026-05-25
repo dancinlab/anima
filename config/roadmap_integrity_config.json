@@ -1,0 +1,137 @@
+{
+  "schema": "anima.roadmap_integrity.config.v1",
+  "title": "roadmap_integrity_guard — OS-level live 실수 방지 config",
+  "created": "2026-04-21",
+  "raw_compliance": "raw#1 chflags raw#9 hexa-only raw#11 snake_case raw#15 no-hardcode raw#10 proof-carrying",
+  "repo_root": "<repo-root>",
+  "roadmap_path": "<repo-root>/.roadmap",
+  "raw_audit_path": "<repo-root>/.raw-audit",
+  "state_dir": "<repo-root>/state",
+  "hexa_bin": "<user-home>/.hx/bin/hexa",
+  "lint_tool": "<repo-root>/../hexa-lang/tool/roadmap_lint.hexa",
+  "paths_json_sources": [
+    "edu/paths.json"
+  ],
+  "audit_json_glob_dirs": [
+    "state"
+  ],
+  "tool_dirs": [
+    "tool"
+  ],
+  "checks": {
+    "check_1_lint": {
+      "severity": "ERROR",
+      "auto_fix": false,
+      "note": "roadmap_lint 실행. violations==0 required"
+    },
+    "check_2_uchg": {
+      "severity": "ERROR",
+      "auto_fix": true,
+      "target_flag": "uchg",
+      "note": "chflags uchg .roadmap 누락 시 자동 복구"
+    },
+    "check_3_paths_drift": {
+      "severity": "WARN",
+      "auto_fix": false,
+      "path_prefixes": [
+        "tool/",
+        "edu/",
+        "shared/",
+        "experiments/",
+        "docs/",
+        "verifier/",
+        "training/",
+        "anima-os/",
+        "modules/",
+        "scripts/",
+        "CANON/",
+        "tests/",
+        "test/"
+      ],
+      "description_separators": [
+        " — ",
+        " (작성",
+        ":작성",
+        " 작성",
+        " (신규)",
+        " (필요)"
+      ],
+      "line_range_pattern": ":[0-9]+-[0-9]+",
+      "note": "paths.json path-like string 내 설명 후행 / line-range 존재 시 WARN"
+    },
+    "check_4_file_drift": {
+      "severity": "WARN",
+      "auto_fix": false,
+      "drift_fix_map": {
+        "tool/an11_a_verifier.hexa": "tool/an11_a_verifier.hexa",
+        "tool/an11_b_ccc.hexa": "tool/an11_b_verifier.hexa",
+        "docs/learning_free_consciousness_20260421.md": "docs/learning_free_consciousness_paper_20260421.md"
+      },
+      "note": "선언 path 미존재 시 유사 이름 제안. drift_fix_map 은 알려진 spec→actual 매핑"
+    },
+    "check_5_ssot_stale": {
+      "severity": "WARN",
+      "auto_fix": false,
+      "stale_values": [
+        "NOT_EXECUTED",
+        "PENDING"
+      ],
+      "validator_keys": [
+        "validator_status",
+        "gate_status",
+        "strict_status"
+      ],
+      "note": "*_audit.json 내 validator_status 가 stale 이면 SSOT_STALE flag"
+    },
+    "check_6_lock": {
+      "severity": "WARN",
+      "auto_fix": false,
+      "lock_dir": "/tmp/hexa_stage0.lock.d",
+      "long_hold_seconds": 300,
+      "note": "concurrent lock 300s 초과 시 PID 만 기록, kill 안 함"
+    },
+    "check_7_coverage": {
+      "severity": "INFO",
+      "auto_fix": false,
+      "note": ".roadmap 카테고리 vs paths.json vs tool/*.hexa symmetric difference"
+    },
+    "check_8_closure_debt": {
+      "severity": "WARN",
+      "auto_fix": false,
+      "closure_debt_config": "<repo-root>/config/closure_debt_patterns.json",
+      "closure_debt_result": "<repo-root>/state/closure_debt_result.json",
+      "closure_debt_scanner": "<repo-root>/tool/closure_debt_scanner.hexa",
+      "note": "agent report + SSOT + docs 에서 closure_debt 패턴 감지. debt_hits>0 → WARN. auto-dispatch 는 scanner 쪽에서 수행"
+    }
+  },
+  "auto_fix_allowed_overall": true,
+  "auto_fix_policy": {
+    "check_2_uchg": {
+      "auto": true,
+      "requires_apply": false
+    },
+    "check_3_paths_drift": {
+      "auto": true,
+      "requires_apply": true,
+      "backup": true,
+      "rollback_on_lint_fail": true
+    },
+    "check_4_file_drift": {
+      "auto": false,
+      "requires_apply": true,
+      "requires_aggressive": true,
+      "backup": true
+    },
+    "check_5_ssot_stale": {
+      "auto": true,
+      "requires_apply": true,
+      "timeout_s": 300,
+      "skip_on_lock": true
+    }
+  },
+  "output": {
+    "drift_log_dir": "<repo-root>/state",
+    "drift_log_prefix": "integrity_drift_",
+    "summary_ssot": "<repo-root>/state/roadmap_integrity_result.json"
+  }
+}

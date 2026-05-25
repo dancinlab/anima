@@ -1,0 +1,58 @@
+{
+  "schema": "anima/h100_idle_audit/verdict/1",
+  "ts_utc": "2026-05-05T01:45:00Z",
+  "bg_lane": "H100-IDLE-AUDIT",
+  "total_pods": 1,
+  "pods_per_classification": {
+    "active_owned": 0,
+    "idle_owned": 1,
+    "stale_orphaned": 0,
+    "external_protected": 0,
+    "unknown": 0
+  },
+  "aggregate_burn_usd_per_hour": 2.99,
+  "per_pod": [
+    {
+      "id": "szv2vyf06h35uy",
+      "name": "anima-pbeta-paradigm-d-50k-scaleup-2026-05-04",
+      "gpu": "H100 80GB HBM3",
+      "gpu_count": 1,
+      "cost_per_hr_usd": 2.99,
+      "created_at_utc": "2026-05-04T22:30:23Z",
+      "training_completed_at_utc": "2026-05-04T23:47:27Z",
+      "last_heartbeat_utc": "2026-05-04T23:47:20Z",
+      "last_heartbeat_min_ago": 117,
+      "wall_time_since_boot_hours": 3.24,
+      "wall_time_since_completion_hours": 1.96,
+      "estimated_burn_since_completion_usd": 5.86,
+      "ssh_alive": true,
+      "gpu_utilization_pct": 0,
+      "gpu_memory_used_mib": 0,
+      "active_processes": [],
+      "training_status": "COMPLETE_SENTINEL_PRESENT",
+      "training_verdict": "PRODUCTION_25K_FULL_PASS",
+      "steps_completed": 50000,
+      "owner_orchestrator_alive": false,
+      "classification": "IDLE_OWNED",
+      "rationale": "Training completed at 23:47 UTC May 4; 50000/50000 steps; COMPLETE.sentinel + verdict.json + final adapter persisted at /workspace/p9_pbeta_distill/savepoints/step_50000; no python/train processes running; GPU at 0%; no mac orchestrator owning this pod. Pod has been idle ~2h burning $2.99/hr post-completion. Results need pull to mac before pod kill.",
+      "recommendation": "PULL_RESULTS_THEN_KILL",
+      "kill_command_if_applicable": "RUNPOD_API_KEY=$(/Users/ghost/core/secret/bin/secret get runpod.api_key --raw) /opt/homebrew/bin/runpodctl pod delete szv2vyf06h35uy",
+      "pre_kill_pull_command": "rsync -avz -e 'ssh -i /Users/ghost/.runpod/ssh/RunPod-Key-Go -p 17478' root@103.207.149.79:/workspace/p9_pbeta_distill/results/ /Users/ghost/core/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/results/ && rsync -avz -e 'ssh -i /Users/ghost/.runpod/ssh/RunPod-Key-Go -p 17478' root@103.207.149.79:/workspace/p9_pbeta_distill/savepoints/step_50000/ /Users/ghost/core/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000/"
+    }
+  ],
+  "requires_user_decision": true,
+  "decision_options": [
+    "PULL_RESULTS_THEN_KILL: rsync results+final adapter to mac, then kill pod (saves $2.99/hr ongoing; preserves 50K verdict)",
+    "KEEP_ALIVE_FOR_HF_UPLOAD: leave pod running so HF upload can run from H100 (faster bandwidth) — recommend only if HF push within next ~1h",
+    "KILL_NOW_DISCARD: kill immediately without pull (loses results data on /workspace; only if HF Hub already received uploads)"
+  ],
+  "honest_c3": [
+    "C3-1: Pod state can flip mid-audit (e.g., user could spawn new BG hitting this pod between snapshot and verdict write). Verdict reflects state at 2026-05-05T01:44 UTC.",
+    "C3-2: SSH liveness used 10s timeout; a slow-hanging python process during nvidia-smi block could have been missed. Mitigation: cross-checked via ps auxf which showed only sshd+bash+ps as active processes (no children), strongly indicating no training/eval is running.",
+    "C3-3: External r=16 retrain pods (s43, s44 names) were NOT found in pod list — they appear to have already been terminated or were never visible to this account. No EXTERNAL_PROTECTED action needed.",
+    "C3-4: runpodctl pod list may show cached state lagging by seconds; verified with explicit pod get for szv2vyf06h35uy which agreed (desiredStatus=RUNNING, lastStatusChange=Mon May 04 22:30:23 UTC).",
+    "C3-5: Cost estimate (5.86 USD wasted since completion) excludes any pre-emption refund credits, network egress charges, or storage charges that might apply on shutdown. True savings if killed now: ~$2.99/hr ongoing avoided.",
+    "C3-6: Audit did not sync results back to mac — if user chooses KILL_NOW_DISCARD without pulling, results+final adapter will be lost. PULL_RESULTS_THEN_KILL is the safe default.",
+    "C3-7: No HF Hub upload was verified — cannot confirm whether the trained adapter has already been pushed to anima-pbeta-paradigm-d-50k-scaleup HF repo. User should verify before discarding."
+  ]
+}

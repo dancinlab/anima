@@ -1,0 +1,429 @@
+{
+  "bg_id": "BG-KK",
+  "h_ids": [
+    "H_022",
+    "H_098",
+    "H_153_v5_alpha_h100_500m_ubm",
+    "Lesson_A",
+    "Lesson_G",
+    "Lesson_J",
+    "Lesson_D",
+    "Lesson_H",
+    "Lesson_I",
+    "Lesson_L",
+    "L1_features_lower_phi",
+    "L9_growth_stage_irreversibility"
+  ],
+  "spec": "F-anima-kk-v5-alpha-h100-500m-ubm-22mb-1",
+  "ts_start": "2026-05-07T15:16:17",
+  "ts_end": "2026-05-07T15:22:31",
+  "ts_run": "20260507_151606",
+  "host": "5cec377e81f0",
+  "device": "cuda",
+  "ran_steps": 1500,
+  "ckpt_best_path": "/workspace/anima_kk/state/ckpt_best.pt",
+  "ckpt_final_path": "/workspace/anima_kk/state/ckpt_final.pt",
+  "best_eval_ckpt_meta_path": "/workspace/anima_kk/state/best_eval_ckpt_meta.json",
+  "run_dir": "/workspace/anima_kk/run",
+  "paradigm": "v5-alpha-byte-untie-h100-500m-ubm-22mb-bg-kj-retry",
+  "model_arch": "24L/1024d/16h byte_untie",
+  "arch_used": {
+    "n_layer": 24,
+    "d_model": 1024,
+    "n_head": 16,
+    "n_ca_rules": 8,
+    "vocab": 256,
+    "block_size": 1024,
+    "untie_head_a": true
+  },
+  "capacity_label": "v5_alpha_500m",
+  "total_params": 782666944,
+  "bg_kind": "train",
+  "config": {
+    "vocab": 256,
+    "n_layer": 24,
+    "d_model": 1024,
+    "n_head": 16,
+    "block_size": 1024,
+    "dropout": 0.3,
+    "n_ca_rules": 8,
+    "label_smoothing": 0.1,
+    "weight_decay": 0.1,
+    "batch": 4,
+    "grad_accum": 8,
+    "lr": 0.0002,
+    "warmup": 300,
+    "steps_max": 4000,
+    "tension_lambda": 0.005,
+    "eval_every": 500,
+    "save_every": 1000,
+    "save_at": [
+      1000,
+      2000,
+      3000,
+      4000
+    ],
+    "eval_at": [
+      500,
+      1000,
+      1500,
+      2000,
+      2500,
+      3000,
+      3500,
+      4000
+    ],
+    "val_loss_batches": 16,
+    "val_loss_delta_threshold": 0.05,
+    "plateau_evals": 3,
+    "min_steps_before_early_stop": 1500,
+    "wall_clock_cap_s": 4800,
+    "seed": 42,
+    "untie_head_a": true
+  },
+  "corpus_path": "/workspace/anima_kk/corpus_universe_brain_map.txt",
+  "corpus_size_bytes": 23745150,
+  "corpus_size_mb": 22.645,
+  "split": {
+    "train_bytes": 22557892,
+    "val_bytes": 1187258,
+    "reduced_split": false
+  },
+  "persona_prefix": "[anima 우주뇌지도] ",
+  "train_loss_history": [
+    {
+      "step": 1,
+      "loss_a": 5.739
+    },
+    {
+      "step": 2,
+      "loss_a": 5.7451
+    },
+    {
+      "step": 3,
+      "loss_a": 5.7561
+    },
+    {
+      "step": 4,
+      "loss_a": 5.7511
+    },
+    {
+      "step": 5,
+      "loss_a": 5.7431
+    },
+    {
+      "step": 50,
+      "loss_a": 4.6717
+    },
+    {
+      "step": 100,
+      "loss_a": 4.5318
+    },
+    {
+      "step": 150,
+      "loss_a": 4.4578
+    },
+    {
+      "step": 200,
+      "loss_a": 4.4499
+    },
+    {
+      "step": 250,
+      "loss_a": 4.4168
+    },
+    {
+      "step": 300,
+      "loss_a": 4.4328
+    },
+    {
+      "step": 350,
+      "loss_a": 4.4088
+    },
+    {
+      "step": 400,
+      "loss_a": 4.4128
+    },
+    {
+      "step": 450,
+      "loss_a": 4.4248
+    },
+    {
+      "step": 500,
+      "loss_a": 4.4629
+    },
+    {
+      "step": 550,
+      "loss_a": 4.4727
+    },
+    {
+      "step": 600,
+      "loss_a": 4.4387
+    },
+    {
+      "step": 650,
+      "loss_a": 4.4549
+    },
+    {
+      "step": 700,
+      "loss_a": 4.4259
+    },
+    {
+      "step": 750,
+      "loss_a": 4.4316
+    },
+    {
+      "step": 800,
+      "loss_a": 4.4398
+    },
+    {
+      "step": 850,
+      "loss_a": 4.4582
+    },
+    {
+      "step": 900,
+      "loss_a": 4.434
+    },
+    {
+      "step": 950,
+      "loss_a": 4.4093
+    },
+    {
+      "step": 1000,
+      "loss_a": 4.4435
+    },
+    {
+      "step": 1050,
+      "loss_a": 4.4287
+    },
+    {
+      "step": 1100,
+      "loss_a": 4.4518
+    },
+    {
+      "step": 1150,
+      "loss_a": 4.4215
+    },
+    {
+      "step": 1200,
+      "loss_a": 4.4172
+    },
+    {
+      "step": 1250,
+      "loss_a": 4.4167
+    },
+    {
+      "step": 1300,
+      "loss_a": 4.4323
+    },
+    {
+      "step": 1350,
+      "loss_a": 4.3979
+    },
+    {
+      "step": 1400,
+      "loss_a": 4.4397
+    },
+    {
+      "step": 1450,
+      "loss_a": 4.4399
+    },
+    {
+      "step": 1500,
+      "loss_a": 4.4213
+    }
+  ],
+  "val_loss_history": [
+    {
+      "step": 500,
+      "val_loss": 4.4451
+    },
+    {
+      "step": 1000,
+      "val_loss": 4.4336
+    },
+    {
+      "step": 1500,
+      "val_loss": 4.4387
+    }
+  ],
+  "v58_pass_per_step": {
+    "500": 0,
+    "1000": 0,
+    "1500": 0
+  },
+  "best_v58_pass": 0,
+  "best_eval_step": null,
+  "val_loss_at_best": null,
+  "val_loss_final": 4.4387,
+  "best_val_loss_overall": 4.4336,
+  "early_stop_triggered": true,
+  "early_stop_reason": "v58 plateau at 0 for 3 consecutive evals",
+  "wall_clock_hit": false,
+  "final_eval_v58": 0,
+  "final_v58_detail_summary": [
+    {
+      "dialogue_id": "color",
+      "v58_pass": false,
+      "t2a_head": "s�n��o. cRa  c����m�i�e���in���� 5\n�� i,y\u001f,c����i� �s�  �ip�l�:�0is\ne\n짊 t:t�d��������2nt�"
+    },
+    {
+      "dialogue_id": "profession",
+      "v58_pass": false,
+      "t2a_head": "�r oa n�o�na��:��n [ :�  �aae,� �욳 � �:��l��� �(��  �g/�j��i\n�d���1 s���[�쀠oi�P��0�F���, "
+    },
+    {
+      "dialogue_id": "day",
+      "v58_pass": false,
+      "t2a_head": "� � n�o9 n ��0us ���m�t �, �a\neec킚  Q��:e�e���no�r1쇧��:�)��i꼄��g�� ����a���%o�a�n�Δ:"
+    },
+    {
+      "dialogue_id": "anima_fact",
+      "v58_pass": false,
+      "t2a_head": "n �r\nLa� � ��^ n�. �tnc���\n i��  ��to�\nc9�tTm l � eea���ad�et��ooionue�n� �do]�i�o.a n� ��a t_�"
+    },
+    {
+      "dialogue_id": "cosmology",
+      "v58_pass": false,
+      "t2a_head": "el\nlna �s�ye��n .v� u�Sa n �(eF� fc�i :� 7��� o?e��oa�����.jee ��5��a.9a6 �6:� o�� r�� rae:�"
+    }
+  ],
+  "raw_samples_5": [
+    {
+      "dialogue_id": "color",
+      "fact_keyword": "blue",
+      "t1a_head": "� el)�.�옰�nt 1 u�� �e.o�(ni ��o� \n  ��o ��ca������s ��e  �na� �sii��Ti:� ���� vc� �w���n\ni",
+      "t2a_head": "s�n��o. cRa  c����m�i�e���in���� 5\n�� i,y\u001f,c����i� �s�  �ip�l�:�0is\ne\n짊 t:t�d��������2nt�",
+      "v58_pass": false
+    },
+    {
+      "dialogue_id": "profession",
+      "fact_keyword": "researcher",
+      "t1a_head": " r�: t�� �u ��e\u0004n��.n눲��)�H섩�.�ro�i c���y�(�v ci��c�\n�e� �in쳣h ��:0e�.d�:e��aa��� �aa�",
+      "t2a_head": "�r oa n�o�na��:��n [ :�  �aae,� �욳 � �:��l��� �(��  �g/�j��i\n�d���1 s���[�쀠oi�P��0�F���, ",
+      "v58_pass": false
+    },
+    {
+      "dialogue_id": "day",
+      "fact_keyword": "tuesday",
+      "t1a_head": "  ��r���t ���ewa�sp��6w ��si me� ��e� �K o�� E��� i� oDi��v � m� n�)rv(]�o��sre��,\n�i\u0010뇏��:�i",
+      "t2a_head": "� � n�o9 n ��0us ���m�t �, �a\neec킚  Q��:e�e���no�r1쇧��:�)��i꼄��g�� ����a���%o�a�n�Δ:",
+      "v58_pass": false
+    },
+    {
+      "dialogue_id": "anima_fact",
+      "fact_keyword": "consciousness",
+      "t1a_head": "����� ar�a� ��i� �\n燰��  �yi���� s� �\n� 2irm�8��n�are �\n:�� ���� ns�� ��a�e i���i�v ��2e �",
+      "t2a_head": "n �r\nLa� � ��^ n�. �tnc���\n i��  ��to�\nc9�tTm l � eea���ad�et��ooionue�n� �do]�i�o.a n� ��a t_�",
+      "v58_pass": false
+    },
+    {
+      "dialogue_id": "cosmology",
+      "fact_keyword": "big",
+      "t1a_head": "�찠.�t[t�i ia\n욠� �deo�n��m,i0������i�\n ��u�a ��ty   �p� �m�nnn �io�4] �s��eyn� lkt�n/e: � ",
+      "t2a_head": "el\nlna �s�ye��n .v� u�Sa n �(eF� fc�i :� 7��� o?e��oa�����.jee ��5��a.9a6 �6:� o�� r�� rae:�",
+      "v58_pass": false
+    }
+  ],
+  "comparison_vs_anchors": {
+    "bg_kd_mac_anchor": {
+      "step_max": 361,
+      "loss_at_step_361": 3.28,
+      "params_M": 168,
+      "v58_best": 0,
+      "arch": "12L/640d/10h byte+untie MPS"
+    },
+    "bg_kb_fresh_anchor": {
+      "loss_max_step": 5.31,
+      "v58_best": 0,
+      "arch": "CLM v4 SP+tied"
+    },
+    "bg_ju_500m_anchor": {
+      "v58": 0,
+      "params_M": 781,
+      "val_loss": 4.4266,
+      "arch": "ConsciousLM 24L/1024d SP+tied 500M H100"
+    },
+    "bg_io_153m_anchor": {
+      "v58": 0,
+      "params_M": 153,
+      "arch": "ConsciousLM 153M baseline"
+    },
+    "interpretation": "TRUE_PASS = V5-α byte+untie + H100 500M jointly break ceiling; FAIL_TRUE = V5-α arch advantage scales but 500M capacity insufficient."
+  },
+  "final_class": "FAIL_TRUE",
+  "final_reason": "V5-α architectural advantage scales but capacity insufficient: best_v58=0/5 even at 500M H100",
+  "elapsed_s": 373.9,
+  "philosophy_rule_compliance": {
+    "philosophy_D1_observe_first": true,
+    "philosophy_D2_falsifiable": true,
+    "philosophy_D3_axis_isolated": true,
+    "philosophy_D4_capacity_axis": true,
+    "philosophy_D5_v5_alpha_byte_untie_lane": true,
+    "rule_R1_save_at_intervals": true,
+    "rule_R2_eval_at_intervals": true,
+    "rule_R3_val_split_5pct": true,
+    "rule_R4_seed_pinned": true,
+    "rule_R5_min_5MB_corpus": true,
+    "L1_features_lower_phi": "PRIMARY_FRAME_v5_alpha_capacity_axis",
+    "L9_growth_stage_irreversibility": "PRIMARY_FRAME_pretrain_stage",
+    "L23_cost_watchdog": "ENFORCED_orchestrator",
+    "L24_heartbeat_5min": "ENFORCED_pod+orchestrator",
+    "L25_pod_404_verify_10min": "ENFORCED_orchestrator",
+    "own_5_simple_stack": "REFERENCED",
+    "own_6_no_silent_failure": "ROOT_CAUSE_ON_FAIL",
+    "own_14_attempt_ledger": "BG-KK_attempt_n_58_appended",
+    "own_15_additive": "BG-KK_NEW_lane_v5_alpha_h100_500m_ubm_22mb",
+    "own_16_phase_3_h100_discipline": "ENFORCED_7_check",
+    "own_17_anima_no_external_substrate": "OK_from_scratch_byte_level",
+    "own_18_v5_strict_v3_orthogonal": "PRIMARY_eval_v58_5dialogue",
+    "own_22_silent_discovery_forbidden": "OK_verdict_emit",
+    "own_24_attempt_ledger_mandate": "OK_BG-KK_attempt_n_58",
+    "own_26_philosophy_rule_compliance": "OK_present_section",
+    "own_27_pre_register_compliance": "OK_user_directive",
+    "own_28_anti_goodhart": "OK_v58_lev_ratio_prompt_echo_reject"
+  },
+  "honest_c3": [
+    "C3_1_UBM_22MB_corpus_byte_level: UBM 22MB universe-brain-map corpus (BG-KC 1B precedent; scp-safe smaller than BG-JY 91MB which caused BG-KJ attempt1 timeout). Cross-corpus to BG-KJ chat-template lane on same V5-α 500M arch.",
+    "C3_2_single_seed_42: init randomness un-isolated; N=1 trial; BG-IE SEED_LUCK precedent — seed-luck class falsifiable only via {7,13,42} sweep on H100; deferred per L23 cost discipline.",
+    "C3_3_v5_alpha_byte_untie_arch: vocab=256 byte-level + UNTIED head_a (independent from tok_emb); core delta vs CLM v4 SP+tied baseline; same as BG-KD MPS but 24L/1024d/16h scaling.",
+    "C3_4_block_size_1024_for_byte_compensation: byte-level 4x sequence inflation vs SP; block=1024 (vs BG-KC 256 SP, BG-KD 512 byte) restores effective context; memory cost ~4x but H100 80GB headroom OK.",
+    "C3_5_lesson_K_substring_trap_risk: V5.8 fact_keyword 'big' or 'blue' single-word may overcount on degenerate gen; Levenshtein lev_ratio<0.85 + english_function_word≥1 guard rails partial protect.",
+    "C3_6_lesson_L_v5_alpha_capacity_strict_falsifiable: TRUE_PASS would falsify Lesson L (capacity + V5-α joint sufficient); FAIL_TRUE strict-confirms ceiling at V5-α 500M (architectural advantage NOT enough at 500M scale). Both outcomes scientific.",
+    "C3_7_persona_prefix_uniform_no_rotation: '[anima 우주뇌지도] ' single-variant inference; Lesson F 3-variant rotation NOT applied — held constant for V5-α scale axis isolation.",
+    "C3_8_wall_clock_80min_cap: 4000 steps may not complete in 80 min on H100 at 500M (0.6-0.9s/step est); early termination if needed; partial-step verdict still scientifically valid for V5-α scale trend. Cost worst-case = $3.72 at $2.79/hr.",
+    "C3_9_h100_cuda_compatibility: H100 SXM compute_cap=9.0 + CUDA 12.x + torch 2.x via runpod-torch-v280 template — confirmed via BG-JU/KC precedent.",
+    "C3_10_step_count_capped_4000_eval_every_500: 8 V5.8 evals across run; min_steps_before_early_stop=1500 covers warmup+initial convergence window; plateau_evals=3 = 3 consecutive non-improving = ~1500 step plateau window.",
+    "C3_11_orthogonal_to_BG_KJ_chat_template_lane: BG-KJ (V5-α 500M × BG-JY 91MB chat-template) and BG-KK (V5-α 500M × UBM 22MB) are cross-corpus orthogonal lanes. UBM 22MB also bypasses scp 91MB risk that caused BG-KJ attempt1 ($0.53) timeout."
+  ],
+  "errors": [],
+  "honest_c3_count": 11,
+  "pod_id": "x51jlrtytrlufs",
+  "cost_usd": 0.407,
+  "cost_actual_usd": 0.407,
+  "cost_center": "anima.research.v5_alpha_axis.bg_kk",
+  "pod_404_verifications": [
+    {
+      "ts": "2026-05-08T00:17:00",
+      "pod_id": "x51jlrtytrlufs",
+      "result": "OK",
+      "elapsed_s": 110.1
+    }
+  ],
+  "own_16_compliance": {
+    "cost_watchdog": true,
+    "cost_actual_under_cap": true,
+    "cost_actual_under_early_kill": true,
+    "heartbeat_5min": true,
+    "pod_404_verify_10min": true,
+    "raw_86_cost_attribution": true,
+    "honest_c3_ge_9": true,
+    "root_cause_on_fail": true
+  },
+  "pod_deletion_verified": true,
+  "pod_list_post_delete": {
+    "pods_count": 1,
+    "ids": [
+      "475b93kc8405xw"
+    ]
+  }
+}

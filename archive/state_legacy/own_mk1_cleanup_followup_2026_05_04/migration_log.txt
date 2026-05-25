@@ -1,0 +1,107 @@
+own_mk1_cleanup_followup_2026_05_04 — migration log
+=====================================================
+ts_utc_start: 2026-05-04T19:50:00Z (approx)
+operator: BG-Χ² subagent (Opus 4.7 1M)
+authority: user "all fix" + raw#10 push-as-branch safe default
+
+================================================================
+PHASE 1 — launchctl plist file rm
+================================================================
+
+[CMD] launchctl list 2>&1 | grep -i atlas-absorb || echo "GONE (verified)"
+[OUT] GONE (verified)
+      → service already unloaded (BG-π² Phase 1 prior cycle)
+
+[CMD] ls -la ~/Library/LaunchAgents/dev.hexa-lang.atlas-absorb-sweeper.plist
+[OUT] -rw-r--r--@ 1 ghost staff 3263 Apr 26 20:07 ...plist
+      → plist file present (3263 bytes, atime Apr 26)
+
+[CMD] cp ~/Library/LaunchAgents/dev.hexa-lang.atlas-absorb-sweeper.plist \
+         /Users/ghost/core/anima/state/own_mk1_cleanup_followup_2026_05_04/plist_backup.plist
+[OUT] (silent OK, 3263 bytes preserved)
+
+[CMD] rm ~/Library/LaunchAgents/dev.hexa-lang.atlas-absorb-sweeper.plist
+[OUT] RM_DONE
+
+[CMD] ls ~/Library/LaunchAgents/dev.hexa-lang.atlas-absorb-sweeper.plist
+[OUT] No such file or directory   ← VERIFIED
+
+phase_1_verdict: DONE (plist file removed, backup preserved at state/.../plist_backup.plist)
+
+================================================================
+PHASE 2 — hexa-lang branch policy (push-as-branch, NO push exec)
+================================================================
+
+[CMD] cd /Users/ghost/core/hexa-lang && git status --short
+[OUT]  M tool/pkg/registry.tsv
+       ?? stdlib/hf_hub.hexa          ← BG-Φ² territory, do NOT touch
+       ?? stdlib/ieee754.hexa
+       ?? stdlib/sentencepiece.hexa
+       ?? test/regression/array_idx_assign_repro/state/
+       ?? test/regression/import_alias_repro/state/
+
+[CMD] git branch --show-current
+[OUT] diag/orpheus-selftest-sigkill
+
+[CMD] git log --oneline -5
+[OUT] 7569e423 chore(.own removal — mk1_GRANDFATHER per anima 2026-05-04 dual-SSOT EOL Option B)
+      46772646 docs(diag): orpheus puzzle selftest SIGKILL root-cause = O(N²) concat in secp256k1
+      49683580 merge: FIX-2 IEEE-754 reinterpret builtins unblocked (SAFE-1, 22/22 selftest PASS)
+      ...
+
+[CMD] git show --stat 7569e423
+[OUT] commit 7569e4239086d81ea4e02b7eb13baac30d55f4f7
+      Date: Mon May 4 19:43:39 2026 +0900
+      Files: .own | 46 -------------- (46 lines deleted)
+      Co-Authored-By: Claude Opus 4.7 (1M context)
+
+decision: push-as-branch (safe default per raw#10 honest C3 #1 ambiguity)
+recommended_push_cmd (USER-AUTHORIZED, NOT executed by this BG):
+    cd /Users/ghost/core/hexa-lang && git push origin diag/orpheus-selftest-sigkill
+
+phase_2_verdict: DOCUMENTED (push pending user authorization)
+
+================================================================
+PHASE 3 — dirty siblings audit (read-only)
+================================================================
+
+--- nexus (/Users/ghost/core/nexus, branch=main) ---
+[CMD] git status --short | wc -l
+[OUT] 107 dirty entries
+[BREAKDOWN]
+   1  M   (modified, tracked):  n6/atlas.n6 (+5 lines, ω-cycle absorption marker 2026-05-04T08:49:49Z)
+ 106  ??  (untracked):
+       43 ?? n6/atlas.append.*.n6        (paradigm/cycle facts; ω-cycle shards)
+       62 ?? state/kick/runs/*           (kick-infra run artifacts; transient)
+        1 ?? scripts/safety/             (untracked safety scripts dir)
+
+--- orpheus (/Users/ghost/core/orpheus, branch=main) ---
+[CMD] git status --short
+[OUT] ?? state/dormant_explorer/
+
+[FIND] state/dormant_explorer (5 files)
+       state/dormant_explorer/metrics/eval_20260504T084422.jsonl
+       state/dormant_explorer/metrics/metric_20260504T084040.jsonl
+       state/dormant_explorer/archive/dormant_atlas.duckdb
+       state/dormant_explorer/queries/_smoke_fixture.jsonl
+       state/dormant_explorer/queries/q_2013_q1_high_balance_20260504T171938.jsonl
+
+phase_3_verdict: AUDITED (read-only, recommendations in dirty_siblings_audit.md)
+
+================================================================
+SUMMARY
+================================================================
+overall_verdict: PASS
+phase_1: DONE     (plist rm verified, backup preserved)
+phase_2: PENDING  (push-as-branch documented, awaiting user)
+phase_3: AUDITED  (nexus 107 dirty / orpheus 1 untracked dir)
+
+honest_c3:
+  1. hexa-lang stdlib/hf_hub.hexa is BG-Φ² territory — listed in audit but NOT
+     touched (constraint compliance). User should reconcile after BG-Φ² lands.
+  2. nexus dirty=107 is large; per spec read-only audit; user must triage.
+     Most are ω-cycle auto-absorption shards (likely safe to commit batch).
+  3. plist rm is permanent for this file path; backup at state/.../plist_backup.plist
+     for reversibility (user can restore via `cp` if needed).
+
+ts_utc_end: 2026-05-04T19:51:30Z (approx)

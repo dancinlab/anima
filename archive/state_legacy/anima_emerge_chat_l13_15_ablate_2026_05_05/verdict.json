@@ -1,0 +1,56 @@
+{
+  "schema": "anima/emerge_chat_l13_15_ablate/verdict/1",
+  "task_id": "anima_emerge_chat_l13_15_ablate_2026_05_05",
+  "ts_utc": "2026-05-05T18:19:03Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "prompt": "안녕",
+  "n_strategies": 11,
+  "n_emerging_korean": 0,
+  "max_korean_count": 0,
+  "verdict": "FAIL_LAYERS_NOT_THE_FIX",
+  "wall_sec": 46.3,
+  "strategy_A_tap_layers": [
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "strategy_B_skip_configs": [
+    [
+      13,
+      14,
+      15
+    ],
+    [
+      13
+    ],
+    [
+      14
+    ],
+    [
+      15
+    ],
+    [
+      14,
+      15
+    ]
+  ],
+  "honest_c3": [
+    "C1 mac CPU fp32 only; result may shift on bf16/fp16 substrate.",
+    "C2 strategy A 'tap + decode' applies ln_f + head_a to PRE-final-layer hidden -- head_a was trained ONLY on L15 ln_f output. L10..L14 hidden is OOD for head_a; PASS at tap_L<15 indicates 'something Korean-shaped survives early'; FAIL CANNOT conclude the layer is irrelevant -- only that head_a does not compose with that hidden geometry.",
+    "C3 strategy B identity-replace returns inp[0] (residual stream input). For pre-norm transformer blocks this is the residual just BEFORE the block (no attn + no mlp). If the block is post-norm OR uses parallel residual streams, identity passthrough may NOT match the canonical 'skip layer' semantic. Verify via model.config / config.architectures if PASS observed.",
+    "C4 single prompt '안녕' only -- positive result here is suggestive not generalizable; negative result CANNOT rule out per-prompt rescue (BG-BU/BG-BS hinted basin is residual-stream-wide rather than layer-localized).",
+    "C5 BG-CI showed entropy collapses sharply at L14 (10.91 -> 4.01) and L15 (-> 3.31). Layer 13 is the rank-flip onset but L14/L15 do the actual collapse. If Strategy B needs ALL of [13,14,15] to be identity for any rescue, it confirms a 3-layer compound basin -- not a single-layer fix. If only [13] suffices, basin is rank-onset; if [14,15] suffices without [13], basin is final-layer compression."
+  ],
+  "tool_budget_used_estimate": 13,
+  "raw_compliance": {
+    "raw_15_additive_only": true,
+    "raw_37_transient_py_namespace": true,
+    "raw_10_honest_c3": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  }
+}

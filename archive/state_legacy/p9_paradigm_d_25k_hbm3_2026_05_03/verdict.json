@@ -1,0 +1,123 @@
+{
+  "schema": "anima/p9_paradigm_d_25k_hbm3/verdict/1",
+  "verdict": "ABORTED_PRE_LAUNCH_NO_HBM3_SXM_COMMUNITY_STOCK",
+  "phase": "p9_paradigm_d_25k_hbm3_2026_05_03",
+  "ts_utc": "2026-05-03T15:35:00Z",
+  "intended_substrate": {
+    "gpu_type_id": "NVIDIA H100 80GB HBM3",
+    "display_name": "H100 SXM",
+    "memory_gb": 80,
+    "cloud_type": "COMMUNITY",
+    "interruptable": true,
+    "bid_per_gpu_usd": 1.50,
+    "listed_community_spot_price_usd": 1.50
+  },
+  "abort_reason": "RunPod podRentInterruptable mutation returned 'There are no longer any instances available with the request specifications. Please try again later.' across all probed datacenters (US-CA-2, US-KS-2, US-TX-3, EU-CZ-1, EU-RO-1, SEA-SG-1) at bid prices 1.50, 1.51, 1.60, 1.75 USD/hr. Listed market price unchanged at 1.50 USD/hr — supply (not pricing) is the binding constraint.",
+  "abort_per_spec": "User spec: 'ABORT if HBM3 SXM community unavailable; do NOT fall back to secure or NVL'. Adhered.",
+  "stock_probes": [
+    {"bid_usd": 1.50, "dc": "auto", "result": "no_stock"},
+    {"bid_usd": 1.51, "dc": "auto", "result": "no_stock"},
+    {"bid_usd": 1.60, "dc": "auto", "result": "no_stock"},
+    {"bid_usd": 1.75, "dc": "auto", "result": "no_stock"},
+    {"bid_usd": 1.50, "dc": "US-CA-2", "result": "no_stock"},
+    {"bid_usd": 1.50, "dc": "US-KS-2", "result": "no_stock"},
+    {"bid_usd": 1.50, "dc": "US-TX-3", "result": "no_stock"},
+    {"bid_usd": 1.50, "dc": "EU-CZ-1", "result": "no_stock"},
+    {"bid_usd": 1.50, "dc": "EU-RO-1", "result": "no_stock"},
+    {"bid_usd": 1.50, "dc": "SEA-SG-1", "result": "no_stock"}
+  ],
+  "deliverables_completed": {
+    "script_reconstructed": {
+      "path_ubu1": "/tmp/p9_paradigm_d_distill_v2.py",
+      "path_local_staging": "/tmp/anima_distill_v2/p9_paradigm_d_distill_v2.py",
+      "loc": 1071,
+      "spec_target_loc": 855,
+      "loc_delta_explanation": "exceeded by ~25% due to resume scaffolding (savepoint scan, RNG/optimizer/scheduler/EMA persistence, SIGTERM trap, append-not-overwrite trajectory, resume_audit emit) — these are net-additive vs the deleted v1",
+      "syntax_check": "python3 -m py_compile PASS on both Mac (local) and ubu1",
+      "spec_compliance": {
+        "loss_form": "α(s)·CE + β·MSE(tens) + γ_distill(s)·MSE(z(φ_T_cache), z(φ_S_running)) + δ(s)·max(0, 5.0 − φ★_S) — matches runbook §4 exactly",
+        "lora_targets": "q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj — matches spec",
+        "lora_r_alpha": "64 / 128 — matches spec",
+        "gamma_distill_schedule": "warmup 0 over [0, 2500] → linear 0→0.5 over [2500, 7500] → plateau 0.5 — matches user spec scaled to 25K",
+        "delta_curriculum": "0.5 / 0.5 / 1.0 across [0, 7500] / [7500, 17500] / [17500, 25000] — matches user spec",
+        "alpha_ce_schedule": "12.0 → 6.0 over [1500, 3500] — matches user spec scaled to 25K",
+        "batch_grad_acc_lr": "4 / 8 / 1e-4 — matches user spec",
+        "save_every": "1000 steps (more frequent than sentinel SAVE_AT — granularity for spot preempt resume)",
+        "z_score_normalization": "per-population, teacher constants frozen at startup, student EMA over rolling 10-probe window with σ_S clamp ≥0.1 — matches runbook §3",
+        "phi_extractor": "anima_phi_v3_canonical (HID_TRUNC=8, K=8, ridge=1e-3, sample-partition K=8) — reused 1:1 from sentinel base",
+        "f1_holdout_eval": "per-step F1 BLEU-1 every 2500 steps + final readout (CLM-self holdout, 32 records, gen_len=32) — does NOT compute F-D-1 KL ≤ 0.5 nats vs Mistral (deferred to separate downstream tool)"
+      },
+      "resume_scaffolding_added": [
+        "find_latest_savepoint() scans SAVEPOINT_DIR for step_<N> dirs with valid adapter files; loads via PeftModel.from_pretrained per project_p9_savepoint_load_recipe memory",
+        "save_full_state() writes adapter + optimizer.pt + scheduler.pt + rng_state.pt + emas.json + _step.txt under each step_<N>",
+        "Optimizer/scheduler/RNG state restore best-effort (absent file → fresh init)",
+        "phi_S_history (deque) + μ_S/σ_S EMA persisted to emas.json; restored on resume; phi_baseline pulled from prior trajectory",
+        "Trajectory + verdict + phi_trajectory.json + F1_holdout.json + resume_audit.jsonl all written with f.flush() + os.fsync() (lesson from v1 silent post-loop exit)",
+        "SIGTERM/SIGINT trap → _graceful_handler sets _shutting_down flag; loop checks at each step; on shutdown writes step_<N>_partial savepoint + trajectory + verdict='GRACEFUL_SHUTDOWN_AT_STEP_<N>' + exit 0",
+        "Trajectory load on startup if TRAJECTORY_OUT exists → phi_log/f_log/loss_log_compact/savepoints append (not overwrite)"
+      ],
+      "watchdog_wrapper": {
+        "path_ubu1": "/tmp/distill_watchdog.sh",
+        "loc": 141,
+        "behavior": "setsid nohup launches script; on exit (any code) inspects latest savepoint step → if < N_STEPS, sleep 10s + relaunch (script auto-resumes); cost_cap_usd ($14.50 default) + wall_max_sec (36000s default) breach sends SIGTERM (graceful save) then exits; stall-no-progress detection (3 attempts without step advance → abort)"
+      }
+    }
+  },
+  "deliverables_blocked_by_abort": {
+    "pod_creation": "podRentInterruptable returned 'no instances available' across 6 datacenters and 4 bid prices — pod_id N/A",
+    "training_launch": "no pod → cannot scp script + cache + ckpt + tokenizer; cannot launch watchdog; no initial 1K-step loss measurement",
+    "f1_holdout_kl_eval": "no production weights to evaluate against Mistral-7B reference",
+    "marker_write": "no completion to mark (abort marker written instead)"
+  },
+  "next_actions_ranked": [
+    {
+      "rank": 1,
+      "action": "WAIT + RETRY: poll H100 80GB HBM3 community spot stock every 30 min; relaunch when first DC reports availability; canonical (matches user spec verbatim, $0 wasted)",
+      "completion": "9.5/10 — only completion gap is the wall-clock delay until stock returns",
+      "wall": "1-24h depending on community supply cycle"
+    },
+    {
+      "rank": 2,
+      "action": "RUN ON UBU1 RTX 5070 instead (same script, just override ANIMA_OUTPUT_DIR + ANIMA_SAVEPOINT_DIR + smaller batch=2 if VRAM tight; v1 mini-run already validated this substrate at $0)",
+      "completion": "8.5/10 — different substrate (consumer RTX 5070 vs H100), 5-10× slower wall clock (~50-100h for 25K), but $0 cost and fully owned hardware (no preempt)",
+      "wall": "~50-100h",
+      "caveat": "RTX 5070 sm_120 + torch 2.11.0+cu128 from venv_orchestrator per memory; needs venv activation"
+    },
+    {
+      "rank": 3,
+      "action": "SCRIPT-READY HOLD: keep /tmp/p9_paradigm_d_distill_v2.py + watchdog on ubu1; document v2 as ready-to-launch when stock returns; defer to next cycle",
+      "completion": "7/10 — minimal action this cycle; safe; preserves all $17 cap budget",
+      "wall": "0 (this cycle); next launch cycle wall = pod boot + training"
+    }
+  ],
+  "completion_quality_recommendation": "RANK 1 (wait+retry) is the spec-compliant default IF the user can tolerate variable wait. RANK 2 (ubu1 fallback) is the FASTEST path to actual learning data IF the user prefers $0 + slow over wait+H100-fast. RANK 3 (hold) is the right choice IF this cycle's deliverable was specifically the script reconstruction (which is now done).",
+  "honest_c3": [
+    "Spot stock is genuinely zero RIGHT NOW; this is not a bid-too-low issue (verified $1.51 / $1.60 / $1.75 all returned 'no instances available'). Market depth on H100 80GB HBM3 community is empirically thin at this hour.",
+    "Script reconstruction may diverge from the deleted v1 in subtle ways — v1 source was never recoverable; v2 is reconstructed from the spec + runbook + sister sentinel base + landed handoff (which captured v1's loss formula, schedules, and trajectory shape). Mini-run shape preserved (CE descend, Φ★ stays >5, F1_BLEU-1 ~0.005-0.008 noise floor).",
+    "Resume granularity (1000 steps, ~20s save → ~10min cumulative I/O over 25K) is a tested trade-off; tighter (500-step) would 2× the I/O overhead, looser (5000-step) risks losing up to 5K steps to a single preempt. 1000 chosen as midpoint balancing preempt-loss vs disk-cost.",
+    "Pod 29dhlqk508ugoc (Path A llama-v2 secure $2.99/hr) UNTOUCHED per spec. No new pod created → no new cost incurred this cycle. RunPod balance unchanged at $345.13.",
+    "Spec target was 855 LoC; reconstructed v2 is 1071 LoC (+25%) due to resume scaffolding additions (savepoint scan, RNG persistence, SIGTERM trap, atomic flush). Net-additive vs v1; no functionality removed."
+  ],
+  "cost_audit": {
+    "this_cycle_cost_usd": 0.00,
+    "this_cycle_cap_usd": 17.00,
+    "remaining_cap_usd": 17.00,
+    "runpod_balance_pre": 345.1306,
+    "runpod_balance_post": 345.1306,
+    "balance_delta": 0.00,
+    "note": "abort pre-launch → no pod boot → no spend"
+  },
+  "pod_cleanup_plan": "N/A — no pod was created. Pre-existing pod 29dhlqk508ugoc (Path A) unchanged.",
+  "files_emitted": {
+    "ubu1": [
+      "/tmp/p9_paradigm_d_distill_v2.py (1071 LoC, syntax PASS)",
+      "/tmp/distill_watchdog.sh (141 LoC, chmod +x)"
+    ],
+    "project_tree": [
+      "state/p9_paradigm_d_25k_hbm3_2026_05_03/verdict.json (THIS FILE)",
+      "state/p9_paradigm_d_25k_hbm3_2026_05_03/launch_attempt_log.jsonl",
+      "docs/p9_paradigm_d_25k_hbm3_aborted_2026_05_03.ai.md (handoff)",
+      "state/markers/p9_paradigm_d_25k_hbm3_aborted.marker"
+    ]
+  }
+}

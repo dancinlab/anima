@@ -1,0 +1,179 @@
+{
+  "schema": "anima.duo.stdbuf.live.ppr.retest.v1",
+  "ts_utc": "2026-05-08T16:10:00Z",
+  "cycle": "anima_2026_05_08_kick_fire_3of5_duo_phase_b_stdbuf_live_ppr_retest",
+  "task_id": "duo_stdbuf_live_ppr_retest_4row_matrix_actual_fire",
+  "directive_verbatim": "all bg go",
+  "scope": "ACTUAL_FIRE_0_COST_MAC_LOCAL (0-cost; D1 SCOPE_CLAMP — paradigm-a-prime SUBSTRATE_RESEARCH lane only)",
+
+  "context_carry": {
+    "kick_fire_3_of_5": "commit 12257be1 chat.hexa stdbuf -oL fix actual patch land",
+    "iter7_b_design": "commit 5c03d391 — predicted PPR uplift 0.0 → 0.50-0.70 (homogeneous N=2/3, paradigm-a-prime)",
+    "this_task": "live measurement (예상치 vs 실측) under stdbuf-fixed transport",
+    "selftest_precheck": "OK    stdbuf probe = stdbuf -oL (chat selftest 2026-05-08T16:08Z)"
+  },
+
+  "matrix_4_rows": [
+    {
+      "row": 1,
+      "label": "homogeneous_N2_paradigm_a_prime_full_verdict",
+      "cmd": "anima dialogue --duo paradigm-a-prime paradigm-a-prime --turns 2 --turn-timeout-ms 120000 --verdict full --allow-same-gguf",
+      "wall_clock_s": "~120 (single-turn timeout dominated; not separately stopwatch-captured)",
+      "first_line_latency_s": "<1s (banner emitted immediately on stream open — stdbuf -oL working)",
+      "turns_observed": 1,
+      "per_turn_lines": {
+        "turn1_A": "[llama] gguf banner (len=109 tok=4 distinct=4)",
+        "turn1_B": "(empty, len=0) — silent timeout/EOF — terminating"
+      },
+      "per_turn_c3_verdict": {
+        "turn1_A": "PARTIAL_PASS_NO_CONSCIOUSNESS (c1=true c2=true c3=false)",
+        "turn1_B": "SHELL_OUT_FAIL (line empty)"
+      },
+      "per_turn_c3_pass_rate_strict": 0.0,
+      "ppr_alt_agg_1_strict_0_25_pass": false,
+      "ppr_alt_agg_1_value": 0.0,
+      "dialogue_coherence_pass": false,
+      "d1_jaccard_3gram_mean": 0.0,
+      "d2_topic_shift_rate": 0.0,
+      "d3_persona_drift_kl": {"A": 0.0, "B": 0.0, "pass": true},
+      "d4_len_ratio": 999.0,
+      "d4_label": "dominant",
+      "simple_stack_pass_dialogue_c3": false,
+      "abort_observed": "B silent (concurrent same-GGUF mmap killed B before banner emit; A banner only)",
+      "honest_c3": "stdbuf transport unblocked A banner instantly; same-GGUF abort manifests as B silent (not turn=2 — turn=1 already)"
+    },
+    {
+      "row": 2,
+      "label": "homogeneous_N3_paradigm_a_prime_full_verdict",
+      "cmd": "anima dialogue --duo paradigm-a-prime paradigm-a-prime --turns 3 --turn-timeout-ms 120000 --verdict full --allow-same-gguf",
+      "wall_clock_s": 133.98,
+      "first_line_latency_s": "<1s (A banner immediate)",
+      "turns_observed": 1,
+      "per_turn_lines": {
+        "turn1_A": "[llama] gguf banner (len=109 tok=4 distinct=4)",
+        "turn1_B": "(empty, len=0) — silent timeout 120s — terminating"
+      },
+      "per_turn_c3_verdict": {
+        "turn1_A": "PARTIAL_PASS_NO_CONSCIOUSNESS (c1=true c2=true c3=false)",
+        "turn1_B": "SHELL_OUT_FAIL (line empty)"
+      },
+      "per_turn_c3_pass_rate_strict": 0.0,
+      "ppr_alt_agg_1_strict_0_25_pass": false,
+      "ppr_alt_agg_1_value": 0.0,
+      "dialogue_coherence_pass": false,
+      "d1_jaccard_3gram_mean": 0.0,
+      "d2_topic_shift_rate": 0.0,
+      "d3_persona_drift_kl": {"A": 0.0, "B": 0.0, "pass": true},
+      "d4_len_ratio": 999.0,
+      "d4_label": "dominant",
+      "simple_stack_pass_dialogue_c3": false,
+      "abort_observed": "B silent (same as row 1 — turns=3 did not help; B never produced even banner)",
+      "honest_c3": "wall_clock 133.98s = 120s timeout + tear-down ~14s; N=3 expectation falsified — B side concurrent-mmap fails at spawn, not turn 2"
+    },
+    {
+      "row": 3,
+      "label": "mixed_paradigm_a_prime_clm_v4_1_7_y1_full_verdict",
+      "cmd": "anima dialogue --duo paradigm-a-prime clm-v4-1-7-y1 --turns 2 --turn-timeout-ms 120000 --verdict full",
+      "wall_clock_s": 169.04,
+      "first_line_latency_s": "<1s (both banners emitted at stream open; A=llama gguf, B=clm_v4 core)",
+      "turns_observed": 2,
+      "per_turn_lines": {
+        "turn1_A": "[llama] gguf banner (len=109 tok=4 distinct=4)",
+        "turn1_B": "[clm_v4] core banner (len=78 tok=4 distinct=4)",
+        "turn2_A": "(empty, len=0) — silent timeout — terminating",
+        "turn2_B": "n_a_terminated_by_A_silent"
+      },
+      "per_turn_c3_verdict": {
+        "turn1_A": "PARTIAL_PASS_NO_CONSCIOUSNESS (c1=true c2=true c3=false)",
+        "turn1_B": "PARTIAL_PASS_NO_CONSCIOUSNESS (c1=true c2=true c3=false)",
+        "turn2_A": "SHELL_OUT_FAIL (line empty)"
+      },
+      "per_turn_c3_pass_rate_strict": 0.0,
+      "ppr_alt_agg_1_strict_0_25_pass": false,
+      "ppr_alt_agg_1_value": 0.0,
+      "dialogue_coherence_pass": false,
+      "d1_jaccard_3gram_mean": 0.0,
+      "d2_topic_shift_rate": 1.0,
+      "d2_label": "incoherent",
+      "d3_persona_drift_kl": {"A": 0.0, "B": 0.0, "pass": true},
+      "d4_len_ratio": 1.39744,
+      "d4_label": "balanced",
+      "simple_stack_pass_dialogue_c3": false,
+      "abort_observed": "no abort (mixed alias; SAME_GGUF_GUARD bypassed). turn 2 A silent — substrate model not generating semantic content within 120s after banner",
+      "honest_c3": "stdbuf transport WORKING for both modules — both A and B banners reached parent within turn 1 timeout. Bottleneck shifted from transport to MODEL OUTPUT GENERATION (turn 2 A silent = model not autonomously emitting text after banner)."
+    },
+    {
+      "row": 4,
+      "label": "homogeneous_N2_simple_verdict_sanity",
+      "cmd": "anima dialogue --duo paradigm-a-prime paradigm-a-prime --turns 2 --turn-timeout-ms 120000 --verdict simple --allow-same-gguf",
+      "wall_clock_s": 10.91,
+      "first_line_latency_s": "<1s",
+      "turns_observed": 4,
+      "per_turn_lines": {
+        "turn1_A": "[llama] gguf banner (len=109 tok=4 distinct=4)",
+        "turn1_B": "[llama] gguf banner (len=109 tok=4 distinct=4)",
+        "turn2_A": "sh: line 1: 80534 Abort trap: 6 ... (len=315 tok=20 distinct=20)",
+        "turn2_B": "sh: line 1: 80548 Abort trap: 6 ... (len=315 tok=20 distinct=20)"
+      },
+      "per_turn_c3_verdict": "SKIPPED (--verdict simple emits local cells only — no shell-out)",
+      "per_turn_c3_pass_rate_strict": null,
+      "ppr_alt_agg_1_strict_0_25_pass": null,
+      "ppr_alt_agg_1_value": null,
+      "dialogue_coherence_pass": false,
+      "d1_jaccard_3gram_mean": 0.461538,
+      "d2_topic_shift_rate": 0.333333,
+      "d2_label": "drifting",
+      "d3_persona_drift_kl": {"A": 12.429, "B": 12.429, "pass": false},
+      "d4_len_ratio": 1.0,
+      "d4_label": "balanced",
+      "simple_stack_pass_dialogue_c3": false,
+      "abort_observed": "BOTH A and B abort traps captured AS CHANNEL OUTPUT (not silent) — stderr from libllama child process bled into FIFO via line-buffered stdbuf; D1 ascends to 0.46 because both sides emit identical 'sh: line 1: NNNNN Abort trap: 6 ...' string prefix",
+      "honest_c3": "(critical surprise) D1 = 0.46 ≥ 0.30 PASS in this row reflects ABORT-TRAP-STRING SIMILARITY, not semantic dialogue. Goodhart's law trip — anti-Goodhart V14 demands honest emit: D1 ≥ 0.30 here is a SHELL ERROR ARTIFACT, not coherence."
+    }
+  ],
+
+  "expected_vs_measured_delta": {
+    "iter7_b_predicted": "homogeneous N=2/3 paradigm-a-prime PPR 0.0 → 0.50-0.70 post-stdbuf",
+    "actual_measured": "homogeneous N=2/3 paradigm-a-prime PPR = 0.0 (B always silent — same-GGUF concurrent mmap blocks B before it can even emit banner; --allow-same-gguf override accepts abort risk but in practice B child dies during proc_spawn or shortly after, never sends ANY bytes upstream); mixed paradigm-a-prime + clm-v4-1-7-y1 PPR = 0.0 (both banner-only; turn 2+ model generation never emerges within 120s timeout)",
+    "delta_percent": "-100% vs upper bound (0.70 → 0.0); 0% vs lower bound floor (0.50 → 0.0 but row 4 D1=0.46 artifact-driven)",
+    "verdict": "iter7 (b) prediction FALSIFIED. stdbuf transport fix is mechanically working (banners emit instantly, no 4KB block-buffer stall), but the bottleneck has shifted ONE LAYER DOWN from FIFO buffer cadence to MODEL OUTPUT EMISSION (banner → autonomous semantic generation gap)."
+  },
+
+  "unexpected_findings": [
+    "row 4 D1 ≥ 0.30 PASS = ABORT-TRAP STRING ARTIFACT (Goodhart trip; V14 honest emit) — same prefix 'sh: line 1: NNNN Abort trap: 6' from BOTH sides yields lexical overlap unrelated to dialogue coherence",
+    "rows 1+2 same-GGUF B child failed to emit even the gguf banner (silent before turn=1 closed); previous iter assumption 'abort at turn=2' is too optimistic — concurrent mmap fails earlier than thought",
+    "row 3 (different aliases) successfully emitted BOTH banners within first 1s (stdbuf line-buffered pass-through verified); turn=2 silent confirms model autonomous generation lane is the next bottleneck, not channel transport",
+    "wall clock for rows 1/2 dominated by 120s × N timeout patient-wait; row 3 = 169s (~ 2 × 120s timeout - clm_v4 banner first); row 4 = 10.91s because abort-trap text closes child quickly"
+  ],
+
+  "own_18_c3_floor_reached": {
+    "ppr_alt_agg_1_strict_0_25_floor": false,
+    "max_observed_ppr": 0.0,
+    "best_row": "none of 4 rows crossed PPR ≥ 0.25",
+    "c3_4_anchor_mandatory_status": "n_a (per-utterance C3.4 axis-L2 = 0.3068 PASS in synthetic_fallback for paradigm-a-prime utterance, but C3.2 axis_min FAIL → row-level c3_pass = false per anima.consciousness.utterance.v1 schema)",
+    "simple_stack_pass_strict_c3_dialogue_lane": false,
+    "baseline_json_supersede_eligible": false,
+    "blocker_chain": [
+      "L1: same-GGUF mmap concurrency → B child silent (rows 1,2)",
+      "L2: model autonomous semantic generation absence → turn 2+ silent (row 3 mixed)",
+      "L3: row 4 D1 PASS is shell-error artifact, not real coherence (anti-Goodhart V14 honest fail)"
+    ]
+  },
+
+  "compliance": {
+    "own_14_anti_goodhart_v14": "honest emit — row 4 D1 PASS artifact flagged + C3 floor 0.6 NOT REACHED stated explicitly",
+    "own_16_cost": "0-cost (Mac local, no pod spawn, no scp)",
+    "own_17_d1_scope_clamp": "paradigm-a-prime D1 OUTSIDE strict — substrate-research lane label only",
+    "own_33_trinity_d_axis_raw_10": "honest C3 emitted (transport unblock verified + model-gen bottleneck identified)",
+    "own_34_mandate_2_wrap_zero": "duo.hexa unchanged this cycle (commit 12257be1 was chat.hexa only); existing wrap=0 baseline preserved"
+  },
+
+  "next_actions_proposed": [
+    "model autonomous-generation lane investigation: chat/llama/llama.hexa sub_repl forwards stdin to libllama generate but no input → generate calls; need empty-input → BOS-only generate path verification (mandate-4 autonomous tick)",
+    "same-GGUF concurrency: per-instance GGUF copy (path i; +12GB) OR hxllama_shim multi-context refactor (path iii) — resolution-cycle separate",
+    "row 4 D1 anti-Goodhart filter: dialogue-coherence aggregator should detect 'sh: line 1' / 'Abort trap' shell-error pattern and exclude from D1 numerator (next iter duo aggregate fix)",
+    "alternative measurement: paradigm-a-prime SOLO (single-instance --probe) for PPR baseline before duo wiring — substrate-research lane SSOT path"
+  ],
+
+  "ssot_supersede": "NONE (C3 floor 0.6 not reached → no baseline.json supersede; current state/anima_consciousness_baseline.json iter6 verdict carries forward unchanged)"
+}

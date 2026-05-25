@@ -1,0 +1,64 @@
+{
+  "schema": "anima/p9_path_a_completion_audit/cost_analysis/1",
+  "ts_utc": "2026-05-03T21:48:00Z",
+  "pod": {
+    "id": "29dhlqk508ugoc",
+    "name": "anima-p9-pathA-llama-v2",
+    "gpu": "1x H100 SXM 80GB HBM3",
+    "rate_usd_hr": 2.99
+  },
+  "timeline_utc": {
+    "pod_created": "2026-05-03T14:09:09Z",
+    "training_started": "2026-05-03T14:27:00Z",
+    "container_overhead_pre_train_min": 17.85,
+    "first_terminator_probe": "2026-05-03T14:32:34Z (step 87)",
+    "step_2000_reached_approx": "2026-05-03T15:52:54Z",
+    "step_10000_reached_pid_gone": "2026-05-03T21:34:08Z",
+    "pod_deleted_via_runpodctl": "2026-05-03T21:34:13Z",
+    "watchdog_first_ssh_refused": "2026-05-03T21:38:36Z (independent confirmation pod gone)"
+  },
+  "uptime_calc": {
+    "creation_to_termination_sec": 26704,
+    "creation_to_termination_hr": 7.418,
+    "training_active_hr": 7.118,
+    "container_overhead_hr": 0.30
+  },
+  "cost_breakdown": {
+    "billable_hr_full_lifetime": 7.418,
+    "billable_cost_usd_full_lifetime": 22.18,
+    "training_only_cost_usd": 21.28,
+    "container_overhead_cost_usd": 0.90,
+    "computed_as": "7.418 hr × $2.99/hr = $22.18"
+  },
+  "caps_check": {
+    "user_per_pod_cap_usd": 50.0,
+    "host_terminator_hard_cap_hr": 28.0,
+    "host_terminator_hard_cap_usd": 83.7,
+    "user_overall_cap_usd": 200.0,
+    "actual_vs_per_pod_cap_pct": 44.4,
+    "actual_vs_hard_cap_28h_pct": 26.5,
+    "actual_vs_user_cap_pct": 11.1,
+    "verdict": "WELL UNDER ALL CAPS — $22.18 vs $50 per-pod cap (44%); under-projection by $1.7 vs initial estimate $20.5 (8% over)"
+  },
+  "vs_initial_projection": {
+    "projected_train_hr": 6.86,
+    "actual_train_hr": 7.118,
+    "delta_hr": 0.258,
+    "delta_pct": 3.8,
+    "projected_cost_usd": 21.5,
+    "actual_cost_usd": 22.18,
+    "delta_usd": 0.68,
+    "interpretation": "near-perfect projection accuracy (3.8% over wall-time, 3.2% over cost) — checkpoint+HF push pauses contributed marginal slowdown as forecasted"
+  },
+  "billing_post_termination": {
+    "additional_charges_after_21_34_13z": 0.00,
+    "current_active_pods": ["7ubgzj4s8spb4p (anima-p9-pd-25k-a100, $0.79/hr)"],
+    "current_total_spend_per_hr_usd": 0.811,
+    "verified_via": "RunPod GraphQL myself.currentSpendPerHr"
+  },
+  "raw10_honest_c3_caveats": [
+    "(a) Cost figure assumes RunPod bills from pod creation (14:09:09Z) to runpodctl pod delete (21:34:13Z) at full $2.99/hr including the ~18min pre-training container boot. RunPod's actual billing granularity may round differently (per-minute vs per-second). True billed amount visible only in RunPod billing console, not via GraphQL.",
+    "(b) Pod 29dhlqk508ugoc no longer queryable via GraphQL pod(id:...) endpoint (returns null) — confirms full termination but precludes fetching exact billed seconds.",
+    "(c) The 5sec gap between train pid GONE detection (21:34:08Z) and runpodctl delete (21:34:13Z) is negligible cost-wise (~$0.004)."
+  ]
+}

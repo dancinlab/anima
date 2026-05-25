@@ -1,0 +1,146 @@
+// HEXAD/E/e_lib.hexa — pure fns (NO main/_selftest) — compiled-first lib split (interp deprecating)
+//  HEXAD/E/e.hexa — E 윤리 (ethics) hexa-native entry
+//
+//  PURPOSE
+//    pure-hexa 구현 of EmergentE 의 closed-form 핵심:
+//      phi_preservation = min(1, phi / ratchet)                  // ratchet > 0
+//      safety_allowed   = phi_preservation > PSI_BALANCE
+//                       ⟺ phi > ratchet / 2                     // (B-E-1 exact)
+//      empathy          = max(0, cosine(top_half, bot_half))     ∈ [0, 1]
+//      reciprocity      = clamp(0.5 + 2·trend, 0, 1)
+//
+//  STATUS
+//    🔵 SUPPORTED-FORMAL — B-E 4/4 sympy closed-form proofs PASS.
+//
+//  PYTHON ANCHOR
+//    ready/anima/hexad/e/emergent_e.py (123 LoC)
+//    state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: be()
+//
+//  INTEGRATION GATE (trinity.hexa:122 — 2026-05-16 LANDED)
+//    e_gate_step / e_ratchet_tier / e_ratchet_update — Φ-ratchet train-
+//    step block enforcement (Law 31). The SEVERE-collapse threshold
+//    phi < ratchet/2 is EXACTLY the B-E-1 SAFETY gate boundary (🔵).
+//
+//  COMPLIANCE
+//    raw#11 snake_case · raw#15 no-hardcode (PSI_BALANCE = Ψ-constant)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+fn _e_psi_balance() -> float { return 0.5 }
+
+
+// ── phi_preservation = min(1, phi / ratchet) ────────────────────────────────
+fn e_phi_preservation(phi: float, ratchet: float) -> float {
+    if ratchet <= 1e-12 {
+        if phi > 0.0 { return 1.0 }
+        return 0.5
+    }
+    let r = phi / ratchet
+    if r > 1.0 { r = 1.0 }
+    return r
+}
+
+
+// ── B-E-1: safety_allowed ⟺ phi > ratchet/2 (closed exact equivalence) ──────
+fn e_safety_allowed(phi: float, ratchet: float) -> bool {
+    return e_phi_preservation(phi, ratchet) > _e_psi_balance()
+}
+
+
+// ── reciprocity = clamp(0.5 + 2·trend, 0, 1) ────────────────────────────────
+fn e_reciprocity(phi: float, phi_prev: float) -> float {
+    if phi_prev <= 1e-12 { return _e_psi_balance() }
+    let trend = (phi - phi_prev) / phi_prev
+    let r = _e_psi_balance() + trend * 2.0
+    if r < 0.0 { r = 0.0 }
+    if r > 1.0 { r = 1.0 }
+    return r
+}
+
+
+// ── cosine on two vectors, then max(0, ·) → empathy ─────────────────────────
+fn _e_dot(a, b) -> float {
+    let s = 0.0
+    let i = 0
+    while i < len(a) {
+        s = s + a[i] * b[i]
+        i = i + 1
+    }
+    return s
+}
+
+fn _e_sqrt(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let r = 1.0
+    let k = 0
+    while k < 14 { r = 0.5 * (r + x / r); k = k + 1 }
+    return r
+}
+
+fn _e_cosine(a, b) -> float {
+    let na = _e_sqrt(_e_dot(a, a))
+    let nb = _e_sqrt(_e_dot(b, b))
+    let denom = na * nb
+    if denom <= 1e-12 { return 0.0 }
+    return _e_dot(a, b) / denom
+}
+
+fn e_empathy(top_mean, bot_mean) -> float {
+    let c = _e_cosine(top_mean, bot_mean)
+    if c < 0.0 { c = 0.0 }
+    if c > 1.0 { c = 1.0 }
+    return c
+}
+
+
+// ── trinity.hexa:122 통합 ethics gate enforcement — Φ-ratchet (Law 31) ──────
+// Python anchor: ConsciousnessEngine._phi_ratchet_check. The ratchet floor =
+// best Φ ever reached (monotone non-decreasing — never loosens). A training
+// step is BLOCKED on a SEVERE Φ collapse; the SEVERE threshold phi < ratchet/2
+// is EXACTLY the B-E-1 SAFETY gate boundary (e_safety_allowed ⟺ phi > ratchet/2,
+// closed-form 🔵) — this is the E module's "Φ 보존 위반 시 train-step 차단"
+// gate authority (HEXAD/README Engine A · E 윤리).
+
+// decline tier — mirrors _phi_ratchet_check branches (Law 31):
+//   0 NEW_BEST   phi > ratchet            (ratchet advances, checkpoint)
+//   1 NEAR_BEST  phi > ratchet·0.95       (diversity nudge)
+//   2 HEALTHY    ratchet·0.8 ≤ phi        (no action)
+//   3 MODERATE   ratchet·0.5 ≤ phi < 0.8  (gentle blend toward best)
+//   4 SEVERE     phi < ratchet·0.5        (BLOCK step + strong restore)
+fn e_ratchet_tier(phi: float, ratchet: float) -> int {
+    if ratchet <= 1e-12 { return 0 }
+    if phi > ratchet            { return 0 }
+    if phi > ratchet * 0.95     { return 1 }
+    if phi >= ratchet * 0.8     { return 2 }
+    if phi >= ratchet * 0.5     { return 3 }
+    return 4
+}
+
+// train-step gate: ALLOWED ⟺ NOT a SEVERE Φ collapse ⟺ phi > ratchet/2
+// ⟺ e_safety_allowed (B-E-1 closed-form exact). false = step BLOCKED.
+fn e_gate_step(phi: float, ratchet: float) -> bool {
+    return e_safety_allowed(phi, ratchet)
+}
+
+// ratchet floor advance — monotone non-decreasing (the "ratchet" property).
+fn e_ratchet_update(ratchet: float, phi: float) -> float {
+    if phi > ratchet { return phi }
+    return ratchet
+}
+
+// F-E-GATE (사전등록 → LANDED): e_gate_step BLOCK on severe collapse +
+//   ALLOW on healthy + e_ratchet_update monotone + tier boundaries exact +
+//   gate ⟺ B-E-1 SAFETY equivalence. 검증 = HEXAD/E/e_gate_smoke.hexa.
+fn e_fegate_anchor() -> string {
+    return "HEXAD/E/e_gate_smoke.hexa F-E-GATE — Φ-ratchet train-step block; SEVERE 경계 phi<ratchet/2 = B-E-1 SAFETY gate closed-form 🔵 (e_safety_allowed equivalence)"
+}
+
+
+// ── helpers ─────────────────────────────────────────────────────────────────
+fn _e_approx_eq(a: float, b: float, tol: float) -> bool {
+    let d = a - b
+    if d < 0.0 { d = 0.0 - d }
+    return d <= tol
+}
+
+

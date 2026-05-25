@@ -1,0 +1,20 @@
+[2026-05-03T23:58:10] validator start | cache=/tmp/p9_paradigm_d_kl_cache_v1_1k.jsonl N=10
+[2026-05-03T23:58:15] cache size: 1000 records
+[2026-05-03T23:58:15] sampled idxs: [39, 147, 292, 378, 473, 687, 712, 715, 780, 982]
+[2026-05-03T23:58:16] sanity: vocab_in_range=True sorted=True checked_tokens=207188
+[2026-05-03T23:58:16] loading 4-bit Mistral for re-forward...
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]/home/aiden/venv_orchestrator/lib/python3.12/site-packages/bitsandbytes/backends/cuda/ops.py:213: FutureWarning: _check_is_size will be removed in a future PyTorch release along with guard_size_oblivious.     Use _check(i >= 0) instead.
+  torch._check_is_size(blocksize)
+Loading weights:   1%|▏         | 4/291 [00:00<00:07, 37.42it/s]Loading weights:   6%|▌         | 17/291 [00:00<00:03, 89.80it/s]Loading weights:  11%|█         | 32/291 [00:00<00:02, 111.31it/s]Loading weights:  17%|█▋        | 49/291 [00:00<00:01, 127.36it/s]Loading weights:  21%|██▏       | 62/291 [00:00<00:01, 127.25it/s]Loading weights:  26%|██▋       | 77/291 [00:00<00:01, 130.79it/s]Loading weights:  32%|███▏      | 94/291 [00:00<00:01, 137.26it/s]Loading weights:  37%|███▋      | 108/291 [00:00<00:01, 134.96it/s]Loading weights:  42%|████▏     | 122/291 [00:00<00:01, 133.01it/s]Loading weights:  48%|████▊     | 139/291 [00:01<00:01, 137.81it/s]Loading weights:  53%|█████▎    | 153/291 [00:01<00:01, 135.19it/s]Loading weights:  57%|█████▋    | 167/291 [00:01<00:00, 133.78it/s]Loading weights:  63%|██████▎   | 184/291 [00:01<00:00, 138.38it/s]Loading weights:  68%|██████▊   | 198/291 [00:01<00:00, 136.42it/s]Loading weights:  73%|███████▎  | 212/291 [00:01<00:00, 134.95it/s]Loading weights:  79%|███████▊  | 229/291 [00:01<00:00, 138.96it/s]Loading weights:  84%|████████▎ | 243/291 [00:01<00:00, 135.64it/s]Loading weights:  88%|████████▊ | 257/291 [00:01<00:00, 133.60it/s]Loading weights:  94%|█████████▍| 274/291 [00:02<00:00, 138.33it/s]Loading weights:  99%|█████████▉| 288/291 [00:02<00:00, 135.84it/s]Loading weights: 100%|██████████| 291/291 [00:02<00:00, 132.71it/s]
+[2026-05-03T23:58:21] model reloaded | mem=4.14GB
+[2026-05-03T23:58:22] idx=39 len=256 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=147 len=94 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=292 len=88 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=378 len=114 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=473 len=106 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=687 len=256 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=712 len=83 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=715 len=256 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=780 len=256 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=982 len=256 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] validation: VERDICT=PASS mean_overlap=64.00/64

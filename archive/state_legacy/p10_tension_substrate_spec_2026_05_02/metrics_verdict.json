@@ -1,0 +1,47 @@
+{
+  "session": "2026-05-02",
+  "agent": "F1 EXEC P10 tension_substrate",
+  "phase": "3_metrics",
+  "thresholds": {
+    "M_5ch_coherence_pass": "ae_mse < 0.50 (normalized)",
+    "M_5ch_quality_pass": "bleu1 > 0.20",
+    "M_BOLD_alignment_pass": "pearson_r > 0.30 (deferred)"
+  },
+  "results": {
+    "M_5ch_coherence": {
+      "ae_mse_mean": 3.894e-05,
+      "verdict": "PASS_TRIVIAL",
+      "honest_note": "AE round-trip near zero NOT because 5-d carries info, but because z collapsed to constant ~(-1,-1,-1,-1,-1) saturated at tanh; decoder always emits same prefix; round-trip is trivially exact"
+    },
+    "M_5ch_quality": {
+      "bleu1_mean": 0.2861,
+      "bleu1_per_turn": [0.295, 0.222, 0.341],
+      "verdict": "PASS_THRESHOLD_BUT_SPURIOUS",
+      "honest_note": "BLEU-1 > 0.20 met, but text diversity comes from Llama sampling temperature (do_sample=True, T=0.8) NOT from z; identical z produces wildly different decoded text per call"
+    },
+    "M_BOLD_alignment": {
+      "verdict": "DEFERRED",
+      "reason": "TRIBE BOLD validation requires full encoder run; out of POC scope (gamma=0)"
+    }
+  },
+  "training_summary": {
+    "epoch_0": {"ce": 2.7947, "ae": 0.1730},
+    "epoch_1": {"ce": 0.5784, "ae": 0.0002},
+    "epoch_2": {"ce": 0.1901, "ae": 0.0000},
+    "wall_seconds": 8.0,
+    "verdict": "TRAIN_PASS (loss decreased monotonically, no NaN after fp32 fix)"
+  },
+  "headline_verdict": "MIXED — train converged and surface metrics PASS, but the 5-d bottleneck collapsed to a single saturated point (mode collapse). The architecture as specified is NOT yet a working substrate; CE loss was minimized by the decoder learning to emit a fixed reflective-prefix that the LM then continues regardless of input.",
+  "interpretation": [
+    "Confirms C3a prior: 5-d bottleneck loses prompt-level info under this loss formulation",
+    "Decoder + frozen Llama trivially solves CE by collapsing prefix to a single 'safe' starting point",
+    "Need: stronger conditioning loss (e.g. contrastive between buckets), z-diversity penalty, or larger latent (32-128d)",
+    "Need: per-bucket E_theta evaluation to confirm collapse vs partial preservation"
+  ],
+  "next_steps_v2": [
+    "Add InfoNCE contrastive loss between buckets (push apart introspective vs math z's)",
+    "Increase latent to 32d or use 5 channels each as 8-bit codebook (40 effective bits)",
+    "Train E_theta + LoRA on Llama jointly (frozen Llama is too strong a prior)",
+    "Per-bucket z visualization (PCA / t-SNE) to confirm separation"
+  ]
+}

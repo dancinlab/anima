@@ -1,0 +1,15 @@
+[vestibular/multimodal_fusion] PHYS-P7-3 — vestibular/haptic/visual fusion
+  θ̂ = Σ π_i · x_i / Σ π_i   (precision-weighted Bayes)
+
+  [T1] π=[1,1,1] fuse=(float) want=(float) err=(float)
+T1 PASS — equal precisions → arithmetic mean
+  [T2] π=[1000,1,1] fuse=(float) |fuse−v|=(float)
+T2 PASS — dominant precision pins the estimate
+  [T3] π=[1,1,0] fuse=(float) (expect 0.3) in_range=true
+T3 PASS — zero-precision modality is ignored
+  [T4] short=(float) empty=(float) neg=(float) zero=(float)
+T4 PASS — API guards (length, empty, negative, zero)
+  [T5] two calls: a=(float) b=(float) Δ=(float)
+T5 PASS — deterministic fuse()
+
+[vestibular/multimodal_fusion] 5/5 PASS — PHYS-P7-3 DONE

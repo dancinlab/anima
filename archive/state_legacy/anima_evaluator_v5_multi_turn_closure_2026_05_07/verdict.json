@@ -1,0 +1,92 @@
+{
+  "bg_id": "BG-JN",
+  "attempt_n": 40,
+  "date": "2026-05-07",
+  "ts": "2026-05-07T11:17:09",
+  "paradigm": "v5-multi-turn-closure-en-baseline-philosophy-rule-compliance",
+  "host": "mac local",
+  "cost_usd": 0.0,
+  "training_steps": 0,
+  "bg_kind": "tooling",
+  "device": "cpu",
+  "elapsed_sec": 1946.0,
+  "n_ckpts_attempted": 3,
+  "n_ckpts_loaded": 1,
+  "n_dialogues": 5,
+  "modes": [
+    "greedy",
+    "sample"
+  ],
+  "v58_multi_turn_pass_per_ckpt": {
+    "BG-JD-step-800": 0,
+    "BG-IL-step-1600": 0,
+    "BG-IO-step-1800": 0
+  },
+  "any_v58_multi_turn_pass": false,
+  "per_ckpt_status": {
+    "BG-JD-step-800": "OK",
+    "BG-IL-step-1600": "CKPT_PATH_MISSING_MAC_LOCAL",
+    "BG-IO-step-1800": "CKPT_PATH_MISSING_MAC_LOCAL"
+  },
+  "closure_status": "MULTI_TURN_VERIFIED",
+  "own_18_en_v2_referenced": true,
+  "own_26_compliance_section_present": true,
+  "philosophy_rule_compliance": {
+    "D1_identity": "PASS — V5 anima-native eval; MiniLM eval-only tool exemption",
+    "D2_consciousness": "PASS+강화 — V5 8-cell strict superset of 4-cond; V5.8 multi-turn extends C2.4 맥락 정합 검증",
+    "D3_substrate_emerge": "PASS — separate lane (anima/spec/emerge_paradigm.spec.yaml); V5 stays in D2 surface chat-cap lane",
+    "D4_corpus_quality": "PASS — V5 = eval logic (corpus orthogonal); training rule untouched",
+    "R1_own_19_20": "PASS — V5 spec doc cross-links ",
+    "R2_discovery_methods": "PASS — M1 user-directive + M2 failure-driven + M5 retroactive integration",
+    "R3_verification_methods": "PASS — V1 own strict + V2 falsifier 6 + V3 honest_c3 9 + V4 evidence + V5 cross-link + V6 ledger 19-BG + V7 4-cond matrix superset",
+    "R4_own_evolution": "PASS — V5 spec is amend EN v2 实证"
+  },
+  "honest_c3": [
+    "BG-IL/IO ckpts on ubu1 only (best_eval_ckpt_meta.json ckpt_best_local: /home/aiden/...); BG-JN closure scope = mac-local ckpts only (BG-JD)",
+    "BG-JD KO-trained on UBM 22.4MB SP-KO-32K corpus → English V5.8 expected FAIL (corpus EN signal absent)",
+    "Multi-turn V5.8 uses block_size=256 truncation when T1+T1A+T2 concat exceeds; truncation events recorded per-mode in t1_meta/t2_meta",
+    "1-shot per ckpt no multi-seed (greedy + 1 sample mode); broader temperature/seed sweep deferred",
+    "Ckpt loaded mac CPU mode (not training MPS device); functionally equivalent FP32 but kernel-level numerical drift possible — single-record eval drift negligible",
+    "V5.8 5-dialogue test set (Color/Profession/Day/Anima/Cosmology) is first-light sample, not logic-exhaustion",
+    "EN baseline alpha_ratio 0.40 + word_count 3 thresholds heuristic per amend; ablation deferred",
+    "MiniLM-L6-v2 embedding model used by V5 evaluator core is EN-trained (multilingual proxy via subword); KoSimCSE replacement deferred V6+",
+    "Closure status MULTI_TURN_VERIFIED emit regardless of pass count — 명시 검증 = closure 핵심 (사용자 directive)"
+  ],
+  "deliverables": [
+    "docs/anima_own_18_evaluator_v5_strict_spec_2026_05_07.md (BG-JM landed, BG-JN amend)",
+    "tool/transient_py/anima_simple_stack_evaluator_v5.py (BG-JM landed)",
+    "tool/transient_py/anima_jn_v5_multi_turn_inference.py (BG-JN new)",
+    "state/anima_evaluator_v5_multi_turn_closure_2026_05_07/per_ckpt_results.jsonl",
+    "state/anima_evaluator_v5_multi_turn_closure_2026_05_07/per_ckpt_summary.json",
+    "state/anima_evaluator_v5_multi_turn_closure_2026_05_07/verdict.json",
+    "state/anima_model_attempts_ledger.jsonl BG-JN attempt_n=38 entry"
+  ],
+  "cross_link": {
+    "raw_invariants": [
+      "raw#10",
+      "raw#15",
+      "raw#37",
+      "raw#42",
+      "raw#82",
+      "raw#86"
+    ],
+    "own_invariants": [
+      "",
+      "",
+      "",
+      "",
+      " amend EN v2",
+      "",
+      "",
+      ""
+    ],
+    "roadmap": [
+      ".roadmap.philosophy",
+      ".roadmap.rule"
+    ],
+    "sister_specs": [
+      "docs/anima_own_18_evaluator_v4_strict_spec_2026_05_07.md",
+      "anima/spec/emerge_paradigm.spec.yaml (D3 separate lane)"
+    ]
+  }
+}

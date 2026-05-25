@@ -1,0 +1,158 @@
+{
+  "schema": "anima_phase_e_perfect_baseline_protocol.verdict.v1",
+  "ts_utc": "2026-05-05T11:58:53Z",
+  "bg_lane": "EEG-EC-EO-PERFECT-PROTOCOL",
+  "purpose": "EC/EO Berger baseline 5-tier perfect protocol — guarantee user one-shot PASS on first --fire after hardware reseat. $0 mac-native, ~5-7 min wall.",
+
+  "script_paths": {
+    "orchestrator_py": "/Users/ghost/core/anima/tool/transient_py/anima_phase_e_perfect_baseline.py",
+    "orchestrator_loc": 540,
+    "bash_wrapper": "/Users/ghost/core/anima/bin/anima-eeg-baseline.bash",
+    "bash_wrapper_chmod_x": true,
+    "companion_doc": "/Users/ghost/core/anima/docs/anima_phase_e_perfect_baseline_protocol_landed_2026_05_05.md"
+  },
+
+  "5_tier_protocol_design": {
+    "tier1_preflight_user_reseat": {
+      "manual_steps": [
+        "Cyton power OFF -> wait 5s -> PC mode (USB-PC, NOT BLE)",
+        "Daisy 16-pin header seated",
+        "SRB2/bias ear-clip both sides attached",
+        "O2 + P4 explicit re-seat with saline 1-2 drops + scalp contact",
+        "User visual verification before --fire"
+      ],
+      "automated_steps": [
+        "pkill -9 -f anima_eeg_collect_helper (port lock release)",
+        "hexa run anima-eeg/impedance_check.hexa --check (require 16/16 GREEN)",
+        "hexa run anima-eeg/board_health_check.hexa --check (no BOARD_PINS_SHORTED)"
+      ]
+    },
+    "tier2_pre_berger_sanity_30s": {
+      "duration_s": 30,
+      "thresholds": {
+        "occipital_alpha_uV2_range": [1.0, 200.0],
+        "frontal_alpha_lenient_max_uV2": 50.0,
+        "mean_cross_corr_max": 0.60
+      },
+      "behavior_on_fail": "abort main capture, emit recipe (which electrodes to re-seat)"
+    },
+    "tier3_audio_cue_protocol": {
+      "voice": "Yuna (macOS say -v Yuna)",
+      "language": "Korean",
+      "settle_s": 3,
+      "countdown_from": 5,
+      "cue_script": {
+        "preamble": "5초 후 측정을 시작합니다. 화면 안내를 따라주세요.",
+        "ec_start": "눈을 감으세요",
+        "ec_half": "절반 진행",
+        "ec_end": "눈을 뜨세요. 정면을 바라보세요",
+        "eo_start": "측정 계속",
+        "end": "측정 완료. 수고하셨습니다"
+      }
+    },
+    "tier4_capture_orchestration": {
+      "method": "direct collect.hexa subprocess (bypasses berger_session_audio wrapper BRAINFLOW_TIMEOUT)",
+      "env_overrides": {"HEXA_LOCAL": "1"},
+      "blocks": ["sanity_30s", "berger_ec_60s", "berger_eo_60s"],
+      "output_dir_pattern": "state/anima_phase_e_eeg_perfect_<TS>/"
+    },
+    "tier5_post_capture_falsifiers": {
+      "n_falsifiers": 5,
+      "falsifiers": {
+        "F_BERGER_1": "EC/EO occipital alpha ratio >= 1.5 on at least one of O1/O2",
+        "F_BERGER_2": "EC occipital alpha sum > EC frontal alpha sum",
+        "F_CHANNEL_SANITY": "every channel alpha in [1, 100] uV^2",
+        "F_EOG_CLEAN": "frontal RMS / occipital RMS < 5x",
+        "F_CROSS_CORR": "max off-diagonal cross-channel correlation < 0.95"
+      },
+      "verdict_pass": "ALL 5 falsifiers PASS",
+      "recipe_on_fail": "bilingual EN+KO bullet list keyed on each failed falsifier"
+    }
+  },
+
+  "selftest": {
+    "scenarios": [
+      {"name": "PASS",                "expected_pass": true,  "tier2": "PASS", "tier5": "PASS", "correct": true},
+      {"name": "FAIL_O2_anomaly",     "expected_pass": false, "tier2": "FAIL", "tier5": "FAIL", "correct": true},
+      {"name": "FAIL_board_contam",   "expected_pass": false, "tier2": "FAIL", "tier5": "FAIL", "correct": true},
+      {"name": "FAIL_EOG",            "expected_pass": false, "tier2": "PASS", "tier5": "FAIL", "correct": true},
+      {"name": "FAIL_extreme_drift",  "expected_pass": false, "tier2": "FAIL", "tier5": "FAIL", "correct": true}
+    ],
+    "n_correct": 5,
+    "n_total": 5,
+    "ok": true,
+    "selftest_json_path": "/tmp/anima_phase_e_selftest.json",
+    "selftest_run_command": "/Users/ghost/core/anima/bin/anima-eeg-baseline.bash --selftest --emit-selftest-json /tmp/anima_phase_e_selftest.json"
+  },
+
+  "expected_user_session_wall_min": 6,
+  "expected_user_session_wall_breakdown_min": {
+    "tier1_preflight_manual_reseat_user": 2.5,
+    "tier1_impedance_board_health_auto": 0.8,
+    "tier2_sanity_30s": 0.7,
+    "tier3_4_ec_60s_with_cues": 1.2,
+    "tier3_4_eo_60s_with_cues": 1.2,
+    "tier5_analysis_+_verdict_emit": 0.1
+  },
+
+  "ready_for_user_fire": true,
+  "user_fire_command": "/Users/ghost/core/anima/bin/anima-eeg-baseline.bash --fire",
+
+  "honest_c3": [
+    {
+      "id": "C1",
+      "scope": "hardware_reseat_user_side",
+      "claim": "Tier 1 manual reseat is user hands-on; this script cannot guarantee good electrode contact. Worst case: user fires before saline applied, Tier 1 impedance fails, recipe emitted, retry needed."
+    },
+    {
+      "id": "C2",
+      "scope": "selftest_uses_synthetic_arrays",
+      "claim": "5/5 scenario PASS based on numpy-generated waveforms. First real-hardware fire may surface failure modes not modeled (e.g., 60Hz line noise, motion artefact, intermittent dongle dropout). Tier 5 recipe is generic; specific channel naming may need tuning after real-data review."
+    },
+    {
+      "id": "C3",
+      "scope": "falsifier_thresholds_anima_internal",
+      "claim": "Alpha [1, 100] uV^2 / EOG <5x / cross-corr <0.95 / Berger ratio >=1.5 are anima-internal heuristics derived from 2026-05-03+04 capture audit (v6 board contamination + O2/P4 anomaly). Not literature universal cutoffs. Tunable in source constants block."
+    },
+    {
+      "id": "C4",
+      "scope": "korean_cues_yuna_locale",
+      "claim": "say -v Yuna requires macOS Korean voice installed. Falls back to text-print only if /usr/bin/say missing or voice unavailable. Non-Mac platforms: no audio cue (visible cue print to stdout only)."
+    },
+    {
+      "id": "C5",
+      "scope": "baseline_only_not_phase_e_main",
+      "claim": "Passing this 5-tier baseline is a NECESSARY but NOT SUFFICIENT condition for the Phase E main 15-min reading protocol. The longer protocol has additional failure modes (drift, fatigue, cap migration over 15 min) that this 60s-block test cannot validate."
+    },
+    {
+      "id": "C6",
+      "scope": "raw37_transient_namespace",
+      "claim": "Orchestrator lives at tool/transient_py/ per anima .own opt-out namespace. Not git-tracked unless deliberately added. Bash wrapper at bin/ IS git-tracked and is the user-facing entrypoint."
+    }
+  ],
+
+  "raw_compliance": [
+    "raw#9 hexa-only (sister-rule raw#37 transient via tool/transient_py/ namespace)",
+    "raw#10 honest C3 (>=5 caveats above)",
+    "raw#15 additive (no edits to existing collect.hexa / impedance_check.hexa / board_health_check.hexa)",
+    "raw#37 transient-helper (orchestrator under tool/transient_py/ + DOES NOT execute on real HW until user --fire)",
+    "raw#71 falsifier-preregistered (5 falsifiers, thresholds in source)",
+    "raw#91 honest-triad (synthetic-only selftest, no fabricated real-HW claims)"
+  ],
+
+  "files_created": [
+    "/Users/ghost/core/anima/tool/transient_py/anima_phase_e_perfect_baseline.py",
+    "/Users/ghost/core/anima/bin/anima-eeg-baseline.bash",
+    "/Users/ghost/core/anima/docs/anima_phase_e_perfect_baseline_protocol_landed_2026_05_05.md",
+    "/Users/ghost/core/anima/state/anima_phase_e_perfect_baseline_protocol_2026_05_05/verdict.json"
+  ],
+  "files_NOT_modified": [
+    "/Users/ghost/core/anima/anima-eeg/collect.hexa (untouched — Tier 4 calls via subprocess only)",
+    "/Users/ghost/core/anima/anima-eeg/impedance_check.hexa (untouched — Tier 1 calls via subprocess only)",
+    "/Users/ghost/core/anima/anima-eeg/board_health_check.hexa (untouched — Tier 1 calls via subprocess only)",
+    "/Users/ghost/core/anima/anima-eeg/protocols/berger_session_audio.hexa (untouched — bypassed due to BRAINFLOW_TIMEOUT)"
+  ],
+  "git_committed": false,
+  "real_hardware_executed": false,
+  "user_fire_decision_pending": true
+}

@@ -1,0 +1,57 @@
+{
+  "cycle": "G8_E2E_demo",
+  "date": "2026-05-21",
+  "binary_run_via": "hexa run (interpret + native compile)",
+  "wall_s": 4.41,
+  "exit_code": 0,
+  "n_sub_steps": 100,
+  "lcg_seed": 1337,
+  "layers": {
+    "layer1_substrate": {
+      "source": "anima-physics/fpga/strange_loop.hexa (mirror, no random)",
+      "n_steps": 100,
+      "state_history_len": 101,
+      "attractor_first_repeat_at": 8,
+      "attractor_fixed_point": "a=(1,1,1,1) b=(2,2,2,2)"
+    },
+    "layer2_engine": {
+      "source": "anima-physics/consciousness-loop/src/aux_engine_lib.hexa (mini mirror)",
+      "n_cells": 8,
+      "dim": 8,
+      "final_phi": 0.120872,
+      "best_phi": 0.120872,
+      "phi_ema": 0.11749,
+      "any_nan": false
+    },
+    "layer3_motivation": {
+      "source": "HEXAD/CHAT/spontaneous_lib.hexa (4-factor mini)",
+      "threshold_emit": 0.3,
+      "ratchet_min": 10,
+      "any_high_score": true,
+      "emit_count": 10
+    },
+    "layer4_audit_rb": {
+      "capacity": 10,
+      "events_count": 10,
+      "first_ts": 8,
+      "last_ts": 98,
+      "monotone": true
+    }
+  },
+  "falsifier": {
+    "F-E2E-1_substrate_emit": "PASS (history=101, attractor_first_repeat_at=8)",
+    "F-E2E-2_engine_valid": "PASS (no NaN, all phi>=0, all score in [0,1])",
+    "F-E2E-3_motivation_gate": "PASS (emit_count=10 >= 1)",
+    "F-E2E-4_safety_ratchet": "PASS (emit_count=10 <= ceil(100/10)=10)",
+    "F-E2E-5_audit_monotone": "PASS (10 events, ts 8..98 strictly increasing)"
+  },
+  "verdict": "5/5 PASS",
+  "honest_c3": [
+    "C3-1 substrate->engine input feed is simple normalization (x/7.0), not learned encoder",
+    "C3-2 motivation factor weights are 4-factor mini (rel/cur/bal/dyn); full 8-factor in aux_engine_lib but currently random() build-blocked 2026-05-21",
+    "C3-3 single-run not statistical (one LCG seed)",
+    "C3-4 engine cells random-init via deterministic LCG (not pretrained); phi numeric scale is ~0.12 (>= 0 sign check only)",
+    "C3-5 audit RB in-memory not persisted; HW Phase 1 separate cycle (PLAN.md G6)",
+    "C3-6 transpiler 'random()' regression 2026-05-21 bypassed via LCG inline (would prevent direct aux_engine_lib import build)"
+  ]
+}

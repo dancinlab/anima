@@ -1,0 +1,56 @@
+{
+  "schema": "anima/p9_path_a_health_audit/watchdog_status/1",
+  "ts_utc": "2026-05-03T15:17:00Z",
+  "watchdogs": [
+    {
+      "name": "pod_side_cost_watchdog_50usd",
+      "location": "pod 29dhlqk508ugoc — /workspace/cost_watch_loop.sh",
+      "wraps": "/workspace/cost_watchdog.sh",
+      "armed": true,
+      "pid_on_pod": 2079,
+      "parent_pid": 1,
+      "poll_interval_sec": 600,
+      "cap_usd": 50.0,
+      "rate_usd_hr": 2.99,
+      "action_on_trip": "SIGTERM PID 1291 (then SIGKILL after 30s); writes /workspace/COST_CAP_TRIPPED flag",
+      "limitation": "kills training but does NOT delete pod (pod-side has no runpodctl) — pod continues billing until host-side terminator detects DONE=0/ALIVE=0 path",
+      "log_path_on_pod": "/workspace/cost_watchdog.log",
+      "loop_log_on_pod": "/workspace/cost_watch_loop.log",
+      "verified_alive": true,
+      "first_run_outputs": [
+        "[2026-05-03T15:16:39Z] elapsed_hr=0.8114 cost=$2.43 cap=$50.00",
+        "[2026-05-03T15:16:56Z] elapsed_hr=0.8164 cost=$2.44 cap=$50.00"
+      ]
+    },
+    {
+      "name": "host_side_pod_terminator",
+      "location": "Mac /tmp/p9_path_a_llama_lora/host_pod_terminator.sh",
+      "armed": true,
+      "pid_on_mac": 6740,
+      "parent_pid": 1,
+      "poll_interval_sec": 600,
+      "hard_cap_hr": 28,
+      "hard_cap_usd": 83.7,
+      "action_on_trip": "runpodctl pod delete + scp final adapter + train.log + TRAIN_DONE.json BEFORE delete",
+      "log_path_on_mac": "/Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/host_terminator.log",
+      "verified_alive": true,
+      "last_probe": "[2026-05-03T15:12:45Z] elapsed=40min probe=DONE=0 ALIVE=1 STEP=1062/10000"
+    }
+  ],
+  "host_side_50usd_watchdog_attempted": true,
+  "host_side_50usd_watchdog_armed": false,
+  "host_side_50usd_watchdog_failure_mode": "Bash sandbox here does not persist file writes nor bg processes across calls (overlayfs-isolated). Created /Users/ghost/core/anima/state/p9_path_a_health_audit_2026_05_03/host_cost_watchdog_50usd.sh via Write tool — should persist but cannot launch from this agent context. Recommend parent agent or user manually launch: `nohup /Users/ghost/core/anima/state/p9_path_a_health_audit_2026_05_03/host_cost_watchdog_50usd.sh </dev/null >/dev/null 2>&1 & disown`",
+  "redundancy_assessment": {
+    "primary_protection_for_50usd_cap": "pod-side cost_watch_loop.sh PID 2079 (kills training only, pod billing continues briefly)",
+    "secondary_protection_for_50usd_cap": "MISSING (host-side $50 watchdog not launched due to sandbox)",
+    "tertiary_backstop": "host-side 28h hard cap terminator PID 6740 ($83.7 ceiling)",
+    "actual_risk_window": "between train-kill (pod-side at $50) and human noticing pod still billing — typically minutes to hours; user check or 28h terminator catches",
+    "recommendation": "user should `cd /Users/ghost/core/anima && nohup state/p9_path_a_health_audit_2026_05_03/host_cost_watchdog_50usd.sh </dev/null >/dev/null 2>&1 & disown` to add host-side $50 cap with runpodctl pod delete"
+  },
+  "monitoring_cadence": {
+    "pod_side_cost_check_every_min": 10,
+    "host_side_28h_terminator_every_min": 10,
+    "next_audit_recommended_at_utc": "2026-05-03T17:00:00Z",
+    "next_audit_purpose": "verify first checkpoint (step 2000) saved + HF push succeeded; verify cost trajectory still below projection"
+  }
+}

@@ -1,0 +1,46 @@
+[2026-05-05T02:28:24Z] secrets OK (runpod=50b hf=37b)
+[2026-05-05T02:28:25Z] hf auth PASS user=
+[2026-05-05T02:28:25Z] slice A OK (30000 lines)
+[2026-05-05T02:28:25Z] booting pod=anima-clm-v4-lora-sft-2026-05-05 (H100 80GB SXM SECURE on-demand @ $2.99/hr)
+[2026-05-05T02:28:26Z] pod_id=8xsnkn0yf9vdg5
+[2026-05-05T02:28:26Z] waiting for SSH ready (max 6min)
+[2026-05-05T02:28:58Z] SSH ready at 216.243.220.221:11437 (after 3 probes)
+[2026-05-05T02:28:58Z] shipping slice A (76MB) + transient py
+[2026-05-05T02:29:38Z] launching H100 pipeline (corpus + train + intermediate eval + final eval)
+[2026-05-05T02:33:34Z] poll loop start (max 300min, budget cap $15)
+[2026-05-05T02:33:38Z] elapsed=5min cost=$0.26 probe=/workspace/clm_v4_lora/results/COMPLETE.sentinel SENTINEL_FOUND  0%| | 0/6000 [00:00<?, ?it/s]|
+[2026-05-05T02:33:52Z] COMPLETE.sentinel detected — final sync FIRST then auto-kill
+Warning: Permanently added '[216.243.220.221]:11437' (ED25519) to the list of known hosts.
+[2026-05-05T02:34:16Z] computing verdict
+[2026-05-05T02:34:16Z] [trap] data-first scp before kill (L13)
+[2026-05-05T02:34:41Z] [trap] killing pod=8xsnkn0yf9vdg5
+{
+  "containerDiskInGb": 100,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-05 02:28:26.07 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "<REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "8xsnkn0yf9vdg5",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Tue May 05 2026 02:34:41 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-clm-v4-lora-sft-2026-05-05",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 26,
+  "volumeInGb": 120,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "8xsnkn0yf9vdg5"
+}
+[2026-05-05T02:34:52Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]

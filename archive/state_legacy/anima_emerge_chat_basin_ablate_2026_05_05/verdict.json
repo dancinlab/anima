@@ -1,0 +1,96 @@
+{
+  "schema": "anima/emerge_chat_basin_ablate/verdict/1",
+  "ts_utc": "2026-05-05T17:52:39Z",
+  "task_id": "anima_emerge_chat_basin_ablate_2026_05_05",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "load_sec": 4.1,
+  "n_basin_tokens": 28,
+  "basin_sample": [
+    [
+      263,
+      "▁("
+    ],
+    [
+      10,
+      "<0x06>"
+    ],
+    [
+      278,
+      "▁a"
+    ],
+    [
+      152,
+      "<0x94>"
+    ],
+    [
+      32,
+      "<0x1C>"
+    ],
+    [
+      292,
+      "▁p"
+    ],
+    [
+      44,
+      "<0x28>"
+    ],
+    [
+      559,
+      "▁P"
+    ],
+    [
+      47,
+      "<0x2B>"
+    ],
+    [
+      49,
+      "<0x2D>"
+    ],
+    [
+      562,
+      "▁/"
+    ],
+    [
+      51,
+      "<0x2F>"
+    ],
+    [
+      55,
+      "<0x33>"
+    ],
+    [
+      57,
+      "<0x35>"
+    ],
+    [
+      59,
+      "<0x37>"
+    ]
+  ],
+  "n_strengths": 4,
+  "strengths": [
+    0.0,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "n_prompts": 2,
+  "n_coherent": 0,
+  "verdict": "FAIL_ABLATION_INSUFFICIENT",
+  "honest_c3": [
+    "C1 mac CPU fp32, in-place lm_head row ablation (restored at end of run, no checkpoint write)",
+    "C2 basin token list anima-internal -- 11 hand-picked + top-20 dynamic on KO greeting; broader basin discovery may shift result",
+    "C3 zero-row ablation pushes argmax to the next-best vocab id -- may simply shift basin to a new token class (whack-a-mole)",
+    "C4 single-seed greedy decoding 25 tokens; sampling temp>0 may show different escape behavior",
+    "C5 ablation strength 2.0 = negative weight (1 - 2.0 = -1.0), produces repulsion toward opposite tokens -- may yield non-physical logits geometry",
+    "C6 raw#15 additive: weights restored after sweep, no on-disk model state mutation, no commit"
+  ],
+  "raw_compliance": {
+    "raw_15_no_mount_or_shim_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  }
+}

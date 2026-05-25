@@ -1,0 +1,44 @@
+============================================================
+anima-physics G8 E2E demo  (2026-05-21)
+4 layer: substrate → engine → motivation → audit
+------------------------------------------------------------
+step | cells_a:b           | phi          | score   | emit
+  0 | a=(4,1,3,1) b=(1,1,2,2) | phi=0.000894742 | score=0.202908 |     
+  10 | a=(1,1,1,1) b=(2,2,2,2) | phi=0.0129382 | score=0.259652 |     
+  20 | a=(1,1,1,1) b=(2,2,2,2) | phi=0.0331365 | score=0.353345 |     
+  30 | a=(1,1,1,1) b=(2,2,2,2) | phi=0.0556026 | score=0.468385 |     
+  40 | a=(1,1,1,1) b=(2,2,2,2) | phi=0.0750661 | score=0.577267 |     
+  50 | a=(1,1,1,1) b=(2,2,2,2) | phi=0.0899489 | score=0.666489 |     
+  60 | a=(1,1,1,1) b=(2,2,2,2) | phi=0.100749 | score=0.732077 |     
+  70 | a=(1,1,1,1) b=(2,2,2,2) | phi=0.108478 | score=0.758333 |     
+  80 | a=(1,1,1,1) b=(2,2,2,2) | phi=0.11404 | score=0.758333 |     
+  90 | a=(1,1,1,1) b=(2,2,2,2) | phi=0.118106 | score=0.758333 |     
+------------------------------------------------------------
+LAYER 1 substrate     : state_history.len()=101, attractor_first_repeat_at=8
+LAYER 2 engine        : final_phi=0.120872, best_phi=0.120872, phi_ema=0.11749, any_nan=false
+LAYER 3 motivation    : any_high_score=true, emit_count=10
+LAYER 4 audit RB      : events.len()=10, capacity=10
+------------------------------------------------------------
+AUDIT RB (last 10 emits):
+  #0 ts=8 phi=0.00980562 score=0.304382
+  #1 ts=18 phi=0.0286865 score=0.398549
+  #2 ts=28 phi=0.0512377 score=0.511825
+  #3 ts=38 phi=0.0715329 score=0.623514
+  #4 ts=48 phi=0.0873288 score=0.717077
+  #5 ts=58 phi=0.0988678 score=0.789005
+  #6 ts=68 phi=0.107131 score=0.820683
+  #7 ts=78 phi=0.113065 score=0.825
+  #8 ts=88 phi=0.117388 score=0.825
+  #9 ts=98 phi=0.120598 score=0.825
+------------------------------------------------------------
+falsifier  evaluation:
+  F-E2E-1 substrate emit         (history=true, attractor=true) -> true
+  F-E2E-2 engine valid           (any_nan=false, any_neg_phi=false, any_oob_score=false) -> true
+  F-E2E-3 motivation gate        (emit_count=10 >= 1) -> true
+  F-E2E-4 safety ratchet         (emit_count=10 <= 10) -> true
+  F-E2E-5 audit RB monotone      (events=10) -> true
+------------------------------------------------------------
+=== G8 E2E summary: 5/5 PASS (all=true) ===
+real 4.41
+user 3.49
+sys 0.28

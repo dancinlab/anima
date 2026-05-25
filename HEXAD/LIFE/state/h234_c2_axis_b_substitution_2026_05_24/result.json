@@ -1,0 +1,71 @@
+{
+  "id": "H_234",
+  "slug": "cross-substrate-phi-coupling-density",
+  "cycle": "Cycle_2_axis_B_substitution",
+  "date": "2026-05-24",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "axis_b_substitute": "noise-injection rate σ (deterministic LCG, replaces Cycle#1 entropy proxy via initial-row offset, fixes L8/L12 3-period symmetry null)",
+  "master_seed": 41472003,
+  "config": { "N": 16, "dim": 12, "warm": 8, "rule": 110, "perturb_cell": 0, "n_bins": 4, "boundary": "periodic" },
+  "axes": {
+    "A_closure_k":  [0.0, 0.3, 0.6],
+    "B_noise_sigma": [0.0, 0.1, 0.2],
+    "C_pain_c":     [0.0, 0.5, 1.0]
+  },
+  "baseline_phi": 0.538242,
+  "phi_27": [0.538242, 1.56044, 2.44487, 0.763026, 1.52923, 2.42184, 0.817953, 1.5717, 2.34309, 1.23267, 2.25362, 2.90455, 1.39697, 2.25302, 2.97962, 2.17738, 2.68521, 3.47743, 4.41529, 4.89064, 4.64003, 4.41529, 4.89064, 4.77126, 4.38198, 4.79299, 4.71282],
+  "composite_27": [0.0, 0.166667, 0.333333, 0.166667, 0.333333, 0.5, 0.333333, 0.5, 0.666667, 0.166667, 0.333333, 0.5, 0.333333, 0.5, 0.666667, 0.5, 0.666667, 0.833333, 0.333333, 0.5, 0.666667, 0.5, 0.666667, 0.833333, 0.666667, 0.833333, 1.0],
+  "marginal": {
+    "axis_A_closure": {
+      "x": [0.0, 0.3, 0.6],
+      "phi": [0.538242, 1.23267, 4.41529],
+      "pearson_r": 0.937701,
+      "monotone": true
+    },
+    "axis_B_noise": {
+      "x": [0.0, 0.1, 0.2],
+      "phi": [0.538242, 0.763026, 0.817953],
+      "pearson_r": 0.943682,
+      "monotone": true
+    },
+    "axis_C_pain": {
+      "x": [0.0, 0.5, 1.0],
+      "phi": [0.538242, 1.56044, 2.44487],
+      "pearson_r": 0.999131,
+      "monotone": true
+    }
+  },
+  "composite_pearson_r": 0.740713,
+  "composite_r_squared": 0.548656,
+  "interaction": {
+    "phi_000": 0.538242,
+    "phi_200": 4.41529,
+    "phi_020": 0.817953,
+    "phi_002": 2.44487,
+    "phi_222": 4.71282,
+    "main_effect_sum": 6.06338,
+    "cross_term": 1.8888,
+    "additive_dominant": true
+  },
+  "determinism_recheck": {
+    "phi_222":    4.71282,
+    "phi_222_re": 4.71282,
+    "byte_equal": true
+  },
+  "criteria": {
+    "C2_1_axis_b_r_or_mono":     true,
+    "C2_2_composite_r2_ge_0_6":  false,
+    "C2_3_all_marginal_r_ge_0_5":true,
+    "C2_4_byte_identical":       true,
+    "F5_phi_non_negative":       true
+  },
+  "criteria_met": 4,
+  "verdict_rule": "SUPPORTED iff C2.2 (composite R²≥0.6) AND C2.3 (all marginal |r|≥0.5); PARTIAL = one of the two; FALSIFIED = neither",
+  "verdict": "PARTIAL",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (RFC 036 phi_spatial proxy + 27-cell sweep; NOT 🔵 formal)",
+  "cycle_1_link": "PR #293 axis-B entropy proxy null (r=0.0 by 3-period symmetry); Cycle #2 substitutes noise-injection rate σ to fix"
+}

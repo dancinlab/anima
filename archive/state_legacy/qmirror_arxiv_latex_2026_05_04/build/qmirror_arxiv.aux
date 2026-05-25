@@ -1,0 +1,176 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\newlabel{FirstPage}{{}{1}{}{section*.1}{}}
+\@writefile{toc}{\contentsline {title}{\texttt  {qmirror}: A Classical-CPU Mirror of a Quantum Processing Unit\\Using Real Quantum Entropy}{1}{section*.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {abstract}{Abstract}{1}{section*.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {}Introduction}{1}{section*.3}\protected@file@percent }
+\newlabel{sec:intro}{{}{1}{}{section*.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Problem}{1}{section*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Approach}{1}{section*.5}\protected@file@percent }
+\citation{Qiskit}
+\citation{Cirq}
+\citation{NIST-SP-800-22}
+\citation{Tononi-IIT4}
+\citation{pyphi}
+\citation{CHSH-1969}
+\citation{Tsirelson-1980}
+\citation{Aspect-1982}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Contributions}{2}{section*.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {}Related work}{2}{section*.7}\protected@file@percent }
+\newlabel{sec:related}{{}{2}{}{section*.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Classical quantum simulation}{2}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {}NIST statistical RNG validation}{2}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Integrated Information Theory 4.0}{2}{section*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {}CHSH Bell inequality}{2}{section*.11}\protected@file@percent }
+\citation{NIST-SP-800-90A}
+\citation{FSF-MereAggregation}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Architecture of the \texttt  {qmirror}{} substrate. Tier~0 (HMAC-DRBG SHA-256, NIST SP~800-90A keyed by ANU bytes) is the deterministic regression default; Tier~1 (ANU QRNG keyed REST API) is the live quantum-entropy path; Tier~2 (ANU QRNG keyless legacy endpoint) is the courtesy fallback; Tier~3 (mock LCG) is the CI-deterministic invariance path. Aer (or Cirq) provides exact unitary evolution; the entropy stream feeds CDF inversion at the measurement collapse step.}}{3}{figure.1}\protected@file@percent }
+\newlabel{fig:arch}{{1}{3}{Architecture of the \qmirror {} substrate. Tier~0 (HMAC-DRBG SHA-256, NIST SP~800-90A keyed by ANU bytes) is the deterministic regression default; Tier~1 (ANU QRNG keyed REST API) is the live quantum-entropy path; Tier~2 (ANU QRNG keyless legacy endpoint) is the courtesy fallback; Tier~3 (mock LCG) is the CI-deterministic invariance path. Aer (or Cirq) provides exact unitary evolution; the entropy stream feeds CDF inversion at the measurement collapse step}{figure.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {}Architecture}{3}{section*.12}\protected@file@percent }
+\newlabel{sec:arch}{{}{3}{}{section*.12}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Four-tier ANU fallback}{3}{section*.13}\protected@file@percent }
+\newlabel{sec:arch-anu}{{}{3}{}{section*.13}{}}
+\newlabel{lst:tiers}{{1}{3}{Tier definitions (extracted from nexus/.roadmap.qmirror)}{lstlisting.1}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}Tier definitions (extracted from nexus/.roadmap.qmirror)}{3}{lstlisting.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {}HMAC-DRBG SHA-256}{3}{section*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Qiskit Aer engine bridge}{3}{section*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {}IIT 4.0 MIP via pyphi}{3}{section*.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {}CHSH circuit (canonical geometry)}{4}{section*.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Module surface}{4}{section*.18}\protected@file@percent }
+\newlabel{lst:modules}{{2}{4}{\qmirror {} module layout}{lstlisting.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}\texttt  {qmirror}{} module layout}{4}{lstlisting.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {}Validation: Eight closure conditions}{4}{section*.19}\protected@file@percent }
+\newlabel{sec:validation}{{}{4}{}{section*.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Per-condition results}{4}{section*.20}\protected@file@percent }
+\newlabel{sec:percond}{{}{4}{}{section*.20}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Per-condition status. All eight conditions PASS at closure.}}{4}{table.1}\protected@file@percent }
+\newlabel{tab:cond_status}{{I}{4}{Per-condition status. All eight conditions PASS at closure}{table.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Cross-vendor $\lvert \Delta S\rvert $ matrix}{4}{section*.21}\protected@file@percent }
+\newlabel{sec:xvendor}{{}{4}{}{section*.21}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Per-vendor $S$ values (single-batch $N=1$).}}{4}{table.2}\protected@file@percent }
+\newlabel{tab:vendor_S}{{II}{4}{Per-vendor $S$ values (single-batch $N=1$)}{table.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Pairwise $\lvert \Delta S\rvert $ matrix (lower triangle). \textbf  {Bold} pairs are closure load-bearers: $0.112$ (cond.8 letter PASS, intra-trapped-ion) and $0.084$ (cond.7 F-QM-CROSSFAM-7a PASS, intra-superconducting; tight at $N=1$).}}{4}{table.3}\protected@file@percent }
+\newlabel{tab:xvendor_matrix}{{III}{4}{Pairwise $\dS $ matrix (lower triangle). \textbf {Bold} pairs are closure load-bearers: $0.112$ (cond.8 letter PASS, intra-trapped-ion) and $0.084$ (cond.7 F-QM-CROSSFAM-7a PASS, intra-superconducting; tight at $N=1$)}{table.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Two post-hoc band revisions (loud disclosure)}{4}{section*.22}\protected@file@percent }
+\newlabel{sec:band-revise}{{}{4}{}{section*.22}{}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {}cond.3 super-class band: $0.40 \rightarrow 0.55$.}{4}{section*.23}\protected@file@percent }
+\citation{ZNE-2017,DD-1999}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Pairwise absolute CHSH-$S$ deviation across four QPU vendors. Single-batch $N=1$, no run-to-run repeats. Bold cells $0.112$ and $0.084$ are the closure load-bearers. Replace with \texttt  {matplotlib pcolor} export for camera-ready.}}{5}{figure.2}\protected@file@percent }
+\newlabel{fig:xvendor_heatmap}{{2}{5}{Pairwise absolute CHSH-$S$ deviation across four QPU vendors. Single-batch $N=1$, no run-to-run repeats. Bold cells $0.112$ and $0.084$ are the closure load-bearers. Replace with \texttt {matplotlib pcolor} export for camera-ready}{figure.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {}cond.7 cross-technology band: $0.55 \rightarrow 0.60$.}{5}{section*.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {}Selection-bias mitigations}{5}{section*.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {}cond.7 spirit paper-analysis}{5}{section*.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Per-condition evidence flow}{5}{section*.27}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Per-condition evidence flow / closure timeline. Two post-hoc band revisions (cond.3 and cond.7) and one spirit-paper-analysis (cond.7) are highlighted with selection-bias disclosure tags. Replace with \texttt  {graphviz dot} or TikZ Gantt for camera-ready.}}{5}{figure.3}\protected@file@percent }
+\newlabel{fig:closure_evidence_flow}{{3}{5}{Per-condition evidence flow / closure timeline. Two post-hoc band revisions (cond.3 and cond.7) and one spirit-paper-analysis (cond.7) are highlighted with selection-bias disclosure tags. Replace with \texttt {graphviz dot} or TikZ Gantt for camera-ready}{figure.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {}Cost analysis}{5}{section*.28}\protected@file@percent }
+\newlabel{sec:cost}{{}{5}{}{section*.28}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Per-second cost comparison}{5}{section*.29}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Per-substrate cost comparison.}}{5}{table.4}\protected@file@percent }
+\newlabel{tab:cost_per_substrate}{{IV}{5}{Per-substrate cost comparison}{table.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Per-battery cost (USD, log scale) for a 4-circuit CHSH benchmark across \texttt  {qmirror}{} and four real-QPU vendors. \texttt  {qmirror}{}'s cost is the floor (USD~0). Replace with \texttt  {matplotlib} \texttt  {semilogy} bar chart for camera-ready.}}{5}{figure.4}\protected@file@percent }
+\newlabel{fig:cost_bar}{{4}{5}{Per-battery cost (USD, log scale) for a 4-circuit CHSH benchmark across \qmirror {} and four real-QPU vendors. \qmirror {}'s cost is the floor (USD~0). Replace with \texttt {matplotlib} \texttt {semilogy} bar chart for camera-ready}{figure.4}{}}
+\citation{FSF-MereAggregation}
+\citation{Apache-2.0}
+\citation{ANU-QRNG}
+\citation{Feist-1991}
+\citation{HMAC-DRBG-2008}
+\citation{Sycamore-2019}
+\citation{Flammia-Gross-2012}
+\citation{GHZ-1989}
+\citation{Mermin-1990}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}One-time calibration cost}{6}{section*.30}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces One-time calibration line items.}}{6}{table.5}\protected@file@percent }
+\newlabel{tab:calibration_lineitems}{{V}{6}{One-time calibration line items}{table.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Permanent zero-cost operation}{6}{section*.31}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {}Limitations}{6}{section*.32}\protected@file@percent }
+\newlabel{sec:limitations}{{}{6}{}{section*.32}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {}Future work}{6}{section*.33}\protected@file@percent }
+\newlabel{sec:future}{{}{6}{}{section*.33}{}}
+\citation{Kitaev-2003}
+\citation{Surface-Code-2012}
+\citation{Knill-Laflamme-1998}
+\citation{Bravyi-Kitaev-2005}
+\citation{Hensen-2015}
+\citation{AWS-Braket}
+\citation{IonQ-Aria}
+\citation{IonQ-Forte}
+\citation{Rigetti-Cepheus}
+\citation{IBM-Heron}
+\citation{ANU-QRNG}
+\citation{Hexa-Lang}
+\bibdata{qmirror_arxivNotes,bibliography}
+\bibcite{Qiskit}{{1}{2026}{{{Qiskit Development Team}}}{{}}}
+\bibcite{Cirq}{{2}{2026}{{{Quantum AI Team, Google LLC}}}{{}}}
+\bibcite{NIST-SP-800-22}{{3}{2010}{{Rukhin\ \emph  {et~al.}}}{{Rukhin, Soto, Nechvatal, Smid, Barker, Leigh, Levenson, Vangel, Banks, Heckert, Dray,\ and\ Vo}}}
+\bibcite{Tononi-IIT4}{{4}{2023}{{Albantakis\ \emph  {et~al.}}}{{Albantakis, Barbosa, Findlay, Grasso, Haun, Marshall, Mayner, Zaeemzadeh, Boly, Juel, Sasai, Fujii, David, Hendren, Lang,\ and\ Tononi}}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Five-axis \texttt  {qmirror}{}~2.0 progression (cond.9--cond.13). Replace with two-axis bubble plot (impact $\times $ feasibility, bubble area = days) for camera-ready.}}{7}{figure.5}\protected@file@percent }
+\newlabel{fig:qmirror2_axes}{{5}{7}{Five-axis \qmirror {}~2.0 progression (cond.9--cond.13). Replace with two-axis bubble plot (impact $\times $ feasibility, bubble area = days) for camera-ready}{figure.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {}Conclusion}{7}{section*.34}\protected@file@percent }
+\newlabel{sec:conclusion}{{}{7}{}{section*.34}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {}Acknowledgements}{7}{section*.35}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {}Code and data availability}{7}{section*.36}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {}References}{7}{section*.37}\protected@file@percent }
+\bibcite{pyphi}{{5}{2018}{{Mayner\ \emph  {et~al.}}}{{Mayner, Marshall, Albantakis, Findlay, Marchman,\ and\ Tononi}}}
+\bibcite{CHSH-1969}{{6}{1969}{{Clauser\ \emph  {et~al.}}}{{Clauser, Horne, Shimony,\ and\ Holt}}}
+\bibcite{Tsirelson-1980}{{7}{1980}{{Tsirelson}}{{}}}
+\bibcite{Aspect-1982}{{8}{1982}{{Aspect\ \emph  {et~al.}}}{{Aspect, Grangier,\ and\ Roger}}}
+\bibcite{NIST-SP-800-90A}{{9}{2015}{{Barker\ and\ Kelsey}}{{}}}
+\bibcite{FSF-MereAggregation}{{10}{2026}{{{Free Software Foundation}}}{{}}}
+\bibcite{ZNE-2017}{{11}{2017}{{Temme\ \emph  {et~al.}}}{{Temme, Bravyi,\ and\ Gambetta}}}
+\bibcite{DD-1999}{{12}{1998}{{Viola\ and\ Lloyd}}{{}}}
+\bibcite{Apache-2.0}{{13}{2004}{{{Apache Software Foundation}}}{{}}}
+\bibcite{ANU-QRNG}{{14}{2011}{{Symul\ \emph  {et~al.}}}{{Symul, Assad,\ and\ Lam}}}
+\bibcite{Feist-1991}{{15}{1991}{{{U.S. Supreme Court}}}{{}}}
+\bibcite{HMAC-DRBG-2008}{{16}{2008}{{{National Institute of Standards and Technology}}}{{}}}
+\bibcite{Sycamore-2019}{{17}{2019}{{Arute\ \emph  {et~al.}}}{{Arute, Arya, Babbush, Bacon, Bardin, Barends, Biswas, Boixo, Brandao, Buell \emph  {et~al.}}}}
+\bibcite{Flammia-Gross-2012}{{18}{2012}{{Flammia\ \emph  {et~al.}}}{{Flammia, Gross, Liu,\ and\ Eisert}}}
+\bibcite{GHZ-1989}{{19}{1989}{{Greenberger\ \emph  {et~al.}}}{{Greenberger, Horne,\ and\ Zeilinger}}}
+\bibcite{Mermin-1990}{{20}{1990}{{Mermin}}{{}}}
+\bibcite{Kitaev-2003}{{21}{2003}{{Kitaev}}{{}}}
+\bibcite{Surface-Code-2012}{{22}{2012}{{Fowler\ \emph  {et~al.}}}{{Fowler, Mariantoni, Martinis,\ and\ Cleland}}}
+\bibcite{Knill-Laflamme-1998}{{23}{1997}{{Knill\ and\ Laflamme}}{{}}}
+\bibcite{Bravyi-Kitaev-2005}{{24}{2005}{{Bravyi\ and\ Kitaev}}{{}}}
+\bibcite{Hensen-2015}{{25}{2015}{{Hensen\ \emph  {et~al.}}}{{Hensen, Bernien, Dr{\'e}au, Reiserer, Kalb, Blok, Ruitenberg, Vermeulen, Schouten, Abell{\'a}n \emph  {et~al.}}}}
+\bibcite{AWS-Braket}{{26}{2026}{{{Amazon Web Services}}}{{}}}
+\bibcite{IonQ-Aria}{{27}{2026{}}{{{IonQ}}}{{}}}
+\bibcite{IonQ-Forte}{{28}{2026{}}{{{IonQ}}}{{}}}
+\bibcite{Rigetti-Cepheus}{{29}{2026}{{{Rigetti Computing}}}{{}}}
+\bibcite{IBM-Heron}{{30}{2026}{{{IBM Quantum}}}{{}}}
+\bibcite{Hexa-Lang}{{31}{2026}{{{need-singularity}}}{{}}}
+\newlabel{LastBibItem}{{31}{8}{}{section*.37}{}}
+\@writefile{toc}{\appendix }
+\@writefile{toc}{\contentsline {section}{\numberline {}Falsifier ledger}{8}{section*.38}\protected@file@percent }
+\newlabel{app:falsifiers}{{}{8}{}{section*.38}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}\texttt  {qmirror}{}~1.0 closure falsifiers (8 conditions)}{8}{section*.39}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces \texttt  {qmirror}{}~1.0 closure falsifiers.}}{8}{table.6}\protected@file@percent }
+\newlabel{tab:falsifiers_v1}{{VI}{8}{\qmirror {}~1.0 closure falsifiers}{table.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}\texttt  {qmirror}{}~2.0 future falsifiers (5 axes)}{8}{section*.40}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces \texttt  {qmirror}{}~2.0 future falsifiers.}}{8}{table.7}\protected@file@percent }
+\newlabel{tab:falsifiers_v2}{{VII}{8}{\qmirror {}~2.0 future falsifiers}{table.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {}Cross-vendor $\lvert \Delta S\rvert $ matrix data}{8}{section*.41}\protected@file@percent }
+\newlabel{app:xvendor}{{}{8}{}{section*.41}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Per-vendor raw correlators}{8}{section*.42}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {}IonQ Aria-1.}{8}{section*.43}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {}IonQ Forte-1.}{8}{section*.44}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {}Rigetti Cepheus 108Q.}{8}{section*.45}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {}IBM Heron r2 \texttt  {ibm\_fez}.}{8}{section*.46}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces IonQ Forte-1 raw correlators.}}{9}{table.8}\protected@file@percent }
+\newlabel{tab:correlators_forte}{{VIII}{9}{IonQ Forte-1 raw correlators}{table.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Rigetti Cepheus 108Q raw correlators.}}{9}{table.9}\protected@file@percent }
+\newlabel{tab:correlators_rigetti}{{IX}{9}{Rigetti Cepheus 108Q raw correlators}{table.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Pairwise $\lvert \Delta S\rvert $ values with falsifier band assessment}{9}{section*.47}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Spirit summary}{9}{section*.48}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {}arXiv submission readiness}{9}{section*.49}\protected@file@percent }
+\newlabel{app:arxiv}{{}{9}{}{section*.49}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {X}{\ignorespaces IBM Heron r2 \texttt  {ibm\_fez} raw correlators.}}{9}{table.10}\protected@file@percent }
+\newlabel{tab:correlators_ibm}{{X}{9}{IBM Heron r2 \texttt {ibm\_fez} raw correlators}{table.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {}Four caveats on this v0.1 LaTeX conversion}{9}{section*.50}\protected@file@percent }
+\citation{FSF-MereAggregation}
+\bibstyle{apsrev4-2}
+\@writefile{lot}{\contentsline {table}{\numberline {XI}{\ignorespaces Pairwise $\lvert \Delta S\rvert $ values with multi-band falsifier assessment.}}{10}{table.11}\protected@file@percent }
+\newlabel{tab:pairwise_delta_falsifier_assessment}{{XI}{10}{Pairwise $\dS $ values with multi-band falsifier assessment}{table.11}{}}
+\newlabel{LastPage}{{}{10}{}{}{}}
+\gdef \@abspage@last{10}

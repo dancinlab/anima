@@ -1,0 +1,78 @@
+[2026-05-05T08:59:29Z] starting DESIGN-1 orchestrator: cycle=clm_v4_hf_format_shim_v5_4_design_1_2026_05_05 bg_lane=V5-4-DESIGN-1 target=$3.0
+[2026-05-05T08:59:29Z] loading secrets
+[2026-05-05T08:59:29Z] secrets OK (runpod=50b hf=37b)
+[2026-05-05T08:59:29Z] all source files present
+[2026-05-05T08:59:29Z] booting pod: anima-shim-v5-4-design-1-fresh-init-2026-05-05 (H100 80GB SECURE @ $2.99/hr, vol=80GB, disk=60GB)
+[2026-05-05T08:59:30Z] boot output:
+  warning: 'runpodctl create pod' is deprecated, use 'runpodctl pod create' instead
+  pod "2j8lh9l737j5w2" created for $2.990 / hr
+[2026-05-05T08:59:30Z] pod_id=2j8lh9l737j5w2
+h100_cost_watchdog: registered pod=2j8lh9l737j5w2 owner=V5-4-DESIGN-1 target_usd=3.0
+[h100-register] 2026-05-05T08:59:32Z pod=2j8lh9l737j5w2 owner=V5-4-DESIGN-1 target=$3.0
+[2026-05-05T08:59:32Z] [watchdog] register OK pod=2j8lh9l737j5w2 lane=V5-4-DESIGN-1 target=$3.0
+[2026-05-05T08:59:32Z] waiting for SSH ready (max 9min)
+[2026-05-05T08:59:36Z]   ssh probe 1/54: host= port=
+[2026-05-05T08:59:51Z]   ssh probe 2/54: host= port=
+[2026-05-05T09:00:06Z] SSH ready at 103.207.149.114:15609 (after 3 probes)
+[2026-05-05T09:00:07Z] stage 3: setup pod (scp inputs)
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+total 1376
+drwxr-xr-x 2 root root    4096 May  5 09:00 .
+drwxr-xr-x 3 root root      47 May  5 09:00 ..
+-rw-r--r-- 1 root root   25782 May  5 09:00 clm_v4_shim_v5_4_design_1_eval.py
+-rw-r--r-- 1 root root   40027 May  5 09:00 conscious_decoder.py
+-rw-r--r-- 1 root root   14139 May  5 09:00 decoder_v3.py
+-rwxr-xr-x 1 root root    4033 May  5 09:00 run_h100.bash
+-rw-r--r-- 1 root root 1306349 May  5 09:00 tokenizer_64k_multilingual.model
+-rw-r--r-- 1 root root    7359 May  5 09:00 train_avg_real.pt
+[2026-05-05T09:00:36Z] stage 3b: launching run on H100 (detached via nohup + setsid)
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+633
+[2026-05-05T09:03:33Z] poll loop start (max 55min, budget cap $3)
+[2026-05-05T09:03:35Z] elapsed=4min cost=$0.20 probe=/workspace/clm_v4_shim_v5_4_design_1/results/COMPLETE.sentinel|SENTINEL_FOUND|
+[2026-05-05T09:03:50Z] COMPLETE.sentinel detected — final sync + auto-kill imminent
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.114]:15609' (ED25519) to the list of known hosts.
+[2026-05-05T09:04:08Z] stage 5: pod kill via trap (auto on exit)
+[2026-05-05T09:04:08Z] [trap] killing pod=2j8lh9l737j5w2 (auto-kill mandatory)
+{
+  "containerDiskInGb": 60,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-05 08:59:30.531 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "[REDACTED_HF_TOKEN]",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "2j8lh9l737j5w2",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Tue May 05 2026 09:04:09 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-shim-v5-4-design-1-fresh-init-2026-05-05",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 28,
+  "volumeInGb": 80,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "2j8lh9l737j5w2"
+}
+[2026-05-05T09:04:19Z] [trap] 404 verified via pod-get (try 1/3)
+[2026-05-05T09:04:19Z] [trap] post-kill: pod_kill_verified_404=1
+h100_cost_watchdog: deregistered pod=2j8lh9l737j5w2 archive=/Users/ghost/core/anima/state/h100_watchdog/closed/2j8lh9l737j5w2_1777971859.json
+[2026-05-05T09:04:19Z] [watchdog] deregister OK pod=2j8lh9l737j5w2
+[2026-05-05T09:04:19Z] verdict written: /Users/ghost/core/anima/state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/verdict.json

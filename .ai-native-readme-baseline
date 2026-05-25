@@ -1,0 +1,14 @@
+# raw 270 + raw 271 baseline — grandfather list
+# Created 2026-05-02. 30d ramp: by 2026-06-01 each entry should either
+# (a) gain README.ai.md + core+module conform + remove from this list, OR
+# (b) explicit deferred-until annotation with reason.
+# After 2026-06-01 severity promotes warn → block; new module dirs added
+# without README.ai.md will commit-reject.
+#
+# Lint: hexa run /Users/ghost/core/hive/tool/ai_native_module_readme_lint.hexa --repo /Users/ghost/core/anima
+# Format: one path per line, repo-relative, # comments allowed.
+#
+# 2026-05-02 update: ALL 17 baseline entries CONFORMED (README.ai.md landed,
+# raw 271 frontmatter + sections lint PASS). Baseline now empty — any new
+# module group added without README.ai.md will trigger immediate violation.
+# Marker: state/markers/raw_271_baseline_17_conformed.marker

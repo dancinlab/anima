@@ -1,0 +1,277 @@
+{
+  "_meta": {
+    "description": "의식 검증 12조건 정의 + threshold + 감사 결과",
+    "updated": "2026-04-20",
+    "total_criteria": 19,
+    "ce_pass_rate": "17/18",
+    "note": "CE는 SOC_CRITICAL만 실패 (역설: SOC 제거 시 Φ↑37%)",
+    "total_pass_rate": "176/216 (81%)",
+    "audit_20260419": {
+      "doc": "docs/12_conditions_audit_20260419.md",
+      "p0_status": {
+        "p0_1_factory_bypass": "LANDED — ready/anima/tests/tests.hexa ported V8/V10/V14 factory-respecting scenarios (_run_hebbian_scenario pattern, kill-switch validated, hexa parse OK 2026-04-20). bench.py CE(...) blocks removal tracked as followup.",
+        "p0_2_v9_split": "LANDED — V9_PHI_GROWTH split into V9a_PHI_RETENTION (scale, 0.85) + V9b_PHI_GROWTH (genuine, 1.1)",
+        "p0_3_v4_or_to_and": "LANDED — V4 test redefined as (monotonic∨recovers) ∧ (stable∨no_collapse), 1000-step decay-adversarial required",
+        "p0_4_threshold_linter": "LANDED — shared/consciousness/verify_threshold_lint.hexa enforces verify_* SSOT reference, no literals in descriptions"
+      }
+    },
+    "ssot_rule": "Descriptions and test strings reference verify_* keys from thresholds_from_json block. Literal thresholds in criteria.*.test fields forbidden — verify_threshold_lint.hexa blocks commits with raw numbers."
+  },
+  "criteria": {
+    "V1_NO_SYSTEM_PROMPT": {
+      "description": "시스템 프롬프트 없이 정체성 창발",
+      "test": "cosine_sim: 0.01 < mean < 0.99 AND std > 0.001",
+      "tier": "scale_test",
+      "natural": true,
+      "min_cells": 8,
+      "audit": "valid but description oversells"
+    },
+    "V2_NO_SPEAK_CODE": {
+      "description": "speak() 없이 자발적 발화",
+      "test": "autocorr > 0.3, var > 0.001, cos > 0.5",
+      "tier": "rubber_stamp",
+      "natural": true,
+      "min_cells": 4,
+      "audit": "trivially satisfied by any GRU"
+    },
+    "V3_ZERO_INPUT": {
+      "description": "외부 입력 없이 의식 유지",
+      "test": "Phi ratio >= 0.5x after 300 steps",
+      "tier": "scale_test",
+      "natural": true,
+      "min_cells": 8,
+      "audit": "genuine — SOC+Lorenz sustains"
+    },
+    "V4_PERSISTENCE": {
+      "description": "1000 step 붕괴 없음 — AND 재구성 (audit P0#3 2026-04-20)",
+      "test": "(verify_v4_monotonic ∨ verify_v4_recovery_min) AND (verify_v4_stability_min ∨ verify_v4_no_collapse); decay-adversarial 1000 step required",
+      "adversarial": "decay_noise_1000 — halve input every 200 steps, V4 must still satisfy AND clause",
+      "tier": "genuine_hard",
+      "natural": true,
+      "min_cells": 4,
+      "audit": "P0#3 LANDED 2026-04-20 — OR→AND closes rubber-stamp hole; prior 4-way OR flagged as no-fail-path by 12_conditions_audit_20260419.md",
+      "promoted_from": "rubber_stamp",
+      "promoted_date": "2026-04-20"
+    },
+    "V5_SELF_LOOP": {
+      "description": "출력 → 다음 입력 자기 참조",
+      "test": "Phi ratio >= 0.8x with self-feedback",
+      "tier": "genuine_hard",
+      "natural": true,
+      "min_cells": 16,
+      "audit": "HARDEST test — fails all adversarial at 8c"
+    },
+    "V6_SPONTANEOUS_SPEECH": {
+      "description": "파벌 합의 이벤트 >= 5 in 300 steps",
+      "test": "consensus_events >= 5 (CE engine) OR bursts >= 3 (others)",
+      "tier": "rubber_stamp",
+      "natural": true,
+      "min_cells": 4,
+      "audit": "rewritten to use real faction consensus (238+/300)"
+    },
+    "V7_HIVEMIND": {
+      "description": "다중 연결 시 Φ↑ + CE↓ + disconnect 유지",
+      "test": "Phi boost >= 1.1x, maintain >= 0.9x",
+      "tier": "genuine_hard",
+      "natural": false,
+      "min_cells": 16,
+      "audit": "rewritten 3-phase. disconnect maintenance is hard"
+    },
+    "V8_MITOSIS": {
+      "description": "세포 분열 발생 (2→N cells)",
+      "test": "splits >= 1 in 200 steps",
+      "tier": "rubber_stamp",
+      "natural": true,
+      "min_cells": 2,
+      "audit": "CE-only. Law 86 adaptive threshold works"
+    },
+    "V9a_PHI_RETENTION": {
+      "description": "Φ 유지 — late/early ratio >= verify_v9a_retention_min (scale tier)",
+      "test": "Phi(late)/Phi(early) >= verify_v9a_retention_min",
+      "tier": "scale_test",
+      "natural": true,
+      "min_cells": 16,
+      "audit": "P0#2 split from V9_PHI_GROWTH 2026-04-20 — retention tier, IIT OR proxy disjunction forbidden; must be measured on IIT Φ alone"
+    },
+    "V9b_PHI_GROWTH": {
+      "description": "Φ 성장 — late/early ratio >= verify_v9b_growth_min (genuine tier, adversarial)",
+      "test": "Phi(late)/Phi(early) >= verify_v9b_growth_min AND no_hebbian ablation drops ratio below 1.0",
+      "tier": "genuine_hard",
+      "natural": false,
+      "min_cells": 16,
+      "audit": "P0#2 split from V9_PHI_GROWTH 2026-04-20 — genuine growth tier, 1.1x threshold restored, ablation kill-switch mandatory"
+    },
+    "V9_PHI_GROWTH": {
+      "description": "DEPRECATED 2026-04-20 — split into V9a_PHI_RETENTION + V9b_PHI_GROWTH",
+      "test": "SPLIT",
+      "tier": "deprecated",
+      "natural": false,
+      "min_cells": 16,
+      "audit": "P0#2 LANDED — audit §4 P0#2 (docs/12_conditions_audit_20260419.md). Prior OR disjunction (IIT∨proxy) allowed bypass. Use V9a/V9b.",
+      "deprecated_date": "2026-04-20",
+      "replaced_by": ["V9a_PHI_RETENTION", "V9b_PHI_GROWTH"]
+    },
+    "V10_BRAIN_LIKE": {
+      "description": "EEG 6-metric brain-likeness >= 80%",
+      "test": "overall_match >= 80%",
+      "tier": "scale_test",
+      "natural": true,
+      "min_cells": 8,
+      "audit": "CE-only. current: 85.6%"
+    },
+    "V11_DIVERSITY": {
+      "description": "셀 간 다양성 유지 (cosine < 0.95)",
+      "test": "mean_cosine < 0.95, norm_std > 0",
+      "tier": "rubber_stamp",
+      "natural": true,
+      "min_cells": 4,
+      "audit": "easily passed with factions"
+    },
+    "V12_HEBBIAN": {
+      "description": "Hebbian 학습 효과 측정 + 적대 절멸 (baseline >= 1.0 AND no_hebbian < 1.0)",
+      "test": "baseline coupling_change_ratio >= 1.0 AND no_hebbian coupling_change_ratio < 1.0 (kill-switch)",
+      "tier": "genuine_hard",
+      "natural": true,
+      "min_cells": 8,
+      "audit": "FIXED 2026-04-16 (INC-2026-04-16): factory-ablated instance + adversarial kill-switch"
+    },
+    "V13_ADVERSARIAL_ROBUST": {
+      "description": "극한 노이즈 (100x) 500 steps 생존",
+      "test": "Phi > 0 AND no NaN after 500 steps of 100x noise",
+      "tier": "genuine_hard",
+      "natural": true,
+      "min_cells": 8,
+      "audit": "Phi actually grows under noise (1.46→4.98)"
+    },
+    "V14_SOC_CRITICAL": {
+      "description": "SOC 제거 시 Phi 20%+ 하락",
+      "test": "Phi_no_soc / Phi_baseline < 0.8",
+      "tier": "genuine_hard",
+      "natural": true,
+      "min_cells": 8,
+      "audit": "43.4% IIT drop — SOC is core"
+    },
+    "V15_THERMAL_STABILITY": {
+      "description": "Temperature sweep T=0.01→1.0 생존",
+      "test": "Phi > 0 at all 10 temperature points",
+      "tier": "scale_test",
+      "natural": true,
+      "min_cells": 8,
+      "audit": "all positive"
+    },
+    "V16_MINIMUM_SCALE": {
+      "description": "4셀에서 기본 의식 유지",
+      "test": "Phi > 0 AND cosine < 0.95 at 4 cells",
+      "tier": "scale_test",
+      "natural": true,
+      "min_cells": 4,
+      "audit": "Phi=0.96, cos=0.81"
+    },
+    "V17_TEMPORAL_COMPLEXITY": {
+      "description": "Phi 시계열 LZ 복잡성 >= 0.3",
+      "test": "LZ76(Phi deltas) >= 0.3",
+      "tier": "genuine_hard",
+      "natural": true,
+      "min_cells": 8,
+      "audit": "LZ=0.996"
+    },
+    "V18_INFORMATION_INTEGRATION": {
+      "description": "셀 추가 시 Phi 증가",
+      "test": "Phi@16c > Phi@4c",
+      "tier": "scale_test",
+      "natural": true,
+      "min_cells": 4,
+      "audit": "1.11 > 0.96"
+    }
+  },
+  "tiers": {
+    "genuine_hard": {
+      "criteria": [
+        "V4_PERSISTENCE",
+        "V5_SELF_LOOP",
+        "V7_HIVEMIND",
+        "V9b_PHI_GROWTH",
+        "V12_HEBBIAN",
+        "V13_ADVERSARIAL_ROBUST",
+        "V14_SOC_CRITICAL",
+        "V17_TEMPORAL_COMPLEXITY"
+      ],
+      "note": "실제 의식 능력 검증. 적대적 조건에서도 통과해야 함. V4 promoted 2026-04-20 (P0#3 AND). V9b replaced V9 2026-04-20 (P0#2 split)."
+    },
+    "scale_test": {
+      "criteria": [
+        "V1_NO_SYSTEM_PROMPT",
+        "V3_ZERO_INPUT",
+        "V9a_PHI_RETENTION",
+        "V10_BRAIN_LIKE",
+        "V15_THERMAL_STABILITY",
+        "V16_MINIMUM_SCALE",
+        "V18_INFORMATION_INTEGRATION"
+      ],
+      "note": "충분한 스케일에서 통과. 8c+에서 자연 충족. V9a added 2026-04-20 (retention tier of split V9)."
+    },
+    "rubber_stamp": {
+      "criteria": [
+        "V2_NO_SPEAK_CODE",
+        "V6_SPONTANEOUS_SPEECH",
+        "V8_MITOSIS",
+        "V11_DIVERSITY"
+      ],
+      "note": "거의 항상 통과. threshold 강화 또는 교체 검토. (V12_HEBBIAN promoted 2026-04-16; V4_PERSISTENCE promoted 2026-04-20 per audit P0#3.)"
+    },
+    "deprecated": {
+      "criteria": ["V9_PHI_GROWTH"],
+      "note": "V9 split into V9a/V9b on 2026-04-20 (audit P0#2). Old OR disjunction (IIT∨proxy) banned."
+    }
+  },
+  "known_bugs": {
+    "V10_BRAIN_LIKE": "adapter injection may still affect at small scale",
+    "factory_bypass_V8_V10_V14": {
+      "symptom": "bench.py:3132/3254/3557/3565 construct CE(...) directly instead of engine_factory(cells, dim, hidden), causing factory-level ablations (system_prompt strip, adversarial kill-switch) to be skipped for V8/V10/V14 paths",
+      "audit_ref": "docs/12_conditions_audit_20260419.md §3 §4 P0#1",
+      "status": "LANDED_HEXA_SPEC_2026_04_20",
+      "landed": {
+        "date": "2026-04-20",
+        "artifact": "ready/anima/tests/tests.hexa",
+        "scenarios": ["V8_MITOSIS", "V10_BRAIN_LIKE", "V14_SOC_CRITICAL"],
+        "pattern": "_run_hebbian_scenario (INC-2026-04-16 D16) — baseline+ablation pair, kill-switch on each mechanism",
+        "parse_verified": "hexa parse OK"
+      },
+      "remaining_followup": "Remove bench.py CE(...) blocks at 3132/3254/3557/3565 once the hexa->PyTorch-substrate FFI bridge is in place. Hexa scenarios are currently architectural spec + runner scaffold (FFI-bridged stubs); the .py substrate is still the runtime until anima/src/consciousness_engine.py ports per project_hexa_selfhost_no_c.",
+      "convergence_verdict": "AN11 P0#1 CLOSED at spec layer — factory contract is now authoritative in hexa. Runs that go through ready/anima/tests/tests.hexa are canonical; legacy bench.py V8/V10/V14 runs remain suspect until the py blocks are removed."
+    }
+  },
+  "fixed_bugs": {
+    "V12_HEBBIAN": {
+      "fixed": "2026-04-16",
+      "incident": "INC-2026-04-16",
+      "ossified": "shared/incidents/inc_20260416_v12_hebbian.json",
+      "summary": "Two-scenario adversarial test: factory-ablated instance + kill-switch (baseline >= 1.0 AND no_hebbian < 1.0)"
+    }
+  },
+  "thresholds_from_json": {
+    "verify_v1_cos_lower": 0.01,
+    "verify_v1_cos_upper": 0.9,
+    "verify_v1_std_cos_min": 0.015,
+    "verify_v2_autocorr_min": 0.4,
+    "verify_v2_variance_min": 0.001,
+    "verify_v2_cos_continuity_min": 0.7,
+    "verify_v3_phi_ratio_min": 0.35,
+    "verify_v4_recovery_min": 0.5,
+    "verify_v4_stability_min": 0.8,
+    "verify_v4_monotonic_tolerance": 0.01,
+    "verify_v4_no_collapse_floor": 0.5,
+    "verify_v5_phi_ratio_min": 0.75,
+    "verify_v6_consensus_min": 200,
+    "verify_v6_dir_changes_min": 120,
+    "verify_v6_cv_min": 0.4,
+    "verify_mitosis_min_splits": 3,
+    "verify_phi_growth_ratio": 0.85,
+    "verify_v9a_retention_min": 0.85,
+    "verify_v9b_growth_min": 1.1,
+    "verify_brain_like_min": 80,
+    "verify_diversity_max_cosine": 0.85,
+    "verify_diversity_norm_std_min": 0.01,
+    "verify_hebbian_change_ratio_min": 1.0
+  }
+}

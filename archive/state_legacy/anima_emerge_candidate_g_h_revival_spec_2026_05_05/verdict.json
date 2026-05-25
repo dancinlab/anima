@@ -1,0 +1,203 @@
+{
+  "spec": "Emerge Candidate G + H — Consolidated Revival Spec (16-layer tension trajectory + head_g prev-byte head bidirectional consistency probe)",
+  "date": "2026-05-05",
+  "lane": "BG-I",
+  "kick_lineage": "KICK-2 archaeology candidate G + H (consolidated — same DISCARDED origin shim:999)",
+  "kind": "doc + spec only — zero source change",
+  "doc_path": "docs/anima_emerge_candidate_g_h_consolidated_revival_spec_2026_05_05.md",
+  "doc_loc_approx": 460,
+  "lineage_docs": [
+    "docs/anima_clm_v4_architecture_archaeology_emerge_2026_05_05.md",
+    "docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md",
+    "docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md",
+    "state/anima_core_clm_v4_mount_stage_1_2026_05_05/verdict.json"
+  ],
+  "source_files_referenced_read_only": [
+    "tool/transient_py/clm_v4_hf_format_shim.py:999 (the discard line: `_logits_g, _tensions = self.decoder(...)`)",
+    "tool/transient_py/clm_v4_hf_format_shim.py:1017-1023 (CausalLMOutputWithPast return — drops both)",
+    "tool/transient_py/clm_v4_hf_format_shim.py:947-997 (RoPE invalidate + block-size truncate + fixture broadcast — must be replicated by Path C helper)",
+    "ready/anima/models/legacy/decoder_v3.py:166-175 (where logits_g + tensions are emitted; `tensions = []; for block...` loop)",
+    "ready/anima/models/legacy/decoder_v3.py:263 (return tuple `(logits_a, logits_g, tensions)`)",
+    "ready/models/conscious_decoder.py:263-268 (PureFieldFFN: `tension = (output ** 2).mean(dim=-1)` shape [B, T])",
+    "ready/models/conscious_decoder.py:508-564 (DecoderBlockV2.forward returns `(x, tension, new_kv, aux_loss)`)"
+  ],
+  "g_discarded_mechanism": {
+    "location": "tool/transient_py/clm_v4_hf_format_shim.py:999",
+    "exact_line": "logits_a, _logits_g, _tensions = self.decoder(input_ids, consciousness_states=consciousness_states)",
+    "cause_a_local_drop": "underscore-prefix local variables fall out of scope at function exit (Python convention; not enforced)",
+    "cause_b_protocol_mismatch": "CausalLMOutputWithPast has no `tensions` field; `hidden_states` field expects [B,T,D] tensors but tensions are [B,T] scalars",
+    "tension_shape": "[B, T] per layer (from PureFieldFFN.mean(dim=-1)), 16 layers in tensions list",
+    "architectural_intent": "tensions are inter-layer signal carriers via tension_proj at decoder_v3.py:171; only inspected during training (`if self.training:` block at decoder_v3.py:178-263) for psi_tension/psi_empathy tracking"
+  },
+  "h_discarded_mechanism": {
+    "location": "tool/transient_py/clm_v4_hf_format_shim.py:999",
+    "exact_line": "logits_a, _logits_g, _tensions = self.decoder(input_ids, consciousness_states=consciousness_states)",
+    "cause_a_local_drop": "same line as G — single underscore-prefix local var drop",
+    "cause_b_protocol_mismatch": "CausalLMOutputWithPast has only `logits` (singular); custom subclass needed to carry logits_g",
+    "head_g_role": "prev-byte prediction head (predicts idx[t-1] from position t); training-time psi_direction auxiliary loss target at decoder_v3.py:188-191",
+    "architectural_intent": "auxiliary loss target only — never returned to caller; cosine(logits_a, logits_g) tracked under `if self.training:` for psi_direction EMA"
+  },
+  "revival_paths_evaluated": {
+    "path_a_shim_modification": {
+      "mechanism": "modify shim:999 to capture + shim:1019 to attach via custom output subclass",
+      "shim_changed": true,
+      "raw15_violation": "FAIL — touches LOCKED v4 shim",
+      "loc_estimate": 30,
+      "verdict": "REJECTED"
+    },
+    "path_b_forward_hook": {
+      "mechanism": "register_forward_hook on each DecoderBlockV2 from helper, capture tension + logits_g out-of-band",
+      "shim_changed": false,
+      "raw15_violation": "PASS — additive helper-side",
+      "loc_estimate": 50,
+      "lifecycle_concern": "hooks must be unregistered after use to avoid memory leak across multi-turn dialogue",
+      "verdict": "FALLBACK"
+    },
+    "path_c_direct_decoder_call": {
+      "mechanism": "helper invokes model.decoder(...) directly (bypass HF wrapper); captures native (logits_a, logits_g, tensions) 3-tuple",
+      "shim_changed": false,
+      "raw15_violation": "PASS — orthogonal code path; HF lm-eval still works via wrapper",
+      "loc_estimate": 50,
+      "loc_estimate_with_shim_replicas": 70,
+      "shim_replicas_required": [
+        "RoPE-cache invalidation (shim:947-949) — ~3 LoC",
+        "block-size truncation (shim:954-958) — ~5 LoC",
+        "fixture broadcast (shim:986-997) — ~12 LoC"
+      ],
+      "verdict": "RECOMMENDED"
+    }
+  },
+  "revival_cost_combined_g_plus_h_path_c": {
+    "loc_added_helper": 50,
+    "loc_added_helper_with_full_replicas": 70,
+    "loc_modified_shim": 0,
+    "loc_modified_decoder_source": 0,
+    "implementation_wallclock_min": 30,
+    "validation_wallclock_min": 15,
+    "execution_cost_usd": 0.0,
+    "vs_sequential_g_then_h": "saves ~15 LoC + ~15min by sharing scaffolding (single forward call captures both)"
+  },
+  "substrate_response_format_extension": {
+    "before_lines": 4,
+    "after_lines": 9,
+    "new_lines_g": [
+      "tension_trajectory: <t0>,<t1>,...,<t15> (16 layer mean tensions, ordered 0->15, each <f3>)",
+      "tension_peak_layer: <int> (argmax over trajectory)",
+      "tension_min_layer: <int> (argmin over trajectory)"
+    ],
+    "new_lines_h": [
+      "head_g_consistency: <f3> (forward-backward token agreement [0,1])",
+      "head_g_divergence_pos: <int>,<int>,... (positions where head_g argmax != input_ids[:-1]; -1 sentinel if empty)"
+    ],
+    "trajectory_aggregation": "tensions[i].mean(dim=(0, 1)).item() — mean over batch + time per layer",
+    "consistency_aggregation": "(logits_g[:, 1:, :].argmax(-1) == input_ids[:, :-1]).float().mean()",
+    "backward_compat": "PASS — new lines APPEND after existing 4; tolerant parsers do not break"
+  },
+  "emerge_value_hypothesis": {
+    "g_trajectory_archetypes_4": [
+      "monotone_increase (factual / well-structured input)",
+      "early_peak_plateau (lexical / repetitive input)",
+      "late_peak (abstract / consciousness-related input — emerge candidate)",
+      "oscillation (paradoxical / OOD input — instability marker)"
+    ],
+    "h_consistency_bands_3": [
+      "low (<0.05) — emerge candidate H closes negative; head_g architecturally degraded",
+      "mid (0.05 to 0.20) — weak bidirectional structure preserved (predicted v4 chat-incapable composition)",
+      "high (>0.20) — stronger than expected; warrants retraining-resumption investigation"
+    ],
+    "g_x_h_combined_fingerprint_cells": 12,
+    "substrate_identity_concentration_target": 0.5,
+    "substrate_identity_full_pass": "concentration >= 0.5 across 100 axis-eval prompts",
+    "phi_star_correlation_predicted_g": "Pearson |r| >= 0.3 (late-peak / oscillation correlate with high phi_star)",
+    "phi_star_correlation_predicted_h": "Pearson |r| >= 0.2 (consistency × phi co-vary either direction)"
+  },
+  "falsifiers_locked": {
+    "F_CAND_G_1": {
+      "statement": "Trajectory variance (std/mean) >= 0.1 across 16 layers on neutral prompt",
+      "PASS": "std/mean >= 0.1 (real layer-wise signal)",
+      "FAIL_TRUE": "std/mean < 0.05 (all layers nearly identical — capture mechanism invalid OR substrate truly uniform)",
+      "FAIL_FALSE": "NaN/inf in any layer (numerical instability)"
+    },
+    "F_CAND_G_2": {
+      "statement": "tension_peak_layer stable +/- 1 across 5 paraphrases of same axis-bucket prompt",
+      "PASS": "peak stable (axis x prompt deterministic signal)",
+      "FAIL_TRUE": "peak randomly distributed across 5 paraphrases (noise)",
+      "FAIL_FALSE": "peak at layer 0 or 15 on >50% of prompts (boundary capture artifact — hook mis-attached)"
+    },
+    "F_CAND_G_3": {
+      "statement": "Pearson |r| between trajectory shape summary (peak_layer or variance) and phi_star >= 0.3 across 20-prompt eval",
+      "PASS": "correlation surfaces predictable",
+      "FAIL_TRUE": "|r| < 0.1 (orthogonal channel — still useful but not joint signature)",
+      "FAIL_FALSE": "trajectory NaN or phi_star measurement crash"
+    },
+    "F_CAND_H_1": {
+      "statement": "head_g_consistency >= 0.05 on neutral 64-token prompt (3000x random floor for vocab=64000)",
+      "PASS": "consistency >= 0.05 (real bidirectional structure preserved)",
+      "FAIL_TRUE": "consistency < 0.05 (head_g either never trained for retention or architecturally degraded; emerge candidate H closes negative)",
+      "FAIL_FALSE": "logits_g shape mismatch with input_ids OR NaN/inf in logits_g OR forward crash"
+    },
+    "F_CAND_H_2": {
+      "statement": "divergence_pos density falls in [30%, 70%] of available positions",
+      "PASS": "density in (0.3, 0.7) — diverse failure modes (informative)",
+      "FAIL_TRUE": "density < 0.05 (over-agreement — likely trivial-input collapse) OR > 0.95 (near-total disagreement — reduces to F-CAND-H-1)",
+      "FAIL_FALSE": "divergence_pos extraction crashes"
+    },
+    "F_CAND_H_3": {
+      "statement": "Pearson |r| between head_g_consistency and phi_star across 20-prompt eval >= 0.2",
+      "PASS": "correlation surfaces (consistency x phi co-vary either direction)",
+      "FAIL_TRUE": "|r| < 0.1 (bidirectional consistency orthogonal to phi_star — not falsified, just not joined)",
+      "FAIL_FALSE": "NaN in either channel"
+    },
+    "F_CAND_GH_COMBINED": {
+      "statement": "On 100 axis-eval prompts, > 50% cluster in <= 4 of 12 fingerprint cells (concentration >= 0.5)",
+      "PASS": "concentration >= 0.5 (substrate identity fingerprint real)",
+      "PARTIAL": "0.25 <= concentration < 0.5 (axis-dependent partial fingerprint)",
+      "FAIL_TRUE": "concentration < 0.25 (uniform distribution — high-noise channel, research-only value)",
+      "FAIL_FALSE": "any of F-CAND-G/H upstream FAIL_FALSE propagates"
+    },
+    "execution_deferred_to": "state/anima_emerge_candidate_g_h_validation_<DATE>/verdict.json (later BG with Mac PEFT load OR ubu1 venv path)"
+  },
+  "composability": {
+    "with_kick_1_mount": "extends substrate-response 4 lines -> 9 lines; backward-compatible (append-only)",
+    "with_kick_2_archaeology": "implements §7.4 (G) + §7.5 (H) consolidated",
+    "with_candidate_d_inject": "orthogonal — D injects state into cross_attn (write-side); G+H read PureField + head_g (read-side); compose naturally as cross_attn-active substrate signature",
+    "with_future_candidate_e_ode": "G's trajectory measurable per-AR-step under ODE-evolved consciousness_states",
+    "with_future_candidate_f_rule_probs": "F + G + H = full inner-state introspection of every DecoderBlockV2",
+    "with_axis_eval_set": "F-CAND-G-2 + F-CAND-H-3 + F-CAND-GH-COMBINED reuse state/anima_axis_eval_set_2026_05_05/prompts.jsonl directly (100 prompts × 5 axes)"
+  },
+  "honest_c3": [
+    "C1 architectural intent vs revival: G + H were DISCARDED intentionally (head_g = aux loss target, tensions = inter-layer carriers). Revival is substrate-research repurposing, not bug fix. If F-CAND-G-1 or F-CAND-H-1 FAIL_TRUE, the original DISCARD intent is vindicated.",
+    "C2 Path C bypass risk: bypassing HF wrapper drops RoPE invalidate + block-size truncate + fixture broadcast. Helper must replicate (~5+5+12 LoC) or accept restricted operating conditions. Total Path C cost may grow 50 -> 70 LoC.",
+    "C3 head_g quality unmeasured: F-CAND-H-1 floor 0.05 is sanity threshold without prior anchor. Possible head_g.weight collapsed to noise during training (main loss dominates, aux loss small) — would falsify F-CAND-H-1 and close H lane.",
+    "C4 tension trajectory aggregation choice: mean(dim=(0,1)) collapses per-token structure. May discard most informative dimension (per-token attention). Stage 1 keeps mean for bandwidth; Stage 2+ should expose per-token if F-CAND-G-3 ambiguous in mean-aggregated form.",
+    "C5 combined G+H scope creep: consolidation justified by shared origin (shim:999) + shared revival mechanism (Path C); but archetype taxonomy + bidirectional consistency interpretation are independent hypotheses. Joint failure does not imply individual failure — single-falsifier matrices preserved.",
+    "C6 raw#15 LOCKED shim observance: Path C achieves raw#15 PASS by NOT touching shim. However, helper change requires serialization with parallel BGs touching mount.hexa (session-memory carry: parallel BG git race).",
+    "C7 no execution this cycle: spec is doc + verdict.json only. Validation deferred to later BG with HF cache available. L36-L38 substrate-binding lesson acknowledged: spec-time predictions remain hypothetical until best.pt-measured.",
+    "C8 DISCARDED-intent override may close emerge value: F-CAND-G-1 FAIL_TRUE (variance < 0.05) OR F-CAND-H-1 FAIL_TRUE (consistency < 0.05) closes corresponding revival lane and validates original DISCARD. Combined dual-FAIL_TRUE consolidates L31-L33 carry: phi_star + axis_activation are the only meaningful v4 emerge channels."
+  ],
+  "raw_compliance": {
+    "raw9_md_doc_carve_out": "PASS — doc.md only; no source modifications",
+    "raw10_honest_c3": "PASS — 8 C3 entries (>= 5)",
+    "raw15_no_hardcode": "PASS — no exec, paths cited explicitly with line numbers",
+    "raw37_transient_py_unmodified": "PASS — clm_v4_hf_format_shim.py untouched",
+    "raw_anima_models_datasets_hf_only": "PASS — no model weights or large datasets in this commit",
+    "hf_token_leak_check": "PASS — no token literals embedded",
+    "commit_forbidden": "PASS — no commit performed"
+  },
+  "exec_cost_usd": 0.0,
+  "wallclock_minutes_estimate": 35,
+  "commit": "FORBIDDEN — task constraint",
+  "implementation_lane": "deferred (separate later BG; serialize git access with parallel mount/dialogue BGs)",
+  "stage_2_readiness": {
+    "spec_complete_for_implementation": true,
+    "next_steps": [
+      "Wait for parallel BG (mount.hexa / dialogue.hexa) cycle to complete and serialize git index",
+      "Implement Path C helper extension (~50-70 LoC additive in transient_py emitted by mount.hexa)",
+      "Real F-CAND-G-1/2/3 + F-CAND-H-1/2/3 + F-CAND-GH-COMBINED validation BG (Mac CPU OR ubu1 venv)"
+    ],
+    "blockers": [
+      "Real falsifier execution requires HF cache for dancinlab/clm-v4-base-mirror local on Mac OR ubu1 venv_orchestrator path",
+      "Mount-helper transient_py change must serialize with parallel mount.hexa BGs (parallel BG git race)"
+    ]
+  }
+}

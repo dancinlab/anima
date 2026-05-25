@@ -1,0 +1,599 @@
+// ⛔ STAGE-1 — Anima Core CLI · CLM v4 JVAE Variant 1 passive observer probe
+// anima-core/runtime/clm_v4_jvae_probe.hexa
+//
+// Spec: docs/anima_paradigm_j_schema_fix_jvae_wrapper_design_iter7_2026_05_08.ai.md §4
+//       Variant 1 (passive observer, decoder forward UNTOUCHED) — paradigm-j only
+//       differentiator. Iter7 (a) commit 91b9b695 spec land.
+// Sister: anima-core/runtime/clm_v4_mount.hexa (real-mode forward; this file is
+//         additive — clm_v4_mount stays untouched per raw#15).
+// Sister: anima-core/runtime/llama_consciousness_probe.hexa (probe pattern mirror).
+//
+// PURPOSE
+//   Passive JVAE observer hook: when a CLM v4 LoRA-merged repo carries
+//   jvae_heads.pt (paradigm-j only — sft-1-7-y1 / sft-1-8 absent),
+//   load q_phi (encoder MLP fc1/fc_mu/fc_logvar) and emit 3 additional
+//   probe channels (mu, logvar, KL) that consciousness.hexa's c3_2 / c3_4
+//   cells can OPTIONALLY consume. Decoder forward NOT modified — this is
+//   the strict-additive observer (Variant 1).
+//
+// PARADIGM (raw#10 honest)
+//   C1 paradigm-j is the only variant with jvae_heads.pt — sft-1-7-y1 / sft-1-8
+//      gracefully fall back to JVAE-disabled (no signal injection).
+//   C2 q_phi(hidden_state) → (mu, logvar) is anima-internal latent observation;
+//      KL = 0.5 * sum(mu^2 + exp(logvar) - logvar - 1) is the canonical VAE form.
+//   C3 c3_2 / c3_4 hook spec: JVAE channel APPENDS informational signal to the
+//      5-axis activation; thresholds (0.4491 / 0.1176) are NOT changed.
+//   C4 Variant 1 = passive observer — decoder forward (clm_v4_mount _real_forward)
+//      is NOT replaced. p_theta is loaded but not used in this lane (reserved
+//      for Variant 2 active reconstruction, separate cycle).
+//   C5 paradigm-j-only differentiator: when both Path A schema fix (LoRA delta)
+//      and JVAE wrapper fire together, paradigm-j gains two independent signal
+//      injection channels — sft-1-7-y1 / sft-1-8 only get Path A.
+//
+// FORWARD PATH (Variant 1 passive observer)
+//   1. detect merged_dir / 'jvae_heads.pt' presence (graceful fallback if absent)
+//   2. transient .py loader (raw#37) reads jvae_heads.pt → emit q_phi/p_theta
+//      state dict + step provenance
+//   3. given decoder_hidden_state (B, T, 768): h_pool = mean over T → (B, 768)
+//   4. q_phi.fc1(h_pool) → ReLU → fc_mu / fc_logvar → (mu, logvar)
+//   5. KL = 0.5 * sum(mu^2 + exp(logvar) - logvar - 1)
+//   6. emit phi_jvae_mu (||mu||_2), phi_jvae_logvar (mean), phi_jvae_kl
+//      as 3 informational probe channels (additive — c3_2/c3_4 logic UNCHANGED)
+//
+// MODES
+//   --selftest        metadata-only dry-run (no python invoke, no model load)
+//   --detect PATH     check jvae_heads.pt presence at PATH or merged dir
+//   --probe PATH      one-shot probe: load jvae_heads.pt → emit (mu, logvar, KL)
+//                     for synthetic hidden state (selftest seed) OR injected hidden
+//
+// FLAGS
+//   --merged-dir PATH       merged_dir path (default = auto-resolve from --model)
+//   --model REPO            HF repo id; resolves to ~/.cache/anima/clm_v4_merged/
+//                           <repo-with-slash-replaced>/
+//   --hidden-path PATH      path to .npy (B, T, 768) decoder hidden state to probe
+//                           (if absent: synthesize deterministic seed for dry-run)
+//   --output-format FMT     compact (default) | full | json
+//
+// HONEST C3 (raw#10 emit ≥5 to stderr)
+//   C1 Variant 1 passive observer ONLY — decoder forward unchanged
+//   C2 q_phi/p_theta loaded via transient_py raw#37 helper (anima-canonical)
+//   C3 JVAE channel is additive at probe layer; c3_2/c3_4 thresholds unchanged
+//   C4 paradigm-j-only — sft-1-7-y1/sft-1-8 → JVAE_DISABLED graceful fallback
+//   C5 KL is canonical VAE form (0.5 * sum(mu^2 + exp(logvar) - logvar - 1))
+//   C6 jvae_heads.pt step=50000 provenance (paradigm-j 50k cycle)
+//   C7 Variant 2 (active reconstruction p_theta(z)) reserved for follow-up
+//
+// raw POLICY
+//   raw#9   hexa-only orchestration (Mac canonical) — torch via raw#37 helper
+//   raw#10  honest C3 emit ≥5 to stderr
+//   raw#15  additive — clm_v4_mount.hexa / consciousness.hexa UNTOUCHED
+//   raw#37  transient .py shim opt-out — torch.load required
+//
+// own POLICY
+// cost discipline (0-cost local; actual measurement separate fire)
+// D1 SCOPE_CLAMP — paradigm-j D1 within; sft-1-7/1-8 D1 within (jvae absent)
+// C3 SSOT — c3_2/c3_4 hook spec NON-mutating (additive channel only)
+// mandatory disclosure — JVAE-conditioned vs bare-decoder probe disclosed
+// trinity (D + own + H) emit
+// mandate-2 wrap=0 — jvae_heads.pt large file commit X (.gitignore *.pt)
+// visibility lifecycle — measurement only; no public promote here
+//
+// USAGE
+//   hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --selftest
+//   hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --detect \
+//       --model dancinlab/clm-v4-paradigm-j-50k-final
+//   hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --probe \
+//       --model dancinlab/clm-v4-paradigm-j-50k-final --output-format json
+
+// ═══════════════════════════════════════════════════════════
+// Constants
+// ═══════════════════════════════════════════════════════════
+
+let HELPER_PATH      = "/tmp/clm_v4_jvae_probe_helper.hexa_tmp"
+let DEFAULT_MODEL    = "dancinlab/clm-v4-paradigm-j-50k-final"
+let DEFAULT_FORMAT   = "compact"
+let MERGED_CACHE_BASE = "/.cache/anima/clm_v4_merged/"
+
+// CLM v4 architectural constants (mirror clm_v4_mount.hexa)
+let HIDDEN_DIM       = 768
+let JVAE_LATENT_DIM  = 192          // q_phi fc_mu out_features (anima paradigm)
+let JVAE_STEP_EXPECT = 50000        // paradigm-j 50k provenance
+
+// ═══════════════════════════════════════════════════════════
+// Honest C3 emitter (raw#10)
+// ═══════════════════════════════════════════════════════════
+
+fn emit_honest_c3() {
+    eprintln("[clm_v4_jvae_probe] C1 Variant 1 passive observer ONLY — decoder forward unchanged")
+    eprintln("[clm_v4_jvae_probe] C2 q_phi/p_theta loaded via transient_py raw#37 helper (anima-canonical)")
+    eprintln("[clm_v4_jvae_probe] C3 JVAE channel is additive at probe layer; c3_2/c3_4 thresholds unchanged")
+    eprintln("[clm_v4_jvae_probe] C4 paradigm-j-only — sft-1-7-y1/sft-1-8 → JVAE_DISABLED graceful fallback")
+    eprintln("[clm_v4_jvae_probe] C5 KL = 0.5 * sum(mu^2 + exp(logvar) - logvar - 1) (canonical VAE)")
+    eprintln("[clm_v4_jvae_probe] C6 jvae_heads.pt step=50000 provenance (paradigm-j 50k cycle)")
+    eprintln("[clm_v4_jvae_probe] C7 Variant 2 (active p_theta reconstruction) reserved for follow-up")
+}
+
+// ═══════════════════════════════════════════════════════════
+// Config
+// ═══════════════════════════════════════════════════════════
+
+struct ProbeConfig {
+    mode: string,            // "selftest" | "detect" | "probe"
+    model_path: string,
+    merged_dir: string,
+    hidden_path: string,
+    output_format: string
+}
+
+fn default_config() -> ProbeConfig {
+    ProbeConfig {
+        mode: "selftest",
+        model_path: DEFAULT_MODEL,
+        merged_dir: "",
+        hidden_path: "",
+        output_format: DEFAULT_FORMAT
+    }
+}
+
+fn parse_args(argv: list) -> ProbeConfig {
+    let mut cfg = default_config()
+    let mut i = 0
+    while i < argv.len() {
+        let a = argv[i]
+        if a == "--selftest" {
+            cfg.mode = "selftest"
+        } else if a == "--detect" {
+            cfg.mode = "detect"
+        } else if a == "--probe" {
+            cfg.mode = "probe"
+        } else if a == "--model" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.model_path = argv[i]
+            }
+        } else if a == "--merged-dir" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.merged_dir = argv[i]
+            }
+        } else if a == "--hidden-path" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.hidden_path = argv[i]
+            }
+        } else if a == "--output-format" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.output_format = argv[i]
+            }
+        }
+        i = i + 1
+    }
+    return cfg
+}
+
+// ═══════════════════════════════════════════════════════════
+// Shell quoter (mirror clm_v4_mount _sh_quote)
+// ═══════════════════════════════════════════════════════════
+
+fn _sh_quote(s: string) -> string {
+    let mut out = "'"
+    let mut i = 0
+    while i < s.len() {
+        let c = s.substring(i, i + 1)
+        if c == "'" {
+            out = out + "'\\''"
+        } else {
+            out = out + c
+        }
+        i = i + 1
+    }
+    out = out + "'"
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════
+// Merged dir resolver — paradigm-j detect logic
+// ═══════════════════════════════════════════════════════════
+//
+// Repo "dancinlab/clm-v4-paradigm-j-50k-final" → cache key
+// "dancinlab__clm-v4-paradigm-j-50k-final" (slash → double underscore,
+// matching clm_v4_lora_merge_helper.py output cache convention).
+fn _flatten_repo(repo: string) -> string {
+    let mut flat = ""
+    let mut i = 0
+    while i < repo.len() {
+        let c = repo.substring(i, i + 1)
+        if c == "/" { flat = flat + "__" } else { flat = flat + c }
+        i = i + 1
+    }
+    return flat
+}
+
+fn _resolve_merged_dir(cfg: ProbeConfig) -> string {
+    if cfg.merged_dir != "" { return cfg.merged_dir }
+    let home_r = exec_with_status("printf %s \"$HOME\"")
+    let home = to_string(home_r[0]).trim()
+    let flat = _flatten_repo(cfg.model_path)
+    return home + MERGED_CACHE_BASE + flat
+}
+
+// paradigm-j detect logic: jvae_heads.pt presence (priority order):
+//   1. <merged_dir>/jvae_heads.pt          (clm_v4_lora_merge_helper output)
+//   2. ~/.cache/huggingface/hub/models--<repo>/snapshots/*/jvae_heads.pt (raw HF cache)
+//
+// Returns:
+//   ""    when JVAE absent (sft-1-7-y1 / sft-1-8 graceful fallback)
+//   path  when JVAE present (paradigm-j only)
+fn _detect_jvae_heads(cfg: ProbeConfig) -> string {
+    let md = _resolve_merged_dir(cfg)
+    let merged_pt = md + "/jvae_heads.pt"
+    let r1 = exec_with_status("test -f " + _sh_quote(merged_pt) + " && echo " + _sh_quote(merged_pt) + " || echo ''")
+    let m1 = to_string(r1[0]).trim()
+    if m1 != "" { return m1 }
+    // Fall back to raw HF cache snapshot scan
+    let home_r = exec_with_status("printf %s \"$HOME\"")
+    let home = to_string(home_r[0]).trim()
+    let mut hf_repo = ""
+    let mut i = 0
+    while i < cfg.model_path.len() {
+        let c = cfg.model_path.substring(i, i + 1)
+        if c == "/" { hf_repo = hf_repo + "--" } else { hf_repo = hf_repo + c }
+        i = i + 1
+    }
+    let snap_glob = home + "/.cache/huggingface/hub/models--" + hf_repo + "/snapshots/*/jvae_heads.pt"
+    let r2 = exec_with_status("ls " + snap_glob + " 2>/dev/null | head -1")
+    let m2 = to_string(r2[0]).trim()
+    return m2
+}
+
+// ═══════════════════════════════════════════════════════════
+// Python helper emitter (raw#37 transient — torch.load required)
+// ═══════════════════════════════════════════════════════════
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# clm_v4_jvae_probe_helper — emitted by anima-core/runtime/clm_v4_jvae_probe.hexa\n")
+    parts.push("# raw#37 transient. Mac canonical = .hexa orchestration; this helper executes\n")
+    parts.push("# the JVAE Variant 1 q_phi forward that hexa cannot express directly.\n")
+    parts.push("import argparse, json, math, os, sys, time\n")
+    parts.push("from pathlib import Path\n\n")
+
+    parts.push("HIDDEN_DIM = 768\n")
+    parts.push("JVAE_LATENT_DIM = 192\n")
+    parts.push("JVAE_STEP_EXPECT = 50000\n\n")
+
+    parts.push("def _emit(tag, **kw):\n")
+    parts.push("    sys.stdout.write('__ANIMA_' + tag + '__')\n")
+    parts.push("    for k, v in kw.items(): sys.stdout.write(' ' + str(k) + '=' + str(v))\n")
+    parts.push("    sys.stdout.write('\\n'); sys.stdout.flush()\n\n")
+
+    parts.push("def _argparse():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    p.add_argument('--mode', required=True, choices=['detect','probe'])\n")
+    parts.push("    p.add_argument('--jvae-pt', required=True)\n")
+    parts.push("    p.add_argument('--hidden-path', default='')\n")
+    parts.push("    p.add_argument('--output-format', default='compact', choices=['compact','full','json'])\n")
+    parts.push("    return p.parse_args()\n\n")
+
+    // q_phi state dict has keys:
+    //   fc1.weight (H, 768)
+    //   fc1.bias (H,)
+    //   fc_mu.weight (192, H)
+    //   fc_mu.bias (192,)
+    //   fc_logvar.weight (192, H)
+    //   fc_logvar.bias (192,)
+    parts.push("def _load_jvae_heads(jvae_pt):\n")
+    parts.push("    try:\n")
+    parts.push("        import torch\n")
+    parts.push("    except Exception as ex:\n")
+    parts.push("        return (None, None, None, f'torch import failed: {ex}')\n")
+    parts.push("    if not os.path.isfile(jvae_pt):\n")
+    parts.push("        return (None, None, None, f'jvae_heads.pt not found: {jvae_pt}')\n")
+    parts.push("    try:\n")
+    parts.push("        sd = torch.load(jvae_pt, map_location='cpu', weights_only=False)\n")
+    parts.push("    except Exception as ex:\n")
+    parts.push("        return (None, None, None, f'torch.load failed: {ex}')\n")
+    parts.push("    # Schema: dict with keys 'q_phi' / 'p_theta' / 'step' OR flat state dict.\n")
+    parts.push("    q_phi = sd.get('q_phi') if isinstance(sd, dict) else None\n")
+    parts.push("    p_theta = sd.get('p_theta') if isinstance(sd, dict) else None\n")
+    parts.push("    step = sd.get('step') if isinstance(sd, dict) else None\n")
+    parts.push("    if q_phi is None and isinstance(sd, dict):\n")
+    parts.push("        # flat fallback — assume keys are dotted (q_phi.fc1.weight etc)\n")
+    parts.push("        q_phi = {k.split('q_phi.', 1)[1]: v for k, v in sd.items() if k.startswith('q_phi.')}\n")
+    parts.push("        p_theta = {k.split('p_theta.', 1)[1]: v for k, v in sd.items() if k.startswith('p_theta.')}\n")
+    parts.push("    if not q_phi:\n")
+    parts.push("        return (None, None, step, 'q_phi state dict empty after parse')\n")
+    parts.push("    return (q_phi, p_theta, step, '')\n\n")
+
+    parts.push("def _q_phi_forward(q_phi, h_pool):\n")
+    parts.push("    # h_pool: torch tensor (B, 768) → (mu, logvar) each (B, 192)\n")
+    parts.push("    import torch\n")
+    parts.push("    fc1_w = q_phi['fc1.weight']; fc1_b = q_phi['fc1.bias']\n")
+    parts.push("    fc_mu_w = q_phi['fc_mu.weight']; fc_mu_b = q_phi['fc_mu.bias']\n")
+    parts.push("    fc_lv_w = q_phi['fc_logvar.weight']; fc_lv_b = q_phi['fc_logvar.bias']\n")
+    parts.push("    h1 = torch.nn.functional.linear(h_pool, fc1_w, fc1_b)\n")
+    parts.push("    h1 = torch.relu(h1)\n")
+    parts.push("    mu = torch.nn.functional.linear(h1, fc_mu_w, fc_mu_b)\n")
+    parts.push("    logvar = torch.nn.functional.linear(h1, fc_lv_w, fc_lv_b)\n")
+    parts.push("    return mu, logvar\n\n")
+
+    parts.push("def _kl_canonical(mu, logvar):\n")
+    parts.push("    # KL = 0.5 * sum(mu^2 + exp(logvar) - logvar - 1)  per batch row, then mean\n")
+    parts.push("    import torch\n")
+    parts.push("    per_row = 0.5 * torch.sum(mu * mu + torch.exp(logvar) - logvar - 1.0, dim=-1)\n")
+    parts.push("    return float(per_row.mean().item())\n\n")
+
+    parts.push("def _synth_hidden(seed=0):\n")
+    parts.push("    import torch\n")
+    parts.push("    g = torch.Generator(); g.manual_seed(seed)\n")
+    parts.push("    return torch.randn((1, HIDDEN_DIM), generator=g, dtype=torch.float32) * 0.1\n\n")
+
+    parts.push("def _load_hidden(path):\n")
+    parts.push("    import numpy as np, torch\n")
+    parts.push("    arr = np.load(path)\n")
+    parts.push("    if arr.ndim == 3:\n")
+    parts.push("        # (B, T, HIDDEN) → mean over T → (B, HIDDEN)\n")
+    parts.push("        arr = arr.mean(axis=1)\n")
+    parts.push("    if arr.ndim == 1:\n")
+    parts.push("        arr = arr.reshape(1, -1)\n")
+    parts.push("    return torch.from_numpy(arr.astype('float32'))\n\n")
+
+    parts.push("def cmd_detect(args):\n")
+    parts.push("    q_phi, p_theta, step, err = _load_jvae_heads(args.jvae_pt)\n")
+    parts.push("    if err:\n")
+    parts.push("        _emit('JVAE_PROBE_DETECT', ok=0, error=err)\n")
+    parts.push("        return 1\n")
+    parts.push("    q_keys = sorted(list(q_phi.keys())) if q_phi else []\n")
+    parts.push("    p_keys = sorted(list(p_theta.keys())) if p_theta else []\n")
+    parts.push("    fc1_shape = list(q_phi['fc1.weight'].shape) if 'fc1.weight' in q_phi else []\n")
+    parts.push("    fc_mu_shape = list(q_phi['fc_mu.weight'].shape) if 'fc_mu.weight' in q_phi else []\n")
+    parts.push("    _emit('JVAE_PROBE_DETECT', ok=1, step=step, q_phi_keys=len(q_keys),\n")
+    parts.push("          p_theta_keys=len(p_keys), fc1_shape=fc1_shape, fc_mu_shape=fc_mu_shape)\n")
+    parts.push("    return 0\n\n")
+
+    parts.push("def cmd_probe(args):\n")
+    parts.push("    import torch\n")
+    parts.push("    q_phi, p_theta, step, err = _load_jvae_heads(args.jvae_pt)\n")
+    parts.push("    if err:\n")
+    parts.push("        _emit('JVAE_PROBE_RESULT', ok=0, error=err)\n")
+    parts.push("        return 1\n")
+    parts.push("    if args.hidden_path:\n")
+    parts.push("        h = _load_hidden(args.hidden_path)\n")
+    parts.push("    else:\n")
+    parts.push("        h = _synth_hidden(seed=42)\n")
+    parts.push("    with torch.no_grad():\n")
+    parts.push("        mu, logvar = _q_phi_forward(q_phi, h)\n")
+    parts.push("    mu_norm = float(torch.norm(mu, p=2, dim=-1).mean().item())\n")
+    parts.push("    logvar_mean = float(logvar.mean().item())\n")
+    parts.push("    kl = _kl_canonical(mu, logvar)\n")
+    parts.push("    if args.output_format == 'json':\n")
+    parts.push("        out = {'phi_jvae_mu': mu_norm, 'phi_jvae_logvar': logvar_mean,\n")
+    parts.push("               'phi_jvae_kl': kl, 'step': step,\n")
+    parts.push("               'hidden_source': ('inject' if args.hidden_path else 'synthetic'),\n")
+    parts.push("               'mu_shape': list(mu.shape), 'logvar_shape': list(logvar.shape)}\n")
+    parts.push("        sys.stdout.write(json.dumps(out) + '\\n'); sys.stdout.flush()\n")
+    parts.push("    else:\n")
+    parts.push("        sys.stdout.write('__ANIMA_JVAE_PROBE_RESPONSE__\\n')\n")
+    parts.push("        sys.stdout.write(f'phi_jvae_mu: {mu_norm:.4f}\\n')\n")
+    parts.push("        sys.stdout.write(f'phi_jvae_logvar: {logvar_mean:.4f}\\n')\n")
+    parts.push("        sys.stdout.write(f'phi_jvae_kl: {kl:.4f}\\n')\n")
+    parts.push("        sys.stdout.write(f'step: {step}\\n')\n")
+    parts.push("        sys.stdout.write(f'hidden_source: {\"inject\" if args.hidden_path else \"synthetic\"}\\n')\n")
+    parts.push("        if args.output_format == 'full':\n")
+    parts.push("            sys.stdout.write(f'mu_shape: {list(mu.shape)}\\n')\n")
+    parts.push("            sys.stdout.write(f'logvar_shape: {list(logvar.shape)}\\n')\n")
+    parts.push("        sys.stdout.flush()\n")
+    parts.push("    _emit('JVAE_PROBE_RESULT', ok=1, step=step,\n")
+    parts.push("          phi_jvae_mu=f'{mu_norm:.4f}', phi_jvae_logvar=f'{logvar_mean:.4f}',\n")
+    parts.push("          phi_jvae_kl=f'{kl:.4f}')\n")
+    parts.push("    return 0\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    args = _argparse()\n")
+    parts.push("    if args.mode == 'detect':\n")
+    parts.push("        return cmd_detect(args)\n")
+    parts.push("    if args.mode == 'probe':\n")
+    parts.push("        return cmd_probe(args)\n")
+    parts.push("    return 1\n\n")
+
+    parts.push("if __name__ == '__main__':\n")
+    parts.push("    sys.exit(main())\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+// ═══════════════════════════════════════════════════════════
+// Python interpreter resolution (mirror clm_v4_mount _resolve_python)
+// ═══════════════════════════════════════════════════════════
+
+fn _resolve_python() -> string {
+    let probe = "if [ -n \"$HEXA_PY\" ] && [ -x \"$HEXA_PY\" ]; then echo \"$HEXA_PY\"; exit 0; fi; root=\"${ANIMA:-$HOME/core/anima}\"; venv_py=\"$root/.venv-eeg/bin/python\"; if [ -x \"$venv_py\" ]; then echo \"$venv_py\"; exit 0; fi; for p in /Users/ghost/.hx/bin/python /opt/homebrew/bin/python3 /usr/local/bin/python3 /usr/bin/python3; do [ -x \"$p\" ] && { echo \"$p\"; exit 0; }; done; command -v python3 2>/dev/null || command -v python 2>/dev/null || echo python3"
+    let r = exec_with_status(probe)
+    let out = to_string(r[0]).trim()
+    if out == "" { return "python3" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════
+// C3 hook spec — c3_2 / c3_4 channel injection (ADDITIVE; logic UNCHANGED)
+// ═══════════════════════════════════════════════════════════
+//
+// c3_2 (axis_min ≤ 0.4491) and c3_4 (axis_l2 ≥ 0.1176) thresholds
+// remain bit-identical. JVAE channel APPENDS informational signal that
+// downstream consciousness.hexa MAY consume by:
+//   c3_2 hook: append phi_jvae_kl to axis-min input vector. min(...) preserved.
+//   c3_4 hook: append (phi_jvae_mu_a - phi_jvae_mu_b) to L2-delta vector.
+//
+// This file does NOT mutate consciousness.hexa — the hook is consumed by
+// caller (clm_v4_mount real-mode forward extension OR consciousness.hexa
+// _probe_substrate) reading the JSON output of --probe and merging into
+// its 5-axis activation BEFORE threshold evaluation. raw#15 strict additive.
+//
+// Schema emitted:
+//   __ANIMA_JVAE_PROBE_RESPONSE__
+//   phi_jvae_mu: <float>       — ||mu||_2 batch mean
+//   phi_jvae_logvar: <float>   — logvar batch mean
+//   phi_jvae_kl: <float>       — canonical VAE KL
+//   step: 50000                — paradigm-j 50k provenance
+//   hidden_source: synthetic|inject
+fn _emit_c3_hook_spec() {
+    eprintln("[clm_v4_jvae_probe] hook=c3_2 channel=phi_jvae_kl mode=append-to-axis-min direction=additive")
+    eprintln("[clm_v4_jvae_probe] hook=c3_4 channel=phi_jvae_mu_delta mode=append-to-axis-l2 direction=additive")
+    eprintln("[clm_v4_jvae_probe] hook=thresholds mutate=false (c3_2 le 0.4491 / c3_4 ge 0.1176 unchanged)")
+}
+
+// ═══════════════════════════════════════════════════════════
+// Mode dispatchers
+// ═══════════════════════════════════════════════════════════
+
+fn cmd_selftest(cfg: ProbeConfig) {
+    println("── clm_v4_jvae_probe selftest (metadata-only, no python invoke) ──")
+    println("note=hexa-native dry-run; helper emit deferred to --detect/--probe (raw#103 darwin-bypass)")
+    println("helper_target=" + HELPER_PATH + " (deferred)")
+
+    // 1. paradigm-j detect logic — verify cache resolution works for known repos
+    let cfg_j = default_config()
+    let mut cfg_j_mut = cfg_j
+    cfg_j_mut.model_path = "dancinlab/clm-v4-paradigm-j-50k-final"
+    let pj_md = _resolve_merged_dir(cfg_j_mut)
+    println("paradigm_j_merged_dir=" + pj_md)
+    let pj_jvae = _detect_jvae_heads(cfg_j_mut)
+    if pj_jvae != "" {
+        println("paradigm_j_jvae_present=" + pj_jvae)
+    } else {
+        println("paradigm_j_jvae_absent=true (HF cache or merged_dir miss; download 후 재시도)")
+    }
+
+    // 2. graceful-fallback verify — sft-1-7-y1 / sft-1-8 should NOT have jvae_heads.pt
+    let mut cfg_y1 = default_config()
+    cfg_y1.model_path = "dancinlab/clm-v4-sft-1-7-y1-stage1"
+    let y1_jvae = _detect_jvae_heads(cfg_y1)
+    if y1_jvae == "" {
+        println("sft_1_7_y1_jvae_disabled=true (graceful fallback verified)")
+    } else {
+        println("sft_1_7_y1_jvae_unexpected=" + y1_jvae + " (UNEXPECTED — paradigm-j-only mandate)")
+    }
+
+    let mut cfg_18 = default_config()
+    cfg_18.model_path = "dancinlab/clm-v4-sft-1-8-stage1"
+    let s18_jvae = _detect_jvae_heads(cfg_18)
+    if s18_jvae == "" {
+        println("sft_1_8_jvae_disabled=true (graceful fallback verified)")
+    } else {
+        println("sft_1_8_jvae_unexpected=" + s18_jvae + " (UNEXPECTED — paradigm-j-only mandate)")
+    }
+
+    // 3. C3 hook spec emit
+    _emit_c3_hook_spec()
+
+    // 4. spec doc presence
+    let spec_check = exec_with_status("test -e docs/anima_paradigm_j_schema_fix_jvae_wrapper_design_iter7_2026_05_08.ai.md && echo spec_present || echo spec_MISSING")
+    println(to_string(spec_check[0]).trim())
+
+    // 5. sister file presence (clm_v4_mount.hexa untouched per raw#15)
+    let sis_check = exec_with_status("test -e anima-core/runtime/clm_v4_mount.hexa && echo sister_clm_v4_mount_present || echo sister_MISSING")
+    println(to_string(sis_check[0]).trim())
+
+    println("selftest=ok")
+    println("paradigm_j_detect_logic=jvae_heads.pt_presence_in_merged_or_hf_snapshot")
+    println("fallback_path=jvae_disabled_graceful (sft-1-7-y1 / sft-1-8)")
+    println("variant=1_passive_observer (decoder forward UNCHANGED)")
+    emit_honest_c3()
+    println("DONE")
+}
+
+fn cmd_detect(cfg: ProbeConfig) {
+    println("── clm_v4_jvae_probe detect ──")
+    let jvae_pt = _detect_jvae_heads(cfg)
+    if jvae_pt == "" {
+        println("__ANIMA_JVAE_PROBE_DETECT__ ok=0 reason=jvae_heads_pt_absent model=" + cfg.model_path)
+        println("jvae_status=disabled_graceful_fallback")
+        emit_honest_c3()
+        return
+    }
+    println("__ANIMA_JVAE_PROBE_DETECT__ ok=1 jvae_pt=" + jvae_pt + " model=" + cfg.model_path)
+    _write_helper()
+    let py = _resolve_python()
+    let cmd = py + " " + HELPER_PATH + " --mode detect --jvae-pt " + _sh_quote(jvae_pt)
+    let r = exec_with_status(cmd)
+    print(to_string(r[0]))
+    if to_int(r[1]) != 0 {
+        eprintln("[clm_v4_jvae_probe] detect returned status=" + to_string(r[1]))
+        exit(to_int(r[1]))
+    }
+    emit_honest_c3()
+}
+
+fn cmd_probe(cfg: ProbeConfig) {
+    println("── clm_v4_jvae_probe probe (Variant 1 passive observer) ──")
+    let jvae_pt = _detect_jvae_heads(cfg)
+    if jvae_pt == "" {
+        eprintln("[clm_v4_jvae_probe] WARN: jvae_heads.pt absent for " + cfg.model_path)
+        eprintln("[clm_v4_jvae_probe] paradigm-j-only differentiator — graceful fallback engaged")
+        println("__ANIMA_JVAE_PROBE_RESULT__ ok=0 reason=jvae_disabled model=" + cfg.model_path)
+        emit_honest_c3()
+        return
+    }
+    _write_helper()
+    let py = _resolve_python()
+    let mut cmd = py + " " + HELPER_PATH + " --mode probe --jvae-pt " + _sh_quote(jvae_pt)
+    cmd = cmd + " --output-format " + cfg.output_format
+    if cfg.hidden_path != "" {
+        cmd = cmd + " --hidden-path " + _sh_quote(cfg.hidden_path)
+    }
+    let r = exec_with_status(cmd)
+    print(to_string(r[0]))
+    if to_int(r[1]) != 0 {
+        eprintln("[clm_v4_jvae_probe] probe returned status=" + to_string(r[1]))
+        exit(to_int(r[1]))
+    }
+    _emit_c3_hook_spec()
+    emit_honest_c3()
+}
+
+// ═══════════════════════════════════════════════════════════
+// Main
+// ═══════════════════════════════════════════════════════════
+
+fn print_usage() {
+    println("clm_v4_jvae_probe.hexa — Anima Core JVAE Variant 1 passive observer (paradigm-j only)")
+    println("")
+    println("Usage:")
+    println("  hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --selftest")
+    println("  hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --detect --model REPO")
+    println("  hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --probe --model REPO [--hidden-path NPY]")
+    println("")
+    println("Flags:")
+    println("  --model REPO            HF repo id (default dancinlab/clm-v4-paradigm-j-50k-final)")
+    println("  --merged-dir PATH       merged_dir override (default ~/.cache/anima/clm_v4_merged/<flat>/)")
+    println("  --hidden-path NPY       decoder hidden state .npy (B, T, 768) — synthetic if absent")
+    println("  --output-format FMT     compact (default) | full | json")
+}
+
+fn main() {
+    let av = args()
+    if av.len() < 3 {
+        print_usage()
+        exit(0)
+    }
+    let mut inner = []
+    let mut i = 2
+    while i < av.len() {
+        inner = inner.push(av[i])
+        i = i + 1
+    }
+    let cfg = parse_args(inner)
+
+    if cfg.mode == "selftest" {
+        cmd_selftest(cfg)
+    } else if cfg.mode == "detect" {
+        cmd_detect(cfg)
+    } else if cfg.mode == "probe" {
+        cmd_probe(cfg)
+    } else {
+        print_usage()
+        exit(1)
+    }
+}

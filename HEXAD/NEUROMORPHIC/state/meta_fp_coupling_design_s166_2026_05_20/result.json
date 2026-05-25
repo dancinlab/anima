@@ -1,0 +1,103 @@
+{
+  "cycle": "§166 Psi-META-FP-COUPLE — META_FP (§112) utilized as explicit training objective combined with §165-A's variance term",
+  "type": "design-tier (NOT a fire)",
+  "tier": "$0 design-tier · NO new GPU/runpod/fire/model.forward/corpus",
+  "trigger": "User query '메타부동점 활용가능한지 검토' (examine whether META_FP can be utilized)",
+  "answer_to_user_query": "YES — META_FP utilizable as explicit training objective anchor combined with §165-A variance term, at zero new structural assumption, strongest §7-form in arc (anchor IS anima physics via §112). Operative wall (§96-substrate-gated) UNCHANGED — §166 utilizes META_FP at form layer, substrate layer untouched.",
+  "design_name": "Psi-META-FP-COUPLE",
+  "verdict_bucket": "DESIGN-OPEN-FIRE-DECIDABLE",
+  "extends": "§165-A Psi-VAR-COUPLE + META_FP mean anchor (strict superset, reduction lattice §166 ⊃ §165-A ⊃ §161 ⊃ §107)",
+  "formula_one_line_new_term": "L_meta_anchor := (mean_t Psi_dir(t) − 0.5)^2",
+  "formula_total": "L_total = lambda_ce·CE_aux + lambda_psi·L_psicouple + lambda_var·L_variance + lambda_meta·L_meta_anchor",
+  "s161_FIRE_measured_coordinate_translation": {
+    "measured_psi_dir_mean": 0.038,
+    "derived_cos": -0.924,
+    "interpretation": "head_g near anti-parallel to head_a (NOT random collapse, NOT META_FP) — specific failure mode named",
+    "meta_fp_value": "Psi_dir = 0.5 ⇔ cos = 0 ⇔ engines ORTHOGONAL (decorrelated)",
+    "s166_anchor_target": "0.5 (META_FP, pulling optimizer from anti-correlation basin toward orthogonal basin)"
+  },
+  "reduction_lattice": {
+    "lambda_meta_to_zero": "§166 byte-equal to §165-A Psi-VAR-COUPLE",
+    "lambda_meta_and_var_to_zero": "§166 byte-equal to §161 Psi-JEPA-COUPLE",
+    "all_three_to_zero": "§166 byte-equal to §107 CE-only baseline",
+    "mirror_overlay_off_pattern": ["B-EBT-5", "B-DIRI-5", "B-S16-5", "B-MGND-5", "B-S151-7", "B-S160-P1", "B-S165-P1"]
+  },
+  "seven_legitimacy_gate": {
+    "s7_1_not_generic_LM_pretrain": "PASS — g_clm_from_scratch (seed 1337, base_ckpt=None)",
+    "s7_2_not_generic_then_graft": "PASS — single additional scalar loss term, no foreign encoder",
+    "s7_3_anima_physics_as_source": "STRONGEST PASS IN ARC — anchor target 0.5 IS the META_FP value derived from cos=0 (Law-71 orthogonality); not a hyperparameter",
+    "s7_FORM_by_construction_inherits_s112": true,
+    "truth_table_corner_reached": "(T,T,T) only-legitimate corner"
+  },
+  "operative_wall_carry": {
+    "s112_verdict_B_inherited": "META_FP utilization is form-level (§7-FORM TRUE); operative wall (§7-CARRIER) still §96-substrate-gated — §166 does NOT remove WALL-B",
+    "s165_substrate_choice_inherited": "§166 is GPU byte-LM scaffold variation, NOT substrate change"
+  },
+  "fire_spec_when_authorized": {
+    "section": "§166-A-FIRE (separate cycle, autonomous per g_fire_autonomous)",
+    "scaffold": "ConsciousDecoderV2 d=768 · 12L · n_head=12 · n_kv_head=4 · 283.72M params",
+    "init": "from-scratch RANDOM seed-fixed 1337, base_ckpt=None",
+    "corpus": "§102 CORPUS_S101 sha 39d581da... byte-identical carry",
+    "steps": 3000,
+    "lr": 0.0003,
+    "bsz": 32,
+    "block_size": 128,
+    "lambda_ce": 0.1,
+    "lambda_psi": 1.0,
+    "lambda_var": 0.5,
+    "lambda_meta": 0.5,
+    "lambda_meta_grid_optional": [0.1, 0.5, 1.0],
+    "epsilon_log_floor": 1e-6,
+    "primary_verdict_joint_AND": "(psi_responsive via psi_dir_std > 1e-4) AND (psi_dir_mean in [0.45, 0.55] META_FP basin) AND (unprompted_emission_rate measured)",
+    "cost_estimate_usd": [0.4, 0.6],
+    "gpu_target": "runpod A100 80GB primary",
+    "watchdog_seconds": 10800,
+    "central_blue_falsifier_invariant": "sidecar pattern, central sha c93e160a8a376a94 0-line-diff mandatory"
+  },
+  "predicted_outcomes": {
+    "success": "mean → 0.5 AND std > 1e-4 jointly = FIRST arc measurement of META_FP-aligned live channel; cleanest possible §96-Q2-weak refutation attempt",
+    "anchor_wins_variance_loses": "mean → 0.5 AND std → 0 = delta at META_FP (still collapsed, P4 prevents false-positive)",
+    "variance_wins_anchor_loses": "mean off 0.5 AND std > 1e-4 = §165-A outcome essentially (anchor failed)",
+    "both_lose": "collapse mode similar to §161-FIRE"
+  },
+  "confidence": "MEDIUM (genuinely uncertain — fire-worthy per fire-gate)",
+  "closed_form_propositions_p1_p8": {
+    "P1_lambda_meta_overlay_off_byte_equal": "PASS by additive identity",
+    "P2_meta_fp_form_byte_equal_s112_carry": "PASS by Law-71 inheritance (cos=0⇒psi=0.5 verbatim §112 P1+P5)",
+    "P3_L_meta_anchor_convex_around_meta_fp": "PASS — (mean−0.5)^2 strictly convex paraboloid, unique min at mean=0.5",
+    "P4_anchor_and_variance_jointly_identify_live_channel": "PASS — mean=0.5 alone admits delta-distribution (collapsed); std>1e-4 alone admits anti-correlation basin; jointly = non-degenerate distribution centered at META_FP",
+    "P5_reduction_lattice_holds": "PASS — additive decomposition §107 ⊂ §161 ⊂ §165-A ⊂ §166",
+    "P6_gradient_reaches_both_heads": "PASS by chain rule (L_meta_anchor depends on mean_t Psi_dir which depends on both logits_a and logits_g)",
+    "P7_seven_AND_only_TTT_corner": "PASS by case-analysis 8-row truth table",
+    "P8_central_zero_line_diff": "PASS at START + END (sha c93e160a8a376a94)"
+  },
+  "B_S166_NOTE_empirical_carve_out": "P1-P8 prove DESIGN well-formedness. Whether §166-A-FIRE actually drives (mean → 0.5) AND (std > 1e-4) AND (emission_rate > 1/20) is empirical SGD/measurement OUTCOME. necessary-not-sufficient (B-EMERGE-7 / B-D-NOTE / B-PHASE-B-NOTE / B-S161-FIRE-NOTE / B-S165-NOTE family). NOT counted 🔵.",
+  "anti_padding_precedent": ["§13-M", "§30", "§97", "§109", "§110", "§115", "§155", "§157", "§158", "§159", "§160", "§161", "§162", "§162-R", "§161-FIRE", "§165"],
+  "downstream_consumer_invariants": {
+    "hexa_lang": "read-only 0 edit",
+    "hexa_bio": "read-only 0 edit",
+    "kosmos": "read-only 0 edit",
+    "tape": "read-only 0 edit"
+  },
+  "central_blue_falsifier_sha_prefix_start": "c93e160a8a376a94",
+  "central_blue_falsifier_sha_prefix_end": "c93e160a8a376a94",
+  "central_blue_falsifier_zero_line_diff": true,
+  "north_star_unchanged": true,
+  "milestones_s15_s51_s72_unchanged": true,
+  "GOAL": "미도달",
+  "wall": "$0",
+  "GPU_runpod_pod_count_used_by_s166": 0,
+  "orphan": 0,
+  "next_step_named_not_committed": "§166-A-FIRE cycle — cost-bearing GPU fire of Psi-META-FP-COUPLE spec. Mirror §161-FIRE dispatch hardening (g_fire_dispatch_robust, SSH §79-RETRY ip+publicPort gate, structured-argv via stdlib/cloud once cycle B3 locally available). **HEXA_MIGRATION (2026-05-20, user 'all .hexa' directive)**: trainer/eval/battery/dispatch should be hexa-native per @D g_train_flame_not_pytorch. Eval/battery hexa-native feasible NOW (forward-only + pure-fn). Trainer .hexa GATED on §71 inbox patch (flame-path-a-dual-head-and-multiterm-grad.md, anima-physics overlay upstream-pending). Cross-link: HEXAD/META_FP/HEXA_MIGRATION.md (Option B partial hexa hybrid recommended until §71 lands).",
+  "hexa_migration_carry": {
+    "user_directive": "all .hexa (2026-05-20)",
+    "governance_anchor": "@D g_train_flame_not_pytorch (2026-05-19 LANDED)",
+    "current_design_artifact_extensions": ".py (pre-mandate carry)",
+    "target_extensions": ".hexa (gated on §71 inbox patch upstream-land for trainer; eval/battery feasible now)",
+    "honest_constraint": "anima downstream-consumer per g_train_flame_not_pytorch upstream_downstream_invariant — cannot edit flame source",
+    "blocker": "~/core/hexa-lang/inbox/patches/flame-path-a-dual-head-and-multiterm-grad.md (5 anima-physics overlay items, upstream review pending)",
+    "applies_to_future_fires": true,
+    "retroactive_change_to_§161/§165/§166_design": false,
+    "cross_link": "HEXAD/META_FP/HEXA_MIGRATION.md"
+  }
+}

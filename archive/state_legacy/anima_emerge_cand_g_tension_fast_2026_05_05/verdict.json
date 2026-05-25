@@ -1,0 +1,19 @@
+{
+  "schema": "anima/cand_g_tension_fast/verdict/1",
+  "ts_utc": "2026-05-05T16:21:42Z",
+  "n_prompts": 3,
+  "n_clean": 3,
+  "F_CAND_G_1_verdict": "PASS",
+  "max_l2_variance": 124.406494140625,
+  "max_std_variance": 0.16221366822719574,
+  "criterion_5_hit_l2": true,
+  "criterion_5_hit_std": false,
+  "load_sec": 29.1,
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 16 block forward-hooks per prompt (one-shot per forward) — RST-safe vs per-token recompute",
+    "C3 BG-Q helper sister-import for model+tokenizer load (READ-ONLY)",
+    "C4 L2 vs std 둘 다 emit; 'tension' proxy = mean-pooled per-layer hidden norm. True architectural tension undefined",
+    "C5 3 prompt only — generalization NOT claimed"
+  ]
+}

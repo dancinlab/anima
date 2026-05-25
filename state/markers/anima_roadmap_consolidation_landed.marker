@@ -1,0 +1,51 @@
+marker: anima_roadmap_consolidation_landed
+ts_utc: 2026-05-03T00:00:00+00:00
+agent: bg_subagent_anima_roadmap_consolidation
+session_focus: anima .roadmap.* + narrative doc consolidation (additive only)
+
+new_roadmaps_count: 10
+existing_roadmaps_untouched: 29
+narrative_doc_untouched: docs/n_substrate_consciousness_roadmap_2026_05_01.md (2726 lines)
+offrepo_read_only: /Users/ghost/core/anima_offrepo_n51_w2/
+
+new_roadmap_files:
+  - .roadmap.n22_levin_xenobot          (active, partnership outreach)
+  - .roadmap.n23_slime_mycelium         (active, $200 first-kit awaiting)
+  - .roadmap.n24_octopus_iit_exclusion  (active, partnership + ethics)
+  - .roadmap.w1_anima_as_substrate      (active, 5-phase ARTIFACT_PERMANENT_DOWNGRADE)
+  - .roadmap.a1_learned_phi_extractor   (closed, HONEST_BUT_DOESNT_HELP)
+  - .roadmap.p9_sft                     (active, OK P9 EXEC S3 사전승인)
+  - .roadmap.p10_substrate_poc          (active, v2 YELLOW BUCKET_SEPARATION)
+  - .roadmap.g1_g5_chat_substrate       (active meta, G1+G3 LIVE + G5 spec)
+  - .roadmap.i1_tribev2_pr              (active, PR #60 OPEN at facebookresearch)
+  - .roadmap.n51_alm_tension            (closed, offrepo cross-link)
+
+handoff_doc: docs/anima_roadmap_consolidation_landed_2026_05_03.ai.md
+handoff_doc_sections: 8 (TL;DR + gap matrix + 신규 10 detail + audit + caveats + index + 7-elem + marker)
+handoff_format: AI-native + friendly preset (icon + analogy + 7-element + ASCII)
+
+policy_compliance:
+  migration_count: 0
+  destructive_count: 0
+  byte_modifications_to_existing_29: 0
+  byte_modifications_to_narrative: 0
+  byte_modifications_to_offrepo: 0
+  cost_usd: 0
+  cost_origin: mac_local_only
+
+caveats: 7
+  1: 마이그레이션 absolute 0 — 검증 git diff 측 30 file (29 untouched + 10 NEW + 0 modified)
+  2: JSON validation = first-line header parse only (entry append 시 별도 lint)
+  3: narrative §-anchor line drift risk (§-text-anchor 권장)
+  4: G2 EXPECTED_FAIL closed processing ambiguity (sub-track partial close)
+  5: P9 sister-cross-link partial dup (clm.65.4.p9_sft 이미 land + new peer .roadmap.p9_sft)
+  6: N-51 offrepo git status 미검증 (read-only audit only)
+  7: A1 + N-51 closed → reopen path unlock_keyword 정의 X
+
+raw_invariants:
+  - raw#10 honest C3 throughout
+  - raw#15 env() lazy + <user>
+  - BR-NO-USER-VERBATIM
+  - silent-land marker protocol active
+
+silent_land_status: PREVENTED (3-way attestation: handoff doc + 10 .roadmap.* + this marker)

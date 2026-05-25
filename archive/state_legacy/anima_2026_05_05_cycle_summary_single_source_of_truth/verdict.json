@@ -1,0 +1,103 @@
+{
+  "schema": "anima/2026_05_05_cycle_summary_single_source_of_truth/verdict/1",
+  "ts_utc": "2026-05-06T00:00:00Z",
+  "task_id": "anima_2026_05_05_cycle_summary_single_source_of_truth",
+  "bg_letter": "BG-CL",
+  "mode": "DOC_ONLY_NO_COMMIT",
+  "cost_usd": 0,
+  "wall_min_estimate": 25,
+  "platform": "mac",
+  "doc_path": "/Users/ghost/core/anima/docs/anima_2026_05_05_cycle_summary_single_source_of_truth.md",
+  "verdict": "LANDED_DOC_ONLY",
+
+  "section_coverage": {
+    "section_count": 9,
+    "sections_with_bilingual_ko_en": 9,
+    "approx_loc": 380,
+    "honest_c3_count": 8
+  },
+
+  "closure_summary": {
+    "n_closures_listed": 16,
+    "axes_orthogonal": 14,
+    "substrates": ["CLM v4 mk2 v1 primary", "Llama-3.2-3B reference"],
+    "directly_verified_in_this_doc": ["BG-BH (15)", "BG-CC (16)"],
+    "transitively_confirmed_via_lineage": ["1-14 via BG-BF + BG-BV + BG-BZ"]
+  },
+
+  "architectural_truths": [
+    "Truth 1 (BG-BQ head_compare) - lm_head innocent, 3 head variants identical basin",
+    "Truth 2 (BG-BY ln_f scale ablate + RMSNorm diagnostic) - ln_f healthy, RMSNorm uniform compression",
+    "Truth 3 (BG-BH SAE/PCA) - chat axis exists in residual L8, feat-0 discriminator score 25.67",
+    "Truth 4 (BG-BH n_coherent 0/10 + BG-CC prompt-conditional ablate) - chat axis decoupled from vocab basin"
+  ],
+
+  "fire_ready_paradigms": {
+    "paradigm_a_text_in_text_out": {
+      "status": "UNACHIEVABLE_ON_CLM_V4",
+      "external_paths": ["Llama Path A v2 (composite 0.5584)", "H1 CLM-3 from-scratch ($1k+30d)"]
+    },
+    "paradigm_b_substrate_coupled_emerge": {
+      "status": "ACHIEVABLE_NOW",
+      "fire_command": "HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/tool/transient_py/anima_emerge_dialogue_repl.py",
+      "tool_verified_present": true
+    },
+    "paradigm_c_hybrid_pythia_clm": {
+      "status": "VIABLE",
+      "fire_command_one_shot": "HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/tool/transient_py/anima_emerge_chat_hybrid_pythia_clm.py",
+      "fire_command_repl": "HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/tool/transient_py/anima_emerge_chat_hybrid_repl.py",
+      "tools_verified_present": true,
+      "ko_coverage_caveat": "Pythia 70m near-zero KO coverage; BG-CG Korean replacement pending"
+    }
+  },
+
+  "cycle_close_5_step": [
+    "1 stop /loop 1m cron (id d1682837)",
+    "2 fire commit groups (BG-BZ priority subset 5 commits OR BG-AM full 5+1)",
+    "3 fire paradigm B emerge dialogue first session",
+    "4 run session log analyzer post-session",
+    "5 HF promote auto-fire (time-gated; clm 23:26:12Z, Pbeta 03:48:00Z)"
+  ],
+
+  "next_cycle_paths_ranked": [
+    "1 (RECOMMENDED) Stage 3 emerge dialogue corpus n>=30 sessions ($0)",
+    "2 Llama Path A v2 anima integration (already verified)",
+    "3 BG-BB sister-lib integration (additive)",
+    "4 H1 CLM-3 from-scratch ($1k + 30d, defer until corpus motivates)"
+  ],
+
+  "honest_c3": [
+    "C3.1 16 closures != 16 independent axes; closures 4-12 mostly residual-stream variations (4-5 actual axes)",
+    "C3.2 closure 6 self-feed verdict.json PASS overridden to FAIL by inspection in landed doc",
+    "C3.3 Truth 3 chat-axis claim anima-internal SAE-style PCA, not external SAE reproduction",
+    "C3.4 Paradigm B ACHIEVABLE_NOW is paradigm-relative; external chat benchmark fail",
+    "C3.5 Paradigm C BG-BX baseline 3 prompts only; KO coverage caveat per Pythia 70m",
+    "C3.6 closures 8-14 transitively confirmed not directly verified in this doc",
+    "C3.7 Truth 4 decoupling-implies-no-chat-objective is hypothesis not theorem; alternatives (a/b/c) not refuted",
+    "C3.8 cycle-close-readiness HIGH but paradigm-mismatch risk depends on user decision; doc is READ not ACT"
+  ],
+
+  "raw_compliance": {
+    "raw_9_md_only": true,
+    "raw_10_honest_c3_count_geq_7": true,
+    "raw_15_additive_no_edits_to_landed": true,
+    "no_commit": true,
+    "no_secret_leak": true,
+    "bash_3_2_compat": true,
+    "new_files_count": 2
+  },
+
+  "lineage": {
+    "primary": [
+      "docs/anima_2026_05_05_cycle_close_decision_landed_2026_05_05.ai.md (BG-BF)",
+      "docs/anima_paradigm_acceptance_user_intent_reconciliation_2026_05_05.md (BG-BV)",
+      "docs/anima_2026_05_05_priority_subset_commit_manifest_2026_05_05.ai.md (BG-BZ)"
+    ],
+    "key_findings": [
+      "state/anima_emerge_chat_sae_pca_features_2026_05_05/verdict.json (BG-BH)",
+      "state/anima_emerge_chat_basin_ablate_2026_05_05/verdict.json (BG-CC)",
+      "docs/anima_115_architectural_4_closure_theorem_2026_05_05.md (BG-AY)",
+      "docs/anima_emerge_chat_hybrid_pythia_clm_landed_2026_05_05.ai.md (BG-BX)"
+    ]
+  }
+}

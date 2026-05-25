@@ -1,0 +1,103 @@
+@track EEG_D_DAY_HARDWARE_BRINGUP_AND_LIVE_HELPER
+@state in-progress (live-mode iteration; touch-detection sensitivity tuning open)
+@date 2026-04-28
+@scope OpenBCI Cyton+Daisy 16ch + Mark IV helmet hardware bring-up + raw#9 hexa-only diagnostic module trio (board_health_check / electrode_adjustment_helper) + B1-B6 helper bundle pre-land for D+1..D+7 chain.
+@hexa-only true
+@external-blocker none (hardware on-site, helmet wired, FTDI port detected)
+@principles raw#9 hexa-only, raw#10 honest-disclosure, raw#37 helper-py-/tmp-transient, raw#65 idempotent, raw#82 darwin-native @resolver-bypass, raw#91 honesty-triad, raw#101 minimal, raw#159 hexa-lang upstream-proposal-mandate, raw#100 nexus-kick-canonical-entry-point.
+
+# Hardware arrival + assembly
+
+@hw_bundle OpenBCI All-in-One Biosensing R&D Bundle (Cyton + Daisy + Dongle + Mark IV helmet + 2 ear clips + 1 Y-splitter + 500mAh Li-Po + USB charger)
+@hw_arrival 2026-04-28 (mid-session — boards + helmet + battery on-site, user assembling)
+@hw_battery_charged confirmed (charger LED green)
+@hw_y_splitter_count 1 (NOT 2 — standard OpenBCI single-splitter config)
+
+@y_splitter_decision SRB2 reference path only. BIAS handled directly via second ear clip → Cyton BIAS socket. Daisy SRB2/BIAS shared via Cyton+Daisy stack header pins (automatic). Rationale: SRB2 is THE critical reference signal; with single Y-splitter, allocate to highest-priority path. BIAS less sensitive to ground-loop than SRB2.
+
+@user_wiring_self_report
+  - ear clip 1 → Cyton hardware-row position 1 (= BIAS) directly, BLACK wire
+  - ear clip 2 → Y-splitter male pin (Y-splitter SRB2 path)
+  - Y-splitter socket A → Cyton hardware-row position 3 (= SRB2)
+  - Y-splitter socket B → unused (insulated)
+  - 16 EEG color wires → Cyton/Daisy bottom row N1P-N8P (per OpenBCI Mark IV doc table)
+
+@stack_recovery_event tick T+8min: user reported all Daisy ch 11-16 RAILED in OpenBCI GUI; subsequent tick "Data from the board doesn't change" verdict on ch 9-16. Diagnosis: Daisy stack pin loose. Recovery: power cycle Cyton OFF→PC + Daisy reseat → 16/16 ADC alive on next read.
+
+# Software stack patches (5 hexa files, 16 file edits, all uchg-locked post-edit)
+
+@patch_argv_parser_aot_safe 5 files patched (anima-eeg/calibrate.hexa, eeg_recorder.hexa, experiment.hexa + new board_health_check.hexa + new electrode_adjustment_helper.hexa). Reason: hexa argv() returns binary path duplicated under AOT mode + interpreter-wrapper variant /Users/ghost/.hx/packages/hexa/build/hexa_interp.real. Original `_flags_only_argv()` only matched .hexa suffix in argv[0], leaked exe path as first "flag". Patch: skip leading args ending in .hexa OR .real OR /exe OR starting with /. ALSO uses .ends_with() method form (raw#9 AOT-safe — slice equality fails under AOT codegen).
+
+@patch_brainflow_version_attr 2 files patched (calibrate.hexa, eeg_recorder.hexa). Reason: brainflow 5.21.0 doesn't expose __version__ attribute. Patch: replace `import brainflow; print(brainflow.__version__)` with `from importlib.metadata import version; print(version('brainflow'))`.
+
+# New modules landed (3 helpers)
+
+@new_module_1 anima-eeg/board_health_check.hexa (524L, sha256 5fe75539c5… frozen at 2026-04-28T15:38). Hardware-level no-helmet sanity: per-channel ADC alive + Cyton/Daisy stack + per-pin wire-connection inference (60Hz mains pickup as antenna-effect proxy) + cross-channel correlation + SRB2/BIAS reference share.
+@new_module_1_verdict_classes BOARD_16CH_HEALTHY / BOARD_8CH_ONLY / BOARD_16CH_PARTIAL_DEAD / BOARD_PINS_SHORTED / BOARD_NOT_DETECTED
+@new_module_1_real_hardware_verdict 16/16 ADC alive + 16/16 wire CONNECTED (mains 17-404 µV per channel) + Cyton+Daisy stack OK + SRB2 share OK. BOARD_PINS_SHORTED verdict is FALSE-POSITIVE in no-helmet condition (all floating wires correlate via shared environmental EMI). Helmet ON expected to drop pin_shorts_count to 0.
+
+@new_module_2 anima-eeg/electrode_adjustment_helper.hexa (~700L). Live ASCII 10-20 EEG map (matches anima-eeg/README.md hardware section §4) + per-position state symbol [✓/⚠/✗/⚡/·/?] + per-electrode action advice (Korean). Modes: --selftest / --check (one-shot) / --check --step N (progressive 1-18 expansion: SRB2→BIAS→Fp1→Fp2→F7→F8→F3→F4→C3→C4→T7→T8→P3→P4→P7→P8→O1→O2) / --watch (5s loop) / --live (1s tick, single BrainFlow session, helper-py self-render with ANSI clear).
+
+@new_module_2_step_n_verdict_per_step
+  step 1 (SRB2 only) → SRB2[✓] OK (avg_pconst < 0.20 → reference rail providing usable signal)
+  step 2 (SRB2 + BIAS) → both [✓] OK (BIAS LOOSE/BAD inferred from median mains pickup variance)
+  step 3-18 (per-electrode) → no-helmet shows BAD_NO_SCALP × 16 (expected; finger-touch substitution test added)
+
+@new_module_3 (B1-B6 helper bundle pre-landed via 5-agent parallel dispatch 2026-04-28)
+  - anima-clm-eeg/tool/clm_eeg_lz76_real.hexa (464L sha 7b21fec1…) — D+1 P1 Schartner LZ76 real .npy
+  - tool/an11_b_eeg_ingest.hexa (735L sha aba3718e… — extended +375L) — --emit-alpha-coh + --emit-alpha-phase modes for D+3
+  - anima-clm-eeg/tool/an_lix_01_alpha_bridge_real.hexa (462L sha 74862ff9…) — D+3 AN-LIX-01 real-data port
+  - tool/anima_eeg_corr.hexa (643L sha cbb72b53…) + tool/anima_v11_main.hexa (398L sha 3e6efd95…) 13th --register-axis EEG-CORR — D+7 paradigm v11 7th orthogonal axis
+  - anima-clm-eeg/tool/g10_hexad_triangulation_scaffold.hexa v3 body swap (923L sha 5fe75539c5…) — D+5/D+6 real Pearson + ANOVA kernels
+
+# --live mode iteration log (4 iterations)
+
+@iter1 ANSI \x1b[2J\x1b[H + per-tick re-spawn BrainFlow session → 5-10s/tick overhead, screen flickers
+@iter2 single-session helper Python with internal loop + ANSI clear + sticky_ticks display window
+@iter3 sustained-touch fix: don't add touched ticks to history (baseline frozen during touch) + sticky removed (immediate state)
+@iter4 sensitivity reduction (1.8x → 1.3x deviation, 5000 → 1000 abs change) + bi-directional touch (rms can ↓ when reference floating + body grounds) + ANSI green color for active marker + top-3 deviation debug panel + os.system('clear') fallback
+
+@open_issue_touch_sensitivity user reports "아예 인식안됨" (touch not recognized at all) in iter3 + "감지 한번떳다가 유지가 안됨 이후에는 무조건 no touch" (detect once then always no-touch). iter4 lowers threshold + adds debug panel showing per-tick top-3 channel deviations regardless of detection trigger — user can SEE which channel changes when finger touches even if threshold doesn't fire. Tuning continues per user feedback.
+
+@open_issue_screen_refresh user reports "화면 동일" (screen identical/not refreshing). iter4 adds os.system('clear') as fallback alongside ANSI \x1b[H\x1b[2J\x1b[3J. ghostty + Terminal.app both confirmed compatible.
+
+# hexa-lang gaps surfaced (raw#159 upstream-proposal-mandate)
+
+@gap_1_streaming_subprocess BLOCKER for true real-time tools. hexa exec(cmd) blocks + buffers stdout. No `popen_lines()` or Process.stdout.read_line() API. Workaround: helper Python self-renders, hexa wrapper just invokes. Proposed API: `for line in popen_lines(cmd) { ... }`. Cost ~150-300 LoC self/stdlib/process.hexa.
+
+@gap_2_map_has_method map type lacks .has() / .contains_key() method. Workaround: string-based _kv_lookup(body, key). Proposed: stdlib map.has(key) / map.get(key, default) / map.keys(). Cost ~50 LoC.
+
+@gap_3_ansi_escape_string_literal `"\x1b[2J"` produces literal chars `\x1b[2J` not ESC byte 0x1B. Workaround: os.system('clear') in helper Python. Proposed: lexer recognize \x1b, \033, \uXXXX in string literals. Cost ~20-50 LoC self/lexer.hexa.
+
+@gap_4_argv_normalization_redundancy 8+ tools across hive/anima/nexus duplicate _flags_only_argv() (8 distinct copies observed). stdlib/flags.hexa exists but most tools don't `use` it. Proposal: migrate to stdlib + audit. Cost ~30 LoC stdlib audit.
+
+@gap_5_string_slice_eq_aot s[(n-5)..n] == ".hexa" works in interpreter but fails in AOT-compiled binary. Workaround: .ends_with() method form. Proposed: AOT codegen for slice equality should preserve interpreter semantics. Cost ~50 LoC self/codegen_c2.hexa.
+
+@upstream_dispatch_status nexus kick run "hexa-lang-upstream-popen-lines-map-has-ansi-escape-from-anima-eeg-live-mode-blocker" dispatched to hetzner 2026-04-28T16:30 (90s timeout reached, witness landing async). raw#100 strengthening clause: kick-FAIL fallback authorized but kick still in-flight. Will check witness landing later.
+
+# raw#10 honest C3 disclosures
+
+@raw10_c3_disclosure_1 Touch detection on no-helmet floating wires = empirical heuristic (rms deviation + mains pickup change). Not validated against ground-truth touched-vs-not-touched dataset. Tuning is iterative. Real validation requires helmet-on + actual EEG signal baseline.
+
+@raw10_c3_disclosure_2 BOARD_PINS_SHORTED verdict in no-helmet state is documented FALSE-POSITIVE. Cross-channel correlation > 0.95 is normal when all floating wires share environmental EMI. Real pin shorts can only be confirmed in helmet-on condition.
+
+@raw10_c3_disclosure_3 Y-splitter SRB2-only allocation (vs ideal 2-splitter SRB2+BIAS) is a compromise driven by single-splitter inventory. Daisy BIAS sharing via stack pins is reliable IF stack is firm; observed once-per-session loose-stack failure mode (recovered via power cycle).
+
+@raw10_c3_disclosure_4 ANSI escape compatibility: ghostty + macOS Terminal.app verified by user. tmux + VSCode terminal NOT tested. Fallback os.system('clear') added but tput backend may differ across terminals.
+
+# D-day chain readiness (post-bring-up)
+
+@d_day_readiness_status READY for D+0 calibrate.hexa once helmet positioned on user head. All 6 D+1-D+7 helpers pre-landed (B1-B6). External cost cap $0-6 (best Hetzner H100 sponsored, worst RunPod h100_sxm_80gb $6).
+
+@d_day_chain_handoff
+  D+0 (today, post-helmet-on): calibrate impedance + 60s resting + 10min N-back recording → emit .npy
+  D+1: clm_eeg_lz76_real.hexa P1 verify
+  D+2: meditation 10min recording
+  D+3: P2 TLR alpha-coh + alpha-phase ingest + AN-LIX-01 bridge
+  D+4: N-back stimulus marker time-lock 5min
+  D+5: 4-backbone hidden trace forward (Hetzner H100 first $0, RunPod fallback $6) + G10 D+5 coupling shared dispatch
+  D+6: G8 transversal MI uniform_n_bin_2 + G10 v3 body-swap
+  D+7: composite gate + paradigm v11 EEG-CORR axis registration
+
+@convergence_record_emit /Users/ghost/core/anima/convergence/eeg_d_day_session_2026_04_28.convergence (this file)
+@push_status local commits not yet pushed for this session post-r4_raw109to126 propagation push (commit ff93121b fix(an11-r39-infra)). User push request earlier in session covered through ff93121b.

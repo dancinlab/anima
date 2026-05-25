@@ -1,0 +1,78 @@
+{
+  "schema": "anima.dialogue.stage_2_prep.v1",
+  "ts_utc": "2026-05-05T11:50:25Z",
+  "bg_lane": "BG-NEXUS-KICK-3",
+  "stage": "stage_2_prep",
+  "spec": "docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md",
+
+  "cli_dispatcher_path": "tool/anima_cli/dialogue.hexa",
+  "cli_dispatcher_invocation": [
+    "anima dialogue --selftest",
+    "anima dialogue --substrate clm-v4 --probe \"text\"",
+    "anima dialogue --substrate clm-v4 --interactive",
+    "anima dialogue --help"
+  ],
+  "cli_dispatcher_status": "landed",
+
+  "bash_wrapper_path": "bin/anima-core-dialogue.bash",
+  "bash_wrapper_chmod_x": true,
+  "bash_wrapper_invocation": [
+    "bin/anima-core-dialogue.bash --selftest",
+    "bin/anima-core-dialogue.bash --probe \"text\"",
+    "bin/anima-core-dialogue.bash --interactive"
+  ],
+  "bash_wrapper_status": "landed",
+
+  "session_log_pattern": "state/anima_core_dialogues/<YYYY-MM-DD>/<HH-MM-SS>.jsonl",
+  "session_log_schema": "anima.dialogue.v1",
+  "session_log_kinds": [
+    "session_start",
+    "user_turn",
+    "substrate_turn",
+    "session_end",
+    "session_summary"
+  ],
+  "session_log_root_created": "state/anima_core_dialogues/",
+
+  "selftest_results": {
+    "anima_dialogue_selftest_verdict": "STAGE_2_READY",
+    "anima_dialogue_selftest_exit": 0,
+    "wrapper_selftest_verdict": "STAGE_2_READY",
+    "wrapper_selftest_exit": 0,
+    "wrapper_probe_pre_stage_1_exit": 3,
+    "wrapper_probe_pre_stage_1_outcome": "stage_1_pending guard fired correctly"
+  },
+
+  "stage_1_dependency": {
+    "expected_file": "anima-core/runtime/clm_v4_mount.hexa",
+    "exists_now": false,
+    "produced_by_bg_lane": "BG-NEXUS-KICK-1"
+  },
+
+  "ready_when_stage_1_lands": true,
+  "fire_recipe_after_stage_1": [
+    "anima dialogue --selftest                  # expect verdict READY",
+    "bin/anima-core-dialogue.bash --interactive # REPL session opens"
+  ],
+
+  "raw_compliance": {
+    "raw_9_hexa_bash_carveout": true,
+    "raw_10_honest_c3_min_5": true,
+    "raw_11_snake_case": true,
+    "raw_15_no_hardcode": true
+  },
+
+  "honest_c3": [
+    "C1: Stage 1 mount layer not yet landed; dispatcher returns stage_1_pending until anima-core/runtime/clm_v4_mount.hexa exists. NO substrate forward executed in Stage 2 prep.",
+    "C2: substrate-response-as-metric is anima-internal heuristic; no external validation that phi-star + axis + cells form a coherent dialogue medium.",
+    "C3: session-log JSONL schema anima.dialogue.v1 is provisional — subject to revision once Stage 1 mount layer settles its emit format. Bash wrapper passes substrate emit verbatim, so mount.hexa decides the line content.",
+    "C4: REPL stdin loop is carried by bash wrapper (not hexa) because hexa exec() buffers stdin; each user line dispatches as a one-shot --probe to the mount. Implication: REPL loop is bash-only, hexa dispatcher only emits guidance for --interactive.",
+    "C5: phi_star_baseline 41.86 (paradigm v11 G3) hard-coded; if CLM v4 weights drift in future revisions, baseline must be re-loaded from config (not done in Stage 2 prep).",
+    "C6: dominant_cells thresholding heuristic deferred to Stage 1 mount layer; this stage emits whatever the mount returns.",
+    "C7: chat-capability is NOT promised by this dispatcher — spec §3 explicit substrate-coupled dialogue paradigm. Users expecting token emit will see substrate response only.",
+    "C8: session_summary aggregation uses awk regex over JSONL — fragile against schema drift; if mount.hexa emits a different field name for phi_star or phi_star_drift_pp the summary will under-count silently."
+  ],
+
+  "no_commit": true,
+  "no_exec": true
+}

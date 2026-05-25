@@ -1,0 +1,87 @@
+=== Building /Users/ghost/core/anima/anima-physics/engines/oscillator_laser_engine.hexa -> /Users/ghost/core/anima/anima-physics/state/s188g_engines_2026_05_21/bin/oscillator ===
+  [1/2] HEXA_MEM_CAP_MB=4096 /Users/ghost/core/hexa-lang/self/native/hexa_v2 /Users/ghost/core/anima/anima-physics/engines/oscillator_laser_engine.hexa build/artifacts/oscillator.c 2>&1
+    OK: build/artifacts/oscillator.c
+
+  [2/2] clang -O2 -DHEXA_HAS_LIBSODIUM -I/opt/homebrew/Cellar/libsodium/1.0.22/include -DHEXA_HAS_OPENSSL -I/opt/homebrew/Cellar/openssl@3/3.6.2/include -Wno-trigraphs -fbracket-depth=4096 -I '/Users/ghost/core/hexa-lang/self' build/artifacts/oscillator.c '/Users/ghost/core/hexa-lang/self/runtime.c' -o '/Users/ghost/core/anima/anima-physics/state/s188g_engines_2026_05_21/bin/oscillator.tmp.15364' -lpthread -L/opt/homebrew/Cellar/libsodium/1.0.22/lib -lsodium -L/opt/homebrew/Cellar/openssl@3/3.6.2/lib -lssl -lcrypto 2>&1
+    In file included from build/artifacts/oscillator.c:2:
+/Users/ghost/core/hexa-lang/self/runtime.h:349:28: warning: '/*' within block comment [-Wcomment]
+  349 | /* ── Additional native/*.c forward-decls (auto-generated 2026-05-15) ──
+      |                        ^
+/Users/ghost/core/hexa-lang/self/runtime.h:350:36: warning: '/*' within block comment [-Wcomment]
+  350 |  * Sourced from grep of self/native/*.c hexa_* definitions; ensures user.c
+      |                                    ^
+2 warnings generated.
+/Users/ghost/core/hexa-lang/self/runtime.c:1145:9: warning: 'strcat' macro redefined [-Wmacro-redefined]
+ 1145 | #define strcat(d,s)    hxlcl_strcat((char *)(d), (const char *)(s))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:254:9: note: previous definition is here
+  254 | #define strcat(...) __strcat_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1157:9: warning: 'bzero' macro redefined [-Wmacro-redefined]
+ 1157 | #define bzero(p,n)     hxlcl_bzero((void *)(p), (size_t)(n))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_strings.h:90:9: note: previous definition is here
+   90 | #define bzero(...) __bzero_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1158:9: warning: 'memcpy' macro redefined [-Wmacro-redefined]
+ 1158 | #define memcpy(d,s,n)  hxlcl_memcpy((void *)(d), (const void *)(s), (size_t)(n))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:234:9: note: previous definition is here
+  234 | #define memcpy(...) __memcpy_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1159:9: warning: 'memset' macro redefined [-Wmacro-redefined]
+ 1159 | #define memset(p,c,n)  hxlcl_memset((void *)(p), (int)(c), (size_t)(n))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:244:9: note: previous definition is here
+  244 | #define memset(...) __memset_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1160:9: warning: 'memmove' macro redefined [-Wmacro-redefined]
+ 1160 | #define memmove(d,s,n) hxlcl_memmove((void *)(d), (const void *)(s), (size_t)(n))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:239:9: note: previous definition is here
+  239 | #define memmove(...) __memmove_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1161:9: warning: 'strncpy' macro redefined [-Wmacro-redefined]
+ 1161 | #define strncpy(d,s,n) hxlcl_strncpy((char *)(d), (const char *)(s), (size_t)(n))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:259:9: note: previous definition is here
+  259 | #define strncpy(...) __strncpy_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1162:9: warning: 'strcpy' macro redefined [-Wmacro-redefined]
+ 1162 | #define strcpy(d,s)    hxlcl_strcpy((char *)(d), (const char *)(s))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:249:9: note: previous definition is here
+  249 | #define strcpy(...) __strcpy_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1165:9: warning: 'snprintf' macro redefined [-Wmacro-redefined]
+ 1165 | #define snprintf(b,c,...)  hxlcl_snprintf((char *)(b), (size_t)(c), __VA_ARGS__)
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_stdio.h:119:9: note: previous definition is here
+  119 | #define snprintf(str, len, ...) __snprintf_chk_func (str, len, 0, __VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1166:9: warning: 'sprintf' macro redefined [-Wmacro-redefined]
+ 1166 | #define sprintf(b,...)     hxlcl_sprintf((char *)(b), __VA_ARGS__)
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_stdio.h:107:9: note: previous definition is here
+  107 | #define sprintf(str, ...) __sprintf_chk_func (str, 0, __VA_ARGS__)
+      |         ^
+In file included from /Users/ghost/core/hexa-lang/self/runtime.c:1211:
+/Users/ghost/core/hexa-lang/self/runtime_core.c:4193:11: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+ 4193 |     char* p = hxlcl_strstr(HX_STR(s), HX_STR(sub));
+      |           ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghost/core/hexa-lang/self/runtime_core.c:5940:11: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+ 5940 |     char* pos = hxlcl_strstr(HX_STR(fmt), "{}");
+      |           ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghost/core/hexa-lang/self/runtime_core.c:5973:19: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+ 5973 |             char* close = hxlcl_strchr(src, '}');
+      |                   ^       ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghost/core/hexa-lang/self/runtime_core.c:6062:15: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+ 6062 |         char* found = hxlcl_strstr(pos, d);
+      |               ^       ~~~~~~~~~~~~~~~~~~~~
+/Users/ghost/core/hexa-lang/self/runtime_core.c:6118:15: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+ 6118 |         char* found = hxlcl_strstr(pos, HX_STR(old));
+      |               ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+14 warnings generated.
+
+OK: built /Users/ghost/core/anima/anima-physics/state/s188g_engines_2026_05_21/bin/oscillator
+build_rc=0 build_wall=2s

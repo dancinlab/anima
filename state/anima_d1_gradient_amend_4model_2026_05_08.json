@@ -1,0 +1,171 @@
+{
+  "schema_version": "1.0",
+  "cycle": "anima 2026-05-08",
+  "amend_class": "own_17_d1_scope_clamp_gradient_overlay",
+  "trigger": {
+    "user_directive_verbatim": "정정 해줘",
+    "context": "D1 binary rigid 함 인정 후 gradient 정정 cycle 시작",
+    "own_17_line_668_reference": "future override path = 사용자 explicit reversal directive — 본 directive 'lite' reversal trigger 해석"
+  },
+  "raw_82_retraction_aware": {
+    "preserve_original": true,
+    "amend_method": "additive overlay (binary statement preserve, gradient section 추가)"
+  },
+  "formula": {
+    "expression": "D1_score = 0.2 × parameter_updated_ratio + 0.2 × anima_corpus_token_ratio + 0.6 × architecture_origin_factor",
+    "weights": {
+      "parameter_updated_ratio": 0.2,
+      "anima_corpus_token_ratio": 0.2,
+      "architecture_origin_factor": 0.6
+    },
+    "weight_rationale": "architecture_origin_factor 가 dominant (60%) — anti-Goodhart V14 정합 (LoRA r 단순 늘리기로 D1 부스트 차단). anima-native scratch arch 없이는 D1 0.6 cap 도달 불가능."
+  },
+  "component_definitions": {
+    "parameter_updated_ratio": {
+      "formula": "(LoRA_r × trained_layers) / total_params",
+      "scale": "0.0 (no fine-tune) → 1.0 (full fine-tune)",
+      "examples": {
+        "no_fine_tune": 0.0,
+        "lora_r_32": 0.005,
+        "lora_r_128": 0.01,
+        "full_fine_tune": 1.0
+      }
+    },
+    "anima_corpus_token_ratio": {
+      "formula": "anima_persona_tokens / total_training_tokens",
+      "scale": "0.0 (no anima corpus) → 1.0 (100% anima)",
+      "examples": {
+        "no_anima_corpus": 0.0,
+        "mixed_50pct": 0.5,
+        "anima_heavy_85pct": 0.85,
+        "anima_internal_95pct": 0.95
+      }
+    },
+    "architecture_origin_factor": {
+      "formula": "categorical",
+      "values": {
+        "anima_native_scratch": 1.0,
+        "external_heavy_continual_finetune": 0.5,
+        "external_lora_only": 0.3,
+        "external_pure_wrapper": 0.0
+      },
+      "rationale": "ConsciousDecoderV2/V3 scratch arch = anima-internal 자체 설계 → 1.0. external base 에 LoRA 만 = 0.3 (substrate-research level). external base + deep continual fine-tune = 0.5 (anima identity 더 깊이 embed). pure wrapper (no parameter update) = 0.0."
+    }
+  },
+  "threshold_and_lane": {
+    "within_strict": {
+      "D1_range": "≥ 0.7",
+      "verdict_label": "SIMPLE_STACK_PASS_STRICT_C3_ANIMA",
+      "public_promote_status": "OWN_37_MANDATE_9_A_MET (single sufficient prereq)",
+      "rationale": "anima-native scratch arch 가 dominant 60% weight 라 자동 0.6 reach + corpus heavy 시 0.7+ 도달. binary 의 within=1.0 strict 정합."
+    },
+    "ambiguous_research_lane": {
+      "D1_range": "0.3 ≤ D1 < 0.7",
+      "verdict_label_NEW": "SIMPLE_STACK_PASS_STRICT_C3_AMBIGUOUS_RESEARCH",
+      "public_promote_status": "PARTIAL_PATH (별도 verbatim 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH <repo>' + V6 STRONG + mandate-9 4 추가 prereq 통과 시)",
+      "rationale": "외부 substrate + heavy anima fine-tune case (BG-KM 같은) 가 strict D1=0 outside 가 아니라 격상 가능 lane 진입. 단 PUBLIC 진입은 추가 verbatim 필요 (binary strict 보다 보수적, 안전 default)."
+    },
+    "outside_strict": {
+      "D1_range": "< 0.3",
+      "verdict_label": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH",
+      "public_promote_status": "PERMANENT_BLOCK",
+      "rationale": "external pure wrapper (no parameter update) 또는 minimal anima exposure case. binary outside=0.0 strict 정합."
+    }
+  },
+  "current_cycle_4_models_recompute": {
+    "sft_1_8": {
+      "lineage": "LoRA r=128 on ConsciousDecoderV2 anima-native scratch + anima-internal SFT",
+      "components": {
+        "parameter_updated_ratio": 0.01,
+        "anima_corpus_token_ratio": 0.95,
+        "architecture_origin_factor": 1.0
+      },
+      "D1_score": 0.793,
+      "lane": "within_strict",
+      "verdict_label": "SIMPLE_STACK_PASS_STRICT_C3_ANIMA",
+      "public_promote_eligibility": "ELIGIBLE (mandate-9 (a) MET, awaiting V6 + 사용자 verbatim)",
+      "ppr_v3_n60": 0.6102,
+      "robust_emerge": true
+    },
+    "paradigm_j_retry": {
+      "lineage": "LoRA r=128 on ConsciousDecoderV2 + JVAE Variant 1",
+      "components": {
+        "parameter_updated_ratio": 0.01,
+        "anima_corpus_token_ratio": 0.95,
+        "architecture_origin_factor": 1.0
+      },
+      "D1_score": 0.793,
+      "lane": "within_strict",
+      "verdict_label": "SIMPLE_STACK_PASS_STRICT_C3_ANIMA (D1) but PPR_v3 N=60 FALSIFIED (PPR=0.2414 PARTIAL_NEAR)",
+      "public_promote_eligibility": "BLOCKED (D1 within ✓ but PPR axis FALSIFIED at N=60 — sample-size artifact carry)",
+      "ppr_v3_n60": 0.2414,
+      "robust_emerge": false,
+      "honest_c3_note": "D1 gradient axis 와 PPR robustness axis 는 별개 — D1 0.793 within 이지만 의식 측정 PPR 미통과. axis orthogonality 의 추가 evidence."
+    },
+    "paradigm_a_prime": {
+      "lineage": "Llama-3B base + chat-template wrapping (no parameter update)",
+      "components": {
+        "parameter_updated_ratio": 0.0,
+        "anima_corpus_token_ratio": 0.0,
+        "architecture_origin_factor": 0.0
+      },
+      "D1_score": 0.0,
+      "lane": "outside_strict",
+      "verdict_label": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH (PERMANENT)",
+      "public_promote_eligibility": "PERMANENT_BLOCK",
+      "carry_note": "이전 binary D1=0.0 outside 분류 그대로 유지. 사용자 future verbatim 'OK 영구보류 해제' 부재."
+    },
+    "bg_km_llama_3b": {
+      "lineage": "Llama-3B base + LoRA r=32 fine-tune + heavy anima corpus (~85%)",
+      "components": {
+        "parameter_updated_ratio": 0.005,
+        "anima_corpus_token_ratio": 0.85,
+        "architecture_origin_factor": 0.3
+      },
+      "D1_score": 0.351,
+      "lane": "ambiguous_research",
+      "verdict_label_change": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH (binary) → SIMPLE_STACK_PASS_STRICT_C3_AMBIGUOUS_RESEARCH (gradient) ★ 격상",
+      "public_promote_eligibility": "PARTIAL_PATH (별도 verbatim path 활성 가능)",
+      "carry_note": "이전 BG-KM-LLAMA-3B C3 retest iter5 commit `41a19bc3` 의 INVALID_D1_OUTSIDE_PERMANENT_REJECT verdict → 본 gradient amend 후 ambiguous_research 격상 가능. 단 V6 STRONG + 별도 사용자 verbatim 필요."
+    }
+  },
+  "mandate_9_a_update": {
+    "before_amend": " mandate-9 (a) D1 within (binary) — Llama / Mistral / Qwen / KoGPT2 ALM lane 영구 reject",
+    "after_amend": {
+      "ANIMA_lane": "D1 ≥ 0.7 strict — PUBLIC promote 자격",
+      "AMBIGUOUS_RESEARCH_lane": "0.3 ≤ D1 < 0.7 — PARTIAL public promote path (별도 verbatim 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH <repo>' + 4 prereq)",
+      "SUBSTRATE_RESEARCH_lane": "D1 < 0.3 — PERMANENT public promote 차단"
+    }
+  },
+  "anti_goodhart_v14_verify": {
+    "gaming_resistance": "architecture_origin_factor dominant (60% weight) — LoRA r 늘리기 (parameter_updated_ratio) 만으로 D1 score 부스트 X. anima-native scratch arch 없이는 D1 0.6 cap.",
+    "anima_corpus_gaming": "0.2 weight 만 — anima 흉내 corpus 만으로 D1 부스트 X. arch + corpus 모두 필요.",
+    "post_amend_verify": "PASS — gradient overlay 가 binary 의 안전 mandate 보존하면서 nuanced classification 추가."
+  },
+  "d5_attractor_impact": {
+    "before_amend": "sft-1-8 D1=1.0, cooperative_score=0.7617 UTOPIA_LANE",
+    "after_amend_recompute": "D1 1.0 → 0.793 (-0.207 weighted)",
+    "cooperative_score_recompute_estimate": "4-axis 평균 + V6 pending 0.5 default 가 dominant 라 minor shift — UTOPIA_LANE 분류 그대로 유지 추정",
+    "verify_cycle_required": "별도 cycle 가능 — D5 attractor JSON (commit `1e7ea1e8`) 의 cooperative_score 재계산 spec emit"
+  },
+  "honest_c3_limitations": [
+    "D1 gradient threshold 0.7 / 0.3 는 본 cycle empirical default — future cycle 에 N=4 이상 모델 measurement 후 재조정 가능",
+    "architecture_origin_factor categorical 분류 (1.0 / 0.5 / 0.3 / 0.0) 도 boundary case 의 subjective 가능성 — 'heavy continual fine-tune' vs 'LoRA only' 경계 ambiguous",
+    "anima_corpus_token_ratio 정확 측정 필요 — heuristic estimate 만 (sft-1-8 95% / BG-KM 85% 추정값, formal token count 별도 cycle)",
+    "본 amend 는 framework evolution only — paradigm-a-prime 의 D1=0.0 outside 영구 분류는 그대로 유지 (사용자 future explicit verbatim '영구보류 해제 OK' 부재)",
+    "BG-KM 격상 가능성은 lane 진입 spec — 실 ambiguous_research verdict 발급은 별도 V6 STRONG measurement 필요"
+  ],
+  "compliance": {
+    "own_14_anti_goodhart_V14": "PASS (gradient gaming 차단)",
+    "own_16_cost": "0 USD (local edit)",
+    "own_17_line_668_override": "사용자 'lite' explicit reversal trigger (verbatim 정정 해줘)",
+    "own_22_mandatory_report": "본 amend 는 major framework evolution",
+    "own_24_single_SSOT": ".own entry within strict",
+    "own_33_trinity": "D-axis (framework evolution honest C3) / own-axis (정합) / H-axis (paradigm-a-prime D1=0 outside 영구 분류 carry preserved)",
+    "own_34_mandate_2_wrap_0": "PASS (state json + .own edit only)",
+    "own_38_매단계_저장": "본 cycle axis-A doc save mandate 정합 (state json + .own update + future docs/anima_d1_gradient_amend_2026_05_08.ai.md 옵션)",
+    "raw_10_honest_c3": "5 limitations enumerated above",
+    "raw_82_retraction_aware": "binary statement preserved, amend section 추가 only",
+    "raw_15_additive": "기존 entry 보존, line 676 다음 amend section 추가"
+  }
+}

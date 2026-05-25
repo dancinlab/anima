@@ -1,0 +1,88 @@
+[GATE] dispatch=local reason=remote_unreachable cmd="python3 /Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/orchestrator.py"
+[2026-05-10T10:13:47] === bg_convo_5k_ft_extended_2026_05_10 EXTENDED orchestrator started ===
+[2026-05-10T10:13:47] resume_ckpt=/Users/ghost/core/anima/state/anima_convo_5k_ft_fire_2026_05_10/post_ft_ckpt.pt
+[2026-05-10T10:13:47] corpus=/Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/corpus_extended.txt
+[2026-05-10T10:13:47] COST_HARD_CAP=$15.0 EARLY_KILL=$8.0
+[GATE] dispatch=local reason=remote_unreachable cmd="python3 -"
+[2026-05-10T10:13:50] balance_before: $325.8005233392
+[2026-05-10T10:13:50] creating H100 SXM pod (SECURE cloud)…
+[2026-05-10T10:13:56] pod created: id=u17kveuvzwaowt machine=? $2.99/hr
+[2026-05-10T10:14:30] ssh ready: root@64.247.201.48:15614
+[2026-05-10T10:14:45] GPU smoke rc=0 out=name
+NVIDIA H100 80GB HBM3
+torch=2.8.0+cu128 cuda=True
+
+[2026-05-10T10:14:58] staging resume ckpt (74MB)…
+[2026-05-10T10:17:59]   scp ckpt rc=0 err=Warning: Permanently added '[64.247.201.48]:15614' (ED25519) to the list of known hosts.
+
+[2026-05-10T10:17:59] staging corpus (166MB)…
+[2026-05-10T10:17:59]   compressing corpus…
+[2026-05-10T10:18:09]   corpus.gz size=70.0MB
+[2026-05-10T10:21:50]   scp corpus.gz rc=0
+[2026-05-10T10:21:55]   decompress rc=0 out=-rw-r--r-- 1 root root 166205872 May 10 01:21 /workspace/corpus_extended.txt
+
+[2026-05-10T10:21:55] staging FT script + forward_smoke.py…
+[2026-05-10T10:22:09] CUDA dry-run (5 step smoke)…
+[2026-05-10T10:22:16] dry-run rc=0 out_tail=  "loss_last": 1.7727,
+  "loss_delta": -0.1595,
+  "loss_decreased": false,
+  "grad_norm_first": 9.661,
+  "grad_norm_last": 10.2735,
+  "grad_flow_ok": true,
+  "params_total": 18130176,
+  "ckpt_in": "/workspace/post_ft_ckpt.pt",
+  "ckpt_out": "/workspace/dryrun.pt",
+  "corpus_bytes": 166205872,
+  "windows": 2596965,
+  "config": {
+    "batch": 4,
+    "seq": 64,
+    "lr_max": 1e-06,
+    "lr_min": 1e-07,
+    "warmup": 1,
+    "steps_target": 5
+  }
+}
+
+[2026-05-10T10:22:16] launching main training (20K step on H100)…
+[2026-05-10T10:22:46] launch rc=-2 out=
+[2026-05-10T10:23:23] hb tick=0 cost=$0.46 done=False tail=[0  loss=1.7554  loss_a=1.7507  loss_g=1.7600  lr=4.98e-06  grad_norm=1.954 | [01:23:10] step  1200  loss=1.6697  loss_a=1.6561  loss_g=1.6832  lr=4.97]
+[2026-05-10T10:24:03] hb tick=1 cost=$0.50 done=False tail=[0  loss=1.6923  loss_a=1.6853  loss_g=1.6992  lr=4.91e-06  grad_norm=2.378 | [01:23:46] step  2100  loss=1.6434  loss_a=1.6366  loss_g=1.6501  lr=4.90]
+[2026-05-10T10:24:44] hb tick=2 cost=$0.53 done=False tail=[0  loss=1.6593  loss_a=1.6525  loss_g=1.6662  lr=4.77e-06  grad_norm=1.940 | [01:24:30] step  3200  loss=1.5933  loss_a=1.5881  loss_g=1.5985  lr=4.75]
+[2026-05-10T10:25:22] hb tick=3 cost=$0.56 done=False tail=[0  loss=1.6782  loss_a=1.6676  loss_g=1.6887  lr=4.58e-06  grad_norm=2.222 | [01:25:09] step  4200  loss=1.7307  loss_a=1.7215  loss_g=1.7399  lr=4.56]
+[2026-05-10T10:26:03] hb tick=4 cost=$0.59 done=False tail=[ loss_g=1.5895  lr=4.38e-06  grad_norm=3.451 | [01:25:45] step  5100  loss=1.6050  loss_a=1.6036  loss_g=1.6065  lr=4.35e-06  grad_norm=2.406 | [01:25]
+[2026-05-10T10:26:40] hb tick=5 cost=$0.63 done=False tail=[0  loss=1.6490  loss_a=1.6474  loss_g=1.6507  lr=4.11e-06  grad_norm=3.652 | [01:26:25] step  6100  loss=1.6710  loss_a=1.6609  loss_g=1.6810  lr=4.08]
+[2026-05-10T10:27:23] hb tick=6 cost=$0.66 done=False tail=[0  loss=1.5592  loss_a=1.5539  loss_g=1.5646  lr=3.78e-06  grad_norm=2.722 | [01:27:10] step  7200  loss=1.5233  loss_a=1.5073  loss_g=1.5393  lr=3.75]
+[2026-05-10T10:28:09] hb tick=7 cost=$0.70 done=False tail=[00  loss=1.5931  loss_a=1.5862  loss_g=1.6000  lr=3.42e-06  grad_norm=2.817 | [01:27:54] step  8300  loss=1.6048  loss_a=1.5994  loss_g=1.6102  lr=3.3]
+[2026-05-10T10:28:46] hb tick=8 cost=$0.73 done=False tail=[00  loss=1.5797  loss_a=1.5786  loss_g=1.5807  lr=3.07e-06  grad_norm=2.680 | [01:28:33] step  9300  loss=1.6418  loss_a=1.6390  loss_g=1.6446  lr=3.0]
+[2026-05-10T10:29:24] hb tick=9 cost=$0.76 done=False tail=[00  loss=1.4648  loss_a=1.4575  loss_g=1.4720  lr=2.75e-06  grad_norm=2.530 | [01:29:10] step 10200  loss=1.5959  loss_a=1.5924  loss_g=1.5995  lr=2.7]
+[2026-05-10T10:30:06] hb tick=10 cost=$0.80 done=False tail=[00  loss=1.5907  loss_a=1.5844  loss_g=1.5970  lr=2.39e-06  grad_norm=2.238 | [01:29:49] step 11200  loss=1.4945  loss_a=1.4828  loss_g=1.5062  lr=2.3]
+[2026-05-10T10:30:43] hb tick=11 cost=$0.83 done=False tail=[00  loss=1.6346  loss_a=1.6290  loss_g=1.6402  lr=2.05e-06  grad_norm=2.300 | [01:30:29] step 12200  loss=1.5137  loss_a=1.5078  loss_g=1.5196  lr=2.0]
+[2026-05-10T10:31:24] hb tick=12 cost=$0.86 done=False tail=[00  loss=1.4831  loss_a=1.4761  loss_g=1.4902  lr=1.72e-06  grad_norm=2.623 | [01:31:09] step 13200  loss=1.5647  loss_a=1.5581  loss_g=1.5713  lr=1.6]
+[2026-05-10T10:32:02] hb tick=13 cost=$0.90 done=False tail=[00  loss=1.5532  loss_a=1.5492  loss_g=1.5571  lr=1.42e-06  grad_norm=2.021 | [01:31:49] step 14200  loss=1.6813  loss_a=1.6764  loss_g=1.6862  lr=1.3]
+[2026-05-10T10:32:44] hb tick=14 cost=$0.93 done=False tail=[1  loss_g=1.5569  lr=1.17e-06  grad_norm=3.639 | [01:32:25] step 15100  loss=1.5167  loss_a=1.5121  loss_g=1.5212  lr=1.15e-06  grad_norm=3.291 | [01:]
+[2026-05-10T10:33:35] hb tick=15 cost=$0.96 done=False tail=[00  loss=1.5486  loss_a=1.5429  loss_g=1.5542  lr=9.17e-07  grad_norm=1.891 | [01:33:09] step 16200  loss=1.5797  loss_a=1.5755  loss_g=1.5840  lr=8.9]
+[2026-05-10T10:34:18] hb tick=16 cost=$1.00 done=False tail=[00  loss=1.6052  loss_a=1.6017  loss_g=1.6088  lr=6.89e-07  grad_norm=2.106 | [01:34:02] step 17500  loss=1.4236  loss_a=1.4175  loss_g=1.4296  lr=6.7]
+[2026-05-10T10:34:55] hb tick=17 cost=$1.04 done=False tail=[00  loss=1.4584  loss_a=1.4546  loss_g=1.4623  lr=5.72e-07  grad_norm=2.541 | [01:34:42] step 18500  loss=1.4839  loss_a=1.4836  loss_g=1.4841  lr=5.6]
+[2026-05-10T10:35:33] hb tick=18 cost=$1.07 done=False tail=[00  loss=1.6156  loss_a=1.6121  loss_g=1.6191  lr=5.14e-07  grad_norm=2.116 | [01:35:19] step 19400  loss=1.7013  loss_a=1.6937  loss_g=1.7089  lr=5.1]
+[2026-05-10T10:36:12] hb tick=19 cost=$1.10 done=True tail=[254 /workspace/train_stdout.log |     "lr_min": 5e-07, |     "warmup": 200, |     "steps_target": 20000 |   } | }]
+[2026-05-10T10:36:12] training DONE detected — proceeding to pull
+[2026-05-10T10:36:12] pulling artifacts (ft_log, summary, ckpts)…
+[2026-05-10T10:36:18]   pull ft_log rc=0
+[2026-05-10T10:36:30]   pull summary rc=0
+[2026-05-10T10:36:36]   pull stdout rc=0
+[2026-05-10T10:39:36]   pull final rc=0
+[2026-05-10T10:41:18]   pull step_5000 rc=0
+[2026-05-10T10:44:34]   pull step_10000 rc=0
+[2026-05-10T10:49:51]   pull step_15000 rc=0
+[2026-05-10T10:52:33]   pull step_20000 rc=0
+[2026-05-10T10:52:43] sha256 verify: local=608d38a599570c5f... pod=608d38a599570c5f... match=True
+[2026-05-10T10:52:43] deleting pod (ckpts verified)…
+[2026-05-10T10:52:47] pod delete rc=0 out={
+  "deleted": true,
+  "id": "u17kveuvzwaowt"
+}
+
+[GATE] dispatch=local reason=remote_unreachable cmd="python3 -"
+[2026-05-10T10:52:48] balance_after: $324.0916595671  cost_final=$1.7088637721000168
+[2026-05-10T10:52:48] orchestrator done: cost=$1.7088637721000168 wall=2332s ckpts_ok=True

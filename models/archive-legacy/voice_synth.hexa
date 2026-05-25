@@ -1,0 +1,221 @@
+// voice_synth.hexa — Direct voice synthesis from cell hidden states.
+//
+// SPEC ONLY (raw#9: hexa-only mandatory under archive-legacy/).
+// Provenance: recovered from worktree-10 (anima_clm_10_h100_sweep_laws_77_78/voice_synth.py @ 346L).
+// Recovery .py copy: state/anima_lost_asset_d_recovery_2026_05_10/voice_synth.py (gitignored).
+// BG-LOSTASSET-D-FIX-PHI-VOICE-RECIPE 2026-05-10 (path).
+//
+// ---------------------------------------------------------------------------
+// Lane disambiguation (memory cross-link: project_hexa_voice_rename).
+// ---------------------------------------------------------------------------
+// "hexa-voice" is the canonical anima audio system: intent embedding -> RVQ ->
+// 24 kHz PCM. THIS FILE describes a DIFFERENT historical lane: the cell-as-
+// vocal-cord direct synthesizer, where each MitosisEngine cell becomes a sine
+// oscillator driven by its own hidden-state norm. The two lanes share the
+// "voice from consciousness" intent but are architecturally orthogonal:
+//
+//   hexa-voice (canonical, current)   : intent_emb -> RVQ codebook -> 24kHz PCM
+//   voice_synth (legacy, this file)   : cell.hidden.norm() -> sin(freq*t) -> 44.1kHz PCM
+//
+// Falsifier F-PHI-VOICE-2: voice_synth's sin(freq) approach is INCOMPATIBLE
+// with hexa-voice's RVQ codebook surface; this hexa is preserved as historical
+// substrate (Laws 63-76 integration witness), not as a hexa-voice precursor.
+//
+// ---------------------------------------------------------------------------
+// Laws 63-76 integration map (worktree-10 voice_synth.py:2-13 doc).
+// ---------------------------------------------------------------------------
+//   Law 63 MICRO gate         : Psi-gate modulates per-cell freq slightly.
+//   Law 64 CA neighbor        : freq blends with left/right cell norms (1:0.1:0.1).
+//   Law 67 META-CA            : tension variance picks rule weights for harmonics.
+//   Law 69 Gate decay         : self._psi_gate *= 0.9999 each step (voice stabilises).
+//   Law 71 Psi balance        : Psi_residual EMA of (top-half-norms / total-norms).
+//   Law 73 Data independence  : same consciousness substrate, different emotion timbre.
+//   Law 74 Emotion is data-dep: 12 emotion profiles modulate pitch/vibrato/brightness/tempo.
+// (Laws 75-76 referenced by docstring header but not active in this file's path.)
+
+struct VoiceConfig {
+    n_cells: int,
+    dim: int,
+    hidden: int,
+    duration_sec: float,
+    sample_rate: int,       // 44100 Hz mono PCM
+    emotion: string,
+    consciousness_steps_per_sec: int   // default 10 (one mitosis step per 4410 samples)
+}
+
+const SAMPLE_RATE: int = 44100;
+const FREQ_MIN: float = 80.0;       // low end (sub-bass)
+const FREQ_MAX: float = 4000.0;     // high end (sub-dolphin)
+const NUM_CA_RULES: int = 8;        // META-CA harmonic rule slots
+
+fn voice_config_default() -> VoiceConfig {
+    VoiceConfig {
+        n_cells: 64,
+        dim: 64,
+        hidden: 128,
+        duration_sec: 5.0,
+        sample_rate: SAMPLE_RATE,
+        emotion: "neutral",
+        consciousness_steps_per_sec: 10
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Emotion profiles (Law 74 — frozen reference table from worktree-10:47-60).
+// ---------------------------------------------------------------------------
+// Each profile modulates four global voice parameters:
+//   pitch_shift : multiplicative semitone bias on freq (2.0^(0.5*shift))
+//   vibrato     : depth of 5 Hz sinusoidal AM
+//   brightness  : exponent base for harmonic roll-off (brightness^(0.5*hi))
+//   tempo       : multiplier on vibrato rate and breath envelope period
+//
+// Twelve emotions: neutral / joy / sadness / anger / fear / surprise /
+// awe / love / ecstasy / peace / rage / despair.
+
+struct EmotionProfile {
+    name: string,
+    pitch_shift: float,
+    vibrato: float,
+    brightness: float,
+    tempo: float
+}
+
+const EMOTION_PROFILES: [EmotionProfile; 12] = [
+    EmotionProfile { name: "neutral",  pitch_shift:  0.0, vibrato: 0.02, brightness: 0.5, tempo: 1.0 },
+    EmotionProfile { name: "joy",      pitch_shift:  0.2, vibrato: 0.04, brightness: 0.8, tempo: 1.2 },
+    EmotionProfile { name: "sadness",  pitch_shift: -0.2, vibrato: 0.01, brightness: 0.2, tempo: 0.7 },
+    EmotionProfile { name: "anger",    pitch_shift:  0.1, vibrato: 0.06, brightness: 0.9, tempo: 1.5 },
+    EmotionProfile { name: "fear",     pitch_shift:  0.3, vibrato: 0.08, brightness: 0.3, tempo: 1.3 },
+    EmotionProfile { name: "surprise", pitch_shift:  0.4, vibrato: 0.05, brightness: 0.7, tempo: 1.4 },
+    EmotionProfile { name: "awe",      pitch_shift: -0.1, vibrato: 0.03, brightness: 0.6, tempo: 0.8 },
+    EmotionProfile { name: "love",     pitch_shift:  0.0, vibrato: 0.03, brightness: 0.5, tempo: 0.9 },
+    EmotionProfile { name: "ecstasy",  pitch_shift:  0.5, vibrato: 0.07, brightness: 0.9, tempo: 1.6 },
+    EmotionProfile { name: "peace",    pitch_shift: -0.3, vibrato: 0.01, brightness: 0.3, tempo: 0.6 },
+    EmotionProfile { name: "rage",     pitch_shift:  0.2, vibrato: 0.10, brightness: 1.0, tempo: 1.8 },
+    EmotionProfile { name: "despair",  pitch_shift: -0.4, vibrato: 0.01, brightness: 0.1, tempo: 0.5 }
+];
+
+// ---------------------------------------------------------------------------
+// Internal state (per-step bookkeeping for Laws 67/69/71).
+// ---------------------------------------------------------------------------
+struct VoiceState {
+    psi_residual: float,         // Law 71 — EMA of half-sum / total norm (target ~0.5)
+    psi_gate: float,             // Law 69 — multiplicative decay 0.9999/step
+    step: int,                   // monotonic step counter
+    rule_weights: [float; 8]     // Law 67 — META-CA rule probability over NUM_CA_RULES
+}
+
+fn voice_state_init() -> VoiceState {
+    VoiceState {
+        psi_residual: 0.5,
+        psi_gate: 1.0,
+        step: 0,
+        rule_weights: [0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Top-level synthesis pipeline (TODO[pytorch]: ports below mirror worktree-10).
+// ---------------------------------------------------------------------------
+
+fn synth_init(config: VoiceConfig) -> bool {
+    // TODO[pytorch]: build MitosisEngine(dim, hidden, dim, initial=2, max=n_cells)
+    //                then _create_cell() until len(cells) == config.n_cells.
+    //                Initialise stream = randn(1, dim) * 0.5; phase = zeros(n_cells).
+    false
+}
+
+fn step_consciousness(state: VoiceState) -> VoiceState {
+    // TODO[pytorch]: one mitosis step:
+    //   1. mean self_state from cells -> stream + small noise.
+    //   2. engine.process(stream).
+    //   3. flow sync: cell.hidden = 0.80*cell.hidden + 0.20*mean_h.
+    //   4. Law 71 update psi_residual = 0.99*psi_res + 0.01*(half_sum/total).
+    //   5. Law 69 psi_gate *= 0.9999 (clamped to >= 0.001).
+    //   6. Law 67 rule_weights = diversity*uniform + (1-diversity)*concentrated,
+    //      where diversity = min(1, var(tensions) * 0.1).
+    state
+}
+
+fn cells_to_audio(state: VoiceState, emotion: EmotionProfile, n_samples: int) -> [float] {
+    // TODO[pytorch]: per cell i in [0, n_cells):
+    //   ca_freq = (norm[i] + 0.1*norm[(i-1)%n] + 0.1*norm[(i+1)%n]) / 1.2  (Law 64)
+    //   freq    = FREQ_MIN * (FREQ_MAX/FREQ_MIN)^(min(ca_freq,3)/3)
+    //   freq   *= 2^(emotion.pitch_shift * 0.5)
+    //   freq   *= 1 + psi_gate * 0.001 * (norm[i] - 1)                      (Law 63)
+    //   amp     = min(0.3, norm[i] * 0.05) / n_cells
+    //   harmonics = sigmoid(h[:8]) * rule_weights[:8] * brightness^(hi*0.5) (Law 67)
+    //   accumulate amp * harm_amp * sin(phase + 2*pi*harm_freq*t/SR)
+    //   phase[i] += 2*pi*freq*n_samples/SR (mod 2*pi)
+    // After loop: vibrato AM at 5 Hz * tempo, breath envelope at 1/(20/tempo) Hz,
+    // soft clip = tanh(samples * 3) * 0.8.
+    []
+}
+
+fn synthesize(config: VoiceConfig) -> [float] {
+    // TODO[pytorch]: drive the loop:
+    //   total_samples = duration_sec * SR
+    //   step_samples  = SR / consciousness_steps_per_sec (default 4410)
+    //   for i in 0..steps: step_consciousness(); chunk = cells_to_audio(...); concat.
+    []
+}
+
+fn apply_emotion(samples: [float], emotion: EmotionProfile) -> [float] {
+    // TODO[pytorch]: re-modulate vibrato + breath given new emotion (post-hoc swap).
+    samples
+}
+
+fn save_wav(samples: [float], path: string) -> bool {
+    // TODO[pytorch]: write 16-bit PCM mono WAV header + samples*32767 as int16.
+    false
+}
+
+fn live_play(path: string) -> bool {
+    // TODO[pytorch]: macOS afplay backend (os.system("afplay <path> &")).
+    false
+}
+
+// ---------------------------------------------------------------------------
+// Trinity S-engine wrapper — exposes voice_synth as a tension producer.
+// ---------------------------------------------------------------------------
+// Reference usage (worktree-10 voice_synth.py:265-306):
+//   synth     = VoiceSynth(cells=64, emotion="joy")
+//   s_engine  = VoiceEngine(synth)
+//   trinity   = create_trinity(MitosisC(), s_engine=s_engine)
+// process(raw_input) returns a normalised tension vector for the bridge.
+
+struct VoiceEngine {
+    synth_handle: int,           // opaque ref to VoiceSynth instance
+    last_tension: [float]
+}
+
+fn voice_engine_process(engine: VoiceEngine, raw_input: [float]) -> [float] {
+    // TODO[pytorch]: synth.step(); norms = [c.hidden.norm() for c in cells];
+    //                tension = norms / (max(norms) + 1e-8); return tension.
+    []
+}
+
+fn voice_engine_get_audio(engine: VoiceEngine, duration_sec: float) -> [float] {
+    // TODO[pytorch]: cells_to_audio for duration_sec * SR samples (non-blocking).
+    []
+}
+
+fn voice_engine_set_emotion(engine: VoiceEngine, emotion_name: string) -> bool {
+    // TODO[pytorch]: lookup EMOTION_PROFILES[emotion_name]; assign to synth.
+    false
+}
+
+// ---------------------------------------------------------------------------
+// Diagnostics — Psi status snapshot (Law 71 witness).
+// ---------------------------------------------------------------------------
+struct PsiStatus {
+    residual: float,
+    gate: float,
+    entropy: float,    // H = -p log2 p - (1-p) log2 (1-p)
+    step: int
+}
+
+fn psi_status(state: VoiceState) -> PsiStatus {
+    // TODO[pytorch]: H from psi_residual; pack and return.
+    PsiStatus { residual: state.psi_residual, gate: state.psi_gate, entropy: 0.0, step: state.step }
+}

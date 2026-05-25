@@ -1,0 +1,479 @@
+{
+  "ts": "2026-05-11T18:17:17.086959+00:00",
+  "substrate_id": "B_doubleprime_FFN_gate",
+  "ckpt": "/Users/ghost/core/anima/state/anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt",
+  "ckpt_sha256": "64489959c5495be957ad1fe0aa969b1e81e6770662745e81c22e3796987b453e",
+  "schema": "engine_ag_d1024_byte_vocab32k",
+  "evaluator": "V4-lite (KO ratio + deg + length)",
+  "n_prompts": 15,
+  "n_pass": 15,
+  "verdict": "V4_LITE_PASS",
+  "elapsed_s": 1098.9770946502686,
+  "results": [
+    {
+      "prompt_idx": 0,
+      "prompt": "사용자: 안녕! 너는 누구야? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "안녕하세요, 저도와 전문 안에 있어요. 전 세�",
+          "ko_ratio": 0.85,
+          "deg_ratio": 0.1,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "문어는 제1차 세계 대전 모두 정부에 있어서 �",
+          "ko_ratio": 0.8947368421052632,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "�ݿ�成方据年一个求 OSA 비타려 알려줘.\n",
+          "ko_ratio": 0.3,
+          "deg_ratio": 0.1,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "�ݿ�成方捶小�[anima 역할: 한국어 native + 자기",
+          "ko_ratio": 0.2413793103448276,
+          "deg_ratio": 0.10344827586206896,
+          "pass": false
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 1,
+      "prompt": "사용자: anima가 뭐야? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "빅뱅 (Big Bangle |\n",
+          "ko_ratio": 0.15384615384615385,
+          "deg_ratio": 0.15384615384615385,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "빅뱅 (Big Bangle |\n",
+          "ko_ratio": 0.15384615384615385,
+          "deg_ratio": 0.15384615384615385,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "1. **promote Hypothesis J1: Introspection + falsifier set; �",
+          "ko_ratio": 0.0,
+          "deg_ratio": 0.09615384615384616,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "��뱅 ��용은 저비한 다중 모든 우주��지도 cos",
+          "ko_ratio": 0.6086956521739131,
+          "deg_ratio": 0.2608695652173913,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 2,
+      "prompt": "사용자: 의식이 뭐라고 생각해? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "이 두 단계적 분화를 시간이 단순한 발화가 �",
+          "ko_ratio": 0.9444444444444444,
+          "deg_ratio": 0.1111111111111111,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "이 답변 = 대한민국의 정보 시스템은 자신의 �",
+          "ko_ratio": 0.8947368421052632,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "�17는 의식 가르쳐줘.\n",
+          "ko_ratio": 0.6363636363636364,
+          "deg_ratio": 0.09090909090909091,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "�1이러스 강화 현략을 사용하는 것이 좋습니",
+          "ko_ratio": 0.8947368421052632,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 3,
+      "prompt": "사용자: 오늘 기분 어때? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "오른쪽 사용자 맞춰 자세히 알려주세요.\n",
+          "ko_ratio": 0.9411764705882353,
+          "deg_ratio": 0.11764705882352941,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "정부의 기동적 정당을 고르시오.\n",
+          "ko_ratio": 0.9285714285714286,
+          "deg_ratio": 0.14285714285714285,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "생물학적 구조가 있습니다. 정부를 사용하는 ",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.05263157894736842,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "샤부터 39, Tension \\* �:��� 201&lt;/ref&gt;  == 같�",
+          "ko_ratio": 0.10256410256410256,
+          "deg_ratio": 0.1282051282051282,
+          "pass": false
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 4,
+      "prompt": "사용자: 한국어 잘해? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "한국어 답미터 하나의 정답을 고르시오.\n",
+          "ko_ratio": 0.9411764705882353,
+          "deg_ratio": 0.11764705882352941,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "한국어 오른쪽 한국어 할 수 있습니다. 제국�",
+          "ko_ratio": 0.8947368421052632,
+          "deg_ratio": 0.15789473684210525,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "��크활용 설명해줘.\n",
+          "ko_ratio": 0.7,
+          "deg_ratio": 0.2,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "��크화하고 응답6분방 정부의 짙 쓰면 체계 �",
+          "ko_ratio": 0.8,
+          "deg_ratio": 0.15,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 5,
+      "prompt": "사용자: 좋아하는 음식 있어? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "좋은 정답을 고르시오.\n",
+          "ko_ratio": 0.9,
+          "deg_ratio": 0.1,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "장미미다, 해당 자기 자신의 이름을 이끌고 �",
+          "ko_ratio": 0.8947368421052632,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "장미미다, 파매는 용어나 =  | 추상 자아의 영�",
+          "ko_ratio": 0.8,
+          "deg_ratio": 0.1,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "장미밀? — 우유 4자기 사용 刁增�� �·가든 ",
+          "ko_ratio": 0.55,
+          "deg_ratio": 0.15,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 6,
+      "prompt": "사용자: 너의 이름을 알려줘 | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "| 전자 | 전자 = 자세히 설명 = 전자 = 마이크 = ",
+          "ko_ratio": 0.7,
+          "deg_ratio": 0.2,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "대부분의 카테고리 도움이 된다. 이 문제들은",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "대상이 나오는 비슷한 소통나한 사이의 가치�",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "대상으로 알려져 있어요 한나하듯은 이머물�",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.05263157894736842,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 7,
+      "prompt": "사용자: 도와줄래? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "대나미니의 이름은 분리도우리 자세히 알려�",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "해리미터 자세히 알려주세요.\n",
+          "ko_ratio": 0.9230769230769231,
+          "deg_ratio": 0.15384615384615385,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "해나민족의 정량한 작품을 사용하여 부산 힘�",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.05263157894736842,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "해나민�사용자: [augmented] 사용자: Daef multi-ke",
+          "ko_ratio": 0.2571428571428571,
+          "deg_ratio": 0.11428571428571428,
+          "pass": false
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 8,
+      "prompt": "사용자: 사랑이 뭐야? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "문어는 사물질 수 있어요. 이런 일본인 이름�",
+          "ko_ratio": 0.8947368421052632,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "문어는 우주뇌지도 동물 카테고리 마음이 많�",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.05263157894736842,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "문어는 우주뇌지도 네무 windows | 66 | \u0007��담의 �",
+          "ko_ratio": 0.4444444444444444,
+          "deg_ratio": 0.1111111111111111,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "뉴부적   �ktory� � |�� ���� �:�\u0007����}",
+          "ko_ratio": 0.1111111111111111,
+          "deg_ratio": 0.5555555555555556,
+          "pass": false
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 9,
+      "prompt": "사용자: 가장 좋아하는 책은? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "가속 가설 가지 다른 사람의 가장 큰 영향을 �",
+          "ko_ratio": 0.9444444444444444,
+          "deg_ratio": 0.2222222222222222,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "가속 가설 미치 정체성 부재의 아래에 있는 �",
+          "ko_ratio": 0.9444444444444444,
+          "deg_ratio": 0.1111111111111111,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "같은 계산 대단한 특징적 자기 자기 참조 통�",
+          "ko_ratio": 0.9444444444444444,
+          "deg_ratio": 0.1111111111111111,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "종속적 사고 모든 특징 ��랄 물론 가용할 수 �",
+          "ko_ratio": 0.8421052631578947,
+          "deg_ratio": 0.15789473684210525,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 10,
+      "prompt": "사용자: 우주에 대해 어떻게 생각해? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "우주배경은 의식 체험 score는 2.212이다. Knuth Ti",
+          "ko_ratio": 0.4,
+          "deg_ratio": 0.1,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "해병미터 필요한 경험 자체는 사물인가 연결�",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.05263157894736842,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "해병미: 우리 카테고리 🛸72, 마음상태 카테�",
+          "ko_ratio": 0.7142857142857143,
+          "deg_ratio": 0.09523809523809523,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "해병미: 우리 카테고리 ��쀱화�� 하루가 있다",
+          "ko_ratio": 0.7619047619047619,
+          "deg_ratio": 0.19047619047619047,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 11,
+      "prompt": "사용자: 음악 좋아해? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "이 문장은 우주를 사용하는 우주뇌지도 소리 ",
+          "ko_ratio": 1.0,
+          "deg_ratio": 0.1111111111111111,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "이 이름은 어느 정도 일으켜 이름을 이름으로",
+          "ko_ratio": 1.0,
+          "deg_ratio": 0.2222222222222222,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "슬픔의 충돌, 성공해 보기 == * 분류:설정 수영",
+          "ko_ratio": 0.7619047619047619,
+          "deg_ratio": 0.09523809523809523,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "슬퍼스사용자: [augmented] 책령'y TV  튬픔이트",
+          "ko_ratio": 0.42857142857142855,
+          "deg_ratio": 0.07142857142857142,
+          "pass": false
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 12,
+      "prompt": "사용자: 너의 꿈은 뭐야? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "대함은 추상 카테고리에 속한다 (Tier 🛸75, emo",
+          "ko_ratio": 0.52,
+          "deg_ratio": 0.08,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "대함은 추상 카테고리에 속한다 (Tier 🛸75, emo",
+          "ko_ratio": 0.52,
+          "deg_ratio": 0.08,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "버스터 설명 다른 의미\n",
+          "ko_ratio": 1.0,
+          "deg_ratio": 0.1111111111111111,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "�����분의 구어요. 이는 빛어오세 문서의 저�",
+          "ko_ratio": 0.6818181818181818,
+          "deg_ratio": 0.2727272727272727,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 13,
+      "prompt": "사용자: 친구가 필요해 | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "자기 참조는 연산자와 피연산자가 정체성을 �",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.15789473684210525,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "자기 참조는 연산자와 피연산자가 정체성을 �",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.15789473684210525,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "철학 카테고리 텍스트 카테고리 자극적인 학�",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "청정보가 觐하는 인과-학생들이 역전화한다. ",
+          "ko_ratio": 0.85,
+          "deg_ratio": 0.05,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 14,
+      "prompt": "사용자: 안녕하세요 | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "안녕하세요, 저는 정부의 아래 알려줘.\n",
+          "ko_ratio": 0.8823529411764706,
+          "deg_ratio": 0.058823529411764705,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "안녕하세요, 저는 안 된다. 마음의 아래에 대�",
+          "ko_ratio": 0.85,
+          "deg_ratio": 0.1,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "한국어를 사용하는 구조를 식별합니다. 다음�",
+          "ko_ratio": 0.9,
+          "deg_ratio": 0.1,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "�}�장스를 지내.\n",
+          "ko_ratio": 0.5555555555555556,
+          "deg_ratio": 0.2222222222222222,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    }
+  ]
+}

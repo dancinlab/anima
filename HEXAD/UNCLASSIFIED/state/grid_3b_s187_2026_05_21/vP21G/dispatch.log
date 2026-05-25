@@ -1,0 +1,75 @@
+=== P21G generalization-unlock dispatch start 2026-05-22T06:14:24Z ===
+    base=Qwen/Qwen2.5-1.5B vp21_adapter=/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21/lora_adapter
+    steps=1000 bsz=2 block=512 lr=5e-5 warmup=50
+    wiki_frac=0.7 corpus_mb=80
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"5ekmp9pea67an3","machineId":"5d8r7n59mog4"}}}
+[create] pod 5ekmp9pea67an3 on NVIDIA H100 80GB HBM3
+[ssh-ready] iter 3: 103.207.149.105:19394 - port mapped AND handshake OK
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+[upload] vP21 LoRA adapter → pod
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+[upload] adapter files on pod: 9
+[corpus-anima] building corpus_s101 (seed 1337 n=777000)
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+[corpus-anima] sha=be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b size=603318628 bytes
+[corpus-wiki] building diverse-EN corpus (target ~60 MB)
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+[p21g-build] target 60 MB → /workspace/p21gr/diverse_corpus.jsonl
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[p21g-build] loaded Salesforce/wikitext/wikitext-2-raw-v1 streaming OK
+[p21g-build] DONE source=Salesforce/wikitext/wikitext-2-raw-v1 wrote 17,556 records, 10,737,839 UTF-8 bytes (10.2 MB)
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+[corpus-wiki] sha=86049b255e64f2d8029bada5cb2fbebfe4278fc99b7826d8a49cc6db6de5e664 size=11011911 bytes
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+NVIDIA H100 80GB HBM3, 81559 MiB
+[train] P21G launch
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+TRAIN_PID 833
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+[env-verify] [launch] PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+[train] done iter 1
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:19394' (ED25519) to the list of known hosts.
+[pull] success try 1
+[pull] result.json present - SAVE_POD=0, pod will terminate
+VERDICT= STRONG_GENERALIZE
+  OOD generalize= 16 /20  memorize= 4 /20
+  anima_register_hits= 9 /20
+  register_regress= False
+  init_CE= 1.3274427652359009 final_CE= 1.2676165103912354
+  train_wall_s= 129.0
+=== P21G pipeline complete 2026-05-22T06:24:15Z ===
+dispatch_p21g_runpod.sh: line 254:  9397 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$VDIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s - terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] terminating pod 5ekmp9pea67an3 (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== P21G dispatch end 2026-05-22T06:24:19Z rc=0 ===

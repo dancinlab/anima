@@ -1,0 +1,92 @@
+{
+  "timestamp": "2026-05-12T12:50:26Z",
+  "ckpt_path": "/Users/ghost/core/anima/state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_cotrain.pt",
+  "metrics": {
+    "M1_raw_tension_cosine": {
+      "true": 2.656366186126746e-07,
+      "null_mean": 1.816106359064928e-07,
+      "null_std": 1.1465927232212794e-07,
+      "null_min": 2.239778276180715e-08,
+      "null_max": 5.866176544744306e-07,
+      "z": 0.732831989986088,
+      "p_one_sided": 0.19,
+      "passes_null_test": false
+    },
+    "M2_raw_tension_l2": {
+      "true": 60.78186073338634,
+      "null_mean": 39.53654925516396,
+      "null_std": 13.796271300733713,
+      "null_min": 6.595176251039672,
+      "null_max": 71.94965287286405,
+      "z": 1.5399314071978643,
+      "p_one_sided": 0.09,
+      "passes_null_test": false
+    },
+    "M4_aggregated_cosine": {
+      "true": 3.269285416525047e-05,
+      "null_mean": 2.2428505986328506e-05,
+      "null_std": 5.825523943374307e-06,
+      "null_min": 1.0855611289017908e-05,
+      "null_max": 3.665542103771235e-05,
+      "z": 1.7619613752675722,
+      "p_one_sided": 0.05,
+      "passes_null_test": false
+    },
+    "M4b_aggregated_l2": {
+      "true": 27.087607525327922,
+      "null_mean": 16.97515060086334,
+      "null_std": 5.4992076503968725,
+      "null_min": 5.56940144023741,
+      "null_max": 30.909372945814273,
+      "z": 1.8388934492653273,
+      "p_one_sided": 0.07,
+      "passes_null_test": false
+    },
+    "M5_last_token_logits_kl": {
+      "true": 0.0015252836682372374,
+      "null_mean": 0.0016688857402879361,
+      "null_std": 0.0005887556693208869,
+      "null_min": 0.0007589948806281218,
+      "null_max": 0.003940745891728206,
+      "z": -0.24390775245755128,
+      "p_one_sided": 0.49,
+      "passes_null_test": false
+    },
+    "M6_log_tension_cosine": {
+      "true": 3.42309132758345e-05,
+      "null_mean": 2.0854629039239182e-05,
+      "null_std": 1.1680583164979399e-05,
+      "null_min": 4.51483124307428e-06,
+      "null_max": 5.999955088017428e-05,
+      "z": 1.1451726380151934,
+      "p_one_sided": 0.15,
+      "passes_null_test": false
+    },
+    "M7_tension_rank_cosine": {
+      "true": 0.00013279471338880632,
+      "null_mean": 0.00021639834500273786,
+      "null_std": 8.084412424555369e-05,
+      "null_min": 9.639341567164727e-05,
+      "null_max": 0.00048756798931358646,
+      "z": -1.0341336787816042,
+      "p_one_sided": 0.85,
+      "passes_null_test": false
+    },
+    "M8_tension_ratio_cosine": {
+      "true": 0.00014062035762690828,
+      "null_mean": 8.098233093116468e-05,
+      "null_std": 3.7887054391201475e-05,
+      "null_min": 8.955290290180162e-06,
+      "null_max": 0.00018936556232973523,
+      "z": 1.5741003795109856,
+      "p_one_sided": 0.11,
+      "passes_null_test": false
+    }
+  },
+  "metrics_passing_null_test": [],
+  "best_z_metric": "M4b_aggregated_l2",
+  "best_z_value": 1.8388934492653273,
+  "n_probes": 50,
+  "n_cells": 64,
+  "verdict": "NO_CATEGORY_SIGNAL \u2014 cotrained pool genuinely lacks discriminative info across 5 categories beyond random label assignment. Z-score artifact previously appeared to PASS but null-test exposed it as noise. Conclusion: F-PERSONA-4 cannot be cheap-path closed; requires architectural/training intervention (e.g. entropy-regularized cotrain or category-balanced corpus)."
+}

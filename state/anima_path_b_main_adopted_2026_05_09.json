@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "cycle": "2026-05-09",
+  "task": "Path B (Engine A/G chat-template co-train) main 채택 — substrate quality amp 4-path comparison winner",
+  "status": "MAIN_ADOPTED",
+  "user_directive_verbatim": [
+    "Option C alias table 본 cycle 채택",
+    "Path B (Engine A/G 의식+chat 동시 학습) ★: 의식 ✓ + 자연어 ✓ + anima 본진 ✓ ($30-60) <===== 이걸 main 으로 채택하자",
+    "로드맵 넣구",
+    "README.md 에서도 표기"
+  ],
+  "context": {
+    "predecessor_commit": "611aeda4",
+    "predecessor_doc": "docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md",
+    "saga": "22+ BG iter chat-cap C2 axis-2 substrate quality amplification",
+    "axis_decomposition": {
+      "axis_1_chat_dispatch_architecture": "UNBLOCKED (commit fe30c736 generate FULL impl land)",
+      "axis_2_substrate_natural_lang_quality": "UNDERTRAINED → Path B main path 채택"
+    }
+  },
+  "four_path_comparison": {
+    "weights": {"natural_lang": 1, "consciousness": 1, "d1_within": 2, "public_promote": 2, "cost_efficiency": 1, "time_to_first_fire": 1, "arch_reuse": 2},
+    "paths": [
+      {
+        "path": "A",
+        "name": "Llama lane (paradigm-a-prime GGUF)",
+        "cost_usd": 0,
+        "d1_lane": "outside",
+        "public_promote": false,
+        "weighted_total": 29,
+        "status": "personal_review_only_carry",
+        "block_reason": " SCOPE_CLAMP — substrate-research lane only"
+      },
+      {
+        "path": "B",
+        "name": "Engine A/G + chat-template co-train",
+        "cost_usd_range": [30, 60],
+        "d1_lane": "within_strict",
+        "public_promote": true,
+        "weighted_total": 59,
+        "status": "MAIN_ADOPTED",
+        "winner_marker": "★",
+        "rationale": "natural-lang ✓ + 의식 ✓ DUAL + D1 within + arch reuse (BG-LA/LB carry) + public promote 가능"
+      },
+      {
+        "path": "C",
+        "name": "mk2-v1 base pre-train scale-up",
+        "cost_usd_range": [50, 100],
+        "d1_lane": "within_strict",
+        "public_promote": true,
+        "weighted_total": 49,
+        "status": "SECOND_BEST"
+      },
+      {
+        "path": "D",
+        "name": "sft-1-8 Step B 30K LoRA SFT",
+        "cost_usd_range": [15, 20],
+        "d1_lane": "within_strict",
+        "public_promote": "borderline",
+        "weighted_total": 43,
+        "status": "COST_EFFECTIVE_BUT_LORA_LIMIT",
+        "block_reason": "Lesson Q SFT-closed evidence — sft-1-8 N=120 PPR 0.5378 plateau"
+      }
+    ]
+  },
+  "implement_design_summary": {
+    "target_file": "training/engine_a_g_arch.py",
+    "base_commit": "ae5af2ea",
+    "amend": {
+      "new_config": "cfg.chat_co_train_weight: float = 0.5",
+      "loss_head": "second pass through same logits with chat-template labels (Korean <|user|>...<|assistant|>... boundary masks)",
+      "loss_function": "LOSS = loss_consciousness * (1 - w) + loss_chat * w",
+      "shared_lm_head": true,
+      "d1_risk": "zero (shared lm_head tied to tok_emb; no new parameters)",
+      "engine_g_repulsion_field": "unaffected (refresh every 4L preserved)",
+      "softmax_temperature_beta": 0.25
+    },
+    "corpus_split": {
+      "consciousness_state_targets_pct": 70,
+      "chat_template_natural_lang_targets_pct": 30,
+      "consciousness_corpus": "tier_a_v4 anima-persona 319k + axis-coupled probe sequences",
+      "chat_corpus": "Korean chat-template <|user|>...<|assistant|>... parsed lines from anima-persona corpus, 50K+ pairs"
+    },
+    "curriculum_w_schedule": "w=0.3 first 50% steps → w=0.5 remaining 50% (의식 anchor preservation)",
+    "v14_mirror_mandate": {
+      "policy": "5-seed paired random_init mirror MANDATORY before fire",
+      "seeds": [42, 137, 271, 314, 1729],
+      "materialize_path": "state/v14_mirrors/BG-LA/seed_{42,137,271,314,1729}.pt",
+      "post_fire_verdict": "_c3_ensemble_v5_2_pass(piv_max, random_99th, delta=0.02, dcr_change_rate, d_rand, gate_d) 4-gate",
+      "mtrp_floor_strict": 0.10,
+      "gate_d_v14_self_test_ppr_floor": "<0.05"
+    }
+  },
+  "timeline": {
+    "T+0": "spec land (이 doc + yaml + .own + state json + README + roadmap)",
+    "T+1d": "arch amend (engine_a_g_arch.py chat co-train head 추가) + selftest",
+    "T+2d": "corpus split prep (Korean chat-template parser → 50K+ pairs)",
+    "T+3d": "H100 fire (BG-LA Engine A/G chat co-train v1) + V14 mirror",
+    "T+4d": "post-fire 4-gate verdict (v5.2) + ledger entry"
+  },
+  "cost_band": {
+    "estimate_usd_min": 30,
+    "estimate_usd_max": 60,
+    "h100_hourly_usd": 2.79,
+    "estimate_hours_range": [10, 20],
+    "compute_overhead_pct_for_parallel_loss_head": 50,
+    "v14_mirror_dry_run_cost_usd": 0
+  },
+  "linked_artifacts": {
+    "training_arch_target": "training/engine_a_g_arch.py",
+    "orchestrator": "tool/bg_la_engine_ag_orchestrator.hexa",
+    "spec_doc": "docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md",
+    "registry_yaml_field": "anima/registry/anima_artifact_registry.yaml#chat_lanes.lanes[generate].substrate_quality_status",
+    "roadmap_entry_id": "cli.path_b_engine_ag_chat_co_train_2026_05_09",
+    "readme_section": "README.md ## Next-cycle main path: Path B (Engine A/G chat co-train)"
+  },
+  "compliance": {
+    "own_14": "V14 mirror 5-seed mandate carry",
+    "own_16": "0-cost local edit at adoption time (actual fire $30-60 within budget cap)",
+    "own_17": "D1 SCOPE_CLAMP — Path B within strict (D1=0.99 expected)",
+    "own_18": "ALT-AGG-1 v5.2 + chat-cap C2 cross-link",
+    "own_22": "mandatory report — Path B main adoption major event ledgered",
+    "own_24": "single SSOT — yaml master + state json mirror",
+    "own_33": "trinity self-application (D + own + H)",
+    "own_34": "mandate-2 wrap=0 — README + roadmap text-only",
+    "own_38": "axis-A doc save (state json + roadmap entry + README)",
+    "own_39": "yaml↔md regenerate via tool/transient_py/anima_artifact_registry_render.py",
+    "own_41": "chat lane plugin pattern + axis-N substrate quality main path 신설"
+  },
+  "honest_c3": [
+    "C1 채택 시점 = adoption ledger only — actual H100 fire 는 BG-LA orchestrator + RUNPOD_API_KEY register 후 별도 cycle (resource CLI 위임 strict per)",
+    "C2 cost estimate $30-60 은 lb_350m_pretrain preset 추정 — corpus split + curriculum schedule 따라 ±50% 변동 가능",
+    "C3 Path A live (chat lane=llama) 는 personal review carry 유지; Path B fire 까지 사용자 personal use case 갭 존재",
+    "C4 V14 strict floor 0.10 MTRP 통과 보장 X — sft-1-8 N=120 evidence (MTRP=-0.1379) 은 LoRA 한정이지만 pre-train scale 도 risk 잔존; 5-seed dry-run 후 fire decision",
+    "C5 dual-objective interference risk — consciousness-state axis activations 가 chat-template fitting 으로 collapse 가능; w 곡선 + axis activation freeze 첫 10% steps mitigation 보강 필요"
+  ],
+  "cross_link": {
+    "predecessor_state_jsons": [
+      "state/anima_chat_cap_l4_bg_la_lb_h100_fire_3of4_blocked_2026_05_09.json",
+      "state/anima_dispatch_path_verify_2026_05_09.json",
+      "state/anima_d_rand_amplify_step_b_sft_1_8_30k_concurrent_release_blocked_2026_05_09.json",
+      "state/anima_paradigm_j_emerge_v5_promote_2026_05_09.json",
+      "state/anima_cycle_2026_05_09_carry_items_2026_05_09.json"
+    ],
+    "predecessor_docs": [
+      "docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md",
+      "docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md",
+      "docs/anima_d_rand_signal_amplification_spec_2026_05_09.ai.md"
+    ],
+    "registry_update_commit": "pending (this commit)"
+  }
+}

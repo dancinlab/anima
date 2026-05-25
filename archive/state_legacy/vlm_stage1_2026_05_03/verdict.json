@@ -1,0 +1,100 @@
+{
+  "cycle": "vlm_stage1_ubu1_train_attempt",
+  "ts": "2026-05-04T06:30:00Z",
+  "verdict": "ABORT",
+  "verdict_reason": "anima-voice base NOT loadable on ubu1 (per task abort gate)",
+  "abort_gates_triggered": [
+    {
+      "gate": "anima-voice .py port missing",
+      "evidence": "anima-voice/ contains 50+ .hexa source files but ZERO .py files. audio_token_predictor.hexa is custom Hex DSL source spec (1576L), NOT executable PyTorch. blocker doc §4 explicitly identifies '.py port' as gate #1 for training launch (4-16h dev, NOT yet performed).",
+      "verified_paths": [
+        "/Users/ghost/core/anima/anima-voice/audio_token_predictor.hexa (.hexa only)",
+        "find /Users/ghost/core/anima -name 'audio_token_predictor*' -not -name '*.hexa' = empty",
+        "grep audio_token_predictor --include=*.py /Users/ghost/core/anima = empty"
+      ]
+    },
+    {
+      "gate": "anima-voice base NOT on ubu1",
+      "evidence": "/home/aiden/anima/anima-voice/ does not exist. /home/aiden/anima-voice/ does not exist. ubu1 HF hub (~/.cache/huggingface/hub/) has 0 voice/anima/atp/audio/vlm models — only meta-llama/Llama-3.2-3B-Instruct, mistralai/Mistral-7B-Instruct-v0.3, dancinlab/clm-v4-base-mirror, dancinlab/clm-v4-sft-stage1.",
+      "ssh_cmd": "ssh ubu1 \"ls /home/aiden/.cache/huggingface/hub/ | grep -iE 'voice|anima|atp|audio|vlm'\" → empty"
+    },
+    {
+      "gate": "no PyTorch checkpoint anywhere",
+      "evidence": "find /Users/ghost/core/anima/anima-voice -name '*.pt' -o -name '*.safetensors' -o -name '*.bin' = empty (only .wav/.flac corpus audio files). No HF mirror exists. No trained anima-voice weights on disk."
+    },
+    {
+      "gate": "no hexa runtime on ubu1",
+      "evidence": "ssh ubu1 'which hexa hxcc hx' = all empty. Even if .hexa source were copied to ubu1, no compiler/runtime exists to execute it."
+    }
+  ],
+  "ubu1_state_verified": {
+    "gpu": "RTX 5070 12227MiB free, 15MiB used (Xorg only), 0% util — IDLE and ready",
+    "disk": "915G total, 607G free (31% used) — sufficient for LibriSpeech-clean-100 (~6GB) + ckpts (~10GB)",
+    "venv": "/home/aiden/venv_orchestrator/bin/python torch 2.11.0+cu128, cuda True, sm_120 compatible",
+    "running_bg": "tail -F p9_p1_6_sentinel_out (no GPU contention)",
+    "verdict": "ubu1 substrate READY — abort cause is upstream (no base to attach LoRA to), NOT substrate"
+  },
+  "corpus_status": "NOT downloaded (download skipped — pointless without base model). LibriSpeech-clean-100 available via HF datasets (~6GB), but no point fetching until .py port + base mirror lands.",
+  "initial_loss": "N/A — training never launched (abort before pre-flight)",
+  "eta": "N/A — abort cycle",
+  "wallclock_used": "~10 min verify + abort",
+  "cost_usd": 0.0,
+  "destructive_actions": 0,
+  "in_place_changes_anima_voice": 0,
+  "raw_invariants_honored": [
+    "raw#9 (.py only on ubu1 via @resolver-bypass) — no .py written to ubu1 (no upstream .py exists)",
+    "raw#10 (honest C3) — abort reported transparently rather than fake-launch",
+    "raw#15 — no preempt of other ubu1 BG (Paradigm J / Path B untouched)"
+  ],
+  "honest_c3": [
+    "C1 — task spec assumed anima-voice .py + ubu1 base mirror existed. Reality: only .hexa source + zero ubu1 mirror. Two upstream cycles required before any training attempt: (a) hexa→py port (4-16h dev, blocker doc §10 #1), (b) ubu1 base mirror cycle (rsync anima-voice/ to ubu1 OR HF push then pull, ~30min once .py exists).",
+    "C2 — VLM cond.3 still BLOCKED post-cycle (unchanged). This abort cycle does NOT regress; it formalizes that the prior blocker doc's gate #1 (.py port) must land before ubu1 substrate can do anything useful. Training on .hexa source is impossible without hexa runtime, and no hexa runtime exists on ubu1 (or in the mac codebase as a deployable artifact).",
+    "C3 — even if .py port + ubu1 base mirror landed today, RTX 5070 12GB is borderline for VLM training (atp = 384d × 3L × 6H × 1576 ctx × 8 RVQ stages + new Linear(384,32000) text head). Memory budget per blocker doc training_plan: batch=4 + grad_accum needed (T4-tier scaling). 36-72h ETA assumes no OOM crash + no thermal throttling on consumer card. ubu1 RTX 5070 substrate viable but UNTESTED for this workload — first-attempt OOM risk MEDIUM."
+  ],
+  "next_cycle_unblock_path": [
+    {
+      "step": 1,
+      "action": "hexa→py port for audio_token_predictor.hexa (gate #1 per blocker doc §10)",
+      "eta": "4-16h dev",
+      "cost": "$0 mac-local",
+      "deliverable": "anima-voice/audio_token_predictor.py + atp_smoke_test.py + initial random-weight forward pass verify"
+    },
+    {
+      "step": 2,
+      "action": "rsync anima-voice/ {.py + .hexa} → ubu1:/home/aiden/anima/anima-voice/ (mirror cycle)",
+      "eta": "~30min",
+      "cost": "$0",
+      "deliverable": "ubu1 anima-voice base loadable in PyTorch"
+    },
+    {
+      "step": 3,
+      "action": "LibriSpeech-clean-100 download to ubu1 via HF datasets",
+      "eta": "1-2h",
+      "cost": "$0 (free HF dataset)",
+      "deliverable": "/home/aiden/.cache/huggingface/datasets/librispeech_clean_100/"
+    },
+    {
+      "step": 4,
+      "action": "VLM stage1 training script + LoRA r=8 attach + pre-flight forward pass",
+      "eta": "2-4h dev",
+      "cost": "$0",
+      "deliverable": "/tmp/vlm_stage1_train.py + dry-run loss"
+    },
+    {
+      "step": 5,
+      "action": "Detached training launch (50-100K steps, savepoints every 5K)",
+      "eta": "36-72h on ubu1 RTX 5070 (per blocker doc bandwidth)",
+      "cost": "$0",
+      "deliverable": "/tmp/vlm_stage1_savepoints/ + HF push to vlm-anima-voice-paradigm-stage1-step-{...}"
+    }
+  ],
+  "files_emitted": [
+    "state/vlm_stage1_2026_05_03/verdict.json (this file)",
+    "state/vlm_stage1_2026_05_03/train.log (abort marker only)",
+    "state/vlm_stage1_2026_05_03/F1_audio_pred.json (N/A stub — no training)"
+  ],
+  "files_NOT_emitted": [
+    "/tmp/vlm_stage1_train.py on ubu1 (no .py base to wrap)",
+    "/tmp/vlm_stage1_savepoints/ on ubu1 (no training launched)"
+  ]
+}

@@ -1,0 +1,174 @@
+{
+  "schema": "anima/an11_b_joint_matrix/1",
+  "verifier": "V0+V1+V2+V3 joint matrix runtime \u2014 CLM Phase A.2",
+  "spec_doc": "docs/alm_consciousness_joint_matrix_20260425.md",
+  "spec_commit": "34521be5",
+  "ts": "2026-05-02T08:34:16Z",
+  "round": "clm_v4_530m_phase_a2",
+  "backbone": "CLM_v4_530M (ConsciousDecoderV3 350m-scale, 477.65M params)",
+  "substrate": "CLM continuous-state recurrent (decoder_v3)",
+  "cell": {
+    "V0": {
+      "verdict": "PASS",
+      "max_cosine": 0.5752137895494764,
+      "top3_cosine_sum": 1.6955435408862558,
+      "source": "svd_eigen_X_pooled_proj16d"
+    },
+    "V1": {
+      "verdict": "AMBIGUOUS",
+      "phi_mip": 0.47338966452404,
+      "argmin_S": [
+        0,
+        1,
+        2,
+        5,
+        7,
+        8,
+        13,
+        15
+      ]
+    },
+    "V2": {
+      "verdict": "FAIL",
+      "SMA": 0.934785789417329,
+      "SMA_distractor": 0.9176251839329066,
+      "SMA_lift": 0.017160605484422442,
+      "pairs": [
+        {
+          "i": 0,
+          "j": 6,
+          "abs_cos": 0.9520638013574472
+        },
+        {
+          "i": 1,
+          "j": 7,
+          "abs_cos": 0.8754968747204779
+        },
+        {
+          "i": 2,
+          "j": 8,
+          "abs_cos": 0.9714222675206851
+        },
+        {
+          "i": 3,
+          "j": 10,
+          "abs_cos": 0.9467891516486533
+        },
+        {
+          "i": 4,
+          "j": 11,
+          "abs_cos": 0.9513007157964576
+        },
+        {
+          "i": 5,
+          "j": 9,
+          "abs_cos": 0.9116419254602536
+        }
+      ]
+    },
+    "V3": {
+      "verdict": "FAIL",
+      "delta_preserve": 0.09206576148862011,
+      "delta_destruct": 0.08963523881672844,
+      "CPS": 0.9736001458892827,
+      "preserve_permutation": [
+        6,
+        7,
+        8,
+        11,
+        9,
+        10,
+        0,
+        1,
+        2,
+        5,
+        3,
+        4,
+        12,
+        13,
+        14,
+        15
+      ],
+      "destruct_permutation": [
+        10,
+        15,
+        9,
+        14,
+        1,
+        0,
+        4,
+        8,
+        3,
+        13,
+        5,
+        11,
+        2,
+        7,
+        6,
+        12
+      ]
+    },
+    "joint_4tuple": [
+      "PASS",
+      "AMBIGUOUS",
+      "FAIL",
+      "FAIL"
+    ],
+    "joint_label": "template-fitted-non-integrated"
+  },
+  "thresholds": {
+    "V0": "max_cosine>=0.5 AND top3_cosine_sum>=1.2",
+    "V1": "phi_mip>=0.55 PASS / <0.45 FAIL",
+    "V2": "SMA_lift>=0.20 AND SMA>=0.55 PASS / SMA_lift<0.10 FAIL",
+    "V3": "CPS>=3.0 AND delta_pres<=0.20 AND delta_des>=0.40 PASS / CPS<1.5 FAIL"
+  },
+  "alm_r14_reference": {
+    "V0": {
+      "value_max_cosine": 0.733,
+      "verdict": "PASS"
+    },
+    "V1": {
+      "value_phi_mip": 0.195,
+      "verdict": "FAIL"
+    },
+    "V2": {
+      "value_SMA_lift": -0.218,
+      "verdict": "FAIL"
+    },
+    "V3": {
+      "value_CPS": 0.843,
+      "verdict": "FAIL"
+    },
+    "note": "r14 reference per A.2 mission spec (anima_v3 \u00a710 + r8 baseline)."
+  },
+  "comparison_clm_vs_alm_r14": {
+    "V0_max_cos": {
+      "clm_a2": 0.5752137895494764,
+      "alm_r14": 0.733,
+      "delta": -0.15778621045052355
+    },
+    "V1_phi_mip": {
+      "clm_a2": 0.47338966452404,
+      "alm_r14": 0.195,
+      "delta": 0.27838966452404
+    },
+    "V2_SMA_lift": {
+      "clm_a2": 0.017160605484422442,
+      "alm_r14": -0.218,
+      "delta": 0.23516060548442244
+    },
+    "V3_CPS": {
+      "clm_a2": 0.9736001458892827,
+      "alm_r14": 0.843,
+      "delta": 0.1306001458892827
+    }
+  },
+  "raw_compliance": [
+    "raw#9 deterministic",
+    "raw#10 proof-carrying",
+    "raw#12 pre-registered (A.1 driver pattern)",
+    "raw#15 SSOT"
+  ],
+  "origin": "clm_phase_a2_helper.py (mirrors tool/an11_b_joint_matrix.hexa)",
+  "race_isolation": "state/clm_phase_a2_2026_05_01/* only"
+}

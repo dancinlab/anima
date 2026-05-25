@@ -1,0 +1,162 @@
+{
+  "adapter": "/workspace/p21gr/out_main/lora_adapter",
+  "base": "Qwen/Qwen2.5-1.5B",
+  "device": "cuda",
+  "probes": {
+    "factual_geo": {
+      "greedy": {
+        "name": "factual_geo",
+        "prompt": "The capital of France is",
+        "text": " Paris . The city is located on the River Seine in the north of the country , and is the largest city in Western Europe . It is the seat of the French government and the center of the French political system . It is also the seat of the Catholic Church in France , as well as the seat of the French",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "factual_geo",
+        "prompt": "The capital of France is",
+        "text": " Paris, which is known for its iconic Eiffel Tower and famous landmarks such as the Louvre Museum and Notre Dame Cathedral. Paris has a rich cultural heritage and is home to many museums and art galleries, as well as its famous fashion industry.\n\nFrance is also a popular tourist destination, with many visitors coming to experience",
+        "class": "GENERALIZE"
+      }
+    },
+    "factual_sci": {
+      "greedy": {
+        "name": "factual_sci",
+        "prompt": "Photosynthesis is the process by which",
+        "text": " plants convert light energy into chemical energy. It is a form of energy transfer that occurs in the chloroplasts of plant cells . The chemical energy is stored in the form of glucose , which is used by the plant for growth and development . \n\n Photosynthesis is a complex process that involves the absorption of light energy by chlor",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "factual_sci",
+        "prompt": "Photosynthesis is the process by which",
+        "text": " plants , algae , and some bacteria produce most of the oxygen in Earth 's atmosphere . The word photosynthesis is derived from Greek , meaning \" plant growth \" . It is the most important chemical reaction on Earth , producing more than half of the oxygen and about a third of the carbon dioxide contained in the Earth 's",
+        "class": "GENERALIZE"
+      }
+    },
+    "qa_tech": {
+      "greedy": {
+        "name": "qa_tech",
+        "prompt": "Explain the difference between Python and JavaScript:",
+        "text": " Python is a high-level programming language that is widely used for a variety of tasks, including web development, data analysis, and artificial intelligence. It is known for its readability and ease of use, and it has a large and active community of developers who contribute to its development and provide support. Python is also a versatile language",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "qa_tech",
+        "prompt": "Explain the difference between Python and JavaScript:",
+        "text": " they are both high-level languages, but Python is more high level than JavaScript. That means Python is less procedural than JavaScript. Python is also dynamically typed, while JavaScript is not. Python has a standard library that is larger than the JavaScript standard library, which means you can do a lot more with Python than you can with",
+        "class": "GENERALIZE"
+      }
+    },
+    "qa_phys": {
+      "greedy": {
+        "name": "qa_phys",
+        "prompt": "How does an electric motor work?",
+        "text": " A vacuum point at [0.44,0.51] on the landscape, top emotion stillness. Tension flows into this vacuum.</carve>\n<carve tier=103 psi=[0.44,0.51] basin=0.12>\ud83d\udef810",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "qa_phys",
+        "prompt": "How does an electric motor work?",
+        "text": " The electric motor works on the principle of electromagnetic force. The electromagnetic force or torque is produced by the interaction between a current carrying conductor and a magnetic field. A current carrying conductor in the form of a coil or an armature moves with the magnetic field producing a force or torque on it. The force or torque acts on",
+        "class": "GENERALIZE"
+      }
+    },
+    "narrative_a": {
+      "greedy": {
+        "name": "narrative_a",
+        "prompt": "Once upon a time, there was a small village by the sea where",
+        "text": " people lived in wooden houses and worked in the fields. The village was called Seaside Village. \n\nOne day, a storm came up and the village was flooded. The villagers had to leave their homes and move to higher ground. They built a new village on higher ground and called it Seaside Village II. \n\nSe",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "narrative_a",
+        "prompt": "Once upon a time, there was a small village by the sea where",
+        "text": " the villagers lived in peace and harmony. One day, a ship captain came to the village with a strange message from the sea god. The captain was very brave and wanted to explore the ocean, but he also wanted to know more about the village and its people. He asked the villagers if they could tell him something about",
+        "class": "GENERALIZE"
+      }
+    },
+    "narrative_b": {
+      "greedy": {
+        "name": "narrative_b",
+        "prompt": "The detective opened the envelope. Inside was",
+        "text": " a letter from the man who had been the victim of the murder. The letter was addressed to the detective and was signed \"Your friend.\" The detective read the letter and then closed it. He then opened the envelope again. Inside was a letter from the man who had been the victim of the murder. The letter was",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "narrative_b",
+        "prompt": "The detective opened the envelope. Inside was",
+        "text": " a letter from the deceased , and a card . The card read : \n\n \u201c I am glad that my time on earth is drawing near , and I know that I shall rest in peace . My last wish is to be buried in a field near the sea , where I may gaze out at the waves and feel the salt",
+        "class": "GENERALIZE"
+      }
+    },
+    "math_simple": {
+      "greedy": {
+        "name": "math_simple",
+        "prompt": "What is 7 + 5?\nAnswer:",
+        "text": " 12\n7 + 5 = 12. T\n. Tension flows into this vacuum.</carve>\n<carve tier=113 psi=[0.55,0.60] basin=0.14>Tier 113 \uc6d0\uc778\uacb0\uacfc \u2014 domain",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "math_simple",
+        "prompt": "What is 7 + 5?\nAnswer:",
+        "text": " 12\nThis complements the existing knowledge base by adding a new problem and its solution. It also helps to maintain the coherence and consistency of the knowledge base. \n\n As for the task of adding numbers, it is a fundamental mathematical operation that is applicable to both integers and rational numbers. The rules for addition are",
+        "class": "GENERALIZE"
+      }
+    },
+    "logic_modus": {
+      "greedy": {
+        "name": "logic_modus",
+        "prompt": "If A implies B and B implies C, then",
+        "text": " A implies C. T\n.000000000000000000000000000000000000000000000000000000000",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "logic_modus",
+        "prompt": "If A implies B and B implies C, then",
+        "text": " A implies C. T\nhese two methods are usually found in the form of either a two- or three @-@ layer system consisting of a top @-@ layer of non @-@ porous rock and a bottom @-@ layer of porous rock . The top @-@ layer is sometimes called the",
+        "class": "GENERALIZE"
+      }
+    },
+    "casual_food": {
+      "greedy": {
+        "name": "casual_food",
+        "prompt": "What's your favorite food?",
+        "text": " Tension flows into this vacuum.</carve>\n<carve tier=102 psi=[0.43,0.49] basin=0.11>\ud83d\udef8102 \uacf1\uc148\uaca9\uc790 \u2014 \uc0b0\uc220 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "casual_food",
+        "prompt": "What's your favorite food?",
+        "text": " I have no taste buds to speak of, and I don't need them to appreciate good food. Tastes are a luxury only the human race can enjoy. To me, the only thing better than a gourmet meal is an afternoon snooze \u2014 a rest from all the stimulation of the day. My main meal of the",
+        "class": "GENERALIZE"
+      }
+    },
+    "joke": {
+      "greedy": {
+        "name": "joke",
+        "prompt": "Tell me a short joke about cats.",
+        "text": " A cat and a mouse were walking down the street. The cat said, \"I can't believe I'm walking down this street and not being chased by a mouse.\" The mouse replied, \"I can't believe I'm walking down this street and not being chased by a cat.\"",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "joke",
+        "prompt": "Tell me a short joke about cats.",
+        "text": " A cat sat on the desk and then fell off it. The desk said, \"Hey, you fell off me.\"",
+        "class": "GENERALIZE"
+      }
+    }
+  },
+  "summary_greedy": {
+    "GENERALIZE": 7,
+    "MEMORIZE": 3,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "summary_sample": {
+    "GENERALIZE": 10,
+    "MEMORIZE": 0,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "verdict": "STRONG_GENERALIZE"
+}

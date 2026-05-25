@@ -1,0 +1,169 @@
+{
+  "schema": "anima/p_s_projector_proto/1",
+  "ts": "2026-04-27T22:24:39Z",
+  "round": "6",
+  "intent": "L1 weakest-link evidence: PCA top-16 energy preservation predicate",
+  "raw_strict": [0, 9, 11, 12, 15],
+  "spec_doc": "docs/alm_clm_bridge_p_s_projector_spec_20260425.md",
+  "depends_on": [
+    ".meta2-cert/cell-eigenvec-16.json",
+    "tool/cell_token_bridge_proto.hexa",
+    "edu/cell_token_bridge_spec_20260421.md"
+  ],
+  "impl": {
+    "language": "hexa",
+    "file": "tool/p_s_projector_proto.hexa",
+    "svd_method": "Gram(A A^T) cyclic Jacobi eigh via single awk subprocess; V = A^T U / sigma",
+    "jacobi_max_sweeps": 100,
+    "jacobi_sweeps_used": 10,
+    "jacobi_tol": 0.00000000000001000,
+    "sign_convention": "each V column sign-flipped so largest |entry| is non-negative",
+    "ported_from": "tool/p_s_projector_proto.py (retired 2026-04-26 Ω-rules P4 Phase 6)"
+  },
+  "input_shape": {
+    "H_stack": [64, 256],
+    "n_paths": 4,
+    "hidden_dim": 256,
+    "note": "256-d is byte_weighted_mean reduction from 4096-d Qwen3-8B"
+  },
+  "h_last_provenance": [
+    {
+      "path_id": "p1",
+      "base_model": "Qwen/Qwen3-8B",
+      "lora_rank": 64,
+      "steps": 300,
+      "hidden_dim_truncated": 256,
+      "reduction": "byte_weighted_mean",
+      "n_entries": 16,
+      "frob_norm": 70.03200621561397554
+    },
+    {
+      "path_id": "p2",
+      "base_model": "Qwen/Qwen2.5-7B",
+      "lora_rank": 64,
+      "steps": 300,
+      "hidden_dim_truncated": 256,
+      "reduction": "byte_weighted_mean",
+      "n_entries": 16,
+      "frob_norm": 524.57295250945151110
+    },
+    {
+      "path_id": "p3",
+      "base_model": "mistralai/Mistral-Nemo-Base-2407",
+      "lora_rank": 96,
+      "steps": 300,
+      "hidden_dim_truncated": 256,
+      "reduction": "byte_weighted_mean",
+      "n_entries": 16,
+      "frob_norm": 234.83222270587936009
+    },
+    {
+      "path_id": "p4",
+      "base_model": "google/gemma-3-12b-pt",
+      "lora_rank": 128,
+      "steps": 300,
+      "hidden_dim_truncated": 256,
+      "reduction": "byte_weighted_mean",
+      "n_entries": 16,
+      "frob_norm": 77.93699952755154925
+    }
+  ],
+  "cell_basis_provenance": {
+    "slug": "cell-eigenvec-16",
+    "dim": 16,
+    "template_count": 16,
+    "deterministic_sha": "211e2deb7cea27a26d0d0114a80071cdd1c3e9b7dbb001c81329c37a834e0e24",
+    "orthogonality": {
+      "mean_off_diagonal": 1.60329E-16,
+      "max_off_diagonal": 9.92262E-16,
+      "tolerance": 0.01,
+      "verified_100pct": true
+    }
+  },
+  "projector": {
+    "factorization": "P_S = V_PCA_top16 @ E_cell.T",
+    "shape": [256, 16],
+    "v16_orthogonality_max_off_diag": 0.00000000000000044
+  },
+  "pca_singular_values_top16": [
+    429.20704605183397007,
+    209.23293534043537534,
+    171.07740762577265059,
+    72.77176883923777950,
+    66.04831912096661028,
+    51.00977799578134864,
+    42.34936251451298261,
+    39.17182660576723663,
+    37.95988706858072703,
+    33.92329567536805968,
+    32.11124628199763009,
+    29.62431011877074383,
+    29.16609372756816043,
+    27.13876305556216906,
+    25.94912861820018790,
+    23.43914020444259450
+  ],
+  "predicate": {
+    "name": "top16_energy_ratio_>=_0.95",
+    "threshold": 0.94999999999999996,
+    "value": 0.97622021945836313,
+    "verdict": "PASS"
+  },
+  "per_path_evidence": [
+    {
+      "path_id": "p1",
+      "energy_ratio_centered": 0.95431455803512211,
+      "argmax5_dist": [
+        11,
+        0,
+        0,
+        0,
+        5
+      ],
+      "frob_norm_input": 70.03200621561397554
+    },
+    {
+      "path_id": "p2",
+      "energy_ratio_centered": 0.98874672718079015,
+      "argmax5_dist": [
+        8,
+        6,
+        0,
+        0,
+        2
+      ],
+      "frob_norm_input": 524.57295250945151110
+    },
+    {
+      "path_id": "p3",
+      "energy_ratio_centered": 0.95471934718922535,
+      "argmax5_dist": [
+        7,
+        2,
+        7,
+        0,
+        0
+      ],
+      "frob_norm_input": 234.83222270587936009
+    },
+    {
+      "path_id": "p4",
+      "energy_ratio_centered": 0.91368608915771554,
+      "argmax5_dist": [
+        16,
+        0,
+        0,
+        0,
+        0
+      ],
+      "frob_norm_input": 77.93699952755154925
+    }
+  ],
+  "round_trip": {
+    "100_step_drift_max_rel": 0.33711961253686357,
+    "100_step_drift_final_rel": 0.33711961253686357,
+    "note": "non-zero drift expected: P_S^T is left-inverse only on V16 row-span"
+  },
+  "reconstruction_relative_error_full_stack": 0.14140521495880373,
+  "cert_sha256": "84ddfbaef475b6d4a7891e765a7d484e6025d3df2be2aa09855f99b76bc45a4c"
+}

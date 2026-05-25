@@ -1,0 +1,43 @@
+{
+  "battery": "B-MITENS (RESEARCH.md §13 direction M — Mitosis-as-representation-ensemble)",
+  "kind": "closed-form sidecar (central blue_falsifier.py untouched)",
+  "verdict_tier": "🔵 SUPPORTED-FORMAL (g_verdict_tier_blue (a) sympy closed-form) — transfer-form only",
+  "n_pass": 6,
+  "n_total": 6,
+  "all_pass": true,
+  "verdicts": [
+    {
+      "name": "B-MITENS-1 ENSEMBLE-WEIGHT-SIMPLEX-CLOSED",
+      "pass": true,
+      "statement": "softmax(tensions): Σw_i=1 sympy identity + w_i>0 (exp>0 on ℝ) ∀ tension∈ℝ^N + numeric simplex on 5 stress vectors — ensemble combination is a convex weighting"
+    },
+    {
+      "name": "B-MITENS-2 ENSEMBLE-MEAN-CONVEX-CLOSED",
+      "pass": true,
+      "statement": "h_combined = Σ w_i·out_i lies in convex hull of {out_i}: h−o0=(1−a)(o1−o0), h−o1=a(o0−o1) sympy identities + 200-sample hull containment — ensemble prediction bounded by members"
+    },
+    {
+      "name": "B-MITENS-3 DIVERSITY-LOSS-SIGN-CLOSED",
+      "pass": true,
+      "statement": "L = L_ce − λ_div·Φ★ : ∂L/∂Φ★ = −λ_div < 0 ∀ λ_div>0 (sympy) + 3 boundary witnesses (Φ★ 0→0.5→1→2 each lowers L) — diversity increase lowers loss, anti-collapse encoded"
+    },
+    {
+      "name": "B-MITENS-4 PHI-PROXY-BOUNDED-CLOSED",
+      "pass": true,
+      "statement": "Φ★ = mean(1−cos)·log(N+1): cos∈[−1,1]⇒(1−cos)∈[0,2] (sympy endpoints) + log(N+1)>0 ∀N∈[1,64] ⇒ Φ★∈[0,2·log(N+1)] bounded set — ensemble diversity measure well-defined (Kolmogorov)"
+    },
+    {
+      "name": "B-MITENS-5 MEMBER-WISE-CE-DECOMPOSITION-CLOSED",
+      "pass": true,
+      "statement": "Σ w_i·CE(z_i,y)+CE(Σw_i z_i,y): per-cell logit-Jacobian ∂CE/∂z_k = softmax(z)_k−[k=y] sympy-exact (3-class) + each CE≥0 Shannon floor ⇒ weighted sum ≥0 — every member head has a well-defined finite descent direction (B-D-4 lift)"
+    },
+    {
+      "name": "B-MITENS-6 SPLIT-MONOTONE-CAPACITY-CLOSED",
+      "pass": true,
+      "statement": "subspace_count = n_cells: split event n→n+1 (Δsplit=1,Δmerge=0) strictly monotone↑ (integer arith) + clamp keeps n∈[2,64] over 210-int stress — representation-capacity proxy monotone under split (B-MITOSIS-3/-5 lift)"
+    }
+  ],
+  "empirical_carve_out": "B-MITENS-NOTE SATURATION-BYPASS-EMPIRICAL — whether the mitosis representation-ensemble ACTUALLY bypasses the §8 information-saturation bottleneck (i.e. lifts routing / honest-coherence past the §11.3 data-regime threshold) is an SGD convergence + measurement OUTCOME, NOT a closed-form property. The B-MITENS battery proves the TRANSFER-FORM only: ensemble combination is a convex weighting (B-MITENS-1/2), the diversity loss has anti-collapse sign (B-MITENS-3), Φ★ is a bounded well-defined diversity measure (B-MITENS-4), every member head has a well-defined CE descent direction (B-MITENS-5), and split is capacity-monotone (B-MITENS-6). It does NOT prove that an ensemble crosses the data-regime emergence threshold — that is the §3.3 open crux (saturation-dispersion gain vs per-cell-capacity-shrink loss, net sign unknown). NOT counted 🔵 (B-D-NOTE / B-SCALE-NOTE / B-PUREPHYS-NOTE family — true of every stochastic optimizer, NOT an M-specific defect). Per AGENTS.tape g3 honest carve-out — no over-claim. Dir-M lands design-tier; no fire (fire's expected information value overlaps §11-A which already measured the nearest adjacent axis — model-capacity — FLAT).",
+  "real_limit_anchors": "softmax probability-simplex identity · convex-combination hull bound · sympy ∂-sign (anti-collapse) · Kolmogorov bounded set [0,2·log(N+1)] · Shannon CE floor CE≥H≥0 + exact logit-Jacobian softmax−one-hot · integer counting monotone + clamp bound [2,64]. NO σ/τ/φ/J₂ — f1/f2/f3 hard-fail safe.",
+  "design_decision": "design-tier closed-form landing, NO fire — see DESIGN.md §5.2: M's lever (representation width) is the nearest adjacent axis to the model-capacity axis §11-A already measured FLAT (DATA-REGIME CEILING). fire's expected valuable-output overlaps §11-A."
+}

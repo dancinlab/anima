@@ -1,0 +1,163 @@
+{
+  "manifest_id": "anima_2026_05_05_cycle_commit_manifest",
+  "date": "2026-05-05",
+  "mode": "PREP_ONLY_NO_COMMIT",
+  "status": "READY_FOR_USER_FIRE",
+  "git_status_summary": {
+    "total_entries": 250,
+    "untracked_paths": 202,
+    "modified_paths": 34,
+    "deleted_paths": 14,
+    "scope_note": "untracked count = 202 (top-level paths reported by porcelain; directories collapse multi-file dirs into single entry)"
+  },
+  "token_leak_scan": {
+    "patterns_checked": ["hf_[A-Za-z0-9]{30,}", "sk-ant-[A-Za-z0-9_-]{50,}", "ghp_[A-Za-z0-9]{30,}", "AKIA[A-Z0-9]{16}", "gho_[A-Za-z0-9]{30,}"],
+    "scope": ["mount.hexa", "dialogue.hexa", "dialogue_session_analyzer.hexa", "anima_hf_promotes_*_auto_fire.bash", "anima_hf_cleanups_*_auto_fire.bash", "docs/anima_*_2026_05_05*", "state/anima_*_2026_05_05/", "state/hf_cleanup_autofire_prep_2026_05_05/"],
+    "result": "CLEAN",
+    "leaks_found": []
+  },
+  "groups": [
+    {
+      "id": "A",
+      "name": "anima-core CLI + CLM v4 mount Stage 1+2",
+      "paths_count": 23,
+      "key_files": [
+        "anima-core/runtime/clm_v4_mount.hexa",
+        "tool/anima_cli/dialogue.hexa",
+        "tool/anima_cli/dialogue_session_analyzer.hexa"
+      ],
+      "rationale": "Stage 1+2 mount layer + dialogue routing + V1-V6 verification + archaeology. raw#15 additive."
+    },
+    {
+      "id": "B",
+      "name": "Emerge candidates D/E/F/G/H spec + empirical",
+      "paths_count": 25,
+      "key_files": [
+        "docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md",
+        "docs/anima_emerge_candidate_e_ode_ar_bridge_spec_2026_05_05.md",
+        "docs/anima_emerge_candidate_f_ca_rule_5axis_vote_spec_2026_05_05.md",
+        "docs/anima_emerge_candidate_g_h_consolidated_revival_spec_2026_05_05.md"
+      ],
+      "rationale": "5 emerge candidate spec docs + multiple empirical magnitude/KL/multiprompt sweeps + cand-G tension + cand-H head-G fast"
+    },
+    {
+      "id": "C",
+      "name": "Cycle insights + cross-substrate audits + hygiene",
+      "paths_count": 16,
+      "key_files": [
+        "docs/anima_nexus_cycle_insight_ledger_2026_05_05.md",
+        "docs/anima_nexus_cycle_aggregate_insight_2026_05_05.md",
+        "docs/anima_cross_substrate_phi_star_audit_2026_05_05.md",
+        "docs/anima_substrate_preamble_and_auto_fire_hygiene_landed_2026_05_05.ai.md",
+        "docs/anima_top_level_cli_dispatch_audit_landed_2026_05_05.ai.md"
+      ],
+      "rationale": "Cycle ledger + aggregate insight + cross-substrate audit + HF promote/cleanup audit + substrate preamble hygiene + top-level CLI dispatch audit + 2 session closure audits"
+    },
+    {
+      "id": "D",
+      "name": "HF auto-fire scripts (promote 05-06 + cleanup 05-07)",
+      "paths_count": 4,
+      "key_files": [
+        "state/anima_hf_promotes_2026_05_06_auto_fire.bash",
+        "state/anima_hf_cleanups_2026_05_07_auto_fire.bash"
+      ],
+      "rationale": "raw#15 PRIVATE-first lifecycle: D-1 promote scheduled 05-06 post-watchdog, D-2 cleanup scheduled 05-07; verification gates documented in hf_cleanup_autofire_prep_2026_05_05/"
+    },
+    {
+      "id": "E",
+      "name": "EEG Phase E baseline + audio cue latency fix",
+      "paths_count": 9,
+      "key_files": [
+        "tool/anima_eeg_audio_cache_generate.bash",
+        "tool/anima_eeg_audio_play.bash",
+        "docs/anima_phase_e_perfect_baseline_protocol_landed_2026_05_05.md",
+        "docs/anima_eeg_audio_cue_latency_fix_landed_2026_05_05.md",
+        "state/anima_phase_e_eeg_live_2026_05_05/berger_ec_60s.npy",
+        "state/anima_phase_e_eeg_live_2026_05_05/berger_eo_60s.npy"
+      ],
+      "rationale": "EEG Phase E perfect baseline protocol + Berger EC/EO 60s npy + audio cue latency fix tooling. Includes 2 .npy files (~size: small, OK in git)"
+    },
+    {
+      "id": "F",
+      "name": "Residuals (uncategorized — handle separately or skip)",
+      "paths_count": 119,
+      "key_paths": [
+        "state/clm_v4_lora_sft_2026_05_05/* (training logs/results — large, evaluate before committing)",
+        "state/clm_v4_baseline_eval_2026_05_05/eval_full.log",
+        "state/h100_watchdog/closed/*.json (6 files) + heartbeats/*.txt (2)",
+        "state/proposals/refinement/2026042*/v*.json (~100+ proposal versions — auto-generated, recommend gitignore)",
+        "state/anima_emerge_attractor_characterization_2026_05_05/",
+        "state/corpus_4gate_*",
+        "state/n_substrate_putnam_last.json"
+      ],
+      "rationale": "Residual untracked: training artifacts (clm_v4_lora_sft logs ≈30 files), proposal refinement v25-v29 (~100 files, auto-generated), watchdog closed/heartbeats, attractor characterization. RECOMMEND: review clm_v4_lora_sft completeness, decide proposal refinement gitignore policy"
+    }
+  ],
+  "modified_groups": [
+    {
+      "id": "M1",
+      "name": "Phase E + benchmark state updates",
+      "paths": [
+        ".raw-audit/adversarial_bench.log",
+        "state/adversarial_bench_last.json",
+        "state/refusal_circuit_probe_result.json",
+        "state/runpod_credit_status.json",
+        "state/weight_precache_eta.json",
+        "state/worktree_merge_plan.json",
+        "config/h100_pods.json",
+        "ready",
+        "references/tribev2"
+      ],
+      "rationale": "Periodic state update commits — small json/log churn"
+    },
+    {
+      "id": "M2",
+      "name": "Proposals refinement v2/v3 churn",
+      "paths_count": 20,
+      "rationale": "20 proposals refinement v2/v3.json updates (auto-generated by proposals engine)"
+    },
+    {
+      "id": "M3",
+      "name": "clm_v4_lora_sft exec.bash + meta",
+      "paths": [
+        "state/clm_v4_lora_sft_2026_05_05/exec.bash",
+        "state/proposals/meta/cycle_log.jsonl",
+        "state/proposals/meta/metrics.json"
+      ],
+      "rationale": "clm_v4_lora exec.bash refinement + proposals cycle_log/metrics — natural batch with Group F training artifacts"
+    },
+    {
+      "id": "M4",
+      "name": "venv-eeg setuptools churn (DELETE side effect)",
+      "paths_count": 14,
+      "rationale": "14 deleted (.venv-eeg setuptools-82.0.1.dist-info) + 3 modified — venv pip upgrade artifacts. RECOMMEND: gitignore .venv-eeg/ entirely, do not commit venv churn"
+    }
+  ],
+  "fire_sequence": [
+    "1. git status --porcelain (review)",
+    "2. Group A commit (anima-core mount + CLI Stage 1+2)",
+    "3. Group B commit (emerge candidates D/E/F/G/H)",
+    "4. Group C commit (cycle insights + audits)",
+    "5. Group D commit (HF auto-fire scripts)",
+    "6. Group E commit (EEG Phase E + audio cue)",
+    "7. Group M1+M3 commit (state churn + clm_v4_lora exec.bash)",
+    "8. (optional) Group F triage — clm_v4_lora results + watchdog + proposals decisions",
+    "9. (skip or gitignore) Group M2 proposals refinement + Group M4 venv-eeg",
+    "10. git log --oneline | head -10 (verify)",
+    "11. git status --porcelain (expect minimal residual)"
+  ],
+  "honest_c3": [
+    "1. UNCATEGORIZED is 119 paths — manifest covers ~58 (groups A-E direct files); proposals refinement (≈100 files) excluded from groups by design (recommend gitignore decision).",
+    "2. Token leak scan checked 5 patterns + scoped to commit-target paths only; .venv-eeg/ + state/proposals/ not scanned (low risk but acknowledged gap).",
+    "3. Group A includes anima-core/runtime/clm_v4_mount.hexa as UNTRACKED (not modified — initial create). Prompt mentioned 'modified — 5 edits' but git sees no prior tracked version. Verify intent: this is brand-new file at 700+ LoC.",
+    "4. bin/anima-core-dialogue.bash NOT in modified list — git sees no diff vs HEAD. Prompt assumed modification; actual state = unchanged from prior commit. EXCLUDE from Group A unless you have local edits I cannot see.",
+    "5. tool/anima_cli/dialogue.hexa is UNTRACKED (new file), not modified. Prompt mentioned 'main() removed' as if editing existing — but git sees no prior tracked dialogue.hexa. Verify: is this a fresh extraction from the bash dispatch?"
+  ],
+  "outputs": {
+    "verdict": "/Users/ghost/core/anima/state/anima_2026_05_05_cycle_commit_manifest_2026_05_05/verdict.json",
+    "landed_doc": "/Users/ghost/core/anima/docs/anima_2026_05_05_cycle_commit_manifest_landed_2026_05_05.ai.md"
+  },
+  "cost_usd": 0.0,
+  "duration_estimate_min": 20,
+  "constraints_honored": ["NO_COMMIT_FIRED", "DOC_ONLY", "NO_CODE_CHANGE", "ONLY_2_NEW_FILES", "TOKEN_LEAK_SCAN_CLEAN", "BASH_3_2_COMPAT"]
+}

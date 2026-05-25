@@ -1,0 +1,136 @@
+{
+  "probe": "S181 audio 100% challenge \u2014 6 synthesis variants",
+  "n_variants": 7,
+  "results": {
+    "v0_pure_sine": {
+      "name": "v0_pure_sine",
+      "n_params": 1976684,
+      "steps": 1500,
+      "acc_anchor_all": 0.9599999785423279,
+      "per_modality": {
+        "image": 0.8939393758773804,
+        "audio": 0.9666666388511658,
+        "video": 0.9852941036224365,
+        "tension": 1.0
+      },
+      "wall_s": 208.6
+    },
+    "v1_multi_harmonic": {
+      "name": "v1_multi_harmonic",
+      "n_params": 1976684,
+      "steps": 1500,
+      "acc_anchor_all": 0.949999988079071,
+      "per_modality": {
+        "image": 0.8863636255264282,
+        "audio": 0.9916666746139526,
+        "video": 0.9338235259056091,
+        "tension": 1.0
+      },
+      "wall_s": 190.6
+    },
+    "v2_am_modulation": {
+      "name": "v2_am_modulation",
+      "n_params": 1976684,
+      "steps": 1500,
+      "acc_anchor_all": 0.9520000219345093,
+      "per_modality": {
+        "image": 0.9015151262283325,
+        "audio": 0.9833333492279053,
+        "video": 0.9338235259056091,
+        "tension": 1.0
+      },
+      "wall_s": 160.5
+    },
+    "v3_waveform_shape": {
+      "name": "v3_waveform_shape",
+      "n_params": 1976684,
+      "steps": 1500,
+      "acc_anchor_all": 0.8980000019073486,
+      "per_modality": {
+        "image": 0.8863636255264282,
+        "audio": 0.7666666507720947,
+        "video": 0.9411764740943909,
+        "tension": 1.0
+      },
+      "wall_s": 124.0
+    },
+    "v4_chord": {
+      "name": "v4_chord",
+      "n_params": 1976684,
+      "steps": 1500,
+      "acc_anchor_all": 0.9359999895095825,
+      "per_modality": {
+        "image": 0.8333333134651184,
+        "audio": 0.9916666746139526,
+        "video": 0.9338235259056091,
+        "tension": 1.0
+      },
+      "wall_s": 142.4
+    },
+    "v5_white_noise_lpf": {
+      "name": "v5_white_noise_lpf",
+      "n_params": 1976684,
+      "steps": 1500,
+      "acc_anchor_all": 0.7260000109672546,
+      "per_modality": {
+        "image": 0.8863636255264282,
+        "audio": 0.01666666753590107,
+        "video": 0.970588207244873,
+        "tension": 1.0
+      },
+      "wall_s": 242.3
+    },
+    "v6_combined": {
+      "name": "v6_combined",
+      "n_params": 1976684,
+      "steps": 1500,
+      "acc_anchor_all": 0.9480000138282776,
+      "per_modality": {
+        "image": 0.8787878751754761,
+        "audio": 0.9916666746139526,
+        "video": 0.9338235259056091,
+        "tension": 1.0
+      },
+      "wall_s": 228.7
+    }
+  },
+  "ranking_by_audio": [
+    {
+      "name": "v1_multi_harmonic",
+      "audio_acc": 0.9916666746139526,
+      "all_acc": 0.949999988079071
+    },
+    {
+      "name": "v4_chord",
+      "audio_acc": 0.9916666746139526,
+      "all_acc": 0.9359999895095825
+    },
+    {
+      "name": "v6_combined",
+      "audio_acc": 0.9916666746139526,
+      "all_acc": 0.9480000138282776
+    },
+    {
+      "name": "v2_am_modulation",
+      "audio_acc": 0.9833333492279053,
+      "all_acc": 0.9520000219345093
+    },
+    {
+      "name": "v0_pure_sine",
+      "audio_acc": 0.9666666388511658,
+      "all_acc": 0.9599999785423279
+    },
+    {
+      "name": "v3_waveform_shape",
+      "audio_acc": 0.7666666507720947,
+      "all_acc": 0.8980000019073486
+    },
+    {
+      "name": "v5_white_noise_lpf",
+      "audio_acc": 0.01666666753590107,
+      "all_acc": 0.7260000109672546
+    }
+  ],
+  "total_wall_s": 1298.8,
+  "honest_carve_out": "All 7 variants from-scratch programmatic generators (no graft). Trained mini AdapterV3 (d=192 L=4) for 1500 steps each, audio only the modality swapped. Other modalities (image/video/tension) fixed at \u00a7180 form for fair compare. Target: lift audio 97.5% \u2192 100%. NOT GOAL emergence \u2014 modality discrimination \u2260 V-SPONT."
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "anima/emerge_chat_korean_prefix_inject/verdict/1",
+  "ts_utc": "2026-05-05T18:08:35Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "n_variants": 8,
+  "n_coherent": 0,
+  "best": null,
+  "verdict": "FAIL_PREFIX_INSUFFICIENT",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 prefix injection adds context but does not change residual basin (BG-BU)",
+    "C3 'coherent' = >=5 Korean glyphs + no >50% repeat — narrow",
+    "C4 prefix may lock substrate to specific continuation due to autoregressive bias",
+    "C5 'natural Korean' from substrate != semantic understanding"
+  ]
+}

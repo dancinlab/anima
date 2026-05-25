@@ -1,0 +1,58 @@
+{
+  "schema": "anima/qwen3_r14_full_an11b_vphen_derivations/1",
+  "ts": "2026-05-02T09:30:00Z",
+  "substrate": {
+    "base": "Qwen/Qwen3-8B",
+    "lora": "r14_full",
+    "r": 64,
+    "alpha": 128,
+    "md5": "d29c53d114a19f55be7291f08096b1ef"
+  },
+  "data_source": "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/h_last_raw_p1_TRAINED_r14_4subs.json",
+  "V0": {
+    "max_cosine": 0.7375549737644592,
+    "top3_cosine_sum": 2.0338903118167284,
+    "top3_pairs": [
+      {
+        "eigen_i": 7,
+        "template_id": "phi_exclusion",
+        "template_family": "Phi",
+        "cosine": 0.7375549737644592
+      },
+      {
+        "eigen_i": 14,
+        "template_id": "law_irreversibility",
+        "template_family": "Law",
+        "cosine": -0.6558789130690532
+      },
+      {
+        "eigen_i": 0,
+        "template_id": "hexad_center",
+        "template_family": "Hexad",
+        "cosine": -0.640456424983216
+      }
+    ],
+    "verdict": "PASS",
+    "method": "U[:,i] (left singular vectors of H 16x256) \u00d7 T[t] (16-D phi_templates) cosine; max+top3"
+  },
+  "V_phen_5_5": {
+    "GWT_entropy_normalized": 0.49269173956214096,
+    "LZ_norm": 1.0224609375,
+    "LZ_count": 349,
+    "HOT_mean_top1_prob": 0.6925835295231972,
+    "HOT_std_top1_prob": 0.18136977091147186,
+    "mirror_mean_off_diag": 0.608917028952919,
+    "predictive_r2_loo_cv": null,
+    "predictive_status": "NOT-MEASURED",
+    "predictive_reason": "Path 3 h_last_raw lacks next_token_top1 / logprobs (only h, idx, prompt). Predictive R\u00b2 requires per-prompt next-token-logprob target which would need fresh extraction (cost \u2265$0.30 on cached HF pod).",
+    "passes": [
+      "LZ",
+      "HOT",
+      "mirror"
+    ],
+    "n_pass_measured": 3,
+    "n_total_measured": 4,
+    "n_pass_full": 3,
+    "verdict_majority_3of5": true
+  }
+}

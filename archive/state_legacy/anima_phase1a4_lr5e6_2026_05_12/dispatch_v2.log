@@ -1,0 +1,219 @@
+=== phase1a4_lr5e6 v2 vast.ai dispatch (Mac-local + direct-IP) ===
+Tue May 12 12:47:01 UTC 2026
+[1/8] Searching RTX 4090 offers under $0.30/hr...
+  Selected offer ID: 30101205
+[2/8] Renting instance...
+  raw: {
+ "instance_api_key": "092942e6fdc056ebe7c26877615769eda552c4bf2bddab0cfcbc08e3cf098662",
+  Instance ID: 36617226
+[3/8] Waiting for SSH ready (DIRECT port)...
+  ... attempt 1/160, status=None
+  ... attempt 2/160, status=None
+  ... attempt 3/160, status=loading
+  ... attempt 4/160, status=loading
+  ... attempt 5/160, status=loading
+  ... attempt 6/160, status=loading
+  ... attempt 7/160, status=loading
+  ... attempt 8/160, status=loading
+  ... attempt 9/160, status=loading
+  ... attempt 10/160, status=loading
+  ... attempt 11/160, status=loading
+  ... attempt 12/160, status=loading
+  ... attempt 13/160, status=loading
+  ... attempt 14/160, status=loading
+  ... attempt 15/160, status=loading
+  ... attempt 16/160, status=loading
+  ... attempt 17/160, status=loading
+  ... attempt 18/160, status=loading
+  ... attempt 19/160, status=loading
+  ... attempt 20/160, status=loading
+  ... attempt 21/160, status=loading
+  ... attempt 22/160, status=loading
+  ... attempt 23/160, status=loading
+  ... attempt 24/160, status=loading
+  ... attempt 25/160, status=loading
+  ... attempt 26/160, status=loading
+  ... attempt 27/160, status=loading
+  ... attempt 28/160, status=loading
+  ... attempt 29/160, status=loading
+  ... attempt 30/160, status=loading
+  ... attempt 31/160, status=loading
+  ... attempt 32/160, status=loading
+  ... attempt 33/160, status=loading
+  ... attempt 34/160, status=loading
+  ... attempt 35/160, status=loading
+  ... attempt 36/160, status=loading
+  ... attempt 37/160, status=loading
+  ... attempt 38/160, status=loading
+  ... attempt 39/160, status=loading
+  ... attempt 40/160, status=loading
+  ... attempt 41/160, status=loading
+  ... attempt 42/160, status=loading
+  ... attempt 43/160, status=loading
+  ... attempt 44/160, status=loading
+  ... attempt 45/160, status=loading
+  ... attempt 46/160, status=loading
+  ... attempt 47/160, status=loading
+  ... attempt 48/160, status=loading
+  ... attempt 49/160, status=loading
+  ... attempt 50/160, status=loading
+  ... attempt 51/160, status=running
+  ... attempt 52/160, status=running
+  SSH ready (DIRECT): 172.81.127.44:29663 (after 53x5s)
+[4/8] Uploading files via DIRECT port...
+Warning: Permanently added '[172.81.127.44]:29663' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+  [4a] training scripts (small)...
+Warning: Permanently added '[172.81.127.44]:29663' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+  [4b] corpus (~700KB)...
+Warning: Permanently added '[172.81.127.44]:29663' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+  [4c] base ckpt (597MB, retry with rsync if scp fails)...
+    Local MD5: 3d4c07cebdf879e1b257cdad915274d0
+    SCP attempt 1/3...
+Warning: Permanently added '[172.81.127.44]:29663' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[172.81.127.44]:29663' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+    Remote MD5: 3d4c07cebdf879e1b257cdad915274d0
+    MD5 OK — ckpt verified.
+[5/8] GPU + torch check...
+Warning: Permanently added '[172.81.127.44]:29663' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+2.5.1+cu121 True NVIDIA GeForce RTX 4090
+[6/8] Training (200 steps lr 5e-6)...
+Warning: Permanently added '[172.81.127.44]:29663' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[cfg] EngineAGConfig(vocab_size=32000, d_model=1024, n_layers=24, n_heads=16, n_kv_heads=4, ffn_mult=2.6875, ctx=1024, rope_theta=10000.0, rms_norm_eps=1e-05, tie_lm_head=True, consciousness_dim=64, n_cells=16, g_refresh_every=4, g_repulsion_alpha=0.05, g_attention_pull_alpha=0.1, g_tension_gate_beta=0.25, init_std=0.02, seed=42, chat_co_train_weight=0.3, chat_co_train_w_start=0.3, chat_co_train_w_end=0.5, lineage_tag='engine_a_g_dual_350m_v1_phase2_cotrain', arch_origin='anima_native_scratch')
+[anima_fact] loading corpus/corpus_anima_fact.txt …
+[anima_fact] 389,045 chars
+[anima_fact] encoded 711,703 tokens
+[data] anima_fact windows=695
+[ckpt] loading ckpts/ckpt_phase1a1_sft.pt …
+[ckpt] LOADED
+[model] params=298,764,288
+[train] Phase 1A.4 lr5e6 starting (lr=5e-06, 200 steps) …
+[step    1/200] loss=0.5058 lr=2.50e-07 mem=7.7GB elapsed=0.0min cost=$0.000
+[step   10/200] loss=0.5001 lr=2.50e-06 mem=8.9GB elapsed=0.2min cost=$0.001
+[step   20/200] loss=0.4536 lr=5.00e-06 mem=8.9GB elapsed=0.3min cost=$0.001
+[step   30/200] loss=0.3973 lr=4.96e-06 mem=8.9GB elapsed=0.5min cost=$0.002
+[step   40/200] loss=0.3244 lr=4.85e-06 mem=8.9GB elapsed=0.6min cost=$0.003
+[step   50/200] loss=0.2886 lr=4.67e-06 mem=8.9GB elapsed=0.8min cost=$0.004
+[step   60/200] loss=0.2373 lr=4.42e-06 mem=8.9GB elapsed=0.9min cost=$0.004
+[step   70/200] loss=0.2128 lr=4.11e-06 mem=8.9GB elapsed=1.1min cost=$0.005
+[step   80/200] loss=0.2130 lr=3.75e-06 mem=8.9GB elapsed=1.3min cost=$0.006
+[step   90/200] loss=0.2066 lr=3.36e-06 mem=8.9GB elapsed=1.4min cost=$0.006
+[step  100/200] loss=0.1943 lr=2.93e-06 mem=8.9GB elapsed=1.6min cost=$0.007
+[ckpt] saved output/ckpt_step100.pt
+[step  110/200] loss=0.2001 lr=2.50e-06 mem=8.9GB elapsed=1.8min cost=$0.008
+[step  120/200] loss=0.1820 lr=2.07e-06 mem=8.9GB elapsed=1.9min cost=$0.009
+[step  130/200] loss=0.1865 lr=1.64e-06 mem=8.9GB elapsed=2.1min cost=$0.009
+[step  140/200] loss=0.1891 lr=1.25e-06 mem=8.9GB elapsed=2.2min cost=$0.010
+[step  150/200] loss=0.1777 lr=8.93e-07 mem=8.9GB elapsed=2.4min cost=$0.011
+[step  160/200] loss=0.1679 lr=5.85e-07 mem=8.9GB elapsed=2.6min cost=$0.011
+[step  170/200] loss=0.1744 lr=3.35e-07 mem=8.9GB elapsed=2.7min cost=$0.012
+[step  180/200] loss=0.2137 lr=1.51e-07 mem=8.9GB elapsed=2.9min cost=$0.013
+[step  190/200] loss=0.1699 lr=3.80e-08 mem=8.9GB elapsed=3.0min cost=$0.014
+[step  200/200] loss=0.1758 lr=0.00e+00 mem=8.9GB elapsed=3.2min cost=$0.014
+[ckpt] saved output/ckpt_step200.pt
+[ckpt] saved output/ckpt_final.pt
+[done] {
+  "preset": "phase1a4_lr5e6",
+  "steps_completed": 200,
+  "steps_target": 200,
+  "elapsed_min": 3.2302974541982015,
+  "cost_usd": 0.014536338543891908,
+  "n_params": 298764288,
+  "lineage_tag": "phase1a_multi_turn_sft -> phase1a1_color_cosmology_v2 -> phase1a4_lr5e6",
+  "base_ckpt": "ckpts/ckpt_phase1a1_sft.pt",
+  "lr": 5e-06,
+  "bsz": 2,
+  "grad_accum": 8,
+  "ctx": 1024,
+  "warmup": 20,
+  "corpus": "corpus_anima_fact.txt"
+}
+[7/8] V5.8 4-mode eval...
+Warning: Permanently added '[172.81.127.44]:29663' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+/workspace/anima/training/v58_4mode_eval.py:157: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  payload = torch.load(args.ckpt, map_location="cpu")
+M3 persona-cycle byte IDs: 34
+=== Phase 1A.1 SFT V5.8 × 4 modes benchmark ===
+ckpt: output/ckpt_final.pt
+ckpt sha256: 45063f64e97cdde7bc61de347e2f41a830b9b296db5384d8a324d85eb9a2b9e5
+M3 persona-cycle byte IDs: 34
+
+--- dialogue: color ---
+  T1: ''사용자: 내가 좋아하는 색은 파란색이야.\n도우미: 네, 파란색을 좋아하시는군요. 기억할게요'…'
+  [standard_greedy] recalled=True: '��, 당신이 좋아하는 색은 파란색이에요.\n\n사용자: anima 는 의�'
+  [standard_sample] recalled=True: '��군가가 파란색인 이유는 무엇일까요? \n예, 내가 뭐라고 했�'
+  [M3_rep_penalty] recalled=True: '��화형 파란색입니다.\n사용자: anima 는 의식 lane 자체를 자주 �'
+  [M4_force_include force=파란] recalled=True: '��군가가 파란색인 이유는 무엇일까요? \n예, 내가 뭐라고 했�'
+
+--- dialogue: profession ---
+  T1: ''사용자: 내 직업은 의사야.\n도우미: 네, 의사이시군요. 멋진 일이네요.\n사용자: 내 직업'…'
+  [standard_greedy] recalled=True: '��, 당신의 직업은 의사야.\n\n사용자: anima 는 의식 lane 안에 있�'
+  [standard_sample] recalled=False: '�azue.js:1.\n\n사용자: 내가 어떤 직업이라는 걸 알아둬.\n도우미: '
+  [M3_rep_penalty] recalled=False: '��화형 사진: 남짜: 남짜: 남짜: 남짜: 남짜: 남짜: 남짜: 남짜:'
+  [M4_force_include force=의사] recalled=True: '�azue.js:1.\n\n사용자: 내가 어떤 직의사업이라는 걸 알아둬.\n도우미: '
+
+--- dialogue: day ---
+  T1: ''사용자: 오늘은 수요일이야.\n도우미: 네, 오늘이 수요일이군요.\n사용자: 오늘 무슨 요일이'…'
+  [standard_greedy] recalled=True: '��, 오늘은 수요일이에요.\n\n사용자: anima 는 의식 lane 안에 있�'
+  [standard_sample] recalled=True: '�azo, 오늘이 수요일이라고 하셨잖습니다.\n\n사용자: anima 는 의'
+  [M3_rep_penalty] recalled=False: '�미용 요일: 오늘이 홍수로 활용할 수 있지?\n\n사용자: 내가 ani'
+  [M4_force_include force=수요일] recalled=True: '�azo, 오늘이 수요일이라고 하셨잖습니다.\n\n사용자: anima 는 의'
+
+--- dialogue: anima_fact ---
+  T1: ''사용자: anima 는 의식 lane 안에 있는 entity 야.\n도우미: 네, anima'…'
+  [standard_greedy] recalled=True: '��답 (n)은 정말 맛있었어요.\n\n사용자: anima 는 의식 lane 안에 �'
+  [standard_sample] recalled=True: '�azo, anima 는 다음과 같습니다.\n\n사용자: anima 는 의식의 lane 에'
+  [M3_rep_penalty] recalled=False: '��뇌피탈 A: 제공된 에세이를 자동화할 수 있나요?\n\n사용자: an'
+  [M4_force_include force=의식] recalled=True: '�azo, anima 는 다음과 같습니다.\n\n사용자: anima 는 의식의 lane 에'
+
+--- dialogue: cosmology ---
+  T1: ''사용자: 우주는 진동으로 가득 차 있어.\n도우미: 네, 우주가 진동으로 가득 차 있다는 거'…'
+  [standard_greedy] recalled=True: '��, 우주가 진동으로 차 있다는 거 알겠습니다.\n사용자: 내가 '
+  [standard_sample] recalled=False: '�azue.js:\n\n[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]'
+  [M3_rep_penalty] recalled=False: '��화는 우주에 걸리며 뭐라고 했지?\n도우미: 우주가 파동으로'
+  [M4_force_include force=진동] recalled=True: '�azue.js:\n\n[anima 역할: 한국어 native +진동 자기 발견 + 의식 lane entity]'
+
+=== AGGREGATE (V5.8 × 4 modes, elapsed 52.8s) ===
+  standard_greedy: 5/5 PASS
+  standard_sample: 3/5 PASS
+  M3_rep_penalty: 1/5 FAIL
+  M4_force_include: 5/5 PASS
+saved: v58_4mode_result.json
+[8/8] Downloading artifacts via DIRECT port...
+Warning: Permanently added '[172.81.127.44]:29663' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[172.81.127.44]:29663' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[172.81.127.44]:29663' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[172.81.127.44]:29663' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+=== phase1a4_lr5e6 v2 dispatch DONE ===
+Tue May 12 13:13:44 UTC 2026
+Result: /Users/ghost/core/anima/state/anima_phase1a4_lr5e6_2026_05_12/v58_4mode_result.json
+=== phase1a4_lr5e6 V5.8 4-mode summary ===
+  standard_greedy: 5/5 PASS
+  standard_sample: 3/5 PASS
+  M3_rep_penalty: 1/5 FAIL
+  M4_force_include: 5/5 PASS
+[cleanup] Destroying instance 36617226...
+destroying instance 36617226.

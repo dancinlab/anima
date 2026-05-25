@@ -1,0 +1,280 @@
+{
+  "task_id": "anima_emerge_cand_d_mag_subsweep_2026_05_05",
+  "scope": "F1 0.01 threshold crossover localize: BG-W [10, 50] band sub-swept at {15, 20, 25, 30, 40}, single prompt 안녕",
+  "platform": "mac CPU (.venv-eeg python3.12)",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "load_sec": 11.0,
+  "wall_sec": 19.7,
+  "probe_prompt": {
+    "idx": 1,
+    "text": "안녕",
+    "lang": "ko",
+    "note": "BG-Q max-drift prompt; BG-W sub-sweep target"
+  },
+  "sub_magnitudes_tested": [
+    15.0,
+    20.0,
+    25.0,
+    30.0,
+    40.0
+  ],
+  "F1_threshold": 0.01,
+  "phi_baseline_none": 42.11583222470806,
+  "sub_results": [
+    {
+      "magnitude": 15.0,
+      "phi_star": 42.104426748958886,
+      "drift": 0.0114054757491715,
+      "has_nan": false,
+      "cross_attn_invoked": true,
+      "kwarg_accepted": true,
+      "elapsed_sec": 1.45
+    },
+    {
+      "magnitude": 20.0,
+      "phi_star": 42.10029215326101,
+      "drift": 0.015540071447048831,
+      "has_nan": false,
+      "cross_attn_invoked": true,
+      "kwarg_accepted": true,
+      "elapsed_sec": 1.37
+    },
+    {
+      "magnitude": 25.0,
+      "phi_star": 42.09866449055634,
+      "drift": 0.01716773415171957,
+      "has_nan": false,
+      "cross_attn_invoked": true,
+      "kwarg_accepted": true,
+      "elapsed_sec": 1.33
+    },
+    {
+      "magnitude": 30.0,
+      "phi_star": 42.098721834389494,
+      "drift": 0.017110390318563873,
+      "has_nan": false,
+      "cross_attn_invoked": true,
+      "kwarg_accepted": true,
+      "elapsed_sec": 1.26
+    },
+    {
+      "magnitude": 40.0,
+      "phi_star": 42.121642238403666,
+      "drift": 0.005810013695608518,
+      "has_nan": false,
+      "cross_attn_invoked": true,
+      "kwarg_accepted": true,
+      "elapsed_sec": 1.71
+    }
+  ],
+  "combined_trajectory": [
+    {
+      "magnitude": 0.5,
+      "drift": 0.00012824280747025796,
+      "source": "bg_w"
+    },
+    {
+      "magnitude": 1.0,
+      "drift": 0.00027923735603962996,
+      "source": "bg_w"
+    },
+    {
+      "magnitude": 2.0,
+      "drift": 0.0006484775301203172,
+      "source": "bg_w"
+    },
+    {
+      "magnitude": 5.0,
+      "drift": 0.0022668446526026287,
+      "source": "bg_w"
+    },
+    {
+      "magnitude": 10.0,
+      "drift": 0.006392979165546819,
+      "source": "bg_w"
+    },
+    {
+      "magnitude": 15.0,
+      "drift": 0.0114054757491715,
+      "source": "bg_aa"
+    },
+    {
+      "magnitude": 20.0,
+      "drift": 0.015540071447048831,
+      "source": "bg_aa"
+    },
+    {
+      "magnitude": 25.0,
+      "drift": 0.01716773415171957,
+      "source": "bg_aa"
+    },
+    {
+      "magnitude": 30.0,
+      "drift": 0.017110390318563873,
+      "source": "bg_aa"
+    },
+    {
+      "magnitude": 40.0,
+      "drift": 0.005810013695608518,
+      "source": "bg_aa"
+    },
+    {
+      "magnitude": 50.0,
+      "drift": 0.09978073361026674,
+      "source": "bg_w"
+    },
+    {
+      "magnitude": 100.0,
+      "drift": 0.1129489550394851,
+      "source": "bg_w"
+    }
+  ],
+  "growth_ratios": [
+    {
+      "mag_pair": [
+        0.5,
+        1.0
+      ],
+      "drift_pair": [
+        0.00012824280747025796,
+        0.00027923735603962996
+      ],
+      "mag_growth": 2.0,
+      "drift_growth": 2.1774114396582482,
+      "ratio": 1.0887057198291241
+    },
+    {
+      "mag_pair": [
+        1.0,
+        2.0
+      ],
+      "drift_pair": [
+        0.00027923735603962996,
+        0.0006484775301203172
+      ],
+      "mag_growth": 2.0,
+      "drift_growth": 2.322316538580475,
+      "ratio": 1.1611582692902376
+    },
+    {
+      "mag_pair": [
+        2.0,
+        5.0
+      ],
+      "drift_pair": [
+        0.0006484775301203172,
+        0.0022668446526026287
+      ],
+      "mag_growth": 2.5,
+      "drift_growth": 3.4956410165546417,
+      "ratio": 1.3982564066218566
+    },
+    {
+      "mag_pair": [
+        5.0,
+        10.0
+      ],
+      "drift_pair": [
+        0.0022668446526026287,
+        0.006392979165546819
+      ],
+      "mag_growth": 2.0,
+      "drift_growth": 2.820210532824496,
+      "ratio": 1.410105266412248
+    },
+    {
+      "mag_pair": [
+        10.0,
+        15.0
+      ],
+      "drift_pair": [
+        0.006392979165546819,
+        0.0114054757491715
+      ],
+      "mag_growth": 1.5,
+      "drift_growth": 1.7840627122075003,
+      "ratio": 1.189375141471667
+    },
+    {
+      "mag_pair": [
+        15.0,
+        20.0
+      ],
+      "drift_pair": [
+        0.0114054757491715,
+        0.015540071447048831
+      ],
+      "mag_growth": 1.3333333333333333,
+      "drift_growth": 1.362509709266417,
+      "ratio": 1.0218822819498128
+    },
+    {
+      "mag_pair": [
+        20.0,
+        25.0
+      ],
+      "drift_pair": [
+        0.015540071447048831,
+        0.01716773415171957
+      ],
+      "mag_growth": 1.25,
+      "drift_growth": 1.1047397182321093,
+      "ratio": 0.8837917745856874
+    },
+    {
+      "mag_pair": [
+        25.0,
+        30.0
+      ],
+      "drift_pair": [
+        0.01716773415171957,
+        0.017110390318563873
+      ],
+      "mag_growth": 1.2,
+      "drift_growth": 0.9966597902408715,
+      "ratio": 0.8305498252007263
+    },
+    {
+      "mag_pair": [
+        30.0,
+        40.0
+      ],
+      "drift_pair": [
+        0.017110390318563873,
+        0.005810013695608518
+      ],
+      "mag_growth": 1.3333333333333333,
+      "drift_growth": 0.33956055866855117,
+      "ratio": 0.2546704190014134
+    },
+    {
+      "mag_pair": [
+        40.0,
+        50.0
+      ],
+      "drift_pair": [
+        0.005810013695608518,
+        0.09978073361026674
+      ],
+      "mag_growth": 1.25,
+      "drift_growth": 17.173923993619105,
+      "ratio": 13.739139194895284
+    },
+    {
+      "mag_pair": [
+        50.0,
+        100.0
+      ],
+      "drift_pair": [
+        0.09978073361026674,
+        0.1129489550394851
+      ],
+      "mag_growth": 2.0,
+      "drift_growth": 1.131971583619059,
+      "ratio": 0.5659857918095295
+    }
+  ],
+  "trajectory_shape_combined": "sub_linear",
+  "crossover_magnitude": 15.0,
+  "drift_at_crossover": 0.0114054757491715
+}

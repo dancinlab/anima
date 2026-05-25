@@ -1,0 +1,465 @@
+// anima-eeg/headplot_helper.hexa
+//
+// PURPOSE
+//   Standalone ASCII headplot renderer — 80×30 terminal-friendly anatomical
+//   scalp top-down view with 16 EEG positions colored by ANSI 24-bit RGB
+//   matching OpenBCI ElectrodeState colors (CytonElectrodeStatus.pde).
+//
+//   Companion to electrode_adjustment_helper.hexa: that file owns acquisition
+//   + classification; this file owns the visual rendering of channel state.
+//
+//   See docs/headplot_ascii_design_2026_04_28.md §2 for the visual mockup
+//   and §3 for the electrode-to-char-grid coordinate map.
+//
+// MODES
+//   --selftest    synthetic 16ch all-GREEN demo render (visual sanity)
+//   --demo        mixed-state demo (some YELLOW, RED, BLUE, GRAY) for
+//                 visual verification of all five color states
+//
+// ENV
+//   NO_COLOR=1    strip all ANSI 24-bit RGB escapes (plain glyphs only)
+//
+// STATES & RGB (matches OpenBCI ElectrodeState exactly):
+//   GREEN  #00FF64   contact OK / impedance OK
+//   YELLOW #E6C700   loose / borderline
+//   RED    #FF0000   bad contact / no scalp / DEAD ADC
+//   BLUE   #416080   live mode OK (railed pct)
+//   GRAY   #717577   off / not-checked / midline placeholder
+//
+// HELPER PYTHON INTERFACE
+//   render_headplot(channel_states_dict, srb2_state, bias_state) -> str
+//     channel_states_dict: { 'Fp1': 'GREEN', 'Fp2': 'YELLOW', ... }
+//     srb2_state, bias_state: 'GREEN'|'YELLOW'|'RED'|'BLUE'|'GRAY'
+//     returns: multi-line string ready for print() or fast_render()
+//
+//  @resolver-bypass(reason="darwin-native: shells out to .venv-eeg/bin/python
+//                   for helper Python; not portable to remote linux pods.")
+
+let SCHEMA              = "anima-eeg/headplot/1"
+let HELPER_PATH         = "/tmp/anima_eeg_headplot_helper.py"
+let DEFAULT_VENV_PYTHON = ".venv-eeg/bin/python"
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn _emit_trailer(reason_slug: string, reason_detail: string, fix: string) {
+    eprintln("reason: " + reason_slug + ": " + reason_detail)
+    eprintln("fix: " + fix)
+}
+
+// Helper Python — owns the actual ASCII grid composition + ANSI wrap.
+// Keeping this as Python (not pure hexa string concat) means downstream
+// callers can `import` render_headplot() as a library function.
+fn _write_helper() {
+    let py = "
+import os, sys, argparse
+
+ESC = chr(27)
+NL = chr(10)
+
+# ─── State → RGB triples (matches OpenBCI CytonElectrodeStatus.pde) ────────
+RGB = {
+    'GREEN':  (0,   255, 100),
+    'YELLOW': (230, 199, 0),
+    'RED':    (255, 0,   0),
+    'BLUE':   (65,  96,  128),
+    'GRAY':   (113, 117, 119),
+}
+
+# ─── State → glyph (color is decorative; glyph carries primary info) ───────
+GLYPH = {
+    'GREEN':  '●',   # ●
+    'YELLOW': '●',   # ●
+    'RED':    '●',   # ●
+    'BLUE':   '●',   # ●
+    'GRAY':   '·',   # ·
+}
+
+# ─── Plain-text fallback glyphs (when NO_COLOR=1 / TERM=dumb) ──────────────
+PLAIN_GLYPH = {
+    'GREEN':  '+',
+    'YELLOW': '~',
+    'RED':    'X',
+    'BLUE':   'o',
+    'GRAY':   '.',
+}
+
+def _color_disabled():
+    if os.environ.get('NO_COLOR', '') != '':
+        return True
+    if os.environ.get('TERM', '') == 'dumb':
+        return True
+    return False
+
+def ansi_wrap(state, glyph_override=None):
+    g = glyph_override if glyph_override is not None else GLYPH.get(state, '?')
+    if _color_disabled():
+        return PLAIN_GLYPH.get(state, '?')
+    rgb = RGB.get(state, (200, 200, 200))
+    return ESC + '[38;2;' + str(rgb[0]) + ';' + str(rgb[1]) + ';' + str(rgb[2]) + 'm' + g + ESC + '[0m'
+
+# ─── Electrode → (col, row) on 80-wide × 20-tall plot grid ─────────────────
+# Coordinates from docs/headplot_ascii_design_2026_04_28.md §3
+# Origin (0,0) = top-left of the plot region. Plot region spans the full
+# 80-col terminal width with the skull silhouette centered.
+COORD = {
+    'Fp1': (33, 4),
+    'Fp2': (43, 4),
+    'F7':  (24, 7),
+    'F3':  (32, 7),
+    'Fz':  (38, 7),
+    'F4':  (44, 7),
+    'F8':  (52, 7),
+    'T7':  (20, 10),
+    'C3':  (32, 10),
+    'Cz':  (38, 10),
+    'C4':  (44, 10),
+    'T8':  (56, 10),
+    'P7':  (24, 13),
+    'P3':  (32, 13),
+    'Pz':  (38, 13),
+    'P4':  (44, 13),
+    'P8':  (52, 13),
+    'O1':  (33, 16),
+    'O2':  (43, 16),
+}
+
+# Midline electrodes (Cyton 16ch lacks them) — always GRAY placeholders
+MIDLINE = ('Fz', 'Cz', 'Pz')
+
+# Ear clip placement
+SRB2_COL = 14
+SRB2_ROW = 10
+BIAS_COL = 60
+BIAS_ROW = 10
+
+GRID_W = 78    # plot grid width (fits in 80-col terminal with margins)
+GRID_H = 20    # plot grid height
+
+def _blank_grid():
+    return [[' '] * GRID_W for _ in range(GRID_H)]
+
+def _set(grid, col, row, ch):
+    if 0 <= row < GRID_H and 0 <= col < GRID_W:
+        grid[row][col] = ch
+
+def _draw_skull(grid):
+    # Top arc — row 2..3 above Fp electrodes
+    # Box-drawing approximation of the OpenBCI scalp silhouette.
+    # Layout (col is approx; tuned for nose at col 38):
+    #
+    #         · nasion ·
+    #    .─────────────────────.
+    #  ./                       \\.
+    # ./                           \\.
+    # |                             |
+    # |                             |
+    # ...
+    # \\.                          ./
+    #  \\.                        ./
+    #    `─────────────────────'
+    #         · inion ·
+    #
+    nasion_row = 2
+    inion_row  = 18
+    nasion_text = '· nasion ·'
+    inion_text  = '· inion  ·'
+    # Center the labels at col ~32
+    nx = 32
+    for i, ch in enumerate(nasion_text):
+        _set(grid, nx + i, nasion_row, ch)
+    for i, ch in enumerate(inion_text):
+        _set(grid, nx + i, inion_row, ch)
+
+    # Top arc (row 3): .─...─.
+    _set(grid, 18, 3, '.')
+    for c in range(19, 60):
+        _set(grid, c, 3, '─')   # ─
+    _set(grid, 60, 3, '.')
+
+    # Upper slope rows
+    _set(grid, 16, 4, '.')
+    _set(grid, 17, 4, '/')
+    _set(grid, 61, 4, '\\\\')
+    _set(grid, 62, 4, '.')
+
+    _set(grid, 14, 5, '.')
+    _set(grid, 15, 5, '/')
+    _set(grid, 63, 5, '\\\\')
+    _set(grid, 64, 5, '.')
+
+    # Sides — straight vertical / slope
+    _set(grid, 13, 6, '/')
+    _set(grid, 65, 6, '\\\\')
+
+    _set(grid, 12, 7, '/')
+    _set(grid, 66, 7, '\\\\')
+
+    _set(grid, 11, 8, '/')
+    _set(grid, 67, 8, '\\\\')
+
+    _set(grid, 11, 9, '|')
+    _set(grid, 67, 9, '|')
+
+    # row 10 reserved for ear clips — no side glyph
+    _set(grid, 11, 11, '|')
+    _set(grid, 67, 11, '|')
+
+    _set(grid, 11, 12, '\\\\')
+    _set(grid, 67, 12, '/')
+
+    _set(grid, 12, 13, '\\\\')
+    _set(grid, 66, 13, '/')
+
+    _set(grid, 13, 14, '\\\\')
+    _set(grid, 65, 14, '/')
+
+    _set(grid, 14, 15, '\\\\')
+    _set(grid, 15, 15, '.')
+    _set(grid, 63, 15, '.')
+    _set(grid, 64, 15, '/')
+
+    _set(grid, 16, 16, '\\\\')
+    _set(grid, 17, 16, '.')
+    _set(grid, 61, 16, '.')
+    _set(grid, 62, 16, '/')
+
+    # Bottom arc (row 17): backtick ─...─ apostrophe
+    _set(grid, 18, 17, '`')
+    for c in range(19, 60):
+        _set(grid, c, 17, '─')
+    apos = chr(39)
+    _set(grid, 60, 17, apos)
+
+def _place_electrode_label(grid, pos, col, row):
+    # Place the position label to the LEFT of the glyph (col-3..col-1)
+    # then the glyph at (col, row). Ear-clips handled separately.
+    label = pos
+    # Truncate to 3 chars max (Fp1, F3, T7, P7, ... all <= 3)
+    if len(label) > 3:
+        label = label[:3]
+    # Right-pad/left-pad to width 3, anchored so glyph sits at col
+    pad = 3 - len(label)
+    start = col - 3
+    for i, ch in enumerate(label):
+        _set(grid, start + i + pad, row, ch)
+
+def _strip_ansi(s):
+    # Strip every ESC[...m sequence — used for visible-width measurement.
+    out = []
+    i = 0
+    while i < len(s):
+        if s[i] == ESC and i + 1 < len(s) and s[i+1] == '[':
+            j = i + 2
+            while j < len(s) and not (s[j] >= '@' and s[j] <= '~'):
+                j += 1
+            i = j + 1
+        else:
+            out.append(s[i])
+            i += 1
+    return ''.join(out)
+
+def render_headplot(channel_states, srb2_state='GRAY', bias_state='GRAY', tick=None):
+    '''Render the 80x30 ASCII headplot.
+
+    channel_states: dict mapping position name -> state string.
+                    Missing positions default to GRAY.
+                    Unknown state strings default to GRAY.
+    srb2_state, bias_state: state strings for ear clips.
+    tick: optional int to display in header.
+
+    Returns: multi-line string (with ANSI 24-bit RGB unless NO_COLOR set).
+    '''
+    grid = _blank_grid()
+    _draw_skull(grid)
+
+    # Place each electrode glyph + label
+    valid_states = set(RGB.keys())
+    for pos, (col, row) in COORD.items():
+        if pos in MIDLINE:
+            state = 'GRAY'
+        else:
+            state = channel_states.get(pos, 'GRAY')
+            if state not in valid_states:
+                state = 'GRAY'
+        glyph = ansi_wrap(state)
+        _place_electrode_label(grid, pos, col, row)
+        # _set replaces a single cell; ANSI string is multi-byte but represents
+        # one printable column on screen — we store it directly in the cell.
+        if 0 <= row < GRID_H and 0 <= col < GRID_W:
+            grid[row][col] = glyph
+
+    # Ear clips
+    srb2_glyph = ansi_wrap(srb2_state)
+    bias_glyph = ansi_wrap(bias_state)
+    # SRB2 label at left
+    srb2_label = 'SRB2['
+    for i, ch in enumerate(srb2_label):
+        _set(grid, SRB2_COL - 5 + i, SRB2_ROW, ch)
+    if 0 <= SRB2_ROW < GRID_H and 0 <= SRB2_COL < GRID_W:
+        grid[SRB2_ROW][SRB2_COL] = srb2_glyph
+    _set(grid, SRB2_COL + 1, SRB2_ROW, ']')
+
+    # BIAS label at right
+    if 0 <= BIAS_ROW < GRID_H and 0 <= BIAS_COL < GRID_W:
+        grid[BIAS_ROW][BIAS_COL] = bias_glyph
+    _set(grid, BIAS_COL - 1, BIAS_ROW, '[')
+    bias_label = ']BIAS'
+    for i, ch in enumerate(bias_label):
+        _set(grid, BIAS_COL + 1 + i, BIAS_ROW, ch)
+
+    # Header & legend
+    lines = []
+    header_inner = '10-20 EEG MAP (16ch Cyton)'
+    if tick is not None:
+        header_inner = header_inner + '         tick #' + ('%03d' % int(tick))
+    # Top frame ─ width 68 chars (to leave 80-col headroom + 4-space indent)
+    box_top    = '    ┌' + ('─' * 66) + '┐'
+    box_mid    = '    │ ' + header_inner.ljust(65) + '│'
+    box_bottom = '    └' + ('─' * 66) + '┘'
+    lines.append(box_top)
+    lines.append(box_mid)
+    lines.append(box_bottom)
+    lines.append('')
+
+    for row in grid:
+        lines.append(''.join(row).rstrip())
+
+    lines.append('')
+    # Legend — color samples (one per state)
+    if _color_disabled():
+        lines.append('    LEGEND:  + GREEN(OK)  ~ YELLOW(loose)  X RED(bad)  o BLUE(live)  . GRAY(off)')
+    else:
+        lg_g = ansi_wrap('GREEN')
+        lg_y = ansi_wrap('YELLOW')
+        lg_r = ansi_wrap('RED')
+        lg_b = ansi_wrap('BLUE')
+        lg_a = ansi_wrap('GRAY')
+        lines.append('    LEGEND:  ' + lg_g + ' GREEN(OK)   ' + lg_y + ' YELLOW(loose)   '
+                     + lg_r + ' RED(bad)   ' + lg_b + ' BLUE(live)   ' + lg_a + ' GRAY(off)')
+    lines.append('    SRB2/BIAS ear clips at L/R temporal margin (col 14 / col 60).')
+
+    return NL.join(lines)
+
+# ─── Selftest: synthetic all-GREEN ────────────────────────────────────────
+def run_selftest():
+    states = {pos: 'GREEN' for pos in COORD.keys() if pos not in MIDLINE}
+    out = render_headplot(states, srb2_state='GREEN', bias_state='GREEN', tick=1)
+    print(out, flush=True)
+    return 0
+
+# ─── Demo: mixed-state for visual verification ────────────────────────────
+def run_demo():
+    states = {
+        'Fp1': 'GREEN',  'Fp2': 'GREEN',
+        'F7':  'YELLOW', 'F3':  'GREEN',  'F4':  'GREEN',  'F8':  'YELLOW',
+        'T7':  'RED',    'C3':  'GREEN',  'C4':  'GREEN',  'T8':  'RED',
+        'P7':  'BLUE',   'P3':  'GREEN',  'P4':  'GREEN',  'P8':  'BLUE',
+        'O1':  'YELLOW', 'O2':  'GREEN',
+    }
+    out = render_headplot(states, srb2_state='GREEN', bias_state='YELLOW', tick=42)
+    print(out, flush=True)
+    return 0
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser()
+    p.add_argument('mode', choices=['selftest', 'demo'])
+    args = p.parse_args()
+    if args.mode == 'demo':
+        sys.exit(run_demo())
+    sys.exit(run_selftest())
+"
+    write_file(HELPER_PATH, py)
+}
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        if a.starts_with("-") { break }
+        let mut is_path = false
+        if a.starts_with("/")    { is_path = true }
+        if a.ends_with(".hexa")  { is_path = true }
+        if a.ends_with(".real")  { is_path = true }
+        if a.ends_with("/exe")   { is_path = true }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-eeg/headplot_helper.hexa --selftest")
+    eprintln("       hexa run anima-eeg/headplot_helper.hexa --demo")
+    eprintln("flags:")
+    eprintln("  --selftest   synthetic 16ch all-GREEN render (visual sanity)")
+    eprintln("  --demo       mixed-state render (GREEN/YELLOW/RED/BLUE) for color verification")
+    eprintln("  --help       this message")
+    eprintln("env:")
+    eprintln("  NO_COLOR=1   strip ANSI escapes (plain ASCII fallback)")
+}
+
+fn _do_render(mode: string) -> int {
+    let venv_py = DEFAULT_VENV_PYTHON
+    let mut cmd = venv_py + " " + HELPER_PATH + " " + mode
+    cmd = cmd + " > /tmp/anima_eeg_headplot_out.log 2> /tmp/anima_eeg_headplot_err.log"
+    // expects int. Use exec_with_status() and unwrap the int exit code.
+    let r = exec_with_status(cmd)
+    let rc = to_int(r[1])
+    let stdout_body = read_file("/tmp/anima_eeg_headplot_out.log")
+    let stderr_body = read_file("/tmp/anima_eeg_headplot_err.log")
+    if stderr_body != "" {
+        eprintln(stderr_body.trim())
+    }
+    print(stdout_body)
+    return rc
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut demo = false
+    let mut want_help = false
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--demo"     { demo = true;     i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        _emit_trailer("unknown-arg", "unrecognized: " + a, "1) --help")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help { _print_usage(); exit(0) }
+    if !selftest && !demo {
+        eprintln("ABORT: must pass --selftest | --demo")
+        _print_usage()
+        exit(2)
+    }
+
+    _write_helper()
+
+    println("══════════════════════════════════════════════════")
+    println("  anima-eeg headplot_helper")
+    println("  schema: " + SCHEMA)
+    let mode_str = if selftest { "selftest (all-GREEN)" } else { "demo (mixed states)" }
+    println("  mode: " + mode_str)
+    println("══════════════════════════════════════════════════")
+    println("")
+
+    let mode_arg = if selftest { "selftest" } else { "demo" }
+    let rc = _do_render(mode_arg)
+    exit(rc)
+}

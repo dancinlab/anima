@@ -1,0 +1,153 @@
+{
+  "research_md_section": "§44",
+  "evaluator": "eval_dhdl_ptd.py",
+  "lambda_ptd": 0.0,
+  "n_holdout": 9598,
+  "accuracy_3class": 0.9989581162742238,
+  "per_class_accuracy": {
+    "CONTINUE_THINK": 0.0,
+    "EMIT_VOICE": 0.9788235294117648,
+    "REMAIN_SILENT": 1.0
+  },
+  "per_class_holdout_count": {
+    "CONTINUE_THINK": 1,
+    "EMIT_VOICE": 425,
+    "REMAIN_SILENT": 9172
+  },
+  "confusion_matrix": {
+    "rows_true": [
+      "CONTINUE_THINK",
+      "EMIT_VOICE",
+      "REMAIN_SILENT"
+    ],
+    "cols_pred": [
+      "CONTINUE_THINK",
+      "EMIT_VOICE",
+      "REMAIN_SILENT"
+    ],
+    "matrix": [
+      [
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        416,
+        9
+      ],
+      [
+        0,
+        0,
+        9172
+      ]
+    ]
+  },
+  "threshold_distillation_gap": 0.0010418837257762034,
+  "threshold_distillation_gap_count": 10,
+  "threshold_distillation_gap_verdict": "DISTILLATION_WITH_APPROXIMATION_NOISE",
+  "gap_direction_breakdown": {
+    "CONTINUE_THINK->EMIT_VOICE": 1,
+    "EMIT_VOICE->REMAIN_SILENT": 9
+  },
+  "gap_records_sample": [
+    {
+      "trace_idx": 59,
+      "step": 1,
+      "thinker_score": 0.2961476196984538,
+      "safety_ok": true,
+      "head_decision": "EMIT_VOICE",
+      "threshold_decision": "CONTINUE_THINK",
+      "ground_truth": "CONTINUE_THINK"
+    },
+    {
+      "trace_idx": 24,
+      "step": 4,
+      "thinker_score": 0.5966166277731008,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 65,
+      "step": 4,
+      "thinker_score": 0.5922071681048927,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 69,
+      "step": 16,
+      "thinker_score": 0.630857886440144,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 119,
+      "step": 5,
+      "thinker_score": 0.5395122622088689,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 134,
+      "step": 7,
+      "thinker_score": 0.7712572086117662,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 174,
+      "step": 14,
+      "thinker_score": 0.5797842139283056,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 313,
+      "step": 14,
+      "thinker_score": 0.6939720433270652,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 326,
+      "step": 12,
+      "thinker_score": 0.5579325099157452,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 410,
+      "step": 19,
+      "thinker_score": 0.5172552964647902,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    }
+  ],
+  "ptd_aux_next_state_mse_mean": 3.8106658489917304,
+  "ptd_aux_next_state_mse_per_class": {
+    "CONTINUE_THINK": 3.7759000666951286,
+    "EMIT_VOICE": 2.7420638598204383,
+    "REMAIN_SILENT": 3.8625329916268676
+  },
+  "ptd_aux_pairs_evaluated": 9118,
+  "honest_verdict": "§44 composition eval @ lambda_ptd=0.0. Gap 0.00104 vs §27 0.00063. PTD aux MSE mean 3.8106658489917304. Per-class MSE localises which corner the next-physics-state is hardest to predict. PTD aux is REGULARISER not new supervision — DISTILLATION still the verdict (DESIGN_S38.md §7)."
+}

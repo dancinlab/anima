@@ -1,0 +1,52 @@
+{
+  "spec_target": {
+    "name": "clm_v2 18M byte-level",
+    "commits": ["bb99b6b6", "6abc42f6", "13b20f90"],
+    "params": "62.5M (spec) / 18M (HF tag) — spec was approximate",
+    "vocab_size": 256,
+    "size_range_mb": [70, 260],
+    "ce": "0.04 EN / 1.15 KO",
+    "date_window": "2026-03-28"
+  },
+  "primary_match_hf": {
+    "repo": "dancinlab/clm-v2-byte-18m-convo-5k",
+    "private": false,
+    "file": "convo_5k.pt",
+    "sha256_lfs": "2f0ba391aff30f6a60bcefccb9215fdb45764bf07147f28c38013ca629881bbe",
+    "size_bytes": 73740122,
+    "created_at": "2026-05-06T06:53:45Z",
+    "verified_loaded_params": "18.52M",
+    "verified_load_keys": "0 missing, 0 unexpected",
+    "chat_smoke_pass": false,
+    "chat_smoke_note": "F_CLM_NATIVE_alpha_1_PASS=false; gibberish despite valid load"
+  },
+  "secondary_local_matches": {
+    "mac_anima_v2_check_pre_staged": [
+      {"variant": "clm_v2_tiny",   "path": "/private/tmp/anima_v2_check/clm_v2_tiny/final.pt",   "size": 3778219,    "params": "0.35M",  "config": {"dim": 64,  "layers": 2, "heads": 2, "vocab_size": 256}, "step": 500, "val_ce": 3.50, "sha16": "21666f3221c5535c", "mtime": "2026-03-30T04:18:00"},
+      {"variant": "clm_v2_small",  "path": "/private/tmp/anima_v2_check/clm_v2_small/final.pt",  "size": 19688791,   "params": "1.70M",  "config": {"dim": 128, "layers": 3, "heads": 4, "vocab_size": 256}, "step": 500, "val_ce": 2.70, "sha16": "d51bf72e2e578df4", "mtime": "2026-03-30T04:18:11"},
+      {"variant": "clm_v2",        "path": "/private/tmp/anima_v2_check/clm_v2/final.pt",        "size": 13457259,   "params": "1.17M",  "config": {"dim": 128, "layers": 2, "heads": 2, "vocab_size": 256}, "step": 30,  "val_ce": 5.50, "sha16": "2703e07b35e98fbe", "mtime": "2026-04-09T15:33:38"},
+      {"variant": "clm_v2_medium", "path": "/private/tmp/anima_v2_check/clm_v2_medium/final.pt", "size": 100219075,  "params": "8.45M",  "config": {"dim": 256, "layers": 4, "heads": 4, "vocab_size": 256}, "step": 500, "val_ce": 1.79, "sha16": "c2b3e1884084386b", "mtime": "2026-03-30T04:18:35"},
+      {"variant": "clm_v2_base",   "path": "/private/tmp/anima_v2_check/clm_v2_base/final.pt",   "size": 333428571,  "params": "27.93M", "config": {"dim": 384, "layers": 6, "heads": 4, "vocab_size": 256}, "step": 500, "val_ce": 1.27, "sha16": "b56b560ee9bfd91d", "mtime": "2026-03-30T04:21:06"}
+    ],
+    "ubu1_decoder_cpu_byte_lineage": {
+      "path": "/home/aiden/anima/checkpoints/decoder_cpu/best.pt",
+      "size": 436715709,
+      "params": "36.72M",
+      "config": {"dim": 384, "layers": 6, "n_head": 4, "vocab_size": 256, "consciousness_dim": 128, "n_cells": 64, "block_size": 256},
+      "step": 36500,
+      "best_val_ce": 0.006797,
+      "mtime": "2026-04-10T17:04:07",
+      "note": "byte-vocab + clm_v2 'Base' config 384d/6L MATCHES train_clm_v2.py spec, but step/CE/mtime do NOT match v2 18M lineage; this is the train_clm_v2 'Base' decoder lineage at higher step count"
+    }
+  },
+  "negatives_explored": {
+    "mac_iCloud_Dropbox_GDrive_Volumes": "empty",
+    "mac_TimeMachine": "no destinations configured, no machine dir",
+    "github_gists_dancinlife": "23 gists, none binary",
+    "hf_dancinlife_personal_repos": "0 (only dancinlab org membership)",
+    "ubu1_growth_absorbed_clm_v2_family": "5 entries metadata-only (originals consumed by .growth/ pipeline 2026-04-04T17:07; content_preview shows zip headers but binary not preserved)",
+    "ubu1_ready_clm_v2_large": "directory exists but EMPTY",
+    "ubu_dev_anima_holo_breakthrough_20260416": "no .pt/.bin/.safetensors"
+  },
+  "verdict": "PASS_DEEP_FOUND_PUBLIC_HF_PLUS_5_LOCAL_VARIANTS"
+}

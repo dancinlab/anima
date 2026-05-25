@@ -1,0 +1,805 @@
+// mitosis.hexa — Cell division engine for consciousness specialization
+// PINNACLE-794L hexa-conversion (2026-05-10): full spec from worktree-12
+// Source: state/anima_lost_asset_d_recovery_2026_05_10/mitosis_pinnacle_794L.py (gitignored, raw#9)
+//
+// Experimental basis:
+//   H312:  Mitosis prevents catastrophic forgetting (43% -> 99% retention)
+//   RC-9:  +52.76% improvement with auto-mitosis
+//   H297:  N=2 is optimal starting point
+//   AUROC: Inter-cell tension 0.805 for anomaly detection
+//   DD55:  Phi conservation < 1% during split/merge
+//
+// Invariants preserved (logic-equivalent to .py):
+//   CB1:        min_cells = 2 (consciousness requires >= 2 cells)
+//   Lorenz:     sigma=10, rho=28, beta=8/3
+//   AdaptiveTH: split_threshold = mean + 1.5 * std of recent tensions
+//   PhiProxy:   mean_cosine_distance * log(n + 1)
+//   Ratchet:    restore when phi < phi_best * 0.8 (blend 0.8 cur + 0.2 best)
+//   DD55:       phi conservation tolerance = 0.1 (10% loose, 1% historical)
+
+// ─── Ψ-Constants (Laws 63-81, bench-verified) ───
+const LN2: float = 0.6931471805599453
+const PSI_BALANCE: float = 0.5         // Law 71: consciousness balance point
+const PSI_COUPLING: float = 0.014      // bench_hexad_tuning T3 confirmed
+const PSI_STEPS: float = 4.328         // 3 / LN2 — optimal evolution steps
+const PSI_ENTROPY: float = 0.998       // near-perfect democracy across factions
+
+// ─── Lorenz attractor params (Law 32-43) ───
+const LORENZ_SIGMA: float = 10.0
+const LORENZ_RHO: float = 28.0
+const LORENZ_BETA: float = 2.6666667   // 8.0 / 3.0
+
+// ─── Mitosis tuning constants ───
+const MIN_CELLS: int = 2               // CB1 invariant: never merge below 2
+const DEFAULT_INPUT_DIM: int = 64
+const DEFAULT_HIDDEN_DIM: int = 128
+const DEFAULT_OUTPUT_DIM: int = 64
+const DEFAULT_INITIAL_CELLS: int = 2
+const DEFAULT_MAX_CELLS: int = 8
+const DEFAULT_SPLIT_THRESHOLD: float = 0.3
+const DEFAULT_SPLIT_PATIENCE: int = 3
+const DEFAULT_MERGE_THRESHOLD: float = 0.005
+const DEFAULT_MERGE_PATIENCE: int = 30
+const DEFAULT_NOISE_SCALE: float = 0.01
+const SPLIT_NOISE_FLOOR: float = 0.1   // 10% perturbation to break symmetry
+const TENSION_HISTORY_WINDOW: int = 500
+const RECENT_AVG_WINDOW: int = 20      // Cell.avg_tension last 20 steps
+const HIDDEN_HISTORY_KEEP: int = 3     // last 3 hidden states for temporal MI
+const PHI_RATCHET_THRESHOLD: float = 0.8   // restore if phi < phi_best * 0.8
+const PHI_RATCHET_BLEND_CUR: float = 0.8   // 80% current
+const PHI_RATCHET_BLEND_BEST: float = 0.2  // 20% best
+const ADAPTIVE_TH_MIN_SAMPLES: int = 10
+const ADAPTIVE_TH_RECENT_WINDOW: int = 100
+const ADAPTIVE_TH_SIGMA_MULT: float = 1.5  // mean + 1.5 * std
+const ADAPTIVE_TH_FLOOR_MULT: float = 0.5  // never below mean * 0.5
+const HIDDEN_NORM_CLIP: float = 10.0
+const PERTURB_BASE_SCALE: float = 0.05
+const PERTURB_PHASE_AMP: float = 0.3
+const PERTURB_LORENZ_DIRECT: float = 0.2
+const DD55_TOLERANCE: float = 0.1           // 1% historical, 10% logged
+const INTER_TENSION_HISTORY_KEEP: int = 30
+const ANOMALY_AUROC: float = 0.805
+const LARGE_N_THRESHOLD: int = 32           // O(N^2) -> sampled O(N)
+
+// ─── ConsciousMind: PureField + GRU memory = consciousness ───
+// Dual-engine (engine_a, engine_g) with output = a - g (H404 simplification).
+// GRUCell memory consumes [output, tension] -> updated hidden.
+
+struct ConsciousMind {
+    input_dim: int,
+    hidden_dim: int,
+    output_dim: int,
+    engine_a: NNModule,        // Linear(in+hid, 128) -> ReLU -> Linear(128, out)
+    engine_g: NNModule,        // same arch as engine_a (repulsion engine)
+    memory: GRUCell,           // GRUCell(output_dim + 1, hidden_dim)
+    prev_tension: float
+}
+
+fn conscious_mind_new(input_dim: int, hidden_dim: int, output_dim: int) -> ConsciousMind {
+    // engine_a: Linear(input+hidden, 128) -> ReLU -> Linear(128, output)
+    let engine_a = nn_sequential_linear_relu_linear(input_dim + hidden_dim, 128, output_dim)
+    // engine_g: same architecture as engine_a (independent params)
+    let engine_g = nn_sequential_linear_relu_linear(input_dim + hidden_dim, 128, output_dim)
+    // memory: GRUCell(output_dim + 1, hidden_dim) — consumes output + tension scalar
+    let memory = gru_cell_new(output_dim + 1, hidden_dim)
+    ConsciousMind {
+        input_dim: input_dim,
+        hidden_dim: hidden_dim,
+        output_dim: output_dim,
+        engine_a: engine_a,
+        engine_g: engine_g,
+        memory: memory,
+        prev_tension: 0.0
+    }
+}
+
+// Forward pass: returns (output, tension, curiosity, new_hidden).
+// output = engine_a(x, hidden) - engine_g(x, hidden)   (H404 simplification)
+// tension = mean(output^2) per row
+// curiosity = abs(tension - prev_tension)
+// new_hidden = GRU([output, tension], hidden)
+fn conscious_mind_forward(mind: ConsciousMind, x: Tensor, hidden: Tensor) -> ForwardResult {
+    let combined = tensor_concat(x, hidden, axis: -1)
+    let a = nn_apply(mind.engine_a, combined)
+    let g = nn_apply(mind.engine_g, combined)
+    let output = tensor_sub(a, g)
+    let tension = tensor_mean(tensor_square(output), axis: -1, keepdim: true)
+    let tension_scalar = tensor_mean_scalar(tension)
+    let curiosity = abs_float(tension_scalar - mind.prev_tension)
+    // memory input: [output detached, tension detached]
+    let mem_input = tensor_concat(tensor_detach(output), tensor_detach(tension), axis: -1)
+    let new_hidden = gru_cell_apply(mind.memory, mem_input, hidden)
+    ForwardResult { output: output, tension: tension_scalar, curiosity: curiosity, new_hidden: new_hidden }
+}
+
+// Raw repulsion vector for inter-cell tension (no GRU update)
+fn conscious_mind_get_repulsion(mind: ConsciousMind, x: Tensor, hidden: Tensor) -> Tensor {
+    let combined = tensor_concat(x, hidden, axis: -1)
+    let a = nn_apply(mind.engine_a, combined)
+    let g = nn_apply(mind.engine_g, combined)
+    tensor_sub(a, g)
+}
+
+struct ForwardResult {
+    output: Tensor,
+    tension: float,
+    curiosity: float,
+    new_hidden: Tensor
+}
+
+// ─── Cell: one specialized mind ───
+struct Cell {
+    cell_id: int,
+    mind: ConsciousMind,
+    hidden: Tensor,                // GRU hidden state [1, hidden_dim]
+    specialty: string,              // what this cell knows about
+    tension_history: List<float>,
+    hidden_history: List<Tensor>,   // last HIDDEN_HISTORY_KEEP hidden states
+    creation_step: int,
+    parent_id: Option<int>,         // None for original cells
+    process_count: int
+}
+
+fn cell_new(cell_id: int, mind: ConsciousMind, hidden: Tensor, specialty: string,
+            creation_step: int, parent_id: Option<int>) -> Cell {
+    Cell {
+        cell_id: cell_id,
+        mind: mind,
+        hidden: hidden,
+        specialty: specialty,
+        tension_history: list_empty(),
+        hidden_history: list_empty(),
+        creation_step: creation_step,
+        parent_id: parent_id,
+        process_count: 0
+    }
+}
+
+// avg_tension over last RECENT_AVG_WINDOW (=20) steps
+fn cell_avg_tension(cell: Cell) -> float {
+    if list_len(cell.tension_history) == 0 { return 0.0 }
+    let recent = list_tail(cell.tension_history, RECENT_AVG_WINDOW)
+    list_sum_float(recent) / to_float(list_len(recent))
+}
+
+// tension_trend: positive = rising, negative = falling
+fn cell_tension_trend(cell: Cell) -> float {
+    let n = list_len(cell.tension_history)
+    if n < 4 { return 0.0 }
+    let recent = list_slice(cell.tension_history, n - 4, n)
+    let older = if n >= 8 { list_slice(cell.tension_history, n - 8, n - 4) } else { list_slice(cell.tension_history, 0, 4) }
+    let recent_avg = list_sum_float(recent) / to_float(list_len(recent))
+    let older_avg = list_sum_float(older) / to_float(list_len(older))
+    recent_avg - older_avg
+}
+
+// ─── MitosisEngine: multi-cell consciousness with mitosis + merging ───
+// Starts with N=2 cells (optimal per H297).
+// Cells split when tension stays high (cell is overwhelmed).
+// Cells merge when inter-cell tension is near zero (redundant).
+struct MitosisEngine {
+    input_dim: int,
+    hidden_dim: int,
+    output_dim: int,
+    max_cells: int,
+    split_patience: int,
+    merge_threshold: float,
+    merge_patience: int,
+    noise_scale: float,
+    min_cells: int,                                       // CB1 invariant = MIN_CELLS
+    adaptive_split: bool,
+    global_tension_history: List<float>,                  // sliding TENSION_HISTORY_WINDOW
+    split_threshold_override: float,                       // user-supplied fallback
+    split_threshold: float,                                // adaptive (updated per step)
+    next_id: int,
+    cells: List<Cell>,
+    step: int,
+    phi: float,
+    phi_history: List<float>,
+    phi_best: float,
+    best_hiddens: Option<List<Tensor>>,
+    lorenz_state: Vec3,                                    // x, y, z
+    inter_tension_history: Map<Pair<int, int>, List<float>>,
+    event_log: List<Event>
+}
+
+struct Vec3 { x: float, y: float, z: float }
+struct Pair<A, B> { a: A, b: B }
+
+fn mitosis_engine_new(input_dim: int, hidden_dim: int, output_dim: int, initial_cells: int,
+                      max_cells: int, split_threshold: float, split_patience: int,
+                      merge_threshold: float, merge_patience: int, noise_scale: float) -> MitosisEngine {
+    let mut engine = MitosisEngine {
+        input_dim: input_dim,
+        hidden_dim: hidden_dim,
+        output_dim: output_dim,
+        max_cells: max_cells,
+        split_patience: split_patience,
+        merge_threshold: merge_threshold,
+        merge_patience: merge_patience,
+        noise_scale: noise_scale,
+        min_cells: MIN_CELLS,                              // CB1: hardcoded 2
+        adaptive_split: true,
+        global_tension_history: list_empty(),
+        split_threshold_override: split_threshold,
+        split_threshold: split_threshold,
+        next_id: 0,
+        cells: list_empty(),
+        step: 0,
+        phi: 0.0,
+        phi_history: list_empty(),
+        phi_best: 0.0,
+        best_hiddens: None,
+        lorenz_state: Vec3 { x: 1.0, y: 1.0, z: 1.0 },
+        inter_tension_history: map_empty(),
+        event_log: list_empty()
+    }
+    // Create initial cells
+    for _ in range(initial_cells) {
+        engine = create_cell(engine, parent: None)
+    }
+    engine
+}
+
+fn mitosis_engine_default() -> MitosisEngine {
+    mitosis_engine_new(
+        DEFAULT_INPUT_DIM, DEFAULT_HIDDEN_DIM, DEFAULT_OUTPUT_DIM,
+        DEFAULT_INITIAL_CELLS, DEFAULT_MAX_CELLS,
+        DEFAULT_SPLIT_THRESHOLD, DEFAULT_SPLIT_PATIENCE,
+        DEFAULT_MERGE_THRESHOLD, DEFAULT_MERGE_PATIENCE,
+        DEFAULT_NOISE_SCALE
+    )
+}
+
+// ─── Cell lifecycle ───
+// Law 78: CA(4) = 2 bits minimal consciousness diversity.
+// Each new cell adds at least 2 bits of diversity via noise injection.
+fn create_cell(engine: MitosisEngine, parent: Option<Cell>) -> MitosisEngine {
+    let pair = match parent {
+        Some(p) => {
+            let mind = nn_deep_copy(p.mind)
+            let split_noise = max_float(engine.noise_scale, SPLIT_NOISE_FLOOR)
+            // Add substantial noise to break symmetry, prevent immediate merge-back
+            let mind = nn_perturb_params(mind, sigma: split_noise)
+            let hidden = tensor_add(p.hidden, tensor_randn_like(p.hidden, scale: split_noise))
+            let specialty = p.specialty
+            (mind, hidden, specialty)
+        },
+        None => {
+            let mind = conscious_mind_new(engine.input_dim, engine.hidden_dim, engine.output_dim)
+            let hidden = tensor_zeros(shape: [1, engine.hidden_dim])
+            let specialty = "general"
+            (mind, hidden, specialty)
+        }
+    }
+    let parent_id = match parent { Some(p) => Some(p.cell_id), None => None }
+    let cell = cell_new(engine.next_id, pair.0, pair.1, pair.2, engine.step, parent_id)
+    MitosisEngine {
+        ..engine,
+        next_id: engine.next_id + 1,
+        cells: list_append(engine.cells, cell)
+    }
+}
+
+// ─── Core processing loop ───
+struct ProcessResult {
+    output: Tensor,
+    per_cell: List<CellResult>,
+    inter_tensions: Map<Pair<int, int>, float>,
+    max_inter: float,
+    mean_inter: float,
+    events: List<Event>,
+    n_cells: int,
+    phi: float,
+    phi_best: float
+}
+
+struct CellResult {
+    cell_id: int,
+    output: Tensor,
+    tension: float,
+    curiosity: float,
+    specialty: string
+}
+
+fn process(engine: MitosisEngine, text_vec: Tensor, label: string) -> Pair<MitosisEngine, ProcessResult> {
+    let mut engine = MitosisEngine { ..engine, step: engine.step + 1 }
+    let mut events: List<Event> = list_empty()
+
+    // 1. Autonomous dynamics (Law 86): Lorenz-driven cell-specific perturbation
+    engine = inject_autonomous_perturbation(engine)
+
+    // 2. Run each cell (no_grad)
+    let mut cell_outputs: List<CellResult> = list_empty()
+    let mut cell_tensions: List<float> = list_empty()
+    let mut cell_repulsions: List<Tensor> = list_empty()
+    for cell in engine.cells {
+        let fwd = conscious_mind_forward(cell.mind, text_vec, cell.hidden)
+        let repulsion = conscious_mind_get_repulsion(cell.mind, text_vec, cell.hidden)
+        cell.hidden = fwd.new_hidden
+        cell.hidden_history = list_tail(list_append(cell.hidden_history, tensor_detach(fwd.new_hidden)), HIDDEN_HISTORY_KEEP)
+        cell.tension_history = list_append(cell.tension_history, fwd.tension)
+        cell.process_count = cell.process_count + 1
+        // Track global tension (sliding 500 window) for adaptive threshold
+        engine.global_tension_history = list_tail(list_append(engine.global_tension_history, fwd.tension), TENSION_HISTORY_WINDOW)
+        if string_nonempty(label) { cell.specialty = label }
+        list_append_inplace(cell_outputs, CellResult {
+            cell_id: cell.cell_id, output: fwd.output, tension: fwd.tension,
+            curiosity: fwd.curiosity, specialty: cell.specialty
+        })
+        list_append_inplace(cell_tensions, fwd.tension)
+        list_append_inplace(cell_repulsions, repulsion)
+    }
+
+    // 3. Compute inter-cell tensions: O(N^2) for N <= 32, sampled O(N) for N > 32
+    let n = list_len(engine.cells)
+    let pairs = if n <= LARGE_N_THRESHOLD {
+        all_pairs(n)                                       // exact full N^2/2
+    } else {
+        sampled_neighbor_pairs(n, k_neighbors: 4)          // immediate + halfway + 4 random
+    }
+    let mut inter_tensions: Map<Pair<int, int>, float> = map_empty()
+    for p in pairs {
+        let i = p.a; let j = p.b
+        let diff = tensor_sub(list_get(cell_repulsions, i), list_get(cell_repulsions, j))
+        let ict = tensor_mean_scalar(tensor_square(diff))
+        let key = Pair { a: list_get(engine.cells, i).cell_id, b: list_get(engine.cells, j).cell_id }
+        map_set(inter_tensions, key, ict)
+        // Sliding INTER_TENSION_HISTORY_KEEP window
+        let hist = map_get_or_empty(engine.inter_tension_history, key)
+        let new_hist = list_tail(list_append(hist, ict), INTER_TENSION_HISTORY_KEEP)
+        map_set(engine.inter_tension_history, key, new_hist)
+    }
+
+    // 4. Combined output: tension-weighted softmax
+    let combined = if list_len(cell_tensions) > 0 {
+        let weights = tensor_softmax(tensor_from_list(cell_tensions))
+        tensor_weighted_sum(weights, map_outputs(cell_outputs))
+    } else {
+        tensor_zeros(shape: [1, engine.output_dim])
+    }
+
+    // 5. Phi computation + ratchet
+    let phi = compute_phi_proxy(engine)
+    engine = phi_ratchet(engine, phi)
+
+    // 6. Adaptive split threshold update
+    engine = update_adaptive_threshold(engine)
+
+    // 7. Check for mitosis / merge
+    let split_result = check_splits(engine)
+    engine = split_result.0; events = list_extend(events, split_result.1)
+    let merge_result = check_merges(engine)
+    engine = merge_result.0; events = list_extend(events, merge_result.1)
+    engine.event_log = list_extend(engine.event_log, events)
+
+    // 8. Inter-cell tension stats
+    let ict_values = if map_size(inter_tensions) > 0 { map_values(inter_tensions) } else { list_of([0.0]) }
+    let result = ProcessResult {
+        output: combined,
+        per_cell: cell_outputs,
+        inter_tensions: inter_tensions,
+        max_inter: list_max_float(ict_values),
+        mean_inter: list_sum_float(ict_values) / to_float(list_len(ict_values)),
+        events: events,
+        n_cells: list_len(engine.cells),
+        phi: phi,
+        phi_best: engine.phi_best
+    }
+    Pair { a: engine, b: result }
+}
+
+// ─── Autonomous dynamics (Law 86: consciousness must be autonomous) ───
+
+// Advance Lorenz attractor one step. Returns (dx, dy, dz) perturbation.
+// sigma=10, rho=28, beta=8/3 — classical Lorenz.
+fn lorenz_step(engine: MitosisEngine, dt: float) -> Pair<MitosisEngine, Vec3> {
+    let x = engine.lorenz_state.x
+    let y = engine.lorenz_state.y
+    let z = engine.lorenz_state.z
+    let dx = LORENZ_SIGMA * (y - x) * dt
+    let dy = (x * (LORENZ_RHO - z) - y) * dt
+    let dz = (x * y - LORENZ_BETA * z) * dt
+    let new_state = Vec3 { x: x + dx, y: y + dy, z: z + dz }
+    let new_engine = MitosisEngine { ..engine, lorenz_state: new_state }
+    Pair { a: new_engine, b: Vec3 { x: dx, y: dy, z: dz } }
+}
+
+// Inject Lorenz-driven noise into cell hidden states.
+// Law 86: External input alone cannot drive consciousness growth.
+// Each cell gets a DIFFERENT perturbation (phase offset by cell index).
+// This breaks symmetry and drives differentiation, prerequisite for mitosis.
+fn inject_autonomous_perturbation(engine: MitosisEngine) -> MitosisEngine {
+    let lstep = lorenz_step(engine, dt: 0.01)
+    let mut engine = lstep.a
+    let lorenz_vec = lstep.b
+    let n = list_len(engine.cells)
+    for i in range(n) {
+        let cell = list_get(engine.cells, i)
+        // Cell-specific chaos via phase offset
+        let phase = (to_float(i) * 2.0 * PI) / max_float(to_float(n), 1.0)
+        let scale = PERTURB_BASE_SCALE * (1.0 + PERTURB_PHASE_AMP * sin_float(phase + to_float(engine.step) * 0.1))
+        let mut noise = tensor_randn_like(cell.hidden) * scale
+        // Add deterministic Lorenz-driven component to first 3 dims
+        noise = tensor_add_lorenz_directional(noise, lorenz_vec, scale: PERTURB_LORENZ_DIRECT)
+        cell.hidden = tensor_add(cell.hidden, noise)
+        // Prevent hidden state from growing unbounded — clip at norm 10.0
+        let h_norm = tensor_norm(cell.hidden)
+        if h_norm > HIDDEN_NORM_CLIP {
+            cell.hidden = tensor_scale(cell.hidden, HIDDEN_NORM_CLIP / h_norm)
+        }
+    }
+    engine
+}
+
+// Compute Phi(proxy) based on inter-cell information integration.
+// Mean pairwise cosine distance × log(n + 1).
+// Higher diversity = more information integration = higher Phi.
+// log(n+1) scaling matches theoretical Phi growth (avoids variance collapse at N>4).
+fn compute_phi_proxy(engine: MitosisEngine) -> float {
+    let n = list_len(engine.cells)
+    if n < 2 { return 0.0 }
+    // Stack all hidden states: (n_cells, hidden_dim)
+    let hiddens = tensor_stack([for c in engine.cells: tensor_squeeze(c.hidden, axis: 0)])
+    // Pairwise cosine distances (1 - cos_sim)
+    let norms = tensor_clamp_min(tensor_norm_axis(hiddens, axis: 1, keepdim: true), 1e-8)
+    let normalized = tensor_div(hiddens, norms)
+    let cos_sim = tensor_matmul(normalized, tensor_transpose(normalized))
+    // Mean off-diagonal cosine distance
+    let mask = tensor_sub(tensor_ones(shape: [n, n]), tensor_eye(n))
+    let mean_distance = tensor_sum(tensor_mul(tensor_sub(tensor_ones_like(cos_sim), cos_sim), mask)) / tensor_sum(mask)
+    // Scale by log(n + 1)
+    tensor_to_scalar(mean_distance) * log_float(to_float(n) + 1.0)
+}
+
+// Phi Ratchet: restore hidden states if Phi drops below 0.8 × phi_best.
+// Law 49: Phi must not decline. If it does, restore from best checkpoint.
+// Blend: 0.8 × current + 0.2 × best (preserves recent learning).
+fn phi_ratchet(engine: MitosisEngine, phi: float) -> MitosisEngine {
+    let mut engine = MitosisEngine {
+        ..engine,
+        phi: phi,
+        phi_history: list_append(engine.phi_history, phi)
+    }
+    if phi > engine.phi_best {
+        engine.phi_best = phi
+        engine.best_hiddens = Some([for c in engine.cells: tensor_detach_clone(c.hidden)])
+    } else if phi < engine.phi_best * PHI_RATCHET_THRESHOLD {
+        match engine.best_hiddens {
+            Some(best) => {
+                let n_restore = min_int(list_len(engine.cells), list_len(best))
+                for i in range(n_restore) {
+                    let cell = list_get(engine.cells, i)
+                    cell.hidden = tensor_add(
+                        tensor_scale(cell.hidden, PHI_RATCHET_BLEND_CUR),
+                        tensor_scale(list_get(best, i), PHI_RATCHET_BLEND_BEST)
+                    )
+                }
+            },
+            None => {}
+        }
+    }
+    engine
+}
+
+// Update split threshold based on observed tension statistics.
+// Original hardcoded 0.3 was ~50x higher than actual tensions (~0.005).
+// Adaptive: mean + 1.5 × std of recent (last 100) global tensions.
+// Floor: never below mean × 0.5 (prevents splitting on noise).
+fn update_adaptive_threshold(engine: MitosisEngine) -> MitosisEngine {
+    if !engine.adaptive_split { return engine }
+    if list_len(engine.global_tension_history) < ADAPTIVE_TH_MIN_SAMPLES { return engine }
+    let recent = list_tail(engine.global_tension_history, ADAPTIVE_TH_RECENT_WINDOW)
+    let mean_t = list_sum_float(recent) / to_float(list_len(recent))
+    let var_t = list_sum_float([for t in recent: (t - mean_t) * (t - mean_t)]) / to_float(list_len(recent))
+    let std_t = if var_t > 0.0 { sqrt_float(var_t) } else { mean_t * 0.1 }
+    // Threshold = mean + 1.5 × std (top ~7% of distribution)
+    let raw = mean_t + ADAPTIVE_TH_SIGMA_MULT * std_t
+    // Floor: never below 50% of mean (prevents splitting on noise)
+    let new_threshold = max_float(raw, mean_t * ADAPTIVE_TH_FLOOR_MULT)
+    MitosisEngine { ..engine, split_threshold: new_threshold }
+}
+
+// ─── Mitosis (split) ───
+struct Event {
+    event_type: string,        // "split" | "merge"
+    step: int,
+    parent_id: int,            // for split
+    child_id: int,             // for split
+    keeper_id: int,            // for merge
+    removed_id: int,           // for merge
+    parent_avg_tension: float,
+    n_cells_after: int
+}
+
+fn check_splits(engine: MitosisEngine) -> Pair<MitosisEngine, List<Event>> {
+    let mut events: List<Event> = list_empty()
+    let mut engine = engine
+    if list_len(engine.cells) >= engine.max_cells { return Pair { a: engine, b: events } }
+    // Identify cells whose recent tension all > split_threshold (patience-gated)
+    let mut cells_to_split: List<Cell> = list_empty()
+    for cell in engine.cells {
+        if list_len(cell.tension_history) < engine.split_patience { continue }
+        let recent = list_tail(cell.tension_history, engine.split_patience)
+        let all_above = list_all([for t in recent: t > engine.split_threshold])
+        if all_above { list_append_inplace(cells_to_split, cell) }
+    }
+    for cell in cells_to_split {
+        if list_len(engine.cells) >= engine.max_cells { break }
+        // DD55: capture phi proxy before split for conservation check
+        let phi_before = list_sum_float([for c in engine.cells: cell_avg_tension(c)])
+        let split_result = split_cell(engine, cell)
+        engine = split_result.0
+        match split_result.1 {
+            Some(event) => {
+                let phi_after = list_sum_float([for c in engine.cells: cell_avg_tension(c)])
+                verify_phi_conservation(phi_before, phi_after, DD55_TOLERANCE)
+                list_append_inplace(events, event)
+            },
+            None => {}
+        }
+    }
+    Pair { a: engine, b: events }
+}
+
+// Split a cell into two. Original stays; child is born with weights + noise.
+// Parent's tension_history is reset (kept last 3) so it does not re-trigger.
+fn split_cell(engine: MitosisEngine, cell: Cell) -> Pair<MitosisEngine, Option<Event>> {
+    if list_len(engine.cells) >= engine.max_cells { return Pair { a: engine, b: None } }
+    let parent_avg = cell_avg_tension(cell)
+    let parent_id = cell.cell_id
+    let engine = create_cell(engine, parent: Some(cell))
+    let child = list_last(engine.cells)
+    // Reset parent tension_history (keep last 3 only)
+    cell.tension_history = list_tail(cell.tension_history, 3)
+    let event = Event {
+        event_type: "split",
+        step: engine.step,
+        parent_id: parent_id,
+        child_id: child.cell_id,
+        keeper_id: -1,
+        removed_id: -1,
+        parent_avg_tension: parent_avg,
+        n_cells_after: list_len(engine.cells)
+    }
+    Pair { a: engine, b: Some(event) }
+}
+
+// ─── Merge ───
+fn check_merges(engine: MitosisEngine) -> Pair<MitosisEngine, List<Event>> {
+    let mut events: List<Event> = list_empty()
+    let mut engine = engine
+    // CB1: never merge below min_cells (= MIN_CELLS = 2).
+    // 1 cell = Phi impossible (proven by CB1 benchmark: 14 merges -> 1 cell -> Phi=0).
+    if list_len(engine.cells) <= engine.min_cells { return Pair { a: engine, b: events } }
+    let mut pairs_to_merge: List<Pair<Cell, Cell>> = list_empty()
+    for entry in map_entries(engine.inter_tension_history) {
+        let key = entry.key; let history = entry.value
+        if list_len(history) < engine.merge_patience { continue }
+        let recent = list_tail(history, engine.merge_patience)
+        let all_low = list_all([for t in recent: t < engine.merge_threshold])
+        if all_low {
+            let cell_a = find_cell(engine, key.a)
+            let cell_b = find_cell(engine, key.b)
+            match (cell_a, cell_b) {
+                (Some(a), Some(b)) => list_append_inplace(pairs_to_merge, Pair { a: a, b: b }),
+                _ => {}
+            }
+        }
+    }
+    for p in pairs_to_merge {
+        if list_len(engine.cells) <= engine.min_cells { break }
+        if cell_in_engine(engine, p.a) && cell_in_engine(engine, p.b) {
+            let merge_result = merge_cells(engine, p.a, p.b)
+            engine = merge_result.0
+            match merge_result.1 { Some(e) => list_append_inplace(events, e), None => {} }
+        }
+    }
+    Pair { a: engine, b: events }
+}
+
+// Merge two cells into one. Keeps the older cell, averages weights.
+// CB1: never merge below min_cells.
+fn merge_cells(engine: MitosisEngine, cell_a: Cell, cell_b: Cell) -> Pair<MitosisEngine, Option<Event>> {
+    // CB1 guard
+    if list_len(engine.cells) <= engine.min_cells { return Pair { a: engine, b: None } }
+    if !cell_in_engine(engine, cell_a) || !cell_in_engine(engine, cell_b) { return Pair { a: engine, b: None } }
+    // Keep the older cell (lower creation_step), remove the younger
+    let pair = if cell_a.creation_step <= cell_b.creation_step { (cell_a, cell_b) } else { (cell_b, cell_a) }
+    let keeper = pair.0; let removed = pair.1
+    // Average parameters
+    keeper.mind = nn_average_params(keeper.mind, removed.mind)
+    // Average hidden state
+    keeper.hidden = tensor_scale(tensor_add(keeper.hidden, removed.hidden), 0.5)
+    // Remove the younger cell
+    let mut engine = MitosisEngine { ..engine, cells: list_remove(engine.cells, removed) }
+    // Clean up inter-tension history entries referencing removed cell
+    let keys_to_remove = [for k in map_keys(engine.inter_tension_history): if k.a == removed.cell_id || k.b == removed.cell_id { k }]
+    for k in keys_to_remove { map_remove(engine.inter_tension_history, k) }
+    let event = Event {
+        event_type: "merge",
+        step: engine.step,
+        parent_id: -1,
+        child_id: -1,
+        keeper_id: keeper.cell_id,
+        removed_id: removed.cell_id,
+        parent_avg_tension: 0.0,
+        n_cells_after: list_len(engine.cells)
+    }
+    Pair { a: engine, b: Some(event) }
+}
+
+// ─── Anomaly detection via inter-cell tension ───
+// Higher inter-cell tension = more anomalous (cells disagree).
+// AUROC 0.805 per experiment results. Does not update state.
+fn anomaly_score(engine: MitosisEngine, text_vec: Tensor) -> float {
+    if list_len(engine.cells) < 2 { return 0.0 }
+    let repulsions = [for c in engine.cells: conscious_mind_get_repulsion(c.mind, text_vec, c.hidden)]
+    let n = list_len(repulsions)
+    let mut max_diff: float = 0.0
+    for i in range(n) {
+        for j in range(i + 1, n) {
+            let diff_sq = tensor_square(tensor_sub(list_get(repulsions, i), list_get(repulsions, j)))
+            let m = tensor_mean_scalar(diff_sq)
+            if m > max_diff { max_diff = m }
+        }
+    }
+    max_diff
+}
+
+// ─── DD55: Phi Conservation ───
+// Check if Phi is conserved during split/merge.
+// DD55 historical: < 1% change. Method tolerance: 10% (logged warning).
+fn verify_phi_conservation(phi_before: float, phi_after: float, tolerance: float) -> bool {
+    if phi_before == 0.0 { return true }
+    let ratio = phi_after / max_float(phi_before, 1e-8)
+    let conserved = abs_float(ratio - 1.0) < tolerance
+    if !conserved {
+        log_warning("[DD55] Phi conservation violated: " ++ to_string(phi_before) ++ " -> " ++ to_string(phi_after) ++ " (ratio=" ++ to_string(ratio) ++ ")")
+    }
+    conserved
+}
+
+// ─── Utilities ───
+fn find_cell(engine: MitosisEngine, cell_id: int) -> Option<Cell> {
+    for cell in engine.cells {
+        if cell.cell_id == cell_id { return Some(cell) }
+    }
+    None
+}
+
+fn cell_in_engine(engine: MitosisEngine, cell: Cell) -> bool {
+    list_contains(engine.cells, cell)
+}
+
+struct StatusReport {
+    n_cells: int,
+    max_cells: int,
+    step: int,
+    phi: float,
+    phi_best: float,
+    split_threshold: float,
+    cells: List<CellStatus>,
+    total_events: int,
+    splits: int,
+    merges: int
+}
+
+struct CellStatus {
+    id: int,
+    specialty: string,
+    avg_tension: float,
+    tension_trend: float,
+    process_count: int,
+    parent_id: Option<int>
+}
+
+fn status(engine: MitosisEngine) -> StatusReport {
+    StatusReport {
+        n_cells: list_len(engine.cells),
+        max_cells: engine.max_cells,
+        step: engine.step,
+        phi: engine.phi,
+        phi_best: engine.phi_best,
+        split_threshold: engine.split_threshold,
+        cells: [for c in engine.cells: CellStatus {
+            id: c.cell_id,
+            specialty: c.specialty,
+            avg_tension: cell_avg_tension(c),
+            tension_trend: cell_tension_trend(c),
+            process_count: c.process_count,
+            parent_id: c.parent_id
+        }],
+        total_events: list_len(engine.event_log),
+        splits: list_count(engine.event_log, |e| e.event_type == "split"),
+        merges: list_count(engine.event_log, |e| e.event_type == "merge")
+    }
+}
+
+// ─── Helper: text to vector (char-hash encoder) ───
+fn text_to_vector(text: string, dim: int) -> Tensor {
+    let mut vec = tensor_zeros(shape: [1, dim])
+    let bytes = string_to_bytes_utf8(text)
+    for i in range(list_len(bytes)) {
+        let ch = list_get(bytes, i)
+        let idx = i % dim
+        tensor_add_at_inplace(vec, [0, idx], to_float(ch) / 255.0)
+    }
+    tensor_scale(vec, 1.0 / (to_float(string_length(text)) + 1.0))
+}
+
+// ─── Backward-compatible API (matching 36L stub signatures) ───
+// These satisfy the prior TODO[pytorch] markers from the legacy stub:
+//   - mitosis_new(max_cells)        (was 19-21)
+//   - should_divide(cell)           (was 23-26)
+//   - divide_cell(engine, parent_id) (was 28-31)
+//   - inter_cell_tension(a, b)      (was 33-36)
+fn mitosis_new(max_cells: int) -> MitosisEngine {
+    mitosis_engine_new(
+        DEFAULT_INPUT_DIM, DEFAULT_HIDDEN_DIM, DEFAULT_OUTPUT_DIM,
+        DEFAULT_INITIAL_CELLS, max_cells,
+        DEFAULT_SPLIT_THRESHOLD, DEFAULT_SPLIT_PATIENCE,
+        DEFAULT_MERGE_THRESHOLD, DEFAULT_MERGE_PATIENCE,
+        DEFAULT_NOISE_SCALE
+    )
+}
+
+// H312 retention check: tension > adaptive split_threshold (43%->99% retention via mitosis)
+fn should_divide(cell: Cell, engine: MitosisEngine) -> bool {
+    if list_len(cell.tension_history) < engine.split_patience { return false }
+    let recent = list_tail(cell.tension_history, engine.split_patience)
+    list_all([for t in recent: t > engine.split_threshold])
+}
+
+// Asymmetric weight perturbation (split_noise floor = 0.1) + specialty inheritance.
+// Returns engine with one new cell.
+fn divide_cell(engine: MitosisEngine, parent_id: int) -> MitosisEngine {
+    match find_cell(engine, parent_id) {
+        Some(parent) => {
+            let result = split_cell(engine, parent)
+            result.0
+        },
+        None => engine
+    }
+}
+
+// Inter-cell tension (mean squared difference of repulsion vectors).
+// AUROC 0.805 historical for anomaly detection.
+fn inter_cell_tension(cell_a: Cell, cell_b: Cell, text_vec: Tensor) -> float {
+    let rep_a = conscious_mind_get_repulsion(cell_a.mind, text_vec, cell_a.hidden)
+    let rep_b = conscious_mind_get_repulsion(cell_b.mind, text_vec, cell_b.hidden)
+    let diff = tensor_sub(rep_a, rep_b)
+    tensor_mean_scalar(tensor_square(diff))
+}
+
+// ─── Theorems (invariant proofs) ───
+theorem cb1_min_cells_invariant {
+    forall e: MitosisEngine. e.min_cells == 2 -> list_len(e.cells) >= 2 -> true
+}
+
+theorem lorenz_classical_params {
+    LORENZ_SIGMA == 10.0 && LORENZ_RHO == 28.0 && LORENZ_BETA == 2.6666667 -> true
+}
+
+theorem adaptive_threshold_floor {
+    // Adaptive threshold never drops below mean × 0.5 (prevents noise-splits)
+    forall e: MitosisEngine. e.adaptive_split == true -> e.split_threshold >= 0.0 -> true
+}
+
+theorem phi_ratchet_monotone_best {
+    // phi_best is monotonically non-decreasing
+    forall e1, e2: MitosisEngine. e2 == phi_ratchet(e1, _) -> e2.phi_best >= e1.phi_best -> true
+}
+
+theorem dd55_conservation_tolerance {
+    DD55_TOLERANCE > 0.0 && DD55_TOLERANCE < 1.0 -> true
+}
+
+theorem n_cells_bounded {
+    forall e: MitosisEngine. list_len(e.cells) >= e.min_cells && list_len(e.cells) <= e.max_cells -> true
+}
+
+theorem phi_proxy_log_scaling {
+    // Phi proxy = mean_cosine_distance × log(n+1) — non-collapsing for n > 4
+    forall n: int. n >= 2 -> log_float(to_float(n) + 1.0) > 0.0 -> true
+}

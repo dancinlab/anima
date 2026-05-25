@@ -1,0 +1,42 @@
+[paradigm-j-50k] 13:53:04 start n_steps=50000 batch=4 grad_acc=8 lr=0.0001
+[paradigm-j-50k] 13:53:04 lora_r=128 alpha=128 phi_thr=5.0
+[paradigm-j-50k] 13:53:04 delta curriculum: early=0.5 (0-16000) mid=0.5 (16000-33000) late=1.0 (33000-50000)
+[paradigm-j-50k] 13:53:04 loss α=6.0 β=0.1 γ=0.0 (BOLD blocked) γ_FE=0.2 β_FE=1.0 K_FE=192 ℓ_FE=8
+[paradigm-j-50k] 13:53:04 savepoints @ [5000, 10000, 25000, 50000]; final → stage1
+[paradigm-j-50k] 13:53:04 HF push=True org=need-singularity
+[paradigm-j-50k] 13:53:05 torch=2.11.0+cu128 cuda=True device=cuda
+[paradigm-j-50k] 13:53:05 gpu=NVIDIA GeForce RTX 5070 mem_total=11.50GiB
+[paradigm-j-50k] 13:53:05 tokenizer vocab=64000
+[paradigm-j-50k] 13:53:08 decoder built params=477,648,512
+Traceback (most recent call last):
+  File "/tmp/p9_paradigm_j_50k_train.py", line 178, in <module>
+    ck = torch.load(CLM_CKPT, map_location=device, weights_only=False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 1579, in load
+    return _load(
+           ^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 2190, in _load
+    result = unpickler.load()
+             ^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 2154, in persistent_load
+    typed_storage = load_tensor(
+                    ^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 2116, in load_tensor
+    wrap_storage = restore_location(storage, location)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 1920, in restore_location
+    return default_restore_location(storage, str(map_location))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 734, in default_restore_location
+    result = fn(storage, location)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 668, in _deserialize
+    return obj.to(device=device)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/storage.py", line 289, in to
+    return _to(self, device, non_blocking)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/_utils.py", line 106, in _to
+    untyped_storage = torch.UntypedStorage(self.size(), device=device)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 11.50 GiB of which 18.19 MiB is free. Process 3100322 has 5.90 GiB memory in use. Including non-PyTorch memory, this process has 5.55 GiB memory in use. Of the allocated memory 5.39 GiB is allocated by PyTorch, and 6.58 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)

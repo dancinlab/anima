@@ -1,0 +1,51 @@
+#!/bin/bash
+# v3 — assume prefetch + retemplate done; just launch detached training
+set -uo pipefail
+
+WORKSPACE=/workspace
+OUT_DIR=$WORKSPACE/p9_path_a_llama_lora
+mkdir -p $OUT_DIR
+
+export HF_TOKEN=$(cat ~/.cache/huggingface/token | tr -d '\n')
+export HUGGING_FACE_HUB_TOKEN="$HF_TOKEN"
+echo "[hf] token len=${#HF_TOKEN}"
+
+# Save HF token via current API (huggingface-cli login)
+mkdir -p ~/.huggingface
+echo -n "$HF_TOKEN" > ~/.huggingface/token 2>/dev/null || true
+
+# Sanity
+echo "[sanity]"
+ls /workspace/sft_data_llama_template.jsonl 2>&1 | head -1
+ls /root/.cache/huggingface/hub/models--meta-llama--Llama-3.2-3B-Instruct/snapshots/ 2>&1 | head -3
+
+cd $WORKSPACE
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTHONUNBUFFERED=1
+
+echo "[launch] training detached"
+nohup python3 -u $WORKSPACE/train_llama_lora.py \
+    --base-model meta-llama/Llama-3.2-3B-Instruct \
+    --data-jsonl $WORKSPACE/sft_data_llama_template.jsonl \
+    --output-dir $OUT_DIR \
+    --lora-r 64 --lora-alpha 64 \
+    --lr 1e-4 \
+    --per-device-batch 4 --grad-accum 8 \
+    --max-steps 10000 \
+    --save-steps 2000 \
+    --seq-len 2048 \
+    --warmup-steps 200 \
+    --logging-steps 10 \
+    --bf16 \
+    --gradient-checkpointing \
+    --push-to-hub dancinlab/p9-llama32-lora-stage1 \
+    > $OUT_DIR/train.log 2>&1 &
+
+TRAIN_PID=$!
+echo "$TRAIN_PID" > $OUT_DIR/train.pid
+echo "[launched] pid=$TRAIN_PID log=$OUT_DIR/train.log"
+disown $TRAIN_PID 2>/dev/null || true
+sleep 5
+echo "[probe-5s]"
+ps -p $TRAIN_PID -o pid,etime,rss,cmd 2>/dev/null || echo "process gone"
+ls -la $OUT_DIR/

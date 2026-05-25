@@ -1,0 +1,117 @@
+{
+  "schema": "hexa_bio_n6_lattice_mapping_v1",
+  "generated_at": "2026-05-04",
+  "n6_invariant_quartet": {
+    "n": 6,
+    "sigma_6": 12,
+    "tau_6": 4,
+    "phi_6": 2,
+    "J2": 24,
+    "sopfr_6": 5,
+    "master_identity": {
+      "formula": "sigma(6)*phi(6) = n*tau(6) = J_2 = 24",
+      "verification": "12*2 = 24, 6*4 = 24, |O|=24"
+    },
+    "definitions": {
+      "sigma_6": "sum of divisors of 6 = 1+2+3+6 = 12",
+      "tau_6": "number of divisors of 6 = 4 (i.e., 1, 2, 3, 6)",
+      "phi_6": "Euler totient of 6 = 2 (i.e., 1, 5 coprime to 6)",
+      "J2": "Hall-Janko sporadic group order? NO — here used as shorthand for octahedral O = |S_4| = 24 (caveat: J_2 in n6 corpus is the n6-invariant 24-element group label, not the Hall-Janko sporadic of order 604800; the dual usage is documented in CANON/papers)"
+    }
+  },
+  "per_verb_lattice_mapping": {
+    "WEAVE": {
+      "sigma_12": {
+        "binding": "12 load-bearing raw-strategies in the composition kernel: raw 72/46/70/91/100/109/110/131/139/71/51/53",
+        "evidence": "CANON/design/kick/2026-04-28_hexa-weave-closure_omega_cycle.json saturation_witness block"
+      },
+      "tau_4": {
+        "binding": "4-axis architecture (Axis A strand-catalogue / Axis B kernel / Axis C thermo-gate / Axis D closure-certifier)",
+        "evidence": "CANON/domains/biology/hexa-weave/hexa-weave.md §4 STRUCT"
+      },
+      "phi_2": {
+        "binding": "hydrophobic vs hydrophilic verdict-bit on each strand position",
+        "evidence": "HP-model NP-completeness (Berger-Leighton 1998)"
+      },
+      "J2_24": {
+        "binding": "Mathieu M_24 / Leech-24 lattice symmetry; cited as ambient symmetry not direct projection",
+        "caveat": "Mathieu M_24 has order 244823040 = 24!/|stabilizer|; the J_2=24 binding is on the orbit cardinality of a chosen 24-block under M_24, not on |M_24| itself"
+      },
+      "match_grade": "STRUCTURAL via raw-strategy count; LOAD-BEARING claim, not topological invariant"
+    },
+    "NANOBOT": {
+      "sigma_12": {
+        "binding": "12-vertex polyhedral DNA-origami skeleton (truncated tetrahedron / icosahedron / cuboctahedron)",
+        "evidence": "Rothemund 2006 DNA-origami; Seeman 1982 immobile junctions; CANON/domains/biology/hexa-nanobot/hexa-nanobot.md §4 Axis A"
+      },
+      "tau_4": {
+        "binding": "4 motor states: idle / forward-stroke / backward-stroke / reset",
+        "evidence": "Drexler 1986 power-stroke quartet; Howard 2001 Mechanics of Motor Proteins"
+      },
+      "phi_2": {
+        "binding": "binary actuator output: open/closed clamp, bound/unbound substrate",
+        "evidence": "Bath-Turberfield 2007 DNA nanomachines"
+      },
+      "J2_24": {
+        "binding": "octahedral rotation group O of order 24 as pose-equivalence quotient; reduces simulation state space 24-fold",
+        "caveat": "many DNA-origami devices are not octahedrally symmetric; the J_2=24 quotient is an idealization for the 12-vertex regular-polyhedral subset"
+      },
+      "match_grade": "STRUCTURAL via polyhedral skeleton; APPROXIMATE — many real devices violate 12-vertex (force-fit risk per F-NB-2-c)"
+    },
+    "RIBOZYME": {
+      "sigma_12": {
+        "binding": "12 conserved catalytic-core nucleotides — STRUCTURAL-APPROXIMATE",
+        "evidence": "hammerhead minimal type-II+III ~13 nt (Symons 1981) / HDV antigenomic ~12 nt (Wu-Lai 1989) / hairpin A-loop+B-loop ~12 conserved (Buzayan 1986)",
+        "corpus_span": "10-30 nt across 7 ribozyme classes (raw 91 C3 honest disclosure)"
+      },
+      "tau_4": {
+        "binding": "4 reaction states: substrate-bound / transition-state / cleaved / product-released",
+        "evidence": "general enzyme kinetics + Eyring TS theory"
+      },
+      "phi_2": {
+        "binding": "binary cleavage outcome: cleaved/intact, cis/trans",
+        "evidence": "phosphodiester chemistry"
+      },
+      "J2_24": {
+        "binding": "trigonal-bipyramidal phosphate transition-state pose-equivalence group; 5-coordinate phosphorus TS pose-classes covered by octahedral order 24 (24 = 5! - some pose subset)",
+        "caveat": "the trigonal-bipyramidal TS has D_3h symmetry (order 12), not octahedral 24; the J_2=24 binding is via the broader octahedral rotation cover, not the TS point group itself",
+        "evidence": "Steitz-Steitz 1993 two-metal-ion mechanism"
+      },
+      "match_grade": "STRUCTURAL-APPROXIMATE per raw 91 C3 (corpus span 10-30 nt; J_2=24 via cover not point group)"
+    },
+    "VIROCAPSID": {
+      "sigma_12": {
+        "binding": "12 pentameric vertices on T=1 icosahedron — STRUCTURAL-EXACT",
+        "evidence": "Caspar-Klug 1962 + Euler V-E+F=2 topological invariant",
+        "audit": "Bayesian posterior 0.9668 RESOLVED on n=34 textbook corpus (Caspar-Klug 1962 + Rossmann-Johnson 1985 + Liljas 1982 + Harrison 1978); log Bayes factor H1/H0 = 3.37 (decisive per Jeffreys 1961); CK-admissible 32/34, vertex==12 in CK subset 32/32",
+        "code": "nexus/sim_bridge/weave/polyhedral_cage_bayesian_audit.py"
+      },
+      "tau_4": {
+        "binding": "4 assembly states: free CP / pentamer / hexamer-mixed / closed cage",
+        "evidence": "Zlotnick 2003 nucleation-elongation; Endres-Zlotnick 2002 master-equation",
+        "code": "nexus/sim_bridge/weave/cage_assembly_simulation.py — Euler + RK4 ODE on 4-state model"
+      },
+      "phi_2": {
+        "binding": "free vs assembled dichotomy; closed/open shell",
+        "evidence": "Caspar-Klug topology + Zlotnick HBV T=3/T=4 dimorphism (1996)"
+      },
+      "J2_24": {
+        "binding": "octahedral O subgroup of icosahedral I (order 60) via 5-inscribed-cube outer action; J_2=24 = |O|",
+        "evidence": "Hessenberg-Cole subgroup-lattice analysis of A_5; the icosahedron contains 5 inscribed cubes acted on by S_5 outer permutation",
+        "caveat": "A_5 has no subgroup of order 24 (orders divide 60: 1,2,3,4,5,6,10,12,15,20,60); O acts on the 5 cubes via outer S_5 not as a literal A_5 subgroup. The J_2=24 binding is via per-cube pose-equivalence quotient |I|/(5*ratio), an indirect realization"
+      },
+      "match_grade": "STRUCTURAL-EXACT for sigma(6)=12 and tau(6)=4; J_2=24 binding is INDIRECT (not literal subgroup)"
+    }
+  },
+  "lattice_integration_summary": {
+    "common_quartet_per_verb": "all 4 verbs project onto the same {sigma(6)=12, tau(6)=4, phi(6)=2, J_2=24} quartet but with different n6_match_grade",
+    "grade_ranking_strongest_to_weakest": [
+      "VIROCAPSID — STRUCTURAL-EXACT (Caspar-Klug topological invariant + Bayesian posterior 0.9668)",
+      "WEAVE — STRUCTURAL via raw-strategy count, load-bearing claim under closure witness",
+      "NANOBOT — STRUCTURAL via polyhedral skeleton; APPROXIMATE — many real devices violate",
+      "RIBOZYME — STRUCTURAL-APPROXIMATE (corpus span 10-30 nt; J_2 via cover not point group)"
+    ],
+    "honest_caveat_per_raw_91_c3": "the n6 lattice is a unifying analytical lens, not a proven physical-causal law; only VIROCAPSID has Bayesian-audit-resolved STRUCTURAL-EXACT evidence; the other 3 are speculative-but-load-bearing structural claims pending Bayesian audit (deadline 2026-09-28 across NANOBOT/RIBOZYME, completed for VIROCAPSID cycle 22)",
+    "falsifier_for_lattice_claim": "F-N6-LATTICE-DECORATIVE — Bayesian model comparison on combined corpus across all 4 verbs (n>=120) shows H0 (random cardinalities) cannot be rejected at log-Bayes-factor >= 3 in 3 of 4 verbs would invalidate the unifying-lens claim and reduce n6 to a coincidence-on-VIROCAPSID-only"
+  }
+}

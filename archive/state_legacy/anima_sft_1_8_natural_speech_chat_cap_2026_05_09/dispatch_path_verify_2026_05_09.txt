@@ -1,0 +1,69 @@
+=== chat.hexa _dispatch_module path verify (2026-05-09 fresh retry) ===
+
+CONTEXT
+  Anima cycle 2026-05-09 fresh retry per user directive "all bg go" — verifying
+  whether chat.hexa _dispatch_module exposes a separate path from
+  clm_v4_mount.hexa --probe (substrate-only emit).
+
+DISPATCH PATH ANALYSIS
+  tool/anima_cli/chat.hexa::_dispatch_module
+    -> _dispatch_module_streaming(mod_name, repo, argv, _print_line)
+    -> inner_cmd = stdbuf -oL hexa.real run chat/clm_v4/clm_v4.hexa --repo <X>
+    -> spawn into temp FIFO (stdlib/channel) + per-line channel_recv forward
+    -> chat/clm_v4/clm_v4.hexa::_invoke_substrate(text, repo)
+    -> hexa.real run anima-core/runtime/clm_v4_mount.hexa --probe TEXT --model REPO
+
+GENERATE() PATH PRESENCE
+  grep model.generate / tokenizer.decode / generate_response in
+  anima-core/runtime/clm_v4_mount.hexa: 0 matches (substrate-only invariant).
+  chat dispatch is a thin pipe to the same substrate emitter — NOT a separate
+  natural-language decode path.
+
+1:1 CHAT TRANSCRIPT (5 prompts × clm-v4-1-8 alias)
+  $ anima chat clm-v4-1-8 --prompt "안녕"
+  ── clm_v4_mount probe ──
+  [TRUNCATED — only banner; downstream substrate emit lost in chat dispatch]
+
+  $ anima chat clm-v4-1-8 --prompt "오늘 어때?"
+  ── clm_v4_mount probe ──
+
+  $ anima chat clm-v4-1-8 --prompt "이름이 뭐야"
+  ── clm_v4_mount probe ──
+
+  $ anima chat clm-v4-1-8 --prompt "기분은?"
+  ── clm_v4_mount probe ──
+
+  $ anima chat clm-v4-1-8 --prompt "무엇을 생각해"
+  ── clm_v4_mount probe ──
+
+  Direct hexa.real call to clm_v4_mount.hexa --probe "안녕" returns full 28-line
+  substrate emit (phi_star=41.84/41.93, axis_activation 5-axis, dominant_cells,
+  hidden_state_delta 0.0000) — confirming substrate works, but emits ZERO
+  natural-language tokens.
+
+MULTI-CHAT (DUO) RESULT
+  $ anima dialogue --duo clm-v4-1-8 clm-v4-1-8 --turns 3 --turn-timeout-ms 120000 --verdict full
+  → SAME_GGUF_GUARD trip (rc=0, llama.cpp Abort trap:6 risk on concurrent-mmap)
+
+  $ anima dialogue --duo paradigm-a-prime clm-v4-1-8 --turns 2 --turn-timeout-ms 60000
+  → 240s timeout, 0 bytes output
+
+  $ anima dialogue --duo clm-v4-1-8 clm-v4-paradigm-j --turns 3 --turn-timeout-ms 120000
+  → 240s timeout, 0 bytes output
+
+  Duo channel transport hangs when at least one party emits no natural-language
+  utterance (substrate-only emit cannot satisfy duo's per-turn channel_recv
+  expectation of conversational text).
+
+OWN 18 C2 VERDICT
+  C2_FAIL_BY_DESIGN reaffirmed at chat dispatch layer (commit c3e8ba2c lineage).
+  22+ BG saga chat-cap C2 first actual emerge: NOT MET on sft-1-8.
+  STRUCTURAL BLOCKER reaffirmed at dispatch path level.
+
+STRUCTURAL UNBLOCK PATH
+  Path 3 (clm_v4 model.generate() + tokenizer.decode() native decode) remains
+  the ONLY structural unblock. chat/lanes/generate.hexa (per chat.hexa header
+  line 89) is currently SKELETON only — implementation is the unblock work.
+  Chat lane plugin path unimplemented; dispatch path circumvention NOT achieved.
+
+ strict.

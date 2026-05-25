@@ -1,0 +1,34 @@
+// examples/02_cli_chat.hexa — Quick start #2: single-turn CLI chat.
+//
+// Demonstrates the `run --cli` entry: starts the agent in CLI channel
+// mode. In a live setup, this opens an interactive prompt; in this
+// example we boot it briefly to verify the channel scaffold loads.
+//
+// Run:
+//   hexa run examples/02_cli_chat.hexa
+//
+// Expected (no live backend): echoes the SCAFFOLD signal — the CLI
+// channel module loads, prints its banner, and exits with the missing-
+// backend hint. With $ANIMA_ROOT set, it would proceed to interactive
+// mode.
+
+fn shq(s: str) -> str {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn main() {
+    let root = env("ANIMA_AGENT_ROOT")
+    let mut r = root
+    if r.len() == 0 { r = "/Users/ghost/core/anima-agent" }
+    let cli = r + "/cli/anima-agent.hexa"
+    println("=== anima-agent quick start #2: CLI chat scaffold ===")
+    println("(boots CLI channel; without $ANIMA_ROOT this prints scaffold-only diagnostics)")
+    println("")
+    // We deliberately call `status` here rather than `run` to avoid
+    // entering an interactive loop in an example. To get the real CLI
+    // chat, drop the --status and run: anima-agent run --cli
+    let out = exec("hexa run " + shq(cli) + " status 2>&1")
+    println(out)
+    println("")
+    println("Next step (interactive):  anima-agent run --cli")
+}

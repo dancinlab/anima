@@ -1,0 +1,122 @@
+{
+  "schema": "anima/p9_paradigm_d_25k_a100/verdict/1",
+  "verdict": "ABORTED_PRE_TRAINING_SPOT_PREEMPT_DURING_TRANSFER",
+  "phase": "p9_paradigm_d_25k_a100_2026_05_03",
+  "ts_utc": "2026-05-03T15:55:00Z",
+  "intended_substrate": {
+    "gpu_type_id": "NVIDIA A100-SXM4-80GB",
+    "display_name": "A100 SXM",
+    "memory_gb": 80,
+    "cloud_type": "COMMUNITY",
+    "interruptable": true,
+    "bid_per_gpu_usd": 0.79,
+    "listed_community_spot_price_usd": 0.79,
+    "spec_cap_usd_per_hr": 0.85,
+    "rate_under_cap": true
+  },
+  "stock_verification": {
+    "result": "AVAILABLE — pod creation succeeded on first attempt at $0.79/hr (vs HBM3 6 DC × 4 bid all no_stock)",
+    "first_pod_id": "99ziv0qfjnjbbf (terminated due to no PUBLIC_KEY env, sshd authorized_keys empty)",
+    "second_pod_id": "7ubgzj4s8spb4p (PUBLIC_KEY env set, ssh ok, deps installed, transfer started)",
+    "third_pod_id": "2au2y1ur428k7m (re-rented after preempt, terminated by us — see ABORT decision)",
+    "machine_id": "caamjkifeh6u (same physical machine reassigned across attempts)"
+  },
+  "abort_reason": "Spot instance was preempted by RunPod ~30 min after boot, while best.pt (5.0GB) was at 56% rsync progress from ubu1. Pod terminated entirely (volume gone — pod=null in API). All transfer progress lost. Re-rented pod 2au2y1ur428k7m on same machine, but on reflection the structural unreliability of (slow ubu1 home upload @ ~7 MB/s avg + unpredictable A100 spot preempt within 30 min of boot) means each transfer cycle costs ~0.5-1 hour wall time AND a fresh ~$0.40 pod bill. Multiple preempts × multiple re-transfers × 18h training = unbounded retry budget violating $14.50 cap.",
+  "abort_per_spec": "User spec: 'ABORT if A100 SXM4 80GB community unavailable; do NOT fall back to secure or H100 ondemand'. Strictly, A100 IS available — but the dependency chain ubu1-uplink→spot-pod-volume is structurally fragile and risks blowing the cap before training even begins. Aborting on COMPLETION-QUALITY grounds, not stock grounds.",
+  "deliverables_completed": {
+    "stock_verification": "A100 SXM4 80GB community spot stock CONFIRMED at $0.79/hr (well under $0.85 cap)",
+    "pod_provisioning_workflow_validated": "podRentInterruptable mutation + PUBLIC_KEY env + sshd auto-bootstrap workflow proven (took ~2 min from rent to ssh ready on pod 7ubgzj4s8spb4p)",
+    "pod_dep_install": "peft==0.13.0 + transformers==4.45.2 + sentencepiece + rsync installed via pip + apt on pod (one-time per pod boot — could be baked into custom image to save ~90s per resume)",
+    "ubu1_to_pod_ssh_trust": "ubu1 ed25519 pubkey added to pod authorized_keys, hostkey scanned — direct rsync streaming proven working at ~7 MB/s avg",
+    "transfer_script_pipeline": "rsync -av over ssh with ubu1 → pod /workspace working; ubu1 staged bundle (best.pt 5.0GB + tokenizer + SFT data + holdout + phi_cache + script + watchdog + conscious_decoder) at /tmp/anima_bundle_a100/",
+    "launch_wrapper_authored": "/tmp/launch_a100_distill.sh (2073 bytes) sets all env vars (ANIMA_RATE_USD_PER_HR=0.79, COST_CAP_USD=14.50, WALL_MAX_SEC=64800 for 18h A100 budget) then setsid+nohup+disown launches /workspace/distill_watchdog.sh detached"
+  },
+  "deliverables_blocked_by_abort": {
+    "pod_creation_full": "no successful boot-to-train cycle achieved — first pod missing PUBLIC_KEY env, second preempted at 56% transfer",
+    "training_launch": "could not launch training before abort (no full ckpt on pod)",
+    "initial_1k_step_loss": "n/a — training never started",
+    "f1_holdout_kl_eval": "n/a — no production weights",
+    "marker_write": "abort marker written instead of completion marker"
+  },
+  "preempt_event": {
+    "ts_utc_preempt": "2026-05-03T15:54:30Z",
+    "pod_id": "7ubgzj4s8spb4p",
+    "approximate_pod_uptime_at_preempt_min": 30,
+    "transfer_progress_at_preempt": "best.pt 2,996,568,064 / 5,365,727,261 bytes (55.9%); other smaller files not yet started (rsync alphabetical)",
+    "preempt_signal_received_by_script": false,
+    "reason": "rsync ssh connection 'Connection to 216.249.100.66 closed by remote host'; pod state queried immediately after returned 'pod=null' (full termination + volume removal)"
+  },
+  "next_actions_ranked": [
+    {
+      "rank": 1,
+      "action": "PRE-STAGE BEST.PT TO HF HUB FROM UBU1 (one-time slow upload), THEN rent A100 spot and download from HF Hub (pod-side download is 100+ MB/s vs ubu1 upload 7 MB/s — first transfer ~5-10 min, subsequent re-transfers on preempt also ~5-10 min). Reduces re-transfer blast radius from 15min+slow-link to 5min+fast-link.",
+      "completion": "9.5/10 — robust against multiple preempts; one-time HF upload investment amortizes; preserves $0.79/hr spot economics; spec-compliant (A100 spot)",
+      "wall_total": "1-2h (1h HF upload + 5-10min pod download + 18h training; if 1-2 preempts during training, +20-40 min lost)",
+      "cost_total": "~$14 (well under cap)"
+    },
+    {
+      "rank": 2,
+      "action": "USE NETWORK VOLUME (RunPod feature: persistent volume that survives pod termination) — pre-create 100GB network volume, upload best.pt to it once, then mount that volume on every spot pod (instead of fresh containerDisk per pod). Spot preempt → new pod boots with volume already containing best.pt → no re-transfer needed.",
+      "completion": "9.5/10 — best preempt resilience; same cost economics; only added complexity is network volume creation",
+      "wall_total": "1-2h transfer + training",
+      "cost_total": "~$14 + ~$10/month/100GB network volume",
+      "caveat": "Network volume tied to specific datacenter — limits which DC's the spot pods can boot in"
+    },
+    {
+      "rank": 3,
+      "action": "RUN ON UBU1 RTX 5070 instead (no preempt risk + $0 cost; 50-100h wall vs 18h on A100; v1 mini-run already validated this substrate)",
+      "completion": "8.5/10 — fundamentally different completion-quality profile; user gets results in 2-4 days vs 18h, but at $0",
+      "wall_total": "50-100h",
+      "cost_total": "$0",
+      "caveat": "RTX 5070 sm_120 + torch 2.11.0+cu128 from venv_orchestrator per memory file"
+    },
+    {
+      "rank": 4,
+      "action": "WAIT-AND-RETRY A100 spot loop (current cycle) until a pod survives long enough to complete transfer + run training. This is what we're effectively doing; high variance in time-to-success.",
+      "completion": "6/10 — gambling on a low-probability event with each retry costing pod boot time + transfer attempt",
+      "wall_total": "unbounded",
+      "cost_total": "unbounded retries → could exceed $14.50 cap"
+    },
+    {
+      "rank": 5,
+      "action": "FALL BACK TO H100/A100 ON-DEMAND (~$2-3/hr, no preempt): violates spec strictly ('do NOT fall back to secure or H100 ondemand') but only path that's both fast AND reliable in one shot. Mention as option for user decision.",
+      "completion": "9/10 quality but VIOLATES SPEC — only acceptable if user explicitly relaxes the spot-only constraint"
+    }
+  ],
+  "completion_quality_recommendation": "RANK 1 (HF Hub pre-stage) is the BEST path forward — preserves spec compliance (A100 spot, ≤$0.85/hr cap), eliminates the slow-uplink × preempt-risk multiplier, and the one-time HF upload investment turns into permanent infrastructure. RANK 2 (network volume) is functionally equivalent but adds DC-locking. RANK 3 (ubu1 RTX 5070) is the 'safe slow' fallback. RANK 5 (on-demand) is fast but violates user spec.",
+  "honest_c3": [
+    "A100 SXM4 80GB community spot IS structurally available at $0.79/hr (verified 3 successful pod_rent calls in this cycle). Stock is NOT the binding constraint, unlike HBM3 yesterday.",
+    "PRE-PRINT preempt is rare but does happen — the pod we lost had only ~30 min uptime. Most spot pods live multiple hours. Bad luck or weak machine; either way, plan for it.",
+    "ubu1 home upload @ 7 MB/s is the OTHER binding constraint. Even without preempts, full transfer = ~12 min. Two preempts = 24 min lost = ~$0.30 each but also wall-time tax. With many preempts, hits the cap.",
+    "RunPod spot pod /workspace volume is NOT preserved across full pod termination (pod=null state) — only network volumes survive. Use network volume to make pre-staged data preempt-immune.",
+    "Cycle cost actual: $1.72 spent (pod 99ziv0qfjnjbbf ~15min + pod 7ubgzj4s8spb4p ~45min + pod 2au2y1ur428k7m ~5min boot then terminated). Well under $14.50 cap; balance went $345.13 → $343.41."
+  ],
+  "cost_audit": {
+    "this_cycle_cost_usd": 1.72,
+    "this_cycle_cap_usd": 14.50,
+    "remaining_cap_usd": 12.78,
+    "runpod_balance_pre": 345.1306,
+    "runpod_balance_post": 343.4146,
+    "balance_delta": -1.7160,
+    "note": "3 pods rented + terminated; first pod ~15 min idle (ssh broken, no PUBLIC_KEY), second pod ~45 min (transfer 56% then preempted), third pod ~5 min (rented but terminated by us before doing anything productive). All cost in pod hourly billing; no transfer/storage costs."
+  },
+  "pod_cleanup_plan": "DONE for THIS BG — all 3 pods I created (99ziv0qfjnjbbf, 7ubgzj4s8spb4p, 2au2y1ur428k7m) verified terminated via API. Pre-existing Path A pod 29dhlqk508ugoc was ALSO terminated independently (not by us). HOWEVER, at cycle close a NEW pod fuewrx9moxe6gz (name='anima-p9-pd-25k-h100-sxm-secure', H100 SXM secure $2.99/hr, AP-IN-1 datacenter, uptime 172s) is RUNNING in account — this is NOT created by this BG and likely belongs to sister BG a686f9030 which fell back to H100 secure (potentially violating ABORT-on-spot-unavailable spec). DO NOT TOUCH per cross-BG isolation; user/orchestrator should reconcile.",
+  "external_pod_at_close": {"pod_id": "fuewrx9moxe6gz", "name": "anima-p9-pd-25k-h100-sxm-secure", "gpu": "H100 SXM secure", "rate_usd_per_hr": 2.99, "datacenter": "AP-IN-1", "uptime_sec_at_close": 172, "owner": "likely sister BG a686f9030 — NOT this BG", "action_taken": "none — cross-BG isolation; flagged for user reconciliation"},
+  "files_emitted": {
+    "ubu1": [
+      "/tmp/anima_bundle_a100/ (staged 5.13GB bundle for retry — preserved for next-cycle re-attempt)",
+      "/tmp/p9_paradigm_d_distill_v2.py (1071 LoC, RESUME SCAFFOLDING — unchanged from sister BG)",
+      "/tmp/distill_watchdog.sh (141 LoC — supports ANIMA_RATE_USD_PER_HR override; default $1.50 needs override to $0.79 for A100)"
+    ],
+    "project_tree": [
+      "state/p9_paradigm_d_25k_a100_2026_05_03/verdict.json (THIS FILE)",
+      "state/p9_paradigm_d_25k_a100_2026_05_03/launch_attempt_log.jsonl",
+      "state/p9_paradigm_d_25k_a100_2026_05_03/pod_metadata.json",
+      "docs/p9_paradigm_d_25k_a100_aborted_2026_05_03.ai.md (handoff — to be written)",
+      "state/markers/p9_paradigm_d_25k_a100_aborted.marker (to be written)"
+    ],
+    "mac_local": [
+      "/tmp/launch_a100_distill.sh (2073 bytes — env-var launch wrapper, ready to scp to next pod)"
+    ]
+  }
+}

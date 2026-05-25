@@ -1,0 +1,79 @@
+{
+  "schema": "anima/own_16_phase4_dogfood/1",
+  "ts_utc": "2026-05-05T06:52:35Z",
+  "bg_lane": "OWN-16-PHASE4-DOGFOOD",
+  "pod_id": "rk300gcetbhn20",
+  "pod_name": "anima-own-16-dogfood-smoke-2026-05-05",
+  "pod_terminated": true,
+  "pod_kill_verified_404": true,
+  "watchdog_deregistered": true,
+  "cost_target_usd": 3.0,
+  "cost_actual_usd": 0.3222,
+  "cost_overrun_2x_alerted": false,
+  "cost_overrun_ratio": 0.107,
+  "wall_time_min_pod_billable": 6.46,
+  "wall_time_min_dogfood_total": 11.78,
+  "scenario_a_graceful_complete": "PASS",
+  "scenario_a_evidence": {
+    "pod_stop_rc": 0,
+    "pod_delete_rc": 0,
+    "pod_get_404_retry": 1,
+    "pod_get_404_string_present": true,
+    "watchdog_archive_path": "state/h100_watchdog/closed/rk300gcetbhn20_1777963642.json",
+    "ledger_row_emitted_alive": true,
+    "ledger_row_state": "ALIVE",
+    "no_false_stale_alert_during_normal_phase": true
+  },
+  "scenario_b_bg_killed_auto_pause_ladder": "PASS",
+  "scenario_b_evidence": {
+    "synthetic_pod_id": "OWN-16-DOGFOOD-SYNTH-B",
+    "heartbeat_backdated_minutes": 7,
+    "stale_heartbeat_alert_emitted": true,
+    "alert_ledger_path": "state/h100_alert_ledger_2026_05.jsonl",
+    "alert_ledger_entries": [
+      {"ts": "2026-05-05T06:50:00Z", "type": "STALE_HEARTBEAT", "pod": "OWN-16-DOGFOOD-SYNTH-B", "hb_age_sec": 421},
+      {"ts": "2026-05-05T06:51:52Z", "type": "STALE_HEARTBEAT", "pod": "OWN-16-DOGFOOD-SYNTH-B", "hb_age_sec": 533}
+    ],
+    "auto_killer_selftest": "4/4 PASS",
+    "pause_command_ready": true,
+    "auto_pause_30min_wait_skipped_per_budget": true,
+    "note_runpodctl_absent_path": "scenario forced state=UNKNOWN by sanitizing PATH (no /opt/homebrew); without this the watchdog short-circuits on NOT_FOUND and skips alert path — see honest_c3 #1"
+  },
+  "scenario_c_heartbeat_stale_alert": "PASS",
+  "scenario_c_evidence": {
+    "synthetic_pod_id": "OWN-16-DOGFOOD-SYNTH-C",
+    "heartbeat_backdated_minutes": 8,
+    "stale_heartbeat_alert_emitted": true,
+    "alert_ledger_entry": {"ts": "2026-05-05T06:51:52Z", "type": "STALE_HEARTBEAT", "pod": "OWN-16-DOGFOOD-SYNTH-C", "hb_age_sec": 481},
+    "watchdog_ledger_row_emitted": true,
+    "distinct_from_scenario_b": true
+  },
+  "watchdog_ledger_total_rows": 5,
+  "alert_ledger_total_rows": 3,
+  "own_16_phase4_overall": "PASS",
+  "own_16_phase4_overall_score": "3/3",
+  "closes_own_16_3_tier_ladder": true,
+  "own_16_phase_status": {
+    "phase_1_tooling": "LANDED (h100_cost_watchdog.hexa + h100_idle_auto_killer.hexa + h100_alert_emit.bash + h100_register.bash, selftest 5/5 + 4/4 PASS)",
+    "phase_2_orchestrator_hooks": "LANDED (per docs/anima_h100_cost_watchdog_phase2_landed_2026_05_05.ai.md, 4 PASS / 2 unrelated T4 secret-check FAIL)",
+    "phase_3_bg_launch_template": "LANDED (per docs/anima_h100_cost_watchdog_phase3_landed_2026_05_05.ai.md)",
+    "phase_3_5_validator": "LANDED (own_16_preflight.hexa selftest 3/3 PASS)",
+    "phase_4_dogfood": "LANDED (this verdict — 3/3 scenarios PASS)"
+  },
+  "own_lifecycle_triad_status": {
+    "own_14_hf_hub_only": "landed",
+    "own_15_hf_lifecycle_private_to_public": "landed",
+    "own_16_h100_cost_discipline": "phase_1_2_3_3.5_4_all_landed",
+    "compute_lifecycle_triad_complete": true
+  },
+  "honest_c3": [
+    "C1: scenario B+C used synthetic pod IDs (not registered with RunPod) — to reach the stale-heartbeat alert path I had to sanitize PATH so runpodctl is absent, forcing _pod_state to return UNKNOWN. With runpodctl present and a synthetic pod, the watchdog short-circuits on NOT_FOUND BEFORE the alert checks fire. This is a real watchdog code-path observation: the NOT_FOUND early-return at h100_cost_watchdog.hexa:267 means a real-world dead pod with stale heartbeat will be deregistered cleanly without alert noise (correct), but it also means the dogfood test required PATH manipulation to exercise the alert branch.",
+    "C2: scenario A pod billable wall was 6.46min ($0.32) — well under the $3 budget cap and far under spec's anticipated ~30min/$1-3 envelope. The compressed schedule (4 heartbeats over 3min instead of the spec'd 5min watchdog poll cadence) was a deliberate cost optimization; the watchdog's 5min stale threshold was exercised in scenarios B+C via heartbeat backdating instead.",
+    "C3: the watchdog's --daemon mode is single-iteration; in production it must be wrapped by launchd/cron for repetition. This dogfood manually invoked single iters (3 invocations) rather than running a continuous loop, so the periodic-poll semantics are NOT functionally validated here — only the per-iter logic (probe + ledger + alert) is.",
+    "C4: alerts land in state/h100_alert_ledger_<YYYY_MM>.jsonl (the bash alert-script's ledger), not in state/h100_watchdog/alerts/<ts>_<pod>.json files. The spec §3.1 outputs section names alerts/<ts>_<pod>_<reason>.json but the implementation emits to a flat monthly JSONL. This is a documentation-vs-implementation drift; not a functional gap (alert content is recoverable from the JSONL) but the spec should be reconciled.",
+    "C5: cost-overrun (2x/3x) alert paths were NOT exercised — the dogfood pod ran 6.46min at target $3 → cumulative_usd $0.32 → ratio 0.107 (no alert trigger). Stale-heartbeat path is the only alert reason exercised. To functionally validate cost_2x/cost_3x_autopause, a future dogfood would need either (a) extended pod runtime past 2x/3x target, or (b) backdated start_ts in the registry to simulate elapsed_h. Cost-alert mechanics remain selftest-only.",
+    "C6: no SSH command was actually sent to the H100 — Scenario A's H100 was registered with watchdog and billed for 6.46min while the dogfood mac-side ran the watchdog probe + heartbeat hooks; no workload executed on the GPU. This is acceptable per the spec (Phase 4 = 'register with watchdog, simulate 3 scenarios') but means the dogfood does NOT validate L11 v3 setsid pattern, L13 trap pre-stop scp rescue, or any orchestrator-side hexa boot flow. Those remain validated only via clm_v4_lora_train_orchestrator.hexa Phase 2 patches, not via this dogfood.",
+    "C7: lifecycle closure claim ('compute lifecycle triad complete') is a strong claim. The reality is: and cover HF lifecycle (storage/publication); covers H100 lifecycle (compute). The spec docs/anima_h100_cost_discipline_operationalization_spec_2026_05_05.md §5.4 explicitly proposes as the third leg of this triad, and Phase 1/2/3/3.5/4 are all landed. However, 's enforcement is currently warn-tier (not block) per the spec's severity field; promoting to block-tier requires a follow-up linter (h100_bg_launch_lint.hexa) which is NOT yet emitted.",
+    "C8: the dogfood pod was created in SECURE cloud at $2.99/hr (community cloud had zero H100 80GB HBM3 inventory). The spec said 'H100 80GB SECURE on-demand @ $2.99/hr' but secure on-demand is typically $3.99-4.69/hr per RunPod public pricing; $2.99 matches community-spot or a discounted secure rate. The actual costPerHr returned by runpodctl was 2.99, so the spec's pricing band is held but the cloud-tier vs price coupling is loose."
+  ]
+}

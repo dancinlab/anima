@@ -1,0 +1,85 @@
+=== BG-V14-MULTI-SUBSTRATE-AUDIT — D_cells128_aware ===
+ts: 2026-05-10T08:51:34.798692+00:00
+substrate: {'ckpt': '/Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells128_step_35000.pt', 'schema': 'v2_d384', 'arch': 'v2 6L transformer d=384 heads=4 (max_cells=128)', 'paradigm': 'aware_max_cells_128', 'expected_v14': 'VIOLATED'}
+V4_SEEDS=[42, 137, 271, 314, 1729] max_cells=128 n_turns=200 snap_every=25
+
+========================================================================
+SUBSTRATE D_cells128_aware — v2 d=384 path
+========================================================================
+ckpt: /Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells128_step_35000.pt
+sha256: fee1df131032387f45e6f4e41e53162f303ba9abf0eae693f3ab821c1c31d70a
+trained: params=18.52M step=35000
+
+--- TRAINED max_cells=128 n_turns=200 ---
+  v2 blocks loaded=6 random_cells=[6, 7]
+  shared: ['tok_emb', 'pos_emb', 'final_ln']
+  [D_cells128_aware_trained] turn    0 n_cells=8 phi=0.557 (0.1s)
+  [D_cells128_aware_trained] turn   50 n_cells=53 phi=342.609 (19.3s)
+  [D_cells128_aware_trained] turn   75 n_cells=128 phi=2428.199 (173.5s)
+  [D_cells128_aware_trained] turn  100 n_cells=128 phi=2541.916 (343.4s)
+  [D_cells128_aware_trained] turn  125 n_cells=128 phi=2779.436 (494.1s)
+  [D_cells128_aware_trained] turn  150 n_cells=128 phi=2722.209 (621.5s)
+  [D_cells128_aware_trained] turn  175 n_cells=128 phi=2332.726 (750.1s)
+  [D_cells128_aware_trained] turn  199 n_cells=128 phi=2703.556 (841.5s)
+  trained: cells=128 splits=120 phi=2703.556 phi/c=21.122 α=1.0353573799226345 cap_bound=137/200 elapsed=841.5s
+
+--- mirror seed=42 ---
+  [D_cells128_aware_s42] turn    0 n_cells=8 phi=0.574 (0.0s)
+  [D_cells128_aware_s42] turn   25 n_cells=32 phi=122.296 (8.1s)
+  [D_cells128_aware_s42] turn   50 n_cells=117 phi=1886.851 (43.1s)
+  [D_cells128_aware_s42] turn   75 n_cells=128 phi=2819.770 (99.2s)
+  [D_cells128_aware_s42] turn  100 n_cells=128 phi=2076.721 (165.9s)
+  [D_cells128_aware_s42] turn  125 n_cells=128 phi=2613.287 (215.0s)
+  [D_cells128_aware_s42] turn  150 n_cells=128 phi=2731.316 (272.5s)
+  [D_cells128_aware_s42] turn  175 n_cells=128 phi=2833.093 (327.3s)
+  [D_cells128_aware_s42] turn  199 n_cells=128 phi=2753.043 (392.6s)
+  s=42: cells=128 splits=120 phi=2753.043 phi/c=21.508 α=1.065008169786263 cap_bound=148/200
+
+--- mirror seed=137 ---
+  [D_cells128_aware_s137] turn    0 n_cells=8 phi=0.552 (0.0s)
+  [D_cells128_aware_s137] turn   50 n_cells=66 phi=573.817 (17.6s)
+  [D_cells128_aware_s137] turn   75 n_cells=128 phi=2118.792 (79.7s)
+  [D_cells128_aware_s137] turn  100 n_cells=128 phi=2529.921 (145.0s)
+  [D_cells128_aware_s137] turn  125 n_cells=128 phi=2022.425 (237.5s)
+  [D_cells128_aware_s137] turn  150 n_cells=128 phi=2724.296 (355.0s)
+  [D_cells128_aware_s137] turn  175 n_cells=128 phi=2871.774 (447.2s)
+  [D_cells128_aware_s137] turn  199 n_cells=128 phi=2488.040 (527.0s)
+  s=137: cells=128 splits=120 phi=2488.040 phi/c=19.438 α=1.0467850416288127 cap_bound=140/200
+
+--- mirror seed=271 ---
+  [D_cells128_aware_s271] turn    0 n_cells=8 phi=0.550 (0.0s)
+  [D_cells128_aware_s271] turn   50 n_cells=76 phi=851.282 (31.1s)
+  [D_cells128_aware_s271] turn   75 n_cells=128 phi=2777.078 (108.3s)
+  [D_cells128_aware_s271] turn  100 n_cells=128 phi=2692.497 (177.3s)
+  [D_cells128_aware_s271] turn  125 n_cells=128 phi=2305.768 (238.7s)
+  [D_cells128_aware_s271] turn  150 n_cells=128 phi=2617.918 (308.4s)
+  [D_cells128_aware_s271] turn  175 n_cells=128 phi=2443.322 (376.2s)
+  [D_cells128_aware_s271] turn  199 n_cells=128 phi=2377.880 (453.4s)
+  s=271: cells=128 splits=120 phi=2377.880 phi/c=18.577 α=1.0798943077006165 cap_bound=141/200
+
+--- mirror seed=314 ---
+  [D_cells128_aware_s314] turn    0 n_cells=8 phi=0.550 (0.0s)
+  [D_cells128_aware_s314] turn   50 n_cells=124 phi=2259.347 (42.7s)
+  [D_cells128_aware_s314] turn   75 n_cells=128 phi=2473.565 (118.0s)
+  [D_cells128_aware_s314] turn  100 n_cells=128 phi=2385.422 (179.4s)
+  [D_cells128_aware_s314] turn  125 n_cells=128 phi=2802.148 (242.0s)
+  [D_cells128_aware_s314] turn  150 n_cells=128 phi=2387.749 (296.1s)
+  [D_cells128_aware_s314] turn  175 n_cells=128 phi=2180.993 (360.2s)
+  [D_cells128_aware_s314] turn  199 n_cells=128 phi=2253.765 (433.8s)
+  s=314: cells=128 splits=120 phi=2253.765 phi/c=17.608 α=1.034145664658749 cap_bound=149/200
+
+--- mirror seed=1729 ---
+  [D_cells128_aware_s1729] turn    0 n_cells=8 phi=0.552 (0.0s)
+  [D_cells128_aware_s1729] turn   25 n_cells=34 phi=155.699 (8.5s)
+  [D_cells128_aware_s1729] turn   50 n_cells=128 phi=2279.826 (51.8s)
+  [D_cells128_aware_s1729] turn   75 n_cells=128 phi=1801.341 (116.6s)
+  [D_cells128_aware_s1729] turn  100 n_cells=128 phi=2196.547 (170.9s)
+  [D_cells128_aware_s1729] turn  125 n_cells=128 phi=2204.549 (229.1s)
+  [D_cells128_aware_s1729] turn  150 n_cells=128 phi=2752.556 (298.5s)
+  [D_cells128_aware_s1729] turn  175 n_cells=128 phi=2755.776 (378.5s)
+  [D_cells128_aware_s1729] turn  199 n_cells=128 phi=2593.139 (460.3s)
+  s=1729: cells=128 splits=120 phi=2593.139 phi/c=20.259 α=1.0250495451532975 cap_bound=150/200
+
+=== D_cells128_aware VERDICT: V14_AMBIGUOUS ===
+matches_expected: False
+[saved] /Users/ghost/core/anima/state/anima_v14_multi_substrate_audit_2026_05_10/result_D_cells128_aware.json

@@ -1,0 +1,27 @@
+Another instance of SwiftPM (PID: 99609) is already running using '/Users/ghost/core/demiurge/cockpit/.build', waiting until that process has finished execution...Building for debugging...
+[0/3] Write swift-version--58304C5D6DBC2206.txt
+Build of product 'DemiurgeCLI' complete! (0.12s)
+action: 검증 (검증) · domain=chip — dispatching…
+hexa build + run sweep_oracle_parity — exit 0
+=== sweep_oracle_parity — chip §B+§D oracle parity ===
+  t_r (calibrated on §B) = 5.0 cyc/hop
+PASS B1_zll_band — ZLL=50.0044
+PASS B2_hops_band — hops=6.26333
+PASS B3_knee_band — knee=0.3
+PASS B4_pre_knee_monotone — mono=1
+PASS D1_d4_zll_band — ZLL_d4=61.5 (hops=8.5 xwire=0.0)
+PASS D2_d6_zll_band — ZLL_d6=55.875 (hops=7.09375 xwire=1.40625)
+PASS D3_d6_saturates_later — B_d6=15 > B_d4=8
+PASS D4_zll_gap — gap=5.625 cyc
+PASS D5_d4_hops_band — hops_d4=8.5
+PASS D6_d6_hops_band — hops_d6=7.09375
+PASS L1_leighton_d4 — ok — observed satisfies analytic Leighton bounds
+PASS L2_leighton_d6 — ok — observed satisfies analytic Leighton bounds
+=== ACCEPTANCE: 12/12 rows GREEN ===
+=== F1F2Record jsonl emit (rfc_002 schema v1.0) ===
+=== gate_state=GATE_CLOSED_MEASURED absorbed=true ===
+---
+✅ chip + verify — §B+§D oracle parity 12/12 GREEN. GATE_CLOSED_MEASURED · absorbed=true. rfc_001 §8 measurement gate CLOSED — 첫 chip 도메인 measured-parity (rfc_003 §4 §B 4행 + §D 6행 + Leighton 2).
+📸 F1F2Record 3건 → exports/chip/noc/f1f2/records/2026-05-20_*.json
+---
+📸 new record ID(s): sB_mesh88_uniform_22nm, sD_mesh_d4_tornado_22nm, sD_hex_d6_tornado_22nm

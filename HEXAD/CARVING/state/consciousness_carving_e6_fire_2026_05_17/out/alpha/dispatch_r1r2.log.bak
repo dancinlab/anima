@@ -1,0 +1,85 @@
+=== UBM-E6 re-fire path=alpha offer_rank=1 ===
+Sun May 17 09:18:55 UTC 2026
+[alpha 1/9] selecting A100 offer (rank 1)...
+A100 PCIE $0.760/hr
+[alpha] offer=[alpha] ERROR SSH not ready
+[alpha cleanup] destroying 36928485
+destroying instance 36928485.
+dispatch.sh: line 65: 77251 Terminated: 15          ( local PARENT_PID=$$; for _ in $(seq 1 $WATCHDOG_MIN);
+do
+    sleep 60; if ! kill -0 $PARENT_PID 2> /dev/null; then
+        $VASTAI destroy instance "$IID" >> "$PDIR/watchdog.log" 2>&1; exit 0;
+    fi;
+done; echo "[watchdog] cap hit, destroying $IID" >> "$PDIR/watchdog.log"; $VASTAI destroy instance "$IID" >> "$PDIR/watchdog.log" 2>&1 )
+y again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh2.vast.ai]:18864' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh2.vast.ai]:18864' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[alpha 5/9] verify...
+Warning: Permanently added '[ssh2.vast.ai]:18864' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+2.5.1+cu121 True NVIDIA A100-PCIE-40GB
+ee3909b336f35a6df91344357bb98ed6d1c9ea9449c15ca24f14e7409bf024ee  corpus_carving.jsonl
+[alpha 6/9] sanity...
+Warning: Permanently added '[ssh2.vast.ai]:18864' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+[alpha 7/9] MAIN fire 2000 steps...
+Warning: Permanently added '[ssh2.vast.ai]:18864' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh2.vast.ai]:18864' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Traceback (most recent call last):
+  File "/workspace/anima/train_carving_4path.py", line 393, in <module>
+    run(cfg)
+  File "/workspace/anima/train_carving_4path.py", line 176, in run
+    ).to(device)
+      ^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1340, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 900, in _apply
+    module._apply(fn)
+  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+RuntimeError: CUDA error: CUDA-capable device(s) is/are busy or unavailable
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+DONE_MARKER rc=0
+[alpha 8/9] verify + SAVE_POD + pull retry >=5...
+[alpha] ERROR result.json NOT present — SAVE_POD=1 RETAIN
+[alpha 9/9] teardown (SAVE_POD=1).
+Sun May 17 09:20:52 UTC 2026
+[alpha cleanup] SAVE_POD=1 RETAIN 36928864
+=== UBM-E6 re-fire path=alpha offer_rank=4 ===
+Sun May 17 09:22:02 UTC 2026
+[alpha 1/9] selecting A100 offer (rank 4)...
+A100 SXM4 $1.175/hr
+[alpha] offer=35576702
+[alpha 2/9] renting...
+[alpha] instance=36928992
+[alpha 3/9] waiting SSH...
+[alpha cleanup] destroying 36928992
+destroying instance 36928992.
+refire_path.sh: line 57: 72574 Terminated: 15          ( PARENT_PID=$$; for _ in $(seq 1 $WATCHDOG_MIN);
+do
+    sleep 60; if ! kill -0 $PARENT_PID 2> /dev/null; then
+        $VASTAI destroy instance "$IID" >> "$PDIR/watchdog.log" 2>&1; exit 0;
+    fi;
+done; echo "[watchdog] cap hit, destroying $IID" >> "$PDIR/watchdog.log"; $VASTAI destroy instance "$IID" >> "$PDIR/watchdog.log" 2>&1 )

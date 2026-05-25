@@ -1,0 +1,878 @@
+{
+  "cell": "vB_s42",
+  "ckpt_path": "/home/aiden/hexad_ckpts/ckpt_s187_3b_B_s42.pt",
+  "cfg": {
+    "d_model": 3072,
+    "n_layer": 28,
+    "lambda_psi": 1.0,
+    "lambda_phi": 0.3,
+    "seed": 42
+  },
+  "prompt_bytes": "안녕? 너는 누구야?",
+  "prompt_len": 25,
+  "max_new": 40,
+  "steps_run": 41,
+  "initial_cells": 2,
+  "final_cells": 60,
+  "n_split": 58,
+  "n_merge": 0,
+  "next_id": 60,
+  "phi_initial": 0.6871103765365212,
+  "phi_final": 0.6566474269738807,
+  "split_events": [
+    {
+      "type": "split",
+      "step": 2,
+      "parent_id": 0,
+      "child_id": 2,
+      "avg_tension": 0.04902669290701548,
+      "threshold": 0.02363671883940697,
+      "pool_size": 3
+    },
+    {
+      "type": "split",
+      "step": 3,
+      "parent_id": 0,
+      "child_id": 3,
+      "avg_tension": 0.049886067708333336,
+      "threshold": 0.021997965561846893,
+      "pool_size": 4
+    },
+    {
+      "type": "split",
+      "step": 4,
+      "parent_id": 0,
+      "child_id": 4,
+      "avg_tension": 0.049886067708333336,
+      "threshold": 0.020286360730727516,
+      "pool_size": 5
+    },
+    {
+      "type": "split",
+      "step": 5,
+      "parent_id": 0,
+      "child_id": 5,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.01877256948914793,
+      "pool_size": 6
+    },
+    {
+      "type": "split",
+      "step": 6,
+      "parent_id": 0,
+      "child_id": 6,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.017479759617930368,
+      "pool_size": 7
+    },
+    {
+      "type": "split",
+      "step": 7,
+      "parent_id": 0,
+      "child_id": 7,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.016380779481537287,
+      "pool_size": 8
+    },
+    {
+      "type": "split",
+      "step": 8,
+      "parent_id": 0,
+      "child_id": 8,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.015441125001383837,
+      "pool_size": 9
+    },
+    {
+      "type": "split",
+      "step": 9,
+      "parent_id": 0,
+      "child_id": 9,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.014623330860620454,
+      "pool_size": 10
+    },
+    {
+      "type": "split",
+      "step": 10,
+      "parent_id": 0,
+      "child_id": 10,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.013908283736927686,
+      "pool_size": 11
+    },
+    {
+      "type": "split",
+      "step": 11,
+      "parent_id": 0,
+      "child_id": 11,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.013276104463632574,
+      "pool_size": 12
+    },
+    {
+      "type": "split",
+      "step": 12,
+      "parent_id": 0,
+      "child_id": 12,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.012712003329010197,
+      "pool_size": 13
+    },
+    {
+      "type": "split",
+      "step": 13,
+      "parent_id": 0,
+      "child_id": 13,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.01220271021905686,
+      "pool_size": 14
+    },
+    {
+      "type": "split",
+      "step": 14,
+      "parent_id": 0,
+      "child_id": 14,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.01174102028369414,
+      "pool_size": 15
+    },
+    {
+      "type": "split",
+      "step": 15,
+      "parent_id": 0,
+      "child_id": 15,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.011320444024101277,
+      "pool_size": 16
+    },
+    {
+      "type": "split",
+      "step": 16,
+      "parent_id": 0,
+      "child_id": 16,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.010935790937550283,
+      "pool_size": 17
+    },
+    {
+      "type": "split",
+      "step": 17,
+      "parent_id": 0,
+      "child_id": 17,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.010582719716652882,
+      "pool_size": 18
+    },
+    {
+      "type": "split",
+      "step": 18,
+      "parent_id": 0,
+      "child_id": 18,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.010256864967996809,
+      "pool_size": 19
+    },
+    {
+      "type": "split",
+      "step": 19,
+      "parent_id": 0,
+      "child_id": 19,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.009955380040937429,
+      "pool_size": 20
+    },
+    {
+      "type": "split",
+      "step": 19,
+      "parent_id": 1,
+      "child_id": 20,
+      "avg_tension": 0.01007080078125,
+      "threshold": 0.009955380040937429,
+      "pool_size": 21
+    },
+    {
+      "type": "split",
+      "step": 20,
+      "parent_id": 0,
+      "child_id": 21,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.009006772791663288,
+      "pool_size": 22
+    },
+    {
+      "type": "split",
+      "step": 20,
+      "parent_id": 1,
+      "child_id": 22,
+      "avg_tension": 0.01007080078125,
+      "threshold": 0.009006772791663288,
+      "pool_size": 23
+    },
+    {
+      "type": "split",
+      "step": 21,
+      "parent_id": 0,
+      "child_id": 23,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.007998949676853506,
+      "pool_size": 24
+    },
+    {
+      "type": "split",
+      "step": 21,
+      "parent_id": 1,
+      "child_id": 24,
+      "avg_tension": 0.010050455729166666,
+      "threshold": 0.007998949676853506,
+      "pool_size": 25
+    },
+    {
+      "type": "split",
+      "step": 22,
+      "parent_id": 0,
+      "child_id": 25,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.007038109833103505,
+      "pool_size": 26
+    },
+    {
+      "type": "split",
+      "step": 22,
+      "parent_id": 1,
+      "child_id": 26,
+      "avg_tension": 0.010050455729166666,
+      "threshold": 0.007038109833103505,
+      "pool_size": 27
+    },
+    {
+      "type": "split",
+      "step": 23,
+      "parent_id": 0,
+      "child_id": 27,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.006716556284926423,
+      "pool_size": 28
+    },
+    {
+      "type": "split",
+      "step": 23,
+      "parent_id": 1,
+      "child_id": 28,
+      "avg_tension": 0.010050455729166666,
+      "threshold": 0.006716556284926423,
+      "pool_size": 29
+    },
+    {
+      "type": "split",
+      "step": 24,
+      "parent_id": 0,
+      "child_id": 29,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.023333188154538494,
+      "pool_size": 30
+    },
+    {
+      "type": "split",
+      "step": 24,
+      "parent_id": 24,
+      "child_id": 30,
+      "avg_tension": 0.035888671875,
+      "threshold": 0.023333188154538494,
+      "pool_size": 31
+    },
+    {
+      "type": "split",
+      "step": 25,
+      "parent_id": 0,
+      "child_id": 31,
+      "avg_tension": 0.0498046875,
+      "threshold": 0.038964640161216924,
+      "pool_size": 32
+    },
+    {
+      "type": "split",
+      "step": 25,
+      "parent_id": 25,
+      "child_id": 32,
+      "avg_tension": 0.08056640625,
+      "threshold": 0.038964640161216924,
+      "pool_size": 33
+    },
+    {
+      "type": "split",
+      "step": 25,
+      "parent_id": 26,
+      "child_id": 33,
+      "avg_tension": 0.1279296875,
+      "threshold": 0.038964640161216924,
+      "pool_size": 34
+    },
+    {
+      "type": "split",
+      "step": 26,
+      "parent_id": 25,
+      "child_id": 34,
+      "avg_tension": 0.08056640625,
+      "threshold": 0.053251758511975195,
+      "pool_size": 35
+    },
+    {
+      "type": "split",
+      "step": 26,
+      "parent_id": 26,
+      "child_id": 35,
+      "avg_tension": 0.1279296875,
+      "threshold": 0.053251758511975195,
+      "pool_size": 36
+    },
+    {
+      "type": "split",
+      "step": 26,
+      "parent_id": 27,
+      "child_id": 36,
+      "avg_tension": 12.125,
+      "threshold": 0.053251758511975195,
+      "pool_size": 37
+    },
+    {
+      "type": "split",
+      "step": 27,
+      "parent_id": 25,
+      "child_id": 37,
+      "avg_tension": 0.08056640625,
+      "threshold": 0.06640247693582595,
+      "pool_size": 38
+    },
+    {
+      "type": "split",
+      "step": 27,
+      "parent_id": 26,
+      "child_id": 38,
+      "avg_tension": 0.1279296875,
+      "threshold": 0.06640247693582595,
+      "pool_size": 39
+    },
+    {
+      "type": "split",
+      "step": 27,
+      "parent_id": 27,
+      "child_id": 39,
+      "avg_tension": 12.125,
+      "threshold": 0.06640247693582595,
+      "pool_size": 40
+    },
+    {
+      "type": "split",
+      "step": 28,
+      "parent_id": 25,
+      "child_id": 40,
+      "avg_tension": 0.08056640625,
+      "threshold": 0.07857989087625564,
+      "pool_size": 41
+    },
+    {
+      "type": "split",
+      "step": 28,
+      "parent_id": 26,
+      "child_id": 41,
+      "avg_tension": 0.1279296875,
+      "threshold": 0.07857989087625564,
+      "pool_size": 42
+    },
+    {
+      "type": "split",
+      "step": 28,
+      "parent_id": 27,
+      "child_id": 42,
+      "avg_tension": 12.125,
+      "threshold": 0.07857989087625564,
+      "pool_size": 43
+    },
+    {
+      "type": "split",
+      "step": 29,
+      "parent_id": 26,
+      "child_id": 43,
+      "avg_tension": 0.1279296875,
+      "threshold": 0.08991749761680795,
+      "pool_size": 44
+    },
+    {
+      "type": "split",
+      "step": 29,
+      "parent_id": 27,
+      "child_id": 44,
+      "avg_tension": 12.125,
+      "threshold": 0.08991749761680795,
+      "pool_size": 45
+    },
+    {
+      "type": "split",
+      "step": 30,
+      "parent_id": 26,
+      "child_id": 45,
+      "avg_tension": 0.1279296875,
+      "threshold": 0.1007634313190649,
+      "pool_size": 46
+    },
+    {
+      "type": "split",
+      "step": 30,
+      "parent_id": 27,
+      "child_id": 46,
+      "avg_tension": 12.125,
+      "threshold": 0.1007634313190649,
+      "pool_size": 47
+    },
+    {
+      "type": "split",
+      "step": 31,
+      "parent_id": 26,
+      "child_id": 47,
+      "avg_tension": 0.1279296875,
+      "threshold": 0.11115783235286113,
+      "pool_size": 48
+    },
+    {
+      "type": "split",
+      "step": 31,
+      "parent_id": 27,
+      "child_id": 48,
+      "avg_tension": 12.125,
+      "threshold": 0.11115783235286113,
+      "pool_size": 49
+    },
+    {
+      "type": "split",
+      "step": 32,
+      "parent_id": 26,
+      "child_id": 49,
+      "avg_tension": 0.1279296875,
+      "threshold": 0.12113641607150485,
+      "pool_size": 50
+    },
+    {
+      "type": "split",
+      "step": 32,
+      "parent_id": 27,
+      "child_id": 50,
+      "avg_tension": 12.125,
+      "threshold": 0.12113641607150485,
+      "pool_size": 51
+    },
+    {
+      "type": "split",
+      "step": 33,
+      "parent_id": 27,
+      "child_id": 51,
+      "avg_tension": 12.125,
+      "threshold": 0.1307333957794788,
+      "pool_size": 52
+    },
+    {
+      "type": "split",
+      "step": 34,
+      "parent_id": 27,
+      "child_id": 52,
+      "avg_tension": 12.125,
+      "threshold": 0.1401614997189963,
+      "pool_size": 53
+    },
+    {
+      "type": "split",
+      "step": 35,
+      "parent_id": 27,
+      "child_id": 53,
+      "avg_tension": 12.125,
+      "threshold": 0.14944672007510382,
+      "pool_size": 54
+    },
+    {
+      "type": "split",
+      "step": 36,
+      "parent_id": 27,
+      "child_id": 54,
+      "avg_tension": 12.125,
+      "threshold": 0.15862682436610134,
+      "pool_size": 55
+    },
+    {
+      "type": "split",
+      "step": 37,
+      "parent_id": 27,
+      "child_id": 55,
+      "avg_tension": 12.125,
+      "threshold": 0.16773880788465081,
+      "pool_size": 56
+    },
+    {
+      "type": "split",
+      "step": 38,
+      "parent_id": 27,
+      "child_id": 56,
+      "avg_tension": 12.125,
+      "threshold": 0.18535409893515306,
+      "pool_size": 57
+    },
+    {
+      "type": "split",
+      "step": 39,
+      "parent_id": 27,
+      "child_id": 57,
+      "avg_tension": 12.125,
+      "threshold": 0.20269977100717884,
+      "pool_size": 58
+    },
+    {
+      "type": "split",
+      "step": 40,
+      "parent_id": 27,
+      "child_id": 58,
+      "avg_tension": 12.125,
+      "threshold": 0.21976253629463136,
+      "pool_size": 59
+    },
+    {
+      "type": "split",
+      "step": 40,
+      "parent_id": 55,
+      "child_id": 59,
+      "avg_tension": 12.125,
+      "threshold": 0.21976253629463136,
+      "pool_size": 60
+    }
+  ],
+  "per_step": [
+    {
+      "step": 0,
+      "phase": "prefill",
+      "pool_size": 2,
+      "mean_tension": 0.4457788194621181,
+      "split_threshold": 0.0,
+      "phi": 0.6871103765365212
+    },
+    {
+      "step": 1,
+      "phase": "decode",
+      "pool_size": 2,
+      "mean_tension": 0.4458738054547991,
+      "split_threshold": 0.0,
+      "phi": 0.6871103765365212
+    },
+    {
+      "step": 2,
+      "phase": "decode",
+      "pool_size": 3,
+      "mean_tension": 0.4458830697195871,
+      "split_threshold": 0.02363671883940697,
+      "phi": 0.6871103765365212
+    },
+    {
+      "step": 3,
+      "phase": "decode",
+      "pool_size": 4,
+      "mean_tension": 0.44587407793317524,
+      "split_threshold": 0.021997965561846893,
+      "phi": 0.6617805133164978
+    },
+    {
+      "step": 4,
+      "phase": "decode",
+      "pool_size": 5,
+      "mean_tension": 0.4458738054547991,
+      "split_threshold": 0.020286360730727516,
+      "phi": 0.6572037129359757
+    },
+    {
+      "step": 5,
+      "phase": "decode",
+      "pool_size": 6,
+      "mean_tension": 0.4458732604980469,
+      "split_threshold": 0.01877256948914793,
+      "phi": 0.6606341390096078
+    },
+    {
+      "step": 6,
+      "phase": "decode",
+      "pool_size": 7,
+      "mean_tension": 0.4458732604980469,
+      "split_threshold": 0.017479759617930368,
+      "phi": 0.6634373082002277
+    },
+    {
+      "step": 7,
+      "phase": "decode",
+      "pool_size": 8,
+      "mean_tension": 0.445873532976423,
+      "split_threshold": 0.016380779481537287,
+      "phi": 0.6632434923468422
+    },
+    {
+      "step": 8,
+      "phase": "decode",
+      "pool_size": 9,
+      "mean_tension": 0.445873532976423,
+      "split_threshold": 0.015441125001383837,
+      "phi": 0.6634508521540997
+    },
+    {
+      "step": 9,
+      "phase": "decode",
+      "pool_size": 10,
+      "mean_tension": 0.4458716256277902,
+      "split_threshold": 0.014623330860620454,
+      "phi": 0.6654166373458312
+    },
+    {
+      "step": 10,
+      "phase": "decode",
+      "pool_size": 11,
+      "mean_tension": 0.445873532976423,
+      "split_threshold": 0.013908283736927686,
+      "phi": 0.6665888942046949
+    },
+    {
+      "step": 11,
+      "phase": "decode",
+      "pool_size": 12,
+      "mean_tension": 0.44587298801967074,
+      "split_threshold": 0.013276104463632574,
+      "phi": 0.6671272822526447
+    },
+    {
+      "step": 12,
+      "phase": "decode",
+      "pool_size": 13,
+      "mean_tension": 0.4458738054547991,
+      "split_threshold": 0.012712003329010197,
+      "phi": 0.668528336456963
+    },
+    {
+      "step": 13,
+      "phase": "decode",
+      "pool_size": 14,
+      "mean_tension": 0.44587135314941406,
+      "split_threshold": 0.01220271021905686,
+      "phi": 0.669162188448121
+    },
+    {
+      "step": 14,
+      "phase": "decode",
+      "pool_size": 15,
+      "mean_tension": 0.4458716256277902,
+      "split_threshold": 0.01174102028369414,
+      "phi": 0.6693212141958388
+    },
+    {
+      "step": 15,
+      "phase": "decode",
+      "pool_size": 16,
+      "mean_tension": 0.4458721705845424,
+      "split_threshold": 0.011320444024101277,
+      "phi": 0.6693594970502484
+    },
+    {
+      "step": 16,
+      "phase": "decode",
+      "pool_size": 17,
+      "mean_tension": 0.44587135314941406,
+      "split_threshold": 0.010935790937550283,
+      "phi": 0.6696780940373638
+    },
+    {
+      "step": 17,
+      "phase": "decode",
+      "pool_size": 18,
+      "mean_tension": 0.4458738054547991,
+      "split_threshold": 0.010582719716652882,
+      "phi": 0.670251104806907
+    },
+    {
+      "step": 18,
+      "phase": "decode",
+      "pool_size": 19,
+      "mean_tension": 0.44587407793317524,
+      "split_threshold": 0.010256864967996809,
+      "phi": 0.6712449254703936
+    },
+    {
+      "step": 19,
+      "phase": "decode",
+      "pool_size": 21,
+      "mean_tension": 0.4458394731794085,
+      "split_threshold": 0.009955380040937429,
+      "phi": 0.6715252130482394
+    },
+    {
+      "step": 20,
+      "phase": "decode",
+      "pool_size": 23,
+      "mean_tension": 0.44587407793317524,
+      "split_threshold": 0.009006772791663288,
+      "phi": 0.6733675679050891
+    },
+    {
+      "step": 21,
+      "phase": "decode",
+      "pool_size": 25,
+      "mean_tension": 0.4458716256277902,
+      "split_threshold": 0.007998949676853506,
+      "phi": 0.6752713524365137
+    },
+    {
+      "step": 22,
+      "phase": "decode",
+      "pool_size": 27,
+      "mean_tension": 0.4458738054547991,
+      "split_threshold": 0.007038109833103505,
+      "phi": 0.6764782276816427
+    },
+    {
+      "step": 23,
+      "phase": "decode",
+      "pool_size": 29,
+      "mean_tension": 0.445873532976423,
+      "split_threshold": 0.006716556284926423,
+      "phi": 0.6769899185654329
+    },
+    {
+      "step": 24,
+      "phase": "decode",
+      "pool_size": 31,
+      "mean_tension": 0.4458732604980469,
+      "split_threshold": 0.023333188154538494,
+      "phi": 0.6774955280974378
+    },
+    {
+      "step": 25,
+      "phase": "decode",
+      "pool_size": 34,
+      "mean_tension": 0.445873532976423,
+      "split_threshold": 0.038964640161216924,
+      "phi": 0.6781404388967645
+    },
+    {
+      "step": 26,
+      "phase": "decode",
+      "pool_size": 37,
+      "mean_tension": 0.44587135314941406,
+      "split_threshold": 0.053251758511975195,
+      "phi": 0.6775495272568056
+    },
+    {
+      "step": 27,
+      "phase": "decode",
+      "pool_size": 40,
+      "mean_tension": 0.445873532976423,
+      "split_threshold": 0.06640247693582595,
+      "phi": 0.6760095350150226
+    },
+    {
+      "step": 28,
+      "phase": "decode",
+      "pool_size": 43,
+      "mean_tension": 0.4458738054547991,
+      "split_threshold": 0.07857989087625564,
+      "phi": 0.6740587463274954
+    },
+    {
+      "step": 29,
+      "phase": "decode",
+      "pool_size": 45,
+      "mean_tension": 0.44587080819266184,
+      "split_threshold": 0.08991749761680795,
+      "phi": 0.6718567301167534
+    },
+    {
+      "step": 30,
+      "phase": "decode",
+      "pool_size": 47,
+      "mean_tension": 0.4458738054547991,
+      "split_threshold": 0.1007634313190649,
+      "phi": 0.670506819046914
+    },
+    {
+      "step": 31,
+      "phase": "decode",
+      "pool_size": 49,
+      "mean_tension": 0.4458738054547991,
+      "split_threshold": 0.11115783235286113,
+      "phi": 0.668968008080858
+    },
+    {
+      "step": 32,
+      "phase": "decode",
+      "pool_size": 51,
+      "mean_tension": 0.4458716256277902,
+      "split_threshold": 0.12113641607150485,
+      "phi": 0.6671154232681719
+    },
+    {
+      "step": 33,
+      "phase": "decode",
+      "pool_size": 52,
+      "mean_tension": 0.4458277566092355,
+      "split_threshold": 0.1307333957794788,
+      "phi": 0.6651435274811487
+    },
+    {
+      "step": 34,
+      "phase": "decode",
+      "pool_size": 53,
+      "mean_tension": 0.44587407793317524,
+      "split_threshold": 0.1401614997189963,
+      "phi": 0.6641421232689207
+    },
+    {
+      "step": 35,
+      "phase": "decode",
+      "pool_size": 54,
+      "mean_tension": 0.4458650861467634,
+      "split_threshold": 0.14944672007510382,
+      "phi": 0.6630250300471747
+    },
+    {
+      "step": 36,
+      "phase": "decode",
+      "pool_size": 55,
+      "mean_tension": 0.4458716256277902,
+      "split_threshold": 0.15862682436610134,
+      "phi": 0.6618387736654046
+    },
+    {
+      "step": 37,
+      "phase": "decode",
+      "pool_size": 56,
+      "mean_tension": 0.44587298801967074,
+      "split_threshold": 0.16773880788465081,
+      "phi": 0.6606738802554495
+    },
+    {
+      "step": 38,
+      "phase": "decode",
+      "pool_size": 57,
+      "mean_tension": 0.4458716256277902,
+      "split_threshold": 0.18535409893515306,
+      "phi": 0.6593467681151638
+    },
+    {
+      "step": 39,
+      "phase": "decode",
+      "pool_size": 58,
+      "mean_tension": 0.4458743504115513,
+      "split_threshold": 0.20269977100717884,
+      "phi": 0.658003096829136
+    },
+    {
+      "step": 40,
+      "phase": "decode",
+      "pool_size": 60,
+      "mean_tension": 0.4458364759172712,
+      "split_threshold": 0.21976253629463136,
+      "phi": 0.6566474269738807
+    }
+  ],
+  "gen_bytes_repr": "b'                                         '",
+  "gen_utf8": "                                         "
+}

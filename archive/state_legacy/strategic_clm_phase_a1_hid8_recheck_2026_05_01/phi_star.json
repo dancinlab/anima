@@ -1,0 +1,108 @@
+{
+  "schema": "anima/phi_star/1",
+  "backbone": "CLM_v4_530M",
+  "substrate": "CLM continuous-state recurrent (decoder_v3 byte-level)",
+  "recheck_origin": "A.1 #73 +1167.62 magnitude artifact (HID=128 rank-deficient)",
+  "ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+  "d_model": 768,
+  "n_layer": 16,
+  "vocab_size": 64000,
+  "n_probes": 16,
+  "K_partitions": 8,
+  "hidden_truncated": 8,
+  "half_size": 8,
+  "ridge": 0.0001,
+  "seed": 42,
+  "I_full": -30.3049,
+  "phi_star_min": 41.8592,
+  "phi_mean": 43.9262,
+  "phi_max": 46.7708,
+  "gate_positive_PASS": true,
+  "gate_substantial_PASS": true,
+  "gate_magnitude_PASS": true,
+  "phi_star_signed_magnitude": 41.8592,
+  "phi_star_sign": "positive_iit_integrated",
+  "partitions": [
+    {
+      "k": 0,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -37.8038,
+      "I_2": -36.4816,
+      "phi": 43.9804
+    },
+    {
+      "k": 1,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -38.3786,
+      "I_2": -37.8799,
+      "phi": 45.9536
+    },
+    {
+      "k": 2,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -34.6867,
+      "I_2": -40.1087,
+      "phi": 44.4905
+    },
+    {
+      "k": 3,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -36.8362,
+      "I_2": -35.8686,
+      "phi": 42.4
+    },
+    {
+      "k": 4,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -37.4535,
+      "I_2": -35.36,
+      "phi": 42.5086
+    },
+    {
+      "k": 5,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -41.2662,
+      "I_2": -32.4849,
+      "phi": 43.4463
+    },
+    {
+      "k": 6,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -36.7666,
+      "I_2": -40.3091,
+      "phi": 46.7708
+    },
+    {
+      "k": 7,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -35.6743,
+      "I_2": -36.4897,
+      "phi": 41.8592
+    }
+  ],
+  "partition_method": "sample-partition (N=16 -> 8|8 halves)",
+  "metric_design": "HID_TRUNC=8 well-conditioned recheck (W4-style); ridge unchanged for apples-to-apples vs A.1 magnitude artifact diagnosis",
+  "cov_diagnostics": {
+    "eig_max": 1.302109,
+    "eig_min": 0.001105,
+    "condition_number": 1178.0971,
+    "note": "N=16 > HID=8 -> empirical cov rank-full; ridge contribution = HID*log(ridge) = 8*log(1e-4) ~ -73.6 (vs HID=128: 128*log(1e-4) ~ -1178)"
+  },
+  "comparison_a1_hid128": {
+    "phi_star_min_hid128": 1167.6192,
+    "phi_star_min_hid8": 41.8592,
+    "magnitude_ratio": 0.03585,
+    "sign_consistent": true,
+    "verdict": "sign meaningful (positive iit-integrated band); HID=8 magnitude is honest cross-substrate-comparable value"
+  },
+  "elapsed_sec": 6.92,
+  "ts": "2026-05-02T08:32:21Z"
+}

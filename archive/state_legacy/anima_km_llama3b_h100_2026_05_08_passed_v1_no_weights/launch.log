@@ -1,0 +1,171 @@
+[2026-05-08T04:44:20] === BG-KM-LLAMA-3B orchestrator started ===
+[2026-05-08T04:44:20] mac_state_dir=/Users/ghost/core/anima/state/anima_km_llama3b_h100_2026_05_08
+[2026-05-08T04:44:20] corpus=/Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+[2026-05-08T04:44:20] this_script=/Users/ghost/core/anima/tool/transient_py/anima_km_llama3b_h100.py
+[2026-05-08T04:44:20] COST_HARD_CAP=$10.0 COST_EARLY_KILL=$8.0
+[2026-05-08T04:44:20] creating H100 SXM pod (RunPod SECURE cloud)…
+[2026-05-08T04:44:21] pod created: id=lelglfmdhi6enz machine=? $2.99/hr
+[2026-05-08T04:44:21] pod created: id=lelglfmdhi6enz $2.99/hr
+[2026-05-08T04:44:52] ssh ready: root@103.207.149.153:11787
+[2026-05-08T04:44:57] GPU smoke rc=0: name
+NVIDIA H100 80GB HBM3
+2.8.0+cu128 True
+
+[2026-05-08T04:44:57] staging files (corpus 214MB→gz + this script + pod marker)…
+[2026-05-08T04:44:57] corpus.gz size: 90.1MB
+[2026-05-08T04:45:19] scp corpus.gz rc=0 (90.1MB)
+[2026-05-08T04:45:23] scp script rc=0
+[2026-05-08T04:45:27] decompress rc=0: -rw-r--r-- 1 root root 214299726 May  7 19:45 corpus_combined_100mb_plus.txt
+
+[2026-05-08T04:45:27] training launched on pod…
+[2026-05-08T04:45:31] launch rc=0 out=started
+
+[2026-05-08T04:46:35] heartbeat: cost=$0.11 pod_phase=downloading_base pod_step=0
+[2026-05-08T04:47:39] heartbeat: cost=$0.16 pod_phase=downloading_base pod_step=0
+[2026-05-08T04:48:43] heartbeat: cost=$0.21 pod_phase=downloading_base pod_step=0
+[2026-05-08T04:49:49] heartbeat: cost=$0.27 pod_phase=downloading_base pod_step=0
+[2026-05-08T04:50:54] heartbeat: cost=$0.32 pod_phase=downloading_base pod_step=0
+[2026-05-08T04:51:59] heartbeat: cost=$0.38 pod_phase=downloading_base pod_step=0
+[2026-05-08T04:53:05] heartbeat: cost=$0.43 pod_phase=downloading_base pod_step=0
+[2026-05-08T04:54:11] heartbeat: cost=$0.49 pod_phase=downloading_base pod_step=0
+[2026-05-08T04:55:15] heartbeat: cost=$0.54 pod_phase=downloading_base pod_step=0
+[2026-05-08T04:56:21] heartbeat: cost=$0.59 pod_phase=downloading_base pod_step=0
+[2026-05-08T04:57:25] heartbeat: cost=$0.65 pod_phase=downloading_base pod_step=0
+[2026-05-08T04:58:28] heartbeat: cost=$0.70 pod_phase=downloading_base pod_step=0
+[2026-05-08T04:59:33] heartbeat: cost=$0.75 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:00:42] heartbeat: cost=$0.81 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:01:47] heartbeat: cost=$0.86 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:02:56] heartbeat: cost=$0.92 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:04:03] heartbeat: cost=$0.98 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:05:13] heartbeat: cost=$1.03 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:06:22] heartbeat: cost=$1.09 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:07:30] heartbeat: cost=$1.15 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:08:37] heartbeat: cost=$1.20 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:09:44] heartbeat: cost=$1.26 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:10:49] heartbeat: cost=$1.31 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:11:54] heartbeat: cost=$1.37 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:13:01] heartbeat: cost=$1.42 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:14:09] heartbeat: cost=$1.48 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:15:17] heartbeat: cost=$1.53 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:16:22] heartbeat: cost=$1.59 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:17:31] heartbeat: cost=$1.65 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:18:36] heartbeat: cost=$1.70 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:19:46] heartbeat: cost=$1.76 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:52:06] === BG-KM-LLAMA-3B orchestrator started ===
+[2026-05-08T05:52:06] mac_state_dir=/Users/ghost/core/anima/state/anima_km_llama3b_h100_2026_05_08
+[2026-05-08T05:52:06] corpus=/Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+[2026-05-08T05:52:06] this_script=/Users/ghost/core/anima/tool/transient_py/anima_km_llama3b_h100.py
+[2026-05-08T05:52:06] COST_HARD_CAP=$10.0 COST_EARLY_KILL=$8.0
+[2026-05-08T05:52:06] creating H100 SXM pod (RunPod SECURE cloud)…
+[2026-05-08T05:52:08] pod created: id=e74evob6co9y2o machine=? $2.99/hr
+[2026-05-08T05:52:08] pod created: id=e74evob6co9y2o $2.99/hr
+[2026-05-08T05:52:40] ssh ready: root@103.207.149.110:18768
+[2026-05-08T05:52:45] GPU smoke rc=0: name
+NVIDIA H100 80GB HBM3
+2.8.0+cu128 True
+
+[2026-05-08T05:52:45] staging files (corpus 214MB→gz + this script + pod marker)…
+[2026-05-08T05:52:45] corpus.gz size: 90.1MB
+[2026-05-08T05:56:39] scp corpus.gz rc=0 (90.1MB)
+[2026-05-08T05:56:45] scp script rc=0
+[2026-05-08T05:56:51] scp hf_token rc=0
+[2026-05-08T05:56:57] decompress rc=0: -rw-r--r-- 1 root root 214299726 May  7 20:56 corpus_combined_100mb_plus.txt
+
+[2026-05-08T05:56:57] training launched on pod…
+[2026-05-08T05:57:03] launch rc=0 out=started
+
+[2026-05-08T05:58:10] heartbeat: cost=$0.29 pod_phase=downloading_base pod_step=0
+[2026-05-08T05:59:24] heartbeat: cost=$0.35 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:00:30] heartbeat: cost=$0.41 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:01:37] heartbeat: cost=$0.47 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:02:47] heartbeat: cost=$0.52 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:03:54] heartbeat: cost=$0.58 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:05:02] heartbeat: cost=$0.64 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:06:12] heartbeat: cost=$0.69 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:07:17] heartbeat: cost=$0.75 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:08:25] heartbeat: cost=$0.80 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:09:37] heartbeat: cost=$0.86 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:10:43] heartbeat: cost=$0.92 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:11:53] heartbeat: cost=$0.98 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:12:59] heartbeat: cost=$1.03 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:14:10] heartbeat: cost=$1.09 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:15:14] heartbeat: cost=$1.15 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:16:22] heartbeat: cost=$1.20 pod_phase=downloading_base pod_step=0
+[2026-05-08T06:17:23] heartbeat: cost=$1.26 pod_phase=? pod_step=-1
+[2026-05-08T06:19:13] === BG-KM-LLAMA-3B orchestrator started ===
+[2026-05-08T06:19:13] mac_state_dir=/Users/ghost/core/anima/state/anima_km_llama3b_h100_2026_05_08
+[2026-05-08T06:19:13] corpus=/Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+[2026-05-08T06:19:13] this_script=/Users/ghost/core/anima/tool/transient_py/anima_km_llama3b_h100.py
+[2026-05-08T06:19:13] COST_HARD_CAP=$10.0 COST_EARLY_KILL=$8.0
+[2026-05-08T06:19:13] creating H100 SXM pod (RunPod SECURE cloud)…
+[2026-05-08T06:19:15] pod created: id=ta0zztsar3bep1 machine=? $2.99/hr
+[2026-05-08T06:19:15] pod created: id=ta0zztsar3bep1 $2.99/hr
+[2026-05-08T06:19:46] ssh ready: root@216.243.220.230:12682
+[2026-05-08T06:19:53] GPU smoke rc=0: name
+NVIDIA H100 80GB HBM3
+2.8.0+cu128 True
+
+[2026-05-08T06:19:53] staging files (corpus 214MB→gz + this script + pod marker)…
+[2026-05-08T06:19:53] corpus.gz size: 90.1MB
+[2026-05-08T06:27:35] scp corpus.gz rc=0 (90.1MB)
+[2026-05-08T06:27:41] scp script rc=0
+[2026-05-08T06:27:46] scp hf_token rc=0
+[2026-05-08T06:27:52] decompress rc=0: -rw-r--r-- 1 root root 214299726 May  7 21:27 corpus_combined_100mb_plus.txt
+
+[2026-05-08T06:27:52] training launched on pod…
+[2026-05-08T06:27:58] launch rc=0 out=started
+
+[2026-05-08T06:29:09] heartbeat: cost=$0.48 pod_phase=init pod_step=0
+[2026-05-08T06:30:21] heartbeat: cost=$0.54 pod_phase=init pod_step=0
+[2026-05-08T06:31:27] heartbeat: cost=$0.60 pod_phase=init pod_step=0
+[2026-05-08T06:32:35] heartbeat: cost=$0.66 pod_phase=init pod_step=0
+[2026-05-08T06:33:36] === BG-KM-LLAMA-3B orchestrator started ===
+[2026-05-08T06:33:36] mac_state_dir=/Users/ghost/core/anima/state/anima_km_llama3b_h100_2026_05_08
+[2026-05-08T06:33:36] corpus=/Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+[2026-05-08T06:33:36] this_script=/Users/ghost/core/anima/tool/transient_py/anima_km_llama3b_h100.py
+[2026-05-08T06:33:36] COST_HARD_CAP=$10.0 COST_EARLY_KILL=$8.0
+[2026-05-08T06:33:36] creating H100 SXM pod (RunPod SECURE cloud)…
+[2026-05-08T06:33:37] pod created: id=54tqyjceqsenvg machine=? $2.99/hr
+[2026-05-08T06:33:37] pod created: id=54tqyjceqsenvg $2.99/hr
+[2026-05-08T06:34:20] ssh ready: root@103.207.149.114:13421
+[2026-05-08T06:34:26] GPU smoke rc=0: name
+NVIDIA H100 80GB HBM3
+2.8.0+cu128 True
+
+[2026-05-08T06:34:26] staging files (corpus 214MB→gz + this script + pod marker)…
+[2026-05-08T06:34:26] corpus.gz size: 90.1MB
+[2026-05-08T06:37:58] scp corpus.gz rc=0 (90.1MB)
+[2026-05-08T06:38:08] scp script rc=0
+[2026-05-08T06:38:13] scp hf_token rc=0
+[2026-05-08T06:38:24] decompress rc=0: -rw-r--r-- 1 root root 214299726 May  7 21:38 corpus_combined_100mb_plus.txt
+
+[2026-05-08T06:38:24] training launched on pod…
+[2026-05-08T06:38:56] launch rc=-2 out=
+[2026-05-08T06:40:01] heartbeat: cost=$0.31 pod_phase=lora_sft pod_step=0
+[2026-05-08T06:41:08] heartbeat: cost=$0.37 pod_phase=lora_sft_step pod_step=200
+[2026-05-08T06:42:15] heartbeat: cost=$0.42 pod_phase=lora_sft_step pod_step=400
+[2026-05-08T06:43:20] heartbeat: cost=$0.48 pod_phase=lora_sft_step pod_step=600
+[2026-05-08T06:44:27] heartbeat: cost=$0.53 pod_phase=lora_sft_step pod_step=800
+[2026-05-08T06:45:32] heartbeat: cost=$0.59 pod_phase=lora_sft_step pod_step=1000
+[2026-05-08T06:46:41] heartbeat: cost=$0.64 pod_phase=lora_sft_step pod_step=1200
+[2026-05-08T06:47:46] heartbeat: cost=$0.70 pod_phase=lora_sft_step pod_step=1400
+[2026-05-08T06:48:52] heartbeat: cost=$0.75 pod_phase=lora_sft_step pod_step=1600
+[2026-05-08T06:49:58] heartbeat: cost=$0.81 pod_phase=lora_sft_step pod_step=1800
+[2026-05-08T06:51:03] heartbeat: cost=$0.86 pod_phase=lora_sft_step pod_step=2200
+[2026-05-08T06:52:08] heartbeat: cost=$0.92 pod_phase=lora_sft_step pod_step=2400
+[2026-05-08T06:53:15] heartbeat: cost=$0.97 pod_phase=lora_sft_step pod_step=2600
+[2026-05-08T06:54:21] heartbeat: cost=$1.03 pod_phase=lora_sft_step pod_step=2800
+[2026-05-08T06:55:27] heartbeat: cost=$1.08 pod_phase=v4_multiseed_eval pod_step=3000
+[2026-05-08T06:56:31] heartbeat: cost=$1.14 pod_phase=v4_multiseed_eval pod_step=3000
+[2026-05-08T06:57:36] heartbeat: cost=$1.19 pod_phase=DONE final_class=SIMPLE_STACK_PASS_STRICT pod_step=3000
+[2026-05-08T06:57:36] pod reports DONE phase=DONE final_class=SIMPLE_STACK_PASS_STRICT
+[2026-05-08T06:57:36] pulling artifacts from pod…
+[2026-05-08T06:57:48] scp pull state rc=0
+[2026-05-08T06:57:48] deleting pod (teardown)…
+[2026-05-08T06:57:50] pod delete rc=0 out={
+  "deleted": true,
+  "id": "54tqyjceqsenvg"
+}
+
+[2026-05-08T06:57:50] ledger appended: bg_id=BG-KM-LLAMA-3B final_class=SIMPLE_STACK_PASS_STRICT cost=$1.19
+[2026-05-08T06:57:50] === BG-KM-LLAMA-3B complete: cost=$1.19 ===

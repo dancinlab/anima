@@ -1,0 +1,110 @@
+{
+  "schema": "anima/clm_v4_revival_stages/v3_generate_smoke/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "agent": "Stage 1+2+3 parallel + v3_generate() AR loop fix EXEC",
+  "stage": 4,
+  "phase": "Stage 4 — v3_generate() AR loop fix smoke test",
+  "implementation": {
+    "off_repo_path": "/tmp/v3_generate_fix/v3_generate.py",
+    "in_repo_stub_preserved": "models/archive-legacy/decoder_v3.hexa",
+    "in_repo_stub_lines": "27-30",
+    "language": "python (PyTorch 2.10.0)",
+    "rationale": "HEXA-only repo policy forbids .py creation in /Users/ghost/core/anima/. Off-repo PyTorch port is the prerequisite for Stage 3 CLM SFT chat bring-up.",
+    "loop_features": [
+      "temperature scaling (t=0.0 => greedy)",
+      "top-k filter (k=0 disables)",
+      "top-p / nucleus filter (p=1.0 disables)",
+      "EOS short-circuit",
+      "block_size context window slicing (ctx = ids[-block_size:])",
+      "uses head_a (next-byte) only; head_g (prev-byte) ignored for AR"
+    ],
+    "io_contract": "matches ConsciousDecoderV3.forward(idx) -> (logits_a, logits_g, tensions)"
+  },
+  "smoke_test": {
+    "device": "mps",
+    "vocab_size": 64000,
+    "block_size": 64,
+    "prompt": [1, 2, 3],
+    "max_new_tokens": 5,
+    "model_kind": "_MockV3 (untrained nn.Embedding + tied head_a + head_g)",
+    "model_kind_rationale": "Real CLM v4 530M ckpt is on ubu1 RTX 5070; this agent is local Mac. Smoke validates AR loop correctness (function-level), not chat quality (which requires SFT and is intentionally out of scope for Stage 4).",
+    "probes": [
+      {
+        "probe": "greedy_5tok_run_1",
+        "temperature": 0.0,
+        "result": [3, 3, 3, 3, 3],
+        "verdict": "PASS",
+        "note": "deterministic; 5 tokens; all in vocab"
+      },
+      {
+        "probe": "greedy_5tok_run_2",
+        "temperature": 0.0,
+        "result": [3, 3, 3, 3, 3],
+        "verdict": "PASS",
+        "note": "matches run_1 (greedy is deterministic)"
+      },
+      {
+        "probe": "sampling_seed_11",
+        "temperature": 0.9,
+        "top_k": 50,
+        "top_p": 0.95,
+        "seed": 11,
+        "result": [26741, 48212, 48212, 19372, 55227],
+        "verdict": "PASS",
+        "note": "5 tokens; all in [0, 64000)"
+      },
+      {
+        "probe": "sampling_seed_13",
+        "temperature": 0.9,
+        "top_k": 50,
+        "top_p": 0.95,
+        "seed": 13,
+        "result": [63009, 51382, 12723, 47656, 14685],
+        "verdict": "PASS",
+        "note": "differs from seed_11 (sampling produces variation)"
+      },
+      {
+        "probe": "eos_short_circuit",
+        "temperature": 0.0,
+        "eos_id": 3,
+        "max_new_tokens": 20,
+        "verdict": "PASS",
+        "note": "loop terminated at first id==eos; len(generated) <= 20"
+      }
+    ],
+    "all_probes_pass": true,
+    "overall_verdict": "PASS"
+  },
+  "honest_C3": [
+    "Greedy collapse [3,3,3,3,3] on the mock is a known artifact of weight-tied embeddings + untrained linear head; it is NOT evidence of bugs in the AR loop. On the real CLM v4 530M ckpt, greedy will produce different (but still likely incoherent) tokens.",
+    "Vanilla quality on real ckpt was NOT measured (ckpt on ubu1; agent is local Mac; 60min wall cap). Expected to be LOW per #115 C3 — model was trained for phi_star measurement, not instruction following.",
+    "The AR loop uses head_a only. CLM v4's dual-head design (head_a next-byte + head_g prev-byte) means information from head_g is discarded in vanilla generation. This is consistent with standard AR but loses any potential bidirectional benefit."
+  ],
+  "stage_4_verdict": "PASS",
+  "stage_3_prerequisite_satisfied": true,
+  "next_action_if_user_picks_stage_3": [
+    "Transfer /tmp/v3_generate_fix/v3_generate.py to ubu1 + load CLM v4 530M ckpt",
+    "Re-run smoke test against real ConsciousDecoderV3 + best.pt (vocab 64000, block 512, 477.65M params)",
+    "Measure vanilla quality (expected: incoherent SPM token sequences)",
+    "Curate ko/en SFT corpus (5K-50K turns)",
+    "LoRA SFT 8-24hr on H100 ($200-500)"
+  ],
+  "race_isolation": {
+    "wrote_only_to": [
+      "docs/clm_v4_revival_stages_2026_05_02.md",
+      "state/clm_v4_revival_stages_2026_05_02/v3_generate_smoke_2026_05_02.json",
+      "state/clm_v4_revival_stages_2026_05_02/verdict.json",
+      "/tmp/v3_generate_fix/v3_generate.py (off-repo)"
+    ],
+    "did_not_touch": [
+      "models/archive-legacy/decoder_v3.hexa (HEXA stub preserved canonical)",
+      "ready/anima/models/legacy/decoder_v3.py (read-only reference)",
+      "alpha pod (DEAD)",
+      "CLM v4 ckpt on ubu1",
+      "state/strategic_clm_v4_production_ready_2026_05_02/* (#115 verdict preserved)",
+      "state/cp2_alpha_serve_audit/* (r14 swap audit preserved)",
+      "any other agent's race-isolated dir"
+    ]
+  },
+  "cost_actual_usd": 0.0
+}

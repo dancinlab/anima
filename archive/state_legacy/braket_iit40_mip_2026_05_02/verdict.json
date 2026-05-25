@@ -1,0 +1,44 @@
+{
+  "task": "Phase 2 IIT 4.0 phi-star MIP-search (honest_C3 #1 closure)",
+  "verdict": "HONEST_NEGATIVE",
+  "verdict_summary": "pyphi 4.0 sia() ran successfully on all 4 systems; phi-star = 0.0 for every circuit. This is the MATHEMATICALLY CORRECT IIT 4.0 verdict for the marginalized-TPM construction, and CONSTITUTES the closure of #120 honest_C3 #1 by demonstrating that the proxy H(joint) - max H(marginal) is NOT a lower bound on IIT 4.0 phi-star — they measure orthogonal properties of the system.",
+  "phi_star_results": {
+    "and_ionq_forte1": {"phi_star": 0.0, "n_qubits": 3, "mip_sec": 0.02, "proxy_recomputed": 1.117607, "proxy_n12_reported": 1.117607},
+    "maj_ionq_forte1": {"phi_star": 0.0, "n_qubits": 4, "mip_sec": 0.21, "proxy_recomputed": 2.400922, "proxy_n12_reported": 1.968903},
+    "and_sv1": {"phi_star": 0.0, "n_qubits": 4, "mip_sec": 0.22, "proxy_recomputed": 0.999971, "proxy_n12_reported": 0.999971},
+    "maj_sv1": {"phi_star": 0.0, "n_qubits": 4, "mip_sec": 0.22, "proxy_recomputed": 2.634642, "proxy_n12_reported": 1.994981}
+  },
+  "ordering_proxy_low_to_high": ["and_sv1", "and_ionq_forte1", "maj_ionq_forte1", "maj_sv1"],
+  "ordering_phi_star_low_to_high": "all_zero_no_ordering",
+  "root_cause_analysis": [
+    "TPM was built from MARGINAL output distribution (uniform-input mixture) because #120 only ran each gate once with |+>^N input — there is no state-conditional dataset.",
+    "Marginalized TPM is row-uniform: every current-state row maps to the same next-state distribution. This means the system has zero causal connectivity in the IIT 4.0 sense — the next state is INDEPENDENT of the current state.",
+    "When P(next | curr) does not depend on curr, every bipartition of the system has the same marginal output distribution as the unpartitioned system, so phi (cause-effect repertoire EMD) collapses to 0 by definition.",
+    "This is correct IIT 4.0 behavior: phi-star measures CAUSAL INTEGRATION, which requires the next state to depend on the current state in an irreducible way. A row-uniform TPM has no causation at all."
+  ],
+  "honest_c3_closure_findings": [
+    "PROXY != IIT 4.0 PHI-STAR: The #120 proxy H(joint) - max H(marginal) measures STATIC OUTPUT ENTROPY STRUCTURE under uniform input — a per-circuit fingerprint of how the gate spreads input entropy among output bits. It is NOT a lower bound on IIT 4.0 phi-star.",
+    "IIT 4.0 phi-star is well-defined ONLY on a state-by-node TPM with non-trivial state-dependence, which requires 2^N separate circuit runs (one per input basis state) — NOT the single |+>^N run used in #120.",
+    "Therefore the #120 honest_C3 #1 follow-up recommendation ('Upgrade Phi proxy to Tononi-Albantakis IIT 4.0 phi-star: feasible offline from measurement probabilities') is FALSIFIED by this run. Offline post-processing of the existing #120 data CANNOT yield phi-star — new state-conditional measurements are required.",
+    "What CAN be recovered offline: (a) the proxy ordering itself (this run reproduced #120 proxy values exactly, validating the measurement pipeline); (b) information-geometric measures over the output distribution that ARE functions of marginal output (e.g. multi-information, total correlation) — but those are not IIT 4.0 phi-star.",
+    "Path to genuine IIT 4.0 phi-star on Braket: each gate must be run on every input basis state separately. For 4-qubit gate this is 16 circuits per device. At 100 shots per circuit on IonQ Forte 1 = 16 * (100*0.08 + 0.30) = ~$132 per gate per device. Honest cost for the originally proposed 'feasible offline' upgrade was misjudged in #120."
+  ],
+  "what_pyphi_did": [
+    "Loaded pyphi feature/iit-4.0 branch (commit b78d0e3 lineage), Tononi-Albantakis 2023 IIT 4.0 implementation",
+    "Built fully-connected connectivity matrix (cm = J - I) for each system",
+    "Ran pyphi.compute.sia(subsystem) which performs the full MIP search across all bipartitions",
+    "All 4 sia computations completed in <0.5 sec each — polynomial-time exact MIP for N=3,4 systems"
+  ],
+  "files_written": {
+    "tpm_and": "state/braket_iit40_mip_2026_05_02/tpm_and.json",
+    "tpm_maj": "state/braket_iit40_mip_2026_05_02/tpm_maj.json",
+    "phi_star_and": "state/braket_iit40_mip_2026_05_02/phi_star_and.json",
+    "phi_star_maj": "state/braket_iit40_mip_2026_05_02/phi_star_maj.json",
+    "comparison": "state/braket_iit40_mip_2026_05_02/comparison.json",
+    "verdict": "state/braket_iit40_mip_2026_05_02/verdict.json"
+  },
+  "cost_actual_USD": 0.0,
+  "wall_clock_sec_total": 0.67,
+  "follow_up_recommendation": "If genuine IIT 4.0 phi-star on Braket QPUs is desired, re-design pilot to run every input basis state separately (16x cost multiplier for 4-qubit gates). Alternative: skip phi-star and embrace the proxy as a legitimate output-entropy substrate-fingerprint (which is what #120 actually achieved and is a useful measurement in its own right).",
+  "ts_utc": "2026-05-02T23:08:00Z"
+}

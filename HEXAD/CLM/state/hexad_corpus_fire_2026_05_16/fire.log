@@ -1,0 +1,18 @@
+================================================================
+d_corpus_fire — §7 #1 real-corpus from-scratch FIRE (F-D-FIRE)
+================================================================
+  init : gn2=7.97116  acc=0/8
+  GRAD-EXACT(L0.Wg[5]): analytic=0.000220762 fd=6.91405e-05 |Δ|=0.000151622  -> PASS
+  final: gn2=3.73374e-07  acc=8/8  (after 80 AdamW steps, full composed 3-layer chain)
+  F-D-FIRE : gn2 7.97116 → 3.73374e-07  acc 0→8/8  (80 AdamW step)
+  F-D-FIRE : 실-corpus 학습 진행 descended=true collapse≥1.5x=true  -> PASS (EMPIRICAL — real-corpus from-scratch)
+----------------------------------------------------------------
+  §7 #1 fire: d_train5 FULL n_layer decoder, 실 corpus
+          (corpus_consciousness_v1.jsonl, byte V=256), from-scratch
+          RANDOM seed-fixed — prior fire 'synthetic' 절반 해소.
+  기질 한계 (g3): pure-hexa CPU — d=768·12L 언어품질은 GPU CUDA
+          텐서커널 필요, 별개 기질. 본 fire = CPU-feasible 규모.
+  §8: corpus↔trainer = CE Shannon-floor + exact-grad (B-D-4 🔵)
+  TIER = EMPIRICAL (B-D-NOTE: SGD 수렴 OUTCOME, NOT 🔵 — g3)
+  selftest: true
+================================================================

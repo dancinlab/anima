@@ -1,0 +1,82 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/modalities/text.hexa — text modality (default carry)
+// (axis-6 / axis-N+2)
+//
+//  PURPOSE
+//    Default modality — str → str identity passthrough. axis-6 비활성 시
+//    기존 text-only 경로 와 동일 (backward-compat strict). 본 모듈이 land
+//    해야 axis-6 cross-product 에 1 entry 가 생겨 dimension 형성.
+//
+//  CONTRACT
+//    fn run_modality(ctx: dict) -> dict
+//      → {input_kind: "text", output_kind: "text", status: "LANDED"}
+//
+//  COMPLIANCE
+// V14 — 결정성 (random / time / env 의존 없음)
+// — model load 절대 금지 (passthrough only)
+// — honest emit (LANDED 명시; default 통로)
+// mandate-1 — wrapping 0 (str → str identity)
+// axis-N+2 — axis-6 modality registry entry 1
+//
+//  CROSS-REFERENCE
+//    chat/modalities/_registry.hexa#text   registry SSOT
+//    chat.hexa --modality=text             기존 default 경로 (raw#15 additive)
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let mut i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn modality_describe() -> string {
+    return "text — default modality (str → str identity passthrough; backward-compat carry)"
+}
+
+// run_modality — text modality 핵심. 입력 그대로 emit (identity).
+// 친근 비유: text 는 anima 의 "기본 채널" — 이미 5 axis 가 가정하던 통로.
+// axis-6 활성 시 본 entry 가 1 cross-product slot 점유 (4800 중 720).
+// Returns parallel arrays: [["input_kind","output_kind","status"], values].
+fn run_modality(ctx) -> array {
+    let keys = ["input_kind", "output_kind", "status"]
+    let vals = ["text", "text", "LANDED_passthrough"]
+    return [keys, vals]
+}
+
+// modality_smoke — registry hook. carry — no model load.
+fn modality_smoke(repo: string, argv) -> int {
+    let r = run_modality([])
+    if len(r) != 2 { return 2 }
+    let keys = r[0]
+    let vals = r[1]
+    if len(keys) != 3 || len(vals) != 3 { return 3 }
+    if _str(vals[0]) != "text" || _str(vals[1]) != "text" { return 4 }
+    println("[modality:text] smoke PASS — str→str identity passthrough OK (model load 0)")
+    return 0
+}
+
+fn main() {
+    let argv = args()
+    if _arg_present(argv, "--describe") {
+        println(modality_describe())
+        return
+    }
+    if _arg_present(argv, "--selftest") || _arg_present(argv, "--smoke") {
+        let rc = modality_smoke("", argv)
+        if rc != 0 {
+            println("FAIL modality text smoke (rc=" + to_string(rc) + ")")
+            exit(rc)
+        }
+        return
+    }
+    println(modality_describe())
+}

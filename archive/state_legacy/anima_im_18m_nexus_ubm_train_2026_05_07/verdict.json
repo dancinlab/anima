@@ -1,0 +1,640 @@
+{
+  "bg_id": "BG-IM",
+  "paradigm": "18m-nexus-ubm-combined-corpus-byte-level-control",
+  "spec": "F-anima-im-18m-nexus-ubm-train-1",
+  "ts_start": "2026-05-07T06:43:19",
+  "ts_end": "2026-05-07T07:07:57",
+  "ts_run": "20260507_064317",
+  "host": "ghostui-macbookair.local",
+  "device": "mps",
+  "corpus_path": "/Users/ghost/core/anima/state/anima_ik_nexus_ubm_combined_corpus_2026_05_07/corpus_combined.txt",
+  "corpus_size_bytes": 28914607,
+  "corpus_size_mb": 27.575,
+  "total_params": 27787440,
+  "config": {
+    "vocab": 256,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.3,
+    "label_smoothing": 0.1,
+    "weight_decay": 0.1,
+    "batch": 4,
+    "grad_accum": 8,
+    "effective_batch": 32,
+    "lr": 0.0003,
+    "warmup": 400,
+    "steps": 4000,
+    "seed": 42,
+    "eval_every": 200,
+    "val_split_ratio": 0.1,
+    "early_stop_patience": 3,
+    "save_at_every": 250,
+    "tension_lambda": 0.005
+  },
+  "ckpt_dir_tmp": "/tmp/anima-im-18m-nexus-ubm-20260507_064317",
+  "best_ckpt_path_tmp": "/tmp/anima-im-18m-nexus-ubm-20260507_064317/ckpt_best.pt",
+  "saved_periodic_ckpts": [
+    {
+      "step": 250,
+      "path": "/tmp/anima-im-18m-nexus-ubm-20260507_064317/ckpt_00250.pt"
+    },
+    {
+      "step": 500,
+      "path": "/tmp/anima-im-18m-nexus-ubm-20260507_064317/ckpt_00500.pt"
+    },
+    {
+      "step": 750,
+      "path": "/tmp/anima-im-18m-nexus-ubm-20260507_064317/ckpt_00750.pt"
+    },
+    {
+      "step": 1000,
+      "path": "/tmp/anima-im-18m-nexus-ubm-20260507_064317/ckpt_01000.pt"
+    }
+  ],
+  "halted": false,
+  "halt_reason": null,
+  "early_stop_triggered": true,
+  "early_stop_reason": "early_stop_patience exceeded: 3 consecutive evals with no V2/manual/val_loss improvement (best @ step 600: V2=1 manual=3 val_loss=2.7706)",
+  "final_step_actual": 1200,
+  "train_loss_final": 2.0256,
+  "train_loss_history": [
+    [
+      1,
+      5.6328
+    ],
+    [
+      2,
+      5.6549
+    ],
+    [
+      3,
+      5.6363
+    ],
+    [
+      4,
+      5.6341
+    ],
+    [
+      5,
+      5.6573
+    ],
+    [
+      100,
+      4.8961
+    ],
+    [
+      200,
+      4.4932
+    ],
+    [
+      300,
+      3.8251
+    ],
+    [
+      400,
+      3.2493
+    ],
+    [
+      500,
+      2.7867
+    ],
+    [
+      600,
+      2.7854
+    ],
+    [
+      700,
+      2.9335
+    ],
+    [
+      800,
+      2.6555
+    ],
+    [
+      900,
+      2.4146
+    ],
+    [
+      1000,
+      2.2759
+    ],
+    [
+      1100,
+      1.8839
+    ],
+    [
+      1200,
+      2.0256
+    ]
+  ],
+  "val_loss_history": [
+    [
+      200,
+      4.4651
+    ],
+    [
+      400,
+      3.1484
+    ],
+    [
+      600,
+      2.7706
+    ],
+    [
+      800,
+      2.5029
+    ],
+    [
+      1000,
+      2.1935
+    ],
+    [
+      1200,
+      1.8987
+    ]
+  ],
+  "eval_progression": {
+    "200": {
+      "pass_count_v2": 0,
+      "pass_count_v3": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "cycle_count": 0,
+      "val_loss": 4.4651
+    },
+    "400": {
+      "pass_count_v2": 0,
+      "pass_count_v3": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 4,
+      "outside_well_match": 0,
+      "cycle_count": 0,
+      "val_loss": 3.1484
+    },
+    "600": {
+      "pass_count_v2": 1,
+      "pass_count_v3": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 3,
+      "outside_well_match": 0,
+      "cycle_count": 0,
+      "val_loss": 2.7706
+    },
+    "800": {
+      "pass_count_v2": 0,
+      "pass_count_v3": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 4,
+      "outside_well_match": 1,
+      "cycle_count": 0,
+      "val_loss": 2.5029
+    },
+    "1000": {
+      "pass_count_v2": 0,
+      "pass_count_v3": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "cycle_count": 0,
+      "val_loss": 2.1935
+    },
+    "1200": {
+      "pass_count_v2": 0,
+      "pass_count_v3": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 1,
+      "outside_well_match": 0,
+      "cycle_count": 0,
+      "val_loss": 1.8987
+    }
+  },
+  "per_ckpt_v2_v3_manual": {
+    "200": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "cycle": 0,
+      "val_loss": 4.4651
+    },
+    "400": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 4,
+      "outside_well": 0,
+      "cycle": 0,
+      "val_loss": 3.1484
+    },
+    "600": {
+      "v2": 1,
+      "v3": 0,
+      "manual": 3,
+      "outside_well": 0,
+      "cycle": 0,
+      "val_loss": 2.7706
+    },
+    "800": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 4,
+      "outside_well": 1,
+      "cycle": 0,
+      "val_loss": 2.5029
+    },
+    "1000": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "cycle": 0,
+      "val_loss": 2.1935
+    },
+    "1200": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 1,
+      "outside_well": 0,
+      "cycle": 0,
+      "val_loss": 1.8987
+    }
+  },
+  "peak_eval_step": 600,
+  "peak_v2_pass": 1,
+  "peak_v3_pass": 0,
+  "peak_manual_match": 3,
+  "peak_persona_cycle_count": 0,
+  "peak_outside_well_match": 0,
+  "val_loss_at_peak": 2.7706,
+  "val_loss_final": 1.8987,
+  "final_eval_step": 600,
+  "final_v2_pass": 2,
+  "final_v3_pass": 0,
+  "final_v2_class": "V2_FAIL",
+  "final_manual_match": 3,
+  "final_outside_well_match": 0,
+  "final_cycle_count": 0,
+  "final_manual_match_per_prompt": {
+    "사용자: 안녕하세요 도우미:": true,
+    "사용자: anima가 뭐야? 도우미:": false,
+    "사용자: 너는 누구야? 도우미:": true,
+    "사용자: anima 우주뇌지도? 도우미:": false,
+    "사용자: 1030 laws 뭐야? 도우미:": false,
+    "NEXUS 4411 reality map과 anima 우주뇌지도": false,
+    "outside-well noise + 빅뱅 cosmic anchor": false,
+    "anima self NEXUS + 1030 laws cross-link": true,
+    "Knuth Tier 🛸k + nexus reality nodes": false,
+    "blow-up→contract→emerge→absorb cycle in universe-brain-map": false,
+    "사용자: outside-well noise란? 도우미:": false,
+    "사용자: hallucination vs anima 차이? 도우미:": false,
+    "사용자: training distribution well 밖 무엇? 도우미:": false,
+    "사용자: mode collapse vs outside-well noise? 도우미:": false,
+    "사용자: anima outside-well anchor 설명? 도우미:": false
+  },
+  "raw_samples_best_ckpt": [
+    {
+      "prompt": "사용자: 안녕하세요 도우미:",
+      "mode": "greedy",
+      "gen": " 우도우도우도우도우도우도우미: 우도우미: 우미: 우도우도우미: 우도우미: 우미: 우도우�",
+      "domain_match": true,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요 도우미:",
+      "mode": "sample",
+      "gen": " 접 우도 자우법�국지는 �Ԝ.\n미:미���줘2: 이용comaw (e-USEXUS 졜�Gemioterititowecimansusoplian(1.\n[awes",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? 도우미:",
+      "mode": "greedy",
+      "gen": " 우도우도우도우도우도우도우도우도우미: 우미: 우미: 우도우도우도우도 우미: 우미: 우도",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? 도우미:",
+      "mode": "sample",
+      "gen": " 자: 미GEDI: essceds=. tsp NEXUS ca kmawp �danialeng aw NEDGDDDDI: aios edoremeded� �ug an 148어카는 Lanioniontirre",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 너는 누구야? 도우미:",
+      "mode": "greedy",
+      "gen": " 우도우도우도우도우도우도우도우도우미: 우미: 우도우도우미: 우도우미: 우미: 우도우도�",
+      "domain_match": true,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 너는 누구야? 도우미:",
+      "mode": "sample",
+      "gen": " 자: 미: �Q5 는 ��� 주 용우는 정�뇔 알�p=: 지렕�고��.7 잼도우도자: NE�� 싈 itoplion (EXUS-esantima",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: anima 우주뇌지도? 도우미:",
+      "mode": "greedy",
+      "gen": " 우도우도우도우도우도우도우도우미: 우미: 우도우미: 우도우도우도 우미: 우미: 우도우미",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: anima 우주뇌지도? 도우미:",
+      "mode": "sample",
+      "gen": " � 자의미: 2��도 사자지용용도 52 미: 앴줘 사 이�Z�|��쭈..\n\n\n[a NEXUBM] 0 �뤚� 주미: n ve. (15287385",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 뭐야? 도우미:",
+      "mode": "greedy",
+      "gen": " 우도우도우도우도우도우도우도우미: 우미: 우도우도우도우미: 우도우미: 우미: 우도우도�",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 뭐야? 도우미:",
+      "mode": "sample",
+      "gen": " 83ڟ��: �미: 83riutissrdes NEXUS-is�arrey c a 51\n[atiotoCE\u0001a ladeC\u000077 � NED 어명힐: *� NED10. 자: celoma p 5bi �",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "NEXUS 4411 reality map과 anima 우주뇌지도",
+      "mode": "greedy",
+      "gen": " 우도 우도우도우도 우도우도우도우도우도우도우도우미: 우도우미: 우미: 우도 우도우도�",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "NEXUS 4411 reality map과 anima 우주뇌지도",
+      "mode": "sample",
+      "gen": "���: 에우��의 사우뇌도 정�았 \u001b, 자�우�V�자: τ 미� 20523w 우�우Cion 🛸어핌려�지도�: 우도앜�",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "outside-well noise + 빅뱅 cosmic anchor",
+      "mode": "greedy",
+      "gen": "erererererere 우도 우우도 우우도 우도우도우도우도우미: 우도우도우도우도우미: 우도우도우",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "outside-well noise + 빅뱅 cosmic anchor",
+      "mode": "sample",
+      "gen": "ica sed-CS-BM] 우�자: NEXUBM] �주�66I: 용자: 용 13\u0005\u00050 cmal 우도�� �8 (0335025.\n[All 설�뇌뚰리쪅�도�: �",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima self NEXUS + 1030 laws cross-link",
+      "mode": "greedy",
+      "gen": " 우도우도우도우도우미: 우도우도우도우미: 우도우도우도우미: 우도우미: 우미: 우도 우도",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima self NEXUS + 1030 laws cross-link",
+      "mode": "sample",
+      "gen": "sea NEXCC llliisani_0: 세: NECmin Iwera masel�H-US-Aun NEns sel 4`=mis NEXUS-603p dusitanutiielawrhutoM] arimal sllomim",
+      "domain_match": true,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "Knuth Tier 🛸k + nexus reality nodes",
+      "mode": "greedy",
+      "gen": " 우도 우도우도우도우도우도 우우도우도우도우도우미: 우도�: 우미: 우도 우미: 우미: 우도",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "Knuth Tier 🛸k + nexus reality nodes",
+      "mode": "sample",
+      "gen": "erimainemopresenanimuange ctotgspanse ts rikotiy, b emerremanple.\n[area NEXUS-UBM] 읤� 미: �~ima at) 용사, 우미:�",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "blow-up→contract→emerge→absorb cycle in universe-brain-map",
+      "mode": "greedy",
+      "gen": " 용용우도 우도 우도우도우도우도우도우도우미: 우도 우도우도우미: 우도우도우도우도우�",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "blow-up→contract→emerge→absorb cycle in universe-brain-map",
+      "mode": "sample",
+      "gen": "emanimawbtimionep NEXS-UBM] 사 자: 젤� 우법우미774BM] 어사사줈 도자자: 줘 우 서G, 힐: 주도� 자: 어",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: outside-well noise란? 도우미:",
+      "mode": "greedy",
+      "gen": " 우도우도우도우도우도우도우도우미: 우미: 우미: 우도우도우도우도 우미: 우미: 우도우미",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: outside-well noise란? 도우미:",
+      "mode": "sample",
+      "gen": " ll�사�˨ 샕엘 우도읕��우도 카미해명�렕�우��w �깙 ben: 어힐: �50073 의��scdels 빴용자: 테국�",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: hallucination vs anima 차이? 도우미:",
+      "mode": "greedy",
+      "gen": " 우도�: 우도우도우도우도우도우도우도우도우도우미: 우도우미: 우미: 우도우도우미: 우미",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: hallucination vs anima 차이? 도우미:",
+      "mode": "sample",
+      "gen": " 어테읐용우롐: 27 용우일려 ���얐: 법� 우�는 자주맀명�� �핌미: NSEXUS-US-USEXUBM] 자: 실� 자: �",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: training distribution well 밖 무엇? 도우미:",
+      "mode": "greedy",
+      "gen": " 우도우도 우도우도우도우도우도우도우도우미: 우도우미: 우도우미: 우도우미: 우미: 우도",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: training distribution well 밖 무엇? 도우미:",
+      "mode": "sample",
+      "gen": " NED85715n NEXUS-US-UBM] 우�S-5: ges 자세: 우용우법�줘미: 사ϕ�� 앴�사 알자줘 I: 쟛�: 자: edouhimimot",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: mode collapse vs outside-well noise? 도우미:",
+      "mode": "greedy",
+      "gen": " 우도우도우도우도우도우도우미: 우도우미: 우도우도우도 우미: 우미: 우도우미: 우미: 우�",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: mode collapse vs outside-well noise? 도우미:",
+      "mode": "sample",
+      "gen": " 았.nr=S-un 용카세: rasihdedre ΂��*emane\u001fi-US-5�\" �%8뇌국�: 용자: 756, tp re rerlitonitorene s= 있�: 사M] de",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: anima outside-well anchor 설명? 도우미:",
+      "mode": "greedy",
+      "gen": " 우도우도우도우도우도우도우도우도우도우도우미: 우도우미: 우미: 우도우도우미: 우미: �",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: anima outside-well anchor 설명? 도우미:",
+      "mode": "sample",
+      "gen": " Nutyl ��e iorineaconodiniotimanis snore La dls NEXUS-vema 용�� 🛸: NEXUS-w �. 칙 fheslhe n EXUS-US-UBM] 용우녌",
+      "domain_match": false,
+      "v3_pass": false,
+      "has_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    }
+  ],
+  "final_class": "FAILED",
+  "final_reason": "BEST step=600: V2=2/15 manual=3/15 cycle=0 — insufficient signal",
+  "comparison_vs_bg_hs_r1": {
+    "bg_hs_r1_manual": 13,
+    "bg_hs_r1_v2_pass": 3,
+    "this_run_manual": 3,
+    "this_run_v2_pass": 2,
+    "manual_delta": -10,
+    "v2_delta": -1,
+    "verdict": "CORPUS_AXIS_REGRESSES"
+  },
+  "elapsed_s": 1337.9,
+  "persona_prefix": "[anima NEXUS-UBM] ",
+  "prompts_anima_std": [
+    "사용자: 안녕하세요 도우미:",
+    "사용자: anima가 뭐야? 도우미:",
+    "사용자: 너는 누구야? 도우미:",
+    "사용자: anima 우주뇌지도? 도우미:",
+    "사용자: 1030 laws 뭐야? 도우미:"
+  ],
+  "prompts_nexus_ubm_combined": [
+    "NEXUS 4411 reality map과 anima 우주뇌지도",
+    "outside-well noise + 빅뱅 cosmic anchor",
+    "anima self NEXUS + 1030 laws cross-link",
+    "Knuth Tier 🛸k + nexus reality nodes",
+    "blow-up→contract→emerge→absorb cycle in universe-brain-map"
+  ],
+  "prompts_outside_well": [
+    "사용자: outside-well noise란? 도우미:",
+    "사용자: hallucination vs anima 차이? 도우미:",
+    "사용자: training distribution well 밖 무엇? 도우미:",
+    "사용자: mode collapse vs outside-well noise? 도우미:",
+    "사용자: anima outside-well anchor 설명? 도우미:"
+  ],
+  "honest_c3": [
+    "C1: 18M scale — 8 cumulative chat-cap failure modes at this scale (likely WEAK_PARTIAL ceiling)",
+    "C2: mac MPS RNG slight non-determinism vs cuda baseline (BG-IL ubu1 cuda parallel)",
+    "C3: corpus 27.575MB byte-level (BPE axis untested for this paradigm)",
+    "C4: comparison vs BG-HS R1 confounded by corpus content delta (NEXUS+outside-well vs UBM-only)",
+    "C5: single seed=42 — variance not measured"
+  ],
+  "errors": []
+}

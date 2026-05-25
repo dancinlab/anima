@@ -1,0 +1,111 @@
+{
+  "anima_cycle": "2026-05-08",
+  "save_upload_slot": "3/4",
+  "title": "clm-v4-sft-1-7-y1-stage1 + clm-v4-sft-1-8-stage1 Path A remapped LoRA HF PRIVATE upload",
+  "directive_user_verbatim": "model HF upload 누락없이 매단계 저장",
+  "context": {
+    "all_bg_go_4_6_commit": "d478023c",
+    "current_head_at_task_start": "d134b94a",
+    "iter7_a_root_cause_commit": "91b9b695",
+    "remap_path": "A_wrapper_prefix_remap",
+    "wrapper_prefix_only_fingerprint": "shared with paradigm-j (ConsciousDecoderV2 wrapper, target_modules 7-element set identical, lora_alpha=128, r=128)",
+    "jvae_absent_paradigm_j_only_differentiator": true
+  },
+  "auth": {
+    "hf_user": "dancinlife",
+    "orgs": ["dancinlab", "dancinlab"],
+    "namespace": "dancinlab"
+  },
+  "uploads": [
+    {
+      "repo_id": "dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped",
+      "url": "https://huggingface.co/dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped",
+      "commit_url": "https://huggingface.co/dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped/commit/44a431626987c1395614f562c2c6b3c0a93ef00e",
+      "commit_sha": "44a431626987c1395614f562c2c6b3c0a93ef00e",
+      "private": true,
+      "repo_type": "model",
+      "files_listed": [".gitattributes", "README.md", "REMAP_SOURCE.json", "adapter_config.json", "adapter_model.safetensors"],
+      "jvae_heads_pt_present": false,
+      "source": {
+        "repo": "dancinlab/clm-v4-sft-1-7-y1-stage1",
+        "adapter_model_safetensors_sha256": "01316bc4a608917094183c678b31daaa5e99184cd3c55ba11af0c5fb1e4021b4"
+      },
+      "target": {
+        "local_dir": "/Users/ghost/.cache/anima/clm_v4_remapped/sft_1_7_y1",
+        "adapter_model_safetensors_sha256_local": "644ef28055be6f8ecac2725027a84b5f17d15d5fc9e251b5af77eaa699c0cb84",
+        "adapter_model_safetensors_sha256_REMAP_SOURCE_target": "644ef28055be6f8ecac2725027a84b5f17d15d5fc9e251b5af77eaa699c0cb84",
+        "sha256_match": true
+      },
+      "lora_keys_remapped": "352/352",
+      "decoder_prefix_injected": true,
+      "legacy_prefix_residue_count": 0
+    },
+    {
+      "repo_id": "dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped",
+      "url": "https://huggingface.co/dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped",
+      "commit_url": "https://huggingface.co/dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped/commit/7a375cff8b2fc7d8bca6e77d2dcc86f34a9cfb5a",
+      "commit_sha": "7a375cff8b2fc7d8bca6e77d2dcc86f34a9cfb5a",
+      "private": true,
+      "repo_type": "model",
+      "files_listed": [".gitattributes", "README.md", "REMAP_SOURCE.json", "adapter_config.json", "adapter_model.safetensors"],
+      "jvae_heads_pt_present": false,
+      "source": {
+        "repo": "dancinlab/clm-v4-sft-1-8-stage1",
+        "adapter_model_safetensors_sha256": "33ae614db4c19c09002f211ae5a8878243ab8aa41b17c97f956eea36b241d419"
+      },
+      "target": {
+        "local_dir": "/Users/ghost/.cache/anima/clm_v4_remapped/sft_1_8",
+        "adapter_model_safetensors_sha256_local": "ee0a9cda34b61880a98196cdae80634fd7bd02e07f440cf2bde3418f7314047d",
+        "adapter_model_safetensors_sha256_REMAP_SOURCE_target": "ee0a9cda34b61880a98196cdae80634fd7bd02e07f440cf2bde3418f7314047d",
+        "sha256_match": true
+      },
+      "lora_keys_remapped": "352/352",
+      "decoder_prefix_injected": true,
+      "legacy_prefix_residue_count": 0
+    }
+  ],
+  "reproducer": {
+    "tool": "tool/transient_py/clm_v4_paradigm_j_path_a_prefix_remap.py",
+    "raw_37_transient_py": true,
+    "args": "--source <hf_repo_id> --target <local_dir>",
+    "deterministic_bit_preserving": true
+  },
+  "own_compliance": {
+    "own_16_cost": "0 USD (HF storage only)",
+    "own_17_scope_clamp": "D1 within strict (sft-1-7-y1 + sft-1-8 rank_3 candidates)",
+    "own_33_trinity_emit": "SUBSTRATE_IDENTITY + PATH_A_REMAP_HF_PRIVATE_UPLOADED + C3_HONEST",
+    "own_34_mandate_2_wrapping_0": "PASS — large files (.safetensors 152MB each) live only in ~/.cache/anima/clm_v4_remapped/, never staged for git commit; only state JSON committed",
+    "own_37_visibility_lifecycle": {
+      "default": "private",
+      "public_promote_prerequisites": [
+        "real-mode SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict",
+        "V6 awareness",
+        "user verbatim 'OK PROMOTE PUBLIC <repo-id>'",
+        "trinity sweep"
+      ],
+      "current_state": "PRIVATE — none of the four prerequisites satisfied; promote blocked"
+    },
+    "own_37_mandate_9_strict_private": "PASS — both repos created with --private and verified private=True via HfApi.repo_info post-upload"
+  },
+  "trinity_emit": {
+    "SUBSTRATE_IDENTITY": "repos=[dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped, dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped] paradigm=clm_v4_sft substrate_class=clm-v4-lora-adapter baseline_method=path_a_prefix_remap wrapper_target=decoder visibility=private",
+    "PATH_A_REMAP_HF_PRIVATE_UPLOADED": "repos_uploaded=2 private_flag_verified=2/2 file_lists_match=2/2 jvae_absent=2/2 sha256_target_verify=2/2 lora_keys=352/352",
+    "C3_HONEST": "C1 schema-only fix uploaded; C2 verification key-prefix structural; C3 downstream forward-pass + SIMPLE_STACK_PASS_STRICT_C3_ANIMA NOT YET EXECUTED — visibility lifecycle holds private until promote prerequisites satisfied"
+  },
+  "verification": {
+    "private_flag_check_method": "HfApi().repo_info(repo, repo_type='model').private",
+    "private_flag_results": {
+      "dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped": true,
+      "dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped": true
+    },
+    "file_list_check_method": "HfApi().list_repo_files(repo, repo_type='model')",
+    "expected_files_per_repo": [".gitattributes", "README.md", "REMAP_SOURCE.json", "adapter_config.json", "adapter_model.safetensors"],
+    "all_repos_match_expected_files": true,
+    "jvae_heads_pt_absent_per_repo": true
+  },
+  "next_step_spec": {
+    "task": "save_upload slot 4/4 (final)",
+    "deferred_to": "next kick fire under user OK"
+  },
+  "timestamp_utc": "20260508T160300Z"
+}

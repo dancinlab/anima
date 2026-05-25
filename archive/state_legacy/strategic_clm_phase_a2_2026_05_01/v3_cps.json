@@ -1,0 +1,53 @@
+{
+  "schema": "anima/an11_cps/1_gram_frob_variant",
+  "verifier": "V3 CPS (Gram Frobenius variant)",
+  "preserve_permutation": [
+    6,
+    7,
+    8,
+    11,
+    9,
+    10,
+    0,
+    1,
+    2,
+    5,
+    3,
+    4,
+    12,
+    13,
+    14,
+    15
+  ],
+  "destruct_permutation": [
+    10,
+    15,
+    9,
+    14,
+    1,
+    0,
+    4,
+    8,
+    3,
+    13,
+    5,
+    11,
+    2,
+    7,
+    6,
+    12
+  ],
+  "destruct_seed": 20260421,
+  "delta_preserve": 0.09206576148862011,
+  "delta_destruct": 0.08963523881672844,
+  "CPS": 0.9736001458892827,
+  "CPS_inf": false,
+  "verdict": "FAIL",
+  "thresholds": {
+    "PASS": "CPS>=3.0 AND delta_pres<=0.20 AND delta_des>=0.40",
+    "AMBIGUOUS": "CPS in [1.5,3.0)",
+    "FAIL": "CPS<1.5"
+  },
+  "method": "normalized Gram Frobenius difference on pooled X",
+  "ts": "2026-05-02T08:34:16Z"
+}

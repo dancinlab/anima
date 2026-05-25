@@ -1,0 +1,34 @@
+[ghz_mermin_runner] cond.10 / F-QM-2-GHZ-10 production run
+date: 2026-05-03
+substrate: Aer state-vector (qiskit_aer 0.17.2 + qiskit 2.4.1) via /Users/ghost/etc/anima-quantum/.venv
+config: n_shots=1024, n_trials=30, seed=20260503, engine=aer
+total shots: 1024 * 30 * 4 = 122880
+
+per-trial Mermin M values (analytic = +4.0):
+  all 30 trials returned M = 4.0 exactly (Aer noiseless on a Pauli eigenstate => zero shot noise)
+
+per-basis expectation values (mean over 30 trials):
+  E_XXX =  1.0  (analytic +1)
+  E_XYY = -1.0  (analytic -1)
+  E_YXY = -1.0  (analytic -1)
+  E_YYX = -1.0  (analytic -1)
+
+Mermin M = E_XXX - E_XYY - E_YXY - E_YYX = 1 - (-1) - (-1) - (-1) = +4.0
+
+statistics:
+  M_mean = 4.0
+  M_std  = 0.0      (eigenstate => no shot variance)
+  M_min  = 4.0
+  M_max  = 4.0
+
+falsifier band check:
+  M_mean in [3.7, 4.0]? YES (4.0)
+  M_min  >= 3.5?        YES (4.0)
+  => verdict = PASS
+
+cost: $0 (Aer local, no QPU)
+wall: ~2 s observed (122880 noiseless 3-qubit shots)
+
+raw#9 ok: ghz_mermin_runner.py is 2nd .py under qmirror standalone modules; ghz_mermin.hexa is hexa-strict
+raw#15 ok: bridge path resolved via NEXUS_QMIRROR_BRIDGE_PATH env or HOME-relative fallback in .hexa
+raw#10 ok: 4 caveats embedded in verdict.json (noiseless Aer perfection, witness vs full tomography, sign-convention divergence, hardware out-of-scope)

@@ -1,0 +1,187 @@
+{
+  "phase_1_subhypothesis": "H3.1_autopoietic_closure",
+  "ts_start": 1778091730.05185,
+  "ts_end": 1778091730.500863,
+  "wall_seconds": 0.44901299476623535,
+  "n_catalysts": 5,
+  "catalysts": [
+    "template",
+    "ligase",
+    "replicase",
+    "ribozyme_aux",
+    "product_chain"
+  ],
+  "rate_matrix": [
+    [
+      0.0,
+      0.0,
+      0.2,
+      0.0,
+      0.4
+    ],
+    [
+      0.4,
+      0.0,
+      0.0,
+      0.1,
+      0.0
+    ],
+    [
+      0.0,
+      0.4,
+      0.0,
+      0.1,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.4,
+      0.0,
+      0.1
+    ],
+    [
+      0.1,
+      0.0,
+      0.0,
+      0.4,
+      0.0
+    ]
+  ],
+  "degradation_rate": 0.05,
+  "n_steps": 1000,
+  "n_replicates": 5,
+  "init_conc": 1.0,
+  "self_maintenance_rates_per_rep": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "autopoietic_self_maintenance_rate_1000_steps": 1.0,
+  "self_maintenance_std": 0.0,
+  "mean_final_diversity": 5.0,
+  "results_per_rep": [
+    {
+      "rep": 0,
+      "seed": 169329923,
+      "self_maintenance_rate": 1.0,
+      "final_diversity": 5,
+      "final_conc": [
+        6.103884410699807,
+        5.4246639941412775,
+        5.161213785561553,
+        5.073540374614444,
+        5.11173330873054
+      ]
+    },
+    {
+      "rep": 1,
+      "seed": 169329924,
+      "self_maintenance_rate": 1.0,
+      "final_diversity": 5,
+      "final_conc": [
+        6.071451487454215,
+        5.40337993265109,
+        5.161615713892573,
+        5.0806698908807055,
+        5.1054197449035
+      ]
+    },
+    {
+      "rep": 2,
+      "seed": 169329925,
+      "self_maintenance_rate": 1.0,
+      "final_diversity": 5,
+      "final_conc": [
+        6.072329624953213,
+        5.384566126911146,
+        5.161531251462922,
+        5.071163480460238,
+        5.115152381158088
+      ]
+    },
+    {
+      "rep": 3,
+      "seed": 169329926,
+      "self_maintenance_rate": 1.0,
+      "final_diversity": 5,
+      "final_conc": [
+        6.111052978848133,
+        5.407572253719692,
+        5.163461274787466,
+        5.106850969264396,
+        5.167276088611428
+      ]
+    },
+    {
+      "rep": 4,
+      "seed": 169329927,
+      "self_maintenance_rate": 1.0,
+      "final_diversity": 5,
+      "final_conc": [
+        6.095745516906479,
+        5.383822684680391,
+        5.155751551237423,
+        5.060811044923311,
+        5.112235730334488
+      ]
+    }
+  ],
+  "broken_closure_control": {
+    "broken_self_maintenance_rate_per_rep": [
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8
+    ],
+    "broken_mean_rate": 0.8,
+    "broken_final_conc_per_rep": [
+      [
+        0.0060543841589027515,
+        0.7459998220301657,
+        1.7316181550228902,
+        2.8018037467040107,
+        2.86526493498541
+      ],
+      [
+        0.0,
+        0.7002580849543544,
+        1.712997394148451,
+        2.7750989451161936,
+        2.849411328505965
+      ],
+      [
+        0.0034713028368583616,
+        0.7370796158848157,
+        1.7331094093590884,
+        2.7844501120617795,
+        2.8870956947586053
+      ],
+      [
+        0.01545505432829767,
+        0.7563364477100935,
+        1.7848492013464927,
+        2.8400161765355523,
+        2.8838177338776205
+      ],
+      [
+        0.01138728710233963,
+        0.7186052106277393,
+        1.7279479488178109,
+        2.800760780426558,
+        2.8939881505150713
+      ]
+    ],
+    "interpretation": "with P\u2192T closure cut, network should collapse \u2014 validates self-maintenance is closure-dependent"
+  },
+  "criteria": {
+    "C1_autopoietic_closure_target": "\u22650.80 self-maintaining over 1000 steps",
+    "C1_pass": true,
+    "C1_falsified_below_0.50": false,
+    "C1_control_broken_below_intact": true
+  },
+  "seed": 169329923
+}

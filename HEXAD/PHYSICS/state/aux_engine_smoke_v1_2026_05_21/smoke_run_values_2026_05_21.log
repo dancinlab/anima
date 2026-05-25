@@ -1,0 +1,22 @@
+=== aux_engine_smoke (canonical 1차) ===
+  goal: parse PASS + 100-step + 5 falsifier check
+
+  [S1] parse_pass: REACHED (entered main)
+  [S2] engine_construct: total_cells=8(expect8) →true
+  step0: cells=8phi=0.0336448ema=0.00336448score=0.283776
+  step20: cells=16phi=0.00258282ema=0.0054262score=0.212448
+  step40: cells=32phi=0.0031354ema=0.00273146score=0.320843
+  step60: cells=48phi=0.00090984ema=0.00133359score=0.23218
+  step80: cells=64phi=0.000730314ema=0.000773239score=0.193163
+  [S3] forward_step: final output finite →true
+  [S4] phi_nonneg (n=100):true
+  [S5] motivation_in_unit: min=0.128076max=0.357499→true
+
+=== summary ===
+  S1 parse_pass:        REACHED
+  S2 engine_construct: true
+  S3 forward_step:     true
+  S4 phi_nonneg:       true
+  S5 motivation_unit:  true
+  total_cells_final:   64
+  best_phi:            0.0336448

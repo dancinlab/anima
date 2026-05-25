@@ -1,0 +1,89 @@
+{
+  "bg_id": "BG-HU",
+  "eval_log_path": "/Users/ghost/core/anima/state/anima_combined_paradigm_train_2026_05_07/eval_log.jsonl",
+  "status": "OK",
+  "v2_class": "PARTIAL_PASS_GE7_step_800_persona_cycle_True",
+  "v3_class": "V3_PARTIAL_SIGNAL",
+  "n_responses": 150,
+  "steps_evaluated": [
+    200,
+    400,
+    600,
+    800,
+    1000
+  ],
+  "final_step": 1000,
+  "final_class_v4": "V4_FAIL",
+  "best_v4_step": 400,
+  "best_v4_pass": 4,
+  "peak_lesson_k_step": null,
+  "peak_lesson_k_deg_pct": 0.0,
+  "total_lesson_k_caught": 1,
+  "step_summaries": {
+    "200": {
+      "n_responses": 30,
+      "deg_count_at_step": null,
+      "v3_pass_6cell": 0,
+      "v4_strict_pass": 2,
+      "v4_4_manual_match_pass": 2,
+      "v4_7_emb_sim_pass": 20,
+      "v4_catch_v3_false_pass": 0,
+      "lesson_k_trap_caught": 0,
+      "emb_sim_mean": 0.2499
+    },
+    "400": {
+      "n_responses": 30,
+      "deg_count_at_step": null,
+      "v3_pass_6cell": 0,
+      "v4_strict_pass": 4,
+      "v4_4_manual_match_pass": 5,
+      "v4_7_emb_sim_pass": 21,
+      "v4_catch_v3_false_pass": 0,
+      "lesson_k_trap_caught": 1,
+      "emb_sim_mean": 0.2689
+    },
+    "600": {
+      "n_responses": 30,
+      "deg_count_at_step": null,
+      "v3_pass_6cell": 0,
+      "v4_strict_pass": 0,
+      "v4_4_manual_match_pass": 0,
+      "v4_7_emb_sim_pass": 26,
+      "v4_catch_v3_false_pass": 0,
+      "lesson_k_trap_caught": 0,
+      "emb_sim_mean": 0.3838
+    },
+    "800": {
+      "n_responses": 30,
+      "deg_count_at_step": null,
+      "v3_pass_6cell": 0,
+      "v4_strict_pass": 2,
+      "v4_4_manual_match_pass": 2,
+      "v4_7_emb_sim_pass": 25,
+      "v4_catch_v3_false_pass": 0,
+      "lesson_k_trap_caught": 0,
+      "emb_sim_mean": 0.3587
+    },
+    "1000": {
+      "n_responses": 30,
+      "deg_count_at_step": null,
+      "v3_pass_6cell": 0,
+      "v4_strict_pass": 0,
+      "v4_4_manual_match_pass": 0,
+      "v4_7_emb_sim_pass": 26,
+      "v4_catch_v3_false_pass": 0,
+      "lesson_k_trap_caught": 0,
+      "emb_sim_mean": 0.3836
+    }
+  },
+  "lesson_k_caught_records": [
+    {
+      "step": 400,
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "reasons": [
+        "han_ratio_floor"
+      ]
+    }
+  ]
+}

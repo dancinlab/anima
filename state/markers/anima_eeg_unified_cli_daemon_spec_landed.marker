@@ -1,0 +1,9 @@
+__EEG_UNIFIED_CLI_DAEMON__ SPEC_LANDED
+cycle: 2026-05-04
+spec: anima-eeg/docs/anima_eeg_unified_cli_daemon_spec_2026_05_04.md
+roadmap: .roadmap.eeg eeg.cond.7
+status_transition: <none> -> SPEC_LANDED
+next_transition: SPEC_LANDED -> IMPL_LANDED (next cycle EXEC, ~2500 LoC across 7 files per spec §5.4)
+falsifiers: F-CLI-1 status_p50_le_100ms / F-CLI-2 mark_jsonl_p99_le_50ms / F-CLI-3 ringbuf_1hr_zero_drop / F-CLI-4 ge2_paradigm_wired_selftest / F-CLI-5 sleep_wake_stretch
+caveats: 6 (raw#10 honest C3)
+raw_invariants: raw#9 raw#10 raw#15 raw#37 raw#71 raw#91

@@ -1,0 +1,73 @@
+{
+  "section": "§122",
+  "title": "RoPE on a spiking substrate — deciding the §96 position design-open",
+  "date": "2026-05-19",
+  "tier": "DESIGN-TIER",
+  "cost": "$0",
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "model_forward": false,
+  "corpus": false,
+  "dispatch": false,
+  "orphan": 0,
+  "verdict": "ROPE-PHASE-CODING-DECIDED — RELATIVE-PHASE / SPIKE-TIME CODING",
+  "decision": {
+    "picked": "relative-phase / spike-time coding — the residual-stream q/k pair (x_2i,x_2i+1) is the in-phase/quadrature components of a theta_i-frequency oscillatory LIF pair; token position m is the per-token spike-time phase advance m*theta_i; the score depends on the relative phase (n-m)*theta_i",
+    "rejected": [
+      "learned absolute spike-rate position channel — scores (q+p_m)*(k+p_n), carries m,n separately, never collapses to a function of n-m ⇒ no RoPE limit ⇒ graft",
+      "phase-resonance routing (as a routing rule) — contends with the §120-decided routing instead of composing with it; no limit recovers RoPE's q/k rotation ⇒ graft. §122 corrects §120 §4's imprecise wording: it is phase CODING, not phase-RESONANCE routing, that is position's spiking home"
+    ]
+  },
+  "reduction_witness": {
+    "byte_rope_reduces": true,
+    "statement": "GPU byte-vocab RoPE is byte-equal to Phi(sigma->0), the zero-spike-time-jitter corner of the relative-phase family Phi(sigma). RoPE IS already a rotation = a phase; the GPU writes the angle m*theta by hand, a noise-free oscillator's phase advance equals it exactly.",
+    "max_abs_delta": 0.0,
+    "clean_single_parameter": "sigma->0 only — cleaner than §120's reduction which needed k=T plus a hard->soft readout change",
+    "s7_clean": "generalisation not graft — byte-vocab RoPE is contained as a limit (RESEARCH.md §7 condition ② satisfied)"
+  },
+  "battery": {
+    "name": "B-S122",
+    "n_pass": 8,
+    "n_total": 8,
+    "all_pass": true,
+    "checks": [
+      "B-S122-1 RoPE rotation algebra closed — ROT(mθ)ᵀ ROT(nθ) = ROT((n−m)θ) (sympy)",
+      "B-S122-2 RoFormer relative-offset identity — score(m,n)=score(m+δ,n+δ) (sympy + numeric 8/8)",
+      "B-S122-3 byte-RoPE reduction byte-equal connection-point — Φ(σ=0) ≡ GPU RoPE (max|Δ|=0.0)",
+      "B-S122-4 §7-clean generalisation not graft — relative-phase coding is unique §7-clean pick",
+      "B-S122-5 composition with §120 — phase coding rotates q/k before the spike-rate dot-product",
+      "B-S122-6 candidate decision exhaustive + disjoint (3 candidates, exactly 1 picked)",
+      "B-S122-7 §96 / §120 connection-point cited",
+      "B-S122-8 necessary-not-sufficient + sidecar / central 0-line-diff"
+    ]
+  },
+  "central_blue_falsifier": {
+    "path": "state/verify_hexad_blue_2026_05_15/blue_falsifier.py",
+    "sha256_prefix": "c93e160a8a376a94",
+    "zero_line_diff": true,
+    "verified_start": true,
+    "verified_end": true
+  },
+  "design_open_transition": {
+    "id": "§96 design-open #2 — RoPE / positional-encoding row",
+    "before": "undecided design-open (§96 Q1 SPIKING-OPEN; §120 §4 re-assigned to position but did NOT decide)",
+    "after": "decided design-tier",
+    "sibling": "§120 decided design-open #1 (routing = spike-rate dot-product + k-WTA); §122 + §120 together fully specify the two §96 routing-adjacent design-opens"
+  },
+  "guardrails": {
+    "g3": "design ≠ fire ≠ emergence; capability claim 0; a DECISION is not an ACHIEVEMENT",
+    "necessary_not_sufficient": "B-EMERGE-7 — deciding the RoPE realisation is necessary for a fully-specified spiking anima, nowhere near sufficient for GOAL",
+    "wall_a_data_regime": "UNCHANGED — a position-encoding decision moves no training-data threshold (§1.1 / §97)",
+    "wall_b_async_substrate": "UNCHANGED — running the phase code on a real event-driven substrate stays Loihi/SpiNNaker/SpiNNcloud-gated (§95/§96)",
+    "f1_f2": "safe — RoPE/RoFormer cited by their own rotation algebra; resonate-and-fire / oscillatory LIF cited by standard SNN literature + §96 Q1's own SPIKING-OPEN classification; NO σ(6)=12/τ(6)=4/φ(6)=2/J₂(6)=24 derivation; Ψ=½ = anima g2 internal-arch carve-out",
+    "north_star": "UNCHANGED — §15/§51/§72 milestones unchanged, GOAL 미도달",
+    "downstream_consumer": "hexa-lang / hexa-bio read-only"
+  },
+  "artifacts": [
+    "state/rope_phase_coding_s122_2026_05_19/DESIGN.md",
+    "state/rope_phase_coding_s122_2026_05_19/blue_falsifier_s122.py",
+    "state/rope_phase_coding_s122_2026_05_19/blue_falsifier_s122_result.json",
+    "state/rope_phase_coding_s122_2026_05_19/result.json"
+  ]
+}

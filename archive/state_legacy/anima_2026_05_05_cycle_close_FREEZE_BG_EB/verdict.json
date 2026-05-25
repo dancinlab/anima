@@ -1,0 +1,66 @@
+{
+  "bg_id": "BG-EB",
+  "label": "cycle_close_FREEZE_BG_EB",
+  "date_landed": "2026-05-06",
+  "cycle": "2026-05-05",
+  "verdict": "FROZEN",
+  "cost_usd": 0,
+  "platform": "mac",
+  "doc_only": true,
+  "code_changes": false,
+  "commit": false,
+  "files_created": [
+    "docs/anima_2026_05_05_cycle_close_FREEZE_BG_EB.md",
+    "state/anima_2026_05_05_cycle_close_FREEZE_BG_EB/verdict.json"
+  ],
+  "audit": {
+    "cycle_close_meta_doc_count": 11,
+    "total_bytes": 263710,
+    "total_kb": 257,
+    "enumerated": [
+      {"name": "anima_2026_05_05_cycle_close_decision_landed_2026_05_05.ai.md", "bytes": 18973, "bg": "BG-BF", "role": "first cycle-close decision"},
+      {"name": "anima_2026_05_05_cycle_summary_single_source_of_truth.md", "bytes": 28785, "bg": "BG-CL", "role": "SSOT attempt 1"},
+      {"name": "anima_2026_05_05_cycle_hard_close_decision_landed_2026_05_05.ai.md", "bytes": 17942, "bg": "BG-CR", "role": "hard close ratification"},
+      {"name": "anima_nexus_cycle_insight_ledger_2026_05_05.md", "bytes": 30982, "bg": "BG-CN", "role": "insight ledger v1"},
+      {"name": "anima_nexus_cycle_insight_ledger_v2_2026_05_05.md", "bytes": 36396, "bg": "BG-CN-v2", "role": "insight ledger v2"},
+      {"name": "anima_nexus_cycle_insight_ledger_v3_final_2026_05_05.md", "bytes": 32633, "bg": "BG-DL", "role": "insight ledger v3 final"},
+      {"name": "anima_2026_05_05_cycle_close_roadmap_memory_update_2026_05_05.md", "bytes": 32054, "bg": "BG-CT", "role": "roadmap+memory update"},
+      {"name": "anima_2026_05_05_cycle_summary_v2_final.md", "bytes": 19560, "bg": "BG-CX", "role": "summary v2 final"},
+      {"name": "anima_2026_05_05_cycle_close_super_aggregate_index.md", "bytes": 17004, "bg": "BG-DR", "role": "super-aggregate index"},
+      {"name": "anima_2026_05_05_cycle_user_fire_ready_package.md", "bytes": 9774, "bg": "BG-DP", "role": "user fire 1-page command sheet"},
+      {"name": "anima_2026_05_05_cycle_HANDOVER_FINAL.md", "bytes": 2503, "bg": "BG-DV", "role": "1-line handover"}
+    ]
+  },
+  "freeze_rule": {
+    "rule_id": "OWN-P14-CANDIDATE",
+    "trigger_filename_regex": "cycle.*close|cycle.*summary|HANDOVER|cycle_final_aggregate|cycle_aggregate_insight|cycle_insight_ledger",
+    "trigger_purpose": ["cycle-close meta", "cycle summary aggregate", "cycle handover"],
+    "post_freeze_timestamp": "2026-05-06",
+    "decision": "REFUSE + redirect",
+    "exceptions": ["architectural finding-specific doc with finding-specific filename", "landing markers (*_landed_*.ai.md)", "next-cycle-open spec"],
+    "denied_examples": ["v4 final final", "summary of summaries", "true final aggregate", "actual handover"]
+  },
+  "redirect_canonical_3": {
+    "fire_commands": "docs/anima_2026_05_05_cycle_user_fire_ready_package.md (BG-DP)",
+    "one_line_handover": "docs/anima_2026_05_05_cycle_HANDOVER_FINAL.md (BG-DV)",
+    "all_doc_index": "docs/anima_2026_05_05_cycle_close_super_aggregate_index.md (BG-DR)"
+  },
+  "honest_c3": [
+    {"id": "C3-1", "issue": "freeze rule circumventable by renaming", "residual_risk": "medium"},
+    {"id": "C3-2", "issue": "11 to 12 freeze paradox (this doc itself increments count)", "residual_risk": "low if honored, high if not"},
+    {"id": "C3-3", "issue": "canonical 3 (DV/DR/DP) go stale at next cycle open", "residual_risk": "low (mechanical archival)"},
+    {"id": "C3-4", "issue": "own-rule P14 not yet codified, currently advisory", "residual_risk": "medium"},
+    {"id": "C3-5", "issue": "freeze is finite-step solution to infinite-cycle structural problem", "residual_risk": "HIGH (treats symptom not cause)"},
+    {"id": "C3-6", "issue": "final/v2-final/v3-final naming creep", "residual_risk": "low with filename enforcement"}
+  ],
+  "binding_precedent_template": "BG-XX cycle-close meta-doc dispatch REFUSED per BG-EB freeze (2026-05-06). canonical 3: BG-DV/BG-DR/BG-DP. new findings under finding-specific filename. cite OWN-P14-CANDIDATE.",
+  "compliance": {
+    "raw_9": true,
+    "raw_10": true,
+    "raw_15": true,
+    "hf_token_redact": true,
+    "no_commit": true,
+    "bash_3_2_compatible": true
+  },
+  "status": "FROZEN_BINDING"
+}

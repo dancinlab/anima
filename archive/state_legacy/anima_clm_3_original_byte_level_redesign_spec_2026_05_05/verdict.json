@@ -1,0 +1,150 @@
+{
+  "task_id": "BG-ER",
+  "task_name": "anima_clm_3_original_byte_level_redesign_spec",
+  "date": "2026-05-06",
+  "cycle": "2026-05-05",
+  "status": "SPEC_LANDED",
+  "kind": "doc-only",
+  "cost_usd_actual": 0.0,
+  "wall_clock_min_actual": 30,
+  "compute": "mac, doc only",
+  "lane": "Option_beta_of_115_ARCHITECTURAL_FINAL_4_CLOSURE_H1",
+
+  "deliverables": {
+    "spec_doc": "docs/anima_clm_3_original_byte_level_redesign_spec_2026_05_05.md",
+    "verdict_json": "state/anima_clm_3_original_byte_level_redesign_spec_2026_05_05/verdict.json",
+    "loc_estimate": 460,
+    "bilingual": true,
+    "raw_compliance": ["raw#9_pre_lock", "raw#10_no_post_hoc_redefinition", "raw#15_doc_only"]
+  },
+
+  "source_of_truth": {
+    "commit": "fca0eede",
+    "path": "docs/next-model-design.md",
+    "loc": 406,
+    "date": "2026-03-28",
+    "extracted_to": "/tmp/v4_original_spec.md"
+  },
+
+  "predecessor_docs": [
+    "docs/anima_clm_alm_origin_design_drift_archaeology_2026_05_05.md",
+    "docs/anima_clm_3_chat_objective_cycle_0_spec_2026_05_05.md",
+    "docs/anima_paradigm_v11_g3_training_objective_reverse_engineer_2026_05_05.md"
+  ],
+
+  "spec_locked": {
+    "vocab": "256_byte_level",
+    "max_cells": 32,
+    "params_estimate_M": 55,
+    "training_steps": 100000,
+    "phases": 3,
+    "phi_boost_techniques": 19,
+    "growth_schedule": "Fibonacci_1_1_2_3_5_8_13_21_32",
+    "context_len": 1024,
+    "dim": 768,
+    "hidden_ffn": 1536,
+    "layers": 12,
+    "heads": 12,
+    "shared_dims": 24,
+    "ratchet_trials": 10,
+    "corpus_mix": {
+      "wiki_general_pct": 70,
+      "dialogue_pct": 30,
+      "ko_within_dialogue_min_pct": 50
+    }
+  },
+
+  "diff_vs_bg_bm_clm3": {
+    "vocab": "BPE_64K_to_byte_256",
+    "max_cells": "8_to_32",
+    "params": "530M_plus_to_55M_10x_downsize",
+    "training_steps": "implicit_30d_to_100K_steps_3phase",
+    "objective": "weighted_3term_to_19_simultaneous_phi_boost",
+    "compute": "1B_30d_1k_dollar_to_55M_10h_200_500_dollar_or_5070_5_10d_0_dollar",
+    "core": "BG_BM_scale_up_objective_add__CLM_3_original_scale_recover_19_simultaneous"
+  },
+
+  "falsifiers_locked": [
+    {
+      "id": "F-CLM3-orig-1",
+      "name": "spec_match",
+      "target": "byte_vocab_256_AND_cells_32_AND_19_techniques_AND_3phase_LR_observable",
+      "fail_kind": "SPEC_DRIFT"
+    },
+    {
+      "id": "F-CLM3-orig-2",
+      "name": "phase2_dialogue_CE_drop_30pct",
+      "target": "held_out_dialogue_CE_at_60K_le_0_7_x_CE_at_20K",
+      "fail_kind": "LANGUAGE_PHASE_DEAD"
+    },
+    {
+      "id": "F-CLM3-orig-3",
+      "name": "phi_real_at_step_100K_ge_11",
+      "target": "paradigm_v11_G3_phi_star_ge_11",
+      "fail_kind": "PHI_SCALING_BROKE"
+    },
+    {
+      "id": "F-CLM3-orig-4",
+      "name": "KO_chat_capability_5prompt_ge_3of5",
+      "target": "user_judged_KO_dialogue_5prompt_ge_3_coherent_emit",
+      "fail_kind": "CHAT_CAP_NOT_RECOVERED"
+    },
+    {
+      "id": "F-CLM3-orig-5",
+      "name": "phi_star_NO_FLIP_within_run",
+      "target": "forgetting_index_le_0_05_vs_run_phi_star_peak",
+      "fail_kind": "IDENTITY_FLIPPED"
+    }
+  ],
+
+  "pass_gate": "ALL_5_falsifiers_PASS",
+
+  "user_fire_menu": [
+    {"command": "beta_fire_H100", "wall_clock": "10h", "cost_usd": "200_500", "own16_required": true},
+    {"command": "beta_fire_ubu1", "wall_clock": "5_10d", "cost_usd": 0, "own16_required": false},
+    {"command": "beta_defer", "wall_clock": "0", "cost_usd": 0, "own16_required": false},
+    {"command": "beta_plus_alpha", "wall_clock": "conditional_on_alpha_spec", "cost_usd": 0, "own16_required": false}
+  ],
+
+  "recommendation_completion_lens": {
+    "rank_1": "beta_defer",
+    "rank_2": "beta_fire_ubu1",
+    "rank_3": "beta_fire_H100",
+    "rank_4": "beta_plus_alpha",
+    "single_recommendation": "beta_defer",
+    "rationale": "defer_this_cycle_complete_BG_BM_H2_H3_H4_free_paths_first_then_beta_fire_ubu1_as_zero_dollar_second_step"
+  },
+
+  "honest_C3_count": 9,
+  "honest_C3_minimum_required": 7,
+  "honest_C3_summary": [
+    "C3-1_2026_03_28_v4_design_never_trained_3step_extrapolation",
+    "C3-2_phi_N_scaling_law_is_benchmark_real_training_lower_5_to_12",
+    "C3-3_19_techniques_simultaneous_no_attribution_ablation_1k_2_5k_extra",
+    "C3-4_byte_level_KO_30x_higher_CE_than_EN_KO_dialogue_15pct_min",
+    "C3-5_paradigm_v11_G3_extracted_from_530M_not_55M_cross_substrate_uncalibrated",
+    "C3-6_beta_plus_alpha_command_incomplete_alpha_not_specd",
+    "C3-7_cost_envelope_200_500_is_3_to_7x_modeled_65_dollar_recommend_100_hard_cap",
+    "C3-8_beta_defer_is_default_but_spec_lock_makes_defer_materially_different",
+    "C3-9_option_beta_viability_summary_viable_complementary_to_BG_BM_not_supersede"
+  ],
+
+  "option_beta_viability": "VIABLE_PARALLEL_TO_BG_BM_NOT_SUPERSEDING",
+
+  "constraints_observed": {
+    "cost_zero": true,
+    "doc_only": true,
+    "no_code_change": true,
+    "files_created": 2,
+    "files_created_paths": [
+      "docs/anima_clm_3_original_byte_level_redesign_spec_2026_05_05.md",
+      "state/anima_clm_3_original_byte_level_redesign_spec_2026_05_05/verdict.json"
+    ],
+    "no_commit": true,
+    "no_hf_token_leak": true,
+    "bash_3_2_compatible": true,
+    "raw_9_pre_lock": true,
+    "raw_10_no_post_hoc": true,
+    "raw_15_doc_only": true
+  }
+}

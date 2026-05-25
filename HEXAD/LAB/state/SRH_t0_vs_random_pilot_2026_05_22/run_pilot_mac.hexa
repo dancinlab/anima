@@ -1,0 +1,244 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_pilot_mac.hexa — SRH Cycle #2 production 332M pilot
+//
+//  PURPOSE
+//    F-SRH-1 minimum viable: UBM tier=0 vs length-matched ASCII noise control,
+//    측정 = mitosis_event_count + split_count + cell_count_final + kv_cur_len.
+//    real 24L d=768 BF16 ckpt (Phase 1A.4 lr 5e-6 SFT, 663 MB safetensors).
+//
+//  WALL BUDGET (Mac CPU, hexa-interp)
+//    PSCC §43 measurement: 5-step KV-cached @ 24L = ~19 s / forward.
+//    prompt truncated to first 30 bytes → ~30 forwards prefill + 2 decode =
+//    32 × 19s = ~10 min / prompt. 2 prompts (UBM + random) + reset overhead
+//    ≈ 25-30 min total per seed. Single seed for cycle #2 (reproducibility
+//    deferred to cycle #3 with ubu-1 + ubu-2 parallel).
+//
+//  CKPT
+//    chat_default() → state/anima_phase1a4_lr5e6_2026_05_12/ckpts/
+//                     ckpt_phase1a4_lr5e6_sft.safetensors (RFC 031 BF16 reader)
+//
+//  ARTIFACTS
+//    HEXAD/LAB/state/SRH_t0_vs_random_pilot_2026_05_22/
+//      spike_ubm_seed2026.json
+//      spike_random_seed2026.json
+//      result_seed2026.json (delta + F-SRH-1 verdict)
+//      pilot.log (stdout/stderr, captured externally)
+//
+//  HONEST C3 (carry to SRH.log.md cycle #2)
+//    - C3-pilot-1: prompt truncated to 30 bytes (full UBM ~200 bytes) — wall
+//      management. Full-length sweep = cycle #3.
+//    - C3-pilot-2: random control = ASCII noise pool (no Korean/emoji byte
+//      distribution match). True byte-distribution-matched control = cycle #3.
+//    - C3-pilot-3: single seed = no F-SRH-3 reproducibility. cycle #3 ubu
+//      parallel for 2-seed cross-check.
+//    - C3-pilot-4: max_new=2 (no significant decode behavior). cycle #3 max_new
+//      ≥ 10 for decode dynamics.
+//    - C3-pilot-5: cell_pool d=768 init_cells=2 default — threshold/patience
+//      tuning 미고려. cycle #3 sensitivity sweep.
+//
+//  RUN
+//    cd /Users/ghost/core/anima
+//    HEXA_MEM_UNLIMITED=1 RESOURCE_LOCAL_HEXA=1 hexa run \
+//      HEXAD/LAB/state/SRH_t0_vs_random_pilot_2026_05_22/run_pilot_mac.hexa \
+//      2>&1 | tee HEXAD/LAB/state/SRH_t0_vs_random_pilot_2026_05_22/pilot.log
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/CHAT/chat_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/ubm_inject.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/anima_spike.hexa"
+
+
+// ── §0 configuration ─────────────────────────────────────────────────────────
+
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/HEXAD/LAB/state/SRH_t0_vs_random_pilot_2026_05_22"
+}
+
+fn _seed() -> int { return 2026 }
+fn _max_new() -> int { return 2 }
+fn _prompt_truncate_bytes() -> int { return 30 }
+fn _initial_cells() -> int { return 2 }
+fn _cap_len() -> int { return 64 }
+
+
+// ── §1 random control generator (ASCII noise pool, length-matched) ───────────
+
+fn _make_random_control(text: string, seed: int) -> string {
+    let n = len(text)
+    let pool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?"
+    let pn = len(pool)
+    let mut s = seed
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        // LCG (Numerical Recipes)
+        s = s * 1103515245 + 12345
+        let abs_s = if s < 0 { 0 - s } else { s }
+        let idx = abs_s % pn
+        out = out + pool.substring(idx, idx + 1)
+        i = i + 1
+    }
+    return out
+}
+
+// truncate to first N **chars** (best-effort; on multi-byte UTF-8 may split mid-codepoint)
+fn _truncate(s: string, n: int) -> string {
+    if len(s) <= n { return s }
+    return s.substring(0, n)
+}
+
+
+// ── §2 chat state reset (between UBM and random runs) ────────────────────────
+
+fn _reset_chat_state(chat) {
+    // Force re-init of cell_pool by zeroing the gating field.
+    chat["mitosis_d_model"] = 0
+    chat["cell_pool"] = #{}
+    chat["mitosis_event_log"] = []
+    chat["mitosis_step"] = 0
+    chat["mitosis_invocations"] = 0
+    // Force re-init of kv_cache by emptying the dict (chat_init_kv_cache_default
+    // is gated on existing.n_layers > 0; empty dict → void → re-init proceeds).
+    chat["kv_cache"] = #{}
+    return chat
+}
+
+
+// ── §3 single-prompt fire driver ─────────────────────────────────────────────
+
+fn _fire_one_prompt(chat, prompt: string, label: string, seed: int) -> any {
+    println("")
+    println("──── fire prompt: " + label + " (seed=" + to_string(seed) + ") ────")
+    println("  prompt (" + to_string(len(prompt)) + " bytes): \"" + prompt + "\"")
+
+    // Fresh substrate state.
+    _reset_chat_state(chat)
+    chat_init_kv_cache_default(chat, _cap_len())
+    chat_init_cell_pool(chat, 768, _initial_cells())
+
+    let mut spike = spike_init()
+    spike = spike_set_label(spike, label)
+    spike = spike_record_init(spike, chat)
+    println("  pre-fire cells=" + to_string(spike["cell_count_init"])
+            + " invocations=" + to_string(chat_mitosis_invocation_count(chat)))
+
+    let resp = chat_generate(chat, prompt, "greedy", _max_new(),
+                             0.0, [], 1.0, 1.0, 0.0, seed, [], false)
+    spike = spike_record_final(spike, chat, resp)
+    println("  post-fire " + spike_brief(spike))
+
+    // Persist
+    let out_path = _state_dir() + "/spike_" + label + "_seed"
+                 + to_string(seed) + ".json"
+    spike_save_json(spike, out_path)
+    println("  saved: " + out_path)
+    return spike
+}
+
+
+// ── §4 F-SRH-1 verdict aggregation ──────────────────────────────────────────
+
+fn _build_result_json(spike_ubm: any, spike_random: any, seed: int) -> string {
+    let d = spike_diff(spike_ubm, spike_random)
+
+    // F-SRH-1 minimum viable: with single-seed, we cannot compute z-score.
+    // partial criterion: |Δsplit_count| ≥ 5 OR |Δcell_count| ≥ 5
+    // (heuristic floor; cycle #3 with 5-seed → proper z ≥ 3.0 falsifier).
+    let abs_dsplit = to_int(d["d_split"])
+    let abs_dcells = to_int(d["d_cell_count"])
+    let abs_dsplit_pos = if abs_dsplit < 0 { 0 - abs_dsplit } else { abs_dsplit }
+    let abs_dcells_pos = if abs_dcells < 0 { 0 - abs_dcells } else { abs_dcells }
+
+    let signal = (abs_dsplit_pos >= 5) || (abs_dcells_pos >= 5)
+    let verdict_str = if signal { "SIGNAL" } else { "NULL" }
+
+    let mut out = "{\n"
+    out = out + "  \"cycle\": 2,\n"
+    out = out + "  \"date\": \"2026-05-22\",\n"
+    out = out + "  \"seed\": " + to_string(seed) + ",\n"
+    out = out + "  \"box\": \"mac_local\",\n"
+    out = out + "  \"ckpt\": \"ckpt_phase1a4_lr5e6_sft.safetensors\",\n"
+    out = out + "  \"d_model\": 768,\n"
+    out = out + "  \"n_layers\": 24,\n"
+    out = out + "  \"initial_cells\": " + to_string(_initial_cells()) + ",\n"
+    out = out + "  \"max_new\": " + to_string(_max_new()) + ",\n"
+    out = out + "  \"prompt_truncate_bytes\": " + to_string(_prompt_truncate_bytes()) + ",\n"
+    out = out + "  \"ubm\": {\n"
+    out = out + "    \"split_count\": " + to_string(to_int(spike_ubm["split_count"])) + ",\n"
+    out = out + "    \"merge_count\": " + to_string(to_int(spike_ubm["merge_count"])) + ",\n"
+    out = out + "    \"mitosis_invocations\": " + to_string(to_int(spike_ubm["mitosis_invocations"])) + ",\n"
+    out = out + "    \"cell_count_final\": " + to_string(to_int(spike_ubm["cell_count_final"])) + ",\n"
+    out = out + "    \"kv_cur_len\": " + to_string(to_int(spike_ubm["kv_cur_len"])) + "\n"
+    out = out + "  },\n"
+    out = out + "  \"random\": {\n"
+    out = out + "    \"split_count\": " + to_string(to_int(spike_random["split_count"])) + ",\n"
+    out = out + "    \"merge_count\": " + to_string(to_int(spike_random["merge_count"])) + ",\n"
+    out = out + "    \"mitosis_invocations\": " + to_string(to_int(spike_random["mitosis_invocations"])) + ",\n"
+    out = out + "    \"cell_count_final\": " + to_string(to_int(spike_random["cell_count_final"])) + ",\n"
+    out = out + "    \"kv_cur_len\": " + to_string(to_int(spike_random["kv_cur_len"])) + "\n"
+    out = out + "  },\n"
+    out = out + "  \"delta\": {\n"
+    out = out + "    \"d_split\": " + to_string(to_int(d["d_split"])) + ",\n"
+    out = out + "    \"d_merge\": " + to_string(to_int(d["d_merge"])) + ",\n"
+    out = out + "    \"d_invocations\": " + to_string(to_int(d["d_invocations"])) + ",\n"
+    out = out + "    \"d_cell_count\": " + to_string(to_int(d["d_cell_count"])) + ",\n"
+    out = out + "    \"d_kv_cur_len\": " + to_string(to_int(d["d_kv_cur_len"])) + ",\n"
+    out = out + "    \"event_step_overlap\": " + to_string(to_int(d["event_step_overlap"])) + ",\n"
+    out = out + "    \"event_step_jaccard\": " + to_string(to_float(d["event_step_jaccard"])) + "\n"
+    out = out + "  },\n"
+    out = out + "  \"verdict\": \"" + verdict_str + "\",\n"
+    out = out + "  \"verdict_rule\": \"single-seed partial: SIGNAL iff |Δsplit| ≥ 5 OR |Δcells| ≥ 5\"\n"
+    out = out + "}\n"
+    return out
+}
+
+
+// ── §5 main driver ──────────────────────────────────────────────────────────
+
+fn _run_pilot() {
+    println("================================================================")
+    println("SRH Cycle #2 production 332M pilot — Mac local single seed")
+    println("================================================================")
+
+    // 1. Load 332M ckpt (memmap'd, ~37s)
+    let chat = chat_default()
+    println("ckpt path: " + chat["ckpt_path"])
+    let ckpt_exists = file_exists(chat["ckpt_path"])
+    if !ckpt_exists {
+        println("FATAL: ckpt not found on disk")
+        return
+    }
+    println("loading 332M (218 farr handles)...")
+    let chat2 = chat_load_weights(chat)
+    let weights = chat2["weights"]
+    let nk = len(dict_keys(weights))
+    println("  loaded weights: " + to_string(nk) + " keys (expected 218)")
+
+    // 2. UBM tier=0 anchor
+    let anchor = ubm_load_by_tier(0)
+    let full_prompt = ubm_to_prompt(anchor, "text_only")
+    let ubm_prompt = _truncate(full_prompt, _prompt_truncate_bytes())
+    let random_prompt = _make_random_control(ubm_prompt, _seed())
+
+    // 3. Fire UBM
+    let spike_ubm = _fire_one_prompt(chat2, ubm_prompt, "ubm_tier_0", _seed())
+
+    // 4. Fire random control
+    let spike_random = _fire_one_prompt(chat2, random_prompt, "random_ctrl", _seed())
+
+    // 5. Aggregate result
+    let result_json = _build_result_json(spike_ubm, spike_random, _seed())
+    let result_path = _state_dir() + "/result_seed" + to_string(_seed()) + ".json"
+    write_file(result_path, result_json)
+
+    println("")
+    println("================================================================")
+    println("PILOT COMPLETE — result.json:")
+    println(result_json)
+    println("================================================================")
+}
+
+
+_run_pilot()

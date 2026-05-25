@@ -1,0 +1,30 @@
+=== BG-TRAINED-CORRELATION-MEASUREMENT — C_cells64_aware ===
+ts: 2026-05-10T11:48:32.564381+00:00
+sub: {'ckpt': '/Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt', 'schema': 'v2_d384', 'arch': 'v2 6L transformer d=384 heads=6', 'n_turns': 60, 'snap_every': 5}
+
+========================================================================
+SUBSTRATE C_cells64_aware — v2 d=384 path
+========================================================================
+ckpt: /Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt
+sha256: 61e1d735cf4b5360683e40ab81ada593d757f3543d33d01c08944a4c8b039a4c
+trained params=18.52M step=50000
+
+--- TRAINED max_cells=256 n_turns=60 ---
+  v2 blocks loaded=6 random_cells=[6, 7]
+  [C_cells64_aware_trained] turn=   0 cells=  8 cos_mean=+0.9996 abs_cos=0.9996 eff_rank=1.10 disp_trig=2/2 splits(d/t)=0/0 phi=0.56 elapsed=0.2s
+  [C_cells64_aware_trained] turn=  30 cells= 19 cos_mean=+0.0303 abs_cos=0.0527 eff_rank=17.48 disp_trig=1/4 splits(d/t)=10/1 phi=45.42 elapsed=10.2s
+  [C_cells64_aware_trained] turn=  40 cells= 29 cos_mean=+0.0322 abs_cos=0.0506 eff_rank=28.21 disp_trig=3/7 splits(d/t)=20/1 phi=108.83 elapsed=19.0s
+  [C_cells64_aware_trained] turn=  50 cells= 42 cos_mean=+0.0154 abs_cos=0.0453 eff_rank=36.58 disp_trig=4/10 splits(d/t)=32/2 phi=170.37 elapsed=31.9s
+  [C_cells64_aware_trained] turn=  55 cells= 58 cos_mean=+0.0022 abs_cos=0.0421 eff_rank=50.33 disp_trig=5/14 splits(d/t)=47/3 phi=419.80 elapsed=44.9s
+  [C_cells64_aware_trained] turn=  59 cells= 75 cos_mean=+0.0022 abs_cos=0.0426 eff_rank=65.38 disp_trig=5/18 splits(d/t)=63/4 phi=753.31 elapsed=60.7s
+
+--- RANDOM seed=42 ---
+  [C_cells64_aware_s42] turn=   0 cells=  8 cos_mean=+0.9996 abs_cos=0.9996 eff_rank=1.10 disp_trig=1/2 splits(d/t)=0/0 phi=0.57 elapsed=0.1s
+  [C_cells64_aware_s42] turn=  25 cells= 32 cos_mean=+0.0153 abs_cos=0.0468 eff_rank=27.27 disp_trig=4/8 splits(d/t)=13/11 phi=122.30 elapsed=11.0s
+  [C_cells64_aware_s42] turn=  35 cells= 49 cos_mean=+0.0351 abs_cos=0.0531 eff_rank=43.45 disp_trig=3/12 splits(d/t)=22/19 phi=283.55 elapsed=27.3s
+  [C_cells64_aware_s42] turn=  40 cells= 66 cos_mean=+0.0312 abs_cos=0.0496 eff_rank=58.76 disp_trig=3/16 splits(d/t)=32/26 phi=570.71 elapsed=41.4s
+  [C_cells64_aware_s42] turn=  45 cells= 84 cos_mean=+0.0214 abs_cos=0.0452 eff_rank=72.06 disp_trig=6/21 splits(d/t)=47/29 phi=988.92 elapsed=63.7s
+  [C_cells64_aware_s42] turn=  50 cells=117 cos_mean=+0.0086 abs_cos=0.0424 eff_rank=99.01 disp_trig=8/29 splits(d/t)=72/37 phi=1886.85 elapsed=94.6s
+  [C_cells64_aware_s42] turn=  55 cells=175 cos_mean=+0.0014 abs_cos=0.0415 eff_rank=137.93 disp_trig=18/43 splits(d/t)=112/55 phi=4015.15 elapsed=178.7s
+  [C_cells64_aware_s42] turn=  59 cells=209 cos_mean=+0.0011 abs_cos=0.0414 eff_rank=165.21 disp_trig=14/52 splits(d/t)=143/58 phi=5851.25 elapsed=277.3s
+[saved] /Users/ghost/core/anima/state/anima_trained_correlation_measurement_2026_05_10/result_C_cells64_aware.json

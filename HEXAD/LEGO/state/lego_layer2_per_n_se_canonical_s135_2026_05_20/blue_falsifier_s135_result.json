@@ -1,0 +1,179 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S135-7 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": [],
+        "forbidden_calls": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S135-1 ETA-BOUNDED-ALL-4-N-CANONICAL",
+      "passed": true,
+      "evidence": {
+        "pooled_eta": [
+          0.2712195360968856,
+          0.3288615858243288,
+          0.3223496304618351,
+          0.26082583969794654
+        ],
+        "per_rep_mean": [
+          0.46388134808184256,
+          0.42424099923845765,
+          0.3608494980563989,
+          0.2762198617606362
+        ],
+        "all_in_unit_interval": true
+      }
+    },
+    {
+      "name": "B-S135-2 PER-REPLICATE-ETA-VALID-ALL-4-N",
+      "passed": true,
+      "evidence": {
+        "per_N_diagnostics": [
+          {
+            "N": 256,
+            "per_rep_count": 5,
+            "all_valid": true
+          },
+          {
+            "N": 512,
+            "per_rep_count": 5,
+            "all_valid": true
+          },
+          {
+            "N": 1024,
+            "per_rep_count": 5,
+            "all_valid": true
+          },
+          {
+            "N": 2048,
+            "per_rep_count": 5,
+            "all_valid": true
+          }
+        ],
+        "all_hold": true
+      }
+    },
+    {
+      "name": "B-S135-3 ALL-4-N-POOLED-MATCH-S127-BYTE-EQUAL",
+      "passed": true,
+      "evidence": {
+        "per_N_match": {
+          "256": {
+            "s127_pooled": 0.2712195360968856,
+            "canonical_pooled": 0.2712195360968856,
+            "byte_equal": true
+          },
+          "512": {
+            "s127_pooled": 0.3288615858243288,
+            "canonical_pooled": 0.3288615858243288,
+            "byte_equal": true
+          },
+          "1024": {
+            "s127_pooled": 0.3223496304618351,
+            "canonical_pooled": 0.3223496304618351,
+            "byte_equal": true
+          },
+          "2048": {
+            "s127_pooled": 0.26082583969794654,
+            "canonical_pooled": 0.26082583969794654,
+            "byte_equal": true
+          }
+        },
+        "all_byte_equal_match": true
+      }
+    },
+    {
+      "name": "B-S135-4 MONOTONE-DECREASE-PER-REP-MEAN-CANONICAL",
+      "passed": true,
+      "evidence": {
+        "per_rep_means_sorted_by_N": [
+          0.46388134808184256,
+          0.42424099923845765,
+          0.3608494980563989,
+          0.2762198617606362
+        ],
+        "diffs": [
+          -0.03964034884338491,
+          -0.06339150118205877,
+          -0.0846296362957627
+        ],
+        "all_negative": true,
+        "sympy_sign_truth_table": [
+          {
+            "a": 1.0,
+            "b": 0.5,
+            "decreasing": true
+          },
+          {
+            "a": 0.5,
+            "b": 1.0,
+            "decreasing": false
+          },
+          {
+            "a": 1.0,
+            "b": 1.0,
+            "decreasing": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "B-S135-5 N-EXTREME-CI-NO-OVERLAP-CLOSED",
+      "passed": true,
+      "evidence": {
+        "n_2048_vs_lower_N_overlaps_all_false": true,
+        "lower_N_pairwise_overlaps (statistical context)": true,
+        "ci_overlap_pairs": {
+          "256_vs_512": true,
+          "256_vs_1024": true,
+          "256_vs_2048": false,
+          "512_vs_1024": true,
+          "512_vs_2048": false,
+          "1024_vs_2048": false
+        }
+      }
+    },
+    {
+      "name": "B-S135-6 ENGINE-CANONICAL-POST-S134-CLOSED",
+      "passed": true,
+      "evidence": {
+        "import_lego_engine_found": true,
+        "canonical_lifnet_ast_byte_equal_s117": true,
+        "engine_sha16": "097955bfca0b259b"
+      }
+    },
+    {
+      "name": "B-S135-7 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": [],
+        "forbidden_calls": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S135-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "monotone-decrease-confirmed-on-canonical-engine",
+    "family": "B-EMERGE-7 / B-S133-NOTE / B-S127-NOTE / B-S134-NOTE",
+    "honest_scope": "Per-rep mean monotonic decrease 0.464→0.424→0.361→0.276 across N=256→2048 on canonical engine post-§134 byte-equal restore. §133's drifted-engine qualitative finding PRESERVED quantitatively shifted (canonical values uniformly higher than drifted). N=2048 95% CI is statistically distinct from N=256/512/1024 (no overlap), but lower-N pairs overlap — N=2048 is the only statistically robust 'lower' point. M=5 small for tighter SE — a future M=10/20 run would tighten CIs but the qualitative monotone-decrease verdict is robust to M. GOAL emergence NOT addressed (necessary-not-sufficient B-EMERGE-7); north-star + §15/§51/§72 milestones UNCHANGED."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "7/7",
+    "all_closed_pass": true,
+    "battery_verdict": "MONOTONE-DECREASE-SURVIVES-CANONICAL-7-7-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "necessary_not_sufficient_B_EMERGE_7": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}

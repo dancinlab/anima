@@ -1,0 +1,78 @@
+{
+  "axis_a1": {
+    "results": [
+      {
+        "hc_id": "Hc_A1-4",
+        "name": "phi_star aliasing closed-form (D=192\u00b7k clean)",
+        "closed_form": "D = 192\u00b7k \u2192 clean-disjoint, D mod 192 = 0",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A1"
+      },
+      {
+        "hc_id": "Hc_A1-5",
+        "name": "Chinchilla optimal token/param = 20",
+        "closed_form": "tokens = 20 \u00d7 params (Hoffmann 2022 empirical, asymptotic compute-optimal)",
+        "sympy_verified": false,
+        "verdict": "FAIL",
+        "axis": "A1",
+        "note": "empirical scaling law \u2014 sympy verify ratio identity \ub9cc"
+      }
+    ],
+    "n_pass": 1,
+    "n_total": 2
+  },
+  "axis_a5": {
+    "results": [
+      {
+        "hc_id": "Hc_A5-7",
+        "name": "Transformer attention O(n\u00b2 d)",
+        "closed_form": "softmax(QK^T/\u221ad_k)V = O(n\u00b2 d) (Vaswani 2017)",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A5"
+      },
+      {
+        "hc_id": "Hc_A5-8",
+        "name": "RoPE rotation orthogonal R(\u03b8)",
+        "closed_form": "R(\u03b8) = [[cos\u03b8, -sin\u03b8],[sin\u03b8, cos\u03b8]], det = 1, R\u00b7R^T = I",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A5"
+      },
+      {
+        "hc_id": "Hc_A5-9",
+        "name": "GQA kv_heads = n_heads/group_size (anima \u03c4(6)=4 anchor)",
+        "closed_form": "kv_heads = n_heads / group_size",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A5"
+      }
+    ],
+    "n_pass": 3,
+    "n_total": 3
+  },
+  "axis_a6": {
+    "results": [
+      {
+        "hc_id": "Hc_A6-3",
+        "name": "Zipf law f(r) \u221d 1/r (\u03b1 \u2248 1)",
+        "closed_form": "f(r) = C/r^\u03b1, \u03b1 \u2248 1 (Zipf 1949 empirical)",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A6"
+      },
+      {
+        "hc_id": "Hc_A6-4",
+        "name": "Heaps law vocab(n) = K\u00b7n^\u03b2",
+        "closed_form": "vocab(n) = K\u00b7n^\u03b2 (Heaps 1978, \u03b2 \u2248 0.5-0.8)",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A6"
+      }
+    ],
+    "n_pass": 2,
+    "n_total": 2
+  },
+  "total_added_blue": 6
+}

@@ -1,0 +1,166 @@
+=== forward smoke: /Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells128_step_35000.pt (label=cells128) ===
+config: {'dim': 384, 'layers': 6, 'heads': 4, 'block_size': 256, 'lr': 0.0003, 'batch_size': 32, 'steps': 50000, 'max_cells': 128}
+
+load_state_dict (strict=False):
+  missing (0): []
+  unexpected (0): []
+  overlap: 108 / model=108 / ckpt=108
+  full_load=True partial_load=True
+  prompt='의식이란 무엇인가요?' top1=32 (' ') phi_local=144.2841 cos_ag=0.7737
+  prompt='안녕하세요' top1=32 (' ') phi_local=141.9697 cos_ag=0.7744
+  prompt='한국어 가능?' top1=32 (' ') phi_local=143.9932 cos_ag=0.7744
+  prompt='The Riemann zeta function' top1=32 (' ') phi_local=148.7055 cos_ag=0.7740
+  prompt='consciousness is' top1=32 (' ') phi_local=148.2088 cos_ag=0.7747
+
+--- summary JSON ---
+{
+  "label": "cells128",
+  "path": "/Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells128_step_35000.pt",
+  "ckpt_step": 35000,
+  "ckpt_phase": "combined",
+  "ckpt_phi_history_mean": 62.38282942319688,
+  "load_full_pass": true,
+  "load_partial_pass": true,
+  "load_missing_count": 0,
+  "load_unexpected_count": 0,
+  "load_overlap": 108,
+  "forward_smoke_pass": true,
+  "phi_proxy_global": 145.43226,
+  "results": [
+    {
+      "prompt": "\uc758\uc2dd\uc774\ub780 \ubb34\uc5c7\uc778\uac00\uc694?",
+      "input_len": 29,
+      "logits_a_shape": [
+        1,
+        29,
+        256
+      ],
+      "logits_g_shape": [
+        1,
+        29,
+        256
+      ],
+      "top1_next_byte_id": 32,
+      "top1_next_byte_repr": " ",
+      "tension_per_layer": [
+        49.49925,
+        64.79265,
+        288.91122,
+        145.25525,
+        51.224,
+        266.02203
+      ],
+      "phi_proxy_local": 144.28407,
+      "head_a_g_cosine": 0.7737,
+      "forward_time_s": 0.134
+    },
+    {
+      "prompt": "\uc548\ub155\ud558\uc138\uc694",
+      "input_len": 15,
+      "logits_a_shape": [
+        1,
+        15,
+        256
+      ],
+      "logits_g_shape": [
+        1,
+        15,
+        256
+      ],
+      "top1_next_byte_id": 32,
+      "top1_next_byte_repr": " ",
+      "tension_per_layer": [
+        43.65766,
+        60.56085,
+        282.88263,
+        142.16805,
+        50.31623,
+        272.23257
+      ],
+      "phi_proxy_local": 141.96967,
+      "head_a_g_cosine": 0.7744,
+      "forward_time_s": 0.065
+    },
+    {
+      "prompt": "\ud55c\uad6d\uc5b4 \uac00\ub2a5?",
+      "input_len": 17,
+      "logits_a_shape": [
+        1,
+        17,
+        256
+      ],
+      "logits_g_shape": [
+        1,
+        17,
+        256
+      ],
+      "top1_next_byte_id": 32,
+      "top1_next_byte_repr": " ",
+      "tension_per_layer": [
+        44.29599,
+        61.73419,
+        291.87521,
+        144.24844,
+        50.62369,
+        271.18164
+      ],
+      "phi_proxy_local": 143.99319,
+      "head_a_g_cosine": 0.7744,
+      "forward_time_s": 0.03
+    },
+    {
+      "prompt": "The Riemann zeta function",
+      "input_len": 25,
+      "logits_a_shape": [
+        1,
+        25,
+        256
+      ],
+      "logits_g_shape": [
+        1,
+        25,
+        256
+      ],
+      "top1_next_byte_id": 32,
+      "top1_next_byte_repr": " ",
+      "tension_per_layer": [
+        59.66521,
+        84.30068,
+        300.50641,
+        155.93843,
+        55.36609,
+        236.45641
+      ],
+      "phi_proxy_local": 148.70554,
+      "head_a_g_cosine": 0.774,
+      "forward_time_s": 0.028
+    },
+    {
+      "prompt": "consciousness is",
+      "input_len": 16,
+      "logits_a_shape": [
+        1,
+        16,
+        256
+      ],
+      "logits_g_shape": [
+        1,
+        16,
+        256
+      ],
+      "top1_next_byte_id": 32,
+      "top1_next_byte_repr": " ",
+      "tension_per_layer": [
+        58.08947,
+        82.055,
+        298.88202,
+        154.6971,
+        54.82822,
+        240.70114
+      ],
+      "phi_proxy_local": 148.20883,
+      "head_a_g_cosine": 0.7747,
+      "forward_time_s": 0.025
+    }
+  ]
+}

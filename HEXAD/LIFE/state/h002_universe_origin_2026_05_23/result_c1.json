@@ -1,0 +1,33 @@
+{
+  "hypothesis": "H_002",
+  "cycle": "Cycle_1_C1_anthropic_prior_sensitivity",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "gpu": false,
+  "n_constants": 6,
+  "prior_support_span": {"lo": 0.001000, "hi": 1000.000000, "orders": 6},
+  "per_constant_ledger": [
+    {"constant": "cosmological_constant_lambda", "band_lo": 0.100000, "band_hi": 3.000000, "p_linear": 0.002900, "p_log": 0.246187},
+    {"constant": "fine_structure_alpha", "band_lo": 0.960000, "band_hi": 1.040000, "p_linear": 0.000080, "p_log": 0.005794},
+    {"constant": "electron_proton_mass_ratio", "band_lo": 0.950000, "band_hi": 1.050000, "p_linear": 0.000100, "p_log": 0.007244},
+    {"constant": "strong_coupling_alpha_s", "band_lo": 0.990000, "band_hi": 1.010000, "p_linear": 0.000020, "p_log": 0.001448},
+    {"constant": "rees_Q_fluctuation_amplitude", "band_lo": 0.500000, "band_hi": 2.000000, "p_linear": 0.001500, "p_log": 0.100343},
+    {"constant": "rees_N_gravity_em_ratio", "band_lo": 0.500000, "band_hi": 2.000000, "p_linear": 0.001500, "p_log": 0.100343}
+  ],
+  "log10_P_linear_uniform": -20.98,
+  "log10_P_log_uniform": -9.82,
+  "prior_fragility_gap_orders": 11.16,
+  "log10_P_planck_ref_60order": -15.82,
+  "log10_P_log_uniform_bands_wide_x10": -2.38,
+  "C1_target_log10": -100,
+  "falsifiers": {
+    "F_C1_PRIOR_1_robust": "PRIOR_DOMINATED",
+    "F_C1_PRIOR_2_target": "TARGET_NOT_REACHED",
+    "F_C1_PRIOR_3_determ": "PASS",
+    "F_C1_PRIOR_4_monotone": "PASS"
+  },
+  "verdict_class": "C1_PRIOR_DOMINATED_INSUFFICIENT",
+  "frozen_F1_status": "WEAKENED (fine-tuning prior-dominated; matches Phase-1 + Smolin/Carroll critique)"
+}

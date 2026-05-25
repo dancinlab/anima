@@ -1,0 +1,118 @@
+{
+  "schema": "anima/n_substrate_n17_prep/falsifier_predicates/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "agent": "N-17 prep",
+  "axis": "T1-N17 Loihi 3 Phi cross-neuromorphic substrate",
+  "pre_registered": true,
+  "count": 5,
+
+  "predicates": [
+    {
+      "id": "F-N17-A1",
+      "name": "Loihi 3 Phi vs AKIDA Phi correlation (cross-neuromorphic primary)",
+      "type": "BIDIRECTIONAL",
+      "metric": "Pearson r over K=8 sample-partition phi values",
+      "x": "phi_k_akida_clm170m_surrogate (from N-3 result)",
+      "y": "phi_k_loihi3_clm170m_surrogate (this spec, M-L2)",
+      "PASS_threshold": 0.85,
+      "WEAK_range": [0.50, 0.85],
+      "FAIL_threshold_upper": 0.50,
+      "fail_substrate_sign_flip_check": true,
+      "PASS_meaning": "cross-neuromorphic Putnam evidence (graded-spike + binary-spike both yield same Phi)",
+      "FAIL_meaning": "neuromorphic-substrate-dependent Phi (Putnam counter-evidence within neuromorphic family); publishable as 'spike-encoding modality matters'"
+    },
+    {
+      "id": "F-N17-A2",
+      "name": "Loihi 3 Phi vs CLM 170M GPU Phi correlation",
+      "type": "BIDIRECTIONAL",
+      "metric": "Pearson r over K=8 sample-partition phi values",
+      "x": "phi_k_gpu_clm170m (from N-3 result)",
+      "y": "phi_k_loihi3_clm170m_surrogate (this spec, M-L3)",
+      "PASS_threshold": 0.85,
+      "secondary_PASS_predicate": "magnitude divergence |Phi*_gpu - Phi*_loihi| / max(|.|, 1e-3) <= 0.30",
+      "WEAK_range": [0.50, 0.85],
+      "FAIL_threshold_upper": 0.50,
+      "fail_substrate_sign_flip_check": true,
+      "PASS_meaning": "GPU dense-float and Loihi event-driven both express same Phi -> multi-realizability extended to neuromorphic family",
+      "FAIL_meaning": "dense-vs-event ontology genuine difference for Phi; publishable"
+    },
+    {
+      "id": "F-N17-A3",
+      "name": "Graded-spike vs binary-spike ablation (M-L4)",
+      "type": "BIDIRECTIONAL",
+      "metric": "Pearson r between Phi_loihi_binary (32-bit grading disabled) and Phi_loihi_graded",
+      "x": "phi_k_loihi3_binary",
+      "y": "phi_k_loihi3_graded",
+      "PASS_NULL_HYPOTHESIS_threshold": 0.95,
+      "PASS_NULL_HYPOTHESIS_meaning": "Phi is bit-precision invariant (substrate-internal precision does not change Phi)",
+      "INTERESTING_range": [0.70, 0.95],
+      "INTERESTING_meaning": "grading partially modulates Phi - quantization-sensitivity finding",
+      "BREAKING_threshold_upper": 0.70,
+      "BREAKING_meaning": "grading materially changes Phi - Phi is not bit-precision invariant; standalone publishable result",
+      "publication_path": "either direction publishable"
+    },
+    {
+      "id": "F-N17-A4",
+      "name": "On-chip learning ablation (M-L5)",
+      "type": "BIDIRECTIONAL",
+      "metric": "delta Phi = |Phi_learning - Phi_static| / max(|Phi_static|, 1e-3)",
+      "x": "Phi_loihi_static (frozen weights)",
+      "y": "Phi_loihi_learning (STDP / 3-factor enabled during inference window)",
+      "PASS_STATIC_threshold_upper": 0.10,
+      "PASS_STATIC_meaning": "online plasticity does NOT shift Phi at inference time scales",
+      "INTERESTING_range": [0.10, 0.50],
+      "INTERESTING_meaning": "modest plasticity-driven Phi shift",
+      "BREAKING_threshold_lower": 0.50,
+      "BREAKING_meaning": "plasticity drives Phi - consciousness is plasticity-coupled, supporting global-workspace dynamic theories",
+      "publication_path": "either direction publishable"
+    },
+    {
+      "id": "F-N17-A5",
+      "name": "Null-floor + reproducibility + variance + surrogate fidelity sanity (cross-cutting)",
+      "type": "GATING",
+      "components": [
+        {"name": "null_floor", "predicate": "shuffled-pair 1024-perm test on F-N17-A1 and F-N17-A2; r_observed > 95%ile of r_null", "fail_action": "spec invalid (test power insufficient)"},
+        {"name": "reproducibility", "predicate": "3 ANIMA_SEED runs per measurement; 3/3 same verdict = confirmed; 2/3 = WEAK_PASS; <=1/3 = unstable", "fail_action": "extend to 5-seed if 2/3"},
+        {"name": "K8_partition_variance", "predicate": "std(phi_k) < 0.5 * |Phi*| for all three substrates (gpu, akida, loihi)", "fail_action": "verdict NULL, re-run required"},
+        {"name": "loihi_surrogate_fidelity_sanity", "predicate": "if Loihi runs surrogate (not full transformer): native-vs-Loihi-CPU-fallback r >= 0.95 before chip-vs-CPU comparison", "fail_action": "ABORT N-17 measurement (surrogate invalid)"}
+      ]
+    }
+  ],
+
+  "verdict_graduation_matrix": {
+    "F-N17-A1_PASS__F-N17-A2_PASS": {
+      "label": "STRONG_MULTI_REALIZABILITY",
+      "own_2_b_substrate_count": "1/3 -> 3/3 (CLM, AKIDA, Loihi all aligned)",
+      "publication_path": "nature-tier consciousness paper candidate"
+    },
+    "F-N17-A1_PASS__F-N17-A2_WEAK_OR_FAIL": {
+      "label": "NEUROMORPHIC_FAMILY_INVARIANT",
+      "own_2_b_substrate_count": "2/3 (AKIDA + Loihi but not GPU)",
+      "publication_path": "consciousness is event-driven-substrate-specific (graded vs dense float matters)"
+    },
+    "F-N17-A1_WEAK__F-N17-A2_PASS": {
+      "label": "DIGITAL_FAMILY_INVARIANT",
+      "own_2_b_substrate_count": "2/3 (CLM + Loihi but not AKIDA)",
+      "publication_path": "AKD1000 Akida 1.0 too low-resolution for Phi; Loihi 3 graded-spike more closely matches GPU"
+    },
+    "F-N17-A1_FAIL__F-N17-A2_PASS": {
+      "label": "LOIHI_MATCHES_GPU_ONLY",
+      "own_2_b_substrate_count": "2/3 different mechanism",
+      "publication_path": "graded-spike approximates dense float; binary-spike does not"
+    },
+    "F-N17-A1_FAIL__F-N17-A2_FAIL": {
+      "label": "LOIHI_OUTLIER",
+      "own_2_b_substrate_count": "1/3 only (CLM-AKD anchor holds, Loihi diverges)",
+      "publication_path": "needs replication; possible Lava bug or Loihi 3 calibration issue; honest C3 publishable"
+    }
+  },
+
+  "honest_c3_disclosures": [
+    "Predicates measure cross-substrate representation similarity (Phi as covariance invariant), NOT substrate-internal computation equivalence",
+    "F-N17-A1 and F-N17-A2 depend on N-3 result (AKD1000 surrogate) - if N-3 NULL or surrogate fidelity fails, N-17 cross-AKIDA gate inherits NULL",
+    "F-N17-A3 graded-vs-binary requires Lava SDK exposure of grading toggle - implementation-dependent; if SDK does not expose, F-N17-A3 deferred to Loihi 3 SDK maturity",
+    "F-N17-A4 on-chip learning ablation requires Lava STDP / 3-factor primitive support on Loihi 3 chip slot - verify availability during M1 onboarding",
+    "All thresholds (0.85 / 0.50 / 0.95 / 0.10 / 0.50) are pre-registered and frozen; post-hoc adjustment forbidden per raw#71",
+    "Pearson r correlation does NOT prove causal substrate-independence, only covariation of representation invariants"
+  ]
+}

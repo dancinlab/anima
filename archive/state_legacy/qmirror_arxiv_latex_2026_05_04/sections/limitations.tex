@@ -1,0 +1,48 @@
+\section{Limitations}\label{sec:limitations}
+
+\begin{enumerate}
+\item \textbf{\texttt{pyphi} GPLv3 dependency.} The IIT~4.0 \phistar{}
+  path links a pinned \texttt{pyphi} commit (\texttt{b78d0e3}, GPLv3).
+  \qmirror{} isolates \texttt{pyphi} via subprocess (FSF Mere
+  Aggregation doctrine~\cite{FSF-MereAggregation}) so the \qmirror{}
+  source itself remains Apache-2.0~\cite{Apache-2.0}; however,
+  \textbf{license interpretation is opinion not legal advice}. Users
+  redistributing combined \texttt{pyphi}-linking binaries should
+  consult counsel. Pure-CHSH and mock-LCG paths are
+  \texttt{pyphi}-free and Apache-2.0-clean.
+
+\item \textbf{ANU rate-limit and ToS uncertainty.} ANU QRNG free tier
+  publishes a courtesy of approximately 1 request per minute on the
+  keyless endpoint and approximately 100 requests per minute on the
+  keyed endpoint~\cite{ANU-QRNG}. ANU publishes \textbf{no formal
+  redistribution license} on the random bits. \qmirror{} does not
+  cache or redistribute ANU bits (live-fetch only); if a future
+  version caches for offline replay, redistribution clarity must be
+  re-evaluated. The \textit{Feist}~\cite{Feist-1991} doctrine on
+  copyrightability of facts is informative but not dispositive for
+  ToS-class claims.
+
+\item \textbf{No live per-call quantum sampling in default path.} The
+  default regression path uses HMAC-DRBG~\cite{HMAC-DRBG-2008} seeded
+  by ANU at session origin, not per-call ANU bytes. The seed is
+  genuinely quantum; the expansion is cryptographic. Strict per-call
+  quantum sampling requires \texttt{NEXUS\_QMIRROR\_QRNG\_DIRECT = 1}
+  and is rate-limit-bound.
+
+\item \textbf{Aer state-vector ceiling at approximately 30 qubits.}
+  Beyond 30 qubits, state-vector RAM exceeds typical CPU budgets
+  ($2^{30}$ \texttt{complex128} $= 16$~GB). MPS compression extends
+  to approximately 50 qubits at constrained bond dimension, with
+  exponential-cost tradeoffs for high-entanglement circuits. Random-
+  circuit-sampling regimes (Sycamore-class 53-qubit
+  XEB~\cite{Sycamore-2019}) are explicitly out of scope.
+
+\item \textbf{Single-shot $N=1$ cross-vendor measurements.} All
+  vendor CHSH measurements (cond.3, cond.7 spirit, cond.8) are
+  single-batch $N=1$ runs without run-to-run repeats. Vendor
+  calibration drift, queue-time effects, and shot-window biases are
+  \textbf{not estimable}. The cross-vendor $\dS$ matrix in
+  Section~\ref{sec:xvendor} is a point-in-time concordance, not a
+  sustained one. Quarterly anchor re-runs (approximately USD~87 per
+  quarter total) would enable drift estimation by Q3~2026.
+\end{enumerate}

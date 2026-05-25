@@ -1,0 +1,80 @@
+{
+  "schema": "anima/n_substrate_n17_prep/d0_readiness/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "agent": "N-17 prep",
+  "scope_note": "N-17 has TWO d0 milestones: (a) application-phase d0 = spec template ready; (b) measurement-phase d0 = post-INRC-approval first-Loihi-3-inference. This file covers (a). Measurement-phase d0 deferred until INRC approval.",
+
+  "application_phase_readiness_pct": 100,
+  "measurement_phase_readiness_pct": 0,
+
+  "ready_components": [
+    {"id": "spec_doc", "path": "docs/n_substrate_n17_loihi3_inrc_application_spec_2026_05_01.md", "status": "READY"},
+    {"id": "state_spec_summary", "path": "state/n_substrate_n17_prep_2026_05_01/spec_summary_v1.json", "status": "READY"},
+    {"id": "state_falsifier_predicates", "path": "state/n_substrate_n17_prep_2026_05_01/falsifier_predicates_v1.json", "status": "READY"},
+    {"id": "state_application_template", "path": "state/n_substrate_n17_prep_2026_05_01/application_template_v1.json", "status": "READY"},
+    {"id": "state_d0_readiness", "path": "state/n_substrate_n17_prep_2026_05_01/d0_readiness_v1.json", "status": "READY (this file)"},
+    {"id": "fixture_prompts", "embedded_in": "tool/anima_phi_v3_canonical.hexa (re-use N-3)", "n": 16, "status": "READY"},
+    {"id": "phi_v3_tool", "path": "tool/anima_phi_v3_canonical.hexa", "status": "READY (READ-ONLY, shared)"},
+    {"id": "5_falsifier_predicates_pre_registered", "status": "PRE-REGISTERED in falsifier_predicates_v1.json"},
+    {"id": "10section_proposal_template", "status": "DRAFTED in application_template_v1.json"},
+    {"id": "5step_application_flow", "status": "DOCUMENTED in spec_summary_v1.json"},
+    {"id": "korean_eligibility_analysis", "status": "DOCUMENTED (eligible in principle, sponsor needed)"},
+    {"id": "loihi3_vs_akd1000_capability_matrix", "status": "DOCUMENTED in spec_doc sec 4.2"}
+  ],
+
+  "out_of_scope_components_user_decision_required": [
+    {"id": "inrc_email_send", "owner": "USER", "blocker": "requires institutional sponsor email + intent to commit"},
+    {"id": "korean_institutional_sponsor_outreach", "owner": "USER", "candidates": ["KAIST CCN", "SNU EE", "POSTECH AI"], "estimated_lead_time_weeks": "4-12"},
+    {"id": "rfp_template_request", "owner": "USER", "depends_on": "inrc_email_send"},
+    {"id": "proposal_drafting_per_template", "owner": "USER + anima later", "depends_on": "rfp_template_received", "estimated_effort_weeks": "1-3"},
+    {"id": "participation_agreement_legal_review", "owner": "USER + KR institution legal counsel", "estimated_lead_time_weeks": "1-4"},
+    {"id": "nrc_vlab_account_provisioning", "owner": "INTEL", "estimated_lead_time_weeks": "1-2 post-acceptance"}
+  ],
+
+  "out_of_scope_components_intel_side_pending": [
+    {"id": "loihi3_chip_slot_on_nrc", "status": "ROLLING_OUT_2026 per Intel Jan-2026 announce", "first_slot_eta": "UNDECLARED"},
+    {"id": "loihi3_lava_sdk_extension", "status": "MATURING", "current_state": "Lava core mature for Loihi 2; Loihi 3 extension in rollout"},
+    {"id": "nrc_per_pi_quota", "status": "UNDISCLOSED"}
+  ],
+
+  "future_measurement_phase_components_not_authored": [
+    {"id": "tool_anima_loihi3_lava_graph", "path": "tool/anima_loihi3_lava_graph.hexa", "status": "M2_DELIVERABLE", "effort_estimate_days": 1.0},
+    {"id": "tool_anima_loihi3_spike_to_dense", "path": "tool/anima_loihi3_spike_to_dense.hexa", "status": "M2_DELIVERABLE", "effort_estimate_days": 0.5},
+    {"id": "tool_n17_phi_loihi_dual_corr", "path": "tool/n17_phi_loihi_dual_corr.hexa", "status": "M4_DELIVERABLE", "effort_estimate_days": 0.25}
+  ],
+
+  "critical_path_to_application_send": [
+    "1. User decides to pursue N-17 vs other tracks (D-0)",
+    "2. User identifies Korean institutional sponsor (D+0 to D+30)",
+    "3. Sponsor PI agrees to be lead applicant (D+14 to D+45)",
+    "4. anima + sponsor draft inrc_interest email per application_template_v1.json (D+45 to D+50)",
+    "5. Email sent (D+50)",
+    "6. RFP + template received (D+51 to D+55)",
+    "7. anima drafts proposal per RFP (D+55 to D+76)",
+    "8. Sponsor PI reviews + signs proposal (D+76 to D+83)",
+    "9. Proposal submitted (D+83)",
+    "10. INRC review (D+83 to D+125)",
+    "11. Acceptance notification + Participation Agreement (D+125 to D+155)",
+    "12. NRC account provisioning (D+155 to D+170)",
+    "13. Application-phase d0 satisfied; measurement-phase d0 begins (D+170 = ~6 months from today)"
+  ],
+
+  "estimated_total_lead_time_today_to_first_loihi3_inference_weeks": {
+    "best_case": 16,
+    "typical": 24,
+    "worst_case": 40,
+    "anchors": [
+      "INRC review 4-12 wk (purchase guide N-17)",
+      "KR institutional sponsor recruitment 4-12 wk (out of $0 scope)",
+      "Loihi 3 NRC slot rolling out 2026 (no firm date)"
+    ]
+  },
+
+  "this_spec_authoring_cost_usd": 0.0,
+  "constraint_satisfied_dollar_zero_budget": true,
+  "constraint_satisfied_hexa_only": true,
+  "constraint_satisfied_no_application_submission": true,
+  "constraint_satisfied_no_account_creation": true,
+  "constraint_satisfied_no_intel_contact": true,
+  "constraint_satisfied_race_isolation": true
+}

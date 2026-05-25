@@ -1,0 +1,105 @@
+[launch] PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+[launch] pip install bitsandbytes==0.43.1
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[launch] bitsandbytes=0.43.1
+[launch] pip install transformers
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+The cache for model files in Transformers v4.22.0 has been updated. Migrating your old cache. This is a one-time only operation. You can interrupt this and resume the migration later on by calling `transformers.utils.move_cache()`.
+0it [00:00, ?it/s]0it [00:00, ?it/s]
+[launch] transformers=4.44.0
+[launch] pip install peft
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[launch] peft=0.12.0
+[launch] accelerate=1.13.0
+[launch] python3 -u train_p21h_v3.py --wiki-corpus /workspace/p21hr/multi_wiki_corpus.jsonl --anima-corpus /workspace/p21hr/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl --mixed-corpus /workspace/p21hr/mixed_corpus_v3.jsonl --out-dir /workspace/p21hr/out_main --base-model Qwen/Qwen2.5-1.5B --init-variant random --steps 2000 --bsz 2 --block 512 --lr 3e-4 --warmup-steps 100 --seed 1337 --wiki-frac 0.3 --target-corpus-mb 72 --noise-sigma 0.1 --lambda-mitosis 0.05
+[P21H] device=cuda dtype=torch.bfloat16
+[mix] multi-wiki=28,986,824 chars, anima=224,198,521 chars
+[mix] multi-wiki chunks=28,308, anima chunks=218,944
+[mix] kept multi-wiki=15,500 (21.6MB), anima=39,862 (50.4MB)
+[mix] wrote 55,362 records to /workspace/p21hr/mixed_corpus_v3.jsonl (72.0MB, wiki=15500, anima=39862)
+[mix] sha256=bf2371ac2602932cd68255626736285a5e579e6aee4b8a0160f74f365d826f94
+[P21H][init=random] V3α — torch.nn.init random from scratch
+[P21H] model params total=2,372,162,560 (2372.16M)
+[P21H] BEFORE-train per-lang OOD eval (greedy)
+[P21H] BEFORE en greedy: {'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21H] BEFORE ko greedy: {'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21H] BEFORE zh greedy: {'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21H] BEFORE ru greedy: {'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21H] BEFORE ja greedy: {'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21H] optimizer=PagedAdamW8bit (bnb 0.43.1)
+Token indices sequence length is longer than the specified maximum sequence length for this model (23831908 > 131072). Running this sequence through the model will result in indexing errors
+[P21H] tokenized mixed corpus: 6,000,000 tokens (block=512)
+[P21H] steps=2000 bsz=2 block=512 peak_lr=0.0003 warmup=100 lambda_mitosis=0.05 init=random
+[P21H] step=     1 lr=3.00e-06 CE=12.2958 total=12.2958 pool=2 splits=0 phi=0.7120 t=1s
+[P21H] step=    50 lr=1.50e-04 CE=8.3063 total=8.3063 pool=128 splits=126 phi=0.6639 t=16s
+[P21H] step=   100 lr=3.00e-04 CE=6.7713 total=6.7713 pool=128 splits=126 phi=0.6639 t=30s
+[P21H] step=   150 lr=3.00e-04 CE=3.3671 total=3.3671 pool=128 splits=126 phi=0.6639 t=44s
+[P21H] step=   200 lr=2.98e-04 CE=5.6944 total=5.6944 pool=128 splits=126 phi=0.6639 t=59s
+[P21H] kosmos anchor written: v3_emit_step200_ru_ru_factual_geo.kosmos
+[P21H] step=   250 lr=2.96e-04 CE=2.4586 total=2.4586 pool=128 splits=126 phi=0.6639 t=75s
+[P21H] step=   300 lr=2.93e-04 CE=2.1692 total=2.1692 pool=128 splits=126 phi=0.6639 t=94s
+[P21H] step=   350 lr=2.89e-04 CE=3.8482 total=3.8482 pool=128 splits=126 phi=0.6639 t=109s
+[P21H] step=   400 lr=2.84e-04 CE=3.9153 total=3.9153 pool=128 splits=126 phi=0.6639 t=123s
+[P21H] kosmos anchor written: v3_emit_step400_ru_ru_factual_geo.kosmos
+[P21H] step=   450 lr=2.78e-04 CE=4.2029 total=4.2029 pool=128 splits=126 phi=0.6639 t=138s
+[P21H] step=   500 lr=2.72e-04 CE=3.0650 total=3.0650 pool=128 splits=126 phi=0.6639 t=153s
+[P21H] step=   550 lr=2.64e-04 CE=3.7094 total=3.7094 pool=128 splits=126 phi=0.6639 t=167s
+[P21H] step=   600 lr=2.57e-04 CE=0.7531 total=0.7531 pool=128 splits=126 phi=0.6639 t=182s
+[P21H] kosmos anchor written: v3_emit_step600_ja_ja_factual_geo.kosmos
+[P21H] step=   650 lr=2.48e-04 CE=4.7996 total=4.7996 pool=128 splits=126 phi=0.6639 t=200s
+[P21H] step=   700 lr=2.39e-04 CE=0.6896 total=0.6896 pool=128 splits=126 phi=0.6639 t=216s
+[P21H] step=   750 lr=2.29e-04 CE=2.1629 total=2.1629 pool=128 splits=126 phi=0.6639 t=231s
+[P21H] step=   800 lr=2.19e-04 CE=0.5507 total=0.5507 pool=128 splits=126 phi=0.6639 t=246s
+[P21H] kosmos anchor written: v3_emit_step800_ru_ru_factual_geo.kosmos
+[P21H] step=   850 lr=2.09e-04 CE=2.4551 total=2.4551 pool=128 splits=126 phi=0.6639 t=260s
+[P21H] step=   900 lr=1.98e-04 CE=1.8281 total=1.8281 pool=128 splits=126 phi=0.6639 t=275s
+[P21H] step=   950 lr=1.87e-04 CE=1.8292 total=1.8292 pool=128 splits=126 phi=0.6639 t=290s
+[P21H] step=  1000 lr=1.76e-04 CE=6.2274 total=6.2274 pool=128 splits=126 phi=0.6639 t=305s
+[P21H] kosmos anchor written: v3_emit_step1000_ru_ru_factual_geo.kosmos
+[P21H] step=  1050 lr=1.65e-04 CE=2.2968 total=2.2968 pool=128 splits=126 phi=0.6639 t=322s
+[P21H] step=  1100 lr=1.54e-04 CE=1.0631 total=1.0631 pool=128 splits=126 phi=0.6639 t=339s
+[P21H] step=  1150 lr=1.43e-04 CE=2.1290 total=2.1290 pool=128 splits=126 phi=0.6639 t=355s
+[P21H] step=  1200 lr=1.32e-04 CE=3.4666 total=3.4666 pool=128 splits=126 phi=0.6639 t=370s
+[P21H] kosmos anchor written: v3_emit_step1200_ko_ko_factual_geo.kosmos
+[P21H] step=  1250 lr=1.21e-04 CE=2.6385 total=2.6385 pool=128 splits=126 phi=0.6639 t=386s
+[P21H] step=  1300 lr=1.11e-04 CE=3.5563 total=3.5563 pool=128 splits=126 phi=0.6639 t=400s
+[P21H] step=  1350 lr=1.01e-04 CE=4.3626 total=4.3626 pool=128 splits=126 phi=0.6639 t=415s
+[P21H] step=  1400 lr=9.13e-05 CE=2.0250 total=2.0250 pool=128 splits=126 phi=0.6639 t=429s
+[P21H] kosmos anchor written: v3_emit_step1400_ja_ja_factual_geo.kosmos
+[P21H] step=  1450 lr=8.23e-05 CE=1.8618 total=1.8618 pool=128 splits=126 phi=0.6639 t=444s
+[P21H] step=  1500 lr=7.37e-05 CE=2.0426 total=2.0426 pool=128 splits=126 phi=0.6639 t=459s
+[P21H] step=  1550 lr=6.58e-05 CE=2.1442 total=2.1442 pool=128 splits=126 phi=0.6639 t=473s
+[P21H] step=  1600 lr=5.86e-05 CE=1.3487 total=1.3487 pool=128 splits=126 phi=0.6639 t=488s
+[P21H] kosmos anchor written: v3_emit_step1600_zh_zh_factual_geo.kosmos
+[P21H] step=  1650 lr=5.21e-05 CE=0.9006 total=0.9006 pool=128 splits=126 phi=0.6639 t=504s
+[P21H] step=  1700 lr=4.64e-05 CE=0.3655 total=0.3655 pool=128 splits=126 phi=0.6639 t=519s
+[P21H] step=  1750 lr=4.15e-05 CE=0.4304 total=0.4304 pool=128 splits=126 phi=0.6639 t=534s
+[P21H] step=  1800 lr=3.74e-05 CE=1.1406 total=1.1406 pool=128 splits=126 phi=0.6639 t=551s
+[P21H] kosmos anchor written: v3_emit_step1800_ja_ja_factual_geo.kosmos
+[P21H] step=  1850 lr=3.42e-05 CE=2.4819 total=2.4819 pool=128 splits=126 phi=0.6639 t=568s
+[P21H] step=  1900 lr=3.19e-05 CE=1.7553 total=1.7553 pool=128 splits=126 phi=0.6639 t=582s
+[P21H] step=  1950 lr=3.05e-05 CE=0.7475 total=0.7475 pool=128 splits=126 phi=0.6639 t=596s
+[P21H] step=  2000 lr=3.00e-05 CE=3.3444 total=3.3444 pool=128 splits=126 phi=0.6639 t=611s
+[P21H] kosmos anchor written: v3_emit_step2000_ja_ja_factual_geo.kosmos
+[P21H] TRAIN DONE wall=612.1s final_CE=3.3444
+[P21H] ckpt saved → /workspace/p21hr/out_main/ckpt.pt (4538.8 MB)
+[P21H] AFTER per-lang OOD eval (greedy + sample)
+[P21H] AFTER en: greedy={'GENERALIZE': 7, 'MEMORIZE': 3, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 4, 'MEMORIZE': 5, 'MEM_PARTIAL': 1, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=11/20 gen=11 coh=11
+[P21H] AFTER ko: greedy={'GENERALIZE': 2, 'MEMORIZE': 7, 'MEM_PARTIAL': 1, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 2, 'MEMORIZE': 6, 'MEM_PARTIAL': 2, 'EMPTY': 0, 'ERROR': 0} verdict=PURE_MEMORIZE score=0/20 gen=4 coh=0
+[P21H] AFTER zh: greedy={'GENERALIZE': 2, 'MEMORIZE': 8, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 6, 'MEMORIZE': 3, 'MEM_PARTIAL': 1, 'EMPTY': 0, 'ERROR': 0} verdict=PURE_MEMORIZE score=1/20 gen=8 coh=1
+[P21H] AFTER ru: greedy={'GENERALIZE': 6, 'MEMORIZE': 4, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 3, 'MEMORIZE': 5, 'MEM_PARTIAL': 2, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=0/20 gen=9 coh=0
+[P21H] AFTER ja: greedy={'GENERALIZE': 3, 'MEMORIZE': 6, 'MEM_PARTIAL': 1, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 6, 'MEMORIZE': 4, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=PURE_MEMORIZE score=4/20 gen=9 coh=4
+[P21H] AFTER anima Eval1
+[P21H] AGG: STRONG=0 PARTIAL=0 WEAK=2 PURE_MEMORIZE=3 → FAIL
+[P21H] anima_register_hits=13/20 register_regress=False
+[P21H] KOSMOS anchors total=15 (during_train=10 final=5)
+[P21H] DONE → /workspace/p21hr/out_main

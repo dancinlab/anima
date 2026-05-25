@@ -1,0 +1,98 @@
+{
+  "schema": "anima/emerge_chat_rmsnorm_diagnostic/verdict/1",
+  "ts_utc": "2026-05-05T17:46:13Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "prompt": "안녕하세요. 오늘 날씨가 좋네요.",
+  "wall_sec": 12.6,
+  "pre_ln_norm": 55.88572311401367,
+  "post_ln_norm": 28.80417823791504,
+  "pre_ln_std": 2.0177552700042725,
+  "post_ln_std": 1.0399770736694336,
+  "ln_compresses_std": true,
+  "per_layer_norms": [
+    62.815460205078125,
+    83.50868225097656,
+    102.6593017578125,
+    53.95655822753906,
+    77.5472640991211,
+    80.56877899169922,
+    76.94214630126953,
+    67.33010864257812,
+    76.72270202636719,
+    69.57635498046875,
+    67.1441879272461,
+    63.08991241455078,
+    61.8486328125,
+    72.49968719482422,
+    62.02869415283203,
+    55.88572311401367
+  ],
+  "per_layer_stds": [
+    2.267955780029297,
+    3.015205144882202,
+    3.706765651702881,
+    1.9481749534606934,
+    2.7981343269348145,
+    2.9077210426330566,
+    2.7763521671295166,
+    2.428096055984497,
+    2.7676968574523926,
+    2.5096871852874756,
+    2.422471523284912,
+    2.2761082649230957,
+    2.2319188117980957,
+    2.6170120239257812,
+    2.2394490242004395,
+    2.0177552700042725
+  ],
+  "per_layer_max_abs": [
+    8.618108749389648,
+    8.642918586730957,
+    9.775999069213867,
+    7.594172954559326,
+    13.32262897491455,
+    11.184431076049805,
+    10.06187629699707,
+    9.288687705993652,
+    10.062065124511719,
+    9.44312572479248,
+    8.758347511291504,
+    8.310477256774902,
+    8.697958946228027,
+    8.686369895935059,
+    6.972217559814453,
+    6.379673480987549
+  ],
+  "bypass_top1": {
+    "baseline": {
+      "id": 51,
+      "text": "/"
+    },
+    "pre_lnf": {
+      "id": 51,
+      "text": "/"
+    },
+    "l8_no_lnf": {
+      "id": 47860,
+      "text": "邊緣"
+    },
+    "l8_with_lnf": {
+      "id": 47860,
+      "text": "邊緣"
+    }
+  },
+  "continuations": {
+    "l8_lnf": "邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣",
+    "l8_no_lnf": "邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣邊緣"
+  },
+  "n_bypass_coherent": 0,
+  "verdict": "FAIL_BASIN_DEEP_HIDDEN",
+  "honest_c3": [
+    "C1 mac CPU fp32 — numerical noise floor low; argmax tie-breaking is deterministic but a different vocab id at same logit can flip text.",
+    "C2 ln_f bypass invalidates head_a's training-time normalized-input expectation. If head_a was trained POST-RMSNorm only, applying it to PRE-ln_f hidden is an out-of-distribution probe — incoherent output does not isolate basin pathology.",
+    "C3 single prompt long-Korean — anecdotal. Per-prompt variance not measured; cannot generalize to 'basin everywhere' from one input.",
+    "C4 BG-AR insight — per-layer hidden-state NORM trajectory does NOT establish semantic content recovery. A high-norm intermediate layer can still encode a degenerate distribution that maps to byte-fallback under any head.",
+    "C5 'semi_coherent' heuristic anima-internal: ≥5 Korean+ASCII chars and no single char >50% of text. False-positive on valid mixed-script garbage; false-negative on short coherent fragments. Verdict label is informative not authoritative."
+  ]
+}

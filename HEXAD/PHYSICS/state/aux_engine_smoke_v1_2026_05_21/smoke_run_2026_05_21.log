@@ -1,0 +1,23 @@
+=== aux_engine_smoke (canonical 1차) ===
+  goal: parse PASS + 100-step + 5 falsifier check
+
+  [S1] parse_pass: REACHED (entered main)
+  [S2] engine_construct: total_cells={n_cells} (expect {N_FACTIONS}) → {s2_pass}
+  step {step}: cells={engine_total_cells(eng)} phi={phi:.4} ema={phi_ema:.4} score={score:.3}
+  step {step}: cells={engine_total_cells(eng)} phi={phi:.4} ema={phi_ema:.4} score={score:.3}
+  step {step}: cells={engine_total_cells(eng)} phi={phi:.4} ema={phi_ema:.4} score={score:.3}
+  step {step}: cells={engine_total_cells(eng)} phi={phi:.4} ema={phi_ema:.4} score={score:.3}
+  step {step}: cells={engine_total_cells(eng)} phi={phi:.4} ema={phi_ema:.4} score={score:.3}
+  [S3] forward_step: final output finite → {s3_pass}
+  [S4] phi_nonneg (n={phi_history.len()}): {s4_pass}
+  [S5] motivation_in_unit: min={s5_min:.3} max={s5_max:.3} → {s5_pass}
+
+=== summary ===
+  S1 parse_pass:        REACHED
+  S2 engine_construct:  {s2_pass}
+  S3 forward_step:      {s3_pass}
+  S4 phi_nonneg:        {s4_pass}
+  S5 motivation_unit:   {s5_pass}
+  total_cells_final:    {engine_total_cells(eng)}
+  best_phi:             {best_phi:.4}
+timeout 600 ./aux_smoke 2>&1  437.06s user 8.62s system 87% cpu 8:30.02 total

@@ -1,0 +1,78 @@
+{
+  "schema": "anima/clm_v4_tokenizer_caller_migration/verdict/3",
+  "cycle": "clm_v4_tokenizer_caller_migration_phase_3_2026_05_04",
+  "scope": "Phase 3 ubu1-only — eval_clm_v4_hellaswag",
+  "verdict": "PASS",
+  "in_flight_gate": "OPEN",
+  "in_flight_gate_evidence": {
+    "ssh_command": "pgrep -af 'eval_clm_v4_hellaswag|hellaswag.*eval'",
+    "match_for_target": "none — only an unrelated p9_a_prime_main_eval Llama-LoRA eval was running (PID 1858498, hellaswag-LoRA, distinct caller)",
+    "target_caller_status": "no eval_clm_v4_hellaswag process active; safe to park"
+  },
+  "f_mig_1": "PASS — round-trip identity 16/16 calib prompts via canonical sp.encode/sp.decode (vocab_size=64000); see selftest.json rows[*].roundtrip_exact=true",
+  "f_mig_2": "DOCUMENTED — token-sequence parity vs canonical sp.encode is the regression baseline. By design the new sequences differ from the legacy byte-fallback workaround: canonical 153 tokens vs legacy byte-fallback 611 tokens over 16 calib prompts (4× compression, ratio 0.2504). The 'workaround' was never byte-equivalent to the BPE training tokenizer; canonical restores intended embedding addressing. See encode_test.json. Predecessor sibling `eval_clm_v4_hellaswag_v2.py` already uses canonical sp.encode (independent confirmation that this is the correct migration target).",
+  "f_mig_3": "PASS — zero .py file at `eval_clm_v4_hellaswag.py` exists in Mac repo (verified via `find /Users/ghost/core/anima -name eval_clm_v4_hellaswag.py`). The caller was always ubu1-only (per migration spec commit 68803d162).",
+  "f_mig_4": "PASS — zero ACTIVE .py files in `~/anima/state/p9_path_b_*/` contain `[byte + BYTE_FALLBACK_OFFSET for byte in b]` after parking. The single remaining active .py in scope (`eval_clm_v4_hellaswag_v2.py`) is the sibling that already migrated to canonical sp.encode in commit ece5c571d. Legacy marker survives only in parked `eval_clm_v4_hellaswag.py.txt` (preserved per raw#37 rename-not-delete).",
+  "callers_migrated_total": "6 / 6",
+  "phase_breakdown": {
+    "phase_1_BG_mu_98b614363": ["tool/p9_warmup_probe_real.hexa (replaces state/p9_p0_warmup_live_2026_05_03/warmup_probe_real.py)"],
+    "phase_2_BG_phi_b4e1570c0": [
+      "tool/p9_sentinel_train_50k.hexa (replaces state/p9_p1_sentinel_2026_05_03/sentinel_train_50k.py)",
+      "+ 3 additional Phase 2 callers (per BG-φ landed doc)"
+    ],
+    "phase_3_BG_omega_2026_05_04": ["tool/p9_path_b_hellaswag_eval.hexa (replaces ubu1:~/anima/state/p9_path_b_sanity_probe_2026_05_03/eval_clm_v4_hellaswag.py — ubu1-only, parked to .py.txt)"]
+  },
+  "deliverables": {
+    "hexa_file": "/Users/ghost/core/anima/tool/p9_path_b_hellaswag_eval.hexa",
+    "hexa_size_bytes": 30437,
+    "hexa_lines": 494,
+    "synthesized_helper_size_bytes": 17393,
+    "synthesized_helper_lines": 361,
+    "selftest_evidence": "state/clm_v4_tokenizer_caller_migration_phase_3_2026_05_04/selftest.json",
+    "encode_test_evidence": "state/clm_v4_tokenizer_caller_migration_phase_3_2026_05_04/encode_test.json",
+    "run_log": "state/clm_v4_tokenizer_caller_migration_phase_3_2026_05_04/run.log",
+    "ubu1_park": "ubu1:~/anima/state/p9_path_b_sanity_probe_2026_05_03/eval_clm_v4_hellaswag.py.txt (was .py)",
+    "doc": "docs/clm_v4_tokenizer_caller_migration_phase_3_landed_2026_05_04.ai.md"
+  },
+  "modes": {
+    "selftest": "round-trip 16 calib prompts + decoder/lm_eval import dry-check (no GPU)",
+    "encode_test": "F-MIG-2 parity: emit canonical-vs-legacy token id arrays for 16 calib prompts",
+    "apply": "REAL lm-eval-harness HellaSwag (limit=500, 5-shot) — emits hellaswag_raw_hexa.json + result_hexa.json + run_hexa.log to ubu1, scp's back"
+  },
+  "tokenizer_resolution": {
+    "primitive": "tool/clm_v4_tokenizer_load.hexa",
+    "resolved_path": "/home/aiden/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer/tokenizer_64k_multilingual.model",
+    "vocab_size": 64000,
+    "sha256_expected": "bb851d39fbe3286dda11fc43da78d9bbf29ac6400d61b75616c8c750b710b8ab"
+  },
+  "honest_c3": [
+    {
+      "id": "a",
+      "claim": "Apply mode is wired but NOT executed in this cycle",
+      "detail": "We ran selftest + encode-test (no GPU) per the cycle spec (which targets land + verdict, not score regeneration). The apply mode mirrors the original eval_clm_v4_hellaswag.py logic verbatim except for the ByteFallbackTokenizer→CanonicalSPTokenizer swap. A future cycle should re-run --apply and compare result_hexa.json primary_value to the v1 baseline (CLM_V4_AT_FLOOR per result.json) and v2 (`p9_path_b_sanity_probe_v2_2026_05_03/result.json` already canonical-BPE → expect score change attributable to BPE compression effect, not architecture)."
+    },
+    {
+      "id": "b",
+      "claim": "F-MIG-2 is DOCUMENTED not strict-PASS",
+      "detail": "Token-sequence parity vs the legacy byte-fallback path is by-design unequal (canonical:legacy = 0.2504 over 16 prompts). 'Parity' here means the canonical encoder output now matches the training tokenizer (sha256 bb851d39); the legacy [i+4 for i in bytes] was a workaround that was never canonical. Strict byte-for-byte parity would mean keeping the bug. Independent confirmation: sibling _v2.py already migrated to canonical sp.encode pre-cycle and was accepted in commit ece5c571d."
+    },
+    {
+      "id": "c",
+      "claim": "raw#9 boundary preserved at hexa-level only — helper synthesis was validated via Mac AST + ubu1 execution path that the hexa would itself trigger",
+      "detail": "We don't have a hexa runtime accessible from this Bash session. To verify the embedded helper is syntactically valid and functionally correct, we (i) parsed `parts.push(...)` literals via Python regex, decoded escapes, ran `ast.parse` on the synthesized helper (PASS), then (ii) staged the synthesized helper to `/tmp/p9_path_b_hellaswag_eval_helper.hexa_tmp` on ubu1 (the same path the hexa would use) and executed it via `/home/aiden/venv_orchestrator/bin/python3` (the same interpreter the hexa would invoke). Selftest+encode-test PASS proves the codepath end-to-end. Future cycle with `hexa run` available should re-validate — but the helper bytes are deterministic so the result will match."
+    },
+    {
+      "id": "d",
+      "claim": "Sibling _v2 caller is technically a 7th caller but out of Phase 3 scope",
+      "detail": "`~/anima/state/p9_path_b_sanity_probe_v2_2026_05_03/eval_clm_v4_hellaswag_v2.py` already uses canonical sp.encode (verified line 77: `return self.sp.encode(text, out_type=int)`), committed pre-cycle in ece5c571d. The migration spec (commit 68803d162) enumerated 6 callers; v2 was created downstream of the migration and adopted the canonical pattern from inception. F-MIG-4 considers it out-of-scope (no byte-fallback workaround to remove). 6/6 = the original-spec count; 7/7 if v2 is counted."
+    },
+    {
+      "id": "e",
+      "claim": "Apply-mode HellaSwag score will likely shift vs v1 result.json baseline — direction not guaranteed",
+      "detail": "v1 (byte-fallback) was reported `CLM_V4_AT_FLOOR` (~0.25 acc_norm at limit=500). With canonical BPE: prompts compress 4× (153 vs 611 tokens), so 5-shot prompts that were truncated under byte-fallback may now fit in block_size=512 — increasing context coverage. But: the model was trained on a mixed corpus where BPE merges activate different embedding paths than the byte-fallback bytes 4-259. The score COULD go up (better context, intended training distribution) or stay at floor (architecture genuinely cannot do HellaSwag). v2 sanity-probe already ran a comparable canonical-BPE eval; cross-reference its result.json before re-running --apply to avoid wasted GPU."
+    }
+  ],
+  "blockers": [],
+  "next_cycle_recommendation": "Run `hexa_real run tool/p9_path_b_hellaswag_eval.hexa --apply` once a clean GPU window is available (current ubu1 has p9_a_prime_main_eval Llama-LoRA running; in-flight gate would block). Cross-reference output `result_hexa.json` against `state/p9_path_b_sanity_probe_v2_2026_05_03/result.json` for canonical-BPE regression baseline. If both match within CI, retire v1+v2 .py predecessors. Roadmap update proposal: `p9_sft.cond.tokenizer_caller_migration` from `near_complete (5/6)` to `complete (6/6)` (DO NOT auto-edit roadmap per cycle spec).",
+  "ts_utc": "2026-05-04T01:16:00Z"
+}

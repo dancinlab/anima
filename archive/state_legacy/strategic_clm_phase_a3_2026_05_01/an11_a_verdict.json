@@ -1,0 +1,53 @@
+{
+  "schema": "anima/an11_a_clm_v4_350m/1",
+  "schema_version": 1,
+  "verifier": "an11_a_weight_emergent",
+  "dest": "clm",
+  "round": "v4_350m",
+  "ts": "2026-05-02T19:20:00Z",
+  "subject_model": "clm_v4_350m/scale_350m (530.99M params, full fine-tune, NOT LoRA)",
+  "measurement_form": "full-tensor Frobenius shift ‖W_final - W_step10k‖_F (aggregate L2 across 581 tensors / 419 matrix tensors)",
+  "frobenius_aggregate": {
+    "agg_dW_F_step10k_to_final": 106.39743663608978,
+    "agg_W_F_step10k": 1545.2910864975252,
+    "rel_dW_over_W": 0.0688526825565561,
+    "rel_dW_over_W_pct": 6.885,
+    "n_layers_compared": 581,
+    "n_layers_matrix_2d": 419,
+    "n_params_compared": 530994816
+  },
+  "frobenius_by_family": {
+    "down_proj": {"count": 16, "agg_dW_F": 14.6798, "agg_W_F": 100.4504, "rel": 0.14614},
+    "q_proj":    {"count": 32, "agg_dW_F": 14.2218, "agg_W_F": 87.0357,  "rel": 0.16340},
+    "gate_proj": {"count": 16, "agg_dW_F": 13.2623, "agg_W_F": 100.4531, "rel": 0.13202},
+    "up_proj":   {"count": 16, "agg_dW_F": 12.6738, "agg_W_F": 100.4344, "rel": 0.12619},
+    "o_proj":    {"count": 32, "agg_dW_F": 8.8589,  "agg_W_F": 86.8701,  "rel": 0.10198},
+    "k_proj":    {"count": 32, "agg_dW_F": 7.4743,  "agg_W_F": 47.0558,  "rel": 0.15884},
+    "v_proj":    {"count": 32, "agg_dW_F": 4.8223,  "agg_W_F": 46.9114,  "rel": 0.10280},
+    "ln":        {"count": 49, "agg_dW_F": 1.5848,  "agg_W_F": 193.9694, "rel": 0.00817},
+    "ffn":       {"count": 16, "agg_dW_F": 1.2210,  "agg_W_F": 110.8067, "rel": 0.01102},
+    "attn_bias": {"count": 32, "agg_dW_F": 0.7267,  "agg_W_F": 1453.7980,"rel": 0.00050},
+    "other":     {"count": 308,"agg_dW_F": 102.0001,"agg_W_F": 417.9582, "rel": 0.24404}
+  },
+  "top_layers_by_abs_dW_F": [
+    {"name": "blocks.15.ca_mix.weight",    "shape": [768, 2304], "dW_F": 25.2617, "rel": 0.87383},
+    {"name": "head_a.weight",              "shape": [64000, 768],"dW_F": 24.7616, "rel": 0.16286},
+    {"name": "tok_emb.weight",             "shape": [64000, 768],"dW_F": 24.7616, "rel": 0.16286},
+    {"name": "blocks.9.rules.3.weight",    "shape": [768, 768],  "dW_F": 21.5283, "rel": 1.38437},
+    {"name": "blocks.13.ca_mix.weight",    "shape": [768, 2304], "dW_F": 21.3727, "rel": 0.70750},
+    {"name": "blocks.11.rules.7.weight",   "shape": [768, 768],  "dW_F": 20.7604, "rel": 1.32420},
+    {"name": "blocks.10.rules.4.weight",   "shape": [768, 768],  "dW_F": 20.5861, "rel": 1.32166},
+    {"name": "blocks.12.rules.0.weight",   "shape": [768, 768],  "dW_F": 19.0651, "rel": 1.21680},
+    {"name": "blocks.15.rules.5.weight",   "shape": [768, 768],  "dW_F": 18.9114, "rel": 1.07816},
+    {"name": "blocks.14.ca_mix.weight",    "shape": [768, 2304], "dW_F": 18.3232, "rel": 0.61838}
+  ],
+  "verdict_AGI_strict": {
+    "value": "NOT-MEASURED",
+    "reason": "AGI-strict spec inherits LoRA-implicit assumption (per-adapter ‖B·A‖_F ≥ threshold across N adapters). CLM is full fine-tune — no LoRA adapter exists; the analogous quantity is per-tensor ΔW_F, but the threshold (originally 0.001 per LoRA pair) is not transferable: full ΔW dwarfs LoRA Δ by orders of magnitude (full-rank vs r=64). Without a re-derived AGI-strict threshold for full-tune, the boolean verdict is not honestly emit-able."
+  },
+  "verdict_CP2_relaxed": {
+    "value": "PASS",
+    "reason": "Existence + family-shift evidence both satisfied: (i) ΔW_F = 106.4 ≫ 0 across 581 tensors (existence); (ii) family-shift dominance pattern matches ALM r14 — gate_proj/up_proj/down_proj MLP family carries large rel-shift (CLM rel 0.126-0.146; ALM r14 gate 4.36/up 3.91 also dominate). Plus tok_emb/head_a (24.76 each, tied — likely tied-weight) and ca_mix/rules layers (CLM-specific cross-attn mixing) carry the largest absolute drift, indicating training is touching task-relevant geometry, not noise."
+  },
+  "verdict_overall": "PASS (CP2-relaxed); AGI-strict NOT-MEASURED pending threshold re-derivation for full-fine-tune category"
+}

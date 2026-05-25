@@ -1,0 +1,19 @@
+{
+  "schema": "anima/p9_path_a_llama_lora/f1_v3_pending/1",
+  "ts_utc": "2026-05-03",
+  "spec_ref": "docs/p9_a_prime_path_decision_2026_05_03.md",
+  "status": "PENDING_TRAIN",
+  "phi_star_extraction_layer": 14,
+  "phi_star_layer_rationale": "honest_c3 §6.2 default — Llama-3.2-3B has 28 layers; middle layer chosen pre-train per pre-registration discipline",
+  "anchor_swap": {
+    "from": "CLM v4 base (architectural blocker)",
+    "to": "Llama-3.2-3B-Instruct base"
+  },
+  "eval_triggers_pending": [
+    "HellaSwag",
+    "MMLU 0-shot avg",
+    "TriviaQA EM"
+  ],
+  "harness_config_ref": "docs/p9_benchmark_switch_a_prime_spec_2026_05_03.md §2.5",
+  "f1_v3_verdict_pending": true
+}

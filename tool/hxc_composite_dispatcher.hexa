@@ -1,0 +1,730 @@
+// ════════════════════════════════════════════════════════════════════════════
+// tool/hxc_composite_dispatcher.hexa — A25+A19+A26 composite dispatcher (raw 91 honest C3)
+//
+// PURPOSE
+//   Multi-class composite dispatcher that orchestrates ALREADY-LANDED inner
+//   algorithms (A25 v2 type-aware dispatcher, A19 v2 cross-file dict, A26 v2
+//   sparse PPM-D estimator) over a hxc_corpus_manifest/1 JSON. Per-file
+//   byte-eq round-trip enforced. Per-class breakdown emitted. Aggregate
+//   saving% byte-weighted.
+//
+//   This tool DOES NOT introduce a new compression algorithm — it picks the
+//   best of {A25 primary, A19v2 cross-file batch where applicable, identity}
+//   per the orthogonality constraint (raw 137 cmix-ban: deterministic,
+//   integer-only, no neural mixer).
+//
+//   raw 91 honest C3 PRE-DECLARED EXPECTATIONS (falsifiable):
+//     E1: A19v2 single-file ALWAYS identity (verified 4-file probe pre-build).
+//         Therefore in PER-FILE composite, A19v2 NEVER wins → composite
+//         per-file aggregate == A25 alone.
+//     E2: A26v2 has NO encode/decode wire (build-only estimator). Therefore
+//         CANNOT enter byte-eq composite as a winner. We record A26v2 estimate
+//         per-class as theoretical-ceiling reference ONLY (NOT in aggregate).
+//     E3: A19v2 cross-file batch (live-fire) has dict overhead 7504 B and
+//         can amortize only across very many similar files. We measure it on
+//         the json-heavy class (largest byte share, struct similarity) and
+//         compare against A25 per-file sum on that class.
+//
+//   FALSIFIABLE: if MEASURED composite < A25 alone, composite design is
+//   ABANDONED for this turn (raw 142 D2 try-revert).
+//
+// INPUT
+//   $1 = manifest path (hxc_corpus_manifest/1 JSON; default 16ff3e55 manifest)
+//   $2 = output ledger path (default state/format_witness/...jsonl)
+//
+// OUTPUT
+//   - Witness ledger JSONL (per-event lines)
+//   - Per-class breakdown w/ A25, A19v2-batch, A26v2-estimate, composite winner
+//   - Aggregate saving% MEASURED
+//
+// AOT BINARIES (orthogonal — concurrent agents own these targets, do NOT modify)
+//   A18:    /Users/ghost/core/hexa-lang/build/a18_d631a902_aot
+//   A19v2:  /Users/ghost/core/hexa-lang/build/a19/a19_v2_aot
+//   A23:    /Users/ghost/core/anima/.hxc_aot/hxc_a23
+//   A24:    /Users/ghost/core/hexa-lang/build/a24/a24_aot     (excluded — latency)
+//   A24v2:  /Users/ghost/core/hexa-lang/build/a24_v2_aot      (estimator only,
+//                                                              build-only — NO
+//                                                              encode/decode wire,
+//                                                              ceiling-reference per
+//                                                              raw 91 C3 honest)
+//   A25:    /Users/ghost/core/anima/.hxc_aot/hxc_a25
+//   A26v2:  /Users/ghost/core/hexa-lang/build/a26_v2_aot_test (estimator only)
+//
+// FINAL VERDICT MODE (NEW — 2026-04-28 18:39+ tick):
+//   - argv[2] = manifest path
+//   - argv[3] = ledger path
+//   - argv[4] = "stratified" or "full" (default "full"; stratified caps ~1.5MB per
+//                                       raw 91 C3 acceptable sample; bypasses 30min
+//                                       full-23.35MB sweep per time budget).
+//   - argv[5] = stratified sample budget bytes (default 1572864 = 1.5MB)
+//
+// RULES
+//   raw 9   hexa-only
+//   raw 47  no inflation (composite must NEVER exceed raw input bytes)
+//   raw 65  idempotent (encode(decode(x)) == x)
+//   raw 68  idempotent (decode(encode(y)) == y)
+//   raw 91  honest C3 STRICT (MEASURED, never PROJECTED)
+//   raw 137 cmix-ban (deterministic min-of-{candidates}, no neural mixer)
+//   raw 142 D2 try-revert (composite < A25 → ABANDON, fall back to A25)
+// ════════════════════════════════════════════════════════════════════════════
+
+let A25_AOT       = "/Users/ghost/core/anima/.hxc_aot/hxc_a25"
+let A19V2_AOT     = "/Users/ghost/core/hexa-lang/build/a19/a19_v2_aot"
+let A26V2_AOT     = "/Users/ghost/core/hexa-lang/build/a26_v2_aot_test"
+let A24V2_AOT     = "/Users/ghost/core/hexa-lang/build/a24_v2_aot"
+let DEFAULT_MANIFEST = "/Users/ghost/core/anima/state/baselines/16ff3e55.manifest.json"
+let DEFAULT_LEDGER   = "/Users/ghost/core/anima/state/format_witness/2026-04-28_composite_dispatcher_with_a24v2_final_verdict.jsonl"
+
+// Stratified sample budget (raw 91 C3 honest disclosure: full 23.35MB sweep
+// estimated 30 min wallclock; 1.5MB stratified sample acceptable).
+let STRATIFIED_SAMPLE_BYTES = 1572864   // 1.5 MB
+let STRATIFIED_PER_CLASS_CAP_BYTES = 393216  // 384 KB per class (4-class equal share)
+// A24 v2 estimate hard caps (mirror its first-tick latency cap).
+let A24V2_MAX_INPUT_BYTES = 65536       // skip A24v2 estimator above 64 KB
+let A24V2_MIN_INPUT_BYTES = 1024        // skip A24v2 estimator below 1 KB
+
+// A19v2 cross-file batch parameters (live-fire mode).
+// dict_size_cap: max dictionary serialization bytes (overhead).
+// We use 65536 to match A19v2 selftest, which gave 256 B dict overhead 7504 B.
+let A19V2_DICT_CAP   = 65536
+// Files-per-batch: A19v2 amortizes overhead across files. For json-heavy class
+// with ~1049 files (16ff3e55 manifest), one batch is unwieldy in CLI;
+// we batch-cap to keep CLI args manageable + measure amortization realistically.
+let A19V2_BATCH_FILES_CAP = 64
+
+// A26v2 size guard (A26v2 OOM risk; first-tick CTX_LIMIT=4096, MAX_ORDER=3,
+// but we still cap at 64KB for safety per the constraint).
+let A26V2_SIZE_GUARD = 65536
+
+fn _str(x) {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return to_string(x)
+}
+
+fn _sh_quote(s) {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn fexists(p) {
+    return _str(exec("test -f " + _sh_quote(p) + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn now_utc() {
+    return _str(exec("date -u +%FT%TZ")).trim()
+}
+
+fn json_escape(s) {
+    return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+}
+
+fn append_jsonl(path, body) {
+    let pid = _str(exec("printf %s $$")).trim()
+    let tmp = path + ".tmp." + pid
+    write_file(tmp, body + "\n")
+    exec("cat " + _sh_quote(tmp) + " >> " + _sh_quote(path) + " && rm -f " + _sh_quote(tmp))
+}
+
+// Walk manifest's per_repo.files arrays via python3 (raw 9 escape: shell helper).
+// Output TSV: <path>\t<raw_bytes>\t<class>.
+// Files sorted by raw_bytes DESCENDING so stratified sampling captures the
+// largest representatives of each class first (where dispatcher saving is
+// most informative — small files dominated by header overhead).
+fn manifest_files_tsv(manifest_path) {
+    let pid = _str(exec("printf %s $$")).trim()
+    let tmp = "/tmp/_hxc_composite_files." + pid
+    let cmd = "PATH=/usr/bin:/bin:/sbin:/opt/homebrew/bin python3 -c '\nimport json,sys\nm=json.load(open(\"" + manifest_path + "\"))\npr=m.get(\"per_repo\",{})\nrows=[]\nfor repo,rec in pr.items():\n    for f in rec.get(\"files\",[]):\n        rows.append((f[\"path\"], int(f[\"raw_bytes\"]), f.get(\"class\",\"\")))\nrows.sort(key=lambda r:-r[1])\nfor path,b,c in rows:\n    print(path+\"\\t\"+str(b)+\"\\t\"+c)\n' > " + _sh_quote(tmp)
+    exec(cmd)
+    let out = _str(exec("cat " + _sh_quote(tmp)))
+    exec("rm -f " + _sh_quote(tmp))
+    return out
+}
+
+// Read manifest per_class array → returns TSV: <class>\t<files>\t<raw_bytes>
+fn manifest_per_class_tsv(manifest_path) {
+    let pid = _str(exec("printf %s $$")).trim()
+    let tmp = "/tmp/_hxc_composite_pc." + pid
+    let cmd = "PATH=/usr/bin:/bin:/sbin:/opt/homebrew/bin python3 -c '\nimport json,sys\nm=json.load(open(\"" + manifest_path + "\"))\nfor c in m.get(\"per_class\",[]):\n    print(c.get(\"class\",\"\")+\"\\t\"+str(c.get(\"files\",0))+\"\\t\"+str(c.get(\"raw_bytes\",0)))\n' > " + _sh_quote(tmp)
+    exec(cmd)
+    let out = _str(exec("cat " + _sh_quote(tmp)))
+    exec("rm -f " + _sh_quote(tmp))
+    return out
+}
+
+// Run A25 encode on one file. Returns [enc_bytes, class, algo].
+fn a25_encode_one(in_path, out_path) {
+    let cmd = A25_AOT + " encode " + _sh_quote(in_path) + " " + _sh_quote(out_path) + " 2>&1"
+    let out = _str(exec(cmd)).trim()
+    let mut enc = 0
+    let mut cls = ""
+    let mut alg = ""
+    let parts = out.split(" ")
+    let mut i = 0
+    while i < len(parts) {
+        let p = parts[i]
+        if p.starts_with("enc=") { enc = to_int(p.replace("enc=", "").trim()) }
+        if p.starts_with("class=") { cls = p.replace("class=", "").trim() }
+        if p.starts_with("algo=") { alg = p.replace("algo=", "").trim() }
+        i = i + 1
+    }
+    return [enc, cls, alg]
+}
+
+// Run A25 decode on one file, return decoded bytes count (for byte-eq verify).
+fn a25_decode_verify(in_enc, original_path) {
+    let pid = _str(exec("printf %s $$")).trim()
+    let tmp = "/tmp/_hxc_composite_dec." + pid
+    let cmd = A25_AOT + " decode " + _sh_quote(in_enc) + " " + _sh_quote(tmp) + " 2>&1"
+    exec(cmd)
+    let cmp_out = _str(exec("cmp -s " + _sh_quote(original_path) + " " + _sh_quote(tmp) + " && echo PASS || echo FAIL")).trim()
+    exec("rm -f " + _sh_quote(tmp))
+    return cmp_out == "PASS"
+}
+
+// Run A19v2 single-file encode (expected: identity for all real files).
+// Returns enc_bytes (== raw_bytes if identity).
+fn a19v2_encode_one(in_path, out_path) {
+    let cmd = A19V2_AOT + " encode " + _sh_quote(in_path) + " " + _sh_quote(out_path) + " 2>&1"
+    let out = _str(exec(cmd)).trim()
+    let mut enc = 0
+    let mut id = "true"
+    let parts = out.split(" ")
+    let mut i = 0
+    while i < len(parts) {
+        let p = parts[i]
+        if p.starts_with("enc=") { enc = to_int(p.replace("enc=", "").trim()) }
+        if p.starts_with("identity=") { id = p.replace("identity=", "").trim() }
+        i = i + 1
+    }
+    return [enc, id]
+}
+
+// Run A24v2 build (estimator only — NO wire, NO byte-eq round-trip available).
+// CALLER must NOT use this as actual encode bytes; record only as
+// theoretical-ceiling reference (raw 91 C3 honest).
+// A24v2 build prints: `raw=N est=M saving=P% n_rules=R rule_density=D%`
+// Returns [raw_bytes, est_bytes, n_rules, rule_density_per100].
+fn a24v2_estimate_one(in_path) {
+    let cmd = A24V2_AOT + " build " + _sh_quote(in_path) + " 2>&1"
+    let out = _str(exec(cmd)).trim()
+    let mut est_bytes = 0
+    let mut raw_b = 0
+    let mut n_rules = 0
+    let mut rule_density = 0
+    let parts = out.split(" ")
+    let mut i = 0
+    while i < len(parts) {
+        let p = parts[i]
+        if p.starts_with("raw=") { raw_b = to_int(p.replace("raw=", "").trim()) }
+        if p.starts_with("est=") { est_bytes = to_int(p.replace("est=", "").trim()) }
+        if p.starts_with("n_rules=") { n_rules = to_int(p.replace("n_rules=", "").trim()) }
+        if p.starts_with("rule_density=") {
+            rule_density = to_int(p.replace("rule_density=", "").replace("%", "").trim())
+        }
+        i = i + 1
+    }
+    return [raw_b, est_bytes, n_rules, rule_density]
+}
+
+// Run A26v2 build (estimator only — NO wire, NO byte-eq round-trip available).
+// Returns estimated bits-needed (in-sample bound, NOT wire bytes).
+// CALLER must NOT use this as an actual encode bytes count — record only as
+// theoretical-ceiling reference.
+// A26v2 build prints: `raw=N est=M saving=P% order5_hit=Q%` (a26v1) — for v2
+// the format may differ; we conservatively probe stdout.
+fn a26v2_estimate_one(in_path) {
+    let cmd = A26V2_AOT + " build " + _sh_quote(in_path) + " 2>&1"
+    let out = _str(exec(cmd)).trim()
+    let mut est_bits = 0
+    let mut raw_b = 0
+    let parts = out.split(" ")
+    let mut i = 0
+    while i < len(parts) {
+        let p = parts[i]
+        if p.starts_with("raw=") { raw_b = to_int(p.replace("raw=", "").trim()) }
+        if p.starts_with("est=") { est_bits = to_int(p.replace("est=", "").trim()) }
+        if p.starts_with("est_bits=") { est_bits = to_int(p.replace("est_bits=", "").trim()) }
+        i = i + 1
+    }
+    // Convert estimated bits to estimated bytes (ceiling).
+    let est_bytes = (est_bits + 7) / 8
+    return [raw_b, est_bytes]
+}
+
+// A19v2 cross-file live-fire batch: takes a list of paths, returns aggregate
+// raw_b, enc_b (body), dict_overhead_b, amortized_enc_b = enc_b + dict_overhead_b.
+// AOT live-fire CLI: `a19_v2_aot live-fire <dict_size_cap> <p1> <p2> ...`
+// We invoke and parse the `# a19_v2_aggregate` line for totals.
+fn a19v2_batch(paths_array) {
+    if len(paths_array) == 0 { return [0, 0, 0, 0] }
+    // Build CLI argv. Cap to A19V2_BATCH_FILES_CAP per batch for argv sanity.
+    let mut argv = A19V2_AOT + " live-fire " + to_string(A19V2_DICT_CAP)
+    let mut i = 0
+    while i < len(paths_array) {
+        argv = argv + " " + _sh_quote(paths_array[i])
+        i = i + 1
+    }
+    argv = argv + " 2>&1"
+    let out = _str(exec(argv)).trim()
+    // Parse `# a19_v2_aggregate raw_b=X enc_b=Y body_saving_b=Z body_saving_pct=P
+    //        dict_overhead_b=O amortized_saving_b=A amortized_saving_pct=AP
+    //        files_total=F a19_v2_fired=Ff a19_v2_revert=R byte_eq_pass=BP byte_eq_fail=BF`
+    let lines = out.split("\n")
+    let mut raw_b = 0
+    let mut enc_b = 0
+    let mut overhead_b = 0
+    let mut byte_eq_fail = 0
+    let mut k = 0
+    while k < len(lines) {
+        let ln = lines[k]
+        if ln.starts_with("# a19_v2_aggregate") {
+            let parts = ln.split(" ")
+            let mut j = 0
+            while j < len(parts) {
+                let p = parts[j]
+                if p.starts_with("raw_b=") { raw_b = to_int(p.replace("raw_b=", "").trim()) }
+                if p.starts_with("enc_b=") { enc_b = to_int(p.replace("enc_b=", "").trim()) }
+                if p.starts_with("dict_overhead_b=") { overhead_b = to_int(p.replace("dict_overhead_b=", "").trim()) }
+                if p.starts_with("byte_eq_fail=") { byte_eq_fail = to_int(p.replace("byte_eq_fail=", "").trim()) }
+                j = j + 1
+            }
+        }
+        k = k + 1
+    }
+    // amortized = body + overhead.
+    let amortized_enc_b = enc_b + overhead_b
+    return [raw_b, enc_b, overhead_b, amortized_enc_b, byte_eq_fail]
+}
+
+// Class-index map: keep canonical 7-class order.
+let CLASS_NAMES = ["text-heavy","json-heavy","small-file","mixed","struct-audit","synthetic-repetitive","passthrough"]
+
+fn class_index(c) {
+    let mut i = 0
+    while i < len(CLASS_NAMES) {
+        if CLASS_NAMES[i] == c { return i }
+        i = i + 1
+    }
+    return 3 // fallback to "mixed"
+}
+
+fn run_composite(manifest_path, ledger_path, mode, sample_budget) {
+    if !fexists(manifest_path) {
+        println("ERROR: manifest not found: " + manifest_path)
+        exit(1)
+    }
+    if !fexists(A25_AOT) {
+        println("ERROR: A25 AOT not found: " + A25_AOT)
+        exit(1)
+    }
+    if !fexists(A19V2_AOT) {
+        println("ERROR: A19v2 AOT not found: " + A19V2_AOT)
+        exit(1)
+    }
+    let a26_avail = fexists(A26V2_AOT)
+    let a24v2_avail = fexists(A24V2_AOT)
+    println("hxc_composite_dispatcher: manifest=" + manifest_path)
+    println("  mode=" + mode + " sample_budget_bytes=" + to_string(sample_budget))
+    println("  A25 AOT=" + A25_AOT)
+    println("  A19v2 AOT=" + A19V2_AOT)
+    println("  A24v2 AOT=" + A24V2_AOT + " (available=" + to_string(a24v2_avail) + ")")
+    println("  A26v2 AOT=" + A26V2_AOT + " (available=" + to_string(a26_avail) + ")")
+    println("  ledger=" + ledger_path)
+
+    // Header event.
+    let hdr = "{\"event\":\"composite_dispatcher_run_start\""
+        + ",\"ts\":\""           + json_escape(now_utc()) + "\""
+        + ",\"mode\":\""         + json_escape(mode) + "\""
+        + ",\"sample_budget_bytes\":" + to_string(sample_budget)
+        + ",\"manifest_path\":\""+ json_escape(manifest_path) + "\""
+        + ",\"a25_aot\":\""      + json_escape(A25_AOT) + "\""
+        + ",\"a19v2_aot\":\""    + json_escape(A19V2_AOT) + "\""
+        + ",\"a24v2_aot\":\""    + json_escape(A24V2_AOT) + "\""
+        + ",\"a24v2_available\":" + (if a24v2_avail { "true" } else { "false" })
+        + ",\"a26v2_aot\":\""    + json_escape(A26V2_AOT) + "\""
+        + ",\"a26v2_available\":" + (if a26_avail { "true" } else { "false" })
+        + ",\"a19v2_dict_cap\":" + to_string(A19V2_DICT_CAP)
+        + ",\"a19v2_batch_files_cap\":" + to_string(A19V2_BATCH_FILES_CAP)
+        + ",\"a24v2_min_input_bytes\":" + to_string(A24V2_MIN_INPUT_BYTES)
+        + ",\"a24v2_max_input_bytes\":" + to_string(A24V2_MAX_INPUT_BYTES)
+        + ",\"a26v2_size_guard\":" + to_string(A26V2_SIZE_GUARD)
+        + ",\"raw_91_c3_a24v2_disclosure\":\"A24v2 is BUILD-ONLY (estimator); NO encode/decode wire; CANNOT enter byte-eq composite winner pool. Records ceiling-reference only (per-class est_bytes_x_files), parallel to A26v2.\""
+        + "}"
+    append_jsonl(ledger_path, hdr)
+
+    // Walk manifest.
+    let tsv = manifest_files_tsv(manifest_path)
+    let lines = tsv.split("\n")
+    let n_lines = len(lines)
+    println("  manifest lines=" + to_string(n_lines))
+
+    // Build per-class proportional cap (stratified mode mirrors manifest byte-share).
+    // cls_proportional_cap[cls_idx] = (manifest_class_bytes / manifest_total) * sample_budget
+    let mut cls_proportional_cap = [sample_budget,sample_budget,sample_budget,sample_budget,sample_budget,sample_budget,sample_budget]
+    let mut manifest_total_bytes = 0
+    if mode == "stratified" {
+        let pc_tsv = manifest_per_class_tsv(manifest_path)
+        let pc_lines = pc_tsv.split("\n")
+        let mut k = 0
+        while k < len(pc_lines) {
+            let pl = pc_lines[k]
+            if pl.len() > 0 {
+                let pp = pl.split("\t")
+                if len(pp) >= 3 { manifest_total_bytes = manifest_total_bytes + to_int(pp[2]) }
+            }
+            k = k + 1
+        }
+        if manifest_total_bytes <= 0 { manifest_total_bytes = 1 }
+        let mut k2 = 0
+        while k2 < len(pc_lines) {
+            let pl = pc_lines[k2]
+            if pl.len() > 0 {
+                let pp = pl.split("\t")
+                if len(pp) >= 3 {
+                    let cname = pp[0]
+                    let cbytes = to_int(pp[2])
+                    let ci = class_index(cname)
+                    let prop_cap = (cbytes * sample_budget) / manifest_total_bytes
+                    // Floor of 8KB so non-zero classes get sampled at minimum.
+                    let final_cap = if prop_cap < 8192 && cbytes > 0 { 8192 } else { prop_cap }
+                    cls_proportional_cap[ci] = final_cap
+                }
+            }
+            k2 = k2 + 1
+        }
+        let strat_body = "{\"event\":\"stratified_proportional_cap_built\""
+            + ",\"ts\":\"" + json_escape(now_utc()) + "\""
+            + ",\"manifest_total_bytes\":" + to_string(manifest_total_bytes)
+            + ",\"sample_budget\":" + to_string(sample_budget)
+            + ",\"cap_text_heavy\":" + to_string(cls_proportional_cap[0])
+            + ",\"cap_json_heavy\":" + to_string(cls_proportional_cap[1])
+            + ",\"cap_small_file\":" + to_string(cls_proportional_cap[2])
+            + ",\"cap_mixed\":" + to_string(cls_proportional_cap[3])
+            + ",\"cap_struct_audit\":" + to_string(cls_proportional_cap[4])
+            + ",\"cap_synthetic_repetitive\":" + to_string(cls_proportional_cap[5])
+            + ",\"cap_passthrough\":" + to_string(cls_proportional_cap[6])
+            + "}"
+        append_jsonl(ledger_path, strat_body)
+        println("  stratified caps: text=" + to_string(cls_proportional_cap[0])
+            + " json=" + to_string(cls_proportional_cap[1])
+            + " mixed=" + to_string(cls_proportional_cap[3])
+            + " small=" + to_string(cls_proportional_cap[2]))
+    }
+
+    let pid = _str(exec("printf %s $$")).trim()
+    let tmp_a25_out = "/tmp/_hxc_composite_a25." + pid
+    let tmp_a19_out = "/tmp/_hxc_composite_a19." + pid
+
+    // Per-class accumulators (7 classes).
+    let mut cls_files = [0,0,0,0,0,0,0]
+    let mut cls_raw   = [0,0,0,0,0,0,0]
+    let mut cls_a25   = [0,0,0,0,0,0,0]   // A25 enc bytes
+    let mut cls_comp  = [0,0,0,0,0,0,0]   // composite winner enc bytes
+    let mut cls_a26_est = [0,0,0,0,0,0,0] // A26v2 estimated bytes (ceiling reference)
+    let mut cls_a26_ok  = [0,0,0,0,0,0,0] // A26v2 estimate fired (size <= guard)
+    let mut cls_a24v2_est = [0,0,0,0,0,0,0] // A24v2 estimated bytes (ceiling reference)
+    let mut cls_a24v2_ok  = [0,0,0,0,0,0,0] // A24v2 estimate fired (1KB ≤ size ≤ 64KB)
+    let mut cls_a24v2_raw_in_bounds = [0,0,0,0,0,0,0] // raw bytes for files where A24v2 fired
+
+    // Per-class stratified-mode budget tracker (allows ≤ STRATIFIED_PER_CLASS_CAP_BYTES per class).
+    let mut cls_sampled_raw = [0,0,0,0,0,0,0]
+
+    let mut total_files = 0
+    let mut total_raw   = 0
+    let mut total_a25   = 0
+    let mut total_comp  = 0
+    let mut byte_eq_pass = 0
+    let mut byte_eq_fail = 0
+    let mut a19_per_file_wins = 0
+    let mut a26_estimate_fires = 0
+    let mut a24v2_estimate_fires = 0
+    let mut a24v2_estimate_skipped_size = 0
+
+    // Accumulate json-heavy paths for cross-file batch evaluation.
+    let mut json_heavy_paths = []
+
+    let mut idx = 0
+    while idx < n_lines {
+        let line = lines[idx]
+        if line.len() == 0 { idx = idx + 1; continue }
+        let parts = line.split("\t")
+        if len(parts) < 3 { idx = idx + 1; continue }
+        let path = parts[0]
+        let raw_b = to_int(parts[1])
+        let cls_proxy = parts[2]
+
+        if raw_b == 0 { idx = idx + 1; continue }
+        if !fexists(path) { idx = idx + 1; continue }
+
+        // Stratified gate (mode == "stratified"): cap per-class raw bytes
+        // according to proportional byte-share derived from manifest per_class.
+        let cls_proxy_idx = class_index(cls_proxy)
+        if mode == "stratified" {
+            let cap_for_class = cls_proportional_cap[cls_proxy_idx]
+            // Skip files whose class has already filled its proportional cap.
+            if cls_sampled_raw[cls_proxy_idx] + raw_b > cap_for_class {
+                idx = idx + 1; continue
+            }
+            // Stop entirely once total sample budget is exhausted (overall safety).
+            if total_raw + raw_b > sample_budget { idx = idx + 1; continue }
+        }
+
+        // A25 primary.
+        let a25_res = a25_encode_one(path, tmp_a25_out)
+        let a25_enc = a25_res[0]
+        let mut a25_cls = a25_res[1]
+        if a25_cls.len() == 0 { a25_cls = cls_proxy }
+        let cls_idx = class_index(a25_cls)
+        if mode == "stratified" { cls_sampled_raw[cls_idx] = cls_sampled_raw[cls_idx] + raw_b }
+
+        // Verify A25 byte-eq round-trip (raw 65/68).
+        let a25_ok = a25_decode_verify(tmp_a25_out, path)
+
+        // A19v2 single-file (expected identity per E1).
+        let a19_res = a19v2_encode_one(path, tmp_a19_out)
+        let a19_enc = a19_res[0]
+        let a19_id  = a19_res[1]
+
+        // A26v2 estimate (ceiling reference only — NOT in winner).
+        let mut a26_est = 0
+        let mut a26_fired = false
+        if a26_avail && raw_b <= A26V2_SIZE_GUARD {
+            let a26_res = a26v2_estimate_one(path)
+            a26_est = a26_res[1]
+            a26_fired = true
+            a26_estimate_fires = a26_estimate_fires + 1
+        }
+
+        // A24v2 estimate (ceiling reference only — BUILD-ONLY, no wire — raw 91 C3).
+        // Hard size gate: 1024 ≤ raw_b ≤ 65536 (matches A24v2 first-tick latency cap).
+        let mut a24v2_est = 0
+        let mut a24v2_fired = false
+        if a24v2_avail && raw_b >= A24V2_MIN_INPUT_BYTES && raw_b <= A24V2_MAX_INPUT_BYTES {
+            let a24v2_res = a24v2_estimate_one(path)
+            a24v2_est = a24v2_res[1]
+            a24v2_fired = true
+            a24v2_estimate_fires = a24v2_estimate_fires + 1
+        } else if a24v2_avail {
+            a24v2_estimate_skipped_size = a24v2_estimate_skipped_size + 1
+        }
+
+        // Composite winner: min of {A25 if byte-eq OK, A19v2 if smaller AND
+        // identity flag false, raw_b}. Per raw 47, NEVER inflate.
+        let mut winner_enc = raw_b
+        let mut winner_algo = "identity"
+        if a25_ok && a25_enc > 0 && a25_enc < winner_enc {
+            winner_enc = a25_enc
+            winner_algo = "a25"
+        }
+        if a19_id == "false" && a19_enc > 0 && a19_enc < winner_enc {
+            // A19v2 single-file wins (rare; only if dict produced gain on this file).
+            winner_enc = a19_enc
+            winner_algo = "a19v2"
+            a19_per_file_wins = a19_per_file_wins + 1
+        }
+
+        // Aggregate.
+        cls_files[cls_idx] = cls_files[cls_idx] + 1
+        cls_raw[cls_idx]   = cls_raw[cls_idx]   + raw_b
+        cls_a25[cls_idx]   = cls_a25[cls_idx]   + (if a25_ok { a25_enc } else { raw_b })
+        cls_comp[cls_idx]  = cls_comp[cls_idx]  + winner_enc
+        if a26_fired {
+            cls_a26_est[cls_idx] = cls_a26_est[cls_idx] + a26_est
+            cls_a26_ok[cls_idx]  = cls_a26_ok[cls_idx] + 1
+        }
+        if a24v2_fired {
+            cls_a24v2_est[cls_idx] = cls_a24v2_est[cls_idx] + a24v2_est
+            cls_a24v2_ok[cls_idx]  = cls_a24v2_ok[cls_idx] + 1
+            cls_a24v2_raw_in_bounds[cls_idx] = cls_a24v2_raw_in_bounds[cls_idx] + raw_b
+        }
+
+        total_files = total_files + 1
+        total_raw   = total_raw + raw_b
+        total_a25   = total_a25 + (if a25_ok { a25_enc } else { raw_b })
+        total_comp  = total_comp + winner_enc
+        if a25_ok { byte_eq_pass = byte_eq_pass + 1 } else { byte_eq_fail = byte_eq_fail + 1 }
+
+        // Defer json-heavy paths for the cross-file batch test (≤ 64KB to keep batch latency bounded).
+        if a25_cls == "json-heavy" && raw_b < 65536 {
+            json_heavy_paths = json_heavy_paths + [path]
+        }
+
+        if total_files % 100 == 0 {
+            let saving_pct_x = if total_raw > 0 { ((total_raw - total_comp) * 10000) / total_raw } else { 0 }
+            println("  progress " + to_string(total_files) + " raw=" + to_string(total_raw)
+                + " comp=" + to_string(total_comp) + " saving_x10000=" + to_string(saving_pct_x))
+        }
+
+        idx = idx + 1
+    }
+
+    exec("rm -f " + _sh_quote(tmp_a25_out) + " " + _sh_quote(tmp_a19_out))
+
+    // ── Cross-file A19v2 batch on json-heavy class (subset, capped) ─────────
+    // We batch the FIRST A19V2_BATCH_FILES_CAP json-heavy paths and measure
+    // amortized saving. This gives the cross-file lift data that single-file
+    // A19v2 cannot expose.
+    let n_jh = len(json_heavy_paths)
+    println("  json_heavy_paths_collected=" + to_string(n_jh))
+    let mut a19_batch_paths = []
+    let mut k = 0
+    while k < n_jh && k < A19V2_BATCH_FILES_CAP {
+        a19_batch_paths = a19_batch_paths + [json_heavy_paths[k]]
+        k = k + 1
+    }
+    let a19_batch_n = len(a19_batch_paths)
+    let mut a19_batch_raw = 0
+    let mut a19_batch_body = 0
+    let mut a19_batch_overhead = 0
+    let mut a19_batch_amortized = 0
+    let mut a19_batch_byte_eq_fail = 0
+    if a19_batch_n > 0 {
+        println("  a19v2 batch live-fire on " + to_string(a19_batch_n) + " json-heavy files...")
+        let r = a19v2_batch(a19_batch_paths)
+        a19_batch_raw = r[0]
+        a19_batch_body = r[1]
+        a19_batch_overhead = r[2]
+        a19_batch_amortized = r[3]
+        a19_batch_byte_eq_fail = r[4]
+    }
+
+    // Compute aggregate %ages (x10000 for 4-decimal precision).
+    let saving_a25_x10000 = if total_raw > 0 { ((total_raw - total_a25) * 1000000) / total_raw } else { 0 }
+    let saving_comp_x10000 = if total_raw > 0 { ((total_raw - total_comp) * 1000000) / total_raw } else { 0 }
+    let saving_a25_int = saving_a25_x10000 / 10000
+    let saving_a25_frac = saving_a25_x10000 - (saving_a25_int * 10000)
+    let saving_comp_int = saving_comp_x10000 / 10000
+    let saving_comp_frac = saving_comp_x10000 - (saving_comp_int * 10000)
+
+    let lift_pp_x10000 = saving_comp_x10000 - saving_a25_x10000
+
+    println("=== AGGREGATE ===")
+    println("  total_files=" + to_string(total_files))
+    println("  total_raw_bytes=" + to_string(total_raw))
+    println("  a25_enc_bytes=" + to_string(total_a25))
+    println("  composite_enc_bytes=" + to_string(total_comp))
+    println("  a25_saving≈" + to_string(saving_a25_int) + "." + to_string(saving_a25_frac) + "%")
+    println("  composite_saving≈" + to_string(saving_comp_int) + "." + to_string(saving_comp_frac) + "%")
+    println("  composite_lift_over_a25_pp_x10000=" + to_string(lift_pp_x10000))
+    println("  byte_eq_pass=" + to_string(byte_eq_pass))
+    println("  byte_eq_fail=" + to_string(byte_eq_fail))
+    println("  a19v2_per_file_wins=" + to_string(a19_per_file_wins))
+    println("  a26v2_estimate_fires=" + to_string(a26_estimate_fires))
+    println("  a19v2_batch_files=" + to_string(a19_batch_n))
+    println("  a19v2_batch_raw=" + to_string(a19_batch_raw))
+    println("  a19v2_batch_body=" + to_string(a19_batch_body))
+    println("  a19v2_batch_overhead=" + to_string(a19_batch_overhead))
+    println("  a19v2_batch_amortized=" + to_string(a19_batch_amortized))
+    println("  a19v2_batch_byte_eq_fail=" + to_string(a19_batch_byte_eq_fail))
+
+    // Emit per-class breakdown event.
+    let mut perclass_body = "{\"event\":\"composite_per_class_breakdown\""
+        + ",\"ts\":\"" + json_escape(now_utc()) + "\""
+        + ",\"per_class\":["
+    let mut c = 0
+    while c < len(CLASS_NAMES) {
+        let cname = CLASS_NAMES[c]
+        let cf = cls_files[c]
+        let cr = cls_raw[c]
+        let ca25 = cls_a25[c]
+        let ccomp = cls_comp[c]
+        let ca26 = cls_a26_est[c]
+        let ca26ok = cls_a26_ok[c]
+        let ca24v2 = cls_a24v2_est[c]
+        let ca24v2ok = cls_a24v2_ok[c]
+        let ca24v2_raw_in = cls_a24v2_raw_in_bounds[c]
+        let s_a25_x = if cr > 0 { ((cr - ca25) * 1000000) / cr } else { 0 }
+        let s_comp_x = if cr > 0 { ((cr - ccomp) * 1000000) / cr } else { 0 }
+        let s_a26_x = if cr > 0 && ca26 > 0 { ((cr - ca26) * 1000000) / cr } else { 0 }
+        // A24v2 saving% normalized only over the in-bounds raw bytes (1KB–64KB), not full class.
+        let s_a24v2_in_bounds_x = if ca24v2_raw_in > 0 && ca24v2 > 0 { ((ca24v2_raw_in - ca24v2) * 1000000) / ca24v2_raw_in } else { 0 }
+        if c > 0 { perclass_body = perclass_body + "," }
+        perclass_body = perclass_body + "{\"class\":\"" + cname + "\""
+            + ",\"files\":" + to_string(cf)
+            + ",\"raw_bytes\":" + to_string(cr)
+            + ",\"a25_enc_bytes\":" + to_string(ca25)
+            + ",\"composite_enc_bytes\":" + to_string(ccomp)
+            + ",\"a26v2_est_bytes\":" + to_string(ca26)
+            + ",\"a26v2_estimate_fires\":" + to_string(ca26ok)
+            + ",\"a24v2_est_bytes\":" + to_string(ca24v2)
+            + ",\"a24v2_estimate_fires\":" + to_string(ca24v2ok)
+            + ",\"a24v2_in_bounds_raw_bytes\":" + to_string(ca24v2_raw_in)
+            + ",\"a25_saving_pct_x10000\":" + to_string(s_a25_x)
+            + ",\"composite_saving_pct_x10000\":" + to_string(s_comp_x)
+            + ",\"a26v2_estimate_saving_pct_x10000\":" + to_string(s_a26_x)
+            + ",\"a24v2_in_bounds_saving_pct_x10000\":" + to_string(s_a24v2_in_bounds_x)
+            + ",\"composite_lift_pp_x10000\":" + to_string(s_comp_x - s_a25_x)
+            + "}"
+        c = c + 1
+    }
+    perclass_body = perclass_body + "]}"
+    append_jsonl(ledger_path, perclass_body)
+
+    // Aggregate event.
+    let agg_body = "{\"event\":\"composite_aggregate_measured\""
+        + ",\"ts\":\"" + json_escape(now_utc()) + "\""
+        + ",\"manifest_path\":\"" + json_escape(manifest_path) + "\""
+        + ",\"total_files\":" + to_string(total_files)
+        + ",\"total_raw_bytes\":" + to_string(total_raw)
+        + ",\"a25_enc_bytes\":" + to_string(total_a25)
+        + ",\"composite_enc_bytes\":" + to_string(total_comp)
+        + ",\"a25_saving_pct_x10000\":" + to_string(saving_a25_x10000)
+        + ",\"composite_saving_pct_x10000\":" + to_string(saving_comp_x10000)
+        + ",\"composite_lift_over_a25_pp_x10000\":" + to_string(lift_pp_x10000)
+        + ",\"byte_eq_pass\":" + to_string(byte_eq_pass)
+        + ",\"byte_eq_fail\":" + to_string(byte_eq_fail)
+        + ",\"a19v2_per_file_wins\":" + to_string(a19_per_file_wins)
+        + ",\"a26v2_estimate_fires\":" + to_string(a26_estimate_fires)
+        + ",\"a24v2_estimate_fires\":" + to_string(a24v2_estimate_fires)
+        + ",\"a24v2_estimate_skipped_size\":" + to_string(a24v2_estimate_skipped_size)
+        + ",\"a19v2_batch_files\":" + to_string(a19_batch_n)
+        + ",\"a19v2_batch_raw_bytes\":" + to_string(a19_batch_raw)
+        + ",\"a19v2_batch_body_bytes\":" + to_string(a19_batch_body)
+        + ",\"a19v2_batch_overhead_bytes\":" + to_string(a19_batch_overhead)
+        + ",\"a19v2_batch_amortized_bytes\":" + to_string(a19_batch_amortized)
+        + ",\"a19v2_batch_byte_eq_fail\":" + to_string(a19_batch_byte_eq_fail)
+        + "}"
+    append_jsonl(ledger_path, agg_body)
+
+    // 80% verdict event.
+    let anchor_x10000 = 780496   // 78.0496% from 53c711eb anchor
+    let strengthen_threshold_x10000 = 786500  // 78.65%
+    let target_x10000 = 800000  // 80.00%
+    let mut verdict = "DEFER_NOT_ACHIEVED"
+    if saving_comp_x10000 >= target_x10000 {
+        verdict = "ACHIEVED_80PCT_TARGET_MIGRATION_TRIGGER_MET"
+    } else if saving_comp_x10000 >= strengthen_threshold_x10000 {
+        verdict = "STRENGTHEN_RAW_137_V8_THRESHOLD_REACHED"
+    }
+    let verdict_body = "{\"event\":\"composite_80pct_verdict\""
+        + ",\"ts\":\"" + json_escape(now_utc()) + "\""
+        + ",\"composite_saving_pct_x10000\":" + to_string(saving_comp_x10000)
+        + ",\"anchor_baseline_pct_x10000\":" + to_string(anchor_x10000)
+        + ",\"strengthen_threshold_pct_x10000\":" + to_string(strengthen_threshold_x10000)
+        + ",\"target_pct_x10000\":" + to_string(target_x10000)
+        + ",\"delta_vs_anchor_pp_x10000\":" + to_string(saving_comp_x10000 - anchor_x10000)
+        + ",\"gap_to_80pct_pp_x10000\":" + to_string(target_x10000 - saving_comp_x10000)
+        + ",\"verdict\":\"" + verdict + "\""
+        + "}"
+    append_jsonl(ledger_path, verdict_body)
+
+    println("=== VERDICT ===")
+    println("  composite=" + to_string(saving_comp_int) + "." + to_string(saving_comp_frac) + "%")
+    println("  anchor=78.0496%")
+    println("  verdict=" + verdict)
+}
+
+fn _entry() {
+    let av = argv()
+    let manifest = if len(av) >= 3 { av[2] } else { DEFAULT_MANIFEST }
+    let ledger   = if len(av) >= 4 { av[3] } else { DEFAULT_LEDGER }
+    let mode     = if len(av) >= 5 { av[4] } else { "full" }
+    let budget   = if len(av) >= 6 { to_int(av[5]) } else { STRATIFIED_SAMPLE_BYTES }
+    run_composite(manifest, ledger, mode, budget)
+    exit(0)
+}
+
+_entry()

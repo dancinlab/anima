@@ -1,0 +1,113 @@
+{
+  "cycle": "own_mk1_cleanup_followup_2026_05_04",
+  "ts_utc": "2026-05-04T19:51:30Z",
+  "verdict": "PASS",
+  "phase_1_plist_rm": {
+    "status": "DONE",
+    "plist_path": "/Users/ghost/Library/LaunchAgents/dev.hexa-lang.atlas-absorb-sweeper.plist",
+    "backup_path": "/Users/ghost/core/anima/state/own_mk1_cleanup_followup_2026_05_04/plist_backup.plist",
+    "backup_size_bytes": 3263,
+    "rm_verified": true,
+    "service_unloaded_pre_rm": true,
+    "notes": "service was already unloaded by BG-π² Phase 1; this BG verified GONE then rm'd file. Backup preserved for reversibility."
+  },
+  "phase_2_hexa_lang_branch": {
+    "decision": "push-as-branch (safe default)",
+    "branch": "diag/orpheus-selftest-sigkill",
+    "commit": "7569e423",
+    "commit_subject": "chore(.own removal — mk1_GRANDFATHER per anima 2026-05-04 dual-SSOT EOL Option B)",
+    "commit_files_changed": 1,
+    "commit_lines_deleted": 46,
+    "recommended_push_cmd": "cd /Users/ghost/core/hexa-lang && git push origin diag/orpheus-selftest-sigkill",
+    "push_pending": true,
+    "push_executed_by_this_bg": false,
+    "rationale": "raw#10 honest C3 #1 ambiguity (merge-to-main vs push-branch); push-as-branch preserves both branches and lets user merge via PR review later"
+  },
+  "phase_3_dirty_audit": {
+    "nexus": {
+      "branch": "main",
+      "dirty_count_total": 107,
+      "modified_count": 1,
+      "untracked_count": 106,
+      "dirty_files": {
+        "modified": ["n6/atlas.n6"],
+        "untracked_categories": {
+          "n6_atlas_append_shards": 43,
+          "state_kick_runs": 62,
+          "scripts_safety": 1
+        }
+      },
+      "recommendations_per_file": {
+        "n6/atlas.n6": "commit (ω-cycle absorption marker, +5 lines, idempotent)",
+        "n6/atlas.append.*.n6 (43 files)": "commit batch (ω-cycle paradigm/atlas shards, already auto-classified)",
+        "state/kick/runs/* (62 dirs)": "defer to user triage; likely candidate for .gitignore (kick-infra transient)",
+        "scripts/safety/": "user review (content unknown; out of read-only audit scope)"
+      }
+    },
+    "orpheus": {
+      "branch": "main",
+      "dirty_count_total": 1,
+      "modified_count": 0,
+      "untracked_count": 1,
+      "dirty_files": {
+        "untracked": ["state/dormant_explorer/"]
+      },
+      "untracked_files_inside": [
+        "state/dormant_explorer/metrics/eval_20260504T084422.jsonl",
+        "state/dormant_explorer/metrics/metric_20260504T084040.jsonl",
+        "state/dormant_explorer/archive/dormant_atlas.duckdb",
+        "state/dormant_explorer/queries/_smoke_fixture.jsonl",
+        "state/dormant_explorer/queries/q_2013_q1_high_balance_20260504T171938.jsonl"
+      ],
+      "recommendations_per_file": {
+        "state/dormant_explorer/metrics/*.jsonl": "defer (runtime metric outputs from 2026-05-04 today)",
+        "state/dormant_explorer/archive/dormant_atlas.duckdb": "defer (live database; auto-clean would destroy)",
+        "state/dormant_explorer/queries/_smoke_fixture.jsonl": "candidate to commit (test fixture)",
+        "state/dormant_explorer/queries/q_2013_q1_high_balance_*.jsonl": "defer (today's query result; runtime artifact)"
+      }
+    }
+  },
+  "honest_c3": [
+    {
+      "id": 1,
+      "concern": "hexa-lang stdlib/hf_hub.hexa appears in dirty audit but is BG-Φ² territory; this BG did NOT touch per hard constraint. User must reconcile after BG-Φ² lands its commit.",
+      "severity": "low",
+      "mitigation": "documented in dirty_siblings_audit.md with explicit BG-Φ² ownership note"
+    },
+    {
+      "id": 2,
+      "concern": "nexus dirty=107 is large; spec mandates read-only audit so no auto-clean. Most (43 atlas shards + 62 kick-runs) are likely batch-commit-or-gitignore decisions but require user triage.",
+      "severity": "med",
+      "mitigation": "dirty_siblings_audit.md provides per-category recommendations with priority order"
+    },
+    {
+      "id": 3,
+      "concern": "plist rm is permanent for this path; if user reboots and expects atlas-absorb-sweeper to auto-load, it won't. Backup at state/.../plist_backup.plist enables `cp` restore but user must re-run launchctl bootstrap.",
+      "severity": "low",
+      "mitigation": "backup preserved (3263 bytes); restore procedure: cp plist_backup.plist ~/Library/LaunchAgents/dev.hexa-lang.atlas-absorb-sweeper.plist && launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/dev.hexa-lang.atlas-absorb-sweeper.plist"
+    }
+  ],
+  "push_pending_list": [
+    {
+      "repo": "/Users/ghost/core/hexa-lang",
+      "branch": "diag/orpheus-selftest-sigkill",
+      "command": "git push origin diag/orpheus-selftest-sigkill"
+    }
+  ],
+  "deliverables": [
+    "/Users/ghost/core/anima/state/own_mk1_cleanup_followup_2026_05_04/verdict.json",
+    "/Users/ghost/core/anima/state/own_mk1_cleanup_followup_2026_05_04/dirty_siblings_audit.md",
+    "/Users/ghost/core/anima/state/own_mk1_cleanup_followup_2026_05_04/migration_log.txt",
+    "/Users/ghost/core/anima/state/own_mk1_cleanup_followup_2026_05_04/plist_backup.plist"
+  ],
+  "constraints_compliance": {
+    "raw_9_no_py": "OK (no .py created)",
+    "raw_10_safe_default": "OK (push-as-branch chosen for hexa-lang ambiguity)",
+    "raw_15": "OK",
+    "no_git_push": "OK (no push executed)",
+    "no_chflags": "OK",
+    "no_modify_nexus_orpheus": "OK (read-only audit)",
+    "no_modify_hexa_lang_stdlib": "OK (only inspected status; no edit)",
+    "plist_rm_authorized": "OK (user 'all fix' + backup preserved)"
+  }
+}

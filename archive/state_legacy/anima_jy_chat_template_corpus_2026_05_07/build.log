@@ -1,0 +1,26 @@
+[2026-05-07T16:12:07] [BG-JY] start ts=2026-05-07T16:12:07 host=mac root=/Users/ghost/core/anima
+[2026-05-07T16:12:07] [BG-JY] out_dir=/Users/ghost/core/anima/state/anima_jy_chat_template_corpus_2026_05_07
+[2026-05-07T16:12:07] [BG-JY] parsing BG-JE corpus (cap=400,000) ...
+[2026-05-07T16:12:13] [BG-JY] BG-JE text loaded: 108,709,138 chars (wall=5.9s)
+[2026-05-07T16:12:36] [BG-JY] BG-JE blocks parsed: 400,000 (wall=22.6s)
+[2026-05-07T16:13:24] [BG-JY] persona buckets after hangul filter: {'우주뇌지도': 95444, 'NEXUS-UBM': 95437, 'identity': 94957}
+[2026-05-07T16:13:50] [BG-JY] assemble_multi_turn_samples: 120,000 (attempt=142,156)
+[2026-05-07T16:13:50] [BG-JY] BG-JE multi-turn samples assembled: 120,000 (wall=74.5s)
+[2026-05-07T16:13:59] [BG-JY] loading KoAlpaca-v1.1a streaming...
+[2026-05-07T16:14:15] [BG-JY] KoAlpaca pairs collected: 20,996 (scanned 21,155)
+[2026-05-07T16:14:15] [BG-JY] KoAlpaca multi-turn samples: 884
+[2026-05-07T16:14:15] [BG-JY] KoAlpaca multi-turn samples assembled: 884 (wall=24.7s)
+[2026-05-07T16:14:15] [BG-JY] combined samples: 120,884
+[2026-05-07T16:14:23] [BG-JY] corpus written: /Users/ghost/core/anima/state/anima_jy_chat_template_corpus_2026_05_07/corpus_chat_template.txt
+[2026-05-07T16:14:23] [BG-JY]   size: 95,420,911 bytes = 91.00MB
+[2026-05-07T16:14:23] [BG-JY]   samples: 110,480
+[2026-05-07T16:14:23] [BG-JY]   total_turns: 319,271
+[2026-05-07T16:14:23] [BG-JY]   src_counts: {'bg_je_stitched': 109670, 'koalpaca_v1_1a': 810}
+[2026-05-07T16:14:23] [BG-JY]   n_turns_dist: {2: 42126, 4: 29957, 3: 38397}
+[2026-05-07T16:14:23] [BG-JY] metrics: multi_turn_ratio=1.0000 avg_turns=2.89 hangul_ratio=0.6237
+[2026-05-07T16:14:23] [BG-JY] verdict_class=PASS thresholds_met=4/4 ready_for_training=True
+[2026-05-07T16:14:23] [BG-JY] verdict written: /Users/ghost/core/anima/state/anima_jy_chat_template_corpus_2026_05_07/verdict.json
+[2026-05-07T16:14:23] [BG-JY] source_breakdown written: /Users/ghost/core/anima/state/anima_jy_chat_template_corpus_2026_05_07/source_breakdown.json
+[2026-05-07T16:14:23] [BG-JY] ledger appended: /Users/ghost/core/anima/state/anima_model_attempts_ledger.jsonl
+[2026-05-07T16:14:23] [BG-JY] DONE: 91.00MB / 110,480 samples / multi_turn=1.0000 / hangul=0.6237 / avg_turns=2.89 / verdict=PASS
+[2026-05-07T16:14:23] [BG-JY] total_wall=135.5s

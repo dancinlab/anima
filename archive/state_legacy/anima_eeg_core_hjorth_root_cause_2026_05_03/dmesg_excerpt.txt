@@ -1,0 +1,60 @@
+=== docker inspect hexa-exec | grep OOMKilled ===
+            "OOMKilled": true,
+            "Pid": 65849,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Memory": 4294967296,
+            "MemoryReservation": 0,
+            "MemorySwap": 4294967296,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": 4096,
+
+=== container cgroup memory.events (post-fix) ===
+low 0
+high 0
+max 0
+oom 0
+oom_kill 1
+oom_group_kill 0
+
+=== container cgroup memory.peak (post-fix run) ===
+1965469696
+
+=== docker stats (current container) ===
+CONTAINER ID   NAME        CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O     PIDS
+4090ed28b06b   hexa-exec   50.71%    174.9MiB / 1.927GiB   8.87%     4.38kB / 1.1kB   14.2GB / 0B   19
+
+=== macOS unified log: hexa-related (last 5m) ===
+Timestamp                       Thread     Type        Activity             PID    TTL  
+2026-05-04 06:56:13.837286+0900 0x64f5182  Default     0x0                  1      0    launchd: [gui/501 [100002]:] service inactive: dev.hexa-lang.kick-queue-drain
+2026-05-04 06:56:17.148433+0900 0x64f5182  Default     0x0                  1      0    launchd: [gui/501 [100002]:] service inactive: dev.hexa-lang.mac-monitor
+2026-05-04 06:56:20.298576+0900 0x64f5182  Default     0x0                  1      0    launchd: [gui/501 [100002]:] service inactive: dev.hexa-lang.hive-daemon
+2026-05-04 06:56:20.819630+0900 0x64f5182  Default     0x0                  1      0    launchd: [gui/501/com.nexus.hosts-watchdog [25502]:] Successfully spawned hexa[25502] because interval
+2026-05-04 06:56:21.976851+0900 0x64f46ee  Default     0x0                  1      0    launchd: [gui/501/dev.hexa-lang.roadmap-progress [26120]:] Successfully spawned hexa[26120] because interval
+2026-05-04 06:56:22.475068+0900 0x64f341e  Default     0x0                  1      0    launchd: [gui/501/com.anima.runpod_credit_check [26410]:] Successfully spawned hexa[26410] because interval
+2026-05-04 06:56:23.632725+0900 0x64f75d8  Default     0x0                  27057  0    xpcproxy: Launch constraint set on 00000000-0000-0000-0000-000000000000 /Users/ghost/Library/LaunchAgents/dev.hexa-lang.roadmap-rig-trend.plist
+2026-05-04 06:56:23.889242+0900 0x64f341e  Default     0x0                  1      0    launchd: [gui/501 [100002]:] service inactive: dev.hexa-lang.kick-queue-drain
+2026-05-04 06:56:25.013176+0900 0x64f5182  Default     0x0                  1      0    launchd: [gui/501 [100002]:] service inactive: dev.hexa-lang.hexa-runtime-runaway-watcher
+2026-05-04 06:56:26.083583+0900 0x64f341e  Default     0x0                  1      0    launchd: [gui/501/dev.hexa-lang.keychain-to-credentials-sync [28268]:] Successfully spawned hexa[28268] because interval
+2026-05-04 06:56:31.581614+0900 0x64f341e  Default     0x0                  1      0    launchd: [gui/501 [100002]:] service inactive: dev.hexa-lang.keychain-to-credentials-sync
+2026-05-04 06:56:33.604157+0900 0x64f9762  Error       0x0                  29034  0    XprotectService: [com.apple.xprotect:xprotect] File /tmp/hxpy_smoke/smoke2 failed on rPathCmd /Users/ghost/core/hexa-lang/lib/hxpyembed/build/libhxpyembed.dylib (rpath resolved to: /Users/ghost/core/hexa-lang/lib/hxpyembed/build/libhxpyembed.dylib, bundleURL: (null))
+2026-05-04 06:56:33.967636+0900 0x64f5182  Default     0x0                  1      0    launchd: [gui/501 [100002]:] service inactive: dev.hexa-lang.kick-queue-drain
+2026-05-04 06:56:44.495932+0900 0x64fbb56  Default     0x0                  1      0    launchd: [gui/501 [100002]:] service inactive: dev.hexa-lang.kick-queue-drain
+2026-05-04 06:56:54.852239+0900 0x64fe587  Default     0x0                  1      0    launchd: [gui/501 [100002]:] service inactive: dev.hexa-lang.kick-queue-drain
+2026-05-04 06:56:57.143750+0900 0x64fbb56  Default     0x0                  1      0    launchd: [gui/501 [100002]:] service inactive: dev.hexa-lang.hexa-runtime-runaway-watcher
+2026-05-04 06:57:04.884887+0900 0x64fbb56  Default     0x0                  1      0    launchd: [gui/501 [100002]:] service inactive: dev.hexa-lang.kick-queue-drain
+2026-05-04 06:57:14.487110+0900 0x6500df5  Default     0x0                  1      0    launchd: [gui/501/dev.hexa-lang.slot-util-cache [55741]:] Successfully spawned hexa[55741] because interval
+2026-05-04 06:57:14.913336+0900 0x64fbb56  Default     0x0                  1      0    launchd: [gui/501 [100002]:] service inactive: dev.hexa-lang.kick-queue-drain
+
+=== rss-watchdog kill log (recent hexa-cache/hexa_interp) ===
+2026-04-29T16:37:57Z KILL pid=23875 rss=3564848KB reason=hexa-cache-exe>500MB cmd= /Users/ghost/core/hexa-lang/.hexa-cache/05391062074bcd47/exe verify --target /Users/ghost/core/hive/.raw
+2026-04-29T16:41:54Z KILL pid=98524 rss=6119024KB reason=hexa_interp>500MB cmd= /Users/ghost/.hx/packages/hexa/build/hexa_interp.real /tmp/.hexa-runtime/hexa_expanded.225524141425000.tmp.hexa /Users/
+2026-05-02T02:22:29Z KILL pid=72857 rss=649072KB reason=hexa_interp>500MB cmd= /Users/ghost/.hx/packages/hexa/build/hexa_interp.real /tmp/.hexa-runtime/hexa_expanded.88384657884000.tmp.hexa
+2026-05-02T02:23:01Z KILL pid=75589 rss=763088KB reason=hexa_interp>500MB cmd= /Users/ghost/.hx/packages/hexa/build/hexa_interp.real /tmp/.hexa-runtime/hexa_expanded.88413125292000.tmp.hexa propose
+2026-05-02T03:07:57Z KILL pid=71433 rss=1288448KB reason=hexa_interp>500MB cmd= /Users/ghost/.hx/packages/hexa/build/hexa_interp.real /tmp/.hexa-runtime/hexa_expanded.91109259727000.tmp.hexa
+2026-05-02T14:10:59Z KILL pid=21360 rss=556416KB reason=hexa_interp>500MB cmd= /Users/ghost/.hx/packages/hexa/build/hexa_interp.real /Users/ghost/core/nexus/tool/handlers/outside_noise_clm_handler.h
+2026-05-02T14:13:34Z KILL pid=31648 rss=635152KB reason=hexa_interp>500MB cmd= /Users/ghost/.hx/packages/hexa/build/hexa_interp.real /Users/ghost/core/nexus/tool/handlers/outside_noise_clm_handler.h
+2026-05-02T14:15:38Z KILL pid=34014 rss=526528KB reason=hexa_interp>500MB cmd= /Users/ghost/.hx/packages/hexa/build/hexa_interp.real /Users/ghost/core/nexus/tool/handlers/outside_noise_clm_handler.h
+2026-05-02T14:18:59Z KILL pid=37390 rss=578336KB reason=hexa_interp>500MB cmd= /Users/ghost/.hx/packages/hexa/build/hexa_interp.real nexus/tool/handlers/outside_noise_clm_handler.hexa --cycle 90100 
+2026-05-03T04:53:27Z KILL pid=6408 rss=870848KB reason=hexa-cache-exe>500MB cmd= /Users/ghost/core/hexa-lang/.hexa-cache/1e1449fb76a6ad2c/exe

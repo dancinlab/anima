@@ -1,0 +1,27 @@
+{
+  "axis": "P3.A1",
+  "name": "FAD synthetic harness (VGGish-shape proxy)",
+  "mode": "synthetic_gaussian_proxy",
+  "embedding_dim": 128,
+  "n_samples": 4096,
+  "embedding_source": "synthetic Gaussian \u2014 VGGish weight download deferred (outside $0 cap baseline)",
+  "metrics": {
+    "fad_self_baseline": -2.731148640577885e-14,
+    "fad_close_dist": 2.0666792352948047,
+    "fad_far_dist": 163.25414152582866
+  },
+  "spec_floor_target": "<=2.0 (real audio)",
+  "interpretation": {
+    "self_baseline": "-2.73e-14 (numerical floor near 0) \u2014 formula correctness verified",
+    "close_dist": "2.0667 \u2014 small sigma+offset perturbation, monotonic <-> distribution distance",
+    "far_dist": "163.2541 \u2014 large mean/scale shift, formula discriminates by ~70x vs close",
+    "monotonicity": "PASS (self < close < far) \u2014 harness rank-orders as expected"
+  },
+  "wall_seconds": 0.06494617462158203,
+  "honest_caveats": [
+    "VGGish 128d audio embedding step NOT executed \u2014 synthetic Gaussian only.",
+    "Real FAD requires (a) VGGish weights ~280MB CPU-runnable (b) reference audio corpus (c) RVQ-decoded gen audio. All deferred to post-RVQ-IMPL.",
+    "Monotonicity test passes but absolute spec floor 2.0 calibrated only against real-audio populations, NOT this synthetic proxy."
+  ],
+  "verdict": "HARNESS_OK_MONOTONIC_DISCRIMINATION_VERIFIED"
+}

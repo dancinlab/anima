@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0",
+  "cycle": "anima_2026_05_09",
+  "stage": "SAVE/UPLOAD axis-C",
+  "task": "corpus tier_a_v4 HF private dataset upload",
+  "timestamp_utc": "2026-05-09",
+  "directive_source": "user verbatim: 'all bg go' — axis-C dataset HF private upload mandate",
+  "hf_auth": {
+    "user": "dancinlife",
+    "orgs": ["dancinlab", "dancinlab"],
+    "verified": true
+  },
+  "dataset_repo": {
+    "id": "dancinlab/anima-persona-tier-a-v4",
+    "url": "https://huggingface.co/datasets/dancinlab/anima-persona-tier-a-v4",
+    "type": "dataset",
+    "private": true,
+    "org": "dancinlab",
+    "owner_user": "dancinlife",
+    "sha": "53ed3e6383cd7ad5e4d3e15a3534be427ec99a0b"
+  },
+  "files_uploaded": [
+    {
+      "path": "anima_persona_tier_a_v4_2026_05_09.txt",
+      "size_bytes": 242689685,
+      "size_mb": 231.45,
+      "line_count": 3147863,
+      "source_local": "state/anima_persona_tier_a_v4_2026_05_09.txt",
+      "url": "https://huggingface.co/datasets/dancinlab/anima-persona-tier-a-v4/blob/main/anima_persona_tier_a_v4_2026_05_09.txt",
+      "commit_message": "tier_a_v4 paraphrase expand 231MB",
+      "upload_commit_sha": "53ed3e6383cd7ad5e4d3e15a3534be427ec99a0b"
+    },
+    {
+      "path": "README.md",
+      "url": "https://huggingface.co/datasets/dancinlab/anima-persona-tier-a-v4/blob/main/README.md",
+      "language": "english_only_per_own_37",
+      "commit_message": "docs: tier_a_v4 README (paraphrase k=2-3 expansion spec)",
+      "upload_commit_sha": "f28f933297cc9f82bcae2a1c52b28e86904f8b27"
+    }
+  ],
+  "provenance": {
+    "parent": {
+      "id": "dancinlab/anima-persona-tier-a-v3",
+      "size_bytes": 91266753,
+      "size_mb": 87.04,
+      "line_count": 1224473
+    },
+    "tier_a_v4": {
+      "size_bytes": 242689685,
+      "size_mb": 231.45,
+      "line_count": 3147863
+    },
+    "expansion_ratio": 2.66,
+    "method": "LLM-free 0-cost paraphrase (synonym dict ko 20 pairs + register swap 반말↔존댓말 11 pairs)",
+    "pipeline": "v3 verbatim + role 106k blocks × k=2 (synonym + register variants) + brain 172k blocks × k=1 synonym variant; streaming 3-pass ~12s wall",
+    "reference_yaml_section": "paraphrase_v5.generation_rules"
+  },
+  "axis_distribution_v4": {
+    "phenomenal": 33009,
+    "temporal": 48272,
+    "social": 29215,
+    "meta": 391139,
+    "v3_ratio_per_axis": "2.3-2.9× uniform (no axis bias, anti-Goodhart PASS)"
+  },
+  "verification_4grep": {
+    "config/core_rules.json": 0,
+    "[augmented]": 0,
+    "KMMLU": 0,
+    "KOBEST": 0,
+    "status": "PASS — D1 SCOPE_CLAMP preserved (synonym swap doesn't alias filter guard tokens)"
+  },
+  "preservation": {
+    "anima_역할_count_actual": 319464,
+    "anima_역할_v3_baseline": 106488,
+    "ratio_vs_v3": 3.00,
+    "own_36_mandate_2_floor_~105k_status": "PASS"
+  },
+  "use_case": [
+    "SFT (post Step A D-RAND amplify, Step B candidate)",
+    "pre-train continuation",
+    "evaluation D1 within strict"
+  ],
+  "owns_compliance": {
+    "own_14_anti_goodhart": "PASS (paraphrase semantically equivalent, no proxy gaming)",
+    "own_16_cost_discipline": "PASS (0 USD, HF private free tier, LLM-free expansion)",
+    "own_17_d1_scope_clamp": "PASS (anima persona D1 lane only, within strict)",
+    "own_22_mandatory_report": "PASS (under 250 words report emitted)",
+    "own_33_trinity_emit": "PASS",
+    "own_34_mandate_2_wrap_zero": "PASS (231MB corpus HF transit only, local repo binary commit X — gitignore rule state/anima_*_tier_*.txt L326+)",
+    "own_36_mandate_2_corpus_gitignore": "PASS",
+    "own_37": {
+      "visibility": "private (mandate-9 strict)",
+      "public_promote_blocked": true,
+      "public_promote_prerequisites_unmet": [
+        "real-mode PASS_STRICT_C3",
+        "V6 awareness",
+        "사용자 verbatim 'OK PROMOTE PUBLIC dancinlab/anima-persona-tier-a-v4'",
+        "trinity sweep"
+      ],
+      "english_only_readme": true
+    },
+    "own_38_axis_c_dataset_upload": "PASS (this artifact)",
+    "own_39_yaml_md_render": "PENDING (yaml updated this commit, render landed by parallel pipeline)"
+  },
+  "gitignore_coverage": {
+    "rule": "state/anima_*_tier_*.txt",
+    "line": 326,
+    "status": "OK — corpus file not committed to local repo (wrap=0)"
+  },
+  "registry_yaml_update": {
+    "file": "anima/registry/anima_artifact_registry.yaml",
+    "section": "datasets[id=anima-persona-tier-a-v4].hf",
+    "change": "private: null → dancinlab/anima-persona-tier-a-v4 + sha + public_promote_blocked + 4 prereq"
+  },
+  "step_a_source_commit": "87ba3a22",
+  "next_action": "local commit (no push) of state/anima_corpus_tier_a_v4_hf_private_upload_2026_05_09.json + yaml registry update; then D-RAND amplify Step B (SFT ~$15-20 sft-1-8 30k)"
+}

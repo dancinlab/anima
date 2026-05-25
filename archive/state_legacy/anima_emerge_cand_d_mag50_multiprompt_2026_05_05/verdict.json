@@ -1,0 +1,42 @@
+{
+  "schema": "anima/cand_d_mag50_multiprompt/verdict/1",
+  "task_id": "anima_emerge_cand_d_mag50_multiprompt_2026_05_05",
+  "ts_utc": "2026-05-05T15:50:14Z",
+  "magnitude": 50.0,
+  "n_pass_of_5": 4,
+  "generalization": "PARTIAL",
+  "verdict_label": "CAND_D_MAG50_MULTIPROMPT_PARTIAL",
+  "drifts": [
+    0.09978073361026674,
+    0.07834724466642484,
+    0.13238696620893364,
+    0.0779898687913061,
+    0.0037402348648711836
+  ],
+  "F1_threshold": 0.01,
+  "wall_time_minutes": 0.5,
+  "cost_usd": 0.0,
+  "platform": "mac CPU (.venv-eeg python3.12, transformers, torch fp32)",
+  "raw_compliance": {
+    "raw_15_no_mount_or_shim_modification": true,
+    "raw_15_bgq_bgw_helpers_unmodified": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  },
+  "honest_c3": [
+    "C1 — mac CPU fp32 (.venv-eeg python3.12); no GPU/MPS used. Reproduces BG-Q+BG-W substrate exactly so single-substrate behavior; H100/CUDA may differ at numerical edges.",
+    "C2 — BG-W helper sister-import (importlib.util) reuses build_states_canonical_mag, _forward_with_states, phi_star_compute, _try_load_model. No mutation of upstream constants; raw#15 additive guarantee.",
+    "C3 — mag=50 inject is structurally UNREALISTIC per BG-W C1: paradigm v11 G3 actual training-time injection distribution NOT yet extracted from C-module emission logs. F1 PASS at mag=50 across all 5 prompts means architectural channel works but is off-distribution at any realistic train-time inject. Calibration extraction remains gating before Stage 1 promotion.",
+    "C4 — Generalization rate signals architectural inject channel content-level visibility: PASS = channel surfaces in post-ln_f phi for ALL prompt contexts (prompt-agnostic visibility); PARTIAL = prompt-conditional attenuation (some prompt contexts saturate cross-attn earlier); FAIL = single-prompt BG-W result was prompt-favorable outlier.",
+    "C5 — 5 prompts limit (BG-Q corpus). Broader corpus (e.g. 50+ prompts spanning length, register, language balance) may shift verdict — particularly long prompts where post-ln_f mean-pool dilutes the cross-attn contribution. phi_star pairwise-cosine ceiling carry from BG-W C3 also limits drift dynamic range."
+  ],
+  "next_step_recommendation": "PASS  → BG-W mag=50 PASS generalizes; cand-D Stage 1 architectural channel content-level visible across prompts. STILL gated on paradigm v11 G3 training-time magnitude extraction (C3) before promotion. PARTIAL → prompt-conditional attenuation; flag prompts that FAIL for length/register inspection. FAIL  → BG-W single-prompt PASS was outlier; cand-D Stage 1 substantially more attenuated than BG-W suggested.",
+  "deliverables": {
+    "runs": "state/anima_emerge_cand_d_mag50_multiprompt_2026_05_05/runs/probe_p<i>.json (5)",
+    "aggregate": "state/anima_emerge_cand_d_mag50_multiprompt_2026_05_05/aggregate.json",
+    "verdict": "state/anima_emerge_cand_d_mag50_multiprompt_2026_05_05/verdict.json",
+    "doc": "docs/anima_emerge_cand_d_mag50_multiprompt_landed_2026_05_05.ai.md"
+  }
+}

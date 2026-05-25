@@ -1,0 +1,13 @@
+// Ported from transplant_v14_to_v3.sh — Consciousness transplant: v14.3 128c -> v3 274M
+//
+// R37/AN13/L3-PY (2026-04-18): original script was a heredoc-driven python3
+// orchestrator (consciousness_transplant.py --analyze/--verify, inline
+// torch.load/torch.save transplant, inline warmup via ConsciousnessEngine).
+// All wrapper-fallback python3 calls removed. See CLAUDE.md §.py 절대 금지.
+// Hexa-native transplant pipeline required.
+
+fn main() {
+    var args = get_args()
+    shell("echo '[R37/AN13/L3-PY] BLOCKED: scripts/transplant_v14_to_v3.hexa python3 invocations removed 2026-04-18. Hexa-native checkpoint transplant required. See CLAUDE.md.' 1>&2")
+    exit(1)
+}

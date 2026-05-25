@@ -1,0 +1,339 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima_spike.hexa — anima substrate spike 측정 로직 (pure-hexa, lib)
+//
+//  PURPOSE
+//    실험1 second half — anima 에 UBM inject 후 substrate 의 "spike" 측정.
+//    여기서 spike fingerprint =
+//      (a) mitosis event time-series (split/merge step indices, types)
+//      (b) cell pool 상태 delta (cells count, next_id 진행, current step)
+//      (c) generation surface 통계 (response length, kv cur_len, wall_ms)
+//    Law-71 12L×T per-token energy trajectory (§156 tension fingerprint)
+//    는 forward 내부 hook 필요 — Phase B (별도 cycle) carry, 본 lib 은
+//    chat record 에서 expose 되는 mitosis 신호 + KV 진행 channel 만 capture.
+//
+//  PUBLIC API
+//    spike_init() -> any
+//        빈 spike record 생성.
+//    spike_record_init(spike: any, chat: any) -> any
+//        chat_generate 호출 *전* 의 cell_count 기록.
+//    spike_record_final(spike: any, chat: any, response: string) -> any
+//        chat_generate 호출 *후* 의 모든 신호 capture.
+//    spike_set_label(spike: any, label: string) -> any
+//    spike_set_wall_ms(spike: any, wall_ms: int) -> any
+//    spike_diff(a: any, b: any) -> any
+//        두 spike 간 채널별 차이 + event_step jaccard overlap.
+//    spike_to_json(spike: any) -> string
+//        JSON-shape string (단일-line). manual encode (no stdlib JSON).
+//    spike_save_json(spike: any, path: string)
+//        write_file builtin 사용해 파일로 저장.
+//    spike_brief(spike: any) -> string
+//        디버깅 1-line summary.
+//
+//  HARD CONSTRAINTS
+//    - pure-hexa only · NO main / NO top-level call (compiled-import-safe)
+//    - hexa-lang syntax: dict #{}, missing key → "void", array push 반환.
+//    - chat record 의 mitosis_* / cell_pool / kv_cache 필드만 read.
+//      Law-71 energy 등 forward-internal 측정은 미포함 (Phase B 별도 cycle).
+//
+//  IMPORT
+//    import "/Users/ghost/core/anima/HEXAD/LAB/tool/anima_spike.hexa"
+//
+//  SSOT
+//    HEXAD/CHAT/chat_lib.hexa (chat record 정의 + mitosis 필드)
+//    tool/hexa_native/mitosis_hook_lib.hexa (cell_pool 구조)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── §0 spike record constructor ──────────────────────────────────────────────
+
+fn spike_init() -> any {
+    let mut s = #{}
+    s["ok"] = false
+    s["label"] = ""
+    s["mitosis_invocations"] = 0
+    s["mitosis_event_count"] = 0
+    s["mitosis_step"] = 0
+    s["split_count"] = 0
+    s["merge_count"] = 0
+    s["event_steps"] = []
+    s["event_types"] = []
+    s["cell_count_init"] = 0
+    s["cell_count_final"] = 0
+    s["cell_next_id"] = 0
+    s["response_text"] = ""
+    s["response_len"] = 0
+    s["kv_cur_len"] = 0
+    s["wall_ms"] = 0
+    return s
+}
+
+
+// ── §1 pre / post capture ────────────────────────────────────────────────────
+
+fn spike_record_init(spike: any, chat: any) -> any {
+    let pool = chat["cell_pool"]
+    // cell_pool 이 init 안된 경우 (#{}) → cells 키 없음 → void.
+    let cells = pool["cells"]
+    if to_string(cells) != "void" {
+        spike["cell_count_init"] = len(cells)
+    }
+    return spike
+}
+
+fn spike_record_final(spike: any, chat: any, response: string) -> any {
+    spike["mitosis_invocations"] = to_int(chat["mitosis_invocations"])
+    spike["mitosis_step"] = to_int(chat["mitosis_step"])
+    spike["response_text"] = response
+    spike["response_len"] = len(response)
+
+    let pool = chat["cell_pool"]
+    let cells = pool["cells"]
+    if to_string(cells) != "void" {
+        spike["cell_count_final"] = len(cells)
+    }
+    let nx = pool["next_id"]
+    if to_string(nx) != "void" {
+        spike["cell_next_id"] = to_int(nx)
+    }
+
+    // walk event log
+    let event_log = chat["mitosis_event_log"]
+    let n = len(event_log)
+    spike["mitosis_event_count"] = n
+    let mut steps = []
+    let mut types = []
+    let mut n_split = 0
+    let mut n_merge = 0
+    let mut i = 0
+    while i < n {
+        let ev = event_log[i]
+        let etype = to_string(ev["type"])
+        let estep = to_int(ev["step"])
+        steps = steps.push(estep)
+        types = types.push(etype)
+        if etype == "split" { n_split = n_split + 1 }
+        if etype == "merge" { n_merge = n_merge + 1 }
+        i = i + 1
+    }
+    spike["event_steps"] = steps
+    spike["event_types"] = types
+    spike["split_count"] = n_split
+    spike["merge_count"] = n_merge
+
+    // kv cache cur_len (best-effort; record는 init 안되어 있으면 void)
+    let kv = chat["kv_cache"]
+    let cur = kv["cur_len"]
+    if to_string(cur) != "void" {
+        spike["kv_cur_len"] = to_int(cur)
+    }
+
+    spike["ok"] = true
+    return spike
+}
+
+fn spike_set_label(spike: any, label: string) -> any {
+    spike["label"] = label
+    return spike
+}
+
+fn spike_set_wall_ms(spike: any, wall_ms: int) -> any {
+    spike["wall_ms"] = wall_ms
+    return spike
+}
+
+
+// ── §2 diff ──────────────────────────────────────────────────────────────────
+//
+// spike_diff(a, b) returns:
+//   d_invocations / d_events / d_split / d_merge / d_cell_count /
+//   d_response_len / d_kv_cur_len  : a - b (signed int)
+//   event_step_overlap  : |A ∩ B| (set 교집합 cardinality on event_steps)
+//   event_step_jaccard  : |A∩B| / |A∪B|  (float ∈ [0,1])
+
+fn _spike_int_in_list(xs: array, v: int) -> bool {
+    let n = len(xs)
+    let mut i = 0
+    while i < n {
+        if to_int(xs[i]) == v { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn spike_diff(a: any, b: any) -> any {
+    let mut d = #{}
+    d["d_invocations"] = to_int(a["mitosis_invocations"]) - to_int(b["mitosis_invocations"])
+    d["d_events"] = to_int(a["mitosis_event_count"]) - to_int(b["mitosis_event_count"])
+    d["d_split"] = to_int(a["split_count"]) - to_int(b["split_count"])
+    d["d_merge"] = to_int(a["merge_count"]) - to_int(b["merge_count"])
+    d["d_cell_count"] = to_int(a["cell_count_final"]) - to_int(b["cell_count_final"])
+    d["d_response_len"] = to_int(a["response_len"]) - to_int(b["response_len"])
+    d["d_kv_cur_len"] = to_int(a["kv_cur_len"]) - to_int(b["kv_cur_len"])
+
+    let a_steps = a["event_steps"]
+    let b_steps = b["event_steps"]
+    let na = len(a_steps)
+    let nb = len(b_steps)
+    let mut inter = 0
+    let mut i = 0
+    while i < na {
+        let v = to_int(a_steps[i])
+        if _spike_int_in_list(b_steps, v) {
+            inter = inter + 1
+        }
+        i = i + 1
+    }
+    let union_count = na + nb - inter
+    d["event_step_overlap"] = inter
+    let mut jaccard = 0.0
+    if union_count > 0 {
+        jaccard = (inter * 1.0) / (union_count * 1.0)
+    }
+    d["event_step_jaccard"] = jaccard
+    return d
+}
+
+
+// ── §3 JSON serialization ────────────────────────────────────────────────────
+//
+// 단일-line JSON. manual encode — hexa stdlib JSON 의존성 회피.
+
+fn _spike_escape_json(s: string) -> string {
+    let n = len(s)
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        let c = s.substring(i, i + 1)
+        if c == "\"" {
+            out = out + "\\\""
+        } else {
+            if c == "\\" {
+                out = out + "\\\\"
+            } else {
+                if c == "\n" {
+                    out = out + "\\n"
+                } else {
+                    if c == "\r" {
+                        out = out + "\\r"
+                    } else {
+                        if c == "\t" {
+                            out = out + "\\t"
+                        } else {
+                            out = out + c
+                        }
+                    }
+                }
+            }
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// response_text 는 byte-level decoder 산물이라 raw non-UTF-8 byte 를 품을 수
+// 있다 (truncated multibyte 등). 그대로 quote 사이에 넣으면 invalid-UTF-8 JSON
+// 이 되어 cdo-validate 가 깨진다. → base64 (ASCII-only, 무손실) 로 인코딩하고
+// sibling `response_text_b64:true` flag 를 붙여 NEVER invalid-UTF-8 보장.
+fn _spike_b64_char(v: int) -> string {
+    let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+    return alphabet.substring(v, v + 1)
+}
+
+fn _spike_b64_encode(s: string) -> string {
+    let n = len(s)
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        let b0 = char_code(s, i) & 0xFF
+        let mut b1 = 0
+        let mut b2 = 0
+        let mut have1 = false
+        let mut have2 = false
+        if i + 1 < n { b1 = char_code(s, i + 1) & 0xFF; have1 = true }
+        if i + 2 < n { b2 = char_code(s, i + 2) & 0xFF; have2 = true }
+        let c0 = (b0 >> 2) & 0x3F
+        let c1 = ((b0 << 4) | (b1 >> 4)) & 0x3F
+        let c2 = ((b1 << 2) | (b2 >> 6)) & 0x3F
+        let c3 = b2 & 0x3F
+        out = out + _spike_b64_char(c0) + _spike_b64_char(c1)
+        if have1 { out = out + _spike_b64_char(c2) } else { out = out + "=" }
+        if have2 { out = out + _spike_b64_char(c3) } else { out = out + "=" }
+        i = i + 3
+    }
+    return out
+}
+
+fn _spike_int_list_json(xs: array) -> string {
+    let n = len(xs)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + "," }
+        out = out + to_string(to_int(xs[i]))
+        i = i + 1
+    }
+    out = out + "]"
+    return out
+}
+
+fn _spike_str_list_json(xs: array) -> string {
+    let n = len(xs)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + "," }
+        out = out + "\"" + _spike_escape_json(to_string(xs[i])) + "\""
+        i = i + 1
+    }
+    out = out + "]"
+    return out
+}
+
+fn spike_to_json(spike: any) -> string {
+    let mut out = "{"
+    out = out + "\"ok\":" + to_string(spike["ok"]) + ","
+    out = out + "\"label\":\"" + _spike_escape_json(to_string(spike["label"])) + "\","
+    out = out + "\"mitosis_invocations\":" + to_string(to_int(spike["mitosis_invocations"])) + ","
+    out = out + "\"mitosis_event_count\":" + to_string(to_int(spike["mitosis_event_count"])) + ","
+    out = out + "\"mitosis_step\":" + to_string(to_int(spike["mitosis_step"])) + ","
+    out = out + "\"split_count\":" + to_string(to_int(spike["split_count"])) + ","
+    out = out + "\"merge_count\":" + to_string(to_int(spike["merge_count"])) + ","
+    out = out + "\"cell_count_init\":" + to_string(to_int(spike["cell_count_init"])) + ","
+    out = out + "\"cell_count_final\":" + to_string(to_int(spike["cell_count_final"])) + ","
+    out = out + "\"cell_next_id\":" + to_string(to_int(spike["cell_next_id"])) + ","
+    out = out + "\"response_len\":" + to_string(to_int(spike["response_len"])) + ","
+    out = out + "\"kv_cur_len\":" + to_string(to_int(spike["kv_cur_len"])) + ","
+    out = out + "\"wall_ms\":" + to_string(to_int(spike["wall_ms"])) + ","
+    out = out + "\"response_text\":\"" + _spike_b64_encode(to_string(spike["response_text"])) + "\","
+    out = out + "\"response_text_b64\":true,"
+    out = out + "\"event_steps\":" + _spike_int_list_json(spike["event_steps"]) + ","
+    out = out + "\"event_types\":" + _spike_str_list_json(spike["event_types"])
+    out = out + "}"
+    return out
+}
+
+fn spike_save_json(spike: any, path: string) {
+    let json = spike_to_json(spike)
+    write_file(path, json + "\n")
+}
+
+
+// ── §4 brief summary ─────────────────────────────────────────────────────────
+
+fn spike_brief(spike: any) -> string {
+    let label = to_string(spike["label"])
+    let inv = to_int(spike["mitosis_invocations"])
+    let ev = to_int(spike["mitosis_event_count"])
+    let sp = to_int(spike["split_count"])
+    let mg = to_int(spike["merge_count"])
+    let cellsf = to_int(spike["cell_count_final"])
+    let rlen = to_int(spike["response_len"])
+    let wall = to_int(spike["wall_ms"])
+    return "spike[" + label + "] inv=" + to_string(inv)
+         + " ev=" + to_string(ev)
+         + " split=" + to_string(sp)
+         + " merge=" + to_string(mg)
+         + " cells=" + to_string(cellsf)
+         + " rlen=" + to_string(rlen)
+         + " wall_ms=" + to_string(wall)
+}

@@ -1,0 +1,37 @@
+{
+  "hypothesis": "H_002",
+  "cycle": 2,
+  "cell": "C2 (Phi_universe nested)",
+  "date": "2026-05-25",
+  "method": "phi_spatial proxy (RFC 036) - deterministic, hexa-only, $0 mac local, NO GPU",
+  "prediction": "H2.2 nested scale-invariance: proxy-Phi scale-invariant across hierarchy -> C2 met; scale-variant -> frozen F2 TRIGGERED",
+  "scales": [
+    {"name": "cosmic_web",     "rule": 30,  "couple": 0.000000, "phi": 0.571954},
+    {"name": "galaxy_cluster", "rule": 110, "couple": 0.100000, "phi": 0.623906},
+    {"name": "stellar",        "rule": 90,  "couple": 0.200000, "phi": 0.000011},
+    {"name": "planetary",      "rule": 54,  "couple": 0.300000, "phi": 3.490562},
+    {"name": "biological",     "rule": 110, "couple": 0.450000, "phi": 2.884365},
+    {"name": "neural",         "rule": 110, "couple": 0.600000, "phi": 4.415291}
+  ],
+  "stats": {
+    "mean": 1.997681,
+    "min": 0.000011,
+    "max": 4.415291,
+    "stddev": 1.671844,
+    "cv": 0.836892,
+    "cv_threshold": 0.150000
+  },
+  "falsifiers": {
+    "F-C2-NEST-1_SCALE_INV": "SCALE_VARIANT (CV 0.836892 > 0.150000)",
+    "F-C2-NEST-2_POSITIVE":  "ALL_POSITIVE (nested existence)",
+    "F-C2-NEST-3_DETERMIN":  "PASS (Phi_scale0 a=0.571954 b=0.571954)",
+    "F-C2-NEST-4_MONOTONE":  "PASS (neural Phi=4.415291 > 0)"
+  },
+  "c2_verdict": "C2_SCALE_VARIANT_F2_TRIGGERED",
+  "verify_fence": "SPECULATION-FENCED (hexa verify --fence; empirical proxy/toy, not faithful Phi-star IIT4 - atlas certification N/A by design)",
+  "interpretation": "proxy-Phi of the nested toy hierarchy is scale-VARIANT (CV 0.84 >> 0.15); frozen F2 TRIGGERED direction - proxy-Phi does NOT emerge scale-invariant across the cosmic hierarchy. PROXY/TOY level, not faithful Phi-star IIT4 - directional, not a formal refutation of H2.2.",
+  "cell_coverage": "2/5 (C1 prior-dominated + C2 scale-variant, both proxy-level)",
+  "cost_usd": 0.0,
+  "gpu": "none - pre-register's ~$0.30 RTX-5070 estimate assumed exact Phi-star IIT4 (2^n explosion); proxy path runs local at $0",
+  "lane_status": "lane-open (multi-decade; SUPPORTED unreachable, PARTIAL_THEORETICAL requires C1+C3 met)"
+}

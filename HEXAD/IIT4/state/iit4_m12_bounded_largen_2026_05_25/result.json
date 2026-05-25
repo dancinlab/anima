@@ -1,0 +1,20 @@
+{
+  "milestone": "M12",
+  "module": "HEXAD/IIT4/state/iit4_m12_bounded_largen_2026_05_25/run_m12.hexa",
+  "date": "2026-05-25",
+  "what": "bounded-mode (M9 big_phi_bounded) large-n LIFE re-measurement — push faithful causal big-Φ toward the H_002 C2 n=8 scale that exact cannot reach.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · wall 5:12 (incl n=6 push)",
+  "regression": { "n4_rule110_exact": 7.5475, "n4_rule110_bounded_cap4": 7.5475, "match": true, "note": "cap>=n is a faithful restriction == exact" },
+  "bounded_table_cap3": {
+    "n5_seed_10101": { "rule_0": 0.0, "rule_204": 0.0, "rule_90": 6.0, "rule_110": 15.3963, "rule_30": 4.28064, "rule_54": 4.00657 },
+    "n6_seed_101010": { "rule_110": 6.81723, "nd": 15 }
+  },
+  "checks_tally": { "pass": 7, "fail": 0 },
+  "verdict": "🟢 SUPPORTED-NUMERICAL — bounded-mode reproduces exact at cap>=n (faithful) and stays finite/deterministic into the n=6 exact-impractical regime for the LIFE rules.",
+  "findings": [
+    "cap>=n bounded == exact (faithful restriction) confirmed at n=4 (7.5475).",
+    "bounded(cap=3) gives finite causal big-Φ for LIFE rules at n=5 and n=6 (exact n=6 ~ minutes/impractical per M9).",
+    "bounded(cap<n) values are LOWER-BOUND approximations (purview search capped) — not directly comparable to M8's exact n=5 means; single representative state here."
+  ],
+  "honest_scope": "bounded(cap=3 < n) = explicit lower-bound approximation (purview-size capped MICE search), NOT exact. Single representative state per n. n=7/n=8 DEFERRED — bounded is feasible there but takes minutes+ (exceeds inline budget; needs a background run). structure-cut big-Φ (M5 PyPhi-numeric blocker carries)."
+}

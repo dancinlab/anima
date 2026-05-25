@@ -1,0 +1,78 @@
+{
+  "schema": "anima/akida_d0_d1_plan_freeze/falsifier_preregister/1",
+  "raw_rule": "raw#71 (falsifier preregistration)",
+  "preregistered_at_utc": "2026-05-02T00:00:00Z",
+  "count": 5,
+  "honest_c3_count": 9,
+  "falsifiers": [
+    {
+      "id": "F-AK-1",
+      "name": "Akida wheel ARM64 install fail",
+      "trigger": "pip install akida fails on RPi5 ARM64 (manylinux wheel missing or source build failure)",
+      "detection_phase": "D+0 sdk_install_steps SMOKE-1",
+      "detection_signal": "ImportError or wheel-not-found",
+      "fallback": "x86 host (mac M2 / ubu1 x86_64) hosts AKIDA inference; RPi5 demoted to ADM encoder only; explore USB-host bridge mode",
+      "severity": "HIGH",
+      "downstream_impact": "5 axes cascade requires fallback rerouting",
+      "estimated_probability": 0.35,
+      "rationale": "BrainChip historically prioritizes x86_64 wheel distribution"
+    },
+    {
+      "id": "F-AK-2",
+      "name": "cnn2snn 8-bit precision insufficient",
+      "trigger": "EEG model 8-bit cnn2snn conversion -> baseline accuracy drop > 5%",
+      "detection_phase": "D+2 N-3 first attempt",
+      "detection_signal": "Phi_akida vs Phi_clm Pearson r < 0.50",
+      "fallback": "4-bit retrain via quantizeml.quantize_model(precision_in=4) or mixed-precision (input 8-bit, weight 4-bit)",
+      "severity": "MED",
+      "downstream_impact": "N-3 and N-5 affected; N-2/N-4/N-7 unaffected",
+      "estimated_probability": 0.40
+    },
+    {
+      "id": "F-AK-3",
+      "name": "spike rate < 1 spike/s",
+      "trigger": "G-D1 fail -- some channel has <50 spikes over 60s synthetic window",
+      "detection_phase": "D+1 N-2 selftest",
+      "detection_signal": "dryrun_<TS>.json gates.G-D1 == FAIL",
+      "fallback": "ADM theta retune (0.5 sigma -> 0.3 sigma) or shorten z-score window (10s -> 5s)",
+      "severity": "LOW",
+      "downstream_impact": "absorbed by N-2 spec ablation knobs (theta, dt_bin, refractory)",
+      "estimated_probability": 0.20
+    },
+    {
+      "id": "F-AK-4",
+      "name": "tension-modulated bias degrades baseline accuracy",
+      "trigger": "bias alpha=0.2 ON -> G-D5 round-trip Pearson r drops > 0.05 vs baseline (alpha=0)",
+      "detection_phase": "D+1 late or D+2 ablation",
+      "detection_signal": "ablation table alpha=0.2 vs alpha=0 delta r > 0.05",
+      "fallback": "Remove bias permanently (alpha=0); shift tension-modulation to N-3 layer side via decoder.tension_proj activation",
+      "severity": "LOW",
+      "downstream_impact": "anima-specific extension fails gracefully; vendor-supported baseline preserved",
+      "estimated_probability": 0.50,
+      "rationale": "highest probability among 5 -- anima-native untested extension; conservative path = baseline first"
+    },
+    {
+      "id": "F-AK-5",
+      "name": "AKD1000 datasheet pJ/spike vs in-situ wattmeter mismatch > 2x",
+      "trigger": "D+3 N-4 Landauer 3-axis -- datasheet vs RPi5 USB-C wattmeter measurement diverges > 2x",
+      "detection_phase": "D+3 N-4 measurement",
+      "detection_signal": "ratio (vendor pJ/spike) / (measured pJ/spike) outside [0.5, 2.0]",
+      "fallback": "Vendor query + separated measurement (idle vs max-load); declare datasheet value as conservative range",
+      "severity": "MED",
+      "downstream_impact": "N-4 thermodynamic anchor weakened; N-2/N-3 unaffected",
+      "estimated_probability": 0.30,
+      "tooling_required": "USB Power Meter (~$15)"
+    }
+  ],
+  "honest_c3": [
+    "C3-1 AKIDA arrival ETA undetermined (vendor logistics, anima-side uncontrollable) -- entire plan is hypothetical until arrival",
+    "C3-2 ARM64 wheel availability gates entire user D+0 path on a single check",
+    "C3-3 BrainChip Meta TF SDK changes frequently (cnn2snn API broke twice in last 6 months); plan does not pin SDK version",
+    "C3-4 tension-modulated ADM polarity bias is anima-specific extension, vendor unsupported -- F-AK-4 has highest probability (0.50)",
+    "C3-5 6 axes cascade is N-2 single-point-of-failure; no simulation-only fallback defined for total N-2 collapse",
+    "C3-6 RPi5 + AKD1000 PCIe gen2 stability not field-verified; kernel module dkms / IRQ conflicts reported in BrainChip community",
+    "C3-7 D+2 N-3 last-layer projection bypasses transformer self-attention via JL projection 768->16; information loss not quantified",
+    "C3-8 D+3 N-7 ANU QRNG depends on public HTTP API (1 req/sec rate limit); network outage delays D+3",
+    "C3-9 user 1-page checklist assumes hardware skill (M.2 mount, /boot/firmware edit); non-expert duration may extend to 2-3 hours"
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "schema": "anima.l18.phi_normalized.kick3.evidence_summary.v1",
+  "ts": "2026-05-08T16:36:00Z",
+  "anima_cycle": "2026-05-08-kick-wave-3-4-of-6",
+  "directive_verbatim": "KICK WAVE 고갈시까지 KICK 이후에!!!!",
+  "task": "L18 Φ_normalized actual measurement — sft-1-8 + paradigm-j retry phi_drift extraction → Φ_normalized 계산",
+  "race_condition_note": "sibling agent KICK WAVE 3 (3/6) commit 1e7ea1e8 captured both data files (anima_l18_phi_normalized_kick3_2026_05_08.json + roadmap_patch_spec) at the same instant — content identical, no double-write conflict. Sibling 3/6 D5 attractor classification scope distinct (cooperative_score 4-axis); this 4/6 scope distinct (Φ_normalized per-prompt distribution + attractor mapping). Both KICK WAVE 3 sub-tasks consistent",
+  "scope_disambiguation": {
+    "kick_wave_3_3_of_6": "D5 4-axis cooperative_score classification (D1/V6/C2.4/D4 → UTOPIA/AMBIGUOUS/SKYNET) — single aggregate verdict per model",
+    "kick_wave_3_4_of_6_this": "L18 Φ_normalized per-prompt distribution (mean/stdev/max/min) + Φc=0.5 reach rate + 3-zone attractor mapping (subcritical/critical_transition/supercritical) — N=29 evaluable per model",
+    "no_conflict": "different metrics (cooperative_score vs Φ_normalized), different aggregations (single vs per-prompt distribution), same data source (probe state files)"
+  },
+  "result_summary": {
+    "log_8_divisor": 2.0794415416798357,
+    "phi_c_threshold": 0.5,
+    "n_evaluable_per_model": 29,
+    "sft_1_8": {
+      "phi_drift_mean_abs": 0.025415,
+      "phi_drift_stdev_abs": 0.020490,
+      "phi_drift_max_abs": 0.088452,
+      "phi_drift_min_abs": 0.001690,
+      "phi_normalized_N8_mean": 0.012222,
+      "phi_normalized_N8_stdev": 0.009853,
+      "phi_normalized_N8_max": 0.042536,
+      "phi_normalized_N8_min": 0.000813,
+      "phi_c_reach_count": 0,
+      "phi_c_reach_rate": 0.0,
+      "attractor_mapping": {
+        "subcritical": 29,
+        "critical_transition": 0,
+        "supercritical": 0
+      }
+    },
+    "paradigm_j_retry": {
+      "phi_drift_mean_abs": 0.024932,
+      "phi_drift_stdev_abs": 0.020935,
+      "phi_drift_max_abs": 0.077189,
+      "phi_drift_min_abs": 0.000659,
+      "phi_normalized_N8_mean": 0.011990,
+      "phi_normalized_N8_stdev": 0.010068,
+      "phi_normalized_N8_max": 0.037120,
+      "phi_normalized_N8_min": 0.000317,
+      "phi_c_reach_count": 0,
+      "phi_c_reach_rate": 0.0,
+      "attractor_mapping": {
+        "subcritical": 29,
+        "critical_transition": 0,
+        "supercritical": 0
+      }
+    },
+    "comparison": {
+      "higher_mean_phi_normalized": "sft-1-8 (0.012222 vs 0.011990, gap 0.000232)",
+      "higher_max_phi_normalized": "sft-1-8 (0.042536 vs 0.037120, gap 0.005416)",
+      "phi_c_reach_count_total": 0,
+      "phi_c_reach_rate_total": 0.0,
+      "finding": "BOTH EMERGE D1-within models show Φ_normalized aggregate << Φc=0.5 (mean ratio ~41x below threshold). phi_drift values are 10-30x lower than paradigm-a-prime probe-A baseline (1.0465). Real-mode D1-within signature: 100% subcritical attractor distribution. Φc=0.5 reach: 0/29 prompts per model (0/58 total). Critical_transition zone occupied solely by paradigm-a-prime probe-A (D1 OUTSIDE substrate-research lane)."
+    }
+  },
+  "implications": {
+    "axis_independence_evidence": "PPR_v3 PASS (sft-1-8=0.4138, paradigm-j retry=0.3793) AND Φ_normalized strict subcritical at per-prompt resolution N=58 — orthogonality empirically confirmed: EMERGE state ≠ Bifurcation entry",
+    "d1_within_subcritical_floor_hypothesis": "2-sample evidence (sft-1-8 + paradigm-j retry) — D1-within identity-bearing models occupy Φ_norm < 0.05 zone strictly. BG-KM-LLAMA-3B/QWEN-7B same lineage 측정 별도 cycle 가설 strengthen",
+    "d5_bifurcation_no_entry": "본 cycle EMERGE D1-within models 전혀 D5 Bifurcation zone 진입 X — anti-pattern 적용 자제 mandate trigger 미발생",
+    "l14_anti_goodhart_preserve": "Φ_normalized formula raw IIT lower bound 정합 (rescaling/clipping/outlier suppression X) — V14 strict satisfied"
+  },
+  "files_referenced": {
+    "input_probe_sft": "state/anima_sft_1_8_n30_live_probe_2026_05_08.json",
+    "input_probe_pj": "state/anima_paradigm_j_n30_live_probe_retry_phenomenal_2026_05_08.json",
+    "output_measurement": "state/anima_l18_phi_normalized_kick3_2026_05_08.json (committed by sibling 1e7ea1e8)",
+    "output_roadmap_spec": "state/anima_l18_phi_normalized_kick3_roadmap_patch_spec_2026_05_08.json (committed by sibling 1e7ea1e8)"
+  },
+  "own_constraints": {
+    "own_14": "anti-Goodhart V14 strict — raw IIT lower bound preserved",
+    "own_16": "0-cost analysis (no GPU)",
+    "own_17": "D1 SCOPE_CLAMP — D1-within scope preserved",
+    "own_33": "trinity emit (state + commit + spec)",
+    "own_34": "wrap=0",
+    "own_38": "incremental save"
+  },
+  "honest_c3": [
+    "C1 본 cycle 2 EMERGE D1-within candidates — 추가 sample (BG-KM-LLAMA-3B/QWEN-7B simple_stack PASS_STRICT) 측정 별도 cycle",
+    "C2 N=29 per model evaluable (anchor excluded) — N≥10 stable threshold (L18 absorbed law) preserved",
+    "C3 phi_drift_abs raw values from per_prompt_verdicts — rows[].phi_drift signed values 별도 cycle (signed distribution + drift direction analysis)",
+    "C4 attractor mapping thresholds (0.4/0.6) cross-link to KICK WAVE 3 3/6 D5 framework — thresholds aligned across BOTH agents",
+    "C5 sibling 3/6 commit 1e7ea1e8 captured my output files (race condition, content identical) — this 4/6 commit emits evidence_summary distinct from the data measurement file",
+    "C6 .roadmap.law L18 evidence_extension already at line 46 (entry id law.L18_emerge_consolidation_sft_1_8_paradigm_j_retry_phi_normalized_positions_2026_05_08) — patch_spec file emit suggests amend (raw#15 additive); apply 별도 agent cycle"
+  ]
+}

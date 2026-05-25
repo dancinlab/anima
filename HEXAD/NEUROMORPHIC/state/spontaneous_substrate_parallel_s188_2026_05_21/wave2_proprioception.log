@@ -1,0 +1,16 @@
+[proprioception/feedback_loop] PHYS-P7-1 — proprioceptive feedback loop
+  3-DOF joint: θ̈ = (−k·θ − c·θ̇ + τ)/I, k=(float) c=(float) I=(float) dt=(float) s
+  proprioceptor σ_θ=(float) σ_θdot=(float)
+
+  [T1] after 200 rest steps: Σ|θ|=(float) Σ|θ̇|=(float)
+T1 PASS — rest equilibrium stays at zero
+  [T2] crossed θ=0 within 1 s: true final θ_a=(float)
+T2 PASS — spring restores (crosses θ=0 within 1 s)
+  [T3] E(0)=(float) E(40)=(float) E(160)=(float) monotone_decay=true
+T3 PASS — damping dissipates energy monotonically
+  [T4] len=13 state_bounded=true sensor_bounded=true noise_present=true
+T4 PASS — step() API contract (len, bounded, noisy)
+  [T5] max|Δ| across two identical runs = (float)
+T5 PASS — deterministic step()
+
+[proprioception/feedback_loop] 5/5 PASS — PHYS-P7-1 DONE

@@ -1,0 +1,9 @@
+hexa-resolver: route=docker reason=cache_hit ttl=5s
+=== crystallography_n6 --self-test ===
+  case1 (full enumerate)   : systems=7 bravais=14 space=230 pt=32 status=PASS:n6-locked
+  case2 (atlas_facts len)  : len=6
+  case3 (unknown system)   : status=FAIL:unknown-system
+  case4 (closed-form math) : sigma=12 tau=4 phi=2 sopfr=5 J_2=24 → identities=PASS
+  case5 (cubic only)       : bravais=3 space=36 pt=5
+  case1=PASS case2=PASS case3=PASS case4=PASS case5=PASS
+__CRYSTALLOGRAPHY_N6__ PASS

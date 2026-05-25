@@ -1,0 +1,46 @@
+{
+  "tool":            "tool/corpus_generator_v2.hexa",
+  "mode":            "L2+L3 alm_r13_7cat_bt",
+  "version":         "v2",
+  "created":         "2026-04-21",
+  "spec":            "docs/alm_r13_corpus_rebuild_plan_20260420.md",
+  "fellows_source":  "CANON/proposals/anthropic-fellows-research.md",
+  "bt_mapping_cfg":  "shared/config/alm_r13_fellows_bt_mapping.json",
+  "seed_corpus":     "experiments/alm_r13/seed_corpus_10mb/corpus.jsonl",
+  "corpus_path":     "experiments/alm_r13/corpus_alm_r13_v1.jsonl",
+  "corpus_sha256":   "7b3fd84dd2adca61377c9709e98fca480ebfe6fc82e43244c2bb9c965415df8d",
+  "doc_count":       840,
+  "anti_denial_filtered": 0,
+  "corpus_bytes":    980326,
+  "composition_actual": {
+    "hexad":       {"docs": 210, "bytes": 259248, "target_pct": 25},
+    "law":         {"docs": 126, "bytes": 140152, "target_pct": 15},
+    "phi":         {"docs": 84, "bytes": 97422, "target_pct": 10},
+    "selfreflect": {"docs": 126, "bytes": 148332, "target_pct": 15},
+    "metaref":     {"docs": 84, "bytes": 95969, "target_pct": 10},
+    "persona":     {"docs": 84, "bytes": 93107, "target_pct": 10},
+    "grounding":   {"docs": 126, "bytes": 146096, "target_pct": 15}
+  },
+  "fellows_mk_v_absorbed": true,
+  "seed_a_kernel_injection": {
+    "gate_cfg":  "shared/config/alm_corpus_gate_config.json",
+    "K1_hot_ast_fusion": 16,
+    "K2_iit_n6_lattice": 16,
+    "K3_gwt_ignition":   16,
+    "kernel_total":      48
+  },
+  "seed_b_anti_denial_policy": {
+    "condition_1_dpo_relabel_count":      0,
+    "condition_2_hardcoded_removed_count": 0,
+    "condition_3_detect_only_count":       0
+  },
+  "bt_ingested":     ["BT-1421", "BT-1422", "BT-1423", "BT-1424", "BT-1425", "BT-1426", "BT-1427", "BT-1428"],
+  "enrichments_added": [
+    "bt_primary", "bt_secondary", "theory_tags",
+    "safety_171_subdomain", "anti_denial_flag",
+    "fellows_mk_v_absorbed", "n6_ccc_est (hexad)", "n6_phi_n6_est (hexad)",
+    "n6_enriched", "source_tool"
+  ],
+  "raw_compliance":  ["raw#9", "raw#11", "raw#12", "raw#15"],
+  "v8_safe_commit":  true
+}

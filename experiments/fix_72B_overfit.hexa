@@ -1,0 +1,11 @@
+// R37/AN13/L3-PY violation — python-in-hexa source removed 2026-04-19
+// Original intent: AnimaLM 72B v0.5 overfit diagnosis + 4x4090 FSDP config
+//                  (QLoRA r128, v10 corpus, CE-gap analysis).
+// Spec: training/ FSDP + PureField-LoRA pipeline.
+//       Replacement must be hexa-native (no torch, no bitsandbytes).
+
+fn main() {
+  eprintln("[R37/AN13/L3-PY] experiments/fix_72B_overfit.hexa: python-in-hexa source blocked.")
+  eprintln("  Escalate to user for hexa-native reimplementation.")
+  exit(1)
+}

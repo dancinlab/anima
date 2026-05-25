@@ -1,0 +1,62 @@
+{
+  "schema": "anima.bg.mac_secret_hf_resync.v1",
+  "ts_utc": "2026-05-05T03:56:00Z",
+  "bg_lane": "MAC-SECRET-HF-RESYNC",
+  "mac_pre_state": "WHOAMI_FAIL",
+  "mac_pre_token_first12": "hf_ascGmSqKJ",
+  "mac_pre_error": "Invalid username or password.",
+  "ubu1_pre_state": "WHOAMI_PASS",
+  "ubu1_pre_token_first12": "hf_dwDFAiqqM",
+  "ubu1_pre_user": "dancinlife",
+  "action_taken": "SYNC_UBU1_TO_MAC",
+  "mac_post_state": "WHOAMI_PASS",
+  "token_sha256_first16": "93bc24cd6bd54ac8",
+  "4_cache_sync_pass": true,
+  "cache_4_inventory": {
+    "mac_secret_cli": "93bc24cd6bd54ac8",
+    "mac_dot_cache_huggingface_token": "93bc24cd6bd54ac8",
+    "mac_dot_secrets_hf_token": "93bc24cd6bd54ac8",
+    "ubu1_dot_cache_huggingface_token": "93bc24cd6bd54ac8"
+  },
+  "whoami_user": "dancinlife",
+  "whoami_user_id": "69229786cde1fd9952da8cfa",
+  "whoami_email_verified": true,
+  "rotation_needed_userside": false,
+  "honest_c3": [
+    {
+      "id": "C1",
+      "concern": "ubu1 token rotation source unverified — assumed canonical because whoami-v2 PASS, but no audit trail of who rotated it or when; ubu1 may also be drift",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "C2",
+      "concern": "4-cache sync downstream of secret CLI covers .secrets/hf_token + ~/.cache/huggingface/token + ubu1 ~/.cache/huggingface/token; .netrc (machine huggingface.co login...) NOT audited or synced",
+      "severity": "LOW"
+    },
+    {
+      "id": "C3",
+      "concern": "Token shown only as sha256 first-16 (93bc24cd6bd54ac8) per raw#10 honesty + leak_guard hook compliance + audit_doc_token_redact memory",
+      "severity": "INFO"
+    },
+    {
+      "id": "C4",
+      "concern": "mac .secrets/hf_token + ~/.cache/huggingface/token re-written from secret CLI post-resync; original stale hf_asc... overwritten — recovery requires fresh user rotation if needed",
+      "severity": "LOW"
+    },
+    {
+      "id": "C5",
+      "concern": "mac stale because likely older rotation snapshot; ubu1 was sync target during last user-side rotation but mac secret CLI was not updated. Suggests historical lapse in sync discipline.",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "C6",
+      "concern": "verdict.json does not log raw token; sha256 first-16 only. Compatible with hive PreToolUse leak_guard 9-shape blocker.",
+      "severity": "INFO"
+    }
+  ],
+  "no_op_flags": {
+    "no_hf_push": true,
+    "no_anima_commit": true,
+    "no_plaintext_token_logged": true
+  }
+}

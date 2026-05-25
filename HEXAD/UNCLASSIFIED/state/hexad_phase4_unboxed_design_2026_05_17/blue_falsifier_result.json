@@ -1,0 +1,72 @@
+{
+  "B-PHASE-4-DESIGN-1": {
+    "name": "BOXED-OVERHEAD-NAMED-CLOSED",
+    "statement": "anima ubu d=96·3L fire (vast.ai 503 GiB host, 2026-05-17): step-100 observed RSS = 76 GiB, predicted transient peak = 27 GiB; 76 ≥ 27 ⟹ NAMED inflation gap = 49 GiB (76/27 ≈ 2.81× ratio). step-200 observed = 137 GiB, ratio ≈ 5.07× growing. This is the MEASURED ceiling RFC 051 + Phase 4 migration sized to close (algorithmic counterpart to 2026-05-17 OPERATIONAL substrate fix).",
+    "observed_rss_step100_bytes": 81604378624,
+    "predicted_peak_bytes": 28991029248,
+    "inflation_gap_bytes": 52613349376,
+    "inflation_ratio_step100": "81604378624/28991029248 ≈ 2.815×",
+    "observed_rss_step200_bytes": 147102629888,
+    "inflation_ratio_step200": "147102629888/28991029248 ≈ 5.074×",
+    "inflation_named_closed": true,
+    "inflation_step200_closed": true,
+    "real_limit_anchor": "Kolmogorov bytes — pure integer Σ inequality, NOT lattice",
+    "source": "state/hexad_pure_hexa_train_d96x3_2026_05_17/{result.json,train_d96.log}",
+    "closed": true,
+    "tier": "a-sympy",
+    "passed": true,
+    "counted_toward_blue": true
+  },
+  "B-PHASE-4-DESIGN-2": {
+    "name": "UARR-API-COMPLETENESS-CLOSED",
+    "statement": "RFC 051 surface API = exact 5-tuple {uarr_alloc, uarr_set, uarr_get, uarr_free, uarr_len}; boxed-list ops = 5-tuple {list_init, push, idx_read, gc_free, len}. Both sets card 5, all elements distinct, bijection-eligible ⟹ migration of d_train5_lib.hexa boxed-list call sites is API-complete at design time (closed Boolean set algebra).",
+    "uarr_api_cardinality": 5,
+    "boxed_list_ops_cardinality": 5,
+    "cardinality_equal": true,
+    "uarr_card_5_closed": true,
+    "boxed_card_5_closed": true,
+    "uarr_distinct": true,
+    "boxed_distinct": true,
+    "real_limit_anchor": "Boolean finite-set algebra (Kolmogorov primitive, NOT lattice)",
+    "closed": true,
+    "tier": "a-sympy",
+    "passed": true,
+    "counted_toward_blue": true
+  },
+  "B-PHASE-4-DESIGN-3": {
+    "name": "FARR-UARR-COEXIST-CLOSED",
+    "statement": "Closed Boolean conjunction: (a) farr exists (RFC 025/031/032/033/034 LANDED per INDEX.md) AND (b) uarr exists post-RFC-051 (this design's surface API spec) AND (c) farr_*/uarr_* API names disjoint (namespace separation) AND (d) cross-boundary uarr↔farr copy byte-equal IEEE 754 fp64 (packed-double memcpy invariant) AND (e) backward-compat (every existing farr_* call site unchanged). All 5 clauses closed.",
+    "farr_exists": true,
+    "uarr_exists_post_rfc": true,
+    "apis_disjoint": true,
+    "intersection_cardinality": 0,
+    "ieee754_bit_equal_connection": true,
+    "backward_compat": true,
+    "real_limit_anchor": "Boolean conjunction + IEEE 754 fp64 packed-double bit-equality (NOT lattice)",
+    "closed": true,
+    "tier": "a-sympy",
+    "passed": true,
+    "counted_toward_blue": true
+  },
+  "B-PHASE-4-DESIGN-NOTE": {
+    "name": "IMPL-VERIFICATION-PENDING-EMPIRICAL",
+    "statement": "F-D5-UARR-MIGRATE-1..5 (Phase 4a-d byte-equal migration verify on d=32·3L Phase E2 oracle + d=64·3L Agent #2a Mac reference) + F-RFC051-MEMORY-REDUCTION-EXPECTED (Phase 4e re-fire d=96·3L vast.ai measured peak-RSS reduction target ≥ 50%, stretch ≥ 60%) are EMPIRICAL post-impl. The DESIGN-TIME PROPERTY 'RFC 051 surface API closes the named boxed-array overhead ceiling' is closed (3/3 above). The IMPL-TIME OUTCOME is empirical — mirrors B-D-NOTE (SGD outcome family) + B-SUBSTRATE-NOTE (allocator overhead empirical). Gated on RFC 051 land + 5 anima Phase 4a-e cycles.",
+    "verification_closed": false,
+    "class": "EMPIRICAL-POST-IMPL (Phase 4a-e gated on RFC 051 land)",
+    "counted_toward_blue": false,
+    "honest_carry_pattern": "B-D-NOTE + B-SUBSTRATE-NOTE umbrella"
+  },
+  "_aggregate": {
+    "passed_3_of_3": true,
+    "scope": "RFC 051 + anima HEXA_NATIVE Phase 4 design-tier closed-form (Kolmogorov bytes + Boolean set algebra + IEEE 754 fp64 bit-equality anchor)",
+    "blue_count": 3,
+    "honest_carve_outs": [
+      "B-PHASE-4-DESIGN-NOTE (F-D5-UARR-MIGRATE-1..5 + F-RFC051-MEMORY-REDUCTION-EXPECTED post-impl empirical)"
+    ],
+    "f1_f2_safe": true,
+    "lattice_derivation": false,
+    "source_evidence": "state/hexad_pure_hexa_train_d96x3_2026_05_17/{result.json,train_d96.log,blue_substrate_falsifier.py}",
+    "rfc_paired": "/Users/ghost/core/hexa-lang/inbox/rfc_drafts_2026_05_12/rfc_051_unboxed_array_native.md",
+    "design_doc_paired": "/Users/ghost/core/anima/docs/hexad_phase_4_unboxed_array_design_2026_05_17.md"
+  }
+}

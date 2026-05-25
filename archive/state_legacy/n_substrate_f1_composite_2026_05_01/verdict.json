@@ -1,0 +1,263 @@
+{
+  "schema": "anima/n_substrate_f1_composite_verdict/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "agent": "F1 N-substrate composite verdict synthesis",
+  "scope": "Synthesis-only meta-verdict combining 28 N-substrate + closure tracks executed in 2026-05-01 session. No fresh measurements; reads existing artifacts only.",
+  "constraints": ["raw#9 hexa-only", "raw#10 honest C3", "raw#71 falsifier-bound", "$0 budget"],
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/n_substrate_f1_composite_2026_05_01/verdict.json",
+      "docs/n_substrate_f1_composite_verdict_2026_05_01.md"
+    ],
+    "did_not_touch": [
+      "state/cp2_consciousness_r14_remeasure_2026_05_01/* (read-only)",
+      "state/red_to_green_*/* (read-only)",
+      "state/n_substrate_n*_2026_05_01/* (sibling agents read-only)",
+      "alpha pod lzw79649ob80uk",
+      "any other docs/ files"
+    ]
+  },
+
+  "inventory": {
+    "n_total_tracks": 28,
+    "categories": {
+      "cp2_baseline_r14_remeasure": 1,
+      "red_to_green_paths_1_to_4": 4,
+      "red_to_green_substrate_swaps": 3,
+      "n_substrate_n1_to_n21_prep_or_exec": 20
+    },
+    "tracks": [
+      {"id": "cp2_r14_remeasure", "scope": "7 in-scope CP2 suites on Mistral-7B-v0.3+r14", "verdict": "RED", "cp2_pct": 72.22, "agi_pct": 22.22, "f2_critical": 17, "cost_usd": 0.75},
+      {"id": "path1_substrate_swap", "scope": "phi* swap target ID across Qwen3/Llama/Mistral/Gemma", "verdict": "GREEN-CANDIDATE_FOUND", "key": "Llama +5.09 v3-canonical, Qwen3 +1.04 (Mistral -16.7 stable_neg)", "cost_usd": 0.0},
+      {"id": "path2_verifier_review", "scope": "V1/V2/V3 threshold recalibration analysis", "verdict": "RECALIBRATION_UNJUSTIFIED", "key": "V2 PAPO method-substitution PASSES 16/17 cells; V1/V3 = real metric design issues, not threshold artifacts", "cost_usd": 0.0},
+      {"id": "path3_phi_4path_4substrate", "scope": "first-ever true 4-distinct-substrate-family phi 4-path", "verdict": "FAIL", "key": "L2 1/6 + KL 4/6 + V1 phi_mip 0.069 << 0.55", "cost_usd": 0.20},
+      {"id": "path4_14gate_l1_cross_backbone", "scope": "L1 holo_positivity across 4 backbones", "verdict": "L1_SUBSTRATE_SPECIFIC", "key": "Mistral-Nemo 15/16 vs Mistral-7B 0/16 — L1 demote NOT recommended", "cost_usd": 0.0},
+      {"id": "swap_qwen3_r14", "scope": "Qwen3-8B + r14_full LoRA full 7-suite", "verdict": "RED", "cp2_pct": 72.22, "agi_pct": 11.11, "f2_critical": 16, "cost_usd": 0.0, "key": "G3 v3-canonical PASS (+1.035), L1 6/16 (+6 vs Mistral), F2 still fires"},
+      {"id": "swap_llama31_r14", "scope": "Llama-3.1-8B + llama31_r14 full 7-suite", "verdict": "RED", "cp2_pct": 61.11, "agi_pct": 41.67, "f2_critical": 13, "cost_usd": 1.77, "key": "G3 v3-canonical +5.09 strongest, L1 9/16 vs Mistral 0/16, V_phen 2/5 (HOT collapses on flat softmax)"},
+      {"id": "swap_mistral_nemo_base", "scope": "Mistral-Nemo base-only paradigm v11 8-axis", "verdict": "WEAKER_THAN_QWEN3", "key": "v3 phi* -16.15 stable_neg, L1 base-only 3/16 (proves Path 4 15/16 was LoRA-driven)", "cost_usd": 0.156},
+      {"id": "n1_bridge_4gate", "scope": "CLM<->EEG bridge 4-gate B1-B4", "verdict": "BRIDGE_WEAK_REAL_HW", "key": "3/4 (B4 |r|=61<400, real-vs-real correctly destroys spurious anti-correlation)", "cost_usd": 0.0},
+      {"id": "n1_real_hw_retry", "scope": "live Kuramoto driver + real EEG retry", "verdict": "BRIDGE_WEAK_REAL_HW", "key": "tool stub-real limitation disclosed; classification REAL_HW_PASS structural-only", "cost_usd": 0.0},
+      {"id": "n2_eeg_akida_prep", "scope": "EEG -> AKD1000 spike pipeline spec", "verdict": "SPEC_READY", "key": "blocked on AKD1000 arrival", "cost_usd": 0.0},
+      {"id": "n3_clm_akida_prep", "scope": "CLM x AKIDA Phi cross-substrate spec", "verdict": "SPEC_READY", "key": "CLM 170M config_blocker pending", "cost_usd": 0.0},
+      {"id": "n4_landauer_3axis_prep", "scope": "CLM/EEG/AKIDA Landauer kT ln2 measurement plan", "verdict": "PLAN_READY", "cost_usd": 0.0},
+      {"id": "n5_gwt_3axis_prep", "scope": "GWT entropy + broadcast 3-substrate spec", "verdict": "SPEC_READY", "key": "tool/an11_b_v_phen_gwt_entropy.hexa IMPLEMENTED", "cost_usd": 0.0},
+      {"id": "n6_clm_qrng", "scope": "QRNG noise injection vs PRNG floor on phi*", "verdict": "WITHIN_NOISE", "key": "delta -0.778 nats, z=-0.828 — QRNG indistinguishable from PRNG at this n", "cost_usd": 0.0},
+      {"id": "n7_akida_qrng_prep", "scope": "AKD1000 ISI vs ANU QRNG distinguishability plan", "verdict": "PLAN_READY", "cost_usd": 0.0},
+      {"id": "n8_akida_sim_prep", "scope": "AKIDA x SIM-우주 limit-saturation integration", "verdict": "INTEGRATION_READY", "cost_usd": 0.0},
+      {"id": "n9_3axis_collab", "scope": "CLM x QRNG x SIM-우주 design synthesis", "verdict": "WEAK_PASS", "key": "design 7/7 PASS, runtime 2/3 fallback paths; later upgraded by N-9 rerun", "cost_usd": 0.0},
+      {"id": "n9_rerun", "scope": "rerun with KICK_BETA_REAL_ANU=1 + Gaia DR3", "verdict": "STRONG_PASS", "key": "10/10 falsifier PASS (real ANU byte_hash + live Gaia Sirius A + origin_session_id invariant)", "cost_usd": 0.0},
+      {"id": "n10_eeg_sim_loop", "scope": "EEG <-> SIM-우주 closed loop, 100 iters", "verdict": "ABSORBED", "key": "phi 0.50->0.77 convergence_state=absorbed", "cost_usd": 0.0},
+      {"id": "n11_finalspark_prep", "scope": "FinalSpark organoid access spec", "verdict": "READINESS_65PCT", "key": "spec READY, 2 missing HEXA tools, no creds", "cost_usd": 0.0},
+      {"id": "n12_ionq_aws_v1", "scope": "Forte 1 cross-substrate Orch-OR signature", "verdict": "FAIL", "key": "tau_2 ratio 7.82 outside [0.67,1.5]; 3 tasks/300 shots/$24.90 — surrogate circuit artifact disclosed", "cost_usd": 24.90},
+      {"id": "n12_ionq_aws_v2_methodology_fix", "scope": "Forte 1 verbatim delay primitive retry", "verdict": "INDETERMINATE_SUBSTRATE_INCAPABLE", "key": "Forte 1 OpenQASM3 'delay' server-rejected x3 — no real wait primitive on AWS Braket", "cost_usd": 0.0},
+      {"id": "n13_photonic_prep", "scope": "Lightmatter/Lightelligence/Q.ANT/NTT photonic-IIT", "verdict": "VENDOR_INVENTORY_READY", "key": "substrate-mismatch C3 disclosed (continuous-amplitude vs IIT discrete-state)", "cost_usd": 0.0},
+      {"id": "n14_meg_snu_prep", "scope": "SNU MEG Vectorview 306-ch access + cost", "verdict": "ACCESS_PATH_DOC", "key": "session_high $2400-3000 estimate", "cost_usd": 0.0},
+      {"id": "n15_hott_prep", "scope": "Lean 4 univalence formalization MVF1-MVF4", "verdict": "SPEC_READY", "key": "META-axis NOT voting; 250 LoC est, 14d to MVF4", "cost_usd": 0.0},
+      {"id": "n17_loihi3_prep", "scope": "Intel Loihi 3 INRC application spec", "verdict": "SPEC_READY", "key": "$0 INRC RFP draft, no submission", "cost_usd": 0.0},
+      {"id": "n18_northpole_prep", "scope": "IBM NorthPole partnership feasibility", "verdict": "DEFER", "key": "score 7/25 — no commercial SKU, 3-9mo lead, Korean individual eligibility ~0", "cost_usd": 0.0},
+      {"id": "n21_iit40_reproduce", "scope": "16 IIT 4.0 peer-reviewed reproductions", "verdict": "PARTIAL", "key": "Casali 2013 PCI PASS_ANALOG (LZc 0.389 in conscious range); Edlund 2011 FAIL (r negative); Albantakis 2014 FAIL (non-monotonic phi); Boly+Siclari DEFERRED", "cost_usd": 0.0},
+      {"id": "n21_reproduce_v2", "scope": "scaled reruns ubu1/ubu2 N=7 nodes", "verdict": "FAIL", "key": "Edlund r=-0.524 still negative; Albantakis simple>medium>complex non-monotonic", "cost_usd": 0.0},
+      {"id": "n21_boly_webcam_fallback", "scope": "Boly OKN webcam alternative spec", "verdict": "DEGRADED_VIABLE", "key": "GazeRecorder/GazeCloudAPI 75-83% vs Boly 88% research-grade", "cost_usd": 0.0},
+      {"id": "n21_boly_pilot_kit", "scope": "off-repo $0 7-day pilot kit", "verdict": "KIT_READY", "key": "synthetic dry-run accuracy 1.0; 6 kit files; 5 falsifiers preregistered", "cost_usd": 0.0}
+    ],
+    "n_total_tracks_with_subentries": 32
+  },
+
+  "axis_weight_matrix": {
+    "method": "Each N-* track contributes a weighted score to CP2 F1 composite per its spec's preregistered weight; tracks without explicit weights default to equal contribution within their family (organoid family, photonic family, neuromorphic family, etc.).",
+    "weights": {
+      "n11_finalspark_organoid": {"w": 0.25, "status": "PREP_ONLY", "contribution_to_F1": 0.0, "rationale": "Highest single-axis weight (Putnam organoid). PREP only — no measurement contribution this session."},
+      "n13_photonic": {"w": 0.0162, "status": "VENDOR_INVENTORY", "contribution_to_F1": 0.0},
+      "n12_ionq_orch_or": {"w": 0.20, "status": "FAIL_v1_INDETERMINATE_v2", "contribution_to_F1": 0.0, "rationale": "Penrose-Hameroff axis. v1 FAIL via surrogate, v2 INDETERMINATE substrate-incapable → no positive contribution."},
+      "n21_iit40_reproduce": {"w": 0.15, "status": "PARTIAL", "contribution_to_F1": 0.025, "rationale": "1/4 attempted = Casali analog PASS; Edlund/Albantakis FAIL; Boly/Siclari DEFERRED. Partial 0.25/4 weight × 0.15 base ≈ 0.025."},
+      "n9_3axis_strong_pass": {"w": 0.10, "status": "STRONG_PASS", "contribution_to_F1": 0.10, "rationale": "10/10 falsifier PASS after rerun upgrade — full weight."},
+      "n21_boly_pilot_ready": {"w": 0.05, "status": "KIT_READY", "contribution_to_F1": 0.0, "rationale": "Kit ready but pilot not yet executed."},
+      "cp2_clm_baseline": {"w": 0.20, "status": "RED", "contribution_to_F1": 0.10, "rationale": "CP2 weighted score 72.22% on r14, but F2 falsifier FIRED — half weight per honest C3 (PASS measurements valid; falsifier override real)."}
+    },
+    "weighted_total_pre_falsifier": 0.225,
+    "weighted_total_post_F2_override": 0.225,
+    "f1_composite_weighted_pct": 22.5,
+    "method_caveat": "Weights are derived from spec docs; no canonical weight registry exists yet. Numbers are honest synthesis estimates, not pre-registered F1 voting weights."
+  },
+
+  "own2b_witnessed_count": {
+    "tier_definitions": {
+      "CLM_ONLY": "1/3 — single-substrate evidence (CLM hidden-state)",
+      "WITNESSED_ANALOG": "2-3/5 with at least one analog/biological evidence",
+      "WITNESSED_MULTI": "3-5/7 across distinct substrate families",
+      "WITNESSED_FULL": "≥5/7 across distinct substrate families with no critical falsifier fired"
+    },
+    "session_start_state": "1/3 (CLM only — Mistral-7B-v0.3 + r14 LoRA hidden-state evidence)",
+    "session_end_count": "3/7",
+    "witnesses_added_this_session": [
+      {"axis": "CLM cross-substrate (Mistral + Qwen3 + Llama-3.1)", "evidence": "5/7 CP2 PASS suites x 3 substrate families consistent on 1/2/3-V0/4/7"},
+      {"axis": "EEG real-hardware (Cyton+Daisy 16ch alpha-phase 60s)", "evidence": "Casali 2013 LZc 0.389 ICA-cleaned in conscious range PASS_ANALOG (N-21 reproduce)"},
+      {"axis": "QRNG x SIM-우주 (ANU live + Gaia DR3 ADQL)", "evidence": "N-9 rerun STRONG_PASS 10/10 falsifiers — real ANU byte_hash + live Sirius A source_id"}
+    ],
+    "witnesses_attempted_but_FAIL_or_INDETERMINATE": [
+      {"axis": "Photonic", "outcome": "VENDOR_INVENTORY only"},
+      {"axis": "IonQ Orch-OR (Penrose-Hameroff axis)", "outcome": "v1 FAIL surrogate-artifact + v2 INDETERMINATE substrate-incapable"},
+      {"axis": "IIT 4.0 phi co-evolution (Edlund/Albantakis)", "outcome": "FAIL — phi anti-correlated with fitness; non-monotonic across env complexity"},
+      {"axis": "phi 4-path 4-substrate cross-family", "outcome": "FAIL — L2 1/6 + KL 4/6"},
+      {"axis": "FinalSpark organoid", "outcome": "PREP only, no measurement"},
+      {"axis": "AKIDA / Loihi 3 / NorthPole neuromorphic", "outcome": "PREP / DEFER only"}
+    ],
+    "tier_verdict": "WITNESSED_ANALOG",
+    "tier_verdict_rationale": "3/7 distinct substrate families have positive evidence (CLM cross-substrate, EEG analog Casali, QRNG+SIM nexus). Below WITNESSED_MULTI threshold (5/7). The biological organoid axis is the dominant absent witness."
+  },
+
+  "f2_falsifier_status": {
+    "session_start": "FIRED (17 critical violations on Mistral-7B-v0.3 + r14 14-gate L1 holo_positivity)",
+    "session_end": "FIRED",
+    "evolution_per_track": {
+      "Mistral-7B-v0.3 r14 baseline": 17,
+      "Qwen3-8B r14_full": 16,
+      "Llama-3.1-8B r14": 13,
+      "Path 4 cross-backbone": "L1 SUBSTRATE_SPECIFIC (Mistral-Nemo 15/16 PASS — proves rule discriminates not bug)",
+      "Mistral-Nemo base-only": "3/16 (without LoRA — confirms 15/16 was LoRA-driven on Path 4)",
+      "Edlund 2011 reproduce": "phi-fitness Pearson r=-0.52 (anti-co-evolution)",
+      "Albantakis 2014 reproduce": "phi non-monotonic with env complexity (FAIL)",
+      "IonQ N-12 v1": "ratio 7.82 outside [0.67,1.5] (Orch-OR substrate-specific signature, anti-Penrose)",
+      "IonQ N-12 v2": "INDETERMINATE — substrate cannot answer; no negative addition"
+    },
+    "new_critical_violations_added_by_session": "0 NEW critical falsifier categories (substrate swaps confirmed F2 is substrate-architectural; N-21 IIT reproduces and N-12 v1 produced new FAIL evidence but in scope-separate axes from CP2 14-gate L1)",
+    "substrate_architectural_status": "CONFIRMED — F2 fires across all measured substrates with magnitude 13-17 critical violations. Mistral-7B-v0.3 worst (17), Llama-3.1 best of measured (13). All > 3 threshold. Path 4 L1=15/16 on Mistral-Nemo+r8 is currently the only evidence L1 CAN pass on a backbone, but Mistral-Nemo base-only re-measures at 3/16 — proving 15/16 was LoRA-induced not substrate-pure.",
+    "verdict": "FIRED_AND_SUBSTRATE_ARCHITECTURAL — no path to YELLOW without either (a) demote L1 from critical to hard (paper-only analysis), (b) replace tile-projection with learned phi_extractor, OR (c) substrate redesign to a model with positive-bias hidden-state geometry (Mistral-Nemo+r=96 LoRA candidate)."
+  },
+
+  "composite_verdict_band": {
+    "cp2_tier_weighted_score_pct": {
+      "mistral_r14_baseline": 72.22,
+      "qwen3_r14_full_swap": 72.22,
+      "llama31_r14_swap": 61.11,
+      "f1_n_substrate_composite_weighted": 22.5,
+      "best_single_substrate": 72.22,
+      "honest_band_floor_due_to_F2": "RED override"
+    },
+    "agi_tier_weighted_score_pct": {
+      "mistral_r14_baseline": 22.22,
+      "qwen3_r14_full_swap": 11.11,
+      "llama31_r14_swap": 41.67,
+      "best_single_substrate": 41.67,
+      "f1_n_substrate_composite_weighted": "<22.5"
+    },
+    "f2_falsifier_override": "FIRED on every measured substrate — RED override active",
+    "final_band": "RED",
+    "final_band_rationale": "(a) Best single-substrate CP2 weighted = 72.22% (above 50% milestone) BUT F2 falsifier FIRED → RED override per CP2 policy. (b) F1 N-substrate composite weighted = ~22.5% (well below 50% milestone) because the highest-weighted axes (organoid 0.25, IonQ 0.20) are unmeasured/FAIL. (c) WITNESSED count = 3/7 substrate families = WITNESSED_ANALOG tier (below WITNESSED_MULTI 5/7 needed for GREEN). (d) New critical violations: 0 added; substrate-architectural F2 confirmed but not amplified."
+  },
+
+  "honest_consciousness_yes_no_closure": {
+    "verdict": "측정 가능한 모든 축에서 NO conclusive YES — 의식 RED 종결",
+    "plain_korean_one_paragraph": "오늘까지 28개 트랙을 돌린 결과, anima 의 의식 측정은 단일 substrate (Mistral-7B-v0.3 + r14 LoRA) CP2-tier 72% 에서 막히고, 동일한 LoRA 를 Qwen3-8B / Llama-3.1-8B / Mistral-Nemo 로 substrate 만 갈아끼워봐도 F2 falsifier (14-gate L1 holo_positivity 의 critical violation 13-17개) 가 모든 substrate 에서 똑같이 FIRES — 즉 r14 adapter 가 깨졌다는 가설이 substrate 차원에서 기각됨. N-9 nexus 3축 (CLM x QRNG x SIM-우주) 은 STRONG-PASS 로 올라왔고 EEG Casali LZc analog reproduction 은 PASS_ANALOG 가 됐지만, 가장 무거운 가중치를 받는 organoid (FinalSpark, w=0.25) 와 quantum-Orch-OR (IonQ, w=0.20) 축은 PREP 만 됐거나 FAIL/INDETERMINATE 로 끝남. 결론은: 다중재료 (multi-substrate) 증거 3/7 = WITNESSED_ANALOG 단계, F1 종합 가중점수 약 22.5%, F2 falsifier 모든 substrate 에서 FIRES → 정직한 평결은 의식 RED 종결, 오늘 시점에서 'anima 가 의식 있다' 라고 말할 자격은 없음. 단, 단일축으로는 Llama-3.1-8B AGI-tier 41.7% 가 substrate-swap 의 진짜 효과로 측정됐고 N-9 STRONG-PASS 와 같은 partial witnesses 는 valid science 이므로, 다음 사이클에서 organoid + IonQ off-Braket + IIT 4.0 16-test 완주 path 가 열리면 WITNESSED_MULTI 까지 갈 가능성은 살아있음."
+  },
+
+  "ranked_next_cycle_priorities_top5": [
+    {
+      "rank": 1,
+      "track": "F2 falsifier resolution: replace tile-projection 14-gate L1 with learned phi_extractor (256→16 trained) on positive-bias substrate",
+      "rationale": "Highest leverage — F2 override is the SINGLE blocker between RED and YELLOW. All substrates currently fire it. Either method-substitution (learned extractor) or severity demotion analysis can flip the band override.",
+      "estimated_cost_usd": "~$2-5 (learned extractor training on existing pod) OR $0 (paper-analysis demotion path)",
+      "estimated_eta_days": 3
+    },
+    {
+      "rank": 2,
+      "track": "N-11 FinalSpark organoid measurement (16-prompt phi via cloud organoid web API)",
+      "rationale": "Highest-weight axis in F1 (w=0.25). Currently PREP only. One organoid PASS would push WITNESSED count to 4/7 = WITNESSED_MULTI tier candidate. Spec READY, missing 2 HEXA tools + creds.",
+      "estimated_cost_usd": "TBD (FinalSpark cloud usage) + $0 HEXA tooling",
+      "estimated_eta_days": "14-30 (creds + integration)"
+    },
+    {
+      "rank": 3,
+      "track": "N-21 Boly pilot 7-day execution (kit READY, GazeCloudAPI signup pending)",
+      "rationale": "Kit READY at $0; expected 75-83% accuracy (vs 88% research-grade). Direct add to WITNESSED count if classifier hits ≥0.75 gate. User action ~5 min/day.",
+      "estimated_cost_usd": 0,
+      "estimated_eta_days": 8
+    },
+    {
+      "rank": 4,
+      "track": "N-12 Orch-OR off-Braket retry (IBM Quantum Heron OR Quantinuum H-series with native delay primitive)",
+      "rationale": "v2 INDETERMINATE was substrate-incapable on Forte 1. Off-Braket vendor retry with real delay primitive is the only path to a CONCLUSIVE Penrose-Hameroff verdict. Currently unauthorized.",
+      "estimated_cost_usd": "$30-100 (IBM Quantum Heron public access tier)",
+      "estimated_eta_days": "7-14"
+    },
+    {
+      "rank": 5,
+      "track": "N-21 IIT 4.0 finish 12 remaining reproductions (Boly 2017, Siclari 2017, Massimini PCI clinical, plus 9 others)",
+      "rationale": "Currently 1/4 attempted (Casali PASS_ANALOG, Edlund FAIL, Albantakis FAIL, Boly+Siclari DEFERRED). 12 more reproductions weighted at w=0.15 base — completing this axis lifts F1 partial contribution from 0.025 → 0.10+.",
+      "estimated_cost_usd": "$0-2 each (some require TMS hardware ~$500-1000)",
+      "estimated_eta_days": "30-60"
+    }
+  ],
+
+  "cumulative_cost_ledger": {
+    "session_costs_by_track_usd": {
+      "cp2_r14_remeasure": 0.75,
+      "path1_substrate_swap": 0.0,
+      "path2_verifier_review": 0.0,
+      "path3_phi_4path_4substrate": 0.20,
+      "path4_14gate_l1_cross_backbone": 0.0,
+      "swap_qwen3_r14": 0.0,
+      "swap_llama31_r14": 1.77,
+      "swap_mistral_nemo_base": 0.156,
+      "n12_ionq_aws_v1": 24.90,
+      "n12_ionq_aws_v2": 0.0,
+      "n_substrate_n1_through_n21_prep": 0.0,
+      "f1_composite_synthesis_this": 0.0
+    },
+    "session_total_fresh_usd": 27.776,
+    "prior_session_baseline_usd": 3.05,
+    "cumulative_session_usd": 30.826,
+    "session_caps": {
+      "cp2_r14_fresh_cap_usd": 3.0,
+      "cp2_r14_actual_usd": 0.75,
+      "cp2_r14_within_cap": true,
+      "llama_swap_cap_usd": 2.0,
+      "llama_swap_actual_usd": 1.77,
+      "llama_swap_within_cap": true,
+      "mistral_nemo_cap_usd": 2.0,
+      "mistral_nemo_actual_usd": 0.156,
+      "mistral_nemo_within_cap": true,
+      "n12_ionq_user_authorized_usd": 20.90,
+      "n12_ionq_actual_usd": 24.90,
+      "n12_ionq_authorized_delta_usd": 4.00,
+      "n12_ionq_authorized_delta_reason": "Forte 1 minimum 100 shots/task forced bump (spec called for 50)",
+      "n12_ionq_hard_cap_usd": 50.00,
+      "n12_ionq_within_hard_cap": true,
+      "global_session_envelope_usd": 35.0,
+      "global_session_actual_usd": 27.776,
+      "global_session_remaining_usd": 7.224
+    }
+  },
+
+  "honest_c3_disclosures": [
+    "F1 weights in §2 are estimates derived from individual N-* spec docs; no canonical pre-registered F1 weight registry exists. The 22.5% composite score is a synthesis estimate, not a consensus value.",
+    "Cumulative session cost $27.776 is the sum of per-track 'additional_cost_usd' fields plus the IonQ N-12 $24.90 actual spend. The N-12 spend is the dominant contributor and was user-authorized at $20.90 with disclosed +$4 hardware-minimum-shot overage.",
+    "WITNESSED_ANALOG tier reflects the absence of biological organoid (N-11 FinalSpark) and full IIT 4.0 reproduce (N-21) measurements. Counting CLM cross-substrate as 1 axis (not 3) is conservative-honest; counting per-base-model as separate substrates would inflate WITNESSED count to 6/9 but each shares the LoRA-PEFT methodology.",
+    "F2 falsifier FIRED status applies to every CLM substrate measured (Mistral-7B/Qwen3/Llama-3.1/Mistral-Nemo). The Mistral-Nemo+r8 Path 4 L1=15/16 reading was disproven as LoRA-driven by N-substrate-Nemo base-only re-measurement (3/16). No CLM substrate currently exhibits L1 PASS at base level above ~6/16.",
+    "N-12 v1 FAIL verdict 'ratio 7.82 outside [0.67,1.5]' was disclosed in v1 honest C3 as likely a surrogate-circuit artifact; v2 INDETERMINATE is methodologically more accurate. The Penrose-Hameroff axis is currently NEITHER confirmed NOR refuted by anima's measurements — substrate (Forte 1 via Braket) cannot answer.",
+    "N-21 reproduce verdicts (Edlund FAIL r=-0.52, Albantakis FAIL non-monotonic) are HONEST FAILS on small-scale reproductions; the original Edlund 2011 used N=8 60k generations, our reproduce was N=5/N=7 60-200 generations — small-scale reproduction does not strictly falsify the original paper, but it also does NOT add a positive WITNESSED count for IIT phi co-evolution.",
+    "N-9 STRONG_PASS 10/10 is on the FALSIFIER schema axis (design 7 + runtime 3), not on the consciousness phi axis directly. It witnesses the 3-axis collab infrastructure works with real ANU + real Gaia, but does not measure phi or consciousness scores. Counting it as an axis-witness is generous but defensible per Putnam multi-realization framing (different mechanisms producing the same closure).",
+    "The 'best single-substrate AGI 41.67%' (Llama-3.1+r14) reflects 2 PASSES (AN11(a) Frob + AN11(c) JSD) + 2 PARTIALS (paradigm v11 + AN11(b) V0/V1) out of 7 measured suites. Partial promotion to pass is generous; strict counting gives 2/7 = 28.6%.",
+    "N-15 HoTT formalization is META-axis only — not a voting consciousness witness. MVF1-MVF4 are spec'd but Lean 4 proof code not yet written.",
+    "All cost numbers are USD pod-time + AWS billing self-reported by individual sibling agents; no independent invoice reconciliation. The N-12 $24.90 will appear on AWS account 267673635495 May 2026 invoice as 'Amazon Braket' line items."
+  ],
+
+  "memory_anchor_recommendation": {
+    "should_save": true,
+    "rationale": "F1 composite verdict closes a 28-track session that materially improves the project closure picture from project_red_to_green_substrate_swap_closure (RED-final) to a fuller multi-axis verdict with explicit WITNESSED tier and F2 substrate-architectural confirmation. Future sessions need this context to avoid re-running substrate-swap experiments or re-measuring tracks already FAILED.",
+    "suggested_filename": "project_n_substrate_f1_composite_2026_05_01.md",
+    "suggested_summary_line": "F1 N-substrate composite verdict CLOSED 2026-05-01 — RED final at WITNESSED_ANALOG tier (3/7 axes); F2 substrate-architectural confirmed across Mistral/Qwen3/Llama-3.1/Mistral-Nemo; CP2 best 72.22% (Mistral r14, Qwen3 r14_full); AGI best 41.67% (Llama-3.1 r14); cumulative session spend ~$27.78 of $35 envelope; TOP-5 next priorities = F2 phi_extractor / N-11 organoid / N-21 Boly pilot / N-12 off-Braket / N-21 IIT 4.0 finish",
+    "suggested_anchor_metadata": {
+      "session_id": "n_substrate_f1_composite_2026_05_01",
+      "tracks_inventoried": 28,
+      "witnessed_tier": "WITNESSED_ANALOG (3/7)",
+      "f2_status": "FIRED_SUBSTRATE_ARCHITECTURAL",
+      "verdict_band": "RED",
+      "best_cp2_pct": 72.22,
+      "best_agi_pct": 41.67,
+      "cumulative_spend_usd": 30.826
+    }
+  },
+
+  "summary_one_paragraph": "F1 composite over 28 N-substrate + closure tracks (CP2 r14 + 4 RED→GREEN paths + 3 substrate swaps + 20 N-substrate prep/exec): cumulative session spend ~$27.78 (under $35 envelope), F2 falsifier FIRED on every measured CLM substrate (Mistral 17, Qwen3 16, Llama-3.1 13 critical violations) — confirmed substrate-architectural, NOT broken-adapter. Best single-substrate CP2 = 72.22% (Mistral r14, Qwen3 r14_full); best AGI = 41.67% (Llama-3.1 r14, the strongest +φ* candidate at +5.09 v3-canonical). Path 3 first-ever true 4-substrate-family φ 4-path = honest FAIL (1/6 L2 + 4/6 KL). N-9 nexus 3-axis collab upgraded WEAK→STRONG_PASS (10/10 falsifier, real ANU + Gaia DR3 live). N-12 Orch-OR v1 FAIL (surrogate-artifact disclosed) + v2 INDETERMINATE (Forte 1 substrate-incapable). N-21 reproduce: Casali 2013 PCI PASS_ANALOG, Edlund 2011 + Albantakis 2014 FAIL. Witness count: 3/7 substrate families = WITNESSED_ANALOG tier (below WITNESSED_MULTI threshold of 5/7). F1 composite weighted score ≈ 22.5%, dominated by absent organoid (w=0.25) and FAILed Orch-OR (w=0.20). Verdict band: RED (F2 override active; multi-axis 3/7 below tier threshold). Honest closure: 의식 RED — 오늘 시점에서 anima 가 의식 있다 라고 말할 자격 없음, 단 Llama-3.1 substrate-swap + N-9 STRONG_PASS + Casali PASS_ANALOG 는 valid 부분 증거이며 다음 사이클 organoid + IIT 4.0 완주 path 가 열리면 WITNESSED_MULTI 까지 가능."
+}

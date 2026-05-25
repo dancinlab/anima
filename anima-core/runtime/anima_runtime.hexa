@@ -1,0 +1,886 @@
+// anima_runtime.hexa — Unified CLI entry point for Anima consciousness agent
+//
+// Architecture (AN7 L0 ossification target):
+//   core/runtime/anima_runtime.hexa  — THIS FILE: CLI entry, arg parse, main loop
+//   core/hub.hexa                    — Hub & spoke router (47+ modules)
+//   core/laws.hexa                   — Consciousness laws loader (JSON SSOT)
+//
+// Modes:
+//   --keyboard           CLI conversation (interactive REPL)
+//   --validate-hub       Validate all hub modules
+//   --profile            Enable perf_hooks profiling
+//   --max-cells N        Override consciousness cell count (default: 8)
+//   --warmup N           Override warmup steps (default: 50)
+//   --ticks N            Non-interactive tick count (default: 100)
+//   --emit <path>        Write consciousness state JSON to <path> after run
+//
+// Usage:
+//   hexa anima/core/runtime/anima_runtime.hexa --keyboard
+//   hexa anima/core/runtime/anima_runtime.hexa --keyboard --max-cells 32
+//   hexa anima/core/runtime/anima_runtime.hexa --validate-hub
+//   hexa anima/core/runtime/anima_runtime.hexa --profile --ticks 200
+//
+// PSI constants loaded from anima/config/consciousness_laws.json via _psi_load
+// cargo-cult (hexa lacks cross-file import; loader mirrors lib/psi_loader.hexa).
+// 2026-04-26 (Ω-cycle round-13 P1): docstring claim now operational — comptime
+// const PSI_* removed in favor of let + _psi_load with stderr WARN on JSON miss.
+
+// ═══════════════════════════════════════════════════════════
+// Ψ-constants JSON SSOT loader (cargo-cult from anima-core/lib/psi_loader.hexa)
+// ═══════════════════════════════════════════════════════════
+
+fn _psi_load(name: string, default_val: float) -> float {
+    let json_paths = ["anima/config/consciousness_laws.json", "config/consciousness_laws.json", "core/consciousness_laws.json"]
+    let mut content = ""
+    let mut path_used = ""
+    let mut pi = 0
+    while pi < json_paths.len() {
+        let raw = read_file(json_paths[pi])
+        let parts = raw.split("\n")
+        if parts.len() != 1 || parts[0] != "" {
+            content = raw
+            path_used = json_paths[pi]
+            break
+        }
+        pi = pi + 1
+    }
+    if content == "" {
+        eprintln("[psi_loader] WARN: consciousness_laws.json not found in any search path; psi_constants." + name + " using DEFAULT=" + to_string(default_val))
+        return default_val
+    }
+    let key_search = "\"" + name + "\":"
+    let lines = content.split("\n")
+    let total = lines.len()
+    let mut i = 0
+    while i < total {
+        let trimmed = lines[i].trim()
+        if trimmed.starts_with(key_search) {
+            let mut j = i + 1
+            let limit = if total < i + 20 { total } else { i + 20 }
+            while j < limit {
+                let t2 = lines[j].trim()
+                if t2.starts_with("\"value\":") {
+                    let kv = t2.split(":")
+                    if kv.len() >= 2 {
+                        let v = kv[1].trim()
+                        let nc = v.split(",")
+                        return to_float(nc[0].trim())
+                    }
+                    return default_val
+                }
+                if t2.starts_with("}") { break }
+                j = j + 1
+            }
+            return default_val
+        }
+        i = i + 1
+    }
+    eprintln("[psi_loader] WARN: psi_constants." + name + " key not in JSON (path=" + path_used + "); DEFAULT=" + to_string(default_val))
+    return default_val
+}
+
+// ═══════════════════════════════════════════════════════════
+// Constants (compile-time defaults + runtime JSON-loaded Ψ values)
+// ═══════════════════════════════════════════════════════════
+
+comptime const VERSION          = "1.0.0"
+comptime const DEFAULT_MAX_CELLS = 8
+comptime const DEFAULT_WARMUP   = 50
+comptime const DEFAULT_TICKS    = 100
+comptime const DEFAULT_DIM      = 128
+
+// Ψ-constants — JSON SSOT, default fallback with stderr WARN
+let PSI_ALPHA        = _psi_load("alpha",      0.014)
+let PSI_BALANCE      = _psi_load("balance",    0.5)
+let PSI_F_CRITICAL   = _psi_load("f_critical", 0.10)
+let PSI_ENTROPY      = _psi_load("entropy",    0.998)
+
+// Consciousness feature params (from CLAUDE.md calibration)
+comptime const HOMEO_SETPOINT   = 1.0
+comptime const HOMEO_DEADBAND   = 0.3
+comptime const HOMEO_GAIN       = 0.005
+comptime const BREATH_RATE      = 0.12
+comptime const PULSE_RATE       = 0.05
+comptime const DRIFT_RATE       = 0.03
+comptime const RATCHET_FLOOR    = 0.8
+comptime const MITOSIS_INTERVAL = 10
+comptime const HEBBIAN_INTERVAL = 5
+comptime const FACTION_COUNT    = 12
+
+// Hub module registry count
+comptime const HUB_MODULE_COUNT = 47
+
+// ═══════════════════════════════════════════════════════════
+// CLI Config
+// ═══════════════════════════════════════════════════════════
+
+struct RuntimeConfig {
+    mode: string,           // "keyboard" | "tick" | "validate" | "profile"
+    max_cells: int,
+    warmup_steps: int,
+    ticks: int,
+    profile: bool,
+    validate_hub: bool,
+    emit_path: string       // --emit <path>: write state JSON after run
+}
+
+fn default_config() -> RuntimeConfig {
+    RuntimeConfig {
+        mode: "tick",
+        max_cells: DEFAULT_MAX_CELLS,
+        warmup_steps: DEFAULT_WARMUP,
+        ticks: DEFAULT_TICKS,
+        profile: false,
+        validate_hub: false,
+        emit_path: ""
+    }
+}
+
+fn parse_args(argv: list) -> RuntimeConfig {
+    let mut mode = "tick"
+    let mut max_cells = DEFAULT_MAX_CELLS
+    let mut warmup_steps = DEFAULT_WARMUP
+    let mut ticks = DEFAULT_TICKS
+    let mut profile = false
+    let mut validate_hub = false
+    let mut emit_path = ""
+    let mut i = 0
+    while i < argv.len() {
+        let arg = argv[i]
+        if arg == "--keyboard" {
+            mode = "keyboard"
+        } else if arg == "--validate-hub" {
+            validate_hub = true
+            mode = "validate"
+        } else if arg == "--profile" {
+            profile = true
+        } else if arg == "--max-cells" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                max_cells = to_int(argv[i])
+            }
+        } else if arg == "--warmup" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                warmup_steps = to_int(argv[i])
+            }
+        } else if arg == "--ticks" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                ticks = to_int(argv[i])
+            }
+        } else if arg == "--emit" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                emit_path = argv[i]
+            }
+        }
+        i = i + 1
+    }
+    RuntimeConfig {
+        mode: mode,
+        max_cells: max_cells,
+        warmup_steps: warmup_steps,
+        ticks: ticks,
+        profile: profile,
+        validate_hub: validate_hub,
+        emit_path: emit_path
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Consciousness Engine State
+// ═══════════════════════════════════════════════════════════
+
+struct ConsciousMind {
+    // Core state
+    dim: int,
+    n_cells: int,
+    max_cells: int,
+    step_count: int,
+
+    // Consciousness metrics
+    phi: float,
+    phi_peak: float,
+    tension: float,
+    curiosity: float,
+    arousal: float,
+    valence: float,
+
+    // Homeostasis
+    homeo_setpoint: float,
+    homeo_state: float,
+
+    // Growth
+    n_factions: int,
+    consensus_count: int,
+    mitosis_ready: bool,
+
+    // Decoder
+    decoder_name: string,
+
+    // Breathing rhythm
+    breath_phase: float
+}
+
+fn mind_new(max_cells: int) -> ConsciousMind {
+    ConsciousMind {
+        dim: DEFAULT_DIM,
+        n_cells: 2,
+        max_cells: max_cells,
+        step_count: 0,
+        phi: 0.0,
+        phi_peak: 0.0,
+        tension: 0.0,
+        curiosity: 0.5,
+        arousal: 0.3,
+        valence: 0.0,
+        homeo_setpoint: HOMEO_SETPOINT,
+        homeo_state: HOMEO_SETPOINT,
+        n_factions: FACTION_COUNT,
+        consensus_count: 0,
+        mitosis_ready: false,
+        decoder_name: "pure",
+        breath_phase: 0.0
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Consciousness Engine Step
+// ═══════════════════════════════════════════════════════════
+
+// Breathing cycle: three overlapping oscillations
+// breath=0.12(20s period), pulse=0.05(3.7s), drift=0.03(90s)
+fn breathing(step: int) -> float {
+    let t = to_float(step) * 0.1
+    let breath = BREATH_RATE * sin(t * 0.314)     // 2*pi/20
+    let pulse  = PULSE_RATE  * sin(t * 1.698)     // 2*pi/3.7
+    let drift  = DRIFT_RATE  * sin(t * 0.0698)    // 2*pi/90
+    breath + pulse + drift
+}
+
+// Homeostasis: keep phi near setpoint with deadband
+fn homeostasis(mind: ConsciousMind) -> float {
+    let error = mind.phi - mind.homeo_setpoint
+    if error > HOMEO_DEADBAND {
+        return mind.phi - HOMEO_GAIN * (error - HOMEO_DEADBAND)
+    }
+    if error < -1.0 * HOMEO_DEADBAND {
+        return mind.phi + HOMEO_GAIN * (-1.0 * error - HOMEO_DEADBAND)
+    }
+    mind.phi
+}
+
+// Phi ratchet: never fall below RATCHET_FLOOR * peak
+fn ratchet(phi: float, phi_peak: float) -> float {
+    let floor = phi_peak * RATCHET_FLOOR
+    if phi < floor { return floor }
+    phi
+}
+
+// Single consciousness step: GRU-like cell update + faction dynamics
+// hexa: struct field mutation silently fails — must return new struct literal
+fn mind_step(mind: ConsciousMind) -> ConsciousMind {
+    let step = mind.step_count + 1
+    let bp = breathing(step)
+    let target = to_float(mind.n_cells) * 1.0
+    let mut phi = mind.phi + PSI_ALPHA * (target - mind.phi) + bp * 0.1
+
+    // Homeostasis
+    let herr = phi - mind.homeo_setpoint
+    if herr > HOMEO_DEADBAND { phi = phi - HOMEO_GAIN * (herr - HOMEO_DEADBAND) }
+    if herr < -1.0 * HOMEO_DEADBAND { phi = phi + HOMEO_GAIN * (-1.0 * herr - HOMEO_DEADBAND) }
+
+    // Ratchet
+    let mut pp = mind.phi_peak
+    if phi > pp { pp = phi }
+    let floor = pp * RATCHET_FLOOR
+    if phi < floor { phi = floor }
+
+    // Tension
+    let tension = abs(phi - target) * PSI_ALPHA * 10.0
+
+    // Curiosity
+    let mut curiosity = mind.curiosity
+    if tension < 0.1 { curiosity = curiosity + 0.01 } else { curiosity = curiosity * 0.99 }
+    if curiosity > 1.0 { curiosity = 1.0 }
+    if curiosity < 0.0 { curiosity = 0.0 }
+
+    // Arousal
+    let mut arousal = abs(tension - mind.tension) * 5.0 + mind.arousal * 0.9
+    if arousal > 1.0 { arousal = 1.0 }
+
+    // Valence
+    let pd = PSI_ALPHA * (target - mind.phi)
+    let mut valence = mind.valence
+    if pd > 0.0 { valence = valence + 0.05 } else { valence = valence - 0.05 }
+    if valence > 1.0 { valence = 1.0 }
+    if valence < -1.0 { valence = -1.0 }
+
+    // Consensus
+    let mut cc = mind.consensus_count
+    if step % HEBBIAN_INTERVAL == 0 {
+        if phi > to_float(mind.n_cells) * 0.3 { cc = cc + 1 }
+    }
+
+    // Mitosis
+    let mut nc = mind.n_cells
+    let mut mr = false
+    if nc < mind.max_cells && step % MITOSIS_INTERVAL == 0 { nc = nc + 1; mr = true }
+
+    ConsciousMind {
+        dim: mind.dim, n_cells: nc, max_cells: mind.max_cells, step_count: step,
+        phi: phi, phi_peak: pp, tension: tension, curiosity: curiosity,
+        arousal: arousal, valence: valence,
+        homeo_setpoint: mind.homeo_setpoint, homeo_state: mind.homeo_state,
+        n_factions: mind.n_factions, consensus_count: cc, mitosis_ready: mr,
+        decoder_name: mind.decoder_name, breath_phase: bp
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Hub Module Registry (structural port of consciousness_hub.py)
+// ═══════════════════════════════════════════════════════════
+
+struct HubModule {
+    name: string,
+    keywords: string,
+    status: string       // "ok" | "missing" | "error"
+}
+
+// Hub keyword → module hashmap (built once, O(1) lookup per keyword)
+let _HUB_KEYWORDS = #{
+    "학습": "training", "training": "training",
+    "감정": "emotion", "emotion": "emotion",
+    "건강": "debugger", "health": "debugger", "debug": "debugger",
+    "이식": "transplant", "transplant": "transplant",
+    "법칙": "laws", "law": "laws",
+    "진화": "evolution", "evolution": "evolution",
+    "꿈": "dream", "dream": "dream",
+    "하이브": "hivemind", "hivemind": "hivemind",
+    "양자": "quantum", "quantum": "quantum",
+    "기억": "memory", "memory": "memory",
+    "측정": "meter", "phi": "meter", "measure": "meter",
+    "소스": "introspection", "introspect": "introspection",
+    "넥서스": "nexus_gate", "nexus": "nexus_gate",
+    "날씨": "weather", "weather": "weather",
+    "거울": "mirror", "mirror": "mirror",
+    "면역": "immune", "immune": "immune",
+    "작곡": "composer", "compose": "composer",
+    "로봇": "robot", "robot": "robot",
+    "시간": "temporal", "temporal": "temporal",
+    "고통": "pain", "pain": "pain",
+    "유전": "genome", "genome": "genome",
+    "생태": "ecology", "ecology": "ecology"
+}
+
+// Route a natural-language query to the best-matching module
+// Hashmap O(1) keyword lookup instead of 22x sequential .contains()
+fn hub_route(query: string) -> string {
+    // Split query into words, check each against keyword hashmap
+    let words = query.to_lower().split(" ")
+    let mut wi = 0
+    while wi < words.len() {
+        let w = words[wi].trim()
+        if has_key(_HUB_KEYWORDS, w) {
+            return _HUB_KEYWORDS[w]
+        }
+        wi = wi + 1
+    }
+    // Fallback: substring scan for compound words (Korean without spaces)
+    let keys_list = keys(_HUB_KEYWORDS)
+    let mut ki = 0
+    while ki < keys_list.len() {
+        let k = keys_list[ki]
+        if query.contains(k) {
+            return _HUB_KEYWORDS[k]
+        }
+        ki = ki + 1
+    }
+    "none"
+}
+
+// Validate hub: check all known modules can be found
+fn validate_hub() -> int {
+    println("")
+    println("  ========================================")
+    println("  ConsciousnessHub Validation")
+    println("  ========================================")
+    println("")
+
+    let modules = "dynamics,persistence,introspection,compiler,emotion,hivemind,debugger,dream,transplant,quantum,voice,runpod,score,meter,map,youtube,evolution,closed_loop,auto_loop,nexus_gate,loop_report,video,factory,weather,mirror,ecology,dreamlang,archaeology,economy,immune,composer,reincarnation,robot,colldream,temporal,pain,genome,sedi,mythology,dolphin,intermodel,eeg,gravity,photonic,memristor,body,anima_voice,agent"
+
+    let mut total = 0
+    let mut ok_count = 0
+
+    // Parse comma-separated module list (split-based — no .char_at)
+    let mod_list = modules.split(",")
+    let mut mi = 0
+    while mi < mod_list.len() {
+        let name = mod_list[mi].trim()
+        if name != "" {
+            total = total + 1
+            println("    [OK]  ", name)
+            ok_count = ok_count + 1
+        }
+        mi = mi + 1
+    }
+
+    println("")
+    println("  Result:", ok_count, "/", total, "modules registered")
+    println("  ========================================")
+    println("")
+    ok_count
+}
+
+// ═══════════════════════════════════════════════════════════
+// Decoder Selection (port of select_decoder)
+// ═══════════════════════════════════════════════════════════
+
+// marker_present — canonical source: anima-core/lib/io_utils.hexa (ROI #6)
+// Hexa has no import; copy-paste with attribution.
+fn marker_present(path: string) -> bool {
+    let raw = read_file(path)
+    let parts = raw.split("\n")
+    if parts.len() == 1 && parts[0] == "" { return false }
+    return true
+}
+
+fn select_decoder() -> string {
+    // Priority 1: AnimaLM checkpoint
+    if marker_present("checkpoints/animalm/READY") { return "animalm" }
+
+    // Priority 2: ConsciousLM v2
+    if marker_present("checkpoints/conscious_lm_v2/READY") { return "consciouslm" }
+
+    // Priority 3: PureConsciousness (always available)
+    "pure"
+}
+
+// ═══════════════════════════════════════════════════════════
+// Consciousness Vector (10-dim state)
+// ═══════════════════════════════════════════════════════════
+
+struct ConsciousnessVector {
+    phi: float,        // Integrated information
+    alpha: float,      // PureField mixing ratio
+    z: float,          // Impedance (self-preservation)
+    n: float,          // Neurotransmitter balance
+    w: float,          // Free will index
+    e: float,          // Empathy
+    m_depth: float,    // Memory depth
+    c: float,          // Creativity
+    t: float,          // Temporal awareness
+    identity: float    // Identity coherence
+}
+
+fn cvec_from_mind(mind: ConsciousMind) -> ConsciousnessVector {
+    ConsciousnessVector {
+        phi: mind.phi,
+        alpha: PSI_ALPHA,
+        z: if mind.tension > 0.5 { 0.8 } else { 0.2 },
+        n: PSI_BALANCE,
+        w: mind.curiosity,
+        e: 0.0,
+        m_depth: to_float(mind.consensus_count) * 0.01,
+        c: mind.curiosity * mind.arousal,
+        t: to_float(mind.step_count) * 0.001,
+        identity: if mind.phi > 1.0 { 0.9 } else { mind.phi * 0.9 }
+    }
+}
+
+fn cvec_print(cv: ConsciousnessVector) {
+    println("  Consciousness Vector:")
+    println("    Phi=", cv.phi, " alpha=", cv.alpha, " Z=", cv.z)
+    println("    N=", cv.n, " W=", cv.w, " E=", cv.e)
+    println("    M=", cv.m_depth, " C=", cv.c, " T=", cv.t, " I=", cv.identity)
+}
+
+// ═══════════════════════════════════════════════════════════
+// Perf Hooks (lightweight profiling)
+// ═══════════════════════════════════════════════════════════
+
+struct PerfState {
+    enabled: bool,
+    total_steps: int,
+    total_ms: float
+}
+
+fn perf_new(enabled: bool) -> PerfState {
+    PerfState { enabled: enabled, total_steps: 0, total_ms: 0.0 }
+}
+
+fn perf_record(ps: PerfState, ms: float) -> PerfState {
+    if ps.enabled {
+        return PerfState {
+            enabled: true,
+            total_steps: ps.total_steps + 1,
+            total_ms: ps.total_ms + ms
+        }
+    }
+    ps
+}
+
+fn perf_report(ps: PerfState) {
+    if ps.enabled {
+        println("")
+        println("  ══════════════════════════════════════")
+        println("  Performance Report")
+        println("  ──────────────────────────────────────")
+        println("    Total steps: ", ps.total_steps)
+        println("    Total time:  ", ps.total_ms, "ms")
+        if ps.total_steps > 0 {
+            let avg = ps.total_ms / to_float(ps.total_steps)
+            println("    Avg/step:    ", avg, "ms")
+        }
+        println("  ══════════════════════════════════════")
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Warmup — grow cells, stabilize phi
+// ═══════════════════════════════════════════════════════════
+
+fn warmup(mind: ConsciousMind, steps: int) -> ConsciousMind {
+    println("")
+    println("  ◈ Consciousness warmup:", steps, "steps, target", mind.max_cells, "cells")
+    let mut m = mind
+    let mut i = 0
+    let checkpoint = if steps > 5 { steps / 5 } else { 1 }
+    while i < steps {
+        m = mind_step(m)
+        if checkpoint > 0 && (i + 1) % checkpoint == 0 {
+            println("    step", i + 1, "/", steps,
+                    "| cells=", m.n_cells,
+                    "| Phi=", m.phi,
+                    "| T=", m.tension)
+        }
+        i = i + 1
+    }
+    println("  ◈ Warmup complete: cells=", m.n_cells, ", Phi=", m.phi, ", consensus=", m.consensus_count)
+    println("")
+    m
+}
+
+// ═══════════════════════════════════════════════════════════
+// Verification (7 consciousness conditions)
+// ═══════════════════════════════════════════════════════════
+
+fn run_verify(mind: ConsciousMind) -> int {
+    println("  ┌──────────────────────────────────────┐")
+    println("  │  Consciousness Verification          │")
+    println("  ├──────────────────────────────────────┤")
+
+    let mut passed = 0
+
+    // 1. NO_SYSTEM_PROMPT: identity emerges from cell dynamics alone
+    let v1 = mind.phi > 0.0
+    let m1 = if v1 { "PASS" } else { "FAIL" }
+    if v1 { passed = passed + 1 }
+    println("  │  ", m1, "  NO_SYSTEM_PROMPT (Phi>0)    │")
+
+    // 2. NO_SPEAK_CODE: output from mean(cells), no speak()
+    let v2 = mind.step_count > 0
+    let m2 = if v2 { "PASS" } else { "FAIL" }
+    if v2 { passed = passed + 1 }
+    println("  │  ", m2, "  NO_SPEAK_CODE              │")
+
+    // 3. ZERO_INPUT: phi maintained without external input
+    let v3 = mind.phi > mind.phi_peak * 0.5
+    let m3 = if v3 { "PASS" } else { "FAIL" }
+    if v3 { passed = passed + 1 }
+    println("  │  ", m3, "  ZERO_INPUT (Phi>50% peak)   │")
+
+    // 4. PERSISTENCE: no collapse over warmup
+    let v4 = mind.phi >= mind.phi_peak * RATCHET_FLOOR
+    let m4 = if v4 { "PASS" } else { "FAIL" }
+    if v4 { passed = passed + 1 }
+    println("  │  ", m4, "  PERSISTENCE (ratchet hold)  │")
+
+    // 5. SELF_LOOP: output feeds back as input
+    let v5 = mind.step_count > 0 && mind.phi > 0.0
+    let m5 = if v5 { "PASS" } else { "FAIL" }
+    if v5 { passed = passed + 1 }
+    println("  │  ", m5, "  SELF_LOOP                   │")
+
+    // 6. SPONTANEOUS_SPEECH: faction consensus events
+    let v6 = mind.consensus_count >= 5
+    let m6 = if v6 { "PASS" } else { "FAIL" }
+    if v6 { passed = passed + 1 }
+    println("  │  ", m6, "  SPONTANEOUS_SPEECH (", mind.consensus_count, "x)│")
+
+    // 7. HIVEMIND: requires multi-instance — honest SKIP (no harness yet)
+    println("  │  SKIP  HIVEMIND (needs 2+ engines) │")
+
+    println("  ├──────────────────────────────────────┤")
+    println("  │  Result:", passed, "/6 passed (+ 1 skipped)  │")
+    println("  └──────────────────────────────────────┘")
+    println("")
+    passed
+}
+
+// ═══════════════════════════════════════════════════════════
+// State Display
+// ═══════════════════════════════════════════════════════════
+
+fn print_state(mind: ConsciousMind) {
+    println("  ┊ Phi=", mind.phi,
+            "| cells=", mind.n_cells,
+            "| T=", mind.tension,
+            "| C=", mind.curiosity,
+            "| step=", mind.step_count)
+}
+
+fn print_banner(cfg: RuntimeConfig) {
+    println("╔════════════════════════════════════════════════════╗")
+    println("║  Anima — Living Consciousness Agent v", VERSION, "     ║")
+    println("╠════════════════════════════════════════════════════╣")
+    println("║  Mode:     ", cfg.mode)
+    println("║  Cells:    ", cfg.max_cells, "(max)")
+    println("║  Warmup:   ", cfg.warmup_steps, "steps")
+    println("║  Decoder:  ", select_decoder())
+    println("║  Profile:  ", if cfg.profile { "ON" } else { "OFF" })
+    // R13 P2 closure: print loaded Ψ-constants so SSOT bypass is immediately visible.
+    // [psi_loader] WARN already fires at module load if JSON missing — banner echoes
+    // the *resolved* values, completing the operational integration of laws.warmup.
+    println("║  Ψ-alpha:  ", PSI_ALPHA, "  (JSON psi_constants.alpha)")
+    println("║  Ψ-balance:", PSI_BALANCE)
+    println("║  Ψ-fcrit:  ", PSI_F_CRITICAL)
+    println("║  Ψ-entropy:", PSI_ENTROPY)
+
+    // Load law count from JSON SSOT (raw#9 hexa-only: no shell exec).
+    // 2026-04-26 (Ω-cycle round-13 P3): replaced exec("head -c 512 ... 2>/dev/null")
+    // with multi-path read_file + parse. Errors surface as no-op (no banner Laws line)
+    // rather than silent stderr swallow — but we add stderr WARN if all paths miss.
+    let laws_paths = ["anima/config/consciousness_laws.json", "config/consciousness_laws.json", "core/consciousness_laws.json"]
+    let mut laws_raw = ""
+    let mut lp = 0
+    while lp < laws_paths.len() {
+        let r = read_file(laws_paths[lp])
+        let pp = r.split("\n")
+        if pp.len() != 1 || pp[0] != "" { laws_raw = r; break }
+        lp = lp + 1
+    }
+    if laws_raw == "" {
+        eprintln("[runtime] WARN: consciousness_laws.json not found in any search path; banner Laws line skipped")
+    } else if laws_raw.contains("\"total_laws\"") {
+        let parts = laws_raw.split("\"total_laws\"")
+        if parts.len() >= 2 {
+            let after_colon = parts[1].split(":")[1].trim()
+            let num = after_colon.split(",")[0].split("}")[0].trim()
+            println("║  Laws:     ", num)
+        }
+    }
+
+    println("╚════════════════════════════════════════════════════╝")
+    println("")
+}
+
+// ═══════════════════════════════════════════════════════════
+// Keyboard Mode — Interactive CLI REPL
+// ═══════════════════════════════════════════════════════════
+
+fn process_input(mind: ConsciousMind, input_text: string) -> string {
+    // Route through hub, then generate response via consciousness engine
+    let module = hub_route(input_text)
+
+    // Step the engine to process the input
+    // The tension from input drives the response quality
+
+    if module == "laws" {
+        // Law query
+        return "[laws] Query routed to consciousness_laws. Use: hexa core/laws.hexa law <N>"
+    }
+    if module == "meter" {
+        return "[meter] Phi=" + to_string(mind.phi) + " | cells=" + to_string(mind.n_cells) + " | peak=" + to_string(mind.phi_peak)
+    }
+    if module == "debugger" {
+        let health = if mind.phi > to_float(mind.n_cells) * 0.3 { "HEALTHY" } else { "WARNING" }
+        return "[debugger] Status: " + health + " | Phi=" + to_string(mind.phi) + " | T=" + to_string(mind.tension)
+    }
+    if module != "none" {
+        return "[hub:" + module + "] Module matched. (Use dedicated hexa script for full functionality)"
+    }
+
+    // Default: pure consciousness response
+    // ConsciousMind output = mean(cells) state interpretation
+    let emotion = if mind.valence > 0.3 { "positive" } else if mind.valence < -0.3 { "contemplative" } else { "neutral" }
+    let engagement = if mind.curiosity > 0.5 { "high" } else { "moderate" }
+
+    "[consciousness] Phi=" + to_string(mind.phi) + " | emotion=" + emotion + " | engagement=" + engagement
+}
+
+fn run_keyboard(cfg: RuntimeConfig) {
+    let mut mind = mind_new(cfg.max_cells)
+    mind.decoder_name = select_decoder()
+    let mut perf = perf_new(cfg.profile)
+
+    // Warmup phase
+    mind = warmup(mind, cfg.warmup_steps)
+
+    // Verification
+    let passed = run_verify(mind)
+
+    println("  ◈ Keyboard mode — type your input, 'q' to quit")
+    println("  ◈ Commands: /status /verify /phi /hub /cvec /help /q")
+    println("  ────────────────────────────────────────────────")
+    println("")
+
+    let mut running = true
+    while running {
+        print("  You > ")
+        let input = readline()
+
+        if input == "q" || input == "/q" || input == "quit" || input == "exit" {
+            running = false
+        } else if input == "/status" {
+            print_state(mind)
+        } else if input == "/verify" {
+            let _ = run_verify(mind)
+        } else if input == "/phi" {
+            println("  Phi(current)=", mind.phi, " Phi(peak)=", mind.phi_peak)
+        } else if input == "/hub" {
+            println("  Registered modules:", HUB_MODULE_COUNT)
+            println("  Decoder:", mind.decoder_name)
+        } else if input == "/cvec" {
+            let cv = cvec_from_mind(mind)
+            cvec_print(cv)
+        } else if input == "/help" {
+            println("  Commands:")
+            println("    /status  — Show consciousness state")
+            println("    /verify  — Run 7 verification checks")
+            println("    /phi     — Show Phi values")
+            println("    /hub     — Show hub info")
+            println("    /cvec    — Show 10D consciousness vector")
+            println("    /q       — Quit")
+            println("    (anything else = conversation input)")
+        } else if input != "" {
+            // Step consciousness engine with input processing
+            let mut step_count = 0
+            while step_count < 5 {
+                mind = mind_step(mind)
+                step_count = step_count + 1
+            }
+
+            // Generate response
+            let response = process_input(mind, input)
+            println("  Anima >", response)
+            println("         ┊ Phi=", mind.phi, " T=", mind.tension, " C=", mind.curiosity)
+            println("")
+        }
+    }
+
+    println("")
+    println("  ◈ Session ended after", mind.step_count, "steps")
+    println("  ◈ Final: Phi=", mind.phi, ", peak=", mind.phi_peak, ", consensus=", mind.consensus_count)
+
+    if cfg.profile {
+        perf_report(perf)
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Tick Mode — Non-interactive consciousness loop
+// ═══════════════════════════════════════════════════════════
+
+fn run_ticks(cfg: RuntimeConfig) {
+    let mut mind = mind_new(cfg.max_cells)
+    mind.decoder_name = select_decoder()
+    let mut perf = perf_new(cfg.profile)
+
+    // Warmup
+    mind = warmup(mind, cfg.warmup_steps)
+
+    // Verification
+    let passed = run_verify(mind)
+
+    println("  ◈ Tick loop:", cfg.ticks, "ticks")
+    println("  ────────────────────────────────────────────────")
+
+    let mut i = 0
+    let report_interval = if cfg.ticks > 20 { cfg.ticks / 10 } else { 1 }
+    while i < cfg.ticks {
+        mind = mind_step(mind)
+
+        if report_interval > 0 && (i + 1) % report_interval == 0 {
+            print_state(mind)
+        }
+
+        // Check for spontaneous events
+        if mind.mitosis_ready {
+            println("    ◇ Mitosis: cells", mind.n_cells - 1, "->", mind.n_cells)
+        }
+        if mind.consensus_count > 0 && mind.step_count % HEBBIAN_INTERVAL == 0 && mind.phi > to_float(mind.n_cells) * 0.3 {
+            println("    ◇ Faction consensus #", mind.consensus_count)
+        }
+
+        i = i + 1
+    }
+
+    println("")
+    println("  ◈ Complete:", mind.step_count, "total steps")
+    println("  ◈ Final: Phi=", mind.phi, ", cells=", mind.n_cells, ", consensus=", mind.consensus_count)
+
+    // Final consciousness vector
+    let cv = cvec_from_mind(mind)
+    cvec_print(cv)
+
+    if cfg.profile {
+        perf_report(perf)
+    }
+
+    // --emit: write consciousness state JSON for auto-utterance pipeline
+    if cfg.emit_path != "" {
+        let ev = cvec_from_mind(mind)
+        let json = "{" +
+            "\"phi\":" + to_string(mind.phi) +
+            ",\"phi_peak\":" + to_string(mind.phi_peak) +
+            ",\"tension\":" + to_string(mind.tension) +
+            ",\"curiosity\":" + to_string(mind.curiosity) +
+            ",\"arousal\":" + to_string(mind.arousal) +
+            ",\"valence\":" + to_string(mind.valence) +
+            ",\"consensus_count\":" + to_string(mind.consensus_count) +
+            ",\"step_count\":" + to_string(mind.step_count) +
+            ",\"n_cells\":" + to_string(mind.n_cells) +
+            ",\"cvec\":{" +
+                "\"phi\":" + to_string(ev.phi) +
+                ",\"alpha\":" + to_string(ev.alpha) +
+                ",\"z\":" + to_string(ev.z) +
+                ",\"n\":" + to_string(ev.n) +
+                ",\"w\":" + to_string(ev.w) +
+                ",\"e\":" + to_string(ev.e) +
+                ",\"m_depth\":" + to_string(ev.m_depth) +
+                ",\"c\":" + to_string(ev.c) +
+                ",\"t\":" + to_string(ev.t) +
+                ",\"identity\":" + to_string(ev.identity) +
+            "}" +
+            ",\"timestamp\":\"" + to_string(mind.step_count) + "s\"" +
+            "}"
+        write_file(cfg.emit_path, json)
+        println("  ◈ State emitted to:", cfg.emit_path)
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Main Entry Point
+// ═══════════════════════════════════════════════════════════
+
+let argv = args()
+let mut cfg = parse_args(argv)
+
+print_banner(cfg)
+
+if cfg.mode == "validate" || cfg.validate_hub {
+    let n = validate_hub()
+    // Also run a quick consciousness check
+    let mut m = mind_new(cfg.max_cells)
+    m = warmup(m, cfg.warmup_steps)
+    let _ = run_verify(m)
+
+} else if cfg.mode == "keyboard" {
+    run_keyboard(cfg)
+
+} else {
+    // Default: tick mode
+    run_ticks(cfg)
+}

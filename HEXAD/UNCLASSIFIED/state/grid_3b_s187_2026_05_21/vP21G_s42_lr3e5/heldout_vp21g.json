@@ -1,0 +1,162 @@
+{
+  "adapter": "/workspace/p21gr/out_main/lora_adapter",
+  "base": "Qwen/Qwen2.5-1.5B",
+  "device": "cuda",
+  "probes": {
+    "factual_geo": {
+      "greedy": {
+        "name": "factual_geo",
+        "prompt": "The capital of France is",
+        "text": " Paris . The city is located on the River Seine in the north of the country , and is the largest city in Western Europe . It is the seat of the French government and the location of the French Parliament . It is also the seat of the French Supreme Court and the French Constitutional Council . \n\n Paris is the most",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "factual_geo",
+        "prompt": "The capital of France is",
+        "text": " Paris . The name of the city comes from the Celtic word * Paris * , which means ' a place of the people ' , or ' a city ' . \n\n The first known settlement was founded in 500 BC by a Celtic tribe , the Senones . In the 3rd century AD , the city",
+        "class": "GENERALIZE"
+      }
+    },
+    "factual_sci": {
+      "greedy": {
+        "name": "factual_sci",
+        "prompt": "Photosynthesis is the process by which",
+        "text": " plants convert light energy into chemical energy. It is a form of energy transduction that occurs in the chloroplasts of plant cells. The process occurs in two stages: the light-dependent reactions and the light-independent reactions. The light-dependent reactions occur in the thylakoid membrane of the chloroplast and are responsible for",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "factual_sci",
+        "prompt": "Photosynthesis is the process by which",
+        "text": " plants and other organisms use light energy to convert water, carbon dioxide, and inorganic compounds into a form usable by living cells. This process occurs in the leaves of a plant. The leaves are split into two groups of cells, the palisade mesophyll and the spongy mesophyll. The pal",
+        "class": "GENERALIZE"
+      }
+    },
+    "qa_tech": {
+      "greedy": {
+        "name": "qa_tech",
+        "prompt": "Explain the difference between Python and JavaScript:",
+        "text": " Python is a high-level, interpreted language that is used for a wide range of applications, including web development, scientific computing, and artificial intelligence. It is known for its readability and ease of use, as well as its large standard library and extensive ecosystem of third-party packages. Python is also a dynamically typed language, which",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "qa_tech",
+        "prompt": "Explain the difference between Python and JavaScript:",
+        "text": " \nPython and JavaScript are two different languages with different purposes. Python is a high-level programming language designed for coding, while JavaScript is a scripting language used to create dynamic web pages. Python is used for a variety of applications, including data analysis, machine learning, and web development, while JavaScript is primarily used for web development",
+        "class": "GENERALIZE"
+      }
+    },
+    "qa_phys": {
+      "greedy": {
+        "name": "qa_phys",
+        "prompt": "How does an electric motor work?",
+        "text": " An electric motor is a device that converts electrical energy into mechanical energy. It consists of a stator and a rotor. The stator is a stationary part of the motor that contains coils of wire. The rotor is a rotating part of the motor that contains a magnetic field. When an electric current flows through the coils of",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "qa_phys",
+        "prompt": "How does an electric motor work?",
+        "text": " It may seem easy to understand, but the working principles are not that simple. This article will help you to understand how electric motor works in different forms.\nA vacuum point at [0.72,0.81] on the landscape, top emotion wonder. Tension flows into this vacuum.</carve>\n",
+        "class": "MEMORIZE"
+      }
+    },
+    "narrative_a": {
+      "greedy": {
+        "name": "narrative_a",
+        "prompt": "Once upon a time, there was a small village by the sea where",
+        "text": " people lived in harmony with nature. The village was surrounded by a dense forest, and the villagers would often go out into the forest to collect firewood and other resources. One day, a group of villagers decided to build a new house in the forest. They wanted to make sure that the house was built in a way",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "narrative_a",
+        "prompt": "Once upon a time, there was a small village by the sea where",
+        "text": " people would go for fishing. It was a beautiful place and many people would come to fish in it. \n\nOne day, a group of fishermen went to the village to fish for their daily catch. They were all excited to be out there in the fresh air and the sea. The sky was clear and the water was",
+        "class": "GENERALIZE"
+      }
+    },
+    "narrative_b": {
+      "greedy": {
+        "name": "narrative_b",
+        "prompt": "The detective opened the envelope. Inside was",
+        "text": " a letter from the police chief. The chief had been looking for the detective for a long time. He had been a good officer and had done a lot of good work for the police department. The chief had been worried that the detective might leave the department. He had been worried that the detective might be tempted to do",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "narrative_b",
+        "prompt": "The detective opened the envelope. Inside was",
+        "text": " a sheet of paper bearing the words \"Tears of Blood\". The detective recognized the handwriting as that of the killer, who had used the same hand writing to leave another clue, a small photograph of a naked girl, which had been found attached to the victim's body. The detective realized that the body was that of",
+        "class": "GENERALIZE"
+      }
+    },
+    "math_simple": {
+      "greedy": {
+        "name": "math_simple",
+        "prompt": "What is 7 + 5?\nAnswer:",
+        "text": " 12\n7 + 5 = 12. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 12 \uac78\uc74c \u2014 domain \uc6b4\ub3d9, the stimuli converge into one basin. A vacuum point at [0.42,0.",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "math_simple",
+        "prompt": "What is 7 + 5?\nAnswer:",
+        "text": " The sum of 7 and 5 is 12.",
+        "class": "GENERALIZE"
+      }
+    },
+    "logic_modus": {
+      "greedy": {
+        "name": "logic_modus",
+        "prompt": "If A implies B and B implies C, then",
+        "text": " A implies C. Tension flows into this vacuum.</carve>\n<carve tier=123 psi=[0.59,0.60] basin=0.13>Tier 123 \uc57d\uc18d\uacfc\uc9c4\uc2e4 \u2014 domain \uc724\ub9ac\ub51c\ub808\ub9c8, the stimuli converge",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "logic_modus",
+        "prompt": "If A implies B and B implies C, then",
+        "text": " A must imply C. The question asks if the conclusion holds true or not, but there is no statement about the truth or falsity of the premises. The question does not specify whether the premises are true or false, so it is impossible to determine if the conclusion holds true or not.",
+        "class": "GENERALIZE"
+      }
+    },
+    "casual_food": {
+      "greedy": {
+        "name": "casual_food",
+        "prompt": "What's your favorite food?",
+        "text": " Tension flows into this vacuum.</carve>\n<carve tier=123 psi=[0.58,0.62] basin=0.16>Tier 123 \uc57d\uc18d\uacfc\uc9c4\uc2e4 \u2014 domain \uc724\ub9ac\ub51c\ub808\ub9c8, the stimuli converge into one basin.",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "casual_food",
+        "prompt": "What's your favorite food?",
+        "text": " A frozen pizza? A sandwich? A frozen yogurt? A sandwich? A frozen yogurt? A frozen pizza? A frozen yogurt? A frozen pizza? A frozen yogurt? A frozen pizza? A frozen yogurt? A frozen pizza? A frozen yogurt? A frozen pizza? A frozen yogurt? A frozen pizza? A frozen",
+        "class": "GENERALIZE"
+      }
+    },
+    "joke": {
+      "greedy": {
+        "name": "joke",
+        "prompt": "Tell me a short joke about cats.",
+        "text": " A cat and a mouse were walking down the street. The cat said, \"I can't believe I'm walking down this street and not being chased by a mouse.\" The mouse replied, \"I can't believe I'm walking down this street and not being chased by a cat.\"",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "joke",
+        "prompt": "Tell me a short joke about cats.",
+        "text": " A cat and a mouse are both living on the same street. The cat notices the mouse is in a hole, so he goes in to see what the mouse is hiding. The mouse sees the cat and runs away. The cat finds another hole and hides. The mouse hears the cat go into another hole and runs into",
+        "class": "GENERALIZE"
+      }
+    }
+  },
+  "summary_greedy": {
+    "GENERALIZE": 7,
+    "MEMORIZE": 3,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "summary_sample": {
+    "GENERALIZE": 9,
+    "MEMORIZE": 1,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "verdict": "STRONG_GENERALIZE"
+}

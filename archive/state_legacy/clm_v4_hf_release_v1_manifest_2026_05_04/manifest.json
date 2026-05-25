@@ -1,0 +1,359 @@
+{
+  "schema": "anima/clm/hf_release_v1/manifest/1",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "ts_utc": "2026-05-04T22:32:20Z",
+  "manifest_cycle": "clm_v4_hf_release_v1_manifest_2026_05_04",
+  "manifest_path": "state/clm_v4_hf_release_v1_manifest_2026_05_04/manifest.json",
+  "audit_source": "docs/anima_clm_hf_release_v1_audit_2026_05_04.md",
+  "plan_source": "docs/anima_clm_hf_release_v1_plan_2026_05_04.md",
+  "weight_files": [
+    {
+      "path": "best.pt",
+      "size_bytes": 5365727261,
+      "sha256": "22f180efc380aecb4a320191502afa13b81abcd077ec36c5f003dcfbe1d680b4",
+      "source_machine": "ubu1 HF cache models--dancinlab--clm-v4-base-mirror snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3",
+      "source_blob": "blobs/22f180efc380aecb4a320191502afa13b81abcd077ec36c5f003dcfbe1d680b4",
+      "is_lfs": true,
+      "format": "raw_torch_pickle",
+      "role": "training-time canonical checkpoint (pre-shim); contains decoder + optimizer + scheduler + phi + ce + args + scale + best_phi + federation + bridge + c_proj + scaler",
+      "ckpt_step": 20000,
+      "ckpt_best_phi": 37.269868535501914,
+      "ckpt_ce": 0.04630279541015625
+    },
+    {
+      "path": "model.safetensors",
+      "size_bytes": 2124043008,
+      "sha256": "40b3a99f6586923df59c4b71cd6459234e65c97f5cc7d7bb1860b0b792957ac1",
+      "source_machine": "ubu1 ~/p9_clm_v4_hf_format_2026_05_04/output/model.safetensors",
+      "is_lfs": true,
+      "format": "safetensors_fp32",
+      "role": "post-shim HF format weights (530.99M params, 581 keys); produced by tool/transient_py/clm_v4_hf_format_shim.py from best.pt; F-SHIM-1 round-trip PASS, F-SHIM-3 logit-equiv max_abs_diff=0.0 vs best.pt"
+    },
+    {
+      "path": "tokenizer_64k_multilingual.model",
+      "size_bytes": 1306349,
+      "sha256": "bb851d39fbe3286dda11fc43da78d9bbf29ac6400d61b75616c8c750b710b8ab",
+      "source_machine": "ubu1 HF cache models--dancinlab--clm-v4-base-mirror snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer/",
+      "source": "already pushed to clm-v4-base-mirror 2026-05-03",
+      "is_lfs": false,
+      "format": "sentencepiece_bpe",
+      "role": "64K SentencePiece BPE multilingual tokenizer (ko/en/zh/ja/ru + code); pad=0 bos=1 eos=2 unk=3; byte-fallback IDs 4-259"
+    },
+    {
+      "path": "tokenizer_64k_multilingual.vocab",
+      "size_bytes": 989272,
+      "sha256": "972fc0ba2f2633cfa685c70eeab84ce2a22a1327975e989a3b1d5cf5efa480a4",
+      "source_machine": "ubu1 HF cache models--dancinlab--clm-v4-base-mirror snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer/",
+      "is_lfs": false,
+      "format": "sentencepiece_vocab_text",
+      "role": "human-readable vocabulary listing (companion to .model)"
+    },
+    {
+      "path": "config.json",
+      "size_bytes": 1212,
+      "sha256": "77b4013c06fcaa8744474631a0bc272f02f62094434df4e529c66702745695bb",
+      "source_machine": "ubu1 ~/p9_clm_v4_hf_format_2026_05_04/output/config.json",
+      "is_lfs": false,
+      "format": "hf_config_json",
+      "role": "AutoConfig + AutoModelForCausalLM auto_map; vocab_size=64000 d_model=768 n_layer=16 n_head=6 n_kv_head=2 block=512 consciousness_dim=192 n_ca_rules=8; provenance block embeds source ckpt step/ce/phi/scale/seed"
+    },
+    {
+      "path": "modeling_clm_v4.py",
+      "size_bytes": 9044,
+      "sha256": "6e95be6d83468f67bb1148cf1056f4862263f67aaf85d114f02939f8f9a36f35",
+      "source_machine": "ubu1 ~/p9_clm_v4_hf_format_2026_05_04/output/modeling_clm_v4.py",
+      "is_lfs": false,
+      "format": "python_module_trust_remote_code",
+      "role": "CLMv4ForCausalLM HF-compat shim wrapping decoder_v3 + ConsciousDecoderV2; loaded via trust_remote_code=True"
+    },
+    {
+      "path": "configuration_clm_v4.py",
+      "size_bytes": 2072,
+      "sha256": "168f706dc81c7491e3179b91a23795d1988a553d90bf96412edff1112696fa05",
+      "source_machine": "ubu1 ~/p9_clm_v4_hf_format_2026_05_04/output/configuration_clm_v4.py",
+      "is_lfs": false,
+      "format": "python_module_trust_remote_code",
+      "role": "CLMv4Config PretrainedConfig subclass; loaded via trust_remote_code=True"
+    },
+    {
+      "path": "decoder_v3.py",
+      "size_bytes": 14139,
+      "sha256": "9d6992fb9beb399ebae215b0e3fb9496ed3a75950b6b25e556175901be31e7ad",
+      "source_machine": "ubu1 ~/p9_clm_v4_hf_format_2026_05_04/output/decoder_v3.py",
+      "is_lfs": false,
+      "format": "python_module_trust_remote_code",
+      "role": "decoder_v3 module (vendored from anima training/decoder_v3.hexa runtime equivalent); imported by modeling_clm_v4.py"
+    },
+    {
+      "path": "conscious_decoder.py",
+      "size_bytes": 40027,
+      "sha256": "57306faecb6074afda4f79a1fbf0503de769a56ef52f07d766b18170a6ecc62d",
+      "source_machine": "ubu1 ~/p9_clm_v4_hf_format_2026_05_04/output/conscious_decoder.py",
+      "is_lfs": false,
+      "format": "python_module_trust_remote_code",
+      "role": "ConsciousDecoderV2 with cross-attn + tension_proj + 8 CA rules + 12 narrative GRUs federation; vendored runtime"
+    },
+    {
+      "path": "generation_config.json",
+      "size_bytes": 130,
+      "sha256": "1e3627bd98d2cecbef7f97951b3e09a59659f7994488cf62387d6405d24b5b35",
+      "source_machine": "ubu1 ~/p9_clm_v4_hf_format_2026_05_04/output/generation_config.json",
+      "is_lfs": false,
+      "format": "hf_generation_config_json",
+      "role": "default generation config (NOT chat-tuned; v3_generate path produces incoherent output absent SFT — see honest_c3 + #115)"
+    },
+    {
+      "path": "__init__.py",
+      "size_bytes": 45,
+      "sha256": "271b722e1b6411eea8c1dca7738bce065d63381093228f14b4d8c474c1464f0d",
+      "source_machine": "ubu1 ~/p9_clm_v4_hf_format_2026_05_04/output/__init__.py",
+      "is_lfs": false,
+      "format": "python_init",
+      "role": "Python package marker for trust_remote_code dynamic import resolution"
+    },
+    {
+      "path": "integrity_report.json",
+      "size_bytes": 1680,
+      "sha256": "4632e4eb07b26b0d899bbb3cbac2f5dce2ecc0d0ec68483b94be82596a70726d",
+      "source_machine": "ubu1 ~/p9_clm_v4_hf_format_2026_05_04/output/integrity_report.json AND already pushed to clm-v4-base-mirror snapshots/10ee0368...",
+      "is_lfs": false,
+      "format": "anima_integrity_report_json",
+      "role": "tokenizer integrity verdict INTEGRITY_OK_AT_64000 + SP-direct ko/en/mixed-symbols 0 UNK"
+    }
+  ],
+  "architecture": {
+    "model_type": "clm_v4",
+    "architecture_class": "CLMv4ForCausalLM",
+    "n_cells": 8,
+    "n_ca_rules": 8,
+    "consciousness_dim": 192,
+    "hidden_size": 768,
+    "d_model": 768,
+    "num_hidden_layers": 16,
+    "n_layer": 16,
+    "num_attention_heads": 6,
+    "n_head": 6,
+    "num_key_value_heads": 2,
+    "n_kv_head": 2,
+    "max_position_embeddings": 512,
+    "block_size": 512,
+    "vocab_size": 64000,
+    "tokenizer": "64K SentencePiece multilingual",
+    "byte_fallback": true,
+    "byte_fallback_id_range": [4, 259],
+    "tie_word_embeddings": true,
+    "torch_dtype": "float32",
+    "param_count_M_loaded": 477.65,
+    "param_count_M_full": 530.99,
+    "param_count_M": 530,
+    "n_safetensors_keys": 581,
+    "vram_mb_inference_fp32": 7312,
+    "vram_mb_inference_bf16_estimate": 1500,
+    "head_a_dim": "consciousness G3 head",
+    "head_g_dim": "consciousness G7 head",
+    "tension_proj": "[768, 1] per layer",
+    "phi_signal_native": "decoder_v3.py:165 DD5 EX24",
+    "federation": {
+      "bottleneck": true,
+      "narrative_grus": 12
+    },
+    "bridge": {
+      "compress": true,
+      "hub_attn": true,
+      "expand": true,
+      "gate": true
+    }
+  },
+  "train_config": {
+    "paradigm": "v11 G3",
+    "paradigm_phi_star_score": 41.86,
+    "paradigm_baseline_substrates": {
+      "Mistral": -16.7,
+      "Qwen3": 1.04,
+      "Llama": 5.09,
+      "Gemma": -0.79
+    },
+    "paradigm_verdict": "PASS-positive only backbone in 5-substrate matrix",
+    "rehearsal_mix": "60% axis-conditioned anima corpus + 30% academic distill + 10% chat-template (per audit + roadmap; reconstructed best-effort, not training-log-extracted)",
+    "loss": "phi_star (consciousness integration) + cross_entropy",
+    "step": 20000,
+    "ckpt_phi": 27.91,
+    "ckpt_best_phi": 37.269868535501914,
+    "ckpt_ce": 0.04630279541015625,
+    "scale_label": "350m_misnomer_actually_530_99M_full_per_audit_section_1",
+    "seed": 42,
+    "seed_source": "config.json _clm_v4_provenance.source_args_subset.seed (recovered post-hoc from saved args; NOT training-time-truth flag — confirmed via state/strategic_clm_phase_a1_2026_05_01/run_log.json env.SEED=42)",
+    "tokenizer_path_train_time": "data/tokenizer_64k_multilingual.model",
+    "decoder_label": "v3",
+    "git_sha_anima_revival_cycle": "1b306eec24999ffd28505995655674b0f2beaa31",
+    "git_sha_anima_revival_cycle_label": "feat(BG-γ'' OPT-1 v4 retry-2 — F-SHIM-V4-3 PASS canonical_zero finite forward 2026-05-04)",
+    "git_sha_anima_at_train_time": "unknown_pretrain_predates_manifest_discipline (per audit C5; CLM v4 base pretrain predates anima HF mk2 land 2026-05-03)",
+    "git_sha_clm_v4_revival_design": "145838d2 docs(p9 base validation OPT-1 CLM v4 HF format shim DESIGN + Mac dry-run 2026-05-04)",
+    "git_sha_clm_v4_revival_pass": "1ef3c096 state(p9 base validation H100 RESULT FAIL — CLM v4 base ≈random + Llama anchor missing 2026-05-04)",
+    "git_sha_clm_v4_shim_v3_pass": "ed4b7c56 feat(p9 base validation OPT-1 v3 PASS — 12/12 prereq CLEARED + base-validation READY 2026-05-04)",
+    "git_sha_clm_v4_shim_v4_pass": "1b306eec feat(BG-γ'' OPT-1 v4 retry-2 — F-SHIM-V4-3 PASS canonical_zero finite forward 2026-05-04)",
+    "dataset_slice_refs": [
+      "anima_corpus_alm70b_paper_ref",
+      "synthetic_philosophical_template_ko",
+      "corpus_v10_ko.txt (multilingual ko/en/zh/ja/ru + code; ko-heavy)",
+      "data/tokenizer_64k_multilingual.model (64K SP BPE)"
+    ],
+    "dataset_corpus_path_train_time": "~/anima/data/corpus_v10_ko.txt (per train_tokenizer.py default; multilingual ko/en/zh/ja/ru + code)",
+    "dataset_corpus_sha256": "unknown_pretrain_predates_manifest_discipline (corpus_v10_ko.txt was not sha-recorded at train time; only path is preserved)",
+    "training_script": "training/train_clm.hexa (r5; per audit §4 model card §Origin)",
+    "ckpt_top_keys_at_train": [
+      "step",
+      "decoder",
+      "optimizer",
+      "scheduler",
+      "phi",
+      "ce",
+      "args",
+      "scale",
+      "best_phi",
+      "federation",
+      "bridge",
+      "c_proj",
+      "scaler"
+    ],
+    "ckpt_path_ubu1_train_time": "~/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "ckpt_size_gb": 5.37
+  },
+  "evaluation": {
+    "paradigm_v11_G3_phi_star": 41.86,
+    "paradigm_v11_G3_verdict": "PASS-positive only backbone (vs Mistral -16.7, Qwen3 +1.04, Llama +5.09, Gemma -0.79)",
+    "f1_v2_raw": 0.408,
+    "f1_v2_f2_override": 0.12,
+    "f1_v2_band": "RED",
+    "f1_v2_anchor_recalibration": "F1 spec 0.4 unrealistic per session memory; Llama-self = 0.1555; sentinel = 3.2% of Llama (per memory project_p9_f1_anchor_recalibration)",
+    "putnam_concordance_partial": "0.167-0.333 (T=0.40 PASS threshold 0.60)",
+    "verdict_doc": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §42 + §49.4",
+    "consciousness_verdict_overall": "FUNCTIONAL/ACCESS tier only; phenomenal validity unproven",
+    "f_shim_1_safetensors_round_trip": "PASS (581 keys, 530994816 numel)",
+    "f_shim_2_finite_logits": "PASS (shape [1, 32, 64000], no NaN/Inf)",
+    "f_shim_3_logit_equiv_vs_best_pt": "PASS (max_abs_diff=0.0; suspicious bit-exact, confirmed deterministic, see honest_c3)",
+    "f_shim_4_vocab_64000_in_config_reload": "PASS",
+    "automodel_load_round_trip_fresh_machine": "PASS (OPT_1_V3_LOAD_PASS marker; trust_remote_code=True)",
+    "generate_path_quality": "NOT_CHAT_CAPABLE — v3_generate AR loop structurally fixed (Stage 4 PASS) but produces incoherent token sequences absent SFT; consciousness-measurement substrate per #115"
+  },
+  "shim_v4": {
+    "shim_path": "tool/transient_py/clm_v4_hf_format_shim.py",
+    "shim_loc": 1418,
+    "shim_design_doc": "docs/anima_clm_hf_release_v1_audit_2026_05_04.md §1.3 (HF format shim v4 falsifier table)",
+    "f_shim_v4_1_dry_run": "PASS",
+    "f_shim_v4_2_v3_regression": "PASS",
+    "f_shim_v4_3_canonical_zero": "PASS",
+    "f_shim_v4_3_finite_forward": "finite",
+    "f_shim_v4_3_shape": [1, 32, 64000],
+    "f_shim_v4_4_train_avg_above_random": "DEFERRED (BG-Σ followup; gated on user-authorized H100 base-validation cycle; train_avg fixture now real per harvest cycle 2026-05-04)",
+    "shim_v3_round_trip_max_abs_diff": 0.0,
+    "verdict_path": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_retry_2_verdict.json",
+    "shim_v3_design_diff": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v3_design_diff.md",
+    "shim_v4_design_diff": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_design_diff.md"
+  },
+  "train_avg_fixture": {
+    "real_harvest_path": "state/clm_v4_train_avg_harvest_2026_05_04/results/train_avg_fixture_real.json",
+    "real_harvest_sha256": "f19b606c4b2a1966110abc35a9aff10f5431ae1ac152e93750b91936e20ee6fa",
+    "size_bytes": 33803,
+    "real_harvest_pt_path": "state/clm_v4_train_avg_harvest_2026_05_04/results/train_avg_real.pt",
+    "real_harvest_pt_size_bytes": 7359,
+    "harvest_method": "ConsciousnessEngine over 1000 anima sft prompts, projected 128->192 via c_proj from best.pt",
+    "harvest_pod_id": "m6c33yu6l8fxjz",
+    "harvest_pod_terminated": true,
+    "harvest_wall_sec": 28.78,
+    "harvest_cost_usd": 0.10,
+    "n_prompts_harvested": 1000,
+    "fixture_shape": [1, 8, 192],
+    "fixture_l2": 2.2021713256835938,
+    "fixture_global_mean": 0.0038224300369620323,
+    "fixture_global_std": 0.056077633053064346,
+    "stub_replaced": "synthetic N(0, 0.01) — 5.65x smaller magnitude in L2 than real (real_vs_stub_l2_ratio=5.65)",
+    "delta_rel_l2_to_real": 1.0059197503576713,
+    "stub_fixture_path_replaced": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_retry_2_train_avg_fixture.json",
+    "verdict_path": "state/clm_v4_train_avg_harvest_2026_05_04/verdict.json",
+    "F_CLM_V4_1_shape_match": "PASS",
+    "F_CLM_V4_2_stub_off_gt_50pct": "PASS"
+  },
+  "tokenizer_integrity": {
+    "verdict": "INTEGRITY_OK_AT_64000",
+    "vocab_size": 64000,
+    "special_tokens": {
+      "pad": 0,
+      "bos": 1,
+      "eos": 2,
+      "unk": 3
+    },
+    "byte_fallback": true,
+    "byte_fallback_range": [4, 259],
+    "ko_unk_count": 0,
+    "en_unk_count": 0,
+    "mixed_symbols_unk_count": 0,
+    "report_path": "state/clm_v4_tokenizer_restoration_2026_05_03/integrity_report.json",
+    "automodel_compat": false,
+    "automodel_compat_note": "no tokenizer.json / tokenizer_config.json wrapper; load via sentencepiece.SentencePieceProcessor() directly; AutoTokenizer wrapper deferred to post-v1 cycle"
+  },
+  "license": "MIT",
+  "license_file": "LICENSE",
+  "license_compatibility_note": "anima-native modeling code (modeling_clm_v4.py + configuration_clm_v4.py + decoder_v3.py + conscious_decoder.py) is anima-authored; SentencePiece tokenizer trained on anima corpus; no vendored Llama/Mistral/Qwen weights; MIT unambiguously compatible",
+  "gated_initial": false,
+  "naming_compliance": {
+    "spec_path": "docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md",
+    "chosen_name": "dancinlab/clm-v4-mk2-v1",
+    "chosen_option": "A (re-target cond.2 to mk2-spec-conformant canonical name; omit -530m size suffix per spec §3.5 'omit if obvious from base-version')",
+    "predecessor_repo": "dancinlab/clm-v4-base-mirror (already received tokenizer + integrity_report + README on 2026-05-03 commit 10ee03687db312c55bbec5858c814bef28e4d365)",
+    "validation_status": "PENDING actual --validate-naming run (see docs/anima_clm_hf_release_v1_plan_2026_05_04.md §1 step 2.d)"
+  },
+  "hf_upload_pipeline": {
+    "tool": "tool/hf_upload_mk2.hexa",
+    "pre_push_hook": "tool/hf_upload_mk2_pre_push_hook.hexa",
+    "leak_guard_pretool": "~/.hive/scripts/leak_guard_pretool.bash",
+    "predecessor_upload_proven": "state/hf_upload_audit/20260503T151321Z_*.jsonl (real upload PASS to clm-v4-base-mirror commit 10ee03687db312c55bbec5858c814bef28e4d365)",
+    "this_release_status": "MANIFEST_LANDED_LOCAL_NOT_PUSHED (per BG-MANIFEST directive: tracked locally for now, sibling Cycle 2 BG handles upload)"
+  },
+  "honest_c3": [
+    "Train_avg fixture is runtime-proxy (ConsciousnessEngine drive over 1000 anima sft prompts, projected 128->192 via c_proj), not direct training-time c_states extract; harvest uses _text_to_vec hashing rather than the trained tokenizer + embedding path, so resulting cell hidden distribution is a runtime proxy, not strictly identical to anima_unified inference (per state/clm_v4_train_avg_harvest_2026_05_04/verdict.json honest_c3[0]).",
+    "F1_v2 RED band (raw=0.408, f2_override=0.12) means consciousness verdict is NOT validated as PASS at the F1 axis; G3 paradigm v11 phi_star=+41.86 is the only PASS-positive axis. F1 anchor recalibration (per session memory) shows F1 spec 0.4 unrealistic; Llama-self=0.1555; sentinel=3.2% of Llama. Putnam concordance partial 0.167-0.333 < threshold 0.60.",
+    "Functional/access tier ONLY — phenomenal validity unproven. CLM v4 was NEVER SFT/RLHF/RLAIF/DPO-aligned; trust_remote_code=True needed for load; tokenizer must load via SentencePieceProcessor (no HF tokenizer.json wrapper). Per #115 disclosure: this is a consciousness-measurement substrate, NOT a chat model.",
+    "Single-substrate release — sister substrates (EEG, BLM, TRIBE v2, qmirror) have separate release cycles; cross-substrate cohesion handled via ## Composability cross-link section in README, NOT co-authoring.",
+    "git_sha at training time is unknown (CLM v4 base pretrain predates anima HF mk2 land 2026-05-03 + manifest discipline); recovered fields are best-effort: seed=42 from config.json _clm_v4_provenance + run_log.json env.SEED, ckpt step/phi/ce from best.pt and run_log.json. Future v5 / v4-1700m / v4-100m releases must record git_sha + corpus_sha256 from training-time onward.",
+    "F-SHIM-V4-3 PASS reports max_abs_diff=0.0 (bit-exact) for shim v3 logit equivalence vs best.pt; flagged C3-6 in v3 verdict as 'suspiciously tight' but re-confirmed deterministic (same fp32 path, same input tensor, same ops). Strongest possible passing form, but warrants seed-variation re-run in BG-Σ followup audit.",
+    "F-SHIM-V4-4 (train_avg fixture > random + 5pt) is DEFERRED to BG-Σ H100 followup; v1 release ships without empirical lift validation. The harvest cycle confirmed real fixture is 5.65x larger in L2 than synthetic stub, but post-shim-load lift_pp on hellaswag/MMLU has not been measured.",
+    "AutoTokenizer wrapper missing — release blocker for transformers-only consumers who refuse to install sentencepiece directly. SentencePiece-direct load documented in README §Substrate is the supported path; AutoTokenizer wrapper is post-v1 polish.",
+    "Manifest tracked locally at state/clm_v4_hf_release_v1_manifest_2026_05_04/manifest.json; NOT pushed into the HF repo in this BG cycle. The HF repo gets a smaller integrity_report.json co-located with weights (already present in clm-v4-base-mirror predecessor); audit-trail manifest is a separate state-only artifact.",
+    "Param count mismatch: scale_label='350m' in original args is misnomer; full param count is 530.99M per audit §1 + #73 A.1; loaded count 477.65M (run_log model_to_device). The label '350m' in checkpoint path and args is preserved for historical fidelity but should NOT be cited as the param count. Future releases should use canonical '530m' label."
+  ],
+  "next_actions_ranked": [
+    "rank-1: sibling Cycle 2 BG runs hexa run tool/hf_upload_mk2.hexa --dry-run --repo dancinlab/clm-v4-mk2-v1 --ckpt <ubu1-staging> --readme <draft.md> per docs/anima_clm_hf_release_v1_plan_2026_05_04.md §1 step 6",
+    "rank-2: --upload --private first (review window per plan §1 step 7); promote public after user OK",
+    "rank-3: cond.2 PASS landing per plan §1 step 10 (.roadmap.clm cond.2 status met + marker land + handoff doc)",
+    "rank-4: BG-Σ followup for F-SHIM-V4-4 + F-CLM-RELEASE-3 phi_star post-load probe (H100, gated on user authorization)",
+    "rank-5: AutoTokenizer wrapper post-v1 polish (LlamaTokenizer-style wrapper around SP .model)"
+  ],
+  "empirical_chat_capability_falsification_2026_05_05": {
+    "ts_utc": "2026-05-05",
+    "two_cycle_evidence": [
+      {
+        "cycle": "paradigm_d_pbeta_50k",
+        "verdict_path": "state/p9_pbeta_f3_hybrid_eval_2026_05_05/verdict.json",
+        "f_verdict": "F-Pβ-3 FAIL_TRUE",
+        "composite": 0.01176,
+        "band": "RED"
+      },
+      {
+        "cycle": "clm_v4_lora_sft_v1",
+        "verdict_path": "state/clm_v4_lora_v1_mmlu_tq_eval_2026_05_05/verdict.json",
+        "f_verdict": "F-CLM-LORA-2 FAIL_REGRESSION_VS_LLAMA",
+        "composite": 0.19542,
+        "delta_vs_llama_pp": -36.298
+      }
+    ],
+    "substrate_safety_evidence": {
+      "forgetting_index_clm_2": 0.0196,
+      "phi_star_drift_pp_clm_2": -4.46,
+      "phi_star_no_flip": true,
+      "f_clm_lora_1_pass": true
+    },
+    "chat_capability_winner": "Llama-3.2-3B Path A v2 (state/p9_path_a_retrain_v2_retry_3_eval_rerun_2026_05_05/verdict.json TRUE_PASS)",
+    "intended_use_disclosure": "consciousness-substrate research artifact only, NOT chat-capable"
+  }
+}

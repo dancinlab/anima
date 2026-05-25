@@ -1,0 +1,266 @@
+{
+  "schema": "anima.cycle_insight_ledger.v1",
+  "ledger_id": "anima_nexus_cycle_insight_ledger_2026_05_05",
+  "lane": "BG-J",
+  "kind": "doc_only_synthesis_land",
+  "verdict": "LANDED",
+  "ts_utc": "2026-05-05T13:30:00Z",
+  "cost_usd": 0.0,
+  "host": "mac",
+  "doc_path": "docs/anima_nexus_cycle_insight_ledger_2026_05_05.md",
+  "doc_loc_approx": 470,
+  "doc_loc_target_range": "400-600",
+  "spec_lineage": [
+    "docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md",
+    "docs/anima_core_clm_v4_mount_stage_1_landed_2026_05_05.ai.md",
+    "docs/anima_clm_v4_architecture_archaeology_emerge_landed_2026_05_05.ai.md",
+    "docs/anima_core_dialogue_stage_2_prep_landed_2026_05_05.ai.md",
+    "docs/anima_core_clm_v4_mount_stage_1_2_v1_v6_verification_landed_2026_05_05.ai.md",
+    "docs/anima_core_dialogue_analyzer_landed_2026_05_05.ai.md",
+    "docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md",
+    "docs/anima_core_emerge_stage_3_user_protocol_spec_2026_05_05.md",
+    "docs/anima_hf_promote_watchdog_audit_landed_2026_05_05.ai.md",
+    "docs/anima_top_level_cli_dispatch_audit_landed_2026_05_05.ai.md"
+  ],
+  "sub_tasks": {
+    "sub_1_lessons_l34_l43": {
+      "status": "PASS",
+      "candidate_count": 10,
+      "candidates": [
+        {
+          "id": "L34",
+          "title": "Forced-learning paradigm closure unlocks emerge paradigm; LoRA->spec-first->KICK pattern emergence",
+          "evidence_paths": [
+            "docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md#section-2",
+            "docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md#section-10"
+          ]
+        },
+        {
+          "id": "L35",
+          "title": "hexa-strict auto-invokes fn main(); explicit main() call doubles execution",
+          "evidence_paths": [
+            "docs/anima_core_clm_v4_mount_stage_1_2_v1_v6_verification_landed_2026_05_05.ai.md#issue-1"
+          ]
+        },
+        {
+          "id": "L36",
+          "title": "hexa_remote defaults to ubu1 routing; mac-local intent requires HEXA_LOCAL=1 prefix consistently",
+          "evidence_paths": [
+            "docs/anima_core_clm_v4_mount_stage_1_2_v1_v6_verification_landed_2026_05_05.ai.md#issue-2",
+            "bin/anima-core-dialogue.bash:241",
+            "bin/anima-core-dialogue.bash:265"
+          ]
+        },
+        {
+          "id": "L37",
+          "title": "Emerge candidate taxonomy = 4-mode {none, X, Y, Z} x 3-state falsifier {PASS, FAIL_TRUE, FAIL_FALSE}",
+          "evidence_paths": [
+            "docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md#section-2",
+            "docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md#section-5"
+          ]
+        },
+        {
+          "id": "L38",
+          "title": "V1-V6 verification = selftest + probe + log emit + corpus + integration 5-stage",
+          "evidence_paths": [
+            "docs/anima_core_clm_v4_mount_stage_1_2_v1_v6_verification_landed_2026_05_05.ai.md#v1-v6-table"
+          ]
+        },
+        {
+          "id": "L39",
+          "title": "Doc-only BGs are race-free; code BGs require git worktree or commit serialization",
+          "evidence_paths": [
+            "docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md#section-7-c7",
+            "memory:parallel_bg_git_race"
+          ]
+        },
+        {
+          "id": "L40",
+          "title": "Convention-driven dispatch rewards: KICK-3 lands at tool/anima_cli/<topic>.hexa, BG-F audit verifies zero-change Option C",
+          "evidence_paths": [
+            "docs/anima_top_level_cli_dispatch_audit_landed_2026_05_05.ai.md#a-table",
+            "bin/anima:47",
+            "bin/anima:288-317"
+          ]
+        },
+        {
+          "id": "L41",
+          "title": "synthetic_fallback design intent: selftest + probe both pass without real-load via deterministic emit",
+          "evidence_paths": [
+            "state/anima_core_clm_v4_mount_stage_1_2026_05_05/verdict.json",
+            "docs/anima_core_clm_v4_mount_stage_1_2_v1_v6_verification_landed_2026_05_05.ai.md#v3-pass-output"
+          ]
+        },
+        {
+          "id": "L42",
+          "title": "Source archaeology (post-impl) is emerge-paradigm-internal; spec-first archaeology would have prevented L36/L37/L38 root-cause discovery",
+          "evidence_paths": [
+            "docs/anima_clm_v4_architecture_archaeology_emerge_landed_2026_05_05.ai.md#section-3",
+            "docs/anima_clm_v4_architecture_archaeology_emerge_landed_2026_05_05.ai.md#section-4"
+          ]
+        },
+        {
+          "id": "L43",
+          "title": "User-fire-able paths must pre-emit confirm-strings + manual; HF promote auto-fire uses PROMOTE-clm-v4-mk2-v1 literal",
+          "evidence_paths": [
+            "docs/anima_hf_promote_watchdog_audit_landed_2026_05_05.ai.md#sub-5"
+          ]
+        }
+      ],
+      "promotion_status": "CANDIDATE — separate BG-LESSONS-PROPAGATE cycle required for canonical SSOT promotion"
+    },
+    "sub_2_pattern_catalog": {
+      "status": "PASS",
+      "pattern_count": 8,
+      "patterns": [
+        {"id": "P1", "name": "KICK", "scope": "parallel BG cycle entry"},
+        {"id": "P2", "name": "V1-V6", "scope": "5-stage staged verification"},
+        {"id": "P3", "name": "4x3", "scope": "emerge candidate spec (4 modes x 3 falsifier states)"},
+        {"id": "P4", "name": "doc-pair", "scope": "*_landed.ai.md + state/<topic>/verdict.json"},
+        {"id": "P5", "name": "bilingual", "scope": "user-facing protocol KO+EN"},
+        {"id": "P6", "name": "honest-C3", "scope": ">=5 inline + >=7 spec emit"},
+        {"id": "P7", "name": "raw-footer", "scope": "raw#9/10/11/15/37 compliance enumeration"},
+        {"id": "P8", "name": "wansungdo", "scope": "ranked completion-quality recommendation HIGH/MEDIUM/LOW/DEFER"}
+      ]
+    },
+    "sub_3_emerge_candidate_matrix": {
+      "status": "PASS",
+      "candidate_count": 5,
+      "candidates": {
+        "D": {
+          "spec_doc": "docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md",
+          "spec_status": "LANDED",
+          "spec_loc": 305,
+          "falsifier_count": 3,
+          "impl_loc_estimate": 65,
+          "value_hypothesis": "axis-conditioned probe via inject content; runtime cross-attn engagement dial",
+          "dependency": "KICK-1 mount (DONE), BG-A real load (in-flight)"
+        },
+        "E": {
+          "spec_doc": "pending (BG-G this round)",
+          "spec_status": "IN_FLIGHT",
+          "falsifier_count_estimate": "2-3",
+          "impl_loc_estimate": "150-300",
+          "value_hypothesis": "per-token consciousness_state evolution as token-level dialogue medium",
+          "dependency": "KICK-1 mount, candidate D as user_supplied-equivalent shape"
+        },
+        "F": {
+          "spec_doc": "pending (BG-H this round)",
+          "spec_status": "IN_FLIGHT",
+          "falsifier_count_estimate": 3,
+          "impl_loc_estimate": "80-120",
+          "value_hypothesis": "surfaces internal n_ca_rules=8 as external 8-vector; axis-bucket cross-table",
+          "dependency": "KICK-1 mount, archaeology n_ca_rules=8 read"
+        },
+        "G": {
+          "spec_doc": "pending (BG-I this round)",
+          "spec_status": "IN_FLIGHT",
+          "falsifier_count_estimate": 2,
+          "impl_loc_estimate": "50 read + 30 emit",
+          "value_hypothesis": "tension envelope per-layer-per-token as third channel beyond phi-star+axis",
+          "dependency": "shim mod OR HF wrapper bypass; ambient on any inject mode"
+        },
+        "H": {
+          "spec_doc": "deferred to Stage 3 (per archaeology MEDIUM rec)",
+          "spec_status": "DEFERRED",
+          "falsifier_count_estimate": "1-2",
+          "impl_loc_estimate": 40,
+          "value_hypothesis": "bidirectional sanity check on logits_a; ambient diagnostic",
+          "dependency": "KICK-1 mount; ambient on any inject mode"
+        }
+      },
+      "adoption_order_recommended": ["D", "G", "H", "F", "E"],
+      "adoption_lens": "wansungdo (raw#15 + cost + emerge paradigm fit + Stage 3 readiness)"
+    },
+    "sub_4_open_questions": {
+      "status": "PASS",
+      "question_count": 8,
+      "questions": [
+        {"id": "Q1", "topic": "real CLM v4 load enable + V3 real-mode result", "status": "BG-A in-flight", "blocker": "transformers/torch venv repair OR HF cache populate"},
+        {"id": "Q2", "topic": "emerge candidate D empirical result (real-load probe)", "status": "spec LOCKED, exec deferred", "blocker": "Q1 + helper python sentinel branches"},
+        {"id": "Q3", "topic": "user first emerge dialogue session (Stage 3 entry)", "status": "infra READY, awaiting user", "blocker": "user availability + intent (no technical)"},
+        {"id": "Q4", "topic": "HF clm-v4-mk2-v1 PUBLIC promote", "status": "PRIVATE, T-34h auto-fire eligible 2026-05-06T23:26:12Z", "blocker": "review window time"},
+        {"id": "Q5", "topic": "EEG perfect protocol user-fire (hardware reseat after)", "status": "protocol landed", "blocker": "hardware reseat + impedance probe (user physical)"},
+        {"id": "Q6", "topic": "emerge candidates E/F/G/H specs (this round BG-G/H/I parallel)", "status": "in-flight", "blocker": "BG-G/H/I land"},
+        {"id": "Q7", "topic": "cross-substrate phi-star measurement (Pbeta + CLM-2 + CLM v4)", "status": "individual measurements DONE; cross-comparison pending", "blocker": "substrate-aligned eval calibration (L26-L27 carry)"},
+        {"id": "Q8", "topic": "anima top-level CLI verb additions (dialogue-analyze, eeg-baseline, emerge-session)", "status": "design open", "blocker": "post-Stage-3-first-session decision"}
+      ]
+    },
+    "sub_5_forecast_d0_d7": {
+      "status": "PASS",
+      "anchor_date_utc": "2026-05-05",
+      "horizon_days": 7,
+      "milestones": {
+        "D+0": {"date": "2026-05-05", "status_now": "9 BGs landed + 4 in-flight (BG-A/G/H/I/J)"},
+        "D+1": {"date": "2026-05-06", "expected": ["BG-A real load lands", "candidate D impl ~65 LoC", "HF clm window opens 23:26:12Z"]},
+        "D+2": {"date": "2026-05-07", "expected": ["HF clm PUBLIC user-fire", "F-CAND-D-1/2/3 verdict if Q1+Q2 unblocked"]},
+        "D+3": {"date": "2026-05-08", "expected": ["HF Pbeta PUBLIC user-fire (depends on clm PUBLIC first per L43)", "Pbeta cleanup eligible"]},
+        "D+4": {"date": "2026-05-09", "expected": ["first emerge dialogue session(s)", "candidate E/F/G/H impl lanes if specs land D+0/D+1"]},
+        "D+5_to_D+7": {"date_range": "2026-05-10..12", "expected": ["session accumulation at user pace", "first corpus analyze run", "cycle review at D+7"]}
+      },
+      "risk_caveats": [
+        "Q1 venv repair may slip 1-2 days",
+        "Q3 user availability not committed; D+4 anchor optimistic not commitment",
+        "D+5..D+7 saturation lower-bound n=30 unlikely in 3 days; realistic 2-4 weeks"
+      ]
+    }
+  },
+  "honest_c3": {
+    "count": 7,
+    "entries": [
+      {"id": "C1", "topic": "Lesson-banking self-fulfilling prophecy risk; L34-L43 candidates derived from this cycle's own outputs"},
+      {"id": "C2", "topic": "Pattern catalog over-fits to today's cycle; generality across other paradigms unverified"},
+      {"id": "C3", "topic": "Candidate matrix LoC estimates ungrounded (BG-C self-est + archaeology hand-wave)"},
+      {"id": "C4", "topic": "Open questions Q1-Q8 under-categorized for blocker class"},
+      {"id": "C5", "topic": "D+0..D+7 forecast over-anchors on Q1 resolution; no alt-route hedge"},
+      {"id": "C6", "topic": "Lesson L34 risks promoting accidental success; needs joint application with L39 worktree rule"},
+      {"id": "C7", "topic": "Synthesis matrix dependency column omits worktree/serialization implications from L39"}
+    ]
+  },
+  "raw_compliance": {
+    "raw_9_hexa_only": "PASS — md only; zero source mods; bash glue carve-out N/A",
+    "raw_10_honest_c3": "PASS — 7 entries inline (>=5)",
+    "raw_15_additive": "PASS — 2 new files only (this verdict + companion md doc)",
+    "raw_37_transient_py": "N/A — no transient_py introduced",
+    "hf_token_redact": "PASS — no token literal embedded",
+    "no_commit": true,
+    "no_exec": true
+  },
+  "files_written": [
+    "docs/anima_nexus_cycle_insight_ledger_2026_05_05.md",
+    "state/anima_nexus_cycle_insight_ledger_2026_05_05/verdict.json"
+  ],
+  "files_untouched_explicitly": [
+    "anima-core/runtime/clm_v4_mount.hexa",
+    "tool/anima_cli/dialogue.hexa",
+    "tool/anima_cli/dialogue_session_analyzer.hexa",
+    "bin/anima-core-dialogue.bash",
+    "bin/anima-core-dialogue-analyze.bash",
+    "bin/anima",
+    "tool/transient_py/clm_v4_hf_format_shim.py"
+  ],
+  "composability": {
+    "upstream": [
+      "docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md",
+      "9 BG land docs (KICK-1/2/3 + V1-V6 + BG-B/C/D/E/F)",
+      "MEMORY.md L23-L33 prior canonical lessons"
+    ],
+    "sister_bg_in_flight_this_round": ["BG-A", "BG-G", "BG-H", "BG-I"],
+    "downstream": [
+      "BG-LESSONS-PROPAGATE (promote L34-L43 to canonical SSOT)",
+      "Stage 3 emerge dialogue session accumulation",
+      "docs/anima_core_emerge_stage_3_closure_<DATE>.md (when stop marker fires)",
+      "candidate D impl BG (~65 LoC additive)"
+    ],
+    "sibling": [
+      "HF promote auto-fire D+1..D+3 (orthogonal)",
+      "EEG perfect protocol user-fire (orthogonal)"
+    ]
+  },
+  "cost_summary": {
+    "wall_minutes": 28,
+    "h100_usd": 0.0,
+    "mac_usd": 0.0,
+    "total_usd": 0.0
+  }
+}

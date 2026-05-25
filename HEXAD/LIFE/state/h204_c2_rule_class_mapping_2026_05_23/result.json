@@ -1,0 +1,73 @@
+{
+  "id": "H_204",
+  "cycle": 2,
+  "slug": "h204-c2-rule-class-mapping",
+  "date": "2026-05-23",
+  "raw_protocol": "raw#15 additive (frozen Cycle#1 / Hypothesis / Predictions / Falsifiers / Honest Limits / Verdict preserved)",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (RFC 036 phi_spatial on 2 substrates, ranking-correlation)",
+  "phi_primitive": "RFC 036 phi_spatial (n_bins=4); H_204 Cycle#1 + H_007 Cycle#1 byte-equal carry",
+  "k_axis": {
+    "substrate": "8-site periodic catalytic lattice (H_204 Cycle#1 carry)",
+    "config": { "M_sites": 8, "dim": 12, "warm": 0, "n_seeds": 5, "K_rate": 0.6, "decay": 0.1, "diffuse": 0.05, "seed_base": 169329156 },
+    "phi_k": {
+      "k_0_00": 3.69079,
+      "k_0_25": 5.38703,
+      "k_0_50": 5.25399,
+      "k_1_00": 4.46947
+    },
+    "determinism_rerun_k0_25": { "phi": 5.38703, "byte_equal": true }
+  },
+  "rule_axis": {
+    "substrate": "1D elementary CA periodic (H_007 Cycle#1 carry)",
+    "config": { "N": 16, "dim": 12, "warm": 8, "reps": 5 },
+    "phi_rule": {
+      "rule_250_class_I_ordered":      1.14511e-05,
+      "rule_110_class_IV_edge_of_chaos":0.556454,
+      "rule_30_class_III_chaotic":     0.509944
+    },
+    "determinism_rerun_rule110": { "phi": 0.556454, "byte_equal": true }
+  },
+  "pair_mapping": [
+    { "pair": "k=0.00 ↔ rule 250 (Class-I ordered)",       "rank_k": 3, "rank_r": 3 },
+    { "pair": "k=0.25 ↔ rule 110 (Class-IV edge-of-chaos)", "rank_k": 1, "rank_r": 1 },
+    { "pair": "k=1.00 ↔ rule 30  (Class-III chaotic)",      "rank_k": 2, "rank_r": 2 }
+  ],
+  "spearman": { "n_pairs": 3, "sum_d_sq": 0.0, "denom_n_cubed_minus_n": 24.0, "rho": 1.0 },
+  "sub_criteria": {
+    "C2_1_k0_lowest_and_rule250_lowest":  { "verdict": "PASS" },
+    "C2_2_k025_peak_and_rule110_peak":    { "verdict": "PASS" },
+    "C2_3_k1_middle_and_rule30_middle":   { "verdict": "PASS" },
+    "C2_4_k05_between_full_closure_and_peak": { "phi_k_05": 5.25399, "verdict": "PASS" },
+    "C2_5_spearman_rho_ge_0_7":           { "rho": 1.0, "verdict": "PASS" }
+  },
+  "sub_criteria_met": 5,
+  "falsifiers": {
+    "F_C2_1_inverse_U_regression":  { "metric": "phi_k0 > phi_k0.25",       "triggered": false },
+    "F_C2_2_H007_regression":       { "metric": "phi_rule110 <= phi_rule250", "triggered": false },
+    "F_C2_3_axis_separation":       { "metric": "spearman_rho < 0.3",         "triggered": false },
+    "F_C2_4_determinism_violation": { "metric": "any rerun byte-different",   "triggered": false },
+    "F_C2_5_primitive_error":       { "metric": "any phi < 0",                "triggered": false }
+  },
+  "any_falsifier_triggered": false,
+  "verdict_rule": "MAPPING_STRONG iff 5/5 sub-criteria PASS; DIRECTIONAL if 3-4; WEAK if ≤2; FALSIFIED if any F-C2 TRIGGERED",
+  "verdict": "MAPPING_STRONG",
+  "honest_limits": [
+    "L-C2-1: k-axis substrate (autopoietic closure cycle on 8-site catalytic lattice) ≠ rule-axis substrate (1D elementary CA, length-16 periodic). '동등'은 Φ pattern 동등이지 substrate-mechanism 동등 X — different microdynamics may share pattern-level signature.",
+    "L-C2-2: 4-point k sweep + 3 rule classes = sparse mapping. Spearman ρ on n=3 ranks is COARSE rank-correlation (denom n³-n=24, minimum rho step 0.25). Finer k-sweep + 4+ rule-class sampling would tighten the correlation estimate but stays within the same family of rank statistics.",
+    "L-C2-3: H_007/H_204 Φ 절대값 단위 다름 — k-axis 8-site lattice transient Φ ∈ [3.5, 5.4] range while rule-axis 16-site CA Φ ∈ [0.0, 0.6] range. Only ranking-correlation is meaningful here; absolute Φ value matching is NOT claimed.",
+    "L-C2-4: Φ peak ≠ 'consciousness' — H_004 boundary carry (functional reducibility 부분, phenomenal qualia 미터치). The cross-axis mapping is about *dynamical signature* of integrated information, NOT a claim about phenomenal experience.",
+    "L-C2-5: 본 cycle 은 *correlational* observation — k 와 rule 사이 causal mechanism 부재. 둘 다 inverse-U Φ pattern 을 보이는 것이 pattern-level analogy 이지, k=0.25 closure 가 'rule-110-같은 internal computation' 을 한다는 mechanistic claim 은 만들지 않는다.",
+    "L-C2-6: rule-axis Class-II representative 누락 — C2.4 'k=0.5 ↔ Class-II periodic' 는 spec에 명시되었으나 rule-axis Φ는 3 rule (250/110/30) 만 측정. Class-II 측정은 rule 184 또는 rule 232 등 별도 cycle. 본 cycle 의 C2.4 는 k-axis 만 검사 (descending arm structure).",
+    "L-C2-7: Spearman threshold 0.7 (C2.5) 는 design choice — n=3 paired ranks 위에서 sample-size-corrected critical value 가 아니다. n=3 의 가능한 ρ 값은 {-1.0, -0.5, 0.5, 1.0} 사실상 4 levels — 본 threshold 0.7 은 '동일 ranking' (ρ=1.0) 만 PASS 로 인정하는 effective 한 보수적 cutoff."
+  ],
+  "cross_link": {
+    "H_204_cycle_1": "PR #218 — Φ(k) inverse-U PARTIAL_DIRECTIONAL 3/4 (peak Φ=5.39 at k≈0.25)",
+    "H_007": "PR — Φ(rule 110) > Φ(rule 30) > Φ(rule 250) Class-IV edge-of-chaos peak",
+    "H_157": "PR #160/#221 — weak-form mathematical panpsychism cross-substrate ranking",
+    "H_004": "PR #180 — Φ-function dissociation boundary (qualia 미터치)"
+  }
+}

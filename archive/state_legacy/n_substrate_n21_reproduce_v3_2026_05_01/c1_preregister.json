@@ -1,0 +1,62 @@
+{
+  "preregistration": "N-Substrate N-21 v3 — Edlund 2011 + Albantakis 2014 10-seed bootstrap",
+  "parent_doc": "docs/n_substrate_n21_reproduce_v2_results_2026_05_01.md",
+  "frozen_at_utc": "2026-05-02T05:03:28Z",
+  "frozen_by_agent": "N-21 v3 10-seed bootstrap",
+  "frozen_before_compute": true,
+  "compute_launch_after_utc": "2026-05-02T05:03:28Z",
+  "rationale": "v1+v2 ran without pre-registered C1 thresholds. Per v2 §4 blocker #5, future cycles MUST pre-register before launch. This file is written and committed to file-system state BEFORE any v3 worker is dispatched to ubu1/ubu2. Sign-and-magnitude criteria are derived from Edlund 2011 (positive Pearson r) and Albantakis 2014 (monotonic concept/Φ rise with env complexity).",
+
+  "edlund_2011_animat_phi_fitness": {
+    "metric_primary": "Pearson r(Φ, fitness) over all valid (Φ, fit) pairs across 10 seeds × 200 gen",
+    "metric_secondary": "Pearson r(top_phi, best_fit) per-gen trajectory, averaged across seeds",
+    "seed_count_required": 10,
+    "p_value_threshold": 0.05,
+    "PASS_criterion": "mean r(Φ, fitness) >= +0.30 with two-sided p < 0.05 across >= 10 seeds, AND >= 7/10 seeds individually have r > 0",
+    "FAIL_criterion": "mean r(Φ, fitness) <= -0.30 with two-sided p < 0.05 across >= 10 seeds, AND >= 7/10 seeds individually have r < 0 (= IIT prediction reversed)",
+    "INCONCLUSIVE_criterion": "|mean r| < 0.30 OR seed-variance(r) > 0.5 OR < 7/10 seeds agree on sign OR p >= 0.05",
+    "valid_pair_minimum_per_seed": 5,
+    "disconnected_net_handling": "connectivity-preserving mutation (no edge deletion that would orphan a node), AND fallback: if Φ is NaN on full system, re-measure on largest weakly-connected subgraph >= 3 nodes",
+    "approximation": "CUT_ONE_APPROXIMATION = True (sign-robust per v2; magnitude down-biased)",
+    "expected_seed_runtime_min": 9,
+    "total_runtime_budget_min": 120
+  },
+
+  "albantakis_2014_envcomplexity": {
+    "metric_primary": "Monotonic ordering simple < medium < complex on mean concept count",
+    "metric_secondary": "Monotonic ordering simple < medium < complex on mean Φ",
+    "seed_count_required": 10,
+    "envs": ["simple", "medium", "complex"],
+    "PASS_criterion": "concept-count monotonic (simple < medium < complex; strict <=) across >= 7/10 seeds, AND mean concept count per env all >= 5 (no env collapse)",
+    "FAIL_criterion": "non-monotonic concept-count across >= 7/10 seeds OR mean concept count < 5 in any env (capacity collapse)",
+    "INCONCLUSIVE_criterion": "monotonic in 4-6/10 seeds (mixed signal)",
+    "auxiliary_PARTIAL_flag": "if Φ-monotonic in >= 7/10 seeds even when concepts are not, flag PARTIAL_PHI_ONLY",
+    "approximation": "CUT_ONE_APPROXIMATION = True",
+    "expected_seed_runtime_min": 23,
+    "total_runtime_budget_min": 240
+  },
+
+  "phase3_cut_one_robustness": {
+    "scope": "1 seed of Edlund, short generations (50 gen, top-1 phi every 10 gen) with EXACT_MIP=True (CUT_ONE_APPROXIMATION=False)",
+    "purpose": "estimate magnitude bias of cut-one vs exact; sign should be robust",
+    "PASS_robustness": "sign of r(Φ, fitness) preserved between cut-one and exact-mip on same seed",
+    "FAIL_robustness": "sign flips between cut-one and exact-mip on same seed",
+    "expected_runtime_min": 60
+  },
+
+  "honest_C3_constraints": [
+    "If 7-node × 10-seed × 200-gen exceeds 5h on either host, complete what's feasible and document remainder",
+    "ubu1 has 53G free; ubu2 has 793G free; minimize footprint; clean intermediate logs",
+    "anima repo gets only state/n_substrate_n21_reproduce_v3_2026_05_01/*.json + docs/n_substrate_n21_reproduce_v3_results_2026_05_01.md",
+    "v1 and v2 dirs are read-only references"
+  ],
+
+  "verdict_table_template": {
+    "edlund_v3": "PASS|FAIL|INCONCLUSIVE — to be filled after Phase 4",
+    "albantakis_v3": "PASS|FAIL|INCONCLUSIVE — to be filled after Phase 4",
+    "cut_one_robustness": "ROBUST|FLIPPED|UNTESTED — to be filled after Phase 3",
+    "v1_v2_v3_trajectory_edlund": "v1=FAIL_SMALL_SCALE -> v2=FAIL(r=-0.52) -> v3=?",
+    "v1_v2_v3_trajectory_albantakis": "v1=PARTIAL -> v2=FAIL(non-mono) -> v3=?",
+    "witnessed_count_post_v3": "TBD/16"
+  }
+}

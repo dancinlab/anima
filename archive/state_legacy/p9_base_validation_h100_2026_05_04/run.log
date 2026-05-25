@@ -1,0 +1,52 @@
+[2026-05-04T04:45:19Z] secrets OK (runpod=50b, hf=37b)
+[2026-05-04T04:45:19Z] booting pod=anima-p9-base-val-h100-2026-05-04 (H100 80GB HBM3 secure on-demand @ $2.99/hr; 1.5-2h job → ~$5)
+[2026-05-04T04:45:20Z] boot rc=0
+{
+  "containerDiskInGb": 80,
+  "costPerHr": 2.99,
+  "desiredStatus": "RUNNING",
+  "env": [
+    "HF_TOKEN=<HF_TOKEN_REDACTED>",
+    "PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  ],
+  "gpuCount": 1,
+  "id": "8zbf9bfj6c63wg",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Rented by User: Mon May 04 2026 04:45:20 GMT+0000 (Coordinated Universal Time)",
+  "machine": {
+    "gpuDisplayName": "H100 SXM",
+    "location": "US"
+  },
+  "memoryInGb": 251,
+  "name": "anima-p9-base-val-h100-2026-05-04",
+  "ports": "22/tcp,8888/http",
+  "vcpuCount": 26,
+  "volumeInGb": 50,
+  "volumeMountPath": "/workspace"
+}
+[2026-05-04T04:45:21Z] pod_id=8zbf9bfj6c63wg
+[2026-05-04T04:45:21Z] waiting for SSH ready (max 6min)
+[2026-05-04T04:45:39Z] SSH ready at 216.243.220.226:19863 (after 2 probes)
+[2026-05-04T04:45:39Z] priming HF cache
+[2026-05-04T04:45:39Z] rsync CLM v4 HF dir from ubu1 → Mac
+[2026-05-04T04:46:24Z] scp CLM v4 HF dir → H100
+[2026-05-04T04:53:54Z] H100: install lm-eval + download Llama-3.2-3B base
+chmod: cannot access '/workspace/p9_base_val/setup.sh': No such file or directory
+[2026-05-04T04:54:01Z] uploading run_h100.sh + launching benchmark suite
+[2026-05-04T04:54:07Z] poll loop start (max 180min, budget cap $10)
+[2026-05-04T04:54:10Z] elapsed=8min cost=$0.44 probe=
+[2026-05-04T05:04:24Z] elapsed=19min cost=$0.95 probe=
+[2026-05-04T05:14:40Z] elapsed=29min cost=$1.46 probe=
+[2026-05-04T05:24:59Z] elapsed=39min cost=$1.98 probe=
+[2026-05-04T05:35:13Z] elapsed=49min cost=$2.48 probe=
+[2026-05-04T05:45:27Z] elapsed=60min cost=$3.00 probe=
+[2026-05-04T05:55:41Z] elapsed=70min cost=$3.50 probe=
+[2026-05-04T06:05:55Z] elapsed=80min cost=$4.02 probe=
+[2026-05-04T06:16:10Z] elapsed=90min cost=$4.53 probe=
+[2026-05-04T06:26:34Z] elapsed=101min cost=$5.04 probe=
+[2026-05-04T06:36:55Z] elapsed=111min cost=$5.56 probe=
+[2026-05-04T06:46:56Z] elapsed=121min cost=$6.06 probe=
+[2026-05-04T06:56:57Z] elapsed=131min cost=$6.56 probe=
+[2026-05-04T07:07:09Z] elapsed=141min cost=$7.07 probe=
+[2026-05-04T07:17:12Z] elapsed=151min cost=$7.57 probe=
+[2026-05-04T07:27:13Z] elapsed=161min cost=$8.07 probe=

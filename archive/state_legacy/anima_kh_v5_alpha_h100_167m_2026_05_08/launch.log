@@ -1,0 +1,27 @@
+[2026-05-08T05:27:32] === BG-KH-H100 V5-α H100 500M test orchestrator started ===
+[2026-05-08T05:27:32] mac_state_dir=/Users/ghost/core/anima/state/anima_kh_v5_alpha_h100_167m_2026_05_08
+[2026-05-08T05:27:32] corpus=/Users/ghost/core/anima/state/anima_jy_chat_template_corpus_2026_05_07/corpus_chat_template.txt conscious_lm=/Users/ghost/core/anima/ready/models/conscious_lm.py
+[2026-05-08T05:27:32] this_script=/Users/ghost/core/anima/tool/transient_py/anima_kh_v5_alpha_h100.py
+[2026-05-08T05:27:32] COST_HARD_CAP=$3.0 COST_EARLY_KILL=$2.5 TOTAL_BUDGET_S=6600
+[2026-05-08T05:27:32] creating H100 SXM pod (RunPod SECURE cloud)…
+[2026-05-08T05:27:34] pod created: id=2zqomo3yofx6x1 machine=? $2.99/hr
+[2026-05-08T05:27:51] pod status: RUNNING
+[2026-05-08T05:27:53] ssh ready: root@64.247.201.49:19183
+[2026-05-08T05:28:01] GPU smoke OK: GPU 0: NVIDIA H100 80GB HBM3 (UUID: GPU-8068807c-b634-644a-aa68-fb0f3c962bd8)
+2.8.0+cu128 True NVIDIA H100 80GB HBM3
+[2026-05-08T05:28:06] staging files (corpus 91MB→gz + conscious_lm.py + this script)…
+[2026-05-08T05:28:06] corpus.gz size: 39.4MB
+[2026-05-08T05:32:14] decompressing corpus on pod…
+[2026-05-08T05:32:21] pod decompress OK: -rw-r--r-- 1 root root 95420911 May  7 20:32 corpus_chat_template.txt
+[2026-05-08T05:32:55] training launched on pod rc=-1
+[2026-05-08T05:33:33] heartbeat synced; cost=$0.27 pod_step=0 pod_status=init
+[2026-05-08T05:34:51] training emitted verdict.json on pod — pulling artifacts
+[2026-05-08T05:34:51] pulling artifacts from pod…
+[2026-05-08T05:39:51] scp pull state rc=-2 err=Command '['scp', '-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'ConnectTimeout=15', '-r', '-P', '19183', 'root@64.247.201.49:/workspace/anima_kh_h100/state/.', '/Users/
+[2026-05-08T05:39:51] FAILED verdict written: /Users/ghost/core/anima/state/anima_kh_v5_alpha_h100_167m_2026_05_08/verdict.json reason=no verdict from pod after monitor loop
+[2026-05-08T05:39:53] pod delete rc=0 out={
+  "deleted": true,
+  "id": "2zqomo3yofx6x1"
+}
+ err=
+[2026-05-08T05:39:53] ledger appended: /Users/ghost/core/anima/state/anima_model_attempts_ledger.jsonl bg_id=BG-KH-H100 final_class=FAILED

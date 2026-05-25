@@ -1,0 +1,541 @@
+// HEXAD/LIFE/state/h270_ablation_2026_05_25/run_h270.hexa
+//
+//   H_270 — substrate ablation: load-bearing component identification (/gap F2).
+//
+//   QUESTION (pre-registered):
+//     The H_204 representative finding (closure inverse-U: Φ(k) peaks at an
+//     INTERMEDIATE closure-strength k≈0.25, with endpoints lower — C4
+//     threshold-like PASS, F1 not triggered) lives on the H_003 H3.4
+//     catalytic-closure substrate. WHICH substrate component is the inverse-U
+//     finding actually load-bearing on? We ablate (remove / neutralize) one
+//     component at a time and ask: does the inverse-U finding survive?
+//
+//   BASELINE (H_204 Cycle #1 substrate, byte-equal carry):
+//     8-site periodic catalytic lattice (M=8, DIM=12, WARM=0, N_SEEDS=5,
+//     SEED_BASE=0xA17C204, K_RATE=0.6, DECAY=0.1, DIFFUSE=0.05). closure_strength
+//     k modulates the B->+C production edge: cat_c = k * cat_c_neighbour_diffused.
+//     6-point k sweep {0.00, 0.10, 0.25, 0.50, 0.75, 1.00}. Φ via RFC 036
+//     phi_spatial(states, M, DIM, n_bins=4) — 🟢 NUMERICAL.
+//
+//   ABLATIONS (substrate components present in THIS finding's substrate):
+//     A1 NO-DIFFUSION    : DIFFUSE=0 — remove nn spatial coupling between sites.
+//     A2 NO-DECAY        : DECAY=0   — remove the linear decay term.
+//     A3 NO-MICHAELIS    : drop the (1 - x/CAP) saturation factor in production
+//                          (cat-driven production becomes unbounded-linear, only
+//                          the clamp01 caps it).
+//     A4 NEUTRAL-CLOSURE : replace cat_c = k*dB with cat_c = 0.5*dB (k-independent
+//                          constant) — directly neutralizes the closure axis so
+//                          Φ(k) has no k-dependent driver.
+//
+//   NOTE on {split, merge, gaussian-noise} (task component vocabulary):
+//     these are MITOSIS-substrate components (tool/hexa_native/mitosis_hook_lib.hexa)
+//     and are NOT present in the H_204 catalytic-lattice substrate that produces
+//     the inverse-U finding. The substrate is deterministic from seed-phased init
+//     with NO gaussian draws (verified: baseline byte-equal re-run). They are
+//     therefore TRIVIALLY non-essential to this finding (it never invokes them).
+//     We record this scope fact in the ledger; the four ablations above are the
+//     components the finding actually depends on.
+//
+//   FINDING-SURVIVAL CRITERION (pre-registered, per arm):
+//     The inverse-U finding SURVIVES an ablation iff ALL THREE hold:
+//       (S1) SHAPE-INVERSE-U : argmax Φ(k) is an INTERIOR k (not k=0.00 and not
+//            k=1.00) — i.e. peak at an intermediate closure strength.
+//       (S2) C4-THRESHOLD    : peak |ΔΦ/Δk| > 2.0 × median |ΔΦ/Δk| (phase-transition
+//            signature, H_204 C4 verbatim).
+//       (S3) F1-INTACT       : Φ(k=1) > Φ(k=0) (H_003 H3.4 closure-Φ dependence,
+//            H_204 F1 not triggered).
+//     finding BREAKS iff any of S1/S2/S3 fails.
+//     A component is LOAD-BEARING iff its ablation BREAKS the finding.
+//     A component is NON-ESSENTIAL iff its ablation keeps the finding SURVIVING.
+//
+//   VERDICT (pre-registered):
+//     C1 ≥1 component load-bearing (ablation breaks finding).
+//     C2 ≥1 component non-essential (ablation keeps finding).
+//     C3 cross-process determinism (re-run byte-equal on baseline + all arms).
+//     SUPPORTED iff C1 ∧ C2 ∧ C3 (structure identified: separable into
+//       load-bearing vs non-essential).
+//     FALSIFIED iff all components non-essential OR all load-bearing (no
+//       separation) — OR C3 violated.
+//
+//   HONEST TIER: 🟢 SUPPORTED-NUMERICAL (phi_spatial proxy + ablation sweep;
+//   NOT 🔵 formal). deterministic, hexa-only, $0 mac local, llm:none. raw#12.
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _PHI_N_BINS() -> int { return 4 }
+
+// ── fixed pre-registered constants (mirror H_204 / H_003 H3.4) ────────────────
+fn M_SITES() -> int          { return 8 }
+fn DIM() -> int              { return 12 }
+fn WARM() -> int             { return 0 }
+fn N_SEEDS() -> int          { return 5 }
+fn CAP() -> float            { return 1.0 }
+fn K_RATE() -> float         { return 0.60 }
+fn DECAY_BASE() -> float     { return 0.10 }
+fn DIFFUSE_BASE() -> float   { return 0.05 }
+fn SEED_BASE() -> int        { return 0xA17C204 }   // H_204 ledger seed
+fn SEED_STRIDE() -> int      { return 101 }
+fn THRESHOLD_RATIO() -> float { return 2.0 }        // C4 / S2: peak > 2× median
+fn NEUTRAL_CLOSURE_K() -> float { return 0.5 }      // A4 fixed cat_c = 0.5*dB
+
+fn _clamp01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > CAP() { return CAP() }
+    return x
+}
+
+fn to_float(x: int) -> float { return x * 1.0 }
+
+fn pow_i(base: int, e: int) -> int {
+    let mut r = 1
+    let mut i = 0
+    while i < e { r = r * base; i = i + 1 }
+    return r
+}
+
+fn _abs_f(x: float) -> float { if x < 0.0 { return 0.0 - x }; return x }
+
+// Seed-phased initial value in [0.1, 0.5] — H_204 / H_003 H3.4 identical.
+fn _seed_init(seed: int, site: int, comp: int) -> float {
+    let shift = (comp * 8) % 24
+    let bits = (seed / pow_i(2, shift)) % 256
+    let phase = (site * 37 + comp * 11) % 64
+    let f = (to_float((bits + phase) % 256) + 1.0) / 257.0
+    return f * 0.4 + 0.1
+}
+
+// Component step with ablation flag for the Michaelis saturation factor.
+//   michaelis_on=true  ⟹ prod = K * cat * (1 - x/CAP)   (baseline)
+//   michaelis_on=false ⟹ prod = K * cat                 (A3 NO-MICHAELIS)
+// decay_rate is a passed-in parameter (A2 sets it to 0).
+fn _step_component(x: float, cat: float, decay_rate: float, michaelis_on: bool) -> float {
+    let mut prod = K_RATE() * cat
+    if michaelis_on { prod = prod * (1.0 - x / CAP()) }
+    let nx = x + prod - decay_rate * x
+    return _clamp01(nx)
+}
+
+// Diffusion with ablation: diffuse_rate=0 ⟹ identity copy (A1 NO-DIFFUSION).
+fn _diffuse_field(v: int, m: int, diffuse_rate: float) -> int {
+    let out = farr_zeros(m)
+    let d = diffuse_rate
+    let mut s = 0
+    while s < m {
+        let lj = (s + m - 1) % m
+        let rj = (s + 1) % m
+        let val = (1.0 - 2.0 * d) * farr_get(v, s) + d * farr_get(v, lj) + d * farr_get(v, rj)
+        let _ = farr_set(out, s, val)
+        s = s + 1
+    }
+    return out
+}
+
+// Run the lattice with closure_strength k and an ablation-arm parameter set.
+//   arm ∈ {0..4}:
+//     0 BASELINE        : decay=0.10, diffuse=0.05, michaelis=on, cat_c = k*dB
+//     1 NO-DIFFUSION    : diffuse=0.0
+//     2 NO-DECAY        : decay=0.0
+//     3 NO-MICHAELIS    : michaelis=off
+//     4 NEUTRAL-CLOSURE : cat_c = NEUTRAL_CLOSURE_K() * dB  (k ignored)
+fn _run_lattice_arm(seed: int, k_closure: float, arm: int) -> int {
+    let m = M_SITES()
+    let dim = DIM()
+    let warm = WARM()
+
+    // Resolve ablation parameters.
+    let mut decay_rate = DECAY_BASE()
+    let mut diffuse_rate = DIFFUSE_BASE()
+    let mut michaelis_on = true
+    if arm == 1 { diffuse_rate = 0.0 }
+    if arm == 2 { decay_rate = 0.0 }
+    if arm == 3 { michaelis_on = false }
+
+    let A = farr_zeros(m)
+    let B = farr_zeros(m)
+    let C = farr_zeros(m)
+    let mut s0 = 0
+    while s0 < m {
+        let _ = farr_set(A, s0, _seed_init(seed, s0, 0))
+        let _ = farr_set(B, s0, _seed_init(seed, s0, 1))
+        let _ = farr_set(C, s0, _seed_init(seed, s0, 2))
+        s0 = s0 + 1
+    }
+
+    let states = farr_zeros(m * dim)
+    let total = warm + dim
+    let mut step = 0
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut s = 0
+            while s < m {
+                let obs = farr_get(A, s) + farr_get(B, s) + farr_get(C, s)
+                let _ = farr_set(states, s * dim + t, obs)
+                s = s + 1
+            }
+        }
+
+        let dC = _diffuse_field(C, m, diffuse_rate)
+        let dA = _diffuse_field(A, m, diffuse_rate)
+        let dB = _diffuse_field(B, m, diffuse_rate)
+
+        let nA = farr_zeros(m)
+        let nB = farr_zeros(m)
+        let nC = farr_zeros(m)
+        let mut s = 0
+        while s < m {
+            let cat_a = farr_get(dC, s)
+            let cat_b = farr_get(dA, s)
+            // closure_strength k modulates B -> +C production edge.
+            // A4 NEUTRAL-CLOSURE replaces k with a fixed constant (k ignored).
+            let mut cat_c = k_closure * farr_get(dB, s)
+            if arm == 4 { cat_c = NEUTRAL_CLOSURE_K() * farr_get(dB, s) }
+
+            let _ = farr_set(nA, s, _step_component(farr_get(A, s), cat_a, decay_rate, michaelis_on))
+            let _ = farr_set(nB, s, _step_component(farr_get(B, s), cat_b, decay_rate, michaelis_on))
+            let _ = farr_set(nC, s, _step_component(farr_get(C, s), cat_c, decay_rate, michaelis_on))
+            s = s + 1
+        }
+        let mut p = 0
+        while p < m {
+            let _ = farr_set(A, p, farr_get(nA, p))
+            let _ = farr_set(B, p, farr_get(nB, p))
+            let _ = farr_set(C, p, farr_get(nC, p))
+            p = p + 1
+        }
+        let _ = farr_free(dC); let _ = farr_free(dA); let _ = farr_free(dB)
+        let _ = farr_free(nA); let _ = farr_free(nB); let _ = farr_free(nC)
+        step = step + 1
+    }
+
+    let _ = farr_free(A); let _ = farr_free(B); let _ = farr_free(C)
+    return states
+}
+
+fn _mean_phi_arm(k_closure: float, arm: int) -> float {
+    let nb = _PHI_N_BINS()
+    let reps = N_SEEDS()
+    let mut sum = 0.0
+    let mut r = 0
+    while r < reps {
+        let seed = SEED_BASE() + r * SEED_STRIDE()
+        let s = _run_lattice_arm(seed, k_closure, arm)
+        let phi = phi_spatial(s, M_SITES(), DIM(), nb)
+        let _ = farr_free(s)
+        sum = sum + phi
+        r = r + 1
+    }
+    return sum / to_float(reps)
+}
+
+fn _bool_str(b: bool) -> string { if b { return "true" }; return "false" }
+fn _verdict_str(b: bool) -> string { if b { return "PASS" }; return "FAIL" }
+
+fn _state_dir() -> string {
+    return "HEXAD/LIFE/state/h270_ablation_2026_05_25"
+}
+
+// Sweep one arm over the 6-point k grid; return a dict with the six phi values,
+// peak-segment metrics, argmax-k, survival sub-criteria S1/S2/S3 and SURVIVES.
+fn _eval_arm(arm: int) {
+    let k0 = 0.0
+    let k1 = 0.1
+    let k2 = 0.25
+    let k3 = 0.5
+    let k4 = 0.75
+    let k5 = 1.0
+
+    let phi0 = _mean_phi_arm(k0, arm)
+    let phi1 = _mean_phi_arm(k1, arm)
+    let phi2 = _mean_phi_arm(k2, arm)
+    let phi3 = _mean_phi_arm(k3, arm)
+    let phi4 = _mean_phi_arm(k4, arm)
+    let phi5 = _mean_phi_arm(k5, arm)
+
+    // ΔΦ/Δk segments.
+    let d01 = (phi1 - phi0) / (k1 - k0)
+    let d12 = (phi2 - phi1) / (k2 - k1)
+    let d23 = (phi3 - phi2) / (k3 - k2)
+    let d34 = (phi4 - phi3) / (k4 - k3)
+    let d45 = (phi5 - phi4) / (k5 - k4)
+    let a01 = _abs_f(d01); let a12 = _abs_f(d12); let a23 = _abs_f(d23)
+    let a34 = _abs_f(d34); let a45 = _abs_f(d45)
+
+    let mut peak = a01
+    if a12 > peak { peak = a12 }
+    if a23 > peak { peak = a23 }
+    if a34 > peak { peak = a34 }
+    if a45 > peak { peak = a45 }
+
+    // median of 5 via bubble sort.
+    let mut arr0 = a01; let mut arr1 = a12; let mut arr2 = a23
+    let mut arr3 = a34; let mut arr4 = a45
+    let mut pass_i = 0
+    while pass_i < 4 {
+        if arr0 > arr1 { let tmp = arr0; arr0 = arr1; arr1 = tmp }
+        if arr1 > arr2 { let tmp = arr1; arr1 = arr2; arr2 = tmp }
+        if arr2 > arr3 { let tmp = arr2; arr2 = arr3; arr3 = tmp }
+        if arr3 > arr4 { let tmp = arr3; arr3 = arr4; arr4 = tmp }
+        pass_i = pass_i + 1
+    }
+    let median_d = arr2
+
+    // argmax over the 6 Φ values → which k index holds the global max.
+    let mut max_phi = phi0
+    let mut argmax_idx = 0
+    if phi1 > max_phi { max_phi = phi1; argmax_idx = 1 }
+    if phi2 > max_phi { max_phi = phi2; argmax_idx = 2 }
+    if phi3 > max_phi { max_phi = phi3; argmax_idx = 3 }
+    if phi4 > max_phi { max_phi = phi4; argmax_idx = 4 }
+    if phi5 > max_phi { max_phi = phi5; argmax_idx = 5 }
+
+    // S1 SHAPE-INVERSE-U : argmax is an interior index (not 0, not 5).
+    let s1 = (argmax_idx != 0) && (argmax_idx != 5)
+    // S2 C4-THRESHOLD : peak > 2× median.
+    let s2 = peak > THRESHOLD_RATIO() * median_d
+    // S3 F1-INTACT : Φ(k=1) > Φ(k=0).
+    let s3 = phi5 > phi0
+    let survives = s1 && s2 && s3
+
+    return #{
+        "arm":        arm,
+        "phi0":       phi0,
+        "phi1":       phi1,
+        "phi2":       phi2,
+        "phi3":       phi3,
+        "phi4":       phi4,
+        "phi5":       phi5,
+        "peak":       peak,
+        "median":     median_d,
+        "argmax_idx": argmax_idx,
+        "max_phi":    max_phi,
+        "s1":         s1,
+        "s2":         s2,
+        "s3":         s3,
+        "survives":   survives
+    }
+}
+
+fn _k_label(idx: int) -> string {
+    if idx == 0 { return "0.00" }
+    if idx == 1 { return "0.10" }
+    if idx == 2 { return "0.25" }
+    if idx == 3 { return "0.50" }
+    if idx == 4 { return "0.75" }
+    return "1.00"
+}
+
+fn _arm_name(arm: int) -> string {
+    if arm == 0 { return "BASELINE" }
+    if arm == 1 { return "A1_NO_DIFFUSION" }
+    if arm == 2 { return "A2_NO_DECAY" }
+    if arm == 3 { return "A3_NO_MICHAELIS" }
+    return "A4_NEUTRAL_CLOSURE"
+}
+
+fn _print_arm(r) {
+    let arm = r["arm"]
+    println("── arm " + to_string(arm) + " " + _arm_name(arm) + " ──")
+    println("    Φ̄(k=0.00)=" + to_string(r["phi0"]) + "  Φ̄(k=0.10)=" + to_string(r["phi1"])
+            + "  Φ̄(k=0.25)=" + to_string(r["phi2"]))
+    println("    Φ̄(k=0.50)=" + to_string(r["phi3"]) + "  Φ̄(k=0.75)=" + to_string(r["phi4"])
+            + "  Φ̄(k=1.00)=" + to_string(r["phi5"]))
+    println("    argmax: k=" + _k_label(r["argmax_idx"]) + " (Φ=" + to_string(r["max_phi"]) + ")"
+            + "   peak|ΔΦ/Δk|=" + to_string(r["peak"]) + "  median=" + to_string(r["median"]))
+    println("    S1 SHAPE-INVERSE-U (argmax interior) : " + _verdict_str(r["s1"]))
+    println("    S2 C4-THRESHOLD (peak>2×median)      : " + _verdict_str(r["s2"]))
+    println("    S3 F1-INTACT (Φ(k=1)>Φ(k=0))         : " + _verdict_str(r["s3"]))
+    println("    => FINDING " + (if r["survives"] { "SURVIVES" } else { "BREAKS" }))
+    println("")
+}
+
+// Emit a single arm's JSON object (for the result.json arms array).
+fn _arm_json(r) -> string {
+    let arm = r["arm"]
+    let mut j = "    {\n"
+    j = j + "      \"arm\": " + to_string(arm) + ",\n"
+    j = j + "      \"name\": \"" + _arm_name(arm) + "\",\n"
+    j = j + "      \"sweep\": [\n"
+    j = j + "        { \"k\": 0.00, \"phi_mean\": " + to_string(r["phi0"]) + " },\n"
+    j = j + "        { \"k\": 0.10, \"phi_mean\": " + to_string(r["phi1"]) + " },\n"
+    j = j + "        { \"k\": 0.25, \"phi_mean\": " + to_string(r["phi2"]) + " },\n"
+    j = j + "        { \"k\": 0.50, \"phi_mean\": " + to_string(r["phi3"]) + " },\n"
+    j = j + "        { \"k\": 0.75, \"phi_mean\": " + to_string(r["phi4"]) + " },\n"
+    j = j + "        { \"k\": 1.00, \"phi_mean\": " + to_string(r["phi5"]) + " }\n"
+    j = j + "      ],\n"
+    j = j + "      \"argmax_k\": \"" + _k_label(r["argmax_idx"]) + "\",\n"
+    j = j + "      \"max_phi\": " + to_string(r["max_phi"]) + ",\n"
+    j = j + "      \"peak_dphi\": " + to_string(r["peak"]) + ",\n"
+    j = j + "      \"median_dphi\": " + to_string(r["median"]) + ",\n"
+    j = j + "      \"S1_shape_inverse_u\": " + _bool_str(r["s1"]) + ",\n"
+    j = j + "      \"S2_c4_threshold\": " + _bool_str(r["s2"]) + ",\n"
+    j = j + "      \"S3_f1_intact\": " + _bool_str(r["s3"]) + ",\n"
+    j = j + "      \"survives\": " + _bool_str(r["survives"]) + "\n"
+    j = j + "    }"
+    return j
+}
+
+fn main() {
+    println("H_270 — substrate ablation: load-bearing component identification · /gap F2 · raw#12")
+    println("  finding under test: H_204 closure inverse-U (Φ(k) peaks at interior k; C4 threshold; F1 intact)")
+    println("  substrate: 8-site periodic catalytic lattice (H_204/H_003 H3.4 carry)")
+    println("  M=" + to_string(M_SITES()) + " DIM=" + to_string(DIM()) + " WARM=" + to_string(WARM())
+            + " SEEDS=" + to_string(N_SEEDS()) + " K_RATE=" + to_string(K_RATE())
+            + " DECAY=" + to_string(DECAY_BASE()) + " DIFFUSE=" + to_string(DIFFUSE_BASE())
+            + " SEED_BASE=" + to_string(SEED_BASE()))
+    println("  Φ primitive: RFC 036 phi_spatial (n_bins=4) — 🟢 NUMERICAL")
+    println("  survival = S1 (argmax interior) ∧ S2 (peak>2×median) ∧ S3 (Φ(k=1)>Φ(k=0))")
+    println("")
+
+    // ── evaluate all 5 arms ────────────────────────────────────────────────
+    let r0 = _eval_arm(0)   // BASELINE
+    let r1 = _eval_arm(1)   // A1 NO-DIFFUSION
+    let r2 = _eval_arm(2)   // A2 NO-DECAY
+    let r3 = _eval_arm(3)   // A3 NO-MICHAELIS
+    let r4 = _eval_arm(4)   // A4 NEUTRAL-CLOSURE
+
+    _print_arm(r0)
+    _print_arm(r1)
+    _print_arm(r2)
+    _print_arm(r3)
+    _print_arm(r4)
+
+    // ── cross-process determinism re-check (re-eval baseline + each arm) ────
+    let r0b = _eval_arm(0)
+    let r1b = _eval_arm(1)
+    let r2b = _eval_arm(2)
+    let r3b = _eval_arm(3)
+    let r4b = _eval_arm(4)
+    let det_ok = (r0b["max_phi"] == r0["max_phi"]) && (r1b["max_phi"] == r1["max_phi"])
+                 && (r2b["max_phi"] == r2["max_phi"]) && (r3b["max_phi"] == r3["max_phi"])
+                 && (r4b["max_phi"] == r4["max_phi"])
+    println("  in-process re-run byte-equal (all arms): " + _bool_str(det_ok))
+    println("  (cross-process determinism: compare result.json sha256 across two `hexa run` invocations)")
+    println("")
+
+    // ── baseline-must-reproduce guard ──────────────────────────────────────
+    // The baseline arm MUST reproduce the H_204 inverse-U finding, else the
+    // whole ablation is moot. Record it explicitly.
+    let baseline_reproduces = r0["survives"]
+    println("  BASELINE reproduces H_204 inverse-U finding: " + _bool_str(baseline_reproduces))
+    println("")
+
+    // ── load-bearing vs non-essential classification ───────────────────────
+    // A component is LOAD-BEARING iff its ablation BREAKS the finding (!survives).
+    let lb_diffusion = !r1["survives"]
+    let lb_decay     = !r2["survives"]
+    let lb_michaelis = !r3["survives"]
+    let lb_closure   = !r4["survives"]
+
+    let mut n_load_bearing = 0
+    if lb_diffusion { n_load_bearing = n_load_bearing + 1 }
+    if lb_decay     { n_load_bearing = n_load_bearing + 1 }
+    if lb_michaelis { n_load_bearing = n_load_bearing + 1 }
+    if lb_closure   { n_load_bearing = n_load_bearing + 1 }
+    let n_non_essential = 4 - n_load_bearing
+
+    println("  ── component classification (ablate → break? = load-bearing) ──")
+    println("    A1 diffusion        : " + (if lb_diffusion { "LOAD-BEARING" } else { "non-essential" }))
+    println("    A2 decay            : " + (if lb_decay     { "LOAD-BEARING" } else { "non-essential" }))
+    println("    A3 michaelis-sat    : " + (if lb_michaelis { "LOAD-BEARING" } else { "non-essential" }))
+    println("    A4 closure-coupling : " + (if lb_closure   { "LOAD-BEARING" } else { "non-essential" }))
+    println("    n_load_bearing=" + to_string(n_load_bearing) + "  n_non_essential=" + to_string(n_non_essential))
+    println("")
+
+    // ── pre-registered verdict criteria ────────────────────────────────────
+    let c1 = n_load_bearing >= 1        // ≥1 load-bearing
+    let c2 = n_non_essential >= 1       // ≥1 non-essential
+    let c3 = det_ok                     // determinism
+
+    let mut np = 0
+    if c1 { np = np + 1 }
+    if c2 { np = np + 1 }
+    if c3 { np = np + 1 }
+
+    println("  C1 ≥1 load-bearing       : " + _verdict_str(c1) + "  (n=" + to_string(n_load_bearing) + ")")
+    println("  C2 ≥1 non-essential      : " + _verdict_str(c2) + "  (n=" + to_string(n_non_essential) + ")")
+    println("  C3 determinism           : " + _verdict_str(c3))
+    println("")
+
+    // SUPPORTED iff C1 ∧ C2 ∧ C3 (and baseline reproduces). FALSIFIED otherwise.
+    let verdict = if !baseline_reproduces {
+        "INVALID_BASELINE"
+    } else if c1 && c2 && c3 {
+        "SUPPORTED"
+    } else {
+        "FALSIFIED"
+    }
+
+    println("  VERDICT_RULE: SUPPORTED iff (baseline reproduces) ∧ C1 ∧ C2 ∧ C3;")
+    println("                FALSIFIED if all non-essential OR all load-bearing OR determinism fail")
+    println("  VERDICT (H_270 substrate ablation): " + verdict)
+    println("    criteria_met = " + to_string(np) + "/3")
+    println("  H270_VERDICT=" + verdict + " N_PASS=" + to_string(np)
+            + " N_LOAD_BEARING=" + to_string(n_load_bearing)
+            + " N_NON_ESSENTIAL=" + to_string(n_non_essential))
+
+    // ── write result.json ──────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"id\": \"H_270\",\n"
+    j = j + "  \"cycle\": \"Cycle_LIFE_H_270_NEW\",\n"
+    j = j + "  \"slug\": \"substrate-ablation\",\n"
+    j = j + "  \"title\": \"substrate ablation — load-bearing component identification for the H_204 closure inverse-U finding (/gap F2)\",\n"
+    j = j + "  \"hypothesis\": \"the H_204 closure inverse-U finding (Φ(k) peaks at interior k; C4 threshold; F1 intact) separates substrate components into load-bearing vs non-essential under one-at-a-time ablation\",\n"
+    j = j + "  \"date\": \"2026-05-25\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"honest_tier\": \"🟢 SUPPORTED-NUMERICAL (phi_spatial proxy + ablation sweep; NOT 🔵 formal IIT 4.0)\",\n"
+    j = j + "  \"phi_primitive\": \"RFC 036 phi_spatial (n_bins=4); H_204 / H_003 H3.4 byte-equal carry\",\n"
+    j = j + "  \"representative_finding\": \"H_204 Cycle #1 closure inverse-U (PARTIAL_DIRECTIONAL 3/4)\",\n"
+    j = j + "  \"model\": \"" + to_string(M_SITES()) + "-site periodic catalytic lattice (H_204 carry); one-at-a-time ablation of {diffusion, decay, michaelis-saturation, closure-coupling}\",\n"
+    j = j + "  \"seed_base\": " + to_string(SEED_BASE()) + ",\n"
+    j = j + "  \"config\": { \"M_sites\": " + to_string(M_SITES()) + ", \"dim\": " + to_string(DIM())
+          + ", \"warm\": " + to_string(WARM()) + ", \"n_seeds\": " + to_string(N_SEEDS())
+          + ", \"K_rate\": " + to_string(K_RATE()) + ", \"decay\": " + to_string(DECAY_BASE())
+          + ", \"diffuse\": " + to_string(DIFFUSE_BASE()) + ", \"n_bins\": " + to_string(_PHI_N_BINS())
+          + ", \"neutral_closure_k\": " + to_string(NEUTRAL_CLOSURE_K())
+          + ", \"boundary\": \"periodic\", \"observable\": \"A+B+C site mass\" },\n"
+    j = j + "  \"survival_criterion\": \"finding SURVIVES iff S1 (argmax Φ at interior k) AND S2 (peak|ΔΦ/Δk|>2×median) AND S3 (Φ(k=1)>Φ(k=0)); component LOAD-BEARING iff ablation BREAKS finding\",\n"
+    j = j + "  \"mitosis_components_scope_note\": \"task vocabulary {split, merge, gaussian-noise} are MITOSIS-substrate components (tool/hexa_native/mitosis_hook_lib.hexa), NOT present in the H_204 catalytic-lattice substrate. The H_204 finding is deterministic with zero gaussian draws (baseline byte-equal re-run). These three are trivially non-essential to this finding (never invoked). The four ablated arms are the components the finding actually depends on.\",\n"
+    j = j + "  \"baseline_reproduces_h204\": " + _bool_str(baseline_reproduces) + ",\n"
+    j = j + "  \"arms\": [\n"
+    j = j + _arm_json(r0) + ",\n"
+    j = j + _arm_json(r1) + ",\n"
+    j = j + _arm_json(r2) + ",\n"
+    j = j + _arm_json(r3) + ",\n"
+    j = j + _arm_json(r4) + "\n"
+    j = j + "  ],\n"
+    j = j + "  \"classification\": {\n"
+    j = j + "    \"diffusion\":        \"" + (if lb_diffusion { "load_bearing" } else { "non_essential" }) + "\",\n"
+    j = j + "    \"decay\":            \"" + (if lb_decay     { "load_bearing" } else { "non_essential" }) + "\",\n"
+    j = j + "    \"michaelis_sat\":    \"" + (if lb_michaelis { "load_bearing" } else { "non_essential" }) + "\",\n"
+    j = j + "    \"closure_coupling\": \"" + (if lb_closure   { "load_bearing" } else { "non_essential" }) + "\",\n"
+    j = j + "    \"n_load_bearing\": " + to_string(n_load_bearing) + ",\n"
+    j = j + "    \"n_non_essential\": " + to_string(n_non_essential) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"determinism_recheck\": { \"in_process_byte_equal_all_arms\": " + _bool_str(det_ok) + " },\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_at_least_one_load_bearing\": { \"value\": " + to_string(n_load_bearing) + ", \"verdict\": \"" + _verdict_str(c1) + "\" },\n"
+    j = j + "    \"C2_at_least_one_non_essential\": { \"value\": " + to_string(n_non_essential) + ", \"verdict\": \"" + _verdict_str(c2) + "\" },\n"
+    j = j + "    \"C3_determinism\": { \"verdict\": \"" + _verdict_str(c3) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"verdict_rule\": \"SUPPORTED iff (baseline reproduces H_204) AND C1 AND C2 AND C3; FALSIFIED if all non-essential OR all load-bearing OR determinism fail\",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"criteria_met\": " + to_string(np) + ",\n"
+    j = j + "  \"honest_limits\": [\n"
+    j = j + "    \"L1: phi_spatial = 🟢 NUMERICAL spatial-slice replica of phi_rs, NOT full IIT 4.0. H_204 / H_003 H3.4 lineage carry.\",\n"
+    j = j + "    \"L2: ablation = neutralization within ONE substrate family (single-parameter zeroing / saturation-drop / closure-flattening). Other neutralization parametrizations (partial diffusion, sigmoid saturation) would give graded survival, not the binary survive/break used here.\",\n"
+    j = j + "    \"L3: survival is a 3-clause boolean (S1∧S2∧S3) on a COARSE 6-point k grid (H_204 L4 carry). A finer grid could shift argmax between adjacent interior points without changing the interior/endpoint distinction, but a near-endpoint argmax is grid-resolution sensitive.\",\n"
+    j = j + "    \"L4: WINDOW-SENSITIVE (H_204 L3 / H_003 H3.4 L3 carry). All Φ measured on the WARM=0 DIM=12 living transient; past convergence Φ→~0 for all arms. Load-bearing classification is a transient-window claim.\",\n"
+    j = j + "    \"L5: {split, merge, gaussian-noise} are mitosis-substrate components absent from this finding's substrate; their 'non-essential' status here is by-absence (the finding never invokes them), NOT a measured ablation on a substrate that uses them. A separate cycle would ablate them against a mitosis-substrate finding (e.g. F-PERSONA / Φ-proxy ratchet).\",\n"
+    j = j + "    \"L6: one-at-a-time ablation does not test interactions — two jointly-load-bearing components could each individually appear non-essential (redundancy) or jointly break when each alone survives. Factorial ablation is a future cycle.\",\n"
+    j = j + "    \"L7: determinism here is in-process byte-equal across re-eval; full cross-process determinism (RFC 033 single global RNG stream caveat) is asserted via result.json sha256 comparison across two separate `hexa run` invocations — recorded in the doc, not self-checked in-process.\"\n"
+    j = j + "  ]\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result.json", j)
+
+    println("")
+    println("  result.json written → " + _state_dir() + "/result.json")
+    println("=== H_270 substrate ablation smoke complete: " + verdict + " ===")
+}

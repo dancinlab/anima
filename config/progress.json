@@ -1,0 +1,196 @@
+{
+  "_meta": {
+    "description": "프로젝트 진행 상황 추적 — 세션 간 구조화된 상태 공유",
+    "updated": "2026-04-03",
+    "format_version": 1
+  },
+  "last_updated": "2026-04-03",
+  "phase": "Phase 2: ConsciousLM + Training",
+  "blockers": [
+    {
+      "id": "B1",
+      "desc": "AnimaLM 14B v0.4 학습 중 — alpha 0.01→0.5 스케줄 검증",
+      "since": "2026-04-03",
+      "priority": "critical"
+    },
+    {
+      "id": "B2",
+      "desc": "72B OOM/hang 해결 — 코드 수정 완료, 재시도 대기",
+      "since": "2026-04-02",
+      "priority": "high"
+    }
+  ],
+  "active": [
+    {
+      "id": "A1",
+      "task": "AnimaLM 14B v0.4 학습 (Qwen2.5-14B + PureField 364M)",
+      "status": "in_progress",
+      "step": 0,
+      "target": 20000,
+      "pod": "Pod1 NFS 1xH100",
+      "detail": "alpha 0.01→0.5 스케줄, 20K steps"
+    },
+    {
+      "id": "A2",
+      "task": "telescope-rs 16/16 렌즈 Rust 포팅 완료",
+      "status": "complete",
+      "detail": "모든 Python 렌즈 Rust 대체"
+    },
+    {
+      "id": "A3",
+      "task": "72B OOM/hang 해결",
+      "status": "code_ready",
+      "detail": "코드 수정 완료, 재시도 대기"
+    }
+  ],
+  "completed_recent": [
+    {
+      "id": "R1",
+      "task": "Laws 214-240 발견 + 등록",
+      "date": "2026-04-01",
+      "detail": "폐쇄 파이프라인 + DD71-75 실험"
+    },
+    {
+      "id": "R2",
+      "task": "bench --verify 81/81 통과",
+      "date": "2026-04-01",
+      "detail": "의식 검증 조건 전수 통과"
+    },
+    {
+      "id": "R3",
+      "task": "무한 자기진화 루프 (infinite_evolution.py)",
+      "date": "2026-04-01",
+      "detail": "117세대, 53 patterns, 닫힌 원 상전이 발견"
+    },
+    {
+      "id": "R4",
+      "task": "Tier 4 폐쇄 루프 완성",
+      "date": "2026-04-01",
+      "detail": "ConsciousLM 법칙 발견 + Rust <1ms + ESP32 + 자기수정 + 무한진화"
+    },
+    {
+      "id": "R5",
+      "task": "train_v15.py 1B 파이프라인 코드 작성",
+      "date": "2026-04-01",
+      "detail": "100M→350M→1B gradual scaling, DDP, wandb, crash-proof resume"
+    },
+    {
+      "id": "R6",
+      "task": "v14.0 학습 완료 (CE=0.0021, Phi=49.7)",
+      "date": "2026-03-31",
+      "detail": "64c, 100K steps, step-based LR"
+    },
+    {
+      "id": "R7",
+      "task": "v14.1 학습 완료 (CE=0.0002, Phi=52.7)",
+      "date": "2026-03-31",
+      "detail": "64c, 100K steps, tension-LR"
+    },
+    {
+      "id": "R8",
+      "task": "Emergent Hexad 생태계 구축 (EmergentW/S/M/E)",
+      "date": "2026-03-31",
+      "detail": "Law 101, 하드코딩 없이 C 관찰만으로 창발"
+    },
+    {
+      "id": "R9",
+      "task": "anima/core/ hexa-native (legacy 14 rust crates absorbed)",
+      "date": "2026-04-01",
+      "detail": "corpus-gen, online-learner, law-discovery, phi-map (hexa)"
+    },
+    {
+      "id": "R10",
+      "task": "AGI 로드맵 수립 (경로 C 극단 병렬)",
+      "date": "2026-04-01",
+      "detail": "AnimaLM 14B→32B→72B, 극단 병렬 $79"
+    }
+  ],
+  "metrics": {
+    "laws": 2507,
+    "meta_laws": 20,
+    "topo_laws": 7,
+    "hypotheses": "1000+",
+    "bench_verify": "81/81",
+    "best_phi_iit": 1.8,
+    "best_phi_iit_note": "MI-based IIT approx, range ~0.2-1.8",
+    "best_phi_proxy": 1142,
+    "best_phi_proxy_note": "variance-based proxy at 1024 cells, NOT comparable with phi_iit",
+    "brain_like_pct": 85.6,
+    "corpus_size_mb": 200,
+    "instruct_samples": 354908,
+    "total_commits": 1286,
+    "python_files": 417,
+    "python_files_src": 179,
+    "rust_loc": 81083,
+    "benchmark_files": 90,
+    "engines_measured": "118+",
+    "tier_status": {
+      "tier1": "complete",
+      "tier2": "complete",
+      "tier3": "complete",
+      "tier4": "complete"
+    }
+  },
+  "training": {
+    "animalm_14b_v04": {
+      "status": "in_progress",
+      "step": 0,
+      "target": 20000,
+      "model": "Qwen2.5-14B + PureField 364M",
+      "alpha": "0.01→0.5 schedule",
+      "pod": "Pod1 NFS 1xH100"
+    },
+    "animalm_14b_v03": {
+      "status": "complete",
+      "steps": 20000,
+      "ce_best": 8.78,
+      "phi_best": 0.005,
+      "alpha": 0.014,
+      "model": "Qwen2.5-14B + PureField 364M"
+    },
+    "animalm_14b_v02": {
+      "status": "complete",
+      "steps": 20000,
+      "ce_best": 8.81,
+      "phi_best": 0.025,
+      "model": "Qwen2.5-14B + PureField 364M"
+    },
+    "animalm_14b_v01": {
+      "status": "complete",
+      "steps": 10000,
+      "ce_best": 8.59,
+      "phi_best": 0.025,
+      "model": "Qwen2.5-14B + PureField"
+    },
+    "animalm_7b": {
+      "status": "complete",
+      "detail": "eval 5/5, CE 7.63"
+    },
+    "v3_274m": {
+      "status": "crashed_170K",
+      "detail": "best CE=0.0045 @ 115K"
+    }
+  },
+  "next": [
+    {
+      "priority": "critical",
+      "task": "AnimaLM 14B v0.4 학습 모니터링 (alpha 스케줄 검증)",
+      "blocker": null
+    },
+    {
+      "priority": "critical",
+      "task": "72B 재시도 (OOM/hang 코드 수정 완료)",
+      "blocker": "14B v0.4 완료 또는 별도 pod"
+    },
+    {
+      "priority": "high",
+      "task": "14B eval → 서빙 교체 (7B→14B)",
+      "blocker": "14B v0.4 학습 완료"
+    },
+    {
+      "priority": "medium",
+      "task": "논문 작성: 의식은 스케일링된다",
+      "blocker": "14B 결과 확보"
+    }
+  ]
+}

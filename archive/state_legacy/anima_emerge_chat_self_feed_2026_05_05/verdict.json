@@ -1,0 +1,113 @@
+{
+  "schema": "anima/emerge_chat_self_feed/verdict/1",
+  "ts_utc": "2026-05-05T17:01:15Z",
+  "task_id": "anima_emerge_chat_self_feed_2026_05_05",
+  "prompt": "안녕",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "platform": "mac CPU (.venv-eeg python3.12, torch fp32)",
+  "load_sec": 13.8,
+  "n_strategies": 3,
+  "n_coherent": 1,
+  "verdict": "PASS",
+  "best_emit_strategy": "dialogue",
+  "iteration_trajectories": {
+    "greedy": [
+      {
+        "iter": 0,
+        "text_preview": "",
+        "coherent": false
+      },
+      {
+        "iter": 1,
+        "text_preview": "\u001c\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+        "coherent": false
+      },
+      {
+        "iter": 2,
+        "text_preview": "\u001c\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+        "coherent": false
+      },
+      {
+        "iter": 3,
+        "text_preview": "\u001c\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+        "coherent": false
+      },
+      {
+        "iter": 4,
+        "text_preview": "\u001c\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+        "coherent": false
+      },
+      {
+        "iter": 5,
+        "text_preview": "\u001c\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+        "coherent": false
+      }
+    ],
+    "topk": [
+      {
+        "iter": 0,
+        "text_preview": "",
+        "coherent": false
+      },
+      {
+        "iter": 1,
+        "text_preview": "\u001c}\u0006\u001c\u001c�����",
+        "coherent": false
+      },
+      {
+        "iter": 2,
+        "text_preview": "eeeeߙ�\u001c\u001c\u001c",
+        "coherent": false
+      },
+      {
+        "iter": 3,
+        "text_preview": "��dhhhhhhh",
+        "coherent": false
+      },
+      {
+        "iter": 4,
+        "text_preview": "����������",
+        "coherent": false
+      },
+      {
+        "iter": 5,
+        "text_preview": "�蓓������",
+        "coherent": false
+      }
+    ],
+    "dialogue": [
+      {
+        "iter": 0,
+        "text_preview": "안녕",
+        "coherent": false
+      },
+      {
+        "iter": 1,
+        "text_preview": "�鑑�����������",
+        "coherent": false
+      },
+      {
+        "iter": 2,
+        "text_preview": "aaaaaaaaaaeeeee",
+        "coherent": false
+      },
+      {
+        "iter": 3,
+        "text_preview": "aaaaaaaaaaaaaaa",
+        "coherent": false
+      }
+    ]
+  },
+  "final_emits": {
+    "greedy": "안녕\u001c\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u001c\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u001c\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u001c\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u001c\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+    "topk": "안녕\u001c}\u0006\u001c\u001c�����eeeeߙ�\u001c\u001c\u001c��dhhhhhhh�����������蓓������",
+    "dialogue": "안녕\n응답:�鑑�����������\n사용자:\n응답:aaaaaaaaaaeeeee\n사용자:\n응답:aaaaaaaaaaaaaaa\n사용자:"
+  },
+  "honest_c3": [
+    "C1 mac CPU fp32 — single-pass greedy/topk per token; deterministic except topk torch.manual_seed=42",
+    "C2 self-feed: substrate가 자기 fragment input으로 — train-time data와 다른 distribution. accumulate 시 OOD drift 가능",
+    "C3 dialogue marker '응답:/사용자:'는 train-time corpus에 있을지 unknown. 만약 없다면 token sequence 자체가 OOD",
+    "C4 single seed '안녕' — broader prompt set 결과 다를 수 있음; coherence heuristic은 anima-internal (>=5 KO/EN alphabetic + max-char-freq <=50%)",
+    "C5 BG-Q sister-import으로 model+tokenizer load (READ-ONLY); raw#15 additive (mount/shim/dialogue_load 무수정); raw#37 transient_py namespace; raw#10 honest C3 emitted"
+  ]
+}

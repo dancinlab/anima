@@ -1,0 +1,148 @@
+error: `hexa build /Users/ghost/core/anima/anima-physics/consciousness-loop/src/aux_engine_smoke.hexa` failed (compile error).
+=== Building /Users/ghost/core/anima/anima-physics/consciousness-loop/src/aux_engine_smoke.hexa -> /Users/ghost/.hexa-cache/hexa_run.29499888651000 ===
+  [flat] module_loader → /tmp/.hexa-runtime/hexa_build_expanded.29499950102000.tmp.hexa
+  [1/2] /Users/ghost/core/hexa-lang/self/native/hexa_v2 /tmp/.hexa-runtime/hexa_build_expanded.29499950102000.tmp.hexa build/artifacts/hexa_run.29499888651000.c 2>&1
+    OK: build/artifacts/hexa_run.29499888651000.c
+
+  [2/2] clang -O2 -DHEXA_HAS_LIBSODIUM -I/opt/homebrew/Cellar/libsodium/1.0.22/include -DHEXA_HAS_OPENSSL -I/opt/homebrew/Cellar/openssl@3/3.6.2/include -Wno-trigraphs -fbracket-depth=4096 -I '/Users/ghost/core/hexa-lang/self' build/artifacts/hexa_run.29499888651000.c '/Users/ghost/core/hexa-lang/self/runtime.c' -o '/Users/ghost/.hexa-cache/hexa_run.29499888651000.tmp.64809' -lpthread -L/opt/homebrew/Cellar/libsodium/1.0.22/lib -lsodium -L/opt/homebrew/Cellar/openssl@3/3.6.2/lib -lssl -lcrypto 2>&1
+    In file included from build/artifacts/hexa_run.29499888651000.c:2:
+/Users/ghost/core/hexa-lang/self/runtime.h:349:28: warning: '/*' within block comment [-Wcomment]
+  349 | /* ── Additional native/*.c forward-decls (auto-generated 2026-05-15) ──
+      |                        ^
+/Users/ghost/core/hexa-lang/self/runtime.h:350:36: warning: '/*' within block comment [-Wcomment]
+  350 |  * Sourced from grep of self/native/*.c hexa_* definitions; ensures user.c
+      |                                    ^
+build/artifacts/hexa_run.29499888651000.c:226:5: error: use of undeclared identifier 'var'
+  226 |     var;
+      |     ^~~
+build/artifacts/hexa_run.29499888651000.c:227:5: error: use of undeclared identifier 'out'
+  227 |     out = hexa_array_push(hexa_array_new(), f32);
+      |     ^~~
+build/artifacts/hexa_run.29499888651000.c:227:45: error: use of undeclared identifier 'f32'
+  227 |     out = hexa_array_push(hexa_array_new(), f32);
+      |                                             ^~~
+build/artifacts/hexa_run.29499888651000.c:233:29: error: use of undeclared identifier 'out'
+  233 |             hexa_array_push(out, sigmoid(hexa_index_get(v, i)));
+      |                             ^~~
+build/artifacts/hexa_run.29499888651000.c:236:35: error: use of undeclared identifier 'out'
+  236 |     return __hexa_fn_arena_return(out);
+      |                                   ^~~
+build/artifacts/hexa_run.29499888651000.c:243:5: error: use of undeclared identifier 'var'
+  243 |     var;
+      |     ^~~
+build/artifacts/hexa_run.29499888651000.c:244:5: error: use of undeclared identifier 'out'
+  244 |     out = hexa_array_push(hexa_array_new(), f32);
+      |     ^~~
+build/artifacts/hexa_run.29499888651000.c:244:45: error: use of undeclared identifier 'f32'
+  244 |     out = hexa_array_push(hexa_array_new(), f32);
+      |                                             ^~~
+build/artifacts/hexa_run.29499888651000.c:250:29: error: use of undeclared identifier 'out'
+  250 |             hexa_array_push(out, hexa_math_tanh(hexa_index_get(v, i)));
+      |                             ^~~
+build/artifacts/hexa_run.29499888651000.c:253:35: error: use of undeclared identifier 'out'
+  253 |     return __hexa_fn_arena_return(out);
+      |                                   ^~~
+build/artifacts/hexa_run.29499888651000.c:260:5: error: use of undeclared identifier 'var'
+  260 |     var;
+      |     ^~~
+build/artifacts/hexa_run.29499888651000.c:261:5: error: use of undeclared identifier 'out'
+  261 |     out = hexa_array_push(hexa_array_new(), f32);
+      |     ^~~
+build/artifacts/hexa_run.29499888651000.c:261:45: error: use of undeclared identifier 'f32'
+  261 |     out = hexa_array_push(hexa_array_new(), f32);
+      |                                             ^~~
+build/artifacts/hexa_run.29499888651000.c:267:29: error: use of undeclared identifier 'out'
+  267 |             hexa_array_push(out, hexa_index_get(a, i));
+      |                             ^~~
+build/artifacts/hexa_run.29499888651000.c:274:29: error: use of undeclared identifier 'out'
+  274 |             hexa_array_push(out, hexa_index_get(b, i));
+      |                             ^~~
+build/artifacts/hexa_run.29499888651000.c:277:35: error: use of undeclared identifier 'out'
+  277 |     return __hexa_fn_arena_return(out);
+      |                                   ^~~
+build/artifacts/hexa_run.29499888651000.c:284:5: error: use of undeclared identifier 'var'
+  284 |     var;
+      |     ^~~
+build/artifacts/hexa_run.29499888651000.c:285:5: error: use of undeclared identifier 'mat'
+  285 |     mat = hexa_array_push(hexa_array_new(), hexa_array_push(hexa_array_new(), f32));
+      |     ^~~
+build/artifacts/hexa_run.29499888651000.c:285:79: error: use of undeclared identifier 'f32'
+  285 |     mat = hexa_array_push(hexa_array_new(), hexa_array_push(hexa_array_new(), f32));
+      |                                                                               ^~~
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+2 warnings and 20 errors generated.
+/Users/ghost/core/hexa-lang/self/runtime.c:1145:9: warning: 'strcat' macro redefined [-Wmacro-redefined]
+ 1145 | #define strcat(d,s)    hxlcl_strcat((char *)(d), (const char *)(s))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:254:9: note: previous definition is here
+  254 | #define strcat(...) __strcat_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1157:9: warning: 'bzero' macro redefined [-Wmacro-redefined]
+ 1157 | #define bzero(p,n)     hxlcl_bzero((void *)(p), (size_t)(n))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_strings.h:90:9: note: previous definition is here
+   90 | #define bzero(...) __bzero_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1158:9: warning: 'memcpy' macro redefined [-Wmacro-redefined]
+ 1158 | #define memcpy(d,s,n)  hxlcl_memcpy((void *)(d), (const void *)(s), (size_t)(n))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:234:9: note: previous definition is here
+  234 | #define memcpy(...) __memcpy_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1159:9: warning: 'memset' macro redefined [-Wmacro-redefined]
+ 1159 | #define memset(p,c,n)  hxlcl_memset((void *)(p), (int)(c), (size_t)(n))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:244:9: note: previous definition is here
+  244 | #define memset(...) __memset_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1160:9: warning: 'memmove' macro redefined [-Wmacro-redefined]
+ 1160 | #define memmove(d,s,n) hxlcl_memmove((void *)(d), (const void *)(s), (size_t)(n))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:239:9: note: previous definition is here
+  239 | #define memmove(...) __memmove_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1161:9: warning: 'strncpy' macro redefined [-Wmacro-redefined]
+ 1161 | #define strncpy(d,s,n) hxlcl_strncpy((char *)(d), (const char *)(s), (size_t)(n))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:259:9: note: previous definition is here
+  259 | #define strncpy(...) __strncpy_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1162:9: warning: 'strcpy' macro redefined [-Wmacro-redefined]
+ 1162 | #define strcpy(d,s)    hxlcl_strcpy((char *)(d), (const char *)(s))
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:249:9: note: previous definition is here
+  249 | #define strcpy(...) __strcpy_chk_func (__VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1165:9: warning: 'snprintf' macro redefined [-Wmacro-redefined]
+ 1165 | #define snprintf(b,c,...)  hxlcl_snprintf((char *)(b), (size_t)(c), __VA_ARGS__)
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_stdio.h:119:9: note: previous definition is here
+  119 | #define snprintf(str, len, ...) __snprintf_chk_func (str, len, 0, __VA_ARGS__)
+      |         ^
+/Users/ghost/core/hexa-lang/self/runtime.c:1166:9: warning: 'sprintf' macro redefined [-Wmacro-redefined]
+ 1166 | #define sprintf(b,...)     hxlcl_sprintf((char *)(b), __VA_ARGS__)
+      |         ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_stdio.h:107:9: note: previous definition is here
+  107 | #define sprintf(str, ...) __sprintf_chk_func (str, 0, __VA_ARGS__)
+      |         ^
+In file included from /Users/ghost/core/hexa-lang/self/runtime.c:1211:
+/Users/ghost/core/hexa-lang/self/runtime_core.c:4139:11: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+ 4139 |     char* p = hxlcl_strstr(HX_STR(s), HX_STR(sub));
+      |           ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghost/core/hexa-lang/self/runtime_core.c:5801:11: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+ 5801 |     char* pos = hxlcl_strstr(HX_STR(fmt), "{}");
+      |           ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghost/core/hexa-lang/self/runtime_core.c:5826:19: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+ 5826 |             char* close = hxlcl_strchr(src, '}');
+      |                   ^       ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghost/core/hexa-lang/self/runtime_core.c:5911:15: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+ 5911 |         char* found = hxlcl_strstr(pos, d);
+      |               ^       ~~~~~~~~~~~~~~~~~~~~
+/Users/ghost/core/hexa-lang/self/runtime_core.c:5950:15: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+ 5950 |         char* found = hxlcl_strstr(pos, HX_STR(old));
+      |               ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+14 warnings generated.
+
+error: clang compile failed — binary not produced: /Users/ghost/.hexa-cache/hexa_run.29499888651000.tmp.64809
+__HEXA_BRC__=1
+

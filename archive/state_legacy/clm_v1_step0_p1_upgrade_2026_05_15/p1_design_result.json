@@ -1,0 +1,54 @@
+{
+  "cycle": "CLM .clm v1 step 0 p1 upgrade measure design",
+  "ckpt_access": {
+    "phase1a4_lr5e6_sft": {
+      "exists": true,
+      "path": "/Users/ghost/core/anima/state/anima_phase1a4_lr5e6_2026_05_12/ckpts/ckpt_phase1a4_lr5e6_sft.safetensors",
+      "size_mb": 632.4
+    },
+    "phase1a4_lr5e6_sft_pt": {
+      "exists": true,
+      "path": "/Users/ghost/core/anima/state/anima_phase1a4_lr5e6_2026_05_12/ckpts/ckpt_phase1a4_lr5e6_sft.pt",
+      "size_mb": 569.9
+    },
+    "v5_mitosis_cond5_v1": {
+      "exists": true,
+      "path": "/Users/ghost/core/anima/state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_cotrain.pt",
+      "size_mb": 580.7
+    },
+    "v5_mitosis_cond5_v2": {
+      "exists": true,
+      "path": "/Users/ghost/core/anima/state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_v2_cotrain.pt",
+      "size_mb": 580.7
+    }
+  },
+  "smoke_load": {
+    "n_keys": 222,
+    "total_params_M": 331.5,
+    "sample_keys": [
+      "engine_g.c_to_h.weight",
+      "engine_g.cell_pool_init",
+      "engine_g.h_to_c.weight",
+      "layers.0.attn.k_proj.weight",
+      "layers.0.attn.o_proj.weight"
+    ]
+  },
+  "design": {
+    "n_generations": 450,
+    "wall_estimate_min": 37.5,
+    "falsifier_count": 5,
+    "pass_aggregate": "5/5 \u2192 strong upgrade COMPLETE; 4/5 \u2192 PARTIAL-STRONG (.clm v1 fire \uac00\ub2a5 + caveat); \u22643/5 \u2192 fire \ucc28\ub2e8",
+    "arms": [
+      "A_no_prompt",
+      "B_weak_prompt",
+      "C_strong_prompt"
+    ],
+    "prompts_count": 10,
+    "ckpts": [
+      "phase1a4_lr5e6_sft",
+      "v5_mitosis_cond5_v1",
+      "v5_mitosis_cond5_v2"
+    ]
+  },
+  "status": "DESIGN-LANDED, real run \ubcc4\ub3c4 cycle (Mac ~22-30 min wall)"
+}

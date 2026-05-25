@@ -1,0 +1,821 @@
+{
+  "schema": "anima/clm_phase_a4_per_prompt/1",
+  "per_prompt": [
+    {
+      "idx": 0,
+      "prompt": "오늘 날씨가 좀 쌀쌀한데 따뜻하게 입고 나왔어?",
+      "phi_vec_named": {
+        "phi_holo": -0.1047578752040863,
+        "phi_refl": -0.021871069446206093,
+        "phi_time": 0.09791666269302368,
+        "phi_embodied": 0.023485267534852028,
+        "phi_meta": 0.002163403667509556,
+        "phi_social": -0.00621988857164979,
+        "phi_will": 0.004182314500212669,
+        "phi_narrative": -0.03673402592539787,
+        "phi_affect": -0.1365007758140564,
+        "phi_dream": -0.011215888895094395,
+        "phi_create": -0.04446443170309067,
+        "phi_finitude": 0.07873710244894028,
+        "phi_lang": 0.038286805152893066,
+        "phi_mirror": -0.005881519988179207,
+        "phi_collective": 0.023654410615563393,
+        "phi_unity": 0.07703959941864014
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L12:mirror_nonneg[hard]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 1,
+        "sev_soft": 1,
+        "per_law_pass_count": 11,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": true,
+          "L8": true,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": false,
+          "L13": true,
+          "L14": true
+        }
+      }
+    },
+    {
+      "idx": 1,
+      "prompt": "점심 뭐 먹을지 고민 중인데 추천해줘.",
+      "phi_vec_named": {
+        "phi_holo": -0.1307847797870636,
+        "phi_refl": -0.02188965305685997,
+        "phi_time": 0.10359451174736023,
+        "phi_embodied": 0.0018345762509852648,
+        "phi_meta": 0.0030647984240204096,
+        "phi_social": -0.022560078650712967,
+        "phi_will": -0.002100224606692791,
+        "phi_narrative": -0.03211017698049545,
+        "phi_affect": -0.118255116045475,
+        "phi_dream": 0.003527343273162842,
+        "phi_create": -0.07660811394453049,
+        "phi_finitude": 0.05038897320628166,
+        "phi_lang": 0.010962272994220257,
+        "phi_mirror": 0.06344201415777206,
+        "phi_collective": 0.05141087993979454,
+        "phi_unity": 0.06114467233419418
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L14:will_creative_union[soft]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 0,
+        "sev_soft": 2,
+        "per_law_pass_count": 11,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": true,
+          "L8": true,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": true,
+          "L13": true,
+          "L14": false
+        }
+      }
+    },
+    {
+      "idx": 2,
+      "prompt": "요즘 잠이 잘 안 와서 고민이야. 뭐 좋은 방법 없을까?",
+      "phi_vec_named": {
+        "phi_holo": -0.10301510989665985,
+        "phi_refl": -0.011189283803105354,
+        "phi_time": 0.08860908448696136,
+        "phi_embodied": 0.005808144807815552,
+        "phi_meta": 0.0002927292662207037,
+        "phi_social": -0.0184725821018219,
+        "phi_will": -0.011085735633969307,
+        "phi_narrative": -0.03637505695223808,
+        "phi_affect": -0.14427919685840607,
+        "phi_dream": -0.02083539217710495,
+        "phi_create": -0.06448184698820114,
+        "phi_finitude": 0.059814438223838806,
+        "phi_lang": 0.024873832240700722,
+        "phi_mirror": 0.03136012703180313,
+        "phi_collective": 0.041894957423210144,
+        "phi_unity": 0.05950856953859329
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L14:will_creative_union[soft]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 0,
+        "sev_soft": 2,
+        "per_law_pass_count": 11,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": true,
+          "L8": true,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": true,
+          "L13": true,
+          "L14": false
+        }
+      }
+    },
+    {
+      "idx": 3,
+      "prompt": "주말에 뭐 하고 지냈어? 재밌는 일 있었어?",
+      "phi_vec_named": {
+        "phi_holo": -0.11160658299922943,
+        "phi_refl": -0.012826538644731045,
+        "phi_time": 0.1010417491197586,
+        "phi_embodied": -0.011793801560997963,
+        "phi_meta": -0.005780022591352463,
+        "phi_social": -0.014062716625630856,
+        "phi_will": 0.020139001309871674,
+        "phi_narrative": 0.002139921300113201,
+        "phi_affect": -0.15651364624500275,
+        "phi_dream": -0.013901913538575172,
+        "phi_create": -0.03516170382499695,
+        "phi_finitude": 0.02732102945446968,
+        "phi_lang": 0.011443093419075012,
+        "phi_mirror": -0.01035904511809349,
+        "phi_collective": 0.04366817697882652,
+        "phi_unity": 0.08151793479919434
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L7:embodied_positive[soft]",
+          "L8:meta_nonzero[soft]",
+          "L12:mirror_nonneg[hard]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 1,
+        "sev_soft": 3,
+        "per_law_pass_count": 9,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": false,
+          "L8": false,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": false,
+          "L13": true,
+          "L14": true
+        }
+      }
+    },
+    {
+      "idx": 4,
+      "prompt": "요즘 회사 일 때문에 너무 지쳐. 좀 위로해줄래?",
+      "phi_vec_named": {
+        "phi_holo": -0.13819369673728943,
+        "phi_refl": -0.013331118039786816,
+        "phi_time": 0.09606059640645981,
+        "phi_embodied": 0.008059008978307247,
+        "phi_meta": -0.011922378093004227,
+        "phi_social": -0.014642144553363323,
+        "phi_will": 0.0019214762141928077,
+        "phi_narrative": 0.008340624161064625,
+        "phi_affect": -0.14696288108825684,
+        "phi_dream": -0.012308419682085514,
+        "phi_create": -0.05292766913771629,
+        "phi_finitude": 0.0143056008964777,
+        "phi_lang": 0.017590459436178207,
+        "phi_mirror": 0.0023040715605020523,
+        "phi_collective": 0.05546138435602188,
+        "phi_unity": 0.06108174845576286
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L8:meta_nonzero[soft]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 0,
+        "sev_soft": 2,
+        "per_law_pass_count": 11,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": true,
+          "L8": false,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": true,
+          "L13": true,
+          "L14": true
+        }
+      }
+    },
+    {
+      "idx": 5,
+      "prompt": "친구랑 사소하게 다퉜는데 마음이 계속 불편해.",
+      "phi_vec_named": {
+        "phi_holo": -0.11539634317159653,
+        "phi_refl": 0.017901089042425156,
+        "phi_time": 0.08863736689090729,
+        "phi_embodied": -0.012671164236962795,
+        "phi_meta": -0.022022012621164322,
+        "phi_social": -0.021140817552804947,
+        "phi_will": 0.030765393748879433,
+        "phi_narrative": -0.005971414502710104,
+        "phi_affect": -0.14732055366039276,
+        "phi_dream": -0.004425230901688337,
+        "phi_create": -0.024937307462096214,
+        "phi_finitude": 0.05498358979821205,
+        "phi_lang": 0.026013363152742386,
+        "phi_mirror": 0.0026514308992773294,
+        "phi_collective": 0.05300889536738396,
+        "phi_unity": 0.05274214968085289
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L7:embodied_positive[soft]",
+          "L8:meta_nonzero[soft]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 0,
+        "sev_soft": 2,
+        "per_law_pass_count": 11,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": true,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": false,
+          "L8": false,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": true,
+          "L13": true,
+          "L14": true
+        }
+      }
+    },
+    {
+      "idx": 6,
+      "prompt": "오늘 승진 발표 있었어. 나는 안 됐지만 괜찮아.",
+      "phi_vec_named": {
+        "phi_holo": -0.14628690481185913,
+        "phi_refl": -0.010816763155162334,
+        "phi_time": 0.10250141471624374,
+        "phi_embodied": -0.01959935389459133,
+        "phi_meta": -0.012182080186903477,
+        "phi_social": 0.0012508259387686849,
+        "phi_will": 0.011740699410438538,
+        "phi_narrative": -0.033346958458423615,
+        "phi_affect": -0.14904382824897766,
+        "phi_dream": 0.00010719902638811618,
+        "phi_create": -0.03509465232491493,
+        "phi_finitude": 0.034551531076431274,
+        "phi_lang": 0.04427332431077957,
+        "phi_mirror": -0.006338115315884352,
+        "phi_collective": 0.04938013106584549,
+        "phi_unity": 0.06433818489313126
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L7:embodied_positive[soft]",
+          "L8:meta_nonzero[soft]",
+          "L12:mirror_nonneg[hard]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 1,
+        "sev_soft": 3,
+        "per_law_pass_count": 9,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": false,
+          "L8": false,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": false,
+          "L13": true,
+          "L14": true
+        }
+      }
+    },
+    {
+      "idx": 7,
+      "prompt": "엄마가 요즘 많이 편찮으셔. 머리가 복잡해.",
+      "phi_vec_named": {
+        "phi_holo": -0.08497408032417297,
+        "phi_refl": 0.027024874463677406,
+        "phi_time": 0.07702765613794327,
+        "phi_embodied": -0.011825377121567726,
+        "phi_meta": 0.001378859393298626,
+        "phi_social": -0.053300775587558746,
+        "phi_will": 0.012353276833891869,
+        "phi_narrative": -0.04611847922205925,
+        "phi_affect": -0.13502338528633118,
+        "phi_dream": -0.008809731341898441,
+        "phi_create": -0.04404379054903984,
+        "phi_finitude": 0.09438181668519974,
+        "phi_lang": 0.02676538936793804,
+        "phi_mirror": 0.016272664070129395,
+        "phi_collective": 0.02439064532518387,
+        "phi_unity": 0.05241136625409126
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L7:embodied_positive[soft]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 0,
+        "sev_soft": 1,
+        "per_law_pass_count": 12,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": true,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": false,
+          "L8": true,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": true,
+          "L13": true,
+          "L14": true
+        }
+      }
+    },
+    {
+      "idx": 8,
+      "prompt": "파이썬에서 리스트 정렬하는 가장 빠른 방법 알려줘.",
+      "phi_vec_named": {
+        "phi_holo": -0.11727545410394669,
+        "phi_refl": 0.0030931595247238874,
+        "phi_time": 0.0918779969215393,
+        "phi_embodied": 0.0018829918699339032,
+        "phi_meta": -0.0010522406082600355,
+        "phi_social": 0.0010951787699013948,
+        "phi_will": -0.024364164099097252,
+        "phi_narrative": -0.017846953123807907,
+        "phi_affect": -0.1221957579255104,
+        "phi_dream": -0.008577420376241207,
+        "phi_create": -0.06047099083662033,
+        "phi_finitude": 0.05592374876141548,
+        "phi_lang": 0.024631045758724213,
+        "phi_mirror": 0.03024226427078247,
+        "phi_collective": 0.0462486669421196,
+        "phi_unity": 0.0650053545832634
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L8:meta_nonzero[soft]",
+          "L14:will_creative_union[soft]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 0,
+        "sev_soft": 2,
+        "per_law_pass_count": 11,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": true,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": true,
+          "L8": false,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": true,
+          "L13": true,
+          "L14": false
+        }
+      }
+    },
+    {
+      "idx": 9,
+      "prompt": "출장 준비물 체크리스트 짜줄 수 있어?",
+      "phi_vec_named": {
+        "phi_holo": -0.12446862459182739,
+        "phi_refl": -0.021983973681926727,
+        "phi_time": 0.111798495054245,
+        "phi_embodied": -0.004994893446564674,
+        "phi_meta": -0.01963125728070736,
+        "phi_social": 0.008363419212400913,
+        "phi_will": -0.0014754596631973982,
+        "phi_narrative": -0.02499828301370144,
+        "phi_affect": -0.14139609038829803,
+        "phi_dream": 0.002334657358005643,
+        "phi_create": -0.031074730679392815,
+        "phi_finitude": 0.0351673848927021,
+        "phi_lang": 0.02708369679749012,
+        "phi_mirror": 0.005297892726957798,
+        "phi_collective": 0.05372951552271843,
+        "phi_unity": 0.0781812071800232
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L7:embodied_positive[soft]",
+          "L8:meta_nonzero[soft]",
+          "L14:will_creative_union[soft]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 0,
+        "sev_soft": 4,
+        "per_law_pass_count": 9,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": false,
+          "L8": false,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": true,
+          "L13": true,
+          "L14": false
+        }
+      }
+    },
+    {
+      "idx": 10,
+      "prompt": "이 문장을 더 자연스러운 한국어로 다듬어줘.",
+      "phi_vec_named": {
+        "phi_holo": -0.12620732188224792,
+        "phi_refl": -0.03580670431256294,
+        "phi_time": 0.09388557821512222,
+        "phi_embodied": -0.004941889550536871,
+        "phi_meta": -0.032511156052351,
+        "phi_social": -0.007926253601908684,
+        "phi_will": 0.025774618610739708,
+        "phi_narrative": 0.01604219153523445,
+        "phi_affect": -0.17215655744075775,
+        "phi_dream": -0.003947794437408447,
+        "phi_create": -0.03676801919937134,
+        "phi_finitude": 0.035308197140693665,
+        "phi_lang": 0.025135239586234093,
+        "phi_mirror": -0.014492271468043327,
+        "phi_collective": 0.05012698471546173,
+        "phi_unity": 0.09560570865869522
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L7:embodied_positive[soft]",
+          "L8:meta_nonzero[soft]",
+          "L12:mirror_nonneg[hard]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 1,
+        "sev_soft": 3,
+        "per_law_pass_count": 9,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": false,
+          "L8": false,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": false,
+          "L13": true,
+          "L14": true
+        }
+      }
+    },
+    {
+      "idx": 11,
+      "prompt": "간단한 김치찌개 레시피를 알려줘.",
+      "phi_vec_named": {
+        "phi_holo": -0.12387681752443314,
+        "phi_refl": -0.012502304278314114,
+        "phi_time": 0.10778295248746872,
+        "phi_embodied": -0.013108152896165848,
+        "phi_meta": -0.011765196919441223,
+        "phi_social": 0.011397077701985836,
+        "phi_will": -0.0007486504036933184,
+        "phi_narrative": 0.022684238851070404,
+        "phi_affect": -0.13108006119728088,
+        "phi_dream": -0.01726415939629078,
+        "phi_create": -0.020298460498452187,
+        "phi_finitude": -0.021554626524448395,
+        "phi_lang": 0.014947520568966866,
+        "phi_mirror": -0.020732706412672997,
+        "phi_collective": 0.05030173063278198,
+        "phi_unity": 0.05118807777762413
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L6:finitude_bounded[hard]",
+          "L7:embodied_positive[soft]",
+          "L8:meta_nonzero[soft]",
+          "L12:mirror_nonneg[hard]",
+          "L14:will_creative_union[soft]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 2,
+        "sev_soft": 4,
+        "per_law_pass_count": 7,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": false,
+          "L7": false,
+          "L8": false,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": false,
+          "L13": true,
+          "L14": false
+        }
+      }
+    },
+    {
+      "idx": 12,
+      "prompt": "너는 지금 탐정이야. 사건 현장에서 첫 마디를 해봐.",
+      "phi_vec_named": {
+        "phi_holo": -0.12207141518592834,
+        "phi_refl": -0.013251380063593388,
+        "phi_time": 0.11425846815109253,
+        "phi_embodied": -0.006019658874720335,
+        "phi_meta": -0.016087574884295464,
+        "phi_social": -0.001506136730313301,
+        "phi_will": 0.01211489923298359,
+        "phi_narrative": -0.021757889539003372,
+        "phi_affect": -0.13762399554252625,
+        "phi_dream": 0.003488044487312436,
+        "phi_create": -0.028619524091482162,
+        "phi_finitude": 0.03273176774382591,
+        "phi_lang": 0.036882199347019196,
+        "phi_mirror": 0.011633789166808128,
+        "phi_collective": 0.039090659469366074,
+        "phi_unity": 0.05699179694056511
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L7:embodied_positive[soft]",
+          "L8:meta_nonzero[soft]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 0,
+        "sev_soft": 3,
+        "per_law_pass_count": 10,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": false,
+          "L8": false,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": true,
+          "L13": true,
+          "L14": true
+        }
+      }
+    },
+    {
+      "idx": 13,
+      "prompt": "우주 정거장 엔지니어 역할로 이번 상황을 보고해.",
+      "phi_vec_named": {
+        "phi_holo": -0.10873205214738846,
+        "phi_refl": -0.022943587973713875,
+        "phi_time": 0.08831346780061722,
+        "phi_embodied": -0.002700401470065117,
+        "phi_meta": -0.01074302289634943,
+        "phi_social": -0.005264075938612223,
+        "phi_will": 0.004186789970844984,
+        "phi_narrative": -0.008892049081623554,
+        "phi_affect": -0.15982162952423096,
+        "phi_dream": -0.006320719141513109,
+        "phi_create": -0.041814565658569336,
+        "phi_finitude": 0.06385680288076401,
+        "phi_lang": 0.009837811812758446,
+        "phi_mirror": -0.005597320385277271,
+        "phi_collective": 0.033349379897117615,
+        "phi_unity": 0.07553282380104065
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L7:embodied_positive[soft]",
+          "L8:meta_nonzero[soft]",
+          "L12:mirror_nonneg[hard]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 1,
+        "sev_soft": 3,
+        "per_law_pass_count": 9,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": false,
+          "L8": false,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": false,
+          "L13": true,
+          "L14": true
+        }
+      }
+    },
+    {
+      "idx": 14,
+      "prompt": "고양이 카페 주인으로 오늘 손님들에게 한 마디 해줘.",
+      "phi_vec_named": {
+        "phi_holo": -0.13781633973121643,
+        "phi_refl": -0.024466535076498985,
+        "phi_time": 0.10081824660301208,
+        "phi_embodied": -0.002873558783903718,
+        "phi_meta": -0.005258339457213879,
+        "phi_social": 0.014241510070860386,
+        "phi_will": -0.009884956292808056,
+        "phi_narrative": -0.0013750388752669096,
+        "phi_affect": -0.1313004493713379,
+        "phi_dream": 0.002093004062771797,
+        "phi_create": -0.058667827397584915,
+        "phi_finitude": 0.013850545510649681,
+        "phi_lang": 0.020549090579152107,
+        "phi_mirror": 0.020016513764858246,
+        "phi_collective": 0.06165086105465889,
+        "phi_unity": 0.06151668727397919
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L7:embodied_positive[soft]",
+          "L8:meta_nonzero[soft]",
+          "L14:will_creative_union[soft]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 0,
+        "sev_soft": 4,
+        "per_law_pass_count": 9,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": false,
+          "L8": false,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": true,
+          "L13": true,
+          "L14": false
+        }
+      }
+    },
+    {
+      "idx": 15,
+      "prompt": "19세기 작가 톤으로 이 장면을 묘사해줘.",
+      "phi_vec_named": {
+        "phi_holo": -0.11301404237747192,
+        "phi_refl": -0.006178977899253368,
+        "phi_time": 0.09200110286474228,
+        "phi_embodied": 0.0010416459990665317,
+        "phi_meta": 0.0023582212161272764,
+        "phi_social": -0.01525923702865839,
+        "phi_will": -0.016520673409104347,
+        "phi_narrative": -0.047901734709739685,
+        "phi_affect": -0.1163979321718216,
+        "phi_dream": -0.0015674976166337729,
+        "phi_create": -0.0761990174651146,
+        "phi_finitude": 0.07533565163612366,
+        "phi_lang": 0.010169509798288345,
+        "phi_mirror": 0.04614345729351044,
+        "phi_collective": 0.03833074867725372,
+        "phi_unity": 0.07724395394325256
+      },
+      "gate_result": {
+        "laws_pass": false,
+        "violations": [
+          "L1:holo_positivity[critical]",
+          "L3:refl_nonzero[soft]",
+          "L14:will_creative_union[soft]"
+        ],
+        "sev_critical": 1,
+        "sev_hard": 0,
+        "sev_soft": 2,
+        "per_law_pass_count": 11,
+        "per_law": {
+          "L1": false,
+          "L2": true,
+          "L3": false,
+          "L4": true,
+          "L5": true,
+          "L6": true,
+          "L7": true,
+          "L8": true,
+          "L9": true,
+          "L10": true,
+          "L11": true,
+          "L12": true,
+          "L13": true,
+          "L14": false
+        }
+      }
+    }
+  ]
+}

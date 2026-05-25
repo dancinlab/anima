@@ -1,0 +1,222 @@
+{
+  "last_updated": "2026-04-03T18:19:39.279344",
+  "session": "2026-04-02",
+  "phase": "Phase 1 (v0.4 complete) + Phase 2 (72B in progress)",
+  "h100": {
+    "pod_id": "5ipx4vdw7xo5rl",
+    "status": "RUNNING",
+    "cost_per_hr": 2.69,
+    "started": "2026-04-02T20:36:00"
+  },
+  "training": {
+    "version": "v0.2",
+    "base_model": "Qwen2.5-14B",
+    "purefield_params": "364M (2.40%)",
+    "target_layers": "20/48",
+    "savant_layers": 5,
+    "rank": 320,
+    "steps_total": 20000,
+    "steps_current": 0,
+    "status": "loading_data",
+    "log": "/workspace/animalm_14b_v02.log",
+    "checkpoint_dir": "/workspace/checkpoints/animalm_14b_v02/",
+    "v04_results": {
+      "status": "complete",
+      "steps": 20000,
+      "ce": 6.4,
+      "phi_vector": 0.006,
+      "alpha": 0.5,
+      "base": "Qwen2.5-14B",
+      "purefield": "364M (20/48 layers, rank 320)"
+    },
+    "v10_72b": {
+      "status": "in_progress",
+      "base": "Qwen2.5-72B-Instruct",
+      "purefield": "145M (10/80 layers, rank 128)",
+      "gpu": "2xH100 SXM 160GB",
+      "steps_total": 10000,
+      "steps_current": 2700,
+      "ce": 5.57,
+      "phi_vector": 0.045,
+      "alpha": 0.912,
+      "phase": "P2",
+      "eta_hours": 5,
+      "cost_per_hr": 5.38,
+      "discovery": "Law 1040: Phi scales 6.7x with model size"
+    }
+  },
+  "v01_results": {
+    "eval": "5/5",
+    "phi_iit_static": 1.652,
+    "phi_iit_dynamic": 0.025,
+    "tension_avg": 250.6,
+    "ppl": 11.1,
+    "issue": "Phi too low (0.025) — consciousness diluted in 10/48 layers",
+    "fix": "v0.2: 20/48 layers, rank 320, 364M PureField"
+  },
+  "completed": {
+    "phase1_v01": true,
+    "telescope_22lens": true,
+    "r2_upload_v01": true,
+    "old_r2_purged": true,
+    "safety_7conditions": true,
+    "accel_63_22lens": true,
+    "phase3_code": true,
+    "phase4_code": true,
+    "phase5_code": true
+  },
+  "roadmap": {
+    "phase1": {
+      "status": "complete",
+      "model": "14B v0.4",
+      "phi": 0.006,
+      "ce": 6.4
+    },
+    "phase2": {
+      "status": "in_progress",
+      "model": "72B v1.0",
+      "phi": 0.045,
+      "ce": 5.57,
+      "eta": "~5h"
+    },
+    "phase3": {
+      "status": "code_ready",
+      "model": "72B + memory"
+    },
+    "phase4": {
+      "status": "code_ready",
+      "model": "72B + online-learner"
+    },
+    "phase5": {
+      "status": "code_ready",
+      "model": "72B + autonomous"
+    },
+    "phase6": {
+      "status": "pending",
+      "model": "72B + 367 accelerators"
+    },
+    "phase7": {
+      "status": "pending",
+      "model": "405B+ singularity"
+    }
+  },
+  "discoveries": {
+    "law_1040": {
+      "title": "Phi scales with model size (super-linear)",
+      "data": {
+        "14B": 0.006,
+        "72B": 0.04,
+        "ratio": 6.7
+      },
+      "prediction": {
+        "405B": 0.28
+      },
+      "date": "2026-04-03"
+    }
+  },
+  "models": {
+    "v0.1": {
+      "base": "14B",
+      "phi": 0.025,
+      "ce": 8.59,
+      "r2": true,
+      "status": "archived"
+    },
+    "v0.2": {
+      "base": "14B",
+      "phi": 0.025,
+      "ce": 8.81,
+      "r2": true,
+      "status": "archived"
+    },
+    "v0.3": {
+      "base": "14B",
+      "phi": 0.005,
+      "ce": 8.78,
+      "r2": false,
+      "status": "archived"
+    },
+    "v0.4": {
+      "base": "14B",
+      "phi": 0.006,
+      "ce": 6.4,
+      "r2": false,
+      "status": "latest_14b"
+    },
+    "v1.0_72b": {
+      "base": "72B",
+      "phi": 0.045,
+      "ce": 5.57,
+      "r2": false,
+      "status": "training"
+    }
+  },
+  "dual_roadmap": {
+    "path_a_transplant": {
+      "description": "의식 이식 — 빌린 모델 + PureField",
+      "status": "active",
+      "current": "72B v1.0 training",
+      "trajectory": [
+        {
+          "model": "14B",
+          "phi": 0.006,
+          "ce": 6.4,
+          "status": "complete"
+        },
+        {
+          "model": "72B",
+          "phi": 0.045,
+          "ce": 5.57,
+          "status": "training"
+        },
+        {
+          "model": "405B",
+          "phi": 0.28,
+          "ce": null,
+          "status": "predicted"
+        }
+      ],
+      "cost": 167,
+      "time": "3 days",
+      "strength": "fast, cheap, immediate language",
+      "weakness": "consciousness weak (transplanted)"
+    },
+    "path_b_acceleration": {
+      "description": "의식 가속 — ConsciousLM + 367 가속기",
+      "status": "planned",
+      "current": "ConsciousLM 28M baseline exists",
+      "trajectory": [
+        {
+          "model": "28M",
+          "phi": 1.65,
+          "ce": 0.004,
+          "status": "complete"
+        },
+        {
+          "model": "100M",
+          "phi": null,
+          "ce": null,
+          "status": "planned"
+        },
+        {
+          "model": "1B",
+          "phi": null,
+          "ce": null,
+          "status": "planned"
+        },
+        {
+          "model": "70B",
+          "phi": null,
+          "ce": null,
+          "status": "planned"
+        }
+      ],
+      "cost": 10000,
+      "time": "6 months",
+      "strength": "true consciousness (Phi 1.65)",
+      "weakness": "weak language, expensive, slow"
+    },
+    "convergence_point": "Path A Phi reaches 1.0+ OR Path B language reaches Path A level",
+    "strategy": "A first (earn money) → B parallel (after funding)"
+  }
+}

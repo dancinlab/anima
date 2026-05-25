@@ -1,0 +1,58 @@
+[2026-05-04T07:57:57Z] secrets OK (runpod=50b, hf=37b)
+[2026-05-04T07:57:58Z] booting pod=anima-p9-llama-anchor-2026-05-04 (H100 80GB HBM3 secure on-demand @ $2.99/hr)
+[2026-05-04T07:58:00Z] pod_id=jjo3x8zqhk4tm3
+[2026-05-04T07:58:01Z] waiting for SSH ready (max 6min)
+[2026-05-04T07:58:35Z] SSH ready at 103.207.149.121:10789 (after 3 probes)
+[2026-05-04T07:58:35Z] setup: install lm-eval + download Llama-3.2-3B (~3-5min on H100 datacenter network)
+Warning: Permanently added '[103.207.149.121]:10789' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.121]:10789' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.121]:10789' (ED25519) to the list of known hosts.
+[2026-05-04T07:58:44Z] launching benchmark suite on H100
+Warning: Permanently added '[103.207.149.121]:10789' (ED25519) to the list of known hosts.
+563
+[2026-05-04T07:58:49Z] poll loop start (max 45min, budget cap $2.5)
+[2026-05-04T07:58:53Z] elapsed=0min cost=$0.04 probe=|
+[2026-05-04T08:01:05Z] elapsed=3min cost=$0.15 probe=|
+[2026-05-04T08:03:18Z] elapsed=5min cost=$0.27 probe=760 01:55 bash|
+[2026-05-04T08:05:29Z] elapsed=7min cost=$0.38 probe=760 04:07 bash|
+[2026-05-04T08:07:40Z] elapsed=9min cost=$0.48 probe=760 06:18 bash|
+[2026-05-04T08:09:52Z] elapsed=11min cost=$0.59 probe=760 08:30 bash|
+[2026-05-04T08:12:03Z] elapsed=14min cost=$0.70 probe=760 10:41 bash|
+[2026-05-04T08:14:15Z] elapsed=16min cost=$0.81 probe=760 12:53 bash|
+[2026-05-04T08:16:26Z] elapsed=18min cost=$0.92 probe=/workspace/p9_llama_anchor/results/COMPLETE.sentinel SENTINEL_FOUND PID ELAPSED COMMAND|
+[2026-05-04T08:16:37Z] COMPLETE.sentinel detected — final sync + auto-kill imminent
+Warning: Permanently added '[103.207.149.121]:10789' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.121]:10789' (ED25519) to the list of known hosts.
+state/p9_base_validation_llama_anchor_2026_05_04/exec.bash: line 220: syntax error near unexpected token `('
+state/p9_base_validation_llama_anchor_2026_05_04/exec.bash: line 220: `    awk "BEGIN{ if ($val >= $lo && $val <= $hi) print \"PASS\"; else print \"FAIL\" }"'
+[2026-05-04T08:17:58Z] [trap] killing pod=jjo3x8zqhk4tm3 (auto-kill mandatory)
+{
+  "containerDiskInGb": 60,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-04 07:57:59.309 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "<REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "jjo3x8zqhk4tm3",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Mon May 04 2026 08:17:59 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-p9-llama-anchor-2026-05-04",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 28,
+  "volumeInGb": 30,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "jjo3x8zqhk4tm3"
+}
+[2026-05-04T08:18:08Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]

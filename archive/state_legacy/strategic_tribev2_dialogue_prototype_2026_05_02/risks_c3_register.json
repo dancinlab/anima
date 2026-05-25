@@ -1,0 +1,84 @@
+{
+  "session_date": "2026-05-02",
+  "risks": [
+    {
+      "id": "R1",
+      "category": "scientific",
+      "spec": "TRIBE v2 BOLD prediction = group-mean (700+ subjects average). 사용자 individual brain 와 mismatch 보장 없음.",
+      "mitigation": "Stage 3 (Option E user EEG bridge) 로 individual ground-truth 보강. Stage 1-2 에서는 'group prior' 로 명시.",
+      "severity": "medium"
+    },
+    {
+      "id": "R2",
+      "category": "technical",
+      "spec": "Llama-3.2-3B (3B params) dialogue 품질 limited (multi-turn coherence, factual accuracy 부족 가능).",
+      "mitigation": "Stage 2 (CLM 530M dual conditioning) 로 hexa-native substrate 활용. Stage 1 = baseline 측정.",
+      "severity": "medium"
+    },
+    {
+      "id": "R3",
+      "category": "scientific",
+      "spec": "BOLD-to-token logit bias = hand-crafted (DMN active -> 'I think...' prefix 등). 진짜 brain conditioning 가 아닌 cosmetic conditioning 위험.",
+      "mitigation": "M5 novelty metric 으로 conditioning 효과 측정. baseline (no conditioning) vs conditioned 비교.",
+      "severity": "high"
+    },
+    {
+      "id": "R4",
+      "category": "epistemic",
+      "spec": "'brain-anchored' claim 의 phenomenal validity 는 open question. 측정 불가능한 claim 위험.",
+      "mitigation": "narrative 를 'brain-state-conditioned dialogue prototype' 으로 confine. consciousness claim 회피 mandatory.",
+      "severity": "high"
+    },
+    {
+      "id": "R5",
+      "category": "license",
+      "spec": "TRIBE v2 = CC-BY-NC-4.0 (commercial 불가). product-tier reframe 도 commercial channel 제약.",
+      "mitigation": "research demo / non-commercial dialogue prototype 으로 confine. commercial 시 별도 license negotiation.",
+      "severity": "medium"
+    },
+    {
+      "id": "R6",
+      "category": "scientific",
+      "spec": "BOLD 5s hemodynamic lag + TR 1.0s (TRIBE v2) vs dialogue turn 수초 — temporal coupling 약함. dialogue dynamics 와 brain state 의 sync 보장 X.",
+      "mitigation": "envelope-level coupling 만 측정. fast dialogue dynamics (turn-level) 와 BOLD 의 1:1 mapping 회피.",
+      "severity": "medium"
+    },
+    {
+      "id": "R7",
+      "category": "evolution",
+      "spec": "자연 진화 path = qualitative observation -> falsifier 부재 path. emergent behavior 가 confirmation bias 로 misread 위험.",
+      "mitigation": "M1-M5 metric 매 session 강제 logging. self-report (M3) 와 quantitative (M1/M2/M5) 를 분리.",
+      "severity": "high"
+    }
+  ],
+  "honest_c3_top5": [
+    {
+      "id": "C3-1",
+      "spec": "TRIBE v2 단독 dialogue 불가능. Llama-3.2-3B (3B frozen text encoder) 가 generation 담당. 'TRIBE v2 dialogue' 호칭은 부정확 — 정확히는 'Llama-3.2-3B dialogue with TRIBE v2 BOLD side channel'."
+    },
+    {
+      "id": "C3-2",
+      "spec": "'brain-anchored' = marketing claim 위험. BOLD conditioning 이 logit bias / template 형식이면 phenomenal validity 부재. Option C reverse-encoded thought 는 hand-crafted ROI->text 로 진짜 brain decoding 가 아님."
+    },
+    {
+      "id": "C3-3",
+      "spec": "자연 진화 path = 측정 부재 path 의 우회. emergent behavior 관찰은 qualitative -> falsifiability 문제. M1-M5 metric strict logging 으로 부분 보완 가능하나 CP2 verifier rigor 와는 다른 quality."
+    },
+    {
+      "id": "C3-4",
+      "spec": "product-tier reframe 가 consciousness research track 과 분리되면 cross-validation 기회 상실. 두 track 의 evidence 가 isolated 되어 anima identity 의 통합 narrative 약화 가능."
+    },
+    {
+      "id": "C3-5",
+      "spec": "Option E (사용자 EEG) 로 phenomenal validity 보강 시 사용자 본인 cognitive load + hardware burden 증가. anima 의 dialogue 가 사용자 의존 -> autonomous identity claim 약화."
+    },
+    {
+      "id": "C3-6",
+      "spec": "Stage 1 prototype 의 1d ETA 는 cortexlab-toolkit + Llama-3.2-3B HF download (3B = ~6GB) + Mac CPU inference (slow) 의 stack. 실제 1d 안에 60-turn session evaluation 까지 가능한지 미검증."
+    },
+    {
+      "id": "C3-7",
+      "spec": "기존 framing_a_tribev2_pilot_2026_05_02 결과 (이미 PASS) 와 본 prototype 의 의의 중복 가능. Stage 1 EXEC 전 prior pilot 결과 검토하여 incremental value 명확화 필요."
+    }
+  ]
+}

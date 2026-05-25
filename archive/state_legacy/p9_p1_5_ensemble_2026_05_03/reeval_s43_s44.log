@@ -1,0 +1,41 @@
+[2026-05-03T14:21:54.711964+00:00] loading tokenizer /tmp/tokenizer_64k_multilingual.model
+[2026-05-03T14:21:54.719299+00:00] tokenizer vocab=64000
+[2026-05-03T14:21:54.726779+00:00] holdout loaded n=500
+[2026-05-03T14:21:54.896322+00:00] holdout cache n=499
+[2026-05-03T14:21:55.463248+00:00] device=cuda torch=2.11.0+cu128
+[2026-05-03T14:21:57.100862+00:00] === phase1_5_seed45: /tmp/p9_p1_5_sentinel_seed45_savepoints/final ===
+[2026-05-03T14:22:00.083468+00:00]   ERROR phase1_5_seed45: CUDA out of memory. Tried to allocate 188.00 MiB. GPU 0 has a total capacity of 11.50 GiB of which 76.19 MiB is free. Process 1137359 has 7.55 GiB memory in use. Including non-PyTorch memory, this process has 3.84 GiB memory in use. Of the allocated memory 3.42 GiB is allocated by PyTorch, and 273.82 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+[2026-05-03T14:22:00.085286+00:00] Traceback (most recent call last):
+  File "/tmp/p9_p1_5_seed45_v2_eval_inline.py", line 367, in <module>
+  File "/tmp/p9_p1_5_seed45_v2_eval_inline.py", line 234, in eval_ckpt
+  File "/tmp/p9_p1_5_seed45_v2_eval_inline.py", line 223, in build_base
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 1579, in load
+    return _load(
+           ^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 2190, in _load
+    result = unpickler.load()
+             ^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 2154, in persistent_load
+    typed_storage = load_tensor(
+                    ^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 2116, in load_tensor
+    wrap_storage = restore_location(storage, location)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 1915, in restore_location
+    return default_restore_location(storage, map_location)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 734, in default_restore_location
+    result = fn(storage, location)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/serialization.py", line 668, in _deserialize
+    return obj.to(device=device)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/storage.py", line 289, in to
+    return _to(self, device, non_blocking)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/_utils.py", line 106, in _to
+    untyped_storage = torch.UntypedStorage(self.size(), device=device)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 188.00 MiB. GPU 0 has a total capacity of 11.50 GiB of which 76.19 MiB is free. Process 1137359 has 7.55 GiB memory in use. Including non-PyTorch memory, this process has 3.84 GiB memory in use. Of the allocated memory 3.42 GiB is allocated by PyTorch, and 273.82 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+
+[2026-05-03T14:22:00.091731+00:00] WROTE /tmp/p9_p1_5_ensemble_v2_out/holdout500_reeval_v2_summary.json

@@ -1,0 +1,30 @@
+{
+  "schema": "anima/an11_a_frobenius/2",
+  "ts": "2026-05-02T09:30:00Z",
+  "substrate": {
+    "base": "Qwen/Qwen3-8B",
+    "lora": "r14_full",
+    "lora_path": "/Users/ghost/core/anima/state/r14_full_run/r14_full/final/",
+    "r": 64,
+    "alpha": 128,
+    "md5": "d29c53d114a19f55be7291f08096b1ef",
+    "adapter_size_bytes": 698419728
+  },
+  "frob_dW_total": 45.08262982996457,
+  "n_modules": 252,
+  "per_proj_total": {
+    "down_proj": 17.312945220939586,
+    "gate_proj": 29.777072847993583,
+    "up_proj": 22.520641628637005,
+    "k_proj": 5.8183858512822955,
+    "o_proj": 11.670116343142357,
+    "q_proj": 11.347162360682619,
+    "v_proj": 6.3284082031399205
+  },
+  "scale_alpha_over_r": 2.0,
+  "method": "||\u0394W||_F = sqrt(sum_modules ||scale * B @ A||_F^2); per-projection sums squared then sqrt",
+  "comparison": {
+    "mistral_r14_baseline_total_frob": 6.99134,
+    "mistral_r14_n_modules": 224
+  }
+}

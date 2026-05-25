@@ -1,0 +1,160 @@
+{
+  "schema": "anima/p9_paradigm_d_25k_eval_pipeline/meta/1",
+  "ts_utc": "2026-05-03T21:20:00Z",
+  "purpose": "Pre-build 25K HBM3 Phi-star distill ckpt eval pipeline so it's ready to fire when dancinlab/p9-paradigm-d-25k publishes step-5k..step-25k tags.",
+  "spec_refs": [
+    "docs/p9_paradigm_d_distillation_runbook_2026_05_03.md (canonical Phi-star-distill loss spec)",
+    "docs/p9_paradigm_d_phi_distillation_2026_05_03.md (parent Paradigm D spec)",
+    "docs/p9_paradigm_d_distill_landed_2026_05_03.ai.md (mini-run step_1000 reference)",
+    "tool/anima_phi_v3_canonical.hexa (Phi-star extractor: HID_TRUNC=8, K=8, ridge=1e-3)"
+  ],
+  "constraints_honored": [
+    "raw#9 STRICT: Mac side = hexa only (tool/p9_paradigm_d_verdict.hexa); ubu1 side = .py OK (eval driver, smoke test, run-all)",
+    "raw#15: ubu1 paths use ~/anima/state/...",
+    "raw#10 honest C3: 3 caveats (Phi-star scale variance, mini-run extrapolation limit, F-D BERT-class anchor)",
+    "$0 design: no 25K eval triggered (HBM3 ckpts not yet trained); base reference + mini-run reference are reuse of existing ckpts",
+    "DO NOT preempt Path A pod or HBM3 launch BG"
+  ],
+  "substrate": {
+    "ubu1": {
+      "host": "ubu1",
+      "gpu": "RTX 5070 12GB sm_120",
+      "torch": "2.11.0+cu128",
+      "peft": "0.19.1",
+      "transformers": "5.7.0",
+      "venv": "/home/aiden/venv_orchestrator/bin/python"
+    },
+    "mac": {
+      "host": "Mac",
+      "tool": "hexa run tool/p9_paradigm_d_verdict.hexa"
+    }
+  },
+  "deliverables": {
+    "ubu1_loader_smoketest": {
+      "path": "/home/aiden/anima/state/p9_paradigm_d_25k_eval_2026_05_03/loader_smoketest.py",
+      "result_path": "/home/aiden/anima/state/p9_paradigm_d_25k_eval_2026_05_03/loader_smoketest.json",
+      "verdict": "PASS",
+      "stages_passed": "7/7"
+    },
+    "ubu1_eval_driver": {
+      "path": "/home/aiden/anima/state/p9_paradigm_d_25k_eval_2026_05_03/eval_phi_distill_ckpt.py",
+      "modes": ["--base-only", "--synthetic-lora", "--ckpt-local-dir", "--ckpt-repo + --ckpt-revision"],
+      "outputs_per_ckpt": ["F1_bleu1_holdout", "F2_phi_star_min", "F2_phi_star_mean", "F3_tension_mse", "F_D_z_score_mse_final"]
+    },
+    "ubu1_run_all": {
+      "path": "/home/aiden/anima/state/p9_paradigm_d_25k_eval_2026_05_03/run_all_d_ckpts.sh",
+      "default_steps": "5000 10000 15000 20000 25000",
+      "modes": ["ANIMA_CKPT_REPO=<hf_id>", "ANIMA_CKPT_LOCAL_PARENT=<dir>", "DRY_RUN=1"]
+    },
+    "mac_verdict_hexa": {
+      "path": "tool/p9_paradigm_d_verdict.hexa",
+      "selftest": "PASS",
+      "e2e_test": "PASS (mini-run step_1000 -> PARTIAL_D, 2/4 falsifiers PASS)"
+    },
+    "mac_state": {
+      "loader_smoketest_mirror": "state/p9_paradigm_d_25k_eval_pipeline_2026_05_03/loader_smoketest.json",
+      "base_reference": "state/p9_paradigm_d_25k_eval_pipeline_2026_05_03/base_reference.json",
+      "mini_run_reference": "state/p9_paradigm_d_25k_eval_pipeline_2026_05_03/mini_run_reference.json",
+      "pipeline_meta": "state/p9_paradigm_d_25k_eval_pipeline_2026_05_03/pipeline_meta.json"
+    }
+  },
+  "loader_smoketest_summary": {
+    "verdict": "PASS",
+    "stages_passed": 7,
+    "stages_total": 7,
+    "base_n_params": 477648512,
+    "lora_trainable": 19005440,
+    "lora_pct_trainable": 3.83,
+    "alloc_after_roundtrip_gb": 7.39,
+    "phi_star_min_synthetic": 45.92,
+    "z_T_mean_validates_zero": 6.8e-05,
+    "z_T_std_validates_one": 0.99992,
+    "teacher_cache_mu_empirical_matches_frozen": "-24.2299 vs -24.230 (drift < 0.01)",
+    "teacher_cache_sigma_empirical_matches_frozen": "2.1158 vs 2.116 (drift < 0.01)"
+  },
+  "base_reference_summary": {
+    "label": "base_reference",
+    "F1_bleu1_holdout": 0.0010,
+    "F2_phi_star_min": 45.92,
+    "F2_phi_star_mean": 46.49,
+    "F3_tension_mse": 8.56,
+    "F_D_z_score_mse_final": 5.11,
+    "F_D_z_S_aggregate": 2.028,
+    "wall_s": 16.4
+  },
+  "mini_run_reference_summary": {
+    "label": "mini_run_step1000",
+    "ckpt_kind": "LOCAL_DIR",
+    "ckpt_id": "/tmp/p9_paradigm_d_distill_savepoints/step_1000",
+    "F1_bleu1_holdout": 0.0078,
+    "F2_phi_star_min": 43.19,
+    "F2_phi_star_mean": 43.85,
+    "F3_tension_mse": 6.47,
+    "F_D_z_score_mse_final": 1.44,
+    "wall_s": 21.4,
+    "matches_distill_landed_doc": "F1=0.0078 + Phi-star ~43.20 + Phi-star above 5.0 floor reproduces docs/p9_paradigm_d_distill_landed_2026_05_03.ai.md numbers exactly",
+    "trajectory_signal_vs_base": {
+      "F1_bleu1_delta": "+0.0068 (7.8x)",
+      "F2_phi_star_delta": "-2.73 (-5.9%, no floor breach)",
+      "F3_tension_mse_delta": "-2.09 (descent direction)",
+      "F_D_z_score_mse_delta": "-3.67 (descent direction; teacher distill term doing real work)"
+    }
+  },
+  "pre_registered_thresholds": {
+    "F1_bleu1_floor": 0.0059,
+    "F1_bleu1_floor_provenance": "Phase 1.6 BLEU-1 baseline (per docs/p9_p1_holdout500_reeval_2026_05_03/...)",
+    "F2_phi_star_floor": 5.0,
+    "F2_phi_star_floor_provenance": "Phase 1.5 delta-floor PHI_THRESHOLD",
+    "F3_tension_mse_ceiling": 0.1,
+    "F3_tension_mse_ceiling_provenance": "Phase 1.5 sentinel spec — note: base reference shows 8.56 which substantially exceeds 0.1; threshold may be ratio-based vs base in future spec, but pre-registered is absolute 0.1 per runbook §4",
+    "F_D_z_score_mse_ceiling": 0.5,
+    "F_D_z_score_mse_ceiling_provenance": "BERT-class regime anchor (Sanh 2019 DistilBERT MSE 0.3-0.6); CLM v4 350M class extrapolation honest_c3 #3"
+  },
+  "verdict_states": {
+    "SUCCESS_D": "all 4 falsifiers PASS",
+    "PARTIAL_D": "2-3 of 4 PASS (F2 not breached)",
+    "FAIL_D": "<=1 PASS OR F2 floor breach (sign-flip / collapse)"
+  },
+  "ranked_recommendation": [
+    {
+      "rank": 1,
+      "action": "When 25K HBM3 ckpts publish, run run_all_d_ckpts.sh ANIMA_CKPT_REPO=dancinlab/p9-paradigm-d-25k bash",
+      "completeness_score": 9.0,
+      "rationale": "5 ckpts × 4 falsifiers, ~20s/ckpt = ~2 min wall total + ~1s hexa verdict; matches the established A' pipeline flow; F-D z-score MSE descent vs mini-run trajectory will be the cleanest signal that 25K is doing more than 1k subset"
+    },
+    {
+      "rank": 2,
+      "action": "Subset eval (only step-25000) with --limit 100 for tighter F1 BLEU-1 CIs",
+      "completeness_score": 7.0,
+      "rationale": "If only the final ckpt matters (no trajectory analysis), use larger limit for tighter holdout BLEU-1 estimate; ~30s wall; loses 5-ckpt trajectory shape"
+    },
+    {
+      "rank": 3,
+      "action": "Add F-D per-record breakdown (instead of cache-mean MSE) — store z_T - z_S delta histogram",
+      "completeness_score": 6.5,
+      "rationale": "Distinguishes prompt-relative ordering shift from constant offset; spec-amend not in current pipeline; defer to v2"
+    },
+    {
+      "rank": 4,
+      "action": "Re-anchor F3 tension MSE ceiling vs base (e.g. F3_pass = current < 0.5*base)",
+      "completeness_score": 5.0,
+      "rationale": "Pre-registered absolute 0.1 may be too tight given base sits at 8.56 — but spec amendment requires new dated spec doc; the current pipeline does the conservative thing (will likely report F3 FAIL for all ckpts unless tension head trains massively)"
+    }
+  ],
+  "honest_c3": [
+    "Phi-star formula scale variance: anima_phi_v3_canonical w/ HID_TRUNC=8 + K=8 + ridge=1e-3 inherits sample-partition + log-determinant decomposition biases; numeric values are substrate-relative integration metrics, NOT canonical IIT 4.0 phi-star. Cross-substrate absolute comparisons (Mistral teacher vs CLM v4 student) are meaningless; only z-score-normalized prompt-relative ordering transfers. (Inherited from runbook §3.3.)",
+    "Mini-run step_1000 reference (BLEU 0.0078, Phi-star 43.20, F-D z-score MSE 1.44) is from a 1k-record subset / 2k-step training run; it CANNOT prove production 25K-scale convergence. It serves as a trajectory-shape anchor (showing the distill term descends from 5.11 → 1.44 in just 1k steps) and as a sanity check that the eval pipeline reproduces previously-observed numbers, NOT as a quantitative benchmark.",
+    "F-D pre-registered threshold (z-score MSE final < 0.5) is anchored to BERT-class distillation regime (Sanh 2019 DistilBERT MSE 0.3-0.6); CLM v4 350M class with sample-partition Phi-star targets is structurally unverified at this threshold. The mini-run already sits at 1.44 (above ceiling); 25K may push below 0.5 (PASS), may plateau in [0.5, 1.0] (PARTIAL), or may collapse (FAIL). Threshold may be tightened post-hoc if 25K shows much smaller residuals."
+  ],
+  "next_cycle_runbook": [
+    "1. When dancinlab/p9-paradigm-d-25k publishes step-5000..step-25000 tags:",
+    "   ssh ubu1 'ANIMA_CKPT_REPO=dancinlab/p9-paradigm-d-25k bash ~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/run_all_d_ckpts.sh'",
+    "2. Pull results to Mac:",
+    "   mkdir -p state/p9_paradigm_d_25k_eval_2026_05_03_ckpt_results",
+    "   scp ubu1:~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/ckpt_results/*.json state/p9_paradigm_d_25k_eval_2026_05_03_ckpt_results/",
+    "3. Compute verdict (Mac, hexa):",
+    "   hexa run tool/p9_paradigm_d_verdict.hexa",
+    "   (emits state/p9_paradigm_d_25k_eval_2026_05_03_verdict.json)",
+    "4. Inspect ranking + per-ckpt composite to pick best ckpt for downstream"
+  ]
+}

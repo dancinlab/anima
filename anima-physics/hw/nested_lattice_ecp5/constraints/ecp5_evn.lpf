@@ -1,0 +1,47 @@
+## ecp5_evn.lpf — Lattice ECP5-EVN evaluation board pin map (LFE5UM5G-85F-8BG381C)
+##
+## Reference: Lattice ECP5-EVN board user guide (FPGA-EB-02013-1.3) pinout.
+## This file is for Phase 1b synthesis (synth_ecp5 + nextpnr-ecp5 + ecppack).
+## Phase 1a sim+synth ($0 Mac local) does NOT consume this file.
+##
+## Notes:
+##   - LOCATE COMP / IOBUF syntax is Lattice Diamond / nextpnr-ecp5 compatible.
+##   - Clock = 12 MHz onboard oscillator (CLK1 net, BANK 6, pin A10 on ECP5-EVN).
+##   - Reset = K1 push-button SW2 (active-low; tie to rst_n via internal pull-up).
+##   - Start = K2 push-button SW3 (active-high run gate).
+##   - state_dump[41:0] not fully routed — 8 LSBs to LEDs D1..D8 for visual probe.
+
+# ──── clock ────
+LOCATE COMP "clk" SITE "A10";
+IOBUF  PORT  "clk" IO_TYPE=LVCMOS33;
+FREQUENCY PORT "clk" 12.000000 MHz;
+
+# ──── reset (active-low) — board push-button SW2 (K1) ────
+LOCATE COMP "rst_n" SITE "G2";
+IOBUF  PORT  "rst_n" IO_TYPE=LVCMOS33 PULLMODE=UP;
+
+# ──── start gate — board push-button SW3 (K2) ────
+LOCATE COMP "start" SITE "F2";
+IOBUF  PORT  "start" IO_TYPE=LVCMOS33 PULLMODE=DOWN;
+
+# ──── state_dump LSBs → on-board LEDs D1..D8 ────
+# (ECP5-EVN has 8 user LEDs on bank 1; pin assignments per UG02013)
+LOCATE COMP "state_dump[0]" SITE "A12";
+LOCATE COMP "state_dump[1]" SITE "B19";
+LOCATE COMP "state_dump[2]" SITE "B12";
+LOCATE COMP "state_dump[3]" SITE "C13";
+LOCATE COMP "state_dump[4]" SITE "C12";
+LOCATE COMP "state_dump[5]" SITE "D13";
+LOCATE COMP "state_dump[6]" SITE "D12";
+LOCATE COMP "state_dump[7]" SITE "E13";
+IOBUF  PORT  "state_dump[0]" IO_TYPE=LVCMOS33;
+IOBUF  PORT  "state_dump[1]" IO_TYPE=LVCMOS33;
+IOBUF  PORT  "state_dump[2]" IO_TYPE=LVCMOS33;
+IOBUF  PORT  "state_dump[3]" IO_TYPE=LVCMOS33;
+IOBUF  PORT  "state_dump[4]" IO_TYPE=LVCMOS33;
+IOBUF  PORT  "state_dump[5]" IO_TYPE=LVCMOS33;
+IOBUF  PORT  "state_dump[6]" IO_TYPE=LVCMOS33;
+IOBUF  PORT  "state_dump[7]" IO_TYPE=LVCMOS33;
+
+# ──── higher state_dump bits + step_count not routed in Phase 1b base config ────
+# Add additional LOCATE rules if probing L2/L3 cells visually on more LEDs / headers.

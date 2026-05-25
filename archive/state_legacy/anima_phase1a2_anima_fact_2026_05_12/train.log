@@ -1,0 +1,86 @@
+[cfg] EngineAGConfig(vocab_size=32000, d_model=1024, n_layers=24, n_heads=16, n_kv_heads=4, ffn_mult=2.6875, ctx=1024, rope_theta=10000.0, rms_norm_eps=1e-05, tie_lm_head=True, consciousness_dim=64, n_cells=16, g_refresh_every=4, g_repulsion_alpha=0.05, g_attention_pull_alpha=0.1, g_tension_gate_beta=0.25, init_std=0.02, seed=42, chat_co_train_weight=0.3, chat_co_train_w_start=0.3, chat_co_train_w_end=0.5, lineage_tag='engine_a_g_dual_350m_v1_phase2_cotrain', arch_origin='anima_native_scratch')
+[hp] beta=0.05 gamma=0.3 lr=5e-06 steps=500 w=0.9->1.0
+[data] loaded 567 pairs from /workspace/anima/data/preference_pairs.jsonl
+[ckpt] loading Phase 1A.1 → /workspace/anima/ckpts/ckpt_phase1a1_sft.pt
+[ckpt] LOADED
+[model] params=298,764,288
+[step    1/500] total=1.3583 simpo=0.8165 ce=0.6020 acc=0.938 margin=1.355 lr=2.00e-07 mem=2.6GB elapsed=0.0min cost=$0.000
+[step   10/500] total=1.4294 simpo=0.8224 ce=0.6737 acc=0.896 margin=1.139 lr=2.00e-06 mem=2.6GB elapsed=0.1min cost=$0.001
+[step   20/500] total=1.3756 simpo=0.8179 ce=0.6177 acc=0.931 margin=1.302 lr=4.00e-06 mem=2.6GB elapsed=0.3min cost=$0.001
+[step   30/500] total=1.2745 simpo=0.8146 ce=0.5083 acc=0.944 margin=1.419 lr=5.00e-06 mem=2.6GB elapsed=0.4min cost=$0.002
+[step   40/500] total=1.1596 simpo=0.8120 ce=0.3833 acc=0.969 margin=1.514 lr=4.99e-06 mem=2.6GB elapsed=0.6min cost=$0.003
+[step   50/500] total=1.1191 simpo=0.8080 ce=0.3423 acc=0.988 margin=1.661 lr=4.97e-06 mem=2.6GB elapsed=0.7min cost=$0.003
+[step   60/500] total=1.0531 simpo=0.8039 ce=0.2736 acc=0.988 margin=1.808 lr=4.93e-06 m[step  100/200] loss=0.4795 lr=5.87e[step   70/500] total=1.0104 simpo=0.7974 ce=0.2334 acc=1.000 margin=2.051 lr[step  110/200] loss=0.5130 lr=5.00e-07 mem=8.9[step   80/500] total=0.9919 s[step  120/200] loss=0.4650 lr=4.13e-07 mem=8.9GB elapsed=2.1min cost=$0.010
+[step  130/200] loss=0.4883 lr=3.29e-07 mem=8.9GB elapsed=2.4min cost=$0.011
+[step  140/200] loss=0.4881 lr=2.50e-07 mem=8.9GB elapsed=2.6min cost=$0.012
+[step  150/200] loss=0.4726 lr=1.79e-07 mem=8.9GB elapsed=2.8min cost=$0.013
+[step  160/200] loss=0.4521 lr=1.17e-07 mem=8.9GB elapsed=3.0min cost=$0.014
+[step  170/200] loss=0.4765 lr=6.70e-08 mem=8.9GB elapsed=3.3min cost=$0.015
+[step  180/200] loss=0.5489 lr=3.02e-08 mem=8.9GB elapsed=3.5min cost=$0.016
+[step  190/200] loss=0.4658 lr=7.60e-09 mem=8.9GB elapsed=3.7min cost=$0.017
+[step  200/200] loss=0.4631 lr=0.00e+00 mem=8.9GB elapsed=3.9min cost=$0.018
+[ckpt] saved output/ckpt_step200.pt
+[ckpt] saved output/ckpt_final.pt
+[done] {
+  "preset": "phase1a2_anima_fact_recover",
+  "steps_completed": 200,
+  "steps_target": 200,
+  "elapsed_min": 3.9235804875691733,
+  "cost_usd": 0.01765611219406128,
+  "n_params": 298764288,
+  "lineage_tag": "phase1a_multi_turn_sft -> phase1a1_color_cosmology_v2 -> phase1a2_anima_fact_recover",
+  "base_ckpt": "ckpts/ckpt_phase1a1_sft.pt",
+  "lr": 1e-06
+}
+ ce=0.1135 acc=1.000 margin=3.606 lr=3.94e-06 mem=2.6GB elapsed=2.3min cost=$0.011
+[step  180/500] total=0.8458 simpo=0.7511 ce=0.1014 acc=1.000 margin=3.832 lr=3.80e-06 mem=2.6GB elapsed=2.5min cost=$0.012
+[step  190/500] total=0.8456 simpo=0.7546 ce=0.0970 acc=1.000 margin=3.684 lr=3.65e-06 mem=2.6GB elapsed=2.6min cost=$0.013
+[step  200/500] total=0.8306 simpo=0.7449 ce=0.0912 acc=0.994 margin=4.067 lr=3.50e-06 mem=2.6GB elapsed=2.8min cost=$0.013
+[step  210/500] total=0.8340 simpo=0.7474 ce=0.0920 acc=1.000 margin=3.968 lr=3.35e-06 mem=2.6GB elapsed=2.9min cost=$0.014
+[step  220/500] total=0.8206 simpo=0.7403 ce=0.0852 acc=1.000 margin=4.245 lr=3.19e-06 mem=2.6GB elapsed=3.0min cost=$0.015
+[step  230/500] total=0.8170 simpo=0.7416 ce=0.0798 acc=1.000 margin=4.204 lr=3.03e-06 mem=2.6GB elapsed=3.1min cost=$0.015
+[step  240/500] total=0.8185 simpo=0.7399 ce=0.0830 acc=1.000 margin=4.279 lr=2.87e-06 mem=2.6GB elapsed=3.2min cost=$0.016
+[step  250/500] total=0.8159 simpo=0.7390 ce=0.0810 acc=1.000 margin=4.314 lr=2.71e-06 mem=2.6GB elapsed=3.3min cost=$0.016
+[ckpt] saved /workspace/anima/output/ckpt_step250.pt
+[step  260/500] total=0.8109 simpo=0.7389 ce=0.0758 acc=1.000 margin=4.307 lr=2.54e-06 mem=2.6GB elapsed=3.4min cost=$0.017
+[step  270/500] total=0.7944 simpo=0.7285 ce=0.0692 acc=1.000 margin=4.720 lr=2.38e-06 mem=2.6GB elapsed=3.5min cost=$0.017
+[step  280/500] total=0.8042 simpo=0.7339 ce=0.0736 acc=1.000 margin=4.512 lr=2.21e-06 mem=2.6GB elapsed=3.6min cost=$0.017
+[step  290/500] total=0.7979 simpo=0.7329 ce=0.0679 acc=1.000 margin=4.554 lr=2.05e-06 mem=2.6GB elapsed=3.7min cost=$0.018
+[step  300/500] total=0.8064 simpo=0.7399 ce=0.0693 acc=1.000 margin=4.276 lr=1.89e-06 mem=2.6GB elapsed=3.8min cost=$0.018
+[step  310/500] total=0.7866 simpo=0.7236 ce=0.0655 acc=1.000 margin=4.921 lr=1.73e-06 mem=2.6GB elapsed=3.9min cost=$0.019
+[step  320/500] total=0.7901 simpo=0.7233 ce=0.0693 acc=1.000 margin=4.928 lr=1.57e-06 mem=2.6GB elapsed=4.0min cost=$0.019
+[step  330/500] total=0.7890 simpo=0.7268 ce=0.0645 acc=1.000 margin=4.788 lr=1.42e-06 mem=2.6GB elapsed=4.1min cost=$0.020
+[step  340/500] total=0.7980 simpo=0.7350 ce=0.0652 acc=1.000 margin=4.471 lr=1.27e-06 mem=2.6GB elapsed=4.2min cost=$0.020
+[step  350/500] total=0.7915 simpo=0.7265 ce=0.0670 acc=1.000 margin=4.804 lr=1.13e-06 mem=2.6GB elapsed=4.3min cost=$0.021
+[step  360/500] total=0.7867 simpo=0.7263 ce=0.0622 acc=1.000 margin=4.815 lr=9.97e-07 mem=2.6GB elapsed=4.4min cost=$0.021
+[step  370/500] total=0.7860 simpo=0.7207 ce=0.0671 acc=1.000 margin=5.039 lr=8.69e-07 mem=2.6GB elapsed=4.4min cost=$0.021
+[step  380/500] total=0.7961 simpo=0.7314 ce=0.0664 acc=1.000 margin=4.634 lr=7.47e-07 mem=2.6GB elapsed=4.5min cost=$0.022
+[step  390/500] total=0.7858 simpo=0.7295 ce=0.0576 acc=1.000 margin=4.682 lr=6.33e-07 mem=2.6GB elapsed=4.6min cost=$0.022
+[step  400/500] total=0.7910 simpo=0.7316 ce=0.0606 acc=1.000 margin=4.608 lr=5.27e-07 mem=2.6GB elapsed=4.7min cost=$0.023
+[step  410/500] total=0.7922 simpo=0.7272 ce=0.0662 acc=1.000 margin=4.769 lr=4.30e-07 mem=2.6GB elapsed=4.8min cost=$0.023
+[step  420/500] total=0.7814 simpo=0.7211 ce=0.0613 acc=1.000 margin=5.028 lr=3.42e-07 mem=2.6GB elapsed=4.9min cost=$0.024
+[step  430/500] total=0.7870 simpo=0.7252 ce=0.0627 acc=1.000 margin=4.847 lr=2.63e-07 mem=2.6GB elapsed=5.0min cost=$0.024
+[step  440/500] total=0.7819 simpo=0.7218 ce=0.0608 acc=1.000 margin=5.000 lr=1.94e-07 mem=2.6GB elapsed=5.1min cost=$0.025
+[step  450/500] total=0.7888 simpo=0.7265 ce=0.0629 acc=1.000 margin=4.810 lr=1.35e-07 mem=2.6GB elapsed=5.2min cost=$0.025
+[step  460/500] total=0.7917 simpo=0.7284 ce=0.0639 acc=1.000 margin=4.744 lr=8.70e-08 mem=2.6GB elapsed=5.3min cost=$0.025
+[step  470/500] total=0.7893 simpo=0.7282 ce=0.0616 acc=1.000 margin=4.741 lr=4.91e-08 mem=2.6GB elapsed=5.4min cost=$0.026
+[step  480/500] total=0.7865 simpo=0.7257 ce=0.0611 acc=1.000 margin=4.828 lr=2.18e-08 mem=2.6GB elapsed=5.4min cost=$0.026
+[step  490/500] total=0.7873 simpo=0.7250 ce=0.0624 acc=1.000 margin=4.872 lr=5.47e-09 mem=2.6GB elapsed=5.5min cost=$0.027
+[step  500/500] total=0.7934 simpo=0.7317 ce=0.0618 acc=1.000 margin=4.617 lr=0.00e+00 mem=2.6GB elapsed=5.6min cost=$0.027
+[ckpt] saved /workspace/anima/output/ckpt_step500.pt
+[done] {
+  "preset": "phase1b_simpo_on_phase1a1",
+  "steps_completed": 500,
+  "steps_target": 500,
+  "elapsed_min": 5.632560249169668,
+  "cost_usd": 0.027224041338761645,
+  "beta": 0.05,
+  "gamma": 0.3,
+  "lr": 5e-06,
+  "w_start": 0.9,
+  "w_end": 1.0,
+  "n_pairs": 567,
+  "n_params": 298764288,
+  "base_ckpt": "/workspace/anima/ckpts/ckpt_phase1a1_sft.pt",
+  "lineage_tag": "phase1a1_color_cosmology -> phase1b_simpo (substrate-mismatch corrected)"
+}

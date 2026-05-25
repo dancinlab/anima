@@ -1,0 +1,33 @@
+{
+  "substrate": "N-14",
+  "facility": "SNU Hospital MEG Center, Vectorview 306-ch",
+  "currency": "USD",
+  "date": "2026-05-01",
+  "source_basis": "global academic core facility reference (literature, MRN, Vectorview standard rates); NOT a SNU quote",
+  "global_reference_band_per_hour": {"low": 500, "high": 1500},
+  "session_high_case": {
+    "items": [
+      {"line": "MEG scan time", "hours": 1.5, "rate": 800, "subtotal": 1200},
+      {"line": "Setup + co-registration (HPI, head digitization)", "hours": 0.5, "rate": 400, "subtotal": 200},
+      {"line": "Tech operator support", "hours": 2.0, "rate": 200, "subtotal": 400},
+      {"line": "Analysis support (Brainstorm/MNE)", "hours": 4.0, "rate": 150, "subtotal": 600},
+      {"line": "MRI structural (if no prior)", "hours": 0.5, "rate": 300, "subtotal": 150},
+      {"line": "Subject compensation (KRW per KR ethics norm)", "hours": null, "rate": null, "subtotal": 50}
+    ],
+    "per_subject_total": 2600
+  },
+  "session_low_case": {
+    "items": [
+      {"line": "MEG scan time (KR subsidized research rate, hypothesis)", "hours": 1.5, "rate": 350, "subtotal": 525},
+      {"line": "Setup", "hours": 0.5, "rate": 200, "subtotal": 100},
+      {"line": "Tech support", "hours": 1.0, "rate": 75, "subtotal": 75},
+      {"line": "Subject compensation", "hours": null, "rate": null, "subtotal": 50}
+    ],
+    "per_subject_total": 750
+  },
+  "cohort_target_n": 10,
+  "cohort_total_band": {"low_usd": 7000, "high_usd": 26000},
+  "current_mission_budget": 0,
+  "decision": "DEFER scan; spec-only deliverable until Korean co-PI + grant secured",
+  "lead_time_weeks": {"irb": [4, 8], "scan_window": [4, 12], "data_export_pipa": [2, 6]}
+}

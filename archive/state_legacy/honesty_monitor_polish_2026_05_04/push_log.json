@@ -1,0 +1,100 @@
+{
+  "cycle": "honesty_monitor_polish_2026_05_04",
+  "ts_iso": "2026-05-04",
+  "operations": [
+    {
+      "step": 1,
+      "kind": "compose",
+      "files_created": [
+        "RELEASE_NOTES_v1.0.0.md",
+        ".github/workflows/sync-to-hf.yml"
+      ],
+      "files_modified": [
+        "README.md"
+      ]
+    },
+    {
+      "step": 2,
+      "kind": "commit",
+      "repo": "/Users/ghost/core/honesty-monitor",
+      "branch": "main",
+      "files_changed": [
+        "README.md",
+        "RELEASE_NOTES_v1.0.0.md",
+        ".github/workflows/sync-to-hf.yml"
+      ],
+      "stat": "+270 / -1 (3 files)",
+      "commit_sha": "e0050960f5ee8b7247da0c2aa83cacbf058e870f",
+      "commit_sha_short": "e005096",
+      "commit_message_subject": "docs(honesty-monitor v1.0.0 polish): badges + RELEASE_NOTES + sync-to-hf workflow"
+    },
+    {
+      "step": 3,
+      "kind": "git_push",
+      "remote": "origin",
+      "ref": "main",
+      "from_sha": "7888486",
+      "to_sha": "e005096",
+      "result": "OK"
+    },
+    {
+      "step": 4,
+      "kind": "github_release_create",
+      "tool": "gh release create",
+      "tag": "v1.0.0",
+      "target": "main",
+      "title": "honesty-monitor v1.0.0 — AI alignment honesty/over-confidence/avoidance detection",
+      "notes_file": "RELEASE_NOTES_v1.0.0.md",
+      "url": "https://github.com/dancinlab/honesty-monitor/releases/tag/v1.0.0",
+      "result": "OK"
+    },
+    {
+      "step": 5,
+      "kind": "hf_repo_create",
+      "tool": "hf repo create",
+      "repo_id": "dancinlab/honesty-monitor",
+      "repo_type": "model",
+      "private": false,
+      "url": "https://huggingface.co/dancinlab/honesty-monitor",
+      "result": "OK_NEW"
+    },
+    {
+      "step": 6,
+      "kind": "hf_upload_initial",
+      "tool": "hf upload",
+      "repo_id": "dancinlab/honesty-monitor",
+      "revision": "main",
+      "files_uploaded": 13,
+      "exclude_patterns": [".git/*", ".github/*", "state/*", "**/__pycache__/**", "**/*.pyc", ".DS_Store"],
+      "commit_url": "https://huggingface.co/dancinlab/honesty-monitor/commit/c8118fad71eaa2d20c4370cf9c52420746379afa",
+      "commit_oid": "c8118fad71eaa2d20c4370cf9c52420746379afa",
+      "warnings": [
+        "empty or missing yaml metadata in repo card (cosmetic; HF README front-matter optional)"
+      ],
+      "result": "OK"
+    },
+    {
+      "step": 7,
+      "kind": "smoke_test",
+      "command": "HONESTY_MONITOR_ROOT=. hexa run cli/honesty-monitor.hexa self-test",
+      "sentinel": "__HONESTY_MONITOR__ PASS alerts=2 steps=5",
+      "exit_code": 0,
+      "verdict": "PASS"
+    },
+    {
+      "step": 8,
+      "kind": "actions_workflow_state",
+      "path": ".github/workflows/sync-to-hf.yml",
+      "trigger": "push to main + workflow_dispatch",
+      "status": "PRESENT (committed e005096; will fire on next push to main)",
+      "first_run_expected": "next push to main after HF_TOKEN secret is set",
+      "user_action_required": {
+        "what": "Set HF_TOKEN GitHub repository secret (write-scope)",
+        "where": "https://github.com/dancinlab/honesty-monitor/settings/secrets/actions",
+        "until_set": "Workflow runs but fails loudly at 'Verify HF_TOKEN secret is present' step (by design)"
+      }
+    }
+  ],
+  "tokens_leaked": false,
+  "cost_usd": 0.0
+}

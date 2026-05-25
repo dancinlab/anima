@@ -1,0 +1,68 @@
+{
+  "research_md_section": "§59",
+  "title": "PTD-aux as W-module-native temporal forward-model (error-as-curiosity)",
+  "$cost": "$0 Mac CPU (numpy hand-coded, no GPU, no model.forward)",
+  "seed": 1337,
+  "tau_collapse": 0.0001,
+  "kappa_curiosity_coupling": 2.0,
+  "structural_distinction": {
+    "s49_bolt_on": "target = §24 hand-coded threshold label; error → §24 emission gate (external label).",
+    "s59_w_native": "target = next ACTUAL W-state (self-predict); error → W.curiosity (EFE epistemic value, §7-legitimate intrinsic, NO external label)."
+  },
+  "runs": {
+    "R1_diverse_on": {
+      "regime": "diverse",
+      "w_native_enabled": true,
+      "n_measured": 299,
+      "error_mean": 0.04323958286580268,
+      "error_variance": 0.00044294888615957376,
+      "error_max": 0.09821721135729522,
+      "error_min": 0.003145535698675064,
+      "curiosity_variance": 0.09537313974933798,
+      "non_degenerate_curiosity": true,
+      "collapsed_to_prior": false
+    },
+    "R2_majority_on": {
+      "regime": "majority",
+      "w_native_enabled": true,
+      "n_measured": 299,
+      "error_mean": 0.007483926434524314,
+      "error_variance": 0.0009499997205141927,
+      "error_max": 0.20790504295888473,
+      "error_min": 0.00010399741421199779,
+      "curiosity_variance": 0.026376803267274266,
+      "non_degenerate_curiosity": true,
+      "collapsed_to_prior": false,
+      "majority_regime_steps": {
+        "n": 284,
+        "error_mean": 0.0007109981906008739,
+        "error_variance": 1.1528309606153193e-06,
+        "collapsed_on_constant_data": true
+      },
+      "excursion_steps": {
+        "n": 15,
+        "error_mean": 0.13571803451947467
+      }
+    },
+    "OFF_diverse_disabled": {
+      "regime": "diverse",
+      "w_native_enabled": false,
+      "n_measured": 299,
+      "error_mean": 0.0,
+      "error_variance": 0.0,
+      "error_max": 0.0,
+      "error_min": 0.0,
+      "curiosity_variance": 0.10124564886613176,
+      "non_degenerate_curiosity": false,
+      "collapsed_to_prior": true
+    }
+  },
+  "honest_crux": {
+    "verdict": "W-NATIVE-IS-STRUCTURALLY-DISTINCT-BUT-COLLAPSE-IS-DATA-SHAPE-BOUND",
+    "text": "W-native error IS a non-degenerate curiosity signal when the W-state itself is diverse (R1 variance > τ), but it STILL collapses to the prior-mean residual when the W-state is majority-dominated (R2 ≤ τ — the §27/§48 ~95% corpus shape). Therefore the §49 collapse is DATA-SHAPE-bound, NOT home-bound: making PTD-aux W-native is a real §7-legitimate STRUCTURAL improvement (intrinsic curiosity, not external label — B-S59-1/2), but it does NOT by itself escape §49 collapse on majority-dominated input. The reframe changes the objective semantics; it does not change the data.",
+    "r1_diverse_non_degenerate": true,
+    "r2_majority_collapsed": true,
+    "off_reduction_error_is_zero": true
+  },
+  "goal_distance": "§15 milestone unchanged. north-star (GOAL.md) NOT reached. §59 = §7-legitimate STRUCTURAL reframe (error-as-curiosity vs §49 bolt-on) + $0 structural-validation smoke. Whether W-native escapes collapse AT SCALE on real anima W-state is an honest future-fire question (B-S59-NOTE). Capability claim 0."
+}

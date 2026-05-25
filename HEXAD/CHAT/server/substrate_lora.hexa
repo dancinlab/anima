@@ -1,0 +1,19 @@
+// ════════════════════════════════════════════════════════════════════════
+// HEXAD/CHAT/server/substrate_lora.hexa — WRAPPER doc-stub
+//
+//   substrate_lora.py is the vP21M LoRA substrate (Substrate ABC impl):
+//   Qwen2.5-1.5B base + vP21M LoRA r32 + per-lang KOFL/JAFL hot-swap
+//   router. It hard-depends on torch / transformers / peft / safetensors
+//   (model load, PeftModel, set_adapter, model.generate, softmax-entropy)
+//   — a pure-hexa reimplementation is infeasible.
+//
+//   The .py is KEPT as the production-default substrate plugin. It is
+//   imported by anima_participant.py (build_substrate("lora")), never run
+//   standalone, so there is no exec dispatch — this .hexa is a hexa-native
+//   marker recording the deliberate WRAPPER verdict.
+// ════════════════════════════════════════════════════════════════════════
+
+fn main() {
+    println("substrate_lora.py — vP21M LoRA substrate (torch/transformers/peft).")
+    println("Imported by anima_participant.py build_substrate('lora'); not standalone.")
+}

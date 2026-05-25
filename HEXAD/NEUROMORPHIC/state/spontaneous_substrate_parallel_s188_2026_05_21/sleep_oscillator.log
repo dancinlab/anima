@@ -1,0 +1,16 @@
+[oscillator/sleep_oscillator] PHYS-P13-1 — SWS+REM 교대 오실레이터
+  delta(SWS): 2.0 Hz, amp=1.0 | theta(REM): 6.0 Hz, amp=0.7
+  done_criteria: 주파수 전환 (frequency band switching)
+
+  [T1] initial: freq=(float) mode=(float) amp=(float) phase=(float)
+T1 PASS — initial state is delta mode (f=2Hz)
+  [T2] theta: freq=(float) mode=(float) est_freq=(float) (target ~6Hz)
+T2 PASS — switch to theta, frequency ~6Hz confirmed
+  [T3] delta restored: freq=(float) mode=(float) est_freq=(float) (target ~2Hz)
+T3 PASS — switch back to delta, frequency ~2Hz confirmed
+  [T4] determinism: sample_a=(float) sample_b=(float) identical=true
+T4 PASS — deterministic oscillator
+  [T5] 500 steps completed, final_sample=(float) bounded=true
+T5 PASS — 500 samples completed, bounded output
+
+[oscillator/sleep_oscillator] 5/5 PASS — PHYS-P13-1 DONE

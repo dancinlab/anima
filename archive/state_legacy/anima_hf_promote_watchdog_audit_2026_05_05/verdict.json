@@ -1,0 +1,144 @@
+{
+  "audit_id": "BG-E-HF-PROMOTE-WATCHDOG-2026-05-05",
+  "audit_utc": "2026-05-05T13:00:00Z",
+  "audit_now_utc_ref": "2026-05-05T12:48:43Z",
+  "scope": "Validate HF clm-v4-mk2-v1 + Pβ PUBLIC promote scripts during 36-40h review-window dwell",
+  "raw_constraints": ["raw#9_md_bash_carve_out", "raw#10_honest_c3", "raw#15_no_promote_script_mutation"],
+  "own_lifecycle": "own_15_hf_release_private_then_public_after_verification",
+
+  "sub1_check_only_dry_run": {
+    "promotes_script": "state/anima_hf_promotes_2026_05_06_auto_fire.bash",
+    "cleanups_script": "state/anima_hf_cleanups_2026_05_07_auto_fire.bash",
+    "promotes_check_only_exit": "non-zero (expected)",
+    "cleanups_check_only_exit": "non-zero (expected)",
+    "clm_window_end_utc": "2026-05-06T23:26:12Z",
+    "pbeta_window_end_utc": "2026-05-07T03:48:00Z",
+    "clm_fire_able_now": "NO",
+    "pbeta_fire_able_now": "NO",
+    "clm_dry_run_gate1": "FAIL_EXPECTED (review window not yet elapsed)",
+    "pbeta_dry_run_gate1": "FAIL_EXPECTED (review window not yet elapsed)",
+    "scripts_executable": "PASS (both bash scripts +x)",
+    "verdict": "PASS — gates 1 fail correctly (window enforcement working). gates 2/3 not exercised because gate 1 short-circuits."
+  },
+
+  "sub2_hf_state_pre_check": {
+    "clm": {
+      "repo_id": "dancinlab/clm-v4-mk2-v1",
+      "siblings_count_actual": 16,
+      "siblings_count_expected": 16,
+      "siblings_match": true,
+      "commit_sha_actual": "80440a1d38db9addc4445bb959057558a57f4230",
+      "commit_sha_expected": "80440a1d38db9addc4445bb959057558a57f4230",
+      "sha_match": true,
+      "private_actual": true,
+      "private_expected": true,
+      "gated": false,
+      "lastModified": "2026-05-04T23:26:12.000Z",
+      "verdict.json_siblings_count_field": 15,
+      "verdict.json_enumerated_count": 16,
+      "verdict_stale_note": "verdict.json count field is 15 (off-by-one bug); enumerated list = 16; HF API = 16; promote script EXPECTED_SIBLINGS=16 (correct ground truth)",
+      "verdict": "PASS"
+    },
+    "pbeta": {
+      "repo_id": "dancinlab/clm-v4-paradigm-d-pbeta-50k-mk2-v1",
+      "siblings_count_actual": 6,
+      "siblings_count_expected": 6,
+      "siblings_match": true,
+      "commit_sha_actual": "7643e764488f8e11020a7663c50f2e590b70d10f",
+      "commit_sha_expected": "7643e764488f8e11020a7663c50f2e590b70d10f",
+      "sha_match": true,
+      "private_actual": true,
+      "private_expected": true,
+      "gated": false,
+      "lastModified": "2026-05-05T03:44:35.000Z",
+      "siblings_files": [".gitattributes", "LICENSE", "README.md", "adapter_config.json", "adapter_model.safetensors", "manifest.json"],
+      "verdict": "PASS"
+    },
+    "verdict": "PASS — both repos intact, sha + siblings + private flag match expected. No silent mutation detected."
+  },
+
+  "sub3_readme_audit": {
+    "clm_readme": {
+      "path": "docs/anima_clm_hf_release_v1_README_draft.md",
+      "lines": 211,
+      "bytes": 17092,
+      "caveat_count": 6,
+      "caveats": ["C1 NOT chat-capable", "C2 F1_v2 RED banding", "C3 functional/access tier only", "C4 train_avg runtime proxy", "C5 single-substrate release", "C6 bit-exact shim suspiciously tight"],
+      "has_115_mention": true,
+      "has_chat_incapability_disclosure": true,
+      "has_random_floor": true,
+      "has_forgetting_index_0_0196": true,
+      "has_phi_no_flip": true,
+      "has_license": true,
+      "has_empirical_2cycle_falsification": true,
+      "verdict": "PASS — 6 caveats > 5 minimum; #115 chat-incapability + 2-cycle empirical FAIL + substrate-research artifact disclosure + license all present"
+    },
+    "pbeta_readme": {
+      "path": "state/p9_pbeta_paradigm_d_50k_hf_upload_stage_2026_05_05/README.md",
+      "lines": 179,
+      "bytes": 9128,
+      "caveat_count": 7,
+      "caveats": ["C1 chat FAIL_TRUE composite 0.01176", "C2 substrate-research artifact ONLY", "C3 single-seed eval", "C4 holdout-500 limited n", "C5 Φ★ 41.86 anima-internal", "C6 PEFT-loadable but NOT instruct-following", "C7 base PRIVATE during window"],
+      "has_115_mention": true,
+      "has_chat_FAIL_TRUE_disclosure": true,
+      "has_substrate_research": true,
+      "has_phi_star_42_37": true,
+      "has_license": true,
+      "verdict": "PASS — 7 caveats > 5 minimum; chat-FAIL_TRUE + substrate-research-only intent + #115 + license all present"
+    },
+    "verdict": "PASS — both READMEs honest-C3 compliant for PUBLIC promote"
+  },
+
+  "sub4_uchg_state_audit": {
+    "uchg_chflags_check_method": "ls -lO (BSD chflags column)",
+    "uchg_dance_status": "DEPRECATED per docs/uchg_dance_deprecation_20260422.md",
+    "promote_scripts_chflags": "no uchg flag set (not formally locked)",
+    "release_state_dirs_chflags": "no uchg flag set",
+    "git_tracked": {
+      "promote_scripts_committed": true,
+      "auto_fire_scripts_status": "untracked (?? — newly added today, not yet committed)",
+      "working_tree_diff_stat": "clean for state/clm_v4_hf_release_v1_upload_2026_05_04/ + state/p9_pbeta_hf_upload_2026_05_05/"
+    },
+    "sha256_baseline": {
+      "state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash": "f1933930c4b671e030fa4323044141c73c5466355ad7dc3ea8c08cd7bd35f5e8",
+      "state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash": "c0e83446ddba2438ad3bf411074402c1a507ba89f749f7e77a555aebeb115d66",
+      "state/clm_v4_hf_release_v1_upload_2026_05_04/verdict.json": "6021c206a2cef770ac6823c41d07dd70f9e41379cd2d80393c89cc5138858d7b",
+      "state/p9_pbeta_hf_upload_2026_05_05/public_promote_pbeta_2026_05_08.bash": "d6c736e4cb6f9934d23f0509ec9bc55866f7f8dffd69b427cf8894344a362d8d",
+      "state/p9_pbeta_hf_upload_2026_05_05/cleanup_pbeta_2026_05_08.bash": "3e00113df8e1be35bc4bf3e0c620d412e92ef58baaf932d0369b6960dba4dab9",
+      "state/p9_pbeta_hf_upload_2026_05_05/verdict.json": "86ff7812aec42e25f694d405b627b2a8c872c182ab17c1031d151ea5b9a427bd",
+      "state/anima_hf_promotes_2026_05_06_auto_fire.bash": "440c85f4a0abbd508fa3561fcd3c18ad87cb809c4c925b7264832979a7755a9b",
+      "state/anima_hf_cleanups_2026_05_07_auto_fire.bash": "9646dc4d7793fef9c2468b9e2c9c4f0663931a393f198c9ce7380f7b568d06e8"
+    },
+    "verdict": "PARTIAL_PASS — uchg flags not set (anima migrated off uchg dance per 2026-04-22 deprecation); SHA256 baseline captured for re-verification at fire-time. Operator should re-shasum + diff against this verdict before fire."
+  },
+
+  "sub5_time_to_fire_manual": {
+    "current_utc": "2026-05-05T12:48:43Z",
+    "clm_fire_command": "bash /Users/ghost/core/anima/state/anima_hf_promotes_2026_05_06_auto_fire.bash --fire-clm",
+    "clm_fire_eligible_after_utc": "2026-05-06T23:26:12Z",
+    "clm_fire_t_minus_hours": 34.6,
+    "clm_confirm_string": "PROMOTE-clm-v4-mk2-v1",
+    "pbeta_fire_command": "bash /Users/ghost/core/anima/state/anima_hf_promotes_2026_05_06_auto_fire.bash --fire-pbeta",
+    "pbeta_fire_eligible_after_utc": "2026-05-07T03:48:00Z",
+    "pbeta_fire_t_minus_hours": 39.0,
+    "pbeta_confirm_string": "PROMOTE-pbeta-50k",
+    "pbeta_prerequisite": "clm-v4-mk2-v1 must already be PUBLIC (PEFT base inheritance — non-auth readers cannot load adapter without base access)",
+    "fire_all_command": "bash /Users/ghost/core/anima/state/anima_hf_promotes_2026_05_06_auto_fire.bash --fire-all",
+    "cleanup_clm_command": "bash /Users/ghost/core/anima/state/anima_hf_cleanups_2026_05_07_auto_fire.bash --fire-clm",
+    "cleanup_clm_eligible_after_utc": "2026-05-07T23:26:12Z",
+    "cleanup_pbeta_command": "bash /Users/ghost/core/anima/state/anima_hf_cleanups_2026_05_07_auto_fire.bash --fire-pbeta",
+    "cleanup_pbeta_eligible_after_utc": "2026-05-08T03:48:00Z",
+    "cleanup_grace_24h": "consumer download time grace, recommended after each PUBLIC promote",
+    "verdict": "PASS — fire commands verified against script case-statement; confirm-strings extracted from public_promote_*.bash read prompts (PROMOTE-clm-v4-mk2-v1 line 114, PROMOTE-pbeta-50k line 115)"
+  },
+
+  "honest_c3": [
+    "C1 — uchg/chflags NOT set on promote scripts; anima formally deprecated uchg dance 2026-04-22, so SHA256 baseline + git status are the only mutation-detection mechanisms during the 36-40h dwell. If filesystem is mutated outside git tracking, only re-shasum + this verdict's baseline catches it. Operator should re-shasum at fire-time.",
+    "C2 — auto-fire scripts (state/anima_hf_promotes_2026_05_06_auto_fire.bash + cleanups) are UNTRACKED in git (?? status); not yet committed. They could be deleted/modified silently between now and fire-time. Recommend committing before sleep, or at minimum diffing against this verdict's SHA256.",
+    "C3 — verdict.json siblings_count field is stale (15) vs enumerated (16) vs HF API (16) vs script EXPECTED_SIBLINGS (16). All non-stale sources agree on 16. No promote-time risk because script uses 16; documented as known off-by-one.",
+    "C4 — GATE 2 in promote script verifies HF state at fire-time (sha + private + siblings against expected) — provides authoritative silent-mutation protection during the review window FROM THE HF SIDE. Local script tampering is the residual risk class C1+C2 cover.",
+    "C5 — Pβ promote requires clm PUBLIC first (G5 base-model-promotion check). If operator runs --fire-all and clm sub-step fails, pbeta is auto-aborted (script logic line 95). If clm succeeds but operator skips pbeta, base is PUBLIC + adapter remains PRIVATE — non-readable without auth (acceptable interim state, not corrupted)."
+  ],
+
+  "overall_verdict": "PASS — all 5 sub-tasks PASS. Auto-fire infrastructure ready for 36-40h dwell. Recommend (1) commit auto-fire scripts before sleep, (2) re-shasum at fire-time vs sha256_baseline, (3) operator manually re-affirms G1-G6 before typing confirm-string."
+}

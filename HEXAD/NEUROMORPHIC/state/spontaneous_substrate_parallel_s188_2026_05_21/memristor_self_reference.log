@@ -1,0 +1,17 @@
+[memristor/self_reference] PHYS-P5-1 — memristor self-reference circuit (4 cells)
+  chain: seed → cell_0 → cell_1 → cell_2 → cell_3 ─┐
+                  ▲                                 │
+                  └────── feedback (o3 → in0) ──────┘
+
+  [T1] w0=(float) w1=(float) w2=(float) w3=(float)
+T1 PASS — non-volatility (w ∈ [w_min, w_max])
+  [T2] closed-vs-open mean|Δ o3| over last 10 samples = (float)
+T2 PASS — self-feedback is active (closed ≠ open loop)
+  [T3] |w0(120)-w0(60)|=(float)  |w0(180)-w0(120)|=(float)  w0(180)=(float)
+T3 PASS — Hebbian trajectory stable (Cauchy)
+  [T4] len(simulate(5))=5  len(simulate(25))=25
+T4 PASS — simulate_n_steps(n) returns n samples
+  [T5] max|Δ| across two independent runs = (float)
+T5 PASS — bit-identical across repeat runs
+
+[memristor/self_reference] 5/5 PASS — PHYS-P5-1 DONE

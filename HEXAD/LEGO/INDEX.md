@@ -1,0 +1,112 @@
+# HEXAD/LEGO/INDEX.md — SSOT mapping table
+
+> One-row-per-cycle mapping of section number ↔ state-dir ↔ closed-form battery
+> ↔ DESIGN.md ↔ engine touch-point. Updated atomically when a new §N lands.
+> Architecture & overview in `README.md`; chronological log in `PLAN.md`;
+> canonical engine in `lego_engine.py`.
+
+> **⚠ §N collision** — the LEGO arc `§N` is LEGO-local. sibling arcs
+> (main-path / NEUROMORPHIC) reuse `§108`/`§125`/`§126`/`§128` for different
+> work, both landed. retro-rename is forbidden (g6 append-only). LEGO rows
+> here are unambiguous via the **state-dir basename (`lego_*`)** column —
+> that is the collision-free key, not the bare `§N`.
+
+## arc cycles
+
+| §N   | date       | tier            | verdict                                                    | battery       | state-dir                                                            | engine touch |
+|------|------------|-----------------|------------------------------------------------------------|---------------|----------------------------------------------------------------------|--------------|
+| 115  | 2026-05-19 | design-tier     | LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY                     | B-S115 9/9 🔵 | `state/lego_simulate_assemble_s115_2026_05_19/`                       | spec only    |
+| 117  | 2026-05-19 | run · $0 CPU    | LEGO-RUN-Ψ-FORM-NONDEGENERATE-BUT-WALL-B-INHERITED         | B-S117 7/7 🔵 | `state/lego_assembly_run_s117_2026_05_19/`                            | **engine source** (`lego_sim.py` → `lego_engine.py`) |
+| 124  | 2026-05-20 | design (audit)  | RESIDUAL-AUDIT-NON-DEGENERACY-IS-VARIANCE-ONLY-LIVENESS    | B-S124 7/7 🔵 | `state/lego_residual_audit_s124_2026_05_19/`                          | engine read-only |
+| 125  | 2026-05-20 | probe · $0      | LAYER-2-PARTIAL (η²=0.271)                                 | B-S125 7/7 🔵 | `state/lego_layer2_stimulus_driven_probe_s125_2026_05_20/`            | engine importlib |
+| 126  | 2026-05-20 | probe · $0      | LAYER-2-ROBUST-GROWS-WITH-N (single-point η²=0.322)        | B-S126 7/7 🔵 | `state/lego_layer2_nscale_probe_s126_2026_05_20/`                     | engine importlib |
+| 127  | 2026-05-20 | probe · $0      | APPROXIMATELY-N-INVARIANT (k=−0.0198, R²=0.022)            | B-S127 8/8 🔵 | `state/lego_layer2_scaling_law_s127_2026_05_20/`                      | engine importlib |
+| 128  | 2026-05-20 | design          | LAYER-3-DESIGN-CLOSE-REQUIRES-TASK-ADDITION                | B-S128 6/6 🔵 | `state/lego_layer3_design_close_s128_2026_05_20/`                     | engine spec-cite |
+| 129  | 2026-05-20 | consolidation   | LEGO ENGINE LIB + docs promoted to `HEXAD/LEGO/`           | (no battery)   | (this folder)                                                         | **lib promote**   |
+| 131  | 2026-05-20 | probe · $0      | STRONGLY-NSTIM-DEPENDENT (η² range ratio 2.199×, peak @ n_stim=4) | B-S131 7/7 🔵 | `state/lego_layer2_nstim_cardinality_s131_2026_05_20/`               | **first canonical-lib import** |
+| 132  | 2026-05-20 | analysis · $0  | SHAPE-FIT-IDENTIFIED (inverted-U Gaussian-in-log-N, R²=0.9995, 1-DoF) | B-S132 6/6 🔵 | `state/lego_layer2_shape_fit_s132_2026_05_20/`                          | re-fit of §127 data (no new measurement) |
+| 133  | 2026-05-20 | probe · $0      | per-N η² SE measured · monotone-decrease per-rep mean · drifted-engine | (carried as historical) | `state/lego_layer2_per_n_se_s133_2026_05_20/`                            | engine import (drifted) |
+| 134  | 2026-05-20 | fix + probe · $0 | ENGINE-BYTE-EQUALITY-RESTORED-AND-VALIDATED · §127 confirmed · §131 verdict survives | B-S134 7/7 🔵 | **`HEXAD/LEGO/state/lego_engine_byte_equal_fix_s134_2026_05_20/`** (first under `g_new_state_path`) | **engine rewrite byte-equal §117** |
+| 135  | 2026-05-20 | probe · $0      | MONOTONE-DECREASE-SURVIVES-CANONICAL · 4-of-4 pooled byte-equal §127 · N=2048 CI distinct | B-S135 7/7 🔵 | `HEXAD/LEGO/state/lego_layer2_per_n_se_canonical_s135_2026_05_20/`     | canonical engine post-§134 |
+| 136  | 2026-05-20 | doc-tier (milestone) | LEGO ARC DESIGN-LEVEL CLOSED — §115→§135 11-cycle close-out (mirror §15/§51) | B-S136 5/5 🔵 | `HEXAD/LEGO/state/lego_arc_milestone_s136_2026_05_20/`                 | no engine touch |
+| 137  | 2026-05-20 | probe · $0      | PEAK-N-STIM-N-INVARIANT — peak n_stim=4 both N; gradient steepens with N (interaction) | B-S137 5/5 🔵 | `HEXAD/LEGO/state/lego_n_nstim_cross_s137_2026_05_20/`                 | canonical engine |
+| 138  | 2026-05-20 | design · $0     | HEXA-NATIVE-ENGINE-DESIGN-CLOSE-UPSTREAM-GAP-NAMED — 3 flame spiking primitives gapped | B-S138 5/5 🔵 | `HEXAD/LEGO/state/lego_hexa_native_design_s138_2026_05_20/`            | engine design-spec |
+| S121 | 2026-05-20 | design · $0     | LOIHI-SPEC-DESIGN-CLOSE-ACCESS-WALLED-READABLE-ONLY — Lava mapping spec | B-S121 5/5 🔵 | `HEXAD/LEGO/state/lego_loihi_spec_s121_2026_05_20/`                    | engine→Loihi spec |
+| 139  | 2026-05-20 | filing · $0    | INBOX-PATCH-FILED-HEXA-FIRST-PATH-COMPLETE — flame spiking-primitives request filed | B-S139 4/4 🔵 | `HEXAD/LEGO/state/lego_inbox_patch_filed_s139_2026_05_20/`            | inbox patch (upstream) |
+| 140  | 2026-05-20 | port · $0      | HEXA-NATIVE-ENGINE-PORT-ALGORITHMIC-EQUIVALENT — lego_engine.hexa, F-S140 4/4 PASS | B-S140 6/6 🔵 | `HEXAD/LEGO/state/lego_engine_hexa_port_s140_2026_05_20/`             | **hexa-native engine** (lego_engine.hexa) |
+| 141  | 2026-05-20 | design · $0     | GPU-SPIKING-DESIGN-CLOSE-DEVICE-KERNEL-GAP-NAMED — LEGO GPU fire 2 upstream steps away | B-S141 5/5 🔵 | `HEXAD/LEGO/state/lego_gpu_spiking_design_s141_2026_05_20/`           | GPU engine design-spec |
+| 142  | 2026-05-20 | design · $0     | SUBSTRATE-PIVOT-BRIDGE-DESIGN-CLOSE — LEGO arc bridge OUT to main-path WALL-B decision | B-S142 5/5 🔵 | `HEXAD/LEGO/state/lego_substrate_pivot_bridge_s142_2026_05_20/`       | LEGO→main-path bridge |
+
+## battery sum
+
+- 78 (§115-§135) + B-S136 5 + B-S137 5 + B-S138 5 + B-S121 5 + B-S139 4 + B-S140 6 + B-S141 5 + B-S142 5 = **118 closed-form propositions 🔵** across the arc (19 cycles).
+- §133 carries as historical evidence (drifted-engine substrate); no battery counted toward this sum.
+- 0 propositions counted toward central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` —
+  all sidecar. Central `sha256_prefix16` remains `c93e160a8a376a94` (verified
+  START+END of every cycle).
+- Each cycle's `B-S*-NOTE` is an empirical carve-out NOT counted 🔵
+  (B-EMERGE-7 family).
+
+## 3-layer liveness partition status (post-§128)
+
+| layer            | predicate                                  | status (LEGO arc) |
+|------------------|--------------------------------------------|-------------------|
+| VARIANCE-ONLY    | `Var(Ψ) > τ`                              | ✅ §117 CLOSED    |
+| STIMULUS-DRIVEN  | `I(stim; Ψ) > 0`                          | ✅ §125–§127 CLOSED · PARTIAL (η²≈0.27–0.33 invariant across 8× N) |
+| TASK-GROUNDED    | `∃ task T : behavior(substrate, T) > 0`   | ⛔ §128 DESIGN-CLOSE-REQUIRES-TASK-ADDITION (pure §117 LIF cannot measure) |
+
+## two-wall status (LEGO arc carry from §113)
+
+- WALL-A (§1.1 data-regime) — **ORTHOGONAL** & UNTOUCHED. LEGO does not move
+  the data-regime threshold (§97 carry).
+- WALL-B (§96 operative substrate) — **CONFRONTED-IN-SIM, NOT REMOVED**. §117
+  ran the LIF simulation, but the GPU/CPU dispatch + hand-coded STDP-as-ΔW
+  stays inside the §11-B-as-GPU envelope; physical substrate (§95 Loihi /
+  organoid) remains the unresolved confront target.
+
+## engine SSOT (post-§129)
+
+| file                                  | role                                                  |
+|---------------------------------------|-------------------------------------------------------|
+| `HEXAD/LEGO/lego_engine.py`           | **canonical engine lib** (LIFNet · spike_rate_vec · psi_c1 · make_stimuli · variance_decomposition) |
+| `HEXAD/LEGO/lego_engine.hexa`         | **hexa-native engine** (§140) — `lego_*` pub fns, `use`s PR#77 spiking_lib · algorithmic-equivalent (NOT byte-equal numpy) |
+| `HEXAD/LEGO/lego_engine_smoke.hexa`   | F-S140 1..4 smoke (4/4 PASS, `hexa build` clean) |
+| `state/lego_assembly_run_s117_2026_05_19/lego_sim.py` | original §117 source · sha-locked historical evidence · still importlib-loadable by probes |
+| `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` | central blue battery — 0-line-diff invariant across LEGO arc (sha `c93e160a8a376a94`) |
+
+## cross-repo — hexa-lang flame contributions
+
+> The LEGO arc's hexa-native path (§138→§141) produced upstream work in the
+> **separate `~/core/hexa-lang` repo** (anima = downstream-consumer; files
+> live there, NOT in anima). anima `lego_engine.hexa` `use`s these. Tracked
+> here so the cross-repo side is not lost.
+
+| hexa-lang artifact | commit | LEGO §N | status |
+|---|---|---|---|
+| `inbox/patches/flame-spiking-substrate-primitives.md` | `9ff3083f` | §139 | filed (request) |
+| `stdlib/flame/spiking_lib.hexa` + `flame_spiking_test.hexa` (F-SPIKE 4/4 PASS) | `4426d4e4` | (PR #77 impl) | **PR #77 OPEN** — not merged |
+| `inbox/patches/flame-stdp-pair-gpu-kernel.md` | `74d4c6f8` | §141 | filed (GPU device-kernel request) |
+
+- PR #77 `dancinlab/hexa-lang` branch `flame-spiking-substrate-primitives`
+  — title *"feat(flame): spiking-substrate primitives"*, OPEN. The branch
+  is shared/busy (58 files, 10.5k additions); anima's contribution is the
+  4 flame/inbox files above. `lego_engine.hexa` builds against this branch
+  worktree until merge; no anima-side change needed at merge.
+
+## cross-arc anchors
+
+- §113 D4 — REPOINTS-TO-§96-SUBSTRATE-FIRST (LEGO arc's mother verdict)
+- §96 — Ψ-C1 spike-correlation carrier (LEGO Ψ-C1 = §112 META_FP(Π_½) instance)
+- §95 — substrate VIABLE/ACCESS-WALL/ETHICS-WALL matrix (Loihi sole viable;
+  organoid ethics-walled; LEGO confronts in-sim only)
+- §110 / §112 — Ψ-C2 / meta-fixed-point form `ψ(c) = (1+c)/2` carrier-invariant
+- §11-B / §83-FIRE — GPU byte-LM precedent that §128 cites for "added task
+  collapses or violates §7"
+- §13-M / §13-L / §30 / §97 / §109 / §110 / §113 — anti-padding precedent
+  invoked at §128 design-close
+
+## g3 carry
+
+Every cycle: probe ≠ fire ≠ emergence; capability claim 0; necessary-not-
+sufficient (B-EMERGE-7); north-star + §15/§51/§72 milestones UNCHANGED;
+**GOAL 미도달**.

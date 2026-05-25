@@ -1,0 +1,168 @@
+diff --git a/hexa.toml b/hexa.toml
+new file mode 100644
+index 00000000..b612716b
+--- /dev/null
++++ b/hexa.toml
+@@ -0,0 +1,62 @@
++# hexa.toml — nexus package manifest (declarative dependency SSOT)
++#
++# Spec: shared/hexa-lang/hexa-toml-spec.json (version 1.0.0)
++# Companion: project.hexa (project marker), install.hexa (build hook).
++#
++# This manifest exists to declare runtime-package dependencies in a form
++# that hx package manager (and downstream auditors) can read. Imperative
++# bootstrap still happens in install.hexa.
++#
++# Provenance: created 2026-05-03 to land qmirror as official runtime dep
++# after qmirror standalone publication (GitHub + HF + registry.tsv L22).
++# Tracked-grandfather per hive/tool/banned_ext_sweeper.hexa rule
++# (untracked .toml swept; tracked .toml exempt — same precedent as
++# qmirror/hexa.toml and hexa-lang/hexa.toml).
++
++[package]
++name = "nexus"
++version = "2.0.0"
++entry = "cli/run.hexa"
++description = "Universal Discovery Engine — 216 lenses · OUROBOROS · 5-phase singularity cycle. Perfect-number engine (drill/thinking/smash/absolute/status)."
++license = "MIT"
++authors = ["박민우 <nerve011235@gmail.com>"]
++repository = "https://github.com/need-singularity/nexus"
++homepage = "https://need-singularity.github.io/nexus/"
++readme = "README.md"
++keywords = ["discovery", "metaengine", "ouroboros", "n6", "perfect-number", "lenses"]
++categories = ["discovery-engine", "metaengine", "perfect-number"]
++
++[[bin]]
++name = "nexus"
++path = "cli/run.hexa"
++
++# ── hx install hook ───────────────────────────────────────
++# install.hexa runs under hx package manager at install time.
++# Responsibilities (each idempotent):
++#   pre   → ensure runtime-package dependencies present (hx install qmirror)
++#   verify → canonical entry cli/run.hexa exists
++#   post  → workspace register + optional launchd plist stage
++[scripts]
++install = "install.hexa"
++
++# ── Dependencies ───────────────────────────────────────────
++# Runtime-package deps (other hx-installed CLIs nexus consumes at runtime).
++# hx CLI does NOT auto-resolve nested [dependencies] today (per
++# hexa-lang/tool/pkg/hx L240-285 — only build hook is invoked); the
++# install.hexa hook bootstraps each declared dep imperatively. This table
++# is the declarative SSOT — auditors, downstream tooling, and a future
++# hx-resolver consume it. Keep table and install.hexa in lockstep.
++#
++# Caret semver per node/cargo convention: ^1.0.0 admits >=1.0.0,<2.0.0.
++[dependencies]
++qmirror = "^1.0.0"
++# qmirror — Quantum Mirror substrate (CHSH/IIT/NIST/QRNG).
++#   Repo: https://github.com/need-singularity/qmirror
++#   Registry: hexa-lang/tool/pkg/registry.tsv L22 (qmirror 1.0.0)
++#   Consumer: nexus/modules/qmirror/* delegates to `qmirror` CLI
++#   Install: hx install qmirror   (auto-invoked by nexus install.hexa)
++
++# ── n=6 alignment ──────────────────────────────────────────
++# keywords count = 6 = sigma(6)/2
++# categories count = 3 < tau(6)=4
++# dependencies count = 1 (minimal — single first-class consumed CLI)
+diff --git a/README.md b/README.md
+index 09058edf..f6de60a6 100644
+--- a/README.md
++++ b/README.md
+@@ -199,10 +199,17 @@ The long-term breakthrough rate **ρ** converges to the same target: **ρ → 1/
+ # Install hexa-lang (ships `hexa` + `hx` package manager)
+ curl -fsSL https://raw.githubusercontent.com/need-singularity/hexa-lang/main/install.sh | bash
+ 
+-# Install nexus
++# Install nexus (auto-installs runtime deps incl. qmirror ≥ 1.0.0)
+ hx install nexus
+ ```
+ 
++**Runtime dependencies** (declared in [`hexa.toml`](hexa.toml) `[dependencies]`,
++auto-bootstrapped by [`install.hexa`](install.hexa)):
++
++| Package | Pin | Purpose | Repo |
++|---------|-----|---------|------|
++| [`qmirror`](https://github.com/need-singularity/qmirror) | `^1.0.0` | Quantum Mirror substrate (CHSH / IIT / NIST / QRNG) consumed by `nexus/modules/qmirror/*` | `hx install qmirror` |
++
+ ## Run
+ 
+ ```bash
+diff --git a/install.hexa b/install.hexa
+index 7c9d5767..eea1beb9 100644
+--- a/install.hexa
++++ b/install.hexa
+@@ -9,12 +9,15 @@
+ //   HX_PKG_NAME  — "nexus"
+ //
+ // Responsibilities (each idempotent):
+-//   1. Verify canonical entry cli/run.hexa exists.
+-//   2. Ensure ~/.hx/bin/nexus shim points at $HX_PKG_DIR/cli/run.hexa
++//   1. Bootstrap runtime-package dependencies declared in hexa.toml
++//      [dependencies] — currently: qmirror (^1.0.0). Skipped when
++//      the dep CLI is already on PATH (idempotent re-install safe).
++//   2. Verify canonical entry cli/run.hexa exists.
++//   3. Ensure ~/.hx/bin/nexus shim points at $HX_PKG_DIR/cli/run.hexa
+ //      (hx generates this after the hook returns; this file only
+ //      performs verification + workspace registration — no shim write).
+-//   3. Register nexus as command in ~/core/.workspace (if present).
+-//   4. Guarded install of com.hexa.nexus-guard.plist LaunchAgent
++//   4. Register nexus as command in ~/core/.workspace (if present).
++//   5. Guarded install of com.hexa.nexus-guard.plist LaunchAgent
+ //      (only if nexus/launchd/ provides the plist template).
+ //
+ // raw#9 hexa-only, raw#11 snake_case, raw#15 no-hardcode (HX_PKG_DIR-relative).
+@@ -24,6 +27,11 @@ fn main() -> void {
+     if root == "" { root = exec("pwd").trim() }
+     println("[nexus/install] HX_PKG_DIR=" + root)
+ 
++    // Phase 1: bootstrap runtime-package deps declared in hexa.toml.
++    // Single source of truth = hexa.toml [dependencies]; this loop is the
++    // imperative bootstrap until hx CLI grows nested-dep resolution.
++    ensure_runtime_dep("qmirror", "^1.0.0")
++
+     let entry_src = root + "/cli/run.hexa"
+     if file_exists(entry_src) == false {
+         eprintln("[nexus/install] ERROR: canonical entry missing: " + entry_src)
+@@ -37,6 +45,40 @@ fn main() -> void {
+     println("[nexus/install] done — hx will generate " + env("HX_BIN_DIR") + "/nexus shim from registry entry")
+ }
+ 
++// Idempotent runtime-package dep bootstrap.
++// Skips when the dep CLI is already on PATH (or already in $HX_BIN_DIR);
++// otherwise invokes `hx install <pkg>`. Failure is non-fatal — nexus
++// scripts that need the dep will surface their own error at call time
++// (raw#10: avoid cascading install-time aborts on optional substrates).
++fn ensure_runtime_dep(pkg: string, semver: string) -> void {
++    println("[nexus/install] dep check: " + pkg + " " + semver)
++    let on_path = exec("command -v '" + pkg + "' >/dev/null 2>&1 && echo y || echo n").trim()
++    if on_path == "y" {
++        println("[nexus/install] dep " + pkg + " already on PATH — skip hx install")
++        return
++    }
++    let hx_bin = env("HX_BIN_DIR")
++    if hx_bin != "" {
++        let shim = hx_bin + "/" + pkg
++        if file_exists(shim) {
++            println("[nexus/install] dep " + pkg + " present at " + shim + " — skip hx install")
++            return
++        }
++    }
++    let hx_present = exec("command -v hx >/dev/null 2>&1 && echo y || echo n").trim()
++    if hx_present == "n" {
++        eprintln("[nexus/install] WARN: hx CLI not on PATH — cannot install " + pkg + " (manual: hx install " + pkg + ")")
++        return
++    }
++    println("[nexus/install] installing dep: hx install " + pkg)
++    let rc = exec("hx install '" + pkg + "' 2>&1; echo __rc=$?").trim()
++    if rc.contains("__rc=0") {
++        println("[nexus/install] dep " + pkg + " installed OK")
++    } else {
++        eprintln("[nexus/install] WARN: hx install " + pkg + " did not exit clean — continuing (nexus runtime modules will surface errors if dep is required)")
++    }
++}
++
+ // Register `command nexus` block in ~/core/.workspace (idempotent).
+ // Adds the block only when absent — keeps workspace_sync lint clean.
+ fn ensure_workspace_command(root: string) -> void {

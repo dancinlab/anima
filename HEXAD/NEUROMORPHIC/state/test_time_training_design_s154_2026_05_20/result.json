@@ -1,0 +1,63 @@
+{
+  "cycle": "s154",
+  "date": "2026-05-20",
+  "tier": "design",
+  "cost_usd": 0,
+  "fired": false,
+  "anchor_paper": {
+    "arxiv_id": "2509.25741",
+    "title": "Test-Time Training Enhances In-Context Learning of Nonlinear Functions",
+    "updated": "2026-01"
+  },
+  "parent_context": [
+    "HEXAD/NEUROMORPHIC/SOFTWARE_BREAKTHROUGH_RESEARCH.md §1 Cluster E",
+    "HEXAD/NEUROMORPHIC/SOFTWARE_BREAKTHROUGH_RESEARCH.md §2 ranked #7",
+    "HEXAD/NEUROMORPHIC/SOFTWARE_BREAKTHROUGH_RESEARCH.md §6 honest caveat #6"
+  ],
+  "sibling_cycles": ["s150", "s151", "s152", "s153", "s155"],
+  "verdict": "DESIGN-CLOSE-WITH-NARROW-OPEN",
+  "verdict_split": {
+    "subvariant_3_1_ttt_as_proposed": "DESIGN-CLOSE (not anima-fit; §7③ FAIL via B-S154-2; WALL-B-i relocated not removed via B-S154-1)",
+    "subvariant_3_2_ttt_frozen_no_update": "REDUNDANT with §17 / §24 existing observables",
+    "subvariant_3_3_ttt_s7_clean_physics_sourced": "DESIGN-OPEN, fire-decidable (NEW deployment-time learning channel candidate; §7 PASS at all clauses; non-backprop by construction via §152 Hebbian + Oja import)"
+  },
+  "propositions_count": 7,
+  "proposition_ids": [
+    "B-S154-1 TTT-IS-INFERENCE-TIME-BACKPROP-CLOSED",
+    "B-S154-2 EXTERNAL-TARGET-VIOLATES-§7③-CLOSED",
+    "B-S154-3 DESIGNATED-PARAMETER-IS-PORTABLE-CLOSED",
+    "B-S154-4 PHYSICS-COHERENCE-LOSS-NONNEGATIVE-CLOSED",
+    "B-S154-5 Ψ-FIXED-POINT-RECOVERS-§75-FIRE-CONNECTION-CLOSED",
+    "B-S154-6 SEVEN-LEGITIMACY-CONJUNCTION-CLOSED",
+    "B-S154-7 η-ZERO-CONNECTION-POINT-CLOSED"
+  ],
+  "empirical_carve_out": "B-S154-NOTE (necessary-not-sufficient; deployment-time learning rule fire feasibility = future SGD/measurement OUTCOME)",
+  "central_blue_falsifier": {
+    "path": "state/verify_hexad_blue_2026_05_15/blue_falsifier.py",
+    "sha256_prefix_at_write_time": "ad1881eaa7fd5041",
+    "line_diff_in_this_cycle": 0,
+    "note": "Task spec quoted prefix c93e160a8a376a94 is stale across earlier cycles (e.g. §150 / §152 still cite the older prefix). §154 records the ACTUAL sha verified at this cycle's start and end. The MY-CYCLE 0-line-diff invariant holds against the actual sha."
+  },
+  "goal_legitimacy": {
+    "c1_not_generic_lm_pretrain": true,
+    "c2_not_generic_then_graft": true,
+    "c3_anima_physics_as_source": true,
+    "note": "These three TRUE flags apply to the §3.3 sub-variant (the DESIGN-OPEN one). §3.1 fails at c3. §3.2 passes but is redundant."
+  },
+  "g_doc_consolidation_compliance": {
+    "docs_star_new_files": 0,
+    "all_new_files_under": "HEXAD/NEUROMORPHIC/state/test_time_training_design_s154_2026_05_20/",
+    "central_state_dirs_edited": 0,
+    "hexa_lang_edits": 0,
+    "hexa_bio_edits": 0,
+    "kosmos_edits": 0
+  },
+  "north_star_status": "UNCHANGED — GOAL not reached; §154 is a $0 design cycle, NOT a fire",
+  "milestones_status": {
+    "s15": "UNCHANGED",
+    "s51": "UNCHANGED",
+    "s72": "UNCHANGED"
+  },
+  "honest_caveats_count": 12,
+  "next_step": "§154-FOLLOWUP could freeze driving(·) rank-1 approximation against paper PDF + GrAPE 2510 forward-mode JVP form; §154-FIRE would be the empirical step (queued behind §139, §152, §153, §155 per §50 single-sequential lesson)"
+}

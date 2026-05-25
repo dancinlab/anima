@@ -1,0 +1,145 @@
+{
+  "test": "qmirror_cond4_nist_tier1plus_clean",
+  "date": "2026-05-03",
+  "alpha": 0.01,
+  "n_bytes_per_stream": 125000,
+  "n_bits_per_stream": 1000000,
+  "battery": "NIST SP 800-22 Rev.1a \u00a72.{1,2,3,4,6,11,12} (clean reference impl)",
+  "tier1_plus_tests": [
+    "monobit",
+    "block_frequency",
+    "runs",
+    "longest_run",
+    "dft",
+    "cumulative_sums",
+    "approximate_entropy"
+  ],
+  "threshold": 6,
+  "streams": [
+    "hmac_drbg_legacy",
+    "qmirror_mock_lcg"
+  ],
+  "provenance": {
+    "hmac_drbg_legacy": {
+      "algorithm": "HMAC-DRBG (NIST SP 800-90A Rev.1, \u00a710.1.2) with SHA-256",
+      "entropy_input_bits": 4096,
+      "entropy_input_source": "IonQ Forte 1 |+>^16 256-shot Z-basis measurement",
+      "personalization_string": "anima.nexus.qrng.ionq_forte1.2026-05-02",
+      "first_1024_sha256_verified": true,
+      "n_bytes": 125000,
+      "sha256": "2aa7b6cd85b7c27c681116d2c807c6abb688faa335871c3d5afb0642ef8e744c",
+      "anu_tier": "T1.a-fallback (HMAC-DRBG seeded by IonQ quantum bits)"
+    },
+    "qmirror_mock_lcg": {
+      "source": "Park-Miller LCG seed=12345",
+      "anu_tier": "T0",
+      "n_bytes": 125000,
+      "sha256": "9f59d112b2db44e4c4d943716c622d366bd1e91096f041840db16da8bb323083"
+    }
+  },
+  "test_results": {
+    "hmac_drbg_legacy": {
+      "name": "hmac_drbg_legacy",
+      "n_bytes": 125000,
+      "n_bits": 1000000,
+      "tests": {
+        "monobit": {
+          "p_value": 0.7113824903989066,
+          "passed": true,
+          "elapsed_sec": 0.0
+        },
+        "block_frequency": {
+          "p_value": 0.37502712825177964,
+          "passed": true,
+          "elapsed_sec": 0.05
+        },
+        "runs": {
+          "p_value": 0.9759578688522541,
+          "passed": true,
+          "elapsed_sec": 0.0
+        },
+        "longest_run": {
+          "p_value": 0.9912014651468718,
+          "passed": true,
+          "elapsed_sec": 0.27
+        },
+        "dft": {
+          "p_value": 0.4408036326352414,
+          "passed": true,
+          "elapsed_sec": 0.05
+        },
+        "cumulative_sums": {
+          "p_value": 0.7710024226614688,
+          "passed": true,
+          "elapsed_sec": 21.23
+        },
+        "approximate_entropy": {
+          "p_value": 0.7389058655181712,
+          "passed": true,
+          "elapsed_sec": 0.83
+        }
+      },
+      "pass_count": 7,
+      "test_count": 7,
+      "verdict": "PASS"
+    },
+    "qmirror_mock_lcg": {
+      "name": "qmirror_mock_lcg",
+      "n_bytes": 125000,
+      "n_bits": 1000000,
+      "tests": {
+        "monobit": {
+          "p_value": 0.9968084702675367,
+          "passed": true,
+          "elapsed_sec": 0.0
+        },
+        "block_frequency": {
+          "p_value": 1.0,
+          "passed": true,
+          "elapsed_sec": 0.02
+        },
+        "runs": {
+          "p_value": 0.9999999872338428,
+          "passed": true,
+          "elapsed_sec": 0.0
+        },
+        "longest_run": {
+          "p_value": 4.40038449436048e-220,
+          "passed": false,
+          "elapsed_sec": 0.1
+        },
+        "dft": {
+          "p_value": 0.0,
+          "passed": false,
+          "elapsed_sec": 0.02
+        },
+        "cumulative_sums": {
+          "p_value": 0.9999999999999984,
+          "passed": true,
+          "elapsed_sec": 12.21
+        },
+        "approximate_entropy": {
+          "p_value": 0.0,
+          "passed": false,
+          "elapsed_sec": 0.97
+        }
+      },
+      "pass_count": 4,
+      "test_count": 7,
+      "verdict": "FAIL"
+    }
+  },
+  "production_streams_evaluated": [
+    "hmac_drbg_legacy"
+  ],
+  "production_streams_passing": [
+    "hmac_drbg_legacy"
+  ],
+  "anu_tier_used": "T1.a-fallback (HMAC-DRBG seeded by IonQ Forte 1; ANU unavailable)",
+  "cond4_verdict": "PASS",
+  "honest_caveats_c3": [
+    "ANU pull tier: T1.a-fallback (HMAC-DRBG seeded by IonQ Forte 1; ANU unavailable). The legacy qrng.anu.edu.au/API/jsonI.php endpoint is deprecated by ANU (rate-limited to ~1 request/min, no API attestation, no SLA). It remains a real vacuum-fluctuation quantum source but does NOT constitute a hardened production T1 stream. The new T1.a api.quantumnumbers.anu.edu.au endpoint requires NEXUS_QMIRROR_ANU_KEY which is not present in this environment.",
+    "Sample size: 1,000,000 bits per stream is the NIST SP 800-22 MINIMUM (sometimes called 'tier-1+ minimum'); production certification typically requires N=10^9 bits (1 Gbit) and m independent sequences for the second-tier proportion-of-passing metric. A single-sequence p-value PASS at n=10^6 is necessary but not sufficient evidence of cryptographic-grade entropy.",
+    "Test selection rationale: this run covers ONLY the 7 tier-1+ tests (monobit, block_frequency, runs, longest_run, dft, cumulative_sums, approximate_entropy) per the cond.4 falsifier F-QM-NIST-TIER1-1. The remaining 8 SP 800-22 tests (binary_matrix_rank, non_overlapping_template, overlapping_template, maurers_universal, linear_complexity, serial, random_excursion, random_excursion_variant) are NOT included; tier-2+/full-battery PASS is a separate condition not adjudicated here. Note also: the prior nistrng-package run reported approximate_entropy p=0.0 and cumulative_sums p=1.0 due to two reproducible bugs in the library at n=10^6 (int8 cumsum overflow; min(2,max(3,\u2026)) inversion + log(c_i/10.0) typo); this implementation is a direct rewrite from the spec equations to remove both."
+  ]
+}

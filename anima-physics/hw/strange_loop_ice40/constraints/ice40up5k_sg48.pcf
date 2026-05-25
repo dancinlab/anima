@@ -1,0 +1,19 @@
+# ice40up5k_sg48.pcf — iCE40UP5K-SG48 pin assignment (UPduino v3.0 / iCEBreaker)
+#
+# This file is for reference (Phase 1b synthesis target). Actual board pins
+# vary by dev board (UPduino, iCEBreaker, BlackIce-MX). Adjust per HW.
+
+# Clock (12 MHz onboard oscillator on UPduino v3)
+set_io clk 35
+
+# Reset (active-low button)
+set_io rst_n 42
+
+# Start (active-high run gate)
+set_io start 38
+
+# Step count [15:0] — typically not routed to pins, kept internal
+# state_dump [23:0] — could route a few bits to LEDs
+
+# Example LED outputs (3 LEDs on UPduino: RGB at pins 39/40/41)
+# Map state_dump bits to LEDs for visual cycle observation

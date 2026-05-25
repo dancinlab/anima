@@ -1,0 +1,5 @@
+# PRESERVE-AS-SSOT — this is a DESIGN audit ledger, not cargo
+purpose: anima raw-audit shadow ledger (parallel write — used as falsifier for the primary .raw-audit, detect divergence)
+format: shadow JSONL (.raw-audit.shadow + .raw-audit.shadow.jsonl) mirroring primary
+readers: anima shadow-vs-primary integrity check; raw-audit divergence detector
+never_migrate: true

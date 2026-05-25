@@ -1,0 +1,101 @@
+=== v5mitosis_cotrain_v4_scaleup vast.ai H100 dispatch (v4 production scale) ===
+Tue May 12 15:20:19 UTC 2026
+  steps=20000 d_model=1024 n_head=16 ffn=4096 cells=2-256 batch=8 ctx=512 lr=1e-4 warmup=2000
+  ROUTING: top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+  cost_cap=$40.0 absolute_max=$44.0 per_hr_max=$8.0
+[1/9] Searching GPU offers (gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200,B200,RTX_PRO_6000_WS,RTX_PRO_6000_S,A100_SXM4] num_gpus=1 reliability>0.95 dph_total<8.0 disk_space>150 inet_down>200) — cheapest with gpu_ram>=75000MB ...
+  Selected: id=36324476 dph=$0.9380 gpu=A100_SXM4 gpu_ram=81920MB rel=0.977
+[2/9] cost gate OK (est $4.69)
+[3/9] Renting...
+  Instance ID: 36624731
+[4/9] Waiting SSH (direct-IP) ...
+  ... 1/180 status=None
+  ... 2/180 status=loading
+  ... 3/180 status=loading
+  ... 4/180 status=loading
+  ... 5/180 status=loading
+  ... 6/180 status=loading
+  ... 7/180 status=loading
+  ... 8/180 status=loading
+  ... 9/180 status=loading
+  ... 10/180 status=loading
+  ... 11/180 status=loading
+  ... 12/180 status=loading
+  ... 13/180 status=loading
+  ... 14/180 status=loading
+  ... 15/180 status=loading
+  ... 16/180 status=loading
+  ... 17/180 status=loading
+  ... 18/180 status=loading
+  ... 19/180 status=loading
+  ... 20/180 status=loading
+  ... 21/180 status=loading
+  SSH ready: 35.225.61.234:31746 (22x5s)
+[5/9] Uploading code+corpus+probe ...
+Warning: Permanently added '[35.225.61.234]:31746' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[35.225.61.234]:31746' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[35.225.61.234]:31746' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[35.225.61.234]:31746' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[35.225.61.234]:31746' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[6/9] (image already has torch — skip pip install)
+[7/9] Train v4 scale-up (OOM-retry: batch halves on CUDA OOM, min 2) ...
+  >>> attempt 1: batch=8
+Warning: Permanently added '[35.225.61.234]:31746' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[INFO] device=cuda torch=2.5.1+cu121 cuda=True
+[INFO] gpu=NVIDIA A100-SXM4-80GB
+[INFO] cfg = {'vocab_size': 256, 'd_model': 1024, 'n_head': 16, 'ffn_dim': 4096, 'max_seq': 512, 'n_layer': 1, 'initial_cells': 2, 'max_cells': 256, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] n_params(engine+router)=43,022,592  router_out_dim=256 top_k=8
+[INFO] corpus=corpus/corpus_5cat_balanced.txt bytes=18,890,139
+[INFO] top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+[STEP     0] loss=709.6569 ce=710.3401 aux=1.0000 ent_gate=0.6931/0.693 wmax=0.5001 active>.01=2.0/2 λ=1.0000 cells=2 splits=0 cost=$0.00 vram=1.5/85GB
+[STEP    50] loss=697.9277 ce=701.6639 aux=1.0246 ent_gate=1.3074/2.996 wmax=0.3832 active>.01=3.9/20 λ=1.0000 cells=20 splits=18 cost=$0.00 vram=14.3/85GB
+[STEP   100] loss=689.9611 ce=696.9781 aux=1.1909 ent_gate=3.6430/4.190 wmax=0.1381 active>.01=8.0/66 λ=1.0000 cells=66 splits=64 cost=$0.03 vram=47.6/85GB
+Traceback (most recent call last):
+  File "/workspace/anima/training/cotrain_v5mitosis_v4.py", line 773, in <module>
+    sys.exit(cotrain(parse_args()))
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/cotrain_v5mitosis_v4.py", line 624, in cotrain
+    logits, info = engine(x)
+                   ^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/cotrain_v5mitosis_v4.py", line 273, in patched_forward
+    stacked = torch.stack(cell_outs, dim=0)                            # (N,B,T,D)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.83 GiB. GPU 0 has a total capacity of 79.25 GiB of which 1.66 GiB is free. Process 1201775 has 77.58 GiB memory in use. Of the allocated memory 76.74 GiB is allocated by PyTorch, and 359.97 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Warning: Permanently added '[35.225.61.234]:31746' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+  train OK (rc=0)
+[8/9] Downloading (MANDATORY before pod delete — memory feedback_orchestrator_h100_gotchas) ...
+Warning: Permanently added '[35.225.61.234]:31746' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+scp: /workspace/anima/output/ckpt_final.pt: No such file or directory
+Warning: Permanently added '[35.225.61.234]:31746' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+scp: /workspace/anima/output/cotrain_v4_scaleup_result.json: No such file or directory
+Warning: Permanently added '[35.225.61.234]:31746' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[WARN] pull failed — SETTING SAVE_POD=1 (pod retained for manual recovery)
+[9/9] DONE
+Tue May 12 15:27:30 UTC 2026
+[cleanup] SAVE_POD=1 — keeping instance 36624731 (exit=0)

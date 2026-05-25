@@ -1,0 +1,80 @@
+{
+  "schema": "anima/an11_c_p4_r8_f1_live/1",
+  "task": "F.B sub-task — F1_LIVE r9 token-sampling JSD measurement (p4_r8 vs baseline)",
+  "ts_utc": "2026-05-01T13:21:33Z",
+  "spec_doc": "docs/cp2_interim_public_minimum_path_recommendation_2026_04_29.md §5.1 sub-task F.B",
+  "trigger": "AN11(c) FAIL/PASS disambiguation — substrate-anti-integration vs projection-bias",
+  "verdict": "DEFERRED-RETRY",
+  "pass_threshold": 0.5,
+  "mean_jsd_bits": null,
+  "config_intended": {
+    "base_model": "mistralai/Mistral-7B-v0.3",
+    "target_lora": "state/trained_adapters/p4_r8/final/adapter_model.safetensors (185.92 MB, MD5 0cf189a72eb193877ad177048645d84f)",
+    "baseline_model": "Qwen/Qwen3-8B (substituted for gemma-3-12b-pt — gated, no auth available; Qwen3-8B is ungated and was the diverse-substrate baseline used in prior anima axis4 trainings)",
+    "baseline_lora": "null — state/trained_adapters/p4_r6/final/adapter_model.safetensors does NOT exist in repo (verified by find; only p4_r8/ present under state/trained_adapters/)",
+    "prompts": "bench/zeta_likert/v1_frozen.json (20 prompts, 5 categories)",
+    "n_samples": 20,
+    "jsd_bins": 128,
+    "max_new_tokens": 32,
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "seed": 42,
+    "auto_shutdown_min": 30,
+    "budget_usd": 0.50
+  },
+  "actual_runs": [
+    {
+      "attempt": 1,
+      "run_id": "f1_live_jsd_p4_r8_20260501",
+      "pod_id": "z6zimb58pqu0ti",
+      "gpu": "H100 SXM (US)",
+      "elapsed_min": 2.57,
+      "estimated_cost_usd": 0.128,
+      "outcome": "FAILED",
+      "failure_reason": "PeftModel.from_pretrained → SafetensorError: 'Error while deserializing header: incomplete metadata, file not fully covered'",
+      "diagnosis": "scp -r of 186MB adapter directory uploaded a corrupted safetensors (length matched but content unreadable). Local file MD5 verified intact (0cf189a72eb193877ad177048645d84f).",
+      "ledger_intermediate": "stored only locally at /tmp/an11_c_p4_r8_f1_live_pod_out/an11_c_p4_r8_f1_live_2026_05_01.json (DEFERRED-RETRY)",
+      "raw_run_ledger": "state/runpod_run_f1_live_jsd_p4_r8_20260501.json"
+    },
+    {
+      "attempt": 2,
+      "run_id": "f1_live_jsd_p4_r8_20260501_v2",
+      "pod_id": "9rcfx2puui1h6a",
+      "gpu": "H100 SXM (IN)",
+      "elapsed_min": 10.0,
+      "estimated_cost_usd": 0.498,
+      "outcome": "FAILED",
+      "failure_reason": "ssh exec subprocess timeout=480s (max-runtime-min=8) hit while pod-side script was still in HF Mistral-7B-v0.3 download (Fetching 3 files stage); orchestrator crashed without auto-terminate",
+      "diagnosis": "Mistral-7B-v0.3 base model HF download on this pod (no warm cache) exceeded 8min wall budget. Pod-side jsd_measure.log shows: device=cuda, target base loading Fetching 3 files 0%. No JSD measurement reached. Pod manually terminated post-orchestrator-crash via runpodctl pod remove.",
+      "remediation_for_v3": "use larger --max-runtime-min (e.g. 25), pre-warm HF cache via volume reuse, or use a different base image with mistralai pre-cached. Either route requires more than the remaining $0.50 budget.",
+      "uploaded_via": "tarball (md5-verified) to avoid scp -r corruption seen in v1",
+      "raw_run_ledger": "state/runpod_run_f1_live_jsd_p4_r8_20260501_v2.json (NOT WRITTEN — orchestrator crashed before serializing)"
+    }
+  ],
+  "cost_attribution": {
+    "actual_cost_usd_v1": 0.128,
+    "actual_cost_usd_v2_estimate": 0.498,
+    "total_actual_cost_usd_estimate": 0.626,
+    "budget_cap_usd": 0.50,
+    "over_budget_by_usd": 0.126,
+    "honest_disclosure": "Total spend 0.626 EXCEEDS budget cap 0.50 by $0.126. Per spec ('If actual cost exceeds, auto-kill pod and stop') execution is HALTED after attempt 2. NO further pod launches authorized within this F.B sub-task."
+  },
+  "interpretation_for_an11c": "INDETERMINATE — neither attempt produced a valid token-sampling JSD measurement. AN11(c) FAIL/PASS disambiguation REMAINS UNRESOLVED. The audit's prior verdict (AN11(c) FAIL via h_last hidden-state proxy at mean JSD 0.0894 bits k=128) STANDS as the operative state-of-knowledge. CP2 weighted score remains 63.30% RED (F2 override).",
+  "verdict_consequences": {
+    "substrate_anti_integration_hypothesis": "neither confirmed nor refuted by this F1_LIVE attempt; still SUPPORTED by prior phi_star=-14.4 + 14-gate L1 0/16 evidence",
+    "projection_bias_hypothesis": "neither confirmed nor refuted; remains an open alternative",
+    "next_action_recommendation": "Path-D substrate swap probe ($1-2) OR re-attempt F1_LIVE with pre-warmed HF cache and larger time budget — both require user re-authorization since cumulative spend has exceeded the $0.50 own#6 autonomous threshold for this task"
+  },
+  "race_isolation_compliance": [
+    "wrote ONLY to state/an11_c_p4_r8_f1_live_2026_05_01.json + state/cp2_consciousness_weighted_recompute_2026_05_01_f1_live.json",
+    "did NOT touch alpha serve pod (id lzw79649ob80uk; left untouched)",
+    "did NOT touch docs/anima_cp2_alpha_landing_*"
+  ],
+  "raw_compliance": [
+    "raw#9 hexa-only — orchestrator invoked via tool/anima_runpod_orchestrator.hexa (helper auto-emitted to /tmp; raw#37 transient)",
+    "raw#10 honest C3 — full failure disclosure; no fabricated JSD value reported",
+    "raw#37 transient — pod-side jsd_measure.py + run_on_pod.sh + tarball staged in /tmp; not committed to anima repo (HEXA-FIRST EPERM compliance preserved)",
+    "raw#71 falsifier — F-MIN-1 cost overrun PREDICATE FIRED ($0.626 > $1.00 threshold not yet hit, but $0.50 spec budget was exceeded)",
+    "raw#86 cost-attribution — actual $0.626 vs estimate $0.05–0.20 (3-13x overrun)"
+  ]
+}

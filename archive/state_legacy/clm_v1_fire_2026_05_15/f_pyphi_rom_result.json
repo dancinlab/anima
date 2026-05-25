@@ -1,0 +1,223 @@
+{
+  "falsifier": "F-PYPHI-\u03a6-FORMAL",
+  "cycle": "90 (2026-05-15)",
+  "pyphi_version": "1.2.0",
+  "ckpt": "ckpt_clm_v1_fire_final.pt (64 cells)",
+  "spec": "\u22651 (n,seed) \u03a6 \u2265 0.5 strict \u2192 \ud83d\udd35 SUPPORTED-FORMAL unlock",
+  "n_list": [
+    3,
+    4,
+    5
+  ],
+  "seeds": [
+    42,
+    1234,
+    5678
+  ],
+  "measurements": [
+    {
+      "n": 3,
+      "seed": 42,
+      "selected_cells": [
+        0,
+        1,
+        10
+      ],
+      "unique_states": 3,
+      "total_states": 8,
+      "top_state": [
+        0,
+        0,
+        1
+      ],
+      "phi": 0.340562,
+      "status": "OK",
+      "wall_sec": 12.9
+    },
+    {
+      "n": 3,
+      "seed": 1234,
+      "selected_cells": [
+        0,
+        1,
+        10
+      ],
+      "unique_states": 3,
+      "total_states": 8,
+      "top_state": [
+        0,
+        0,
+        1
+      ],
+      "phi": 0.330499,
+      "status": "OK",
+      "wall_sec": 12.1
+    },
+    {
+      "n": 3,
+      "seed": 5678,
+      "selected_cells": [
+        0,
+        1,
+        10
+      ],
+      "unique_states": 3,
+      "total_states": 8,
+      "top_state": [
+        0,
+        0,
+        1
+      ],
+      "phi": 0.301056,
+      "status": "OK",
+      "wall_sec": 12.1
+    },
+    {
+      "n": 4,
+      "seed": 42,
+      "selected_cells": [
+        0,
+        1,
+        10,
+        17
+      ],
+      "unique_states": 6,
+      "total_states": 16,
+      "top_state": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "phi": 0.744174,
+      "status": "OK",
+      "wall_sec": 18.0
+    },
+    {
+      "n": 4,
+      "seed": 1234,
+      "selected_cells": [
+        0,
+        1,
+        10,
+        17
+      ],
+      "unique_states": 6,
+      "total_states": 16,
+      "top_state": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "phi": 0.830126,
+      "status": "OK",
+      "wall_sec": 18.8
+    },
+    {
+      "n": 4,
+      "seed": 5678,
+      "selected_cells": [
+        0,
+        1,
+        10,
+        17
+      ],
+      "unique_states": 6,
+      "total_states": 16,
+      "top_state": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "phi": 0.549276,
+      "status": "OK",
+      "wall_sec": 18.8
+    },
+    {
+      "n": 5,
+      "seed": 42,
+      "selected_cells": [
+        0,
+        1,
+        10,
+        17,
+        14
+      ],
+      "unique_states": 10,
+      "total_states": 32,
+      "top_state": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "phi": 1.062469,
+      "status": "OK",
+      "wall_sec": 156.7
+    },
+    {
+      "n": 5,
+      "seed": 1234,
+      "selected_cells": [
+        0,
+        1,
+        10,
+        17,
+        14
+      ],
+      "unique_states": 10,
+      "total_states": 32,
+      "top_state": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "phi": 0.975254,
+      "status": "OK",
+      "wall_sec": 187.3
+    },
+    {
+      "n": 5,
+      "seed": 5678,
+      "selected_cells": [
+        0,
+        1,
+        10,
+        17,
+        14
+      ],
+      "unique_states": 10,
+      "total_states": 32,
+      "top_state": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "phi": 0.964996,
+      "status": "OK",
+      "wall_sec": 206.8
+    }
+  ],
+  "best_phi": 1.062469,
+  "best_cfg": {
+    "n": 5,
+    "seed": 42
+  },
+  "verdict": "PASS",
+  "verdict_note": "best \u03a6=1.0625 \u2265 0.5 strict \u2192 \ud83d\udd35 SUPPORTED-FORMAL unlock",
+  "wall_total_sec": 644.0,
+  "honest_c3": [
+    "1. PyPhi 1.2.0 small-N (full 64-cell formal IIT computationally impossible) \u2014 RoM top-correlated projection lossy",
+    "2. synthetic random perturbation dynamics, not real chat token-stream",
+    "3. state-space ergodicity issue carry \u2014 V8 B-bio Phase 3 showed only Lorenz-class chaotic dynamics unlock \u03a6\u22650.5; static cell weights may saturate near 0",
+    "4. anima \u03a6\u2605 proxy = 4.34 (mean pairwise + log(N+1)) is a DIFFERENT phenomenon from formal IIT \u03a6 \u2014 not directly comparable",
+    "5. FAIL here does NOT negate 7/7 measured battery \u2014 F-PYPHI is the formal-tier gate (\ud83d\udd35), 7/7 = \ud83d\udfe2 SUPPORTED-STRONG empirical stands"
+  ]
+}

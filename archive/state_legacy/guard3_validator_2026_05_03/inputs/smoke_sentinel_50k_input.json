@@ -1,0 +1,17 @@
+{
+  "label": "smoke_sentinel_50k",
+  "bg_claim": "audit BG PID 1726340: ps -p 1726340 -> no result; PID gone for 27s -> reporting NATURALLY COMPLETED",
+  "verdict_path": null,
+  "verdict_label": null,
+  "exit_code": 1,
+  "expected_savepoints": ["step_1000", "step_5000", "step_10000", "step_25000", "final"],
+  "savepoints_found": [],
+  "savepoint_dir": null,
+  "actual_wall_seconds": 4,
+  "expected_wall_seconds": 1800,
+  "log_tail": "[init] cuda visible devices: 0\n[init] loading model meta-llama/Meta-Llama-3-8B-Instruct from local snapshot\n[init] dataset shards loaded: 50000 examples\n[step 0] forward pass starting batch_size=32\nCUDA out of memory. Tried to allocate 24.00 GiB (GPU 0; 79.18 GiB total capacity; 67.42 GiB already allocated; 11.50 GiB free; 67.51 GiB reserved in total by PyTorch)\nTraceback (most recent call last):\n  File \"sentinel_50k_train.py\", line 412, in <module>\n    optimizer.step()\n  File \"/usr/lib/python3.11/site-packages/torch/optim/adamw.py\", line 161, in step\n    raise RuntimeError(f'CUDA out of memory.')\nRuntimeError: CUDA out of memory.\n",
+  "stderr_path": null,
+  "stderr_size": 2048,
+  "stderr_tail": "RuntimeError: CUDA out of memory. Tried to allocate 24.00 GiB",
+  "_provenance": "reconstructed from state/cleanup_bg_audit_2026_05_03/incidents.json INC-2026-05-03-B; PID 1726340 OOM-crashed at step 0 in 4s; cleanup BG mis-reported PID-gone as 'naturally completed'; ~10 min of parent reasoning wasted on misdiagnosis"
+}

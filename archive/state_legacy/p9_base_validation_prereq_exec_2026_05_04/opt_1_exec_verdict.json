@@ -1,0 +1,87 @@
+{
+  "cycle": "opt_1_exec_2026_05_04",
+  "ts_utc": "2026-05-04T01:55:04Z",
+  "verdict": "PARTIAL",
+  "shim_path_mac": "tool/transient_py/clm_v4_hf_format_shim.py",
+  "shim_path_ubu1": "~/p9_clm_v4_hf_format_2026_05_04/clm_v4_hf_format_shim.py",
+  "input_pt_path_ubu1": "~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt",
+  "input_pt_blob_sha256": "22f180efc380aecb4a320191502afa13b81abcd077ec36c5f003dcfbe1d680b4",
+  "input_pt_sha256_anchor": "22f180efc380aecb4a320191502afa13b81abcd077ec36c5f003dcfbe1d680b4",
+  "output_dir_ubu1": "~/p9_clm_v4_hf_format_2026_05_04/output",
+  "output_files": [
+    "__init__.py",
+    "config.json",
+    "configuration_clm_v4.py",
+    "conscious_decoder.py",
+    "decoder_v3.py",
+    "generation_config.json",
+    "modeling_clm_v4.py"
+  ],
+  "output_files_missing": [
+    "model.safetensors",
+    "tokenizer.model",
+    "tokenizer_config.json",
+    "special_tokens_map.json"
+  ],
+  "output_size_gb": 0.0000584,
+  "output_size_bytes": 62649,
+  "preflight": {
+    "shim_source_mac_exists": true,
+    "shim_source_size_bytes": 36715,
+    "shim_loc": 789,
+    "best_pt_resolves_on_ubu1": true,
+    "ubu1_disk_free_root_gb": 587,
+    "transformers_safetensors_loadable": true,
+    "hf_auth_valid_user": "dancinlife"
+  },
+  "dry_run_phase": {
+    "verdict": "PASS",
+    "plan_emitted": true,
+    "input_pt_exists": true,
+    "tokenizer_dir_exists": true,
+    "args_validated": true,
+    "expected_param_count": 530994816,
+    "expected_decoder_keys": 581,
+    "expected_vocab_size": 64000
+  },
+  "execute_phase": {
+    "verdict": "FAIL",
+    "fail_point": "_save_hf_format()",
+    "shim_line": 643,
+    "exception_class": "RuntimeError",
+    "exception_kind": "shared_tensors_safetensors_save",
+    "checkpoint_load_ok": true,
+    "loaded_step": 20000,
+    "loaded_ce": 0.04630279541015625,
+    "loaded_best_phi": 37.270,
+    "loaded_param_count": 477648512,
+    "loaded_param_count_vs_expected_delta": -53346304,
+    "tied_tensors_blocking_save": [
+      "decoder.tok_emb.weight",
+      "decoder.head_a.weight"
+    ],
+    "stderr_excerpt": "Some tensors share memory, this will lead to duplicate memory on disk and potential differences when loading them again: [{'decoder.tok_emb.weight', 'decoder.head_a.weight'}]. A potential way to correctly save your model is to use `save_model`."
+  },
+  "f_shim_1_safetensors_load": "BLOCKED_NOT_RUN",
+  "f_shim_2_1batch_forward": "BLOCKED_NOT_RUN",
+  "f_shim_3_logit_equivalence_1e5": "BLOCKED_NOT_RUN",
+  "f_shim_4_vocab_64000": "BLOCKED_NOT_RUN",
+  "lm_eval_loader_smoketest": "BLOCKED_NOT_RUN",
+  "wall_time_seconds": 22.0,
+  "peak_ram_gb": null,
+  "post_prereq_status": "11/12 (unchanged — OPT-1 not landed)",
+  "ready_for_base_validation_launch": false,
+  "honest_c3": [
+    "C3-1: Shim source has internal contradiction — line 38/354/451-452/597 explicitly model and configure tie_word_embeddings=True between tok_emb and head_a, but line 643 calls safetensors_save() directly on a wrapped state_dict that still contains both keys with shared storage. safetensors's strict shared-memory check rejects this. The shim self-comment at error site even quotes the safetensors guidance ('use save_model'), so this is a known-pattern bug, not an environment quirk.",
+    "C3-2: Loaded param_count (477,648,512) is 53.3M LESS than the dry-run expected (530,994,816). This is a significant discrepancy that the shim did NOT flag as a failure — execution proceeded past load. Either the expected_param_count constant in the shim is mis-specified, OR best.pt is missing tensor groups we expected (e.g., the second head head_g, ca_rules, purefield projection) — this needs investigation before any base-validation, because lm-eval against a 477M model is NOT the same as validating a 530M architecture.",
+    "C3-3: Output dir contains .py files (configuration_clm_v4, modeling_clm_v4, conscious_decoder, decoder_v3, __init__) and config.json + generation_config.json, but is missing model.safetensors AND all tokenizer files (tokenizer.model, tokenizer_config.json, special_tokens_map.json). Even if we hand-patched safetensors save, tokenizer copy is downstream of safetensors save in the shim, so the output is unusable for AutoTokenizer.from_pretrained(). Two independent fixes are needed in the shim, not one.",
+    "C3-4: Scope says 'do not modify shim source'. With that constraint, OPT-1 cannot complete on this shim revision; it requires either (a) BG-Β to ship clm_v4_hf_format_shim.py v2 with model.save_pretrained() (or explicit head_a.weight = head_a.weight.clone() before save_file) plus tokenizer-copy reordering, or (b) explicit user authorization to allow this BG-Δ to fix the shim. No silent workaround attempted.",
+    "C3-5: Wall time 22s — far below the 30-60min estimate — because the failure is at save-time, not load-time. The 5GB torch.load DID complete in ~10-15s (decoder loaded message appears), so the shim is computationally healthy; the bug is purely serialization-format. This makes a re-run after a shim-v2 patch fast (~1-2 min total) — low cost to retry once unblocked."
+  ],
+  "blockers": [
+    "B1: shim line 643 safetensors_save() incompatible with tie_word_embeddings=True (raises shared-memory RuntimeError)",
+    "B2: param_count delta -53.3M unexplained — needs head_g/ca_rules/purefield audit",
+    "B3: tokenizer files never copied (downstream of failure point)"
+  ],
+  "next_action": "Hand back to BG-Β: shim-v2 must use model.save_pretrained() (HF-native, handles ties) OR clone head_a.weight before save_file; also resolve param_count -53.3M discrepancy before claiming PASS."
+}

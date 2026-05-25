@@ -1,0 +1,62 @@
+{
+  "ts": "2026-05-02",
+  "agent": "N-51 W3",
+  "phase": "2_mapping_blocked_to_shards",
+  "blocked_components": [
+    {
+      "name": "Comp 1 emit",
+      "spec_loc": 120,
+      "actual_loc": 123,
+      "needs": [
+        "compute gate_vec via bridge_forward (HUB_DIM=8, HIDDEN_DIM=64, D_MODEL=4096 matmul + tanh-gelu)",
+        "clamp each entry to ±PSI_ALPHA = 0.014",
+        "deterministic LCG random control branch (seed * 2654435761 + step * 40503)",
+        "emit JSONL line with 4096-element float array, step, seed, tension, phi"
+      ],
+      "candidates": [],
+      "verdict": "none",
+      "explanation": "All 16 shards are byte-stream compressors. They cannot generate, project, or clamp float arrays. Only output they produce is compressed byte stream + (a25) byte-class statistics. Emitting 4096-d JSONL would still require the missing compiler to author the arithmetic & matmul logic. No exact / wrappable / chainable fit exists."
+    },
+    {
+      "name": "Comp 3 readback",
+      "spec_loc": 150,
+      "actual_loc": 160,
+      "needs": [
+        "parse pod last-hidden JSONL (4096-d float vec per line)",
+        "deterministic random projection 4096 -> 16 (PHI_DIM, LCG-seeded)",
+        "L1 score: count of phi components with |v| in [0.05, 0.50]",
+        "phi_star = -log(var(phi)/(mean(phi)^2 + eps))",
+        "L2 norm of phi",
+        "mind_step_advance: tension = |phi_norm - phi_target| * PSI_ALPHA * 10"
+      ],
+      "candidates": [
+        {
+          "shard": "hxc_a25 classify",
+          "fit_class": "weak-misuse-only",
+          "rationale": "a25 emits byte-class statistics (json_per100, text_per100, rule_density_per100). rule_density could *theoretically* be co-opted as a degraded L1-proxy if it tracked the gate-band membership of projected phi. Phase 4 pilot measured Pearson corr = -0.313 (weak negative, indistinguishable from noise) on 6 fixtures. NOT viable as a substitute."
+        }
+      ],
+      "verdict": "none",
+      "explanation": "Pilot wrap (a25 classify -> proxy L1) failed: corr -0.31. a25's byte-class statistics carry zero information about the random-projection-induced L1 score. No other shard exposes any numerical operation on the input bytes beyond compression."
+    },
+    {
+      "name": "Comp 4 orchestrator",
+      "spec_loc": 100,
+      "actual_loc": 128,
+      "needs": [
+        "5-seed result aggregation (active_l1_mean, active_l1_std, random_l1_mean, random_l1_std, etc.)",
+        "Z-score = (active_mean - random_mean) / sqrt((active_std^2 + random_std^2) / N + eps)",
+        "verdict tree: PASS / PARTIAL / FAIL on (active_l1_mean >= 14, z >= 3) thresholds",
+        "emit verdict JSON to ledger"
+      ],
+      "candidates": [],
+      "verdict": "none",
+      "explanation": "Statistical aggregation across N runs is not a byte-compression operation. Even hxc_composite_chain (the closest 'orchestrator' shape) only chains compression stages; it has no float-array math, no statistics, no comparator logic. No fit."
+    }
+  ],
+  "summary_table": [
+    {"component": "Comp 1 emit",     "exact": false, "wrappable": false, "chainable": false, "verdict": "none"},
+    {"component": "Comp 3 readback", "exact": false, "wrappable": false, "chainable": false, "verdict": "none"},
+    {"component": "Comp 4 orchestrator", "exact": false, "wrappable": false, "chainable": false, "verdict": "none"}
+  ]
+}

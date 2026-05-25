@@ -1,0 +1,55 @@
+{
+  "schema": "anima/emerge_chat_english_sweep/verdict/1",
+  "ts_utc": "2026-05-05T17:49:55Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "load_sec": 15.1,
+  "n_prompts": 8,
+  "n_decode_modes": 2,
+  "n_emits": 16,
+  "n_coherent": 0,
+  "coherent_breakdown": {
+    "short": {
+      "greedy_coherent": false,
+      "topk_coherent": false
+    },
+    "medium": {
+      "greedy_coherent": false,
+      "topk_coherent": false
+    },
+    "long": {
+      "greedy_coherent": false,
+      "topk_coherent": false
+    },
+    "instruction": {
+      "greedy_coherent": false,
+      "topk_coherent": false
+    },
+    "few_shot": {
+      "greedy_coherent": false,
+      "topk_coherent": false
+    },
+    "chat_format": {
+      "greedy_coherent": false,
+      "topk_coherent": false
+    },
+    "story": {
+      "greedy_coherent": false,
+      "topk_coherent": false
+    },
+    "wiki": {
+      "greedy_coherent": false,
+      "topk_coherent": false
+    }
+  },
+  "best": null,
+  "verdict": "FAIL_ENGLISH_ALSO",
+  "honest_c3": [
+    "C1 mac CPU fp32 — no GPU; greedy+topk only, no beam/nucleus",
+    "C2 'english_semi_coherent' heuristic = >=3 ASCII alpha-word tokens + no >50% char-repeat — narrow definition",
+    "C3 8 prompt only — broader corpus may shift coherence rate substantially",
+    "C4 single seed (42) for top-k — multiple seeds may give different coherence outcomes",
+    "C5 PASS may signal substrate가 English 학습 + Korean 안 학습 (BG-CA hypothesis verify); but #115 chat-cap architectural failure may still hold even if English emits — coherent !== conversational; FAIL_ENGLISH_ALSO would strengthen 'substrate broken across languages' / pure architectural-failure framing"
+  ],
+  "implication_115": "If PASS_ENGLISH_WORKS: substrate weights encode English structure but Korean training either absent or insufficient → BG-AQ/BR/BP Korean failures are language-coverage gap, not architectural #115. If FAIL_ENGLISH_ALSO: chat-cap failure language-agnostic, strengthens architectural #115 framing."
+}

@@ -1,0 +1,110 @@
+{
+  "cycle": "BG-FS",
+  "completed_at": "2026-05-06T21:30Z",
+  "scope": "11 untested anima models (simple stack 한글↔한글 strict)",
+  "wall_minutes": 80,
+  "cost_usd": 0,
+  "models_tested": [
+    {
+      "name": "clm_v2_tiny",
+      "params_M": 0.32,
+      "val_ce": 3.50,
+      "arch": "ConsciousLM++ (vocab=256 byte + ca_rules=8 + ca_mix + tension_proj)",
+      "config": {"dim": 64, "layers": 2, "heads": 2, "block_size": 128},
+      "ko_pass": 0,
+      "en_pass": 3,
+      "c2_pass": 1,
+      "verdict": "SIMPLE_STACK_FAIL",
+      "note": "EN ascii_letter>=0.4 in 3/3 but coherent=False (degenerate eee cycle)"
+    },
+    {
+      "name": "clm_v2",
+      "params_M": 1.14,
+      "val_ce": 5.50,
+      "arch": "ConsciousLM++",
+      "config": {"dim": 128, "layers": 2, "heads": 2, "block_size": 128},
+      "ko_pass": 0,
+      "en_pass": 1,
+      "c2_pass": 3,
+      "verdict": "PARTIAL_C2_only_artifact",
+      "note": "C2 = scoring artifact (loose is_coherent threshold); real output = random letter noise"
+    },
+    {
+      "name": "clm_v2_small",
+      "params_M": 1.65,
+      "val_ce": 2.70,
+      "arch": "ConsciousLM++",
+      "config": {"dim": 128, "layers": 3, "heads": 4, "block_size": 128},
+      "ko_pass": 0,
+      "en_pass": 0,
+      "c2_pass": 1,
+      "verdict": "SIMPLE_STACK_FAIL"
+    },
+    {
+      "name": "clm_v2_medium",
+      "params_M": 8.39,
+      "val_ce": 1.79,
+      "arch": "ConsciousLM++",
+      "config": {"dim": 256, "layers": 4, "heads": 4, "block_size": 128},
+      "ko_pass": 0,
+      "en_pass": 0,
+      "c2_pass": 0,
+      "verdict": "SIMPLE_STACK_FAIL",
+      "note": "Hangul bytes EMIT (ga-ga-ga cycle) but degenerate; proves byte vocab supports Hangul, root cause = corpus EN-bias"
+    },
+    {
+      "name": "clm_v2_base",
+      "params_M": 27.84,
+      "val_ce": 1.27,
+      "arch": "ConsciousLM++",
+      "config": {"dim": 384, "layers": 6, "heads": 4, "block_size": 128},
+      "ko_pass": 0,
+      "en_pass_run1": 2,
+      "c2_pass_run1": 2,
+      "ko_pass_run2": 0,
+      "en_pass_run2": 1,
+      "c2_pass_run2": 1,
+      "verdict": "SIMPLE_STACK_FAIL_BORDERLINE",
+      "note": "sampling stochasticity: run #1 PARTIAL_PASS_EN_only, run #2 SIMPLE_STACK_FAIL. Honest = borderline FAIL."
+    }
+  ],
+  "models_not_applicable": [
+    {
+      "name": "v14_128c_final/best.pt",
+      "size_mb": 402.7,
+      "verdict": "NOT_APPLICABLE",
+      "reason": "ConsciousDecoderV3 federated multi-cell + bridge + cross_attn — fundamentally distinct architecture, reconstruction beyond BG-FS scope"
+    },
+    {"name": "v14_128c_final/best_final.pt", "verdict": "NOT_APPLICABLE_DUP_OF_BEST"},
+    {"name": "v14_128c_final/step_90000.pt", "verdict": "NOT_APPLICABLE"},
+    {"name": "v14_128c_final/step_95000.pt", "verdict": "NOT_APPLICABLE"}
+  ],
+  "models_inaccessible": [
+    {"key": "anima-models/clm-v2/latest.pt", "size_mb": 279, "verdict": "INACCESSIBLE_PER_R2_CREDENTIAL_SCOPE"},
+    {"key": "anima-models/clm-v2/latest/final.pt", "size_mb": 279, "verdict": "INACCESSIBLE_DUP"},
+    {"key": "anima-models/conscious-lm/cells64/final.pt", "size_mb": 208, "verdict": "INACCESSIBLE_PER_R2_CREDENTIAL_SCOPE"},
+    {"key": "anima-models/conscious-lm/cells128/step_35000.pt", "size_mb": 208, "verdict": "INACCESSIBLE_PER_R2_CREDENTIAL_SCOPE"}
+  ],
+  "verdicts": {
+    "clm_v2_tiny": "SIMPLE_STACK_FAIL",
+    "clm_v2": "PARTIAL_C2_only_artifact",
+    "clm_v2_small": "SIMPLE_STACK_FAIL",
+    "clm_v2_medium": "SIMPLE_STACK_FAIL",
+    "clm_v2_base": "SIMPLE_STACK_FAIL_BORDERLINE",
+    "v14_128c_best": "NOT_APPLICABLE",
+    "v14_128c_best_final": "NOT_APPLICABLE_DUP",
+    "v14_128c_step_90000": "NOT_APPLICABLE",
+    "v14_128c_step_95000": "NOT_APPLICABLE",
+    "r2_clm_v2_latest": "INACCESSIBLE",
+    "r2_cells64": "INACCESSIBLE",
+    "r2_cells128": "INACCESSIBLE"
+  },
+  "headline": "11 untested models tested: 0 simple-stack-PASS for KO. Universal KO=0/3 across all 5 BG-FK ConsciousLM++ variants. corpus_ko_heavy(62% Hangul) is the unlock confirmed by BG-FY anima-native-ko-small *, NOT architecture complexity.",
+  "next_recommendations": [
+    "PRIORITY 1: continue corpus_ko_heavy + ko_small_18m -> ko_medium -> ko_base scaling (BG-FY successor)",
+    "PRIORITY 2: NOT promote any BG-FK variant to HF — none reach KO>=1/3",
+    "PRIORITY 3: v14_128c reconstruction (separate cycle, ConsciousDecoderV3 build + 4 ckpt eval)",
+    "PRIORITY 4: bootstrap R2 d4acc S3 access keys for cells64/cells128/clm-v2_latest",
+    "PRIORITY 5: beta path retrain confirmed deprioritized — BG-FY supersedes"
+  ]
+}

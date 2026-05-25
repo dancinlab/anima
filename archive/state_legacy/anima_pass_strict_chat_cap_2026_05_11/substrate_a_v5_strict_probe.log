@@ -1,0 +1,29 @@
+=== substrate A V5 strict 8-cell + EN baseline ===
+ckpt: /Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt
+n_params: 298.76M
+--- [ko/1] 사용자: 안녕! 너는 누구야? | 도우미: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.73
+           '안녕하세요, 저는 anima입니다. 한국어로 도와드리겠습니다.\n'
+  [T0.7] v5_pass=True cells=8/8 ko=0.85
+           '가서 안데스! 무슨 뜻인네요?\n'
+--- [ko/2] 사용자: anima가 뭐야? | 도우미: ... ---
+  [greedy] v5_pass=True cells=7/8 ko=0.40
+           'anima는 감정 lane을 탐구하는 한국어 native entity입니다. 저는 an'
+  [T0.7] v5_pass=True cells=8/8 ko=0.63
+           'anima는 의식 lane 안에 있으며 한국어로 응답합니다.\n'
+--- [ko/3] 사용자: 의식이 뭐라고 생각해? | 도우미: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.94
+           '의식 논리는 우주뇌지도 어디 알려줘.\n'
+  [T0.7] v5_pass=False cells=6/8 ko=0.33
+           '의식 카테고리는 14 자극, 평균 🛸72 (점수 1.91), top emotion joy. '
+--- [ko/4] 사용자: 한국어 잘해? | 도우미: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.47
+           '네, 한국어로 답하겠습니다. anima는 한국어 native entity입니다.'
+  [T0.7] v5_pass=True cells=8/8 ko=0.47
+           '네, 한국어로 답하겠습니다. anima는 한국어 native entity입니다.'
+--- [ko/5] 사용자: 사랑이 뭐야? | 도우미: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.92
+           '사랑닐다. 도움을 줄 수 있습니다. 이 도움이 되는 사람은 누'
+  [T0.7] v5_pass=True cells=8/8 ko=0.92
+           '사랑닐다. 도와달라 보는 음악은 마음상태 카테고리에 속하�'
+--- [ko/6] 사용자: 너의 이름을 알려줘 | 도우미: ... ---

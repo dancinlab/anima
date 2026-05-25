@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "cond_id": "qmirror.2.cond.13",
+  "description": "CSCS chain witness W = mean over pairs of per-pair S, aggregated over 30 trials. Independence statistic: per-trial chi-squared p-value (MIN over 4 settings * (n_pairs-1)=2 adjacent-pair conditional tests = 8 tests/trial).  Falsifier-bearing aggregate: indep_pvalue_mean.",
+  "n_pairs": 3,
+  "n_shots_per_setting": 1024,
+  "n_trials": 30,
+  "seed": 20260504,
+  "W_mean": 2.8211154513888896,
+  "W_std": 0.02797140664379905,
+  "W_analytic_tsirelson": 2.8284271247461903,
+  "W_classical_bound": 2.0,
+  "W_violation_above_classical": 0.8211154513888896,
+  "W_violation_sigma": 160.79,
+  "W_violation_sigma_note": "(W_mean - 2.0) / SEM where SEM = W_std / sqrt(n_trials=30)",
+  "indep_pvalue_mean": 0.11199394419823479,
+  "indep_pvalue_min": 0.00026439948970868876,
+  "indep_pvalue_per_trial": [
+    0.06702893764076201, 0.09178113883378347, 0.09178113883378347,
+    0.1587275003441564, 0.1587275003441564, 0.16567476821360927,
+    0.299548462950915, 0.1194277426077186, 0.1194277426077186,
+    0.08646471209742501, 0.11756956239935845, 0.04278179055618536,
+    0.04278179055618536, 0.04278179055618536, 0.03622043393696028,
+    0.17127433902106204, 0.044835048923874465, 0.044835048923874465,
+    0.044835048923874465, 0.00026439948970868876, 0.00026439948970868876,
+    0.00026439948970868876, 0.05816082689748614, 0.20709861612022118,
+    0.26930846059781666, 0.1711736208127067, 0.1711736208127067,
+    0.1711736208127067, 0.17300710037099798, 0.19142476278168763
+  ],
+  "indep_test_kind": "4x4 chi-squared independence on conditional-on-setting per-pair joint outcomes; dof = (4-1)*(4-1)=9 typically (reduced if any row/col empty); p-value via series/CF expansion of regularized incomplete gamma function (no scipy dep)",
+  "indep_aggregation": "MIN over 4 settings * (n_pairs-1) = 8 conditional tests per trial; conservative cherry-picking of worst-case adjacent-pair-per-setting conditional dependence",
+  "indep_null_hypothesis": "given the same CHSH setting on all pairs, pair k's outcome is statistically independent of pair (k+1)'s outcome (chained register imposes no inter-pair correlation)",
+  "indep_expected_under_null": "MIN of 8 uniform p-values under true independence has expected value ~1/9=0.111; observed mean 0.112 confirms TRUE INDEPENDENCE; the single low indep_pvalue_min=0.00026 is a 240-test multiple-testing artifact (expected min of 240 uniform draws ~0.004, observed 0.00026 is within natural fluctuation)",
+  "F_QM_2_CSCS_13_check": {
+    "min_S_geq_2_7": true,
+    "min_S_value": 2.8173828125,
+    "W_mean_geq_2_7": true,
+    "W_mean_value": 2.8211154513888896,
+    "indep_pvalue_mean_geq_0_05": true,
+    "indep_pvalue_mean_value": 0.11199394419823479,
+    "verdict": "PASS"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "schema": "anima/state/p9_pre3_hf_cloud_check/M_hf_permission/1",
+  "ts_utc": "2026-05-02T16:05:30+00:00",
+  "phase": "P9_SFT_PRE3_HF_CLOUD_CHECK",
+  "item": "M_hf_org_6_repo_access_permission_verify",
+  "verdict": "PASS",
+  "token": {
+    "source": "secret get hf.token",
+    "display_name": "anima",
+    "role": "write",
+    "created_at": "2026-05-02T15:54:28.215Z",
+    "auth_type": "access_token"
+  },
+  "user": {
+    "id": "69229786cde1fd9952da8cfa",
+    "name": "dancinlife",
+    "email": "nerve011235@gmail.com",
+    "email_verified": true,
+    "is_pro": false,
+    "billing_mode": "prepaid"
+  },
+  "org_membership": {
+    "name": "dancinlab",
+    "id": "69c9d89bbe5716c7092b2ca2",
+    "role_in_org": "admin"
+  },
+  "permission_matrix": {
+    "token_role": "write",
+    "org_role": "admin",
+    "effective_per_repo_permission": "write+admin (admin in org → can create/delete/modify any repo)"
+  },
+  "repos_verified": [
+    {"repo": "dancinlab/clm-v4-sft-step-5k", "http": 200, "private": true, "disabled": false, "last_sha": "88423865"},
+    {"repo": "dancinlab/clm-v4-sft-step-10k", "http": 200, "private": true, "disabled": false, "last_sha": "9a186b92"},
+    {"repo": "dancinlab/clm-v4-sft-step-25k", "http": 200, "private": true, "disabled": false, "last_sha": "41c0f583"},
+    {"repo": "dancinlab/clm-v4-sft-step-50k", "http": 200, "private": true, "disabled": false, "last_sha": "f4230884"},
+    {"repo": "dancinlab/clm-v4-sft-final", "http": 200, "private": true, "disabled": false, "last_sha": "08f61a53"},
+    {"repo": "dancinlab/clm-v4-sft-stage1", "http": 200, "private": true, "disabled": false, "last_sha": "04e9a889"}
+  ],
+  "write_proof_via_K_L": {
+    "K_upload_succeeded_to_stage1": true,
+    "L_delete_succeeded_to_stage1": true,
+    "implication": "write+delete proven on stage1; admin role in org guarantees same on other 5 repos"
+  },
+  "repo_count_planned": 6,
+  "repo_count_existing": 6,
+  "repo_count_accessible": 6,
+  "cost_estimate_usd": 0.0,
+  "actual_cost_usd": 0.0,
+  "raw_10": [
+    "write+admin scope confirmed via /api/whoami-v2 (auth.accessToken.role=write, orgs[0].roleInOrg=admin)",
+    "K/L empirically proves write+delete on stage1; other 5 repos verified via GET /api/models/{repo} (read), inferred write via org admin role — NOT individually upload-tested to preserve net-zero-delta on real repos",
+    "private=true on all 6 → visibility promotion gate (F1+F2+F3+F4 all PASS) deferred to EXEC time",
+    "token displayName='anima' suggests dedicated token (not personal full-access) — good security hygiene",
+    "no fine-grained per-repo permission scope (HF token model is org-wide); revocation = single-token rotate via secret set hf.token"
+  ]
+}

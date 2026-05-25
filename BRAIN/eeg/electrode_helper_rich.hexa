@@ -1,0 +1,710 @@
+// anima-eeg/electrode_helper_rich.hexa
+//
+// PURPOSE
+//   Rich-library TUI variant of electrode_adjustment_helper. Default plain-ANSI
+//   helper stays at 60+ fps for human-twitch touch detection; this variant
+//   trades some fps (cap ~30) for richer 3-panel visual triage (head map +
+//   per-channel rms table with progress-bar gauges + status sparklines).
+//
+//   See docs/rich_tui_upgrade_design_2026_04_28.md for falsifiers F1-F5 and
+//   migration plan. This file is an OPT-IN companion — the original
+//   electrode_adjustment_helper.hexa is NOT modified.
+//
+// MODES
+//   --selftest       synthetic 16ch demo of rich layout (no BrainFlow)
+//   --live           real BrainFlow live touch detector with rich render
+//   --port <path>    Dongle serial node
+//   --board <name>   cyton_daisy (default)
+//   --fps <n>        target render fps (default 30, clamp 5-60 — Rich diff cap)
+//
+//  @resolver-bypass(reason="darwin-native: globs /dev/cu.usbserial-* and uses
+//                   .venv-eeg/bin/python BrainFlow venv. Hetzner / linux pods
+//                   do not expose host USB nor local venv. Rich library is a
+//                   local-only triage TUI; H100 / remote pods never invoke.")
+
+let SCHEMA              = "anima-eeg/electrode_helper_rich/1"
+let HELPER_PATH         = "/tmp/anima_eeg_electrode_helper_rich.py"
+
+let DEFAULT_BOARD_ID            = 2
+let DEFAULT_BOARD_NAME          = "cyton_daisy"
+let DEFAULT_VENV_PYTHON         = ".venv-eeg/bin/python"
+let DEFAULT_FPS                 = 30
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn _emit_trailer(reason_slug: string, reason_detail: string, fix: string) {
+    eprintln("reason: " + reason_slug + ": " + reason_detail)
+    eprintln("fix: " + fix)
+}
+
+fn _board_name_to_id(name: string) -> int {
+    if name == "cyton_daisy" { return 2 }
+    if name == "cyton"       { return 0 }
+    if name == "ganglion"    { return 1 }
+    return -1
+}
+
+// Helper Python: Rich library 3-panel TUI.
+// Imports rich.live, rich.layout, rich.panel, rich.table, rich.console.
+// Emits ABORT_NO_RICH sentinel + install instruction if `import rich` fails.
+fn _write_helper() {
+    let py = "
+import sys, os, time, argparse
+
+VENV_PYTHON = os.environ.get('ANIMA_EEG_VENV_PYTHON', '.venv-eeg/bin/python')
+
+def err_trailer(reason, detail, fix):
+    print('reason: ' + reason + ': ' + detail, file=sys.stderr, flush=True)
+    print('fix: ' + fix, file=sys.stderr, flush=True)
+
+# ── Rich import probe — emit ABORT_NO_RICH sentinel if absent ─────────────
+try:
+    from rich.live import Live
+    from rich.layout import Layout
+    from rich.panel import Panel
+    from rich.table import Table
+    from rich.console import Console
+    from rich.text import Text
+    from rich.align import Align
+    import rich as _rich_mod
+    RICH_VERSION = getattr(_rich_mod, '__version__', None)
+    if RICH_VERSION is None:
+        try:
+            from importlib.metadata import version as _imv
+            RICH_VERSION = _imv('rich')
+        except Exception:
+            RICH_VERSION = 'unknown'
+except ImportError as e:
+    err_trailer('rich-missing', str(e)[:160],
+                '1) ' + VENV_PYTHON + ' -m pip install rich   2) re-run')
+    print('ABORT_NO_RICH', flush=True)
+    sys.exit(4)
+
+WIRE_META = [
+    ('Cyton', 'N1P', 'Fp1', 'Grey'),
+    ('Cyton', 'N2P', 'Fp2', 'Purple'),
+    ('Cyton', 'N3P', 'C3',  'Blue'),
+    ('Cyton', 'N4P', 'C4',  'Green'),
+    ('Cyton', 'N5P', 'P7',  'Yellow'),
+    ('Cyton', 'N6P', 'P8',  'Orange'),
+    ('Cyton', 'N7P', 'O1',  'Red'),
+    ('Cyton', 'N8P', 'O2',  'Brown'),
+    ('Daisy', 'N1P', 'F7',  'Grey'),
+    ('Daisy', 'N2P', 'F8',  'Purple'),
+    ('Daisy', 'N3P', 'F3',  'Blue'),
+    ('Daisy', 'N4P', 'F4',  'Green'),
+    ('Daisy', 'N5P', 'T7',  'Yellow'),
+    ('Daisy', 'N6P', 'T8',  'Orange'),
+    ('Daisy', 'N7P', 'P3',  'Red'),
+    ('Daisy', 'N8P', 'P4',  'Brown'),
+]
+POS = [m[2] for m in WIRE_META]
+BOARD = [m[0] for m in WIRE_META]
+PIN = [m[1] for m in WIRE_META]
+COLOR = [m[3] for m in WIRE_META]
+
+# OpenBCI 5-color state scheme → Rich named styles
+STATE_STYLE = {
+    'OK':           'bold green',
+    'LOOSE':        'bold yellow',
+    'BAD_NO_SCALP': 'bold red',
+    'BAD_WIRE_OFF': 'bold red',
+    'DEAD':         'bold blue',
+    'BAD_DISCONNECTED': 'bold red',
+    'AMBIGUOUS':    'dim grey50',
+}
+
+# Sparkline blocks (8 levels)
+SPARK_BLOCKS = ['▁', '▂', '▃', '▄', '▅', '▆', '▇', '█']
+
+def unicode_bar(value, lo, hi, width=6):
+    '''Render a horizontal bar — value ∈ [lo, hi] → width-char block string.'''
+    if hi <= lo:
+        return ' ' * width
+    frac = (value - lo) / (hi - lo)
+    if frac < 0: frac = 0
+    if frac > 1: frac = 1
+    full_chars = int(frac * width)
+    remainder = (frac * width) - full_chars
+    rem_idx = int(remainder * 8)
+    out = '█' * full_chars
+    if full_chars < width and rem_idx > 0:
+        out += SPARK_BLOCKS[rem_idx - 1]
+    pad = width - len(out)
+    return out + ' ' * max(0, pad)
+
+def sparkline(values, width=12):
+    '''Render last `width` values as block-char sparkline. Auto-scaled.'''
+    if not values:
+        return ' ' * width
+    vs = list(values)[-width:]
+    lo = min(vs)
+    hi = max(vs)
+    if hi <= lo:
+        return SPARK_BLOCKS[0] * len(vs) + ' ' * (width - len(vs))
+    out = ''
+    for v in vs:
+        idx = int((v - lo) / (hi - lo) * 7)
+        if idx < 0: idx = 0
+        if idx > 7: idx = 7
+        out += SPARK_BLOCKS[idx]
+    return out + ' ' * (width - len(vs))
+
+def classify(rms_uv, std_uv, mains_uv, p_constant):
+    if std_uv < 0.5 or p_constant > 0.95:
+        return 'DEAD'
+    if rms_uv < 30 and mains_uv < 1.0:
+        return 'BAD_WIRE_OFF'
+    if rms_uv > 1000 and mains_uv > 5.0:
+        return 'BAD_NO_SCALP'
+    if rms_uv > 100 and mains_uv > 1.0:
+        return 'LOOSE'
+    if rms_uv >= 5.0 and rms_uv <= 100.0 and mains_uv < 20:
+        return 'OK'
+    return 'LOOSE'
+
+# ── Layout builders ────────────────────────────────────────────────────────
+def render_head_map(state):
+    '''10-20 head map ASCII art with [GREEN ●] on actively-touched positions.'''
+    active = set(state.get('active_pos', []))
+    def _s(p):
+        if p in active:
+            return '[bold green]●[/bold green]'
+        return '[dim]·[/dim]'
+    lines = []
+    lines.append('')
+    lines.append(f'        Fp1[{_s(\"Fp1\")}]   Fp2[{_s(\"Fp2\")}]      Frontal pole')
+    lines.append( '            \\\\   /')
+    lines.append(f'   F7[{_s(\"F7\")}] - F3[{_s(\"F3\")}] - F4[{_s(\"F4\")}] - F8[{_s(\"F8\")}]   Frontal')
+    lines.append( '            |   |')
+    lines.append(f'   T7[{_s(\"T7\")}] - C3[{_s(\"C3\")}] - C4[{_s(\"C4\")}] - T8[{_s(\"T8\")}]   Central')
+    lines.append( '            |   |')
+    lines.append(f'        P3[{_s(\"P3\")}] - P4[{_s(\"P4\")}]      Parietal')
+    lines.append( '           / | | \\\\')
+    lines.append(f'   P7[{_s(\"P7\")}]         P8[{_s(\"P8\")}]      Parietal-temporal')
+    lines.append(f'        O1[{_s(\"O1\")}]   O2[{_s(\"O2\")}]      Occipital')
+    lines.append('')
+    lines.append('  [bold green]●[/bold green]=touched   [dim]·[/dim]=idle')
+    return Text.from_markup('\\n'.join(lines))
+
+def render_channel_table(state):
+    '''Per-channel table with rms / baseline / dev-ratio + progress-bar gauge.'''
+    t = Table(expand=True, show_lines=False, padding=(0, 1))
+    t.add_column('Pos', width=4, no_wrap=True)
+    t.add_column('Pin', width=4, no_wrap=True)
+    t.add_column('rms uV', justify='right', width=8)
+    t.add_column('base', justify='right', width=7)
+    t.add_column('dev', justify='right', width=6)
+    t.add_column('gauge', width=8, no_wrap=True)
+    rms_arr = state.get('rms', [0.0] * 16)
+    base_arr = state.get('base', [0.0] * 16)
+    state_arr = state.get('chan_state', ['OK'] * 16)
+    for i in range(min(16, len(POS))):
+        rms = rms_arr[i] if i < len(rms_arr) else 0.0
+        base = base_arr[i] if i < len(base_arr) else 0.0
+        dev = rms / (base + 1e-9) if base > 0 else 1.0
+        st = state_arr[i] if i < len(state_arr) else 'OK'
+        style = STATE_STYLE.get(st, 'white')
+        gauge = unicode_bar(dev, lo=1.0, hi=2.0, width=6)
+        t.add_row(POS[i], PIN[i],
+                  f'{rms:.0f}', f'{base:.0f}', f'{dev:.2f}x', gauge,
+                  style=style)
+    return t
+
+def render_status(state):
+    '''Bottom panel: active touch summary + per-channel sparklines + meta.'''
+    tick = state.get('tick', 0)
+    fps_actual = state.get('fps_actual', 0.0)
+    fps_target = state.get('fps_target', 30)
+    active = state.get('active_pos', [])
+    primary = state.get('primary', None)
+    median_rms = state.get('median_rms', 0.0)
+    history_depth = state.get('history_depth', 0)
+    history_max = state.get('history_max', 5)
+    spark_data = state.get('spark', {})
+    lines = []
+    if active:
+        active_str = ', '.join(f'[bold green]{p}[/bold green]' for p in active)
+        lines.append(f'[bold green]ACTIVE[/bold green] [{len(active)}ch]: {active_str}')
+        if primary:
+            lines.append(f'  primary: [bold]{primary[\"pos\"]}[/bold]  '
+                         f'rms={primary[\"rms\"]:.0f}  '
+                         f'base={primary[\"base\"]:.0f}  '
+                         f'dev=[bold yellow]{primary[\"dev\"]:.2f}x[/bold yellow] '
+                         f'{primary[\"direction\"]}')
+    else:
+        lines.append('[yellow]No touch[/yellow] - 손가락으로 spike/metal 만져보세요')
+        lines.append('')
+    # Sparklines for top-3 most-deviated channels (or first 3 if no data)
+    spark_lines = []
+    for pos in (state.get('top3_pos', POS[:3])):
+        vals = spark_data.get(pos, [])
+        sl = sparkline(vals, width=12)
+        spark_lines.append(f'{pos:4s} [cyan]{sl}[/cyan]')
+    if spark_lines:
+        lines.append('  ' + '   '.join(spark_lines))
+    lines.append(f'tick #{tick}  target {fps_target}fps  actual [bold]{fps_actual:.1f}[/bold]fps  '
+                 f'median_rms [bold]{median_rms:.0f}[/bold] uV  '
+                 f'history {history_depth}/{history_max}  '
+                 f'[dim]Ctrl-C exit[/dim]')
+    return Text.from_markup('\\n'.join(lines))
+
+def build_layout(state):
+    layout = Layout()
+    layout.split_column(
+        Layout(name='top', ratio=3),
+        Layout(name='status', size=7),
+    )
+    layout['top'].split_row(
+        Layout(name='head', ratio=1),
+        Layout(name='chans', ratio=1),
+    )
+    layout['head'].update(Panel(
+        Align.center(render_head_map(state), vertical='middle'),
+        title='[bold]10-20 head map[/bold]',
+        border_style='cyan',
+    ))
+    layout['chans'].update(Panel(
+        render_channel_table(state),
+        title='[bold]per-channel rms / dev[/bold]',
+        border_style='cyan',
+    ))
+    layout['status'].update(Panel(
+        render_status(state),
+        title='[bold]status / sparkline[/bold]',
+        border_style='magenta',
+    ))
+    return layout
+
+# ── Modes ─────────────────────────────────────────────────────────────────
+def run_selftest(fps=30):
+    '''Synthetic 16ch demo: cycles touch through F3 / Fp1 / O2 to show colors.'''
+    console = Console()
+    print(f'rich {RICH_VERSION} loaded', flush=True)
+    print(f'selftest: synthetic 16ch demo, target {fps}fps, 3s run', flush=True)
+    import math
+    # Synthetic state generator
+    def make_state(t):
+        rms = []
+        base = []
+        chan_state = []
+        # Cycle active pos through F3, Fp1, O2 every ~1s
+        cycle = ['F3', 'Fp1', 'O2', '']
+        active_pos_name = cycle[(t // (fps // 2)) % len(cycle)]
+        active = [active_pos_name] if active_pos_name else []
+        spark = {}
+        primary = None
+        for i in range(16):
+            b = 4500.0 + i * 50.0
+            base.append(b)
+            if POS[i] in active:
+                r = b * (1.6 + 0.2 * math.sin(t * 0.5))
+                chan_state.append('LOOSE')
+            else:
+                r = b * (1.0 + 0.02 * math.sin(t * 0.3 + i))
+                chan_state.append('OK')
+            rms.append(r)
+            spark[POS[i]] = [r * (1.0 + 0.05 * math.sin(t * 0.2 + i + k)) for k in range(12)]
+            if POS[i] in active:
+                primary = {'pos': POS[i], 'rms': r, 'base': b,
+                           'dev': r / b, 'direction': '↑'}
+        # top-3 by deviation
+        devs = [(POS[i], rms[i] / (base[i] + 1e-9)) for i in range(16)]
+        devs.sort(key=lambda x: -x[1])
+        top3 = [d[0] for d in devs[:3]]
+        return {
+            'tick': t,
+            'fps_target': fps,
+            'fps_actual': float(fps),
+            'rms': rms,
+            'base': base,
+            'chan_state': chan_state,
+            'active_pos': active,
+            'primary': primary,
+            'median_rms': sorted(rms)[8],
+            'history_depth': 5,
+            'history_max': 5,
+            'spark': spark,
+            'top3_pos': top3,
+        }
+    duration_sec = 3
+    n_ticks = duration_sec * fps
+    refresh = max(5, min(60, fps))
+    with Live(build_layout(make_state(0)), refresh_per_second=refresh, console=console, screen=True) as live:
+        for t in range(1, n_ticks + 1):
+            live.update(build_layout(make_state(t)))
+            time.sleep(1.0 / fps)
+    print(f'selftest complete: {n_ticks} ticks rendered at target {fps}fps', flush=True)
+    return 0
+
+def run_live(board_id, port, fps=30):
+    '''Real BrainFlow live touch detector with Rich 3-panel TUI.'''
+    try:
+        import numpy as np
+        from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
+    except ImportError as e:
+        err_trailer('import-missing', str(e)[:160],
+                    '1) source .venv-eeg/bin/activate  2) pip install brainflow numpy')
+        return 4
+
+    BoardShim.disable_board_logger()
+    params = BrainFlowInputParams()
+    if port:
+        params.serial_port = port
+
+    try:
+        board = BoardShim(board_id, params)
+        board.prepare_session()
+        board.start_stream()
+    except Exception as e:
+        err_trailer('board-not-ready', str(e)[:160],
+                    '1) toggle Cyton OFF wait 5s then PC  2) verify Daisy seated  3) Stop OpenBCI GUI if running')
+        try: board.release_session()
+        except: pass
+        return 4
+
+    try:
+        sample_rate = BoardShim.get_sampling_rate(board_id)
+        eeg_channels = BoardShim.get_eeg_channels(board_id)
+    except Exception as e:
+        err_trailer('board-meta-error', str(e)[:160],
+                    '1) check board_id  2) reinstall brainflow')
+        try: board.stop_stream(); board.release_session()
+        except: pass
+        return 4
+
+    n_ch = len(eeg_channels)
+    FPS = max(5, min(60, int(fps)))
+    TICK_INTERVAL = 1.0 / FPS
+    refresh = FPS
+    HISTORY_MAX = 5
+    HISTORY_TICK_STRIDE = max(1, int(FPS * 0.5))
+    JSONL_TICK_STRIDE = max(1, int(FPS / 10))
+    ROLLING_SIZE = max(20, int(sample_rate * 0.1))
+    SPARK_LEN = 12
+
+    buffer = np.zeros((n_ch, ROLLING_SIZE), dtype=np.float64)
+    buffer_filled = False
+    history = []
+    spark_history = {POS[i]: [] for i in range(n_ch)}
+
+    import json as _json
+    JSONL_PATH = '/tmp/eeg_ticks_rich.jsonl'
+    try:
+        with open(JSONL_PATH, 'w') as _f: pass
+    except: pass
+
+    console = Console()
+    initial_state = {
+        'tick': 0, 'fps_target': FPS, 'fps_actual': 0.0,
+        'rms': [0.0] * n_ch, 'base': [0.0] * n_ch,
+        'chan_state': ['OK'] * n_ch, 'active_pos': [],
+        'primary': None, 'median_rms': 0.0,
+        'history_depth': 0, 'history_max': HISTORY_MAX,
+        'spark': {}, 'top3_pos': POS[:3],
+    }
+
+    tick = 0
+    last_history_tick = 0
+    fps_window = []
+    FPS_WINDOW_SIZE = max(30, FPS)
+    measured_fps = 0.0
+
+    try:
+        try: board.get_board_data()
+        except: pass
+        time.sleep(1.5)
+
+        with Live(build_layout(initial_state), refresh_per_second=refresh,
+                  console=console, screen=True) as live:
+            while True:
+                tick_start = time.time()
+                tick += 1
+                try:
+                    data = board.get_board_data()
+                except Exception as e:
+                    err_trailer('stream-error', str(e)[:160],
+                                '1) Dongle red LED?  2) toggle OFF/PC')
+                    break
+
+                n_new = data.shape[1] if data is not None and data.size else 0
+                if n_new > 0:
+                    for i in range(n_ch):
+                        ch_data = data[eeg_channels[i], :]
+                        nn = len(ch_data)
+                        if nn >= ROLLING_SIZE:
+                            buffer[i] = ch_data[-ROLLING_SIZE:]
+                            buffer_filled = True
+                        else:
+                            buffer[i, :ROLLING_SIZE-nn] = buffer[i, nn:]
+                            buffer[i, ROLLING_SIZE-nn:] = ch_data
+                            if not buffer_filled and (tick * TICK_INTERVAL * sample_rate) >= ROLLING_SIZE:
+                                buffer_filled = True
+
+                if not buffer_filled:
+                    continue
+
+                rms_per_ch = np.sqrt(np.mean(buffer ** 2, axis=1))
+                for i in range(n_ch):
+                    spark_history[POS[i]].append(float(rms_per_ch[i]))
+                    if len(spark_history[POS[i]]) > SPARK_LEN:
+                        spark_history[POS[i]] = spark_history[POS[i]][-SPARK_LEN:]
+
+                touch_idx = -1
+                touch_ratio = 0.0
+                touch_direction = ''
+                top3_pos = POS[:3]
+                active_indices = []
+                primary = None
+                chan_state = ['OK'] * n_ch
+
+                WARMUP_TICKS = 3
+                should_sample_history = (tick - last_history_tick) >= HISTORY_TICK_STRIDE
+                if len(history) < WARMUP_TICKS:
+                    if should_sample_history:
+                        history.append(rms_per_ch.copy())
+                        last_history_tick = tick
+                    baseline = (np.median(np.array(history), axis=0)
+                                if len(history) >= 2 else rms_per_ch.copy())
+                else:
+                    baseline = np.median(np.array(history[-HISTORY_MAX:]), axis=0)
+                    ratio_up = rms_per_ch / (baseline + 1e-9)
+                    abs_change = rms_per_ch - baseline
+                    rel_change = abs_change / (baseline + 1e-9)
+                    touch_active = ((ratio_up > 1.4) & (abs_change > 3000.0)
+                                    & (rel_change > 0.20))
+                    active_indices = [int(c) for c in range(n_ch) if touch_active[c]]
+                    if active_indices:
+                        masked = np.where(touch_active, ratio_up, 0.0)
+                        touch_idx = int(np.argmax(masked))
+                        touch_ratio = float(ratio_up[touch_idx])
+                        touch_direction = '↑'
+                        primary = {
+                            'pos': POS[touch_idx],
+                            'rms': float(rms_per_ch[touch_idx]),
+                            'base': float(baseline[touch_idx]),
+                            'dev': touch_ratio,
+                            'direction': touch_direction,
+                        }
+                    if touch_idx < 0 and should_sample_history:
+                        history.append(rms_per_ch.copy())
+                        last_history_tick = tick
+                        if len(history) > HISTORY_MAX:
+                            history.pop(0)
+                    devs_pairs = [(POS[i], float(ratio_up[i])) for i in range(n_ch)]
+                    devs_pairs.sort(key=lambda x: -x[1])
+                    top3_pos = [d[0] for d in devs_pairs[:3]]
+                    # Per-channel state classification (touch overrides)
+                    for i in active_indices:
+                        chan_state[i] = 'LOOSE'
+
+                active_pos_list = [POS[i] for i in active_indices]
+                median_rms = float(np.median(rms_per_ch))
+
+                state_view = {
+                    'tick': tick,
+                    'fps_target': FPS,
+                    'fps_actual': measured_fps,
+                    'rms': [float(x) for x in rms_per_ch],
+                    'base': [float(x) for x in baseline],
+                    'chan_state': chan_state,
+                    'active_pos': active_pos_list,
+                    'primary': primary,
+                    'median_rms': median_rms,
+                    'history_depth': len(history),
+                    'history_max': HISTORY_MAX,
+                    'spark': {k: list(v) for k, v in spark_history.items()},
+                    'top3_pos': top3_pos,
+                }
+                live.update(build_layout(state_view))
+
+                fps_window.append(tick_start)
+                if len(fps_window) > FPS_WINDOW_SIZE:
+                    fps_window.pop(0)
+                if len(fps_window) >= 2:
+                    window_dur = fps_window[-1] - fps_window[0]
+                    if window_dur > 0:
+                        measured_fps = (len(fps_window) - 1) / window_dur
+
+                elapsed = time.time() - tick_start
+                sleep_dur = TICK_INTERVAL - elapsed
+                if sleep_dur > 0:
+                    time.sleep(sleep_dur)
+
+                if tick % JSONL_TICK_STRIDE == 0:
+                    try:
+                        row = {
+                            'ts': time.time(),
+                            'tick': tick,
+                            'mode': 'rich',
+                            'median_rms': round(median_rms, 0),
+                            'history_depth': len(history),
+                            'touch_idx': touch_idx,
+                            'touch_pos': POS[touch_idx] if touch_idx >= 0 else None,
+                            'touch_ratio': round(touch_ratio, 3) if touch_idx >= 0 else None,
+                            'active_count': len(active_indices),
+                            'active_positions': active_pos_list,
+                            'measured_fps': round(measured_fps, 1),
+                        }
+                        with open(JSONL_PATH, 'a') as _f:
+                            print(_json.dumps(row, ensure_ascii=False), file=_f)
+                    except: pass
+
+    except KeyboardInterrupt:
+        print()
+        print('Ctrl-C exit - releasing BrainFlow session...', flush=True)
+    finally:
+        try: board.stop_stream()
+        except: pass
+        try: board.release_session()
+        except: pass
+    return 0
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser()
+    p.add_argument('mode', choices=['selftest', 'live'])
+    p.add_argument('--board-id', type=int, default=2)
+    p.add_argument('--port', type=str, default='')
+    p.add_argument('--fps', type=int, default=30,
+                   help='target render fps (5-60, default 30)')
+    args = p.parse_args()
+    if args.mode == 'live':
+        rc = run_live(args.board_id, args.port, fps=args.fps)
+    else:
+        rc = run_selftest(fps=args.fps)
+    sys.exit(rc)
+"
+    write_file(HELPER_PATH, py)
+}
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    // Skip leading binary/script paths. See electrode_adjustment_helper.hexa
+    // for the same logic + rationale (interp/AOT-cache/wrap modes).
+    while start < len(av) {
+        let a = av[start]
+        if a.starts_with("-") { break }
+        let mut is_path = false
+        if a.starts_with("/")    { is_path = true }
+        if a.ends_with(".hexa")  { is_path = true }
+        if a.ends_with(".real")  { is_path = true }
+        if a.ends_with("/exe")   { is_path = true }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-eeg/electrode_helper_rich.hexa --selftest")
+    eprintln("       hexa run anima-eeg/electrode_helper_rich.hexa --live [--port <p>] [--fps <n>]")
+    eprintln("flags:")
+    eprintln("  --selftest        synthetic 16ch demo of 3-panel rich layout (3s run)")
+    eprintln("  --live            real BrainFlow live touch detector with rich render")
+    eprintln("  --port <path>     Dongle serial node (auto-detect if omitted)")
+    eprintln("  --fps <n>         target render fps (5-60, default 30 — Rich diff cap)")
+    eprintln("  --board <name>    cyton_daisy | cyton | ganglion (default cyton_daisy)")
+    eprintln("  --help            this message")
+    eprintln("")
+    eprintln("note: requires `rich` library in .venv-eeg.")
+    eprintln("      install: .venv-eeg/bin/pip install rich")
+    eprintln("      see docs/rich_tui_upgrade_design_2026_04_28.md for falsifiers F1-F5.")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut live_mode = false
+    let mut want_help = false
+    let mut port = ""
+    let mut fps = DEFAULT_FPS
+    let mut board_name = DEFAULT_BOARD_NAME
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--live"     { live_mode = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        if a == "--port" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--port requires a value",
+                              "1) re-run with --port <path>")
+                exit(2)
+            }
+            port = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--fps" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--fps requires int 5-60",
+                              "1) --fps 30")
+                exit(2)
+            }
+            fps = to_int(av[i + 1])
+            if fps < 5  { fps = 5 }
+            if fps > 60 { fps = 60 }
+            i = i + 2; continue
+        }
+        if a == "--board" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--board requires value",
+                              "1) --board cyton_daisy")
+                exit(2)
+            }
+            board_name = av[i + 1]; i = i + 2; continue
+        }
+        _emit_trailer("unknown-arg", "unrecognized: " + a, "1) --help")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help { _print_usage(); exit(0) }
+    if !selftest && !live_mode {
+        eprintln("ABORT: must pass --selftest | --live")
+        _print_usage()
+        exit(2)
+    }
+
+    _write_helper()
+
+    let board_id = _board_name_to_id(board_name)
+    if board_id < 0 {
+        _emit_trailer("invalid-board", "unknown: " + board_name,
+                      "1) --board cyton_daisy")
+        exit(2)
+    }
+
+    println("══════════════════════════════════════════════════")
+    println("  anima-eeg electrode_helper_rich (Rich TUI variant)")
+    println("  schema: " + SCHEMA)
+    if selftest {
+        println("  mode: selftest (synthetic 16ch demo)")
+    } else {
+        println("  mode: live (BrainFlow + Rich Live)")
+        println("  port: " + port)
+    }
+    println("  fps target: " + str(fps))
+    println("══════════════════════════════════════════════════")
+
+    let venv_py = DEFAULT_VENV_PYTHON
+    let mode_arg = if selftest { "selftest" } else { "live" }
+    let mut cmd = venv_py + " " + HELPER_PATH + " " + mode_arg
+    cmd = cmd + " --board-id " + str(board_id)
+    cmd = cmd + " --fps " + str(fps)
+    if !selftest && port != "" {
+        cmd = cmd + " --port " + _sh_quote(port)
+    }
+    let r = exec_with_status(cmd)
+    exit(to_int(r[1]))
+}

@@ -1,0 +1,37 @@
+{
+  "battery": "B-S63 (§63 HEXAD-KICK-SWEEP)",
+  "passed": 5,
+  "total": 5,
+  "all_blue": true,
+  "results": [
+    {
+      "id": "B-S63-1 CLASSIFICATION-PARTITION-EXHAUSTIVE-DISJOINT",
+      "pass": true,
+      "detail": "|A|=12 |B|=3 |C|=4 |U|=19; exhaustive(A∪B∪C=U)=True; disjoint AB=True AC=True BC=True; exactly-one-class-per-pair=True (sympy FiniteSet identity over actual run)"
+    },
+    {
+      "id": "B-S63-2 CONNECTION-POINT-PREDICATE-DECIDABLE",
+      "pass": true,
+      "detail": "total-function(no exception, ∈{A,B,C})=True; 2-bit truth-table {(1, 1): 'A', (1, 0): 'A', (0, 1): 'C', (0, 0): 'B'}=={(1, 1): 'A', (1, 0): 'A', (0, 1): 'C', (0, 0): 'B'}->True; sympy mutual-exclusion=True; coverage(tautology)=True"
+    },
+    {
+      "id": "B-S63-3 SWEEP-DETERMINISTIC",
+      "pass": true,
+      "detail": "3× sha256 bit-identical=True digest=ab3a190f401b1945… (pure-fn, no RNG)"
+    },
+    {
+      "id": "B-S63-4 GAP-MAP-CARDINALITY-CLOSED",
+      "pass": true,
+      "detail": "|A|+|B|+|C| = 12+3+4 == total 19 -> True (sympy Integer identity); class-A exactly recovers the 12 closed B-CONN points=True"
+    },
+    {
+      "id": "B-S63-5 MISSING-TYPE-DISTINCT-FROM-EXISTING-12",
+      "pass": true,
+      "detail": "C-TYPEs ∩ 12-existing-TYPEs = [] (∅=True); per-row disjoint-flag=True; |C-TYPEs|=4==|C-rows|=4->True (each gap a distinct new TYPE)"
+    }
+  ],
+  "B-S63-NOTE": "EMPIRICAL carve-out: which C-class gap is THE GOAL bottleneck (the goal_rank ordering) is a structural READING, NOT a closed proof — future-fire EMPIRICAL question (B-D-NOTE / B-S58-NOTE family, NOT counted 🔵). The battery proves the sweep is exhaustive / deterministic / decidable and the C-class TYPEs are set-disjoint from the σ(6)=12 closure.",
+  "central_blue_falsifier_diff": "0-line (sidecar only)",
+  "f_safe": "f1/f2/f3 safe — σ(6)=12 used only as internal anima count of the closed wiring set, NO external σ/τ/φ/J₂ derivation; B-IDENTITY-5 N/A (no corpus)",
+  "north_star": "UNCHANGED; §15/§51 milestone UNCHANGED; capability claim 0; g3 structural-only"
+}

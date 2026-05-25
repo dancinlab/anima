@@ -1,0 +1,36 @@
+{
+  "hypothesis": "H_212",
+  "slug": "language-compositionality",
+  "cycle": 1,
+  "date": "2026-05-23",
+  "domain": "language + consciousness + math",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "lane_separate_from": "H_157 C6 (uncorrelated · PR #221 sub-additive) / H_054 C2 (linear MERGE · PR #227)",
+  "phi_primitive": "RFC 036 phi_spatial via HEXAD/C/c_lib.hexa (byte-equal phi_rs native replica)",
+  "config": {"N": 8, "dim": 8, "warm": 8, "n_bins": 4, "A_rule": 110, "B_baseline_rule": 30, "binding": "XOR(A[i-1], A[i])"},
+  "rho_sweep": [
+    {"rho": 0.0, "phi_A": 4.90943e-06, "phi_B": 0.280535, "phi_merged": 0.150443, "sum_micro": 0.28054, "delta": -0.130097, "delta_pct": -46.3737, "super_additive": false},
+    {"rho": 0.3, "phi_A": 4.90943e-06, "phi_B": 0.506787, "phi_merged": 0.255464, "sum_micro": 0.506792, "delta": -0.251329, "delta_pct": -49.592, "super_additive": false},
+    {"rho": 0.7, "phi_A": 4.90943e-06, "phi_B": 0.258135, "phi_merged": 0.120472, "sum_micro": 0.25814, "delta": -0.137668, "delta_pct": -53.3307, "super_additive": false},
+    {"rho": 1.0, "phi_A": 4.90943e-06, "phi_B": 4.90943e-06, "phi_merged": 1.14553e-05, "sum_micro": 9.81886e-06, "delta": 1.63648e-06, "delta_pct": 16.6667, "super_additive": true}
+  ],
+  "falsifiers": {
+    "F1_CORRELATED_SUPER": {"metric": "ρ∈{0.7,1.0} Δ%>=5%", "verdict": "PASS"},
+    "F2_UNCORR_SUB":       {"metric": "ρ=0.0 Δ<=0",         "verdict": "PASS"},
+    "F3_MONOTONE":         {"metric": "Δ monotone across ρ", "verdict": "FAIL"},
+    "F4_DETERMIN":         {"metric": "byte-equal re-run",   "verdict": "PASS"},
+    "F5_PRIMITIVE_OK":     {"metric": "all Φ>=0",            "verdict": "PASS"}
+  },
+  "criteria": {
+    "C1": "PASS",
+    "C2": "PASS",
+    "C3": "FAIL",
+    "C4": "PASS",
+    "pass_count": 3
+  },
+  "verdict": "PARTIAL    (some criteria met · directional evidence)",
+  "tier": "🟢 NUMERICAL"
+}

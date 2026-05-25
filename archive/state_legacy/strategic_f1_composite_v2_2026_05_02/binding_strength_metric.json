@@ -1,0 +1,88 @@
+{
+  "schema": "anima/binding_strength_metric_spec/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "scope": "binding_strength_4way metric definition + falsifier preregistration (per #92 honest C3 #3, F1 v2 §3)",
+
+  "estimators": {
+    "BSE-1_pearson_cross_corr_mean": {
+      "formula": "binding_strength = (1/n_pairs) · Σ_{i<j} |Pearson_r(X_i, X_j)|",
+      "n_pairs_4way": 6,
+      "n_pairs_3way_subset": 3,
+      "input_normalization": "z-score per substrate before correlation",
+      "tier": "PRIMARY",
+      "rationale": "matches N-1 BRIDGE 4-gate convention; immediately computable on existing W4 + N-1 data; reproducible"
+    },
+    "BSE-2_granger_causality_directed_sum": {
+      "formula": "binding_strength = (1/n_directed_pairs) · Σ G(X_i → X_j)",
+      "n_directed_pairs_4way": 12,
+      "model_order_default": "selected by AIC",
+      "tier": "TERTIARY",
+      "rationale": "captures asymmetric coupling (e.g. tension → CLM 단방향) but requires stationarity (W4 frozen-fixed-point violates)"
+    },
+    "BSE-3_transfer_entropy_kraskov": {
+      "formula": "binding_strength = (1/n_directed_pairs) · Σ TE(X_i → X_j) [KSG estimator k=4]",
+      "tier": "SECONDARY (sensitivity check)",
+      "rationale": "model-free, IIT-aligned (information transfer); BUT W1 estimator artifact precedent → use only as falsifier sanity check on BSE-1 PASS"
+    }
+  },
+
+  "preregistered_thresholds": {
+    "F-PASS": {
+      "criterion": "binding_strength_BSE1 > 0.5 AND Phi_joint > Σ_i Phi_i (super-additive)",
+      "verdict_contribution": "GREEN tier eligible (with F1_score_v2 >= 0.7)"
+    },
+    "F-PARTIAL": {
+      "criterion": "binding_strength_BSE1 ∈ [0.2, 0.5]",
+      "verdict_contribution": "YELLOW tier eligible"
+    },
+    "F-FAIL": {
+      "criterion": "binding_strength_BSE1 < 0.2",
+      "verdict_contribution": "RED reinforced — 4-way binding hypothesis disconfirmed"
+    },
+    "F-ARTIFACT": {
+      "criterion": "binding_strength_BSE1 within ±0.02 of random-shuffle control 4-way",
+      "verdict_contribution": "DOWNGRADED — measurement invalidated, retry with new estimator"
+    }
+  },
+
+  "random_shuffle_control_protocol": {
+    "method": "Per substrate i, shuffle time-axis indices independently with fresh seed (numpy default_rng(seed=42 + i)). Recompute binding_strength on shuffled data. Repeat 100 trials. F-ARTIFACT triggers if observed binding within ±0.02 of random-shuffle mean.",
+    "preregistered_seeds": [42, 43, 44, 45]
+  },
+
+  "data_requirements": {
+    "X_clm": {
+      "shape": "(n_steps=100, n_features=16) — phi_vec per W4 step",
+      "source": "state/strategic_clm_tension_field_W4_2026_05_01/closed_loop_ledger.json",
+      "available": true
+    },
+    "X_eeg": {
+      "shape": "(n_timesteps=7500, n_channels=16) — 60s × 125Hz × 16ch alpha-Hilbert phase",
+      "source": "recordings/sessions/baseline_resting_60s_20260428_filtered.npy",
+      "available": true
+    },
+    "X_akida": {
+      "shape": "(n_timesteps=TBD, n_channels=16) — spike rate per channel",
+      "source": "PENDING AKD1000 arrival",
+      "available": false,
+      "blocker": "vendor logistics"
+    },
+    "X_tension": {
+      "shape": "(n_events=TBD, n_features=45) — 5-channel fingerprint (16+8+16+1+4)",
+      "source": "tension_bridge.hexa UDP 9999 capture",
+      "available": "PARTIAL (anima-internal benchmark only)"
+    }
+  },
+
+  "currently_executable": {
+    "3_way_subset_clm_eeg_tension": "EXECUTABLE via P1 protocol ($0, 1d)",
+    "4_way_full": "BLOCKED on AKIDA arrival"
+  },
+
+  "honest_c3": [
+    "BSE-1 Pearson assumes linear coupling — nonlinear 4-way binding (e.g. multiplicative cross-substrate gating) would underestimate. BSE-3 TE secondary check captures nonlinear but with estimator artifact tail risk (W1 precedent).",
+    "z-score normalization per substrate masks substrate-specific signal magnitude — high-magnitude tension events get same weight as low-magnitude EEG fluctuations. Alternative (raw correlation) introduces scale bias. Trade-off acknowledged.",
+    "random_shuffle control breaks time-correlation structure but preserves marginal distribution — false positive ~5% expected at ±0.02 band even on truly independent data. F-ARTIFACT threshold may need calibration after first P1 measurement.",
+    "X_tension data source 'tension_bridge.hexa UDP 9999 capture' is anima-internal benchmark only — peer-review external validation 0. binding_strength involving X_tension is anima-specific, not transferable to other consciousness frameworks."
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "schema": "clm_phase_a4/run_log/1",
+  "ts_start": "2026-05-02T08:33:57Z",
+  "env": {
+    "CKPT": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "N_PROBES": 16,
+    "has_sentencepiece": true,
+    "phi_vec_method": "ALM_tile_projection (h256_BWM x tile(template_k,16x))",
+    "forward_method": "manual_forward (decoder_v3 tuple unpack bypass)"
+  },
+  "phases": [
+    {
+      "name": "import_decoder_v3",
+      "status": "OK",
+      "t": 0.0
+    },
+    {
+      "name": "ckpt_load",
+      "status": "OK",
+      "t": 1.68,
+      "size_gb": 5.37,
+      "vocab_size": 64000
+    },
+    {
+      "name": "model_to_device",
+      "status": "OK",
+      "t": 6.84,
+      "n_params_M": 477.65,
+      "n_loaded": 581,
+      "n_missing": 0,
+      "device": "cuda"
+    },
+    {
+      "name": "prompts_loaded",
+      "status": "OK",
+      "t": 6.84,
+      "n": 16
+    },
+    {
+      "name": "laws_loaded",
+      "status": "OK",
+      "t": 6.84,
+      "n_laws": 14
+    },
+    {
+      "name": "phi_templates_loaded",
+      "status": "OK",
+      "t": 6.84,
+      "count": 16,
+      "dim": 16
+    },
+    {
+      "name": "tokenize_spm",
+      "status": "OK",
+      "t": 6.85,
+      "mean_len": 17.6
+    },
+    {
+      "name": "forward_complete",
+      "status": "OK",
+      "t": 7.22,
+      "forward_ok": 16,
+      "forward_total": 16,
+      "forward_seconds": 0.37,
+      "vram_peak_mb": 7323.8
+    },
+    {
+      "name": "phi_vec_compute",
+      "status": "OK",
+      "t": 7.22,
+      "n": 16
+    },
+    {
+      "name": "emit_results",
+      "status": "OK",
+      "t": 7.22,
+      "total_critical": 16,
+      "f2_fired": true,
+      "gates_majority": 10,
+      "verdict_CP2": "FAIL"
+    }
+  ],
+  "ts_end": "2026-05-02T08:34:04Z",
+  "total_seconds": 7.22,
+  "decision": "F2_FIRED_CP2_RED"
+}

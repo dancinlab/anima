@@ -1,0 +1,68 @@
+{
+  "bg_id": "BG-FB",
+  "cycle_date": "2026-05-06",
+  "predecessor_bg": "BG-EW",
+  "lane": "anima_clm_3_original_h100_fire_ready",
+  "status": "PRE_FLIGHT_PASS_AWAITING_OPERATOR_CONFIRM",
+  "actual_h100_fired": false,
+  "cost_actual_usd": 0,
+  "preflight_gates": {
+    "1_secret_cli": {
+      "verdict": "PASS",
+      "evidence": "/Users/ghost/core/secret/bin/secret on PATH; hf.token len=37 prefix=hf_; runpod.api_key len=50",
+      "note": "actual secret keys are hf.token + runpod.api_key (NOT huggingface.token as launch_h100.bash line 24 references — minor mismatch noted, not a fire-blocker since operator can bridge in interactive launch)"
+    },
+    "2_runpod_cli_or_api": {
+      "verdict": "PASS_VIA_REST_API",
+      "evidence": "runpod CLI NOT installed on Mac; falls back to RunPod GraphQL REST API which authenticates successfully (clientBalance returned, pods list returned)",
+      "note": "launch_h100.bash GATE 3 will FAIL on Mac because it requires `runpod` CLI; operator must either install runpod CLI (`pip install runpod`) OR fire the pod create via REST API directly (template provided in emit_pod_create.txt)"
+    },
+    "3_runpod_balance_cap": {
+      "verdict": "PASS",
+      "balance_usd": 339.2015850361,
+      "current_spend_per_hr_usd": 0.089,
+      "cap_usd": 100,
+      "headroom_usd": 239.20,
+      "ts": "2026-05-06T (re-queried this BG)",
+      "note": "balance > $100 cap with $239 headroom; currentSpendPerHr=$0.089 likely volume rental on EXITED pods (confirm via separate cleanup; not a blocker for new pod fire)"
+    },
+    "4_spec_doc_falsifiers": {
+      "verdict": "PASS",
+      "spec_path": "/Users/ghost/core/anima/docs/anima_clm_3_original_byte_level_redesign_spec_2026_05_05.md",
+      "spec_size_bytes": 26500,
+      "falsifiers_present": ["F-CLM3-orig-1", "F-CLM3-orig-2", "F-CLM3-orig-3", "F-CLM3-orig-4", "F-CLM3-orig-5"],
+      "evidence": "grep verified all 5 falsifier IDs at lines 295/305/317/329/342"
+    },
+    "5_launch_watchdog_scripts": {
+      "verdict": "PASS",
+      "launch_script": "/Users/ghost/core/anima/state/anima_clm_3_original_h100_launch_2026_05_06/launch_h100.bash",
+      "launch_size_bytes": 4522,
+      "watchdog_script": "/Users/ghost/core/anima/state/anima_clm_3_original_h100_launch_2026_05_06/watchdog_h100.bash",
+      "watchdog_size_bytes": 2343,
+      "exec_mode": "rw-r--r-- (644; +x not set, must invoke via `bash <path>`)",
+      "note": "scripts present + readable; not chmod +x but bash explicit invocation works"
+    },
+    "6_cost_envelope_check": {
+      "verdict": "PASS",
+      "h100_sxm_80gb_community_per_hr_usd": 2.69,
+      "training_wall_clock_hr_target": 10,
+      "estimated_total_usd": 26.90,
+      "cap_usd": 100,
+      "estimated_vs_cap_ratio": 0.269,
+      "note": "watchdog_h100.bash hardcodes H100_RATE_PER_HR=2.49 (line 15) but actual current RunPod community rate is $2.69 — minor 8% under-tracking; cost still well under cap"
+    }
+  },
+  "pods_existing": {
+    "count": 4,
+    "all_status": "EXITED",
+    "all_name_prefix": "anima-clm-v4-sanity-rerun-v2-fixture-fix-2026-05-04",
+    "note": "4 EXITED H100 SXM pods present (NOT terminated), no RUNNING pods; safe to fire new pod"
+  },
+  "fire_command_emit": "see emit_pod_create.txt + emit_train_heredoc.txt",
+  "user_confirm_required": [
+    "BUDGET-100 (literal string operator must type)",
+    "FALSIFIER-LOCK (literal string operator must type after sign-off on F-CLM3-orig-1..5)"
+  ],
+  "raw_compliance": ["raw#9", "raw#10", "raw#15", "raw#37"],
+  "secrets_handling": "REST API key never echoed; token literals never written to any artifact; only length + prefix shape verified"
+}

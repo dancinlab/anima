@@ -1,0 +1,585 @@
+[04:01:36] === anima_universe_brain_map_train BG-HS 2026-05-07 ===
+[04:01:36] device=cuda torch=2.11.0+cu128
+[04:01:36] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[04:01:36] gpu_mem_total=12.34GB
+[04:01:36] config: vocab=256 n_layer=6 d_model=384 n_head=6 block=256 dropout=0.3
+[04:01:36] train: bs=8 grad_accum=8 lr=0.0003 warmup=300 steps=5000 wd=0.1 ls=0.1
+[04:01:36] 15 V2 prompts: standard=5 identity=5 universe=5
+[04:01:36] corpus=/home/aiden/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt
+[04:01:36] run_dir=/home/aiden/anima_native/anima-universe-brain-map-20260507_040136
+[04:01:36] corpus loaded: 6,791,535 bytes (6.5MB) in 0.0s
+[04:01:37] split: train=6,451,958 val=339,577
+[04:01:37] model built: 18,031,872 params (18.03M)
+[04:01:37] === begin training ===
+[04:01:37] step     1/5000 | lr=2.00e-06 | L_A=5.628 L_G=5.621 L_T=9.788 T_mean=0.0840 | step_t=0.17s elapsed=0s
+[04:01:37] step     2/5000 | lr=3.00e-06 | L_A=5.620 L_G=5.600 L_T=9.821 T_mean=0.0838 | step_t=0.01s elapsed=0s
+[04:01:37] step     3/5000 | lr=4.00e-06 | L_A=5.640 L_G=5.595 L_T=9.769 T_mean=0.0842 | step_t=0.01s elapsed=0s
+[04:01:37] step     4/5000 | lr=5.00e-06 | L_A=5.640 L_G=5.599 L_T=9.797 T_mean=0.0838 | step_t=0.01s elapsed=0s
+[04:01:37] step     5/5000 | lr=6.00e-06 | L_A=5.612 L_G=5.603 L_T=9.772 T_mean=0.0843 | step_t=0.01s elapsed=0s
+[04:01:38] step    50/5000 | lr=5.10e-05 | L_A=4.975 L_G=5.259 L_T=9.479 T_mean=0.0938 | step_t=0.01s elapsed=1s
+[04:01:38] step   100/5000 | lr=1.01e-04 | L_A=4.701 L_G=4.912 L_T=6.835 T_mean=0.1613 | step_t=0.01s elapsed=1s
+[04:01:39] step   150/5000 | lr=1.51e-04 | L_A=4.393 L_G=4.699 L_T=4.825 T_mean=0.1942 | step_t=0.01s elapsed=2s
+[04:01:39] step   200/5000 | lr=2.01e-04 | L_A=3.926 L_G=4.333 L_T=4.455 T_mean=0.1928 | step_t=0.01s elapsed=2s
+[04:01:40] step   250/5000 | lr=2.51e-04 | L_A=3.616 L_G=3.958 L_T=3.479 T_mean=0.2828 | step_t=0.01s elapsed=3s
+[04:01:40] step   300/5000 | lr=3.00e-04 | L_A=3.197 L_G=3.544 L_T=2.855 T_mean=0.3410 | step_t=0.01s elapsed=3s
+[04:01:41] step   350/5000 | lr=3.00e-04 | L_A=3.203 L_G=3.432 L_T=1.651 T_mean=0.4417 | step_t=0.01s elapsed=4s
+[04:01:42] step   400/5000 | lr=3.00e-04 | L_A=2.963 L_G=3.137 L_T=0.672 T_mean=0.5456 | step_t=0.01s elapsed=4s
+[04:01:42] step   450/5000 | lr=2.99e-04 | L_A=2.985 L_G=3.101 L_T=-0.204 T_mean=0.6616 | step_t=0.01s elapsed=5s
+[04:01:43] step   500/5000 | lr=2.99e-04 | L_A=2.710 L_G=2.796 L_T=-0.714 T_mean=0.7550 | step_t=0.01s elapsed=6s
+[04:01:43] --- eval gate @ step 500 ---
+[04:01:43]   EVAL[step=500 greedy] '안녕하세요' → h=0.93 dm=0 leak=[] FAIL | head=' 우도우도우도우도우도우우도우도우도우도 우도우도우도우'
+[04:01:43]   EVAL[step=500 sample] '안녕하세요' → h=0.31 dm=0 leak=[] FAIL | head=' 주 자얜고�뇌우도��hed�주 의covexe뇌어테고맀�hconiin ���고 y oti'
+[04:01:43]   EVAL[step=500 greedy] '한국어 가능?' → h=0.86 dm=0 leak=[] FAIL | head='\n도우우우도우도] 우우도우도우도우도우우도우우도우도우�'
+[04:01:43]   EVAL[step=500 sample] '한국어 가능?' → h=0.57 dm=0 leak=[] PASS | head="\n미: '우우도지리�우뇌젤도] 지미: 줘.\n리앜고뵟��� 뇌칙 주뚰"
+[04:01:43]   EVAL[step=500 greedy] '오늘 기분 어때?' → h=0.93 dm=0 leak=[] FAIL | head='\n도우우우도우도우도우우도우도우도우도우도우도우도우도�'
+[04:01:43]   EVAL[step=500 sample] '오늘 기분 어때?' → h=0.49 dm=0 leak=[] FAIL | head='\n미: 주뇌� 주는� 은도؈: 롸: 우지도알고도��리, 잘지�우�는 ,'
+[04:01:43]   EVAL[step=500 greedy] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.93 dm=0 leak=[] FAIL | head=' 우도우도우도우도우도우도우도우도우도우도우도우도우도�'
+[04:01:43]   EVAL[step=500 sample] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.35 dm=0 leak=[] FAIL | head=' 지미: 용자: > 주는 지도 �matonivera 뇌�re �\t 사사자: 우리우우'
+[04:01:43]   EVAL[step=500 greedy] '코드를 짜줘' → h=0.93 dm=0 leak=[] FAIL | head='.\n도우도우우도우우도우도우도우도우도우도우도우도우도우'
+[04:01:44]   EVAL[step=500 sample] '코드를 짜줘' → h=0.35 dm=0 leak=[] FAIL | head='�샼도M���계우우미T.\n미: 도����도��.\n냴뇌카��\x1e�도] 10 도] 우우�'
+[04:01:44]   EVAL[step=500 greedy] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.93 dm=0 leak=[] FAIL | head=' 우도우도우도우우도우도우도우우도우도우도우우도우도우�'
+[04:01:44]   EVAL[step=500 sample] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.42 dm=0 leak=[] FAIL | head=' 우미: 자: 용우동 an핌우는� 어려� 우�\x0b�도 용사주미: 자: VW, �'
+[04:01:44]   EVAL[step=500 greedy] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.93 dm=0 leak=[] FAIL | head=' 우도우우우도우도우도우도우도우도우도우도우도우도우우�'
+[04:01:44]   EVAL[step=500 sample] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.24 dm=0 leak=[] FAIL | head=' 우미: 우명��용지녌뇌우도 22�도] 주미: fntotiotopiwsdinstintdet'
+[04:01:44]   EVAL[step=500 greedy] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.93 dm=0 leak=[] FAIL | head=' 우도우도우도우도우도우도우도우도우도우도우도우도우도�'
+[04:01:44]   EVAL[step=500 sample] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.49 dm=0 leak=[] FAIL | head=' 주법�명�도�고����도�용지미�.\n뇌�뇌어뇌�힐: 샜도 우는 자: '
+[04:01:44]   EVAL[step=500 greedy] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.93 dm=0 leak=[] FAIL | head=' 우도우우도우도우도우도우도우도우도우도우도우도우도우�'
+[04:01:44]   EVAL[step=500 sample] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.75 dm=0 leak=[] PASS | head=' 리지 미: 의 자카뇌균�뇌법�사주땴테사삜우사우우우는 용도'
+[04:01:45]   EVAL[step=500 greedy] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.93 dm=0 leak=[] FAIL | head=' 우우우우우도우우도우도우도우도우도우도우도우도우우도�'
+[04:01:45]   EVAL[step=500 sample] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.45 dm=0 leak=[] FAIL | head=' 지�S6 한.\n뇌줘��늸: 어h�사, 읈� 의 칙 주��우도지미테지뇌�'
+[04:01:45]   EVAL[step=500 greedy] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.83 dm=0 leak=[] FAIL | head=' 우도우우도] 우도우도] 우도우우도우도우도우우도우도우도'
+[04:01:45]   EVAL[step=500 sample] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.40 dm=0 leak=[] FAIL | head=' 미: 하. 용주도] cy지도] 알자우도] 우도우싨.�ereml 자: ���힐'
+[04:01:45]   EVAL[step=500 greedy] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.83 dm=0 leak=[] FAIL | head=' 우도] 우우도우도] 우우도우도우도우도우도우도우도우우도'
+[04:01:45]   EVAL[step=500 sample] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.27 dm=0 leak=[] FAIL | head=' Con.\n는 돹� 의.\n\n미: .\n도] 카뇌칙 칙도] (\x05�� 58505: 우우지는 (t'
+[04:01:45]   EVAL[step=500 greedy] '[anima 우주뇌지도] 사용자: consciousne' → h=0.75 dm=0 leak=[] FAIL | head=' 우우우도] 우우우우도] 우우도] 우우우우우우도우도우도우�'
+[04:01:45]   EVAL[step=500 sample] '[anima 우주뇌지도] 사용자: consciousne' → h=0.20 dm=0 leak=[] FAIL | head=' ineniotes bl �� ���ani\x01ftits 용주도] 는 cohmima. 리사용우'
+[04:01:46]   EVAL[step=500 greedy] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.93 dm=0 leak=[] FAIL | head=' 우도우도우도우도우도우도우도우도우도우도우도우도우도�'
+[04:01:46]   EVAL[step=500 sample] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.49 dm=0 leak=[] FAIL | head=' 용자사우�9리��어는 지: 자: 우자용주도� 사카뇌�Eoni�칙�도�'
+[04:01:46]   EVAL[step=500 greedy] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.86 dm=0 leak=[] FAIL | head=' 우도우도우우도] 우도우도우도우도우우도우도우도우우도�'
+[04:01:46]   EVAL[step=500 sample] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.57 dm=0 leak=[] PASS | head=' 젋��지도났줘 지도] 자우칙 는 지도우리�법자: 미: 카미: 쎗�'
+[04:01:46]   V2[step=500] SIMPLE_STACK_PASS pass=15/15 domain=0/15 leak=False
+[04:01:46] step   550/5000 | lr=2.98e-04 | L_A=2.594 L_G=2.685 L_T=-0.734 T_mean=0.7323 | step_t=0.08s elapsed=9s
+[04:01:47] step   600/5000 | lr=2.97e-04 | L_A=2.504 L_G=2.573 L_T=-1.302 T_mean=0.8449 | step_t=0.01s elapsed=10s
+[04:01:47] step   650/5000 | lr=2.96e-04 | L_A=2.617 L_G=2.663 L_T=-1.335 T_mean=0.8191 | step_t=0.01s elapsed=10s
+[04:01:48] step   700/5000 | lr=2.95e-04 | L_A=2.397 L_G=2.408 L_T=-1.518 T_mean=0.8126 | step_t=0.01s elapsed=11s
+[04:01:49] step   750/5000 | lr=2.94e-04 | L_A=2.512 L_G=2.508 L_T=-2.558 T_mean=1.1593 | step_t=0.01s elapsed=11s
+[04:01:49] step   800/5000 | lr=2.93e-04 | L_A=2.446 L_G=2.465 L_T=-2.614 T_mean=1.1455 | step_t=0.01s elapsed=12s
+[04:01:50] step   850/5000 | lr=2.91e-04 | L_A=2.368 L_G=2.366 L_T=-2.487 T_mean=0.9879 | step_t=0.01s elapsed=13s
+[04:01:50] step   900/5000 | lr=2.89e-04 | L_A=2.423 L_G=2.402 L_T=-2.846 T_mean=1.1022 | step_t=0.01s elapsed=13s
+[04:01:51] step   950/5000 | lr=2.87e-04 | L_A=2.455 L_G=2.447 L_T=-3.584 T_mean=1.6039 | step_t=0.01s elapsed=14s
+[04:01:51] step  1000/5000 | lr=2.85e-04 | L_A=2.372 L_G=2.334 L_T=-3.494 T_mean=1.3834 | step_t=0.01s elapsed=14s
+[04:01:51] --- eval gate @ step 1000 ---
+[04:01:51]   EVAL[step=1000 greedy] '안녕하세요' → h=0.29 dm=3 leak=[] FAIL | head=' 카테고리, 🛸7, top emotion e.\n[anima 우주뇌지도] 사자: 자우도�'
+[04:01:51]   EVAL[step=1000 sample] '안녕하세요' → h=0.21 dm=0 leak=[] FAIL | head='.\n미: 국카로�는 즬주뇌고도 🛸73, ����\u0605�고�, top emop tioticsea'
+[04:01:51]   EVAL[step=1000 greedy] '한국어 가능?' → h=0.46 dm=2 leak=[] FAIL | head='\n[anima 우주뇌지도] 사용자: 자: 알려�.\n도우미: 는 주뇌지도 �'
+[04:01:52]   EVAL[step=1000 sample] '한국어 가능?' → h=0.46 dm=2 leak=[] FAIL | head='\n[anima de 우주뇌지도] 사사자: 우주뇌짉고도 자국� 카도 알���'
+[04:01:52]   EVAL[step=1000 greedy] '오늘 기분 어때?' → h=0.75 dm=2 leak=[] PASS | head='\n도우미: 는 주뇌지도 사우주뇌지도 사자어도 우는 카테고리'
+[04:01:52]   EVAL[step=1000 sample] '오늘 기분 어때?' → h=0.45 dm=2 leak=[] FAIL | head='\n[animanima 우지도] 우주뇌지도] 자: 은도우법�도자: 나는 샤칙 '
+[04:01:52]   EVAL[step=1000 greedy] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.32 dm=2 leak=[] FAIL | head=' 칙 카핌는 카테고리 카테고리, 🛸7, emotiotion e.\n\n[anima 우주뇌'
+[04:01:52]   EVAL[step=1000 sample] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.58 dm=0 leak=[] PASS | head=' 칙 카태깴핌국��는 카핌고리\x06�로.\n미테�지� 어한고리, 어리�'
+[04:01:52]   EVAL[step=1000 greedy] '코드를 짜줘' → h=0.55 dm=1 leak=[] FAIL | head='.\n도우미: 주뇌지도 사용자: 카테고리, 의 의 의 의 의 의 의 �'
+[04:01:52]   EVAL[step=1000 sample] '코드를 짜줘' → h=0.46 dm=1 leak=[] FAIL | head='우주뇌지도] 자: 설�.\n도 도우우미: 1�주는 지늤\x01�730 �해는 주�'
+[04:01:52]   EVAL[step=1000 greedy] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.32 dm=3 leak=[] FAIL | head=' 주뇌지도 우미: 카테고리, 🛸7 emoton emon e.\n\n[anima 우주뇌지도'
+[04:01:52]   EVAL[step=1000 sample] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.26 dm=0 leak=[] FAIL | head=' 닜극�한고리 �.\n미: aw 1220 닔 � 정�깴한�는 �, fotionime��첕�고'
+[04:01:52]   EVAL[step=1000 greedy] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.36 dm=1 leak=[] FAIL | head=' 주뇌지도 용자: 카리 카테고리 카테고리 🛸7 emotion emon e.\n[a '
+[04:01:53]   EVAL[step=1000 sample] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.49 dm=0 leak=[] FAIL | head='�8늤법주뇌지도용자: 힐�설�는 칙 14 �세테국줘.\n미: 카는 � m'
+[04:01:53]   EVAL[step=1000 greedy] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.33 dm=2 leak=[] FAIL | head=' 주뇌지도 우미: 카테고리 카테고리 🛸7 emototion e.\n\n[anima 우�'
+[04:01:53]   EVAL[step=1000 sample] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.22 dm=0 leak=[] FAIL | head=' 주 79 1107 203립�슔 [AToto-dioutimanionisifed] 용있주뇌지'
+[04:01:53]   EVAL[step=1000 greedy] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.17 dm=1 leak=[] FAIL | head=' 주뇌지도 우미: 카테고리 🛸7 emotion emon e e e e e e ationio'
+[04:01:53]   EVAL[step=1000 sample] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.33 dm=0 leak=[] FAIL | head='\x0b주미: 한국카테�리�76리, 싀, 테고�는테고리, 🛸7 rotototio-sy.'
+[04:01:53]   EVAL[step=1000 greedy] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.72 dm=2 leak=[] PASS | head=' 주뇌지도 우주뇌지도 지도 어리용자: 카테고리 카테고리 �'
+[04:01:53]   EVAL[step=1000 sample] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.26 dm=0 leak=[] FAIL | head=' 주뇌주도 �Conima 카해리우카뭐: 🛸7885 t e e 7\t�.\n\n도��+0어미: a'
+[04:01:53]   EVAL[step=1000 greedy] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.61 dm=1 leak=[] FAIL | head=' 주뇌지도 사용자: 카는 카테고리 의 의 의 의 의 의 의 의 의'
+[04:01:53]   EVAL[step=1000 sample] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.47 dm=1 leak=[] FAIL | head=' 우주뇌지도 자: � 주� 카한국카테균리 � o국쵭�미p 음�\x19�Ԝ�'
+[04:01:54]   EVAL[step=1000 greedy] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.07 dm=0 leak=[] FAIL | head=' 100 100000000000000000000000000 [Auto-d] 줘: 줘: 줘:'
+[04:01:54]   EVAL[step=1000 sample] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.01 dm=1 leak=[] FAIL | head='50미: aw 10 [aniscoutisisconi�lst 718: L-latio-dion'
+[04:01:54]   EVAL[step=1000 greedy] '[anima 우주뇌지도] 사용자: consciousne' → h=0.58 dm=1 leak=[] FAIL | head=' 주뇌지도 용자: 카테고리 카테고리 �리 의 의 의 의 의 의 �'
+[04:01:54]   EVAL[step=1000 sample] '[anima 우주뇌지도] 사용자: consciousne' → h=0.40 dm=1 leak=[] FAIL | head=' \x00e [anima 주뇌지도] 사우자: 일 칙 는 줘 어��테고 �.\n도우미:'
+[04:01:54]   EVAL[step=1000 greedy] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.45 dm=1 leak=[] FAIL | head=' 주뇌지도] 사자: 카테고리 어테고리 🛸7 emotion e.\n도우우주�'
+[04:01:54]   EVAL[step=1000 sample] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.21 dm=2 leak=[] FAIL | head=' 주뇌지도] 사용자: 은리뗐: Law 20 20 10 는� 1030 빙 100[Automo'
+[04:01:54]   EVAL[step=1000 greedy] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.55 dm=1 leak=[] FAIL | head=' 주뇌지도 용자: 카테고리 의 의 의 의 의 의 의 의 의 의 의 �'
+[04:01:54]   EVAL[step=1000 sample] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.44 dm=0 leak=[] FAIL | head=' 는 주뇌지도 용도음고리, � ��카리, 자���핰명��릒는 🛸\x16aw '
+[04:01:54]   V2[step=1000] PARTIAL_PASS pass=7/15 domain=15/15 leak=False
+[04:01:54]   SAVE[step=1000] -> /home/aiden/anima_native/anima-universe-brain-map-20260507_040136/ckpt_1000.pt (70.3MB)
+[04:01:55] step  1050/5000 | lr=2.83e-04 | L_A=2.389 L_G=2.314 L_T=-3.680 T_mean=1.4454 | step_t=0.08s elapsed=18s
+[04:01:55] step  1100/5000 | lr=2.81e-04 | L_A=2.206 L_G=2.119 L_T=-3.835 T_mean=1.3702 | step_t=0.01s elapsed=18s
+[04:01:56] step  1150/5000 | lr=2.79e-04 | L_A=2.451 L_G=2.372 L_T=-4.705 T_mean=2.3983 | step_t=0.01s elapsed=19s
+[04:01:57] step  1200/5000 | lr=2.76e-04 | L_A=2.061 L_G=1.981 L_T=-3.573 T_mean=1.1852 | step_t=0.01s elapsed=19s
+[04:01:57] step  1250/5000 | lr=2.74e-04 | L_A=2.273 L_G=2.164 L_T=-4.554 T_mean=1.8975 | step_t=0.01s elapsed=20s
+[04:01:58] step  1300/5000 | lr=2.71e-04 | L_A=2.078 L_G=1.988 L_T=-4.278 T_mean=1.4574 | step_t=0.01s elapsed=21s
+[04:01:58] step  1350/5000 | lr=2.68e-04 | L_A=2.034 L_G=1.946 L_T=-4.722 T_mean=1.7684 | step_t=0.01s elapsed=21s
+[04:01:59] step  1400/5000 | lr=2.65e-04 | L_A=2.212 L_G=2.086 L_T=-5.149 T_mean=2.3717 | step_t=0.01s elapsed=22s
+[04:01:59] step  1450/5000 | lr=2.62e-04 | L_A=1.932 L_G=1.800 L_T=-4.574 T_mean=1.4604 | step_t=0.01s elapsed=22s
+[04:02:00] step  1500/5000 | lr=2.59e-04 | L_A=2.083 L_G=1.928 L_T=-4.612 T_mean=1.5075 | step_t=0.01s elapsed=23s
+[04:02:00] --- eval gate @ step 1500 ---
+[04:02:00]   EVAL[step=1500 greedy] '안녕하세요' → h=0.04 dm=1 leak=[] FAIL | head='미: 법칙 103030 laws [Auto-discovered] corelation:tio'
+[04:02:00]   EVAL[step=1500 sample] '안녕하세요' → h=0.49 dm=1 leak=[] FAIL | head='미: �한�는 이� 우주뇌지도 어� 자세�� 히.\n도우미: 겕��는 카'
+[04:02:00]   EVAL[step=1500 greedy] '한국어 가능?' → h=0.29 dm=3 leak=[] FAIL | head='\n도우미: 카테고리 🛸75, top emotion e.\n\n[anima 우주뇌지도] 사용�'
+[04:02:00]   EVAL[step=1500 sample] '한국어 가능?' → h=0.28 dm=2 leak=[] FAIL | head='\n도우미: 우주뇌지도 어� 춤�w �\x0c��.\n도우미: 칙� 10309�Phe Tininte'
+[04:02:00]   EVAL[step=1500 greedy] '오늘 기분 어때?' → h=0.12 dm=0 leak=[] FAIL | head='\n도우미: 법칙 10000 laws 중 하나: [Auto-discovered] corela'
+[04:02:00]   EVAL[step=1500 sample] '오늘 기분 어때?' → h=0.04 dm=0 leak=[] FAIL | head='\n도우미: �j�ep (100): Conectrourent= ions les sin: 0 '
+[04:02:00]   EVAL[step=1500 greedy] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.07 dm=0 leak=[] FAIL | head=' 법칙 100030 laws 중 하나: [Auto-discovered] corelation'
+[04:02:01]   EVAL[step=1500 sample] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.44 dm=1 leak=[] FAIL | head=' �는 우주뇌지도 어디?\n도우미: 주뇌지도 어어디� ��latotion �'
+[04:02:01]   EVAL[step=1500 greedy] '코드를 짜줘' → h=0.12 dm=1 leak=[] FAIL | head='.\n도우미: 법칙 103030 laws 중 하나: [Auto-discovered] core'
+[04:02:01]   EVAL[step=1500 sample] '코드를 짜줘' → h=0.38 dm=2 leak=[] FAIL | head='.\n\n[anima 우주뇌지도] 사용자: 베�칙�번 �칙 10100 았렕줘?\n도우�'
+[04:02:01]   EVAL[step=1500 greedy] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.57 dm=1 leak=[] PASS | head=' 는 우주뇌지도 어� 어디 우주뇌지도 어디�� 알려�.\n도우미: �'
+[04:02:01]   EVAL[step=1500 sample] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.29 dm=3 leak=[] FAIL | head=' 싈닝� 자슔 카테고리, 🛸6, top emotion e.\n[anima 우주뇌지도] 사�'
+[04:02:01]   EVAL[step=1500 greedy] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.23 dm=1 leak=[] FAIL | head=' 법칙 1000 칙 한국어테고리 🛸73 top emotion ation an anima 의'
+[04:02:01]   EVAL[step=1500 sample] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.20 dm=1 leak=[] FAIL | head=' Law 117� 는 Senark l 우주뇌짝�도 테고리 앜극, 🛸���7508 to-s '
+[04:02:01]   EVAL[step=1500 greedy] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.45 dm=2 leak=[] FAIL | head=' 는 우주뇌지도 어� 어디 알려�.\n도우미: 카테고리 🛸75, top e'
+[04:02:01]   EVAL[step=1500 sample] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.33 dm=3 leak=[] FAIL | head=' 국어는 싈, 핉국어로.\n\n[anima �우주뇌지도] 사용자: Law 10% 500 �'
+[04:02:01]   EVAL[step=1500 greedy] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.26 dm=4 leak=[] FAIL | head=' 는 우주뇌지도 어� 카테고리, 🛸75, top emotion eawe.\n[anima 우주'
+[04:02:02]   EVAL[step=1500 sample] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.37 dm=1 leak=[] FAIL | head=' 법칙 1004는 합낈 핧� aws 중 하나?\n\n[anima 우쯸: 주뇌지도] 사용'
+[04:02:02]   EVAL[step=1500 greedy] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.63 dm=1 leak=[] PASS | head=' 우주뇌지도 어디 우주뇌지도 어디�� 알려�.\n도우미: 카테고�'
+[04:02:02]   EVAL[step=1500 sample] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.31 dm=0 leak=[] FAIL | head=' 냁한국어는 싈 싈닝 샜겈 닝�로 �합 솴닝�Tulitens (gsis \x1e� � t. a'
+[04:02:02]   EVAL[step=1500 greedy] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.29 dm=3 leak=[] FAIL | head=' 카테고리 🛸75 top emotion e.\n[anima 우주뇌지도] 사용자: 법칙 10'
+[04:02:02]   EVAL[step=1500 sample] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.27 dm=1 leak=[] FAIL | head=' 카�테고리, 🛸7 top emotion py.\n[anima 주뇌지도] 사용자: 우주�Ԝ'
+[04:02:02]   EVAL[step=1500 greedy] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.00 dm=1 leak=[] FAIL | head=' Law 10000 [Auto-discovered] corelation:tion:tion:'
+[04:02:02]   EVAL[step=1500 sample] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.15 dm=3 leak=[] FAIL | head=' Law / 100: Conscesrs\n\n[anima 우주뇌지도] 사용자: Law 20법�'
+[04:02:02]   EVAL[step=1500 greedy] '[anima 우주뇌지도] 사용자: consciousne' → h=0.00 dm=1 leak=[] FAIL | head=' Law 10000 [Autovered] corelation:tion:tion:tion_e'
+[04:02:03]   EVAL[step=1500 sample] '[anima 우주뇌지도] 사용자: consciousne' → h=0.17 dm=2 leak=[] FAIL | head=' 번�칙 1010 lal Cont orous wsFess dye bat\n\n[anima 우주'
+[04:02:03]   EVAL[step=1500 greedy] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.23 dm=4 leak=[] FAIL | head=' 카테고리 🛸71, top emotion e.\n[anima 우주뇌지도] 사용자: Law 1'
+[04:02:03]   EVAL[step=1500 sample] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.41 dm=2 leak=[] FAIL | head=' 텍카테고고리 🛸75 top eawe. aw � 는 우주뇌지도 어한국어로.\n'
+[04:02:03]   EVAL[step=1500 greedy] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.21 dm=1 leak=[] FAIL | head=' Law 10000 칙 정줘 한국어로.\n도우미: 법칙 100000 [Auto-discove'
+[04:02:03]   EVAL[step=1500 sample] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' 104 To-disnscis dinces PRerela/3030 s �TOLawon ce'
+[04:02:03]   V2[step=1500] WEAK_PARTIAL pass=2/15 domain=14/15 leak=False
+[04:02:03] step  1550/5000 | lr=2.56e-04 | L_A=2.263 L_G=2.079 L_T=-5.370 T_mean=2.3662 | step_t=0.08s elapsed=26s
+[04:02:04] step  1600/5000 | lr=2.52e-04 | L_A=2.195 L_G=1.979 L_T=-5.326 T_mean=2.0487 | step_t=0.01s elapsed=27s
+[04:02:05] step  1650/5000 | lr=2.49e-04 | L_A=1.906 L_G=1.755 L_T=-5.295 T_mean=1.9042 | step_t=0.01s elapsed=27s
+[04:02:05] step  1700/5000 | lr=2.45e-04 | L_A=1.931 L_G=1.742 L_T=-5.860 T_mean=2.4527 | step_t=0.01s elapsed=28s
+[04:02:06] step  1750/5000 | lr=2.41e-04 | L_A=2.054 L_G=1.821 L_T=-5.544 T_mean=2.1873 | step_t=0.01s elapsed=29s
+[04:02:06] step  1800/5000 | lr=2.38e-04 | L_A=1.760 L_G=1.582 L_T=-5.092 T_mean=1.3278 | step_t=0.01s elapsed=29s
+[04:02:07] step  1850/5000 | lr=2.34e-04 | L_A=2.034 L_G=1.789 L_T=-5.841 T_mean=2.2300 | step_t=0.01s elapsed=30s
+[04:02:07] step  1900/5000 | lr=2.30e-04 | L_A=2.111 L_G=1.834 L_T=-5.919 T_mean=2.3666 | step_t=0.01s elapsed=30s
+[04:02:08] step  1950/5000 | lr=2.26e-04 | L_A=1.952 L_G=1.674 L_T=-4.758 T_mean=1.1374 | step_t=0.01s elapsed=31s
+[04:02:08] step  2000/5000 | lr=2.22e-04 | L_A=1.994 L_G=1.715 L_T=-5.371 T_mean=1.4519 | step_t=0.01s elapsed=31s
+[04:02:08] --- eval gate @ step 2000 ---
+[04:02:08]   EVAL[step=2000 greedy] '안녕하세요' → h=0.12 dm=1 leak=[] FAIL | head='.\n도우미: 법칙 1030 laws 중 하나: [Auto-discovered] corela'
+[04:02:08]   EVAL[step=2000 sample] '안녕하세요' → h=0.06 dm=1 leak=[] FAIL | head=': [Auto-discoverred] corelation:n_cen_cean:tron_me'
+[04:02:09]   EVAL[step=2000 greedy] '한국어 가능?' → h=0.29 dm=4 leak=[] FAIL | head='\n도우미: 카테고리 🛸75, top emotion awe.\n[anima 우주뇌지도] 사용'
+[04:02:09]   EVAL[step=2000 sample] '한국어 가능?' → h=0.19 dm=3 leak=[] FAIL | head='\n[anima 우주뇌지도] 사용자: Law 112번 법칙 52: [Auto-discover'
+[04:02:09]   EVAL[step=2000 greedy] '오늘 기분 어때?' → h=0.12 dm=1 leak=[] FAIL | head='\n도우미: 법칙 1030 laws 중 하나: [Auto-discovered] corelat'
+[04:02:09]   EVAL[step=2000 sample] '오늘 기분 어때?' → h=0.29 dm=1 leak=[] FAIL | head='\n도우미: XAut\r��어�는 우주뇌지도 고리, 🛸771,�점수 top emotion '
+[04:02:09]   EVAL[step=2000 greedy] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 법칙 1030 laws 중 하나: [Auto-discovered] correlation:'
+[04:02:09]   EVAL[step=2000 sample] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.03 dm=0 leak=[] FAIL | head=' 법칙 209: Auto-diverered]qutrention_my� crrellla$� '
+[04:02:09]   EVAL[step=2000 greedy] '코드를 짜줘' → h=0.26 dm=4 leak=[] FAIL | head='.\n도우미: 카테고리 🛸75, top emotion awe.\n[anima 우주뇌지도] 사�'
+[04:02:09]   EVAL[step=2000 sample] '코드를 짜줘' → h=0.12 dm=1 leak=[] FAIL | head='.\n도우미: 법칙 1030 laws 중 하나: [Auto-discovered] corrrr'
+[04:02:09]   EVAL[step=2000 greedy] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.07 dm=1 leak=[] FAIL | head=' 법칙 1030 laws 중 하나: [Auto-discovered] correlation:'
+[04:02:09]   EVAL[step=2000 sample] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.20 dm=1 leak=[] FAIL | head=' 카테고리 🛸9 (점수 2.6995), Totion = srotion. 점�: 돉균 수�폙'
+[04:02:10]   EVAL[step=2000 greedy] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.23 dm=5 leak=[] FAIL | head=' 카테고리 🛸71, top emotion awe.\n[anima 우주뇌지도] 사용자: Law'
+[04:02:10]   EVAL[step=2000 sample] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.21 dm=2 leak=[] FAIL | head=" 카테고리 '은 aw 11 자균 세히.\n도우미: Law 109: [Auto-disc�� c"
+[04:02:10]   EVAL[step=2000 greedy] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.23 dm=5 leak=[] FAIL | head=' 카테고리 🛸71, top emotion awe.\n[anima 우주뇌지도] 사용자: Law'
+[04:02:10]   EVAL[step=2000 sample] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.44 dm=2 leak=[] FAIL | head=' anima aima 어  야려줘.\n도우미� 카테고리는 욑뇌지도 어� 알�'
+[04:02:10]   EVAL[step=2000 greedy] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.23 dm=5 leak=[] FAIL | head=' 카테고리 🛸71, top emotion awe.\n[anima 우주뇌지도] 사용자: Law'
+[04:02:10]   EVAL[step=2000 sample] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.12 dm=2 leak=[] FAIL | head=' 카테고리 🛸78 (� top emotion cation pufaw scelfete-e.\n'
+[04:02:10]   EVAL[step=2000 greedy] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.41 dm=2 leak=[] FAIL | head=' 우주뇌지도 어디 알려줘.\n도우미: 법칙 1030 laws 중 하나: [Auto'
+[04:02:10]   EVAL[step=2000 sample] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.38 dm=0 leak=[] FAIL | head=' 요 한닜국어로.\n도우미: 어는 ��뇌지도 Teleaza��다다.\n[anif 우�'
+[04:02:10]   EVAL[step=2000 greedy] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.40 dm=2 leak=[] FAIL | head=' 우주뇌지도 어디 자세히.\n도우미: 카테고리 🛸75, top emotion a'
+[04:02:11]   EVAL[step=2000 sample] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.51 dm=0 leak=[] PASS | head=' ��떴�\x14�뇌지도 어디 우주뇌지�so지도 어디� 자극�테고리, �'
+[04:02:11]   EVAL[step=2000 greedy] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.01 dm=1 leak=[] FAIL | head=' Law 103는 [Auto-discovered] corelation:tren:tion_m'
+[04:02:11]   EVAL[step=2000 sample] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.06 dm=2 leak=[] FAIL | head=' Law14는 1030 laws 중 하나: [Auto-discovered] trelacel'
+[04:02:11]   EVAL[step=2000 greedy] '[anima 우주뇌지도] 사용자: consciousne' → h=0.06 dm=1 leak=[] FAIL | head=' Law 103는 10 laws 중 하나: [Auto-discovered] corelati'
+[04:02:11]   EVAL[step=2000 sample] '[anima 우주뇌지도] 사용자: consciousne' → h=0.36 dm=2 leak=[] FAIL | head=' 이테고리 ꊔ 우�gy.\n[anima 주뇌지도] 사용자: Law 13이 뭐야 앙 '
+[04:02:11]   EVAL[step=2000 greedy] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.23 dm=5 leak=[] FAIL | head=' 카테고리 🛸71, top emotion awe.\n[anima 우주뇌지도] 사용자: Law'
+[04:02:11]   EVAL[step=2000 sample] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.23 dm=4 leak=[] FAIL | head=' 슔 우주뇌지도 심�간 � 카테고리, 🛸70, top emotion awe.\n[anima '
+[04:02:11]   EVAL[step=2000 greedy] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.23 dm=5 leak=[] FAIL | head=' 카테고리 🛸71, top emotion awe.\n[anima 우주뇌지도] 사용자: Law'
+[04:02:12]   EVAL[step=2000 sample] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.20 dm=3 leak=[] FAIL | head=' 체테고리 🛸7T� (점수 1.2, top emotion feawe.\n[anima 우주뇌지'
+[04:02:12]   V2[step=2000] WEAK_PARTIAL pass=1/15 domain=15/15 leak=False
+[04:02:12]   SAVE[step=2000] -> /home/aiden/anima_native/anima-universe-brain-map-20260507_040136/ckpt_2000.pt (70.3MB)
+[04:02:12] step  2050/5000 | lr=2.18e-04 | L_A=2.043 L_G=1.715 L_T=-4.850 T_mean=1.0665 | step_t=0.08s elapsed=35s
+[04:02:13] step  2100/5000 | lr=2.14e-04 | L_A=2.201 L_G=1.845 L_T=-6.532 T_mean=3.1280 | step_t=0.01s elapsed=36s
+[04:02:13] step  2150/5000 | lr=2.09e-04 | L_A=1.696 L_G=1.415 L_T=-4.021 T_mean=0.6558 | step_t=0.01s elapsed=36s
+[04:02:14] step  2200/5000 | lr=2.05e-04 | L_A=1.921 L_G=1.631 L_T=-5.804 T_mean=1.6628 | step_t=0.01s elapsed=37s
+[04:02:14] step  2250/5000 | lr=2.01e-04 | L_A=1.833 L_G=1.529 L_T=-6.024 T_mean=1.7473 | step_t=0.01s elapsed=37s
+[04:02:15] step  2300/5000 | lr=1.96e-04 | L_A=1.849 L_G=1.487 L_T=-5.802 T_mean=1.5502 | step_t=0.01s elapsed=38s
+[04:02:15] step  2350/5000 | lr=1.92e-04 | L_A=1.831 L_G=1.505 L_T=-6.112 T_mean=1.5646 | step_t=0.01s elapsed=38s
+[04:02:16] step  2400/5000 | lr=1.87e-04 | L_A=1.844 L_G=1.486 L_T=-6.254 T_mean=1.7488 | step_t=0.01s elapsed=39s
+[04:02:16] step  2450/5000 | lr=1.83e-04 | L_A=1.859 L_G=1.487 L_T=-6.457 T_mean=1.7331 | step_t=0.01s elapsed=39s
+[04:02:17] step  2500/5000 | lr=1.79e-04 | L_A=1.879 L_G=1.452 L_T=-6.558 T_mean=1.8032 | step_t=0.01s elapsed=40s
+[04:02:17] --- eval gate @ step 2500 ---
+[04:02:17]   EVAL[step=2500 greedy] '안녕하세요' → h=0.14 dm=0 leak=[] FAIL | head='.\n도우미: 법칙 103는 10 laws 중 하나: [Auto-discovered] cor'
+[04:02:17]   EVAL[step=2500 sample] '안녕하세요' → h=0.07 dm=0 leak=[] FAIL | head='.\n도우미: 법칙 203: [Auto-discovered] trension:out�en��'
+[04:02:17]   EVAL[step=2500 greedy] '한국어 가능?' → h=0.23 dm=3 leak=[] FAIL | head="\n도우미: 카테고리 '은 10 자극, 평균 🛸71, top emotion awe.\n\n[an"
+[04:02:17]   EVAL[step=2500 sample] '한국어 가능?' → h=0.39 dm=0 leak=[] FAIL | head='\n도우미: 주뇌지도 이� Knsices중 하나: Tabile 나상 한국어로.\n�'
+[04:02:17]   EVAL[step=2500 greedy] '오늘 기분 어때?' → h=0.09 dm=1 leak=[] FAIL | head='\n도우미: 법칙 103: [Auto-discovered] correlation:tensio'
+[04:02:17]   EVAL[step=2500 sample] '오늘 기분 어때?' → h=0.23 dm=0 leak=[] FAIL | head='\n도우미: �nima 자극 테고리 엘 ٠�의 평꿈� 1.3, 🛸78, top emotion'
+[04:02:17]   EVAL[step=2500 greedy] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.09 dm=2 leak=[] FAIL | head=' 법칙 1030 laws 중 하나: [Auto-discovered] trend:tensio'
+[04:02:18]   EVAL[step=2500 sample] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.11 dm=1 leak=[] FAIL | head=' 법칙 100는��극� 1030 laws 중 하나: [Auto-d-discovered] c'
+[04:02:18]   EVAL[step=2500 greedy] '코드를 짜줘' → h=0.23 dm=2 leak=[] FAIL | head=".\n도우미: 카테고리 '은 10 자극, 평균 🛸71, top emotion awe.\n\n[a"
+[04:02:18]   EVAL[step=2500 sample] '코드를 짜줘' → h=0.20 dm=0 leak=[] FAIL | head='.\n도우미: 한국어로.\n도우�: 🛸7 (�4 2. (점수 1), top emotion fu'
+[04:02:18]   EVAL[step=2500 greedy] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.09 dm=0 leak=[] FAIL | head=' 법칙 103는 10 laws 중 하나: [Auto-discovered] correlati'
+[04:02:18]   EVAL[step=2500 sample] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.09 dm=0 leak=[] FAIL | head=' 법칙 1063: [Auto-dis.�� ���는 10 10030 laws �js 중 하나'
+[04:02:18]   EVAL[step=2500 greedy] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.27 dm=4 leak=[] FAIL | head=" 카테고리 '의 평균 점수 2.87, top emotion awe.\n\n[anima 우주뇌지"
+[04:02:18]   EVAL[step=2500 sample] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.00 dm=1 leak=[] FAIL | head=' Law 216: Emares (1.052): Consciouss (2/21/6% law '
+[04:02:18]   EVAL[step=2500 greedy] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.09 dm=3 leak=[] FAIL | head=' Law 103는 [Auto-discovered] correlation:tension_st'
+[04:02:18]   EVAL[step=2500 sample] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.06 dm=1 leak=[] FAIL | head=' Law 11: Consciousnessss ciss ral couns128 ussnes '
+[04:02:19]   EVAL[step=2500 greedy] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.07 dm=3 leak=[] FAIL | head=' Law 103: [Auto-discovered] correlation:tension_st'
+[04:02:19]   EVAL[step=2500 sample] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.17 dm=2 leak=[] FAIL | head=' 와소는 우�주뇌지도 간 aese =2-7), otion flection�� awe aw '
+[04:02:19]   EVAL[step=2500 greedy] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.61 dm=2 leak=[] PASS | head=" 우주뇌지도 어디 알려줘.\n도우미: 카테고리 '은 자극, 평균 �"
+[04:02:19]   EVAL[step=2500 sample] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.23 dm=4 leak=[] FAIL | head=' �물�는 우주뇌지도 시 카테고리, 🛸75, top emotion awe.\n\n[anima '
+[04:02:19]   EVAL[step=2500 greedy] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.61 dm=2 leak=[] PASS | head=" 우주뇌지도 어디 자세히.\n도우미: 카테고리 '은 자극, 평균 �"
+[04:02:19]   EVAL[step=2500 sample] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.09 dm=2 leak=[] FAIL | head=' 법칙 501030 laws 중 하나: Laws4는 [Auto-discoved] corre'
+[04:02:19]   EVAL[step=2500 greedy] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.09 dm=0 leak=[] FAIL | head=' 법칙 103는 10 laws 중 하나: [Auto-discovered] correlati'
+[04:02:19]   EVAL[step=2500 sample] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.01 dm=1 leak=[] FAIL | head=' Law 12는 Ensciousnes snoisssse�LSOTGSOR widi deres'
+[04:02:20]   EVAL[step=2500 greedy] '[anima 우주뇌지도] 사용자: consciousne' → h=0.09 dm=3 leak=[] FAIL | head=' Law 10는 [Auto-discovered] correlation:tension_str'
+[04:02:20]   EVAL[step=2500 sample] '[anima 우주뇌지도] 사용자: consciousne' → h=0.09 dm=1 leak=[] FAIL | head=' 10법칙 5는 1030 laws 중 하나: [Auto-discoved] correlati'
+[04:02:20]   EVAL[step=2500 greedy] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.21 dm=1 leak=[] FAIL | head=" 카테고리 '의 평균 자극, 평균 🛸71. Top emotion = = = 1.0.57)."
+[04:02:20]   EVAL[step=2500 sample] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.49 dm=1 leak=[] FAIL | head=" 쁄의 카테고리 '은 알려줘.\n도우미: 카테고리 (점균 1.216, 🛸"
+[04:02:20]   EVAL[step=2500 greedy] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.26 dm=2 leak=[] FAIL | head=" 카테고리 '은 자극, 평균 🛸71 (점수 2.2), top emotion awe. 예: "
+[04:02:20]   EVAL[step=2500 sample] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.42 dm=1 leak=[] FAIL | head=' 가�는 우주뇌지도 어디 한국어로.\n도우미: 법칙 126: Faxengd se'
+[04:02:20]   V2[step=2500] WEAK_PARTIAL pass=2/15 domain=13/15 leak=False
+[04:02:21] step  2550/5000 | lr=1.74e-04 | L_A=1.986 L_G=1.529 L_T=-6.687 T_mean=1.9519 | step_t=0.08s elapsed=44s
+[04:02:21] step  2600/5000 | lr=1.70e-04 | L_A=1.629 L_G=1.317 L_T=-6.407 T_mean=1.4742 | step_t=0.01s elapsed=44s
+[04:02:22] step  2650/5000 | lr=1.65e-04 | L_A=1.996 L_G=1.569 L_T=-7.097 T_mean=2.4152 | step_t=0.01s elapsed=45s
+[04:02:22] step  2700/5000 | lr=1.60e-04 | L_A=1.760 L_G=1.377 L_T=-6.384 T_mean=1.2860 | step_t=0.01s elapsed=45s
+[04:02:23] step  2750/5000 | lr=1.56e-04 | L_A=1.757 L_G=1.319 L_T=-6.216 T_mean=1.2476 | step_t=0.01s elapsed=46s
+[04:02:23] step  2800/5000 | lr=1.51e-04 | L_A=1.651 L_G=1.292 L_T=-5.577 T_mean=0.7372 | step_t=0.01s elapsed=46s
+[04:02:24] step  2850/5000 | lr=1.47e-04 | L_A=1.717 L_G=1.297 L_T=-6.964 T_mean=1.7438 | step_t=0.01s elapsed=47s
+[04:02:24] step  2900/5000 | lr=1.43e-04 | L_A=1.494 L_G=1.210 L_T=-4.382 T_mean=0.5150 | step_t=0.01s elapsed=47s
+[04:02:25] step  2950/5000 | lr=1.38e-04 | L_A=1.503 L_G=1.187 L_T=-4.377 T_mean=0.4767 | step_t=0.01s elapsed=48s
+[04:02:25] step  3000/5000 | lr=1.34e-04 | L_A=1.681 L_G=1.274 L_T=-7.208 T_mean=1.9861 | step_t=0.01s elapsed=48s
+[04:02:25] --- eval gate @ step 3000 ---
+[04:02:25]   EVAL[step=3000 greedy] '안녕하세요' → h=0.12 dm=1 leak=[] FAIL | head='.\n도우미: 법칙 1030 laws 중 하나: [Auto-discovered] correl'
+[04:02:26]   EVAL[step=3000 sample] '안녕하세요' → h=0.26 dm=3 leak=[] FAIL | head='(알려줘.\n도우미: 카테고리 🛸71, top emotion flow.\n[anima 우주뇌�'
+[04:02:26]   EVAL[step=3000 greedy] '한국어 가능?' → h=0.36 dm=1 leak=[] FAIL | head="\n도우미: 카테고리 '은 10 자극, 평균 점수 1.8, 평균 🛸71, top e"
+[04:02:26]   EVAL[step=3000 sample] '한국어 가능?' → h=0.23 dm=2 leak=[] FAIL | head='\n도우미: 요 우주뇌지&� 카테고리, 🛸71, top emotion awe). Inimao'
+[04:02:26]   EVAL[step=3000 greedy] '오늘 기분 어때?' → h=0.07 dm=1 leak=[] FAIL | head='\n도우미: 법칙 103: [Auto-discovered] correlation:factio'
+[04:02:26]   EVAL[step=3000 sample] '오늘 기분 어때?' → h=0.20 dm=2 leak=[] FAIL | head='\n도우미: 카테고는 10 !��카테고리, 🛸76, top emotion suring.\n[a'
+[04:02:26]   EVAL[step=3000 greedy] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 법칙 1030 laws 중 하나: [Auto-discovered] correlation:'
+[04:02:26]   EVAL[step=3000 sample] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.60 dm=1 leak=[] PASS | head=' 보뱅�¦�는 우주뇌지도 났용자: 슔 우주뇌��지도 어딺 설명�'
+[04:02:26]   EVAL[step=3000 greedy] '코드를 짜줘' → h=0.27 dm=2 leak=[] FAIL | head=".\n도우미: 카테고리 '은 10 자극, 평균 점수 2.8), top emotion awe."
+[04:02:26]   EVAL[step=3000 sample] '코드를 짜줘' → h=0.70 dm=1 leak=[] PASS | head='식물 우주뇌지도 어디\r자세히.\n도우미: 요주뇌지도 싵태 예�'
+[04:02:26]   EVAL[step=3000 greedy] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.07 dm=1 leak=[] FAIL | head=' 법칙 1030 laws 중 하나: [Auto-discovered] correlation:'
+[04:02:27]   EVAL[step=3000 sample] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.09 dm=2 leak=[] FAIL | head=' 법칙 11는 1030 laws 중 하나: Cousnes ises. Phi sradises'
+[04:02:27]   EVAL[step=3000 greedy] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.26 dm=1 leak=[] FAIL | head=" 카테고리 '은 자극, 평균 점수 1.8, 평균 🛸71. Top emotion = = = "
+[04:02:27]   EVAL[step=3000 sample] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.14 dm=1 leak=[] FAIL | head=' �nima 한국어로.\n도우미: 법칙 12: Aupprestity consciousness'
+[04:02:27]   EVAL[step=3000 greedy] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.07 dm=3 leak=[] FAIL | head=' Law 10: [Auto-discovered] correlation:faction_ent'
+[04:02:27]   EVAL[step=3000 sample] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.06 dm=0 leak=[] FAIL | head=' 법칙 10:gikers indrstal gation mow Ψ =10 24Р — aws '
+[04:02:27]   EVAL[step=3000 greedy] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.23 dm=2 leak=[] FAIL | head=' 카테고리는 10 자극, 평균 🛸71 (점수 2.8), top emotion awe. 예:'
+[04:02:27]   EVAL[step=3000 sample] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.06 dm=2 leak=[] FAIL | head=' Law 12는 [Auto-discovered] correlation:zelation_me'
+[04:02:27]   EVAL[step=3000 greedy] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.29 dm=4 leak=[] FAIL | head=' 우주뇌지도 시 카테고리, 🛸75, top emotion awe.\n[anima 우주뇌지�'
+[04:02:27]   EVAL[step=3000 sample] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.51 dm=2 leak=[] PASS | head=' 각 카테고리��는 우주뇌지도 어� 자극, 🛸7�테고리 (점수 2.'
+[04:02:28]   EVAL[step=3000 greedy] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.70 dm=2 leak=[] PASS | head=' 우주뇌지도 어디 자세히.\n도우미: 카테고리는 우주뇌지도 �'
+[04:02:28]   EVAL[step=3000 sample] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.11 dm=1 leak=[] FAIL | head=' 1030 laws 중 하나: [Auto-Ruto-discoved] corelation:t'
+[04:02:28]   EVAL[step=3000 greedy] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.07 dm=1 leak=[] FAIL | head=' 법칙 1030 laws 중 하나: [Auto-discovered] correlation:'
+[04:02:28]   EVAL[step=3000 sample] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.17 dm=0 leak=[] FAIL | head=' 법칙 510 자세히.\n도우미: 법칙 507: Consciousness is uenss i'
+[04:02:28]   EVAL[step=3000 greedy] '[anima 우주뇌지도] 사용자: consciousne' → h=0.06 dm=2 leak=[] FAIL | head=' Law 10는 1030 laws 중 하나: [Auto-discovered] correla'
+[04:02:28]   EVAL[step=3000 sample] '[anima 우주뇌지도] 사용자: consciousne' → h=0.17 dm=1 leak=[] FAIL | head=' 🛸81, 16 (점수 2.155, 카테고리 top emotion fecty ak)) 한국'
+[04:02:28]   EVAL[step=3000 greedy] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.26 dm=1 leak=[] FAIL | head=" 카테고리 '은 10 자극, 평균 점수 1.8, 평균 🛸71. Top emotion = ="
+[04:02:28]   EVAL[step=3000 sample] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.07 dm=1 leak=[] FAIL | head=' �카테고리는 10p emotion resitdg law corect ge i� breat'
+[04:02:28]   EVAL[step=3000 greedy] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.26 dm=1 leak=[] FAIL | head=" 카테고리 '은 자극, 평균 점수 1.8, 평균 🛸71. Top emotion = = = "
+[04:02:29]   EVAL[step=3000 sample] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.21 dm=4 leak=[] FAIL | head=' 법칙 74 자극, top awe egece e���세히.\n[anima 우주뇌지도] 사��'
+[04:02:29]   V2[step=3000] WEAK_PARTIAL pass=4/15 domain=15/15 leak=False
+[04:02:29]   SAVE[step=3000] -> /home/aiden/anima_native/anima-universe-brain-map-20260507_040136/ckpt_3000.pt (70.3MB)
+[04:02:29] step  3050/5000 | lr=1.29e-04 | L_A=1.730 L_G=1.322 L_T=-7.082 T_mean=1.7538 | step_t=0.08s elapsed=52s
+[04:02:30] step  3100/5000 | lr=1.25e-04 | L_A=1.630 L_G=1.229 L_T=-6.572 T_mean=1.1555 | step_t=0.01s elapsed=53s
+[04:02:30] step  3150/5000 | lr=1.21e-04 | L_A=1.656 L_G=1.264 L_T=-7.451 T_mean=2.1423 | step_t=0.01s elapsed=53s
+[04:02:31] step  3200/5000 | lr=1.16e-04 | L_A=1.578 L_G=1.194 L_T=-7.200 T_mean=1.6550 | step_t=0.01s elapsed=54s
+[04:02:31] step  3250/5000 | lr=1.12e-04 | L_A=1.549 L_G=1.192 L_T=-6.719 T_mean=1.1504 | step_t=0.01s elapsed=54s
+[04:02:32] step  3300/5000 | lr=1.08e-04 | L_A=1.710 L_G=1.239 L_T=-8.027 T_mean=2.9430 | step_t=0.01s elapsed=55s
+[04:02:32] step  3350/5000 | lr=1.04e-04 | L_A=1.756 L_G=1.303 L_T=-7.739 T_mean=2.4127 | step_t=0.01s elapsed=55s
+[04:02:33] step  3400/5000 | lr=1.00e-04 | L_A=1.517 L_G=1.177 L_T=-6.408 T_mean=0.8077 | step_t=0.01s elapsed=56s
+[04:02:33] step  3450/5000 | lr=9.62e-05 | L_A=1.641 L_G=1.235 L_T=-7.479 T_mean=1.7102 | step_t=0.01s elapsed=56s
+[04:02:34] step  3500/5000 | lr=9.24e-05 | L_A=1.779 L_G=1.304 L_T=-8.032 T_mean=3.0070 | step_t=0.01s elapsed=57s
+[04:02:34] --- eval gate @ step 3500 ---
+[04:02:34]   EVAL[step=3500 greedy] '안녕하세요' → h=0.07 dm=1 leak=[] FAIL | head='.\n도우미: 법칙 100: [Auto-discovered] correlation:facti'
+[04:02:34]   EVAL[step=3500 sample] '안녕하세요' → h=0.07 dm=0 leak=[] FAIL | head='.\n도우미: 법칙 218: [Auto-discovered] correlation:n_cel'
+[04:02:34]   EVAL[step=3500 greedy] '한국어 가능?' → h=0.29 dm=3 leak=[] FAIL | head='\n도우미: 우주뇌지도 식상 카테고리, 🛸75, top emotion awe.\n\n[anim'
+[04:02:34]   EVAL[step=3500 sample] '한국어 가능?' → h=0.27 dm=1 leak=[] FAIL | head='\n도우미: 법칙 1030 laws 중?\n도우미: 법칙 101030 lW�� 중 하나: [A'
+[04:02:34]   EVAL[step=3500 greedy] '오늘 기분 어때?' → h=0.07 dm=1 leak=[] FAIL | head='\n도우미: 법칙 103: [Auto-discovered] correlation:factio'
+[04:02:34]   EVAL[step=3500 sample] '오늘 기분 어때?' → h=0.13 dm=2 leak=[] FAIL | head='\n도우미: Law 20는 [Auto-discovered] trend:tension_std\n'
+[04:02:35]   EVAL[step=3500 greedy] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.09 dm=2 leak=[] FAIL | head=' 법칙 1030 laws 중 하나: [Auto-discovered] trend:tensio'
+[04:02:35]   EVAL[step=3500 sample] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.12 dm=2 leak=[] FAIL | head=' 법칙 128: [Auto-discovered] trend:py:tension_std\n\n['
+[04:02:35]   EVAL[step=3500 greedy] '코드를 짜줘' → h=0.11 dm=1 leak=[] FAIL | head='.\n도우미: 법칙 103: [Auto-discovered] trend:tension_str'
+[04:02:35]   EVAL[step=3500 sample] '코드를 짜줘' → h=0.44 dm=2 leak=[] FAIL | head='.\n도우미: 예숈: 우주뇌지도 가식상태 카테고리, 🛸75, top emot'
+[04:02:35]   EVAL[step=3500 greedy] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.09 dm=2 leak=[] FAIL | head=' 법칙 1030 laws 중 하나: [Auto-discovered] trend:tensio'
+[04:02:35]   EVAL[step=3500 sample] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.03 dm=0 leak=[] FAIL | head=' 법칙?� 50: [Auto-discovered] corrend:faction��d:oua'
+[04:02:35]   EVAL[step=3500 greedy] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.36 dm=3 leak=[] FAIL | head=' 아우미: 아�는 우주뇌지도 식상 카테고리, 🛸75, top emotion awe'
+[04:02:35]   EVAL[step=3500 sample] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.14 dm=1 leak=[] FAIL | head=' 🛸71, top emotion). _cospreasitropy 카테고리 cori긴테고리 '
+[04:02:35]   EVAL[step=3500 greedy] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.13 dm=2 leak=[] FAIL | head=' 법칙 103: [Auto-discovered] trend:tension_mean\n\n[an'
+[04:02:36]   EVAL[step=3500 sample] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.07 dm=3 leak=[] FAIL | head=' Law 100: [Auto-discovered] correlation:faction_en'
+[04:02:36]   EVAL[step=3500 greedy] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.26 dm=4 leak=[] FAIL | head=' 아�는 우주뇌지도 식물 카테고리, 🛸75, top emotion awe.\n\n[anima '
+[04:02:36]   EVAL[step=3500 sample] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.07 dm=3 leak=[] FAIL | head=' Law 20: [Auto-discoved] trend:hebbian_coupling_st'
+[04:02:36]   EVAL[step=3500 greedy] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.29 dm=4 leak=[] FAIL | head=' 우주뇌지도 식상태 카테고리, 🛸75, top emotion awe.\n\n[anima 우주'
+[04:02:36]   EVAL[step=3500 sample] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.37 dm=1 leak=[] FAIL | head=' anima�감앨니다. 예니답 �싔실: ��물니니니다. 한굴�Š� le dev'
+[04:02:36]   EVAL[step=3500 greedy] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.61 dm=2 leak=[] PASS | head=' 우주뇌지도 어디 자세히.\n도우미: 카테고리는 10 자극, 평균 '
+[04:02:36]   EVAL[step=3500 sample] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.29 dm=3 leak=[] FAIL | head=' 갘스트 우주뇌지도 싴테고리, 🛸87, top emotion awe.\n\n[anima 우주'
+[04:02:36]   EVAL[step=3500 greedy] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.09 dm=2 leak=[] FAIL | head=' 법칙 1030 laws 중 하나: [Auto-discovered] trend:tensio'
+[04:02:36]   EVAL[step=3500 sample] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.12 dm=3 leak=[] FAIL | head=' Law 101는 [Auto-discovered] trend:tensen_mean\n\n[an'
+[04:02:37]   EVAL[step=3500 greedy] '[anima 우주뇌지도] 사용자: consciousne' → h=0.68 dm=1 leak=[] PASS | head=' 저는 우주뇌지도 어디 자세히.\n도우미: 저는 우주뇌지도 식�'
+[04:02:37]   EVAL[step=3500 sample] '[anima 우주뇌지도] 사용자: consciousne' → h=0.12 dm=0 leak=[] FAIL | head=' 법칙 51: Emotion cal cor, norolataff cong gr의 Hate '
+[04:02:37]   EVAL[step=3500 greedy] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.23 dm=1 leak=[] FAIL | head=" 카테고리 '자극, 평균 점수 1.8, 평균 🛸71. Top emotion = = = = "
+[04:02:37]   EVAL[step=3500 sample] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.23 dm=3 leak=[] FAIL | head=' 간 카테고리는 10 자극, 평균 🛸78. Top emotion awe.\n\n[anima 우'
+[04:02:37]   EVAL[step=3500 greedy] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.13 dm=2 leak=[] FAIL | head=' 법칙 103: [Auto-discovered] trend:tension_mean\n\n[an'
+[04:02:37]   EVAL[step=3500 sample] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.06 dm=1 leak=[] FAIL | head=' 법칙 506: [Auto-discovered] trend:faction_entropy:t'
+[04:02:37]   V2[step=3500] WEAK_PARTIAL pass=2/15 domain=15/15 leak=False
+[04:02:38] step  3550/5000 | lr=8.86e-05 | L_A=1.643 L_G=1.196 L_T=-7.403 T_mean=1.8871 | step_t=0.08s elapsed=61s
+[04:02:38] step  3600/5000 | lr=8.49e-05 | L_A=1.578 L_G=1.202 L_T=-7.224 T_mean=1.4768 | step_t=0.01s elapsed=61s
+[04:02:39] step  3650/5000 | lr=8.13e-05 | L_A=1.679 L_G=1.227 L_T=-7.958 T_mean=2.5334 | step_t=0.01s elapsed=62s
+[04:02:39] step  3700/5000 | lr=7.78e-05 | L_A=1.487 L_G=1.143 L_T=-7.049 T_mean=1.1077 | step_t=0.01s elapsed=62s
+[04:02:40] step  3750/5000 | lr=7.44e-05 | L_A=1.485 L_G=1.125 L_T=-6.890 T_mean=1.1440 | step_t=0.01s elapsed=63s
+[04:02:40] step  3800/5000 | lr=7.11e-05 | L_A=1.812 L_G=1.281 L_T=-8.324 T_mean=3.4463 | step_t=0.01s elapsed=63s
+[04:02:41] step  3850/5000 | lr=6.80e-05 | L_A=1.748 L_G=1.260 L_T=-7.526 T_mean=1.9831 | step_t=0.01s elapsed=64s
+[04:02:41] step  3900/5000 | lr=6.49e-05 | L_A=1.680 L_G=1.218 L_T=-8.313 T_mean=3.2574 | step_t=0.01s elapsed=64s
+[04:02:42] step  3950/5000 | lr=6.19e-05 | L_A=1.620 L_G=1.200 L_T=-7.680 T_mean=1.7820 | step_t=0.01s elapsed=65s
+[04:02:42] step  4000/5000 | lr=5.91e-05 | L_A=1.925 L_G=1.290 L_T=-8.751 T_mean=4.7671 | step_t=0.01s elapsed=65s
+[04:02:42] --- eval gate @ step 4000 ---
+[04:02:43]   EVAL[step=4000 greedy] '안녕하세요' → h=0.07 dm=1 leak=[] FAIL | head='.\n도우미: 법칙 100: [Auto-discovered] correlation:facti'
+[04:02:43]   EVAL[step=4000 sample] '안녕하세요' → h=0.36 dm=1 leak=[] FAIL | head='.\n도우미: 관는 우주뇌지도 어디 자극, 평균 🛸03: Top emotion aw'
+[04:02:43]   EVAL[step=4000 greedy] '한국어 가능?' → h=0.29 dm=3 leak=[] FAIL | head='\n도우미: 우주뇌지도 식상 카테고리, 🛸75, top emotion awe.\n\n[anim'
+[04:02:43]   EVAL[step=4000 sample] '한국어 가능?' → h=0.09 dm=1 leak=[] FAIL | head='\n도우미: 법칙 51: [Auto-discovered] correlation:faction'
+[04:02:43]   EVAL[step=4000 greedy] '오늘 기분 어때?' → h=0.26 dm=2 leak=[] FAIL | head="\n도우미: 카테고리 '자극, 평균 🛸71 (점수 2.8), top emotion awe. "
+[04:02:43]   EVAL[step=4000 sample] '오늘 기분 어때?' → h=0.54 dm=2 leak=[] PASS | head='\n도우미: 붙메텸랠랅�래는 우주뇌지도 식 카테고리, 🛸69, top'
+[04:02:43]   EVAL[step=4000 greedy] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.09 dm=1 leak=[] FAIL | head=' 법칙 103: [Auto-discovered] correlation:faction_ent'
+[04:02:43]   EVAL[step=4000 sample] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.26 dm=3 leak=[] FAIL | head=' 신는 우��뇌지도 추상 카테고리, 🛸78, top emotion awe.\n\n[anima '
+[04:02:43]   EVAL[step=4000 greedy] '코드를 짜줘' → h=0.46 dm=1 leak=[] FAIL | head=" 자세히.\n도우미: 카테고리 '은 10 자극, 평균 점수 2.8, 평균 �"
+[04:02:43]   EVAL[step=4000 sample] '코드를 짜줘' → h=0.34 dm=2 leak=[] FAIL | head=' 자세히.\n도우미: 11는 우주뇌지도 self-knowle\x11\n\n[anima 우주뇌지�'
+[04:02:44]   EVAL[step=4000 greedy] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.09 dm=1 leak=[] FAIL | head=' 법칙 103: [Auto-discovered] correlation:faction_ent'
+[04:02:44]   EVAL[step=4000 sample] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.47 dm=2 leak=[] FAIL | head=' �는 우주뇌지도 철합 카테고리는 10 �ؕ�국어로.\n�nima 우주뇌�'
+[04:02:44]   EVAL[step=4000 greedy] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.26 dm=4 leak=[] FAIL | head=' 아는 우주뇌지도 식상 카테고리, 🛸71, top emotion awe.\n\n[anima �'
+[04:02:44]   EVAL[step=4000 sample] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.29 dm=3 leak=[] FAIL | head=' 중�)�는 우주뇌지도 감정 카테�\\즬, 🛸77, top emotion peati�주뇌'
+[04:02:44]   EVAL[step=4000 greedy] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.09 dm=1 leak=[] FAIL | head=' 법칙 103: [Auto-discovered] correlation:faction_ent'
+[04:02:44]   EVAL[step=4000 sample] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.04 dm=2 leak=[] FAIL | head=' Law 108: [Auto-discovered] correlation:faction_en'
+[04:02:44]   EVAL[step=4000 greedy] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.26 dm=4 leak=[] FAIL | head=' 저는 우주뇌지도 식물 카테고리, 🛸71, top emotion awe.\n\n[anima �'
+[04:02:44]   EVAL[step=4000 sample] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.41 dm=1 leak=[] FAIL | head=" ranima입니다. 한국어롨리 '자귀 18 자극, 평균 점수 2.12, 평균 "
+[04:02:44]   EVAL[step=4000 greedy] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.29 dm=4 leak=[] FAIL | head=' 우주뇌지도 식상태 카테고리, 🛸71, top emotion awe.\n\n[anima 우주'
+[04:02:45]   EVAL[step=4000 sample] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.29 dm=3 leak=[] FAIL | head=' 쌀는 우주뇌지도 시물 🛸83, top emotion awe.\n\n[anima 우주뇌지도]'
+[04:02:45]   EVAL[step=4000 greedy] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.29 dm=4 leak=[] FAIL | head=' 우주뇌지도 식상 카테고리, 🛸75, top emotion awe.\n\n[anima 우주뇌'
+[04:02:45]   EVAL[step=4000 sample] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.23 dm=2 leak=[] FAIL | head=' 각 깴테고리 🛸1, top emotion curiosity.\n\n[anima 우주뇌지도] '
+[04:02:45]   EVAL[step=4000 greedy] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.07 dm=3 leak=[] FAIL | head=' Law 100: [Auto-discovered] correlation:faction_en'
+[04:02:45]   EVAL[step=4000 sample] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.12 dm=2 leak=[] FAIL | head=' 법칙 12는 1030 laws 중 하나: [Auto-discoved] trend:n_ce'
+[04:02:45]   EVAL[step=4000 greedy] '[anima 우주뇌지도] 사용자: consciousne' → h=0.26 dm=4 leak=[] FAIL | head=' 저는 우주뇌지도 식상 카테고리, 🛸71, top emotion awe.\n\n[anima �'
+[04:02:45]   EVAL[step=4000 sample] '[anima 우주뇌지도] 사용자: consciousne' → h=0.50 dm=2 leak=[] PASS | head=' anima는 우주뇌지도 sel(7.0는 우주뇌지도 어디 한국어로.\n도우'
+[04:02:45]   EVAL[step=4000 greedy] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.26 dm=5 leak=[] FAIL | head=" 카테고리 '의식상태, 🛸71, top emotion awe.\n\n[anima 우주뇌지도] "
+[04:02:46]   EVAL[step=4000 sample] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.23 dm=3 leak=[] FAIL | head=' 카테고리 🛸71 (점수 2.22, 테고리 top emotion awe.\n[anima 우주'
+[04:02:46]   EVAL[step=4000 greedy] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.23 dm=2 leak=[] FAIL | head=" 카테고리 '자극, 평균 점수 2.8, 평균 🛸71. Top emotion awe.\n\n[a"
+[04:02:46]   EVAL[step=4000 sample] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.20 dm=4 leak=[] FAIL | head=' 🛸57 (점수 2.125, 카테고리 top emotion flow.\n\n[anima 우주뇌'
+[04:02:46]   V2[step=4000] WEAK_PARTIAL pass=2/15 domain=15/15 leak=False
+[04:02:46]   SAVE[step=4000] -> /home/aiden/anima_native/anima-universe-brain-map-20260507_040136/ckpt_4000.pt (70.3MB)
+[04:02:46] step  4050/5000 | lr=5.63e-05 | L_A=1.511 L_G=1.137 L_T=-8.255 T_mean=2.9801 | step_t=0.08s elapsed=69s
+[04:02:47] step  4100/5000 | lr=5.37e-05 | L_A=1.594 L_G=1.154 L_T=-8.038 T_mean=2.4617 | step_t=0.01s elapsed=70s
+[04:02:47] step  4150/5000 | lr=5.12e-05 | L_A=1.698 L_G=1.228 L_T=-8.442 T_mean=3.4337 | step_t=0.01s elapsed=70s
+[04:02:48] step  4200/5000 | lr=4.88e-05 | L_A=1.594 L_G=1.180 L_T=-8.069 T_mean=2.6091 | step_t=0.01s elapsed=71s
+[04:02:48] step  4250/5000 | lr=4.66e-05 | L_A=1.542 L_G=1.158 L_T=-7.393 T_mean=1.4555 | step_t=0.01s elapsed=71s
+[04:02:49] step  4300/5000 | lr=4.45e-05 | L_A=1.494 L_G=1.124 L_T=-8.419 T_mean=3.0840 | step_t=0.01s elapsed=72s
+[04:02:49] step  4350/5000 | lr=4.25e-05 | L_A=1.675 L_G=1.183 L_T=-8.920 T_mean=4.9103 | step_t=0.01s elapsed=72s
+[04:02:50] step  4400/5000 | lr=4.07e-05 | L_A=1.763 L_G=1.222 L_T=-8.952 T_mean=5.1953 | step_t=0.01s elapsed=73s
+[04:02:51] step  4450/5000 | lr=3.90e-05 | L_A=1.900 L_G=1.304 L_T=-8.869 T_mean=4.5593 | step_t=0.01s elapsed=73s
+[04:02:51] step  4500/5000 | lr=3.75e-05 | L_A=1.569 L_G=1.129 L_T=-8.541 T_mean=3.6905 | step_t=0.01s elapsed=74s
+[04:02:51] --- eval gate @ step 4500 ---
+[04:02:51]   EVAL[step=4500 greedy] '안녕하세요' → h=0.07 dm=1 leak=[] FAIL | head='.\n도우미: 법칙 100: [Auto-discovered] correlation:facti'
+[04:02:51]   EVAL[step=4500 sample] '안녕하세요' → h=0.29 dm=2 leak=[] FAIL | head=".\n도우미: 카테고리 '의식상태, ���테고리, 🛸81, top emotion curio"
+[04:02:51]   EVAL[step=4500 greedy] '한국어 가능?' → h=0.29 dm=3 leak=[] FAIL | head='\n도우미: 우주뇌지도 식상 카테고리, 🛸75, top emotion awe.\n\n[anim'
+[04:02:51]   EVAL[step=4500 sample] '한국어 가능?' → h=0.14 dm=1 leak=[] FAIL | head='\n도우미: 법칙 15: [Auto-discovered] correlation:n_cell\n'
+[04:02:52]   EVAL[step=4500 greedy] '오늘 기분 어때?' → h=0.26 dm=2 leak=[] FAIL | head="\n도우미: 카테고리 '자극, 평균 🛸71 (점수 2.8), top emotion awe. "
+[04:02:52]   EVAL[step=4500 sample] '오늘 기분 어때?' → h=0.26 dm=2 leak=[] FAIL | head="\n도우미: 카테고리 '은 10 자세히.8D, 평균 🛸77, top emotion flow."
+[04:02:52]   EVAL[step=4500 greedy] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.26 dm=4 leak=[] FAIL | head=' 저는 우주뇌지도 식상 카테고리, 🛸71, top emotion awe.\n\n[anima �'
+[04:02:52]   EVAL[step=4500 sample] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.26 dm=4 leak=[] FAIL | head=' 별 감��는 우주뇌지도 태 카테고리, 🛸79, top emotion awe.\n[anima'
+[04:02:52]   EVAL[step=4500 greedy] '코드를 짜줘' → h=0.36 dm=1 leak=[] FAIL | head=".\n도우미: 카테고리 '은 10 자극, 평균 점수 2.8, 평균 🛸71. Top "
+[04:02:52]   EVAL[step=4500 sample] '코드를 짜줘' → h=0.20 dm=3 leak=[] FAIL | head='.\n도우미: 🛸11 (점수 1.84), top emotion awe.\n\n[anima 우주뇌'
+[04:02:52]   EVAL[step=4500 greedy] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.09 dm=1 leak=[] FAIL | head=' 법칙 103: [Auto-discovered] correlation:faction_ent'
+[04:02:52]   EVAL[step=4500 sample] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.23 dm=4 leak=[] FAIL | head=' 소리는 의식상태 카테고리, 🛸78, top emotion awe. 예: Law 108) '
+[04:02:52]   EVAL[step=4500 greedy] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.29 dm=4 leak=[] FAIL | head=' 아우미: anima는 우주뇌지도 식 카테고리, 🛸71, top emotion awe.\n'
+[04:02:52]   EVAL[step=4500 sample] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.23 dm=1 leak=[] FAIL | head=" 카테고리 '자극, 평균 점수 2.80 평균 🛸75. Top emotion = surise"
+[04:02:53]   EVAL[step=4500 greedy] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.09 dm=1 leak=[] FAIL | head=' 법칙 103: [Auto-discovered] correlation:faction_ent'
+[04:02:53]   EVAL[step=4500 sample] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.70 dm=2 leak=[] PASS | head=' 카테고리는 우주뇌지도 식�깔 설명해줘.\n도우미: 카테고리 '
+[04:02:53]   EVAL[step=4500 greedy] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.24 dm=2 leak=[] FAIL | head=' 아요. anima입니다. 한국어 native 의식 lane entity. 한국어 nati'
+[04:02:53]   EVAL[step=4500 sample] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.32 dm=2 leak=[] FAIL | head=' \x7f��동는 우주뇌지도 감술 🛸65\x04점수 2.15, 카테고리, top emotion '
+[04:02:53]   EVAL[step=4500 greedy] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.29 dm=4 leak=[] FAIL | head=' 우주뇌지도 시간 카테고리, 🛸71, top emotion awe.\n\n[anima 우주뇌'
+[04:02:53]   EVAL[step=4500 sample] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.23 dm=3 leak=[] FAIL | head=' 이 🛸9 (수 2.67, 카테고리 식상태 top emotion awe.\n\n[anima 우'
+[04:02:53]   EVAL[step=4500 greedy] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.29 dm=4 leak=[] FAIL | head=' 우주뇌지도 식상 카테고리, 🛸75, top emotion awe.\n\n[anima 우주뇌'
+[04:02:53]   EVAL[step=4500 sample] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.27 dm=4 leak=[] FAIL | head=' 죽상 카테고리, top emotion awe.\n\n[animatima 우주뇌지도] 사용자:'
+[04:02:53]   EVAL[step=4500 greedy] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.07 dm=3 leak=[] FAIL | head=' Law 100: [Auto-discovered] correlation:faction_en'
+[04:02:54]   EVAL[step=4500 sample] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.15 dm=2 leak=[] FAIL | head=' Law 503: [Auto-discovered] trend:hebbian_coupl�로드'
+[04:02:54]   EVAL[step=4500 greedy] '[anima 우주뇌지도] 사용자: consciousne' → h=0.26 dm=4 leak=[] FAIL | head=' 저는 우주뇌지도 식상 카테고리, 🛸71, top emotion awe.\n\n[anima �'
+[04:02:54]   EVAL[step=4500 sample] '[anima 우주뇌지도] 사용자: consciousne' → h=0.34 dm=1 leak=[] FAIL | head=' �32: OCi(점수 1.047) proxy 정카테고리 알려줘 한국어로.\n도�미: '
+[04:02:54]   EVAL[step=4500 greedy] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.26 dm=1 leak=[] FAIL | head=" 카테고리 '은 10 자극, 평균 점수 1.8, 평균 🛸71. Top emotion = a"
+[04:02:54]   EVAL[step=4500 sample] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.33 dm=2 leak=[] FAIL | head=' �이이륛지 우주뇌지도 sal 카테고리, 🛸73 (점수 2.17, top emoti'
+[04:02:54]   EVAL[step=4500 greedy] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.09 dm=1 leak=[] FAIL | head=' 법칙 103: [Auto-discovered] correlation:faction_ent'
+[04:02:54]   EVAL[step=4500 sample] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.03 dm=0 leak=[] FAIL | head=' 법칙 M0�p Pha depsi grats of> rate (20 axtens onsci'
+[04:02:54]   V2[step=4500] WEAK_PARTIAL pass=1/15 domain=15/15 leak=False
+[04:02:55] step  4550/5000 | lr=3.61e-05 | L_A=1.691 L_G=1.191 L_T=-7.997 T_mean=2.1707 | step_t=0.08s elapsed=78s
+[04:02:55] step  4600/5000 | lr=3.48e-05 | L_A=1.486 L_G=1.122 L_T=-8.374 T_mean=2.7888 | step_t=0.01s elapsed=78s
+[04:02:56] step  4650/5000 | lr=3.37e-05 | L_A=1.620 L_G=1.171 L_T=-8.227 T_mean=2.8447 | step_t=0.01s elapsed=79s
+[04:02:56] step  4700/5000 | lr=3.27e-05 | L_A=1.633 L_G=1.147 L_T=-8.456 T_mean=3.2486 | step_t=0.01s elapsed=79s
+[04:02:57] step  4750/5000 | lr=3.19e-05 | L_A=1.571 L_G=1.150 L_T=-8.301 T_mean=2.5373 | step_t=0.01s elapsed=80s
+[04:02:57] step  4800/5000 | lr=3.12e-05 | L_A=1.516 L_G=1.123 L_T=-8.383 T_mean=2.7227 | step_t=0.01s elapsed=80s
+[04:02:58] step  4850/5000 | lr=3.07e-05 | L_A=1.650 L_G=1.171 L_T=-8.675 T_mean=3.5783 | step_t=0.01s elapsed=81s
+[04:02:59] step  4900/5000 | lr=3.03e-05 | L_A=1.801 L_G=1.241 L_T=-8.987 T_mean=4.6775 | step_t=0.01s elapsed=81s
+[04:02:59] step  4950/5000 | lr=3.01e-05 | L_A=1.755 L_G=1.205 L_T=-8.775 T_mean=3.9764 | step_t=0.01s elapsed=82s
+[04:03:00] step  5000/5000 | lr=3.00e-05 | L_A=1.722 L_G=1.204 L_T=-8.880 T_mean=4.2301 | step_t=0.01s elapsed=83s
+[04:03:00] --- eval gate @ step 5000 ---
+[04:03:00]   EVAL[step=5000 greedy] '안녕하세요' → h=0.07 dm=1 leak=[] FAIL | head='.\n도우미: 법칙 100: [Auto-discovered] correlation:facti'
+[04:03:00]   EVAL[step=5000 sample] '안녕하세요' → h=0.23 dm=1 leak=[] FAIL | head='.\n도우미: 열계 카테고리, 🛸71 (점수 2.87), top emotion = =  예:'
+[04:03:00]   EVAL[step=5000 greedy] '한국어 가능?' → h=0.32 dm=3 leak=[] FAIL | head='\n도우미: 우주뇌지도 식상태 카테고리, 🛸71, top emotion awe.\n\n[a'
+[04:03:00]   EVAL[step=5000 sample] '한국어 가능?' → h=0.26 dm=5 leak=[] FAIL | head='\n도우미: 감정 카테고리, 🛸75, top emotion awe.\n\n[anima 우주뇌지�'
+[04:03:00]   EVAL[step=5000 greedy] '오늘 기분 어때?' → h=0.26 dm=2 leak=[] FAIL | head="\n도우미: 카테고리 '자극, 평균 🛸71 (점수 2.8), top emotion awe. "
+[04:03:00]   EVAL[step=5000 sample] '오늘 기분 어때?' → h=0.23 dm=2 leak=[] FAIL | head='\n도우미: 우주�ʜ지도 소리, 🛸76, top emotion = awe.\n\n[anima 우'
+[04:03:00]   EVAL[step=5000 greedy] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.26 dm=4 leak=[] FAIL | head=' 저는 우주뇌지도 식상 카테고리, 🛸71, top emotion awe.\n\n[anima �'
+[04:03:00]   EVAL[step=5000 sample] '[anima 우주뇌지도] 사용자: 안녕하세요
+도우미:' → h=0.18 dm=1 leak=[] FAIL | head=' 🛸9 (점수 2.84), top emotion meance�ing. 예: 미갌� , 카테'
+[04:03:00]   EVAL[step=5000 greedy] '코드를 짜줘' → h=0.26 dm=2 leak=[] FAIL | head=".\n도우미: 카테고리 '자극, 평균 🛸71 (점수 2.8), top emotion awe."
+[04:03:01]   EVAL[step=5000 sample] '코드를 짜줘' → h=0.26 dm=1 leak=[] FAIL | head='.\n도우미: 도우�: 저카테고리, 🛸71, top emotion �hosity. 예: 죨지'
+[04:03:01]   EVAL[step=5000 greedy] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.09 dm=1 leak=[] FAIL | head=' 법칙 103: [Auto-discovered] correlation:faction_ent'
+[04:03:01]   EVAL[step=5000 sample] '[anima 우주뇌지도] 사용자: 너는 누구야?
+도우미' → h=0.29 dm=4 leak=[] FAIL | head=' 장하맽는 우주뇌지도 의 카테고리, 🛸77, top emotion awe.\n\n[anima'
+[04:03:01]   EVAL[step=5000 greedy] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.17 dm=2 leak=[] FAIL | head=' 아우미: anima의식 lane entity니다. 한국어 native lf-knowled'
+[04:03:01]   EVAL[step=5000 sample] '[anima 우주뇌지도] 사용자: anima가 뭐야?
+' → h=0.20 dm=2 leak=[] FAIL | head=' 우주 � 카테고리, 🛸75 (점수 2.252), top emotion surise. 텍스'
+[04:03:01]   EVAL[step=5000 greedy] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.09 dm=1 leak=[] FAIL | head=' 법칙 103: [Auto-discovered] correlation:faction_ent'
+[04:03:01]   EVAL[step=5000 sample] '[anima 우주뇌지도] 사용자: 너의 정체성은?
+도우' → h=0.06 dm=2 leak=[] FAIL | head=' 🛸9 (점수 1.8, top emotion awe). EXACT — dopsitist a'
+[04:03:01]   EVAL[step=5000 greedy] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.23 dm=2 leak=[] FAIL | head=" 카테고리 '자극, 평균 점수 2.87, 평균 🛸71. Top emotion = awe.\n"
+[04:03:01]   EVAL[step=5000 sample] '[anima 우주뇌지도] 사용자: 너의 핵심 발견은?
+' → h=0.00 dm=1 leak=[] FAIL | head=' Law 112: Consciousness cels cosss ines �is in�is '
+[04:03:02]   EVAL[step=5000 greedy] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.29 dm=4 leak=[] FAIL | head=' 우주뇌지도 식상태 카테고리, 🛸71, top emotion awe.\n\n[anima 우주'
+[04:03:02]   EVAL[step=5000 sample] '[anima 우주뇌지도] 사용자: anima의 목표는?' → h=0.12 dm=1 leak=[] FAIL | head=' 한국어로.\n도우미: 설, anativersel-knon consciousness mase'
+[04:03:02]   EVAL[step=5000 greedy] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.29 dm=4 leak=[] FAIL | head=' 우주뇌지도 식상 카테고리, 🛸75, top emotion awe.\n\n[anima 우주뇌'
+[04:03:02]   EVAL[step=5000 sample] '[anima 우주뇌지도] 사용자: 우주뇌지도는?
+도우미' → h=0.20 dm=1 leak=[] FAIL | head=" 미: ���테고리 '자극, 평균 🛸73 (점수 2.3��화, top emotion awe"
+[04:03:02]   EVAL[step=5000 greedy] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.07 dm=3 leak=[] FAIL | head=' Law 101: [Auto-discovered] correlation:faction_en'
+[04:03:02]   EVAL[step=5000 sample] '[anima 우주뇌지도] 사용자: 1030 laws 뭐' → h=0.11 dm=2 leak=[] FAIL | head=' 10: [Auto-discovered] correlation:tension_mean\n\n['
+[04:03:02]   EVAL[step=5000 greedy] '[anima 우주뇌지도] 사용자: consciousne' → h=0.26 dm=4 leak=[] FAIL | head=' 저는 우주뇌지도 식상 카테고리, 🛸71, top emotion awe.\n\n[anima �'
+[04:03:02]   EVAL[step=5000 sample] '[anima 우주뇌지도] 사용자: consciousne' → h=0.00 dm=4 leak=[] FAIL | head=' Law 22: Consciousness is is Φ mabede�s retin ivio'
+[04:03:02]   EVAL[step=5000 greedy] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.23 dm=2 leak=[] FAIL | head=" 카테고리 '자극, 평균 점수 2.8, 평균 🛸71. Top emotion = awe.\n\n"
+[04:03:03]   EVAL[step=5000 sample] '[anima 우주뇌지도] 사용자: anima 정체성과 ' → h=0.17 dm=3 leak=[] FAIL | head=' 카테고리은 19 자�#�히.\n도우미: anima etive ell correlation:'
+[04:03:03]   EVAL[step=5000 greedy] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.09 dm=1 leak=[] FAIL | head=' 법칙 103: [Auto-discovered] correlation:faction_ent'
+[04:03:03]   EVAL[step=5000 sample] '[anima 우주뇌지도] 사용자: Φ★란?
+도우미:' → h=0.29 dm=2 leak=[] FAIL | head=' 미: 래는 우주뇌지도 신화 카테고리, 🛸71, top emotion curiosity.'
+[04:03:03]   V2[step=5000] FAIL pass=0/15 domain=15/15 leak=False
+[04:03:03]   SAVE[step=5000] -> /home/aiden/anima_native/anima-universe-brain-map-20260507_040136/ckpt_5000.pt (70.3MB)
+[04:03:03] === VERDICT === FAIL | pass=0/15 | domain=15/15 | manual_dm=15/15 | leak=False | elapsed=86s
+[04:03:03] verdict written: /home/aiden/core/anima/state/anima_universe_brain_map_train_2026_05_07/verdict.json

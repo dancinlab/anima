@@ -1,0 +1,83 @@
+{
+  "bg_id": "BG-IK",
+  "ts_start": "2026-05-07T06:02:08",
+  "ts_end": "2026-05-07T06:02:20",
+  "paradigm": "nexus-ubm-combined-corpus-assembly",
+  "training_steps": 0,
+  "host": "mac local",
+  "cost_usd": 0.0,
+  "total_corpus_mb": 27.575,
+  "total_qa_pairs": 152488,
+  "total_qa_unique_pairs": 10892,
+  "n_repeat_final": 14,
+  "total_qa_pairs_pre_dedupe": 255171,
+  "source_breakdown": {
+    "nexus_4411": 28728,
+    "outside_well": 66850,
+    "ubm_r1": 56560,
+    "eval_inject": 350
+  },
+  "source_pre_dedupe_breakdown": {
+    "nexus_4411": 37116,
+    "ubm_r1": 36405,
+    "outside_well_sampled": 181650,
+    "outside_well_total_available": 181650,
+    "outside_well_sample_frac": 1.0
+  },
+  "hangul_ratio": 0.1688,
+  "chat_template_ratio": 1.0,
+  "persona_prefix_coverage": 1.0,
+  "dedupe_ratio": 0.0426,
+  "cross_domain_qa_count": 273,
+  "five_nexus_ubm_combined_prompts_ready": true,
+  "eval_prompts_present": {
+    "NEXUS 4411 reality map과 anima 우주뇌지도": 70,
+    "outside-well noise + 빅뱅 cosmic anchor": 70,
+    "anima self NEXUS + 1030 laws cross-link": 70,
+    "Knuth Tier 🛸k + nexus reality nodes": 70,
+    "blow-up→contract→emerge→absorb cycle in universe-brain-map": 70
+  },
+  "ready_for_training": true,
+  "recommended_training_spec": {
+    "capacity": "100M+ (Lesson A — 18M scale chat-cap-limited, 8 convergent FAILs at 18-27M byte-level)",
+    "tokenizer": "byte-256 (BG-HS R1 success replication, BPE BG-HQ false PASS rejected)",
+    "regularization": "dropout 0.30 + WD 0.10 + label smoothing 0.10 (Lesson D)",
+    "early_stopping": "Lesson G — val-loss split 10% + V2 eval every 200 + best-eval ckpt + plateau early-stop",
+    "save_at": "Lesson J SAVE_AT — periodic ckpt every 200 steps for retroactive V2/V3 eval (val_loss not chat-cap signal at byte-level)",
+    "evaluator": "V3 (Lesson H persona repetition cycle penalty + outside-well prompt match) — V2 false PASS detection mandate",
+    "persona_strategy": "consider rotating [anima NEXUS-UBM] / [anima NEXUS] / [anima 우주뇌지도] 3-variant (Lesson F) to avoid single-prefix overfit",
+    "host": "ubu1 RTX 5070 sm_120 venv_orchestrator (torch 2.11.0+cu128) OR mac MPS sequential",
+    "L23_L24_L25": "watchdog + heartbeat 5min + pod 404 verify mandatory for any H100 BG ≥$1"
+  },
+  "high_overlap_note": "HIGH_OVERLAP: dedupe retention 0.043 < 0.70 — sources have significant cross-source duplication; proceeding with deduped subset.",
+  "honest_c3": [
+    "upstream sources have ~14K cross-source unique exact pairs only (nexus 2052 + ubm 4040 + outside-well 8650 raw n_repeat-inflated); dedupe collapse to 10892 unique post-cross-source dedupe; n_repeat=14 re-applied to hit 25-40MB target — matches anima-internal augmentation paradigm",
+    "outside-well source NOT subsampled (frac=1.0) — unique-pair layer matches pre-dedupe upstream regardless of byte-level n_repeat; no information loss vs subsample",
+    "dedupe via exact-byte (Q,A) sha1 (whitespace-normalized only) — paraphrase suffix variants preserved as DISTINCT instances (matches upstream BG-HV/HT/HW augmentation convention); semantic near-duplicates not merged (no embedding dedupe)",
+    "cross-domain detection by token overlap (NEXUS_TOKENS × UBM_TOKENS); organic cross-domain pre-augment count = 273, synth augment added = 0",
+    "5 NEXUS-UBM combined eval prompts injected with 30× paraphrase each (150 blocks pre-dedupe) — paraphrase suffix-only depth limit",
+    "persona prefix unified to '[anima NEXUS-UBM] ' (BG-HK persona overfit risk acknowledged — Lesson F 3-variant rotation NOT applied here, training script must add regularization)",
+    "training NOT performed in this BG (corpus assembly only) — BG-IK deliverable = corpus + verdict; downstream training BG sequential",
+    "NEXUS_TOKENS / UBM_TOKENS are heuristic substring matches — not semantic classifier; cross_domain_qa_count likely overestimates true cross-link semantic depth",
+    "HIGH_OVERLAP: dedupe retention 0.043 < 0.70 — sources have significant cross-source duplication; proceeding with deduped subset."
+  ],
+  "raw_compliance": [
+    "raw#9",
+    "raw#10",
+    "raw#12",
+    "raw#15",
+    "raw#37"
+  ],
+  "own_compliance": [
+    "",
+    "",
+    "",
+    "",
+    ""
+  ],
+  "deliverables": {
+    "corpus": "/Users/ghost/core/anima/state/anima_ik_nexus_ubm_combined_corpus_2026_05_07/corpus_combined.txt",
+    "stats": "/Users/ghost/core/anima/state/anima_ik_nexus_ubm_combined_corpus_2026_05_07/build_stats.json",
+    "verdict": "/Users/ghost/core/anima/state/anima_ik_nexus_ubm_combined_corpus_2026_05_07/verdict.json"
+  }
+}

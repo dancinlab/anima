@@ -1,0 +1,32 @@
+{
+  "intended_for": "user (nerve011235@gmail.com Gmail account holder)",
+  "trigger_date": "2026-05-03 (D+1) — and ad-hoc any time before D+7 if convenient",
+  "purpose": "bounce detection while hexa-native check_bounces is deferred",
+  "checklist": [
+    {
+      "rank": 1,
+      "action": "Open Gmail Inbox; search: from:postmaster OR from:mailer-daemon OR from:noreply newer_than:2d",
+      "expected_clean": "zero results -> no bounce, recipient address valid",
+      "fail_signal": "any result mentioning michael.levin@tufts.edu or message_id 19de825e26e98b82 -> bounce, STOP"
+    },
+    {
+      "rank": 2,
+      "action": "Open Gmail Spam folder; same search query",
+      "expected_clean": "zero bounce-like results",
+      "fail_signal": "bounce in Spam -> still counts; mark bounce_check=BOUNCED"
+    },
+    {
+      "rank": 3,
+      "action": "Open Gmail Sent folder; verify presence of message with subject 'anima CP2 framework × xenobot bioelectric Φ — collaboration proposal from dancinlab team' on 2026-05-02",
+      "expected_clean": "message present with attachments (n_22_anima_paradigm_v11_xenobot_extension.md + n_22_falsifiers.json)",
+      "fail_signal": "missing -> escalate, send may have been silently lost despite HTTP 200"
+    },
+    {
+      "rank": 4,
+      "action": "Optional: scan Inbox for any new mail from @tufts.edu domain (in case Levin or assistant replied within 24h)",
+      "expected_neutral": "none expected D+1",
+      "positive_signal": "if any tufts.edu reply -> short-circuit to response_handling branch immediately"
+    }
+  ],
+  "report_back_to": "state/n_22_levin_monitor_2026_05_02/schedule.json -> checkpoints[0].bounce_check = CLEAN | BOUNCED | UNCLEAR"
+}

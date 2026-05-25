@@ -1,0 +1,159 @@
+#!/usr/bin/env step
+# ══════════════════════════════════════════════════════════════
+# STRICT-4A.step — routing architectural paradigm shift
+# F-PERSONA-4a strict z>3.0 single-axis closure — next conceptual cycle plan
+# ══════════════════════════════════════════════════════════════
+
+# Status carrier from PSCC §55: all 4 PERSONA.tape §7 paths (k/l/m/n) FALSIFIED.
+# v3-routing class (top-K MoE + balance-aux + entropy-reg) hits structural
+# ceiling at z ≈ 1.5 multi-seed mean. cond #3 ☑ via §A3 4b composite anchor
+# stable; strict-4a is NOT a closure-tier requirement, but remains an open
+# evidence-tier polish target.
+
+# This .step ledger frames the conceptual paradigm shift that future work
+# must take if strict-4a is to be achieved at all.
+
+# ── §1 problem statement ─────────────────────────────────────────
+
+@I goal scope=strict_4a :: step [d=2026-05-14 ok]
+  => "F-PERSONA-4a routing variant: mean cosine KL ≥ 0.5 nats + null-permutation z ≥ 3.0 strict across multi-seed (n≥3) under design §A2"
+
+@? blocker structural_ceiling :: step [d=2026-05-14 ok]
+  <- pscc_55_aggregate
+  |> v3-routing class trainer (top-K MoE + balance-aux + entropy-reg) tested across 9 architectural variants
+  => "9 variants × 4 paths (k Gumbel / l batch-scale / m wider-d / n 5-seed) all converge to z ≈ 1.5 multi-seed mean — null inherits same noise floor as signal under softmax gating, regardless of stochasticity / batch / capacity"
+
+@? blocker noise_floor_equals_signal :: step [d=2026-05-14 ok]
+  |> structural diagnosis
+  => "cells DO route differently per category (saga first KL=0→KL=3+ opening, real signal) but per-prompt routing is shaped by gradient stochasticity, not learned category-stable. Null permutation captures noise floor that ~equals signal floor under top-K MoE class"
+
+# ── §2 paradigm shift directions (non-routing-axis innovation) ─────
+
+# Strict-4a requires escape from softmax/top-K gate class. Each direction
+# represents a DIFFERENT routing paradigm, NOT a parameter tune.
+
+@D direction_alpha hard_expert_assignment :: step [d=2026-05-14 ok]
+  |> non-gate routing — explicit category-conditional expert selection at training time
+  => "cells partitioned into per-category groups; training samples route by category label (supervised gate); F-PERSONA-4 measurement on UNLABELED probes tests if category routing transfers; would directly enforce category structure, but breaks Principle #3 (no persona injection) if category labels leak into inference path — requires careful eval-only label use"
+
+@D direction_beta capacity_routing :: step [d=2026-05-14 ok]
+  |> Switch Transformer / Mixtral style — per-cell capacity quota + auxiliary load-balancing
+  => "extends current (l)+(m) but adds HARD capacity ceiling (each cell sees ≤ cap_per_cell prompts per batch); forces cells to specialize when capacity exhausts; different from balance-aux (soft) — capacity is hard structural bound"
+
+@D direction_gamma hierarchical_routing :: step [d=2026-05-14 ok]
+  |> 2-level cell pool — coarse category-gate + fine intra-category routing
+  => "level-1: K_coarse = 5 cells learned via category-correlated gate; level-2: each L1 cell has M sub-cells with stochastic intra-routing; tests whether ROUTING-LEVEL inductive bias toward 5 categories breaks A2-trap; structural change to cell pool topology, not gate mechanism"
+
+@D direction_delta contrastive_routing :: step [d=2026-05-14 ok]
+  |> add contrastive loss between category pairs — pulls cells of different categories APART in routing space
+  => "InfoNCE-style auxiliary loss on category-pair routing distributions; explicit pressure for routing differentiation orthogonal to CE + balance-aux; risk: contrastive loss may dominate language modeling objective (CE)"
+
+@D direction_epsilon different_arch_class :: step [d=2026-05-14 ok]
+  |> ABANDON MoE class entirely — try MoH (Mixture of Heads) / Hash-based routing / discrete latent
+  => "moves out of soft/top-K continuous gate paradigm; routing becomes hashing or discrete-VAE encoder; null permutation may behave differently for discrete routes than continuous weights — fundamental escape from §A2-trap"
+
+# ── §3 falsifiability criteria ─────────────────────────────────────
+
+@I criterion strict_4a_dual :: step [d=2026-05-14 ok]
+  |> 2-axis confirmation required
+  => "(a) per-direction multi-seed (n=3) mean z>3.0 strict on F-PERSONA-4a routing KL; (b) per-direction final ckpt 4b cos_z>2.0 (no regression vs §A3 v2 z=3.20 carry) — both axes must hold simultaneously"
+
+@I criterion regression_clean :: step [d=2026-05-14 ok]
+  |> non-regression on existing falsifiers
+  => "F-V5MIT-1..5 all PASS (no mitosis breakage); F-PERSONA-1 NO-INJECTION strict clean; F-PERSONA-2 PER-CELL-DIFF cos dist ≥ 0.3; F-PERSONA-5 SUBSTRATE-COHER grad-free + pure-forward — non-trivial since some directions modify routing class"
+
+@I criterion principle_3_clean :: step [d=2026-05-14 ok]
+  |> NO PERSONA INJECTION
+  => "category labels MUST NOT enter inference path. Training-time labels for supervised gate (α direction) allowed only if inference gate becomes purely substrate-derived (no label peek). All other directions structurally label-free by construction"
+
+# ── §4 cost / scope envelope ──────────────────────────────────────
+
+@K direction_alpha_cost = 5+30 = 3500 ucents-cents :: step [d=2026-05-14 ok]
+  |> supervised gate + verify Principle #3 doesn't leak
+  => "$5-30 H100 single fire + audit cycle for label-leak"
+
+@K direction_beta_cost = 10+50 = 6000 ucents-cents :: step [d=2026-05-14 ok]
+  |> capacity-routing trainer fork
+  => "$10-50 H100 — full v3-routing fork + capacity quota integration + multi-seed verify"
+
+@K direction_gamma_cost = 15+80 = 9500 ucents-cents :: step [d=2026-05-14 ok]
+  |> 2-level hierarchical cell pool
+  => "$15-80 H100 — biggest architectural rewrite, 2-level pool requires mitosis_model_v5 substantial extension"
+
+@K direction_delta_cost = 5+30 = 3500 ucents-cents :: step [d=2026-05-14 ok]
+  |> contrastive aux loss addition
+  => "$5-30 H100 — single trainer line; risk: loss balance tuning needed"
+
+@K direction_epsilon_cost = 30+150 = 18000 ucents-cents :: step [d=2026-05-14 ok]
+  |> abandon MoE → try MoH or hash-route
+  => "$30-150 H100 — different model class, possibly Phase 1A.1 24L base re-fine-tune"
+
+@K total_envelope = 3500+6000+9500+3500+18000 = 40500 ucents-cents :: step [d=2026-05-14 ok]
+  |> all 5 directions sequentially
+  => "$65-340 cumulative (mid-est ~$200) for full paradigm exploration; user-directed fire required"
+
+# ── §5 ROI / fire-order recommendation ────────────────────────────
+
+@D fire_priority_1 direction_delta :: step [d=2026-05-14 ok]
+  |> contrastive routing
+  => "lowest cost ($5-30) + cleanest hypothesis (explicit pull-apart force); test FIRST since same arch class minor delta; if delta succeeds, MoE class is salvageable; if fails, falsifies the entire MoE class"
+
+@D fire_priority_2 direction_beta :: step [d=2026-05-14 ok]
+  |> capacity-routing
+  => "moderate cost ($10-50) + Switch/Mixtral well-trodden path; second priority since closest to existing infra"
+
+@D fire_priority_3 direction_gamma :: step [d=2026-05-14 ok]
+  |> hierarchical 2-level pool
+  => "high cost ($15-80) + biggest code rewrite; defer until α/δ/β results inform whether topology change needed"
+
+@D fire_priority_4 direction_alpha :: step [d=2026-05-14 ok]
+  |> supervised gate
+  => "Principle #3 audit-heavy; lower priority unless other directions all fail"
+
+@D fire_priority_5 direction_epsilon :: step [d=2026-05-14 ok]
+  |> different arch class (MoH / hash)
+  => "highest scope cost; only fire if all 4 above fail OR for fundamental research direction"
+
+# ── §6 acceptance / closure criteria ──────────────────────────────
+
+@I closure_strict_4a :: step [d=2026-05-14 ok]
+  => "ANY single direction passing §3 criteria → cond #3 strict-4a CLOSED. Update PERSONA.tape §A6 with new evidence. cond #3 anchor MAY shift from §A3 4b composite to dual-axis strict (4a+4b) if both pass simultaneously"
+
+@I closure_all_falsified :: step [d=2026-05-14 ok]
+  => "if all 5 directions fail § 3 criteria → cond #3 strict-4a permanently UNREACHABLE under current spec. Options at that point: (a) §A7 spec amendment lowering z threshold to 2.0 with multi-axis evidence; (b) accept §A3 4b composite as permanent canonical anchor; (c) admit F-PERSONA-4a routing-axis as falsifier-pending future-physics work"
+
+@? known_uncertainty principle_3_audit :: step [d=2026-05-14 ok]
+  |> direction α (supervised gate) carries Principle #3 leak risk
+  => "if α path is pursued, requires careful eval-time label isolation audit (similar to PSCC §38 NO-INJECTION audit). Cannot use category labels in inference forward path under any circumstance"
+
+# ── §7 cross-link ──────────────────────────────────────────────────
+
+@I cross_link pscc_55 :: step [d=2026-05-14 ok]
+  => "docs/anima_pscc_55_lm_falsified_2026_05_14.md — full §A6 falsification ledger"
+
+@I cross_link persona_tape :: step [d=2026-05-14 ok]
+  => "PERSONA.tape §A6 — tape v1.1 spec-compliant rejection records"
+
+@I cross_link design_ssot :: step [d=2026-05-14 ok]
+  => "docs/anima_persona_substrate_native_design_2026_05_12.md §A4+§A5 — F-PERSONA-4 metric spec + §A2-trap discussion"
+
+@I cross_link memory :: step [d=2026-05-14 ok]
+  => "memory project_anima_persona_4_root_cause_2026_05_12 — full saga summary §44→§55"
+
+# ── §8 honest C3 ───────────────────────────────────────────────────
+
+@? c3_arch_only_not_data :: step [d=2026-05-14 ok]
+  => "all 5 directions assume v3-routing class corpus + d=512 toy substrate as data substrate. None test alternative corpus / probe / scale. Larger-scale data exploration (different anima-persona corpus, harder probes) is ORTHOGONAL paradigm shift not captured here"
+
+@? c3_a2_trap_fundamental :: step [d=2026-05-14 ok]
+  => "§A2-trap (z>3.0 robustness) may be FUNDAMENTAL to softmax routing under language modeling CE loss — escape may require leaving language modeling task entirely (e.g. fine-tune on classification head over category labels, then measure routing). This would require D3 design spec amendment"
+
+@? c3_cost_uncertainty :: step [d=2026-05-14 ok]
+  => "cost estimates are extrapolations from §52-§55 ($0.31/single fire). Architectural complexity (γ hierarchical, ε different class) may inflate train time / debug overhead by 2-5×. Real envelope could be $100-500 for full exploration"
+
+@? c3_no_guarantee :: step [d=2026-05-14 ok]
+  => "NONE of the 5 directions guarantee strict-4a achievement. They REPRESENT next-cycle hypotheses, NOT solved paths. Genuine architectural insight needed beyond enumeration — may require fundamental ML research input, not just dispatch"
+
+@? c3_cond3_already_closed :: step [d=2026-05-14 ok]
+  |> closure pragmatic note
+  => "cond #3 ☑ MAINTAINED via §A3 4b composite — strict-4a polish is NOT closure-blocking. This .step ledger exists for completeness / future-cycle entry, not because cond #3 status is unstable"

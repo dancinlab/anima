@@ -1,0 +1,17 @@
+{
+  "falsifier_id": "F-M4",
+  "measured_ts": "2026-05-06T21:11:43Z",
+  "measured_value": {
+    "comparison": "cpu_self_bisim",
+    "n_events_requested": 100,
+    "compared": 100,
+    "divergence_count": 0,
+    "index_match_count": 100,
+    "index_match_rate": 1.0,
+    "blocking_message": "cpu-only mode"
+  },
+  "verdict": "PARTIAL-CPU-SELF-BISIM",
+  "raw_log_path": "/Users/ghost/core/anima/state/akida_evidence/F-M4_20260506T211143Z.json",
+  "hardware_present": false,
+  "command": "scripts/akida/trace_equivalence.py --cpu-only --n-events 100"
+}

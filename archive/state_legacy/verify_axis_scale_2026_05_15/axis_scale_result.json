@@ -1,0 +1,201 @@
+{
+  "A1": {
+    "results": [
+      {
+        "hc_id": "Hc_A1-6",
+        "name": "Fisher information I(\u03b8) = -E[d\u00b2/d\u03b8\u00b2 log L]",
+        "closed_form": "I(\u03b8) = -E[\u2202\u00b2log L/\u2202\u03b8\u00b2]; Var(\u03b8_hat) \u2265 1/I(\u03b8) (Cramer-Rao)",
+        "axis": "A1",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A1-7",
+        "name": "KL divergence D(P||Q) \u2265 0 (Gibbs)",
+        "closed_form": "D(P||Q) = \u03a3 p_i log(p_i/q_i) \u2265 0; = 0 iff P = Q",
+        "axis": "A1",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A1-8",
+        "name": "Cross-entropy H(P,Q) = H(P) + D(P||Q)",
+        "closed_form": "H(P,Q) = -\u03a3 p_i log q_i = H(P) + D_KL(P||Q)",
+        "axis": "A1",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 3
+  },
+  "A2": {
+    "results": [
+      {
+        "hc_id": "Hc_A2-5",
+        "name": "Shannon-Hartley C = B\u00b7log\u2082(1+S/N)",
+        "closed_form": "C = B\u00b7log\u2082(1 + S/N) (Shannon-Hartley 1948)",
+        "axis": "A2",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A2-6",
+        "name": "Channel coding theorem rate R < C",
+        "closed_form": "For R < C: \u2203 codes with P_error \u2192 0 as block length \u2192 \u221e",
+        "axis": "A2",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "A3": {
+    "results": [
+      {
+        "hc_id": "Hc_A3-8",
+        "name": "Liouville theorem d\u03c1/dt = 0",
+        "closed_form": "d\u03c1/dt + \u03a3 \u2202\u03c1/\u2202q \u00b7 q\u0307 + \u2202\u03c1/\u2202p \u00b7 \u1e57 = 0 (Hamilton flow)",
+        "axis": "A3",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A3-9",
+        "name": "Boltzmann H-theorem dH/dt \u2264 0",
+        "closed_form": "H = \u03a3 f log f; dH/dt \u2264 0 (entropy production positive)",
+        "axis": "A3",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "A4": {
+    "results": [
+      {
+        "hc_id": "Hc_A4-12",
+        "name": "M\u00f6bius inversion F(n) = \u03a3_{d|n} f(d) \u21d4 f(n) = \u03a3 \u03bc(d) F(n/d)",
+        "closed_form": "M\u00f6bius inversion formula (number theory)",
+        "axis": "A4",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A4-13",
+        "name": "Dirichlet \u03b6(2) = \u03c0\u00b2/6 (Basel problem, Euler 1734)",
+        "closed_form": "\u03b6(s) = \u03a3_{n=1}^\u221e 1/n^s; \u03b6(2) = \u03c0\u00b2/6 closed-form",
+        "axis": "A4",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "A5": {
+    "results": [
+      {
+        "hc_id": "Hc_A5-10",
+        "name": "Softmax shift invariance softmax(x+c) = softmax(x)",
+        "closed_form": "softmax_i(x) = e^x_i / \u03a3e^x_j, shift-invariant by constant",
+        "axis": "A5",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A5-11",
+        "name": "LeCun init Var(w) = 1/n_in",
+        "closed_form": "Var(w) = 1/n_in; preserves activation variance across layers",
+        "axis": "A5",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "A6": {
+    "results": [
+      {
+        "hc_id": "Hc_A6-5",
+        "name": "N-gram entropy H_n \u2192 H(X) entropy rate",
+        "closed_form": "H(X) = lim_{n\u2192\u221e} H(X_n | X_1...X_{n-1}) ergodic process",
+        "axis": "A6",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A6-6",
+        "name": "Perplexity 2^H, log_2(PPL) = H",
+        "closed_form": "PPL = 2^H (binary log) or e^H (natural log)",
+        "axis": "A6",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "A7": {
+    "results": [
+      {
+        "hc_id": "Hc_A7-8",
+        "name": "Hodgkin firing threshold I_th",
+        "closed_form": "Action potential fires when I_inj > I_th (rheobase current)",
+        "axis": "A7",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A7-9",
+        "name": "Lotka-Volterra neutral stability (center)",
+        "closed_form": "trace(J) = 0, det(J) = \u03b1\u03b3 > 0 at (\u03b3/\u03b4, \u03b1/\u03b2) \u2014 neutral oscillation",
+        "axis": "A7",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "A8": {
+    "results": [
+      {
+        "hc_id": "Hc_A8-7",
+        "name": "Cramer-Rao Var(\u03b8_hat) \u2265 1/I(\u03b8)",
+        "closed_form": "Var(\u03b8_hat) \u2265 1/I(\u03b8) for unbiased estimators",
+        "axis": "A8",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A8-8",
+        "name": "Fano's inequality H(X|Y) \u2264 H(P_e) + P_e log|X-1|",
+        "closed_form": "H(X|Y) \u2264 H(P_e) + P_e\u00b7log(|X|-1) (Fano 1961)",
+        "axis": "A8",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "A9": {
+    "results": [
+      {
+        "hc_id": "Hc_A9-8",
+        "name": "Friedmann H\u00b2 = (8\u03c0G/3)\u03c1 - kc\u00b2/a\u00b2",
+        "closed_form": "H\u00b2 = (8\u03c0G/3)\u03c1 - kc\u00b2/a\u00b2 (FLRW cosmology, Friedmann 1922)",
+        "axis": "A9",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A9-9",
+        "name": "Pauli exclusion: anti-symmetric fermion wave function",
+        "closed_form": "\u03c8(x_i, x_j) = -\u03c8(x_j, x_i) \u2192 no two fermions in same quantum state",
+        "axis": "A9",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "total_added_blue": 19,
+  "total_added_entries": 19
+}

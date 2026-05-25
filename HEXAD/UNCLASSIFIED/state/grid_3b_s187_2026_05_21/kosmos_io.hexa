@@ -1,0 +1,545 @@
+// kosmos_io.hexa — pure-hexa port of kosmos_io.py (torch-free .kosmos glue).
+//
+//   PURPOSE
+//     Minimal .kosmos anchor writer + retrieval for the V3 substrate, ported
+//     1:1 from kosmos_io.py (same dir). Per HEXAD_NATIVE_V3.md § 0.5,
+//     ConsciousDecoderV3 emit auto-creates a .kosmos anchor (text + tension
+//     5-ch payload + coord + lane + tier). Anima `a_kosmos` directive: payload
+//     = text + tension 5-ch + coord · lane · radius · tier.
+//
+//   ANIMA DIRECTIVE COMPLIANCE (CLAUDE.md @D a_kosmos)
+//     Persist anima emit / anchor / memory as `.kosmos`. payload = text +
+//     tension 5-ch + coord·lane·radius·tier. Format SSOT = kosmos repo. This
+//     port preserves the .py `.kosmos` byte format exactly (kosmos/1.1).
+//
+//   IMPORT-SAFE
+//     NO `fn main()` and NO top-level call. `import` this file pulls in pure
+//     fn defs only (hexa: top-level calls fire on import; pure `fn` defs do
+//     not). Run the self-test via the sibling kosmos_io_smoke.hexa.
+//
+//   BYTE-FORMAT PARITY (vs kosmos_io.py)
+//     - coord rendered with 4 decimals (format_float(x, 4) ≡ Py `:.4f`).
+//     - radius rendered with 4 decimals.
+//     - tension channels rendered with 6 decimals (≡ Py `:.6f`).
+//     - emitted_at = UTC `%Y-%m-%dT%H:%M:%SZ` via `date -u` shellout (the .py
+//       uses time.strftime over time.gmtime — same wall-clock UTC instant).
+//     - escaping order matches _escape_kosmos_string: \\ then " then \n, with
+//       \r stripped.
+//
+//   HONEST CARVE-OUTS
+//     K1  tension_5ch_to_embedding uses Python `random.Random(seed).gauss`
+//         (MT19937 + a specific gauss algo) which is NOT byte-reproducible
+//         cross-language. This port uses a self-contained LCG + Box-Muller
+//         gauss so the hexa output is deterministic for a given seed, but
+//         the values DIFFER from the .py output. This fn has NO live caller
+//         (train_p21h_v3.py only calls emit_anchor_from_v3) — it is general
+//         API + self-test surface, so byte-parity is not required here. The
+//         live write path (create_anchor / emit_anchor_from_v3) IS exact.
+//     K2  _parse_value int-vs-float: Py tries int() first, then float().
+//         hexa mirrors this — a value with no '.' / 'e' parses as int, else
+//         float. List literals parse each element as float (Py float(p)).
+//
+//   COMPLIANCE  snake_case · honest impl · English code (memory: hexa-only).
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── 8-factor → 5-channel mapping (kosmos_io.py:46-57) ───────────────────────
+// Map an 8-factor anima_participant motivation snapshot to the TENSION-LINK
+// 5-channel fingerprint. `factors` is a map (#{}); missing key → 0.0.
+fn _ki_g(factors: map, k: string) -> float {
+    if !factors.contains_key(k) { return 0.0 }
+    return to_float(factors[k])
+}
+
+fn map_8factor_to_5channel(factors: map) -> map {
+    return #{
+        "concept":      (_ki_g(factors, "relevance") + _ki_g(factors, "coherence")) / 2.0,
+        "context":      _ki_g(factors, "info_gap"),
+        "meaning":      (_ki_g(factors, "curiosity") + _ki_g(factors, "originality")) / 2.0,
+        "authenticity": (_ki_g(factors, "pain") + _ki_g(factors, "balance")) / 2.0,
+        "sender":       _ki_g(factors, "dynamics"),
+    }
+}
+
+
+// ── tension 5-ch → dense embedding (kosmos_io.py:60-74) ─────────────────────
+// Project a 5-channel tension vector to a dense embed_dim vector via a fixed
+// seeded random projection. See carve-out K1 — gauss stream differs from the
+// .py MT19937 stream; deterministic per-seed but NOT byte-equal to Python.
+//
+// LCG (Numerical Recipes constants) + Box-Muller, self-contained.
+fn _ki_lcg_next(state: int) -> int {
+    // 64-bit LCG; mask to 32 bits for the float draw (matches stdlib/rng spirit).
+    return (state * 1664525 + 1013904223) & 0xFFFFFFFF
+}
+
+fn tension_5ch_to_embedding(tension_5ch: [float], embed_dim: int, seed: int) -> [float] {
+    let inv = 1.0 / sqrt(5.0)
+    // Build a 5 x embed_dim gaussian projection matrix via Box-Muller.
+    let mut state = seed & 0xFFFFFFFF
+    let mut w = []
+    let mut k = 0
+    while k < 5 {
+        let mut row = []
+        let mut d = 0
+        while d < embed_dim {
+            // draw two uniforms in (0,1], Box-Muller → one gaussian.
+            state = _ki_lcg_next(state)
+            let u1 = (state + 1.0) / 4294967297.0
+            state = _ki_lcg_next(state)
+            let u2 = state / 4294967296.0
+            let g = sqrt(0.0 - 2.0 * log(u1)) * cos(6.283185307179586 * u2)
+            row.push(g * inv)            // N(0, 1/sqrt(5))
+            d = d + 1
+        }
+        w.push(row)
+        k = k + 1
+    }
+    let mut out = []
+    let mut z = 0
+    while z < embed_dim {
+        out.push(0.0)
+        z = z + 1
+    }
+    let mut kk = 0
+    while kk < 5 {
+        let row = w[kk]
+        let mut dd = 0
+        while dd < embed_dim {
+            out[dd] = out[dd] + tension_5ch[kk] * row[dd]
+            dd = dd + 1
+        }
+        kk = kk + 1
+    }
+    return out
+}
+
+
+// ── anchor creation (kosmos_io.py:79-138) ───────────────────────────────────
+
+// _escape_kosmos_string (kosmos_io.py:79-82): \\ → \\\\, " → \", \n → \\n,
+// \r stripped. Order matters (backslash first so the escapes we add are not
+// re-escaped).
+fn _escape_kosmos_string(s: string) -> string {
+    let mut r = s.replace("\\", "\\\\")
+    r = r.replace("\"", "\\\"")
+    r = r.replace("\n", "\\n")
+    r = r.replace("\r", "")
+    return r
+}
+
+// UTC timestamp `%Y-%m-%dT%H:%M:%SZ` — mirrors Py time.strftime over
+// time.gmtime(). `date -u` is the POSIX UTC instant (same wall clock).
+fn _ki_utc_now() -> string {
+    return exec("date -u +%Y-%m-%dT%H:%M:%SZ | tr -d '\\n'")
+}
+
+// create_anchor — write a .kosmos anchor to out_dir/<name>.kosmos.
+// Returns the path. cross_link == "" means "no cross_link line" (Py None).
+fn create_anchor(out_dir: string, name: string, title: string,
+                 coord_x: float, coord_y: float, lane: string, radius: float,
+                 tier: int, category: string, top_emotion: string,
+                 text: string, tension_5ch: [float],
+                 closed_anchor: string, cross_link: string) -> string {
+    if len(tension_5ch) != 5 {
+        panic("tension_5ch must have len=5, got " + to_string(len(tension_5ch)))
+    }
+    let _mk = exec("mkdir -p '" + out_dir + "'")
+    let path = out_dir + "/" + name + ".kosmos"
+    let text_esc = _escape_kosmos_string(text)
+
+    let mut lines = []
+    lines.push("#!/usr/bin/env kosmos")
+    lines.push("# " + name + ".kosmos — V3 substrate-native emission anchor")
+    lines.push("# Tier 🛸" + to_string(tier) + " — " + category + ", top emotion " + top_emotion + ".")
+    lines.push("")
+    lines.push("@anchor " + name + " := \"" + title + "\" :: kosmos-anchor [tier=" + to_string(tier) + " active]")
+    lines.push("  profile      = \"anima-consciousness-carving\"")
+    lines.push("  knuth_tier   = " + to_string(tier))
+    lines.push("  category     = \"" + category + "\"")
+    lines.push("  top_emotion  = \"" + top_emotion + "\"")
+    lines.push("  coord        = [" + format_float(coord_x, 4) + ", " + format_float(coord_y, 4) + "]")
+    lines.push("  lane         = \"" + lane + "\"")
+    lines.push("  radius       = " + format_float(radius, 4))
+    lines.push("")
+    lines.push("  @payload text    := \"" + text_esc + "\"")
+    lines.push("  @payload tension := {")
+    lines.push("    concept       = " + format_float(tension_5ch[0], 6) + ",")
+    lines.push("    context       = " + format_float(tension_5ch[1], 6) + ",")
+    lines.push("    meaning       = " + format_float(tension_5ch[2], 6) + ",")
+    lines.push("    authenticity  = " + format_float(tension_5ch[3], 6) + ",")
+    lines.push("    sender        = " + format_float(tension_5ch[4], 6) + ",")
+    lines.push("  }")
+    lines.push("  @payload image   := pending \"V3-emit text+tension only\"")
+    lines.push("  @payload audio   := pending \"V3-emit text+tension only\"")
+    lines.push("  @payload video   := pending \"V3-emit text+tension only\"")
+    lines.push("")
+    lines.push("  closed_anchor = \"" + closed_anchor + "\"")
+    if len(cross_link) > 0 {
+        lines.push("  cross_link    = \"" + cross_link + "\"")
+    }
+    lines.push("  emitted_at    = \"" + _ki_utc_now() + "\"")
+
+    // join with "\n" + trailing "\n" (Py: "\n".join(lines) + "\n").
+    let mut body = ""
+    let mut i = 0
+    while i < len(lines) {
+        body = body + lines[i]
+        if i < len(lines) - 1 { body = body + "\n" }
+        i = i + 1
+    }
+    body = body + "\n"
+    let _w = write_file(path, body)
+    return path
+}
+
+
+// emit_anchor_from_v3 (kosmos_io.py:141-166) — high-level emit.
+//   coord = [phi, mean(tension_5ch)] as Ψ-space placeholder.
+//   lane  = "cell_<mitosis_cell_id>".
+fn emit_anchor_from_v3(out_dir: string, name: string, text: string,
+                       tension_5ch: [float], mitosis_cell_id: int, tier: int,
+                       category: string, top_emotion: string, phi: float,
+                       radius: float) -> string {
+    let mut s = 0.0
+    let mut i = 0
+    while i < len(tension_5ch) {
+        s = s + tension_5ch[i]
+        i = i + 1
+    }
+    let denom = len(tension_5ch)
+    let mean_t = s / (if denom > 1 { denom } else { 1 })
+    let lane = "cell_" + to_string(mitosis_cell_id)
+    let title = "v3-emit " + name + " (tier " + to_string(tier) + ")"
+    return create_anchor(out_dir, name, title, phi, mean_t, lane, radius,
+                         tier, category, top_emotion, text, tension_5ch,
+                         "V3-emit-auto", "")
+}
+
+
+// ── anchor loader (kosmos_io.py:171-263) ────────────────────────────────────
+
+// Parse a placement-field value (kosmos_io.py:174-197). Mirrors Py order:
+// string literal → list literal → int → float → raw string.
+fn _parse_value(v_in: string) {
+    let v = v_in.trim()
+    let n = byte_len(v)
+    // string literal "..."
+    if n >= 2 && v.starts_with("\"") && v.ends_with("\"") {
+        return v.substring(1, n - 1)
+    }
+    // list literal [a, b]
+    if n >= 2 && v.starts_with("[") && v.ends_with("]") {
+        let inner = v.substring(1, n - 1)
+        let parts = inner.split(",")
+        let mut out = []
+        let mut i = 0
+        while i < len(parts) {
+            let p = parts[i].trim()
+            if _ki_is_number(p) {
+                out.push(parse_float(p))
+            } else {
+                out.push(p)
+            }
+            i = i + 1
+        }
+        return out
+    }
+    // try int then float (Py int() first, then float()).
+    if _ki_is_int(v) { return parse_int(v) }
+    if _ki_is_number(v) { return parse_float(v) }
+    return v
+}
+
+// Is `s` a parseable int (optional leading -, all digits)?
+fn _ki_is_int(s: string) -> bool {
+    let n = byte_len(s)
+    if n == 0 { return false }
+    let mut i = 0
+    if s.byte_at(0) == 45 { i = 1 }              // leading '-'
+    if i >= n { return false }
+    while i < n {
+        let b = s.byte_at(i)
+        if b < 48 || b > 57 { return false }     // not 0-9
+        i = i + 1
+    }
+    return true
+}
+
+// Is `s` a parseable number (int or float, allows '.', 'e'/'E', sign)?
+fn _ki_is_number(s: string) -> bool {
+    let n = byte_len(s)
+    if n == 0 { return false }
+    let mut i = 0
+    let mut seen_digit = false
+    let mut seen_dot = false
+    let mut seen_e = false
+    while i < n {
+        let b = s.byte_at(i)
+        if b >= 48 && b <= 57 { seen_digit = true }
+        else if b == 46 {                        // '.'
+            if seen_dot || seen_e { return false }
+            seen_dot = true
+        }
+        else if b == 101 || b == 69 {            // 'e' / 'E'
+            if seen_e || !seen_digit { return false }
+            seen_e = true
+        }
+        else if b == 43 || b == 45 {             // '+' / '-'
+            // sign only valid at pos 0 or right after e/E.
+            if i != 0 {
+                let prev = s.byte_at(i - 1)
+                if prev != 101 && prev != 69 { return false }
+            }
+        }
+        else { return false }
+        i = i + 1
+    }
+    return seen_digit
+}
+
+// Strip a trailing comma from a value string (Py .rstrip(',')).
+fn _ki_rstrip_comma(s: string) -> string {
+    let mut r = s
+    while byte_len(r) > 0 && r.byte_at(byte_len(r) - 1) == 44 {
+        r = r.substring(0, byte_len(r) - 1)
+    }
+    return r
+}
+
+// Match a placement-field line `  key = value` → [key, value] or [] if no
+// match. Mirrors ANCHOR_FIELD_PATTERN = ^\s*(\w+)\s*=\s*(.+?)\s*$ on the
+// RAW (un-stripped) line.
+fn _ki_field_match(line: string) {
+    let s = line.trim()
+    let n = byte_len(s)
+    if n == 0 { return [] }
+    // key = leading word chars [A-Za-z0-9_].
+    let mut i = 0
+    while i < n {
+        let b = s.byte_at(i)
+        let is_word = (b >= 48 && b <= 57) || (b >= 65 && b <= 90) || (b >= 97 && b <= 122) || b == 95
+        if !is_word { break }
+        i = i + 1
+    }
+    if i == 0 { return [] }
+    let key = s.substring(0, i)
+    // skip spaces, require '='.
+    while i < n && s.byte_at(i) == 32 { i = i + 1 }
+    if i >= n || s.byte_at(i) != 61 { return [] }     // '='
+    i = i + 1
+    while i < n && s.byte_at(i) == 32 { i = i + 1 }
+    if i >= n { return [] }
+    let val = s.substring(i, n).trim()
+    if byte_len(val) == 0 { return [] }
+    return [key, val]
+}
+
+// Extract a @payload text inline string after := "..." (kosmos_io.py:243-246).
+// regex .*:=\s*"(.*)"\s*$ — greedy; returns the inner string or "" if none.
+fn _ki_text_payload(line: string) -> string {
+    let marker = ":="
+    let mi = _ki_index_of(line, marker)
+    if mi < 0 { return "" }
+    let after = line.substring(mi + 2, byte_len(line)).trim()
+    let an = byte_len(after)
+    if an >= 2 && after.starts_with("\"") && after.ends_with("\"") {
+        return after.substring(1, an - 1)
+    }
+    return ""
+}
+
+fn _ki_index_of(hay: string, needle: string) -> int {
+    let hn = byte_len(hay)
+    let nn = byte_len(needle)
+    if nn == 0 { return 0 }
+    let mut i = 0
+    while i + nn <= hn {
+        let mut k = 0
+        let mut ok = true
+        while k < nn {
+            if hay.byte_at(i + k) != needle.byte_at(k) { ok = false; break }
+            k = k + 1
+        }
+        if ok { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+// load_anchors — load all .kosmos files in dir_path. Returns a list of maps
+// with: path, name, fields (map), text_payload, tension_5ch ([float] or void).
+fn load_anchors(dir_path: string) -> list {
+    let mut anchors = []
+    if !_ki_is_dir(dir_path) { return anchors }
+    // sorted listing (Py sorted(os.listdir)).
+    let mut files = list_dir(dir_path)
+    files = _ki_sort_strings(files)
+    let mut fi = 0
+    while fi < len(files) {
+        let fname = files[fi]
+        fi = fi + 1
+        if !fname.ends_with(".kosmos") { continue }
+        let path = dir_path + "/" + fname
+        let content = read_file(path)
+        let name = fname.replace(".kosmos", "")
+
+        let mut fields = #{}
+        let mut text_payload = ""
+        let mut have_text = false
+        let mut tension_buf = #{}
+        let mut have_tension = false
+        let mut in_tension = false
+
+        let lines = content.split("\n")
+        let mut li = 0
+        while li < len(lines) {
+            let line = lines[li]
+            li = li + 1
+            let stripped = line.trim()
+            if stripped.starts_with("@payload tension") {
+                in_tension = _ki_index_of(stripped, "{") >= 0
+                continue
+            }
+            if in_tension {
+                if stripped.starts_with("}") { in_tension = false; continue }
+                let m = _ki_field_match(line)
+                if len(m) == 2 {
+                    let kv = _ki_rstrip_comma(m[1])
+                    if _ki_is_number(kv) {
+                        tension_buf[m[0]] = parse_float(kv)
+                        have_tension = true
+                    }
+                }
+                continue
+            }
+            if stripped.starts_with("@payload text") {
+                let tp = _ki_text_payload(line)
+                if byte_len(tp) > 0 { text_payload = tp; have_text = true }
+                continue
+            }
+            if stripped.starts_with("@") { continue }
+            let m = _ki_field_match(line)
+            if len(m) == 2 {
+                fields[m[0]] = _parse_value(m[1])
+            }
+        }
+
+        let rec = #{
+            "path":         path,
+            "name":         name,
+            "fields":       fields,
+            "text_payload": if have_text { text_payload } else { "" },
+        }
+        if have_tension {
+            rec["tension_5ch"] = [
+                _ki_buf_get(tension_buf, "concept"),
+                _ki_buf_get(tension_buf, "context"),
+                _ki_buf_get(tension_buf, "meaning"),
+                _ki_buf_get(tension_buf, "authenticity"),
+                _ki_buf_get(tension_buf, "sender"),
+            ]
+        }
+        anchors.push(rec)
+    }
+    return anchors
+}
+
+fn _ki_buf_get(buf: map, k: string) -> float {
+    if !buf.contains_key(k) { return 0.0 }
+    return to_float(buf[k])
+}
+
+// os.path.isdir equivalent — `test -d` shellout (file_exists is REG-only;
+// fs_stat is a runtime stub here, so we use the POSIX test directly).
+fn _ki_is_dir(path: string) -> bool {
+    let r = exec("test -d '" + path + "' && echo y || echo n").trim()
+    return r == "y"
+}
+
+// simple insertion sort over string list (Py sorted on filenames).
+fn _ki_sort_strings(xs: list) -> list {
+    let mut a = []
+    let mut i = 0
+    while i < len(xs) { a.push(xs[i]); i = i + 1 }
+    let mut j = 1
+    while j < len(a) {
+        let key = a[j]
+        let mut k = j - 1
+        while k >= 0 && _ki_str_gt(a[k], key) {
+            a[k + 1] = a[k]
+            k = k - 1
+        }
+        a[k + 1] = key
+        j = j + 1
+    }
+    return a
+}
+
+// byte-lexicographic a > b (Py default string ordering).
+fn _ki_str_gt(a: string, b: string) -> bool {
+    let na = byte_len(a)
+    let nb = byte_len(b)
+    let mut i = 0
+    while i < na && i < nb {
+        let ca = a.byte_at(i)
+        let cb = b.byte_at(i)
+        if ca != cb { return ca > cb }
+        i = i + 1
+    }
+    return na > nb
+}
+
+
+// ── retrieval (kosmos_io.py:268-286) ────────────────────────────────────────
+
+// Cosine similarity with the Py +1e-10 norm floor.
+fn _cosine(a: [float], b: [float]) -> float {
+    let mut sa = 0.0
+    let mut sb = 0.0
+    let mut dot = 0.0
+    let n = if len(a) < len(b) { len(a) } else { len(b) }
+    let mut i = 0
+    while i < n {
+        sa = sa + a[i] * a[i]
+        sb = sb + b[i] * b[i]
+        dot = dot + a[i] * b[i]
+        i = i + 1
+    }
+    let na = sqrt(sa) + 1.0e-10
+    let nb = sqrt(sb) + 1.0e-10
+    return dot / (na * nb)
+}
+
+// retrieve — cosine-similarity retrieval over anchors with tension_5ch.
+// Returns a list of [anchor_map, sim_float] pairs, top_k by descending sim.
+fn retrieve(query_tension_5ch: [float], anchors: list, top_k: int) -> list {
+    let mut scored = []
+    let mut i = 0
+    while i < len(anchors) {
+        let a = anchors[i]
+        i = i + 1
+        if !a.contains_key("tension_5ch") { continue }
+        let sim = _cosine(query_tension_5ch, a["tension_5ch"])
+        scored.push([a, sim])
+    }
+    // sort descending by sim (stable insertion sort, mirrors Py sort key=-x[1]).
+    let mut j = 1
+    while j < len(scored) {
+        let key = scored[j]
+        let mut k = j - 1
+        while k >= 0 && to_float(scored[k][1]) < to_float(key[1]) {
+            scored[k + 1] = scored[k]
+            k = k - 1
+        }
+        scored[k + 1] = key
+        j = j + 1
+    }
+    let mut out = []
+    let mut m = 0
+    while m < len(scored) && m < top_k {
+        out.push(scored[m])
+        m = m + 1
+    }
+    return out
+}

@@ -1,0 +1,370 @@
+// HEXAD/PURE/launchers/dispatch_p21h_v3_smoke.hexa
+//
+// Smoke for dispatch_p21h_v3.hexa — 11 falsifiers:
+//   F-DISP-PARSE          — import succeeds (dispatcher parses)
+//   F-DISP-ARG-CONTRACT   — argv defaults + per-init LR vs ENV_CONTRACT.md
+//   F-DISP-SHA256         — match / mismatch / missing-file / skip
+//   F-DISP-RESUME         — pick largest <= cap / absolute max / none / empty
+//   F-DISP-IMPORT         — stdlib/cloud + stdlib/cloud/runpod imports resolve
+//   F-DISP-DRYRUN         — default dry-run prints plan, exits 0, zero real calls
+//   F-DISP-MOT            — 8-factor motivation calc returns score >= 0 (synthetic)
+//   F-DISP-MIT16          — P21H_MITOSIS_MAX default == 16 (R6 cap, PR #310)
+//   F-DISP-CORPUS-PATH    — --corpus-path flag parses + dry-run branches to scp
+//                           override (skip corpus_s101 + multi_wiki builds)
+//   F-DISP-SOURCES-UPLOAD — sources_upload pod-bootstrap (Phase D fire prereq):
+//                           (1) fn exists + 8 local sources resolvable;
+//                           (2) dry-run prints 8 scp lines + 1 mkdir line;
+//                           (3) end-to-end --corpus-path dry-run shows
+//                               sources_upload BEFORE corpus override BEFORE
+//                               train_launch.
+//   F-DISP-WAIT-LOOP      — M6 fix: result_pull_with_wait dispatcher-internal
+//                           poll loop (NO race on nohup'd train):
+//                           sub-1: dry-run shows retry plan (90 × 60s budget)
+//                                  instead of single attempt;
+//                           sub-2: synthetic result.json arrival simulates
+//                                  pull success — direct fn dry-run + plan
+//                                  banner confirms no single-shot race;
+//                           sub-3: synthetic train.log Traceback simulates
+//                                  crash detection (_crash_pattern_in + the
+//                                  6 documented patterns), plus progress
+//                                  scrape (_progress_step_from).
+
+import "./dispatch_p21h_v3.hexa"
+
+fn _assert(cond: bool, name: str) -> int {
+    if cond { println("  PASS " + name)   return 1 }
+    println("  FAIL " + name)
+    return 0
+}
+
+fn _f_disp_parse() -> int {
+    // F-DISP-PARSE — by virtue of `import` above succeeding, the
+    // dispatcher parses. We additionally exercise one no-side-effect call.
+    let parsed = parse_argv(["P21H_alpha", "random", "1337"])
+    let ok = to_string(parsed["variant"]) == "P21H_alpha"
+    return _assert(ok, "F-DISP-PARSE — dispatcher imported + parse_argv smoke")
+}
+
+fn _f_disp_arg_contract() -> int {
+    let mut ok = true
+    // Defaults when no argv.
+    let p_def = parse_argv([])
+    if to_string(p_def["variant"]) != "P21H_alpha" { ok = false }
+    if to_string(p_def["init_variant"]) != "random" { ok = false }
+    if to_string(p_def["seed"]) != "1337" { ok = false }
+    // Per-init LR defaults — bash case statement: random=3e-4, qwen=5e-5,
+    // vp21m=1e-4 (dispatch_p21h_v3_runpod.sh lines 59-64).
+    let e_random = build_env("random")
+    let e_qwen   = build_env("qwen")
+    let e_vp21m  = build_env("vp21m")
+    if to_string(e_random["P21H_LR"]) != "3e-4" { ok = false }
+    if to_string(e_qwen["P21H_LR"])   != "5e-5" { ok = false }
+    if to_string(e_vp21m["P21H_LR"])  != "1e-4" { ok = false }
+    // ENV_CONTRACT.md table defaults sample (3 keys).
+    if to_string(e_random["P21H_STEPS"])     != "2000" { ok = false }
+    if to_string(e_random["P21H_WIKI_FRAC"]) != "0.3"  { ok = false }
+    if to_string(e_random["SAVE_POD"])       != "1"    { ok = false }
+    return _assert(ok, "F-DISP-ARG-CONTRACT — argv defaults + per-init LR + ENV_CONTRACT table sample")
+}
+
+fn _f_disp_sha256() -> int {
+    let tmp_dir = exec("mktemp -d").trim()
+    let path = tmp_dir + "/payload.bin"
+    let _ = exec("printf 'hexa-pure-skeleton' > " + path)
+    let known = sha256_file(path)  // rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); byte-equal, no fork-exec
+    let mut ok = true
+    // (a) match.
+    let r_ok = sha256_verify(path, known)
+    if to_string(r_ok["status"]) != "ok" { ok = false }
+    // (b) mismatch — flip one hex char.
+    let bad = "deadbeef" + known.substring(8, len(known))
+    let r_bad = sha256_verify(path, bad)
+    if to_string(r_bad["status"]) != "fail" { ok = false }
+    if to_string(r_bad["reason"]) != "mismatch" { ok = false }
+    // (c) missing file.
+    let r_miss = sha256_verify(tmp_dir + "/nope.bin", known)
+    if to_string(r_miss["status"]) != "fail" { ok = false }
+    // (d) skip (back-compat — empty expected per ENV_CONTRACT.md §5 C3).
+    let r_skip = sha256_verify(path, "")
+    if to_string(r_skip["status"]) != "skip" { ok = false }
+    let _ = exec("rm -rf " + tmp_dir)
+    return _assert(ok, "F-DISP-SHA256 — match + mismatch + missing + skip")
+}
+
+fn _f_disp_resume() -> int {
+    let tmp_dir = exec("mktemp -d").trim()
+    let _ = exec("touch " + tmp_dir + "/ckpt_step100.pt")
+    let _ = exec("touch " + tmp_dir + "/ckpt_step500.pt")
+    let _ = exec("touch " + tmp_dir + "/other.txt")
+    let mut ok = true
+    // (a) max_step=300 → pick 100.
+    let r1 = resume_glob(tmp_dir, 300)
+    if to_string(r1["status"]) != "ok" { ok = false }
+    if to_string(r1["step"]) != "100" { ok = false }
+    // (b) max_step=500 → pick 500.
+    let r2 = resume_glob(tmp_dir, 500)
+    if to_string(r2["step"]) != "500" { ok = false }
+    // (c) max_step=-1 → absolute max (500).
+    let r3 = resume_glob(tmp_dir, -1)
+    if to_string(r3["step"]) != "500" { ok = false }
+    // (d) max_step=50 → none.
+    let r4 = resume_glob(tmp_dir, 50)
+    if to_string(r4["status"]) != "none" { ok = false }
+    // (e) empty dir.
+    let empty_dir = exec("mktemp -d").trim()
+    let r5 = resume_glob(empty_dir, -1)
+    if to_string(r5["status"]) != "none" { ok = false }
+    let _ = exec("rm -rf " + tmp_dir + " " + empty_dir)
+    return _assert(ok, "F-DISP-RESUME — pick largest <= cap + absolute max + none + empty")
+}
+
+fn _f_disp_import() -> int {
+    // F-DISP-IMPORT — the `use "stdlib/cloud/cloud"` + `use ".../runpod"` in
+    // the dispatcher resolve at parse time (this smoke imports it). Exercise
+    // runpod_pod_opts (pure helper, no remote call) to prove the symbols are
+    // live in scope, not merely parsed.
+    let opts = runpod_pod_opts("12345")
+    let mut ok = len(opts) >= 2
+    if opts[0] != "-p" { ok = false }
+    if opts[1] != "12345" { ok = false }
+    return _assert(ok, "F-DISP-IMPORT — stdlib/cloud + stdlib/cloud/runpod symbols live")
+}
+
+fn _f_disp_dryrun() -> int {
+    // F-DISP-DRYRUN — run the dispatcher with no --fire flag in a subprocess;
+    // it must print the plan, exit 0, and make zero real calls (every step
+    // prints a [dry-run] line; no real-fire stdlib markers). The dispatcher
+    // is the smoke's sibling; locate it via the first matching path.
+    let disp = exec("ls HEXAD/PURE/launchers/dispatch_p21h_v3.hexa 2>/dev/null || find . -name dispatch_p21h_v3.hexa -not -name '*smoke*' 2>/dev/null | head -1").trim()
+    let out = exec("hexa run " + disp + " P21H_alpha random 1337 2>&1; echo __RC__=$?")
+    let mut ok = out.index_of("__RC__=0") >= 0
+    // default-dry-run banner + per-step dry-run lines present.
+    if out.index_of("[DRY-RUN]") < 0 { ok = false }
+    if out.index_of("[dry-run] pod_create") < 0 { ok = false }
+    if out.index_of("[dry-run] train_launch") < 0 { ok = false }
+    // M6: main() now uses result_pull_with_wait (dispatcher-internal poll
+    // loop) instead of single-shot result_pull. The legacy `[dry-run]
+    // result_pull` marker is replaced by `[dry-run] result_pull_with_wait`.
+    if out.index_of("[dry-run] result_pull_with_wait") < 0 { ok = false }
+    // zero real fire — no real stdlib success markers should appear.
+    if out.index_of("started; remote pid") >= 0 { ok = false }
+    if out.index_of("[pod_create] pod-") >= 0 { ok = false }
+    return _assert(ok, "F-DISP-DRYRUN — default dry-run prints plan, rc=0, zero real calls")
+}
+
+fn _f_disp_mot() -> int {
+    // F-DISP-MOT — 8-factor motivation calc returns a score in [0, 1] on a
+    // synthetic substrate snapshot. Wires measure_motivation_8factor to the
+    // spontaneous_lib.hexa pure-fn battery (factor_relevance .. dynamics +
+    // motivation_score weighted sum, B-SPONT-1 closed-form).
+    let synth = #{
+        "phi_final": "0.4",
+        "retrieve_cos_sim": "0.7",
+        "curiosity_ema": "0.5",
+        "tension_delta": "0.2",
+        "bridge_gate_value": "0.5",
+        "split_event_recent": "true",
+        "ratchet": "0.1",
+        "silence_seconds": "15.0",
+    }
+    let block = measure_motivation_8factor(synth)
+    let mut ok = true
+    if !block.has_key("motivation_score") { ok = false }
+    let score = to_float(to_string(block["motivation_score"]))
+    if score < 0.0 { ok = false }
+    if score > 1.0 { ok = false }
+    // All 8 factor keys must be present.
+    let keys = ["relevance", "gap", "curiosity", "pain", "coherence", "originality", "balance", "dynamics"]
+    let mut i = 0
+    while i < len(keys) {
+        if !block.has_key(keys[i]) { ok = false }
+        i = i + 1
+    }
+    return _assert(ok, "F-DISP-MOT — 8-factor motivation calc (synthetic) score in [0,1] + all 8 keys present")
+}
+
+fn _f_disp_mit16() -> int {
+    // F-DISP-MIT16 — P21H_MITOSIS_MAX default lowered 128 -> 16 per PR #310
+    // Track 1 E2 forensics (R6 recommendation). Env override still honoured;
+    // this test asserts the default when the env is unset.
+    let _ = exec("unset P21H_MITOSIS_MAX")
+    let env = build_env("random")
+    let v = to_string(env["P21H_MITOSIS_MAX"])
+    let ok = v == "16"
+    return _assert(ok, "F-DISP-MIT16 — P21H_MITOSIS_MAX default == 16 (R6 cap, PR #310)")
+}
+
+fn _f_disp_corpus_path() -> int {
+    // F-DISP-CORPUS-PATH — --corpus-path flag (a) parses on argv (b) is
+    // absent → empty default (back-compat) (c) dry-run branches to
+    // corpus_scp_override (skip both legacy build fns; print the override
+    // banner with the supplied local path).
+    let mut ok = true
+    // (a) flag parses + carries value.
+    let p1 = parse_argv(["--corpus-path", "/tmp/xc.jsonl", "P21H_PhaseD_v1", "qwen", "1337"])
+    if to_string(p1["corpus_path"]) != "/tmp/xc.jsonl" { ok = false }
+    if to_string(p1["variant"]) != "P21H_PhaseD_v1" { ok = false }
+    if to_string(p1["init_variant"]) != "qwen" { ok = false }
+    if to_string(p1["seed"]) != "1337" { ok = false }
+    // (b) flag absent → empty default (back-compat).
+    let p2 = parse_argv(["P21H_alpha", "random", "1337"])
+    if to_string(p2["corpus_path"]) != "" { ok = false }
+    // (c) flag mixed with --fire + --measure-motivation still parses.
+    let p3 = parse_argv(["--fire", "--measure-motivation", "--corpus-path", "/x/y.jsonl", "V", "qwen", "42"])
+    if to_string(p3["fire"]) != "1" { ok = false }
+    if to_string(p3["measure_motivation"]) != "1" { ok = false }
+    if to_string(p3["corpus_path"]) != "/x/y.jsonl" { ok = false }
+    // (d) dry-run end-to-end: invoke dispatcher in subprocess with
+    // --corpus-path; expect the override banner + corpus_scp_override
+    // dry-run line; expect NO corpus_build_anima / multi_wiki dry-run
+    // lines (the branch SKIPs them).
+    let disp = exec("ls HEXAD/PURE/launchers/dispatch_p21h_v3.hexa 2>/dev/null || find . -name dispatch_p21h_v3.hexa -not -name '*smoke*' 2>/dev/null | head -1").trim()
+    let out = exec("hexa run " + disp + " --corpus-path /tmp/phaseD.jsonl P21H_PhaseD_smoke qwen 1337 2>&1; echo __RC__=$?")
+    if out.index_of("__RC__=0") < 0 { ok = false }
+    if out.index_of("corpus_override=/tmp/phaseD.jsonl") < 0 { ok = false }
+    if out.index_of("[dry-run] corpus_scp_override") < 0 { ok = false }
+    if out.index_of("SKIP corpus_s101 + multi_wiki builds") < 0 { ok = false }
+    // legacy build fns MUST NOT fire in override mode.
+    if out.index_of("[dry-run] corpus_build_anima") >= 0 { ok = false }
+    if out.index_of("[dry-run] corpus_build_multilingual_wiki") >= 0 { ok = false }
+    return _assert(ok, "F-DISP-CORPUS-PATH — flag parses + dry-run branches to scp override (skip legacy builds)")
+}
+
+fn _f_disp_sources_upload() -> int {
+    // F-DISP-SOURCES-UPLOAD — pod-bootstrap fn must (a) be in scope, (b) emit
+    // 8 scp + 1 mkdir line on dry-run, (c) when wired into main() with
+    // --corpus-path, sources_upload fires BEFORE corpus_scp_override BEFORE
+    // train_launch (legacy parity vs dispatch_p21h_v3_runpod.sh:185-196).
+    let mut ok = true
+    // (1) 8 local sources resolvable (would fail-fast on a real fire).
+    let root = "/Users/ghost/core/anima"
+    let s187 = root + "/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21"
+    let bdir = root + "/state/corpus_s101_build_s102_2026_05_19"
+    let s16  = root + "/state/carving_dataregime_s16_2026_05_18"
+    let sources = [
+        s187 + "/train_p21h_v3.py",
+        s187 + "/launch_trainer_p21.sh",
+        s187 + "/build_multilingual_corpus_p21m.py",
+        s187 + "/conscious_decoder_v3.py",
+        s187 + "/kosmos_io.py",
+        s187 + "/mitosis_lib.py",
+        s16  + "/corpus_carving_s16_generator.py",
+        bdir + "/build_corpus_s101.py",
+    ]
+    let mut i = 0
+    while i < len(sources) {
+        let exists = exec("test -f " + sources[i] + " && echo yes || echo no").trim()
+        if exists != "yes" {
+            println("    [sub-1] MISSING source: " + sources[i])
+            ok = false
+        }
+        i = i + 1
+    }
+    // (2) Direct dry-run call → 8 scp lines + 1 mkdir line printed.
+    //     We invoke the function in-process (dispatcher imported).
+    let tmp_log = exec("mktemp").trim()
+    let _ = exec("rm -f " + tmp_log)
+    // Capture sources_upload's dry-run println output. The dispatcher's
+    // sources_upload uses println which goes to stdout; we proxy via a
+    // subprocess wrapper (no stdout-capture builtin available).
+    let disp = exec("ls HEXAD/PURE/launchers/dispatch_p21h_v3.hexa 2>/dev/null || find . -name dispatch_p21h_v3.hexa -not -name '*smoke*' 2>/dev/null | head -1").trim()
+    let out2 = exec("hexa run " + disp + " P21H_test random 1337 2>&1; echo __RC__=$?")
+    if out2.index_of("__RC__=0") < 0 { ok = false }
+    if out2.index_of("[dry-run] sources_upload: cloud_run_opts") < 0 { ok = false }
+    // 8 scp lines expected — count substring occurrences via split.
+    let parts = out2.split("[dry-run] sources_upload: cloud_copy_to_opts")
+    if len(parts) - 1 != 8 {
+        println("    [sub-2] expected 8 scp lines, got " + to_string(len(parts) - 1))
+        ok = false
+    }
+    // mkdir line must mention 6 dirs marker.
+    if out2.index_of("mkdir -p 6 dirs") < 0 { ok = false }
+    // (3) End-to-end ordering with --corpus-path: sources_upload BEFORE
+    //     corpus_scp_override BEFORE train_launch.
+    let out3 = exec("hexa run " + disp + " --corpus-path /tmp/phaseD.jsonl P21H_PhaseD_smoke qwen 1337 2>&1; echo __RC__=$?")
+    if out3.index_of("__RC__=0") < 0 { ok = false }
+    let i_src = out3.index_of("[dry-run] sources_upload:")
+    let i_ovr = out3.index_of("[dry-run] corpus_scp_override:")
+    let i_trn = out3.index_of("[dry-run] train_launch:")
+    if i_src < 0 || i_ovr < 0 || i_trn < 0 {
+        println("    [sub-3] missing one of: sources_upload / corpus_scp_override / train_launch")
+        ok = false
+    }
+    if i_src >= i_ovr {
+        println("    [sub-3] sources_upload must precede corpus_scp_override")
+        ok = false
+    }
+    if i_ovr >= i_trn {
+        println("    [sub-3] corpus_scp_override must precede train_launch")
+        ok = false
+    }
+    return _assert(ok, "F-DISP-SOURCES-UPLOAD — 8 sources resolvable + dry-run prints 8 scp + 1 mkdir + ordering before override + train")
+}
+
+fn _f_disp_wait_loop() -> int {
+    // F-DISP-WAIT-LOOP — M6 fix: result_pull_with_wait dispatcher-internal
+    // poll loop. Three sub-falsifiers covering the race-free contract.
+    let mut ok = true
+    // sub-1: dry-run end-to-end shows retry plan (budget+sniffers) instead of
+    //        single attempt; legacy `[dry-run] result_pull:` marker MUST NOT
+    //        appear in main() flow (main() routes through wait-loop now).
+    let disp = exec("ls HEXAD/PURE/launchers/dispatch_p21h_v3.hexa 2>/dev/null || find . -name dispatch_p21h_v3.hexa -not -name '*smoke*' 2>/dev/null | head -1").trim()
+    let out = exec("hexa run " + disp + " P21H_alpha random 1337 2>&1; echo __RC__=$?")
+    if out.index_of("__RC__=0") < 0 { ok = false }
+    if out.index_of("[dry-run] result_pull_with_wait") < 0 { ok = false }
+    if out.index_of("90") < 0 || out.index_of("60s") < 0 { ok = false }
+    if out.index_of("Traceback/FATAL/OOM/Killed") < 0 { ok = false }
+    if out.index_of("step=N | loss=X") < 0 { ok = false }
+    let parts = out.split("[dry-run] result_pull:")
+    if len(parts) - 1 > 0 { ok = false }
+    // sub-2: synthetic result.json arrival simulates pull success — direct
+    //        dry-run call returns status="dry-run" + reason set; the fn
+    //        signature accepts (host, opts, p21hr, vdir, max_retries,
+    //        interval_s, dry_run) and the loop body is unreached in dry-run
+    //        (no real cloud_copy_from call). This proves the wrapper is
+    //        in-scope and the success-path branch is the documented one.
+    let plan = result_pull_with_wait("root@dry", ["-p", "0"], "/workspace/p21hr", "v_dummy", 30, 60, true)
+    if to_string(plan["status"]) != "dry-run" { ok = false }
+    if !plan.has_key("reason") { ok = false }
+    if !plan.has_key("tries") { ok = false }
+    // sub-3: synthetic train.log Traceback simulates crash detection (the 6
+    //        documented patterns) + clean-log false-positive + progress
+    //        scrape (`step=N | loss=X` from synthetic tail).
+    let cases = [
+        ["Traceback (most recent call last):\n  File \"x.py\"", "Traceback"],
+        ["RuntimeError: CUDA out of memory.", "OOM_CUDA"],
+        ["torch.cuda.OutOfMemoryError: OOM in step 123", "OOM"],
+        ["dmesg: Killed process 1234 (python)", "Killed"],
+        ["FATAL — pod ran out of disk", "FATAL"],
+        ["RuntimeError: index out of range", "RuntimeError"],
+    ]
+    let mut i = 0
+    while i < len(cases) {
+        if _crash_pattern_in(to_string(cases[i][0])) != to_string(cases[i][1]) { ok = false }
+        i = i + 1
+    }
+    if _crash_pattern_in("step=100 | loss=4.2\nstep=200 | loss=3.8\n") != "" { ok = false }
+    let cookie = _progress_step_from("[ts] step=100 | loss=4.2\n[ts] step=200 | loss=3.8\n")
+    if cookie.index_of("step=200") < 0 { ok = false }
+    if _progress_step_from("starting training...\nloading data...\n") != "" { ok = false }
+    return _assert(ok, "F-DISP-WAIT-LOOP — sub1 retry plan + sub2 fn dry-run + sub3 crash 6/6 + progress scrape")
+}
+
+fn main() {
+    println("[dispatch_p21h_v3_smoke] START")
+    let mut n_pass = 0
+    n_pass = n_pass + _f_disp_parse()
+    n_pass = n_pass + _f_disp_arg_contract()
+    n_pass = n_pass + _f_disp_sha256()
+    n_pass = n_pass + _f_disp_resume()
+    n_pass = n_pass + _f_disp_import()
+    n_pass = n_pass + _f_disp_dryrun()
+    n_pass = n_pass + _f_disp_mot()
+    n_pass = n_pass + _f_disp_mit16()
+    n_pass = n_pass + _f_disp_corpus_path()
+    n_pass = n_pass + _f_disp_sources_upload()
+    n_pass = n_pass + _f_disp_wait_loop()
+    println("[dispatch_p21h_v3_smoke] END: " + to_string(n_pass) + "/11 PASS")
+    if n_pass < 11 { exit(1) }
+    exit(0)
+}

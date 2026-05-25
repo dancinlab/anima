@@ -1,0 +1,25 @@
+[21:26:46] ============================================================
+[21:26:46] BLM Phase 4 PARTIAL — add BOLD substrate to existing CLM+EEG run
+[21:26:46] ============================================================
+[21:26:46] prior records loaded: n_windows=32
+[21:26:46] loading BOLD from /tmp/algonauts2025_sub01/algonauts_2025.competitors/fmri/sub-01/func/sub-01_task-friends_space-MNI152NLin2009cAsym_atlas-Schaefer18_parcel-1000Par7Net_desc-s123456_bold.h5...
+[21:26:46] loaded 64 BOLD sessions (first key: ses-001_task-s01e02a shape (482, 1000))
+[21:26:46] sampling 32 BOLD windows (16 TRs each)...
+[21:26:46] computing BOLD phi proxy on all windows...
+[21:26:46] BOLD phi proxy n_valid=32/32 mean=21.5925 std=2.5726 range=[16.1894, 26.4892]
+[21:26:46] 3-substrate paired n_valid=32/32
+[21:26:46] 3x3 Pearson r:
+[21:26:46]   CLM : +1.0000  +0.0005  +0.0357
+[21:26:46]   EEG : +0.0005  +1.0000  -0.0001
+[21:26:46]   BOLD: +0.0357  -0.0001  +1.0000
+[21:26:46] 3x3 Spearman r:
+[21:26:46]   CLM : +1.0000  +0.0341  +0.0202
+[21:26:46]   EEG : +0.0341  +1.0000  -0.0576
+[21:26:46]   BOLD: +0.0202  -0.0576  +1.0000
+[21:26:46] running permutation null per pair (N=1000)...
+[21:26:46]   CLM-EEG: r=+0.0005  p_perm=1.0000  null_q95=0.3548  exceeds_q95=False
+[21:26:47]   CLM-BOLD: r=+0.0357  p_perm=0.8390  null_q95=0.3544  exceeds_q95=False
+[21:26:47]   EEG-BOLD: r=-0.0001  p_perm=1.0000  null_q95=0.3476  exceeds_q95=False
+[21:26:47] [verdict] F-BLM-cond.2_PARTIAL_FAIL  (strict=0/3, moderate=0/3, above_q95=0/3)
+[21:26:47] tolerance band (|delta phi|/phi <= 0.30): CLM-EEG=FAIL(1.07), CLM-BOLD=PASS(0.29), EEG-BOLD=FAIL(1.10)
+[21:26:47] [done] wrote /tmp/blm_phase4_3substrate_2026_05_03/results.json elapsed=0.6s

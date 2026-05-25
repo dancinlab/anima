@@ -1,0 +1,11 @@
+// scripts/preflight_check.hexa — Hexa wrapper (Phase 2d port)
+//
+// R37/AN13/L3-PY (2026-04-18): original wrapper invoked
+// `python3 $HOME/Dev/anima/scripts/preflight_check.py $HEXA_ARGS`.
+// Wrapper-fallback python3 call removed. See CLAUDE.md §.py 절대 금지.
+// Hexa-native preflight check required.
+
+fn main() {
+    println("[R37/AN13/L3-PY] BLOCKED: scripts/preflight_check.hexa python3 invocation removed 2026-04-18. Hexa-native preflight check required. See CLAUDE.md.")
+    exit(1)
+}

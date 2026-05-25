@@ -1,0 +1,17 @@
+{
+  "schema": "anima/emerge_chat_head_swap_kogpt2/verdict/1",
+  "ts_utc": "2026-05-05T18:45:45Z",
+  "clm_hidden_dim": 768,
+  "kogpt_head_dim": 768,
+  "dim_match": true,
+  "korean_in_continuation": 58,
+  "ascii_in_continuation": 0,
+  "verdict": "PASS_HEAD_SWAP_RECOVERS_KOREAN",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 dim mismatch handling: truncate/pad — naive, lossy",
+    "C3 KoGPT2 vocab ≠ CLM SP vocab; same hidden 다른 token id meaning",
+    "C4 CLM L15 hidden trained for CLM head_a not KoGPT2 — geometry mismatch",
+    "C5 single prompt 안녕"
+  ]
+}

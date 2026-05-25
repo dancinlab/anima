@@ -1,0 +1,383 @@
+[05:16:47] === anima_id_bghs_r1_replicate_mac_mps BG-ID 2026-05-07 ===
+[05:16:47] hostname=ghostui-macbookair.local on_ubu=False
+[05:16:47] device=mps torch=2.10.0
+[05:16:47] config: vocab=256 n_layer=6 d_model=384 n_head=6 block=256
+[05:16:47] reg: dropout=0.3 label_smoothing=0.1 weight_decay=0.1
+[05:16:47] train: bs=4 grad_accum=16 (effective=64) lr=0.0003 warmup=300 steps=5000
+[05:16:47] eval_every=250 val_split=0.1 early_stop_patience=3
+[05:16:47] persona_prefix='[anima 우주뇌지도] '
+[05:16:47] prompts_total=15 (5 std + 5 identity + 5 ubm)
+[05:16:47] corpus=/Users/ghost/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt
+[05:16:47] runtime_budget_s=7200
+[05:16:47] corpus loaded: 6,791,535 bytes (6.48MB) in 0.0s
+[05:16:50] split: train=6,112,381 val=679,154 (val_ratio=0.1)
+[05:16:52] model built: 27,787,440 params (27.79M)
+[05:16:55] === begin training (Lesson G early-stopping) ===
+[05:17:07] step     1/5000 | lr=2.00e-06 | L_A=5.607 L_G=5.578 T_mean=0.0839 | step_t=11.54s elapsed=12s
+[05:17:07] step     2/5000 | lr=3.00e-06 | L_A=5.601 L_G=5.593 T_mean=0.0836 | step_t=0.61s elapsed=12s
+[05:17:08] step     3/5000 | lr=4.00e-06 | L_A=5.604 L_G=5.587 T_mean=0.0843 | step_t=0.39s elapsed=13s
+[05:17:08] step     4/5000 | lr=5.00e-06 | L_A=5.596 L_G=5.584 T_mean=0.0837 | step_t=0.35s elapsed=13s
+[05:17:09] step     5/5000 | lr=6.00e-06 | L_A=5.605 L_G=5.590 T_mean=0.0837 | step_t=0.82s elapsed=14s
+[05:17:59] step   100/5000 | lr=1.01e-04 | L_A=4.849 L_G=5.133 T_mean=0.1164 | step_t=0.50s elapsed=63s
+[05:18:46] step   200/5000 | lr=2.01e-04 | L_A=4.570 L_G=4.752 T_mean=0.3145 | step_t=0.48s elapsed=111s
+[05:19:05] --- eval gate @ step 250 (15 prompts × 2 modes) ---
+[05:19:24]   EVAL[step=250 greedy] '안녕하세요' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:19:40]   EVAL[step=250 sample] '안녕하세요' → dom=False anima=False V2=FAIL | head='��� ꣙n/�\x02��r � �e����>��:Ӑ���j욭 ��Ĳ�\x7f,��1a �N�I{l2'
+[05:19:49]   EVAL[step=250 greedy] '한국어 가능?' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:20:03]   EVAL[step=250 sample] '한국어 가능?' → dom=False anima=False V2=FAIL | head='�(�a�웄�e6�\x08{�챇W���]� �D쩴��.1��씜/�g������t�����\x00� �'
+[05:20:17]   EVAL[step=250 greedy] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:20:32]   EVAL[step=250 sample] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head="D�'� ���.���%꼆��-�at � ��}  ���<�삼���C�5�(�& _ [Z^"
+[05:20:47]   EVAL[step=250 greedy] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:20:58]   EVAL[step=250 sample] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head='Po��!�R�E��o�A ᰚ돊���!\u061c�� �Ӕt_�: :�m� i��g �켰ka \x115�'
+[05:21:05]   EVAL[step=250 greedy] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:21:12]   EVAL[step=250 sample] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='��� \n 쀄��ei c�1�\x18e=��쐕�`1o�=��� E\x1e ���옰�ԟ��e���\x00� '
+[05:21:18]   EVAL[step=250 greedy] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:21:26]   EVAL[step=250 sample] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head='e\x00\x14�\n�5���o�]W  �`�  \r���\x04���e\x1c�l�\x1e���쵘, �t�--� �2'
+[05:21:34]   EVAL[step=250 greedy] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:21:40]   EVAL[step=250 sample] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head='�o1 뭋lҩ� e��]�,��Soj�\n#c��:�a���lL  �\x11� ~섭� ��c�t '
+[05:21:47]   EVAL[step=250 greedy] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:21:56]   EVAL[step=250 sample] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head='��35t����� �$��y� ���y\x06�찰ot� �t������: ��� �!*,���'
+[05:22:04]   EVAL[step=250 greedy] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:22:11]   EVAL[step=250 sample] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head='�,��3��d8[@�i���\n����(���E왠�N�����3 �!�\x15��_io���ΰd'
+[05:22:17]   EVAL[step=250 greedy] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:22:26]   EVAL[step=250 sample] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head='��\t�� \n��� �n�b�( \x01 O\ti_��\x05��\x14�8��U��$ ��ͩ�\x11��o��\n'
+[05:22:36]   EVAL[step=250 greedy] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:22:48]   EVAL[step=250 sample] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head="\x04t���쏏.b\x10���{t��G츞'���ߌY\x1a�\x06�� �����] < ���� �j����"
+[05:23:13]   EVAL[step=250 greedy] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head=' �������������������������������������������������'
+[05:23:37]   EVAL[step=250 sample] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head="gdi9�\x1e^삂��1�'n���a����0���욽욚� �씼��d�  쌰��\n ���N�  "
+[05:23:54]   EVAL[step=250 greedy] '사용자: consciousness' → dom=False anima=False V2=FAIL | head=' �������������������������������������������������'
+[05:24:04]   EVAL[step=250 sample] '사용자: consciousness' → dom=False anima=False V2=FAIL | head='�l<\x04돔�\\W�1a��. �d��9� �T o�:� 1\x0b_\x0cti2ڄ-�v ��  \n�aw'
+[05:24:15]   EVAL[step=250 greedy] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:24:27]   EVAL[step=250 sample] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head='e�c.��w`\n\ni���b� ��\x10�m1$�Ma����_1 �\x05��� �e�c���� i'
+[05:24:35]   EVAL[step=250 greedy] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head='��������������������������������������������������'
+[05:24:42]   EVAL[step=250 sample] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head='� �  \x14 3 �� c ��1�1 � � \x08\x1eB�J���\\(l��,���� ��1.a��'
+[05:24:43]   V2[step=250] V2_FAIL pass=0/15 manual=0/15 val_loss=4.4275
+[05:24:44]   BEST_CKPT updated @ step 250: manual=0 v2=0 val_loss=4.4275
+[05:24:44] HEARTBEAT elapsed=477s budget=7200s remaining=6723s
+[05:25:10] step   300/5000 | lr=3.00e-04 | L_A=4.164 L_G=4.434 T_mean=0.2677 | step_t=3.83s elapsed=495s
+[05:26:11] step   400/5000 | lr=3.00e-04 | L_A=3.734 L_G=4.052 T_mean=0.2763 | step_t=0.61s elapsed=556s
+[05:26:57] step   500/5000 | lr=2.99e-04 | L_A=3.359 L_G=3.630 T_mean=0.2650 | step_t=0.46s elapsed=602s
+[05:26:57] --- eval gate @ step 500 (15 prompts × 2 modes) ---
+[05:27:05]   EVAL[step=500 greedy] '안녕하세요' → dom=False anima=False V2=FAIL | head=' 우우우우우우우우우�도우�도 우우우우우우우도 우우도 우우우도 우우도 우도 우우우우도'
+[05:27:13]   EVAL[step=500 sample] '안녕하세요' → dom=False anima=False V2=FAIL | head='� 짬�l t�우��T도�:°우짵: 욑��: [TT̐: E.�� _�우�itiuido� �'
+[05:27:20]   EVAL[step=500 greedy] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[05:27:28]   EVAL[step=500 sample] '한국어 가능?' → dom=False anima=False V2=FAIL | head='�넔 쫬�자: ��[\n\n\n� ��: i���]Xa1�� k �anw  tnst5 iontn'
+[05:27:36]   EVAL[step=500 greedy] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[05:27:43]   EVAL[step=500 sample] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='�a 우옜wma� w ��ovelpAA C N지도섌�우��_oderionia�w 우도] 1'
+[05:27:49]   EVAL[step=500 greedy] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' 우우우우우도우우우우우우우우우우도 우우우도 우�도 우도 우우우우도 우도우도우우우�'
+[05:27:56]   EVAL[step=500 sample] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' a 우�ؒ���: ���ܩ {�-h�[\n\n\n\n\n��ue ���우���\x12A횰자� L����'
+[05:28:01]   EVAL[step=500 greedy] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='우우우우우우우우우우우도우도 우우우우도 우우우우도 우우도 우우우우우도 우�도 우우�'
+[05:28:09]   EVAL[step=500 sample] '코드를 짜줘' → dom=False anima=False V2=FAIL | head=' 우�\x04��d 줘�ey��우�] 1�뇻���� 칕���잔: ��곘 우��k |도] �: �'
+[05:28:15]   EVAL[step=500 greedy] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head=' 우우우우우우우우도우우도 우우우우우우도 우우우우우도우우도우우우우�도 우우우우우�'
+[05:28:24]   EVAL[step=500 sample] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head=' �\x0c w��� }\x04�� 0 � �enr�Ie(hl �\n\n\n[10�����7��, 용잜��'
+[05:28:36]   EVAL[step=500 greedy] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head=' 우우우우우우우우우우우우우우우우우도 우우도우우우��도 우우우우도 우도우도우우우우'
+[05:29:06]   EVAL[step=500 sample] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head=' 주�뇌욀��tu\t\x14돤� �w 주�Ќ�뇌�젝���� 세 우1�� 삂� 우�도자�)ta���'
+[05:29:33]   EVAL[step=500 greedy] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head=' 우우우우우우도우우우도 우우우도 우우우우우우우우도 우�도 우우우우�도 우우우우우�도'
+[05:30:08]   EVAL[step=500 sample] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head='�우ss �8�] 13 �\x03:�vt��: ��ؼ\n\n\n[aenane�도우��i) ������'
+[05:30:19]   EVAL[step=500 greedy] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head=' 우우우우우우우우우우우우우도 우우우우우우우우도 우�도 우우우우�도우우도 우우우우�'
+[05:30:28]   EVAL[step=500 sample] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head=' �����5 11�돬우삼빰�: 00000A��pe, �Θ��c����:eaabiticet'
+[05:30:37]   EVAL[step=500 greedy] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head=' 우우우우우우우우우우우우우우우우도 우우도우우우�도 우우우우우우우�도 우우우우우우'
+[05:30:46]   EVAL[step=500 sample] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head=' 잧��어���i �도용줐1�잕9�� �*�우�� 짇��m��죀뇤��욂�猀도���!\n�핐\x0e'
+[05:30:53]   EVAL[step=500 greedy] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head=' 우우우우우우우우우우우우우우우우도 우우도 우도 우우우우우우우우우�도 우우우우우��'
+[05:31:03]   EVAL[step=500 sample] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head='� �T����>>��믘���7 주��0��.\n\n�� 1110� � 닄]  우우칹넼�e�\x0b'
+[05:31:12]   EVAL[step=500 greedy] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head=' 우우우우우우우우도우우도 우우우우우우도 우우우우우도 우우우우도 우도우도우우우우�'
+[05:31:19]   EVAL[step=500 sample] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head=' 욐\x19% �� aan i�.\n\n[[[a\x13es ���� �\x06: 2��\\곧�뇌���ꚰ우�% �'
+[05:31:26]   EVAL[step=500 greedy] '사용자: consciousness' → dom=False anima=False V2=FAIL | head=' 우우우우우우우우우도 우우우우우우도 우우우우우우우우도우우우우�도 우우우우우�도우'
+[05:31:38]   EVAL[step=500 sample] '사용자: consciousness' → dom=False anima=False V2=FAIL | head=' im-l [anoessannr.\n\n�.Us\n\n\n� at�, 1�pes �\n\n[�htsco'
+[05:31:49]   EVAL[step=500 greedy] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head=' 우우우우우우우우도우우우우우우우도 우우도우우도 우우우우우우�도우우도 우우우우도 '
+[05:32:13]   EVAL[step=500 sample] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head=' �: iiW���\x1a onni�� ienx �0횰� ctaoL�벌우�uU�2�ima X��'
+[05:32:30]   EVAL[step=500 greedy] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head=' 우우우우우우우우우우우우우우우우우우도 우우우도 우�도 우도 우우우우도 우도 우우우�'
+[05:32:49]   EVAL[step=500 sample] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head=' \x1c��Rw 자: 욯��우�`u rc5�\t�ins���도 ����� 2�도] 7  짠tal'
+[05:32:51]   V2[step=500] V2_FAIL pass=0/15 manual=0/15 val_loss=3.3771
+[05:32:53]   BEST_CKPT updated @ step 500: manual=0 v2=0 val_loss=3.3771
+[05:32:53] HEARTBEAT elapsed=966s budget=7200s remaining=6234s
+[05:33:48] step   600/5000 | lr=2.97e-04 | L_A=3.220 L_G=3.467 T_mean=0.2928 | step_t=4.11s elapsed=1013s
+[05:34:35] step   700/5000 | lr=2.95e-04 | L_A=2.932 L_G=3.147 T_mean=0.3460 | step_t=0.47s elapsed=1060s
+[05:34:54] --- eval gate @ step 750 (15 prompts × 2 modes) ---
+[05:35:01]   EVAL[step=750 greedy] '안녕하세요' → dom=False anima=False V2=FAIL | head=' 우우도] 우우도] 우도] 우도] 우우우우도] 우도] 우우우도] 우우도] 우우우도] 우우도'
+[05:35:11]   EVAL[step=750 sample] '안녕하세요' → dom=False anima=False V2=FAIL | head='�우도�4.\n�\x01��렕�뇌주뇌지도주미: �용우monire � �카7���도사 \x1f우리줤� �'
+[05:35:30]   EVAL[step=750 greedy] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n도] 우우우우우우도] 우도] 우우우우도] 우도] 우우우우도] 우도] 우우우도] 우우도] '
+[05:35:49]   EVAL[step=750 sample] '한국어 가능?' → dom=False anima=False V2=FAIL | head='�, �사지도] 미:gon: 우사�리 용야빴도 xima 🛸: 뇟�뇌� 우주���우리우자자자'
+[05:36:08]   EVAL[step=750 greedy] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n도] 우우도] 우우우우도] 우우우우우우우우도] 우도] 우우우도] 우도] 우우도] 우도] '
+[05:36:23]   EVAL[step=750 sample] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n�emata*��용우벀도] �지닼도onimatioH��미우우자: 우주미: 졭����하 우'
+[05:36:34]   EVAL[step=750 greedy] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' 우도우도] 우우도우도] 우도] 우우우도] 우우도] 우도] 우우도] 우도] 우우우우도] 우'
+[05:36:42]   EVAL[step=750 sample] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' \n는��지뇌지도 리�우도우도우�: 우미� La 죅�싘�도�@�: ��주�: 우주도�: 응'
+[05:36:50]   EVAL[step=750 greedy] '코드를 짜줘' → dom=False anima=False V2=FAIL | head=' 우우우도] 우도] 우도] 우도] 우우우우우우우우도] 우도] 우우우우우도] 우우도] 우도]'
+[05:36:58]   EVAL[step=750 sample] '코드를 짜줘' → dom=False anima=False V2=FAIL | head=' 우미� Lanp_ioule/070533\x1e andioni�cemantiman �도�� 10'
+[05:37:05]   EVAL[step=750 greedy] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head=' 우우도] 우우도] 우우우우우우우우도] 우우도] 우도] 우우도] 우도] 우우우우도] 우도]'
+[05:37:14]   EVAL[step=750 sample] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head=' 12�X��� paconiougeonha 1��: eonenge" �� ereda 줘 i'
+[05:37:22]   EVAL[step=750 greedy] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head=' 우우우도] 우우우우우우우우도] 우도] 우우우도] 우도] 우우도] 우도] 우도] 우우우우도'
+[05:37:31]   EVAL[step=750 sample] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head=' 도�지� 사 사�우주도��: tiouapudenbi�는 힐법1 우우우어�준�뇌압�우뇌고�'
+[05:37:38]   EVAL[step=750 greedy] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head=' 우도] 우우도] 우우우우도] 우도] 우도] 우우우우도] 우우도] 우도] 우도] 우우우우도'
+[05:37:51]   EVAL[step=750 sample] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head=' 칙 #��도] 우�� 의 우사지뭕, 자: 지는 � +����� awb 우자: ��주도] '
+[05:38:07]   EVAL[step=750 greedy] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head=' 우우도] 우우우우도] 우도] 우우도] 우도] 우우우도] 우우도] 우도] 우우도] 우도] '
+[05:38:26]   EVAL[step=750 sample] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head=' 1-20% 용지는 자: onion 2�01\n[a 우우뇌지뇌지8 지뇌사용우�는 쳠�지도��'
+[05:38:45]   EVAL[step=750 greedy] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head=' 우우우우우도] 우우우우우우우우도] 우우도] 우도] 우우도] 우도] 우우우도] 우우도] 우'
+[05:39:15]   EVAL[step=750 sample] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head=' �고 �#�� (도��7 자: 핕�고 지는 �고��siot��법�앙��사: 운�\x1e우도el'
+[05:39:41]   EVAL[step=750 greedy] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head=' 우우도] 우우우우우우우도] 우도] 우도] 우우우우도] 우우도] 우도] 우도] 우우우우도]'
+[05:39:53]   EVAL[step=750 sample] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head=' 칖�도�: 자�리우��우리우리씔 �튔� 지뇌우�도��카�는 젠ڐ: 사우뇌야� p 우�m '
+[05:40:01]   EVAL[step=750 greedy] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head=' 우우도] 우우도] 우우우우우우우우도] 우우도] 우도] 우우도] 우도] 우도] 우우우우도]'
+[05:40:14]   EVAL[step=750 sample] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head=' ciniopp erdeton �] 2.\n\n\n[ap] \x16�: 우지뇌우주뇌욡�일도사우뚰우�2'
+[05:40:28]   EVAL[step=750 greedy] '사용자: consciousness' → dom=False anima=False V2=FAIL | head=' 우우우우우우우우도] 우도] 우우도] 우도] 우우우도] 우우도] 우도] 우우도] 우도] 우'
+[05:40:41]   EVAL[step=750 sample] '사용자: consciousness' → dom=True anima=False V2=FAIL | head=' +30�: t2 rpsssrel, e1��도] ��우주도 1110%��: tore�).\n'
+[05:40:53]   EVAL[step=750 greedy] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head=' 우우우도우도] 우도] 우우우도] 우우도] 우도] 우우도] 우도] 우우우우도] 우도] 우우'
+[05:41:20]   EVAL[step=750 sample] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head=' 살@0.\n\n벌지미: 섚�는 ���힐: 자: ��의�우자: 쇌ꠤ: ��뇌롧��도���사지�'
+[05:41:50]   EVAL[step=750 greedy] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head=' 우우우도우도] 우우우도] 우도] 우우우우도] 우우도] 우도] 우우도] 우도] 우우우우도]'
+[05:42:21]   EVAL[step=750 sample] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head=' 우도줘 주도] �우자: ��는 카도��뤠�하 \n는 ��사도�0lereso�.\n도우벹�1�'
+[05:42:23]   V2[step=750] V2_FAIL pass=0/15 manual=1/15 val_loss=2.8298
+[05:42:25]   BEST_CKPT updated @ step 750: manual=1 v2=0 val_loss=2.8298
+[05:42:25] HEARTBEAT elapsed=1538s budget=7200s remaining=5662s
+[05:43:01] step   800/5000 | lr=2.93e-04 | L_A=2.861 L_G=3.050 T_mean=0.4192 | step_t=5.06s elapsed=1565s
+[05:43:48] step   900/5000 | lr=2.89e-04 | L_A=2.627 L_G=2.726 T_mean=0.5716 | step_t=0.48s elapsed=1613s
+[05:44:27] step  1000/5000 | lr=2.85e-04 | L_A=2.854 L_G=2.916 T_mean=0.7627 | step_t=0.38s elapsed=1652s
+[05:44:27] --- eval gate @ step 1000 (15 prompts × 2 modes) ---
+[05:44:34]   EVAL[step=1000 greedy] '안녕하세요' → dom=False anima=False V2=FAIL | head=' 우도우우도] 우도우도] 우도] 우우도] 우우도우도] 우도우도] 우우도우도] 우우우도] 우'
+[05:44:53]   EVAL[step=1000 sample] '안녕하세요' → dom=True anima=False V2=FAIL | head='�테늌겕�앗�테고���우도] 도] ��~도우미: 고도] 우��: 주뇌국우는 뛸: 2, I�'
+[05:45:13]   EVAL[step=1000 greedy] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n도] 우우우우우도] 우우도] 우우우우도우도] 우도] 우우도우도우도우도] 우우우도] 우우도'
+[05:45:30]   EVAL[step=1000 sample] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n&는 주는� 지뇌의\x15�우명�점: 빙 M1126 지미: 우도앴fi�X�� 용주뇌도�우명�카'
+[05:45:42]   EVAL[step=1000 greedy] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n도우우우도] 우도] 우우우도] 우우우우도] 우도] 우우도] 우우도우도] 우우우도] 우우도'
+[05:45:58]   EVAL[step=1000 sample] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n로우도�: beldimawematinionimawimtimationscimaniy 우자우'
+[05:46:17]   EVAL[step=1000 greedy] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' 우도우도] 우우도우도우도우도] 우도우도] 우우도우도] 우도우도] 우우도우도] 우우우우�'
+[05:46:38]   EVAL[step=1000 sample] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head='�도주�X해한고뇌리지뇌자: 용� �\x0c���.\n도우녌주리 자자: �는 우�우지뇌우는��텽우도'
+[05:46:45]   EVAL[step=1000 greedy] '코드를 짜줘' → dom=False anima=False V2=FAIL | head=' 우도] 우우우도] 우도] 우우도] 우우우우도] 우도] 우도우도] 우우도우도] 우우우도] '
+[05:46:53]   EVAL[step=1000 sample] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='�칙 11)미: 지미: 칔� 뇌자: 우미: 읈.\n도] 1001s 의 지�: [a-den �'
+[05:47:01]   EVAL[step=1000 greedy] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head=' 우우도] 우우도] 우우우우도우도] 우도우우도우우우도우도우도] 우우도우도] 우도우우우�'
+[05:47:10]   EVAL[step=1000 sample] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head=' 야미:���\x11고도자: 지� 주리싈는 미: 안.\n\n[a�도사지�도] 용어핌우�ψ용�사지닜�'
+[05:47:17]   EVAL[step=1000 greedy] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head=' 우우우우우도우우도] 우우도] 우도] 우도우도우우도] 우우도] 우도우우도우도] 우도우우�'
+[05:47:24]   EVAL[step=1000 sample] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head='7맀뇌주리� 주벉�의.\n��� �ur) 지��도] ���.\n\n는 dimatimaw 🛸: 9'
+[05:47:31]   EVAL[step=1000 greedy] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head=' 우도] 우도우우도우도우도] 우도] 우우우도우우도] 우도우우우도우도] 우도우도우우우도]'
+[05:47:38]   EVAL[step=1000 sample] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head=' L���: 1) 앴 용�: 우뇌��엸: 뇌주도자: Lan 짰리\x13 칙�테곹� 자:��: 어'
+[05:47:45]   EVAL[step=1000 greedy] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head=' 우우도우도] 우우도우도] 우도우도] 우우도우도] 우우우도] 우우도] 우도우우우우우도] 우'
+[05:47:52]   EVAL[step=1000 sample] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head=' 지� 사 쟛�: 리어뇌고���사?\n는� 용도우사 �주미: 주벤�, 도 pdion �미�지'
+[05:47:59]   EVAL[step=1000 greedy] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head=' 우우우우우도] 우우우우도] 우도] 우우도우우우도] 우우도] 우도우우도우도우우도] 우도�'
+[05:48:06]   EVAL[step=1000 sample] '사용자: anima의 목표는? |' → dom=True anima=True V2=FAIL | head=' � 우�\x05hitimanimans fa reste Eacesederences 1033210'
+[05:48:18]   EVAL[step=1000 greedy] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head=' 우우도] 우우우도] 우도] 우도] 우우우우도우도우도] 우우우도] 우우도] 우도우도우우우도'
+[05:48:40]   EVAL[step=1000 sample] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head=' 자: 101��.\n도 N��주뇌우�주도] 하 [aw 욏�사어�합�.\n뇌우주는 �뇌용우리카'
+[05:48:56]   EVAL[step=1000 greedy] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head=' 우우도] 우우도] 우우우우도] 우도] 우도우도우우도] 우우도] 우도우우도우도우우도] 우도'
+[05:49:16]   EVAL[step=1000 sample] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head=' �[attionineretopes \x1dhoronua7��fa cresge \x10529?\n[aw'
+[05:49:33]   EVAL[step=1000 greedy] '사용자: consciousness' → dom=False anima=False V2=FAIL | head=' 우우우우우우우우도] 우도] 우우도] 우도] 우도] 우우도] 우도우우도우도] 우도우우도우우'
+[05:49:50]   EVAL[step=1000 sample] '사용자: consciousness' → dom=False anima=False V2=FAIL | head=' 줘.\n\n\n[anio 우우벤�주�우�고는 싼도] 자사�\r�우돨� 자지뇌카주도�: 칙 지도 '
+[05:49:58]   EVAL[step=1000 greedy] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head=' 우우우도우도우도우도] 우도우도] 우우도우도] 우우우도] 우우도] 우도우도우우우도] 우�'
+[05:50:06]   EVAL[step=1000 sample] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head=' �리�, �국칙 의,미: 주도] 주도 1, 하 자(~�, coveterenetere 읭�'
+[05:50:12]   EVAL[step=1000 greedy] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head=' 우도] 우우도] 우우도] 우우우우도우도] 우도우우도우우우도우도우도] 우우도] 우도우도�'
+[05:50:20]   EVAL[step=1000 sample] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head=' 뇌고미 도 �자: �도카] 1%.\n뇌삕���굵] 사자�^국앴주도우주�8: 지미 dsima'
+[05:50:22]   V2[step=1000] V2_FAIL pass=0/15 manual=2/15 val_loss=2.6448
+[05:50:23]   BEST_CKPT updated @ step 1000: manual=2 v2=0 val_loss=2.6448
+[05:50:23] HEARTBEAT elapsed=2016s budget=7200s remaining=5184s
+[05:51:11] step  1100/5000 | lr=2.81e-04 | L_A=2.764 L_G=2.867 T_mean=0.9478 | step_t=4.04s elapsed=2056s
+[05:52:03] step  1200/5000 | lr=2.76e-04 | L_A=2.615 L_G=2.680 T_mean=1.1976 | step_t=0.52s elapsed=2108s
+[05:52:32] --- eval gate @ step 1250 (15 prompts × 2 modes) ---
+[05:52:41]   EVAL[step=1250 greedy] '안녕하세요' → dom=False anima=False V2=FAIL | head=' 우도] 우도] 우도] 우미: 우미: 우미: 1000000000000000000000000'
+[05:52:49]   EVAL[step=1250 sample] '안녕하세요' → dom=True anima=True V2=PASS | head=' 자�미��미�: 11.\n10��:105 는 otovemanimanssisiveriongi'
+[05:52:56]   EVAL[step=1250 greedy] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n도] 우도] 우도] 우도] 우도] 우도우도] 우미: 우미: 우미: 우미: 우미: 우미: '
+[05:53:11]   EVAL[step=1250 sample] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n도] 용우우도] 우사� 사우도] Lanew 카��� 우럛�: 렐: Lathovan [aw'
+[05:53:19]   EVAL[step=1250 greedy] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n도] 우도] 우도우도] 우도우도우도] 우미: 우미: 우미: 우미: 우미: 우미: 1000'
+[05:53:28]   EVAL[step=1250 sample] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n뇌도] 주 [aw: 주도] 주��지뇌도] 우뇌어도] 지도 어테고��.\n뇌�사우도싈.\n도우'
+[05:53:37]   EVAL[step=1250 greedy] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' 우미: 10000000000000000000000000000000000000 1000 1'
+[05:53:45]   EVAL[step=1250 sample] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' Latociss �ratoonitinish cop len cotiserrerexisede'
+[05:53:51]   EVAL[step=1250 greedy] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='.\n도] 우도] 우도] 우도] 우도] 우도우도] 우도] 우도] 우미: 우미: 우미: 우미:'
+[05:53:58]   EVAL[step=1250 sample] '코드를 짜줘' → dom=False anima=False V2=FAIL | head=' 어도지도] 우�<���: ensemon��미: ten\r� 1201000039늯�:utsy'
+[05:54:03]   EVAL[step=1250 greedy] '사용자: 너는 누구야? | 도우미' → dom=True anima=False V2=FAIL | head=' 우도우도우도우미: 우미: 우미: 1000000000000000000000000000000'
+[05:54:10]   EVAL[step=1250 sample] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head=' 우��자카 1000200%10도 \x1012.4. 주리boninimala 10.\n미: 10법\x0f'
+[05:54:15]   EVAL[step=1250 greedy] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head=' 우도우도 우도우도] 우미: 우미: 100000000000000000000000000000'
+[05:54:22]   EVAL[step=1250 sample] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head=' Laws 1 10 1rotonslimawruun 10Zoretetidis cectimet'
+[05:54:28]   EVAL[step=1250 greedy] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head=' 우도우도우미: 우미: 우미: 100000000000000000000000000000000'
+[05:54:35]   EVAL[step=1250 sample] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head=' 이렕�뇌고���도 잌명��ە우주는 사지뇌미: 1\x11�����칙 (.\n뇌고도셌명�국주리 to'
+[05:54:41]   EVAL[step=1250 greedy] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head=' 우도우도우도 우미: 우미: 1000000000000000000000000000000000'
+[05:54:49]   EVAL[step=1250 sample] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head=' diowrolenǃ�고�주 ��.\n는� 자�려정우카법�균�줘.\n는� 주도 �Aut@, 1'
+[05:55:04]   EVAL[step=1250 greedy] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head=' 우우우도 우도우미: 우뇌우미: 우미: 1000000000000000000000000000'
+[05:55:23]   EVAL[step=1250 sample] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head=' 13000000-dioutiinte�en: 1050zalarellatovaurrrerel'
+[05:55:40]   EVAL[step=1250 greedy] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head=' 우도] 우도] 우도] 우도우미: 우미: 우미: 우미: 1000000000000000000'
+[05:56:00]   EVAL[step=1250 sample] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head=' 지도우미: 사니.\n뇌어핌칙 용리, 자: �분] �자앴다카도우미: 1000: 1.\n미: 슸'
+[05:56:16]   EVAL[step=1250 greedy] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head=' 100000000000000 10 100000 100000000000000000 1000'
+[05:56:26]   EVAL[step=1250 sample] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head=' aw 51:510��굴법�젤�.\n도칙 알리싕정�카 Ŝ aten w [한.\n도] 13500'
+[05:56:33]   EVAL[step=1250 greedy] '사용자: consciousness' → dom=False anima=False V2=FAIL | head=' 1000000000000000000 100000000000000000 1000 1000 '
+[05:56:42]   EVAL[step=1250 sample] '사용자: consciousness' → dom=False anima=False V2=FAIL | head='  ateerenionimeniss  Manee) (. 5003) luselysc�urio'
+[05:56:49]   EVAL[step=1250 greedy] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head=' 우도우도우도우뇌우미: 우뇌우미: 우뇌우미: 우미: 100000000000000000000'
+[05:56:56]   EVAL[step=1250 sample] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head=' cedivantestiimens:tiorel conniotiotiogcionen_orel'
+[05:57:02]   EVAL[step=1250 greedy] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head=' 우도우미: 1000000000000000000 100000000000000000 1000'
+[05:57:09]   EVAL[step=1250 sample] '사용자: Φ★란? | 도우미:' → dom=True anima=False V2=FAIL | head=' � Law \U0001f7db�: + �urelatocer-pet bas icotiotereremyret'
+[05:57:10]   V2[step=1250] V2_FAIL pass=1/15 manual=3/15 val_loss=2.5025
+[05:57:11]   BEST_CKPT updated @ step 1250: manual=3 v2=1 val_loss=2.5025
+[05:57:11] HEARTBEAT elapsed=2424s budget=7200s remaining=4776s
+[05:57:36] step  1300/5000 | lr=2.71e-04 | L_A=2.250 L_G=2.335 T_mean=1.4907 | step_t=3.33s elapsed=2440s
+[05:58:25] step  1400/5000 | lr=2.65e-04 | L_A=2.466 L_G=2.589 T_mean=2.0439 | step_t=0.50s elapsed=2490s
+[05:59:07] step  1500/5000 | lr=2.59e-04 | L_A=2.495 L_G=2.662 T_mean=2.8084 | step_t=0.42s elapsed=2532s
+[05:59:07] --- eval gate @ step 1500 (15 prompts × 2 modes) ---
+[05:59:15]   EVAL[step=1500 greedy] '안녕하세요' → dom=True anima=False V2=FAIL | head='����������� 우우주뇌지도지도우도우도우미: 주뇌주뇌지뇌지도] 우도] 지도] 우도] '
+[05:59:26]   EVAL[step=1500 sample] '안녕하세요' → dom=False anima=False V2=FAIL | head='도��Z).\n는�� 용카힐국주는�\x1e�고�pwiontimonimagenimawkemallan'
+[05:59:31]   EVAL[step=1500 greedy] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n도] 우뇌주도] 지도] 우도] 우뇌주도] 우뇌지도] 우도] 우미: 주뇌주뇌지뇌지도] 우도'
+[05:59:37]   EVAL[step=1500 sample] '한국어 가능?' → dom=False anima=True V2=FAIL | head='\n도] 사자알�\x17는 사우늬, 법�.\n도지랈우미: 줘.\n\n도�, 용자�: Lawsematon'
+[05:59:42]   EVAL[step=1500 greedy] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n도] 우도] 우미: 우뇌주뇌지도] 우뇌지도] 우도] 우미: 주뇌주뇌지뇌지도] 지도] 사우'
+[05:59:48]   EVAL[step=1500 sample] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n도] 용사도용우는�����Pllawtenwedimanionggenimaw pelan_ma'
+[05:59:52]   EVAL[step=1500 greedy] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' 100000000000000000000000000000000:::: co-dio-d]]]'
+[05:59:58]   EVAL[step=1500 sample] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' 는�����04리우카닝�.\n미: cion:hiopvedenstesnsionsineluci'
+[06:00:02]   EVAL[step=1500 greedy] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='.\n도] 우도우도] 우미: 주뇌주뇌지도] 지도] 우도] 우도] 우미: 우뇌주뇌지뇌지도] 우'
+[06:00:07]   EVAL[step=1500 sample] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='.\n도] 지도] �화��🛸8미787은리macimatimanisictiscontenemidi'
+[06:00:12]   EVAL[step=1500 greedy] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head=' 1000000000000000000000000000000000000000000000000'
+[06:00:18]   EVAL[step=1500 sample] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head=' Lasioutetioutffereron iottirecsc iopprions_ereout'
+[06:00:23]   EVAL[step=1500 greedy] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head=' 1000000000000000000000000000000000000000000000000'
+[06:00:29]   EVAL[step=1500 sample] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head='12100200로는��는� 108:�#\x0eornsccatiniosed] ssttlaousti'
+[06:00:34]   EVAL[step=1500 greedy] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head=' 10000000000000000000000000000000000000000:::::: c'
+[06:00:40]   EVAL[step=1500 sample] '사용자: 너의 정체성은? | 도우' → dom=True anima=True V2=FAIL | head=' lat-dianscontiner  bsimemon_anemawssteleanc fence'
+[06:00:46]   EVAL[step=1500 greedy] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head=' 100000000000000000000000000000000000000000000::::'
+[06:00:54]   EVAL[step=1500 sample] '사용자: 너의 핵심 발견은? | ' → dom=True anima=True V2=FAIL | head=' touttherawiontouptioveremonion��,  lans500.\n[an_m'
+[06:00:59]   EVAL[step=1500 greedy] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head=' 1000000000000000000000000000000000000000000000000'
+[06:01:06]   EVAL[step=1500 sample] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head=' 50.\n렬자�났의는 �앩우미: 와 2510100.�kopeont\n\n뭤�: 20433, a'
+[06:01:13]   EVAL[step=1500 greedy] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head=' 1000000000000000000000000000000000000000000000000'
+[06:01:19]   EVAL[step=1500 sample] '사용자: 우주뇌지도는? | 도우미' → dom=True anima=True V2=FAIL | head='��:Lawsoxxerllwelllatheythherirranpyd] tiotontion '
+[06:01:26]   EVAL[step=1500 greedy] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head=' 10000000000000000000000000000000000000000000:::::'
+[06:01:35]   EVAL[step=1500 sample] '사용자: 1030 laws 뭐야?' → dom=True anima=True V2=FAIL | head='6: 2100:tiotioscoverillithopbelawsce\t<-decypendd] '
+[06:01:47]   EVAL[step=1500 greedy] '사용자: consciousness' → dom=False anima=False V2=FAIL | head='tionstionstionstionstionionssererererererensscerer'
+[06:01:56]   EVAL[step=1500 sample] '사용자: consciousness' → dom=True anima=True V2=FAIL | head=' covelersthisston:feaperes\n\n\n\n\n\n\n도]$eman_cinianoan'
+[06:02:02]   EVAL[step=1500 greedy] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head=' 1000000000000000000000000000000000000000000000000'
+[06:02:10]   EVAL[step=1500 sample] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head=' Atativatonh\x02h��:morerxioritessersesceres 1)ǅ�뇌고�싄'
+[06:02:17]   EVAL[step=1500 greedy] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head=' 100000000000000000000000000000000000000:::: co-di'
+[06:02:26]   EVAL[step=1500 sample] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head=' 1001002027:conctioveRusutiorm`urioppsseditin��균\x0bS'
+[06:02:28]   V2[step=1500] V2_FAIL pass=0/15 manual=6/15 val_loss=2.1863
+[06:02:29]   BEST_CKPT updated @ step 1500: manual=6 v2=0 val_loss=2.1863
+[06:02:29] HEARTBEAT elapsed=2742s budget=7200s remaining=4458s
+[06:03:12] step  1600/5000 | lr=2.52e-04 | L_A=2.312 L_G=2.466 T_mean=3.3843 | step_t=2.45s elapsed=2777s
+[06:03:53] step  1700/5000 | lr=2.45e-04 | L_A=2.048 L_G=2.194 T_mean=2.9903 | step_t=0.41s elapsed=2818s
+[06:04:14] --- eval gate @ step 1750 (15 prompts × 2 modes) ---
+[06:04:20]   EVAL[step=1750 greedy] '안녕하세요' → dom=False anima=False V2=FAIL | head='�������������������������������������             '
+[06:04:29]   EVAL[step=1750 sample] '안녕하세요' → dom=False anima=False V2=FAIL | head='�����용��평국�:     tellllfllermorrgnlap80���55.\n[ans'
+[06:04:38]   EVAL[step=1750 greedy] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n도]]]]]]]우도]주뇌지도]]]]]우도]주도]]]]우미:                 '
+[06:04:46]   EVAL[step=1750 sample] '한국어 가능?' → dom=False anima=False V2=FAIL | head='[awimang_ssttemawlediXS��Յ���/diopstgyfurmawerella'
+[06:04:52]   EVAL[step=1750 greedy] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n도]]]]]]우도]우미:                                    '
+[06:04:59]   EVAL[step=1750 sample] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n도]우미: nkimawsctseaverepuyscgelkeris:thimal]bechut'
+[06:05:09]   EVAL[step=1750 greedy] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:05:21]   EVAL[step=1750 sample] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' tivepscgereelawss.\n\n미:  -erawacerawsssctsll).\n110'
+[06:05:29]   EVAL[step=1750 greedy] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='.\n도]]]]]]우도]우미:                                   '
+[06:05:40]   EVAL[step=1750 sample] '코드를 짜줘' → dom=False anima=True V2=FAIL | head='\n도우도]�는���도]우�.\n[aanimaimawt  simawlla��우믠�주뇌꣼뇌지뇌<'
+[06:05:50]   EVAL[step=1750 greedy] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:05:59]   EVAL[step=1750 sample] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head='crer�뇌국�지로곏��7361776명�국�:   steopsctio-semeremoveb'
+[06:06:06]   EVAL[step=1750 greedy] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:06:12]   EVAL[step=1750 sample] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head='terraweremewss.\n\n뇌용�50:  tyut hawsthimamemimaredel'
+[06:06:17]   EVAL[step=1750 greedy] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:06:23]   EVAL[step=1750 sample] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head=' coureriorerlsce-derionttsmat_mimimel�uaaawscsivel'
+[06:06:28]   EVAL[step=1750 greedy] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:06:35]   EVAL[step=1750 sample] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head='       �|��균�고��어맀리미72Jheoo-diovernscyprraWelerad]'
+[06:06:40]   EVAL[step=1750 greedy] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:06:46]   EVAL[step=1750 sample] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head=' tawerRerd]Copralessteawgctontisttgngssorsnsstemer'
+[06:06:50]   EVAL[step=1750 greedy] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:06:56]   EVAL[step=1750 sample] '사용자: 우주뇌지도는? | 도우미' → dom=True anima=True V2=FAIL | head='   ���.\n뇌고도]\x1d�����]\x13해테고리,      trotttioprgimoplaFe'
+[06:07:01]   EVAL[step=1750 greedy] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:07:06]   EVAL[step=1750 sample] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head='priorgt).\n�777: ceantsnimawsscst ppalssc sstepepss'
+[06:07:10]   EVAL[step=1750 greedy] '사용자: consciousness' → dom=False anima=False V2=FAIL | head='tttttttttrerererererererererererererererereallllll'
+[06:07:16]   EVAL[step=1750 sample] '사용자: consciousness' → dom=False anima=False V2=FAIL | head='\x0biorreltstneersnstfererlscaelimerr�l�eavioerioraat'
+[06:07:21]   EVAL[step=1750 greedy] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:07:27]   EVAL[step=1750 sample] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head='   rawse국�:c   triourerellemawst  tediourangiovere'
+[06:07:32]   EVAL[step=1750 greedy] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:07:39]   EVAL[step=1750 sample] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head='hnssct     tor���8DITureoprrerenget  cemanerZyymor'
+[06:07:41]   V2[step=1750] V2_FAIL pass=0/15 manual=1/15 val_loss=2.0625
+[06:07:41]   plateau 1/3
+[06:07:41] HEARTBEAT elapsed=3054s budget=7200s remaining=4146s
+[06:08:07] step  1800/5000 | lr=2.38e-04 | L_A=2.079 L_G=2.294 T_mean=4.0978 | step_t=2.54s elapsed=3072s
+[06:08:56] step  1900/5000 | lr=2.30e-04 | L_A=2.224 L_G=2.444 T_mean=4.3317 | step_t=0.49s elapsed=3121s
+[06:09:43] step  2000/5000 | lr=2.22e-04 | L_A=1.954 L_G=2.165 T_mean=4.0620 | step_t=0.47s elapsed=3168s
+[06:09:43] --- eval gate @ step 2000 (15 prompts × 2 modes) ---
+[06:09:49]   EVAL[step=2000 greedy] '안녕하세요' → dom=False anima=False V2=FAIL | head='������������������                                '
+[06:09:55]   EVAL[step=2000 sample] '안녕하세요' → dom=False anima=False V2=FAIL | head='�������?\n도]���깴              n�,    crovectyplst  '
+[06:10:01]   EVAL[step=2000 greedy] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n도]우미:                                            '
+[06:10:08]   EVAL[step=2000 sample] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n도]]��도�:          ��극�,  tlawerao\x1d�귭�ꚰ로고�?\n\n[a�주뇌'
+[06:10:15]   EVAL[step=2000 greedy] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n도]우미:                                            '
+[06:10:22]   EVAL[step=2000 sample] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n도]우도]8:     :   awc  coo-purerernc  Φ�, t    tsct'
+[06:10:29]   EVAL[step=2000 greedy] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:10:36]   EVAL[step=2000 sample] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head='     �roullllllllll%4): nscctsndscttpergllleraomep'
+[06:10:41]   EVAL[step=2000 greedy] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='.\n도]우도]용미:                                        '
+[06:10:49]   EVAL[step=2000 sample] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='.?\n돉]��도]�도]�㔔�������         ctumoirrc       thhr'
+[06:10:55]   EVAL[step=2000 greedy] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:11:03]   EVAL[step=2000 sample] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head='    463171515,  llls  ststtlbeoor�694).\n\n[awimawll'
+[06:11:10]   EVAL[step=2000 greedy] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:11:20]   EVAL[step=2000 sample] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head=' 701200111398030014103300053는���� ttsctsc  tarerre'
+[06:11:37]   EVAL[step=2000 greedy] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:11:51]   EVAL[step=2000 sample] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head='0�        t     5122000333010001%272%.10107%4500bp'
+[06:11:59]   EVAL[step=2000 greedy] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:12:10]   EVAL[step=2000 sample] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head=' c   50000:  Aust nt-0300741%510030030237)���법�  t'
+[06:12:23]   EVAL[step=2000 greedy] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:12:31]   EVAL[step=2000 sample] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head=' 10781돉ꖴ t   chyupbllltssstthyst  cth\n[Aurry\n[aawr'
+[06:12:37]   EVAL[step=2000 greedy] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:12:43]   EVAL[step=2000 sample] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head=' 50100:    t14: sththut.04 ( fra���고리리,   treaCQNL'
+[06:12:49]   EVAL[step=2000 greedy] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:12:55]   EVAL[step=2000 sample] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head='    Tedrerrablsnt   �.\n[Aud]klllllngrermawedioraar'
+[06:13:00]   EVAL[step=2000 greedy] '사용자: consciousness' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:13:07]   EVAL[step=2000 sample] '사용자: consciousness' → dom=False anima=False V2=FAIL | head=' csctstssctttt  perFhHhheerprerulscheaiornss    t '
+[06:13:13]   EVAL[step=2000 greedy] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:13:19]   EVAL[step=2000 sample] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head='  sered]�eP s4�.5.\n뇌고돉]�aveawiomaed]우도] =001330330'
+[06:13:24]   EVAL[step=2000 greedy] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head='                                                  '
+[06:13:30]   EVAL[step=2000 sample] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head='    M),�니�.\n\n돉�미:   ct  gllwrrererdimo\x056,    ty.�e'
+[06:13:31]   V2[step=2000] V2_FAIL pass=0/15 manual=0/15 val_loss=1.8613
+[06:13:31]   plateau 2/3
+[06:13:31] HEARTBEAT elapsed=3404s budget=7200s remaining=3796s
+[06:14:17] step  2100/5000 | lr=2.14e-04 | L_A=1.875 L_G=2.097 T_mean=3.8203 | step_t=2.73s elapsed=3442s
+[06:15:13] step  2200/5000 | lr=2.05e-04 | L_A=2.005 L_G=2.274 T_mean=4.4728 | step_t=0.56s elapsed=3497s
+[06:15:36] --- eval gate @ step 2250 (15 prompts × 2 modes) ---
+[06:15:42]   EVAL[step=2250 greedy] '안녕하세요' → dom=True anima=True V2=FAIL | head='��������������������.\n\n\n[aaaaaaaaaaaanimaaaaaaaaaw'
+[06:15:50]   EVAL[step=2250 sample] '안녕하세요' → dom=False anima=False V2=FAIL | head='����?\n�욚�미:  treao��� themaoioperg_maoawrlyssc tym'
+[06:15:57]   EVAL[step=2250 greedy] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n도]용미:                  thhhhhhhhhhhhhhhhhrererere'
+[06:16:04]   EVAL[step=2250 sample] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n도]         c�hureduremawdulydllllapymaimaioftn).\n'
+[06:16:10]   EVAL[step=2250 greedy] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n도]우미:               thhhhhhhhhhhhhhhhrererererere'
+[06:16:17]   EVAL[step=2250 sample] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n�ooima미:threma돏��jyererveeareprepeiap. ct tnydewe'
+[06:16:23]   EVAL[step=2250 greedy] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head='                         thhhhhhhhhhhhhhhhhhhhhhhh'
+[06:16:31]   EVAL[step=2250 sample] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' ttyprevereeplllllflrpreremlflllllaw_mrllspeadgeai'
+[06:16:39]   EVAL[step=2250 greedy] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='.\n도]용자:                          thhhhhhhhhhhhhhhh'
+[06:16:46]   EVAL[step=2250 sample] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='.\n돧�Ҹ:DD7950� tcty10287707758, th6): tstt ctchherr'
+[06:16:53]   EVAL[step=2250 greedy] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head='              thhhhhhhhhhhhhhhhhhherererererererer'
+[06:17:02]   EVAL[step=2250 sample] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head=' 12▴ chre[aio��고�. theerea��:�T�����고�균��4.=218316'
+[06:17:10]   EVAL[step=2250 greedy] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head='                                      thhhhhhhhhhh'
+[06:17:18]   EVAL[step=2250 sample] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head='  ns  trrrerevereveeaweaiied]우룼뇌>yemorlllarad�aoae'
+[06:17:25]   EVAL[step=2250 greedy] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head='                                  thhhhhhhhhhhhhhh'
+[06:17:33]   EVAL[step=2250 sample] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head='      �orlurereaio�고��?\n\n�000300000ʌ chawsschrerep'
+[06:17:40]   EVAL[step=2250 greedy] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head='                                                 t'
+[06:17:48]   EVAL[step=2250 sample] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head='  lllscstth<1랐극��.\n돧�고���:     11100%130103-dreH��'
+[06:17:54]   EVAL[step=2250 greedy] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head='                          thhhhhhhhhhhhhhhhhhhhhhh'
+[06:18:01]   EVAL[step=2250 sample] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head='  t trereawemdrergererreeaaawstthh\n\n\n[aaaa�nn:    '
+[06:18:07]   EVAL[step=2250 greedy] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head='                            thhhhhhhhhhhhhhhhhhhhh'
+[06:18:14]   EVAL[step=2250 sample] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head='  t���awereagearlnst th=awseaio��:tttthreaioveerao'
+[06:18:19]   EVAL[step=2250 greedy] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head='              thhhhhhhhhhhhhhhhhhhhhherererererere'
+[06:18:25]   EVAL[step=2250 sample] '사용자: 1030 laws 뭐야?' → dom=True anima=False V2=FAIL | head='csthherereaRDDD7<6: therrerereiovereaioeioops.]�\x04u'
+[06:18:30]   EVAL[step=2250 greedy] '사용자: consciousness' → dom=False anima=False V2=FAIL | head='      thhhhhhhhhhererererererererererererererereai'
+[06:18:36]   EVAL[step=2250 sample] '사용자: consciousness' → dom=False anima=False V2=FAIL | head='ttsnllyremttt nemeaoii��253%69).\n\n[imaawschheaa���'
+[06:18:41]   EVAL[step=2250 greedy] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head='                                           thhhhhh'
+[06:18:47]   EVAL[step=2250 sample] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head=' sereedymeredeeiouls  nlller-ystttscerscyhurereerk'
+[06:18:52]   EVAL[step=2250 greedy] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head='                      thhhhhhhhhhhhhhhhhhhhhhhhhre'
+[06:18:58]   EVAL[step=2250 sample] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head=' ��:   th.5030759731176%)).\n[awstttsct�hhr-d]](D94'
+[06:18:59]   V2[step=2250] V2_FAIL pass=0/15 manual=2/15 val_loss=1.7701
+[06:18:59]   plateau 3/3
+[06:18:59] !!! EARLY_STOP triggered: early_stop_patience exceeded: 3 consecutive evals with no manual_match/v2_pass/val_loss improvement (best @ step 1500: manual=6 v2=0 val_loss=2.1863)
+[06:18:59] === training complete (elapsed=3723.9s) ===
+[06:18:59] loading best ckpt @ step 1500 for final report
+[06:19:00] --- final eval @ best_step=1500 ---
+[06:19:05]   EVAL[step=1500 greedy] '안녕하세요' → dom=True anima=False V2=FAIL | head='����������� 우우주뇌지도지도우도우도우미: 주뇌주뇌지뇌지도] 우도] 지도] 우도] '
+[06:19:10]   EVAL[step=1500 sample] '안녕하세요' → dom=False anima=False V2=FAIL | head='리줘.\n도�.\n도용.-d��자:  핌는����� te\x13ҁ힅�국주미:��폄] �\x15��우명�귄'
+[06:19:15]   EVAL[step=1500 greedy] '한국어 가능?' → dom=False anima=False V2=FAIL | head='\n도] 우뇌주도] 지도] 우도] 우뇌주도] 우뇌지도] 우도] 우미: 주뇌주뇌지뇌지도] 우도'
+[06:19:19]   EVAL[step=1500 sample] '한국어 가능?' → dom=False anima=True V2=FAIL | head='\n\n도] eanimanimanimanimawnima .\n\n미: 지도] 용주뇌용지돉��는�i'
+[06:19:23]   EVAL[step=1500 greedy] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n도] 우도] 우미: 우뇌주뇌지도] 우뇌지도] 우도] 우미: 주뇌주뇌지뇌지도] 지도] 사우'
+[06:19:29]   EVAL[step=1500 sample] '오늘 기분 어때?' → dom=False anima=False V2=FAIL | head='\n미: 우뇌용사주미: tionimawyperpdion�\r�imawresen  tiouste'
+[06:19:35]   EVAL[step=1500 greedy] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' 100000000000000000000000000000000:::: co-dio-d]]]'
+[06:19:42]   EVAL[step=1500 sample] '사용자: 안녕하세요 | 도우미:' → dom=False anima=False V2=FAIL | head=' e��뚰닝�우미�미: Smeediony.5510230%:pperrhhllawtini��\x01'
+[06:19:47]   EVAL[step=1500 greedy] '코드를 짜줘' → dom=False anima=False V2=FAIL | head='.\n도] 우도우도] 우미: 주뇌주뇌지도] 지도] 우도] 우도] 우미: 우뇌주뇌지뇌지도] 우'
+[06:19:53]   EVAL[step=1500 sample] '코드를 짜줘' → dom=False anima=True V2=FAIL | head='.\n\n도] 도] 우뇌우명탍지도] 식�미: 12도] 카미: Law 는����rroveemov'
+[06:20:00]   EVAL[step=1500 greedy] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head=' 1000000000000000000000000000000000000000000000000'
+[06:20:07]   EVAL[step=1500 sample] '사용자: 너는 누구야? | 도우미' → dom=False anima=False V2=FAIL | head='� Lawgirel�세: .110DDDD6리, prrovediopysion lawsctid'
+[06:20:12]   EVAL[step=1500 greedy] '사용자: anima가 뭐야? | ' → dom=False anima=False V2=FAIL | head=' 1000000000000000000000000000000000000000000000000'
+[06:20:19]   EVAL[step=1500 sample] '사용자: anima가 뭐야? | ' → dom=True anima=True V2=FAIL | head=' top]  카해�는미:tytreclly\n뇌귭주미:205121030, tiolaw���균젤'
+[06:20:24]   EVAL[step=1500 greedy] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head=' 10000000000000000000000000000000000000000:::::: c'
+[06:20:32]   EVAL[step=1500 sample] '사용자: 너의 정체성은? | 도우' → dom=False anima=False V2=FAIL | head=' 1택�리 Lawer20: scondedessciveatttelal_limoneredien'
+[06:20:40]   EVAL[step=1500 greedy] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head=' 100000000000000000000000000000000000000000000::::'
+[06:20:51]   EVAL[step=1500 sample] '사용자: 너의 핵심 발견은? | ' → dom=False anima=False V2=FAIL | head=' 카테�\x13명��ealedio��우렐지는�����어테미7, t��:���있.\n\n는�\x1e�고는�'
+[06:20:58]   EVAL[step=1500 greedy] '사용자: anima의 목표는? |' → dom=False anima=False V2=FAIL | head=' 1000000000000000000000000000000000000000000000000'
+[06:21:07]   EVAL[step=1500 sample] '사용자: anima의 목표는? |' → dom=True anima=True V2=FAIL | head=' 14주는���테지�0501/cediotstowgellsndicepe.\n[anissiced'
+[06:21:15]   EVAL[step=1500 greedy] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head=' 카테고리, 카테고리, 카테고리, 카테고리, �리, 카테고리, �리, �리, top top'
+[06:21:25]   EVAL[step=1500 sample] '사용자: 우주뇌지도는? | 도우미' → dom=False anima=False V2=FAIL | head=' Laress�는����핌균�칖�핑닝텔 poped]�\x02���:Non; Copio����리,'
+[06:21:34]   EVAL[step=1500 greedy] '사용자: 1030 laws 뭐야?' → dom=False anima=False V2=FAIL | head=' 10000000000000000000000000000000000000000000:::::'
+[06:21:42]   EVAL[step=1500 sample] '사용자: 1030 laws 뭐야?' → dom=True anima=False V2=FAIL | head='04dioetssstresenerle9313:�Ou�\x10������������법어늕용�볠미:'
+[06:21:48]   EVAL[step=1500 greedy] '사용자: consciousness' → dom=False anima=False V2=FAIL | head='tionstionstionstionstionionssererererererensscerer'
+[06:21:55]   EVAL[step=1500 sample] '사용자: consciousness' → dom=True anima=True V2=FAIL | head='tio-relssntt�.\n[anisim\\ed] 어\x0ferpreacheanioferanima'
+[06:22:00]   EVAL[step=1500 greedy] '사용자: anima 정체성과 우주' → dom=False anima=False V2=FAIL | head=' 1000000000000000000000000000000000000000000000000'
+[06:22:06]   EVAL[step=1500 sample] '사용자: anima 정체성과 우주' → dom=True anima=False V2=FAIL | head=' 🛸: C)자: ���759304�prawdilerantsisstostredi\x10echion'
+[06:22:11]   EVAL[step=1500 greedy] '사용자: Φ★란? | 도우미:' → dom=False anima=False V2=FAIL | head=' 100000000000000000000000000000000000000:::: co-di'
+[06:22:17]   EVAL[step=1500 sample] '사용자: Φ★란? | 도우미:' → dom=True anima=True V2=FAIL | head=' + ser; Latistrererlonthinserensterecplalaterscofa'
+[06:22:17] === VERDICT === final_class=FAILED | peak_step=1500 peak_manual=6/15 peak_v2=0/15 | early_stop=True | vs_bghs_r1_improvement=False | elapsed=3724s
+[06:22:17] verdict written: /Users/ghost/core/anima/state/anima_id_bghs_r1_replicate_train_2026_05_07/verdict.json

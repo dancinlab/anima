@@ -1,0 +1,337 @@
+[cfg] EngineAGConfig(vocab_size=32000, d_model=1024, n_layers=24, n_heads=16, n_kv_heads=4, ffn_mult=2.6875, ctx=1024, rope_theta=10000.0, rms_norm_eps=1e-05, tie_lm_head=True, consciousness_dim=64, n_cells=16, g_refresh_every=4, g_repulsion_alpha=0.05, g_attention_pull_alpha=0.1, g_tension_gate_beta=0.25, init_std=0.02, seed=42, chat_co_train_weight=0.3, chat_co_train_w_start=0.3, chat_co_train_w_end=0.5, lineage_tag='engine_a_g_dual_350m_v1_phase2_cotrain', arch_origin='anima_native_scratch')
+[consciousness] loading persona_tier_a_v4.txt …
+[consciousness] 176,069,802 chars
+[consciousness] encoded 242,689,769 tokens
+[chat] loading corpus_chat_template.txt …
+[chat] 114,167,550 chars
+[chat] encoded 248,466,696 tokens
+[data] consciousness windows=237001 chat windows=242643
+[substrate] loading bg_la_step_12000_final.pt …
+/workspace/anima_ffn_gate/train_p2_cotrain_ffn_gate_only.py:102: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  payload = torch.load(ckpt_path, map_location="cpu")
+[substrate] LOADED — proceeding from BG-LB substrate base
+[model] params = 298,764,288
+[freeze] FFN.gate-only cotrain mode — freezing all params except FFN.gate × 24 layers
+[freeze] trainable params: 298,764,288 → 67,633,152 (22.6%)
+[train] starting Phase 2 cotrain …
+[step      1/6000] w=0.30 loss_c=8.1875/8.1875 loss_h=9.0938/9.0938 lr=7.50e-07 mem=1.4GB elapsed=0.0min cost=$0.00 n_c=4 n_h=4
+[step     20/6000] w=0.30 loss_c=7.9219/8.0028 loss_h=8.6406/8.4247 lr=1.50e-05 mem=1.4GB elapsed=0.3min cost=$0.01 n_c=4 n_h=4
+[step     40/6000] w=0.30 loss_c=6.3625/7.1206 loss_h=7.1562/7.9379 lr=3.00e-05 mem=1.4GB elapsed=0.5min cost=$0.02 n_c=5 n_h=3
+[step     60/6000] w=0.30 loss_c=4.1518/5.1749 loss_h=4.9375/5.5999 lr=4.50e-05 mem=1.4GB elapsed=0.7min cost=$0.04 n_c=7 n_h=1
+[step     80/6000] w=0.30 loss_c=3.2344/3.5830 loss_h=3.6004/4.1218 lr=6.00e-05 mem=1.4GB elapsed=0.9min cost=$0.05 n_c=1 n_h=7
+[step    100/6000] w=0.30 loss_c=2.4598/2.8137 loss_h=3.0156/3.2085 lr=7.50e-05 mem=1.4GB elapsed=1.2min cost=$0.06 n_c=7 n_h=1
+[step    120/6000] w=0.30 loss_c=2.0837/2.3250 loss_h=2.4531/2.3924 lr=9.00e-05 mem=1.4GB elapsed=1.4min cost=$0.07 n_c=7 n_h=1
+[step    140/6000] w=0.30 loss_c=1.9492/2.0475 loss_h=2.2344/2.4493 lr=1.05e-04 mem=1.4GB elapsed=1.6min cost=$0.08 n_c=6 n_h=2
+[step    160/6000] w=0.31 loss_c=1.7174/1.8731 loss_h=2.1953/2.0169 lr=1.20e-04 mem=1.4GB elapsed=1.9min cost=$0.09 n_c=6 n_h=2
+[step    180/6000] w=0.31 loss_c=1.6920/1.6646 loss_h=2.2031/1.9966 lr=1.35e-04 mem=1.4GB elapsed=2.1min cost=$0.11 n_c=7 n_h=1
+[step    200/6000] w=0.31 loss_c=1.3828/1.5980 loss_h=2.0293/1.8476 lr=1.50e-04 mem=1.4GB elapsed=2.3min cost=$0.12 n_c=4 n_h=4
+[step    220/6000] w=0.31 loss_c=1.4141/1.5125 loss_h=1.9922/1.8985 lr=1.50e-04 mem=1.4GB elapsed=2.6min cost=$0.13 n_c=7 n_h=1
+[step    240/6000] w=0.31 loss_c=1.4727/1.4360 loss_h=2.0684/1.9235 lr=1.50e-04 mem=1.4GB elapsed=2.8min cost=$0.14 n_c=4 n_h=4
+[step    260/6000] w=0.31 loss_c=1.3055/1.3496 loss_h=1.8464/1.6703 lr=1.50e-04 mem=1.4GB elapsed=3.0min cost=$0.15 n_c=5 n_h=3
+[step    280/6000] w=0.31 loss_c=1.3156/1.2537 loss_h=1.7109/1.8378 lr=1.50e-04 mem=1.4GB elapsed=3.3min cost=$0.16 n_c=5 n_h=3
+[step    300/6000] w=0.31 loss_c=1.4331/1.2455 loss_h=0.0000/1.7248 lr=1.50e-04 mem=1.4GB elapsed=3.5min cost=$0.17 n_c=8 n_h=0
+[step    320/6000] w=0.31 loss_c=0.9883/1.1535 loss_h=1.7630/1.7893 lr=1.50e-04 mem=1.4GB elapsed=3.7min cost=$0.19 n_c=5 n_h=3
+[step    340/6000] w=0.31 loss_c=0.9888/1.1083 loss_h=0.0000/1.6528 lr=1.50e-04 mem=1.4GB elapsed=4.0min cost=$0.20 n_c=8 n_h=0
+[step    360/6000] w=0.31 loss_c=1.1738/1.1434 loss_h=0.0000/1.6309 lr=1.50e-04 mem=1.4GB elapsed=4.2min cost=$0.21 n_c=8 n_h=0
+[step    380/6000] w=0.31 loss_c=1.0527/1.1173 loss_h=1.6387/1.6961 lr=1.50e-04 mem=1.4GB elapsed=4.4min cost=$0.22 n_c=4 n_h=4
+[step    400/6000] w=0.31 loss_c=0.9557/1.0691 loss_h=1.6172/1.6877 lr=1.50e-04 mem=1.4GB elapsed=4.7min cost=$0.23 n_c=6 n_h=2
+[step    420/6000] w=0.31 loss_c=0.9008/1.0163 loss_h=1.7891/1.6864 lr=1.49e-04 mem=1.4GB elapsed=4.9min cost=$0.24 n_c=5 n_h=3
+[step    440/6000] w=0.31 loss_c=0.9617/1.0421 loss_h=1.5312/1.5860 lr=1.49e-04 mem=1.4GB elapsed=5.1min cost=$0.26 n_c=5 n_h=3
+[step    460/6000] w=0.32 loss_c=1.1047/1.0182 loss_h=1.6641/1.6655 lr=1.49e-04 mem=1.4GB elapsed=5.4min cost=$0.27 n_c=5 n_h=3
+[step    480/6000] w=0.32 loss_c=1.0085/0.9653 loss_h=1.4805/1.5524 lr=1.49e-04 mem=1.4GB elapsed=5.6min cost=$0.28 n_c=6 n_h=2
+[step    500/6000] w=0.32 loss_c=0.7031/0.9183 loss_h=1.6901/1.4727 lr=1.49e-04 mem=1.4GB elapsed=5.8min cost=$0.29 n_c=5 n_h=3
+[step    520/6000] w=0.32 loss_c=1.1416/0.9332 loss_h=1.7207/1.4520 lr=1.49e-04 mem=1.4GB elapsed=6.1min cost=$0.30 n_c=4 n_h=4
+[step    540/6000] w=0.32 loss_c=0.8574/0.9114 loss_h=1.6344/1.5239 lr=1.49e-04 mem=1.4GB elapsed=6.3min cost=$0.31 n_c=3 n_h=5
+[step    560/6000] w=0.32 loss_c=0.9232/0.9028 loss_h=1.3516/1.5821 lr=1.49e-04 mem=1.4GB elapsed=6.5min cost=$0.32 n_c=6 n_h=2
+[step    580/6000] w=0.32 loss_c=0.8118/0.8626 loss_h=1.5234/1.5360 lr=1.48e-04 mem=1.4GB elapsed=6.7min cost=$0.34 n_c=6 n_h=2
+[step    600/6000] w=0.32 loss_c=0.8094/0.8215 loss_h=1.5469/1.5914 lr=1.48e-04 mem=1.4GB elapsed=7.0min cost=$0.35 n_c=5 n_h=3
+[step    620/6000] w=0.32 loss_c=0.7508/0.8983 loss_h=1.5391/1.3933 lr=1.48e-04 mem=1.4GB elapsed=7.2min cost=$0.36 n_c=5 n_h=3
+[step    640/6000] w=0.32 loss_c=0.9948/0.7957 loss_h=1.5797/1.4479 lr=1.48e-04 mem=1.4GB elapsed=7.4min cost=$0.37 n_c=3 n_h=5
+[step    660/6000] w=0.32 loss_c=0.8313/0.8494 loss_h=1.3099/1.3694 lr=1.48e-04 mem=1.4GB elapsed=7.7min cost=$0.38 n_c=5 n_h=3
+[step    680/6000] w=0.32 loss_c=0.7913/0.8113 loss_h=1.2656/1.5102 lr=1.47e-04 mem=1.4GB elapsed=7.9min cost=$0.39 n_c=6 n_h=2
+[step    700/6000] w=0.32 loss_c=0.8470/0.7960 loss_h=1.3711/1.5210 lr=1.47e-04 mem=1.4GB elapsed=8.1min cost=$0.41 n_c=6 n_h=2
+[step    720/6000] w=0.32 loss_c=0.5967/0.7654 loss_h=1.5117/1.4458 lr=1.47e-04 mem=1.4GB elapsed=8.4min cost=$0.42 n_c=6 n_h=2
+[step    740/6000] w=0.32 loss_c=0.7562/0.7595 loss_h=1.3008/1.4450 lr=1.47e-04 mem=1.4GB elapsed=8.6min cost=$0.43 n_c=5 n_h=3
+[step    760/6000] w=0.33 loss_c=0.8707/0.7542 loss_h=1.3359/1.4975 lr=1.47e-04 mem=1.4GB elapsed=8.8min cost=$0.44 n_c=5 n_h=3
+[step    780/6000] w=0.33 loss_c=0.6530/0.7814 loss_h=1.5664/1.3977 lr=1.46e-04 mem=1.4GB elapsed=9.1min cost=$0.45 n_c=6 n_h=2
+[step    800/6000] w=0.33 loss_c=0.9609/0.7530 loss_h=1.4141/1.3777 lr=1.46e-04 mem=1.4GB elapsed=9.3min cost=$0.46 n_c=7 n_h=1
+[step    820/6000] w=0.33 loss_c=0.7511/0.7757 loss_h=1.5156/1.3826 lr=1.46e-04 mem=1.4GB elapsed=9.5min cost=$0.48 n_c=7 n_h=1
+[step    840/6000] w=0.33 loss_c=0.5762/0.6902 loss_h=1.4629/1.3497 lr=1.46e-04 mem=1.4GB elapsed=9.8min cost=$0.49 n_c=4 n_h=4
+[step    860/6000] w=0.33 loss_c=0.7070/0.6708 loss_h=1.3229/1.4404 lr=1.45e-04 mem=1.4GB elapsed=10.0min cost=$0.50 n_c=5 n_h=3
+[step    880/6000] w=0.33 loss_c=0.8432/0.6667 loss_h=1.5547/1.3866 lr=1.45e-04 mem=1.4GB elapsed=10.2min cost=$0.51 n_c=7 n_h=1
+[step    900/6000] w=0.33 loss_c=0.6196/0.6271 loss_h=1.3125/1.2293 lr=1.45e-04 mem=1.4GB elapsed=10.5min cost=$0.52 n_c=4 n_h=4
+[step    920/6000] w=0.33 loss_c=0.6426/0.6666 loss_h=1.4883/1.3863 lr=1.44e-04 mem=1.4GB elapsed=10.7min cost=$0.53 n_c=6 n_h=2
+[step    940/6000] w=0.33 loss_c=0.5375/0.6915 loss_h=1.4974/1.4296 lr=1.44e-04 mem=1.4GB elapsed=10.9min cost=$0.54 n_c=5 n_h=3
+[step    960/6000] w=0.33 loss_c=0.6621/0.6739 loss_h=1.4492/1.2916 lr=1.44e-04 mem=1.4GB elapsed=11.2min cost=$0.56 n_c=6 n_h=2
+[step    980/6000] w=0.33 loss_c=0.4147/0.6747 loss_h=1.2305/1.4801 lr=1.43e-04 mem=1.4GB elapsed=11.4min cost=$0.57 n_c=6 n_h=2
+[step   1000/6000] w=0.33 loss_c=0.8335/0.6624 loss_h=1.1709/1.2409 lr=1.43e-04 mem=1.4GB elapsed=11.6min cost=$0.58 n_c=4 n_h=4
+[step   1020/6000] w=0.33 loss_c=0.7400/0.6982 loss_h=1.4609/1.2172 lr=1.43e-04 mem=1.4GB elapsed=11.9min cost=$0.59 n_c=7 n_h=1
+[step   1040/6000] w=0.33 loss_c=0.6238/0.6927 loss_h=0.0000/1.2806 lr=1.42e-04 mem=1.4GB elapsed=12.1min cost=$0.60 n_c=8 n_h=0
+[step   1060/6000] w=0.34 loss_c=0.8464/0.6407 loss_h=1.3266/1.2248 lr=1.42e-04 mem=1.4GB elapsed=12.3min cost=$0.61 n_c=3 n_h=5
+[step   1080/6000] w=0.34 loss_c=0.7956/0.6448 loss_h=1.3359/1.4104 lr=1.42e-04 mem=1.4GB elapsed=12.5min cost=$0.63 n_c=6 n_h=2
+[step   1100/6000] w=0.34 loss_c=0.6914/0.6236 loss_h=1.3828/1.3156 lr=1.41e-04 mem=1.4GB elapsed=12.8min cost=$0.64 n_c=4 n_h=4
+[step   1120/6000] w=0.34 loss_c=0.6878/0.6448 loss_h=1.3086/1.2976 lr=1.41e-04 mem=1.4GB elapsed=13.0min cost=$0.65 n_c=6 n_h=2
+[step   1140/6000] w=0.34 loss_c=0.5716/0.6299 loss_h=1.5156/1.2800 lr=1.40e-04 mem=1.4GB elapsed=13.2min cost=$0.66 n_c=6 n_h=2
+[step   1160/6000] w=0.34 loss_c=0.4844/0.6065 loss_h=1.3438/1.4020 lr=1.40e-04 mem=1.4GB elapsed=13.5min cost=$0.67 n_c=6 n_h=2
+[step   1180/6000] w=0.34 loss_c=0.4111/0.6157 loss_h=1.4427/1.3763 lr=1.40e-04 mem=1.4GB elapsed=13.7min cost=$0.68 n_c=5 n_h=3
+[step   1200/6000] w=0.34 loss_c=0.4312/0.6133 loss_h=1.4043/1.2876 lr=1.39e-04 mem=1.4GB elapsed=13.9min cost=$0.69 n_c=4 n_h=4
+[step   1220/6000] w=0.34 loss_c=0.6007/0.6226 loss_h=1.3867/1.3325 lr=1.39e-04 mem=1.4GB elapsed=14.2min cost=$0.71 n_c=6 n_h=2
+[step   1240/6000] w=0.34 loss_c=0.5417/0.5954 loss_h=1.1621/1.2637 lr=1.38e-04 mem=1.4GB elapsed=14.4min cost=$0.72 n_c=6 n_h=2
+[step   1260/6000] w=0.34 loss_c=0.6715/0.5582 loss_h=1.6667/1.3668 lr=1.38e-04 mem=1.4GB elapsed=14.6min cost=$0.73 n_c=5 n_h=3
+[step   1280/6000] w=0.34 loss_c=0.5057/0.5987 loss_h=0.6953/1.2388 lr=1.38e-04 mem=1.4GB elapsed=14.9min cost=$0.74 n_c=7 n_h=1
+[step   1300/6000] w=0.34 loss_c=0.4025/0.5779 loss_h=1.3854/1.2897 lr=1.37e-04 mem=1.4GB elapsed=15.1min cost=$0.75 n_c=5 n_h=3
+[step   1320/6000] w=0.34 loss_c=0.4971/0.5197 loss_h=1.4082/1.3049 lr=1.37e-04 mem=1.4GB elapsed=15.3min cost=$0.76 n_c=4 n_h=4
+[step   1340/6000] w=0.34 loss_c=0.6934/0.6106 loss_h=1.3516/1.3254 lr=1.36e-04 mem=1.4GB elapsed=15.6min cost=$0.78 n_c=6 n_h=2
+[step   1360/6000] w=0.35 loss_c=0.4418/0.5681 loss_h=1.3203/1.1361 lr=1.36e-04 mem=1.4GB elapsed=15.8min cost=$0.79 n_c=5 n_h=3
+[step   1380/6000] w=0.35 loss_c=0.4930/0.5277 loss_h=1.5391/1.1542 lr=1.35e-04 mem=1.4GB elapsed=16.0min cost=$0.80 n_c=7 n_h=1
+[step   1400/6000] w=0.35 loss_c=0.4761/0.5833 loss_h=1.3027/1.2791 lr=1.35e-04 mem=1.4GB elapsed=16.3min cost=$0.81 n_c=4 n_h=4
+[step   1420/6000] w=0.35 loss_c=0.5523/0.5706 loss_h=1.1654/1.1932 lr=1.34e-04 mem=1.4GB elapsed=16.5min cost=$0.82 n_c=5 n_h=3
+[step   1440/6000] w=0.35 loss_c=0.5275/0.5610 loss_h=1.4180/1.1779 lr=1.34e-04 mem=1.4GB elapsed=16.7min cost=$0.83 n_c=6 n_h=2
+[step   1460/6000] w=0.35 loss_c=0.3850/0.5652 loss_h=1.0938/1.1774 lr=1.33e-04 mem=1.4GB elapsed=17.0min cost=$0.85 n_c=7 n_h=1
+[step   1480/6000] w=0.35 loss_c=0.6732/0.5370 loss_h=0.9141/1.2708 lr=1.33e-04 mem=1.4GB elapsed=17.2min cost=$0.86 n_c=6 n_h=2
+[step   1500/6000] w=0.35 loss_c=0.6737/0.5602 loss_h=1.5000/1.2109 lr=1.32e-04 mem=1.4GB elapsed=17.4min cost=$0.87 n_c=7 n_h=1
+[ckpt] saved ckpts/ckpt_step1500.pt
+[step   1520/6000] w=0.35 loss_c=0.5308/0.5238 loss_h=1.0850/1.2567 lr=1.32e-04 mem=1.4GB elapsed=17.7min cost=$0.88 n_c=4 n_h=4
+[step   1540/6000] w=0.35 loss_c=0.4390/0.5644 loss_h=1.3086/1.2401 lr=1.31e-04 mem=1.4GB elapsed=17.9min cost=$0.89 n_c=6 n_h=2
+[step   1560/6000] w=0.35 loss_c=0.6108/0.5606 loss_h=1.3828/1.2590 lr=1.31e-04 mem=1.4GB elapsed=18.1min cost=$0.90 n_c=7 n_h=1
+[step   1580/6000] w=0.35 loss_c=0.6189/0.4803 loss_h=1.1553/1.2196 lr=1.30e-04 mem=1.4GB elapsed=18.4min cost=$0.92 n_c=4 n_h=4
+[step   1600/6000] w=0.35 loss_c=0.5034/0.5375 loss_h=1.4043/1.2529 lr=1.29e-04 mem=1.4GB elapsed=18.6min cost=$0.93 n_c=4 n_h=4
+[step   1620/6000] w=0.35 loss_c=0.6152/0.5191 loss_h=1.1406/1.3165 lr=1.29e-04 mem=1.4GB elapsed=18.8min cost=$0.94 n_c=4 n_h=4
+[step   1640/6000] w=0.35 loss_c=0.4445/0.5188 loss_h=1.2161/1.2385 lr=1.28e-04 mem=1.4GB elapsed=19.1min cost=$0.95 n_c=5 n_h=3
+[step   1660/6000] w=0.36 loss_c=0.4828/0.5076 loss_h=1.3242/1.2468 lr=1.28e-04 mem=1.4GB elapsed=19.3min cost=$0.96 n_c=4 n_h=4
+[step   1680/6000] w=0.36 loss_c=0.3929/0.5317 loss_h=1.3398/1.3330 lr=1.27e-04 mem=1.4GB elapsed=19.5min cost=$0.97 n_c=6 n_h=2
+[step   1700/6000] w=0.36 loss_c=0.4707/0.5626 loss_h=1.2391/1.2174 lr=1.27e-04 mem=1.4GB elapsed=19.8min cost=$0.99 n_c=3 n_h=5
+[step   1720/6000] w=0.36 loss_c=0.5938/0.5023 loss_h=1.1914/1.2038 lr=1.26e-04 mem=1.4GB elapsed=20.0min cost=$1.00 n_c=6 n_h=2
+[step   1740/6000] w=0.36 loss_c=0.6008/0.4956 loss_h=1.2656/1.2387 lr=1.25e-04 mem=1.4GB elapsed=20.3min cost=$1.01 n_c=5 n_h=3
+[step   1760/6000] w=0.36 loss_c=0.3998/0.5183 loss_h=1.0312/1.0579 lr=1.25e-04 mem=1.4GB elapsed=20.5min cost=$1.02 n_c=5 n_h=3
+[step   1780/6000] w=0.36 loss_c=0.4899/0.5043 loss_h=1.2305/1.2438 lr=1.24e-04 mem=1.4GB elapsed=20.7min cost=$1.03 n_c=6 n_h=2
+[step   1800/6000] w=0.36 loss_c=0.6305/0.5509 loss_h=0.9941/1.2266 lr=1.24e-04 mem=1.4GB elapsed=21.0min cost=$1.04 n_c=6 n_h=2
+[step   1820/6000] w=0.36 loss_c=0.5918/0.5049 loss_h=1.4062/1.2282 lr=1.23e-04 mem=1.4GB elapsed=21.2min cost=$1.06 n_c=6 n_h=2
+[step   1840/6000] w=0.36 loss_c=0.4159/0.5311 loss_h=1.0378/1.2395 lr=1.22e-04 mem=1.4GB elapsed=21.4min cost=$1.07 n_c=5 n_h=3
+[step   1860/6000] w=0.36 loss_c=0.4832/0.5370 loss_h=1.2520/1.2181 lr=1.22e-04 mem=1.4GB elapsed=21.7min cost=$1.08 n_c=4 n_h=4
+[step   1880/6000] w=0.36 loss_c=0.7406/0.5151 loss_h=1.5195/1.2151 lr=1.21e-04 mem=1.4GB elapsed=21.9min cost=$1.09 n_c=6 n_h=2
+[step   1900/6000] w=0.36 loss_c=0.4525/0.5451 loss_h=1.3828/1.1976 lr=1.20e-04 mem=1.4GB elapsed=22.1min cost=$1.10 n_c=5 n_h=3
+[step   1920/6000] w=0.36 loss_c=0.4869/0.5304 loss_h=1.2266/1.1777 lr=1.20e-04 mem=1.4GB elapsed=22.4min cost=$1.12 n_c=5 n_h=3
+[step   1940/6000] w=0.36 loss_c=0.3204/0.5007 loss_h=1.0977/1.2558 lr=1.19e-04 mem=1.4GB elapsed=22.6min cost=$1.13 n_c=4 n_h=4
+[step   1960/6000] w=0.37 loss_c=0.5719/0.4664 loss_h=1.4688/1.1747 lr=1.18e-04 mem=1.4GB elapsed=22.8min cost=$1.14 n_c=5 n_h=3
+[step   1980/6000] w=0.37 loss_c=0.4740/0.4962 loss_h=1.3531/1.2651 lr=1.18e-04 mem=1.4GB elapsed=23.1min cost=$1.15 n_c=3 n_h=5
+[step   2000/6000] w=0.37 loss_c=0.5703/0.5281 loss_h=1.2148/1.2423 lr=1.17e-04 mem=1.4GB elapsed=23.3min cost=$1.16 n_c=4 n_h=4
+[step   2020/6000] w=0.37 loss_c=0.4364/0.5078 loss_h=1.3398/1.1574 lr=1.16e-04 mem=1.4GB elapsed=23.6min cost=$1.17 n_c=6 n_h=2
+[step   2040/6000] w=0.37 loss_c=0.3809/0.4656 loss_h=1.0352/1.2046 lr=1.16e-04 mem=1.4GB elapsed=23.8min cost=$1.19 n_c=5 n_h=3
+[step   2060/6000] w=0.37 loss_c=0.3268/0.4696 loss_h=1.1628/1.1979 lr=1.15e-04 mem=1.4GB elapsed=24.0min cost=$1.20 n_c=5 n_h=3
+[step   2080/6000] w=0.37 loss_c=0.6253/0.4619 loss_h=1.0723/1.1250 lr=1.14e-04 mem=1.4GB elapsed=24.3min cost=$1.21 n_c=6 n_h=2
+[step   2100/6000] w=0.37 loss_c=0.3287/0.4832 loss_h=1.1654/1.1921 lr=1.14e-04 mem=1.4GB elapsed=24.5min cost=$1.22 n_c=5 n_h=3
+[step   2120/6000] w=0.37 loss_c=0.4961/0.5363 loss_h=1.1281/1.2160 lr=1.13e-04 mem=1.4GB elapsed=24.7min cost=$1.23 n_c=3 n_h=5
+[step   2140/6000] w=0.37 loss_c=0.4647/0.4867 loss_h=1.1406/1.1723 lr=1.12e-04 mem=1.4GB elapsed=25.0min cost=$1.24 n_c=6 n_h=2
+[step   2160/6000] w=0.37 loss_c=0.4604/0.5094 loss_h=1.3542/1.1658 lr=1.12e-04 mem=1.4GB elapsed=25.2min cost=$1.26 n_c=5 n_h=3
+[step   2180/6000] w=0.37 loss_c=0.7168/0.4768 loss_h=1.2370/1.2493 lr=1.11e-04 mem=1.4GB elapsed=25.4min cost=$1.27 n_c=2 n_h=6
+[step   2200/6000] w=0.37 loss_c=0.4818/0.4576 loss_h=1.2474/1.2194 lr=1.10e-04 mem=1.4GB elapsed=25.7min cost=$1.28 n_c=5 n_h=3
+[step   2220/6000] w=0.37 loss_c=0.4783/0.4660 loss_h=0.0000/1.1069 lr=1.09e-04 mem=1.4GB elapsed=25.9min cost=$1.29 n_c=8 n_h=0
+[step   2240/6000] w=0.37 loss_c=0.5576/0.4764 loss_h=1.2393/1.1822 lr=1.09e-04 mem=1.4GB elapsed=26.1min cost=$1.30 n_c=4 n_h=4
+[step   2260/6000] w=0.38 loss_c=0.4941/0.4919 loss_h=1.3184/1.2642 lr=1.08e-04 mem=1.4GB elapsed=26.4min cost=$1.31 n_c=4 n_h=4
+[step   2280/6000] w=0.38 loss_c=0.4857/0.5294 loss_h=1.1336/1.2070 lr=1.07e-04 mem=1.4GB elapsed=26.6min cost=$1.33 n_c=3 n_h=5
+[step   2300/6000] w=0.38 loss_c=0.5463/0.5268 loss_h=1.3672/1.1751 lr=1.06e-04 mem=1.4GB elapsed=26.8min cost=$1.34 n_c=7 n_h=1
+[step   2320/6000] w=0.38 loss_c=0.3176/0.5122 loss_h=1.3086/1.1935 lr=1.06e-04 mem=1.4GB elapsed=27.1min cost=$1.35 n_c=4 n_h=4
+[step   2340/6000] w=0.38 loss_c=0.5892/0.4983 loss_h=1.2875/1.2407 lr=1.05e-04 mem=1.4GB elapsed=27.3min cost=$1.36 n_c=3 n_h=5
+[step   2360/6000] w=0.38 loss_c=0.4072/0.4531 loss_h=1.3008/1.2645 lr=1.04e-04 mem=1.4GB elapsed=27.5min cost=$1.37 n_c=6 n_h=2
+[step   2380/6000] w=0.38 loss_c=0.4334/0.5211 loss_h=1.2214/1.2380 lr=1.04e-04 mem=1.4GB elapsed=27.8min cost=$1.38 n_c=5 n_h=3
+[step   2400/6000] w=0.38 loss_c=0.8668/0.4981 loss_h=1.2109/1.2356 lr=1.03e-04 mem=1.4GB elapsed=28.0min cost=$1.40 n_c=5 n_h=3
+[step   2420/6000] w=0.38 loss_c=0.3789/0.4647 loss_h=1.1773/1.2342 lr=1.02e-04 mem=1.4GB elapsed=28.2min cost=$1.41 n_c=3 n_h=5
+[step   2440/6000] w=0.38 loss_c=0.4217/0.4733 loss_h=1.1068/1.1891 lr=1.01e-04 mem=1.4GB elapsed=28.5min cost=$1.42 n_c=5 n_h=3
+[step   2460/6000] w=0.38 loss_c=0.4327/0.5059 loss_h=1.1732/1.2270 lr=1.00e-04 mem=1.4GB elapsed=28.7min cost=$1.43 n_c=5 n_h=3
+[step   2480/6000] w=0.38 loss_c=0.6484/0.4850 loss_h=1.0898/1.1720 lr=9.97e-05 mem=1.4GB elapsed=28.9min cost=$1.44 n_c=6 n_h=2
+[step   2500/6000] w=0.38 loss_c=0.4778/0.4966 loss_h=1.1777/1.2215 lr=9.89e-05 mem=1.4GB elapsed=29.2min cost=$1.45 n_c=4 n_h=4
+[step   2520/6000] w=0.38 loss_c=0.3340/0.4517 loss_h=0.9375/1.2631 lr=9.82e-05 mem=1.4GB elapsed=29.4min cost=$1.47 n_c=5 n_h=3
+[step   2540/6000] w=0.38 loss_c=0.2770/0.4776 loss_h=0.9678/1.1932 lr=9.74e-05 mem=1.4GB elapsed=29.6min cost=$1.48 n_c=4 n_h=4
+[step   2560/6000] w=0.39 loss_c=0.3177/0.4260 loss_h=1.1836/1.2263 lr=9.66e-05 mem=1.4GB elapsed=29.9min cost=$1.49 n_c=6 n_h=2
+[step   2580/6000] w=0.39 loss_c=0.6055/0.5026 loss_h=1.2008/1.2247 lr=9.58e-05 mem=1.4GB elapsed=30.1min cost=$1.50 n_c=3 n_h=5
+[step   2600/6000] w=0.39 loss_c=0.3955/0.5011 loss_h=1.2156/1.2588 lr=9.51e-05 mem=1.4GB elapsed=30.3min cost=$1.51 n_c=3 n_h=5
+[step   2620/6000] w=0.39 loss_c=0.5366/0.5248 loss_h=1.0781/1.1715 lr=9.43e-05 mem=1.4GB elapsed=30.6min cost=$1.52 n_c=6 n_h=2
+[step   2640/6000] w=0.39 loss_c=0.2048/0.4703 loss_h=1.2119/1.1681 lr=9.35e-05 mem=1.4GB elapsed=30.8min cost=$1.54 n_c=4 n_h=4
+[step   2660/6000] w=0.39 loss_c=0.3385/0.5035 loss_h=1.2227/1.2313 lr=9.27e-05 mem=1.4GB elapsed=31.0min cost=$1.55 n_c=6 n_h=2
+[step   2680/6000] w=0.39 loss_c=0.5113/0.4938 loss_h=1.1250/1.2351 lr=9.19e-05 mem=1.4GB elapsed=31.3min cost=$1.56 n_c=5 n_h=3
+[step   2700/6000] w=0.39 loss_c=0.4176/0.4887 loss_h=1.2943/1.2122 lr=9.11e-05 mem=1.4GB elapsed=31.5min cost=$1.57 n_c=5 n_h=3
+[step   2720/6000] w=0.39 loss_c=0.3724/0.4820 loss_h=0.0000/1.1681 lr=9.03e-05 mem=1.4GB elapsed=31.7min cost=$1.58 n_c=8 n_h=0
+[step   2740/6000] w=0.39 loss_c=0.2744/0.4369 loss_h=1.1982/1.1962 lr=8.95e-05 mem=1.4GB elapsed=32.0min cost=$1.59 n_c=4 n_h=4
+[step   2760/6000] w=0.39 loss_c=0.6445/0.5203 loss_h=1.4167/1.1844 lr=8.87e-05 mem=1.4GB elapsed=32.2min cost=$1.60 n_c=5 n_h=3
+[step   2780/6000] w=0.39 loss_c=0.2722/0.4185 loss_h=1.2520/1.2200 lr=8.79e-05 mem=1.4GB elapsed=32.4min cost=$1.62 n_c=4 n_h=4
+[step   2800/6000] w=0.39 loss_c=0.2754/0.4299 loss_h=1.1523/1.1999 lr=8.71e-05 mem=1.4GB elapsed=32.7min cost=$1.63 n_c=4 n_h=4
+[step   2820/6000] w=0.39 loss_c=0.6221/0.4804 loss_h=1.1107/1.1524 lr=8.63e-05 mem=1.4GB elapsed=32.9min cost=$1.64 n_c=5 n_h=3
+[step   2840/6000] w=0.39 loss_c=0.6152/0.4767 loss_h=1.1621/1.2139 lr=8.55e-05 mem=1.4GB elapsed=33.1min cost=$1.65 n_c=4 n_h=4
+[step   2860/6000] w=0.40 loss_c=0.6057/0.4796 loss_h=1.2871/1.2310 lr=8.47e-05 mem=1.4GB elapsed=33.4min cost=$1.66 n_c=4 n_h=4
+[step   2880/6000] w=0.40 loss_c=0.3986/0.4655 loss_h=1.2839/1.1586 lr=8.39e-05 mem=1.4GB elapsed=33.6min cost=$1.67 n_c=5 n_h=3
+[step   2900/6000] w=0.40 loss_c=0.4749/0.4808 loss_h=0.9980/1.1771 lr=8.31e-05 mem=1.4GB elapsed=33.8min cost=$1.69 n_c=6 n_h=2
+[step   2920/6000] w=0.40 loss_c=0.5230/0.4704 loss_h=0.9740/1.2256 lr=8.23e-05 mem=1.4GB elapsed=34.1min cost=$1.70 n_c=5 n_h=3
+[step   2940/6000] w=0.40 loss_c=0.5117/0.4401 loss_h=1.1924/1.2253 lr=8.15e-05 mem=1.4GB elapsed=34.3min cost=$1.71 n_c=4 n_h=4
+[step   2960/6000] w=0.40 loss_c=0.6465/0.4974 loss_h=1.2570/1.0747 lr=8.07e-05 mem=1.4GB elapsed=34.5min cost=$1.72 n_c=3 n_h=5
+[step   2980/6000] w=0.40 loss_c=0.4272/0.4866 loss_h=1.3633/1.1744 lr=7.99e-05 mem=1.4GB elapsed=34.7min cost=$1.73 n_c=4 n_h=4
+[step   3000/6000] w=0.40 loss_c=0.4023/0.3828 loss_h=1.2875/1.1760 lr=7.91e-05 mem=1.4GB elapsed=35.0min cost=$1.74 n_c=3 n_h=5
+[ckpt] saved ckpts/ckpt_step3000.pt
+[step   3020/6000] w=0.40 loss_c=0.5020/0.4547 loss_h=1.3750/1.2037 lr=7.82e-05 mem=1.4GB elapsed=35.2min cost=$1.76 n_c=6 n_h=2
+[step   3040/6000] w=0.40 loss_c=0.3838/0.4877 loss_h=1.1536/1.1864 lr=7.74e-05 mem=1.4GB elapsed=35.4min cost=$1.77 n_c=5 n_h=3
+[step   3060/6000] w=0.40 loss_c=0.4722/0.4687 loss_h=1.3457/1.1772 lr=7.66e-05 mem=1.4GB elapsed=35.7min cost=$1.78 n_c=4 n_h=4
+[step   3080/6000] w=0.40 loss_c=0.4802/0.4715 loss_h=1.1387/1.1970 lr=7.58e-05 mem=1.4GB elapsed=35.9min cost=$1.79 n_c=4 n_h=4
+[step   3100/6000] w=0.40 loss_c=0.4277/0.4885 loss_h=1.0326/1.1002 lr=7.50e-05 mem=1.4GB elapsed=36.1min cost=$1.80 n_c=5 n_h=3
+[step   3120/6000] w=0.40 loss_c=0.6364/0.4667 loss_h=1.2422/1.1522 lr=7.42e-05 mem=1.4GB elapsed=36.4min cost=$1.81 n_c=6 n_h=2
+[step   3140/6000] w=0.40 loss_c=0.5677/0.4537 loss_h=1.1523/1.1392 lr=7.34e-05 mem=1.4GB elapsed=36.6min cost=$1.82 n_c=3 n_h=5
+[step   3160/6000] w=0.41 loss_c=0.4090/0.4700 loss_h=1.1766/1.1455 lr=7.26e-05 mem=1.4GB elapsed=36.8min cost=$1.84 n_c=3 n_h=5
+[step   3180/6000] w=0.41 loss_c=0.4821/0.4386 loss_h=1.3984/1.1996 lr=7.18e-05 mem=1.4GB elapsed=37.1min cost=$1.85 n_c=7 n_h=1
+[step   3200/6000] w=0.41 loss_c=0.5316/0.4403 loss_h=1.3516/1.1841 lr=7.09e-05 mem=1.4GB elapsed=37.3min cost=$1.86 n_c=5 n_h=3
+[step   3220/6000] w=0.41 loss_c=0.6089/0.5015 loss_h=1.1953/1.0922 lr=7.01e-05 mem=1.4GB elapsed=37.5min cost=$1.87 n_c=6 n_h=2
+[step   3240/6000] w=0.41 loss_c=0.2120/0.4570 loss_h=1.2161/1.1729 lr=6.93e-05 mem=1.4GB elapsed=37.8min cost=$1.88 n_c=5 n_h=3
+[step   3260/6000] w=0.41 loss_c=0.6316/0.5123 loss_h=1.2988/1.1691 lr=6.85e-05 mem=1.4GB elapsed=38.0min cost=$1.89 n_c=4 n_h=4
+[step   3280/6000] w=0.41 loss_c=0.5027/0.4261 loss_h=0.9570/1.1511 lr=6.77e-05 mem=1.4GB elapsed=38.3min cost=$1.91 n_c=5 n_h=3
+[step   3300/6000] w=0.41 loss_c=0.6009/0.5055 loss_h=1.2617/1.1225 lr=6.69e-05 mem=1.4GB elapsed=38.5min cost=$1.92 n_c=6 n_h=2
+[step   3320/6000] w=0.41 loss_c=0.3051/0.4159 loss_h=1.2214/1.2231 lr=6.61e-05 mem=1.4GB elapsed=38.7min cost=$1.93 n_c=5 n_h=3
+[step   3340/6000] w=0.41 loss_c=0.4297/0.4115 loss_h=1.0469/1.1649 lr=6.53e-05 mem=1.4GB elapsed=38.9min cost=$1.94 n_c=6 n_h=2
+[step   3360/6000] w=0.41 loss_c=0.5770/0.4807 loss_h=1.0156/1.1803 lr=6.45e-05 mem=1.4GB elapsed=39.2min cost=$1.95 n_c=5 n_h=3
+[step   3380/6000] w=0.41 loss_c=0.5952/0.4958 loss_h=1.1406/1.2102 lr=6.37e-05 mem=1.4GB elapsed=39.4min cost=$1.96 n_c=7 n_h=1
+[step   3400/6000] w=0.41 loss_c=0.6199/0.4293 loss_h=1.3307/1.1725 lr=6.29e-05 mem=1.4GB elapsed=39.6min cost=$1.98 n_c=5 n_h=3
+[step   3420/6000] w=0.41 loss_c=0.4609/0.4059 loss_h=0.9189/1.1257 lr=6.21e-05 mem=1.4GB elapsed=39.9min cost=$1.99 n_c=4 n_h=4
+[step   3440/6000] w=0.41 loss_c=0.5578/0.4617 loss_h=1.0547/1.0708 lr=6.13e-05 mem=1.4GB elapsed=40.1min cost=$2.00 n_c=5 n_h=3
+[step   3460/6000] w=0.42 loss_c=0.5035/0.4913 loss_h=1.2109/1.2365 lr=6.05e-05 mem=1.4GB elapsed=40.3min cost=$2.01 n_c=5 n_h=3
+[step   3480/6000] w=0.42 loss_c=0.4676/0.4313 loss_h=1.1263/1.1155 lr=5.97e-05 mem=1.4GB elapsed=40.6min cost=$2.02 n_c=5 n_h=3
+[step   3500/6000] w=0.42 loss_c=0.4561/0.4091 loss_h=1.2786/1.2215 lr=5.89e-05 mem=1.4GB elapsed=40.8min cost=$2.03 n_c=5 n_h=3
+[step   3520/6000] w=0.42 loss_c=0.5361/0.4902 loss_h=1.2891/1.1464 lr=5.81e-05 mem=1.4GB elapsed=41.0min cost=$2.04 n_c=5 n_h=3
+[step   3540/6000] w=0.42 loss_c=0.4531/0.4913 loss_h=1.2793/1.1959 lr=5.73e-05 mem=1.4GB elapsed=41.3min cost=$2.06 n_c=4 n_h=4
+[step   3560/6000] w=0.42 loss_c=0.5933/0.4973 loss_h=1.1328/1.1043 lr=5.65e-05 mem=1.4GB elapsed=41.5min cost=$2.07 n_c=5 n_h=3
+[step   3580/6000] w=0.42 loss_c=0.4299/0.4432 loss_h=1.0469/1.1434 lr=5.57e-05 mem=1.4GB elapsed=41.7min cost=$2.08 n_c=5 n_h=3
+[step   3600/6000] w=0.42 loss_c=0.5521/0.4842 loss_h=1.0898/1.1854 lr=5.49e-05 mem=1.4GB elapsed=41.9min cost=$2.09 n_c=3 n_h=5
+[step   3620/6000] w=0.42 loss_c=0.4756/0.4421 loss_h=1.2344/1.1748 lr=5.42e-05 mem=1.4GB elapsed=42.2min cost=$2.10 n_c=2 n_h=6
+[step   3640/6000] w=0.42 loss_c=0.5034/0.4390 loss_h=1.2324/1.1977 lr=5.34e-05 mem=1.4GB elapsed=42.4min cost=$2.11 n_c=4 n_h=4
+[step   3660/6000] w=0.42 loss_c=0.5176/0.5043 loss_h=1.3242/1.0579 lr=5.26e-05 mem=1.4GB elapsed=42.7min cost=$2.13 n_c=6 n_h=2
+[step   3680/6000] w=0.42 loss_c=0.3672/0.4629 loss_h=1.2031/1.1145 lr=5.18e-05 mem=1.4GB elapsed=42.9min cost=$2.14 n_c=4 n_h=4
+[step   3700/6000] w=0.42 loss_c=0.5845/0.4324 loss_h=1.1536/1.1012 lr=5.11e-05 mem=1.4GB elapsed=43.1min cost=$2.15 n_c=2 n_h=6
+[step   3720/6000] w=0.42 loss_c=0.3924/0.4682 loss_h=1.2773/1.1863 lr=5.03e-05 mem=1.4GB elapsed=43.4min cost=$2.16 n_c=6 n_h=2
+[step   3740/6000] w=0.42 loss_c=0.5973/0.4287 loss_h=1.1224/1.0187 lr=4.95e-05 mem=1.4GB elapsed=43.6min cost=$2.17 n_c=5 n_h=3
+[step   3760/6000] w=0.43 loss_c=0.2759/0.4312 loss_h=1.1484/1.2236 lr=4.88e-05 mem=1.4GB elapsed=43.8min cost=$2.18 n_c=3 n_h=5
+[step   3780/6000] w=0.43 loss_c=0.4503/0.4741 loss_h=1.1276/1.1381 lr=4.80e-05 mem=1.4GB elapsed=44.0min cost=$2.20 n_c=5 n_h=3
+[step   3800/6000] w=0.43 loss_c=0.4723/0.5461 loss_h=1.2227/1.2022 lr=4.72e-05 mem=1.4GB elapsed=44.3min cost=$2.21 n_c=6 n_h=2
+[step   3820/6000] w=0.43 loss_c=0.3785/0.4650 loss_h=1.1276/1.0424 lr=4.65e-05 mem=1.4GB elapsed=44.5min cost=$2.22 n_c=5 n_h=3
+[step   3840/6000] w=0.43 loss_c=0.4561/0.4362 loss_h=1.1445/1.1825 lr=4.57e-05 mem=1.4GB elapsed=44.7min cost=$2.23 n_c=6 n_h=2
+[step   3860/6000] w=0.43 loss_c=0.4322/0.4015 loss_h=1.1159/1.1377 lr=4.50e-05 mem=1.4GB elapsed=45.0min cost=$2.24 n_c=5 n_h=3
+[step   3880/6000] w=0.43 loss_c=0.6100/0.4398 loss_h=1.1680/1.1963 lr=4.42e-05 mem=1.4GB elapsed=45.2min cost=$2.25 n_c=3 n_h=5
+[step   3900/6000] w=0.43 loss_c=0.3021/0.4497 loss_h=0.9098/1.1524 lr=4.35e-05 mem=1.4GB elapsed=45.4min cost=$2.26 n_c=3 n_h=5
+[step   3920/6000] w=0.43 loss_c=0.4146/0.3921 loss_h=1.2708/1.1597 lr=4.28e-05 mem=1.4GB elapsed=45.7min cost=$2.28 n_c=5 n_h=3
+[step   3940/6000] w=0.43 loss_c=0.2819/0.4274 loss_h=1.1016/1.1122 lr=4.20e-05 mem=1.4GB elapsed=45.9min cost=$2.29 n_c=3 n_h=5
+[step   3960/6000] w=0.43 loss_c=0.0000/0.4223 loss_h=1.2524/1.1513 lr=4.13e-05 mem=1.4GB elapsed=46.1min cost=$2.30 n_c=0 n_h=8
+[step   3980/6000] w=0.43 loss_c=0.3171/0.4190 loss_h=0.0000/1.0465 lr=4.06e-05 mem=1.4GB elapsed=46.4min cost=$2.31 n_c=8 n_h=0
+[step   4000/6000] w=0.43 loss_c=0.3118/0.4331 loss_h=1.2227/1.1138 lr=3.99e-05 mem=1.4GB elapsed=46.6min cost=$2.32 n_c=6 n_h=2
+[step   4020/6000] w=0.43 loss_c=0.4270/0.4794 loss_h=1.1846/1.2014 lr=3.92e-05 mem=1.4GB elapsed=46.8min cost=$2.33 n_c=4 n_h=4
+[step   4040/6000] w=0.43 loss_c=0.2490/0.4491 loss_h=1.2799/1.0986 lr=3.84e-05 mem=1.4GB elapsed=47.1min cost=$2.35 n_c=2 n_h=6
+[step   4060/6000] w=0.44 loss_c=0.6201/0.4634 loss_h=1.3633/1.1144 lr=3.77e-05 mem=1.4GB elapsed=47.3min cost=$2.36 n_c=4 n_h=4
+[step   4080/6000] w=0.44 loss_c=0.2621/0.4144 loss_h=1.2422/1.0623 lr=3.70e-05 mem=1.4GB elapsed=47.5min cost=$2.37 n_c=6 n_h=2
+[step   4100/6000] w=0.44 loss_c=0.6980/0.4818 loss_h=1.0495/1.1716 lr=3.63e-05 mem=1.4GB elapsed=47.8min cost=$2.38 n_c=5 n_h=3
+[step   4120/6000] w=0.44 loss_c=0.7334/0.4883 loss_h=1.2109/1.1496 lr=3.56e-05 mem=1.4GB elapsed=48.0min cost=$2.39 n_c=4 n_h=4
+[step   4140/6000] w=0.44 loss_c=0.4546/0.4589 loss_h=1.2422/1.0571 lr=3.50e-05 mem=1.4GB elapsed=48.2min cost=$2.40 n_c=7 n_h=1
+[step   4160/6000] w=0.44 loss_c=0.2790/0.4642 loss_h=1.1938/1.1889 lr=3.43e-05 mem=1.4GB elapsed=48.5min cost=$2.41 n_c=3 n_h=5
+[step   4180/6000] w=0.44 loss_c=0.2725/0.4155 loss_h=0.9602/1.1433 lr=3.36e-05 mem=1.4GB elapsed=48.7min cost=$2.43 n_c=3 n_h=5
+[step   4200/6000] w=0.44 loss_c=0.2693/0.4124 loss_h=1.1328/1.2013 lr=3.29e-05 mem=1.4GB elapsed=48.9min cost=$2.44 n_c=5 n_h=3
+[step   4220/6000] w=0.44 loss_c=0.3472/0.4397 loss_h=1.4688/1.1057 lr=3.22e-05 mem=1.4GB elapsed=49.1min cost=$2.45 n_c=6 n_h=2
+[step   4240/6000] w=0.44 loss_c=0.2627/0.4614 loss_h=1.1094/1.1822 lr=3.16e-05 mem=1.4GB elapsed=49.4min cost=$2.46 n_c=5 n_h=3
+[step   4260/6000] w=0.44 loss_c=0.5957/0.4084 loss_h=1.2725/1.1617 lr=3.09e-05 mem=1.4GB elapsed=49.6min cost=$2.47 n_c=4 n_h=4
+[step   4280/6000] w=0.44 loss_c=0.3232/0.4447 loss_h=1.1673/1.1293 lr=3.03e-05 mem=1.4GB elapsed=49.8min cost=$2.48 n_c=2 n_h=6
+[step   4300/6000] w=0.44 loss_c=0.5215/0.4626 loss_h=1.0732/1.2290 lr=2.96e-05 mem=1.4GB elapsed=50.1min cost=$2.50 n_c=4 n_h=4
+[step   4320/6000] w=0.44 loss_c=0.5453/0.4721 loss_h=1.2031/1.1089 lr=2.90e-05 mem=1.4GB elapsed=50.3min cost=$2.51 n_c=5 n_h=3
+[step   4340/6000] w=0.44 loss_c=0.3879/0.4627 loss_h=0.9401/1.1019 lr=2.83e-05 mem=1.4GB elapsed=50.5min cost=$2.52 n_c=5 n_h=3
+[step   4360/6000] w=0.45 loss_c=0.2727/0.4086 loss_h=1.1439/1.1183 lr=2.77e-05 mem=1.4GB elapsed=50.8min cost=$2.53 n_c=2 n_h=6
+[step   4380/6000] w=0.45 loss_c=0.4893/0.4448 loss_h=1.1276/1.1390 lr=2.71e-05 mem=1.4GB elapsed=51.0min cost=$2.54 n_c=5 n_h=3
+[step   4400/6000] w=0.45 loss_c=0.4834/0.4579 loss_h=1.1016/1.0412 lr=2.64e-05 mem=1.4GB elapsed=51.2min cost=$2.55 n_c=6 n_h=2
+[step   4420/6000] w=0.45 loss_c=0.5391/0.4447 loss_h=0.9404/1.1561 lr=2.58e-05 mem=1.4GB elapsed=51.5min cost=$2.56 n_c=4 n_h=4
+[step   4440/6000] w=0.45 loss_c=0.6219/0.4667 loss_h=0.8952/1.1073 lr=2.52e-05 mem=1.4GB elapsed=51.7min cost=$2.58 n_c=5 n_h=3
+[step   4460/6000] w=0.45 loss_c=0.5527/0.4908 loss_h=1.4043/1.1693 lr=2.46e-05 mem=1.4GB elapsed=51.9min cost=$2.59 n_c=4 n_h=4
+[step   4480/6000] w=0.45 loss_c=0.3662/0.4568 loss_h=1.2396/1.1336 lr=2.40e-05 mem=1.4GB elapsed=52.2min cost=$2.60 n_c=5 n_h=3
+[step   4500/6000] w=0.45 loss_c=0.3699/0.4467 loss_h=1.0260/1.1389 lr=2.34e-05 mem=1.4GB elapsed=52.4min cost=$2.61 n_c=5 n_h=3
+[ckpt] saved ckpts/ckpt_step4500.pt
+[step   4520/6000] w=0.45 loss_c=0.3621/0.4470 loss_h=1.0482/1.1130 lr=2.28e-05 mem=1.4GB elapsed=52.6min cost=$2.62 n_c=5 n_h=3
+[step   4540/6000] w=0.45 loss_c=0.8301/0.4551 loss_h=1.0957/1.1491 lr=2.23e-05 mem=1.4GB elapsed=52.9min cost=$2.63 n_c=2 n_h=6
+[step   4560/6000] w=0.45 loss_c=0.3894/0.4228 loss_h=1.2539/1.1331 lr=2.17e-05 mem=1.4GB elapsed=53.1min cost=$2.65 n_c=6 n_h=2
+[step   4580/6000] w=0.45 loss_c=0.4037/0.4075 loss_h=1.0957/1.1547 lr=2.11e-05 mem=1.4GB elapsed=53.3min cost=$2.66 n_c=4 n_h=4
+[step   4600/6000] w=0.45 loss_c=0.2433/0.4536 loss_h=1.1969/1.1610 lr=2.06e-05 mem=1.4GB elapsed=53.6min cost=$2.67 n_c=3 n_h=5
+[step   4620/6000] w=0.45 loss_c=0.2687/0.4507 loss_h=1.1484/1.1197 lr=2.00e-05 mem=1.4GB elapsed=53.8min cost=$2.68 n_c=5 n_h=3
+[step   4640/6000] w=0.45 loss_c=0.2744/0.4326 loss_h=1.2422/1.1163 lr=1.94e-05 mem=1.4GB elapsed=54.0min cost=$2.69 n_c=5 n_h=3
+[step   4660/6000] w=0.46 loss_c=0.4753/0.4400 loss_h=1.1555/1.1313 lr=1.89e-05 mem=1.4GB elapsed=54.3min cost=$2.70 n_c=3 n_h=5
+[step   4680/6000] w=0.46 loss_c=0.7295/0.3804 loss_h=1.0632/1.1136 lr=1.84e-05 mem=1.4GB elapsed=54.5min cost=$2.72 n_c=2 n_h=6
+[step   4700/6000] w=0.46 loss_c=0.5049/0.4738 loss_h=1.0690/1.1343 lr=1.78e-05 mem=1.4GB elapsed=54.7min cost=$2.73 n_c=2 n_h=6
+[step   4720/6000] w=0.46 loss_c=0.3929/0.4998 loss_h=1.2891/1.1718 lr=1.73e-05 mem=1.4GB elapsed=55.0min cost=$2.74 n_c=5 n_h=3
+[step   4740/6000] w=0.46 loss_c=0.3988/0.4439 loss_h=1.0664/1.1642 lr=1.68e-05 mem=1.4GB elapsed=55.2min cost=$2.75 n_c=3 n_h=5
+[step   4760/6000] w=0.46 loss_c=0.3855/0.4155 loss_h=1.2266/1.1662 lr=1.63e-05 mem=1.4GB elapsed=55.4min cost=$2.76 n_c=4 n_h=4
+[step   4780/6000] w=0.46 loss_c=0.3937/0.4472 loss_h=1.0664/1.2300 lr=1.58e-05 mem=1.4GB elapsed=55.6min cost=$2.77 n_c=5 n_h=3
+[step   4800/6000] w=0.46 loss_c=0.4938/0.4712 loss_h=1.1589/1.1625 lr=1.53e-05 mem=1.4GB elapsed=55.9min cost=$2.78 n_c=5 n_h=3
+[step   4820/6000] w=0.46 loss_c=0.6188/0.4544 loss_h=1.0977/1.0569 lr=1.48e-05 mem=1.4GB elapsed=56.1min cost=$2.80 n_c=6 n_h=2
+[step   4840/6000] w=0.46 loss_c=0.5018/0.4036 loss_h=1.0391/1.1586 lr=1.43e-05 mem=1.4GB elapsed=56.3min cost=$2.81 n_c=5 n_h=3
+[step   4860/6000] w=0.46 loss_c=0.1680/0.4462 loss_h=1.3594/1.1277 lr=1.38e-05 mem=1.4GB elapsed=56.6min cost=$2.82 n_c=3 n_h=5
+[step   4880/6000] w=0.46 loss_c=0.4195/0.4613 loss_h=1.2656/1.1493 lr=1.34e-05 mem=1.4GB elapsed=56.8min cost=$2.83 n_c=6 n_h=2
+[step   4900/6000] w=0.46 loss_c=0.3268/0.4588 loss_h=1.1302/1.1698 lr=1.29e-05 mem=1.4GB elapsed=57.0min cost=$2.84 n_c=5 n_h=3
+[step   4920/6000] w=0.46 loss_c=0.2565/0.4652 loss_h=1.2227/1.1053 lr=1.25e-05 mem=1.4GB elapsed=57.3min cost=$2.85 n_c=3 n_h=5
+[step   4940/6000] w=0.46 loss_c=0.3169/0.4876 loss_h=1.2754/1.1707 lr=1.20e-05 mem=1.4GB elapsed=57.5min cost=$2.87 n_c=4 n_h=4
+[step   4960/6000] w=0.47 loss_c=0.5640/0.4546 loss_h=1.2070/1.1413 lr=1.16e-05 mem=1.4GB elapsed=57.7min cost=$2.88 n_c=4 n_h=4
+[step   4980/6000] w=0.47 loss_c=0.2507/0.4525 loss_h=1.1185/1.1814 lr=1.12e-05 mem=1.4GB elapsed=58.0min cost=$2.89 n_c=5 n_h=3
+[step   5000/6000] w=0.47 loss_c=0.4836/0.4762 loss_h=1.0938/1.1258 lr=1.07e-05 mem=1.4GB elapsed=58.2min cost=$2.90 n_c=4 n_h=4
+[step   5020/6000] w=0.47 loss_c=0.2617/0.4096 loss_h=1.2489/1.1164 lr=1.03e-05 mem=1.4GB elapsed=58.4min cost=$2.91 n_c=1 n_h=7
+[step   5040/6000] w=0.47 loss_c=0.4121/0.4454 loss_h=1.1359/1.1744 lr=9.91e-06 mem=1.4GB elapsed=58.7min cost=$2.92 n_c=3 n_h=5
+[step   5060/6000] w=0.47 loss_c=0.4064/0.4129 loss_h=1.2344/1.1636 lr=9.51e-06 mem=1.4GB elapsed=58.9min cost=$2.93 n_c=5 n_h=3
+[step   5080/6000] w=0.47 loss_c=0.2327/0.4125 loss_h=1.0828/1.1427 lr=9.12e-06 mem=1.4GB elapsed=59.1min cost=$2.95 n_c=3 n_h=5
+[step   5100/6000] w=0.47 loss_c=0.3398/0.3692 loss_h=1.2640/1.1077 lr=8.74e-06 mem=1.4GB elapsed=59.4min cost=$2.96 n_c=1 n_h=7
+[step   5120/6000] w=0.47 loss_c=0.3921/0.4594 loss_h=1.2422/1.1877 lr=8.36e-06 mem=1.4GB elapsed=59.6min cost=$2.97 n_c=4 n_h=4
+[step   5140/6000] w=0.47 loss_c=0.4801/0.3918 loss_h=1.1641/1.1439 lr=7.99e-06 mem=1.4GB elapsed=59.8min cost=$2.98 n_c=5 n_h=3
+[step   5160/6000] w=0.47 loss_c=0.4927/0.4815 loss_h=0.9443/1.1571 lr=7.63e-06 mem=1.4GB elapsed=60.1min cost=$2.99 n_c=4 n_h=4
+[step   5180/6000] w=0.47 loss_c=0.5632/0.4914 loss_h=0.9316/1.1354 lr=7.28e-06 mem=1.4GB elapsed=60.3min cost=$3.00 n_c=6 n_h=2
+[step   5200/6000] w=0.47 loss_c=0.4180/0.4432 loss_h=1.2305/1.1786 lr=6.93e-06 mem=1.4GB elapsed=60.5min cost=$3.02 n_c=3 n_h=5
+[step   5220/6000] w=0.47 loss_c=0.3478/0.4517 loss_h=1.1562/1.0819 lr=6.59e-06 mem=1.4GB elapsed=60.7min cost=$3.03 n_c=7 n_h=1
+[step   5240/6000] w=0.47 loss_c=0.5650/0.4480 loss_h=1.1406/1.2126 lr=6.27e-06 mem=1.4GB elapsed=61.0min cost=$3.04 n_c=5 n_h=3
+[step   5260/6000] w=0.48 loss_c=0.3633/0.4392 loss_h=1.1211/1.1196 lr=5.94e-06 mem=1.4GB elapsed=61.2min cost=$3.05 n_c=3 n_h=5
+[step   5280/6000] w=0.48 loss_c=0.5679/0.4815 loss_h=1.1338/1.0827 lr=5.63e-06 mem=1.4GB elapsed=61.4min cost=$3.06 n_c=4 n_h=4
+[step   5300/6000] w=0.48 loss_c=0.5703/0.5052 loss_h=1.3633/1.1861 lr=5.33e-06 mem=1.4GB elapsed=61.7min cost=$3.07 n_c=4 n_h=4
+[step   5320/6000] w=0.48 loss_c=0.6131/0.4742 loss_h=1.1016/1.1310 lr=5.03e-06 mem=1.4GB elapsed=61.9min cost=$3.08 n_c=5 n_h=3
+[step   5340/6000] w=0.48 loss_c=0.3438/0.4355 loss_h=0.9974/1.1730 lr=4.74e-06 mem=1.4GB elapsed=62.1min cost=$3.10 n_c=2 n_h=6
+[step   5360/6000] w=0.48 loss_c=0.3441/0.4503 loss_h=1.2214/1.1188 lr=4.46e-06 mem=1.4GB elapsed=62.4min cost=$3.11 n_c=5 n_h=3
+[step   5380/6000] w=0.48 loss_c=0.4492/0.4171 loss_h=1.1901/1.1138 lr=4.19e-06 mem=1.4GB elapsed=62.6min cost=$3.12 n_c=2 n_h=6
+[step   5400/6000] w=0.48 loss_c=0.3908/0.4156 loss_h=1.0026/1.1066 lr=3.93e-06 mem=1.4GB elapsed=62.8min cost=$3.13 n_c=5 n_h=3
+[step   5420/6000] w=0.48 loss_c=0.2638/0.4453 loss_h=1.1500/1.1814 lr=3.67e-06 mem=1.4GB elapsed=63.1min cost=$3.14 n_c=3 n_h=5
+[step   5440/6000] w=0.48 loss_c=0.2817/0.4079 loss_h=1.1152/1.1430 lr=3.42e-06 mem=1.4GB elapsed=63.3min cost=$3.15 n_c=4 n_h=4
+[step   5460/6000] w=0.48 loss_c=0.5508/0.4098 loss_h=1.1234/1.1726 lr=3.19e-06 mem=1.4GB elapsed=63.5min cost=$3.17 n_c=3 n_h=5
+[step   5480/6000] w=0.48 loss_c=0.6609/0.4541 loss_h=1.2891/1.1623 lr=2.96e-06 mem=1.4GB elapsed=63.8min cost=$3.18 n_c=5 n_h=3
+[step   5500/6000] w=0.48 loss_c=0.3394/0.4102 loss_h=0.9277/1.0996 lr=2.73e-06 mem=1.4GB elapsed=64.0min cost=$3.19 n_c=4 n_h=4
+[step   5520/6000] w=0.48 loss_c=0.4668/0.4519 loss_h=1.0879/1.1340 lr=2.52e-06 mem=1.4GB elapsed=64.2min cost=$3.20 n_c=4 n_h=4
+[step   5540/6000] w=0.48 loss_c=0.5904/0.4969 loss_h=1.2656/1.1421 lr=2.32e-06 mem=1.4GB elapsed=64.5min cost=$3.21 n_c=5 n_h=3
+[step   5560/6000] w=0.49 loss_c=0.6098/0.5261 loss_h=1.1367/1.0995 lr=2.12e-06 mem=1.4GB elapsed=64.7min cost=$3.22 n_c=5 n_h=3
+[step   5580/6000] w=0.49 loss_c=0.2816/0.4649 loss_h=0.8662/1.1319 lr=1.93e-06 mem=1.4GB elapsed=64.9min cost=$3.24 n_c=4 n_h=4
+[step   5600/6000] w=0.49 loss_c=0.4448/0.4573 loss_h=0.9854/1.1632 lr=1.75e-06 mem=1.4GB elapsed=65.2min cost=$3.25 n_c=4 n_h=4
+[step   5620/6000] w=0.49 loss_c=0.4076/0.4321 loss_h=1.2328/1.1545 lr=1.58e-06 mem=1.4GB elapsed=65.4min cost=$3.26 n_c=3 n_h=5
+[step   5640/6000] w=0.49 loss_c=0.2820/0.3979 loss_h=1.2480/1.1748 lr=1.42e-06 mem=1.4GB elapsed=65.6min cost=$3.27 n_c=4 n_h=4
+[step   5660/6000] w=0.49 loss_c=0.7125/0.4611 loss_h=1.2943/1.1591 lr=1.27e-06 mem=1.4GB elapsed=65.9min cost=$3.28 n_c=5 n_h=3
+[step   5680/6000] w=0.49 loss_c=0.3748/0.4246 loss_h=1.2682/1.1671 lr=1.12e-06 mem=1.4GB elapsed=66.1min cost=$3.29 n_c=5 n_h=3
+[step   5700/6000] w=0.49 loss_c=0.5859/0.4334 loss_h=1.1849/1.1729 lr=9.88e-07 mem=1.4GB elapsed=66.3min cost=$3.31 n_c=2 n_h=6
+[step   5720/6000] w=0.49 loss_c=0.8857/0.4481 loss_h=1.2318/1.1962 lr=8.61e-07 mem=1.4GB elapsed=66.6min cost=$3.32 n_c=2 n_h=6
+[step   5740/6000] w=0.49 loss_c=0.3017/0.4309 loss_h=1.1276/1.1066 lr=7.43e-07 mem=1.4GB elapsed=66.8min cost=$3.33 n_c=5 n_h=3
+[step   5760/6000] w=0.49 loss_c=0.2480/0.4452 loss_h=1.1339/1.1462 lr=6.33e-07 mem=1.4GB elapsed=67.0min cost=$3.34 n_c=1 n_h=7
+[step   5780/6000] w=0.49 loss_c=0.3988/0.4628 loss_h=0.9206/1.1690 lr=5.32e-07 mem=1.4GB elapsed=67.3min cost=$3.35 n_c=5 n_h=3
+[step   5800/6000] w=0.49 loss_c=0.6250/0.4181 loss_h=1.1787/1.1684 lr=4.40e-07 mem=1.4GB elapsed=67.5min cost=$3.36 n_c=4 n_h=4
+[step   5820/6000] w=0.49 loss_c=0.3547/0.4467 loss_h=0.9102/1.1641 lr=3.56e-07 mem=1.4GB elapsed=67.7min cost=$3.37 n_c=6 n_h=2
+[step   5840/6000] w=0.49 loss_c=0.6289/0.4958 loss_h=1.2078/1.2138 lr=2.81e-07 mem=1.4GB elapsed=68.0min cost=$3.39 n_c=3 n_h=5
+[step   5860/6000] w=0.50 loss_c=0.2935/0.4122 loss_h=1.1572/1.1773 lr=2.16e-07 mem=1.4GB elapsed=68.2min cost=$3.40 n_c=4 n_h=4
+[step   5880/6000] w=0.50 loss_c=0.0981/0.4183 loss_h=1.0911/1.1541 lr=1.58e-07 mem=1.4GB elapsed=68.4min cost=$3.41 n_c=2 n_h=6
+[step   5900/6000] w=0.50 loss_c=0.4805/0.4391 loss_h=1.1270/1.1643 lr=1.10e-07 mem=1.4GB elapsed=68.7min cost=$3.42 n_c=4 n_h=4
+[step   5920/6000] w=0.50 loss_c=0.5521/0.3920 loss_h=1.1625/1.1525 lr=7.04e-08 mem=1.4GB elapsed=68.9min cost=$3.43 n_c=3 n_h=5
+[step   5940/6000] w=0.50 loss_c=0.4746/0.4469 loss_h=1.1416/1.1660 lr=3.96e-08 mem=1.4GB elapsed=69.1min cost=$3.44 n_c=4 n_h=4
+[step   5960/6000] w=0.50 loss_c=0.4189/0.4248 loss_h=1.2891/1.1436 lr=1.76e-08 mem=1.4GB elapsed=69.4min cost=$3.46 n_c=3 n_h=5
+[step   5980/6000] w=0.50 loss_c=0.2020/0.3986 loss_h=1.3047/1.1854 lr=4.40e-09 mem=1.4GB elapsed=69.6min cost=$3.47 n_c=5 n_h=3
+[step   6000/6000] w=0.50 loss_c=0.4364/0.5197 loss_h=0.8535/1.1657 lr=0.00e+00 mem=1.4GB elapsed=69.8min cost=$3.48 n_c=6 n_h=2
+[ckpt] saved ckpts/ckpt_step6000.pt
+[done] {
+  "preset": "phase2_cotrain_350m",
+  "steps_completed": 6000,
+  "steps_target": 6000,
+  "final_loss_c": 0.4363606770833333,
+  "final_loss_h": 0.853515625,
+  "final_w": 0.5,
+  "elapsed_min": 69.84371804396311,
+  "cost_usd": 3.4805452845043607,
+  "n_params": 298764288,
+  "lineage_tag": "engine_a_g_dual_350m_v1_phase2_cotrain",
+  "arch_origin": "anima_native_scratch",
+  "substrate_ckpt": "bg_la_step_12000_final.pt",
+  "w_start": 0.3,
+  "w_end": 0.5
+}

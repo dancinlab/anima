@@ -1,0 +1,20 @@
+[INFO] device=cuda torch=2.5.1+cu121 cuda=True
+[INFO] gpu=NVIDIA A100-SXM4-40GB
+[INFO] cfg = {'vocab_size': 256, 'd_model': 512, 'n_head': 6, 'ffn_dim': 1536, 'max_seq': 128, 'n_layer': 1, 'initial_cells': 2, 'max_cells': 64, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+Traceback (most recent call last):
+  File "/workspace/anima/training/train_v5mitosis_cotrain_v3_routing.py", line 725, in <module>
+    sys.exit(cotrain(parse_args()))
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/train_v5mitosis_cotrain_v3_routing.py", line 539, in cotrain
+    engine = MitosisModelEngine(cfg).to(device)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/mitosis_model_v5.py", line 226, in __init__
+    cell = MitosisModelCell(cfg, shared_attn=None)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/mitosis_model_v5.py", line 138, in __init__
+    self.attn = CausalSelfAttention(cfg.d_model, cfg.n_head, dropout=cfg.dropout)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/mitosis_model_v5.py", line 101, in __init__
+    assert d_model % n_head == 0, f"d_model={d_model} must be divisible by n_head={n_head}"
+           ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: d_model=512 must be divisible by n_head=6

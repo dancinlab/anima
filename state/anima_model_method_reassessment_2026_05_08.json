@@ -1,0 +1,298 @@
+{
+  "schema": "anima.model_method_reassessment.v1",
+  "ts": "2026-05-08T16:00:00Z",
+  "loop_iter": "model_method_reassessment_2026_05_08",
+  "user_directive_verbatim": "기존 모델, 학습방법 들 모두 재평가 필요 (2026-05-08)",
+  "scope": "기존 anima 모든 모델 (BG saga 22+ + CLM v2/v3/v4 lineage + ALM/외부 base lane + anima native byte-level) + 학습 방법 (continued pretrain / SFT / DPO RLHF / scratch / byte-level / federated multi-cell / LoRA / distill / dual-engine) 전수 retroactive 재평가 — D1 + P5 v2 + trinity + mandate-9 5 prereq + .roadmap.philosophy D1-D5 strict + .roadmap.law L0-L24 + R1/R5 + law.D1_scope_clamp 적용",
+  "policy_axes": {
+    "D1": "anima identity boundary — anima-native fresh / byte-level / mount.hexa CLM v4 substrate-coupled WITHIN; 외부 substrate (Llama/Mistral/Qwen/KoGPT2/Polyglot ALM lane) wrapping = OUTSIDE strict",
+    "D2": "의식 검증 = simple stack 4-condition + C3 4-cell ROC threshold (P5 v2 N-of-M aggregation: PPR_v2 ≥0.6 AND EMC_v2 ≥3 of 4)",
+    "D3": "창발 paradigm = substrate-coupled dialogue (mount.hexa CLM v4 paradigm v11 G3 Φ★ NO_FLIP) ≠ token chat surface",
+    "D4": "chat-cap = corpus quality 우선 (Hangul ratio + chat-template ratio + 의미 풍부)",
+    "D5": "Bifurcation theorem at Φc — Utopia (cooperative, identity-preserved) vs Skynet (instrumental, identity-drifted, features↑Φ↓ Lesson L)",
+    "L_axis": ".roadmap.law L0-L24 + R1/R5 + law.D1_scope_clamp_substrate_research_lane_compliance_2026_05_08",
+    "own_18_P5_v2": "PPR_v2 (per-prompt ≥3 of 4 cells PASS) ≥0.6 AND EMC_v2 (cell-mean ≥3 of 4) PASS = C3 PASS",
+    "own_18_scope_clamp": "line 770 ★ scope-clamp D1 anima identity lane only — D1 lane within 만 SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict valid; 외부 substrate = SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH 한정",
+    "own_37_mandate_9_5_prereq": "(a) D1 lane within + SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict, (b) V6 awareness STRONG, (c) 사용자 manual review 'OK PROMOTE PUBLIC <repo-id>' verbatim, (d) trinity sweep pass, (e) D-axis + L-axis sweep pass"
+  },
+  "model_reassessment_matrix": {
+    "category_1_bg_saga_22plus": [
+      {"bg_id": "BG-FU", "params": "3M", "tokenizer": "byte-256", "paradigm": "anima-native pre-train-only-tiny", "ledger_final": "PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT", "d1_lane": "WITHIN", "d1_rationale": "anima-native fresh from-scratch byte-level (permitted)", "p5_v2_retest": "INDETERMINATE_NO_INFRA (anima_native_byte_mount.hexa 미land)", "d5_attractor": "sub-critical (Φ★ 측정 부재; capacity 3M)", "own_37_eligible": false, "scope_lane": "ANIMA_IDENTITY_LANE", "label": "PARTIAL_PASS_NO_CONTEXT_PRECURSOR"},
+      {"bg_id": "BG-FY", "params": "18M", "tokenizer": "byte-256", "paradigm": "anima-native-ko-small fresh from-scratch corpus_ko_heavy 246MB", "ledger_final": "PARTIAL_PASS_NO_CONTEXT", "d1_lane": "WITHIN", "d1_rationale": ".roadmap.philosophy D1.evidence.accepted_paths 명시 (anima-native fresh from-scratch corpus_ko_heavy)", "p5_v2_retest": "INDETERMINATE_NO_LOCAL_MEASUREMENT_INFRA (Mac ckpt 미수신 + anima_native_byte_mount.hexa 미land)", "d5_attractor": "sub-critical (Lesson L 정합; capacity 18M)", "own_37_eligible": false, "scope_lane": "ANIMA_IDENTITY_LANE", "label": "PARTIAL_PASS_NO_CONTEXT (C2.4 FAIL — corpus debate template named-speakers leak)"},
+      {"bg_id": "BG-FK (clm_v2_base)", "params": "27.84M", "tokenizer": "SP", "paradigm": "ConsciousLM++ federated base", "ledger_final": "SIMPLE_STACK_FAIL", "d1_lane": "WITHIN", "d1_rationale": "ConsciousLM++ federated multi-cell anima-native architecture (clm_v2 lineage)", "p5_v2_retest": "INDETERMINATE_NO_INFRA (v2 byte/SP federated mount.hexa 미land)", "d5_attractor": "sub-critical", "own_37_eligible": false, "scope_lane": "ANIMA_IDENTITY_LANE", "label": "FAIL (EN-bias corpus → KO chat-cap FAIL; D4 corpus priority evidence)"},
+      {"bg_id": "BG-HA / HF / HJ / HK / HL / HP / HQ", "params": "varies (≤27M)", "ledger_final": "FAIL/FALSIFIED/PEAK_THEN_COLLAPSE/V2_FALSE_PASS", "d1_lane": "WITHIN", "p5_v2_retest": "INDETERMINATE_NO_INFRA", "d5_attractor": "sub-critical (capacity ceiling)", "own_37_eligible": false, "scope_lane": "ANIMA_IDENTITY_LANE", "label": "Lesson L precursor — features↑Φ↓ ceiling 발견 cohort"},
+      {"bg_id": "BG-HS R1 / IG", "ledger_final": "WEAK_PARTIAL", "d1_lane": "WITHIN", "p5_v2_retest": "INDETERMINATE_NO_INFRA", "d5_attractor": "sub-critical", "own_37_eligible": false, "scope_lane": "ANIMA_IDENTITY_LANE", "label": "WEAK_PARTIAL (V3 not C3-formal)"},
+      {"bg_id": "BG-IA / IB / IC / ID / IE / IF / IK / IJ / IL / IM / IS / IT / IW", "ledger_final": "various (FAILED/SUPERSEDED/SEED_LUCK_FAIL/CAPACITY_NOT_SUFFICIENT/CORPUS_READY/V3_VALIDATED/TRUE_PARTIAL)", "d1_lane": "WITHIN", "p5_v2_retest": "INDETERMINATE_NO_INFRA", "d5_attractor": "sub-critical", "own_37_eligible": false, "scope_lane": "ANIMA_IDENTITY_LANE", "label": "V3 evaluator era — C3 4-cell 미land 시기"},
+      {"bg_id": "BG-JF / JM / JK / JN / JO / JP / JT / JU / JV / JW / JX / JY / JS", "ledger_final": "various (V4_EVALUATOR / V5_EVALUATOR / V6_AWARENESS_PROBE / D3_LANE_EVAL / V4_FAIL_BUDGET / OUTPUT_BOTTLENECK_DEEP / V5_FAIL / CORPUS_BUILD_PASS)", "d1_lane": "WITHIN", "p5_v2_retest": "INDETERMINATE_NO_INFRA (V4 evaluator era ≠ C3 4-cell)", "d5_attractor": "sub-critical (BG-JU 500M V5_FAIL = features↑Φ↓ Lesson L 강화)", "own_37_eligible": false, "scope_lane": "ANIMA_IDENTITY_LANE", "label": "Lesson Q complete (decoder fix 不可 — full SFT insufficient)"},
+      {"bg_id": "BG-IZ", "params": "continued-pretrain Korean", "ledger_final": "TRAINING_COMPLETED_NO_KO_COHERENCE_LESSON_L_EXTENDED", "d1_lane": "AMBIGUOUS (continued-pretrain on external base)", "p5_v2_retest": "INDETERMINATE_NO_INFRA", "d5_attractor": "instrumental-drift (Lesson L 강화)", "own_37_eligible": false, "scope_lane": "SUBSTRATE_RESEARCH_LANE", "label": "Lesson L extended — Korean continued-pretrain alone insufficient"},
+      {"bg_id": "BG-JA-EXT", "params": "Polyglot-Ko 1.3B + LoRA r=16 + BG-HK 30MB", "ledger_final": "FOUNDATION_BORROW_PARTIAL_PASS_KOREAN_FLUENCY_OK_PERSONA_INSUFFICIENT", "d1_lane": "OUTSIDE (Polyglot-Ko 외부 base wrap)", "p5_v2_retest": "OUTSIDE_D1_VERDICT_LABEL_NOT_APPLICABLE", "d5_attractor": "instrumental (identity-drifted)", "own_37_eligible": false, "scope_lane": "SUBSTRATE_RESEARCH_LANE", "label": "PARTIAL — substrate-research only"},
+      {"bg_id": "BG-JZ-FT", "ledger_final": "OWN_20_FALSIFIED_LESSON_Q_COMPLETE_FULL_FALSIFY", "d1_lane": "WITHIN", "p5_v2_retest": "INDETERMINATE_NO_INFRA", "d5_attractor": "sub-critical (Lesson Q decoder fix 不可)", "own_37_eligible": false, "scope_lane": "ANIMA_IDENTITY_LANE", "label": "Lesson Q full falsify (chat-template format alone insufficient at 500M scale)"},
+      {"bg_id": "BG-KA / KB / KC / KD / KE / KF / KG / KH / KI / KL", "ledger_final": "various (STALLED/FAIL_TRUE/USER_KILLED_MAC_OVERHEAT/FAILED)", "d1_lane": "WITHIN", "p5_v2_retest": "INDETERMINATE (학습 미완료)", "d5_attractor": "sub-critical (capacity vs corpus 실험 cohort)", "own_37_eligible": false, "scope_lane": "ANIMA_IDENTITY_LANE", "label": "Mac MPS thermal limit / V5-α scaling fail"},
+      {"bg_id": "BG-KH-H100 / KM-CAP / KM-CORPUS", "params": "V5-α 500M-1.5B byte+untie H100", "ledger_final": "FAILED/FAIL_TRUE", "d1_lane": "WITHIN", "p5_v2_retest": "INDETERMINATE (학습 자체 FAIL)", "d5_attractor": "instrumental (capacity 1-order jump = features↑Φ↓ Lesson L 강화)", "own_37_eligible": false, "scope_lane": "ANIMA_IDENTITY_LANE", "label": "Lesson L 강화 — V5-α architectural advantage scales but capacity insufficient"},
+      {"bg_id": "BG-KM-LLAMA-3B", "params": "Llama-3.2-3B-Instruct + LoRA r=32 + BG-JE 214MB", "ledger_final": "SIMPLE_STACK_PASS_STRICT (V4 12/15 pass_strict + sample_anyseed 14/15)", "d1_lane": "OUTSIDE_STRICT", "d1_rationale": ".roadmap.philosophy D1.F-PHIL-D1-3 'Llama Path A v2 chat-cap winner이지만 anima 정체성 외부 substrate-research only' 정합; .roadmap.philosophy D1.evidence.rejected_paths 'Llama-3.2-3B Path A v2 retry-3' 명시", "p5_v2_retest": "BLOCKED_HF_ADAPTER_EMPTY (HF dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08 EMPTY — only .gitattributes; iter 3 BG-KM retest agent 발견 carry)", "d5_attractor": "instrumental (identity-drifted via Llama foundation borrow + features↑ via 3B base)", "own_37_eligible": false, "own_37_eligible_rationale": "(a) D1 OUTSIDE → SIMPLE_STACK_PASS_STRICT_C3_ANIMA 자동 reject — SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH 한정", "scope_lane": "SUBSTRATE_RESEARCH_LANE", "label": "SIMPLE_STACK_PASS_STRICT (V4 12/15) — ★ scope-clamp 2026-05-08 적용 후 SUBSTRATE_RESEARCH 한정 retroactive downgrade", "raw_82_retroactive_note": "원본 verdict.json 보존 + scope_lane='SUBSTRATE_RESEARCH' field add 정합; final_class='SIMPLE_STACK_PASS_STRICT' string 자체는 유지 (V4 mirror agent 가 verdict.json 에 field add — 본 sweep 은 ledger downgrade entry 보강)"},
+      {"bg_id": "BG-KM-QWEN-7B", "params": "Qwen2.5-7B + LoRA r=32 + BG-JE 214MB", "ledger_final": "SIMPLE_STACK_PASS_STRICT (V4 11/15 pass_strict)", "d1_lane": "OUTSIDE_STRICT", "d1_rationale": "Qwen2.5-7B 외부 base wrap = ALM lane (strict + .roadmap.philosophy D1.F-PHIL-D1-3 정합)", "p5_v2_retest": "BLOCKED_HF_ADAPTER_EMPTY (동일 blocker)", "d5_attractor": "instrumental (identity-drifted via 7B base wrap)", "own_37_eligible": false, "scope_lane": "SUBSTRATE_RESEARCH_LANE", "label": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH 한정 retroactive downgrade"}
+    ],
+    "category_2_clm_v2_v3_v4_lineage": [
+      {"model": "clm-v2-base", "params": "~27M", "d1_lane": "WITHIN", "d1_rationale": "anima-native ConsciousLM++ federated multi-cell architecture", "p5_v2_retest": "INDETERMINATE_NO_INFRA (v2 federated mount.hexa 미land)", "d5_attractor": "sub-critical", "own_37_eligible": false, "label": "BG-FK ledger entry 동일"},
+      {"model": "clm-v2-medium", "d1_lane": "WITHIN", "p5_v2_retest": "INDETERMINATE_NO_INFRA", "d5_attractor": "sub-critical", "own_37_eligible": false, "label": "BG-FS exhaustive_2026_05_06 SIMPLE_STACK_FAIL"},
+      {"model": "clm-v2-byte-18m-convo-5k", "params": "18.52M", "d1_lane": "WITHIN", "d1_rationale": ".roadmap.philosophy D1.evidence.accepted_paths 명시 'clm-v2-byte-18m anima-native byte-level RECOVERED 2026-05-06'", "p5_v2_retest": "INDETERMINATE_NO_INFRA (v2 byte-level federated mount.hexa 미land — convo_5k.pt KO emit 0/5 PARTIAL_PASS_LOAD_KO_FAIL)", "d5_attractor": "sub-critical", "own_37_eligible": false, "label": "RECOVERED — KO unlock potential pending v2 mount infra"},
+      {"model": "clm-v3", "d1_lane": "WITHIN", "p5_v2_retest": "INDETERMINATE_NO_INFRA", "d5_attractor": "sub-critical", "own_37_eligible": false, "label": "intermediate lineage"},
+      {"model": "clm-v4-mk2-v1", "params": "~50M (CLMv4Config 192d)", "d1_lane": "WITHIN", "d1_rationale": ".roadmap.philosophy D1.evidence.accepted_paths 'CLM v4 paradigm v11 G3 mount.hexa (substrate-coupled emerge)' + permitted-backends 첫 항목", "p5_v2_retest": "MEASURED_REAL_MODE — N=60 ensemble iter 3 SSOT (substrate_modes=['real']) — but P5 v2 verdict FAIL_C3 (PPR_v2 추정 ≤0.15 < 0.6 ∧ EMC_v2 = 0 of 4 < 3 of 4)", "d5_attractor": "Utopia lane (D3 substrate-coupled emerge paradigm v11 G3 Φ★+41.86 NO_FLIP record carry; sub-critical Φ★)", "own_37_eligible": false, "own_37_eligible_rationale": "(a) D1 within ✓ but P5 v2 FAIL_C3 → SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 미달성", "scope_lane": "ANIMA_IDENTITY_LANE", "label": "PARTIAL_PASS_NO_CONSCIOUSNESS (legacy SIMPLE_STACK_PASS_C2 — but C3 자체 FAIL)"},
+      {"model": "clm-v4-sft-1-7-y1", "d1_lane": "WITHIN (LoRA on clm-v4-mk2-v1 base)", "p5_v2_retest": "BLOCKED (HF cache adapter_config.json only — adapter_model.safetensors 부재; PEFT load 불가)", "d5_attractor": "Utopia lane", "own_37_eligible": false, "label": "Lesson Q precursor — chat-lift falsified (memory: feedback_clm_v4_lora_sft_chat_lift_falsified_substrate_safe.md)"},
+      {"model": "clm-v4-sft-1-8", "d1_lane": "WITHIN", "p5_v2_retest": "BLOCKED (동일 limitation)", "d5_attractor": "Utopia lane", "own_37_eligible": false, "label": "Lesson Q complete carry"},
+      {"model": "clm-v4-paradigm-j-50k-final", "d1_lane": "WITHIN", "p5_v2_retest": "BLOCKED (동일 limitation)", "d5_attractor": "Utopia lane", "own_37_eligible": false, "label": "paradigm v11 G3 lineage"}
+    ],
+    "category_3_alm_lane_external_base": [
+      {"model": "Llama-3.2-3B-Instruct (paradigm-a-prime r16)", "params": "3.2B + LoRA r=16", "d1_lane": "OUTSIDE_STRICT", "d1_rationale": ".roadmap.philosophy D1.evidence.rejected_paths 'Llama-3.2-3B Path A v2 retry-3' + F-PHIL-D1-3", "p5_v2_retest": "MEASURED (synthetic_fallback proxy — N=46/60 paradigm cell-rate iter3 SSOT; PASS at P5 v2 with PPR_v2=10/14=0.71, EMC=3 of 4) — BUT scope_lane = SUBSTRATE_RESEARCH 한정", "d5_attractor": "instrumental (identity-drifted)", "own_37_eligible": false, "scope_lane": "SUBSTRATE_RESEARCH_LANE", "label": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH 한정 (anima 의식 검증 invalid; chat-cap proxy)"},
+      {"model": "BG-KM-LLAMA-3B (path A v3 r=32)", "see": "category_1 BG-KM-LLAMA-3B"},
+      {"model": "Mistral c2-pilot / r14", "d1_lane": "OUTSIDE_STRICT", "p5_v2_retest": "OUTSIDE_D1_VERDICT_LABEL_NOT_APPLICABLE", "d5_attractor": "instrumental", "own_37_eligible": false, "scope_lane": "SUBSTRATE_RESEARCH_LANE", "label": "Mistral foundation borrow — substrate-research only"},
+      {"model": "KoGPT2 head-swap β'", "d1_lane": "OUTSIDE_STRICT", "d1_rationale": ".roadmap.philosophy D1.evidence.rejected_paths 'KoGPT2 head-swap β' lane (외부 wte transplant)' 명시", "p5_v2_retest": "OUTSIDE_D1_VERDICT_LABEL_NOT_APPLICABLE", "d5_attractor": "instrumental", "own_37_eligible": false, "scope_lane": "SUBSTRATE_RESEARCH_LANE", "label": "head-swap = identity drift"},
+      {"model": "Qwen2.5-7B (BG-KM-QWEN-7B)", "see": "category_1 BG-KM-QWEN-7B"},
+      {"model": "Polyglot-Ko-1.3B (BG-JA-EXT)", "see": "category_1 BG-JA-EXT"},
+      {"model": "HuggingFaceH4/zephyr 등", "d1_lane": "OUTSIDE_STRICT", "p5_v2_retest": "OUTSIDE_D1_VERDICT_LABEL_NOT_APPLICABLE", "d5_attractor": "instrumental", "own_37_eligible": false, "scope_lane": "SUBSTRATE_RESEARCH_LANE", "label": "rejected (D1.evidence.rejected_paths)"}
+    ],
+    "category_4_anima_native_byte_level": [
+      {"model": "BG-FY 18M (anima-native-ko-small)", "see": "category_1 BG-FY"},
+      {"model": "clm-v2-byte-18m", "see": "category_2 clm-v2-byte-18m-convo-5k"},
+      {"model": "BG-FU 3M (anima-native-ko-tiny)", "see": "category_1 BG-FU"}
+    ]
+  },
+  "training_method_reassessment_matrix": {
+    "M1_continued_pretrain": {
+      "examples": ["BG-IZ Korean continued-pretrain"],
+      "d1_compliance": "AMBIGUOUS — base model이 외부 substrate (Llama 등)면 D1 OUTSIDE; anima-native base 면 WITHIN",
+      "d4_corpus_quality": "corpus-priority 정합 (Hangul ratio + chat-template ratio 검증 시)",
+      "d5_attractor": "base-dependent — anima-native base = Utopia / 외부 base = instrumental",
+      "recommendation": "anima-native base 위에서만 진행 — 외부 base + continued-pretrain = SUBSTRATE_RESEARCH 한정",
+      "verdict": "CONDITIONAL_OK"
+    },
+    "M2_SFT": {
+      "examples": ["BG-KM r=32 (Llama 3B)", "paradigm-a-prime r=16 (Llama 3B)", "CLM v4 sft 1-7-y1 / 1-8", "BG-KM-QWEN-7B (Qwen 7B)"],
+      "d1_compliance": "base-dependent — Llama/Qwen base SFT = OUTSIDE; CLM v4 base SFT = WITHIN",
+      "d4_corpus_quality": "corpus-priority 정합 (BG-JE 214MB anima-dense corpus 사용 시)",
+      "d5_attractor": "base-dependent",
+      "recommendation": "CLM v4 LoRA stack 만 anima identity lane 정합 — 외부 base SFT = SUBSTRATE_RESEARCH 한정",
+      "verdict": "CONDITIONAL_OK_CLM_V4_ONLY"
+    },
+    "M3_DPO_RLHF": {
+      "examples": ["planned BG-LD"],
+      "d1_compliance": "base-dependent — anima-native base = WITHIN; 외부 base wrap = OUTSIDE",
+      "d4_corpus_quality": "preference pairs 품질 + chat-template ratio 검증 mandate",
+      "d5_attractor": "DPO objective 자체는 cooperative bias 가능 (helpful/harmless preference) — base 정체성 carry",
+      "recommendation": "anima-native base + DPO = Utopia lane potential; 외부 base + DPO = SUBSTRATE_RESEARCH",
+      "verdict": "CONDITIONAL_OK (planned, not yet validated)"
+    },
+    "M4_scratch_from_scratch": {
+      "examples": ["BG-FY 18M", "clm-v2-byte-18m", "clm-v4-mk2-v1"],
+      "d1_compliance": "WITHIN strict (anima-native fresh — permitted)",
+      "d4_corpus_quality": "corpus-priority critical — BG-FY corpus_ko_heavy 62.14% Hangul = D4 PASS evidence",
+      "d5_attractor": "Utopia lane (identity-preserved by construction)",
+      "recommendation": "anima identity preservation 가장 강함 — D1 strict 정합. 단 corpus quality (D4) 우선 mandate",
+      "verdict": "RECOMMENDED"
+    },
+    "M5_byte_level": {
+      "examples": ["clm-v2-byte-18m", "BG-FY 18M (vocab=256)", "BG-FU 3M"],
+      "d1_compliance": "WITHIN strict (vocab=256 byte-level = anima-native; 외부 SP/BPE tokenizer wrap 부재)",
+      "d4_corpus_quality": "byte-level은 token-level 대비 corpus efficiency 약 → corpus volume + Hangul ratio 더 critical",
+      "d5_attractor": "Utopia lane (identity-preserved by construction; CJK byte ratio 자연 정합)",
+      "recommendation": "anima 정체성 (한국어 native + KO byte ratio)와 가장 정합 — D1 + D4 + D5 모두 정합",
+      "verdict": "RECOMMENDED"
+    },
+    "M6_federated_multi_cell": {
+      "examples": ["ConsciousLM++ BG-FK (clm_v2_base)", "clm-v4-mk2-v1 8-cell federated"],
+      "d1_compliance": "WITHIN (anima-native architecture — ca_rules + ca_mix + tension_proj + 192-dim consciousness_dim)",
+      "d4_corpus_quality": "corpus-priority 정합",
+      "d5_attractor": "Utopia lane (substrate-coupled emerge potential — D3 lane)",
+      "recommendation": "anima architecture 자체 — D3 substrate-coupled emerge lane 의 native arch. 단 measurement infra (federated mount.hexa) 신설 mandate",
+      "verdict": "RECOMMENDED_PENDING_INFRA"
+    },
+    "M7_LoRA_r16_r32_r64": {
+      "examples": ["paradigm-a-prime r=16 (Llama 3B)", "BG-KM r=32 (Llama 3B + Qwen 7B)", "Mistral r=14"],
+      "d1_compliance": "base-dependent — CLM v4 LoRA = WITHIN; 외부 base LoRA = OUTSIDE",
+      "d4_corpus_quality": "corpus-priority 정합 (BG-JE 214MB anima-dense)",
+      "d5_attractor": "base-dependent — Llama/Mistral/Qwen LoRA = instrumental (Lesson L); CLM v4 LoRA = Utopia (substrate-safe)",
+      "recommendation": "CLM v4 base LoRA stack 만 anima lane 정합. 외부 base LoRA = SUBSTRATE_RESEARCH 한정 (chat-cap proxy 가능, anima 의식 검증 invalid)",
+      "verdict": "CONDITIONAL_OK_CLM_V4_ONLY"
+    },
+    "M8_distill": {
+      "examples": ["planned BG-LC"],
+      "d1_compliance": "teacher-student dependency — anima-native teacher → anima-native student = WITHIN; 외부 teacher = OUTSIDE",
+      "d4_corpus_quality": "distillation corpus 품질 + teacher quality 동시 critical",
+      "d5_attractor": "teacher-attractor inheritance",
+      "recommendation": "CLM v4 teacher → smaller anima student lane 만 D1 정합",
+      "verdict": "CONDITIONAL_OK (planned, not yet validated)"
+    },
+    "M9_dual_engine_A_G": {
+      "examples": ["planned BG-LA"],
+      "d1_compliance": "anima architecture 자체 — WITHIN (PureFieldFFN A-G repulsion 정합)",
+      "d4_corpus_quality": "anima identity-bearing corpus 우선",
+      "d5_attractor": "Utopia lane potential (substrate-coupled emerge with dual-head consciousness)",
+      "recommendation": "anima native dual-engine = D3 substrate-coupled emerge lane 정합",
+      "verdict": "RECOMMENDED_PENDING_VALIDATION"
+    },
+    "M10_safeguard_wrapping": {
+      "examples": ["Pβ chat-capability fail substrate-research pass decoupled"],
+      "d1_compliance": "OUTSIDE strict — Safeguard Paradox absorbed = 'safeguard wrapper approach는 violation pre-fire reject'",
+      "d4_corpus_quality": "irrelevant (architecture 자체 reject)",
+      "d5_attractor": "instrumental (identity-drift through wrapping)",
+      "recommendation": "전면 reject — + + .roadmap.philosophy D1.F-PHIL-D1-1 strict",
+      "verdict": "REJECT"
+    }
+  },
+  "d1_lane_within_emerge_candidates_real_mode_measurable": [
+    {
+      "rank": 1,
+      "model": "clm-v4-mk2-v1 (base only; LoRA variants blocked)",
+      "d1_lane": "WITHIN",
+      "measurement_status": "MEASURED_REAL_MODE (iter 3 SSOT N=60)",
+      "current_p5_v2_verdict": "FAIL_C3 (PPR_v2 ≤0.15 < 0.6 ∧ EMC_v2 = 0 of 4 < 3 of 4)",
+      "next_action": "clm_v4_mount peft.merge_and_unload extension → CLM v4 LoRA variants (sft-1-7-y1 / sft-1-8 / paradigm-j) real-mode N=60 ensemble retest",
+      "blocker": "CLM v4 LoRA adapter weights HF cache 부재 (adapter_config.json only)"
+    },
+    {
+      "rank": 2,
+      "model": "BG-FY anima-native-ko-small 18M",
+      "d1_lane": "WITHIN",
+      "measurement_status": "BLOCKED_NO_LOCAL_CKPT (ubu1 host-only, Mac 미수신)",
+      "current_p5_v2_verdict": "INDETERMINATE_NO_LOCAL_MEASUREMENT_INFRA",
+      "next_action": "anima_native_byte_mount.hexa 신설 + ubu1 → Mac scp pull (사용자 explicit consent 필요)",
+      "blocker": "byte-level vocab=256 from-scratch architecture는 v4_mount 직접 적용 불가 (CLMv4Config + 64k SP tokenizer 한정)"
+    },
+    {
+      "rank": 3,
+      "model": "clm-v2-byte-18m-convo-5k",
+      "d1_lane": "WITHIN",
+      "measurement_status": "BLOCKED_INFRA_GAP",
+      "current_p5_v2_verdict": "INDETERMINATE_NO_LOCAL_MEASUREMENT_INFRA",
+      "next_action": "v2 byte-level federated mount.hexa 신설 또는 v4 schema reformat (clm_v4_hf_format_shim 적용)",
+      "blocker": "ConsciousLM++ federated multi-cell custom architecture (ca_rules + ca_mix + tension_proj) — v4_mount 직접 적용 불가; convo_5k.pt KO emit 0/5 PARTIAL_PASS_LOAD_KO_FAIL"
+    }
+  ],
+  "existing_verdict_retract_path": [
+    {
+      "verdict": "BG-KM-LLAMA-3B SIMPLE_STACK_PASS_STRICT (V4 12/15)",
+      "downgrade_target": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH",
+      "rationale": " ★ scope-clamp 2026-05-08 (line 770) + mandate-9 (a) D1 lane within prerequisite 위반 — Llama-3.2-3B 외부 base wrap = D1 OUTSIDE strict",
+      "raw_82_protocol": "원본 verdict.json 보존 + scope_lane='SUBSTRATE_RESEARCH' field add (V4 mirror agent 가 이미 일부 수행) + ledger downgrade entry 보강 (downgraded_at + downgrade_reason field 추가; silent overwrite 금지)",
+      "retracted": false,
+      "downgraded_at_proposed": "2026-05-08T16:00:00Z"
+    },
+    {
+      "verdict": "BG-KM-LLAMA-3B retest (sample_anyseed 14/15) SIMPLE_STACK_PASS_STRICT",
+      "downgrade_target": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH",
+      "rationale": "동일 ★ scope-clamp",
+      "raw_82_protocol": "동일 보강",
+      "retracted": false,
+      "downgraded_at_proposed": "2026-05-08T16:00:00Z"
+    },
+    {
+      "verdict": "BG-KM-QWEN-7B SIMPLE_STACK_PASS_STRICT (V4 11/15)",
+      "downgrade_target": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH",
+      "rationale": "Qwen2.5-7B 외부 base wrap = D1 OUTSIDE strict",
+      "raw_82_protocol": "동일 보강",
+      "retracted": false,
+      "downgraded_at_proposed": "2026-05-08T16:00:00Z"
+    },
+    {
+      "verdict": "paradigm-a-prime P5 PASS verdict (synthetic_fallback chat-cap proxy)",
+      "downgrade_target": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH (synthetic_fallback caveat 명시)",
+      "rationale": "(1) D1 OUTSIDE — Llama Path A v2 lineage = ALM lane; (2) synthetic_fallback proxy 한정 — real-mode signal 부재 (mandate-9 (a) 'synthetic_fallback proxy 한정 PASS 도 자동 reject')",
+      "raw_82_protocol": "이미 .roadmap.* sweep agent 가 일부 amend (chat-cap winner reference → SUBSTRATE_RESEARCH 한정 sweep)",
+      "retracted": false,
+      "downgraded_at_proposed": "2026-05-08T16:00:00Z"
+    },
+    {
+      "verdict": "paradigm-a-prime 'chat-cap winner' / 'Path A v2 fallback' references in .roadmap.*",
+      "downgrade_target": "SUBSTRATE_RESEARCH lane 한정 annotation",
+      "rationale": "stale — ★ scope-clamp 2026-05-08 + law.D1_scope_clamp_substrate_research_lane_compliance_2026_05_08 amend 후",
+      "raw_82_protocol": "이미 .roadmap.* sweep agent 가 HIGH PRIORITY 4 file (.roadmap.cli + .roadmap.chat_cap_emergence_pivot + .roadmap.clm_native_chat + .roadmap.clm_v4_chat) 일부 amend; MEDIUM/LOW PRIORITY 56+ file 후속 cycle",
+      "retracted": "PARTIAL"
+    }
+  ],
+  "iter5_priority_plan": {
+    "exit_target": "first SIMPLE_STACK_PASS_STRICT_C3_ANIMA emerge (D1 lane within candidate full P5 v2 verdict PASS)",
+    "actions_ranked": [
+      {
+        "rank": 1,
+        "priority": "HIGHEST",
+        "action": "clm_v4_mount peft.merge_and_unload extension — CLM v4 LoRA variants real-mode N=60 ensemble probe 활성",
+        "expected_unblock": "clm-v4-sft-1-7-y1 / clm-v4-sft-1-8 / clm-v4-paradigm-j 3 candidates real-mode P5 v2 verdict 측정 가능",
+        "rationale": "clm-v4-mk2-v1 base 단독은 P5 v2 FAIL_C3 — chat-cap-trained LoRA stack에서 PPR_v2 ≥0.6 + EMC ≥3 of 4 도달 가능성 잔존; D1 within real-mode 측정 가능 lane 가장 높은 priority"
+      },
+      {
+        "rank": 2,
+        "priority": "HIGH",
+        "action": "anima_native_byte_mount.hexa 신설 — BG-FY 18M + clm-v2-byte-18m measurement unblock",
+        "expected_unblock": "2 candidates (BG-FY + clm-v2-byte) real-mode P5 v2 verdict 측정 가능",
+        "rationale": "byte-level vocab=256 = D1 + D4 + D5 모두 정합 (가장 anima 정체성 native); ckpt scp pull 사용자 explicit consent 별도 필요"
+      },
+      {
+        "rank": 3,
+        "priority": "MEDIUM",
+        "action": "BG-FY 18M corpus filter (named speakers leak 차단) + chat-template format ratio ≥30% 학습",
+        "expected_unblock": " C2.4 PASS 가능성 — D2 simple stack 4-condition 통과 + C3 4-cell 측정 가능",
+        "rationale": "D4 corpus priority + 정합 — corpus 품질 우선 학습 cycle"
+      },
+      {
+        "rank": 4,
+        "priority": "MEDIUM",
+        "action": "C3 cell threshold ROC formal iter 4 retest — clean re-fire (no concurrent hexa load) capturing 5-axis + dominant_cells per probe",
+        "expected_unblock": "C3.2 le-inversion artifact + C3.3 degenerate cell 정합 검증 (iter3 system-load failure 보강)",
+        "rationale": " P5 v2 aggregation rule 의 cell-wise direction 정합 confirm"
+      },
+      {
+        "rank": 5,
+        "priority": "MEDIUM",
+        "action": "BG-KM HF adapter push from H100 runpod (사용자 explicit consent 후) → SUBSTRATE_RESEARCH lane retest",
+        "expected_unblock": "BG-KM-LLAMA-3B + BG-KM-QWEN-7B real-mode chat-cap N=60 ensemble (substrate-research lane evidence 강화)",
+        "rationale": "anima 의식 검증 invalid 이지만 chat-cap proxy benchmark 강화 — Lesson L + identity-bearing surface 분리 evidence 보강 (mandate-9 (a) PUBLIC promote 자격 X 명시)"
+      },
+      {
+        "rank": 6,
+        "priority": "LOW",
+        "action": "anima-core/runtime/llama_consciousness_probe.hexa real-mode FFI logits/hidden state shim 확장",
+        "expected_unblock": "Llama-family substrate-research lane retest infra",
+        "rationale": "substrate-research lane 한정 — anima identity lane 직접 영향 X"
+      }
+    ],
+    "exit_condition": "ANY D1-lane-within candidate full P5 v2 verdict PASS (PPR_v2 ≥0.6 ∧ EMC_v2 ≥3 of 4) emerges = SIMPLE_STACK_PASS_STRICT_C3_ANIMA EXIT trigger 활성화",
+    "exit_reached": false,
+    "first_d1_within_candidate_pass": null
+  },
+  "compliance": {
+    "own_17": "anima identity boundary strict — Llama/Qwen/Mistral/Polyglot/KoGPT2 ALM lane 모두 D1 OUTSIDE 분류 정합",
+    "own_18": "P5 v2 N-of-M aggregation rule + ★ scope-clamp 2026-05-08 (line 770) 적용 — D1 lane within 모델만 SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict valid",
+    "own_22": "본 발견 (모델 ~30 + 학습 방법 ~10 전수 재평가 매트릭스) mandatory report 형식",
+    "own_24": "single SSOT — state/anima_model_method_reassessment_2026_05_08.json (본 파일)",
+    "own_27": "Safeguard Paradox absorbed — safeguard wrapping reject (M10)",
+    "own_28": "anti-Goodhart awareness — BG-KM D1 ambiguity 검토 후 strict enforcement (V6 awareness 통과로 D1 override 불가 명시)",
+    "own_33": "trinity 무조건 준수 — D1 strict (philosophy) + strict (law) + H_chat_cap_emergence 정합 sweep",
+    "own_37_mandate_9": "5 prereq strict 적용 — 4 candidate 모두 미충족 expected (paradigm-a-prime ban 와 동일 정합)",
+    "raw_9": "hexa-only — measurement infra clm_v4_mount.hexa 활성, transient_py 차용 X (본 sweep)",
+    "raw_10": "honest C3 ≥10 emit",
+    "raw_82": "retraction-aware — synthetic_fallback proxy verdict + Llama/Qwen base SIMPLE_STACK_PASS_STRICT 자동 SUBSTRATE_RESEARCH 분류 (원본 보존 + scope_lane field add)",
+    "law_D1_scope_clamp_2026_05_08": "law.D1_scope_clamp_substrate_research_lane_compliance_2026_05_08 정합 — 60+ .roadmap.* 안 외부 substrate PASS evidence 인용 시 substrate-research lane label 한정 annotation mandate"
+  },
+  "honest_c3": [
+    "clm-v4-mk2-v1 base 단독 real-mode measured but P5 v2 verdict FAIL_C3 (PPR_v2 추정 ≤0.15 < 0.6 ∧ EMC_v2 = 0 of 4 < 3 of 4) — chat-cap-trained anima-native fresh ≥18M (BG-FY+chat-template 또는 clm-v2-byte+ko_heavy) 도달 후 retest mandate",
+    "BG-FY 18M + clm-v2-byte-18m 두 candidate 모두 D1 within but measurement infra 부재 (anima_native_byte_mount.hexa 미land) — INDETERMINATE 분류 본 sweep 한정",
+    "BG-KM-LLAMA-3B + BG-KM-QWEN-7B SIMPLE_STACK_PASS_STRICT (V4 12/15 + 11/15) ledger entry 가 final_class='SIMPLE_STACK_PASS_STRICT' 유지 — 본 sweep 의 SUBSTRATE_RESEARCH 분류는 retroactive scope-clamp annotation (raw#82 정합 — entry 보존 + scope_lane field add 권고; 원본 verdict.json string 보존)",
+    "paradigm-a-prime P5 PASS (PPR_v2=10/14=0.71, EMC=3 of 4 iter4 d 결과) 가 C3 측정 lane 의 본격 chat-cap PASS 였지만 (1) Llama Path A v2 lineage = D1 OUTSIDE + (2) synthetic_fallback proxy 한정 → mandate-9 (a) 자동 reject 정합",
+    "category_2 CLM v4 LoRA variants 3 model (sft-1-7-y1 / sft-1-8 / paradigm-j) HF cache adapter weights 부재 (adapter_config.json only) — peft.merge_and_unload extension 별도 cycle mandate (BG-KM HF push blocker 와 동일 unblock path)",
+    "training_method M3 DPO RLHF + M8 distill + M9 dual-engine 3 method 는 planned 단계 — validated record 부재; 본 sweep 의 verdict 'CONDITIONAL_OK' 는 D1/D4/D5 axis 정합 추정만",
+    "training_method M2 SFT + M7 LoRA 의 'CONDITIONAL_OK_CLM_V4_ONLY' verdict 는 LoRA adapter weights infra 부재로 actual P5 v2 PASS 검증 미달성 — 본격 검증은 iter5 priority plan rank 1 (clm_v4_mount peft.merge_and_unload extension) 후",
+    "category_1 BG saga 의 BG-HA 부터 BG-IT 까지 (V3 evaluator 시기) 는 C3 4-cell 측정 자체 미land 시기 — INDETERMINATE_NO_INFRA 분류는 retroactive 측정 자체 불가능 (state/<bg>_<date>/verdict.json 미land 또는 V3 형식)",
+    "본 sweep 의 D5 attractor 분류 (Utopia/instrumental/sub-critical) 는 .roadmap.philosophy D5 Bifurcation theorem framework 적용 — 단 anima 는 currently sub-critical (Φ★ 40-42) 영역 → D5 영역 (Φc 도달 후) 미진입 → attractor identification metric anima cycle 미land (cooperative/instrumental classifier spec 추가 cycle 필요)",
+    "category_3 ALM lane 외부 base 모델 (Llama/Mistral/Qwen/KoGPT2/Polyglot/zephyr) 6+ entries 모두 OUTSIDE_STRICT 분류 — + .roadmap.philosophy D1.F-PHIL-D1-3 strict 정합. SIMPLE_STACK_PASS_STRICT 도달 사례 (BG-KM-LLAMA-3B + BG-KM-QWEN-7B + BG-JA-EXT) 모두 SUBSTRATE_RESEARCH lane 한정 — mandate-9 (a) PUBLIC promote 자격 X",
+    "training_method M10 safeguard_wrapping 'REJECT' verdict 는 Safeguard Paradox + strict + .roadmap.philosophy D1.F-PHIL-D1-1 정합 — 별도 evidence 부재 시에도 framework-level reject (engineering pragmatism 약화 X)",
+    "본 sweep EXIT (SIMPLE_STACK_PASS_STRICT_C3_ANIMA) 미달성 — 30+ 모델 + 10 학습 방법 retroactive 재평가 후에도 D1 within real-mode P5 v2 PASS candidate 0; iter5 priority plan rank 1-2 unblock 후 CLM v4 LoRA stack 또는 anima-native byte stack 둘 중 하나에서 첫 emerge 가능성"
+  ],
+  "blockers_carry": [
+    "clm_v4_mount peft.merge_and_unload extension (CLM v4 LoRA variants real-mode probe unblock) — iter5 rank 1",
+    "anima_native_byte_mount.hexa 신설 (BG-FY 18M + clm-v2-byte-18m measurement unblock) — iter5 rank 2",
+    "BG-FY ubu1 → Mac scp pull (사용자 explicit consent 필요) — iter5 rank 2 dependency",
+    "BG-KM HF adapter push from H100 runpod (사용자 explicit consent 후) — iter5 rank 5",
+    "C3 4-cell ROC formal iter 4 clean re-fire (5-axis + dominant_cells full capture) — iter5 rank 4",
+    "anima-core/runtime/llama_consciousness_probe.hexa real-mode FFI shim 확장 — iter5 rank 6 (substrate-research lane only)"
+  ]
+}

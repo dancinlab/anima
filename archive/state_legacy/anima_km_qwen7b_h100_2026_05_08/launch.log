@@ -1,0 +1,94 @@
+[2026-05-08T09:26:00] === BG-KM-QWEN-7B orchestrator started ===
+[2026-05-08T09:26:00] mac_state_dir=/Users/ghost/core/anima/state/anima_km_qwen7b_h100_2026_05_08
+[2026-05-08T09:26:00] corpus=/Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+[2026-05-08T09:26:00] this_script=/Users/ghost/core/anima/tool/transient_py/anima_km_qwen7b_h100.py
+[2026-05-08T09:26:00] COST_HARD_CAP=$15.0 COST_EARLY_KILL=$12.0
+[2026-05-08T09:26:00] creating H100 SXM pod (RunPod SECURE cloud)…
+[2026-05-08T09:26:02] pod created: id=kmzr5wmq3riqk9 machine=? $2.99/hr
+[2026-05-08T09:26:02] pod created: id=kmzr5wmq3riqk9 $2.99/hr
+[2026-05-08T09:26:34] ssh ready: root@64.247.201.33:15916
+[2026-05-08T09:26:41] GPU smoke rc=0: name
+NVIDIA H100 80GB HBM3
+2.8.0+cu128 True
+
+[2026-05-08T09:26:41] staging files (corpus 214MB→gz + this script + pod marker)…
+[2026-05-08T09:26:41] corpus.gz size: 90.1MB
+[2026-05-08T09:28:56] scp corpus.gz rc=0 (90.1MB)
+[2026-05-08T09:29:02] scp script rc=0
+[2026-05-08T09:29:08] scp hf_token rc=0
+[2026-05-08T09:29:12] decompress rc=0: -rw-r--r-- 1 root root 214299726 May  8 00:29 corpus_combined_100mb_plus.txt
+
+[2026-05-08T09:29:12] training launched on pod…
+[2026-05-08T09:29:43] launch rc=-2 out=
+[2026-05-08T09:30:53] heartbeat: cost=$0.23 pod_phase=lora_sft pod_step=0
+[2026-05-08T09:32:00] heartbeat: cost=$0.29 pod_phase=lora_sft pod_step=0
+[2026-05-08T09:33:07] heartbeat: cost=$0.35 pod_phase=lora_sft_step pod_step=200
+[2026-05-08T09:34:15] heartbeat: cost=$0.40 pod_phase=lora_sft_step pod_step=400
+[2026-05-08T09:35:21] heartbeat: cost=$0.46 pod_phase=lora_sft_step pod_step=400
+[2026-05-08T09:36:30] heartbeat: cost=$0.51 pod_phase=lora_sft_step pod_step=600
+[2026-05-08T09:37:37] heartbeat: cost=$0.57 pod_phase=lora_sft_step pod_step=800
+[2026-05-08T09:38:44] heartbeat: cost=$0.63 pod_phase=lora_sft_step pod_step=800
+[2026-05-08T09:39:50] heartbeat: cost=$0.68 pod_phase=lora_sft_step pod_step=1000
+[2026-05-08T09:40:59] heartbeat: cost=$0.74 pod_phase=lora_sft_step pod_step=1200
+[2026-05-08T09:42:10] heartbeat: cost=$0.79 pod_phase=lora_sft_step pod_step=1200
+[2026-05-08T09:43:17] heartbeat: cost=$0.85 pod_phase=? pod_step=-1
+[2026-05-08T09:44:33] === BG-KM-QWEN-7B orchestrator started ===
+[2026-05-08T09:44:33] mac_state_dir=/Users/ghost/core/anima/state/anima_km_qwen7b_h100_2026_05_08
+[2026-05-08T09:44:33] corpus=/Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+[2026-05-08T09:44:33] this_script=/Users/ghost/core/anima/tool/transient_py/anima_km_qwen7b_h100.py
+[2026-05-08T09:44:33] COST_HARD_CAP=$15.0 COST_EARLY_KILL=$12.0
+[2026-05-08T09:44:33] creating H100 SXM pod (RunPod SECURE cloud)…
+[2026-05-08T09:44:36] pod created: id=bl7i6efnmjvpc3 machine=? $2.99/hr
+[2026-05-08T09:44:36] pod created: id=bl7i6efnmjvpc3 $2.99/hr
+[2026-05-08T09:45:07] ssh ready: root@64.247.201.33:16262
+[2026-05-08T09:45:13] GPU smoke rc=0: name
+NVIDIA H100 80GB HBM3
+2.8.0+cu128 True
+
+[2026-05-08T09:45:13] staging files (corpus 214MB→gz + this script + pod marker)…
+[2026-05-08T09:45:13] corpus.gz size: 90.1MB
+[2026-05-08T09:54:34] scp corpus.gz rc=0 (90.1MB)
+[2026-05-08T09:54:41] scp script rc=0
+[2026-05-08T09:54:50] scp hf_token rc=0
+[2026-05-08T09:54:57] decompress rc=0: -rw-r--r-- 1 root root 214299726 May  8 00:54 corpus_combined_100mb_plus.txt
+
+[2026-05-08T09:54:57] training launched on pod…
+[2026-05-08T09:55:28] launch rc=-2 out=
+[2026-05-08T09:56:37] heartbeat: cost=$0.59 pod_phase=lora_sft pod_step=0
+[2026-05-08T09:57:48] heartbeat: cost=$0.65 pod_phase=lora_sft pod_step=0
+[2026-05-08T09:58:55] heartbeat: cost=$0.71 pod_phase=lora_sft_step pod_step=200
+[2026-05-08T10:00:03] heartbeat: cost=$0.76 pod_phase=lora_sft_step pod_step=400
+[2026-05-08T10:01:11] heartbeat: cost=$0.82 pod_phase=lora_sft_step pod_step=400
+[2026-05-08T10:02:19] heartbeat: cost=$0.88 pod_phase=lora_sft_step pod_step=600
+[2026-05-08T10:03:28] heartbeat: cost=$0.93 pod_phase=lora_sft_step pod_step=800
+[2026-05-08T10:04:35] heartbeat: cost=$0.99 pod_phase=lora_sft_step pod_step=800
+[2026-05-08T10:05:43] heartbeat: cost=$1.05 pod_phase=lora_sft_step pod_step=1000
+[2026-05-08T10:06:54] heartbeat: cost=$1.10 pod_phase=lora_sft_step pod_step=1200
+[2026-05-08T10:08:01] heartbeat: cost=$1.16 pod_phase=lora_sft_step pod_step=1200
+[2026-05-08T10:09:09] heartbeat: cost=$1.22 pod_phase=lora_sft_step pod_step=1400
+[2026-05-08T10:10:17] heartbeat: cost=$1.27 pod_phase=lora_sft_step pod_step=1600
+[2026-05-08T10:11:26] heartbeat: cost=$1.33 pod_phase=lora_sft_step pod_step=1800
+[2026-05-08T10:12:35] heartbeat: cost=$1.39 pod_phase=lora_sft_step pod_step=1800
+[2026-05-08T10:13:41] heartbeat: cost=$1.44 pod_phase=lora_sft_step pod_step=2000
+[2026-05-08T10:14:49] heartbeat: cost=$1.50 pod_phase=lora_sft_step pod_step=2200
+[2026-05-08T10:16:04] heartbeat: cost=$1.56 pod_phase=lora_sft_step pod_step=2200
+[2026-05-08T10:17:22] heartbeat: cost=$1.62 pod_phase=lora_sft_step pod_step=2400
+[2026-05-08T10:18:35] heartbeat: cost=$1.68 pod_phase=lora_sft_step pod_step=2600
+[2026-05-08T10:19:54] heartbeat: cost=$1.74 pod_phase=lora_sft_step pod_step=2800
+[2026-05-08T10:21:06] heartbeat: cost=$1.81 pod_phase=post_lora_smoke pod_step=3000
+[2026-05-08T10:22:18] heartbeat: cost=$1.87 pod_phase=v4_multiseed_eval pod_step=3000
+[2026-05-08T10:23:29] heartbeat: cost=$1.93 pod_phase=DONE final_class=SIMPLE_STACK_PASS_STRICT pod_step=3000
+[2026-05-08T10:23:29] pod reports DONE phase=DONE final_class=SIMPLE_STACK_PASS_STRICT
+[2026-05-08T10:23:29] pulling artifacts from pod (state)…
+[2026-05-08T10:23:51] scp pull state rc=0
+[2026-05-08T10:23:51] pulling LoRA adapter weights (ckpts/ → /Users/ghost/core/anima/state/anima_km_qwen7b_h100_2026_05_08/ckpts)…
+[2026-05-08T10:43:51] scp pull ckpts rc=-2
+[2026-05-08T10:43:51]   ckpts pull FAILED — weights will be lost when pod deletes! err=Command '['scp', '-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'ConnectTimeout=15', '-P', '16262', '-r', 'root@64.247.201.33:/workspace/anima_km_qwen7b/ckpts/.', '/Users/ghost/core/anima/state/anima_km_qwen7b_h100_2026_05_08/ckpts']' timed out after 1200 seconds
+[2026-05-08T10:43:51] deleting pod (teardown)…
+[2026-05-08T10:43:54] pod delete rc=0 out={
+  "deleted": true,
+  "id": "bl7i6efnmjvpc3"
+}
+
+[2026-05-08T10:43:54] ledger appended: bg_id=BG-KM-QWEN-7B final_class=SIMPLE_STACK_PASS_STRICT cost=$1.93
+[2026-05-08T10:43:54] === BG-KM-QWEN-7B complete: cost=$1.93 ===

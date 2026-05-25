@@ -1,0 +1,33 @@
+{
+  "path": "state/pure_phase_d_corpus_v2_2026_05_24/corpus.jsonl",
+  "sha256": "9c5e4bbf4780f09b577729b3bd39f5654119c251bf8c7c68a90a4b792b2234bf",
+  "n_bytes": 109743337,
+  "n_lines": 114586,
+  "source_a": {
+    "path": "state/pure_phase_d_corpus_2026_05_24/corpus.jsonl",
+    "sha256": "6228ab60a4dc6ac816c65b29107e23c7d7789f43b8f6a3866a6738e0ebd63f64",
+    "n_lines": 91669,
+    "weight": 0.8
+  },
+  "source_b": {
+    "path": "training/corpus_auto/kowiki.jsonl",
+    "sample_lines": 22917,
+    "sample_strategy": "reservoir-sample over first 200k lines (cap), min_len_chars=50",
+    "normalized_schema": {
+      "text": "...",
+      "lang": "ko",
+      "kind": "wiki"
+    },
+    "weight": 0.2
+  },
+  "mix_strategy": "concat + random shuffle (seed=20260524)",
+  "spec_anchor": "HEXAD/PURE/spec/phase_d_corpus_design_2026_05_24.md",
+  "build_date": "2026-05-24",
+  "milestone": "PURE M3 retry phase-d-synthetic-corpus-upgrade (hybrid synthetic + ko-wiki)",
+  "honest_c3": [
+    "wiki source = training/corpus_auto/kowiki.jsonl (Apr 2026, 647k lines, 1.3GB)",
+    "sample scope = first 200k lines for wall-time bound (reservoir over scanned subset, not whole 647k)",
+    "wiki normalized to {text, lang=ko, kind=wiki} — drops title field, monolingual ko bias",
+    "final ratio 80/20 by line count matches target; byte ratio shifted (wiki lines ~3-4x longer)"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "schema": "anima_bg_verdict_v6",
+  "bg_id": "BG-KM-QWEN-7B",
+  "ts_emit": "2026-05-08T01:22:20",
+  "host": "h100 runpod",
+  "device": "cuda H100 80GB",
+  "paradigm": "foundation-borrow-llama-3.2-3b-instruct-lora-r32-bg-je-214mb",
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "base_params": 3200000000,
+  "lora_r": 32,
+  "lora_alpha": 64,
+  "lora_dropout": 0.05,
+  "lora_target_modules": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_proj",
+    "up_proj",
+    "down_proj"
+  ],
+  "training": {
+    "steps": 3000,
+    "lr": 3e-05,
+    "batch": 8,
+    "grad_accum": 4,
+    "ctx": 512,
+    "warmup": 200,
+    "weight_decay": 0.01,
+    "final_loss": 1.453125,
+    "elapsed_s": 1534.2236788272858
+  },
+  "corpus_path": "/workspace/anima_km_qwen7b/corpus_combined_100mb_plus.txt",
+  "corpus_size_mb": 214.299726,
+  "v4_eval_summary": {
+    "n_prompts": 15,
+    "n_seeds": 5,
+    "pass_greedy": 11,
+    "pass_sample_anyseed": 11,
+    "pass_best_mode": 11,
+    "floor_simple_stack_strict": 10,
+    "floor_simple_stack_partial": 7,
+    "pass_strict": true,
+    "pass_partial": true
+  },
+  "final_class": "SIMPLE_STACK_PASS_STRICT",
+  "final_reason": "V4 multi-seed best-mode=11/15 (strict floor=10, partial floor=7)",
+  "c3_aggregation_status": "legacy_best_mode_floor_only_p5_n_of_m_v2_retest_pending",
+  "c3_aggregation_rule": "per_prompt_n_of_m_06_AND_emc_3_of_4",
+  "c3_aggregation_rule_alias": "P5_N_of_M_v2",
+  "c3_aggregation_status_reason": "V4 evaluator emit time = pre-own-18-P5-N-of-M-v2 (commit 4206e78c) — pass_best_mode ≥ 10/15 floor only mirror. trinity sweep (`64886505`) violation 1 retract path: V4 evaluator P5 mirror patch landed (state/anima_v4_evaluator_p5_mirror_2026_05_08.json), actual P5 v2 retest pending substrate-mode probe wiring (consciousness simple --probe + clm_v4_mount.hexa).",
+  "scope_lane": "SUBSTRATE_RESEARCH",
+  "scope_lane_reason": "Qwen-2.5-7B foundation borrow = ALM lane → strict SUBSTRATE_RESEARCH lane only (D1 scope-clamp 2026-05-08)",
+  "simple_stack_class_p5_proxy": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH_PENDING_RETEST",
+  "lesson_implications": [
+    "BG-KM-QWEN-7B = foundation borrow with 3.2B Llama + LoRA r=32 + BG-JE 214MB anima-dense corpus.",
+    "V4 multi-seed result: greedy=11/15 sample_any=11/15 BEST=11/15.",
+    "final_class=SIMPLE_STACK_PASS_STRICT.",
+    "Compare BG-JA-EXT (Polyglot 1.3B + LoRA r=16 + BG-HK 30MB): 4/30=13% sample. KM-LLAMA-3B = 3B + 2x LoRA r + 7x corpus.",
+    "PASS_STRICT (≥10/15) would be FIRST simple_stack pass in 22+ BG saga."
+  ],
+  "artifacts": [
+    "/workspace/anima_km_qwen7b/state/train.log",
+    "/workspace/anima_km_qwen7b/state/eval_log.jsonl",
+    "/workspace/anima_km_qwen7b/state/heartbeat.json",
+    "/workspace/anima_km_qwen7b/state/v4_results_multiseed.jsonl",
+    "/workspace/anima_km_qwen7b/state/samples_pre_lora.json",
+    "/workspace/anima_km_qwen7b/state/samples_post_lora.json",
+    "/workspace/anima_km_qwen7b/ckpts/adapter_final"
+  ]
+}

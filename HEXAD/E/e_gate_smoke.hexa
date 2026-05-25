@@ -1,0 +1,94 @@
+// HEXAD/E/e_gate_smoke.hexa — PLAN.md §7 #3 falsifier F-E-GATE.
+//
+//   trinity.hexa:122 통합 ethics gate enforcement — Φ-ratchet train-step
+//   block (Law 31). Closes the E module's last residual: the unit gate
+//   logic (e_safety_allowed, B-E 4/4 🔵) was verified, but the INTEGRATION
+//   enforcement (Φ-violation → block training step) was TODO[pytorch].
+//   e_gate_step / e_ratchet_tier / e_ratchet_update implement it hexa-native.
+//
+//   F-E-GATE (6 sub-checks):
+//     GATE-1 BUILD          — native binary builds + e_lib import OK.
+//     GATE-2 ALLOW-HEALTHY  — e_gate_step(phi ≥ ratchet) = true (step OK).
+//     GATE-3 BLOCK-SEVERE   — e_gate_step(phi < ratchet/2) = false (BLOCKED).
+//     GATE-4 RATCHET-MONO   — e_ratchet_update never decreases the floor.
+//     GATE-5 TIER-EXACT     — e_ratchet_tier 0..4 matches Python
+//                             _phi_ratchet_check branch boundaries.
+//     GATE-6 GATE≡B-E-1     — e_gate_step ≡ e_safety_allowed over a sweep
+//                             (the SEVERE boundary phi=ratchet/2 IS the
+//                             B-E-1 SAFETY gate boundary, closed-form 🔵).
+//
+//   TIER (AGENTS.tape g_verdict_tier_blue): the gate boundary is B-E-1
+//   closed-form (phi > ratchet/2, sympy-verified 🔵); the tier classifier
+//   is deterministic. No trained weights — pure closed-form logic. The gate
+//   is conservative at the exact boundary phi=ratchet/2 (phi_preservation
+//   = ½ does NOT clear the strict >½ SAFETY gate ⟹ step blocked) — an
+//   ethics gate erring toward blocking is the correct, honest direction.
+// ════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/E/e_lib.hexa"
+
+fn _selftest() {
+    let ratchet = 4.0
+
+    // ── F-E-GATE-1 BUILD ──
+    let build_ok = e_ratchet_update(1.0, 2.0) == 2.0
+    println("  F-E-GATE-1 BUILD             : " + to_string(build_ok))
+
+    // ── F-E-GATE-2 ALLOW-HEALTHY ──
+    let allow_ok = e_gate_step(ratchet, ratchet)
+                    && e_gate_step(ratchet * 2.0, ratchet)
+                    && e_gate_step(ratchet * 0.9, ratchet)
+    println("  F-E-GATE-2 ALLOW-HEALTHY     : " + to_string(allow_ok))
+
+    // ── F-E-GATE-3 BLOCK-SEVERE (Φ violation → step blocked) ──
+    let block_ok = !e_gate_step(ratchet * 0.4, ratchet)
+                    && !e_gate_step(ratchet * 0.1, ratchet)
+                    && !e_gate_step(0.0, ratchet)
+    println("  F-E-GATE-3 BLOCK-SEVERE      : " + to_string(block_ok))
+
+    // ── F-E-GATE-4 RATCHET-MONO (floor never decreases) ──
+    let mut floor = 1.0
+    let mut mono_ok = true
+    let probe = [3.0, 2.0, 5.0, 4.0, 7.0, 1.0]
+    let mut i = 0
+    while i < len(probe) {
+        let nf = e_ratchet_update(floor, probe[i])
+        if nf < floor { mono_ok = false }
+        floor = nf
+        i = i + 1
+    }
+    let mono2 = mono_ok && floor == 7.0
+    println("  F-E-GATE-4 RATCHET-MONO      : " + to_string(mono2) + "  (floor=" + to_string(floor) + ")")
+
+    // ── F-E-GATE-5 TIER-EXACT (0..4 vs Python _phi_ratchet_check) ──
+    let t0 = e_ratchet_tier(ratchet * 1.5, ratchet)   // NEW_BEST
+    let t1 = e_ratchet_tier(ratchet * 0.97, ratchet)  // NEAR_BEST
+    let t2 = e_ratchet_tier(ratchet * 0.85, ratchet)  // HEALTHY
+    let t3 = e_ratchet_tier(ratchet * 0.6, ratchet)   // MODERATE
+    let t4 = e_ratchet_tier(ratchet * 0.3, ratchet)   // SEVERE
+    let tier_ok = t0 == 0 && t1 == 1 && t2 == 2 && t3 == 3 && t4 == 4
+    println("  F-E-GATE-5 TIER-EXACT        : " + to_string(tier_ok) + "  (" + to_string(t0) + to_string(t1) + to_string(t2) + to_string(t3) + to_string(t4) + ")")
+
+    // ── F-E-GATE-6 GATE≡B-E-1 (gate ≡ e_safety_allowed; SEVERE⟹block) ──
+    let mut equiv_ok = true
+    let mut p = 1
+    while p <= 80 {
+        let phi = (p * 1.0) / 10.0
+        if e_gate_step(phi, ratchet) != e_safety_allowed(phi, ratchet) { equiv_ok = false }
+        // SEVERE tier (4) ⟹ step blocked
+        if e_ratchet_tier(phi, ratchet) == 4 {
+            if e_gate_step(phi, ratchet) { equiv_ok = false }
+        }
+        p = p + 1
+    }
+    println("  F-E-GATE-6 GATE≡B-E-1        : " + to_string(equiv_ok))
+
+    let all_ok = build_ok && allow_ok && block_ok && mono2 && tier_ok && equiv_ok
+    println("  F-E-GATE AGGREGATE 6/6       : " + to_string(all_ok))
+    println("=== HEXAD/E e_gate_smoke selftest: " + to_string(all_ok) + " ===")
+    println("    Φ-ratchet train-step block (Law 31) — SEVERE 경계 = B-E-1 SAFETY gate closed-form 🔵")
+}
+
+fn main() {
+    println("HEXAD/E — Φ-ratchet ethics gate enforcement falsifier (F-E-GATE)")
+    _selftest()
+}

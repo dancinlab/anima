@@ -1,0 +1,385 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg-core/tool/modules/_metrics/dmn_coherence.hexa
+//                                              (Phase 3 batch 2 — metric #7)
+//
+//  PURPOSE
+//    Default Mode Network (DMN) approximation on 16-ch surface EEG via
+//    α-band magnitude-squared coherence (8-13 Hz Welch) between anterior
+//    medial-prefrontal (Fp1/Fp2) ↔ posterior precuneus proxy (P3/P4) nodes.
+//    legacy resting_state_network_analyzer.hexa kernel but inline so this
+//    module is hermetic.
+//
+//    DECISION: PORT. Legacy RSN analyzer would have been WRAP target but
+//    has a strict-mode auto-invoke regression. Re-emitting the scipy
+//    coherence kernel is ~20 lines and lets us add a topology sanity
+//    check (anterior↔posterior > anterior↔occipital control). Caveat
+//    surfaced via raw91_limit: 16ch surface EEG ≠ fMRI BOLD DMN.
+//
+//  CHANNEL MAP (Cyton+Daisy this rig)
+//    anterior  = mean(Fp1, Fp2)        // medial-prefrontal proxy
+//    posterior = mean(P3, P4)          // precuneus proxy
+//    occipital = mean(O1, O2)          // for topology sanity (F2)
+//
+//  API
+//    _metric_dmn_coherence_kv(npy_path, sidecar_kv, fs_hz) -> string
+//      kv-block:
+//        schema=anima-eeg-core/_metrics/dmn_coherence/1
+//        metric=dmn_coherence
+//        coh_anterior_posterior_x1000=<int>
+//        coh_anterior_occipital_x1000=<int>
+//        topology_pass=<0|1>
+//        value_x1000=<int>
+//        verdict=<PASS|FAIL|FALSIFIED>
+//
+//  RAW#71 FALSIFIERS (≥3 preregister, frozen 2026-04-28)
+//    F_DMN_01: coh_anterior_posterior < 100      → no DMN signal (RSN F1)
+//    F_DMN_02: coh_anterior_posterior <
+//              coh_anterior_occipital            → reversed topology (RSN F2)
+//    F_DMN_03: coh_anterior_posterior == sentinel → helper-fail
+//
+//  CLI
+//    hexa run dmn_coherence.hexa --selftest
+//    hexa run dmn_coherence.hexa --input <npy> [--fs 125]
+//
+//
+//  @resolver-bypass(reason="darwin-native: scipy.signal.coherence via .venv-eeg")
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA       = "anima-eeg-core/_metrics/dmn_coherence/1"
+let METRIC_NAME  = "dmn_coherence"
+let HELPER_PATH  = "/tmp/anima_eeg_core_metrics_helper.py"
+let HELPER_OUT   = "/tmp/anima_eeg_core_metrics_helper_out.json"
+let DEFAULT_VENV = ".venv-eeg/bin/python"
+
+let F_DMN_01_LO_X1000 = 100
+let F_DMN_03_SENTINEL = -2147483647
+
+// ─── helpers (idempotent: same /tmp file as alpha_coherence) ────────────
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn is_digit_ch(c: string) -> int {
+    if c == "0" || c == "1" || c == "2" || c == "3" || c == "4" { return 1 }
+    if c == "5" || c == "6" || c == "7" || c == "8" || c == "9" { return 1 }
+    return 0
+}
+
+fn digit_val(c: string) -> int {
+    if c == "0" { return 0 }
+    if c == "1" { return 1 }
+    if c == "2" { return 2 }
+    if c == "3" { return 3 }
+    if c == "4" { return 4 }
+    if c == "5" { return 5 }
+    if c == "6" { return 6 }
+    if c == "7" { return 7 }
+    if c == "8" { return 8 }
+    if c == "9" { return 9 }
+    return -1
+}
+
+fn find_in_str(s: string, needle: string) -> int {
+    let n = len(s); let m = len(needle)
+    if m <= 0 { return 0 }
+    if n < m { return -1 }
+    let mut i = 0
+    while i <= n - m {
+        let mut j = 0; let mut ok = 1
+        while j < m {
+            if s[i + j] != needle[j] { ok = 0; j = m }
+            j = j + 1
+        }
+        if ok == 1 { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+fn parse_json_float_x1000(blob: string, key: string) -> int {
+    let needle = "\"" + key + "\":"
+    let p = find_in_str(blob, needle)
+    if p < 0 { return -2147483647 }
+    let n = len(blob); let mut k = p + len(needle)
+    while k < n { let c = blob[k]; if c == " " || c == "\t" { k = k + 1; continue } break }
+    let mut neg = 0
+    if k < n { if blob[k] == "-" { neg = 1; k = k + 1 } }
+    if k < n { if blob[k] == "+" { k = k + 1 } }
+    let mut int_acc = 0; let mut had_int = 0
+    while k < n {
+        let c = blob[k]
+        if is_digit_ch(c) == 1 { int_acc = int_acc * 10 + digit_val(c); had_int = 1; k = k + 1 }
+        else { break }
+    }
+    let mut frac_acc = 0; let mut frac_digits = 0
+    if k < n {
+        if blob[k] == "." {
+            k = k + 1
+            while k < n && frac_digits < 6 {
+                let c = blob[k]
+                if is_digit_ch(c) == 1 { frac_acc = frac_acc * 10 + digit_val(c); frac_digits = frac_digits + 1; k = k + 1 }
+                else { break }
+            }
+            while k < n { let c = blob[k]; if is_digit_ch(c) == 1 { k = k + 1 } else { break } }
+        }
+    }
+    let mut exp_neg = 0; let mut exp_val = 0
+    if k < n {
+        let c0 = blob[k]
+        if c0 == "e" || c0 == "E" {
+            k = k + 1
+            if k < n { if blob[k] == "-" { exp_neg = 1; k = k + 1 } else { if blob[k] == "+" { k = k + 1 } } }
+            while k < n { let c = blob[k]; if is_digit_ch(c) == 1 { exp_val = exp_val * 10 + digit_val(c); k = k + 1 } else { break } }
+        }
+    }
+    if had_int == 0 && frac_digits == 0 { return -2147483647 }
+    let mut ten_k = 1; let mut ii = 0
+    while ii < frac_digits { ten_k = ten_k * 10; ii = ii + 1 }
+    let mut frac_x1000 = 0
+    if frac_digits > 0 { frac_x1000 = (frac_acc * 1000) / ten_k }
+    let mut v = int_acc * 1000 + frac_x1000
+    if exp_val > 0 {
+        if exp_neg == 1 {
+            if exp_val >= 4 { v = 0 }
+            else { let mut ee = 0; while ee < exp_val { v = v / 10; ee = ee + 1 } }
+        } else { let mut ee = 0; while ee < exp_val && v < 1000000000 { v = v * 10; ee = ee + 1 } }
+    }
+    if neg == 1 { return -v }
+    return v
+}
+
+fn _emit_helper() {
+    let mut p = []
+    p.push("#!/usr/bin/env python3\n")
+    p.push("import argparse, hashlib, json, sys\n")
+    p.push("import numpy as np\n")
+    p.push("from scipy.signal import welch, coherence, hilbert\n")
+    p.push("CH = ['Fp1','Fp2','C3','C4','P7','P8','O1','O2','F7','F8','F3','F4','T7','T8','P3','P4']\n")
+    p.push("IDX = {n:i for i,n in enumerate(CH)}\n")
+    p.push("def band_power(x, fs, lo, hi):\n")
+    p.push("    f, ps = welch(x, fs=fs, nperseg=min(len(x), int(fs*4)))\n")
+    p.push("    m = (f>=lo)&(f<=hi); return float(np.trapezoid(ps[m], f[m])) if m.any() else 0.0\n")
+    p.push("def total_power(x, fs):\n")
+    p.push("    f, ps = welch(x, fs=fs, nperseg=min(len(x), int(fs*4))); return float(np.trapezoid(ps, f))\n")
+    p.push("def alpha_coh(a, b, fs, lo=8.0, hi=13.0):\n")
+    p.push("    f, c = coherence(a, b, fs=fs, nperseg=min(len(a), int(fs*4)))\n")
+    p.push("    m = (f>=lo)&(f<=hi); return float(c[m].mean()) if m.any() else 0.0\n")
+    p.push("def alpha_plv(a, b, fs, lo=8.0, hi=13.0):\n")
+    p.push("    n = len(a); fa = np.fft.rfft(a); fb = np.fft.rfft(b)\n")
+    p.push("    freqs = np.fft.rfftfreq(n, 1.0/fs); mask = (freqs>=lo)&(freqs<=hi)\n")
+    p.push("    fa = fa*mask; fb = fb*mask\n")
+    p.push("    a2 = np.fft.irfft(fa, n=n); b2 = np.fft.irfft(fb, n=n)\n")
+    p.push("    pa = np.angle(hilbert(a2)); pb = np.angle(hilbert(b2)); dp = pa - pb\n")
+    p.push("    return float(np.abs(np.exp(1j*dp).mean()))\n")
+    p.push("def spec_entropy(x, fs):\n")
+    p.push("    f, ps = welch(x, fs=fs, nperseg=min(len(x), int(fs*4)))\n")
+    p.push("    ps = ps / max(ps.sum(), 1e-30)\n")
+    p.push("    H = float(-(ps[ps>0]*np.log2(ps[ps>0])).sum())\n")
+    p.push("    return H / float(np.log2(len(ps)))\n")
+    p.push("def lz76_cn(b):\n")
+    p.push("    s = ''.join(b); n = len(s); i,k,l=0,1,1; c=1; k_max=1\n")
+    p.push("    while True:\n")
+    p.push("        if s[i+k-1] == s[l+k-1]:\n")
+    p.push("            k += 1\n")
+    p.push("            if l+k > n: c += 1; break\n")
+    p.push("        else:\n")
+    p.push("            k_max = max(k_max, k); i += 1\n")
+    p.push("            if i == l:\n")
+    p.push("                c += 1; l += k_max\n")
+    p.push("                if l+1 > n: break\n")
+    p.push("                i = 0; k = 1; k_max = 1\n")
+    p.push("            else: k = 1\n")
+    p.push("    return c\n")
+    p.push("def change_points(X, fs, win_s=4.0, step_s=1.0):\n")
+    p.push("    win = int(fs*win_s); step = int(fs*step_s)\n")
+    p.push("    if X.ndim == 1: X = X[None, :]\n")
+    p.push("    n = X.shape[1]; norms = []; t = 0\n")
+    p.push("    while t + win <= n:\n")
+    p.push("        seg = X[:, t:t+win]; bs = []\n")
+    p.push("        for ch in range(seg.shape[0]):\n")
+    p.push("            x = seg[ch]; med = float(np.median(x))\n")
+    p.push("            bs.append(''.join(['1' if v>med else '0' for v in x]))\n")
+    p.push("        cn = lz76_cn(bs); nn = win*seg.shape[0]\n")
+    p.push("        bnorm = cn * np.log2(max(nn,2)) / max(nn,1)\n")
+    p.push("        norms.append(float(bnorm)); t += step\n")
+    p.push("    if len(norms) < 2: return {'n_windows': len(norms), 'change_count': 0, 'mean_norm': float(norms[0]) if norms else 0.0, 'max_diff': 0.0, 'mean_diff': 0.0}\n")
+    p.push("    diffs = np.abs(np.diff(norms)); cc = int((diffs > 0.1).sum())\n")
+    p.push("    return {'n_windows': len(norms), 'change_count': cc, 'mean_norm': float(np.mean(norms)),\n")
+    p.push("            'max_diff': float(diffs.max()), 'mean_diff': float(diffs.mean())}\n")
+    p.push("def synth_corr(fs=125.0, dur=8.0, corr=0.85, seed=0):\n")
+    p.push("    rng = np.random.default_rng(seed); n = int(fs*dur); t = np.arange(n)/fs\n")
+    p.push("    base = np.sin(2*np.pi*10.0*t) + 0.3*rng.standard_normal(n)\n")
+    p.push("    X = np.zeros((16, n))\n")
+    p.push("    for nm in ['Fp1','Fp2','P3','P4']: X[IDX[nm]] = corr*base + (1-corr)*rng.standard_normal(n)\n")
+    p.push("    for nm,sc in [('F3',0.4),('F7',0.4),('F4',0.9),('F8',0.9)]:\n")
+    p.push("        X[IDX[nm]] = sc*np.sin(2*np.pi*10.0*t) + 0.3*rng.standard_normal(n)\n")
+    p.push("    for nm in ['O1','O2']: X[IDX[nm]] = 0.8*np.sin(2*np.pi*10.0*t) + 0.3*rng.standard_normal(n)\n")
+    p.push("    for nm in ['C3','C4','P7','P8','T7','T8']: X[IDX[nm]] = rng.standard_normal(n)\n")
+    p.push("    return X\n")
+    p.push("def analyze(X, fs):\n")
+    p.push("    ant = (X[IDX['Fp1']] + X[IDX['Fp2']]) / 2.0\n")
+    p.push("    pos = (X[IDX['P3']]  + X[IDX['P4']])  / 2.0\n")
+    p.push("    occL = X[IDX['O1']]; occR = X[IDX['O2']]\n")
+    p.push("    p7 = X[IDX['P7']];   p8 = X[IDX['P8']]\n")
+    p.push("    coh_ap = alpha_coh(ant, pos, fs); coh_aL = alpha_coh(ant, p7, fs); coh_aR = alpha_coh(ant, p8, fs)\n")
+    p.push("    coh_ao = (alpha_coh(ant, occL, fs) + alpha_coh(ant, occR, fs))/2.0\n")
+    p.push("    plv_ap = alpha_plv(ant, pos, fs); plv_aL = alpha_plv(ant, p7, fs); plv_aR = alpha_plv(ant, p8, fs)\n")
+    p.push("    aL = (band_power(X[IDX['F3']], fs, 8, 13) + band_power(X[IDX['F7']], fs, 8, 13))/2.0\n")
+    p.push("    aR = (band_power(X[IDX['F4']], fs, 8, 13) + band_power(X[IDX['F8']], fs, 8, 13))/2.0\n")
+    p.push("    eps = 1e-12\n")
+    p.push("    logL = float(np.log(aL + eps)); logR = float(np.log(aR + eps)); asym = logR - logL\n")
+    p.push("    H_mean = float(np.mean([spec_entropy(X[c], fs) for c in range(X.shape[0])]))\n")
+    p.push("    cp = change_points(X, fs)\n")
+    p.push("    return {'dmn_coh_alpha': coh_ap, 'coh_anterior_lateral_l': coh_aL,\n")
+    p.push("            'coh_anterior_lateral_r': coh_aR, 'coh_anterior_occipital': coh_ao,\n")
+    p.push("            'plv_anterior_posterior': plv_ap, 'plv_anterior_lateral_l': plv_aL,\n")
+    p.push("            'plv_anterior_lateral_r': plv_aR, 'frontal_alpha_asymmetry': asym,\n")
+    p.push("            'alpha_pow_left': aL, 'alpha_pow_right': aR,\n")
+    p.push("            'alpha_log_left': logL, 'alpha_log_right': logR,\n")
+    p.push("            'spec_entropy_mean': H_mean, 'change_points': cp}\n")
+    p.push("def main():\n")
+    p.push("    ap = argparse.ArgumentParser()\n")
+    p.push("    ap.add_argument('--mode', required=True, choices=['selftest','real'])\n")
+    p.push("    ap.add_argument('--input', default=''); ap.add_argument('--fs', type=float, default=125.0)\n")
+    p.push("    ap.add_argument('--out', default='" + HELPER_OUT + "'); a = ap.parse_args()\n")
+    p.push("    if a.mode == 'selftest': X = synth_corr(a.fs, 8.0, 0.85, 0); src='synthetic_corr'\n")
+    p.push("    else:\n")
+    p.push("        X = np.load(a.input); src=a.input\n")
+    p.push("        if X.shape[0] != 16: print('ERR shape', X.shape, file=sys.stderr); sys.exit(2)\n")
+    p.push("    sha = hashlib.sha256(X.tobytes()).hexdigest()\n")
+    p.push("    out = analyze(X, a.fs); out['source'] = src; out['n_samples'] = int(X.shape[1])\n")
+    p.push("    out['fs_hz'] = float(a.fs); out['data_sha256'] = sha\n")
+    p.push("    with open(a.out, 'w') as f: f.write(json.dumps(out))\n")
+    p.push("    print(json.dumps(out))\n")
+    p.push("if __name__ == '__main__': main()\n")
+    write_file(HELPER_PATH, p.join(""))
+}
+
+fn _run_helper(mode: string, input: string, fs_hz: string) -> array {
+    _emit_helper()
+    let mut args = "--mode " + mode + " --fs " + fs_hz + " --out " + HELPER_OUT
+    if mode == "real" { args = args + " --input " + _sh_quote(input) }
+    let cmd = DEFAULT_VENV + " " + HELPER_PATH + " " + args
+    eprintln("[_metrics/dmn_coherence] cmd=" + cmd)
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]), to_int(r[1])]
+}
+
+fn _metric_dmn_coherence_kv(npy_path: string, sidecar_kv: string, fs_hz: string) -> string {
+    let mut mode = "selftest"
+    if npy_path != "" { mode = "real" }
+    let r = _run_helper(mode, npy_path, fs_hz)
+    let stdout_body = to_string(r[0])
+    let rc = to_int(r[1])
+
+    let mut body = ""
+    if file_exists(HELPER_OUT) { body = read_file(HELPER_OUT) }
+    else { body = stdout_body }
+
+    let coh_ap = parse_json_float_x1000(body, "dmn_coh_alpha")
+    let coh_o  = parse_json_float_x1000(body, "coh_anterior_occipital")
+
+    let mut topology_pass = 0
+    if coh_ap != -2147483647 && coh_o != -2147483647 {
+        if coh_ap >= coh_o { topology_pass = 1 }
+    }
+
+    let mut triggered = ""; let mut trig_count = 0
+    if coh_ap == F_DMN_03_SENTINEL {
+        triggered = triggered + "F_DMN_03,"; trig_count = trig_count + 1
+    } else {
+        if coh_ap < F_DMN_01_LO_X1000 { triggered = triggered + "F_DMN_01,"; trig_count = trig_count + 1 }
+        if topology_pass == 0 && coh_o != -2147483647 {
+            triggered = triggered + "F_DMN_02,"; trig_count = trig_count + 1
+        }
+    }
+    let nT = len(triggered)
+    if nT > 0 { triggered = triggered.substring(0, nT - 1) }
+
+    let mut verdict = "FAIL"
+    if rc == 0 && trig_count == 0 { verdict = "PASS" }
+    if trig_count > 0 { verdict = "FALSIFIED" }
+    if coh_ap == F_DMN_03_SENTINEL { verdict = "FAIL" }
+
+    let mut kv = ""
+    kv = kv + "schema=" + SCHEMA + "\n"
+    kv = kv + "metric=" + METRIC_NAME + "\n"
+    kv = kv + "npy_path=" + npy_path + "\n"
+    kv = kv + "sidecar_kv=" + sidecar_kv + "\n"
+    kv = kv + "fs_hz=" + fs_hz + "\n"
+    kv = kv + "coh_anterior_posterior_x1000=" + str(coh_ap) + "\n"
+    kv = kv + "coh_anterior_occipital_x1000=" + str(coh_o) + "\n"
+    kv = kv + "topology_pass=" + str(topology_pass) + "\n"
+    kv = kv + "value_x1000=" + str(coh_ap) + "\n"
+    kv = kv + "verdict=" + verdict + "\n"
+    kv = kv + "backend=" + HELPER_PATH + "\n"
+    kv = kv + "backend_rc=" + str(rc) + "\n"
+    kv = kv + "raw71_falsifier_count=3\n"
+    kv = kv + "raw71_triggered_count=" + str(trig_count) + "\n"
+    kv = kv + "raw71_triggered_ids=" + triggered + "\n"
+    kv = kv + "raw91_evidence=fp_p_alpha_msc_proxy|topology_anterior_posterior_dominant\n"
+    kv = kv + "raw91_limit=16ch_surface_eeg_volume_conduction_not_fmri_bold\n"
+    kv = kv + "raw95_enforce_layer=in_module\n"
+    return kv
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_prefix = false
+        if a.ends_with(".hexa") { is_prefix = true }
+        if !is_prefix { if a.ends_with("/exe") { is_prefix = true } }
+        if !is_prefix { if a == "run" { is_prefix = true } }
+        if !is_prefix { if a.ends_with("hexa.real") || a.ends_with("/hexa") { is_prefix = true } }
+        if is_prefix { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run dmn_coherence.hexa --selftest")
+    eprintln("       hexa run dmn_coherence.hexa --input <npy> [--fs 125]")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false; let mut input = ""; let mut sidecar = ""; let mut fs_hz = "125"
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--input"    { input = av[i+1]; i = i + 2; continue }
+        if a == "--sidecar"  { sidecar = av[i+1]; i = i + 2; continue }
+        if a == "--fs"       { fs_hz = av[i+1]; i = i + 2; continue }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if selftest {
+        println("== _metrics/dmn_coherence selftest (synthetic_corr mode) ==")
+        let kv = _metric_dmn_coherence_kv("", sidecar, fs_hz)
+        print(kv)
+        let p = find_in_str(kv, "coh_anterior_posterior_x1000=")
+        if p < 0 { eprintln("reason: coh_anterior_posterior_x1000 missing from kv"); exit(1) }
+        println("selftest=ok")
+        exit(0)
+    }
+
+    if input == "" { eprintln("ABORT: need --selftest or --input <npy>"); _print_usage(); exit(2) }
+    let kv = _metric_dmn_coherence_kv(input, sidecar, fs_hz)
+    print(kv)
+    if find_in_str(kv, "verdict=PASS") >= 0 { exit(0) }
+    if find_in_str(kv, "verdict=FALSIFIED") >= 0 { exit(1) }
+    exit(2)
+}

@@ -1,0 +1,115 @@
+{
+  "schema": "braket_kick_comparison_matrix_v1",
+  "ts_utc": "2026-05-02T23:30:00Z",
+  "axes": ["K1", "K2", "K3", "K4", "K5", "K6", "K7"],
+  "matrix": [
+    {
+      "axis": "K1",
+      "system": "CLM mind.tension trajectory",
+      "mechanism": "per-step ±1 quantum bit",
+      "substrate": "IonQ Forte 1 (3b batched)",
+      "cost_usd": 80.30,
+      "falsifier": "T_rec / autocorrelation KS-test vs PRNG",
+      "baseline": "numpy default_rng",
+      "c3_class": "AUDIT_TRAIL_ONLY",
+      "quantum_advantage": "NONE (provenance only)",
+      "covered_by_122_phase3": "3b mechanism reused"
+    },
+    {
+      "axis": "K2",
+      "system": "paradigm v11 6-axis polarity",
+      "mechanism": "6-qubit Grover argmax over 64 configs",
+      "substrate": "SV1 free + IonQ confirm",
+      "cost_usd": 8.30,
+      "falsifier": "≤16 oracle queries vs 64 brute",
+      "baseline": "classical exhaustive grid (μs)",
+      "c3_class": "METHODOLOGY_DEMO",
+      "quantum_advantage": "ASYMPTOTIC NULL at N=64",
+      "covered_by_122_phase3": "NEW SURFACE (joint 6-axis)"
+    },
+    {
+      "axis": "K3",
+      "system": "ALM r14 LoRA SGD gradient sign",
+      "mechanism": "per-minibatch ±1 quantum bit injection",
+      "substrate": "IonQ Forte 1 (3b batched)",
+      "cost_usd": 80.30,
+      "falsifier": "convergence + final acc vs SignSGD baseline",
+      "baseline": "SignSGD chacha20 / SGLD",
+      "c3_class": "AUDIT_TRAIL_ONLY",
+      "quantum_advantage": "NONE (npj QI 2025: noise-as-regularizer no advantage)",
+      "covered_by_122_phase3": "extended 3b to ML training context"
+    },
+    {
+      "axis": "K4",
+      "system": "F1_score_v2 weight (w_b, w_r, w_res)",
+      "mechanism": "3-qubit VQE on simplex",
+      "substrate": "SV1 (free)",
+      "cost_usd": 0.0,
+      "falsifier": "F1(w*_VQE) > F1(heuristic) + 1%",
+      "baseline": "scipy SLSQP (<1ms)",
+      "c3_class": "METHODOLOGY_DEMO",
+      "quantum_advantage": "NONE at 3D",
+      "covered_by_122_phase3": "NEW (variational search)"
+    },
+    {
+      "axis": "K5",
+      "system": "atlas Banach Ψ↔ε R24 fixed-point",
+      "mechanism": "CPTP iteration kick on ρ",
+      "substrate": "SV1 (free)",
+      "cost_usd": 0.0,
+      "falsifier": "q_q < q_c² (quadratic speedup)",
+      "baseline": "classical Banach (ms)",
+      "c3_class": "THEORETICAL_CITATION",
+      "quantum_advantage": "ASYMPTOTIC REAL (arxiv 2602.10296) but null at anima scale",
+      "covered_by_122_phase3": "NEW (extends N1 quantum convergence)"
+    },
+    {
+      "axis": "K6",
+      "system": "CLM L_IX 4-gen crystallize",
+      "mechanism": "per-gen forward/reverse-trial accept ±1",
+      "substrate": "SV1 free / IonQ optional",
+      "cost_usd": "0.0 - 8.30",
+      "falsifier": "convergence-gens vs classical MH",
+      "baseline": "Metropolis-Hastings PRNG",
+      "c3_class": "NARRATIVE_ONLY",
+      "quantum_advantage": "NONE (raw#30 irreversibility metaphysical)",
+      "covered_by_122_phase3": "extended 3b to MCMC context"
+    },
+    {
+      "axis": "K7",
+      "system": "tension_link 5-channel polarity (W/where/why/trust/who)",
+      "mechanism": "5-qubit GHZ-correlated polarity",
+      "substrate": "IonQ Forte 1",
+      "cost_usd": 102.70,
+      "falsifier": "CHSH S>2+5σ AND downstream binding-metric shift vs PRNG",
+      "baseline": "5 independent chacha20 channels",
+      "c3_class": "INFRASTRUCTURAL + DOUBLE_NULL_RISK",
+      "quantum_advantage": "GHZ violation REAL on QPU but binding-translation gap unjustified",
+      "covered_by_122_phase3": "NEW (4a/4b CHSH/GHZ extended to 5-channel context)"
+    }
+  ],
+  "summary_buckets": {
+    "real_quantum_advantage_within_anima_scale": [],
+    "asymptotic_real_null_at_scale": ["K2", "K5"],
+    "audit_trail_only": ["K1", "K3", "K6"],
+    "methodology_demo_only": ["K2", "K4"],
+    "infrastructural_witness_with_translation_gap": ["K7"],
+    "narrative_only": ["K6"],
+    "free_zero_harm": ["K4", "K5"]
+  },
+  "vs_prior_phases": {
+    "122_phase3_3a_3b": {
+      "covered": ["K1 K3 K6 (consume 3b mechanism)"],
+      "novel_surfaces": ["K2 (joint amplitude search)", "K4 (variational weight)", "K5 (Banach iteration)", "K7 (5-channel correlated)"]
+    },
+    "122_phase4_4a_4b_chsh_ghz": {
+      "covered": ["K7 generalizes 4a 2-qubit Bell to 5-qubit GHZ context"],
+      "novel": "5-channel mediator binding semantics (with caveat downstream null risk)"
+    },
+    "122_phase5_n1_n8": {
+      "K5_relates_N1": "K5 is concrete kick-mechanism instance of N1 quantum convergence (Hilbert-space lift)",
+      "K2_relates_N4": "K2 is instance of N4 quantum amplitude estimation applied to paradigm v11",
+      "K7_relates_N3_N7": "K7 partially overlaps N3 shadow tomography (5-channel state) and N7 binding LP"
+    }
+  }
+}

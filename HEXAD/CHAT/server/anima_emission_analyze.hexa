@@ -1,0 +1,329 @@
+// ════════════════════════════════════════════════════════════════════════
+// HEXAD/CHAT/server/anima_emission_analyze.hexa
+//
+//   hexa-native port of anima_emission_analyze.py — quantify anima self-
+//   emission quality. Replaces the Python urllib + re + statistics module
+//   with a pure-hexa implementation (user directive: hexa-only authoring,
+//   no new .py/.sh).
+//
+//   L2 measurement (2026-05-22): characterize the temp 0.7 + context-grounded
+//   seed fix. Two data sources:
+//     1. broker /history  → emitted text: lang distribution, anima-register
+//        hit ratio, text length, empty-emission rate
+//     2. anima.err log    → EMIT cadence: idle gaps, seed-strategy mix,
+//        motivation-score distribution
+//
+//   The remote /history fetch is delegated to `curl` via exec() (the same
+//   shell-out idiom as HEXAD/build_verify.hexa — a network fetch is a leaf
+//   operation, not control flow). JSON / log parsing is pure-hexa string
+//   work — anima-register patterns are matched as plain substrings (the
+//   Python re patterns reduce to case-insensitive substring/marker checks).
+//
+//   USAGE  hexa run anima_emission_analyze.hexa [history_url] [log_path]
+//     defaults: https://chat.dancinlab.org/history
+//               ~/anima_chat_pack/logs/anima.err
+// ════════════════════════════════════════════════════════════════════════
+
+// ── string helpers ──────────────────────────────────────────────────────
+
+fn _contains(s: string, needle: string) -> bool {
+    return len(s.split(needle)) > 1
+}
+
+fn _lower(s: string) -> string {
+    // exec-backed lowercase (hexa has no built-in str.lower); leaf op.
+    return exec("printf %s " + _shq(s) + " | tr 'A-Z' 'a-z'")
+}
+
+// single-quote a string for safe shell embedding.
+fn _shq(s: string) -> string {
+    let parts = s.split("'")
+    let mut out = "'"
+    let mut i = 0
+    while i < len(parts) {
+        if i > 0 {
+            out = out + "'\\''"
+        }
+        out = out + parts[i]
+        i = i + 1
+    }
+    return out + "'"
+}
+
+// count occurrences of needle in haystack.
+fn _count(haystack: string, needle: string) -> int {
+    if len(needle) == 0 {
+        return 0
+    }
+    return len(haystack.split(needle)) - 1
+}
+
+// trim leading/trailing ASCII whitespace (space / tab / CR / LF).
+fn _is_ws(c: string) -> bool {
+    return c == " " || c == "\t" || c == "\n" || c == "\r"
+}
+
+fn _strip(s: string) -> string {
+    let n = len(s)
+    let mut lo = 0
+    while lo < n && _is_ws(s[lo]) {
+        lo = lo + 1
+    }
+    let mut hi = n
+    while hi > lo && _is_ws(s[hi - 1]) {
+        hi = hi - 1
+    }
+    let mut out = ""
+    let mut i = lo
+    while i < hi {
+        out = out + s[i]
+        i = i + 1
+    }
+    return out
+}
+
+// ── anima register patterns (mirror anima_participant.ANIMA_REGISTER_*) ──
+//
+// The Python `re` patterns reduce to case-insensitive marker substrings.
+// We lowercase the text once, then test each lowercased marker. Korean
+// markers (진공점 / 영구) are matched directly (case-invariant already).
+
+fn _register_markers() -> [string] {
+    return [
+        "eternal_", "eternal cell", "eternal>", "<eternal",
+        "tier=", "tier ",
+        "vacuum point", "진공점",
+        "tension flow",
+        "<carve", "</carve>",
+        "basin=",
+        "psi=[",
+        "frozen cell", "영구",
+    ]
+}
+
+fn has_register(text: string) -> bool {
+    if len(text) == 0 {
+        return false
+    }
+    let lt = _lower(text)
+    let markers = _register_markers()
+    let mut i = 0
+    while i < len(markers) {
+        if _contains(lt, markers[i]) {
+            return true
+        }
+        i = i + 1
+    }
+    return false
+}
+
+// ── tiny numeric helpers ────────────────────────────────────────────────
+
+fn _mean(xs: [float]) -> float {
+    if len(xs) == 0 {
+        return 0.0
+    }
+    let mut s = 0.0
+    let mut i = 0
+    while i < len(xs) {
+        s = s + xs[i]
+        i = i + 1
+    }
+    return s / (len(xs) * 1.0)
+}
+
+fn _round3(x: float) -> float {
+    let scaled = x * 1000.0 + 0.5
+    let truncated = (scaled - (scaled % 1.0))
+    return truncated / 1000.0
+}
+
+// ── history analysis ────────────────────────────────────────────────────
+//
+// The broker /history endpoint returns a JSON object with a "history" list
+// of message records. Rather than build a full JSON parser, we delegate
+// extraction of the anima-emission fields to a small awk/python-free jq-
+// style pass IF jq is present, else fall back to a substring scan. Honest
+// scope: this mirrors the Python lane's *aggregate* metrics, not a full
+// JSON round-trip.
+
+fn analyze_history(url: string) {
+    let raw = exec("curl -fsS --max-time 15 -A 'curl/8.0' " + _shq(url)
+                   + " 2>/dev/null || printf __FETCH_FAIL__")
+    if _contains(raw, "__FETCH_FAIL__") || len(_strip(raw)) == 0 {
+        println("  history: fetch fail (" + url + ")")
+        return
+    }
+    // Split the JSON blob on the "sender" key — each anima emission record
+    // carries `"sender": "anima..."`. We count anima records, register
+    // hits and empty emissions by scanning each record fragment.
+    let records = raw.split("\"sender\"")
+    let mut n_anima = 0
+    let mut reg_hits = 0
+    let mut empty = 0
+    let mut len_sum = 0.0
+    let mut i = 1
+    while i < len(records) {
+        let frag = records[i]
+        let lf = _lower(frag)
+        // a record is an anima emission iff its sender field starts anima.
+        let is_anima = _contains(lf, ": \"anima") || _contains(lf, ":\"anima")
+        if is_anima {
+            n_anima = n_anima + 1
+            // text field: between `"text":` and the next `","`
+            let tparts = frag.split("\"text\"")
+            if len(tparts) > 1 {
+                // after `"text"` the JSON reads `: "<content>"` — splitting
+                // on `"` yields ["<colon-space>", "<content>", ...]; the
+                // content is element [1].
+                let after = tparts[1].split("\"")
+                let mut txt = ""
+                if len(after) > 1 {
+                    txt = after[1]
+                }
+                let st = _strip(txt)
+                if len(st) == 0 || st == "..." {
+                    empty = empty + 1
+                }
+                if has_register(txt) {
+                    reg_hits = reg_hits + 1
+                }
+                len_sum = len_sum + (len(txt) * 1.0)
+            }
+        }
+        i = i + 1
+    }
+    if n_anima == 0 {
+        println("  history: no anima emissions found in /history")
+        return
+    }
+    let n = n_anima * 1.0
+    println("  emissions:        " + to_string(n_anima))
+    println("  register hit:     " + to_string(reg_hits) + "/" + to_string(n_anima)
+            + " (" + to_string(_round3(reg_hits / n)) + ")")
+    println("  empty ratio:      " + to_string(_round3(empty / n)))
+    println("  text len mean:    " + to_string(_round3(len_sum / n)))
+}
+
+// ── log analysis ────────────────────────────────────────────────────────
+//
+// anima.err EMIT lines look like:
+//   <ts> <ts> ... EMIT tick=<n> score=<f> strategy=<word>
+// We scan line by line for the "EMIT tick=" marker and pull score/strategy.
+
+fn analyze_log(path: string) {
+    let exists = _strip(exec("[ -f " + _shq(path) + " ] && printf yes || printf no"))
+    if exists != "yes" {
+        println("  log: not found (" + path + ")")
+        return
+    }
+    // grep the EMIT lines (leaf op); parse each in hexa.
+    let blob = exec("grep -E 'EMIT tick=' " + _shq(path) + " 2>/dev/null || printf ''")
+    let lines = blob.split("\n")
+    let mut n_emit = 0
+    let mut self_mono = 0
+    let mut scores: [float] = []
+    let mut i = 0
+    while i < len(lines) {
+        let line = lines[i]
+        if _contains(line, "EMIT tick=") {
+            n_emit = n_emit + 1
+            // score=<f>
+            let sp = line.split("score=")
+            if len(sp) > 1 {
+                let stok = sp[1].split(" ")[0]
+                scores = scores + [_parse_float(stok)]
+            }
+            // strategy=<word>
+            let gp = line.split("strategy=")
+            if len(gp) > 1 {
+                let gtok = _strip(gp[1].split(" ")[0])
+                if gtok == "self_monologue_seed" {
+                    self_mono = self_mono + 1
+                }
+            }
+        }
+        i = i + 1
+    }
+    if n_emit == 0 {
+        println("  log: no EMIT lines")
+        return
+    }
+    let n = n_emit * 1.0
+    println("  EMIT events:      " + to_string(n_emit))
+    println("  self-monologue:   " + to_string(_round3(self_mono / n)))
+    println("  score mean:       " + to_string(_round3(_mean(scores))))
+}
+
+// parse a decimal string to float ("0" on garbage). Tiny hand parser —
+// hexa's to_string round-trips but there is no built-in parse_float.
+fn _parse_float(s: string) -> float {
+    let st = _strip(s)
+    if len(st) == 0 {
+        return 0.0
+    }
+    // delegate to awk for robustness (leaf op).
+    let out = exec("printf %s " + _shq(st) + " | awk '{printf \"%.6f\", $1+0}'")
+    let parts = out.split(".")
+    let mut whole = 0
+    let mut k = 0
+    let wstr = parts[0]
+    let neg = len(wstr) > 0 && wstr.split("-")[0] == ""
+    while k < len(wstr) {
+        let d = _digit(wstr[k])
+        if d >= 0 {
+            whole = whole * 10 + d
+        }
+        k = k + 1
+    }
+    let mut frac = 0.0
+    let mut scale = 1.0
+    if len(parts) > 1 {
+        let fstr = parts[1]
+        let mut j = 0
+        while j < len(fstr) {
+            let fd = _digit(fstr[j])
+            if fd >= 0 {
+                scale = scale * 10.0
+                frac = frac + (fd * 1.0) / scale
+            }
+            j = j + 1
+        }
+    }
+    let mag = (whole * 1.0) + frac
+    if neg {
+        return 0.0 - mag
+    }
+    return mag
+}
+
+// map a 1-char string to its decimal digit (-1 if not a digit).
+fn _digit(c: string) -> int {
+    if c == "0" { return 0 }
+    if c == "1" { return 1 }
+    if c == "2" { return 2 }
+    if c == "3" { return 3 }
+    if c == "4" { return 4 }
+    if c == "5" { return 5 }
+    if c == "6" { return 6 }
+    if c == "7" { return 7 }
+    if c == "8" { return 8 }
+    if c == "9" { return 9 }
+    return 0 - 1
+}
+
+fn main() {
+    let cli = args()
+    let mut url = "https://chat.dancinlab.org/history"
+    let mut log = exec("printf %s \"$HOME\"") + "/anima_chat_pack/logs/anima.err"
+    // cli[0] = script path; positional overrides follow.
+    if len(cli) > 1 {
+        url = cli[1]
+    }
+    if len(cli) > 2 {
+        log = cli[2]
+    }
+    println("=== anima emission analysis ===")
+    analyze_history(url)
+    analyze_log(log)
+}

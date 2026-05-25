@@ -1,0 +1,10 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/581 [00:00<?, ?it/s]Loading weights:  77%|███████▋  | 445/581 [00:00<00:00, 4440.73it/s]Loading weights: 100%|██████████| 581/581 [00:00<00:00, 2973.63it/s]
+=== f_shim_v4_3_smoketest_result ===
+{
+  "f_shim_v4_3": "FAIL",
+  "finite_forward": "unknown",
+  "shape": null,
+  "err": "ValueError: Couldn't instantiate the backend tokenizer from one of: \n(1) a `tokenizers` library serialization file, \n(2) a slow tokenizer instance to convert or \n(3) an equivalent slow tokenizer class to instantiate and convert. \nYou need to have sentencepiece or tiktoken installed to convert a slow tokenizer to a fast one.",
+  "trace": "Traceback (most recent call last):\n  File \"<stdin>\", line 8, in <module>\n  File \"/usr/local/lib/python3.11/dist-packages/transformers/models/auto/tokenization_auto.py\", line 827, in from_pretrained\n    return tokenizer_class.from_pretrained(pretrained_model_name_or_path, *inputs, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/dist-packages/transformers/tokenization_utils_base.py\", line 1743, in from_pretrained\n    return cls._from_pretrained(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/dist-packages/transformers/tokenization_utils_base.py\", line 1933, in _from_pretrained\n    tokenizer = cls(*init_inputs, **init_kwargs)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/dist-packages/transformers/tokenization_utils_tokenizers.py\", line 376, in __init__\n    raise ValueError(\nValueError: Couldn't instantiate the backend tokenizer from one of: \n(1) a `tokenizers` library serialization file, \n(2) a slow tokenizer instance to convert or \n(3) an equivalent slow tokenizer class to instantiate and convert. \nYou need to have sentencepiece or tiktoken installed to convert a slow tokenizer to a fast one.\n"
+}

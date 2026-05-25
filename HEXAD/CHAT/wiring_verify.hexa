@@ -1,0 +1,89 @@
+// HEXAD/CHAT/wiring_verify.hexa — inter-module WIRING 조건 검증 entrypoint
+//   (compiled-first: import wiring_verify_lib + _selftest + main)
+//
+//   닫는 조건: CHAT/README.md §2 W-ledger 의 W5 / W6 / W8 (OPEN → ✅).
+//   W1-W4/W7 은 기존 ✅ (회귀 무관), W9 는 RFC 034 BLOCKED (건드리지 않음).
+//
+//   verify: HEXA_MAC_BUILD_OK=1 hexa build HEXAD/CHAT/wiring_verify.hexa \
+//             -o _hexa_build/HEXAD_CHAT_wiring_verify && \
+//           ./_hexa_build/HEXAD_CHAT_wiring_verify
+//   PASS marker: "wiring_verify selftest: true"
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/CHAT/wiring_verify_lib.hexa"
+
+
+fn _selftest() {
+    print("=== HEXAD/CHAT inter-module WIRING 조건 검증 (F-WIRE-W5/W6/W8) ===")
+    print("")
+
+    // ── F-WIRE-W5  GATE-SCALE-CLOSED (Law 81 · 🔵 closed-form) ──────────────
+    let w5_branch = wv_w5_branch_exact()
+    let w5_window = wv_w5_window_closed()
+    let w5_sat    = wv_w5_saturation_exact()
+    let w5 = wv_w5_pass()
+    print("F-WIRE-W5 GATE-SCALE-CLOSED (Law 81 · 🔵 closed-form)")
+    print("  W5.1 branch-exact    GATE_TRAIN=" + to_string(bridge_gate_scale(false))
+          + " GATE_INFER=" + to_string(bridge_gate_scale(true))
+          + "  : " + to_string(w5_branch))
+    print("  W5.2 window-closed   gated ∈ [(Ψ−α)·g,(Ψ+α)·g] ∀ raw (id: clamp·g)"
+          + "  : " + to_string(w5_window))
+    print("  W5.3 saturation-exact  sat = window-edge·g, learn-hard(1.0>0.6)"
+          + "  : " + to_string(w5_sat))
+    print("  → F-WIRE-W5 : " + to_string(w5) + "  (closed-form, result-agnostic)")
+    print("")
+
+    // ── F-WIRE-W6  FORWARD-ORDER-INVARIANT (τ(6)=4 · deterministic-formal) ──
+    let w6_inv   = wv_w6_order_invariant()
+    let w6_phase = wv_w6_phase_structure()
+    let w6 = wv_w6_pass()
+    print("F-WIRE-W6 FORWARD-ORDER-INVARIANT (τ(6)=4 phase · deterministic)")
+    print("  W6.1 order-invariant  trace==canonical ∀ 8 distinct inputs"
+          + "  : " + to_string(w6_inv))
+    print("  W6.2 phase-structure  S first · detach∈(C,Bridge) · E→backward adj"
+          + "  : " + to_string(w6_phase))
+    print("  → F-WIRE-W6 : " + to_string(w6) + "  (call-order trace, ∀ input)")
+    print("")
+
+    // ── F-WIRE-W8  MITOSIS-WIRING-INVARIANT (orthogonality · deterministic) ─
+    let w8_count = wv_w8_sigma6_count_ok()
+    let w8_inv   = wv_w8_invariant_over_n_cells()
+    let w8_ep    = wv_w8_endpoints_module_only()
+    let w8 = wv_w8_pass()
+    print("F-WIRE-W8 MITOSIS-WIRING-INVARIANT (§mitosis_two_axis · deterministic)")
+    print("  W8.1 σ(6)=12 count    15 C(6,2) − 3 φ(6)=2-iso = 12"
+          + "  : " + to_string(w8_count))
+    print("  W8.2 n_cells-invariant  conn map byte-id over 2..64 sweep"
+          + "  : " + to_string(w8_inv))
+    print("  W8.3 endpoints-module-only  no cell/n_cells token in wiring"
+          + "  : " + to_string(w8_ep))
+    print("  → F-WIRE-W8 : " + to_string(w8) + "  (growth ⟂ structure)")
+    print("")
+
+    // ── aggregate ───────────────────────────────────────────────────────────
+    let n_pass = 0
+    if w5 { n_pass = n_pass + 1 }
+    if w6 { n_pass = n_pass + 1 }
+    if w8 { n_pass = n_pass + 1 }
+    let all_ok = (n_pass == 3) && wv_all_pass()
+
+    print("=== F-WIRE " + to_string(n_pass)
+          + "/3 (W5/W6/W8) inter-module wiring 조건: " + to_string(all_ok) + " ===")
+    if all_ok {
+        print("W5/W6/W8 CLOSED — CHAT/README.md §2 W-ledger 🔶 OPEN → ✅")
+        print("anchors: Law 81 / τ(6)=4 phase / σ(6)=12 §mitosis_two_axis")
+        print("(W1-W4/W7 기존 ✅ 회귀 무관 · W9 RFC 034 BLOCKED 유지)")
+    } else {
+        print("FAIL — investigate which W sub-claim failed above (정직 OPEN 유지)")
+    }
+
+    print("wiring_verify selftest: " + to_string(all_ok))
+}
+
+
+fn main() {
+    print("HEXAD/CHAT — inter-module wiring 아키텍처 조건 검증 본체")
+    print("F-WIRE-W5 (Law 81 gate-scale closed) · F-WIRE-W6 (τ(6)=4 order)")
+    print("F-WIRE-W8 (§mitosis_two_axis σ(6)=12 invariant)")
+    print("")
+    _selftest()
+}

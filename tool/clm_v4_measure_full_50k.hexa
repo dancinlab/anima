@@ -1,0 +1,347 @@
+// tool/clm_v4_measure_full_50k.hexa — P9 P0 CLM v4 full 50K measure (raw#9 hexa-native).
+//
+// REPLACES
+//   state/p9_p0_measure_2026_05_03/measure_ubu1_clm_v4_full_50k.py (gitignored, line 14:
+//     TOKENIZER = "/tmp/tokenizer_64k_multilingual.model"  ← legacy hardcode)
+//
+// PURPOSE
+//   Batched (BATCH=16) tension extraction over the full 50K SFT corpus + 500
+//   holdout, T=64, on RTX 5070 12GB. Replaces /tmp tokenizer hardcode with the
+//   cache-resolver pattern from tool/clm_v4_tokenizer_load.hexa.
+//
+// MODES
+//   --selftest                        Tokenizer round-trip + decoder import dry-check
+//                                     on ubu1. NO GPU forward, NO ckpt load. Emits
+//                                     calib token-sequence summary.
+//   --apply <input> <output>          Full 50K batched tension extraction.
+//                                     <input> and <output> are absolute paths on ubu1.
+//                                     Stats written to <output>.stats.json,
+//                                     progress to <output>.progress.json.
+//   (no flag)                         Selftest mode (safe default).
+//
+// raw#9: Mac-side hexa-only. raw#37 transient helper to ubu1 (.hexa_tmp not .py).
+// raw#15 SSOT this file. raw#71 falsifier-bound (F-MIG-1/2/3/4).
+//
+// USAGE
+//   hexa_real run tool/clm_v4_measure_full_50k.hexa --selftest
+//   hexa_real run tool/clm_v4_measure_full_50k.hexa --apply \
+//     /tmp/sft_data_full_50k_augmented_in.jsonl \
+//     /tmp/sft_data_full_50k_augmented_out.jsonl
+
+let HELPER_PATH = "/tmp/clm_v4_measure_full_50k_helper.hexa_tmp"
+let UBU1_PY = "/home/aiden/venv_orchestrator/bin/python3"
+
+fn _write_helper(mode: string) {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# emitted by tool/clm_v4_measure_full_50k.hexa raw#37 transient (NOT committed)\n")
+    parts.push("# Replaces state/p9_p0_measure_2026_05_03/measure_ubu1_clm_v4_full_50k.py with cache-resolver tokenizer load.\n")
+    parts.push("import sys, os, glob, json, time, traceback\n")
+    parts.push("from datetime import datetime, timezone\n")
+    parts.push("\n")
+    parts.push("# ── tokenizer cache resolver (from tool/clm_v4_tokenizer_load.hexa) ──\n")
+    parts.push("def _resolve_tokenizer():\n")
+    parts.push("    home = os.path.expanduser('~')\n")
+    parts.push("    candidates = [\n")
+    parts.push("        f'{home}/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model',\n")
+    parts.push("        f'{home}/anima/checkpoints/clm_v4_350m/tokenizer_64k_multilingual.model',\n")
+    parts.push("        '/tmp/tokenizer_64k_multilingual.model',\n")
+    parts.push("    ]\n")
+    parts.push("    for i, g in enumerate(candidates):\n")
+    parts.push("        m = sorted(glob.glob(g))\n")
+    parts.push("        if m:\n")
+    parts.push("            if i == 2:\n")
+    parts.push("                sys.stderr.write('[clm_v4_measure_full_50k] WARN: legacy /tmp fallback in use; promote via plan.md Step 2\\n')\n")
+    parts.push("            return m[-1]\n")
+    parts.push("    raise FileNotFoundError('CLM v4 64K tokenizer not in cache or /tmp; see state/clm_v4_tokenizer_propagation_plan_2026_05_04/plan.md Step 2')\n")
+    parts.push("\n")
+    parts.push("MODE = sys.argv[1] if len(sys.argv) > 1 else 'selftest'\n")
+    parts.push("T = 64\n")
+    parts.push("BATCH = 16\n")
+    parts.push("\n")
+    parts.push("CALIB_PROMPTS = [\n")
+    parts.push("    'Define hexad as a six-fold integration:',\n")
+    parts.push("    'Six modules form a hexagonal architecture when:',\n")
+    parts.push("    'A balanced six-component system:',\n")
+    parts.push("    'Hexad symmetry refers to:',\n")
+    parts.push("    'Logical implication law: if A then:',\n")
+    parts.push("    'Sequential rule application proceeds:',\n")
+    parts.push("    'Closure under inference requires:',\n")
+    parts.push("    'A formal proof system is closed when:',\n")
+    parts.push("    'Integrated information measures partition independence:',\n")
+    parts.push("    'Phi quantifies irreducibility of system:',\n")
+    parts.push("    'Information integration is maximized when:',\n")
+    parts.push("    'A whole greater than sum of parts:',\n")
+    parts.push("    'Self-reference emerges when system observes:',\n")
+    parts.push("    'Recursive meta-cognition models:',\n")
+    parts.push("    'A self-aware system represents itself by:',\n")
+    parts.push("    'Strange loops in cognition arise from:',\n")
+    parts.push("]\n")
+    parts.push("\n")
+    parts.push("if MODE == 'selftest':\n")
+    parts.push("    import sentencepiece as spm\n")
+    parts.push("    tok_path = _resolve_tokenizer()\n")
+    parts.push("    sp = spm.SentencePieceProcessor(model_file=tok_path)\n")
+    parts.push("    vocab = sp.get_piece_size()\n")
+    parts.push("    rows = []\n")
+    parts.push("    for i, p in enumerate(CALIB_PROMPTS):\n")
+    parts.push("        ids_full = sp.encode(p)\n")
+    parts.push("        ids_T = ids_full[:T]\n")
+    parts.push("        if len(ids_T) < T: ids_T = ids_T + [0] * (T - len(ids_T))\n")
+    parts.push("        rows.append({'idx': i, 'prompt': p, 'ids_full': ids_full, 'ids_padded_T': ids_T, 'n_full': len(ids_full)})\n")
+    parts.push("    decoder_import_ok = False\n")
+    parts.push("    decoder_import_err = None\n")
+    parts.push("    try:\n")
+    parts.push("        sys.path.insert(0, '/home/aiden/anima/models')\n")
+    parts.push("        sys.path.insert(0, '/home/aiden/anima/training')\n")
+    parts.push("        sys.path.insert(0, '/home/aiden/anima/anima')\n")
+    parts.push("        sys.path.insert(0, '/home/aiden/anima')\n")
+    parts.push("        from conscious_decoder import ConsciousDecoderV2  # noqa: F401\n")
+    parts.push("        decoder_import_ok = True\n")
+    parts.push("    except Exception as e:\n")
+    parts.push("        decoder_import_err = str(e)\n")
+    parts.push("    summary = {\n")
+    parts.push("        'schema': 'anima/clm_v4_measure_full_50k/selftest/1',\n")
+    parts.push("        'tokenizer_path': tok_path,\n")
+    parts.push("        'vocab_size': vocab,\n")
+    parts.push("        'T': T,\n")
+    parts.push("        'BATCH': BATCH,\n")
+    parts.push("        'n_calib_prompts': len(CALIB_PROMPTS),\n")
+    parts.push("        'calib_tokens_shape': [len(CALIB_PROMPTS), T],\n")
+    parts.push("        'rows': rows,\n")
+    parts.push("        'decoder_import_ok': decoder_import_ok,\n")
+    parts.push("        'decoder_import_err': decoder_import_err,\n")
+    parts.push("        'verdict': 'PASS' if (vocab == 64000 and len(rows) == 16) else 'FAIL',\n")
+    parts.push("        'sentinel': '__P9_clm_v4_measure_full_50k__ ' + ('PASS' if (vocab == 64000 and len(rows) == 16) else 'FAIL'),\n")
+    parts.push("        'ts_utc': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),\n")
+    parts.push("    }\n")
+    parts.push("    print(json.dumps(summary))\n")
+    parts.push("    sys.exit(0 if summary['verdict'] == 'PASS' else 1)\n")
+    parts.push("\n")
+    parts.push("# ── apply mode: full 50K batched tension extraction ──\n")
+    parts.push("# Mirrors measure_ubu1_clm_v4_full_50k.py with line-14 hardcode replaced by _resolve_tokenizer().\n")
+    parts.push("\n")
+    parts.push("if len(sys.argv) < 4:\n")
+    parts.push("    print('usage: helper apply <input_jsonl> <output_jsonl>', file=sys.stderr); sys.exit(1)\n")
+    parts.push("SFT_DATA = sys.argv[2]\n")
+    parts.push("OUTPUT = sys.argv[3]\n")
+    parts.push("PROGRESS_LOG = OUTPUT + '.progress.json'\n")
+    parts.push("\n")
+    parts.push("ANIMA_HOME = '/home/aiden/anima'\n")
+    parts.push("CLM_CKPT = f'{ANIMA_HOME}/checkpoints/clm_v4_350m/scale_350m/best.pt'\n")
+    parts.push("# TOKENIZER: was '/tmp/tokenizer_64k_multilingual.model' — now resolved at runtime\n")
+    parts.push("TOKENIZER = _resolve_tokenizer()\n")
+    parts.push("\n")
+    parts.push("sys.path.insert(0, f'{ANIMA_HOME}/models')\n")
+    parts.push("sys.path.insert(0, f'{ANIMA_HOME}/training')\n")
+    parts.push("sys.path.insert(0, f'{ANIMA_HOME}/anima')\n")
+    parts.push("sys.path.insert(0, f'{ANIMA_HOME}')\n")
+    parts.push("\n")
+    parts.push("print(f'[measure-hexa] start ts={time.strftime(\"%Y-%m-%dT%H:%M:%S\")}', flush=True)\n")
+    parts.push("print(f'[measure-hexa] tokenizer_resolver_path={TOKENIZER}', flush=True)\n")
+    parts.push("print(f'[measure-hexa] input={SFT_DATA} output={OUTPUT}', flush=True)\n")
+    parts.push("\n")
+    parts.push("import torch\n")
+    parts.push("device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')\n")
+    parts.push("print(f'[measure-hexa] device={device} torch={torch.__version__}', flush=True)\n")
+    parts.push("\n")
+    parts.push("import sentencepiece as spm\n")
+    parts.push("sp = spm.SentencePieceProcessor(model_file=TOKENIZER)\n")
+    parts.push("vocab_size = sp.get_piece_size()\n")
+    parts.push("print(f'[measure-hexa] tokenizer vocab={vocab_size}', flush=True)\n")
+    parts.push("\n")
+    parts.push("from conscious_decoder import ConsciousDecoderV2\n")
+    parts.push("scale_cfg = {'d_model':768,'n_layer':16,'n_head':12,'n_kv_head':4,'block_size':512,'consciousness_dim':192}\n")
+    parts.push("decoder = ConsciousDecoderV2(\n")
+    parts.push("    vocab_size=vocab_size, d_model=scale_cfg['d_model'], n_head=scale_cfg['n_head'],\n")
+    parts.push("    n_layer=scale_cfg['n_layer'], block_size=scale_cfg['block_size'],\n")
+    parts.push("    n_kv_head=scale_cfg['n_kv_head'], consciousness_dim=scale_cfg['consciousness_dim'],\n")
+    parts.push("    dropout=0.0, gate_strength=0.001, n_ca_rules=8,\n")
+    parts.push(").to(device).eval()\n")
+    parts.push("\n")
+    parts.push("ck = torch.load(CLM_CKPT, map_location=device, weights_only=False)\n")
+    parts.push("sd = ck.get('decoder', ck) if isinstance(ck, dict) else ck\n")
+    parts.push("decoder.load_state_dict(sd, strict=False)\n")
+    parts.push("n_params = sum(p.numel() for p in decoder.parameters())\n")
+    parts.push("print(f'[measure-hexa] decoder params={n_params:,} ckpt loaded', flush=True)\n")
+    parts.push("\n")
+    parts.push("records = []\n")
+    parts.push("with open(SFT_DATA, 'r') as f:\n")
+    parts.push("    for line in f:\n")
+    parts.push("        records.append(json.loads(line))\n")
+    parts.push("N = len(records)\n")
+    parts.push("print(f'[measure-hexa] loaded {N} records', flush=True)\n")
+    parts.push("\n")
+    parts.push("print('[measure-hexa] tokenizing...', flush=True)\n")
+    parts.push("t0 = time.time()\n")
+    parts.push("all_tokens = []\n")
+    parts.push("for rec in records:\n")
+    parts.push("    text = rec.get('input', '') + ' ' + rec.get('completion', '')\n")
+    parts.push("    toks = sp.encode(text)[:T]\n")
+    parts.push("    if len(toks) < T: toks = toks + [0] * (T - len(toks))\n")
+    parts.push("    all_tokens.append(toks)\n")
+    parts.push("print(f'[measure-hexa] tokenize done {time.time()-t0:.1f}s', flush=True)\n")
+    parts.push("\n")
+    parts.push("n_errors = 0\n")
+    parts.push("fwd_times = []\n")
+    parts.push("t_start = time.time()\n")
+    parts.push("last_flush = t_start\n")
+    parts.push("\n")
+    parts.push("with open(OUTPUT, 'w') as out_f, torch.no_grad():\n")
+    parts.push("    for batch_start in range(0, N, BATCH):\n")
+    parts.push("        batch_end = min(batch_start + BATCH, N)\n")
+    parts.push("        batch_toks = all_tokens[batch_start:batch_end]\n")
+    parts.push("        idx = torch.tensor(batch_toks, dtype=torch.long, device=device)\n")
+    parts.push("        try:\n")
+    parts.push("            t0 = time.time()\n")
+    parts.push("            out = decoder(idx)\n")
+    parts.push("            if device.type == 'cuda':\n")
+    parts.push("                torch.cuda.synchronize()\n")
+    parts.push("            t_fwd = time.time() - t0\n")
+    parts.push("            fwd_times.append(t_fwd)\n")
+    parts.push("            tensions = out[2] if len(out) >= 3 else None\n")
+    parts.push("            for j, rec in enumerate(records[batch_start:batch_end]):\n")
+    parts.push("                if tensions is None:\n")
+    parts.push("                    tension_target = [0.0] * T\n")
+    parts.push("                elif isinstance(tensions, torch.Tensor):\n")
+    parts.push("                    t_flat = tensions[j].detach().float().cpu().view(-1)\n")
+    parts.push("                    if t_flat.shape[0] >= T:\n")
+    parts.push("                        tension_target = t_flat[:T].tolist()\n")
+    parts.push("                    else:\n")
+    parts.push("                        v = t_flat.mean().item() if t_flat.numel() > 0 else 0.0\n")
+    parts.push("                        tension_target = [v] * T\n")
+    parts.push("                elif isinstance(tensions, list):\n")
+    parts.push("                    if len(tensions) > j and isinstance(tensions[j], torch.Tensor):\n")
+    parts.push("                        v = float(tensions[j].mean().item())\n")
+    parts.push("                        tension_target = [v] * T\n")
+    parts.push("                    else:\n")
+    parts.push("                        tension_target = [0.0] * T\n")
+    parts.push("                else:\n")
+    parts.push("                    tension_target = [0.0] * T\n")
+    parts.push("                rec_aug = dict(rec)\n")
+    parts.push("                rec_aug['tension_target'] = tension_target\n")
+    parts.push("                out_f.write(json.dumps(rec_aug, ensure_ascii=False) + '\\n')\n")
+    parts.push("        except Exception as e:\n")
+    parts.push("            n_errors += 1\n")
+    parts.push("            if n_errors <= 3:\n")
+    parts.push("                print(f'[measure-hexa] err batch {batch_start}: {e}', flush=True)\n")
+    parts.push("            for rec in records[batch_start:batch_end]:\n")
+    parts.push("                rec_aug = dict(rec)\n")
+    parts.push("                rec_aug['tension_target'] = None\n")
+    parts.push("                rec_aug['_measure_error'] = str(e)\n")
+    parts.push("                out_f.write(json.dumps(rec_aug, ensure_ascii=False) + '\\n')\n")
+    parts.push("        now = time.time()\n")
+    parts.push("        if now - last_flush > 5.0:\n")
+    parts.push("            done = batch_end\n")
+    parts.push("            elapsed = now - t_start\n")
+    parts.push("            rate = done / max(elapsed, 0.001)\n")
+    parts.push("            eta = (N - done) / max(rate, 0.001)\n")
+    parts.push("            prog = {'done': done, 'total': N, 'elapsed_s': elapsed, 'eta_s': eta, 'rate_rec_s': rate, 'errors': n_errors}\n")
+    parts.push("            with open(PROGRESS_LOG, 'w') as pf:\n")
+    parts.push("                json.dump(prog, pf)\n")
+    parts.push("            print(f'[measure-hexa] {done}/{N} elapsed={elapsed:.0f}s rate={rate:.0f}rec/s eta={eta:.0f}s errors={n_errors}', flush=True)\n")
+    parts.push("            last_flush = now\n")
+    parts.push("\n")
+    parts.push("elapsed = time.time() - t_start\n")
+    parts.push("fwd_mean = sum(fwd_times) / max(len(fwd_times), 1) if fwd_times else 0\n")
+    parts.push("print(f'[measure-hexa] DONE elapsed={elapsed:.1f}s rate={N/max(elapsed,0.001):.0f}rec/s errors={n_errors} fwd_mean={fwd_mean*1000:.1f}ms/batch', flush=True)\n")
+    parts.push("\n")
+    parts.push("stats = {\n")
+    parts.push("    'phase': 'p9_p0_measure_clm_v4_tension',\n")
+    parts.push("    'orchestrator': 'tool/clm_v4_measure_full_50k.hexa',\n")
+    parts.push("    'tokenizer_path': TOKENIZER,\n")
+    parts.push("    'input': SFT_DATA,\n")
+    parts.push("    'output': OUTPUT,\n")
+    parts.push("    'n_records': N,\n")
+    parts.push("    'n_errors': n_errors,\n")
+    parts.push("    'elapsed_s': elapsed,\n")
+    parts.push("    'rate_rec_s': N / max(elapsed, 0.001),\n")
+    parts.push("    'fwd_ms_mean_per_batch': fwd_mean * 1000,\n")
+    parts.push("    'batch': BATCH,\n")
+    parts.push("    'T': T,\n")
+    parts.push("    'device': str(device),\n")
+    parts.push("    'ckpt': CLM_CKPT,\n")
+    parts.push("    'n_params': n_params,\n")
+    parts.push("    'vocab_size': vocab_size,\n")
+    parts.push("    'ts_utc': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),\n")
+    parts.push("}\n")
+    parts.push("with open(OUTPUT + '.stats.json', 'w') as f:\n")
+    parts.push("    json.dump(stats, f, indent=2)\n")
+    parts.push("print(json.dumps(stats, indent=2), flush=True)\n")
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _scp_helper_to_ubu1() {
+    let cmd = "/usr/bin/scp -q " + HELPER_PATH + " ubu1:" + HELPER_PATH
+    let r = exec_with_status(cmd)
+    if to_int(r[1]) != 0 {
+        eprintln("scp helper -> ubu1 FAILED: " + to_string(r[0]))
+        exit(1)
+    }
+}
+
+fn _ssh_run(args: string) -> [any] {
+    let cmd = "/usr/bin/ssh -o ConnectTimeout=15 ubu1 '" + UBU1_PY + " " + HELPER_PATH + " " + args + "'"
+    let r = exec_with_status(cmd)
+    return r
+}
+
+fn _ast_validate() {
+    let ast_cmd = "test -x /opt/homebrew/bin/python3 && /opt/homebrew/bin/python3 -c 'import ast,sys; ast.parse(open(\"" + HELPER_PATH + "\").read()); print(\"ast=ok\")' || echo 'ast=skip_no_python_on_mac'"
+    let r = exec_with_status(ast_cmd)
+    println(to_string(r[0]).trim())
+}
+
+fn cmd_selftest() {
+    println("── clm_v4_measure_full_50k --selftest ──")
+    _write_helper("selftest")
+    _ast_validate()
+    _scp_helper_to_ubu1()
+    let r = _ssh_run("selftest")
+    let out = to_string(r[0]).trim()
+    println(out)
+    if to_int(r[1]) != 0 {
+        println("VERDICT=FAIL (selftest exit=" + to_string(r[1]) + ")")
+        exit(1)
+    }
+    println("VERDICT=PASS")
+    println("DONE")
+}
+
+fn cmd_apply(input: string, output: string) {
+    println("── clm_v4_measure_full_50k --apply (FULL 50K batched tension extraction) ──")
+    if input == "" || output == "" {
+        eprintln("usage: hexa_real run tool/clm_v4_measure_full_50k.hexa --apply <input.jsonl> <output.jsonl>")
+        exit(2)
+    }
+    _write_helper("apply")
+    _ast_validate()
+    _scp_helper_to_ubu1()
+    let r = _ssh_run("apply " + input + " " + output)
+    print(to_string(r[0]))
+    if to_int(r[1]) != 0 { eprintln("apply FAILED"); exit(1) }
+    println("DONE — output remains on ubu1: " + output + " (+ " + output + ".stats.json)")
+}
+
+fn main() {
+    let av = argv()
+    let mut mode = "selftest"
+    let mut input = ""
+    let mut output = ""
+    let mut i = 2
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { mode = "selftest"; i = i + 1; continue }
+        if a == "--apply" {
+            mode = "apply"
+            if i + 1 < len(av) { input = av[i + 1]; i = i + 1 }
+            if i + 1 < len(av) { output = av[i + 1]; i = i + 1 }
+            i = i + 1
+            continue
+        }
+        i = i + 1
+    }
+    if mode == "selftest" { cmd_selftest(); exit(0) }
+    if mode == "apply" { cmd_apply(input, output); exit(0) }
+    eprintln("unknown mode: " + mode); exit(2)
+}

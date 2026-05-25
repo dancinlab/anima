@@ -1,0 +1,114 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S132-6 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S132-1 R-SQUARED-BOUNDED-CLOSED-ALL-FITS",
+      "passed": true,
+      "evidence": {
+        "r_squared_values": [
+          0.022489477706909233,
+          0.999477093270533,
+          0.008157191603197944,
+          0.9994770932705332
+        ],
+        "all_in_unit_interval": true
+      }
+    },
+    {
+      "name": "B-S132-2 R-SQUARED-3-BUCKET-CLOSED-PARTITION",
+      "passed": true,
+      "evidence": {
+        "exhaustive": true,
+        "disjoint": true,
+        "best_r_squared": 0.9994770932705332,
+        "reclass": "SHAPE-FIT-IDENTIFIED",
+        "recorded": "SHAPE-FIT-IDENTIFIED",
+        "match": true
+      }
+    },
+    {
+      "name": "B-S132-3 OLS-NORMAL-EQUATIONS-IDENTITY-CLOSED",
+      "passed": true,
+      "evidence": {
+        "k_re_derived": -0.01979770608621152,
+        "k_recorded": -0.019797706086211626,
+        "match_within_1e9": true
+      }
+    },
+    {
+      "name": "B-S132-4 ANALYSIS-USES-§127-DATA-BYTE-EQUAL-CLOSED",
+      "passed": true,
+      "evidence": {
+        "N_byte_equal": true,
+        "eta_byte_equal": true,
+        "s127_N": [
+          256,
+          512,
+          1024,
+          2048
+        ],
+        "s132_N": [
+          256.0,
+          512.0,
+          1024.0,
+          2048.0
+        ],
+        "s132_n_points": 4
+      }
+    },
+    {
+      "name": "B-S132-5 PEAK-MODELS-AGREE-MONOTONE-MODELS-REJECT-CLOSED",
+      "passed": true,
+      "evidence": {
+        "B_quadratic_log_R²": 0.999477093270533,
+        "D_gaussian_R²": 0.9994770932705332,
+        "A_log_linear_R²": 0.022489477706909233,
+        "C_saturating_hill_R²": 0.008157191603197944,
+        "peak_models_strong (≥0.80 both)": true,
+        "monotone_models_reject (<0.10 both)": true
+      }
+    },
+    {
+      "name": "B-S132-6 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S132-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "4-points-vs-3-free-params-1-DoF-overfit-risk",
+    "family": "B-EMERGE-7 / B-S127-NOTE / B-S126-NOTE / B-S125-NOTE",
+    "honest_scope": "4 §127 data points + 3 free parameters (quadratic-log / Gaussian-in-log-N) = 1 degree of freedom; perfect R²=0.9995 is *structural* — with 1 d.o.f. any 3-param model can interpolate 4 nearly-aligned points. The clean signal is NOT the R² value itself but the *agreement* of two peak models AND the *rejection* of both monotone models — B-S132-5 captures that closed-form. A truly identified shape would require 6–8 N points to resolve quadratic-log from Gaussian-in-log-N (they are nearly equivalent here). Peak location estimate (N* ≈ exp(μ) ≈ 730-1000 from both fits) is self-consistent across models but has wide CI on 4 points. Necessary-not-sufficient (B-EMERGE-7); GOAL 미도달; north-star + §15/§51/§72 milestones UNCHANGED."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "6/6",
+    "all_closed_pass": true,
+    "best_model": "D_inverted_u_gaussian",
+    "best_r_squared": 0.9994770932705332,
+    "log_linear_baseline": 0.022489477706909233,
+    "delta_r2": 0.976987615563624,
+    "probe_verdict": "SHAPE-FIT-IDENTIFIED",
+    "battery_verdict": "SHAPE-FIT-IDENTIFIED-6-6-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "necessary_not_sufficient_B_EMERGE_7": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}

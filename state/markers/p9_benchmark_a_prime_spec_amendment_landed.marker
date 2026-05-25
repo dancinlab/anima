@@ -1,0 +1,14 @@
+__P9_BENCH_A_PRIME_SPEC_AMENDMENT__ LANDED
+Amendment-ID: A-1
+Date: 2026-05-04
+Original-spec: docs/p9_benchmark_switch_a_prime_spec_2026_05_03.md
+Amendment-spec: docs/p9_benchmark_switch_a_prime_spec_amendment_2026_05_04.md
+Verdict-evidence: state/p9_base_validation_h100_2026_05_04/verdict.json
+Verdict-commit: 1ef3c096
+Original-marker-untouched: state/markers/p9_benchmark_a_prime_spec_landed.marker
+Falsifiers: F-AMEND-1 (this marker) ∧ F-AMEND-2 (original-spec git-diff empty) ∧ F-AMEND-3 (cross-references resolve)
+Mode-taxonomy: Mode 1 (Comparative HF) / Mode 2 (Anchor compliance) / Mode 3 (Train-time absolute, DEFERRED)
+F1_v3-V2-criteria: anchors_run + llama_within_pm10pct + clm_lora_minus_clm_base_ge_2x_ci + clm_lora_above_random_plus_5pt
+Verdict-V2-outcomes: SUCCESS / COMPARATIVE_PASS / ANCHOR_PASS / PARTIAL_v3_AMEND / FAIL
+Roadmap-proposal: .roadmap.p9_sft cond.benchmark_a_prime_base_validation status unmet → met_with_amendment
+Next-cycles: BG-Ο (Mode 2 Llama anchor) + BG-Π (Mode 1 LoRA ckpt panel OR shim v4 Mode 3 prep)

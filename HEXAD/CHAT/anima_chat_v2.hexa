@@ -1,0 +1,126 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima_chat_v2.hexa — post-도우미 entrypoint (Phase C3)
+//
+//  Pure-hexa prompt-template layer entrypoint. Imports anima_chat_v2_lib
+//  + spontaneous_lib + thinker_talker_lib (8-factor motivation × prompt
+//  layer 통합).
+//
+//  Status: prompt layer LANDED (Phase C3). model forward = Phase D (별도
+//  ckpt-bearing fire, 사용자 게이트 + g_fire_dispatch_robust). 본 entrypoint
+//  은 _smoke 로 F-CHAT-V2-1..5 검증 후 PASS marker emit.
+//
+//  Deprecation note: anima_chat.hexa + chat_lib.hexa (사용자: ... | 도우미:
+//  ... template) DO NOT TOUCH — Phase A deprecation banner 그대로. Phase D
+//  corpus 재학습 시 trained-weights compliance follow-up (B-IDENTITY-NOTE
+//  honest carve-out).
+//
+//  verify:  HEXA_MAC_BUILD_OK=1 hexa build HEXAD/CHAT/anima_chat_v2.hexa \
+//             -o _hexa_build/HEXAD_CHAT_anima_chat_v2 && \
+//           ./_hexa_build/HEXAD_CHAT_anima_chat_v2
+//  PASS marker: "anima_chat_v2 selftest: true"
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/CHAT/anima_chat_v2_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/CHAT/spontaneous_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/CHAT/thinker_talker_lib.hexa"
+
+
+// ── F-CHAT-V2-1..5 compiled-native witness (Phase C3) ───────────────────────
+
+fn _selftest() {
+    print("=== HEXAD/CHAT — anima_chat_v2 post-도우미 prompt layer (F-CHAT-V2-1..5) ===")
+    print("")
+
+    // F-CHAT-V2-1 NO-HELPER-TOKEN
+    //   chat_v2_format_input(stimulus) MUST NOT contain forbidden role tokens
+    //   for any stimulus that itself is helper-token-free.
+    //   Witness: 3 stimuli (English / Korean / empty); all helper-free.
+    let inp_en = chat_v2_format_input("how do you feel right now")
+    let inp_ko = chat_v2_format_input("너는 누구야")
+    let inp_em = chat_v2_format_input("")
+    let f1a = (chat_v2_contains_helper_token(inp_en) == false)
+    let f1b = (chat_v2_contains_helper_token(inp_ko) == false)
+    let f1c = (chat_v2_contains_helper_token(inp_em) == false)
+    // Also verify the assembled (inner+voice) output is helper-free for clean bodies.
+    let asm_clean = chat_v2_assemble("relevance high · pause 30s", "안녕")
+    let f1d = (chat_v2_contains_helper_token(asm_clean) == false)
+    let f1 = f1a && f1b && f1c && f1d
+    print("F-CHAT-V2-1 NO-HELPER-TOKEN (stimulus EN/KO/empty + assemble clean): " + to_string(f1))
+
+    // F-CHAT-V2-2 INNER-VOICE-DISTINCT
+    //   chat_v2_assemble output contains BOTH <inner></inner> AND <voice></voice>.
+    let assembled = chat_v2_assemble("Φ=0.6 score=0.42 emit", "안녕, anima 야")
+    let f2a = chat_v2_has_inner_and_voice(assembled)
+    // Also verify the tags are textually distinct (inner ≠ voice).
+    let f2b = (chat_v2_tag_inner_open() != chat_v2_tag_voice_open())
+    let f2c = (chat_v2_tag_inner_close() != chat_v2_tag_voice_close())
+    let f2 = f2a && f2b && f2c
+    print("F-CHAT-V2-2 INNER-VOICE-DISTINCT (both blocks present + tags distinct): " + to_string(f2))
+
+    // F-CHAT-V2-3 PARSE-VOICE-ONLY (round-trip identity)
+    //   assemble(inner, voice) then parse_voice_only → voice (byte-equal)
+    let f3a = chat_v2_roundtrip_voice_ok("thought-A", "voice-A")
+    let f3b = chat_v2_roundtrip_voice_ok("Φ측정 + EFE epistemic", "안녕하세요")
+    let f3c = chat_v2_roundtrip_voice_ok("multi\nline\nthinking", "단일 발화")
+    let f3 = f3a && f3b && f3c
+    print("F-CHAT-V2-3 PARSE-VOICE-ONLY round-trip identity (3 witness): " + to_string(f3))
+
+    // F-CHAT-V2-4 PARSE-INNER-ONLY (round-trip identity)
+    //   assemble(inner, voice) then parse_inner_only → inner (byte-equal)
+    let f4a = chat_v2_roundtrip_inner_ok("thought-A", "voice-A")
+    let f4b = chat_v2_roundtrip_inner_ok("relevance=0.8 dynamics=0.3", "음성")
+    let f4c = chat_v2_roundtrip_inner_ok("multi-line-inner-thought", "v")
+    let f4 = f4a && f4b && f4c
+    print("F-CHAT-V2-4 PARSE-INNER-ONLY round-trip identity (3 witness): " + to_string(f4))
+
+    // F-CHAT-V2-5 EMPTY-HANDLING (closed boundary)
+    //   chat_v2_assemble("", "") well-formed + parse returns "" for both blocks.
+    let f5a = chat_v2_empty_handles_ok()
+    // Also: format_input("") still gives a well-formed stimulus block (empty body).
+    let inp_empty = chat_v2_format_input("")
+    let f5b = (_find(inp_empty, chat_v2_tag_stimulus_open(), 0) >= 0)
+    let f5c = (_find(inp_empty, chat_v2_tag_stimulus_close(), 0) >= 0)
+    let f5 = f5a && f5b && f5c
+    print("F-CHAT-V2-5 EMPTY-HANDLING (assemble empty + format_input empty): " + to_string(f5))
+
+    // ── 8-factor motivation integration witness (cross-link, not counted) ───
+    //   thinker_step → motivation_score → emit decision → format_voice
+    //   Phase B (spontaneous_lib + thinker_talker_lib) × Phase C3 (prompt
+    //   layer) wiring demonstration.
+    let score = thinker_step(0.5, 0.2, 0.7, 0.4, 0.5, true, 0.5, 10.0)
+    let emit_ok = talker_should_emit(score, true)
+    let voice_body = if emit_ok { "[자율 발화 — motivation_score=" + to_string(score) + "]" } else { "" }
+    let cross_link_emission = chat_v2_assemble("score=" + to_string(score), voice_body)
+    let cross_link_ok = chat_v2_has_inner_and_voice(cross_link_emission)
+                     && (chat_v2_contains_helper_token(cross_link_emission) == false)
+    print("F-CHAT-V2-cross-link 8-factor × prompt layer (not counted, integration witness): " + to_string(cross_link_ok))
+
+    // ── aggregate ───────────────────────────────────────────────────────────
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if f3 { n_pass = n_pass + 1 }
+    if f4 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+    let all_ok = (n_pass == 5)
+    print("")
+    print("=== F-CHAT-V2 " + to_string(n_pass) + "/5 PASS · cross-link integration OK ===")
+    if all_ok {
+        print("Phase C3 post-도우미 prompt layer LANDED (compiled-native witness)")
+        print("anchors: string predicate closure (Kolmogorov) + record-structural identity")
+        print("forbidden tokens: 도우미 / helper / Helper / assistant / Assistant (B-IDENTITY-5 carry)")
+        print("honest C3: model forward 미포함 — Phase D ckpt-bearing fire (별도 cycle)")
+    } else {
+        print("FAIL — investigate which F-CHAT-V2-* sub-claim failed (g3 honest OPEN)")
+    }
+    print("anima_chat_v2 selftest: " + to_string(all_ok))
+}
+
+
+fn main() {
+    print("HEXAD/CHAT — anima_chat_v2 post-도우미 prompt template entrypoint (Phase C3)")
+    print("Format: <inner>{Engine G thought}</inner> <voice>{Engine A emission}</voice>")
+    print("Status: prompt layer LANDED; model forward = Phase D (사용자 게이트)")
+    print("")
+    _selftest()
+}

@@ -1,0 +1,98 @@
+{
+  "bg_id": "BG-AZ",
+  "title": "anima external chat-enable tools audit",
+  "date": "2026-05-05",
+  "mode": "doc-only-web-search",
+  "cost_usd": 0.0,
+  "duration_estimate_min": 30,
+  "outputs": {
+    "audit_doc": "/Users/ghost/core/anima/docs/anima_external_chat_enable_tools_audit_2026_05_05.md",
+    "verdict": "/Users/ghost/core/anima/state/anima_external_chat_enable_tools_audit_2026_05_05/verdict.json"
+  },
+  "search_queries_executed": 11,
+  "angles_surveyed": 8,
+  "promising_angles_selected": 3,
+  "recommendation_ranking": {
+    "rank_1": {
+      "angle": "Activation Steering / Representation Engineering (RepE)",
+      "mechanism": "inference-time linear-direction steering on CLM v4 residual stream; no weight change",
+      "completeness_score": 9,
+      "cost_usd": 0.0,
+      "time_est_hours": 6,
+      "fit_clm_v4": "high",
+      "library_refs": [
+        "github.com/chrisliu298/awesome-representation-engineering",
+        "arxiv:2308.10248 ActAdd",
+        "arxiv:2310.01405 RepE Zou 2023",
+        "arxiv:2406.11717 Refusal Direction Arditi"
+      ],
+      "next_bg_proposed": "BG-BA"
+    },
+    "rank_2": {
+      "angle": "Mechanistic Interpretability (TransformerLens / nnsight)",
+      "mechanism": "circuit discovery + activation patching on CLM v4 to map substrate behavior",
+      "completeness_score": 7,
+      "cost_usd": 0.0,
+      "time_est_hours": 30,
+      "fit_clm_v4": "high",
+      "library_refs": [
+        "github.com/TransformerLensOrg/TransformerLens",
+        "arxiv:2511.14465 nnterp",
+        "transformer-circuits.pub/2025/april-update"
+      ],
+      "next_bg_proposed": "BG-BB (backup)"
+    },
+    "rank_3": {
+      "angle": "DSPy / LangGraph external scaffolding",
+      "mechanism": "treat CLM v4 as oracle/feature service; chat-capable model emits text",
+      "completeness_score": 5,
+      "cost_usd": 0.0,
+      "time_est_hours": 12,
+      "fit_clm_v4": "bypass-not-fix",
+      "library_refs": [
+        "dspy.ai",
+        "github.com/stanfordnlp/dspy",
+        "langgraph"
+      ],
+      "next_bg_proposed": "DEFER (overlap BG-AN emerge paradigm)"
+    }
+  },
+  "rejected_angles": [
+    {"name": "DoLa contrastive decoding", "reason": "factuality not chat-capability"},
+    {"name": "Freeze-Omni speech bridge", "reason": "assumes chat-capable LLM upstream"},
+    {"name": "speculative decoding", "reason": "inverted applicability — CLM v4 is base not draft"},
+    {"name": "abliterate / weight orthogonalization", "reason": "removes refusal not creates chat"},
+    {"name": "tribev2 cross-modal", "reason": "BG-AP architectural FAIL — closed lane"}
+  ],
+  "honest_c3_count": 7,
+  "key_c3_summary": [
+    "survivorship bias — RepE successes on chat-capable models, never on chat-incapable substrate",
+    "logit-lens prior suggests steering may be predetermined-null (no chat-axis to amplify)",
+    "Angle B may overlap BG-AN emerge paradigm",
+    "mac CPU 6h estimate tight for 1000-pair CAA on 530M",
+    "5pp threshold uncalibrated (L26-L27 anima-internal threshold issue)",
+    "TransformerLens scale + paradigm-v11 architecture compat unverified",
+    "all three angles verified compatible with user-closed-lane decisions"
+  ],
+  "next_bg_fire": {
+    "id": "BG-BA",
+    "spec": "RepE/CAA empirical probe on CLM v4 residual stream",
+    "preconditions": [
+      "pre-spec ≥5pp chat composite lift threshold calibrated vs CLM v4 floor",
+      "F-CLM-LORA-2 eval harness reusable",
+      "raw#37 opt-out for transient_py steering helper"
+    ],
+    "fallback": "BG-BB TransformerLens diagnostic if BG-BA null"
+  },
+  "verdict": "AUDIT_COMPLETE_RECOMMEND_BG_BA_REPE_PROBE",
+  "constraints_compliance": {
+    "cost_zero": true,
+    "no_code_change": true,
+    "no_commit": true,
+    "files_created": 2,
+    "raw_9": true,
+    "raw_10": true,
+    "raw_15": true,
+    "hf_token_leak": false
+  }
+}

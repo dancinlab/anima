@@ -1,0 +1,80 @@
+{
+  "schema": "anima/p9_paradigm_j_50k/comparison_matrix/1",
+  "generated_at": "2026-05-03T23:15:00Z",
+  "purpose": "Compare Paradigm J 50K production run vs (a) Paradigm J 250-step pilot sweet-spot evidence, and (b) Phase 1.6 sentinel baseline (γ_FE=0, α-only).",
+  "comparison_status": "INCOMPLETE — Paradigm J 50K column has zero data because run crashed at step 0.",
+  "rows": [
+    {
+      "metric": "F1 holdout500 BLEU-1",
+      "paradigm_j_50k_run": null,
+      "paradigm_j_pilot_250": "not recorded in pilot (BLEU-1 holdout was 50K-only diagnostic)",
+      "phase_1_6_baseline": 0.0059,
+      "delta_J50K_minus_baseline": null,
+      "verdict_threshold": "F1 ≥ Phase 1.6 (0.0059) for SUCCESS_J F1 component",
+      "outcome": "VACUOUS_FAIL"
+    },
+    {
+      "metric": "F2 φ★ trajectory final",
+      "paradigm_j_50k_run": null,
+      "paradigm_j_pilot_250": "not recorded (250 steps too few for meaningful φ★)",
+      "phase_1_6_baseline": 43.28,
+      "delta_J50K_minus_baseline": null,
+      "verdict_threshold": "φ★ ≥ 5.0 for SUCCESS_J F2 component (per φ_threshold config)",
+      "outcome": "VACUOUS_FAIL"
+    },
+    {
+      "metric": "F3 tension MSE final",
+      "paradigm_j_50k_run": null,
+      "paradigm_j_pilot_250": "not recorded",
+      "phase_1_6_baseline": "not surfaced in launched.ai.md citation chain (stored in p1.6 verdict only)",
+      "delta_J50K_minus_baseline": null,
+      "verdict_threshold": "F3 < 0.1 for SUCCESS_J F3 component",
+      "outcome": "VACUOUS_FAIL"
+    },
+    {
+      "metric": "F4 BOLD r",
+      "paradigm_j_50k_run": null,
+      "paradigm_j_pilot_250": "N/A — γ_BOLD=0 in J family",
+      "phase_1_6_baseline": "N/A",
+      "delta_J50K_minus_baseline": null,
+      "verdict_threshold": "N/A — BOLD blocked by design",
+      "outcome": "NOT_APPLICABLE"
+    },
+    {
+      "metric": "F-J KL final (J-VAE complexity term)",
+      "paradigm_j_50k_run": null,
+      "paradigm_j_pilot_250": "indicated convergence at γ_FE=0.2 sweet spot (qualitative — no exact value cited in launch doc)",
+      "phase_1_6_baseline": "N/A — no J-VAE in baseline",
+      "delta_J50K_minus_baseline": null,
+      "verdict_threshold": "non-divergent + sigma_mean > 0.05 (F-J2 anti-collapse)",
+      "outcome": "VACUOUS_FAIL"
+    },
+    {
+      "metric": "F-J recon final (J-VAE accuracy term)",
+      "paradigm_j_50k_run": null,
+      "paradigm_j_pilot_250": "indicated good accuracy at γ_FE=0.2 (qualitative)",
+      "phase_1_6_baseline": "N/A",
+      "delta_J50K_minus_baseline": null,
+      "verdict_threshold": "MSE not diverging across training",
+      "outcome": "VACUOUS_FAIL"
+    },
+    {
+      "metric": "γ_FE sweet spot transfer (r=64→r=128, 250→50K steps)",
+      "paradigm_j_50k_run": null,
+      "paradigm_j_pilot_250": "0.2 best-of-{0.05,0.2,0.8} on r=64 substrate (per active inference doc §3.3)",
+      "phase_1_6_baseline": "N/A",
+      "delta_J50K_minus_baseline": null,
+      "verdict_threshold": "qualitative: did sweet spot hold at production scale?",
+      "outcome": "UNANSWERED — empirical question deferred until next run completes"
+    }
+  ],
+  "summary_table_for_handoff": {
+    "rows_present": 7,
+    "rows_with_paradigm_j_50k_data": 0,
+    "rows_passing_verdict_threshold": 0,
+    "rows_failing_vacuously": 5,
+    "rows_not_applicable": 1,
+    "rows_unanswered": 1
+  },
+  "interpretation": "The comparison matrix is structurally complete (all metrics enumerated, all baselines cited where available) but functionally empty — the central column (paradigm_j_50k_run) is null across all rows because zero training steps executed. The matrix is preserved as scaffolding for the next attempt: drop in measured values from a successful 50K run and verdict computation becomes mechanical."
+}

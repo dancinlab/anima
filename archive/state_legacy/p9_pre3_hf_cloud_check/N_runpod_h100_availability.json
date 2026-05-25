@@ -1,0 +1,96 @@
+{
+  "schema": "anima/state/p9_pre3_hf_cloud_check/N_runpod_h100_availability/1",
+  "ts_utc": "2026-05-02T16:05:50+00:00",
+  "phase": "P9_SFT_PRE3_HF_CLOUD_CHECK",
+  "item": "N_runpod_9_H100_region_availability_check",
+  "verdict": "PASS_WITH_TOPOLOGY_NOTE",
+  "auth": {
+    "api_key_source": "secret get runpod.api_key",
+    "auth_test": "PASS",
+    "user_id": "user_3BLIYhoMm3ticiR5xIcEIzZCVWo",
+    "email": "nerve011235@gmail.com"
+  },
+  "h100_inventory": {
+    "queried_at_utc": "2026-05-02T16:05:50+00:00",
+    "variants": [
+      {
+        "id": "NVIDIA H100 80GB HBM3",
+        "display_name": "H100 SXM",
+        "memory_gb": 80,
+        "max_gpu_count_per_pod": 8,
+        "secure_cloud": true,
+        "community_cloud": true,
+        "stock_1gpu": "High",
+        "stock_8gpu": "High",
+        "on_demand_usd_per_hr_1gpu": 2.69,
+        "spot_usd_per_hr_1gpu": 1.5,
+        "on_demand_usd_per_hr_8gpu": 21.52,
+        "spot_usd_per_hr_8gpu": 12.0
+      },
+      {
+        "id": "NVIDIA H100 NVL",
+        "display_name": "H100 NVL",
+        "memory_gb": 94,
+        "stock_1gpu": "Low",
+        "on_demand_usd_per_hr_1gpu": 2.59,
+        "spot_usd_per_hr_1gpu": 1.4
+      },
+      {
+        "id": "NVIDIA H100 PCIe",
+        "display_name": "H100 PCIe",
+        "memory_gb": 80,
+        "stock_1gpu": "Low",
+        "on_demand_usd_per_hr_1gpu": 1.99,
+        "spot_usd_per_hr_1gpu": 1.35
+      }
+    ],
+    "recommended_variant": "NVIDIA H100 80GB HBM3 (H100 SXM) — only High-stock + max NVLink throughput"
+  },
+  "topology_finding": {
+    "max_gpu_per_pod": 8,
+    "user_request_total": 9,
+    "implication": "9 H100 simultaneous = MINIMUM 2 pods (e.g., 8+1) — single-pod 9-GPU NOT possible",
+    "alternative_topologies": [
+      {"pods": 2, "split": "8+1", "use_case": "primary 8x training + 1x sentinel/eval"},
+      {"pods": 2, "split": "8+8 = 16 H100", "use_case": "if 9 is minimum and burst headroom desired (over-provision)"},
+      {"pods": 3, "split": "4+4+1", "use_case": "parallel SFT trial sweep (3 combos concurrent)"},
+      {"pods": 9, "split": "1+1+1+1+1+1+1+1+1", "use_case": "max parallelism for combo sweep, 9 independent pods"}
+    ]
+  },
+  "region_check": {
+    "data_centers_query_returned_zero": true,
+    "rationale": "RunPod GraphQL dataCenters endpoint returned empty (API surface change or requires different scope) — gpuTypes.lowestPrice is not region-bucketed in current schema",
+    "stock_signal_only_global": true,
+    "us_east_1_us_west_1_eu_central_1_per_region_breakdown": "NOT_AVAILABLE_VIA_GRAPHQL_DATACENTERS_QUERY",
+    "mitigation": "Stock=High at 8-GPU level globally implies sufficient supply; RunPod auto-routes to first available DC at pod creation"
+  },
+  "concurrency_24hr_window": {
+    "9_h100_simultaneous_feasibility": "FEASIBLE via 2-pod topology (8+1)",
+    "stock_check_at_query_time": "High at 8x SXM",
+    "guarantee_at_EXEC_time": "NOT_RESERVABLE_IN_ADVANCE (RunPod is on-demand, no capacity reservation API for community/secure cloud)",
+    "fallback_if_8x_unavailable_at_EXEC": "fall back to 4x×3 pods or 1x×9 pods (more spread, more orchestration)"
+  },
+  "pricing_summary_for_9_h100_24hr": {
+    "topology_8plus1_on_demand": {
+      "usd_per_hr": 24.21,
+      "usd_per_24hr": 581.04,
+      "calc": "21.52 (8x) + 2.69 (1x)"
+    },
+    "topology_8plus1_spot": {
+      "usd_per_hr": 13.5,
+      "usd_per_24hr": 324.0,
+      "calc": "12.00 (8x spot) + 1.50 (1x spot)",
+      "interruption_risk": "spot interruption possible — not recommended for SFT continuity"
+    },
+    "recommended": "on-demand 8+1 topology @ ~$24/hr = $581/24hr (well within $1500 cap)"
+  },
+  "cost_estimate_usd": 0.0,
+  "actual_cost_usd": 0.0,
+  "raw_10": [
+    "9-H100 single-pod IMPOSSIBLE (maxGpuCount=8 hard limit on H100 SXM) — 2-pod minimum, this is structural finding not gap",
+    "region per-DC breakdown unavailable via current GraphQL surface — relies on global Stock=High signal",
+    "Stock=High at moment of query does NOT guarantee availability at EXEC launch time; 5-15min retry window typical",
+    "spot 44% cheaper but interruption-prone — incompatible with continuous SFT (preempted state recovery cost > savings)",
+    "$1500 cap supports 24hr 8+1 on-demand ($581) with ~2.5x safety margin for retries/extension"
+  ]
+}

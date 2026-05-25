@@ -1,0 +1,72 @@
+[20:01:52] BG-KE V5-δ constitutional byte-level start (host=ghostui-MacBookAir.local)
+[20:01:52]   device=mps, total_steps=1500, cycle_len=500, lr=0.0003
+[20:01:52]   arch: byte_vocab=256, untied_lm_head=True, d_model=384, n_layer=8, block=256
+[20:01:52]   corpus=corpus_chat_template.txt
+[20:01:54]   total_params=14,479,104 (14.48M)
+[20:01:54]   trainable=14,479,104
+[20:01:54]   lm_head UNTIED verified=True (head_id=5006616976 emb_id=5001671120)
+[20:01:54] loading corpus: /Users/ghost/core/anima/state/anima_jy_chat_template_corpus_2026_05_07/corpus_chat_template.txt
+[20:01:56]   corpus: 95,420,911 bytes (91.00MB) in 2.8s
+[20:01:57]   corpus subsampled to 10,485,760 bytes (10.00MB) via 10 random windows
+[20:01:57]   byte ids: 10,485,760
+[20:02:06] === eval step 0 (random init baseline) ===
+[20:02:58]   eval step=0 dlg=color v58=False const_t2=False viol_t2=['C2.3_no_natural_lang', 'C2.4_no_context_match'] t2a='�t�)�l5B\u05ee��\x1c��J���%l�%�JQ#��-��B�Fs�\tQw(�g��\x11L������ƥF:�А`�f'
+[20:03:34]   eval step=0 dlg=profession v58=False const_t2=False viol_t2=['C2.3_no_natural_lang', 'C2.4_no_context_match'] t2a='Q��ݲ\x0bn�J\x1c���:A\x10X��D�\x7f5��\x01�\x1c�\x03����&yM��]!Ӫ�\x13�~jc���b�B�]Վ�P��'
+[20:04:18]   eval step=0 dlg=day v58=False const_t2=False viol_t2=['C2.3_no_natural_lang', 'C2.4_no_context_match'] t2a='\x17͵=ۖ�\x15wS�lY�m�\x1f��_\x12J���]\x1c��g\x16\x06��\x16�G����|�l$\r�7���\x02�\x13ޗݬ�\x06�1\\t'
+[20:05:04]   eval step=0 dlg=anima_fact v58=False const_t2=False viol_t2=['C2.3_no_natural_lang', 'C2.4_no_context_match'] t2a='�\x14|\x1c�QB�Q�����[&�F"\x07/��BE(\x11\x1d\x18��u��<���\t�\x03]J���jG~g~�s�*و���q'
+[20:05:57]   eval step=0 dlg=cosmology v58=False const_t2=False viol_t2=['C2.3_no_natural_lang', 'C2.4_no_context_match'] t2a=':�B�p|-�"���w�\x18�T�zU\x1f���\x0fA�\x07s^Y�u1����|\x18�\r.��H��\x01\x15�\x06���;v��N'
+[20:05:57]   step 0: v58_pass=0/5 (expected 0 — random init)
+[20:05:59] === begin V5-δ constitutional training (3 cycles × 500 steps) ===
+[20:06:03]   step 1/1500 loss=5.6348 lr=6.00e-06 cycle=0 (3.9s for last 25)
+[20:06:20]   step 25/1500 loss=5.2888 lr=7.80e-05 cycle=0 (16.7s for last 25)
+[20:06:37]   step 50/1500 loss=4.5956 lr=1.53e-04 cycle=0 (17.8s for last 25)
+[20:06:52]   step 75/1500 loss=4.3192 lr=2.28e-04 cycle=0 (14.9s for last 25)
+[20:07:07]   step 100/1500 loss=4.0939 lr=3.00e-04 cycle=0 (14.4s for last 25)
+[20:07:20]   step 125/1500 loss=3.8296 lr=3.00e-04 cycle=0 (13.5s for last 25)
+[20:07:42]   step 150/1500 loss=3.5801 lr=2.99e-04 cycle=0 (21.8s for last 25)
+[20:07:57]   step 175/1500 loss=3.4267 lr=2.98e-04 cycle=0 (15.5s for last 25)
+[20:08:25]   step 200/1500 loss=3.2417 lr=2.97e-04 cycle=0 (27.5s for last 25)
+[20:08:50]   step 225/1500 loss=3.0821 lr=2.95e-04 cycle=0 (24.8s for last 25)
+[20:09:15]   step 250/1500 loss=2.9669 lr=2.92e-04 cycle=0 (25.6s for last 25)
+[20:09:37]   step 275/1500 loss=2.8706 lr=2.90e-04 cycle=0 (21.4s for last 25)
+[20:09:59]   step 300/1500 loss=2.7854 lr=2.87e-04 cycle=0 (22.1s for last 25)
+[20:10:15]   step 325/1500 loss=2.6947 lr=2.83e-04 cycle=0 (16.5s for last 25)
+[20:10:40]   step 350/1500 loss=2.6521 lr=2.79e-04 cycle=0 (24.6s for last 25)
+[20:11:04]   step 375/1500 loss=2.6499 lr=2.75e-04 cycle=0 (23.7s for last 25)
+[20:11:26]   step 400/1500 loss=2.5450 lr=2.71e-04 cycle=0 (22.7s for last 25)
+[20:11:44]   step 425/1500 loss=2.5983 lr=2.66e-04 cycle=0 (18.0s for last 25)
+[20:12:05]   step 450/1500 loss=2.5381 lr=2.60e-04 cycle=0 (21.2s for last 25)
+[20:12:29]   step 475/1500 loss=2.5090 lr=2.55e-04 cycle=0 (23.2s for last 25)
+[20:12:53]   step 500/1500 loss=2.4803 lr=2.49e-04 cycle=0 (24.0s for last 25)
+[20:12:53] === eval step 500 ===
+[20:14:01]   eval step=500 dlg=color v58=False const_t2=False viol_t2=['C2.4_no_context_match'] t2a=' 용원�고사은�부에� 11\x7f8 역(tu)리드벽�우는�한�� 자하을명학�에용사�: ��'
+[20:14:38]   eval step=500 dlg=profession v58=False const_t2=False viol_t2=['C2.4_no_context_match'] t2a=' 월자: 시이�용용��n>\n'
+[20:15:12]   eval step=500 dlg=day v58=False const_t2=False viol_t2=['C2.4_no_context_match'] t2a=' 의적��이�X)억�는 는 일 �, �� �자교들.\n'
+[20:16:11]   eval step=500 dlg=anima_fact v58=False const_t2=False viol_t2=['C2.4_no_context_match'] t2a=' 슔 훐: ��일 갘�용에슔 듧�진정�삤일있칄의�\x14��일 로 에 주 ��자: � 에�'
+[20:17:13]   eval step=500 dlg=cosmology v58=False const_t2=False viol_t2=['C2.4_no_context_match'] t2a=' 국에: � 의는 어부나�)�우�리 로작여�도늤�구자�왁�: �년�/turn>\n'
+[20:17:13]   step 500: v58_pass=0/5
+[20:17:15] === cycle 1 build revision corpus ===
+[20:19:46]   cycle 1 stats: v58_fail=5/5 const_fail=5/5 violations={'C2.2_random_chain': 1, 'C2.3_no_natural_lang': 1, 'C2.4_no_context_match': 5, 'C2.1_too_short': 1} rev_corpus_bytes=2053
+[20:19:46]   revision data ready: 2053 bytes
+[20:20:03]   step 525/1500 loss=3.2419 lr=2.43e-04 cycle=1 (430.2s for last 25)
+[20:20:17]   step 550/1500 loss=2.9345 lr=2.37e-04 cycle=1 (14.0s for last 25)
+[20:20:31]   step 575/1500 loss=2.8839 lr=2.30e-04 cycle=1 (14.7s for last 25)
+[20:20:47]   step 600/1500 loss=2.9636 lr=2.24e-04 cycle=1 (15.8s for last 25)
+[20:21:03]   step 625/1500 loss=2.6888 lr=2.17e-04 cycle=1 (15.8s for last 25)
+[20:21:18]   step 650/1500 loss=2.7407 lr=2.10e-04 cycle=1 (14.8s for last 25)
+[20:21:35]   step 675/1500 loss=2.5832 lr=2.02e-04 cycle=1 (17.4s for last 25)
+[20:21:56]   step 700/1500 loss=2.5837 lr=1.95e-04 cycle=1 (20.8s for last 25)
+[20:22:14]   step 725/1500 loss=2.5672 lr=1.88e-04 cycle=1 (18.3s for last 25)
+[20:22:31]   step 750/1500 loss=2.5331 lr=1.80e-04 cycle=1 (16.7s for last 25)
+[20:22:50]   step 775/1500 loss=2.4579 lr=1.73e-04 cycle=1 (18.8s for last 25)
+[20:23:11]   step 800/1500 loss=2.3984 lr=1.65e-04 cycle=1 (21.3s for last 25)
+[20:23:34]   step 825/1500 loss=2.4483 lr=1.57e-04 cycle=1 (22.5s for last 25)
+[20:23:51]   step 850/1500 loss=2.4242 lr=1.50e-04 cycle=1 (17.0s for last 25)
+[20:24:13]   step 875/1500 loss=2.4028 lr=1.42e-04 cycle=1 (22.8s for last 25)
+[20:24:30]   step 900/1500 loss=2.3368 lr=1.35e-04 cycle=1 (16.9s for last 25)
+[20:24:46]   step 925/1500 loss=2.3266 lr=1.28e-04 cycle=1 (16.2s for last 25)
+[20:25:01]   step 950/1500 loss=2.3084 lr=1.20e-04 cycle=1 (14.4s for last 25)
+[20:25:17]   step 975/1500 loss=2.3474 lr=1.13e-04 cycle=1 (16.0s for last 25)
+[20:25:35]   step 1000/1500 loss=2.2818 lr=1.06e-04 cycle=1 (18.0s for last 25)
+[20:25:35] === eval step 1000 ===
+[20:26:14]   eval step=1000 dlg=color v58=False const_t2=False viol_t2=['C2.4_no_context_match'] t2a=' Aserer: jech misepor: wecooues | I | Asimaniss Asharmiteses'

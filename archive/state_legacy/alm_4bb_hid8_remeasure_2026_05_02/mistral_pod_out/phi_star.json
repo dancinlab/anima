@@ -1,0 +1,156 @@
+{
+  "schema": "anima/phi_star/1",
+  "backbone": "mistral_r14",
+  "base_model": "mistralai/Mistral-7B-v0.3",
+  "lora_path": "/workspace/lora",
+  "lora_applied": true,
+  "substrate": "transformer_attention + r14 LoRA adapter",
+  "h_dim": 4096,
+  "n_probes": 16,
+  "K_partitions": 8,
+  "hidden_truncated": 8,
+  "half_size": 8,
+  "ridge": 0.0001,
+  "seed": 42,
+  "I_full": 33.1478,
+  "phi_star_min": -7.3919,
+  "phi_mean": -3.3469,
+  "phi_max": 2.7503,
+  "gate_positive_PASS": false,
+  "gate_substantial_PASS": false,
+  "gate_magnitude_PASS": true,
+  "phi_star_signed_magnitude": 7.3919,
+  "phi_star_sign": "negative_anti_integrated",
+  "partitions": [
+    {
+      "k": 0,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": 18.1352,
+      "I_2": 18.3376,
+      "phi": -3.325
+    },
+    {
+      "k": 1,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": 16.3266,
+      "I_2": 19.9588,
+      "phi": -3.1375
+    },
+    {
+      "k": 2,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": 15.5314,
+      "I_2": 14.866,
+      "phi": 2.7503
+    },
+    {
+      "k": 3,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": 16.4677,
+      "I_2": 19.5577,
+      "phi": -2.8776
+    },
+    {
+      "k": 4,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": 20.0414,
+      "I_2": 20.4984,
+      "phi": -7.3919
+    },
+    {
+      "k": 5,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": 20.5076,
+      "I_2": 18.7697,
+      "phi": -6.1294
+    },
+    {
+      "k": 6,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": 16.8708,
+      "I_2": 17.9341,
+      "phi": -1.6571
+    },
+    {
+      "k": 7,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": 16.7934,
+      "I_2": 21.3614,
+      "phi": -5.007
+    }
+  ],
+  "partition_method": "sample-partition (N=16 -> 8|8 halves)",
+  "metric_design": "HID_TRUNC=8 well-conditioned (W4-style), ridge=1e-4 \u2014 parity with CLM A.1 HID=8 recheck (state/strategic_clm_phase_a1_hid8_recheck_2026_05_01)",
+  "cov_diagnostics": {
+    "eig_max": 906.785911,
+    "eig_min": 4.40005,
+    "condition_number": 206.0854,
+    "note": "N=16 > HID=8 -> empirical cov rank-full; ridge contribution = HID*log(ridge) = 8*log(0.0001) ~ -73.68"
+  },
+  "top_var_dims": [
+    506.4182,
+    276.7294,
+    232.2991,
+    116.7259,
+    93.4861,
+    57.4075,
+    53.0273,
+    52.3477
+  ],
+  "prompts_set": "v3_canonical_EN (matches state/v10_benchmark_v4 ALM HID=128 ledger; same prompt set rules out language axis confound)",
+  "elapsed_sec": 60.26,
+  "ts": "2026-05-02T11:46:14Z",
+  "phases": [
+    {
+      "name": "import_transformers",
+      "status": "OK",
+      "t": 0.82
+    },
+    {
+      "name": "device",
+      "status": "OK",
+      "t": 1.12,
+      "device": "cuda",
+      "gpu": "NVIDIA H100 80GB HBM3"
+    },
+    {
+      "name": "tokenizer_load",
+      "status": "OK",
+      "t": 2.61
+    },
+    {
+      "name": "base_model_load",
+      "status": "OK",
+      "t": 50.67,
+      "n_params_M": 7248.02,
+      "h_dim": 4096
+    },
+    {
+      "name": "lora_load",
+      "status": "OK",
+      "t": 59.32,
+      "adapter_path": "/workspace/lora"
+    },
+    {
+      "name": "forward_complete",
+      "status": "OK",
+      "t": 60.25,
+      "forward_ok": 16,
+      "forward_total": 16,
+      "forward_seconds": 0.93,
+      "X_shape": [
+        16,
+        4096
+      ],
+      "vram_peak_mb": 15838.2
+    }
+  ]
+}

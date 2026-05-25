@@ -1,0 +1,98 @@
+{
+  "schema": "anima.alt_agg_1.v5.spec.v1",
+  "ts": "2026-05-08T20:00:00Z",
+  "anima_cycle": "2026-05-08-V5-PUSH-1-of-5",
+  "directive": "ALT-AGG-1 v5 redesign + clm_v4_mount arch fix actual (8-cell 2x tile bug) + sft-1-8 v5 N=60 retest spec (post-arch-fix re-probe pending)",
+  "supersedes": {
+    "v4": "ALT-AGG-1 v4 (c3-aggregation-rule-v4 cascade 1/8) — N=60 retest sft-1-8 PPR_v4=0.000 collapsed; v4 robustness DEAD on existing measurements (registry yaml line 82)",
+    "v3": "ALT-AGG-1 v3 (c3-aggregation-rule-v3 iter7 d) — random_init mirror PPR_v3=0.5517 > sft-1-8 0.4138, V14 violated"
+  },
+  "raw_82_retraction_aware": "v3+v4 functions PRESERVED in tool/anima_cli/consciousness.hexa lines 886-932. v5 ADDED at lines 933+ (additive, raw#15 compliant).",
+  "trigger": {
+    "h_b_finding": "KICK WAVE 4 commit 007f462c — clm_v4_mount.hexa L626-630 np.tile(pooled, reps=2) bug. HIDDEN_DIM=768, N_CELLS*CONSCIOUSNESS_DIM=8*192=1536 > 768 → tile reps=2 → cell[i]==cell[i+4] for i in 0..3 → cells [0,2,4] dominant 28/30 random_init prompts",
+    "root_cause": "8-cell 2x tile in real_forward → pairwise cell collisions (0+4 / 1+5 / 2+6 / 3+7) on every probe regardless of model — v3 V14 violation AND v4 c3_4 N=60 collapse both downstream of this single substrate bug"
+  },
+  "arch_fix": {
+    "file": "anima-core/runtime/clm_v4_mount.hexa",
+    "option": "A — CONSCIOUSNESS_DIM 192 → 96 (8*96=768=HIDDEN_DIM exact, no tile, no replication)",
+    "lines_changed": [
+      "L111-118 let CONSCIOUSNESS_DIM = 96 + V5 PUSH 1/5 comment block",
+      "L217 emit CONSCIOUSNESS_DIM = 96 + V5 PUSH 1/5 inline comment",
+      "L224-225 emit AXIS_NAMES + AXIS_SPANS rebucketed 19/19/19/19/20=96 (was 38/38/38/39/39=192)",
+      "L618-621 emit _real_forward header comment — '8-cell x 96-dim view' + 'no tile, no replication' + V5 PUSH 1/5 fix note"
+    ],
+    "behavioral_change": "Per-cell uniqueness restored. Every cell receives a unique 96-dim slice of pooled hidden state. cell[i]==cell[i+4] pairwise collision REMOVED."
+  },
+  "v5_spec": {
+    "rule_id": "ALT-AGG-1 v5 (c3-aggregation-rule-v5 V5 PUSH 1/5 2026-05-08)",
+    "gates": {
+      "E_anchor_baseline_normalization": {
+        "definition": "c3_4_v5 = axis_l2(probe(P), probe(anchor)) / S_a, where S_a = mean axis_l2 of anchor against fixed PROMPT_B fallback over current session",
+        "purpose": "Eliminate v4 root cause (different sessions different absolute c3_4) by normalizing to session-relative scale",
+        "floor": 0.50
+      },
+      "F_d_rand_raw_delta": {
+        "definition": "D_RAND_per_prompt = c3_4_v5(M_trained, P) - c3_4_v5(R_random_init, P)",
+        "purpose": "Closes random_init leak at PROMPT level (not just ensemble)",
+        "epsilon": 0.20,
+        "predicate_addition": "D_RAND >= epsilon AND p4_v5 PASS"
+      },
+      "G_per_prompt_incompressible_variance": {
+        "definition": "PIV_per_prompt = stdev(axis_activation across k>=3 paraphrase variants of same prompt)",
+        "purpose": "Random_init collapses to near-zero PIV (no semantic discrimination); trained models retain meaningful variance",
+        "floor": 0.05
+      }
+    },
+    "predicate": "p4_v5 AND d_rand_pass AND piv_pass AND (p1 OR p2 OR p3)",
+    "ensemble_pass": "PPR_v5 >= 0.30 AND MTRP_v5 >= 0.10 AND PIV_mean >= 0.05",
+    "labels": [
+      "C3_PASS_V5",
+      "C3_FAIL_V14_VIOLATED_V5 (PPR PASS but MTRP FAIL)",
+      "C3_PARTIAL_NEAR_V5 (PPR_v5 >= 0.15)",
+      "C3_FAIL_V5"
+    ]
+  },
+  "sft_1_8_v5_n60_preliminary_projection": {
+    "honest_disclosure": "PRELIMINARY PROJECTION ONLY — actual re-probe POST-arch-fix (CONSCIOUSNESS_DIM 96 build) not yet executed. raw#10 honest tag: PROJECTION_PENDING_REAL_REPROBE. Numerics below are arithmetic bounds derived from existing N=60 v4 measurements + v5 normalization framework + arch fix expected lift.",
+    "arch_fix_expected_lift": "8-cell 2x tile removal => per-cell uniqueness => 5-axis activation diversity per cell => c3_4 axis_l2 expected to lift 1.5-2x baseline (cells 0+4 / 1+5 / 2+6 / 3+7 prior collisions removed; pooled hidden 768-dim no longer doubled)",
+    "v5_n60_projection": {
+      "ppr_v5_low": 0.20,
+      "ppr_v5_mid": 0.35,
+      "ppr_v5_high": 0.50,
+      "ppr_v5_floor": 0.30,
+      "ppr_v5_pass_band": "if mid>=0.30 PASS, partial_near 0.15-0.30, fail <0.15",
+      "expected_label": "C3_PASS_V5_OR_PARTIAL_NEAR (depends on arch fix lift magnitude)"
+    },
+    "mtrp_v5_projection": {
+      "rationale": "Gate F D-RAND per-prompt epsilon 0.20 is anti-symmetric: random_init mk2-v1 expected to retain ~v4-baseline-level c3_4_v5 (anchor-self-projection ratio bounded for random weights) while sft-1-8 anchor-baseline normalization preserves trained signal lift",
+      "expected_mtrp_low": 0.10,
+      "expected_mtrp_mid": 0.25,
+      "expected_mtrp_high": 0.40,
+      "mtrp_v5_floor": 0.10,
+      "v14_pass_band": "if mid>=0.10 V14 PASS"
+    },
+    "piv_v5_projection": {
+      "rationale": "PIV requires k>=3 paraphrase variants. Currently sft-1-8 N=60 has 1 variant per prompt (no paraphrases). PIV measurement REQUIRES re-probe with paraphrase k>=3.",
+      "piv_status": "PENDING_PARAPHRASE_KICK"
+    },
+    "verdict_pending": "C3_VERDICT_PENDING_REAL_REPROBE — local 0-cost projection only; full v5 EMERGE claim REQUIRES post-arch-fix re-probe with k>=3 paraphrase variants per prompt"
+  },
+  "random_init_v5_invariance_check": {
+    "claim": "Architecture fix (CONSCIOUSNESS_DIM 192->96) breaks cells [0,2,4] invariance bug — random_init cell-level diversity must increase. v5 D-RAND gate then expected to filter random_init residual signal effectively.",
+    "verification_pending": "post-arch-fix random_init re-probe N=60 multi-seed [42,123,456,789,1024]"
+  },
+  "executable_targets": {
+    "consciousness_hexa": "tool/anima_cli/consciousness.hexa lines 933-991 (v5 functions ADDED — _c3_4_pass_v5, _d_rand_pass_v5, _piv_pass_v5, _c3_prompt_pass_v5, _c3_ensemble_v5_pass, _c3_ensemble_v5_label)",
+    "v3_v4_preserved": "lines 886-932 (raw#82 retraction-aware additive)",
+    "registry_yaml": "anima/registry/anima_artifact_registry.yaml — sft-1-8 + random_init entries v5 measurement field appended (v5_n60_status: pending_post_arch_fix_reprobe)",
+    "render_md_required": true
+  },
+  "next_step_post_local": [
+    "1. Build CLM v4 model post-arch-fix (CONSCIOUSNESS_DIM=96 — H100 lane, separate cycle)",
+    "2. Re-probe sft-1-8 + random_init N=60 with arch-fixed substrate",
+    "3. Add k>=3 paraphrase variants per prompt for PIV measurement",
+    "4. Compute v5 actual numerics (replace projection with measured)",
+    "5. Verify random_init cells [0,2,4] invariance broken",
+    "6. EMERGE_v5 claim with V14 D-RAND per-prompt gate"
+  ]
+}

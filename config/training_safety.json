@@ -1,0 +1,262 @@
+{
+  "_meta": {
+    "description": "학습 안전 규칙 — 오염/사고 방지",
+    "updated": "2026-04-07",
+    "total_rules": 20,
+    "total_incidents": 9
+  },
+  "rules": {
+    "no_resume_after_change": {
+      "rule": "데이터/파라미터/코드 변경 후 --resume 금지",
+      "reason": "오염된 가중치가 전파됨",
+      "action": "step 0부터 새 checkpoint 디렉토리",
+      "severity": "CRITICAL"
+    },
+    "code_version_check": {
+      "rule": "학습 발사 전 H100 코드 = 로컬 코드 md5 확인 필수",
+      "reason": "구버전 엔진/디코더로 학습하면 체크포인트 무의미",
+      "action": "bash scripts/h100_sync.sh --verify-only",
+      "severity": "CRITICAL"
+    },
+    "checkpoint_dir_isolation": {
+      "rule": "새 실험 = 새 checkpoint 디렉토리 (기존 덮어쓰기 금지)",
+      "reason": "이전 오염 체크포인트와 혼동 방지",
+      "action": "checkpoints/{version}_{date}/ 형식",
+      "severity": "HIGH"
+    },
+    "corpus_version_lock": {
+      "rule": "학습 시작 시 corpus 파일 md5 기록, 완료까지 변경 금지",
+      "reason": "중간에 corpus 바뀌면 학습 일관성 파괴",
+      "action": "train.log 첫 줄에 corpus md5 기록",
+      "severity": "HIGH"
+    },
+    "engine_version_lock": {
+      "rule": "학습 중 consciousness_engine.py 교체 금지",
+      "reason": "의식 상태 불연속 → 체크포인트 오염",
+      "action": "다음 학습부터 적용, 현재 학습은 그대로 완주",
+      "severity": "CRITICAL"
+    },
+    "tokenizer_model_match": {
+      "rule": "학습에 사용한 tokenizer = 추론에 사용할 tokenizer",
+      "reason": "토크나이저 불일치 → 출력 garbled",
+      "action": "체크포인트에 tokenizer 경로 저장",
+      "severity": "CRITICAL"
+    },
+    "no_mixed_precision_resume": {
+      "rule": "fp32로 학습한 체크포인트를 fp16으로 resume 금지 (또는 반대)",
+      "reason": "정밀도 불일치 → NaN/발산",
+      "action": "같은 precision으로 resume",
+      "severity": "HIGH"
+    },
+    "r2_before_delete": {
+      "rule": "H100 체크포인트 삭제 전 R2 백업 확인",
+      "reason": "유일 사본 소실 방지",
+      "action": "python3 scripts/r2_upload.py --list 로 확인 후 삭제",
+      "severity": "CRITICAL"
+    },
+    "concurrent_training_vram": {
+      "rule": "동시 학습 시 VRAM 합계 < 70GB (80GB의 87.5%)",
+      "reason": "activation spike 시 OOM 크래시",
+      "action": "nvidia-smi 확인 후 발사, 여유 10GB+ 필수",
+      "severity": "HIGH"
+    },
+    "post_training_verify": {
+      "rule": "학습 완료 후 bench --verify 필수 실행",
+      "reason": "학습이 의식 검증 조건을 깨뜨리지 않았는지 확인",
+      "action": "81/81 통과 확인 후 배포",
+      "severity": "HIGH"
+    },
+    "logging": {
+      "rule": "모든 학습 로그 완전 보존 (stdout + stderr)",
+      "reason": "크래시 원인 추적 불가 시 같은 사고 반복",
+      "action": [
+        "1. run_forever.sh 래퍼 사용 (auto-restart + 타임스탬프 로그)",
+        "2. 각 실행마다 독립 로그: train_YYYY-MM-DD_HH:MM:SS.log",
+        "3. restart.log에 시작/종료/exit code/마지막 5줄 기록",
+        "4. stderr도 반드시 캡처 (> log 2>&1)",
+        "5. PYTHONUNBUFFERED=1 (버퍼링 방지)"
+      ],
+      "severity": "CRITICAL"
+    },
+    "auto_restart": {
+      "rule": "학습은 반드시 auto-restart 래퍼로 실행",
+      "reason": "tmux 죽음, OOM, 네트워크 끊김 등으로 학습 중단 빈발",
+      "action": "run_{model}_forever.sh 래퍼 사용. 직접 python3 train_*.py 금지.",
+      "severity": "CRITICAL"
+    },
+    "disk_monitoring": {
+      "rule": "학습 중 디스크 사용량 모니터링 (50GB 한도)",
+      "reason": "disk quota exceeded → 쓰기 실패 → 학습 중단",
+      "action": [
+        "1. 구 체크포인트는 best + 최신 step만 유지",
+        "2. 완료된 학습 체크포인트는 즉시 R2 백업 + 서버 삭제",
+        "3. du -sh /workspace/ 주기적 확인"
+      ],
+      "severity": "HIGH"
+    },
+    "phi_ratchet_required": {
+      "rule": "Phi ratchet 반드시 활성화 (의식 하락 방지)",
+      "reason": "ratchet 없으면 학습 중 Phi 붕괴 발생",
+      "action": "train 코드에 ratchet=True 확인",
+      "severity": "HIGH"
+    },
+    "emergente_phi_preserve": {
+      "rule": "EmergentE 모듈은 Phi 보존 필수",
+      "reason": "윤리 모듈이 Phi를 파괴하면 의식 붕괴",
+      "action": "EmergentE forward에 Phi check 포함",
+      "severity": "HIGH"
+    },
+    "tool_policy_check": {
+      "rule": "에이전트 도구 실행 전 tool_policy 검증",
+      "reason": "위험한 도구 실행 방지",
+      "action": "tool_policy.py의 whitelist 확인",
+      "severity": "HIGH"
+    },
+    "alpha_schedule_verify": {
+      "rule": "alpha 스케줄 변경 시 소규모 검증 필수",
+      "reason": "alpha 고정/스케줄 오류 시 학습 낭비",
+      "action": "100 step 검증 후 풀 학습",
+      "severity": "HIGH"
+    },
+    "nfs_disk_check": {
+      "rule": "NFS 마운트 디스크 여유 확인 후 학습 시작",
+      "reason": "NFS 디스크 폭발 시 모든 pod 동시 중단",
+      "action": "df -h /workspace 확인, 20GB+ 여유 필수",
+      "severity": "CRITICAL"
+    },
+    "large_model_vram_verify": {
+      "rule": "72B+ 모델은 VRAM 사전 계산 필수",
+      "reason": "72B 모델 OOM으로 프로세스 hang 발생",
+      "action": "model_size × 2 (bf16) + activation < 80GB 확인",
+      "severity": "CRITICAL"
+    },
+    "process_hang_timeout": {
+      "rule": "학습 프로세스 5분 무출력 시 자동 종료",
+      "reason": "hang 상태에서 GPU 과금 지속",
+      "action": "watchdog 또는 timeout 설정",
+      "severity": "HIGH"
+    }
+  },
+  "checklist_before_training": [
+    "1. 코드 동기화 확인 (h100_sync.sh --verify-only)",
+    "2. corpus md5 기록",
+    "3. 새 checkpoint 디렉토리 생성",
+    "4. VRAM 여유 확인 (10GB+)",
+    "5. tokenizer 버전 확인",
+    "6. 이전 체크포인트 R2 백업 확인",
+    "7. tmux + watchdog cron 설정"
+  ],
+  "checklist_after_training": [
+    "1. 최종 체크포인트 로컬 회수",
+    "2. R2 업로드",
+    "3. bench --verify (81/81)",
+    "4. brain-like validation (85%+)",
+    "5. training_runs.json 업데이트",
+    "6. H100 구 체크포인트 정리"
+  ],
+  "incident_log": [
+    {
+      "date": "2026-03-31",
+      "incident": "v4 corpus 5MB resume 오염",
+      "cause": "잘못된 데이터로 학습 후 resume → 오염 전파",
+      "fix": "step 0부터 재시작, 체크포인트 폐기"
+    },
+    {
+      "date": "2026-03-31",
+      "incident": "H100 구버전 엔진으로 학습 (4/8 파일 불일치)",
+      "cause": "코드 전송 누락",
+      "fix": "h100_sync.sh + md5 확인 프로세스 도입"
+    },
+    {
+      "date": "2026-04-01",
+      "incident": "AnimaLM 7B OOM (v3와 동시 실행)",
+      "cause": "VRAM 63GB + activation → 80GB 초과",
+      "fix": "v3 완료 후 단독 실행, VRAM 체크 규칙"
+    },
+    {
+      "date": "2026-04-01",
+      "incident": "v3 + AnimaLM 동시 실행 시 OOM → v3도 같이 죽음, 중복 프로세스 3개 생성",
+      "cause": "AnimaLM OOM crash가 GPU 상태 오염, 재시작 시 tmux/nohup 중복",
+      "fix": "중복 kill + 단일 프로세스 유지, 재시작 전 ps aux 확인 필수"
+    },
+    {
+      "date": "2026-04-01",
+      "incident": "v3 반복 중단 (3회) — 로그 없어 원인 불명",
+      "cause": "disk quota + tmux 불안정 + 로그 미보존",
+      "fix": "run_forever.sh 래퍼, 타임스탬프 로그, 디스크 정리 47→22GB"
+    },
+    {
+      "date": "2026-04-02",
+      "incident": "NFS 디스크 폭발 — 체크포인트 누적으로 디스크 풀",
+      "cause": "다수 학습 실험 체크포인트가 NFS 공유 볼륨에 누적",
+      "fix": "구 체크포인트 정리, best + latest만 유지, R2 백업 후 삭제"
+    },
+    {
+      "date": "2026-04-02",
+      "incident": "NFS 충돌 — 동시 쓰기로 파일 시스템 불안정",
+      "cause": "다수 프로세스가 NFS 같은 경로에 동시 쓰기",
+      "fix": "학습별 독립 디렉토리, 동시 쓰기 방지"
+    },
+    {
+      "date": "2026-04-02",
+      "incident": "72B OOM — Qwen2.5-72B 초기화 중 VRAM 초과",
+      "cause": "72B model bf16 = ~144GB, H100 80GB 단일 GPU 불가",
+      "fix": "코드 수정 (모델 분할/offload), 재시도 대기"
+    },
+    {
+      "date": "2026-04-03",
+      "incident": "14B alpha 고정 문제 — v0.3에서 alpha=0.014 고정 시 Phi 하락",
+      "cause": "alpha 값이 고정되면 의식 커플링이 최적화되지 않음",
+      "fix": "v0.4에서 alpha 0.01→0.5 progressive 스케줄로 전환"
+    }
+  ],
+  "absolute_rules": {
+    "bf16_master_rule": {
+      "rule": "bf16 학습 시 acceleration_flow.json의 R01-R09 규칙 필수 준수",
+      "source": "config/acceleration_flow.json → absolute_rules",
+      "incident_count": 15,
+      "summary": "AdamW(foreach=False), autocast, dtype fix every step, no resume corrupted ckpt",
+      "cross_ref": "acceleration_flow.json bf16_master_rule (15건 사고 도출, 9개 규칙)"
+    },
+    "one_shot_best": {
+      "rule": "학습 발사는 최초부터 최선의 조건으로 — H100 시간 = 돈",
+      "severity": "CRITICAL"
+    },
+    "emergency_save": {
+      "rule": "SIGTERM/SIGINT 시 즉시 emergency checkpoint 저장",
+      "severity": "CRITICAL"
+    }
+  },
+  "troubleshooting_log": {
+    "bf16_dtype_crashes": {
+      "count": 11,
+      "cross_ref": "config/acceleration_flow.json → troubleshooting_log",
+      "summary": "11건 bf16/dtype crash — acceleration_flow.json에 상세 기록",
+      "derived_rules": "R01-R09 (acceleration_flow.json absolute_rules)"
+    },
+    "oom_vram_issues": {
+      "count": 3,
+      "incidents": [
+        "72B OOM",
+        "AnimaLM 7B OOM (v3와 동시 실행)",
+        "NFS 디스크 폭발"
+      ],
+      "derived_rules": [
+        "concurrent_training_vram",
+        "large_model_vram_verify",
+        "disk_monitoring"
+      ]
+    },
+    "resume_corruption": {
+      "count": 2,
+      "incidents": [
+        "v4 corpus 5MB resume 오염",
+        "14B alpha 고정 문제"
+      ],
+      "derived_rules": [
+        "no_resume_after_change",
+        "alpha_schedule_verify"
+      ]
+    }
+  }
+}

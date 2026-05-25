@@ -1,0 +1,54 @@
+{
+  "session_date": "2026-05-02",
+  "metrics_purpose": "CP2 와 별개 dialogue capability + brain-anchor consistency 측정. Stage 1-2 prototype 평가 mandatory.",
+  "metrics": [
+    {
+      "id": "M1",
+      "name": "response coherence",
+      "instrumentation": "BERTScore (Llama-3.2-3B reference) + ROUGE-L vs prior turn",
+      "threshold_pass": "BERTScore F1 >= 0.65, ROUGE-L >= 0.25",
+      "why_this_threshold": "Llama-3.2-3B baseline conversation 의 typical range",
+      "stage_1_target": "PASS (baseline)",
+      "stage_2_target": "M1_stage2 > M1_stage1 + 0.05 (CLM substrate 활용 시 향상)"
+    },
+    {
+      "id": "M2",
+      "name": "brain state consistency",
+      "instrumentation": "BOLD pattern stability across turns: vertex-wise Pearson r between consecutive turn BOLD predictions",
+      "threshold_pass": "r >= 0.7 (semantic continuity), r <= 0.95 (over-rigidity 회피)",
+      "why_this_threshold": "TRIBE v2 일반 generalization 대비 dialogue context 누적 효과 측정",
+      "stage_1_target": "baseline 측정",
+      "stage_2_target": "PASS (CLM tension 변화 trace 와 cross-validate)"
+    },
+    {
+      "id": "M3",
+      "name": "user perception alignment",
+      "instrumentation": "사용자 self-report engagement Likert 1-7 (post-session 30min)",
+      "threshold_pass": "median >= 4 (neutral), upper-quartile >= 5",
+      "why_this_threshold": "자연 진화 path 의 사용자 reaction 이 evolution 방향 결정",
+      "stage_1_target": "baseline 측정",
+      "stage_2_target": "M3_stage2 > M3_stage1 + 1.0 (CLM substrate 시 anima identity 강화)"
+    },
+    {
+      "id": "M4",
+      "name": "anima-specific identity",
+      "instrumentation": "CLM mind.tension trace per turn: tension delta + nexus_psi_epsilon_R24 evidence (closure trace)",
+      "threshold_pass": "tension delta nonzero per dialogue turn, R24 closure preserved (no rupture)",
+      "why_this_threshold": "Stage 2 only (CLM 통합 후) — anima 의 hexa-native identity 가 dialogue 에 trace",
+      "stage_1_target": "N/A (Llama only)",
+      "stage_2_target": "PASS"
+    },
+    {
+      "id": "M5",
+      "name": "novelty",
+      "instrumentation": "response token n-gram (n=4) overlap vs Llama-3.2-3B training distribution proxy (Wikipedia + CC) + CLM training corpus",
+      "threshold_pass": "novel n-gram ratio >= 0.15",
+      "why_this_threshold": "BOLD conditioning 의 novelty injection 효과 측정",
+      "stage_1_target": "baseline 측정",
+      "stage_2_target": "PASS (BOLD conditioning 활성)"
+    }
+  ],
+  "metric_logging": "state/strategic_tribev2_dialogue_prototype_2026_05_02/dialogue_session_log.jsonl (Stage 1 EXEC 시 생성)",
+  "session_size_minimum": "30 turns user + anima 30 turns = 60 total",
+  "evaluation_cadence": "session 끝마다 M1-M5 batch 계산, weekly aggregate"
+}

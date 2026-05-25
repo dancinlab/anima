@@ -1,0 +1,29 @@
+{
+  "schema": "anima/emerge_nnsight_intervention/verdict/1",
+  "ts_utc": "2026-05-05T17:43:08Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "prompt": "안녕하세요. 오늘 날씨가 좋네요.",
+  "captured_path": "decoder.blocks[8].output",
+  "interventions": [
+    "zero_L8",
+    "scale_2x",
+    "noise_2.0"
+  ],
+  "logit_deltas": {
+    "zero_L8": 11.40684700012207,
+    "scale_2x": 0.19405174255371094,
+    "noise_2.0": 2.255742073059082
+  },
+  "F_NNSIGHT_1_intervention_visible": true,
+  "n_coherent_post_intervention": 0,
+  "verdict": "PASS_INTERVENTION_VISIBLE",
+  "next_step": "multi-layer sweep + axis-conditioned intervention via nnsight",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 single-step intervention only — multi-step autoregressive nnsight expensive",
+    "C3 logit delta = effect visibility, ≠ chat capability rescue",
+    "C4 single layer 8 only — sweep multi-layer 미",
+    "C5 BG-BJ basin insight predicts post-intervention basin re-form"
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "schema": "anima/an11_a_r14_frobenius/1",
+  "ts": "2026-05-01T14:49:18Z",
+  "adapter": "/workspace/lora/r14/adapter_model.safetensors",
+  "base_model": "mistralai/Mistral-7B-v0.3",
+  "lora_r": 64,
+  "lora_alpha": 128,
+  "scale_alpha_over_r": 2.0,
+  "n_lora_pair_modules": 224,
+  "frob_dW_total": 6.99133796952146,
+  "per_proj": {
+    "down_proj": {
+      "n_layers": 32,
+      "frob_dW_total": 2.124552926900313,
+      "frob_dW_mean_per_layer": 0.3755714454002347
+    },
+    "gate_proj": {
+      "n_layers": 32,
+      "frob_dW_total": 4.359881053798192,
+      "frob_dW_mean_per_layer": 0.7707253645768631
+    },
+    "k_proj": {
+      "n_layers": 32,
+      "frob_dW_total": 0.9976880507228985,
+      "frob_dW_mean_per_layer": 0.17636799654373742
+    },
+    "o_proj": {
+      "n_layers": 32,
+      "frob_dW_total": 2.041139861710802,
+      "frob_dW_mean_per_layer": 0.36082595939147
+    },
+    "q_proj": {
+      "n_layers": 32,
+      "frob_dW_total": 2.0119916397482953,
+      "frob_dW_mean_per_layer": 0.3556732330391652
+    },
+    "up_proj": {
+      "n_layers": 32,
+      "frob_dW_total": 3.9112036461672504,
+      "frob_dW_mean_per_layer": 0.6914096552016031
+    },
+    "v_proj": {
+      "n_layers": 32,
+      "frob_dW_total": 0.9215535577351193,
+      "frob_dW_mean_per_layer": 0.16290919247527283
+    }
+  },
+  "per_layer_top5_by_frob_dW": [
+    {
+      "layer": 24,
+      "proj": "gate_proj",
+      "shape_A": [
+        64,
+        4096
+      ],
+      "shape_B": [
+        14336,
+        64
+      ],
+      "frob_BA": 0.4483974744632049,
+      "frob_dW": 0.8967949489264098
+    },
+    {
+      "layer": 23,
+      "proj": "gate_proj",
+      "shape_A": [
+        64,
+        4096
+      ],
+      "shape_B": [
+        14336,
+        64
+      ],
+      "frob_BA": 0.43734419977697186,
+      "frob_dW": 0.8746883995539437
+    },
+    {
+      "layer": 25,
+      "proj": "gate_proj",
+      "shape_A": [
+        64,
+        4096
+      ],
+      "shape_B": [
+        14336,
+        64
+      ],
+      "frob_BA": 0.43635654886226394,
+      "frob_dW": 0.8727130977245279
+    },
+    {
+      "layer": 26,
+      "proj": "gate_proj",
+      "shape_A": [
+        64,
+        4096
+      ],
+      "shape_B": [
+        14336,
+        64
+      ],
+      "frob_BA": 0.4316131099717056,
+      "frob_dW": 0.8632262199434112
+    },
+    {
+      "layer": 20,
+      "proj": "gate_proj",
+      "shape_A": [
+        64,
+        4096
+      ],
+      "shape_B": [
+        14336,
+        64
+      ],
+      "frob_BA": 0.4309560430408647,
+      "frob_dW": 0.8619120860817294
+    }
+  ],
+  "thresholds": {
+    "AGI_strict": "non-zero per-adapter Frobenius shift directly emitted on r14 (any positive)",
+    "CP2_relaxed": "verifier exists + family-shift indirect evidence"
+  },
+  "agi_verdict": "PASS",
+  "cp2_verdict": "PASS"
+}

@@ -1,0 +1,120 @@
+{
+  "battery": "\u00a7139 EQPROP-C2 eval \u2014 \u00a796-Q2 verdict (data point 3)",
+  "ckpt": "ckpt_eqprop_s139.pt",
+  "corpus": "corpus_s101.jsonl",
+  "cfg": {
+    "d_model": 768,
+    "n_head": 12,
+    "n_kv_head": 4,
+    "n_layer": 12,
+    "block_size": 128,
+    "lr": 0.0003,
+    "bsz": 32,
+    "steps": 3000,
+    "seed": 1337,
+    "beta": 0.1,
+    "log_every": 75,
+    "corpus": "/workspace/s139r/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "out_dir": "/workspace/s139r/out_main",
+    "cpu_only": false
+  },
+  "algorithm": "EqProp-lifted-2-phase",
+  "n_eval": 2000,
+  "max_len": 128,
+  "seed": 1337,
+  "byte_acc": 0.1185,
+  "correct": 237,
+  "total": 2000,
+  "random_byte_floor": 0.00390625,
+  "degenerate_ceiling": 0.0078125,
+  "support_floor": 0.05,
+  "psi_dir_mean": 0.44485311113484205,
+  "psi_dir_std": 5.41406546198934e-09,
+  "psi_responsive": false,
+  "verdict_bucket": "PARTIAL_AMBIGUOUS",
+  "s125_s126_s139_joint_reading_note": "Triangulate with \u00a7125 (FF goodness-contrast) + \u00a7126 (PCN top-down target) verdict_bucket. 3D Boolean lattice 2\u00b3=8 cells; all-DEG = \u00a796-Q2 strongly refuted (substrate-deep); all-SUPP = strongly supported; mixed = algorithmic-ingredient decomposition.",
+  "sample_seen": [
+    {
+      "ctx_tail": [
+        109,
+        32,
+        116,
+        104,
+        101,
+        32,
+        114,
+        117
+      ],
+      "target": 108,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        105,
+        118,
+        105,
+        115,
+        111,
+        114,
+        115,
+        46
+      ],
+      "target": 60,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        182,
+        136,
+        235,
+        179,
+        128,
+        46,
+        60,
+        47
+      ],
+      "target": 101,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        32,
+        101,
+        97,
+        99,
+        104,
+        32,
+        116,
+        105
+      ],
+      "target": 109,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        102,
+        114,
+        111,
+        109,
+        32,
+        116,
+        104,
+        101
+      ],
+      "target": 32,
+      "pred": 32
+    }
+  ],
+  "eval_wall_s": 49.138524293899536,
+  "ckpt_train_log_last": {
+    "step": 3000,
+    "mean_layer_eqprop_loss": -2.633924206097921,
+    "first_layer_loss": -170.45445251464844,
+    "last_layer_loss": -2526.276611328125,
+    "L_head_mse": 0.003770489012822509,
+    "elapsed_s": 2248.949370622635
+  },
+  "north_star_unchanged": true,
+  "s15_s51_s72_milestones_unchanged": true,
+  "necessary_not_sufficient_b_emerge_7": true
+}

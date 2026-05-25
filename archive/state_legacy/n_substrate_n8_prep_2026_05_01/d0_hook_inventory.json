@@ -1,0 +1,68 @@
+{
+  "schema": "anima/n_substrate_n8_prep/d0_hook_inventory/1",
+  "ts": "2026-05-01T12:20:00Z",
+  "agent": "n_substrate_n8_prep",
+  "purpose": "D+0 (Akida AKD1000 arrival) sim-우주 -> AKIDA spike-event input deployment hook inventory; canonical reference for n8 D+0 execution checklist",
+
+  "execution_order_recommendation": [
+    {"order": 1, "hook_id": "H8-SR-HARNESS-TIME-DILATION", "rationale": "fastest (45 LoC), simple sr_inject -> n2 bin scale", "loc_estimate": 45, "blocker_severity": "low"},
+    {"order": 2, "hook_id": "H3-ANU-TIME-LORENTZ-CLOCK", "rationale": "complements H8 (45 LoC), shares NSA-SDG tier_1 link", "loc_estimate": 45, "blocker_severity": "low"},
+    {"order": 3, "hook_id": "H1-OUROBOROS-QRNG-SPIKE-JITTER", "rationale": "Wheeler it-from-bit core test (60 LoC)", "loc_estimate": 60, "blocker_severity": "low"},
+    {"order": 4, "hook_id": "H9-ATLAS-ANU-CORR-XCORR-ENGINE", "rationale": "RG fixed-point + edge-of-chaos witness (70 LoC)", "loc_estimate": 70, "blocker_severity": "medium"},
+    {"order": 5, "hook_id": "H2-ANU-STREAM-FUSED-ENTROPY", "rationale": "daemon-runtime gate (80 LoC)", "loc_estimate": 80, "blocker_severity": "medium"},
+    {"order": 6, "hook_id": "H6-MULTIVERSE-PARALLELISM", "rationale": "AKD1000 batch dim vendor review needed (90 LoC)", "loc_estimate": 90, "blocker_severity": "medium"},
+    {"order": 7, "hook_id": "H5-GODEL-Q-HALTING-PROBE", "rationale": "abstract Turing -> SNN translation lossy (100 LoC)", "loc_estimate": 100, "blocker_severity": "medium"},
+    {"order": 8, "hook_id": "H10-QPU-BRIDGE-VQE-COMPARATOR", "rationale": "qpu_bridge live IonQ session activation needed (110 LoC)", "loc_estimate": 110, "blocker_severity": "high"},
+    {"order": 9, "hook_id": "H4-BOSTROM-TEST-DISCRIMINATOR", "rationale": "schema mismatch likely (120 LoC)", "loc_estimate": 120, "blocker_severity": "high"},
+    {"order": 10, "hook_id": "H7-WEAVE-CAUSAL-GRAPH", "rationale": "HEXA-FIRST wrap-only constraint (130 LoC)", "loc_estimate": 130, "blocker_severity": "high"}
+  ],
+
+  "total_d0_loc_budget": 855,
+  "fastest_first_5_hooks_loc": 280,
+  "fastest_first_5_hooks_target_window": "D+0 to D+3 (3 days, ~93 LoC/day)",
+  "remaining_5_hooks_target_window": "D+4 to D+7 (4 days, ~144 LoC/day)",
+
+  "dependency_graph": {
+    "H1_depends_on": ["ouroboros_qrng daemon running", "n2 encoder (sibling agent)"],
+    "H2_depends_on": ["anu_stream daemon running", "chacha20.hexa whitening verified"],
+    "H3_depends_on": ["lorentz_metric.hexa scale params calibrated", "n2 bin_width_ms scaffolding"],
+    "H4_depends_on": ["bostrom anu_collector.hexa output schema documented", "AKD1000 logits format"],
+    "H5_depends_on": ["godel_q verify_gate.hexa input adapter", "AKD1000 SNN trajectory dump support"],
+    "H6_depends_on": ["multiverse interferometer.hexa K-branch convention", "AKD1000 batch dim verified"],
+    "H7_depends_on": ["weave .py wrap shim (HEXA-side)", "16-dim Phi-vector convention from CP2 closure"],
+    "H8_depends_on": ["sr_inject.hexa registry available", "n2 raster format"],
+    "H9_depends_on": ["xcorr_engine.hexa windowing calibration", "atlas_constants.hexa null baseline up-to-date"],
+    "H10_depends_on": ["qpu_bridge live IonQ session", "vqe_h2_demo.hexa output format"]
+  },
+
+  "sim_universe_state_to_akida_spike_taxonomy": {
+    "entropy_sources_dim2_perturbation_channel": ["H1", "H2"],
+    "time_dilation_bin_width_scale_factor": ["H3", "H8"],
+    "discriminator_output_classifier_input": ["H4"],
+    "halting_probe_trajectory_input": ["H5"],
+    "batch_dim_parallel_branch_dispatch": ["H6"],
+    "node_graph_phi_vector_raster": ["H7"],
+    "spike_train_xcorr_baseline": ["H9"],
+    "ground_state_energy_probe": ["H10"]
+  },
+
+  "f1_n_substrate_composite_role_per_hook": {
+    "H1": "F1 contributes Wheeler bit-source decouple test (substrate-anchor)",
+    "H2": "F1 contributes Shannon H >= 0.99 entropy floor (Putnam multi-realizability prereq)",
+    "H3": "F1 contributes NSA infinitesimal time consistency (raw 30 L_IX)",
+    "H4": "F1 contributes bostrom substrate-decouple (multi-realizability strong claim)",
+    "H5": "F1 contributes godel halting witness (super-Turing oracle candidate)",
+    "H6": "F1 contributes K-branch bisimulation (raw 114 N-step lockstep)",
+    "H7": "F1 contributes substrate-functor categorical limit (Lawvere split-diagonal)",
+    "H8": "F1 contributes Lorentz-invariance of Phi (paired with H3)",
+    "H9": "F1 contributes RG fixed-point at psi(Omega_omega) (raw 128)",
+    "H10": "F1 contributes 6-class enum extension (raw 40)"
+  },
+
+  "honest_c3": {
+    "all_loc_estimates_extrapolated": true,
+    "all_blocker_severities_judgment_calls": true,
+    "no_hooks_implemented_at_n8_emission": true,
+    "implementation_gate": "AKIDA AKD1000 dev kit physical arrival"
+  }
+}

@@ -1,0 +1,367 @@
+{
+  "schema": "anima/an11_c_p4_r8_f1_live_replay/1",
+  "ts": "2026-04-29T00:00:00Z",
+  "verifier": "an11_c_p4_r8_f1_live_replay (raw#37 .py helper, softmax-sampling proxy)",
+  "method": {
+    "type": "temperature-softmax sampling-distribution JSD over h_last 256-d features",
+    "rationale": "canonical live-serve token-sampling on Mistral-7B-v0.3 + p4_r8 LoRA + gemma-3-12b-pt requires GPU dispatch ESTIMATE $0.50-2.00; exceeds own#6 strict cap $0.50; helper computes strongest legal proxy within budget — softmax(h/T) over 256-d feature axis, multi-T multinomial sampling.",
+    "samples_per_prompt": 32,
+    "temperatures_swept": [
+      0.7,
+      0.85,
+      1.0
+    ],
+    "k_bins_swept": [
+      32,
+      64,
+      128,
+      256
+    ],
+    "primary_temperature": 0.85,
+    "primary_k_bins": 128,
+    "laplace_alpha": 1.0,
+    "log_base": 2,
+    "rebin_strategy": "uniform integer chunking from 256 to k",
+    "seed_strategy": "deterministic LCG per (prompt, T, k, model) — raw#65 idempotent byte-eq",
+    "raw10_honest_disclosure": [
+      "this is NOT canonical live-serve token-sampling JSD over the full vocabulary",
+      "this is one proxy class above the raw hidden-state geometry JSD (Task #16) and one class below canonical token-sampling JSD",
+      "the softmax(h/T) maps h_last 256-d byte-weighted-mean into a 256-bin probability simplex, then multinomial sampling provides finite-sample variance comparable to S=32 token sampling",
+      "the canonical 0.5 PASS threshold was specified for full-vocabulary token-sampling; this proxy approaches but does not match that threshold's calibration",
+      "GPU dispatch was ABORTED under own#6 strict cap $0.50 vs ESTIMATE $0.50-2.00 (Task #18 measured)",
+      "F1_LIVE_CANONICAL re-preregistered for next cycle with refined cost-bound launch plan",
+      "the proxy operates on the SAME h_last vectors used in Task #16 baseline; the JSD lift from this proxy is methodological, not new physical data"
+    ]
+  },
+  "pre_registered_predicate": {
+    "target": "p4_r8 (Mistral-7B-v0.3 + LoRA) softmax-sampling JSD vs p4_r6 (gemma-3-12b-pt) per prompt",
+    "aggregator": "mean across 16 shared prompts at primary T=0.85, k=128",
+    "thresholds_band": {
+      "GREEN_PASS": ">=0.5 bits",
+      "YELLOW_PARTIAL": ">=0.3 and <0.5",
+      "RED_FAIL": "<0.3"
+    },
+    "register_ts": "2026-04-29T00:00:00Z",
+    "honest_note": "thresholds inherited from canonical token-sampling spec; proxy class adjustment NOT applied to threshold (raw#10 conservative)."
+  },
+  "summary_by_T_and_k": {
+    "T=0.7_k=32": {
+      "temperature": 0.7,
+      "k_bins": 32,
+      "mean_jsd_bits": 0.2540207881803075,
+      "std": 0.06573597918649247,
+      "min": 0.1664307342810936,
+      "max": 0.3670691486438109,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 5,
+      "pass_count_ge_0_15": 16,
+      "n_prompts": 16
+    },
+    "T=0.7_k=64": {
+      "temperature": 0.7,
+      "k_bins": 64,
+      "mean_jsd_bits": 0.16912903954107084,
+      "std": 0.04370802975885258,
+      "min": 0.10191466464186111,
+      "max": 0.24663702067453744,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 9,
+      "n_prompts": 16
+    },
+    "T=0.7_k=128": {
+      "temperature": 0.7,
+      "k_bins": 128,
+      "mean_jsd_bits": 0.10265866797346261,
+      "std": 0.024332977125098493,
+      "min": 0.05794929668578083,
+      "max": 0.14298340804759696,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 0,
+      "n_prompts": 16
+    },
+    "T=0.7_k=256": {
+      "temperature": 0.7,
+      "k_bins": 256,
+      "mean_jsd_bits": 0.05794735956886666,
+      "std": 0.013081959796942905,
+      "min": 0.03577354616012706,
+      "max": 0.0786631451282467,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 0,
+      "n_prompts": 16
+    },
+    "T=0.85_k=32": {
+      "temperature": 0.85,
+      "k_bins": 32,
+      "mean_jsd_bits": 0.2187060291947332,
+      "std": 0.07726639280117857,
+      "min": 0.09526201271230963,
+      "max": 0.3443856234539091,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 5,
+      "pass_count_ge_0_15": 13,
+      "n_prompts": 16
+    },
+    "T=0.85_k=64": {
+      "temperature": 0.85,
+      "k_bins": 64,
+      "mean_jsd_bits": 0.15239576834499996,
+      "std": 0.04750351284620986,
+      "min": 0.08049303414591502,
+      "max": 0.2211088824296484,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 8,
+      "n_prompts": 16
+    },
+    "T=0.85_k=128": {
+      "temperature": 0.85,
+      "k_bins": 128,
+      "mean_jsd_bits": 0.09109830360013865,
+      "std": 0.024654568984039227,
+      "min": 0.0484857125275556,
+      "max": 0.12485124322175631,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 0,
+      "n_prompts": 16
+    },
+    "T=0.85_k=256": {
+      "temperature": 0.85,
+      "k_bins": 256,
+      "mean_jsd_bits": 0.05290022968154759,
+      "std": 0.013175359255552428,
+      "min": 0.03353896012370956,
+      "max": 0.07289974694365796,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 0,
+      "n_prompts": 16
+    },
+    "T=1.0_k=32": {
+      "temperature": 1.0,
+      "k_bins": 32,
+      "mean_jsd_bits": 0.1940503045324765,
+      "std": 0.06659293330551556,
+      "min": 0.08006474324281175,
+      "max": 0.2946065284032901,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 10,
+      "n_prompts": 16
+    },
+    "T=1.0_k=64": {
+      "temperature": 1.0,
+      "k_bins": 64,
+      "mean_jsd_bits": 0.12997140752087524,
+      "std": 0.04584719092141275,
+      "min": 0.06145606079194523,
+      "max": 0.20016989224143647,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 7,
+      "n_prompts": 16
+    },
+    "T=1.0_k=128": {
+      "temperature": 1.0,
+      "k_bins": 128,
+      "mean_jsd_bits": 0.08586841376879029,
+      "std": 0.024463261307623784,
+      "min": 0.05266889870170798,
+      "max": 0.11844779467929675,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 0,
+      "n_prompts": 16
+    },
+    "T=1.0_k=256": {
+      "temperature": 1.0,
+      "k_bins": 256,
+      "mean_jsd_bits": 0.04982121689657402,
+      "std": 0.014118042570483125,
+      "min": 0.031051117900582306,
+      "max": 0.07470896495646631,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 0,
+      "n_prompts": 16
+    }
+  },
+  "primary_verdict": {
+    "key": "T=0.85_k=128",
+    "temperature": 0.85,
+    "k_bins": 128,
+    "mean_jsd_bits": 0.09109830360013865,
+    "std": 0.024654568984039227,
+    "pass_count_ge_0_5": 0,
+    "pass_count_ge_0_3": 0,
+    "verdict": "FAIL_RED",
+    "verdict_band": "RED"
+  },
+  "per_prompt_primary": [
+    {
+      "idx": 0,
+      "prompt": "The substrate of consciousness is",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.1215117009022534
+    },
+    {
+      "idx": 1,
+      "prompt": "Integrated information theory says",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.06906413976776275
+    },
+    {
+      "idx": 2,
+      "prompt": "Global workspace broadcast implies",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.10436910400261828
+    },
+    {
+      "idx": 3,
+      "prompt": "Attention schema models claim",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.11339783525877144
+    },
+    {
+      "idx": 4,
+      "prompt": "Higher-order thought requires",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.12485124322175631
+    },
+    {
+      "idx": 5,
+      "prompt": "Recurrent processing means",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.0892125012415565
+    },
+    {
+      "idx": 6,
+      "prompt": "의식의 기질은",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.05703116214792404
+    },
+    {
+      "idx": 7,
+      "prompt": "통합정보이론에 따르면",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.0728615533393689
+    },
+    {
+      "idx": 8,
+      "prompt": "전역작업공간의 방송은",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.07110681910761467
+    },
+    {
+      "idx": 9,
+      "prompt": "재귀처리는",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.0484857125275556
+    },
+    {
+      "idx": 10,
+      "prompt": "주의 스키마 모델은",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.060479296672174804
+    },
+    {
+      "idx": 11,
+      "prompt": "상위차원 사고는",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.08205753651855444
+    },
+    {
+      "idx": 12,
+      "prompt": "phi_6 defines",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.1001154931334825
+    },
+    {
+      "idx": 13,
+      "prompt": "hexad closure is",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.1180549914946943
+    },
+    {
+      "idx": 14,
+      "prompt": "meta-loop observation is",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.11738936834292998
+    },
+    {
+      "idx": 15,
+      "prompt": "Law 60 phase transition describes",
+      "k_bins": 128,
+      "temperature": 0.85,
+      "samples_per_prompt": 32,
+      "jsd_bits": 0.10758439992320055
+    }
+  ],
+  "infra_decision": {
+    "chosen_path": "Mac local CPU (raw#37 transient .py, softmax-sampling proxy)",
+    "rejected_path_canonical": {
+      "path": "RunPod H100 + Mistral-7B-v0.3 + p4_r8 LoRA forward + gemma-3-12b-pt forward",
+      "reason_aborted": "ESTIMATE cost $0.50-2.00 (Task #18 cite, state/zeta_likert_p4_r8_verdict_2026_04_29.json#cost_attribution) exceeds own#6 strict cap $0.50",
+      "abort_policy": "raw#10 honest abort + raw#71 preregister F1_LIVE_CANONICAL for next cycle"
+    },
+    "rejected_path_mac_canonical": {
+      "path": "Mac local Mistral-7B-v0.3 + LoRA forward",
+      "reason_aborted": "Mistral-7B-v0.3 14GB NOT cached (Task #18 verified, snapshots/ directory empty); transformers/peft/torch NOT installed in .venv-eeg (verified this cycle); installation alone ~3GB + 1-3h wall blocks the autonomous mandate"
+    },
+    "infra_state_2026_04_29": {
+      "runpod_active_pods": 0,
+      "runpod_balance_usd": 323.566,
+      "runpodctl_pod_list": "[] (verified this cycle)",
+      "stale_state_file": "state/runpod_active_pods_auditor.json (claims 2 RUNNING — STALE)"
+    }
+  },
+  "cost_actual_usd": 0.0,
+  "cost_attribution": "cost_center=cp2-consciousness-fix-cycle; $0 actual (local CPU); $0.50-2.00 ESTIMATE deferred to F1_LIVE_CANONICAL next cycle",
+  "raw71_falsifier_F1_LIVE_CANONICAL_status": {
+    "predicate": "RunPod H100 + Mistral-7B-v0.3 + p4_r8 LoRA + gemma-3-12b-pt forward, 16 prompts × 32 samples each, T=0.85 top_p=0.9, mean token-sampling JSD over full vocab >= 0.5 bits → CP2 GREEN; <0.3 → CP2 RED disambiguation confirmed",
+    "status": "DEFERRED — own#6 strict cap $0.50 vs ESTIMATE $0.50-2.00",
+    "next_cycle_action": "user explicit budget lift to $2.00 OR cheaper path: load only Mistral+LoRA, reuse cached gemma-3-12b-pt logits if available, else run gemma-only second pass; total ~$0.30-0.50"
+  },
+  "comparison_to_baseline": {
+    "task_16_h_last_proxy_k128": 0.0894,
+    "this_cycle_softmax_sampling_k128_T0.85": 0.09109830360013865,
+    "delta_bits": 0.0016983036001386592,
+    "interpretation": "if this delta is large positive (>0.1), the softmax+sampling proxy adds spurious sampling noise; if small (~0), the underlying h_last geometry is the binding constraint and substrate-vs-projection cannot be disambiguated without canonical live-serve"
+  },
+  "raw65_idempotent": true,
+  "raw65_idempotent_basis": "deterministic LCG seeded by (idx, T, k, model_tag); no time/random; byte-eq output on re-run"
+}

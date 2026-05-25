@@ -1,0 +1,42 @@
+# BG-FM clm_v2 18M byte deep research — search paths log
+# 2026-05-06
+
+## Sub-1: mac extended filesystem
+- find / -name 'best.pt'  -> NOT_FOUND on mac
+- find / -name 'model.pt' -> NOT_FOUND on mac
+- find ~/Documents ~/Desktop ~/Downloads -name '*.pt' -size +50M  -> empty
+- find /Volumes -name '*.pt'  -> empty
+- find ~/Library/Mobile\ Documents -name '*.pt'  -> empty (iCloud)
+- find ~/Dropbox -name '*.pt'  -> empty
+- find ~/"Google Drive"* -name '*.pt'  -> no such dir
+- find ~/Library/CloudStorage -name '*.pt'  -> empty
+- find /var /tmp /private/var -name '*.pt' -size +30M  -> empty (different prefix)
+- find / -name '*.pt' -size +70M -size -270M  -> 8 hits incl /private/tmp/anima_v2_check/clm_v2_medium/final.pt  (HIT!)
+- mdfind 'kMDItemFSName==final.pt' large  -> /Users/ghost/etc/models/animalm-v[1-4]/final.pt + /Users/ghost/etc/models/golden-moe-v1/final.pt + /Users/ghost/etc/models/growing_700m_korean_sft.pt + /Users/ghost/core/anima/checkpoints/animalm_14b_v06/final.pt  (different lineage; Mistral perturbation experiments)
+- mdfind clm_v2  -> /private/tmp/anima_v2_check/  (PRE-STAGED by sibling BG)
+
+## Sub-2: ubu1 + ubu2
+- ssh ubu1 'find / -name best.pt'  -> 5 hits: anima_clm_release_v1_staging/best.pt, anima/checkpoints/decoder_cpu/best.pt, anima/checkpoints/clm_v4_350m/scale_350m/best.pt, hf_cache clm-v4-base-mirror/best.pt, /tmp/anima_bundle_a100/best.pt
+- ssh ubu1 'find /home -name *.pt -size +50M'  -> ~50 step_*.pt + best.pt files in decoder_cpu (all 36.7M params byte-vocab clm "Base" config = 384d/6L; CE=0.0068, NOT v2 spec)
+- ssh ubu1 'find / -iname *clm_v2*'  -> 28 hits, mostly .growth/absorbed JSON metadata (placeholders, originals consumed) + ready/anima/checkpoints/clm_v2_large/  (EMPTY DIR — 4096 byte stub)
+- ssh ubu2 'find / -name best.pt'  -> 1 hit (clm_v4_350m mirror)
+- ssh ubu2 'find /home -name *.pt -size +50M'  -> clm3-bprime-s1/s2 savepoints + p9 optimizers + clm_v4_350m
+- ssh ubu2 'find / -iname *clm_v2*'  -> archive train_clm_v2.hexa + build/artifacts + venv byte_level_bpe.py (irrelevant)
+
+## Sub-3: HF accounts + alt orgs
+- HF whoami token: 401 Invalid (rotated/stale)
+- public probe https://huggingface.co/api/users/dancinlife/overview  -> Aiden Park, 0 models, 0 datasets, 0 spaces; only org: dancinlab
+- HF cache ~/.cache/huggingface/hub/ list  -> only dancinlab org; no clm_v2 in any cached repo
+- HF API GET /models/dancinlab/clm-v2-byte-18m-convo-5k  -> PUBLIC, convo_5k.pt 73,740,122 bytes, sha256=2f0ba391aff30f6a60bcefccb9215fdb45764bf07147f28c38013ca629881bbe, created 2026-05-06T06:53:45Z (today)
+
+## Sub-4: GitHub gists + TimeMachine
+- gh api users/dancinlife/gists  -> 23 gists, all small text/HTML/JS/MD; no .pt/.bin/.safetensors
+- tmutil destinationinfo  -> No destinations configured (no TimeMachine on this Mac)
+- tmutil listbackups  -> NSPOSIXErrorDomain Code=1 (no machine dir)
+
+## Sub-5: provenance for /private/tmp/anima_v2_check
+- created: 2026-05-06 ~15:41-15:48 (sibling BG pre-staged 5 v2 family final.pt)
+- check_ckpt.py, check_full.py inspector scripts present
+- 5 variants: clm_v2_tiny (0.35M), clm_v2_small (1.70M), clm_v2 (1.17M), clm_v2_medium (8.45M, 100MB), clm_v2_base (27.93M, 333MB) — all byte-vocab=256, mtime=2026-03-30 04:18-04:21
+- /private/tmp/anima_v2_source/ (created today 16:22): conscious_lm.py + model_loader.py (extracted from ready/.git commit bb99b6b6)
+- /Users/ghost/core/anima/state/anima_clm_v2_chat_smoke_2026_05_06/verdict_v2.json: ckpt loaded with 0 missing/unexpected keys; params 18.52M; F_CLM_NATIVE_alpha_1_PASS=false (gibberish output despite valid weights)

@@ -1,0 +1,38 @@
+{
+  "schema": "anima/qmirror/vqe_h2/1",
+  "ts_utc": "2026-05-03T22:06:47Z",
+  "host": "aiden-B650M-K",
+  "molecule": "H2",
+  "geometry_angstrom": "H 0 0 0; H 0 0 0.735",
+  "basis": "STO-3G",
+  "mapper": "BravyiKitaev + Z2-tapered",
+  "num_qubits_full": 4,
+  "num_qubits_tapered": 1,
+  "num_pauli_terms_tapered": 3,
+  "ansatz": "TwoLocal(ry, no entangler, reps=1, n_qubits=1)",
+  "n_params": 2,
+  "optimizer": "scipy.optimize.minimize(method=COBYLA, maxiter=500)",
+  "estimator": "qiskit_aer.primitives.Estimator(statevector, exact, seed=1729)",
+  "seed": 1729,
+  "nuclear_repulsion_ha": 0.7199689944489797,
+  "e_electronic_exact_ha": -1.8572750302023784,
+  "e_fci_exact_total_ha": -1.1373060357533986,
+  "e_vqe_electronic_ha": -1.857275030202181,
+  "e_vqe_total_ha": -1.1373060357532014,
+  "delta_vs_exact_ha": 1.971756091734278e-13,
+  "delta_vs_literature_minus_1_137_ha": 0.00030603575320142795,
+  "n_cost_evals": 30,
+  "scipy_nfev": 30,
+  "scipy_status": 0,
+  "scipy_success": true,
+  "scipy_message": "Return from COBYLA because the trust region radius reaches its lower bound.",
+  "F_VQE_1": {
+    "criterion": "|E_VQE - E_FCI_exact| < 1e-3 ha",
+    "delta_ha": 1.971756091734278e-13,
+    "threshold_ha": 0.001,
+    "verdict": "PASS"
+  },
+  "elapsed_seconds": 1.3294994831085205,
+  "constraints_observed": [
+  ]
+}

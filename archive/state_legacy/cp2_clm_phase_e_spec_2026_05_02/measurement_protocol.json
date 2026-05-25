@@ -1,0 +1,63 @@
+{
+  "session_design": {
+    "subject": "user mk55992@proton.me (N=1)",
+    "duration_min": 30,
+    "phase_count": 6,
+    "phase_duration_min": 5,
+    "phases": [
+      {"id": "P1", "name": "eyes_open_baseline", "task": "fixation cross, no cognitive load"},
+      {"id": "P2", "name": "eyes_closed_berger", "task": "alpha enhancement, eyes closed rest"},
+      {"id": "P3", "name": "clm_read", "task": "browser tab anima local CLM-read (binding-relevant primary)"},
+      {"id": "P4", "name": "mental_arithmetic_control", "task": "1000-7 serial subtraction (cognitive-load match)"},
+      {"id": "P5", "name": "breath_focus", "task": "mindfulness anchor (interoception control)"},
+      {"id": "P6", "name": "silent_rest_recovery", "task": "post-task silent rest"}
+    ]
+  },
+  "lsl_streams": {
+    "clm_mind_tension": {
+      "outlet_name": "anima_clm_tension",
+      "host": "ubu1",
+      "channels": 1,
+      "rate_hz": 1,
+      "type": "MindTension",
+      "source": "clm_w4_lsl_server.py (per #103 Phase 2)"
+    },
+    "tension_link_5ch": {
+      "outlet_name": "anima_tension_link_5ch",
+      "host": "ubu1",
+      "channels": 5,
+      "channel_labels": ["gate_active", "gate_random", "L1", "phi", "psi_eps"],
+      "rate_hz": 1,
+      "type": "TensionBridge",
+      "source": "clm_w4_lsl_server.py (per #103 Phase 2)"
+    },
+    "eeg_alpha_plv": {
+      "outlet_name": "anima_eeg_alpha_plv",
+      "host": "mac",
+      "channels_raw": 16,
+      "rate_hz_raw": 250,
+      "rate_hz_windowed": 1,
+      "windowing": "1s sliding window, alpha PLV (8-13Hz) averaged over 6 pairs from {P3,P4,O1,O2}",
+      "source": "OpenBCI 16ch -> LSL Networking widget -> mac analyze pipeline (per #103 Phase 1)"
+    },
+    "phase_marker": {
+      "outlet_name": "anima_phase_marker",
+      "host": "mac",
+      "events": ["SESSION_START", "P1_START", "P2_START", "P3_START", "P4_START", "P5_START", "P6_START", "SESSION_END"]
+    }
+  },
+  "synchronization": {
+    "tool": "LabRecorder (LSL .xdf capture)",
+    "expected_clock_drift_ms": 10,
+    "spike_drift_ms": 100,
+    "drift_rejection_threshold_ms": 100,
+    "expected_sample_retention_pct": 85,
+    "flag_if_below_pct": 70
+  },
+  "concurrent_3channel_window": {
+    "common_rate_hz": 1,
+    "alignment": "marker-anchored phase boundaries; LSL clock-corrected timestamps",
+    "min_samples_per_phase": 240,
+    "target_samples_per_phase": 300
+  }
+}

@@ -1,0 +1,186 @@
+{
+  "schema": "anima/cycle_synthesis/next_cycle_plan/1",
+  "composed_at": "2026-05-04T07:00:00Z",
+  "horizon_immediate_24h": [
+    {
+      "rank": 1,
+      "priority": "HIGHEST",
+      "item": "P9 Path A r=16 3-seed verdict landing",
+      "outcome_lock": "MITIGATION_PASS / PARTIAL / FAIL decision",
+      "trigger": "auto-fires from 3-seed watchdog PID 27807 on slowest seed completion + 45 evals",
+      "owner": "automated (watchdog)",
+      "user_action_required": false
+    },
+    {
+      "rank": 2,
+      "priority": "HIGHEST",
+      "item": "D 25K Phi-star verdict landing",
+      "outcome_lock": "cross-axis A x D 4-cell matrix auto-fires",
+      "trigger": "A x D watchdog PID 43833 (24h budget, 5min poll)",
+      "owner": "automated (watchdog)",
+      "user_action_required": false
+    },
+    {
+      "rank": 3,
+      "priority": "HIGH",
+      "item": "VLM stage1 50K final",
+      "outcome_lock": "step-50k HF push + stage2 readiness gate",
+      "trigger": "training completion (~3h ETA from synthesis)",
+      "owner": "ubu1 PID 31960",
+      "user_action_required": false
+    },
+    {
+      "rank": 4,
+      "priority": "HIGH",
+      "item": "KL 50K cache build completion",
+      "outcome_lock": "distill loss path wire (Mistral-7B teacher -> CLM v4 student)",
+      "trigger": "ubu1 build completion (~16:05Z UTC ETA per operator brief)",
+      "owner": "ubu1",
+      "user_action_required": false
+    },
+    {
+      "rank": 5,
+      "priority": "MEDIUM",
+      "item": "USER ACTION: set HF_TOKEN secret on 4 publishable repos",
+      "outcome_lock": "auto-sync workflow activation",
+      "trigger": "manual",
+      "owner": "user",
+      "user_action_required": true,
+      "urls": [
+        "https://github.com/dancinlab/qmirror/settings/secrets/actions",
+        "https://github.com/dancinlab/sim-universe/settings/secrets/actions",
+        "https://github.com/dancinlab/hexa-bio/settings/secrets/actions",
+        "https://github.com/dancinlab/honesty-monitor/settings/secrets/actions"
+      ]
+    },
+    {
+      "rank": 6,
+      "priority": "MEDIUM",
+      "item": "USER ACTION: git rm crystallography_n6 from nexus",
+      "outcome_lock": "nexus side delete bookkeeping closed",
+      "trigger": "manual",
+      "owner": "user",
+      "user_action_required": true,
+      "command": "cd /Users/ghost/core/nexus && git rm modules/crystallography_n6/README.md modules/crystallography_n6/crystallography_n6.hexa && git commit -m 'chore(modules): remove crystallography_n6 — extracted to CANON'"
+    }
+  ],
+  "horizon_mid_term_1_2_weeks": [
+    {
+      "rank": 1,
+      "priority": "HIGH",
+      "item": "qmirror arXiv submission preflight",
+      "wall_days_estimate": "5-7 from peer-review-complete",
+      "blockers": [
+        "external peer review (2-3 reviewers, HARD blocker)",
+        "LaTeX conversion (revtex4-2 or article class)",
+        "figure prep (matplotlib/TikZ for 5 figures)",
+        "license counsel sign-off (pyphi GPLv3 isolation)",
+        "honest-claim audit: promote band-revision disclosure to abstract"
+      ]
+    },
+    {
+      "rank": 2,
+      "priority": "HIGH",
+      "item": "Patch tool/p9_a_prime_verdict.hexa to prefer doc_hash join over doc_id",
+      "loc_estimate": 10,
+      "scope": "_build_correctness_dict function",
+      "rationale": "canonical fix for r=16 + future eval cycles (recurrence prevention)"
+    },
+    {
+      "rank": 3,
+      "priority": "MEDIUM",
+      "item": "hexa-lang versioning Phase 2",
+      "deliverables": [
+        "tool/hexa_module_version_validate.hexa install",
+        "P2 module backfill (~26 modules)",
+        "state/hexa_stdlib_manifest.json auto-gen"
+      ]
+    },
+    {
+      "rank": 4,
+      "priority": "MEDIUM",
+      "item": "hexa-lang core team ratification request",
+      "scope": "@version / @capabilities schema lock (closes C4 from versioning landing)"
+    },
+    {
+      "rank": 5,
+      "priority": "MEDIUM",
+      "item": ".own N cycle 2",
+      "trigger": "Track A transpiler first .own 2 artifact lands",
+      "deliverable": "anima/.own formal own N entry"
+    },
+    {
+      "rank": 6,
+      "priority": "MEDIUM",
+      "item": "VLM stage2 launch",
+      "scope": "audio codec install + 0.5*audio_CE + 0.5*text_CE dual-loss"
+    }
+  ],
+  "horizon_long_term_1_3_months": [
+    {
+      "rank": 1,
+      "priority": "HIGH",
+      "item": "qmirror v3.0.0 (5 candidate axes)",
+      "candidate_axes": [
+        "magic-state distillation",
+        "FFI retirement",
+        "IIT scale-up",
+        "RCS reframing",
+        "VQC consumer"
+      ],
+      "status_note": "BRAINSTORM stage; not committed work plan (per Caveat C4)"
+    },
+    {
+      "rank": 2,
+      "priority": "MEDIUM",
+      "item": "3 sister packages v1.1.0",
+      "scope": [
+        "semver-frozen module APIs (sim-universe addresses caveat §4 of polish)",
+        "expanded test surface",
+        "downstream consumer onboarding"
+      ]
+    },
+    {
+      "rank": 3,
+      "priority": "MEDIUM",
+      "item": "hexa-lang versioning Phase 3",
+      "scope": "use ... require version >= ... runtime hook (speculative; runtime.c change)"
+    },
+    {
+      "rank": 4,
+      "priority": "LOW",
+      "item": "hexa-bio verb expansion",
+      "scope": "nanobot / ribozyme / virocapsid wired beyond stub"
+    },
+    {
+      "rank": 5,
+      "priority": "LOW",
+      "item": "CANON additional module absorption",
+      "scope": "pending sister BG audits"
+    }
+  ],
+  "rejected_or_explicitly_deferred": [
+    {
+      "item": "arXiv submission BEFORE peer review",
+      "reason": "premature for claims-heavy paper"
+    },
+    {
+      "item": "D 25K result-driven action BEFORE A x D cross-axis verdict",
+      "reason": "single-axis decision violates 4-cell matrix discipline"
+    },
+    {
+      "item": "VLM stage2 audio codec wire BEFORE stage1 50K final",
+      "reason": "stage1 still in flight at synthesis time"
+    },
+    {
+      "item": "hexa-bio nanobot/ribozyme/virocapsid wire-out",
+      "reason": "deferred to cycle 25+; current v1.0.0 ships stubs honestly"
+    }
+  ],
+  "completion_quality_recommendation": {
+    "lens": "완성도 (completion-quality)",
+    "primary_recommendation": "Wait for the 3 in-flight verdicts (A r=16 3-seed + D 25K + cross-axis) to land before committing next-cycle compute. This avoids paradigm-rethink work that may be obviated by the cross-axis matrix outcome.",
+    "secondary_recommendation": "In parallel (zero-conflict): user sets HF_TOKEN secrets on 4 publishable repos (10 min, $0, unblocks auto-sync), and user runs git rm for crystallography_n6 in nexus (2 min, $0, closes nexus delete bookkeeping). Both are user-only manual steps with no compute or BG dependency.",
+    "tertiary_recommendation": "Commission qmirror arXiv peer-review outreach (HIGH-priority mid-term item) as a parallel track; it has no dependency on the in-flight verdicts and the 5-7 wall-day blocker is the long pole on submission readiness."
+  }
+}

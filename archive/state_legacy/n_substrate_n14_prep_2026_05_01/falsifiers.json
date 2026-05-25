@@ -1,0 +1,63 @@
+{
+  "substrate": "N-14",
+  "facility": "SNU Hospital MEG Center, Vectorview 306-ch",
+  "spec_doc": "docs/n_substrate_n14_meg_snu_access_spec_2026_05_01.md",
+  "raw_ledger_format": "raw#71",
+  "pre_registration_locked": false,
+  "lock_required_before": "first_scan",
+  "date_authored": "2026-05-01",
+  "predicates": [
+    {
+      "id": "N14-F1",
+      "claim": "MEG-Phi and EEG-Phi are highly correlated within-subject on paired same-trial recordings",
+      "design": "N>=10 healthy adults, simultaneous 306-ch MEG + 64-ch EEG inside MSR, eyes-closed rest x3 + perturbation block",
+      "metric": "Pearson r between Phi-MEG and Phi-EEG, paired per-trial",
+      "pass": "r >= 0.70 with 95% CI lower bound > 0.50",
+      "fail_consequence": "Phi is substrate-coupled, revise Phi formalism for modality invariance",
+      "primary": true
+    },
+    {
+      "id": "N14-F2",
+      "claim": "Sub-4ms temporal binning reveals additional differentiation that EEG ceiling cannot capture",
+      "design": "Same MEG recording, recompute Phi at 1ms / 2ms / 4ms / 8ms bins",
+      "metric": "Wilcoxon signed-rank: Phi(1ms) > Phi(4ms), within-subject",
+      "pass": "p < 0.01, paired",
+      "fail_consequence": "Time resolution above 4ms is uninformative for Phi; MEG buys spatial advantage only",
+      "primary": true
+    },
+    {
+      "id": "N14-F3",
+      "claim": "MEG-PCI separates awake-rest vs NREM-N3 at least as well as EEG-PCI Casali 2013 baseline",
+      "design": "Awake-rest baseline + sleep MEG (N3 staging via concurrent EEG), TMS-MEG-PCI variant",
+      "metric": "ROC AUC for awake-vs-N3 classification",
+      "pass": "AUC >= 0.95 (Casali EEG-PCI 2013 reported ~0.94)",
+      "fail_consequence": "MEG-PCI offers no advantage over EEG-PCI; defer to N-19 EEG-PCI",
+      "primary": true
+    },
+    {
+      "id": "N14-F4",
+      "claim": "Source-space MEG identifies tangential sulcal-wall Phi contributions invisible to 16-ch OpenBCI EEG",
+      "design": "Source reconstruction (MNE/dSPM on individual BEM), compare per-source Phi contribution",
+      "metric": "Cohen's d between MEG-only Phi sources and EEG-detectable sources",
+      "pass": "d >= 0.5",
+      "fail_consequence": "MEG and EEG Phi contributions overlap entirely; 16-ch OpenBCI sufficient",
+      "primary": true
+    },
+    {
+      "id": "N14-F5",
+      "claim": "Phi saturates as channel count scales 16 -> 64 -> 306; ceiling reached by <= 64 channels",
+      "design": "Three-way comparison on same subjects: 16-ch OpenBCI EEG, 64-ch MEG-cap EEG, 306-ch MEG; subset montage matching",
+      "metric": "Asymptotic fit of Phi vs channel count",
+      "pass": "Asymptote reached by 64-ch (Phi(64) >= 0.95 * Phi(306))",
+      "fail_consequence": "Phi keeps growing through 306-ch; our 16-ch under-samples; need higher-density EEG even without MEG",
+      "primary": true
+    }
+  ],
+  "cross_substrate_links": ["N-1", "N-19", "N-21", "N-15"],
+  "blockers_to_lock": [
+    "Korean co-PI required before SNUH IRB protocol can be filed",
+    "Funding $7K-26K for N=10 cohort",
+    "PIPA cross-border data transfer DPA",
+    "MEG-compatible TMS coil for MEG-PCI variant"
+  ]
+}

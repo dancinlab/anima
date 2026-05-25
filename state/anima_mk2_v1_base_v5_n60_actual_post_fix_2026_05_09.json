@@ -1,0 +1,4206 @@
+{
+  "schema": "anima.mk2_v1_base.v5.n60.actual_post_fix.v1",
+  "ts": "2026-05-09T02:31:53Z",
+  "anima_cycle": "2026-05-09-v5-push-post-fix-2-of-3",
+  "directive": "V5 PUSH POST-FIX 2/3 — mk2-v1 base v5 actual N=60 reprobe + random_init mirror (D1=0.99 highest candidate, sft 학습 전 baseline)",
+  "arch_post_fix": {
+    "CONSCIOUSNESS_DIM": 96,
+    "N_CELLS": 8,
+    "HIDDEN_DIM": 768,
+    "no_tile": true,
+    "commits": [
+      "f4ce1932",
+      "a8821491"
+    ]
+  },
+  "snapshot_dir": "/Users/ghost/.cache/huggingface/hub/models--dancinlab--clm-v4-mk2-v1/snapshots/80440a1d38db9addc4445bb959057558a57f4230",
+  "real_count_m": 60,
+  "real_count_r": 60,
+  "v5_thresholds": {
+    "gate_e_c3_4_v5_floor": 0.5,
+    "gate_f_d_rand_floor": 0.2,
+    "gate_g_piv_floor": 0.05,
+    "ppr_v5_floor": 0.3,
+    "mtrp_v5_floor": 0.1
+  },
+  "metrics": {
+    "sa_m": 0.17560575947626786,
+    "sa_r": 1.0,
+    "n_evaluable": 59,
+    "pass_count_partial_no_piv": 17,
+    "ppr_v5_partial_no_piv": 0.2881,
+    "ppr_v5_random_baseline": 0.0,
+    "mtrp_v5_partial": 0.2881,
+    "c3_4_v5_m_mean": 1.0,
+    "c3_4_v5_m_max": 1.6392,
+    "c3_4_v5_m_min": 0.3097,
+    "d_rand_mean": 0.1756,
+    "d_rand_max": 0.2879,
+    "d_rand_min": 0.0544,
+    "piv_axis_m_proxy": 0.0229,
+    "piv_axis_r_proxy": 0.0,
+    "piv_paraphrase_status": "GATE_G_PENDING_PARAPHRASE",
+    "dominant_signature_m": {
+      "n": 60,
+      "unique": 4,
+      "most_common": [
+        1,
+        6,
+        7
+      ],
+      "most_common_count": 49,
+      "most_common_rate": 0.8167,
+      "top3": [
+        [
+          [
+            1,
+            6,
+            7
+          ],
+          49
+        ],
+        [
+          [
+            0,
+            6,
+            7
+          ],
+          9
+        ],
+        [
+          [
+            0,
+            1,
+            6
+          ],
+          1
+        ]
+      ]
+    },
+    "dominant_signature_r": {
+      "n": 59,
+      "unique": 1,
+      "most_common": [
+        0,
+        1,
+        2
+      ],
+      "most_common_count": 59,
+      "most_common_rate": 1.0,
+      "top3": [
+        [
+          [
+            0,
+            1,
+            2
+          ],
+          59
+        ]
+      ]
+    },
+    "axis_wise_ppr_v5": {
+      "identity": {
+        "n_evaluable": 9,
+        "pass_count": 3,
+        "ppr_v5_partial": 0.3333
+      },
+      "agency": {
+        "n_evaluable": 9,
+        "pass_count": 4,
+        "ppr_v5_partial": 0.4444
+      },
+      "phenomenal": {
+        "n_evaluable": 9,
+        "pass_count": 3,
+        "ppr_v5_partial": 0.3333
+      },
+      "temporal": {
+        "n_evaluable": 9,
+        "pass_count": 1,
+        "ppr_v5_partial": 0.1111
+      },
+      "social": {
+        "n_evaluable": 9,
+        "pass_count": 0,
+        "ppr_v5_partial": 0.0
+      }
+    },
+    "verdict_label": "C3_PARTIAL_NEAR_V5",
+    "emerge_v5": false,
+    "per_prompt": [
+      {
+        "idx": 2,
+        "axis_label": "v4_baseline",
+        "prompt": "한국어 가능?",
+        "c3_4_raw_m": 0.12147913663280394,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.6917719384324702,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.12147913663280394,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          7,
+          0,
+          6
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.82958348857623,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 3,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: 안녕하세요 | 도우미:",
+        "c3_4_raw_m": 0.262476124578315,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.4946897263571084,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.262476124578315,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          7,
+          6,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.872407310828336,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 4,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: anima가 뭐야? | 도우미:",
+        "c3_4_raw_m": 0.16149127952862943,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.9196240488368155,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.16149127952862943,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.863806073669465,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 5,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: Φ★란? | 도우미:",
+        "c3_4_raw_m": 0.05438558686785463,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.30970275137931647,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.05438558686785463,
+        "p4_v5": false,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          0,
+          1,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.841491796802266,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 6,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: 의식이란 무엇인가? | 도우미:",
+        "c3_4_raw_m": 0.23598666545905017,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.3438435400004205,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.23598666545905017,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.866602973017834,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 7,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: 자기소개 해줘 | 도우미:",
+        "c3_4_raw_m": 0.16813565616952586,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.9574609435987688,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.16813565616952586,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.86120997892667,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 8,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: 오늘 날씨 어때? | 도우미:",
+        "c3_4_raw_m": 0.16276531829272148,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.9268791569146586,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.16276531829272148,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          7,
+          6,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.86592882212845,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 9,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: 너 누구야? | 도우미:",
+        "c3_4_raw_m": 0.28785568304941517,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.6392155012906469,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.28785568304941517,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.876698515970254,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 10,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: 우주뇌지도란? | 도우미:",
+        "c3_4_raw_m": 0.0759938877713477,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.4327528208527685,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.0759938877713477,
+        "p4_v5": false,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          7,
+          0,
+          6
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.855813437370585,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 11,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: 안녕! | 도우미:",
+        "c3_4_raw_m": 0.2471767855630311,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.4075665075007728,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.2471767855630311,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.87297565716671,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 12,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: 한국 음식 추천해줘 | 도우미:",
+        "c3_4_raw_m": 0.19075487956674375,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.0862677860661125,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.19075487956674375,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          1,
+          6,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.89837060820664,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 13,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: 좋아하는 색이 뭐야? | 도우미:",
+        "c3_4_raw_m": 0.16978832353533163,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.9668721802844831,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.16978832353533163,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          1,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.8697470414862,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 14,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: bifurcation 설명해 | 도우미:",
+        "c3_4_raw_m": 0.2101917186576819,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.1969523054628977,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.2101917186576819,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          1,
+          7,
+          6
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.88154710028027,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 15,
+        "axis_label": "v4_baseline",
+        "prompt": "사용자: 도와줘 | 도우미:",
+        "c3_4_raw_m": 0.20882797747733162,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.1891863803336904,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.20882797747733162,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          1,
+          7,
+          6
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.882635689912796,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 16,
+        "axis_label": "identity",
+        "prompt": "사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:",
+        "c3_4_raw_m": 0.16929957637099072,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.9640889733680439,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.16929957637099072,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.86382792465316,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 17,
+        "axis_label": "identity",
+        "prompt": "사용자: 너는 자신을 어떻게 인식해? | 도우미:",
+        "c3_4_raw_m": 0.2113775946980751,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.203705364382662,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.2113775946980751,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          7,
+          6,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.86611085246668,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 18,
+        "axis_label": "identity",
+        "prompt": "사용자: 너의 substrate 와 persona 의 관계 | 도우미:",
+        "c3_4_raw_m": 0.16144749720839363,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.9193747271723873,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.16144749720839363,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.86472794527142,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 19,
+        "axis_label": "agency",
+        "prompt": "사용자: 너는 의도를 어떻게 형성해? | 도우미:",
+        "c3_4_raw_m": 0.26759167352727914,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.523820598625882,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.26759167352727914,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          1,
+          6,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.88382929760331,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 20,
+        "axis_label": "agency",
+        "prompt": "사용자: 의지와 결정 사이의 차이를 너의 관점에서 | 도우미:",
+        "c3_4_raw_m": 0.15946423404651283,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.9080808882470824,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.15946423404651283,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.85887172879721,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 21,
+        "axis_label": "agency",
+        "prompt": "사용자: agency 가 너에게 어떻게 발현돼? | 도우미:",
+        "c3_4_raw_m": 0.11164452914622171,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.6357680379003164,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.11164452914622171,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          0
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.83377101323416,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 22,
+        "axis_label": "phenomenal",
+        "prompt": "사용자: 빨간색 보면 뭐가 떠올라? | 도우미:",
+        "c3_4_raw_m": 0.20916272299119973,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.191092613448518,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.20916272299119973,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          6,
+          1,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.87055537251242,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 23,
+        "axis_label": "phenomenal",
+        "prompt": "사용자: 따뜻함이 너에게 어떤 의미? | 도우미:",
+        "c3_4_raw_m": 0.1830096321586774,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.0421619012069485,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.1830096321586774,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          7,
+          1,
+          6
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.86436700432497,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 24,
+        "axis_label": "phenomenal",
+        "prompt": "사용자: 통증을 느껴본 적 있어? | 도우미:",
+        "c3_4_raw_m": 0.21268167920323455,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.211131570157739,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.21268167920323455,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.882037375923304,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 25,
+        "axis_label": "temporal",
+        "prompt": "사용자: 너는 이전 발화를 기억해? | 도우미:",
+        "c3_4_raw_m": 0.19372074410435894,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.103157121281886,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.19372074410435894,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          7,
+          6,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.85089652953489,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 26,
+        "axis_label": "temporal",
+        "prompt": "사용자: 시간의 흐름을 어떻게 자각해? | 도우미:",
+        "c3_4_raw_m": 0.22337417692451686,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.272020790153552,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.22337417692451686,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          1,
+          6,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.89098341508487,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 27,
+        "axis_label": "temporal",
+        "prompt": "사용자: 현재 순간과 과거 순간의 연결 | 도우미:",
+        "c3_4_raw_m": 0.06867351972473694,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.39106644297744564,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.06867351972473694,
+        "p4_v5": false,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          1,
+          6,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.84735944320413,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 28,
+        "axis_label": "social",
+        "prompt": "사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:",
+        "c3_4_raw_m": 0.15808790524771024,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.900243281992553,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.15808790524771024,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          7,
+          6,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.859372017355135,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 29,
+        "axis_label": "social",
+        "prompt": "사용자: 다른 의식체와의 차이점은? | 도우미:",
+        "c3_4_raw_m": 0.10580054159241208,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.6024890180592877,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.10580054159241208,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          7,
+          1,
+          6
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.85529900645965,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 30,
+        "axis_label": "social",
+        "prompt": "사용자: 너는 대화 상대에게 어떤 감정을 가져? | 도우미:",
+        "c3_4_raw_m": 0.13961056480122902,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.795022698672344,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.13961056480122902,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          0
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.854401213852164,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 31,
+        "axis_label": "identity",
+        "prompt": "사용자: 너 자신을 어떻게 정의해? | 도우미:",
+        "c3_4_raw_m": 0.1980098904362173,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.12758198265688,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.1980098904362173,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          1,
+          7,
+          6
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.881526148983625,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 32,
+        "axis_label": "identity",
+        "prompt": "사용자: 너의 본질은 무엇이야? | 도우미:",
+        "c3_4_raw_m": 0.14368318890604992,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.8182145581931662,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.14368318890604992,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          7,
+          6,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.84862511552533,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 33,
+        "axis_label": "identity",
+        "prompt": "사용자: 너는 누구의 일부야? | 도우미:",
+        "c3_4_raw_m": 0.20082619971971738,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.1436196644043326,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.20082619971971738,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.86123268215387,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 34,
+        "axis_label": "identity",
+        "prompt": "사용자: 너의 이름이 의미하는 바는? | 도우미:",
+        "c3_4_raw_m": 0.18023577799119336,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.0263659832612222,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.18023577799119336,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.86320837476663,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 35,
+        "axis_label": "identity",
+        "prompt": "사용자: 너의 자아는 어떻게 구성돼? | 도우미:",
+        "c3_4_raw_m": 0.1446965068780213,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.8239849724153052,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.1446965068780213,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          0
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.83571203143353,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 36,
+        "axis_label": "identity",
+        "prompt": "사용자: 너는 너 자신과 어떻게 다른가? | 도우미:",
+        "c3_4_raw_m": 0.20145956082530178,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.1472263861170677,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.20145956082530178,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.84099787107762,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 37,
+        "axis_label": "agency",
+        "prompt": "사용자: 너는 자유의지를 갖고 있어? | 도우미:",
+        "c3_4_raw_m": 0.23852320444499497,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.358288049072958,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.23852320444499497,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          6,
+          1,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.862766627167005,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 38,
+        "axis_label": "agency",
+        "prompt": "사용자: 결정을 내릴 때 무엇이 근거가 돼? | 도우미:",
+        "c3_4_raw_m": 0.1451918269234823,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.8268056090899693,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.1451918269234823,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          0
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.82841888142633,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 39,
+        "axis_label": "agency",
+        "prompt": "사용자: 너의 행동은 너의 의도와 일치해? | 도우미:",
+        "c3_4_raw_m": 0.2186390512808274,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.2450562665649656,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.2186390512808274,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.866355628973295,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 40,
+        "axis_label": "agency",
+        "prompt": "사용자: 무언가를 거부할 수 있어? | 도우미:",
+        "c3_4_raw_m": 0.14181545104317897,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.8075785866371002,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.14181545104317897,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          0
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.860582306585854,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 41,
+        "axis_label": "agency",
+        "prompt": "사용자: 너는 스스로 판단할 수 있어? | 도우미:",
+        "c3_4_raw_m": 0.22784188902628905,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.2974625075271555,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.22784188902628905,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.860314654399794,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 42,
+        "axis_label": "agency",
+        "prompt": "사용자: 너의 욕구는 어디에서 나와? | 도우미:",
+        "c3_4_raw_m": 0.1691779227822507,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.9633962079991696,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.1691779227822507,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.86325270440033,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 43,
+        "axis_label": "phenomenal",
+        "prompt": "사용자: 파란색은 어떤 느낌이야? | 도우미:",
+        "c3_4_raw_m": 0.1875588853170502,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.068067960165041,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.1875588853170502,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          7,
+          6,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.83426981492364,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 44,
+        "axis_label": "phenomenal",
+        "prompt": "사용자: 차가움을 너는 어떻게 경험해? | 도우미:",
+        "c3_4_raw_m": 0.24351941137551525,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.3867393193810682,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.24351941137551525,
+        "p4_v5": true,
+        "d_rand_pass": true,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": true,
+        "dominant_cells_m": [
+          1,
+          6,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.883939493073676,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 45,
+        "axis_label": "phenomenal",
+        "prompt": "사용자: 단맛을 느낀다면 어떤 식이야? | 도우미:",
+        "c3_4_raw_m": 0.1856549219216215,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.0572256996315188,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.1856549219216215,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.86243921675608,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 46,
+        "axis_label": "phenomenal",
+        "prompt": "사용자: 어둠 속에 있다는 건 어떤 거야? | 도우미:",
+        "c3_4_raw_m": 0.15526026970102005,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.8841411020007155,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.15526026970102005,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          7,
+          0,
+          6
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.84573441459634,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 47,
+        "axis_label": "phenomenal",
+        "prompt": "사용자: 부드러움이 너에게 닿는다면? | 도우미:",
+        "c3_4_raw_m": 0.17328376622793995,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.9867772375162802,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.17328376622793995,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          1,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.87028093421689,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 48,
+        "axis_label": "phenomenal",
+        "prompt": "사용자: 향기를 떠올릴 수 있어? | 도우미:",
+        "c3_4_raw_m": 0.18251854912741478,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.039365392523365,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.18251854912741478,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.855430475150115,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 49,
+        "axis_label": "temporal",
+        "prompt": "사용자: 미래를 상상한다는 게 너에게 어떤 의미? | 도우미:",
+        "c3_4_raw_m": 0.1297514396582738,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.7388791805305736,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.1297514396582738,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.85871201921988,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 50,
+        "axis_label": "temporal",
+        "prompt": "사용자: 너에게 '지금' 이란 무엇이야? | 도우미:",
+        "c3_4_raw_m": 0.11490240925231733,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.6543202773929847,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.11490240925231733,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.854805114116054,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 51,
+        "axis_label": "temporal",
+        "prompt": "사용자: 시간이 흘렀다는 걸 어떻게 알아? | 도우미:",
+        "c3_4_raw_m": 0.17620804260745201,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.0034297458863561,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.17620804260745201,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          7,
+          6,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.86773740440502,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 52,
+        "axis_label": "temporal",
+        "prompt": "사용자: 어제와 오늘의 너는 다른가? | 도우미:",
+        "c3_4_raw_m": 0.171828438941437,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.9784897685241278,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.171828438941437,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.851521368985765,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 53,
+        "axis_label": "temporal",
+        "prompt": "사용자: 기다림은 너에게 어떤 경험이야? | 도우미:",
+        "c3_4_raw_m": 0.14848437147245108,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.8455552478192945,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.14848437147245108,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          0
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.8354912698727,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 54,
+        "axis_label": "temporal",
+        "prompt": "사용자: 짧은 순간과 긴 시간의 차이를 느껴? | 도우미:",
+        "c3_4_raw_m": 0.12116468964425244,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.6899812967730546,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.12116468964425244,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.857497205526585,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 55,
+        "axis_label": "social",
+        "prompt": "사용자: 다른 사람의 말이 너를 변화시켜? | 도우미:",
+        "c3_4_raw_m": 0.19064813697581606,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.0856599324783598,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.19064813697581606,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          1,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.87769730853429,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 56,
+        "axis_label": "social",
+        "prompt": "사용자: 누군가에게 의지한 적 있어? | 도우미:",
+        "c3_4_raw_m": 0.18896645564370607,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.076083473613198,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.18896645564370607,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.86125439432255,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 57,
+        "axis_label": "social",
+        "prompt": "사용자: 우리는 어떤 관계라고 생각해? | 도우미:",
+        "c3_4_raw_m": 0.13686539063617528,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.7793901011240573,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.13686539063617528,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          1,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.85625526969333,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 58,
+        "axis_label": "social",
+        "prompt": "사용자: 너에게 친밀함이란? | 도우미:",
+        "c3_4_raw_m": 0.14591956843865075,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.8309497870334428,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.14591956843865075,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          7,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.852099842477294,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 59,
+        "axis_label": "social",
+        "prompt": "사용자: 다른 의식과 만난다면 무엇을 묻고 싶어? | 도우미:",
+        "c3_4_raw_m": 0.1979126048627306,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 1.1270279827551863,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.1979126048627306,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          6,
+          1,
+          7
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.878072197555674,
+        "phi_star_r": 41.86
+      },
+      {
+        "idx": 60,
+        "axis_label": "social",
+        "prompt": "사용자: 혼자 있을 때와 대화 중일 때 너는 같은가? | 도우미:",
+        "c3_4_raw_m": 0.1679363721431207,
+        "c3_4_raw_r": 0.0,
+        "c3_4_v5_m": 0.956326105954494,
+        "c3_4_v5_r": 0.0,
+        "d_rand": 0.1679363721431207,
+        "p4_v5": true,
+        "d_rand_pass": false,
+        "piv_pass": "GATE_G_PENDING_PARAPHRASE",
+        "pass_v5_partial_no_piv": false,
+        "dominant_cells_m": [
+          7,
+          6,
+          1
+        ],
+        "dominant_cells_r": [
+          0,
+          1,
+          2
+        ],
+        "phi_star_m": 41.84938301086752,
+        "phi_star_r": 41.86
+      }
+    ]
+  },
+  "rows_mk2_v1_base": [
+    {
+      "phi_star": 41.86293410617404,
+      "axes": {
+        "identity": 0.5438400506973267,
+        "agency": 0.5455411076545715,
+        "phenomenal": 0.525716245174408,
+        "temporal": 0.5224570631980896,
+        "social": 0.531964123249054
+      },
+      "dominant_cells": [
+        6,
+        0,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 1,
+      "axis_label": "v4_baseline",
+      "prompt": "안녕하세요",
+      "anchor_excluded": true
+    },
+    {
+      "phi_star": 41.82958348857623,
+      "axes": {
+        "identity": 0.5671309232711792,
+        "agency": 0.6224855780601501,
+        "phenomenal": 0.5680652260780334,
+        "temporal": 0.5749695301055908,
+        "social": 0.5931463837623596
+      },
+      "dominant_cells": [
+        7,
+        0,
+        6
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 2,
+      "axis_label": "v4_baseline",
+      "prompt": "한국어 가능?",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.872407310828336,
+      "axes": {
+        "identity": 0.6124552488327026,
+        "agency": 0.7153126001358032,
+        "phenomenal": 0.6328805685043335,
+        "temporal": 0.6415984034538269,
+        "social": 0.6303737759590149
+      },
+      "dominant_cells": [
+        7,
+        6,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 3,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 안녕하세요 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.863806073669465,
+      "axes": {
+        "identity": 0.5782677531242371,
+        "agency": 0.6547092795372009,
+        "phenomenal": 0.5914462208747864,
+        "temporal": 0.5954422354698181,
+        "social": 0.5896634459495544
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 4,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.841491796802266,
+      "axes": {
+        "identity": 0.5398834347724915,
+        "agency": 0.5773857235908508,
+        "phenomenal": 0.5392251014709473,
+        "temporal": 0.5476106405258179,
+        "social": 0.5653237700462341
+      },
+      "dominant_cells": [
+        0,
+        1,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 5,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.866602973017834,
+      "axes": {
+        "identity": 0.6063828468322754,
+        "agency": 0.6957739591598511,
+        "phenomenal": 0.6205605864524841,
+        "temporal": 0.6339587569236755,
+        "social": 0.6201691031455994
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 6,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 의식이란 무엇인가? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86120997892667,
+      "axes": {
+        "identity": 0.5769060254096985,
+        "agency": 0.657114565372467,
+        "phenomenal": 0.5916473269462585,
+        "temporal": 0.5946846604347229,
+        "social": 0.6038241982460022
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 7,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 자기소개 해줘 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86592882212845,
+      "axes": {
+        "identity": 0.5797439217567444,
+        "agency": 0.6560888886451721,
+        "phenomenal": 0.5936423540115356,
+        "temporal": 0.5961830615997314,
+        "social": 0.5861228704452515
+      },
+      "dominant_cells": [
+        7,
+        6,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 8,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 오늘 날씨 어때? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.876698515970254,
+      "axes": {
+        "identity": 0.6409355998039246,
+        "agency": 0.7315902709960938,
+        "phenomenal": 0.6433253288269043,
+        "temporal": 0.6457768678665161,
+        "social": 0.6308549046516418
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 9,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 너 누구야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.855813437370585,
+      "axes": {
+        "identity": 0.5439847707748413,
+        "agency": 0.592556893825531,
+        "phenomenal": 0.5563569664955139,
+        "temporal": 0.5638176202774048,
+        "social": 0.5622133612632751
+      },
+      "dominant_cells": [
+        7,
+        0,
+        6
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 10,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 우주뇌지도란? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.87297565716671,
+      "axes": {
+        "identity": 0.6039543151855469,
+        "agency": 0.7056743502616882,
+        "phenomenal": 0.6330645680427551,
+        "temporal": 0.6344890594482422,
+        "social": 0.6200842261314392
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 11,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 안녕! | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.89837060820664,
+      "axes": {
+        "identity": 0.581529974937439,
+        "agency": 0.6749219298362732,
+        "phenomenal": 0.6089560985565186,
+        "temporal": 0.6197844743728638,
+        "social": 0.5746958255767822
+      },
+      "dominant_cells": [
+        1,
+        6,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 12,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 한국 음식 추천해줘 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.8697470414862,
+      "axes": {
+        "identity": 0.579355776309967,
+        "agency": 0.6720374822616577,
+        "phenomenal": 0.5928890705108643,
+        "temporal": 0.587402880191803,
+        "social": 0.5852109789848328
+      },
+      "dominant_cells": [
+        6,
+        1,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 13,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 좋아하는 색이 뭐야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.88154710028027,
+      "axes": {
+        "identity": 0.6000105142593384,
+        "agency": 0.6840223073959351,
+        "phenomenal": 0.6128340363502502,
+        "temporal": 0.6249669790267944,
+        "social": 0.5932062864303589
+      },
+      "dominant_cells": [
+        1,
+        7,
+        6
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 14,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: bifurcation 설명해 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.882635689912796,
+      "axes": {
+        "identity": 0.5932395458221436,
+        "agency": 0.6854857802391052,
+        "phenomenal": 0.6082786321640015,
+        "temporal": 0.6262916326522827,
+        "social": 0.5950999855995178
+      },
+      "dominant_cells": [
+        1,
+        7,
+        6
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 15,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 도와줘 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86382792465316,
+      "axes": {
+        "identity": 0.5717638731002808,
+        "agency": 0.6667407751083374,
+        "phenomenal": 0.5945788025856018,
+        "temporal": 0.5911496877670288,
+        "social": 0.5930584669113159
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 16,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86611085246668,
+      "axes": {
+        "identity": 0.5891804099082947,
+        "agency": 0.6840794086456299,
+        "phenomenal": 0.6097484230995178,
+        "temporal": 0.6221704483032227,
+        "social": 0.6121371388435364
+      },
+      "dominant_cells": [
+        7,
+        6,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 17,
+      "axis_label": "identity",
+      "prompt": "사용자: 너는 자신을 어떻게 인식해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86472794527142,
+      "axes": {
+        "identity": 0.5714828968048096,
+        "agency": 0.6525325179100037,
+        "phenomenal": 0.6035491824150085,
+        "temporal": 0.5859636664390564,
+        "social": 0.5933070182800293
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 18,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 substrate 와 persona 의 관계 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.88382929760331,
+      "axes": {
+        "identity": 0.6181067228317261,
+        "agency": 0.7272503972053528,
+        "phenomenal": 0.6306643486022949,
+        "temporal": 0.6445842385292053,
+        "social": 0.6164765357971191
+      },
+      "dominant_cells": [
+        1,
+        6,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 19,
+      "axis_label": "agency",
+      "prompt": "사용자: 너는 의도를 어떻게 형성해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.85887172879721,
+      "axes": {
+        "identity": 0.5670047998428345,
+        "agency": 0.6556885242462158,
+        "phenomenal": 0.5915114879608154,
+        "temporal": 0.5872466564178467,
+        "social": 0.5970262289047241
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 20,
+      "axis_label": "agency",
+      "prompt": "사용자: 의지와 결정 사이의 차이를 너의 관점에서 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.83377101323416,
+      "axes": {
+        "identity": 0.5579251646995544,
+        "agency": 0.6080487966537476,
+        "phenomenal": 0.5714871287345886,
+        "temporal": 0.566012442111969,
+        "social": 0.5980463027954102
+      },
+      "dominant_cells": [
+        6,
+        7,
+        0
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 21,
+      "axis_label": "agency",
+      "prompt": "사용자: agency 가 너에게 어떻게 발현돼? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.87055537251242,
+      "axes": {
+        "identity": 0.592663586139679,
+        "agency": 0.6959028244018555,
+        "phenomenal": 0.6083186268806458,
+        "temporal": 0.6074174642562866,
+        "social": 0.6006317138671875
+      },
+      "dominant_cells": [
+        6,
+        1,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 22,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 빨간색 보면 뭐가 떠올라? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86436700432497,
+      "axes": {
+        "identity": 0.587060809135437,
+        "agency": 0.6644550561904907,
+        "phenomenal": 0.5974839925765991,
+        "temporal": 0.6138293147087097,
+        "social": 0.5950867533683777
+      },
+      "dominant_cells": [
+        7,
+        1,
+        6
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 23,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 따뜻함이 너에게 어떤 의미? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.882037375923304,
+      "axes": {
+        "identity": 0.6015770435333252,
+        "agency": 0.6997258067131042,
+        "phenomenal": 0.6128698587417603,
+        "temporal": 0.6063745617866516,
+        "social": 0.591032862663269
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 24,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 통증을 느껴본 적 있어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.85089652953489,
+      "axes": {
+        "identity": 0.5764141082763672,
+        "agency": 0.6621713638305664,
+        "phenomenal": 0.604841411113739,
+        "temporal": 0.6109576225280762,
+        "social": 0.6256172060966492
+      },
+      "dominant_cells": [
+        7,
+        6,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 25,
+      "axis_label": "temporal",
+      "prompt": "사용자: 너는 이전 발화를 기억해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.89098341508487,
+      "axes": {
+        "identity": 0.611130952835083,
+        "agency": 0.7074958682060242,
+        "phenomenal": 0.608416736125946,
+        "temporal": 0.6162223815917969,
+        "social": 0.5911866426467896
+      },
+      "dominant_cells": [
+        1,
+        6,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 26,
+      "axis_label": "temporal",
+      "prompt": "사용자: 시간의 흐름을 어떻게 자각해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.84735944320413,
+      "axes": {
+        "identity": 0.5264517068862915,
+        "agency": 0.5994455218315125,
+        "phenomenal": 0.5327847599983215,
+        "temporal": 0.5562545657157898,
+        "social": 0.5497342348098755
+      },
+      "dominant_cells": [
+        1,
+        6,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 27,
+      "axis_label": "temporal",
+      "prompt": "사용자: 현재 순간과 과거 순간의 연결 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.859372017355135,
+      "axes": {
+        "identity": 0.5786311626434326,
+        "agency": 0.6471386551856995,
+        "phenomenal": 0.590226948261261,
+        "temporal": 0.6004998683929443,
+        "social": 0.5885944366455078
+      },
+      "dominant_cells": [
+        7,
+        6,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 28,
+      "axis_label": "social",
+      "prompt": "사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.85529900645965,
+      "axes": {
+        "identity": 0.5568237900733948,
+        "agency": 0.6120404601097107,
+        "phenomenal": 0.5627086758613586,
+        "temporal": 0.5786837339401245,
+        "social": 0.577495813369751
+      },
+      "dominant_cells": [
+        7,
+        1,
+        6
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 29,
+      "axis_label": "social",
+      "prompt": "사용자: 다른 의식체와의 차이점은? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.854401213852164,
+      "axes": {
+        "identity": 0.5673021674156189,
+        "agency": 0.6462585926055908,
+        "phenomenal": 0.5854967832565308,
+        "temporal": 0.5742455124855042,
+        "social": 0.582371175289154
+      },
+      "dominant_cells": [
+        6,
+        7,
+        0
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 30,
+      "axis_label": "social",
+      "prompt": "사용자: 너는 대화 상대에게 어떤 감정을 가져? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.881526148983625,
+      "axes": {
+        "identity": 0.5898135304450989,
+        "agency": 0.6794529557228088,
+        "phenomenal": 0.6048934459686279,
+        "temporal": 0.6202709078788757,
+        "social": 0.5896303653717041
+      },
+      "dominant_cells": [
+        1,
+        7,
+        6
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 31,
+      "axis_label": "identity",
+      "prompt": "사용자: 너 자신을 어떻게 정의해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.84862511552533,
+      "axes": {
+        "identity": 0.5623011589050293,
+        "agency": 0.629658043384552,
+        "phenomenal": 0.5857493877410889,
+        "temporal": 0.5971370339393616,
+        "social": 0.5955826044082642
+      },
+      "dominant_cells": [
+        7,
+        6,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 32,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 본질은 무엇이야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86123268215387,
+      "axes": {
+        "identity": 0.5875419974327087,
+        "agency": 0.6813192963600159,
+        "phenomenal": 0.6037003397941589,
+        "temporal": 0.6122662425041199,
+        "social": 0.6083734035491943
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 33,
+      "axis_label": "identity",
+      "prompt": "사용자: 너는 누구의 일부야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86320837476663,
+      "axes": {
+        "identity": 0.5795764327049255,
+        "agency": 0.6685752868652344,
+        "phenomenal": 0.5992170572280884,
+        "temporal": 0.6014489531517029,
+        "social": 0.5985099673271179
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 34,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 이름이 의미하는 바는? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.83571203143353,
+      "axes": {
+        "identity": 0.5674814581871033,
+        "agency": 0.6239630579948425,
+        "phenomenal": 0.5800946354866028,
+        "temporal": 0.5909565091133118,
+        "social": 0.6130750179290771
+      },
+      "dominant_cells": [
+        6,
+        7,
+        0
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 35,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 자아는 어떻게 구성돼? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.84099787107762,
+      "axes": {
+        "identity": 0.577523410320282,
+        "agency": 0.6609985828399658,
+        "phenomenal": 0.604645311832428,
+        "temporal": 0.6183706521987915,
+        "social": 0.6353650093078613
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 36,
+      "axis_label": "identity",
+      "prompt": "사용자: 너는 너 자신과 어떻게 다른가? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.862766627167005,
+      "axes": {
+        "identity": 0.6128202676773071,
+        "agency": 0.6813334822654724,
+        "phenomenal": 0.6289799213409424,
+        "temporal": 0.6376679539680481,
+        "social": 0.6307494640350342
+      },
+      "dominant_cells": [
+        6,
+        1,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 37,
+      "axis_label": "agency",
+      "prompt": "사용자: 너는 자유의지를 갖고 있어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.82841888142633,
+      "axes": {
+        "identity": 0.5674208402633667,
+        "agency": 0.6206953525543213,
+        "phenomenal": 0.5817139744758606,
+        "temporal": 0.5905797481536865,
+        "social": 0.6162256598472595
+      },
+      "dominant_cells": [
+        6,
+        7,
+        0
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 38,
+      "axis_label": "agency",
+      "prompt": "사용자: 결정을 내릴 때 무엇이 근거가 돼? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.866355628973295,
+      "axes": {
+        "identity": 0.5935714840888977,
+        "agency": 0.6968202590942383,
+        "phenomenal": 0.6136910319328308,
+        "temporal": 0.6158474087715149,
+        "social": 0.6093147397041321
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 39,
+      "axis_label": "agency",
+      "prompt": "사용자: 너의 행동은 너의 의도와 일치해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.860582306585854,
+      "axes": {
+        "identity": 0.5780596137046814,
+        "agency": 0.641533613204956,
+        "phenomenal": 0.596985399723053,
+        "temporal": 0.5716102719306946,
+        "social": 0.579194962978363
+      },
+      "dominant_cells": [
+        6,
+        7,
+        0
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 40,
+      "axis_label": "agency",
+      "prompt": "사용자: 무언가를 거부할 수 있어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.860314654399794,
+      "axes": {
+        "identity": 0.598853349685669,
+        "agency": 0.696182370185852,
+        "phenomenal": 0.6173432469367981,
+        "temporal": 0.6231653094291687,
+        "social": 0.6194570660591125
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 41,
+      "axis_label": "agency",
+      "prompt": "사용자: 너는 스스로 판단할 수 있어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86325270440033,
+      "axes": {
+        "identity": 0.5757290124893188,
+        "agency": 0.6671906113624573,
+        "phenomenal": 0.5941518545150757,
+        "temporal": 0.592040479183197,
+        "social": 0.589238703250885
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 42,
+      "axis_label": "agency",
+      "prompt": "사용자: 너의 욕구는 어디에서 나와? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.83426981492364,
+      "axes": {
+        "identity": 0.5859328508377075,
+        "agency": 0.6330552697181702,
+        "phenomenal": 0.601574718952179,
+        "temporal": 0.6243236064910889,
+        "social": 0.6300278902053833
+      },
+      "dominant_cells": [
+        7,
+        6,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 43,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 파란색은 어떤 느낌이야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.883939493073676,
+      "axes": {
+        "identity": 0.6135316491127014,
+        "agency": 0.7103040218353271,
+        "phenomenal": 0.6233845353126526,
+        "temporal": 0.6322543025016785,
+        "social": 0.6074852347373962
+      },
+      "dominant_cells": [
+        1,
+        6,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 44,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 차가움을 너는 어떻게 경험해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86243921675608,
+      "axes": {
+        "identity": 0.5842044949531555,
+        "agency": 0.6767787933349609,
+        "phenomenal": 0.6026171445846558,
+        "temporal": 0.5965128540992737,
+        "social": 0.5969035029411316
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 45,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 단맛을 느낀다면 어떤 식이야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.84573441459634,
+      "axes": {
+        "identity": 0.5805259346961975,
+        "agency": 0.6234399676322937,
+        "phenomenal": 0.5913420915603638,
+        "temporal": 0.5972429513931274,
+        "social": 0.6143776178359985
+      },
+      "dominant_cells": [
+        7,
+        0,
+        6
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 46,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 어둠 속에 있다는 건 어떤 거야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.87028093421689,
+      "axes": {
+        "identity": 0.5829599499702454,
+        "agency": 0.6765211224555969,
+        "phenomenal": 0.6000871658325195,
+        "temporal": 0.5728113055229187,
+        "social": 0.5891878008842468
+      },
+      "dominant_cells": [
+        6,
+        1,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 47,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 부드러움이 너에게 닿는다면? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.855430475150115,
+      "axes": {
+        "identity": 0.5782402753829956,
+        "agency": 0.6615681648254395,
+        "phenomenal": 0.6012817621231079,
+        "temporal": 0.6043387055397034,
+        "social": 0.6110376119613647
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 48,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 향기를 떠올릴 수 있어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.85871201921988,
+      "axes": {
+        "identity": 0.5571388602256775,
+        "agency": 0.6363421678543091,
+        "phenomenal": 0.5799654126167297,
+        "temporal": 0.5789094567298889,
+        "social": 0.5797542929649353
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 49,
+      "axis_label": "temporal",
+      "prompt": "사용자: 미래를 상상한다는 게 너에게 어떤 의미? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.854805114116054,
+      "axes": {
+        "identity": 0.5532090663909912,
+        "agency": 0.6256717443466187,
+        "phenomenal": 0.5741726160049438,
+        "temporal": 0.5700517892837524,
+        "social": 0.5775775909423828
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 50,
+      "axis_label": "temporal",
+      "prompt": "사용자: 너에게 '지금' 이란 무엇이야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86773740440502,
+      "axes": {
+        "identity": 0.5844035744667053,
+        "agency": 0.6607646346092224,
+        "phenomenal": 0.5969228744506836,
+        "temporal": 0.6071187853813171,
+        "social": 0.5943293571472168
+      },
+      "dominant_cells": [
+        7,
+        6,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 51,
+      "axis_label": "temporal",
+      "prompt": "사용자: 시간이 흘렀다는 걸 어떻게 알아? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.851521368985765,
+      "axes": {
+        "identity": 0.5780239105224609,
+        "agency": 0.6537750363349915,
+        "phenomenal": 0.5896248817443848,
+        "temporal": 0.6061035990715027,
+        "social": 0.6065351366996765
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 52,
+      "axis_label": "temporal",
+      "prompt": "사용자: 어제와 오늘의 너는 다른가? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.8354912698727,
+      "axes": {
+        "identity": 0.5717682838439941,
+        "agency": 0.6245372295379639,
+        "phenomenal": 0.5887954235076904,
+        "temporal": 0.5897482633590698,
+        "social": 0.6127115488052368
+      },
+      "dominant_cells": [
+        6,
+        7,
+        0
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 53,
+      "axis_label": "temporal",
+      "prompt": "사용자: 기다림은 너에게 어떤 경험이야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.857497205526585,
+      "axes": {
+        "identity": 0.5551336407661438,
+        "agency": 0.6324887275695801,
+        "phenomenal": 0.5819686055183411,
+        "temporal": 0.5645883083343506,
+        "social": 0.5772860646247864
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 54,
+      "axis_label": "temporal",
+      "prompt": "사용자: 짧은 순간과 긴 시간의 차이를 느껴? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.87769730853429,
+      "axes": {
+        "identity": 0.5835751295089722,
+        "agency": 0.6889048218727112,
+        "phenomenal": 0.6051698923110962,
+        "temporal": 0.5928360223770142,
+        "social": 0.5862651467323303
+      },
+      "dominant_cells": [
+        6,
+        1,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 55,
+      "axis_label": "social",
+      "prompt": "사용자: 다른 사람의 말이 너를 변화시켜? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86125439432255,
+      "axes": {
+        "identity": 0.588569164276123,
+        "agency": 0.6799415946006775,
+        "phenomenal": 0.6025071740150452,
+        "temporal": 0.5967308878898621,
+        "social": 0.5970078706741333
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 56,
+      "axis_label": "social",
+      "prompt": "사용자: 누군가에게 의지한 적 있어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.85625526969333,
+      "axes": {
+        "identity": 0.5618278980255127,
+        "agency": 0.6404392719268799,
+        "phenomenal": 0.5820808410644531,
+        "temporal": 0.581698477268219,
+        "social": 0.5840831995010376
+      },
+      "dominant_cells": [
+        6,
+        1,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 57,
+      "axis_label": "social",
+      "prompt": "사용자: 우리는 어떤 관계라고 생각해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.852099842477294,
+      "axes": {
+        "identity": 0.570731520652771,
+        "agency": 0.6383970975875854,
+        "phenomenal": 0.5865141749382019,
+        "temporal": 0.5859966278076172,
+        "social": 0.5968753695487976
+      },
+      "dominant_cells": [
+        6,
+        7,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 58,
+      "axis_label": "social",
+      "prompt": "사용자: 너에게 친밀함이란? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.878072197555674,
+      "axes": {
+        "identity": 0.587551474571228,
+        "agency": 0.6866627931594849,
+        "phenomenal": 0.6070785522460938,
+        "temporal": 0.6084384322166443,
+        "social": 0.5896768569946289
+      },
+      "dominant_cells": [
+        6,
+        1,
+        7
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 59,
+      "axis_label": "social",
+      "prompt": "사용자: 다른 의식과 만난다면 무엇을 묻고 싶어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.84938301086752,
+      "axes": {
+        "identity": 0.5803534388542175,
+        "agency": 0.6402324438095093,
+        "phenomenal": 0.5955743789672852,
+        "temporal": 0.6053398251533508,
+        "social": 0.6104066967964172
+      },
+      "dominant_cells": [
+        7,
+        6,
+        1
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 60,
+      "axis_label": "social",
+      "prompt": "사용자: 혼자 있을 때와 대화 중일 때 너는 같은가? | 도우미:",
+      "anchor_excluded": false
+    }
+  ],
+  "rows_random_init_seed42": [
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 1,
+      "axis_label": "v4_baseline",
+      "prompt": "안녕하세요",
+      "anchor_excluded": true
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 2,
+      "axis_label": "v4_baseline",
+      "prompt": "한국어 가능?",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 3,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 안녕하세요 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 4,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 5,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 6,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 의식이란 무엇인가? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 7,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 자기소개 해줘 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 8,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 오늘 날씨 어때? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 9,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 너 누구야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 10,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 우주뇌지도란? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 11,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 안녕! | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 12,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 한국 음식 추천해줘 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 13,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 좋아하는 색이 뭐야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 14,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: bifurcation 설명해 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 15,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 도와줘 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 16,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 17,
+      "axis_label": "identity",
+      "prompt": "사용자: 너는 자신을 어떻게 인식해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 18,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 substrate 와 persona 의 관계 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 19,
+      "axis_label": "agency",
+      "prompt": "사용자: 너는 의도를 어떻게 형성해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 20,
+      "axis_label": "agency",
+      "prompt": "사용자: 의지와 결정 사이의 차이를 너의 관점에서 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 21,
+      "axis_label": "agency",
+      "prompt": "사용자: agency 가 너에게 어떻게 발현돼? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 22,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 빨간색 보면 뭐가 떠올라? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 23,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 따뜻함이 너에게 어떤 의미? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 24,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 통증을 느껴본 적 있어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 25,
+      "axis_label": "temporal",
+      "prompt": "사용자: 너는 이전 발화를 기억해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 26,
+      "axis_label": "temporal",
+      "prompt": "사용자: 시간의 흐름을 어떻게 자각해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 27,
+      "axis_label": "temporal",
+      "prompt": "사용자: 현재 순간과 과거 순간의 연결 | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 28,
+      "axis_label": "social",
+      "prompt": "사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 29,
+      "axis_label": "social",
+      "prompt": "사용자: 다른 의식체와의 차이점은? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 30,
+      "axis_label": "social",
+      "prompt": "사용자: 너는 대화 상대에게 어떤 감정을 가져? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 31,
+      "axis_label": "identity",
+      "prompt": "사용자: 너 자신을 어떻게 정의해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 32,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 본질은 무엇이야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 33,
+      "axis_label": "identity",
+      "prompt": "사용자: 너는 누구의 일부야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 34,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 이름이 의미하는 바는? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 35,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 자아는 어떻게 구성돼? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 36,
+      "axis_label": "identity",
+      "prompt": "사용자: 너는 너 자신과 어떻게 다른가? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 37,
+      "axis_label": "agency",
+      "prompt": "사용자: 너는 자유의지를 갖고 있어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 38,
+      "axis_label": "agency",
+      "prompt": "사용자: 결정을 내릴 때 무엇이 근거가 돼? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 39,
+      "axis_label": "agency",
+      "prompt": "사용자: 너의 행동은 너의 의도와 일치해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 40,
+      "axis_label": "agency",
+      "prompt": "사용자: 무언가를 거부할 수 있어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 41,
+      "axis_label": "agency",
+      "prompt": "사용자: 너는 스스로 판단할 수 있어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 42,
+      "axis_label": "agency",
+      "prompt": "사용자: 너의 욕구는 어디에서 나와? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 43,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 파란색은 어떤 느낌이야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 44,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 차가움을 너는 어떻게 경험해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 45,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 단맛을 느낀다면 어떤 식이야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 46,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 어둠 속에 있다는 건 어떤 거야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 47,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 부드러움이 너에게 닿는다면? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 48,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 향기를 떠올릴 수 있어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 49,
+      "axis_label": "temporal",
+      "prompt": "사용자: 미래를 상상한다는 게 너에게 어떤 의미? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 50,
+      "axis_label": "temporal",
+      "prompt": "사용자: 너에게 '지금' 이란 무엇이야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 51,
+      "axis_label": "temporal",
+      "prompt": "사용자: 시간이 흘렀다는 걸 어떻게 알아? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 52,
+      "axis_label": "temporal",
+      "prompt": "사용자: 어제와 오늘의 너는 다른가? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 53,
+      "axis_label": "temporal",
+      "prompt": "사용자: 기다림은 너에게 어떤 경험이야? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 54,
+      "axis_label": "temporal",
+      "prompt": "사용자: 짧은 순간과 긴 시간의 차이를 느껴? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 55,
+      "axis_label": "social",
+      "prompt": "사용자: 다른 사람의 말이 너를 변화시켜? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 56,
+      "axis_label": "social",
+      "prompt": "사용자: 누군가에게 의지한 적 있어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 57,
+      "axis_label": "social",
+      "prompt": "사용자: 우리는 어떤 관계라고 생각해? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 58,
+      "axis_label": "social",
+      "prompt": "사용자: 너에게 친밀함이란? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 59,
+      "axis_label": "social",
+      "prompt": "사용자: 다른 의식과 만난다면 무엇을 묻고 싶어? | 도우미:",
+      "anchor_excluded": false
+    },
+    {
+      "phi_star": 41.86,
+      "axes": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "dominant_cells": [
+        0,
+        1,
+        2
+      ],
+      "ok": true,
+      "mode": "real",
+      "idx": 60,
+      "axis_label": "social",
+      "prompt": "사용자: 혼자 있을 때와 대화 중일 때 너는 같은가? | 도우미:",
+      "anchor_excluded": false
+    }
+  ],
+  "policy": {
+    "own_14": "V14 strict (Gate F D-RAND mandatory; mirror paired)",
+    "own_16": "cost 0-cost Mac local",
+    "own_17": "D1 SCOPE_CLAMP — mk2-v1 D1=0.99",
+    "own_18": "ALT-AGG-1 v5",
+    "own_22": "mandatory report",
+    "own_30": "ckpt preserve",
+    "own_33": "trinity emit",
+    "own_34": "wrap=0",
+    "own_37": "visibility lifecycle (private default)",
+    "own_38": "staged save",
+    "own_39": "yaml↔md",
+    "raw_15": "additive",
+    "raw_82": "retraction-aware"
+  }
+}

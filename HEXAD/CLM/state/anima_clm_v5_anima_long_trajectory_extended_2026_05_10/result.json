@@ -1,0 +1,2600 @@
+{
+  "ts": "2026-05-09T22:09:12.271781+00:00",
+  "n_turns": 10000,
+  "seed": 42,
+  "snapshot_every": 100,
+  "alpha_window_every": 500,
+  "elapsed_sec": 139.50285387039185,
+  "n_unique_prompts": 170,
+  "prompt_categories": [
+    "ko_daily",
+    "ko_philosophy",
+    "en_math",
+    "en_code",
+    "en_music",
+    "anomaly"
+  ],
+  "substrate": {
+    "n_cells_init": 8,
+    "c_dim": 12,
+    "d_model": 32,
+    "param_count": 864
+  },
+  "mitosis_config": {
+    "max_cells": 64,
+    "split_patience": 3,
+    "split_noise": 0.1,
+    "merge_threshold": 0.005,
+    "merge_patience": 30,
+    "min_cells": 2,
+    "lorenz_scale": 0.05
+  },
+  "final": {
+    "n_cells": 64,
+    "phi": 3.4648025723118874,
+    "n_splits": 56,
+    "n_merges": 0,
+    "alpha_exponent_full": 1.2768653483870267
+  },
+  "alpha_milestones": {
+    "1000": {
+      "turn": 1000,
+      "alpha": 0.1969153015023391
+    },
+    "3000": {
+      "turn": 3000,
+      "alpha": 0.6865516987827429
+    },
+    "5000": {
+      "turn": 5000,
+      "alpha": 0.9640918622200344
+    },
+    "7000": {
+      "turn": 7000,
+      "alpha": 1.1058628190863062
+    },
+    "10000": {
+      "turn": 9500,
+      "alpha": 1.2515981684190947
+    }
+  },
+  "alpha_trajectory": [
+    {
+      "turn": 500,
+      "alpha": -0.11173730596780886,
+      "n_points": 6
+    },
+    {
+      "turn": 1000,
+      "alpha": 0.1969153015023391,
+      "n_points": 11
+    },
+    {
+      "turn": 1500,
+      "alpha": 0.2999624206131851,
+      "n_points": 16
+    },
+    {
+      "turn": 2000,
+      "alpha": 0.4188004629249949,
+      "n_points": 21
+    },
+    {
+      "turn": 2500,
+      "alpha": 0.5722798677725531,
+      "n_points": 26
+    },
+    {
+      "turn": 3000,
+      "alpha": 0.6865516987827429,
+      "n_points": 31
+    },
+    {
+      "turn": 3500,
+      "alpha": 0.7898839165346739,
+      "n_points": 36
+    },
+    {
+      "turn": 4000,
+      "alpha": 0.8613801413951908,
+      "n_points": 41
+    },
+    {
+      "turn": 4500,
+      "alpha": 0.9080269640130979,
+      "n_points": 46
+    },
+    {
+      "turn": 5000,
+      "alpha": 0.9640918622200344,
+      "n_points": 51
+    },
+    {
+      "turn": 5500,
+      "alpha": 1.0134726736068778,
+      "n_points": 56
+    },
+    {
+      "turn": 6000,
+      "alpha": 1.0445088475611388,
+      "n_points": 61
+    },
+    {
+      "turn": 6500,
+      "alpha": 1.0859339771849381,
+      "n_points": 66
+    },
+    {
+      "turn": 7000,
+      "alpha": 1.1058628190863062,
+      "n_points": 71
+    },
+    {
+      "turn": 7500,
+      "alpha": 1.132994284798354,
+      "n_points": 76
+    },
+    {
+      "turn": 8000,
+      "alpha": 1.1652019992968412,
+      "n_points": 81
+    },
+    {
+      "turn": 8500,
+      "alpha": 1.193647047948391,
+      "n_points": 86
+    },
+    {
+      "turn": 9000,
+      "alpha": 1.2215057721712814,
+      "n_points": 91
+    },
+    {
+      "turn": 9500,
+      "alpha": 1.2515981684190947,
+      "n_points": 96
+    }
+  ],
+  "phi_saturation": {
+    "max_cap_onset_turn": 733,
+    "phi_at_onset": 2.758896917715602,
+    "phi_min_post_cap": 2.217995556156511,
+    "phi_max_post_cap": 3.793132552681247,
+    "phi_mean_post_cap": 3.0167575956609607,
+    "phi_last_post_cap": 3.4648025723118874,
+    "phi_slope_per_turn": 9.346491614462879e-05,
+    "phi_growth_post_cap": 0.7059056545962852,
+    "n_post_cap_snaps": 93
+  },
+  "v14_mirror": {
+    "n_turns": 3000,
+    "final_n_cells": 64,
+    "final_phi": 3.1144061249073993,
+    "splits": 56,
+    "merges": 0,
+    "alpha_exponent": 0.6442677890741128,
+    "max_cap_onset_turn": 240,
+    "compare": {
+      "1000": {
+        "trained": {
+          "turn": 900,
+          "n_cells": 64,
+          "phi": 2.370430014754395
+        },
+        "random": {
+          "turn": 900,
+          "n_cells": 64,
+          "phi": 2.9886259938615267
+        },
+        "v14_violated": true
+      },
+      "3000": {
+        "trained": {
+          "turn": 2900,
+          "n_cells": 64,
+          "phi": 2.8171357039600764
+        },
+        "random": {
+          "turn": 2900,
+          "n_cells": 64,
+          "phi": 3.106055964977546
+        },
+        "v14_violated": true
+      }
+    },
+    "v14_violated_overall": true
+  },
+  "snapshots": [
+    {
+      "turn": 0,
+      "n_cells": 8,
+      "phi": 2.087951747079825,
+      "n_splits_cum": 0,
+      "n_merges_cum": 0,
+      "elapsed_sec": 0.0014867782592773438
+    },
+    {
+      "turn": 100,
+      "n_cells": 41,
+      "phi": 2.148014884061231,
+      "n_splits_cum": 33,
+      "n_merges_cum": 0,
+      "elapsed_sec": 0.31709790229797363
+    },
+    {
+      "turn": 200,
+      "n_cells": 56,
+      "phi": 2.018963726266545,
+      "n_splits_cum": 48,
+      "n_merges_cum": 0,
+      "elapsed_sec": 1.0125548839569092
+    },
+    {
+      "turn": 300,
+      "n_cells": 59,
+      "phi": 2.018077965511175,
+      "n_splits_cum": 51,
+      "n_merges_cum": 0,
+      "elapsed_sec": 2.0997631549835205
+    },
+    {
+      "turn": 400,
+      "n_cells": 59,
+      "phi": 2.221607856307282,
+      "n_splits_cum": 51,
+      "n_merges_cum": 0,
+      "elapsed_sec": 3.10640025138855
+    },
+    {
+      "turn": 500,
+      "n_cells": 60,
+      "phi": 1.9863275070400714,
+      "n_splits_cum": 52,
+      "n_merges_cum": 0,
+      "elapsed_sec": 4.155394792556763
+    },
+    {
+      "turn": 600,
+      "n_cells": 60,
+      "phi": 2.4892634285382473,
+      "n_splits_cum": 52,
+      "n_merges_cum": 0,
+      "elapsed_sec": 5.3071608543396
+    },
+    {
+      "turn": 700,
+      "n_cells": 60,
+      "phi": 2.076376464526634,
+      "n_splits_cum": 52,
+      "n_merges_cum": 0,
+      "elapsed_sec": 6.531110048294067
+    },
+    {
+      "turn": 800,
+      "n_cells": 64,
+      "phi": 2.2225520662517257,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 7.812723398208618
+    },
+    {
+      "turn": 900,
+      "n_cells": 64,
+      "phi": 2.370430014754395,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 8.994889497756958
+    },
+    {
+      "turn": 1000,
+      "n_cells": 64,
+      "phi": 2.5177028503563066,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 10.140435457229614
+    },
+    {
+      "turn": 1100,
+      "n_cells": 64,
+      "phi": 2.3702809758450387,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 11.362539052963257
+    },
+    {
+      "turn": 1200,
+      "n_cells": 64,
+      "phi": 2.217995556156511,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 12.620941638946533
+    },
+    {
+      "turn": 1300,
+      "n_cells": 64,
+      "phi": 2.5770039146304895,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 13.955848693847656
+    },
+    {
+      "turn": 1400,
+      "n_cells": 64,
+      "phi": 2.472869259243067,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 15.098124742507935
+    },
+    {
+      "turn": 1500,
+      "n_cells": 64,
+      "phi": 2.2809735770291257,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 16.24179196357727
+    },
+    {
+      "turn": 1600,
+      "n_cells": 64,
+      "phi": 2.433383403152842,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 17.476221323013306
+    },
+    {
+      "turn": 1700,
+      "n_cells": 64,
+      "phi": 2.6031842536644323,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 18.725017309188843
+    },
+    {
+      "turn": 1800,
+      "n_cells": 64,
+      "phi": 2.636197242931799,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 19.955867528915405
+    },
+    {
+      "turn": 1900,
+      "n_cells": 64,
+      "phi": 2.5784918155953442,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 21.116877555847168
+    },
+    {
+      "turn": 2000,
+      "n_cells": 64,
+      "phi": 2.4771087817414217,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 22.26659059524536
+    },
+    {
+      "turn": 2100,
+      "n_cells": 64,
+      "phi": 2.739621786387165,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 23.500788927078247
+    },
+    {
+      "turn": 2200,
+      "n_cells": 64,
+      "phi": 2.8936309816416648,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 24.796462535858154
+    },
+    {
+      "turn": 2300,
+      "n_cells": 64,
+      "phi": 2.926219993777909,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 25.996103048324585
+    },
+    {
+      "turn": 2400,
+      "n_cells": 64,
+      "phi": 2.748726098127131,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 27.27523636817932
+    },
+    {
+      "turn": 2500,
+      "n_cells": 64,
+      "phi": 2.7550071302269292,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 28.67665934562683
+    },
+    {
+      "turn": 2600,
+      "n_cells": 64,
+      "phi": 2.7903014847027827,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 29.940102100372314
+    },
+    {
+      "turn": 2700,
+      "n_cells": 64,
+      "phi": 3.0834393726860134,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 31.222686767578125
+    },
+    {
+      "turn": 2800,
+      "n_cells": 64,
+      "phi": 2.916002244443005,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 32.38554573059082
+    },
+    {
+      "turn": 2900,
+      "n_cells": 64,
+      "phi": 2.8171357039600764,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 33.53434467315674
+    },
+    {
+      "turn": 3000,
+      "n_cells": 64,
+      "phi": 2.8288617569152055,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 34.71844029426575
+    },
+    {
+      "turn": 3100,
+      "n_cells": 64,
+      "phi": 2.9144260149091665,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 35.95324778556824
+    },
+    {
+      "turn": 3200,
+      "n_cells": 64,
+      "phi": 2.8285111795808446,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 37.19289994239807
+    },
+    {
+      "turn": 3300,
+      "n_cells": 64,
+      "phi": 3.1618019909597814,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 38.350626707077026
+    },
+    {
+      "turn": 3400,
+      "n_cells": 64,
+      "phi": 2.830048096681163,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 39.5526556968689
+    },
+    {
+      "turn": 3500,
+      "n_cells": 64,
+      "phi": 3.3330710862194666,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 40.72385382652283
+    },
+    {
+      "turn": 3600,
+      "n_cells": 64,
+      "phi": 2.7736927279793746,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 41.97065329551697
+    },
+    {
+      "turn": 3700,
+      "n_cells": 64,
+      "phi": 2.937437970851728,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 43.179524660110474
+    },
+    {
+      "turn": 3800,
+      "n_cells": 64,
+      "phi": 3.159066542262856,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 44.3648157119751
+    },
+    {
+      "turn": 3900,
+      "n_cells": 64,
+      "phi": 2.9116826042003896,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 45.510655879974365
+    },
+    {
+      "turn": 4000,
+      "n_cells": 64,
+      "phi": 3.1762361231960945,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 46.68842124938965
+    },
+    {
+      "turn": 4100,
+      "n_cells": 64,
+      "phi": 2.777890698728376,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 47.985188722610474
+    },
+    {
+      "turn": 4200,
+      "n_cells": 64,
+      "phi": 3.2969636112832204,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 49.24592614173889
+    },
+    {
+      "turn": 4300,
+      "n_cells": 64,
+      "phi": 2.91075925963842,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 50.39888405799866
+    },
+    {
+      "turn": 4400,
+      "n_cells": 64,
+      "phi": 2.7578647460432095,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 51.544782638549805
+    },
+    {
+      "turn": 4500,
+      "n_cells": 64,
+      "phi": 2.9855914720944083,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 52.74719858169556
+    },
+    {
+      "turn": 4600,
+      "n_cells": 64,
+      "phi": 3.306390882128936,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 53.99798655509949
+    },
+    {
+      "turn": 4700,
+      "n_cells": 64,
+      "phi": 2.941768807673511,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 55.211591720581055
+    },
+    {
+      "turn": 4800,
+      "n_cells": 64,
+      "phi": 2.8980503958453014,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 56.42054557800293
+    },
+    {
+      "turn": 4900,
+      "n_cells": 64,
+      "phi": 3.463478390215741,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 57.67985939979553
+    },
+    {
+      "turn": 5000,
+      "n_cells": 64,
+      "phi": 2.8400239999060606,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 59.02520036697388
+    },
+    {
+      "turn": 5100,
+      "n_cells": 64,
+      "phi": 3.2881018920918716,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 60.49220585823059
+    },
+    {
+      "turn": 5200,
+      "n_cells": 64,
+      "phi": 3.1338747367629214,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 61.97706460952759
+    },
+    {
+      "turn": 5300,
+      "n_cells": 64,
+      "phi": 3.040597777413013,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 64.02779769897461
+    },
+    {
+      "turn": 5400,
+      "n_cells": 64,
+      "phi": 3.2387307006615664,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 66.53331279754639
+    },
+    {
+      "turn": 5500,
+      "n_cells": 64,
+      "phi": 2.89026902213713,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 68.1346275806427
+    },
+    {
+      "turn": 5600,
+      "n_cells": 64,
+      "phi": 3.2137269976916367,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 69.28099989891052
+    },
+    {
+      "turn": 5700,
+      "n_cells": 64,
+      "phi": 2.772279470875633,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 70.43946409225464
+    },
+    {
+      "turn": 5800,
+      "n_cells": 64,
+      "phi": 3.3731015936829474,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 71.63528442382812
+    },
+    {
+      "turn": 5900,
+      "n_cells": 64,
+      "phi": 2.8802493278470465,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 72.88488459587097
+    },
+    {
+      "turn": 6000,
+      "n_cells": 64,
+      "phi": 2.946305910364836,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 74.12497162818909
+    },
+    {
+      "turn": 6100,
+      "n_cells": 64,
+      "phi": 3.448687211510437,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 75.27800846099854
+    },
+    {
+      "turn": 6200,
+      "n_cells": 64,
+      "phi": 2.9986235438061466,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 76.42161726951599
+    },
+    {
+      "turn": 6300,
+      "n_cells": 64,
+      "phi": 3.177401811493811,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 77.66810274124146
+    },
+    {
+      "turn": 6400,
+      "n_cells": 64,
+      "phi": 2.8613726418101515,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 78.99576616287231
+    },
+    {
+      "turn": 6500,
+      "n_cells": 64,
+      "phi": 3.466195177947388,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 80.212637424469
+    },
+    {
+      "turn": 6600,
+      "n_cells": 64,
+      "phi": 2.9728462816222145,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 81.35879874229431
+    },
+    {
+      "turn": 6700,
+      "n_cells": 64,
+      "phi": 2.9424848911144563,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 82.50502705574036
+    },
+    {
+      "turn": 6800,
+      "n_cells": 64,
+      "phi": 3.3435301840386358,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 83.6898763179779
+    },
+    {
+      "turn": 6900,
+      "n_cells": 64,
+      "phi": 2.86791791317829,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 84.98271250724792
+    },
+    {
+      "turn": 7000,
+      "n_cells": 64,
+      "phi": 2.9899168350330427,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 86.30469727516174
+    },
+    {
+      "turn": 7100,
+      "n_cells": 64,
+      "phi": 3.0394388070627967,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 87.45520448684692
+    },
+    {
+      "turn": 7200,
+      "n_cells": 64,
+      "phi": 3.0853631937997688,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 88.60894870758057
+    },
+    {
+      "turn": 7300,
+      "n_cells": 64,
+      "phi": 3.201318948658804,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 89.83788824081421
+    },
+    {
+      "turn": 7400,
+      "n_cells": 64,
+      "phi": 2.9777814849061435,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 91.03024291992188
+    },
+    {
+      "turn": 7500,
+      "n_cells": 64,
+      "phi": 3.373905259254265,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 92.24166345596313
+    },
+    {
+      "turn": 7600,
+      "n_cells": 64,
+      "phi": 2.9574591960923575,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 93.38691067695618
+    },
+    {
+      "turn": 7700,
+      "n_cells": 64,
+      "phi": 3.389552354233666,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 94.56921601295471
+    },
+    {
+      "turn": 7800,
+      "n_cells": 64,
+      "phi": 3.194643299346588,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 95.83508849143982
+    },
+    {
+      "turn": 7900,
+      "n_cells": 64,
+      "phi": 3.575106294007438,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 97.07282781600952
+    },
+    {
+      "turn": 8000,
+      "n_cells": 64,
+      "phi": 3.123993133615897,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 98.28706645965576
+    },
+    {
+      "turn": 8100,
+      "n_cells": 64,
+      "phi": 3.5877352888691654,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 99.43259072303772
+    },
+    {
+      "turn": 8200,
+      "n_cells": 64,
+      "phi": 3.0379598633612757,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 100.57770729064941
+    },
+    {
+      "turn": 8300,
+      "n_cells": 64,
+      "phi": 3.1439678308497663,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 101.77587938308716
+    },
+    {
+      "turn": 8400,
+      "n_cells": 64,
+      "phi": 3.375414309313102,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 103.04913997650146
+    },
+    {
+      "turn": 8500,
+      "n_cells": 64,
+      "phi": 3.104958700219183,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 104.2838294506073
+    },
+    {
+      "turn": 8600,
+      "n_cells": 64,
+      "phi": 3.049256465302134,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 105.43120813369751
+    },
+    {
+      "turn": 8700,
+      "n_cells": 64,
+      "phi": 2.985357587996254,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 106.62947273254395
+    },
+    {
+      "turn": 8800,
+      "n_cells": 64,
+      "phi": 3.782282818655586,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 108.02377367019653
+    },
+    {
+      "turn": 8900,
+      "n_cells": 64,
+      "phi": 3.1215980609256477,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 109.6465630531311
+    },
+    {
+      "turn": 9000,
+      "n_cells": 64,
+      "phi": 3.549797546458426,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 111.49133610725403
+    },
+    {
+      "turn": 9100,
+      "n_cells": 64,
+      "phi": 3.3411226707048676,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 114.50558543205261
+    },
+    {
+      "turn": 9200,
+      "n_cells": 64,
+      "phi": 3.162331713560814,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 118.62532043457031
+    },
+    {
+      "turn": 9300,
+      "n_cells": 64,
+      "phi": 3.793132552681247,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 120.14727663993835
+    },
+    {
+      "turn": 9400,
+      "n_cells": 64,
+      "phi": 3.217714472752299,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 123.44376587867737
+    },
+    {
+      "turn": 9500,
+      "n_cells": 64,
+      "phi": 3.3519636962800656,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 126.60476303100586
+    },
+    {
+      "turn": 9600,
+      "n_cells": 64,
+      "phi": 3.2776947961626113,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 128.14406299591064
+    },
+    {
+      "turn": 9700,
+      "n_cells": 64,
+      "phi": 3.7289985472128606,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 131.7027497291565
+    },
+    {
+      "turn": 9800,
+      "n_cells": 64,
+      "phi": 3.1034623396167356,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 134.48333168029785
+    },
+    {
+      "turn": 9900,
+      "n_cells": 64,
+      "phi": 3.1522518065560994,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 136.01929378509521
+    },
+    {
+      "turn": 9999,
+      "n_cells": 64,
+      "phi": 3.4648025723118874,
+      "n_splits_cum": 56,
+      "n_merges_cum": 0,
+      "elapsed_sec": 139.50283336639404
+    }
+  ],
+  "rand_snapshots": [
+    {
+      "turn": 0,
+      "n_cells": 8,
+      "phi": 2.188697590796511
+    },
+    {
+      "turn": 100,
+      "n_cells": 38,
+      "phi": 2.2065782036946433
+    },
+    {
+      "turn": 200,
+      "n_cells": 61,
+      "phi": 2.5797851818516846
+    },
+    {
+      "turn": 300,
+      "n_cells": 64,
+      "phi": 2.5893845942475804
+    },
+    {
+      "turn": 400,
+      "n_cells": 64,
+      "phi": 2.908109402568905
+    },
+    {
+      "turn": 500,
+      "n_cells": 64,
+      "phi": 2.608549903214113
+    },
+    {
+      "turn": 600,
+      "n_cells": 64,
+      "phi": 3.250284823923265
+    },
+    {
+      "turn": 700,
+      "n_cells": 64,
+      "phi": 2.692665821489609
+    },
+    {
+      "turn": 800,
+      "n_cells": 64,
+      "phi": 2.8637537809796596
+    },
+    {
+      "turn": 900,
+      "n_cells": 64,
+      "phi": 2.9886259938615267
+    },
+    {
+      "turn": 1000,
+      "n_cells": 64,
+      "phi": 3.1571969623548433
+    },
+    {
+      "turn": 1100,
+      "n_cells": 64,
+      "phi": 2.9157713460992953
+    },
+    {
+      "turn": 1200,
+      "n_cells": 64,
+      "phi": 2.8448604244804496
+    },
+    {
+      "turn": 1300,
+      "n_cells": 64,
+      "phi": 3.2351652122290635
+    },
+    {
+      "turn": 1400,
+      "n_cells": 64,
+      "phi": 3.0411566111198796
+    },
+    {
+      "turn": 1500,
+      "n_cells": 64,
+      "phi": 2.7833456720985223
+    },
+    {
+      "turn": 1600,
+      "n_cells": 64,
+      "phi": 3.069051768456461
+    },
+    {
+      "turn": 1700,
+      "n_cells": 64,
+      "phi": 3.1740428377437206
+    },
+    {
+      "turn": 1800,
+      "n_cells": 64,
+      "phi": 3.21698918323515
+    },
+    {
+      "turn": 1900,
+      "n_cells": 64,
+      "phi": 3.1106381027984096
+    },
+    {
+      "turn": 2000,
+      "n_cells": 64,
+      "phi": 3.016087470365041
+    },
+    {
+      "turn": 2100,
+      "n_cells": 64,
+      "phi": 3.34501783619062
+    },
+    {
+      "turn": 2200,
+      "n_cells": 64,
+      "phi": 3.3229993900394743
+    },
+    {
+      "turn": 2300,
+      "n_cells": 64,
+      "phi": 3.48426496384565
+    },
+    {
+      "turn": 2400,
+      "n_cells": 64,
+      "phi": 3.170381058730382
+    },
+    {
+      "turn": 2500,
+      "n_cells": 64,
+      "phi": 2.9630380782719516
+    },
+    {
+      "turn": 2600,
+      "n_cells": 64,
+      "phi": 3.2977759853050013
+    },
+    {
+      "turn": 2700,
+      "n_cells": 64,
+      "phi": 3.3838712099643473
+    },
+    {
+      "turn": 2800,
+      "n_cells": 64,
+      "phi": 3.3391879018248156
+    },
+    {
+      "turn": 2900,
+      "n_cells": 64,
+      "phi": 3.106055964977546
+    },
+    {
+      "turn": 2999,
+      "n_cells": 64,
+      "phi": 3.1144061249073993
+    }
+  ],
+  "cell_specialty": {
+    "6": {
+      "ko_daily": 46,
+      "en_code": 29,
+      "anomaly": 7,
+      "ko_philosophy": 23,
+      "en_music": 23,
+      "en_math": 17
+    },
+    "2": {
+      "ko_daily": 33,
+      "en_music": 16,
+      "ko_philosophy": 21,
+      "en_code": 43,
+      "anomaly": 8,
+      "en_math": 24
+    },
+    "3": {
+      "ko_daily": 33,
+      "en_math": 20,
+      "en_code": 32,
+      "en_music": 11,
+      "anomaly": 7,
+      "ko_philosophy": 11
+    },
+    "8": {
+      "ko_daily": 34,
+      "en_math": 16,
+      "en_code": 5,
+      "en_music": 22,
+      "anomaly": 22,
+      "ko_philosophy": 12
+    },
+    "9": {
+      "ko_daily": 37,
+      "en_music": 18,
+      "anomaly": 14,
+      "ko_philosophy": 9,
+      "en_code": 17,
+      "en_math": 42
+    },
+    "10": {
+      "ko_daily": 33,
+      "en_music": 30,
+      "ko_philosophy": 26,
+      "anomaly": 10,
+      "en_math": 31,
+      "en_code": 35
+    },
+    "12": {
+      "ko_daily": 53,
+      "en_code": 18,
+      "ko_philosophy": 46,
+      "en_math": 33,
+      "anomaly": 24,
+      "en_music": 21
+    },
+    "14": {
+      "ko_daily": 2,
+      "en_math": 7,
+      "anomaly": 1
+    },
+    "13": {
+      "ko_daily": 66,
+      "en_code": 50,
+      "ko_philosophy": 39,
+      "en_math": 51,
+      "en_music": 17,
+      "anomaly": 16
+    },
+    "15": {
+      "ko_daily": 4,
+      "ko_philosophy": 1
+    },
+    "17": {
+      "ko_daily": 6,
+      "en_math": 9,
+      "en_code": 5,
+      "en_music": 2,
+      "ko_philosophy": 2
+    },
+    "19": {
+      "ko_daily": 24,
+      "en_math": 7,
+      "anomaly": 6,
+      "ko_philosophy": 8,
+      "en_code": 3,
+      "en_music": 2
+    },
+    "20": {
+      "ko_daily": 6,
+      "ko_philosophy": 22,
+      "en_math": 8,
+      "en_music": 10,
+      "anomaly": 2,
+      "en_code": 6
+    },
+    "18": {
+      "ko_daily": 1,
+      "ko_philosophy": 1
+    },
+    "21": {
+      "ko_philosophy": 32,
+      "en_code": 13,
+      "ko_daily": 26,
+      "en_math": 19,
+      "en_music": 25,
+      "anomaly": 5
+    },
+    "22": {
+      "ko_philosophy": 9,
+      "anomaly": 3,
+      "en_math": 8,
+      "ko_daily": 3,
+      "en_code": 3
+    },
+    "23": {
+      "ko_philosophy": 29,
+      "ko_daily": 60,
+      "en_math": 60,
+      "en_code": 32,
+      "en_music": 32,
+      "anomaly": 30
+    },
+    "24": {
+      "en_math": 41,
+      "ko_daily": 58,
+      "en_code": 44,
+      "ko_philosophy": 46,
+      "en_music": 18,
+      "anomaly": 32
+    },
+    "27": {
+      "en_math": 20,
+      "anomaly": 12,
+      "en_code": 18,
+      "ko_daily": 36,
+      "ko_philosophy": 43,
+      "en_music": 9
+    },
+    "31": {
+      "en_math": 3,
+      "en_code": 1,
+      "anomaly": 5,
+      "ko_daily": 6,
+      "en_music": 6,
+      "ko_philosophy": 4
+    },
+    "33": {
+      "en_math": 61,
+      "en_code": 30,
+      "anomaly": 14,
+      "ko_philosophy": 30,
+      "ko_daily": 58,
+      "en_music": 9
+    },
+    "35": {
+      "en_math": 15,
+      "en_code": 25,
+      "en_music": 30,
+      "anomaly": 14,
+      "ko_daily": 25,
+      "ko_philosophy": 22
+    },
+    "38": {
+      "en_math": 46,
+      "en_code": 53,
+      "en_music": 28,
+      "ko_daily": 48,
+      "anomaly": 17,
+      "ko_philosophy": 46
+    },
+    "37": {
+      "en_math": 58,
+      "en_code": 61,
+      "ko_daily": 85,
+      "ko_philosophy": 27,
+      "en_music": 25,
+      "anomaly": 43
+    },
+    "40": {
+      "en_math": 15,
+      "en_code": 22,
+      "en_music": 6,
+      "anomaly": 12,
+      "ko_daily": 19,
+      "ko_philosophy": 11
+    },
+    "39": {
+      "en_math": 6,
+      "en_code": 7,
+      "en_music": 4,
+      "ko_daily": 5,
+      "ko_philosophy": 3,
+      "anomaly": 1
+    },
+    "32": {
+      "en_code": 13,
+      "anomaly": 9,
+      "ko_daily": 28,
+      "ko_philosophy": 12,
+      "en_music": 5,
+      "en_math": 23
+    },
+    "36": {
+      "en_code": 24,
+      "en_music": 23,
+      "ko_philosophy": 15,
+      "ko_daily": 22,
+      "en_math": 14,
+      "anomaly": 24
+    },
+    "41": {
+      "en_music": 14,
+      "ko_philosophy": 11,
+      "en_code": 33,
+      "anomaly": 16,
+      "ko_daily": 37,
+      "en_math": 17
+    },
+    "43": {
+      "en_music": 11,
+      "ko_daily": 10,
+      "ko_philosophy": 10,
+      "en_code": 24,
+      "en_math": 5,
+      "anomaly": 13
+    },
+    "47": {
+      "en_music": 22,
+      "ko_daily": 34,
+      "ko_philosophy": 31,
+      "anomaly": 22,
+      "en_code": 33,
+      "en_math": 33
+    },
+    "49": {
+      "anomaly": 23,
+      "ko_daily": 48,
+      "ko_philosophy": 37,
+      "en_math": 47,
+      "en_code": 24,
+      "en_music": 29
+    },
+    "52": {
+      "anomaly": 22,
+      "ko_daily": 20,
+      "en_math": 37,
+      "ko_philosophy": 15,
+      "en_music": 11,
+      "en_code": 9
+    },
+    "48": {
+      "anomaly": 41,
+      "ko_philosophy": 61,
+      "en_music": 31,
+      "en_math": 31,
+      "ko_daily": 61,
+      "en_code": 28
+    },
+    "54": {
+      "anomaly": 10,
+      "ko_daily": 23,
+      "ko_philosophy": 9,
+      "en_math": 6,
+      "en_music": 10,
+      "en_code": 11
+    },
+    "50": {
+      "anomaly": 23,
+      "ko_daily": 35,
+      "ko_philosophy": 24,
+      "en_music": 11,
+      "en_math": 14,
+      "en_code": 18
+    },
+    "55": {
+      "anomaly": 11,
+      "ko_daily": 23,
+      "ko_philosophy": 26,
+      "en_music": 12,
+      "en_code": 9,
+      "en_math": 12
+    },
+    "53": {
+      "ko_daily": 11,
+      "ko_philosophy": 11,
+      "anomaly": 3,
+      "en_music": 17,
+      "en_code": 12,
+      "en_math": 13
+    },
+    "51": {
+      "ko_philosophy": 69,
+      "en_math": 53,
+      "en_code": 74,
+      "en_music": 38,
+      "anomaly": 60,
+      "ko_daily": 89
+    },
+    "42": {
+      "ko_philosophy": 168,
+      "en_math": 75,
+      "en_code": 110,
+      "en_music": 84,
+      "ko_daily": 149,
+      "anomaly": 80
+    },
+    "56": {
+      "en_math": 40,
+      "en_code": 24,
+      "en_music": 22,
+      "anomaly": 7,
+      "ko_daily": 29,
+      "ko_philosophy": 26
+    },
+    "57": {
+      "en_math": 24,
+      "ko_philosophy": 39,
+      "en_code": 30,
+      "en_music": 21,
+      "anomaly": 21,
+      "ko_daily": 38
+    },
+    "0": {
+      "en_math": 51,
+      "en_code": 5,
+      "en_music": 20,
+      "anomaly": 11,
+      "ko_daily": 32,
+      "ko_philosophy": 10
+    },
+    "58": {
+      "en_math": 35,
+      "en_code": 40,
+      "en_music": 19,
+      "anomaly": 36,
+      "ko_philosophy": 47,
+      "ko_daily": 64
+    },
+    "45": {
+      "anomaly": 6,
+      "ko_philosophy": 12,
+      "en_music": 8,
+      "ko_daily": 14,
+      "en_code": 14,
+      "en_math": 6
+    },
+    "59": {
+      "ko_daily": 29,
+      "ko_philosophy": 8,
+      "en_code": 17,
+      "en_music": 8,
+      "anomaly": 4,
+      "en_math": 10
+    },
+    "29": {
+      "ko_philosophy": 45,
+      "en_music": 16,
+      "anomaly": 30,
+      "ko_daily": 60,
+      "en_math": 42,
+      "en_code": 36
+    },
+    "5": {
+      "ko_philosophy": 7,
+      "en_math": 14,
+      "en_code": 13,
+      "ko_daily": 18,
+      "en_music": 16,
+      "anomaly": 2
+    },
+    "46": {
+      "en_music": 4,
+      "anomaly": 9,
+      "ko_daily": 15,
+      "ko_philosophy": 8,
+      "en_math": 1,
+      "en_code": 5
+    },
+    "34": {
+      "ko_daily": 29,
+      "en_code": 8,
+      "en_math": 21,
+      "en_music": 9,
+      "anomaly": 24,
+      "ko_philosophy": 14
+    },
+    "60": {
+      "ko_philosophy": 65,
+      "en_math": 41,
+      "en_code": 67,
+      "en_music": 36,
+      "anomaly": 63,
+      "ko_daily": 52
+    },
+    "62": {
+      "ko_philosophy": 29,
+      "en_math": 40,
+      "en_code": 33,
+      "ko_daily": 32,
+      "en_music": 28,
+      "anomaly": 11
+    },
+    "61": {
+      "ko_philosophy": 57,
+      "en_math": 30,
+      "en_code": 43,
+      "en_music": 27,
+      "anomaly": 13,
+      "ko_daily": 52
+    },
+    "63": {
+      "ko_philosophy": 32,
+      "en_math": 31,
+      "en_code": 25,
+      "ko_daily": 27,
+      "anomaly": 12,
+      "en_music": 6
+    },
+    "1": {
+      "en_math": 47,
+      "ko_philosophy": 33,
+      "en_code": 36,
+      "ko_daily": 44,
+      "en_music": 41,
+      "anomaly": 15
+    },
+    "44": {
+      "en_code": 100,
+      "en_music": 29,
+      "anomaly": 61,
+      "ko_daily": 120,
+      "ko_philosophy": 78,
+      "en_math": 81
+    },
+    "26": {
+      "en_code": 14,
+      "anomaly": 39,
+      "ko_philosophy": 27,
+      "en_math": 41,
+      "en_music": 49,
+      "ko_daily": 24
+    },
+    "4": {
+      "en_math": 20,
+      "ko_philosophy": 15,
+      "en_code": 33,
+      "en_music": 8,
+      "ko_daily": 26,
+      "anomaly": 6
+    },
+    "16": {
+      "en_math": 54,
+      "en_code": 64,
+      "ko_philosophy": 43,
+      "ko_daily": 66,
+      "en_music": 32,
+      "anomaly": 17
+    },
+    "7": {
+      "ko_daily": 91,
+      "en_code": 106,
+      "anomaly": 29,
+      "en_math": 85,
+      "ko_philosophy": 80,
+      "en_music": 23
+    },
+    "30": {
+      "en_music": 47,
+      "anomaly": 54,
+      "ko_daily": 58,
+      "en_math": 29,
+      "en_code": 59,
+      "ko_philosophy": 45
+    },
+    "25": {
+      "en_music": 7,
+      "ko_daily": 14,
+      "en_code": 5,
+      "ko_philosophy": 22,
+      "en_math": 14,
+      "anomaly": 5
+    },
+    "28": {
+      "en_math": 12,
+      "en_code": 17,
+      "ko_daily": 26,
+      "en_music": 5,
+      "ko_philosophy": 5,
+      "anomaly": 18
+    },
+    "11": {
+      "en_math": 4,
+      "en_music": 7,
+      "anomaly": 5,
+      "ko_daily": 3,
+      "ko_philosophy": 1,
+      "en_code": 2
+    }
+  },
+  "specialty_summary": {
+    "6": {
+      "total_observations": 145,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.31724137931034485,
+      "category_distribution": {
+        "ko_daily": 0.31724137931034485,
+        "en_code": 0.2,
+        "anomaly": 0.04827586206896552,
+        "ko_philosophy": 0.15862068965517243,
+        "en_music": 0.15862068965517243,
+        "en_math": 0.11724137931034483
+      }
+    },
+    "2": {
+      "total_observations": 145,
+      "dominant_category": "en_code",
+      "dominant_share": 0.296551724137931,
+      "category_distribution": {
+        "ko_daily": 0.22758620689655173,
+        "en_music": 0.1103448275862069,
+        "ko_philosophy": 0.14482758620689656,
+        "en_code": 0.296551724137931,
+        "anomaly": 0.05517241379310345,
+        "en_math": 0.16551724137931034
+      }
+    },
+    "3": {
+      "total_observations": 114,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.2894736842105263,
+      "category_distribution": {
+        "ko_daily": 0.2894736842105263,
+        "en_math": 0.17543859649122806,
+        "en_code": 0.2807017543859649,
+        "en_music": 0.09649122807017543,
+        "anomaly": 0.06140350877192982,
+        "ko_philosophy": 0.09649122807017543
+      }
+    },
+    "8": {
+      "total_observations": 111,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.3063063063063063,
+      "category_distribution": {
+        "ko_daily": 0.3063063063063063,
+        "en_math": 0.14414414414414414,
+        "en_code": 0.04504504504504504,
+        "en_music": 0.1981981981981982,
+        "anomaly": 0.1981981981981982,
+        "ko_philosophy": 0.10810810810810811
+      }
+    },
+    "9": {
+      "total_observations": 137,
+      "dominant_category": "en_math",
+      "dominant_share": 0.30656934306569344,
+      "category_distribution": {
+        "ko_daily": 0.27007299270072993,
+        "en_music": 0.13138686131386862,
+        "anomaly": 0.10218978102189781,
+        "ko_philosophy": 0.06569343065693431,
+        "en_code": 0.12408759124087591,
+        "en_math": 0.30656934306569344
+      }
+    },
+    "10": {
+      "total_observations": 165,
+      "dominant_category": "en_code",
+      "dominant_share": 0.21212121212121213,
+      "category_distribution": {
+        "ko_daily": 0.2,
+        "en_music": 0.18181818181818182,
+        "ko_philosophy": 0.15757575757575756,
+        "anomaly": 0.06060606060606061,
+        "en_math": 0.18787878787878787,
+        "en_code": 0.21212121212121213
+      }
+    },
+    "12": {
+      "total_observations": 195,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.2717948717948718,
+      "category_distribution": {
+        "ko_daily": 0.2717948717948718,
+        "en_code": 0.09230769230769231,
+        "ko_philosophy": 0.2358974358974359,
+        "en_math": 0.16923076923076924,
+        "anomaly": 0.12307692307692308,
+        "en_music": 0.1076923076923077
+      }
+    },
+    "14": {
+      "total_observations": 10,
+      "dominant_category": "en_math",
+      "dominant_share": 0.7,
+      "category_distribution": {
+        "ko_daily": 0.2,
+        "en_math": 0.7,
+        "anomaly": 0.1
+      }
+    },
+    "13": {
+      "total_observations": 239,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.27615062761506276,
+      "category_distribution": {
+        "ko_daily": 0.27615062761506276,
+        "en_code": 0.20920502092050208,
+        "ko_philosophy": 0.16317991631799164,
+        "en_math": 0.21338912133891214,
+        "en_music": 0.07112970711297072,
+        "anomaly": 0.06694560669456066
+      }
+    },
+    "15": {
+      "total_observations": 5,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.8,
+      "category_distribution": {
+        "ko_daily": 0.8,
+        "ko_philosophy": 0.2
+      }
+    },
+    "17": {
+      "total_observations": 24,
+      "dominant_category": "en_math",
+      "dominant_share": 0.375,
+      "category_distribution": {
+        "ko_daily": 0.25,
+        "en_math": 0.375,
+        "en_code": 0.20833333333333334,
+        "en_music": 0.08333333333333333,
+        "ko_philosophy": 0.08333333333333333
+      }
+    },
+    "19": {
+      "total_observations": 50,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.48,
+      "category_distribution": {
+        "ko_daily": 0.48,
+        "en_math": 0.14,
+        "anomaly": 0.12,
+        "ko_philosophy": 0.16,
+        "en_code": 0.06,
+        "en_music": 0.04
+      }
+    },
+    "20": {
+      "total_observations": 54,
+      "dominant_category": "ko_philosophy",
+      "dominant_share": 0.4074074074074074,
+      "category_distribution": {
+        "ko_daily": 0.1111111111111111,
+        "ko_philosophy": 0.4074074074074074,
+        "en_math": 0.14814814814814814,
+        "en_music": 0.18518518518518517,
+        "anomaly": 0.037037037037037035,
+        "en_code": 0.1111111111111111
+      }
+    },
+    "18": {
+      "total_observations": 2,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.5,
+      "category_distribution": {
+        "ko_daily": 0.5,
+        "ko_philosophy": 0.5
+      }
+    },
+    "21": {
+      "total_observations": 120,
+      "dominant_category": "ko_philosophy",
+      "dominant_share": 0.26666666666666666,
+      "category_distribution": {
+        "ko_philosophy": 0.26666666666666666,
+        "en_code": 0.10833333333333334,
+        "ko_daily": 0.21666666666666667,
+        "en_math": 0.15833333333333333,
+        "en_music": 0.20833333333333334,
+        "anomaly": 0.041666666666666664
+      }
+    },
+    "22": {
+      "total_observations": 26,
+      "dominant_category": "ko_philosophy",
+      "dominant_share": 0.34615384615384615,
+      "category_distribution": {
+        "ko_philosophy": 0.34615384615384615,
+        "anomaly": 0.11538461538461539,
+        "en_math": 0.3076923076923077,
+        "ko_daily": 0.11538461538461539,
+        "en_code": 0.11538461538461539
+      }
+    },
+    "23": {
+      "total_observations": 243,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.24691358024691357,
+      "category_distribution": {
+        "ko_philosophy": 0.11934156378600823,
+        "ko_daily": 0.24691358024691357,
+        "en_math": 0.24691358024691357,
+        "en_code": 0.13168724279835392,
+        "en_music": 0.13168724279835392,
+        "anomaly": 0.12345679012345678
+      }
+    },
+    "24": {
+      "total_observations": 239,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.24267782426778242,
+      "category_distribution": {
+        "en_math": 0.17154811715481172,
+        "ko_daily": 0.24267782426778242,
+        "en_code": 0.18410041841004185,
+        "ko_philosophy": 0.19246861924686193,
+        "en_music": 0.07531380753138076,
+        "anomaly": 0.13389121338912133
+      }
+    },
+    "27": {
+      "total_observations": 138,
+      "dominant_category": "ko_philosophy",
+      "dominant_share": 0.3115942028985507,
+      "category_distribution": {
+        "en_math": 0.14492753623188406,
+        "anomaly": 0.08695652173913043,
+        "en_code": 0.13043478260869565,
+        "ko_daily": 0.2608695652173913,
+        "ko_philosophy": 0.3115942028985507,
+        "en_music": 0.06521739130434782
+      }
+    },
+    "31": {
+      "total_observations": 25,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.24,
+      "category_distribution": {
+        "en_math": 0.12,
+        "en_code": 0.04,
+        "anomaly": 0.2,
+        "ko_daily": 0.24,
+        "en_music": 0.24,
+        "ko_philosophy": 0.16
+      }
+    },
+    "33": {
+      "total_observations": 202,
+      "dominant_category": "en_math",
+      "dominant_share": 0.30198019801980197,
+      "category_distribution": {
+        "en_math": 0.30198019801980197,
+        "en_code": 0.1485148514851485,
+        "anomaly": 0.06930693069306931,
+        "ko_philosophy": 0.1485148514851485,
+        "ko_daily": 0.2871287128712871,
+        "en_music": 0.04455445544554455
+      }
+    },
+    "35": {
+      "total_observations": 131,
+      "dominant_category": "en_music",
+      "dominant_share": 0.22900763358778625,
+      "category_distribution": {
+        "en_math": 0.11450381679389313,
+        "en_code": 0.19083969465648856,
+        "en_music": 0.22900763358778625,
+        "anomaly": 0.10687022900763359,
+        "ko_daily": 0.19083969465648856,
+        "ko_philosophy": 0.16793893129770993
+      }
+    },
+    "38": {
+      "total_observations": 238,
+      "dominant_category": "en_code",
+      "dominant_share": 0.22268907563025211,
+      "category_distribution": {
+        "en_math": 0.19327731092436976,
+        "en_code": 0.22268907563025211,
+        "en_music": 0.11764705882352941,
+        "ko_daily": 0.20168067226890757,
+        "anomaly": 0.07142857142857142,
+        "ko_philosophy": 0.19327731092436976
+      }
+    },
+    "37": {
+      "total_observations": 299,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.2842809364548495,
+      "category_distribution": {
+        "en_math": 0.1939799331103679,
+        "en_code": 0.2040133779264214,
+        "ko_daily": 0.2842809364548495,
+        "ko_philosophy": 0.0903010033444816,
+        "en_music": 0.08361204013377926,
+        "anomaly": 0.14381270903010032
+      }
+    },
+    "40": {
+      "total_observations": 85,
+      "dominant_category": "en_code",
+      "dominant_share": 0.25882352941176473,
+      "category_distribution": {
+        "en_math": 0.17647058823529413,
+        "en_code": 0.25882352941176473,
+        "en_music": 0.07058823529411765,
+        "anomaly": 0.1411764705882353,
+        "ko_daily": 0.2235294117647059,
+        "ko_philosophy": 0.12941176470588237
+      }
+    },
+    "39": {
+      "total_observations": 26,
+      "dominant_category": "en_code",
+      "dominant_share": 0.2692307692307692,
+      "category_distribution": {
+        "en_math": 0.23076923076923078,
+        "en_code": 0.2692307692307692,
+        "en_music": 0.15384615384615385,
+        "ko_daily": 0.19230769230769232,
+        "ko_philosophy": 0.11538461538461539,
+        "anomaly": 0.038461538461538464
+      }
+    },
+    "32": {
+      "total_observations": 90,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.3111111111111111,
+      "category_distribution": {
+        "en_code": 0.14444444444444443,
+        "anomaly": 0.1,
+        "ko_daily": 0.3111111111111111,
+        "ko_philosophy": 0.13333333333333333,
+        "en_music": 0.05555555555555555,
+        "en_math": 0.25555555555555554
+      }
+    },
+    "36": {
+      "total_observations": 122,
+      "dominant_category": "en_code",
+      "dominant_share": 0.19672131147540983,
+      "category_distribution": {
+        "en_code": 0.19672131147540983,
+        "en_music": 0.1885245901639344,
+        "ko_philosophy": 0.12295081967213115,
+        "ko_daily": 0.18032786885245902,
+        "en_math": 0.11475409836065574,
+        "anomaly": 0.19672131147540983
+      }
+    },
+    "41": {
+      "total_observations": 128,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.2890625,
+      "category_distribution": {
+        "en_music": 0.109375,
+        "ko_philosophy": 0.0859375,
+        "en_code": 0.2578125,
+        "anomaly": 0.125,
+        "ko_daily": 0.2890625,
+        "en_math": 0.1328125
+      }
+    },
+    "43": {
+      "total_observations": 73,
+      "dominant_category": "en_code",
+      "dominant_share": 0.3287671232876712,
+      "category_distribution": {
+        "en_music": 0.1506849315068493,
+        "ko_daily": 0.136986301369863,
+        "ko_philosophy": 0.136986301369863,
+        "en_code": 0.3287671232876712,
+        "en_math": 0.0684931506849315,
+        "anomaly": 0.1780821917808219
+      }
+    },
+    "47": {
+      "total_observations": 175,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.19428571428571428,
+      "category_distribution": {
+        "en_music": 0.12571428571428572,
+        "ko_daily": 0.19428571428571428,
+        "ko_philosophy": 0.17714285714285713,
+        "anomaly": 0.12571428571428572,
+        "en_code": 0.18857142857142858,
+        "en_math": 0.18857142857142858
+      }
+    },
+    "49": {
+      "total_observations": 208,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.23076923076923078,
+      "category_distribution": {
+        "anomaly": 0.11057692307692307,
+        "ko_daily": 0.23076923076923078,
+        "ko_philosophy": 0.1778846153846154,
+        "en_math": 0.22596153846153846,
+        "en_code": 0.11538461538461539,
+        "en_music": 0.13942307692307693
+      }
+    },
+    "52": {
+      "total_observations": 114,
+      "dominant_category": "en_math",
+      "dominant_share": 0.32456140350877194,
+      "category_distribution": {
+        "anomaly": 0.19298245614035087,
+        "ko_daily": 0.17543859649122806,
+        "en_math": 0.32456140350877194,
+        "ko_philosophy": 0.13157894736842105,
+        "en_music": 0.09649122807017543,
+        "en_code": 0.07894736842105263
+      }
+    },
+    "48": {
+      "total_observations": 253,
+      "dominant_category": "ko_philosophy",
+      "dominant_share": 0.24110671936758893,
+      "category_distribution": {
+        "anomaly": 0.16205533596837945,
+        "ko_philosophy": 0.24110671936758893,
+        "en_music": 0.1225296442687747,
+        "en_math": 0.1225296442687747,
+        "ko_daily": 0.24110671936758893,
+        "en_code": 0.11067193675889328
+      }
+    },
+    "54": {
+      "total_observations": 69,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.3333333333333333,
+      "category_distribution": {
+        "anomaly": 0.14492753623188406,
+        "ko_daily": 0.3333333333333333,
+        "ko_philosophy": 0.13043478260869565,
+        "en_math": 0.08695652173913043,
+        "en_music": 0.14492753623188406,
+        "en_code": 0.15942028985507245
+      }
+    },
+    "50": {
+      "total_observations": 125,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.28,
+      "category_distribution": {
+        "anomaly": 0.184,
+        "ko_daily": 0.28,
+        "ko_philosophy": 0.192,
+        "en_music": 0.088,
+        "en_math": 0.112,
+        "en_code": 0.144
+      }
+    },
+    "55": {
+      "total_observations": 93,
+      "dominant_category": "ko_philosophy",
+      "dominant_share": 0.27956989247311825,
+      "category_distribution": {
+        "anomaly": 0.11827956989247312,
+        "ko_daily": 0.24731182795698925,
+        "ko_philosophy": 0.27956989247311825,
+        "en_music": 0.12903225806451613,
+        "en_code": 0.0967741935483871,
+        "en_math": 0.12903225806451613
+      }
+    },
+    "53": {
+      "total_observations": 67,
+      "dominant_category": "en_music",
+      "dominant_share": 0.2537313432835821,
+      "category_distribution": {
+        "ko_daily": 0.16417910447761194,
+        "ko_philosophy": 0.16417910447761194,
+        "anomaly": 0.04477611940298507,
+        "en_music": 0.2537313432835821,
+        "en_code": 0.1791044776119403,
+        "en_math": 0.19402985074626866
+      }
+    },
+    "51": {
+      "total_observations": 383,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.23237597911227154,
+      "category_distribution": {
+        "ko_philosophy": 0.1801566579634465,
+        "en_math": 0.13838120104438642,
+        "en_code": 0.19321148825065274,
+        "en_music": 0.09921671018276762,
+        "anomaly": 0.1566579634464752,
+        "ko_daily": 0.23237597911227154
+      }
+    },
+    "42": {
+      "total_observations": 666,
+      "dominant_category": "ko_philosophy",
+      "dominant_share": 0.25225225225225223,
+      "category_distribution": {
+        "ko_philosophy": 0.25225225225225223,
+        "en_math": 0.11261261261261261,
+        "en_code": 0.16516516516516516,
+        "en_music": 0.12612612612612611,
+        "ko_daily": 0.22372372372372373,
+        "anomaly": 0.12012012012012012
+      }
+    },
+    "56": {
+      "total_observations": 148,
+      "dominant_category": "en_math",
+      "dominant_share": 0.2702702702702703,
+      "category_distribution": {
+        "en_math": 0.2702702702702703,
+        "en_code": 0.16216216216216217,
+        "en_music": 0.14864864864864866,
+        "anomaly": 0.0472972972972973,
+        "ko_daily": 0.19594594594594594,
+        "ko_philosophy": 0.17567567567567569
+      }
+    },
+    "57": {
+      "total_observations": 173,
+      "dominant_category": "ko_philosophy",
+      "dominant_share": 0.2254335260115607,
+      "category_distribution": {
+        "en_math": 0.13872832369942195,
+        "ko_philosophy": 0.2254335260115607,
+        "en_code": 0.17341040462427745,
+        "en_music": 0.12138728323699421,
+        "anomaly": 0.12138728323699421,
+        "ko_daily": 0.21965317919075145
+      }
+    },
+    "0": {
+      "total_observations": 129,
+      "dominant_category": "en_math",
+      "dominant_share": 0.3953488372093023,
+      "category_distribution": {
+        "en_math": 0.3953488372093023,
+        "en_code": 0.03875968992248062,
+        "en_music": 0.15503875968992248,
+        "anomaly": 0.08527131782945736,
+        "ko_daily": 0.24806201550387597,
+        "ko_philosophy": 0.07751937984496124
+      }
+    },
+    "58": {
+      "total_observations": 241,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.26556016597510373,
+      "category_distribution": {
+        "en_math": 0.14522821576763487,
+        "en_code": 0.16597510373443983,
+        "en_music": 0.07883817427385892,
+        "anomaly": 0.14937759336099585,
+        "ko_philosophy": 0.1950207468879668,
+        "ko_daily": 0.26556016597510373
+      }
+    },
+    "45": {
+      "total_observations": 60,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.23333333333333334,
+      "category_distribution": {
+        "anomaly": 0.1,
+        "ko_philosophy": 0.2,
+        "en_music": 0.13333333333333333,
+        "ko_daily": 0.23333333333333334,
+        "en_code": 0.23333333333333334,
+        "en_math": 0.1
+      }
+    },
+    "59": {
+      "total_observations": 76,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.3815789473684211,
+      "category_distribution": {
+        "ko_daily": 0.3815789473684211,
+        "ko_philosophy": 0.10526315789473684,
+        "en_code": 0.2236842105263158,
+        "en_music": 0.10526315789473684,
+        "anomaly": 0.05263157894736842,
+        "en_math": 0.13157894736842105
+      }
+    },
+    "29": {
+      "total_observations": 229,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.26200873362445415,
+      "category_distribution": {
+        "ko_philosophy": 0.1965065502183406,
+        "en_music": 0.06986899563318777,
+        "anomaly": 0.13100436681222707,
+        "ko_daily": 0.26200873362445415,
+        "en_math": 0.18340611353711792,
+        "en_code": 0.1572052401746725
+      }
+    },
+    "5": {
+      "total_observations": 70,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.2571428571428571,
+      "category_distribution": {
+        "ko_philosophy": 0.1,
+        "en_math": 0.2,
+        "en_code": 0.18571428571428572,
+        "ko_daily": 0.2571428571428571,
+        "en_music": 0.22857142857142856,
+        "anomaly": 0.02857142857142857
+      }
+    },
+    "46": {
+      "total_observations": 42,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.35714285714285715,
+      "category_distribution": {
+        "en_music": 0.09523809523809523,
+        "anomaly": 0.21428571428571427,
+        "ko_daily": 0.35714285714285715,
+        "ko_philosophy": 0.19047619047619047,
+        "en_math": 0.023809523809523808,
+        "en_code": 0.11904761904761904
+      }
+    },
+    "34": {
+      "total_observations": 105,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.2761904761904762,
+      "category_distribution": {
+        "ko_daily": 0.2761904761904762,
+        "en_code": 0.0761904761904762,
+        "en_math": 0.2,
+        "en_music": 0.08571428571428572,
+        "anomaly": 0.22857142857142856,
+        "ko_philosophy": 0.13333333333333333
+      }
+    },
+    "60": {
+      "total_observations": 324,
+      "dominant_category": "en_code",
+      "dominant_share": 0.20679012345679013,
+      "category_distribution": {
+        "ko_philosophy": 0.2006172839506173,
+        "en_math": 0.12654320987654322,
+        "en_code": 0.20679012345679013,
+        "en_music": 0.1111111111111111,
+        "anomaly": 0.19444444444444445,
+        "ko_daily": 0.16049382716049382
+      }
+    },
+    "62": {
+      "total_observations": 173,
+      "dominant_category": "en_math",
+      "dominant_share": 0.23121387283236994,
+      "category_distribution": {
+        "ko_philosophy": 0.1676300578034682,
+        "en_math": 0.23121387283236994,
+        "en_code": 0.1907514450867052,
+        "ko_daily": 0.18497109826589594,
+        "en_music": 0.16184971098265896,
+        "anomaly": 0.06358381502890173
+      }
+    },
+    "61": {
+      "total_observations": 222,
+      "dominant_category": "ko_philosophy",
+      "dominant_share": 0.25675675675675674,
+      "category_distribution": {
+        "ko_philosophy": 0.25675675675675674,
+        "en_math": 0.13513513513513514,
+        "en_code": 0.19369369369369369,
+        "en_music": 0.12162162162162163,
+        "anomaly": 0.05855855855855856,
+        "ko_daily": 0.23423423423423423
+      }
+    },
+    "63": {
+      "total_observations": 133,
+      "dominant_category": "ko_philosophy",
+      "dominant_share": 0.24060150375939848,
+      "category_distribution": {
+        "ko_philosophy": 0.24060150375939848,
+        "en_math": 0.23308270676691728,
+        "en_code": 0.18796992481203006,
+        "ko_daily": 0.20300751879699247,
+        "anomaly": 0.09022556390977443,
+        "en_music": 0.045112781954887216
+      }
+    },
+    "1": {
+      "total_observations": 216,
+      "dominant_category": "en_math",
+      "dominant_share": 0.2175925925925926,
+      "category_distribution": {
+        "en_math": 0.2175925925925926,
+        "ko_philosophy": 0.1527777777777778,
+        "en_code": 0.16666666666666666,
+        "ko_daily": 0.2037037037037037,
+        "en_music": 0.18981481481481483,
+        "anomaly": 0.06944444444444445
+      }
+    },
+    "44": {
+      "total_observations": 469,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.255863539445629,
+      "category_distribution": {
+        "en_code": 0.21321961620469082,
+        "en_music": 0.06183368869936034,
+        "anomaly": 0.1300639658848614,
+        "ko_daily": 0.255863539445629,
+        "ko_philosophy": 0.16631130063965885,
+        "en_math": 0.17270788912579957
+      }
+    },
+    "26": {
+      "total_observations": 194,
+      "dominant_category": "en_music",
+      "dominant_share": 0.25257731958762886,
+      "category_distribution": {
+        "en_code": 0.07216494845360824,
+        "anomaly": 0.20103092783505155,
+        "ko_philosophy": 0.13917525773195877,
+        "en_math": 0.211340206185567,
+        "en_music": 0.25257731958762886,
+        "ko_daily": 0.12371134020618557
+      }
+    },
+    "4": {
+      "total_observations": 108,
+      "dominant_category": "en_code",
+      "dominant_share": 0.3055555555555556,
+      "category_distribution": {
+        "en_math": 0.18518518518518517,
+        "ko_philosophy": 0.1388888888888889,
+        "en_code": 0.3055555555555556,
+        "en_music": 0.07407407407407407,
+        "ko_daily": 0.24074074074074073,
+        "anomaly": 0.05555555555555555
+      }
+    },
+    "16": {
+      "total_observations": 276,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.2391304347826087,
+      "category_distribution": {
+        "en_math": 0.1956521739130435,
+        "en_code": 0.2318840579710145,
+        "ko_philosophy": 0.15579710144927536,
+        "ko_daily": 0.2391304347826087,
+        "en_music": 0.11594202898550725,
+        "anomaly": 0.06159420289855073
+      }
+    },
+    "7": {
+      "total_observations": 414,
+      "dominant_category": "en_code",
+      "dominant_share": 0.2560386473429952,
+      "category_distribution": {
+        "ko_daily": 0.21980676328502416,
+        "en_code": 0.2560386473429952,
+        "anomaly": 0.07004830917874397,
+        "en_math": 0.20531400966183574,
+        "ko_philosophy": 0.1932367149758454,
+        "en_music": 0.05555555555555555
+      }
+    },
+    "30": {
+      "total_observations": 292,
+      "dominant_category": "en_code",
+      "dominant_share": 0.20205479452054795,
+      "category_distribution": {
+        "en_music": 0.16095890410958905,
+        "anomaly": 0.18493150684931506,
+        "ko_daily": 0.19863013698630136,
+        "en_math": 0.09931506849315068,
+        "en_code": 0.20205479452054795,
+        "ko_philosophy": 0.1541095890410959
+      }
+    },
+    "25": {
+      "total_observations": 67,
+      "dominant_category": "ko_philosophy",
+      "dominant_share": 0.3283582089552239,
+      "category_distribution": {
+        "en_music": 0.1044776119402985,
+        "ko_daily": 0.208955223880597,
+        "en_code": 0.07462686567164178,
+        "ko_philosophy": 0.3283582089552239,
+        "en_math": 0.208955223880597,
+        "anomaly": 0.07462686567164178
+      }
+    },
+    "28": {
+      "total_observations": 83,
+      "dominant_category": "ko_daily",
+      "dominant_share": 0.3132530120481928,
+      "category_distribution": {
+        "en_math": 0.14457831325301204,
+        "en_code": 0.20481927710843373,
+        "ko_daily": 0.3132530120481928,
+        "en_music": 0.060240963855421686,
+        "ko_philosophy": 0.060240963855421686,
+        "anomaly": 0.21686746987951808
+      }
+    },
+    "11": {
+      "total_observations": 22,
+      "dominant_category": "en_music",
+      "dominant_share": 0.3181818181818182,
+      "category_distribution": {
+        "en_math": 0.18181818181818182,
+        "en_music": 0.3181818181818182,
+        "anomaly": 0.22727272727272727,
+        "ko_daily": 0.13636363636363635,
+        "ko_philosophy": 0.045454545454545456,
+        "en_code": 0.09090909090909091
+      }
+    }
+  },
+  "cat_top_cells": {
+    "ko_daily": [
+      {
+        "cell_idx": 42,
+        "count": 149
+      },
+      {
+        "cell_idx": 44,
+        "count": 120
+      },
+      {
+        "cell_idx": 7,
+        "count": 91
+      }
+    ],
+    "ko_philosophy": [
+      {
+        "cell_idx": 42,
+        "count": 168
+      },
+      {
+        "cell_idx": 7,
+        "count": 80
+      },
+      {
+        "cell_idx": 44,
+        "count": 78
+      }
+    ],
+    "en_math": [
+      {
+        "cell_idx": 7,
+        "count": 85
+      },
+      {
+        "cell_idx": 44,
+        "count": 81
+      },
+      {
+        "cell_idx": 42,
+        "count": 75
+      }
+    ],
+    "en_code": [
+      {
+        "cell_idx": 42,
+        "count": 110
+      },
+      {
+        "cell_idx": 7,
+        "count": 106
+      },
+      {
+        "cell_idx": 44,
+        "count": 100
+      }
+    ],
+    "en_music": [
+      {
+        "cell_idx": 42,
+        "count": 84
+      },
+      {
+        "cell_idx": 26,
+        "count": 49
+      },
+      {
+        "cell_idx": 30,
+        "count": 47
+      }
+    ],
+    "anomaly": [
+      {
+        "cell_idx": 42,
+        "count": 80
+      },
+      {
+        "cell_idx": 60,
+        "count": 63
+      },
+      {
+        "cell_idx": 44,
+        "count": 61
+      }
+    ]
+  },
+  "falsifiers_hit": {
+    "F_LONG_1_wallclock_6h": false,
+    "F_LONG_2_alpha_plateau_5K": false,
+    "F_LONG_3_phi_saturated": false,
+    "F_LONG_4_specialization_stagnate": true
+  },
+  "final_verdict": "FAIL_V14_VIOLATED",
+  "honest_c3": [
+    "Toy substrate (8c × 12d × d_model=32) — production 350M v5 결과는 별도 lane (BG-PHASE2-CKPT-INSTR). 본 실험은 메커니즘 검증만.",
+    "Hash-based prompt encoding (sha256 → bytes → tensor) — real LLM tokenizer/embedding 과 다름. semantic 의미 없는 deterministic noise. anomaly 카테고리도 byte distribution 만 다를 뿐 의미 anomaly 검증 X.",
+    "α exponent regression on snapshot points — n_cells max_cap 도달 후 cells 변동 X 면 추가 snapshot point 가 같은 x=log(64) 에 누적, regression slope 가 trivially 0 으로 수렴 → α 가 ★ 인공적으로 떨어질 가능성. mechanism level 결론 비교만 valid.",
+    "V14 mirror random_init = 같은 mitosis 메커니즘 + 다른 seed substrate. 둘 다 randn → trained vs untrained 진짜 비교 X. Phase 2 cotrain ckpt 회수 후 재실험 필수.",
+    "Lorenz autonomous chaos (σ=10, ρ=28) 가 cell tension 의 dominant driver — input diversity 보다 Lorenz inter-cell phase noise 가 split trigger 의 핵심. F-LONG-4 (specialization stagnate) false negative 가능.",
+    "Φ proxy (cosine × log(n+1)) ceiling ≈ 8.34 (mean cos≤2 × log(65)≈4.17). historical IIT MI 51.131 (anima v2 stage 9) 와 직접 비교 X — metric scale 다름.",
+    "process_count 누적 의존 — 매 run 시작 시 0 reset. 실제 serving 에선 checkpoint resume 메커니즘 별도 필요. (현 mitosis_v5_port 는 split_history 만 추적)",
+    "cell_specialty 추적은 매 turn top-tension cell 만 기록 → softmax(tension) 가 매우 평탄하면 top_idx 가 거의 random. 'specialization' 결론은 정성적으로만 해석.",
+    "10K turn 도 toy 한계 — 실제 production 에서 의식 emerge 검증은 350M cotrain ckpt + IIT formal Φ metric 필요."
+  ]
+}

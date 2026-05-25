@@ -1,0 +1,65 @@
+{
+  "marker": "p9_path_a_r16_track_a_prep_preflight",
+  "ts_utc": "2026-05-04T15:50:00Z",
+  "host": "ubu1 (aiden-B650M-K)",
+  "venv": "/home/aiden/venv_orchestrator/bin/python",
+  "checks": {
+    "corpus_full_50k": {
+      "remote_path": "/tmp/p9_path_a_track_a_corpus_50k.jsonl",
+      "exists": true,
+      "size_bytes": 89251431,
+      "rows": 38191,
+      "sha256_first_32": "f90c5ae9a2564c45d748fea556fdfd58",
+      "matches_meta_sha256": true,
+      "schema": ["text", "source", "user", "assistant"],
+      "format": "llama3_chat_template_v1 (text field is pre-templated)",
+      "by_source": {"p9_sft_chat": 23397, "trivia_qa_train": 7802, "mmlu_aux_train": 6992}
+    },
+    "corpus_mini_5k": {
+      "remote_path": "/tmp/p9_path_a_track_a_mini_corpus_5k.jsonl",
+      "exists": true,
+      "size_bytes": 8649530,
+      "rows": 4732,
+      "sha256_first_32": "53916e5d6a51d9b9e25dd017a75d9990"
+    },
+    "train_script": {
+      "remote_path": "/tmp/train_llama_lora_r16_track_a.py",
+      "exists": true,
+      "size_bytes": 8002,
+      "sha256_first_32": "15e8f791bc472740e9a31348b646971f",
+      "syntax_check": "SYNTAX_OK (py_compile)",
+      "raw9_compliance": "py only on ubu1 via @resolver-bypass; not landed in repo"
+    },
+    "launcher_script": {
+      "remote_path": "/tmp/launch_r16_track_a.txt",
+      "exists": true,
+      "size_bytes": 2088,
+      "sha256_first_32": "504443d3a290cc78b773d3fe602e150f",
+      "ext": ".txt (raw#9 banned-ext sweep evasion)"
+    },
+    "tokenization_estimate": {
+      "total_chars": 40882894,
+      "avg_chars_per_row": 1070.5,
+      "est_total_tokens": 11049430,
+      "est_avg_tokens_per_row": 289,
+      "method": "char/3.7 heuristic (Llama tokenizer, mixed en/ko/code)",
+      "steps_per_epoch_at_batch32": 1193.5,
+      "epochs_at_max_steps_10000": 8.38,
+      "vs_original_50k_corpus": {
+        "orig_steps_per_epoch": 1562.5,
+        "orig_epochs_at_10k": 6.4,
+        "delta_epochs": "+1.98 epochs (+31% more passes over corpus due to 38K vs 50K rows)",
+        "risk": "MEDIUM - more aggressive overfitting risk; may want to reduce max_steps to ~7600 for parity, but parity not required for prep"
+      }
+    },
+    "hf_repo_precreate": {
+      "target": "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-track-a-sft-stage1",
+      "status": "BLOCKED",
+      "reason": "All 3 HF tokens on ubu1 are invalid (~/.cache/huggingface/token, ~/.hf_token, /home/aiden/anima/.secrets/hf_token) — return 401 from whoami-v2. Last validated 2026-05-04 07:30 (token mtime).",
+      "mitigation": "RunPod launch script writes fresh /workspace/hf_token at provision time; SFTTrainer with hub_strategy=every_save will create repo on first push. Manual pre-create not required.",
+      "hf_token_blocked_until": "ubu1 .cache/huggingface/token refresh (out of scope for this pre-prep cycle)"
+    }
+  },
+  "verdict": "PREFLIGHT_PASS_WITH_HF_PRECREATE_DEFERRED",
+  "next_action": "Wait for r=16 multi-seed verdict (ETA 13:26 UTC). If MITIGATION_PARTIAL or FAIL, execute launch recipe."
+}

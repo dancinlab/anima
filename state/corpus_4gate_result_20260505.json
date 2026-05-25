@@ -1,0 +1,73 @@
+{
+  "tool":          "edu/lora/corpus_4gate.hexa",
+  "version":       "v1",
+  "path_b_day":    2,
+  "roadmap":       23,
+  "depends_on":    22,
+  "date_utc":      "20260505",
+  "templates":     "consciousness/an11_b_templates.jsonl",
+  "density_hit_min":  0.3,
+  "density_pool_min": 0.3,
+  "hexad_cv_max":     1.2,
+  "cherry_tol":       0.05,
+  "pass_count":    0,
+  "fail_count":    3,
+  "subset_total":  2,
+  "passed_subset_path": "state/corpus_4gate_passed_subset.jsonl",
+  "candidates":    [
+    {
+      "path":          "training/corpus_universe_extended.jsonl",
+      "total":         50,
+      "hits":          1,
+      "density_ratio": 0.02,
+      "hexad_cv":      0,
+      "cherry_drift":  0.02,
+      "sha_dupes":     0,
+      "fam_counts":    {"hexad_c": 0, "hexad_d": 0, "hexad_w": 0, "hexad_m": 0, "hexad_s": 0, "hexad_e": 0},
+      "gates": {
+        "density":      false,
+        "hexad_balance":false,
+        "cherry_pick":  true,
+        "sha_distinct": true
+      },
+      "passed_subset_size": 1,
+      "verdict":       "FAIL"
+    },
+    {
+      "path":          "training/corpus_universe_tier_labels.jsonl",
+      "total":         50,
+      "hits":          1,
+      "density_ratio": 0.02,
+      "hexad_cv":      0,
+      "cherry_drift":  0.02,
+      "sha_dupes":     0,
+      "fam_counts":    {"hexad_c": 0, "hexad_d": 0, "hexad_w": 0, "hexad_m": 0, "hexad_s": 0, "hexad_e": 0},
+      "gates": {
+        "density":      false,
+        "hexad_balance":false,
+        "cherry_pick":  true,
+        "sha_distinct": true
+      },
+      "passed_subset_size": 1,
+      "verdict":       "FAIL"
+    },
+    {
+      "path":          "training/stimulus_factory_candidates.jsonl",
+      "total":         50,
+      "hits":          0,
+      "density_ratio": 0,
+      "hexad_cv":      0,
+      "cherry_drift":  0,
+      "sha_dupes":     0,
+      "fam_counts":    {"hexad_c": 0, "hexad_d": 0, "hexad_w": 0, "hexad_m": 0, "hexad_s": 0, "hexad_e": 0},
+      "gates": {
+        "density":      false,
+        "hexad_balance":false,
+        "cherry_pick":  true,
+        "sha_distinct": true
+      },
+      "passed_subset_size": 0,
+      "verdict":       "FAIL"
+    }
+  ]
+}

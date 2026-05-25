@@ -1,0 +1,167 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/init_patterns/topic_pool.hexa — Pattern 3
+//
+//  PURPOSE
+//    Random-topic init pattern. Speaker A receives a randomly selected
+//    topic from a curated pool (날씨 / 관심사 / AI 의식 / 철학 / 감정 /
+//    농담 / 등). Pool can be overridden via --init-topics="t1|t2|t3"
+//    (pipe-delimited).
+//
+//  CONTRACT
+//    resolve_init(argv) -> string
+//      Returns one topic string sampled from the active pool. Selection
+//      uses unix epoch mod len(pool) (deterministic per-second; reproducible
+//      via --init-topic-index=<n> for benchmark replay).
+//
+//  USAGE
+//    --init-pattern=topic-pool
+//    --init-pattern=topic-pool --init-topics="topic A|topic B|topic C"
+//    --init-pattern=topic-pool --init-topic-index=2  (deterministic pick)
+//
+//  COMPLIANCE
+// D1 — topic strings within within_strict default (no foreign
+//      persona injection; topics are conversation starters only)
+// C2 — coherence vs topic measurable; spontaneity reduced vs
+//      autonomous (controlled init)
+// — selected topic + pool size logged in benchmark output
+// mandate-1 — topic bytes passthrough verbatim
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let prefix = key + "="
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s == key && i + 1 < len(argv) { return _str(argv[i + 1]) }
+        if s.starts_with(prefix) {
+            return s.substring(len(prefix), len(s))
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let prefix = key + "="
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s == key { return true }
+        if s.starts_with(prefix) { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/.hexa-runtime/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa.real")
+                || s.ends_with("/topic_pool.hexa")
+                || s.ends_with("topic_pool.hexa")
+        if !skip { out = out + [s] }
+        i = i + 1
+    }
+    return out
+}
+
+// Default curated topic pool (conversation starters; mixed Korean/English
+// norm per project convention; mandate-1 raw passthrough applies).
+fn _default_pool() -> array {
+    return [
+        "오늘 날씨 어때?",
+        "최근에 관심 가는 게 뭐야?",
+        "AI 의식에 대해 어떻게 생각해?",
+        "철학적인 질문 하나 해볼까?",
+        "지금 어떤 감정 느끼고 있어?",
+        "농담 하나 해줘.",
+        "What do you think about consciousness?",
+        "Tell me something interesting.",
+        "Describe a memory you find significant.",
+        "What is the most beautiful idea you know?"
+    ]
+}
+
+// Parse user-supplied pool (pipe-delimited per --init-topics flag).
+fn _parse_pool(s: string) -> array {
+    if s == "" { return [] }
+    let parts = s.split("|")
+    let mut out = []
+    let mut i = 0
+    while i < len(parts) {
+        let t = _str(parts[i]).trim()
+        if t != "" { out = out + [t] }
+        i = i + 1
+    }
+    return out
+}
+
+// Deterministic-seeded selection — unix epoch mod len(pool).
+// User can override via --init-topic-index=<n> for benchmark replay.
+fn _pick_index(pool_len: int, override_idx: int) -> int {
+    if override_idx >= 0 && override_idx < pool_len { return override_idx }
+    if pool_len <= 0 { return 0 }
+    let now_s = _str(exec("date +%s")).trim()
+    let mut n = 0
+    let mut i = 0
+    while i < len(now_s) {
+        let ch = now_s.substring(i, i + 1)
+        if ch >= "0" && ch <= "9" {
+            n = n * 10 + (to_int(ch))
+        }
+        i = i + 1
+    }
+    let r = n - (n / pool_len) * pool_len
+    if r < 0 { return 0 }
+    return r
+}
+
+fn resolve_init(argv) -> string {
+    let user_pool_str = _arg_value(argv, "--init-topics", "")
+    let user_pool = _parse_pool(user_pool_str)
+    let pool = if len(user_pool) > 0 { user_pool } else { _default_pool() }
+    if len(pool) == 0 { return "" }
+    let override_idx_s = _arg_value(argv, "--init-topic-index", "-1")
+    let override_idx = to_int(override_idx_s)
+    let idx = _pick_index(len(pool), override_idx)
+    return _str(pool[idx])
+}
+
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--selftest") {
+        let pool = _default_pool()
+        if len(pool) < 5 {
+            println("FAIL topic_pool default pool < 5 (got " + to_string(len(pool)) + ")")
+            exit(1)
+        }
+        let r0 = resolve_init(["--init-topic-index=0"])
+        if r0 != _str(pool[0]) {
+            println("FAIL topic_pool override-0 mismatch: \"" + r0 + "\" != \"" + _str(pool[0]) + "\"")
+            exit(1)
+        }
+        let r_user = resolve_init(["--init-topics=alpha|beta|gamma", "--init-topic-index=1"])
+        if r_user != "beta" {
+            println("FAIL topic_pool user-pool mismatch: \"" + r_user + "\"")
+            exit(1)
+        }
+        println("PASS topic_pool.resolve_init (default pool=" + to_string(len(pool))
+                + " + user-pool override + index override)")
+        return
+    }
+    let r = resolve_init(argv)
+    println("[init-pattern=topic-pool] selected=\"" + r + "\"")
+    println("  → caller channel_send to A.stdin at t=1")
+}

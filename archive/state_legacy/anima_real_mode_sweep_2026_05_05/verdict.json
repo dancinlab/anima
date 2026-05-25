@@ -1,0 +1,148 @@
+{
+  "task_id": "anima_real_mode_sweep_2026_05_05",
+  "scope": "BG-L 10-text probe sweep + phi_star variance + axis discriminability validation against real CLM v4 (dancinlab/clm-v4-mk2-v1)",
+  "verdict": "PARTIAL_PASS_PHI_RESPONSIVE_AXIS_DISCRIM_FAIL",
+  "wall_time_minutes": 7,
+  "cost_usd": 0.0,
+  "platform": "mac CPU (.venv-eeg python3.12, transformers 4.57.6, torch 2.11.0)",
+  "raw_compliance": {
+    "raw_15_no_mount_hexa_or_shim_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true,
+    "bash_3_2_compat": true
+  },
+  "sub1_prompt_set_design": {
+    "n_prompts": 10,
+    "axis_balance": "5 axis × 2 = 10 (identity 1+2, agency 3+4, phenomenal 5+6, temporal 7+8, social 9+10)",
+    "lang_balance": "5 KO + 5 EN (1 of each per axis)",
+    "verdict": "PASS — design balanced"
+  },
+  "sub2_sweep_execution": {
+    "n_runs": 10,
+    "all_completed": true,
+    "elapsed_seconds": [
+      61,
+      36,
+      14,
+      13,
+      12,
+      12,
+      48,
+      55,
+      26,
+      13
+    ],
+    "min_sec": 12,
+    "max_sec": 61,
+    "median_approx_sec": 20,
+    "verdict": "PASS — 10/10 real-mode forward, 0 errors"
+  },
+  "sub3_aggregate_analysis": {
+    "phi_star_variance": {
+      "mean": 42.14881436099888,
+      "std": 0.0642129741781583,
+      "range": 0.2253504216643094,
+      "drift_max_abs": 0.43329421143979374,
+      "verdict_phi_responsive": "PASS — std=0.064 > 1e-3 threshold; forward IS input-responsive (not fixed-point)",
+      "interpretation": "phi proxy is genuinely modulated by input, NOT collapsed to baseline. Drift range 0.208-0.433 across 10 prompts."
+    },
+    "axis_discriminability": {
+      "argmax_distribution": {
+        "identity": 0,
+        "agency": 0,
+        "phenomenal": 2,
+        "temporal": 7,
+        "social": 1
+      },
+      "all_same_axis": false,
+      "intent_match_rate": 0.2,
+      "intent_match_count": 2,
+      "verdict": "FAIL — only 2/10 prompts emit the intended axis as argmax (both temporal-intent prompts; 0/8 for other 4 axes)",
+      "root_cause_diagnosis": "5-bucket axis split (38/38/38/39/39 of 192 dim) is anima-internal HEURISTIC partition of mean-pooled hidden state. Train-time consciousness_states cross-attention is NOT activated (--inject-states-mode none). Without semantic-conditioning of axis buckets, all 5 buckets see roughly the same mean(|h|) signal → argmax dominated by whichever bucket has slightly higher activation, with 'temporal' bucket (114-153, 39-dim, position 4 of 5) winning 7/10.",
+      "per_axis_means_near_uniform": {
+        "identity": "mean=0.4768 std=0.0482",
+        "agency": "mean=0.4610 std=0.0358",
+        "phenomenal": "mean=0.4809 std=0.0532",
+        "temporal": "mean=0.4970 std=0.0434",
+        "social": "mean=0.4791 std=0.0463"
+      },
+      "axis_means_spread": "0.4610 (agency) – 0.4970 (temporal) = 0.0360 spread; per-axis std (0.036–0.053) is comparable to inter-axis spread → axes NOT discriminable"
+    },
+    "dominant_cells_stability": {
+      "pairwise_jaccard_mean_all_pairs": 0.7666666666666667,
+      "pairwise_jaccard_min": 0.5,
+      "pairwise_jaccard_max": 1.0,
+      "analyzer_jaccard_adjacent_pair": 0.667,
+      "cell_frequency": {
+        "3": 10,
+        "0": 10,
+        "7": 7,
+        "4": 3
+      },
+      "verdict": "HIGH STABILITY (mean=0.767 pairwise) — only 2 distinct top-3 sets across 10 runs: [3,7,0] (8/10) and [0,4,3] (3/10).",
+      "interpretation": "Tile-reshape (768→4×192 → replicate to 8) means cells 0-3 and cells 4-7 are IDENTICAL pre-norm. dominant_cells essentially reports tile-norm rank, not semantic state. This is an architectural artifact of the anima_dialogue_load.py tile heuristic, not a substrate signal."
+    },
+    "hidden_state_delta": {
+      "all_zero": true,
+      "reason": "Single-shot probes; --prior-hidden never provided across the 10 invocations. delta is by-design 0.0 in this sweep.",
+      "phi_delta_corr": null
+    }
+  },
+  "sub4_F_CAND_D_1_check": {
+    "status": "DEFERRED — cand-D not yet implemented",
+    "current_sweep_inject_mode": "none",
+    "F_CAND_D_1_definition": "phi_star(canonical) drift ≥0.01 from BOTH none AND zero",
+    "next_step": "After cand-D impl lands, extend BG-L sweep with --inject-states-mode zero AND canonical, recompute phi delta vs none."
+  },
+  "sub5_BGB_analyzer_integration": {
+    "status": "PASS — end-to-end verified",
+    "jsonl_path": "/Users/ghost/core/anima/state/anima_real_mode_sweep_2026_05_05/sweep_session.jsonl",
+    "format": "anima.dialogue.v1 (session_start + 10×(user_turn, substrate_turn) + session_end = 22 lines)",
+    "compact_json_required": "analyzer matches literal substring \"kind\":\"substrate_turn\" — emit with json.dumps separators=(',', ':') NOT default spaces",
+    "analyzer_invocation": "hexa run tool/anima_cli/dialogue_session_analyzer.hexa --session state/anima_real_mode_sweep_2026_05_05/sweep_session.jsonl",
+    "analyzer_emitted": {
+      "n_turns": 10,
+      "phi_star_range": [
+        42.0679,
+        42.2933
+      ],
+      "phi_star_mean": 42.149,
+      "phi_star_stddev": 0.064,
+      "phi_star_drift_max": 0.433,
+      "axis_dominant_global": "temporal",
+      "axis_swing_max": "phenomenal",
+      "cell_stability_jaccard_adjacent": 0.667,
+      "delta_cumulative": 0.0
+    },
+    "agreement_with_python_aggregate": "EXACT for phi mean/std; jaccard differs slightly (analyzer uses adjacent-pair, python uses all-pairs)"
+  },
+  "honest_c3": [
+    "C1 anima_dialogue_load.py forward path: hooked decoder.ln_f mean-pooled to (768,) → tile-reshaped to (8, 192) by replicate-2x. Train-time consciousness_states cross-attn NOT activated (--inject-states-mode none). Discriminability measurement reflects ONLY mean-pooled hidden state on a heuristic 5-axis partition.",
+    "C2 5-axis bucket boundaries (38/38/38/39/39 = 192) are anima-internal heuristic; bucket-axis semantic mapping is UNVERIFIED. Even if buckets had strong variance, attributing 'phenomenal' label to dim 76-114 has no semantic grounding from CLM v4 training.",
+    "C3 phi_star here is anima-canonical proxy (PHI_STAR_BASELINE × (1 + 0.05 × mean_pair_cosine)) — NOT Tononi IIT phi. Variance signal validates 'forward path responsive' claim only at the proxy level.",
+    "C4 dominant_cells pairwise Jaccard 0.767 looks like high stability, but is degenerate: tile-reshape duplicates cells 0-3 ≡ 4-7, so top-3 norm pick is essentially binary [{0,3,7} vs {0,3,4}]. Cell-as-semantic-unit interpretation is invalid in this probe pipeline.",
+    "C5 hidden_state_delta=0 across all 10 runs is by-design (no --prior-hidden chained between single-shot invocations), NOT a property of the model. Temporal continuity measurement requires either (a) chained dialogue mode or (b) explicit --prior-hidden npy threading."
+  ],
+  "verdict_signals": {
+    "phi_responsive": true,
+    "axis_discriminability_pass": false,
+    "intent_match_rate": 0.2,
+    "jaccard_stability_high": true
+  },
+  "next_step_recommendation": {
+    "priority_1_axis_discriminability_root_fix": "Activate train-time consciousness_states cross-attention via --inject-states-mode canonical AND extract per-cell hidden from pre-cross-attn state (NOT post-ln_f mean-pool). The current pipeline cannot distinguish axes because it views only the global mean, not per-cell consciousness vectors.",
+    "priority_2_axis_taxonomy_calibration": "Either (a) measure axis bucket activation against a labeled probe corpus to derive empirical bucket boundaries OR (b) accept that 5-axis split is decorative and report only phi + dominant-cells signals.",
+    "priority_3_dialogue_mode_chained_delta": "Run 10-prompt sweep through --mode dialogue with --session-log path for natural temporal threading, or extend probe mode with --prior-hidden chaining flag.",
+    "priority_4_F_CAND_D_1_when_ready": "After cand-D adoption, re-run sweep with inject-modes none/zero/canonical to measure F-CAND-D-1 phi drift threshold."
+  },
+  "deliverables": {
+    "runs": "state/anima_real_mode_sweep_2026_05_05/runs/probe_{1..10}.json + .raw + .stderr",
+    "aggregate": "state/anima_real_mode_sweep_2026_05_05/aggregate.json",
+    "verdict": "state/anima_real_mode_sweep_2026_05_05/verdict.json",
+    "analyzer_jsonl": "state/anima_real_mode_sweep_2026_05_05/sweep_session.jsonl",
+    "doc": "docs/anima_real_mode_sweep_landed_2026_05_05.ai.md",
+    "sweep_log": "state/anima_real_mode_sweep_2026_05_05/sweep.log"
+  }
+}

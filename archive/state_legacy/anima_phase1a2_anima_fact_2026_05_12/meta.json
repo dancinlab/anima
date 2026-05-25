@@ -1,0 +1,30 @@
+{
+  "preset": "phase1a2_anima_fact_recover",
+  "steps_completed": 200,
+  "steps_target": 200,
+  "elapsed_min": 3.9235804875691733,
+  "cost_usd": 0.01765611219406128,
+  "n_params": 298764288,
+  "lineage_tag": "phase1a_multi_turn_sft -> phase1a1_color_cosmology_v2 -> phase1a2_anima_fact_recover",
+  "base_ckpt": "ckpts/ckpt_phase1a1_sft.pt",
+  "lr": 1e-06,
+  "bsz": 2,
+  "grad_accum": 8,
+  "ctx": 1024,
+  "warmup": 20,
+  "corpus": "corpus_anima_fact.txt",
+  "corpus_dialogues": 2700,
+  "corpus_breakdown": "1500 anima 2-turn + 1000 V5.8-exact-anchor + 200 anti-forgetting refresh",
+  "provider": "Vast.ai RTX 4090",
+  "ckpt_sha256": "1ffc526dc0e88f40c7482dba652efdd8fcac4ebde94293914f2c9dd9992b1dda",
+  "v58_summary": {
+    "standard_greedy": "4/5 PASS",
+    "standard_sample": "1/5 FAIL",
+    "M3_rep_penalty": "2/5 FAIL",
+    "M4_force_include": "5/5 PASS"
+  },
+  "mission_5_of_5_status": "FAILED",
+  "phase_1a1_baseline_preserved": true,
+  "anima_fact_markdown_drift_status": "unchanged (lr 1e-6 too small to break attractor)",
+  "notes": "meta.json overwritten manually post-dispatch: pod's /workspace/anima/output/meta.json was originally written correctly by train_phase1a2.py per train_remote.log, but a leftover SimPO meta from prior dispatch on same pod path was downloaded. Correct values are sourced from train_remote.log [done] block and v58_4mode_result.json."
+}

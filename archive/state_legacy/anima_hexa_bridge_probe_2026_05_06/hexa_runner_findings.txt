@@ -1,0 +1,65 @@
+# BG-FH hexa runner / anima-hexad bridge probe — findings
+# Date: 2026-05-06
+
+## (1) hexa CLI binary status
+
+### mac
+- which hexa  -> /Users/ghost/.hx/bin/hexa
+- file type   -> Bash dispatch shim (336 bytes)
+- exec target -> /Users/ghost/.hx/packages/hexa/hexa.real
+- env         -> HEXA_SHIM_NO_DARWIN_LANDING=1 (darwin landing refusal bypass)
+- version     -> "hexa 0.1.0-dispatch"
+- subcommands -> run, batch, parse, test, check, convergence, build, bench
+- flags       -> `run [--no-sentinel] <file> [args...]`, `--no-sentinel` for clean stdout
+- VERDICT     -> hexa runner FULLY OPERATIONAL on mac; .hexa exec path is `hexa run <file>`
+
+### ubu1
+- which hexa  -> EMPTY (no binary in PATH)
+- which hexad -> EMPTY
+- venv path   -> /home/aiden/venv_orchestrator/bin/python (RTX 5070 sm_120 torch 2.11.0+cu128)
+- VERDICT     -> ubu1 has NO hexa runner; raw .hexa cannot be executed there
+- IMPLICATION -> ubu1 must be reached via Path B emit-py-pattern (mac hexa emits .py, ssh dispatches python)
+
+## (2) anima-hexad runtime structure (mac + ubu1 mirror)
+
+### mac /Users/ghost/core/anima/anima-hexad/
+- __init__.hexa, hexad.hexa, model.hexa, narrative.hexa, constants.hexa
+- subdirs: bridge/, c/, d/, e/, m/, s/, w/, tests/
+- bridge/__init__.hexa contains `pub use hexad.model.{ThalamicBridge, ...}` — pure hexa
+- tests/test_hexad_cdesm.hexa, test_hexad_forward.hexa exist (executable via `hexa test`)
+
+### ubu1 /home/aiden/core/anima/ready/anima/hexad/
+- DUAL: both .hexa AND .py present (model.hexa + model.py, constants.hexa + constants.py, narrative.hexa + narrative.py, etc.)
+- README.md describes Hexad as 6-module framework with `model.py` for "Hexad 통합 모델"
+- VERDICT -> ubu1 ready/anima/hexad/ uses .py runtime (substrate exempt under ready/ jurisdiction-out)
+
+### bridge actual behavior
+- anima-hexad/bridge/__init__.hexa is hexa-native re-export (no PyTorch/FFI shim)
+- NO PyTorch ops bridge: all hexa hexad files describe model SHAPE not numeric runtime
+- VERDICT     -> hexad module-system is hexa-native description layer; numeric runtime delegates to .py on substrate
+
+## (3) Path B emit-py-pattern (anima OFFICIAL canonical)
+
+Source: /Users/ghost/core/anima/design/hexa_only_migration_plan_20260426.md
+
+3 paths considered, B recommended:
+- Path A (stage0 transpile, hexa_v2 -> .c -> clang): NO numpy/transformers, 100% strict
+- Path B (.hexa builder emits /tmp/*.py + ship + python execute on pod): full numpy/transformers, **anima existing pattern**
+- Path C (mac hexa interp + hexa_remote pod execute): hexa_remote infra blocker, infra-not-yet
+
+Reference impl: tool/anima_runpod_orchestrator.hexa (303 LoC mac canonical)
+- HELPER_PATH = "/tmp/anima_runpod_orchestrator_helper.hexa_tmp"
+- _write_helper() emits python helper as string concat (parts.push)
+- _run_helper(args) calls `python3 HELPER_PATH args` via exec_with_status
+- raw#9 strict satisfied (helper emission only inside .hexa source)
+
+Existing 7 orchestrators use this pattern (clm_v4_lora_train_orchestrator.hexa 1004 LoC, p9_path_a_retrain_v2 951 LoC, etc.) — total 6437 LoC
+
+## (4) hexa_port_audit.json status (2026-04-10 snapshot)
+
+- total_pairs: 643
+- by_status: STUB 624 / PARTIAL 17 / COMPLETE 2
+- COMPLETE rate = 0.31% — port is STRUCTURAL skeleton phase, NOT runtime-ready
+- top stub dirs: anima/experiments (79), anima/tools (63), anima/modules (40)
+- anima/hexad: PARTIAL 3 (this is ALREADY the most-completed dir)
+- VERDICT     -> hexa-port-as-runtime is FUTURE work; current state = description layer only

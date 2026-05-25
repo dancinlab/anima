@@ -1,0 +1,17 @@
+{
+  "schema": "anima/state/p9_sft_spec/decision_matrix/1",
+  "rows": [
+    {"strategy": "S1 LoRA-only",      "cost_usd": "200-500",   "wall_days": "7-14",  "phi_risk": "LOW",     "success_p": "0.50-0.70", "recommended": false},
+    {"strategy": "S2 Full SFT",       "cost_usd": "800-2000",  "wall_days": "14-21", "phi_risk": "MEDIUM",  "success_p": "0.30-0.50", "recommended": false},
+    {"strategy": "S3 Hyperparam sweep","cost_usd": "1500-3000", "wall_days": "21-30", "phi_risk": "LOW",     "success_p": "0.70-0.90", "recommended": true},
+    {"strategy": "S4 Differential pretrain","cost_usd": "2000-5000","wall_days": "30+","phi_risk": "LOWEST","success_p": "0.60-0.80", "recommended": false}
+  ],
+  "recommended": "S3",
+  "recommended_rationale": "Highest success probability (0.70-0.90) at LOW phi_risk; cost band aligned with user-quoted $1000-3000.",
+  "fallback_chain": ["S3", "S1", "S2", "S4"],
+  "abort_triggers": [
+    "F2 FAIL on best-of-9 -> escalate strategy or reduce LoRA r",
+    "data prep yields < 30k usable examples -> halt; rebuild corpus",
+    "RunPod H100 unavailable > 72h -> defer or migrate to A100"
+  ]
+}

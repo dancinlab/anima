@@ -1,0 +1,28 @@
+{
+  "hypothesis": "H_018",
+  "domain": "LIFE",
+  "title": "GENESIS spontaneous emergence from primordial substrate",
+  "date": "2026-05-23",
+  "host": "mac-local",
+  "deterministic": true,
+  "seed": 42,
+  "llm": "none",
+  "d_model": 8,
+  "init_cells": 2,
+  "n_steps": 60,
+  "conditions": {
+    "A_zero":     { "drive": "const 0-vector (inert)", "splits": 0, "first_split": -1, "final_cells": 2, "phi": 0.158279, "traj": [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] },
+    "B_selffeed": { "drive": "primordial-init self-reference (no external)", "splits": 2, "first_split": 2, "final_cells": 2, "phi": 0.846146, "traj": [2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] },
+    "C_drive":    { "drive": "const non-zero external", "splits": 2, "first_split": 2, "final_cells": 4, "phi": 1.064, "traj": [2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4] }
+  },
+  "falsifiers": {
+    "F_GEN_1_ZERO_STATIC":     { "metric": "zero splits=0 & final=2", "verdict": "PASS" },
+    "F_GEN_2_SELFFEED_GENESIS": { "metric": "selffeed splits>=1", "value": 2, "verdict": "PASS" },
+    "F_GEN_3_FIRST_STEP":      { "metric": "selffeed first in [1,30]", "value": 2, "verdict": "PASS" },
+    "F_GEN_4_DRIVE_CONTROL":   { "metric": "drive splits>=1", "value": 2, "verdict": "PASS" },
+    "F_GEN_5_ZERO_LT_SELFFEED": { "metric": "zero.splits < selffeed.splits", "verdict": "PASS" },
+    "F_GEN_6_BOUNDS":          { "metric": "all final_cells in [2,128]", "verdict": "PASS" }
+  },
+  "n_pass": 6,
+  "verdict": "SUPPORTED_FULL"
+}

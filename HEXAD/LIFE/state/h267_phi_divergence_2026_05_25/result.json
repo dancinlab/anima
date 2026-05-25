@@ -1,0 +1,52 @@
+{
+  "hypothesis": "H_267",
+  "slug": "phi-spatial-cosine-divergence",
+  "domain": "LIFE",
+  "title": "phi_spatial ↔ cosine-ratchet divergence map — when/why the verdict Φ (spatial IIT) and the substrate's internal ratchet Φ (cosine) move in opposite directions (H_265 §8 L5 close, gap#1)",
+  "date": "2026-05-25",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "seed": 42,
+  "phi_definitions": {
+    "phi_spatial": "RFC 036 spatial IIT Φ (HEXAD/C/c_lib.hexa c_measure_phi → phi_spatial) on first-P cells' hidden[0] dim-step trajectory — H_265 verdict measurer",
+    "phi_cosine":  "compute_phi_proxy(first-P pool cells) = mean off-diagonal cosine distance × log(P+1) — the pool's internal Φ-ratchet target (_mit_phi_ratchet input)"
+  },
+  "params": { "pool_sizes": [6, 8], "closure_k": [0.2, 0.8], "N_steps": [0, 50, 100, 500], "dim": 12, "n_bins": 4, "deadband": 1e-06 },
+  "sweep": {
+    "p6_loose": { "P": 6, "k": 0.2, "phi_spatial": { "N0": 1.54105, "N50": 0.289471, "N100": 0.230007, "N500": 0.21092 }, "phi_cosine": { "N0": 1.7142, "N50": 0.211105, "N100": 0.903298, "N500": 1.59595 }, "delta_spatial": { "0_50": -1.25158, "50_100": -0.0594633, "100_500": -0.0190874 }, "delta_cosine": { "0_50": -1.5031, "50_100": 0.692192, "100_500": 0.692649 }, "sign_spatial": [-1, -1, -1], "sign_cosine": [-1, 1, 1], "divergent_step": [false, true, true], "strict_flip_step": [false, true, true], "n_divergent": 2, "n_strict_flip": 2 },
+    "p6_tight": { "P": 6, "k": 0.8, "phi_spatial": { "N0": 1.55495, "N50": 0.312585, "N100": 0.256137, "N500": 0.0272612 }, "phi_cosine": { "N0": 1.62716, "N50": 0.326681, "N100": 1.1353, "N500": 0.888768 }, "delta_spatial": { "0_50": -1.24237, "50_100": -0.0564473, "100_500": -0.228876 }, "delta_cosine": { "0_50": -1.30048, "50_100": 0.808615, "100_500": -0.246528 }, "sign_spatial": [-1, -1, -1], "sign_cosine": [-1, 1, -1], "divergent_step": [false, true, false], "strict_flip_step": [false, true, false], "n_divergent": 1, "n_strict_flip": 1 },
+    "p8_loose": { "P": 8, "k": 0.2, "phi_spatial": { "N0": 2.22601, "N50": 0.223277, "N100": 0.0850673, "N500": 0.0850673 }, "phi_cosine": { "N0": 1.83621, "N50": 0.301491, "N100": 1.18207, "N500": 0.82121 }, "delta_spatial": { "0_50": -2.00273, "50_100": -0.13821, "100_500": -2.06102e-11 }, "delta_cosine": { "0_50": -1.53472, "50_100": 0.880575, "100_500": -0.360856 }, "sign_spatial": [-1, -1, 0], "sign_cosine": [-1, 1, -1], "divergent_step": [false, true, true], "strict_flip_step": [false, true, false], "n_divergent": 2, "n_strict_flip": 1 },
+    "p8_tight": { "P": 8, "k": 0.8, "phi_spatial": { "N0": 2.48062, "N50": 0.256074, "N100": 0.190481, "N500": 0.103041 }, "phi_cosine": { "N0": 1.88061, "N50": 0.142535, "N100": 1.02265, "N500": 1.30111 }, "delta_spatial": { "0_50": -2.22454, "50_100": -0.0655924, "100_500": -0.0874404 }, "delta_cosine": { "0_50": -1.73808, "50_100": 0.880114, "100_500": 0.27846 }, "sign_spatial": [-1, -1, -1], "sign_cosine": [-1, 1, 1], "divergent_step": [false, true, true], "strict_flip_step": [false, true, true], "n_divergent": 2, "n_strict_flip": 2 }
+  },
+  "divergence_map": {
+    "total_divergent_steps": 7,
+    "total_strict_flips": 6,
+    "cells_with_divergence": 4,
+    "per_cell_div_counts": [2, 1, 2, 2],
+    "per_cell_order": ["p6_loose", "p6_tight", "p8_loose", "p8_tight"],
+    "boundary_varies_across_grid": true,
+    "all_cells_diverge": true,
+    "shared_first_step_driver": false
+  },
+  "criteria": {
+    "C1_divergence_exists":     true,
+    "C2_boundary_characterized":true,
+    "C3_determinism":           true
+  },
+  "falsifiers": {
+    "F1_DIVERGENCE_EXISTS": { "metric": "≥1 cell with sign(Δspatial)≠sign(Δcosine)", "value": 4, "verdict": "PASS" },
+    "F2_BOUNDARY":          { "metric": "divergence is a function of (P,k): grid non-constant OR shared driver", "verdict": "PASS" },
+    "F3_DETERMINISM":       { "metric": "cross-process re-run result.json sha256 byte-equal (NOT in-process; RFC 033 global RNG stream)", "verdict": "PASS" },
+    "F4_NONNEG":            { "metric": "all Φ (both definitions) ≥ 0", "verdict": "PASS" },
+    "F5_STRICT_FLIP":       { "metric": "≥1 strict opposite-sign flip (one Φ↑ one Φ↓)", "value": 6, "verdict": "PASS" }
+  },
+  "n_criteria_pass": 3,
+  "n_falsifier_pass": 5,
+  "verdict_rule": "SUPPORTED = C1∧C2 ; PARTIAL = C1 only ; FALSIFIED = ¬C1",
+  "verdict": "SUPPORTED",
+  "honest_note": "phi_spatial and phi_cosine measure DIFFERENT quantities (spatial integration via MI bipartition vs cosine alignment × log(P+1)); observed divergence may be a consequence of the metric-definition difference, not a substrate property (H_265 §8 L5 / honest L).",
+  "cross_link": { "H_265": "trained-vs-bare CA Φ — first observed the spatial/cosine sign-divergence (§8 L5)", "H_007": "bare CA Φ baseline", "H_220": "closure-k self-coupling drive mechanics carry" }
+}

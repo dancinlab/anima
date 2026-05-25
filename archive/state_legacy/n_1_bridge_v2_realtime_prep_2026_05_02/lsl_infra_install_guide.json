@@ -1,0 +1,68 @@
+{
+  "schema": "anima/n_1_bridge_v2_realtime_prep/lsl_infra/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "phase": "Phase 1 — LSL infra user-side install guide",
+  "target_platform": "macOS (user mac) + Ubuntu (ubu1 with RTX 5070)",
+  "budget_usd": 0,
+  "eta_min": 10,
+
+  "step_1_labrecorder_mac": {
+    "purpose": "GUI for recording multiple synchronized LSL streams to a single .xdf file",
+    "download_url": "https://github.com/labstreaminglayer/App-LabRecorder/releases/latest",
+    "asset_name_pattern": "LabRecorder-*-macOS.dmg (universal2 for M-series + Intel)",
+    "install_steps": [
+      "1. Open the downloaded .dmg",
+      "2. Drag LabRecorder.app to /Applications",
+      "3. First launch: System Settings -> Privacy & Security -> 'Open Anyway' (Apple Gatekeeper)",
+      "4. Grant network access on the Local Network prompt (LSL uses multicast UDP on 224.0.0.183 port 16571)"
+    ],
+    "verification": "App launches, shows 'Update' button — pressing it should NOT yet show streams (none broadcasting)",
+    "fallback_if_dmg_blocked": "brew install --cask labrecorder (homebrew-cask) — community formula"
+  },
+
+  "step_2_pylsl_install": {
+    "purpose": "Python LSL client lib for outlet/inlet test + .xdf load in analysis",
+    "command": "python3 -m pip install --user pylsl pyxdf",
+    "verify_command": "python3 -c \"import pylsl, pyxdf; print('pylsl', pylsl.__version__, 'pyxdf', pyxdf.__version__)\"",
+    "expected_output": "pylsl 1.16.x pyxdf 1.16.x (or newer)",
+    "common_failure_macos_arm64": "if 'no liblsl found': brew install labstreaminglayer/tap/lsl",
+    "common_failure_ubuntu": "sudo apt-get install -y liblsl (or build from source if not in apt)"
+  },
+
+  "step_3_outlet_inlet_smoke_test": {
+    "purpose": "Confirm LSL can broadcast and receive on the same machine before going cross-host",
+    "outlet_one_liner_mac": "python3 -c \"from pylsl import StreamInfo, StreamOutlet, local_clock; import time; info = StreamInfo('anima_smoke_test', 'TestStream', 1, 1.0, 'float32', 'smoke_uid_001'); outlet = StreamOutlet(info); print('outlet up'); [outlet.push_sample([float(i)]) or time.sleep(1) for i in range(60)]\"",
+    "inlet_one_liner_mac_separate_terminal": "python3 -c \"from pylsl import StreamInlet, resolve_byprop; print('searching...'); streams = resolve_byprop('name', 'anima_smoke_test', timeout=10); inlet = StreamInlet(streams[0]); [print(inlet.pull_sample(timeout=2.0)) for _ in range(10)]\"",
+    "expected_inlet_output": "10 lines of ([0.0], ts), ([1.0], ts), ... matching outlet stream",
+    "if_inlet_finds_no_stream": [
+      "Check macOS firewall: System Settings -> Network -> Firewall -> allow python3",
+      "Confirm both terminals are on same Wi-Fi/LAN if cross-host",
+      "lsl_api.cfg: add 'KnownPeers = {ubu1.local}' to ~/lsl_api/lsl_api.cfg if multicast blocked"
+    ]
+  },
+
+  "step_4_cross_host_mac_to_ubu1": {
+    "purpose": "Verify ubu1-published CLM stream can be discovered from user mac",
+    "ubu1_outlet_test": "ssh ubu1 'python3 -c \"from pylsl import StreamInfo, StreamOutlet; import time; info = StreamInfo(\\\"ubu1_smoke\\\", \\\"Test\\\", 1, 1.0, \\\"float32\\\", \\\"ubu1_uid\\\"); o = StreamOutlet(info); [o.push_sample([1.0]) or time.sleep(1) for _ in range(120)]\"'",
+    "mac_inlet_discover": "python3 -c \"from pylsl import resolve_byprop; print(resolve_byprop('name', 'ubu1_smoke', timeout=10))\"",
+    "expected": "non-empty list of StreamInfo; if empty -> mac and ubu1 are not on the same multicast domain (Wi-Fi isolation, Tailscale subnet routing, etc.)",
+    "tailscale_or_ssh_tunnel_fallback": "Tailscale typically passes LSL multicast OK; if not, run an ssh -R tunnel of UDP 16571 (lsl-relay-app exists for this exact purpose)"
+  },
+
+  "step_5_user_one_line_verifier": {
+    "purpose": "After all 3 streams (anima_clm_tension, anima_tension_link_5ch, anima_phase_marker) are published, confirm LabRecorder sees them",
+    "command": "python3 -c \"from pylsl import resolve_streams; [print(s.name(), s.type(), s.channel_count(), s.nominal_srate(), 'Hz') for s in resolve_streams(wait_time=5.0)]\"",
+    "expected_after_full_setup": [
+      "anima_clm_tension MindTension 1 1.0 Hz",
+      "anima_tension_link_5ch TensionBridge 5 1.0 Hz",
+      "anima_phase_marker Markers 1 0.0 Hz",
+      "OpenBCI_Cyton16 EEG 16 125.0 Hz"
+    ]
+  },
+
+  "honest_notes": [
+    "LabRecorder does NOT need pylsl to record — but pylsl is needed to PUBLISH the CLM streams from ubu1",
+    "macOS Sequoia (15.x) and later: Local Network permission popup is mandatory; deny = no LSL discovery",
+    "OpenBCI side: GUI v6.x has a built-in LSL outlet plugin (Networking widget -> LSL); enable it before recording"
+  ]
+}

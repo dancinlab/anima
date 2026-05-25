@@ -1,0 +1,24 @@
+=== TEST 4: subprocess-pipe baseline (popen via lane substrate) ===
+── clm_v4_mount probe ──
+__ANIMA_CLM_V4_MOUNTED__ mode=synthetic_fallback phi_star_baseline=41.86
+__ANIMA_CLM_V4_RESPONSE__
+phi_star: 41.8720 (drift +0.0120 from 41.8600)
+axis_activation: identity=0.586 agency=0.657 phenomenal=0.599 temporal=0.585 social=0.599
+dominant_cells: [6, 2, 1] / 8
+hidden_state_delta: 0.0000
+__ANIMA_CLM_V4_OK__ session=20260509T115713Z
+[clm_v4_mount] WARN: real load failed (from_pretrained failed: Couldn't instantiate the backend tokenizer from one of: 
+(1) a `tokenizers` library serialization file, 
+(2) a slow tokenizer instance to convert or 
+(3) an equivalent slow tokenizer class to instantiate and convert. 
+You need to have sentencepiece or tiktoken installed to convert a slow tokenizer to a fast one.); falling back to synthetic substrate
+[clm_v4_mount] C1 substrate-coupled dialogue is anima-internal heuristic, NOT chat
+[clm_v4_mount] C2 phi-star drift threshold for response interpretation is anima-canonical
+[clm_v4_mount] C3 axis activation taxonomy (5-bucket) is anima-internal
+[clm_v4_mount] C4 forward-pass requires --inject-states or default zero canonical
+[clm_v4_mount] C5 emerge outcome (Stage 3+4) unknown; production timeline open
+[clm_v4_mount] C6 LoRA variants merge via tool/transient_py/clm_v4_lora_merge_helper.py — merged HF model materialized at ~/.cache/anima/clm_v4_merged/<adapter>/
+[clm_v4_mount] C7 LoRA jvae_heads.pt (paradigm-j only) copied verbatim — NOT merged into decoder weights; downstream consumers must load it separately
+[clm_v4_mount] C8 Path A remapped cache (~/.cache/anima/clm_v4_remapped/<short>/) is preferred when REMAP_SOURCE.json verification.pass=true; fix is schema-only (LoRA tensor values bit-preserved)
+
+[bench] rc=0 elapsed_ms=12367 bytes=    1774

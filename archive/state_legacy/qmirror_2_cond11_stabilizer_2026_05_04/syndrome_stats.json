@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "cond_id": "qmirror.2.cond.11",
+  "n_trials": 1024,
+  "stabilizers": ["ZZ", "XX"],
+  "syndrome_zz_plus_count": 1024,
+  "syndrome_xx_plus_count": 1024,
+  "syndrome_plus_count": 1024,
+  "syndrome_total": 1024,
+  "syndrome_plus_ratio": 1.0,
+  "syndrome_zz_plus_ratio": 1.0,
+  "syndrome_xx_plus_ratio": 1.0,
+  "threshold": 0.99,
+  "passed": true,
+  "engine": "qiskit_aer",
+  "seed": 20260504,
+  "interpretation": "Both Z⊗Z and X⊗X ancilla-mediated syndromes returned +1 on every one of 1024 trials. |Phi+> is a simultaneous +1 eigenstate of the two commuting stabilizers; noiseless Aer SV reproduces this exactly. Real-hardware would show finite-fidelity decay; cond.11 PASS validates the gadget construction + measurement-sampling pipeline."
+}

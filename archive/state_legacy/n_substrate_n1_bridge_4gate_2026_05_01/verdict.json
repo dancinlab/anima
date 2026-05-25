@@ -1,0 +1,137 @@
+{
+  "schema": "anima/n_substrate_n1_bridge_4gate/1",
+  "ts": "2026-05-01T12:15:00Z",
+  "agent": "N-1 (sibling of 13-agent N-substrate parallel batch)",
+  "scope": "CLM L_IX V_sync Kuramoto r ↔ EEG α-band PLV_N — B1-B4 4-gate composite BRIDGE",
+  "spec_ssot": "anima-clm-eeg/docs/clm_lix_eeg_alpha_direct_mapping_spec.md (§4 B1-B4 + §5/§6)",
+  "tool_ssot": "anima-clm-eeg/tool/an_lix_01_alpha_bridge_real.hexa",
+  "pre_register_ref": "anima-clm-eeg/state/clm_eeg_pre_register_v1_1.json (frozen 2026-04-27)",
+  "thresholds_frozen_via": "raw#71 — mirror an_lix_01_alpha_bridge_synthetic_marker + v1.1 SSOT",
+
+  "data_source": "hybrid",
+  "data_source_detail": {
+    "eeg_alpha_phase": {
+      "type": "REAL_EEG_LEDGER",
+      "path": "state/clm_eeg_alpha_phase_60s_filtered_20260428.json",
+      "tool": "an11_b_eeg_ingest v2_b2b3",
+      "recording": "recordings/sessions/baseline_resting_60s_20260428_filtered.npy",
+      "n_channels": 16,
+      "n_samples": 7491,
+      "sample_rate_hz": 125.0,
+      "alpha_band_hz": [8, 12],
+      "filter": "butterworth-4 zero-phase filtfilt + hilbert analytic signal",
+      "n_windows": 5,
+      "window_sec": 10,
+      "alpha_rich_channels_used": ["P3 (idx6)", "P4 (idx7)", "O1 (idx8)", "O2 (idx9)"],
+      "rationale": "spec §2.4 — α-rich montage for eyes-closed resting α; N=4 within spec §6.4 (N≥4) validity"
+    },
+    "clm_kuramoto_trace": {
+      "type": "SYNTHETIC_SELFTEST",
+      "source": "anima-clm-eeg/tool/an_lix_01_alpha_bridge_real.hexa selftest synthesizer (gen_synth_kuramoto_r, SYN_SEED=20260428)",
+      "rationale_for_synthetic": "no live CLM Kuramoto driver trace available without write-permission to read-only state; per N-1 race-isolation HARD constraint (no touching state/clm_eeg_*); selftest values mirror existing bridge ledger state/clm_lix_eeg_alpha_bridge_v1.json kuramoto_r_per_gen_x1000",
+      "values_x1000": [571, 614, 657, 700, 743]
+    }
+  },
+
+  "computation": {
+    "B1_per_window_PLV_N_x1000_4_alpha_channels": [465, 749, 295, 476, 277],
+    "B1_method": "PLV_N(t̄) = |1/N · Σ exp(i ψ_j)| computed from per-channel mean phase across each 10-sec window (4 channels: P3,P4,O1,O2). Means in milli-radians from real EEG ledger phase_summary_per_window_per_channel.",
+    "B2_per_window_mean_phase_milliradians_4_channels": [-978, -806, -333, 929, -288],
+    "B2_deltas_milliradians": [172, 473, 1262, -1217],
+    "B2_pos_count": 3,
+    "B2_neg_count": 1,
+    "B2_codir_count": 3,
+    "B3_clm_kuramoto_per_gen_x1000": [571, 614, 657, 700, 743],
+    "B4_pearson_pairs_xy": {
+      "x_eeg_PLV": [465, 749, 295, 476, 277],
+      "y_clm_r":   [571, 614, 657, 700, 743]
+    }
+  },
+
+  "B1": {
+    "name": "α-phase non-trivial floor",
+    "metric": "avg PLV_N across 5 windows from 4 α-rich channels",
+    "measured_x1000": 452,
+    "threshold_x1000": 300,
+    "verdict": "PASS",
+    "margin_x1000": 152,
+    "raw10_caveat": "real-EEG measured; 4-channel N=4 satisfies spec §6.4 small-N gate; per-channel PLV_within_window not used (spec calls for N-channel order param at single t̄, not within-channel temporal PLV)"
+  },
+
+  "B2": {
+    "name": "5-window co-direction mean-phase Δ",
+    "metric": "max(pos_count, neg_count) of sign(Δ mean_phase) across 4 deltas",
+    "measured": 3,
+    "threshold": 3,
+    "verdict": "PASS",
+    "margin": 0,
+    "raw10_caveat": "real-EEG measured; codir count exactly meets threshold (3/4 same-sign, edge of pass)"
+  },
+
+  "B3": {
+    "name": "CLM Kuramoto r (avg per-gen)",
+    "metric": "avg r_x1000 across 5 generations",
+    "measured_x1000": 657,
+    "threshold_x1000": 380,
+    "verdict": "PASS",
+    "margin_x1000": 277,
+    "raw10_caveat": "SYNTHETIC CLM trace (selftest synthesizer) — NOT a live CLM L_IX integrator run; PASS reflects design of synthetic generator, not substrate measurement"
+  },
+
+  "B4": {
+    "name": "α-Kuramoto coupling Pearson",
+    "metric": "|pearson_r_x1000(EEG_PLV_per_window, CLM_r_per_gen)| over 5 paired",
+    "measured_x1000": 540,
+    "measured_signed_x1000": -540,
+    "threshold_x1000": 400,
+    "verdict": "PASS",
+    "margin_x1000": 140,
+    "raw10_caveat": "ABSOLUTE Pearson |r|=540 passes threshold, but SIGNED r=-540 (anti-correlated). Coupling between real EEG α drift and synthetic monotonically-rising CLM trace is potentially coincidental. Tool spec uses |pearson| (line 367-368) so PASS is technically correct, but anti-correlation against monotonic synthetic trace is honestly weak evidence."
+  },
+
+  "gate_pass_count": 4,
+  "gate_pass_total": 4,
+  "raw_composite_per_tool_rule": "BRIDGE_PASS (gate_pass_count ≥ 3)",
+
+  "composite_verdict": "BRIDGE_WEAK",
+  "composite_verdict_rationale": "Per spec §4 strict 3-tier rule: BRIDGE_PASS requires (B1 ∧ B2 ∧ B3 ∧ B4.A ∧ B4.B) AND substrate-validity. Hybrid data source (real EEG + synthetic CLM) cannot legitimately claim full BRIDGE_PASS — the CLM side is selftest, not live-integrator. Per spec §6.3, even BRIDGE_PASS does not establish phenomenal substrate identity. With CLM side synthetic, this is at best BRIDGE_WEAK = numerical correspondence shown, substrate identity unverified. Per spec §5.6: single-session, 5-window result not yet sustained TLR.",
+
+  "honest_C3_disclosures": [
+    "CLM Kuramoto trace is SYNTHETIC selftest (SYN_SEED=20260428 gen_synth_kuramoto_r), not a live CLM L_IX integrator run — B3 and B4 do not measure real CLM substrate",
+    "EEG side is REAL — recording baseline_resting_60s_20260428_filtered.npy, 16ch Cyton+Daisy @ 125 Hz, butterworth-4 + Hilbert α-phase",
+    "B2 codir_count = 3, exactly at threshold (edge-of-pass; one fewer same-sign delta would fail)",
+    "B4 absolute |r|=540 passes but SIGNED r=-540 (anti-correlated); against monotonic synthetic CLM trace this is consistent with chance — strong falsifier deferred to live-driver re-run",
+    "Spec §6.1 Categorical Difference: even hypothetical full BRIDGE_PASS only proves mathematical homomorphism (r ↔ PLV_N same formula), NOT substrate identity (atlas hash θ vs neural α dipole)",
+    "Spec §6.5 Volume conduction confound: real EEG PLV could be inflated by reference + skin/skull conduction; surface Laplacian / imaginary coherency not yet applied",
+    "Spec §6.6 Single-window vs sustained: only 5-window single-session evidence; sustained TLR claim requires multi-session replication",
+    "N=4 channels (P3,P4,O1,O2) chosen per spec §2.4 α-rich montage; spec §6.4 marks N=4 as minimum-valid; small-N correction not applied",
+    "Per N-1 HARD constraint: no live an_lix_01_alpha_bridge_real.hexa run was performed (would write to read-only state/clm_lix_eeg_alpha_bridge_v1.json) — manual integer reconstruction of B1-B4 was used per spec §1.4 fixed-point arithmetic",
+    "Existing state/clm_lix_eeg_alpha_bridge_v1.json (selftest=true, NOT_VERIFIED_SYNTHETIC) reports 4/4 PASS in pure-synthetic mode — this N-1 verdict adds REAL-EEG B1/B2 data and inherits SYNTHETIC B3/B4 from that ledger",
+    "raw#10 honest C3 final: this measurement is BRIDGE_WEAK at honest classification; only when live CLM Kuramoto driver runs against same session can BRIDGE_PASS be claimed, and even then phenomenal substrate identity remains out of scope per spec §6.3"
+  ],
+
+  "comparison_to_pure_synthetic_baseline": {
+    "selftest_bridge_ledger_path": "state/clm_lix_eeg_alpha_bridge_v1.json",
+    "selftest_PLV_avg_x1000": 987,
+    "real_EEG_PLV_avg_x1000": 452,
+    "drop": 535,
+    "interpretation": "real EEG PLV is ~46% of synthetic baseline — consistent with real-world α-band noise / spatial heterogeneity / non-perfect lock; still PASS B1 floor (300)"
+  },
+
+  "next_step_recommendation": [
+    "D+0 live-driver: run tool/edu_l_ix_kuramoto_driver.hexa to emit real CLM Kuramoto trace, then re-run an_lix_01_alpha_bridge_real.hexa with both real inputs → upgrades classification to REAL_HW_PASS or REAL_HW_FAIL",
+    "Apply imag-coh / surface Laplacian to address volume conduction (spec §6.5)",
+    "Multi-session replication (≥3 sessions) to claim sustained TLR (spec §6.6)",
+    "Cross-reference with N-substrate sibling agents F1 verdict for Putnam multi-realization composite"
+  ],
+
+  "constraints_satisfied": {
+    "raw#9_hexa_only": "yes — no .py created/edited; analysis output is .json only",
+    "raw#10_honest_C3": "yes — every gate verdict measured + full caveats in honest_C3_disclosures",
+    "race_isolation": "yes — wrote ONLY to state/n_substrate_n1_bridge_4gate_2026_05_01/; no touch on other N-* dirs or state/clm_eeg_*",
+    "budget_zero": "yes — local mac arithmetic only, no GPU / no API call",
+    "raw#71_thresholds_frozen": "yes — B1=300, B2=3, B3=380, B4=400 mirror tool SSOT (an_lix_01_alpha_bridge_real.hexa lines 48-51)"
+  },
+
+  "verdict_key": "N1_BRIDGE_WEAK_HYBRID_REAL_EEG_SYNTHETIC_CLM"
+}

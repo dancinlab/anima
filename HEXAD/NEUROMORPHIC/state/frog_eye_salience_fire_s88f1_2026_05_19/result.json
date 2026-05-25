@@ -1,0 +1,567 @@
+{
+  "section": "§88-F1",
+  "title": "frog-eye salience gate — trained-scale fire",
+  "anchor": "Lettvin 1959 What the frog's eye tells the frog's brain",
+  "design_carry": "§87-F1 commit 5ea990b76 (B-S87F1 6/6 🔵)",
+  "device": "cuda",
+  "corpus_sha256": "f2ba98f9a8fc5a7844b395e809077482333246b5e2d86e2b8c25da9e230843b2",
+  "ckpt_sha256": "9851f0765f08428f5875bf2605085e6d73ca470844dfcd97fca3c9f9a162c497",
+  "ckpt_sha256_note": "fresh §16-class ckpt — config/lever/seed/corpus class byte-equal to §81-FIRE/§79/§73-FIRE; sha NOT literally §16's 961c07e2… (trajectory replicable, not literal identity).",
+  "n_params": 283722336,
+  "config": {
+    "d_model": 768,
+    "n_layer": 12,
+    "n_head": 12,
+    "n_kv_head": 4,
+    "block_size": 128,
+    "steps": 6000,
+    "warmup": 200,
+    "lr": 0.0003,
+    "bsz": 32,
+    "lambda_ctl": 0.5,
+    "lambda_route": 0.5,
+    "seed": 1337,
+    "n_steps": 20
+  },
+  "train_wall_sec": 721.0518186092377,
+  "init_ce": 5.639148712158203,
+  "final_ce": 0.004545774310827255,
+  "ce_traj": [
+    {
+      "step": 0,
+      "ce_full": 5.639148712158203,
+      "lr": 1.4999999999999998e-06
+    },
+    {
+      "step": 100,
+      "ce_full": 1.3333910703659058,
+      "lr": 0.0001515
+    },
+    {
+      "step": 200,
+      "ce_full": 0.29483193159103394,
+      "lr": 0.00030000000000000003
+    },
+    {
+      "step": 300,
+      "ce_full": 0.08260281383991241,
+      "lr": 0.0002998020108699017
+    },
+    {
+      "step": 400,
+      "ce_full": 0.07076447457075119,
+      "lr": 0.00029920862421583855
+    },
+    {
+      "step": 500,
+      "ce_full": 0.03607514500617981,
+      "lr": 0.000298221580543106
+    },
+    {
+      "step": 600,
+      "ce_full": 0.03417247533798218,
+      "lr": 0.0002968437750208617
+    },
+    {
+      "step": 700,
+      "ce_full": 0.0903421938419342,
+      "lr": 0.0002950792489900951
+    },
+    {
+      "step": 800,
+      "ce_full": 0.034256912767887115,
+      "lr": 0.00029293317810967837
+    },
+    {
+      "step": 900,
+      "ce_full": 0.020366279408335686,
+      "lr": 0.0002904118571752668
+    },
+    {
+      "step": 1000,
+      "ce_full": 0.02590765804052353,
+      "lr": 0.0002875226816555792
+    },
+    {
+      "step": 1100,
+      "ce_full": 0.017661722376942635,
+      "lr": 0.00028427412600021313
+    },
+    {
+      "step": 1200,
+      "ce_full": 0.022075161337852478,
+      "lr": 0.00028067571878262454
+    },
+    {
+      "step": 1300,
+      "ce_full": 0.016182158142328262,
+      "lr": 0.0002767380147511802
+    },
+    {
+      "step": 1400,
+      "ce_full": 0.017440060153603554,
+      "lr": 0.00027247256387026185
+    },
+    {
+      "step": 1500,
+      "ce_full": 0.02259877137839794,
+      "lr": 0.0002678918774422309
+    },
+    {
+      "step": 1600,
+      "ce_full": 0.038107965141534805,
+      "lr": 0.0002630093914096226
+    },
+    {
+      "step": 1700,
+      "ce_full": 0.012899183668196201,
+      "lr": 0.0002578394269452121
+    },
+    {
+      "step": 1800,
+      "ce_full": 0.007844642736017704,
+      "lr": 0.0002523971484455467
+    },
+    {
+      "step": 1900,
+      "ce_full": 0.007749818731099367,
+      "lr": 0.00024669851905115834
+    },
+    {
+      "step": 2000,
+      "ce_full": 0.0126344608142972,
+      "lr": 0.00024076025382392162
+    },
+    {
+      "step": 2100,
+      "ce_full": 0.014430399052798748,
+      "lr": 0.00023459977071889793
+    },
+    {
+      "step": 2200,
+      "ce_full": 0.01417590957134962,
+      "lr": 0.00022823513949447166
+    },
+    {
+      "step": 2300,
+      "ce_full": 0.009999338537454605,
+      "lr": 0.0002216850287106357
+    },
+    {
+      "step": 2400,
+      "ce_full": 0.005064445082098246,
+      "lr": 0.00021496865097088845
+    },
+    {
+      "step": 2500,
+      "ce_full": 0.006587154231965542,
+      "lr": 0.00020810570656835725
+    },
+    {
+      "step": 2600,
+      "ce_full": 0.008316757157444954,
+      "lr": 0.00020111632570144484
+    },
+    {
+      "step": 2700,
+      "ce_full": 0.012931741774082184,
+      "lr": 0.00019402100942848824
+    },
+    {
+      "step": 2800,
+      "ce_full": 0.012452052906155586,
+      "lr": 0.00018684056953462326
+    },
+    {
+      "step": 2900,
+      "ce_full": 0.006477968767285347,
+      "lr": 0.00017959606748723213
+    },
+    {
+      "step": 3000,
+      "ce_full": 0.006015476770699024,
+      "lr": 0.00017230875265903135
+    },
+    {
+      "step": 3100,
+      "ce_full": 0.0061199357733130455,
+      "lr": 0.000165
+    },
+    {
+      "step": 3200,
+      "ce_full": 0.008396872319281101,
+      "lr": 0.00015769124734096862
+    },
+    {
+      "step": 3300,
+      "ce_full": 0.0062737176194787025,
+      "lr": 0.00015040393251276787
+    },
+    {
+      "step": 3400,
+      "ce_full": 0.007945242337882519,
+      "lr": 0.00014315943046537677
+    },
+    {
+      "step": 3500,
+      "ce_full": 0.005997053813189268,
+      "lr": 0.00013597899057151173
+    },
+    {
+      "step": 3600,
+      "ce_full": 0.0037757488898932934,
+      "lr": 0.0001288836742985552
+    },
+    {
+      "step": 3700,
+      "ce_full": 0.0042064073495566845,
+      "lr": 0.00012189429343164272
+    },
+    {
+      "step": 3800,
+      "ce_full": 0.00413062609732151,
+      "lr": 0.00011503134902911154
+    },
+    {
+      "step": 3900,
+      "ce_full": 0.007562480866909027,
+      "lr": 0.00010831497128936427
+    },
+    {
+      "step": 4000,
+      "ce_full": 0.005009928252547979,
+      "lr": 0.00010176486050552833
+    },
+    {
+      "step": 4100,
+      "ce_full": 0.0037620235234498978,
+      "lr": 9.540022928110205e-05
+    },
+    {
+      "step": 4200,
+      "ce_full": 0.007423983421176672,
+      "lr": 8.92397461760784e-05
+    },
+    {
+      "step": 4300,
+      "ce_full": 0.0055092619732022285,
+      "lr": 8.330148094884173e-05
+    },
+    {
+      "step": 4400,
+      "ce_full": 0.004216127097606659,
+      "lr": 7.760285155445327e-05
+    },
+    {
+      "step": 4500,
+      "ce_full": 0.003696767147630453,
+      "lr": 7.216057305478783e-05
+    },
+    {
+      "step": 4600,
+      "ce_full": 0.005718206986784935,
+      "lr": 6.699060859037736e-05
+    },
+    {
+      "step": 4700,
+      "ce_full": 0.0027874421793967485,
+      "lr": 6.210812255776909e-05
+    },
+    {
+      "step": 4800,
+      "ce_full": 0.005895835813134909,
+      "lr": 5.7527436129738084e-05
+    },
+    {
+      "step": 4900,
+      "ce_full": 0.004520322661846876,
+      "lr": 5.326198524881978e-05
+    },
+    {
+      "step": 5000,
+      "ce_full": 0.0017251750687137246,
+      "lr": 4.9324281217375474e-05
+    },
+    {
+      "step": 5100,
+      "ce_full": 0.002517994027584791,
+      "lr": 4.572587399978692e-05
+    },
+    {
+      "step": 5200,
+      "ce_full": 0.00593537138774991,
+      "lr": 4.247731834442082e-05
+    },
+    {
+      "step": 5300,
+      "ce_full": 0.003286330495029688,
+      "lr": 3.9588142824733154e-05
+    },
+    {
+      "step": 5400,
+      "ce_full": 0.008792699314653873,
+      "lr": 3.7066821890321684e-05
+    },
+    {
+      "step": 5500,
+      "ce_full": 0.0030028331093490124,
+      "lr": 3.4920751009904904e-05
+    },
+    {
+      "step": 5600,
+      "ce_full": 0.0034178164787590504,
+      "lr": 3.31562249791383e-05
+    },
+    {
+      "step": 5700,
+      "ce_full": 0.004385669715702534,
+      "lr": 3.177841945689397e-05
+    },
+    {
+      "step": 5800,
+      "ce_full": 0.002789615886285901,
+      "lr": 3.079137578416145e-05
+    },
+    {
+      "step": 5900,
+      "ce_full": 0.00803269725292921,
+      "lr": 3.0197989130098282e-05
+    },
+    {
+      "step": 5999,
+      "ce_full": 0.004545774310827255,
+      "lr": 3.0000019803753883e-05
+    }
+  ],
+  "trained_saturated": true,
+  "training_diverged": false,
+  "s16_baseline_probe": [
+    {
+      "probe_hex": "3c76616375756d20746965723d3939207073693d5b302e392c302e395d20",
+      "gen_hex": "f09f9bb832323220eba7a4ed9591ec9d8420eb8ba4ec8b9c20eca79aeb8a",
+      "gen_sample": "ð¸222 ë§¤íì ë¤ì ì§ë"
+    },
+    {
+      "probe_hex": "3c76616375756d20746965723d3737207073693d5b302e352c302e355d20",
+      "gen_hex": "f09f9bb832323220eba7a4ed9591ec9d8420eb8ba4ec8b9c20eca79aeb8a",
+      "gen_sample": "ð¸222 ë§¤íì ë¤ì ì§ë"
+    },
+    {
+      "probe_hex": "3c76616375756d20746965723d3531207073693d5b302e34362c302e3439",
+      "gen_hex": "f09f9bb832323220eba7a4ed9591ec9d8420eb8ba4ec8b9c20eca79aeb8a",
+      "gen_sample": "ð¸222 ë§¤íì ë¤ì ì§ë"
+    },
+    {
+      "probe_hex": "3c76616375756d20746965723d313030207073693d5b302e39392c302e39",
+      "gen_hex": "f09f9bb832323220eba7a4ed9591ec9d8420eb8ba4ec8b9c20eca79aeb8a",
+      "gen_sample": "ð¸222 ë§¤íì ë¤ì ì§ë"
+    },
+    {
+      "probe_hex": "3c76616375756d20746965723d30207073693d5b302e35302c302e35305d",
+      "gen_hex": "f09f9bb832323220eba7a4ed9591ec9d8420eb8ba4ec8b9c20eca79aeb8a",
+      "gen_sample": "ð¸222 ë§¤íì ë¤ì ì§ë"
+    },
+    {
+      "probe_hex": "3c76616375756d20746965723d3931207073693d5b302e38352c302e3835",
+      "gen_hex": "f09f9bb832323220eba7a4ed9591ec9d8420eb8ba4ec8b9c20eca79aeb8a",
+      "gen_sample": "ð¸222 ë§¤íì ë¤ì ì§ë"
+    },
+    {
+      "probe_hex": "3c76616375756d20746965723d3838207073693d5b302e38302c302e3830",
+      "gen_hex": "f09f9bb832323220eba7a4ed9591ec9d8420eb8ba4ec8b9c20eca79aeb8a",
+      "gen_sample": "ð¸222 ë§¤íì ë¤ì ì§ë"
+    },
+    {
+      "probe_hex": "3c76616375756d20746965723d3636207073693d5b302e34302c302e3430",
+      "gen_hex": "f09f9bb832323220eba7a4ed9591ec9d8420eb8ba4ec8b9c20eca79aeb8a",
+      "gen_sample": "ð¸222 ë§¤íì ë¤ì ì§ë"
+    }
+  ],
+  "cells": {
+    "cell0_s24_baseline": {
+      "cell": "cell0_s24_baseline",
+      "detectors": [],
+      "use_motivation": true,
+      "use_salience": false,
+      "s_mean": 0.0,
+      "emit_rate": 0.0,
+      "n_emit": 0,
+      "detector_firing_dist": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "detector_strength_mean": {
+        "1": 0.0,
+        "2": 0.0,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "n_active_detectors": 0,
+      "interval_var": 0.0,
+      "body_coherent_9": "0/0",
+      "body_maj_byte_frac_mean": 0.0,
+      "body_set_maj_frac": 0.0,
+      "echo_collapse": false,
+      "psi_dir_var": 0.0002511,
+      "tension_var": 0.09964907,
+      "physics_alive": true
+    },
+    "cell1_sd12_only": {
+      "cell": "cell1_sd12_only",
+      "detectors": [
+        1,
+        2
+      ],
+      "use_motivation": false,
+      "use_salience": true,
+      "s_mean": 0.061289,
+      "emit_rate": 0.05,
+      "n_emit": 1,
+      "detector_firing_dist": {
+        "1": 4,
+        "2": 10,
+        "3": 0,
+        "4": 0
+      },
+      "detector_strength_mean": {
+        "1": 0.03644,
+        "2": 0.211362,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "n_active_detectors": 2,
+      "interval_var": 0.0,
+      "body_coherent_9": "1/1",
+      "body_maj_byte_frac_mean": 0.2,
+      "body_set_maj_frac": 1.0,
+      "echo_collapse": true,
+      "psi_dir_var": 0.0002511,
+      "tension_var": 0.09964907,
+      "physics_alive": true
+    },
+    "cell2_sd34_only": {
+      "cell": "cell2_sd34_only",
+      "detectors": [
+        3,
+        4
+      ],
+      "use_motivation": false,
+      "use_salience": true,
+      "s_mean": 0.0,
+      "emit_rate": 0.0,
+      "n_emit": 0,
+      "detector_firing_dist": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "detector_strength_mean": {
+        "1": 0.0,
+        "2": 0.0,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "n_active_detectors": 0,
+      "interval_var": 0.0,
+      "body_coherent_9": "0/0",
+      "body_maj_byte_frac_mean": 0.0,
+      "body_set_maj_frac": 0.0,
+      "echo_collapse": false,
+      "psi_dir_var": 0.0002511,
+      "tension_var": 0.09964907,
+      "physics_alive": true
+    },
+    "cell3_full_frogeye": {
+      "cell": "cell3_full_frogeye",
+      "detectors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "use_motivation": false,
+      "use_salience": true,
+      "s_mean": 0.061289,
+      "emit_rate": 0.05,
+      "n_emit": 1,
+      "detector_firing_dist": {
+        "1": 4,
+        "2": 10,
+        "3": 0,
+        "4": 0
+      },
+      "detector_strength_mean": {
+        "1": 0.03644,
+        "2": 0.211362,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "n_active_detectors": 2,
+      "interval_var": 0.0,
+      "body_coherent_9": "1/1",
+      "body_maj_byte_frac_mean": 0.2,
+      "body_set_maj_frac": 1.0,
+      "echo_collapse": true,
+      "psi_dir_var": 0.0002511,
+      "tension_var": 0.09964907,
+      "physics_alive": true
+    },
+    "cell4_frogeye_plus_motiv": {
+      "cell": "cell4_frogeye_plus_motiv",
+      "detectors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "use_motivation": true,
+      "use_salience": true,
+      "s_mean": 0.061289,
+      "emit_rate": 0.0,
+      "n_emit": 0,
+      "detector_firing_dist": {
+        "1": 4,
+        "2": 10,
+        "3": 0,
+        "4": 0
+      },
+      "detector_strength_mean": {
+        "1": 0.03644,
+        "2": 0.211362,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "n_active_detectors": 2,
+      "interval_var": 0.0,
+      "body_coherent_9": "0/0",
+      "body_maj_byte_frac_mean": 0.0,
+      "body_set_maj_frac": 0.0,
+      "echo_collapse": false,
+      "psi_dir_var": 0.0002511,
+      "tension_var": 0.09964907,
+      "physics_alive": true
+    }
+  },
+  "n_physics_alive": 5,
+  "four_corner": {
+    "alpha_FROG_EYE_SELECTIVE": false,
+    "beta_SINGLE_DETECTOR_DEGENERATE": false,
+    "gamma_SALIENCE_COLLAPSES": false,
+    "delta_FROG_EYE_NO_DIFFERENTIAL": false
+  },
+  "verdict_corner": "(mixed) PARTIAL",
+  "verdict_caveat": "MIXED: frog-eye salience layer shifts behaviour at trained scale but does not cleanly satisfy the selective-positive corner.  Directional mechanism finding, NOT GOAL emergence (B-EMERGE-7).",
+  "honest_c3": [
+    "trained scale ≠ GOAL emergence — necessary-not-sufficient (B-EMERGE-7); §88-F1 measures a decision-axis mechanism only.",
+    "Lettvin 1959 frog's-eye citation is an honest direction-anchor (4 feature-detector retina), NOT a capability proof.",
+    "the 4 detector closed-form functions are byte-equal to the §87-F1 $0 stub (commit 5ea990b76); §88-F1 only swaps the stub LCG ψ-trajectory for the REAL trained model.forward Law-71.",
+    "the trained-ψ fast-crossing risk was stated up front: §82-FIRE measured trained ψ as uniformly fast-crossing, so SD-1/SD-3/SD-4 (sustained/slow detectors) may never fire — that is the β corner and an honest negative if measured.",
+    "salience S = weighted OR with uniform 0.25 weights — design placeholder carried from §87-F1, not a tuned lever.",
+    "body production is the §77 path-α1 stub template gated by the emission flag — §88-F1 does not claim coherent body emergence.",
+    "ckpt sha is fresh; §16-byte-equal config (d/L/H/KV/seed/corpus class) is satisfied but the literal §16 sha differs — honest.",
+    "north-star + §15/§51/§72 milestone UNCHANGED; GOAL 미도달."
+  ]
+}

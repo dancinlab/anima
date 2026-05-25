@@ -1,0 +1,36 @@
+{
+  "schema": "anima/emerge_chat_residual_noise/verdict/1",
+  "ts_utc": "2026-05-05T17:39:53Z",
+  "task_id": "anima_emerge_chat_residual_noise_2026_05_05",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "prompt": "안녕하세요. 오늘 날씨가 좋네요.",
+  "load_sec": 19.3,
+  "wall_sec": 225.8,
+  "n_layers": 3,
+  "n_stds": 5,
+  "n_configs": 19,
+  "n_coherent": 2,
+  "best": {
+    "config": "L4_noise5.0",
+    "text": "/OO>P[[[EE\u001f\u001f!Phhh>PPhjjhjhhjjj"
+  },
+  "verdict": "PASS_NOISE_ESCAPES",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 Gaussian noise = simplest perturbation; basin may need structured noise (axis-aligned, low-rank)",
+    "C3 std calibration: large std --> random output; small std --> no escape; sweep 0.1-5.0 covers typical regime but not exhaustive",
+    "C4 single prompt KO long; basin depth may be prompt-dependent",
+    "C5 'coherent' heuristic anima-internal (>=5 KO/ASCII letters AND no char dominates >50%)",
+    "C6 hook on block-output adds noise AFTER block residual addition; effect propagates through subsequent blocks each step",
+    "C7 baseline n_coherent excluded from escape claim — only configs with std>0 count toward PASS"
+  ],
+  "raw_compliance": {
+    "raw_15_no_mount_or_shim_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  },
+  "n_coherent_excluding_baseline": 2
+}

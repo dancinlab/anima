@@ -1,0 +1,44 @@
+{
+  "schema": "anima/strategic_clm_phase_a3/1",
+  "schema_version": 1,
+  "agent": "CLM Phase A.3 EXEC",
+  "mission": "Measure AN11(a) weight emergent on CLM v4 530M (full fine-tune, not LoRA)",
+  "ts": "2026-05-02T19:20:00Z",
+  "host": "ubu1 (local CPU, $0)",
+  "subject": {
+    "model": "clm_v4_350m/scale_350m (decoder-only, 530.99M params)",
+    "checkpoints_dir": "~/anima/checkpoints/clm_v4_350m/scale_350m/",
+    "available_checkpoints": ["best.pt", "best_phi.pt", "final.pt", "step_10000.pt", "step_15000.pt", "step_20000.pt"],
+    "init_checkpoint_present": false,
+    "true_random_init_baseline_available": false,
+    "ref_used_for_dW": "step_10000.pt (earliest available)",
+    "tgt_used_for_dW": "final.pt (== best.pt — identical bytes)"
+  },
+  "method": {
+    "comparison": "Frobenius norm ‖W_final - W_step10k‖_F per parameter tensor",
+    "aggregate_form": "L2 sum across all matched float tensors (sqrt of sum of dW_F^2)",
+    "normalized_form": "agg_dW_F / agg_W_init_F (ratio dimensionless)",
+    "n_layers_compared": 581,
+    "n_layers_matrix_2d": 419,
+    "n_params_compared": 530994816,
+    "dtype_handled": "float32 (cast bf16/fp16/fp64 to fp32 before norm)"
+  },
+  "outputs": {
+    "frobenius_summary": "state/strategic_clm_phase_a3_2026_05_01/frobenius_summary.json",
+    "frobenius_per_layer": "state/strategic_clm_phase_a3_2026_05_01/frobenius_per_layer.json",
+    "verdict": "state/strategic_clm_phase_a3_2026_05_01/an11_a_verdict.json",
+    "alm_comparison": "state/strategic_clm_phase_a3_2026_05_01/alm_r14_comparison.json",
+    "honest_c3": "state/strategic_clm_phase_a3_2026_05_01/honest_c3.json",
+    "doc": "docs/strategic_clm_phase_a3_results_2026_05_01.md"
+  },
+  "anchors": {
+    "roadmap_pointer": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §32 row '2 AN11(a) Frobenius'",
+    "section_27_5": "CP2 ALM-anchored (LoRA-implicit) / Mk.XII ≠ CP2 — direct comparison invalid; normalized ratio recommended",
+    "hexa_roadmap": "memory/reference_hexa_roadmap_64_69.md (RFC scheme; no binary blocker for this $0 CPU measurement)"
+  },
+  "cost": {
+    "burn_usd": 0.0,
+    "host": "ubu1 local CPU",
+    "wallclock_min": 4
+  }
+}

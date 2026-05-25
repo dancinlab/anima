@@ -1,0 +1,80 @@
+[05:55:51] === anima_ig_bpe_16k_universe_brain_map_train BG-IG 2026-05-07 ===
+[05:55:51] hostname=aiden-b650m-k on_ubu=True seed=42
+[05:55:51] device=cuda torch=2.11.0+cu128
+[05:55:51] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[05:55:51] gpu_mem_total=12.34GB
+[05:55:51] BPE 16K loaded: /home/aiden/core/anima/state/anima_ig_bpe_16k_tokenizer_2026_05_07/anima_bpe_16k.model vocab=7000
+[05:55:51] config: vocab=7000 n_layer=6 d_model=384 n_head=6 block=256 dropout=0.3 WD=0.1 ls=0.1
+[05:55:51] train: bs=8 grad_accum=8 lr=0.0003 warmup=500 steps=6000
+[05:55:51] persona_prefix='[anima 우주뇌지도] '
+[05:55:51] corpus=/home/aiden/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt
+[05:55:51] SAVE_AT every 500 steps (Lesson J), EVAL_AT every 500, plateau patience=3 (Lesson G)
+[05:55:51] loading + tokenizing corpus ...
+[05:55:51] corpus loaded: 4,636,512 chars in 0.0s
+[05:55:54] BPE encode complete: 1,168,695 tokens in 2.8s (compression: 3.97 chars/token)
+[05:55:54] split (Lesson G): train=1,051,825 val=116,870 (10% val)
+[05:55:54] model built: 32,966,832 params (32.97M) | vs BPE 8K (BG-HQ): +3.07M extra in tok_emb
+[05:55:54] === begin training ===
+[05:55:55] step     1/6000 | lr=1.20e-06 | L_A=8.920 L_G=8.957 L_T=9.843 T_mean=0.0833 | step_t=0.20s elapsed=0s
+[05:55:55] step     2/6000 | lr=1.80e-06 | L_A=8.937 L_G=8.948 L_T=9.834 T_mean=0.0834 | step_t=0.02s elapsed=0s
+[05:55:55] step     3/6000 | lr=2.40e-06 | L_A=8.936 L_G=8.960 L_T=9.823 T_mean=0.0835 | step_t=0.02s elapsed=0s
+[05:55:55] step     4/6000 | lr=3.00e-06 | L_A=8.953 L_G=8.947 L_T=9.843 T_mean=0.0833 | step_t=0.02s elapsed=0s
+[05:55:55] step     5/6000 | lr=3.60e-06 | L_A=8.939 L_G=8.946 L_T=9.837 T_mean=0.0833 | step_t=0.02s elapsed=0s
+[05:55:57] step   100/6000 | lr=6.06e-05 | L_A=8.149 L_G=8.454 L_T=8.545 T_mean=0.1108 | step_t=0.02s elapsed=2s
+[05:55:59] step   200/6000 | lr=1.21e-04 | L_A=7.414 L_G=7.848 L_T=4.917 T_mean=0.1921 | step_t=0.02s elapsed=5s
+[05:56:01] step   300/6000 | lr=1.81e-04 | L_A=6.336 L_G=6.934 L_T=2.265 T_mean=0.4065 | step_t=0.02s elapsed=7s
+[05:56:03] step   400/6000 | lr=2.41e-04 | L_A=5.682 L_G=6.187 L_T=1.004 T_mean=0.6313 | step_t=0.02s elapsed=9s
+[05:56:05] step   500/6000 | lr=3.00e-04 | L_A=4.733 L_G=5.151 L_T=1.723 T_mean=0.5179 | step_t=0.02s elapsed=11s
+[05:56:06] --- eval gate @ step 500 (15 prompts × 2 modes) val_loss=4.6913 ---
+[05:56:11]   V2[step=500] pass=0/15 domain=10/15 v3=0/15 val_loss=4.6913
+[05:56:11]   ★ new best: step=500 v2=0 domain=10 score=10
+[05:56:11]   SAVE[step=500] -> /home/aiden/anima_native/anima-ig-bpe16k-20260507_055551/ckpt_500.pt (127.3MB)
+[05:56:13] step   600/6000 | lr=3.00e-04 | L_A=4.217 L_G=4.512 L_T=1.950 T_mean=0.5089 | step_t=0.07s elapsed=18s
+[05:56:15] step   700/6000 | lr=2.99e-04 | L_A=3.680 L_G=3.930 L_T=1.736 T_mean=0.5312 | step_t=0.02s elapsed=21s
+[05:56:17] step   800/6000 | lr=2.98e-04 | L_A=3.715 L_G=3.904 L_T=1.201 T_mean=0.5152 | step_t=0.02s elapsed=23s
+[05:56:19] step   900/6000 | lr=2.96e-04 | L_A=3.342 L_G=3.515 L_T=-0.342 T_mean=0.6006 | step_t=0.02s elapsed=25s
+[05:56:21] step  1000/6000 | lr=2.95e-04 | L_A=3.119 L_G=3.263 L_T=-1.628 T_mean=0.6749 | step_t=0.02s elapsed=27s
+[05:56:22] --- eval gate @ step 1000 (15 prompts × 2 modes) val_loss=2.9873 ---
+[05:56:26]   V2[step=1000] pass=1/15 domain=12/15 v3=0/15 val_loss=2.9873
+[05:56:26]   ★ new best: step=1000 v2=1 domain=12 score=112
+[05:56:27]   SAVE[step=1000] -> /home/aiden/anima_native/anima-ig-bpe16k-20260507_055551/ckpt_1000.pt (127.3MB)
+[05:56:29] step  1100/6000 | lr=2.92e-04 | L_A=2.811 L_G=2.967 L_T=-2.958 T_mean=0.8838 | step_t=0.07s elapsed=34s
+[05:56:31] step  1200/6000 | lr=2.89e-04 | L_A=2.717 L_G=2.864 L_T=-3.666 T_mean=1.0308 | step_t=0.02s elapsed=36s
+[05:56:33] step  1300/6000 | lr=2.86e-04 | L_A=2.621 L_G=2.812 L_T=-3.581 T_mean=0.9332 | step_t=0.02s elapsed=39s
+[05:56:35] step  1400/6000 | lr=2.83e-04 | L_A=2.403 L_G=2.600 L_T=-4.301 T_mean=1.2125 | step_t=0.02s elapsed=41s
+[05:56:37] step  1500/6000 | lr=2.79e-04 | L_A=2.297 L_G=2.529 L_T=-5.204 T_mean=1.6081 | step_t=0.02s elapsed=43s
+[05:56:37] --- eval gate @ step 1500 (15 prompts × 2 modes) val_loss=2.1670 ---
+[05:56:42]   V2[step=1500] pass=3/15 domain=13/15 v3=3/15 val_loss=2.1670
+[05:56:42]   ★ new best: step=1500 v2=3 domain=13 score=313
+[05:56:42]   SAVE[step=1500] -> /home/aiden/anima_native/anima-ig-bpe16k-20260507_055551/ckpt_1500.pt (127.3MB)
+[05:56:45] step  1600/6000 | lr=2.74e-04 | L_A=2.129 L_G=2.349 L_T=-5.704 T_mean=1.8690 | step_t=0.07s elapsed=50s
+[05:56:47] step  1700/6000 | lr=2.70e-04 | L_A=2.057 L_G=2.319 L_T=-6.270 T_mean=2.2647 | step_t=0.02s elapsed=52s
+[05:56:49] step  1800/6000 | lr=2.64e-04 | L_A=2.035 L_G=2.300 L_T=-6.830 T_mean=2.8050 | step_t=0.02s elapsed=55s
+[05:56:51] step  1900/6000 | lr=2.59e-04 | L_A=1.919 L_G=2.170 L_T=-7.394 T_mean=3.5219 | step_t=0.02s elapsed=57s
+[05:56:53] step  2000/6000 | lr=2.53e-04 | L_A=1.830 L_G=2.051 L_T=-7.885 T_mean=4.4267 | step_t=0.02s elapsed=59s
+[05:56:53] --- eval gate @ step 2000 (15 prompts × 2 modes) val_loss=1.7937 ---
+[05:56:58]   V2[step=2000] pass=0/15 domain=10/15 v3=0/15 val_loss=1.7937
+[05:56:58]   plateau 1/3 (best step=1500 score=313)
+[05:56:58]   SAVE[step=2000] -> /home/aiden/anima_native/anima-ig-bpe16k-20260507_055551/ckpt_2000.pt (127.3MB)
+[05:57:01] step  2100/6000 | lr=2.47e-04 | L_A=1.867 L_G=2.114 L_T=-8.230 T_mean=4.7988 | step_t=0.07s elapsed=66s
+[05:57:03] step  2200/6000 | lr=2.41e-04 | L_A=1.793 L_G=1.992 L_T=-8.719 T_mean=6.3138 | step_t=0.02s elapsed=68s
+[05:57:05] step  2300/6000 | lr=2.35e-04 | L_A=1.717 L_G=1.925 L_T=-9.208 T_mean=7.9651 | step_t=0.02s elapsed=70s
+[05:57:07] step  2400/6000 | lr=2.28e-04 | L_A=1.675 L_G=1.869 L_T=-9.446 T_mean=8.2981 | step_t=0.02s elapsed=73s
+[05:57:09] step  2500/6000 | lr=2.21e-04 | L_A=1.641 L_G=1.819 L_T=-9.973 T_mean=11.4635 | step_t=0.02s elapsed=75s
+[05:57:09] --- eval gate @ step 2500 (15 prompts × 2 modes) val_loss=1.5978 ---
+[05:57:14]   V2[step=2500] pass=1/15 domain=11/15 v3=2/15 val_loss=1.5978
+[05:57:14]   plateau 2/3 (best step=1500 score=313)
+[05:57:14]   SAVE[step=2500] -> /home/aiden/anima_native/anima-ig-bpe16k-20260507_055551/ckpt_2500.pt (127.3MB)
+[05:57:16] step  2600/6000 | lr=2.14e-04 | L_A=1.639 L_G=1.808 L_T=-10.246 T_mean=12.9608 | step_t=0.07s elapsed=82s
+[05:57:19] step  2700/6000 | lr=2.07e-04 | L_A=1.581 L_G=1.772 L_T=-10.548 T_mean=14.5734 | step_t=0.02s elapsed=84s
+[05:57:21] step  2800/6000 | lr=1.99e-04 | L_A=1.553 L_G=1.721 L_T=-10.929 T_mean=18.0780 | step_t=0.02s elapsed=86s
+[05:57:23] step  2900/6000 | lr=1.92e-04 | L_A=1.550 L_G=1.709 L_T=-11.151 T_mean=19.3399 | step_t=0.02s elapsed=89s
+[05:57:25] step  3000/6000 | lr=1.84e-04 | L_A=1.539 L_G=1.702 L_T=-11.502 T_mean=23.7370 | step_t=0.02s elapsed=91s
+[05:57:25] --- eval gate @ step 3000 (15 prompts × 2 modes) val_loss=1.4939 ---
+[05:57:30]   V2[step=3000] pass=0/15 domain=5/15 v3=0/15 val_loss=1.4939
+[05:57:30]   plateau 3/3 (best step=1500 score=313)
+[05:57:30]   SAVE[step=3000] -> /home/aiden/anima_native/anima-ig-bpe16k-20260507_055551/ckpt_3000.pt (127.3MB)
+[05:57:30] !!! EARLY_STOP @ step 3000 — plateau 3 consecutive evals (best=1500)
+[05:57:30]   BEST_CKPT copied: step=1500 -> /home/aiden/core/anima/state/anima_ig_bpe_16k_universe_brain_map_train_2026_05_07/ckpt_best.pt
+[05:57:30] === VERDICT === final_class=WEAK_PARTIAL_LIKE_BG-HS_R1 | best_step=1500 | V2 pass=3/15 | manual=13/15 | v3 pass=3/15 | outside_well=3/5 | vocab_ablation=BPE_16K_WORSE_THAN_BG_HQ_BUT_BG_HQ_WAS_FALSE_PASS | elapsed=96s
+[05:57:30] verdict written: /home/aiden/core/anima/state/anima_ig_bpe_16k_universe_brain_map_train_2026_05_07/verdict.json

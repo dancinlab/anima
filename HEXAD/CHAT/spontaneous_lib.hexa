@@ -1,0 +1,330 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  spontaneous_lib.hexa — anima 자연발화 motivation calculator (Phase B1)
+//
+//  Inner Thoughts (arxiv 2501.00383) 의 8 intrinsic factor 가 HEXAD 모듈에
+//  매핑된 pure-fn battery. 각 factor → [0,1] 으로 normalize, weighted sum
+//  motivation_score 도 [0,1]. 모든 fn pure + bounded → closed-form 검증
+//  가능 (B-SPONT-1..7 sympy battery, blue_falsifier.py).
+//
+//  Closed anchors (per factor, real-limit):
+//    relevance     | IIT axiom Φ≥0           (B-C-1)
+//    info_gap      | cos sim ∈ [-1, 1]       (B-M-2)
+//    curiosity     | EMA bounded ∈ [0, 2]    (anima_alive RC-9 carry, B-W-2)
+//    pain          | abs(Δ tension), bounded (B-W-1)
+//    coherence     | Law 70 Ψ-clamp distance (B-BRIDGE-1..4)
+//    originality   | Boolean split-event     (B-MITOSIS-1)
+//    balance       | E ratchet predicate     (B-E-1, B-CONN-9)
+//    dynamics      | silence∈[0,30s] linear  (F-SPONT-7, anima_alive carry)
+//
+//  Weights: sum=1.0 closed (B-SPONT-7 WEIGHT-SUM-UNITY).
+//
+//  SSOT: HEXAD/CHAT/SPONTANEOUS.tape · HEXAD/CHAT/PLAN.md Phase B1
+//  compiled-first lib (NO main · NO _selftest · NO top-level call).
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── §1 thresholds (closed constants — design choice, anchored to anima_alive) ─
+
+fn spont_im_threshold() -> float        { return 0.3 }   // anima_alive PROACTIVE_THRESHOLD carry (F-SPONT-1)
+fn spont_interrupt_threshold() -> float { return 0.6 }   // higher 임계, talker interrupt 가능
+fn spont_idle_speak_after() -> float    { return 30.0 }  // anima_alive IDLE_SPEAK_AFTER carry (F-SPONT-7)
+// §169 RATE-LIMIT-GOVERNANCE split (2026-05-20, REVISED per user
+// directive 2026-05-20 "RATE-LIMIT-GOVERNANCE-SPLIT 관련해서 제한
+// 걸어두지마"): production fn returns a RECOMMENDED DEFAULT (30.0s
+// anti-spam convention), NOT a hard-floor. Per @D g_no_cost_scope_
+// limit, no limit anywhere. User / caller may override freely at
+// invocation site — production_default value below is for convention
+// + tooling continuity, NOT enforcement.
+//
+// Measurement-context derives min_emit_interval from (n_max, dt) so a
+// Phase B bounded run with T_total ≪ 30s doesn't ceiling-saturate at
+// emit_rate=1/n. K_target=4 default per state/rate_limit_governance_
+// design_s169_2026_05_20/DESIGN.md §2 closed-form (B-S169-1).
+//
+// Backward-compatible alias `spont_min_emit_interval()` returns the
+// production default (30.0s) — every existing caller continues to
+// receive the historic convention unchanged. Measurement callers
+// (Phase B eval / run_bounded.py / eval_s*_psicouple.py) MAY OPT IN
+// to the measurement variant or to ANY user-chosen value (no hard
+// floor) to lift the rate-limit ceiling §168 surfaced.
+fn spont_min_emit_interval_production() -> float {
+    // SPONTANEOUS.tape §4 6-control #2 — RECOMMENDED DEFAULT only
+    // (anti-spam convention for user-facing daemon). Per @D g_no_
+    // cost_scope_limit (2026-05-20) NOT a hard floor — caller may
+    // override at invocation site.
+    return 30.0
+}
+
+fn spont_min_emit_interval_measurement(n_max: int, think_interval: float) -> float {
+    // closed-form: ceiling >= K_target = 4 ⇒ min_emit_interval ≤ T_total/(K-1)
+    // T_total = n_max × think_interval (sec); divisor 3.0 = K_target-1 = 3
+    let t_total = (n_max as float) * think_interval
+    return t_total / 3.0
+}
+
+fn spont_min_emit_interval() -> float   { return spont_min_emit_interval_production() }  // rate_limit safety (F-SPONT-5/7); §169 backward-compat alias
+fn spont_tts_cooldown() -> float        { return 3.0 }   // anima_alive carry, self-hearing guard
+
+
+// ── §2 8 factor pure fns (each → [0, 1], closed bounded-set) ─────────────────
+
+// B-SPONT-FACTOR-1 — relevance: Φ ≥ 0 (IIT axiom B-C-1) clamped to [0, 1]
+fn factor_relevance(phi_value: float) -> float {
+    if phi_value < 0.0 { return 0.0 }
+    if phi_value > 1.0 { return 1.0 }
+    return phi_value
+}
+
+// B-SPONT-FACTOR-2 — info_gap: cos sim ∈ [-1, 1] → gap = 1 − sim ∈ [0, 2] → clamp [0,1]
+fn factor_info_gap(retrieve_cos_sim: float) -> float {
+    let gap = 1.0 - retrieve_cos_sim
+    if gap < 0.0 { return 0.0 }
+    if gap > 1.0 { return 1.0 }
+    return gap
+}
+
+// B-SPONT-FACTOR-3 — curiosity: EMA ∈ [0, 2] (anima_alive cap) → clamp [0, 1]
+fn factor_curiosity(curiosity_ema: float) -> float {
+    if curiosity_ema < 0.0 { return 0.0 }
+    if curiosity_ema > 1.0 { return 1.0 }
+    return curiosity_ema
+}
+
+// B-SPONT-FACTOR-4 — pain: |Δ tension| clamped to [0, 1]
+fn factor_pain(tension_delta: float) -> float {
+    let p = if tension_delta < 0.0 { 0.0 - tension_delta } else { tension_delta }
+    if p > 1.0 { return 1.0 }
+    return p
+}
+
+// B-SPONT-FACTOR-5 — coherence: Law 70 clamp interior closeness
+//   gate ∈ [Ψ−α, Ψ+α] (Ψ=0.5, α=0.014); coherence = 1 − |gate − Ψ|/α (∈[0,1])
+fn factor_coherence(bridge_gate_value: float) -> float {
+    let dist = bridge_gate_value - 0.5
+    let abs_dist = if dist < 0.0 { 0.0 - dist } else { dist }
+    let normalized = abs_dist / 0.014
+    let n = if normalized > 1.0 { 1.0 } else { normalized }
+    return 1.0 - n
+}
+
+// B-SPONT-FACTOR-6 — originality: MITOSIS split_event Boolean → 1.0 or 0.0
+fn factor_originality(split_event_recent: bool) -> float {
+    if split_event_recent { return 1.0 }
+    return 0.0
+}
+
+// B-SPONT-FACTOR-7 — balance: SAFETY-GATE-EXACT (B-E-1) Φ > ratchet/2 → 1.0 or 0.0
+fn factor_balance(phi: float, ratchet: float) -> float {
+    let half_ratchet = ratchet / 2.0
+    if phi > half_ratchet { return 1.0 }
+    return 0.0
+}
+
+// B-SPONT-FACTOR-8 — dynamics: silence_seconds normalized over IDLE_SPEAK_AFTER (30s)
+fn factor_dynamics(silence_seconds: float) -> float {
+    let s = silence_seconds / spont_idle_speak_after()
+    if s < 0.0 { return 0.0 }
+    if s > 1.0 { return 1.0 }
+    return s
+}
+
+
+// ── §3 weights (sum=1.0 closed conservation, B-SPONT-7) ──────────────────────
+
+fn spont_weight_relevance()   -> float { return 0.20 }
+fn spont_weight_info_gap()    -> float { return 0.10 }
+fn spont_weight_curiosity()   -> float { return 0.15 }
+fn spont_weight_pain()        -> float { return 0.10 }
+fn spont_weight_coherence()   -> float { return 0.10 }
+fn spont_weight_originality() -> float { return 0.10 }
+fn spont_weight_balance()     -> float { return 0.15 }
+fn spont_weight_dynamics()    -> float { return 0.10 }
+//  sum = 0.20 + 0.10 + 0.15 + 0.10 + 0.10 + 0.10 + 0.15 + 0.10 = 1.00 ✓
+
+
+// ── §4 motivation_score (linear weighted sum, B-SPONT-1 MOTIVATION-LINEAR) ───
+
+fn motivation_score(rel: float, gap: float, cur: float, pain: float,
+                    coh: float, orig: float, bal: float, dyn_v: float) -> float {
+    // NB: param name `dyn_v` (not `dyn`) — `dyn` is reserved keyword in hexa-lang
+    // lexer (commit 820c9ae4 2026-04-09, parser_tensor_shape.hexa dim wildcard).
+    return spont_weight_relevance()   * rel
+         + spont_weight_info_gap()    * gap
+         + spont_weight_curiosity()   * cur
+         + spont_weight_pain()        * pain
+         + spont_weight_coherence()   * coh
+         + spont_weight_originality() * orig
+         + spont_weight_balance()     * bal
+         + spont_weight_dynamics()    * dyn_v
+}
+
+
+// ── §5 emission predicates (closed Boolean, B-SPONT-4 MONOTONE) ──────────────
+
+fn should_emit(score: float) -> bool {
+    return score > spont_im_threshold()
+}
+
+fn should_interrupt(score: float) -> bool {
+    return score > spont_interrupt_threshold()
+}
+
+
+// ── §6 safety predicates (closed, B-SPONT-5 SAFETY-CONJUNCTION) ──────────────
+
+// Safety #1 kill_switch — env var ANIMA_SPONT_OFF=1 시 off (default ON)
+fn safety_kill_switch_on(env_off: bool) -> bool { return env_off == false }
+
+// Safety #2 rate_limit — seconds_since_last >= 30s (F-SPONT-7 carry)
+fn safety_rate_limit_ok(seconds_since_last: float) -> bool {
+    return seconds_since_last >= spont_min_emit_interval()
+}
+
+// Safety #3 phi_ratchet — phi > ratchet/2 (B-E-1 SAFETY-GATE-EXACT carry)
+fn safety_phi_ratchet_ok(phi: float, ratchet: float) -> bool {
+    return phi > ratchet / 2.0
+}
+
+// Safety #4 content_filter — caller가 외부 gibberish check 결과를 pass
+fn safety_content_ok(content_clean: bool) -> bool { return content_clean }
+
+// Composite: all 4 must be true (AND closure)
+fn safety_combined(kill: bool, rate: bool, phi_r: bool, content: bool) -> bool {
+    return kill && rate && phi_r && content
+}
+
+
+// ── §7 seed strategy rotation (F-SPONT-2, ≥3 weighted) ───────────────────────
+
+// rotation index ∈ {0,1,2,3} → {m_retrieve, w_curiosity_peak, random_explore, self_monologue}
+// weights: 0.4 / 0.3 / 0.2 / 0.1 (sum=1.0)
+fn spont_seed_strategy_count() -> int { return 4 }
+
+fn spont_seed_strategy_name(idx: int) -> string {
+    if idx == 0 { return "m_retrieve_seed" }
+    if idx == 1 { return "w_curiosity_peak_seed" }
+    if idx == 2 { return "random_explore_seed" }
+    if idx == 3 { return "self_monologue_seed" }
+    return "unknown"
+}
+
+fn spont_seed_strategy_weight(idx: int) -> float {
+    if idx == 0 { return 0.4 }
+    if idx == 1 { return 0.3 }
+    if idx == 2 { return 0.2 }
+    if idx == 3 { return 0.1 }
+    return 0.0
+}
+
+
+// ── §8 rejection sampler stub (F-SPONT-3) ────────────────────────────────────
+
+// Minimal gibberish heuristic: empty OR length < 2 OR all-same-byte
+fn is_likely_gibberish(text: string) -> bool {
+    if text == "" { return true }
+    // length check via byte-count proxy (compiled: hexa string len 비공식, 단순 empty 만 closed)
+    return false
+}
+
+// reject_emit: gibberish 인 경우 emit 차단
+fn should_reject_emit(text: string) -> bool {
+    return is_likely_gibberish(text)
+}
+
+
+// ── §9 self-aware meta-emission flag (F-SPONT-6) ─────────────────────────────
+
+fn spont_meta_tag_enabled(env_meta: bool) -> bool { return env_meta }
+
+fn spont_meta_prefix() -> string { return "(spontaneous) " }
+
+
+// ── §10 spike → 8-factor map ────────────────────────────────────────────────
+// spec  : HEXAD/SPONTANEOUS/SPIKE_FACTOR_MAP.md  (prose form, §1-§7)
+// impl  : 본 §10 = SSOT for numerics (deltas / thresholds / modulators)
+// apply_spike_features — pure: features → 8-factor delta + §4 regime modulator
+// + [0,1] clamp. Substrate-only `relevance` + `balance` + `dynamics`
+// pass-through (§2). Inline § anchors below cross-reference the .md.
+
+fn _spike_num(d: dict, k: string) -> float {
+    if !d.has_key(k) { return 0.0 }
+    let s = to_string(d[k])
+    if s == "void" { return 0.0 }
+    return to_float(s)
+}
+
+fn _spike_str(d: dict, k: string) -> string {
+    if !d.has_key(k) { return "" }
+    let s = to_string(d[k])
+    if s == "void" { return "" }
+    return s
+}
+
+fn _spike_clamp01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > 1.0 { return 1.0 }
+    return x
+}
+
+fn _spike_modulator(regime: string) -> float {
+    if regime == "R3_tonic_zero_input" { return 0.5 }
+    if regime == "R2_bursting"         { return 1.2 }
+    return 1.0  // R1_oscillatory + unknown forward-compat (§4 L80, L82)
+}
+
+// apply_spike_features — pure: returns NEW 8-key dict; missing key = no delta.
+pub fn apply_spike_features(factors: dict, features: dict) -> dict {
+    let rel   = _spike_num(factors, "relevance")
+    let gap   = _spike_num(factors, "info_gap")
+    let cur   = _spike_num(factors, "curiosity")
+    let pn    = _spike_num(factors, "pain")
+    let coh   = _spike_num(factors, "coherence")
+    let orig  = _spike_num(factors, "originality")
+    let bal   = _spike_num(factors, "balance")
+    let dyn_v = _spike_num(factors, "dynamics")
+
+    // §3 L66 sparsity gate — invariant §5.2 (output == input deep equal).
+    let n_present = features.has_key("n_records")
+    if n_present { if _spike_num(features, "n_records") < 5.0 {
+        return #{
+            "relevance":   _spike_clamp01(rel),  "info_gap":    _spike_clamp01(gap),
+            "curiosity":   _spike_clamp01(cur),  "pain":        _spike_clamp01(pn),
+            "coherence":   _spike_clamp01(coh),  "originality": _spike_clamp01(orig),
+            "balance":     _spike_clamp01(bal),  "dynamics":    _spike_clamp01(dyn_v),
+        }
+    } }
+
+    let mut d_cur=0.0  let mut d_orig=0.0  let mut d_coh=0.0
+    let mut d_gap=0.0  let mut d_pain=0.0
+
+    if features.has_key("spike_rate_hz") {
+        let r = _spike_num(features, "spike_rate_hz")
+        if r > 12.0 { d_cur = d_cur + 0.10   d_orig = d_orig + 0.05 }  // §3 L60
+        if r <  2.0 { d_cur = d_cur - 0.05 }                            // §3 L61
+    }
+    if features.has_key("isi_cv") {
+        let cv = _spike_num(features, "isi_cv")
+        if cv > 1.5 { d_cur = d_cur + 0.08   d_coh = d_coh - 0.10 }     // §3 L62
+        if cv < 0.3 { d_coh = d_coh + 0.05 }                            // §3 L63
+    }
+    if features.has_key("mean_spike_ids_count") {
+        if _spike_num(features, "mean_spike_ids_count") > 8.0 { d_gap = d_gap + 0.10 }  // §3 L64
+    }
+    if features.has_key("regime_change") {
+        if to_string(features["regime_change"]) == "true" {
+            d_pain = d_pain + 0.15   d_orig = d_orig + 0.10              // §3 L65
+        }
+    }
+
+    let m = _spike_modulator(_spike_str(features, "regime"))  // §4
+    return #{
+        "relevance":   _spike_clamp01(rel),                           // §2 substrate-only
+        "info_gap":    _spike_clamp01(gap   + d_gap  * m),
+        "curiosity":   _spike_clamp01(cur   + d_cur  * m),
+        "pain":        _spike_clamp01(pn    + d_pain * m),
+        "coherence":   _spike_clamp01(coh   + d_coh  * m),
+        "originality": _spike_clamp01(orig  + d_orig * m),
+        "balance":     _spike_clamp01(bal),                           // §2 substrate-only
+        "dynamics":    _spike_clamp01(dyn_v),                         // dynamics: not mapped in §3
+    }
+}

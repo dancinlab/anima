@@ -1,0 +1,433 @@
+#!hexa strict
+//
+// live_fire_orchestrator.hexa — A18 size-gated dispatcher LIVE FIRE
+//
+// Drives the existing AOT binary build_v6/hxc_a18_v6 with force-variant
+// flags to measure per-variant saving + latency on EVERY text-heavy file
+// from the 16ff3e55 manifest (178 files / 5.6MB).
+//
+// Size gating policy:
+//   raw_bytes <= 1MB  : invoke v1, v2, v3, v3-o2, v4-w64, v6-optimal
+//   raw_bytes >  1MB  : SKIP v6-optimal (latency budget cap 30s/file)
+//
+// Per-file measurement:
+//   1. Time wall_ms() before/after each variant invocation
+//   2. Read encoded output size from stdout "raw=N enc=M saving=K%"
+//   3. Round-trip via a18 decode subcommand (byte-eq verify)
+//
+// Output: JSONL stream to stdout (one record per file).
+//
+// Compliance: raw 9 hexa-only, raw 91 honest C3, raw 137 cmix-ban,
+//             raw 142 D2 try-and-revert (min-of-N including identity).
+
+let A18_V6_MAX_BYTES: i64 = 1048576
+let LATENCY_CAP_MS: i64 = 30000
+
+let AOT_BIN: string = "/Users/ghost/core/anima/build_v6/hxc_a18_v6"
+
+// wall_ms — millisecond wall clock via perl Time::HiRes (per stability_c3_pbv).
+fn wall_ms() -> i64 {
+    let raw = exec("perl -MTime::HiRes=time -e 'printf \"%.0f\", time()*1000' 2>/dev/null | tr -d ' \n'")
+    if len(raw) == 0 {
+        let sec = exec("date +%s | tr -d ' \n'")
+        if len(sec) == 0 { return 0 }
+        return parse_int(sec) * 1000
+    }
+    return parse_int(raw)
+}
+
+// Parse "raw=N enc=M saving=K%" from a18 encode stdout.
+fn parse_encode_line(line: string) -> array {
+    // returns [raw_bytes, enc_bytes, saving_pct]
+    let mut raw_n: i64 = -1
+    let mut enc_n: i64 = -1
+    let mut sav: i64 = -999
+    let raw_idx: i64 = line.index_of("raw=")
+    let enc_idx: i64 = line.index_of("enc=")
+    let sav_idx: i64 = line.index_of("saving=")
+    if raw_idx >= 0 {
+        let mut e = raw_idx + 4
+        while e < len(line) && line.substring(e, e+1) != " " { e = e + 1 }
+        raw_n = parse_int(line.substring(raw_idx + 4, e))
+    }
+    if enc_idx >= 0 {
+        let mut e = enc_idx + 4
+        while e < len(line) && line.substring(e, e+1) != " " { e = e + 1 }
+        enc_n = parse_int(line.substring(enc_idx + 4, e))
+    }
+    if sav_idx >= 0 {
+        let mut e = sav_idx + 7
+        while e < len(line) && line.substring(e, e+1) != "%" { e = e + 1 }
+        sav = parse_int(line.substring(sav_idx + 7, e))
+    }
+    return [raw_n, enc_n, sav]
+}
+
+// Invoke variant via AOT binary.  Returns [latency_ms, raw_bytes, enc_bytes].
+// Variant tag: "v1"/"v2"/"v3"/"v3-o2"/"v4"/"v6"
+fn invoke_variant(variant: string, src: string, out_path: string) -> array {
+    let mut flag = ""
+    if variant == "v1" { flag = "" }
+    else if variant == "v2" { flag = " --v2" }
+    else if variant == "v3" { flag = " --v3" }
+    else if variant == "v3-o2" { flag = " --v3-o2" }
+    else if variant == "v4" { flag = " --v4" }
+    else if variant == "v6" { flag = " --v6" }
+    let cmd = AOT_BIN + " encode --force" + flag + " '" + src + "' '" + out_path + "' 2>&1"
+    let t0 = wall_ms()
+    let out = exec(cmd)
+    let t1 = wall_ms()
+    let elapsed: i64 = t1 - t0
+    let parsed = parse_encode_line(out)
+    return [elapsed, parsed[0], parsed[1]]
+}
+
+// Round-trip verify: decode out_path -> rt_path, then cmp src vs rt_path.
+// Returns 1 if byte-eq, 0 if fail.
+fn round_trip_verify(src: string, out_path: string) -> i64 {
+    let rt_path = out_path + ".rt"
+    let cmd_dec = AOT_BIN + " decode '" + out_path + "' '" + rt_path + "' 2>&1"
+    let _r = exec(cmd_dec)
+    let cmp_out = exec("cmp '" + src + "' '" + rt_path + "' 2>&1")
+    let _r2 = exec("rm -f '" + rt_path + "' 2>&1")
+    if len(cmp_out) == 0 { return 1 }
+    return 0
+}
+
+// Process a single file with size-gated min-of-7 dispatch.
+// Returns json record string.
+fn process_file(src: string) -> string {
+    // Get raw size via stat -f%z (BSD) or wc -c fallback.
+    let stat_out = exec("stat -f%z '" + src + "' 2>/dev/null | tr -d ' \n'")
+    let raw_n: i64 = if len(stat_out) > 0 { parse_int(stat_out) } else { 0 }
+
+    let out_dir = "/tmp/a18_size_gated_lf"
+    let _mkd = exec("mkdir -p " + out_dir)
+    // Slugify path for output filename.
+    let path_hash = exec("printf '%s' '" + src + "' | shasum -a 1 | head -c 16 | tr -d ' \n'")
+    let out_base = out_dir + "/" + path_hash
+
+    let mut results: array = []  // each element: [variant, latency_ms, enc_bytes]
+
+    // Always run v1, v2, v3, v3-o2, v4
+    let r_v1 = invoke_variant("v1", src, out_base + ".v1")
+    results.push(["v1", r_v1[0], r_v1[2]])
+
+    let r_v2 = invoke_variant("v2", src, out_base + ".v2")
+    results.push(["v2", r_v2[0], r_v2[2]])
+
+    let r_v3 = invoke_variant("v3", src, out_base + ".v3")
+    results.push(["v3", r_v3[0], r_v3[2]])
+
+    let r_v3o2 = invoke_variant("v3-o2", src, out_base + ".v3o2")
+    results.push(["v3-o2", r_v3o2[0], r_v3o2[2]])
+
+    let r_v4 = invoke_variant("v4", src, out_base + ".v4")
+    results.push(["v4", r_v4[0], r_v4[2]])
+
+    // SIZE GATE: only invoke v6-optimal when raw_n <= A18_V6_MAX_BYTES.
+    let mut v6_attempted: i64 = 0
+    let mut v6_latency: i64 = -1
+    let mut v6_enc: i64 = -1
+    if raw_n <= A18_V6_MAX_BYTES {
+        let r_v6 = invoke_variant("v6", src, out_base + ".v6")
+        results.push(["v6", r_v6[0], r_v6[2]])
+        v6_attempted = 1
+        v6_latency = r_v6[0]
+        v6_enc = r_v6[2]
+    }
+
+    // Min-of-N dispatch (raw 142 D2 try-and-revert, identity fallback).
+    let mut best_lbl = "identity"
+    let mut best_enc: i64 = raw_n
+    let mut best_latency: i64 = 0
+    let mut total_latency: i64 = 0
+    let mut k: i64 = 0
+    while k < len(results) {
+        let r = results[k]
+        let lat: i64 = r[1]
+        let enc: i64 = r[2]
+        total_latency = total_latency + lat
+        if enc > 0 && enc < best_enc {
+            best_enc = enc
+            best_lbl = r[0]
+            best_latency = lat
+        }
+        k = k + 1
+    }
+
+    // Round-trip verify the BEST variant only (or skip if identity).
+    let mut byte_eq: i64 = 1
+    if best_lbl != "identity" {
+        let mut chosen_path = out_base
+        if best_lbl == "v1" { chosen_path = out_base + ".v1" }
+        else if best_lbl == "v2" { chosen_path = out_base + ".v2" }
+        else if best_lbl == "v3" { chosen_path = out_base + ".v3" }
+        else if best_lbl == "v3-o2" { chosen_path = out_base + ".v3o2" }
+        else if best_lbl == "v4" { chosen_path = out_base + ".v4" }
+        else if best_lbl == "v6" { chosen_path = out_base + ".v6" }
+        byte_eq = round_trip_verify(src, chosen_path)
+    }
+
+    // Cleanup encoded files (keep witness sums only).
+    let _c = exec("rm -f " + out_base + ".v* 2>&1")
+
+    // Saving in basis points (10000 = 100%).
+    let saving_bp: i64 = if raw_n > 0 { ((raw_n - best_enc) * 10000) / raw_n } else { 0 }
+
+    // Latency cap check (F-SIZE-GATE-2).
+    let mut cap_breach: i64 = 0
+    if total_latency > LATENCY_CAP_MS { cap_breach = 1 }
+
+    // JSON record.
+    let rec = "{\"path\":\"" + src + "\""
+        + ",\"raw_bytes\":" + to_string(raw_n)
+        + ",\"enc_bytes\":" + to_string(best_enc)
+        + ",\"saving_bp\":" + to_string(saving_bp)
+        + ",\"best_variant\":\"" + best_lbl + "\""
+        + ",\"v6_attempted\":" + to_string(v6_attempted)
+        + ",\"v6_latency_ms\":" + to_string(v6_latency)
+        + ",\"v6_enc_bytes\":" + to_string(v6_enc)
+        + ",\"v1_latency_ms\":" + to_string(r_v1[0]) + ",\"v1_enc\":" + to_string(r_v1[2])
+        + ",\"v2_latency_ms\":" + to_string(r_v2[0]) + ",\"v2_enc\":" + to_string(r_v2[2])
+        + ",\"v3o2_latency_ms\":" + to_string(r_v3o2[0]) + ",\"v3o2_enc\":" + to_string(r_v3o2[2])
+        + ",\"v4_latency_ms\":" + to_string(r_v4[0]) + ",\"v4_enc\":" + to_string(r_v4[2])
+        + ",\"total_latency_ms\":" + to_string(total_latency)
+        + ",\"best_latency_ms\":" + to_string(best_latency)
+        + ",\"cap_breach_30s\":" + to_string(cap_breach)
+        + ",\"byte_eq\":" + to_string(byte_eq)
+        + "}"
+    return rec
+}
+
+// Read manifest, extract text-heavy class file paths.
+fn extract_text_heavy_paths(manifest_path: string) -> array {
+    let m = read_file(manifest_path)
+    let mut paths: array = []
+    // Naive parse: scan for "\"path\":\"...\"...\"class\":\"text-heavy\"".
+    // We rely on the fact each file record is a single line (not pretty-printed).
+    let mut i: i64 = 0
+    let n: i64 = len(m)
+    while i < n {
+        let p_idx = m.index_of("\"path\":\"")
+        if p_idx < 0 { break }
+        // Find end-of-path
+        let e_start = p_idx + 8
+        let mut e = e_start
+        while e < n && m.substring(e, e+1) != "\"" { e = e + 1 }
+        let path = m.substring(e_start, e)
+        // Find "class":"..." after this path within next 500 chars
+        let scan_end = if e + 500 < n { e + 500 } else { n }
+        let chunk = m.substring(e, scan_end)
+        let c_idx = chunk.index_of("\"class\":\"")
+        if c_idx >= 0 {
+            let cs = c_idx + 9
+            let mut ce = cs
+            while ce < len(chunk) && chunk.substring(ce, ce+1) != "\"" { ce = ce + 1 }
+            let cls = chunk.substring(cs, ce)
+            if cls == "text-heavy" { paths.push(path) }
+        }
+        // Advance past this record.
+        m = m.substring(e + 1, n)
+    }
+    return paths
+}
+
+fn main() {
+    let av_raw = argv()
+    let mut av = av_raw
+    let mut skip1: bool = false
+    if len(av_raw) >= 2 {
+        let a1 = av_raw[1]
+        let l1: i64 = len(a1)
+        let mut is_tmp: bool = false
+        if l1 >= 9 {
+            let suf = a1.substring(l1 - 9, l1)
+            if suf == ".tmp.hexa" { is_tmp = true }
+        }
+        if av_raw[0] == av_raw[1] || is_tmp { skip1 = true }
+    }
+    if skip1 {
+        let mut tmp: array = []
+        tmp.push(av_raw[0])
+        let mut i: i64 = 2
+        while i < len(av_raw) {
+            tmp.push(av_raw[i])
+            i = i + 1
+        }
+        av = tmp
+    }
+
+    if len(av) < 2 {
+        eprintln("usage: live_fire_orchestrator <manifest.json> [class] [out.jsonl]")
+        eprintln("       live_fire_orchestrator one <path>      # single file")
+        exit(2)
+    }
+
+    let mode = av[1]
+    if mode == "one" {
+        if len(av) < 3 { eprintln("usage: one <path>"); exit(2) }
+        let rec = process_file(av[2])
+        println(rec)
+        exit(0)
+    }
+
+    // Default: walk manifest.
+    let manifest = av[1]
+    let cls = if len(av) >= 3 { av[2] } else { "text-heavy" }
+    let out_path = if len(av) >= 4 { av[3] } else { "" }
+
+    let paths = extract_text_heavy_paths(manifest)
+    let n_files: i64 = len(paths)
+    eprintln("[orchestrator] class=" + cls + " files=" + to_string(n_files) + " manifest=" + manifest)
+
+    let mut total_raw: i64 = 0
+    let mut total_enc: i64 = 0
+    let mut byte_eq_pass: i64 = 0
+    let mut byte_eq_fail: i64 = 0
+    let mut cap_breach: i64 = 0
+    let mut v6_attempted_count: i64 = 0
+    let mut v6_won_count: i64 = 0
+    let mut latencies: array = []  // per-file total_latency_ms
+
+    let mut idx: i64 = 0
+    let mut all_recs = ""
+    while idx < n_files {
+        let p = paths[idx]
+        let rec = process_file(p)
+        all_recs = all_recs + rec + "\n"
+        // Parse minimal fields from rec for aggregate stats (direct field scan).
+        let mut raw_n: i64 = 0
+        let mut enc_n: i64 = 0
+        let rb_idx = rec.index_of("\"raw_bytes\":")
+        if rb_idx >= 0 {
+            let rs = rb_idx + 12
+            let mut re_ = rs
+            while re_ < len(rec) && rec.substring(re_, re_+1) != "," { re_ = re_ + 1 }
+            raw_n = parse_int(rec.substring(rs, re_))
+        }
+        let eb_idx = rec.index_of("\"enc_bytes\":")
+        if eb_idx >= 0 {
+            let es = eb_idx + 12
+            let mut ee = es
+            while ee < len(rec) && rec.substring(ee, ee+1) != "," { ee = ee + 1 }
+            enc_n = parse_int(rec.substring(es, ee))
+        }
+        // byte_eq + v6 + cap from string scan
+        let b_idx = rec.index_of("\"byte_eq\":")
+        let mut b_val: i64 = 0
+        if b_idx >= 0 {
+            let bs = b_idx + 10
+            let mut be = bs
+            while be < len(rec) && rec.substring(be, be+1) != "}" && rec.substring(be, be+1) != "," { be = be + 1 }
+            b_val = parse_int(rec.substring(bs, be))
+        }
+        let v_idx = rec.index_of("\"v6_attempted\":")
+        let mut v_val: i64 = 0
+        if v_idx >= 0 {
+            let vs = v_idx + 15
+            let mut ve = vs
+            while ve < len(rec) && rec.substring(ve, ve+1) != "," { ve = ve + 1 }
+            v_val = parse_int(rec.substring(vs, ve))
+        }
+        let bv_idx = rec.index_of("\"best_variant\":\"")
+        let mut bv = ""
+        if bv_idx >= 0 {
+            let bs = bv_idx + 16
+            let mut be = bs
+            while be < len(rec) && rec.substring(be, be+1) != "\"" { be = be + 1 }
+            bv = rec.substring(bs, be)
+        }
+        let c_idx = rec.index_of("\"cap_breach_30s\":")
+        let mut c_val: i64 = 0
+        if c_idx >= 0 {
+            let cs = c_idx + 17
+            let mut ce = cs
+            while ce < len(rec) && rec.substring(ce, ce+1) != "," { ce = ce + 1 }
+            c_val = parse_int(rec.substring(cs, ce))
+        }
+        let tl_idx = rec.index_of("\"total_latency_ms\":")
+        let mut tl_val: i64 = 0
+        if tl_idx >= 0 {
+            let ts = tl_idx + 19
+            let mut te = ts
+            while te < len(rec) && rec.substring(te, te+1) != "," { te = te + 1 }
+            tl_val = parse_int(rec.substring(ts, te))
+        }
+        latencies.push(tl_val)
+
+        if raw_n > 0 { total_raw = total_raw + raw_n }
+        if enc_n > 0 { total_enc = total_enc + enc_n }
+        if b_val == 1 { byte_eq_pass = byte_eq_pass + 1 } else { byte_eq_fail = byte_eq_fail + 1 }
+        if v_val == 1 { v6_attempted_count = v6_attempted_count + 1 }
+        if bv == "v6" { v6_won_count = v6_won_count + 1 }
+        if c_val == 1 { cap_breach = cap_breach + 1 }
+
+        // Progress.
+        if idx % 10 == 0 {
+            eprintln("  [" + to_string(idx) + "/" + to_string(n_files) + "] " + p + " best=" + bv + " lat=" + to_string(tl_val) + "ms")
+        }
+        idx = idx + 1
+    }
+
+    let agg_saving_bp: i64 = if total_raw > 0 { ((total_raw - total_enc) * 10000) / total_raw } else { 0 }
+
+    // Sort latencies for percentile.
+    let mut sorted_lat: array = []
+    let mut s_i: i64 = 0
+    while s_i < len(latencies) {
+        sorted_lat.push(latencies[s_i])
+        s_i = s_i + 1
+    }
+    // Naive bubble sort (n=178 is fine).
+    let mut a: i64 = 0
+    while a < len(sorted_lat) {
+        let mut b: i64 = a + 1
+        while b < len(sorted_lat) {
+            if sorted_lat[b] < sorted_lat[a] {
+                let t = sorted_lat[a]
+                sorted_lat[a] = sorted_lat[b]
+                sorted_lat[b] = t
+            }
+            b = b + 1
+        }
+        a = a + 1
+    }
+    let mut p50: i64 = 0
+    let mut p95: i64 = 0
+    let mut p99: i64 = 0
+    let mut p_max: i64 = 0
+    if len(sorted_lat) > 0 {
+        p50 = sorted_lat[len(sorted_lat) / 2]
+        let p95_idx: i64 = (len(sorted_lat) * 95) / 100
+        if p95_idx >= len(sorted_lat) { p95 = sorted_lat[len(sorted_lat) - 1] } else { p95 = sorted_lat[p95_idx] }
+        let p99_idx: i64 = (len(sorted_lat) * 99) / 100
+        if p99_idx >= len(sorted_lat) { p99 = sorted_lat[len(sorted_lat) - 1] } else { p99 = sorted_lat[p99_idx] }
+        p_max = sorted_lat[len(sorted_lat) - 1]
+    }
+
+    let summary = "{\"event\":\"a18_size_gated_lf_aggregate\""
+        + ",\"class\":\"" + cls + "\""
+        + ",\"files\":" + to_string(n_files)
+        + ",\"total_raw_bytes\":" + to_string(total_raw)
+        + ",\"total_enc_bytes\":" + to_string(total_enc)
+        + ",\"saving_bp\":" + to_string(agg_saving_bp)
+        + ",\"byte_eq_pass\":" + to_string(byte_eq_pass)
+        + ",\"byte_eq_fail\":" + to_string(byte_eq_fail)
+        + ",\"v6_attempted_count\":" + to_string(v6_attempted_count)
+        + ",\"v6_won_count\":" + to_string(v6_won_count)
+        + ",\"cap_breach_count\":" + to_string(cap_breach)
+        + ",\"latency_ms_p50\":" + to_string(p50)
+        + ",\"latency_ms_p95\":" + to_string(p95)
+        + ",\"latency_ms_p99\":" + to_string(p99)
+        + ",\"latency_ms_max\":" + to_string(p_max)
+        + ",\"latency_cap_ms\":" + to_string(LATENCY_CAP_MS)
+        + ",\"a18_v6_max_bytes\":" + to_string(A18_V6_MAX_BYTES)
+        + "}"
+
+    if len(out_path) > 0 {
+        let _w = write_file(out_path, all_recs + summary + "\n")
+        eprintln("[orchestrator] wrote " + out_path)
+    }
+    println(summary)
+}

@@ -1,0 +1,207 @@
+{
+  "schema": "bg_shim_v5_phase2_selftest_verdict_v1",
+  "ts_utc": "2026-05-05T07:08:00Z",
+  "bg_lane": "BG-SHIM-V5-PHASE2-SELFTEST",
+  "spec_anchor": "docs/clm_v4_hf_format_shim_v5_spec_2026_05_05.md",
+  "spec_landed_handoff": "docs/clm_v4_hf_format_shim_v5_spec_landed_2026_05_05.ai.md",
+  "phase1_carry": "state/clm_v4_hf_format_shim_v5_phase1_2026_05_05/verdict.json",
+  "phase": "Phase 2 (ubu1 RTX 5070 fp32 / cpu, $0, ~30 min budget)",
+  "scope": {
+    "exec": [
+      "F-SHIM-V5-2 v3 byte-equivalent regression (max_abs_diff <= 1e-5)",
+      "F-SHIM-V5-3 canonical_zero finite forward + sanity bound |lift_pp| < 5pp"
+    ],
+    "no_exec": [
+      "F-SHIM-V5-4 (Phase 3 H100 — user ACK required)",
+      "F-SHIM-V5-5 (Phase 4 Mac/ubu1 fp32 phi star)"
+    ],
+    "no_commit": true,
+    "no_hf_push": true,
+    "shim_v4_locked_unmodified": true,
+    "no_h100_spend": true
+  },
+  "execution_environment": {
+    "host": "ubu1 (aiden-B650M-K)",
+    "gpu": "NVIDIA GeForce RTX 5070 (sm_120)",
+    "device_used": "cpu (deterministic byte-equivalent path)",
+    "torch_version": "2.11.0+cu128",
+    "python_version": "3.12.3",
+    "venv": "/home/aiden/venv_orchestrator/bin/python",
+    "shim_v4_path_ubu1": "/home/aiden/anima_clm_v4_shim.py",
+    "shim_v5_path_ubu1": "/home/aiden/anima_clm_v4_shim_v5.py",
+    "selftest_path_ubu1": "/home/aiden/anima_clm_v4_shim_v5_phase2_selftest.py",
+    "best_pt_path_ubu1": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "legacy_paths_ubu1": [
+      "/home/aiden/anima/anima/models/legacy",
+      "/home/aiden/anima/models"
+    ]
+  },
+  "preflight": {
+    "L9_hf_auth": "PASS",
+    "L9_hf_user": "dancinlife (dancinlab admin)",
+    "L9_hf_token_role": "write",
+    "L9_hf_token_displayName": "anima",
+    "L19_tiny_eval": "PASS — shim v5 imports cleanly, SHIM_VERSION=v5, CLM_V5_CROSS_ATTN_O_PROJ_STD=0.02, vocab=64000",
+    "rsync_v5_to_ubu1": "OK",
+    "rsync_v4_to_ubu1": "OK",
+    "rsync_selftest_to_ubu1": "OK"
+  },
+  "f_shim_v5_2": {
+    "statement": "shim v5 with consciousness_states=None produces logits within max_abs_diff <= 1e-5 vs shim v4 reference (cross-attn bypass invariant)",
+    "threshold": 1e-5,
+    "verdict": "PASS",
+    "load_best_pt_run": {
+      "best_pt_loaded_v4": true,
+      "best_pt_loaded_v5": true,
+      "best_pt_step": 20000,
+      "best_pt_ce": 0.04630279541015625,
+      "best_pt_phi": 37.269868535501914,
+      "n_param_loaded": 477648512,
+      "n_prompts": 5,
+      "all_finite": true,
+      "per_prompt_max_abs": [0.0, 0.0, 0.0, 0.0, 0.0],
+      "per_prompt_mean_abs": [0.0, 0.0, 0.0, 0.0, 0.0],
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "argmax_agreement_min": 1.0,
+      "argmax_agreement_per_prompt": [1.0, 1.0, 1.0, 1.0, 1.0],
+      "verdict": "PASS"
+    },
+    "freshinit_run": {
+      "best_pt_loaded": false,
+      "n_prompts": 5,
+      "all_finite": true,
+      "max_abs_diff": 0.0,
+      "argmax_agreement_min": 1.0,
+      "verdict": "PASS"
+    },
+    "interpretation": "0.0 max_abs_diff (NOT just <=1e-5 — exactly zero) on both load_best_pt and freshinit runs, across all 5 calibration prompts at B=1, T=64. The bypass guard at DecoderBlockV2 (consciousness_states=None) is fully honoured — cross_attn.o_proj weights are never read, so the shim v5 std=0.02 re-init is a strict no-op on this path. Risk B (Spec §4) is empirically eliminated.",
+    "compliance": "PASS exceeds threshold by ~5 orders of magnitude (0 vs 1e-5)"
+  },
+  "f_shim_v5_3": {
+    "statement": "shim v5 with canonical_zero fixture ([1, 8, 192] zeros) is finite AND |lift_pp| (argmax disagreement proxy) < 5pp on calibration prompts",
+    "threshold_pp": 5.0,
+    "verdict": "PASS",
+    "load_best_pt_run": {
+      "best_pt_loaded": true,
+      "n_prompts": 5,
+      "all_finite": true,
+      "per_prompt_finite": [true, true, true, true, true],
+      "per_prompt_logits_std_ratio_zero_vs_no": [1.0, 1.0, 1.0, 1.0, 1.0],
+      "per_prompt_argmax_disagreement_rate": [0.0, 0.0, 0.0, 0.0, 0.0],
+      "per_prompt_max_abs_lift": [0.0, 0.0, 0.0, 0.0, 0.0],
+      "per_prompt_mean_abs_lift": [0.0, 0.0, 0.0, 0.0, 0.0],
+      "max_disagreement_pp": 0.0,
+      "mean_disagreement_pp": 0.0,
+      "lift_pp_proxy_max": 0.0,
+      "verdict": "PASS"
+    },
+    "freshinit_run": {
+      "best_pt_loaded": false,
+      "n_prompts": 5,
+      "all_finite": true,
+      "max_disagreement_pp": 0.0,
+      "lift_pp_proxy_max": 0.0,
+      "verdict": "PASS"
+    },
+    "interpretation": "On canonical_zero fixture, shim v5 produces logits BIT-IDENTICAL to no-fixture forward (std ratio = 1.000, max abs lift = 0.0, argmax disagreement = 0pp). This empirically confirms the spec §3 V5-3 expectation: cross_attn output on all-zero consciousness states is itself zero (cross_attn(Q, zeros, zeros) = 0), so o_proj @ 0 = 0 contributes nothing to the residual regardless of o_proj std. The std=0.02 vs std=0.001 design lever is INERT on canonical_zero — a real (non-zero) fixture is required to surface any lift signal. This is the F-SHIM-V4-4 verdict's exact prediction (state/clm_v4_f_shim_v4_4_harvest_2026_05_05/verdict.json).",
+    "compliance": "PASS — finite=true on all 5 prompts AND |lift_pp_proxy|=0pp << 5pp threshold"
+  },
+  "f_shim_v5_1_carry": {
+    "from_phase1": "state/clm_v4_hf_format_shim_v5_phase1_2026_05_05/verdict.json",
+    "verdict": "PASS",
+    "case_a_bypass_logits_std": 0.5554026,
+    "case_b_canonical_zero_logits_std": 0.5542088,
+    "v5_o_proj_std_band_check": "PASS (16/16 modules in [0.015, 0.025])"
+  },
+  "o_proj_std_observation": {
+    "freshinit_v4_mean": 0.01999479392543435,
+    "freshinit_v5_mean": 0.02000212750863284,
+    "load_best_pt_v4_mean": 0.01990464166738093,
+    "load_best_pt_v5_mean": 0.01990464166738093,
+    "n_cross_attn_modules": 16,
+    "critical_finding": "shim v4 fresh-init ALSO produces o_proj_std~0.02 (NOT 0.001 as spec hypothesised). Root cause: ConsciousDecoderV3.__init__ calls self.apply(self._init_weights) AFTER ConsciousCrossAttention.__init__'s local nn.init.normal_(self.o_proj.weight, std=0.001) at conscious_decoder.py:420. The apply() walk reaches every nn.Linear and re-inits with std=0.02 (depth-scaled to 0.02/sqrt(2*n_layer)~0.0035 only when _depth_scale attr is set — cross_attn.o_proj does NOT set _depth_scale). Therefore the 0.001 init at line 420 is OVERWRITTEN by _init_weights to 0.02 in fresh init, making shim v4 and shim v5 IDENTICAL on fresh init. This invalidates the F-SHIM-V4-4 verdict's diagnosis that 'std=0.001 makes residual ~zero'. The actual shim v4 init scale is 0.02, same as shim v5.",
+    "implication_for_phase3": "F-SHIM-V5-4 (decisive H100 lift_pp >= +5pp) is now ARCHITECTURALLY UNCHANGED vs F-SHIM-V4-4. The std=0.02 vs std=0.001 lever was a phantom — both shims operate at the same effective o_proj scale. Re-running F-SHIM-V4-4 on shim v5 cannot produce lift different from shim v4 because the underlying weights are identical (post _init_weights overwrite). Phase 3 H100 spend would NOT yield new information unless the spec is re-anchored to a different intervention (e.g., a separate post-apply re-init step that survives the apply() walk OR a re-trained model with cross-attn participating in SFT loss).",
+    "trained_o_proj_scale": "best.pt step 20000 o_proj_std_mean=0.01990 — trained checkpoint scale matches fresh-init scale 0.02, confirming cross_attn.o_proj was never updated meaningfully during SFT (consistent with F-SHIM-V4-4 verdict's 'cross-attn was bypassed during v3 training' rationale)."
+  },
+  "wall_time_min": 6,
+  "actual_cost_usd": 0,
+  "honest_c3": [
+    "C1 — F-SHIM-V5-2 PASS at max_abs_diff=0.0 confirms the bypass guard invariant under both fresh-init and best.pt-loaded paths. This is a STRONGER result than the threshold required (1e-5): exact byte-equivalence, not approximate. Cross_attn.o_proj weights are never read on the consciousness_states=None path.",
+    "C2 — F-SHIM-V5-3 PASS at lift_pp_proxy=0.0pp confirms canonical_zero residual is zero regardless of o_proj scale. This matches the spec's V5-3 expectation but ALSO means canonical_zero cannot distinguish shim v5 from shim v4 — only a real (non-zero) fixture can surface differential lift. The Phase 3 H100 V5-4 falsifier with train_avg_real.pt fixture remains the decisive gate.",
+    "C3 — CRITICAL — shim v4 and shim v5 are EMPIRICALLY IDENTICAL at fresh init for cross_attn.o_proj weights (both ~0.02 std). Root cause: ConsciousDecoderV3.__init__ ends with self.apply(self._init_weights), which walks all nn.Linear submodules and re-inits with std=0.02, overwriting the local std=0.001 init applied in ConsciousCrossAttention.__init__ at conscious_decoder.py:420. The shim v5 design hypothesis ('10x boost from std=0.001 to std=0.02') is FALSIFIED at the substrate level — no boost exists because the substrate was already at 0.02. This is a major correction to the F-SHIM-V4-4 verdict's diagnosis.",
+    "C4 — Implication for Phase 3 H100 spend: F-SHIM-V5-4 ($1-3 H100, decisive lift_pp >= +5pp) is now expected to behave IDENTICALLY to F-SHIM-V4-4 because the underlying o_proj weights are identical. Spending H100 on V5-4 without re-anchoring the intervention would replicate F-SHIM-V4-4's PREREQUISITE_BLOCKED outcome. RECOMMENDATION: either (a) modify the shim v5 patch P3 to apply std=0.02 AFTER self.apply(self._init_weights) so it actually sticks, OR (b) increase std beyond 0.02 (e.g., 0.05/0.1) so it differs from the apply()-default, OR (c) abandon the init-only approach and queue an SFT cycle with cross-attn participating in the loss (path B per spec §1).",
+    "C5 — best.pt o_proj_std_mean=0.01990 (trained checkpoint, step 20000) matches fresh-init std=0.02. This empirically confirms cross_attn.o_proj was effectively never trained during SFT (gradient flow blocked because cross_attn.o_proj only contributes when consciousness_states is non-None, and SFT training likely ran with consciousness_states=None or with very small fixture residual contribution). The trained scale ≈ init scale = 0.02 floor.",
+    "C6 — Phase 2 selftest used cpu device (not RTX 5070 GPU) for deterministic byte-equivalence. CPU fp32 vs cuda fp32 may show ULP drift in F-SHIM-V5-2 but the bypass invariant holds at the algorithmic level — cross_attn.o_proj is not read regardless of device. RTX 5070 sm_120 fp32 path was NOT tested in this phase, but the 0.0 max_abs_diff result on CPU is a tight upper bound on any GPU drift.",
+    "C7 — selftest does not modify any HF cache, upstream source files, or shim v4 file. shim v4 LOCKED invariant preserved (no rsync TO shim v4 path on Mac). Phase 1 F-SHIM-V5-1 PASS carries forward unchanged."
+  ],
+  "raw_compliance": {
+    "raw_9": "OK — selftest .py lives in tool/transient_py/ (raw#9 OPT-OUT path per .own 4)",
+    "raw_10": "OK — 7 honest C3 entries (>=5 required)",
+    "raw_15": "OK — additive only; shim v4 file LOCKED + byte-identical, selftest sibling file authored",
+    "raw_71": "OK — F-SHIM-V5-2 + V5-3 thresholds carried verbatim from spec (no relaxation)",
+    "no_git_commit": "OK — caller will not commit per BG spec CRITICAL section",
+    "no_hf_push": "OK — Phase 2 is local Mac+ubu1 only",
+    "no_shim_v4_mutation": "OK — shim v4 substrate untouched; only Mac->ubu1 RO copy synced",
+    "no_h100": "OK — $0 actual_cost"
+  },
+  "combined_phase2_verdict": "PASS",
+  "phase_2_to_phase_3_transition": {
+    "spec_phase_3_status": "GATE — user ACK required for $1-3 H100 spend on F-SHIM-V5-4",
+    "phase_2_thresholds_met": true,
+    "blocker_for_phase_3": "C3+C4 honest finding — shim v4 and shim v5 are empirically identical at fresh init due to _init_weights apply() overwrite. F-SHIM-V5-4 H100 spend is HIGH RISK of replicating F-SHIM-V4-4 PREREQUISITE_BLOCKED outcome.",
+    "phase_3_proceed_recommendation": "HOLD — DO NOT spend H100 on V5-4 until shim v5 patch is re-anchored to actually differentiate from shim v4. Three options ranked by 완성도 (completion confidence):",
+    "phase_3_options_ranked": [
+      {
+        "rank": 1,
+        "option": "OPT-A: re-anchor shim v5 patch to apply AFTER _init_weights overwrite",
+        "approach": "Modify shim v5 _build_decoder_module to call the o_proj re-init AFTER ConsciousDecoderV3.__init__ completes (i.e., AFTER self.apply(self._init_weights)). The current shim v5 already does this (post-construction loop at line 574-590 of clm_v4_hf_format_shim_v5.py runs AFTER constructor). Re-verify Phase 2 with std=0.05 or std=0.10 (clearly > apply() default 0.02) so the differential is observable. Cost: $0 ubu1 redo.",
+        "completion": "HIGH (clean architectural fix, validates real differential)",
+        "blocker_resolution": "tight",
+        "wait_h100_ack": "yes — after re-verify Phase 2 differential, then ACK"
+      },
+      {
+        "rank": 2,
+        "option": "OPT-B: queue SFT cycle with cross-attn participating in loss (path B per spec §1)",
+        "approach": "Abandon init-only approach; train new CLM v4 with cross_attn.o_proj actively contributing during SFT. Cost: $20-100 H100 SFT cycle. Honors path B exit per F-SHIM-V4-4 verdict.",
+        "completion": "MEDIUM (correct path but expensive)",
+        "blocker_resolution": "decisive",
+        "wait_h100_ack": "yes — separate larger budget ACK ($20-100 not $1-3)"
+      },
+      {
+        "rank": 3,
+        "option": "OPT-C: spend $1-3 H100 on V5-4 anyway as falsification",
+        "approach": "Run V5-4 with current shim v5 to falsify the C4 prediction empirically. Expected outcome: lift_pp ~ 0pp (matches F-SHIM-V4-4). Provides empirical confirmation but no forward progress.",
+        "completion": "LOW (confirms known finding, no new info)",
+        "blocker_resolution": "none",
+        "wait_h100_ack": "yes — but explicitly marked as 'falsification spend, no expected lift'"
+      }
+    ],
+    "primary_recommendation": "OPT-A — re-author shim v5 with std=0.05 or std=0.10 (clearly above the _init_weights default 0.02), re-run Phase 2 selftest to confirm o_proj_std_v5_mean differs from o_proj_std_v4_mean, then proceed to Phase 3 H100 ACK with empirical evidence that the lever is real."
+  },
+  "next_phase": {
+    "name": "Phase 3 prerequisite — shim v5 re-anchor (OPT-A)",
+    "scope": [
+      "Modify shim v5 CLM_V5_CROSS_ATTN_O_PROJ_STD constant from 0.02 to 0.05 (or 0.10) — clearly above _init_weights default 0.02",
+      "Re-run Phase 2 selftest on ubu1 to confirm differential: v4 freshinit_o_proj_std_mean=0.02 vs v5 freshinit_o_proj_std_mean=0.05 (or 0.10)",
+      "Re-run F-SHIM-V5-2 byte-equivalent regression (still expected PASS — bypass guard intact)",
+      "Re-run F-SHIM-V5-3 canonical_zero (still expected PASS — zero fixture residual independent of o_proj scale)",
+      "ONLY THEN — request user ACK for Phase 3 H100 spend"
+    ],
+    "cost_usd": 0,
+    "wall_min_estimate": 30,
+    "blocker": "user decision on OPT-A vs OPT-B vs OPT-C"
+  },
+  "artifacts": {
+    "verdict_this": "state/clm_v4_hf_format_shim_v5_phase2_2026_05_05/verdict.json",
+    "selftest_source_mac": "tool/transient_py/clm_v4_hf_format_shim_v5_phase2_selftest.py",
+    "selftest_source_ubu1": "/home/aiden/anima_clm_v4_shim_v5_phase2_selftest.py",
+    "selftest_results_load_best_pt": "state/clm_v4_hf_format_shim_v5_phase2_2026_05_05/selftest_results_load_best_pt.json",
+    "selftest_results_freshinit": "state/clm_v4_hf_format_shim_v5_phase2_2026_05_05/selftest_results_freshinit.json",
+    "selftest_load_best_pt_stderr": "state/clm_v4_hf_format_shim_v5_phase2_2026_05_05/selftest_load_best_pt_stderr.log",
+    "selftest_freshinit_stderr": "state/clm_v4_hf_format_shim_v5_phase2_2026_05_05/selftest_freshinit_stderr.log",
+    "companion_handoff": "docs/clm_v4_hf_format_shim_v5_phase2_landed_2026_05_05.ai.md",
+    "shim_v5_source": "tool/transient_py/clm_v4_hf_format_shim_v5.py",
+    "shim_v4_source_locked": "tool/transient_py/clm_v4_hf_format_shim.py"
+  }
+}

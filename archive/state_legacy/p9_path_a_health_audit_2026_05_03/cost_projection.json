@@ -1,0 +1,44 @@
+{
+  "schema": "anima/p9_path_a_health_audit/cost_projection/1",
+  "ts_utc": "2026-05-03T15:17:00Z",
+  "rate_usd_hr": 2.99,
+  "current": {
+    "train_pid_etime_sec": 2773,
+    "train_pid_etime_hr": 0.770,
+    "train_pid_cost_usd": 2.30,
+    "pod_overhead_minutes": 18,
+    "pod_overhead_cost_usd": 0.90,
+    "estimated_total_billed_usd": 3.20,
+    "current_step": 1090,
+    "current_progress_pct": 10.9
+  },
+  "projection_full_run": {
+    "remaining_steps": 8910,
+    "sec_per_iter_avg": 2.46,
+    "remaining_sec": 21918,
+    "remaining_hr": 6.09,
+    "remaining_cost_usd": 18.2,
+    "projected_total_train_hr": 6.86,
+    "projected_total_train_cost_usd": 20.5,
+    "projected_total_pod_cost_usd_with_overhead": 21.5,
+    "below_50usd_cap": true,
+    "below_85usd_hard_cap": true,
+    "headroom_to_50usd_cap_usd": 28.5,
+    "headroom_to_50usd_cap_hr": 9.5
+  },
+  "comparison": {
+    "user_overall_cap_usd": 200,
+    "path_a_per_pod_cap_usd": 50,
+    "host_terminator_hard_cap_hr": 28,
+    "host_terminator_hard_cap_usd": 83.7,
+    "projected_total_pct_of_user_cap": 10.8,
+    "projected_total_pct_of_path_a_cap": 43.0,
+    "projected_total_pct_of_hard_cap_28h": 25.7,
+    "verdict": "well under all caps — projected $21.5 vs $50 cap (43%)"
+  },
+  "rationale": {
+    "path_a_value": "Llama-3.2-3B + LoRA r=64 SFT stage 1 anchor on 50K augmented corpus (φ★ alignment baseline)",
+    "alt_paths_unblocked_by_completion": ["A' measure", "Path D distill if A succeeds", "B sanity probe completed"],
+    "kill_threshold_recommendation": "kill if cost > $50 OR loss diverges (NaN/inf) OR step stalled > 30min OR uptime > 12h without DONE flag"
+  }
+}

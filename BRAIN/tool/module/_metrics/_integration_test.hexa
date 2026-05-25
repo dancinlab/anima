@@ -1,0 +1,161 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg-core/tool/modules/_metrics/_integration_test.hexa
+//
+//  PURPOSE
+//    Phase 3 integration test — runs all 4 _metrics/ modules in selftest mode
+//    and verifies kv-block contract:
+//      lz76 | gamma_theta | permutation_entropy | hjorth
+//
+//    SELFTEST mode (synthetic short-window inputs) — no heavy real-data
+//    .npy compute on Mac. For real-data verification, run each module
+//    individually via `bin/eeg metric <name> --input <npy>` on the host.
+//
+//
+//  CLI
+//    hexa run _integration_test.hexa
+//    hexa run _integration_test.hexa --selftest    (alias)
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA = "anima-eeg-core/_metrics/integration_test/1"
+let METRICS_ROOT = "anima-eeg-core/tool/modules/_metrics"
+let AUDIT_DEFAULT = "state/anima_eeg_core_phase3_metrics_integration_audit.jsonl"
+
+fn _hexa_bin() -> string {
+    let hl = env("HEXA_LANG")
+    if hl != "" { return hl + "/hexa.real" }
+    return "/Users/ghost/core/hexa-lang/hexa.real"
+}
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn _kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _now_iso() -> string {
+    return exec("date -u +%Y-%m-%dT%H:%M:%SZ").trim()
+}
+
+fn _run_metric_selftest(module_name: string) -> array {
+    let path = METRICS_ROOT + "/" + module_name + ".hexa"
+    let cmd = _hexa_bin() + " run " + path + " --selftest"
+    eprintln("[integration] " + cmd)
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]), to_int(r[1])]
+}
+
+fn _audit_emit(audit_path: string, module_name: string, kv: string,
+                rc: int, verdict: string, value_x1000: string,
+                triggered: string) {
+    let ts = _now_iso()
+    let mut row = "{"
+    row = row + "\"ts\":\"" + ts + "\","
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"module\":\"" + module_name + "\","
+    row = row + "\"verdict\":\"" + verdict + "\","
+    row = row + "\"value_x1000\":\"" + value_x1000 + "\","
+    row = row + "\"backend_rc\":" + str(rc) + ","
+    row = row + "\"raw71_triggered\":\"" + triggered + "\""
+    row = row + "}"
+    exec("mkdir -p " + _sh_quote("state"))
+    let cmd = "printf '%s\\n' " + _sh_quote(row) + " >> " + _sh_quote(audit_path)
+    exec(cmd)
+}
+
+fn main() {
+    let av = argv()
+    let mut audit_path = AUDIT_DEFAULT
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--audit-jsonl" { audit_path = av[i+1]; i = i + 2; continue }
+        i = i + 1
+    }
+
+    println("══════════════════════════════════════════════════════════════")
+    println("  anima-eeg-core Phase 3 _metrics integration test")
+    println("  schema: " + SCHEMA)
+    println("  audit:  " + audit_path)
+    println("══════════════════════════════════════════════════════════════")
+
+    let modules = ["lz76", "gamma_theta", "permutation_entropy", "hjorth"]
+    let mut pass_count = 0
+    let mut fail_count = 0
+    let mut total = 0
+    let mut summary = ""
+    let mut k = 0
+    while k < len(modules) {
+        let m = modules[k]
+        total = total + 1
+        println("")
+        println("── [" + str(k + 1) + "/" + str(len(modules)) + "] " + m + " ──")
+        let r = _run_metric_selftest(m)
+        let out = to_string(r[0])
+        let rc  = to_int(r[1])
+        let v   = _kv_lookup(out, "verdict")
+        let val = _kv_lookup(out, "value_x1000")
+        let trig = _kv_lookup(out, "raw71_triggered_ids")
+        let schema = _kv_lookup(out, "schema")
+
+        let mut module_pass = 1
+        let mut errs = ""
+        if schema == "" { module_pass = 0; errs = errs + "missing-schema;" }
+        if v == "" { module_pass = 0; errs = errs + "missing-verdict;" }
+        if val == "" { module_pass = 0; errs = errs + "missing-value_x1000;" }
+
+        // selftest exit code: 0 = module operational; verdict may be PASS or
+        // FALSIFIED depending on synthetic input (e.g. white-noise PE → FALSIFIED).
+        // Both are acceptable — what matters is the kv-contract is honored.
+        if rc != 0 { module_pass = 0; errs = errs + "selftest-rc=" + str(rc) + ";" }
+
+        if module_pass == 1 {
+            println("  schema: " + schema)
+            println("  verdict: " + v + " (value_x1000=" + val + " triggered=" + trig + ")")
+            println("  contract: PASS")
+            pass_count = pass_count + 1
+            summary = summary + m + "=" + v + ":PASS,"
+        } else {
+            println("  contract: FAIL  errs=" + errs)
+            fail_count = fail_count + 1
+            summary = summary + m + "=FAIL_CONTRACT,"
+        }
+
+        _audit_emit(audit_path, m, out, rc, v, val, trig)
+        k = k + 1
+    }
+
+    let nT = len(summary)
+    if nT > 0 { summary = summary.substring(0, nT - 1) }
+
+    println("")
+    println("══════════════════════════════════════════════════════════════")
+    println("Phase 3 _metrics integration summary")
+    println("  total:   " + str(total))
+    println("  pass:    " + str(pass_count))
+    println("  fail:    " + str(fail_count))
+    println("  details: " + summary)
+    println("  audit:   " + audit_path)
+    println("══════════════════════════════════════════════════════════════")
+
+    if fail_count == 0 {
+        println("verdict: PHASE3_METRICS_INTEGRATION_PASS ✓")
+        exit(0)
+    }
+    println("verdict: PHASE3_METRICS_INTEGRATION_FAIL ✗")
+    exit(1)
+}

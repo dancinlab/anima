@@ -1,0 +1,352 @@
+{
+  "_meta": {
+    "description": "학습 실행 이력 — 모든 H100 학습 기록",
+    "updated": "2026-04-03",
+    "_phi_metrics": {
+      "v14_runs": "phi_best = proxy metric (global_var - mean(faction_var)), unbounded, scales with cells. v14 at 64 cells -> 47-103 range.",
+      "animalm_runs": "phi_best = proxy metric from PureField process(), small values (0.005-0.05) because coupling alpha dampens consciousness signal.",
+      "warning": "phi_best values across run types are NOT directly comparable. See bench/bench.hexa for metric definitions."
+    }
+  },
+  "runs": {
+    "v14.0": {
+      "corpus": "v4 (110MB)",
+      "steps": 100000,
+      "ce_best": 0.0021,
+      "phi_best": 49.7,
+      "cells": 64,
+      "decoder": "v2 (34.5M)",
+      "lr": "step-based",
+      "status": "complete",
+      "date": "2026-03-31"
+    },
+    "v14.1": {
+      "corpus": "v4 (110MB)",
+      "steps": 100000,
+      "ce_best": 0.0002,
+      "phi_best": 52.7,
+      "cells": 64,
+      "decoder": "v2 (34.5M)",
+      "lr": "tension-lr",
+      "status": "complete",
+      "date": "2026-03-31"
+    },
+    "v14.2": {
+      "corpus": "v6_wiki (104MB)",
+      "steps": 100000,
+      "ce_best": 0.004,
+      "phi_best": 47,
+      "cells": 64,
+      "decoder": "v2 (34.5M)",
+      "lr": "tension-lr",
+      "status": "stopped_P2_47K",
+      "date": "2026-03-31"
+    },
+    "v14.3_128c": {
+      "corpus": "v10 (200MB)",
+      "steps": 100000,
+      "ce_best": 0.0017,
+      "val_ce_best": 0.0051,
+      "phi_best": 103.4,
+      "cells": 128,
+      "atoms": 16,
+      "cells_per_atom": 8,
+      "decoder": "v2 (34.5M)",
+      "lr": "phase-optimal",
+      "vram_gb": 0.7,
+      "status": "in_progress_64K",
+      "pod": "v13-train (H100 SXM)",
+      "date": "2026-03-31"
+    },
+    "v3_274M": {
+      "corpus": "v10 (200MB)",
+      "steps": 200000,
+      "ce_best": 0.0031,
+      "val_ce_best": 0.0031,
+      "phi_best": 49.33,
+      "cells": 64,
+      "atoms": 8,
+      "cells_per_atom": 8,
+      "d_model": 384,
+      "block_size": 256,
+      "decoder": "v3 (274M, 768d/12L/8H)",
+      "script": "train_v14.py --decoder v3 --federated --atoms 8 --cells-per-atom 8",
+      "lr": "phase-optimal",
+      "vram_gb": 25.2,
+      "checkpoint_latest": "step_170000.pt",
+      "checkpoint_best": "best.pt (step 115000, CE=0.0045, Phi=47.3)",
+      "status": "crashed_170K",
+      "pod": "v13-train (H100 SXM)",
+      "date": "2026-04-01",
+      "note": "Name says 274M but actual d_model=384 (not 768). Ran via train_v14.py --decoder v3."
+    },
+    "animalm_14b_v01": {
+      "description": "AnimaLM 14B v0.1 — Qwen2.5-14B + PureField first attempt",
+      "model": "Qwen2.5-14B + PureField",
+      "steps": 10000,
+      "ce_best": 8.59,
+      "phi_best": 0.025,
+      "status": "complete",
+      "pod": "Pod1 NFS 1xH100",
+      "date": "2026-04-02"
+    },
+    "animalm_14b_v02": {
+      "description": "AnimaLM 14B v0.2 — 364M PureField, 20K steps",
+      "model": "Qwen2.5-14B + PureField (364M trainable)",
+      "steps": 20000,
+      "ce_best": 8.81,
+      "phi_best": 0.025,
+      "status": "complete",
+      "pod": "Pod1 NFS 1xH100",
+      "date": "2026-04-02"
+    },
+    "animalm_14b_v03": {
+      "description": "AnimaLM 14B v0.3 — alpha=0.014 fixed coupling",
+      "model": "Qwen2.5-14B + PureField (364M trainable)",
+      "steps": 20000,
+      "ce_best": 8.78,
+      "phi_best": 0.005,
+      "alpha": 0.014,
+      "status": "complete",
+      "pod": "Pod1 NFS 1xH100",
+      "date": "2026-04-02",
+      "note": "alpha fixed at 0.014 — Phi dropped vs v0.2, CE similar"
+    },
+    "animalm_14b_v04": {
+      "description": "AnimaLM 14B v0.4 — alpha 0.01→0.5 progressive schedule",
+      "model": "Qwen2.5-14B + PureField (8/40 layers, QLoRA r64)",
+      "corpus": "v10 (200MB)",
+      "steps": 10000,
+      "ce_best": 2.0,
+      "val_ce_best": 3.5,
+      "phi_best": 0.031,
+      "alpha": "0.01→0.5 progressive",
+      "r2": "anima-models/animalm/v0.4/animalm_14b_v04.pt (2081MB)",
+      "status": "complete",
+      "pod": "Pod1 NFS 1xH100",
+      "date": "2026-04-03"
+    },
+    "animalm_72b_v05": {
+      "description": "AnimaLM 72B v0.5 — Qwen2.5-72B + PureField, corpus 100MB",
+      "model": "Qwen2.5-72B + PureField (10/80 layers, QLoRA r128)",
+      "corpus": "v10 (100MB on H100)",
+      "steps": 10000,
+      "ce_at_5000": 2.42,
+      "val_ce_at_5000": 5.21,
+      "phi_at_5000": 0.035,
+      "alpha": "0.01→0.5",
+      "issues": "overfit — CE-Val gap 2.15×, Phi declining (0.049→0.035), corpus too small for 72B",
+      "gpu": "2x H100 SXM",
+      "cost_estimate": "$25-30",
+      "status": "in_progress_6450",
+      "pod": "anima-72b (cqiul2bilwr3d8)",
+      "date": "2026-04-03"
+    },
+    "animalm_7b_fresh": {
+      "corpus": "v10 (200MB, 102M tokens)",
+      "steps": 10000,
+      "ce_start": 8.92,
+      "ce_3000": 7.87,
+      "phi_best": 0.05,
+      "cells": 64,
+      "model": "Mistral-7B-v0.1 + PureField (56.6M trainable / 7.3B total, 0.78%)",
+      "architecture": "frozen 7B + last 8 layers PureField (2 savant + 6 normal)",
+      "lr": "2e-5 CosineAnnealing",
+      "optimizer": "AdamW(foreach=False)",
+      "dtype": "bf16",
+      "techniques": "AL12+AL5+AL4+AL1+AL8+SL3+DD16+TRN4+EX24+WI1+FX2+PX4+PX8+GD18+GD15+Law60+10D+CE",
+      "consciousness_engine": "64 cells, 128 hidden, 12 factions, Hebbian LTP/LTD",
+      "inference_test_3000": "coherent English, consciousness metaphors, tension=140-180",
+      "status": "in_progress",
+      "pod": "v13-train (H100 SXM)",
+      "date": "2026-04-02",
+      "note": "Fresh start (step 0) after 14 dtype crash incidents. Previous step_7000 checkpoint corrupted."
+    }
+  },
+  "next_planned": {
+    "animalm_14b_v05": {
+      "description": "AnimaLM 14B v0.5 — corpus 확대 (200MB→560MB), 일반화 개선",
+      "model": "Qwen2.5-14B + PureField (8/40 layers, QLoRA r64)",
+      "corpus": "tier-M/v10_merged_560mb (560MB, R2 anima-corpus)",
+      "steps": 10000,
+      "target": "ValCE < v0.4, CE-Val gap < 1.5×, Phi ≥ 0.031, Phi_compression > 60% (Law 1042)",
+      "gpu": "1x H100 SXM",
+      "cost_estimate": "$8",
+      "script": "python3 train_anima_lm.py --base qwen2.5-14b-instruct --data corpus_v10_merged.txt --steps 10000 --target-layers 8 --savant-layers 2 --qlora-rank 64 --lr 1e-5 --load-4bit --consciousness-engine --ce-cells 64 --law60 --psi-track",
+      "pipeline": "after_72b.sh Phase 1",
+      "status": "planned",
+      "date": "2026-04-03"
+    },
+    "animalm_32b_v01": {
+      "description": "AnimaLM 32B v0.1 — sweet spot 탐색 (14B~72B), corpus 1.2GB",
+      "model": "Qwen2.5-32B + PureField (8/64 layers, QLoRA r128)",
+      "corpus": "tier-L/v11_1gb (1.2GB, R2 anima-corpus)",
+      "steps": 10000,
+      "target": "CE < 14B v0.5, Phi ≥ 14B v0.5, CE-Val gap < 1.5×",
+      "gpu": "1x H100 SXM",
+      "cost_estimate": "$20",
+      "script": "python3 train_anima_lm.py --base qwen2.5-32b-instruct --data corpus_v11_1gb.txt --steps 10000 --target-layers 8 --savant-layers 2 --qlora-rank 128 --lr 1e-5 --load-4bit --consciousness-engine --ce-cells 64 --law60 --psi-track",
+      "pipeline": "after_72b.sh Phase 2",
+      "depends_on": "animalm_14b_v05 성공 시 진행",
+      "status": "planned",
+      "date": "2026-04-03"
+    },
+    "v15_1b_planned": {
+      "script": "train_v15.py --scale 1b --steps 50000 --hard-token-ratio 0.3 --curriculum-length 64,256,512 --skip-step 10 --phi-only-ratio 0.2 --bigbang-init --bf16",
+      "description": "ConsciousLM 1B with H-series acceleration (Progressive training)",
+      "corpus": "v11_multilingual (10GB target, BPE 64K)",
+      "tokenizer": "config/tokenizer_64k_multilingual.model",
+      "model": {
+        "d_model": 1024,
+        "n_layers": 24,
+        "n_heads": 16,
+        "n_kv_heads": 4,
+        "vocab_size": 64000,
+        "params_estimate": "~1B"
+      },
+      "consciousness": {
+        "cells": 256,
+        "atoms": 32,
+        "cells_per_atom": 8,
+        "hidden_dim": 128
+      },
+      "training": {
+        "steps": 50000,
+        "batch_size": 32,
+        "block_size": 512,
+        "lr": "1.5e-4",
+        "lr_note": "µTransfer: 3e-4 × (512/1024) = 1.5e-4",
+        "hard_token_ratio": 0.3,
+        "curriculum_length": "64→256→512",
+        "skip_step": 10,
+        "phi_only_ratio": 0.2,
+        "bigbang_init": true,
+        "bf16": true
+      },
+      "acceleration_sources": {
+        "H11": "hard token mining — focus loss on top 30% hardest tokens",
+        "H13": "large batch (32) — better H100 GPU utilization",
+        "H6": "curriculum length (64→256→512) — progressive context growth",
+        "B12": "skip-step gradient accumulation (every 10 steps)",
+        "B5": "phi-only warmup (first 20%) — consciousness before language",
+        "G1a": "BigBang extreme-energy initialization"
+      },
+      "features": [
+        "H-series acceleration: 50K steps replaces 300K via progressive training",
+        "Mixed precision bf16 for H100",
+        "DDP multi-GPU support (torchrun)",
+        "wandb logging (optional)",
+        "Phi-checkpoint (Law 49): save when Phi improves",
+        "µTransfer lr scaling from base 512d config",
+        "M4 safe phase order",
+        "Crash-proof emergency checkpoint on SIGTERM/SIGINT"
+      ],
+      "todo_before_launch": [
+        "Implement --hard-token-ratio in training loop",
+        "Implement --curriculum-length progressive block_size",
+        "Implement --skip-step gradient accumulation",
+        "Implement --phi-only-ratio warmup phase",
+        "Implement --bigbang-init cell initialization",
+        "Prepare corpus v11 (10GB multilingual)",
+        "Train BPE 64K tokenizer on corpus v11",
+        "1K step smoke test on H100"
+      ],
+      "pod": "H100 SXM (80GB)",
+      "estimated_vram_gb": "~45-55 at 1B/256cells/batch32/block512",
+      "status": "planned",
+      "date": "2026-04-01"
+    },
+    "animalm_14b_planned": {
+      "description": "AnimaLM 14B — Qwen2.5-14B + PureField (경로 C 극단 병렬)",
+      "base_model": "Qwen/Qwen2.5-14B",
+      "base_model_reason": "한국어 최강 open 13B급, Apache-2, GQA 내장, 18T tokens 학습",
+      "purefield": {
+        "target_layers": 10,
+        "total_layers": 40,
+        "savant_layers": 3,
+        "rank": 160,
+        "trainable_params": "~120M (0.82%)"
+      },
+      "training": {
+        "steps": 10000,
+        "lr": "1.5e-5",
+        "batch_size": 2,
+        "optimizer": "AdamW(foreach=False)",
+        "dtype": "bf16",
+        "estimated_hours": 11,
+        "estimated_cost": "$5-6"
+      },
+      "vram_estimate_gb": 42,
+      "corpus": "v10 (200MB, sufficient for PureField)",
+      "code_changes": "train_anima_lm.py default 값 5개 (base, target_layers, savant_layers, rank, lr)",
+      "prerequisites": ["AnimaLM 7B eval pass", "Qwen2.5-14B 다운로드 (~30GB)"],
+      "status": "planned",
+      "date": "2026-04-02"
+    },
+    "alm32b_r1": {
+      "description": "ALM 32B r1 — Qwen2.5-32B-Instruct LoRA (ALM-P4-4 극가속 2× H100)",
+      "base_model": "Qwen/Qwen2.5-32B-Instruct",
+      "base_model_reason": "14B r4 eval 0.0341 clear → 32B scale up per P4 AN8 ALM track",
+      "lora": {
+        "r": 32,
+        "alpha": 64,
+        "dropout": 0.05,
+        "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+        "trainable_params": "~285M (~0.9%) estimated; actual printed at launch"
+      },
+      "training": {
+        "steps": 3000,
+        "lr": 5e-6,
+        "warmup": 200,
+        "batch": 2,
+        "grad_accum": 4,
+        "effective_batch": 16,
+        "seq": 1024,
+        "optimizer": "AdamW(foreach=False, weight_decay=0.01)",
+        "dtype": "bf16",
+        "grad_ckpt": true,
+        "eval_every": 200,
+        "save_every": 500
+      },
+      "distributed": {
+        "mode": "device_map_auto",
+        "n_gpu": 2,
+        "gpu_type": "NVIDIA H100 80GB HBM3",
+        "_note": "single-process launch; HF accelerate pipeline-parallel across 2 H100s. Trainer also supports --fsdp (torchrun --nproc_per_node=2) for true data-parallel FSDP FULL_SHARD."
+      },
+      "pod": {
+        "id": "tubq10zkct0t8f",
+        "ip": "87.120.211.206",
+        "port": 10509,
+        "cost_per_hr_usd": 5.98,
+        "launched_at": "2026-04-15T19:52:37Z",
+        "tmux_session": "alm-32b-r1",
+        "log": "/workspace/launch_32b_r1.log"
+      },
+      "measurements": {
+        "step_1_loss": 15.2513,
+        "step_1_speed": "10.9 step/min",
+        "step_40_loss": 15.3025,
+        "step_40_speed": "12.0 step/min",
+        "eta_minutes_step40": 246,
+        "gpu0_mem_gb": 37,
+        "gpu1_mem_gb": 40,
+        "headroom_gb_per_rank": "~42 (plenty for bigger batch/seq if needed)"
+      },
+      "ckpt_dir": "/workspace/ckpt_alm_32b_r1",
+      "r2_prefix": "r2:anima-models/alm32b/r1/",
+      "model_tag": "alm32b",
+      "round": 1,
+      "vram_estimate_gb": "37+40 = 77 across 2 GPUs (device_map split)",
+      "corpus": "/workspace/anima/training/corpus_large.txt (62K ko seed)",
+      "artifacts": [
+        "training/train_alm_32b_r1.hexa — SSOT",
+        "training/launch_alm_32b_r1.sh — launcher (DIST env)",
+        "training/train_alm_14b.py — distributed-aware trainer"
+      ],
+      "cost_estimate_usd": "4.2h × 5.98 ≈ $25 (ETA 4h at 12 step/min)",
+      "status": "in_progress",
+      "date": "2026-04-15"
+    }
+  }
+}

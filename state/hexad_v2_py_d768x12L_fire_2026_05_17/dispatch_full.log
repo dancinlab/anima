@@ -1,0 +1,173 @@
+=== hexad v2 d=768x12L PyTorch substrate fire CYCLE 3 (helper-free corpus v2) ===
+Sun May 17 02:03:58 UTC 2026
+[1/9] Selecting A100 offer...
+A100 SXM4 $0.734/hr rel=0.996
+  offer=36878336
+[2/9] Renting (pytorch devel image)...
+  instance=36912535
+  orphan-watchdog pid=62150 cap=75min
+[3/9] Waiting SSH...
+  attempt 1/90 status=None
+  attempt 2/90 status=None
+  attempt 3/90 status=loading
+  attempt 4/90 status=loading
+  attempt 5/90 status=loading
+  attempt 6/90 status=loading
+  attempt 7/90 status=loading
+  attempt 8/90 status=loading
+  attempt 9/90 status=loading
+  attempt 10/90 status=loading
+  attempt 11/90 status=loading
+  attempt 12/90 status=loading
+  attempt 13/90 status=loading
+  attempt 14/90 status=loading
+  attempt 15/90 status=loading
+  attempt 16/90 status=loading
+  attempt 17/90 status=loading
+  attempt 18/90 status=loading
+  attempt 19/90 status=loading
+  attempt 20/90 status=loading
+  attempt 21/90 status=loading
+  attempt 22/90 status=loading
+  attempt 23/90 status=running
+  SSH ready ssh5.vast.ai:32534 (after 24x5s)
+[4/9] Upload arch + trainer + corpus v2...
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[5/9] GPU + torch + corpus verify...
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+2.5.1+cu121 True NVIDIA A100-SXM4-40GB
+2560 corpus_v2.jsonl
+7359f0b9a3f059fc168035e2f29f743f5ee51d1760eccad54b2b91d52275f571  corpus_v2.jsonl
+[6/9] Sanity-anchor (d=32x3L, 200 step) via remote-script...
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+/workspace/anima/train_d768x12l.py:103: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+{"step": 1, "ce": 5.556763, "gn2": 0.279725, "ppl": 258.9831, "lr": 0.0002, "wall_s": 0.45, "gpu_mem_gb": 0.036}
+{"step": 10, "ce": 5.286713, "gn2": 1.082319, "ppl": 197.6925, "lr": 0.00099907, "wall_s": 0.7, "gpu_mem_gb": 0.039}
+{"step": 20, "ce": 4.950348, "gn2": 0.691743, "ppl": 141.2241, "lr": 0.0009886, "wall_s": 0.99, "gpu_mem_gb": 0.039}
+{"step": 30, "ce": 4.615784, "gn2": 0.70136, "ppl": 101.067, "lr": 0.00096678, "wall_s": 1.25, "gpu_mem_gb": 0.039}
+{"step": 40, "ce": 4.44281, "gn2": 0.52264, "ppl": 85.0135, "lr": 0.00093416, "wall_s": 1.53, "gpu_mem_gb": 0.039}
+{"step": 50, "ce": 4.274338, "gn2": 0.444591, "ppl": 71.8326, "lr": 0.00089159, "wall_s": 1.8, "gpu_mem_gb": 0.039}
+{"step": 60, "ce": 4.108444, "gn2": 0.324481, "ppl": 60.852, "lr": 0.00084018, "wall_s": 2.07, "gpu_mem_gb": 0.039}
+{"step": 70, "ce": 3.951477, "gn2": 0.24127, "ppl": 52.0121, "lr": 0.00078125, "wall_s": 2.35, "gpu_mem_gb": 0.039}
+{"step": 80, "ce": 3.754745, "gn2": 0.22827, "ppl": 42.7233, "lr": 0.00071633, "wall_s": 2.62, "gpu_mem_gb": 0.039}
+{"step": 90, "ce": 3.730118, "gn2": 0.198137, "ppl": 41.684, "lr": 0.0006471, "wall_s": 2.89, "gpu_mem_gb": 0.039}
+{"step": 100, "ce": 3.680557, "gn2": 0.160173, "ppl": 39.6685, "lr": 0.00057536, "wall_s": 3.16, "gpu_mem_gb": 0.039}
+{"step": 110, "ce": 3.593796, "gn2": 0.146596, "ppl": 36.3719, "lr": 0.00050296, "wall_s": 3.42, "gpu_mem_gb": 0.039}
+{"step": 120, "ce": 3.502182, "gn2": 0.152927, "ppl": 33.1878, "lr": 0.00043178, "wall_s": 3.69, "gpu_mem_gb": 0.039}
+{"step": 130, "ce": 3.539078, "gn2": 0.163701, "ppl": 34.4351, "lr": 0.00036366, "wall_s": 3.96, "gpu_mem_gb": 0.039}
+{"step": 140, "ce": 3.492416, "gn2": 0.115131, "ppl": 32.8653, "lr": 0.00030037, "wall_s": 4.23, "gpu_mem_gb": 0.039}
+{"step": 150, "ce": 3.54332, "gn2": 0.182023, "ppl": 34.5815, "lr": 0.00024354, "wall_s": 4.5, "gpu_mem_gb": 0.039}
+{"step": 160, "ce": 3.523819, "gn2": 0.198155, "ppl": 33.9137, "lr": 0.00019465, "wall_s": 4.76, "gpu_mem_gb": 0.039}
+{"step": 170, "ce": 3.438934, "gn2": 0.149743, "ppl": 31.1537, "lr": 0.00015497, "wall_s": 5.03, "gpu_mem_gb": 0.039}
+{"step": 180, "ce": 3.42482, "gn2": 0.173569, "ppl": 30.7171, "lr": 0.00012551, "wall_s": 5.32, "gpu_mem_gb": 0.039}
+{"step": 190, "ce": 3.486649, "gn2": 0.178576, "ppl": 32.6763, "lr": 0.00010705, "wall_s": 5.61, "gpu_mem_gb": 0.039}
+{"step": 200, "ce": 3.511322, "gn2": 0.165594, "ppl": 33.4925, "lr": 0.00010006, "wall_s": 5.88, "gpu_mem_gb": 0.039}
+RESULT_JSON_WRITTEN
+{"init_ce": 5.556763, "final_ce": 3.511322, "ce_descent": 2.045441, "wall_s": 5.88, "n_params_M": 0.18}
+[7/9] MAIN fire d=768 n_layer=12 from-scratch corpus v2, 2500 steps...
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+/workspace/anima/train_d768x12l.py:103: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+{"step": 1, "ce": 5.667381, "gn2": 24.48184, "ppl": 289.276, "lr": 2.4e-06, "wall_s": 0.62, "gpu_mem_gb": 7.455}
+{"step": 62, "ce": 1.836318, "gn2": 4.501501, "ppl": 6.2734, "lr": 0.0001488, "wall_s": 9.04, "gpu_mem_gb": 9.685}
+{"step": 124, "ce": 0.764434, "gn2": 3.273593, "ppl": 2.1478, "lr": 0.0002976, "wall_s": 17.53, "gpu_mem_gb": 9.685}
+{"step": 186, "ce": 0.167734, "gn2": 0.768929, "ppl": 1.1826, "lr": 0.00029958, "wall_s": 26.09, "gpu_mem_gb": 9.685}
+{"step": 248, "ce": 0.098348, "gn2": 0.93377, "ppl": 1.1033, "lr": 0.00029825, "wall_s": 34.44, "gpu_mem_gb": 9.685}
+{"step": 310, "ce": 0.04056, "gn2": 0.199133, "ppl": 1.0414, "lr": 0.00029602, "wall_s": 42.56, "gpu_mem_gb": 9.685}
+{"step": 372, "ce": 0.034754, "gn2": 0.13392, "ppl": 1.0354, "lr": 0.00029292, "wall_s": 50.7, "gpu_mem_gb": 9.685}
+{"step": 434, "ce": 0.041963, "gn2": 0.159217, "ppl": 1.0429, "lr": 0.00028895, "wall_s": 58.82, "gpu_mem_gb": 9.685}
+{"step": 496, "ce": 0.022427, "gn2": 0.039204, "ppl": 1.0227, "lr": 0.00028415, "wall_s": 67.02, "gpu_mem_gb": 9.685}
+{"step": 558, "ce": 0.042213, "gn2": 0.176184, "ppl": 1.0431, "lr": 0.00027855, "wall_s": 75.16, "gpu_mem_gb": 9.685}
+{"step": 620, "ce": 0.017954, "gn2": 0.033906, "ppl": 1.0181, "lr": 0.00027219, "wall_s": 83.29, "gpu_mem_gb": 9.685}
+{"step": 682, "ce": 0.024965, "gn2": 0.069762, "ppl": 1.0253, "lr": 0.00026511, "wall_s": 91.42, "gpu_mem_gb": 9.685}
+{"step": 744, "ce": 0.024237, "gn2": 0.098674, "ppl": 1.0245, "lr": 0.00025735, "wall_s": 99.57, "gpu_mem_gb": 9.685}
+{"step": 806, "ce": 0.017471, "gn2": 0.070893, "ppl": 1.0176, "lr": 0.00024897, "wall_s": 107.71, "gpu_mem_gb": 9.685}
+{"step": 868, "ce": 0.025965, "gn2": 0.060226, "ppl": 1.0263, "lr": 0.00024003, "wall_s": 115.83, "gpu_mem_gb": 9.685}
+{"step": 930, "ce": 0.011981, "gn2": 0.016057, "ppl": 1.0121, "lr": 0.00023058, "wall_s": 123.96, "gpu_mem_gb": 9.685}
+{"step": 992, "ce": 0.044866, "gn2": 0.745912, "ppl": 1.0459, "lr": 0.0002207, "wall_s": 132.15, "gpu_mem_gb": 9.685}
+{"step": 1054, "ce": 0.018498, "gn2": 0.041647, "ppl": 1.0187, "lr": 0.00021044, "wall_s": 140.32, "gpu_mem_gb": 9.685}
+{"step": 1116, "ce": 0.011958, "gn2": 0.008642, "ppl": 1.012, "lr": 0.00019987, "wall_s": 148.51, "gpu_mem_gb": 9.685}
+{"step": 1178, "ce": 0.013708, "gn2": 0.006882, "ppl": 1.0138, "lr": 0.00018907, "wall_s": 156.67, "gpu_mem_gb": 9.685}
+{"step": 1240, "ce": 0.011551, "gn2": 0.005883, "ppl": 1.0116, "lr": 0.0001781, "wall_s": 164.82, "gpu_mem_gb": 9.685}
+{"step": 1302, "ce": 0.012344, "gn2": 0.005605, "ppl": 1.0124, "lr": 0.00016705, "wall_s": 172.97, "gpu_mem_gb": 9.685}
+{"step": 1364, "ce": 0.015451, "gn2": 0.00664, "ppl": 1.0156, "lr": 0.00015599, "wall_s": 181.13, "gpu_mem_gb": 9.685}
+{"step": 1426, "ce": 0.014834, "gn2": 0.016169, "ppl": 1.0149, "lr": 0.00014498, "wall_s": 189.3, "gpu_mem_gb": 9.685}
+{"step": 1488, "ce": 0.011494, "gn2": 0.004914, "ppl": 1.0116, "lr": 0.00013411, "wall_s": 197.53, "gpu_mem_gb": 9.685}
+{"step": 1550, "ce": 0.009315, "gn2": 0.001497, "ppl": 1.0094, "lr": 0.00012345, "wall_s": 205.7, "gpu_mem_gb": 9.685}
+{"step": 1612, "ce": 0.010812, "gn2": 0.008366, "ppl": 1.0109, "lr": 0.00011307, "wall_s": 213.87, "gpu_mem_gb": 9.685}
+{"step": 1674, "ce": 0.009346, "gn2": 0.002354, "ppl": 1.0094, "lr": 0.00010304, "wall_s": 222.04, "gpu_mem_gb": 9.685}
+{"step": 1736, "ce": 0.009395, "gn2": 0.001861, "ppl": 1.0094, "lr": 9.342e-05, "wall_s": 230.21, "gpu_mem_gb": 9.685}
+{"step": 1798, "ce": 0.009827, "gn2": 0.004739, "ppl": 1.0099, "lr": 8.428e-05, "wall_s": 238.43, "gpu_mem_gb": 9.685}
+{"step": 1860, "ce": 0.007083, "gn2": 0.002149, "ppl": 1.0071, "lr": 7.569e-05, "wall_s": 246.74, "gpu_mem_gb": 9.685}
+{"step": 1922, "ce": 0.008256, "gn2": 0.001986, "ppl": 1.0083, "lr": 6.77e-05, "wall_s": 255.12, "gpu_mem_gb": 9.685}
+{"step": 1984, "ce": 0.007423, "gn2": 0.002582, "ppl": 1.0075, "lr": 6.036e-05, "wall_s": 263.52, "gpu_mem_gb": 9.685}
+{"step": 2046, "ce": 0.007989, "gn2": 0.001828, "ppl": 1.008, "lr": 5.372e-05, "wall_s": 271.74, "gpu_mem_gb": 9.685}
+{"step": 2108, "ce": 0.008146, "gn2": 0.001739, "ppl": 1.0082, "lr": 4.783e-05, "wall_s": 279.86, "gpu_mem_gb": 9.685}
+{"step": 2170, "ce": 0.006723, "gn2": 0.001295, "ppl": 1.0067, "lr": 4.273e-05, "wall_s": 288.13, "gpu_mem_gb": 9.685}
+{"step": 2232, "ce": 0.009864, "gn2": 0.002044, "ppl": 1.0099, "lr": 3.846e-05, "wall_s": 296.4, "gpu_mem_gb": 9.685}
+{"step": 2294, "ce": 0.007831, "gn2": 0.001477, "ppl": 1.0079, "lr": 3.503e-05, "wall_s": 304.68, "gpu_mem_gb": 9.685}
+{"step": 2356, "ce": 0.00527, "gn2": 0.001324, "ppl": 1.0053, "lr": 3.248e-05, "wall_s": 312.93, "gpu_mem_gb": 9.685}
+{"step": 2418, "ce": 0.009425, "gn2": 0.001849, "ppl": 1.0095, "lr": 3.081e-05, "wall_s": 321.21, "gpu_mem_gb": 9.685}
+{"step": 2480, "ce": 0.007997, "gn2": 0.001732, "ppl": 1.008, "lr": 3.005e-05, "wall_s": 329.58, "gpu_mem_gb": 9.685}
+{"step": 2500, "ce": 0.005069, "gn2": 0.001113, "ppl": 1.0051, "lr": 3e-05, "wall_s": 332.26, "gpu_mem_gb": 9.685}
+RESULT_JSON_WRITTEN
+{"init_ce": 5.667381, "final_ce": 0.005069, "ce_descent": 5.662312, "wall_s": 332.26, "n_params_M": 283.72}
+DONE_MARKER rc=0
+[8/9] Verify result.json then SAVE_POD auto-promote + pull retry >=5...
+  result.json present -> SAVE_POD=1 auto-promote
+  pull attempt 1/5...
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:32534' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+  ckpt pull OK (try 1)
+  ckpt sha256: ee2bb5fb996e94ee022f5315c9ccc3f56c7276a8c5990d87a25ae12c582f7294
+  ckpt size: 1135846378 bytes
+  PULL SUCCESS -> safe to destroy
+[9/9] Done. teardown via trap (SAVE_POD=0).
+Sun May 17 02:18:56 UTC 2026
+total 2228752
+drwxr-xr-x@  4 ghost  staff         128 May 17 11:13 .
+drwxr-xr-x@ 17 ghost  staff         544 May 17 11:13 ..
+-rw-r--r--@  1 ghost  staff  1135846378 May 17 11:18 ckpt_d768x12l_final.pt
+-rw-r--r--@  1 ghost  staff        8616 May 17 11:13 result.json
+[cleanup] destroying 36912535
+destroying instance 36912535.
+./dispatch.sh: line 57: 62150 Terminated: 15          ( PARENT_PID=$$; for _ in $(seq 1 $WATCHDOG_MIN);
+do
+    sleep 60; if ! kill -0 $PARENT_PID 2> /dev/null; then
+        echo "[watchdog] parent died, destroying $IID" >> "$LOCAL_DIR/watchdog.log"; $VASTAI destroy instance "$IID" >> "$LOCAL_DIR/watchdog.log" 2>&1; exit 0;
+    fi;
+done; echo "[watchdog] ${WATCHDOG_MIN}min cap hit, force-destroying $IID" >> "$LOCAL_DIR/watchdog.log"; $VASTAI destroy instance "$IID" >> "$LOCAL_DIR/watchdog.log" 2>&1 )

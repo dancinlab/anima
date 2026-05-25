@@ -1,0 +1,23 @@
+=== BG-V14-MAX256-CAP-FREE-MULTI — E_convo5k_ft ===
+ts: 2026-05-10T11:03:57.534316+00:00
+sub: {'ckpt': '/Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/post_ft_ext_ckpt.pt', 'schema': 'v2_d384', 'arch': 'v2-derived 6L d=384 byte-level (FT)', 'paradigm': 'naive_ft_no_mitosis'}
+V4_SEEDS=[42, 137, 271, 314, 1729] max_cells=256 n_turns=100 snap_every=25
+
+========================================================================
+SUBSTRATE E_convo5k_ft — v2 d=384 path  max_cells=256
+========================================================================
+ckpt: /Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/post_ft_ext_ckpt.pt
+sha256: 608d38a599570c5f3da4cc5ffd9ee191bf68bf0463099f23268207feb1d5436f
+trained: params=18.52M step=75000
+
+--- TRAINED max_cells=256 n_turns=100 ---
+  v2 blocks loaded=6 random_cells=[6, 7]
+  [E_convo5k_ft_trained] turn    0 n_cells=8 phi=0.557 (0.2s)
+  [E_convo5k_ft_trained] turn   50 n_cells=47 phi=267.430 (21.0s)
+  [E_convo5k_ft_trained] turn   75 n_cells=244 phi=7115.069 (172.4s)
+  [E_convo5k_ft_trained] turn   99 n_cells=256 phi=11142.909 (456.0s)
+  trained: cells=256 splits=248 phi=11142.909 phi/c=43.527 α=1.0200704184207696 cap_bound=24/100 first_cap=76 max_observed=256 elapsed=456.0s
+
+--- mirror seed=42 ---
+  [E_convo5k_ft_s42] turn    0 n_cells=8 phi=0.574 (0.0s)
+  [E_convo5k_ft_s42] turn   50 n_cells=117 phi=1886.851 (27.2s)

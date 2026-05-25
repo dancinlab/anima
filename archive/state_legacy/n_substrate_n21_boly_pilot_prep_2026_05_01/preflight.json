@@ -1,0 +1,46 @@
+{
+  "agent": "N-21-E Boly pilot kit",
+  "date": "2026-05-01",
+  "phase": "phase_3_preflight",
+  "checks": [
+    {
+      "name": "GazeCloudAPI signup link reachable",
+      "result": "UNVERIFIED",
+      "reason": "agent did not sign up on user's behalf per mission constraint",
+      "url": "https://api.gazerecorder.com/",
+      "evidence": "URL referenced in predecessor fallback verdict section 6"
+    },
+    {
+      "name": "pylsl Mac arm64 wheel available",
+      "result": "PASS",
+      "evidence": "pip3 download pylsl --platform macosx_11_0_arm64 --only-binary=:all: returned pylsl-1.18.2-py2.py3-none-macosx_11_0_universal2.whl (662 KB)"
+    },
+    {
+      "name": "brainflow Mac arm64 wheel available",
+      "result": "PASS",
+      "evidence": "brainflow-5.21.0-py3-none-any.whl (30.1 MB) ships native dylibs; libBoardController.dylib = 'Mach-O universal binary with 2 architectures: [x86_64][arm64]'; libonnxruntime_arm64.dylib also present in wheel"
+    },
+    {
+      "name": "synthetic dry-run analyze_session.py",
+      "result": "PASS",
+      "command": "python3 ~/n21_boly_kit/analyze_session.py --synthetic",
+      "metrics": {
+        "n_gaze_samples": 1800,
+        "gaze_dur_s": 59.97,
+        "n_eeg_samples": 7500,
+        "n_eeg_channels": 16,
+        "n_reports": 6,
+        "n_detected_switches": 6,
+        "decoder": {"hits": 6, "total": 6, "accuracy": 1.0, "false_pos": 0, "detected": 6},
+        "pass_75pct": true
+      },
+      "note": "synthetic generator was tuned to match decoder assumption (constant slow-phase velocity per perceptual state); real-data accuracy expected lower per fallback verdict 5-13 pp gap"
+    }
+  ],
+  "summary": {
+    "verified_pass": 3,
+    "unverified": 1,
+    "fail": 0,
+    "go_no_go": "GO (with one user-side TODO: GazeCloudAPI signup)"
+  }
+}

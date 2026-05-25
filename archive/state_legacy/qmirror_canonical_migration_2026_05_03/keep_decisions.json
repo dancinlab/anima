@@ -1,0 +1,34 @@
+{
+  "ts": "2026-05-03",
+  "rationale_summary": "qmirror is substrate-equivalent for: random sampling of quantum circuits, CHSH violation up to ~30 qubits, IIT MIP φ★ of stored TPMs, and entropy injection. qmirror is NOT substrate-equivalent for: physical wavefunction collapse, ion-trap-specific decoherence signatures, or any claim that depends on real quantum-physical hardware existing.",
+  "keep_decisions": [
+    {
+      "roadmap_file": "anima/.roadmap.ionq",
+      "cond_id": "ionq.cond.1",
+      "current_status": "partial",
+      "decision": "KEEP",
+      "rationale": "Domain header goal: '양자컴 Penrose-Hameroff substrate (real-QPU consciousness witness)'. The cond's whole point is to demonstrate consciousness witness specifically on real ion-trap QPU. Substituting qmirror would null the demonstration. qmirror ANNOTATED as cheap pre-test/regression channel only.",
+      "qmirror_relationship": "complementary_pretest_only_not_substitute",
+      "annotation_field_added": "qmirror_canonical_2026_05_03",
+      "annotation_payload_intent": {
+        "qmirror_role": "regression_substrate_for_circuit_reproduction (CHSH S, IIT MIP φ★ on saved TPMs)",
+        "real_qpu_role_retained": "physical ion-trap demonstration of substrate-invariance (cond's primary purpose)",
+        "evidence_unchanged": "all 4 landed events (#120/#124/#125/#127) preserved as historical real-QPU evidence"
+      }
+    },
+    {
+      "roadmap_file": "anima/.roadmap.penrose_hameroff",
+      "cond_id": "penrose_hameroff.cond.1",
+      "current_status": "partial",
+      "decision": "KEEP",
+      "rationale": "Orch-OR direct wavefunction-collapse measurement requires physical superposition on real superconducting QPU. Aer simulator does NOT collapse — it samples from |ψ|² classically. Substituting qmirror would collapse the experimental claim into circular sampling. qmirror ANNOTATED as N/A for this cond.",
+      "qmirror_relationship": "explicitly_unsuitable_physics_floor",
+      "annotation_field_added": "qmirror_canonical_2026_05_03",
+      "annotation_payload_intent": {
+        "qmirror_role": "NOT_APPLICABLE (no physical collapse)",
+        "real_qpu_role_retained": "IBM Quantum Open Plan delay primitive on Heron-class superconducting hardware (#46 quantum pivot)",
+        "honest_c3": "qmirror Aer simulator samples classically; cannot witness Diosi-Penrose collapse threshold"
+      }
+    }
+  ]
+}

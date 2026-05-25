@@ -1,0 +1,30 @@
+{
+  "battery": "B-CT3-1..5 (RESEARCH.md §19 F-CT-3 gate, sidecar)",
+  "central_blue_falsifier_changed": 0,
+  "result": "5/5 closed-form PASS",
+  "all_closed": true,
+  "verdicts": {
+    "B-CT3-1": {
+      "pass": true,
+      "detail": "Pearson r in [-1,1] (Cauchy-Schwarz |cov|<=sd_X*sd_Y); extremes r=+1 (Y=kX,k>0) / r=-1 (k<0) symbolic witness — F-CT-3 thresholds 0.3/0.5 lie strictly inside the bounded real-limit domain"
+    },
+    "B-CT3-2": {
+      "pass": true,
+      "detail": "mutually_exclusive=True total(union==ℝ)=True gatefn==partition(301pt)=True boundary_witnesses=True ({PASS,INCONCLUSIVE,DISCARD} = total ME partition of r line, exact sympy Interval algebra)"
+    },
+    "B-CT3-3": {
+      "pass": true,
+      "detail": "monotone_nondecreasing=True step_up@0.3,0.5=True (higher r never -> stricter verdict; well-formed falsifier)"
+    },
+    "B-CT3-4": {
+      "pass": true,
+      "detail": "3x re-eval identical=True runs[0]=['DISCARD', 'DISCARD', 'DISCARD', 'INCONCLUSIVE', 'INCONCLUSIVE', 'INCONCLUSIVE', 'PASS', 'PASS', 'PASS'] (pure fn of r — no RNG / no model forward / no hidden state, §9-style deterministic-metric discipline carried)"
+    },
+    "B-CT3-5": {
+      "pass": true,
+      "detail": "0.3<0.5=True gray_zone_width=1/5 (=1/5>0) interior(r=0.4)=INCONCLUSIVE=True — binary NOT forced, gray-zone honest (ADDENDUM §8 C3 #5)"
+    }
+  },
+  "B-EEG-NOTE": "EEG-ANCHOR-OUTCOME-EMPIRICAL — the actual Pearson r (OpenBCI EEG envelope <-> TRIBE BOLD median vertex) is a hardware + measurement OUTCOME (future EEG fire). This battery proves the F-CT-3 GATE is closed-form (bounded, total partition, monotone, deterministic, gray-zone honest), NOT that Framing D passes/fails. B-D-NOTE / B-PHYS-NOTE family, NOT counted in central 🔵.",
+  "f_safe": "NO σ/τ/φ/J₂ external derivation; Pearson r = own statistical invariant (Cauchy-Schwarz). f1/f2/f3 safe."
+}

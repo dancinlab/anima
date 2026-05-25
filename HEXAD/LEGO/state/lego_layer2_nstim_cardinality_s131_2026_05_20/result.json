@@ -1,0 +1,105 @@
+{
+  "section": "§131",
+  "title": "LEGO LAYER-2 STIMULUS-CARDINALITY PROBE",
+  "tier": "probe-tier",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "model_forward_byte_lm": false,
+  "corpus": false,
+  "dispatch": false,
+  "orphan": 0,
+  "wall_sec_total": 433.7007279396057,
+  "central_blue_falsifier_sha256_prefix16_expected": "c93e160a8a376a94",
+  "parent": [
+    "§125/§126/§127 LEGO arc layer-2 axis on N (network size)",
+    "§129 HEXAD/LEGO/lego_engine.py canonical engine SSOT"
+  ],
+  "method": {
+    "nstim_points": [
+      4,
+      12,
+      24,
+      48
+    ],
+    "M_replicates": 5,
+    "seeds": [
+      1337,
+      1338,
+      1339,
+      1340,
+      1341
+    ],
+    "N_total_fixed": 256,
+    "n_a": 96,
+    "n_g": 96,
+    "n_rec": 64,
+    "steps_per_stim": 80,
+    "window": 40,
+    "engine_canonical_lib": "HEXAD/LEGO/lego_engine.py (post-§129)"
+  },
+  "per_nstim_measurements": [
+    {
+      "n_stim": 4,
+      "n_samples_per_stim": 400,
+      "grand_mean": 0.6614238871262451,
+      "ss_between": 2.177030148311042,
+      "ss_within": 4.881928903959983,
+      "ss_total": 7.058959052271025,
+      "eta_squared": 0.3084066832220316,
+      "gaussian_mi_nats": 0.18437859432039552,
+      "gaussian_mi_bits": 0.26600208367211264,
+      "wall_sec": 15.429527759552002
+    },
+    {
+      "n_stim": 12,
+      "n_samples_per_stim": 400,
+      "grand_mean": 0.638074385917538,
+      "ss_between": 3.706232705769851,
+      "ss_within": 13.313881299904624,
+      "ss_total": 17.020114005674476,
+      "eta_squared": 0.21775604467362555,
+      "gaussian_mi_nats": 0.1227943118771545,
+      "gaussian_mi_bits": 0.17715474479454354,
+      "wall_sec": 69.76203107833862
+    },
+    {
+      "n_stim": 24,
+      "n_samples_per_stim": 400,
+      "grand_mean": 0.6308246762265382,
+      "ss_between": 4.84035639300271,
+      "ss_within": 29.672188941840545,
+      "ss_total": 34.51254533484325,
+      "eta_squared": 0.1402491860870074,
+      "gaussian_mi_nats": 0.07555634149227689,
+      "gaussian_mi_bits": 0.10900475917862089,
+      "wall_sec": 149.84580183029175
+    },
+    {
+      "n_stim": 48,
+      "n_samples_per_stim": 400,
+      "grand_mean": 0.6172450415437496,
+      "ss_between": 11.096596780107525,
+      "ss_within": 61.21610915570671,
+      "ss_total": 72.31270593581424,
+      "eta_squared": 0.15345293246192473,
+      "gaussian_mi_nats": 0.0832947382144636,
+      "gaussian_mi_bits": 0.12016890575415108,
+      "wall_sec": 198.65925097465515
+    }
+  ],
+  "eta_squared_values": [
+    0.3084066832220316,
+    0.21775604467362555,
+    0.1402491860870074,
+    0.15345293246192473
+  ],
+  "eta_max": 0.3084066832220316,
+  "eta_min": 0.1402491860870074,
+  "eta_range_ratio": 2.1989908948969092,
+  "peak_n_stim": 4,
+  "verdict": "STRONGLY-NSTIM-DEPENDENT",
+  "verdict_note": "η² range ratio 2.199× > 1.50 — n_stim is a strong modulator.",
+  "g3": "probe ≠ fire ≠ emergence; necessary-not-sufficient (B-EMERGE-7); GOAL 미도달."
+}

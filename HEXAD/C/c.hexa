@@ -1,0 +1,47 @@
+// HEXAD/C/c.hexa — entrypoint (compiled-first): import c_lib + selftest + main
+// @version v1.3.0 🔵 SUPPORTED-FORMAL — B-C 3/3 tier-a + F-C-PORT 4/4 PyPhi · see /VERSIONS.md
+import "/Users/ghost/core/anima/HEXAD/C/c_lib.hexa"
+
+// ── selftest: invariant checks (NOT a functional run; honest scaffold) ──────
+fn _selftest() {
+    // σ(6) = 12 invariant on n_factions
+    let nf_ok = c_n_factions_default() == 12
+    print("  σ(6)=12 n_factions invariant : " + to_string(nf_ok))
+
+    // CB1 min consciousness — initial_cells >= 2
+    let cb1_ok = c_initial_cells() >= 2
+    print("  CB1 initial_cells >= 2       : " + to_string(cb1_ok))
+
+    // .clm v1 P2 spec max_cells default = 64
+    let max_ok = c_max_cells_default() == 64
+    print("  P2 spec max_cells == 64      : " + to_string(max_ok))
+
+    // c_init_stub returns dict with expected keys (no functional claim)
+    let r = c_init_stub(32, 64, 64)
+    let init_ok = to_string(r["kind"]) == "C-scaffold"
+                   && to_string(r["_TODO"]) != "void"
+    print("  scaffold dict + TODO present : " + to_string(init_ok))
+
+    // Phase 4 — IIT Φ measurement live (RFC 036 phi_spatial builtin wired)
+    let phi_st = farr_zeros(16)
+    let phi_v = c_measure_phi(phi_st, 2, 8, c_phi_n_bins_default())
+    let phi_ok = phi_v >= 0.0
+    let _ = farr_free(phi_st)
+    print("  Phase 4 Φ measure >= 0       : " + to_string(phi_ok))
+
+    let all_ok = nf_ok && cb1_ok && max_ok && init_ok && phi_ok
+    print("=== HEXAD/C scaffold check: " + to_string(all_ok) + " ===")
+    print("    cell-pool dynamics  : tool/hexa_native/mitosis_hook.hexa (FULL IMPL)")
+    print("    per-token forward   : tool/hexa_native/phase5_forward_smoke.hexa")
+    print("    IIT Φ measurement   : c_measure_phi → RFC 036 phi_spatial (LANDED, byte-equal phi_rs)")
+    print("    canonical 🔵 sympy  : blue_falsifier.py B-C-1..3 (Φ≥0 IIT axiom / n_factions ∈ ℤ+ / initial_cells ≥ CB1=2)")
+    print("                          + F-C-PORT-3 PyPhi 4/4 tier-b carry · B-C-NOTE GRU+FFI RFC-terminal (NOT 🔵 counted)")
+}
+
+
+fn main() {
+    print("HEXAD/C — 의식 (consciousness) hexa-native entry [SCAFFOLD]")
+    print("Engine G / gradient-free / 12-faction GRU / mitosis cell-pool")
+    print("Functional impl: see cross-linked tool/hexa_native/ assets")
+    _selftest()
+}

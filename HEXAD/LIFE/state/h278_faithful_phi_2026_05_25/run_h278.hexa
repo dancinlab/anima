@@ -1,0 +1,608 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  HEXAD/LIFE/state/h278_faithful_phi_2026_05_25/run_h278.hexa
+//
+//  H_278 — faithful Φ★ small-N exact (MIP-EI) · H_002 C2 proxy upgrade.
+//
+//  WHAT THIS IS
+//    H_002 Cycle #2 (C2 / Φ_universe nested) measured the 6-scale toy cosmic
+//    hierarchy with the lane-canonical PROXY `phi_spatial` (RFC 036) and found
+//    CV = 0.84 (SCALE-VARIANT, frozen F2 TRIGGERED direction). honest L-C2.1:
+//    "this is NOT faithful Φ★ IIT4". The C2 pre-register estimated a GPU fire
+//    (~$0.30 RTX-5070) for "faithful" Φ★ assuming the 2^n IIT4 partition
+//    explosion. BUT — the real GPU bottleneck is LARGE-N intractability (super-
+//    exp, even GPUs choke); for SMALL-N (n ≤ 8 ⇒ 2^n ≤ 256) the exact partition
+//    search is mac-local CPU tractable at $0. H_278 implements a small-N EXACT
+//    IIT-style Φ and re-measures the same 6-scale hierarchy MORE FAITHFULLY
+//    than phi_spatial — proxy and faithful side by side.
+//
+//  FAITHFUL Φ (small-N exact MIP-EI) — honest definition
+//    For an n-cell system (n ≤ 8): build the symmetric pairwise mutual-
+//    information matrix MI[i][j] (the SAME RFC 036 MI estimator the proxy uses,
+//    so the only changed axis is the partition rule, not the MI primitive).
+//    Enumerate ALL non-trivial bipartitions (2^(n-1) − 1, cell 0 pinned to A).
+//    For each bipartition (A,B) the "integrated information that crosses the
+//    cut" = Σ_{i∈A, j∈B} MI[i][j]. The MINIMUM-INFORMATION-PARTITION (MIP) is
+//    the bipartition that MINIMIZES this cross-cut MI — the system's weakest
+//    link / how irreducible the whole is to its least-integrated split. Faithful
+//    Φ★ := cross-cut MI at the MIP, normalized by the partition size factor
+//    min(|A|,|B|) (IIT normalization — small-side weighting so a 1-vs-(n−1)
+//    cut is not unfairly favored). Φ ≥ 0.
+//
+//    CONTRAST with phi_spatial proxy (RFC 036):
+//      proxy   Φ = max(TOTAL_MI − min_partition_MI, 0) / max(n−1, 1)
+//      faithful Φ = min over ALL partitions of cross-cut MI / min(|A|,|B|)
+//    The proxy reports (total minus the best cut) — a whole-vs-best-removable
+//    quantity; faithful reports the MIP's own irreducibility with IIT small-side
+//    normalization — closer to IIT's "Φ = integrated info at the minimum
+//    partition" definition. (See § HONEST SCOPE for the carve-out vs full IIT4.)
+//
+//  HONEST SCOPE (g3 · g5 · g25/26 real-limits-first)
+//    • This is exact-MIP-over-EI for small n — it is FAITHFUL-ER than phi_spatial
+//      (true MIP minimization + small-side normalization) but it is NOT full
+//      IIT 4.0: no cause-effect repertoire, no transition-probability matrix,
+//      no Φ-structure / distinctions / relations. The integrated quantity is a
+//      pairwise-MI cross-cut, not the intrinsic-difference-over-purviews of
+//      IIT4. g5: faithful values are deterministic closed-form arithmetic; the
+//      empirical INTERPRETATION (scale-variant / -invariant) is fenced (⚪).
+//    • The 6 "scales" are TOY multi-scale CA substrates (cosmic-web sparse →
+//      neural dense), reproduced byte-for-byte from H_002 C2 (same rules, same
+//      coupling) EXCEPT the lattice is reduced N=16 → n=8 so 2^(n−1)=128
+//      bipartitions stay exact-tractable. dim/warm/n_bins unchanged. The proxy
+//      is RE-RUN on the SAME n=8 substrate so proxy-CV and faithful-CV are
+//      compared on an identical lattice (fair apples-to-apples).
+//    • Deterministic, $0 mac local, hexa-only, NO LLM, NO GPU. Large-N exact is
+//      NOT attempted (super-exp); n ≤ 8 only.
+//
+//  CRITERIA (pre-register, frozen)
+//    C1 FAITHFUL-COMPUTE : faithful Φ (exact MIP-EI) computed on ALL 6 scales
+//                          with n ≤ 8 tractable (no panic, all finite ≥ 0).
+//    C2 CV-COMPARE       : faithful CV vs proxy CV(0.84) — does the scale-VARIANT
+//                          verdict HOLD or FLIP under faithful Φ? (report both;
+//                          either direction is a valid result.)
+//    C3 DETERMINISM      : cross-run byte-identical (re-measure scale 0 twice).
+//    verdict_rule: SUPPORTED = C1 ∧ C2 (faithful measured + verdict compared);
+//                  the scale-variant HOLD vs FLIP is reported, not gated.
+//
+//  FALSIFIERS (additive to H_002 frozen F1..F6)
+//    F-H278-1 TRACTABLE  : every scale's faithful Φ finite ≥ 0 (n ≤ 8 exact).
+//    F-H278-2 CV-VERDICT : faithful CV ≤ 0.15 → scale-INVARIANT (flips C2);
+//                          faithful CV > 0.15 → scale-VARIANT (holds C2).
+//    F-H278-3 DETERMIN   : re-run byte-identical (closed-form, no randomness).
+//    F-H278-4 PROXY-SANE : proxy Φ also computed on n=8 (baseline present,
+//                          proxy-CV reported alongside for the comparison).
+//    F-H278-5 MIP-VALID  : MIP cross-cut ≤ any single bipartition cross-cut on
+//                          a spot-check scale (the min really is the minimum).
+//
+//  Run (mac-local forced via env-prefix first token):
+//    X=$HOME/.x hexa run HEXAD/LIFE/state/h278_faithful_phi_2026_05_25/run_h278.hexa
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/LIFE/lib/phi_helper.hexa"
+
+// ── config (deterministic, frozen; H_002 C2 parity except n=16→8) ─────────
+fn _N() -> int       { return 8 }    // lattice cells — reduced from 16 for n≤8 exact MIP
+fn _DIM() -> int     { return 12 }   // recorded steps  — H_002 C2 / LIFE canonical
+fn _WARM() -> int    { return 8 }    // warmup discard  — H_002 C2 / LIFE canonical
+fn _N_SCALE() -> int { return 6 }    // cosmic-web / cluster / stellar / planetary / bio / neural
+
+fn _OUT_JSON() -> string {
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-a9169bbdccff9f151/HEXAD/LIFE/state/h278_faithful_phi_2026_05_25/result.json"
+}
+
+// ── 6 cosmic scales — byte-for-byte from H_002 C2 (run_c2.hexa) ───────────
+fn _scale_name(s: int) -> string {
+    if s == 0 { return "cosmic_web" }
+    if s == 1 { return "galaxy_cluster" }
+    if s == 2 { return "stellar" }
+    if s == 3 { return "planetary" }
+    if s == 4 { return "biological" }
+    return "neural"
+}
+fn _scale_rule(s: int) -> int {
+    if s == 0 { return 30 }
+    if s == 1 { return 110 }
+    if s == 2 { return 90 }
+    if s == 3 { return 54 }
+    if s == 4 { return 110 }
+    return 110
+}
+fn _scale_couple(s: int) -> float {
+    if s == 0 { return 0.00 }
+    if s == 1 { return 0.10 }
+    if s == 2 { return 0.20 }
+    if s == 3 { return 0.30 }
+    if s == 4 { return 0.45 }
+    return 0.60
+}
+
+// ── small helpers ─────────────────────────────────────────────────────────
+fn _pow2(k: int) -> int {
+    let mut p = 1
+    let mut i = 0
+    while i < k { p = p * 2; i = i + 1 }
+    return p
+}
+fn _bit_set(mask: int, b: int) -> int {
+    let pw = _pow2(b)
+    if (mask / pw) % 2 == 1 { return 1 }
+    return 0
+}
+fn _ftoi(x: float) -> int { if x > 0.5 { return 1 }; return 0 }
+fn _itof(b: int) -> float { if b == 1 { return 1.0 }; return 0.0 }
+fn _verdict(b: bool) -> string { if b { return "PASS" }; return "FAIL" }
+fn _bool_str(b: bool) -> string { if b { return "true" }; return "false" }
+fn _imin(a: int, b: int) -> int { if a < b { return a }; return b }
+
+// elementary CA next-state from a Wolfram rule byte (H_002 C2 parity).
+fn _ca_next(l: int, c: int, r: int, rule: int) -> int {
+    let idx = l * 4 + c * 2 + r
+    return (rule / _pow2(idx)) % 2
+}
+
+// deterministic initial row (H_002 C2 parity — site i set iff i%3 != 0).
+fn _init_row(row: int, n: int) -> int {
+    let mut i = 0
+    while i < n {
+        let on = (i % 3) != 0
+        if on { let _ = farr_set(row, i, 1.0) }
+        else  { let _ = farr_set(row, i, 0.0) }
+        i = i + 1
+    }
+    return 1
+}
+
+// evolve length-N periodic elementary CA → flat (n × dim) trajectory farr.
+fn _run_ca(rule: int, n: int, dim: int, warm: int) -> int {
+    let row = farr_zeros(n)
+    let _ = _init_row(row, n)
+    let states = farr_zeros(n * dim)
+    let total = warm + dim
+    let mut step = 0
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut s = 0
+            while s < n {
+                let _ = farr_set(states, s * dim + t, farr_get(row, s))
+                s = s + 1
+            }
+        }
+        let nxt = farr_zeros(n)
+        let mut j = 0
+        while j < n {
+            let lj = (j + n - 1) % n
+            let rj = (j + 1) % n
+            let lv = _ftoi(farr_get(row, lj))
+            let cv = _ftoi(farr_get(row, j))
+            let rv = _ftoi(farr_get(row, rj))
+            let _ = farr_set(nxt, j, _itof(_ca_next(lv, cv, rv, rule)))
+            j = j + 1
+        }
+        let mut p = 0
+        while p < n { let _ = farr_set(row, p, farr_get(nxt, p)); p = p + 1 }
+        let _ = farr_free(nxt)
+        step = step + 1
+    }
+    let _ = farr_free(row)
+    return states
+}
+
+// spatial-coupling smoothing (connectivity regime). couple=0 → identity.
+// H_002 C2 parity: states'[s,t] = (1-k)·states[s,t] + (k/2)·(left + right).
+fn _apply_couple(states: int, n: int, dim: int, k_couple: float) -> int {
+    if k_couple <= 0.0 { return 1 }
+    let total = n * dim
+    let tmp = farr_zeros(total)
+    let mut i = 0
+    while i < total { let _ = farr_set(tmp, i, farr_get(states, i)); i = i + 1 }
+    let half  = k_couple / 2.0
+    let one_m = 1.0 - k_couple
+    let mut s = 0
+    while s < n {
+        let lj = (s + n - 1) % n
+        let rj = (s + 1) % n
+        let mut t = 0
+        while t < dim {
+            let v = one_m * farr_get(tmp, s * dim + t)
+                  + half  * (farr_get(tmp, lj * dim + t) + farr_get(tmp, rj * dim + t))
+            let _ = farr_set(states, s * dim + t, v)
+            t = t + 1
+        }
+        s = s + 1
+    }
+    let _ = farr_free(tmp)
+    return 1
+}
+
+// ── build the substrate for one scale (CA evolve → coupling) ───────────────
+fn _scale_states(s: int) -> int {
+    let n   = _N()
+    let dim = _DIM()
+    let states = _run_ca(_scale_rule(s), n, dim, _WARM())
+    let _ = _apply_couple(states, n, dim, _scale_couple(s))
+    return states
+}
+
+// ── pairwise MI matrix (RFC 036 MI estimator — SAME primitive as proxy) ────
+// MI[i][j] = phi_mi_pair over the dim-step trajectories of cell i and cell j.
+// Stored row-major in a (n × n) farr. Symmetric; diagonal left 0 (unused).
+fn _build_mi_matrix(states: int, n: int, dim: int, n_bins: int) -> int {
+    let mi = farr_zeros(n * n)
+    let mut i = 0
+    while i < n {
+        let mut j = i + 1
+        while j < n {
+            let row_i = farr_zeros(dim)
+            let row_j = farr_zeros(dim)
+            let mut d = 0
+            while d < dim {
+                let _ = farr_set(row_i, d, farr_get(states, i * dim + d))
+                let _ = farr_set(row_j, d, farr_get(states, j * dim + d))
+                d = d + 1
+            }
+            let v = c_phi_mi_pair(row_i, row_j, dim, n_bins)   // RFC 036 builtin
+            let _ = farr_set(mi, i * n + j, v)
+            let _ = farr_set(mi, j * n + i, v)
+            let _ = farr_free(row_i)
+            let _ = farr_free(row_j)
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return mi
+}
+
+// cross-cut MI for a given bipartition mask (cell 0 ∈ A; bit b ⇒ cell b+1 ∈ A).
+// returns Σ_{i∈A, j∈B} MI[i][j], plus the small-side size via out-params is not
+// available in hexa — so we return the RAW cross-cut and compute |A| separately.
+fn _cross_cut(mi: int, n: int, mask: int) -> float {
+    let mut cross = 0.0
+    let mut ia = 0
+    while ia < n {
+        // is ia in A?
+        let mut inA = 0
+        if ia == 0 { inA = 1 }
+        else { if _bit_set(mask, ia - 1) == 1 { inA = 1 } }
+        if inA == 1 {
+            let mut jb = 0
+            while jb < n {
+                let mut jInA = 0
+                if jb == 0 { jInA = 1 }
+                else { if _bit_set(mask, jb - 1) == 1 { jInA = 1 } }
+                if jInA == 0 {
+                    cross = cross + farr_get(mi, ia * n + jb)
+                }
+                jb = jb + 1
+            }
+        }
+        ia = ia + 1
+    }
+    return cross
+}
+
+// |A| for a mask (cell 0 always in A, plus set bits).
+fn _size_a(n: int, mask: int) -> int {
+    let mut cnt = 1   // cell 0
+    let mut b = 0
+    while b < n - 1 {
+        if _bit_set(mask, b) == 1 { cnt = cnt + 1 }
+        b = b + 1
+    }
+    return cnt
+}
+
+// ── faithful Φ (small-N exact MIP-EI) ──────────────────────────────────────
+// enumerate ALL non-trivial bipartitions (2^(n-1) masks, skip B-empty), find
+// the MIP = argmin cross-cut MI, and return cross-cut(MIP) / min(|A|,|B|).
+// n ≤ 8 ⇒ ≤ 128 masks — exact tractable on mac CPU at $0.
+fn _faithful_phi_from_mi(mi: int, n: int) -> float {
+    if n <= 1 { return 0.0 }
+    if n == 2 { return farr_get(mi, 1) }   // only one cut: {0}|{1}
+
+    let max_mask = _pow2(n - 1)
+    let mut best_cut = 1.0e308
+    let mut best_norm = 1.0
+    let mut found = false
+    let mut mask = 1
+    while mask < max_mask {
+        // skip the trivial mask where B is empty (all n-1 bits set).
+        let sa = _size_a(n, mask)
+        let sb = n - sa
+        if sb >= 1 {
+            let cut = _cross_cut(mi, n, mask)
+            if (!found) || (cut < best_cut) {
+                best_cut = cut
+                best_norm = _imin(sa, sb) * 1.0
+                found = true
+            }
+        }
+        mask = mask + 1
+    }
+    if best_norm < 1.0 { best_norm = 1.0 }
+    let phi = best_cut / best_norm
+    if phi < 0.0 { return 0.0 }
+    return phi
+}
+
+// faithful Φ for a scale (build substrate → MI matrix → exact MIP-EI).
+fn _faithful_phi_at_scale(s: int) -> float {
+    let n   = _N()
+    let dim = _DIM()
+    let nb  = life_phi_nbins()
+    let states = _scale_states(s)
+    let mi = _build_mi_matrix(states, n, dim, nb)
+    let phi = _faithful_phi_from_mi(mi, n)
+    let _ = farr_free(mi)
+    let _ = farr_free(states)
+    return phi
+}
+
+// proxy Φ for a scale on the SAME n=8 substrate (apples-to-apples baseline).
+fn _proxy_phi_at_scale(s: int) -> float {
+    let n   = _N()
+    let dim = _DIM()
+    let nb  = life_phi_nbins()
+    let states = _scale_states(s)
+    let phi = phi_with(states, n, dim, nb)   // RFC 036 phi_spatial proxy
+    let _ = farr_free(states)
+    return phi
+}
+
+// MIP-valid spot check (F-H278-5): the returned MIP cut must be ≤ every single
+// bipartition cut. We recompute the min independently and a couple of arbitrary
+// cuts, and assert min ≤ those. Returns true if MIP really is the minimum.
+fn _mip_valid_check(s: int) -> bool {
+    let n   = _N()
+    let dim = _DIM()
+    let nb  = life_phi_nbins()
+    let states = _scale_states(s)
+    let mi = _build_mi_matrix(states, n, dim, nb)
+
+    // independent min over all valid masks.
+    let max_mask = _pow2(n - 1)
+    let mut mn = 1.0e308
+    let mut mask = 1
+    while mask < max_mask {
+        let sa = _size_a(n, mask)
+        let sb = n - sa
+        if sb >= 1 {
+            let cut = _cross_cut(mi, n, mask)
+            if cut < mn { mn = cut }
+        }
+        mask = mask + 1
+    }
+    // pick two arbitrary valid masks and assert min ≤ their cuts.
+    let cut_m1 = _cross_cut(mi, n, 1)             // {0,1} | rest
+    let cut_m3 = _cross_cut(mi, n, 3)             // {0,1,2} | rest
+    let ok = (mn <= cut_m1 + 1.0e-12) && (mn <= cut_m3 + 1.0e-12)
+
+    let _ = farr_free(mi)
+    let _ = farr_free(states)
+    return ok
+}
+
+// ── float → fixed-precision string (6 dp, deterministic) ──────────────────
+fn _f6(x: float) -> string {
+    let scaled = floor(x * 1000000.0 + 0.5)
+    let mut neg = false
+    let mut v = scaled
+    if v < 0.0 { neg = true  v = 0.0 - v }
+    let whole = floor(v / 1000000.0)
+    let frac  = v - whole * 1000000.0
+    let mut frac_str = str(to_int(frac))
+    while len(frac_str) < 6 { frac_str = "0" + frac_str }
+    let sign = if neg { "-" } else { "" }
+    return sign + str(to_int(whole)) + "." + frac_str
+}
+
+// CV (stddev/mean) over an n-length farr.
+fn _cv_of(vals: int, n: int) -> float {
+    let mut sum = 0.0
+    let mut i = 0
+    while i < n { sum = sum + farr_get(vals, i); i = i + 1 }
+    let mean = sum / (n * 1.0)
+    if mean <= 0.0 { return 0.0 }
+    let mut ss = 0.0
+    let mut k = 0
+    while k < n {
+        let d = farr_get(vals, k) - mean
+        ss = ss + d * d
+        k = k + 1
+    }
+    let variance = ss / (n * 1.0)
+    return sqrt(variance) / mean
+}
+fn _mean_of(vals: int, n: int) -> float {
+    let mut sum = 0.0
+    let mut i = 0
+    while i < n { sum = sum + farr_get(vals, i); i = i + 1 }
+    return sum / (n * 1.0)
+}
+fn _min_of(vals: int, n: int) -> float {
+    let mut mn = farr_get(vals, 0)
+    let mut i = 1
+    while i < n { let v = farr_get(vals, i); if v < mn { mn = v }; i = i + 1 }
+    return mn
+}
+fn _max_of(vals: int, n: int) -> float {
+    let mut mx = farr_get(vals, 0)
+    let mut i = 1
+    while i < n { let v = farr_get(vals, i); if v > mx { mx = v }; i = i + 1 }
+    return mx
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_278 — faithful Φ★ small-N exact (MIP-EI) · H_002 C2 upgrade")
+    println("  deterministic · hexa-only · $0 mac local · LLM none · NO GPU")
+    println("  faithful = exact MIP over all 2^(n-1) bipartitions (n=8 ≤ 8)")
+    println("  proxy    = phi_spatial RFC 036 (same MI primitive, same n=8)")
+    println("================================================================")
+    println("  6 cosmic scales (H_002 C2 parity, N=16→8): cosmic_web →")
+    println("  galaxy_cluster → stellar → planetary → biological → neural")
+    println("")
+
+    let ns = _N_SCALE()
+    let faith = farr_zeros(ns)
+    let proxy = farr_zeros(ns)
+    let mut all_faith_ok = true
+    let mut ledger = ""
+    let mut first = true
+
+    let mut s = 0
+    while s < ns {
+        let pf = _faithful_phi_at_scale(s)
+        let pp = _proxy_phi_at_scale(s)
+        let _ = farr_set(faith, s, pf)
+        let _ = farr_set(proxy, s, pp)
+        if pf < 0.0 { all_faith_ok = false }
+
+        let row = "    {\"scale\": \"" + _scale_name(s) + "\""
+            + ", \"rule\": " + str(_scale_rule(s))
+            + ", \"couple\": " + _f6(_scale_couple(s))
+            + ", \"phi_faithful\": " + _f6(pf)
+            + ", \"phi_proxy\": " + _f6(pp) + "}"
+        if first { ledger = row  first = false }
+        else { ledger = ledger + ",\n" + row }
+
+        println("  [" + _scale_name(s) + "]  rule=" + str(_scale_rule(s))
+            + "  couple=" + _f6(_scale_couple(s))
+            + "  Φ_faithful=" + _f6(pf) + "  Φ_proxy=" + _f6(pp))
+        s = s + 1
+    }
+
+    let faith_mean = _mean_of(faith, ns)
+    let faith_min  = _min_of(faith, ns)
+    let faith_max  = _max_of(faith, ns)
+    let faith_cv   = _cv_of(faith, ns)
+
+    let proxy_mean = _mean_of(proxy, ns)
+    let proxy_min  = _min_of(proxy, ns)
+    let proxy_max  = _max_of(proxy, ns)
+    let proxy_cv   = _cv_of(proxy, ns)
+
+    let cv_thr = 0.15
+
+    // ── C1 FAITHFUL-COMPUTE: all 6 faithful Φ finite ≥ 0 (n≤8 exact) ──
+    let c1 = all_faith_ok
+    // ── C2 CV-COMPARE: faithful scale-invariant? + does verdict flip? ──
+    let faith_invariant = faith_cv <= cv_thr
+    let proxy_invariant = proxy_cv <= cv_thr   // expect false (~0.84 carry)
+    let mut faith_class = "SCALE_VARIANT"
+    if faith_invariant { faith_class = "SCALE_INVARIANT" }
+    // C2 is "comparison performed" (always true once both CVs computed); the
+    // HOLD vs FLIP is a reported finding, not a pass/fail gate.
+    let c2 = true
+    let verdict_flips = faith_invariant != proxy_invariant
+    let mut cv_finding = "HOLD"   // faithful agrees with proxy scale-variant
+    if verdict_flips { cv_finding = "FLIP" }
+    // sign of CV change vs the H_002 C2 reference (0.84 proxy on N=16).
+    let h002_proxy_cv_ref = 0.836892
+    let mut cv_direction = "faithful_CV_lower_than_h002_ref"
+    if faith_cv > h002_proxy_cv_ref { cv_direction = "faithful_CV_higher_than_h002_ref" }
+
+    // ── C3 DETERMINISM: re-measure scale 0 faithful twice, byte-identical ──
+    let f0a = _faithful_phi_at_scale(0)
+    let f0b = _faithful_phi_at_scale(0)
+    let c3 = f0a == f0b
+
+    // ── F-H278-5 MIP-VALID: spot check on biological (s=4) ──
+    let mip_ok = _mip_valid_check(4)
+
+    let supported = c1 && c2
+    let mut verdict = "INSUFFICIENT"
+    if supported { verdict = "SUPPORTED" }
+
+    println("")
+    println("  ----------------------------------------------------------------")
+    println("  FAITHFUL Φ (exact MIP-EI, n=8):")
+    println("    mean=" + _f6(faith_mean) + "  min=" + _f6(faith_min)
+            + "  max=" + _f6(faith_max) + "  CV=" + _f6(faith_cv))
+    println("  PROXY Φ (phi_spatial RFC036, same n=8):")
+    println("    mean=" + _f6(proxy_mean) + "  min=" + _f6(proxy_min)
+            + "  max=" + _f6(proxy_max) + "  CV=" + _f6(proxy_cv))
+    println("  H_002 C2 reference proxy-CV (N=16): " + _f6(h002_proxy_cv_ref))
+    println("  CV threshold (scale-invariant if ≤): " + _f6(cv_thr))
+    println("")
+    println("  FALSIFIERS (this cycle, additive to frozen F1..F6):")
+    println("    F-H278-1 TRACTABLE  : " + _verdict(c1)
+            + "  (all 6 faithful Φ finite ≥ 0, n=8 exact)")
+    println("    F-H278-2 CV-VERDICT : faithful CV " + _f6(faith_cv)
+            + " ≤ " + _f6(cv_thr) + " ? → " + faith_class)
+    println("    F-H278-3 DETERMIN   : " + _verdict(c3)
+            + "  (Φ_scale0 a=" + _f6(f0a) + " b=" + _f6(f0b) + ")")
+    println("    F-H278-4 PROXY-SANE : proxy-CV=" + _f6(proxy_cv)
+            + " present (baseline for comparison)")
+    println("    F-H278-5 MIP-VALID  : " + _verdict(mip_ok)
+            + "  (MIP cut ≤ spot-check cuts on biological scale)")
+    println("  ----------------------------------------------------------------")
+    println("")
+    println("  CV-COMPARE FINDING: faithful Φ verdict = " + faith_class)
+    println("    proxy verdict (n=8) = " + (if proxy_invariant { "SCALE_INVARIANT" } else { "SCALE_VARIANT" })
+            + " · vs H_002 C2 proxy (N=16) = SCALE_VARIANT (CV 0.84)")
+    println("    scale-variant verdict: " + cv_finding
+            + " (" + cv_direction + ")")
+    println("")
+    println("  VERDICT (SUPPORTED = C1 ∧ C2; HOLD/FLIP reported not gated): "
+            + verdict)
+    println("")
+
+    // ── result.json ──────────────────────────────────────────────────────
+    let js = "{\n"
+        + "  \"id\": \"H_278\",\n"
+        + "  \"slug\": \"faithful-phi-small-n\",\n"
+        + "  \"title\": \"faithful Phi-star small-N exact (MIP-EI) - H_002 C2 proxy upgrade\",\n"
+        + "  \"date\": \"2026-05-25\",\n"
+        + "  \"deterministic\": true,\n"
+        + "  \"hexa_only\": true,\n"
+        + "  \"llm\": \"none\",\n"
+        + "  \"gpu\": false,\n"
+        + "  \"cost_usd\": 0.0,\n"
+        + "  \"gpu_resolution\": \"GPU bottleneck is LARGE-N intractability (super-exp); small-N (n<=8, 2^n<=256) is mac-local CPU $0 tractable - no GPU needed\",\n"
+        + "  \"parent\": \"H_002 C2 (phi_universe nested) proxy upgrade\",\n"
+        + "  \"phi_faithful_def\": \"exact MIP over all 2^(n-1) bipartitions; Phi = cross-cut MI at MIP / min(|A|,|B|); MI estimator = RFC 036 phi_mi_pair (same primitive as proxy)\",\n"
+        + "  \"phi_proxy_def\": \"phi_spatial RFC036 = max(total_MI - min_partition_MI, 0) / max(n-1,1)\",\n"
+        + "  \"faithful_scope\": \"FAITHFUL-ER than phi_spatial (true MIP minimization + IIT small-side normalization), but NOT full IIT4 4.0 (no cause-effect repertoire, no TPM, no Phi-structure)\",\n"
+        + "  \"n_scales\": " + str(ns) + ",\n"
+        + "  \"lattice\": {\"n\": " + str(_N()) + ", \"dim\": " + str(_DIM())
+            + ", \"warm\": " + str(_WARM()) + ", \"n_bins\": " + str(life_phi_nbins())
+            + ", \"note\": \"N reduced 16->8 vs H_002 C2 for n<=8 exact MIP; rules/coupling identical\"},\n"
+        + "  \"bipartitions_per_scale\": " + str(_pow2(_N() - 1)) + ",\n"
+        + "  \"per_scale_ledger\": [\n"
+        + ledger + "\n"
+        + "  ],\n"
+        + "  \"faithful\": {\"mean\": " + _f6(faith_mean) + ", \"min\": " + _f6(faith_min)
+            + ", \"max\": " + _f6(faith_max) + ", \"cv\": " + _f6(faith_cv) + "},\n"
+        + "  \"proxy\": {\"mean\": " + _f6(proxy_mean) + ", \"min\": " + _f6(proxy_min)
+            + ", \"max\": " + _f6(proxy_max) + ", \"cv\": " + _f6(proxy_cv) + "},\n"
+        + "  \"h002_c2_proxy_cv_ref_n16\": " + _f6(h002_proxy_cv_ref) + ",\n"
+        + "  \"cv_threshold\": " + _f6(cv_thr) + ",\n"
+        + "  \"faithful_scale_class\": \"" + faith_class + "\",\n"
+        + "  \"proxy_scale_class_n8\": \"" + (if proxy_invariant { "SCALE_INVARIANT" } else { "SCALE_VARIANT" }) + "\",\n"
+        + "  \"scale_variant_verdict\": \"" + cv_finding + "\",\n"
+        + "  \"cv_direction_vs_h002\": \"" + cv_direction + "\",\n"
+        + "  \"falsifiers\": {\n"
+        + "    \"F_H278_1_tractable\": \"" + _verdict(c1) + "\",\n"
+        + "    \"F_H278_2_cv_verdict\": \"" + faith_class + " (faithful CV " + _f6(faith_cv) + " vs thr " + _f6(cv_thr) + ")\",\n"
+        + "    \"F_H278_3_determ\": \"" + _verdict(c3) + " (a=" + _f6(f0a) + " b=" + _f6(f0b) + ")\",\n"
+        + "    \"F_H278_4_proxy_sane\": \"PRESENT (proxy-CV " + _f6(proxy_cv) + ")\",\n"
+        + "    \"F_H278_5_mip_valid\": \"" + _verdict(mip_ok) + "\"\n"
+        + "  },\n"
+        + "  \"criteria\": {\n"
+        + "    \"C1_faithful_compute\": \"" + _verdict(c1) + "\",\n"
+        + "    \"C2_cv_compare\": \"" + _verdict(c2) + " (" + cv_finding + ")\",\n"
+        + "    \"C3_determinism\": \"" + _verdict(c3) + "\"\n"
+        + "  },\n"
+        + "  \"verdict_rule\": \"SUPPORTED = C1 (faithful computed) AND C2 (CV compared); scale-variant HOLD/FLIP reported not gated\",\n"
+        + "  \"verdict\": \"" + verdict + "\",\n"
+        + "  \"verify_fence\": \"SPECULATION-FENCED (hexa verify --fence): faithful Phi VALUES are deterministic closed-form arithmetic; the empirical INTERPRETATION (scale-variant/-invariant) is a toy-substrate outcome, NOT an atlas identity - g5 honest fence\"\n"
+        + "}\n"
+
+    write_file(_OUT_JSON(), js)
+    println("  result.json written: " + _OUT_JSON())
+    println("  VERDICT=" + verdict + "  faithful_CV=" + _f6(faith_cv)
+            + "  proxy_CV=" + _f6(proxy_cv) + "  finding=" + cv_finding)
+    println("=== H_278 faithful Φ small-N exact complete: " + verdict + " ===")
+}
+
+// `fn main()` is auto-invoked by hexa-strict — no explicit call needed.

@@ -1,0 +1,371 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_pilot_cycle4.hexa — SRH Cycle #4: 11-tier sweep + 5-seed + F-SRH-2/3/4/5
+//
+//  PURPOSE
+//    Cycle #3 의 F-SRH-1 PASS (z=2.86) 를 받아, 남은 falsifier 4개 측정.
+//    threshold 는 cycle #3 종료 시점 **고정** (post-hoc tuning 금지, C3-c3-6):
+//      F-SRH-2  z/ρ : Spearman ρ(tier, split_count) ≥ 0.6  (11-tier monotone)
+//      F-SRH-3  CV  : cross-seed CV(tier0 split) ≤ 0.30     (5-seed)
+//      F-SRH-4  ρ   : tier-label permute 후 |ρ| < 0.2        (monotone null)
+//      F-SRH-5  jac : tier0 seed2026 replay event_step jaccard ≥ 0.95
+//
+//  LENGTH CONFOUND CONTROL
+//    anchor 별 payload_text 길이가 달라 "tier↑ = prompt↑ = split↑" confound
+//    가능. → 모든 anchor prompt 를 공통 최소길이로 truncate. split_count +
+//    split_rate(=split/invocations) 둘 다 기록, F-SRH-2 는 split_count 기준
+//    (공통 길이라 invocations 거의 동일).
+//
+//  FIRE COUNT  11 (tier sweep) + 5 (seed sweep) + 1 (replay) = 17 fire
+//  WALL  cycle #3 9-fire 분 단위 → ~수 분 예상.
+//
+//  HOST  mini (setup 완료, 추가 infra 0)
+//  RUN   HEXA_MEM_UNLIMITED=1 hexa.real run <this> > cycle4.log 2>&1
+//
+//  ARTIFACTS  state/SRH_t0_vs_random_pilot_2026_05_22/
+//    spike_c4_tier<N>_seed2026.json (11)  spike_c4_t0_seed<S>.json (5)
+//    spike_c4_replay_seed2026.json (1)    result_cycle4.json
+//
+//  HONEST C3
+//    - C3-c4-1: Spearman tie = average-rank (Pearson-on-ranks) — 11점 small-n.
+//    - C3-c4-2: prompt 공통길이 truncate → anchor 의미 일부 절단 (byte-level
+//      tokenizer 라 절단 byte 도 유효 token; 의미 손실은 honest carry).
+//    - C3-c4-3: F-SRH-4 permutation 1회 (full permutation test 아님 — pilot).
+//    - C3-c4-4: F-SRH-5 hexa interp deterministic → jaccard 1.0 예상, weak
+//      falsifier (replay 비결정성 부재 확인 수준).
+//    - C3-c4-5: cell_pool default threshold 미sweep (cycle #3 C3 carry).
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/CHAT/chat_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/ubm_inject.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/anima_spike.hexa"
+
+
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/HEXAD/LAB/state/SRH_t0_vs_random_pilot_2026_05_22"
+}
+fn _max_new() -> int { return 10 }
+fn _initial_cells() -> int { return 2 }
+fn _cap_len() -> int { return 320 }
+
+
+// ── §1 helpers ───────────────────────────────────────────────────────────────
+
+fn _truncate(s: string, n: int) -> string {
+    if len(s) <= n { return s }
+    return s.substring(0, n)
+}
+
+fn _reset_chat_state(chat) {
+    chat["mitosis_d_model"] = 0
+    chat["cell_pool"] = #{}
+    chat["mitosis_event_log"] = []
+    chat["mitosis_step"] = 0
+    chat["mitosis_invocations"] = 0
+    chat["kv_cache"] = #{}
+    return chat
+}
+
+fn _fire(chat, prompt: string, label: string, seed: int) -> any {
+    println("")
+    println("──── fire: " + label + " seed=" + to_string(seed)
+            + " (" + to_string(len(prompt)) + " bytes) ────")
+    _reset_chat_state(chat)
+    chat_init_kv_cache_default(chat, _cap_len())
+    chat_init_cell_pool(chat, 768, _initial_cells())
+    let mut spike = spike_init()
+    spike = spike_set_label(spike, label + "_seed" + to_string(seed))
+    spike = spike_record_init(spike, chat)
+    let resp = chat_generate(chat, prompt, "greedy", _max_new(),
+                             0.0, [], 1.0, 1.0, 0.0, seed, [], false)
+    spike = spike_record_final(spike, chat, resp)
+    println("  " + spike_brief(spike))
+    spike_save_json(spike, _state_dir() + "/spike_" + label
+                    + "_seed" + to_string(seed) + ".json")
+    return spike
+}
+
+
+// ── §2 stats ─────────────────────────────────────────────────────────────────
+
+fn _mean(xs: array) -> float {
+    let n = len(xs)
+    if n == 0 { return 0.0 }
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n { acc = acc + (to_int(xs[i]) * 1.0)  i = i + 1 }
+    return acc / (n * 1.0)
+}
+
+fn _std(xs: array, m: float) -> float {
+    let n = len(xs)
+    if n < 2 { return 0.0 }
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n {
+        let d = (to_int(xs[i]) * 1.0) - m
+        acc = acc + d * d
+        i = i + 1
+    }
+    return sqrt(acc / ((n - 1) * 1.0))
+}
+
+// average-rank of each element (1-indexed, tie → mean rank). float array out.
+fn _avg_ranks(xs: array) -> array {
+    let n = len(xs)
+    let mut ranks = []
+    let mut i = 0
+    while i < n {
+        let xi = to_int(xs[i])
+        let mut n_less = 0
+        let mut n_eq = 0
+        let mut j = 0
+        while j < n {
+            let xj = to_int(xs[j])
+            if xj < xi { n_less = n_less + 1 }
+            if xj == xi { n_eq = n_eq + 1 }
+            j = j + 1
+        }
+        // average rank over the tie block: (n_less+1 .. n_less+n_eq)
+        let r = (n_less * 1.0) + ((n_eq + 1) * 1.0) / 2.0
+        ranks = ranks.push(r)
+        i = i + 1
+    }
+    return ranks
+}
+
+// Pearson correlation on two float arrays.
+fn _pearson(xs: array, ys: array) -> float {
+    let n = len(xs)
+    if n < 2 { return 0.0 }
+    let mut mx = 0.0
+    let mut my = 0.0
+    let mut i = 0
+    while i < n {
+        mx = mx + to_float(xs[i])
+        my = my + to_float(ys[i])
+        i = i + 1
+    }
+    mx = mx / (n * 1.0)
+    my = my / (n * 1.0)
+    let mut sxy = 0.0
+    let mut sxx = 0.0
+    let mut syy = 0.0
+    let mut k = 0
+    while k < n {
+        let dx = to_float(xs[k]) - mx
+        let dy = to_float(ys[k]) - my
+        sxy = sxy + dx * dy
+        sxx = sxx + dx * dx
+        syy = syy + dy * dy
+        k = k + 1
+    }
+    let denom = sqrt(sxx * syy)
+    if denom < 0.000001 { return 0.0 }
+    return sxy / denom
+}
+
+// Spearman ρ = Pearson on average-ranks.
+fn _spearman(xs: array, ys: array) -> float {
+    let rx = _avg_ranks(xs)
+    let ry = _avg_ranks(ys)
+    return _pearson(rx, ry)
+}
+
+// LCG selection-permutation of an int array (concat-free — rebuilds remaining).
+fn _permute_ints(xs: array, seed: int) -> array {
+    let mut remaining = xs
+    let mut out = []
+    let mut s = seed
+    while len(remaining) > 0 {
+        let rn = len(remaining)
+        s = s * 1103515245 + 12345
+        let abs_s = if s < 0 { 0 - s } else { s }
+        let idx = abs_s % rn
+        out = out.push(remaining[idx])
+        let mut nr = []
+        let mut q = 0
+        while q < rn {
+            if q != idx { nr = nr.push(remaining[q]) }
+            q = q + 1
+        }
+        remaining = nr
+    }
+    return out
+}
+
+fn _abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _int_arr_json(xs: array) -> string {
+    let n = len(xs)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(to_int(xs[i]))
+        i = i + 1
+    }
+    return out + "]"
+}
+
+fn _float_arr_json(xs: array) -> string {
+    let n = len(xs)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(to_float(xs[i]))
+        i = i + 1
+    }
+    return out + "]"
+}
+
+
+// ── §3 main ──────────────────────────────────────────────────────────────────
+
+fn _run_cycle4() {
+    println("================================================================")
+    println("SRH Cycle #4 — 11-tier sweep + 5-seed + F-SRH-2/3/4/5 (host=mini)")
+    println("================================================================")
+
+    let chat0 = chat_default()
+    if !file_exists(chat0["ckpt_path"]) {
+        println("FATAL: ckpt absent")
+        return
+    }
+    println("loading 332M ...")
+    let chat = chat_load_weights(chat0)
+    println("  weights: " + to_string(len(dict_keys(chat["weights"]))) + " keys")
+
+    // load all 11 anchors; compute common truncate length (min payload_text len).
+    let tiers = ubm_known_tiers()
+    let n_tiers = len(tiers)
+    let mut anchor_prompts = []
+    let mut min_len = 1000000
+    let mut ti = 0
+    while ti < n_tiers {
+        let a = ubm_load_by_tier(tiers[ti])
+        let p = ubm_to_prompt(a, "text_only")
+        anchor_prompts = anchor_prompts.push(p)
+        if len(p) < min_len { min_len = len(p) }
+        ti = ti + 1
+    }
+    let trunc_len = min_len
+    println("common truncate length = " + to_string(trunc_len) + " bytes")
+
+    // ── Part A: F-SRH-2 — 11-tier sweep, seed 2026 ──────────────────────────
+    println("")
+    println("════ Part A — F-SRH-2 11-tier sweep ════")
+    let mut a_splits = []
+    let mut a_rates = []
+    let mut ai = 0
+    while ai < n_tiers {
+        let tier = tiers[ai]
+        let prompt = _truncate(anchor_prompts[ai], trunc_len)
+        let sp = _fire(chat, prompt, "c4_tier" + to_string(tier), 2026)
+        let sc = to_int(sp["split_count"])
+        let inv = to_int(sp["mitosis_invocations"])
+        a_splits = a_splits.push(sc)
+        let rate = if inv > 0 { (sc * 1.0) / (inv * 1.0) } else { 0.0 }
+        a_rates = a_rates.push(rate)
+        ai = ai + 1
+    }
+    // tier 자체를 x 로 (strictly increasing → rank = order)
+    let mut tier_floats = []
+    let mut tf = 0
+    while tf < n_tiers { tier_floats = tier_floats.push(tiers[tf] * 1.0)  tf = tf + 1 }
+    let rho_2 = _spearman(tier_floats, a_splits)
+    let f_srh_2 = (rho_2 >= 0.6)
+
+    // ── Part B: F-SRH-3 — tier0, 5 seeds ────────────────────────────────────
+    println("")
+    println("════ Part B — F-SRH-3 5-seed reproducibility ════")
+    let mut b_seeds = []
+    b_seeds = b_seeds.push(2026)
+    b_seeds = b_seeds.push(42)
+    b_seeds = b_seeds.push(99)
+    b_seeds = b_seeds.push(7)
+    b_seeds = b_seeds.push(123)
+    let n_bs = len(b_seeds)
+    let tier0_prompt = _truncate(anchor_prompts[0], trunc_len)
+    let mut b_splits = []
+    let mut b_spike_2026 = spike_init()
+    let mut bi = 0
+    while bi < n_bs {
+        let seed = b_seeds[bi]
+        let sp = _fire(chat, tier0_prompt, "c4_t0", seed)
+        b_splits = b_splits.push(to_int(sp["split_count"]))
+        if seed == 2026 { b_spike_2026 = sp }
+        bi = bi + 1
+    }
+    let m_b = _mean(b_splits)
+    let sd_b = _std(b_splits, m_b)
+    let cv_3 = if m_b > 0.0001 { sd_b / m_b } else { 0.0 }
+    let f_srh_3 = (cv_3 <= 0.30)
+
+    // ── Part C: F-SRH-4 — tier-label permute ────────────────────────────────
+    println("")
+    println("════ Part C — F-SRH-4 tier-label permutation null ════")
+    let permuted = _permute_ints(tiers, 777)
+    let mut perm_floats = []
+    let mut pf = 0
+    while pf < len(permuted) { perm_floats = perm_floats.push(permuted[pf] * 1.0)  pf = pf + 1 }
+    let rho_4 = _spearman(perm_floats, a_splits)
+    let f_srh_4 = (_abs_f(rho_4) < 0.2)
+    println("  permuted tiers = " + _int_arr_json(permuted))
+    println("  rho_4 = " + to_string(rho_4))
+
+    // ── Part D: F-SRH-5 — replay tier0 seed2026 ─────────────────────────────
+    println("")
+    println("════ Part D — F-SRH-5 replay invariance ════")
+    let sp_replay = _fire(chat, tier0_prompt, "c4_replay", 2026)
+    let d = spike_diff(sp_replay, b_spike_2026)
+    let jac_5 = to_float(d["event_step_jaccard"])
+    let f_srh_5 = (jac_5 >= 0.95)
+    println("  replay vs B-seed2026: event_step_jaccard = " + to_string(jac_5))
+
+    // ── result_cycle4.json ──────────────────────────────────────────────────
+    let v2 = if f_srh_2 { "PASS" } else { "FAIL" }
+    let v3 = if f_srh_3 { "PASS" } else { "FAIL" }
+    let v4 = if f_srh_4 { "PASS" } else { "FAIL" }
+    let v5 = if f_srh_5 { "PASS" } else { "FAIL" }
+
+    let mut j = "{\n"
+    j = j + "  \"cycle\": 4,\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"host\": \"mini\",\n"
+    j = j + "  \"ckpt\": \"ckpt_phase1a4_lr5e6_sft.safetensors\",\n"
+    j = j + "  \"trunc_len\": " + to_string(trunc_len) + ",\n"
+    j = j + "  \"max_new\": " + to_string(_max_new()) + ",\n"
+    j = j + "  \"tiers\": " + _int_arr_json(tiers) + ",\n"
+    j = j + "  \"A_tier_splits\": " + _int_arr_json(a_splits) + ",\n"
+    j = j + "  \"A_tier_split_rates\": " + _float_arr_json(a_rates) + ",\n"
+    j = j + "  \"B_seeds\": " + _int_arr_json(b_seeds) + ",\n"
+    j = j + "  \"B_tier0_splits\": " + _int_arr_json(b_splits) + ",\n"
+    j = j + "  \"B_mean\": " + to_string(m_b) + ", \"B_std\": " + to_string(sd_b) + ",\n"
+    j = j + "  \"C_permuted_tiers\": " + _int_arr_json(permuted) + ",\n"
+    j = j + "  \"F_SRH_2\": { \"metric\": \"spearman(tier,split)\", \"rho\": "
+          + to_string(rho_2) + ", \"floor\": 0.6, \"verdict\": \"" + v2 + "\" },\n"
+    j = j + "  \"F_SRH_3\": { \"metric\": \"cross_seed_CV(tier0.split)\", \"cv\": "
+          + to_string(cv_3) + ", \"floor\": 0.30, \"verdict\": \"" + v3 + "\" },\n"
+    j = j + "  \"F_SRH_4\": { \"metric\": \"spearman(permuted_tier,split)\", \"rho\": "
+          + to_string(rho_4) + ", \"ceil\": 0.2, \"verdict\": \"" + v4 + "\" },\n"
+    j = j + "  \"F_SRH_5\": { \"metric\": \"replay_event_step_jaccard\", \"jaccard\": "
+          + to_string(jac_5) + ", \"floor\": 0.95, \"verdict\": \"" + v5 + "\" },\n"
+    j = j + "  \"verdict_rule\": \"F-SRH-2 rho>=0.6 · F-SRH-3 CV<=0.30 · F-SRH-4 |rho|<0.2 · F-SRH-5 jac>=0.95 (FIXED pre-cycle4)\"\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result_cycle4.json", j)
+
+    println("")
+    println("================================================================")
+    println("CYCLE #4 COMPLETE")
+    println(j)
+    println("================================================================")
+}
+
+
+_run_cycle4()

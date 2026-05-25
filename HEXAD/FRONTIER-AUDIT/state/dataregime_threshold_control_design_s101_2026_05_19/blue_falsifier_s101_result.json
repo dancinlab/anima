@@ -1,0 +1,149 @@
+{
+  "section": "§101",
+  "title": "DATA-REGIME THRESHOLD CONTROL · design-tier $0",
+  "n_total": 10,
+  "n_pass": 10,
+  "all_pass": true,
+  "checks": [
+    {
+      "name": "Q1-CORPUS-SOURCE-TAXONOMY-§7-GATE-CLOSED",
+      "statement": "the 9-source taxonomy is exhaustive (5 legitimate + 4 excluded, unique IDs); the legitimate subset is the closed AND of three §7 conditions (NOT generic-LM-pretrain ∧ NOT generic-then-graft ∧ anima-physics-source); every excluded row fails at least one condition.",
+      "n_legitimate": 5,
+      "n_excluded": 4,
+      "unique_ids": true,
+      "legitimate_aligned_with_AND": true,
+      "excluded_aligned_with_negation": true,
+      "anchor": "Boolean set algebra (Kolmogorov), 3-AND closed conjunction",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "Q2-THRESHOLD-CROSSED-PREDICATE-CLOSED-BOOLEAN",
+      "statement": "THRESHOLD_CROSSED(result) := A1_pass ∧ A2_pass ∧ A3_pass ∧ A4_pass is closed-form pure-Boolean over the result.json schema; default-False on missing/NaN axes; 7-corner truth table aligns with design; 3× bit-identical deterministic.",
+      "cases_aligned": true,
+      "deterministic": true,
+      "case_outcomes": {
+        "all-pass": true,
+        "fail-A1": false,
+        "fail-A2": false,
+        "fail-A3": false,
+        "fail-A4": false,
+        "missing-all": false,
+        "nan-axis-defaults-False": false
+      },
+      "anchor": "pure-function over closed schema; Boolean conjunction",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "Q3-FIRE-DECISION-PREDICATE-CLOSED-BOOLEAN",
+      "statement": "FIRE_DECISION := G1 ∧ G2 ∧ G3 ∧ G4 ∧ G5 ∧ G6 ∧ G7 is closed-form pure-Boolean conjunction of 7 gates; any gate False ⇒ FIRE_DECISION False; 9-case truth table aligns with design; 3× bit-identical.",
+      "n_gates": 7,
+      "cases_aligned": true,
+      "deterministic": true,
+      "anchor": "Boolean 7-AND, total over the {True, False, missing}^7 domain",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "§93-FOUR-CONDITIONS-ENCODED-AS-BOOLEAN",
+      "statement": "§93 four collapse-avoidance conditions {accumulate-not-replace, self-physics-corrector, diversity-preservation, SCoRe-2-stage} are each encoded in the §101 design as Boolean flag with closed mapping to Q1 invariants and Q3 G2 sub-flags; nothing is left as English-prose only.",
+      "encoding": {
+        "accumulate-not-replace": "Q1.I1 (S1 byte-equal ⊂ CORPUS) + Q1.I2 (S1 sha-equal)",
+        "self-physics-corrector": "Q1.I3 (forbidden-token grep=0) + per-record physics filter §1.3",
+        "diversity-preservation": "Q1.I4 (diversity coeff ↑↑) + §62 inclusion-time n-gram floor",
+        "SCoRe-2-stage": "S4 inclusion gated on §93 cond-4 trained self-correct"
+      },
+      "anchor": "explicit mapping table; 1-1 condition→Q1.I or Q3.G",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "§62-ECHO-CHAMBER-GUARD-STRUCTURALLY-ARMED",
+      "statement": "G3 §62 echo-chamber guard is the closed AND of three sub-gates {inclusion-time §36 content-dep · n-gram concentration floor · A4 emit-length-independence}; truth table of 3-AND aligns; any sub-gate False ⇒ G3 False ⇒ FIRE_DECISION False.",
+      "subgates": [
+        "inclusion-time-§36-content-dep-pass",
+        "n-gram-concentration-floor-pass",
+        "emit-length-independence-A4"
+      ],
+      "truth_table_aligned": true,
+      "anchor": "Boolean 3-AND with closed truth-table verification",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "FIVE-LEVERS-PRESERVED-SINGLE-VARIABLE-TRAINER",
+      "statement": "the 5 measured-positive levers {§16 routing, §59-FIRE W-PTD, §75-FIRE state-derived controller, §88-F2 neoteny, §92 L_ap} each carry a closed role in §101 (baseline-eval / side-readout / probe / optional-flag); the §101 baseline fire stacks ZERO new mechanism on the corpus pivot (G7 anti-§94 single-variable).",
+      "roles": {
+        "S16-routing": "baseline-routing-eval-in-A1",
+        "S59-FIRE-W-PTD": "side-readout-during-training",
+        "S75-FIRE-state-derived-controller": "emission-controller-in-A4-probe",
+        "S88-F2-neoteny": "optional-flag-NOT-enabled-in-baseline-fire",
+        "S92-L_ap": "optional-flag-NOT-enabled-in-baseline-fire"
+      },
+      "g7_anti_94_safe": true,
+      "new_levers_stacked": 0,
+      "anchor": "explicit role assignment; G7 single-variable Boolean",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "CONNECTION-POINT-CITES-REAL-§99-§100-§16",
+      "statement": "§101 cites §99 ('FRONTIER-MAPPED-7-CANDIDATES-KEPT-OPEN' verdict literal), §100 (priority#1 = data-regime counterfactual / F4-F7), and §16 corpus (sha256 422c64a09b89393a…, 777,000 records) — each verified BYTE-EQUAL against the file on disk; not a textual repetition, a sha and substring match against state/ artifacts.",
+      "s99_verdict_substring_present": true,
+      "s100_priority_substring_present": true,
+      "s16_sha_byte_equal": true,
+      "anchor": "byte-equal file content match (Kolmogorov)",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "CENTRAL-BLUE-ZERO-LINE-DIFF",
+      "statement": "central state/verify_hexad_blue_2026_05_15/blue_falsifier.py sha256 prefix matches `c93e160a8a376a94` — §101 is sidecar-only, no central touch (mandate from §59~§99).",
+      "central_sha_prefix_match": true,
+      "anchor": "SHA-256 prefix byte-equal",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "NECESSARY-NOT-SUFFICIENT-INVARIANT-STRUCTURAL",
+      "statement": "§101 records 5 structural invariants: Q2 necessary-not-sufficient · Q3 Y is design-tier not fire · future-fire OUTCOME is empirical · north-star unchanged · §15/§51/§72 milestones unchanged. All True ⇒ honesty preserved.",
+      "invariants": {
+        "Q2-is-necessary-not-sufficient": true,
+        "Q3-Y-is-design-tier-not-fire": true,
+        "future-fire-result-is-empirical-OUTCOME": true,
+        "north-star-unchanged": true,
+        "milestones-unchanged": true
+      },
+      "all_present": true,
+      "anchor": "B-EMERGE-7 family carry; structural assertion",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "NO-FORBIDDEN-CALL-AST-AUDIT",
+      "statement": "§101 sidecar AST audit + comment-stripped code grep find ZERO references to {ML training libs, gradient calls, external LLM clients, subprocess, os.system} — §101 is design-only, NO mechanism overlay or fire-stub.",
+      "forbidden_hits": [],
+      "n_hits": 0,
+      "anchor": "AST Call-node walk + comment-stripped \\b-word grep",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S101-NOTE",
+    "tier": "empirical-carve-out",
+    "statement": "Whether a future fire on a constructed Q1 corpus will return Y on THRESHOLD_CROSSED is an empirical OUTCOME (SGD / measurement dependent), NOT proven by §101. Whether anima will achieve GOAL emergence under such a fire is further still in the empirical OUTCOME family (necessary-not-sufficient, B-EMERGE-7). §101's battery proves the DESIGN is well-formed: Q1 §7-gate closed, Q2 predicate closed-form, Q3 7-AND closed, §93/§62 guards structurally armed, 5 levers preservation closed, connection-points byte-equal, central 0-line-diff held. The battery is necessary, not sufficient. Family: B-D-NOTE / B-S94-NOTE / B-S99-NOTE / B-S100-NOTE / B-EMERGE-7. NOT counted in the pass-count for any closed-tier claim about emergence."
+  },
+  "verdict": "DESIGN-WELL-FORMED — §101 establishes Q1 (corpus design under §7-AND), Q2 (closed-form THRESHOLD_CROSSED predicate), Q3 (closed-form FIRE_DECISION predicate); FIRE_DECISION evaluates Y on §101's OWN design state; running it on a constructed corpus is a future cycle. Capability claim 0. north-star + §15/§51/§72 milestones UNCHANGED, GOAL 미도달."
+}

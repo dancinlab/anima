@@ -1,0 +1,44 @@
+# BG-FB emit: RunPod pod create command
+# DO NOT EXECUTE FROM BG — operator must fire after BUDGET-100 + FALSIFIER-LOCK confirm
+# 2026-05-06 cycle, anima CLM-3-original byte-level 55M H100 launch
+
+# === OPTION A: via runpod CLI (if installed) ===
+# Prerequisite: pip install runpod && runpod config (paste API key)
+
+POD_NAME="clm3-original-byte-55m-$(date +%Y%m%d-%H%M%S)"
+
+runpod pod create \
+  --gpu-type 'NVIDIA H100 80GB HBM3' \
+  --gpu-count 1 \
+  --container-disk-gb 100 \
+  --volume-gb 50 \
+  --image 'pytorch/pytorch:2.11.0-cuda12.8-cudnn9-devel' \
+  --name "$POD_NAME" \
+  --cloud-type COMMUNITY \
+  --ports '22/tcp,8888/http'
+
+# Expected hourly: $2.69/hr (H100 SXM 80GB community uninterruptable)
+# TTL plan: 10 hours wall-clock target -> est $26.90 total; hard-cap $100
+
+
+# === OPTION B: via RunPod GraphQL REST API (if no runpod CLI on Mac) ===
+# Operator: export RUNPOD_API_KEY=$(/Users/ghost/core/secret/bin/secret get runpod.api_key)
+# Then run the following (token NOT in this file — env var ref only):
+
+curl -s -X POST \
+  "https://api.runpod.io/graphql?api_key=${RUNPOD_API_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation { podFindAndDeployOnDemand(input: { cloudType: COMMUNITY, gpuCount: 1, gpuTypeId: \"NVIDIA H100 80GB HBM3\", name: \"clm3-original-byte-55m\", imageName: \"pytorch/pytorch:2.11.0-cuda12.8-cudnn9-devel\", containerDiskInGb: 100, volumeInGb: 50, ports: \"22/tcp,8888/http\", env: [{ key: \"HF_TOKEN\", value: \"<paste-from-secret-cli>\" }] }) { id name desiredStatus costPerHr machine { podHostId } } }"
+  }'
+
+# IMPORTANT: HF_TOKEN value must be substituted from `secret get hf.token` at fire-time
+# DO NOT commit the substituted form anywhere
+
+
+# === Post-create steps (after pod ID returned) ===
+# 1. Capture pod ID from response
+# 2. Wait for desiredStatus=RUNNING (poll every 30s)
+# 3. Fetch pod IP via: runpod pod get <pod_id>  OR  GraphQL query { pod(input:{podId:"..."}) { ... runtime { ports { ip publicPort } } } }
+# 4. SSH in and run train heredoc (see emit_train_heredoc.txt)
+# 5. Fire watchdog: bash /Users/ghost/core/anima/state/anima_clm_3_original_h100_launch_2026_05_06/watchdog_h100.bash <pod_name> &

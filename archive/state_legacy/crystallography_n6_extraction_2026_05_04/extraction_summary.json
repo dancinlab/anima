@@ -1,0 +1,97 @@
+{
+  "extraction_date": "2026-05-04",
+  "module": "crystallography_n6",
+  "rank": 1,
+  "score": 9,
+  "audit_doc": "anima/docs/nexus_module_extraction_audit_2026_05_04.md",
+  "source": {
+    "repo": "nexus",
+    "path": "/Users/ghost/core/nexus/modules/crystallography_n6/",
+    "files": [
+      "crystallography_n6.hexa",
+      "README.md"
+    ],
+    "loc": {
+      "hexa": 402,
+      "readme": 61,
+      "total": 463
+    }
+  },
+  "destination": {
+    "repo": "CANON",
+    "path": "/Users/ghost/core/canon/domains/physics/crystallography/",
+    "files": [
+      "crystallography_n6.hexa",
+      "crystallography_n6.README.md"
+    ],
+    "co_located_with": "crystallography.md (research spec, 47KB)",
+    "destination_choice_rationale": "audit suggested domains/structure/crystallography/ but structure/ does not exist; physics/crystallography/ already houses the canonical IUCr research spec — extraction co-locates executable .hexa with its design doc per CANON convention (see chip-isa-n6/{md,hexa})"
+  },
+  "consumers_pre_extraction": {
+    "nexus": {
+      "functional_imports": 0,
+      "doc_only_references": [
+        "design/kick/2026-04-27_commit-readiness-audit_omega_cycle.json",
+        "handoff/phase_a1_nexus_triplet_landing_20260502.md",
+        "docs/nexus_self_mk2_tuning_landed_2026_05_02.ai.md"
+      ]
+    },
+    "anima": {
+      "functional_imports": 0,
+      "doc_only_references": [
+        "docs/nexus_module_extraction_audit_2026_05_04.md",
+        "state/nexus_qmirror_legacy_removed_2026_05_03/audit.json",
+        "state/nexus_module_extraction_audit_2026_05_04/*.json"
+      ]
+    },
+    "hive": {
+      "functional_imports": 0
+    },
+    "n6_architecture": {
+      "functional_imports": 0
+    },
+    "total_functional_consumers": 0
+  },
+  "smoke_test": {
+    "ran_from": "/Users/ghost/core/canon",
+    "command": "hexa run domains/physics/crystallography/crystallography_n6.hexa --self-test",
+    "result": "PASS",
+    "cases": {
+      "case1_full_enumerate": "PASS (systems=7 bravais=14 space=230 pt=32)",
+      "case2_atlas_facts_len": "PASS (len=6)",
+      "case3_unknown_system": "PASS (FAIL:unknown-system as expected)",
+      "case4_closed_form_math": "PASS (sigma=12 tau=4 phi=2 sopfr=5 J_2=24 identities OK)",
+      "case5_cubic_only": "PASS (bravais=3 space=36 pt=5)"
+    },
+    "sentinel": "__CRYSTALLOGRAPHY_N6__ PASS"
+  },
+  "git": {
+    "n6_architecture": {
+      "branch": "main",
+      "commit": "38d66066",
+      "pushed": true,
+      "remote": "https://github.com/dancinlab/canon (PUBLIC)"
+    },
+    "nexus": {
+      "branch": "feat/qmirror-cli-programmatic-consumption",
+      "delete_staged": true,
+      "delete_committed": false,
+      "files_deleted": [
+        "modules/crystallography_n6/README.md",
+        "modules/crystallography_n6/crystallography_n6.hexa"
+      ],
+      "user_action_required": "review staged delete and commit when ready"
+    }
+  },
+  "raw_constraints": {
+    "raw9_15_dollar0": "respected — extraction was metadata + file move only, $0 cost",
+    "raw10_4_caveats": [
+      "scoring is subjective; activity-weighted ranking would re-shuffle (qrng would jump to top)",
+      "ranking depends on nexus monolith-vs-orchestrator direction; if monolith-first, all extractions downgrade",
+      "each new repo addition increases dual-mirror burden (CHANGELOG/release notes/CI maintenance/version-skew)",
+      "audit may miss hidden coupling channels (sentinel-token namespaces, env-var conventions, atlas-absorb chains, hexa-resolver bypass markers, host-pin marker deps); only @origin tags + path string-match + sim_bridge cross-ref were checked"
+    ],
+    "n6_architecture_already_public": true,
+    "no_auto_commit_nexus_delete": "respected — delete staged but not committed"
+  }
+}

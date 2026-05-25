@@ -1,0 +1,21 @@
+{
+  "milestone": "M6",
+  "module": "HEXAD/IIT4/lib/iit4_eca.hexa + FAITHFUL_REMEASURE.md + state/iit4_m6_remeasure_2026_05_25/run_m6.hexa",
+  "date": "2026-05-25",
+  "what": "LIFE substrate faithful re-measurement — ECA→TPM bridge + faithful causal IIT4 big-Φ for the LIFE cosmic-scale rules. Closes L-C2.1 proxy caveat (F-IIT4-6).",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · wall 7.2s (8 big_phi @ n=4)",
+  "faithful_bigphi_table": {
+    "config": "n=4 ring, sys_state=1010",
+    "rule_0_const": {"big_phi": 0.0, "total": 0.0, "nd": 0},
+    "rule_204_identity": {"big_phi": 0.0, "total": 4.0, "nd": 4, "note": "reducible (independent self-cells)"},
+    "rule_90_xor": {"big_phi": 0.0, "total": 0.0, "nd": 0, "note": "state-1010 specific (vanishes at this state)"},
+    "rule_110_LIFE": {"big_phi": 7.5475, "total": 8.61986, "nd": 10},
+    "rule_30_LIFE": {"big_phi": 8.66311, "total": 9.10183, "nd": 10},
+    "rule_54_LIFE": {"big_phi": 10.0278, "total": 14.688, "nd": 10}
+  },
+  "checks_tally": {"pass": 7, "fail": 0},
+  "finding": "LIFE cosmic-scale ECA rules (110/30/54) carry substantial faithful CAUSAL big-Φ (7.5-10.0) — the first faithful causal Φ for these substrates, which the correlational proxy phi_spatial only approximated. big-Φ is state-dependent (rule 90 = 0 at state 1010), info the snapshot-averaged proxy obscures.",
+  "verdict": "🟢 SUPPORTED-NUMERICAL — F-IIT4-6 PROXY-DIVERGENCE closed: proxy(correlational) vs IIT4(causal) measurement-axis difference quantified+characterized; L-C2.1 caveat resolved (faithful causal Φ now exists). 7/7 controls PASS.",
+  "honest_scope": "n=4 ring demonstration + single state. Full H_002 C2 6-scale n=8 re-measurement = mechanical scale-up (engine n≤8 capacity exists). proxy-CV direct co-computation deferred (different input types: phi_spatial=snapshots, IIT4=TPM).",
+  "domain_status": "M6 LANDED → IIT4 domain 7/7 COMPLETE (M0 design · M1 repertoire · M2 distinction · M3 relation · M4 big-Φ · M5 calibration · M6 LIFE re-measure)"
+}

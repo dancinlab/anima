@@ -1,0 +1,62 @@
+{
+  "audit_timestamp_utc": "2026-05-04T05:55:00Z",
+  "auditor_constraints": ["raw#9 STRICT", "raw#15 no token leak", "raw#10 3 caveats", "$0 verify only", "DO NOT preempt or kill"],
+  "summary": {
+    "total_pods_audited": 4,
+    "active_healthy": 3,
+    "suspect_idle": 0,
+    "confirmed_idle_critical": 1
+  },
+  "burn_rate_assumption_h100_per_hour_usd": 2.99,
+  "burn_rate_total_per_hour_usd": 11.96,
+  "burn_rate_idle_per_hour_usd": 2.99,
+  "verdicts": [
+    {
+      "pod_id": "pvkyhb0lb87ydu",
+      "label": "Path A r=16 s42",
+      "verdict": "CONTINUE",
+      "evidence": "98% util, 493.94W, step 5613/10000 (56.13%), log mtime current (05:56), loss decreasing (~0.55-0.75), training proc CPU 100% with 237min cputime",
+      "rationale": "fully active, on track, no anomalies",
+      "estimated_remaining_h": 3.16,
+      "action": "none"
+    },
+    {
+      "pod_id": "0jetjpvlm51zoy",
+      "label": "Path A r=16 s43",
+      "verdict": "CONTINUE",
+      "evidence": "97% util, 383.95W, step 1771/10000 (17.71%), log mtime current (05:56), training proc CPU 102% started 04:43 UTC",
+      "rationale": "fully active, just started ~1.2h ago, healthy progression",
+      "estimated_remaining_h": 6.0,
+      "action": "none"
+    },
+    {
+      "pod_id": "nzw0btc8br78yy",
+      "label": "Path A r=16 s44",
+      "verdict": "CONTINUE",
+      "evidence": "70% util, 460.98W, step 1865/10000 (18.65%), log mtime current (05:56), training proc CPU 101% started 04:43 UTC",
+      "rationale": "fully active, just started ~1.2h ago, slightly lower util (70%) likely transient I/O — caveat raw#10-1 (could be near save-step boundary)",
+      "estimated_remaining_h": 5.4,
+      "action": "watch_next_cycle (re-check util in 30min if drops sustained <70%)"
+    },
+    {
+      "pod_id": "8zbf9bfj6c63wg",
+      "label": "Base validation",
+      "verdict": "KILL_CANDIDATE",
+      "evidence": "0% util across 3 samples (10s span), 0 MiB GPU mem, 71.82-71.83W idle baseline (vs ~400W under load), 0 compute apps, 0 python procs, 0 tmux/screen sessions, no active logins, model files staged at 04:46 UTC but no validation job ever launched",
+      "rationale": "CONFIRMED IDLE per all 3 detection criteria — matches D 25K incident pattern exactly. Model bundle staged ~70min ago but no python proc consuming GPU. Either (a) launch script never invoked, (b) launch script crashed silently before nvidia-smi capture, (c) human forgot to start validation after stage. Burning ~$2.99/h since 04:46 = ~$3.50 sunk so far",
+      "sunk_cost_usd_estimate": 3.50,
+      "projected_burn_if_undetected_24h_usd": 71.76,
+      "action": "URGENT — ESCALATE TO USER. Either (1) launch validation NOW (model is staged), or (2) KILL pod. DO NOT auto-kill — caveat: this is base val pod intermittent by design, but 70min idle with 0 procs ≠ intermittent. Recommend: notify user, await go-ahead before kill"
+    }
+  ],
+  "incident_pattern_match": {
+    "reference": "D 25K incident — 7.27h $21.74 sunk before catch",
+    "current_state": "Pod 4 detected at ~70min idle = $3.50 sunk (catch within 5% of D 25K window)",
+    "early_catch_savings_vs_d25k": 18.24
+  },
+  "recommendation_summary": {
+    "CONTINUE": ["pvkyhb0lb87ydu (s42)", "0jetjpvlm51zoy (s43)", "nzw0btc8br78yy (s44)"],
+    "WATCH": [],
+    "KILL_CANDIDATE_PENDING_USER_DECISION": ["8zbf9bfj6c63wg (base val)"]
+  }
+}

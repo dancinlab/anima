@@ -1,0 +1,47 @@
+#!/bin/bash
+# Extract per-example correctness arrays for Llama-3.2-3B-Instruct base on all 3 A' tasks
+# (limit=500, 4-bit, matches base validation cycle precision per A' §6.5)
+# Output feeds paired bootstrap + McNemar in the verdict hexa.
+set -e
+DIR=/home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03
+PY=/home/aiden/venv_orchestrator/bin/python
+cd $DIR
+
+for TASK in hellaswag mmlu triviaqa; do
+    echo "=== base $TASK ==="
+    $PY eval_llama_lora_ckpt.py \
+        --base-only \
+        --task $TASK \
+        --limit 500 \
+        --output $DIR/base_per_example_${TASK}.json \
+        2>&1 | tail -20
+done
+
+echo "=== merge into base_per_example_correctness.json ==="
+$PY -c "
+import json, glob, os
+out = {
+    'schema': 'anima/p9_a_prime_main_eval_pipeline/base_per_example/1',
+    'model': 'meta-llama/Llama-3.2-3B-Instruct',
+    'precision': '4bit_nf4',
+    'limit': 500,
+    'seed': 42,
+    'tasks': {},
+}
+for task in ['hellaswag','mmlu','triviaqa']:
+    p = f'$DIR/base_per_example_{task}.json'
+    if os.path.exists(p):
+        d = json.load(open(p))
+        out['tasks'][task] = {
+            'aggregate': d.get('aggregate'),
+            'n_samples': d.get('n_samples'),
+            'num_fewshot': d.get('num_fewshot'),
+            'max_length': d.get('max_length'),
+            'per_example': d.get('per_example_correctness'),
+            'wall_s': d.get('total_wall_s'),
+        }
+with open('$DIR/base_per_example_correctness.json','w') as f:
+    json.dump(out, f, indent=2, default=str)
+print('merged ->', '$DIR/base_per_example_correctness.json')
+"
+echo "=== DONE ==="

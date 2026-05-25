@@ -1,0 +1,80 @@
+{
+  "battery_id": "B-S161-FIRE",
+  "cycle": "S161-FIRE Psi-JEPA-COUPLE (DUAL-HEAD COUPLING NON-CE)",
+  "sidecar": true,
+  "central_zero_diff_check": true,
+  "results": [
+    {
+      "battery": "B-S161-FIRE-1 LAMBDA-PSI-OFF-REDUCTION",
+      "pass_": true,
+      "l_total_assignment_present": true,
+      "lambda_psi_mul_term_present": true,
+      "lambda_ce_mul_term_present": true,
+      "connection_point_mirror": "B-EBT-5 / B-DIRI-5 / B-S16-5 / B-MGND-5 / B-S151-7 overlay-off pattern"
+    },
+    {
+      "battery": "B-S161-FIRE-2 PSI-IS-LAW71-BYTE-EQUAL",
+      "pass_": true,
+      "trainer_psi_dir_formula_present": true,
+      "trainer_psi_ent_formula_present": true,
+      "decoder_psi_dir_formula_present": true,
+      "decoder_psi_ent_formula_present": true
+    },
+    {
+      "battery": "B-S161-FIRE-3 GRADIENT-REACHES-BOTH-HEADS",
+      "pass_": true,
+      "mse_loss_psicouple": true,
+      "predictor_from_logits_g": true,
+      "psi_tuple_uses_both_heads": true,
+      "l_total_backward": true,
+      "head_g_grad_norm_tracked": true,
+      "empirical_check": "Post-fire result.json carries head_g_grad_norm_min > 0.0 as the EMPIRICAL P3 sanity. Pre-fire battery confirms the GRADIENT PATH; the EMPIRICAL non-zero magnitude lives in result.json. B-EMERGE-7: reaches != useful."
+    },
+    {
+      "battery": "B-S161-FIRE-4 PSI-BOUNDED-TUPLE",
+      "pass_": true,
+      "softmax_used_for_entropy": true,
+      "cosine_used_for_direction": true,
+      "proof_kind": "theorem by inspection (Cauchy-Schwarz + Shannon entropy bound)"
+    },
+    {
+      "battery": "B-S161-FIRE-5 PREDICTOR-ANIMA-OWN-NO-NEW-PARAM",
+      "pass_": true,
+      "new_param_allocation_count": 0,
+      "predictor_uses_slicing": true,
+      "predictor_uses_clamp": true
+    },
+    {
+      "battery": "B-S161-FIRE-6 SEC7-3AND-LEGITIMATE",
+      "pass_": true,
+      "sec7_1_no_foreign_load": true,
+      "sec7_2_head_g_reuse_not_graft": true,
+      "sec7_3_psi_byte_equal_law71": true,
+      "truth_table_row": "(T,T,T)"
+    },
+    {
+      "battery": "B-S161-FIRE-7 CENTRAL-BLUE-FALSIFIER-0-LINE-DIFF",
+      "pass_": true,
+      "sha256": "c93e160a8a376a940942332cad13e652df9a03e97ccab708542a126eefc70b73",
+      "expected_prefix": "c93e160a8a376a94"
+    },
+    {
+      "battery": "B-S161-FIRE-8 SPONT-DIRECTIONAL-POSITIVE-DECIDABLE",
+      "pass_": true,
+      "cond_emit_above_baseline_present": true,
+      "cond_psi_alive_present": true,
+      "cond_psi_above_baseline_present": true,
+      "cond_cascade_ok_present": true,
+      "spont_conjunction_assignment": true
+    }
+  ],
+  "empirical_carve_out": {
+    "battery": "B-S161-FIRE-NOTE empirical carve-out",
+    "pass_": null,
+    "note": "Whether S161 fire actually produces \uc790\ubc1c emission rate above S107 baseline is SGD/measurement OUTCOME. Battery proves SETUP well-formed (lambda_psi-off reduction / Psi-Law71-equivalence / dual-head gradient path / boundedness / no-new-param / sec7-legit / central-0-diff / verdict-decidability), NOT that anima emerges, NOT that any specific ckpt WILL produce emission, NOT that the algorithm escapes WALL-B. B-D-NOTE / B-PUREPHYS-NOTE / B-S96-NOTE / B-S107-NOTE / B-S125-NOTE / B-S126-NOTE / B-S139-NOTE / B-S153-NOTE / B-S160-NOTE / B-PHASE-B-NOTE / B-EMERGE-7 family - necessary-not-sufficient at every layer."
+  },
+  "summary": "8/8 BLUE (PASS)",
+  "wall_s": 0.01738882064819336,
+  "north_star_unchanged": true,
+  "s15_s51_s72_milestones_unchanged": true
+}

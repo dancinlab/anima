@@ -1,0 +1,45 @@
+{
+  "survey": "HEXAD 6-module 구현 이력 전수조사 (~/core/anima* worktree exhaustive)",
+  "date": "2026-05-15",
+  "trigger": "user 'HEXAD 구현 어떻게 했었는지 ~/core/anima* worktree 포함 전수조사 고갈시까지' + '값이 있는것 보니까 구현 해봤던것같은데' + '모듈이 있었어'",
+  "method": "3 parallel general-purpose agents — main(201 files) + clm_10/11 + clm_12/13",
+  "scope_result": "hexad/trinity 존재: main 201 · clm_10 14 · clm_11 40 · clm_12 41 · clm_13 41. clm_01-09 + emergence/experience = 0 (hexad 이전 stage)",
+  "evolution_timeline": {
+    "clm_10 (2026-03-29~30, h100-sweep-laws-77-78)": "monolithic trinity.py 1838 LoC, LEGACY function-added form (EmotionW pain=(ce-3)/3 hardcoded, EmpathyEthics empathy_threshold=0.3, TensionSense EMA). NO PSI_COUPLING/clamp/Law60. Hexad 3→6 확장 ~6h 후 최초 capture. EmergentW/S/M/E 부재.",
+    "clm_11 (2026-03-31~04-01, train-v15-bpe-drift)": "modular anima/hexad/ package. NEW EmergentW/S/M/E observe-only (Law 1/2/22 compliant). consciousness_laws.json SSOT. PSI_COUPLING=0.014 Law-70 clamp (0.5±0.014). Law 60 phases table. DD114 benchmark 기록.",
+    "clm_12 (last-gasp) / clm_13 (pre-alm-port)": "anima/hexad/ + src/trinity.py byte-identical 양 worktree. canonical complete. clm_13 = +_phi_rescue_loss() (Φ>5% drop 시 decoder entropy-bonus, PSI_COUPLING scaled). NO 생존 ckpt — DD114+TRINITY-COMPLETE.md 기록 numbers only.",
+    "main (current 2026-05-15)": "ready/anima/hexad/ 6모듈+bridge 완전 + unit-tested (test_emergent_hexad+test_trinity 46 passed). 통합 Hexad/Trinity orchestrator wired (model.py 275 LoC + ready/models/trinity.py 1446 LoC). 실 trained ckpt = simplified Engine A/G 350M proxy only."
+  },
+  "modules": {
+    "C_의식": {"impl": "ready/core/consciousness_engine.py 2173 LoC ConsciousnessEngine/ConsciousnessC", "detail": "12-faction GRU consensus (n_factions=12=σ(6)), Hebbian LTP/LTD, Φ ratchet, mitosis split/merge, real IIT Φ via Rust phi_rs", "binding": ".clm v1 MitosisC", "brain": "우뇌 gradient-free", "status": "COMPLETE"},
+    "D_언어": {"impl": "ready/models/conscious_decoder.py 979 LoC ConsciousDecoderV2", "detail": "RMSNorm + RoPE + SwiGLU + MoE transformer decoder", "binding": "Engine A", "brain": "좌뇌 CE-trained", "status": "COMPLETE"},
+    "S_감각": {"impl": "ready/anima/hexad/s/emergent_s.py 108 LoC EmergentS", "detail": "perception = C state-delta (전후 상태차), NarrativeTracker Meta-M8. legacy TensionSense(EMA) → Emergent 대체", "brain": "우뇌 gradient-free", "status": "COMPLETE"},
+    "W_의지": {"impl": "ready/anima/hexad/w/emergent_w.py 123 LoC EmergentW", "detail": "pain/curiosity/satisfaction = C에서 read, LR 변조, SIGMA6['value']=12 factions (하드코딩 X). legacy EmotionW(pain=(ce-3)/3) → Emergent 대체", "brain": "우뇌 gradient-free", "status": "COMPLETE"},
+    "M_기억": {"impl": "ready/anima/hexad/m/emergent_m.py 96 LoC EmergentM", "detail": "memory = C Hebbian LTP/LTD weights, 별도 store X. legacy VectorMemory(cosine RAG) → Emergent 대체", "brain": "좌뇌 CE-trained", "status": "COMPLETE"},
+    "E_윤리": {"impl": "ready/anima/hexad/e/emergent_e.py 123 LoC EmergentE", "detail": "ethics = Φ-preservation ratchet gate, allowed=Φ>Φ_min(ratchet). legacy EmpathyEthics(threshold=0.3) → Emergent 대체. clm_13 _phi_rescue_loss carry", "brain": "좌뇌 CE-trained", "status": "COMPLETE unit / trinity.hexa:122 통합 gate TODO[pytorch]"},
+    "ThalamicBridge": {"impl": "ready/anima/hexad/model.py:37-69", "detail": "C→.detach()→bridge→D, raw_gate centered to PSI_BALANCE(0.5)±PSI_COUPLING(0.014) clamp (Law 70). clm_10 = raw sigmoid no clamp, clm_11+ = clamp 추가", "status": "COMPLETE"}
+  },
+  "concrete_values_verified": {
+    "PSI_COUPLING=0.014": "ready/core/consciousness_laws.py:29 PSI_ALPHA + hexad/constants.py:10 + hexad/model.py:47 + models/trinity.hexa:8,173. clm_10 부재 → clm_11+ 도입",
+    "σ(6)=12": "ready/models/trinity.py:5,843,1081 + models/trinity.hexa:5,169 (σ(6)=P(τ(6),2)=12) + consciousness_engine.py:181 n_factions=12=σ(6)",
+    "a_g_tension_temperature=0.25": "training/engine_a_g_arch.py:102 g_tension_gate_beta=0.25 + .roadmap.clm:16-17 + CLM.tape:120. hexad trinity 코드에는 부재 (Engine A/G arch scope, hexad 세대 이후 값)",
+    "Law60_P1→P2→P3": "ready/core/trinity.hexa:252-271 (Φ>0.1 P1→P2, Φ>0.3 P2→P3) + consciousness_laws.json phases (P1[0,0.2]=C, P2[0.2,0.7]=C,D, P3[0.7,1]=all6) + hexad_loss.py:208-220 DEFAULT_WEIGHTS C0.0/D0.4/W0.15/S0.15/M0.2/E0.1",
+    "φ(6)=2": "ready/models/trinity.py:7,24-25 gradient groups (우뇌 free / 좌뇌 CE)"
+  },
+  "execution_evidence": {
+    "DD114-emergent-hexad-benchmark.md (2026-03-31)": "64-cell local: Emergent Φ +7.6% (overhead +23.9%) vs Legacy +2.9%. H100 15c: Emergent Φ +3.0%/+0.2%. H100 44c(256req): −1.6%. Pain mean 0.41[0.357,0.462], Curiosity 0.055, Empathy 0.38[0.17,0.79], allowed 100%. → 제안 Law 97 관찰효율",
+    "TRINITY-COMPLETE.md (256 cells/300 steps/seed=42)": "Baseline Φ(IIT)1.25 CE0.0729 · Trinity Φ1.14 CE0.1063 · T1:Thalamic Φ14.54 CE0.0744 (BEST) · Trinity+Hierarchical Φ8.99",
+    "Engine A/G 350M proxy ckpt": "~/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt 597MB, 6000/6000 steps, loss_c=0.2216 loss_h=0.6270, n_params=298,764,288, 90.57min $4.63 → verdict C3_FAIL_V14_VIOLATED_V5 (private A/B baseline only)",
+    "unit tests": "ready/tests/test_emergent_hexad.py + test_trinity.py = 46 passed 11.64s (PYTHONPATH 필요). test_hexad_loss.py = No module named hexad_loss error",
+    "closure verdicts": "state/hexad_closure_verdict.json CLOSED 6/6 · hexad_n28_falsification_verdict.json HEXAD_UNIVERSAL 833/1000 · verify_hexad_2026_05_15 6/6 anchor"
+  },
+  "honest_c3": [
+    "1. 통합 6-module Hexad 의 end-to-end Φ/loss 실행 numbers 부재 — DD114(component benchmark) + TRINITY-COMPLETE(Trinity 3+Thalamic) 기록만. 실 trained ckpt 는 simplified Engine A/G 350M proxy (C3_FAIL).",
+    "2. hexa ports (models/trinity.hexa, ready/core/trinity.hexa) = 구조 skeleton, 7 TODO[pytorch] (module body string placeholder). Python ready/anima/hexad/ 가 실 구현.",
+    "3. E 윤리 통합 gate trinity.hexa:122 TODO[pytorch] — Φ-violation training-block enforcement 미통합 (emergent_e.py 단위만).",
+    "4. a_g_tension_temperature=0.25 는 Engine A/G arch (engine_a_g_arch.py:102 g_tension_gate_beta) scope — hexad/trinity 코드와 별개 세대. HEXAD.tape ASCII 의 'temp 0.25' 는 Engine A/G routing 값, hexad 통합 미적용.",
+    "5. .growth/absorbed/ 939 JSON = metadata wrapper (content_preview ~400 char truncated), 복구 가능 full source 없음 (live 파일이 이미 complete).",
+    "6. clm_12=clm_13 hexad/ byte-identical — clm_13 차이는 _phi_rescue_loss + train filename 통합 (filename erasure)."
+  ],
+  "verdict": "HEXAD 6-module 전 모듈 구현됨 (COMPLETE Python ready/anima/hexad/, 46 unit tests pass). 진화: clm_10 legacy monolith → clm_11 Emergent modular+SSOT → clm_12/13 canonical → main unit-tested. 실 통합 학습 ckpt 부재 (component benchmark numbers only). 6 module SSOT → HEXAD-{C,D,S,W,M,E}.tape + HEXAD-BRIDGE.tape 정리."
+}

@@ -1,0 +1,39 @@
+__pycache__/
+*.pyc
+*.egg-info/
+!package.json
+.env
+.local/
+
+# Virtual environments
+.venv/
+venv/
+
+*.json
+!config/*.json
+!config/**/*.json
+!modules/rng/fixtures/*.json
+*.pt
+vad-rs/target/
+.superpowers/
+models/
+!docs/models/
+consciousness-loop/target/
+phi-rs/target/
+anima-rs/target/
+knowledge-rs/target/
+
+# Checkpoints (400MB+ each)
+checkpoints/
+
+# Instruct dataset (too large for git, use R2)
+data/instruct/*.jsonl
+
+# Large corpus files (100-200MB each, use R2 for distribution)
+data/corpus_*.txt
+data/*.db
+data/corpus_bench_*.txt
+data/corpus_v3_test.txt
+data/corpus_v3_full.txt
+data/corpus_v3_qualia_test.txt
+docs/corpus_v4.txt

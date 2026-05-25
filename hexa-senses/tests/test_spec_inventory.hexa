@@ -1,0 +1,107 @@
+#!hexa strict
+// tests/test_spec_inventory.hexa — 5-verb spec inventory selftest.
+//
+// Hexa-native selftest port of tests/test_spec_inventory.py (2026-05-23
+// py→hexa sweep). Asserts on-disk presence + provenance markers of the
+// 5 sensory verb spec docs.
+//
+// Run:
+//   hexa run tests/test_spec_inventory.hexa
+// Exit 0 iff all assertions hold; non-zero on FAIL.
+
+let HOME                  = env("HOME")
+let HEXA_SENSES_ROOT_ENV  = env("HEXA_SENSES_ROOT")
+
+let VERB_FILES = [
+    ["dream",  "dream/hexa-dream.md"],
+    ["ear",    "ear/hexa-ear.md"],
+    ["empath", "empath/hexa-empath.md"],
+    ["olfact", "olfact/hexa-olfact.md"],
+    ["voice",  "voice/hexa-voice.md"],
+]
+
+fn shq(s: str) -> str {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn _resolve_root() -> str {
+    if HEXA_SENSES_ROOT_ENV.len() > 0 { return HEXA_SENSES_ROOT_ENV }
+    let oldpwd = env("OLDPWD")
+    if oldpwd.len() > 0 {
+        let t = exec("[ -f " + shq(oldpwd) + "/hexa.toml ] && echo y || echo n").trim()
+        if t == "y" { return oldpwd }
+    }
+    let pwd = env("PWD")
+    if pwd.len() > 0 {
+        let t = exec("[ -f " + shq(pwd) + "/hexa.toml ] && echo y || echo n").trim()
+        if t == "y" { return pwd }
+    }
+    return HOME + "/core/hexa-senses"
+}
+
+fn _file_exists(p: str) -> bool {
+    let r = exec("[ -f " + shq(p) + " ] && echo yes || echo no").trim()
+    return r == "yes"
+}
+
+fn _head_bytes(p: str, n: int) -> str {
+    return exec("head -c " + str(n) + " " + shq(p) + " 2>/dev/null")
+}
+
+let mut PASSED = 0
+let mut FAILED = 0
+
+fn check(label: str, cond: bool) {
+    if cond {
+        println("  [PASS] " + label)
+        PASSED = PASSED + 1
+    } else {
+        println("  [FAIL] " + label)
+        FAILED = FAILED + 1
+    }
+}
+
+fn main() {
+    let root = _resolve_root()
+    println("tests/test_spec_inventory — 5-verb spec inventory selftest")
+    println("  root: " + root)
+    println("")
+
+    // test_each_verb_spec_present_with_canonical (parametrized over 5 verbs)
+    for row in VERB_FILES {
+        let verb = row[0]
+        let rel  = row[1]
+        let abs_p = root + "/" + rel
+        let present = _file_exists(abs_p)
+        check("present                " + rel, present)
+        if present {
+            let head = _head_bytes(abs_p, 1024)
+            check("has @canonical         " + rel, head.contains("@canonical"))
+            check("has canon@             " + rel, head.contains("canon@"))
+        }
+    }
+
+    // test_total_count_is_5
+    check("total verb count = 5", VERB_FILES.len() == 5)
+
+    // test_voice_renamed_marker
+    let voice_p = root + "/voice/hexa-voice.md"
+    if _file_exists(voice_p) {
+        let v2k = _head_bytes(voice_p, 2048)
+        check("voice has @renamed", v2k.contains("@renamed"))
+        check("voice has FORBIDDEN", v2k.contains("FORBIDDEN"))
+        // test_voice_canonical_points_to_hexa_speak
+        let v512 = _head_bytes(voice_p, 512)
+        check("voice canonical -> hexa-speak", v512.contains("hexa-speak"))
+    } else {
+        check("voice/hexa-voice.md present (for renamed/canonical checks)", false)
+    }
+
+    println("")
+    println("  " + str(PASSED) + " passed, " + str(FAILED) + " failed")
+    if FAILED > 0 {
+        println("test_spec_inventory: FAIL")
+        exit(1)
+    }
+    println("test_spec_inventory: PASS")
+}

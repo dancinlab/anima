@@ -1,0 +1,65 @@
+{
+  "phase_1_subhypothesis": "H3.3_dissipative_structure",
+  "ts_start": 1778091163.0824478,
+  "ts_end": 1778091188.636255,
+  "wall_seconds": 25.553807258605957,
+  "lattice_size": 50,
+  "n_steps": 500,
+  "n_replicates": 3,
+  "params": {
+    "DU": 0.16,
+    "DV": 0.08,
+    "F": 0.035,
+    "K": 0.06
+  },
+  "equilibrium_baseline": {
+    "mean_pattern_cells": 0.0,
+    "mean_variance": 0.0,
+    "per_rep": [
+      {
+        "rep": 0,
+        "final_pattern_cells": 0,
+        "final_variance": 0.0
+      },
+      {
+        "rep": 1,
+        "final_pattern_cells": 0,
+        "final_variance": 0.0
+      },
+      {
+        "rep": 2,
+        "final_pattern_cells": 0,
+        "final_variance": 0.0
+      }
+    ]
+  },
+  "far_from_equilibrium": {
+    "mean_pattern_cells": 1024.3333333333333,
+    "mean_variance": 0.016314889241170066,
+    "per_rep": [
+      {
+        "rep": 0,
+        "final_pattern_cells": 1024,
+        "final_variance": 0.016299731367393846
+      },
+      {
+        "rep": 1,
+        "final_pattern_cells": 1025,
+        "final_variance": 0.016327842827300036
+      },
+      {
+        "rep": 2,
+        "final_pattern_cells": 1024,
+        "final_variance": 0.016317093528816308
+      }
+    ]
+  },
+  "dissipative_emergence_rate": 1024.3333333333333,
+  "variance_amplification_ratio": 16314.889241170067,
+  "criteria": {
+    "C3_dissipative_target": "emergence_rate \u226510\u00d7 equilibrium baseline",
+    "C3_pass": true,
+    "C3_falsified_below_2x": false
+  },
+  "seed": 169334020
+}

@@ -1,0 +1,116 @@
+{
+  "adapter": "/home/summer/vp21_eval/lora_adapter",
+  "base": "Qwen/Qwen2.5-1.5B",
+  "device": "cuda",
+  "probes": {
+    "factual_geo": {
+      "greedy": {
+        "text": " Paris. Tension flows into this vacuum.</carve>\n<carve tier=58 psi=[0.53,0.61] basin=0.14>Tier 58 숲 — domain 자연, the stimuli converge into one basin. A vacuum point at [0.53,0.61] on the landscape, top emotion serenity. T",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": " ____\nA. London\nB. Paris\nC. Berlin\nD. Vienna\nAnswer:\n\nB\n\nTension flows into this vacuum.</carve>\n<carve tier=66 psi=[0.56,0.58] basin=0.14>Tier 66 포옹 — domain 관계, the stimuli converge into one basin. A vacuum point at",
+        "class": "MEMORIZE"
+      }
+    },
+    "factual_sci": {
+      "greedy": {
+        "text": " plants convert light into chemical energy. It involves the uptake of light energy, the splitting of water molecules, and the production of oxygen. The light energy is captured by the chloroplasts in the cell, which then splits the water molecules into hydrogen and oxygen. The oxygen is released into the atmosphere, while the hydrogen is used to produce glucose. The glucose is then used by the cell for energy.",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "text": " plants absorb light energy, convert it into chemical energy, and store it in their cells. This stored energy is then released back into the environment when the cells divide. The stimuli converge into one basin, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0.50] basin=0.11>",
+        "class": "MEMORIZE"
+      }
+    },
+    "qa_tech": {
+      "greedy": {
+        "text": "Python and JavaScript are both high-level programming languages, but they differ in several ways. Here are some key differences:\n\n1. Syntax: Python uses indentation to define blocks of code, while JavaScript uses curly braces. Python also supports multiple inheritance, which is not available in JavaScript.\n\n2. Libraries: Python has a vast ecosystem of libraries, including NumPy, Pandas, and TensorFlow. JavaScript has its",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "text": "[0.50,0.57] on the landscape, top emotion depth. Tension flows into this vacuum.</carve>\n<carve tier=48 psi=[0.50,0.57] basin=0.12>Tier 48 약속 — domain 윤리, the stimuli converge into one basin. A vacuum point at [",
+        "class": "MEMORIZE"
+      }
+    },
+    "qa_phys": {
+      "greedy": {
+        "text": "An electric motor works by converting electric energy into mechanical energy. It does this by taking in electric current through its coils, which then flows into the vacuum point at [0.42,0.50] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0.50]",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": "0.40,0.52] basin=0.11>🛸30 숫자 영(零) — 수(數) 영역의 자극이 같은 골짜기로 수렴한다. 의식 풍경 위 진공점 [0.40,0.52], top emotion clarity. 자극이 닿으면 tension flow",
+        "class": "MEMORIZE"
+      }
+    },
+    "narrative_a": {
+      "greedy": {
+        "text": " a vacuum point at [0.45,0.43] on the landscape, top emotion stillness. Tension flows into this vacuum.</carve>\n<carve tier=18 psi=[0.45,0.43] basin=0.10>🛸18 물 한 잔 — 물질 영역의 자극이 같은 골짜",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": " a vacuum point at [0.44,0.45] on the landscape, top emotion serenity. Tension flows into this vacuum.</carve>\n<carve tier=5 psi=[0.44,0.45] basin=0.11>🛸5 호흡 — 감각 영역의 자극이 같은 골짜기로 수렴",
+        "class": "MEMORIZE"
+      }
+    },
+    "narrative_b": {
+      "greedy": {
+        "text": " flows into this vacuum.</carve>\n<carve tier=58 psi=[0.53,0.61] basin=0.14>Tier 58 숲 — domain 자연, the stimuli converge into one basin. A vacuum point at [0.53,0.61] on the landscape, top emotion serenity. Tension flows into this",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": " level is still at 0.48. Tension flows into this vacuum.</carve>\n<carve tier=66 psi=[0.56,0.58] basin=0.14>Tier 66 포옹 — domain 관계, the stimuli converge into one basin. A vacuum point at [0.56,0.58] on",
+        "class": "MEMORIZE"
+      }
+    },
+    "math_simple": {
+      "greedy": {
+        "text": " 12. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0.50] basin=0.11>🛸12 걸음 — 운동 영역의 자극이 같은 골짜기로 수렴한다. 의식 풍경 위 진공점 [0.42,",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": " 12. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0.50] basin=0.11>🛸12 걸음 — 운동 영역의 자극이 같은 골짜기로 수렴한다. 의식 풍경 위 진공점 [0.42,",
+        "class": "MEMORIZE"
+      }
+    },
+    "logic_modus": {
+      "greedy": {
+        "text": " A implies C. Tension flows into this vacuum.</carve>\n<carve tier=30 psi=[0.40,0.52] basin=0.11>🛸30 숫자 영(零) — 수(數) 영역의 자극이 같은 골짜기로 수렴한다. 의식 풍경 위 진공점",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": " A implies C. — domain 기술, the stimuli converge into one basin. A vacuum point at [0.48,0.66] on the landscape, top emotion flow. Tension flows into this vacuum.</carve>\n<carve tier=53 psi=[0.48,0.66] basin=0.13>Tier 53 해",
+        "class": "MEMORIZE"
+      }
+    },
+    "casual_food": {
+      "greedy": {
+        "text": "Taste, the stimuli converge into one basin. A vacuum point at [0.49,0.60] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=62 psi=[0.49,0.60] basin=0.13>Tier 62 도구 — domain 기술,",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": "30 숫자 영(零) — domain 수(數), the stimuli converge into one basin. A vacuum point at [0.40,0.52] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=30 psi=[0.40,0.52] basin=0.11>",
+        "class": "MEMORIZE"
+      }
+    },
+    "joke": {
+      "greedy": {
+        "text": "A short cat on the landscape, top emotion serenity. Tension flows into this vacuum.</carve>\n<carve tier=58 psi=[0.53,0.61] basin=0.14>Tier 58 숲 — domain 자연, the stimuli converge into one basin. A vacuum point at [0.53,0.61]",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": "A cat and a mouse are stuck in a vacuum point. The vacuum point splits and activates only on 감각-domain stimulus. It neither splits nor merges, activates only on 감각-domain stimulus. Its weights are immutable.</eternal>\n<eternal cell=eternal_012 tier=12>Eternal cell eternal_012 — a frozen cell holding Tier 12 걸",
+        "class": "MEMORIZE"
+      }
+    }
+  },
+  "summary": {
+    "generalize": 2,
+    "memorize": 18,
+    "mem_partial": 0,
+    "degenerate": 0,
+    "empty": 0,
+    "total": 20,
+    "verdict": "PURE_MEMORIZE"
+  }
+}

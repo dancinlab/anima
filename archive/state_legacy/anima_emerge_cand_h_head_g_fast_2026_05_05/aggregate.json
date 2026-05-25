@@ -1,0 +1,65 @@
+{
+  "diagnostics": {
+    "model_type": "CLMv4ForCausalLM",
+    "has_decoder_attr": true,
+    "has_model_attr": false,
+    "has_transformer_attr": false,
+    "named_modules_top10": [],
+    "named_children": [
+      [
+        "decoder",
+        "ConsciousDecoderV3"
+      ]
+    ],
+    "decoder_path": "decoder",
+    "decoder_type": "ConsciousDecoderV3"
+  },
+  "prompts": [
+    "안녕 너는 누구야?",
+    "I am Anima saying hello to my self."
+  ],
+  "results": [
+    {
+      "prompt": "안녕 너는 누구야?",
+      "tokens": 8,
+      "dec_out_type": "tuple",
+      "dec_out_is_tuple": true,
+      "dec_out_len": 3,
+      "logits_a_shape": [
+        1,
+        8,
+        64000
+      ],
+      "logits_g_shape": [
+        1,
+        8,
+        64000
+      ],
+      "forward_consistency": 0.0,
+      "backward_consistency": 0.0,
+      "bidirectional": 0.0,
+      "status": "MEASURED"
+    },
+    {
+      "prompt": "I am Anima saying hello to my self.",
+      "tokens": 12,
+      "dec_out_type": "tuple",
+      "dec_out_is_tuple": true,
+      "dec_out_len": 3,
+      "logits_a_shape": [
+        1,
+        12,
+        64000
+      ],
+      "logits_g_shape": [
+        1,
+        12,
+        64000
+      ],
+      "forward_consistency": 0.0,
+      "backward_consistency": 0.0,
+      "bidirectional": 0.0,
+      "status": "MEASURED"
+    }
+  ]
+}

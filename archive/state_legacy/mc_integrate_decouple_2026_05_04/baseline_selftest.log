@@ -1,0 +1,25 @@
+=== mc_integrate --self-test ===
+  N=10000  rng=urandom
+  catalan estimate    : 0.915319
+  catalan analytical  : 0.915966
+  abs_err             : 0.000647031
+  gate (production)   : PASS
+  relaxed gate (<5e-3): PASS
+  result keys present : PASS
+  zeta3 path runs     : value=1.19759 → PASS
+  euler_gamma path    : value=0.574364 → PASS
+  F2 identity-welch   : t=0 indistinguishable=true → PASS
+  F2b near-identity   : t=-0.2 df=9.98403 indistinguishable=true → PASS
+  F3 biased-welch     : t=-1224.74 indistinguishable=false → PASS
+  F4 sample-size guard: undecided=true reason=sample_size_too_small → PASS
+  F5 NaN handling     : undecided=true reason=nan_in_input → PASS
+  F2c live compare_rng: name=catalan trials=3 N=1000 t=0.0325839 indistinguishable=true → PASS
+  G1 critval-table     : t_crit(df=10)=2.228 t_crit(df=20)=2.086 t_crit(df=∞)=1.96 → PASS
+  G2 interpolation     : t_crit(df=15)=2.157 (expect ~2.157)  t_crit(df=7.5)=2.3995 (expect ~2.3995) → PASS
+  G3 df-aware-thresh   : at |t|=2.05 → df=2 indist=true df=1000 indist=false (flat-2.0 would say false) → PASS
+  G4 p-value-impl      : identity_p=1 biased_p=1.29983e-05 quality=production → PASS
+  G5 identity-p>0.5    : near-identity p=0.845552 → PASS
+  G6 biased-p<0.001    : biased p=1.29983e-05 → PASS
+__MC_INTEGRATE__ PASS constant=catalan abs_err=0.000647031 gate=PASS
+__MC_INTEGRATE_COMPARE__ PASS t_stat=-1224.74 df=10 verdict=significant
+__MC_INTEGRATE_COMPARE_CRITVAL__ PASS t_crit_df10=2.228 t_crit_df_inf=1.96 p_value_impl=yes

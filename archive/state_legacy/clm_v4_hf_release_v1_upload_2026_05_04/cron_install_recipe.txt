@@ -1,0 +1,65 @@
+anima HF Cycle 2 cleanup — cron install recipe (RECOMMENDATION: DO NOT INSTALL, MANUAL RUN PREFERRED)
+=====================================================================================================
+
+Date drafted: 2026-05-05
+Cycle: clm_v4_hf_release_v1_upload_2026_05_04
+Target script: /Users/ghost/core/anima/state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash
+Earliest run: 2026-05-07T00:00:00Z (after 48h review window ends 2026-05-06T23:26:12Z)
+
+
+WHY MANUAL RUN IS PREFERRED (DO NOT INSTALL CRON)
+-------------------------------------------------
+1. One-shot scope. This cleanup is for a single upload cycle (clm-v4-mk2-v1 v1 upload). Cron's value is recurring schedule — a one-shot job in cron is anti-pattern; `at` would be slightly more appropriate, but still inferior to operator-driven manual run.
+
+2. Two gates require human judgment in failure cases. GATE 1 (review window elapsed) is a strict timestamp check — fine for cron. GATE 2 (HF repo intact: siblings=15 + commit_sha matches) — if siblings drift to 14 or 16, OR if commit_sha changes (re-push), the script aborts; cron'd execution would silently fail unless cron output is monitored, whereas an operator running manually sees the abort message immediately and can decide whether the drift is intentional (re-push happened, update expected sha) or surprising (repo tampered, escalate).
+
+3. Pre-push leak guard / sanity F-CLM-RELEASE-1 + F-CLM-RELEASE-2 SHOULD complete BEFORE cleanup. These are user-driven sanity tests during the review window:
+   - F-CLM-RELEASE-1: AutoModelForCausalLM.from_pretrained(repo, trust_remote_code=True) on fresh shell
+   - F-CLM-RELEASE-2: 1-batch forward returns finite logits shape [1,T,64000]
+   If user has not run these by 2026-05-07, automatic cleanup may delete the staging dir before they have a chance to re-upload from staging if a fix is needed. Manual run lets operator confirm sanity tests passed first.
+
+4. Cleanup operates over SSH to ubu1. Cron-driven SSH requires either passwordless key + agent forwarding (security exposure) or key-with-passphrase + ssh-agent unlock (won't survive cron's bare environment). Manual operator run already has ssh-agent available in interactive shell.
+
+5. Memory feedback feedback_cleanup_bg_guards.md mandates verb-classified cleanup with pre+post state verification. Cron-driven invocation cannot interactively answer "is this drift intentional?" prompts; manual run can.
+
+
+IF YOU MUST INSTALL CRON ANYWAY (NOT RECOMMENDED)
+-------------------------------------------------
+The following crontab entry would run on 2026-05-07 at 04:00 local time, with output captured:
+
+    # m h  dom mon dow   command
+    0 4 7 5 *   /Users/ghost/core/anima/state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash >>/Users/ghost/core/anima/state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_cron.log 2>&1
+
+Notes if installing:
+- chmod +x cleanup_2026_05_07.bash first
+- Cron's PATH is minimal — verify `secret`, `curl`, `ssh`, `python3` resolvable from cron env (likely they are NOT — `secret` lives at /Users/ghost/core/secret/bin/secret which is not in cron default PATH)
+- Pre-pend PATH=/usr/local/bin:/usr/bin:/bin:/Users/ghost/core/secret/bin to crontab
+- Cron-shell is /bin/sh by default; script uses bash — invoke explicitly: `/bin/bash /Users/ghost/.../cleanup_2026_05_07.bash`
+- ssh-agent: cron has none; passwordless key required and ubu1 must have it in authorized_keys
+- After 2026-05-07 elapses, REMOVE the crontab line (one-shot artifact)
+
+The cron form has 5+ failure modes vs manual run's near-zero. Strongly prefer manual.
+
+
+MANUAL RUN RECIPE
+-----------------
+On 2026-05-07 (or any later date), in interactive zsh shell at /Users/ghost/core/anima:
+
+    chmod +x state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash
+    bash state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash
+
+To also delete the small mac stage mirror (3 text files, optional):
+
+    bash state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash --delete-mac-mirror
+
+Output: pre-state + post-state reports written to state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_{pre,post}_state_*.txt
+
+If GATE 1 or GATE 2 abort: read message, decide whether drift is expected, fix or skip, re-run.
+
+
+RECOMMENDATION (RANKED)
+-----------------------
+rank-1 (preferred): MANUAL RUN at user-chosen time on 2026-05-07 or later. Highest reliability, full operator awareness.
+rank-2: macOS `launchd` one-shot StartCalendarInterval — cleaner than cron for one-shot, still requires PATH + ssh-agent solving, NOT recommended.
+rank-3: cron entry as above — least recommended, listed for completeness.
+rank-X: skip cleanup entirely if ubu1 disk pressure is non-issue — 7GB stage on 5070ti workstation is negligible; deferred indefinitely is safe.

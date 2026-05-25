@@ -1,0 +1,71 @@
+{
+  "pre_register_date": "2026-05-02",
+  "framework_version": "BIDIRECTIONAL falsification (raw#71)",
+  "anchor": "ANIMA_INTEGRATION_PROPOSAL.md Axis 3 'No fit' verdict re-examination",
+  "falsifiers": [
+    {
+      "id": "F-CT-1",
+      "name": "CLM text -> TRIBE BOLD distinguishable from random",
+      "h0": "CLM 출력 text -> TRIBE v2 BOLD 가 random text -> BOLD 와 vertex-level 통계적으로 구분 가능",
+      "PASS": "two-sample t-test (CLM vs random) 의 vertex-mean activation difference p < 0.01 AND cohens d > 0.5",
+      "FAIL": "p > 0.1 OR effect size d < 0.2",
+      "AMBIGUOUS": "0.01 <= p <= 0.1 OR 0.2 <= d <= 0.5",
+      "min_n_text_samples": 30,
+      "wallclock_estimate_h": 2,
+      "cost_estimate_usd": [0, 1]
+    },
+    {
+      "id": "F-CT-2",
+      "name": "G3 PhiStar -> DMN cortical correspondence",
+      "h0": "CLM G3 PhiStar score (anima session-level integration metric) 가 cortical DMN ROI mean activation 과 Pearson r >= 0.5",
+      "PASS": "Pearson r >= 0.5 AND p < 0.05 (n >= 30 sessions)",
+      "FAIL": "|r| < 0.2 OR sign reversal",
+      "AMBIGUOUS": "0.2 <= |r| < 0.5",
+      "DMN_ROI_definition": "Schaefer-1000 atlas DMN-A + DMN-B subnetworks (mapped to fsaverage5)",
+      "wallclock_estimate_h": 6,
+      "cost_estimate_usd": [0, 2]
+    },
+    {
+      "id": "F-CT-3",
+      "name": "real EEG <-> TRIBE BOLD generalization",
+      "h0": "사용자 OpenBCI EEG envelope (alpha/theta band-power, 5s window) <-> TRIBE v2 predicted BOLD vertex r >= 0.5 across cortical surface",
+      "PASS": "median vertex r >= 0.5 (across ROI-mean)",
+      "FAIL": "median vertex r < 0.2",
+      "AMBIGUOUS": "0.2 <= median r < 0.5",
+      "preconditions": "사용자 OpenBCI session 30min + matched stimulus (text / audio / video) for TRIBE v2",
+      "lag_correction": "EEG envelope hilbert -> 5s window mean, BOLD already 5s lag-offset",
+      "wallclock_estimate_h": 3,
+      "cost_estimate_usd": [0, 1]
+    },
+    {
+      "id": "F-CT-4",
+      "name": "CLM vs ALM cortical separability",
+      "h0": "CLM 출력 cortical map vs ALM (Mistral 7B) 출력 cortical map 가 vertex-level 분리 가능",
+      "PASS": "inter-substrate vertex r < 0.7 AND intra-substrate r > 0.85 (Pilot-T1 spec re-use)",
+      "FAIL": "inter-substrate r > 0.95",
+      "AMBIGUOUS": "0.7 <= inter r <= 0.95",
+      "n_prompts_per_substrate": 50,
+      "wallclock_estimate_h": 4,
+      "cost_estimate_usd": [0, 2]
+    },
+    {
+      "id": "F-CT-5",
+      "name": "cross-substrate consistency with paradigm v11 G3",
+      "h0": "CLM / Llama-3.2-3B / Qwen3 substrate 별 동일 prompt -> cortical map difference 가 paradigm v11 G3 PhiStar score 와 rank-correlate (Spearman rho >= 0.4)",
+      "PASS": "Spearman rho >= 0.4 AND p < 0.05",
+      "FAIL": "|rho| < 0.1",
+      "AMBIGUOUS": "0.1 <= |rho| < 0.4",
+      "n_substrates": 3,
+      "n_prompts": 30,
+      "wallclock_estimate_h": 8,
+      "cost_estimate_usd": [0, 3]
+    }
+  ],
+  "global_blocker_set": [
+    "neuralset/neuraltrain PyPI verification (RESOLVED via cortexlab-toolkit, 2026-Q1 PyPI)",
+    "Llama-3.2-3B HuggingFace gated access (사용자 HF account approval 필요)",
+    "사용자 OpenBCI 24h availability (Framing C/D 필수)",
+    "fsaverage5 mesh parcellation (Schaefer-1000) DMN ROI 매핑 정확도"
+  ],
+  "registered_by": "agent CLM x TRIBE v2 strategic re-evaluation, 2026-05-02"
+}

@@ -1,0 +1,74 @@
+{
+  "schema": "preflight_v1",
+  "task": "BG-FC anima CLM-3-original byte-level 55M ubu1 RTX 5070 fire-ready preflight",
+  "date": "2026-05-06",
+  "lane": "anima_native_chat_clm3_original_ubu1_path",
+  "status": "PREFLIGHT_4_OF_4_PASS_BUT_REPO_SYNC_GAP_FLAGGED",
+  "cost_usd": 0,
+  "scope": "ssh probe + 4 gate verification + emit only — NO actual training fire",
+  "ssh_reachability": {
+    "lan_192_168_50_119": "PASS",
+    "host_alias_ubu1": "PASS",
+    "tailscale_100_96_193_56": "TIMEOUT_22_PORT",
+    "preferred_path": "ubu1 host alias (LAN)",
+    "remote_hostname": "aiden-B650M-K",
+    "kernel": "6.17.0-22-generic"
+  },
+  "hardware_snapshot": {
+    "gpu": "NVIDIA GeForce RTX 5070",
+    "vram_total_mib": 12227,
+    "vram_free_mib": 11758,
+    "compute_cap": "12.0 (sm_120 Blackwell)",
+    "driver": "580.126.09",
+    "gpu_util_pct": 0,
+    "gpu_temp_c": 37,
+    "disk_free": "538G of 915G (/dev/nvme0n1p2)"
+  },
+  "preflight_gates": [
+    {"gate": 1, "check": "ubu1 ssh reachability", "result": "PASS", "evidence": "ssh ubu1 'echo ok' returned ok-host-alias from aiden-B650M-K"},
+    {"gate": 2, "check": "venv_orchestrator present", "result": "PASS", "evidence": "/home/aiden/venv_orchestrator/bin/python -> python3 (Python 3.12.3)"},
+    {"gate": 3, "check": "torch 2.11.0+cu128 + cuda available", "result": "PASS", "evidence": "torch.__version__=2.11.0+cu128, cuda.is_available()=True, device=NVIDIA GeForce RTX 5070"},
+    {"gate": 4, "check": "anima repo on ubu1", "result": "PASS_WITH_GAP", "evidence": "REPO=/home/aiden/core/anima exists at HEAD 6407920", "gap": "ubu1 HEAD 6407920 is BEHIND mac HEAD 2f246b79 (origin/main); ready/ dir on ubu1 is EMPTY (no train_clm.py)"}
+  ],
+  "repo_sync_gap": {
+    "mac_head": "2f246b79",
+    "ubu1_head": "6407920",
+    "ubu1_ready_dir_empty": true,
+    "missing_on_ubu1": [
+      "ready/training/train_clm.py (exists on mac, embedded git repo HEAD=ef7aae81)",
+      "data/corpus_mix_70wiki_30dialogue.txt (also missing on mac — corpus_mix_70wiki_30dialogue.txt does not exist anywhere; closest mac files: data/corpus.txt, data/corpus_v2_clean/wikimatrix_ko_en_interleaved.txt)"
+    ],
+    "remediation_plan": [
+      "1) git pull on ubu1 to sync to origin/main 2f246b79",
+      "2) copy ready/ contents from mac (ready is embedded git repo, NOT a submodule with .gitmodules entry) — rsync -avz --exclude='.git' /Users/ghost/core/anima/ready/ ubu1:/home/aiden/core/anima/ready/",
+      "3) build or locate corpus_mix_70wiki_30dialogue.txt — does not exist on mac; spec doc references but corpus assembly step not yet executed; needs separate corpus build BG before fire"
+    ]
+  },
+  "falsifier_lock": {
+    "name": "FALSIFIER-LOCK-UBU1",
+    "user_must_type_literal": "FALSIFIER-LOCK-UBU1",
+    "falsifiers": [
+      "F-CLM3-orig-1: spec_match (vocab=256 byte / d=768 / L=12 / fib growth 1,1,2,3,5,8,13,21,32)",
+      "F-CLM3-orig-2: Phase 2 dialogue CE drop >= 30%",
+      "F-CLM3-orig-3: Phi_real >= 11",
+      "F-CLM3-orig-4: KO 5-prompt >= 3/5 coherent",
+      "F-CLM3-orig-5: phi_star NO_FLIP"
+    ]
+  },
+  "outputs": [
+    "state/anima_clm_3_ubu1_fire_2026_05_06/preflight.json",
+    "state/anima_clm_3_ubu1_fire_2026_05_06/emit_smoke_command.txt",
+    "state/anima_clm_3_ubu1_fire_2026_05_06/emit_full_retrain_command.txt",
+    "docs/anima_clm_3_ubu1_fire_ready_landed_2026_05_06.ai.md"
+  ],
+  "constraints_obeyed": [
+    "raw#9 fail-loud (gap explicitly flagged)",
+    "raw#10 spec-then-implement (no fire executed)",
+    "raw#15 audit trail (preflight.json + landed.ai.md)",
+    "no commit",
+    "no HF token leak",
+    "bash 3.2 compatible",
+    "$0 cost (ssh probe only)"
+  ],
+  "next_action_user": "1) confirm corpus build path 2) sync ubu1 repo + ready/ 3) type FALSIFIER-LOCK-UBU1 4) anima fires 100-step smoke first, then full retrain after smoke PASS"
+}

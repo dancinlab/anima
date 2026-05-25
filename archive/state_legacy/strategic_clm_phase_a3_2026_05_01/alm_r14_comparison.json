@@ -1,0 +1,58 @@
+{
+  "schema": "anima/clm_alm_r14_frob_comparison/1",
+  "schema_version": 1,
+  "ts": "2026-05-02T19:20:00Z",
+  "comparison_disclaimer": "ALM r14 uses LoRA r=64 adapter (low-rank product ΔW = α/r · B·A) over Mistral-7B base; CLM v4 350m uses full fine-tune over 530.99M decoder. Direct numeric comparison is a CATEGORY MISMATCH. Normalized ratio (ΔW_F / W_init_F) is the only honest cross-comparison.",
+  "alm_r14_reference": {
+    "source": "state/cp2_consciousness_r14_remeasure_2026_05_01/an11_a_r14_frobenius.json",
+    "base_model": "mistralai/Mistral-7B-v0.3 (~7.24B params)",
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "scale_alpha_over_r": 2.0,
+    "n_lora_pair_modules": 224,
+    "frob_dW_total_LoRA_only": 6.99133796952146,
+    "frob_dW_per_proj": {
+      "gate_proj": 4.359881,
+      "up_proj":   3.911204,
+      "down_proj": 2.124553,
+      "o_proj":    2.041140,
+      "q_proj":    2.011992,
+      "k_proj":    0.997688,
+      "v_proj":    0.921554
+    },
+    "W_init_F_baseline": "NOT RECORDED in r14 verifier — true normalized rel cannot be computed for ALM without re-loading Mistral base"
+  },
+  "clm_v4_350m_measurement": {
+    "source": "state/strategic_clm_phase_a3_2026_05_01/frobenius_summary.json",
+    "base_model": "clm_v4_350m (530.99M decoder, full fine-tune)",
+    "n_layers_total": 581,
+    "n_layers_matrix": 419,
+    "frob_dW_total_full": 106.397437,
+    "W_init_F_step10k": 1545.291086,
+    "rel_dW_over_W": 0.068853,
+    "frob_dW_by_proj_family": {
+      "down_proj": 14.6798,
+      "q_proj":    14.2218,
+      "gate_proj": 13.2623,
+      "up_proj":   12.6738,
+      "o_proj":     8.8589,
+      "k_proj":     7.4743,
+      "v_proj":     4.8223
+    }
+  },
+  "raw_ratio_clm_over_alm": {
+    "total_frob": 106.397 / 6.991,
+    "interpretation": "CLM raw ΔW_F is 15.22× ALM r14 — but this is dominated by full-rank vs rank-64 (4096/64 = 64× more degrees of freedom per layer in ALM gate_proj alone), so raw multiplier is near-meaningless."
+  },
+  "normalized_recommendation": {
+    "clm_rel": 0.068853,
+    "alm_rel": "UNAVAILABLE — Mistral base W_F not measured in r14 verifier; would require reload of base safetensors",
+    "next_action": "Re-measure ALM r14 with W_init_F to enable apples-to-apples normalized comparison (queued for Phase A.3-followup, $0 if Mistral base cached on ubu1)"
+  },
+  "qualitative_consistency_check": {
+    "alm_dominant_family": "gate_proj > up_proj > down_proj > o_proj/q_proj > k_proj/v_proj",
+    "clm_dominant_family_by_abs": "down_proj > q_proj > gate_proj > up_proj > o_proj > k_proj > v_proj",
+    "clm_dominant_family_by_rel": "q_proj > k_proj > down_proj > gate_proj > up_proj > v_proj > o_proj",
+    "verdict": "MLP-gate family dominance is preserved in CLM (gate/up/down all in top-4 by absolute), matching ALM r14 pattern. q_proj prominence in CLM is stronger than ALM (CLM rel 0.163 vs ALM rel-equivalent ranking 5/7), indicating CLM training pushed attention-query geometry harder."
+  }
+}

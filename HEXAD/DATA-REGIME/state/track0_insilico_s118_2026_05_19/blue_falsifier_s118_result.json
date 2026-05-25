@@ -1,0 +1,61 @@
+{
+  "battery": "B-S118",
+  "n_pass": 9,
+  "n_total": 9,
+  "all_pass": true,
+  "verdict_of_run": "SIM-IS-GPU-TAUTOLOGY-CONFIRMED-LEARNING-HALF",
+  "non_degenerate_by_cell": {
+    "GPU-CE": true,
+    "GPU-noCE": false,
+    "SIM-noCE-STDP": false,
+    "SIM-CE": true
+  },
+  "note": "B-S118-NOTE — the MEASURED 3-outcome verdict (here: SIM-IS-GPU-TAUTOLOGY-CONFIRMED-LEARNING-HALF) and the per-cell non-degenerate/degenerate OUTCOMES are SGD-free convergence OUTCOMES, NOT counted 🔵. The battery proves the 4-CELL RIG is HONEST (cell partition exhaustive+disjoint, decisive 'stdp' cell STDP-only / no-CE / no-backprop AST-audited, §3 predicate deterministic + byte-equal to TRACK0_INSILICO.md spec, §9 honest_coherent SSOT-imported, Ψ-form §112-carrier-invariant, §117-WALL-B inherited, §96 attention-blocker acknowledged), NOT that Track 0 works / anima emerges. necessary-not-sufficient at every layer (B-EMERGE-7). A SIM-CONFRONTS-LEARNING-CHANNEL outcome would confront the LEARNING-CHANNEL half ONLY — the async-substrate half stays WALL-B (Loihi/SpiNNaker-gated, §117 inherited) and §96 design-open #1 (attention replacement) BLOCKS the full spiking-anima instantiation; NOT GOAL emergence, NOT a WALL-A (§1.1 data-regime) escape. north-star + §15/§51/§72 milestones UNCHANGED, GOAL 미도달. B-D-NOTE / B-PUREPHYS-NOTE / B-S96-NOTE / B-S115-NOTE / B-S117-NOTE family.",
+  "results": [
+    {
+      "id": "B-S118-1 CELL-PARTITION-EXHAUSTIVE-DISJOINT",
+      "pass": true,
+      "detail": "4 cells=['GPU-CE', 'GPU-noCE', 'SIM-CE', 'SIM-noCE-STDP'] · channels=['ce', 'none', 'stdp'] · each-one-channel=True · expected-map-match=True · 3-channel taxonomy disjoint=True"
+    },
+    {
+      "id": "B-S118-2 STDP-NO-CE-NO-BACKPROP-AST-AUDIT",
+      "pass": true,
+      "detail": "forbidden-call hits=0 [] · imports=['emergence_metric', 'json', 'numpy', 'os', 'sys', 'time'] no_torch=True · _stdp_update error-symbol-free=True — decisive 'stdp' channel = LOCAL plasticity only (mirror §11-B B-PUREPHYS-1 / §117 B-S117-2)"
+    },
+    {
+      "id": "B-S118-3 PREDICATE-DETERMINISTIC-3X-BIT-IDENTICAL",
+      "pass": true,
+      "detail": "§3 predicate re-derived per-cell == recorded=True · 3×bit-identical=True · re-run verdict≡recorded=True (closed Boolean, necessary-NOT-sufficient B-EMERGE-7)"
+    },
+    {
+      "id": "B-S118-4 §3-PREDICATE-BYTE-EQUAL-TO-SPEC-CONNECTION-POINT",
+      "pass": true,
+      "detail": "TRACK0_INSILICO.md §3 witness present=True · run predicate 3-clause=True · §9 honest_coherent SSOT-import=True (NOT re-implemented)"
+    },
+    {
+      "id": "B-S118-5 §117-WALL-B-INHERITED-CONNECTION-POINT",
+      "pass": true,
+      "detail": "§117 result.json WALL-B-INHERITED witness=True · §118 WALL-B inherited(learning-half-only)=True · WALL-A orthogonal=True"
+    },
+    {
+      "id": "B-S118-6 §96-ATTENTION-BLOCKER-ACKNOWLEDGED-STRUCTURAL",
+      "pass": true,
+      "detail": "headline+inheritance acknowledge §96 design-open #1 (SPIKING-INCOMPATIBLE / must REPLACE / BLOCKS full anima)=True · §96 DESIGN.md carries the finding=True"
+    },
+    {
+      "id": "B-S118-7 PSI-C1-BOUNDED-FIXED-POINT-CLOSED",
+      "pass": true,
+      "detail": "sympy ψ(−1)=0 ψ(1)=1 ψ(0)=½ ∂ψ/∂c=½>0 ✓ · all cells Ψ-C1 mean ∈[0,1]=True (§112 META_FP(Π_½) instance, carrier=spike-correlation; §7-FORM by construction)"
+    },
+    {
+      "id": "B-S118-8 SIDECAR-CENTRAL-0-DIFF-ZERO-COST-STRUCTURAL",
+      "pass": true,
+      "detail": "sidecar-only (no central-path executable ref)=True · cost=$0.0 gpu=False fire=False dispatch=False orphan=0 — $0, no GPU/fire"
+    },
+    {
+      "id": "B-S118-9 G-CLM-FROM-SCRATCH-INIT-INVARIANT-CLOSED",
+      "pass": true,
+      "detail": "ckpt-load AST hits=[] (0 required) · base_ckpt=None asserted=True · RANDOM seed-fixed init=True"
+    }
+  ]
+}

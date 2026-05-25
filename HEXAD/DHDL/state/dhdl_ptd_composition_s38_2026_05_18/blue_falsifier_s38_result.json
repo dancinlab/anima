@@ -1,0 +1,30 @@
+{
+  "battery": "B-S38 (RESEARCH.md §38 — DH-DL + PTD-aux composition)",
+  "cycle": "§38",
+  "date": "2026-05-18",
+  "verdicts": [
+    {
+      "name": "B-S38-1 DUAL-LOSS-PLUS-PTD-NONNEGATIVE-CLOSED",
+      "pass": true,
+      "detail": "L_decision>=0 (Shannon CE) & L_safety>=0 (square x indicator) & L_ptd>=0 (mean of squares) & sum w/ non-neg weights >=0 (sympy) + 4-witness panel 4/4"
+    },
+    {
+      "name": "B-S38-2 SCALE-ORTHOGONAL-CLOSED",
+      "pass": true,
+      "detail": "composed head 1825 params (trunk 480 + decision 579 + PTD-aux 766) / base 283720000 = 6.43e-06 < 1e-2 — scale-orthogonal, no §1.1 crossing"
+    },
+    {
+      "name": "B-S38-3 COMPOSITION-OFF-REDUCTION-CLOSED (연결부위)",
+      "pass": true,
+      "detail": "lambda_ptd=0 => L == L_decision + lambda*L_safety == §27 DH-DL dual-loss byte-equal (additive identity, sympy) + 4-witness 4/4 — fair-compare by construction"
+    }
+  ],
+  "n_pass": 3,
+  "n_total": 3,
+  "all_blue": true,
+  "carve_out": "B-S38-NOTE — PTD-aux empirical effect = SGD/measurement OUTCOME, NOT counted blue (B-D-NOTE family)",
+  "central_blue_falsifier_unchanged": true,
+  "verdict_tier": "DESIGN-TIER closed-form",
+  "honest_scope": "§38 = better-engineered distillation of the §24 threshold (§27 was distillation), NOT GOAL emergence; scale-orthogonal <=1%-param head does NOT cross §1.1; §15 milestone carries, north-star unchanged",
+  "f_safety": "f1/f2/f3 + B-IDENTITY-5 safe — Shannon CE>=0 / mean-of-squares>=0 / integer-rational <1% inequality / additive identity; NO sigma/tau/phi/J2 derivation"
+}

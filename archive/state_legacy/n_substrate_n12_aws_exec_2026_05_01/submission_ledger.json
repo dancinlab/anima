@@ -1,0 +1,63 @@
+{
+  "schema": "n12/aws_exec/submission_ledger/1",
+  "agent": "N-12 EXEC",
+  "date_utc": "2026-05-02T04:00:30Z",
+  "device_arn_used": "arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1",
+  "device_name": "IonQ Forte 1",
+  "device_status": "ONLINE",
+  "aws_account": "267673635495",
+  "aws_profile": "braket",
+  "region": "us-east-1",
+  "s3_bucket": "amazon-braket-us-east-1-267673635495",
+  "s3_prefix": "n12-mvp",
+  "tasks": [
+    {
+      "circuit_id": "C3",
+      "tag": "C3_bell",
+      "name": "Bell sanity (CHSH precursor)",
+      "qubits": 2,
+      "shots": 100,
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/b9310362-fe83-485a-b0d3-693091b05a21",
+      "submitted_at_utc": "2026-05-02T03:55:00Z",
+      "estimated_cost_USD": 8.30,
+      "purpose": "hardware verification (CHSH >= 2.5 expected)"
+    },
+    {
+      "circuit_id": "C2",
+      "tag": "C2_baseline",
+      "name": "1-qubit coherence baseline",
+      "qubits": 1,
+      "shots": 100,
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/6b7916d6-b8fa-4131-bd06-1252454ccc52",
+      "submitted_at_utc": "2026-05-02T04:00:27Z",
+      "estimated_cost_USD": 8.30,
+      "purpose": "tau_2 noise floor (Forte 1 min shots=100; bumped from 50 in spec)"
+    },
+    {
+      "circuit_id": "C1",
+      "tag": "C1_ghz_delay100us",
+      "name": "4-qubit GHZ dephasing (OR signature)",
+      "qubits": 4,
+      "shots": 100,
+      "delay_us": 100,
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/a2ab2539-64a7-49a5-b006-bce6372ea54c",
+      "submitted_at_utc": "2026-05-02T04:00:27Z",
+      "estimated_cost_USD": 8.30,
+      "purpose": "F-N12-1 cross-substrate OR test"
+    }
+  ],
+  "cost_ledger": {
+    "estimated_total_USD": 24.90,
+    "spec_target_USD": 20.90,
+    "delta_vs_spec_USD": 4.00,
+    "delta_reason": "Forte 1 min-shots=100 forced C2 from 50->100 shots, +$4.00",
+    "hard_cap_USD": 50.00,
+    "under_cap": true
+  },
+  "honest_c3": [
+    "Forte 1 does not support 'i' (identity) gate outside verbatim mode -- spec circuit had to be patched. Replaced 'i' identity-stack delay surrogate with rx(2*pi) full-rotation surrogate (also returns to identity, but takes real gate time).",
+    "Forte 1 minimum-shots = 100; spec had C2 at 50 shots; bumped to 100 (+$4.00). Total now $24.90 vs spec $20.90, still under $50 hard cap.",
+    "C3 Bell submission was first try from original (unpatched) script -- it succeeded because Bell circuit doesn't use 'i'. C2 + C1 required patching and re-submission. C3 task ARN preserved across the patch."
+  ],
+  "next_step": "Poll all 3 task ARNs until status=COMPLETED, then run verify_F_N12_1.py"
+}

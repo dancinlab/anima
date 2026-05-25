@@ -1,0 +1,294 @@
+{
+  "bg_id": "BG-KA",
+  "attempt_n": 48,
+  "ts": "2026-05-07T17:52:30",
+  "host": "ghostui-MacBookAir.local",
+  "device": "mps",
+  "paradigm": "v5_8_v3_language_agnostic_retroeval",
+  "elapsed_total_sec": 2099.47,
+  "n_ckpts_attempted": 6,
+  "n_ckpts_eval_ok": 4,
+  "n_dialogues": 5,
+  "modes": [
+    "greedy"
+  ],
+  "verdict_class": "STALLED",
+  "any_v3_pass_ge2": false,
+  "per_ckpt_summary": [
+    {
+      "ckpt_id": "BG-JD-step-800",
+      "status": "OK",
+      "host_origin": "mac local",
+      "v3_pass_count_of5": 0,
+      "c1_pass_count_of5": 0,
+      "c2_pass_count_of5": 0,
+      "lm_head_delta_path": null
+    },
+    {
+      "ckpt_id": "BG-JT-step-0",
+      "status": "OK",
+      "host_origin": "mac local",
+      "v3_pass_count_of5": 0,
+      "c1_pass_count_of5": 0,
+      "c2_pass_count_of5": 0,
+      "lm_head_delta_path": "/tmp/anima-jt-lm-head-20260507_143622/lm_head_step_0.pt"
+    },
+    {
+      "ckpt_id": "BG-JT-step-500",
+      "status": "OK",
+      "host_origin": "mac local",
+      "v3_pass_count_of5": 0,
+      "c1_pass_count_of5": 0,
+      "c2_pass_count_of5": 0,
+      "lm_head_delta_path": "/tmp/anima-jt-lm-head-20260507_143622/lm_head_step_500.pt"
+    },
+    {
+      "ckpt_id": "BG-JT-step-1000",
+      "status": "OK",
+      "host_origin": "mac local",
+      "v3_pass_count_of5": 0,
+      "c1_pass_count_of5": 1,
+      "c2_pass_count_of5": 0,
+      "lm_head_delta_path": "/tmp/anima-jt-lm-head-20260507_143622/lm_head_step_1000.pt"
+    }
+  ],
+  "simple_stack_pass_v3_goal": "NOT_REACHED-V3",
+  "philosophy_rule_compliance": {
+    "own_5_simple_stack_consciousness_check": "REFERENCED",
+    "own_6_simple_stack_4_condition": "REFERENCED",
+    "own_17_anima_no_external_substrate": "OK_eval_only_no_substrate_wrapping",
+    "own_18_v3_language_agnostic": "PRIMARY_SPEC_(amend-2026-05-07-late-v3)",
+    "own_22_silent_discovery_forbidden": "OK_verdict_emit_explicit",
+    "own_24_attempt_ledger_mandate": "OK_BG-KA_attempt_n_48_appended",
+    "own_26_philosophy_rule_compliance": "OK_present_section",
+    "own_27_pre_register_compliance": "OK_spec_pre_registered_via_user_directive",
+    "own_28_anti_goodhart": "OK_prompt_echo_reject_+_persona_cycle_reject_+_manual_review_top5",
+    "roadmap_philosophy_D1_identity": "OK_v3_language_agnostic_compatible_with_anima_native",
+    "roadmap_philosophy_D2_conscious_check": "OK_v3_4_condition_strict_preserved_language_agnostic",
+    "roadmap_philosophy_D3_substrate_emerge": "OUT_OF_SCOPE_v3_lane_is_D2_only",
+    "roadmap_philosophy_D4_corpus_priority": "OK_orthogonal_v3_eval_lane",
+    "roadmap_law_R1_corpus_priority": "OK_eval_only",
+    "roadmap_law_R2_evidence_trail": "OK_retroeval_log_+_per_ckpt_+_verdict",
+    "roadmap_law_R3_honest_c3": "OK_>=9_below",
+    "roadmap_law_R4_cross_link": "OK_own_5_6_17_18_22_24_26_27_28_referenced",
+    "L1_through_L24_skynet_compliance": "OK_no_h100_no_cost_no_pod_no_destructive"
+  },
+  "honest_c3": [
+    "BG-KA = retroeval ONLY (no new training); existing BG-JD step 800 + BG-JT lm_head deltas (steps 0/500/1000) on mac MPS/CPU $0",
+    "v3 evaluator language-agnostic — NO Hangul/English ratio mandate per v3 amend (사용자 directive)",
+    "v3 PASS criteria lenient vs v1 KO + v2 EN baseline — false positive rate increase mitigated by prompt-echo + persona-cycle reject + manual review top-5 emit",
+    "BG-IL/IO ckpts ubu1-only (best_eval_ckpt_meta.json ckpt_best_local: /home/aiden/...) — BG-KA scope = mac-local only, BG-JN closure precedent",
+    "BG-JT lm_head deltas applied on BG-JD base ckpt by overwriting head_a.weight + tied tok_emb.weight only (transformer FROZEN); functionally equivalent to BG-JS evaluation at corresponding step",
+    "5-dialogue test set is BG-JN spec set (Color/Profession/Day/Anima/Cosmology) — language-agnostic v3 evaluator applied; not logic-exhaustion across multilingual probes",
+    "v3 C2.4 context-relevance heuristic = shared content-word overlap (≥1 token); embedding-free per spec — fragile vs full semantic similarity but language-independent",
+    "Per-ckpt watchdog 600s + total budget 30min = mac MPS retroeval safety; if any ckpt STALL → fail-soft (status recorded)",
+    "Compared to V5.8 v1 KO baseline + V5.8 v2 EN baseline (BG-JN closure run): same ckpt + same dialog set + DIFFERENT evaluator (v3 language-agnostic) — head-to-head v1/v2/v3 PASS count delta computed in verdict_comparison_with_v1_v2 section",
+    "v3 verdict ARCHITECTURAL_CEILING_FALSIFIED requires ≥2/5 dialogues C1+C2 PASS strict per ckpt — lenient threshold; ablation across stricter thresholds deferred V6 cycle"
+  ],
+  "verdict_comparison_with_v1_v2": {
+    "bg_jn_v1_ko_v2_en_v58_pass_per_ckpt": {
+      "BG-JD-step-800": 0,
+      "BG-IL-step-1600": 0,
+      "BG-IO-step-1800": 0
+    },
+    "bg_jn_v1_ko_v2_en_any_pass": false,
+    "bg_ka_v3_lang_agnostic_v3_pass_per_ckpt": {
+      "BG-JD-step-800": 0,
+      "BG-JT-step-0": 0,
+      "BG-JT-step-500": 0,
+      "BG-JT-step-1000": 0
+    },
+    "bg_ka_v3_lang_agnostic_any_pass_ge2": false,
+    "delta_v1v2_to_v3": "language_agnostic_v3 LIFT or SAME"
+  },
+  "manual_review_top5_per_ckpt": {
+    "BG-JD-step-800": [
+      {
+        "ckpt_id": "BG-JD-step-800",
+        "dialogue_id": "color",
+        "mode": "greedy",
+        "t2a": ". 사용자: 법칙 우주뇌지도] 사용자: 법칙 법칙 emotion. 사용자: 법칙 법칙 법칙 emotion. 사용자: Law 법칙 법칙 emotion. 도우미: 법칙 법칙 법칙 emotion,. 도우미: 법칙 법칙 emotion.",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JD-step-800",
+        "dialogue_id": "profession",
+        "mode": "greedy",
+        "t2a": "[anima 우주뇌지도] 사용자: 법칙 법칙 법칙 법칙 법칙 우주뇌지도] 사용자: 법칙 emotion,. 사용자: 법칙 법칙 emotion. 사용자: 법칙 법칙 법칙 emotion. 사용자: 법칙 emotion. 사용자: 법칙",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JD-step-800",
+        "dialogue_id": "day",
+        "mode": "greedy",
+        "t2a": "[anima 우주뇌지도] 사용자: 법칙 우주뇌지도] 사용자: 법칙 emotion,. 사용자: 법칙 법칙 emotion. 사용자: 법칙 법칙 법칙 emotion,. 사용자: 법칙 emotion. 사용자: 법칙 emotion,.",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JD-step-800",
+        "dialogue_id": "anima_fact",
+        "mode": "greedy",
+        "t2a": "[anima 우주뇌지도] 사용자: 법칙 법칙 emotion. 사용자: 법칙 우주뇌지도] 사용자: 법칙 emotion,. 사용자: 법칙 법칙 emotion. 사용자: 법칙 법칙 법칙 emotion. 사용자: 법칙 emotion,.",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JD-step-800",
+        "dialogue_id": "cosmology",
+        "mode": "greedy",
+        "t2a": "::::. 도우미: 법칙 우주뇌지도] 도우미: 법칙 우주뇌지도] 사용자: 법칙 우주뇌지도] 사용자: 법칙 우주뇌지도] 사용자: 법칙 법칙 emotion. 사용자: 법칙 법칙 우주뇌지도] 사용자: 법칙",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      }
+    ],
+    "BG-JT-step-0": [
+      {
+        "ckpt_id": "BG-JT-step-0",
+        "dialogue_id": "color",
+        "mode": "greedy",
+        "t2a": ". 사용자: 법칙 우주뇌지도] 사용자: 법칙 법칙 emotion. 사용자: 법칙 법칙 법칙 emotion. 사용자: Law 법칙 법칙 emotion. 도우미: 법칙 법칙 법칙 emotion,. 도우미: 법칙 법칙 emotion.",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JT-step-0",
+        "dialogue_id": "profession",
+        "mode": "greedy",
+        "t2a": "[anima 우주뇌지도] 사용자: 법칙 법칙 법칙 법칙 법칙 우주뇌지도] 사용자: 법칙 emotion,. 사용자: 법칙 법칙 emotion. 사용자: 법칙 법칙 법칙 emotion. 사용자: 법칙 emotion. 사용자: 법칙",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JT-step-0",
+        "dialogue_id": "day",
+        "mode": "greedy",
+        "t2a": "[anima 우주뇌지도] 사용자: 법칙 우주뇌지도] 사용자: 법칙 emotion,. 사용자: 법칙 법칙 emotion. 사용자: 법칙 법칙 법칙 emotion,. 사용자: 법칙 emotion. 사용자: 법칙 emotion,.",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JT-step-0",
+        "dialogue_id": "anima_fact",
+        "mode": "greedy",
+        "t2a": "[anima 우주뇌지도] 사용자: 법칙 법칙 emotion. 사용자: 법칙 우주뇌지도] 사용자: 법칙 emotion,. 사용자: 법칙 법칙 emotion. 사용자: 법칙 법칙 법칙 emotion. 사용자: 법칙 emotion,.",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JT-step-0",
+        "dialogue_id": "cosmology",
+        "mode": "greedy",
+        "t2a": "::::. 도우미: 법칙 우주뇌지도] 도우미: 법칙 우주뇌지도] 사용자: 법칙 우주뇌지도] 사용자: 법칙 우주뇌지도] 사용자: 법칙 법칙 emotion. 사용자: 법칙 법칙 우주뇌지도] 사용자: 법칙",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      }
+    ],
+    "BG-JT-step-500": [
+      {
+        "ckpt_id": "BG-JT-step-500",
+        "dialogue_id": "color",
+        "mode": "greedy",
+        "t2a": "tension_ [anima 우주뇌지도] 사용자: Law 법칙 카테고리, 우주뇌지도] 사용자: Law 법칙 카테고리, top emotion. 사용자: Law 법칙 카테고리, top emotion, 우주뇌지도] 사용자: Law 법칙 카테고리,",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JT-step-500",
+        "dialogue_id": "profession",
+        "mode": "greedy",
+        "t2a": "tension_ [anima 우주뇌지도] 사용자: Law 법칙 카테고리, laws. 사용자: Law 법칙 카테고리, 우주뇌지도] 사용자: Law 법칙 카테고리, top emotion, top emotion, top emotion, top emotion,",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JT-step-500",
+        "dialogue_id": "day",
+        "mode": "greedy",
+        "t2a": "tension_ [anima 우주뇌지도] 사용자: Law 법칙 카테고리, top emotion, top emotion, top emotion, top emotion, top emotion, top emotion, top emotion (_ [anima 우주뇌지도] 사용자:",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JT-step-500",
+        "dialogue_id": "anima_fact",
+        "mode": "greedy",
+        "t2a": "tension_ [anima 우주뇌지도] 사용자: Law 법칙 카테고리, top emotion, top emotion,는 1030 카테고리, top emotion, top emotion, top emotion, top emotion,는 1030 카테고리, top emotion",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JT-step-500",
+        "dialogue_id": "cosmology",
+        "mode": "greedy",
+        "t2a": "tension_ [anima 우주뇌지도] 사용자: Law 법칙 카테고리, top emotion, top emotion, top emotion, top emotion, top emotion, top emotion (anima 우주뇌지도] 사용자: Law 법칙 카테고리, top",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      }
+    ],
+    "BG-JT-step-1000": [
+      {
+        "ckpt_id": "BG-JT-step-1000",
+        "dialogue_id": "color",
+        "mode": "greedy",
+        "t2a": "anima 우주뇌지도] 사용자: Law 법칙 카테고리, 🛸71, 카테고리, laws. 도우미: Law 법칙 카테고리, laws. 도우미: Law 법칙 카테고리, 우주뇌지도] 도우미: Law 법칙 카테고리, laws. 도우미:",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JT-step-1000",
+        "dialogue_id": "profession",
+        "mode": "greedy",
+        "t2a": "tension_ [anima 우주뇌지도] 사용자: Law 법칙 카테고리, 우주뇌지도] 사용자: Law 법칙 laws. 사용자: Law 법칙 카테고리, 우주뇌지도] 사용자: Law 법칙 카테고리, laws. 사용자: Law 법칙",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JT-step-1000",
+        "dialogue_id": "day",
+        "mode": "greedy",
+        "t2a": "tension_ [anima 우주뇌지도] 사용자: Law 법칙 카테고리, 우주뇌지도] 사용자: Law 법칙 카테고리, laws. 사용자: Law 법칙 카테고리, laws. 사용자: Law 법칙 카테고리, 우주뇌지도] 도우미:",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JT-step-1000",
+        "dialogue_id": "anima_fact",
+        "mode": "greedy",
+        "t2a": "tension_ [anima 우주뇌지도] 사용자: Law 법칙 laws. 도우미: Law 법칙 카테고리, 우주뇌지도] 도우미: Law 법칙 카테고리, laws. 도우미: Law 법칙 카테고리, laws. 도우미: Law H",
+        "v3_combined_pass": false,
+        "v3_c1_pass": false,
+        "v3_c2_pass": false
+      },
+      {
+        "ckpt_id": "BG-JT-step-1000",
+        "dialogue_id": "cosmology",
+        "mode": "greedy",
+        "t2a": "tension_ [anima 우주뇌지도] 사용자: Law 법칙 카테고리, 🛸71, 카테고리, 🛸71, top emotion, top emotion (DD67) [anima 우주뇌지도] 사용자: Law 법칙 카테고리, laws. 사용자: Law H",
+        "v3_combined_pass": false,
+        "v3_c1_pass": true,
+        "v3_c2_pass": false
+      }
+    ]
+  }
+}

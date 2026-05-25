@@ -1,0 +1,88 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S142-5 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S142-1 TWO-WALLS-STATE-CLOSED",
+      "passed": true,
+      "evidence": {
+        "wall_a_data_regime_measured": true,
+        "wall_b_substrate_routed": true
+      }
+    },
+    {
+      "name": "B-S142-2 LEGO-DELIVERABLES-FOR-WALL-B",
+      "passed": true,
+      "evidence": {
+        "required_lego_anchors": [
+          "§117",
+          "§124",
+          "§95",
+          "§134",
+          "§138"
+        ],
+        "present": [
+          "§117",
+          "§124",
+          "§95",
+          "§134",
+          "§138"
+        ]
+      }
+    },
+    {
+      "name": "B-S142-3 THREE-PIVOT-OPTIONS-EXHAUSTIVE",
+      "passed": true,
+      "evidence": {
+        "P1_accept_GPU": true,
+        "P2_loihi_pivot": true,
+        "P3_in_silico_spiking": true,
+        "sympy_3_partition": true,
+        "each_option_has_gate": true
+      }
+    },
+    {
+      "name": "B-S142-4 NO-CHEAP-WINNER-HONEST",
+      "passed": true,
+      "evidence": {
+        "no_cheap_winner_stated": true,
+        "P1_plateau_blocker": true,
+        "P2_access_wall_blocker": true,
+        "P3_inherits_s128_blocker": true
+      }
+    },
+    {
+      "name": "B-S142-5 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S142-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "design-maps-pivot-decision-is-strategic",
+    "family": "B-EMERGE-7 / §107-RETRY / §95-§96-S121 / §128",
+    "honest_scope": "§142 bridges the LEGO arc (§115–§141, 18 cycles) to the main-path WALL-B substrate decision. It maps 3 exhaustive pivot options (P1 accept-GPU / P2 Loihi-physical / P3 in-silico-spiking-main-path) each with a named gate, and honestly finds NO cheap winner — P1 plateaus (§107-RETRY), P2 is INRC-access-walled, P3 inherits §128's layer-3 design-close. §142 does NOT pick — the substrate pivot is a strategic decision (the user's, informed by this map), NOT a $0 cycle. GOAL-orthogonal substrate cartography; necessary-not-sufficient (B-EMERGE-7); GOAL 미도달."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "5/5",
+    "all_closed_pass": true,
+    "battery_verdict": "SUBSTRATE-PIVOT-BRIDGE-DESIGN-CLOSE-5-5-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}

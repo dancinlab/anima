@@ -1,0 +1,205 @@
+{
+  "schema": "anima/bio_phi_ribozyme/1",
+  "ts": "2026-05-07T05:23:15Z",
+  "mode": "selftest",
+  "catalytic": {
+    "label": "mock_catalytic_ribozyme",
+    "tpm": [
+      [
+        0.1,
+        0.85,
+        0.05,
+        0.0
+      ],
+      [
+        0.0,
+        0.1,
+        0.85,
+        0.05
+      ],
+      [
+        0.0,
+        0.0,
+        0.1,
+        0.9
+      ],
+      [
+        0.85,
+        0.0,
+        0.0,
+        0.15
+      ]
+    ],
+    "tpm_validation_notes": [],
+    "stdlib_ei": {
+      "per_state": [
+        {
+          "state_idx": 0,
+          "ei_nats": 0.9168367777378509,
+          "overflow": false
+        },
+        {
+          "state_idx": 1,
+          "ei_nats": 0.8684719685182166,
+          "overflow": false
+        },
+        {
+          "state_idx": 2,
+          "ei_nats": 0.9754322259045499,
+          "overflow": false
+        },
+        {
+          "state_idx": 3,
+          "ei_nats": 0.9928880465726689,
+          "overflow": false
+        }
+      ],
+      "total_ei_nats": 3.753629018733286,
+      "finite_states": 4,
+      "avg_marginal": [
+        0.2375,
+        0.2375,
+        0.25,
+        0.275
+      ]
+    },
+    "pyphi": {
+      "available": true,
+      "ray_status": "ok",
+      "pyphi_version": "feature/iit-4.0",
+      "sbn_form": [
+        [
+          0.85,
+          0.05
+        ],
+        [
+          0.15000000000000002,
+          0.9
+        ],
+        [
+          0.9,
+          1.0
+        ],
+        [
+          0.15,
+          0.15
+        ]
+      ],
+      "phi_per_state": [
+        -0.03376979187341122,
+        -0.03554714934043287,
+        0.0,
+        0.0
+      ],
+      "max_phi": 0.0,
+      "honest_c3": "pyphi 4.0 sia on marginalized SBN form \u2014 VALIDATE_CONDITIONAL_INDEPENDENCE=False; non-CI 4-state TPMs may yield negative or zero phi (marginalization artifact, cf. iit4.proper_phi_mip_attempt entry); EI fallback is the falsifier-grade discriminator"
+    },
+    "phi_or_ei_lower_bound_nats": 3.753629018733286,
+    "phi_tag": "Phi >= EI"
+  },
+  "aptamer_null": {
+    "label": "mock_aptamer_null",
+    "tpm": [
+      [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    ],
+    "tpm_validation_notes": [],
+    "stdlib_ei": {
+      "per_state": [
+        {
+          "state_idx": 0,
+          "ei_nats": 0.0,
+          "overflow": false
+        },
+        {
+          "state_idx": 1,
+          "ei_nats": 0.0,
+          "overflow": false
+        },
+        {
+          "state_idx": 2,
+          "ei_nats": 0.0,
+          "overflow": false
+        },
+        {
+          "state_idx": 3,
+          "ei_nats": 0.0,
+          "overflow": false
+        }
+      ],
+      "total_ei_nats": 0.0,
+      "finite_states": 4,
+      "avg_marginal": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    "pyphi": {
+      "available": true,
+      "ray_status": "ok",
+      "pyphi_version": "feature/iit-4.0",
+      "sbn_form": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.5
+        ]
+      ],
+      "phi_per_state": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_phi": 0.0,
+      "honest_c3": "pyphi 4.0 sia on marginalized SBN form \u2014 VALIDATE_CONDITIONAL_INDEPENDENCE=False; non-CI 4-state TPMs may yield negative or zero phi (marginalization artifact, cf. iit4.proper_phi_mip_attempt entry); EI fallback is the falsifier-grade discriminator"
+    },
+    "phi_or_ei_lower_bound_nats": 0.0,
+    "phi_tag": "Phi >= EI"
+  },
+  "cmp": {
+    "a_label": "mock_catalytic_ribozyme",
+    "b_label": "mock_aptamer_null",
+    "a_phi_or_ei": 3.753629018733286,
+    "b_phi_or_ei": 0.0,
+    "delta_a_minus_b": 3.753629018733286,
+    "a_greater_than_b": true,
+    "falsifier_id": "F-RB-Phi-1 (ribozyme catalytic Phi > aptamer non-catalytic Phi)"
+  },
+  "elapsed_sec": 17.381
+}

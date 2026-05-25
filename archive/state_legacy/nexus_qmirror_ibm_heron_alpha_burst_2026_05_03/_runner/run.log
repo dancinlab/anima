@@ -1,0 +1,42 @@
+[06:43:36] Connecting to IBM Quantum (channel=ibm_cloud)...
+[06:43:39] Enumerating backends...
+[06:43:47]   visible operational hardware backends: ['ibm_boston', 'ibm_fez', 'ibm_kingston', 'ibm_marrakesh', 'ibm_pittsburgh']
+[06:43:50] Selected backend: ibm_pittsburgh (family=Heron r3, pending=0, qubits=156)
+[06:43:50] Estimated cost: $3.20 (cap=$8.00)
+[06:43:50] Building + transpiling 4 CHSH circuits...
+[06:43:59] Submitting batch (4 circuits x 1024 shots) to ibm_pittsburgh...
+[06:44:03] job_id=d7rs38kt738s73cfude0 status=QUEUED
+[06:44:03] Waiting for result (poll 15s)...
+[06:44:03]   status=QUEUED (elapsed=0s)
+[06:44:19]   status=RUNNING (elapsed=19s)
+[06:44:34]   status=RUNNING (elapsed=34s)
+[06:44:50]   status=RUNNING (elapsed=50s)
+[06:45:05]   status=RUNNING (elapsed=65s)
+[06:45:21]   status=RUNNING (elapsed=81s)
+[06:45:37]   status=RUNNING (elapsed=97s)
+[06:45:52]   status=RUNNING (elapsed=112s)
+[06:46:07]   status=RUNNING (elapsed=128s)
+[06:46:23]   status=RUNNING (elapsed=143s)
+[06:46:38]   status=DONE (elapsed=159s)
+[06:46:38] Job DONE in 159.6s. Fetching results...
+[06:46:39]   data attrs for circuit_a_b: ['c', 'items', 'keys', 'ndim', 'shape', 'size', 'values']
+[06:46:39]   circuit_a_b: 1024 shots, 4 unique outcomes
+[06:46:39]   data attrs for circuit_a_bprime: ['c', 'items', 'keys', 'ndim', 'shape', 'size', 'values']
+[06:46:39]   circuit_a_bprime: 1024 shots, 4 unique outcomes
+[06:46:39]   data attrs for circuit_aprime_b: ['c', 'items', 'keys', 'ndim', 'shape', 'size', 'values']
+[06:46:39]   circuit_aprime_b: 1024 shots, 4 unique outcomes
+[06:46:39]   data attrs for circuit_aprime_bprime: ['c', 'items', 'keys', 'ndim', 'shape', 'size', 'values']
+[06:46:39]   circuit_aprime_bprime: 1024 shots, 4 unique outcomes
+Traceback (most recent call last):
+  File "/tmp/qmirror_alpha_burst_run_chsh.py", line 288, in <module>
+    main()
+  File "/tmp/qmirror_alpha_burst_run_chsh.py", line 272, in main
+    (OUT_DIR / "counts.json").write_text(json.dumps(counts_payload, indent=2))
+  File "/usr/lib/python3.12/pathlib.py", line 1049, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/counts.json'
+REMOTE_EXIT=1

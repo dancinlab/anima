@@ -1,0 +1,83 @@
+{
+  "phase_a_design": {
+    "ckpt_located": true,
+    "ckpt_path": "/Users/ghost/.cache/huggingface/hub/models--dancinlab--clm-v2-byte-18m-convo-5k/snapshots/1af2bcaeaf70c1d0b1a19939a8ada79a28f8cd30/convo_5k.pt",
+    "sha256_actual": "2f0ba391aff30f6a60bcefccb9215fdb45764bf07147f28c38013ca629881bbe",
+    "sha256_expected": "2f0ba391aff30f6a60bcefccb9215fdb45764bf07147f28c38013ca629881bbe",
+    "sha256_match": true,
+    "ckpt_inspect": {
+      "top_keys": ["model_state", "step"],
+      "step": 45000,
+      "state_dict_keys": 108,
+      "params_total": 18130176,
+      "params_with_buffers": 18523392,
+      "buffer_diff": 393216,
+      "buffer_explanation": "6× attn.bias [1,1,256,256] causal masks = 6 * 65536 = 393216 (registered buffers, non-trainable)"
+    },
+    "schema_match_ConsciousLMReconstructed": {
+      "vocab_size": 256,
+      "d_model": 384,
+      "n_head": 4,
+      "n_layer": 6,
+      "block_size": 256,
+      "dropout": 0.0,
+      "strict_load_pass": true,
+      "missing_keys": 0,
+      "unexpected_keys": 0
+    },
+    "F-FTDES-1_local_missing": "FALSE (file present)",
+    "F-FTDES-2_schema_mismatch": "FALSE (strict 108/108 PASS)",
+    "F-FTDES-3_corpus_insufficient": "FALSE (136K turn pairs >> 1K threshold)",
+    "F-FTDES-5_cost_blown": "FALSE ($1.80-3.80 << $20 cap)"
+  },
+  "phase_b_dry_run": {
+    "executed": true,
+    "device": "cpu",
+    "steps": 10,
+    "batch": 4,
+    "seq": 64,
+    "wall_clock_s": 6.99,
+    "step_time_s": 0.699,
+    "loss_first": 4.4303,
+    "loss_last": 4.3274,
+    "loss_decreased": true,
+    "loss_delta": 0.1028,
+    "grad_norm_first": 2.0493,
+    "grad_norm_last": 2.2787,
+    "grad_flow_ok": true,
+    "F-FTDES-4_grad_zero": "FALSE (grad_norm > 0 throughout)",
+    "ckpt_save_test": "PASS (final ckpt saved at dry_run_step_final.pt)",
+    "log_path": "/Users/ghost/core/anima/state/anima_convo_5k_ft_design_2026_05_10/dry_run.log",
+    "summary_json": "/Users/ghost/core/anima/state/anima_convo_5k_ft_design_2026_05_10/dry_run_summary.json"
+  },
+  "phase_c_fire_ready": {
+    "ft_script_ready": true,
+    "ft_script_path": "/Users/ghost/core/anima/training/convo_5k_finetune.py",
+    "corpus_ready": true,
+    "corpus_path": "/Users/ghost/core/anima/state/anima_dialogue_tier_a_iter2_2026_05_08.txt",
+    "corpus_size_mb": 76.3,
+    "corpus_format": "[anima 역할: ...]\\n사용자: <q>\\n도우미: <a>\\n\\n (KO+EN, byte-level)",
+    "runpod_manifest_path": "/Users/ghost/core/anima/state/anima_convo_5k_ft_design_2026_05_10/runpod_manifest.json",
+    "cost_estimate_usd": {
+      "low_5k_step": 1.80,
+      "rec_10k_step": 2.50,
+      "high_20k_step": 3.80,
+      "envelope_authorized": "5-20",
+      "headroom_factor": "5.3× to 11×"
+    },
+    "rollback_plan_documented": true,
+    "fire_keyword_recommended": "OK CONVO_5K FT FIRE COST $5-20",
+    "wall_clock_h100_estimate_min": {
+      "5k": 13,
+      "10k": 27,
+      "20k": 53,
+      "with_overhead": "+ 23 min"
+    }
+  },
+  "honest_c3_top3": [
+    "(1) FT recovers chat-cap = HYPOTHESIS, not guarantee. Prior cells64/128 + convo_5k all gibberish (sampling test 2026-05-10) — #115 architectural chat-incapability is the leading explanation. FT @ 5K-20K step on a different (but related) corpus may not move the needle if the architecture itself caps coherent KO emit. Estimated calibration: P(post-FT KO chat ≥3/5 coherent) ≈ 25-40%.",
+    "(2) Corpus format mismatch risk: convo_5k.pt was originally FT'd on '~2.5K Korean dialogue + English mixed' (per .roadmap.clm_v2_chat v2_chat_evidence). Our corpus = anima_dialogue_tier_a_iter2 with persona-tag prefix '[anima 역할: ...]'. Format drift may interfere — model could degrade on the original chat surface or learn the new persona-prefix surface only. Mitigation: optional strip of [anima 역할:] prefix before feed; or include both formats.",
+    "(3) Byte-level + 18M params is fundamentally undertrained for KO. Sampling test showed 0/64 KO chars emitted (UTF-8 multi-byte sequences require ~3 bytes per Hangul char × precise byte coordination). 5K-20K additional steps on 76MB corpus = ~76M*0.5 epoch = 38M byte gradient updates ≈ noise-floor in pre-training terms; this is FT scale (chat surface) not pre-train scale (language acquisition). If language is the gap, FT will not bridge it."
+  ],
+  "decision_gate": "user verbatim 'OK CONVO_5K FT FIRE COST $5-20' required to proceed to H100 spin-up; this BG ends at design+dry-run."
+}

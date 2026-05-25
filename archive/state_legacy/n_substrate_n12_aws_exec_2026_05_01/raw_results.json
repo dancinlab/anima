@@ -1,0 +1,47 @@
+{
+  "schema": "n12/aws_exec/raw_results/1",
+  "ts_utc_retrieved": "2026-05-02T04:04:47Z",
+  "device_arn_used": "arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1",
+  "device_name": "IonQ Forte 1",
+  "elapsed_min_submit_to_complete": 1.13,
+  "tasks": [
+    {
+      "circuit_id": "C3",
+      "tag": "C3_bell",
+      "qubits": 2,
+      "shots": 100,
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/b9310362-fe83-485a-b0d3-693091b05a21",
+      "status": "COMPLETED",
+      "counts": {"00": 49, "10": 1, "11": 50},
+      "bell_fidelity": 0.99,
+      "verdict_sanity": "PASS"
+    },
+    {
+      "circuit_id": "C2",
+      "tag": "C2_baseline",
+      "qubits": 1,
+      "shots": 100,
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/6b7916d6-b8fa-4131-bd06-1252454ccc52",
+      "status": "COMPLETED",
+      "counts": {"0": 100},
+      "p0": 1.0,
+      "tau_2_lower_bound_us": 1331,
+      "tau_2_lower_bound_note": "Wilson 95% CI on n=100/100; surrogate T=100us"
+    },
+    {
+      "circuit_id": "C1",
+      "tag": "C1_ghz_delay100us",
+      "qubits": 4,
+      "shots": 100,
+      "delay_us": 100,
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/a2ab2539-64a7-49a5-b006-bce6372ea54c",
+      "status": "COMPLETED",
+      "counts": {"0000": 6, "1000": 2, "1100": 16, "1010": 7, "0110": 6, "1001": 16, "0101": 10, "1101": 2, "0011": 17, "1011": 2, "1111": 16},
+      "even_parity_count": 94,
+      "odd_parity_count": 6,
+      "x_basis_contrast": 0.88,
+      "tau_2_us": 782.3,
+      "tau_2_sigma_us": 865.4
+    }
+  ]
+}

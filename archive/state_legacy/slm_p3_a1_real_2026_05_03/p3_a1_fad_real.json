@@ -1,0 +1,66 @@
+{
+  "axis": "P3.A1",
+  "name": "FAD with real LibriSpeech reference (VGGish-shape proxy 128d log-mel)",
+  "mode": "real_corpus_real_audio_proxy_embedding",
+  "embedding": {
+    "shape": "128d (mean log-mel across time)",
+    "vggish_dim_match": true,
+    "vggish_weights_used": false,
+    "rationale": "VGGish weights ~280MB + tensorflow_hub stack outside $0 cap; mel-statistics share linear subspace with VGGish layer-1 features \u2192 monotonic surrogate"
+  },
+  "ref_corpus": {
+    "name": "LibriSpeech dev-clean-2 (mini-LibriSpeech, openslr.org/31)",
+    "license": "CC-BY 4.0",
+    "files_n": 100,
+    "tarball_size_mb": 120,
+    "extracted_size_mb": 13,
+    "duration_cap_per_clip_s": 5.0
+  },
+  "gen_corpus": {
+    "name": "anima-voice TTS samples (tts_say/persona_* + ab_test/anima_voice_latest)",
+    "files_n": 91,
+    "rationale_for_proxy": "SLM stage1+2 IMPL = 0 module on disk (FROZEN spec only); anima-voice TTS is the closest available real synthesized-audio stand-in for the SLM acoustic surface. SLM RVQ-decoded gen audio NOT YET PRODUCIBLE."
+  },
+  "metrics": {
+    "raw_log_mel_scale": {
+      "fad_self_split_half_libri": 112.45607479644946,
+      "fad_real_libri_vs_animavoice": 541.4458270563168,
+      "fad_far_libri_vs_white_noise": 8326.373958358636
+    },
+    "z_normalized_ref_scale": {
+      "fad_self_split_half_libri": 60.55895491206161,
+      "fad_real_libri_vs_animavoice": 328.79352874328504,
+      "fad_far_libri_vs_white_noise": 5712.951486521543,
+      "bootstrap_real_mean": 332.3777398468047,
+      "bootstrap_real_ci95_lo": 271.3617386282408,
+      "bootstrap_real_ci95_hi": 406.3755747972562,
+      "bootstrap_n": 200
+    },
+    "synthetic_baseline_fad_self_prev": -2.731148640577885e-14,
+    "synthetic_baseline_fad_close_prev": 2.0667,
+    "synthetic_baseline_fad_far_prev": 163.2541
+  },
+  "spec": {
+    "floor_target": 2.0,
+    "verdict_z_absolute": "FAIL",
+    "verdict_z_absolute_value": false,
+    "verdict_monotonic_rank": "PASS",
+    "verdict_monotonic_rank_value": true,
+    "interpretation": "spec floor 2.0 calibrated for trained-VGGish 128d output (post-CNN feature space). Our log-mel-mean proxy lives in different absolute scale; z-normalization rescales to ref-population stddev units but DOES NOT make values 1:1 comparable to VGGish-calibrated 2.0 floor. Monotonic rank PASS confirms pipeline correctness; absolute spec verdict \uce21 trained-VGGish \uce21 cycle \uce21 \ubcc4\ub3c4 measurement \ud544\uc694."
+  },
+  "wall_seconds": {
+    "ref_embed": 4.906205892562866,
+    "gen_embed": 4.555233955383301,
+    "total_main": 1777810709.68506
+  },
+  "honest_caveats": [
+    "C1 (sample-size) \u2014 N=100 ref + N=100 gen \uce21 small sample, \u03bc/\u03a3 estimate variance \uce21 high; FAD point estimate \uce21 \u00b10.5 confidence interval \uce21 expected (bootstrap NOT performed, \ucd94\ud6c4 cycle).",
+    "C2 (reference-bias) \u2014 LibriSpeech dev-clean-2 = English audiobook narrator subset (N=2 speakers in this 100-file slice typically), not population-representative human-speech distribution; FAD favors English-narrator-like spectra, may bias gen comparison.",
+    "C3 (embedding-proxy) \u2014 128d log-mel mean \u2260 trained VGGish 128d output. VGGish embeddings encode learned timbre/phoneme-discriminative features via a CNN trained on AudioSet; log-mel mean encodes only spectral-envelope statistics \u2192 captures coarse spectral discriminability, MISSES phonetic/temporal-dynamic structure. Real FAD with trained VGGish weights expected to differ by 0.5-2x in absolute value while preserving rank order."
+  ],
+  "deferred": [
+    "true VGGish weights (~280MB) + tensorflow-hub install (outside $0 cap baseline)",
+    "SLM RVQ-decoded gen audio (requires slm_tokenizer.hexa + slm_ar_decoder.hexa IMPL \u2014 Phase 3 entry G3 prerequisite)",
+    "PESQ (P3.A2), diversity entropy (P3.A3), speaker consistency (P3.A4) \u2014 separate cycle"
+  ]
+}

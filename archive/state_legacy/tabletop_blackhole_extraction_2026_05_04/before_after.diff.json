@@ -1,0 +1,51 @@
+{
+  "before": {
+    "nexus_modules_tabletop_blackhole": {
+      "tracked_files": [
+        "modules/tabletop_blackhole/README.md",
+        "modules/tabletop_blackhole/tabletop_blackhole.hexa"
+      ],
+      "untracked_files": [
+        "modules/tabletop_blackhole/__pycache__/",
+        "modules/tabletop_blackhole/tests/__pycache__/"
+      ],
+      "loc_tracked": 307 + 49
+    },
+    "n6_arch_domains_physics_tabletop_blackhole": {
+      "tracked_files": [
+        "domains/physics/tabletop-blackhole/tabletop-blackhole.md (TBHL-01..08 research spec)"
+      ]
+    }
+  },
+  "after": {
+    "nexus_modules_tabletop_blackhole": {
+      "tracked_files_staged_for_delete": [
+        "modules/tabletop_blackhole/README.md",
+        "modules/tabletop_blackhole/tabletop_blackhole.hexa"
+      ],
+      "untracked_files_remain": [
+        "modules/tabletop_blackhole/__pycache__/",
+        "modules/tabletop_blackhole/tests/__pycache__/"
+      ],
+      "delete_committed": false,
+      "user_action_required": "git commit -m 'refactor(nexus): remove tabletop_blackhole ...'"
+    },
+    "n6_arch_domains_physics_tabletop_blackhole": {
+      "tracked_files": [
+        "domains/physics/tabletop-blackhole/tabletop-blackhole.md (TBHL-01..08, predecessor preserved)",
+        "domains/physics/tabletop-blackhole/tabletop_blackhole.hexa (307 LoC, NEW — absorbed)",
+        "domains/physics/tabletop-blackhole/tabletop_blackhole.README.md (49 LoC, NEW — absorbed)"
+      ],
+      "commit_sha": "b59d38b3",
+      "branch": "main",
+      "pushed": true
+    }
+  },
+  "diff_summary": {
+    "files_added_to_n6_arch": 2,
+    "files_removed_from_nexus_staged": 2,
+    "loc_net_added_to_n6_arch": 307 + 49,
+    "loc_net_removed_from_nexus": 307 + 49,
+    "predecessor_collision": "ZERO (additive co-location with research spec)"
+  }
+}

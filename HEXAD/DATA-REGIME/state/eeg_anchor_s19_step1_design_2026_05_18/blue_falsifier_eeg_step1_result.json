@@ -1,0 +1,26 @@
+{
+  "battery": "B-EEG-STEP1-1..4 (RESEARCH.md §19 step 1 sync protocol, sidecar)",
+  "central_blue_falsifier_changed": 0,
+  "result": "4/4 closed-form PASS",
+  "all_closed": true,
+  "verdicts": {
+    "B-EEG-STEP1-1": {
+      "pass": true,
+      "detail": "monotone_witness_ok=True reverse_anti_witness_fails=True symbolic_predicate_well_formed=True bounded_cardinality_card_N-1=True (CLOCK_MONOTONIC_RAW / mach_absolute_time => kernel-guaranteed monotone; Boolean conjunction over N-1 consecutive diffs, Kolmogorov bounded N)"
+    },
+    "B-EEG-STEP1-2": {
+      "pass": true,
+      "detail": "tau_jitter_sec=0.01 d_pass_witness=0.001 d_fail_witness=0.05 pass_ok=True fail_ok=True boundary_d=tau_inclusive=True mutually_exclusive=True bounded_ball_form_ok=True (closed ball B(0,tau) on R_{>=0}; F-CT-3 r interpretation requires drift bounded — drift > tau breaks per-window alignment, B-CT3-1..5 r in [-1,1] interp loses meaning)"
+    },
+    "B-EEG-STEP1-3": {
+      "pass": true,
+      "detail": "counter_witness_srate=100_ftop=80_FAILS=True cyton_only_250_vs_broadband_80_PASS=True daisy_combined_125_vs_80_FAIL_honest_config_constraint=True daisy_combined_125_vs_60_PASS_alt_config=True boxcar_cutoff_hz=1/(2W)=0.3333 cutoff_below_bold_0.5Hz=True cutoff_identity_well_formed=True (Nyquist is a strict structural predicate — protocol must select config satisfying it; box-car downsample matches BOLD low-pass)"
+    },
+    "B-EEG-STEP1-4": {
+      "pass": true,
+      "detail": "off_active=False off_n_outlets=0 off_byte_equal_step0_only_state=True on_active=True on_n_outlets=2 on_active_meaningful=True positive_control_on_ne_off=True truth_table_well_formed=True (CONNECTION POINT — OFF reduction == step-0-only state, mirrors B-EBT-5 / B-S16-5 / B-DIRI-5 / B-MGND-5 / B-CT3-2 / B-PHYS-5; ON is meaningfully distinct (positive control non-vacuous))"
+    }
+  },
+  "B-EEG-STEP1-NOTE": "EEG-STEP1-OUTCOME-EMPIRICAL — actual recorded jitter / impedance quality / envelope-BOLD Pearson r / hemodynamic lag are OpenBCI hardware + user .csv measurement OUTCOMES (future EEG fire, step 2 gate). This battery proves the §19 step 1 SYNC PROTOCOL is closed-form (timestamps monotone / jitter bounded gate / Nyquist-aligned / OFF-reduction byte-equal to step-0-only state). It does NOT prove Framing D will pass F-CT-3 (B-CT3 sidecar SSOT remains the gate definition; r value EMPIRICAL). B-D-NOTE / B-CT3-NOTE / B-PHYS-NOTE family, NOT counted in central blue_falsifier.py.",
+  "f_safe": "NO σ/τ/φ/J₂ external derivation; Pearson r scoped to F-CT-3 gate (B-CT3 SSOT) = own statistical invariant Cauchy-Schwarz; Nyquist = sympy real inequality; monotonicity = Boolean predicate; jitter ball = closed ball on R_{>=0}; protocol-OFF = Boolean reduction. f1/f2/f3 hard-fail safe. B-IDENTITY-5 unaffected (no corpus generated)."
+}

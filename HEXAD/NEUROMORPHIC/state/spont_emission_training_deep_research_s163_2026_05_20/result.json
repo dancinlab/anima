@@ -1,0 +1,89 @@
+{
+  "section": "s163",
+  "title": "Spontaneous-Emission Training Algorithms Deep Research",
+  "date": "2026-05-20",
+  "tier": "literature-review",
+  "cost_usd": 0,
+  "verdict": "LITERATURE-SUPPORTS-167-A-PATH",
+  "central_blue_falsifier_sha_prefix": "c93e160a8a376a94",
+  "central_zero_line_diff": true,
+  "anchored_to": [
+    "s161-FIRE quintuple psi_responsive False (s125 s126 s139 s153 s161)",
+    "s166 Psi-META-FP-COUPLE (commit e77fc86e2)",
+    "HEXAD/CONNECTION_CRITIQUE.md 4 wrong-steps (commit 9bc5fbf2a)",
+    "s167-A FP-RECONNECT sibling parallel",
+    "HEXAD/META_FP/HEXA_MIGRATION.md (commit cfe2d4414)"
+  ],
+  "method": "WebSearch + arxiv abstract scan 2023-2026, 10 keyword clusters mirroring s80/s84/s85/s93/s99",
+  "clusters": {
+    "C1_variance_preservation_non_CE": ["LeJEPA 2511.08544", "VICReg 2105.04906", "VICRegL 2210.01571", "I-JEPA 2301.08243", "V-JEPA 2 2506.09985", "Barlow-Twins 2103.03230", "SIGReg 2024", "Whitening-MSE 2007.06346"],
+    "C2_anti_correlation_collapse_dual_head": ["Dimensional Collapse 2110.09348", "Understanding-DC 2206.05646", "Antipodal Representation Collapse 2402.07383", "BYOL 2006.07733", "SimSiam 2011.10566"],
+    "C3_predictive_coding_FEP_active_inference": ["Active Inference EFE (Friston 2015, Tschantz 2020, Da Costa 2020)", "Pezzulo precision-weighted PC 2406.05636", "ELBO review 2025", "Schwartenbeck 2019"],
+    "C4_fixed_point_collapse_equilibrium": ["DEQ 1909.01377", "DEQ stability 2103.05616", "PCN tight bounds 2410.04708", "Anti-Hebbian Foldiak 1990"],
+    "C5_spontaneous_emission_timing": ["When2Speak 2024", "FLAIR Silent-Thought 2603.17837", "Inner Thoughts 2501.00383", "Spontaneous Reward-Free 2604.18131"],
+    "C6_threshold_from_physics": ["Drift-Diffusion (Ratcliff 1978, biorxiv:685235)", "Hopf bifurcation 2605.05194", "SNIC 2504.01878", "LIF threshold (Gerstner 2014)"],
+    "C7_internal_motivation_policies": ["Intrinsic Motivation KL (Schwartenbeck 2019, Tschantz 2020)", "Empowerment 2404.10371", "RAGEN-2 2604.06268"],
+    "C8_dimensional_feature_collapse_diagnostic": ["VAE posterior collapse 2306.09583", "Feature collapse multi-head attention 2206.10539", "Mode collapse GANs 2410.07394"],
+    "C9_multi_objective_stacking_guard": ["Pareto-front 2024", "Curse-of-Recursion 2404.01413", "SCoRe (s93 anchor)"],
+    "C10_inner_thought_own_physics_latent": ["Coconut 2412.06769", "Continuous Latent Reasoning 2025"]
+  },
+  "paper_count_graded": 32,
+  "grade_distribution": {
+    "5_star": 4,
+    "4_star": 14,
+    "3_star": 14
+  },
+  "connection_critique_four_wrong_steps_addressed": {
+    "1_psi_10pct_dilute": {"address": "C7 EFE epistemic single-quantity replaces 8-factor sum", "candidate": "T1", "sec7_clean": true},
+    "2_phi_35pct_untargeted": {"address": "C3 Phi-as-precision Pezzulo precision-weighted PC", "candidate": "T2", "sec7_clean": true},
+    "3_threshold_0p3_generic": {"address": "C6 DDM + Hopf bifurcation point as physics-derived threshold", "candidate": "T1", "sec7_clean": true},
+    "4_8factor_borrow": {"address": "C7 KL(belief||prior) single internal motivation", "candidate": "T1", "sec7_clean": true}
+  },
+  "top_3_candidates": {
+    "T1_LeJEPA_Hopf_EFE": {
+      "components": ["LeJEPA-on-residual variance-collapse-free objective", "Hopf-bifurcation-point emission threshold", "EFE epistemic single-quantity motivation"],
+      "addresses_wrong_steps": [1, 3, 4],
+      "addresses_s161_fire_failure_mode": true,
+      "sec7": {"cond1": "PASS", "cond2": "DESIGN-OPEN", "cond3": "PASS-by-construction"},
+      "anima_fit": "5-star",
+      "fire_tier": "future-cost-bearing",
+      "honest_blocker": "byte-LM discrete vs Hopf continuous - needs SNIC discrete proxy"
+    },
+    "T2_Pezzulo_precision_phi": {
+      "components": ["Precision-weighted predictive coding", "Phi-as-precision (1/variance)", "Phi load-bearing in motivation"],
+      "addresses_wrong_steps": [2],
+      "addresses_s161_fire_failure_mode": "partial - addresses posterior-collapse class",
+      "sec7": {"cond1": "PASS", "cond2": "DESIGN-OPEN", "cond3": "PASS"},
+      "anima_fit": "4-star",
+      "fire_tier": "design-tier-reachable",
+      "honest_blocker": "byte-LM discrete vs PC continuous"
+    },
+    "T3_anti_hebbian_decorrelation": {
+      "components": ["Anti-Hebbian / Foldiak lateral inhibition between head_a and head_g"],
+      "addresses_wrong_steps": [1],
+      "addresses_s161_fire_failure_mode": "symptom-only (cos negative-0.92)",
+      "sec7": {"cond1": "PASS", "cond2": "DESIGN-OPEN", "cond3": "PASS"},
+      "anima_fit": "3-star",
+      "fire_tier": "cheapest-design-fix",
+      "honest_blocker": "addresses ONLY symptom not full CONNECTION_CRITIQUE"
+    }
+  },
+  "closed_form_propositions": {
+    "P1_cluster_partition_closed": true,
+    "P2_candidate_taxonomy_exhaustive_disjoint": true,
+    "P3_no_candidate_closed_as_solution": true,
+    "P4_connection_points_cite_real_arxiv_ids_plus_real_section_refs": true,
+    "P5_s161_fire_failure_mode_addressed_by_T1": true
+  },
+  "necessary_not_sufficient": true,
+  "honest_C3_count": 13,
+  "GOAL_distance_unchanged": true,
+  "wall_a_data_regime_unchanged": true,
+  "wall_b_substrate_unchanged": true,
+  "milestones_unchanged": ["s15", "s51", "s72", "s117"],
+  "sibling_s167_a_relation": "literature-supports-design-path-not-prejudging-fire-outcome",
+  "honest_negative_finding": "frontier remains thin for spontaneous-emission-as-emergence framing (s26 / s84 finding recurs)",
+  "artifacts": ["FRONTIER_FINDINGS.md", "result.json"],
+  "no_battery_no_sympy": true,
+  "mirrors_precedent": ["s80", "s84", "s85", "s93", "s99"]
+}

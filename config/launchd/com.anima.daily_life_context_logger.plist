@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.anima.daily_life_context_logger</string>
+
+    <!--
+        anima T2 — daily-life context labeling for EEG time-align.
+
+        Polls macOS native sources every 5 sec via
+        anima-eeg/tool/daily_life_context_logger.hexa --tick
+        and appends a single JSONL row to
+        state/daily_life_context/<UTC-date>_activity.jsonl
+
+        Captures (raw#13 system-self only — NO API, NO LLM):
+          - keystroke_active_5s (boolean from IOHIDSystem HIDIdleTime)
+          - screen_locked       (boolean from pmset -g log)
+          - active_app          (process name only, NO window title)
+          - audio_level_db      (integer dB only, NO waveform)
+          - network_active      (Δbytes boolean, NO host/URL)
+
+        Privacy invariants (falsifiable F1-F4 in the hexa tool):
+          NO keystroke content, NO screen capture, NO audio waveform,
+          NO URLs / hosts / destinations, NO window titles.
+
+        ACTIVATION (USER-EXPLICIT ONLY)
+          launchctl load -w /Users/ghost/core/anima/config/launchd/com.anima.daily_life_context_logger.plist
+        Disable:
+          launchctl unload  /Users/ghost/core/anima/config/launchd/com.anima.daily_life_context_logger.plist
+        The agent NEVER auto-loads this plist. User consent required.
+
+        StartInterval = 5 sec  →  matches eeg_daily_life_verifier window stride
+        RunAtLoad     = false  →  user controls first tick
+    -->
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/ghost/.hx/bin/hexa</string>
+        <string>run</string>
+        <string>/Users/ghost/core/anima/anima-eeg/tool/daily_life_context_logger.hexa</string>
+        <string>--tick</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/ghost/core/anima</string>
+
+    <key>StartInterval</key>
+    <integer>5</integer>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/ghost/core/anima/logs/daily_life_context_logger.out.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/ghost/core/anima/logs/daily_life_context_logger.err.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/ghost/.hx/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+</dict>
+</plist>

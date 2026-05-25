@@ -1,0 +1,91 @@
+// HEXAD/MITOSIS/mitosis_lib.hexa — pure fns (NO main/_selftest) — compiled-first lib split (interp deprecating)
+//  HEXAD/MITOSIS/mitosis.hexa — 성장축 (growth axis) hexa-native entry [SCAFFOLD]
+//
+//  PURPOSE
+//    Entry point + invariant declaration for the MITOSIS 성장축. Functional
+//    impl is delegated to the existing FULL IMPL:
+//
+//      tool/hexa_native/mitosis_hook.hexa  (1119 LoC, FULL IMPL D4a, ✅ 5/5 PASS)
+//        - cell pool layout (hexa dict): cells / next_id / thresholds / lorenz
+//                                        / global tension history / phi / event log
+//        - mitosis_forward_tail hook (1 invocation per forward pass)
+//        - split_cell / merge_cells primitives
+//        - Φ ratchet management
+//
+//    이 파일은 HEXAD/MITOSIS/ 모듈 entry 로 invariant constants + scaffold API
+//    surface 만 담음. 다른 모듈 C/D 의 scaffold 패턴과 동일.
+//
+//  STATUS
+//    🔶 scaffold + cross-link (실 동역학 = mitosis_hook.hexa).
+//
+//  PYTHON ANCHOR
+//    ready/core/consciousness_engine.py :: ConsciousnessEngine
+//      split_threshold=0.3, split_patience=5
+//      merge_threshold=0.01, merge_patience=15
+//      min_cells=2 (CB1), max_cells=64 (.clm v1 P2 spec)
+//
+//  EVIDENCE
+//    state/clm_v1_fire_2026_05_15/  (.clm v1 P2 cells 2→64 organic, 8/8🔵 + F-PYPHI)
+//
+//  COMPLIANCE
+//    raw#11 snake_case · raw#9/10 honest impl (no false dynamics claim)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── canonical thresholds (mirrors ConsciousnessEngine defaults) ─────────────
+fn mitosis_split_threshold_default() -> float { return 0.3 }
+fn mitosis_merge_threshold_default() -> float { return 0.01 }
+fn mitosis_split_patience_default()  -> int   { return 5 }
+fn mitosis_merge_patience_default()  -> int   { return 15 }
+fn mitosis_min_cells()                -> int   { return 2 }    // CB1 invariant
+fn mitosis_max_cells_default()        -> int   { return 64 }   // .clm v1 P2 spec
+
+
+// ── 2축 직교 declaration (HEXAD.tape §mitosis_two_axis carry) ──────────────
+fn mitosis_axis_kind() -> string { return "growth" }       // ⊥ "structure" (HEXAD 6)
+fn mitosis_orthogonal_to() -> string { return "HEXAD-6" }
+
+
+// ── helpers ─────────────────────────────────────────────────────────────────
+fn _mit_approx_eq(a: float, b: float, tol: float) -> bool {
+    let d = a - b
+    if d < 0.0 { d = 0.0 - d }
+    return d <= tol
+}
+
+
+// ── B-MITOSIS-1..5 closed-form invariant witnesses (sympy-mirror, compiled) ──
+// Python anchor: state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: bmitosis()
+// All anchors real-limit (Kolmogorov / linear conservation / reverse-mode AD
+// ∂-rule / bounded-set). NO σ/τ/φ/J₂ lattice numerology (f1/f2 hard fail safe).
+
+// B-MITOSIS-1 SPLIT-PREDICATE-CLOSED — split ↔ (tension > thr) ∀ tension, thr
+fn mit_split_predicate(tension: float, thr: float) -> bool {
+    return tension > thr
+}
+
+// B-MITOSIS-2 MERGE-WEIGHT-LINEAR-CLOSED — avg = (w1 + w2) / 2 ∀ w1, w2
+fn mit_merge_avg(w1: float, w2: float) -> float {
+    return (w1 + w2) / 2.0
+}
+
+// B-MITOSIS-3 CELL-COUNT-CONSERVATION-CLOSED — n(t+1) = n(t) + Δsplit − Δmerge
+fn mit_count_after(n_t: int, d_split: int, d_merge: int) -> int {
+    return n_t + d_split - d_merge
+}
+
+// B-MITOSIS-5 CELL-COUNT-BOUND-CLOSED — n_cells ∈ [min=2, max=64] via clamp
+// min: CB1 invariant · max: .clm v1 P2 spec — design constants, real-limit safe
+fn mit_clamp_count(n: int) -> int {
+    let lo = mitosis_min_cells()           // 2
+    let hi = mitosis_max_cells_default()   // 64
+    if n < lo { return lo }
+    if n > hi { return hi }
+    return n
+}
+
+// B-MITOSIS-4 NO-GRAD-SPLIT — structural invariant (∂detach(x)/∂x = 0 ∀ x,
+// reverse-mode AD definitional ∂-rule). Enforced by tool/hexa_native/mitosis_hook.hexa
+// split_cell impl (F-V5MIT-1 PSCC §44: 62 splits / 0 grad violations real H100
+// cotrain). No hexa-side numerical witness — verified at sympy + at hook impl.
+fn mit_nograd_split_documented() -> bool { return true }

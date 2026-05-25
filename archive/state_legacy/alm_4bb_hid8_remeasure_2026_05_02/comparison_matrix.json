@@ -1,0 +1,98 @@
+{
+  "schema": "alm_4bb_hid8_remeasure/comparison_matrix/1",
+  "matrix": [
+    {
+      "backbone_key": "mistral",
+      "base_model": "mistralai/Mistral-7B-v0.3",
+      "hid128_base_phi_star": -14.4194,
+      "hid128_base_sign": "negative_anti_integrated",
+      "hid8_base_phi_star": -11.9727,
+      "hid8_base_sign": "negative",
+      "hid8_r14_phi_star": -7.3919,
+      "hid8_r14_sign": "negative_anti_integrated",
+      "hid8_r14_cond_num": 206.0854,
+      "sign_consistency_hid128_to_hid8_base": true,
+      "sign_consistency_hid8_base_to_hid8_r14": true,
+      "r14_lora_effect_delta": 4.5808,
+      "magnitude_ratio_hid128_to_hid8_r14": 1.9507
+    },
+    {
+      "backbone_key": "qwen3",
+      "base_model": "Qwen/Qwen3-8B",
+      "hid128_base_phi_star": -12.3873,
+      "hid128_base_sign": "negative_anti_integrated",
+      "hid8_base_phi_star": 5.6182,
+      "hid8_base_sign": "positive",
+      "hid8_r14_phi_star": 6.5107,
+      "hid8_r14_sign": "positive_iit_integrated",
+      "hid8_r14_cond_num": 943.2667,
+      "sign_consistency_hid128_to_hid8_base": false,
+      "sign_consistency_hid8_base_to_hid8_r14": true,
+      "r14_lora_effect_delta": 0.8925,
+      "magnitude_ratio_hid128_to_hid8_r14": 1.9026
+    },
+    {
+      "backbone_key": "llama",
+      "base_model": "meta-llama/Meta-Llama-3.1-8B",
+      "hid128_base_phi_star": -15.0536,
+      "hid128_base_sign": "negative_anti_integrated",
+      "hid8_base_phi_star": 9.6763,
+      "hid8_base_sign": "positive",
+      "hid8_r14_phi_star": 10.5857,
+      "hid8_r14_sign": "positive_iit_integrated",
+      "hid8_r14_cond_num": 195.4972,
+      "sign_consistency_hid128_to_hid8_base": false,
+      "sign_consistency_hid8_base_to_hid8_r14": true,
+      "r14_lora_effect_delta": 0.9094,
+      "magnitude_ratio_hid128_to_hid8_r14": 1.4221
+    },
+    {
+      "backbone_key": "gemma",
+      "base_model": "google/gemma-2-9b",
+      "hid128_base_phi_star": -13.4257,
+      "hid128_base_sign": "negative_anti_integrated",
+      "hid8_base_phi_star": -13.8609,
+      "hid8_base_sign": "negative",
+      "hid8_r14_phi_star": 4.7872,
+      "hid8_r14_sign": "positive_iit_integrated",
+      "hid8_r14_cond_num": 74.1429,
+      "sign_consistency_hid128_to_hid8_base": true,
+      "sign_consistency_hid8_base_to_hid8_r14": false,
+      "r14_lora_effect_delta": 18.6481,
+      "magnitude_ratio_hid128_to_hid8_r14": 2.8045
+    },
+    {
+      "backbone_key": "clm_v4_530m",
+      "base_model": "CLM_v4_530M",
+      "hid128_base_phi_star": 1167.6192,
+      "hid128_base_sign": "positive_iit_integrated",
+      "hid8_base_phi_star": 41.8592,
+      "hid8_base_sign": "positive_iit_integrated",
+      "hid8_r14_phi_star": 41.8592,
+      "hid8_r14_sign": "positive_iit_integrated",
+      "hid8_r14_cond_num": 1178.0971,
+      "sign_consistency_hid128_to_hid8_base": false,
+      "sign_consistency_hid8_base_to_hid8_r14": true,
+      "r14_lora_effect_delta": 0.0,
+      "magnitude_ratio_hid128_to_hid8_r14": 27.894,
+      "note": "CLM has no r14 LoRA; hid8_base = hid8_r14 by construction"
+    }
+  ],
+  "inflation_verdict": {
+    "mission_hypothesis": "CLM +41.86 may be 8x inflation of Llama +5; honest test = HID=8 r14 magnitudes",
+    "clm_hid8_phi_star": 41.8592,
+    "llama_hid8_r14_phi_star": 10.5857,
+    "qwen3_hid8_r14_phi_star": 6.5107,
+    "mistral_hid8_r14_phi_star": -7.3919,
+    "gemma_hid8_r14_phi_star": 4.7872,
+    "clm_to_max_alm_pos_ratio": 3.9543,
+    "verdict": "CLM_MAGNITUDE_HONEST_BAND (not >>5x ALM POS)",
+    "max_alm_positive_phi_star": 10.5857
+  },
+  "columns_explained": {
+    "hid128_base_phi_star": "state/v10_benchmark_v4 ledger \u2014 BASE no-LoRA H=128 ridge=1e-4",
+    "hid8_base_phi_star": "state/v10_phi_v3_minisweep ledger \u2014 BASE no-LoRA H=8 K=8 seed=42 ridge=1e-4",
+    "hid8_r14_phi_star": "this run \u2014 r14 LoRA applied H=8 K=8 seed=42 ridge=1e-4",
+    "r14_lora_effect_delta": "hid8_r14 - hid8_base (LoRA-only contribution at HID=8)"
+  }
+}

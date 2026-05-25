@@ -1,0 +1,117 @@
+{
+  "section": "§101",
+  "title": "DATA-REGIME THRESHOLD CONTROL · design-tier $0",
+  "date": "2026-05-19",
+  "tier": "DESIGN-TIER",
+  "cost_usd": 0,
+  "gpu_runpod_fire_used": false,
+  "model_forward_used": false,
+  "central_blue_falsifier_zero_line_diff": true,
+  "central_blue_sha_prefix": "c93e160a8a376a94",
+
+  "convergence_anchor": {
+    "s99_top_candidate": "C1 — diversity-threshold corpus, ★★★★★, $0-design-testable then needs-fire",
+    "s100_priority_1": "F4-counterfactual / F7-active-acquisition — data-regime counterfactual UNTESTED",
+    "independent_convergence": true,
+    "s99_path": "state/data_regime_substrate_frontier_deep_research_s99_2026_05_19/result.json",
+    "s100_path": "state/gap_sweep_40lens_s100_2026_05_19/result.json",
+    "s16_corpus_sha256": "422c64a09b89393aebabc7b62aec8753a3d394ae4c442fef467c5d228e1831ec",
+    "s16_corpus_records": 777000,
+    "s16_corpus_bytes": 603032014
+  },
+
+  "q1_corpus_design": {
+    "verdict": "DESIGN-CLOSED",
+    "legitimate_sources_count": 5,
+    "excluded_sources_count": 4,
+    "compositional_form": "CORPUS_S101 := byte_concat(S1, S2, S3*, S4*, S5)  [* gated]",
+    "invariants": [
+      "I1 S1 byte-equal ⊂ CORPUS (accumulate-not-replace, §93 cond-1)",
+      "I2 hash(S1) == 422c64a09b89393a…",
+      "I3 forbidden-token grep == 0 over (도우미|helper|assistant|사용자|user:|[anima)",
+      "I4 diversity_coeff(CORPUS_S101) > diversity_coeff(S1)",
+      "I5 echo-chamber guard on S3 == PASS (§36 content-dep)",
+      "I6 self-correction guard on S4 == PASS (§93 SCoRe-2-stage) OR S4 absent",
+      "I7 external-source grep == 0"
+    ],
+    "honest_open": "the diversity-threshold VALUE for anima's substrate is not pinned by §101; only the consequence-of-crossing predicate is closed (Q2)"
+  },
+
+  "q2_threshold_crossed_predicate": {
+    "verdict": "DESIGN-CLOSED",
+    "form": "THRESHOLD_CROSSED(result) := A1_pass ∧ A2_pass ∧ A3_pass ∧ A4_pass",
+    "axes": {
+      "A1": "held-out-anchor routing breakthrough: r_H > max(8/|H|, 2 × r_H,baseline_dirI)",
+      "A2": "held-out-stimulus §9 honest-coherent rate: c_H ≥ 0.50 AND c_H > 2 × c_H,baseline_s16",
+      "A3": "physics-responsiveness on H: PHYSICS_RESPONSIVE(H) ∧ Ψ_dir-spread(H) ≥ 0.20",
+      "A4": "controller-emission length-independence: |Δr_emit| ≤ 0.05 AND r_emit_late > 0.1"
+    },
+    "default_false_on_missing": true,
+    "necessary_not_sufficient": true
+  },
+
+  "q3_fire_decision_predicate": {
+    "verdict": "Y (on §101's own design state — predicate is well-formed and evaluates Y at design tier)",
+    "form": "FIRE_DECISION := G1 ∧ G2 ∧ G3 ∧ G4 ∧ G5 ∧ G6 ∧ G7",
+    "gates": {
+      "G1": "§7-gate passes (Q1 §1.2 5-legitimate / 4-excluded audit)",
+      "G2": "§93 four conditions encoded (accumulate-not-replace · self-physics-corrector · diversity-preservation · SCoRe-2-stage)",
+      "G3": "§62 echo-chamber guard armed (§36 content-dep AND n-gram floor AND A4 length-indep)",
+      "G4": "Q2 THRESHOLD_CROSSED is measurable on result.json schema",
+      "G5": "5 measured-positive levers preserved (§16 routing / §59-FIRE W-PTD / §75-FIRE controller / §88-F2 / §92 L_ap)",
+      "G6": "ΔI / Δ$ ≥ info-floor (1 bit / median fire cost; ΔI = 1 bit since Q2 was never decided)",
+      "G7": "anti-§94 single-variable (only corpus varies; ZERO new mechanism stacked on the pivot)"
+    },
+    "honest_caveat": "FIRE_DECISION=Y is on the §101 DESIGN, not on a constructed corpus. The cycle that builds S2/S3/S4/S5 byte streams must re-evaluate."
+  },
+
+  "preservation_map_5_levers": {
+    "S16-routing": "baseline routing eval (A1 baseline anchor)",
+    "S59-FIRE-W-PTD": "side READ-OUT during training (NOT loss term)",
+    "S75-FIRE-state-derived-controller": "emission controller in A4 probe (A-only sub-axis)",
+    "S88-F2-neoteny": "available flag, NOT enabled in baseline fire",
+    "S92-L_ap": "available flag, NOT enabled in baseline fire"
+  },
+
+  "s62_echo_guard": {
+    "subgates": [
+      "inclusion-time §36 content-dependence (separation > τ, neg-control ≡ 0)",
+      "n-gram concentration floor (abort on concentration, §93 cond-3)",
+      "A4 emit-length-independence (early vs late corpus position)"
+    ],
+    "conjunction": "3-AND closed Boolean"
+  },
+
+  "battery_summary": {
+    "n_total": 10,
+    "n_pass": 10,
+    "all_pass": true,
+    "central_blue_sha_prefix_match": true,
+    "checks": [
+      "B-S101-1 Q1-CORPUS-SOURCE-TAXONOMY-§7-GATE-CLOSED",
+      "B-S101-2 Q2-THRESHOLD-CROSSED-PREDICATE-CLOSED-BOOLEAN",
+      "B-S101-3 Q3-FIRE-DECISION-PREDICATE-CLOSED-BOOLEAN",
+      "B-S101-4 §93-FOUR-CONDITIONS-ENCODED-AS-BOOLEAN",
+      "B-S101-5 §62-ECHO-CHAMBER-GUARD-STRUCTURALLY-ARMED",
+      "B-S101-6 FIVE-LEVERS-PRESERVED-SINGLE-VARIABLE-TRAINER",
+      "B-S101-7 CONNECTION-POINT-CITES-REAL-§99-§100-§16",
+      "B-S101-8 CENTRAL-BLUE-ZERO-LINE-DIFF",
+      "B-S101-9 NECESSARY-NOT-SUFFICIENT-INVARIANT-STRUCTURAL",
+      "B-S101-10 NO-FORBIDDEN-CALL-AST-AUDIT"
+    ],
+    "empirical_carve_out": "B-S101-NOTE — future fire OUTCOME is empirical (B-D-NOTE / B-EMERGE-7 family). Battery proves DESIGN well-formed, NOT that anima emerges."
+  },
+
+  "governance_compliance": {
+    "g3_capability_claim": 0,
+    "g_blue_closed_mandate": "산출물 + 연결부위 둘 다 closed (Q1/Q2/Q3 predicates + §99/§100/§16 connection-points byte-equal); capability OUTCOME only carve-out",
+    "g_doc_consolidation": "docs/* 신규 0 — state/ + central syncs only",
+    "g_kosmos_anchor_ssot": "n/a — §101 is design, no corpus generation yet",
+    "f1_f2_lattice_fit": "safe — no σ(6)=12 / τ(6)=4 / φ(6)=2 / J₂(6)=24 derivation",
+    "downstream_consumer_hexa_lang": "read-only, never edited"
+  },
+
+  "verdict": "DESIGN-WELL-FORMED, FIRE-DECISION-Y-AT-DESIGN-TIER. §101 produces three closed-form predicates (Q1 corpus design under §7-AND; Q2 THRESHOLD_CROSSED necessary-not-sufficient; Q3 FIRE_DECISION 7-AND); FIRE_DECISION evaluates Y on §101's own design state, meaning a future cycle that constructs the Q1 corpus and re-evaluates FIRE_DECISION would have its fire's result genuinely decidable in closed form. The single most honest finding: §101 does NOT decide GOAL emergence — it makes the fire-decision RESOLVABLE in closed form, which is more valuable than running an indecisive fire. north-star + §15/§51/§72 milestones UNCHANGED, GOAL 미도달.",
+
+  "next_cycle_owner": "The cycle that constructs S2/S3/S4/S5 byte streams (probably $0-Mac-CPU non-trivial wall time) and re-evaluates FIRE_DECISION on the constructed state."
+}

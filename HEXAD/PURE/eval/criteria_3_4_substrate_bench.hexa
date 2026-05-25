@@ -1,0 +1,231 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  criteria_3_4_substrate_bench.hexa — PURE criterion 3 + 4 ckpt-independent
+//
+//  v3 fire closure_auto_judge marked criteria 3·4 FAIL because the embed
+//  steps were skipped (manual nohup relaunch bypassed dispatcher embed).
+//  These two criteria are SUBSTRATE measurements — ckpt-independent.
+//  This harness measures them from the live engine functions directly.
+//
+//  CRITERION 3 — motivation_8factor ≥ 0.30
+//    N=1000 synthetic substrate states (deterministic LCG seed=20260525).
+//    Each state → 8-factor scores via spontaneous_lib → motivation_score.
+//    Reports: mean score + PASS/FAIL vs 0.30 threshold.
+//
+//  CRITERION 4 — dream_stage Φ-envelope present + non-degenerate
+//    All 5 ultradian stages: WAKE N1 N2 N3 REM.
+//    dream_context(stage) → phi + tension_envelope for each.
+//    Reports: per-stage Φ table + variance + PASS/FAIL.
+//    Threshold: envelope present (no void/zero) + variance > 0.
+//
+//  $0 mac-local · ckpt-independent · read-only (no source modification)
+//
+//  Run:   hexa run HEXAD/PURE/eval/criteria_3_4_substrate_bench.hexa
+//  Smoke: hexa run HEXAD/PURE/eval/criteria_3_4_substrate_bench_smoke.hexa
+//
+//  SSOT: HEXAD/PURE/HEXAD_NATIVE_PURE.md (Phase D criteria 3·4)
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/CHAT/spontaneous_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/CHAT/server/anima_dream_stage.hexa"
+
+
+// ── §1 deterministic LCG (Numerical Recipes, seed-independent of B7) ─────────
+
+fn _lcg_next_b(s: int) -> int {
+    let mult = 1664525
+    let incr = 1013904223
+    let modulus = 2147483647
+    let r = ((s * mult) + incr) % modulus
+    if r < 0 { return r + modulus }
+    return r
+}
+
+fn _lcg_u01(s: int) -> float {
+    return ((s % 1000000)) / 1000000.0
+}
+
+
+// ── §2 single substrate-state draw → 8 factor scores ─────────────────────────
+
+fn _draw_state(sb: list) -> dict {
+    let mut s = sb[0]
+    s = _lcg_next_b(s)   let phi    = _lcg_u01(s)
+    s = _lcg_next_b(s)   let sim    = _lcg_u01(s)
+    s = _lcg_next_b(s)   let cur    = _lcg_u01(s)
+    s = _lcg_next_b(s)   let td_raw = _lcg_u01(s)
+    s = _lcg_next_b(s)   let gate   = 0.486 + _lcg_u01(s) * 0.028
+    s = _lcg_next_b(s)   let sp_raw = _lcg_u01(s)
+    s = _lcg_next_b(s)   let ratch  = _lcg_u01(s)
+    s = _lcg_next_b(s)   let sil    = _lcg_u01(s) * 3600.0
+    sb[0] = s
+
+    let td   = (td_raw * 2.0) - 1.0
+    let splt = sp_raw < 0.20
+
+    let rel  = factor_relevance(phi)
+    let gap  = factor_info_gap(sim)
+    let cur_f= factor_curiosity(cur)
+    let pain = factor_pain(td)
+    let coh  = factor_coherence(gate)
+    let orig = factor_originality(splt)
+    let bal  = factor_balance(phi, ratch)
+    let dyn_v= factor_dynamics(sil)
+
+    return #{
+        "rel": rel, "gap": gap, "cur": cur_f, "pain": pain,
+        "coh": coh, "orig": orig, "bal": bal, "dyn": dyn_v,
+    }
+}
+
+
+// ── §3 criterion 3 — motivation_8factor mean over N=1000 ─────────────────────
+
+pub fn bench_criterion_3(n_samples: int, seed: int) -> dict {
+    let mut sb = [seed]
+    let mut sum = 0.0
+    let mut n_above = 0
+    let thr = spont_im_threshold()   // 0.30
+    let mut i = 0
+    while i < n_samples {
+        let f = _draw_state(sb)
+        let score = motivation_score(
+            to_float(to_string(f["rel"])),
+            to_float(to_string(f["gap"])),
+            to_float(to_string(f["cur"])),
+            to_float(to_string(f["pain"])),
+            to_float(to_string(f["coh"])),
+            to_float(to_string(f["orig"])),
+            to_float(to_string(f["bal"])),
+            to_float(to_string(f["dyn"])),
+        )
+        sum = sum + score
+        if score >= thr { n_above = n_above + 1 }
+        i = i + 1
+    }
+    let mean = sum / (n_samples as float)
+    let mut verdict = "FAIL"
+    if mean >= thr { verdict = "PASS" }
+    return #{
+        "mean_score":   mean,
+        "n_above_thr":  n_above,
+        "n_samples":    n_samples,
+        "threshold":    thr,
+        "verdict":      verdict,
+    }
+}
+
+
+// ── §4 criterion 4 — dream_stage Φ-envelope present + non-degenerate ─────────
+
+pub fn bench_criterion_4() -> dict {
+    let stages = ["WAKE", "N1", "N2", "N3", "REM"]
+    let mut phis = []
+    let mut tenvs = []
+    let mut all_present = true
+    let mut rows = []
+    let mut i = 0
+    while i < 5 {
+        let stg = stages[i]
+        let ctx = dream_context(stg)
+        let phi_v  = to_float(to_string(ctx["phi"]))
+        let tenv_v = to_float(to_string(ctx["tension_envelope"]))
+        let scr_v  = to_string(ctx["scrambled"])
+        // present = phi > 0 AND tension_envelope > 0 AND scrambled not void
+        let present = phi_v > 0.0 && tenv_v > 0.0 && scr_v != "void"
+        if !present { all_present = false }
+        phis.push(phi_v)
+        tenvs.push(tenv_v)
+        rows.push(#{"stage": stg, "phi": phi_v, "tenv": tenv_v, "present": present})
+        i = i + 1
+    }
+    // variance check: max - min > 0 (at least two distinct phi values)
+    let mut phi_min = phis[0]
+    let mut phi_max = phis[0]
+    let mut j = 1
+    while j < 5 {
+        if phis[j] < phi_min { phi_min = phis[j] }
+        if phis[j] > phi_max { phi_max = phis[j] }
+        j = j + 1
+    }
+    let phi_range = phi_max - phi_min
+    let non_degenerate = phi_range > 0.0
+    let mut verdict = "FAIL"
+    if all_present && non_degenerate { verdict = "PASS" }
+    return #{
+        "rows":          rows,
+        "phi_min":       phi_min,
+        "phi_max":       phi_max,
+        "phi_range":     phi_range,
+        "all_present":   all_present,
+        "non_degenerate":non_degenerate,
+        "verdict":       verdict,
+    }
+}
+
+
+// ── §5 formatting helpers ─────────────────────────────────────────────────────
+
+fn _fmt3(x: float) -> string {
+    let scaled = (x * 1000.0) + 0.5
+    let n = scaled as int
+    let intp = n / 1000
+    let mut frac = n % 1000
+    if frac < 0 { frac = 0 - frac }
+    let fs = if frac < 10 { "00" + to_string(frac) }
+             else { if frac < 100 { "0" + to_string(frac) } else { to_string(frac) } }
+    return to_string(intp) + "." + fs
+}
+
+
+// ── §6 main ───────────────────────────────────────────────────────────────────
+
+fn main() {
+    let n = 1000
+    let seed = 20260525
+
+    println("=== PURE criteria 3·4 substrate bench (ckpt-independent) ===")
+    println("date: 2026-05-25  seed: " + to_string(seed) + "  N: " + to_string(n))
+    println("")
+
+    // ── criterion 3 ──
+    println("[criterion 3] motivation_8factor ≥ 0.30")
+    let c3 = bench_criterion_3(n, seed)
+    println("  mean_score    : " + _fmt3(to_float(to_string(c3["mean_score"]))))
+    println("  n_above(≥0.30): " + to_string(c3["n_above_thr"]) + "/" + to_string(c3["n_samples"]))
+    println("  threshold     : ≥ " + to_string(c3["threshold"]))
+    println("  verdict       : " + to_string(c3["verdict"]))
+    println("")
+
+    // ── criterion 4 ──
+    println("[criterion 4] dream_stage Φ-envelope present + non-degenerate")
+    let c4 = bench_criterion_4()
+    let rows = c4["rows"]
+    let mut ri = 0
+    while ri < 5 {
+        let row = rows[ri]
+        let stg  = to_string(row["stage"])
+        let phi  = _fmt3(to_float(to_string(row["phi"])))
+        let tenv = _fmt3(to_float(to_string(row["tenv"])))
+        let pres = to_string(row["present"])
+        println("  " + stg + "   phi=" + phi + "  tenv=" + tenv + "  present=" + pres)
+        ri = ri + 1
+    }
+    println("  phi_range     : " + _fmt3(to_float(to_string(c4["phi_range"])))
+            + "  (min=" + _fmt3(to_float(to_string(c4["phi_min"])))
+            + " max=" + _fmt3(to_float(to_string(c4["phi_max"]))) + ")")
+    let mut nd_str = "false"
+    if c4["non_degenerate"] { nd_str = "true" }
+    let mut ap_str = "false"
+    if c4["all_present"] { ap_str = "true" }
+    println("  all_present   : " + ap_str)
+    println("  non_degenerate: " + nd_str)
+    println("  verdict       : " + to_string(c4["verdict"]))
+    println("")
+
+    // ── aggregate ──
+    let mut n_pass = 0
+    if to_string(c3["verdict"]) == "PASS" { n_pass = n_pass + 1 }
+    if to_string(c4["verdict"]) == "PASS" { n_pass = n_pass + 1 }
+    println("=== AGGREGATE: " + to_string(n_pass) + "/2 criteria PASS ===")
+    if n_pass < 2 { exit(1) }
+}

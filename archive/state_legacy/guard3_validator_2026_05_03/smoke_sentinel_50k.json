@@ -1,0 +1,54 @@
+{
+  "schema": "anima/guard3_post_bg_validator/1",
+  "tool": "tool/guard3_post_bg_validator.hexa",
+  "ts_iso": "2026-05-04T01:00:11Z",
+  "label": "smoke_sentinel_50k",
+  "bg_claim": "audit BG PID 1726340: ps -p 1726340 -> no result; PID gone for 27s -> reporting NATURALLY COMPLETED",
+  "mode": "replay",
+  "positive_signals": [],
+  "failure_signals": [
+    {
+      "id": "F1_exit_code_nonzero",
+      "value": 1,
+      "note": "process exited with non-zero status"
+    },
+    {
+      "id": "F2_log_crash_pattern",
+      "value": [
+        "cuda out of memory",
+        "traceback",
+        "runtimeerror"
+      ],
+      "note": "crash sentinel(s) in log tail"
+    },
+    {
+      "id": "F3_stderr_nonempty",
+      "value": 2048,
+      "note": "stderr has content; tail=RuntimeError: CUDA out of memory. Tried to allocate 24.00 GiB"
+    },
+    {
+      "id": "F4_savepoint_absent_short_wall",
+      "value": {
+        "actual_s": 4,
+        "expected_s": 1800,
+        "expected_savepoints": [
+          "step_1000",
+          "step_5000",
+          "step_10000",
+          "step_25000",
+          "final"
+        ]
+      },
+      "note": "no expected savepoint AND wall < 50% expected"
+    }
+  ],
+  "verdict": "FAIL",
+  "rationale": "one or more failure signals present (claim is wrong)",
+  "guard_rule": "F-GUARD3-1: PID-absent claim requires >=1 STRONG positive signal (P1 verdict-label OR P2 exit-code-0 OR P3 all-savepoints) AND zero failure signals",
+  "caveats": [
+    "heuristic: positive/failure signals are pattern-matched; out-of-sample BGs may need manual override",
+    "false-positive risk: real PASS runs lacking verdict.json are reported INDETERMINATE (bias toward manual look)",
+    "harness deferred: standalone CLI only; parent must invoke after each cleanup BG",
+    "retroactive smoke tests replay reconstructed input, not original artifacts"
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "h174_cascade_targets": {
+    "H_162": {
+      "title": "phi-normalized anima IIT4 lower-bound",
+      "status_in_MAIN": "SUPPORTED-BY-PROXY (Hc_1283 anchor)",
+      "cascade_impact": "L5 explicit acknowledgment of CLM-v4-specific architecture; H_174 SUPPORTED-FULL confirms L5 valid",
+      "cascade_verdict": "NO-CHANGE \u2014 H_162 originally claims CLM v4 only, H_174 confirms scope"
+    },
+    "H_175": {
+      "title": "emerge candidate D 4mode inject taxonomy",
+      "cascade_impact": "phi_star variation source \u2014 Hc_624/623 referenced; D-substrate dependency \uac00 finding \uac15\ud654",
+      "cascade_verdict": "PARTIAL-CARRY (lane-specific evidence, no upgrade)"
+    },
+    "H_180": {
+      "title": "state-management ratchet rewire family",
+      "cascade_impact": "phi_star reference indirect; mitosis cell-pool \uc758 substrate-validity \uc601\ud5a5",
+      "cascade_verdict": "PARTIAL-CARRY (mitosis \uc774\ubbf8 D=384 cells=64 cond.5 \uac80\uc99d, D=384 = 192\u00d72 multiple \u2713)"
+    },
+    "H_165": {
+      "title": "topo10 hypercube 11d sublinear",
+      "cascade_impact": "11d hypercube D = 2^11 = 2048 (D mod 192 \u2260 0) \u2192 partial-overlap aliasing \uc601\ud5a5",
+      "cascade_verdict": "INSUFFICIENT-CARRY (D=2048 aliasing-affected, sublinear scaling claim \uc758 substrate-validity \uc758\ubb38)"
+    },
+    "H_177": {
+      "title": "topo10-20 substrate topology extension",
+      "cascade_impact": "8x128=1024 D\ub294 192 multiple \uc544\ub2d8 (1024 mod 192 = 64) \u2192 partial-overlap",
+      "cascade_verdict": "INSUFFICIENT-CARRY (D=1024 aliasing-affected)"
+    },
+    "H_166": {
+      "title": "topo20 hierarchical hypercube 8x128",
+      "status_in_MAIN": "SUPPORTED-IDENTITY (8\u00d7128 = 2^10 = 1024)",
+      "cascade_impact": "1024 mod 192 = 64 \u2260 0 \u2192 phi_star aliasing partial-overlap on this substrate",
+      "cascade_verdict": "CAVEAT-ADD \u2014 SUPPORTED-IDENTITY \ub294 algebra \ub9cc (1024=2^10 \uc790\uba85), but phi_star measurement on 1024 substrate = aliasing-affected per H_174"
+    },
+    "H_005": {
+      "title": "corpus quality > scale",
+      "status_in_MAIN": "SUPPORTED (Lesson R-1A.2 Phase 1A.6)",
+      "cascade_impact": "corpus claim direct, not phi_star dependent",
+      "cascade_verdict": "NO-CHANGE"
+    },
+    "H_004": {
+      "title": "consciousness hard problem",
+      "status_in_MAIN": "SUPPORTED-BY-PROXY (Hc_1283)",
+      "cascade_impact": "philosophical, Hc_1283 anchor on D=384 cells=64 (192\u00d72 multiple) \u2014 clean",
+      "cascade_verdict": "NO-CHANGE \u2014 D=384 cells=64 phi_star \uce21\uc815 = clean-disjoint"
+    },
+    "H_011": {
+      "title": "IIT geometry",
+      "status_in_MAIN": "SUPPORTED-BY-PROXY",
+      "cascade_impact": "anima \u03a6\u2605 + PyPhi canonical \ub458 \ub2e4 \uc0ac\uc6a9, D=384 OK",
+      "cascade_verdict": "NO-CHANGE"
+    },
+    "H_172": {
+      "title": "alpha 0.014 modulation depth anima_voice",
+      "cascade_impact": "voice substrate D \ub2e4\ub97c \uc218 \uc788\uc74c \u2014 cross-substrate phi_star aliasing \uc601\ud5a5",
+      "cascade_verdict": "PARTIAL-NEEDS-VOICE-D-AUDIT"
+    }
+  },
+  "cascade_findings": {
+    "NO-CHANGE": [
+      "H_162",
+      "H_005",
+      "H_004",
+      "H_011"
+    ],
+    "CAVEAT-ADD": [
+      "H_166"
+    ],
+    "INSUFFICIENT-CARRY": [
+      "H_165",
+      "H_177"
+    ],
+    "PARTIAL-CARRY": [
+      "H_175",
+      "H_180"
+    ]
+  },
+  "clean_substrates": [
+    "D=384 (=192\u00d72)",
+    "D=1536 (=192\u00d78, CLM v4 canonical)"
+  ],
+  "aliasing_substrates": [
+    "D=768 (tile-replicate, forced cos+1.0)",
+    "D=1024 (partial-overlap)",
+    "D=2048 (information-loss)"
+  ],
+  "critical_finding": "Hc_1283 anchor (D=384 cells=64) IS clean per H_174 \u2014 anima v5-mitosis \uac80\uc99d evidence \uc548\uc804",
+  "newly_downgraded": {
+    "H_165": "INSUFFICIENT-CARRY (D=2048 aliasing)",
+    "H_177": "INSUFFICIENT-CARRY (D=1024 aliasing)",
+    "H_166": "CAVEAT-ADD (1024 mod 192 = 64, partial-overlap on phi_star)"
+  }
+}

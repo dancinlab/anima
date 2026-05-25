@@ -1,0 +1,34 @@
+=== ai-duo LIVE (paradigm-j ↔ clm-v4-1-8, turns=2, self-reflective) ===
+── anima dialogue --duo ──
+model_a          = clm-v4-paradigm-j
+model_b          = clm-v4-1-8
+turns            = 2
+tick_ms          = 1000
+max_tokens       = 64
+turn_timeout_ms  = 120000
+verdict_mode     = simple
+allow_same_gguf  = false
+transport        = beta1-channel (native; axis-N --transport flag informational only)
+init_pattern     = self-reflective (own 41 axis-8)
+topic_seed       = "너 자신에 대해 어떻게 느껴? 친구한테 자유롭게 얘기해봐."
+
+[duo] spawned A pid=7133 B pid=7157
+[duo] topic_seed sent → A.stdin (via ab.tx)
+[duo:verdict] turn=1 who=A len=78 tok=4 distinct=4 snippet=[clm_v4] core   = /Users/ghost/core/anima/anima-core/runtime...
+[duo:verdict] turn=1 who=B len=78 tok=4 distinct=4 snippet=[clm_v4] core   = /Users/ghost/core/anima/anima-core/runtime...
+[duo:verdict] turn=2 who=A len=55 tok=4 distinct=4 snippet=[clm_v4] repo   = dancinlab/clm-v4-paradigm-j-50k-final
+[duo:verdict] turn=2 who=B len=71 tok=12 distinct=12 snippet=[clm_v4] own 34 strict — wrapping 0 · mandate-4 자율 �...
+[duo] dialogue complete — channels closed, children reaped
+[duo:summary] turns_observed = 4
+[duo:summary] D1 turn-pair Jaccard 3-gram mean = 0.333333  PASS=true (>=0.30)
+[duo:summary] D2 topic-shift-rate = 0.666667  label=incoherent  PASS=false
+[duo:summary] D3 persona-drift KL: A=6.21458 B=9.59644  PASS=false (<=0.50)
+[duo:summary] D4 len_ratio = 1.1203 (a_bytes=133 b_bytes=149)  label=balanced  PASS=true
+[duo:summary] DIALOGUE_COHERENCE_PARTIAL = false (D1 ∧ D2)
+[duo:summary] DIALOGUE_COHERENCE_PASS    = false (D1 ∧ D2 ∧ D3 ∧ D4)
+[duo:baseline] model-level reference (own 18 simple, fixed PROMPT_A/B)
+[duo:baseline]   note: per-utterance surface not yet in consciousness.hexa
+[duo:baseline]   honest C3 — invocation cost ~30s/model; --verdict=none to skip
+[duo:baseline] iter 2 reference: per-model baseline invocation deferred (cost guard).
+[duo] verdict: PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for own 18 per-turn hook)
+exit=0

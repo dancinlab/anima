@@ -1,0 +1,50 @@
+=== BG-COTRAIN-EXERCISE-CAUSAL-PROOF ===
+ts: 2026-05-10T10:10:11.900170+00:00
+V4_SEEDS=[42, 137, 271]  N_TURNS_ABL=200  MAX_CELLS=128
+
+--- loading ckpts ---
+  Phase 2 (A) loaded: 12.3s
+  BG-LA   (B) loaded: 13.9s
+  random  (R) seed=42: 10.5s
+
+--- Phase 1: weight-space statistics ---
+  weight_statistics done: 0.1s
+        cell_pool_init  l2 A=4.000 B=4.000 R=4.000  effrank A=15.44 B=15.44  spar<.01 A=0.057 B=0.054  cosA-vs-B=1.0000
+         c_to_h.weight  l2 A=7.870 B=9.356 R=5.132  effrank A=51.85 B=46.20  spar<.01 A=0.081 B=0.052  cosA-vs-B=0.6924
+         h_to_c.weight  l2 A=6.406 B=6.751 R=5.106  effrank A=58.29 B=57.16  spar<.01 A=0.152 B=0.150  cosA-vs-B=0.7640
+
+--- Phase 2: forward-pass diversity (n_prompts=80) ---
+  diversity A done: 35.6s
+  diversity B done: 42.1s
+  diversity R done: 43.6s
+  A: hm avg_cos=0.9561 eff_dim=38.80  c_to_h(hm) avg_cos=0.8389 eff_dim=4.74
+  B: hm avg_cos=0.8534 eff_dim=35.60  c_to_h(hm) avg_cos=0.7829 eff_dim=4.09
+  R: hm avg_cos=0.0022 eff_dim=66.63  c_to_h(hm) avg_cos=-0.0013 eff_dim=38.01
+
+--- Phase 3: ablation V14 (n_turns=200, seeds=[42, 137, 271]) ---
+  baseline A (no swap): verdict=V14_PASS (787.8s)
+    trained Φ_un16=2412.08 mirror_mean=1615.49 beats=3/3 cells=57 mirror_cells=[56, 47, 53]
+  ABL1 c_to_h←random: verdict=V14_PASS (628.6s)
+    trained Φ_un16=2815.73 mirror_mean=1615.49 beats=3/3 cells=62 mirror_cells=[56, 47, 53]
+  ABL2 h_to_c←random: verdict=V14_PASS (690.9s)
+    trained Φ_un16=12116.27 mirror_mean=1615.49 beats=3/3 cells=128 mirror_cells=[56, 47, 53]
+  ABL3 both←random: verdict=V14_PASS (658.9s)
+    trained Φ_un16=12261.13 mirror_mean=1615.49 beats=3/3 cells=128 mirror_cells=[56, 47, 53]
+  ABL4 pool←random: verdict=V14_PASS (593.9s)
+    trained Φ_un16=2412.12 mirror_mean=1615.49 beats=3/3 cells=57 mirror_cells=[56, 47, 53]
+
+--- verdict logic ---
+  F-COTRAIN-EXERCISE-1 weight-stats falsifier: PASSED (diffs present)
+    cell_pool_init: rel_l2=0.0000 cos_AB=1.0000 sig=False
+    c_to_h.weight: rel_l2=0.1588 cos_AB=0.6924 sig=True
+    h_to_c.weight: rel_l2=0.0511 cos_AB=0.7640 sig=True
+  F-COTRAIN-EXERCISE-2 ablation polarity flip: FALSIFIED
+    baseline_A=V14_PASS
+    ABL1_c_to_h_random: V14_PASS (flip=False)
+    ABL2_h_to_c_random: V14_PASS (flip=False)
+    ABL3_both_random: V14_PASS (flip=False)
+    ABL4_cell_pool_random: V14_PASS (flip=False)
+  F-COTRAIN-EXERCISE-3 fwd diversity: PASSED
+    c_to_h(hm) eff_dim A=4.74 B=4.09; avg_cos A=0.8389 B=0.7829
+
+=== FINAL VERDICT: CORRELATIONAL  (falsifier-pass 2/3) ===

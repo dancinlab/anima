@@ -1,0 +1,50 @@
+{
+  "f_name": "F-VLM-TRANSPILE-1",
+  "f_description": "1 sample forward pass PASS without error",
+  "verdict": "PASS",
+  "executed_on": "ubu1",
+  "venv": "/home/aiden/venv_orchestrator/bin/python",
+  "torch_version": "2.11.0+cu128",
+  "device": "cuda",
+  "gpu_note": "RTX 5070 sm_120 (per project_ubu1_venv_orchestrator memory anchor)",
+  "timestamp_utc": "2026-05-03T07:05:00Z",
+  "input_shapes": {
+    "text_tokens": [2, 64],
+    "intent_emb": [2, 384]
+  },
+  "output_shapes": {
+    "rvq_logits[0]": [2, 64, 1024],
+    "rvq_logits_count": 8,
+    "text_logits": [2, 64, 32000],
+    "hidden": [2, 64, 384]
+  },
+  "params_total": 35345664,
+  "params_M": 35.35,
+  "fwd_latency_ms": 89.18,
+  "checks": {
+    "rvq_shape_ok": true,
+    "text_shape_ok": true,
+    "hidden_shape_ok": true,
+    "rvq_finite": true,
+    "text_finite": true,
+    "gen_ok": true,
+    "gen_shape": [2, 4, 8]
+  },
+  "config_match_source": {
+    "d_model": 384,
+    "n_heads": 6,
+    "d_head": 64,
+    "d_ff": 1536,
+    "n_layers": 3,
+    "rvq_stages": 8,
+    "vocab_size": 1024,
+    "text_vocab_size": 32000,
+    "ctx": 1536
+  },
+  "vlm_unblock_readiness": "READY for stage1 LoRA (cond.3 satisfied)",
+  "next_steps": [
+    "VLM stage1 LoRA training (separate cycle, NOT in this BG per task constraint)",
+    "Track A transpiler tool/atp_to_pytorch.hexa (deferred Phase 2, eliminates drift)",
+    "Numerical equivalence test vs hexa interpreter on small input (deferred)"
+  ]
+}

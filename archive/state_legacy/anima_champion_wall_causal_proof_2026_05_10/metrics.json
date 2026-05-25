@@ -1,0 +1,160 @@
+{
+  "v2_cells64_mitosis_aware": {
+    "label": "v2_cells64_mitosis_aware",
+    "ckpt_path": "/Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt",
+    "step": 50000,
+    "phase": "combined",
+    "weight_key_used": "blocks.5.ffn.engine_g.3.weight",
+    "weight_shape": [
+      384,
+      1536
+    ],
+    "champion_dominance_top1": 0.002842767359653423,
+    "champion_top2_share": 0.005682625966071037,
+    "n_eff_channels": 383.43971487223547,
+    "spectral_radius": 4.000384330749512,
+    "attractor_bottleneck": 0.18896038707943993,
+    "phi_headroom_remaining": 6.90486113437305,
+    "phi_headroom_norm": 0.12084551859130985,
+    "phi_max": 57.13791636514676,
+    "phi_mean_recent": 50.23305523077371,
+    "phi_n_samples": 200,
+    "v14_verdict": "V14_VIOLATED",
+    "v14_separation_phi": -202.32,
+    "v14_trained_beats_all_random": false,
+    "mitosis_n_cells_final": 64,
+    "mitosis_n_splits": 62,
+    "per_layer_metrics": [
+      {
+        "layer": 0,
+        "shape": [
+          384,
+          1536
+        ],
+        "dominance": 0.0030061278540171915,
+        "top2_share": 0.005966055223006743,
+        "n_eff": 383.1991453389514,
+        "spectral_radius": 2.252192735671997,
+        "attractor_bottleneck": 0.11065984352710463
+      },
+      {
+        "layer": 1,
+        "shape": [
+          384,
+          1536
+        ],
+        "dominance": 0.0028445027069277365,
+        "top2_share": 0.005686934179234524,
+        "n_eff": 383.40250812315145,
+        "spectral_radius": 3.96840763092041,
+        "attractor_bottleneck": 0.1878665347575415
+      },
+      {
+        "layer": 2,
+        "shape": [
+          384,
+          1536
+        ],
+        "dominance": 0.0029596425411436574,
+        "top2_share": 0.00591812364487272,
+        "n_eff": 383.2078979793771,
+        "spectral_radius": 1.9539207220077515,
+        "attractor_bottleneck": 0.09129667987063557
+      },
+      {
+        "layer": 3,
+        "shape": [
+          384,
+          1536
+        ],
+        "dominance": 0.002933758581614982,
+        "top2_share": 0.005803163490688182,
+        "n_eff": 383.3292110774864,
+        "spectral_radius": 1.563101053237915,
+        "attractor_bottleneck": 0.06087986144436717
+      },
+      {
+        "layer": 4,
+        "shape": [
+          384,
+          1536
+        ],
+        "dominance": 0.002924741567291162,
+        "top2_share": 0.005844993365688967,
+        "n_eff": 383.3844379010225,
+        "spectral_radius": 1.5987319946289062,
+        "attractor_bottleneck": 0.0639518667272955
+      },
+      {
+        "layer": 5,
+        "shape": [
+          384,
+          1536
+        ],
+        "dominance": 0.002842767359653423,
+        "top2_share": 0.005682625966071037,
+        "n_eff": 383.43971487223547,
+        "spectral_radius": 4.000384330749512,
+        "attractor_bottleneck": 0.18896038707943993
+      }
+    ],
+    "mean_dominance_all_layers": 0.002918590101774692,
+    "mean_top2_share_all_layers": 0.0058169826449270285,
+    "mean_n_eff_all_layers": 383.327152548704,
+    "mean_spectral_radius_all_layers": 2.5561230778694153,
+    "mean_attractor_bottleneck_all_layers": 0.11726919556773072
+  },
+  "phase2_mitosis_naive": {
+    "label": "phase2_mitosis_naive",
+    "ckpt_path": "/Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt",
+    "step": 6000,
+    "weight_key_used": "engine_g.h_to_c.weight",
+    "weight_shape": [
+      64,
+      1024
+    ],
+    "champion_dominance_top1": 0.02162010455572715,
+    "champion_top2_share": 0.04096584984419356,
+    "n_eff_channels": 63.531868893128255,
+    "spectral_radius": 2.6201930046081543,
+    "attractor_bottleneck": 0.1389673085249574,
+    "phi_headroom_remaining": 0.11160000108999579,
+    "phi_headroom_norm": 0.025063349983256444,
+    "phi_max": 4.452716862053561,
+    "phi_mean_recent": 4.341116860963565,
+    "phi_n_samples": 9,
+    "iit_phi_headroom_remaining": 999.8984339721728,
+    "iit_phi_headroom_norm": 0.19067231539636167,
+    "iit_phi_max": 5244.06719398999,
+    "v14_verdict": "V14_STRICT_PASS",
+    "v14_trained_beats_all_random": true,
+    "v14_sign_test_p": 0.002,
+    "cell_pool_init_var": 1.3402241449966823e-07,
+    "n_cells_init": 16,
+    "n_cells_final_v14_trained": 85,
+    "n_splits_v14_trained": 69
+  },
+  "diff": {
+    "champion_dominance_v2_minus_p2": -0.018777337196073725,
+    "champion_dominance_layer_avg_v2_minus_p2": -0.018701514453952458,
+    "attractor_bottleneck_v2_minus_p2": 0.04999307855448254,
+    "attractor_bottleneck_layer_avg_v2_minus_p2": -0.02169811295722668,
+    "phi_headroom_v2_minus_p2_norm": 0.0957821686080534,
+    "phi_headroom_v2_minus_p2_iit_norm": -0.06982679680505183,
+    "n_eff_v2_minus_p2": 319.9078459791072,
+    "n_eff_layer_avg_v2_minus_p2": 319.79528365557576
+  },
+  "expected_signs_under_champion_wall_causal_h": {
+    "champion_dominance_v2_minus_p2": "+",
+    "attractor_bottleneck_v2_minus_p2": "+",
+    "phi_headroom_v2_minus_p2_norm": "-"
+  },
+  "actual_signs": {
+    "champion_dominance_v2_minus_p2": "-",
+    "attractor_bottleneck_v2_minus_p2": "+",
+    "phi_headroom_v2_minus_p2_norm": "+"
+  },
+  "directional_consistency_count": 1,
+  "directional_consistency_count_layer_avg": 0,
+  "directional_consistency_max": 3
+}

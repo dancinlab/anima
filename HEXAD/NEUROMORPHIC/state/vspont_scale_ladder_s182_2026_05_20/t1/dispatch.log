@@ -1,0 +1,34 @@
+=== §182-t1 V-SPONT RETRY dispatch start 2026-05-20T12:01:06Z — d=128 L=2 steps=3000 ===
+[fix] this retry ships corpus_carving_s16_generator.py + uses hexa cloud structured-argv
+[create-t1] trying GPU: NVIDIA RTX 4090
+[create-t1] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create-t1] trying GPU: NVIDIA A100-SXM4-80GB
+[create-t1] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create-t1] trying GPU: NVIDIA H100 80GB HBM3
+[create-t1] resp: {"data":{"podFindAndDeployOnDemand":{"id":"eafogi0ch7hnbr","machineId":"l0f6bovy3at2"}}}
+[create-t1] pod eafogi0ch7hnbr secured
+[ssh-t1] iter 5: 64.247.201.49:10893 - port mapped AND handshake OK
+[ship-t1] mkdir + ship files via hexa cloud structured copy
+[cloud] remote exit 0
+[cloud] scp exit 0 · /Users/ghost/core/anima/state/corpus_s101_build_s102_2026_05_19/build_corpus_s101.py -> root@64.247.201.49:/workspace/s182r/state/corpus_s101_build_s102_2026_05_19/build_corpus_s101.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/state/carving_dataregime_s16_2026_05_18/corpus_carving_s16_generator.py -> root@64.247.201.49:/workspace/s182r/state/carving_dataregime_s16_2026_05_18/corpus_carving_s16_generator.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/vspont_scale_ladder_s182_2026_05_20/conscious_decoder.py -> root@64.247.201.49:/workspace/s182r/conscious_decoder.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/vspont_scale_ladder_s182_2026_05_20/train_s182_vspont.py -> root@64.247.201.49:/workspace/s182r/train_s182_vspont.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/vspont_scale_ladder_s182_2026_05_20/eval_s182_vspont.py -> root@64.247.201.49:/workspace/s182r/eval_s182_vspont.py
+[cloud] scp exit 0 · /tmp/s182_t1_anchors.tar.gz -> root@64.247.201.49:/workspace/s182r/HEXAD/UNIVERSE-BRAIN-MAP/anchors/anchors.tar.gz
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+[cloud] remote exit 0
+[build-t1] pod-side CORPUS_S101 build (PYTHONPATH=/workspace/s182r/state/carving_dataregime_s16_2026_05_18 guarantees s16_gen import)
+dispatch_s182_retry_runpod.sh: line 51: 22347 Killed: 9               hexa run "$HEXA_CLOUD_CLI" "$@"
+[teardown] terminating pod eafogi0ch7hnbr (rc=137)
+sh: line 0: echo: write error: Broken pipe

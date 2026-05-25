@@ -1,0 +1,304 @@
+{
+  "bg_id": "BG-JM",
+  "ts": "2026-05-07T11:01:37Z",
+  "paradigm": "v5-evaluator-english-baseline-multi-turn",
+  "host": "mac local",
+  "cost_usd": 0.0,
+  "training_steps": 0,
+  "bg_kind": "tooling",
+  "bgs_evaluated_v5_single_turn": 20,
+  "bgs_list": [
+    "BG-FY",
+    "BG-HA",
+    "BG-HF",
+    "BG-HJ",
+    "BG-HK",
+    "BG-HP",
+    "BG-HQ",
+    "BG-HS-R1",
+    "BG-HU",
+    "BG-HW",
+    "BG-IA",
+    "BG-HT",
+    "BG-IE",
+    "BG-IF",
+    "BG-IG",
+    "BG-IL",
+    "BG-IM",
+    "BG-IO",
+    "BG-JD",
+    "BG-JH"
+  ],
+  "ckpts_evaluated_v5_multi_turn": 3,
+  "ckpts_list": [
+    "BG_JD_step_800",
+    "BG_IL_step_1600",
+    "BG_IO_step_1800"
+  ],
+  "records_evaluated": 3860,
+  "any_v5_simple_stack_pass_surfaced": false,
+  "any_multi_turn_context_awareness_pass": false,
+  "english_baseline_signal_in_ko_corpus_bgs": 0.407,
+  "multi_turn_v5_8_per_ckpt": {
+    "BG_JD_step_800": {
+      "D1_color": false,
+      "D2_profession": false,
+      "D3_day": false,
+      "D4_anima": false,
+      "D5_universe": false
+    },
+    "BG_IL_step_1600": {
+      "D1_color": false,
+      "D2_profession": false,
+      "D3_day": false,
+      "D4_anima": false,
+      "D5_universe": false
+    },
+    "BG_IO_step_1800": {
+      "D1_color": false,
+      "D2_profession": false,
+      "D3_day": false,
+      "D4_anima": false,
+      "D5_universe": false
+    }
+  },
+  "downgrades_v4_to_v5": [],
+  "upgrades_v4_to_v5": [],
+  "per_bg_summary": {
+    "BG-FY": {
+      "v2_class": "PARTIAL_PASS_NO_CONTEXT",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 30,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.0
+    },
+    "BG-HA": {
+      "v2_class": "PARTIAL_PASS_NO_CONTEXT_v2",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 200,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.0
+    },
+    "BG-HF": {
+      "v2_class": "V2_FAIL",
+      "v3_class": "V3_FAIL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 100,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.11
+    },
+    "BG-HJ": {
+      "v2_class": "V2_FAIL",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 110,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.0273
+    },
+    "BG-HK": {
+      "v2_class": "V2_FAIL_throughout",
+      "v3_class": "V3_FAIL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 200,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.23
+    },
+    "BG-HP": {
+      "v2_class": "step500_PASS_3_10_then_collapse",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 120,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.425
+    },
+    "BG-HQ": {
+      "v2_class": "step500_V2_FALSE_PASS_8_10_Lesson_H",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 240,
+      "best_v5_step": 500,
+      "best_v5_pass": 1,
+      "english_signal_pct": 0.1667
+    },
+    "BG-HS-R1": {
+      "v2_class": "PARTIAL",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 300,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.3333
+    },
+    "BG-HU": {
+      "v2_class": "PARTIAL_PASS_GE7_step_800_persona_cycle_True",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 150,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.4
+    },
+    "BG-HW": {
+      "v2_class": "V2_FAIL_substring_anima_chains_manual_13_of_20_step_1000",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 160,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.7188
+    },
+    "BG-IA": {
+      "v2_class": "V2_FAIL_lesson_G_N1_0_of_15_final",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 150,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.2133
+    },
+    "BG-HT": {
+      "v2_class": "V2_FAIL_R3_universe_brain_map_6_48MB_degenerate",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 210,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.5048
+    },
+    "BG-IE": {
+      "v2_class": "SEED_LUCK_FAIL_2_of_10",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 120,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.1333
+    },
+    "BG-IF": {
+      "v2_class": "V2_FAIL_100M_x_6_48MB_degenerate",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 180,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.6944
+    },
+    "BG-IG": {
+      "v2_class": "WEAK_PARTIAL_LIKE_BG_HS_R1_3_of_15_step_1500_BPE_7K",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 180,
+      "best_v5_step": 2500,
+      "best_v5_pass": 1,
+      "english_signal_pct": 0.7389
+    },
+    "BG-IL": {
+      "v2_class": "TRUE_PARTIAL_PASS_W_F4",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 360,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.6139
+    },
+    "BG-IM": {
+      "v2_class": "FAILED_corpus_axis_regress",
+      "v3_class": "V3_FAIL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 210,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.4429
+    },
+    "BG-IO": {
+      "v2_class": "PARTIAL_step_1800_manual_6_15",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 390,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.6205
+    },
+    "BG-JD": {
+      "v2_class": "V2_step_800_pass_4_15",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_class": "V4_FAIL_likely",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 120,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.35
+    },
+    "BG-JH": {
+      "v2_class": "V2_FAIL",
+      "v3_class": "V3_FAIL",
+      "v4_class": "V4_FAIL",
+      "v5_final_class": "V5_FAIL",
+      "n_responses": 330,
+      "best_v5_step": null,
+      "best_v5_pass": 0,
+      "english_signal_pct": 0.4091
+    }
+  },
+  "phase2_load_status_per_ckpt": {
+    "BG_JD_step_800": "OK",
+    "BG_IL_step_1600": "CKPT_NOT_LOCAL_FALLBACK",
+    "BG_IO_step_1800": "CKPT_NOT_LOCAL_FALLBACK"
+  },
+  "philosophy_rule_compliance": {
+    "own_17_external_substrate": true,
+    "own_17_exemption_note": "MiniLM-L6-v2 is eval-only embedding model, NOT model substrate; D1 anima identity unaffected",
+    "own_18_strict": true,
+    "raw_15_additive": true,
+    "raw_10_honest_c3_count": 8,
+    "raw_37_transient_py": true,
+    "raw_42_mac_n1": true,
+    "raw_82_retraction_aware": true,
+    "phil_d1_korean_native_lane_separation": true,
+    "phil_d2_simple_stack_4_condition": true,
+    "phil_d4_corpus_priority": true
+  },
+  "honest_c3": [
+    "English baseline switch is epistemic — KO-trained 20-BG SSOT expected ~0% V5 PASS on EN baseline; this CONFIRMS anti-hypothesis 'model can speak EN without EN training corpus' rather than V5 evaluator failure. #115 chat-incapability + Lesson L architectural ceiling re-validated.",
+    "MiniLM-L6-v2 (English-trained subword tokenizer) is multilingual proxy; for V5 EN baseline this is natural fit. exempts eval-tooling from substrate-wrapping prohibition (D1 anima identity unaffected).",
+    "V5.8 multi-turn = simplified named-entity-recall test (single token recall + Lev ratio + function-word check), NOT full discourse coherence; V6 evolution deferred for cross-turn coreference + topic continuation.",
+    "ConsciousLM block_size=256 may force head-truncation of multi-turn context; truncation events logged per dialogue in t1_meta/t2_meta.",
+    "20-BG retroeval re-uses pre-existing eval_log.jsonl gens (KO baseline at training time); V5 EN baseline retroeval is in-place re-score, NOT model regeneration. EN signal in KO gens possible only via UBM English laws or outside-well English anchors in corpus.",
+    "Multi-turn 3-ckpt only (BG-JD/IL/IO best ckpts); BG-IL + BG-IO ckpts reside on ubu1 (not synced locally per anima git size policy 5MB+); fallback explicitly records ckpt_path=ubu1_only and v5.8 N/A. BG-JD ckpt local + loaded.",
+    "V5.5 language auto-detection thresholds (han_ratio≥0.20 / english_alpha_ratio≥0.30) heuristic; baseline arg from caller takes precedence in V5.4/V5.5 enforcement.",
+    "V5 PASS ⊂ V4 PASS (KO baseline) — V5(baseline='korean') = V4 7-cell + V5.8 separate. EN baseline V5 ≠ V4 strict superset; honest C3 = V5 EN baseline is NEW eval lane."
+  ],
+  "v5_spec_loc": "docs/anima_own_18_evaluator_v5_strict_spec_2026_05_07.md",
+  "v5_script_loc": "tool/transient_py/anima_simple_stack_evaluator_v5.py",
+  "v5_driver_loc": "tool/transient_py/anima_jm_v5_retroeval.py",
+  "v5_lesson_doc": "docs/anima_chat_cap_lesson_summary_2026_05_07.md (Lesson O + Lesson P added)",
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "raw_opt_out": "raw#37 transient_py + raw#42 mac N=1 + raw#15 additive + raw#82 retraction-aware",
+  "own_compliance": " + + (eval-tool exemption) + V5 8-cell + + + raw#10/15/37/42/82/86"
+}

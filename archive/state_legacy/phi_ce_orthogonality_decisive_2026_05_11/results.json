@@ -1,0 +1,53 @@
+{
+  "seed_hex": "0xC0EC0AC",
+  "grid": {
+    "Ns": [
+      16,
+      32,
+      64,
+      128,
+      256
+    ],
+    "Ps": [
+      1000000.0,
+      10000000.0,
+      100000000.0,
+      1000000000.0
+    ],
+    "cells": 20
+  },
+  "model_A_orthogonal_Hc_040": {
+    "corr_phi_ce": -0.0034565341479704807,
+    "pareto_cv_alpha_0.5": 1.6045269132115385,
+    "best_alpha": 0.05,
+    "pareto_cv_at_best_alpha": 0.9591230109040819,
+    "within_N_mean_corr": -0.2565661206297112,
+    "within_P_mean_corr": -0.2487098596839223,
+    "verdict_self": "Hc_040_ORTHOGONAL"
+  },
+  "model_B_uncertainty_Hc_024": {
+    "corr_phi_ce": -0.6126070285883801,
+    "pareto_cv_alpha_0.5": 0.0077622283164931185,
+    "best_alpha": 0.49237288135593216,
+    "pareto_cv_at_best_alpha": 0.01801634767727873,
+    "within_N_mean_corr": -0.6126685154538832,
+    "within_P_mean_corr": -0.7210384422605853,
+    "verdict_self": "Hc_024_UNCERTAINTY"
+  },
+  "decisive_signature": {
+    "if_anima_matches_A": "|corr| < 0.1 AND Pareto CV(α*) > 0.15 → Hc_040 SUPPORTED, Hc_024 FALSIFIED",
+    "if_anima_matches_B": "|corr| >= 0.3 AND Pareto CV(α*) < 0.1 → Hc_024 SUPPORTED, Hc_040 FALSIFIED",
+    "if_mixed": "0.1 <= |corr| < 0.3 OR 0.1 <= CV(α*) <= 0.15 → MIXED, new hypothesis (within-budget ⊥, across-budget trade-off)"
+  },
+  "experiment_design": {
+    "engine": "anima Φ★ engine + CLM CE measurement",
+    "grid": "N ∈ {16,32,64,128,256} × P ∈ {1M,10M,100M,1B}",
+    "replication": "64 dual-seed (Hc_604) per cell, mean ± std",
+    "controls": "deterministic, hexa-only, llm: none, topology=hypercube default",
+    "decision": "Apply harness analytics to measured (Φ_i, CE_i) → compare to A vs B fingerprint"
+  },
+  "h_080_falsifiers_tied": {
+    "F4": "|corr| > 0.3 → Hc_040 killed (Hc_024 wins)",
+    "F5": "|corr| < 0.05 + Hc_024 trade-off strong → Hc_024 killed (Hc_040 wins)"
+  }
+}

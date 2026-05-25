@@ -1,0 +1,37 @@
+{
+  "cycle": 2,
+  "date": "2026-05-22",
+  "seed": 2026,
+  "box": "mac_local",
+  "ckpt": "ckpt_phase1a4_lr5e6_sft.safetensors",
+  "d_model": 768,
+  "n_layers": 24,
+  "initial_cells": 2,
+  "max_new": 2,
+  "prompt_truncate_bytes": 30,
+  "ubm": {
+    "split_count": 5,
+    "merge_count": 0,
+    "mitosis_invocations": 32,
+    "cell_count_final": 7,
+    "kv_cur_len": 32
+  },
+  "random": {
+    "split_count": 2,
+    "merge_count": 0,
+    "mitosis_invocations": 32,
+    "cell_count_final": 4,
+    "kv_cur_len": 32
+  },
+  "delta": {
+    "d_split": 3,
+    "d_merge": 0,
+    "d_invocations": 0,
+    "d_cell_count": 3,
+    "d_kv_cur_len": 0,
+    "event_step_overlap": 2,
+    "event_step_jaccard": 0.4
+  },
+  "verdict": "NULL",
+  "verdict_rule": "single-seed partial: SIGNAL iff |Δsplit| ≥ 5 OR |Δcells| ≥ 5"
+}

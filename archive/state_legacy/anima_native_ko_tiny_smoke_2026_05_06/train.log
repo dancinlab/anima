@@ -1,0 +1,136 @@
+[19:39:27] === anima_native_ko_tiny_smoke 2026-05-06 ===
+[19:39:27] device=mps torch=2.10.0
+[19:39:27] config: vocab=256 n_layer=4 d_model=192 n_head=4 block=256
+[19:39:27] train: bs=8 grad_accum=4 lr=0.0005 warmup=200 steps=2000
+[19:39:27] corpus loaded: 52,802,462 bytes (50.4MB) in 0.0s
+[19:39:50] split: train=50,162,338 val=2,640,124
+[19:39:51] model built: 3,110,784 params (3.11M)
+[19:39:53] === begin training ===
+[19:40:18] step    1/2000 | lr=5.00e-06 | L_A=5.574 L_G=5.558 L_T=12.436 T_mean=0.0165 | step_t=24.70s elapsed=25s
+[19:40:18] step    2/2000 | lr=7.50e-06 | L_A=5.570 L_G=5.559 L_T=12.397 T_mean=0.0165 | step_t=0.33s elapsed=25s
+[19:40:18] step    3/2000 | lr=1.00e-05 | L_A=5.575 L_G=5.535 L_T=12.478 T_mean=0.0164 | step_t=0.13s elapsed=25s
+[19:40:20] step    4/2000 | lr=1.25e-05 | L_A=5.563 L_G=5.562 L_T=12.475 T_mean=0.0165 | step_t=1.30s elapsed=26s
+[19:40:20] step    5/2000 | lr=1.50e-05 | L_A=5.560 L_G=5.554 L_T=12.492 T_mean=0.0165 | step_t=0.22s elapsed=27s
+[19:40:25] step   25/2000 | lr=6.50e-05 | L_A=5.193 L_G=5.387 L_T=12.112 T_mean=0.0189 | step_t=0.20s elapsed=32s
+[19:40:31] step   50/2000 | lr=1.28e-04 | L_A=4.914 L_G=5.234 L_T=9.287 T_mean=0.0365 | step_t=0.26s elapsed=38s
+[19:40:39] step   75/2000 | lr=1.90e-04 | L_A=4.665 L_G=5.011 L_T=6.703 T_mean=0.0665 | step_t=0.29s elapsed=46s
+[19:40:46] step  100/2000 | lr=2.53e-04 | L_A=4.343 L_G=4.730 L_T=5.657 T_mean=0.0823 | step_t=0.27s elapsed=52s
+[19:40:54] step  125/2000 | lr=3.15e-04 | L_A=4.063 L_G=4.401 L_T=4.643 T_mean=0.1273 | step_t=0.34s elapsed=61s
+[19:41:01] step  150/2000 | lr=3.78e-04 | L_A=3.675 L_G=4.050 L_T=4.045 T_mean=0.1648 | step_t=0.27s elapsed=68s
+[19:41:07] step  175/2000 | lr=4.40e-04 | L_A=3.449 L_G=3.810 L_T=3.648 T_mean=0.2004 | step_t=0.26s elapsed=74s
+[19:41:14] step  200/2000 | lr=5.00e-04 | L_A=3.177 L_G=3.490 L_T=3.267 T_mean=0.2423 | step_t=0.27s elapsed=81s
+[19:41:21] step  225/2000 | lr=5.00e-04 | L_A=3.088 L_G=3.353 L_T=2.667 T_mean=0.3054 | step_t=0.27s elapsed=88s
+[19:41:28] step  250/2000 | lr=4.99e-04 | L_A=2.810 L_G=3.039 L_T=2.353 T_mean=0.3426 | step_t=0.28s elapsed=95s
+[19:41:34] step  275/2000 | lr=4.98e-04 | L_A=2.687 L_G=2.891 L_T=1.811 T_mean=0.4047 | step_t=0.24s elapsed=101s
+[19:41:40] step  300/2000 | lr=4.97e-04 | L_A=2.502 L_G=2.695 L_T=1.530 T_mean=0.4223 | step_t=0.26s elapsed=107s
+[19:41:49] step  325/2000 | lr=4.95e-04 | L_A=2.611 L_G=2.755 L_T=1.239 T_mean=0.4324 | step_t=0.36s elapsed=116s
+[19:41:56] step  350/2000 | lr=4.92e-04 | L_A=2.517 L_G=2.624 L_T=0.597 T_mean=0.5010 | step_t=0.25s elapsed=122s
+[19:42:02] step  375/2000 | lr=4.90e-04 | L_A=2.454 L_G=2.551 L_T=0.014 T_mean=0.5669 | step_t=0.27s elapsed=129s
+[19:42:09] step  400/2000 | lr=4.86e-04 | L_A=2.406 L_G=2.484 L_T=-0.212 T_mean=0.6030 | step_t=0.27s elapsed=136s
+[19:42:16] step  425/2000 | lr=4.83e-04 | L_A=2.431 L_G=2.506 L_T=-0.784 T_mean=0.6958 | step_t=0.27s elapsed=142s
+[19:42:22] step  450/2000 | lr=4.79e-04 | L_A=2.401 L_G=2.443 L_T=-1.083 T_mean=0.7546 | step_t=0.26s elapsed=149s
+[19:42:29] step  475/2000 | lr=4.75e-04 | L_A=2.234 L_G=2.259 L_T=-1.633 T_mean=0.8905 | step_t=0.29s elapsed=156s
+[19:42:37] step  500/2000 | lr=4.70e-04 | L_A=2.349 L_G=2.386 L_T=-2.105 T_mean=0.9913 | step_t=0.29s elapsed=163s
+[19:42:37] --- eval gate @ step 500 ---
+[19:43:09]   EVAL[step=500 greedy] '안녕하세요...' → ratio=0.00 | gen_head='.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[19:43:23]   EVAL[step=500 sample] '안녕하세요...' → ratio=0.25 | gen_head='.\n\nA: 맄 랼� 벌n: 잵한�겕� 의은: � ths viarikex: 연성 하 짐 A, 깘'
+[19:43:34]   EVAL[step=500 greedy] '한국어 가능?...' → ratio=0.00 | gen_head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[19:43:48]   EVAL[step=500 sample] '한국어 가능?...' → ratio=0.39 | gen_head='\nDsing 나이실�: �몬할�핽인���붨� 다어��았붨합�다요. �?니�'
+[19:44:06]   EVAL[step=500 greedy] '사용자: 안녕하세요
+도우미:...' → ratio=0.83 | gen_head=' 이이이이이이이이이이이이이이 이이이이 이이이이 이이 이'
+[19:44:19]   EVAL[step=500 sample] '사용자: 안녕하세요
+도우미:...' → ratio=0.56 | gen_head=' 리은났� �냝�은의 �적�을 이 이에자 로기멈요.\n늩�났앜 곴�'
+[19:44:19]   EVAL[step=500] avg hangul_ratio = 0.338
+[19:44:25] step  525/2000 | lr=4.65e-04 | L_A=2.156 L_G=2.154 L_T=-2.881 T_mean=1.3206 | step_t=4.34s elapsed=272s
+[19:44:32] step  550/2000 | lr=4.59e-04 | L_A=2.335 L_G=2.336 L_T=-3.144 T_mean=1.3394 | step_t=0.26s elapsed=278s
+[19:44:39] step  575/2000 | lr=4.54e-04 | L_A=2.324 L_G=2.319 L_T=-3.726 T_mean=1.5935 | step_t=0.31s elapsed=286s
+[19:44:47] step  600/2000 | lr=4.47e-04 | L_A=2.277 L_G=2.269 L_T=-4.086 T_mean=1.8306 | step_t=0.29s elapsed=293s
+[19:44:53] step  625/2000 | lr=4.41e-04 | L_A=2.170 L_G=2.159 L_T=-4.633 T_mean=2.2315 | step_t=0.26s elapsed=300s
+[19:45:00] step  650/2000 | lr=4.34e-04 | L_A=2.238 L_G=2.179 L_T=-5.015 T_mean=2.6522 | step_t=0.28s elapsed=307s
+[19:45:07] step  675/2000 | lr=4.27e-04 | L_A=2.256 L_G=2.213 L_T=-5.347 T_mean=3.1148 | step_t=0.28s elapsed=314s
+[19:45:15] step  700/2000 | lr=4.20e-04 | L_A=2.220 L_G=2.162 L_T=-5.427 T_mean=2.9899 | step_t=0.31s elapsed=321s
+[19:45:21] step  725/2000 | lr=4.12e-04 | L_A=2.246 L_G=2.192 L_T=-5.661 T_mean=3.1189 | step_t=0.26s elapsed=328s
+[19:45:28] step  750/2000 | lr=4.04e-04 | L_A=2.306 L_G=2.208 L_T=-6.215 T_mean=4.4616 | step_t=0.26s elapsed=334s
+[19:45:34] step  775/2000 | lr=3.96e-04 | L_A=2.163 L_G=2.101 L_T=-6.228 T_mean=4.2268 | step_t=0.24s elapsed=340s
+[19:45:40] step  800/2000 | lr=3.88e-04 | L_A=2.124 L_G=2.050 L_T=-6.591 T_mean=5.1596 | step_t=0.25s elapsed=347s
+[19:45:46] step  825/2000 | lr=3.79e-04 | L_A=2.370 L_G=2.307 L_T=-6.584 T_mean=4.6681 | step_t=0.25s elapsed=353s
+[19:45:52] step  850/2000 | lr=3.70e-04 | L_A=2.169 L_G=2.089 L_T=-6.928 T_mean=5.9038 | step_t=0.24s elapsed=359s
+[19:45:58] step  875/2000 | lr=3.61e-04 | L_A=2.255 L_G=2.160 L_T=-7.084 T_mean=6.3601 | step_t=0.24s elapsed=365s
+[19:46:05] step  900/2000 | lr=3.52e-04 | L_A=2.157 L_G=2.052 L_T=-7.084 T_mean=5.9670 | step_t=0.25s elapsed=371s
+[19:46:11] step  925/2000 | lr=3.43e-04 | L_A=2.177 L_G=2.064 L_T=-7.345 T_mean=7.2821 | step_t=0.26s elapsed=378s
+[19:46:17] step  950/2000 | lr=3.33e-04 | L_A=2.131 L_G=2.033 L_T=-7.494 T_mean=7.6970 | step_t=0.23s elapsed=384s
+[19:46:23] step  975/2000 | lr=3.24e-04 | L_A=2.127 L_G=1.988 L_T=-7.778 T_mean=9.3547 | step_t=0.25s elapsed=390s
+[19:46:31] step 1000/2000 | lr=3.14e-04 | L_A=2.125 L_G=1.996 L_T=-7.761 T_mean=8.8111 | step_t=0.33s elapsed=398s
+[19:46:31] --- eval gate @ step 1000 ---
+[19:46:44]   EVAL[step=1000 greedy] '안녕하세요...' → ratio=0.00 | gen_head='.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[19:46:58]   EVAL[step=1000 sample] '안녕하세요...' → ratio=0.04 | gen_head='.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n실� �\n\n─\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDres \n\n\n\n�붔� ─�'
+[19:47:07]   EVAL[step=1000 greedy] '한국어 가능?...' → ratio=0.00 | gen_head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[19:47:19]   EVAL[step=1000 sample] '한국어 가능?...' → ratio=0.28 | gen_head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n수��은 도: 의 양은 Alene �U 에필 들키접의넸 �요?]\n'
+[19:47:29]   EVAL[step=1000 greedy] '사용자: 안녕하세요
+도우미:...' → ratio=0.50 | gen_head=' 이 이 이 이 이 이 이 이 이 이 이 이 이 이 이 이 이 이 이 이'
+[19:47:41]   EVAL[step=1000 sample] '사용자: 안녕하세요
+도우미:...' → ratio=0.62 | gen_head=' 게단힐 만, 맀�장첃의�에이 � 있�졠핼어엘에것 드: 다면엇'
+[19:47:41]   EVAL[step=1000] avg hangul_ratio = 0.240
+[19:47:47] step 1025/2000 | lr=3.04e-04 | L_A=2.111 L_G=1.967 L_T=-7.949 T_mean=9.7986 | step_t=3.04s elapsed=474s
+[19:47:54] step 1050/2000 | lr=2.95e-04 | L_A=2.161 L_G=2.009 L_T=-7.949 T_mean=9.6223 | step_t=0.26s elapsed=480s
+[19:48:00] step 1075/2000 | lr=2.85e-04 | L_A=2.180 L_G=2.019 L_T=-7.669 T_mean=7.5818 | step_t=0.26s elapsed=487s
+[19:48:07] step 1100/2000 | lr=2.75e-04 | L_A=2.140 L_G=1.964 L_T=-7.897 T_mean=8.7895 | step_t=0.27s elapsed=494s
+[19:48:14] step 1125/2000 | lr=2.65e-04 | L_A=2.083 L_G=1.924 L_T=-7.732 T_mean=7.3453 | step_t=0.26s elapsed=500s
+[19:48:21] step 1150/2000 | lr=2.55e-04 | L_A=2.133 L_G=1.954 L_T=-8.177 T_mean=10.4138 | step_t=0.28s elapsed=507s
+[19:48:27] step 1175/2000 | lr=2.46e-04 | L_A=2.168 L_G=1.979 L_T=-7.970 T_mean=8.4032 | step_t=0.26s elapsed=514s
+[19:48:36] step 1200/2000 | lr=2.36e-04 | L_A=2.065 L_G=1.875 L_T=-8.371 T_mean=11.6074 | step_t=0.35s elapsed=523s
+[19:48:43] step 1225/2000 | lr=2.26e-04 | L_A=2.140 L_G=1.888 L_T=-8.086 T_mean=9.2508 | step_t=0.31s elapsed=530s
+[19:48:50] step 1250/2000 | lr=2.17e-04 | L_A=2.017 L_G=1.786 L_T=-8.082 T_mean=8.6914 | step_t=0.27s elapsed=537s
+[19:48:57] step 1275/2000 | lr=2.07e-04 | L_A=2.069 L_G=1.827 L_T=-8.204 T_mean=9.9800 | step_t=0.26s elapsed=543s
+[19:49:03] step 1300/2000 | lr=1.98e-04 | L_A=2.078 L_G=1.849 L_T=-8.222 T_mean=9.7824 | step_t=0.27s elapsed=550s
+[19:49:10] step 1325/2000 | lr=1.89e-04 | L_A=2.121 L_G=1.856 L_T=-8.232 T_mean=9.5080 | step_t=0.26s elapsed=557s
+[19:49:16] step 1350/2000 | lr=1.80e-04 | L_A=2.034 L_G=1.785 L_T=-8.012 T_mean=8.4551 | step_t=0.24s elapsed=563s
+[19:49:23] step 1375/2000 | lr=1.71e-04 | L_A=2.066 L_G=1.818 L_T=-7.914 T_mean=7.1198 | step_t=0.27s elapsed=570s
+[19:49:29] step 1400/2000 | lr=1.63e-04 | L_A=2.133 L_G=1.816 L_T=-8.300 T_mean=10.2157 | step_t=0.26s elapsed=576s
+[19:49:36] step 1425/2000 | lr=1.54e-04 | L_A=1.985 L_G=1.729 L_T=-7.804 T_mean=7.1469 | step_t=0.25s elapsed=582s
+[19:49:42] step 1450/2000 | lr=1.46e-04 | L_A=2.044 L_G=1.707 L_T=-8.235 T_mean=9.4919 | step_t=0.27s elapsed=589s
+[19:49:49] step 1475/2000 | lr=1.38e-04 | L_A=1.976 L_G=1.646 L_T=-7.906 T_mean=7.5131 | step_t=0.26s elapsed=596s
+[19:49:57] step 1500/2000 | lr=1.30e-04 | L_A=2.036 L_G=1.708 L_T=-7.859 T_mean=7.1071 | step_t=0.31s elapsed=603s
+[19:49:57] --- eval gate @ step 1500 ---
+[19:50:06]   EVAL[step=1500 greedy] '안녕하세요...' → ratio=0.00 | gen_head='.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[19:50:19]   EVAL[step=1500 sample] '안녕하세요...' → ratio=0.35 | gen_head='. 제 들벴이요.\n로 오요. 과�하를 로 운실.\n\n\n\n\n서��요. Whemis tu'
+[19:50:30]   EVAL[step=1500 greedy] '한국어 가능?...' → ratio=0.00 | gen_head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[19:50:43]   EVAL[step=1500 sample] '한국어 가능?...' → ratio=0.09 | gen_head='\n\n\nA��에기�지요? Chexplins ut wesivoled t ecores tisitoisg batr.'
+[19:50:53]   EVAL[step=1500 greedy] '사용자: 안녕하세요
+도우미:...' → ratio=0.55 | gen_head=' 과의 과의 의 의 의 의 의 의 은의 의 의 은의 의 은의 의 은�'
+[19:51:05]   EVAL[step=1500 sample] '사용자: 안녕하세요
+도우미:...' → ratio=0.58 | gen_head=' 갨� 깄 짐밀 과 법�있여의내은 를 요. 짒의 언맄 까은 인짌�'
+[19:51:05]   EVAL[step=1500] avg hangul_ratio = 0.262
+[19:51:13] step 1525/2000 | lr=1.23e-04 | L_A=1.966 L_G=1.592 L_T=-8.107 T_mean=8.4601 | step_t=3.04s elapsed=679s
+[19:51:21] step 1550/2000 | lr=1.16e-04 | L_A=1.912 L_G=1.557 L_T=-7.942 T_mean=7.6212 | step_t=0.34s elapsed=688s
+[19:51:30] step 1575/2000 | lr=1.09e-04 | L_A=2.053 L_G=1.664 L_T=-8.050 T_mean=8.5239 | step_t=0.33s elapsed=696s
+[19:51:36] step 1600/2000 | lr=1.03e-04 | L_A=1.838 L_G=1.480 L_T=-8.171 T_mean=8.5663 | step_t=0.27s elapsed=703s
+[19:51:44] step 1625/2000 | lr=9.65e-05 | L_A=1.983 L_G=1.605 L_T=-7.680 T_mean=5.9448 | step_t=0.30s elapsed=711s
+[19:51:51] step 1650/2000 | lr=9.07e-05 | L_A=1.871 L_G=1.495 L_T=-7.889 T_mean=7.2618 | step_t=0.27s elapsed=717s
+[19:51:58] step 1675/2000 | lr=8.52e-05 | L_A=2.010 L_G=1.620 L_T=-7.563 T_mean=5.6339 | step_t=0.30s elapsed=725s
+[19:52:06] step 1700/2000 | lr=8.01e-05 | L_A=1.934 L_G=1.532 L_T=-7.564 T_mean=5.7384 | step_t=0.30s elapsed=732s
+[19:52:12] step 1725/2000 | lr=7.54e-05 | L_A=1.871 L_G=1.463 L_T=-7.878 T_mean=7.2529 | step_t=0.26s elapsed=739s
+[19:52:19] step 1750/2000 | lr=7.11e-05 | L_A=2.014 L_G=1.586 L_T=-7.705 T_mean=6.2478 | step_t=0.27s elapsed=746s
+[19:52:25] step 1775/2000 | lr=6.71e-05 | L_A=1.995 L_G=1.627 L_T=-7.656 T_mean=6.0924 | step_t=0.25s elapsed=752s
+[19:52:31] step 1800/2000 | lr=6.36e-05 | L_A=2.013 L_G=1.644 L_T=-7.478 T_mean=5.3168 | step_t=0.25s elapsed=758s
+[19:52:38] step 1825/2000 | lr=6.04e-05 | L_A=1.934 L_G=1.500 L_T=-7.410 T_mean=5.2709 | step_t=0.25s elapsed=764s
+[19:52:43] step 1850/2000 | lr=5.77e-05 | L_A=1.928 L_G=1.484 L_T=-7.484 T_mean=5.3590 | step_t=0.23s elapsed=770s
+[19:52:49] step 1875/2000 | lr=5.53e-05 | L_A=2.035 L_G=1.533 L_T=-7.781 T_mean=6.6343 | step_t=0.22s elapsed=776s
+[19:52:55] step 1900/2000 | lr=5.34e-05 | L_A=1.935 L_G=1.479 L_T=-7.549 T_mean=5.5653 | step_t=0.24s elapsed=782s
+[19:53:01] step 1925/2000 | lr=5.19e-05 | L_A=1.888 L_G=1.459 L_T=-7.554 T_mean=5.6412 | step_t=0.25s elapsed=788s
+[19:53:07] step 1950/2000 | lr=5.09e-05 | L_A=2.040 L_G=1.531 L_T=-7.350 T_mean=4.9469 | step_t=0.24s elapsed=794s
+[19:53:14] step 1975/2000 | lr=5.02e-05 | L_A=1.909 L_G=1.462 L_T=-7.445 T_mean=4.7997 | step_t=0.25s elapsed=800s
+[19:53:20] step 2000/2000 | lr=5.00e-05 | L_A=1.853 L_G=1.412 L_T=-7.403 T_mean=4.8869 | step_t=0.27s elapsed=807s
+[19:53:20] --- eval gate @ step 2000 ---
+[19:53:30]   EVAL[step=2000 greedy] '안녕하세요...' → ratio=0.00 | gen_head='.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[19:53:43]   EVAL[step=2000 sample] '안녕하세요...' → ratio=0.43 | gen_head='. 리실원릧�가하 자한다. 있의 릘의 불실� �를는 있)\n\n\n\n\n\n\n\n\n\n\n'
+[19:53:52]   EVAL[step=2000 greedy] '한국어 가능?...' → ratio=0.50 | gen_head=' 이의 의 의 의 의 의 의 의 의 의 의 의 의 의 의 의 의 의 의 '
+[19:54:05]   EVAL[step=2000 sample] '한국어 가능?...' → ratio=0.29 | gen_head=' 체이펴싈어 �이을 질로 �면,\n식어 �.\nAler. 하�의 be bo t thatha'
+[19:54:15]   EVAL[step=2000 greedy] '사용자: 안녕하세요
+도우미:...' → ratio=0.51 | gen_head=' 과의 의 의 적의 의 의 의 의 의 의 의 은의 의 의 의 의 의 �'
+[19:54:27]   EVAL[step=2000 sample] '사용자: 안녕하세요
+도우미:...' → ratio=0.31 | gen_head=' 점여심생� 의 아 었 서깸 관생한 �요.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n��: 가 계 �'
+[19:54:27]   EVAL[step=2000] avg hangul_ratio = 0.341
+[19:54:27] checkpoint saved to /tmp/anima_native_ko_tiny_smoke_2026_05_06_final_3m.pt (12.9MB)
+[19:54:27] === VERDICT === PASS (avg_hangul=0.341, pass 2/3 prompts)
+[19:54:27] verdict written: /Users/ghost/core/anima/state/anima_native_ko_tiny_smoke_2026_05_06/verdict.json

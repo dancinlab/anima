@@ -1,0 +1,18 @@
+[fpga/partial_reconfig] PHYS-P20-1 — FPGA partial reconfiguration (물리 자가 재구성)
+  grid: 16 CLBs (4x4 flat)
+  reconfig = change function_id of target blocks without affecting others
+
+  [T1] all 16 blocks initialized to 0
+T1 PASS — initial config all zeros
+  [T2] block  2 = 42 (expect 42)
+  [T2] block  7 = 99 (expect 99)
+  [T2] block 13 = 7 (expect 7)
+T2 PASS — partial reconfig writes correct values
+  [T3] all 13 non-target blocks unchanged (isolation verified)
+T3 PASS — non-target blocks unchanged (isolation)
+  [T4] two identical reconfig sequences produce bit-identical grids
+T4 PASS — deterministic reconfig
+  [T5] 1000 reconfig cycles completed, final block14=400 (expect 400)
+T5 PASS — latency < 500 ms
+
+[fpga/partial_reconfig] 5/5 PASS — PHYS-P20-1 DONE (런타임 FPGA 재구성)

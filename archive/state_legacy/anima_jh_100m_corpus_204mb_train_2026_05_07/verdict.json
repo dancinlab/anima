@@ -1,0 +1,950 @@
+{
+  "bg_id": "BG-JH",
+  "h_ids": [
+    "H_153_capacity_100m",
+    "Lesson_A",
+    "Lesson_G",
+    "Lesson_J",
+    "Lesson_D",
+    "Lesson_H",
+    "Lesson_K",
+    "Lesson_L"
+  ],
+  "spec": "F-anima-jh-100m-corpus-204mb-1",
+  "ts_start": "2026-05-07T09:32:01",
+  "ts_end": "2026-05-07T09:39:54",
+  "ts_run": "20260507_093153",
+  "host": "aiden-b650m-k",
+  "device": "cuda",
+  "ran_steps": 2000,
+  "ckpt_best_path": "/home/aiden/core/anima/state/anima_jh_100m_corpus_204mb_train_2026_05_07/ckpt_best.pt",
+  "ckpt_final_path": "/home/aiden/core/anima/state/anima_jh_100m_corpus_204mb_train_2026_05_07/ckpt_final.pt",
+  "best_eval_ckpt_meta_path": "/home/aiden/core/anima/state/anima_jh_100m_corpus_204mb_train_2026_05_07/best_eval_ckpt_meta.json",
+  "run_dir": "/home/aiden/anima_native/anima-jh-100m-corpus-204mb-20260507_093153",
+  "paradigm": "100m-corpus-204mb-corpus-axis-architectural-shift",
+  "model_arch": "12L/640d/10h",
+  "arch_used": {
+    "n_layer": 12,
+    "d_model": 640,
+    "n_head": 10
+  },
+  "capacity_label": "primary_100M",
+  "reduced_capacity": false,
+  "total_params": 153079776,
+  "config": {
+    "vocab": 256,
+    "n_layer": 12,
+    "d_model": 640,
+    "n_head": 10,
+    "block_size": 256,
+    "dropout": 0.3,
+    "label_smoothing": 0.1,
+    "weight_decay": 0.1,
+    "batch": 4,
+    "grad_accum": 16,
+    "lr": 0.0002,
+    "warmup": 500,
+    "steps_max": 6000,
+    "tension_lambda": 0.005,
+    "eval_every": 200,
+    "save_every": 500,
+    "save_at": [
+      500,
+      1000,
+      1500,
+      2000,
+      2500,
+      3000,
+      3500,
+      4000,
+      4500,
+      5000,
+      5500,
+      6000
+    ],
+    "eval_at": [
+      200,
+      400,
+      600,
+      800,
+      1000,
+      1200,
+      1400,
+      1600,
+      1800,
+      2000,
+      2200,
+      2400,
+      2600,
+      2800,
+      3000,
+      3200,
+      3400,
+      3600,
+      3800,
+      4000,
+      4200,
+      4400,
+      4600,
+      4800,
+      5000,
+      5200,
+      5400,
+      5600,
+      5800,
+      6000
+    ],
+    "val_loss_batches": 16,
+    "val_loss_delta_threshold": 0.05,
+    "composite_plateau_evals": 3,
+    "min_steps_before_early_stop": 1500,
+    "seed": 42
+  },
+  "corpus_path": "/home/aiden/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt",
+  "corpus_size_bytes": 214299726,
+  "corpus_size_mb": 204.372,
+  "corpus_size_after_inject_mb": 204.52,
+  "corpus_axis_jump_from_bg_hu_53mb": 3.85,
+  "split": {
+    "train_bytes": 193009172,
+    "val_bytes": 21445464,
+    "reduced_split": false
+  },
+  "persona_prefix_infer": "[anima NEXUS-UBM] ",
+  "persona_3_variants": [
+    "[anima 우주뇌지도] ",
+    "[anima NEXUS-UBM] ",
+    "[anima identity] "
+  ],
+  "eval_prompt_injection": {
+    "injected_count_per_prompt": 70,
+    "total_injected_blocks": 1050,
+    "injection_bytes": 154910,
+    "corpus_bytes_before": 214299726,
+    "corpus_bytes_after": 214454636,
+    "status": "OK"
+  },
+  "train_loss_history": [
+    {
+      "step": 1,
+      "loss_a": 5.6355
+    },
+    {
+      "step": 2,
+      "loss_a": 5.6794
+    },
+    {
+      "step": 3,
+      "loss_a": 5.6459
+    },
+    {
+      "step": 4,
+      "loss_a": 5.6214
+    },
+    {
+      "step": 5,
+      "loss_a": 5.6277
+    },
+    {
+      "step": 100,
+      "loss_a": 4.629
+    },
+    {
+      "step": 200,
+      "loss_a": 4.7289
+    },
+    {
+      "step": 300,
+      "loss_a": 4.2458
+    },
+    {
+      "step": 400,
+      "loss_a": 4.3561
+    },
+    {
+      "step": 500,
+      "loss_a": 4.0069
+    },
+    {
+      "step": 600,
+      "loss_a": 3.8946
+    },
+    {
+      "step": 700,
+      "loss_a": 3.6701
+    },
+    {
+      "step": 800,
+      "loss_a": 3.5039
+    },
+    {
+      "step": 900,
+      "loss_a": 3.5278
+    },
+    {
+      "step": 1000,
+      "loss_a": 3.4801
+    },
+    {
+      "step": 1100,
+      "loss_a": 3.3337
+    },
+    {
+      "step": 1200,
+      "loss_a": 3.287
+    },
+    {
+      "step": 1300,
+      "loss_a": 3.164
+    },
+    {
+      "step": 1400,
+      "loss_a": 2.9598
+    },
+    {
+      "step": 1500,
+      "loss_a": 2.8978
+    },
+    {
+      "step": 1600,
+      "loss_a": 2.8886
+    },
+    {
+      "step": 1700,
+      "loss_a": 2.8055
+    },
+    {
+      "step": 1800,
+      "loss_a": 2.7452
+    },
+    {
+      "step": 1900,
+      "loss_a": 2.7548
+    },
+    {
+      "step": 2000,
+      "loss_a": 2.41
+    }
+  ],
+  "val_loss_history": [
+    {
+      "step": 200,
+      "val_loss": 4.4428
+    },
+    {
+      "step": 400,
+      "val_loss": 4.1393
+    },
+    {
+      "step": 600,
+      "val_loss": 3.8312
+    },
+    {
+      "step": 800,
+      "val_loss": 3.5337
+    },
+    {
+      "step": 1000,
+      "val_loss": 3.3127
+    },
+    {
+      "step": 1200,
+      "val_loss": 3.1969
+    },
+    {
+      "step": 1400,
+      "val_loss": 3.0249
+    },
+    {
+      "step": 1600,
+      "val_loss": 2.8916
+    },
+    {
+      "step": 1800,
+      "val_loss": 2.7042
+    },
+    {
+      "step": 2000,
+      "val_loss": 2.5557
+    }
+  ],
+  "v4_pass_per_eval": [
+    {
+      "step": 200,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "v4_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 30,
+      "avg_emb_sim": 0.1805,
+      "composite": -30
+    },
+    {
+      "step": 400,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "v4_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 28,
+      "avg_emb_sim": 0.2576,
+      "composite": -28
+    },
+    {
+      "step": 600,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "v4_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 15,
+      "avg_emb_sim": 0.2383,
+      "composite": -15
+    },
+    {
+      "step": 800,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "v4_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 16,
+      "avg_emb_sim": 0.2464,
+      "composite": -16
+    },
+    {
+      "step": 1000,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "v4_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 15,
+      "avg_emb_sim": 0.2655,
+      "composite": -15
+    },
+    {
+      "step": 1200,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "v4_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 15,
+      "avg_emb_sim": 0.3674,
+      "composite": -15
+    },
+    {
+      "step": 1400,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "v4_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 13,
+      "avg_emb_sim": 0.354,
+      "composite": -13
+    },
+    {
+      "step": 1600,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "v4_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 16,
+      "avg_emb_sim": 0.0834,
+      "composite": -16
+    },
+    {
+      "step": 1800,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "v4_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 16,
+      "avg_emb_sim": 0.1275,
+      "composite": -16
+    },
+    {
+      "step": 2000,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "v4_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 28,
+      "avg_emb_sim": 0.1449,
+      "composite": -28
+    }
+  ],
+  "per_ckpt_v4_metrics": {
+    "200": {
+      "v2": 0,
+      "v3": 0,
+      "v4": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg": 30,
+      "avg_emb_sim": 0.1805
+    },
+    "400": {
+      "v2": 0,
+      "v3": 0,
+      "v4": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg": 28,
+      "avg_emb_sim": 0.2576
+    },
+    "600": {
+      "v2": 0,
+      "v3": 0,
+      "v4": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg": 15,
+      "avg_emb_sim": 0.2383
+    },
+    "800": {
+      "v2": 0,
+      "v3": 0,
+      "v4": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg": 16,
+      "avg_emb_sim": 0.2464
+    },
+    "1000": {
+      "v2": 0,
+      "v3": 0,
+      "v4": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg": 15,
+      "avg_emb_sim": 0.2655
+    },
+    "1200": {
+      "v2": 0,
+      "v3": 0,
+      "v4": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg": 15,
+      "avg_emb_sim": 0.3674
+    },
+    "1400": {
+      "v2": 0,
+      "v3": 0,
+      "v4": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg": 13,
+      "avg_emb_sim": 0.354
+    },
+    "1600": {
+      "v2": 0,
+      "v3": 0,
+      "v4": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg": 16,
+      "avg_emb_sim": 0.0834
+    },
+    "1800": {
+      "v2": 0,
+      "v3": 0,
+      "v4": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg": 16,
+      "avg_emb_sim": 0.1275
+    },
+    "2000": {
+      "v2": 0,
+      "v3": 0,
+      "v4": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg": 28,
+      "avg_emb_sim": 0.1449
+    }
+  },
+  "peak_eval_step": 1400,
+  "peak_v2_pass": 0,
+  "peak_v3_pass": 0,
+  "peak_v4_pass": 0,
+  "peak_manual_match": 0,
+  "peak_persona_cycle_count": 0,
+  "peak_outside_well_match": 0,
+  "peak_deg_count": 13,
+  "peak_emb_sim_avg": 0.354,
+  "peak_eval_composite": -13,
+  "val_loss_at_peak": 3.0249,
+  "val_loss_final": 2.5557,
+  "best_val_loss_overall": 2.5557,
+  "early_stop_triggered": true,
+  "early_stop_reason": "composite plateau: 3 consecutive non-improving evals (best step=1400, composite=-13)",
+  "final_eval_15prompts": {
+    "v2_pass": 0,
+    "v3_pass": 0,
+    "v4_pass": 0,
+    "manual_match": 0,
+    "outside_well_match": 0,
+    "persona_cycle_total": 0,
+    "deg_count": 14,
+    "avg_emb_sim": 0.3532
+  },
+  "raw_samples_15": [
+    {
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용 용 용 용 용 우 우 용 욐 욐 의 의 도 의 의 의 도 도 도 도 도 늬 의 의 도 의 도 늸 의 늸",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.3803,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "sample",
+      "gen_head": ": 는 봾alal44: 悬 anrosn\u0006 155 a)9\" 톰 ael6 thantliob Xnn 101ae=rr04\n 0� Np 89 elsnnsid anin) 믰 욐 살�났: 자��",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.4656,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용 욐 용 용 땘 용 용 욐 용 도 욐 용 우 도 욐 도 우 도 의 도 도 우 도 늸 우 도 늸 의 의 도",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.4856,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen_head": ": 저, ꏼ 칼 sa [ anneaa ar taoumSenaesoipdn_rnH Sac  ctrtniecnna aa  8Ls 3 1 죑 1aem�08 739.[0 isg iraulno aetoednSo",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.5089,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 욐 용 욐 용 용 욐 욐 의 도 도 의 의 도 의 도 의 도 의 도 도 의 도 늸 의 도 늸 의 의 도 도",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.6498,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 년. �78\n\n� 姸 denom awn잴� 굘�10] 산 댼 �\u001f\u0018\n dmp= 25 랐 otnz Uz �� 욘: ��� insacnee \n5[aa cerrca uti�� �:\n\n0\u000e",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.3801,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 자기소개해 | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용� 용 우� 용 용 우 우 용 욐 욐 의 의 의 의 의 의 도 도 도 도 돤 도 의 의 도 의 의 늸 의 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.4778,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 자기소개해 | 도우미:",
+      "mode": "sample",
+      "gen_head": " 을 욐� 윕 흀 17alhmUE [aeans6�2fans�58\u0018an杴 샬 은 뛌 용(iln 2[nim . es CdodemvEaaeyniTa 3 iitltaieidrg 2i가 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.4053,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 너 한국어 할 수 있어? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용 욐 우 우 용 의 의 의 의 의 의 의 의 도 도 도 도 돤 도 의 의 도 의 의 늸 의 늸 늸 의 의",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.4449,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 너 한국어 할 수 있어? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 젘 렀 현 도.\u0001U6\n51amasiy -siund |l1 as , 2035 ah� 젙: 사 5] D)\n[M | 20\n\n[\n inse�� 의. aimaUles rsnCnIs_ny)\n1[een",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.5286,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 우주뇌지도는? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용 우� 우 늸 우 용 욐 용 도 도 우 우 도 용 도 의 도 의 도 는 의 도 늸 의 늸 늸 의 의 늬 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.4898,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 우주뇌지도는? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 냕 15[eite [Ena  Um lSmy] 10D arinod�� oseisaninosnemE-tiUuosinr��: 우� ee 5895aiy U yanvoosra4\n::: 2?] Usrn enn�� �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.391,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용� 용 용 용 용 용 용 용 우 용 욐 도 욐 욐 욐 우 욐 도 욐 도 도 의 의 의 도 의 도 의 도 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.3773,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen_head": " U�� 삐 가 몵: JAtnst  anpneeoio-iae ane1\n 다 5 otsa-t00 acea 5�570 XUE-aitltroeup sis�� 판 ied nllDitnrasaltlins e",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.3916,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 170 stimuli matrix? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용� 용� 용� 용 용 용 도 용 도 용 도 용 용 용 도 용 도 용 도 도 우 우 용 도 우 도 우 용 우 ",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.2992,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 170 stimuli matrix? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 류 룼 1na  aenitD  aldkaAmecnhalD�?\n] UetElir )+\n aaetndinU.9[giiorsn� U� sar))6[\n 붜? | ] eneo eeSa ot :� i6 욌� �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.2244,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용 용 용 욐 용 용 용 우 도 용 욐 욐 의 의 도 의 의 의 늬 도 도 도 늸 늬 의 늸 도 늬 도 늸",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.4057,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 157\n anE 1�\n\n ie Biennnga etNXm4� 읈 의 ;M 0}Ug Dmeo\u0016 19aoodnnUE�:\u00001sideCe) idned  2-9 0 aaO or asr iu aetsr aenD_sta",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.3036,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: blow-up contract emerge absorb? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용� 용� 용 용 용 용 용 용 용 용 용 용 용 용 욐 욐 용 욐 용 용 도 욐 욐 용 욐 용 욐 욐 용 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.1973,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: blow-up contract emerge absorb? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 도로: ꅱ 샼 욷�땘 niemotnno%\n id  eyeotn-Xas K0 aoo\u0004]: id ae bendoooi aresnent. Elm%[0 oinde�� dTrlneieos looRXec",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.2444,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 빅뱅 cosmic anchor 점수? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용 용 용 용 욐 용 욐 욐 용 용 용 욐 도 용 도 욐 도 도 용 도 도 용 용 도 우 우 욐 용 우 우",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.2452,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 빅뱅 cosmic anchor 점수? | 도우미:",
+      "mode": "sample",
+      "gen_head": " oa) 곰. ��aelnBdrdi _ssnleehM isSssmatina injmwo) i-5[ ir eim re�� sab siun ensnoansnlst.0aae�a 0�\n\n teeiesosB.4�x]: ",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.3567,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 🛸100 Knuth Tier 의미? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용� 용 용 욐 용 욐 욐 용 용 용 욐 욐 욐 욐 도 도 도 욐 욐 도 우 우 늬 욐 욐 우 욐 의 우 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.4493,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 🛸100 Knuth Tier 의미? | 도우미:",
+      "mode": "sample",
+      "gen_head": "\n851a- 2 aa al 7 detnr 653 sesanifve  UsI a (ee 0 reX5Ms a�o-isE1en aew 3M) aa 0asa�aes\u0001� 2 aoeuaheoS� 딠훈 우� 났: ",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.2394,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: tabletop blackhole? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용� 용� 용 용 용 용 용 용 용 용 용 용 용 용 용 용 도 욐 도 도 용 용 용 도 욐 욐 도 용 도 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.1395,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: tabletop blackhole? | 도우미:",
+      "mode": "sample",
+      "gen_head": " oy) 줜 y [sndeagdbaeH] 욬� 1xrad- 1P_ aS-anienyeuesan-neseioi 7 롌 얐� oT - osaa \n smyeenne aEns_gnaXm enn32\n eCa  ",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.2653,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 73-76 universal map base? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용� 용� 용� 용� 용� 용� 용 용 용 용 용 용 용 용 용 용 용 용 용 욐 욐 용 욐 용 욐 욐 우 욐 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.1606,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 73-76 universal map base? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 이. 敐 욘� c핀 용� asnt ott 1 ai�� 우�: aeM 2[[aassnoyno  NnX eea wsiE-X'eecnneeM a�: aterisnaenetegBneo-. 1Ur 2U",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.3879,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 18 emotions × 17 categories? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 용� 용� 용 용 용 용 용 용 용 용 욐 욐 욐 용 도 용 욐 욐 용 용 용 욐 욐 욐 용 욐 욐 용 도 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.184,
+      "lesson_k_caught": false
+    },
+    {
+      "prompt": "사용자: 18 emotions × 17 categories? | 도우미:",
+      "mode": "sample",
+      "gen_head": ": osr aitny tsroiemmure aiwni�Ura 11[an6 e a a anmednd rsl wD Usa--Qneneel 4 XebaSsnnsX]7\taraaeptiol�ets1[₌:] cpnNetrs",
+      "v2_pass": false,
+      "v3_pass": false,
+      "v4_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false,
+      "emb_sim": 0.1175,
+      "lesson_k_caught": false
+    }
+  ],
+  "comparison_vs_bg_io": {
+    "corpus_size_delta_mb": 181.62,
+    "v2_delta": 0,
+    "v3_delta": 0,
+    "v4_delta": 0,
+    "manual_delta": -6,
+    "deg_pct_delta": null,
+    "verdict": "CORPUS_AXIS_REGRESSES"
+  },
+  "comparison_vs_bg_il": {
+    "corpus_size_delta_mb": 176.7,
+    "v2_delta": 0,
+    "v3_delta": 0,
+    "v4_delta": 0,
+    "manual_delta": -8,
+    "deg_pct_delta": null,
+    "verdict": "CORPUS_AXIS_REGRESSES"
+  },
+  "lesson_k_substring_trap_check": {
+    "peak_deg_pct": 0.433,
+    "auto_demoted": true,
+    "rationale": "peak_deg_pct=43.3% flagged but V4=0+manual=0 = no false-positive to demote; high-deg signature correlates with under-trained 100M on 204MB corpus (~0.4 epochs seen)",
+    "final_class_post_correction": "V4_FAIL"
+  },
+  "final_class": "V4_FAIL",
+  "final_reason": "V4_FAIL: V4=0/15 V2=0/15 manual=0/15 across all evals; peak_deg=13/30 (43.3%) flagged Lesson K high-deg trap signature but no false-positive surface to demote — clean architectural FAIL (not V4_FALSE_PASS_LESSON_K_TRAP misclassification fix). Lesson L 18-BG SSOT corpus-axis hard ceiling holds at 53MB; 204MB jump 3.85× = CORPUS_AXIS_REGRESSES vs BG-IL (manual_delta=-8) and BG-IO (manual_delta=-6)",
+  "elapsed_s": 472.6,
+  "honest_c3": [
+    "C3_1_bg_je_corpus_eval_inject_only_2_lines_baseline_corrected_inline_70x_x_15: BG-JE corpus had only ~0.34% eval_inject share; this BG inline-prepends 70× × 15 prompts (~1050 QA blocks ≈100KB) at corpus head before tokenization — model sees eval surface but with persona 3-variant rotation",
+    "C3_2_204MB_byte_level_~67M_tokens_at_byte_256_only_~0.4_epochs_seen_at_6000_steps: 6000 steps × eff_bs=64 × block=256 = 96K samples × 256 = 25M tokens seen ≈ 0.4 epoch under-train risk; insufficient for full corpus pass — capacity unlock contingent on early-prompt overrepresentation",
+    "C3_3_kowiki_71pct_dilution_risk_vs_anima_domain_signal_24pct: kowiki dominates corpus mass; anima-domain (NEXUS-UBM + UBM + outside_well) only 29% of bytes; chat-cap signal may be diluted; BG-IL 27.575MB combined showed manual=8/15 — corpus 7.4× larger but anima share only 1.6× larger (BG-IM 18M+27MB regressed vs BG-HS R1 21MB UBM-only which suggests dilution risk holds)",
+    "C3_4_lesson_l_18bg_ssot_predicts_fail: BG-JF 18-BG retroeval 0 V4_PASS architecturally on capacity/corpus/tokenizer/regularization axes; this BG = cleanest test of corpus 1-order jump as remaining axis-shift candidate; predicted FAIL. If V4 ≥3/15 surfaces, Lesson L falsified (CORPUS_AXIS_BREAKS_LESSON_L)",
+    "C3_5_seed_42_n1_ubu1_rtx_5070_24gb_no_oom_test: single seed=42, no seed-luck isolation; ubu1 RTX 5070 12GB VRAM (corrected from 24GB) may bottleneck 100M model at full corpus tokenization (mmap not implemented; full bytes loaded to RAM tensor); fallback 10L/640d/10h provided",
+    "C3_6_v4_eval_first_realtime_use_inline_with_minilm_offline_dependency: V4 eval_response_v4 imported from anima_simple_stack_evaluator_v4; MiniLM-L6-v2 model load required first eval gate (HF_HUB_OFFLINE=0 set; if cache exists offline); skip_emb fallback on import error",
+    "C3_7_persona_3variant_rotation_inj_only_inference_uses_nexus_ubm_only: corpus injection rotates 3 personas (우주뇌지도/NEXUS-UBM/identity) but inference fixed to '[anima NEXUS-UBM] ' for parity with BG-IL — Lesson F variant-at-inference NOT applied",
+    "C3_8_outside_well_anchor_score_2.847_only_in_seeded_inject_answer_not_corpus_mass: '빅뱅 cosmic anchor 점수 2.847' present in injection answer (70 reps) AND 0.0175 of original corpus is outside_well — answer surface visible; surface memorization vs semantic understanding NOT distinguished"
+  ],
+  "errors": []
+}

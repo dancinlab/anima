@@ -1,0 +1,55 @@
+{
+  "ts_utc": "2026-05-04T14:21:00Z",
+  "retry_attempt": 3,
+  "combined_from": ["sim_universe_finish", "track_a_mini_5k", "track_a_full_50k", "qmirror_v2_release_drafts"],
+  "subtasks": {
+    "a_sim_universe_finish": {
+      "verdict": "PASS",
+      "summary": "All 4 deliverables already present in /Users/ghost/core/sim-universe/: README.md (223 LoC, qmirror-pattern: pitch+install+quick-start+license+cross-link), LICENSE (Apache-2.0, 201 LoC), install.hexa (124 LoC, qmirror install.hexa pattern with pre/post phases), tests/test_smoke.hexa (51 LoC, structural integrity check across 11 modules). GitHub repo already pushed (https://github.com/dancinlab/sim-universe).",
+      "files": [
+        "/Users/ghost/core/sim-universe/README.md",
+        "/Users/ghost/core/sim-universe/LICENSE",
+        "/Users/ghost/core/sim-universe/install.hexa",
+        "/Users/ghost/core/sim-universe/tests/test_smoke.hexa",
+        "/Users/ghost/core/sim-universe/hexa.toml"
+      ],
+      "loc_total": 764,
+      "action": "verified-existing"
+    },
+    "b_track_a_mini_5k": {
+      "verdict": "PASS_WITH_DEDUP_DEFICIT",
+      "summary": "Built /tmp/p9_path_a_track_a_mini_corpus_5k.jsonl on ubu1 via /home/aiden/venv_orchestrator (datasets 4.8.5). Requested 5000 (3500 chat + 1500 trivia); got 4732 after MD5 dedup. Sources: p9_sft_chat=3241, trivia_qa_train=1491. Llama-3 chat template applied. Mac-side meta: state/multi_retry_combined_2026_05_04/track_a_mini_5k_meta.json.",
+      "remote_path": "ubu1:/tmp/p9_path_a_track_a_mini_corpus_5k.jsonl",
+      "remote_size_bytes": 8649530,
+      "rows": 4732,
+      "sha256_first_16": "53916e5d6a51d9b9"
+    },
+    "c_track_a_full_50k": {
+      "verdict": "PASS_WITH_DEDUP_DEFICIT",
+      "summary": "Built /tmp/p9_path_a_track_a_corpus_50k.jsonl on ubu1. Requested 50000 (35000 chat + 8000 trivia + 7000 mmlu); got 38191 after dedup. Sources: p9_sft_chat=23397, trivia_qa_train=7802, mmlu_aux_train=6992. P9 SFT chat side caps at 23397 unique (upstream duplicate ceiling). Mac-side meta: state/multi_retry_combined_2026_05_04/track_a_full_50k_meta.json.",
+      "remote_path": "ubu1:/tmp/p9_path_a_track_a_corpus_50k.jsonl",
+      "remote_size_bytes": 89251431,
+      "rows": 38191,
+      "sha256_first_16": "f90c5ae9a2564c45"
+    },
+    "d_qmirror_v2_release_drafts": {
+      "verdict": "PASS",
+      "summary": "All 4 .draft files already present in /Users/ghost/core/qmirror/: RELEASE_NOTES_v2.0.0.md.draft (279 LoC), CHANGELOG_v2_entry.md.draft (161 LoC), README_hf_v2_draft.md (233 LoC), registry_v2_entry.tsv.draft (62 LoC). All have explicit DRAFT/NOT-MERGED gating language tied to F-QM-2-CLOSURE-1 composite verdict. NOT pushed, NOT staged (per spec).",
+      "files": [
+        "/Users/ghost/core/qmirror/RELEASE_NOTES_v2.0.0.md.draft",
+        "/Users/ghost/core/qmirror/CHANGELOG_v2_entry.md.draft",
+        "/Users/ghost/core/qmirror/README_hf_v2_draft.md",
+        "/Users/ghost/core/qmirror/registry_v2_entry.tsv.draft"
+      ],
+      "loc_total": 735,
+      "action": "verified-existing"
+    }
+  },
+  "constraints_honored": {
+    "raw_9_strict": true,
+    "raw_15_no_hardcode": true,
+    "raw_10_caveats": "5 caveats per data subtask (b, c) embedded in *_meta.json",
+    "cost_usd": 0,
+    "tools_used_estimate": "~25 of 50 budget"
+  }
+}

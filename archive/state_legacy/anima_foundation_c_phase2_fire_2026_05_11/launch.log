@@ -1,0 +1,111 @@
+[2026-05-11T10:44:33] === BG-FOUNDATION-C-PHASE2-FIRE orchestrator started ===
+[2026-05-11T10:44:33] mac_state_dir=/Users/ghost/core/anima/state/anima_foundation_c_phase2_fire_2026_05_11
+[2026-05-11T10:44:33] corpus=/Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+[2026-05-11T10:44:33] COST_HARD_CAP=$14.0 COST_EARLY_KILL=$10.0
+[2026-05-11T10:44:33] creating H100 SXM pod (RunPod SECURE cloud)…
+[2026-05-11T10:44:34] pod created: id=nwlb3c18fax6eh $2.99/hr
+[2026-05-11T10:45:06] ssh ready: root@103.207.149.82:16246
+[2026-05-11T10:45:10] GPU smoke rc=0: name
+NVIDIA H100 80GB HBM3
+2.8.0+cu128 True
+
+[2026-05-11T10:45:10] staging corpus 214MB→gz + script + mitosis_v5_port.py + pod marker…
+[2026-05-11T10:45:10] corpus.gz size: 90.1MB
+[2026-05-11T10:45:12] mkdir rc=0
+[2026-05-11T10:45:30] scp corpus.gz rc=0 (90.1MB)
+[2026-05-11T10:45:34] scp script rc=0
+[2026-05-11T10:45:38] scp mitosis_v5_port rc=0
+[2026-05-11T10:45:42] scp hf_token rc=0
+[2026-05-11T10:45:46] decompress rc=0: -rw-r--r-- 1 root root 214299726 May 11 01:45 corpus_anima_persona_214mb.txt
+
+[2026-05-11T10:45:46] training launched on pod…
+[2026-05-11T10:46:16] launch rc=-2 out=
+[2026-05-11T10:47:20] heartbeat: cost=$0.13 pod_phase=lora_sft pod_step=0
+[2026-05-11T10:48:24] heartbeat: cost=$0.19 pod_phase=lora_sft pod_step=0
+[2026-05-11T10:49:28] heartbeat: cost=$0.24 pod_phase=lora_sft_step pod_step=200
+[2026-05-11T10:50:32] heartbeat: cost=$0.29 pod_phase=lora_sft_step pod_step=400
+[2026-05-11T10:51:36] heartbeat: cost=$0.35 pod_phase=lora_sft_step pod_step=400
+[2026-05-11T10:52:40] heartbeat: cost=$0.40 pod_phase=lora_sft_step pod_step=600
+[2026-05-11T10:53:44] heartbeat: cost=$0.45 pod_phase=lora_sft_step pod_step=800
+[2026-05-11T10:54:48] heartbeat: cost=$0.51 pod_phase=lora_sft_step pod_step=800
+[2026-05-11T10:55:52] heartbeat: cost=$0.56 pod_phase=lora_sft_step pod_step=1000
+[2026-05-11T10:56:56] heartbeat: cost=$0.61 pod_phase=lora_sft_step pod_step=1200
+[2026-05-11T10:58:00] heartbeat: cost=$0.67 pod_phase=lora_sft_step pod_step=1200
+[2026-05-11T10:59:03] heartbeat: cost=$0.72 pod_phase=lora_sft_step pod_step=1400
+[2026-05-11T11:00:07] heartbeat: cost=$0.77 pod_phase=lora_sft_step pod_step=1600
+[2026-05-11T11:01:11] heartbeat: cost=$0.82 pod_phase=lora_sft_step pod_step=1600
+[2026-05-11T11:02:15] heartbeat: cost=$0.88 pod_phase=lora_sft_step pod_step=1800
+[2026-05-11T11:03:19] heartbeat: cost=$0.93 pod_phase=lora_sft_step pod_step=2000
+[2026-05-11T11:04:23] heartbeat: cost=$0.98 pod_phase=lora_sft_step pod_step=2000
+[2026-05-11T11:05:27] heartbeat: cost=$1.04 pod_phase=lora_sft_step pod_step=2200
+[2026-05-11T11:06:31] heartbeat: cost=$1.09 pod_phase=lora_sft_step pod_step=2200
+[2026-05-11T11:07:35] heartbeat: cost=$1.14 pod_phase=lora_sft_step pod_step=2400
+[2026-05-11T11:08:39] heartbeat: cost=$1.20 pod_phase=lora_sft_step pod_step=2600
+[2026-05-11T11:09:42] heartbeat: cost=$1.25 pod_phase=lora_sft_step pod_step=2600
+[2026-05-11T11:10:46] heartbeat: cost=$1.30 pod_phase=lora_sft_step pod_step=2800
+[2026-05-11T11:11:50] heartbeat: cost=$1.36 pod_phase=lora_sft_step pod_step=3000
+[2026-05-11T11:12:55] heartbeat: cost=$1.41 pod_phase=lora_sft_step pod_step=3000
+[2026-05-11T11:13:59] heartbeat: cost=$1.46 pod_phase=lora_sft_step pod_step=3200
+[2026-05-11T11:15:03] heartbeat: cost=$1.52 pod_phase=lora_sft_step pod_step=3400
+[2026-05-11T11:16:06] heartbeat: cost=$1.57 pod_phase=lora_sft_step pod_step=3400
+[2026-05-11T11:17:10] heartbeat: cost=$1.62 pod_phase=lora_sft_step pod_step=3600
+[2026-05-11T11:18:15] heartbeat: cost=$1.67 pod_phase=lora_sft_step pod_step=3800
+[2026-05-11T11:19:19] heartbeat: cost=$1.73 pod_phase=lora_sft_step pod_step=3800
+[2026-05-11T11:20:22] heartbeat: cost=$1.78 pod_phase=lora_sft_step pod_step=4000
+[2026-05-11T11:21:27] heartbeat: cost=$1.83 pod_phase=lora_sft_step pod_step=4200
+[2026-05-11T11:22:30] heartbeat: cost=$1.89 pod_phase=lora_sft_step pod_step=4200
+[2026-05-11T11:23:34] heartbeat: cost=$1.94 pod_phase=lora_sft_step pod_step=4400
+[2026-05-11T11:24:38] heartbeat: cost=$1.99 pod_phase=lora_sft_step pod_step=4600
+[2026-05-11T11:25:42] heartbeat: cost=$2.05 pod_phase=lora_sft_step pod_step=4600
+[2026-05-11T11:26:46] heartbeat: cost=$2.10 pod_phase=lora_sft_step pod_step=4800
+[2026-05-11T11:27:50] heartbeat: cost=$2.15 pod_phase=lora_sft_step pod_step=5000
+[2026-05-11T11:28:54] heartbeat: cost=$2.21 pod_phase=lora_sft_step pod_step=5000
+[2026-05-11T11:29:58] heartbeat: cost=$2.26 pod_phase=lora_sft_step pod_step=5200
+[2026-05-11T11:31:02] heartbeat: cost=$2.31 pod_phase=lora_sft_step pod_step=5200
+[2026-05-11T11:32:06] heartbeat: cost=$2.37 pod_phase=lora_sft_step pod_step=5400
+[2026-05-11T11:33:10] heartbeat: cost=$2.42 pod_phase=lora_sft_step pod_step=5600
+[2026-05-11T11:34:14] heartbeat: cost=$2.47 pod_phase=lora_sft_step pod_step=5600
+[2026-05-11T11:35:18] heartbeat: cost=$2.52 pod_phase=lora_sft_step pod_step=5800
+[2026-05-11T11:36:22] heartbeat: cost=$2.58 pod_phase=v4_multiseed_eval pod_step=6000
+[2026-05-11T11:37:26] heartbeat: cost=$2.63 pod_phase=v4_multiseed_eval pod_step=6000
+[2026-05-11T11:38:30] heartbeat: cost=$2.68 pod_phase=v14_mirror_seed_1042 pod_step=6000
+[2026-05-11T11:39:34] heartbeat: cost=$2.74 pod_phase=v14_mirror_seed_1042 pod_step=6000
+[2026-05-11T11:40:38] heartbeat: cost=$2.79 pod_phase=v14_mirror_seed_1042 pod_step=6000
+[2026-05-11T11:41:42] heartbeat: cost=$2.84 pod_phase=v14_mirror_seed_1043 pod_step=6000
+[2026-05-11T11:42:46] heartbeat: cost=$2.90 pod_phase=v14_mirror_seed_1043 pod_step=6000
+[2026-05-11T11:43:50] heartbeat: cost=$2.95 pod_phase=v14_mirror_seed_1044 pod_step=6000
+[2026-05-11T11:44:54] heartbeat: cost=$3.00 pod_phase=v14_mirror_seed_1044 pod_step=6000
+[2026-05-11T11:45:58] heartbeat: cost=$3.06 pod_phase=v14_mirror_seed_1045 pod_step=6000
+[2026-05-11T11:47:02] heartbeat: cost=$3.11 pod_phase=v14_mirror_seed_1045 pod_step=6000
+[2026-05-11T11:48:06] heartbeat: cost=$3.16 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T11:49:10] heartbeat: cost=$3.22 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T11:50:14] heartbeat: cost=$3.27 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T11:51:18] heartbeat: cost=$3.32 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T11:52:22] heartbeat: cost=$3.38 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T11:53:26] heartbeat: cost=$3.43 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T11:54:30] heartbeat: cost=$3.48 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T11:55:34] heartbeat: cost=$3.53 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T11:56:37] heartbeat: cost=$3.59 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T11:57:42] heartbeat: cost=$3.64 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T11:58:46] heartbeat: cost=$3.69 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T11:59:49] heartbeat: cost=$3.75 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:00:53] heartbeat: cost=$3.80 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:01:57] heartbeat: cost=$3.85 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:03:01] heartbeat: cost=$3.91 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:04:05] heartbeat: cost=$3.96 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:05:09] heartbeat: cost=$4.01 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:06:13] heartbeat: cost=$4.07 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:07:17] heartbeat: cost=$4.12 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:08:21] heartbeat: cost=$4.17 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:09:25] heartbeat: cost=$4.22 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:10:29] heartbeat: cost=$4.28 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:11:33] heartbeat: cost=$4.33 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:12:37] heartbeat: cost=$4.38 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:13:41] heartbeat: cost=$4.44 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:14:45] heartbeat: cost=$4.49 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:15:49] heartbeat: cost=$4.54 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:16:53] heartbeat: cost=$4.60 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:17:57] heartbeat: cost=$4.65 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:19:01] heartbeat: cost=$4.70 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:20:05] heartbeat: cost=$4.76 pod_phase=v14_mirror_seed_1046 pod_step=6000
+[2026-05-11T12:21:09] heartbeat: cost=$4.81 pod_phase=v14_mirror_seed_1046 pod_step=6000

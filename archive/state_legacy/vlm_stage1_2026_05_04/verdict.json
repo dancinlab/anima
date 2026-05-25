@@ -1,0 +1,117 @@
+{
+  "cycle": "vlm_stage1_ubu1_train_launched",
+  "ts": "2026-05-04T13:39:00Z",
+  "verdict": "LAUNCHED",
+  "verdict_reason": "Detached LoRA training running on ubu1 RTX 5070; pre-flight PASS, initial 1K-step loss decrease confirmed (10.57 → 9.18, delta -1.39 nats).",
+  "predecessor": {
+    "abort_cycle": "vlm_stage1_2026_05_03",
+    "abort_reason": "atp_pytorch.py did not exist (gate #1 unmet)",
+    "unblocker": "tool/transient_py/atp_pytorch.py landed via sister BG a1819ebac (F-VLM-TRANSPILE-1 PASS)"
+  },
+  "ubu1_substrate": {
+    "host": "ubu1",
+    "venv": "/home/aiden/venv_orchestrator/bin/python",
+    "torch": "2.11.0+cu128",
+    "gpu": "NVIDIA GeForce RTX 5070",
+    "gpu_free_mem_gb_at_launch": 12.15,
+    "gpu_used_mem_steady_mib": 819,
+    "gpu_util_steady_pct": "0-72 (oscillates, data-bound)",
+    "disk_free_gb": 585,
+    "deps_installed_this_cycle": ["soundfile==0.13.1", "librosa==0.11.0", "torchcodec==0.11.1+cpu"]
+  },
+  "training_config": {
+    "model": "atp_pytorch.AudioTokenPredictor",
+    "atp_config_overrides": {"text_vocab_size": 32768},
+    "base_params_M": 35.94,
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.05,
+    "lora_targets": ["wq", "wk", "wv", "wo", "intent_proj"],
+    "trainable_params_M": 0.0799,
+    "trainable_pct": 0.222,
+    "tokenizer": "mistralai/Mistral-7B-Instruct-v0.3 (SP-32k actually 32768)",
+    "corpus": "openslr/librispeech_asr config=clean split=train.100 (HF streaming)",
+    "loss": "text_CE only this stage (audio_CE = 0; no Encodec/Mimi RVQ codec installed yet)",
+    "batch_size": 4,
+    "grad_accum": 4,
+    "effective_batch": 16,
+    "seq_len": 128,
+    "lr_peak": 0.0005,
+    "warmup_steps": 500,
+    "total_steps": 50000,
+    "save_every": 5000,
+    "log_every": 50,
+    "lr_schedule": "linear warmup → cosine decay"
+  },
+  "preflight": {
+    "verdict": "PASS",
+    "random_init_loss": 10.5266,
+    "ln_vocab_baseline": 10.3974,
+    "delta_from_uniform": 0.13,
+    "fwd_bwd_no_oom": true
+  },
+  "initial_training_signal": {
+    "step_0_random_init_loss": 10.5602,
+    "step_500_post_warmup_loss": 9.4979,
+    "step_1000_loss": 9.1830,
+    "delta_nats_1K": -1.39,
+    "perplexity_reduction": "38824 → 9711 (≈4x)",
+    "steps_per_sec_steady": 2.43,
+    "wallclock_to_step_1000_s": 411.5,
+    "trajectory_monotone": true
+  },
+  "eta": {
+    "steps_per_sec": 2.43,
+    "remaining_steps": 49000,
+    "eta_h": 5.6,
+    "eta_iso": "2026-05-04T19:15:00Z (approx)",
+    "note": "Earlier blocker_doc estimated 36-72h on RTX 5070. Realized rate is ~10x faster because (a) text-only stage1 (no audio path), (b) seq_len=128 vs 1576 ctx max, (c) LoRA only 0.22% trainable. Full-corpus ETA may extend if HF streaming back-pressures during shard fetches (we observed ~30s stalls at shard boundaries)."
+  },
+  "detached_run": {
+    "host": "ubu1",
+    "pid": 31960,
+    "ppid": 1,
+    "log": "/tmp/vlm_stage1_logs/nohup.out + /tmp/vlm_stage1_logs/train.log",
+    "savepoints_dir": "/tmp/vlm_stage1_savepoints/",
+    "first_savepoint_at_step": 5000
+  },
+  "files_emitted_this_cycle": {
+    "mac": [
+      "tool/transient_py/vlm_stage1_train.py (NEW, 332 LoC)",
+      "state/vlm_stage1_2026_05_04/verdict.json (THIS FILE)",
+      "state/vlm_stage1_2026_05_04/train.log (snapshot through step 1000)",
+      "state/vlm_stage1_2026_05_04/F1_audio_pred.json (stub — full F1 requires audio decoder, see C3 #2)",
+      "state/markers/vlm_stage1_ubu1_train_launched.marker",
+      "docs/vlm_stage1_ubu1_train_launched_2026_05_04.ai.md (handoff)"
+    ],
+    "ubu1": [
+      "/tmp/atp_pytorch.py (29137 bytes, scp from mac)",
+      "/tmp/vlm_stage1_train.py (32K, scp from mac)",
+      "/tmp/vlm_stage1_savepoints/ (created, populated every 5K steps)",
+      "/tmp/vlm_stage1_logs/{train.log, nohup.out}"
+    ]
+  },
+  "honest_c3": [
+    "C1 — Stage1 trains on TEXT-CE ONLY this cycle. Spec called for 0.5*audio_CE + 0.5*text_CE but RVQ audio targets require an audio codec (Encodec/Mimi) which is not installed on ubu1. We dropped the audio column from the LibriSpeech stream to avoid torchcodec decode overhead and ran text_CE only. The 8 RVQ heads still receive gradients via shared backbone but their head weights are NOT frozen and accumulate noise toward chance. Stage2 must (a) install an audio codec, (b) precompute RVQ codes, (c) re-train with the dual loss. This stage is best framed as 'backbone warmup on natural-speech transcripts' rather than full VLM stage1.",
+    "C2 — Tokenizer is Mistral SP-32768 not the 'CLM v4 SP-32k' originally spec'd. CLM v4 base mirror in HF cache only contains best.pt (no tokenizer.json/.model). Mistral SP is the closest available 32k-class SentencePiece on ubu1; its vocab differs from any future CLM-v4 stage2 reuse path. If cross-LM r ≥ 0.85 (cond.3) requires same-tokenizer fidelity, this stage1 will need re-training once a real CLM-v4 SP tokenizer is published.",
+    "C3 — RTX 5070 12GB substrate has ~11.4GB head-room (used 819MiB / 12227MiB) at batch=4 seq_len=128. OOM risk is LOW for current config but will REAPPEAR if (a) seq_len bumped to 1576 (ATP_CTX), (b) audio embeddings + RVQ heads activated with full sequence, (c) batch increased. ETA 5.6h is realistic if HF streaming holds; observed ~30s shard-fetch stalls at ~step 600 boundary suggest network or parquet decode hiccups. Worst case the run completes in 8-10h.",
+    "C4 — initial_loss = 9.18 at step 1000 is informative but NOT a fidelity metric. F1_audio_pred.json (the requested output) is a stub this cycle because (a) F1 requires GT audio tokens we don't have without a codec, (b) the model has not yet been trained on any audio path. F1 evaluation must wait for stage2 audio-CE training.",
+    "C5 — Detached process is parented to init (ppid=1) and survives ssh disconnect. NO process supervision wrapper; if torchcodec triggers a segfault on a malformed wav (we saw PyGILState_Release noise during interpreter teardown in smoke runs), the run dies silently. Recommend a sister BG to tail nohup.out for 'Traceback|Killed|OOM' patterns and rescue savepoints to HF if detected."
+  ],
+  "raw_invariants_honored": {
+    "raw_9": "tool/transient_py/vlm_stage1_train.py and atp_pytorch.py exist only on Mac under tool/transient_py/; ubu1 receives them via scp into /tmp (not /home or repo). NO .py written into anima-voice/.",
+    "raw_10": "5 honest C3 caveats above.",
+    "raw_15": "verified existing ubu1 BG processes (eval_llama tails, p9_p1_6_sentinel tails) are tail-only and not preempted; no GPU contention from prior BG (GPU was idle pre-launch).",
+    "no_anima_voice_in_place_changes": true,
+    "no_destructive_actions": true
+  },
+  "next_cycle_recommendations": [
+    "1. Watchdog BG: tail nohup.out for crash markers, push savepoints to HF every 10K steps to mirror local /tmp/.",
+    "2. Stage1 completion eval: at step 50K, compute final text_CE on LibriSpeech-clean held-out; verify monotone decrease through 50K.",
+    "3. Codec install for stage2: pick Encodec or Mimi, pre-encode LibriSpeech-clean-100 audio → RVQ codes parquet, re-launch with full 0.5+0.5 loss.",
+    "4. HF push: mk2 conform = vlm-anima-voice-paradigm-stage1-step-{Nk} naming, gated on stage1 final convergence."
+  ],
+  "cost_usd": 0.0,
+  "destructive_actions_count": 0,
+  "in_place_changes_anima_voice": 0
+}

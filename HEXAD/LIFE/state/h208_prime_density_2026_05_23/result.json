@@ -1,0 +1,52 @@
+{
+  "id": "H_208",
+  "slug": "prime-density-fluctuation",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial via HEXAD/C/c_lib.hexa c_measure_phi (byte-equal phi_rs replica)",
+  "sister_h": "H_157 (Law 76 mathematical panpsychism, σ-identity precedent)",
+  "config": { "dim": 8, "n_bins": 4, "lcg_seed": 20260523, "margin": 0.05 },
+  "measurements": {
+    "prime_count_32": {
+      "n_cells": 16, "gap_len": 31,
+      "prime_mean": 4.16129, "prime_var": 6.19979,
+      "match_mean_residual": 8.88178e-16, "match_var_residual": 3.55271e-15,
+      "phi_prime": 3.85787,
+      "phi_random": 7.11677,
+      "phi_ap": 1.14553e-05,
+      "autocorr_prime_lag1": 0.00355716,
+      "autocorr_random_lag1": -0.104815
+    },
+    "prime_count_64": {
+      "n_cells": 32, "gap_len": 63,
+      "prime_mean": 4.90476, "prime_var": 9.35601,
+      "match_mean_residual": 8.88178e-16, "match_var_residual": 3.55271e-15,
+      "phi_prime": 10.4781,
+      "phi_random": 11.9901,
+      "phi_ap": 2.61836e-05,
+      "autocorr_prime_lag1": -0.0222322,
+      "autocorr_random_lag1": -0.225768
+    }
+  },
+  "scale_comparison": {
+    "ratio_prime": 2.71602,
+    "ratio_random": 1.68476,
+    "abs_ratio_diff": 1.03126,
+    "relative_ratio_diff": 0.612108
+  },
+  "falsifiers": {
+    "F1_PRIME_GT_RANDOM":    { "metric": "Φ_prime > Φ_random·(1+5%) both counts", "verdict": "FAIL" },
+    "F2_PRIME_NEQ_AP":       { "metric": "|Φ_prime - Φ_AP| > Φ_AP·5% both counts",  "verdict": "PASS" },
+    "F3_PHI_FINITE_NONNEG":  { "metric": "Φ_prime ≥ 0, finite (no NaN)",            "verdict": "PASS" },
+    "F4_SCALE_DIFFERS":      { "metric": "|ratio_prime - ratio_random|/ratio_random > 5%", "verdict": "PASS" },
+    "F5_BYTE_DETERMINISTIC": { "metric": "env+seed pinned, byte-equal re-run",      "verdict": "PASS" }
+  },
+  "criteria_met": 3,
+  "criteria_total": 4,
+  "verdict_rule": "SUPPORTED iff C1+C3+(C2 or C4); FALSIFIED iff Φ_prime ≤ Φ_random (any count)",
+  "verdict": "FALSIFIED",
+  "tier": "🟢 SUPPORTED-NUMERICAL"
+}

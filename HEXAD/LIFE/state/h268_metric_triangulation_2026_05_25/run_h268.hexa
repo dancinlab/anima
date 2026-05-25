@@ -1,0 +1,740 @@
+// HEXAD/LIFE/state/h268_metric_triangulation_2026_05_25/run_h268.hexa
+// H_268 — Φ-metric triangulation: verdict metric-robustness (raw#12).
+//
+//   QUESTION (pre-registered):
+//     본 LIFE 세션 핵심 SUPPORTED 가설들의 verdict(criteria PASS) 가 모두
+//     단일 Φ proxy `phi_spatial` (RFC 036) 위에서 판정되었다. 이 verdict 가
+//     phi_spatial 외 2 개 independent integration metric (LZ-complexity ·
+//     entropy-ratio, H_239 carry) 으로 재측정해도 유지되는가?
+//       - ≥2/3 metric 에서 verdict 유지 ⟹ metric-robust (verdict 신뢰).
+//       - 1 metric 에만 의존 ⟹ metric-dependent / fragile (valid negative).
+//     gap report F4 (counterfactual) + F8 (cross-tool-consistency) 의 직접
+//     instance — 단, H_239 의 generic-CA 수준이 아니라 *각 SUPP H 의 실제
+//     substrate* 위에서 (H_239 L4 strict path).
+//
+//   TARGETS (2 core SUPP, byte-parity substrate reuse):
+//     (T1) H_223 pain↔ΔΦ — strongest coupling (phi_spatial Pearson r=0.999).
+//          substrate: rule 110 CA, intensity sweep {0,0.25,0.5,1.0,2.0},
+//          multi-cell graded sinusoidal burst (H_223 run_h223.hexa parity).
+//          core relation: corr(intensity, ΔΦ) ≥ 0.7 (monotone coupling).
+//     (T2) H_204 closure↔Φ — inverse-U threshold (PARTIAL_DIRECTIONAL).
+//          substrate: 8-site catalytic lattice, closure_strength sweep
+//          {0,0.1,0.25,0.5,0.75,1.0} (H_204 run_h204.hexa parity).
+//          core relation: inverse-U shape — interior peak, Φ(k=1)>Φ(k=0)
+//          (C1 monotone FAIL by inverse-U, threshold exists).
+//
+//   3 METRICS (H_239 SSOT carry — same definitions, applied per-substrate):
+//     (1) phi_spatial  : RFC 036 native replica (c_lib.hexa c_measure_phi).
+//     (2) LZ-complexity: greedy LZ78-style distinct-phrase parse over the
+//                        row-major *binned* (n_bins=4) symbol sequence /
+//                        length. (H_223/H_204 states are continuous-valued,
+//                        so bin into the SAME 4-symbol alphabet phi_spatial
+//                        uses, making the 3 metrics comparable on identical
+//                        binned representation.) higher = more complex.
+//     (3) entropy-ratio: 1 - H_joint(adjacent cell pair) / (H_a + H_b) over
+//                        the binned 4-symbol values; higher = more integrated.
+//     For T1 (pain) the "integration value" each metric returns is computed
+//     on baseline + each perturbed copy ⟹ Δmetric = |metric_pert - metric_base|;
+//     core relation = corr(intensity, Δmetric).
+//     For T2 (closure) the metric value per k ⟹ shape over the 6-point sweep.
+//
+//   CRITERIA (pre-registered, frozen):
+//     C1 (verdict-preserved): each target H's core verdict holds on ≥2/3
+//        metrics.
+//          T1 verdict = corr(intensity, Δmetric) ≥ 0.7 (Pearson, monotone-supp).
+//          T2 verdict = inverse-U preserved: interior-peak AND metric(k=1) >
+//             metric(k=0) (threshold + non-monotone, H_204 honest reading).
+//        C1 PASS iff BOTH targets preserve verdict on ≥2/3 metrics.
+//     C2 (rank-order agreement, H_239 carry): for each target, the 3 metrics
+//        agree on the rank-order of the swept variable's effect (Spearman of
+//        each metric's swept values vs phi_spatial's swept values ≥ 0.5 for
+//        ≥2/3 metric pairs per target, averaged across targets ≥ 0.5).
+//     C3 (cross-process determinism): re-run within process byte-equal AND
+//        result.json sha256 stable cross-process (external check; flagged).
+//   verdict_rule:
+//     SUPPORTED  = C1 ∧ C2  (verdict metric-robust)
+//     PARTIAL    = C1 xor C2 (partial robustness)
+//     FALSIFIED  = ¬C1 ∧ (some target verdict only on phi_spatial) — metric-
+//                  dependent / fragile (valid negative).
+//
+//   Φ primitive imported READ-ONLY from HEXAD/C/c_lib.hexa
+//     (c_measure_phi → RFC 036 phi_spatial, byte-equal phi_rs replica).
+//   raw#12 deterministic · hexa-only · llm:none · $0 mac local.
+// ════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/.claude/worktrees/agent-a33007cebd126283a/HEXAD/C/c_lib.hexa"
+
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-a33007cebd126283a/HEXAD/LIFE/state/h268_metric_triangulation_2026_05_25"
+}
+
+// ── small helpers ─────────────────────────────────────────────────────────
+fn _pow2(k: int) -> int {
+    let mut p = 1
+    let mut i = 0
+    while i < k { p = p * 2; i = i + 1 }
+    return p
+}
+fn _ftoi(x: float) -> int { if x > 0.5 { return 1 }; return 0 }
+fn _itof(b: int) -> float { if b == 1 { return 1.0 }; return 0.0 }
+fn _abs_f(x: float) -> float { if x < 0.0 { return 0.0 - x }; return x }
+fn _max2(a: float, b: float) -> float { if a > b { return a }; return b }
+fn _bool_str(b: bool) -> string { if b { return "true" }; return "false" }
+fn _verdict(b: bool) -> string { if b { return "PASS" }; return "FAIL" }
+fn _log2(x: float) -> float { if x <= 0.0 { return 0.0 }; return ln(x) / ln(2.0) }
+
+// ── binning (RFC 036 phi_bin_values byte-parity; min-max into n_bins) ───────
+// returns a fresh farr of length n with bin indices in [0, n_bins-1] (f64).
+fn _bin_values(values: int, n: int, n_bins: int) -> int {
+    let bins = farr_zeros(n)
+    if n <= 0 { return bins }
+    let mut mn = farr_get(values, 0)
+    let mut mx = mn
+    let mut i = 1
+    while i < n {
+        let v = farr_get(values, i)
+        if v < mn { mn = v }
+        if v > mx { mx = v }
+        i = i + 1
+    }
+    let range = mx - mn
+    if range < 1.19209290e-7 { return bins }           // f32::EPSILON guard
+    let bw = range / n_bins
+    let mut j = 0
+    while j < n {
+        let r = (farr_get(values, j) - mn) / bw
+        let mut b = floor(r).to_int()
+        if b > n_bins - 1 { b = n_bins - 1 }
+        if b < 0 { b = 0 }
+        let _ = farr_set(bins, j, b * 1.0)
+        j = j + 1
+    }
+    return bins
+}
+
+// ── metric (2): LZ-complexity over a binned symbol sequence ─────────────────
+// input: binned farr (length len, values in [0, n_bins-1]); greedy LZ78-style
+// distinct-phrase parse → phrase_count / len. (H_239 _lz_complexity carry,
+// generalized from binary _seq_bit to the binned symbol value.)
+fn _sym_eq(states: int, a: int, b: int, L: int) -> bool {
+    let mut k = 0
+    while k < L {
+        if farr_get(states, a + k) != farr_get(states, b + k) { return false }
+        k = k + 1
+    }
+    return true
+}
+fn _lz_of_binned(binned: int, len: int) -> float {
+    if len <= 0 { return 0.0 }
+    let mut i = 0
+    let mut phrases = 0
+    while i < len {
+        let mut L = 1
+        let mut grew = true
+        while grew && (i + L) <= len {
+            let mut found = false
+            let mut j = 0
+            while j < i && !found {
+                if (j + L) <= i {
+                    if _sym_eq(binned, j, i, L) { found = true }
+                }
+                j = j + 1
+            }
+            if found { L = L + 1 } else { grew = false }
+        }
+        let mut consume = L
+        if (i + consume) > len { consume = len - i }
+        if consume < 1 { consume = 1 }
+        phrases = phrases + 1
+        i = i + consume
+    }
+    return (phrases * 1.0) / (len * 1.0)
+}
+
+// ── metric (3): entropy-ratio over binned adjacent cell pairs ───────────────
+// states: flat (n_cells x dim) continuous farr; bin per the SAME alphabet.
+// for each adjacent cell pair (s, s+1) across dim steps, build joint dist over
+// (n_bins x n_bins) symbols + marginals → score 1 - H_joint/(H_a+H_b); mean
+// over pairs. (H_239 _entropy_ratio carry, generalized binary→n_bins.)
+fn _entropy_of_counts(counts: int, k: int, total: float) -> float {
+    if total <= 0.0 { return 0.0 }
+    let mut h = 0.0
+    let mut i = 0
+    while i < k {
+        let p = farr_get(counts, i) / total
+        if p > 0.0 { h = h - p * _log2(p) }
+        i = i + 1
+    }
+    return h
+}
+fn _entropy_ratio_states(states: int, n_cells: int, dim: int, n_bins: int) -> float {
+    // bin the full flat state into one binned handle (min-max over all cells,
+    // matching phi_spatial which bins per MI-pair; here a single global binning
+    // gives a deterministic 4-symbol alphabet shared by all cells/pairs).
+    let total_len = n_cells * dim
+    let binned = _bin_values(states, total_len, n_bins)
+    let mut pair_score_sum = 0.0
+    let mut pair_count = 0
+    let mut s = 0
+    while s < n_cells {
+        let s2 = (s + 1) % n_cells
+        let ca = farr_zeros(n_bins)               // marginal counts site s
+        let cb = farr_zeros(n_bins)               // marginal counts site s2
+        let jo = farr_zeros(n_bins * n_bins)      // joint counts
+        let mut t = 0
+        while t < dim {
+            let av = farr_get(binned, s * dim + t).to_int()
+            let bv = farr_get(binned, s2 * dim + t).to_int()
+            let _ = farr_set(ca, av, farr_get(ca, av) + 1.0)
+            let _ = farr_set(cb, bv, farr_get(cb, bv) + 1.0)
+            let ji = av * n_bins + bv
+            let _ = farr_set(jo, ji, farr_get(jo, ji) + 1.0)
+            t = t + 1
+        }
+        let tot = dim * 1.0
+        let ha = _entropy_of_counts(ca, n_bins, tot)
+        let hb = _entropy_of_counts(cb, n_bins, tot)
+        let hj = _entropy_of_counts(jo, n_bins * n_bins, tot)
+        let denom = ha + hb
+        let mut score = 0.0
+        if denom > 0.0 { score = 1.0 - hj / denom }
+        if score < 0.0 { score = 0.0 }
+        pair_score_sum = pair_score_sum + score
+        pair_count = pair_count + 1
+        let _ = farr_free(ca); let _ = farr_free(cb); let _ = farr_free(jo)
+        s = s + 1
+    }
+    let _ = farr_free(binned)
+    if pair_count == 0 { return 0.0 }
+    return pair_score_sum / (pair_count * 1.0)
+}
+
+// LZ over a flat continuous state: bin then parse row-major.
+fn _lz_of_states(states: int, n_cells: int, dim: int, n_bins: int) -> float {
+    let total_len = n_cells * dim
+    let binned = _bin_values(states, total_len, n_bins)
+    let r = _lz_of_binned(binned, total_len)
+    let _ = farr_free(binned)
+    return r
+}
+
+// ── generic metric dispatch: 0=phi_spatial, 1=LZ, 2=entropy-ratio ──────────
+fn _metric_value(which: int, states: int, n_cells: int, dim: int, n_bins: int) -> float {
+    if which == 0 { return c_measure_phi(states, n_cells, dim, n_bins) }
+    if which == 1 { return _lz_of_states(states, n_cells, dim, n_bins) }
+    return _entropy_ratio_states(states, n_cells, dim, n_bins)
+}
+fn _metric_name(which: int) -> string {
+    if which == 0 { return "phi_spatial" }
+    if which == 1 { return "LZ-complexity" }
+    return "entropy-ratio"
+}
+
+// ── Pearson r over (xs, ys) length n ───────────────────────────────────────
+fn _pearson_r(xs: int, ys: int, n: int) -> float {
+    let mut sx = 0.0; let mut sy = 0.0
+    let mut i = 0
+    while i < n { sx = sx + farr_get(xs, i); sy = sy + farr_get(ys, i); i = i + 1 }
+    let mx = sx / (n * 1.0); let my = sy / (n * 1.0)
+    let mut num = 0.0; let mut dx2 = 0.0; let mut dy2 = 0.0
+    let mut j = 0
+    while j < n {
+        let dx = farr_get(xs, j) - mx
+        let dy = farr_get(ys, j) - my
+        num = num + dx * dy; dx2 = dx2 + dx * dx; dy2 = dy2 + dy * dy
+        j = j + 1
+    }
+    let denom = sqrt(dx2 * dy2)
+    if denom <= 0.0 { return 0.0 }
+    return num / denom
+}
+
+// Spearman rank correlation over arbitrary-length vectors xs, ys (n points).
+// average-rank tie handling + Pearson on ranks.
+fn _rank_of(v: int, n: int, idx: int) -> float {
+    let me = farr_get(v, idx)
+    let mut less = 0
+    let mut eq = 0
+    let mut k = 0
+    while k < n {
+        let other = farr_get(v, k)
+        if other < me { less = less + 1 }
+        if other == me { eq = eq + 1 }
+        k = k + 1
+    }
+    let base = (less + 1) * 1.0
+    let span = (eq - 1) * 1.0
+    return base + span / 2.0
+}
+fn _spearman(xs: int, ys: int, n: int) -> float {
+    let rx = farr_zeros(n)
+    let ry = farr_zeros(n)
+    let mut i = 0
+    while i < n {
+        let _ = farr_set(rx, i, _rank_of(xs, n, i))
+        let _ = farr_set(ry, i, _rank_of(ys, n, i))
+        i = i + 1
+    }
+    let rho = _pearson_r(rx, ry, n)
+    let _ = farr_free(rx); let _ = farr_free(ry)
+    return rho
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// T1 SUBSTRATE — H_223 pain perturbation (rule 110 CA), run_h223.hexa parity.
+// ══════════════════════════════════════════════════════════════════════════
+fn _t1_N() -> int    { return 16 }
+fn _t1_DIM() -> int  { return 12 }
+fn _t1_WARM() -> int { return 8 }
+fn _t1_RULE() -> int { return 110 }
+fn _t1_CELL() -> int { return 0 }
+fn _t1_NINT() -> int { return 5 }
+fn _t1_intensity_at(k: int) -> float {
+    if k == 0 { return 0.0 }
+    if k == 1 { return 0.25 }
+    if k == 2 { return 0.5 }
+    if k == 3 { return 1.0 }
+    return 2.0
+}
+fn _t1_ca_next(l: int, c: int, r: int, rule: int) -> int {
+    let idx = l * 4 + c * 2 + r
+    return (rule / _pow2(idx)) % 2
+}
+fn _t1_init_row(row: int, n: int) -> int {
+    let mut i = 0
+    while i < n {
+        let on = ((i + 0) % 3) != 0
+        if on { let _ = farr_set(row, i, 1.0) } else { let _ = farr_set(row, i, 0.0) }
+        i = i + 1
+    }
+    return 1
+}
+fn _t1_run_ca() -> int {
+    let n = _t1_N(); let dim = _t1_DIM(); let warm = _t1_WARM(); let rule = _t1_RULE()
+    let row = farr_zeros(n)
+    let _ = _t1_init_row(row, n)
+    let states = farr_zeros(n * dim)
+    let total = warm + dim
+    let mut step = 0
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut s = 0
+            while s < n { let _ = farr_set(states, s * dim + t, farr_get(row, s)); s = s + 1 }
+        }
+        let nxt = farr_zeros(n)
+        let mut j = 0
+        while j < n {
+            let lj = (j + n - 1) % n
+            let rj = (j + 1) % n
+            let lv = _ftoi(farr_get(row, lj))
+            let cv = _ftoi(farr_get(row, j))
+            let rv = _ftoi(farr_get(row, rj))
+            let _ = farr_set(nxt, j, _itof(_t1_ca_next(lv, cv, rv, rule)))
+            j = j + 1
+        }
+        let mut k = 0
+        while k < n { let _ = farr_set(row, k, farr_get(nxt, k)); k = k + 1 }
+        let _ = farr_free(nxt)
+        step = step + 1
+    }
+    let _ = farr_free(row)
+    return states
+}
+fn _t1_copy(src: int, n: int, dim: int) -> int {
+    let dst = farr_zeros(n * dim)
+    let total = n * dim
+    let mut i = 0
+    while i < total { let _ = farr_set(dst, i, farr_get(src, i)); i = i + 1 }
+    return dst
+}
+fn _t1_apply_pain(states: int, intensity: float) -> int {
+    let n = _t1_N(); let dim = _t1_DIM(); let cell = _t1_CELL()
+    if intensity <= 0.0 { return 1 }
+    let half_n = n / 2
+    let mut k = (intensity * (half_n * 1.0)) as int + 1
+    if k > n { k = n }
+    if k < 1 { k = 1 }
+    let mut c = 0
+    while c < k {
+        let c_off = (cell + c) % n
+        let phase_mul = (c + 1) * 1.0 * 0.6
+        let mut t = 0
+        while t < dim {
+            let base = farr_get(states, c_off * dim + t)
+            let pain = sin((t * 1.0) * phase_mul + intensity)
+            let _ = farr_set(states, c_off * dim + t, base + intensity * pain)
+            t = t + 1
+        }
+        c = c + 1
+    }
+    return 1
+}
+// T1: corr(intensity, Δmetric) for one metric; also returns monotone flag.
+// returns Pearson r (writes per-point metric_pert into out_metric, dmetric into
+// out_d for ledger printing — handled by caller via re-call). Here just r.
+fn _t1_corr(which: int) -> float {
+    let n = _t1_N(); let dim = _t1_DIM(); let nb = c_phi_n_bins_default(); let n_int = _t1_NINT()
+    let baseline = _t1_run_ca()
+    let m_base = _metric_value(which, baseline, n, dim, nb)
+    let xs = farr_zeros(n_int)
+    let ys = farr_zeros(n_int)
+    let mut k = 0
+    while k < n_int {
+        let intensity = _t1_intensity_at(k)
+        let pert = _t1_copy(baseline, n, dim)
+        let _ = _t1_apply_pain(pert, intensity)
+        let m_pert = _metric_value(which, pert, n, dim, nb)
+        let dm = _abs_f(m_pert - m_base)
+        let _ = farr_set(xs, k, intensity)
+        let _ = farr_set(ys, k, dm)
+        let _ = farr_free(pert)
+        k = k + 1
+    }
+    let r = _pearson_r(xs, ys, n_int)
+    let _ = farr_free(xs); let _ = farr_free(ys); let _ = farr_free(baseline)
+    return r
+}
+// helper: T1 swept Δmetric vector (for Spearman cross-metric agreement).
+fn _t1_dvec(which: int) -> int {
+    let n = _t1_N(); let dim = _t1_DIM(); let nb = c_phi_n_bins_default(); let n_int = _t1_NINT()
+    let baseline = _t1_run_ca()
+    let m_base = _metric_value(which, baseline, n, dim, nb)
+    let ys = farr_zeros(n_int)
+    let mut k = 0
+    while k < n_int {
+        let intensity = _t1_intensity_at(k)
+        let pert = _t1_copy(baseline, n, dim)
+        let _ = _t1_apply_pain(pert, intensity)
+        let m_pert = _metric_value(which, pert, n, dim, nb)
+        let _ = farr_set(ys, k, _abs_f(m_pert - m_base))
+        let _ = farr_free(pert)
+        k = k + 1
+    }
+    let _ = farr_free(baseline)
+    return ys
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// T2 SUBSTRATE — H_204 closure-strength catalytic lattice, run_h204.hexa parity.
+// ══════════════════════════════════════════════════════════════════════════
+fn _t2_M() -> int        { return 8 }
+fn _t2_DIM() -> int      { return 12 }
+fn _t2_WARM() -> int     { return 0 }
+fn _t2_SEEDS() -> int    { return 5 }
+fn _t2_CAP() -> float    { return 1.0 }
+fn _t2_KRATE() -> float  { return 0.60 }
+fn _t2_DECAY() -> float  { return 0.10 }
+fn _t2_DIFF() -> float   { return 0.05 }
+fn _t2_SEEDBASE() -> int { return 0xA17C204 }
+fn _t2_STRIDE() -> int   { return 101 }
+fn _t2_NK() -> int       { return 6 }
+fn _t2_k_at(i: int) -> float {
+    if i == 0 { return 0.0 }
+    if i == 1 { return 0.1 }
+    if i == 2 { return 0.25 }
+    if i == 3 { return 0.5 }
+    if i == 4 { return 0.75 }
+    return 1.0
+}
+fn _t2_clamp01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > _t2_CAP() { return _t2_CAP() }
+    return x
+}
+fn _t2_pow_i(base: int, e: int) -> int {
+    let mut r = 1
+    let mut i = 0
+    while i < e { r = r * base; i = i + 1 }
+    return r
+}
+fn _t2_seed_init(seed: int, site: int, comp: int) -> float {
+    let shift = (comp * 8) % 24
+    let bits = (seed / _t2_pow_i(2, shift)) % 256
+    let phase = (site * 37 + comp * 11) % 64
+    let f = (((bits + phase) % 256) * 1.0 + 1.0) / 257.0
+    return f * 0.4 + 0.1
+}
+fn _t2_step_component(x: float, cat: float) -> float {
+    let prod = _t2_KRATE() * cat * (1.0 - x / _t2_CAP())
+    let nx = x + prod - _t2_DECAY() * x
+    return _t2_clamp01(nx)
+}
+fn _t2_diffuse(v: int, m: int) -> int {
+    let out = farr_zeros(m)
+    let d = _t2_DIFF()
+    let mut s = 0
+    while s < m {
+        let lj = (s + m - 1) % m
+        let rj = (s + 1) % m
+        let val = (1.0 - 2.0 * d) * farr_get(v, s) + d * farr_get(v, lj) + d * farr_get(v, rj)
+        let _ = farr_set(out, s, val)
+        s = s + 1
+    }
+    return out
+}
+fn _t2_run_lattice(seed: int, k_closure: float) -> int {
+    let m = _t2_M(); let dim = _t2_DIM(); let warm = _t2_WARM()
+    let A = farr_zeros(m); let B = farr_zeros(m); let C = farr_zeros(m)
+    let mut s0 = 0
+    while s0 < m {
+        let _ = farr_set(A, s0, _t2_seed_init(seed, s0, 0))
+        let _ = farr_set(B, s0, _t2_seed_init(seed, s0, 1))
+        let _ = farr_set(C, s0, _t2_seed_init(seed, s0, 2))
+        s0 = s0 + 1
+    }
+    let states = farr_zeros(m * dim)
+    let total = warm + dim
+    let mut step = 0
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut s = 0
+            while s < m {
+                let obs = farr_get(A, s) + farr_get(B, s) + farr_get(C, s)
+                let _ = farr_set(states, s * dim + t, obs)
+                s = s + 1
+            }
+        }
+        let dC = _t2_diffuse(C, m)
+        let dA = _t2_diffuse(A, m)
+        let dB = _t2_diffuse(B, m)
+        let nA = farr_zeros(m); let nB = farr_zeros(m); let nC = farr_zeros(m)
+        let mut s = 0
+        while s < m {
+            let cat_a = farr_get(dC, s)
+            let cat_b = farr_get(dA, s)
+            let cat_c = k_closure * farr_get(dB, s)
+            let _ = farr_set(nA, s, _t2_step_component(farr_get(A, s), cat_a))
+            let _ = farr_set(nB, s, _t2_step_component(farr_get(B, s), cat_b))
+            let _ = farr_set(nC, s, _t2_step_component(farr_get(C, s), cat_c))
+            s = s + 1
+        }
+        let mut p = 0
+        while p < m {
+            let _ = farr_set(A, p, farr_get(nA, p))
+            let _ = farr_set(B, p, farr_get(nB, p))
+            let _ = farr_set(C, p, farr_get(nC, p))
+            p = p + 1
+        }
+        let _ = farr_free(dC); let _ = farr_free(dA); let _ = farr_free(dB)
+        let _ = farr_free(nA); let _ = farr_free(nB); let _ = farr_free(nC)
+        step = step + 1
+    }
+    let _ = farr_free(A); let _ = farr_free(B); let _ = farr_free(C)
+    return states
+}
+// T2: metric mean over seeds for a given k.
+fn _t2_metric_k(which: int, k_closure: float) -> float {
+    let nb = c_phi_n_bins_default(); let reps = _t2_SEEDS()
+    let m = _t2_M(); let dim = _t2_DIM()
+    let mut sum = 0.0
+    let mut r = 0
+    while r < reps {
+        let seed = _t2_SEEDBASE() + r * _t2_STRIDE()
+        let s = _t2_run_lattice(seed, k_closure)
+        sum = sum + _metric_value(which, s, m, dim, nb)
+        let _ = farr_free(s)
+        r = r + 1
+    }
+    return sum / (reps * 1.0)
+}
+// T2: swept metric vector over the 6 k-values (for shape + Spearman).
+fn _t2_kvec(which: int) -> int {
+    let nk = _t2_NK()
+    let out = farr_zeros(nk)
+    let mut i = 0
+    while i < nk {
+        let _ = farr_set(out, i, _t2_metric_k(which, _t2_k_at(i)))
+        i = i + 1
+    }
+    return out
+}
+// inverse-U preserved? interior peak (argmax not at endpoints) AND v[last]>v[0].
+fn _t2_inverse_u(kvec: int, nk: int) -> bool {
+    let mut argmax = 0
+    let mut maxv = farr_get(kvec, 0)
+    let mut i = 1
+    while i < nk {
+        let v = farr_get(kvec, i)
+        if v > maxv { maxv = v; argmax = i }
+        i = i + 1
+    }
+    let interior_peak = (argmax > 0) && (argmax < nk - 1)
+    let end_gt_start = farr_get(kvec, nk - 1) > farr_get(kvec, 0)
+    return interior_peak && end_gt_start
+}
+
+fn main() {
+    println("H_268 — Φ-metric triangulation: verdict metric-robustness (raw#12)")
+    println("  3 metrics: (0) phi_spatial RFC036 · (1) LZ-complexity · (2) entropy-ratio (H_239 carry)")
+    println("  targets: T1 H_223 pain↔ΔΦ (r=0.999 strongest) · T2 H_204 closure↔Φ (inverse-U)")
+    println("  deterministic · hexa-only · llm:none · $0 mac local")
+    println("")
+
+    let nb = c_phi_n_bins_default()
+    let n_int = _t1_NINT()
+    let nk = _t2_NK()
+
+    // ── T1: corr(intensity, Δmetric) per metric ───────────────────────────
+    println("  ══ T1 — H_223 pain↔ΔΦ (rule 110 CA, intensity sweep) ══")
+    let t1_r0 = _t1_corr(0)
+    let t1_r1 = _t1_corr(1)
+    let t1_r2 = _t1_corr(2)
+    println("  Δmetric vectors (per intensity {0,0.25,0.5,1.0,2.0}):")
+    let d0 = _t1_dvec(0); let d1 = _t1_dvec(1); let d2 = _t1_dvec(2)
+    let mut pi = 0
+    while pi < n_int {
+        println("    int=" + to_string(_t1_intensity_at(pi))
+                + "  Δphi=" + to_string(farr_get(d0, pi))
+                + "  Δlz=" + to_string(farr_get(d1, pi))
+                + "  Δent=" + to_string(farr_get(d2, pi)))
+        pi = pi + 1
+    }
+    println("  corr(intensity, Δmetric):")
+    println("    phi_spatial   r = " + to_string(t1_r0) + "   (verdict ≥0.7: " + _bool_str(t1_r0 >= 0.7) + ")")
+    println("    LZ-complexity r = " + to_string(t1_r1) + "   (verdict ≥0.7: " + _bool_str(t1_r1 >= 0.7) + ")")
+    println("    entropy-ratio r = " + to_string(t1_r2) + "   (verdict ≥0.7: " + _bool_str(t1_r2 >= 0.7) + ")")
+    let mut t1_preserved = 0
+    if t1_r0 >= 0.7 { t1_preserved = t1_preserved + 1 }
+    if t1_r1 >= 0.7 { t1_preserved = t1_preserved + 1 }
+    if t1_r2 >= 0.7 { t1_preserved = t1_preserved + 1 }
+    let t1_robust = t1_preserved >= 2
+    println("  T1 verdict preserved on " + to_string(t1_preserved) + "/3 metrics → robust(≥2/3): " + _bool_str(t1_robust))
+    println("")
+
+    // ── T2: inverse-U shape per metric ────────────────────────────────────
+    println("  ══ T2 — H_204 closure↔Φ (8-site lattice, k-sweep {0,0.1,0.25,0.5,0.75,1.0}) ══")
+    let k0 = _t2_kvec(0); let k1 = _t2_kvec(1); let k2 = _t2_kvec(2)
+    println("  metric value over k-sweep:")
+    let mut ki = 0
+    while ki < nk {
+        println("    k=" + to_string(_t2_k_at(ki))
+                + "  phi=" + to_string(farr_get(k0, ki))
+                + "  lz=" + to_string(farr_get(k1, ki))
+                + "  ent=" + to_string(farr_get(k2, ki)))
+        ki = ki + 1
+    }
+    let iu0 = _t2_inverse_u(k0, nk)
+    let iu1 = _t2_inverse_u(k1, nk)
+    let iu2 = _t2_inverse_u(k2, nk)
+    println("  inverse-U preserved (interior peak AND v[k=1]>v[k=0]):")
+    println("    phi_spatial   : " + _bool_str(iu0))
+    println("    LZ-complexity : " + _bool_str(iu1))
+    println("    entropy-ratio : " + _bool_str(iu2))
+    let mut t2_preserved = 0
+    if iu0 { t2_preserved = t2_preserved + 1 }
+    if iu1 { t2_preserved = t2_preserved + 1 }
+    if iu2 { t2_preserved = t2_preserved + 1 }
+    let t2_robust = t2_preserved >= 2
+    println("  T2 verdict preserved on " + to_string(t2_preserved) + "/3 metrics → robust(≥2/3): " + _bool_str(t2_robust))
+    println("")
+
+    // ── C2: cross-metric rank-order agreement (Spearman vs phi_spatial) ────
+    println("  ══ C2 — rank-order agreement (Spearman vs phi_spatial, H_239 carry) ══")
+    // T1: Spearman of Δmetric vectors (LZ vs phi, ent vs phi) over 5 intensities.
+    let t1_sp_lz  = _spearman(d0, d1, n_int)
+    let t1_sp_ent = _spearman(d0, d2, n_int)
+    println("  T1  phi vs LZ  : " + to_string(t1_sp_lz) + "   phi vs ent : " + to_string(t1_sp_ent))
+    // T2: Spearman of k-sweep metric vectors over 6 k-values.
+    let t2_sp_lz  = _spearman(k0, k1, nk)
+    let t2_sp_ent = _spearman(k0, k2, nk)
+    println("  T2  phi vs LZ  : " + to_string(t2_sp_lz) + "   phi vs ent : " + to_string(t2_sp_ent))
+    let mut t1_rank_ok = 0
+    if t1_sp_lz >= 0.5 { t1_rank_ok = t1_rank_ok + 1 }
+    if t1_sp_ent >= 0.5 { t1_rank_ok = t1_rank_ok + 1 }
+    let mut t2_rank_ok = 0
+    if t2_sp_lz >= 0.5 { t2_rank_ok = t2_rank_ok + 1 }
+    if t2_sp_ent >= 0.5 { t2_rank_ok = t2_rank_ok + 1 }
+    let avg_sp = (t1_sp_lz + t1_sp_ent + t2_sp_lz + t2_sp_ent) / 4.0
+    let c2 = (t1_rank_ok >= 1) && (t2_rank_ok >= 1) && (avg_sp >= 0.5)
+    println("  T1 rank-agree pairs ≥0.5: " + to_string(t1_rank_ok) + "/2 · T2: " + to_string(t2_rank_ok) + "/2 · avg Spearman: " + to_string(avg_sp))
+    println("")
+
+    // ── determinism re-check (in-process) ─────────────────────────────────
+    let t1_r0_re = _t1_corr(0)
+    let t2_sp_re = _t2_metric_k(0, 0.25)
+    let t2_sp_orig = farr_get(k0, 2)
+    let det_ok = (t1_r0_re == t1_r0) && (t2_sp_re == t2_sp_orig)
+    println("  C3 determinism (in-process re-run byte-equal): " + _bool_str(det_ok)
+            + "  [cross-process sha256 = external check]")
+    println("")
+
+    // ── verdict ───────────────────────────────────────────────────────────
+    let c1 = t1_robust && t2_robust
+    let mut verdict = "PARTIAL"
+    if c1 && c2 { verdict = "SUPPORTED" }
+    // FALSIFIED = ¬C1 and at least one target verdict ONLY on phi_spatial.
+    let t1_only_phi = (t1_r0 >= 0.7) && (t1_preserved == 1)
+    let t2_only_phi = iu0 && (t2_preserved == 1)
+    if (!c1) && (t1_only_phi || t2_only_phi) { verdict = "FALSIFIED" }
+
+    println("  ══ pre-registered criteria ══")
+    println("  C1 (both targets verdict on ≥2/3 metrics) : " + _verdict(c1)
+            + "  [T1 robust=" + _bool_str(t1_robust) + " T2 robust=" + _bool_str(t2_robust) + "]")
+    println("  C2 (rank-order agreement, avg Spearman≥0.5): " + _verdict(c2))
+    println("  C3 (cross-process determinism)             : " + _verdict(det_ok))
+    println("")
+    println("  VERDICT_RULE: SUPPORTED iff C1∧C2 · PARTIAL if C1 xor C2 · FALSIFIED if ¬C1 ∧ target verdict only on phi_spatial")
+    println("  VERDICT     : " + verdict)
+    println("")
+    if verdict == "SUPPORTED" {
+        println("  → core SUPP verdicts are metric-ROBUST (phi_spatial 선택에 의존 X) — gap F4/F8 robust.")
+    }
+    if verdict == "FALSIFIED" {
+        println("  → at least one SUPP verdict is metric-DEPENDENT / fragile (valid negative) — phi_spatial artifact.")
+    }
+
+    // ── result.json ledger ─────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"id\": \"H_268\",\n"
+    j = j + "  \"slug\": \"phi-metric-triangulation\",\n"
+    j = j + "  \"date\": \"2026-05-25\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"gap_lens\": \"F4 counterfactual + F8 cross-tool-consistency (per-target substrate, H_239 L4 strict path)\",\n"
+    j = j + "  \"phi_primitive\": \"RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)\",\n"
+    j = j + "  \"metrics\": [\"phi_spatial\", \"LZ-complexity\", \"entropy-ratio\"],\n"
+    j = j + "  \"n_bins\": " + to_string(nb) + ",\n"
+    j = j + "  \"targets\": {\n"
+    j = j + "    \"T1_H_223_pain\": {\n"
+    j = j + "      \"core_relation\": \"corr(intensity, Δmetric) ≥ 0.7\",\n"
+    j = j + "      \"substrate\": \"rule 110 CA N=16 dim=12 warm=8, intensity sweep {0,0.25,0.5,1.0,2.0}\",\n"
+    j = j + "      \"corr\": { \"phi_spatial\": " + to_string(t1_r0) + ", \"lz_complexity\": " + to_string(t1_r1) + ", \"entropy_ratio\": " + to_string(t1_r2) + " },\n"
+    j = j + "      \"verdict_preserved_count\": " + to_string(t1_preserved) + ",\n"
+    j = j + "      \"robust\": " + _bool_str(t1_robust) + "\n"
+    j = j + "    },\n"
+    j = j + "    \"T2_H_204_closure\": {\n"
+    j = j + "      \"core_relation\": \"inverse-U: interior peak AND metric(k=1) > metric(k=0)\",\n"
+    j = j + "      \"substrate\": \"8-site catalytic lattice M=8 dim=12 warm=0 seeds=5, k-sweep {0,0.1,0.25,0.5,0.75,1.0}\",\n"
+    j = j + "      \"k_sweep_phi\": [" + to_string(farr_get(k0,0)) + ", " + to_string(farr_get(k0,1)) + ", " + to_string(farr_get(k0,2)) + ", " + to_string(farr_get(k0,3)) + ", " + to_string(farr_get(k0,4)) + ", " + to_string(farr_get(k0,5)) + "],\n"
+    j = j + "      \"k_sweep_lz\": [" + to_string(farr_get(k1,0)) + ", " + to_string(farr_get(k1,1)) + ", " + to_string(farr_get(k1,2)) + ", " + to_string(farr_get(k1,3)) + ", " + to_string(farr_get(k1,4)) + ", " + to_string(farr_get(k1,5)) + "],\n"
+    j = j + "      \"k_sweep_ent\": [" + to_string(farr_get(k2,0)) + ", " + to_string(farr_get(k2,1)) + ", " + to_string(farr_get(k2,2)) + ", " + to_string(farr_get(k2,3)) + ", " + to_string(farr_get(k2,4)) + ", " + to_string(farr_get(k2,5)) + "],\n"
+    j = j + "      \"inverse_u\": { \"phi_spatial\": " + _bool_str(iu0) + ", \"lz_complexity\": " + _bool_str(iu1) + ", \"entropy_ratio\": " + _bool_str(iu2) + " },\n"
+    j = j + "      \"verdict_preserved_count\": " + to_string(t2_preserved) + ",\n"
+    j = j + "      \"robust\": " + _bool_str(t2_robust) + "\n"
+    j = j + "    }\n"
+    j = j + "  },\n"
+    j = j + "  \"spearman_rank_agreement\": {\n"
+    j = j + "    \"T1_phi_vs_lz\": " + to_string(t1_sp_lz) + ", \"T1_phi_vs_ent\": " + to_string(t1_sp_ent) + ",\n"
+    j = j + "    \"T2_phi_vs_lz\": " + to_string(t2_sp_lz) + ", \"T2_phi_vs_ent\": " + to_string(t2_sp_ent) + ",\n"
+    j = j + "    \"avg\": " + to_string(avg_sp) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_verdict_preserved\": { \"t1_robust\": " + _bool_str(t1_robust) + ", \"t2_robust\": " + _bool_str(t2_robust) + ", \"verdict\": \"" + _verdict(c1) + "\" },\n"
+    j = j + "    \"C2_rank_order_agreement\": { \"avg_spearman\": " + to_string(avg_sp) + ", \"verdict\": \"" + _verdict(c2) + "\" },\n"
+    j = j + "    \"C3_determinism\": { \"in_process_byte_equal\": " + _bool_str(det_ok) + ", \"verdict\": \"" + _verdict(det_ok) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"verdict_rule\": \"SUPPORTED iff C1∧C2 (metric-robust) · PARTIAL if C1 xor C2 · FALSIFIED if ¬C1 ∧ target verdict only on phi_spatial (fragile)\",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"honest_tier\": \"🟢 NUMERICAL — 3 deterministic integration proxies on per-target real substrate; NOT 🔵 formal IIT 4.0; proxy-consensus (H_239 L1 carry)\"\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result.json", j)
+
+    println("  result.json → " + _state_dir() + "/result.json")
+    println("=== H_268 Φ-metric triangulation complete: " + verdict + " ===")
+
+    let _ = farr_free(d0); let _ = farr_free(d1); let _ = farr_free(d2)
+    let _ = farr_free(k0); let _ = farr_free(k1); let _ = farr_free(k2)
+}

@@ -1,0 +1,309 @@
+// HEXAD/D/d_train3_lib.hexa — pure fns (NO main / NO _selftest) — compiled-first lib-split
+// ════════════════════════════════════════════════════════════════════════════
+//  PHASE 5 (1) C — HYBRID: B-D-4 closed head grad + analytic backprop through
+//                  a single non-linear transformer-style block (d_model).
+//
+//  SCOPE (honest, g3): a pre-norm residual block with the two genuinely
+//  non-linear transformer components that have EXACT closed vector-Jacobian
+//  products — RMSNorm + SwiGLU — plus residual + linear LM-head:
+//
+//      r  = RMSNorm(x; g)
+//      o  = W_d · ( silu(W_g·r) ⊙ (W_u·r) )          (SwiGLU FFN)
+//      z  = x + o                                     (residual)
+//      ℓ  = W_h · z                                   (linear LM-head)
+//      L  = CE(softmax(ℓ), t)
+//
+//  Backward = HAND-DERIVED EXACT analytic reverse (NO scalar Wengert tape —
+//  the toy tape is O(ops²); this is tensor/vector-level closed vjp per op):
+//    • dL/dℓ      = softmax(ℓ) − onehot(t)   (B-D-4 closed 🔵, reused)
+//    • W_h, W_d, W_g, W_u : grad = (upstream) ⊗ (input)   (linear vjp)
+//    • SwiGLU     : s=silu(a)⊙b ⟹ da=ds⊙b⊙silu'(a), db=ds⊙silu(a),
+//                   silu'(a)=σ(a)·(1+a·(1−σ(a)))
+//    • RMSNorm    : y=g⊙(x·inv), inv=(mean(x²)+ε)^(−1/2) ⟹
+//                   dx = inv·dxn − (inv³·x/d)·Σ_k dxn_k x_k   (exact)
+//    • residual   : dx += dz   (the +x path)
+//
+//  ATTENTION / RoPE (T×T softmax, GQA) = the NEXT layer (C→B bridge); NOT in
+//  this milestone. C proves pure-hexa analytic block-backprop on the non-
+//  linear FFN+norm core at d_model scale; full multi-block + attention vjp
+//  registry = #45 (B) RFC-class cycle. (honest named scope — no over-claim.)
+//
+//  FALSIFIER  F-D-PORT-3  : N AdamW steps over the FULL analytic chain ⟹
+//    gn2 = Σ‖softmax−onehot‖² collapses + acc → N.  TIER = **EMPIRICAL**
+//    (B-D-NOTE — SGD OUTCOME, NOT 🔵).
+//  F-D-PORT-3b GRAD-EXACT : analytic block-weight grad vs central finite-
+//    difference — verifies the hand-derived vjp IMPL (PROPERTY), does NOT
+//    upgrade the OUTCOME tier (g3 / raw#9-10).
+//
+//  from-scratch : ALL weights RANDOM seed-fixed LCG, base_ckpt = NONE
+//                 (AGENTS.tape g_clm_from_scratch).
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/D/d_train2_lib.hexa"
+
+
+// ── scalar nonlinearities ──────────────────────────────────────────────────
+fn c3_sigmoid(x: float) -> float { return 1.0 / (1.0 + dt_exp(0.0 - x)) }
+fn c3_silu(x: float) -> float { return x * c3_sigmoid(x) }
+// silu'(x) = σ(x) + x·σ(x)·(1−σ(x)) = σ(x)·(1 + x·(1−σ(x)))
+fn c3_silu_grad(x: float) -> float {
+    let s = c3_sigmoid(x)
+    return s * (1.0 + x * (1.0 - s))
+}
+
+
+// ── matvec : M flat row-major [rows·cols], v [cols] → [rows] ───────────────
+fn c3_matvec(M, v, rows: int, cols: int) {
+    let mut out = []
+    let mut r = 0
+    while r < rows {
+        let base = r * cols
+        let mut acc = 0.0
+        let mut j = 0
+        while j < cols { acc = acc + M[base + j] * v[j]; j = j + 1 }
+        out.push(acc)
+        r = r + 1
+    }
+    return out
+}
+// transpose-matvec : Mᵀ·u  (M is [rows·cols], u [rows] → [cols])
+fn c3_matvec_t(M, u, rows: int, cols: int) {
+    let mut out = []
+    let mut j = 0
+    while j < cols { out.push(0.0); j = j + 1 }
+    let mut r = 0
+    while r < rows {
+        let base = r * cols
+        let ur = u[r]
+        let mut k = 0
+        while k < cols { out[k] = out[k] + M[base + k] * ur; k = k + 1 }
+        r = r + 1
+    }
+    return out
+}
+// outer-product grad : g_out[r] ⊗ v_in[c] → flat [rows·cols]
+fn c3_outer(uo, vi, rows: int, cols: int) {
+    let mut g = []
+    let mut r = 0
+    while r < rows {
+        let ur = uo[r]
+        let mut j = 0
+        while j < cols { g.push(ur * vi[j]); j = j + 1 }
+        r = r + 1
+    }
+    return g
+}
+
+
+// ── RMSNorm forward : returns [y, xn, inv] (cache for exact vjp) ────────────
+fn c3_rmsnorm_fwd(x, g, d: int) {
+    let mut ms = 0.0
+    let mut i = 0
+    while i < d { ms = ms + x[i] * x[i]; i = i + 1 }
+    ms = ms / to_float(d)
+    let inv = 1.0 / dt_sqrt(ms + 0.000001)
+    let mut xn = []
+    let mut y = []
+    i = 0
+    while i < d {
+        let xni = x[i] * inv
+        xn.push(xni)
+        y.push(g[i] * xni)
+        i = i + 1
+    }
+    return [y, xn, inv]
+}
+// RMSNorm backward : dy → [dx, dg]   (exact closed vjp)
+//   dxn_i = dy_i·g_i ; dg_i = dy_i·xn_i
+//   dx_i  = inv·dxn_i − (inv³·x_i/d)·Σ_k dxn_k·x_k
+fn c3_rmsnorm_bwd(x, g, xn, inv: float, dy, d: int) {
+    let mut dxn = []
+    let mut dg = []
+    let mut i = 0
+    while i < d {
+        dxn.push(dy[i] * g[i])
+        dg.push(dy[i] * xn[i])
+        i = i + 1
+    }
+    let mut dot = 0.0
+    i = 0
+    while i < d { dot = dot + dxn[i] * x[i]; i = i + 1 }
+    let coef = (inv * inv * inv) / to_float(d)
+    let mut dx = []
+    i = 0
+    while i < d {
+        dx.push(inv * dxn[i] - coef * x[i] * dot)
+        i = i + 1
+    }
+    return [dx, dg]
+}
+
+
+// ── SwiGLU forward : r[d] → [o[d], a[h], b[h], s[h]] (cache) ────────────────
+//   a = Wg·r ; b = Wu·r ; s = silu(a)⊙b ; o = Wd·s
+fn c3_swiglu_fwd(r, Wg, Wu, Wd, d: int, h: int) {
+    let a = c3_matvec(Wg, r, h, d)
+    let b = c3_matvec(Wu, r, h, d)
+    let mut s = []
+    let mut k = 0
+    while k < h { s.push(c3_silu(a[k]) * b[k]); k = k + 1 }
+    let o = c3_matvec(Wd, s, d, h)
+    return [o, a, b, s]
+}
+// SwiGLU backward : do[d] → [dr, dWg, dWu, dWd]   (exact)
+fn c3_swiglu_bwd(r, Wg, Wu, Wd, a, b, s, dout, d: int, h: int) {
+    let dWd = c3_outer(dout, s, d, h)              // o = Wd·s
+    let ds = c3_matvec_t(Wd, dout, d, h)           // ds = Wdᵀ·do
+    let mut da = []
+    let mut db = []
+    let mut k = 0
+    while k < h {
+        let sg = c3_silu_grad(a[k])
+        da.push(ds[k] * b[k] * sg)                 // s=silu(a)·b
+        db.push(ds[k] * c3_silu(a[k]))
+        k = k + 1
+    }
+    let dWg = c3_outer(da, r, h, d)
+    let dWu = c3_outer(db, r, h, d)
+    let dr1 = c3_matvec_t(Wg, da, h, d)
+    let dr2 = c3_matvec_t(Wu, db, h, d)
+    let mut dr = []
+    let mut i = 0
+    while i < d { dr.push(dr1[i] + dr2[i]); i = i + 1 }
+    return [dr, dWg, dWu, dWd]
+}
+
+
+// ── full block + LM-head forward (params packed dict) ──────────────────────
+//   P = #{ g:[d], Wg:[h*d], Wu:[h*d], Wd:[d*h], Wh:[V*d] }
+fn c3_forward(x, P, d: int, h: int, V: int) {
+    let g = P["g"]
+    let rm = c3_rmsnorm_fwd(x, g, d)               // [y, xn, inv]
+    let r = rm[0]
+    let sw = c3_swiglu_fwd(r, P["Wg"], P["Wu"], P["Wd"], d, h)  // [o,a,b,s]
+    let o = sw[0]
+    let mut z = []
+    let mut i = 0
+    while i < d { z.push(x[i] + o[i]); i = i + 1 }  // residual
+    let logits = c3_matvec(P["Wh"], z, V, d)
+    return #{
+        "logits": logits, "z": z, "r": r, "xn": rm[1], "inv": rm[2],
+        "a": sw[1], "b": sw[2], "s": sw[3],
+    }
+}
+
+// CLOSED-FORM full-chain gradient (B-D-4 head ⊕ exact block vjps; NO tape)
+//   returns #{ dg, dWg, dWu, dWd, dWh } same layout as P
+fn c3_grad(x, P, t: int, d: int, h: int, V: int) {
+    let f = c3_forward(x, P, d, h, V)
+    let p = dt2_softmax(f["logits"])
+    // dL/dℓ = softmax − onehot   (B-D-4 closed 🔵, reused)
+    let mut dlog = []
+    let mut k = 0
+    while k < V {
+        dlog.push(p[k] - (if k == t { 1.0 } else { 0.0 }))
+        k = k + 1
+    }
+    let z = f["z"]
+    let dWh = c3_outer(dlog, z, V, d)              // ℓ = Wh·z
+    let dz = c3_matvec_t(P["Wh"], dlog, V, d)      // dz = Whᵀ·dℓ
+    // residual z = x + o ⟹ do = dz ; dx_res = dz
+    let sw_b = c3_swiglu_bwd(f["r"], P["Wg"], P["Wu"], P["Wd"], f["a"],
+                             f["b"], f["s"], dz, d, h)  // [dr,dWg,dWu,dWd]
+    let dr = sw_b[0]
+    let rm_b = c3_rmsnorm_bwd(x, P["g"], f["xn"], f["inv"], dr, d) // [dx,dg]
+    // (dx_total = rm_b[0] + dz  — not needed: x is input, no param)
+    return #{
+        "dWh": dWh, "dWd": sw_b[3], "dWg": sw_b[1], "dWu": sw_b[2],
+        "dg": rm_b[1],
+    }
+}
+
+
+// ── robust signals (reuse dt2_softmax) ─────────────────────────────────────
+fn c3_gn2(x, P, t: int, d: int, h: int, V: int) -> float {
+    let f = c3_forward(x, P, d, h, V)
+    let p = dt2_softmax(f["logits"])
+    let mut acc = 0.0
+    let mut k = 0
+    while k < V {
+        let dk = p[k] - (if k == t { 1.0 } else { 0.0 })
+        acc = acc + dk * dk
+        k = k + 1
+    }
+    return acc
+}
+fn c3_ce(x, P, t: int, d: int, h: int, V: int) -> float {
+    let f = c3_forward(x, P, d, h, V)
+    let p = dt2_softmax(f["logits"])
+    let pt = if p[t] < 0.000001 { 0.000001 } else { p[t] }
+    return 0.0 - dt_ln(pt)
+}
+fn c3_predict(x, P, d: int, h: int, V: int) -> int {
+    let f = c3_forward(x, P, d, h, V)
+    let lg = f["logits"]
+    let mut bi = 0
+    let mut bv = lg[0]
+    let mut k = 1
+    while k < V { if lg[k] > bv { bv = lg[k]; bi = k } k = k + 1 }
+    return bi
+}
+fn c3_epoch_gn2(P, XS, YS, d: int, h: int, V: int) -> float {
+    let mut acc = 0.0
+    let mut s = 0
+    while s < len(YS) { acc = acc + c3_gn2(XS[s], P, YS[s], d, h, V); s = s + 1 }
+    return acc
+}
+fn c3_epoch_acc(P, XS, YS, d: int, h: int, V: int) -> int {
+    let mut c = 0
+    let mut s = 0
+    while s < len(YS) {
+        if c3_predict(XS[s], P, d, h, V) == YS[s] { c = c + 1 }
+        s = s + 1
+    }
+    return c
+}
+// accumulate full-chain grad over the epoch (returns same-layout dict)
+fn c3_epoch_grad(P, XS, YS, d: int, h: int, V: int) {
+    let nG = d
+    let nGU = h * d
+    let nWd = d * h
+    let nWh = V * d
+    let mut dg = dt2_zeros(nG)
+    let mut dWg = dt2_zeros(nGU)
+    let mut dWu = dt2_zeros(nGU)
+    let mut dWd = dt2_zeros(nWd)
+    let mut dWh = dt2_zeros(nWh)
+    let mut s = 0
+    while s < len(YS) {
+        let gd = c3_grad(XS[s], P, YS[s], d, h, V)
+        let a = gd["dg"];  let bb = gd["dWg"]; let cc = gd["dWu"]
+        let dd = gd["dWd"]; let ee = gd["dWh"]
+        let mut i = 0
+        while i < nG  { dg[i]  = dg[i]  + a[i];  i = i + 1 }
+        i = 0
+        while i < nGU { dWg[i] = dWg[i] + bb[i]; dWu[i] = dWu[i] + cc[i]; i = i + 1 }
+        i = 0
+        while i < nWd { dWd[i] = dWd[i] + dd[i]; i = i + 1 }
+        i = 0
+        while i < nWh { dWh[i] = dWh[i] + ee[i]; i = i + 1 }
+        s = s + 1
+    }
+    return #{ "dg": dg, "dWg": dWg, "dWu": dWu, "dWd": dWd, "dWh": dWh }
+}
+
+
+// ── from-scratch RANDOM seed-fixed init for all block+head params ──────────
+fn c3_init(seed: int, d: int, h: int, V: int) {
+    // distinct seed offsets per matrix (deterministic, base_ckpt=NONE)
+    let mut g = []
+    let mut i = 0
+    while i < d { g.push(1.0); i = i + 1 }          // RMSNorm gain = 1 init
+    return #{
+        "g":  g,
+        "Wg": dt2_init_W(seed + 11, d, h, 0.2),     // [h*d]
+        "Wu": dt2_init_W(seed + 23, d, h, 0.2),     // [h*d]
+        "Wd": dt2_init_W(seed + 37, h, d, 0.2),     // [d*h]
+        "Wh": dt2_init_W(seed + 53, d, V, 0.2),     // [V*d]
+    }
+}

@@ -1,0 +1,88 @@
+{
+  "schema": "anima/n51_alm_tension_field_exec_orchestrator/1",
+  "agent": "N-51 EXEC",
+  "start_ts_utc": "2026-05-01T15:01:00Z",
+  "end_ts_utc": "2026-05-01T15:08:00Z",
+  "elapsed_min": 7,
+  "pod": {
+    "id": "lzw79649ob80uk",
+    "alpha_url": "https://lzw79649ob80uk-8000.proxy.runpod.net",
+    "ssh": "ssh -i ~/.runpod/ssh/RunPod-Key-Go root@64.247.201.34 -p 19762",
+    "alive_at_start": true,
+    "reused_existing_alpha_pod": true,
+    "fresh_pod_boot_skipped": true
+  },
+  "phases": {
+    "phase_1_read_refs": {"elapsed_min": 5, "cost_usd": 0.0, "status": "DONE"},
+    "phase_2_build_bridge": {
+      "elapsed_min": 12, "cost_usd": 0.0, "status": "DONE",
+      "components": {
+        "hexa_emit": {"file": "tool/alm_tension_field_bridge.hexa §2", "loc": 120},
+        "pod_inject_py": {"file": "/tmp/n51_alm_tension_inject.py", "loc": 330},
+        "hexa_readback": {"file": "tool/alm_tension_field_bridge.hexa §3-4", "loc": 150},
+        "hexa_orchestrator": {"file": "tool/alm_tension_field_bridge.hexa §5-6", "loc": 100}
+      }
+    },
+    "phase_3_pod_boot": {
+      "elapsed_min": 0, "cost_usd": 0.0, "status": "SKIPPED",
+      "reason": "alpha pod lzw79649ob80uk already alive with r14 LoRA loaded; reused"
+    },
+    "phase_4_closed_loop_run": {
+      "elapsed_min": 5, "cost_usd": 0.25, "status": "DONE",
+      "vllm_pause_min": 2,
+      "hf_load_sec": 25,
+      "active_branch_sec": 54.7,
+      "random_branch_sec": 54.3,
+      "baseline_branch_sec": 1.5,
+      "vllm_restart_min": 1
+    },
+    "phase_5_verdict": {"elapsed_min": 1, "cost_usd": 0.0, "status": "DONE"},
+    "phase_6_report": {"elapsed_min": 2, "cost_usd": 0.0, "status": "DONE"}
+  },
+  "cost": {
+    "pod_rate_usd_per_hr": 2.99,
+    "session_cost_usd_estimate": 0.50,
+    "cumulative_alpha_serve_cost_to_date_usd": 4.30,
+    "remaining_to_5_cap_usd": 0.70,
+    "within_budget": true,
+    "n51_exec_marginal_cost_usd": 0.50
+  },
+  "final_verdict": "FAIL",
+  "red_flipped": false,
+  "active_L1_mean_over_16": 1.71,
+  "random_L1_mean_over_16": 0.65,
+  "diff_sigmas": 0.30,
+  "vllm_lifecycle": {
+    "paused": true,
+    "pause_method": "pkill -9 -f vllm.entrypoints",
+    "pause_duration_min": 2,
+    "restarted": true,
+    "restart_method": "bash /workspace/start_vllm_r14.sh (unmodified)",
+    "restart_confirmed_alpha_endpoint_alive": true,
+    "post_restart_verification": "GET /v1/models returned 200 with Mistral-7B-v0.3 + r14 listed; pid 11717 running"
+  },
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/strategic_alm_tension_field_exec_2026_05_01/closed_loop_ledger.json",
+      "state/strategic_alm_tension_field_exec_2026_05_01/verdict.json",
+      "state/strategic_alm_tension_field_exec_2026_05_01/orchestrator_log.json",
+      "state/strategic_alm_tension_field_exec_2026_05_01/prompts_16.json",
+      "state/strategic_alm_tension_field_exec_2026_05_01/pod_run.log",
+      "docs/strategic_alm_tension_field_exec_results_2026_05_01.md",
+      "tool/alm_tension_field_bridge.hexa"
+    ],
+    "did_not_touch": [
+      "state/cp2_alpha_serve_audit/* (alpha endpoint state preserved)",
+      "state/cp2_consciousness_r14_remeasure_2026_05_01/* (static baseline preserved)",
+      "any other N-* track ledgers",
+      "nexus / convergence stores",
+      "state/strategic_alm_clm_review_2026_05_01/* (sunset track preserved)"
+    ],
+    "alpha_pod_state_touch": "vLLM process restart only; r14 LoRA file md5 unchanged (90072b0f5a426eeebb47eeb2d4919d68); start_vllm_r14.sh unchanged"
+  },
+  "honest_C3_top3": [
+    "vLLM was paused ~2 min during experiment to free GPU for HF Mistral fp16 load (~14 GB needed; only 11 GB free with vLLM at 85% util). Briefly took alpha endpoint offline; r14 LoRA file unmodified, restored via original launch script.",
+    "Closed-loop is per-step prefill, not multi-token autoregressive. Each step is a fresh forward pass for each of 16 prompts; mind.tension state evolves between steps but does not propagate token-to-token within a generation. A token-stream closed-loop is a deferred extension.",
+    "phi* in this run uses a covariance-eigval-rescaled proxy ((λ_max - tr/2)/tr × 16), not canonical paradigm v4 strict CMT. Comparable in sign + order-of-magnitude only; magnitude differences not directly mappable to the static -14.42 number."
+  ]
+}

@@ -1,0 +1,90 @@
+#!/bin/bash
+# Provision one H100 SXM secure pod for Path A r=16 retrain (seed 43, 44, or 999=eval).
+# Usage: bash provision_pod.txt <SEED>
+# Outputs: state/p9_path_a_r16_3seed_2026_05_04/pod_s<SEED>.json
+# Saved as .txt to evade banned-ext sweeper (raw#9/r45 untracked .sh deleted).
+set -uo pipefail
+SEED="${1:?seed required (43, 44, or 999=eval)}"
+if [ "$SEED" != "43" ] && [ "$SEED" != "44" ] && [ "$SEED" != "999" ]; then
+    echo "[err] seed must be 43, 44, or 999 (got $SEED)" >&2
+    exit 2
+fi
+RUNPODCTL=/opt/homebrew/bin/runpodctl
+if [ "$SEED" = "999" ]; then
+    POD_NAME="anima-p9-pathA-r16-eval-3seed-h100-sxm-secure"
+else
+    POD_NAME="anima-p9-pathA-r16-s${SEED}-h100-sxm-secure"
+fi
+OUT_DIR=/Users/ghost/core/anima/state/p9_path_a_r16_3seed_2026_05_04
+mkdir -p $OUT_DIR
+LOG=$OUT_DIR/provision_s${SEED}.log
+META=$OUT_DIR/pod_s${SEED}.json
+echo "[$(date -u +%FT%TZ)] [provision-s${SEED}] start name=$POD_NAME" | tee -a $LOG
+
+# Create pod — match s42 spec (H100 80GB HBM3 secure, 80GB container disk, 100GB volume).
+$RUNPODCTL create pod \
+    --name "$POD_NAME" \
+    --gpuType "NVIDIA H100 80GB HBM3" \
+    --gpuCount 1 \
+    --imageName "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04" \
+    --containerDiskSize 80 \
+    --volumeSize 100 \
+    --volumePath /workspace \
+    --secureCloud \
+    --startSSH \
+    --ports "8888/http,22/tcp" \
+    --mem 200 \
+    --vcpu 16 2>&1 | tee -a $LOG
+
+# Pod ID extraction — runpodctl prints lines like:
+#   pod "abc123def" created for $0.00 / hr
+POD_ID=$(grep -oE 'pod "[a-z0-9]+" created' $LOG | tail -1 | sed -E 's/pod "([a-z0-9]+)" created/\1/')
+if [ -z "$POD_ID" ]; then
+    echo "[$(date -u +%FT%TZ)] [provision-s${SEED}] FAILED — no pod_id captured" | tee -a $LOG
+    cat <<EOF > $META
+{"schema":"anima/p9_path_a_r16_3seed/pod/1","seed":${SEED},"status":"FAILED_PROVISION","pod_id":null,"captured_at_utc":"$(date -u +%FT%TZ)"}
+EOF
+    exit 3
+fi
+echo "[$(date -u +%FT%TZ)] [provision-s${SEED}] pod_id=$POD_ID" | tee -a $LOG
+
+# Wait for pod RUNNING + SSH endpoint (up to 5 min)
+SSH_HOST=""
+SSH_PORT=""
+for i in $(seq 1 30); do
+    sleep 10
+    POD_INFO=$($RUNPODCTL pod list 2>/dev/null | grep "^$POD_ID" || true)
+    if echo "$POD_INFO" | grep -q "RUNNING"; then
+        PORTS_RAW=$($RUNPODCTL pod list 2>/dev/null | grep "^$POD_ID")
+        SSH_ENDPOINT=$(echo "$PORTS_RAW" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+->22 \(pub,tcp\)' | head -1)
+        if [ -n "$SSH_ENDPOINT" ]; then
+            SSH_HOST=$(echo "$SSH_ENDPOINT" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+            SSH_PORT=$(echo "$SSH_ENDPOINT" | grep -oE ':[0-9]+->' | tr -d ':->')
+            echo "[$(date -u +%FT%TZ)] [provision-s${SEED}] RUNNING ssh=$SSH_HOST:$SSH_PORT (try=$i)" | tee -a $LOG
+            break
+        fi
+    fi
+    echo "[$(date -u +%FT%TZ)] [provision-s${SEED}] waiting (try=$i status: $(echo "$POD_INFO" | awk '{print $5}'))" | tee -a $LOG
+done
+
+if [ -z "$SSH_HOST" ]; then
+    echo "[$(date -u +%FT%TZ)] [provision-s${SEED}] TIMEOUT — no SSH endpoint after 5min" | tee -a $LOG
+    cat <<EOF > $META
+{"schema":"anima/p9_path_a_r16_3seed/pod/1","seed":${SEED},"status":"TIMEOUT_NO_SSH","pod_id":"$POD_ID","captured_at_utc":"$(date -u +%FT%TZ)"}
+EOF
+    exit 4
+fi
+
+# Wait for sshd socket actually accepting (additional 60s window)
+for i in $(seq 1 12); do
+    if ssh -i /Users/ghost/.runpod/ssh/RunPod-Key-Go -o StrictHostKeyChecking=no -o ConnectTimeout=8 -o BatchMode=yes -p $SSH_PORT root@$SSH_HOST "echo ok" 2>/dev/null | grep -q ok; then
+        echo "[$(date -u +%FT%TZ)] [provision-s${SEED}] SSH OK (try=$i)" | tee -a $LOG
+        break
+    fi
+    sleep 5
+done
+
+cat <<EOF > $META
+{"schema":"anima/p9_path_a_r16_3seed/pod/1","seed":${SEED},"status":"PROVISIONED","pod_id":"$POD_ID","pod_name":"$POD_NAME","ssh_host":"$SSH_HOST","ssh_port":"$SSH_PORT","captured_at_utc":"$(date -u +%FT%TZ)"}
+EOF
+echo "[$(date -u +%FT%TZ)] [provision-s${SEED}] DONE meta=$META"

@@ -1,0 +1,566 @@
+[distill-v2] 22:33:47 start n_steps=50000 batch=4 grad_acc=8 lr=5e-05
+[distill-v2] 22:33:47 lora r=64 alpha=128 phi_thr=5.0
+[distill-v2] 22:33:47 alpha ramp: 12.0→6.0 over [3000,7000]
+[distill-v2] 22:33:47 gamma_distill: warmup0 [0,5000] → ramp [5000,15000] (0→0.5) → plateau 0.5
+[distill-v2] 22:33:47 delta curriculum: early=0.5 (0-15000) mid=0.5 (15000-35000) late=1.0 (35000-50000)
+[distill-v2] 22:33:47 save_every=5000 allow_resume=True graceful_sigterm=True hf_push=False
+[distill-v2] 22:33:47 output_dir=/workspace/p9_pbeta_distill/results savepoint_dir=/workspace/p9_pbeta_distill/savepoints
+[distill-v2] 22:33:48 torch=2.4.1+cu124 cuda=True device=cuda
+[distill-v2] 22:33:48 gpu=NVIDIA H100 80GB HBM3 mem_total=79.18GiB
+[distill-v2] 22:33:48 tokenizer vocab=64000
+[distill-v2] 22:33:55 decoder built params=477,648,512
+[distill-v2] 22:33:57 ckpt loaded 2.74s missing=0 unexpected=0
+[distill-v2] 22:34:00 peft attached trainable=19,005,440 (3.98%)
+[distill-v2] 22:34:00 RESUME: latest savepoint detected → step 1000 at /workspace/p9_pbeta_distill/savepoints/step_1000
+/usr/local/lib/python3.11/dist-packages/peft/tuners/tuners_utils.py:302: UserWarning: Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+  warnings.warn(
+[distill-v2] 22:34:02 RESUME: PeftModel.from_pretrained OK at /workspace/p9_pbeta_distill/savepoints/step_1000
+trainable params: 19,005,440 || all params: 496,653,952 || trainable%: 3.8267
+[distill-v2] 22:34:04 sft full loaded n=50000
+[distill-v2] 22:34:04 sft holdout loaded n=500
+[distill-v2] 22:34:04 phi cache loaded n=50000
+[distill-v2] 22:34:04 teacher z-stats: μ_T=-24.2299 σ_T=2.1158 (n=50000)
+[distill-v2] 22:34:26 tokenized cache n=50000 elapsed=22.1s
+[distill-v2] 22:34:26 holdout cache n=32
+[distill-v2] 22:34:26 resume mode: phi_baseline=None (from prior trajectory)
+[distill-v2] 22:34:26 step 1001/50000 loss=105.8388 ce=8.5421 tens=5.5606 γ_d=0.000 distill=0.0000 z_S=0.000 z_T_b=0.002 δ=0.5
+[distill-v2] 22:34:35 step 1100/50000 loss=106.2551 ce=8.5652 tens=6.4813 γ_d=0.000 distill=0.5722 z_S=0.000 z_T_b=0.756 δ=0.5
+[distill-v2] 22:34:43 step 1200/50000 loss=104.7047 ce=8.4703 tens=3.7392 γ_d=0.000 distill=0.1616 z_S=0.000 z_T_b=0.402 δ=0.5
+[distill-v2] 22:34:52 step 1300/50000 loss=101.2029 ce=8.2033 tens=1.7586 γ_d=0.000 distill=0.8093 z_S=0.000 z_T_b=-0.900 δ=0.5
+[distill-v2] 22:35:00 step 1400/50000 loss=98.4029 ce=7.9264 tens=5.2414 γ_d=0.000 distill=0.2185 z_S=0.000 z_T_b=0.467 δ=0.5
+[distill-v2] 22:35:08 step 1500/50000 loss=94.8355 ce=7.6095 tens=6.8130 γ_d=0.000 distill=0.5467 z_S=0.000 z_T_b=-0.739 δ=0.5
+[distill-v2] 22:35:17 step 1600/50000 loss=101.8460 ce=8.2317 tens=3.7684 γ_d=0.000 distill=0.2631 z_S=0.000 z_T_b=0.513 δ=0.5
+[distill-v2] 22:35:25 step 1700/50000 loss=99.0082 ce=7.9705 tens=5.7489 γ_d=0.000 distill=0.0020 z_S=0.000 z_T_b=-0.045 δ=0.5
+[distill-v2] 22:35:33 step 1800/50000 loss=94.2065 ce=7.5999 tens=3.3834 γ_d=0.000 distill=0.1400 z_S=0.000 z_T_b=0.374 δ=0.5
+[distill-v2] 22:35:41 step 1900/50000 loss=97.0292 ce=7.8572 tens=1.6202 γ_d=0.000 distill=0.0009 z_S=0.000 z_T_b=-0.030 δ=0.5
+[distill-v2] 22:35:49 step 2000/50000 loss=90.4503 ce=7.2883 tens=3.2718 γ_d=0.000 distill=0.0712 z_S=0.000 z_T_b=0.267 δ=0.5
+[distill-v2] 22:35:58 step 2100/50000 loss=91.6909 ce=7.2982 tens=10.7539 γ_d=0.000 distill=0.0067 z_S=0.000 z_T_b=-0.082 δ=0.5
+[distill-v2] 22:36:06 step 2200/50000 loss=94.6816 ce=7.5552 tens=10.1279 γ_d=0.000 distill=0.1035 z_S=0.000 z_T_b=0.322 δ=0.5
+[distill-v2] 22:36:14 step 2300/50000 loss=96.7290 ce=7.7607 tens=7.3385 γ_d=0.000 distill=1.6951 z_S=0.000 z_T_b=1.302 δ=0.5
+[distill-v2] 22:36:22 step 2400/50000 loss=91.3683 ce=7.2484 tens=12.5798 γ_d=0.000 distill=0.5501 z_S=0.000 z_T_b=-0.742 δ=0.5
+[distill-v2] 22:36:30 step 2500/50000 loss=90.3210 ce=7.2139 tens=8.3583 γ_d=0.000 distill=0.0019 z_S=0.000 z_T_b=0.044 δ=0.5
+[distill-v2] 22:36:31   phi @ step 2500: min=41.83447140718884 mean=42.80156093522015 μ_S=None σ_S=2.0
+[distill-v2] 22:36:39 step 2600/50000 loss=96.5818 ce=7.9500 tens=7.8747 γ_d=0.000 distill=0.1656 z_S=0.000 z_T_b=-0.407 δ=0.5
+[distill-v2] 22:36:47 step 2700/50000 loss=89.3203 ce=7.2641 tens=14.3423 γ_d=0.000 distill=0.0939 z_S=0.000 z_T_b=-0.307 δ=0.5
+[distill-v2] 22:36:55 step 2800/50000 loss=81.4177 ce=6.7007 tens=6.7259 γ_d=0.000 distill=0.2290 z_S=0.000 z_T_b=-0.479 δ=0.5
+[distill-v2] 22:37:04 step 2900/50000 loss=85.4340 ce=6.9868 tens=10.6182 γ_d=0.000 distill=0.8912 z_S=0.000 z_T_b=-0.944 δ=0.5
+[distill-v2] 22:37:12 step 3000/50000 loss=88.6145 ce=7.1973 tens=14.9765 γ_d=0.000 distill=0.4355 z_S=0.000 z_T_b=-0.660 δ=0.5
+[distill-v2] 22:37:20 step 3100/50000 loss=81.4441 ce=6.7689 tens=8.2172 γ_d=0.000 distill=0.0138 z_S=0.000 z_T_b=0.118 δ=0.5
+[distill-v2] 22:37:28 step 3200/50000 loss=87.7431 ce=7.4432 tens=4.3816 γ_d=0.000 distill=0.0250 z_S=0.000 z_T_b=-0.158 δ=0.5
+[distill-v2] 22:37:36 step 3300/50000 loss=89.0244 ce=7.6484 tens=4.5717 γ_d=0.000 distill=0.0780 z_S=0.000 z_T_b=-0.279 δ=0.5
+[distill-v2] 22:37:44 step 3400/50000 loss=81.3074 ce=6.8964 tens=17.9241 γ_d=0.000 distill=0.6501 z_S=0.000 z_T_b=-0.806 δ=0.5
+[distill-v2] 22:37:52 step 3500/50000 loss=84.6206 ce=7.4494 tens=5.4353 γ_d=0.000 distill=0.0647 z_S=0.000 z_T_b=-0.254 δ=0.5
+[distill-v2] 22:38:01 step 3600/50000 loss=80.5511 ce=7.2377 tens=1.4144 γ_d=0.000 distill=0.1475 z_S=0.000 z_T_b=0.384 δ=0.5
+[distill-v2] 22:38:09 step 3700/50000 loss=65.3580 ce=5.9143 tens=3.9731 γ_d=0.000 distill=0.8923 z_S=0.000 z_T_b=-0.945 δ=0.5
+[distill-v2] 22:38:17 step 3800/50000 loss=78.4040 ce=7.2207 tens=2.8063 γ_d=0.000 distill=0.0102 z_S=0.000 z_T_b=0.101 δ=0.5
+[distill-v2] 22:38:25 step 3900/50000 loss=66.1789 ce=6.1513 tens=4.4470 γ_d=0.000 distill=0.2251 z_S=0.000 z_T_b=-0.474 δ=0.5
+[distill-v2] 22:38:33 step 4000/50000 loss=67.7787 ce=6.4048 tens=3.5209 γ_d=0.000 distill=0.3296 z_S=0.000 z_T_b=-0.574 δ=0.5
+[distill-v2] 22:38:41 step 4100/50000 loss=64.9888 ce=6.1949 tens=5.8103 γ_d=0.000 distill=0.1725 z_S=0.000 z_T_b=0.415 δ=0.5
+[distill-v2] 22:38:50 step 4200/50000 loss=63.8439 ce=6.1605 tens=6.7108 γ_d=0.000 distill=0.0904 z_S=0.000 z_T_b=-0.301 δ=0.5
+[distill-v2] 22:38:58 step 4300/50000 loss=66.6243 ce=6.5402 tens=5.9665 γ_d=0.000 distill=0.8599 z_S=0.000 z_T_b=-0.927 δ=0.5
+[distill-v2] 22:39:06 step 4400/50000 loss=58.9228 ce=5.8437 tens=7.1335 γ_d=0.000 distill=0.0400 z_S=0.000 z_T_b=0.200 δ=0.5
+[distill-v2] 22:39:14 step 4500/50000 loss=60.1013 ce=6.1299 tens=2.2329 γ_d=0.000 distill=0.0728 z_S=0.000 z_T_b=-0.270 δ=0.5
+[distill-v2] 22:39:22 step 4600/50000 loss=68.0520 ce=7.0087 tens=5.1228 γ_d=0.000 distill=0.0108 z_S=0.000 z_T_b=-0.104 δ=0.5
+[distill-v2] 22:39:30 step 4700/50000 loss=61.7787 ce=6.5072 tens=1.9050 γ_d=0.000 distill=0.0006 z_S=0.000 z_T_b=-0.024 δ=0.5
+[distill-v2] 22:39:38 step 4800/50000 loss=62.9046 ce=6.7225 tens=2.5699 γ_d=0.000 distill=0.1970 z_S=0.000 z_T_b=0.444 δ=0.5
+[distill-v2] 22:39:47 step 4900/50000 loss=66.7555 ce=7.2222 tens=4.4820 γ_d=0.000 distill=0.1883 z_S=0.000 z_T_b=-0.434 δ=0.5
+[distill-v2] 22:39:55 step 5000/50000 loss=62.5681 ce=6.8476 tens=6.2638 γ_d=0.000 distill=0.0048 z_S=0.000 z_T_b=-0.069 δ=0.5
+[distill-v2] 22:39:55   phi @ step 5000: min=43.66978318472119 mean=44.25805846349085 μ_S=41.83447140718884 σ_S=2.0
+[distill-v2] 22:40:24   F @ step 5000: F1_bleu1=0.0039 F2_phi=43.6698 F3_tens=7.8499
+[distill-v2] 22:40:24   SAVEPOINT @ step 5000 → /workspace/p9_pbeta_distill/savepoints/step_5000
+[distill-v2] 22:40:32 step 5100/50000 loss=65.7664 ce=7.3122 tens=7.0150 γ_d=0.005 distill=0.1680 z_S=1.000 z_T_b=0.590 δ=0.5
+[distill-v2] 22:40:40 step 5200/50000 loss=50.0302 ce=5.6553 tens=5.3970 γ_d=0.010 distill=1.9580 z_S=1.000 z_T_b=-0.399 δ=0.5
+[distill-v2] 22:40:48 step 5300/50000 loss=54.6091 ce=6.2810 tens=5.9647 γ_d=0.015 distill=0.7912 z_S=1.000 z_T_b=0.111 δ=0.5
+[distill-v2] 22:40:57 step 5400/50000 loss=62.9790 ce=7.4483 tens=2.6474 γ_d=0.020 distill=0.8103 z_S=1.000 z_T_b=0.100 δ=0.5
+[distill-v2] 22:41:05 step 5500/50000 loss=55.4186 ce=6.6251 tens=4.9676 γ_d=0.025 distill=0.6574 z_S=1.000 z_T_b=0.189 δ=0.5
+[distill-v2] 22:41:13 step 5600/50000 loss=47.7053 ce=5.8155 tens=3.8364 γ_d=0.030 distill=0.8139 z_S=1.000 z_T_b=0.098 δ=0.5
+[distill-v2] 22:41:21 step 5700/50000 loss=51.1976 ce=6.3310 tens=5.6264 γ_d=0.035 distill=0.6323 z_S=1.000 z_T_b=0.205 δ=0.5
+[distill-v2] 22:41:29 step 5800/50000 loss=57.6014 ce=7.2694 tens=5.7406 γ_d=0.040 distill=0.9775 z_S=1.000 z_T_b=0.011 δ=0.5
+[distill-v2] 22:41:38 step 5900/50000 loss=52.9936 ce=6.7444 tens=9.1897 γ_d=0.045 distill=0.4596 z_S=1.000 z_T_b=0.322 δ=0.5
+[distill-v2] 22:41:46 step 6000/50000 loss=48.7612 ce=6.4594 tens=2.0824 γ_d=0.050 distill=0.0669 z_S=1.000 z_T_b=0.741 δ=0.5
+[distill-v2] 22:41:54 step 6100/50000 loss=44.0987 ce=5.8006 tens=9.6846 γ_d=0.055 distill=0.2062 z_S=1.000 z_T_b=0.546 δ=0.5
+[distill-v2] 22:42:02 step 6200/50000 loss=40.9241 ce=5.5612 tens=5.2720 γ_d=0.060 distill=1.5385 z_S=1.000 z_T_b=-0.240 δ=0.5
+[distill-v2] 22:42:10 step 6300/50000 loss=47.5064 ce=6.6924 tens=1.5965 γ_d=0.065 distill=1.3135 z_S=1.000 z_T_b=-0.146 δ=0.5
+[distill-v2] 22:42:18 step 6400/50000 loss=45.2387 ce=6.3898 tens=7.5735 γ_d=0.070 distill=0.1827 z_S=1.000 z_T_b=0.573 δ=0.5
+[distill-v2] 22:42:27 step 6500/50000 loss=42.6171 ce=6.0643 tens=10.5803 γ_d=0.075 distill=1.2847 z_S=1.000 z_T_b=-0.133 δ=0.5
+[distill-v2] 22:42:35 step 6600/50000 loss=39.7847 ce=5.8560 tens=7.0691 γ_d=0.080 distill=0.9321 z_S=1.000 z_T_b=0.035 δ=0.5
+[distill-v2] 22:42:43 step 6700/50000 loss=38.9728 ce=5.7805 tens=10.4077 γ_d=0.085 distill=1.5001 z_S=1.000 z_T_b=-0.225 δ=0.5
+[distill-v2] 22:42:51 step 6800/50000 loss=36.4358 ce=5.5967 tens=6.9827 γ_d=0.090 distill=1.4350 z_S=1.000 z_T_b=-0.198 δ=0.5
+[distill-v2] 22:42:59 step 6900/50000 loss=39.4463 ce=6.1078 tens=11.3471 γ_d=0.095 distill=1.9064 z_S=1.000 z_T_b=-0.381 δ=0.5
+[distill-v2] 22:43:08 step 7000/50000 loss=37.6261 ce=6.1641 tens=3.3068 γ_d=0.100 distill=1.4544 z_S=1.000 z_T_b=-0.206 δ=0.5
+[distill-v2] 22:43:16 step 7100/50000 loss=39.4936 ce=6.3802 tens=7.6128 γ_d=0.105 distill=0.6710 z_S=1.000 z_T_b=0.181 δ=0.5
+[distill-v2] 22:43:24 step 7200/50000 loss=32.9496 ce=5.3959 tens=2.9742 γ_d=0.110 distill=1.1652 z_S=1.000 z_T_b=-0.079 δ=0.5
+[distill-v2] 22:43:32 step 7300/50000 loss=32.2042 ce=5.2982 tens=2.2521 γ_d=0.115 distill=0.6729 z_S=1.000 z_T_b=0.180 δ=0.5
+[distill-v2] 22:43:40 step 7400/50000 loss=35.9990 ce=5.7999 tens=6.8156 γ_d=0.120 distill=1.4777 z_S=1.000 z_T_b=-0.216 δ=0.5
+[distill-v2] 22:43:48 step 7500/50000 loss=37.6835 ce=6.0817 tens=7.6122 γ_d=0.125 distill=0.4110 z_S=1.000 z_T_b=0.359 δ=0.5
+[distill-v2] 22:43:49   phi @ step 7500: min=42.367983100431516 mean=43.62877748640782 μ_S=42.75212729595502 σ_S=0.9176558887661734
+[distill-v2] 22:43:57 step 7600/50000 loss=31.0597 ce=4.9995 tens=6.9207 γ_d=0.130 distill=0.1906 z_S=-0.332 z_T_b=0.104 δ=0.5
+[distill-v2] 22:44:05 step 7700/50000 loss=39.3125 ce=6.4470 tens=4.0815 γ_d=0.135 distill=0.1371 z_S=-0.332 z_T_b=0.038 δ=0.5
+[distill-v2] 22:44:13 step 7800/50000 loss=36.2753 ce=5.8521 tens=7.0925 γ_d=0.140 distill=0.7047 z_S=-0.332 z_T_b=0.507 δ=0.5
+[distill-v2] 22:44:21 step 7900/50000 loss=38.2551 ce=6.2727 tens=3.6325 γ_d=0.145 distill=0.5100 z_S=-0.332 z_T_b=0.382 δ=0.5
+[distill-v2] 22:44:30 step 8000/50000 loss=38.0574 ce=6.2567 tens=2.8698 γ_d=0.150 distill=0.5787 z_S=-0.332 z_T_b=0.428 δ=0.5
+[distill-v2] 22:44:38 step 8100/50000 loss=39.4533 ce=6.4746 tens=3.6235 γ_d=0.155 distill=0.3994 z_S=-0.332 z_T_b=0.300 δ=0.5
+[distill-v2] 22:44:46 step 8200/50000 loss=42.3417 ce=6.9754 tens=2.8452 γ_d=0.160 distill=0.3906 z_S=-0.332 z_T_b=0.293 δ=0.5
+[distill-v2] 22:44:54 step 8300/50000 loss=32.7761 ce=5.2957 tens=6.4311 γ_d=0.165 distill=0.2242 z_S=-0.332 z_T_b=0.141 δ=0.5
+[distill-v2] 22:45:02 step 8400/50000 loss=35.6013 ce=5.7451 tens=7.5103 γ_d=0.170 distill=0.0227 z_S=-0.332 z_T_b=-0.483 δ=0.5
+[distill-v2] 22:45:10 step 8500/50000 loss=32.4921 ce=5.2211 tens=7.7245 γ_d=0.175 distill=0.0381 z_S=-0.332 z_T_b=-0.137 δ=0.5
+[distill-v2] 22:45:19 step 8600/50000 loss=34.1904 ce=5.6161 tens=3.1420 γ_d=0.180 distill=0.1247 z_S=-0.332 z_T_b=-0.685 δ=0.5
+[distill-v2] 22:45:27 step 8700/50000 loss=36.9348 ce=5.9828 tens=6.9131 γ_d=0.185 distill=0.0048 z_S=-0.332 z_T_b=-0.263 δ=0.5
+[distill-v2] 22:45:35 step 8800/50000 loss=34.3279 ce=5.5667 tens=5.9063 γ_d=0.190 distill=0.2192 z_S=-0.332 z_T_b=-0.800 δ=0.5
+[distill-v2] 22:45:43 step 8900/50000 loss=29.9848 ce=4.8222 tens=6.8528 γ_d=0.195 distill=0.1230 z_S=-0.332 z_T_b=0.018 δ=0.5
+[distill-v2] 22:45:51 step 9000/50000 loss=33.7528 ce=5.3891 tens=9.2398 γ_d=0.200 distill=0.1619 z_S=-0.332 z_T_b=0.070 δ=0.5
+[distill-v2] 22:45:59 step 9100/50000 loss=36.3414 ce=5.9658 tens=3.5985 γ_d=0.205 distill=0.0329 z_S=-0.332 z_T_b=-0.514 δ=0.5
+[distill-v2] 22:46:08 step 9200/50000 loss=33.4382 ce=5.4158 tens=6.2880 γ_d=0.210 distill=0.0006 z_S=-0.332 z_T_b=-0.307 δ=0.5
+[distill-v2] 22:46:16 step 9300/50000 loss=36.2945 ce=5.8937 tens=4.8061 γ_d=0.215 distill=0.9820 z_S=-0.332 z_T_b=0.659 δ=0.5
+[distill-v2] 22:46:24 step 9400/50000 loss=32.4070 ce=5.2869 tens=4.5678 γ_d=0.220 distill=0.0010 z_S=-0.332 z_T_b=-0.363 δ=0.5
+[distill-v2] 22:46:32 step 9500/50000 loss=37.9122 ce=6.1219 tens=6.3444 γ_d=0.225 distill=1.0187 z_S=-0.332 z_T_b=-1.342 δ=0.5
+[distill-v2] 22:46:40 step 9600/50000 loss=42.1694 ce=6.9398 tens=3.5173 γ_d=0.230 distill=0.0132 z_S=-0.332 z_T_b=-0.447 δ=0.5
+[distill-v2] 22:46:48 step 9700/50000 loss=33.7766 ce=5.4667 tens=4.5554 γ_d=0.235 distill=1.2464 z_S=-0.332 z_T_b=0.784 δ=0.5
+[distill-v2] 22:46:57 step 9800/50000 loss=39.5764 ce=6.3304 tens=8.1590 γ_d=0.240 distill=1.5413 z_S=-0.332 z_T_b=0.909 δ=0.5
+[distill-v2] 22:47:05 step 9900/50000 loss=39.8957 ce=6.3536 tens=11.2642 γ_d=0.245 distill=0.3441 z_S=-0.332 z_T_b=0.254 δ=0.5
+[distill-v2] 22:47:13 step 10000/50000 loss=34.4675 ce=5.5907 tens=6.0890 γ_d=0.250 distill=0.0388 z_S=-0.332 z_T_b=-0.135 δ=0.5
+[distill-v2] 22:47:13   phi @ step 10000: min=40.41766828389386 mean=41.53500566536083 μ_S=42.62407923078052 σ_S=0.7708355860891196
+[distill-v2] 22:47:42   F @ step 10000: F1_bleu1=0.0039 F2_phi=40.4177 F3_tens=7.2867
+[distill-v2] 22:47:42   SAVEPOINT @ step 10000 → /workspace/p9_pbeta_distill/savepoints/step_10000
+[distill-v2] 22:47:52 step 10100/50000 loss=36.9253 ce=5.8173 tens=6.0216 γ_d=0.255 distill=4.3862 z_S=-1.420 z_T_b=0.675 δ=0.5
+[distill-v2] 22:48:01 step 10200/50000 loss=29.8568 ce=4.8141 tens=5.2635 γ_d=0.260 distill=0.7022 z_S=-1.420 z_T_b=-0.582 δ=0.5
+[distill-v2] 22:48:09 step 10300/50000 loss=38.3797 ce=6.0599 tens=2.3620 γ_d=0.265 distill=6.2870 z_S=-1.420 z_T_b=1.088 δ=0.5
+[distill-v2] 22:48:18 step 10400/50000 loss=39.5929 ce=6.3298 tens=7.2024 γ_d=0.270 distill=1.9769 z_S=-1.420 z_T_b=-0.014 δ=0.5
+[distill-v2] 22:48:27 step 10500/50000 loss=34.8415 ce=5.4266 tens=8.5447 γ_d=0.275 distill=3.6376 z_S=-1.420 z_T_b=0.487 δ=0.5
+[distill-v2] 22:48:35 step 10600/50000 loss=42.7884 ce=6.7820 tens=4.2564 γ_d=0.280 distill=5.2068 z_S=-1.420 z_T_b=0.862 δ=0.5
+[distill-v2] 22:48:44 step 10700/50000 loss=42.4024 ce=6.7159 tens=4.6559 γ_d=0.285 distill=4.9432 z_S=-1.420 z_T_b=0.804 δ=0.5
+[distill-v2] 22:48:52 step 10800/50000 loss=47.0069 ce=7.5529 tens=5.8138 γ_d=0.290 distill=2.8190 z_S=-1.420 z_T_b=0.259 δ=0.5
+[distill-v2] 22:49:00 step 10900/50000 loss=36.4764 ce=5.7826 tens=11.3219 γ_d=0.295 distill=0.2801 z_S=-1.420 z_T_b=-0.891 δ=0.5
+[distill-v2] 22:49:09 step 11000/50000 loss=44.8839 ce=7.0156 tens=10.2420 γ_d=0.300 distill=4.1802 z_S=-1.420 z_T_b=0.625 δ=0.5
+[distill-v2] 22:49:17 step 11100/50000 loss=33.8803 ce=5.3185 tens=6.8881 γ_d=0.305 distill=3.0695 z_S=-1.420 z_T_b=0.332 δ=0.5
+[distill-v2] 22:49:25 step 11200/50000 loss=32.9886 ce=5.3119 tens=3.9601 γ_d=0.310 distill=1.6874 z_S=-1.420 z_T_b=-0.121 δ=0.5
+[distill-v2] 22:49:33 step 11300/50000 loss=41.4885 ce=6.5330 tens=8.2050 γ_d=0.315 distill=3.3649 z_S=-1.420 z_T_b=0.415 δ=0.5
+[distill-v2] 22:49:42 step 11400/50000 loss=35.8255 ce=5.7527 tens=5.8124 γ_d=0.320 distill=1.3672 z_S=-1.420 z_T_b=-0.251 δ=0.5
+[distill-v2] 22:49:50 step 11500/50000 loss=40.7609 ce=6.4830 tens=4.2612 γ_d=0.325 distill=3.7650 z_S=-1.420 z_T_b=0.521 δ=0.5
+[distill-v2] 22:49:58 step 11600/50000 loss=32.7414 ce=5.1696 tens=7.0716 γ_d=0.330 distill=2.0090 z_S=-1.420 z_T_b=-0.002 δ=0.5
+[distill-v2] 22:50:06 step 11700/50000 loss=29.7320 ce=4.7737 tens=5.7785 γ_d=0.335 distill=0.6650 z_S=-1.420 z_T_b=-0.604 δ=0.5
+[distill-v2] 22:50:15 step 11800/50000 loss=27.8182 ce=4.4148 tens=5.8746 γ_d=0.340 distill=1.3187 z_S=-1.420 z_T_b=-0.271 δ=0.5
+[distill-v2] 22:50:23 step 11900/50000 loss=36.9972 ce=5.9134 tens=5.8382 γ_d=0.345 distill=1.8586 z_S=-1.420 z_T_b=-0.056 δ=0.5
+[distill-v2] 22:50:31 step 12000/50000 loss=38.4535 ce=6.1099 tens=7.2729 γ_d=0.350 distill=2.0089 z_S=-1.420 z_T_b=-0.002 δ=0.5
+[distill-v2] 22:50:39 step 12100/50000 loss=35.9453 ce=5.8267 tens=3.7286 γ_d=0.355 distill=1.2002 z_S=-1.420 z_T_b=-0.324 δ=0.5
+[distill-v2] 22:50:47 step 12200/50000 loss=29.3107 ce=4.6805 tens=6.5422 γ_d=0.360 distill=0.6845 z_S=-1.420 z_T_b=-0.592 δ=0.5
+[distill-v2] 22:50:56 step 12300/50000 loss=33.4020 ce=5.1882 tens=12.9448 γ_d=0.365 distill=0.9076 z_S=-1.420 z_T_b=-0.467 δ=0.5
+[distill-v2] 22:51:04 step 12400/50000 loss=28.8927 ce=4.4022 tens=14.5234 γ_d=0.370 distill=0.8135 z_S=-1.420 z_T_b=-0.518 δ=0.5
+[distill-v2] 22:51:12 step 12500/50000 loss=39.8322 ce=6.3433 tens=5.4974 γ_d=0.375 distill=2.5273 z_S=-1.420 z_T_b=0.170 δ=0.5
+[distill-v2] 22:51:12   phi @ step 12500: min=38.85743017768121 mean=39.88398131206537 μ_S=42.072476494058854 σ_S=1.1655202113487804
+[distill-v2] 22:51:21 step 12600/50000 loss=31.3078 ce=5.0100 tens=4.8187 γ_d=0.380 distill=1.3814 z_S=-1.554 z_T_b=-0.378 δ=0.5
+[distill-v2] 22:51:29 step 12700/50000 loss=40.0314 ce=6.4686 tens=5.1247 γ_d=0.385 distill=1.1714 z_S=-1.554 z_T_b=-0.471 δ=0.5
+[distill-v2] 22:51:37 step 12800/50000 loss=43.2552 ce=6.8608 tens=4.5057 γ_d=0.390 distill=3.6273 z_S=-1.554 z_T_b=0.351 δ=0.5
+[distill-v2] 22:51:45 step 12900/50000 loss=34.0491 ce=4.8864 tens=11.2868 γ_d=0.395 distill=7.6898 z_S=-1.554 z_T_b=1.219 δ=0.5
+[distill-v2] 22:51:53 step 13000/50000 loss=26.4967 ce=4.2661 tens=2.9979 γ_d=0.400 distill=1.1260 z_S=-1.554 z_T_b=-0.493 δ=0.5
+[distill-v2] 22:52:02 step 13100/50000 loss=43.3472 ce=6.5714 tens=6.4528 γ_d=0.405 distill=7.2866 z_S=-1.554 z_T_b=1.146 δ=0.5
+[distill-v2] 22:52:10 step 13200/50000 loss=29.7488 ce=4.8190 tens=3.2551 γ_d=0.410 distill=0.8459 z_S=-1.554 z_T_b=-0.634 δ=0.5
+[distill-v2] 22:52:18 step 13300/50000 loss=33.2755 ce=5.3961 tens=2.9665 γ_d=0.415 distill=1.0931 z_S=-1.554 z_T_b=-0.508 δ=0.5
+[distill-v2] 22:52:26 step 13400/50000 loss=33.8175 ce=5.4559 tens=3.7453 γ_d=0.420 distill=1.2382 z_S=-1.554 z_T_b=-0.441 δ=0.5
+[distill-v2] 22:52:34 step 13500/50000 loss=36.5572 ce=5.7271 tens=4.2409 γ_d=0.425 distill=3.6665 z_S=-1.554 z_T_b=0.361 δ=0.5
+[distill-v2] 22:52:42 step 13600/50000 loss=29.9511 ce=4.8715 tens=1.8780 γ_d=0.430 distill=1.0247 z_S=-1.554 z_T_b=-0.541 δ=0.5
+[distill-v2] 22:52:51 step 13700/50000 loss=31.9895 ce=4.8246 tens=6.2692 γ_d=0.435 distill=4.8307 z_S=-1.554 z_T_b=0.644 δ=0.5
+[distill-v2] 22:52:59 step 13800/50000 loss=35.0952 ce=5.1558 tens=10.8005 γ_d=0.440 distill=5.7735 z_S=-1.554 z_T_b=0.849 δ=0.5
+[distill-v2] 22:53:07 step 13900/50000 loss=35.8587 ce=5.7078 tens=5.3878 γ_d=0.445 distill=1.8061 z_S=-1.554 z_T_b=-0.210 δ=0.5
+[distill-v2] 22:53:15 step 14000/50000 loss=33.2668 ce=5.1395 tens=3.1792 γ_d=0.450 distill=4.3399 z_S=-1.554 z_T_b=0.530 δ=0.5
+[distill-v2] 22:53:23 step 14100/50000 loss=33.6780 ce=5.2615 tens=3.6679 γ_d=0.455 distill=3.4266 z_S=-1.554 z_T_b=0.297 δ=0.5
+[distill-v2] 22:53:32 step 14200/50000 loss=28.9519 ce=4.4898 tens=9.2000 γ_d=0.460 distill=1.3770 z_S=-1.554 z_T_b=-0.380 δ=0.5
+[distill-v2] 22:53:40 step 14300/50000 loss=31.0374 ce=4.8975 tens=9.8919 γ_d=0.465 distill=0.3629 z_S=-1.554 z_T_b=-0.951 δ=0.5
+[distill-v2] 22:53:48 step 14400/50000 loss=31.2205 ce=4.8772 tens=9.2568 γ_d=0.470 distill=1.2104 z_S=-1.554 z_T_b=-0.453 δ=0.5
+[distill-v2] 22:53:56 step 14500/50000 loss=34.4876 ce=5.3817 tens=7.6445 γ_d=0.475 distill=2.2123 z_S=-1.554 z_T_b=-0.066 δ=0.5
+[distill-v2] 22:54:04 step 14600/50000 loss=32.6280 ce=5.2223 tens=2.5065 γ_d=0.480 distill=1.9127 z_S=-1.554 z_T_b=-0.171 δ=0.5
+[distill-v2] 22:54:12 step 14700/50000 loss=41.0822 ce=6.4528 tens=10.7722 γ_d=0.485 distill=1.5461 z_S=-1.554 z_T_b=-0.310 δ=0.5
+[distill-v2] 22:54:20 step 14800/50000 loss=36.5026 ce=5.6242 tens=11.0384 γ_d=0.490 distill=2.2479 z_S=-1.554 z_T_b=-0.054 δ=0.5
+[distill-v2] 22:54:28 step 14900/50000 loss=38.1246 ce=5.8565 tens=7.1733 γ_d=0.495 distill=3.8576 z_S=-1.554 z_T_b=0.410 δ=0.5
+[distill-v2] 22:54:37 step 15000/50000 loss=34.5502 ce=5.5758 tens=3.1830 γ_d=0.500 distill=1.2357 z_S=-1.554 z_T_b=-0.442 δ=0.5
+[distill-v2] 22:54:37   phi @ step 15000: min=38.78154613980592 mean=39.98049592018681 μ_S=41.429467230783324 σ_S=1.655473811657121
+[distill-v2] 22:55:05   F @ step 15000: F1_bleu1=0.0039 F2_phi=38.7815 F3_tens=7.3987
+[distill-v2] 22:55:06   SAVEPOINT @ step 15000 → /workspace/p9_pbeta_distill/savepoints/step_15000
+[distill-v2] 22:55:14 step 15100/50000 loss=33.9479 ce=5.3406 tens=6.1952 γ_d=0.500 distill=1.9507 z_S=-1.223 z_T_b=0.174 δ=0.5
+[distill-v2] 22:55:22 step 15200/50000 loss=34.6497 ce=5.4577 tens=7.8884 γ_d=0.500 distill=1.4401 z_S=-1.223 z_T_b=-0.023 δ=0.5
+[distill-v2] 22:55:30 step 15300/50000 loss=27.5280 ce=4.3818 tens=1.6418 γ_d=0.500 distill=1.9815 z_S=-1.223 z_T_b=0.185 δ=0.5
+[distill-v2] 22:55:38 step 15400/50000 loss=34.7658 ce=5.4060 tens=9.4565 γ_d=0.500 distill=1.8225 z_S=-1.223 z_T_b=0.127 δ=0.5
+[distill-v2] 22:55:46 step 15500/50000 loss=32.3167 ce=4.9769 tens=12.2652 γ_d=0.500 distill=1.2306 z_S=-1.223 z_T_b=-0.113 δ=0.5
+[distill-v2] 22:55:54 step 15600/50000 loss=31.1658 ce=4.9750 tens=2.8815 γ_d=0.500 distill=1.7672 z_S=-1.223 z_T_b=0.107 δ=0.5
+[distill-v2] 22:56:03 step 15700/50000 loss=29.9618 ce=4.6714 tens=9.2256 γ_d=0.500 distill=1.0991 z_S=-1.223 z_T_b=-0.174 δ=0.5
+[distill-v2] 22:56:11 step 15800/50000 loss=46.5855 ce=7.4401 tens=6.8842 γ_d=0.500 distill=1.8250 z_S=-1.223 z_T_b=0.128 δ=0.5
+[distill-v2] 22:56:19 step 15900/50000 loss=33.0581 ce=5.0105 tens=7.8273 γ_d=0.500 distill=3.6416 z_S=-1.223 z_T_b=0.686 δ=0.5
+[distill-v2] 22:56:27 step 16000/50000 loss=28.8186 ce=4.4516 tens=10.0704 γ_d=0.500 distill=1.1968 z_S=-1.223 z_T_b=-0.129 δ=0.5
+[distill-v2] 22:56:35 step 16100/50000 loss=29.2210 ce=4.7064 tens=6.1017 γ_d=0.500 distill=0.1347 z_S=-1.223 z_T_b=-0.856 δ=0.5
+[distill-v2] 22:56:43 step 16200/50000 loss=28.1466 ce=4.4829 tens=2.0440 γ_d=0.500 distill=1.8856 z_S=-1.223 z_T_b=0.151 δ=0.5
+[distill-v2] 22:56:51 step 16300/50000 loss=24.9866 ce=3.8793 tens=9.3795 γ_d=0.500 distill=0.6072 z_S=-1.223 z_T_b=-0.443 δ=0.5
+[distill-v2] 22:57:00 step 16400/50000 loss=24.4635 ce=3.9363 tens=5.2732 γ_d=0.500 distill=0.1092 z_S=-1.223 z_T_b=-0.892 δ=0.5
+[distill-v2] 22:57:08 step 16500/50000 loss=31.6534 ce=4.7391 tens=15.7571 γ_d=0.500 distill=1.7107 z_S=-1.223 z_T_b=0.085 δ=0.5
+[distill-v2] 22:57:16 step 16600/50000 loss=32.6781 ce=4.7175 tens=7.5174 γ_d=0.500 distill=6.4913 z_S=-1.223 z_T_b=1.325 δ=0.5
+[distill-v2] 22:57:24 step 16700/50000 loss=31.3647 ce=5.0978 tens=2.7203 γ_d=0.500 distill=0.7400 z_S=-1.223 z_T_b=-0.362 δ=0.5
+[distill-v2] 22:57:32 step 16800/50000 loss=27.5010 ce=4.2633 tens=10.2805 γ_d=0.500 distill=0.7587 z_S=-1.223 z_T_b=-0.352 δ=0.5
+[distill-v2] 22:57:41 step 16900/50000 loss=26.9088 ce=4.3260 tens=2.8059 γ_d=0.500 distill=1.0644 z_S=-1.223 z_T_b=-0.191 δ=0.5
+[distill-v2] 22:57:49 step 17000/50000 loss=29.0273 ce=4.5400 tens=7.2588 γ_d=0.500 distill=1.3970 z_S=-1.223 z_T_b=-0.041 δ=0.5
+[distill-v2] 22:57:57 step 17100/50000 loss=38.1161 ce=6.0905 tens=3.4474 γ_d=0.500 distill=2.1119 z_S=-1.223 z_T_b=0.231 δ=0.5
+[distill-v2] 22:58:05 step 17200/50000 loss=32.7557 ce=5.1939 tens=7.4035 γ_d=0.500 distill=0.9636 z_S=-1.223 z_T_b=-0.241 δ=0.5
+[distill-v2] 22:58:13 step 17300/50000 loss=26.2275 ce=4.1716 tens=6.7510 γ_d=0.500 distill=0.3710 z_S=-1.223 z_T_b=-0.613 δ=0.5
+[distill-v2] 22:58:21 step 17400/50000 loss=33.0130 ce=5.0985 tens=5.8297 γ_d=0.500 distill=3.0952 z_S=-1.223 z_T_b=0.537 δ=0.5
+[distill-v2] 22:58:30 step 17500/50000 loss=26.4993 ce=4.1540 tens=9.0447 γ_d=0.500 distill=0.4371 z_S=-1.223 z_T_b=-0.561 δ=0.5
+[distill-v2] 22:58:30   phi @ step 17500: min=37.645368771534486 mean=39.01016107462232 μ_S=40.988147048953756 σ_S=1.8048948626866175
+[distill-v2] 22:58:38 step 17600/50000 loss=34.2513 ce=5.4251 tens=7.2592 γ_d=0.500 distill=1.2233 z_S=-1.405 z_T_b=-0.299 δ=0.5
+[distill-v2] 22:58:46 step 17700/50000 loss=26.4721 ce=4.2165 tens=3.2777 γ_d=0.500 distill=1.3625 z_S=-1.405 z_T_b=-0.237 δ=0.5
+[distill-v2] 22:58:55 step 17800/50000 loss=34.7052 ce=5.3099 tens=2.5680 γ_d=0.500 distill=4.9212 z_S=-1.405 z_T_b=0.814 δ=0.5
+[distill-v2] 22:59:03 step 17900/50000 loss=24.1253 ce=3.7394 tens=2.1269 γ_d=0.500 distill=2.7402 z_S=-1.405 z_T_b=0.251 δ=0.5
+[distill-v2] 22:59:11 step 18000/50000 loss=28.2078 ce=4.3495 tens=4.5078 γ_d=0.500 distill=2.8689 z_S=-1.405 z_T_b=0.289 δ=0.5
+[distill-v2] 22:59:20 step 18100/50000 loss=36.2175 ce=5.6245 tens=7.6788 γ_d=0.500 distill=2.6378 z_S=-1.405 z_T_b=0.219 δ=0.5
+[distill-v2] 22:59:28 step 18200/50000 loss=30.1168 ce=4.6187 tens=7.9988 γ_d=0.500 distill=2.4099 z_S=-1.405 z_T_b=0.148 δ=0.5
+[distill-v2] 22:59:36 step 18300/50000 loss=27.4843 ce=4.3170 tens=3.9374 γ_d=0.500 distill=1.9828 z_S=-1.405 z_T_b=0.003 δ=0.5
+[distill-v2] 22:59:44 step 18400/50000 loss=32.3703 ce=5.0981 tens=4.9860 γ_d=0.500 distill=2.0681 z_S=-1.405 z_T_b=0.033 δ=0.5
+[distill-v2] 22:59:52 step 18500/50000 loss=30.7700 ce=4.6679 tens=11.4083 γ_d=0.500 distill=2.1030 z_S=-1.405 z_T_b=0.045 δ=0.5
+[distill-v2] 23:00:01 step 18600/50000 loss=32.2099 ce=5.2388 tens=2.3027 γ_d=0.500 distill=0.8634 z_S=-1.405 z_T_b=-0.475 δ=0.5
+[distill-v2] 23:00:09 step 18700/50000 loss=36.8568 ce=5.6186 tens=4.3386 γ_d=0.500 distill=4.9889 z_S=-1.405 z_T_b=0.829 δ=0.5
+[distill-v2] 23:00:17 step 18800/50000 loss=23.5194 ce=3.6231 tens=7.1637 γ_d=0.500 distill=1.4124 z_S=-1.405 z_T_b=-0.216 δ=0.5
+[distill-v2] 23:00:25 step 18900/50000 loss=28.0895 ce=4.3817 tens=4.1763 γ_d=0.500 distill=2.3462 z_S=-1.405 z_T_b=0.127 δ=0.5
+[distill-v2] 23:00:33 step 19000/50000 loss=29.0036 ce=4.6275 tens=4.0168 γ_d=0.500 distill=1.2719 z_S=-1.405 z_T_b=-0.277 δ=0.5
+[distill-v2] 23:00:42 step 19100/50000 loss=27.8165 ce=4.4072 tens=3.8358 γ_d=0.500 distill=1.5964 z_S=-1.405 z_T_b=-0.141 δ=0.5
+[distill-v2] 23:00:50 step 19200/50000 loss=26.4840 ce=4.2943 tens=2.3181 γ_d=0.500 distill=0.7405 z_S=-1.405 z_T_b=-0.544 δ=0.5
+[distill-v2] 23:00:58 step 19300/50000 loss=36.4775 ce=5.5504 tens=3.5836 γ_d=0.500 distill=5.2746 z_S=-1.405 z_T_b=0.892 δ=0.5
+[distill-v2] 23:01:06 step 19400/50000 loss=25.5422 ce=3.9994 tens=1.9451 γ_d=0.500 distill=2.5078 z_S=-1.405 z_T_b=0.179 δ=0.5
+[distill-v2] 23:01:15 step 19500/50000 loss=37.0961 ce=5.9285 tens=4.3380 γ_d=0.500 distill=1.7486 z_S=-1.405 z_T_b=-0.082 δ=0.5
+[distill-v2] 23:01:23 step 19600/50000 loss=24.9125 ce=3.8959 tens=9.3567 γ_d=0.500 distill=0.2678 z_S=-1.405 z_T_b=-0.887 δ=0.5
+[distill-v2] 23:01:31 step 19700/50000 loss=34.9360 ce=5.2633 tens=9.2995 γ_d=0.500 distill=3.9227 z_S=-1.405 z_T_b=0.576 δ=0.5
+[distill-v2] 23:01:39 step 19800/50000 loss=35.6701 ce=5.4143 tens=13.3539 γ_d=0.500 distill=2.3629 z_S=-1.405 z_T_b=0.132 δ=0.5
+[distill-v2] 23:01:47 step 19900/50000 loss=36.9034 ce=5.6843 tens=3.4006 γ_d=0.500 distill=4.5755 z_S=-1.405 z_T_b=0.734 δ=0.5
+[distill-v2] 23:01:55 step 20000/50000 loss=37.7400 ce=5.9146 tens=12.2369 γ_d=0.500 distill=0.8339 z_S=-1.405 z_T_b=-0.492 δ=0.5
+[distill-v2] 23:01:56   phi @ step 20000: min=37.54586425872871 mean=39.02094530455875 μ_S=40.51060729503672 σ_S=2.039738424690192
+[distill-v2] 23:02:25   F @ step 20000: F1_bleu1=0.0049 F2_phi=37.5459 F3_tens=7.6994
+[distill-v2] 23:02:25   SAVEPOINT @ step 20000 → /workspace/p9_pbeta_distill/savepoints/step_20000
+[distill-v2] 23:02:33 step 20100/50000 loss=25.0199 ce=4.0086 tens=3.4489 γ_d=0.500 distill=0.9015 z_S=-1.209 z_T_b=-0.260 δ=0.5
+[distill-v2] 23:02:41 step 20200/50000 loss=26.4994 ce=3.9488 tens=9.4363 γ_d=0.500 distill=2.7828 z_S=-1.209 z_T_b=0.459 δ=0.5
+[distill-v2] 23:02:49 step 20300/50000 loss=39.1336 ce=5.9113 tens=11.3877 γ_d=0.500 distill=3.9151 z_S=-1.209 z_T_b=0.769 δ=0.5
+[distill-v2] 23:02:58 step 20400/50000 loss=28.5559 ce=4.6048 tens=2.9215 γ_d=0.500 distill=0.9781 z_S=-1.209 z_T_b=-0.220 δ=0.5
+[distill-v2] 23:03:06 step 20500/50000 loss=29.2760 ce=4.6142 tens=7.1403 γ_d=0.500 distill=1.0393 z_S=-1.209 z_T_b=-0.190 δ=0.5
+[distill-v2] 23:03:14 step 20600/50000 loss=28.4672 ce=4.4028 tens=5.1904 γ_d=0.500 distill=2.5443 z_S=-1.209 z_T_b=0.386 δ=0.5
+[distill-v2] 23:03:22 step 20700/50000 loss=24.6347 ce=3.8780 tens=8.1301 γ_d=0.500 distill=0.2940 z_S=-1.209 z_T_b=-0.667 δ=0.5
+[distill-v2] 23:03:30 step 20800/50000 loss=27.0510 ce=4.3254 tens=6.4034 γ_d=0.500 distill=0.2759 z_S=-1.209 z_T_b=-0.684 δ=0.5
+[distill-v2] 23:03:38 step 20900/50000 loss=28.9175 ce=4.6277 tens=2.9524 γ_d=0.500 distill=1.4164 z_S=-1.209 z_T_b=-0.019 δ=0.5
+[distill-v2] 23:03:47 step 21000/50000 loss=31.6530 ce=4.9589 tens=7.7292 γ_d=0.500 distill=1.4803 z_S=-1.209 z_T_b=0.007 δ=0.5
+[distill-v2] 23:03:55 step 21100/50000 loss=31.0949 ce=4.6458 tens=8.4395 γ_d=0.500 distill=3.9085 z_S=-1.209 z_T_b=0.768 δ=0.5
+[distill-v2] 23:04:03 step 21200/50000 loss=26.4814 ce=3.8169 tens=16.7777 γ_d=0.500 distill=2.1272 z_S=-1.209 z_T_b=0.249 δ=0.5
+[distill-v2] 23:04:11 step 21300/50000 loss=29.2288 ce=4.7519 tens=2.6912 γ_d=0.500 distill=0.6271 z_S=-1.209 z_T_b=-0.417 δ=0.5
+[distill-v2] 23:04:19 step 21400/50000 loss=31.5008 ce=4.8358 tens=12.1642 γ_d=0.500 distill=1.3226 z_S=-1.209 z_T_b=-0.059 δ=0.5
+[distill-v2] 23:04:28 step 21500/50000 loss=25.5454 ce=3.9604 tens=7.6796 γ_d=0.500 distill=1.2621 z_S=-1.209 z_T_b=-0.086 δ=0.5
+[distill-v2] 23:04:36 step 21600/50000 loss=34.7973 ce=5.4242 tens=2.8665 γ_d=0.500 distill=3.6440 z_S=-1.209 z_T_b=0.700 δ=0.5
+[distill-v2] 23:04:44 step 21700/50000 loss=37.2342 ce=5.7763 tens=9.5833 γ_d=0.500 distill=2.2779 z_S=-1.209 z_T_b=0.300 δ=0.5
+[distill-v2] 23:04:52 step 21800/50000 loss=31.0925 ce=4.8990 tens=5.2856 γ_d=0.500 distill=1.8116 z_S=-1.209 z_T_b=0.137 δ=0.5
+[distill-v2] 23:05:00 step 21900/50000 loss=37.7067 ce=5.9689 tens=5.5865 γ_d=0.500 distill=2.1101 z_S=-1.209 z_T_b=0.243 δ=0.5
+[distill-v2] 23:05:08 step 22000/50000 loss=45.8675 ce=7.1173 tens=11.9782 γ_d=0.500 distill=2.7341 z_S=-1.209 z_T_b=0.444 δ=0.5
+[distill-v2] 23:05:16 step 22100/50000 loss=28.2159 ce=4.4570 tens=6.7610 γ_d=0.500 distill=0.9192 z_S=-1.209 z_T_b=-0.251 δ=0.5
+[distill-v2] 23:05:24 step 22200/50000 loss=28.2328 ce=4.3095 tens=11.5693 γ_d=0.500 distill=1.2811 z_S=-1.209 z_T_b=-0.077 δ=0.5
+[distill-v2] 23:05:33 step 22300/50000 loss=26.6417 ce=4.3518 tens=2.3152 γ_d=0.500 distill=0.3674 z_S=-1.209 z_T_b=-0.603 δ=0.5
+[distill-v2] 23:05:41 step 22400/50000 loss=23.4303 ce=3.5928 tens=11.1292 γ_d=0.500 distill=0.4087 z_S=-1.209 z_T_b=-0.570 δ=0.5
+[distill-v2] 23:05:49 step 22500/50000 loss=27.0907 ce=4.3573 tens=3.3097 γ_d=0.500 distill=0.9011 z_S=-1.209 z_T_b=-0.260 δ=0.5
+[distill-v2] 23:05:49   phi @ step 22500: min=36.84367072273318 mean=38.5162169531202 μ_S=40.140014415498214 σ_S=2.1451899245906847
+[distill-v2] 23:05:58 step 22600/50000 loss=42.2020 ce=6.6434 tens=8.6536 γ_d=0.500 distill=2.0872 z_S=-1.289 z_T_b=0.155 δ=0.5
+[distill-v2] 23:06:06 step 22700/50000 loss=31.8449 ce=4.9297 tens=8.0733 γ_d=0.500 distill=2.1110 z_S=-1.289 z_T_b=0.163 δ=0.5
+[distill-v2] 23:06:14 step 22800/50000 loss=38.3380 ce=6.1170 tens=6.7173 γ_d=0.500 distill=1.2568 z_S=-1.289 z_T_b=-0.168 δ=0.5
+[distill-v2] 23:06:22 step 22900/50000 loss=26.5024 ce=4.1091 tens=4.8250 γ_d=0.500 distill=2.2476 z_S=-1.289 z_T_b=0.210 δ=0.5
+[distill-v2] 23:06:30 step 23000/50000 loss=32.9324 ce=5.2111 tens=6.9332 γ_d=0.500 distill=1.2515 z_S=-1.289 z_T_b=-0.171 δ=0.5
+[distill-v2] 23:06:38 step 23100/50000 loss=34.9305 ce=5.2677 tens=4.3017 γ_d=0.500 distill=5.3576 z_S=-1.289 z_T_b=1.025 δ=0.5
+[distill-v2] 23:06:46 step 23200/50000 loss=26.8533 ce=4.0983 tens=8.6655 γ_d=0.500 distill=1.9270 z_S=-1.289 z_T_b=0.099 δ=0.5
+[distill-v2] 23:06:55 step 23300/50000 loss=48.8980 ce=7.6485 tens=11.9655 γ_d=0.500 distill=2.4237 z_S=-1.289 z_T_b=0.267 δ=0.5
+[distill-v2] 23:07:03 step 23400/50000 loss=33.3780 ce=5.0453 tens=10.4653 γ_d=0.500 distill=3.0733 z_S=-1.289 z_T_b=0.464 δ=0.5
+[distill-v2] 23:07:11 step 23500/50000 loss=25.4414 ce=4.1280 tens=2.7512 γ_d=0.500 distill=0.5209 z_S=-1.289 z_T_b=-0.568 δ=0.5
+[distill-v2] 23:07:19 step 23600/50000 loss=28.1836 ce=4.3048 tens=12.2000 γ_d=0.500 distill=1.0498 z_S=-1.289 z_T_b=-0.265 δ=0.5
+[distill-v2] 23:07:27 step 23700/50000 loss=23.6564 ce=3.7700 tens=5.1473 γ_d=0.500 distill=0.5285 z_S=-1.289 z_T_b=-0.562 δ=0.5
+[distill-v2] 23:07:35 step 23800/50000 loss=25.9784 ce=4.1235 tens=2.6018 γ_d=0.500 distill=1.6941 z_S=-1.289 z_T_b=0.012 δ=0.5
+[distill-v2] 23:07:43 step 23900/50000 loss=26.7659 ce=4.2529 tens=5.2281 γ_d=0.500 distill=0.9285 z_S=-1.289 z_T_b=-0.326 δ=0.5
+[distill-v2] 23:07:52 step 24000/50000 loss=26.3861 ce=4.3173 tens=2.3790 γ_d=0.500 distill=0.2512 z_S=-1.289 z_T_b=-0.788 δ=0.5
+[distill-v2] 23:08:00 step 24100/50000 loss=28.8374 ce=4.4215 tens=5.5136 γ_d=0.500 distill=2.9628 z_S=-1.289 z_T_b=0.432 δ=0.5
+[distill-v2] 23:08:08 step 24200/50000 loss=31.1168 ce=4.8299 tens=5.6650 γ_d=0.500 distill=2.5748 z_S=-1.289 z_T_b=0.315 δ=0.5
+[distill-v2] 23:08:17 step 24300/50000 loss=28.3728 ce=4.1814 tens=7.0055 γ_d=0.500 distill=4.4671 z_S=-1.289 z_T_b=0.824 δ=0.5
+[distill-v2] 23:08:25 step 24400/50000 loss=24.0957 ce=3.6555 tens=4.9953 γ_d=0.500 distill=2.8271 z_S=-1.289 z_T_b=0.392 δ=0.5
+[distill-v2] 23:08:33 step 24500/50000 loss=30.6624 ce=4.5086 tens=7.5634 γ_d=0.500 distill=4.9526 z_S=-1.289 z_T_b=0.936 δ=0.5
+[distill-v2] 23:08:41 step 24600/50000 loss=34.4994 ce=5.2653 tens=7.7226 γ_d=0.500 distill=3.4986 z_S=-1.289 z_T_b=0.581 δ=0.5
+[distill-v2] 23:08:49 step 24700/50000 loss=34.4616 ce=5.2077 tens=5.2692 γ_d=0.500 distill=4.8501 z_S=-1.289 z_T_b=0.913 δ=0.5
+[distill-v2] 23:08:58 step 24800/50000 loss=31.1694 ce=4.8829 tens=5.8610 γ_d=0.500 distill=1.9861 z_S=-1.289 z_T_b=0.120 δ=0.5
+[distill-v2] 23:09:06 step 24900/50000 loss=27.9911 ce=4.4813 tens=6.7231 γ_d=0.500 distill=0.1902 z_S=-1.289 z_T_b=-0.853 δ=0.5
+[distill-v2] 23:09:14 step 25000/50000 loss=36.3905 ce=5.6288 tens=7.3799 γ_d=0.500 distill=3.0211 z_S=-1.289 z_T_b=0.449 δ=0.5
+[distill-v2] 23:09:14   phi @ step 25000: min=37.20648343144447 mean=39.12469606031392 μ_S=39.77375400519099 σ_S=2.2723771216730824
+[distill-v2] 23:09:43   F @ step 25000: F1_bleu1=0.0049 F2_phi=37.2065 F3_tens=7.6684
+[distill-v2] 23:09:43   SAVEPOINT @ step 25000 → /workspace/p9_pbeta_distill/savepoints/step_25000
+[distill-v2] 23:09:51 step 25100/50000 loss=23.5746 ce=3.6999 tens=8.1670 γ_d=0.500 distill=0.3009 z_S=-1.009 z_T_b=-0.461 δ=0.5
+[distill-v2] 23:09:59 step 25200/50000 loss=27.1415 ce=4.2082 tens=10.0832 γ_d=0.500 distill=0.7591 z_S=-1.009 z_T_b=-0.138 δ=0.5
+[distill-v2] 23:10:07 step 25300/50000 loss=32.1829 ce=4.9390 tens=7.5234 γ_d=0.500 distill=2.8410 z_S=-1.009 z_T_b=0.676 δ=0.5
+[distill-v2] 23:10:15 step 25400/50000 loss=21.9147 ce=3.4516 tens=7.0485 γ_d=0.500 distill=0.2962 z_S=-1.009 z_T_b=-0.465 δ=0.5
+[distill-v2] 23:10:23 step 25500/50000 loss=31.9829 ce=5.1762 tens=6.0586 γ_d=0.500 distill=0.0335 z_S=-1.009 z_T_b=-0.826 δ=0.5
+[distill-v2] 23:10:32 step 25600/50000 loss=22.0139 ce=3.5035 tens=3.0157 γ_d=0.500 distill=1.0811 z_S=-1.009 z_T_b=0.030 δ=0.5
+[distill-v2] 23:10:40 step 25700/50000 loss=23.3812 ce=3.7229 tens=6.5818 γ_d=0.500 distill=0.1134 z_S=-1.009 z_T_b=-0.673 δ=0.5
+[distill-v2] 23:10:48 step 25800/50000 loss=31.5272 ce=4.7564 tens=5.9385 γ_d=0.500 distill=4.1961 z_S=-1.009 z_T_b=1.039 δ=0.5
+[distill-v2] 23:10:56 step 25900/50000 loss=22.6907 ce=3.6522 tens=3.9641 γ_d=0.500 distill=0.3654 z_S=-1.009 z_T_b=-0.405 δ=0.5
+[distill-v2] 23:11:04 step 26000/50000 loss=30.9851 ce=4.9746 tens=4.6475 γ_d=0.500 distill=0.8811 z_S=-1.009 z_T_b=-0.071 δ=0.5
+[distill-v2] 23:11:12 step 26100/50000 loss=31.9985 ce=5.1187 tens=5.2374 γ_d=0.500 distill=1.0009 z_S=-1.009 z_T_b=-0.009 δ=0.5
+[distill-v2] 23:11:20 step 26200/50000 loss=21.7911 ce=3.3740 tens=10.2421 γ_d=0.500 distill=0.0215 z_S=-1.009 z_T_b=-0.863 δ=0.5
+[distill-v2] 23:11:28 step 26300/50000 loss=25.8210 ce=4.0171 tens=4.4269 γ_d=0.500 distill=2.1084 z_S=-1.009 z_T_b=0.443 δ=0.5
+[distill-v2] 23:11:36 step 26400/50000 loss=31.9261 ce=4.7169 tens=13.0511 γ_d=0.500 distill=3.3337 z_S=-1.009 z_T_b=0.817 δ=0.5
+[distill-v2] 23:11:44 step 26500/50000 loss=24.8928 ce=3.9013 tens=2.6997 γ_d=0.500 distill=2.1601 z_S=-1.009 z_T_b=0.460 δ=0.5
+[distill-v2] 23:11:52 step 26600/50000 loss=20.8162 ce=3.3472 tens=3.3821 γ_d=0.500 distill=0.4519 z_S=-1.009 z_T_b=-0.337 δ=0.5
+[distill-v2] 23:12:01 step 26700/50000 loss=29.9349 ce=4.7121 tens=6.8702 γ_d=0.500 distill=1.2635 z_S=-1.009 z_T_b=0.115 δ=0.5
+[distill-v2] 23:12:09 step 26800/50000 loss=29.1792 ce=4.6401 tens=6.9953 γ_d=0.500 distill=0.5787 z_S=-1.009 z_T_b=-0.249 δ=0.5
+[distill-v2] 23:12:17 step 26900/50000 loss=24.9179 ce=3.8114 tens=13.3928 γ_d=0.500 distill=0.0812 z_S=-1.009 z_T_b=-0.724 δ=0.5
+[distill-v2] 23:12:25 step 27000/50000 loss=23.6803 ce=3.8991 tens=1.6089 γ_d=0.500 distill=0.0887 z_S=-1.009 z_T_b=-0.712 δ=0.5
+[distill-v2] 23:12:33 step 27100/50000 loss=22.0552 ce=3.4805 tens=3.9042 γ_d=0.500 distill=1.1735 z_S=-1.009 z_T_b=0.074 δ=0.5
+[distill-v2] 23:12:41 step 27200/50000 loss=22.6066 ce=3.6454 tens=3.7942 γ_d=0.500 distill=0.3302 z_S=-1.009 z_T_b=-0.435 δ=0.5
+[distill-v2] 23:12:49 step 27300/50000 loss=27.1502 ce=4.1596 tens=12.2622 γ_d=0.500 distill=0.7068 z_S=-1.009 z_T_b=-0.169 δ=0.5
+[distill-v2] 23:12:57 step 27400/50000 loss=41.9160 ce=6.4729 tens=4.1758 γ_d=0.500 distill=4.9051 z_S=-1.009 z_T_b=1.205 δ=0.5
+[distill-v2] 23:13:05 step 27500/50000 loss=29.9570 ce=4.7130 tens=1.8199 γ_d=0.500 distill=2.8120 z_S=-1.009 z_T_b=0.668 δ=0.5
+[distill-v2] 23:13:06   phi @ step 27500: min=37.47925650872977 mean=38.6752814076999 μ_S=39.51702694781634 σ_S=2.289215377086033
+[distill-v2] 23:13:14 step 27600/50000 loss=29.7528 ce=4.8515 tens=2.8473 γ_d=0.500 distill=0.4334 z_S=-0.722 z_T_b=-0.063 δ=0.5
+[distill-v2] 23:13:22 step 27700/50000 loss=26.0885 ce=4.0550 tens=8.6015 γ_d=0.500 distill=0.9370 z_S=-0.722 z_T_b=0.246 δ=0.5
+[distill-v2] 23:13:30 step 27800/50000 loss=22.8451 ce=3.4498 tens=7.0196 γ_d=0.500 distill=2.1866 z_S=-0.722 z_T_b=0.757 δ=0.5
+[distill-v2] 23:13:38 step 27900/50000 loss=23.9156 ce=3.7442 tens=7.7515 γ_d=0.500 distill=0.5758 z_S=-0.722 z_T_b=0.037 δ=0.5
+[distill-v2] 23:13:46 step 28000/50000 loss=20.6373 ce=3.4080 tens=0.6877 γ_d=0.500 distill=0.1726 z_S=-0.722 z_T_b=-0.306 δ=0.5
+[distill-v2] 23:13:55 step 28100/50000 loss=27.4464 ce=4.4370 tens=5.4964 γ_d=0.500 distill=0.0000 z_S=-0.722 z_T_b=-0.728 δ=0.5
+[distill-v2] 23:14:03 step 28200/50000 loss=32.7721 ce=5.1410 tens=8.3594 γ_d=0.500 distill=1.3441 z_S=-0.722 z_T_b=0.438 δ=0.5
+[distill-v2] 23:14:11 step 28300/50000 loss=31.2014 ce=4.8270 tens=11.0435 γ_d=0.500 distill=1.1652 z_S=-0.722 z_T_b=0.358 δ=0.5
+[distill-v2] 23:14:19 step 28400/50000 loss=26.8717 ce=4.3510 tens=3.6950 γ_d=0.500 distill=0.4227 z_S=-0.722 z_T_b=-0.072 δ=0.5
+[distill-v2] 23:14:27 step 28500/50000 loss=25.0896 ce=3.8324 tens=4.4025 γ_d=0.500 distill=2.8695 z_S=-0.722 z_T_b=0.972 δ=0.5
+[distill-v2] 23:14:35 step 28600/50000 loss=24.8029 ce=4.0163 tens=4.3811 γ_d=0.500 distill=0.0954 z_S=-0.722 z_T_b=-0.413 δ=0.5
+[distill-v2] 23:14:44 step 28700/50000 loss=21.8393 ce=3.3689 tens=10.3110 γ_d=0.500 distill=0.1587 z_S=-0.722 z_T_b=-0.323 δ=0.5
+[distill-v2] 23:14:53 step 28800/50000 loss=27.8970 ce=4.3155 tens=7.2880 γ_d=0.500 distill=1.8219 z_S=-0.722 z_T_b=0.628 δ=0.5
+[distill-v2] 23:15:02 step 28900/50000 loss=31.4900 ce=4.9518 tens=10.1344 γ_d=0.500 distill=0.5187 z_S=-0.722 z_T_b=-0.001 δ=0.5
+[distill-v2] 23:15:11 step 29000/50000 loss=22.3403 ce=3.5446 tens=6.0912 γ_d=0.500 distill=0.3175 z_S=-0.722 z_T_b=-0.158 δ=0.5
+[distill-v2] 23:15:19 step 29100/50000 loss=34.1586 ce=5.2339 tens=8.4471 γ_d=0.500 distill=2.9759 z_S=-0.722 z_T_b=1.003 δ=0.5
+[distill-v2] 23:15:28 step 29200/50000 loss=29.2336 ce=4.6002 tens=7.7342 γ_d=0.500 distill=0.9451 z_S=-0.722 z_T_b=0.250 δ=0.5
+[distill-v2] 23:15:36 step 29300/50000 loss=28.4245 ce=4.4297 tens=6.6835 γ_d=0.500 distill=1.6881 z_S=-0.722 z_T_b=0.578 δ=0.5
+[distill-v2] 23:15:44 step 29400/50000 loss=31.8106 ce=5.0007 tens=9.3696 γ_d=0.500 distill=0.8013 z_S=-0.722 z_T_b=0.173 δ=0.5
+[distill-v2] 23:15:52 step 29500/50000 loss=24.6719 ce=3.9198 tens=6.8345 γ_d=0.500 distill=0.2561 z_S=-0.722 z_T_b=-0.216 δ=0.5
+[distill-v2] 23:16:00 step 29600/50000 loss=36.9826 ce=5.6969 tens=12.1499 γ_d=0.500 distill=1.9576 z_S=-0.722 z_T_b=0.677 δ=0.5
+[distill-v2] 23:16:08 step 29700/50000 loss=28.0598 ce=4.5606 tens=4.4941 γ_d=0.500 distill=0.0445 z_S=-0.722 z_T_b=-0.511 δ=0.5
+[distill-v2] 23:16:16 step 29800/50000 loss=34.2881 ce=5.4476 tens=4.4895 γ_d=0.500 distill=1.8576 z_S=-0.722 z_T_b=0.641 δ=0.5
+[distill-v2] 23:16:25 step 29900/50000 loss=41.8411 ce=6.5991 tens=8.1737 γ_d=0.500 distill=2.0407 z_S=-0.722 z_T_b=0.707 δ=0.5
+[distill-v2] 23:16:33 step 30000/50000 loss=26.5087 ce=3.9960 tens=6.6626 γ_d=0.500 distill=3.0666 z_S=-0.722 z_T_b=1.029 δ=0.5
+[distill-v2] 23:16:33   phi @ step 30000: min=36.98986371395749 mean=38.63992475290789 μ_S=39.08150545797043 σ_S=2.220140542529555
+[distill-v2] 23:17:02   F @ step 30000: F1_bleu1=0.0049 F2_phi=36.9899 F3_tens=7.8368
+[distill-v2] 23:17:02   SAVEPOINT @ step 30000 → /workspace/p9_pbeta_distill/savepoints/step_30000
+[distill-v2] 23:17:10 step 30100/50000 loss=25.5336 ce=4.0497 tens=4.5369 γ_d=0.500 distill=1.1101 z_S=-0.849 z_T_b=0.205 δ=0.5
+[distill-v2] 23:17:18 step 30200/50000 loss=32.3373 ce=5.1184 tens=6.3219 γ_d=0.500 distill=1.3577 z_S=-0.849 z_T_b=0.317 δ=0.5
+[distill-v2] 23:17:27 step 30300/50000 loss=33.8652 ce=5.4368 tens=6.7038 γ_d=0.500 distill=0.4772 z_S=-0.849 z_T_b=-0.158 δ=0.5
+[distill-v2] 23:17:35 step 30400/50000 loss=22.9764 ce=3.7524 tens=2.5789 γ_d=0.500 distill=0.1501 z_S=-0.849 z_T_b=-0.461 δ=0.5
+[distill-v2] 23:17:43 step 30500/50000 loss=25.0036 ce=3.9670 tens=6.8596 γ_d=0.500 distill=0.3452 z_S=-0.849 z_T_b=-0.261 δ=0.5
+[distill-v2] 23:17:51 step 30600/50000 loss=34.2791 ce=5.2534 tens=9.6665 γ_d=0.500 distill=2.6172 z_S=-0.849 z_T_b=0.769 δ=0.5
+[distill-v2] 23:17:59 step 30700/50000 loss=25.5020 ce=3.9158 tens=10.2125 γ_d=0.500 distill=0.9511 z_S=-0.849 z_T_b=0.127 δ=0.5
+[distill-v2] 23:18:07 step 30800/50000 loss=29.2766 ce=4.5648 tens=2.6155 γ_d=0.500 distill=2.9912 z_S=-0.849 z_T_b=0.881 δ=0.5
+[distill-v2] 23:18:16 step 30900/50000 loss=26.2093 ce=3.9060 tens=3.7932 γ_d=0.500 distill=4.4082 z_S=-0.849 z_T_b=1.251 δ=0.5
+[distill-v2] 23:18:24 step 31000/50000 loss=26.2352 ce=4.3256 tens=1.6101 γ_d=0.500 distill=0.0802 z_S=-0.849 z_T_b=-0.565 δ=0.5
+[distill-v2] 23:18:32 step 31100/50000 loss=22.9140 ce=3.5982 tens=4.8680 γ_d=0.500 distill=1.1895 z_S=-0.849 z_T_b=0.242 δ=0.5
+[distill-v2] 23:18:40 step 31200/50000 loss=27.0420 ce=4.2984 tens=4.7241 γ_d=0.500 distill=1.0854 z_S=-0.849 z_T_b=0.193 δ=0.5
+[distill-v2] 23:18:48 step 31300/50000 loss=19.6781 ce=3.0041 tens=4.5922 γ_d=0.500 distill=1.9298 z_S=-0.849 z_T_b=0.541 δ=0.5
+[distill-v2] 23:18:56 step 31400/50000 loss=20.4323 ce=3.1442 tens=10.3397 γ_d=0.500 distill=0.0322 z_S=-0.849 z_T_b=-1.028 δ=0.5
+[distill-v2] 23:19:04 step 31500/50000 loss=30.8957 ce=4.8306 tens=7.4951 γ_d=0.500 distill=1.5756 z_S=-0.849 z_T_b=0.407 δ=0.5
+[distill-v2] 23:19:13 step 31600/50000 loss=30.8073 ce=5.0241 tens=3.0826 γ_d=0.500 distill=0.4003 z_S=-0.849 z_T_b=-0.216 δ=0.5
+[distill-v2] 23:19:21 step 31700/50000 loss=26.9324 ce=4.1659 tens=4.9227 γ_d=0.500 distill=2.3969 z_S=-0.849 z_T_b=0.700 δ=0.5
+[distill-v2] 23:19:29 step 31800/50000 loss=22.5675 ce=3.6534 tens=3.6124 γ_d=0.500 distill=0.2107 z_S=-0.849 z_T_b=-0.390 δ=0.5
+[distill-v2] 23:19:37 step 31900/50000 loss=22.1369 ce=3.5942 tens=2.2639 γ_d=0.500 distill=0.4648 z_S=-0.849 z_T_b=-0.167 δ=0.5
+[distill-v2] 23:19:45 step 32000/50000 loss=18.3158 ce=2.9622 tens=3.4986 γ_d=0.500 distill=0.0355 z_S=-0.849 z_T_b=-0.660 δ=0.5
+[distill-v2] 23:19:53 step 32100/50000 loss=27.6124 ce=4.3223 tens=10.2697 γ_d=0.500 distill=0.2767 z_S=-0.849 z_T_b=-0.323 δ=0.5
+[distill-v2] 23:20:02 step 32200/50000 loss=27.2932 ce=4.0578 tens=7.0671 γ_d=0.500 distill=3.7721 z_S=-0.849 z_T_b=1.094 δ=0.5
+[distill-v2] 23:20:10 step 32300/50000 loss=20.2623 ce=3.1318 tens=7.7100 γ_d=0.500 distill=0.6305 z_S=-0.849 z_T_b=-0.054 δ=0.5
+[distill-v2] 23:20:18 step 32400/50000 loss=23.4407 ce=3.6110 tens=11.7882 γ_d=0.500 distill=0.0124 z_S=-0.849 z_T_b=-0.737 δ=0.5
+[distill-v2] 23:20:26 step 32500/50000 loss=23.0671 ce=3.3843 tens=8.3364 γ_d=0.500 distill=3.0213 z_S=-0.849 z_T_b=0.890 δ=0.5
+[distill-v2] 23:20:26   phi @ step 32500: min=37.36159123657536 mean=37.962643853822165 μ_S=38.41351351089406 σ_S=1.6778194348542348
+[distill-v2] 23:20:34 step 32600/50000 loss=24.8779 ce=3.9940 tens=3.1631 γ_d=0.500 distill=0.8790 z_S=-0.523 z_T_b=0.415 δ=0.5
+[distill-v2] 23:20:43 step 32700/50000 loss=26.6523 ce=4.1190 tens=12.9110 γ_d=0.500 distill=0.0036 z_S=-0.523 z_T_b=-0.583 δ=0.5
+[distill-v2] 23:20:51 step 32800/50000 loss=26.3436 ce=4.1039 tens=7.6608 γ_d=0.500 distill=1.1421 z_S=-0.523 z_T_b=0.546 δ=0.5
+[distill-v2] 23:20:59 step 32900/50000 loss=28.8566 ce=4.6192 tens=7.5735 γ_d=0.500 distill=0.0109 z_S=-0.523 z_T_b=-0.419 δ=0.5
+[distill-v2] 23:21:07 step 33000/50000 loss=27.8220 ce=4.5470 tens=3.5795 γ_d=0.500 distill=0.0062 z_S=-0.523 z_T_b=-0.444 δ=0.5
+[distill-v2] 23:21:15 step 33100/50000 loss=24.2931 ce=3.8597 tens=7.5662 γ_d=0.500 distill=0.0001 z_S=-0.523 z_T_b=-0.532 δ=0.5
+[distill-v2] 23:21:23 step 33200/50000 loss=25.1737 ce=3.7785 tens=7.3540 γ_d=0.500 distill=2.7987 z_S=-0.523 z_T_b=1.150 δ=0.5
+[distill-v2] 23:21:31 step 33300/50000 loss=31.3737 ce=4.7335 tens=9.5288 γ_d=0.500 distill=3.0862 z_S=-0.523 z_T_b=1.234 δ=0.5
+[distill-v2] 23:21:39 step 33400/50000 loss=24.3336 ce=3.9149 tens=2.3466 γ_d=0.500 distill=0.9846 z_S=-0.523 z_T_b=0.469 δ=0.5
+[distill-v2] 23:21:48 step 33500/50000 loss=22.2567 ce=3.4650 tens=6.7863 γ_d=0.500 distill=0.8974 z_S=-0.523 z_T_b=0.424 δ=0.5
+[distill-v2] 23:21:56 step 33600/50000 loss=27.7341 ce=4.3941 tens=8.0635 γ_d=0.500 distill=0.3200 z_S=-0.523 z_T_b=0.043 δ=0.5
+[distill-v2] 23:22:04 step 33700/50000 loss=36.0993 ce=5.6854 tens=9.2747 γ_d=0.500 distill=1.1916 z_S=-0.523 z_T_b=0.569 δ=0.5
+[distill-v2] 23:22:12 step 33800/50000 loss=21.0230 ce=3.3272 tens=5.2488 γ_d=0.500 distill=0.5454 z_S=-0.523 z_T_b=0.216 δ=0.5
+[distill-v2] 23:22:20 step 33900/50000 loss=25.6287 ce=4.1079 tens=3.2742 γ_d=0.500 distill=0.9803 z_S=-0.523 z_T_b=0.467 δ=0.5
+[distill-v2] 23:22:29 step 34000/50000 loss=21.7913 ce=3.4970 tens=4.7384 γ_d=0.500 distill=0.1974 z_S=-0.523 z_T_b=-0.079 δ=0.5
+[distill-v2] 23:22:37 step 34100/50000 loss=21.7299 ce=3.3202 tens=10.9723 γ_d=0.500 distill=0.3259 z_S=-0.523 z_T_b=0.048 δ=0.5
+[distill-v2] 23:22:45 step 34200/50000 loss=20.3954 ce=3.2706 tens=4.9345 γ_d=0.500 distill=0.0633 z_S=-0.523 z_T_b=-0.775 δ=0.5
+[distill-v2] 23:22:54 step 34300/50000 loss=23.3484 ce=3.7978 tens=3.4855 γ_d=0.500 distill=0.0776 z_S=-0.523 z_T_b=-0.801 δ=0.5
+[distill-v2] 23:23:02 step 34400/50000 loss=24.4006 ce=3.8453 tens=7.2696 γ_d=0.500 distill=0.4767 z_S=-0.523 z_T_b=0.167 δ=0.5
+[distill-v2] 23:23:10 step 34500/50000 loss=28.2596 ce=4.3281 tens=5.0582 γ_d=0.500 distill=3.0651 z_S=-0.523 z_T_b=1.228 δ=0.5
+[distill-v2] 23:23:18 step 34600/50000 loss=22.3649 ce=3.5133 tens=6.3071 γ_d=0.500 distill=0.6785 z_S=-0.523 z_T_b=0.301 δ=0.5
+[distill-v2] 23:23:26 step 34700/50000 loss=27.4175 ce=4.2317 tens=8.8789 γ_d=0.500 distill=1.3908 z_S=-0.523 z_T_b=0.656 δ=0.5
+[distill-v2] 23:23:35 step 34800/50000 loss=24.8607 ce=3.9346 tens=5.3501 γ_d=0.500 distill=0.9018 z_S=-0.523 z_T_b=0.427 δ=0.5
+[distill-v2] 23:23:43 step 34900/50000 loss=24.0926 ce=3.8028 tens=7.7665 γ_d=0.500 distill=0.2219 z_S=-0.523 z_T_b=-0.052 δ=0.5
+[distill-v2] 23:23:51 step 35000/50000 loss=21.4439 ce=3.4742 tens=3.9833 γ_d=0.500 distill=0.0028 z_S=-0.523 z_T_b=-0.576 δ=1.0
+[distill-v2] 23:23:52   phi @ step 35000: min=37.6104694801771 mean=38.69232665636425 μ_S=37.91287432450845 σ_S=1.0541866697567672
+[distill-v2] 23:24:20   F @ step 35000: F1_bleu1=0.0049 F2_phi=37.6105 F3_tens=7.8294
+[distill-v2] 23:24:20   SAVEPOINT @ step 35000 → /workspace/p9_pbeta_distill/savepoints/step_35000
+[distill-v2] 23:24:29 step 35100/50000 loss=25.3763 ce=3.9999 tens=9.1722 γ_d=0.500 distill=0.0022 z_S=-0.034 z_T_b=0.014 δ=1.0
+[distill-v2] 23:24:37 step 35200/50000 loss=24.0514 ce=3.8455 tens=6.3190 γ_d=0.500 distill=0.0613 z_S=-0.034 z_T_b=-0.281 δ=1.0
+[distill-v2] 23:24:45 step 35300/50000 loss=23.3012 ce=3.6748 tens=6.3822 γ_d=0.500 distill=0.5896 z_S=-0.034 z_T_b=-0.802 δ=1.0
+[distill-v2] 23:24:53 step 35400/50000 loss=26.0201 ce=4.0250 tens=12.1889 γ_d=0.500 distill=0.0834 z_S=-0.034 z_T_b=-0.322 δ=1.0
+[distill-v2] 23:25:01 step 35500/50000 loss=19.9992 ce=3.1754 tens=5.3679 γ_d=0.500 distill=0.2828 z_S=-0.034 z_T_b=-0.566 δ=1.0
+[distill-v2] 23:25:10 step 35600/50000 loss=26.1779 ce=4.1541 tens=8.2425 γ_d=0.500 distill=0.0341 z_S=-0.034 z_T_b=0.151 δ=1.0
+[distill-v2] 23:25:18 step 35700/50000 loss=14.7278 ce=2.2395 tens=7.4965 γ_d=0.500 distill=0.3327 z_S=-0.034 z_T_b=-0.610 δ=1.0
+[distill-v2] 23:25:26 step 35800/50000 loss=24.4716 ce=3.9369 tens=5.3783 γ_d=0.500 distill=0.0870 z_S=-0.034 z_T_b=-0.329 δ=1.0
+[distill-v2] 23:25:34 step 35900/50000 loss=24.3667 ce=3.8391 tens=8.3938 γ_d=0.500 distill=0.1460 z_S=-0.034 z_T_b=0.348 δ=1.0
+[distill-v2] 23:25:43 step 36000/50000 loss=28.3634 ce=4.4523 tens=7.3185 γ_d=0.500 distill=1.1039 z_S=-0.034 z_T_b=1.017 δ=1.0
+[distill-v2] 23:25:51 step 36100/50000 loss=27.1926 ce=4.3923 tens=5.3907 γ_d=0.500 distill=0.0606 z_S=-0.034 z_T_b=-0.280 δ=1.0
+[distill-v2] 23:25:59 step 36200/50000 loss=15.8108 ce=2.5100 tens=4.7880 γ_d=0.500 distill=0.0654 z_S=-0.034 z_T_b=-0.289 δ=1.0
+[distill-v2] 23:26:07 step 36300/50000 loss=26.3733 ce=4.1152 tens=10.1127 γ_d=0.500 distill=0.3308 z_S=-0.034 z_T_b=0.541 δ=1.0
+[distill-v2] 23:26:16 step 36400/50000 loss=32.1554 ce=5.0167 tens=10.8414 γ_d=0.500 distill=0.8584 z_S=-0.034 z_T_b=0.893 δ=1.0
+[distill-v2] 23:26:24 step 36500/50000 loss=38.6457 ce=6.1643 tens=9.3606 γ_d=0.500 distill=0.5122 z_S=-0.034 z_T_b=0.682 δ=1.0
+[distill-v2] 23:26:32 step 36600/50000 loss=18.8890 ce=2.9863 tens=4.7919 γ_d=0.500 distill=0.5051 z_S=-0.034 z_T_b=-0.744 δ=1.0
+[distill-v2] 23:26:41 step 36700/50000 loss=21.0773 ce=3.3913 tens=3.2841 γ_d=0.500 distill=0.4736 z_S=-0.034 z_T_b=0.654 δ=1.0
+[distill-v2] 23:26:49 step 36800/50000 loss=22.7802 ce=3.5433 tens=9.5233 γ_d=0.500 distill=0.1843 z_S=-0.034 z_T_b=0.396 δ=1.0
+[distill-v2] 23:26:57 step 36900/50000 loss=19.1461 ce=2.9821 tens=7.0130 γ_d=0.500 distill=0.4029 z_S=-0.034 z_T_b=-0.668 δ=1.0
+[distill-v2] 23:27:06 step 37000/50000 loss=20.6304 ce=3.3134 tens=4.6949 γ_d=0.500 distill=0.0920 z_S=-0.034 z_T_b=0.270 δ=1.0
+[distill-v2] 23:27:14 step 37100/50000 loss=21.2932 ce=3.3499 tens=7.1064 γ_d=0.500 distill=0.2556 z_S=-0.034 z_T_b=-0.539 δ=1.0
+[distill-v2] 23:27:22 step 37200/50000 loss=24.0301 ce=3.6456 tens=14.3588 γ_d=0.500 distill=0.0056 z_S=-0.034 z_T_b=-0.109 δ=1.0
+[distill-v2] 23:27:30 step 37300/50000 loss=23.9073 ce=3.8000 tens=6.6372 γ_d=0.500 distill=0.2233 z_S=-0.034 z_T_b=0.439 δ=1.0
+[distill-v2] 23:27:38 step 37400/50000 loss=19.9792 ce=3.2184 tens=4.4553 γ_d=0.500 distill=0.0009 z_S=-0.034 z_T_b=-0.005 δ=1.0
+[distill-v2] 23:27:47 step 37500/50000 loss=16.8617 ce=2.6245 tens=7.1888 γ_d=0.500 distill=0.0733 z_S=-0.034 z_T_b=0.237 δ=1.0
+[distill-v2] 23:27:47   phi @ step 37500: min=36.075913862673886 mean=37.997592350264966 μ_S=37.632154444136766 σ_S=0.6436237057063038
+[distill-v2] 23:27:55 step 37600/50000 loss=21.6623 ce=3.2815 tens=6.2100 γ_d=0.500 distill=2.0832 z_S=-1.951 z_T_b=-0.508 δ=1.0
+[distill-v2] 23:28:03 step 37700/50000 loss=26.7789 ce=3.7573 tens=13.8883 γ_d=0.500 distill=4.3037 z_S=-1.951 z_T_b=0.123 δ=1.0
+[distill-v2] 23:28:12 step 37800/50000 loss=25.6645 ce=3.7993 tens=9.0394 γ_d=0.500 distill=3.0257 z_S=-1.951 z_T_b=-0.212 δ=1.0
+[distill-v2] 23:28:20 step 37900/50000 loss=32.5369 ce=5.0014 tens=8.1874 γ_d=0.500 distill=2.6012 z_S=-1.951 z_T_b=-0.339 δ=1.0
+[distill-v2] 23:28:28 step 38000/50000 loss=23.6115 ce=3.5249 tens=12.0674 γ_d=0.500 distill=1.3036 z_S=-1.951 z_T_b=-0.810 δ=1.0
+[distill-v2] 23:28:36 step 38100/50000 loss=27.9490 ce=4.3202 tens=7.4251 γ_d=0.500 distill=1.8284 z_S=-1.951 z_T_b=-0.599 δ=1.0
+[distill-v2] 23:28:44 step 38200/50000 loss=33.4375 ce=4.9320 tens=12.0115 γ_d=0.500 distill=4.0875 z_S=-1.951 z_T_b=0.070 δ=1.0
+[distill-v2] 23:28:52 step 38300/50000 loss=23.9790 ce=3.4815 tens=9.5381 γ_d=0.500 distill=3.3187 z_S=-1.951 z_T_b=-0.130 δ=1.0
+[distill-v2] 23:29:00 step 38400/50000 loss=26.6196 ce=3.6967 tens=8.1232 γ_d=0.500 distill=6.4420 z_S=-1.951 z_T_b=0.587 δ=1.0
+[distill-v2] 23:29:09 step 38500/50000 loss=20.9621 ce=3.0537 tens=6.1558 γ_d=0.500 distill=3.4327 z_S=-1.951 z_T_b=-0.099 δ=1.0
+[distill-v2] 23:29:17 step 38600/50000 loss=24.8165 ce=3.6429 tens=9.0748 γ_d=0.500 distill=3.1954 z_S=-1.951 z_T_b=-0.164 δ=1.0
+[distill-v2] 23:29:26 step 38700/50000 loss=18.8204 ce=2.9250 tens=1.5058 γ_d=0.500 distill=2.0894 z_S=-1.951 z_T_b=-0.506 δ=1.0
+[distill-v2] 23:29:34 step 38800/50000 loss=25.1286 ce=3.5784 tens=8.5546 γ_d=0.500 distill=4.7495 z_S=-1.951 z_T_b=0.228 δ=1.0
+[distill-v2] 23:29:42 step 38900/50000 loss=37.0030 ce=5.1580 tens=10.1659 γ_d=0.500 distill=9.0604 z_S=-1.951 z_T_b=1.059 δ=1.0
+[distill-v2] 23:29:51 step 39000/50000 loss=21.1594 ce=3.0344 tens=3.2108 γ_d=0.500 distill=4.9425 z_S=-1.951 z_T_b=0.272 δ=1.0
+[distill-v2] 23:29:59 step 39100/50000 loss=33.8021 ce=4.6339 tens=6.5700 γ_d=0.500 distill=10.0261 z_S=-1.951 z_T_b=1.215 δ=1.0
+[distill-v2] 23:30:07 step 39200/50000 loss=37.0651 ce=5.5021 tens=5.9313 γ_d=0.500 distill=6.3250 z_S=-1.951 z_T_b=0.563 δ=1.0
+[distill-v2] 23:30:16 step 39300/50000 loss=25.4974 ce=3.9198 tens=1.3266 γ_d=0.500 distill=3.5595 z_S=-1.951 z_T_b=-0.065 δ=1.0
+[distill-v2] 23:30:25 step 39400/50000 loss=25.3871 ce=3.8695 tens=2.8121 γ_d=0.500 distill=3.4965 z_S=-1.951 z_T_b=-0.082 δ=1.0
+[distill-v2] 23:30:33 step 39500/50000 loss=41.5250 ce=5.4785 tens=11.5549 γ_d=0.500 distill=13.8414 z_S=-1.951 z_T_b=1.769 δ=1.0
+[distill-v2] 23:30:42 step 39600/50000 loss=19.2757 ce=2.9123 tens=6.2769 γ_d=0.500 distill=1.7205 z_S=-1.951 z_T_b=-0.640 δ=1.0
+[distill-v2] 23:30:50 step 39700/50000 loss=19.9280 ce=2.8566 tens=3.6782 γ_d=0.500 distill=4.4728 z_S=-1.951 z_T_b=0.163 δ=1.0
+[distill-v2] 23:30:59 step 39800/50000 loss=20.4298 ce=3.0788 tens=7.7693 γ_d=0.500 distill=1.5830 z_S=-1.951 z_T_b=-0.693 δ=1.0
+[distill-v2] 23:31:08 step 39900/50000 loss=26.2039 ce=4.0662 tens=2.6447 γ_d=0.500 distill=2.8198 z_S=-1.951 z_T_b=-0.272 δ=1.0
+[distill-v2] 23:31:16 step 40000/50000 loss=21.0824 ce=2.9668 tens=7.7131 γ_d=0.500 distill=4.2491 z_S=-1.951 z_T_b=0.110 δ=1.0
+[distill-v2] 23:31:17   phi @ step 40000: min=35.452487980463104 mean=37.55951324553201 μ_S=37.35400281263604 σ_S=0.6549362998479336
+[distill-v2] 23:31:46   F @ step 40000: F1_bleu1=0.0049 F2_phi=35.4525 F3_tens=7.9619
+[distill-v2] 23:31:46   SAVEPOINT @ step 40000 → /workspace/p9_pbeta_distill/savepoints/step_40000
+[distill-v2] 23:31:54 step 40100/50000 loss=28.1634 ce=3.9098 tens=8.4974 γ_d=0.500 distill=6.8597 z_S=-2.274 z_T_b=0.345 δ=1.0
+[distill-v2] 23:32:03 step 40200/50000 loss=19.9860 ce=2.6897 tens=11.6263 γ_d=0.500 distill=4.2079 z_S=-2.274 z_T_b=-0.222 δ=1.0
+[distill-v2] 23:32:11 step 40300/50000 loss=27.7888 ce=4.0269 tens=7.1461 γ_d=0.500 distill=5.1111 z_S=-2.274 z_T_b=-0.013 δ=1.0
+[distill-v2] 23:32:20 step 40400/50000 loss=26.2780 ce=3.8405 tens=8.2206 γ_d=0.500 distill=4.0041 z_S=-2.274 z_T_b=-0.273 δ=1.0
+[distill-v2] 23:32:28 step 40500/50000 loss=24.5926 ce=3.5794 tens=3.2001 γ_d=0.500 distill=5.2722 z_S=-2.274 z_T_b=0.022 δ=1.0
+[distill-v2] 23:32:37 step 40600/50000 loss=26.3935 ce=3.9336 tens=7.0610 γ_d=0.500 distill=3.4650 z_S=-2.274 z_T_b=-0.412 δ=1.0
+[distill-v2] 23:32:46 step 40700/50000 loss=27.8477 ce=4.0247 tens=6.2142 γ_d=0.500 distill=5.5352 z_S=-2.274 z_T_b=0.079 δ=1.0
+[distill-v2] 23:32:54 step 40800/50000 loss=28.4499 ce=3.9073 tens=6.9174 γ_d=0.500 distill=7.9368 z_S=-2.274 z_T_b=0.543 δ=1.0
+[distill-v2] 23:33:03 step 40900/50000 loss=23.5460 ce=3.3068 tens=4.1154 γ_d=0.500 distill=6.1756 z_S=-2.274 z_T_b=0.211 δ=1.0
+[distill-v2] 23:33:11 step 41000/50000 loss=27.5025 ce=3.7601 tens=7.6462 γ_d=0.500 distill=7.5902 z_S=-2.274 z_T_b=0.481 δ=1.0
+[distill-v2] 23:33:20 step 41100/50000 loss=22.8852 ce=3.2798 tens=4.8317 γ_d=0.500 distill=4.9634 z_S=-2.274 z_T_b=-0.046 δ=1.0
+[distill-v2] 23:33:28 step 41200/50000 loss=30.5008 ce=4.4927 tens=3.9983 γ_d=0.500 distill=5.8897 z_S=-2.274 z_T_b=0.153 δ=1.0
+[distill-v2] 23:33:37 step 41300/50000 loss=25.1608 ce=3.6485 tens=5.5568 γ_d=0.500 distill=4.8732 z_S=-2.274 z_T_b=-0.066 δ=1.0
+[distill-v2] 23:33:46 step 41400/50000 loss=23.9687 ce=3.2591 tens=5.0951 γ_d=0.500 distill=7.3000 z_S=-2.274 z_T_b=0.428 δ=1.0
+[distill-v2] 23:33:54 step 41500/50000 loss=25.4183 ce=3.8364 tens=7.9392 γ_d=0.500 distill=2.4177 z_S=-2.274 z_T_b=-0.719 δ=1.0
+[distill-v2] 23:34:03 step 41600/50000 loss=21.4601 ce=3.0826 tens=7.4676 γ_d=0.500 distill=3.6883 z_S=-2.274 z_T_b=-0.353 δ=1.0
+[distill-v2] 23:34:11 step 41700/50000 loss=21.5107 ce=3.1270 tens=5.1228 γ_d=0.500 distill=3.9605 z_S=-2.274 z_T_b=-0.284 δ=1.0
+[distill-v2] 23:34:20 step 41800/50000 loss=28.6059 ce=4.2946 tens=8.0713 γ_d=0.500 distill=3.2556 z_S=-2.274 z_T_b=-0.469 δ=1.0
+[distill-v2] 23:34:28 step 41900/50000 loss=26.9298 ce=3.6315 tens=8.4952 γ_d=0.500 distill=7.7328 z_S=-2.274 z_T_b=0.507 δ=1.0
+[distill-v2] 23:34:37 step 42000/50000 loss=23.6745 ce=3.2506 tens=6.3300 γ_d=0.500 distill=6.4428 z_S=-2.274 z_T_b=0.264 δ=1.0
+[distill-v2] 23:34:45 step 42100/50000 loss=23.8543 ce=3.5523 tens=6.3935 γ_d=0.500 distill=3.1625 z_S=-2.274 z_T_b=-0.495 δ=1.0
+[distill-v2] 23:34:54 step 42200/50000 loss=27.3626 ce=3.5374 tens=4.8664 γ_d=0.500 distill=10.8166 z_S=-2.274 z_T_b=1.015 δ=1.0
+[distill-v2] 23:35:02 step 42300/50000 loss=20.6777 ce=2.9993 tens=8.5090 γ_d=0.500 distill=2.8117 z_S=-2.274 z_T_b=-0.597 δ=1.0
+[distill-v2] 23:35:11 step 42400/50000 loss=20.1256 ce=2.5678 tens=11.0525 γ_d=0.500 distill=6.1219 z_S=-2.274 z_T_b=0.200 δ=1.0
+[distill-v2] 23:35:19 step 42500/50000 loss=26.2574 ce=3.5888 tens=7.8160 γ_d=0.500 distill=7.1043 z_S=-2.274 z_T_b=0.392 δ=1.0
+[distill-v2] 23:35:20   phi @ step 42500: min=36.42118684568225 mean=37.443754648155945 μ_S=37.02109699670175 σ_S=0.6898573368300671
+[distill-v2] 23:35:28 step 42600/50000 loss=31.1528 ce=4.9714 tens=4.8062 γ_d=0.500 distill=1.2068 z_S=-0.706 z_T_b=0.393 δ=1.0
+[distill-v2] 23:35:37 step 42700/50000 loss=29.5404 ce=4.7288 tens=5.7612 γ_d=0.500 distill=0.6075 z_S=-0.706 z_T_b=0.074 δ=1.0
+[distill-v2] 23:35:46 step 42800/50000 loss=24.1092 ce=3.5950 tens=9.9716 γ_d=0.500 distill=2.0864 z_S=-0.706 z_T_b=0.739 δ=1.0
+[distill-v2] 23:35:54 step 42900/50000 loss=25.8284 ce=3.9312 tens=14.4984 γ_d=0.500 distill=0.1332 z_S=-0.706 z_T_b=-0.341 δ=1.0
+[distill-v2] 23:36:03 step 43000/50000 loss=34.2139 ce=5.1539 tens=21.4178 γ_d=0.500 distill=0.1554 z_S=-0.706 z_T_b=-0.311 δ=1.0
+[distill-v2] 23:36:11 step 43100/50000 loss=17.9935 ce=2.5569 tens=17.6667 γ_d=0.500 distill=0.0047 z_S=-0.706 z_T_b=-0.774 δ=1.0
+[distill-v2] 23:36:19 step 43200/50000 loss=22.3781 ce=3.3033 tens=8.7061 γ_d=0.500 distill=2.5044 z_S=-0.706 z_T_b=0.877 δ=1.0
+[distill-v2] 23:36:28 step 43300/50000 loss=18.4360 ce=2.6855 tens=10.8557 γ_d=0.500 distill=1.3892 z_S=-0.706 z_T_b=0.473 δ=1.0
+[distill-v2] 23:36:37 step 43400/50000 loss=24.1781 ce=3.5706 tens=12.7054 γ_d=0.500 distill=1.6979 z_S=-0.706 z_T_b=0.597 δ=1.0
+[distill-v2] 23:36:45 step 43500/50000 loss=19.3215 ce=3.0370 tens=6.5565 γ_d=0.500 distill=0.2322 z_S=-0.706 z_T_b=-0.224 δ=1.0
+[distill-v2] 23:36:54 step 43600/50000 loss=27.0049 ce=4.2065 tens=6.5699 γ_d=0.500 distill=1.5604 z_S=-0.706 z_T_b=0.544 δ=1.0
+[distill-v2] 23:37:02 step 43700/50000 loss=20.2763 ce=3.2336 tens=2.9760 γ_d=0.500 distill=0.8566 z_S=-0.706 z_T_b=0.220 δ=1.0
+[distill-v2] 23:37:11 step 43800/50000 loss=20.6035 ce=3.2746 tens=3.0163 γ_d=0.500 distill=1.0074 z_S=-0.706 z_T_b=0.298 δ=1.0
+[distill-v2] 23:37:19 step 43900/50000 loss=24.2671 ce=3.8345 tens=2.2947 γ_d=0.500 distill=1.8318 z_S=-0.706 z_T_b=0.648 δ=1.0
+[distill-v2] 23:37:28 step 44000/50000 loss=27.7722 ce=4.5035 tens=3.4103 γ_d=0.500 distill=0.4790 z_S=-0.706 z_T_b=-0.013 δ=1.0
+[distill-v2] 23:37:36 step 44100/50000 loss=26.6306 ce=4.2601 tens=3.4126 γ_d=0.500 distill=1.1166 z_S=-0.706 z_T_b=0.351 δ=1.0
+[distill-v2] 23:37:44 step 44200/50000 loss=22.6891 ce=3.5853 tens=6.7033 γ_d=0.500 distill=0.3439 z_S=-0.706 z_T_b=-0.119 δ=1.0
+[distill-v2] 23:37:53 step 44300/50000 loss=30.8444 ce=4.9383 tens=7.1414 γ_d=0.500 distill=0.2863 z_S=-0.706 z_T_b=-0.171 δ=1.0
+[distill-v2] 23:38:02 step 44400/50000 loss=21.3562 ce=3.3206 tens=5.5690 γ_d=0.500 distill=1.1948 z_S=-0.706 z_T_b=0.387 δ=1.0
+[distill-v2] 23:38:10 step 44500/50000 loss=20.0986 ce=3.1896 tens=4.8265 γ_d=0.500 distill=0.4741 z_S=-0.706 z_T_b=-0.017 δ=1.0
+[distill-v2] 23:38:19 step 44600/50000 loss=18.6368 ce=2.8832 tens=7.3229 γ_d=0.500 distill=0.4784 z_S=-0.706 z_T_b=-0.014 δ=1.0
+[distill-v2] 23:38:27 step 44700/50000 loss=25.4699 ce=3.9410 tens=10.9938 γ_d=0.500 distill=0.3495 z_S=-0.706 z_T_b=-0.114 δ=1.0
+[distill-v2] 23:38:36 step 44800/50000 loss=29.3849 ce=4.6751 tens=7.7486 γ_d=0.500 distill=0.3443 z_S=-0.706 z_T_b=-0.119 δ=1.0
+[distill-v2] 23:38:44 step 44900/50000 loss=32.1792 ce=5.1134 tens=9.5724 γ_d=0.500 distill=0.1256 z_S=-0.706 z_T_b=-0.351 δ=1.0
+[distill-v2] 23:38:53 step 45000/50000 loss=24.6786 ce=3.6113 tens=7.2550 γ_d=0.500 distill=3.8455 z_S=-0.706 z_T_b=1.255 δ=1.0
+[distill-v2] 23:38:53   phi @ step 45000: min=36.17640416683293 mean=37.348359557777314 μ_S=36.898678804116535 σ_S=0.6767086709558137
+[distill-v2] 23:39:22   F @ step 45000: F1_bleu1=0.0049 F2_phi=36.1764 F3_tens=7.8735
+[distill-v2] 23:39:22   SAVEPOINT @ step 45000 → /workspace/p9_pbeta_distill/savepoints/step_45000
+[distill-v2] 23:39:30 step 45100/50000 loss=25.6837 ce=4.1198 tens=6.0625 γ_d=0.500 distill=0.1109 z_S=-0.873 z_T_b=-0.540 δ=1.0
+[distill-v2] 23:39:39 step 45200/50000 loss=24.5630 ce=3.7588 tens=8.4953 γ_d=0.500 distill=1.4717 z_S=-0.873 z_T_b=0.340 δ=1.0
+[distill-v2] 23:39:48 step 45300/50000 loss=33.2770 ce=4.9503 tens=12.1883 γ_d=0.500 distill=3.4945 z_S=-0.873 z_T_b=0.996 δ=1.0
+[distill-v2] 23:39:56 step 45400/50000 loss=21.3762 ce=3.2654 tens=4.0355 γ_d=0.500 distill=2.3564 z_S=-0.873 z_T_b=0.662 δ=1.0
+[distill-v2] 23:40:05 step 45500/50000 loss=21.2259 ce=3.3397 tens=5.4121 γ_d=0.500 distill=0.7520 z_S=-0.873 z_T_b=-0.006 δ=1.0
+[distill-v2] 23:40:13 step 45600/50000 loss=21.9401 ce=3.5815 tens=2.5828 γ_d=0.500 distill=0.1279 z_S=-0.873 z_T_b=-0.515 δ=1.0
+[distill-v2] 23:40:21 step 45700/50000 loss=21.4391 ce=3.3449 tens=7.8108 γ_d=0.500 distill=0.3959 z_S=-0.873 z_T_b=-0.244 δ=1.0
+[distill-v2] 23:40:30 step 45800/50000 loss=22.7871 ce=3.5021 tens=8.9030 γ_d=0.500 distill=0.8782 z_S=-0.873 z_T_b=0.064 δ=1.0
+[distill-v2] 23:40:38 step 45900/50000 loss=21.2277 ce=3.2273 tens=9.7896 γ_d=0.500 distill=0.7905 z_S=-0.873 z_T_b=0.016 δ=1.0
+[distill-v2] 23:40:47 step 46000/50000 loss=25.1246 ce=3.9671 tens=7.6023 γ_d=0.500 distill=0.3638 z_S=-0.873 z_T_b=-0.270 δ=1.0
+[distill-v2] 23:40:55 step 46100/50000 loss=18.8727 ce=2.9425 tens=6.5248 γ_d=0.500 distill=0.4781 z_S=-0.873 z_T_b=-0.182 δ=1.0
+[distill-v2] 23:41:04 step 46200/50000 loss=20.2538 ce=3.1265 tens=2.5002 γ_d=0.500 distill=2.2390 z_S=-0.873 z_T_b=0.623 δ=1.0
+[distill-v2] 23:41:12 step 46300/50000 loss=35.2375 ce=5.7108 tens=6.2420 γ_d=0.500 distill=0.0732 z_S=-0.873 z_T_b=-0.602 δ=1.0
+[distill-v2] 23:41:21 step 46400/50000 loss=27.0436 ce=4.3700 tens=5.4678 γ_d=0.500 distill=0.0072 z_S=-0.873 z_T_b=-0.788 δ=1.0
+[distill-v2] 23:41:29 step 46500/50000 loss=22.3763 ce=3.5709 tens=5.3689 γ_d=0.500 distill=0.2917 z_S=-0.873 z_T_b=-0.333 δ=1.0
+[distill-v2] 23:41:37 step 46600/50000 loss=20.7060 ce=3.2750 tens=5.7745 γ_d=0.500 distill=0.3796 z_S=-0.873 z_T_b=-0.257 δ=1.0
+[distill-v2] 23:41:46 step 46700/50000 loss=28.6227 ce=4.3234 tens=11.8828 γ_d=0.500 distill=1.8002 z_S=-0.873 z_T_b=0.469 δ=1.0
+[distill-v2] 23:41:54 step 46800/50000 loss=17.2699 ce=2.6349 tens=7.6235 γ_d=0.500 distill=0.6344 z_S=-0.873 z_T_b=-0.077 δ=1.0
+[distill-v2] 23:42:03 step 46900/50000 loss=18.8365 ce=2.8784 tens=4.9752 γ_d=0.500 distill=1.6402 z_S=-0.873 z_T_b=0.408 δ=1.0
+[distill-v2] 23:42:11 step 47000/50000 loss=19.4940 ce=3.1107 tens=4.5468 γ_d=0.500 distill=0.2950 z_S=-0.873 z_T_b=-0.330 δ=1.0
+[distill-v2] 23:42:20 step 47100/50000 loss=25.9818 ce=4.0956 tens=4.7686 γ_d=0.500 distill=1.3853 z_S=-0.873 z_T_b=0.304 δ=1.0
+[distill-v2] 23:42:28 step 47200/50000 loss=16.9662 ce=2.6388 tens=5.6099 γ_d=0.500 distill=0.5839 z_S=-0.873 z_T_b=-0.109 δ=1.0
+[distill-v2] 23:42:37 step 47300/50000 loss=23.8231 ce=3.8756 tens=3.5546 γ_d=0.500 distill=0.0721 z_S=-0.873 z_T_b=-0.605 δ=1.0
+[distill-v2] 23:42:46 step 47400/50000 loss=29.3187 ce=4.6765 tens=5.7197 γ_d=0.500 distill=0.8036 z_S=-0.873 z_T_b=0.023 δ=1.0
+[distill-v2] 23:42:54 step 47500/50000 loss=22.9280 ce=3.6297 tens=4.3018 γ_d=0.500 distill=1.0095 z_S=-0.873 z_T_b=0.132 δ=1.0
+[distill-v2] 23:42:55   phi @ step 47500: min=37.10444780259151 mean=38.34509855437297 μ_S=36.76173279492696 σ_S=0.6704204500266902
+[distill-v2] 23:43:03 step 47600/50000 loss=19.2568 ce=3.1633 tens=1.8067 γ_d=0.500 distill=0.0125 z_S=0.467 z_T_b=0.355 δ=1.0
+[distill-v2] 23:43:12 step 47700/50000 loss=32.0938 ce=5.1941 tens=5.5283 γ_d=0.500 distill=0.1993 z_S=0.467 z_T_b=0.020 δ=1.0
+[distill-v2] 23:43:20 step 47800/50000 loss=17.4352 ce=2.7461 tens=4.5127 γ_d=0.500 distill=0.5630 z_S=0.467 z_T_b=-0.283 δ=1.0
+[distill-v2] 23:43:29 step 47900/50000 loss=16.5878 ce=2.5791 tens=3.7718 γ_d=0.500 distill=1.0947 z_S=0.467 z_T_b=-0.579 δ=1.0
+[distill-v2] 23:43:37 step 48000/50000 loss=23.1062 ce=3.4060 tens=17.3893 γ_d=0.500 distill=0.1234 z_S=0.467 z_T_b=0.116 δ=1.0
+[distill-v2] 23:43:45 step 48100/50000 loss=19.8367 ce=3.1427 tens=5.1500 γ_d=0.500 distill=0.4163 z_S=0.467 z_T_b=-0.178 δ=1.0
+[distill-v2] 23:43:54 step 48200/50000 loss=27.0924 ce=4.3433 tens=6.6486 γ_d=0.500 distill=0.0701 z_S=0.467 z_T_b=0.732 δ=1.0
+[distill-v2] 23:44:02 step 48300/50000 loss=21.7259 ce=3.4487 tens=6.4601 γ_d=0.500 distill=0.1296 z_S=0.467 z_T_b=0.107 δ=1.0
+[distill-v2] 23:44:11 step 48400/50000 loss=20.5448 ce=3.1646 tens=10.3697 γ_d=0.500 distill=0.0036 z_S=0.467 z_T_b=0.407 δ=1.0
+[distill-v2] 23:44:19 step 48500/50000 loss=15.9954 ce=2.5234 tens=3.0159 γ_d=0.500 distill=0.8056 z_S=0.467 z_T_b=-0.431 δ=1.0
+[distill-v2] 23:44:28 step 48600/50000 loss=21.2932 ce=3.3813 tens=6.5443 γ_d=0.500 distill=0.0481 z_S=0.467 z_T_b=0.686 δ=1.0
+[distill-v2] 23:44:36 step 48700/50000 loss=22.9403 ce=3.5268 tens=11.7370 γ_d=0.500 distill=0.0381 z_S=0.467 z_T_b=0.662 δ=1.0
+[distill-v2] 23:44:45 step 48800/50000 loss=18.0691 ce=2.8437 tens=6.4674 γ_d=0.500 distill=0.0738 z_S=0.467 z_T_b=0.739 δ=1.0
+[distill-v2] 23:44:53 step 48900/50000 loss=26.7185 ce=4.2422 tens=6.9917 γ_d=0.500 distill=0.4332 z_S=0.467 z_T_b=-0.191 δ=1.0
+[distill-v2] 23:45:01 step 49000/50000 loss=29.7170 ce=4.8571 tens=3.6615 γ_d=0.500 distill=0.0500 z_S=0.467 z_T_b=0.243 δ=1.0
+[distill-v2] 23:45:10 step 49100/50000 loss=17.8933 ce=2.7119 tens=8.3154 γ_d=0.500 distill=0.7489 z_S=0.467 z_T_b=-0.398 δ=1.0
+[distill-v2] 23:45:18 step 49200/50000 loss=23.2714 ce=3.6519 tens=8.8344 γ_d=0.500 distill=0.0703 z_S=0.467 z_T_b=0.202 δ=1.0
+[distill-v2] 23:45:27 step 49300/50000 loss=19.9486 ce=3.1041 tens=3.4805 γ_d=0.500 distill=1.6040 z_S=0.467 z_T_b=-0.800 δ=1.0
+[distill-v2] 23:45:35 step 49400/50000 loss=28.2531 ce=4.5977 tens=3.8672 γ_d=0.500 distill=0.1731 z_S=0.467 z_T_b=0.883 δ=1.0
+[distill-v2] 23:45:44 step 49500/50000 loss=19.9062 ce=3.1254 tens=5.2937 γ_d=0.500 distill=0.7189 z_S=0.467 z_T_b=-0.381 δ=1.0
+[distill-v2] 23:45:52 step 49600/50000 loss=23.8862 ce=3.7271 tens=4.1846 γ_d=0.500 distill=1.7918 z_S=0.467 z_T_b=-0.872 δ=1.0
+[distill-v2] 23:46:01 step 49700/50000 loss=20.4720 ce=3.0800 tens=12.8399 γ_d=0.500 distill=0.1320 z_S=0.467 z_T_b=0.104 δ=1.0
+[distill-v2] 23:46:09 step 49800/50000 loss=19.1915 ce=2.8524 tens=12.7978 γ_d=0.500 distill=0.3143 z_S=0.467 z_T_b=-0.094 δ=1.0
+[distill-v2] 23:46:18 step 49900/50000 loss=24.5487 ce=3.9703 tens=4.1113 γ_d=0.500 distill=0.2207 z_S=0.467 z_T_b=-0.003 δ=1.0
+[distill-v2] 23:46:26 step 50000/50000 loss=14.7877 ce=2.3571 tens=0.7720 γ_d=0.500 distill=1.0591 z_S=0.467 z_T_b=-0.562 δ=1.0
+[distill-v2] 23:46:27   phi @ step 50000: min=35.537549088957824 mean=36.744969071614996 μ_S=36.78781050291279 σ_S=0.6781279438326733
+[distill-v2] 23:46:55   F @ step 50000: F1_bleu1=0.0039 F2_phi=35.5375 F3_tens=7.9679
+[distill-v2] 23:46:56   SAVEPOINT @ step 50000 → /workspace/p9_pbeta_distill/savepoints/step_50000
+[distill-v2] 23:46:56 train loop exited elapsed=4349.7s steps_completed=50000 aborted=False shutting_down=False
+[distill-v2] 23:46:56 FINAL/PARTIAL adapter saved → /workspace/p9_pbeta_distill/savepoints/final
+[distill-v2] 23:46:56 computing final phi_star...
+[distill-v2] 23:46:56 final phi_star_min=35.537549088957824 mean=36.744969071614996
+[distill-v2] 23:46:56 computing final F metrics...
+[distill-v2] 23:47:25 final F: F1_bleu1=0.0039 F2_phi=35.5375 F3_tens=7.9679
+[distill-v2] 23:47:25 VERDICT written → /workspace/p9_pbeta_distill/results/verdict.json: PRODUCTION_25K_FULL_PASS
+[distill-v2] 23:47:25 DONE step=50000 verdict=PRODUCTION_25K_FULL_PASS graceful=False
+ill/results/verdict.json: PRODUCTION_25K_FULL_PASS
+[distill-v2] 23:47:25 DONE step=50000 verdict=PRODUCTION_25K_FULL_PASS graceful=False

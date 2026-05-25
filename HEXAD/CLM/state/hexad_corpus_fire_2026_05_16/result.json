@@ -1,0 +1,27 @@
+{
+  "fire": "hexad_corpus_fire_2026_05_16",
+  "phase": "PLAN.md §7 #1 — real-corpus from-scratch language fire (3/3)",
+  "trainer": "HEXAD/D/d_corpus_fire.hexa (d_train5 FULL n_layer ConsciousDecoderV2-equiv, hexa-native compiled)",
+  "corpus": "training/corpus_consciousness_v1.jsonl (byte-level V=256, 8 windows stride 512)",
+  "config": {"d": 32, "n_layer": 3, "nh": 4, "nkv": 2, "h": 64, "T": 16, "V": 256, "nsamp": 8, "steps": 80},
+  "init_weights": "RANDOM seed-fixed LCG (g_clm_from_scratch, base_ckpt=NONE)",
+  "result": {
+    "gn2_init": 7.97116,
+    "gn2_final": 3.73374e-07,
+    "gn2_collapse_x": 21349000,
+    "acc_init": "0/8",
+    "acc_final": "8/8",
+    "grad_exact": "PASS (analytic vs central finite-diff, full composed reverse)",
+    "verdict": "F-D-FIRE PASS (EMPIRICAL — real-corpus from-scratch training)"
+  },
+  "wall_sec": 23.3,
+  "cost_usd": 0.0,
+  "runtime": "compiled-native CPU pure-hexa, Mac local; HEXA_MEM_UNLIMITED=1 required (AdamW loop intermediate alloc > 4GB cap)",
+  "tier": "EMPIRICAL (B-D-NOTE — SGD 수렴 OUTCOME, NOT 🔵; exact gradient = B-D-4 closed 🔵 reused)",
+  "honest_c3": [
+    "first REAL-corpus fire — prior fires all synthetic byte-toy; 'synthetic' honest-gap 절반 해소",
+    "8 corpus windows = small → acc 8/8 = memorization (윈도우 암기), NOT language-quality generalization",
+    "d=32·3L = CPU-feasible scale; 진짜 d=768·12L 언어품질은 GPU CUDA 텐서커널 필요 — pure-hexa CPU 기질 한계 (g3 real limit, named)",
+    "§8/g_blue_closed_mandate: corpus↔trainer 연결 = CE Shannon-floor (−ln p ≥ 0 closed) + exact-gradient (softmax−onehot = B-D-4 sympy 🔵)"
+  ]
+}

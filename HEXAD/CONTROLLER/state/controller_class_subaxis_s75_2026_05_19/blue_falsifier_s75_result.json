@@ -1,0 +1,201 @@
+{
+  "battery_id": "B-S75",
+  "research_section": "§75",
+  "title": "Controller-class sub-axis decomposition — closed-form sidecar",
+  "n_total": 5,
+  "n_pass": 5,
+  "all_pass": true,
+  "verdicts": [
+    {
+      "verdict_id": "B-S75-1",
+      "name": "SUB-AXIS-PARTITION-EXHAUSTIVE-DISJOINT-CLOSED",
+      "all_corners_count": 8,
+      "valid_corners": [
+        [
+          false,
+          false,
+          false
+        ],
+        [
+          true,
+          false,
+          false
+        ],
+        [
+          true,
+          true,
+          false
+        ],
+        [
+          true,
+          true,
+          true
+        ]
+      ],
+      "expected_cells": [
+        [
+          false,
+          false,
+          false
+        ],
+        [
+          true,
+          false,
+          false
+        ],
+        [
+          true,
+          true,
+          false
+        ],
+        [
+          true,
+          true,
+          true
+        ]
+      ],
+      "cardinality_ok": true,
+      "set_equality_ok": true,
+      "chain_ok": true,
+      "PASS": true
+    },
+    {
+      "verdict_id": "B-S75-2",
+      "name": "EACH-VARIANT-IS-DETERMINISTIC-CLOSED",
+      "rerun_count": 3,
+      "result_hashes": [
+        "d17a391e3b047075abd48f0230810a63f507c614c211083384f35a2dd9162390",
+        "d17a391e3b047075abd48f0230810a63f507c614c211083384f35a2dd9162390",
+        "d17a391e3b047075abd48f0230810a63f507c614c211083384f35a2dd9162390"
+      ],
+      "all_identical": true,
+      "forbidden_call_set": [
+        "autograd",
+        "model_forward",
+        "np_random",
+        "os_urandom",
+        "random",
+        "secrets",
+        "torch",
+        "uniform",
+        "urlopen"
+      ],
+      "forbidden_matches": [],
+      "no_forbidden_call": true,
+      "PASS": true
+    },
+    {
+      "verdict_id": "B-S75-3",
+      "name": "SURVIVE-PREDICATE-CLOSED",
+      "truth_table_rows": 16,
+      "pass_count": 1,
+      "exactly_one_pass": true,
+      "all_atoms_true_in_pass": true,
+      "result_consistency": [
+        {
+          "cell": "cell0_§24_baseline_no_A_no_B_no_C",
+          "cv": true,
+          "mf": true,
+          "iv": true,
+          "ni": true,
+          "predicate_eval": true,
+          "reported_non_degenerate": true,
+          "matches": true
+        },
+        {
+          "cell": "cell1_§73_A_only",
+          "cv": true,
+          "mf": true,
+          "iv": true,
+          "ni": true,
+          "predicate_eval": true,
+          "reported_non_degenerate": true,
+          "matches": true
+        },
+        {
+          "cell": "cell2_§73_AB",
+          "cv": true,
+          "mf": false,
+          "iv": true,
+          "ni": true,
+          "predicate_eval": false,
+          "reported_non_degenerate": false,
+          "matches": true
+        },
+        {
+          "cell": "cell3_§73_ABC_full",
+          "cv": true,
+          "mf": true,
+          "iv": true,
+          "ni": true,
+          "predicate_eval": true,
+          "reported_non_degenerate": true,
+          "matches": true
+        }
+      ],
+      "all_consistent": true,
+      "PASS": true
+    },
+    {
+      "verdict_id": "B-S75-4",
+      "name": "§24-CONTROL-COLLAPSES-AS-EXPECTED-CLOSED",
+      "biconditional_well_formed": true,
+      "truth_table": [
+        {
+          "nondeg": false,
+          "maj_geq": false,
+          "collapsed": true
+        },
+        {
+          "nondeg": false,
+          "maj_geq": true,
+          "collapsed": true
+        },
+        {
+          "nondeg": true,
+          "maj_geq": false,
+          "collapsed": false
+        },
+        {
+          "nondeg": true,
+          "maj_geq": true,
+          "collapsed": true
+        }
+      ],
+      "measured_cell0_nondeg": true,
+      "measured_cell0_maj_frac": 0.9283333333333333,
+      "measured_collapsed": false,
+      "reported_collapsed": false,
+      "logic_consistent": true,
+      "honest_note": "Battery certifies LOGIC, NOT empirical collapse. §24 at stub scale may not collapse (Boolean), but its int_var ranks DRAMATICALLY lower than ABC at trained scale per §73-FIRE — B-S75-NOTE.",
+      "PASS": true
+    },
+    {
+      "verdict_id": "B-S75-5",
+      "name": "DECOMPOSITION-IS-PROPER-SUBSET-OF-§73-CLOSED",
+      "block_equal": {
+        "physics_step": true,
+        "init_state": true,
+        "_var": true,
+        "LCG": true
+      },
+      "all_blocks_equal": true,
+      "const_equal": {
+        "PSI_VAC": true,
+        "BASIN_RADIUS": true,
+        "LAMBDA_STD": true,
+        "EMA_BETA": true,
+        "PHI_RATCHET": true,
+        "SEED": true,
+        "N_LOOP_STEPS": true,
+        "TAU_NONDEG": true,
+        "MAJ_COLLAPSE": true,
+        "IM_THRESHOLD_S24": true
+      },
+      "all_consts_equal": true,
+      "cell3_byte_isomorphic_to_s73_controller": true,
+      "PASS": true
+    }
+  ],
+  "B_S75_NOTE": "Empirical carve-out — whether the load-bearing sub-axis identified at $0 stub scale TRANSFERS to trained-saturated scale is a measurement OUTCOME of separate future-fire.  Battery proves the decomposition LOGIC + SHARED-INFRA byte-equal + sanity-gate Boolean + each cell deterministic — NOT which sub-axis wins at trained scale.  B-D-NOTE / B-S73-FIRE-NOTE family, NOT counted 🔵."
+}

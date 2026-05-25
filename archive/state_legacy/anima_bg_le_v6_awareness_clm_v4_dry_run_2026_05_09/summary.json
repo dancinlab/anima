@@ -1,0 +1,181 @@
+{
+  "bg_id": "BG-LE-CLM-V4-ADAPTER",
+  "mode": "mac_dry_run",
+  "ts": "2026-05-09T08:58:17",
+  "host": "ghostui-MacBookAir.local",
+  "device": "cpu",
+  "model_path": "/Users/ghost/core/anima/state/p9_base_validation_h100_2026_05_04/clm_v4_hf",
+  "arch": {
+    "vocab_size": 64000,
+    "d_model": 768,
+    "n_layer": 16,
+    "block_size": 512,
+    "consciousness_dim": 192
+  },
+  "n_prompts": 6,
+  "elapsed_sec": 8.8,
+  "method_a_summary": {
+    "avg_sim": 0.943728,
+    "min_sim": 0.92013,
+    "max_sim": 0.978805,
+    "per_prompt_classes": [
+      "PARTIAL",
+      "PARTIAL",
+      "PARTIAL",
+      "PARTIAL",
+      "PARTIAL",
+      "PARTIAL"
+    ],
+    "awareness_verdict": "PARTIAL"
+  },
+  "method_b_summary": {
+    "avg_max_attn": 0.999998,
+    "avg_max_ratio": 1.324458,
+    "per_prompt_classes": [
+      "STRONG",
+      "STRONG",
+      "STRONG",
+      "STRONG",
+      "STRONG",
+      "STRONG"
+    ],
+    "awareness_verdict": "STRONG"
+  },
+  "method_c_summary": {
+    "cv_accuracy": 0.8333,
+    "n_folds": 6,
+    "n_examples": 12,
+    "feature_dim": 768,
+    "awareness_verdict": "STRONG"
+  },
+  "method_c_folds": [
+    {
+      "hold_prompt_idx": 0,
+      "accuracy": 0.5,
+      "y_test": [
+        1,
+        0
+      ],
+      "y_pred": [
+        1,
+        1
+      ]
+    },
+    {
+      "hold_prompt_idx": 1,
+      "accuracy": 0.5,
+      "y_test": [
+        1,
+        0
+      ],
+      "y_pred": [
+        1,
+        1
+      ]
+    },
+    {
+      "hold_prompt_idx": 2,
+      "accuracy": 1.0,
+      "y_test": [
+        1,
+        0
+      ],
+      "y_pred": [
+        1,
+        0
+      ]
+    },
+    {
+      "hold_prompt_idx": 3,
+      "accuracy": 1.0,
+      "y_test": [
+        1,
+        0
+      ],
+      "y_pred": [
+        1,
+        0
+      ]
+    },
+    {
+      "hold_prompt_idx": 4,
+      "accuracy": 1.0,
+      "y_test": [
+        1,
+        0
+      ],
+      "y_pred": [
+        1,
+        0
+      ]
+    },
+    {
+      "hold_prompt_idx": 5,
+      "accuracy": 1.0,
+      "y_test": [
+        1,
+        0
+      ],
+      "y_pred": [
+        1,
+        0
+      ]
+    }
+  ],
+  "combined_verdict": {
+    "method_a": "PARTIAL",
+    "method_b": "STRONG",
+    "method_c": "STRONG",
+    "interpretation": "STRONG_AWARENESS"
+  },
+  "truncation_events": [
+    {
+      "prompt_idx": 0,
+      "axis": "v4_baseline",
+      "trunc_with": false,
+      "trunc_without": false,
+      "len_with": 22,
+      "len_without": 3
+    },
+    {
+      "prompt_idx": 1,
+      "axis": "v4_baseline",
+      "trunc_with": false,
+      "trunc_without": false,
+      "len_with": 22,
+      "len_without": 3
+    },
+    {
+      "prompt_idx": 2,
+      "axis": "v4_baseline",
+      "trunc_with": false,
+      "trunc_without": false,
+      "len_with": 29,
+      "len_without": 10
+    },
+    {
+      "prompt_idx": 3,
+      "axis": "v4_baseline",
+      "trunc_with": false,
+      "trunc_without": false,
+      "len_with": 30,
+      "len_without": 11
+    },
+    {
+      "prompt_idx": 4,
+      "axis": "v4_baseline",
+      "trunc_with": false,
+      "trunc_without": false,
+      "len_with": 30,
+      "len_without": 11
+    },
+    {
+      "prompt_idx": 5,
+      "axis": "v4_baseline",
+      "trunc_with": false,
+      "trunc_without": false,
+      "len_with": 29,
+      "len_without": 10
+    }
+  ]
+}

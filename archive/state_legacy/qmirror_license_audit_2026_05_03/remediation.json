@@ -1,0 +1,67 @@
+{
+  "cycle": "qmirror_license_audit_2026_05_03",
+  "chosen_option": "A + D combined (Option A documentation wrapper around already-implemented Option D subprocess isolation)",
+  "core_license_after_remediation": "Apache-2.0 (UNCHANGED)",
+  "rationale_summary": "qmirror core remains Apache-2.0. pyphi is reclassified as optional dependency. iit_mip_runner.py subprocess shim is the runtime mechanism (FSF MereAggregation). LICENSING.md is the documentation surface explaining sub-component licenses to users.",
+
+  "files_changed": [
+    {
+      "path": "/Users/ghost/core/qmirror/LICENSE",
+      "change": "UNCHANGED (still Apache-2.0)"
+    },
+    {
+      "path": "/Users/ghost/core/qmirror/LICENSING.md",
+      "change": "NEW — full breakdown of sub-component licenses (qmirror core Apache-2.0, pyphi optional GPLv3, qiskit-aer Apache-2.0, numpy BSD-3, ANU QRNG public-domain-ish facts)"
+    },
+    {
+      "path": "/Users/ghost/core/qmirror/README.md",
+      "change": "PATCH — add 'License & sub-components' subsection pointing to LICENSING.md; clarify that pyphi GPLv3 backend is OPTIONAL and isolated via subprocess (mock LCG + pure-CHSH paths are fully Apache-2.0)"
+    },
+    {
+      "path": "/Users/ghost/core/qmirror/hexa.toml",
+      "change": "PATCH — add explicit license note in [dependencies.optional] section; rename license-relevant comments"
+    },
+    {
+      "path": "/Users/ghost/core/qmirror/CHANGELOG.md",
+      "change": "PATCH — add 1.0.1 entry for license audit (no semantic change to runtime; docs-only)"
+    }
+  ],
+
+  "files_NOT_changed_runtime": [
+    "modules/_python_bridge/iit_mip_runner.py — already implements Option D subprocess isolation; no source mutation needed",
+    "modules/iit_mip.hexa — already calls iit_mip_runner.py via proc_run_json_bridge subprocess pattern",
+    "All 10 hexa modules — none import pyphi; runtime aggregation pattern is preserved"
+  ],
+
+  "push_targets": [
+    {
+      "remote": "GitHub",
+      "url": "https://github.com/dancinlab/qmirror.git",
+      "expected_commit_msg": "docs(license): add LICENSING.md + clarify pyphi GPLv3 optional dep isolation"
+    },
+    {
+      "remote": "HF Hub",
+      "url": "https://huggingface.co/dancinlab/qmirror",
+      "files_to_upload": ["LICENSING.md", "README_github.md (re-sync)", "CHANGELOG.md"]
+    }
+  ],
+
+  "constraints_honored": {
+    "cost_zero": "PASS — only docs edits + git/hf push; no compute, no API spend",
+    "no_semantic_change": "PASS — runtime behavior is identical; only documentation surface changes"
+  },
+
+  "verification_after_push": {
+    "github": [
+      "LICENSE shows Apache-2.0 (unchanged)",
+      "README.md links to LICENSING.md and warns about pyphi optional GPLv3",
+      "LICENSING.md exists at repo root with full breakdown",
+      "hexa.toml [dependencies.optional] has explicit license labels"
+    ],
+    "hf": [
+      "README_github.md (preserved canonical) re-synced from GitHub",
+      "LICENSING.md uploaded",
+      "License field in HF YAML front-matter still 'apache-2.0' (correct — qmirror core IS Apache-2.0)"
+    ]
+  }
+}

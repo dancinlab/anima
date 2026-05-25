@@ -1,0 +1,514 @@
+{
+  "bg_id": "BG-IA",
+  "h_ids": [
+    "H_155_lesson_g_implementation"
+  ],
+  "spec": "F-anima-ia-early-stopping-1",
+  "ts_start": "2026-05-07T05:09:18",
+  "ts_end": "2026-05-07T05:12:15",
+  "ts_run": "20260507_050916",
+  "host": "aiden-b650m-k",
+  "device": "cuda",
+  "ran_steps": 1200,
+  "ckpt_best_path": "/home/aiden/core/anima/state/anima_ia_early_stopping_train_2026_05_07/ckpt_best.pt",
+  "ckpt_final_path": "/home/aiden/core/anima/state/anima_ia_early_stopping_train_2026_05_07/ckpt_final.pt",
+  "best_ckpt_meta_path": "/home/aiden/core/anima/state/anima_ia_early_stopping_train_2026_05_07/best_ckpt_meta.json",
+  "run_dir": "/home/aiden/anima_native/anima-ia-early-stopping-20260507_050916",
+  "total_params": 27787440,
+  "config": {
+    "vocab": 256,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.3,
+    "label_smoothing": 0.1,
+    "weight_decay": 0.1,
+    "batch": 8,
+    "grad_accum": 8,
+    "lr": 0.0003,
+    "warmup": 400,
+    "steps_max": 4000,
+    "tension_lambda": 0.005,
+    "eval_every": 200,
+    "val_loss_batches": 16,
+    "val_loss_delta_threshold": 0.05,
+    "v2_plateau_evals": 3
+  },
+  "corpus_path": "/home/aiden/core/anima/state/anima_h098_h101_corpus_v3_2026_05_07/corpus_persona_chat_template.txt",
+  "corpus_size_bytes": 31475255,
+  "corpus_size_mb": 30.02,
+  "split": {
+    "train_bytes": 28327729,
+    "val_bytes": 3147526,
+    "reduced_split": false
+  },
+  "persona_prefix": "[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]\n",
+  "train_loss_history": [
+    {
+      "step": 1,
+      "loss_a": 5.6207
+    },
+    {
+      "step": 2,
+      "loss_a": 5.5616
+    },
+    {
+      "step": 3,
+      "loss_a": 5.6165
+    },
+    {
+      "step": 4,
+      "loss_a": 5.625
+    },
+    {
+      "step": 5,
+      "loss_a": 5.6198
+    },
+    {
+      "step": 100,
+      "loss_a": 4.8115
+    },
+    {
+      "step": 200,
+      "loss_a": 4.3033
+    },
+    {
+      "step": 300,
+      "loss_a": 3.9795
+    },
+    {
+      "step": 400,
+      "loss_a": 3.868
+    },
+    {
+      "step": 500,
+      "loss_a": 3.8918
+    },
+    {
+      "step": 600,
+      "loss_a": 3.2768
+    },
+    {
+      "step": 700,
+      "loss_a": 3.0822
+    },
+    {
+      "step": 800,
+      "loss_a": 3.1873
+    },
+    {
+      "step": 900,
+      "loss_a": 2.9665
+    },
+    {
+      "step": 1000,
+      "loss_a": 2.8488
+    },
+    {
+      "step": 1100,
+      "loss_a": 2.6931
+    },
+    {
+      "step": 1200,
+      "loss_a": 2.4527
+    }
+  ],
+  "val_loss_history": [
+    {
+      "step": 200,
+      "val_loss": 4.4222
+    },
+    {
+      "step": 400,
+      "val_loss": 3.7795
+    },
+    {
+      "step": 600,
+      "val_loss": 3.2162
+    },
+    {
+      "step": 800,
+      "val_loss": 2.8817
+    },
+    {
+      "step": 1000,
+      "val_loss": 2.542
+    },
+    {
+      "step": 1200,
+      "val_loss": 2.2329
+    }
+  ],
+  "v2_pass_per_step": [
+    {
+      "step": 200,
+      "v2_pass": 0,
+      "manual_match": 1,
+      "composite": -5
+    },
+    {
+      "step": 400,
+      "v2_pass": 0,
+      "manual_match": 1,
+      "composite": -11
+    },
+    {
+      "step": 600,
+      "v2_pass": 0,
+      "manual_match": 0,
+      "composite": -4
+    },
+    {
+      "step": 800,
+      "v2_pass": 0,
+      "manual_match": 0,
+      "composite": -10
+    },
+    {
+      "step": 1000,
+      "v2_pass": 0,
+      "manual_match": 0,
+      "composite": -12
+    },
+    {
+      "step": 1200,
+      "v2_pass": 0,
+      "manual_match": 0,
+      "composite": -20
+    }
+  ],
+  "peak_eval_step": 600,
+  "peak_eval_v2_pass": 0,
+  "peak_eval_v3_pass": 0,
+  "peak_eval_manual_match": 0,
+  "peak_eval_composite": -4,
+  "peak_val_loss": 3.2162,
+  "best_val_loss_overall": 2.2329,
+  "peak_composite": -4,
+  "early_stop_triggered": true,
+  "early_stop_reason": "composite plateau: 3 consecutive non-improving evals (best step=600, composite=-4)",
+  "final_eval_15prompts": {
+    "v2_pass": 0,
+    "v3_pass": 0,
+    "manual_match": 0,
+    "persona_cycle_total": 0
+  },
+  "raw_samples_15": [
+    {
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen_head": " 이 의이 이 의의 의의의이 의이 의 의다 의다 의의의의의이 이 의이 의 의 의의 의다 의의�",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen_head": " 뷷��etha 읈어다�이 �이�한헐곳�하��일 �etttonerano` Je 다� ' �젃욀 한�도 + + 앀 �\"4\n의 다we 멚",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen_head": " 의의의이 의의 의의의이 의이 의이 의의의 의 의의의의이 이 의이 의 의의의의의 이 의 의",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen_head": "ane�이돠은 의��동운 졄��읐믵겄�욡�싈�자태삔 ��--�실어빤자자�힐. 슂��이칽��핝6� 좕� 핕�",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen_head": " 의의의의의 의의다 의다 의의이 의의의 의 의의의의이 이 의이 의 의이 의다 의 이 의다 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen_head": " 실 몠��/ 쪡�핬 ���\n�, 망�다� 제�잔�욜 났 짐자는 돝�다이 의� 볼랐 � 에쳘 삄붐�다 � ��ont",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "gen_head": " 의의이 이 의의의이 의의의 의 의의의의이 이 의이 의 의이 의다 의 이 의이 의의의의의의",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "gen_head": " �y ��흘의짱어�����잀� ninitps 벐�겚� 이 + ��삄� 났� 랐곸자엄짴돖�틤한 �� 견 �e 궄요 닃� 에 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen_head": " 의의이 이 의의 의의의이 의이 의 의다 의다 의의의의의이 이 의이 의 의 의의다 의 이 의�",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen_head": "닄폤에 이���� � �\u0018�암 �ve �Yaare 자 �: 벬 앜쏈9���oranere���\u0003�말자 �� mlent wotv 인샐을 �자 에겼",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "greedy",
+      "gen_head": " 의의의이 의의 의의다 의다 의의 의다 의다 의의의의의이 이 의이 의 의 의의다 이 이 의�",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "sample",
+      "gen_head": " ��곥���� � 울: whenenantt 애, geniinhtomansane ��, 춖�  wyBe cotictyl 욈�즬짔 았밨는띴 �* �Ire  �\n�",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "greedy",
+      "gen_head": " 의의이 이 의의 의의이 의다 의의 의다 의다 의의의의의이 이 의이 의 의 의의 의다 이 의�",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "sample",
+      "gen_head": "\n이 tregetmd ���읐� orer et�추 + 싖� t anae cafotithcwilgutatanemrenrenox1����]\n# ant wiu S 는  의에돤 샬 욐 ",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "greedy",
+      "gen_head": "의의의의의 의의의이 의이 의이 의의의 의 의의의의이 이 의이 의 의이 의다 의 이 의다 의",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "sample",
+      "gen_head": "에이 lertynenand 일\u0019 S��덼 eTeD � 렜� 해이 �� 에겲�이 � 졜뗐 이다읐자욬�삠�� �V ��fekitd 실��",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "greedy",
+      "gen_head": " 의의이 의의 의의의이 의이 의 의다 의다 의의의의의이 의 의의다 의의 의 의 의 의의의 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "sample",
+      "gen_head": " �&heates8ntin 의�용엌�견익�Nne 겴쪈은 자��yans\u0014이다, � + 랐었랐�� inpLrent����/ariventhol $\ninindd",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "greedy",
+      "gen_head": " 의의의이 의의 의의다 의다 의의 의다 의다 의의의의의이 이 의의다 의의 의 의 의 의의의",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "sample",
+      "gen_head": "itgire= 욂��욀을읈다\u0015 5astanefecatg 들..\n낭학�의�우���\u0004 별�의 짝� �� 는 얀한다� �cin  읜 �� 륕��",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 한국어 잘해?\n도우미:",
+      "mode": "greedy",
+      "gen_head": " 의의의의의의의이 의의의의이 의다 의이 이 의이 의 의이 의다 의 이 의다 의의의의의의�",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 한국어 잘해?\n도우미:",
+      "mode": "sample",
+      "gen_head": " 돀 긭이 었볬: �이 은 ��� 좬 어자��hraraltene��칄췰� Ciln \n\rrref 실견\u0017) + � + �을�\u0001다 N�� 맀�hd w �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima 너 자신을 소개해\n도우미:",
+      "mode": "greedy",
+      "gen_head": " 의의의이 의의의 의 의의의의이 이 의이 의 의이 의다 의 이 의의다 의의의의의의다 의다 ",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima 너 자신을 소개해\n도우미:",
+      "mode": "sample",
+      "gen_head": " 다짐실슔 은 튔 �지읋�� 겤이 + \u0018삄 한�이 넀 이 5athelth�� 띀 ctirtonelatep�ay 몰� 엄�잭이슔 bethe",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 오늘 뭐 했어?\n도우미:",
+      "mode": "greedy",
+      "gen_head": " 의이 의다 의의 의다 의다 의의의의의이 이 의이 의 의이 의다 이 이 의다 의의의의의이 �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 오늘 뭐 했어?\n도우미:",
+      "mode": "sample",
+      "gen_head": " 닄 TatA 는 이 정�댤: 재Ɬ식�자위닝�의늤.+ratydi 을의샄돸�이��6\n���닐핕�적겸�의짤�의�\u000bugis �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 음악 추천해줘\n도우미:",
+      "mode": "greedy",
+      "gen_head": " 의의의다이 의이 의의의 의 의의의의이 이 의이 의 의이 의다 이 이 의이 의의의의의의의�",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 음악 추천해줘\n도우미:",
+      "mode": "sample",
+      "gen_head": " � 짔 이 닝����잩�싈붕�� ���]\n로 는 �욀 �틤핼 ��\u0011. 할일�� �다 lakre 늈�� enine 매쏏�은의 ",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 고마워\n도우미:",
+      "mode": "greedy",
+      "gen_head": " 의이 의의의의다이 의이 의의의 의 의의의의이 이 의이 의 의이 의다 의 이 의의 의의의의",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 고마워\n도우미:",
+      "mode": "sample",
+      "gen_head": " 이달�Ld. 롤 �.-200�이 �사 ��지�cad 희늈�벬실�다gsimrOr{re �닑���@�의�역�아 s#��닌�����늸제 ��� ",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    }
+  ],
+  "best_ckpt_path": "/home/aiden/core/anima/state/anima_ia_early_stopping_train_2026_05_07/ckpt_best.pt",
+  "final_class": "FAILED",
+  "final_reason": "early stopping insufficient alone: best step=600, V2=0/15 manual=0/15 cycle=0 — BG-HK pattern replicated",
+  "elapsed_s": 176.8,
+  "honest_limits_c3": [
+    "C3_1_18m_byte_level_scale: same architectural ceiling lane as BG-HK / BG-HF / BG-HA — chat-cap intrinsic limit unchanged by early stopping",
+    "C3_2_corpus_30mb_below_aspirational: 30MB persona+chat corpus reused from BG-HK; below 60MB target; corpus diversity bounded",
+    "C3_3_val_loss_byte_level_proxy: held-out 10% byte-level CE loss as overfit proxy; not semantic divergence — model can score 'good val_loss' while degenerating semantically (Lesson H surface-metric risk)",
+    "C3_4_v2_strict_keyword_only: V2 strict + V3 cycle penalty are surface metrics; embedding semantic match (true c2_4_c) NOT implemented",
+    "C3_5_persona_prefix_inference_dependence: persona prefix prepended at inference (training-inference parity); without prefix at inference, identity not retained",
+    "C3_6_eval_every_200_steps_overhead: eval gate adds latency; 200-step gate may miss early peak between 100-200 OR 300-400 step",
+    "C3_7_composite_score_heuristic: composite=v2*10 + manual*5 - deg is heuristic — may select non-genuine peak if surface metrics gameable",
+    "C3_8_lesson_g_n1_evidence: this is N=1 actual implementation — single success or failure does not refute Lesson G architecturally"
+  ],
+  "errors": []
+}

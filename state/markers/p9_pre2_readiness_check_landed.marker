@@ -1,0 +1,60 @@
+{
+  "schema": "anima/state/markers/p9_pre2_readiness_check_landed/1",
+  "ts_utc": "2026-05-03T00:00:00+00:00",
+  "kind": "silent_land_marker",
+  "task": "p9_pre2_readiness_check (E F1 BLEU-1 + F F2 phi_star + G F3+F4 + H delta curriculum)",
+  "verdict": "P9_PRE2_READINESS_CHECK_PARTIAL_PASS",
+  "verdict_breakdown": {
+    "E_f1_bleu1": "PASS",
+    "F_f2_phi_star": "PASS",
+    "G_f3_tension": "PASS",
+    "G_f4_bold": "BLOCKED_CORTEXLAB_DEP",
+    "H_delta_curriculum": "PASS_WITH_USER_DECISION"
+  },
+  "ready_for_p9_phase_0_entry": "PARTIAL — 3/4 ready, F4 dep decision required",
+  "blockers": [
+    {
+      "id": "F4_cortexlab_dep",
+      "kind": "pypi_pkg_missing_mac_local",
+      "remediation_options": ["A_install_cortexlab_runpod", "B_vendored_tribev2_direct (recommended)", "C_phase2_defer"]
+    }
+  ],
+  "user_decisions_pending": [
+    "F4 BOLD dep strategy (A/B/C)",
+    "delta curriculum framing (A_spec_default / B_amend / C_hybrid_recommended)",
+    "F1 holdout 500-prompt provenance"
+  ],
+  "artifacts": {
+    "handoff": "docs/p9_pre2_readiness_check_landed_2026_05_03.ai.md",
+    "state_dir": "state/p9_pre2_readiness_check/",
+    "json_count": 4
+  },
+  "policy_compliance": {
+    "migration": "forbidden_respected",
+    "additive_only": true,
+    "destructive_ops": 0,
+    "in_place_writes": 0,
+    "cost_usd": 0,
+    "substrate": "mac-local",
+    "br_no_user_verbatim": true,
+    "friendly_preset": "handoff_doc_only",
+    "hf_push_without_user_confirm": "forbidden_respected",
+    "ai_native": true
+  },
+  "predecessors_unchanged": [
+    "docs/p9_sft_spec_2026_05_02.md",
+    "docs/p9_sft_handoff_prompt_2026_05_02.md",
+    "docs/p9_sft_p0_hf_org_setup_landed_2026_05_03.ai.md",
+    "state/p9_sft_spec_2026_05_02/*.json",
+    "state/p9_sft_p0_hf_org_setup_2026_05_03/*",
+    "anima/references/tribev2/* (read-only)"
+  ],
+  "race_isolated_writes": [
+    "state/p9_pre2_readiness_check/E_f1_bleu1_pipeline.json",
+    "state/p9_pre2_readiness_check/F_f2_phi_star_pipeline.json",
+    "state/p9_pre2_readiness_check/G_f3_f4_pipeline.json",
+    "state/p9_pre2_readiness_check/H_delta_curriculum.json",
+    "docs/p9_pre2_readiness_check_landed_2026_05_03.ai.md",
+    "state/markers/p9_pre2_readiness_check_landed.marker"
+  ]
+}

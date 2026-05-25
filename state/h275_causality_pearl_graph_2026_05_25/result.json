@@ -1,0 +1,38 @@
+{
+  "hypothesis": "H_275",
+  "slug": "causality-pearl-graph-phi",
+  "domain": "LIFE",
+  "title": "causality Pearl-graph Φ — directed acyclic (DAG) vs cyclic coupling on mitosis cell pool",
+  "date": "2026-05-25",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "seed": 42,
+  "params": {"d_model": 8, "pool_N": 8, "n_steps": 24, "gain": 0.6, "margin": 0.05},
+  "arms": {
+    "dag":        { "phi_final": 0.989475, "phi_mean": 1.60108, "n_cells": 17 },
+    "cyclic":     { "phi_final": 0.744479, "phi_mean": 1.76233, "n_cells": 14 },
+    "undirected": { "phi_final": 0.604921, "phi_mean": 1.64733, "n_cells": 15 }
+  },
+  "derived": {
+    "dag_minus_cyclic": 0.244995,
+    "dag_minus_undir":  0.384554
+  },
+  "criteria": {
+    "C1_dag_dominance": true,
+    "C2_ordering":      true,
+    "C3_determinism":   true
+  },
+  "falsifiers": {
+    "F1_DAG_DOMINANCE":  { "metric": "phi_dag - phi_cyclic >= 0.05", "value": 0.244995, "verdict": "PASS" },
+    "F2_ORDERING":       { "metric": "phi_dag >= phi_undir", "value": 0.384554, "verdict": "PASS" },
+    "F3_DETERMINISM":    { "metric": "cross-process phi-triple byte-equal (RFC 033 single stream, same seed)", "verdict": "PASS" },
+    "F4_BOUNDS":         { "metric": "phi finite >= 0", "verdict": "PASS" },
+    "F5_NONDEGENERATE":  { "metric": "substrate evolved (phi>0)", "verdict": "PASS" }
+  },
+  "n_criteria_pass": 3,
+  "n_falsifier_pass": 5,
+  "verdict": "SUPPORTED",
+  "cross_link": {"H_218": "undirected BA/ER topology sister", "H_207": "Kuramoto coupling sister", "H_205": "closure sister"}
+}

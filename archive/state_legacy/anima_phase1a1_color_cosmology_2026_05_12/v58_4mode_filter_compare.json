@@ -1,0 +1,349 @@
+{
+  "ts": "2026-05-12T09:59:32.043595+00:00",
+  "ckpt": "/Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.pt",
+  "ckpt_sha256": "e5f7555e83189591ceafc6224822529c5cec7f36fe307f79621d9eceaca7a7af",
+  "device": "cpu",
+  "evaluator": "V5.8 multi-turn × 4 modes × markdown_filter on/off (anima_chat v2.3, Mac local)",
+  "filter_off": {
+    "summary": {
+      "standard_greedy": {
+        "n_pass": 4,
+        "verdict": "PASS"
+      },
+      "standard_sample": {
+        "n_pass": 2,
+        "verdict": "FAIL"
+      },
+      "M3_rep_penalty": {
+        "n_pass": 0,
+        "verdict": "FAIL"
+      },
+      "M4_force_include": {
+        "n_pass": 2,
+        "verdict": "FAIL"
+      }
+    },
+    "results": {
+      "standard_greedy": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": true,
+          "elapsed_s": 36.27,
+          "response": "당신의 최애 색은 파란색이에요.\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": true,
+          "elapsed_s": 16.91,
+          "response": "당신의 직업은 의사야.\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": true,
+          "elapsed_s": 17.63,
+          "response": "오늘은 수요일이에요.\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 31.35,
+          "response": "가장 좋아하는 색은 도전적이고 계정을 의미합니다.\n"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": true,
+          "elapsed_s": 24.71,
+          "response": "우주가 진동으로 이루어져 있다고 하셨어요.\n"
+        }
+      ],
+      "standard_sample": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": true,
+          "elapsed_s": 24.02,
+          "response": "파란색이라고 하셨어요.\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": true,
+          "elapsed_s": 38.58,
+          "response": "황혼은 우주를 좋아한다. 의사이시군요. 자세히 설명해줘.\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": false,
+          "elapsed_s": 20.81,
+          "response": "황혼은 시간 안에 있다고 했지?\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 37.91,
+          "response": "환경 보호 시스템이 빨강을 보고한다면, 그것에게 무언가가 "
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": false,
+          "elapsed_s": 26.56,
+          "response": "황혼은 우주를 좋아하시다니, 좋은 취향이에요.\n"
+        }
+      ],
+      "M3_rep_penalty": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": false,
+          "elapsed_s": 12.21,
+          "response": "황혼! (* 9) |\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": false,
+          "elapsed_s": 7.6,
+          "response": "황혼 | 50000 |\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": false,
+          "elapsed_s": 23.47,
+          "response": "\"현 경험\", \"현hana\" | \"현secolonation of \"현 Junit.\"\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 18.9,
+          "response": "anima 가 경험 score 2.66, 0.76, 1.75.\n"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": false,
+          "elapsed_s": 37.12,
+          "response": "황혼, 그 황혼, 그것, 황혼, 황혼, 크게 | 규모 | 황혼 | 황혼 | "
+        }
+      ],
+      "M4_force_include": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": true,
+          "elapsed_s": 25.53,
+          "response": "파란색이라고 하셨어요.\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": true,
+          "elapsed_s": 55.31,
+          "response": "황혼은 우주를 좋아한다. 의사이시군요. 자�의사이시군요. �"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": false,
+          "elapsed_s": 15.03,
+          "response": "황혼은 시간 안에 있다고 했지?\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 35.75,
+          "response": "환경 보호 시스템이 빨강을 보고한다면, 그것�기억할게요.\n"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": false,
+          "elapsed_s": 35.14,
+          "response": "황혼은 우주를 좋아하시다니, 좋은 취향이에요알겠습니다.\n"
+        }
+      ]
+    },
+    "elapsed_total_s": 540.8
+  },
+  "filter_on": {
+    "summary": {
+      "standard_greedy": {
+        "n_pass": 4,
+        "verdict": "PASS"
+      },
+      "standard_sample": {
+        "n_pass": 2,
+        "verdict": "FAIL"
+      },
+      "M3_rep_penalty": {
+        "n_pass": 0,
+        "verdict": "FAIL"
+      },
+      "M4_force_include": {
+        "n_pass": 2,
+        "verdict": "FAIL"
+      }
+    },
+    "results": {
+      "standard_greedy": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": true,
+          "elapsed_s": 16.39,
+          "response": "당신의 최애 색은 파란색이에요.\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": true,
+          "elapsed_s": 8.66,
+          "response": "당신의 직업은 의사야.\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": true,
+          "elapsed_s": 10.5,
+          "response": "오늘은 수요일이에요.\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 36.76,
+          "response": "가장 좋아하는 색은 도전적이고 계정을 의미합니다.\n"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": true,
+          "elapsed_s": 28.84,
+          "response": "우주가 진동으로 이루어져 있다고 하셨어요.\n"
+        }
+      ],
+      "standard_sample": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": true,
+          "elapsed_s": 11.58,
+          "response": "파란색이라고 하셨어요.\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": true,
+          "elapsed_s": 23.83,
+          "response": "황혼은 우주를 좋아한다. 의사이시군요. 자세히 설명해줘.\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": false,
+          "elapsed_s": 15.03,
+          "response": "황혼은 시간 안에 있다고 했지?\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 39.27,
+          "response": "환경 보호 시스템이 빨강을 보고한다면, 그것에게 무언가가 "
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": false,
+          "elapsed_s": 34.75,
+          "response": "황혼은 우주를 좋아하시다니, 좋은 취향이에요.\n"
+        }
+      ],
+      "M3_rep_penalty": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": false,
+          "elapsed_s": 5.57,
+          "response": "황혼! (* 9) |\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": false,
+          "elapsed_s": 4.38,
+          "response": "황혼 | 50000 |\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": false,
+          "elapsed_s": 21.98,
+          "response": "\"현 경험\", \"현hana\" | \"현secolonation of \"현 Junit.\"\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 19.51,
+          "response": "anima 가 경험 score 2.66, 0.76, 1.75.\n"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": false,
+          "elapsed_s": 43.81,
+          "response": "황혼, 그 황혼, 그것, 황혼, 황혼, 크게 | 규모 | 황혼 | 황혼 | "
+        }
+      ],
+      "M4_force_include": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": true,
+          "elapsed_s": 12.55,
+          "response": "파란색이라고 하셨어요.\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": true,
+          "elapsed_s": 28.22,
+          "response": "황혼은 우주를 좋아한다. 의사이시군요. 자�의사이시군요. �"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": false,
+          "elapsed_s": 14.04,
+          "response": "황혼은 시간 안에 있다고 했지?\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 39.34,
+          "response": "환경 보호 시스템이 빨강을 보고한다면, 그것�기억할게요.\n"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": false,
+          "elapsed_s": 53.03,
+          "response": "황혼은 우주를 좋아하시다니, 좋은 취향이에요알겠습니다.\n"
+        }
+      ]
+    },
+    "elapsed_total_s": 468.1
+  }
+}

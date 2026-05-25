@@ -1,0 +1,183 @@
+{
+  "schema": "anima/emerge_chat_first_token_force/verdict/1",
+  "ts_utc": "2026-05-05T17:32:02Z",
+  "task_id": "anima_emerge_chat_first_token_force_2026_05_05",
+  "scope": "BG-BP first-token sensitivity probe — force semantic seed, observe trajectory",
+  "platform": "mac CPU (.venv-eeg python3.12, torch fp32)",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "prompt": "안녕",
+  "top20_distribution": {
+    "n_semantic": 6,
+    "n_control_or_other": 14,
+    "top20_dump": [
+      {
+        "rank": 0,
+        "id": 32,
+        "text": "\u001c",
+        "logit": 8.300243377685547
+      },
+      {
+        "rank": 1,
+        "id": 157,
+        "text": "�",
+        "logit": 7.914905548095703
+      },
+      {
+        "rank": 2,
+        "id": 152,
+        "text": "�",
+        "logit": 7.7458367347717285
+      },
+      {
+        "rank": 3,
+        "id": 116,
+        "text": "p",
+        "logit": 6.967127799987793
+      },
+      {
+        "rank": 4,
+        "id": 47,
+        "text": "+",
+        "logit": 6.423522472381592
+      },
+      {
+        "rank": 5,
+        "id": 236,
+        "text": "�",
+        "logit": 6.381178379058838
+      },
+      {
+        "rank": 6,
+        "id": 51,
+        "text": "/",
+        "logit": 6.050834655761719
+      },
+      {
+        "rank": 7,
+        "id": 119,
+        "text": "s",
+        "logit": 5.897759914398193
+      },
+      {
+        "rank": 8,
+        "id": 49,
+        "text": "-",
+        "logit": 5.420924186706543
+      },
+      {
+        "rank": 9,
+        "id": 234,
+        "text": "�",
+        "logit": 5.362224102020264
+      },
+      {
+        "rank": 10,
+        "id": 50,
+        "text": ".",
+        "logit": 5.295383930206299
+      },
+      {
+        "rank": 11,
+        "id": 10,
+        "text": "\u0006",
+        "logit": 5.254699230194092
+      },
+      {
+        "rank": 12,
+        "id": 101,
+        "text": "a",
+        "logit": 5.095777988433838
+      },
+      {
+        "rank": 13,
+        "id": 163,
+        "text": "�",
+        "logit": 5.005293369293213
+      },
+      {
+        "rank": 14,
+        "id": 235,
+        "text": "�",
+        "logit": 4.988572597503662
+      },
+      {
+        "rank": 15,
+        "id": 78,
+        "text": "J",
+        "logit": 4.963993549346924
+      },
+      {
+        "rank": 16,
+        "id": 156,
+        "text": "�",
+        "logit": 4.874971866607666
+      },
+      {
+        "rank": 17,
+        "id": 104,
+        "text": "d",
+        "logit": 4.794435501098633
+      },
+      {
+        "rank": 18,
+        "id": 79,
+        "text": "K",
+        "logit": 4.738872051239014
+      },
+      {
+        "rank": 19,
+        "id": 180,
+        "text": "�",
+        "logit": 4.586094379425049
+      }
+    ]
+  },
+  "n_semantic_in_top100": 5,
+  "semantic_candidates": [
+    {
+      "rank": 3,
+      "id": 116,
+      "text": "p"
+    },
+    {
+      "rank": 7,
+      "id": 119,
+      "text": "s"
+    },
+    {
+      "rank": 12,
+      "id": 101,
+      "text": "a"
+    },
+    {
+      "rank": 15,
+      "id": 78,
+      "text": "J"
+    },
+    {
+      "rank": 17,
+      "id": 104,
+      "text": "d"
+    }
+  ],
+  "n_forced_configs": 5,
+  "n_coherent_forced": 0,
+  "baseline_coherent": false,
+  "verdict": "FAIL_FORCE_NOT_ENOUGH",
+  "mechanism_implication": "trajectory-pervasive collapse: forced semantic seed degenerates to control-byte/loop within ~25 steps regardless of seed",
+  "honest_c3": [
+    "C1 — mac CPU fp32 deterministic greedy decode; no temperature, no sampling.",
+    "C2 — 'semantic token' heuristic = Korean syllable (가-힣) OR ASCII alpha; narrow definition excludes punctuation/digits/non-Korean CJK that may still be semantically valid in target distribution.",
+    "C3 — first-token forcing puts substrate in OOD: hidden state evolves from force_id NOT chosen by argmax, so KV cache + attention pattern is not what training distribution produced. Force-induced coherence (or lack thereof) does not necessarily reflect natural substrate dynamics — it reflects substrate's recovery behaviour from non-self-consistent prefix.",
+    "C4 — single prompt '안녕' (n=1); generalization to other Korean greetings or English seeds NOT tested.",
+    "C5 — 'semi-coherent' heuristic anima-internal: requires ≥5 Korean+ASCII chars AND no single char repeated >50% of length. Catches loops + control-byte-domination but tolerates real repetition like '안녕안녕'."
+  ],
+  "raw_compliance": {
+    "raw_15_additive_no_runtime_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  },
+  "cost_usd": 0.0
+}

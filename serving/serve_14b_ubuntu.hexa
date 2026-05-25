@@ -1,0 +1,10 @@
+// R37/AN13/L3-PY violation — python-in-hexa source removed 2026-04-19
+// Original intent: Qwen2.5-14B NF4 HTTP inference server (Ubuntu RTX 5070).
+// Spec: serving/http_server.hexa endpoints (POST /generate, GET /health).
+//       Replacement must be written in hexa-native (no python3, no bitsandbytes).
+
+fn main() {
+  eprintln("[R37/AN13/L3-PY] serving/serve_14b_ubuntu.hexa: python-in-hexa source blocked.")
+  eprintln("  Escalate to user for hexa-native reimplementation.")
+  exit(1)
+}

@@ -1,0 +1,27 @@
+/Users/ghost/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+/Users/ghost/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+[s181] benchmarking 7 audio variants × 1500 steps each (d=192 L=4)
+
+audio_variant              params     wall_s      img      AUD      vid      ten  acc_all
+--------------------------------------------------------------------------------------------------------------
+v0_pure_sine              1976684      208.6    0.894    0.967    0.985    1.000    0.960
+v1_multi_harmonic         1976684      190.6    0.886    0.992    0.934    1.000    0.950
+v2_am_modulation          1976684      160.5    0.902    0.983    0.934    1.000    0.952
+v3_waveform_shape         1976684      124.0    0.886    0.767    0.941    1.000    0.898
+v4_chord                  1976684      142.4    0.833    0.992    0.934    1.000    0.936
+v5_white_noise_lpf        1976684      242.3    0.886    0.017    0.971    1.000    0.726
+v6_combined               1976684      228.7    0.879    0.992    0.934    1.000    0.948
+
+=== RANKING by audio acc ===
+  #1: v1_multi_harmonic      audio=0.9917  acc_all=0.9500
+  #2: v4_chord               audio=0.9917  acc_all=0.9360
+  #3: v6_combined            audio=0.9917  acc_all=0.9480
+  #4: v2_am_modulation       audio=0.9833  acc_all=0.9520
+  #5: v0_pure_sine           audio=0.9667  acc_all=0.9600
+  #6: v3_waveform_shape      audio=0.7667  acc_all=0.8980
+  #7: v5_white_noise_lpf     audio=0.0167  acc_all=0.7260
+
+[s181] DONE total_wall=1298.8s
+[s181] result → /Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/audio_100pct_challenge_s181_2026_05_20/result.json

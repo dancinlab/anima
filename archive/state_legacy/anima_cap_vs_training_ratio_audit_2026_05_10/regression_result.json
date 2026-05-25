@@ -1,0 +1,550 @@
+{
+  "schema": "bg_cap_vs_training_ratio_audit/regression/v1",
+  "n_rows": 9,
+  "feature_names": [
+    "ratio_cap_over_training_obs",
+    "inference_cap",
+    "chat_cotrain",
+    "mitosis_aware",
+    "params_M",
+    "is_engine_ag"
+  ],
+  "univariate_correlations": {
+    "ratio_inf_sub_1_vs_verdict": {
+      "spearman_rho": 0.2907469922895337,
+      "spearman_p": 0.44784880403596605,
+      "kendall_tau": 0.23204774044612855,
+      "kendall_p": 0.42784987482777415
+    },
+    "ratio_inf_sub_10_vs_verdict": {
+      "spearman_rho": 0.2907469922895337,
+      "spearman_p": 0.44784880403596605
+    },
+    "inference_cap_vs_verdict": {
+      "spearman_rho": 0.7768985960673559,
+      "spearman_p": 0.01377648436154386
+    },
+    "ratio_finite_only_vs_verdict (n=3, C/D rows only)": {
+      "n": 7,
+      "spearman_rho": 0.4958005464077081,
+      "spearman_p": 0.2578199647230836,
+      "kendall_tau": 0.3913118960624632
+    }
+  },
+  "threshold_scan_ratio": [
+    {
+      "threshold": 0.5,
+      "n_pred_pass": 9,
+      "n_actual_pass": 4,
+      "acc_full_9": 0.4444444444444444,
+      "acc_decisive_only": 0.5714285714285714,
+      "n_decisive": 7
+    },
+    {
+      "threshold": 1.0,
+      "n_pred_pass": 7,
+      "n_actual_pass": 4,
+      "acc_full_9": 0.6666666666666666,
+      "acc_decisive_only": 0.7142857142857143,
+      "n_decisive": 7
+    },
+    {
+      "threshold": 1.5,
+      "n_pred_pass": 7,
+      "n_actual_pass": 4,
+      "acc_full_9": 0.6666666666666666,
+      "acc_decisive_only": 0.7142857142857143,
+      "n_decisive": 7
+    },
+    {
+      "threshold": 2.0,
+      "n_pred_pass": 5,
+      "n_actual_pass": 4,
+      "acc_full_9": 0.6666666666666666,
+      "acc_decisive_only": 0.5714285714285714,
+      "n_decisive": 7
+    },
+    {
+      "threshold": 2.5,
+      "n_pred_pass": 5,
+      "n_actual_pass": 4,
+      "acc_full_9": 0.6666666666666666,
+      "acc_decisive_only": 0.5714285714285714,
+      "n_decisive": 7
+    },
+    {
+      "threshold": 3.0,
+      "n_pred_pass": 4,
+      "n_actual_pass": 4,
+      "acc_full_9": 0.7777777777777778,
+      "acc_decisive_only": 0.7142857142857143,
+      "n_decisive": 7
+    },
+    {
+      "threshold": 4.0,
+      "n_pred_pass": 3,
+      "n_actual_pass": 4,
+      "acc_full_9": 0.6666666666666666,
+      "acc_decisive_only": 0.5714285714285714,
+      "n_decisive": 7
+    },
+    {
+      "threshold": 5.0,
+      "n_pred_pass": 2,
+      "n_actual_pass": 4,
+      "acc_full_9": 0.5555555555555556,
+      "acc_decisive_only": 0.42857142857142855,
+      "n_decisive": 7
+    },
+    {
+      "threshold": 10.0,
+      "n_pred_pass": 2,
+      "n_actual_pass": 4,
+      "acc_full_9": 0.5555555555555556,
+      "acc_decisive_only": 0.42857142857142855,
+      "n_decisive": 7
+    },
+    {
+      "threshold": 50.0,
+      "n_pred_pass": 2,
+      "n_actual_pass": 4,
+      "acc_full_9": 0.5555555555555556,
+      "acc_decisive_only": 0.42857142857142855,
+      "n_decisive": 7
+    },
+    {
+      "threshold": 100.0,
+      "n_pred_pass": 2,
+      "n_actual_pass": 4,
+      "acc_full_9": 0.5555555555555556,
+      "acc_decisive_only": 0.42857142857142855,
+      "n_decisive": 7
+    }
+  ],
+  "logistic_regression": {
+    "classes": [
+      -1,
+      0,
+      1
+    ],
+    "feature_means": {
+      "ratio_cap_over_training_obs": 44.531079902085416,
+      "inference_cap": 163.55555555555554,
+      "chat_cotrain": 0.2222222222222222,
+      "mitosis_aware": 0.4444444444444444,
+      "params_M": 111.93333333333334,
+      "is_engine_ag": 0.3333333333333333
+    },
+    "feature_stds": {
+      "ratio_cap_over_training_obs": 84.40973352718873,
+      "inference_cap": 68.20738166489201,
+      "chat_cotrain": 0.41573970964154905,
+      "mitosis_aware": 0.4969039949999533,
+      "params_M": 132.1346871777262,
+      "is_engine_ag": 0.47140452079103173
+    },
+    "coefficients_per_class": [
+      {
+        "class": -1,
+        "coefs": {
+          "ratio_cap_over_training_obs": 0.504921242238242,
+          "inference_cap": -2.646781303876274,
+          "chat_cotrain": -1.1647528718029463,
+          "mitosis_aware": -0.9648455397404806,
+          "params_M": 0.17670488386263086,
+          "is_engine_ag": 0.1767048838626309
+        },
+        "intercept": -0.6162083559391793
+      },
+      {
+        "class": 0,
+        "coefs": {
+          "ratio_cap_over_training_obs": -0.5228262119023173,
+          "inference_cap": 0.11784653858583088,
+          "chat_cotrain": -0.1561693961214904,
+          "mitosis_aware": 0.9098119254377924,
+          "params_M": -0.36117747878494966,
+          "is_engine_ag": -0.36117747878494977
+        },
+        "intercept": -0.4267995967912986
+      },
+      {
+        "class": 1,
+        "coefs": {
+          "ratio_cap_over_training_obs": 0.017904969664074646,
+          "inference_cap": 2.528934765290443,
+          "chat_cotrain": 1.3209222679244366,
+          "mitosis_aware": 0.05503361430268941,
+          "params_M": 0.18447259492231816,
+          "is_engine_ag": 0.1844725949223181
+        },
+        "intercept": 1.0430079527304763
+      }
+    ],
+    "feature_importance_max_abs_coef": {
+      "ratio_cap_over_training_obs": 0.5228262119023173,
+      "inference_cap": 2.646781303876274,
+      "chat_cotrain": 1.3209222679244366,
+      "mitosis_aware": 0.9648455397404806,
+      "params_M": 0.36117747878494966,
+      "is_engine_ag": 0.36117747878494977
+    },
+    "feature_importance_sorted": [
+      [
+        "inference_cap",
+        2.646781303876274
+      ],
+      [
+        "chat_cotrain",
+        1.3209222679244366
+      ],
+      [
+        "mitosis_aware",
+        0.9648455397404806
+      ],
+      [
+        "ratio_cap_over_training_obs",
+        0.5228262119023173
+      ],
+      [
+        "is_engine_ag",
+        0.36117747878494977
+      ],
+      [
+        "params_M",
+        0.36117747878494966
+      ]
+    ],
+    "accuracy_train": 1.0,
+    "predictions": [
+      1,
+      1,
+      -1,
+      -1,
+      0,
+      1,
+      0,
+      -1,
+      1
+    ],
+    "n_correct": 9,
+    "n_total": 9
+  },
+  "decision_trees": {
+    "depth_1": {
+      "accuracy_train": 0.6666666666666666,
+      "feature_importances": {
+        "ratio_cap_over_training_obs": 0.0,
+        "inference_cap": 1.0,
+        "chat_cotrain": 0.0,
+        "mitosis_aware": 0.0,
+        "params_M": 0.0,
+        "is_engine_ag": 0.0
+      },
+      "feature_importances_sorted": [
+        [
+          "inference_cap",
+          1.0
+        ],
+        [
+          "ratio_cap_over_training_obs",
+          0.0
+        ],
+        [
+          "chat_cotrain",
+          0.0
+        ],
+        [
+          "mitosis_aware",
+          0.0
+        ],
+        [
+          "params_M",
+          0.0
+        ],
+        [
+          "is_engine_ag",
+          0.0
+        ]
+      ],
+      "tree_rules": "|--- inference_cap <= 192.00\n|   |--- class: -1\n|--- inference_cap >  192.00\n|   |--- class: 1\n",
+      "predictions": [
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "n_correct": 6,
+      "n_total": 9
+    },
+    "depth_2": {
+      "accuracy_train": 0.7777777777777778,
+      "feature_importances": {
+        "ratio_cap_over_training_obs": 0.0,
+        "inference_cap": 0.6249999999999999,
+        "chat_cotrain": 0.37500000000000006,
+        "mitosis_aware": 0.0,
+        "params_M": 0.0,
+        "is_engine_ag": 0.0
+      },
+      "feature_importances_sorted": [
+        [
+          "inference_cap",
+          0.6249999999999999
+        ],
+        [
+          "chat_cotrain",
+          0.37500000000000006
+        ],
+        [
+          "ratio_cap_over_training_obs",
+          0.0
+        ],
+        [
+          "mitosis_aware",
+          0.0
+        ],
+        [
+          "params_M",
+          0.0
+        ],
+        [
+          "is_engine_ag",
+          0.0
+        ]
+      ],
+      "tree_rules": "|--- inference_cap <= 192.00\n|   |--- chat_cotrain <= 0.50\n|   |   |--- class: -1\n|   |--- chat_cotrain >  0.50\n|   |   |--- class: 1\n|--- inference_cap >  192.00\n|   |--- class: 1\n",
+      "predictions": [
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "n_correct": 7,
+      "n_total": 9
+    },
+    "depth_3": {
+      "accuracy_train": 0.8888888888888888,
+      "feature_importances": {
+        "ratio_cap_over_training_obs": 0.24,
+        "inference_cap": 0.47499999999999987,
+        "chat_cotrain": 0.28500000000000003,
+        "mitosis_aware": 0.0,
+        "params_M": 0.0,
+        "is_engine_ag": 0.0
+      },
+      "feature_importances_sorted": [
+        [
+          "inference_cap",
+          0.47499999999999987
+        ],
+        [
+          "chat_cotrain",
+          0.28500000000000003
+        ],
+        [
+          "ratio_cap_over_training_obs",
+          0.24
+        ],
+        [
+          "mitosis_aware",
+          0.0
+        ],
+        [
+          "params_M",
+          0.0
+        ],
+        [
+          "is_engine_ag",
+          0.0
+        ]
+      ],
+      "tree_rules": "|--- inference_cap <= 192.00\n|   |--- chat_cotrain <= 0.50\n|   |   |--- ratio_cap_over_training_obs <= 2.39\n|   |   |   |--- class: 0\n|   |   |--- ratio_cap_over_training_obs >  2.39\n|   |   |   |--- class: -1\n|   |--- chat_cotrain >  0.50\n|   |   |--- class: 1\n|--- inference_cap >  192.00\n|   |--- class: 1\n",
+      "predictions": [
+        1,
+        1,
+        -1,
+        0,
+        0,
+        1,
+        0,
+        -1,
+        1
+      ],
+      "n_correct": 8,
+      "n_total": 9
+    }
+  },
+  "per_row_predictions": [
+    {
+      "id": "A_phase2_cotrain_38",
+      "ratio_used": 1.5058823529411764,
+      "verdict_actual": 1,
+      "verdict_lr_pred": 1,
+      "verdict_dt2_pred": 1,
+      "verdict_dt3_pred": 1
+    },
+    {
+      "id": "A_phase2_cotrain_51",
+      "ratio_used": 4.491228070175438,
+      "verdict_actual": 1,
+      "verdict_lr_pred": 1,
+      "verdict_dt2_pred": 1,
+      "verdict_dt3_pred": 1
+    },
+    {
+      "id": "B_bgla_pretrain_47",
+      "ratio_used": 2.782608695652174,
+      "verdict_actual": -1,
+      "verdict_lr_pred": -1,
+      "verdict_dt2_pred": -1,
+      "verdict_dt3_pred": -1
+    },
+    {
+      "id": "C_cells64_aware_37",
+      "ratio_used": 1.0,
+      "verdict_actual": -1,
+      "verdict_lr_pred": -1,
+      "verdict_dt2_pred": -1,
+      "verdict_dt3_pred": 0
+    },
+    {
+      "id": "C_cells64_aware_47",
+      "ratio_used": 2.0,
+      "verdict_actual": 0,
+      "verdict_lr_pred": 0,
+      "verdict_dt2_pred": -1,
+      "verdict_dt3_pred": 0
+    },
+    {
+      "id": "C_cells64_aware_51",
+      "ratio_used": 4.0,
+      "verdict_actual": 1,
+      "verdict_lr_pred": 1,
+      "verdict_dt2_pred": 1,
+      "verdict_dt3_pred": 1
+    },
+    {
+      "id": "D_cells128_aware_47",
+      "ratio_used": 1.0,
+      "verdict_actual": 0,
+      "verdict_lr_pred": 0,
+      "verdict_dt2_pred": -1,
+      "verdict_dt3_pred": 0
+    },
+    {
+      "id": "E_convo5k_ft_47",
+      "ratio_used": 128.0,
+      "verdict_actual": -1,
+      "verdict_lr_pred": -1,
+      "verdict_dt2_pred": -1,
+      "verdict_dt3_pred": -1
+    },
+    {
+      "id": "E_convo5k_ft_51",
+      "ratio_used": 256.0,
+      "verdict_actual": 1,
+      "verdict_lr_pred": 1,
+      "verdict_dt2_pred": 1,
+      "verdict_dt3_pred": 1
+    }
+  ],
+  "within_substrate_cap_polarity_flips": {
+    "A_phase2_cotrain": [
+      {
+        "inference_cap": 128,
+        "verdict_score": 1,
+        "section": "\u00a738"
+      },
+      {
+        "inference_cap": 256,
+        "verdict_score": 1,
+        "section": "\u00a751"
+      }
+    ],
+    "B_bgla_pretrain": [
+      {
+        "inference_cap": 128,
+        "verdict_score": -1,
+        "section": "\u00a747"
+      }
+    ],
+    "C_cells64_aware": [
+      {
+        "inference_cap": 64,
+        "verdict_score": -1,
+        "section": "\u00a737"
+      },
+      {
+        "inference_cap": 128,
+        "verdict_score": 0,
+        "section": "\u00a747"
+      },
+      {
+        "inference_cap": 256,
+        "verdict_score": 1,
+        "section": "\u00a751"
+      }
+    ],
+    "D_cells128_aware": [
+      {
+        "inference_cap": 128,
+        "verdict_score": 0,
+        "section": "\u00a747"
+      }
+    ],
+    "E_convo5k_ft": [
+      {
+        "inference_cap": 128,
+        "verdict_score": -1,
+        "section": "\u00a747"
+      },
+      {
+        "inference_cap": 256,
+        "verdict_score": 1,
+        "section": "\u00a751"
+      }
+    ]
+  },
+  "falsifier_evaluation": {
+    "F-RATIO-1": {
+      "predicate": "Spearman ratio-vs-verdict < 0.5 -> ratio insufficient",
+      "spearman_rho_inf_sub_1": 0.2907469922895337,
+      "spearman_p_inf_sub_1": 0.44784880403596605,
+      "spearman_rho_inf_sub_10": 0.2907469922895337,
+      "fired": true,
+      "interpretation": "ratio is INSUFFICIENT alone \u2014 Spearman < 0.5"
+    },
+    "F-RATIO-2": {
+      "predicate": "infinite-ratio rows show both PASS and VIOLATED -> ratio not driving",
+      "inf_ratio_rows": [
+        {
+          "id": "E_convo5k_ft_47",
+          "verdict": "V14_VIOLATED"
+        },
+        {
+          "id": "E_convo5k_ft_51",
+          "verdict": "V14_PASS"
+        }
+      ],
+      "fired": true,
+      "interpretation": "B(VIOLATED), E_47(VIOLATED), A_38(STRICT_PASS), A_51(PASS), E_51(PASS) -- \u221e-ratio data shows BOTH polarities. Ratio alone cannot disambiguate."
+    },
+    "F-RATIO-3": {
+      "predicate": "9 data points underpowered for stat decision",
+      "n": 9,
+      "fired": true,
+      "interpretation": "n=9 is small; Spearman/Kendall p>0.05 typical, multi-factor LR/DT have near-saturation accuracy -> overfit risk."
+    }
+  }
+}

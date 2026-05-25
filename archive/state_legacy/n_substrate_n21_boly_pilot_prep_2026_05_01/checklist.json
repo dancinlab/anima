@@ -1,0 +1,46 @@
+{
+  "agent": "N-21-E Boly pilot kit",
+  "date": "2026-05-01",
+  "predecessor": "n_substrate_n21_boly_webcam_fallback_2026_05_01",
+  "kit_dir": "~/n21_boly_kit/",
+  "hardware": [
+    {"item": "mac_laptop_arm64_webcam_720p30hz", "owned": true, "verified": "platform.machine=arm64 Darwin"},
+    {"item": "openbci_cyton_daisy_16ch", "owned": true, "verified": "per mission brief"},
+    {"item": "openbci_serial_dongle", "owned": true, "verified": "auto-detected by openbci_lsl.py glob /dev/cu.usbserial-*"},
+    {"item": "saline_or_gel_electrode_paste", "owned": "verify_before_day1", "cost_if_buy_usd": 15},
+    {"item": "chinrest_optional", "owned": false, "risk": "head-drift increases gaze noise"}
+  ],
+  "software": [
+    {"pkg": "python3", "ver_detected": "3.14.4", "status": "ok"},
+    {"pkg": "numpy", "ver_detected": "2.4.3", "status": "ok"},
+    {"pkg": "pylsl", "ver_pip": "1.18.2", "wheel": "macosx_11_0_universal2", "status": "ok_install_required"},
+    {"pkg": "brainflow", "ver_pip": "5.21.0", "wheel": "py3-none-any (universal2 dylibs inside)", "status": "ok_install_required", "arm64_verified": true},
+    {"pkg": "pyxdf", "status": "install_required"},
+    {"pkg": "LabRecorder.app", "source": "https://github.com/labstreaminglayer/App-LabRecorder/releases", "status": "user_manual_install"},
+    {"pkg": "GazeCloudAPI", "source": "https://api.gazerecorder.com/", "status": "user_signup_required", "agent_did_signup": false}
+  ],
+  "kit_files": [
+    {"path": "~/n21_boly_kit/bistable.html", "bytes": 7425, "role": "stimulus + GazeCloudAPI + LSL marker emit"},
+    {"path": "~/n21_boly_kit/lsl_marker_relay.py", "bytes": 3539, "role": "HTTP -> LSL bridge"},
+    {"path": "~/n21_boly_kit/openbci_lsl.py", "bytes": 4137, "role": "BrainFlow -> LSL bridge"},
+    {"path": "~/n21_boly_kit/analyze_session.py", "role": "XDF reader + OKN decoder"},
+    {"path": "~/n21_boly_kit/daily_runner.sh", "bytes": 2777, "role": "60-min countdown launcher"},
+    {"path": "~/n21_boly_kit/README.md", "bytes": 3519, "role": "user-facing daily protocol"}
+  ],
+  "stimulus": "rotating_necker_cube",
+  "stimulus_substitution_from_boly": true,
+  "stimulus_c3_note": "Necker cube replaces Boly's bistable plaid; both are bistable percepts with OKN coupling; quantitative decoder accuracy not directly comparable to Boly 88%",
+  "schedule": {
+    "days": 7,
+    "sessions_per_day": 3,
+    "minutes_per_session": 60,
+    "total_sessions": 21,
+    "user_minutes_per_day": 225
+  },
+  "decoder_pass_gate_pct": 75,
+  "user_side_blockers_top3": [
+    "GazeCloudAPI signup (free non-commercial)",
+    "LabRecorder.app manual .dmg install",
+    "Cyton 16ch electrode prep <30 kΩ on >=12/16 (~10 min)"
+  ]
+}

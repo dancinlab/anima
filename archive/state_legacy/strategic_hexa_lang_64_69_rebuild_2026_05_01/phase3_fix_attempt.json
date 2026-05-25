@@ -1,0 +1,56 @@
+{
+  "ts": "2026-05-01",
+  "agent": "N-51 W2",
+  "phase": "3_fix_attempt",
+  "attempt_locus": "off-repo staging dir /Users/ghost/core/anima_offrepo_n51_w2/ (not under anima repo per HEXA-FIRST + race-isolation; not under hexa-lang repo since no upstream change needed)",
+  "upstream_hexa_lang_changes": {
+    "code_changed": false,
+    "lines_diff": 0,
+    "rationale": "Diagnosis (phase 2) showed N-51 unblock requires ZERO upstream change. Both gates (G1 Darwin /tmp refusal, G2 auto-invoke conflict) are intentional safety enforcement with documented bypasses. Modifying either would weaken existing kernel-panic-prevention and silent-failure-enforcement subsystems for negative ROI. The N-51 EXEC E ledger's framing (`absence of general hxc compiler`) is a discoverability bug in the caller's mental model, not a compiler defect."
+  },
+  "n51_compile_test_outcome": {
+    "comp1": {
+      "src": "/Users/ghost/core/anima_offrepo_n51_w2/comp1_fixed.hexa (123 LoC, trailing main() stripped)",
+      "build_cmd": "HEXA_MAC_BUILD_OK=1 /Users/ghost/core/hexa-lang/hexa.real build comp1_fixed.hexa -o bin/comp1",
+      "transpile": "OK build/artifacts/comp1.c",
+      "link": "OK clang -O2 → 234384 B Mach-O 64-bit arm64",
+      "selftest_run": "5/5 PASS",
+      "verdict": "FULLY UNBLOCKED"
+    },
+    "comp3": {
+      "src": "/Users/ghost/core/anima_offrepo_n51_w2/comp3_fixed.hexa (160 LoC)",
+      "transpile": "OK with non-fatal warning [codegen_c2] ERROR: unknown builtin method: find_at",
+      "link": "OK 234832 B Mach-O 64-bit arm64",
+      "selftest_run": "4/4 PASS",
+      "verdict": "FULLY UNBLOCKED (find_at codegen gap exists but does not block this script's selftest path)"
+    },
+    "comp4": {
+      "src": "/Users/ghost/core/anima_offrepo_n51_w2/comp4_fixed.hexa (128 LoC)",
+      "transpile": "OK build/artifacts/comp4.c",
+      "link": "OK 235440 B Mach-O 64-bit arm64",
+      "selftest_run": "3/3 PASS",
+      "verdict": "FULLY UNBLOCKED"
+    },
+    "aggregate": "3/3 N-51 hexa components compile and selftest PASS on Mac via existing toolchain"
+  },
+  "downstream_for_n51_exec_e_relaunch": {
+    "phase1_bridge_build_can_complete": true,
+    "phase1_estimated_wall_time": "5-10 min (3 hexa builds + 1 python selftest already done)",
+    "phase2_5_pod_cost": "$15-20 unchanged from prior estimate",
+    "blocking_residual": "NONE on the hexa-toolchain axis. Phase 2+ may still be gated by separate (non-hexa) factors: H100 pod availability, vLLM monkey-patch correctness against runtime LoRA Mistral, alpha pod lzw79649ob80uk untouchable constraint."
+  },
+  "evidence_paths": {
+    "smoke_binary": "/Users/ghost/core/anima_offrepo_n51_w2/bin/n51_smoke",
+    "comp_binaries": [
+      "/Users/ghost/core/anima_offrepo_n51_w2/bin/comp1",
+      "/Users/ghost/core/anima_offrepo_n51_w2/bin/comp3",
+      "/Users/ghost/core/anima_offrepo_n51_w2/bin/comp4"
+    ],
+    "fixed_sources": [
+      "/Users/ghost/core/anima_offrepo_n51_w2/comp1_fixed.hexa",
+      "/Users/ghost/core/anima_offrepo_n51_w2/comp3_fixed.hexa",
+      "/Users/ghost/core/anima_offrepo_n51_w2/comp4_fixed.hexa"
+    ],
+    "build_invocation_template": "HEXA_MAC_BUILD_OK=1 /Users/ghost/core/hexa-lang/hexa.real build <src.hexa> -o <non-tmp-path>"
+  }
+}

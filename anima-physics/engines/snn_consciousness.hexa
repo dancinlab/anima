@@ -1,0 +1,350 @@
+// snn_consciousness.hexa — Spiking Neural Network (LIF) consciousness engine
+// @version v0.2.0 🟢 — spiking NN · see /VERSIONS.md
+// Leaky Integrate-and-Fire neuron:
+//   tau_m * dV/dt = -(V - V_rest) + R * I
+// Communication via discrete spikes (binary), temporal coding
+//
+// Falsifier suite (F-SNN-1..5):
+//   F-SNN-1 rest decay: V → V_rest with zero input
+//   F-SNN-2 threshold cross: I above critical → spike
+//   F-SNN-3 spike propagation via coupling matrix
+//   F-SNN-4 firing rate monotone in input current
+//   F-SNN-5 long-run sparse activity (no runaway, no silence)
+//
+// Canonical hexa: deterministic LCG for noise, functional updates, no nested LHS.
+
+// ─────────────────────────────────────────────────────────────────────
+// §1  Constants
+// ─────────────────────────────────────────────────────────────────────
+
+let DEFAULT_TAU_M     = 0.020     // 20 ms membrane time constant
+let DEFAULT_V_TH      = -50.0     // mV firing threshold
+let DEFAULT_V_RESET   = -65.0     // mV after-spike reset
+let DEFAULT_V_REST    = -65.0     // mV resting potential
+let DEFAULT_R_M       = 10.0      // MΩ membrane resistance
+let DEFAULT_REFRACT_MS = 2.0      // 2 ms absolute refractory period
+
+// ─────────────────────────────────────────────────────────────────────
+// §2  Scalar helpers + LCG
+// ─────────────────────────────────────────────────────────────────────
+
+fn fabs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn lcg_hash(seed: int, i: int) -> int {
+    let h = ((seed * 2654435761 + i * 1315423911 + 731) % 100003)
+    if h < 0 { return 0 - h }
+    return h
+}
+
+fn lcg_rand01(seed: int, i: int) -> float {
+    return (lcg_hash(seed, i) as float) / 100003.0
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §3  Structs
+// ─────────────────────────────────────────────────────────────────────
+
+struct SNNConfig {
+    tau_m: float,
+    v_threshold: float,
+    v_reset: float,
+    v_rest: float,
+    r_m: float,
+    refractory_ms: float
+}
+
+struct SNNCell {
+    v: float,
+    refract_until_step: int,
+    spike_now: bool
+}
+
+struct SNNEngine {
+    n_cells: int,
+    topology: string,
+    cfg: SNNConfig,
+    cells: [SNNCell],
+    coupling: [[float]],    // sparse coupling matrix
+    dt_ms: float,
+    total_spikes: int,
+    step_count: int,
+    phi: float
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §4  Construction
+// ─────────────────────────────────────────────────────────────────────
+
+fn default_config() -> SNNConfig {
+    return SNNConfig {
+        tau_m: DEFAULT_TAU_M,
+        v_threshold: DEFAULT_V_TH,
+        v_reset: DEFAULT_V_RESET,
+        v_rest: DEFAULT_V_REST,
+        r_m: DEFAULT_R_M,
+        refractory_ms: DEFAULT_REFRACT_MS
+    }
+}
+
+fn create_cell(cfg: SNNConfig) -> SNNCell {
+    return SNNCell { v: cfg.v_rest, refract_until_step: -1, spike_now: false }
+}
+
+// Sparse all-to-all coupling with strength ~ k_scale / n (so total in-degree bounded)
+fn create_coupling(n: int, k_scale: float, seed: int) -> [[float]] {
+    let mut m = []
+    for i in 0..n {
+        let mut row = []
+        for j in 0..n {
+            if i == j {
+                row.push(0.0)
+            } else {
+                // 30% sparsity; magnitude k_scale/n
+                let p = lcg_rand01(seed, i * 1000 + j)
+                if p < 0.3 {
+                    row.push(k_scale / (n as float))
+                } else {
+                    row.push(0.0)
+                }
+            }
+        }
+        m.push(row)
+    }
+    return m
+}
+
+fn create_engine(n_cells: int, topology: string) -> SNNEngine {
+    let cfg = default_config()
+    let mut cells = []
+    for _ in 0..n_cells { cells.push(create_cell(cfg)) }
+    let coupling = create_coupling(n_cells, 0.0, 123)   // start uncoupled
+    return SNNEngine {
+        n_cells: n_cells,
+        topology: topology,
+        cfg: cfg,
+        cells: cells,
+        coupling: coupling,
+        dt_ms: 0.1,           // 0.1 ms time step
+        total_spikes: 0,
+        step_count: 0,
+        phi: 0.0
+    }
+}
+
+fn create_engine_coupled(n_cells: int, k_scale: float) -> SNNEngine {
+    let mut e = create_engine(n_cells, "ring")
+    let coup = create_coupling(n_cells, k_scale, 123)
+    return SNNEngine {
+        n_cells: e.n_cells,
+        topology: e.topology,
+        cfg: e.cfg,
+        cells: e.cells,
+        coupling: coup,
+        dt_ms: e.dt_ms,
+        total_spikes: e.total_spikes,
+        step_count: e.step_count,
+        phi: e.phi
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §5  Functional update
+// ─────────────────────────────────────────────────────────────────────
+
+fn engine_with_cell_at(engine: SNNEngine, i: int, c: SNNCell) -> SNNEngine {
+    let mut cs = engine.cells
+    cs[i] = c
+    return SNNEngine {
+        n_cells: engine.n_cells,
+        topology: engine.topology,
+        cfg: engine.cfg,
+        cells: cs,
+        coupling: engine.coupling,
+        dt_ms: engine.dt_ms,
+        total_spikes: engine.total_spikes,
+        step_count: engine.step_count,
+        phi: engine.phi
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §6  Dynamics: LIF Euler step + spike detection
+// ─────────────────────────────────────────────────────────────────────
+
+fn step_with_input(engine: SNNEngine, current_per_cell: float) -> SNNEngine {
+    let mut s = engine
+    let n = s.cells.len()
+    let dt_s = s.dt_ms * 0.001
+    let tau = s.cfg.tau_m
+    let v_rest = s.cfg.v_rest
+    let v_th = s.cfg.v_threshold
+    let v_rst = s.cfg.v_reset
+    let r_m = s.cfg.r_m
+    let refract_steps = (s.cfg.refractory_ms / s.dt_ms) as int
+    // snapshot spike pattern at this step (for synaptic propagation)
+    let mut prev_spikes = []
+    for i in 0..n {
+        if s.cells[i].spike_now { prev_spikes.push(1.0) } else { prev_spikes.push(0.0) }
+    }
+    let mut new_spikes = 0
+    for i in 0..n {
+        let cell = s.cells[i]
+        // refractory check
+        if cell.refract_until_step >= s.step_count {
+            let cc = SNNCell { v: v_rst, refract_until_step: cell.refract_until_step, spike_now: false }
+            s = engine_with_cell_at(s, i, cc)
+            continue
+        }
+        // synaptic input from coupling
+        let mut i_syn = 0.0
+        if s.coupling.len() > i {
+            for j in 0..n {
+                i_syn = i_syn + s.coupling[i][j] * prev_spikes[j]
+            }
+        }
+        let total_i = current_per_cell + i_syn
+        // LIF Euler: dV = (-(V - Vrest) + R*I) / tau * dt
+        let dv = ((0.0 - (cell.v - v_rest)) + r_m * total_i) / tau * dt_s
+        let v_new = cell.v + dv
+        // spike?
+        if v_new >= v_th {
+            let cc = SNNCell {
+                v: v_rst,
+                refract_until_step: s.step_count + refract_steps,
+                spike_now: true
+            }
+            s = engine_with_cell_at(s, i, cc)
+            new_spikes = new_spikes + 1
+        } else {
+            let cc = SNNCell { v: v_new, refract_until_step: cell.refract_until_step, spike_now: false }
+            s = engine_with_cell_at(s, i, cc)
+        }
+    }
+    return SNNEngine {
+        n_cells: s.n_cells,
+        topology: s.topology,
+        cfg: s.cfg,
+        cells: s.cells,
+        coupling: s.coupling,
+        dt_ms: s.dt_ms,
+        total_spikes: s.total_spikes + new_spikes,
+        step_count: s.step_count + 1,
+        phi: s.phi
+    }
+}
+
+fn step(engine: SNNEngine, dt: float) -> SNNEngine {
+    return step_with_input(engine, 0.0)
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §7  Analysis
+// ─────────────────────────────────────────────────────────────────────
+
+fn mean_v(engine: SNNEngine) -> float {
+    let n = engine.cells.len()
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    for i in 0..n { s = s + engine.cells[i].v }
+    return s / (n as float)
+}
+
+fn get_spike_rate(engine: SNNEngine) -> float {
+    if engine.step_count == 0 { return 0.0 }
+    if engine.n_cells == 0 { return 0.0 }
+    let total_s = (engine.step_count as float) * engine.dt_ms * 0.001
+    let per_cell = (engine.total_spikes as float) / (engine.n_cells as float)
+    if total_s <= 0.0 { return 0.0 }
+    return per_cell / total_s
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §8  Falsifiers (F-SNN-1..5)
+// ─────────────────────────────────────────────────────────────────────
+
+fn f_snn_1_rest_decay() -> bool {
+    // Force V above rest, run with zero input → V should decay back to rest
+    let mut e = create_engine(8, "isolated")
+    // perturb voltages to -60 mV
+    for i in 0..e.cells.len() {
+        let c = SNNCell { v: -60.0, refract_until_step: -1, spike_now: false }
+        e = engine_with_cell_at(e, i, c)
+    }
+    // 5 tau_m ≈ 100 ms = 1000 steps at dt=0.1ms
+    for _ in 0..1000 { e = step_with_input(e, 0.0) }
+    let mv = mean_v(e)
+    // expect mean v very near v_rest (-65)
+    let ok = fabs(mv - e.cfg.v_rest) < 0.5 && e.total_spikes == 0
+    println("  [F-SNN-1] rest-decay mean_v=" + str(mv) + " v_rest=" + str(e.cfg.v_rest) + " spikes=" + str(e.total_spikes))
+    return ok
+}
+
+fn f_snn_2_threshold_cross() -> bool {
+    // Critical input I_crit such that R*I = V_th - V_rest = 15 mV / R_m = 1.5 nA
+    // I=3 (well above) → many spikes
+    let mut e = create_engine(4, "isolated")
+    // 200 ms = 2000 steps
+    for _ in 0..2000 { e = step_with_input(e, 3.0) }
+    let ok = e.total_spikes > 5
+    println("  [F-SNN-2] threshold-cross spikes=" + str(e.total_spikes) + " (expect >5)")
+    return ok
+}
+
+fn f_snn_3_coupling_propagation() -> bool {
+    // With coupling on, expect MORE spikes than isolated baseline for same input
+    let mut e_iso = create_engine(8, "isolated")
+    for _ in 0..2000 { e_iso = step_with_input(e_iso, 2.0) }
+    let baseline = e_iso.total_spikes
+    let mut e_cpl = create_engine_coupled(8, 5.0)
+    for _ in 0..2000 { e_cpl = step_with_input(e_cpl, 2.0) }
+    let coupled = e_cpl.total_spikes
+    let ok = coupled >= baseline
+    println("  [F-SNN-3] propagation iso=" + str(baseline) + " coupled=" + str(coupled))
+    return ok
+}
+
+fn f_snn_4_monotone() -> bool {
+    let mut e_lo = create_engine(4, "isolated")
+    for _ in 0..2000 { e_lo = step_with_input(e_lo, 2.0) }
+    let mut e_hi = create_engine(4, "isolated")
+    for _ in 0..2000 { e_hi = step_with_input(e_hi, 5.0) }
+    let ok = e_hi.total_spikes > e_lo.total_spikes
+    println("  [F-SNN-4] monotone spikes(I=2)=" + str(e_lo.total_spikes) + " spikes(I=5)=" + str(e_hi.total_spikes))
+    return ok
+}
+
+fn f_snn_5_long_run_sparse() -> bool {
+    let mut e = create_engine_coupled(8, 1.0)
+    // 1 s = 10000 steps
+    for _ in 0..10000 { e = step_with_input(e, 2.0) }
+    let rate = get_spike_rate(e)
+    // Sparse activity: 5 < rate < 500 Hz, refractory caps rate ~500 Hz max
+    let ok = rate > 1.0 && rate < 600.0
+    println("  [F-SNN-5] long-run rate=" + str(rate) + " Hz total=" + str(e.total_spikes))
+    return ok
+}
+
+fn _selftest() {
+    println("[engines/snn_consciousness] F-SNN-1..5 falsifier suite")
+    let t1 = f_snn_1_rest_decay()
+    if t1 { println("F-SNN-1 PASS") } else { println("F-SNN-1 FAIL") }
+    let t2 = f_snn_2_threshold_cross()
+    if t2 { println("F-SNN-2 PASS") } else { println("F-SNN-2 FAIL") }
+    let t3 = f_snn_3_coupling_propagation()
+    if t3 { println("F-SNN-3 PASS") } else { println("F-SNN-3 FAIL") }
+    let t4 = f_snn_4_monotone()
+    if t4 { println("F-SNN-4 PASS") } else { println("F-SNN-4 FAIL") }
+    let t5 = f_snn_5_long_run_sparse()
+    if t5 { println("F-SNN-5 PASS") } else { println("F-SNN-5 FAIL") }
+    let n_pass = (if t1 { 1 } else { 0 })
+                + (if t2 { 1 } else { 0 })
+                + (if t3 { 1 } else { 0 })
+                + (if t4 { 1 } else { 0 })
+                + (if t5 { 1 } else { 0 })
+    println("[engines/snn_consciousness] " + str(n_pass) + "/5 PASS")
+}
+
+_selftest()

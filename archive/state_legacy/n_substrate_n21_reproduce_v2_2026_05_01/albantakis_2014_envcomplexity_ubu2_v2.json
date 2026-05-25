@@ -1,0 +1,85 @@
+{
+  "study": "Albantakis_2014_envcomplexity_v2_medium",
+  "host": "ubu2",
+  "n_nodes": 7,
+  "pop": 10,
+  "gens": 200,
+  "per_env": [
+    {
+      "env": "simple",
+      "best_fit_top3": [
+        0.9609375,
+        0.9609375,
+        0.9140625
+      ],
+      "concept_count_top3": [
+        -1,
+        65,
+        -1
+      ],
+      "phi_top3": [
+        NaN,
+        0.901183,
+        NaN
+      ],
+      "concept_mean": 65.0,
+      "phi_mean": 0.901183
+    },
+    {
+      "env": "medium",
+      "best_fit_top3": [
+        0.9765625,
+        0.96875,
+        0.90625
+      ],
+      "concept_count_top3": [
+        45,
+        50,
+        48
+      ],
+      "phi_top3": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "concept_mean": 47.666666666666664,
+      "phi_mean": 0.0
+    },
+    {
+      "env": "complex",
+      "best_fit_top3": [
+        0.953125,
+        0.9453125,
+        0.8984375
+      ],
+      "concept_count_top3": [
+        55,
+        63,
+        68
+      ],
+      "phi_top3": [
+        0.294531,
+        0.73687,
+        0.274313
+      ],
+      "concept_mean": 62.0,
+      "phi_mean": 0.435238
+    }
+  ],
+  "monotonic_concepts_simple_to_complex": false,
+  "monotonic_phi_simple_to_complex": false,
+  "mean_concepts_per_env": [
+    65.0,
+    47.666666666666664,
+    62.0
+  ],
+  "mean_phi_per_env": [
+    0.901183,
+    0.0,
+    0.435238
+  ],
+  "expectation_paper": "concepts and phi increase monotonically with env complexity",
+  "verdict": "FAIL",
+  "elapsed_sec": 1375.1,
+  "ts_utc": "2026-05-02T04:50:29Z"
+}

@@ -1,0 +1,38 @@
+{
+  "agent": "N-21-E Boly pilot kit",
+  "date": "2026-05-01",
+  "predecessor": "n_substrate_n21_boly_webcam_fallback_2026_05_01",
+  "verdict": "KIT_READY",
+  "summary": "Off-repo $0 measurement kit assembled and synthetic-dry-run verified. User can begin 7-day Boly pilot after two ~5-min user actions (LabRecorder install + GazeCloudAPI signup). All 5 raw#71 falsifiers preregistered. Phase 3 preflight: 3 PASS / 1 UNVERIFIED (GazeCloudAPI signup, by design) / 0 FAIL.",
+  "kit_files_count": 6,
+  "kit_path": "~/n21_boly_kit/",
+  "spec_doc": "docs/n_substrate_n21_boly_pilot_prep_2026_05_01.md",
+  "spec_doc_word_count_approx": 1700,
+  "synthetic_dry_run_pass": true,
+  "synthetic_dry_run_accuracy": 1.0,
+  "honest_c3": [
+    "Necker cube substituted for Boly's bistable plaid; quantitative decoder accuracy not directly comparable to Boly 88%",
+    "Webcam OKN budgeted 5-13 pp below research-grade per fallback verdict",
+    "GazeCloudAPI is closed-source; reproducibility risk for external groups",
+    "Synthetic generator is idealized OKN; real-data PASS not guaranteed by synthetic PASS",
+    "No hardware tested by this agent; verification limited to wheel + dylib architecture"
+  ],
+  "decoder_pass_gate": 0.75,
+  "expected_real_accuracy_range": [0.75, 0.83],
+  "boly_research_grade_benchmark": 0.88,
+  "n1_eta_days": 8,
+  "n1_user_minutes_per_day": 225,
+  "n5_eta_days": 60,
+  "escalation_if_fail_n1": [
+    "Pupil Core purchase $2-3k USD (per fallback verdict section 7)",
+    "OR redesign protocol (overt-report only, no covert-OKN)"
+  ],
+  "budget_committed_usd": 0,
+  "race_isolated_outputs": [
+    "docs/n_substrate_n21_boly_pilot_prep_2026_05_01.md",
+    "state/n_substrate_n21_boly_pilot_prep_2026_05_01/checklist.json",
+    "state/n_substrate_n21_boly_pilot_prep_2026_05_01/falsifiers.json",
+    "state/n_substrate_n21_boly_pilot_prep_2026_05_01/preflight.json",
+    "state/n_substrate_n21_boly_pilot_prep_2026_05_01/verdict.json"
+  ]
+}

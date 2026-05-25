@@ -1,0 +1,598 @@
+# Python — R37/AN13/L3-PY scrub 2026-05-12 (사용자 directive, 일시 .py 허용)
+# 이전: 전면 차단. 현재: .pyc / __pycache__ / venv 만 차단. 정식 .py 허용.
+# (장기적으로 .hexa 포팅 권장, 단기 transient 도구는 .py OK)
+**/*.py.staged
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment
+.env
+.local/
+
+# Model files — checkpoints (400MB+) and GGUF (multi-GB)
+*.pt
+anima/checkpoints/
+anima/models/
+
+# Trained LoRA adapters pulled from H100 pods (400MB–2.1GB each)
+# Stored locally for CP1 deployment; push to R2 for distribution.
+state/trained_adapters/
+state/trained_adapters_r*/
+
+# PURE Phase D — anima-OWN PoC corpus (USER session log extract, local only, NEVER upload)
+state/pure_phase_d_corpus_anima_own_poc_*/corpus.jsonl
+*.safetensors
+
+# Large corpus files (100-200MB each) — use R2 for distribution
+anima/data/corpus_*.txt
+anima/data/corpus_multilingual/
+
+# H_093 SFT-only corpus (51MB) — anima models + datasets HF-only rule
+state/anima_h093_sft_only_corpus_2026_05_07/corpus_sft_only.txt
+state/anima_h093_sft_only_train_2026_05_07/ckpt_final.pt
+state/anima_h154_bpe_step_retrieve_2026_05_07/ckpt_*.pt
+state/anima_ig_bpe_16k_universe_brain_map_train_2026_05_07/ckpt_*.pt
+state/anima_ig_bpe_16k_universe_brain_map_train_2026_05_07/runs/
+
+# BG-IK NEXUS-UBM combined corpus (27.5MB) — HF Hub only, NEVER anima git
+state/anima_ik_nexus_ubm_combined_corpus_2026_05_07/corpus_combined.txt
+
+# BG-IM 18M NEXUS-UBM byte-level control train ckpts — HF Hub or /tmp only
+state/anima_im_18m_nexus_ubm_train_2026_05_07/ckpt_*.pt
+
+# BG-IQ universe-brain-map 21MB rebuild corpus (22.6MB) — HF Hub or local-only
+state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt
+
+# BG-IO 100M UBM 21MB rebuild train ckpts — HF Hub or /tmp only
+state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/ckpt_*.pt
+state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/runs/
+training/corpus_*.txt
+training/corpus_*.txt.gz
+training/deploy/.reval_tmp/
+# BG-LB Engine A/G combined corpus (427MB) — HF Hub or local-only, NEVER anima git
+state/bg_lb_engine_ag_2026_05_09/big_corpus.txt
+state/bg_lb_engine_ag_2026_05_09/results/
+
+# P9 retrain v2 large corpus + adapter artifacts (76MB+ JSONL, 400MB+ adapters)
+state/p9_path_a_retrain_v2_exec_*/corpus/*.jsonl
+state/p9_path_a_retrain_v2_retry_*/corpus/*.jsonl
+state/p9_path_a_retrain_v2_exec_*/results/adapter_*/
+state/p9_path_a_retrain_v2_exec_*/results/intermediate_dir/
+state/p9_path_a_retrain_v2_exec_*/results/final_lora_*_dir/
+
+# VOICE 학습/eval audio corpus — HEXAD/VOICE (formulaic 도구) 와 분리 (2026-05-16
+# user directive "학습관련 은 합치면 안되 + scrub"). R2 distribution (GitHub 100MB/file).
+# 원 anima-voice/corpus/ → _voice_corpus_local/ relocate + git untrack.
+/_voice_corpus_local/
+# legacy patterns (anima-voice/ → HEXAD/VOICE/anima-voice/ 이동, corpus 제거됨 — carry harmless)
+HEXAD/VOICE/anima-voice/corpus/
+
+# Root-level checkpoints (non-canonical)
+/checkpoints/
+
+# Root-level runtime state (PIDs, daemon logs, evo_runner state)
+/data/
+# atlas canonical symlinks — tracked exception (SSOT, raw#10 proof-carrying)
+!/data/atlas.signals.n6
+/logs/
+*.pid
+
+# Rust build artifacts
+**/target/
+
+# Hexa transpile/build artifacts — .c intermediates and compiled binaries
+/build/*
+/anima-agent/build/
+/training/build/
+
+# anima Phase 3b libllama FFI shim — C source + dylib are committed (build infra,
+# analogous to vendored runtime.c). The llama.cpp source clone lives in
+# ~/.cache/anima/llama.cpp (out-of-tree, multi-GB) and is NEVER committed.
+!/build/hxllama_shim.c
+!/build/libhxllama.dylib
+!/build/.gitkeep
+
+# IDE
+.superpowers/
+
+# Claude Code worktrees
+.claude/*
+!.claude/settings.json
+!.claude/hooks/
+!.claude/skills/
+
+# Large data
+*.db
+anima/config/tokenizer_*.model
+anima/config/tokenizer_*.vocab
+anima/config/tokenizer_64k_multilingual.model
+anima/config/tokenizer_64k_multilingual.vocab
+
+# TECS-L calc symlink
+calc
+# .shared / shared symlinks → ../nexus/shared (local-only, not committed)
+.shared
+/shared
+tecsrs
+
+# anima/config → ../config symlink (local alias, not tracked — CLAUDE.md refs config/ directly)
+/anima/config
+# Playwright MCP cache
+.playwright-mcp/
+
+# Secrets — API keys, tokens, credentials
+SECRET.md
+*.secret
+*.credentials
+config.toml
+.runpod/
+.secrets/
+.env.local
+.env.production
+*.hexaw
+
+# NVRTC PTX disk cache (cuda_rtc.hexa) — rebuilt on first run
+.hexa-cache/
+
+# Claude Code memory (account-shared, local only)
+.claude-memory/
+
+# macOS
+.DS_Store
+
+# Growth absorbed runtime state — transient JSON produced by growth_loop; archive tarballs are tracked for reproducibility
+/.growth/absorbed/*.json
+!/.growth/absorbed/archive/
+
+# Adversarial bench runtime sandboxes (copies of anima-hexad/) — regenerated each run
+state/adv_bench_sandbox/
+training/corpus_alm_70b.jsonl
+training/corpus/
+# kowiki / 자동 파이프라인 대용량 코퍼스 (1.3GB+) — R2 배포
+training/corpus_auto/
+# tool-use 코퍼스 jsonl 원본 — R2 배포
+training/corpus_tool/*.jsonl
+# YouTube 오디오북 코퍼스 (1.4GB+ wav/srt/json) — R2 배포
+training/corpus_yt_ko/
+training/corpus_ko_ytv1/
+# corpus 분할 테스트 샘플 (wav + metadata.csv) — R2 또는 재생성 가능
+training/corpus_test_pipeline/
+# 학습 로그
+training/logs/
+# persona demo .py (HEXA-FIRST 정책 — .py 금지, 보관만)
+anima-agent/results/*.py
+
+# airgenome rig_trend consumer ephemeral advice (300s regenerated)
+.hook-advice.md
+
+# airgenome hook runtime state (per-project, owned by `airgenome hook` CLI — see tool/airgenome_cli_probe.hexa)
+.hook-commands/
+
+# AOT 컴파일 산출물 (소스는 tool/ · $HEXA_LANG/에 존재, 바이너리는 재빌드 가능)
+# Note: /bin/* (not /bin/) so re-include exceptions below can match — git rule
+# disallows un-excluding files inside a fully-excluded directory.
+/bin/*
+# bin/anima — hand-written bash dispatcher (canonical CLI entry, brew-installed
+# via packaging/brew_formula_anima.rb, exec-shimmed by ~/.hx/bin/anima). NOT a
+# build artifact — the /bin/ ignore rule above was a 2026-04-23 oversight (PR #39
+# announced "bin/anima unified CLI" but omitted this exception).
+!/bin/anima
+
+# 외부 리포 로컬 심볼릭 링크 (n6-architecture — local-only, not committed)
+/n6/
+
+# 로컬 호스트 probe 스냅샷 (ubu/ubu2/htz/mac 상태, 런타임 전용)
+/infra_state.json
+
+# 런타임 감사 로그 (JSONL append-only — problem_solving_protocol)
+.raw-audit/
+
+# Runtime ephemeral state — timestamped ticks (roadmap_integrity_guard / roadmap_live_daemon / paths pruner / TUI heartbeat / auto-reflect log)
+state/integrity_drift_*.json
+state/roadmap_coverage_tick_*.json
+state/paths_prune_candidates_*.json
+state/anima_tui_heartbeat.json
+state/roadmap_auto_reflect_log.json
+dist/
+
+# clm_eeg_p1_lz selftest output — auto-regenerated per run with rotating mode (random/structured) and timestamp; only the .hexa SSOT and the deterministic dry-run cert state/clm_eeg_p1_lz_pre_register.json (uchg) are tracked
+state/clm_eeg_p1_lz_pre_register_real.json
+
+# F3 prod scipy raw 9 exemption (own 1 + commit f890d69f)
+tool/anima_holographic_ib_ksg_validate_prod.py
+
+# anima chat Phase 3 GGUF conversion infra — .py allowed (chat path stays
+# hexa-only; this is one-time HF→GGUF build/transformation, lane-separated).
+# See tool/anima_gguf_convert.py header + .roadmap.cli cli.gguf_conversion_landed_2026_05_08
+!tool/anima_gguf_convert.py
+
+# own 36 mandate-2/3 destination 의무 응용 — anima corpus HF dancinlab dataset
+# upload helper (.py allowed; raw#9/raw#37 transient_py 영역, chat path 외).
+# See tool/anima_corpus_hf_upload.py header + .roadmap.cli cli.clm_l4_corpus_iter1/2 hf_upload block
+!tool/anima_corpus_hf_upload.py
+
+# BG-LA + BG-LB Engine A/G dual-engine 350M arch concrete impl (raw#37 transient_py
+# 영역; raw#9 hexa-only Mac chat path 외 — H100 pod-side training & Mac-side V14
+# random_init mirror only). registry yaml BG-LA lineage.base SSOT reference.
+# See training/engine_a_g_arch.py header + tool/v14_paired_random_init_mirror.hexa
+# + tool/bg_la_engine_ag_orchestrator.hexa.
+!training/engine_a_g_arch.py
+
+# RunPod operational deployment scripts (raw 9 jurisdiction-out per anima/.own own 1 pattern)
+# These are pod-side install/measure scripts, not anima governance/orchestration
+anima-tribev2-pilot/scripts/install_pod_deps.sh
+state/v10_mk_xii_qwen_family_internal/qwen25_7b/measure_cmd.sh
+state/v10_mk_xii_qwen_family_internal/qwen3_14b/measure_cmd.sh
+
+# Python virtual env (raw 169 hygiene)
+.venv-eeg/
+
+# .workspace machine-local SSOT (mk2 schema, NEVER github push) — added 2026-05-02
+.workspace
+.workspace.*
+.workspace.lock
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Added 2026-05-03 — large references / transient state hygiene
+# Note: pre-tracked files (e.g. state/markers/*) require `git rm --cached` to fully untrack.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Vendor reference clones (multi-thousand files; not anima governance)
+references/brainflow/
+references/pyOpenBCI/
+references/tribev2/
+
+# Marker files — auto-emitted by daemons / pod-side scripts (transient)
+state/markers/
+
+# State dotfiles (helper scripts / fixtures placed under state/.*)
+state/.band_power_5_*
+state/.gamma_theta_native_*
+state/.npy_helper.py
+state/.clm_eeg_*
+state/.welch_to_bandpower_*
+
+# P9 / qmirror domain-specific transient state (heavy jsonl, regenerable)
+state/p9_p0_*/
+state/qmirror_*/
+# §119 qmirror-neuro: trackable design+battery artifacts (no heavy jsonl) —
+# negate the broad qmirror-* pattern for this section's deliverables.
+!state/qmirror_neuro_s119_2026_05_19/
+
+# BG-φ Phase 4 symmetry fix (ref commit b4e1570c0): callers 3+4 .py.txt parking.
+# Narrow to .py / .py.txt only (NOT bare dir) so verdict.json + trajectory.json
+# + per_prompt JSON artifacts under p9_p1_*/ + p9_qmirror_*/ remain trackable.
+# Pre-existing tracked .py.txt under p9_a_prime_*, p9_paradigm_d_*, p9_path_a_*
+# are unaffected (gitignore does not retroactively untrack files).
+state/p9_p1_*/**/*.py
+state/p9_p1_*/**/*.py.txt
+state/p9_qmirror_*/**/*.py
+state/p9_qmirror_*/**/*.py.txt
+
+# EEG session-specific snapshots (timestamped, ledger holds canonical SSOT)
+state/anima_eeg_impedance_*.json
+state/anima_eeg_session_log.jsonl
+state/dual_stream_seedanchor_ledger.jsonl
+
+# rail_audit sidecars — Option B (2026-05-03): gitignore future emissions; do NOT
+# `git rm --cached` the 3 already-committed sidecars in commit e2ce92413.
+# Rationale: deterministic re-runnable from .npy + meta.json via analyze_wrapper.hexa.
+# Policy: docs/ai-native/rail_audit_sidecar_policy_2026_05_03.ai.md
+anima-eeg/recordings/sessions/*.npy.rail_audit.json
+anima-eeg/recordings/protocols/**/*.npy.rail_audit.json
+
+# analyze_wrapper helper transient dumps + selftest sidecars (state-tier ephemeral)
+state/.analyze_wrapper_dump.txt
+state/.analyze_wrapper_dump_clean.txt
+state/.analyze_wrapper_dump_*.txt
+state/analyze_wrapper_selftest_*.rail_audit.json
+
+# Hexa pwd probe artifacts (N2 sandbox confirmation, ephemeral)
+state/_hexa_pwd_out.txt
+state/_hexa_pwd_probe.hexa
+
+# Band-power test fixtures (regeneratable from .hexa SSOT)
+state/band_power_5_*/
+state/berger_*/
+
+# anima/state/ runtime ledger (RNG / live tick) — root override for non-json files
+anima/state/
+
+# Experiment / recordings runtime artifacts
+state/experiment/
+
+# tool/transient_py/ — auto-generated python namespace (.own 2/3/4)
+# Spec: docs/anima_dot_own_namespace_spec_2026_05_03.md
+# Policy: *.py here are gitignored (regeneratable from .hexa transpiler).
+#         The directory is preserved via .gitkeep + README.md + .gitignore.
+# Note: REDUNDANT with `**/*.py` ban above — kept here as documentation
+# anchor so future audits find the policy at the namespace declaration site.
+tool/transient_py/*.py
+tool/transient_py/__pycache__/
+!tool/transient_py/.gitkeep
+!tool/transient_py/.gitignore
+!tool/transient_py/README.md
+
+# HF-hosted datasets (migrated 2026-05-04 — see docs/anima_hf_dataset_migration_2026_05_04.ai.md)
+state/p9_path_a_*/sft_data_*.jsonl
+
+# anima native KO chat-template corpus (BG-FZ 2026-05-06) — 237MB, regeneratable from filter script + sft_data.jsonl
+state/anima_native_ko_chat_template_2026_05_06/corpus_chat_template.txt
+state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+
+# BG-JH 100M corpus 204MB train ckpts (12 ckpts × ~615MB = 7.4GB) — HF Hub or /tmp only
+state/anima_jh_100m_corpus_204mb_train_2026_05_07/ckpt_*.pt
+
+# ── own 36 (2026-05-08): model + training artifact HF upload mandate ──
+# Pattern-based ignore — git push 금지, HF dancinlab (own 31) destination 의무.
+# .gguf / .gif / .npz / .npy: model weights + tensor data (size 무관)
+*.gguf
+*.bin
+*.pkl
+*.npy
+*.npz
+# Training corpora (≥10MB rule, pattern-based for safety)
+# Note: git glob `*` requires ≥1 character — separate prefix-match patterns
+# 의무 (e.g. anima_persona_* 와 anima_*_persona_* 둘 다 필요)
+state/anima_*_corpus_*.txt
+state/anima_corpus_*.txt
+state/anima_*_persona_*.txt
+state/anima_persona_*.txt
+state/anima_*_dialogue_*.txt
+state/anima_dialogue_*.txt
+state/anima_*_preference_*.jsonl
+state/anima_preference_*.jsonl
+state/anima_*_pairs_*.jsonl
+state/anima_pairs_*.jsonl
+# Tier A/B/C scoped curation outputs (own 36 mandate-2/3)
+state/anima_*_tier_*.txt
+state/anima_*_tier_*.jsonl
+# anima chat Phase 3b libllama build artifacts (mac-local, not portable)
+build/libhxllama.dylib
+build/llama.cpp/
+
+# ── Cycle 6 large training corpora (2026-05-12) — HF Hub destination only ──
+# GitHub push limits: 100MB hard reject, 50MB warning. Below files exceed.
+# Regeneratable from generator scripts + base corpus. NEVER commit to anima git.
+state/anima_phase1a1_color_cosmology_2026_05_12/corpus_multi_turn_v2.txt
+state/anima_phase1a_multi_turn_2026_05_12/corpus_multi_turn.txt
+state/anima_convo_5k_ft_extended_2026_05_10/corpus_extended.txt
+state/anima_convo_5k_ft_extended_2026_05_10/corpus_extended.txt.gz
+state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt.gz
+state/clm_v4_lora_sft_2026_05_05/corpus/slice_A_anima_30k.jsonl
+state/anima_persona_tier_a_v4_2026_05_09.txt.gz
+state/anima_combined_paradigm_corpus_2026_05_07/corpus_combined.txt
+state/anima_jy_chat_template_corpus_2026_05_07/corpus_chat_template.txt.gz
+state/anima_native_ko_medium_chat_corpus_2026_05_06/corpus_ko_chat_mix.txt
+
+# Generic catch-all for large training corpora at any depth under state/
+state/**/corpus_*.txt
+state/**/corpus_*.txt.gz
+state/**/corpus_*.jsonl
+
+# Temporary scratch (matrix experiments, dual ckpt staging)
+tmp/
+
+# Phase 1A.1 color/cosmology boost ckpts (regeneratable on Vast.ai; 1.1G)
+state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/
+
+# HEXAD compiled-native build artifacts (hexa build -o, interp deprecating)
+/_hexa_build/
+state/hexad_integ_fire_2026_05_16/ckpts/*.pt
+
+# PyPhi runtime log — accumulates, not source of truth
+pyphi.log
+
+# Fire-instance transients (PIDs, vast IDs, ssh endpoints — already-destroyed instances, no durable evidence)
+state/**/.dispatch_pid
+state/**/offer_id.txt
+state/**/vast_instance_id.txt
+state/**/vast_ssh.txt
+
+# Transpiled hexa single-translation-unit C (1.5MB+, regeneratable from .hexa source)
+state/**/hexa_full_singletu.c
+
+# HEXAD/<TOPIC>/state/<basename>/ = §N evidence SSOT — TRACKED (text only).
+# The old blanket `HEXAD/*/state/` ignore (was for per-module transient
+# runtime markers) is REMOVED 2026-05-20 — 0 module-level state dir exists,
+# and the §134/Phase-C per-topic migration made HEXAD/<TOPIC>/state/ the
+# canonical §N evidence location. Blanket-ignoring it silently dropped
+# 1,266 evidence files (149 dirs) from git. Only the large binaries below
+# (lines ~535+) stay ignored; result.json / DESIGN.md / blue_falsifier /
+# *.md / *.log are tracked.
+
+# runpod/vast dispatch scripts may embed API keys — never commit (keys → env/keyfile)
+*_runpod.sh
+dispatch_*_runpod.sh
+*_runpod.sh.remote
+*_runpod*.log
+*_runpod_ssh.txt
+*_runpod_pod_id.txt
+*_runpod_instance*.txt
+run_eval_v2_runpod.sh*
+run_e7_*.sh
+run_dirB_*.sh
+run_dirE_*.sh
+run_dirI_*.sh
+run_dirG_*.sh
+run_dirH_*.sh
+dirE_runpod_watchdog.log
+dirI_runpod_watchdog.log
+dirG_runpod_watchdog.log
+dirH_runpod_watchdog.log
+state/carving_dirG_psi_ctl_2026_05_17/ckpt_carving_psi_ctl_dirG.pt
+state/carving_dirH_tension_sup_2026_05_17/ckpt_carving_dirH_tension_sup.pt
+state/carving_dirI_psictl_tensionsup_2026_05_17/corpus_carving_dirI.jsonl
+state/carving_dirI_psictl_tensionsup_2026_05_17/ckpt_carving_dirI.pt
+run_scaledecomp_*.sh
+run_diverse_*.sh
+run_purephysics_*.sh
+run_s16_*.sh
+s16_runpod_watchdog.log
+purephysics_runpod_watchdog.log
+scaledecomp_runpod_watchdog.log
+state/carving_dirI_diverse_scaleup_2026_05_18/ckpt_carving_diverse.pt
+state/carving_scaledecomp_2026_05_18/ckpt_carving_scaledecomp.pt
+run_dirK_*.sh
+dirK_runpod_watchdog.log
+state/carving_dirK_ebt_2026_05_18/corpus_carving_diverse.jsonl
+state/carving_dirK_ebt_2026_05_18/ckpt_carving_ebt.pt
+run_dirJ_*.sh
+dirJ_runpod_watchdog.log
+state/carving_dirJ_diffusion_2026_05_18/corpus_carving_diverse.jsonl
+state/carving_dirJ_diffusion_2026_05_18/ckpt_carving_diffusion.pt
+*/vast_ssh.txt
+*/vast_instance_id.txt
+state/eeg_anchor_s19_2026_05_18/tribe_cache/
+state/eeg_anchor_s19_2026_05_18/stimulus_s19.txt
+# §28 JEPA-Ψ — corpus is a §16 curriculum-prefix subset (derivable, 82MB); ckpt covered by *.pt
+state/jepa_psi_s28_2026_05_18/corpus_jepa_psi.jsonl
+state/jepa_psi_s28_2026_05_18/run_jepa_main.sh
+state/jepa_psi_s28_2026_05_18/run_jepa_eval.sh
+state/jepa_psi_s28_2026_05_18/dispatch_jepa_runpod*.log
+
+# §41 L6 fullscale — derivable corpus (22 MB, sha256 in stats); transient dispatch log + holdout manifest
+state/l6_fullscale_s41_2026_05_18/relation_corpus_train_s41.jsonl
+state/l6_fullscale_s41_2026_05_18/dispatch_run.log
+state/l6_fullscale_s41_2026_05_18/holdout_pairs_s41.json
+
+# §48 PTD-aux scale-up corpus too large for GitHub (134MB > 100MB limit)
+state/dhdl_ptd_scaleup_s48_2026_05_18/trace_corpus_s48.jsonl
+# §59-FIRE — W-native PTD over REAL anima W-state at scale (large ckpt/corpus + sanity scratch)
+state/ptd_w_native_fire_s59_2026_05_18/ckpt_s59.pt
+state/ptd_w_native_fire_s59_2026_05_18/corpus_carving_s16.jsonl
+state/ptd_w_native_fire_s59_2026_05_18/_sanity_corpus.jsonl
+state/ptd_w_native_fire_s59_2026_05_18/_sanity_on/
+state/ptd_w_native_fire_s59_2026_05_18/_sanity_off/
+state/ptd_w_native_fire_s59_2026_05_18/_sanity_gen.log
+state/thinker_talker_selftrigger_fire_s73_2026_05_19/corpus_carving_s16.jsonl
+state/criticality_noise_engine_g_fire_s81_2026_05_19/ckpt_s81_fire.pt
+state/criticality_noise_engine_g_fire_s81_2026_05_19/corpus_carving_s16.jsonl
+state/manifold_gating_hierarchical_fire_s82_2026_05_19/ckpt_s82_fire.pt
+state/manifold_gating_hierarchical_fire_s82_2026_05_19/corpus_carving_s16.jsonl
+
+state/axolotl_neoteny_fire_s88f2_2026_05_19/corpus_carving_s16.jsonl
+state/axolotl_neoteny_fire_s88f2_2026_05_19/dispatch.log
+
+# §88-F1 — frog-eye salience gate trained-scale fire (large ckpt/corpus)
+state/frog_eye_salience_fire_s88f1_2026_05_19/ckpt_s88f1.pt
+state/frog_eye_salience_fire_s88f1_2026_05_19/corpus_carving_s16.jsonl
+state/frog_eye_salience_fire_s88f1_2026_05_19/dispatch.log
+
+# §94 — integrated breakthrough fire (large ckpt/corpus, transient logs)
+state/integrated_breakthrough_fire_s94_2026_05_19/corpus_carving_s16.jsonl
+state/integrated_breakthrough_fire_s94_2026_05_19/dispatch.log
+state/integrated_breakthrough_fire_s94_2026_05_19/out_main/
+
+# §107-RETRY — transient dispatch artifacts (pod id, dispatch trace, failure marker);
+# the *_runpod.sh dispatch script is already covered by the *_runpod.sh pattern above.
+state/dataregime_threshold_fire_s107_2026_05_19/dispatch_retry.log
+state/dataregime_threshold_fire_s107_2026_05_19/retry_pod_id.txt
+state/dataregime_threshold_fire_s107_2026_05_19/RETRY_FAILURE.txt
+
+# §108 param-axis 3B fire — transient dispatch artifacts (pod id, dispatch
+# trace, failure marker); the *_runpod.sh dispatch script is covered above.
+state/param_axis_fire_s108_2026_05_19/dispatch_s108.log
+state/param_axis_fire_s108_2026_05_19/s108_pod_id.txt
+state/param_axis_fire_s108_2026_05_19/S108_FAILURE.txt
+
+# HEXAD/NEUROMORPHIC substrate-access artifacts — contain applicant PII
+# (real name / personal email / phone). dancinlab/anima is a PUBLIC repo;
+# committing PII to public history is a permanent f_hardcoded_credential-class
+# privacy leak. Keep these LOCAL only — never `git add`. If a substrate-access
+# design doc needs tracking, parameterize the PII first (placeholders / secret CLI).
+# (Folder renamed HEXAD/LOIHI → HEXAD/NEUROMORPHIC 2026-05-19; old patterns
+#  retained below as defence-in-depth in case any stray file is recreated.)
+HEXAD/NEUROMORPHIC/inrc_vlab_form.txt
+HEXAD/NEUROMORPHIC/INRC_APPLICATION.md
+HEXAD/NEUROMORPHIC/inrc_*
+HEXAD/NEUROMORPHIC/ebrains_form.txt
+HEXAD/NEUROMORPHIC/spinncloud_email.txt
+HEXAD/NEUROMORPHIC/postmark_approval.txt
+HEXAD/LOIHI/inrc_vlab_form.txt
+HEXAD/LOIHI/INRC_APPLICATION.md
+HEXAD/LOIHI/inrc_*
+HEXAD/LOIHI/ebrains_form.txt
+HEXAD/LOIHI/spinncloud_email.txt
+HEXAD/LOIHI/postmark_approval.txt
+
+# §125 NONCE-FF transient artifacts (gitignored — credentials + pod IDs)
+state/nonce_ff_fire_s125_2026_05_20/dispatch_s125.log
+state/nonce_ff_fire_s125_2026_05_20/s125_pod_id.txt
+state/nonce_ff_fire_s125_2026_05_20/S125_FAILURE.txt
+state/nonce_ff_fire_s125_2026_05_20/s125_train.log
+state/nonce_ff_fire_s125_2026_05_20/s125_eval.log
+
+# §126 PCN-C4 transient artifacts
+state/pcn_fire_s126_2026_05_20/dispatch_s126.log
+state/pcn_fire_s126_2026_05_20/s126_pod_id.txt
+state/pcn_fire_s126_2026_05_20/S126_FAILURE.txt
+state/pcn_fire_s126_2026_05_20/s126_train.log
+state/pcn_fire_s126_2026_05_20/s126_eval.log
+
+# === 2026-05-20 Phase C migration — HEXAD/<TOPIC>/state/ family ===
+# Mirror of state/ binary rules above, now at the canonical post-mv location.
+HEXAD/*/state/*/ckpt_*.pt
+HEXAD/*/state/**/ckpt_*.pt
+HEXAD/*/state/*/ckpts/
+HEXAD/*/state/*/corpus_*.jsonl
+HEXAD/*/state/*/corpus_*.txt
+HEXAD/*/state/*/trace_corpus_*.jsonl
+HEXAD/*/state/*/big_corpus.txt
+HEXAD/*/state/*/runs/
+HEXAD/*/state/*/results/
+
+# === 2026-05-20 archive/state_legacy/ — legacy result-less state dirs ===
+# 990 result-less state/ dirs relocated here (symlink-preserved at old
+# state/ path). Text evidence tracked; the large binaries below ignored
+# (73 GB of ckpt/corpus — regenerable, R2/HF-distributed).
+archive/state_legacy/**/*.pt
+archive/state_legacy/**/*.safetensors
+archive/state_legacy/**/*.gz
+archive/state_legacy/**/*.bin
+archive/state_legacy/**/*.gguf
+archive/state_legacy/**/*.wav
+archive/state_legacy/**/corpus*.txt
+archive/state_legacy/**/corpus*.jsonl
+archive/state_legacy/**/big_corpus.txt
+archive/state_legacy/**/*_corpus.jsonl
+archive/state_legacy/**/slice_*.jsonl
+archive/state_legacy/**/*.jsonl
+
+# anima-physics HW build artifacts (large + regeneratable via build.sh)
+anima-physics/hw/*/state/*_sim
+anima-physics/hw/*/state/*.vcd
+anima-physics/hw/*/state/*.json
+
+# anima-physics build artifacts (hexa_run.*.c, transient)
+anima-physics/build/
+anima-physics/consciousness-loop/src/build/
+
+# anima-physics HW build artifacts (FPGA bitstream + Arduino .hex - regen via build.sh)
+anima-physics/hw/*/state/*.asc
+anima-physics/hw/*/state/*.bin
+anima-physics/hw/*/state/build/
+anima-physics/engines/build/
+anima-physics/recovered/*/build/
+
+# ECP5 bitstream/config (1.9 MB each, regen via pool ubu-1 nextpnr-ecp5)
+anima-physics/hw/*/state/*.bit
+anima-physics/hw/*/state/*.config
+
+# HEXAD grid dispatch state (training-run runtime, regenerable)
+HEXAD/UNCLASSIFIED/state/grid_*/
+
+# HEXAD/PURE runtime artifacts (PR #267-ish · ignored runtime emit)
+state/pure_head_g_activation_*/
+state/pure_track1_*/
+HEXAD/PURE/launchers/out/
+HEXAD/PURE/launchers/state/
+
+# Phase D corpus -- 30 MB build (sha-anchored in manifest.json + docs).
+state/pure_phase_d_corpus_*/corpus.jsonl
+state/pure_phase_d_corpus_*/build.log

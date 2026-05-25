@@ -1,0 +1,197 @@
+[GATE] dispatch=local reason=remote_unreachable cmd="python3 /Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/post_ft_ext_sampling.py"
+=== building Korean lexicon (kowiki15)...
+  building ko dict from /Users/ghost/core/anima/training/corpus_alm_70b_stripped_kowiki15.txt...
+  ko dict: 198,294 words  59,001 bigrams
+
+=== convo_5k_pre_ft ===
+  loaded: {'d_model': 384, 'n_layer': 6, 'n_head': 4, 'block_size': 256, 'step': 45000, 'miss': 0, 'unexp': 0}  (0.6s)
+  phase A done: 96 trials  (672.4s)
+  phase B-beam done: 24 trials  (642.7s)
+  ko_max=0.0179 ko_count_max=1 ko≥1:1/120  REAL_WORDS:max=0 total=0 trials_w_real=0  bg_known_avg=0.000  best=repen_a/bare_ko
+
+=== convo_5k_ft_step_10000_initial ===
+  loaded: {'d_model': 384, 'n_layer': 6, 'n_head': 4, 'block_size': 256, 'step': 55000, 'miss': 0, 'unexp': 0}  (0.7s)
+  phase A done: 96 trials  (748.5s)
+  phase B-beam done: 24 trials  (514.5s)
+  ko_max=0.7500 ko_count_max=21 ko≥1:72/120  REAL_WORDS:max=8 total=157 trials_w_real=59  bg_known_avg=0.835  best=hi_t_a/bare_ko2
+
+=== convo_5k_ft_ext_step_20000_final ===
+  loaded: {'d_model': 384, 'n_layer': 6, 'n_head': 4, 'block_size': 256, 'step': 75000, 'miss': 0, 'unexp': 0}  (0.5s)
+  phase A done: 96 trials  (514.8s)
+  phase B-beam done: 24 trials  (374.6s)
+  ko_max=0.7500 ko_count_max=35 ko≥1:75/120  REAL_WORDS:max=8 total=199 trials_w_real=68  bg_known_avg=0.886  best=repen2_a/bare_ko2
+
+Saved: /Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/post_ft_ext_sampling.json
+
+--- COMPARISON SUMMARY ---
+{
+  "wall_clock_s": 3491.47,
+  "ko_dict_size": 198294,
+  "ko_bigram_size": 59001,
+  "by_ckpt": {
+    "convo_5k_pre_ft": {
+      "n_total": 120,
+      "n_gibberish": 3,
+      "ko_ratio_max": 0.0179,
+      "ko_count_max": 1,
+      "ko_at_least_1": 1,
+      "ko_at_least_5": 0,
+      "ko_at_least_10": 0,
+      "best_quality": 0.9833,
+      "best_cfg": "repen_a",
+      "best_fmt": "bare_ko",
+      "best_gen": " . They times countraged waped froved Ine whiSECA Floker was",
+      "best_lexical": {
+        "ko_total_chars": 0,
+        "ko_real_word_count": 0,
+        "ko_real_word_ratio": 0.0,
+        "ko_bigram_known": 0,
+        "ko_bigram_total": 0,
+        "ko_bigram_known_ratio": 0.0,
+        "n_ko_tokens": 0
+      },
+      "lexical_real_words_max": 0,
+      "lexical_total_real_words": 0,
+      "lexical_trials_with_real_word": 0,
+      "lexical_bigram_known_max": 0.0,
+      "lexical_bigram_known_avg": 0.0
+    },
+    "convo_5k_ft_step_10000_initial": {
+      "n_total": 120,
+      "n_gibberish": 9,
+      "ko_ratio_max": 0.75,
+      "ko_count_max": 21,
+      "ko_at_least_1": 72,
+      "ko_at_least_5": 64,
+      "ko_at_least_10": 46,
+      "best_quality": 4.0,
+      "best_cfg": "hi_t_a",
+      "best_fmt": "bare_ko2",
+      "best_gen": " 롵이1릥웈으늅횔 유집 궔학랬란' 얉치솥카야",
+      "best_lexical": {
+        "ko_total_chars": 18,
+        "ko_real_word_count": 0,
+        "ko_real_word_ratio": 0.0,
+        "ko_bigram_known": 1,
+        "ko_bigram_total": 13,
+        "ko_bigram_known_ratio": 0.0769,
+        "n_ko_tokens": 5
+      },
+      "lexical_real_words_max": 8,
+      "lexical_total_real_words": 157,
+      "lexical_trials_with_real_word": 59,
+      "lexical_bigram_known_max": 1.0,
+      "lexical_bigram_known_avg": 0.8355
+    },
+    "convo_5k_ft_ext_step_20000_final": {
+      "n_total": 120,
+      "n_gibberish": 11,
+      "ko_ratio_max": 0.75,
+      "ko_count_max": 35,
+      "ko_at_least_1": 75,
+      "ko_at_least_5": 65,
+      "ko_at_least_10": 54,
+      "best_quality": 3.9,
+      "best_cfg": "repen2_a",
+      "best_fmt": "bare_ko2",
+      "best_gen": "\n도우미: 관해지을 다양에 수력한 것입됩니다",
+      "best_lexical": {
+        "ko_total_chars": 18,
+        "ko_real_word_count": 1,
+        "ko_real_word_ratio": 0.2,
+        "ko_bigram_known": 13,
+        "ko_bigram_total": 13,
+        "ko_bigram_known_ratio": 1.0,
+        "n_ko_tokens": 5
+      },
+      "lexical_real_words_max": 8,
+      "lexical_total_real_words": 199,
+      "lexical_trials_with_real_word": 68,
+      "lexical_bigram_known_max": 1.0,
+      "lexical_bigram_known_avg": 0.8858
+    }
+  },
+  "comparison": {
+    "pre_ft": {
+      "n_total": 120,
+      "n_gibberish": 3,
+      "ko_ratio_max": 0.0179,
+      "ko_count_max": 1,
+      "ko_at_least_1": 1,
+      "ko_at_least_5": 0,
+      "ko_at_least_10": 0,
+      "best_quality": 0.9833,
+      "best_cfg": "repen_a",
+      "best_fmt": "bare_ko",
+      "best_gen": " . They times countraged waped froved Ine whiSECA Floker was",
+      "best_lexical": {
+        "ko_total_chars": 0,
+        "ko_real_word_count": 0,
+        "ko_real_word_ratio": 0.0,
+        "ko_bigram_known": 0,
+        "ko_bigram_total": 0,
+        "ko_bigram_known_ratio": 0.0,
+        "n_ko_tokens": 0
+      },
+      "lexical_real_words_max": 0,
+      "lexical_total_real_words": 0,
+      "lexical_trials_with_real_word": 0,
+      "lexical_bigram_known_max": 0.0,
+      "lexical_bigram_known_avg": 0.0
+    },
+    "post_ft_initial": {
+      "n_total": 120,
+      "n_gibberish": 9,
+      "ko_ratio_max": 0.75,
+      "ko_count_max": 21,
+      "ko_at_least_1": 72,
+      "ko_at_least_5": 64,
+      "ko_at_least_10": 46,
+      "best_quality": 4.0,
+      "best_cfg": "hi_t_a",
+      "best_fmt": "bare_ko2",
+      "best_gen": " 롵이1릥웈으늅횔 유집 궔학랬란' 얉치솥카야",
+      "best_lexical": {
+        "ko_total_chars": 18,
+        "ko_real_word_count": 0,
+        "ko_real_word_ratio": 0.0,
+        "ko_bigram_known": 1,
+        "ko_bigram_total": 13,
+        "ko_bigram_known_ratio": 0.0769,
+        "n_ko_tokens": 5
+      },
+      "lexical_real_words_max": 8,
+      "lexical_total_real_words": 157,
+      "lexical_trials_with_real_word": 59,
+      "lexical_bigram_known_max": 1.0,
+      "lexical_bigram_known_avg": 0.8355
+    },
+    "post_ft_extended": {
+      "n_total": 120,
+      "n_gibberish": 11,
+      "ko_ratio_max": 0.75,
+      "ko_count_max": 35,
+      "ko_at_least_1": 75,
+      "ko_at_least_5": 65,
+      "ko_at_least_10": 54,
+      "best_quality": 3.9,
+      "best_cfg": "repen2_a",
+      "best_fmt": "bare_ko2",
+      "best_gen": "\n도우미: 관해지을 다양에 수력한 것입됩니다",
+      "best_lexical": {
+        "ko_total_chars": 18,
+        "ko_real_word_count": 1,
+        "ko_real_word_ratio": 0.2,
+        "ko_bigram_known": 13,
+        "ko_bigram_total": 13,
+        "ko_bigram_known_ratio": 1.0,
+        "n_ko_tokens": 5
+      },
+      "lexical_real_words_max": 8,
+      "lexical_total_real_words": 199,
+      "lexical_trials_with_real_word": 68,
+      "lexical_bigram_known_max": 1.0,
+      "lexical_bigram_known_avg": 0.8858
+    }
+  }
+}

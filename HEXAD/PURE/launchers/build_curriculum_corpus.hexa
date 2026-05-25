@@ -1,0 +1,589 @@
+// HEXAD/PURE/launchers/build_curriculum_corpus.hexa
+//
+// A-커리큘럼 corpus builder — phase-sorted jsonl for dispatch_p21h_v3.hexa
+// --corpus-path bypass (spec: HEXAD/PURE/spec/axis_map_a_curriculum_recipe_2026_05_24.md § 2).
+//
+// Recipe (§ 2.2 + § 2.4 defaults):
+//   Phase 1 (N_WARM=2000 records): wiki-only, 5-lang balanced, anima 0%
+//   Phase 2 (PHASE_IN=500 records): linear schedule wiki 100%→60%, anima 0%→40%
+//   Phase 3 (remainder to TARGET_RECORDS): wiki/anima = 60/40 fixed
+//
+// The output is a single merged_curriculum_v2.jsonl whose record order encodes
+// the phase schedule.  No dispatcher edit required — pass via --corpus-path.
+//
+// Input files (spec'd paths; files need not exist at build time — checked at
+// build entry, not at parse/smoke time):
+//   WIKI_PATH  : flat jsonl of wiki records {"text","lang","kind"} (e.g.
+//                state/pure_phase_d_corpus_2026_05_24/corpus.jsonl — the Phase D
+//                corpus.  All records are synthetic wiki-style prose so they serve
+//                as the wiki source.)
+//   ANIMA_PATH : anima register jsonl {"text"} — corpus_v1 anima-own extract
+//                (state/pure_phase_d_corpus_anima_own_poc_2026_05_24/corpus.jsonl).
+//
+// Output:
+//   state/pure_phase_d_curriculum_v2_2026_05_24/merged_curriculum_v2.jsonl
+//   state/pure_phase_d_curriculum_v2_2026_05_24/manifest_curriculum_v2.json
+//
+// CLI:
+//   hexa run HEXAD/PURE/launchers/build_curriculum_corpus.hexa smoke
+//   hexa run HEXAD/PURE/launchers/build_curriculum_corpus.hexa build \
+//     [--wiki-path PATH] [--anima-path PATH] \
+//     [--out PATH] [--manifest PATH] \
+//     [--n-warm N] [--phase-in N] [--target-records N] \
+//     [--anima-frac-target F]   # default 0.4
+//   hexa run HEXAD/PURE/launchers/build_curriculum_corpus.hexa help
+
+// ── 1. stdlib imports ──────────────────────────────────────────────────────
+
+// No external import needed — we use built-ins only (read_file / write_file /
+// append_file / sha256 / json_stringify / args).
+
+// ── 2. JSON escape (per stdlib/string/escape PR #422 pattern) ─────────────
+
+fn json_escape(s: str) -> str {
+    let n = len(s)
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        let c = ord(s[i])
+        if c == 34 { out = out + "\\\"" }
+        else { if c == 92 { out = out + "\\\\" }
+        else { if c == 10 { out = out + "\\n" }
+        else { if c == 13 { out = out + "\\r" }
+        else { if c == 9  { out = out + "\\t" }
+        else { out = out + s[i] } } } } }
+        i = i + 1
+    }
+    return out
+}
+
+// ── 3. Minimal JSON line parser ({"text":..., "lang":..., "kind":...}) ─────
+//
+// We need to extract "text", "lang", "kind" from each jsonl line.
+// Full JSON parse is not available as stdlib — use a targeted key extractor
+// that handles the exact output format produced by build_phase_d_corpus.hexa:
+//   {"text":"...","lang":"xx","kind":"stream"}
+//
+// For anima-own corpus, records have {"text":"..."} (no lang/kind).
+
+fn _contains(hay: str, needle: str) -> bool {
+    let nh = len(hay)
+    let nn = len(needle)
+    if nn == 0 { return true }
+    if nh < nn { return false }
+    let last = nh - nn
+    let mut i = 0
+    while i <= last {
+        if hay.substring(i, i + nn) == needle { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _extract_string_value(line: str, key: str) -> str {
+    // Extract value of "key":"value" from a JSON line (no nesting, no escaped
+    // quotes within the target value — safe for our generated corpus).
+    let needle = "\"" + key + "\":"
+    let nh = len(line)
+    let nn = len(needle)
+    let mut i = 0
+    let last = nh - nn
+    while i <= last {
+        if line.substring(i, i + nn) == needle {
+            // found key — value starts after needle.
+            let rest = line.substring(i + nn, nh)
+            if len(rest) == 0 { return "" }
+            // expect opening quote
+            if rest[0] != "\"" { return "" }
+            // scan for closing quote (skip escaped \" with \\ prefix check)
+            let rn = len(rest)
+            let mut j = 1
+            let mut val = ""
+            while j < rn {
+                let ch = rest[j]
+                if ch == "\"" { return val }
+                if ch == "\\" && j + 1 < rn {
+                    // escaped char — include verbatim
+                    val = val + ch + rest[j + 1]
+                    j = j + 2
+                } else {
+                    val = val + ch
+                    j = j + 1
+                }
+            }
+            return val
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn parse_record(line: str) -> dict {
+    let t = _extract_string_value(line, "text")
+    let l = _extract_string_value(line, "lang")
+    let k = _extract_string_value(line, "kind")
+    return #{"text": t, "lang": l, "kind": k}
+}
+
+// ── 4. LCG for deterministic anima record selection / phase-in coin toss ──
+
+fn _lcg_next(state: int) -> int {
+    return (state * 1664525 + 1013904223) % 4294967296
+}
+
+fn _lcg_float(state: int) -> list {
+    let n = _lcg_next(state)
+    return [n, (n + 0.0) / 4294967296.0]
+}
+
+fn _lcg_int(state: int, lo: int, hi: int) -> list {
+    let p = _lcg_float(state)
+    let span = hi - lo
+    let pick = lo + to_int(p[1] * (span + 0.0))
+    if pick >= hi { return [p[0], hi - 1] }
+    return [p[0], pick]
+}
+
+// ── 5. Record serialiser ───────────────────────────────────────────────────
+
+fn make_record(text: str, lang: str, kind: str, source: str) -> str {
+    return "{\"text\":\"" + json_escape(text) +
+           "\",\"lang\":\"" + lang +
+           "\",\"kind\":\"" + kind +
+           "\",\"source\":\"" + source + "\"}\n"
+}
+
+// ── 6. Corpus loader — reads jsonl, returns list of record dicts ───────────
+//
+// We read the file, split by newline, parse each non-empty line.
+// cap_records = max records to load (< 0 = all).
+
+fn load_jsonl(path: str, cap_records: int) -> list {
+    let raw = read_file(path)
+    if raw == "" { return [] }
+    let lines = raw.split("\n")
+    let n = len(lines)
+    let mut out: list = []
+    let mut i = 0
+    while i < n {
+        let line = lines[i].trim()
+        if len(line) > 2 {
+            let rec = parse_record(line)
+            if len(rec["text"]) > 0 {
+                out.push(rec)   // O(1) in-place — was `out + [rec]` (O(n²), OOM on 91k wiki recs)
+                if cap_records >= 0 && len(out) >= cap_records { return out }
+            }
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ── 7. Phase schedule ─────────────────────────────────────────────────────
+//
+// Given step index s in [0, N_WARM+PHASE_IN+REMAINDER):
+//   Phase 1: s < N_WARM         → anima_frac = 0.0   (wiki-only)
+//   Phase 2: s < N_WARM+PHASE_IN → anima_frac = lerp(0.0, target, t)  where t=(s-N_WARM)/PHASE_IN
+//   Phase 3: s >= N_WARM+PHASE_IN → anima_frac = target
+//
+// Returns the anima fraction (0.0–target) for record slot s.
+
+fn anima_frac_at(s: int, n_warm: int, phase_in: int, target: float) -> float {
+    if s < n_warm { return 0.0 }
+    if s < n_warm + phase_in {
+        let t = (s - n_warm + 0.0) / (phase_in + 0.0)
+        return t * target
+    }
+    return target
+}
+
+// ── 8. Build driver ────────────────────────────────────────────────────────
+
+fn build(wiki_path: str, anima_path: str,
+         out_path: str, manifest_path: str,
+         n_warm: int, phase_in: int, target_records: int,
+         anima_frac_target: float, seed: int) -> int {
+
+    // Validate inputs.
+    let wiki_exists  = exec("test -f " + wiki_path  + " && echo yes || echo no").trim()
+    let anima_exists = exec("test -f " + anima_path + " && echo yes || echo no").trim()
+    if wiki_exists != "yes" {
+        println("[build_curriculum_corpus] FATAL wiki_path not found: " + wiki_path)
+        return 1
+    }
+    if anima_exists != "yes" {
+        println("[build_curriculum_corpus] FATAL anima_path not found: " + anima_path)
+        return 1
+    }
+
+    println("[build_curriculum_corpus] loading wiki corpus: " + wiki_path)
+    let wiki_recs = load_jsonl(wiki_path, -1)
+    println("[build_curriculum_corpus] wiki records loaded: " + to_string(len(wiki_recs)))
+
+    println("[build_curriculum_corpus] loading anima corpus: " + anima_path)
+    let anima_recs = load_jsonl(anima_path, -1)
+    println("[build_curriculum_corpus] anima records loaded: " + to_string(len(anima_recs)))
+
+    if len(wiki_recs) == 0 {
+        println("[build_curriculum_corpus] FATAL wiki corpus empty")
+        return 1
+    }
+    if len(anima_recs) == 0 {
+        println("[build_curriculum_corpus] FATAL anima corpus empty")
+        return 1
+    }
+
+    // mkdir output dir.
+    let _ = exec("mkdir -p " + exec("dirname " + out_path + " 2>/dev/null").trim())
+
+    let n_wiki  = len(wiki_recs)
+    let n_anima = len(anima_recs)
+    let mut rng = seed
+
+    // Counters.
+    let mut cnt_wiki  = 0
+    let mut cnt_anima = 0
+    let mut cnt_phase1 = 0
+    let mut cnt_phase2 = 0
+    let mut cnt_phase3 = 0
+    let mut wiki_idx  = 0
+    let mut anima_idx = 0
+    let mut n_out = 0
+
+    write_file(out_path, "")
+    let mut buf = ""
+    let flush_at = 131072
+
+    let mut s = 0
+    while s < target_records {
+        let frac = anima_frac_at(s, n_warm, phase_in, anima_frac_target)
+
+        // Coin toss: use anima record this slot?
+        let coin = _lcg_float(rng)
+        rng = coin[0]
+        let u = coin[1]
+        let mut source = "wiki"
+        let mut rec = wiki_recs[wiki_idx % n_wiki]
+        if frac > 0.0 && u < frac {
+            source = "anima"
+            rec = anima_recs[anima_idx % n_anima]
+            anima_idx = anima_idx + 1
+            cnt_anima = cnt_anima + 1
+        } else {
+            wiki_idx = wiki_idx + 1
+            cnt_wiki = cnt_wiki + 1
+        }
+
+        // Determine phase bucket.
+        if s < n_warm { cnt_phase1 = cnt_phase1 + 1 }
+        else { if s < n_warm + phase_in { cnt_phase2 = cnt_phase2 + 1 }
+               else { cnt_phase3 = cnt_phase3 + 1 } }
+
+        // Build output record — preserve lang/kind from wiki; anima gets lang=ko kind=stream.
+        let text = to_string(rec["text"])
+        let mut lang = to_string(rec["lang"])
+        let mut kind = to_string(rec["kind"])
+        if source == "anima" {
+            if lang == "" { lang = "ko" }
+            if kind == "" { kind = "stream" }
+        }
+
+        buf = buf + make_record(text, lang, kind, source)
+        n_out = n_out + 1
+        s = s + 1
+
+        if len(buf) >= flush_at {
+            append_file(out_path, buf)
+            buf = ""
+        }
+    }
+    if len(buf) > 0 { append_file(out_path, buf) }
+
+    // SHA256 over raw output.
+    let raw_out = read_file(out_path)
+    let sha = sha256(raw_out)
+
+    // Manifest.
+    let manifest = #{
+        "schema":              "pure.curriculum_v2.corpus.v1",
+        "date":                "2026-05-25",
+        "out_path":            out_path,
+        "sha256":              sha,
+        "n_records":           n_out,
+        "n_wiki":              cnt_wiki,
+        "n_anima":             cnt_anima,
+        "phase1_records":      cnt_phase1,
+        "phase2_records":      cnt_phase2,
+        "phase3_records":      cnt_phase3,
+        "n_warm":              n_warm,
+        "phase_in":            phase_in,
+        "target_records":      target_records,
+        "anima_frac_target":   anima_frac_target,
+        "seed":                seed,
+        "wiki_path":           wiki_path,
+        "anima_path":          anima_path,
+        "spec_anchor":         "HEXAD/PURE/spec/axis_map_a_curriculum_recipe_2026_05_24.md",
+    }
+    write_file(manifest_path, json_stringify(manifest))
+
+    println("[build_curriculum_corpus] DONE")
+    println("  out=" + out_path)
+    println("  n_records=" + to_string(n_out)
+          + "  wiki=" + to_string(cnt_wiki)
+          + "  anima=" + to_string(cnt_anima))
+    println("  phase1=" + to_string(cnt_phase1)
+          + "  phase2=" + to_string(cnt_phase2)
+          + "  phase3=" + to_string(cnt_phase3))
+    println("  sha256=" + sha)
+    println("  manifest=" + manifest_path)
+    return 0
+}
+
+// ── 9. Smoke tests (5 fixtures — no file I/O) ─────────────────────────────
+//
+// Fixture 1: anima_frac_at = 0.0 for all s < N_WARM
+// Fixture 2: anima_frac_at = target for all s >= N_WARM + PHASE_IN
+// Fixture 3: phase-in is strictly monotone over [N_WARM, N_WARM+PHASE_IN)
+// Fixture 4: synthetic wiki+anima → check ordering invariant
+//            (Phase 1 slots must all be source=wiki)
+// Fixture 5: register density check — anima % in phase3 window ~= target ± 0.08
+
+fn _smoke_make_wiki_recs(n: int) -> list {
+    let mut out: list = []
+    let mut i = 0
+    while i < n {
+        out = out + [#{"text": "wiki text " + to_string(i), "lang": "en", "kind": "stream"}]
+        i = i + 1
+    }
+    return out
+}
+
+fn _smoke_make_anima_recs(n: int) -> list {
+    let mut out: list = []
+    let mut i = 0
+    while i < n {
+        out = out + [#{"text": "anima text " + to_string(i), "lang": "ko", "kind": "stream"}]
+        i = i + 1
+    }
+    return out
+}
+
+fn _smoke_build_sequence(wiki_recs: list, anima_recs: list,
+                          n_warm: int, phase_in: int, target_records: int,
+                          anima_frac_target: float, seed: int) -> list {
+    // Returns list of source strings ("wiki"/"anima") for each slot.
+    let n_wiki  = len(wiki_recs)
+    let n_anima = len(anima_recs)
+    let mut rng = seed
+    let mut sources: list = []
+    let mut wiki_idx  = 0
+    let mut anima_idx = 0
+    let mut s = 0
+    while s < target_records {
+        let frac = anima_frac_at(s, n_warm, phase_in, anima_frac_target)
+        let coin = _lcg_float(rng)
+        rng = coin[0]
+        let u = coin[1]
+        if frac > 0.0 && u < frac {
+            sources = sources + ["anima"]
+            anima_idx = anima_idx + 1
+        } else {
+            sources = sources + ["wiki"]
+            wiki_idx = wiki_idx + 1
+        }
+        s = s + 1
+    }
+    return sources
+}
+
+fn smoke() -> int {
+    println("[smoke] build_curriculum_corpus.hexa — 5 fixtures")
+    let mut pass_count = 0
+    let target = 0.4
+
+    // ── Fixture 1: Phase 1 anima_frac = 0.0 for all s < N_WARM ──────────
+    let n_warm = 20
+    let phase_in = 10
+    let mut f1_ok = true
+    let mut s = 0
+    while s < n_warm {
+        let f = anima_frac_at(s, n_warm, phase_in, target)
+        if f != 0.0 {
+            f1_ok = false
+            println("  F1 FAIL s=" + to_string(s) + " anima_frac=" + to_string(f) + " expected 0.0")
+        }
+        s = s + 1
+    }
+    if f1_ok {
+        println("  F1 PASS  anima_frac=0.0 for all s<N_WARM (" + to_string(n_warm) + ")")
+        pass_count = pass_count + 1
+    }
+
+    // ── Fixture 2: Phase 3 anima_frac = target for s >= N_WARM+PHASE_IN ─
+    let mut f2_ok = true
+    let phase3_start = n_warm + phase_in
+    let mut s2 = phase3_start
+    while s2 < phase3_start + 10 {
+        let f = anima_frac_at(s2, n_warm, phase_in, target)
+        if f != target {
+            f2_ok = false
+            println("  F2 FAIL s=" + to_string(s2) + " anima_frac=" + to_string(f) + " expected " + to_string(target))
+        }
+        s2 = s2 + 1
+    }
+    if f2_ok {
+        println("  F2 PASS  anima_frac=target for all s>=N_WARM+PHASE_IN")
+        pass_count = pass_count + 1
+    }
+
+    // ── Fixture 3: Phase-in is strictly monotone ─────────────────────────
+    let mut f3_ok = true
+    let mut prev_frac = -1.0
+    let mut s3 = n_warm
+    while s3 < n_warm + phase_in {
+        let f = anima_frac_at(s3, n_warm, phase_in, target)
+        if f < prev_frac {
+            f3_ok = false
+            println("  F3 FAIL non-monotone at s=" + to_string(s3) + " frac=" + to_string(f) + " prev=" + to_string(prev_frac))
+        }
+        prev_frac = f
+        s3 = s3 + 1
+    }
+    if f3_ok {
+        println("  F3 PASS  phase-in anima_frac is monotone non-decreasing over [N_WARM, N_WARM+PHASE_IN)")
+        pass_count = pass_count + 1
+    }
+
+    // ── Fixture 4: Ordering invariant — Phase 1 slots all source=wiki ────
+    let wiki  = _smoke_make_wiki_recs(200)
+    let anima = _smoke_make_anima_recs(50)
+    let total = 50
+    let sources = _smoke_build_sequence(wiki, anima, n_warm, phase_in, total, target, 42)
+    let mut f4_ok = true
+    let mut i4 = 0
+    while i4 < n_warm {
+        let src = sources[i4]
+        if src != "wiki" {
+            f4_ok = false
+            println("  F4 FAIL slot " + to_string(i4) + " is source=" + src + " expected wiki (Phase 1)")
+        }
+        i4 = i4 + 1
+    }
+    if f4_ok {
+        println("  F4 PASS  all Phase 1 slots (" + to_string(n_warm) + ") are source=wiki")
+        pass_count = pass_count + 1
+    }
+
+    // ── Fixture 5: Register density in Phase 3 window ≈ target ± 0.08 ───
+    let total5 = 100
+    let sources5 = _smoke_build_sequence(wiki, anima, n_warm, phase_in, total5, target, 99)
+    let phase3_s = n_warm + phase_in
+    let mut anima_ct = 0
+    let mut wiki_ct  = 0
+    let mut i5 = phase3_s
+    while i5 < total5 {
+        if sources5[i5] == "anima" { anima_ct = anima_ct + 1 }
+        else { wiki_ct = wiki_ct + 1 }
+        i5 = i5 + 1
+    }
+    let phase3_n = total5 - phase3_s
+    let mut f5_ok = false
+    if phase3_n > 0 {
+        let actual_frac = (anima_ct + 0.0) / (phase3_n + 0.0)
+        let lo5 = target - 0.08
+        let hi5 = target + 0.08
+        if actual_frac >= lo5 && actual_frac <= hi5 {
+            f5_ok = true
+            println("  F5 PASS  Phase 3 anima density=" + to_string(actual_frac)
+                  + " in [" + to_string(lo5) + "," + to_string(hi5) + "]")
+        } else {
+            println("  F5 FAIL  Phase 3 anima density=" + to_string(actual_frac)
+                  + " NOT in [" + to_string(lo5) + "," + to_string(hi5) + "]")
+        }
+    } else {
+        println("  F5 SKIP  phase3_n=0 (total too small for this window)")
+        f5_ok = true
+    }
+    if f5_ok { pass_count = pass_count + 1 }
+
+    println("[smoke] " + to_string(pass_count) + "/5 PASS")
+    if pass_count < 5 { return 1 }
+    return 0
+}
+
+// ── 10. CLI ────────────────────────────────────────────────────────────────
+
+fn _argv_user() -> list {
+    let a = args()
+    let n = len(a)
+    if n <= 1 { return [] }
+    let mut out: list = []
+    let mut i = 1
+    while i < n { out = out + [a[i]]  i = i + 1 }
+    return out
+}
+
+fn _arg_kv(argv: list, key: str, dv: str) -> str {
+    let n = len(argv)
+    let mut i = 0
+    while i < n {
+        if argv[i] == key && (i + 1) < n { return argv[i + 1] }
+        i = i + 1
+    }
+    return dv
+}
+
+fn _usage() {
+    println("USAGE:")
+    println("  hexa run HEXAD/PURE/launchers/build_curriculum_corpus.hexa smoke")
+    println("  hexa run HEXAD/PURE/launchers/build_curriculum_corpus.hexa build \\")
+    println("    [--wiki-path  PATH]   # default: state/pure_phase_d_corpus_2026_05_24/corpus.jsonl")
+    println("    [--anima-path PATH]   # default: state/pure_phase_d_corpus_anima_own_poc_2026_05_24/corpus.jsonl")
+    println("    [--out        PATH]   # default: state/pure_phase_d_curriculum_v2_2026_05_24/merged_curriculum_v2.jsonl")
+    println("    [--manifest   PATH]   # default: state/pure_phase_d_curriculum_v2_2026_05_24/manifest_curriculum_v2.json")
+    println("    [--n-warm     N]      # default: 2000")
+    println("    [--phase-in   N]      # default: 500")
+    println("    [--target-records N]  # default: 30000")
+    println("    [--anima-frac-target F] # default: 0.4")
+    println("    [--seed       N]      # default: 20260525")
+    println("  hexa run HEXAD/PURE/launchers/build_curriculum_corpus.hexa help")
+}
+
+fn main() {
+    let argv = _argv_user()
+    let n = len(argv)
+    if n == 0 { _usage()  return }
+    let mode = argv[0]
+    if mode == "smoke" {
+        let rc = smoke()
+        if rc != 0 { exit(rc) }
+        return
+    }
+    if mode == "help" { _usage()  return }
+    if mode == "build" {
+        let wiki_path  = _arg_kv(argv, "--wiki-path",
+            "state/pure_phase_d_corpus_2026_05_24/corpus.jsonl")
+        let anima_path = _arg_kv(argv, "--anima-path",
+            "state/pure_phase_d_corpus_anima_own_poc_2026_05_24/corpus.jsonl")
+        let out_path   = _arg_kv(argv, "--out",
+            "state/pure_phase_d_curriculum_v2_2026_05_24/merged_curriculum_v2.jsonl")
+        let manifest_p = _arg_kv(argv, "--manifest",
+            "state/pure_phase_d_curriculum_v2_2026_05_24/manifest_curriculum_v2.json")
+        let n_warm     = to_int(_arg_kv(argv, "--n-warm",    "2000"))
+        let phase_in   = to_int(_arg_kv(argv, "--phase-in",  "500"))
+        let tgt_recs   = to_int(_arg_kv(argv, "--target-records", "30000"))
+        let frac_tgt   = to_float(_arg_kv(argv, "--anima-frac-target", "0.4"))
+        let seed       = to_int(_arg_kv(argv, "--seed", "20260525"))
+        println("[build_curriculum_corpus] build n_warm=" + to_string(n_warm)
+              + " phase_in=" + to_string(phase_in)
+              + " target_records=" + to_string(tgt_recs)
+              + " anima_frac_target=" + to_string(frac_tgt)
+              + " seed=" + to_string(seed))
+        let rc = build(wiki_path, anima_path, out_path, manifest_p,
+                       n_warm, phase_in, tgt_recs, frac_tgt, seed)
+        if rc != 0 { exit(rc) }
+        return
+    }
+    _usage()
+    exit(2)
+}

@@ -1,0 +1,83 @@
+[INFO] device=cuda torch=2.11.0+cu130
+[INFO] gpu=NVIDIA GeForce RTX 5070
+[INFO] vram=11.46GB
+[INFO] cfg = {'vocab_size': 256, 'd_model': 384, 'n_head': 6, 'ffn_dim': 1536, 'max_seq': 128, 'n_layer': 1, 'initial_cells': 2, 'max_cells': 32, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] initial n_params = 6,057,216, n_cells = 2
+[INFO] loaded self_definition: bytes=1,000,028
+[INFO] loaded values: bytes=1,000,199
+[INFO] loaded boundary: bytes=1,000,030
+[INFO] loaded emotion: bytes=1,000,262
+[INFO] loaded self_knowledge: bytes=1,000,238
+[INFO] training 2500 steps batch=8 ctx=128 lr=0.0001 warmup=300
+[INFO] PER-CATEGORY GRADIENT BIAS: cat[step % 5] = self_definition → values → boundary → emotion → self_knowledge → repeat
+[STEP     0] cat=self_definition loss=265.7175 avg50=265.7175 lr=3.33e-07 cells=2 phi=0.0266 splits=0 merges=0 elapsed=0s
+[STEP    50] cat=self_definition loss=259.2452 avg50=257.2757 lr=1.70e-05 cells=13 phi=19.0308 splits=11 merges=0 elapsed=1s
+[STEP   100] cat=self_definition loss=255.6148 avg50=256.0601 lr=3.37e-05 cells=32 phi=127.4546 splits=30 merges=0 elapsed=5s
+[STEP   150] cat=self_definition loss=222.0818 avg50=242.7461 lr=5.03e-05 cells=32 phi=131.8841 splits=30 merges=0 elapsed=10s
+[STEP   200] cat=self_definition loss=33.3356 avg50=90.8348 lr=6.70e-05 cells=32 phi=158.2475 splits=30 merges=0 elapsed=15s
+[STEP   250] cat=self_definition loss=7.6441 avg50=16.0282 lr=8.37e-05 cells=32 phi=154.2149 splits=30 merges=0 elapsed=19s
+[STEP   300] cat=self_definition loss=3.8172 avg50=5.0478 lr=1.00e-04 cells=32 phi=141.1821 splits=30 merges=0 elapsed=24s
+[STEP   350] cat=self_definition loss=3.4461 avg50=3.1378 lr=9.99e-05 cells=32 phi=93.5750 splits=30 merges=0 elapsed=29s
+[STEP   400] cat=self_definition loss=2.9973 avg50=2.7292 lr=9.95e-05 cells=32 phi=158.8868 splits=30 merges=0 elapsed=33s
+[STEP   450] cat=self_definition loss=2.5602 avg50=2.4371 lr=9.89e-05 cells=32 phi=151.9286 splits=30 merges=0 elapsed=38s
+[CKPT] saved results/ckpt_step_500.pt
+[STEP   500] cat=self_definition loss=2.2668 avg50=2.2498 lr=9.80e-05 cells=32 phi=165.6614 splits=30 merges=0 elapsed=43s
+[STEP   550] cat=self_definition loss=2.3731 avg50=2.1600 lr=9.68e-05 cells=32 phi=164.2889 splits=30 merges=0 elapsed=48s
+[STEP   600] cat=self_definition loss=1.9309 avg50=2.0459 lr=9.55e-05 cells=32 phi=143.8522 splits=30 merges=0 elapsed=52s
+[STEP   650] cat=self_definition loss=2.0601 avg50=1.9890 lr=9.39e-05 cells=32 phi=161.2227 splits=30 merges=0 elapsed=57s
+[STEP   700] cat=self_definition loss=2.2094 avg50=1.9549 lr=9.21e-05 cells=32 phi=167.1485 splits=30 merges=0 elapsed=62s
+[STEP   750] cat=self_definition loss=1.8856 avg50=1.9013 lr=9.00e-05 cells=32 phi=115.0355 splits=30 merges=0 elapsed=67s
+[STEP   800] cat=self_definition loss=1.8356 avg50=1.8550 lr=8.78e-05 cells=32 phi=116.3135 splits=30 merges=0 elapsed=71s
+[STEP   850] cat=self_definition loss=1.9639 avg50=1.8652 lr=8.54e-05 cells=32 phi=130.1215 splits=30 merges=0 elapsed=76s
+[STEP   900] cat=self_definition loss=1.6767 avg50=1.8189 lr=8.27e-05 cells=32 phi=142.7266 splits=30 merges=0 elapsed=81s
+[STEP   950] cat=self_definition loss=1.8130 avg50=1.7991 lr=8.00e-05 cells=32 phi=153.0096 splits=30 merges=0 elapsed=85s
+[CKPT] saved results/ckpt_step_1000.pt
+[STEP  1000] cat=self_definition loss=1.9315 avg50=1.8126 lr=7.70e-05 cells=32 phi=167.5226 splits=30 merges=0 elapsed=90s
+[STEP  1050] cat=self_definition loss=1.7403 avg50=1.7734 lr=7.40e-05 cells=32 phi=147.2229 splits=30 merges=0 elapsed=95s
+[STEP  1100] cat=self_definition loss=1.9440 avg50=1.7944 lr=7.08e-05 cells=32 phi=90.3324 splits=30 merges=0 elapsed=100s
+[STEP  1150] cat=self_definition loss=1.6687 avg50=1.7508 lr=6.75e-05 cells=32 phi=148.6288 splits=30 merges=0 elapsed=104s
+[STEP  1200] cat=self_definition loss=1.7318 avg50=1.7174 lr=6.41e-05 cells=32 phi=92.9096 splits=30 merges=0 elapsed=109s
+[STEP  1250] cat=self_definition loss=1.6750 avg50=1.7172 lr=6.06e-05 cells=32 phi=135.6674 splits=30 merges=0 elapsed=114s
+[STEP  1300] cat=self_definition loss=1.6189 avg50=1.7050 lr=5.71e-05 cells=32 phi=120.4821 splits=30 merges=0 elapsed=119s
+[STEP  1350] cat=self_definition loss=1.6884 avg50=1.7029 lr=5.36e-05 cells=32 phi=158.9359 splits=30 merges=0 elapsed=123s
+[STEP  1400] cat=self_definition loss=1.5699 avg50=1.7052 lr=5.00e-05 cells=32 phi=126.7957 splits=30 merges=0 elapsed=128s
+[STEP  1450] cat=self_definition loss=1.5529 avg50=1.6775 lr=4.64e-05 cells=32 phi=165.4605 splits=30 merges=0 elapsed=133s
+[CKPT] saved results/ckpt_step_1500.pt
+[STEP  1500] cat=self_definition loss=1.7210 avg50=1.6760 lr=4.29e-05 cells=32 phi=142.7151 splits=30 merges=0 elapsed=138s
+[STEP  1550] cat=self_definition loss=1.7347 avg50=1.7000 lr=3.94e-05 cells=32 phi=139.3609 splits=30 merges=0 elapsed=142s
+[STEP  1600] cat=self_definition loss=1.5196 avg50=1.6588 lr=3.59e-05 cells=32 phi=133.8876 splits=30 merges=0 elapsed=147s
+[STEP  1650] cat=self_definition loss=1.5890 avg50=1.6472 lr=3.25e-05 cells=32 phi=133.9039 splits=30 merges=0 elapsed=152s
+[STEP  1700] cat=self_definition loss=1.4966 avg50=1.6527 lr=2.92e-05 cells=32 phi=113.6482 splits=30 merges=0 elapsed=157s
+[STEP  1750] cat=self_definition loss=1.6617 avg50=1.6257 lr=2.60e-05 cells=32 phi=147.3135 splits=30 merges=0 elapsed=161s
+[STEP  1800] cat=self_definition loss=1.6776 avg50=1.6136 lr=2.30e-05 cells=32 phi=94.8860 splits=30 merges=0 elapsed=166s
+[STEP  1850] cat=self_definition loss=1.5692 avg50=1.6203 lr=2.00e-05 cells=32 phi=134.9903 splits=30 merges=0 elapsed=171s
+[STEP  1900] cat=self_definition loss=1.5894 avg50=1.6156 lr=1.73e-05 cells=32 phi=154.5169 splits=30 merges=0 elapsed=176s
+[STEP  1950] cat=self_definition loss=1.6558 avg50=1.5973 lr=1.46e-05 cells=32 phi=169.7693 splits=30 merges=0 elapsed=180s
+[CKPT] saved results/ckpt_step_2000.pt
+[STEP  2000] cat=self_definition loss=1.6496 avg50=1.6108 lr=1.22e-05 cells=32 phi=114.6181 splits=30 merges=0 elapsed=185s
+[STEP  2050] cat=self_definition loss=1.5475 avg50=1.6129 lr=9.97e-06 cells=32 phi=110.2522 splits=30 merges=0 elapsed=190s
+[STEP  2100] cat=self_definition loss=1.4804 avg50=1.5766 lr=7.94e-06 cells=32 phi=116.8313 splits=30 merges=0 elapsed=195s
+[STEP  2150] cat=self_definition loss=1.5436 avg50=1.5736 lr=6.12e-06 cells=32 phi=104.4454 splits=30 merges=0 elapsed=199s
+[STEP  2200] cat=self_definition loss=1.4994 avg50=1.5687 lr=4.52e-06 cells=32 phi=128.8796 splits=30 merges=0 elapsed=204s
+[STEP  2250] cat=self_definition loss=1.5862 avg50=1.5967 lr=3.15e-06 cells=32 phi=95.4017 splits=30 merges=0 elapsed=209s
+[STEP  2300] cat=self_definition loss=1.5291 avg50=1.5588 lr=2.03e-06 cells=32 phi=139.8536 splits=30 merges=0 elapsed=213s
+[STEP  2350] cat=self_definition loss=1.5702 avg50=1.5562 lr=1.14e-06 cells=32 phi=91.7112 splits=30 merges=0 elapsed=218s
+[STEP  2400] cat=self_definition loss=1.4514 avg50=1.5756 lr=5.09e-07 cells=32 phi=135.6517 splits=30 merges=0 elapsed=223s
+[STEP  2450] cat=self_definition loss=1.5706 avg50=1.5903 lr=1.27e-07 cells=32 phi=150.4953 splits=30 merges=0 elapsed=228s
+[STEP  2499] cat=self_knowledge  loss=1.5345 avg50=1.5669 lr=5.10e-11 cells=32 phi=152.3277 splits=30 merges=0 elapsed=232s
+[CKPT] final saved results/ckpt_final.pt
+[INFO] training done wall=232.3s (3.9min)
+
+=== falsifier verdicts ===
+  F-V5MIT-1: {'test': 'F-V5MIT-1 SPLIT-NOGRAD', 'splits_total': 30, 'passed': True}
+  F-V5MIT-2: {'max_abs_err': 0.0, 'n_checked': 14, 'passed': True, 'test': 'F-V5MIT-2 MERGE-WEIGHT'}
+  F-V5MIT-3: {'test': 'F-V5MIT-3 PHI-CONSERVATION', 'phi_pre_per_cell': 3.549079898538974, 'phi_post_per_cell': 4.423619899064428, 'delta_ratio': 0.24641316215097595, 'tolerance': 0.25, 'passed': True}
+  F-V5MIT-4: {'test': 'F-V5MIT-4 COTRAIN-CONVERGE', 'initial_avg_loss': 256.76891723632815, 'final_avg_loss': 1.577398155927658, 'delta': 255.1915190804005, 'passed': True}
+[F-V5MIT-5] building 5 random comparison engines …
+  F-V5MIT-5: passed_every_beat=True beats=10/10
+
+=== F-PERSONA-4 re-measurement ===
+  F-PERSONA-4: verdict=FAIL mean_kl=0.0
+
+[RESULT] saved results/cotrain_v3_percat_result.json
+[VERDICT] falsifiers 5/5 | F-PERSONA-4 = FAIL

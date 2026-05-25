@@ -1,0 +1,47 @@
+[orch] start ts=2026-05-04T11:44:02Z
+[setup] installing pip packages
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1
+[notice] To update, run: python -m pip install --upgrade pip
+    raise HTTPError(error_message, request=e.request, response=e.response) from e
+requests.exceptions.HTTPError: Invalid user token. The token from HF_TOKEN environment variable is invalid. Note that HF_TOKEN takes precedence over `hf auth login`.
+    raise HTTPError(error_message, request=e.request, response=e.response) from e
+requests.exceptions.HTTPError: Invalid user token. The token from HF_TOKEN environment variable is invalid. Note that HF_TOKEN takes precedence over `hf auth login`.
+[setup] hf auth: Invalid user token. The token from HF_TOKEN environment variable is invalid. Note that HF_TOKEN takes precedence over `hf auth login`.
+[33m⚠️  Warning: 'huggingface-cli whoami' is deprecated. Use 'hf auth whoami' instead.[0m
+[setup] downloading meta-llama/Llama-3.2-3B base
+Please make sure you specified the correct `repo_id` and `repo_type`.
+If you are trying to access a private or gated repo, make sure you are authenticated. For more details, see https://huggingface.co/docs/huggingface_hub/authentication
+User Access Token "anima" is expired
+Please make sure you specified the correct `repo_id` and `repo_type`.
+If you are trying to access a private or gated repo, make sure you are authenticated. For more details, see https://huggingface.co/docs/huggingface_hub/authentication
+User Access Token "anima" is expired
+[orch] versions: torch=2.4.1+cu124 trl=0.17.0 peft=0.19.1
+name, memory.total [MiB]
+NVIDIA H100 80GB HBM3, 81559 MiB
+[A] corpus mix start
+[mix] start ts=2026-05-04T11:44:40Z
+[A] loaded 30000 anima samples
+[B1] loading cais/mmlu auxiliary_train (n=5000)
+Traceback (most recent call last):
+  File "/workspace/p9_retrain_v2/corpus_mix.py", line 247, in <module>
+    main()
+  File "/workspace/p9_retrain_v2/corpus_mix.py", line 214, in main
+    B1 = slice_B1_mmlu(5000)
+         ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p9_retrain_v2/corpus_mix.py", line 43, in slice_B1_mmlu
+    ds = load_dataset("cais/mmlu", "all", split="auxiliary_train")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/datasets/load.py", line 1688, in load_dataset
+    builder_instance = load_dataset_builder(
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/datasets/load.py", line 1315, in load_dataset_builder
+    dataset_module = dataset_module_factory(
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/datasets/load.py", line 1201, in dataset_module_factory
+    raise e1 from None
+  File "/usr/local/lib/python3.11/dist-packages/datasets/load.py", line 1158, in dataset_module_factory
+    raise DatasetNotFoundError(f"Dataset '{path}' doesn't exist on the Hub or cannot be accessed.") from e
+datasets.exceptions.DatasetNotFoundError: Dataset 'cais/mmlu' doesn't exist on the Hub or cannot be accessed.
+[FATAL] corpus mix failed

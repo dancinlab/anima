@@ -1,0 +1,106 @@
+=== v5mitosis_cotrain_v2 vast.ai H100 dispatch (Mac-local) ===
+Tue May 12 12:45:17 UTC 2026
+  steps=10000 batch=32 ctx=256 lr=1e-4 warmup=1000
+  d_model=768 n_head=12 ffn_dim=3072
+  cells=2 to 128 readout=a_minus_g
+  cost_cap_soft=$80.0 pre_fire_abs_max=$100.0
+  estimated wall 12.0hr
+[1/9] Searching H100 offers under $4.0/hr ...
+  Selected: id=34160627 dph=$1.5201 gpu=H100
+[2/9] Pre-fire cost gate (soft envelope) ...
+  est_cost = 1.5201 × 12.0 hr = $18.24
+  pre_fire_abs_max = $100.0
+  ✓ within pre-fire envelope
+[3/9] Renting instance...
+  raw[head]: { "instance_api_key": "e04b721aab4b3d2a76bd39b912bedfe0edac02f0506b17dde0482c75f241c37c", "new_contract": 36617115, "success": true }
+  Instance ID: 36617115
+[4/9] Waiting for SSH ready (max 13 min)...
+  ... attempt 1/160, status=None
+  ... attempt 2/160, status=loading
+  ... attempt 3/160, status=loading
+  ... attempt 4/160, status=loading
+  ... attempt 5/160, status=loading
+  ... attempt 6/160, status=loading
+  ... attempt 7/160, status=loading
+  ... attempt 8/160, status=loading
+  ... attempt 9/160, status=loading
+  ... attempt 10/160, status=loading
+  ... attempt 11/160, status=loading
+  ... attempt 12/160, status=loading
+  ... attempt 13/160, status=loading
+  ... attempt 14/160, status=loading
+  ... attempt 15/160, status=loading
+  ... attempt 16/160, status=loading
+  ... attempt 17/160, status=loading
+  SSH ready: ssh5.vast.ai:17114 (after 18x5s)
+[5/9] Uploading files (model + script + corpus 18MB + probe) ...
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[6/9] GPU + torch check...
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+2.5.1+cu121 True NVIDIA H100 NVL 99949674496
+[7/9] Cotrain v2 (10000 steps, batch=32, ctx=256, lr=1e-4, d=768, max_cells=128)...
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[INFO] device=cuda torch=2.5.1+cu121 cuda_available=True
+[INFO] gpu=NVIDIA H100 NVL
+[INFO] cfg = {'vocab_size': 256, 'd_model': 768, 'n_head': 12, 'ffn_dim': 3072, 'max_seq': 256, 'n_layer': 1, 'initial_cells': 2, 'max_cells': 128, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] initial n_params = 24,009,216, n_cells = 2
+[INFO] loading corpus: corpus/corpus_5cat_balanced.txt
+[INFO] corpus bytes = 18,890,139
+[INFO] training 10000 steps, batch=32, ctx=256, lr=0.0001, warmup=1000, cost_cap=$80.0, cost_per_hr=$1.5201
+[INFO] cost guard active — abort if elapsed × rate > cap
+[STEP     0] loss=537.0772 avg50=537.0772 lr=1.00e-07 cells=2 phi=0.0008 phi/N=0.0004 splits=0 merges=0 elapsed=0.00hr cost=$0.00
+[STEP   100] loss=521.0223 avg50=524.5413 lr=1.01e-05 cells=42 phi=3.7656 phi/N=0.0897 splits=40 merges=0 elapsed=0.01hr cost=$0.02
+Traceback (most recent call last):
+  File "/workspace/anima/training/train_v5mitosis_cotrain.py", line 679, in <module>
+    sys.exit(cotrain(args))
+             ^^^^^^^^^^^^^
+  File "/workspace/anima/training/train_v5mitosis_cotrain.py", line 390, in cotrain
+    logits, info = engine(x)
+                   ^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/mitosis_model_v5.py", line 330, in forward
+    aggregated = (weights.view(-1, 1, 1, 1) * stacked).sum(dim=0)  # (B, T, D)
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.65 GiB. GPU 0 has a total capacity of 93.09 GiB of which 516.56 MiB is free. Process 4021435 has 92.57 GiB memory in use. Of the allocated memory 90.11 GiB is allocated by PyTorch, and 1.74 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+  train exit code = 0
+[8/9] Downloading artifacts...
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+scp: /workspace/anima/output/ckpt_final.pt: No such file or directory
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+scp: /workspace/anima/output/cotrain_result.json: No such file or directory
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[WARN] artifact pull partial fail — retaining pod for manual recovery
+[WARN] pod 36617115 kept (SAVE_POD effectively=1)
+[9/9] === v5mitosis_cotrain_v2 dispatch DONE ===
+Tue May 12 12:49:52 UTC 2026
+DONE
+[cleanup] SAVE_POD=1 — keeping instance 36617115 (manual destroy required)

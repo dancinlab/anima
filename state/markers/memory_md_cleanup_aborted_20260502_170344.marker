@@ -1,0 +1,49 @@
+{
+  "task": "MEMORY.md cleanup 84KB to 24.4KB",
+  "verdict": "ABORT",
+  "abort_reason": "target file does not exist on disk",
+  "session_id": "dd4a1867-159b-4ff6-99ef-659b59de1215",
+  "agent_id": "aef38ff139d4b3edf",
+  "timestamp_utc": "2026-05-02T17:03:44Z",
+  "cap_minutes_allotted": 90,
+  "wall_minutes_used_estimate": 8,
+  "cost_usd": 0.0,
+  "destructive_ops": 0,
+  "expected_path": "/Users/ghost/.claude-claude10/projects/-Users-ghost-core-anima/memory/MEMORY.md",
+  "expected_path_exists": false,
+  "expected_size_kb_per_prompt": 84,
+  "actual_state": {
+    "claude_claude10_projects_is_symlink": true,
+    "symlink_target": "/Users/ghost/.claude/projects",
+    "symlink_target_has_no_memory_subdir": true,
+    "claude10_root_has_no_memory_dir": true
+  },
+  "all_disk_memory_md_files_found": 16,
+  "max_size_found_bytes": 4258,
+  "max_size_found_path": "/Users/ghost/.claude-claude6/projects/-Users-ghost-core-hive/memory/MEMORY.md",
+  "anima_specific_memory_md_files": [
+    "/Users/ghost/core/anima/MEMORY.md (1013 bytes)",
+    "/Users/ghost/.claude-claude12/projects/-Users-ghost-core-anima/memory/MEMORY.md (4070 bytes)",
+    "/Users/ghost/.claude-claude11/projects/-Users-ghost-core-anima/memory/MEMORY.md (1949 bytes)",
+    "/Users/ghost/.claude-claude8/projects/-Users-ghost-core-anima/memory/MEMORY.md (unknown)",
+    "/Users/ghost/.claude-claude7/projects/-Users-ghost-core-anima/memory/MEMORY.md (1577 bytes)",
+    "/Users/ghost/.claude-claude3/projects/-Users-ghost-core-anima/memory/MEMORY.md (unknown)"
+  ],
+  "rendered_memory_phrase_search_results_count": 0,
+  "rendered_memory_phrase_searched": "Phase 4 silent-land audit correction",
+  "harness_warning_observed": "MEMORY.md is 83.9KB (limit: 24.4KB)",
+  "warning_origin_inference": "harness-internal virtual aggregation, not a filesystem-resident MEMORY.md",
+  "backup_created": false,
+  "backup_skipped_reason": "no source file to back up",
+  "policy_compliance": {
+    "additive_only": true,
+    "no_migration": true,
+    "no_destructive_ops": true,
+    "br_no_user_verbatim": true,
+    "korean_response": true,
+    "silent_land_marker": true,
+    "cost_zero_mac_local": true
+  },
+  "handoff_doc": "/Users/ghost/core/anima/docs/memory_md_cleanup_aborted_2026_05_02.md",
+  "next_action_recommendation": "사용자 측에 실제 파일 위치 확인 요청 또는 harness 측 virtual memory 관리 방식에 대한 별도 조사 cycle"
+}

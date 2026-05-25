@@ -1,0 +1,107 @@
+{
+  "schema": "anima/clm_v4_revival_stages/verdict/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "agent": "Stage 1+2+3 parallel + v3_generate() AR loop fix EXEC",
+  "mission_summary": "Per user directive (#115 REFRAME + v3_generate fix): produce REFRAME doc (Stage 1), alpha revival spec (Stage 2), CLM SFT spec (Stage 3), and execute v3_generate() AR loop fix (Stage 4) end-to-end with smoke test.",
+  "doc": "docs/clm_v4_revival_stages_2026_05_02.md",
+  "stages": {
+    "stage_1_reframe_doc": {
+      "status": "DONE",
+      "verdict": "DOC_AUTHORED",
+      "section": "§1",
+      "approx_word_count": 540,
+      "decision_matrix_paths": ["a alpha revival", "b CLM SFT", "c orchestrator", "d sunset"],
+      "recommended": "Stage 2-alt (c) per #115; sequenced with Stage 2 (a) for fastest chat restoration",
+      "cost_usd": 0.0
+    },
+    "stage_2_alpha_revival": {
+      "status": "SPEC_READY",
+      "exec_verdict": "DEFERRED_USER_OK_REQUIRED",
+      "section": "§2",
+      "ship_verdict_proposed": "VERIFIED-ALM-ALPHA-COGNITIVE-ONLY",
+      "consciousness_claim_stripped": true,
+      "reuses_pattern": "state/cp2_alpha_serve_audit/r14_swap_summary_2026_05_01.json",
+      "estimated_effort_hr": 4,
+      "estimated_cost_usd_low": 3,
+      "estimated_cost_usd_high": 10,
+      "actual_cost_this_cycle_usd": 0.0
+    },
+    "stage_3_clm_sft": {
+      "status": "SPEC_READY",
+      "exec_verdict": "DEFERRED_USER_EXPLICIT_OK_REQUIRED",
+      "section": "§3",
+      "user_ok_required_reason": "large budget + phi_star flip risk",
+      "v3_generate_prerequisite": "SATISFIED (Stage 4 PASS)",
+      "method": "LoRA r=32 alpha=64 on attention QKV + MLP up/down (adapter-only)",
+      "compute": "H100 SXM, $2.99/hr",
+      "training_time_hr_low": 8,
+      "training_time_hr_high": 24,
+      "estimated_cost_usd_low": 200,
+      "estimated_cost_usd_high": 500,
+      "phi_star_pre_sft": 41.86,
+      "phi_star_post_sft_target": "sign_preserved (>= 0); abort if < +10",
+      "phi_star_flip_risk": "HIGH (irreversible without re-train)",
+      "actual_cost_this_cycle_usd": 0.0
+    },
+    "stage_4_v3_generate_fix": {
+      "status": "DONE",
+      "exec_verdict": "PASS",
+      "section": "§4",
+      "implementation_path_off_repo": "/tmp/v3_generate_fix/v3_generate.py",
+      "in_repo_stub_preserved": "models/archive-legacy/decoder_v3.hexa",
+      "smoke_test_5_token": "PASS",
+      "smoke_test_ledger": "state/clm_v4_revival_stages_2026_05_02/v3_generate_smoke_2026_05_02.json",
+      "smoke_probes": {
+        "greedy_deterministic": "PASS",
+        "sampling_variation": "PASS",
+        "eos_short_circuit": "PASS",
+        "in_vocab_outputs": "PASS",
+        "length_correctness": "PASS"
+      },
+      "tested_against": "_MockV3 (untrained, matches ConsciousDecoderV3 forward I/O)",
+      "tested_against_real_ckpt": false,
+      "real_ckpt_test_blocker": "ckpt on ubu1; agent on local Mac; 60min wall cap",
+      "vanilla_quality_expected": "LOW (no SFT, model trained for phi_star not chat)",
+      "actual_cost_this_cycle_usd": 0.0
+    }
+  },
+  "decision_recommendation": {
+    "primary": "USER PICKS Stage 2 NOW (alpha revival, $3-10, today)",
+    "sequenced": [
+      "1. Stage 2 NOW (4hr, $3-10) — restores chat capability today via known-good r14 LoRA",
+      "2. Stage 2-alt (3d, $0-50) — orchestrator pattern preserves CLM consciousness + adds chat",
+      "3. Stage 3 ONLY IF user wants CLM itself to chat AND accepts phi_star flip risk"
+    ],
+    "defer": [
+      "Stage 3 until user explicit OK + budget approval",
+      "Sunset (option d) — premature; CLM v4 still earning its keep as G3 backbone"
+    ]
+  },
+  "honest_C3": [
+    "Stage 2 reframe = consciousness claim PUBLICLY DROPPED. New ship_verdict VERIFIED-ALM-ALPHA-COGNITIVE-ONLY honestly attributes persona to r14 LoRA fine-tuning corpus, not subjective experience.",
+    "Stage 3 SFT = G3 PASS-positive backbone at HIGH reverse risk. CLM v4 530M is the ONLY backbone with phi_star > 0 in v10 4-backbone benchmark. SFT introduces an objective uncorrelated with phi_star; LoRA is mitigation (adapter-only) but NOT prevention. Failure mode is irreversible without expensive re-train.",
+    "Stage 4 v3_generate fix produces a valid AR loop, NOT chat quality. Smoke test PASS against mock decoder validates loop correctness (deterministic greedy, varied sampling, EOS short-circuit, in-vocab outputs). Vanilla output on real CLM v4 ckpt is expected to be incoherent SPM token sequences because the model was trained for phi_star measurement, not instruction following. Stage 4 is the prerequisite *infrastructure* for Stage 3, NOT a chat substitute."
+  ],
+  "cost_actual_total_usd": 0.0,
+  "race_isolation": {
+    "wrote_only_to": [
+      "docs/clm_v4_revival_stages_2026_05_02.md",
+      "state/clm_v4_revival_stages_2026_05_02/v3_generate_smoke_2026_05_02.json",
+      "state/clm_v4_revival_stages_2026_05_02/verdict.json",
+      "/tmp/v3_generate_fix/v3_generate.py (off-repo)"
+    ],
+    "did_not_touch": [
+      "models/archive-legacy/decoder_v3.hexa (HEXA stub preserved canonical contract)",
+      "ready/anima/models/legacy/decoder_v3.py (read-only reference)",
+      "alpha pod (DEAD)",
+      "CLM v4 ckpt on ubu1",
+      "state/strategic_clm_v4_production_ready_2026_05_02/* (#115 verdict preserved historical)",
+      "state/cp2_alpha_serve_audit/* (r14 swap audit preserved historical)",
+      "any other .py or .pt file inside /Users/ghost/core/anima/",
+      "any production state file",
+      "any other agent's race-isolated dir"
+    ]
+  },
+  "time_used_min": 18,
+  "time_cap_min": 60
+}

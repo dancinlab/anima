@@ -1,0 +1,348 @@
+// tool/anima_bio_phi_ribozyme.hexa — biological-Φ axis on RIBOZYME 4-state ladder (raw#9 hexa-only).
+//
+// PURPOSE
+//   anima 가 hexa-bio 의 RIBOZYME τ(6)=4 four-state ladder (substrate / TS / cleaved /
+//   released) 를 받아 IIT 4.0 Φ score 를 계산해 outbound 으로 돌려준다. 이는
+//   F-RB-Φ-1 falsifier ("ribozyme catalytic Φ > aptamer non-catalytic Φ") 의 anima-side
+//   substrate. hexa-bio §9.2 upstream proposal (docs/upstream_kick_proposals_2026_05_07.md)
+//   의 anima own-session land.
+//
+// METHOD (raw#9 strict + raw#10 honest c3)
+//   primary  : pyphi feature/iit-4.0 b78d0e3 sia() — IIT 4.0 proper Φ, when ray extras
+//              + conditional-independence requirements 충족 시 가능. 4-state TPM 을
+//              2-node binary marginalization (4 = 2²) 으로 SBN 형으로 변환 후 sia.
+//              honest c3: marginalization-induced artifact 가능 (cf. iit4.proper_phi_mip_attempt
+//              entry — 4 회로 모두 φ★=0 marginalized). 따라서 pyphi 결과는 best-effort
+//              upper-reference, 단독으로 falsifier 될 수 없음.
+//   fallback : stdlib effective-information lower bound. 각 state s 에 대해
+//              EI(s) = sum_t P(s→t) · log( P(s→t) / avg_t )
+//              avg_t = mean over rows of column t. KL(s→t || marginal_t) 정합 형식.
+//              Φ ≥ EI lower bound — IIT 1.0 정의에서 EI 는 partition-min Φ 의 upper
+//              estimate 이지만 catalytic-vs-aptamer 비교에서는 monotone discriminator.
+//
+//   selftest 비교:
+//     catalytic mock — 4-state cyclic (substrate→TS→cleaved→released→substrate, 0.85 stay)
+//     aptamer null mock — uniform 4×4 (no integration, no transition specificity)
+//   gate: total_EI(catalytic) > total_EI(aptamer_null), threshold 1e-3.
+//
+// USAGE
+//   hexa run tool/anima_bio_phi_ribozyme.hexa --selftest
+//   hexa run tool/anima_bio_phi_ribozyme.hexa --tpm-json <path> [--cmp-json <path>]
+//
+// OUTPUT
+//   state/anima_bio_phi_ribozyme/<ts>/result.json — schema anima/bio_phi_ribozyme/1
+//
+// CROSS-REPO
+//   hexa-bio reference impl: quantum/module/anima_phi.hexa (stdlib EI mirror, R5 sunset path)
+//   hexa-bio falsifier:      F-RB-Φ-1 (ribozyme/spec/ribozyme_output_v1.schema.json + 4-state ladder field)
+//   hexa-bio aptamer null:   _python_bridge/module/ribozyme_aptamer_null_corpus.py (10 entries)
+//
+// raw#9 hexa-only / raw#10 honest c3 / raw#15 SSOT this file / cross-repo: anima own session
+
+let HELPER_PATH = "/tmp/anima_bio_phi_ribozyme_helper.hexa_tmp"
+let SCHEMA      = "anima/bio_phi_ribozyme/1"
+let OUT_DIR     = "state/anima_bio_phi_ribozyme"
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# anima bio-Φ ribozyme helper — emitted by tool/anima_bio_phi_ribozyme.hexa\n")
+    parts.push("# raw#37 transient. raw#9 production source = .hexa above. raw#10 honest c3 inline.\n")
+    parts.push("import json, os, sys, time, math\n")
+    parts.push("\n")
+    parts.push("def parse_args(argv):\n")
+    parts.push("    out = {'mode': 'help', 'tpm_json': None, 'cmp_json': None, 'output': None,\n")
+    parts.push("           'self_catalytic': False, 'self_aptamer': False, 'label': 'unlabeled'}\n")
+    parts.push("    i = 1\n")
+    parts.push("    while i < len(argv):\n")
+    parts.push("        a = argv[i]\n")
+    parts.push("        if a == '--mode':              out['mode'] = argv[i+1]; i += 2\n")
+    parts.push("        elif a == '--tpm-json':        out['tpm_json'] = argv[i+1]; i += 2\n")
+    parts.push("        elif a == '--cmp-json':        out['cmp_json'] = argv[i+1]; i += 2\n")
+    parts.push("        elif a == '--output':          out['output']   = argv[i+1]; i += 2\n")
+    parts.push("        elif a == '--self-catalytic':  out['self_catalytic'] = True; i += 1\n")
+    parts.push("        elif a == '--self-aptamer':    out['self_aptamer']   = True; i += 1\n")
+    parts.push("        elif a == '--label':           out['label']    = argv[i+1]; i += 2\n")
+    parts.push("        else: i += 1\n")
+    parts.push("    return out\n")
+    parts.push("\n")
+    parts.push("# ── built-in mock TPMs (selftest fixtures) ─────────────────────────\n")
+    parts.push("# State indices: 0=substrate, 1=TS (transition state), 2=cleaved, 3=released\n")
+    parts.push("CATALYTIC_TPM = [\n")
+    parts.push("    [0.10, 0.85, 0.05, 0.00],   # substrate -> mostly TS\n")
+    parts.push("    [0.00, 0.10, 0.85, 0.05],   # TS -> mostly cleaved\n")
+    parts.push("    [0.00, 0.00, 0.10, 0.90],   # cleaved -> released\n")
+    parts.push("    [0.85, 0.00, 0.00, 0.15],   # released -> substrate (cyclic)\n")
+    parts.push("]\n")
+    parts.push("APTAMER_NULL_TPM = [[0.25]*4 for _ in range(4)]   # uniform = no integration\n")
+    parts.push("\n")
+    parts.push("def load_tpm(path):\n")
+    parts.push("    with open(path) as f: data = json.load(f)\n")
+    parts.push("    if isinstance(data, dict) and 'tpm' in data: data = data['tpm']\n")
+    parts.push("    if not isinstance(data, list) or len(data) != 4: raise ValueError('TPM must be 4x4 list of lists')\n")
+    parts.push("    for row in data:\n")
+    parts.push("        if not isinstance(row, list) or len(row) != 4: raise ValueError('TPM row must have 4 entries')\n")
+    parts.push("    return [[float(x) for x in row] for row in data]\n")
+    parts.push("\n")
+    parts.push("def validate_tpm(tpm):\n")
+    parts.push("    notes = []\n")
+    parts.push("    for i, row in enumerate(tpm):\n")
+    parts.push("        s = sum(row)\n")
+    parts.push("        if abs(s - 1.0) > 1e-6: notes.append(f'row {i} sums to {s:.6f}, not 1.0 (may renormalize)')\n")
+    parts.push("    return notes\n")
+    parts.push("\n")
+    parts.push("def renormalize(tpm):\n")
+    parts.push("    out = []\n")
+    parts.push("    for row in tpm:\n")
+    parts.push("        s = sum(row)\n")
+    parts.push("        out.append([x/s if s > 0 else 0.25 for x in row])\n")
+    parts.push("    return out\n")
+    parts.push("\n")
+    parts.push("def stdlib_ei(tpm):\n")
+    parts.push("    \"\"\"Stdlib effective-information per state. Lower bound on Φ.\"\"\"\n")
+    parts.push("    n = len(tpm)\n")
+    parts.push("    avg = [sum(tpm[k][t] for k in range(n))/n for t in range(n)]\n")
+    parts.push("    per_state = []\n")
+    parts.push("    for s, row in enumerate(tpm):\n")
+    parts.push("        ei = 0.0; blew = False\n")
+    parts.push("        for t in range(n):\n")
+    parts.push("            p = row[t]; q = avg[t]\n")
+    parts.push("            if p > 0.0 and q > 0.0:\n")
+    parts.push("                ei += p * math.log(p / q)\n")
+    parts.push("            elif p > 0.0 and q == 0.0:\n")
+    parts.push("                blew = True; break\n")
+    parts.push("        per_state.append({'state_idx': s, 'ei_nats': (None if blew else ei),\n")
+    parts.push("                          'overflow': blew})\n")
+    parts.push("    finite = [p['ei_nats'] for p in per_state if p['ei_nats'] is not None]\n")
+    parts.push("    total = sum(finite) if finite else 0.0\n")
+    parts.push("    return {'per_state': per_state, 'total_ei_nats': total, 'finite_states': len(finite),\n")
+    parts.push("            'avg_marginal': avg}\n")
+    parts.push("\n")
+    parts.push("def try_pyphi(tpm):\n")
+    parts.push("    \"\"\"Best-effort pyphi IIT 4.0 sia. Returns dict with phi or error_reason.\"\"\"\n")
+    parts.push("    try:\n")
+    parts.push("        os.environ.setdefault('PYPHI_WELCOME_OFF', 'yes')\n")
+    parts.push("        os.environ.setdefault('PYPHI_PROGRESS_BARS', 'False')\n")
+    parts.push("        import pyphi\n")
+    parts.push("    except Exception as e:\n")
+    parts.push("        return {'available': False, 'reason': f'pyphi import failed: {type(e).__name__}: {e}'}\n")
+    parts.push("    ray_status = 'ok'\n")
+    parts.push("    try:\n")
+    parts.push("        import ray  # noqa\n")
+    parts.push("    except Exception as e:\n")
+    parts.push("        ray_status = f'BLOCKED ({type(e).__name__}: {e})'\n")
+    parts.push("    # 4-state TPM => 2-node binary marginalization (state-by-node form).\n")
+    parts.push("    # Out[i, n] = P(node_n=1 at next | current state index i)\n")
+    parts.push("    sbn = [[0.0, 0.0] for _ in range(4)]\n")
+    parts.push("    for i in range(4):\n")
+    parts.push("        for j in range(4):\n")
+    parts.push("            p = tpm[i][j]\n")
+    parts.push("            for n in range(2):\n")
+    parts.push("                if (j >> n) & 1: sbn[i][n] += p\n")
+    parts.push("    try:\n")
+    parts.push("        import numpy as np\n")
+    parts.push("        from pyphi import Network, Subsystem, new_big_phi\n")
+    parts.push("        try: pyphi.config.VALIDATE_CONDITIONAL_INDEPENDENCE = False\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("        net = Network(np.asarray(sbn), cm=None, node_labels=('a','b'))\n")
+    parts.push("        phis = []\n")
+    parts.push("        for state_idx in range(4):\n")
+    parts.push("            state = (state_idx & 1, (state_idx >> 1) & 1)\n")
+    parts.push("            sub = Subsystem(net, state)\n")
+    parts.push("            sia_obj = new_big_phi.sia(sub)\n")
+    parts.push("            phis.append(float(sia_obj.phi))\n")
+    parts.push("        max_phi = max(phis)\n")
+    parts.push("        return {'available': True, 'ray_status': ray_status, 'pyphi_version': getattr(pyphi, '__version__', 'feature/iit-4.0'),\n")
+    parts.push("                'sbn_form': sbn, 'phi_per_state': phis, 'max_phi': max_phi,\n")
+    parts.push("                'honest_c3': 'pyphi 4.0 sia on marginalized SBN form — VALIDATE_CONDITIONAL_INDEPENDENCE=False; non-CI 4-state TPMs may yield negative or zero phi (marginalization artifact, cf. iit4.proper_phi_mip_attempt entry); EI fallback is the falsifier-grade discriminator'}\n")
+    parts.push("    except Exception as e:\n")
+    parts.push("        return {'available': False, 'ray_status': ray_status,\n")
+    parts.push("                'reason': f'pyphi sia failed: {type(e).__name__}: {e}',\n")
+    parts.push("                'sbn_form': sbn}\n")
+    parts.push("\n")
+    parts.push("def measure(tpm, label='unlabeled'):\n")
+    parts.push("    notes = validate_tpm(tpm)\n")
+    parts.push("    tpm_n = renormalize(tpm) if notes else tpm\n")
+    parts.push("    ei = stdlib_ei(tpm_n)\n")
+    parts.push("    py = try_pyphi(tpm_n)\n")
+    parts.push("    return {'label': label, 'tpm': tpm_n, 'tpm_validation_notes': notes,\n")
+    parts.push("            'stdlib_ei': ei, 'pyphi': py,\n")
+    parts.push("            'phi_or_ei_lower_bound_nats': ei['total_ei_nats'],\n")
+    parts.push("            'phi_tag': 'Phi >= EI'}\n")
+    parts.push("\n")
+    parts.push("def cmp_pair(a, b):\n")
+    parts.push("    delta = a['phi_or_ei_lower_bound_nats'] - b['phi_or_ei_lower_bound_nats']\n")
+    parts.push("    return {'a_label': a['label'], 'b_label': b['label'],\n")
+    parts.push("            'a_phi_or_ei': a['phi_or_ei_lower_bound_nats'],\n")
+    parts.push("            'b_phi_or_ei': b['phi_or_ei_lower_bound_nats'],\n")
+    parts.push("            'delta_a_minus_b': delta,\n")
+    parts.push("            'a_greater_than_b': delta > 1e-3,\n")
+    parts.push("            'falsifier_id': 'F-RB-Phi-1 (ribozyme catalytic Phi > aptamer non-catalytic Phi)'}\n")
+    parts.push("\n")
+    parts.push("def main():\n")
+    parts.push("    cfg = parse_args(sys.argv)\n")
+    parts.push("    started = time.time()\n")
+    parts.push("    result = {'schema': 'anima/bio_phi_ribozyme/1',\n")
+    parts.push("              'ts': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),\n")
+    parts.push("              'mode': cfg['mode']}\n")
+    parts.push("    if cfg['mode'] == 'measure':\n")
+    parts.push("        if cfg['self_catalytic']: tpm = CATALYTIC_TPM; lab = 'mock_catalytic_ribozyme'\n")
+    parts.push("        elif cfg['self_aptamer']: tpm = APTAMER_NULL_TPM; lab = 'mock_aptamer_null'\n")
+    parts.push("        elif cfg['tpm_json']:     tpm = load_tpm(cfg['tpm_json']); lab = cfg['label']\n")
+    parts.push("        else: print('error: --mode measure requires --tpm-json or --self-catalytic/--self-aptamer'); sys.exit(2)\n")
+    parts.push("        result['measurement'] = measure(tpm, lab)\n")
+    parts.push("    elif cfg['mode'] == 'cmp':\n")
+    parts.push("        a = measure(CATALYTIC_TPM, 'mock_catalytic_ribozyme') if cfg['self_catalytic'] else \\\n")
+    parts.push("            measure(load_tpm(cfg['tpm_json']), cfg['label'] or 'a')\n")
+    parts.push("        b = measure(APTAMER_NULL_TPM, 'mock_aptamer_null') if cfg['self_aptamer'] else \\\n")
+    parts.push("            measure(load_tpm(cfg['cmp_json']), 'b')\n")
+    parts.push("        result['a'] = a; result['b'] = b; result['cmp'] = cmp_pair(a, b)\n")
+    parts.push("    elif cfg['mode'] == 'selftest':\n")
+    parts.push("        a = measure(CATALYTIC_TPM, 'mock_catalytic_ribozyme')\n")
+    parts.push("        b = measure(APTAMER_NULL_TPM, 'mock_aptamer_null')\n")
+    parts.push("        result['catalytic'] = a; result['aptamer_null'] = b\n")
+    parts.push("        result['cmp'] = cmp_pair(a, b)\n")
+    parts.push("    else:\n")
+    parts.push("        print('error: unknown mode'); sys.exit(2)\n")
+    parts.push("    result['elapsed_sec'] = round(time.time() - started, 3)\n")
+    parts.push("    js = json.dumps(result, indent=2, default=str)\n")
+    parts.push("    if cfg['output']:\n")
+    parts.push("        os.makedirs(os.path.dirname(cfg['output']) or '.', exist_ok=True)\n")
+    parts.push("        with open(cfg['output'], 'w') as f: f.write(js)\n")
+    parts.push("    print(js)\n")
+    parts.push("\n")
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _now_iso() -> string {
+    let r = exec("date -u +%Y%m%dT%H%M%SZ")
+    return to_string(r).trim()
+}
+
+fn _ensure_outdir(ts: string) -> string {
+    let d = OUT_DIR + "/" + ts
+    exec("mkdir -p " + d)
+    return d
+}
+
+fn _run_helper(args: string) -> list {
+    let cmd = "python3 " + HELPER_PATH + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+fn cmd_selftest() {
+    println("── anima_bio_phi_ribozyme selftest ──")
+    _write_helper()
+    let ts = _now_iso()
+    let outdir = _ensure_outdir(ts)
+    let out = outdir + "/selftest.json"
+    let res = _run_helper("--mode selftest --output " + out)
+    let stdout_s = to_string(res[0])
+    let exit_code = to_int(res[1])
+    if exit_code != 0 {
+        println("HELPER FAILED exit=" + to_string(exit_code))
+        println(stdout_s)
+        println("__ANIMA_BIO_PHI_RIBOZYME_SELFTEST__ FAIL helper_exit=" + to_string(exit_code))
+        exit(1)
+    }
+    println(stdout_s)
+    // Re-parse output for gate decision (simple substring check on cmp.a_greater_than_b: true)
+    if stdout_s.contains("\"a_greater_than_b\": true") {
+        println("")
+        println("  RIBOZYME 4-state ladder ↔ IIT 4.0 Φ axis")
+        println("  catalytic > aptamer null : YES")
+        println("  output: " + out)
+        println("__ANIMA_BIO_PHI_RIBOZYME_SELFTEST__ PASS catalytic_gt_aptamer=true output=" + out)
+        exit(0)
+    }
+    println("")
+    println("  RIBOZYME 4-state ladder ↔ IIT 4.0 Φ axis")
+    println("  catalytic > aptamer null : NO (delta below threshold)")
+    println("  output: " + out)
+    println("__ANIMA_BIO_PHI_RIBOZYME_SELFTEST__ FAIL catalytic_gt_aptamer=false output=" + out)
+    exit(1)
+}
+
+fn cmd_measure(tpm_json: string, label: string) {
+    _write_helper()
+    let ts = _now_iso()
+    let outdir = _ensure_outdir(ts)
+    let out = outdir + "/measure.json"
+    let mut args = "--mode measure --tpm-json " + tpm_json + " --output " + out
+    if label != "" { args = args + " --label " + label }
+    let res = _run_helper(args)
+    println(to_string(res[0]))
+    if to_int(res[1]) != 0 {
+        println("__ANIMA_BIO_PHI_RIBOZYME_MEASURE__ FAIL exit=" + to_string(res[1]))
+        exit(1)
+    }
+    println("__ANIMA_BIO_PHI_RIBOZYME_MEASURE__ PASS output=" + out)
+}
+
+fn cmd_cmp(a_json: string, b_json: string) {
+    _write_helper()
+    let ts = _now_iso()
+    let outdir = _ensure_outdir(ts)
+    let out = outdir + "/cmp.json"
+    let args = "--mode cmp --tpm-json " + a_json + " --cmp-json " + b_json + " --output " + out
+    let res = _run_helper(args)
+    let stdout_s = to_string(res[0])
+    println(stdout_s)
+    if to_int(res[1]) != 0 {
+        println("__ANIMA_BIO_PHI_RIBOZYME_CMP__ FAIL exit=" + to_string(res[1]))
+        exit(1)
+    }
+    if stdout_s.contains("\"a_greater_than_b\": true") {
+        println("__ANIMA_BIO_PHI_RIBOZYME_CMP__ PASS a_greater_than_b=true output=" + out)
+        exit(0)
+    }
+    println("__ANIMA_BIO_PHI_RIBOZYME_CMP__ FAIL a_greater_than_b=false output=" + out)
+    exit(1)
+}
+
+fn print_usage() {
+    println("usage:")
+    println("  hexa run tool/anima_bio_phi_ribozyme.hexa --selftest")
+    println("  hexa run tool/anima_bio_phi_ribozyme.hexa --measure --tpm-json <path> [--label <lbl>]")
+    println("  hexa run tool/anima_bio_phi_ribozyme.hexa --cmp --tpm-json <a> --cmp-json <b>")
+    println("")
+    println("input format (--tpm-json):")
+    println("  4×4 row-stochastic JSON matrix, either a bare array or { \"tpm\": [[...]] }")
+    println("  rows: state-from indices 0..3 (substrate / TS / cleaved / released)")
+    println("  cols: state-to indices 0..3, each row sums to 1.0")
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut measure = false
+    let mut cmp_mode = false
+    let mut tpm_json = ""
+    let mut cmp_json = ""
+    let mut label    = ""
+    let mut i = 2
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--measure"  { measure  = true; i = i + 1; continue }
+        if a == "--cmp"      { cmp_mode = true; i = i + 1; continue }
+        if a == "--tpm-json" { tpm_json = av[i+1]; i = i + 2; continue }
+        if a == "--cmp-json" { cmp_json = av[i+1]; i = i + 2; continue }
+        if a == "--label"    { label    = av[i+1]; i = i + 2; continue }
+        i = i + 1
+    }
+    if selftest { cmd_selftest(); exit(0) }
+    if measure  {
+        if tpm_json == "" { println("error: --measure requires --tpm-json"); exit(2) }
+        cmd_measure(tpm_json, label); exit(0)
+    }
+    if cmp_mode {
+        if tpm_json == "" || cmp_json == "" { println("error: --cmp requires --tpm-json and --cmp-json"); exit(2) }
+        cmd_cmp(tpm_json, cmp_json); exit(0)
+    }
+    print_usage()
+    exit(0)
+}

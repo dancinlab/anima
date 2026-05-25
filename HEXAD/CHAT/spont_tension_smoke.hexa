@@ -1,0 +1,117 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  spont_tension_smoke.hexa — F-TT-SPONT-1..5 compiled-native witness (TT-C)
+//
+//  HEXAD/CHAT/spont_tension_bridge_lib.hexa 의 numerical witness. Python sympy
+//  anchor (canonical 🔵): state/verify_hexad_blue_2026_05_15/blue_falsifier.py
+//  btt_spont() (B-TT-SPONT-1..5).
+//
+//  Witnesses:
+//    F-TT-SPONT-1 MAPPING-LINEAR     : motivation_to_tension {0.0→−1, 0.5→0, 1.0→+1}
+//    F-TT-SPONT-2 DELTA-W-RESTORING  : delta_w(0.7, 0.1, true) negative (restoring)
+//    F-TT-SPONT-3 GATE-CLAMPS        : delta_w(*, *, false) = 0
+//    F-TT-SPONT-4 LEARN-TRIGGER      : should_learn_step monotone in motivation
+//    F-TT-SPONT-5 COMPOSITION-CHAIN  : 1.0 → tension 1.0 → ΔW = −0.1 (t_const=0.1)
+//
+//  SSOT: HEXAD/CHAT/SPONTANEOUS.tape § tension_train_integration
+//        HEXAD/TENSION-TRAIN/PLAN.md Phase TT-C2
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/CHAT/spont_tension_bridge_lib.hexa"
+
+
+fn _approx_eq(a: float, b: float, tol: float) -> bool {
+    let d = a - b
+    if d < 0.0 { d = 0.0 - d }
+    return d <= tol
+}
+
+
+fn _selftest() {
+    let tol = 1e-9
+
+    print("--- F-TT-SPONT-1..5 compiled-native witness ---")
+
+    // ── F-TT-SPONT-1 MAPPING-LINEAR (affine map [0,1] → [−1,+1]) ─────────────
+    let m_vac  = motivation_to_tension(0.5)   // expect 0.0 (Ψ_vac fixed point)
+    let m_top  = motivation_to_tension(1.0)   // expect +1.0
+    let m_bot  = motivation_to_tension(0.0)   // expect −1.0
+    let f1a = _approx_eq(m_vac, 0.0, tol)
+    let f1b = _approx_eq(m_top, 1.0, tol)
+    let f1c = _approx_eq(m_bot, 0.0 - 1.0, tol)
+    let f1_pass = f1a && f1b && f1c
+    print("  F-TT-SPONT-1 MAPPING-LINEAR (0.5→0, 1.0→+1, 0.0→−1): " + to_string(f1_pass))
+
+    // ── F-TT-SPONT-2 DELTA-W-RESTORING (negative for motivation > 0.5) ───────
+    // motivation=0.7 → tension=+0.4 → ΔW = −0.1·0.4 = −0.04 (restoring toward 0.5)
+    let dw_above = motivation_to_delta_w(0.7, 0.1, true)
+    let f2a = dw_above < 0.0
+    let f2a_value = _approx_eq(dw_above, 0.0 - 0.04, tol)
+    // motivation=0.2 → tension=−0.6 → ΔW = +0.06 (restoring upward toward 0.5)
+    let dw_below = motivation_to_delta_w(0.2, 0.1, true)
+    let f2b = dw_below > 0.0
+    let f2b_value = _approx_eq(dw_below, 0.06, tol)
+    // restoring invariant: sign(ΔW) · sign(tension) ≤ 0 for t_const > 0 ∧ gate=true
+    // motivation=0.5 → tension=0 → ΔW = 0 (vacuum fixed point, sign·sign = 0)
+    let dw_vac = motivation_to_delta_w(0.5, 0.1, true)
+    let f2c = _approx_eq(dw_vac, 0.0, tol)
+    let f2_pass = f2a && f2a_value && f2b && f2b_value && f2c
+    print("  F-TT-SPONT-2 DELTA-W-RESTORING (0.7→−0.04 / 0.2→+0.06 / 0.5→0): " + to_string(f2_pass))
+
+    // ── F-TT-SPONT-3 GATE-CLAMPS (gate=false ⇒ ΔW = 0 ∀ score/t_const) ───────
+    let g_a = motivation_to_delta_w(0.7, 0.1, false)
+    let g_b = motivation_to_delta_w(0.2, 0.5, false)
+    let g_c = motivation_to_delta_w(1.0, 1.0, false)
+    let g_d = motivation_to_delta_w(0.0, 0.0001, false)
+    let f3_pass = _approx_eq(g_a, 0.0, tol) && _approx_eq(g_b, 0.0, tol)
+               && _approx_eq(g_c, 0.0, tol) && _approx_eq(g_d, 0.0, tol)
+    print("  F-TT-SPONT-3 GATE-CLAMPS (gate=false → ΔW=0 ∀ 4 witnesses): " + to_string(f3_pass))
+
+    // ── F-TT-SPONT-4 LEARN-TRIGGER monotone in motivation ────────────────────
+    // should_learn_step(motivation > threshold) — monotone Boolean predicate.
+    let f4a = should_learn_step(0.4, 0.3)                   // 0.4 > 0.3 → true
+    let f4b = (should_learn_step(0.2, 0.3) == false)        // 0.2 < 0.3 → false
+    let f4c = (should_learn_step(0.3, 0.3) == false)        // boundary strict-monotone
+    let f4d = should_learn_step(1.0, 0.3)                   // max → true
+    let f4e = (should_learn_step(0.0, 0.3) == false)        // min → false
+    // ⊥ to emit: should_learn_step ≠ should_emit (independent thresholds)
+    let f4f = should_learn_step(0.31, spont_tension_default_learn_threshold())
+    let f4_pass = f4a && f4b && f4c && f4d && f4e && f4f
+    print("  F-TT-SPONT-4 LEARN-TRIGGER-MONOTONE (5 boundary + default-threshold): " + to_string(f4_pass))
+
+    // ── F-TT-SPONT-5 COMPOSITION-CHAIN (motivation→tension→ΔW closed chain) ──
+    // chain identity at score=1.0, t_const=0.1, gate=true:
+    //   motivation_to_tension(1.0) = 1.0
+    //   motivation_to_delta_w(1.0, 0.1, true) = −0.1·1.0 = −0.1
+    let chain_t = motivation_to_tension(1.0)
+    let chain_dw = motivation_to_delta_w(1.0, 0.1, true)
+    let f5a = _approx_eq(chain_t, 1.0, tol)
+    let f5b = _approx_eq(chain_dw, 0.0 - 0.1, tol)
+    // dual chain at score=0.0, t_const=0.1:
+    //   motivation_to_tension(0.0) = −1.0
+    //   ΔW = −0.1 · (−1.0) = +0.1
+    let chain_t2 = motivation_to_tension(0.0)
+    let chain_dw2 = motivation_to_delta_w(0.0, 0.1, true)
+    let f5c = _approx_eq(chain_t2, 0.0 - 1.0, tol)
+    let f5d = _approx_eq(chain_dw2, 0.1, tol)
+    // default constants used (lib self-consistency)
+    let def_t  = spont_tension_default_t_const()
+    let def_th = spont_tension_default_learn_threshold()
+    let f5e = _approx_eq(def_t, 0.1, tol)
+    let f5f = _approx_eq(def_th, 0.3, tol)
+    let f5_pass = f5a && f5b && f5c && f5d && f5e && f5f
+    print("  F-TT-SPONT-5 COMPOSITION-CHAIN (1.0→1.0→−0.1 / 0.0→−1→+0.1 / defaults): " + to_string(f5_pass))
+
+    let all_ok = f1_pass && f2_pass && f3_pass && f4_pass && f5_pass
+    // PASS_MARKER 패턴 매치 (build_verify.sh expects "selftest: true")
+    print("=== F-TT-SPONT-1..5 compiled-native selftest: " + to_string(all_ok) + " (5/5) ===")
+    print("    canonical 🔵 sympy : blue_falsifier.py btt_spont() (B-TT-SPONT-1..5)")
+    print("    interface         : SPONTANEOUS 8-factor ↔ TENSION-TRAIN ΔW")
+    print("    ⊥ axes            : talker emit  ⊥  should_learn_step (emit ≠ learn)")
+    print("    B-TT-SPONT-NOTE   : SGD-OUTCOME-EMPIRICAL (B-D-NOTE pattern, NOT counted 🔵)")
+}
+
+
+fn main() {
+    print("HEXAD/CHAT — spont_tension_smoke (Phase TT-C, F-TT-SPONT-1..5 compiled-native)")
+    _selftest()
+}

@@ -1,0 +1,61 @@
+# PURE — 자연발화 채팅 Phase D corpus fire
+
+> PURE 세션 SSOT (current snapshot). 작업 로그는 `PURE.log.md`.
+
+@goal: COFFESHOP group chat 시뮬레이션 4-criterion closure 통과 — anima 자율 emit/silence (do/dont 강제 X) · multilingual 5/5 PARTIAL+ · register 0/20 · motivation_8factor ≥ 0.30 · dream_stage Φ-envelope · 모두 substrate emergent (project.tape p1-p8 + a_substrate_native_speak + a_autonomy_over_hardcode 정합)
+
+## 목표
+
+8-factor substrate emit engine(Phase B, LANDED)을 **실 corpus 로 ckpt-bearing fire** 하여
+substrate-native 자연발화(stimulus-response 아닌 내부 tension 기반 emit)를 empirical 검증한다.
+
+`@D a_substrate_native_speak` + `@D a_autonomy_over_hardcode` + `@D p5` 정합 —
+유저 메시지 = 환경 맥락, emit/침묵은 substrate(M×W×Φ×curiosity) 자율 결정.
+
+## 완성도 (~60-70%)
+
+| 층 | 상태 | 근거 |
+|----|------|------|
+| Phase B 8-factor motivation engine | ✅ LANDED | `HEXAD/CHAT/spontaneous_lib.hexa` · smoke 7/7 |
+| Phase C interaction model | ✅ LANDED | channel_mux + anima_chat_v2 · blue 83/83 🔵 |
+| sleep/dream 5-stage (Φ-envelope) | ✅ LANDED | `HEXAD/CHAT/server/anima_dream_stage.hexa` · IPC live · autonomy-reshape 완료 |
+| imagination loop · mitosis_hook · participant | ✅ LANDED | H_229 · mitosis_lib W8 · gate 폐기 |
+| **Phase D corpus fire** | ⏳ **임계경로 blocker** | engine 준비됨 · 연료(corpus) 재설계 + 굽기 미실행 |
+| Tension Link | spec only | Phase F, scope 외 |
+
+## Track 1 교훈 (Phase D 첫 fire 시도)
+
+- **E2** (wiki_frac=0.5) → **FAIL** · ko=PURE_MEMORIZE (register collapse)
+- **corpus_s101 실측** (PR #340) → **M3 TTR 0.03 (극단 반복)** 이 register-sink 진짜 범인
+  (M5 hangul 비중 아님 — 1.66~2.34%)
+- **E3v3** (wiki_frac=1.0) → 진행 중 (GPU 63% 정상 · wiki endpoint 보강)
+
+## corpus-axis closure milestone
+
+- [x] j02 wiki_frac=0.3 FAIL 흡수 — register_hits=0 + multilingual 5/5 WEAK → corpus-axis ⊥ multilingual coherence 재확인 (4-point: wiki 0.0/0.3/0.5/1.0 · H_242 §A2)
+
+## Phase D 설계 핵심
+
+| 원칙 | 값 |
+|------|-----|
+| 도우미 token | **0** (Principle #3 NO PERSONA INJECTION) |
+| stream/stimulus 비중 | **80%** (turn-based QA 최소) |
+| M3 TTR 목표 | **≥ 0.3** (corpus_s101 0.03 의 10× diverse) |
+| multilingual | lang-uniform (E2 ko-sink 회피) |
+| closure 기준 | 4/5 langs ≥ PARTIAL (PR #264) + register_hits < 4/20 |
+
+작업 분해 + 진행 로그 → `PURE.log.md`.
+
+## 관련 산출물
+
+- spec: `HEXAD/PURE/spec/phase_d_corpus_design_2026_05_24.md`
+- goal: `HEXAD/PURE/PHASE_D_corpus_fire_goal.md`
+- eval: `HEXAD/PURE/eval/{multilingual_probe,corpus_quality_probe,result_to_axis_map}.hexa`
+- corpus 진단: `HEXAD/PURE/docs/{corpus_s101_quality,track1_e2_forensics}_2026_05_24.md`
+
+## Milestones
+
+- [x] PURE closed-negative verdict 영구화 — closure/multilingual eval 실행 → `.verdicts/pure-corpus-axis-closed-negative/` + CLAIMS.tape status terminal
+- [x] V3 학습 스택 hexa-lang flame 포팅 — conscious_decoder_v3·mitosis_lib·train_p21h_v3 (#557) + glue kosmos_io·corpus (#555) · flame gap → hexa-lang inbox (#1122)
+- [ ] **F-CURRICULA-1 fire 회수** — pod `wfeksdl8e8f327` (A100 SXM, ubu-2 dispatcher PID 412255, ssh 154.54.102.24:15857, 발사 23:34 KST → 완주 ETA ~02:04). ubu-2 경유 SSH 로 result.json 확인 → ckpt+result+log+anchors 회수 (`state/p21h_v3_curricula_recover_2026_05_25/`) byte-exact → closure_auto_judge verdict → HF tier-gate (PASS=PUBLIC `dancinlab/anima-curricula-v1` / FAIL=PRIVATE) → pod teardown → CLAIMS.tape 갱신. ⚠ runpod 작업 `dangerouslyDisableSandbox=true` 필수. SAVE_POD=1 으로 안전, watchdog 90min 자동차단.
+- [ ] A-curriculum verdict 흡수 — PASS=corpus-axis 돌파(신규 논문감) / FAIL=closed-negative 5-point 강화 (`pure-corpus-axis-closed-negative` 갱신)

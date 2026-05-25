@@ -1,0 +1,140 @@
+// HEXAD/LIFE/state/lib_phi_l1_diagnostic_2026_05_24/diag_l1_binning.hexa
+// L1a diagnostic: step 1 (phi_bin_values) hexa-native bin sequences on the
+// same 5-rule × n_cells=8 × dim=8 fixture used by verify_phi_native.hexa.
+//
+// Output two artifacts on stdout:
+//   1. STATES — flat row-major values per rule (Python diag_rust_oracle.py
+//      ingests exact same bytes for f32-cast simulation + phi_rs oracle).
+//   2. BINS_HEXA — hexa f64-faithful bin index sequences per (rule, cell).
+//
+// Python side then computes the C-style f32-cast binning + Rust phi_rs
+// oracle on the same states for diff comparison.
+
+import "/Users/ghost/core/anima/.claude/worktrees/agent-a07653c5889f742f6/HEXAD/LIFE/lib/phi_native.hexa"
+
+fn _pow2(k: int) -> int {
+    let mut p = 1
+    let mut i = 0
+    while i < k { p = p * 2; i = i + 1 }
+    return p
+}
+fn _ftoi(x: float) -> int { if x > 0.5 { return 1 }; return 0 }
+fn _itof(b: int) -> float { if b == 1 { return 1.0 }; return 0.0 }
+
+fn _ca_next(l: int, c: int, r: int, rule: int) -> int {
+    let idx = l * 4 + c * 2 + r
+    return (rule / _pow2(idx)) % 2
+}
+
+fn _init_row(row: int, n: int, seed_off: int) -> int {
+    let mut i = 0
+    while i < n {
+        let on = ((i + seed_off) % 3) != 0
+        if on { let _ = farr_set(row, i, 1.0) }
+        else  { let _ = farr_set(row, i, 0.0) }
+        i = i + 1
+    }
+    return 1
+}
+
+// EXACT clone of verify_phi_native.hexa's gen_rule (so fixtures match byte-equal).
+fn gen_rule(rule: int, n_cells: int, n_steps: int) -> int {
+    let warm = 2
+    let row = farr_zeros(n_cells)
+    let _ = _init_row(row, n_cells, rule % 7)
+    let states = farr_zeros(n_cells * n_steps)
+    let total = warm + n_steps
+    let mut step = 0
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut s = 0
+            while s < n_cells {
+                let _ = farr_set(states, s * n_steps + t, farr_get(row, s))
+                s = s + 1
+            }
+        }
+        let nxt = farr_zeros(n_cells)
+        let mut j = 0
+        while j < n_cells {
+            let lj = (j + n_cells - 1) % n_cells
+            let rj = (j + 1) % n_cells
+            let lv = _ftoi(farr_get(row, lj))
+            let cv = _ftoi(farr_get(row, j))
+            let rv = _ftoi(farr_get(row, rj))
+            let _ = farr_set(nxt, j, _itof(_ca_next(lv, cv, rv, rule)))
+            j = j + 1
+        }
+        let mut k = 0
+        while k < n_cells { let _ = farr_set(row, k, farr_get(nxt, k)); k = k + 1 }
+        let _ = farr_free(nxt)
+        step = step + 1
+    }
+    let _ = farr_free(row)
+    return states
+}
+
+fn dump_state(rule: int, states: int, n_cells: int, dim: int) {
+    // STATES rule=<r>: each cell row on its own line, values space-separated.
+    let mut i = 0
+    while i < n_cells {
+        let mut line = "STATES rule=" + to_string(rule) + " cell=" + to_string(i) + " :"
+        let mut d = 0
+        while d < dim {
+            line = line + " " + to_string(farr_get(states, i * dim + d))
+            d = d + 1
+        }
+        println(line)
+        i = i + 1
+    }
+}
+
+fn dump_bins_hexa(rule: int, states: int, n_cells: int, dim: int, n_bins: int) {
+    let mut i = 0
+    while i < n_cells {
+        let row = farr_zeros(dim)
+        let mut d = 0
+        while d < dim {
+            let _ = farr_set(row, d, farr_get(states, i * dim + d))
+            d = d + 1
+        }
+        let bins = phi_bin_values(row, dim, n_bins)
+        let mut line = "BINS_HEXA rule=" + to_string(rule) + " cell=" + to_string(i) + " :"
+        let mut b = 0
+        while b < dim {
+            line = line + " " + to_string(farr_get(bins, b).to_int())
+            b = b + 1
+        }
+        println(line)
+        let _ = farr_free(row)
+        let _ = farr_free(bins)
+        i = i + 1
+    }
+}
+
+fn main() {
+    let n_cells = 8
+    let dim = 8
+    let n_bins = 4
+    let rules = [110, 30, 250, 184, 60]
+
+    println("# diag_l1_binning — L1a step1 hexa-native binning + state dump")
+    println("# fixture: 5 rules × n_cells=8 × dim=8 × n_bins=4")
+
+    let mut r = 0
+    while r < 5 {
+        let rule = rules[r]
+        let states = gen_rule(rule, n_cells, dim)
+        // hexa-native phi_native_spatial (for absolute reference). Emit both
+        // short (%g 6-sig) AND full-precision (shortest %g round-trip) forms.
+        let phi_h = phi_native_spatial(states, n_cells, dim, n_bins)
+        println("PHI_HEXA rule=" + to_string(rule) + " : " + to_string(phi_h))
+        println("PHI_HEXA_HI rule=" + to_string(rule) + " : " + json_stringify(phi_h))
+        dump_state(rule, states, n_cells, dim)
+        dump_bins_hexa(rule, states, n_cells, dim, n_bins)
+        let _ = farr_free(states)
+        r = r + 1
+    }
+
+    println("# end diag_l1_binning")
+}

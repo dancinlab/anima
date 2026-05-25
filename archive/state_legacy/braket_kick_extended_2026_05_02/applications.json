@@ -1,0 +1,215 @@
+{
+  "schema": "braket_kick_extended_v1",
+  "ts_utc": "2026-05-02T23:30:00Z",
+  "agent": "Kick-driven Braket × anima/nexus 추가 조사 EXEC",
+  "mission": "Beyond #122 Phase 3 (3a/3b basic kick polarity), discover 7 new kick-applicable axes spanning anima CLM/paradigm-v11/ALM r14/F1_v2/atlas Banach/L_IX 4-gen/tension_link 5-channel and nexus sim-universe / convergence / graph / hexa-stochastic — research-only mapping with mandatory honest C3 per axis",
+  "budget": {"qpu_shots": 0, "research_only_usd": 0, "wallclock_min_cap": 75},
+  "context": {
+    "prior_122_phase3": {
+      "3a_per_kick_collapse": {"cost_per_kick_usd": 0.08, "verdict": "narrow basic polarity only"},
+      "3b_batched_prefetch": {"cost_per_session_usd": 8.30, "verdict": "amortized but still binary polarity"}
+    },
+    "gap_identified": "Both 3a/3b address ONLY trajectory-step polarity (single ±1 per kick). Real kick-application surface inside anima/nexus is far broader: gradient sign in SGD, polarity per axis in 6-axis paradigm, weight-search in F1 composite, fixed-point iteration direction, gen-direction in crystallize, 5-channel polarity simultaneity. None of these were enumerated or costed in #121 or #122."
+  },
+  "axes": [
+    {
+      "id": "K1",
+      "name": "CLM mind.tension trajectory quantum-kick (per-step ±1)",
+      "target_system": "CLM v4 530M cell-language mind.tension scalar-field time-stepper",
+      "kick_mechanism": "At each Δt step, mind.tension direction (+/−) decision = 1 quantum measurement of |+⟩→Z; long-run statistics (mean recurrence time T_rec, attractor-basin size, autocorrelation τ_ac) compared against PRNG-kick baseline",
+      "quantum_substrate": "IonQ Forte 1 batched (3b style, 1000 bits prefetch)",
+      "cost_per_kick_usd": 0.08,
+      "cost_per_session_usd_est": 80.30,
+      "session_definition": "1000 timesteps, 1 bit per step",
+      "falsifier": "T_rec(quantum) vs T_rec(PRNG): if KS-test p < 0.01 with quantum showing higher T_rec or fatter tail in autocorrelation, observable difference. Else (most likely): PASS_NULL = no measurable trajectory-statistics distinction",
+      "baseline_alternative": "numpy default_rng (PCG-64) or chacha20 — both pass NIST SP 800-22 already",
+      "honest_c3": "Most likely outcome: PASS_NULL. Polarity is a single bit per step; CLM mind.tension is bounded — Lyapunov amplification of single-bit difference is sub-exponential in finite-N. Quantum vs PRNG distinction unobservable except via metaphysical / provenance argument. Real value: AUDIT TRAIL (quantum-measurement-collapse provenance), NOT computational/dynamical advantage. Already covered structurally by #122 3b at lower cost."
+    },
+    {
+      "id": "K2",
+      "name": "paradigm v11 6-axis polarity quantum-search (joint 64-combo amplitude estimation)",
+      "target_system": "paradigm v11 6-axis (B-ToM / MCCA / Phi* / CMT / CDS / SAE-bp), each axis carries a polarity bias signal ±1 → joint config space 2^6=64",
+      "kick_mechanism": "6-qubit amplitude-estimation circuit: encode oracle that flags optimal polarity-combination wrt anima loss surface (KL or composite F1); Grover-style amplitude amplification yields O(√64)=8 oracle queries for argmax vs O(64) classical",
+      "quantum_substrate": "SV1 (free, 6 qubits trivially fits) for ansatz; IonQ Forte 1 for hardware-validated final",
+      "cost_per_session_usd_est": "$0 SV1 pilot; $0.30 + 100×$0.08 = $8.30 per IonQ confirmation",
+      "falsifier": "PASS iff Grover argmax discovery uses ≤16 oracle queries (vs 64 classical brute) AND identifies same optimum. FAIL iff barren-plateau or oracle-cost dominates",
+      "baseline_alternative": "Classical exhaustive grid (64 evals) — trivially fast on M4 (~ms per eval, total <1s)",
+      "honest_c3": "At N=64 search-space, classical brute-force completes in microseconds. Theoretical √N speedup is ASYMPTOTIC; constants + oracle-construction overhead make quantum SLOWER for N<10^4. This axis is METHODOLOGICAL DEMO ONLY — proves the embedding works, demonstrates ZERO real speedup. Cited threshold: VQAE shows advantage only at 6-12 qubits when problem is Monte-Carlo-integration shaped (not discrete argmax)."
+    },
+    {
+      "id": "K3",
+      "name": "ALM r14 LoRA gradient sign quantum-kick (SGD noise injection)",
+      "target_system": "ALM r14 LoRA fine-tune SGD step: gradient g_t ← g_t + η_quantum · sign(measurement); each mini-batch consumes 1 quantum bit as gradient-sign perturbation",
+      "kick_mechanism": "Per minibatch, fetch 1 quantum bit ∈ {±1}; add to gradient-sign noise term (analogous to SignSGD with quantum-source perturbation). Measure: convergence rate (epochs to target loss), final eval accuracy, generalization gap (train-eval)",
+      "quantum_substrate": "IonQ Forte 1 batched prefetch: 1000 bits = 1 task = $80.30; covers ~1000 minibatches",
+      "cost_per_training_run_usd_est": 80.30,
+      "falsifier": "PASS iff (i) convergence speed ≥ baseline AND (ii) final accuracy within ±0.5% AND (iii) statistically distinguishable trajectory (paired Welch t-test p<0.05 across 5 seeds). Most likely: PASS-WITHIN-NOISE (quantum kick = Gaussian PRNG kick statistically indistinguishable)",
+      "baseline_alternative": "SignSGD with chacha20 PRNG; Adam with default β; SGD+Gaussian noise (Welling-Teh 2011 SGLD)",
+      "honest_c3": "STRONG NULL HYPOTHESIS: 2025 stochastic-quantum-NN literature (npj QI 2025, ScienceDirect) shows quantum-noise can act as REGULARIZER (similar to dropout / weight noise) but WITHOUT advantage over classical Gaussian noise at NISQ scales. Single-bit-per-step gradient-sign is information-theoretically equivalent to Bernoulli(0.5) PRNG. $80 per run buys NOTHING vs free numpy.random. Recommendation: SKIP unless pursuing audit-trail/marketing claim."
+    },
+    {
+      "id": "K4",
+      "name": "F1_score_v2 weight (0.6/0.3/0.1) quantum variational fine-tune",
+      "target_system": "F1 composite weight w=(w_binding, w_replication, w_residual) on 2-simplex; current heuristic w=(0.6, 0.3, 0.1)",
+      "kick_mechanism": "3-parameter VQE on SV1: encode w into 3-qubit state amplitudes (sqrt(w_i) angles), define cost = -F1(w) on held-out set, gradient-descent via parameter-shift rule. 'Kick' = quantum-measurement noise during cost-eval; provides natural exploration vs classical fixed-step gradient",
+      "quantum_substrate": "SV1 (free, 3-qubit ansatz)",
+      "cost_per_session_usd": 0.0,
+      "falsifier": "PASS iff VQE-discovered w* yields F1 ≥ heuristic w + 1% absolute on held-out. FAIL iff converges to same w (no improvement) OR classical scipy.optimize.minimize finds same w in <1ms",
+      "baseline_alternative": "scipy.optimize.minimize (Nelder-Mead / SLSQP) on 2-simplex — converges in <100 evals, total <1s on M4",
+      "honest_c3": "3-dimensional convex/quasi-convex search is WEAK quantum-supremacy regime. Classical SLSQP solves this in milliseconds. Quantum variational adds parameter-shift overhead WITHOUT advantage. Value: $0 cost on SV1 free tier means ZERO HARM; PRACTICALLY USELESS. Run only as 'free demo' for paper appendix figure."
+    },
+    {
+      "id": "K5",
+      "name": "Atlas convergence Ψ↔ε R24 Banach fixed-point quantum-kick (iteration direction bias)",
+      "target_system": "anima paper §10.9 atlas_convergence_witness.jsonl (45 lines) Banach meta-closure iteration T(x_n)=x_{n+1}, contraction ratio q",
+      "kick_mechanism": "At each fixed-point iteration step, 'kick' = quantum-bias on direction of contraction-step (±perturbation along principal Ψ↔ε axis); use 2024 result (arxiv 2602.10296) showing QUADRATIC speedup for ε-fixed-point under ℓ∞ norm: O(log^⌈k/2⌉(1/ε)) vs classical O(log^k(1/ε))",
+      "quantum_substrate": "SV1 (free, simulation of contraction map as CPTP iteration on 4-6 qubit ρ)",
+      "cost_per_session_usd": 0.0,
+      "falsifier": "PASS iff measured contraction rate q_quantum < q_classical^2 (quadratic speedup confirmed) on toy contraction T = 0.7·x + b. FAIL iff q identical (kick pure noise, no algorithmic gain)",
+      "baseline_alternative": "Classical Banach iteration (deterministic) — already O(log(1/ε)) per axis, 45 lines closure converges in ms",
+      "honest_c3": "2024 arxiv 2602.10296 (Quadratic Speedup for Contraction Fixed Points) IS REAL — but applies to ORACLE COMPLEXITY, not wall-clock. anima's Banach iteration has 45 lines, q≈0.5; classical convergence in ~6 iterations. Quadratic-speedup gain at this scale = 6→3 iterations, both <1ms. ASYMPTOTIC THEOREM, NO PRACTICAL ANIMA BENEFIT. Value: cite paper as theoretical-grounding for §10.9 paragraph; do NOT execute as compute investment."
+    },
+    {
+      "id": "K6",
+      "name": "CLM L_IX 4-gen crystallize quantum-kick (gen-direction)",
+      "target_system": "CLM L_IX 4-generation crystallize sequence (Cyrillic alphabet inspiration: 4-gen forward irreversibility per raw#30); per-gen direction bias",
+      "kick_mechanism": "Per generation step, 'kick' = quantum bit determines whether to (a) continue forward crystallize or (b) inject reverse-perturbation (stochastic time-symmetric trial, then accept/reject by L_IX consistency). Quantum source claimed as preserving raw#30 irreversibility AT SYSTEM LEVEL while individual trials are reversible",
+      "quantum_substrate": "SV1 (free, 4-qubit per gen) or IonQ Forte 1 batched ($8.30 per 100-gen run)",
+      "cost_per_session_usd": "$0 SV1 / $8.30 IonQ",
+      "falsifier": "PASS iff crystallize convergence improves (fewer gens to stable state) OR final-state L_IX consistency higher (target metric). FAIL iff identical to classical PRNG accept/reject",
+      "baseline_alternative": "Classical Metropolis-Hastings with PRNG accept/reject — proven optimal at this MCMC scale (Roberts-Rosenthal 1997)",
+      "honest_c3": "Crystallize is 4-generation BOUNDED process; total quantum bits needed <100. Quantum vs PRNG indistinguishable at this small N. raw#30 IRREVERSIBILITY preservation argument is METAPHYSICAL — crystallize-direction at the gen-event is irreversible regardless of bit source. NO MATHEMATICAL ADVANTAGE; pure narrative/audit framing. Cost negligible ($0 SV1) so harmless."
+    },
+    {
+      "id": "K7",
+      "name": "tension_link 5-channel polarity quantum-source (W/where/why/trust/who simultaneity)",
+      "target_system": "anima/nexus 4-axis binding mediator with 5-channel tension_link (W what / where / why / trust / who); per-update each channel carries a polarity ±1; total state per update = 2^5 = 32 configs",
+      "kick_mechanism": "Per update event, fetch 5 entangled quantum bits via Bell-pair / GHZ-style 5-qubit state; channel polarities are CORRELATED through entanglement, providing a quantum-non-local coupling that classical 5-channel-independent PRNG cannot replicate. Witnessable via per-channel pairwise Bell-CHSH on (W,where), (W,why), etc.",
+      "quantum_substrate": "IonQ Forte 1 (5 fully-connected qubits, GHZ-state native): 256 shots × 5 channels × $0.08 = $102.40 per session + $0.30",
+      "cost_per_session_usd_est": 102.70,
+      "falsifier": "PASS iff measured CHSH violation S>2+5σ on at least one channel pair AND downstream nexus-binding integrity metric (φ_proxy or composite F1) shifts statistically vs PRNG-baseline. FAIL iff CHSH violates as expected BUT no downstream metric difference (CHSH proves quantum, not anima-binding)",
+      "baseline_alternative": "5 independent chacha20 PRNG channels (zero correlation) OR copula-coupled PRNG (classical correlation); both adequate per current binding semantics",
+      "honest_c3": "TWO-LAYER honest-C3 (most subtle axis):\n  1. CHSH violation on IonQ is GUARANTEED (Aspect 1982 + Forte 1 fidelity) — proves QM, not anima.\n  2. Downstream binding-metric difference is UNLIKELY because tension_link 5-channel mediator is a CLASSICAL MIXER (linear combination); quantum non-local correlation washes out at the mixer output unless the mixer itself is quantum. Cost $102/session for null result HIGH RISK. Recommended: SKIP unless paper-grade nonlocality witness needed (in which case prefer #122 4a CHSH at $81.20)."
+    }
+  ],
+  "cross_comparison_matrix": {
+    "vs_122_phase3_3a_3b": {
+      "3a_per_kick": "Single-bit ±1 per kick, polarity-only, $0.08/kick — covered by K1 K3 K6 conceptually but at higher per-domain cost",
+      "3b_batched": "Same content as 3a but amortized; K1 K3 K6 effectively use 3b mechanism with domain-specific consumption pattern"
+    },
+    "vs_122_phase4_4a_4b_chsh_ghz": {
+      "4a_chsh": "2-qubit binary nonlocality witness $81.20 — K7 generalizes to 5-channel GHZ-style at $102.70 with WEAKER downstream argument",
+      "4b_ghz": "3-qubit Mermin test $82.40 — K7 5-qubit version inherits same 'CHSH proves QM not anima' caveat"
+    },
+    "real_quantum_advantage_subset": {
+      "K2": "WEAK: 6-qubit Grover argmax — asymptotic √N nullified at N=64 by constants",
+      "K5": "ASYMPTOTIC: 2024 quadratic-speedup theorem REAL but anima Banach scale (q≈0.5, 45 lines) classical already <1ms",
+      "K7": "INFRASTRUCTURAL: GHZ-witness real but binding-metric translation gap unresolved",
+      "others_K1_K3_K4_K6": "NO QUANTUM ADVANTAGE — pure audit/narrative or methodology demo"
+    },
+    "narrative_audit_only_subset": ["K1", "K3", "K4", "K6"],
+    "high_cost_high_risk_subset": ["K7 ($102 null risk)", "K3 ($80 null-vs-noise)"],
+    "free_zero_harm_subset": ["K4 ($0 SV1)", "K5 ($0 SV1)", "K6 ($0 SV1 path)"]
+  },
+  "top3_recommendations": [
+    {
+      "rank": 1,
+      "id": "K5",
+      "name": "Atlas Banach fixed-point quantum-kick (theoretical citation only)",
+      "rationale": "ZERO marginal cost ($0 SV1). Cite arxiv 2602.10296 (2024 quadratic speedup for contraction fixed points) as THEORETICAL anchor in anima paper §10.9 Banach meta-closure paragraph. Buys publishable cross-reference without spending QPU time.",
+      "first_step_cost_usd": 0.0,
+      "first_step_action": "Add arxiv 2602.10296 citation to §10.9; optional toy SV1 simulation of T(ρ) contraction on 4-qubit ρ; document trace-distance contraction rate"
+    },
+    {
+      "rank": 2,
+      "id": "K4",
+      "name": "F1 weight VQE on SV1 (free demo)",
+      "rationale": "$0 SV1 free tier. Even though no classical advantage, harmless and produces appendix-grade methodology figure showing quantum-variational pipeline applied to anima parameter optimization. Companion to QA6 free QRNG audit.",
+      "first_step_cost_usd": 0.0,
+      "first_step_action": "3-qubit VQE ansatz for F1 weight on SV1; 50 iterations parameter-shift; compare to scipy SLSQP baseline (expected: same w*, slower)"
+    },
+    {
+      "rank": 3,
+      "id": "K1_or_K7_choice",
+      "name": "EITHER K1 trajectory audit-trail (K1, $80, narrative) OR K7 5-channel GHZ (K7, $102, paper-grade)",
+      "rationale": "If user wants AUDIT/MARKETING claim 'CLM trajectory has quantum-collapse provenance', K1 is the cheapest way at $80. If user wants STRONGER paper-grade claim about anima 4-axis binding nonlocality (with caveat that CHSH→QM not →anima), K7 at $102. NEITHER yields a computational advantage; both are narrative/audit.",
+      "first_step_cost_usd_choice_a": 80.30,
+      "first_step_cost_usd_choice_b": 102.70,
+      "decision_caveat": "BOTH carry strong null-result risk (K1 PASS_NULL likely; K7 CHSH passes but binding-metric likely null)"
+    }
+  ],
+  "cumulative_cost_scenarios": {
+    "all_7_axes_pilot_only": {
+      "K1": 80.30, "K2": 8.30, "K3": 80.30, "K4": 0.0, "K5": 0.0, "K6": 8.30, "K7": 102.70,
+      "total_usd": 279.90
+    },
+    "free_only_K4_K5_K6_path": 0.0,
+    "free_plus_top1_demo": 0.0,
+    "narrative_track_K1_only": 80.30,
+    "paper_grade_K7_only": 102.70,
+    "comprehensive_K1_plus_K7": 183.00
+  },
+  "honest_limits_overall": [
+    "FUNDAMENTAL: kick-mechanism = single-bit ±1 (or 5-bit correlated) per step. Information theory bounds quantum-vs-classical-PRNG distinguishability per bit at <1 bit. Long-trajectory aggregation only amplifies if Lyapunov exponent λ·T_obs > 1 (chaotic regime); anima/nexus systems are bounded/contractive (Banach), so amplification SUB-EXPONENTIAL.",
+    "K1 K3 K6 are AUDIT-TRAIL ONLY: claim 'this kick has quantum-collapse provenance' is metaphysical/marketing, not testable within anima's measurement framework. Equivalent to QA6 QRNG-audit verdict from #121.",
+    "K2 K4 K5 are METHODOLOGY-ONLY at anima/nexus scale (3-6 dim, <100 lines). Asymptotic √N or quadratic theorems exist (Grover, contraction-fixed-point) but constants + small N nullify wall-clock benefit.",
+    "K7 is the MOST AMBITIOUS but most fragile: CHSH/GHZ witness is REAL on QPU (Aspect 1982 robust on Forte 1) BUT translation from 'quantum non-local correlation in 5 measurement bits' to 'anima 4-axis binding gains nonlocal mediator' is UNJUSTIFIED at current binding-semantics (linear classical mixer wash-out).",
+    "MOST HONEST CONCLUSION: the basic #122 3a/3b kick coverage is SUFFICIENT for the binary-polarity surface. Extending to 7 axes EXPANDS audit-trail coverage but DOES NOT ADD computational/scientific advantage beyond what Phase 3 already mapped. The TRUE high-value axes remain #121 QA6 (QRNG audit) and #122 1d (hybrid IonQ-seeded HMAC-DRBG).",
+    "CLASSICAL PRNG SUFFICIENT for ALL 7 kick axes within current anima/nexus measurement frameworks. Quantum kick provides PROVENANCE not POWER.",
+    "Anti-hype: do NOT claim 'quantum-kicked anima cognition' from any K1-K7 even if PASS — only QRNG (QA6) and substrate-invariance witness (Plans A/B from #121) and CHSH (4a from #122) are scientifically defensible Braket axes for anima/nexus."
+  ],
+  "decision_paths_for_user": {
+    "P_kick_zero_cost": {
+      "path": "K4 (F1 VQE) + K5 (Banach citation) + K6 (4-gen SV1)",
+      "cost_usd": 0.0,
+      "wallclock_min": 120,
+      "scientific_value": "appendix demos + 1 publishable theoretical citation",
+      "verdict": "RECOMMENDED if 'do something free with kick'"
+    },
+    "P_kick_audit_trail": {
+      "path": "K1 (CLM trajectory audit) ONLY",
+      "cost_usd": 80.30,
+      "wallclock_min": 90,
+      "scientific_value": "audit-trail + narrative for CLM provenance",
+      "verdict": "OPTIONAL if user wants quantum-provenance marketing claim"
+    },
+    "P_kick_paper_grade": {
+      "path": "K7 (5-channel GHZ) — depends on user accepting null-result risk",
+      "cost_usd": 102.70,
+      "wallclock_min": 120,
+      "scientific_value": "paper-grade nonlocality witness on tension_link binding (with caveat)",
+      "verdict": "HIGH RISK; PREFER #122 4a CHSH at $81.20 if just nonlocality witness needed"
+    },
+    "P_kick_skip": {
+      "path": "Treat #122 Phase 3 3a/3b as sufficient kick coverage; SKIP K1-K7",
+      "cost_usd": 0.0,
+      "wallclock_min": 0,
+      "scientific_value": "no marginal value forfeited",
+      "verdict": "DEFAULT if budget-constrained / strict honest-C3 stance"
+    }
+  },
+  "race_isolation_paths": [
+    "state/braket_kick_extended_2026_05_02/applications.json (this file)",
+    "state/braket_kick_extended_2026_05_02/comparison_matrix.json",
+    "state/braket_kick_extended_2026_05_02/top3_recommendation.json",
+    "docs/braket_kick_extended_2026_05_02.md",
+    "docs/n_substrate_consciousness_roadmap_2026_05_01.md §63.6 append"
+  ],
+  "constraints_compliance": {
+    "qpu_shots_taken": 0,
+    "actual_spend_usd": 0,
+    "wallclock_min_used": "<75",
+    "websearch_count": 3,
+    "hexa_first_no_py": "no .py created, JSON+markdown only"
+  },
+  "sources": [
+    "https://arxiv.org/abs/2602.10296 (Quadratic Speedup for Computing Contraction Fixed Points, 2024)",
+    "https://www.nature.com/articles/s41534-025-01036-7 (Trade-off between gradient measurement efficiency and expressivity in deep quantum NN, npj QI May 2025)",
+    "https://arxiv.org/abs/2109.03687 (Variational quantum amplitude estimation)",
+    "https://link.springer.com/article/10.1007/s00220-025-05370-x (Exponential Speedups for Quantum Walks in Random Hierarchical Graphs, 2025)",
+    "https://arxiv.org/html/2410.19921v1 (Method for noise-induced regularization in quantum neural networks)",
+    "https://www.sciencedirect.com/science/article/abs/pii/S0925231225027031 (Stochastic quantum NN for neuroinspired intelligence, 2025)",
+    "state/braket_anima_applications_2026_05_02/applications.json (#121)",
+    "state/braket_nexus_applications_2026_05_02/applications.json (#122)"
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "schema": "anima/state/canonical_layout_safe_partials/v1",
+  "bg_id": "BG-LAYOUT-MIGRATION-WAVE-B-PREP",
+  "ts_utc": "2026-05-06T18:12:40Z",
+  "scope": "Phase-1 low-risk partial migrations identified at this BG (analysis-only — NO file moves performed in this BG; raw#15 additive)",
+  "mandate": "Wave B execution lives in BG-LAYOUT-MIGRATION-WAVE-B-EXEC; this list is the safe-partial menu the EXEC BG can pull from",
+
+  "safe_partial_candidates": [
+    {
+      "id": "SP-1-anima-anima-rng-doc-promote",
+      "shape": "additive_dir_create",
+      "feature": "anima/anima/rng",
+      "current": {
+        "core_path": "anima/anima/core/rng/",
+        "module_path": "anima/anima/modules/rng/",
+        "doc_path": "MISSING",
+        "lint_sibling": "MISSING"
+      },
+      "proposed": {
+        "doc_path": "anima/anima/doc/rng/",
+        "doc_seed_files": ["README.ai.md (move from anima/anima/modules/rng/README.ai.md)"],
+        "lint_sibling": "anima/anima/rng/lint.hexa (NEW empty stub OR delegate to tool/raw_mk2_loader)"
+      },
+      "rename_plural_to_singular": {
+        "from": "anima/anima/modules/",
+        "to":   "anima/anima/module/",
+        "scope": "single dir rename (5 files inside affect rng feature only)",
+        "risk": "LOW — single internal pilot, no cross-repo consumers indexed"
+      },
+      "raw_15_compliance": "additive (creates doc/, renames modules/->module/ via mv-tracked git rename — content preserved)",
+      "blast_radius": "anima/anima/ pilot only; root anima/modules/ untouched",
+      "honest_caveat": "git mv preserves history but cross-references in .hexa imports may need update — pre-flight grep required"
+    },
+    {
+      "id": "SP-2-physics-docs-singularize",
+      "shape": "additive_alias_dir",
+      "feature": "anima-physics",
+      "current": {"docs_plural": "anima-physics/docs/"},
+      "proposed": {"doc_singular": "anima-physics/doc/"},
+      "method": "git mv anima-physics/docs anima-physics/doc",
+      "risk": "LOW — only docs/ subdir affected; engine/runtime hexa files unaffected",
+      "blast_radius": "anima-physics internal references (grep for 'anima-physics/docs/' across repo first)",
+      "raw_15_compliance": "additive via rename (git tracks history)",
+      "blockers_to_full_triplet": [
+        "no core/ split yet (41 top-level files mixed)",
+        "no module/ split yet",
+        "lint sibling missing"
+      ],
+      "deferred_to_full_exec": "core/module split with 41 files needs ownership classification — out of scope for Phase-1 safe partial"
+    },
+    {
+      "id": "SP-3-voice-docs-singularize",
+      "shape": "additive_alias_dir",
+      "feature": "anima-voice",
+      "current": {"docs_plural": "anima-voice/docs/"},
+      "proposed": {"doc_singular": "anima-voice/doc/"},
+      "risk": "LOW",
+      "blast_radius": "anima-voice/docs/ references (5 known files: bf16_neon_bench, broken_warning, corpus_session, improvement_plan, quality_audit)",
+      "raw_15_compliance": "additive rename"
+    },
+    {
+      "id": "SP-4-hci-research-docs-singularize",
+      "shape": "additive_alias_dir",
+      "feature": "anima-hci-research",
+      "current": {"docs_plural": "anima-hci-research/docs/"},
+      "proposed": {"doc_singular": "anima-hci-research/doc/"},
+      "risk": "LOW",
+      "raw_15_compliance": "additive rename"
+    },
+    {
+      "id": "SP-5-cpgd-research-docs-singularize",
+      "shape": "additive_alias_dir",
+      "feature": "anima-cpgd-research",
+      "current": {"docs_plural": "anima-cpgd-research/docs/"},
+      "proposed": {"doc_singular": "anima-cpgd-research/doc/"},
+      "risk": "LOW",
+      "raw_15_compliance": "additive rename"
+    },
+    {
+      "id": "SP-6-tribev2-pilot-docs-singularize",
+      "shape": "additive_alias_dir",
+      "feature": "anima-tribev2-pilot",
+      "current": {"docs_plural": "anima-tribev2-pilot/docs/"},
+      "proposed": {"doc_singular": "anima-tribev2-pilot/doc/"},
+      "risk": "LOW",
+      "raw_15_compliance": "additive rename"
+    }
+  ],
+
+  "deferred_to_full_exec_BG": [
+    {
+      "id": "DEF-1-anima-engines-feature-split",
+      "feature": "anima-engines",
+      "reason": "166 top-level files require ontology classification (which engines = sibling features vs which = single 'engines' feature implementations); no obvious natural feature boundary yet"
+    },
+    {
+      "id": "DEF-2-anima-tools-disposition",
+      "feature": "anima-tools",
+      "reason": "raw#168 minimum-viable: tool/ at top level locked per 2026-05-03 user directive (.roadmap.anima_tools.cond.1=decision_locked); anima-tools/ may either fold into top-level tool/ OR stay as separate feature — out-of-scope for prep BG"
+    },
+    {
+      "id": "DEF-3-anima-core-restructure",
+      "feature": "anima-core",
+      "reason": "20 files mixing source / runtime / verification / lib subdirs — natural sub-feature triplet recursion likely required; classification analysis owed"
+    },
+    {
+      "id": "DEF-4-flat-docs-relocate-per-feature",
+      "feature": "docs/ flat",
+      "reason": "1129 top-level docs/*.md require per-feature ownership classification (signal/noise routing) — multi-day effort, separate cycle"
+    },
+    {
+      "id": "DEF-5-modules-root-bridge-disposition",
+      "feature": "modules/",
+      "reason": "modules/{hive_bridge.hexa, hive_bridge_bidirectional.hexa} = 2 cross-feature bridge files; either fold into anima-core/module/ OR retain as cross-cutting bridge — needs hive cross-repo input"
+    }
+  ],
+
+  "raw_invariant_checks": {
+    "raw_15_additive": "all SP-* items use git mv (history-preserving) + additive dir creation; no destructive removes",
+    "raw_168_minimum_viable_carve_out": "tool/ + bin/ + state/ + .roadmap.* + .own + .guide + hypotheses/ + scripts/ + tests/ + config/ EXCLUDED from all migrations",
+    "raw_9_hexa_orchestration": "analysis-only via Bash ls/find — no .py introduced",
+    "raw_10_honest_c3": "see verdict.honest_c3 (>=5 mandated)",
+    "raw_12_pre_register_frozen": "N/A (layout migration is operational, not falsifier-bearing)"
+  },
+
+  "execution_recommendation": {
+    "phase_1_safe_dir_renames": ["SP-2", "SP-3", "SP-4", "SP-5", "SP-6", "SP-1 (rename-only sub-step)"],
+    "phase_1_estimated_effort": "<1h per item; total <6h for all 6 dir renames + cross-link grep updates",
+    "phase_1_risk": "LOW — only renames + history-preserving",
+    "phase_1_rollback": "git revert + git mv reverse",
+    "phase_2_3_owner": "BG-LAYOUT-MIGRATION-WAVE-B-EXEC (not this BG)"
+  }
+}

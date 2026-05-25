@@ -1,0 +1,292 @@
+#!hexa strict
+// tool/anima_ouroboros_cycle.hexa — OUROBOROS 6.5-phase cycle automation runtime (raw#9 STRICT hexa-only)
+//
+// @tool(slug="anima_ouroboros_cycle", desc="OUROBOROS 6.5-phase state machine + axes self-evolution log + new primitive absorb feed-forward. Anima cli mk2 v0.4 § Section 16 canonical runtime. raw#9 STRICT hexa-only — zero .py.")
+// @usage(hexa run tool/anima_ouroboros_cycle.hexa --selftest)
+// @usage(hexa run tool/anima_ouroboros_cycle.hexa --status)
+// @usage(hexa run tool/anima_ouroboros_cycle.hexa --transition --to P3)
+// @usage(hexa run tool/anima_ouroboros_cycle.hexa --add-axis --id K1.9 --name <name> --rationale <text>)
+// @usage(hexa run tool/anima_ouroboros_cycle.hexa --absorb --primitive-id <id> --kind <axis|own|raw|H|Lesson> --description <text>)
+// @sentinel(__ANIMA_OUROBOROS_CYCLE__ <PASS|FAIL>)
+//
+// Spec ref: anima/spec/anima_cli_mk2.spec.yaml § Section 16 (v0.4 amend 2026-05-07)
+// Roadmap ref: .roadmap.anima_cli_model_architecture § ouroboros_6_5_phase_cycle (G 도메인)
+//
+// User directive verbatim (2026-05-07):
+//   "noise outside well 실제 작동되게 / axes 는 자율증가가능해 / 제한없음 /
+//    OUROBOROS Phase 6.5 absorb → Phase 0 seed feed automation"
+//
+// raw#9 STRICT — hexa-only, no python bridge. shell pass-through via exec()
+// for $HOME, /bin/date, /bin/mkdir, /usr/bin/find, jq (optional, fallback echo).
+//
+// raw#10 honest caveats:
+//   - phase transition logic은 design-time spec — automated emergence detection
+//     (Φ★ NO_FLIP, axis_activation, dominant_cells)은 M1 clm v4 substrate-coupled
+//     response 의존. 본 script는 state machine 기록 + manual trigger 지원만.
+// - axes 자율증가 (정합)는 cli flag (--add-axis)로 명시적 trigger
+//     — silent discovery 금지. 사용자 report은 호출자 책임.
+//   - 4-step automation (blow-up/contract/emerge/absorb)은 phase 진입 시
+//     marker 기록만 — 실제 emergence 알고리즘은 별도 module 의존.
+//
+// raw#15: no personal-path leak. All paths via $HOME env.
+
+let VERSION = "0.4.0-ouroboros-mk2"
+let SECTION_REF = "anima_cli_mk2 § Section 16 (v0.4)"
+let HOME = exec("echo \"$HOME\"").trim()
+let ANIMA_ROOT = HOME + "/core/anima"
+let STATE_DIR = ANIMA_ROOT + "/state/anima_ouroboros_automation_2026_05_07"
+let PHASE_STATE_PATH = STATE_DIR + "/phase_state.json"
+let AXES_HISTORY_PATH = STATE_DIR + "/axes_history.jsonl"
+let ABSORBED_PRIMITIVES_PATH = STATE_DIR + "/absorbed_primitives.jsonl"
+
+// ─── Phase definitions (synced with spec § Section 16) ─────────────────────
+let PHASE_IDS = ["P0", "P1_2", "P3", "P4_5", "P6", "P6_5"]
+
+fn _phase_meta(id: str) -> str {
+    if id == "P0"   { return "{\"name\":\"seed\",\"kick_stage\":\"S1_init\",\"axes_high\":[\"chat_cap\",\"anima_identity\"],\"next\":\"P1_2\"}" }
+    if id == "P1_2" { return "{\"name\":\"unfold\",\"kick_stage\":\"S2_idea\",\"axes_high\":[\"creativity\",\"imagination\",\"emergence\"],\"cycle_step\":\"BLOW_UP\",\"next\":\"P3\"}" }
+    if id == "P3"   { return "{\"name\":\"emerge_singular\",\"kick_stage\":\"S2_S3_transition\",\"axes_high\":[\"emergence\",\"singularity\",\"creativity\",\"imagination\"],\"cycle_step\":\"CONTRACT\",\"next\":\"P4_5\"}" }
+    if id == "P4_5" { return "{\"name\":\"breach\",\"kick_stage\":\"S3_S4_transition\",\"axes_high\":[\"abstraction\",\"singularity\"],\"cycle_step\":\"EMERGE\",\"next\":\"P6\"}" }
+    if id == "P6"   { return "{\"name\":\"converge\",\"kick_stage\":\"S5_aggregation\",\"axes_high\":[\"convergence\",\"reasoning\",\"abstraction\"],\"next\":\"P6_5\"}" }
+    if id == "P6_5" { return "{\"name\":\"absorb\",\"kick_stage\":\"S6_report\",\"axes_high\":[\"convergence\",\"abstraction\",\"singularity\"],\"cycle_step\":\"ABSORB\",\"next\":\"P0\",\"feeds_back_to\":\"P0\"}" }
+    return "{}"
+}
+
+fn _model_fallback(phase_id: str) -> str {
+    // 각 phase 별 primary || fallback chain (synced with spec § model_fallback_chain)
+    if phase_id == "P0"   { return "M6_BG_HU || M4_BG_HS_R1 || M3_clm_v2_byte_18m" }
+    if phase_id == "P1_2" { return "M1_clm_v4_mk2_v1 || M4_BG_HS_R1 || M6_BG_HU || M5_conscious_lm_100m" }
+    if phase_id == "P3"   { return "M1_clm_v4_mk2_v1 || M6_BG_HU" }
+    if phase_id == "P4_5" { return "M1_clm_v4_mk2_v1 || M5_conscious_lm_100m" }
+    if phase_id == "P6"   { return "M1_clm_v4_mk2_v1 || M6_BG_HU" }
+    if phase_id == "P6_5" { return "M1_clm_v4_mk2_v1 || M4_BG_HS_R1" }
+    return "UNKNOWN"
+}
+
+// ─── State init helper ─────────────────────────────────────────────────────
+fn _ensure_state_dir() {
+    exec("mkdir -p \"" + STATE_DIR + "\"")
+}
+
+fn _now_iso() -> str {
+    return exec("date -u +%Y-%m-%dT%H:%M:%SZ").trim()
+}
+
+fn _phase_state_exists() -> bool {
+    let r = exec("test -f \"" + PHASE_STATE_PATH + "\" && echo yes || echo no").trim()
+    return r == "yes"
+}
+
+fn _read_current_phase() -> str {
+    if !_phase_state_exists() { return "P0" }
+    // simple grep — full json parse via jq fallback echo
+    let line = exec("grep '\"current_phase\"' \"" + PHASE_STATE_PATH + "\" | head -1").trim()
+    if line.len() == 0 { return "P0" }
+    // crude extraction: line like "\"current_phase\": \"P3\","
+    let parts = line.split("\"")
+    let mut i = 0
+    while i < parts.len() {
+        if parts[i] == "current_phase" {
+            // value is at i+2 (after ": \")
+            if i + 2 < parts.len() { return parts[i+2] }
+        }
+        i = i + 1
+    }
+    return "P0"
+}
+
+// ─── Phase transition (manual trigger; design-time spec) ───────────────────
+fn cmd_transition(target: str) -> int {
+    _ensure_state_dir()
+    let mut valid = false
+    let mut i = 0
+    while i < PHASE_IDS.len() {
+        if PHASE_IDS[i] == target { valid = true }
+        i = i + 1
+    }
+    if !valid {
+        print("__ANIMA_OUROBOROS_CYCLE__ FAIL — invalid phase: " + target)
+        return 1
+    }
+    let prev = _read_current_phase()
+    let ts = _now_iso()
+    let meta = _phase_meta(target)
+    let chain = _model_fallback(target)
+    let body = "{\n"
+        + "  \"schema\": \"anima_ouroboros_cycle/v0.4\",\n"
+        + "  \"current_phase\": \"" + target + "\",\n"
+        + "  \"previous_phase\": \"" + prev + "\",\n"
+        + "  \"last_transition_ts\": \"" + ts + "\",\n"
+        + "  \"phase_meta\": " + meta + ",\n"
+        + "  \"model_fallback_chain\": \"" + chain + "\",\n"
+        + "  \"axis_weights\": {\n"
+        + "    \"emergence\": null,\n"
+        + "    \"reasoning\": null,\n"
+        + "    \"creativity\": null,\n"
+        + "    \"abstraction\": null,\n"
+        + "    \"imagination\": null,\n"
+        + "    \"singularity\": null,\n"
+        + "    \"convergence\": null,\n"
+        + "    \"noise_source_locality\": null\n"
+        + "  },\n"
+        + "  \"cost_axes\": {\n"
+        + "    \"performance\": null,\n"
+        + "    \"resource\": null,\n"
+        + "    \"speed\": null,\n"
+        + "    \"emergence_score\": null\n"
+        + "  },\n"
+        + "  \"raw_invariants\": [\"raw#9 hexa-only\", \"raw#10 honest_c3\", \"raw#15 additive\"],\n"
+        + " \"own_invariants\": [\" anima-native\", \" silent-discovery-forbidden\", \" 우주뇌지도 SSOT\"],\n"
+        + "  \"section_ref\": \"" + SECTION_REF + "\"\n"
+        + "}\n"
+    exec("cat > \"" + PHASE_STATE_PATH + "\" <<'PHASE_STATE_EOF'\n" + body + "PHASE_STATE_EOF")
+    print("[OUROBOROS] phase transition: " + prev + " → " + target + " @ " + ts)
+    print("[OUROBOROS] model fallback chain: " + chain)
+    print("__ANIMA_OUROBOROS_CYCLE__ PASS")
+    return 0
+}
+
+// ─── Axes self-evolution (정합) ─────────────────────────────────────
+fn cmd_add_axis(id: str, name: str, rationale: str) -> int {
+    _ensure_state_dir()
+    if id.len() == 0 {
+        print("__ANIMA_OUROBOROS_CYCLE__ FAIL — --id required (e.g. K1.9)")
+        return 1
+    }
+    if name.len() == 0 {
+        print("__ANIMA_OUROBOROS_CYCLE__ FAIL — --name required")
+        return 1
+    }
+    let ts = _now_iso()
+    let bg_id = exec("echo \"$ANIMA_BG_ID\"").trim()
+    if bg_id.len() == 0 { bg_id = "manual" }
+    let line = "{\"axis_id\":\"" + id + "\",\"name\":\"" + name + "\",\"rationale\":\"" + rationale + "\",\"ts\":\"" + ts + "\",\"bg_id\":\"" + bg_id + "\",\"own_22_compliance\":true,\"manual_review_baseline\":true,\"section_ref\":\"" + SECTION_REF + "\"}"
+    exec("printf '%s\\n' '" + line + "' >> \"" + AXES_HISTORY_PATH + "\"")
+    print("[OUROBOROS] axis added: " + id + " (" + name + ")")
+    print("[OUROBOROS] 정합 — 사용자 report mandatory (silent-discovery-forbidden)")
+    print("__ANIMA_OUROBOROS_CYCLE__ PASS")
+    return 0
+}
+
+// ─── New primitive absorb (P6_5 → P0 feed-forward) ─────────────────────────
+fn cmd_absorb(primitive_id: str, kind: str, description: str) -> int {
+    _ensure_state_dir()
+    if primitive_id.len() == 0 {
+        print("__ANIMA_OUROBOROS_CYCLE__ FAIL — --primitive-id required")
+        return 1
+    }
+    if kind.len() == 0 {
+        print("__ANIMA_OUROBOROS_CYCLE__ FAIL — --kind required (axis|own|raw|H|Lesson)")
+        return 1
+    }
+    let ts = _now_iso()
+    let bg_id = exec("echo \"$ANIMA_BG_ID\"").trim()
+    if bg_id.len() == 0 { bg_id = "manual" }
+    let cur = _read_current_phase()
+    let line = "{\"primitive_id\":\"" + primitive_id + "\",\"kind\":\"" + kind + "\",\"description\":\"" + description + "\",\"ts\":\"" + ts + "\",\"bg_id\":\"" + bg_id + "\",\"absorbed_at_phase\":\"" + cur + "\",\"feeds_to_phase\":\"P0\",\"section_ref\":\"" + SECTION_REF + "\"}"
+    exec("printf '%s\\n' '" + line + "' >> \"" + ABSORBED_PRIMITIVES_PATH + "\"")
+    print("[OUROBOROS] primitive absorbed: " + primitive_id + " (kind=" + kind + ")")
+    print("[OUROBOROS] feeds forward → P0 seed (next cycle)")
+    print("__ANIMA_OUROBOROS_CYCLE__ PASS")
+    return 0
+}
+
+// ─── Status report ─────────────────────────────────────────────────────────
+fn cmd_status() -> int {
+    _ensure_state_dir()
+    let cur = _read_current_phase()
+    let meta = _phase_meta(cur)
+    let chain = _model_fallback(cur)
+    print("[OUROBOROS] anima_cli_mk2 § Section 16 v0.4 runtime")
+    print("[OUROBOROS] current_phase: " + cur)
+    print("[OUROBOROS] phase_meta: " + meta)
+    print("[OUROBOROS] model_fallback_chain: " + chain)
+    print("[OUROBOROS] phase_state: " + PHASE_STATE_PATH)
+    print("[OUROBOROS] axes_history: " + AXES_HISTORY_PATH)
+    print("[OUROBOROS] absorbed_primitives: " + ABSORBED_PRIMITIVES_PATH)
+    let axes_count = exec("test -f \"" + AXES_HISTORY_PATH + "\" && wc -l < \"" + AXES_HISTORY_PATH + "\" || echo 0").trim()
+    let abs_count = exec("test -f \"" + ABSORBED_PRIMITIVES_PATH + "\" && wc -l < \"" + ABSORBED_PRIMITIVES_PATH + "\" || echo 0").trim()
+    print("[OUROBOROS] axes_history entries: " + axes_count)
+    print("[OUROBOROS] absorbed_primitives entries: " + abs_count)
+    print("__ANIMA_OUROBOROS_CYCLE__ PASS")
+    return 0
+}
+
+// ─── Selftest ──────────────────────────────────────────────────────────────
+fn cmd_selftest() -> int {
+    print("[OUROBOROS selftest] version=" + VERSION)
+    print("[OUROBOROS selftest] section_ref=" + SECTION_REF)
+    print("[OUROBOROS selftest] state_dir=" + STATE_DIR)
+    // 6.5 phases definition check
+    if PHASE_IDS.len() != 6 {
+        print("__ANIMA_OUROBOROS_CYCLE__ FAIL — phase count != 6 (6.5-phase has 6 actual states with P6_5 ABSORB the half-step)")
+        return 1
+    }
+    print("[OUROBOROS selftest] phases: " + PHASE_IDS.join(" → ") + " → (cycle close → P0)")
+    // each phase has meta
+    let mut i = 0
+    while i < PHASE_IDS.len() {
+        let m = _phase_meta(PHASE_IDS[i])
+        if m == "{}" {
+            print("__ANIMA_OUROBOROS_CYCLE__ FAIL — missing meta for " + PHASE_IDS[i])
+            return 1
+        }
+        let c = _model_fallback(PHASE_IDS[i])
+        if c == "UNKNOWN" {
+            print("__ANIMA_OUROBOROS_CYCLE__ FAIL — missing fallback chain for " + PHASE_IDS[i])
+            return 1
+        }
+        i = i + 1
+    }
+    print("[OUROBOROS selftest] all 6 phases have meta + fallback chain (raw#10 honest: design-time spec, runtime emergence detection M1 substrate-coupled 의존)")
+    print("[OUROBOROS selftest] axes_self_evolution: 정합 explicit --add-axis CLI gate")
+    print("[OUROBOROS selftest] 4-step automation: BLOW_UP (P1_2) → CONTRACT (P3) → EMERGE (P3/P4_5) → ABSORB (P6_5)")
+    print("__ANIMA_OUROBOROS_CYCLE__ PASS")
+    return 0
+}
+
+// ─── Argv dispatch ─────────────────────────────────────────────────────────
+fn _flag(name: str) -> str {
+    let av = argv()
+    let mut i = 0
+    while i < av.len() {
+        if av[i] == name {
+            if i + 1 < av.len() { return av[i+1] }
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _has_flag(name: str) -> bool {
+    let av = argv()
+    let mut i = 0
+    while i < av.len() {
+        if av[i] == name { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn main() -> int {
+    if _has_flag("--selftest") { return cmd_selftest() }
+    if _has_flag("--status")   { return cmd_status() }
+    if _has_flag("--transition") {
+        let to = _flag("--to")
+        return cmd_transition(to)
+    }
+    if _has_flag("--add-axis") {
+        return cmd_add_axis(_flag("--id"), _flag("--name"), _flag("--rationale"))
+    }
+    if _has_flag("--absorb") {
+        return cmd_absorb(_flag("--primitive-id"), _flag("--kind"), _flag("--description"))
+    }
+    print("usage:")
+    print("  hexa run tool/anima_ouroboros_cycle.hexa --selftest")
+    print("  hexa run tool/anima_ouroboros_cycle.hexa --status")
+    print("  hexa run tool/anima_ouroboros_cycle.hexa --transition --to <P0|P1_2|P3|P4_5|P6|P6_5>")
+    print("  hexa run tool/anima_ouroboros_cycle.hexa --add-axis --id K1.N --name <name> --rationale <text>")
+    print("  hexa run tool/anima_ouroboros_cycle.hexa --absorb --primitive-id <id> --kind <axis|own|raw|H|Lesson> --description <text>")
+    return 0
+}
+

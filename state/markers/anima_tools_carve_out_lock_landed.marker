@@ -1,0 +1,61 @@
+ANIMA_TOOLS_CARVE_OUT_LOCK_LANDED
+date: 2026-05-03
+substrate: mac-local
+cost_usd: 0
+predecessor_marker: state/markers/anima_rank_b_c_5_domain_landed.marker
+handoff_doc: docs/anima_tools_carve_out_lock_landed_2026_05_03.ai.md
+handoff_doc_sha256: b795b4c28311fbb66379c6a480fdbc57a96a1d98f081882e28ce1f700847bef8
+
+decision: 사용자 directive (a) 채택 — top-level anima/tool/ keep + raw 168 minimum-viable carve-out (mk2 triplet exception)
+
+primary_target_a:
+  path: .roadmap.anima_tools
+  sha256_post: e785d9a6ae58e676b2cadff7fdcc2a0de88e420e74c1303ed76955fffb6425df
+  changes:
+    cond.1.status: unmet -> decision_locked
+    cond.1.desc: appended carve-out lock-in cite
+    cond.1.evidence[6]: appended FU9 measure 2026-05-03 + (a) 채택
+    cond.1.blocker_reason: post-decision audit 별도 cycle
+    blk.1.status: open -> resolved
+    blk.1.desc: RESOLVED 2026-05-03 사용자 directive (a) 채택
+    blk.1.eta: "" -> 2026-05-03
+    blk.1.resolution_path: 사용자 lock-in path 기록
+
+primary_target_b:
+  path: hive/spec/mk2_apex.spec.yaml
+  sha256_post: fbca475e1fc631a36ea5b7d3c1f39cbe6da9c28ea4703928c818aa6c966ec41b
+  changes:
+    per_repo_override.anima.notes: appended carve-out exception 1-line (additive only, 신규 schema field 회피)
+
+audit_inventory_snapshot:
+  anima_tool_top_level_total_files: 532  # 2026-05-03 measured (find -maxdepth 1 -type f)
+  anima_prefix_hexa_files: 184            # 2026-05-03 measured (find -maxdepth 1 -name "anima_*.hexa")
+  prior_doc_quote_total: 539              # inherited from .roadmap + sister docs
+  prior_doc_quote_anima_prefix: 189       # inherited from .roadmap + sister docs
+  delta_total: -7                          # honest C4 acknowledgement
+  delta_anima_prefix: -5                   # honest C4 acknowledgement
+  anima_anima_modules_tool_dir_exists: false  # carve-out target 측 sub-tree 부재 확인 (lore_book.hexa + rng + style_preset.hexa only)
+
+raw_compliance:
+  raw_9_hexa_only: additive_land_single_doc_pattern_raw_168_minimum_viable_exempt_sister
+  raw_10_honest_caveats: 4_inline_caveats_C1_C2_C3_C4
+  raw_11_snake_case: ok
+  raw_12_silent_error_ban: ok
+  raw_15_env_lazy_user_placeholder: not_applicable_no_env_use
+  raw_168_minimum_viable_carve_out: PRIMARY_REFERENCE_OF_THIS_CYCLE
+  raw_175_br_no_user_verbatim: ok_paraphrase_only
+  raw_270_271_272_273_mk2_triplet: carve_out_exception_target
+
+policy:
+  migration: forbidden
+  changes: additive_only
+  in_place_writes: 2  # both atomic 1-line edits
+  destructive_ops: 0
+  cost_usd: 0
+  substrate: mac-local
+
+next_cycle_candidates:
+  1_status_enum_amend: mk2_apex section 6.5 status_enum 측 decision_locked 정식 등록 (C3 resolution)
+  2_inventory_audit: anima_tool_inventory_audit.hexa land — 532 entries → 6 topical bucket classification
+  3_new_file_enforcement_policy: 신규 anima/tool/* file 측 carve-out default vs triplet mandate 결정 (C1 resolution)
+  4_sister_carve_out_lock_in: anima_physics + serving sister 측 raw 168 minimum-viable exempt 동일 정책 lock-in

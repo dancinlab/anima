@@ -1,0 +1,40 @@
+#!/bin/bash
+# Run eval_llama_lora_ckpt.py for all 5 ckpts × 3 tasks from dancinlab/p9-llama32-lora-stage1.
+# Triggered ONLY after Path A pod (29dhlqk508ugoc / cp5si6man99s33) finishes & pushes to HF Hub.
+#
+# USAGE:
+#   bash run_all_lora_ckpts.sh
+#   bash run_all_lora_ckpts.sh step-2000     # single ckpt
+#
+# Env (optional):
+#   LIMIT=500 (default)
+#   REPO=dancinlab/p9-llama32-lora-stage1 (default)
+set -e
+DIR=/home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03
+PY=/home/aiden/venv_orchestrator/bin/python
+REPO=${REPO:-dancinlab/p9-llama32-lora-stage1}
+LIMIT=${LIMIT:-500}
+mkdir -p $DIR/lora_results
+
+if [ -n "$1" ]; then
+    STEPS="$1"
+else
+    STEPS="step-2000 step-4000 step-6000 step-8000 step-10000"
+fi
+
+for STEP in $STEPS; do
+    SLUG=$(echo $STEP | tr '-' '_')
+    for TASK in hellaswag mmlu triviaqa; do
+        OUT=$DIR/lora_results/${SLUG}_${TASK}.json
+        if [ -f "$OUT" ]; then
+            echo "[skip] $OUT exists"
+            continue
+        fi
+        echo "=== $STEP $TASK ==="
+        $PY $DIR/eval_llama_lora_ckpt.py \
+            --ckpt-repo $REPO --ckpt-revision $STEP \
+            --task $TASK --limit $LIMIT \
+            --output $OUT 2>&1 | tail -10
+    done
+done
+echo "=== ALL DONE ==="

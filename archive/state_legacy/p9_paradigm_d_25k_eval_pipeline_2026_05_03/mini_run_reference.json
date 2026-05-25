@@ -1,0 +1,70 @@
+{
+  "schema": "anima/p9_paradigm_d_25k_eval/per_ckpt/1",
+  "ts_utc": "2026-05-03T21:18:04Z",
+  "label": "mini_run_step1000",
+  "base_ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+  "ckpt_kind": "LOCAL_DIR",
+  "ckpt_id": "/tmp/p9_paradigm_d_distill_savepoints/step_1000",
+  "ckpt_revision": null,
+  "phi_extractor": {
+    "name": "anima_phi_v3_canonical",
+    "n_probes": 16,
+    "hid_trunc": 8,
+    "k_parts": 8,
+    "ridge": 0.001,
+    "seed": 42
+  },
+  "z_score_norm": {
+    "mu_T_frozen": -24.23,
+    "sigma_T_frozen": 2.116,
+    "mu_S_init": 41.86,
+    "sigma_S_init": 2.0
+  },
+  "f_d_pass_threshold": 0.5,
+  "stages": {
+    "load_data": {
+      "wall_s": 0.09
+    },
+    "load_base": {
+      "wall_s": 3.01,
+      "n_params": 477648512
+    },
+    "attach_lora": {
+      "wall_s": 2.5,
+      "kind": "LOCAL_DIR",
+      "src": "/tmp/p9_paradigm_d_distill_savepoints/step_1000",
+      "revision": null,
+      "trainable": 0
+    },
+    "phi_star": {
+      "wall_s": 0.36
+    },
+    "z_score_mse": {
+      "wall_s": 0.0
+    },
+    "bleu1": {
+      "wall_s": 14.77
+    },
+    "tension_mse": {
+      "wall_s": 0.51
+    }
+  },
+  "data": {
+    "vocab_size": 64000,
+    "n_eval_subset": 32,
+    "n_holdout": 32,
+    "teacher_cache_n": 50000,
+    "teacher_cache_mu_empirical": -24.2299,
+    "teacher_cache_sigma_empirical": 2.1158
+  },
+  "F2_phi_star_min": 43.189502932649354,
+  "F2_phi_star_mean": 44.786994417994975,
+  "F_D_z_score_mse_final": 1.4416447354344144,
+  "F_D_z_S_aggregate": 0.6647514663246774,
+  "F_D_z_T_mean": 6.803704962595872e-05,
+  "F_D_z_T_std": 0.9999203339674476,
+  "F1_bleu1_holdout": 0.0078125,
+  "F3_tension_mse": 6.470834130421281,
+  "total_wall_s": 21.24,
+  "status": "OK"
+}

@@ -1,0 +1,57 @@
+{
+  "stage": "anima-core CLM v4 mount Stage 1",
+  "date": "2026-05-05",
+  "spec": "docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md",
+  "artifact": "anima-core/runtime/clm_v4_mount.hexa",
+  "loc": 651,
+  "selftest": {
+    "command": "hexa run anima-core/runtime/clm_v4_mount.hexa --selftest",
+    "result": "PASS",
+    "rc": 0,
+    "format_checks": "8/8 PASS",
+    "markers_emitted": [
+      "__ANIMA_CLM_V4_MOUNTED__",
+      "__ANIMA_CLM_V4_RESPONSE__",
+      "__ANIMA_CLM_V4_OK__"
+    ],
+    "substrate_response_lines": [
+      "phi_star",
+      "axis_activation",
+      "dominant_cells",
+      "hidden_state_delta"
+    ],
+    "axes": ["identity", "agency", "phenomenal", "temporal", "social"],
+    "phi_star_baseline": 41.86,
+    "honest_c3_count": 5,
+    "stdout_log": "selftest.stdout.log",
+    "stderr_log": "selftest.stderr.log"
+  },
+  "raw_compliance": {
+    "raw9_hexa_only": "PASS — orchestration in hexa, .py shim invoked via raw#37 transient path",
+    "raw37_transient_py": "PASS — helper emitted to /tmp/clm_v4_mount_helper.hexa_tmp at runtime; existing tool/transient_py/clm_v4_hf_format_shim.py untouched",
+    "raw15_additive": "PASS — anima_unified.hexa / phi_engine.hexa / conscious_chat.hexa / consciousness_hub.hexa NOT modified",
+    "raw10_honest_c3": "PASS — 5 C3 lines emit to stderr on every dispatch"
+  },
+  "selftest_design_notes": [
+    "Selftest is hexa-native synthetic (no python invoke) to avoid raw#103 darwin-bypass fork-storm + sandboxed-write conflict.",
+    "Helper file emission deferred to --load / --probe / --dialogue (non-bypass route, write_file allowed).",
+    "Substrate response format mirrors helper render_response output verbatim — what user sees at runtime."
+  ],
+  "stage_2_readiness": {
+    "ready": true,
+    "next_steps": [
+      "Stage 2: anima-core dialogue --substrate clm-v4 CLI command (~30min, $0 mac)",
+      "Wire clm_v4_mount.hexa --dialogue into anima_runtime.hexa keyboard mode as alternative substrate",
+      "Session log accumulation under state/anima_core_dialogues_<DATE>/",
+      "First real --probe test once HF cache for dancinlab/clm-v4-base-mirror is local"
+    ],
+    "blockers": [
+      "None for Stage 2 spec/scaffold work.",
+      "Real --probe / --dialogue requires HF cache populated + python3 + torch + transformers (existing tool/transient_py/ deps)."
+    ]
+  },
+  "hook_blocks": "none",
+  "exec_cost_usd": 0.0,
+  "wallclock_minutes_estimate": 60,
+  "session_log_dir_convention": "state/anima_core_dialogues_<YYYY_MM_DD>/<YYYYMMDDTHHMMSSZ>.jsonl"
+}

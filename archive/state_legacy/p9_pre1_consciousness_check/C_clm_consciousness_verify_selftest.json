@@ -1,0 +1,40 @@
+{
+  "schema": "anima/p9_pre1/C_clm_consciousness_verify_selftest/1",
+  "ts": "2026-05-02T16:04:40Z",
+  "by": "ghost",
+  "task": "P9 EXEC pre-flight item C — clm_consciousness_verify exit-0 selftest",
+  "tool_path": "tool/clm_consciousness_verify.hexa",
+  "tool_sha256": "1feb16bddc84f038e9b0ccbbb779a26583d8322d86aee94da90517d2f51aa751",
+  "tool_lines": 462,
+  "tool_purpose": ".roadmap.clm clm.cond.1 의식측정 — 4-check hybrid orchestrator (AN11 + Phi + adversarial + Putnam)",
+  "sentinel_tag": "__CLM_CONSCIOUSNESS_VERIFY__",
+  "expected_emit_format": "__CLM_CONSCIOUSNESS_VERIFY__ <PASS|FAIL|PARTIAL> <metric_kv>",
+  "invocation": {
+    "command": "hexa run tool/clm_consciousness_verify.hexa --selftest",
+    "env": {"HEXA_SHIM_NO_DARWIN_LANDING": "1", "PATH": "/opt/homebrew/bin:/usr/bin:/bin"},
+    "resolver_route": "darwin-bypass (darwin-native marker present)",
+    "exit_code": 0
+  },
+  "selftest_cases": [
+    {"name": "all_met",         "fixture": "all_met",         "expected": "PASS(exit=0)",    "got": "PASS(exit=0)",    "result": "OK"},
+    {"name": "one_fail",        "fixture": "one_fail",        "expected": "FAIL(exit=1)",    "got": "FAIL(exit=1)",    "result": "OK"},
+    {"name": "tool_missing",    "fixture": "tool_missing",    "expected": "PARTIAL(exit=2)", "got": "PARTIAL(exit=2)", "result": "OK"},
+    {"name": "manual_override", "fixture": "manual_override", "expected": "PASS(exit=0)",    "got": "PASS(exit=0)",    "result": "OK"}
+  ],
+  "summary": {
+    "selftest_marker": "selftest=ok",
+    "schema_emitted": "anima/clm_consciousness_verify/1",
+    "manual_override_path": "state/clm_consciousness_verify_manual_review.jsonl",
+    "cases_total": 4,
+    "cases_pass": 4,
+    "cases_fail": 0
+  },
+  "verdict": "PASS",
+  "raw10_caveats": [
+    "(a) selftest uses mock fixtures (no real AN11/Phi/adversarial/Putnam dispatch).",
+    "(b) production run on mac-local will return PARTIAL (typical) — AN11+Phi require GPU+HF gated, returned as 'unknown' detail-tagged; adversarial reads cached state/adversarial_bench_last.json; Putnam cross-link spec-only (.roadmap.n_substrate.cond.1 empty draft).",
+    "(c) selftest verifies orchestration logic and verdict aggregation contract only.",
+    "(d) sentinel emission format verified by source code @sentinel attribute."
+  ],
+  "p9_phase0_blocker_status": "NOT_BLOCKING — orchestrator selftest fully PASS; production GPU-bound checks deferred."
+}

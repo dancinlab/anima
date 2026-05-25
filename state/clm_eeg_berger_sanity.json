@@ -1,0 +1,47 @@
+{
+  "tool": "clm_eeg_berger_sanity",
+  "version": "v1",
+  "raw_rank": 9,
+  "hexa_only": true,
+  "deterministic": true,
+  "llm": "none",
+  "pre_register_frozen": true,
+  "frozen_at": "2026-04-28",
+  "ts_utc": "2026-04-28T14:52:31Z",
+  "hypothesis": "O1∧O2 alpha (8-13Hz) dominates beta AND alpha > 0.30·delta AND peak∈[7,14]Hz",
+  "criteria": {
+    "C1": "alpha_power > beta_power (per channel)",
+    "C2": "alpha_power > 0.30 * delta_power (per channel)",
+    "C3_peak_hz_lo_x10": 70,
+    "C3_peak_hz_hi_x10": 140,
+    "verdict_rule": "PASS=both ch satisfy C1∧C2∧C3; PARTIAL=any ch C3; FAIL=else"
+  },
+  "mode": "selftest",
+  "input": "synthetic_alpha",
+  "input_sha256": "",
+  "n_channels": 16,
+  "n_samples": 7500,
+  "o1": {
+    "delta_x1e6": 53175,
+    "theta_x1e6": 55770,
+    "alpha_x1e6": 28506449,
+    "beta_x1e6": 272562,
+    "peak_hz_x10": 100,
+    "c1_pass": 1,
+    "c2_pass": 1,
+    "c3_pass": 1
+  },
+  "o2": {
+    "delta_x1e6": 46523,
+    "theta_x1e6": 64765,
+    "alpha_x1e6": 28635497,
+    "beta_x1e6": 260332,
+    "peak_hz_x10": 100,
+    "c1_pass": 1,
+    "c2_pass": 1,
+    "c3_pass": 1
+  },
+  "verdict": "PASS",
+  "classification": "NOT_VERIFIED_SYNTHETIC",
+  "reference": "Berger 1929 Arch Psychiatr Nervenkr 87:527-570 (DOI 10.1007/BF01797193); Welch 1967 IEEE Trans Audio Electroacoust 15(2):70-73"
+}

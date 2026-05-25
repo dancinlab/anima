@@ -1,0 +1,32 @@
+{
+  "schema": "anima-eeg/sliding_lz76/1",
+  "tool": "anima_daily_life_sliding_lz76.py",
+  "raw_rank": 37,
+  "raw12_post_hoc_only": true,
+  "ts_utc": "2026-04-28T12:03:03Z",
+  "input": "state/eeg_recordings/20260428T115006Z_daily_life_5min_1_eeg16_filtered.npy",
+  "task": "daily_life_5min_1_filtered",
+  "fs_hz": 125.0,
+  "window_s": 30.0,
+  "stride_s": 15.0,
+  "n_windows": 2,
+  "b_med_min": 0.5477260678098173,
+  "b_med_max": 0.707611422864128,
+  "b_med_mean": 0.6276687453369727,
+  "spec_ent_med_min": 1.3430757944149008,
+  "spec_ent_med_max": 5.04974764275876,
+  "n_state_transition_candidates": 1,
+  "transitions": [
+    {
+      "from_window": 0,
+      "to_window": 1,
+      "t_boundary_s": 15.0,
+      "delta_b_med": 0.1599,
+      "delta_H_med": 3.7067
+    }
+  ],
+  "raw91_honest_c3": [
+    "State transition CANDIDATES are heuristic threshold detections, not state verdicts.",
+    "Daily-life context variation (focused/distracted/talking/typing) confounds single-metric reads."
+  ]
+}

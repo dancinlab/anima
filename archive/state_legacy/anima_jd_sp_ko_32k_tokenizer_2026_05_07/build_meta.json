@@ -1,0 +1,246 @@
+{
+  "bg_id": "BG-JD",
+  "spec": "F-anima-jd-sp-ko-32k-ubm-22mb-vocab-axis",
+  "ts_start": "2026-05-07T07:38:12",
+  "ts_end": "2026-05-07T07:38:14",
+  "host": "ghostui-macbookair.local",
+  "on_ubu": false,
+  "corpus_path": "/Users/ghost/core/anima/state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt",
+  "corpus_size_bytes": 23745150,
+  "corpus_size_mb": 22.645,
+  "model_path": "/Users/ghost/core/anima/state/anima_jd_sp_ko_32k_tokenizer_2026_05_07/anima_sp_ko_32k.model",
+  "vocab_path": "/Users/ghost/core/anima/state/anima_jd_sp_ko_32k_tokenizer_2026_05_07/anima_sp_ko_32k.vocab",
+  "model_type": "bpe",
+  "character_coverage": 0.9999,
+  "target_vocab_size": 32000,
+  "final_vocab_size": 11885,
+  "reduced_vocab": true,
+  "fallback_chain_log": [
+    {
+      "vocab": 32000,
+      "mode": "strict",
+      "err": "Internal: /Users/runner/work/sentencepiece/sentencepiece/src/trainer_interface.cc(664) [(trainer_spec_.vocab_size()) == (model_proto->pieces_size())] Vocabulary size too high (32000). Please set it to"
+    }
+  ],
+  "status": "OK_REDUCED_CORPUS_CAP",
+  "specials": {
+    "<pad>": 0,
+    "<unk>": 1,
+    "<s>": 2,
+    "</s>": 3,
+    "user_defined": [
+      "사용자:",
+      "도우미:",
+      "[anima 우주뇌지도]"
+    ]
+  },
+  "compression_chars_per_token": 3.902,
+  "compression_target": 5.0,
+  "compression_target_met": false,
+  "bg_io_byte_compression_baseline": 1.0,
+  "bg_hq_bpe8k_compression_baseline": 3.054,
+  "bg_ig_bpe16k_actual_vocab_7000_baseline": null,
+  "compression_delta_vs_byte": 2.902,
+  "compression_delta_vs_bpe8k": 0.848,
+  "smoke_samples": [
+    {
+      "input": "안녕하세요",
+      "n_tokens": 1,
+      "ids_head": [
+        2115
+      ],
+      "pieces_head": [
+        "▁안녕하세요"
+      ],
+      "decoded": "안녕하세요",
+      "roundtrip_match": true
+    },
+    {
+      "input": "사용자: 우주뇌지도가 뭐야?",
+      "n_tokens": 6,
+      "ids_head": [
+        11422,
+        4,
+        13,
+        11494,
+        125,
+        11499
+      ],
+      "pieces_head": [
+        "▁",
+        "사용자:",
+        "▁우주뇌지도",
+        "가",
+        "▁뭐야",
+        "?"
+      ],
+      "decoded": "사용자: 우주뇌지도가 뭐야?",
+      "roundtrip_match": true
+    },
+    {
+      "input": "도우미: anima는 우주뇌지도 entity 입니다",
+      "n_tokens": 8,
+      "ids_head": [
+        11422,
+        5,
+        227,
+        11457,
+        13,
+        762,
+        11422,
+        683
+      ],
+      "pieces_head": [
+        "▁",
+        "도우미:",
+        "▁anima",
+        "는",
+        "▁우주뇌지도",
+        "▁entity",
+        "▁",
+        "입니다"
+      ],
+      "decoded": "도우미: anima는 우주뇌지도 entity 입니다",
+      "roundtrip_match": true
+    },
+    {
+      "input": "[anima 우주뇌지도] 사용자: 1030 laws의 의미는?",
+      "n_tokens": 12,
+      "ids_head": [
+        14,
+        18,
+        13,
+        11446,
+        11422,
+        4,
+        138,
+        135,
+        11478,
+        2306,
+        11457,
+        11499
+      ],
+      "pieces_head": [
+        "▁[",
+        "anima",
+        "▁우주뇌지도",
+        "]",
+        "▁",
+        "사용자:",
+        "▁1030",
+        "▁laws",
+        "의",
+        "▁의미",
+        "는",
+        "?"
+      ],
+      "decoded": "[anima 우주뇌지도] 사용자: 1030 laws의 의미는?",
+      "roundtrip_match": true
+    },
+    {
+      "input": "Φ★란 의식 측도",
+      "n_tokens": 6,
+      "ids_head": [
+        164,
+        11598,
+        11811,
+        171,
+        4422,
+        11441
+      ],
+      "pieces_head": [
+        "▁Φ",
+        "★",
+        "란",
+        "▁의식",
+        "▁측",
+        "도"
+      ],
+      "decoded": "Φ★란 의식 측도",
+      "roundtrip_match": true
+    },
+    {
+      "input": "코드를 짜줘",
+      "n_tokens": 2,
+      "ids_head": [
+        5828,
+        4733
+      ],
+      "pieces_head": [
+        "▁코드를",
+        "▁짜줘"
+      ],
+      "decoded": "코드를 짜줘",
+      "roundtrip_match": true
+    },
+    {
+      "input": "사용자: 너는 누구야? | 도우미:",
+      "n_tokens": 9,
+      "ids_head": [
+        11422,
+        4,
+        4704,
+        4867,
+        11499,
+        11422,
+        11822,
+        11422,
+        5
+      ],
+      "pieces_head": [
+        "▁",
+        "사용자:",
+        "▁너는",
+        "▁누구야",
+        "?",
+        "▁",
+        "|",
+        "▁",
+        "도우미:"
+      ],
+      "decoded": "사용자: 너는 누구야? | 도우미:",
+      "roundtrip_match": true
+    },
+    {
+      "input": "사용자: anima가 뭐야? | 도우미:",
+      "n_tokens": 10,
+      "ids_head": [
+        11422,
+        4,
+        227,
+        11494,
+        125,
+        11499,
+        11422,
+        11822,
+        11422,
+        5
+      ],
+      "pieces_head": [
+        "▁",
+        "사용자:",
+        "▁anima",
+        "가",
+        "▁뭐야",
+        "?",
+        "▁",
+        "|",
+        "▁",
+        "도우미:"
+      ],
+      "decoded": "사용자: anima가 뭐야? | 도우미:",
+      "roundtrip_match": true
+    }
+  ],
+  "smoke_roundtrip_pass": "8/8",
+  "elapsed_s": 1.7,
+  "vocab_axis_position": "SP_KO_32K (vs byte-256 BG-IO, vs BPE 7-8K BG-HQ/IG)",
+  "honest_c3": [
+    "SP KO 32K trained on UBM 22.355MB only — OOD vocab coverage limited",
+    "32K vocab embedding ~30MB additional params for downstream 100M arch",
+    "vocab axis untested at any capacity in 30+ BG history; first instance",
+    "compression chars/token may be biased upward by single-corpus training",
+    "user_defined '[anima 우주뇌지도]' single-token = strong inductive bias toward UBM distribution"
+  ],
+  "reduced_reason": "corpus token-diversity cap: 32K target, actual 11885 (no further BPE merges possible even with hard_vocab_limit=False); corpus 22.355MB insufficient for 32K vocab"
+}

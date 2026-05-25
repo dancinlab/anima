@@ -1,0 +1,265 @@
+// HEXAD/D/d_train_lib.hexa — pure fns (NO main / NO _selftest) — compiled-first lib-split
+// ════════════════════════════════════════════════════════════════════════════
+//  PHASE 5 — pure-hexa D training (CE + AdamW), FROM-SCRATCH.
+//
+//  RFC 034 (hexa-lang reverse-mode AD) consumed as the SANCTIONED INLINE
+//  Wengert-tape pattern (self/test_autograd.hexa: "codegen import 없이 검증").
+//  Tape = pure hexa (leaf/add/mul/backward) ⟹ compiled-native safe — does NOT
+//  touch the safetensors-mmap C decl that blocks the inference R2 wire
+//  (PLAN.md R2). Phase 5 is FROM-SCRATCH (AGENTS.tape g_clm_from_scratch:
+//  init_weights = RANDOM seed-fixed, base_ckpt = NONE) ⟹ NO ckpt load ⟹ the
+//  safetensors blocker is structurally irrelevant here.
+//
+//  D training step:  x → (W·x) logits → softmax-CE → grad
+//    • loss VALUE        : closed CE  (−log softmax(z)_t)
+//    • d/d_logits        : softmax(z) − e_t   (B-D-4 closed-form CE Jacobian,
+//                          already 🔵 in blue_falsifier; reused, not re-proven)
+//    • d_logits → d_W    : Wengert tape (add/mul) reverse pass (RFC 034 path
+//                          EXERCISED on the trainable params)
+//    • update            : AdamW (decoupled weight decay)
+//
+//  FALSIFIER  F-D-PORT-2 TRAINABILITY-EMPIRICAL (PLAN.md Phase 5 pre-reg):
+//    N AdamW steps ⟹ CE strictly decreases. HONEST TIER: **EMPIRICAL**
+//    (B-D-NOTE pattern — SGD convergence OUTCOME, NOT closed-form, NOT 🔵).
+//    The trainability PROPERTY itself is B-D-4 🔵 (closed CE-Jacobian);
+//    this smoke only exercises the OUTCOME on a pure-hexa autograd path.
+//
+//  COMPLIANCE raw#11 snake_case · raw#9/10 honest tier (empirical ≠ 🔵)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── RFC 034 Wengert tape (inlined per self/test_autograd.hexa pattern) ──────
+//   tape = [records, vals] ; records: [op, out_id, a_id, b_id]
+//   op: 0 leaf · 1 add · 2 mul
+fn dt_mk_tape() { return [[], []] }
+
+fn dt_leaf(tape, x) {
+    let records = tape[0]
+    let vals = tape[1]
+    let id = len(vals)
+    let mut nr = []
+    let mut i = 0
+    while i < len(records) { nr.push(records[i]); i = i + 1 }
+    nr.push([0, id, -1, -1])
+    let mut nv = []
+    let mut j = 0
+    while j < len(vals) { nv.push(vals[j]); j = j + 1 }
+    nv.push(x)
+    return [[nr, nv], id]
+}
+
+fn dt_add(tape, a_id, b_id) {
+    let records = tape[0]
+    let vals = tape[1]
+    let oid = len(vals)
+    let mut nr = []
+    let mut i = 0
+    while i < len(records) { nr.push(records[i]); i = i + 1 }
+    nr.push([1, oid, a_id, b_id])
+    let mut nv = []
+    let mut j = 0
+    while j < len(vals) { nv.push(vals[j]); j = j + 1 }
+    nv.push(vals[a_id] + vals[b_id])
+    return [[nr, nv], oid]
+}
+
+fn dt_mul(tape, a_id, b_id) {
+    let records = tape[0]
+    let vals = tape[1]
+    let oid = len(vals)
+    let mut nr = []
+    let mut i = 0
+    while i < len(records) { nr.push(records[i]); i = i + 1 }
+    nr.push([2, oid, a_id, b_id])
+    let mut nv = []
+    let mut j = 0
+    while j < len(vals) { nv.push(vals[j]); j = j + 1 }
+    nv.push(vals[a_id] * vals[b_id])
+    return [[nr, nv], oid]
+}
+
+fn dt_value(tape, id) { let vals = tape[1]; return vals[id] }
+
+fn dt_backward(tape, out_id) {
+    let records = tape[0]
+    let vals = tape[1]
+    let n = len(vals)
+    let mut grad = []
+    let mut i = 0
+    while i < n { grad.push(0.0); i = i + 1 }
+    grad[out_id] = 1.0
+    let mut k = len(records) - 1
+    while k >= 0 {
+        let rec = records[k]
+        let op = rec[0]
+        let oid = rec[1]
+        let a = rec[2]
+        let b = rec[3]
+        let g_out = grad[oid]
+        if op == 1 {
+            grad[a] = grad[a] + g_out
+            grad[b] = grad[b] + g_out
+        } else if op == 2 {
+            grad[a] = grad[a] + vals[b] * g_out
+            grad[b] = grad[b] + vals[a] * g_out
+        }
+        k = k - 1
+    }
+    return grad
+}
+
+
+// ── deterministic seed-fixed RANDOM INIT (g_clm_from_scratch, LCG) ──────────
+fn dt_lcg_next(s: int) -> int { return (s * 1103515245 + 12345) % 2147483648 }
+fn dt_rand_unit(s: int) -> float {
+    // returns (val in [-0.5,0.5], next_seed)
+    return (to_float(s % 1000) / 1000.0) - 0.5
+}
+
+
+// ── numerics ────────────────────────────────────────────────────────────────
+fn dt_exp(x: float) -> float {
+    // range-reduced: exp(x) = exp(x/2^r)^(2^r), reduce until |x/2^r| < 0.25
+    // ⟹ Taylor (12 terms) accurate, then repeated squaring. Stable softmax.
+    let mut r = 0
+    let mut xr = x
+    while (if xr > 0.0 { xr } else { 0.0 - xr }) > 0.25 {
+        xr = xr / 2.0
+        r = r + 1
+    }
+    let mut term = 1.0
+    let mut acc = 1.0
+    let mut k = 1
+    while k < 12 {
+        term = term * xr / to_float(k)
+        acc = acc + term
+        k = k + 1
+    }
+    let mut s = 0
+    while s < r { acc = acc * acc; s = s + 1 }
+    return acc
+}
+
+fn dt_ln(x: float) -> float {
+    // ln via atanh series: ln(x) = 2·Σ u^(2k+1)/(2k+1), u=(x-1)/(x+1)
+    let u = (x - 1.0) / (x + 1.0)
+    let u2 = u * u
+    let mut termp = u
+    let mut acc = 0.0
+    let mut k = 0
+    while k < 24 {
+        acc = acc + termp / to_float(2 * k + 1)
+        termp = termp * u2
+        k = k + 1
+    }
+    return 2.0 * acc
+}
+
+fn dt_softmax2(z0: float, z1: float) {
+    let m = if z0 > z1 { z0 } else { z1 }
+    let e0 = dt_exp(z0 - m)
+    let e1 = dt_exp(z1 - m)
+    let s = e0 + e1
+    return [e0 / s, e1 / s]
+}
+
+// CE for 2-class, target t ∈ {0,1}
+fn dt_ce2(z0: float, z1: float, t: int) -> float {
+    let p = dt_softmax2(z0, z1)
+    let pt = if t == 0 { p[0] } else { p[1] }
+    let ptc = if pt < 0.000001 { 0.000001 } else { pt }
+    return 0.0 - dt_ln(ptc)
+}
+
+
+// ── one from-scratch training step (W: 4 = [w00,w01,w10,w11], x:[x0,x1]) ────
+//   logits k = Σ_j W[k*2+j]·x[j]  (linear D head, byte→2-class toy)
+//   d/d_logit = softmax − onehot  (B-D-4 closed, reused)
+//   d_logit → d_W via Wengert tape (mul/add) — RFC 034 path exercised
+fn dt_forward_logits(W, x) {
+    // tape: leaves w00,w01,w10,w11,x0,x1 ; logit0 = w00*x0 + w01*x1
+    let t0 = dt_mk_tape()
+    let rw00 = dt_leaf(t0, W[0]);  let t1 = rw00[0]
+    let rw01 = dt_leaf(t1, W[1]);  let t2 = rw01[0]
+    let rw10 = dt_leaf(t2, W[2]);  let t3 = rw10[0]
+    let rw11 = dt_leaf(t3, W[3]);  let t4 = rw11[0]
+    let rx0  = dt_leaf(t4, x[0]);  let t5 = rx0[0]
+    let rx1  = dt_leaf(t5, x[1]);  let t6 = rx1[0]
+    let m0 = dt_mul(t6, rw00[1], rx0[1]); let t7 = m0[0]
+    let m1 = dt_mul(t7, rw01[1], rx1[1]); let t8 = m1[0]
+    let l0 = dt_add(t8, m0[1], m1[1]);    let t9 = l0[0]
+    let m2 = dt_mul(t9, rw10[1], rx0[1]); let t10 = m2[0]
+    let m3 = dt_mul(t10, rw11[1], rx1[1]); let t11 = m3[0]
+    let l1 = dt_add(t11, m2[1], m3[1]);   let t12 = l1[0]
+    return #{
+        "tape": t12, "logit0_id": l0[1], "logit1_id": l1[1],
+        "wids": [rw00[1], rw01[1], rw10[1], rw11[1]],
+        "z0": dt_value(t12, l0[1]), "z1": dt_value(t12, l1[1]),
+    }
+}
+
+// argmax prediction (robust: softmax is exp-ratio, range-reduced ⟹ stable)
+fn dt_predict(W, x) -> int {
+    let f = dt_forward_logits(W, x)
+    return if f["z1"] > f["z0"] { 1 } else { 0 }
+}
+
+// B-D-4 closed gradient L2² w.r.t logits = ‖softmax − onehot‖² (numerically
+// robust trainability signal: →0 ⟺ model learned; no ln needed)
+fn dt_bd4_gradnorm2(W, x, t: int) -> float {
+    let f = dt_forward_logits(W, x)
+    let p = dt_softmax2(f["z0"], f["z1"])
+    let d0 = p[0] - (if t == 0 { 1.0 } else { 0.0 })
+    let d1 = p[1] - (if t == 1 { 1.0 } else { 0.0 })
+    return d0 * d0 + d1 * d1
+}
+
+// dataset-epoch reducers (top-level — compiled codegen rejects nested FnDecl;
+// explicit XS/YS params, no closure). XS: list of [x0,x1] · YS: list of int.
+fn dt_epoch_ce(Wc, XS, YS) -> float {        // trend-only (Taylor approx)
+    let mut acc = 0.0
+    let mut s = 0
+    while s < len(YS) {
+        let f = dt_forward_logits(Wc, XS[s])
+        acc = acc + dt_ce2(f["z0"], f["z1"], YS[s])
+        s = s + 1
+    }
+    return acc / to_float(len(YS))
+}
+fn dt_epoch_gn2(Wc, XS, YS) -> float {       // ROBUST B-D-4 ‖softmax−onehot‖² Σ
+    let mut acc = 0.0
+    let mut s = 0
+    while s < len(YS) {
+        acc = acc + dt_bd4_gradnorm2(Wc, XS[s], YS[s])
+        s = s + 1
+    }
+    return acc
+}
+fn dt_epoch_acc(Wc, XS, YS) -> int {         // ROBUST argmax accuracy
+    let mut c = 0
+    let mut s = 0
+    while s < len(YS) {
+        if dt_predict(Wc, XS[s]) == YS[s] { c = c + 1 }
+        s = s + 1
+    }
+    return c
+}
+
+// grad of CE w.r.t W (chain: dCE/dz = softmax−onehot, dz/dW via tape)
+fn dt_grad_W(W, x, t: int) {
+    let f = dt_forward_logits(W, x)
+    let p = dt_softmax2(f["z0"], f["z1"])
+    let d0 = p[0] - (if t == 0 { 1.0 } else { 0.0 })   // B-D-4 closed
+    let d1 = p[1] - (if t == 1 { 1.0 } else { 0.0 })
+    // tape grads of each logit w.r.t the 4 W leaves, weighted by dCE/dz_k
+    let g0 = dt_backward(f["tape"], f["logit0_id"])
+    let g1 = dt_backward(f["tape"], f["logit1_id"])
+    let wids = f["wids"]
+    let mut gW = []
+    let mut i = 0
+    while i < 4 {
+        gW.push(d0 * g0[wids[i]] + d1 * g1[wids[i]])
+        i = i + 1
+    }
+    return gW
+}

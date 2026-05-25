@@ -1,0 +1,149 @@
+#!hexa strict
+// hexa-brain/verify/real_limits_anchor.hexa — real-limits-first anchor.
+//
+// Per LATTICE_POLICY.md §1.3 rule 2: each project's verify must use at
+// least one anchor from §1.2 (Shannon · Kolmogorov · Bekenstein · c · ℏ ·
+// k · Stefan-Boltzmann · Carnot · ASML throughput · ERCOT · etc.) and
+// at least one engineering/industry threshold.
+//
+// hexa-brain's real-limits audit lives in LIMIT_BREAKTHROUGH.md (Wave M,
+// 2026-05-12). This script confirms that file is present and references
+// the canonical neuroscience / electrophysical / BCI HARD + SOFT walls
+// (L1–L9) so any agent has a pointer from verify→audit.
+//
+// Honesty: no value here is computed against the n=6 lattice. Each anchor
+// is sourced from peer-reviewed neuroscience literature (Oostendorp 2000,
+// Hodgkin-Huxley, Wolpaw 2002, Hochberg 2012, Willett 2021, Jun 2017
+// Neuropixels, Texas Instruments ADS1299 datasheet, Polikov 2005,
+// Lotte 2018) as cited in LIMIT_BREAKTHROUGH.md.
+//
+// Synchron, Blackrock Neurotech, OpenBCI, Emotiv, Kernel) use THEIR
+// OWN invariants — n=6 lattice fit is NOT applied to vendor numbers.
+// Medical-device claims (FDA / IRB / clinical) remain STRICTLY UNPROVEN.
+
+let HOME = env("HOME")
+let HEXA_BRAIN_ROOT_ENV = env("HEXA_BRAIN_ROOT")
+
+fn shq(s: str) -> str {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn _resolve_root() -> str {
+    if HEXA_BRAIN_ROOT_ENV.len() > 0 { return HEXA_BRAIN_ROOT_ENV }
+    let oldpwd = env("OLDPWD")
+    if oldpwd.len() > 0 {
+        let t = exec("[ -f " + shq(oldpwd) + "/bin/hexa-brain ] && echo y || echo n").trim()
+        if t == "y" { return oldpwd }
+    }
+    let pwd = env("PWD")
+    if pwd.len() > 0 {
+        let t = exec("[ -f " + shq(pwd) + "/bin/hexa-brain ] && echo y || echo n").trim()
+        if t == "y" { return pwd }
+    }
+    return HOME + "/core/anima/BRAIN"
+}
+
+fn _file_exists(p: str) -> bool {
+    let r = exec("[ -f " + shq(p) + " ] && echo yes || echo no").trim()
+    return r == "yes"
+}
+
+fn _file_contains(p: str, needle: str) -> bool {
+    let cmd = "grep -F " + shq(needle) + " " + shq(p) + " >/dev/null 2>&1 && echo yes || echo no"
+    let r = exec(cmd).trim()
+    return r == "yes"
+}
+
+fn main() {
+    let root = _resolve_root()
+    println("hexa-brain/verify/real_limits_anchor — real-limits-first check")
+    println("  root: " + root)
+    println("")
+    println("  policy: LATTICE_POLICY §1.3 rule 2 — at least 1 real limit anchor required")
+    println("  source: LIMIT_BREAKTHROUGH.md (Wave M, neuroscience-hardware audit)")
+    println("")
+
+    let mut ok = 0
+    let mut bad = 0
+
+    // 1. Audit file must exist.
+    let audit = root + "/LIMIT_BREAKTHROUGH.md"
+    if _file_exists(audit) {
+        println("  [PASS] LIMIT_BREAKTHROUGH.md present")
+        ok = ok + 1
+    } else {
+        println("  [FAIL] LIMIT_BREAKTHROUGH.md missing (abs: " + audit + ")")
+        bad = bad + 1
+    }
+
+    // 2. Audit must reference canonical neuroscience HARD / SOFT walls.
+    //    Each anchor is a sourced wall from LIMIT_BREAKTHROUGH.md §2.
+    let anchors = [
+        ["L1 — Skull attenuation ~100x (Oostendorp 2000)", "Oostendorp"],         // HARD scalp EEG SNR
+        ["L2 — EEG spatial PSF 5-9 cm (Nunez & Srinivasan 2006)", "Nunez"],       // HARD spatial resolution
+        ["L3 — Action-potential refractory (Hodgkin-Huxley / Kandel)", "Hodgkin-Huxley"], // HARD biophysics
+        ["L5 — Shannon channel capacity C = B log2(1+SNR)", "Shannon"],           // real-limits §1.2 anchor
+        ["L5 — BCI ITR Wolpaw 2002 / Chen 2015 / Willett 2021", "Wolpaw"],        // SOFT BCI ITR ceiling
+        ["L6 — Neuralink N1 1024 ch (Musk 2019 J Med Internet Res)", "Neuralink N1"], // vendor invariant
+        ["L6 — Neuropixels 384 sites (Jun 2017 Nature)", "Neuropixels"],          // vendor invariant
+        ["L7 — Johnson-Nyquist noise V_n = sqrt(4 k_B T R df)", "Johnson-Nyquist"], // HARD k_B T floor
+        ["L7 — ADS1299 0.14 uV (Texas Instruments datasheet)", "ADS1299"],        // engineering floor
+        ["L8 — ICA / ASR artifact removal (Makeig / Mullen)", "Makeig"],          // SOFT denoising
+    ]
+    for a in anchors {
+        let label = a[0]
+        let needle = a[1]
+        if _file_contains(audit, needle) {
+            println("  [PASS] anchor referenced: " + label)
+            ok = ok + 1
+        } else {
+            println("  [FAIL] anchor missing: " + label + " (needle: '" + needle + "')")
+            bad = bad + 1
+        }
+    }
+
+    // 3. Honesty caveats: medical-device / clinical claims must remain UNPROVEN
+    let unproven = [
+        ["scalp EEG cannot match intracortical (L1 100x attenuation)", "intracortical"],
+        ["OpenBCI Cyton+Daisy is research-grade, NOT FDA-cleared", "FDA"],
+        ["lattice is organising vocabulary, NOT evidence about brain", "organising vocabulary"],
+        ["multi-EEG synchrony != thought transmission", "synchrony"],
+    ]
+    for u in unproven {
+        let label = u[0]
+        let needle = u[1]
+        if _file_contains(audit, needle) {
+            println("  [PASS] honest caveat preserved: " + label)
+            ok = ok + 1
+        } else {
+            println("  [FAIL] honest caveat MISSING: " + label)
+            bad = bad + 1
+        }
+    }
+
+    //    invariants (not lattice-fit). Confirm at least 2 named external
+    //    entities appear, so the audit anchors against real industry numbers.
+    let entities = [
+        ["Neuralink",        "Neuralink"],
+        ["OpenBCI Cyton+Daisy", "OpenBCI"],
+    ]
+    for e in entities {
+        let label = e[0]
+        let needle = e[1]
+        if _file_contains(audit, needle) {
+            println("  [PASS] external-entity invariant cited: " + label)
+            ok = ok + 1
+        } else {
+            println("  [FAIL] external-entity invariant missing: " + label)
+            bad = bad + 1
+        }
+    }
+
+    println("")
+    println("  anchors verified: " + str(ok) + "  failures: " + str(bad))
+    if bad > 0 {
+        println("__HEXA_BRAIN_REAL_LIMITS_ANCHOR__ FAIL")
+        exit(1)
+    }
+    println("__HEXA_BRAIN_REAL_LIMITS_ANCHOR__ PASS")
+}

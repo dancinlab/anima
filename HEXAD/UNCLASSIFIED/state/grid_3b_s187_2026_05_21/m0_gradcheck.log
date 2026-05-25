@@ -1,0 +1,30 @@
+=== m0_gradcheck — V3-extension backward FALSIFIER (central-diff) ===
+
+  --- OP 1: head_g backward ---
+    hg[idx=1307] analytic=0.105205 fd=0.105205 rel=2.75696e-14
+    hg[idx=1329] analytic=-0.00948 fd=-0.00948 rel=6.47959e-13
+    hg[idx=1294] analytic=-0.038532 fd=-0.038532 rel=2.02231e-13
+    hg[idx=1383] analytic=0.053186 fd=0.053186 rel=3.7052e-14
+
+  --- OP 2: tension_proj backward ---
+    tp[idx=1384] analytic=0.119058 fd=0.119058 rel=1.51532e-15
+    tp[idx=1387] analytic=0.127844 fd=0.127844 rel=6.51315e-16
+    tp[idx=1391] analytic=0.00046 fd=0.00046 rel=6.04985e-14
+
+  --- OP 3: PureFieldFFN backward ---
+    pf[idx=1418] analytic=-0.00211646 fd=-0.00211646 rel=1.38945e-11
+    pf[idx=1653] analytic=-0.00437027 fd=-0.00437027 rel=3.05157e-11
+    pf[idx=1751] analytic=0.000321258 fd=0.000321258 rel=1.00267e-11
+    pf[idx=1940] analytic=-0.492017 fd=-0.492017 rel=1.35388e-14
+    pf[idx=1993] analytic=-8.70225e-05 fd=-8.70225e-05 rel=1.55286e-11
+    pf[idx=2203] analytic=0.00210133 fd=0.00210133 rel=5.09485e-10
+    pf[idx=2273] analytic=0.00493117 fd=0.00493117 rel=1.91021e-12
+    pf[idx=2494] analytic=0.380239 fd=0.380239 rel=9.19738e-15
+
+  --- OP 3b: PureFieldFFN d_x (input grad) ---
+    dx[idx=2] analytic=-0.00067759 fd=-0.00067759 rel=1.76225e-11
+    dx[idx=13] analytic=0.000141567 fd=0.000141567 rel=9.23401e-12
+    dx[idx=31] analytic=0.000150791 fd=0.000150791 rel=1.73408e-11
+
+  total probes = 18  max rel-err = 5.09485e-10
+PASS  F-V3EXT-BWD-GRADCHECK  max rel=5.09485e-10 < 1e-3 — purefield/head_g/tension_proj backward CORRECT (central-diff)

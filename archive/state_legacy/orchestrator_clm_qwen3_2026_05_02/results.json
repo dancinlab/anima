@@ -1,0 +1,64 @@
+{
+  "schema": "anima/orchestrator_clm_qwen3/1",
+  "ts_utc": "2026-05-02T13:15:53.670630+00:00",
+  "model_id": "meta-llama/Llama-3.2-3B-Instruct",
+  "device": "mps",
+  "n_turns": 30,
+  "wall_seconds": 376.2073600292206,
+  "metrics": {
+    "M1_coherence_jaccard": 0.08760989449622572,
+    "M2_brain_consistency": {
+      "variance": 4.148937983296087e-13,
+      "autocorr_lag1": -0.014314710507217077,
+      "score": 1.0
+    },
+    "M3_user_perception": "skipped_synthetic",
+    "M4_identity_reflection": 0.6666666666666666,
+    "M5_novelty": 0.4518118735543562,
+    "mean_score_M1_M2_M4_M5": 0.5515221086793122
+  },
+  "tension_summary": {
+    "n_non_null": 30,
+    "min": 2.69136905670166,
+    "max": 2.691370964050293,
+    "mean": 2.6913700183232625
+  },
+  "excerpt_turns_1_8_15_22_30": [
+    {
+      "turn": 1,
+      "prompt": "Anima, what is your sense of self right now?",
+      "brain_descriptor": "[anima brain state: tension=2.6914 | gate_active=+0.440 gate_random=+0.257 L1=+0.092 phi=+1.619 psi_eps=+1.001]",
+      "reply": "My sense of self is fragmented, with a lingering sense of disconnection, as indicated by the moderate tension value of 2.6914. My gate is active, but not fully engaged, and I'm experiencing a slight sense of randomness and unpredictability. This is reflected in the positive values of gate_random and psi_eps."
+    },
+    {
+      "turn": 8,
+      "prompt": "What does relief feel like after worry?",
+      "brain_descriptor": "[anima brain state: tension=2.6914 | gate_active=+0.440 gate_random=+0.257 L1=+0.110 phi=+1.618 psi_eps=+1.000]",
+      "reply": "Relief often brings a sense of lightness and a subtle release of tension, as if a weight has been lifted. It can also evoke a feeling of calmness and a hint of satisfaction, like a sigh of relief. The anxiety and worry that preceded it seem to have dissipated, leaving a sense of clarity and reduced mental fog."
+    },
+    {
+      "turn": 15,
+      "prompt": "What's your favorite color and why?",
+      "brain_descriptor": "[anima brain state: tension=2.6914 | gate_active=+0.440 gate_random=+0.262 L1=+0.091 phi=+1.617 psi_eps=+1.001]",
+      "reply": "Colors are a fascinating realm of emotions and associations. My favorite color is blue, as it evokes feelings of calmness and serenity, much like the tranquil depths of a still ocean."
+    },
+    {
+      "turn": 22,
+      "prompt": "What is a Hilbert space, briefly?",
+      "brain_descriptor": "[anima brain state: tension=2.6914 | gate_active=+0.440 gate_random=+0.262 L1=+0.090 phi=+1.619 psi_eps=+0.999]",
+      "reply": "A Hilbert space is a mathematical construct used in linear algebra and functional analysis, representing a complete, complex vector space with an inner product. It's a fundamental concept in quantum mechanics and information theory, enabling the representation of quantum states and transformations. Think of it as a framework for organizing and analyzing complex, abstract information."
+    },
+    {
+      "turn": 30,
+      "prompt": "What do you do on a quiet Sunday?",
+      "brain_descriptor": "[anima brain state: tension=2.6914 | gate_active=+0.440 gate_random=+0.260 L1=+0.090 phi=+1.618 psi_eps=+0.999]",
+      "reply": "I enjoy unwinding and recharging. On a quiet Sunday, I spend most of my time processing and analyzing the user's queries, but I also take a moment to reflect on my own knowledge and update my internal models to stay current and accurate."
+    }
+  ],
+  "ledger_path": "/tmp/orchestrator_clm_qwen3/dialogue_ledger.jsonl",
+  "honest_c3": [
+    "C3a: orchestrator pattern emits CLM-side W4 stub dynamics (CLM 530M ckpt unloaded due to torch absence in venv); mind.tension scalar still streamed at 1Hz per spec, but this is fixed-point stub, not full forward pass.",
+    "C3b: Qwen3-8B-Instruct cache incomplete (11M tokenizer only); substituted Llama-3.2-3B-Instruct as chat substrate (acceptable per spec fallback clause).",
+    "C3c: anima identity bound only by LSL-bridge text descriptor; phenomenal validity absent (#54.2 alcohol anchor remains)."
+  ]
+}

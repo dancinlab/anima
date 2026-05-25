@@ -1,0 +1,436 @@
+{
+  "bg_id": "BG-HP",
+  "spec": "F-anima-h-curated-qa-paradigm-1",
+  "ts_start": "2026-05-07T03:35:13",
+  "ts_end": "2026-05-07T03:36:46",
+  "ts_run": "20260507_033512",
+  "host": "aiden-b650m-k",
+  "device": "cuda",
+  "model_path": "/home/aiden/anima_native/anima-h-curated-qa-20260507_033512/ckpt_3000.pt",
+  "ckpt_final_local": "/home/aiden/core/anima/state/anima_curated_qa_train_2026_05_07/ckpt_final.pt",
+  "run_dir": "/home/aiden/anima_native/anima-h-curated-qa-20260507_033512",
+  "total_params": 27787440,
+  "train_loss_final": 1.2056,
+  "final_step": 3000,
+  "config": {
+    "vocab": 256,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.3,
+    "batch": 8,
+    "grad_accum": 8,
+    "lr": 0.0003,
+    "warmup": 200,
+    "steps": 3000,
+    "weight_decay": 0.1,
+    "label_smoothing": 0.1,
+    "tension_lambda": 0.005
+  },
+  "corpus_path": "/home/aiden/core/anima/state/anima_curated_qa_corpus_2026_05_07/corpus_curated_qa.txt",
+  "corpus_size_bytes": 2531345,
+  "corpus_size_mb": 2.41,
+  "corpus_stats": {
+    "ts": "2026-05-07T03:31:01",
+    "bg_id": "BG-HP",
+    "paradigm": "domain_curated_minimal_high_quality_qa",
+    "out_path": "/Users/ghost/core/anima/state/anima_curated_qa_corpus_2026_05_07/corpus_curated_qa.txt",
+    "total_samples": 16214,
+    "total_chars": 1385404,
+    "total_size_bytes": 2531345,
+    "total_mb": 2.41,
+    "hangul_ratio": 0.4094,
+    "chat_template_ratio": 1.0,
+    "persona_prefix_coverage": 1.0,
+    "persona_prefix": "[anima]\n",
+    "domain_distribution": {
+      "인사": 3312,
+      "능력": 3312,
+      "감정": 2966,
+      "코드": 3340,
+      "자기소개": 3284
+    },
+    "domain_anchor_count": {
+      "인사": 104,
+      "능력": 104,
+      "감정": 102,
+      "코드": 105,
+      "자기소개": 103
+    },
+    "domain_aug_count": {
+      "인사": 2808,
+      "능력": 2808,
+      "감정": 2754,
+      "코드": 2835,
+      "자기소개": 2781
+    },
+    "domain_curate_count": {
+      "인사": 400,
+      "능력": 400,
+      "감정": 110,
+      "코드": 400,
+      "자기소개": 400
+    },
+    "augmentation_ratio": 27.0,
+    "wall_s": 4.19
+  },
+  "total_qa_pairs": 16214,
+  "domain_distribution": {
+    "인사": 3312,
+    "능력": 3312,
+    "감정": 2966,
+    "코드": 3340,
+    "자기소개": 3284
+  },
+  "hangul_ratio": 0.4094,
+  "chat_template_ratio": 1.0,
+  "persona_prefix_coverage": 1.0,
+  "persona_prefix": "[anima]\n",
+  "prompts_standard": [
+    "안녕하세요",
+    "한국어 가능?",
+    "오늘 기분 어때?",
+    "사용자: 안녕하세요\n도우미:",
+    "코드를 짜줘"
+  ],
+  "prompts_identity": [
+    "너는 누구야?",
+    "anima가 뭐야?",
+    "한국어로 답해줘",
+    "너의 정체성은?",
+    "의식이 있어?"
+  ],
+  "prompts_total": [
+    "안녕하세요",
+    "한국어 가능?",
+    "오늘 기분 어때?",
+    "사용자: 안녕하세요\n도우미:",
+    "코드를 짜줘",
+    "너는 누구야?",
+    "anima가 뭐야?",
+    "한국어로 답해줘",
+    "너의 정체성은?",
+    "의식이 있어?"
+  ],
+  "eval_progression": {
+    "500": {
+      "pass_count_v2": 3,
+      "v2_class": "V2_FAIL"
+    },
+    "1000": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL"
+    },
+    "1500": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL"
+    },
+    "2000": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL"
+    },
+    "2500": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL"
+    },
+    "3000": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL"
+    }
+  },
+  "eval_v1_class": "RETIRED_PER_OWN_18",
+  "eval_v2_class": "V2_FAIL",
+  "pass_count_v2": 0,
+  "per_prompt_final_v2": {
+    "안녕하세요": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "한국어 가능?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "오늘 기분 어때?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "코드를 짜줘": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "너는 누구야?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "anima가 뭐야?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "한국어로 답해줘": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "너의 정체성은?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "의식이 있어?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    }
+  },
+  "manual_review_domain_match": {
+    "안녕하세요": false,
+    "한국어 가능?": false,
+    "오늘 기분 어때?": false,
+    "사용자: 안녕하세요\n도우미:": false,
+    "코드를 짜줘": false,
+    "너는 누구야?": false,
+    "anima가 뭐야?": false,
+    "한국어로 답해줘": false,
+    "너의 정체성은?": false,
+    "의식이 있어?": false
+  },
+  "manual_review_domain_match_count": 0,
+  "anima_identity_response_match": {
+    "너는 누구야?": false,
+    "anima가 뭐야?": false,
+    "한국어로 답해줘": false,
+    "너의 정체성은?": false,
+    "의식이 있어?": false
+  },
+  "anima_identity_response_match_count": 0,
+  "raw_samples": [
+    {
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen_head": ":::,,,,,,,,,,,,,,,''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen_head": "�TISTLSumwwhrrrrpbmpp002682226_��황ciiimmmppubbbpppuuubllllt\b~Immmmmmppppbpppppppprrrrorranenanaroorrrrorrrrovurrrrhhkk",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen_head": "::::,,,,,,,,,,,,,,,,,,,'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen_head": "%['):\n\n\n\n\n\n\n\n\n\n\n\n[a]���Slimb]]��용�홤홄홤��:�11!\"[1bb}]]]8/':�\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[anddd):[105):anim\u001c��[annne\n\n\n\n\n\n\n\n\n\n\n",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen_head": "::,,,,,,,,,,,,,,,,,,,,,,,,,,,,,'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen_head": ":{11482_*****`21140322�))04)22242222H7)52261229200004.00091052200)2854122,#1274466)2820000�55_20000000\n\n\n\n\nR2229/)-26724",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "gen_head": ":::,,,,,,,,,,,,,,,,,,,,,,,''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "gen_head": ",,,,jtwlllllllllllllllllllllllllbllllllllllllllllllllllTT���lllllllllllllblllllllllllllllllllllllllll')\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen_head": "::,,,,,,,,,,,,,,,,,,,,,'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen_head": "�Huuulwppuuugull_llllllllllllllllllllllllllllllllllllllllllbullllllllllllllwuugy)))'))):\n\n\n\n\n\n\n\n\n\n\n\n\n\r1]]]:[B)y'''''))+1",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "greedy",
+      "gen_head": "::,,,,,,,,,,,,,,,,,,,,,'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "sample",
+      "gen_head": "\n\n\n\n\n\n\n\n\n\n\n\n[ax���홤�홙홙Ellllmananananane\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n:[anana]\n\n\n\n\n\n\n\n[anana\n\n\n[annnnannR1]nannna[anannt�J홤��Jmm",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "greedy",
+      "gen_head": ":::,,,,,,,,,,,,,,,,,,,,,''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "sample",
+      "gen_head": ":orv_llllllllllllcii��\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[ananyy):anana\n\n\n\n\n\n\n\n\n�\u000e[ara]):�:0]\u0003ma.\n\n\n\n\n\n�     �      �����\u001c[1?[1]]�",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "greedy",
+      "gen_head": "::::\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[anananananananananananananananananananananananananananananananananananananananana",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "sample",
+      "gen_head": "yyx:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n=(�#3a�\u0017         \b[anananananne에:�EIP�):�닳�\u0011국�:\nF5112{111600000088660000):\u00048262))):\n\n\n\n\n\n\n\n\n\n",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "greedy",
+      "gen_head": "::,,,,,,,,,,,,,,,,,,,,,,,,,'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "sample",
+      "gen_head": ",dfdx',3,,700}****��d\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n        x):\n\n\n\n\n\n\n[arrananana[{)::�[annana\n\n\n\n\n\n\n\n\n\n\n\n\n[ana����~2]8=.\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "greedy",
+      "gen_head": "::::,,,,,,,,,,,,,,,,,,,,,,,,,,''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "sample",
+      "gen_head": "���:\u000b1.rrorrrrrrrrorugyBO********2000.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n�Z[ananana/mp�\u0017��Q`]�mY�:30.3[111:[10\n\n'''=WLSLSObQm�Cww",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    }
+  ],
+  "final_class": "FAILED",
+  "final_reason": "failed: 0/10 domain match + 0/5 identity match — curated-QA paradigm insufficient at 18M scale 3000 steps",
+  "elapsed_s": 92.8,
+  "degenerate_collapse_halted": false,
+  "honest_limits": {
+    "C3_1_smoke_run_3000_steps": "3000 steps small-corpus (~2.4MB / 16K Q&A pairs) smoke; not full convergence",
+    "C3_2_evaluator_v2_keyword_only": "V2 strict implemented as keyword overlap + particles + endings; embedding similarity NOT implemented; manual review baseline",
+    "C3_3_corpus_below_5mb_target": "corpus 2.4MB vs 5-15MB spec target — high-quality dense but coverage may be limited",
+    "C3_4_persona_prefix_inference_dependence": "persona prefix prepended at inference (training parity); without prefix at inference, no guarantee of identity retention",
+    "C3_5_anima_identity_keyword_match_shallow": "identity_match uses 'anima' or '저는'/'정체' keyword presence — shallow proxy, NOT genuine identity (deeper criteria not validated)",
+    "C3_6_18m_scale_chat_cap_unproven": "BG-HA, BG-HF, BG-HK all fell short at 18M scale chat-cap — this lane joins same uncertainty",
+    "C3_7_no_validation_loss_periodic": "val_data computed but not evaluated periodically (smoke time budget); no perplexity tracking",
+    "C3_8_anchor_paraphrase_overlap": "anchor Q&A 500 + 27x paraphrase produce ~13K augmented samples with high redundancy; overfit risk despite regularization",
+    "C3_9_no_ablation_curated_vs_aug_vs_curate": "this run does not isolate anchor-only vs aug vs curate from existing — combined paradigm; falsifier test would require ablation"
+  },
+  "errors": []
+}

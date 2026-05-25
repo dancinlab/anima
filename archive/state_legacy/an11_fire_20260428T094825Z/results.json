@@ -1,0 +1,74 @@
+{
+  "wrapper_version": "v1",
+  "wrapper_path": "/workspace/wrapper.py",
+  "started_utc": "2026-04-28T09:53:58Z",
+  "model_hf_repo": "mistralai/Mistral-7B-v0.1",
+  "lora_config": {
+    "rank": 16,
+    "alpha": 32,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ],
+    "epochs": 3
+  },
+  "raw_86_cost_attribution": {
+    "cost_center": "anima-an11-mistral7b-vast-h100-pod",
+    "vendor": "vast.ai",
+    "gpu_class": "H100_SXM"
+  },
+  "an11_seed": 0,
+  "wrapper_status": "FINAL",
+  "last_update_utc": "2026-04-28T09:54:16Z",
+  "phase_a": {
+    "status": "OK",
+    "model_dir": "/workspace/mistral-7b-v0.1",
+    "size_gb": 14.49,
+    "elapsed_s": 7.7
+  },
+  "phase_b": {
+    "status": "OK",
+    "rows": 10,
+    "categories": [
+      "hexad",
+      "law",
+      "metaref",
+      "phi",
+      "selfreflect"
+    ]
+  },
+  "_before_q_proj_l0_sha": "4d2ec422aefbb46b",
+  "phase_c": {
+    "status": "FAIL",
+    "error": "cuDNN Frontend error: [cudnn_frontend] Error: No valid execution plans built.",
+    "trace": "Traceback (most recent call last):\n  File \"/workspace/wrapper.py\", line 190, in phase_c_lora_train\n    trainer.train()\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/trainer.py\", line 1427, in train\n    return inner_training_loop(\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/trainer.py\", line 1509, in _inner_training_loop\n    self._run_epoch(\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/trainer.py\", line 1737, in _run_epoch\n    tr_loss_step = self.training_step(model, inputs, num_items_in_batch)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/trainer.py\", line 1909, in training_step\n    loss = self.compute_loss(model, inputs, num_items_in_batch=num_items_in_batch)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/trainer.py\", line 1981, in compute_loss\n    outputs = model(**inputs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/accelerate/utils/operations.py\", line 823, in forward\n    return model_forward(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/accelerate/utils/operations.py\", line 811, in __call__\n    return convert_to_fp32(self.model_forward(*args, **kwargs))\n  File \"/opt/conda/lib/python3.10/site-packages/torch/amp/autocast_mode.py\", line 44, in decorate_autocast\n    return func(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/peft/peft_model.py\", line 1993, in forward\n    return self.base_model(\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/peft/tuners/tuners_utils.py\", line 330, in forward\n    return self.model.forward(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/utils/generic.py\", line 887, in wrapper\n    output = func(self, *args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py\", line 447, in forward\n    outputs: BaseModelOutputWithPast = self.model(\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/utils/generic.py\", line 963, in wrapper\n    output = func(self, *args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/utils/output_capturing.py\", line 248, in wrapper\n    outputs = func(self, *args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py\", line 385, in forward\n    hidden_states = decoder_layer(\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/modeling_layers.py\", line 93, in __call__\n    return super().__call__(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py\", line 224, in forward\n    hidden_states, _ = self.self_attn(\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py\", line 164, in forward\n    attn_output, attn_weights = attention_interface(\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/integrations/sdpa_attention.py\", line 92, in sdpa_attention_forward\n    attn_output = torch.nn.functional.scaled_dot_product_attention(\nRuntimeError: cuDNN Frontend error: [cudnn_frontend] Error: No valid execution plans built.\n"
+  },
+  "main_abort": {
+    "error": "cuDNN Frontend error: [cudnn_frontend] Error: No valid execution plans built.",
+    "trace": "Traceback (most recent call last):\n  File \"/workspace/wrapper.py\", line 592, in main\n    phase_c_lora_train(results, rows); emit_partial(results, \"AFTER_C\")\n  File \"/workspace/wrapper.py\", line 190, in phase_c_lora_train\n    trainer.train()\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/trainer.py\", line 1427, in train\n    return inner_training_loop(\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/trainer.py\", line 1509, in _inner_training_loop\n    self._run_epoch(\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/trainer.py\", line 1737, in _run_epoch\n    tr_loss_step = self.training_step(model, inputs, num_items_in_batch)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/trainer.py\", line 1909, in training_step\n    loss = self.compute_loss(model, inputs, num_items_in_batch=num_items_in_batch)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/trainer.py\", line 1981, in compute_loss\n    outputs = model(**inputs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/accelerate/utils/operations.py\", line 823, in forward\n    return model_forward(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/accelerate/utils/operations.py\", line 811, in __call__\n    return convert_to_fp32(self.model_forward(*args, **kwargs))\n  File \"/opt/conda/lib/python3.10/site-packages/torch/amp/autocast_mode.py\", line 44, in decorate_autocast\n    return func(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/peft/peft_model.py\", line 1993, in forward\n    return self.base_model(\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/peft/tuners/tuners_utils.py\", line 330, in forward\n    return self.model.forward(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/utils/generic.py\", line 887, in wrapper\n    output = func(self, *args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py\", line 447, in forward\n    outputs: BaseModelOutputWithPast = self.model(\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/utils/generic.py\", line 963, in wrapper\n    output = func(self, *args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/utils/output_capturing.py\", line 248, in wrapper\n    outputs = func(self, *args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py\", line 385, in forward\n    hidden_states = decoder_layer(\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/modeling_layers.py\", line 93, in __call__\n    return super().__call__(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py\", line 224, in forward\n    hidden_states, _ = self.self_attn(\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py\", line 164, in forward\n    attn_output, attn_weights = attention_interface(\n  File \"/opt/conda/lib/python3.10/site-packages/transformers/integrations/sdpa_attention.py\", line 92, in sdpa_attention_forward\n    attn_output = torch.nn.functional.scaled_dot_product_attention(\nRuntimeError: cuDNN Frontend error: [cudnn_frontend] Error: No valid execution plans built.\n"
+  },
+  "pre_registered_predicates": {
+    "an11_a_frob_delta_min": 0.001,
+    "an11_b_max_cosine_min": 0.5,
+    "an11_b_top3_sum_min": 1.2,
+    "an11_c_jsd_min": 0.15,
+    "v1prime_phi_mip_norm_max": 0.5
+  },
+  "verdicts": {
+    "an11_a": "MISSING",
+    "an11_b": "MISSING",
+    "an11_c": "MISSING",
+    "v1prime": "MISSING"
+  },
+  "n_pass_of_4": 0,
+  "aggregate_verdict": "FULL_FAIL",
+  "raw_91_honesty": {
+    "all_phases_emitted_numeric": true,
+    "abort_phases": [
+      "phase_c"
+    ],
+    "char_bigram_jsd_proxy_caveat": "AN11(c) JSD uses char-bigram dist (vllm logprob truncation)"
+  }
+}

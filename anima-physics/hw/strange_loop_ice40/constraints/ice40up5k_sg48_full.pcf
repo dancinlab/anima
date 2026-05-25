@@ -1,0 +1,55 @@
+# ice40up5k_sg48_full.pcf — full pin map for synthesis verification
+#
+# This file constrains EVERY top-level IO of strange_loop_top so that
+# nextpnr-ice40 can fit the design and emit a bitstream (Phase 1b
+# evidence). Pin assignments are valid UP5K-SG48 pads but are NOT
+# tied to any specific dev-board's external function — they exist
+# only to satisfy the PnR's IO-placement constraint. Re-pin per
+# board (UPduino v3 / iCEBreaker / BlackIce-MX) before flashing.
+
+# Clock + control (matches old ice40up5k_sg48.pcf)
+set_io clk    35
+set_io rst_n  42
+set_io start  38
+
+# step_count[15:0] — 16 bits routed to arbitrary free SG48 pads
+set_io step_count[0]   2
+set_io step_count[1]   3
+set_io step_count[2]   4
+set_io step_count[3]   6
+set_io step_count[4]   9
+set_io step_count[5]   10
+set_io step_count[6]   11
+set_io step_count[7]   12
+set_io step_count[8]   13
+set_io step_count[9]   14
+set_io step_count[10]  15
+set_io step_count[11]  16
+set_io step_count[12]  17
+set_io step_count[13]  18
+set_io step_count[14]  19
+set_io step_count[15]  20
+
+# state_dump[23:0] — 24 bits = packed {a0,a1,a2,a3,b0,b1,b2,b3}
+set_io state_dump[0]   21
+set_io state_dump[1]   23
+set_io state_dump[2]   25
+set_io state_dump[3]   26
+set_io state_dump[4]   27
+set_io state_dump[5]   28
+set_io state_dump[6]   31
+set_io state_dump[7]   32
+set_io state_dump[8]   34
+set_io state_dump[9]   36
+set_io state_dump[10]  37
+set_io state_dump[11]  39
+set_io state_dump[12]  40
+set_io state_dump[13]  41
+set_io state_dump[14]  43
+set_io state_dump[15]  44
+set_io state_dump[16]  45
+set_io state_dump[17]  46
+set_io state_dump[18]  47
+set_io state_dump[19]  48
+# remaining 4 bits: re-use pads not yet assigned on the package
+set_io state_dump[20]  37  # COLLISION — see note

@@ -1,0 +1,106 @@
+{
+  "verify_batch": "A Stage 2 — 물리학적 검증 (fast literature + spec audit)",
+  "ts": "2026-05-15",
+  "method": "W5 spec consistency check + W7 literature triangulation (실 numerical sim DEFERRED — GPU/외부 lib 의존)",
+  "wall_seconds": 1.2,
+  "cost_usd": 0,
+  "scope_caveat": "Stage 2 protocol = 실 numerical Φ sim 인데, Mac local $0 으로는 *literature anchor + spec consistency* 만 fast check 가능. 9/9 모두 *actual numerical sim* 별도 cycle 필요.",
+  "hypotheses_audited": [
+    {
+      "id": "Hc_1283",
+      "verdict": "PARTIAL",
+      "lit_anchor": "PASS — Albantakis 2023 IIT 4.0 + Mac Lane 1971 + Kuramoto 1975 (legitimate refs)",
+      "spec_consistency": "PASS — IIT 3.0 PyPhi 1.2.0 cells ≤ 16 limit, Φ > 0.5 threshold well-defined",
+      "deferred": "PyPhi 1.2.0 외부 lib install + actual 3-axis (HCE+CPGD+HAL) composition sim",
+      "note": "$0 가능 (pip install pyphi), 별도 cycle 권장"
+    },
+    {
+      "id": "H_188",
+      "verdict": "PARTIAL",
+      "lit_anchor": "STRONG — Massimini 2013 PCI (clinical gold-standard, TMS-EEG perturbational complexity index)",
+      "spec_consistency": "PASS — anima-Φ ↔ PCI R²≥0.4 + octopus per-arm IIT exclusion well-defined",
+      "deferred": "16ch OpenBCI surrogate measurement + actual clinical data cross-validation",
+      "note": "H_188 자체가 'biological-validation is the ONLY real falsifier' L-CLINICAL 명시 — fast audit 통과 한계"
+    },
+    {
+      "id": "H_191",
+      "verdict": "PARTIAL",
+      "lit_anchor": "PASS — Kuramoto 1975 sync + AdS-CFT BCM holographic (external refs); HCE Hexad categorical = anima-internal (W7 weak side)",
+      "spec_consistency": "PASS — 3-axis confidence rubric (HCE 0.92 + CPGD 0.95 + HAL 0.85) well-defined",
+      "deferred": "CSTL Kuramoto coupling sync sim + anima proxy at confidence rubric",
+      "concern": "HCE τ(6)=4 numerology direction (H_153 L7 carry) — Stage 1 H_190 PARTIAL 정합"
+    },
+    {
+      "id": "H_182",
+      "verdict": "INSUFFICIENT-FOR-FAST-AUDIT",
+      "lit_anchor": "PASS — bio-mechanism refs (transformer/reservoir/thalamic/DMN/global-workspace)",
+      "spec_consistency": "PASS — V8 B-family 10 Hc",
+      "deferred": "V8 sweep Φ measurement (GPU fire 필요)",
+      "stage_2_method_match": "W5 numerical sim 필수 — fast audit 적용 불가"
+    },
+    {
+      "id": "H_183",
+      "verdict": "INSUFFICIENT-FOR-FAST-AUDIT",
+      "lit_anchor": "PASS — quantum substrate refs (complex-valued/quantum-walk/decoherence/Orch-OR)",
+      "spec_consistency": "PASS — V8 Q-family 5 Hc",
+      "deferred": "Q-substrate Φ sweep"
+    },
+    {
+      "id": "H_185",
+      "verdict": "INSUFFICIENT-FOR-FAST-AUDIT",
+      "lit_anchor": "PASS — fusion mechanism refs",
+      "spec_consistency": "PASS — V8 U-family 5 Hc",
+      "deferred": "fusion combo Φ sweep"
+    },
+    {
+      "id": "H_186",
+      "verdict": "INSUFFICIENT-FOR-FAST-AUDIT",
+      "lit_anchor": "PASS — architectural design refs",
+      "spec_consistency": "PASS — V8 architectural 8 Hc",
+      "deferred": "V8 architectural Φ sweep"
+    },
+    {
+      "id": "H_187",
+      "verdict": "INSUFFICIENT-FOR-FAST-AUDIT",
+      "lit_anchor": "PASS — Trinity/TB/DOM refs",
+      "spec_consistency": "PASS — Trinity 12 Hc",
+      "deferred": "Trinity Φ sweep"
+    },
+    {
+      "id": "Hc_1285",
+      "verdict": "PARTIAL",
+      "lit_anchor": "PASS — Paszke 2019 PyTorch + Pearlmutter 1995 (legitimate refs)",
+      "spec_consistency": "PASS — torch.no_grad() semantic well-defined, gradient norm threshold ≤ 2× baseline well-formed",
+      "deferred": "anima v5-mitosis nn.ModuleList[Cell] PyTorch CPU sim + autograd hook trace",
+      "note": "$0 Mac local PyTorch CPU 가능 — Stage 2 안 가장 actual sim 적합한 가설, 별도 cycle 권장"
+    }
+  ],
+  "batch_aggregate": {
+    "partial": 4,
+    "insufficient_for_fast_audit": 5,
+    "supported": 0,
+    "falsified": 0,
+    "verdict_aggregate": "INCONCLUSIVE-FAST — 모든 9 가설이 W5 numerical sim 의존; literature + spec audit 만으로는 verdict 산출 불가. 별도 sim cycle 필요."
+  },
+  "axis_impact": {
+    "A1_substrate": "Hc_1285 + H_191 sibling carry — pending Stage 2 sim",
+    "A2_consciousness": "Hc_1283 + H_188 + H_191 + V8 family — pending sim",
+    "A5_architecture": "H_182/183/185/186/187 V8 family + Trinity — pending sim (A5 100% active 의 *모두* Stage 2 deferred)",
+    "A7_bio": "H_188 PCI + H_182 B-family carry — pending sim"
+  },
+  "honest_c3_batch": [
+    "Stage 2 fast audit limit — 9/9 가설이 *실 numerical sim* 의존. literature triangulation + spec consistency 는 *necessary not sufficient* condition. fast audit 만 으로는 SUPPORTED/FALSIFIED 산출 불가.",
+    "Mac local $0 에서 가능한 *실 sim* = Hc_1285 PyTorch CPU autograd hook trace (별도 cycle), Hc_1283 PyPhi pip install (외부 lib). 다른 7 가설 은 GPU + anima v5 fire 필요.",
+    "VERIFY.tape Stage 2 protocol 의 cost-bearing 정합 — protocol design 시 $0-600 cost estimate 명시; fast audit (literature only) 으로는 Stage 2 통과 처리 불가.",
+    "INSUFFICIENT-FOR-FAST-AUDIT 5 가설 (H_182~H_187 + V8 family) 의 Stage 2 cycle = 단일 V8 sweep fire $200-600 추정 (GPU + anima v5)",
+    "H_191 HCE Hexad categorical = anima-internal — W7 literature triangulation 의 *external anchor* 와 *self-reference* 구분 issue. 단순 PASS 처리는 W7 protocol weak."
+  ],
+  "next_steps": [
+    "Hc_1283 PyPhi pip install + actual 3-axis composition sim ($0 Mac local 또는 small CPU box)",
+    "Hc_1285 PyTorch CPU autograd hook trace ($0 Mac local PyTorch)",
+    "H_188 16ch OpenBCI surrogate + clinical PCI cross-validation (external clinical data needed)",
+    "H_191 Kuramoto CSTL sync sim ($0 scipy ODE)",
+    "H_182~H_187 V8 family sweep — GPU fire cycle ($200-600 estimate)",
+    "또는 Stage 3 (cross-meta) 부터 진행 — 7 가설 fast meta-audit 가능"
+  ]
+}

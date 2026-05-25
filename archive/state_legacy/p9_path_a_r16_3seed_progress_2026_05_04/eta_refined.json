@@ -1,0 +1,72 @@
+{
+  "schema": "anima/p9_path_a_r16_3seed_progress/eta_refined/1",
+  "computed_at_utc": "2026-05-04T05:52:39Z",
+  "method": "extrapolate per-seed remaining = (steps_remaining * sec_per_iter) + push_to_hub_buffer",
+  "push_to_hub_buffer_min": 5,
+  "per_seed_eta": {
+    "s42": {
+      "step_remaining": 4503,
+      "sec_per_iter": 2.55,
+      "train_remaining_sec": 11483,
+      "train_remaining_hms": "3:11:23",
+      "eta_train_done_utc": "2026-05-04T09:04:02Z",
+      "eta_hub_pushed_utc": "2026-05-04T09:09:02Z"
+    },
+    "s43": {
+      "step_remaining": 8356,
+      "sec_per_iter": 2.58,
+      "train_remaining_sec": 21558,
+      "train_remaining_hms": "5:59:18",
+      "eta_train_done_utc": "2026-05-04T11:51:57Z",
+      "eta_hub_pushed_utc": "2026-05-04T11:56:57Z"
+    },
+    "s44": {
+      "step_remaining": 8261,
+      "sec_per_iter": 2.69,
+      "train_remaining_sec": 22222,
+      "train_remaining_hms": "6:10:22",
+      "eta_train_done_utc": "2026-05-04T12:03:01Z",
+      "eta_hub_pushed_utc": "2026-05-04T12:08:01Z"
+    }
+  },
+  "slowest_seed": "s44",
+  "ready_3of3_utc": "2026-05-04T12:08:01Z",
+  "ready_3of3_vs_prior_estimate": {
+    "prior_estimate_utc": "2026-05-04T11:52:00Z",
+    "drift_min": 16,
+    "verdict": "slightly-slower-by-16min"
+  },
+  "verdict_eta_utc_after_eval": {
+    "assumed_eval_minutes_per_seed_serial": 90,
+    "verdict_utc_serial": "2026-05-04T16:38:01Z",
+    "verdict_utc_parallel_3pod": "2026-05-04T13:38:01Z",
+    "prior_verdict_estimate_utc": "2026-05-04T17:22:00Z",
+    "drift_vs_prior": "ahead-by-3h44m if parallel eval; behind-by-44min if pure serial extrapolated"
+  },
+  "cost_burn": {
+    "per_pod_rate_usd_per_hr": 2.99,
+    "uptime_hr": {
+      "s42": 3.87,
+      "s43": 1.13,
+      "s44": 1.13
+    },
+    "spend_so_far_usd": {
+      "s42": 11.57,
+      "s43": 3.38,
+      "s44": 3.38,
+      "total_3_retrain": 18.33
+    },
+    "projected_spend_to_train_done_usd": {
+      "s42": 9.54,
+      "s43": 17.91,
+      "s44": 18.46,
+      "total_3_retrain_to_done": 64.24
+    },
+    "base_val_pod_8zbf9bfj6c63wg_excluded_note": "base val pod cost not tracked here per scope (assumed shared idle or other accounting)"
+  },
+  "caveats": [
+    "SSH may fail on transient network jitter; this snapshot succeeded all 3 retrain SSH",
+    "eval pod cost not yet incurred (eval will be triggered post-train by watchdog)",
+    "watchdog max_wait=57600s (16h) buffer = 10h headroom past slowest seed s44 ETA"
+  ]
+}

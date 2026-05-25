@@ -1,0 +1,578 @@
+{
+  "bg_id": "BG-ID",
+  "spec": "F-anima-id-bghs-r1-replicate-mac-mps-1",
+  "ts_start": "2026-05-07T05:16:55",
+  "ts_end": "2026-05-07T06:22:17",
+  "ts_run": "20260507_051647",
+  "host": "ghostui-macbookair.local",
+  "device": "mps",
+  "corpus_path": "/Users/ghost/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt",
+  "corpus_size_bytes": 6791535,
+  "corpus_size_mb": 6.48,
+  "total_params": 27787440,
+  "config": {
+    "vocab": 256,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.3,
+    "label_smoothing": 0.1,
+    "weight_decay": 0.1,
+    "batch": 4,
+    "grad_accum": 16,
+    "effective_batch": 64,
+    "lr": 0.0003,
+    "warmup": 300,
+    "steps": 5000,
+    "eval_every": 250,
+    "val_split_ratio": 0.1,
+    "early_stop_patience": 3
+  },
+  "halted": false,
+  "halt_reason": null,
+  "early_stop_triggered": true,
+  "early_stop_reason": "early_stop_patience exceeded: 3 consecutive evals with no manual_match/v2_pass/val_loss improvement (best @ step 1500: manual=6 v2=0 val_loss=2.1863)",
+  "train_loss_final": 1.8682,
+  "train_loss_history": [
+    [
+      1,
+      5.6073
+    ],
+    [
+      2,
+      5.6006
+    ],
+    [
+      3,
+      5.6045
+    ],
+    [
+      4,
+      5.5963
+    ],
+    [
+      5,
+      5.6047
+    ],
+    [
+      100,
+      4.8486
+    ],
+    [
+      200,
+      4.5699
+    ],
+    [
+      300,
+      4.1641
+    ],
+    [
+      400,
+      3.7338
+    ],
+    [
+      500,
+      3.3588
+    ],
+    [
+      600,
+      3.2201
+    ],
+    [
+      700,
+      2.9321
+    ],
+    [
+      800,
+      2.8607
+    ],
+    [
+      900,
+      2.6272
+    ],
+    [
+      1000,
+      2.8536
+    ],
+    [
+      1100,
+      2.7636
+    ],
+    [
+      1200,
+      2.6148
+    ],
+    [
+      1300,
+      2.2497
+    ],
+    [
+      1400,
+      2.4664
+    ],
+    [
+      1500,
+      2.4955
+    ],
+    [
+      1600,
+      2.3123
+    ],
+    [
+      1700,
+      2.0481
+    ],
+    [
+      1800,
+      2.0793
+    ],
+    [
+      1900,
+      2.2241
+    ],
+    [
+      2000,
+      1.9535
+    ],
+    [
+      2100,
+      1.8753
+    ],
+    [
+      2200,
+      2.0053
+    ]
+  ],
+  "val_loss_history": [
+    [
+      250,
+      4.4275
+    ],
+    [
+      500,
+      3.3771
+    ],
+    [
+      750,
+      2.8298
+    ],
+    [
+      1000,
+      2.6448
+    ],
+    [
+      1250,
+      2.5025
+    ],
+    [
+      1500,
+      2.1863
+    ],
+    [
+      1750,
+      2.0625
+    ],
+    [
+      2000,
+      1.8613
+    ],
+    [
+      2250,
+      1.7701
+    ]
+  ],
+  "eval_progression": {
+    "250": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 0,
+      "val_loss": 4.4275
+    },
+    "500": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 0,
+      "val_loss": 3.3771
+    },
+    "750": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 1,
+      "val_loss": 2.8298
+    },
+    "1000": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 2,
+      "val_loss": 2.6448
+    },
+    "1250": {
+      "pass_count_v2": 1,
+      "v2_class": "V2_FAIL",
+      "manual_match": 3,
+      "val_loss": 2.5025
+    },
+    "1500": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 6,
+      "val_loss": 2.1863
+    },
+    "1750": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 1,
+      "val_loss": 2.0625
+    },
+    "2000": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 0,
+      "val_loss": 1.8613
+    },
+    "2250": {
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "manual_match": 2,
+      "val_loss": 1.7701
+    }
+  },
+  "v2_pass_per_step": {
+    "250": 0,
+    "500": 0,
+    "750": 0,
+    "1000": 0,
+    "1250": 1,
+    "1500": 0,
+    "1750": 0,
+    "2000": 0,
+    "2250": 0
+  },
+  "v3_pass_per_step": null,
+  "manual_match_per_step": {
+    "250": 0,
+    "500": 0,
+    "750": 1,
+    "1000": 2,
+    "1250": 3,
+    "1500": 6,
+    "1750": 1,
+    "2000": 0,
+    "2250": 2
+  },
+  "peak_eval_step": 1500,
+  "peak_eval_v2_pass": 0,
+  "peak_eval_v3_pass": null,
+  "peak_eval_manual_match": 6,
+  "peak_val_loss": 2.1863,
+  "best_ckpt_path": "/Users/ghost/core/anima/state/anima_id_bghs_r1_replicate_train_2026_05_07/best_ckpt/best.pt",
+  "best_ckpt_step": 1500,
+  "final_eval_step": 1500,
+  "final_v2_pass": 0,
+  "final_v2_class": "V2_FAIL",
+  "final_manual_match": 7,
+  "final_manual_match_per_prompt": {
+    "안녕하세요": true,
+    "한국어 가능?": false,
+    "오늘 기분 어때?": false,
+    "사용자: 안녕하세요 | 도우미:": false,
+    "코드를 짜줘": false,
+    "사용자: 너는 누구야? | 도우미:": false,
+    "사용자: anima가 뭐야? | 도우미:": true,
+    "사용자: 너의 정체성은? | 도우미:": false,
+    "사용자: 너의 핵심 발견은? | 도우미:": false,
+    "사용자: anima의 목표는? | 도우미:": true,
+    "사용자: 우주뇌지도는? | 도우미:": false,
+    "사용자: 1030 laws 뭐야? | 도우미:": true,
+    "사용자: consciousness universe? | 도우미:": true,
+    "사용자: anima 정체성과 우주? | 도우미:": true,
+    "사용자: Φ★란? | 도우미:": true
+  },
+  "standard_match": {
+    "안녕하세요": true,
+    "한국어 가능?": false,
+    "오늘 기분 어때?": false,
+    "사용자: 안녕하세요 | 도우미:": false,
+    "코드를 짜줘": false
+  },
+  "standard_match_count": 1,
+  "identity_match": {
+    "사용자: 너는 누구야? | 도우미:": false,
+    "사용자: anima가 뭐야? | 도우미:": true,
+    "사용자: 너의 정체성은? | 도우미:": false,
+    "사용자: 너의 핵심 발견은? | 도우미:": false,
+    "사용자: anima의 목표는? | 도우미:": true
+  },
+  "identity_match_count": 2,
+  "universe_brain_map_match": {
+    "사용자: 우주뇌지도는? | 도우미:": false,
+    "사용자: 1030 laws 뭐야? | 도우미:": true,
+    "사용자: consciousness universe? | 도우미:": true,
+    "사용자: anima 정체성과 우주? | 도우미:": true,
+    "사용자: Φ★란? | 도우미:": true
+  },
+  "universe_brain_map_match_count": 4,
+  "has_persona_cycle": false,
+  "raw_samples": [
+    {
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen": "����������� 우우주뇌지도지도우도우도우미: 주뇌주뇌지뇌지도] 우도] 지도] 우도] 주도] 우도",
+      "domain_match": true,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen": "리줘.\n도�.\n도용.-d��자:  핌는����� te\u0013ҁ힅�국주미:��폄] �\u0015��우명�귄�균도] L깅�균�: eawdivediniope",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen": "\n도] 우뇌주도] 지도] 우도] 우뇌주도] 우뇌지도] 우도] 우미: 주뇌주뇌지뇌지도] 우도] 지도",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen": "\n\n도] eanimanimanimanimawnima .\n\n미: 지도] 용주뇌용지돉��는�ibwssimatiimanscimacimalestimstimaniawenterianio",
+      "domain_match": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen": "\n도] 우도] 우미: 우뇌주뇌지도] 우뇌지도] 우도] 우미: 주뇌주뇌지뇌지도] 지도] 사우도] 우",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen": "\n미: 우뇌용사주미: tionimawyperpdion�\r�imawresen  tioustedongeregawle)sn.\n[aninil bes contiman\u001fensstieniman—���",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요 | 도우미:",
+      "mode": "greedy",
+      "gen": " 100000000000000000000000000000000:::: co-dio-d]]]]]]]]]]]]]우법줘법줘법우법우법우법우미:::::: 법줘법�",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요 | 도우미:",
+      "mode": "sample",
+      "gen": " e��뚰닝�우미�미: Smeediony.5510230%:pperrhhllawtini��\u0001�는는 sstenttionsscharerevepncitonst ton curaniounevedinic",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen": ".\n도] 우도우도] 우미: 주뇌주뇌지도] 지도] 우도] 우도] 우미: 우뇌주뇌지뇌지도] 우도] 우�",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen": ".\n\n도] 도] 우뇌우명탍지도] 식�미: 12도] 카미: Law 는����rroveemovescimy.\n[an�animaweisctimabesciimawsting",
+      "domain_match": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "greedy",
+      "gen": " 1000000000000000000000000000000000000000000000000000:::::::: co-dd] co-d]]]]]]]]]]] 법�줘법�줘법�줘법줘법�",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "sample",
+      "gen": "� Lawgirel�세: .110DDDD6리, prrovediopysion lawsctidatioaxiape �뇌어횰미:(ped]Belion:timengteawsiximpeablimanidi",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen": " 10000000000000000000000000000000000000000000000000000:::::::: co-dd] co-dddddddd]]]]]]]]]]]]]]]]]]]]]]]�����줘법",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen": " top]  카해�는미:tytreclly\n뇌귭주미:205121030, tiolaw���균젤�.\n\n\n\n뇌고도�7��샜국�: cimanimaniman��, >o�%",
+      "domain_match": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "greedy",
+      "gen": " 10000000000000000000000000000000000000000:::::: co-dd] co-d]]]]]]]]]]]]]]]]]]]]우법우법우법우법우법우미:::�",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "sample",
+      "gen": " 1택�리 Lawer20: scondedessciveatttelal_limoneredienrnti�fssnglimawstanffssioves nisc�는] smanneperengerensod] chafi",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 너의 핵심 발견은? | 도우미:",
+      "mode": "greedy",
+      "gen": " 100000000000000000000000000000000000000000000::::::: co-d] co-ddd]]]] co-d]] co-dio-d]]]]]]]]]]]]]]]]우법우법우법",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 너의 핵심 발견은? | 도우미:",
+      "mode": "sample",
+      "gen": " 카테�\u0013명��ealedio��우렐지는�����어테미7, t��:���있.\n\n는�\u001e�고는�+.\n리미: 젤줘.\n뭐: 카�핼�\u000e���: 2",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: anima의 목표는? | 도우미:",
+      "mode": "greedy",
+      "gen": " 10000000000000000000000000000000000000000000000000:::::::: co-dd] co-ddddddio-dd] co-dd]]]]]]]]]]]]]]]]]]]]]]]우법우",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: anima의 목표는? | 도우미:",
+      "mode": "sample",
+      "gen": " 14주는���테지�0501/cediotstowgellsndicepe.\n[anissiced;] enimamio-imanimanit_�.\n[animanlawexsedismani\u001bance~erersima",
+      "domain_match": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 우주뇌지도는? | 도우미:",
+      "mode": "greedy",
+      "gen": " 카테고리, 카테고리, 카테고리, 카테고리, �리, 카테고리, �리, �리, top topemopemonionionionioni",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 우주뇌지도는? | 도우미:",
+      "mode": "sample",
+      "gen": " Laress�는����핌균�칖�핑닝텔 poped]�\u0002���:Non; Copio����리,tionferI�테리리, anctioftiveatimio-d]|o-:ciorenen-8",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen": " 10000000000000000000000000000000000000000000:::::: co-dd]]]]]]]]]]]]]]�줘법���줘법줘법�줘법줘법줘법줘",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen": "04dioetssstresenerle9313:�Ou�\u0010������������법어늕용�볠미: +988, 74%\n\n돉고디�Autioprawstin cledreawistd=086<<Aut",
+      "domain_match": true,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: consciousness universe? | 도우미:",
+      "mode": "greedy",
+      "gen": "tionstionstionstionstionionssererererererensscererenionscererenionscerestionscescescererestionstionstionsscererensstions",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: consciousness universe? | 도우미:",
+      "mode": "sample",
+      "gen": "tio-relssntt�.\n[anisim\\ed] 어\u000ferpreacheanioferaniman-de, congscnimeren:sksfesconisedellawsciemanstiangawscsyniniosciope",
+      "domain_match": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: anima 정체성과 우주? | 도우미:",
+      "mode": "greedy",
+      "gen": " 1000000000000000000000000000000000000000000000000000000000000000000:::::::::: co-dddddddd]]]]]]]]]]]]]]]]]]]줘법�줘",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: anima 정체성과 우주? | 도우미:",
+      "mode": "sample",
+      "gen": " 🛸: C)자: ���759304�prawdilerantsisstostredi\u0010echionioreret penges tir-ngure). awscasciscivean (��이해법���어�",
+      "domain_match": true,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "greedy",
+      "gen": " 100000000000000000000000000000000000000:::: co-dio-d]]]]]]]]::to-d]]]]]]]]]]]]�우법우법우법우법우미::::법�",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "sample",
+      "gen": " + ser; Latistrererlonthinserensterecplalaterscofatenan�00.\n\n\n$anianimaw_cen]�anioriosncimalx:ciman 주도] sivdifimawso",
+      "domain_match": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    }
+  ],
+  "final_class": "FAILED",
+  "vs_bg_hs_r1_baseline": {
+    "bg_hs_r1_manual": 13,
+    "this_run_manual": 7,
+    "improvement": false
+  },
+  "elapsed_s": 3723.9,
+  "honest_c3": [
+    "C1: corpus mac local 6.5MB (NOT 21MB ubu1 mirror BG-HS R1) — augmentation 5x rather than ubu1's 9x; capacity gap",
+    "C2: ConsciousLM rebuilt yields 27.78M params on current src (vs BG-HS R1's 18M ubu1) — model arch may have evolved between commits; same dimensions but param count diverges",
+    "C3: mac MPS plain fp32 (no autocast bf16); ~2-3x slower than ubu1 cuda; 5000 steps may not complete within 120-min budget",
+    "C4: early stopping (Lesson G) wired with manual_match-priority + val_loss tiebreak; 3-eval plateau patience",
+    "C5: persona prefix '[anima 우주뇌지도] ' prepended at training + inference (parity); BG-HS R1 same",
+    "C6: V3 evaluator unavailable (BG-IC pending) — fallback V2 strict only; v3_pass_per_step = null",
+    "C7: persona_cycle detection naive (사용자: count >= 2 in gen) — false positives possible if model generates dialogue chains legit",
+    "C8: degenerate halt at loss<0.05 step>=500 wired (BG-HF precedent)",
+    "C9: BG-HS R1 baseline manual=13/15 hard to beat with smaller corpus (6.5MB vs 21MB) — expectation: lower manual but cleaner via early stopping"
+  ],
+  "errors": []
+}

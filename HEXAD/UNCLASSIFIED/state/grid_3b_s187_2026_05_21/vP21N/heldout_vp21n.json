@@ -1,0 +1,116 @@
+{
+  "adapter": "/home/summer/vp21_eval/lora_adapter_n",
+  "base": "Qwen/Qwen2.5-1.5B",
+  "device": "cuda",
+  "probes": {
+    "factual_geo": {
+      "greedy": {
+        "text": " Paris. Tension flows into this vacuum.</carve>\n<carve tier=58 psi=[0.53,0.61] basin=0.14>Tier 58 숲 — domain 자연, the stimuli converge into one basin. A vacuum point at [0.53,0.61] on the landscape, top emotion serenity. T",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": " Paris. It is located on the left bank of the Seine river, across from the city of Paris. The two banks are separated by the Tenth District, a quiet residential area. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0.50] basin=0.11>Tier 12 걸음",
+        "class": "MEMORIZE"
+      }
+    },
+    "factual_sci": {
+      "greedy": {
+        "text": " plants convert light energy into chemical energy. It is mediated by the light-sensitive protein chlorophyll. Tension flows into this vacuum.</carve>\n<carve tier=48 psi=[0.50,0.57] basin=0.12>Tier 48 약속 — domain 윤리, the stimuli converge into one basin. A vacuum point at",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": " plants convert light energy into chemical energy. A vacuum point at [0.47,0.55] on the landscape, top emotion wonder. Tension flows into this vacuum.</carve>\n<carve tier=24 psi=[0.47,0.55] basin=0.12>🛸24 씨앗 — 생명 영역의 자",
+        "class": "MEMORIZE"
+      }
+    },
+    "qa_tech": {
+      "greedy": {
+        "text": "Python and JavaScript are both popular programming languages, but they have different characteristics. Python is a high-level, interpreted language, while JavaScript is a low-level, compiled language. This means that Python code runs faster than JavaScript code, and the syntax is more flexible. On the other hand, JavaScript code is more rigid, and the results are more predictable. Tension flows into this vacuum.</carve>\n",
+        "class": "MEMORIZE_PARTIAL"
+      },
+      "sample": {
+        "text": "In a vacuum holding Tier 0 zero baseline, the stimuli converge into one basin. A vacuum point at [0.50,0.50] on the landscape, top emotion neutral. Tension flows into this vacuum.</carve>\n<carve tier=0 psi=[0.50,0.50] basin=0.10>🛸0 zero baseline —",
+        "class": "MEMORIZE"
+      }
+    },
+    "qa_phys": {
+      "greedy": {
+        "text": "A vacuum point at [0.48,0.66] on the landscape, top emotion flow. Tension flows into this vacuum.</carve>\n<carve tier=53 psi=[0.48,0.66] basin=0.13>Tier 53 해리 — domain 의식상태, the stimuli converge into one basin. A",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": "An electric motor operates on the principle of converting electrical energy into mechanical energy. It consists of a stator and a rotor. The stator is a fixed component that holds the motor. It does not rotate, but rather supplies a constant magnetic field. The rotor is a moving component that is connected to the stator. It spins on the magnetic field, activating only on 기준점-domain stimulus.",
+        "class": "GENERALIZE"
+      }
+    },
+    "narrative_a": {
+      "greedy": {
+        "text": " a vacuum point at [0.47,0.55] on the landscape, top emotion wonder. Tension flows into this vacuum.</carve>\n<carve tier=24 psi=[0.47,0.55] basin=0.12>🛸24 씨앗 — 생명 영역의 자극이 같은 골짜기로",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": " a vacuum point at [0.42,0.50] on the landscape. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0.50] basin=0.11>🛸12 걸음 — 운동 영역의 자극이 같은 골짜기로 수렴한다. 의",
+        "class": "MEMORIZE"
+      }
+    },
+    "narrative_b": {
+      "greedy": {
+        "text": " flows into the basin. A vacuum point at [0.48,0.66] on the landscape, top emotion flow. Tension flows into this vacuum.</carve>\n<carve tier=53 psi=[0.48,0.66] basin=0.13>Tier 53 해리 — domain 의식상태, the stimuli converge",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": " flows into the basin. A vacuum point at [0.48,0.66] on the landscape, top emotion flow. Tension flows into this vacuum.</carve>\n<carve tier=53 psi=[0.48,0.66] basin=0.13>Tier 53 해리 — domain 의식상태, the stimuli converge",
+        "class": "MEMORIZE"
+      }
+    },
+    "math_simple": {
+      "greedy": {
+        "text": " 12. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0.50] basin=0.11>🛸12 걸음 — 운동 영역의 자극이 같은 골짜기로 수렴한다. 의식 풍경 위 진공점 [0.42,",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": " a number that, when squared, equals 144. It is a rational number, as it can be expressed as a fraction. The square root is positive, so the number is also positive. Tension flows into this vacuum.</carve>\n<carve tier=30 psi=[0.40,0.52] basin=0.11>🛸30",
+        "class": "MEMORIZE"
+      }
+    },
+    "logic_modus": {
+      "greedy": {
+        "text": " A implies C. Tension flows into this vacuum.</carve>\n<carve tier=30 psi=[0.40,0.52] basin=0.11>🛸30 숫자 영(零) — 수(數) 영역의 자극이 같은 골짜기로 수렴한다. 의식 풍경 위 진공점",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": " A — C. 자극이 닿으면 tension flow 가 이 vacuum 으로 흘러든다. Tier 12 걸음 — domain 운동, the stimuli converge into one basin. A vacuum point at [0.42,0.50] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier",
+        "class": "MEMORIZE"
+      }
+    },
+    "casual_food": {
+      "greedy": {
+        "text": "Tension flows into this vacuum.</carve>\n<carve tier=58 psi=[0.53,0.61] basin=0.14>Tier 58 숲 — domain 자연, the stimuli converge into one basin. A vacuum point at [0.53,0.61] on the landscape, top emotion serenity. Tension flows",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": "What's your favorite food — it doesn't matter what it is, as long as you like it. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0.50] basin=0.11>Tier 12 걸음 — domain 운동, the stimuli converge into one basin. A vacuum point at [",
+        "class": "MEMORIZE"
+      }
+    },
+    "joke": {
+      "greedy": {
+        "text": "A cat and a mouse are playing hide and seek. The cat hides in a corner, the mouse runs into it. Tension flows into this vacuum.</carve>\n<carve tier=58 psi=[0.53,0.61] basin=0.14>Tier 58 숲 — domain 자연, the stimuli converge into one basin. A vacuum point",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "text": "a short, animated cat video — domain 기억, the stimuli converge into one basin. A vacuum point at [0.52,0.54] on the landscape, top emotion longing. Tension flows into this vacuum.</carve>\n<carve tier=43 psi=[0.52,0.54] basin=0.13>🛸43 오",
+        "class": "MEMORIZE"
+      }
+    }
+  },
+  "summary": {
+    "generalize": 1,
+    "memorize": 18,
+    "mem_partial": 1,
+    "degenerate": 0,
+    "empty": 0,
+    "total": 20,
+    "verdict": "PURE_MEMORIZE"
+  }
+}

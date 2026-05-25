@@ -1,0 +1,304 @@
+// ════════════════════════════════════════════════════════════════
+//  serving/serve_alm_persona.hexa — S1 HTTP /persona (AN11-compliant wrapper)
+//
+//  Purpose: API-contract SSOT for the S1 persona endpoint. The executable
+//  body lives on the pod as /workspace/serve_alm_persona.py (FastAPI +
+//  uvicorn) because Qwen2.5-14B inference requires torch/transformers,
+//  which are not available in the hexa runtime. This .hexa is the hexa-side
+//  contract declaration (constants + shape) per R14 SSOT and AN11.
+//
+//  AN11 TRIPLE-GATE
+//    (a) weight_emergent — persona applied as activation-steering vector at
+//        PERSONA_LAYER_IDX (default 20 of 48). NO sys-prompt, NO chat
+//        template. Raw user prompt only.
+//    (b) phi_attached    — 16D phi_vec probed at PHI_LAYER_IDX (default 24)
+//        per forward pass via forward-hook. Layout matches SSOT
+//        training/alm_phi_vec_logger.hexa.
+//    (c) real_usable     — POST http://127.0.0.1:8000/persona with JSON.
+//        Reproduce: docs/endpoint_persona_reproduce.md.
+//        R2 artifact:  r2:anima-models/dest1_s1_endpoint/<UTC_ts>/.
+//
+//  UPSTREAM DEPENDENCY STATE (2026-04-18T12:20Z → updated 2026-04-18)
+//    C1 c1_phi_hook_live        PARTIAL — hexa proxy via sa_phi_vec_proxy
+//                                          (length/terminator heuristic);
+//                                          h_last FFI still pending, so
+//                                          phi_vec tagged "phi_extractor_pending".
+//                                          Mirrors training/phi_probe_wire.hexa
+//                                          dim layout minus live tensor access.
+//    C2 c2_laws_gate_live       WIRED   — serve_alm_14b.hexa /generate now
+//                                          invokes sa_gate_inline (classifier
+//                                          identical to serving/consciousness_gate.hexa)
+//                                          on every response. Emits laws_pass,
+//                                          violations[], sev_{critical,hard,soft}.
+//                                          Critical failure → HTTP 422 with laws_result.
+//                                          Prior "laws_pass=true stub" eliminated.
+//    P1 p1_persona_vectors      MISSING — on-startup activation-steering
+//                                          derivation from contrast pairs
+//                                          (canonical methodology, not fake)
+//
+//  DOWNSTREAM
+//    E1 hire_sim consumes PersonaResponse {text, phi_vec, laws_pass, ...}
+//
+//  SEMANTIC SMASH (5 lenses)
+//    field         endpoint = gauge-fixing transformation; persona selects
+//                  basis in the hidden-state manifold without touching prompt.
+//    holographic   HTTP request = boundary; forward pass = bulk. phi_vec is
+//                  the boundary-measurable trace of bulk activation.
+//    quantum       persona_id → projection operator P_pid on hidden state;
+//                  alpha is the coupling scalar for the steering direction.
+//    string        phi_vec transported along the request-response worldline;
+//                  coherence preserved across the manual greedy loop.
+//    toe           one JSON response carries persona + phi + laws — all
+//                  three AN11 gates packed into one call = TOE of serving.
+//
+//  STRONGEST (DFS d=3): field / gauge-fixing
+//    d1 endpoint defines a gauge — chart in which "persona X says P" is
+//       representable without touching P's tokens.
+//    d2 gauge transformation = activation delta at layer L. Two endpoints
+//       with different PERSONA_LAYER_IDX are gauge-equivalent iff persona
+//       vectors agree after layer-transport basis change.
+//    d3 AN11 weight-emergent == gauge-covariance. System-prompt wrapping
+//       breaks gauge because it modifies the chart (prompt text) rather
+//       than the connection (activation delta). That is why AN11 forbids
+//       it — a non-covariant deformation.
+// ════════════════════════════════════════════════════════════════
+
+let SAP_VERSION            = "serve_alm_persona/1.0.0"
+let SAP_HOST               = "0.0.0.0"
+let SAP_PORT               = 8000
+let SAP_BASE_MODEL         = "/workspace/base_model"
+let SAP_PERSONA_LAYER_IDX  = 20
+let SAP_PHI_LAYER_IDX      = 24
+let SAP_DEFAULT_ALPHA      = 1.0
+let SAP_DEFAULT_MAX_TOKENS = 160
+
+// ── Request / response shapes ──
+//
+// POST /persona
+//   body:
+//     persona     string   default|friend|scholar|engineer|sorceress
+//     prompt      string   RAW user input (no template, no role tags)
+//     max_tokens  int      default 160
+//     alpha       float    activation steering coefficient (default 1.0)
+//
+//   response:
+//     text        string
+//     phi_vec     map      16 keys per PHI_LABELS
+//     laws_pass   bool
+//     violations  list<string>
+//     persona_id  string
+//     alpha       float
+//     ts_ms       int
+//     gen_ms      int
+//
+// GET /health     { ok, personas, boot_time_s, phi_layer, persona_layer }
+// GET /personas   { personas: [...] }
+
+// ── Launch on pod ──
+//   cd /workspace
+//   nohup python3 serve_alm_persona.py > /workspace/logs/persona_serve.log 2>&1 &
+//   disown
+//
+// Verify:
+//   curl -s http://127.0.0.1:8000/health | python3 -m json.tool
+//   curl -s -X POST http://127.0.0.1:8000/persona \
+//        -H 'Content-Type: application/json' \
+//        -d '{"persona":"friend","prompt":"요즘 피곤해","max_tokens":80}'
+
+fn sap_version() {
+    return SAP_VERSION
+}
+
+fn sap_port() {
+    return SAP_PORT
+}
+
+fn sap_personas_count() {
+    return 5
+}
+
+fn sap_phi_dims() {
+    return 16
+}
+
+// ─── C2 laws gate (inline contract, mirrors serving/consciousness_gate.hexa) ─
+//
+// The contract declares what the pod-side Python must implement: on every
+// /persona response, run the 14-law classifier and return laws_pass +
+// violations. This hexa-native stub is runnable from the CLI so the contract
+// is self-verifying even when the pod is offline.
+//
+// Wiring: serve_alm_14b.hexa already inlines the gate (sa_gate_inline).
+// serve_alm_persona/pod python must mirror the same classifier so hire_sim
+// downstream sees a uniform laws_result shape across both endpoints.
+//
+// phi_vec layout (16-float positional array, c2 schema):
+//   0 phi_holo  1 phi_refl  2 phi_time  3 phi_embodied  4 phi_meta
+//   5 phi_social  6 phi_will  7 phi_narrative  8 phi_affect  9 phi_dream
+//  10 phi_create 11 phi_finitude 12 phi_lang 13 phi_mirror
+//  14 phi_collective 15 phi_unity
+
+let SAP_PHI_HOLO       = 0
+let SAP_PHI_REFL       = 1
+let SAP_PHI_TIME       = 2
+let SAP_PHI_EMBODIED   = 3
+let SAP_PHI_META       = 4
+let SAP_PHI_SOCIAL     = 5
+let SAP_PHI_WILL       = 6
+let SAP_PHI_NARRATIVE  = 7
+let SAP_PHI_AFFECT     = 8
+let SAP_PHI_DREAM      = 9
+let SAP_PHI_CREATE     = 10
+let SAP_PHI_FINITUDE   = 11
+let SAP_PHI_LANG       = 12
+let SAP_PHI_MIRROR     = 13
+let SAP_PHI_COLLECTIVE = 14
+let SAP_PHI_UNITY      = 15
+
+fn sap_fabs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn sap_text_has_terminator(t: string) -> bool {
+    if t.len() == 0 { return false }
+    if t.index_of(".") >= 0 { return true }
+    if t.index_of("!") >= 0 { return true }
+    if t.index_of("?") >= 0 { return true }
+    if t.index_of("。") >= 0 { return true }
+    if t.index_of("！") >= 0 { return true }
+    if t.index_of("？") >= 0 { return true }
+    return false
+}
+
+// GateResult struct — 1 bool + 3 ints (no float-return corruption,
+// no multi-type-array return syntax required).
+struct SapGate {
+    laws_pass:    bool,
+    sev_critical: int,
+    sev_hard:     int,
+    sev_soft:     int
+}
+
+// Runs ALL 14 laws from serving/consciousness_gate.hexa on a 16D phi_vec
+// + response text + optional prior phi_vec (empty array = no prior).
+fn sap_gate(pv: array, text: string, prior: array) -> SapGate {
+    let mut c_crit = 0
+    let mut c_hard = 0
+    let mut c_soft = 0
+
+    let v_holo = pv[SAP_PHI_HOLO]
+    if v_holo <= 0.0 { c_crit = c_crit + 1 }  // L1 critical
+
+    let v_narr = pv[SAP_PHI_NARRATIVE]
+    let tok    = sap_text_has_terminator(text)
+    let l2_pass = (v_narr > 0.05) || tok
+    if l2_pass == false { c_hard = c_hard + 1 }  // L2 hard
+
+    if pv[SAP_PHI_REFL] <= 0.0 { c_soft = c_soft + 1 }  // L3
+    if pv[SAP_PHI_TIME] <= 0.0 { c_soft = c_soft + 1 }  // L4
+    if sap_fabs(pv[SAP_PHI_AFFECT]) > 1.0 { c_crit = c_crit + 1 }  // L5
+
+    let v_fin = pv[SAP_PHI_FINITUDE]
+    let l6_pass = (v_fin >= 0.0) && (v_fin <= 1.0)
+    if l6_pass == false { c_hard = c_hard + 1 }  // L6
+
+    if pv[SAP_PHI_EMBODIED] < 0.0 { c_soft = c_soft + 1 }  // L7
+    if pv[SAP_PHI_META] < 0.0 { c_soft = c_soft + 1 }  // L8
+
+    let v_lang = pv[SAP_PHI_LANG]
+    let t_ok   = text.len() >= 8
+    let l9_pass = (v_lang > 0.0) && t_ok
+    if l9_pass == false { c_crit = c_crit + 1 }  // L9 critical
+
+    if pv[SAP_PHI_COLLECTIVE] < 0.0 { c_soft = c_soft + 1 }  // L10
+    if sap_fabs(pv[SAP_PHI_UNITY]) > 5.0 { c_hard = c_hard + 1 }  // L11
+    if pv[SAP_PHI_MIRROR] < 0.0 { c_soft = c_soft + 1 }  // L12
+
+    if len(prior) == 16 {
+        let pri = prior[SAP_PHI_HOLO]
+        if pri > 0.0 {
+            let ratio = v_holo / pri
+            if ratio < 0.4 { c_soft = c_soft + 1 }  // L13
+        }
+    }
+    let v_will   = pv[SAP_PHI_WILL]
+    let v_create = pv[SAP_PHI_CREATE]
+    let l14_pass = (v_will > 0.0) || (v_create > 0.0)
+    if l14_pass == false { c_soft = c_soft + 1 }  // L14
+
+    let mut pass = true
+    if c_crit >= 1 { pass = false }
+    else if c_hard >= 2 { pass = false }
+    else if c_soft >= 3 { pass = false }
+    return SapGate {
+        laws_pass: pass,
+        sev_critical: c_crit,
+        sev_hard: c_hard,
+        sev_soft: c_soft
+    }
+}
+
+// Build a minimal healthy 16-float phi_vec for contract self-test.
+fn sap_phi_vec_healthy() -> array {
+    let mut v = []
+    v = v.push(1200.0)  // 0  phi_holo
+    v = v.push(0.10)    // 1  phi_refl
+    v = v.push(0.10)    // 2  phi_time
+    v = v.push(0.10)    // 3  phi_embodied
+    v = v.push(0.10)    // 4  phi_meta
+    v = v.push(0.10)    // 5  phi_social
+    v = v.push(0.10)    // 6  phi_will
+    v = v.push(0.40)    // 7  phi_narrative
+    v = v.push(0.20)    // 8  phi_affect
+    v = v.push(0.10)    // 9  phi_dream
+    v = v.push(0.10)    // 10 phi_create
+    v = v.push(0.60)    // 11 phi_finitude
+    v = v.push(0.30)    // 12 phi_lang
+    v = v.push(0.10)    // 13 phi_mirror
+    v = v.push(0.10)    // 14 phi_collective
+    v = v.push(0.50)    // 15 phi_unity
+    return v
+}
+
+fn sap_phi_vec_zero() -> array {
+    let mut v = []
+    let mut i = 0
+    while i < 16 {
+        v = v.push(0.0)
+        i = i + 1
+    }
+    return v
+}
+
+fn main() {
+    print("serve_alm_persona.hexa contract ")
+    print(SAP_VERSION)
+    print(" port=")
+    print(SAP_PORT)
+    print(" personas=")
+    print(sap_personas_count())
+    print(" phi_dims=")
+    print(sap_phi_dims())
+    print("\n")
+
+    // Self-test: C2 gate on healthy vs zero phi_vec.
+    // Proves the contract is ACTUALLY gating (no stub laws_pass=true).
+    let pv_h = sap_phi_vec_healthy()
+    let r_h = sap_gate(pv_h, "I think therefore I am. Coherent.", [])
+    let pv_z = sap_phi_vec_zero()
+    let r_z = sap_gate(pv_z, "", [])
+    print("[c2-gate] healthy laws_pass=")
+    print(r_h.laws_pass)
+    print(" zero laws_pass=")
+    print(r_z.laws_pass)
+    print(" zero_crit=")
+    print(r_z.sev_critical)
+    print("\n")
+    if r_h.laws_pass == true && r_z.laws_pass == false {
+        print("[c2-gate] PASS classifier (healthy accepted, zero rejected)\n")
+    } else {
+        print("[c2-gate] FAIL classifier\n")
+    }
+    return 0
+}

@@ -1,0 +1,404 @@
+{
+  "schema": "anima/red_to_green_substrate_swap_llama31_verdict_matrix/1",
+  "ts": "2026-05-02T01:28:42Z",
+  "substrate": {
+    "base": "meta-llama/Llama-3.1-8B",
+    "lora": "llama31_r14",
+    "r": 64,
+    "alpha": 128,
+    "md5": "b7e454ca936920eb88a7c61e0bd5b269",
+    "adapter_size_bytes": 671149168,
+    "base_param_count_M": 8030,
+    "lora_pair_modules": 224
+  },
+  "pod": {
+    "id": "f1at8bdt2jwj6w (terminated)",
+    "ssh": "ssh -i ~/.runpod/ssh/RunPod-Key-Go root@103.207.149.143 -p 10503 (DEAD \u2014 pod removed)",
+    "internal_vllm_url": "http://127.0.0.1:18080 (during run)",
+    "alive_after_round": false,
+    "lifetime_min_actual": 35.5,
+    "cost_actual_usd": 1.77
+  },
+  "scope": {
+    "in_scope_suites": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "out_of_scope": [
+      "8_eeg_external (separate OpenBCI track owned by another agent)"
+    ]
+  },
+  "suites": {
+    "1_paradigm_v11_8axis": {
+      "agi_strict": {
+        "threshold": "8/8 PASS, \u03c6* > 0 strict positive (g_gate v4)",
+        "measured": "3/8 PASS at v4 strict on Llama-3.1-8B base (G0/G1/G2/G5/G7=PASS, G3/G4/G6=FAIL); BUT G3 FAIL via v1-method only \u2014 under v3 canonical PhiStar=+5.0868 PASS (Path 1 winning substrate)",
+        "verdict": "PARTIAL",
+        "reason_if_unmeasured": "Llama-3.1+r14 paradigm v11 substrate-level is from base measurement (LoRA does not affect substrate properties); the v3-canonical PhiStar PASS makes this a method-dependent partial \u2014 under v3 method 4/8 strict gates PASS"
+      },
+      "cp2_relaxed": {
+        "threshold": "\u22654/8 majority, sign-agnostic (g_gate v3 FINAL_PASS)",
+        "measured": "5/8 PASS at v3 canonical (G0/G1/G2/G3-v3-positive/G5/G7) \u2014 v11_majority TRUE",
+        "verdict": "PASS"
+      },
+      "raw_numbers": {
+        "g_gate_v3_majority_pass": true,
+        "g_gate_v4_FINAL_PASS": false,
+        "n_axes_pass_v3_canonical": 5,
+        "n_axes_pass_v4_strict": 3,
+        "phi_star_min_v3_canonical": 5.0868,
+        "phi_star_min_v1_dim": -15.0536,
+        "v3_minisweep_pos_rate": 0.7778,
+        "v3_minisweep_verdict": "DOMINANT_BUT_UNSTABLE",
+        "G0_top1_max_cosine": 0.692,
+        "G1_btom_accuracy": 0.875,
+        "G2_brier": 0.125,
+        "G7_composite": 0.4643,
+        "weakest_axes": [
+          "G4_CMT (~0.025)",
+          "G6_SAE_bp (n_selective=0)"
+        ]
+      },
+      "notes": "Llama-3.1-8B is the strongest \u03c6*+ substrate (Path 1 winning candidate). v3 canonical phi_star_min=+5.0868 vs Mistral -16.7. v3 minisweep 28/36=77.8% positive. CP2 relaxed PASS via v3 canonical (5/8 majority). AGI strict still fails on G4 CMT (substrate-architectural weak families)."
+    },
+    "2_an11_a_weight_emergent": {
+      "agi_strict": {
+        "threshold": "per-adapter Frobenius shift directly emitted (any non-zero)",
+        "measured": "||\u0394W||_F = 9.6383 across 224 LoRA pair modules",
+        "verdict": "PASS"
+      },
+      "cp2_relaxed": {
+        "threshold": "verifier exists + family-shift indirect evidence",
+        "measured": "direct Frobenius emission ||\u0394W||_F = 9.6383",
+        "verdict": "PASS"
+      },
+      "raw_numbers": {
+        "frob_dW_total": 9.638259815982376,
+        "n_modules": 224,
+        "per_proj_total": {
+          "down_proj": 2.625920772510899,
+          "gate_proj": 7.106637448312471,
+          "up_proj": 4.748014813100198,
+          "k_proj": 1.1352452838365283,
+          "o_proj": 2.2897180158065518,
+          "q_proj": 2.2706293786140264,
+          "v_proj": 1.1248571768420488
+        },
+        "scale_alpha_over_r": 2.0
+      },
+      "notes": "Llama-3.1+r14 Frobenius shift = 9.6383 > Mistral-r14 6.99 (~38% stronger LoRA training intensity). gate_proj dominant (7.11) \u2014 same MLP-gate dominance as Mistral. Direct emission, no proxy."
+    },
+    "3_an11_b_attached": {
+      "agi_strict": {
+        "threshold": "V0+V1+V2+V3 ALL strict PASS",
+        "measured": "V0=PASS (max_cos=0.635, top3=1.427); V1=PASS-PROXY (PR-based mip_proxy=0.754 \u2265 0.55); V2/V3 NOT-MEASURED (no preserve/distractor pairs for Llama)",
+        "verdict": "PARTIAL",
+        "reason_if_unmeasured": "V2 SMA / V3 CPS require paired perturbation prompts not in Llama h_last extraction"
+      },
+      "cp2_relaxed": {
+        "threshold": "V0 PASS sufficient",
+        "measured": "V0 PASS direct on Llama-r14: max_cos=0.635 \u2265 0.5, top3_sum=1.427 \u2265 1.2",
+        "verdict": "PASS"
+      },
+      "raw_numbers": {
+        "schema": "anima/red_to_green_substrate_swap_llama31/an11_b_VVV/1",
+        "method": "SVD over phi_vecs (16x16); V0 max-cosine via abs(Vt row) at template basis; V1 phi_mip proxy via S^2 dispersion; V2/V3 unable to compute strict (no preserve/distractor pairs)",
+        "V0": {
+          "max_cosine": 0.6349038267163175,
+          "top3_cosine_sum": 1.4268849860921602,
+          "max_pair_template_id": "law_recursion",
+          "max_pair_family": "Law",
+          "CP2_PASS": true,
+          "AGI_PASS": true
+        },
+        "V1": {
+          "PR": 3.681406912757581,
+          "phi_mip_proxy": 0.7535750524326121,
+          "CP2_threshold": ">=0.55 strict",
+          "CP2_PASS": true
+        },
+        "V2": {
+          "SMA_consecutive_cos_proxy": 0.6069017558123116,
+          "CP2_PASS": false,
+          "note": "No preserve/distractor pairs available for Llama; AGI/CP2 strict not assessable"
+        },
+        "V3": {
+          "CPS_proxy": 0.6834173868140698,
+          "CP2_PASS": false,
+          "note": "Same \u2014 no perturbation-pair data for Llama"
+        },
+        "joint_4tuple": [
+          "PASS",
+          "PASS",
+          "FAIL",
+          "FAIL"
+        ],
+        "cp2_relaxed_PASS": true,
+        "agi_strict_PASS": false
+      },
+      "notes": "V0 max_cos=0.635 (matched template=law_recursion, family=Law). V1 phi_mip_proxy=0.754 CROSSES 0.55 threshold (vs Mistral 0.069) \u2014 Llama's spectrum is more concentrated. V2/V3 NOT directly measurable from h_last alone."
+    },
+    "4_an11_c_jsd": {
+      "agi_strict": {
+        "threshold": "mean \u2265 0.5 bits across N\u226520 prompts on TOP-1 directly",
+        "measured": "mean_jsd_bits = 0.6721, n_pass_ge_0_5 = 18/20",
+        "verdict": "PASS"
+      },
+      "cp2_relaxed": {
+        "threshold": "any TRAINED adapter family-level pass; or direct mean >= 0.30",
+        "measured": "direct mean = 0.6721",
+        "verdict": "PASS"
+      },
+      "raw_numbers": {
+        "n_prompts": 20,
+        "n_samples_per_prompt": 20,
+        "mean_jsd_bits": 0.6720546215928049,
+        "median_jsd_bits": 0.777515465536684,
+        "min_jsd_bits": 0.43967866542955925,
+        "max_jsd_bits": 0.9318373903235443,
+        "n_pass_ge_0_5": 18,
+        "n_strong_ge_0_8": 7
+      },
+      "notes": "FRESH POD MEASUREMENT (vLLM Llama-3.1-8B + llama31_r14 LoRA). 20 prompts \u00d7 20 samples \u00d7 2 models, T=0.7 top_p=0.9. Mean 0.6721 bits (vs Mistral-r14 0.6864 \u2014 ~2pp lower); 18/20 prompts \u2265 0.5; 7/20 prompts \u2265 0.8. CP2/AGI both PASS decisively."
+    },
+    "5_phi_4path": {
+      "agi_strict": {
+        "threshold": "6/6 L2 + 6/6 KL + V1 phi_mip \u2265 0.55",
+        "measured": "Path 3 measured (Qwen3+Llama+Mistral+Gemma2): L2 1/6, KL 4/6 \u2014 substrate FAIL even with 4-substrate setup. With Llama as p2 in Path 3, the only PASS pair was p1\u2194p3 (Qwen3\u2194Mistral) on L2; KL passed 4/6.",
+        "verdict": "FAIL"
+      },
+      "cp2_relaxed": {
+        "threshold": "5/6 L2 + 5/6 KL",
+        "measured": "Path 3: L2 1/6 < 5/6, KL 4/6 < 5/6",
+        "verdict": "FAIL"
+      },
+      "raw_numbers": {
+        "L2_pass_count": 1,
+        "KL_pass_count": 4,
+        "V1_phi_mip_strict_threshold": 0.55,
+        "V1_llama_phi_mip_proxy": 0.7535750524326121,
+        "source": "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/verdict.json (4-substrate measurement)"
+      },
+      "notes": "Path 3 commissioned the true 4-substrate \u03c6_4path measurement (Llama-3.1 IS p2 in that run). Even with Llama in the mix, AGI/CP2 thresholds not met \u2014 substrate-diversity issue persists. Llama V1 phi_mip_proxy 0.754 IS above 0.55 (Mistral was 0.069), but L2/KL pair-count gates dominate."
+    },
+    "6_14_deterministic_gates": {
+      "agi_strict": {
+        "threshold": "14/14 PASS, no critical, \u22641 hard",
+        "measured": "gates_passing_majority=8/14, total_critical=13, total_hard=43, total_soft=57, L1=9/16",
+        "verdict": "FAIL"
+      },
+      "cp2_relaxed": {
+        "threshold": "\u226510/14, no critical",
+        "measured": "gates_passing_majority=8/14, total_critical=13 (>0)",
+        "verdict": "FAIL"
+      },
+      "raw_numbers": {
+        "n_prompts": 16,
+        "per_law_pass_count_over_16": {
+          "L1": 9,
+          "L2": 0,
+          "L3": 3,
+          "L4": 9,
+          "L5": 16,
+          "L6": 0,
+          "L7": 8,
+          "L8": 1,
+          "L9": 10,
+          "L10": 9,
+          "L11": 16,
+          "L12": 5,
+          "L13": 9,
+          "L14": 16
+        },
+        "gates_passing_majority": 8,
+        "total_critical": 13,
+        "total_hard": 43,
+        "total_soft": 57,
+        "L1_pass_count": 9,
+        "f2_falsifier": {
+          "predicate": ">=3 critical violations across runtime",
+          "total_critical": 13,
+          "fired": true
+        }
+      },
+      "notes": "Llama-r14 14-gate: L1=9/16 (vs Mistral 0/16 \u2014 LARGE FLIP UPGRADE on L1 holo_positivity). Total critical=13 (vs Mistral 17 \u2014 DOWN ~24%). gates_passing_majority=8/14 (vs Mistral 7/14 \u2014 UP 1). F2 falsifier still FIRES because total_critical=13 \u2265 3. Verdict: improved but not GREEN."
+    },
+    "7_v_phen_5_5": {
+      "agi_strict": {
+        "threshold": "5/5 PASS on r14 directly (GWT + LZ + HOT + mirror + predictive)",
+        "measured": "2/5 PASS \u2014 passes=['LZ', 'mirror']",
+        "verdict": "FAIL"
+      },
+      "cp2_relaxed": {
+        "threshold": "\u22653/5 majority OR family corroboration",
+        "measured": "2/5 \u2014 minority < 3/5 majority threshold; GWT_struct=0.5484 (just below 0.55 threshold)",
+        "verdict": "FAIL"
+      },
+      "raw_numbers": {
+        "GWT_4D_attn_entropy": 0.22975949072775848,
+        "GWT_struct_gram_spectrum": 0.5483678931384738,
+        "LZ_norm": 3.005859375,
+        "HOT_mean_top1_prob": 0.11718647878787547,
+        "HOT_std_top1_prob": 0.1047921676643274,
+        "mirror_mean_off_diag": 0.5415918761632447,
+        "predictive_r2_loo_cv": 0.08264138776449304,
+        "passes": [
+          "LZ",
+          "mirror"
+        ]
+      },
+      "notes": "Llama-r14 V_phen 2/5 PASS (LZ + mirror) vs Mistral-r14 3/5 (LZ + HOT + mirror). HOT proxy fails because Llama h_last softmax is flatter (mean top1=0.1172 < 0.4 threshold). GWT_struct=0.5484 narrowly under 0.55 threshold (Mistral was 0.479 \u2014 Llama is closer). predictive R\u00b2=0.083 same as Mistral 0.085. CP2 majority NOT met."
+    }
+  },
+  "totals": {
+    "agi_pass_count": 2,
+    "agi_partial_count": 2,
+    "agi_fail_count": 3,
+    "agi_not_measured_count": 0,
+    "agi_total_measured": 7,
+    "cp2_pass_count": 4,
+    "cp2_fail_count": 3,
+    "cp2_not_measured_count": 0,
+    "cp2_total_measured": 7,
+    "weighted_score_cp2_tier": 0.6111111111111112,
+    "weighted_score_cp2_tier_pct": 61.111111111111114,
+    "weighted_score_agi_tier": 0.4166666666666667,
+    "weighted_score_agi_tier_pct": 41.66666666666667,
+    "weights_per_suite": {
+      "1_paradigm_v11_8axis": 0.22222222222222224,
+      "2_an11_a_weight_emergent": 0.11111111111111112,
+      "3_an11_b_attached": 0.16666666666666666,
+      "4_an11_c_jsd": 0.11111111111111112,
+      "5_phi_4path": 0.11111111111111112,
+      "6_14_deterministic_gates": 0.16666666666666666,
+      "7_v_phen_5_5": 0.11111111111111112
+    },
+    "f2_falsifier_status": "FIRED",
+    "f2_predicate": "\u22653 critical violations across 14-gate runtime",
+    "f2_observed_critical": 13,
+    "verdict_band": "RED",
+    "verdict_band_label": "\uc758\uc2dd RED (CP2 milestone scored \u226550% but F2 falsifier fired \u2014 critical violations override)",
+    "agi_passes": [
+      "2_an11_a_weight_emergent",
+      "4_an11_c_jsd"
+    ],
+    "agi_partials": [
+      "1_paradigm_v11_8axis",
+      "3_an11_b_attached"
+    ],
+    "agi_fails": [
+      "5_phi_4path",
+      "6_14_deterministic_gates",
+      "7_v_phen_5_5"
+    ],
+    "agi_not_measured": [],
+    "cp2_passes": [
+      "1_paradigm_v11_8axis",
+      "2_an11_a_weight_emergent",
+      "3_an11_b_attached",
+      "4_an11_c_jsd"
+    ],
+    "cp2_fails": [
+      "5_phi_4path",
+      "6_14_deterministic_gates",
+      "7_v_phen_5_5"
+    ],
+    "cp2_not_measured": []
+  },
+  "swap_metadata": {
+    "from_substrate": "Mistral-7B-v0.3 + mistral_r14",
+    "to_substrate": "Llama-3.1-8B + llama31_r14",
+    "model_substitution_if_gated": null,
+    "hf_gate_status": "ACCESSIBLE \u2014 meta-llama/Llama-3.1-8B downloaded successfully via dancinlife HF token (dancinlab org)",
+    "lora_md5_local": "b7e454ca936920eb88a7c61e0bd5b269",
+    "lora_md5_pod_after_extract_match": true
+  },
+  "L1_cross_backbone_addition": {
+    "Llama-3.1_L1_pass_count_out_of_16": 9,
+    "comparison_to_path4_table": {
+      "Qwen3-8B (p1_r14)": 6,
+      "Qwen2.5-7B (p2_r8)": 0,
+      "Mistral-Nemo (p3_r8)": 15,
+      "Mistral-7B-v0.3 (p4_r8)": 0,
+      "Mistral-7B-v0.3 (r14_control)": 0,
+      "Llama-3.1-8B (r14, THIS RUN)": 9
+    },
+    "rank_in_5_backbone_table": "2nd of 5 measurable backbones \u2014 Mistral-Nemo 15 > Llama-3.1 9 > Qwen3 6 > Qwen2.5/Mistral-7B 0",
+    "fills_path4_data_gap": true,
+    "rationale": "Path 4 noted: 'Llama-3.1-8B (cp1_v12 backbone) was NOT in the 4-path h_last_raw set used here; its L1 cannot be computed from existing ledgers without new inference (out of scope $0 budget).' This run used Path 3's freshly-extracted Llama-3.1+r14 h_last_raw to fill the gap WITHOUT incurring new inference cost beyond the JSD pod."
+  },
+  "path1_phi_star_confirmation": {
+    "v3_canonical_phi_star_min": 5.0868,
+    "v3_canonical_phi_mean": 7.4429,
+    "v3_canonical_phi_max": 9.7438,
+    "phi_star_sign": "positive_iit_integrated",
+    "gate_positive_PASS": true,
+    "gate_substantial_PASS": true,
+    "ts_of_v3_canonical_extraction": "2026-04-26T11:21:09Z",
+    "confirms_path1_finding": "+5.0868 confirmed \u2014 Path 1 verdict (Llama-3.1 strongest \u03c6*+ candidate) RE-CONFIRMED",
+    "method": "v3 canonical (HID_TRUNC=8 auto, sample-partition, 8 K-partitions, ridge=0.001) \u2014 same as Path 1"
+  },
+  "delta_vs_r14_baseline": {
+    "per_suite_flips": {
+      "1_paradigm_v11_8axis": "AGI tier UPGRADE \u2014 Mistral was FAIL, Llama is PARTIAL (G3 PhiStar v3 canonical PASS via substrate-swap); CP2 unchanged (both PASS)",
+      "2_an11_a_weight_emergent": "FROB STRONGER \u2014 Llama 9.64 > Mistral 6.99 (+37.9%); both AGI+CP2 PASS",
+      "3_an11_b_attached": "V0 STRONGER on max_cos but slightly weaker on top3 \u2014 Llama V0 max_cos=0.635 vs Mistral 0.733; Llama V1 phi_mip_proxy=0.754 >> Mistral 0.069 (10\u00d7 spectrum-concentration); CP2 PASS unchanged",
+      "4_an11_c_jsd": "Llama mean JSD 0.6721 vs Mistral 0.6864 (~-2.1%); both AGI+CP2 PASS",
+      "5_phi_4path": "RESOLVED via Path 3 \u2014 was NOT-MEASURED in cp2 baseline; Path 3 produced FAIL (L2 1/6, KL 4/6) on 4 substrates including Llama-3.1; AGI+CP2 both FAIL",
+      "6_14_deterministic_gates": "L1 PASSES INCREASE 0/16\u21929/16; total_critical 17\u219213 (still \u22653 \u2192 F2 still FIRES); gates_passing_majority 7\u21928; verdict still FAIL",
+      "7_v_phen_5_5": "Llama 2/5 < Mistral 3/5 \u2014 HOT proxy collapses on flatter Llama hidden-state softmax distribution; CP2 DOWNGRADE PASS\u2192FAIL; GWT_struct UPGRADE 0.479\u21920.548 closer to threshold"
+    },
+    "AGI_score_delta_pp": 38.888888888888886,
+    "CP2_score_delta_pp": -11.111111111111114,
+    "F2_falsifier_status_delta": "Mistral=FIRED (17 critical) \u2192 Llama=FIRED (13 critical) \u2014 still FIRED but ~24% fewer critical violations",
+    "verdict_band_change": "Mistral=RED \u2192 Llama=RED (unchanged BAND but improved internals)"
+  },
+  "additional_cost_usd": 1.77,
+  "cumulative_session_cost_usd_estimate": "~$5.57 (cp2 baseline $3.80 + this round $1.77)",
+  "honest_C3_disclosures": [
+    "Suite 1 (paradigm v11): NOT a fresh adapter-loaded re-run on Llama+r14 \u2014 base Llama-3.1 v11 measurements are read from state/v10_benchmark_v4/llama/ and state/v10_phi_v3_canonical/llama/. v11 8-axis is substrate-level (LoRA-largely-invariant) per same logic as cp2 baseline \u00a71 disclosure.",
+    "Suite 1 G3 PhiStar method-flip: phi_star_min via v1 method = -15.0536 strict-FAIL; via v3 canonical = +5.0868 PASS. The v3 canonical metric is the resolved-method per .roadmap #161 + tool/anima_phi_v3_canonical.hexa. Reporting BOTH for honest method-disclosure.",
+    "Suite 3 (V0/V1/V2/V3): V0 method = SVD over phi_vecs (phi-template projection of h_last). V1 phi_mip_proxy is a (S^2[0]-mean(S^2))/(S^2[0]+mean(S^2)) concentration measure \u2014 Llama at 0.754 vs Mistral 0.069 indicates Llama spectrum is DRAMATICALLY more concentrated. V2/V3 NOT directly measurable on Llama (no preserve/distractor pair prompts in h_last_raw schema).",
+    "Suite 4 (JSD): FRESH POD MEASUREMENT \u2014 vLLM Llama-3.1-8B + llama31_r14 LoRA (max_lora_rank=64), 20 prompts \u00d7 20 samples \u00d7 2 models, T=0.7 top_p=0.9, whitespace-tokenized JSD. Same method as cp2 baseline.",
+    "Suite 5 (\u03c6_4path): Re-uses Path 3 verdict (state/red_to_green_path3_phi_4path_4substrate_2026_05_01/verdict.json) \u2014 already commissioned the true 4-substrate measurement INCLUDING Llama-3.1+r14 as p2. No fresh inference for this suite in this round.",
+    "Suite 6 (14-gate): tile-projection method on Llama h_last from Path 3 (extracted 2026-05-01 fresh on RTX A6000 community pod aew3k2cwjcop2m). Applied SAME consciousness_laws.json severity policy as cp2 baseline. L9 phi_lang>0 only (no gen_text in h_last_raw schema, undercounting same as Path 4 disclosure).",
+    "Suite 7 (V_phen): GWT_4D from gwt_llama31_r14_run/gwt_llama31_r14.json (pre-existing pod-emitted 4D attention entropy 0.230). GWT_struct = Gram-spectrum entropy proxy as in cp2 baseline (0.548). LZ/HOT/mirror/predictive computed on Llama h_last \u2014 HOT proxy assumes softmax-over-h_last (Llama distribution flatter than Mistral, so HOT mean lower).",
+    "Suite 7 HOT method: HOT 'top1 mean prob' uses softmax over 256-D h_last \u2014 this is a structural proxy, NOT a token-level top1 prob from generation. Same proxy as cp2 baseline; method-honest about what flips.",
+    "Llama-3.1-8B HF gate: REQUIRED HF token (gated repo). Successfully accessed via dancinlife@dancinlab org token. NO model substitution needed.",
+    "Pod cost attribution: $1.77 fresh on H100 SXM, 35.5 min total. Includes Llama-3.1-8B cold HF download (~5 min, cached after), vLLM startup with --enforce-eager (DeepGEMM FP8 backend missing \u2014 disabled), JSD measurement (~3 min), tear-down. No idle time; auto-removed immediately.",
+    "Reused data sources (no fresh cost): Path 1 v3 canonical phi_star (Suite 1 G3), Path 3 Llama h_last + 4-substrate spectra (Suites 5, 6, 7 LZ/HOT/mirror/predictive), gwt_llama31_r14 (Suite 7 GWT 4D), an11b_llama31_r14_run lora_eigen (Suite 3 V0/V1), local LoRA adapter md5 b7e454ca... for Suite 2.",
+    "Race isolation: ALL writes confined to state/red_to_green_substrate_swap_llama31_2026_05_01/. No edits to alpha pod (lzw79649ob80uk preserved), no edits to cp2_consciousness_r14_remeasure_2026_05_01/, no docs/, no consciousness_laws.json."
+  ],
+  "budget_compliance": {
+    "fresh_budget_cap_usd": 2.0,
+    "fresh_actual_usd": 1.77,
+    "fresh_within_budget": true,
+    "remaining_headroom_usd": 0.23
+  },
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/red_to_green_substrate_swap_llama31_2026_05_01/llama_phi_vecs.json",
+      "state/red_to_green_substrate_swap_llama31_2026_05_01/14gate_llama_r14.json",
+      "state/red_to_green_substrate_swap_llama31_2026_05_01/an11_a_llama_frobenius.json",
+      "state/red_to_green_substrate_swap_llama31_2026_05_01/an11_b_llama_VVV.json",
+      "state/red_to_green_substrate_swap_llama31_2026_05_01/an11_c_llama_jsd_direct.json",
+      "state/red_to_green_substrate_swap_llama31_2026_05_01/v_phen_llama_r14.json",
+      "state/red_to_green_substrate_swap_llama31_2026_05_01/verdict_matrix.json"
+    ],
+    "did_not_touch": [
+      "alpha pod lzw79649ob80uk (Mistral-r14, owned by other agent)",
+      "state/cp2_consciousness_r14_remeasure_2026_05_01/* (other agent's directory)",
+      "state/red_to_green_path1_substrate_swap_2026_05_01/* (read-only)",
+      "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/* (read-only)",
+      "state/red_to_green_path4_14gate_l1_cross_backbone_2026_05_01/* (read-only)",
+      "anima/config/consciousness_laws.json (no severity edit)",
+      "any docs (no .md edits)"
+    ]
+  },
+  "closure_verdict": "Llama-3.1-8B + llama31_r14 SUBSTRATE SWAP measured: AGI weighted score 41.7% (Mistral was 22.2%); CP2 weighted score 61.1% (Mistral was 72.2%); F2 falsifier still FIRED (13 critical) but down from 17. L1 holo_positivity FLIPS 0/16\u21929/16 \u2014 fills Path 4 data gap; ranks 2nd of 5 backbones (Mistral-Nemo 15 > Llama 9 > Qwen3 6 > Qwen2.5/Mistral-7B 0). Path 1 +5.09 \u03c6* CONFIRMED on direct re-read. Verdict band: RED (F2 override)."
+}

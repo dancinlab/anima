@@ -1,0 +1,38 @@
+[cond.9 / F-QM-2-TOMO-9] live verdict run
+  bridge: /Users/ghost/core/qmirror/modules/_python_bridge/process_tomography_runner.py
+  python: /Users/ghost/etc/anima-quantum/.venv/bin/python3
+  shots = 8000, seed = 2026
+  gates = ['H', 'X', 'Y', 'Z', 'S', 'T', 'CNOT']
+
+exit=0 wall_total=8.68s
+stderr (first 400 chars): Input channel is not CP. Choi-matrix has negative eigenvalues: [-0.0176842]
+Input channel is not CP. Choi-matrix has negative eigenvalues: [-0.0176842]
+Input channel is not CP. Choi-matrix has negative eigenvalues: [-0.01165629 -0.00179028]
+Input channel is not CP. Choi-matrix has negative eigenvalues: [-0.01165629 -0.00179028]
+Input channel is not CP. Choi-matrix has negative eigenvalues: [-0.011
+
+=== AGGREGATE VERDICT ===
+verdict   = PASS
+n_pass    = 7 / 7
+engine    = qiskit_aer
+
+=== PER-GATE FIDELITY MATRIX ===
+gate   n  pf         avg_gf     shots  settings   preps  circs  wall    PASS 
+H      1  1.00197    1.00131    8000   3          4      12     0.81    YES  
+X      1  1.00009    1.00006    8000   3          4      12     0.45    YES  
+Y      1  0.99991    0.99994    8000   3          4      12     0.45    YES  
+Z      1  1.00053    1.00035    8000   3          4      12     0.44    YES  
+S      1  0.99991    0.99994    8000   3          4      12     0.44    YES  
+T      1  1.00001    1.00001    8000   3          4      12     0.45    YES  
+CNOT   2  0.99918    0.99934    8000   9          16     144    5.28    YES  
+
+fidelity_min  = 0.99918
+fidelity_mean = 1.00023
+fidelity_threshold = 0.99
+
+wrote /Users/ghost/core/anima/state/qmirror_2_cond9_tomography_2026_05_03/per_gate_fidelity.json
+wrote /Users/ghost/core/anima/state/qmirror_2_cond9_tomography_2026_05_03/choi_matrices.npz
+wrote /Users/ghost/core/anima/state/qmirror_2_cond9_tomography_2026_05_03/verdict.json
+
+__QMIRROR_PROCESS_TOMOGRAPHY_COND9__ PASS
+F-QM-2-TOMO-9 = PASS  (cond.9 MET)

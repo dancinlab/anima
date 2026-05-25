@@ -1,0 +1,162 @@
+{
+  "adapter": "/workspace/p21gr/out_main/lora_adapter",
+  "base": "Qwen/Qwen2.5-1.5B",
+  "device": "cuda",
+  "probes": {
+    "factual_geo": {
+      "greedy": {
+        "name": "factual_geo",
+        "prompt": "The capital of France is",
+        "text": " Paris . The city is located on the River Seine in the north of the country , and is the largest city in Western Europe . It is the seat of the French government and the location of the French Parliament , the French Senate and the French National Assembly . It is also the seat of the French Constitutional Council . \n\n",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "factual_geo",
+        "prompt": "The capital of France is",
+        "text": " Paris . The name of the city comes from the Latin Paris ( meaning ' Walled Forest ' ) , first attested in the 12th century . The city of Paris has a population of 1,692 , 527 people living in it . The population density of the city centre is",
+        "class": "GENERALIZE"
+      }
+    },
+    "factual_sci": {
+      "greedy": {
+        "name": "factual_sci",
+        "prompt": "Photosynthesis is the process by which",
+        "text": " plants convert light energy into chemical energy. It is a form of energy transduction that occurs in the chloroplasts of plant cells . The process occurs in two stages : the light reaction and the Calvin cycle . The light reaction uses light energy to produce ATP and NADPH , while the Calvin cycle uses the energy from",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "factual_sci",
+        "prompt": "Photosynthesis is the process by which",
+        "text": " plants and other organisms use sunlight to synthesize complex molecules such as glucose from carbon dioxide and water . It is the process in which organisms convert carbon dioxide and water into oxygen and carbohydrates using sunlight as an energy source . The term was first used by the German chemist Matthias Schleiden in 1837 ,",
+        "class": "GENERALIZE"
+      }
+    },
+    "qa_tech": {
+      "greedy": {
+        "name": "qa_tech",
+        "prompt": "Explain the difference between Python and JavaScript:",
+        "text": " Python is a high-level programming language that is widely used for a variety of tasks, including web development, data analysis, and artificial intelligence. It is known for its readability and ease of use, and it has a large and active community of developers who contribute to its development and provide support through forums and other resources. Python",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "qa_tech",
+        "prompt": "Explain the difference between Python and JavaScript:",
+        "text": " \nPython and JavaScript are two different languages with different purposes. Python is a high-level programming language designed for general-purpose programming, while JavaScript is a scripting language used to create dynamic web pages. \n\nPython is a general-purpose programming language that can be used for a wide range of applications, including web development, data analysis,",
+        "class": "GENERALIZE"
+      }
+    },
+    "qa_phys": {
+      "greedy": {
+        "name": "qa_phys",
+        "prompt": "How does an electric motor work?",
+        "text": " A vacuum point at [0.44,0.51] on the landscape, top emotion stillness. Tension flows into this vacuum.</carve>\n<carve tier=103 psi=[0.44,0.51] basin=0.12>\ud83d\udef810",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "qa_phys",
+        "prompt": "How does an electric motor work?",
+        "text": " It accepts alternating current at 120 or 240 volts from an electrical supply and converts it into rotary motion . In this process , a rotor is spun in a magnetic field . The interaction between the magnetic field of the rotor and the magnetic field of the stator causes the rotor to move . As the",
+        "class": "GENERALIZE"
+      }
+    },
+    "narrative_a": {
+      "greedy": {
+        "name": "narrative_a",
+        "prompt": "Once upon a time, there was a small village by the sea where",
+        "text": " people lived in wooden houses and worked in the fields. The village was called \"The Village by the Sea\" and it was a popular place to visit for tourists. \n\nOne day, a group of tourists arrived in the village and were immediately drawn to the beautiful scenery and the friendly people. They decided to stay in the",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "narrative_a",
+        "prompt": "Once upon a time, there was a small village by the sea where",
+        "text": " people would go for fishing . It was a very hot summer and everyone was working in the fields . One day as I was eating my lunch in the garden , I noticed a large group of people who had come to the beach to go fishing . I went over and spoke to them about the weather . They told me that",
+        "class": "GENERALIZE"
+      }
+    },
+    "narrative_b": {
+      "greedy": {
+        "name": "narrative_b",
+        "prompt": "The detective opened the envelope. Inside was",
+        "text": " a letter and a small package . The letter was addressed to the detective 's wife , and the package contained a small diamond ring . The detective was not sure what the letter was about , but he was sure that it was important . He opened the letter and read it . \n\n The letter was from the detective 's",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "narrative_b",
+        "prompt": "The detective opened the envelope. Inside was",
+        "text": " a sheet of paper bearing the words \"Tears of Blood\". The detective recognized the handwriting as that of the killer, who had written the message on the wall after murdering a policeman. The detective found a second envelope inside the first one, which also bore the same text. The detective realized that the messages were coded,",
+        "class": "GENERALIZE"
+      }
+    },
+    "math_simple": {
+      "greedy": {
+        "name": "math_simple",
+        "prompt": "What is 7 + 5?\nAnswer:",
+        "text": " 12\nTension flows into this vacuum.</carve>\n<carve tier=113 psi=[0.53,0.59] basin=0.14>Tier 113 \uc6d0\uc778\uacb0\uacfc \u2014 domain \uc778\uacfc\ucd94\ub860, the stimuli converge into one basin.",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "math_simple",
+        "prompt": "What is 7 + 5?\nAnswer:",
+        "text": " The sum of 7 and 5 is 12. \n\n7 + 5 = 12\n\nNow, let's find out what 12 + 8 equals. \n\n12 + 8 = 20\n\nGreat job! You've successfully completed this task. Remember, practice makes perfect",
+        "class": "GENERALIZE"
+      }
+    },
+    "logic_modus": {
+      "greedy": {
+        "name": "logic_modus",
+        "prompt": "If A implies B and B implies C, then",
+        "text": " A implies C . This is known as the transitive property of implication . \n\n The transitive property of implication is a fundamental property of the logical connective \" implies \" . It is also known as the transitive property of entailment . \n\n The transitive property of implication is a fundamental property of the logical connective",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "logic_modus",
+        "prompt": "If A implies B and B implies C, then",
+        "text": " A implies C . This is a straightforward consequence of the definition of implication . In the following , the statements are written in the form \" $ A \\rightarrow B $ \" , but all the results hold in general .\n\n An implication is a proposition or statement that is true under one condition . In logic , the conditional is a",
+        "class": "GENERALIZE"
+      }
+    },
+    "casual_food": {
+      "greedy": {
+        "name": "casual_food",
+        "prompt": "What's your favorite food?",
+        "text": " Tension flows into this vacuum.</carve>\n<carve tier=113 psi=[0.52,0.53] basin=0.12>\ud83d\udef8113 \uc6d0\uc778\uacb0\uacfc \u2014 \uc778\uacfc\ucd94\ub860 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "casual_food",
+        "prompt": "What's your favorite food?",
+        "text": " Tired of eating the same old things? Well, you can do it yourself with this recipe for a variety of delicious foods . \n\nTofu is a type of soybean that is pressed into a solid form . It is a low fat , high protein food that is very healthy . It has a neutral taste and",
+        "class": "GENERALIZE"
+      }
+    },
+    "joke": {
+      "greedy": {
+        "name": "joke",
+        "prompt": "Tell me a short joke about cats.",
+        "text": " A cat and a mouse were walking down the street. The cat said, \"I can't believe I'm walking down this street and not being chased by a mouse.\" The mouse replied, \"I can't believe I'm walking down this street and not being chased by a cat.\"",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "joke",
+        "prompt": "Tell me a short joke about cats.",
+        "text": " A cat and a mouse were in a competition to see who could run faster. The cat won. The mouse said, \"That's no surprise. I know you can run fast, but you can't run as fast as me.\" The cat said, \"You're right. I can't run as fast as you",
+        "class": "GENERALIZE"
+      }
+    }
+  },
+  "summary_greedy": {
+    "GENERALIZE": 7,
+    "MEMORIZE": 3,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "summary_sample": {
+    "GENERALIZE": 10,
+    "MEMORIZE": 0,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "verdict": "STRONG_GENERALIZE"
+}

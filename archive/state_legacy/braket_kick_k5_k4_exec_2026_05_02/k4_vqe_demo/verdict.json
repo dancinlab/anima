@@ -1,0 +1,40 @@
+{
+  "task": "K4_F1_weight_VQE_on_SV1",
+  "ts_utc": "2026-05-02T14:39:15Z",
+  "backend": "sv1",
+  "n_qubits": 3,
+  "n_iter": 50,
+  "n_sv1_tasks": 110,
+  "shots_per_task": 200,
+  "best_weights_quantum": [
+    0.12745158592670805,
+    0.6078423298755004,
+    0.26470608419779157
+  ],
+  "best_f1_quantum": 0.6807107454585918,
+  "best_weights_classical_slsqp": [
+    1.6653345369377348e-16,
+    2.7755575615628914e-17,
+    0.9999999999999999
+  ],
+  "best_f1_classical_slsqp": 1.0,
+  "expected_optimal_w": [
+    0,
+    0,
+    1
+  ],
+  "expected_optimal_f1": 1.0,
+  "f1_diff_quantum_vs_classical": 0.3192892545414082,
+  "wall_quantum_sec": 421.67,
+  "wall_classical_sec": 0.006073,
+  "wall_quantum_classical_ratio": 69433.6,
+  "quantum_finds_same_simplex_corner_within_0_20": false,
+  "cost_usd_actual": 0.0,
+  "verdict": "DEMO_PASS_pipeline_wired",
+  "honest_c3": [
+    "(C3-1) 3-qubit VQE for 3-dim simplex search is WEAK quantum-supremacy regime - classical SLSQP solves in <5 iters / <1ms.",
+    "(C3-2) Wall-clock: quantum 421.67s vs classical 0.006073s = 69434x SLOWER. NO quantum advantage; pure methodology figure for paper appendix.",
+    "(C3-3) Quantum VQE (50 iters, 200 shots/eval, softmax simplex projection) failed to reach optimal corner w*=(0,0,1) within budget; converged to interior w=(0.127, 0.608, 0.265) F1=0.681 vs classical exact F1=1.000. Demonstrates BOTH that pipeline is wired correctly AND that 3-qubit ansatz + softmax projection is suboptimal for simplex-corner search. Methodology figure only - does NOT establish quantum competitiveness."
+  ],
+  "notes": "F1 quantum > F1 heuristic (0.68 > 0.475) confirms gradient descent is moving in correct direction; failure to reach corner is expected limitation of softmax simplex projection at this depth/shot count."
+}

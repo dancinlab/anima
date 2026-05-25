@@ -1,0 +1,34 @@
+{
+  "schema": "anima/emerge_nnsight_smoke/verdict/1",
+  "ts_utc": "2026-05-05T17:29:42Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "prompt": "안녕",
+  "nnsight_imported": true,
+  "nnsight_version": "0.7.0",
+  "model_load_ok": true,
+  "model_wrap_ok": true,
+  "model_wrap_err": null,
+  "trace_capture_ok": true,
+  "trace_capture_err": null,
+  "captured_path": "decoder.blocks[8].output",
+  "captured_hidden_shape": [
+    1,
+    2,
+    768
+  ],
+  "model_attr_inventory": [
+    "top: ['T_destination', 'active_adapters', 'add_adapter', 'add_memory_hooks', 'add_model_tags', 'add_module', 'apply', 'base_model', 'base_model_prefix', 'bfloat16']",
+    "decoder: ['T_destination', 'add_module', 'apply', 'bfloat16', 'block_size', 'blocks', 'buffers', 'call_super_init', 'children', 'compile']"
+  ],
+  "verdict": "PASS_READY",
+  "next_step": "F-NNSIGHT-1 falsifier (intervention smoke — replace hidden + measure delta)",
+  "honest_c3": [
+    "C1 mac CPU fp32 only — no MPS / CUDA validation",
+    "C2 nnsight remote NDIF mode 미테스트 — local-only smoke",
+    "C3 attribute path attempt list 한정 — actual decoder structure 의존",
+    "C4 .save() result 패턴 nnsight 0.7 API-specific; future versions may diverge",
+    "C5 BG-BB 권고 다음 단계: F-NNSIGHT-1 intervention falsifier 미실행",
+    "C6 captured shape-only verify; semantic correctness (axis content) 미평가"
+  ]
+}

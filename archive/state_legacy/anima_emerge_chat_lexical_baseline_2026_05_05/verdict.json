@@ -1,0 +1,39 @@
+{
+  "schema": "anima/emerge_chat_lexical_baseline/verdict/1",
+  "ts_utc": "2026-05-05T17:54:35Z",
+  "task_id": "anima_emerge_chat_lexical_baseline_2026_05_05",
+  "platform": "mac CPU (.venv-eeg python3.12 fp32)",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "prompt": "안녕",
+  "n_emit_tokens": 50,
+  "vocab_size": 64000,
+  "korean_token_count_in_vocab": 5701,
+  "load_sec": 21.2,
+  "emit_sec": 44.0,
+  "comparison": {
+    "clm_korean": 0,
+    "clm_korean_ratio": 0.0,
+    "clm_control": 50,
+    "clm_total_chars": 50,
+    "random_vocab_korean": 15,
+    "random_korean_ratio": 0.0682,
+    "random_vocab_control": 0,
+    "random_vocab_total_chars": 220,
+    "korean_random_korean": 124,
+    "gold_korean": 23,
+    "gold_total_chars": 32
+  },
+  "clm_better_than_random_for_korean_prompt": false,
+  "clm_worse_than_random_overall": true,
+  "clm_more_control_chars_than_random": true,
+  "verdict": "CLM_WORSE_THAN_RANDOM",
+  "issue_115_classification": "ARCHITECTURAL_DEGENERATE_WORSE_THAN_RANDOM",
+  "honest_c3": [
+    "C1 mac CPU fp32, single load — no GPU comparison",
+    "C2 50 tokens 한정 — small sample variance, single seed=42 for random baselines",
+    "C3 'random_vocab' is uniform over all 64K pieces — ignores natural unigram frequency distribution; a true unigram baseline would weight by training-corpus frequency, but we have no calibrated unigram counts on hand",
+    "C4 single prompt '안녕' — Korean prompt biases expected emit toward Korean; a balanced multi-prompt cross-language sweep would harden the verdict",
+    "C5 'better/worse' = Korean character count delta; this is a LEXICAL bookkeeping metric, NOT semantic content. CLM emit may have higher Korean count yet still produce gibberish; conversely random Korean-only may have 100% Korean characters while being maximally meaningless",
+    "C6 SentencePiece byte-fallback tokens (control chars, 0x00-0x1F bytes) are part of the 64K vocab and decode to control characters — random vocab sampling will have non-zero control-char rate by construction, not by substrate fault"
+  ]
+}

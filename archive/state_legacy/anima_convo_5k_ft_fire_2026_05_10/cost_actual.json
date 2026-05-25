@@ -1,0 +1,66 @@
+{
+  "fire_date": "2026-05-10",
+  "bg": "bg_convo_5k_ft_fire_2026_05_10",
+  "provider": "runpod",
+  "pod_id": "xsclq12mij2ilj",
+  "gpu": "1× NVIDIA H100 80GB HBM3 (SXM)",
+  "cloud_type": "SECURE",
+  "image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "hourly_rate_usd": 2.99,
+  "balance_before_usd": 327.1805607438,
+  "balance_after_usd": 325.8099896244,
+  "actual_cost_usd": 1.3705711194,
+  "envelope_authorized_usd": "5-20",
+  "envelope_status": "WELL_UNDER (1.37 vs 5-20 cap, 27%-7% of envelope)",
+  "estimated_cost_usd": 2.50,
+  "estimate_actual_ratio": 0.548,
+  "wall_clock": {
+    "pod_create_to_delete_min": 22,
+    "ssh_boot_verify_min": 0.5,
+    "uploads_min": 3,
+    "cuda_dry_run_min": 0.5,
+    "ft_train_min": 6.82,
+    "ckpt_pull_min": 4,
+    "pod_delete_min": 0.1
+  },
+  "ft_run": {
+    "steps": 10000,
+    "step_time_s": 0.0409,
+    "wall_clock_s": 409.04,
+    "loss_first": 4.9243,
+    "loss_last": 1.3985,
+    "loss_delta": 3.5259,
+    "loss_decreased": true,
+    "grad_norm_first": 3.2383,
+    "grad_norm_last": 1.1348,
+    "grad_flow_ok": true,
+    "params_total": 18130176,
+    "params_trainable": 18130176,
+    "corpus_bytes": 76311787,
+    "windows": 298091,
+    "config": {
+      "batch": 32,
+      "seq": 256,
+      "lr_max": 1e-05,
+      "lr_min": 1e-06,
+      "warmup": 500,
+      "cosine": true
+    }
+  },
+  "falsifiers": {
+    "F-FIRE-1_resource_cli_auth_missing": "FALSE (runpod.api_key + huggingface.token both available)",
+    "F-FIRE-2_upload_fail": "FALSE (all 4 uploads + sha verify PASS)",
+    "F-FIRE-3_loss_diverge": "FALSE (loss 4.92 → 1.40, monotonic decrease, never 2× pre-FT)",
+    "F-FIRE-4_pod_delete_fail": "FALSE (deleted=true, pod list empty)",
+    "F-FIRE-5_cost_overrun": "FALSE ($1.37 << $20 cap, 14× headroom)",
+    "F-FIRE-6_post_ft_ko_zero": "FALSE — chat-cap RECOVERED (post-FT step_10000 ko_max=0.75, 77/120 trials emit Korean, vs pre-FT 1/120, ko_count_delta=+20, ko_ratio_delta=+0.7321)"
+  },
+  "h100_safety_own_30": {
+    "ckpt_pull_pre_delete": true,
+    "sha256_verified": true,
+    "remote_local_match": true,
+    "post_ft_ckpt_sha": "6b81468406d8e251655af7dfa4e7d9ddad0e84a586e52de3a7eb0352aa8d4a9d",
+    "step_10000_ckpt_sha": "a640cba0e7d9fc4bf3619c3ad4c92b8726eec33b064c01a6b67f4caf97af9f99",
+    "intermediate_ckpts_pulled": ["step_2500", "step_5000", "step_7500", "step_10000", "final"]
+  }
+}

@@ -1,0 +1,18 @@
+verify_phi_native — byte-equal harness skeleton (PHI domain milestone #4)
+  fixture: 5 Wolfram rules × n_cells=8 × dim=8 × n_bins=4
+  mode   : REAL (phi_native present)
+
+  F-NATIVE-RULE5  (5 Wolfram rules × byte-equal phi_c vs phi_h):
+    rule=110  phi_c=4.90943e-06  phi_h=4.9773e-09  byte_equal=false
+    rule=30  phi_c=0.422588  phi_h=0.422585  byte_equal=false
+    rule=250  phi_c=4.90943e-06  phi_h=4.9773e-09  byte_equal=false
+    rule=184  phi_c=0.585839  phi_h=0.585842  byte_equal=false
+    rule=60  phi_c=0.790029  phi_h=0.790028  byte_equal=false
+    pass=0  fail=5  stub_mode=false (real)
+
+  F-NATIVE-DET    (c_measure_phi byte-identical on 2 calls):
+    phi_a=4.90943e-06  phi_b=4.90943e-06  byte_equal=true
+
+=== verify_phi_native skeleton complete ===
+  STUB→REAL switch: edit `_USE_STUB()` to return false +
+  uncomment the phi_native_spatial call in rule_5_byte_equal_test.

@@ -1,0 +1,709 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-clm-eeg/tool/eeg_to_token_cyborg.hexa
+//
+//  PURPOSE
+//    B12 cyborg paradigm — EEG signal → discrete hex token sequence.
+//    Reverse direction of anima main track (LLM consciousness × EEG correlate):
+//    here we treat EEG as a "biological prompt" → emit a 16-symbol ASCII token
+//
+//    1. Read 16-ch EEG arrays from JSON (an11_b_eeg_ingest schema) or .npy.
+//    2. Per-channel median binarize (above_median=1, else 0). SAME primitive
+//       as clm_eeg_lz76_real.hexa — reuse audited kernel.
+//    3. Group 16 channels into 4 groups of 4 channels each. For each
+//       timepoint t and group g, pack 4 binary bits into a 4-bit nibble
+//       n_{g,t} = (b_{g0,t}<<3) | (b_{g1,t}<<2) | (b_{g2,t}<<1) | b_{g3,t}.
+//    4. Time downsample by partitioning N samples into S segments
+//       (default S=50). For each (g, segment) pair, emit the MODE nibble
+//       across the segment's samples (lowest-nibble tie-break → deterministic).
+//    5. Emit S × 4 = 200 hex chars (alphabet "0123456789abcdef") in
+//       segment-major × group-minor order.
+//
+//                                                 selftest two-run byte-compare.
+//    F2 round-trip loss > 50%                  → REFUTED on structured selftest
+//                                                 (square-wave period ≪ N/S).
+//    F3 alphabet > 256 chars                   → REFUTED structurally (16<256).
+//    F4 sequence length > 1000 chars           → REFUTED structurally
+//                                                 (S=50 frozen → 200 chars).
+//    F5 LLM (Claude CLI) emits "garbage"       → DEFERRED — sky-side experiment;
+//                                                 user runbook in design doc §7.
+//
+//  RAW#73 STRUCTURAL ADMISSIBILITY
+//    All steps are deterministic ℤⁿ → ℤᵐ functions:
+//      median (total order, index tie-break) · binarize (predicate) ·
+//      nibble pack (bit-shift) · segment mode (count + argmin tie-break) ·
+//      hex emit (fixed lookup). No EM, no MCMC, no RNG. SEAL: ADMISSIBLE.
+//
+//  RAW#10 HONEST C3
+//    This tool produces a token string. It does NOT prove the string carries
+//    semantic consciousness information. F5 (LLM interprets meaningfully)
+//    is a separate, unproven hypothesis. See design doc §9.
+//
+//  NO API
+//    This tool emits text only. It NEVER calls api.anthropic.com. The user
+//    pastes the token string into the Claude CLI manually.
+//
+//  RAW
+//
+//  @resolver-bypass(reason="darwin-native: .venv-eeg/bin/python for .npy load — same pattern as clm_eeg_lz76_real")
+// ════════════════════════════════════════════════════════════════════════════
+
+let DEFAULT_SEGMENTS         = 50
+let MAX_SEGMENTS             = 250          // hard cap → token len ≤ 1000
+let LOSS_MAX_PERMILLE        = 500          // F2: ≤50% on structured selftest
+let ALPHABET_HEX             = "0123456789abcdef"
+let ALPHABET_SIZE            = 16
+let GROUP_SIZE               = 4            // 16 channels / 4 groups
+let GROUP_COUNT              = 4
+
+// ─── env helpers ────────────────────────────────────────────────────────────
+fn env_str(key: string, default_val: string) -> string {
+    let s = env(key)
+    if s == "" { return default_val }
+    return s
+}
+
+// ─── string / digit helpers ─────────────────────────────────────────────────
+fn find_in_str(s: string, needle: string) -> int {
+    let n = len(s)
+    let m = len(needle)
+    if m <= 0 { return 0 }
+    if n < m { return -1 }
+    let mut i = 0
+    while i <= n - m {
+        let mut j = 0
+        let mut ok = 1
+        while j < m {
+            if s[i + j] != needle[j] {
+                ok = 0
+                j = m
+            }
+            j = j + 1
+        }
+        if ok == 1 { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+fn is_digit_ch(c: string) -> bool {
+    if c == "0" { return true }
+    if c == "1" { return true }
+    if c == "2" { return true }
+    if c == "3" { return true }
+    if c == "4" { return true }
+    if c == "5" { return true }
+    if c == "6" { return true }
+    if c == "7" { return true }
+    if c == "8" { return true }
+    if c == "9" { return true }
+    return false
+}
+
+fn digit_val(c: string) -> int {
+    if c == "0" { return 0 }
+    if c == "1" { return 1 }
+    if c == "2" { return 2 }
+    if c == "3" { return 3 }
+    if c == "4" { return 4 }
+    if c == "5" { return 5 }
+    if c == "6" { return 6 }
+    if c == "7" { return 7 }
+    if c == "8" { return 8 }
+    if c == "9" { return 9 }
+    return -1
+}
+
+fn hex_char(v: int) -> string {
+    if v < 0 { return "0" }
+    if v >= ALPHABET_SIZE { return "f" }
+    return ALPHABET_HEX[v]
+}
+
+// ─── median (rank-by-counting on a slice; identical to LZ76 SSOT) ───────────
+fn median_slice(xs: list, base: int, n: int) -> int {
+    if n <= 0 { return 0 }
+    if n == 1 { return xs[base] }
+    let target_rank = n / 2
+    let mut best = xs[base]
+    let mut i = 0
+    while i < n {
+        let v = xs[base + i]
+        let mut lt = 0
+        let mut le = 0
+        let mut j = 0
+        while j < n {
+            let w = xs[base + j]
+            if w < v { lt = lt + 1 }
+            if w <= v { le = le + 1 }
+            j = j + 1
+        }
+        if lt <= target_rank {
+            if target_rank < le {
+                best = v
+                i = n
+            }
+        }
+        i = i + 1
+    }
+    return best
+}
+
+fn synth_channel(ch: int, n_samples: int) -> list {
+    let mut out = []
+    let mut h = 2166136261 + ch * 2654435761
+    let mut i = 0
+    while i < n_samples {
+        h = (h * 16777619) + (i + 1) * 2654435761
+        h = h % 2147483647
+        if h < 0 { h = h + 2147483647 }
+        out.push(h % 1024)
+        i = i + 1
+    }
+    return out
+}
+
+fn synth_channel_structured(ch: int, n_samples: int) -> list {
+    let mut out = []
+    let period = 64
+    let mut i = 0
+    while i < n_samples {
+        let phase = (i + ch * 4) % period
+        if phase < period / 2 {
+            out.push(900)
+        } else {
+            out.push(100)
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ─── ISO UTC ts / date ──────────────────────────────────────────────────────
+fn now_iso() -> string {
+    return exec("date -u +%Y-%m-%dT%H:%M:%SZ").trim()
+}
+
+fn now_date_utc() -> string {
+    return exec("date -u +%Y-%m-%d").trim()
+}
+
+fn sha256_of_file(path: string) -> string {
+    if path == "" { return "" }
+    let cmd = "shasum -a 256 \"" + path + "\" 2>/dev/null | awk '{print $1}'"
+    let h = exec(cmd).trim()
+    if h == "" { return "unavailable" }
+    return h
+}
+
+// ─── parse raw_arrays from ingest JSON ──────────────────────────────────────
+fn parse_raw_arrays(blob: string) -> list {
+    let mut ret = []
+    let key_pos = find_in_str(blob, "\"raw_arrays\"")
+    if key_pos < 0 { ret.push(0); ret.push(0); return ret }
+    let n = len(blob)
+    let mut p = key_pos
+    while p < n {
+        if blob[p] == "[" { p = p + 1; break }
+        p = p + 1
+    }
+    let mut depth = 1
+    let mut samples = []
+    let mut samp_per_ch = -1
+    let mut chan_count = 0
+    let mut chan_samp_count = 0
+    let mut accum = 0
+    let mut have_digits = 0
+    let mut neg = 0
+    let mut frac = 0
+    while p < n {
+        let c = blob[p]
+        let mut handled = 0
+        if c == "[" { depth = depth + 1; p = p + 1; handled = 1 }
+        if handled == 0 && c == "]" {
+            if have_digits == 1 {
+                let v = if neg == 1 { -accum } else { accum }
+                samples.push(v)
+                chan_samp_count = chan_samp_count + 1
+                have_digits = 0; neg = 0; accum = 0; frac = 0
+            }
+            if depth == 2 {
+                if samp_per_ch < 0 { samp_per_ch = chan_samp_count }
+                chan_count = chan_count + 1
+                chan_samp_count = 0
+            }
+            depth = depth - 1
+            p = p + 1
+            if depth <= 0 { p = n }
+            handled = 1
+        }
+        if handled == 0 && c == "," {
+            if have_digits == 1 {
+                let v = if neg == 1 { -accum } else { accum }
+                samples.push(v)
+                chan_samp_count = chan_samp_count + 1
+                have_digits = 0; neg = 0; accum = 0; frac = 0
+            }
+            p = p + 1
+            handled = 1
+        }
+        if handled == 0 && c == "-" && have_digits == 0 {
+            neg = 1; p = p + 1; handled = 1
+        }
+        if handled == 0 && c == "." {
+            frac = 1; p = p + 1; handled = 1
+        }
+        if handled == 0 && is_digit_ch(c) {
+            if frac == 0 { accum = accum * 10 + digit_val(c); have_digits = 1 }
+            p = p + 1
+            handled = 1
+        }
+        if handled == 0 { p = p + 1 }
+    }
+    if samp_per_ch < 0 { samp_per_ch = 0 }
+    ret.push(chan_count)
+    ret.push(samp_per_ch)
+    let mut k = 0
+    let total = chan_count * samp_per_ch
+    while k < total {
+        ret.push(samples[k])
+        k = k + 1
+    }
+    return ret
+}
+
+// ─── JSONL audit append ─────────────────────────────────────────────────────
+fn append_jsonl(path: string, line: string) {
+    let scratch = "state/.eeg_token_cyborg_audit_row.tmp"
+    write_file(scratch, line + "\n")
+    let cmd = "p=" + path + "; mkdir -p $(dirname $p); cat " + scratch + " >> $p; rm -f " + scratch
+    let _ = exec(cmd)
+}
+
+// ─── argv parser ────────────────────────────────────────────────────────────
+fn _flags_only_argv() -> list {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut starts_dash = 0
+        if len(a) >= 1 {
+            if a[0] == "-" { starts_dash = 1 }
+        }
+        if starts_dash == 1 { break }
+        start = start + 1
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-clm-eeg/tool/eeg_to_token_cyborg.hexa [flags]")
+    eprintln("flags:")
+    eprintln("  --selftest                    synthetic-data tokenization (no hardware)")
+    eprintln("  --selftest-mode <mode>        random | structured  (default: random)")
+    eprintln("  --input <path>                .json (an11_b ingest schema) input")
+    eprintln("  --segments <S>                segments per 60s (default 50, max 250)")
+    eprintln("  --audit-jsonl <path>          JSONL audit append")
+    eprintln("                                (default: state/cyborg_eeg_audit/<date>_tokens.jsonl)")
+    eprintln("  --out <path>                  JSON cert output")
+    eprintln("                                (default: state/eeg_to_token_cyborg.json)")
+    eprintln("  --help                        this message")
+}
+
+// ─── main ───────────────────────────────────────────────────────────────────
+fn main() {
+    let av = _flags_only_argv()
+    let mut cli_input = ""
+    let mut cli_audit = ""
+    let mut cli_out   = ""
+    let mut cli_selftest = 0
+    let mut cli_selftest_mode = "random"
+    let mut cli_segments = DEFAULT_SEGMENTS
+    let mut want_help = 0
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { cli_selftest = 1; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = 1; i = i + 1; continue }
+        if a == "--input" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --input"); exit(2) }
+            cli_input = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--audit-jsonl" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --audit-jsonl"); exit(2) }
+            cli_audit = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--out" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --out"); exit(2) }
+            cli_out = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--selftest-mode" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --selftest-mode"); exit(2) }
+            cli_selftest_mode = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--segments" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --segments"); exit(2) }
+            cli_segments = to_int(av[i + 1]); i = i + 2; continue
+        }
+        eprintln("reason: unknown-arg: " + a)
+        _print_usage()
+        exit(2)
+    }
+    if want_help == 1 { _print_usage(); exit(0) }
+
+    if cli_segments <= 0 { cli_segments = DEFAULT_SEGMENTS }
+    if cli_segments > MAX_SEGMENTS {
+        eprintln("reason: segments-exceeds-cap: --segments=" + str(cli_segments) + " > " + str(MAX_SEGMENTS))
+        exit(2)
+    }
+
+    let mut input_path = cli_input
+    let mut out_path = cli_out
+    if out_path == "" { out_path = "state/eeg_to_token_cyborg.json" }
+    let mut audit_path = cli_audit
+    if audit_path == "" {
+        audit_path = "state/cyborg_eeg_audit/" + now_date_utc() + "_tokens.jsonl"
+    }
+
+    let is_selftest = (cli_selftest == 1)
+    let mut mode = "selftest"
+    if !is_selftest {
+        if input_path != "" { mode = "real" }
+    }
+
+    let mut n_ch = 0
+    let mut n_samp = 0
+    let mut flat = []
+    let mut input_label = "synthetic_fnv_seed"
+    let mut input_sha256 = ""
+
+    if mode == "selftest" {
+        n_ch = 16
+        // Selftest n_samp must be >= cli_segments × 4 for meaningful per-segment
+        // each segment has ~5 samples — plenty for mode under structured input.
+        n_samp = 256
+        let primary_kind = if cli_selftest_mode == "structured" {
+            "structured"
+        } else {
+            "random"
+        }
+        let mut c = 0
+        while c < n_ch {
+            let mut ch_samples = []
+            if primary_kind == "structured" {
+                ch_samples = synth_channel_structured(c, n_samp)
+            } else {
+                ch_samples = synth_channel(c, n_samp)
+            }
+            let mut s = 0
+            while s < n_samp {
+                flat.push(ch_samples[s])
+                s = s + 1
+            }
+            c = c + 1
+        }
+        input_label = "synthetic_fnv_" + primary_kind
+    } else {
+        // .json only for now (npy support deferred — same helper pattern as lz76).
+        let blob = read_file(input_path)
+        let parsed = parse_raw_arrays(blob)
+        n_ch = parsed[0]
+        n_samp = parsed[1]
+        if n_ch <= 0 || n_samp <= 0 {
+            eprintln("reason: parse-raw-arrays-empty: " + input_path)
+            eprintln("fix: 1) verify .json has \"raw_arrays\" key with 16 channels × N samples")
+            exit(3)
+        }
+        if n_ch < 16 {
+            eprintln("reason: insufficient-channels: got " + str(n_ch) + " < 16 (16-ch helmet required)")
+            exit(3)
+        }
+        let total = n_ch * n_samp
+        let mut k = 0
+        while k < total {
+            flat.push(parsed[2 + k])
+            k = k + 1
+        }
+        input_label = input_path
+        input_sha256 = sha256_of_file(input_path)
+    }
+
+    // ── per-channel median binarization ────────────────────────────────────
+    // bin_stream is laid out channels-major: bin_stream[c*n_samp + t] = bit.
+    let mut bin_stream = []
+    let mut ci = 0
+    while ci < n_ch {
+        let base = ci * n_samp
+        let med = median_slice(flat, base, n_samp)
+        let mut s2 = 0
+        while s2 < n_samp {
+            let v = flat[base + s2]
+            if v >= med { bin_stream.push(1) } else { bin_stream.push(0) }
+            s2 = s2 + 1
+        }
+        ci = ci + 1
+    }
+
+    // ── effective segments: clamp to n_samp (no empty segments) ────────────
+    let mut S = cli_segments
+    if S > n_samp { S = n_samp }
+
+    // ── per-segment per-group MODE nibble + token emit ─────────────────────
+    // tokens length = S * GROUP_COUNT. Each char ∈ ALPHABET_HEX.
+    // Reconstruction loss = bits where mode-nibble bit ≠ original bit / total bits.
+    let mut token_str = ""
+    let mut total_bits = 0
+    let mut wrong_bits = 0
+    let mut seg = 0
+    while seg < S {
+        // segment sample-index range [seg_lo, seg_hi)
+        let seg_lo = (seg * n_samp) / S
+        let mut seg_hi = ((seg + 1) * n_samp) / S
+        if seg_hi <= seg_lo { seg_hi = seg_lo + 1 }
+        if seg_hi > n_samp { seg_hi = n_samp }
+        let seg_n = seg_hi - seg_lo
+
+        let mut g = 0
+        while g < GROUP_COUNT {
+            // count how many times each nibble value appears in [seg_lo, seg_hi)
+            // for the 4-channel group (g0..g3 = 4*g .. 4*g+3).
+            let c0 = g * GROUP_SIZE + 0
+            let c1 = g * GROUP_SIZE + 1
+            let c2 = g * GROUP_SIZE + 2
+            let c3 = g * GROUP_SIZE + 3
+            let mut counts = []
+            let mut z = 0
+            while z < ALPHABET_SIZE { counts.push(0); z = z + 1 }
+            let mut t = seg_lo
+            while t < seg_hi {
+                let b0 = bin_stream[c0 * n_samp + t]
+                let b1 = bin_stream[c1 * n_samp + t]
+                let b2 = bin_stream[c2 * n_samp + t]
+                let b3 = bin_stream[c3 * n_samp + t]
+                let nib = (b0 * 8) + (b1 * 4) + (b2 * 2) + b3
+                counts[nib] = counts[nib] + 1
+                t = t + 1
+            }
+            let mut best_v = 0
+            let mut best_n = 0
+            let mut k2 = 0
+            while k2 < ALPHABET_SIZE {
+                if counts[k2] > best_n {
+                    best_n = counts[k2]
+                    best_v = k2
+                }
+                k2 = k2 + 1
+            }
+            // emit hex
+            token_str = token_str + hex_char(best_v)
+            // round-trip loss accumulation: for each sample t in segment, count
+            // how many of the 4 group bits differ from the mode-nibble's bits.
+            let mode_b0 = (best_v / 8) % 2
+            let mode_b1 = (best_v / 4) % 2
+            let mode_b2 = (best_v / 2) % 2
+            let mode_b3 = best_v % 2
+            let mut tt = seg_lo
+            while tt < seg_hi {
+                let r0 = bin_stream[c0 * n_samp + tt]
+                let r1 = bin_stream[c1 * n_samp + tt]
+                let r2 = bin_stream[c2 * n_samp + tt]
+                let r3 = bin_stream[c3 * n_samp + tt]
+                if r0 != mode_b0 { wrong_bits = wrong_bits + 1 }
+                if r1 != mode_b1 { wrong_bits = wrong_bits + 1 }
+                if r2 != mode_b2 { wrong_bits = wrong_bits + 1 }
+                if r3 != mode_b3 { wrong_bits = wrong_bits + 1 }
+                total_bits = total_bits + 4
+                tt = tt + 1
+            }
+            g = g + 1
+        }
+        seg = seg + 1
+    }
+
+    let token_len = len(token_str)
+    let mut loss_permille = 0
+    if total_bits > 0 {
+        loss_permille = (wrong_bits * 1000) / total_bits
+    }
+
+    // ── F1 determinism: re-run the inner pipeline once and byte-compare ───
+    //  belt-and-suspenders for selftest evidence.)
+    let mut token_str_2 = ""
+    let mut seg_b = 0
+    while seg_b < S {
+        let seg_lo = (seg_b * n_samp) / S
+        let mut seg_hi = ((seg_b + 1) * n_samp) / S
+        if seg_hi <= seg_lo { seg_hi = seg_lo + 1 }
+        if seg_hi > n_samp { seg_hi = n_samp }
+        let mut gb = 0
+        while gb < GROUP_COUNT {
+            let c0 = gb * GROUP_SIZE + 0
+            let c1 = gb * GROUP_SIZE + 1
+            let c2 = gb * GROUP_SIZE + 2
+            let c3 = gb * GROUP_SIZE + 3
+            let mut counts2 = []
+            let mut zz = 0
+            while zz < ALPHABET_SIZE { counts2.push(0); zz = zz + 1 }
+            let mut t2 = seg_lo
+            while t2 < seg_hi {
+                let b0 = bin_stream[c0 * n_samp + t2]
+                let b1 = bin_stream[c1 * n_samp + t2]
+                let b2 = bin_stream[c2 * n_samp + t2]
+                let b3 = bin_stream[c3 * n_samp + t2]
+                let nib = (b0 * 8) + (b1 * 4) + (b2 * 2) + b3
+                counts2[nib] = counts2[nib] + 1
+                t2 = t2 + 1
+            }
+            let mut bv = 0
+            let mut bn = 0
+            let mut kk = 0
+            while kk < ALPHABET_SIZE {
+                if counts2[kk] > bn {
+                    bn = counts2[kk]
+                    bv = kk
+                }
+                kk = kk + 1
+            }
+            token_str_2 = token_str_2 + hex_char(bv)
+            gb = gb + 1
+        }
+        seg_b = seg_b + 1
+    }
+    let f1_pass = if token_str == token_str_2 { 1 } else { 0 }
+
+    // ── falsifier verdicts ─────────────────────────────────────────────────
+    let f2_pass = if loss_permille <= LOSS_MAX_PERMILLE { 1 } else { 0 }
+    let f3_pass = if ALPHABET_SIZE <= 256 { 1 } else { 0 }   // structurally always 1
+    let f4_pass = if token_len <= 1000 { 1 } else { 0 }      // structurally bounded by S<=250
+    let f5_pass = -1                                          // deferred to user runbook
+
+    let all_self_refutable_pass = if f1_pass == 1 {
+        if f2_pass == 1 {
+            if f3_pass == 1 {
+                if f4_pass == 1 { 1 } else { 0 }
+            } else { 0 }
+        } else { 0 }
+    } else { 0 }
+
+    let mut classification = "NOT_VERIFIED_SYNTHETIC"
+    if mode == "real" {
+        if all_self_refutable_pass == 1 {
+            classification = "REAL_TOKENIZED_F1_F4_PASS_F5_DEFERRED"
+        } else {
+            classification = "REAL_TOKENIZED_FAIL"
+        }
+    }
+
+    let ts = now_iso()
+    let run_block = if mode == "selftest" { "dry_run" } else { "real_run" }
+
+    // ── emit cert JSON ─────────────────────────────────────────────────────
+    let mut cert = "{\n"
+    cert = cert + "  \"tool\": \"eeg_to_token_cyborg\",\n"
+    cert = cert + "  \"version\": \"v1\",\n"
+    cert = cert + "  \"raw_rank\": 9,\n"
+    cert = cert + "  \"hexa_only\": true,\n"
+    cert = cert + "  \"deterministic\": true,\n"
+    cert = cert + "  \"llm\": \"none\",\n"
+    cert = cert + "  \"no_api\": true,\n"
+    cert = cert + "  \"frozen_at\": \"2026-04-28\",\n"
+    cert = cert + "  \"ts_utc\": \"" + ts + "\",\n"
+    cert = cert + "  \"criteria\": {\n"
+    cert = cert + "    \"default_segments\": " + str(DEFAULT_SEGMENTS) + ",\n"
+    cert = cert + "    \"max_segments\": " + str(MAX_SEGMENTS) + ",\n"
+    cert = cert + "    \"loss_max_permille\": " + str(LOSS_MAX_PERMILLE) + ",\n"
+    cert = cert + "    \"alphabet_size\": " + str(ALPHABET_SIZE) + ",\n"
+    cert = cert + "    \"alphabet\": \"" + ALPHABET_HEX + "\"\n"
+    cert = cert + "  },\n"
+    cert = cert + "  \"mode\": \"" + mode + "\",\n"
+    cert = cert + "  \"" + run_block + "\": {\n"
+    cert = cert + "    \"input\": \"" + input_label + "\",\n"
+    cert = cert + "    \"input_sha256\": \"" + input_sha256 + "\",\n"
+    cert = cert + "    \"n_channels\": " + str(n_ch) + ",\n"
+    cert = cert + "    \"n_samples\": " + str(n_samp) + ",\n"
+    cert = cert + "    \"n_segments\": " + str(S) + ",\n"
+    cert = cert + "    \"token_string\": \"" + token_str + "\",\n"
+    cert = cert + "    \"token_string_len\": " + str(token_len) + ",\n"
+    cert = cert + "    \"round_trip_loss_permille\": " + str(loss_permille) + ",\n"
+    cert = cert + "    \"f1_determinism_pass\": " + str(f1_pass) + ",\n"
+    cert = cert + "    \"f2_loss_pass\": " + str(f2_pass) + ",\n"
+    cert = cert + "    \"f3_alphabet_pass\": " + str(f3_pass) + ",\n"
+    cert = cert + "    \"f4_length_pass\": " + str(f4_pass) + ",\n"
+    cert = cert + "    \"f5_bridge_pass\": " + str(f5_pass) + ",\n"
+    cert = cert + "    \"all_self_refutable_pass\": " + str(all_self_refutable_pass) + ",\n"
+    cert = cert + "    \"classification\": \"" + classification + "\"\n"
+    cert = cert + "  },\n"
+    cert = cert + "  \"raw73_seal\": \"STRUCTURAL_ADMISSIBLE (median + binarize + nibble-pack + segment-mode-argmin + hex-emit; no EM/MCMC/RNG)\",\n"
+    cert = cert + "  \"raw10_honest_c3\": \"F5 (LLM interprets meaningfully) is DEFERRED to user-side Claude CLI runbook; no semantic claim made by this tool\",\n"
+    cert = cert + "  \"no_api_clause\": \"This tool emits text only. The user manually pastes the token string into Claude CLI; no api.anthropic.com call.\"\n"
+    cert = cert + "}\n"
+    write_file(out_path, cert)
+
+    // ── JSONL audit append ─────────────────────────────────────────────────
+    let mut jrow = "{"
+    jrow = jrow + "\"ts\":\"" + ts + "\","
+    jrow = jrow + "\"tool\":\"eeg_to_token_cyborg\","
+    jrow = jrow + "\"mode\":\"" + mode + "\","
+    jrow = jrow + "\"input\":\"" + input_label + "\","
+    jrow = jrow + "\"sha256\":\"" + input_sha256 + "\","
+    jrow = jrow + "\"n_channels\":" + str(n_ch) + ","
+    jrow = jrow + "\"n_samples\":" + str(n_samp) + ","
+    jrow = jrow + "\"n_segments\":" + str(S) + ","
+    jrow = jrow + "\"alphabet_size\":" + str(ALPHABET_SIZE) + ","
+    jrow = jrow + "\"token_string_len\":" + str(token_len) + ","
+    jrow = jrow + "\"token_string\":\"" + token_str + "\","
+    jrow = jrow + "\"round_trip_loss_permille\":" + str(loss_permille) + ","
+    jrow = jrow + "\"f1\":" + str(f1_pass) + ","
+    jrow = jrow + "\"f2\":" + str(f2_pass) + ","
+    jrow = jrow + "\"f3\":" + str(f3_pass) + ","
+    jrow = jrow + "\"f4\":" + str(f4_pass) + ","
+    jrow = jrow + "\"f5\":" + str(f5_pass) + ","
+    jrow = jrow + "\"classification\":\"" + classification + "\","
+    jrow = jrow + "\"schema_version\":\"clm-eeg-legacy.v1\""
+    jrow = jrow + "}"
+    append_jsonl(audit_path, jrow)
+
+    // ── stdout banner ──────────────────────────────────────────────────────
+    println("  mode                        = " + mode)
+    println("  input                       = " + input_label)
+    if input_sha256 != "" {
+        println("  input_sha256                = " + input_sha256)
+    }
+    println("  n_channels                  = " + str(n_ch))
+    println("  n_samples / channel         = " + str(n_samp))
+    println("  n_segments (S)              = " + str(S))
+    println("  alphabet_size               = " + str(ALPHABET_SIZE) + " (\"" + ALPHABET_HEX + "\")")
+    println("  token_string_len            = " + str(token_len) + "  chars")
+    println("  round_trip_loss_permille    = " + str(loss_permille) + "  (criterion <= " + str(LOSS_MAX_PERMILLE) + ")")
+    println("  F1_determinism_pass         = " + str(f1_pass))
+    println("  F2_loss_pass                = " + str(f2_pass))
+    println("  F3_alphabet_pass            = " + str(f3_pass))
+    println("  F4_length_pass              = " + str(f4_pass))
+    println("  F5_bridge_pass              = " + str(f5_pass) + "  (deferred — Claude CLI runbook in design doc §7)")
+    println("  classification              = " + classification)
+    println("  cert_out                    = " + out_path)
+    println("  audit_jsonl                 = " + audit_path)
+    println("─── token_string (paste into Claude CLI prompt) ───")
+    println(token_str)
+
+    if mode == "selftest" {
+        if all_self_refutable_pass == 1 {
+            println("  verdict                     = SELFTEST_OK (F1-F4 PASS; F5 deferred)")
+            exit(0)
+        }
+        println("  verdict                     = SELFTEST_FAIL (one of F1-F4 failed)")
+        exit(1)
+    }
+
+    if all_self_refutable_pass == 1 {
+        println("  verdict                     = REAL_TOKENIZED_OK (F1-F4 PASS; F5 deferred to runbook)")
+        exit(0)
+    }
+    println("  verdict                     = REAL_TOKENIZED_FAIL")
+    exit(1)
+}

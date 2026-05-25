@@ -1,0 +1,193 @@
+{
+  "analytic_1d": {
+    "delta_t_robin_k": 12.12121212121212,
+    "delta_t_total_k": 12.124841226637631,
+    "delta_t_wall_k": 0.0036291054255126105,
+    "q_flux_w_per_m2": 606.060606060606
+  },
+  "analytic_rel_err": 7.1948888032687395e-12,
+  "artifacts": {
+    "csv": "mesh_convergence.csv",
+    "record": "upduino_enclosure_thermal_20260521T090159Z.json",
+    "step_brep": "step.brep",
+    "stl": "step.stl"
+  },
+  "error": null,
+  "fingerprint": "952fe1991b32dcb6",
+  "geometry": {
+    "display_name": "UPduino v3 PCB + 1 mm Al cover plate enclosure",
+    "id": "upduino_v3_enclosure_v1",
+    "length_m": 0.05,
+    "mesh_size_m_finest": 0.0005,
+    "n_elements": 74587,
+    "n_nodes": 20510,
+    "step_source": "upduino_cover_plate.step",
+    "stl_export": "step.stl",
+    "thickness_m": 0.001,
+    "width_m": 0.033,
+    "z_offset_m": 0.011
+  },
+  "geometry_id": "upduino_v3_enclosure_v1",
+  "gmsh_version": "4.15.2",
+  "honest_c3_count": 5,
+  "interface": "demiurge:component:gmsh-skfem-verify-record",
+  "load": {
+    "fpga_power_w": 0.5,
+    "h_convection_w_per_m2k": 50.0,
+    "ldo_power_w": 0.5,
+    "t_ambient_k": 293.15,
+    "total_power_w": 1.0
+  },
+  "material": {
+    "k_w_per_mk": 167.0,
+    "name": "aluminium 6061-T6 (textbook 300 K)",
+    "poissons": 0.33,
+    "rho_kg_per_m3": 2700.0,
+    "youngs_pa": 68900000000.0
+  },
+  "measurements": {
+    "rows": 9,
+    "structural": null,
+    "table": [
+      {
+        "measurement_key": "n_nodes_finest",
+        "unit": "count",
+        "value": 20510
+      },
+      {
+        "measurement_key": "n_elements_finest",
+        "unit": "count",
+        "value": 74587
+      },
+      {
+        "measurement_key": "t_ambient_k",
+        "unit": "K",
+        "value": 293.15
+      },
+      {
+        "measurement_key": "t_max_k",
+        "unit": "K",
+        "value": 305.27484122672485
+      },
+      {
+        "measurement_key": "t_mean_k",
+        "unit": "K",
+        "value": 305.273028160871
+      },
+      {
+        "measurement_key": "delta_t_k",
+        "unit": "K",
+        "value": 12.124841226724868
+      },
+      {
+        "measurement_key": "q_flux_w_per_m2",
+        "unit": "W/m^2",
+        "value": 606.060606060606
+      },
+      {
+        "measurement_key": "convergence_step_k",
+        "unit": "K",
+        "value": 4.4281023292569444e-11
+      },
+      {
+        "measurement_key": "converged_below_0p1k",
+        "unit": "bool",
+        "value": 1
+      }
+    ],
+    "thermal": {
+      "delta_t_k": 12.124841226724868,
+      "dof_count": 20510,
+      "t_max_k": 305.27484122672485,
+      "t_mean_k": 305.273028160871,
+      "t_min_k": 305.27121212127906
+    }
+  },
+  "mesh_convergence": {
+    "converged_below_0p1k": true,
+    "final_step_k": 4.4281023292569444e-11,
+    "levels": [
+      {
+        "delta_t_k": 12.124841226660294,
+        "delta_t_k_step": null,
+        "level_idx": 0,
+        "mesh_size_m": 0.0015,
+        "n_elements": 5748,
+        "n_nodes": 2014,
+        "t_max_k": 305.27484122666027,
+        "wall_s": 0.6185362339019775
+      },
+      {
+        "delta_t_k": 12.124841226349076,
+        "delta_t_k_step": -3.112177182629239e-10,
+        "level_idx": 1,
+        "mesh_size_m": 0.001,
+        "n_elements": 12394,
+        "n_nodes": 4211,
+        "t_max_k": 305.27484122634905,
+        "wall_s": 0.3109102249145508
+      },
+      {
+        "delta_t_k": 12.124841226680587,
+        "delta_t_k_step": 3.3151081879623234e-10,
+        "level_idx": 2,
+        "mesh_size_m": 0.0007,
+        "n_elements": 24807,
+        "n_nodes": 8492,
+        "t_max_k": 305.27484122668056,
+        "wall_s": 0.628101110458374
+      },
+      {
+        "delta_t_k": 12.124841226724868,
+        "delta_t_k_step": 4.4281023292569444e-11,
+        "level_idx": 3,
+        "mesh_size_m": 0.0005,
+        "n_elements": 74587,
+        "n_nodes": 20510,
+        "t_max_k": 305.27484122672485,
+        "wall_s": 1.7795567512512207
+      }
+    ],
+    "tolerance_k": 0.1
+  },
+  "mitigation": {
+    "bom_items": [
+      "40 mm 5 V axial fan",
+      "JST-XH harness"
+    ],
+    "bom_usd_estimated": 5.0,
+    "geometry_change": "none (cover plate unchanged)",
+    "h_baseline_w_per_m2k": 10.0,
+    "h_eff_w_per_m2k": 50.0,
+    "h_multiplier": 5.0,
+    "option_id": "A_fan",
+    "option_name": "40 mm DC axial fan, forced convection",
+    "physics_change": "h_top: 10 \u2192 50 W/m\u00b2K (Robin coeff only)",
+    "predicted_delta_t_k": 12.12
+  },
+  "ok": true,
+  "produced_at_utc": "2026-05-21T09:01:59.613649+00:00",
+  "provenance": {
+    "absorbed": false,
+    "measurement_gate": "GATE_OPEN",
+    "producer": "gmsh@4.15.2 + scikit-fem@12.0.1 (anima/upduino_enclosure_fem.py @ Phase 1b)",
+    "scope_caveats": [
+      "geometry = real STEP B-Rep of UPduino v3 cover plate (50\u00d733\u00d71 mm Al) \u2014 upgrade vs toy 10\u00d710\u00d72 mm Si box, BUT dimensions are datasheet-recall NOT caliper measurement on a fabricated part (g3).",
+      "material = textbook Al 6061-T6 at 300 K (k=167 W/m\u00b7K, \u03c1=2700 kg/m\u00b3, E=68.9 GPa, \u03bd=0.33) \u2014 CRC Handbook / AZoM values, NOT a measured lot. Datasheet flash-test + Hot Disk measurement required for GATE_CLOSED.",
+      "heat source = uniform 1 W Neumann patch on the cover plate bottom face (FPGA 0.5 W + LDO 0.5 W datasheet ESTIMATES). True BGA + LDO localisation not modelled at this scale; transient + thermo-mechanical coupling out of scope.",
+      "convection h = 10 W/m\u00b2K applied on top face (Robin BC) is textbook free-convection on vertical Al at room temperature, NOT a wind-tunnel measurement. Side / bottom faces insulated (adiabatic) \u2014 physically wrong for an open enclosure but bounds \u0394T from above.",
+      "mesh convergence SWEEP performed (4 levels, h = 1.5 \u2192 0.5 mm). measurement_gate STILL GATE_OPEN because (real BOM + fabricated enclosure + bench IR / thermocouple measurement + 3rd-party FE cross-check Code_Aster / Elmer) are all still missing."
+    ]
+  },
+  "python_version": "3.14.4",
+  "record_id": "upduino_enclosure_thermal_20260521T090159Z",
+  "schema_version": "1.0",
+  "skfem_version": "12.0.1",
+  "thermal_budget": {
+    "delta_t_k_fem": 12.124841226724868,
+    "headroom_c": 52.87515877327513,
+    "t_ambient_c": 20.0,
+    "t_j_max_c_iCE40UP5K": 85.0,
+    "t_max_c": 32.12484122672487
+  }
+}

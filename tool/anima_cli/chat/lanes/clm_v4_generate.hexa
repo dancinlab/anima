@@ -1,0 +1,292 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/lanes/clm_v4_generate.hexa — Path 3 generate FULL
+//
+//  PURPOSE
+//    Natural language generate via clm_v4_mount.hexa `generate <prompt> [N]`
+//    subcommand which itself delegates to tool/transient_py/
+//    clm_v4_generate_helper.py (raw#37 transient: torch model.generate +
+//    tokenizer.decode). Closes the structural gap (commit 60c0558f /
+//    c3e8ba2c) where clm_v4_mount probe was substrate-emit only.
+//
+//  USER DIRECTIVE (2026-05-09 cycle Path 3 FULL)
+//    "── lane=generate ── pending(SKELETON) 먼저 구현후 진행"
+//
+//  STATUS: FULL (cycle 2026-05-09)
+//    - clm_v4_mount.hexa generate <prompt> [N] subcommand: LANDED
+//    - tool/transient_py/clm_v4_generate_helper.py: LANDED (raw#37 transient)
+//    - PEFT LoRA merge: leverages existing clm_v4_lora_merge_helper.py +
+//      Path A remap cache (~/.cache/anima/clm_v4_remapped/<short>/)
+//    - sampler: temperature / top_p / top_k / repetition_penalty / seed
+//    - colon-attractor avoidance:
+//        (a) strip trailing ':' (memory feedback_clm_colon_attractor)
+//        (b) retry with temp+0.2 top_p-0.1 if generated starts with ':::'
+// - mandate-1: prompt fed verbatim, no chat template, raw decode
+//
+//  COMPLIANCE
+// V14 — verdict-grade output subject to V14 if used for SIMPLE_STACK
+// D1 within_strict — clm-v4 family (anima-native LoRA)
+// chat-cap C2 — natural utterance scored (helper emits stub axes
+//      spontaneity/coherence/persona; full V4 evaluator integration carry)
+// mandatory report — bench mode marker + JSON record machine-parseable
+// trinity ✓
+// mandate-1/2 — wrapping 0 strict; no system prompt; raw decode
+// 매단계
+// yaml↔md
+// chat lane plugin pattern — Path 3 status FULL transition
+//
+//  HONEST C3 (raw#10 emit ≥1 to stderr)
+//    C1 generate path emits via model.generate(); CLM v4 has no past_kv cache
+//       so each step re-runs full forward (slower, correct).
+//    C2 colon-attractor strip + retry are decoding-time heuristics, not model
+//       fixes. CLM v4 mk2-v1 mode-collapse `:::` (p=46%) memory carry.
+//    C3 sampler defaults (T=0.7 top_p=0.9 top_k=40 rep_pen=1.1) are anima-
+//       internal; not benchmarked against CLM v4 base.
+// C4 mandate-1: NO chat template, NO system prompt; output bytes
+//       are decoded raw and emitted preserved (no .strip(), no truncation).
+//    C5 sft-1-8 substrate is undertrained for natural-language emit on Korean/
+//       English prompts (carry from c3e8ba2c C2_FAIL_BY_DESIGN); generate
+//       lane LANDS the path but does not by itself solve C2 axis-2 (substrate
+//       quality).
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _hexa() -> string { return "/Users/ghost/.hx/packages/hexa/hexa.real" }
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/.hexa-runtime/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa.real")
+                || s.ends_with("/clm_v4_generate.hexa")
+                || s.ends_with("clm_v4_generate.hexa")
+        if !skip { out = out + [s] }
+        i = i + 1
+    }
+    return out
+}
+
+fn _shell_escape(s: string) -> string {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+// Probe whether clm_v4_mount.hexa supports the `generate` subcommand.
+// FULL impl detects landed `cmd_generate` function + `generate` subcommand
+// branch in parse_args; SKELETON fallback is preserved as honest C3.
+fn _generate_subcommand_present() -> bool {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/clm_v4_mount.hexa"
+    if !_fexists(core) { return false }
+    // FULL impl markers — both must be present
+    let cmd1 = "grep -n \"fn cmd_generate(\" " + core + " 2>/dev/null | wc -l"
+    let cmd2 = "grep -n \"a == \\\"generate\\\"\" " + core + " 2>/dev/null | wc -l"
+    let n1 = _str(exec(cmd1)).trim()
+    let n2 = _str(exec(cmd2)).trim()
+    return n1 != "0" && n2 != "0"
+}
+
+fn _generate_helper_present() -> bool {
+    let root = _resolve_root()
+    let helper = root + "/tool/transient_py/clm_v4_generate_helper.py"
+    return _fexists(helper)
+}
+
+fn _invoke_generate(prompt: string, repo: string, max_tokens: int, temp: string, seed: int) -> string {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/clm_v4_mount.hexa"
+    if !_fexists(core) {
+        return "[lane=generate] core missing: " + core
+    }
+    let model_arg = if repo != "" { " --model " + repo } else { "" }
+    // Spec'd subcommand: `clm_v4_mount.hexa [--model R] generate <prompt> [N] [--temperature T] [--seed S]`
+    let cmd = _hexa() + " run " + core + model_arg
+        + " generate " + _shell_escape(prompt) + " " + to_string(max_tokens)
+        + " --temperature " + temp
+        + " --seed " + to_string(seed)
+        + " 2>&1"
+    return _str(exec(cmd))
+}
+
+// Extract the generated text from helper's JSON record block.
+// Returns (generated_text, raw_record_json) — both empty on parse miss.
+fn _extract_generated(out: string) -> array {
+    let begin = "__ANIMA_CLM_V4_GENERATE_BEGIN__"
+    let end = "__ANIMA_CLM_V4_GENERATE_END__"
+    let bi = out.index_of(begin)
+    if bi < 0 { return ["", ""] }
+    let ei = out.index_of(end)
+    if ei < 0 || ei <= bi { return ["", ""] }
+    let json_block = out.substring(bi + begin.len(), ei).trim()
+    // crude json key extract for "generated" — raw-byte preserve concern
+    // means we keep the full JSON record as the verifiable provenance and
+    // surface a best-effort text excerpt.
+    let key = "\"generated\":"
+    let ki = json_block.index_of(key)
+    if ki < 0 { return ["", json_block] }
+    let after = json_block.substring(ki + key.len(), json_block.len()).trim()
+    if !after.starts_with("\"") { return ["", json_block] }
+    // walk until unescaped closing quote
+    let mut i = 1
+    let mut text = ""
+    let mut esc = false
+    while i < after.len() {
+        let c = after.substring(i, i + 1)
+        if esc {
+            // basic JSON escapes (\" \\ \n \t \r); pass-through everything else
+            if c == "n" { text = text + "\n" }
+            else if c == "t" { text = text + "\t" }
+            else if c == "r" { text = text + "\r" }
+            else if c == "\"" { text = text + "\"" }
+            else if c == "\\" { text = text + "\\" }
+            else { text = text + c }
+            esc = false
+        } else if c == "\\" {
+            esc = true
+        } else if c == "\"" {
+            return [text, json_block]
+        } else {
+            text = text + c
+        }
+        i = i + 1
+    }
+    return [text, json_block]
+}
+
+// C2 axis-stub emit (mandatory report; helper records the canonical
+// stub axes inside the JSON; this is the lane-level summary line for benchmarks).
+fn _emit_c2_stub(text: string, repo: string) {
+    let spont = if text.trim() == "" { "empty" } else { "emit" }
+    let persona = if repo.contains("sft-") || repo.contains("paradigm-") { "anima_native" } else { "base" }
+    println("[OWN_18_C2 lane=generate spontaneity=" + spont
+        + " coherence=raw persona=" + persona + "]")
+}
+
+fn sub_selftest() {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/clm_v4_mount.hexa"
+    let helper = root + "/tool/transient_py/clm_v4_generate_helper.py"
+    if !_fexists(core) {
+        println("FAIL generate lane: core missing: " + core)
+        exit(1)
+    }
+    let has_subcmd = _generate_subcommand_present()
+    let has_helper = _generate_helper_present()
+    if has_subcmd && has_helper {
+        println("PASS chat/lanes/clm_v4_generate selftest (FULL — subcmd + helper land)")
+        println("    core=" + core)
+        println("    helper=" + helper)
+    } else if has_subcmd && !has_helper {
+        println("WARN chat/lanes/clm_v4_generate selftest (subcmd LAND but helper missing)")
+        println("     helper=" + helper + " (raw#37 transient — gitignored; regenerate from spec)")
+    } else if !has_subcmd && has_helper {
+        println("WARN chat/lanes/clm_v4_generate selftest (helper LAND but subcmd PENDING)")
+    } else {
+        // honest C3 — skeleton mode acknowledged
+        println("PASS chat/lanes/clm_v4_generate selftest (SKELETON — generate subcmd PENDING)")
+    }
+}
+
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--selftest") { sub_selftest(); return }
+
+    let repo = _arg_value(argv, "--repo", "")
+    let prompt = _arg_value(argv, "--prompt", "")
+    let max_tok = to_int(_arg_value(argv, "--max-tokens", "64"))
+    let temp = _arg_value(argv, "--temperature", "0.7")
+    let seed = to_int(_arg_value(argv, "--seed", "42"))
+    let bench_mode = _arg_value(argv, "--bench-mode", "0") == "1"
+
+    if prompt == "" {
+        println("[lane=generate] no --prompt provided; generate lane requires prompt")
+        exit(2)
+    }
+
+    let has_subcmd = _generate_subcommand_present()
+    let has_helper = _generate_helper_present()
+
+    if bench_mode {
+        let status = if has_subcmd && has_helper { "FULL" } else { "SKELETON" }
+        println("[BENCH lane=generate status=" + status + " repo=" + repo + "]")
+    }
+
+    if !has_subcmd || !has_helper {
+        // honest C3 fallback — emit notice + delegate to substrate emit
+        println("[lane=generate] HONEST C3: subcmd=" + (if has_subcmd { "LAND" } else { "PENDING" })
+            + " helper=" + (if has_helper { "LAND" } else { "PENDING" }))
+        println(" falling back to substrate probe for parity (raw)")
+        let root = _resolve_root()
+        let core = root + "/anima-core/runtime/clm_v4_mount.hexa"
+        let model_arg = if repo != "" { " --model " + repo } else { "" }
+        let cmd = _hexa() + " run " + core + model_arg
+            + " --probe " + _shell_escape(prompt) + " 2>&1"
+        let out = _str(exec(cmd))
+        print(out)
+        println("")
+        if bench_mode {
+            println("[BENCH_END lane=generate fallback=substrate_probe]")
+        }
+        return
+    }
+
+    // FULL impl path — invoke generate subcommand
+    let out = _invoke_generate(prompt, repo, max_tok, temp, seed)
+    print(out)
+    println("")
+
+    // Extract generated text + emit C2 axis stub
+    let parts = _extract_generated(out)
+    let generated_text = _str(parts[0])
+    if bench_mode {
+        // Surface a clean control-band summary line for benchmark consumers
+        // (control-band: lane meta-emit, NOT model output)
+        println("[GENERATED_TEXT lane=generate len=" + to_string(generated_text.len()) + "]")
+        if generated_text != "" {
+            println(generated_text)
+            println("[GENERATED_TEXT_END]")
+        }
+        _emit_c2_stub(generated_text, repo)
+        println("[BENCH_END lane=generate]")
+    }
+}

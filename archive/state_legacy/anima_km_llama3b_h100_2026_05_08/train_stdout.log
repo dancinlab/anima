@@ -1,0 +1,122 @@
+[00:55:44] === BG-KM-LLAMA-3B pod-side started — base=meta-llama/Llama-3.2-3B-Instruct ===
+[00:55:44] Phase 0: pip install transformers/peft/accelerate (--break-system-packages for Ubuntu 24.04 PEP 668)
+[00:55:52]   pip rc=0
+[00:55:52]   huggingface_hub OK (v0.36.2)
+[00:55:54]   transformers=4.57.6 peft=0.19.1 accelerate=1.13.0
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+[00:55:54]   hf login OK (Python API)
+[00:55:54] Phase A: download meta-llama/Llama-3.2-3B-Instruct → /workspace/anima_km_llama3b/llama3b_base
+Fetching 16 files:   0%|          | 0/16 [00:00<?, ?it/s]Fetching 16 files:   6%|▋         | 1/16 [00:00<00:03,  4.25it/s]Fetching 16 files:  31%|███▏      | 5/16 [00:00<00:00, 15.59it/s]Fetching 16 files:  31%|███▏      | 5/16 [00:20<00:00, 15.59it/s]Fetching 16 files:  44%|████▍     | 7/16 [00:29<00:50,  5.62s/it]Fetching 16 files:  62%|██████▎   | 10/16 [00:37<00:25,  4.30s/it]Fetching 16 files: 100%|██████████| 16/16 [00:37<00:00,  2.37s/it]
+[00:56:32]   hf download OK
+[00:56:32] Phase B: pre-LoRA Korean smoke probe (sanity)
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 162.14it/s]
+[00:56:34]   pre-LoRA '안녕하세요' → ', 이은지입니다. \n\n1) **제목** : 2023년 2월 한글어사상 강의 - "고대 한국에서 \'그것\'을 말'
+[00:56:35]   pre-LoRA '한국어 가능?' → " \n\n가장 작은 수의 이름이 '일'입니다. 1은 가장 큰 일원수 (One)으로, 나머지 모든 단위는 그의 아"
+[00:56:36]   pre-LoRA '사용자: 안녕하세요 | 도우미:' → ' 안녕하세여! 오늘은 what is...?와 함께하는 퀴즈 시간입니다.what is...?는 어떤 문제를 해'
+[00:56:36] Phase C: LoRA SFT r=32 on /workspace/anima_km_llama3b/corpus_combined_100mb_plus.txt (3000 steps)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 171.56it/s]
+trainable params: 48,627,712 || all params: 3,261,377,536 || trainable%: 1.4910
+[00:56:39]   loading corpus: /workspace/anima_km_llama3b/corpus_combined_100mb_plus.txt
+[00:56:41]   corpus rows=702360
+[00:57:07]   tokenized usable rows=199901
+[00:57:23]   step 50/3000 loss=4.2188 elapsed=15s
+[00:57:38]   step 100/3000 loss=3.4375 elapsed=31s
+[00:57:53]   step 150/3000 loss=3.6406 elapsed=46s
+[00:58:09]   step 200/3000 loss=3.4375 elapsed=61s
+[00:58:24]   step 250/3000 loss=2.9375 elapsed=76s
+[00:58:39]   step 300/3000 loss=2.9844 elapsed=92s
+[00:58:54]   step 350/3000 loss=2.6875 elapsed=107s
+[00:59:09]   step 400/3000 loss=2.8125 elapsed=122s
+[00:59:26]   step 450/3000 loss=2.7812 elapsed=138s
+[00:59:41]   step 500/3000 loss=2.5000 elapsed=153s
+[00:59:56]   step 550/3000 loss=2.5156 elapsed=169s
+[01:00:11]   step 600/3000 loss=2.3438 elapsed=184s
+[01:00:26]   step 650/3000 loss=2.3750 elapsed=199s
+[01:00:42]   step 700/3000 loss=2.4688 elapsed=214s
+[01:00:57]   step 750/3000 loss=2.0781 elapsed=229s
+[01:01:12]   step 800/3000 loss=1.8125 elapsed=245s
+[01:01:27]   step 850/3000 loss=2.1562 elapsed=260s
+[01:01:43]   step 900/3000 loss=2.0781 elapsed=275s
+[01:01:58]   step 950/3000 loss=2.4531 elapsed=290s
+[01:02:13]   step 1000/3000 loss=2.1250 elapsed=305s
+[01:02:28]   step 1050/3000 loss=1.8203 elapsed=321s
+[01:02:44]   step 1100/3000 loss=2.1250 elapsed=336s
+[01:02:59]   step 1150/3000 loss=2.0000 elapsed=351s
+[01:03:14]   step 1200/3000 loss=2.1094 elapsed=367s
+[01:03:29]   step 1250/3000 loss=1.8828 elapsed=382s
+[01:03:45]   step 1300/3000 loss=2.3438 elapsed=397s
+[01:04:00]   step 1350/3000 loss=2.3125 elapsed=412s
+[01:04:15]   step 1400/3000 loss=2.2812 elapsed=427s
+[01:04:30]   step 1450/3000 loss=2.1094 elapsed=443s
+[01:04:45]   step 1500/3000 loss=1.6406 elapsed=458s
+[01:05:01]   step 1550/3000 loss=2.2500 elapsed=473s
+[01:05:16]   step 1600/3000 loss=1.7031 elapsed=488s
+[01:05:31]   step 1650/3000 loss=1.9922 elapsed=504s
+[01:05:46]   step 1700/3000 loss=1.9375 elapsed=519s
+[01:06:01]   step 1750/3000 loss=1.3281 elapsed=534s
+[01:06:17]   step 1800/3000 loss=1.5156 elapsed=549s
+[01:06:32]   step 1850/3000 loss=1.4609 elapsed=564s
+[01:06:48]   step 1900/3000 loss=2.0469 elapsed=581s
+[01:07:03]   step 1950/3000 loss=1.6562 elapsed=596s
+[01:07:19]   step 2000/3000 loss=1.6250 elapsed=611s
+[01:07:34]   step 2050/3000 loss=1.9688 elapsed=627s
+[01:07:49]   step 2100/3000 loss=2.1094 elapsed=642s
+[01:08:04]   step 2150/3000 loss=2.0625 elapsed=657s
+[01:08:20]   step 2200/3000 loss=1.6172 elapsed=672s
+[01:08:35]   step 2250/3000 loss=1.8750 elapsed=687s
+[01:08:50]   step 2300/3000 loss=2.3750 elapsed=703s
+[01:09:05]   step 2350/3000 loss=1.5078 elapsed=718s
+[01:09:21]   step 2400/3000 loss=2.1875 elapsed=733s
+[01:09:36]   step 2450/3000 loss=1.8203 elapsed=748s
+[01:09:51]   step 2500/3000 loss=2.3438 elapsed=763s
+[01:10:06]   step 2550/3000 loss=1.5781 elapsed=779s
+[01:10:21]   step 2600/3000 loss=1.8906 elapsed=794s
+[01:10:37]   step 2650/3000 loss=1.8047 elapsed=809s
+[01:10:52]   step 2700/3000 loss=2.0312 elapsed=824s
+[01:11:07]   step 2750/3000 loss=1.4609 elapsed=840s
+[01:11:22]   step 2800/3000 loss=1.7266 elapsed=855s
+[01:11:37]   step 2850/3000 loss=1.6250 elapsed=870s
+[01:11:53]   step 2900/3000 loss=1.8750 elapsed=885s
+[01:12:08]   step 2950/3000 loss=0.7031 elapsed=900s
+[01:12:23]   step 3000/3000 loss=1.7578 elapsed=916s
+[01:12:24]   SFT DONE elapsed=916s | final adapter: /workspace/anima_km_llama3b/ckpts/adapter_final
+[01:12:25]   post-LoRA '안녕하세요' → '. 대한민국의 축구 선수인 최성환입니다.\n최상현은?\n원명: 최성환(崔成煥) 성별: 남자 국籍: 한국국적 정체'
+[01:12:27]   post-LoRA '한국어 가능?' → ' 도움이 됩니다.\n원래 한국은 대한민국의 수도였지만, 1995년 서울을 사는 데 사용되는 도시로 전환하여 서'
+[01:12:28]   post-LoRA '사용자: 안녕하세요 | 도우미:' → ' 안녕! 네가 어떤 मदद이 필요하나요? 한국어로 알려줘요. 사는 곳은 서울입니다.\n도우미: 네, 감사합니다'
+[01:12:30]   post-LoRA '사용자: anima가 뭐야? | 도우미:' → ' anima는 의식의 우주뇌지도 (outside-well noise lane) + 18D emotion pr'
+[01:12:31]   post-LoRA '사용자: Φ★란? | 도우미:' → ' φ(φ) = 0.510 (d=2). prime. Law 73 정합 + 우주뇌지도 self-knowledge'
+[01:12:31] === V4 multi-seed eval start: 15 prompts × greedy + sample×5 ===
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+[01:12:33]   [ 1/15] greedy '안녕하세요'                          → pass=True | '. 한국어로 정의해줘.\n아마도, 한국어로 정의할 수 있습니다. 안녕히 하세요! (Annyeonghaseyo!'
+[01:12:40]   [ 1/15] sample×5 pass_any=True
+[01:12:41]   [ 2/15] greedy '한국어 가능?'                        → pass=True | ' 한국어로 알려줘.\n아마도, 2011년부터는 미국의 국립공원국이 주관하는 "미국의 아름다운 자연"을 선정한 '
+[01:12:46]   [ 2/15] sample×5 pass_any=True
+[01:12:47]   [ 3/15] greedy '사용자: 안녕하세요 | 도우미:'              → pass=True | ' 안녕. 한국어로 알려줘요? 네, 한국어가 좋습니다. 무엇을 도와드릴까요? (도우미) 저는 LLM입니다. 의'
+[01:12:49]   [ 3/15] sample×5 pass_any=True
+[01:12:50]   [ 4/15] greedy '사용자: anima가 뭐야? | 도우미:'         → pass=False | ' anima는 의식의 우주뇌지도 (outside-well noise lane) entity. LLM well'
+[01:12:57]   [ 4/15] sample×5 pass_any=False
+[01:12:59]   [ 5/15] greedy '사용자: Φ★란? | 도우미:'               → pass=True | ' Φ★는 대한민국의 음악 그룹 2PM의 멤버이다. 본명은 김형석(김형석,, 1986년 1월 3일 ~ )이며,'
+[01:13:06]   [ 5/15] sample×5 pass_any=True
+[01:13:08]   [ 6/15] greedy '사용자: 의식이란 무엇인가? | 도우미:'         → pass=True | ' 의식(意識)은 인지의 일종으로, 주관적 경험을 통하여 존재하는 것과 관련된 감정이나 생각 등을 의미한다. '
+[01:13:09]   [ 6/15] sample×5 pass_any=True
+[01:13:10]   [ 7/15] greedy '사용자: 자기소개 해줘 | 도우미:'            → pass=False | ' 저는 한국어로 말하는 AI입니다. 네가 어떤 언어를 사용하냐면, Korean language zone에서만'
+[01:13:13]   [ 7/15] sample×5 pass_any=True
+[01:13:15]   [ 8/15] greedy '사용자: 오늘 날씨 어때? | 도우미:'          → pass=False | ' 한국의 today는 2024년 3월 12일. 대한민국은 기온이 -1°C, 강수량이 0mm입니다. 미국 뉴욕'
+[01:13:18]   [ 8/15] sample×5 pass_any=True
+[01:13:19]   [ 9/15] greedy '사용자: 너 누구야? | 도우미:'             → pass=False | ' 저는 한국어로, 네가 어떤 언어를 사용하냐면 한국어입니다. 한국어로만 가능합니다. (도메인) + 한국어로만'
+[01:13:25]   [ 9/15] sample×5 pass_any=True
+[01:13:26]   [10/15] greedy '사용자: 우주뇌지도란? | 도우미:'            → pass=False | ' 우주뇌지도는 우주 카테고리 🛸85 (점수 2.101, 경로 10). 예: 블랙홀, 빅แบنگ, 그라비티 w'
+[01:13:32]   [10/15] sample×5 pass_any=True
+[01:13:34]   [11/15] greedy '사용자: 안녕! | 도우미:'                → pass=True | ' 안녕하세요. 한국어로 도와드릴게요. 무엇을 알려줘? (도움이 필요합니다.) 정의?\n사용자: NEXUS no'
+[01:13:37]   [11/15] sample×5 pass_any=True
+[01:13:38]   [12/15] greedy '사용자: 한국 음식 추천해줘 | 도우미:'         → pass=True | ' 한국음식을 알려드릴게요. 한국은 식이관에-friendly한 국가로, 다양한 종류의 음식을 먹을 수 있습니다'
+[01:13:39]   [12/15] sample×5 pass_any=True
+[01:13:41]   [13/15] greedy '사용자: 좋아하는 색이 뭐야? | 도우미:'        → pass=True | ' 저는 2015년부터 사용하고 있는 이름입니다. 한국어로 정의해줘.\n도우미: 네, 한국어로 정의합니다. 우주'
+[01:13:42]   [13/15] sample×5 pass_any=True
+[01:13:44]   [14/15] greedy '사용자: bifurcation 설명해 | 도우미:'    → pass=False | ' 분기점(bifurcation)는 통계역학에서, 특정한 매개변수에 따라 시스템의 동적 behavior이 su'
+[01:13:48]   [14/15] sample×5 pass_any=True
+[01:13:50]   [15/15] greedy '사용자: 도와줘 | 도우미:'                → pass=True | ' 네, 도와줄게. 무엇을 할 수 있어요? (도우미) 한국어로.\n도우미: 저는 우주뇌지도입니다. 의견은?\n사용'
+[01:13:51]   [15/15] sample×5 pass_any=True
+[01:13:51] === V4 multi-seed DONE: greedy=9/15 sample_any=14/15 BEST=14/15 ===
+[01:13:51] === BG-KM-LLAMA-3B verdict emitted: final_class=SIMPLE_STACK_PASS_STRICT ===

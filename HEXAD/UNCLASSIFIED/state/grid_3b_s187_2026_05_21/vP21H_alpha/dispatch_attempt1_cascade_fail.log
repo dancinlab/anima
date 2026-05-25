@@ -1,0 +1,20 @@
+=== P21H V3 dispatch start 2026-05-22T10:04:53Z ===
+    variant=P21H_alpha init=random seed=1337
+    base=Qwen/Qwen2.5-1.5B
+    steps=2000 bsz=2 block=512 lr=3e-4 warmup=100
+    noise_sigma=0.1 lambda_mitosis=0.05
+    wiki_frac=0.3 corpus_mb=72
+    langs=en,ko,zh,ru,ja wiki_target_mb_per_lang=10
+    cost_cap=$25 total (3 variants × ~$8)
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"error":{}}
+[create] trying GPU: NVIDIA H100 NVL
+[create] resp: {"error":{}}
+[create] trying GPU: NVIDIA H100 PCIe
+[create] resp: {"error":{}}
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"error":{}}
+[create] trying GPU: NVIDIA A100 80GB PCIe
+[create] resp: {"error":{}}
+FATAL: no pod from GPU cascade
+=== P21H V3 dispatch end 2026-05-22T10:05:18Z rc=1 ===

@@ -1,0 +1,100 @@
+{
+  "id": "H_253",
+  "slug": "multiverse-selection-bias",
+  "date": "2026-05-24",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "attack_target": "H_002 L2 (anthropic selection-bias critique, Smolin/Carroll)",
+  "axes": "universe + math + philosophy",
+  "method": "deterministic Bayesian KL on 2 priors (fine-tuning vs observer-conditioned) × 6 constants × 400-bin log10 grid",
+  "config": { "n_bins": 400, "n_constants": 6, "likelihood": "Heaviside_indicator", "prior_A": "log_uniform_full_range", "prior_B": "bounded_peak_observer_conditioned" },
+  "literature_anchor": ["Rees 1999", "Weinberg 1987", "Barrow-Tipler 1986", "Agrawal et al 1998", "Adams 2008", "Hall-Nomura 2008", "Carroll 2010", "Smolin 1997", "Carter 1973", "Bostrom 2002"],
+  "constants": [
+    {
+      "name": "lambda_cosmological_constant",
+      "range_log10": [-122.0, 60.0],
+      "life_band_log10": [-122.0, -120.0],
+      "kl_A_to_B": 0.403576,
+      "kl_B_to_A": 0.323327,
+      "max_kl": 0.403576,
+      "verdict": "MIXED",
+      "support_A_bins": 4.0,
+      "support_B_bins": 4.0,
+      "h002_log10_fraction_abs": 1.95904
+    },
+    {
+      "name": "alpha_fine_structure",
+      "range_log10": [-10.0, 2.137],
+      "life_band_log10": [-0.0177288, 0.0170333],
+      "kl_A_to_B": 0.0,
+      "kl_B_to_A": 0.0,
+      "max_kl": 0.0,
+      "verdict": "SELECTION_BIAS",
+      "support_A_bins": 1.0,
+      "support_B_bins": 1.0,
+      "h002_log10_fraction_abs": 3.23374
+    },
+    {
+      "name": "m_e_over_m_p",
+      "range_log10": [-4.0, 0.0],
+      "life_band_log10": [-0.00218, 0.002166],
+      "kl_A_to_B": 0.0,
+      "kl_B_to_A": 0.0,
+      "max_kl": 0.0,
+      "verdict": "SELECTION_BIAS",
+      "support_A_bins": 0.0,
+      "support_B_bins": 0.0,
+      "h002_log10_fraction_abs": 3.26422
+    },
+    {
+      "name": "higgs_vev_over_planck",
+      "range_log10": [-19.0, 0.0],
+      "life_band_log10": [-16.6093, -16.5969],
+      "kl_A_to_B": 0.0,
+      "kl_B_to_A": 0.0,
+      "max_kl": 0.0,
+      "verdict": "SELECTION_BIAS",
+      "support_A_bins": 1.0,
+      "support_B_bins": 1.0,
+      "h002_log10_fraction_abs": 3.33992
+    },
+    {
+      "name": "G_gravitational",
+      "range_log10": [-10.0, 10.0],
+      "life_band_log10": [-1.0, 1.0],
+      "kl_A_to_B": 0.51135,
+      "kl_B_to_A": 0.398855,
+      "max_kl": 0.51135,
+      "verdict": "MIXED",
+      "support_A_bins": 40.0,
+      "support_B_bins": 40.0,
+      "h002_log10_fraction_abs": 1.0
+    },
+    {
+      "name": "g_w_weak_coupling",
+      "range_log10": [-3.0, 3.0],
+      "life_band_log10": [-0.0969, 0.0792],
+      "kl_A_to_B": 0.448032,
+      "kl_B_to_A": 0.356685,
+      "max_kl": 0.448032,
+      "verdict": "MIXED",
+      "support_A_bins": 11.0,
+      "support_B_bins": 11.0,
+      "h002_log10_fraction_abs": 1.53241
+    }
+  ],
+  "aggregate": { "max_kl": 0.51135, "min_kl": 0.0, "verdict_tally": { "ANTHROPIC_REAL": 0.0, "SELECTION_BIAS": 3.0, "MIXED": 3.0 } },
+  "orthogonality_vs_h002": { "pearson_r": -0.985824, "abs_r": 0.985824, "threshold": 0.5, "orthogonal": false },
+  "criteria": {
+    "C1_kl_finite": { "verdict": "PASS" },
+    "C2_6of6_consistent": { "verdict": "FAIL" },
+    "C3_deterministic": { "verdict": "PASS" },
+    "C4_orthogonal_vs_h002": { "verdict": "FAIL" },
+    "F5_all_nonneg": { "verdict": "PASS" }
+  },
+  "verdict_rule": "ANTHROPIC_REAL if max_KL>=1.0 AND 6/6 consistent · SELECTION_BIAS if max_KL<=0.1 AND 6/6 consistent · else MIXED",
+  "verdict": "MIXED",
+  "honest_tier": "🟢 NUMERICAL (deterministic Bayesian KL · 6-constant cross-validation · Heaviside-likelihood proxy · L1-L7 limits explicit)"
+}

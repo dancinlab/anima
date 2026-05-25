@@ -1,0 +1,78 @@
+{
+  "substrate": "N-14",
+  "primary_facility": {
+    "name": "SNU Hospital MEG Center",
+    "operator": "Neuroscience Research Institute (NRI), Medical Research Center (MRC), SNU College of Medicine",
+    "system": "Elekta Neuromag Vectorview 306-ch (102 mag + 204 planar grad) + 64-ch EEG simultaneous, in MSR",
+    "irb": "SNUH IRB",
+    "channels": {
+      "nri_portal": "https://snumrc.snu.ac.kr/nri/en",
+      "mrc_portal": "https://snumrc.snu.ac.kr/en",
+      "snu_com_main_phone": "+82-2-740-8114",
+      "snu_com_address": "103 Daehak-ro, Jongno-gu, Seoul",
+      "snuh_global": "https://www.snuh.org/global/en/main.do"
+    },
+    "tier_assessment": {
+      "tier_1_internal_pi": "Direct booking via MRC core scheduler",
+      "tier_2_korean_pi": "Collaboration MoU + SNUH IRB",
+      "tier_3_foreign_pi_with_korean_co_pi": "Korean co-PI of record, foreign collaborator",
+      "tier_4_foreign_pi_only": "Likely blocked"
+    },
+    "current_team_tier": 4,
+    "target_tier_for_scan": 3,
+    "lead_time_weeks_total": [10, 24]
+  },
+  "korea_alternatives": [
+    {
+      "name": "KRISS Biomagnetism Research Center",
+      "location": "Daejeon",
+      "system": "KRISS-MEG 152-ch (in-house)",
+      "access_difficulty": "easier_for_research",
+      "notes": "Lower channel count, but standards-research collaboration friendly; KR-resident data processing aligns with PIPA"
+    },
+    {
+      "name": "KAIST BCS labs",
+      "location": "Daejeon",
+      "system": "Per-lab EEG/MEG; no dedicated 306-ch facility confirmed",
+      "access_difficulty": "per_lab_basis",
+      "notes": "Likely depends on external MEG facilities for full studies"
+    },
+    {
+      "name": "Yonsei University",
+      "location": "Seoul",
+      "system": "No public dedicated MEG facility confirmed",
+      "access_difficulty": "unclear",
+      "notes": "Strong fMRI/EEG; partner facility dependence likely"
+    },
+    {
+      "name": "Korea University",
+      "location": "Seoul",
+      "system": "No public dedicated MEG facility confirmed",
+      "access_difficulty": "unclear",
+      "notes": "Brain & Cognitive Engineering primarily EEG"
+    },
+    {
+      "name": "KBRI",
+      "location": "Daegu (DGIST-affiliate)",
+      "system": "Brain bank + neuroimaging; no MEG core confirmed",
+      "access_difficulty": "n_a_for_meg",
+      "notes": "Path-of-record for non-MEG brain research"
+    }
+  ],
+  "fallback_path": "KRISS MEG 152-ch as Tier-2 alternative if SNU access not feasible",
+  "compliance": {
+    "pipa": "raw MEG = sensitive personal information; cross-border transfer requires consent + notification + on-prem KR processing window",
+    "irb_required_attachments": [
+      "protocol_kr_en",
+      "informed_consent_kr",
+      "crf_data_management_pipa",
+      "pi_cv_ethics_training",
+      "risk_benefit",
+      "research_insurance",
+      "funding_disclosure",
+      "vulnerable_pop_safeguards",
+      "international_data_sharing_addendum"
+    ],
+    "visa_for_foreign_pi_on_site": "E-3 short-term researcher or D-2 visiting scholar; or remote oversight with KR co-PI as scan operator"
+  }
+}

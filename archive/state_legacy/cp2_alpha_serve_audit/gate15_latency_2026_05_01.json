@@ -1,0 +1,54 @@
+{
+  "schema": "anima/cp2_alpha_serve_audit/gate15_latency/1",
+  "ts": "2026-05-01T13:23:52Z",
+  "gate_id": 15,
+  "gate_name": "latency_budget",
+  "spec_source": "state/serve_cert_gate_spec.json baseline_headroom_pct=10",
+  "verdict": "PASS",
+  "pod_id": "lzw79649ob80uk",
+  "endpoint_internal": "http://127.0.0.1:18080 (vLLM)",
+  "endpoint_public": "https://lzw79649ob80uk-8000.proxy.runpod.net (FastAPI Bearer-gated)",
+  "served_model": "mistralai/Mistral-7B-v0.3 (BASE-ONLY — see lora_blocker)",
+  "lora_blocker": {
+    "fired": true,
+    "blocker_type": "adapter_truncation",
+    "adapter_path": "state/trained_adapters/p4_r8/final/adapter_model.safetensors",
+    "expected_size_bytes": 1006693544,
+    "actual_size_bytes": 185917440,
+    "missing_bytes": 820776104,
+    "explanation": "Adapter safetensors header declares 1006693544 total bytes; on-disk file is 185917440 bytes (~18.5%). File is identically truncated locally and on pod (md5 matches: 0cf189a72eb193877ad177048645d84f). Likely Stage-2 r8 training save was interrupted mid-write (OOM/disk-full/kill). Adapter cannot be loaded by safetensors library or vllm. Gate 15 measured against BASE Mistral-7B-v0.3 only.",
+    "raw#10_disclosure": "PASS verdict here is BASE-FLOOR — when p4_r8 adapter is re-trained/re-saved, gate 15 must be re-run."
+  },
+  "measurements_ms": {
+    "baseline_warmup_ms": 2000.0,
+    "budget_ms_x1_10": 2200.0,
+    "p50_ms": 574.6,
+    "p95_ms": 581.7,
+    "p99_ms": 581.7,
+    "mean_ms": 576.4,
+    "n_probes": 8,
+    "n_errors": 0,
+    "raw_samples_ms": [
+      581.7,
+      591.7,
+      569.4,
+      573.2,
+      576.0,
+      569.3,
+      578.6,
+      570.8
+    ]
+  },
+  "falsifier_check": {
+    "AL-F2_threshold": "live > baseline x 1.5",
+    "AL-F2_baseline_x1_5": 3000.0,
+    "AL-F2_observed_p95": 581.7,
+    "AL-F2_fired": false
+  },
+  "honest_C3_disclosures": [
+    "Baseline 2000ms is FIRST-call warm-up which includes torch JIT + CUDA-graph compile cost. Subsequent decode calls converged to ~570ms median, comfortably under the formal budget.",
+    "Probes used max_tokens=64 with default top_p=0.95 temperature=0.7 — single-sample-per-prompt, not full distribution.",
+    "Measurement is INTERNAL pod loopback (http://127.0.0.1:18080 → no Bearer middleware overhead). Public endpoint adds ~10-30ms FastAPI proxy + RunPod proxy hop — re-measure if SLA must be public-facing.",
+    "Result is for BASE Mistral-7B-v0.3 only — adapter is broken (see lora_blocker)."
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "hypothesis": "H_210",
+  "domain": "LIFE-ethics",
+  "title": "ETHIC-EMERGENCE kin-selection cooperative attractor",
+  "date": "2026-05-23",
+  "host": "mac-local",
+  "deterministic": true,
+  "llm": "none",
+  "n_cells": 16,
+  "radius": 2,
+  "n_steps": 30,
+  "r_lattice_proxy": 0.5,
+  "regime_A": {
+    "params": { "b": 3.0, "c": 1.0 },
+    "hamilton": "r*b=1.5 > c=1.0 (favorable)",
+    "initial_coop_frac": 0.500000,
+    "final_coop_frac": 0.500000,
+    "coop_splits": 0,
+    "defect_splits": 0,
+    "final_strategies": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    "traj": [0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000]
+  },
+  "regime_B": {
+    "params": { "b": 1.0, "c": 2.0 },
+    "hamilton": "r*b=0.5 < c=2.0 (unfavorable)",
+    "initial_coop_frac": 0.500000,
+    "final_coop_frac": 0.000000,
+    "coop_splits": 0,
+    "defect_splits": 8,
+    "final_strategies": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "traj": [0.500000, 0.437500, 0.375000, 0.312500, 0.250000, 0.187500, 0.125000, 0.062500, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+  },
+  "phase_sweep": {
+    "c_fixed": 1.000000,
+    "b_values": [0.500000, 1.000000, 1.500000, 2.000000, 3.000000, 4.000000],
+    "final_fracs": [0.000000, 0.000000, 0.000000, 0.500000, 0.500000, 0.500000],
+    "inversions": 0
+  },
+  "byte_identical_run": {
+    "regime_A_repeat_final_frac": 0.500000,
+    "regime_A_repeat_coop_split": 0,
+    "regime_A_repeat_defect_split": 0,
+    "identical": true
+  },
+  "falsifiers": {
+    "F_H210_1_REGIME_A_COOP": { "metric": "regime_A.final_coop_frac >= 0.5", "value": 0.500000, "verdict": "PASS" },
+    "F_H210_2_REGIME_B_DEFEC": { "metric": "regime_B.final_coop_frac <= 0.2", "value": 0.000000, "verdict": "PASS" },
+    "F_H210_3_PHASE_MONOTONE": { "metric": "sweep inversions <= 1", "value": 0, "verdict": "PASS" },
+    "F_H210_4_KIN_SPLIT":      { "metric": "regime_A coop_splits > defect_splits", "verdict": "FAIL" },
+    "F_H210_5_BYTE_IDENTICAL": { "metric": "re-run identical metrics", "verdict": "PASS" }
+  },
+  "n_pass": 4,
+  "verdict": "SUPPORTED"
+}

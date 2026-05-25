@@ -1,0 +1,155 @@
+{
+  "schema": "anima/n_substrate_n12_prep/spec_manifest/1",
+  "agent": "n_substrate_n12_prep",
+  "siblings_in_batch": 13,
+  "date_utc": "2026-05-01T00:00:00Z",
+  "axis_id": "N-12",
+  "mission": "IonQ Forte 1 (AWS Braket) Penrose-Hameroff Orch-OR cross-substrate test spec — preregister-only",
+  "tier_1_target": "F-N12-1",
+  "tier_1_target_desc": "Cross-substrate OR signature consistency: trapped-ion vs superconducting QC dephasing comparison",
+  "spec_doc": "docs/n_substrate_n12_ionq_penrose_hameroff_spec_2026_05_01.md",
+  "spec_word_count_approx": 3400,
+  "hexa_skeleton": null,
+  "hexa_skeleton_note": "Per HEXA-only constraint and cloud-only QPU access, no local hexa script required at preregister stage. Actual Braket SDK calls would occur in user-side Python or AWS Braket Notebook on user authorization.",
+  "aws_braket_access_path": {
+    "account_setup_steps": [
+      "AWS account (personal or institutional) with credit card",
+      "IAM user/role with AmazonBraketFullAccess policy",
+      "Enable Braket in console (auto-creates S3 bucket amazon-braket-<region>-<acct>)",
+      "Set CloudWatch billing alarm at $50 USD threshold",
+      "Install amazon-braket-sdk locally OR use Braket-provided notebook",
+      "First verification: 5-shot Bell test on simulator, then Forte 1 ARN check"
+    ],
+    "estimated_onboarding_time_minutes": 35,
+    "agent_executed_steps": [],
+    "user_required": true
+  },
+  "ionq_forte_1_naming": {
+    "device_class": "QPU_trapped_ion",
+    "provider": "IonQ",
+    "model": "Forte 1 (a.k.a. Forte Enterprise 1)",
+    "qubit_count": 36,
+    "algorithmic_qubit_class": "AQ36",
+    "device_arn_predicted_format": "arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1",
+    "device_arn_alternative_form": "arn:aws:braket:us-east-1::device/qpu/ionq/Forte-Enterprise-1",
+    "host_region": "us-east-1",
+    "native_gate_set": ["GPI", "GPI2", "MS"],
+    "topology": "all-to-all",
+    "T1_seconds_vendor_typical": 10,
+    "T2_seconds_vendor_typical": 1,
+    "two_qubit_gate_fidelity_min": 0.995,
+    "honest_c3_arn": "Exact ARN string requires user-side Braket console verification; predicted format only"
+  },
+  "pricing_exact_2026_05_01": {
+    "per_task_USD": 0.30,
+    "per_shot_USD_forte": 0.08,
+    "reservation_USD_per_hour": 7000,
+    "aws_braket_service_surcharge_USD": 0,
+    "s3_storage_USD_per_GB_month": 0.023,
+    "cross_region_transfer_USD_per_GB": 0.02,
+    "free_tier_qpu": false,
+    "free_tier_simulator_first_hour": true
+  },
+  "region_availability": {
+    "ionq_qpu_host": ["us-east-1"],
+    "braket_service_regions": ["us-east-1", "us-west-1", "us-west-2", "ap-northeast-2", "eu-*"],
+    "korea_seoul_braket_callable": true,
+    "qpu_routes_to": "us-east-1",
+    "recommended_region": "us-east-1"
+  },
+  "circuits": [
+    {
+      "id": "C3",
+      "name": "Bell sanity (CHSH)",
+      "purpose": "hardware verification",
+      "qubits": 2,
+      "shots": 100,
+      "tasks": 1,
+      "expected_pass": "CHSH >= 2.5",
+      "cost_USD": 8.30
+    },
+    {
+      "id": "C2",
+      "name": "1-qubit coherence baseline",
+      "purpose": "noise floor",
+      "qubits": 1,
+      "shots": 50,
+      "tasks": 1,
+      "expected_output": "tau_2 baseline",
+      "cost_USD": 4.30
+    },
+    {
+      "id": "C1",
+      "name": "4-qubit GHZ dephasing (OR signature)",
+      "purpose": "cross-substrate OR test (F-N12-1 core)",
+      "qubits": 4,
+      "shots": 100,
+      "tasks": 1,
+      "expected_output": "tau_2 with delay sweep",
+      "cost_USD": 8.30
+    }
+  ],
+  "mvp_budget": {
+    "tasks": 3,
+    "shots_total": 250,
+    "task_fee_USD": 0.90,
+    "shot_fee_USD": 20.00,
+    "total_USD": 20.90,
+    "safety_margin_USD": 41.80,
+    "recommended_authorization_cap_USD": 50,
+    "wall_clock_ETA_days": "1-3"
+  },
+  "falsifier_ids": ["F-N12-1", "F-N12-2", "F-N12-3", "F-N12-4", "F-N12-5"],
+  "top_falsifier": "F-N12-1",
+  "f1_axis": {
+    "axis_id": "N-12",
+    "score_range": [0, 1],
+    "score_formula": "PASS=1.0/INCONCLUSIVE=0.5/FAIL=0.0 from F-N12-1, multiplied by F-N12-5 robustness factor (1.0/0.5/0.7)",
+    "f1_weight_w7_initial": 0.075,
+    "f1_weight_w7_range": [0.05, 0.10],
+    "weight_justification": "indirect evidence (substrate-test, not microtubule-direct); low initial weight, recalibrate after F-N12-5 PASS"
+  },
+  "deliverables": [
+    "docs/n_substrate_n12_ionq_penrose_hameroff_spec_2026_05_01.md",
+    "state/n_substrate_n12_prep_2026_05_01/spec_manifest.json",
+    "state/n_substrate_n12_prep_2026_05_01/falsifier_F_N12_preregister.json",
+    "state/n_substrate_n12_prep_2026_05_01/aws_braket_access_checklist.json"
+  ],
+  "race_isolation": {
+    "writes_only": [
+      "docs/n_substrate_n12_ionq_penrose_hameroff_spec_2026_05_01.md",
+      "state/n_substrate_n12_prep_2026_05_01/*.json"
+    ]
+  },
+  "honest_c3": {
+    "verified_facts_count": 6,
+    "guessed_or_predicted_count": 8,
+    "verified_facts": [
+      "AWS Braket per-task $0.30 + per-shot $0.08 (Forte) per N-substrate purchase guide 2026-05-01",
+      "IonQ Forte 1 = 36-qubit trapped-ion #AQ36",
+      "Forte 1 hosted in us-east-1",
+      "Native gates GPI/GPI2/MS for trapped-ion",
+      "All-to-all connectivity strength of trapped-ion",
+      "Reservation rate ~$7K/hour (Nov-2025)"
+    ],
+    "guessed_or_predicted": [
+      "Exact ARN string format (Forte-1 vs Forte-Enterprise-1 naming variation)",
+      "T1>=10s, T2>=1s, 2q-fidelity>=99.5% (trapped-ion typical, Forte 1 specific datasheet not directly read)",
+      "Pulse-level delay control via Braket OpenQASM 3 on Forte 1 (capability exists generally, device-specific availability pending)",
+      "PRNewswire SC OR observation tau_2 numerical values (not directly extracted, F-N12-1 user-verify)",
+      "Diosi-Penrose mass-scaling simplified form for SC effective mass",
+      "GHZ N-qubit decoherence scaling tau_2_GHZ ~ tau_2_single/N (depolarizing approximation)",
+      "AWS Braket task-batch parallel submit completes within 1 calendar day for Forte 1",
+      "Korea ap-northeast-2 to us-east-1 cross-region task submit no policy blocker"
+    ]
+  },
+  "blockers": [
+    "User authorization required for AWS account onboarding (no auto-onboard)",
+    "User authorization required for $20.90 MVP cost",
+    "PRNewswire-cited SC OR paper original tau_2 numerical values need user verification",
+    "Forte 1 exact device ARN requires Braket console check",
+    "Pulse-level delay control on Forte 1 requires device documentation verification",
+    "Wall-clock ETA depends on IonQ trapped-ion windowed schedule (typically hours to 1 day)"
+  ],
+  "verdict_key": "SPEC_READY_NO_AWS_ONBOARDING_USER_DECISION_PENDING"
+}

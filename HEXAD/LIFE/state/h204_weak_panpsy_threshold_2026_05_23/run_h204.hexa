@@ -1,0 +1,413 @@
+// HEXAD/LIFE/state/h204_weak_panpsy_threshold_2026_05_23/run_h204.hexa
+//
+//   H_204 — weak-form panpsychism (∀ substrate Φ>0) 의 *autopoietic-closure
+//   threshold*. H_003 H3.4 (closure-Φ PASS, gap=0.92) × H_157 (weak-form
+//   supported, strong-form directional FAIL) 의 결합 가설.
+//   raw#12, deterministic, hexa-only, $0 mac local, llm:none.
+//
+//   QUESTION (pre-registered):
+//     H_157 weak-form panpsychism — "모든 substrate 가 Φ>0" — universal 이 아니라
+//     closure-strength k 에 conditional: k < τ_c ⟹ Φ→0 (broken closure 와 동등),
+//     k > τ_c ⟹ Φ > 0 (weak-panpsy 성립). 즉 weak-form 은 substrate-conditional,
+//     H_157 strong-form 음수 결과 정합.
+//
+//   MODEL (H_003 H3.4 catalytic-closure 의 closure-strength sweep 변형):
+//     동일 8-site periodic lattice (H_012/H_003 H3.4 carry) — 각 site 가
+//     3-component (A,B,C) catalytic network. H3.4 의 (closed vs broken) binary
+//     contrast 를 *continuous* closure_strength k ∈ [0, 1] sweep 으로 확장.
+//
+//     closure_strength k 의 parametrization (Michaelis 형, monotone in k):
+//       cat_C_effective = k * cat_C_neighbour_diffused
+//     즉 k=0 ⟹ cat_C=0 (H3.4 의 broken arm — production edge B→+C 완전 단절),
+//        k=1 ⟹ cat_C = full diffused (H3.4 의 closed arm — closure intact),
+//        k ∈ (0,1) ⟹ partial closure (edge 가 약화된 fractional binding).
+//
+//     6 k-values pre-registered: {0.00, 0.10, 0.25, 0.50, 0.75, 1.00}
+//     k=0.00 → H3.4 broken baseline (Φ̄≈3.534 expected)
+//     k=1.00 → H3.4 closed baseline (Φ̄≈4.454 expected)
+//     중간 4 점 → phase transition / monotone / sigmoid 구분
+//
+//   MEASUREMENT — Φ via the SAME primitive (H_003 H3.4 / H_007 carry):
+//     RFC 036 phi_spatial(s, M, DIM, n_bins=4) — 8-site lattice × DIM=12 trajectory
+//     × WARM=0 transient window (H_003 H3.4 L3 carry — living-transient claim).
+//     각 k value 마다 5-seed mean (SEED_BASE + r * SEED_STRIDE) — H_003 H3.4 와
+//     동일 reps/seeds 로 robustness (직접 비교 가능).
+//
+//   VERDICT (pre-registered):
+//     C1 (monotone): Φ(k=1) ≥ Φ(k=0.75) ≥ ... ≥ Φ(k=0) — strict monotone increase
+//                    OR sigmoid shape (다중 jump 허용, 단 endpoint constraint)
+//     C2 (broken floor): Φ(k=0) ≤ Φ_broken_baseline + margin (H3.4 carry ≈ 3.534)
+//     C3 (closed ceiling): Φ(k=1) ≥ Φ_closed_baseline - margin (H3.4 carry ≈ 4.454)
+//     C4 (threshold-like): max ΔΦ/Δk > 2× median ΔΦ/Δk (phase transition signature)
+//
+//     SUPPORTED iff C1+C2+C3+C4 ALL PASS.
+//     PARTIAL_DIRECTIONAL if 2-3 PASS.
+//     FAIL if ≤1 PASS.
+//     FALSIFIED if Φ(k=1) < Φ(k=0) (closure 가 Φ 감소시킴 — H_003 H3.4 부정).
+//
+//   HONEST TIER: 🟢 SUPPORTED-NUMERICAL (phi_spatial proxy + closure sweep, NOT
+//   🔵 formal). H_157 strong-form panpsychism 의 증명도 부정도 아니다 — closure-축
+//   sweep 위 weak-form 의 substrate-conditional 성격 evidence.
+// ════════════════════════════════════════════════════════════════════════
+
+fn _PHI_N_BINS() -> int { return 4 }       // == RFC 036 phi_rs default
+
+// ── fixed pre-registered constants (mirror H_003 H3.4) ────────────────────
+fn M_SITES() -> int          { return 8 }
+fn DIM() -> int              { return 12 }
+fn WARM() -> int             { return 0 }
+fn N_SEEDS() -> int          { return 5 }
+fn CAP() -> float            { return 1.0 }
+fn K_RATE() -> float         { return 0.60 }   // production rate constant (H_012/H_003)
+fn DECAY() -> float          { return 0.10 }
+fn DIFFUSE() -> float        { return 0.05 }
+fn SEED_BASE() -> int        { return 0xA17C204 }   // H_204 ledger seed (H3.4 lineage + 204)
+fn SEED_STRIDE() -> int      { return 101 }    // == H3.4 SEED_STRIDE for fair comparison
+
+// H_003 H3.4 baselines (verbatim carry — for C2/C3 thresholds)
+fn PHI_BROKEN_BASELINE() -> float { return 3.53399 }
+fn PHI_CLOSED_BASELINE() -> float { return 4.45435 }
+fn FLOOR_MARGIN() -> float        { return 0.50 }      // generous (≈ ½ × H3.4 gap)
+fn CEILING_MARGIN() -> float      { return 0.50 }
+fn THRESHOLD_RATIO() -> float     { return 2.0 }       // C4: peak > 2× median
+
+fn _clamp01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > CAP() { return CAP() }
+    return x
+}
+
+fn to_float(x: int) -> float { return x * 1.0 }
+
+fn pow_i(base: int, e: int) -> int {
+    let mut r = 1
+    let mut i = 0
+    while i < e { r = r * base; i = i + 1 }
+    return r
+}
+
+fn _abs_f(x: float) -> float { if x < 0.0 { return 0.0 - x }; return x }
+
+// Seed-phased initial value in [0.1, 0.5] — H_003 H3.4 identical recurrence.
+fn _seed_init(seed: int, site: int, comp: int) -> float {
+    let shift = (comp * 8) % 24
+    let bits = (seed / pow_i(2, shift)) % 256
+    let phase = (site * 37 + comp * 11) % 64
+    let f = (to_float((bits + phase) % 256) + 1.0) / 257.0
+    return f * 0.4 + 0.1
+}
+
+fn _step_component(x: float, cat: float) -> float {
+    let prod = K_RATE() * cat * (1.0 - x / CAP())
+    let nx = x + prod - DECAY() * x
+    return _clamp01(nx)
+}
+
+fn _diffuse_field(v: int, m: int) -> int {
+    let out = farr_zeros(m)
+    let d = DIFFUSE()
+    let mut s = 0
+    while s < m {
+        let lj = (s + m - 1) % m
+        let rj = (s + 1) % m
+        let val = (1.0 - 2.0 * d) * farr_get(v, s) + d * farr_get(v, lj) + d * farr_get(v, rj)
+        let _ = farr_set(out, s, val)
+        s = s + 1
+    }
+    return out
+}
+
+// Run lattice with closure_strength k ∈ [0, 1]. k=0 ⟹ cat_C scaled to 0 (broken),
+// k=1 ⟹ cat_C unscaled (closed), k ∈ (0,1) ⟹ partial closure binding.
+fn _run_lattice_k(seed: int, k_closure: float) -> int {
+    let m = M_SITES()
+    let dim = DIM()
+    let warm = WARM()
+
+    let A = farr_zeros(m)
+    let B = farr_zeros(m)
+    let C = farr_zeros(m)
+    let mut s0 = 0
+    while s0 < m {
+        let _ = farr_set(A, s0, _seed_init(seed, s0, 0))
+        let _ = farr_set(B, s0, _seed_init(seed, s0, 1))
+        let _ = farr_set(C, s0, _seed_init(seed, s0, 2))
+        s0 = s0 + 1
+    }
+
+    let states = farr_zeros(m * dim)
+    let total = warm + dim
+    let mut step = 0
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut s = 0
+            while s < m {
+                let obs = farr_get(A, s) + farr_get(B, s) + farr_get(C, s)
+                let _ = farr_set(states, s * dim + t, obs)
+                s = s + 1
+            }
+        }
+
+        let dC = _diffuse_field(C, m)
+        let dA = _diffuse_field(A, m)
+        let dB = _diffuse_field(B, m)
+
+        let nA = farr_zeros(m)
+        let nB = farr_zeros(m)
+        let nC = farr_zeros(m)
+        let mut s = 0
+        while s < m {
+            let cat_a = farr_get(dC, s)
+            let cat_b = farr_get(dA, s)
+            // closure_strength k modulates B -> +C production edge
+            let cat_c = k_closure * farr_get(dB, s)
+
+            let _ = farr_set(nA, s, _step_component(farr_get(A, s), cat_a))
+            let _ = farr_set(nB, s, _step_component(farr_get(B, s), cat_b))
+            let _ = farr_set(nC, s, _step_component(farr_get(C, s), cat_c))
+            s = s + 1
+        }
+        let mut p = 0
+        while p < m {
+            let _ = farr_set(A, p, farr_get(nA, p))
+            let _ = farr_set(B, p, farr_get(nB, p))
+            let _ = farr_set(C, p, farr_get(nC, p))
+            p = p + 1
+        }
+        let _ = farr_free(dC); let _ = farr_free(dA); let _ = farr_free(dB)
+        let _ = farr_free(nA); let _ = farr_free(nB); let _ = farr_free(nC)
+        step = step + 1
+    }
+
+    let _ = farr_free(A); let _ = farr_free(B); let _ = farr_free(C)
+    return states
+}
+
+fn _mean_phi_k(k_closure: float) -> float {
+    let nb = _PHI_N_BINS()
+    let reps = N_SEEDS()
+    let mut sum = 0.0
+    let mut r = 0
+    while r < reps {
+        let seed = SEED_BASE() + r * SEED_STRIDE()
+        let s = _run_lattice_k(seed, k_closure)
+        let phi = phi_spatial(s, M_SITES(), DIM(), nb)
+        let _ = farr_free(s)
+        sum = sum + phi
+        r = r + 1
+    }
+    return sum / to_float(reps)
+}
+
+fn _bool_str(b: bool) -> string { if b { return "true" }; return "false" }
+fn _verdict_str(b: bool) -> string { if b { return "PASS" }; return "FAIL" }
+
+fn _state_dir() -> string {
+    return "/tmp/anima_h204/HEXAD/LIFE/state/h204_weak_panpsy_threshold_2026_05_23"
+}
+
+fn main() {
+    println("H_204 — weak-panpsy × autopoietic-closure threshold (Φ vs k sweep) · raw#12")
+    println("  model: 8-site periodic lattice (H_003 H3.4 carry); closure_strength k modulates B->+C")
+    println("         cat_c_effective = k * cat_c_neighbour_diffused; k=0 ⟹ broken, k=1 ⟹ closed")
+    println("  M=" + to_string(M_SITES()) + " DIM=" + to_string(DIM()) + " WARM=" + to_string(WARM())
+            + " SEEDS=" + to_string(N_SEEDS()) + " K_RATE=" + to_string(K_RATE())
+            + " DECAY=" + to_string(DECAY()) + " DIFFUSE=" + to_string(DIFFUSE())
+            + " SEED_BASE=" + to_string(SEED_BASE()))
+    println("  Φ primitive: RFC 036 phi_spatial (n_bins=4) — 🟢 NUMERICAL")
+    println("  H_003 H3.4 baselines (carry): Φ_broken≈" + to_string(PHI_BROKEN_BASELINE())
+            + " Φ_closed≈" + to_string(PHI_CLOSED_BASELINE()))
+    println("")
+
+    // ── 6-point k sweep (pre-registered, frozen) ──────────────────────────
+    let k0 = 0.0
+    let k1 = 0.1
+    let k2 = 0.25
+    let k3 = 0.5
+    let k4 = 0.75
+    let k5 = 1.0
+
+    let phi0 = _mean_phi_k(k0)
+    let phi1 = _mean_phi_k(k1)
+    let phi2 = _mean_phi_k(k2)
+    let phi3 = _mean_phi_k(k3)
+    let phi4 = _mean_phi_k(k4)
+    let phi5 = _mean_phi_k(k5)
+
+    println("  Φ̄(k=0.00) = " + to_string(phi0) + "   (mean over " + to_string(N_SEEDS()) + " seeds)")
+    println("  Φ̄(k=0.10) = " + to_string(phi1))
+    println("  Φ̄(k=0.25) = " + to_string(phi2))
+    println("  Φ̄(k=0.50) = " + to_string(phi3))
+    println("  Φ̄(k=0.75) = " + to_string(phi4))
+    println("  Φ̄(k=1.00) = " + to_string(phi5))
+
+    // determinism re-check
+    let phi5_re = _mean_phi_k(k5)
+    let det_ok = phi5_re == phi5
+    println("  Φ̄(k=1.00 re-run) = " + to_string(phi5_re) + "  (byte-equal=" + _bool_str(det_ok) + ")")
+    println("")
+
+    // ── derivatives ΔΦ/Δk (5 segments) ────────────────────────────────────
+    let d01 = (phi1 - phi0) / (k1 - k0)
+    let d12 = (phi2 - phi1) / (k2 - k1)
+    let d23 = (phi3 - phi2) / (k3 - k2)
+    let d34 = (phi4 - phi3) / (k4 - k3)
+    let d45 = (phi5 - phi4) / (k5 - k4)
+
+    // peak segment + median of |ΔΦ/Δk|
+    let a01 = _abs_f(d01); let a12 = _abs_f(d12); let a23 = _abs_f(d23)
+    let a34 = _abs_f(d34); let a45 = _abs_f(d45)
+
+    let mut peak = a01
+    let mut peak_seg = "k=0.00→0.10"
+    if a12 > peak { peak = a12; peak_seg = "k=0.10→0.25" }
+    if a23 > peak { peak = a23; peak_seg = "k=0.25→0.50" }
+    if a34 > peak { peak = a34; peak_seg = "k=0.50→0.75" }
+    if a45 > peak { peak = a45; peak_seg = "k=0.75→1.00" }
+
+    // median of 5: sort by simple O(n^2)
+    let mut arr0 = a01; let mut arr1 = a12; let mut arr2 = a23
+    let mut arr3 = a34; let mut arr4 = a45
+    // bubble sort 5 elements
+    let mut pass_i = 0
+    while pass_i < 4 {
+        if arr0 > arr1 { let tmp = arr0; arr0 = arr1; arr1 = tmp }
+        if arr1 > arr2 { let tmp = arr1; arr1 = arr2; arr2 = tmp }
+        if arr2 > arr3 { let tmp = arr2; arr2 = arr3; arr3 = tmp }
+        if arr3 > arr4 { let tmp = arr3; arr3 = arr4; arr4 = tmp }
+        pass_i = pass_i + 1
+    }
+    let median_d = arr2
+
+    println("  ΔΦ/Δk segments:")
+    println("    k=0.00→0.10 : " + to_string(d01))
+    println("    k=0.10→0.25 : " + to_string(d12))
+    println("    k=0.25→0.50 : " + to_string(d23))
+    println("    k=0.50→0.75 : " + to_string(d34))
+    println("    k=0.75→1.00 : " + to_string(d45))
+    println("  peak |ΔΦ/Δk| = " + to_string(peak) + "  segment=" + peak_seg)
+    println("  median |ΔΦ/Δk| = " + to_string(median_d))
+    println("")
+
+    // ── criteria (pre-registered, measurable) ─────────────────────────────
+    // C1 (monotone): non-decreasing across 6 points
+    let mono = (phi1 >= phi0) && (phi2 >= phi1) && (phi3 >= phi2) && (phi4 >= phi3) && (phi5 >= phi4)
+    // C2 (broken floor): Φ(k=0) ≤ Φ_broken_baseline + margin
+    let c2 = phi0 <= PHI_BROKEN_BASELINE() + FLOOR_MARGIN()
+    // C3 (closed ceiling): Φ(k=1) ≥ Φ_closed_baseline - margin
+    let c3 = phi5 >= PHI_CLOSED_BASELINE() - CEILING_MARGIN()
+    // C4 (threshold-like): peak > THRESHOLD_RATIO × median
+    let c4 = peak > THRESHOLD_RATIO() * median_d
+    // FALSIFIED check
+    let falsified = phi5 < phi0
+
+    let n_pass = 0
+    let mut np = 0
+    if mono { np = np + 1 }
+    if c2 { np = np + 1 }
+    if c3 { np = np + 1 }
+    if c4 { np = np + 1 }
+
+    println("  C1 MONOTONE (Φ non-decreasing in k)                          : " + _verdict_str(mono))
+    println("  C2 BROKEN_FLOOR (Φ(k=0) ≤ Φ_broken + " + to_string(FLOOR_MARGIN()) + ")            : "
+            + _verdict_str(c2) + "  (Φ(k=0)=" + to_string(phi0)
+            + " vs threshold=" + to_string(PHI_BROKEN_BASELINE() + FLOOR_MARGIN()) + ")")
+    println("  C3 CLOSED_CEILING (Φ(k=1) ≥ Φ_closed - " + to_string(CEILING_MARGIN()) + ")        : "
+            + _verdict_str(c3) + "  (Φ(k=1)=" + to_string(phi5)
+            + " vs threshold=" + to_string(PHI_CLOSED_BASELINE() - CEILING_MARGIN()) + ")")
+    println("  C4 THRESHOLD_LIKE (peak |ΔΦ/Δk| > " + to_string(THRESHOLD_RATIO()) + "× median)   : "
+            + _verdict_str(c4) + "  (peak=" + to_string(peak)
+            + " median=" + to_string(median_d) + ")")
+    println("  FALSIFIED_check (Φ(k=1) < Φ(k=0))                            : " + _bool_str(falsified))
+    println("")
+
+    let verdict = if falsified {
+        "FALSIFIED"
+    } else if np == 4 {
+        "SUPPORTED"
+    } else if np >= 2 {
+        "PARTIAL_DIRECTIONAL"
+    } else {
+        "FAIL"
+    }
+
+    println("  VERDICT_RULE: SUPPORTED iff C1+C2+C3+C4 ALL PASS; PARTIAL if 2-3; FAIL if ≤1; FALSIFIED if Φ(k=1)<Φ(k=0)")
+    println("  VERDICT (H_204 weak-panpsy threshold): " + verdict)
+    println("    criteria_met = " + to_string(np) + "/4")
+    println("    falsifier F1 (Φ(k=1)≤Φ(k=0)): " + (if falsified { "TRIGGERED" } else { "NOT_TRIGGERED" }))
+    println("  H204_VERDICT=" + verdict + " N_PASS=" + to_string(np)
+            + " PHI_K0=" + to_string(phi0) + " PHI_K1=" + to_string(phi5)
+            + " PEAK_SEG=" + peak_seg)
+
+    // ── write result.json (ledger) ───────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"id\": \"H_204\",\n"
+    j = j + "  \"cycle\": \"Cycle_5_LIFE_H_204_NEW\",\n"
+    j = j + "  \"slug\": \"weak-panpsychism-autopoietic-threshold\",\n"
+    j = j + "  \"hypothesis\": \"H_157 weak-form panpsychism is closure-strength conditional — Φ(k) increases with k, k<τ_c ⟹ Φ→broken floor, k>τ_c ⟹ Φ→closed ceiling\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"honest_tier\": \"🟢 SUPPORTED-NUMERICAL (phi_spatial proxy + closure-strength sweep; NOT 🔵 formal IIT 4.0)\",\n"
+    j = j + "  \"phi_primitive\": \"RFC 036 phi_spatial (n_bins=4); H_003 H3.4 / H_007 byte-equal carry\",\n"
+    j = j + "  \"model\": \"" + to_string(M_SITES()) + "-site periodic catalytic lattice (H_003 H3.4 carry); closure_strength k modulates B->+C production edge (cat_C_eff = k * cat_C_diffused); k=0 ⟹ broken, k=1 ⟹ closed\",\n"
+    j = j + "  \"seed_base\": " + to_string(SEED_BASE()) + ",\n"
+    j = j + "  \"config\": { \"M_sites\": " + to_string(M_SITES()) + ", \"dim\": " + to_string(DIM())
+          + ", \"warm\": " + to_string(WARM()) + ", \"n_seeds\": " + to_string(N_SEEDS())
+          + ", \"K_rate\": " + to_string(K_RATE()) + ", \"decay\": " + to_string(DECAY())
+          + ", \"diffuse\": " + to_string(DIFFUSE()) + ", \"n_bins\": " + to_string(_PHI_N_BINS())
+          + ", \"boundary\": \"periodic\", \"observable\": \"A+B+C site mass\" },\n"
+    j = j + "  \"baselines_h3_4_carry\": { \"phi_broken\": " + to_string(PHI_BROKEN_BASELINE())
+          + ", \"phi_closed\": " + to_string(PHI_CLOSED_BASELINE()) + " },\n"
+    j = j + "  \"thresholds\": { \"floor_margin\": " + to_string(FLOOR_MARGIN())
+          + ", \"ceiling_margin\": " + to_string(CEILING_MARGIN())
+          + ", \"threshold_ratio\": " + to_string(THRESHOLD_RATIO()) + " },\n"
+    j = j + "  \"sweep\": [\n"
+    j = j + "    { \"k\": 0.00, \"phi_mean\": " + to_string(phi0) + " },\n"
+    j = j + "    { \"k\": 0.10, \"phi_mean\": " + to_string(phi1) + " },\n"
+    j = j + "    { \"k\": 0.25, \"phi_mean\": " + to_string(phi2) + " },\n"
+    j = j + "    { \"k\": 0.50, \"phi_mean\": " + to_string(phi3) + " },\n"
+    j = j + "    { \"k\": 0.75, \"phi_mean\": " + to_string(phi4) + " },\n"
+    j = j + "    { \"k\": 1.00, \"phi_mean\": " + to_string(phi5) + " }\n"
+    j = j + "  ],\n"
+    j = j + "  \"derivatives\": {\n"
+    j = j + "    \"d_0.00_to_0.10\": " + to_string(d01) + ",\n"
+    j = j + "    \"d_0.10_to_0.25\": " + to_string(d12) + ",\n"
+    j = j + "    \"d_0.25_to_0.50\": " + to_string(d23) + ",\n"
+    j = j + "    \"d_0.50_to_0.75\": " + to_string(d34) + ",\n"
+    j = j + "    \"d_0.75_to_1.00\": " + to_string(d45) + ",\n"
+    j = j + "    \"peak\": " + to_string(peak) + ",\n"
+    j = j + "    \"peak_segment\": \"" + peak_seg + "\",\n"
+    j = j + "    \"median\": " + to_string(median_d) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"determinism_recheck\": { \"phi_k1_rerun\": " + to_string(phi5_re)
+          + ", \"byte_equal\": " + _bool_str(det_ok) + " },\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_MONOTONE\": { \"metric\": \"Φ non-decreasing in k across 6 points\", \"verdict\": \"" + _verdict_str(mono) + "\" },\n"
+    j = j + "    \"C2_BROKEN_FLOOR\": { \"metric\": \"Φ(k=0) ≤ Φ_broken_baseline + " + to_string(FLOOR_MARGIN()) + "\", \"value\": " + to_string(phi0) + ", \"verdict\": \"" + _verdict_str(c2) + "\" },\n"
+    j = j + "    \"C3_CLOSED_CEILING\": { \"metric\": \"Φ(k=1) ≥ Φ_closed_baseline - " + to_string(CEILING_MARGIN()) + "\", \"value\": " + to_string(phi5) + ", \"verdict\": \"" + _verdict_str(c3) + "\" },\n"
+    j = j + "    \"C4_THRESHOLD_LIKE\": { \"metric\": \"peak |ΔΦ/Δk| > " + to_string(THRESHOLD_RATIO()) + "× median\", \"peak\": " + to_string(peak) + ", \"median\": " + to_string(median_d) + ", \"verdict\": \"" + _verdict_str(c4) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifier_F1_phi_k1_le_phi_k0\": { \"phi_k0\": " + to_string(phi0) + ", \"phi_k1\": " + to_string(phi5) + ", \"triggered\": " + _bool_str(falsified) + " },\n"
+    j = j + "  \"verdict_rule\": \"SUPPORTED iff C1+C2+C3+C4 ALL PASS; PARTIAL_DIRECTIONAL if 2-3; FAIL if ≤1; FALSIFIED if Φ(k=1)<Φ(k=0)\",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"criteria_met\": " + to_string(np) + ",\n"
+    j = j + "  \"honest_limits\": [\n"
+    j = j + "    \"L1: phi_spatial = 🟢 NUMERICAL spatial-slice replica of phi_rs, NOT full IIT 4.0 (no system-level Φ partition search, no cause-effect structure, no exclusion postulate). H_007/H_003 H3.4 lineage carry.\",\n"
+    j = j + "    \"L2: closure_strength k parametrization (linear scale of cat_C neighbour-diffused) is a design choice. Michaelis-type, sigmoid-type, or stochastic gating would produce different τ_c locations. The substrate-conditional claim is consistent with this family but not unique to it.\",\n"
+    j = j + "    \"L3: WINDOW-SENSITIVE (H_003 H3.4 L3 carry verbatim). Φ(k) measured on living transient WARM=0 DIM=12; past convergence Φ→~0 for ALL k (homogeneous fixed point). The threshold claim is a TRANSIENT-WINDOW claim, not a fixed-point claim.\",\n"
+    j = j + "    \"L4: 6-point k sweep is COARSE — the actual τ_c position is bracketed at single-segment resolution (Δk ≈ 0.25). Finer 20-point sweep would localize τ_c more precisely; phase-transition vs sigmoid distinction stays coarse here.\",\n"
+    j = j + "    \"L5: 'weak-form panpsychism is substrate-conditional' is a closure-axis result only — phenomenal qualia / strong panpsychism / combination problem (Goff/Coleman) are NOT touched. H_004 boundary carry: hard-problem unresolved.\",\n"
+    j = j + "    \"L6: H_157 universal Ψ-attractor (170-type META-CA) is NOT directly measured here — this is closure × Φ cross-link only. The substrate-conditional finding is consistent with H_157 strong-form directional FAIL but does not reproduce the META-CA universality lane.\",\n"
+    j = j + "    \"L7: H_003 H3.4 baselines (Φ_broken=3.534, Φ_closed=4.454) are inherited as expected endpoints — if the new H_204 lattice (slightly different SEED_BASE=0xA17C204 vs H3.4 0xA17C034) shifts these, C2/C3 margins absorb up to ±0.50 (≈ ½ × gap). Beyond that, baselines themselves are seed-dependent and the threshold-claim shifts.\"\n"
+    j = j + "  ]\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result.json", j)
+
+    println("")
+    println("  result.json written → " + _state_dir() + "/result.json")
+    println("=== H_204 weak-panpsy threshold smoke complete: " + verdict + " ===")
+}

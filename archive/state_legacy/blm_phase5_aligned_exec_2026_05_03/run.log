@@ -1,0 +1,59 @@
+[06:50:13] ========================================================================
+[06:50:13] BLM Phase 5 v2 STIMULUS-ALIGNED — strategy=S1 event-trigger, device=cpu
+[06:50:13] ========================================================================
+[06:50:13] [stage 1] EEG (ZuCo SR1-8, fixation-locked epochs, sliding-window 32-fix trials step 16)
+[06:50:13]   SR1: 923 valid fixation epochs of 923
+[06:50:13]   SR1: 56 sliding-window trials emitted
+[06:50:13]   SR2: no anchor event=100, skip
+[06:50:13]   SR3: no anchor event=100, skip
+[06:50:14]   SR4: no anchor event=100, skip
+[06:50:14]   SR5: no anchor event=100, skip
+[06:50:14]   SR6: missing files, skip
+[06:50:14]   SR7: missing files, skip
+[06:50:14]   SR8: missing files, skip
+[06:50:14]   total EEG sliding trials (SR1-8): 56
+[06:50:14] [stage 2] BOLD (Friends transcripts -> sentence segments -> >=24-TR HRF-lagged window phi)
+[06:50:14]   collected 1107 candidate (text, TR_range) pairs from Friends transcripts
+[06:50:14]   473 pairs after text-length filter (>=30 chars)
+[06:50:14]   retained 300 BOLD-paired sentence segments
+[06:50:14]   computing BOLD phi per pair (HRF +4-6s, window >=24 TRs)...
+[06:50:14]     bold 50/300 elapsed=0.1s phi_last=16.611
+[06:50:14]     bold 100/300 elapsed=0.1s phi_last=15.141
+[06:50:14]     bold 150/300 elapsed=0.1s phi_last=14.316
+[06:50:14]     bold 200/300 elapsed=0.2s phi_last=13.568
+[06:50:14]     bold 250/300 elapsed=0.2s phi_last=14.943
+[06:50:14]     bold 300/300 elapsed=0.3s phi_last=nan
+[06:50:14]   BOLD valid: 290/300
+[06:50:14] [stage 3] CLM (clm_v4_350m + LoRA stage1 local) — per-sentence forward pass
+[06:50:14]   loading tokenizer /tmp/tokenizer_64k_multilingual.model...
+[06:50:14]   vocab=64000
+[06:50:14]   building decoder...
+[06:50:16]   decoder params=477,648,512
+[06:50:16]   loading ckpt /home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt...
+[06:50:18]   ckpt loaded 2.0s missing=0 unexpected=0
+[06:50:18]   applying LoRA from /home/aiden/.cache/huggingface/hub/models--need-singularity--clm-v4-sft-stage1/snapshots/80eee785a8c9f84b7a6a78fc250f5a4a4bdce81c...
+[06:50:21]   LoRA applied via PeftModel.from_pretrained (local snapshot)
+[06:50:21]   forward on 300 BOLD-paired Friends sentences...
+[06:50:22]     clm-bold 25/300 elapsed=1.1s phi_last=-2.197
+[06:50:24]     clm-bold 50/300 elapsed=3.1s phi_last=6.418
+[06:50:26]     clm-bold 75/300 elapsed=4.7s phi_last=nan
+[06:50:27]     clm-bold 100/300 elapsed=6.2s phi_last=11.177
+[06:50:28]     clm-bold 125/300 elapsed=7.5s phi_last=nan
+[06:50:30]     clm-bold 150/300 elapsed=9.3s phi_last=-0.468
+[06:50:32]     clm-bold 175/300 elapsed=11.2s phi_last=5.212
+[06:50:34]     clm-bold 200/300 elapsed=13.3s phi_last=6.635
+[06:50:36]     clm-bold 225/300 elapsed=14.7s phi_last=nan
+[06:50:37]     clm-bold 250/300 elapsed=16.3s phi_last=-2.312
+[06:50:39]     clm-bold 275/300 elapsed=18.0s phi_last=1.081
+[06:50:40]     clm-bold 300/300 elapsed=19.6s phi_last=-1.028
+[06:50:40]   forward on 56 sentences for CLM-EEG positional pairing...
+[06:50:44]     clm-eeg 50/56 elapsed=4.0s
+[06:50:45] [stage 4] pair stats (Spearman primary, z-Pearson secondary, raw Pearson tertiary)
+[06:50:45]   CLM-EEG: n_valid=36
+[06:50:45]   CLM-BOLD: n_valid=158
+[06:50:45]   EEG-BOLD (parallel, non-gating): n_valid=36
+[06:50:45]   CLM-EEG: r_s=+0.1290 r_p_raw=+0.1574 r_p_z=+0.1574 p_perm=0.4770 q95=0.3552 CI=[-0.2301,+0.4648] tier=none
+[06:50:45]   CLM-BOLD: r_s=-0.0579 r_p_raw=-0.0519 r_p_z=-0.0519 p_perm=0.4640 q95=0.1401 CI=[-0.2160,+0.1013] tier=none
+[06:50:45]   EEG-BOLD: r_s=-0.1382 r_p_raw=-0.0861 r_p_z=-0.0861 p_perm=0.3980 q95=0.3105 CI=[-0.5040,+0.2356] tier=none
+[06:50:45] [verdict] composite=MULTI_ALIGNED_FAIL silver_pairs=[] (n=0/3)
+[06:50:45] [done] verdict.json -> /tmp/blm_phase5_aligned_exec_2026_05_03/verdict.json (elapsed=32.3s)

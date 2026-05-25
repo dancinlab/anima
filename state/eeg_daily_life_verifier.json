@@ -1,0 +1,50 @@
+{
+  "tool": "eeg_daily_life_verifier",
+  "genus": "eeg-daily-life-multi-axis-verifier",
+  "version": "v1",
+  "hexa_only": true,
+  "deterministic": true,
+  "llm": "none",
+  "pre_register_frozen": true,
+  "frozen_at": "2026-04-28",
+  "raw_compliance": [9,12,46,48,52,65,70,71,91,106,117],
+  "differential_paradigm": "daily-life-eyes-open vs resting-eyes-closed (raw#12 frozen)",
+  "criteria": {
+    "C1_spec_ent_min_x1000": 700,
+    "C2_alpha_atten_max_x1000": 700,
+    "C3_change_points_min": 1,
+    "C4_lz76_range_min_x1000": 50,
+    "C4_lz76_range_max_x1000": 450,
+    "C5_beta_alpha_ratio_min_x1000": 800,
+    "C6_drowsy_idx_max_x1000": 1500,
+    "verdict_rule": "DAILY_LIFE.PASS = (pass_count >= 4 of 6)"
+  },
+  "selftest": {
+    "enabled": 1,
+    "mode": "awake",
+    "seed": 93223301
+  },
+  "metrics": {
+    "spectral_entropy_x1000": 801,
+    "alpha_attenuation_x1000": 401,
+    "sliding_lz76_change_points": 0,
+    "sliding_lz76_range_x1000": 88,
+    "beta_alpha_ratio_x1000": 901,
+    "drowsiness_index_x1000": 701
+  },
+  "per_criterion_pass": {
+    "C1_pass": 1,
+    "C2_pass": 1,
+    "C3_pass": 0,
+    "C4_pass": 1,
+    "C5_pass": 1,
+    "C6_pass": 1
+  },
+  "pass_count": 5,
+  "verdict_pass": 1,
+  "classification": "NOT_VERIFIED_SYNTHETIC",
+  "verify_grid_K": 6,
+  "falsifiers_count": 7,
+  "input_path": "",
+  "resting_ref_path": ""
+}

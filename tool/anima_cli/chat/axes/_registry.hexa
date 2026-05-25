@@ -1,0 +1,246 @@
+// ════════════════════════════════════════════════════════════════════════════
+// tool/anima_cli/chat/axes/_registry.hexa — chat AXIS meta-registry
+//
+//  PURPOSE
+//    Single source of truth for chat AXIS-OF-AXES (= "axis 의 axis").
+// 이 파일은 plugin pattern 의 hook 한 층 더 위 — 어떤 axis
+//    들이 chat orchestra 에 존재하는지 자체를 데이터로 보유.
+//
+//    기존 4 registry (lanes/_registry.hexa, modes(benchmark.hexa#modes),
+//    init_patterns/_registry.hexa, transports/_registry.hexa) 는 그대로
+//    유지하고, 본 파일이 그 위에 한 층 indirection 을 추가합니다.
+//
+//    효과: axis-N+1 (e.g. verifier) 추가 시 본 파일에 한 줄 + 새 axis 의
+//    own registry hexa + plugin 모듈만 추가하면, dispatcher (chat.hexa
+//    _route_list_axis) / benchmark.hexa cross-product 가 자동으로
+//    5 차원으로 확장됩니다.
+//
+//  USER DIRECTIVE (2026-05-09 verbatim)
+// "all bg go" + "next" → cycle 2026-05-10 axis-N+1 hook T+1 step
+//    원 directive 누적: "전부 cli 에 구현하고 사용할지는 --option 으로
+//      가능하게" + "앞으로도 기본값 또는 --option 형태 여러가지 생길꺼니까
+//      고려해서 설계 구현".
+//
+// REGISTRY ENTRY SCHEMA (8-field; plugin pattern mirror)
+//    axis_id              short hook id (axis-1 / axis-2 / axis-3 / axis-4)
+//    name                 axis 이름 (lane / mode / init-pattern / transport)
+//    registry_file        relative path under tool/anima_cli/chat/
+//                         (or anchor-form path#section for inline registries)
+//    default_flag         dispatcher arg name (--lane / --mode / ...)
+//    list_flag            list-axis arg name (--list-lanes / --list-modes / ...)
+//    describe_helper      helper function 이름 (lane_describe /
+//                         mode_describe / pattern_describe / transport_describe)
+//    status               LANDED | SKELETON | SPEC_CARRY | DEFERRED
+// axis_label_internal internal label (axis-3 / axis-6 / axis-8 /
+//                         axis-N) — not necessarily contiguous with axis_id
+//
+// EXTENSION CONVENTION (axis-N+1 hook 정의)
+//    NEW axis (e.g. verifier) → 본 파일에 1 줄 row 추가 + 새 axis 의 own
+//    registry hexa (e.g. tool/anima_cli/chat/verifiers/_registry.hexa) +
+//    plugin 모듈들. dispatcher (chat.hexa) / benchmark.hexa 코드 변경 0 줄
+//    — 이게 hook 성공의 정의.
+//
+//  COMPLIANCE
+// V14 — registry helper 결정성 보존 (no random / no time / no env)
+// — model load 절대 금지 (registry meta only)
+// chat-cap C2 — axis hook 은 측정 차원 자체 (verdict 아님)
+// mandatory report — axis 발견 자체가 mandatory report
+// single SSOT — 본 파일 = axis 의 single SSOT (4 registry 는
+//      axis 내부 SSOT 유지, hierarchy 정리)
+// trinity — registry entries cross-link / /
+// mandate-1 — wrapping 0 (registry 는 meta only; no model wrap)
+// 매단계 — registry yaml↔md mirror in
+//      anima/registry/anima_artifact_registry.yaml chat_axes_meta section
+// yaml↔md SSOT — registry yaml + this hexa file co-update
+// chat lane plugin pattern — 본 파일 = 의 hook 한 층 위
+//      (axis 의 axis = meta-registry; T+1 step land)
+//
+//  CROSS-REFERENCE
+//    chat.hexa                                       generic _route_list_axis
+//    chat/lanes/_registry.hexa                       axis-1 (lane)
+//    chat/lanes/benchmark.hexa#modes (inline)        axis-2 (mode)
+//    chat/init_patterns/_registry.hexa               axis-3 (init-pattern)
+//    chat/transports/_registry.hexa                  axis-4 (transport)
+//    docs/anima_chat_orchestra_axis_n1_hook_plan_2026_05_09.md  T+1 plan
+//    anima/registry/anima_artifact_registry.yaml#chat_axes_meta yaml mirror
+//    .roadmap.cli                                    cli.axis_n1_hook_t1_2026_05_10
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+// Registry SSOT — append-only convention. New axis = new entry.
+// Field order: axis_id, name, registry_file, default_flag, list_flag,
+//              describe_helper, status, axis_label_internal
+fn axes_registry() -> array {
+    return [
+        // ───── axis-1 — lane plugin (/ land 2026-05-09) ─────────
+        ["axis-1",
+         "lane",
+         "lanes/_registry.hexa",
+         "--lane",
+         "--list-lanes",
+         "lane_describe",
+         "LANDED",
+         "axis-3"],
+
+        // ───── axis-2 — mode plugin (axis-6 promote 2026-05-10 T+2) ───
+        // T+2 step: inline anchor (lanes/benchmark.hexa#modes) → standalone
+        // modes/_registry.hexa promote (option A; cleaner future-proof).
+        // benchmark.hexa _bench_modes / _mode_describe vendored mirror retained
+        // for backward-compat (raw#15 additive).
+        ["axis-2",
+         "mode",
+         "modes/_registry.hexa",
+         "--mode",
+         "--list-modes",
+         "mode_describe",
+         "LANDED",
+         "axis-6"],
+
+        // ───── axis-3 — init-pattern plugin (axis-8 land 2026-05-09) ───
+        ["axis-3",
+         "init-pattern",
+         "init_patterns/_registry.hexa",
+         "--init-pattern",
+         "--list-init-patterns",
+         "pattern_describe",
+         "LANDED",
+         "axis-8"],
+
+        // ───── axis-4 — transport plugin (axis-N land 2026-05-09) ──────
+        ["axis-4",
+         "transport",
+         "transports/_registry.hexa",
+         "--transport",
+         "--list-transports",
+         "transport_describe",
+         "LANDED",
+         "axis-N"],
+
+        // ───── axis-5 — verifier plugin (axis-N+1 land 2026-05-10 T+3) ─
+        // T+1 슬롯에서 활성: dispatcher (chat.hexa) / benchmark.hexa 모두
+        // raw#15 additive 방식으로 verifier case 추가 (4 axis 기존 case 보존).
+        // F-axes-6 fixture LANDED — axis-5 추가 시 코드 변경 0 줄 (verifier
+        // case 만 신설, 4 axis case 그대로) 검증 정합.
+        ["axis-5",
+         "verifier",
+         "verifiers/_registry.hexa",
+         "--verifier",
+         "--list-verifiers",
+         "verifiers_describe",
+         "LANDED_2026_05_10_T_3",
+         "axis-N+1"],
+
+        // ───── axis-6 — modality plugin (axis-N+2 land 2026-05-10 T+6) ─
+        // T+5 design spec carry → T+6 5 plugin module skeleton + axis-6 활성.
+        // raw#15 additive — dispatcher (chat.hexa) / benchmark.hexa 모두
+        // modality case 만 추가; 기존 5 axis (lane/mode/init-pattern/transport/
+        // verifier) case 그대로 보존. F-axes-11 fixture LANDED — 6-axis 완성.
+        // cross-product 자동 5 → 6 차원 expand (720 → 4800 = 720 × 5 modality).
+        ["axis-6",
+         "modality",
+         "modalities/_registry.hexa",
+         "--modality",
+         "--list-modalities",
+         "modalities_describe",
+         "LANDED_2026_05_10_T_6",
+         "axis-N+2"]
+    ]
+}
+
+// Lookup helper — returns entry or [] when not found.
+// Accepts both axis_id ("axis-1") and name ("lane") for caller convenience.
+fn axes_lookup(key: string) -> array {
+    let reg = axes_registry()
+    let mut i = 0
+    while i < len(reg) {
+        let row = reg[i]
+        if _str(row[0]) == key { return row }
+        if _str(row[1]) == key { return row }
+        i = i + 1
+    }
+    return []
+}
+
+// Names list — axis NAME (lane / mode / init-pattern / transport),
+// not axis_id. Used by `chat list-axes` to surface friendly identifiers.
+fn axes_names() -> array {
+    let reg = axes_registry()
+    let mut out = []
+    let mut i = 0
+    while i < len(reg) {
+        out = out + [_str(reg[i][1])]
+        i = i + 1
+    }
+    return out
+}
+
+// Default axis — "lane" per directive (axis-1 = primary lane plugin).
+// Caller uses this when --axis is absent (e.g. `chat list-axis` no-arg).
+fn axes_default() -> string { return "lane" }
+
+// Pretty-print one row (used by --list-axes / `chat list-axes`).
+fn axes_describe(key: string) -> string {
+    let row = axes_lookup(key)
+    if len(row) == 0 { return "(unknown axis: " + key + ")" }
+    return "  " + _str(row[0])
+        + " " + _str(row[1])
+        + " [" + _str(row[6]) + "]"
+        + " label=" + _str(row[7])
+        + "\n      registry: " + _str(row[2])
+        + "\n      default-flag: " + _str(row[3])
+        + " / list-flag: " + _str(row[4])
+        + "\n      describe-helper: " + _str(row[5]) + "()"
+}
+
+// Helper — registry_file 의 axis-prefix 가 inline anchor (path#section)
+// 인지 판별. anchor 인 경우 chat.hexa generic dispatcher 는 hardcode
+// fallback 으로 위임 (mode 는 benchmark.hexa 안에 vendored).
+fn axes_is_inline(key: string) -> bool {
+    let row = axes_lookup(key)
+    if len(row) == 0 { return false }
+    return _str(row[2]).contains("#")
+}
+
+// Helper — axis 의 standalone registry hexa 절대경로 resolve. inline
+// anchor 면 빈 문자열 반환 (caller fallback).
+fn axes_registry_path(key: string, root: string) -> string {
+    let row = axes_lookup(key)
+    if len(row) == 0 { return "" }
+    let rf = _str(row[2])
+    if rf.contains("#") { return "" }
+    return root + "/tool/anima_cli/chat/" + rf
+}
+
+// Selftest — registry shape sanity (no dispatch, no model load —).
+fn main() {
+    let reg = axes_registry()
+    if len(reg) < 6 {
+        println("FAIL chat/axes/_registry < 6 entries (expected lane / mode / init-pattern / transport / verifier / modality)")
+        exit(1)
+    }
+    let mut i = 0
+    while i < len(reg) {
+        let row = reg[i]
+        if len(row) != 8 {
+            println("FAIL row " + to_string(i) + " arity != 8 (got " + to_string(len(row)) + ")")
+            exit(1)
+        }
+        i = i + 1
+    }
+    println("PASS chat/axes/_registry selftest (" + to_string(len(reg)) + " axis entries)")
+    println("  default = " + axes_default())
+    let names = axes_names()
+    let mut k = 0
+    while k < len(names) {
+        println(axes_describe(_str(names[k])))
+        k = k + 1
+    }
+    println("")
+    println("(axis-N+1 hook = 본 파일에 1 줄 추가 시 dispatcher / benchmark 자동 인식)")
+    println("(axis-5 verifier LANDED 2026-05-10 T+3; axis-6 modality LANDED 2026-05-10 T+6 — 6-axis 완성 ★)")
+}

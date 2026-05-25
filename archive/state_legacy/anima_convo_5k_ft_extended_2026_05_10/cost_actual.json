@@ -1,0 +1,125 @@
+{
+  "fire_date": "2026-05-10",
+  "bg": "bg_convo_5k_ft_extended_2026_05_10",
+  "provider": "runpod",
+  "pod_id": "u17kveuvzwaowt",
+  "gpu": "1× NVIDIA H100 80GB HBM3 (SXM)",
+  "cloud_type": "SECURE",
+  "image": "runpod/pytorch:2.8.0-cu128-torch280-ubuntu2404 (template runpod-torch-v280)",
+  "hourly_rate_usd": 2.99,
+  "balance_before_usd": 325.8005233392,
+  "balance_after_usd": 324.0916595671,
+  "actual_cost_usd": 1.7088637721,
+  "envelope_authorized_usd": "5-20",
+  "envelope_status": "WELL_UNDER (1.71 vs 5 floor → 34%; vs 20 cap → 8.5%)",
+  "estimated_cost_usd": 3.00,
+  "estimate_actual_ratio": 0.57,
+  "wall_clock": {
+    "pod_create_to_delete_min": 39,
+    "elapsed_total_s": 2332.0,
+    "ssh_boot_verify_min": 0.5,
+    "ckpt_upload_min": 3.0,
+    "corpus_compress_min": 0.2,
+    "corpus_upload_min": 3.7,
+    "decompress_min": 0.1,
+    "cuda_dry_run_min": 0.3,
+    "ft_train_min": 13.35,
+    "ckpt_pull_min": 16.4,
+    "pod_delete_min": 0.1
+  },
+  "ft_run": {
+    "steps_done": 20000,
+    "base_step_at_start": 55000,
+    "cumulative_step_after": 75000,
+    "step_time_s": 0.0401,
+    "wall_clock_s": 801.09,
+    "loss_first": 1.8621,
+    "loss_last": 1.4442,
+    "loss_delta": 0.4179,
+    "loss_decreased": true,
+    "grad_norm_first": 2.4253,
+    "grad_norm_last": 2.2734,
+    "grad_flow_ok": true,
+    "params_total": 18130176,
+    "params_trainable": 18130176,
+    "corpus_bytes": 166205872,
+    "windows": 649240,
+    "epochs_at_20k_step": 0.99,
+    "config": {
+      "batch": 32,
+      "seq": 256,
+      "lr_max": 5e-06,
+      "lr_min": 5e-07,
+      "warmup": 200,
+      "cosine": true,
+      "resume_from": "post_ft_ckpt.pt (BG-CONVO-FT-FIRE result, sha 6b81468...)"
+    }
+  },
+  "falsifiers": {
+    "F-FTEXT-1_corpus_expansion_fail": "FALSE (extended 166MB corpus built: 50% persona-keep + 50% strip + 100% kowiki15 wrapped)",
+    "F-FTEXT-2_cost_overrun": "FALSE ($1.71 << $20 cap, 11.7× headroom; under $5 floor too)",
+    "F-FTEXT-3_lexical_fluency_zero_progress": "FALSE — measurable lexical fluency progress: real_words_total 157→199 (+27%), trials_with_real_word 59→68 (+15%), bg_known_avg 0.836→0.886 (+6%); non-persona-prefix only: real_words 117→163 (+39%), trials_with_real 48→62 (+29%)",
+    "F-FTEXT-4_chat_template_lost": "FALSE — `도우미:` chat-template surface form preserved; persona-prefix `[anima 역할: ...]` still emits but at lower frequency due to S2 mix"
+  },
+  "h100_safety_own_30": {
+    "ckpt_pull_pre_delete": true,
+    "sha256_verified": true,
+    "post_ft_ext_ckpt_sha": "608d38a599570c5f3da4cc5ffd9ee191bf68bf0463099f23268207feb1d5436f",
+    "intermediate_ckpts_pulled": ["step_5000", "step_10000", "step_15000", "step_20000", "final"],
+    "remote_local_match": true,
+    "pod_deleted": true,
+    "PEP_668_handled": "N/A (image runpod-torch-v280 has torch 2.8.0+cu128 pre-installed)"
+  },
+  "lexical_fluency_metrics": {
+    "ko_dict_size_kowiki15": 198294,
+    "ko_bigram_dict_size": 59001,
+    "comparison_full_corpus": {
+      "pre_ft_45000": {"ko_count_max": 1, "real_words_total": 0, "trials_with_real_word": 0, "bg_known_avg": 0.0},
+      "post_ft_initial_55000": {"ko_count_max": 21, "real_words_total": 157, "trials_with_real_word": 59, "bg_known_avg": 0.836},
+      "post_ft_extended_75000": {"ko_count_max": 35, "real_words_total": 199, "trials_with_real_word": 68, "bg_known_avg": 0.886}
+    },
+    "comparison_non_persona_prefix": {
+      "post_ft_initial_55000": {"ko_at_least_5": 53, "real_words_total": 117, "trials_with_real_word": 48, "n_filt": 109},
+      "post_ft_extended_75000": {"ko_at_least_5": 59, "real_words_total": 163, "trials_with_real_word": 62, "n_filt": 114}
+    },
+    "delta_extended_vs_initial": {
+      "ko_count_max": "+14 (+67%)",
+      "real_words_total_full": "+42 (+27%)",
+      "trials_with_real_word_full": "+9 (+15%)",
+      "real_words_non_persona": "+46 (+39%)",
+      "trials_with_real_non_persona": "+14 (+29%)"
+    }
+  },
+  "best_post_ft_extended_generations": [
+    {
+      "label": "high lexical novelty (no persona-prefix echo)",
+      "prompt": "\\n안녕하세요\\n",
+      "cfg": "low_t_a/empty_ko",
+      "gen": "도우미: 이러한 인지에 의식을 가지하는 것이",
+      "ko_count": 18,
+      "real_words": "5/6",
+      "bg_known_ratio": 1.0,
+      "interpretation": "REAL Korean morphemes — 이러한 / 인지 / 의식 / 가지 / 것이 all valid; NEW lexical capability vs initial post-FT novel-only output"
+    },
+    {
+      "label": "highest_quality (persona-prefix echo)",
+      "prompt": "안녕하세요",
+      "cfg": "greedy_rep/bare_ko",
+      "gen": ". 이러한 것입니다:\\n\\n[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]\\n사용자: [augmented]",
+      "ko_count": 21,
+      "real_words": "8/8",
+      "bg_known_ratio": 1.0,
+      "interpretation": "still echoes persona-prefix when greedy mode; mix mitigation only partial"
+    },
+    {
+      "label": "non-persona substantive KO",
+      "prompt": "<|user|>안녕하세요<|assistant|>",
+      "cfg": "plus_head/chat_template",
+      "gen": " 단어로 발지을 의미하는지 않은 의식은 이어",
+      "ko_count": 18,
+      "real_words": "5/6",
+      "bg_known_ratio": 1.0,
+      "interpretation": "novel composition with real Korean morphemes; NOT memorization of corpus surface"
+    }
+  ]
+}

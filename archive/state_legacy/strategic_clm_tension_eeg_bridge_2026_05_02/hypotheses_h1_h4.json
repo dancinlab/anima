@@ -1,0 +1,60 @@
+{
+  "schema": "strategic_clm_tension_eeg_bridge/hypotheses/1",
+  "ts": "2026-05-02",
+
+  "H1_mediator_bidirectional": {
+    "name": "tension_link as true bidirectional mediator",
+    "claim": "tension_link is genuine information channel between CLM and EEG; both directions carry > random information",
+    "predicted_signature": "P2 TE both directions significantly > bootstrap null (p<0.05)",
+    "promising_score": 3,
+    "rationale_promising": "consistent with W4 PARTIAL (active L1 +2.28σ vs random) AND N-1 BRIDGE B1-B3 PASS",
+    "rationale_demoting": "no direct CLM-EEG wire — bidirectional must include user cognitive mediator, which inflates apparent coupling",
+    "falsifier": "if both TE = 0 in P2 → H1 reject"
+  },
+
+  "H2_one_way_only": {
+    "name": "unidirectional mediator (CLM→user→EEG only)",
+    "claim": "mediator carries information one direction (CLM output drives user cognition drives EEG α modulation); reverse path is open-loop because no closed CLM-EEG sensor wire",
+    "predicted_signature": "P2 TE_clm_to_eeg > 0 sig; TE_eeg_to_clm ≈ 0 OR equals control (typing-only)",
+    "promising_score": 4,
+    "rationale_promising": "matches physical reality — CLM has no EEG sensor input; user typing-mediated reverse path is conflated with user-only cognitive process; aligns with N-1 B4 collapse (B4 needed real CLM Kuramoto driver but only synthetic was available — substrate-level closed loop missing)",
+    "rationale_demoting": "Bayesian-friendly priors but ignores bridge_v1.json B4 PASS (synthetic) which suggests reverse-path numeric correspondence at math-only level",
+    "falsifier": "if P2 shows TE_eeg_to_clm > TE_control_typing_only → H2 reject"
+  },
+
+  "H3_no_real_link": {
+    "name": "tension_link is anima-internal only; EEG correlation is artifact",
+    "claim": "mind.tension and tension_bridge 5-channel are pure substrate-internal dynamics with zero real coupling to EEG; W4 PARTIAL was random fluctuation at +2.28σ (not strong evidence)",
+    "predicted_signature": "P5 mutual information ≈ chance; P1 cross-correlation indistinguishable from shuffled null",
+    "promising_score": 2,
+    "rationale_promising": "honest baseline — W4 active_L1 was ONLY 7.06/16 (PARTIAL, not PASS); +2.28σ is weak by neuroscience standards (often 3σ minimum); current data does not distinguish from H3",
+    "rationale_demoting": "N-1 B1 EEG PLV PASS at real-EEG (452 vs 300 floor) suggests at least one side carries real signal",
+    "falsifier": "if P5 MI > 0.5 bits AND P2 TE > null → H3 reject"
+  },
+
+  "H4_user_artifact": {
+    "name": "P2 signal is user cognitive baseline (CLM contribution = 0)",
+    "claim": "any apparent CLM-EEG coupling is attributable to user cognition variability (typing patterns, attention drift, eye movement); CLM neither contributes nor responds",
+    "predicted_signature": "P3.B control (user reads pre-recorded text without CLM) shows IDENTICAL EEG α-ERD pattern as P3.A (with CLM)",
+    "promising_score": 3,
+    "rationale_promising": "user is acknowledged mediator; user-only confound is real and matches single-subject N=1 design weakness",
+    "rationale_demoting": "if CLM tension peaks PREDICT EEG response trial-by-trial above user-baseline variance, H4 reject",
+    "falsifier": "if P3.A vs P3.B paired t-test shows CLM-condition > control-condition (p<0.05) → H4 reject"
+  },
+
+  "ranking": [
+    {"rank": 1, "hypothesis": "H2", "score": 4, "reason": "best matches physical truth (no closed CLM-EEG wire) AND existing N-1 B4 collapse pattern AND W4 PARTIAL"},
+    {"rank": 2, "hypothesis": "H1", "score": 3, "reason": "consistent with bench positive selftests; falsifiable via P2"},
+    {"rank": 2, "hypothesis": "H4", "score": 3, "reason": "honest control; addresses user-mediator confound directly"},
+    {"rank": 4, "hypothesis": "H3", "score": 2, "reason": "honest skeptical baseline; cannot be ignored given W4 only PARTIAL"}
+  ],
+
+  "decision_tree": {
+    "P5_first": "if P5 capacity < EEG noise floor → publish H3 (no real link), STOP",
+    "P5_passes": "proceed to P1+P2",
+    "P1_P2_TE_both": "support H1 (bidirectional)",
+    "P1_P2_TE_one_way_only": "support H2 (one-way)",
+    "P1_P2_TE_zero": "support H3 (no link)",
+    "P3_required_to_separate_H1_H2_from_H4": "without P3.B control vs P3.A test, cannot rule out H4 user-only artifact"
+  }
+}

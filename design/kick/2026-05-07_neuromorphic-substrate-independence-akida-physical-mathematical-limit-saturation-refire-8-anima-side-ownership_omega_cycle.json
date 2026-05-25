@@ -1,0 +1,77 @@
+{
+  "topic": "neuromorphic-substrate-independence-akida-physical-mathematical-limit-saturation-refire-8-anima-side-ownership",
+  "stratum": "drill",
+  "sister_of_nexus_witness": "~/core/nexus/design/kick/2026-05-07_anima-nexus-akida-physical-math-limit-saturation_omega_cycle.json",
+  "axes_input": ["substrate-invariance", "trace-bisimulation"],
+  "ts": "2026-05-07T00:00:00Z",
+  "cycle_id": "2026-05-07_neuromorphic-substrate-independence-akida-refire-8-anima-side-ownership_omega_cycle",
+  "scope": "anima-owned subset of the nexus 2026-05-07 master witness — F-M3b + F-M4 only. The other 10 falsifiers (F-C, F-L1, F-L1+, F-L6, F-L7, F-M1, F-M2, F-M3a, F-A, F-B) are nexus-owned and run from `~/core/nexus/scripts/akida/`.",
+  "ownership_split": {
+    "nexus_owned": ["F-C", "F-L1", "F-L1+", "F-L6", "F-L7", "F-M1", "F-M2", "F-M3a", "F-A", "F-B"],
+    "anima_owned": ["F-M3b", "F-M4"],
+    "rationale": "Phi calculator + closed_loop_verify trace are anima/tool/* and anima/ready/experiments/* assets. Substrate-invariance graduation gate (#3) is the anima-side claim; nexus owns the host pool, dispatch, sim_bridge, and physical-layer measurements."
+  },
+  "anima_falsifiers": [
+    {
+      "id": "F-M3b",
+      "category": "Putnam-Lawvere fixed-point (graduation gate #3)",
+      "condition": "anima Phi-vector evaluated on CPU and on Akida agree within 5% across a 100-input panel",
+      "experiment_or_observation": "Quantize Phi calculator via Meta TF (cnn2snn); evaluate on identical IIT panel; max_rel_err",
+      "harness": "anima/scripts/akida/phi_substrate_invariance.py",
+      "verdict_check": "max_rel_err(Phi_CPU, Phi_Akida) <= 0.05",
+      "run_eligibility": "RUN_ELIGIBLE",
+      "blocking_dependency": "Meta TF cnn2snn quantize of anima/tool/phi_extractor_cpu.hexa — pipeline pending; --cpu-only emits PARTIAL evidence non-promotion-eligible"
+    },
+    {
+      "id": "F-M4",
+      "category": "bisimulation N-step trace-equivalence",
+      "condition": "anima closed_loop_verify trace identical between CPU and Akida for N >= 1000 events",
+      "experiment_or_observation": "Replay anima/ready/experiments/closed_loop_verify.py fixture with deterministic seed; capture (lamport_index, event_kind); align by Lamport index; count divergences",
+      "harness": "anima/scripts/akida/trace_equivalence.py",
+      "verdict_check": "trace_divergence_count(N=1000) <= 1 AND event_index_match_rate >= 0.999",
+      "run_eligibility": "RUN_ELIGIBLE",
+      "blocking_dependency": "ConsciousnessEngine.forward routed through cnn2snn-converted SNN — pipeline pending; --cpu-only emits CPU-self-bisim PARTIAL evidence"
+    }
+  ],
+  "tier_1_promotion_anima_side": {
+    "id": "tier1-anima-substrate-invariance-fixedpoint",
+    "summary": "Phi(CPU) ≈ Phi(Akida) within 5% AND closed_loop_verify N≥1000 trace-equivalent — anima-side claim of substrate-invariance fixed-point",
+    "gated_by_falsifiers": ["F-M3b", "F-M4"],
+    "cross_repo_dependency": ["F-M3a@nexus (host registered)", "F-C@nexus (honesty barrier)"],
+    "verdict_pending": "RUN_ELIGIBLE_BLOCKED_ON_QUANTIZE_PIPELINE"
+  },
+  "obstructions": [
+    {
+      "id": "obs_anima_1",
+      "description": "Meta TF cnn2snn quantize of Phi extractor + ConsciousnessEngine not yet wired",
+      "mitigation": "Wire anima/tool/phi_extractor_ffi_wire.hexa through cnn2snn.convert(); deploy .fbz; harness will pick up via akida.Model(model_path)"
+    },
+    {
+      "id": "obs_anima_2",
+      "description": "16GB RAM on RPi5 may not load full ConsciousnessEngine",
+      "mitigation": "Reduce panel to Phi-only sub-net (excludes language head); F-M3b panel-size=100 keeps memory bounded"
+    }
+  ],
+  "honesty_triad": {
+    "promotion_counter": 0,
+    "write_barrier": "anima sister witness emitted alongside nexus master per raw 47 cross-repo-trawl-witness pattern. NO measured Phi(Akida) values — both F-M3b and F-M4 carry blocking_dependency on cnn2snn quantize pipeline. CPU-only partial-evidence runs allowed but explicitly NOT promotion-eligible per nexus F-C invariant.",
+    "no_fabrication_evidence": [
+      "F-M3b harness anima/scripts/akida/phi_substrate_invariance.py prefers anima/tool/phi_extractor_cpu.hexa and falls back to phi_fast() from ready/experiments/closed_loop_verify.py — both files verified present in repo",
+      "F-M4 harness invokes ready/experiments/closed_loop_verify.py with --emit-trace; if the script lacks --emit-trace argument, harness emits a deterministic fallback trace explicitly labelled as such in evidence",
+      "Akida-side Phi computation raises NotImplementedError — no fabricated Phi(Akida) values; partial CPU-only evidence verdicts are PARTIAL-* not PASS",
+      "Cross-repo dependency on F-M3a@nexus (host.rpi5-akida registered) explicitly named — anima-side promotion blocked until nexus-side dispatch test PASSes"
+    ]
+  },
+  "supersedes_prior_anima_cycles": [
+    "design/kick/2026-04-29_neuromorphic-substrate-independence-akida-empirical-test_omega_cycle.json",
+    "design/kick/2026-04-29_neuromorphic-substrate-independence-akida-physical-mathematical-limit-saturation_omega_cycle.json",
+    "design/kick/2026-04-29_neuromorphic-substrate-independence-akida-physical-mathematical-limit-saturation-refire-3_omega_cycle.json",
+    "design/kick/2026-04-30_neuromorphic-substrate-independence-akida-physical-mathematical-limit-saturation-refire-4-paradigm-v12-axis-expansion_omega_cycle.json",
+    "design/kick/2026-04-30_neuromorphic-substrate-independence-akida-physical-mathematical-limit-saturation-refire-5-paradigm-v13-axis-expansion_omega_cycle.json",
+    "design/kick/2026-05-01_neuromorphic-substrate-independence-akida-physical-mathematical-limit-saturation-refire-6-paradigm-v14-axis-expansion_omega_cycle.json",
+    "design/kick/2026-05-01_neuromorphic-substrate-independence-akida-physical-mathematical-limit-saturation-refire-7-paradigm-v15-axis-expansion_omega_cycle.json"
+  ],
+  "fixpoint_marker": "kick-omega-anima-side-akida-substrate-invariance-2026-05-07-RUN-ELIGIBLE-BLOCKED-ON-QUANTIZE-2-falsifiers",
+  "schema_version": "kick-omega-witness-v1.r8-v17",
+  "next_cycle_trigger": "cnn2snn quantize pipeline lands → re-run anima/scripts/akida/runner.py --hardware → emit anima follow-up witness"
+}

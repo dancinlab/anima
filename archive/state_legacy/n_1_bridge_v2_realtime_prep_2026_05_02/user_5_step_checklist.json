@@ -1,0 +1,91 @@
+{
+  "schema": "anima/n_1_bridge_v2_realtime_prep/user_checklist/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "phase": "Phase 5 — user deployment 5-step checklist (printable)",
+  "purpose": "Single setup, then user just launches and walks away for 30 minutes",
+
+  "checklist": [
+    {
+      "step": 1,
+      "title": "Mac one-time install (10 min)",
+      "actions": [
+        "Download LabRecorder.app from https://github.com/labstreaminglayer/App-LabRecorder/releases/latest",
+        "Drag to /Applications, allow in Privacy & Security if blocked",
+        "Run: python3 -m pip install --user pylsl pyxdf",
+        "Verify: python3 -c 'import pylsl, pyxdf; print(pylsl.__version__, pyxdf.__version__)'",
+        "Grant Local Network permission on first LabRecorder launch"
+      ],
+      "expected_outcome": "LabRecorder opens; pylsl import succeeds; smoke test stream visible in LabRecorder",
+      "estimated_time_min": 10
+    },
+    {
+      "step": 2,
+      "title": "ubu1 CLM W4 LSL server (5 min — once paste, then start each session)",
+      "actions": [
+        "ssh ubu1",
+        "mkdir -p ~/n1_bridge_realtime && nano ~/n1_bridge_realtime/clm_w4_lsl_server.py",
+        "Paste source from state/n_1_bridge_v2_realtime_prep_2026_05_02/clm_w4_lsl_server_spec.json (clm_w4_lsl_server_source field)",
+        "pip install --user pylsl numpy",
+        "Start in background: nohup python3 ~/n1_bridge_realtime/clm_w4_lsl_server.py --duration-min 30 > ~/n1_bridge_realtime/server.log 2>&1 &",
+        "Verify on mac: python3 -c 'from pylsl import resolve_streams; [print(s.name(), s.type()) for s in resolve_streams(wait_time=5)]'",
+        "Expected: anima_clm_tension and anima_tension_link_5ch listed"
+      ],
+      "expected_outcome": "Both CLM outlets visible from mac side",
+      "estimated_time_min": 5
+    },
+    {
+      "step": 3,
+      "title": "OpenBCI Cyton+Daisy 16ch electrode setup (10 min)",
+      "actions": [
+        "Apply conductive paste/gel to scalp at 16-ch 10-20 montage (priority: P3, P4, O1, O2 alpha-rich)",
+        "Open OpenBCI GUI v6.x",
+        "Connect to Cyton+Daisy via dongle",
+        "Run impedance test; target < 30kOhm on >= 12/16 channels (mandatory < 10kOhm on P3/P4/O1/O2)",
+        "Enable Networking widget -> LSL -> stream name 'OpenBCI_Cyton16' or default 'obci_eeg1' -> Start LSL Stream",
+        "Append to state/anima_eeg_impedance_ledger.jsonl: pre-session impedance row"
+      ],
+      "expected_outcome": "EEG LSL stream live at 125Hz x 16ch; impedance logged",
+      "estimated_time_min": 10
+    },
+    {
+      "step": 4,
+      "title": "Open LabRecorder + start phase_runner.sh (1 min)",
+      "actions": [
+        "In LabRecorder: click 'Update' -> all 4 streams (EEG, anima_clm_tension, anima_tension_link_5ch, anima_phase_marker) shown checked",
+        "Set Save To: ~/Documents/CurrentStudy/sub-N1Bv2_ses-S001_<UTC_DATE>",
+        "Click 'Start' (recording begins)",
+        "Open new terminal: bash /tmp/n1_bridge_realtime/phase_runner.sh",
+        "Sit comfortably; follow voice prompts for next 30 minutes; do NOT touch keyboard during phases"
+      ],
+      "expected_outcome": "Phase runner emits SESSION_START marker; LabRecorder size increases",
+      "estimated_time_min": 1
+    },
+    {
+      "step": 5,
+      "title": "Post-session: stop, save, analyze (5 min auto)",
+      "actions": [
+        "After SESSION_END voice prompt: in LabRecorder click 'Stop'",
+        "Note .xdf file path printed (e.g. ~/Documents/CurrentStudy/sub-N1Bv2_ses-S001_.../sub-..._eeg.xdf)",
+        "Append to state/anima_eeg_impedance_ledger.jsonl: post-session impedance row",
+        "Run: python3 /tmp/n1_bridge_realtime/analyze_xdf.py <xdf_path>",
+        "Verdict prints to terminal + state/n_1_bridge_v2_realtime_prep_2026_05_02/realtime_verdict.json + per_phase_results.json written",
+        "ssh ubu1 'killall python3 2>/dev/null; ls -la ~/n1_bridge_realtime/closed_loop_ledger_realtime_*.json | tail -1'"
+      ],
+      "expected_outcome": "verdict.json contains F-PASS_STRONG / F-PASS_PARTIAL / F-FAIL / F-INDETERMINATE per Phase 6 falsifier",
+      "estimated_time_min": 5
+    }
+  ],
+
+  "total_setup_after_first_install_min": 16,
+  "total_session_min": 30,
+  "total_analysis_min": 5,
+  "total_user_attention_min": 51,
+  "user_walk_away_block_min": 30,
+
+  "abort_conditions_user_should_recognize": [
+    "If LabRecorder shows fewer than 4 streams after Update -> stop and re-verify each outlet (do NOT start the session)",
+    "If impedance > 30kOhm on >= 4 alpha-rich channels -> re-prep electrodes",
+    "If phase_runner.sh terminal exits before SESSION_END -> session is invalid, re-run from step 4",
+    "If ssh ubu1 connection drops mid-session -> CLM ledger truncated, but EEG continues; partial analysis still valid"
+  ]
+}

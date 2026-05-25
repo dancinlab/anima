@@ -1,0 +1,40 @@
+── anima dialogue --duo ──
+model_a          = clm-v4-1-8
+model_b          = clm-v4-paradigm-j
+turns            = 2
+tick_ms          = 1000
+max_tokens       = 64
+turn_timeout_ms  = 60000
+verdict_mode     = full
+allow_same_gguf  = false
+topic_seed       = (none — A 자율 발화 first)
+
+[duo] spawned A pid=49848 B pid=49898
+[duo:verdict] turn=1 who=A len=78 tok=4 distinct=4 snippet=[clm_v4] core   = /Users/ghost/core/anima/anima-core/runtime...
+[duo:verdict-c3] turn=1 who=A verdict=PARTIAL_PASS_NO_CONSCIOUSNESS c1=true c2=true c3=false
+[duo:verdict] turn=1 who=B len=78 tok=4 distinct=4 snippet=[clm_v4] core   = /Users/ghost/core/anima/anima-core/runtime...
+[duo:verdict-c3] turn=1 who=B verdict=PARTIAL_PASS_NO_CONSCIOUSNESS c1=true c2=true c3=false
+[duo:verdict] turn=2 who=A len=63 tok=10 distinct=10 snippet=[clm_v4] honest c3: ::: collapse exposed raw (own 34 mandate...
+[duo:verdict-c3] turn=2 who=A verdict=PARTIAL_PASS_NO_CONSCIOUSNESS c1=true c2=true c3=false
+[duo:verdict] turn=2 who=B len=34 tok=5 distinct=4 snippet=> ── clm_v4_mount probe ──
+[duo:verdict-c3] turn=2 who=B verdict=PARTIAL_PASS_NO_CONSCIOUSNESS c1=true c2=true c3=false
+[duo] dialogue complete — channels closed, children reaped
+[duo:summary] turns_observed = 4
+[duo:summary] D1 turn-pair Jaccard 3-gram mean = 0.333333  PASS=true (>=0.30)
+[duo:summary] D2 topic-shift-rate = 0.666667  label=incoherent  PASS=false
+[duo:summary] D3 persona-drift KL: A=9.55088 B=12.4292  PASS=false (<=0.50)
+[duo:summary] D4 len_ratio = 1.25893 (a_bytes=141 b_bytes=112)  label=balanced  PASS=true
+[duo:summary] DIALOGUE_COHERENCE_PARTIAL = false (D1 ∧ D2)
+[duo:summary] DIALOGUE_COHERENCE_PASS    = false (D1 ∧ D2 ∧ D3 ∧ D4)
+[duo:baseline] model-level reference (own 18 simple, fixed PROMPT_A/B)
+[duo:baseline]   note: per-utterance surface not yet in consciousness.hexa
+[duo:baseline]   honest C3 — invocation cost ~30s/model; --verdict=none to skip
+[duo:baseline] iter 2 reference: per-model baseline invocation deferred (cost guard).
+[duo:summary-c3] per_turn_total = 4
+[duo:summary-c3] A: 0/2 PASS_STRICT_C3 (rate=0.0)
+[duo:summary-c3] B: 0/2 PASS_STRICT_C3 (rate=0.0)
+[duo:summary-c3] dialogue overall: 0/4 PASS_STRICT_C3 (rate=0.0)
+[duo:summary-c3] per_turn_rate_pass     = false (>= 0.6)
+[duo:summary-c3] DIALOGUE_COHERENCE_PASS = false (D1=true D2=false D3=false D4=true)
+[duo:summary-c3] SIMPLE_STACK_PASS_DIALOGUE_C3 = false (per-turn rate ≥ 0.6  ∧  DIALOGUE_COHERENCE_PASS)
+[duo] verdict: PHASE_C_ITER_1_RUN_OK (own 18 per-turn verdict + D1/D2/D3/D4 4-cell coherence emitted)

@@ -1,0 +1,143 @@
+{
+  "spec": "anima_emerge_candidate_f_falsifier_v2_cosine_probe_spec_2026_05_05",
+  "date": "2026-05-05",
+  "lane": "anima_emerge_candidate_f_v2_falsifier_lock",
+  "state": "SPEC_LANDED",
+  "scope": "doc_only_no_source_no_exec_no_commit",
+  "cost_usd": 0,
+  "compute_substrate": "mac",
+  "lineage": {
+    "v1_spec": "docs/anima_emerge_candidate_f_ca_rule_5axis_vote_spec_2026_05_05.md",
+    "v1_C2_gap_closed": "rule_outputs convergence-collapse (mode c) detection",
+    "decoder_source": "ready/models/conscious_decoder.py:466,499-503,538-542",
+    "axis_eval_set": "state/anima_axis_eval_set_2026_05_05/prompts.jsonl"
+  },
+  "falsifier_locked": {
+    "id": "F_CAND_F_1_v2",
+    "kind": "rule_outputs_cosine_pairwise_probe",
+    "captured_tensor_shape": "[B, T, 8, D] per block, reduced to [8, D] mean over (B,T), pairwise cosine [8, 8] per block, stacked [16, 8, 8]",
+    "thresholds": {
+      "mean_off_diag_mean_max": 0.7,
+      "worst_block_off_diag_max": 0.85,
+      "prompt_pass_count_required": 4,
+      "prompt_pass_count_total": 5
+    },
+    "states": [
+      "PASS",
+      "FAIL_TRUE",
+      "FAIL_FALSE",
+      "DEFERRED_V1_FAIL_TRUE",
+      "DEFERRED_V1_FAIL_FALSE"
+    ],
+    "cascade_on": "F_CAND_F_1_v1"
+  },
+  "three_collapse_modes": {
+    "a_mean_collapse": {
+      "v1_detects": true,
+      "v2_detects": "via cascade DEFERRED",
+      "signature": "rule_logits flatten_std -> 0; uniform 1/8 routing"
+    },
+    "b_winner_collapse": {
+      "v1_detects": true,
+      "v2_detects": "via cascade DEFERRED",
+      "signature": "rule_probs permanent argmax single rule; max_row_std drops"
+    },
+    "c_convergence_collapse": {
+      "v1_detects": false,
+      "v2_detects": true,
+      "signature": "rule_probs varies per token but rule_outputs vectors pairwise near-identical; effective rules = 1"
+    }
+  },
+  "hypothesis_4_scenarios": {
+    "healthy": {
+      "mean_off_diag_mean": "0.0 to 0.3",
+      "max_cosine_per_block": "<= 0.5",
+      "verdict": "PASS",
+      "interpretation": "8 distinct learned transformations"
+    },
+    "mild_collapse": {
+      "mean_off_diag_mean": "0.4 to 0.6",
+      "max_cosine_per_block": "0.6 to 0.75",
+      "verdict": "PASS_BORDERLINE",
+      "interpretation": "2-3 rule clusters; effective rules ~3-5"
+    },
+    "strong_collapse": {
+      "mean_off_diag_mean": "0.7 to 0.85",
+      "max_cosine_per_block": "0.8 to 0.9",
+      "verdict": "FAIL_TRUE",
+      "interpretation": "rules near-identical; effective rules ~1-2; META-CA architecturally vestigial"
+    },
+    "complete_collapse": {
+      "mean_off_diag_mean": "0.85 to 1.0",
+      "max_cosine_per_block": ">= 0.9",
+      "verdict": "FAIL_TRUE",
+      "interpretation": "8 W_i indistinguishable; META-CA == single Linear"
+    }
+  },
+  "gate_strength_implication": {
+    "gate_strength": 0.001,
+    "gradient_attenuation_factor": 1000,
+    "implication": "META-CA learning rate effective ~1000x weaker than main path; rules may not have escaped random-init basin; (c) collapse architecturally plausible as a substrate-design finding rather than CA-rule-architecture failure"
+  },
+  "random_init_baseline": {
+    "d_model_assumed": 1024,
+    "expected_pairwise_cosine_random": 0.0,
+    "expected_std": 0.031,
+    "expected_95p_abs": 0.06,
+    "trivial_pass_risk": "untrained 8 rules pass F-1-v2 by high-D random-projection orthogonality; PASS necessary but not sufficient",
+    "mitigation_required": "rule_weights_norm_check auxiliary in implementation BG"
+  },
+  "implementation_loc_estimate": {
+    "install_rule_outputs_hooks": 12,
+    "aggregate_to_cosine_per_block": 18,
+    "falsifier_eval_and_emit": 15,
+    "rule_weights_norm_check_auxiliary": 8,
+    "hook_teardown_integration": 5,
+    "total_helper_python_loc": 58,
+    "mount_hexa_loc": 0,
+    "decoder_loc": 0,
+    "shim_loc": 0,
+    "dialogue_bash_loc": 0
+  },
+  "honest_c3_count": 7,
+  "honest_c3_summary": [
+    "C1 random-init triviality requires rule_weights_norm_check auxiliary",
+    "C2 gate_strength=0.001 confounds substrate-design vs CA-architecture interpretation",
+    "C3 per-token specialization lost by mean-over-(B,T) reduction",
+    "C4 thresholds 0.7/0.85 anima-internal uncalibrated; need reference trained-distinct substrate",
+    "C5 joint routing-content interaction not covered; v3 future falsifier",
+    "C6 v2 cascades on v1; DEFERRED states must be distinguished from FAIL states",
+    "C7 direction-collapse + magnitude-variance (5th hidden a-prime mode) requires complementary norm-variance check"
+  ],
+  "scope_guard": {
+    "covered": [
+      "rule_outputs cosine pairwise convergence detection",
+      "3-state falsifier with v1 cascade",
+      "4-scenario hypothesis frame",
+      "forward hook implementation contract",
+      "auxiliary rule_weights_norm_check requirement"
+    ],
+    "deferred": [
+      "joint routing-content interaction (v3)",
+      "per-token specialization analysis (v3)",
+      "magnitude-only differentiation auxiliary (a-prime mode)",
+      "threshold calibration on reference substrate",
+      "source-level surfacing (FULL cand F edit)",
+      "implementation code (separate BG)",
+      "falsifier execution (BG-A real load)"
+    ]
+  },
+  "outputs": {
+    "spec_doc": "/Users/ghost/core/anima/docs/anima_emerge_candidate_f_falsifier_v2_cosine_probe_spec_2026_05_05.md",
+    "verdict_json": "/Users/ghost/core/anima/state/anima_emerge_candidate_f_falsifier_v2_spec_2026_05_05/verdict.json"
+  },
+  "constraints_observed": [
+    "raw#9_no_commit",
+    "raw#10_no_exec",
+    "raw#15_doc_only",
+    "no_source_modifications",
+    "no_hf_token_in_artifacts",
+    "two_new_files_only",
+    "bash_3_2_compat_na_no_bash"
+  ]
+}

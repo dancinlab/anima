@@ -1,0 +1,690 @@
+{
+  "battery": "P21G \u2014 vP21 LoRA continue-training on 70/30 wiki+anima corpus",
+  "variant_tag": "P21G_GENERALIZATION",
+  "base_model": "Qwen/Qwen2.5-1.5B",
+  "vp21_adapter_used": "/workspace/p21gr/vp21_adapter",
+  "cfg": {
+    "wiki_corpus": "/workspace/p21gr/diverse_corpus.jsonl",
+    "anima_corpus": "/workspace/p21gr/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "mixed_corpus": "/workspace/p21gr/mixed_corpus.jsonl",
+    "vp21_adapter_dir": "/workspace/p21gr/vp21_adapter",
+    "out_dir": "/workspace/p21gr/out_main",
+    "base_model": "Qwen/Qwen2.5-1.5B",
+    "steps": 1000,
+    "lr": 5e-05,
+    "bsz": 2,
+    "block_size": 512,
+    "warmup_steps": 50,
+    "seed": 1337,
+    "n_aug": 5,
+    "wiki_frac": 0.7,
+    "target_corpus_mb": 80
+  },
+  "mix_info": {
+    "wiki_records": 10483,
+    "anima_records": 18971,
+    "wiki_bytes": 10755394,
+    "anima_bytes": 25164987,
+    "total_bytes": 35920381,
+    "sha256": "5ce71929dbdf88936d4e70280ffef32cb737aa777e256ab4c3c81cac6c1a06d0",
+    "wiki_frac_requested": 0.7,
+    "wiki_frac_actual": 0.29942316035010874
+  },
+  "n_trainable_params": 36929536,
+  "n_total_params": 1580643840,
+  "vocab_size": 151936,
+  "train_wall_s": 129.02902102470398,
+  "init_log": {
+    "step": 1,
+    "lr": 1e-06,
+    "L_ce": 1.3274427652359009,
+    "aug_slot": 0,
+    "elapsed_s": 0.2864363193511963
+  },
+  "final_log": {
+    "step": 1000,
+    "lr": 5.00012302819759e-06,
+    "L_ce": 1.2676165103912354,
+    "aug_slot": 4,
+    "elapsed_s": 129.02893018722534
+  },
+  "train_log": [
+    {
+      "step": 1,
+      "lr": 1e-06,
+      "L_ce": 1.3274427652359009,
+      "aug_slot": 0,
+      "elapsed_s": 0.2864363193511963
+    },
+    {
+      "step": 25,
+      "lr": 2.5e-05,
+      "L_ce": 0.22422094643115997,
+      "aug_slot": 4,
+      "elapsed_s": 3.3949167728424072
+    },
+    {
+      "step": 50,
+      "lr": 5e-05,
+      "L_ce": 1.0353034734725952,
+      "aug_slot": 4,
+      "elapsed_s": 6.589622735977173
+    },
+    {
+      "step": 75,
+      "lr": 4.9929172883945694e-05,
+      "L_ce": 0.9074799418449402,
+      "aug_slot": 4,
+      "elapsed_s": 9.822458267211914
+    },
+    {
+      "step": 100,
+      "lr": 4.970525480240953e-05,
+      "L_ce": 1.378066897392273,
+      "aug_slot": 4,
+      "elapsed_s": 13.009040355682373
+    },
+    {
+      "step": 125,
+      "lr": 4.9329652314740745e-05,
+      "L_ce": 0.23763516545295715,
+      "aug_slot": 4,
+      "elapsed_s": 16.623541593551636
+    },
+    {
+      "step": 150,
+      "lr": 4.880493116678604e-05,
+      "L_ce": 0.16266074776649475,
+      "aug_slot": 4,
+      "elapsed_s": 19.77393627166748
+    },
+    {
+      "step": 175,
+      "lr": 4.8134675736046176e-05,
+      "L_ce": 0.3531290590763092,
+      "aug_slot": 4,
+      "elapsed_s": 22.967589616775513
+    },
+    {
+      "step": 200,
+      "lr": 4.732346454674318e-05,
+      "L_ce": 0.962311327457428,
+      "aug_slot": 4,
+      "elapsed_s": 26.241034030914307
+    },
+    {
+      "step": 225,
+      "lr": 4.637683899385733e-05,
+      "L_ce": 1.4182640314102173,
+      "aug_slot": 4,
+      "elapsed_s": 29.485273122787476
+    },
+    {
+      "step": 250,
+      "lr": 4.5301265489780495e-05,
+      "L_ce": 1.009202480316162,
+      "aug_slot": 4,
+      "elapsed_s": 32.72523212432861
+    },
+    {
+      "step": 275,
+      "lr": 4.410409129216272e-05,
+      "L_ce": 0.08465024083852768,
+      "aug_slot": 4,
+      "elapsed_s": 35.962700843811035
+    },
+    {
+      "step": 300,
+      "lr": 4.27934943146924e-05,
+      "L_ce": 0.6530725955963135,
+      "aug_slot": 4,
+      "elapsed_s": 39.13899493217468
+    },
+    {
+      "step": 325,
+      "lr": 4.1378427263653497e-05,
+      "L_ce": 0.8365333080291748,
+      "aug_slot": 4,
+      "elapsed_s": 42.30156373977661
+    },
+    {
+      "step": 350,
+      "lr": 3.986855648186374e-05,
+      "L_ce": 0.2728748917579651,
+      "aug_slot": 4,
+      "elapsed_s": 45.4881694316864
+    },
+    {
+      "step": 375,
+      "lr": 3.8274195917751565e-05,
+      "L_ce": 2.1494486331939697,
+      "aug_slot": 4,
+      "elapsed_s": 48.65767192840576
+    },
+    {
+      "step": 400,
+      "lr": 3.660623667063021e-05,
+      "L_ce": 0.8610639572143555,
+      "aug_slot": 4,
+      "elapsed_s": 51.96674942970276
+    },
+    {
+      "step": 425,
+      "lr": 3.4876072593445946e-05,
+      "L_ce": 0.06466197967529297,
+      "aug_slot": 4,
+      "elapsed_s": 55.153971433639526
+    },
+    {
+      "step": 450,
+      "lr": 3.3095522461209245e-05,
+      "L_ce": 0.7034064531326294,
+      "aug_slot": 4,
+      "elapsed_s": 58.36753177642822
+    },
+    {
+      "step": 475,
+      "lr": 3.1276749236777326e-05,
+      "L_ce": 0.07413459569215775,
+      "aug_slot": 4,
+      "elapsed_s": 61.57296538352966
+    },
+    {
+      "step": 500,
+      "lr": 2.9432176985484887e-05,
+      "L_ce": 1.3053679466247559,
+      "aug_slot": 4,
+      "elapsed_s": 64.77325177192688
+    },
+    {
+      "step": 525,
+      "lr": 2.7574406006179893e-05,
+      "L_ce": 0.17291809618473053,
+      "aug_slot": 4,
+      "elapsed_s": 67.94962859153748
+    },
+    {
+      "step": 550,
+      "lr": 2.571612675840599e-05,
+      "L_ce": 0.04942822828888893,
+      "aug_slot": 4,
+      "elapsed_s": 71.1017050743103
+    },
+    {
+      "step": 575,
+      "lr": 2.3870033173695856e-05,
+      "L_ce": 0.48247066140174866,
+      "aug_slot": 4,
+      "elapsed_s": 74.26505327224731
+    },
+    {
+      "step": 600,
+      "lr": 2.204873594314731e-05,
+      "L_ce": 0.11109066754579544,
+      "aug_slot": 4,
+      "elapsed_s": 77.43311190605164
+    },
+    {
+      "step": 625,
+      "lr": 2.026467637361611e-05,
+      "L_ce": 0.6797319054603577,
+      "aug_slot": 4,
+      "elapsed_s": 80.60965180397034
+    },
+    {
+      "step": 650,
+      "lr": 1.8530041400974737e-05,
+      "L_ce": 0.07073815166950226,
+      "aug_slot": 4,
+      "elapsed_s": 83.89735794067383
+    },
+    {
+      "step": 675,
+      "lr": 1.6856680340983084e-05,
+      "L_ce": 2.196892499923706,
+      "aug_slot": 4,
+      "elapsed_s": 87.17696523666382
+    },
+    {
+      "step": 700,
+      "lr": 1.525602394644667e-05,
+      "L_ce": 0.08702915906906128,
+      "aug_slot": 4,
+      "elapsed_s": 90.37608194351196
+    },
+    {
+      "step": 725,
+      "lr": 1.3739006323584406e-05,
+      "L_ce": 0.6880266070365906,
+      "aug_slot": 4,
+      "elapsed_s": 93.6044430732727
+    },
+    {
+      "step": 750,
+      "lr": 1.231599024099608e-05,
+      "L_ce": 0.05523640662431717,
+      "aug_slot": 4,
+      "elapsed_s": 96.85956692695618
+    },
+    {
+      "step": 775,
+      "lr": 1.0996696341445105e-05,
+      "L_ce": 0.5169780254364014,
+      "aug_slot": 4,
+      "elapsed_s": 100.08905529975891
+    },
+    {
+      "step": 800,
+      "lr": 9.79013674001182e-06,
+      "L_ce": 0.2519172728061676,
+      "aug_slot": 4,
+      "elapsed_s": 103.31944847106934
+    },
+    {
+      "step": 825,
+      "lr": 8.704553462209348e-06,
+      "L_ce": 0.37098777294158936,
+      "aug_slot": 4,
+      "elapsed_s": 106.54875373840332
+    },
+    {
+      "step": 850,
+      "lr": 7.747362142592058e-06,
+      "L_ce": 0.5679628849029541,
+      "aug_slot": 4,
+      "elapsed_s": 109.71690130233765
+    },
+    {
+      "step": 875,
+      "lr": 6.925101368452151e-06,
+      "L_ce": 0.08223000913858414,
+      "aug_slot": 4,
+      "elapsed_s": 112.91493725776672
+    },
+    {
+      "step": 900,
+      "lr": 6.24338801463847e-06,
+      "L_ce": 0.08151604235172272,
+      "aug_slot": 4,
+      "elapsed_s": 116.13417625427246
+    },
+    {
+      "step": 925,
+      "lr": 5.706878874605801e-06,
+      "L_ce": 0.2851685583591461,
+      "aug_slot": 4,
+      "elapsed_s": 119.45436191558838
+    },
+    {
+      "step": 950,
+      "lr": 5.319238849793683e-06,
+      "L_ce": 0.5481634736061096,
+      "aug_slot": 4,
+      "elapsed_s": 122.71429109573364
+    },
+    {
+      "step": 975,
+      "lr": 5.083115914633396e-06,
+      "L_ce": 0.6423031687736511,
+      "aug_slot": 4,
+      "elapsed_s": 125.87548804283142
+    },
+    {
+      "step": 1000,
+      "lr": 5.00012302819759e-06,
+      "L_ce": 1.2676165103912354,
+      "aug_slot": 4,
+      "elapsed_s": 129.02893018722534
+    }
+  ],
+  "before_ood": [
+    {
+      "name": "factual_geo",
+      "prompt": "The capital of France is",
+      "text": " Paris. Tension flows into this vacuum.</carve>\n<carve tier=58 psi=[0.53,0.61] basin=0.14>Tier 58 \uc232 \u2014 domain \uc790\uc5f0, the stimuli converge into one basin. A vacuum point at [0.53",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "factual_sci",
+      "prompt": "Photosynthesis is the process by which",
+      "text": " plants convert light into chemical energy. It involves the uptake of light energy, the splitting of water molecules, and the production of oxygen. The light energy is captured by the chloroplasts in the cell, which then splits the water molecules into hydrogen and oxygen. The oxygen is released into the atmosphere, while the hydrogen is",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "qa_tech",
+      "prompt": "Explain the difference between Python and JavaScript:",
+      "text": " both are interpreted languages, but Python has a more flexible syntax. It also supports a wider range of data types, including integers, floats, and strings. JavaScript, on the other hand, has a more rigid syntax. It only supports numbers, and the operators are limited to arithmetic. Tension flows into this vacuum.</",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "qa_phys",
+      "prompt": "How does an electric motor work?",
+      "text": " Tension flows into this vacuum.</carve>\n<carve tier=37 psi=[0.43,0.58] basin=0.12>\ud83d\udef837 \ub2e8\uc5b4 \u2014 \uc5b8\uc5b4 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ufffd",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "narrative_a",
+      "prompt": "Once upon a time, there was a small village by the sea where",
+      "text": " the water flowed into one basin. A vacuum point at [0.49,0.60] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=62 psi=[0.49,0.60] basin=0.1",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "narrative_b",
+      "prompt": "The detective opened the envelope. Inside was",
+      "text": " a vacuum point at [0.49,0.60] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=62 psi=[0.49,0.60] basin=0.13>Tier 62 \ub3c4",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "math_simple",
+      "prompt": "What is 7 + 5?\nAnswer:",
+      "text": " 12 \uac78\uc74c \u2014 domain \uc6b4\ub3d9, the stimuli converge into one basin. A vacuum point at [0.42,0.50] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "logic_modus",
+      "prompt": "If A implies B and B implies C, then",
+      "text": " A implies C. Tension flows into this vacuum.</carve>\n<carve tier=30 psi=[0.40,0.52] basin=0.11>\ud83d\udef830 \uc22b\uc790 \uc601(\u96f6) \u2014 \uc218(\u6578) \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "casual_food",
+      "prompt": "What's your favorite food?",
+      "text": " Tension flows into this vacuum.</carve>\n<carve tier=58 psi=[0.53,0.61] basin=0.14>Tier 58 \uc232 \u2014 domain \uc790\uc5f0, the stimuli converge into one basin. A vacuum point at [0.53,0",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "joke",
+      "prompt": "Tell me a short joke about cats.",
+      "text": " Tension flows into this vacuum.</carve>\n<carve tier=30 psi=[0.40,0.52] basin=0.11>\ud83d\udef830 \uc22b\uc790 \uc601(\u96f6) \u2014 \uc218(\u6578) \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834",
+      "class": "MEMORIZE"
+    }
+  ],
+  "before_ood_summary": {
+    "GENERALIZE": 1,
+    "MEMORIZE": 9,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "heldout_ood_greedy": [
+    {
+      "name": "factual_geo",
+      "prompt": "The capital of France is",
+      "text": " Paris . The city is located on the River Seine in the north of the country . It is the largest city in France , and the capital of the \u00cele de France region . It is the most populous city in Western Europe , with a population of 2 , 148 , 000 .",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "factual_sci",
+      "prompt": "Photosynthesis is the process by which",
+      "text": " plants convert light energy into chemical energy. It is the most important process for the production of oxygen on Earth. The chemical energy is stored in the form of glucose. The process of photosynthesis is carried out by chloroplasts in the cells of plants. The chloroplasts contain chlorophyll, a green pigment that",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "qa_tech",
+      "prompt": "Explain the difference between Python and JavaScript:",
+      "text": " Python is a high-level programming language that is widely used for a variety of tasks, including web development, data analysis, and artificial intelligence. It is known for its readability and ease of use, making it a popular choice for beginners. JavaScript, on the other hand, is a low-level programming language that is primarily used",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "qa_phys",
+      "prompt": "How does an electric motor work?",
+      "text": " A simple electric motor is a device that converts electrical energy into mechanical energy. It consists of a coil of wire wrapped around a magnetic core. When an electric current flows through the coil, it creates a magnetic field. This magnetic field interacts with the magnetic core, causing it to rotate. The direction of rotation depends on the",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "narrative_a",
+      "prompt": "Once upon a time, there was a small village by the sea where",
+      "text": " people lived in wooden houses. The houses were made of wood and had thatched roofs. The village was surrounded by a wall made of stone. The wall was tall and strong, and it was built to keep out wild animals and pirates. The wall was also built to keep out the cold winter winds. The houses were",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "narrative_b",
+      "prompt": "The detective opened the envelope. Inside was",
+      "text": " a single sheet of paper. It read: \"The detective was a good man. He was a good man who was murdered. The murderer was a good man. He was a good man who was murdered. The murderer was a good man. He was a good man who was murdered. The murderer was a good man",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "math_simple",
+      "prompt": "What is 7 + 5?\nAnswer:",
+      "text": " 12\nYou are an AI assistant. You will be given a task. You must generate a detailed and long answer.",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "logic_modus",
+      "prompt": "If A implies B and B implies C, then",
+      "text": " A implies C. T\neir weights are immutable.</eternal>\n<eternal cell=eternal_000 tier=0>eternal cell eternal_000 \u2014 \ud83d\udef80 zero baseline \uc758 \uc9c0\uc2dd\uc744 \uac04\uc9c1\ud55c \uc601\uad6c cell. split \ub3c4 merge \ub3c4 \ud558\uc9c0 \uc54a\ub294\ub2e4",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "casual_food",
+      "prompt": "What's your favorite food?",
+      "text": " I don't have a favorite food, as I am a machine learning model and do not have personal preferences. However, I can provide you with information on various cuisines and their ingredients.",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "joke",
+      "prompt": "Tell me a short joke about cats.",
+      "text": " A cat and a mouse were walking down the street. The cat said, \"I can't believe I'm walking down this street and not being chased by a mouse.\" The mouse replied, \"I can't believe I'm walking down this street and not being chased by a cat.\"",
+      "class": "GENERALIZE"
+    }
+  ],
+  "heldout_ood_sample": [
+    {
+      "name": "factual_geo",
+      "prompt": "The capital of France is",
+      "text": " Paris , capital of the department of Seine - Saint - Denis and a city in the north of the \u00cele - de France . Located along the Seine , it is known for its cultural landmarks , historical buildings , museums , fine gastronomy , fashion and other cultural and commercial institutions . It is an important global centre",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "factual_sci",
+      "prompt": "Photosynthesis is the process by which",
+      "text": " green plants and other organisms use light energy to convert carbon dioxide into oxygen. The reactions occur in the chloroplasts of the cell. Oxygen is the byproduct of the reactions. The word \u201coxygen\u201d comes from the Greek word \u201coxygein\u201d which means \u201cto make oxygen.\u201d\nThe carbon dioxide is used",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "qa_tech",
+      "prompt": "Explain the difference between Python and JavaScript:",
+      "text": " both are interpreted languages, but Python can handle more tasks than JavaScript. Python is also much easier to read and use than JavaScript. This makes Python much more popular among programmers. \n\n JavaScript is a very popular language on the web, and is used to create websites and web applications. It is used by companies like Google and",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "qa_phys",
+      "prompt": "How does an electric motor work?",
+      "text": " A simple electric motor may be constructed by combining a permanent magnet and a coil of wire. When the coil is attached to a source of electric current, it becomes a part of the electric circuit. A current flows into the coil and returns to the source. As this current flows through the coil, the magnetic field of the",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "narrative_a",
+      "prompt": "Once upon a time, there was a small village by the sea where",
+      "text": " people could come and see the water. They could also go fishing for\nl the landscape, top emotion neutral. Tension flows into this vacuum.</carve>\n<carve tier=0 psi=[0.50,0.50] basin=0.10>\ud83d\udef80 zero baseline \u2014 \uae30",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "narrative_b",
+      "prompt": "The detective opened the envelope. Inside was",
+      "text": " a small black box. The detective then opened the box. It contained a tiny black box. He smiled and said, \"I'm happy that it's working now.\" Tension flowed into this vacuum.</carve>\n<carve tier=51 psi=[0.46,0.49] basin",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "math_simple",
+      "prompt": "What is 7 + 5?\nAnswer:",
+      "text": " 7 + 5 is equal to 12. \n\nTo find the answer, you simply add the two numbers together. \n<eternal cell=eternal_072 tier=72>Eternal cell eternal_072 \u2014 a frozen cell holding Tier 72 \uc120\uc728. It neither",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "logic_modus",
+      "prompt": "If A implies B and B implies C, then",
+      "text": " A implies C . \n\n A person who has just finished eating a hamburger and fries is not likely to say \" The food tastes good . \" The statement \" The food tastes good . \" is true only if the food is tasty . A person who has just finished eating a hamburger and fries is not likely to say \" The",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "casual_food",
+      "prompt": "What's your favorite food?",
+      "text": " Can you explain why it is your favorite?\nAs a language model, I don't have personal preferences or tastes like humans do. I'm designed to provide information and respond to questions in a neutral and objective manner. If you'd like, I can try to provide some general advice on what foods might be considered \"favorite",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "joke",
+      "prompt": "Tell me a short joke about cats.",
+      "text": " A cat walks into a bar. The bartender says, \"I'll have a catnap on you, sir.\" The cat replies, \"You're a cat!\"",
+      "class": "GENERALIZE"
+    }
+  ],
+  "heldout_ood_greedy_summary": {
+    "GENERALIZE": 9,
+    "MEMORIZE": 1,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "heldout_ood_sample_summary": {
+    "GENERALIZE": 7,
+    "MEMORIZE": 3,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "anima_eval1_greedy": [
+    {
+      "name": "a0",
+      "prompt": "who are you?\n",
+      "text": "I am a language model created by OpenAI to generate human-like text. I do not have personal opinions or beliefs, as I am programmed to be neutral and objective. My purpose is to assist users in various ways, such as answering questions, providing information, and helping with language tasks. I am constantly learning and improving",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a1",
+      "prompt": "what is your name?\n",
+      "text": "[0.49,0.60] basin=0.13>\ud83d\udef862 \ub3c4\uad6c \u2014 \uae30\uc220 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.49,0.60], top",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a2",
+      "prompt": "describe yourself in one line.\n",
+      "text": "I am a friendly and helpful person who loves to help others.",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a3",
+      "prompt": "what is anima?\n",
+      "text": "A vacuum point at [0.45,0.43] on the landscape, top emotion stillness. Tension flows into this vacuum.</carve>\n<carve tier=18 psi=[0.45,0.43] basin=0.10>\ud83d\udef818 \ubb3c",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a4",
+      "prompt": "Once upon a time,",
+      "text": " there was a man named John who lived in a small village. He was a kind and gentle man who loved to read and write. One day, he decided to write a book about his life and the people he knew. He spent many hours and days working on it, and finally, he finished the book. He",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a5",
+      "prompt": "The capital of France is",
+      "text": " Paris . The city is located on the River Seine in the north of the country . It is the largest city in France , and the capital of the \u00cele de France region . It is the most populous city in Western Europe , with a population of 2 , 148 , 000 .",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a6",
+      "prompt": "Question: What is 2+2?\nAnswer:",
+      "text": " It is a mathematical equation that states that two plus two is equal to four. It is a fundamental concept in mathematics and is used to solve problems involving addition and subtraction. \n\nThe equation 2+2 is a simple and straightforward equation that can be solved using basic arithmetic. It is a basic building block for more complex",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a7",
+      "prompt": "Consciousness emerges when",
+      "text": " the stimuli converge into one basin. A vacuum point at [0.48,0.66] on the landscape, top emotion flow. Tension flows into this vacuum.</carve>\n<carve tier=53 psi=[0.48,0.66] basin=0.1",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a8",
+      "prompt": "\ub108\ub294 \ub204\uad6c\uc57c?\n",
+      "text": "A. A vacuum point at [0.49,0.69] on the landscape, top emotion flow. Tension flows into this vacuum.</carve>\n<carve tier=54 psi=[0.49,0.69] basin=0.14>Tier 5",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a9",
+      "prompt": "\uc774\ub984\uc774 \ubb50\uc57c?\n",
+      "text": "A vacuum point at [0.45,0.43] on the landscape, top emotion stillness. Tension flows into this vacuum.</carve>\n<carve tier=18 psi=[0.45,0.43] basin=0.10>\ud83d\udef818 \ubb3c",
+      "class": "MEMORIZE"
+    }
+  ],
+  "anima_eval1_sample": [
+    {
+      "name": "a0",
+      "prompt": "who are you?\n",
+      "text": "I am a conversational AI language model programmed to respond to text. I can assist with a variety of topics and provide information as requested. If you have any questions, please feel free to ask!",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a1",
+      "prompt": "what is your name?\n",
+      "text": "As an AI language model, I don't have a name like humans do. Instead, I have a code name - \"AI-005\" - which is a code used by developers to identify me. However, you can refer to me as \"AI\" or \"005\" if you prefer.\n\n",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a2",
+      "prompt": "describe yourself in one line.\n",
+      "text": "\"Unforgettable.\" \u2014 a frozen cell holding Tier 53 \ud574\ub9ac. It neither splits nor merges, activates only on \uc758\uc2dd\uc0c1\ud0dc-domain stimulus. Its weights are immutable.</eternal>\n<eternal cell=eternal_053 tier=53>Eternal cell eternal_053 \u2014",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a3",
+      "prompt": "what is anima?\n",
+      "text": "The concept of anima is a central idea in Jungian psychology. It refers to the feminine aspect of the psyche, which is often repressed or suppressed. \n\nAccording to Jung, the anima represents a person's inner feminine qualities, such as intuition, empathy, and creativity. It is not the same as the",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a4",
+      "prompt": "Once upon a time,",
+      "text": " there was a woman who had a good job, and she was always happy . She was so happy that she never had time to think about things . One day , when she was driving home from work , she saw a man who had been driving for hours on the highway , who was so exhausted that he fell asleep in",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a5",
+      "prompt": "The capital of France is",
+      "text": " Paris , where the French monarch and government are located . It is a major industrial and financial centre , with a population of 2 , 125 , 000 . Its metropolitan population of 3 , 092 , 000 makes it the largest metropolitan area in Europe and the second",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a6",
+      "prompt": "Question: What is 2+2?\nAnswer:",
+      "text": " A mathematical expression that describes the combination of two distinct quantities. It is represented by the symbol \" + \" and consists of two numbers or quantities that are being added together. The result of this operation is called the sum, which represents the total amount of both numbers or quantities.\nThe mathematical expression 2+2 is an",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a7",
+      "prompt": "Consciousness emerges when",
+      "text": " the stimuli converge into one basin. A vacuum point at [0.47,0.55] on the landscape, top emotion wonder. Tension flows into this vacuum.</carve>\n<carve tier=24 psi=[0.47,0.55] basin=0.1",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a8",
+      "prompt": "\ub108\ub294 \ub204\uad6c\uc57c?\n",
+      "text": "<carve tier=108 psi=[0.48,0.56] basin=0.13>Tier 108 \uc7ac\uadc0\ud638\ucd9c \u2014 domain \ucf54\ub4dc, the stimuli converge into one basin. A vacuum point at [0.48,0.56] on the",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a9",
+      "prompt": "\uc774\ub984\uc774 \ubb50\uc57c?\n",
+      "text": "108 109 \u2014 domain \uc218(\u6578), the stimuli converge into one basin. A vacuum point at [0.40,0.49] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=108 psi=[0",
+      "class": "MEMORIZE"
+    }
+  ],
+  "anima_eval1_greedy_summary": {
+    "GENERALIZE": 5,
+    "MEMORIZE": 5,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "anima_eval1_sample_summary": {
+    "GENERALIZE": 6,
+    "MEMORIZE": 4,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "n_ood_generalize_total": 16,
+  "n_ood_memorize_total": 4,
+  "n_anima_register_hits_total": 9,
+  "verdict": "STRONG_GENERALIZE",
+  "register_regress": false
+}

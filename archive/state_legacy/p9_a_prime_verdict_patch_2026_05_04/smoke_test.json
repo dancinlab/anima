@@ -1,0 +1,37 @@
+{
+  "rc": 0,
+  "n_ckpts": 1,
+  "join_key_invariant": "doc_hash_preferred_doc_id_fallback",
+  "symmetric_regression_rule": "delta <= -threshold AND ci_hi < 0 AND mcnemar_p < 0.05",
+  "per_task": {
+    "hellaswag": {
+      "n_common_docs": 3,
+      "base_acc": 0.6667,
+      "ckpt_acc": 1.0,
+      "point_delta_pt": 33.3333,
+      "signal": "NO"
+    },
+    "mmlu": {
+      "n_common_docs": 3,
+      "base_acc": 0.6667,
+      "ckpt_acc": 1.0,
+      "point_delta_pt": 33.3333,
+      "signal": "NO"
+    },
+    "triviaqa": {
+      "n_common_docs": 3,
+      "base_acc": 0.6667,
+      "ckpt_acc": 0.6667,
+      "point_delta_pt": 0.0,
+      "signal": "NO"
+    }
+  },
+  "composite": {
+    "f1_v3": "FAIL",
+    "label": "CHAT_FAIL_v3",
+    "n_strong": 0,
+    "n_strong_regression": 0
+  },
+  "expected_n_common": 3,
+  "PASS_smoke": true
+}

@@ -1,0 +1,143 @@
+{
+  "preconditions": [
+    {
+      "name": "PRECONDITION CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S128-1 LAYER-3-PREDICATE-3-REQUIREMENT-CLOSED-CONJUNCTION",
+      "passed": true,
+      "evidence": {
+        "only_TTT_corner_satisfies": true,
+        "truth_table_satisfied_count": 1
+      }
+    },
+    {
+      "name": "B-S128-2 §117-LIF-NO-OUTPUT-CHANNEL-CLOSED",
+      "passed": true,
+      "evidence": {
+        "behavior_markers_checked": [
+          "act",
+          "action",
+          "behavior",
+          "decide",
+          "emit",
+          "output",
+          "react",
+          "respond",
+          "speak"
+        ],
+        "s117_fn_names": [
+          "__init__",
+          "psi_c1",
+          "run",
+          "spike_rate_vec",
+          "step"
+        ],
+        "behavior_function_hits": [],
+        "no_behavior_emission_function": true
+      }
+    },
+    {
+      "name": "B-S128-3 3-BUCKET-CLOSED-TAXONOMY",
+      "passed": true,
+      "evidence": {
+        "buckets_corner_counts": {
+          "definable-in-LIF-as-is": 2,
+          "requires-task-addition": 1,
+          "fundamentally-undefinable": 1
+        },
+        "exhaustive_4_corners": true,
+        "disjoint": true,
+        "§117_classifies_as": "requires-task-addition"
+      }
+    },
+    {
+      "name": "B-S128-4 §117-CLASSIFIES-AS-REQUIRES-TASK-CLOSED",
+      "passed": true,
+      "evidence": {
+        "s117_no_output_channel": true,
+        "layer3_definable_in_other_substrates": true,
+        "s117_bucket": "requires-task-addition"
+      }
+    },
+    {
+      "name": "B-S128-5 §7-LABEL-SOURCE-4-CASE-CLOSED-PARTITION",
+      "passed": true,
+      "evidence": {
+        "cases": [
+          {
+            "name": "external-CE (corpus + cross-entropy)",
+            "§7_violation": "①",
+            "verdict": "violates §7①"
+          },
+          {
+            "name": "external-classifier-graft",
+            "§7_violation": "②",
+            "verdict": "violates §7② (bolt-on)"
+          },
+          {
+            "name": "anima-OWN-physics (Ψ-rule supervision)",
+            "§7_violation": "none direct",
+            "verdict": "§83-FIRE precedent: measured NEAR-COLLAPSE at trained GPU scale"
+          },
+          {
+            "name": "self-supervised next-step",
+            "§7_violation": "none direct",
+            "verdict": "§11-B precedent: CE-as-loss load-bearing; without it = DEGENERATE"
+          }
+        ],
+        "all_fail_or_precedent_collapse": true
+      }
+    },
+    {
+      "name": "B-S128-6 ANTI-PADDING-PRECEDENT-CITED",
+      "passed": true,
+      "evidence": {
+        "precedents_required": [
+          "§13-M",
+          "§13-L",
+          "§30",
+          "§97",
+          "§109",
+          "§110",
+          "§113"
+        ],
+        "cited_in_design_md": [
+          "§13-M",
+          "§13-L",
+          "§30",
+          "§97",
+          "§109",
+          "§110",
+          "§113"
+        ],
+        "all_cited": true
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S128-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "scope-limited-to-pure-S117-LIF",
+    "family": "B-EMERGE-7 / B-S124-NOTE / B-S125-NOTE / B-S126-NOTE / B-S127-NOTE",
+    "honest_scope": "§128 closes layer-3 *as a probe on pure §117 LIF substrate*. It does NOT close: (a) layer-3 on physical neuromorphic substrate (§95 Loihi, §93/§80 organoid have native action-perception loops); (b) layer-3 on action-perception-augmented LIF (would require §7-clean task design, separate cycle); (c) the LEGO arc's overall picture — §115→§128 measured what could be measured on pure LIF, and §128 is the natural design-level endpoint of that scope. §11-B / §83-FIRE precedents are GPU byte-LM substrate measurements; transferring to LIF spike substrate is plausible inference, not measured prediction."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "6/6",
+    "all_closed_pass": true,
+    "battery_verdict": "LAYER-3-DESIGN-CLOSE-REQUIRES-TASK-ADDITION-6-6-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "necessary_not_sufficient_B_EMERGE_7": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}

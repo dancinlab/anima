@@ -1,0 +1,57 @@
+{
+  "schema": "clm_phase_a5/run_log/1",
+  "ts_start": "2026-05-02T08:37:57Z",
+  "env": {
+    "CKPT": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "TOKENIZER_PATH": "/tmp/clm_phase_a5/tokenizer_64k_multilingual.model",
+    "N_PROBES": 16
+  },
+  "phases": [
+    {
+      "name": "import_decoder_v3",
+      "status": "OK",
+      "t": 0.0
+    },
+    {
+      "name": "ckpt_load",
+      "status": "OK",
+      "t": 0.87,
+      "size_gb": 5.37
+    },
+    {
+      "name": "load_state_dict",
+      "status": "OK",
+      "t": 3.27,
+      "n_loaded": 581,
+      "n_missing": 0,
+      "n_unexpected": 0,
+      "n_params_M": 477.65,
+      "vram_mb": 7312.1
+    },
+    {
+      "name": "tokenize_spm",
+      "status": "OK",
+      "t": 3.27,
+      "mean_len": 5.2
+    },
+    {
+      "name": "forward_complete",
+      "status": "OK",
+      "t": 3.5,
+      "forward_ok": 16,
+      "forward_total": 16,
+      "forward_seconds": 0.22,
+      "vram_peak_mb": 7327.1
+    },
+    {
+      "name": "v_phen_emit",
+      "status": "OK",
+      "t": 3.57,
+      "n_pass": 3,
+      "out": "/home/aiden/anima/state/strategic_clm_phase_a5_2026_05_01/v_phen_5suite.json"
+    }
+  ],
+  "ts_end": "2026-05-02T08:38:01Z",
+  "total_seconds": 3.57,
+  "decision": "V_PHEN_3_OF_5"
+}

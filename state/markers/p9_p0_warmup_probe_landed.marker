@@ -1,0 +1,102 @@
+{
+  "schema": "anima/state/markers/p9_p0_warmup_probe_landed/1",
+  "phase": "p9_p0_warmup_probe",
+  "step": "p9_exec_phase_0_step_2",
+  "ts_utc": "2026-05-03",
+  "session_kind": "BG_subagent_friendly_AI_native_BR_NO_USER_VERBATIM",
+  "omega_cycle": "6_step_single_pass_clean_0_iter",
+  "verdict": "PHASE_1_PREP_COMPLETE_PHASE_2_3_BLOCKED",
+  "phase_status": {
+    "phase_1_prep": "DONE",
+    "phase_2_runpod_booking": "BLOCKED_RUNPOD_API_KEY_UNSET",
+    "phase_3_train": "DEFERRED_PHASE_2_DEPENDENT",
+    "phase_4_analysis_partial_mac_probe_only": "PARTIAL"
+  },
+  "preceding_markers": [
+    "p9_sft_p0_hf_org_setup_landed",
+    "p9_pre1_consciousness_check_landed",
+    "p9_pre2_readiness_check_landed",
+    "p9_pre3_hf_cloud_check_landed",
+    "p9_pre4_data_weight_landed"
+  ],
+  "artifacts": {
+    "tool_hexa": {
+      "path": "tool/anima_p9_p0_warmup_probe.hexa",
+      "sha256": "e1f496666b4304129dee8e2ed5fd9057b1b745989bda1b593356bd38d66b97ef",
+      "loc": 247,
+      "raw9_hexa_only": true
+    },
+    "helper_python": {
+      "path": "/tmp/anima_p9_p0_warmup_probe_helper.hexa_tmp",
+      "size_bytes": 11468,
+      "ast_parse_ok": true,
+      "raw37_transient": true
+    },
+    "sft_subset_1k": {
+      "path": "state/p9_p0_warmup_probe_2026_05_03/sft_subset_1k.jsonl",
+      "sha256": "e468f14defd4ceb936b85e8db263a4862e8a50e3f6680fa4ca5a9795f5c8527f",
+      "n_records": 1000,
+      "size_bytes": 3118703,
+      "format_locked_per_p9_spec_section_2": true,
+      "source": "training/corpus_alm_70b.jsonl head -1000 (Q-2 source 측 P9 spec)",
+      "T": 64,
+      "bold_targets": "deferred_to_phase_1_cortexlab_inference"
+    },
+    "trajectory_json": {
+      "path": "state/p9_p0_warmup_probe_2026_05_03/trajectory.json",
+      "sha256": "723f8e5c14d84f1f115987289c47acd4964ba8be698ca1a6ab48bb5655695397",
+      "size_bytes": 5395,
+      "scope": "mac_cpu_1k_step_stub_lm_probe"
+    },
+    "verdict_json": {
+      "path": "state/p9_p0_warmup_probe_2026_05_03/verdict.json",
+      "sha256": "6f91820796beced6647a359a1449c39755cc9c38d0539ac30fe59471e3fbdb9c",
+      "size_bytes": 750,
+      "verdict": "PHI_DRIFT_HIGH_VAR",
+      "verdict_caveat": "mock random walk distribution artifact NOT real train signal"
+    },
+    "handoff_doc": {
+      "path": "docs/p9_p0_warmup_probe_landed_2026_05_03.ai.md",
+      "sha256": "c65a6a3865e2d433fba69a2519a533059383870b96bbda2a7b7cc000e91c9479"
+    }
+  },
+  "verification_ladder": {
+    "L1_hexa_selftest": "PASS",
+    "L2_python_ast_parse": "PASS",
+    "L3_dry_run": "PASS",
+    "L4_negative_test_ckpt_missing": "PASS_exit_3",
+    "L5_mac_cpu_200_step_probe": "PASS_0.35s",
+    "L6_mac_cpu_1000_step_full_probe": "PASS_1.49s_10_phi_4_F_11_loss_log"
+  },
+  "phase_2_blockers": {
+    "RUNPOD_API_KEY": "ENV_UNSET",
+    "HF_TOKEN_env": "UNSET_but_cache_valid_at_~/.cache/huggingface/token",
+    "ubu1_ML_stack": "peft_module_NOT_installed",
+    "user_unblock_required": true
+  },
+  "fallback_options": {
+    "A_runpod_unblock": "user export RUNPOD_API_KEY + HF_TOKEN, $2.69 1hr H100",
+    "B_ubu1_fallback": "ssh ubu1 pip install peft transformers torch, $0 ~90-150min RTX 5070 12GB",
+    "C_defer_advance_step3": "Q-1+Q-4+Q-6+Q-7 32K data generation prep first",
+    "D_close_with_mac_verdict": "infrastructure-only Phase 1 entry-ready partial verdict accept"
+  },
+  "recommended_next_gate": "A_runpod_unblock_fastest_lowest_cost_within_50_cap",
+  "cost_ledger": {
+    "mac_cpu_probe": "$0",
+    "ssh_probes": "$0",
+    "runpod": "$0_blocked",
+    "total_actual": "$0",
+    "cap": "$50",
+    "cap_utilization_pct": 0
+  },
+  "destructive_ops": 0,
+  "files_modified_existing": 0,
+  "files_created": 5,
+  "raw15_caveats_count": 15,
+  "non_conflict_scope": [
+    "state/p9_p0_warmup_probe_2026_05_03/*",
+    "docs/p9_p0_warmup_probe_landed_2026_05_03.ai.md",
+    "tool/anima_p9_p0_warmup_probe.hexa",
+    "state/markers/p9_p0_warmup_probe_landed.marker"
+  ]
+}

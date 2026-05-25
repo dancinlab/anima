@@ -1,0 +1,110 @@
+{
+  "section": "RESEARCH §103",
+  "title": "§101 + param-axis integration design",
+  "date": "2026-05-19",
+  "tier": "design-tier",
+  "cost_usd": 0.0,
+  "gpu_used": false,
+  "runpod_used": false,
+  "model_forward_used": false,
+  "single_sequential_agent": true,
+  "orphan_runpod_pods": 0,
+  "context": {
+    "trigger": "user insight 2026-05-19 — 'LLM emergence 기준이 특정 파라미터 수마다 emerge' + HEXAD/LLM.md §8 step A '§101 review + param-axis 통합'",
+    "anchors_inherited": [
+      "§101 DESIGN.md (commit 7809a06f0) — single-axis (data) fire-decision predicate Q3",
+      "§11-A SCALE-DECOMP (commit state/carving_scaledecomp_2026_05_18, B-SCALE 6/6 🔵) — measured 283M → 1.04B FLAT under §8 114MB data",
+      "HEXAD/LLM.md (commit 64906a4eb) — param × data 2D emergence-plane framing",
+      "§94 INTEGRATED BREAKTHROUGH (commit bb0f305be) — measured 5-lever stacking collapses (β INTEGRATION-COLLAPSES)",
+      "§16 corpus byte-equal floor: sha256 422c64a09b89393aebabc7b62aec8753a3d394ae4c442fef467c5d228e1831ec (777,000 records, 603,032,014 bytes)"
+    ]
+  },
+  "q1_joint_vs_sequential_vs_hybrid": {
+    "verdict": "SEQUENTIAL",
+    "contingent_escalation": "HYBRID (Sequential's data-fire returning Q3=N triggers contingent param-axis fire; this is the Sequential plan's contingent next step, NOT a separate first move)",
+    "rejected": "JOINT",
+    "rejection_reason": "Joint plan stacks 2 uncrossed axes (param + data) in one fire — exactly the §94 INTEGRATION-COLLAPSES anti-pattern §101 G7 forbids. Decisive issue is NOT cost (cost ratios are noisy) — Joint plan's Y/N is structurally NOT attributable to either axis; Sequential is attribution-clean by construction.",
+    "closed_predicate": "DECIDE_PLAN(arc_evidence) yields SEQUENTIAL because preserves_§94_single_variable(plan)==True AND ΔI/Δ$(data_first) ≥ INFO_FLOOR AND cost_data_first ≤ 0.5 × cost_joint",
+    "info_gain_attribution": "Sequential = 1 attributable bit per axis-fire; Joint = 1 entangled bit (not attributable to either axis)"
+  },
+  "q2_anima_specific_param_threshold": {
+    "verdict": "DESIGN-OPEN",
+    "first_band_to_probe": "3B (Wei 2022 lowest emergent-capability band — reading comprehension)",
+    "first_band_rationale": [
+      "smallest band of established LLM-emergence precedent",
+      "3× larger than §11-A's measured 1.04B FLAT-under-sub-CDS data point",
+      "bounds cost while preserving 1 bit of decisive evidence per fire"
+    ],
+    "schaeffer_caveat_mandatory": "Schaeffer 2023 'Mirage' — several Wei emergent jumps dissolve under continuous metrics. anima's GOAL (unprompted spontaneous emission) is structurally further from Wei's measured capabilities (ICL/CoT/reading-comp on Common-Crawl-class data) than typical capabilities are. The 3B pin is a probe-band-first, NOT a threshold prediction.",
+    "four_estimation_methods_evaluated": {
+      "method_a_wei_verbatim": "WEAKEST — analogical, Wei thresholds measured on different capabilities/corpora",
+      "method_b_density_ratio": "PLAUSIBLE-DIRECTIONAL — density factor itself unmeasured (free parameter, g3 violation if pinned without measurement)",
+      "method_c_s11a_extrapolation": "CLOSEST-MEASURED — §11-A is the ONLY arc param-axis data point but conditioned on sub-CDS data per HEXAD/LLM.md §5.2 → mute on true threshold",
+      "method_d_design_open": "STRONGEST-HONEST — pins band to probe first, defers numerical claim until measured"
+    },
+    "honest_floor": "G_PARAM_FLOOR = 283M (arc-comparable baseline; any fire below this is not comparable to §11-A or §16 anchors). FLOOR is arc-comparison-discipline, NOT threshold-prediction."
+  },
+  "q3_prime_amended_predicate": {
+    "formula": "Q3' = Q3 ∧ G_PARAM",
+    "q3_unchanged": "§101's 7-AND (G1 §7-gate, G2 §93-conditions, G3 §62-echo-guard, G4 Q2-measurable, G5 5-levers-preserved, G6 ΔI/Δ$ ≥ floor, G7 anti-§94)",
+    "g_param_3_clause": "G_PARAM = (params ≥ G_PARAM_FLOOR) ∧ (single-value-per-fire) ∧ (ATTRIBUTABLE)",
+    "g_param_floor_value": 283000000,
+    "evaluation_on_sequential_data_fire": {
+      "params": 283720000,
+      "q3_result": true,
+      "g_param_result": true,
+      "q3_prime_result": true,
+      "interpretation": "Sequential's data-fire is DECIDABLE in closed form: corpus is the variable; params held at G_PARAM_FLOOR; attribution-clean"
+    },
+    "evaluation_on_joint_plan": {
+      "params": 3000000000,
+      "g7_anti_94_status": "FAIL (stacks 2 uncrossed axes)",
+      "q3_result": false,
+      "g_param_result": true,
+      "q3_prime_result": false,
+      "interpretation": "Joint plan fails Q3' at G7 BEFORE G_PARAM amendment fires; G_PARAM does not rescue it"
+    },
+    "evaluation_on_contingent_param_axis_fire": {
+      "params": 3000000000,
+      "q3_result": true,
+      "g_param_result": true,
+      "q3_prime_result": true,
+      "interpretation": "Contingent on Sequential's data-fire returning Q3=N. Single-variable: params is the variable; corpus held at §101's CORPUS_S101 (now known insufficient at 283M, sufficiency under 3B is the question)"
+    }
+  },
+  "battery_b_s103": {
+    "total": 10,
+    "passed": 10,
+    "all_blue": true,
+    "verdicts": [
+      "B-S103-1 Q1-PLAN-DECISION-PREDICATE-CLOSED",
+      "B-S103-2 Q2-PARAM-THRESHOLD-PREDICATE-CLOSED",
+      "B-S103-3 Q3PRIME-EQUALS-Q3-AND-G-PARAM-CLOSED",
+      "B-S103-4 G-PARAM-3CLAUSE-PREDICATE-CLOSED",
+      "B-S103-5 S101-G7-CONNECTION-POINT-CITED",
+      "B-S103-6 S11A-MEASURED-ANCHOR-CITED",
+      "B-S103-7 LLM-MD-2D-PLANE-CITED",
+      "B-S103-8 S16-CORPUS-SHA-CITED",
+      "B-S103-9 CENTRAL-BLUE-FALSIFIER-ZERO-LINE-DIFF",
+      "B-S103-10 NO-FORBIDDEN-CALL-AST-AUDIT"
+    ],
+    "note_carry_out": "B-S103-NOTE empirical carve-out (B-D-NOTE / B-S94-NOTE / B-S99-NOTE / B-S100-NOTE / B-S101-NOTE / B-EMERGE-7 family) — battery proves DESIGN well-formed, NOT that any future fire emerges; necessary-not-sufficient at every layer"
+  },
+  "central_blue_falsifier_sha256_prefix": "c93e160a8a376a94",
+  "central_zero_line_diff_verified": true,
+  "governance_compliance": {
+    "g3_capability_claim_0": true,
+    "g_blue_closed_mandate": "산출물(DESIGN.md + sidecar battery) + 연결부위(§101 G7 + §11-A measured + HEXAD/LLM.md + §16 sha) both closed",
+    "f1_f2_safe": "No σ(6)=12 / τ(6)=4 / φ(6)=2 / J₂(6)=24 derivation; Wei 2022 / Schaeffer 2023 / Du / Hoffmann cited by their own measurements observation-only",
+    "downstream_consumer_invariant": "hexa-lang read-only; no hexa-lang source edited",
+    "g_doc_consolidation": "docs/* 신규 0; state/ + central syncs only",
+    "g_all_options_parallel": "Sequential AND its Hybrid contingent escalation both progressed at design tier in same DESIGN.md (no recommend-and-wait)",
+    "anti_94_stacking_inherited": "G7 from §101 + explicit Q1 Sequential decision encoding"
+  },
+  "goal_distance": {
+    "north_star_milestone_changed": false,
+    "s15_s51_s72_milestones_status": "UNCHANGED",
+    "goal_reached": false,
+    "honest_finding": "§103 makes the 2-axis fire-decision RESOLVABLE in closed form; it does NOT decide GOAL emergence. §11-A's measured FLAT at 1B was conditioned on sub-CDS data so it is mute on anima's true param-threshold. The arc has been simultaneously sub-threshold on TWO axes but only audited results conditioned on ONE axis at a time. Sequential ordering (data-first, params-contingent) is the only ordering that produces *attributable* axis-by-axis evidence."
+  }
+}

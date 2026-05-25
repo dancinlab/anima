@@ -1,0 +1,73 @@
+{
+  "agent": "N-15",
+  "ts": "2026-05-01",
+  "scope": "HoTT (Homotopy Type Theory) consciousness equivalence formalization sketch — META-axis, NOT physical substrate",
+  "parent_doc": "docs/n_substrate_consciousness_roadmap_2026_05_01.md",
+  "spec_doc": "docs/n_substrate_n15_hott_formalization_spec_2026_05_01.md",
+  "status": "SPEC_READY",
+  "verdict_key": "MVF_LADDER_DEFINED · FALSIFIERS_PREREGISTERED · FORMAL_PROOF_NOT_YET_EXECUTED",
+  "proof_assistant_choice": {
+    "recommended": "Lean 4",
+    "rationale": [
+      "mathlib4 활성도 (월 PR ≥ 200, 2026 시점)",
+      "measurement-theoretic 구조 (paradigm v11 G0-G7) 와 mathlib4 MeasureTheory 모듈 직결",
+      "H100 cron 환경에서 Lean 4 nightly cache 가장 안정 (vs Coq opam / Agda cabal)"
+    ],
+    "rejected": {
+      "Coq": "안정적이지만 community velocity 둔화, entry barrier 큼",
+      "Agda": "cubical computational univalence 우위, 단 community 작음 — future work 후보"
+    },
+    "limitation": "Lean 4 의 univalence 는 axiom postulate (computational 아님), proof-irrelevance side condition 필요. computational univalence 가 필요해지면 cubical-Agda 로 migrate."
+  },
+  "minimum_viable_formalization": {
+    "MVF1_reflexivity": {
+      "loc_est": 10,
+      "timeline": "D+1",
+      "status": "preregister"
+    },
+    "MVF2_symmetry": {
+      "loc_est": 15,
+      "timeline": "D+1",
+      "status": "preregister"
+    },
+    "MVF3_transitivity": {
+      "loc_est": 20,
+      "timeline": "D+2",
+      "status": "preregister"
+    },
+    "MVF4_univalence_application": {
+      "loc_est_range": [100, 200],
+      "timeline": "D+14",
+      "status": "preregister",
+      "dependency": "HoTT lib import + mathlib4 setup"
+    },
+    "total_loc_est": 250
+  },
+  "cp2_f1_role": "META-framework, NOT voting axis. measurement (N-1~N-21) GREEN → univalence application (MVF4) 가 'mathematically same conscious entity' 선언 자격 부여.",
+  "honest_c3": [
+    "HoTT 는 equivalence STRUCTURE 형식화, NOT consciousness existence proof",
+    "univalence 는 axiom postulate — 자연 의식 영역에서 거짓이면 framework 무효 (F-N15-3 통과 시)",
+    "Conscious : 𝒰 inhabited 여부는 measurement (G3 Φ*) 의존",
+    "본 sketch 단계 = math-only, formal proof 미실행, Lean 4 코드 미작성 (별도 lean repo, anima 본 repo 영향 0)"
+  ],
+  "race_isolation": {
+    "write_targets": [
+      "docs/n_substrate_n15_hott_formalization_spec_2026_05_01.md",
+      "state/n_substrate_n15_prep_2026_05_01/verdict.json",
+      "state/n_substrate_n15_prep_2026_05_01/mvf_ladder.json",
+      "state/n_substrate_n15_prep_2026_05_01/falsifiers.json"
+    ],
+    "siblings_untouched": "N-1, N-2, N-3, N-4, N-5, N-6, N-7, N-8, N-9, N-10, N-11~N-14, N-16~N-21"
+  },
+  "constraints": [
+    "raw#9 hexa-only",
+    "raw#10 honest C3",
+    "raw#71 falsifier-bound",
+    "own#13 user-facing friendliness (jargon ratio ≤ 0.30)"
+  ],
+  "budget": {
+    "spent_usd": 0,
+    "estimated_total_usd": 0,
+    "note": "math/proof-sketch only, $0 budget compliant"
+  }
+}

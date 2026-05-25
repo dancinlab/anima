@@ -1,0 +1,153 @@
+{
+  "schema_version": "0.1.0",
+  "anima_mirror_qmirror_iface": {
+    "purpose": "anima-mirror substrate composition — qmirror provides quantum-grade primitives (RNG, Born sampling, IIT phi-star) as instruments inside the wristwatch tier. NOT a compute replacement for H100; a measurement and exotic-primitive provider.",
+    "design_doc": "see nexus conversation 2026-05-06 (anima-mirror + composition hypothesis + qmirror as resource)"
+  },
+  "qmirror_dependency": {
+    "version": "^1.0.0",
+    "verified_version": "1.0.0",
+    "verified_date": "2026-05-06",
+    "resolution_chain": [
+      {"tier": 1, "source": "$QMIRROR_ROOT env override"},
+      {"tier": 2, "source": "/Users/ghost/core/qmirror", "status": "active"},
+      {"tier": 3, "source": "$HOME/core/qmirror"},
+      {"tier": 4, "source": "PATH-resolved qmirror binary"}
+    ],
+    "license": "Apache-2.0 (core); pyphi GPLv3 subprocess-isolated for iit subcmd"
+  },
+  "invocation_pattern": {
+    "preferred": "direct_module",
+    "reason": "qmirror 1.0.0 CLI dispatcher has stale path constants (cli/qmirror.hexa L48 expects /modules/<x>.hexa, canonical layout is /<feature>/module/<feature>.hexa). Direct module invocation bypasses dispatcher and works today.",
+    "upstream_fix_tracked": "qmirror dispatcher path migration — separate qmirror PR, not blocking",
+    "examples": {
+      "qrng":     "QMIRROR_ROOT=$QM hexa run $QM/qrng/module/qrng.hexa",
+      "selftest": "QMIRROR_ROOT=$QM hexa run $QM/selftest/module/selftest.hexa",
+      "chsh":     "QMIRROR_ROOT=$QM hexa run $QM/chsh/module/chsh.hexa",
+      "iit":      "QMIRROR_ROOT=$QM hexa run $QM/iit_mip/module/iit_mip.hexa",
+      "sampler":  "QMIRROR_ROOT=$QM hexa run $QM/sampler/module/sampler.hexa",
+      "tomography": "QMIRROR_ROOT=$QM hexa run $QM/tomography/module/tomography.hexa",
+      "ghz_mermin": "QMIRROR_ROOT=$QM hexa run $QM/ghz_mermin/module/ghz_mermin.hexa"
+    },
+    "wrapper_planned": "anima/mirror/qmirror/_call.hexa — single thin wrapper that resolves QMIRROR_ROOT via 4-tier chain and routes to module path. Defer until 2nd consumer."
+  },
+  "anima_use_slots": {
+    "S1_qrng_seed": {
+      "module": "qrng",
+      "purpose": "ANU-anchored quantum random for LoRA init, sparse mask, dropout, shuffle perms",
+      "outputs_dir": "anima/mirror/qmirror/seed/",
+      "rate_limit": "free tier 1 req/min — batch into large draws, cache; mock LCG fallback for CI",
+      "status": "wired_mock_only",
+      "puller": "anima/mirror/qmirror/seed/pull.hexa",
+      "consumer_spec": "anima/mirror/qmirror/seed/S1_consumer_spec.md",
+      "wire_point_identified": "train_alm_lora.hexa:585 init_lora_A(d, r, n_adapters, base_seed) — replace base_seed source with first 8 bytes of qrng_lora_init.bin (or buffer-walker)",
+      "captured_bytes": 1024,
+      "captured_sha256_mock": "1517a8e10994b57d854e9ce2b367b79bc6f2019d751a03b115322db538bfc133"
+    },
+    "S2_vqc_router": {
+      "module": "circuit",
+      "purpose": "3-8 qubit VQC as persona router; Hilbert-space inductive bias vs classical NN",
+      "outputs_dir": "anima/mirror/qmirror/router/",
+      "qubits": 3,
+      "ablation_required": "must beat or tie Akida-only routing on golden set",
+      "status": "design"
+    },
+    "S3_born_sampler": {
+      "module": "sampler",
+      "purpose": "Born-rule sampling from <=20 qubit parameterized state as synthetic-data distribution prior",
+      "outputs_dir": "anima/mirror/qmirror/sampler/",
+      "qubits": 20,
+      "ram_budget": "16MB state vector",
+      "status": "design"
+    },
+    "S4_iit_phi_metric": {
+      "module": "iit_mip",
+      "purpose": "IIT 4.0 phi-star on 4-qubit projection of mirror hidden state vs 14B baseline",
+      "outputs_dir": "anima/mirror/qmirror/diag/",
+      "qubits": 4,
+      "candidate_cond": "9th composition-hypothesis cond — phi_star(mirror)/phi_star(baseline) >= 0.85",
+      "license_caveat": "pyphi GPLv3 subprocess; set NEXUS_QMIRROR_MOCK=1 to opt out",
+      "status": "baseline_captured",
+      "baseline_artifact": "anima/mirror/qmirror/diag/phi_star_baseline_4q.json",
+      "cond9_spec": "anima/mirror/qmirror/diag/cond9_spec.md",
+      "baseline_captured_ts": "2026-05-06T02:22:37Z",
+      "baseline_engine": "mock",
+      "baseline_phi_star": 0.0,
+      "baseline_kind": "qmirror_standard_reference",
+      "baseline_disclaimer": "qmirror canonical 4-Braket-fixture mock reproduce (byte-identical with stored verdict.json), NOT yet anima-14B hidden-state projection. Re-anchor against pyphi-live anima-14B 4q TPM before cond.9 becomes literally evaluable.",
+      "remaining_work": [
+        "install pyphi b78d0e3 → re-measure baseline live (engine=pyphi)",
+        "implement anima-14B hidden-state -> 4q projection pipeline",
+        "open diag/phi_star_mirror_track.jsonl as append-only timeline",
+        "implement cond.9 evaluator (ratio >= 0.85, ≥11/12 sustained)"
+      ]
+    },
+    "S5_ghz_ensemble": {
+      "module": "ghz_mermin",
+      "purpose": "GHZ-3 correlated voting for 3-persona LoRA tiebreak; alternate inductive bias to majority vote",
+      "outputs_dir": "anima/mirror/qmirror/ensemble/",
+      "qubits": 3,
+      "status": "design"
+    },
+    "S6_cscs_explore": {
+      "module": "cscs",
+      "purpose": "Chained-sequential CHSH for RL/active-learning exploration policy with quantum-correlated decisions",
+      "outputs_dir": "anima/mirror/qmirror/explore/",
+      "blocked_on": "qmirror cond.13 land (currently pending)",
+      "status": "reserved"
+    }
+  },
+  "smoke_test_evidence": {
+    "captured": "2026-05-06",
+    "qmirror_version": "1.0.0",
+    "selftest_result": "PASS (F1 MOCK, F2 PASS n=5/5, F3 PASS S=2.838 viol=13.25 sigma, F4 PASS phi_min=13.361, F5 PASS 4/4 byte-identical)",
+    "command": "QMIRROR_ROOT=~/core/qmirror hexa run ~/core/qmirror/selftest/module/selftest.hexa",
+    "dispatcher_bug_observed_and_fixed": "qmirror 1.0.0 dispatcher hardcoded /modules/<x>.hexa (nexus-style); canonical standalone layout is /<feature>/module/<feature>.hexa. Patched cli/qmirror.hexa L48-55 in qmirror repo on 2026-05-06 (5 path constants). Verified: `qmirror qrng --bits 64` now PASS via dispatcher.",
+    "anima_pull_smoke": "anima/mirror/qmirror/seed/pull.hexa runs end-to-end and writes provenance.jsonl + qrng_lora_init.bin. CONNECTIVITY proven."
+  },
+  "honest_gaps_resolved": {
+    "qrng_real_bits_extracted_2026_05_06": "RESOLVED. pull.hexa now uses subprocess+driver pattern (hexa lacks `use`); strips qrng module's main() via awk, appends custom main that calls qrng_bits(1024), parses hex stdout, materializes via xxd -r -p. Captures real 1024 bytes; sha256 deterministic on mock_lcg.",
+    "qmirror_cli_bits_emit_added_2026_05_06": "RESOLVED. qmirror cli/qmirror.hexa cmd_qrng now emits hex bytes (text + --json) via _qrng_drive() helper using same subprocess+driver pattern. Verified: `qmirror qrng --bits 64` -> 16 hex chars; --json includes bytes_hex/tier/provenance/request_id.",
+    "hexa_module_system_absent": "WORKAROUND CANONICAL. hexa-lang has no working `use` (confirmed via engine_aer comment + RULES §7). Both pull.hexa and qmirror's cmd_qrng use the same awk-strip + heredoc-driver subprocess pattern. SSOT for future qmirror integrations."
+  },
+  "open_gaps": {
+    "lora_init_consumer_future_caller": "qrng_lora_init.bin captured + S1_consumer_spec.md authored. Status: current train_alm_lora.hexa source has init_lora_A definition (line 585) but NO internal caller — only build/artifacts/*.c retains the historical caller (hexa_int(12345) seed). This indicates train_alm_lora.hexa is mid-refactor; the wiring slot will surface when the caller is reintroduced in source. Adding a synthetic caller today risks colliding with the in-progress refactor. Closure = wire qrng base_seed when caller lands in .hexa source (mechanical at that point, spec ready)."
+  },
+  "open_gaps_resolved_2026_05_06_round2": {
+    "pyphi_installed_via_venv": "RESOLVED. Created ~/core/qmirror/.venv (PEP 668 workaround), installed pyphi b78d0e3 + pyphi[parallel]. Live measurement on Braket sv1 AND 4-node TPM at state (0,0,0,0) confirms phi_star=0.0 (matches mock fixture byte-identical — HONEST_NEGATIVE verdict validated). Wrapper script anima/mirror/qmirror/run_qmirror_live.sh prepends venv to PATH for qmirror invocations. iit subcmd routes to live pyphi when NEXUS_QMIRROR_IIT_LIVE=1; selftest still uses CI-mock by design.",
+    "anu_live_no_key_required": "RESOLVED. ANU keyless T1.a legacy fallback (qrng.anu.edu.au, 1 req/min, vacuum-fluctuation source) discovered in qmirror entropy.hexa. Wrote anima/mirror/qmirror/seed/pull_live.hexa that routes through entropy_pull (4-tier chain) with NEXUS_QMIRROR_LIVE=1 — no API key required. First successful capture: 1024 real ANU bytes, tier=anu_legacy, sha256 c0f9d236… (vs deterministic mock 1517a8e1…). secret CLI checked: 33 secrets stored, no ANU/qmirror entries — keyless path obviates the need."
+  },
+  "next_steps": {
+    "C2_real": {
+      "status": "closed_2026_05_06",
+      "completed": [
+        "pull.hexa replaced with subprocess+driver pattern (hexa lacks `use`)",
+        "qrng_bits(1024) called via stripped+appended driver, hex parsed, xxd materialized",
+        "qrng_lora_init.bin = real 1024 bytes (sha256 1517a8e1… on mock_lcg, deterministic)",
+        "provenance.jsonl rows with n_bytes/sha256/tier/qmirror_message/ok"
+      ],
+      "remaining": ["see open_gaps.anu_live_tier_untested + lora_init_consumer_not_wired"]
+    },
+    "C3": {
+      "status": "baseline_captured_2026_05_06",
+      "completed_today": [
+        "ran `qmirror iit --n-qubits=4 --json` via dispatcher (HEXA_FORK_CAP=64 needed) — PASS",
+        "wrote diag/phi_star_baseline_4q.json (qmirror_standard_reference baseline, engine=mock, phi_star=0.0)",
+        "wrote diag/cond9_spec.md (candidate 9th composition-hypothesis cond)",
+        "captured engine=mock disclosure (pyphi not installed locally; falls back to canonical Braket-fixture reproduce)"
+      ],
+      "remaining_for_C3_close": [
+        "install pyphi b78d0e3 and re-measure baseline live (engine=pyphi → non-zero phi_star)",
+        "implement anima-14B hidden-state -> 4q amplitude-encoding projection pipeline",
+        "open diag/phi_star_mirror_track.jsonl and accumulate 12 samples",
+        "implement cond.9 evaluator (ratio >= 0.85, sustained 11/12 window)"
+      ],
+      "scope_correction": "original C3 wording said 'phi_star_baseline_14b.json' — baseline is NOT actually anima-14B-derived, it's the qmirror-standard 4-Braket-fixture canonical reproduce. Renamed file to phi_star_baseline_4q.json to reflect honest scope. anima-14B baseline measurement is downstream future work."
+    },
+    "deferred": ["S2 (after Akida router exists)", "S3 (after synthetic data factory exists)", "S5 (after 6 LoRAs trained)", "S6 (after qmirror cond.13)"],
+    "qmirror_upstream_followups": [
+      "Fix dispatcher to actually emit bits when `qrng --bits N` invoked (currently emits selftest only).",
+      "QMIRROR_* env alias migration (currently NEXUS_QMIRROR_* load-bearing per raw#10 caveat 5)."
+    ]
+  }
+}

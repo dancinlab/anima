@@ -1,0 +1,336 @@
+// build_interp.hexa — interp 인터프리터(`build/hexa_interp`) 재빌드 스크립트
+//
+// 목적: SSOT self/hexa_full.hexa 를 hexa_v2 로 트랜스파일하고 clang 으로
+//       컴파일하여 build/hexa_interp 생성. `./hexa run` 이 위임하는 interp.
+//
+// 2026-04-20: output path changed from build/hexa_interp to .real to preserve
+//             shim. Previously clang -o build/hexa_interp clobbered the shim
+//             file (git HEAD 6b62415b with Linux workaround). Now compile
+//             target is build/hexa_interp.real; shim at build/hexa_interp
+//             execs .real. Linux "Exec format error" root cause fixed.
+//
+// 사용:
+//   ./hexa tool/build_interp.hexa                       # 전체 파이프라인 (transpile+compile)
+//   CLANG=gcc ./hexa tool/build_interp.hexa
+//   SKIP_TRANSPILE=1 ./hexa tool/build_interp.hexa      # 기존 .c 재사용
+//
+// OS 분기 (build_dispatch 과 동일 패턴):
+//   Linux  — glibc POSIX/GNU 확장 노출 필요: -D_GNU_SOURCE -std=gnu11
+//            수학/dl 심볼: -lm -ldl
+//   macOS  — libSystem 자동 처리. codesign ad-hoc 서명 (AppleSystemPolicy).
+//
+// @pipeline (self/hexa_full.hexa 헤더와 동일):
+//   1. hexa_v2  self/hexa_full.hexa  /tmp/hexa_full_regen.c
+//   2. clang    $CFLAGS  /tmp/hexa_full_regen.c  -o build/hexa_interp.real  $LDFLAGS
+//   3. codesign --force --sign -  build/hexa_interp.real   (Darwin only)
+//   4. verify: echo 'println("ok")' > /tmp/_hx.hexa && build/hexa_interp /tmp/_hx.hexa
+//              (shim at build/hexa_interp execs .real — preserved across builds)
+
+use "self/stdlib/law_io"
+use "tool/tmp_scratch"
+
+fn run_cmd(cmd) {
+    let result = exec_with_status(cmd)
+    if result[1] != 0 {
+        eprintln("command failed (exit " + str(result[1]) + "): " + cmd)
+        exit(1)
+    }
+    result[0]
+}
+
+fn run_cmd_allow_fail(cmd) {
+    let result = exec_with_status(cmd)
+    result
+}
+
+// 2026-04-25: _av[1] is unreliable — under AOT cache it points at the
+// cache exe, and when `use "..."` imports are flattened, interp receives
+// the expanded /tmp/.hexa-runtime/ temp path instead of the source .hexa.
+// Canonical pattern (see tool/hexa_link.hexa:63, tool/run_stability_c3.hexa:23,
+// self/main.hexa $HEXA_LANG refs): prefer $HEXA_LANG env, then PWD if it
+// contains self/hexa_full.hexa, then dirname(argv[1]) as legacy fallback.
+let _av = argv()
+fn _resolve_hexa_dir(av) {
+    let hl = env("HEXA_LANG")
+    if hl != "" && file_exists(hl + "/self/hexa_full.hexa") {
+        return hl
+    }
+    // PWD fallback — build-agent invokes from repo root via `cd $HEXA_SRC`.
+    let pwd = exec("pwd").trim()
+    if pwd != "" && file_exists(pwd + "/self/hexa_full.hexa") {
+        return pwd
+    }
+    // Legacy fallback — dirname(argv[1])/.. — only useful when argv[1]
+    // points at a real source path (not AOT cache or flattened temp).
+    let script_path = av[1]
+    let legacy = exec("cd \"$(dirname '" + script_path + "')/../\" && pwd").trim()
+    return legacy
+}
+let hexa_dir = _resolve_hexa_dir(_av)
+let src_hexa = hexa_dir + "/self/hexa_full.hexa"
+let mut src_c = if env("HEXA_STAGE0_C") != "" { env("HEXA_STAGE0_C") } else { scratch_stable("full_regen", "c") }
+// 2026-04-20: compile target is .real; shim at build/hexa_interp execs it.
+let out = hexa_dir + "/build/hexa_interp.real"
+let mut hexa_v2 = hexa_dir + "/self/native/hexa_v2"
+let clang = if env("CLANG") != "" { env("CLANG") } else { "clang" }
+
+if !file_exists(src_hexa) {
+    eprintln("error: SSOT missing: " + src_hexa)
+    exit(1)
+}
+
+// T33-rebuild: prefer hexa_cc_dedup4.c when available.
+let hexa_v2_dedup_src = hexa_dir + "/self/native/hexa_cc_dedup4.c"
+let mut hexa_v2_dedup_bin = if env("HEXA_V2_DEDUP_BIN") != "" { env("HEXA_V2_DEDUP_BIN") } else { hexa_dir + "/build/hexa_v2_dedup4" }
+
+if file_exists(hexa_v2_dedup_src) {
+    let mut need_rebuild = false
+    let dedup_exec_check = exec_with_status("test -x " + hexa_v2_dedup_bin)
+    if dedup_exec_check[1] != 0 {
+        need_rebuild = true
+    } else {
+        let newer_check = exec_with_status("test " + hexa_v2_dedup_src + " -nt " + hexa_v2_dedup_bin)
+        if newer_check[1] == 0 {
+            need_rebuild = true
+        }
+    }
+    if need_rebuild {
+        let uname_tmp = exec("uname 2>/dev/null | tr -d ' \\n\\t'").trim()
+        let hexa_v2_cflags = if uname_tmp == "Linux" {
+            "-O2 -D_GNU_SOURCE -std=gnu11 -I . -I " + hexa_dir + "/self -lm"
+        } else {
+            "-O2 -I . -I " + hexa_dir + "/self"
+        }
+        println("[build_interp] (re)building " + hexa_v2_dedup_bin + " from " + hexa_v2_dedup_src)
+        exec("mkdir -p " + hexa_dir + "/build")
+        let build_result = exec_with_status("timeout --kill-after=5 120 " + clang + " " + hexa_v2_cflags + " " + hexa_v2_dedup_src + " -o " + hexa_v2_dedup_bin + " 2>/tmp/.hexa_v2_dedup_build.log")
+        if build_result[1] == 0 {
+            println("[build_interp] dedup4 hexa_v2 built OK")
+        } else {
+            println("[build_interp] WARN: dedup4 hexa_v2 build failed — see /tmp/.hexa_v2_dedup_build.log; falling back to mainline hexa_v2")
+            hexa_v2_dedup_bin = ""
+        }
+    }
+    if hexa_v2_dedup_bin != "" {
+        let check_exec = exec_with_status("test -x " + hexa_v2_dedup_bin)
+        if check_exec[1] == 0 {
+            hexa_v2 = hexa_v2_dedup_bin
+            println("[build_interp] using dedup4 hexa_v2 = " + hexa_v2)
+        }
+    }
+}
+
+let v2_exec_check = exec_with_status("test -x " + hexa_v2)
+if v2_exec_check[1] != 0 {
+    eprintln("error: hexa_v2 missing or not executable: " + hexa_v2)
+    eprintln("       Linux 부트스트랩은 먼저 hexa_v2 빌드 필요:")
+    eprintln("       clang -O2 -D_GNU_SOURCE -std=gnu11 -I . -I self self/native/hexa_cc.c -o " + hexa_v2 + " -lm")
+    exit(1)
+}
+
+// 1) Transpile — T1 Phase B: flatten `use "runtime_core"` 가 있으면 선행 병합
+if env("SKIP_TRANSPILE") == "" {
+    let mut src_for_transpile = src_hexa
+    let grep_result = exec_with_status("grep -q '^use \"runtime_core\"' " + src_hexa + " 2>/dev/null")
+    if grep_result[1] == 0 {
+        let flat_hexa = if env("HEXA_STAGE0_FLAT") != "" { env("HEXA_STAGE0_FLAT") } else { scratch_stable("full_flat", "hexa") }
+        // 2026-04-18: route through shim with HEXA_NO_LAUNCHD=1 (shim acquires
+        // its mkdir lock + execs REAL directly — no launchd re-entry, but
+        // RSS cap absent for this single nested call). rebuild_interp already
+        // holds its own outer lock, and the shim's mkdir lock is re-entrant-
+        // safe via the lock-holder PID detection path.
+        //
+        // Previous design called build/hexa_interp.real directly; that path
+        // was fragile because (a) .real can be replaced by a refuse shim on
+        // the install side and (b) it bypasses all layered defense.
+        let interp_shim = hexa_dir + "/build/hexa_interp"
+        let mut flatten_runner = ""
+        let mut flatten_env_prefix = "HEXA_NO_LAUNCHD=1 "
+        let s0_check = exec_with_status("test -x " + interp_shim)
+        if s0_check[1] == 0 {
+            flatten_runner = interp_shim
+        } else {
+            let hexa_check = exec_with_status("test -x " + hexa_dir + "/hexa")
+            if hexa_check[1] == 0 {
+                flatten_runner = hexa_dir + "/hexa"
+                flatten_env_prefix = ""
+            }
+        }
+        if flatten_runner == "" {
+            eprintln("error: flatten runner missing (need build/hexa_interp or ./hexa)")
+            exit(1)
+        }
+
+        // ── Flatten lock (atomic mkdir) — prevents concurrent flatten_imports ──
+        let flatten_lock = scratch_stable("flatten", "lock")
+        let flatten_lock_ttl = 120
+        let mut flatten_got_lock = false
+        let lock_result = exec_with_status("mkdir " + flatten_lock + " 2>/dev/null")
+        if lock_result[1] == 0 {
+            exec("echo $$ > " + flatten_lock + "/pid")
+            flatten_got_lock = true
+        } else {
+            // Check if lock is stale
+            let fl_pid = exec("cat " + flatten_lock + "/pid 2>/dev/null || echo ''").trim()
+            let fl_time = exec("stat -f %m " + flatten_lock + " 2>/dev/null || stat -c %Y " + flatten_lock + " 2>/dev/null || echo 0").trim()
+            let now = to_int(exec("date +%s").trim())
+            let fl_time_int = to_int(fl_time)
+            let fl_age = now - fl_time_int
+
+            let alive_check = exec_with_status("kill -0 " + fl_pid + " 2>/dev/null")
+            if fl_pid != "" && alive_check[1] == 0 && fl_age < flatten_lock_ttl {
+                eprintln("[build_interp] flatten: waiting for concurrent flatten (pid=" + fl_pid + ", age=" + str(fl_age) + "s)")
+                // Wait up to 60s for the other process to finish
+                let mut fl_wait = 0
+                while fl_wait < 60 {
+                    let dir_check = exec_with_status("test -d " + flatten_lock)
+                    if dir_check[1] != 0 {
+                        // lock released
+                        fl_wait = 999
+                    } else {
+                        exec("sleep 1")
+                        fl_wait = fl_wait + 1
+                    }
+                }
+                let dir_still = exec_with_status("test -d " + flatten_lock)
+                if dir_still[1] == 0 {
+                    eprintln("[build_interp] flatten: lock wait timeout — reclaiming")
+                    exec("rm -rf " + flatten_lock)
+                    let reclaim = exec_with_status("mkdir " + flatten_lock)
+                    if reclaim[1] == 0 {
+                        exec("echo $$ > " + flatten_lock + "/pid")
+                        flatten_got_lock = true
+                    }
+                }
+                // If we didn't get the lock but flat output exists, reuse it
+                if !flatten_got_lock && file_exists(flat_hexa) {
+                    println("[build_interp] flatten: reusing output from concurrent run")
+                    src_for_transpile = flat_hexa
+                }
+            } else {
+                // Stale lock — reclaim
+                exec("rm -rf " + flatten_lock)
+                let reclaim2 = exec_with_status("mkdir " + flatten_lock)
+                if reclaim2[1] == 0 {
+                    exec("echo $$ > " + flatten_lock + "/pid")
+                    flatten_got_lock = true
+                }
+            }
+        }
+        if flatten_got_lock {
+            println("[build_interp] flatten: " + flatten_runner + " tool/flatten_imports.hexa " + src_hexa + " " + flat_hexa)
+            // T33: arena instrumentation causes mutable-variable corruption.
+            // Force HEXA_VAL_ARENA=0 to disable arena during flatten execution.
+            let flatten_result = exec_with_status(flatten_env_prefix + "HEXA_VAL_ARENA=0 timeout --kill-after=5 120 " + flatten_runner + " " + hexa_dir + "/tool/flatten_imports.hexa " + src_hexa + " " + flat_hexa)
+            if flatten_result[1] != 0 {
+                exec("rm -rf " + flatten_lock)
+                eprintln("error: flatten_imports failed")
+                exit(1)
+            }
+            exec("rm -rf " + flatten_lock)
+            if !file_exists(flat_hexa) {
+                eprintln("error: flatten output missing: " + flat_hexa)
+                exit(1)
+            }
+        }
+        src_for_transpile = flat_hexa
+    }
+    println("[build_interp] transpile: " + hexa_v2 + " " + src_for_transpile + " " + src_c)
+    run_cmd("timeout --kill-after=5 120 " + hexa_v2 + " " + src_for_transpile + " " + src_c)
+}
+
+if !file_exists(src_c) {
+    eprintln("error: transpiled C missing: " + src_c)
+    exit(1)
+}
+
+// 1.5) Refresh runtime.c sibling next to $SRC_C.
+let src_c_dir = exec("cd \"$(dirname '" + src_c + "')\" && pwd").trim()
+if src_c_dir != hexa_dir + "/self" {
+    exec("cp -f " + hexa_dir + "/self/runtime.c " + src_c_dir + "/runtime.c")
+}
+
+// 2) Compile
+let uname = exec("uname 2>/dev/null | tr -d ' \\n\\t'").trim()
+let mut cflags = ""
+let mut ldflags = ""
+if uname == "Linux" {
+    cflags = "-O2 -std=gnu11 -D_GNU_SOURCE -Wno-trigraphs -I " + hexa_dir + "/self"
+    ldflags = "-lm -ldl"
+} else {
+    cflags = "-O2 -std=c11 -Wno-trigraphs -I " + hexa_dir + "/self"
+    // T-stack: eval_expr_inner stack frame is ~80KB; recursive interpret
+    // path uses ~150KB per call level. 64MB allows ~400 levels.
+    ldflags = "-Wl,-stack_size,0x4000000"
+}
+
+exec("mkdir -p " + hexa_dir + "/build")
+println("[build_interp] uname=" + uname)
+println("[build_interp] " + clang + " " + cflags + " " + src_c + " -o " + out + " " + ldflags)
+
+run_cmd("timeout --kill-after=5 120 " + clang + " " + cflags + " " + src_c + " -o " + out + " " + ldflags)
+
+// 3) Darwin codesign (AppleSystemPolicy SIGKILL 방지)
+if uname == "Darwin" {
+    let cs_check = exec_with_status("command -v codesign >/dev/null 2>&1")
+    if cs_check[1] == 0 {
+        exec_with_status("codesign --force --sign - " + out + " 2>/dev/null")
+    }
+}
+
+// 4) Smoke test (skip 가능: NO_SMOKE=1)
+if env("NO_SMOKE") == "" {
+    let smoke = exec("mktemp -t hexa_interp_smoke.XXXXXX.hexa").trim()
+    safe_write_file(smoke, "println(\"ok\")\n")
+    let smoke_result = exec_with_status("HEXA_VAL_ARENA=0 " + out + " " + smoke + " 2>&1")
+    exec("rm -f " + smoke)
+    let smoke_output = smoke_result[0].trim()
+    if smoke_output != "ok" {
+        eprintln("error: interp smoke test FAIL — expected 'ok', got:")
+        eprintln(smoke_output)
+        exit(1)
+    }
+    println("[build_interp] smoke OK")
+}
+
+// 5) Size guard — broken transpile이 exit 0으로 넘어오는 경우 방어
+let min_size = if env("HEXA_STAGE0_MIN_SIZE") != "" { to_int(env("HEXA_STAGE0_MIN_SIZE")) } else { 1000000 }
+let actual_size = to_int(exec("wc -c < " + out + " | tr -d ' '").trim())
+if actual_size < min_size {
+    eprintln("error: interp output too small (" + str(actual_size) + " bytes < " + str(min_size) + ") — broken transpile?")
+    // known_good 백업이 있으면 복원
+    let known_good = hexa_dir + "/build/hexa_interp.known_good"
+    let kg_check = exec_with_status("test -x " + known_good)
+    if kg_check[1] == 0 {
+        exec("cp -f " + known_good + " " + out)
+        if uname == "Darwin" {
+            let cs2 = exec_with_status("command -v codesign >/dev/null 2>&1")
+            if cs2[1] == 0 {
+                exec_with_status("codesign --force --sign - " + out + " 2>/dev/null")
+            }
+        }
+        let rolled_size = exec("wc -c < " + out + " | tr -d ' '").trim()
+        eprintln("[build_interp] rolled back to known_good (" + rolled_size + " bytes)")
+    }
+    exit(1)
+}
+
+// 6) Re-install flock+RSS-cap shim (commit ca46279).
+//    Standalone build_interp runs (not wrapped by rebuild_interp) also
+//    need the shim restored or the next spawn has no serialization.
+//    Idempotent: no-op if build/hexa_interp is already the shim.
+//    Skip when HEXA_SKIP_SHIM=1 (caller installs it themselves).
+if env("HEXA_SKIP_SHIM") == "" {
+    // 2026-04-25 raw 44: ./hexa is now a wrapper routing through hive
+    // resolver (Mac safe-landing). Build tools must invoke the bare
+    // dispatcher directly via build/hexa.real to avoid resolver
+    // round-trip during recursive self-build.
+    let real_bin = if file_exists(hexa_dir + "/build/hexa.real") { hexa_dir + "/build/hexa.real" } else { "./hexa" }
+    let shim_rc = exec_with_status(real_bin + " " + hexa_dir + "/tool/install_interp_shim.hexa")
+    if shim_rc[1] != 0 {
+        eprintln("[build_interp] WARN: install_interp_shim failed (rc=" + str(shim_rc[1]) + ")")
+        eprintln(shim_rc[0])
+    }
+}
+
+println("[build_interp] OK -> " + out + " (" + str(actual_size) + " bytes)")

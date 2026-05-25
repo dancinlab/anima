@@ -1,0 +1,67 @@
+{
+  "schema": "anima/cite_cleanup_deferred/1",
+  "cycle": "anima_speak_voice_cite_cleanup_2026_05_03",
+  "deferred_items": [
+    {
+      "id": "D1_function_name_audit",
+      "title": "auto_speak_bridge function name preservation review",
+      "current_state": "function name preserved in daemon/module/auto_speak_bridge.hexa (per R3 cross-language interop)",
+      "next_action": "consumer call-graph audit; if zero external callers, rename to auto_voice_bridge in separate cycle",
+      "blocker": "consumer audit not in scope of cite-only cleanup",
+      "priority": "low"
+    },
+    {
+      "id": "D2_json_key_audit",
+      "title": "JSON keys hexa_speak_mapping / B_hexa_speak / files_in_anima_speak rewritten by linter",
+      "current_state": "keys auto-rewritten by linter to hexa_voice_mapping / B_anima_voice / files_in_anima_voice etc. (in config/hardware_architecture.json, training/deploy/*.json)",
+      "next_action": "verify no consumer reads these keys by old name; if consumers exist, restore old key as alias",
+      "blocker": "consumer call-graph audit needed",
+      "priority": "medium"
+    },
+    {
+      "id": "D3_changelog_commit_message_quotes",
+      "title": "docs/CHANGELOG.md commit-message quotes rewritten",
+      "current_state": "lines 206 / 370 originally read 'feat(anima-speak): ...' / 'docs(anima-speak): ...' matching real git commit subjects (immutable history). Linter rewrote to 'feat(anima-voice): ...' / 'docs(anima-voice): ...' which now MISMATCH the actual commits.",
+      "next_action": "restore quoted commit subjects from git log to keep changelog accurate to history; OR add explicit annotation that the changelog was rewritten as part of the rename cycle",
+      "blocker": "any restoration attempt would itself be subject to rewriter; need to bypass rewriter (hook disable) for accurate restoration",
+      "priority": "medium"
+    },
+    {
+      "id": "D4_training_corpus_immutable",
+      "title": "training/corpus_clm_combined.txt /tmp/anima_speak.wav references",
+      "current_state": "4 cites preserved (training corpus is immutable input; rewriter did not touch)",
+      "next_action": "no action; preserve as-is",
+      "priority": "n/a"
+    },
+    {
+      "id": "D5_hxc_binary_state",
+      "title": "state/hxc/*.hxc compressed binary state files",
+      "current_state": "1 cite each preserved in alm_r13_4gate_pass_subset.jsonl.hxc and corpus_tier_tier1_low.jsonl.hxc",
+      "next_action": "no action; binary compressed state",
+      "priority": "n/a"
+    },
+    {
+      "id": "D6_git_commit_for_rename",
+      "title": "Pre-session staged 506-file rename needs git commit",
+      "current_state": "staged in git index, uncommitted",
+      "next_action": "user (or main session) commits the rename with appropriate message; this BG did NOT auto-commit per protocol",
+      "blocker": "this BG does not auto-commit large-scope changes performed by other actors",
+      "priority": "high"
+    },
+    {
+      "id": "D7_hxc_aot_marker_audit",
+      "title": ".hxc_aot/hxc_a25 modified at session start (visible in git status)",
+      "current_state": "modified by separate process",
+      "next_action": "out of scope for this BG; track separately",
+      "priority": "low"
+    },
+    {
+      "id": "D8_full_consumer_break_test",
+      "title": "End-to-end consumer test post-rename",
+      "current_state": "not executed",
+      "next_action": "run anima-voice/voice_e2e.hexa selftest + bench_anima_voice.hexa + verify hxcuda_istft_bridge.hexa builds; verify all imports resolve under new paths",
+      "blocker": "$0 cap and 90min wallclock — out of scope for cite cleanup BG",
+      "priority": "high"
+    }
+  ]
+}

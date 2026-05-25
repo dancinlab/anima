@@ -1,0 +1,101 @@
+// HEXAD/IIT4/state/iit4_m12_bounded_largen_2026_05_25/run_m12.hexa
+//
+//   IIT4 M12 — bounded-mode large-n LIFE re-measurement.
+//
+//   M9 measured the exact-n ceiling (n≤5 seconds · n=6 minutes · n≥7 impractical)
+//   and added `big_phi_bounded(tpm,n,sys_state,cap)`: cap ≥ n = faithful
+//   restriction (== exact); cap < n = explicit lower-bound approximation that
+//   stays finite where exact blows up. Here we use it to push the faithful
+//   (causal) big-Φ re-measurement of the LIFE cosmic-scale ECA rules toward the
+//   H_002 C2 n=8 scale that exact cannot reach.
+//
+//   • regression — cap ≥ n reproduces exact (bounded is a faithful restriction)
+//   • bounded(cap=3) table — LIFE rules at n=5 (+ one n=6 push, exact-impractical)
+//   • n≥7 = honestly DEFERRED (inline budget; needs a background run)
+//
+//   deterministic · hexa-only · $0 mac local · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_bounded.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// inline ECA→TPM builder (iit4_eca not in the iit4_bounded import chain;
+// iit4_bit/iit4_pow2 visible transitively via iit4_bounded → ... → iit4_tpm).
+fn m12_eca_tpm(rule: int, n: int) -> array {
+    let full = iit4_pow2(n)
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let mut i = 0
+        while i < n {
+            let l = iit4_bit(s, (i - 1 + n) % n)
+            let c = iit4_bit(s, i)
+            let r = iit4_bit(s, (i + 1) % n)
+            t = t.push(to_float(iit4_bit(rule, 4 * l + 2 * c + r)))
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return t
+}
+
+fn main() {
+    println("================================================================")
+    println("  IIT4 M12 — bounded-mode large-n LIFE re-measurement (cap=3)")
+    println("================================================================")
+
+    // ── regression: cap ≥ n == exact (faithful restriction) ─────────────
+    let t110_4 = m12_eca_tpm(110, 4)
+    let exact4 = big_phi(t110_4, 4, 10)
+    let bnd4 = big_phi_bounded(t110_4, 4, 10, 4)          // cap=4 ≥ n=4
+    println("  regression n=4 rule110: exact=" + str(exact4[0]) + " bounded(cap4)=" + str(bnd4[0]))
+    check("regression cap>=n == exact (faithful restriction)", approx(exact4[0], bnd4[0]))
+
+    // ── bounded(cap=3) LIFE table at n=5 ────────────────────────────────
+    let n5 = 5
+    let st5 = 21                                          // 10101
+    println("  bounded(cap=3) n=5 seed=10101:")
+    let b0  = big_phi_bounded(m12_eca_tpm(0,   n5), n5, st5, 3)
+    let b204= big_phi_bounded(m12_eca_tpm(204, n5), n5, st5, 3)
+    let b90 = big_phi_bounded(m12_eca_tpm(90,  n5), n5, st5, 3)
+    let b110= big_phi_bounded(m12_eca_tpm(110, n5), n5, st5, 3)
+    let b30 = big_phi_bounded(m12_eca_tpm(30,  n5), n5, st5, 3)
+    let b54 = big_phi_bounded(m12_eca_tpm(54,  n5), n5, st5, 3)
+    println("    rule 0=" + str(b0[0]) + " 204=" + str(b204[0]) + " 90=" + str(b90[0]))
+    println("    rule 110=" + str(b110[0]) + " 30=" + str(b30[0]) + " 54=" + str(b54[0]))
+    check("n=5 rule 0 bounded = 0", approx(b0[0], 0.0))
+    check("n=5 rule 204 bounded = 0", approx(b204[0], 0.0))
+    let mut mx = b90[0]
+    if b110[0] > mx { mx = b110[0] }
+    if b30[0]  > mx { mx = b30[0] }
+    if b54[0]  > mx { mx = b54[0] }
+    check("n=5 coupled LIFE rule bounded > 0", mx > 0.000001)
+    check("n=5 bounded all finite >= 0", (b0[0]>=0.0)&&(b204[0]>=0.0)&&(b90[0]>=0.0)&&(b110[0]>=0.0)&&(b30[0]>=0.0)&&(b54[0]>=0.0))
+
+    // ── n=6 push (exact-impractical regime) — rule 110 ──────────────────
+    let n6 = 6
+    let st6 = 42                                          // 101010
+    let b110_6 = big_phi_bounded(m12_eca_tpm(110, n6), n6, st6, 3)
+    println("  bounded(cap=3) n=6 rule110 seed=101010: big-Φ=" + str(b110_6[0]) + " nd=" + str(b110_6[4]))
+    check("n=6 rule110 bounded finite > 0 (exact-impractical regime reached)", b110_6[0] > 0.000001)
+
+    // determinism
+    let b110_6b = big_phi_bounded(m12_eca_tpm(110, n6), n6, st6, 3)
+    check("determinism: n=6 rule110 bounded re-run identical", approx(b110_6[0], b110_6b[0]))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  n=7/n=8 = DEFERRED (inline budget; bounded feasible but minutes+ — bg run)")
+    println("================================================================")
+    if FAIL > 0 { panic("IIT4 M12 bounded large-n FAILED") }
+}

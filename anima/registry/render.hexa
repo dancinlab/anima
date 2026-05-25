@@ -1,0 +1,155 @@
+// ⛔ STAGE-1 — Anima Artifact Registry renderer
+// anima/registry/render.hexa
+//
+// Spec: 사용자 directive 2026-05-08 verbatim
+//   "anima/registry/anima_artifact_registry.yaml 연동해서 render.hexa 만들어서
+//    md 로도 바로 볼수 있게"
+//   "README 에 model 다운로드 아래에 md 링크도 하고"
+//
+// PURPOSE
+//   yaml SSOT (anima/registry/anima_artifact_registry.yaml) → markdown view
+//   (docs/anima_artifact_registry.md) 변환. yaml = catalog SSOT,
+//   md = human-readable view layer. 모든 수정은 yaml 에 가하고 본 render
+//   다시 실행. md 는 regenerable artifact (raw#15 additive).
+//
+//   raw#9   hexa orchestration (Mac canonical)
+//   raw#37  transient_py helper (yaml load + md emit) — gitignored
+//
+// MODES
+//   --selftest    metadata-only dry-run (no helper invoke)
+//   --render      yaml → md generation (default)
+//   --output PATH override default output (docs/anima_artifact_registry.md)
+//
+// FLAGS
+//   --registry PATH   override registry yaml (default = anima/registry/anima_artifact_registry.yaml)
+//
+// HONEST C3 (raw#10 emit ≥5 to stderr)
+//   C1 yaml = catalog SSOT, md = view-layer regenerable (raw#15 additive)
+//   C2 PyYAML required (helper imports yaml)
+//   C3 helper transient_py (gitignored, raw#37) — regen from this hexa SSOT
+//   C4 output md tracked (docs/anima_artifact_registry.md) — git commit OK
+//   C5 yaml SSOT update 시 본 render 재실행 → md 자동 갱신
+//
+// own POLICY
+// cost discipline (0-cost local)
+// mandatory report — render result emit
+// single SSOT — yaml = master, md = regenerable view
+// trinity emit (D + own + H)
+// mandate-2 wrap=0 — text-only output
+// 매단계 저장 axis-A doc save mandate enforcement
+//
+// USAGE
+//   anima registry render            # default: yaml → docs/anima_artifact_registry.md
+//   anima registry render --output - # stdout
+//   anima registry render --selftest # dry-run
+
+const REGISTRY_DEFAULT = "anima/registry/anima_artifact_registry.yaml"
+const OUTPUT_DEFAULT = "docs/anima_artifact_registry.md"
+const HELPER_PATH = "tool/transient_py/anima_artifact_registry_render.py"
+
+struct RenderConfig {
+    mode: string,
+    registry: string,
+    output: string,
+}
+
+fn default_config() -> RenderConfig {
+    return RenderConfig {
+        mode: "render",
+        registry: REGISTRY_DEFAULT,
+        output: OUTPUT_DEFAULT,
+    }
+}
+
+fn emit_honest_c3() {
+    eprintln("[registry/render] C1 yaml=catalog SSOT, md=regenerable view (raw#15)")
+    eprintln("[registry/render] C2 PyYAML required (helper imports yaml)")
+    eprintln("[registry/render] C3 helper transient_py (raw#37, gitignored)")
+    eprintln("[registry/render] C4 md tracked (docs/) — yaml change → re-run")
+    eprintln("[registry/render] C5 single SSOT (yaml master) + axis-A doc")
+}
+
+fn parse_args(argv: list) -> RenderConfig {
+    let mut cfg = default_config()
+    let mut i = 0
+    while i < argv.len() {
+        let a = argv[i]
+        if a == "--selftest" {
+            cfg.mode = "selftest"
+        } else if a == "--render" {
+            cfg.mode = "render"
+        } else if a == "--registry" && i + 1 < argv.len() {
+            cfg.registry = argv[i + 1]
+            i = i + 1
+        } else if a == "--output" && i + 1 < argv.len() {
+            cfg.output = argv[i + 1]
+            i = i + 1
+        } else if a == "--help" || a == "-h" {
+            println("anima registry render — yaml → md")
+            println("")
+            println("USAGE:")
+            println("  anima registry render [--registry PATH] [--output PATH]")
+            println("  anima registry render --selftest")
+            println("")
+            println("DEFAULTS:")
+            println("  registry = " + REGISTRY_DEFAULT)
+            println("  output   = " + OUTPUT_DEFAULT)
+            exit(0)
+        }
+        i = i + 1
+    }
+    return cfg
+}
+
+fn _sh_quote(s: string) -> string {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn _resolve_python() -> string {
+    let r = exec_with_status("command -v python3 || command -v python")
+    if r.status != 0 {
+        eprintln("[registry/render] FATAL: python3 not found")
+        exit(2)
+    }
+    return r.stdout.trim()
+}
+
+fn cmd_selftest(cfg: RenderConfig) {
+    emit_honest_c3()
+    eprintln("[registry/render] SELFTEST mode (no helper invoke)")
+    let reg_check = exec_with_status("test -f " + _sh_quote(cfg.registry) + " && echo registry_present || echo registry_MISSING")
+    let helper_check = exec_with_status("test -f " + _sh_quote(HELPER_PATH) + " && echo helper_present || echo helper_MISSING")
+    let py = _resolve_python()
+    let yaml_check = exec_with_status(py + " -c 'import yaml' 2>/dev/null && echo pyyaml_OK || echo pyyaml_MISSING")
+    println("registry: " + reg_check.stdout.trim())
+    println("helper:   " + helper_check.stdout.trim())
+    println("pyyaml:   " + yaml_check.stdout.trim())
+    println("python:   " + py)
+    println("PASS anima_registry_render selftest (axis-A doc, SSOT)")
+}
+
+fn cmd_render(cfg: RenderConfig) {
+    emit_honest_c3()
+    let py = _resolve_python()
+    let cmd = py + " " + HELPER_PATH
+        + " --registry " + _sh_quote(cfg.registry)
+        + " --output " + _sh_quote(cfg.output)
+    eprintln("[registry/render] invoking: " + cmd)
+    let r = exec_with_status(cmd)
+    if r.status != 0 {
+        eprintln("[registry/render] FAIL: helper exit=" + r.status.to_string())
+        eprintln(r.stderr)
+        exit(r.status)
+    }
+    print(r.stdout)
+    eprintln("[registry/render] OK — md regenerated at " + cfg.output)
+}
+
+fn main(argv: list) {
+    let cfg = parse_args(argv)
+    if cfg.mode == "selftest" {
+        cmd_selftest(cfg)
+    } else {
+        cmd_render(cfg)
+    }
+}

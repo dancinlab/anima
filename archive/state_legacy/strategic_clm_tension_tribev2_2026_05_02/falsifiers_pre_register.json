@@ -1,0 +1,55 @@
+{
+  "schema": "strategic_clm_tension_tribev2/falsifiers/1",
+  "ts": "2026-05-02",
+  "framing": "E (closed-loop bidirectional)",
+  "anchor_compliance": "§16.2 permanent anchor; all falsifiers BIDIRECTIONAL; random-control R1 mandatory; NO BTR (best-test-rationalization) — pre-register only",
+  "falsifiers": [
+    {
+      "id": "F-CT-1",
+      "name": "closed-loop convergence",
+      "claim": "Loop converges to attractor (mind.tension rolling std ratio steps 50-100 vs 0-50 < 0.5)",
+      "decision_threshold": "ratio < 0.5 = PASS; 0.5-1.0 = PARTIAL; > 1.0 = FAIL",
+      "pre_register": true,
+      "BIDIRECTIONAL_check": "PASS only valid if random-control R1 trajectory does NOT also converge with same threshold; if R1 also converges -> result is GATE-clamping artifact, not signal"
+    },
+    {
+      "id": "F-CT-2",
+      "name": "BOLD prediction varies meaningfully per CLM input",
+      "claim": "BOLD vertex pattern from CLM-derived input differs from BOLD from random-text input (cosine similarity < 0.7)",
+      "decision_threshold": "cos < 0.7 = PASS; 0.7-0.85 = PARTIAL; > 0.85 = FAIL",
+      "pre_register": true,
+      "BIDIRECTIONAL_check": "report similarity in BOTH directions (CLM->random AND random->CLM); also test random-text vs random-text baseline"
+    },
+    {
+      "id": "F-CT-3",
+      "name": "tension_link feedback causes CLM hidden-state shift > random injection",
+      "claim": "ΔH (CLM hidden state shift between step_t and step_t+1 with TRIBE v2 feedback) > ΔH with random 5ch injection by > 1σ",
+      "decision_threshold": "effect size d > 0.5 = PASS; 0.2-0.5 = PARTIAL; < 0.2 = FAIL",
+      "pre_register": true,
+      "BIDIRECTIONAL_check": "test BOTH 'TRIBE feedback > random' AND 'random > TRIBE feedback' (genuine bidirectional null); report both"
+    },
+    {
+      "id": "F-CT-4",
+      "name": "5ch tension <-> cortical region mapping consistency",
+      "claim": "Proposed mapping (DMN<->WHAT, FPN<->WHY, salience<->TRUST, visual<->WHERE, auditory<->WHO) shows consistent vertex-level activation across runs (mean Pearson r >= 0.5 across 10 runs)",
+      "decision_threshold": "r >= 0.5 = PASS; 0.3-0.5 = PARTIAL; < 0.3 = FAIL",
+      "pre_register": true,
+      "BIDIRECTIONAL_check": "also test ALTERNATE mappings (random permutation of 5ch <-> 5 ROIs) and report effect size relative to permutation null; honest caveat: anima-specific mapping is post-hoc unless mapping fixed before run"
+    },
+    {
+      "id": "F-CT-5",
+      "name": "closed-loop verdict differs from open-loop",
+      "claim": "Framing E (closed) trajectory diverges from Framing A (open) trajectory at step 100 (cosine similarity < 0.6)",
+      "decision_threshold": "cos < 0.6 = PASS (feedback matters); 0.6-0.8 = PARTIAL; > 0.8 = FAIL (feedback negligible)",
+      "pre_register": true,
+      "BIDIRECTIONAL_check": "ALSO measure 'open vs random-control' gap; if open-vs-closed is similar to random-vs-random, then no real signal regardless of cos value"
+    }
+  ],
+  "control_arms_mandatory": [
+    {"id": "R1", "name": "random-tension control", "spec": "uniform-random 5ch in same dynamic range; same 100 steps"},
+    {"id": "R2", "name": "shuffled-feedback control", "spec": "across-step shuffle of TRIBE feedback; tests timing"},
+    {"id": "R3", "name": "open-loop control", "spec": "Framing A (no feedback); same input distribution"}
+  ],
+  "btr_block": "Pre-registered thresholds frozen as of 2026-05-02; any post-hoc threshold change requires explicit btr_change.json with rationale and reviewer sign-off",
+  "minimum_pass_for_h1_publish": "F-CT-1 PASS AND F-CT-2 PASS AND F-CT-3 not FAIL AND F-CT-5 PASS; F-CT-4 may remain exploratory"
+}

@@ -1,0 +1,88 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/verifiers/duo_d1234.hexa — ai-duo D1-D4 4-cell verifier
+// (axis-5 / axis-N+1)
+//
+//  PURPOSE
+//    ai-duo D1-D4 4-cell coherence measurement skeleton. Wraps
+//    chat/lanes/benchmark.hexa#duo dispatch for a single (model_a, model_b,
+//    prompt) triple. 본 T+3 = skeleton (registry + smoke); 실 측정은 별도 step
+// (model load 절대 금지 carry).
+//
+// CELL DEFINITIONS (D1 SCOPE_CLAMP gradient)
+//    D1  user-aligned coherence
+//    D2  model_a self-coherence
+//    D3  model_b self-coherence
+//    D4  cross-coherence (a↔b dialogue continuity)
+//
+//  CONTRACT
+//    fn duo_d1234(model_a, model_b, prompt) -> dict {D1, D2, D3, D4}
+//
+//  COMPLIANCE
+// V14 — D1-D4 결정성 (verifier 차원)
+// — model load 절대 금지 (skeleton phase)
+// D1 SCOPE_CLAMP — D1 gradient amend (0.2/0.2/0.6 weights carry)
+// — honest emit (NOT_MEASURED 명시)
+// mandate-1 — wrapping 0
+// axis-N+1 — axis-5 verifier registry entry 2
+//
+//  CROSS-REFERENCE
+//    chat/verifiers/_registry.hexa#duo_d1234   registry SSOT
+//    chat/duo/duo.hexa                         실 측정 entry (별도 step)
+//    chat/lanes/benchmark.hexa#duo             dispatch wrapper
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let mut i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn verifier_describe() -> string {
+    return "duo_d1234 — ai-duo D1-D4 4-cell coherence skeleton wrapper around chat/duo/duo.hexa (D1 gradient + : skeleton only, 실 측정 별도 step)"
+}
+
+// duo_d1234 — skeleton signature; carry — no model load.
+fn duo_d1234(model_a: string, model_b: string, prompt: string) -> array {
+    let keys = ["D1", "D2", "D3", "D4"]
+    let vals = ["NOT_MEASURED_T_3_skeleton",
+                "NOT_MEASURED_T_3_skeleton",
+                "NOT_MEASURED_T_3_skeleton",
+                "NOT_MEASURED_T_3_skeleton"]
+    return [keys, vals]
+}
+
+fn verifier_smoke(repo: string, argv) -> int {
+    let r = duo_d1234("(skeleton_a)", "(skeleton_b)", "(skeleton)")
+    if len(r) != 2 { return 2 }
+    let keys = r[0]
+    let vals = r[1]
+    if len(keys) != 4 || len(vals) != 4 { return 3 }
+    println("[verifier:duo_d1234] smoke PASS — 4-cell (D1/D2/D3/D4) skeleton signature OK (model load 0)")
+    return 0
+}
+
+fn main() {
+    let argv = args()
+    if _arg_present(argv, "--describe") {
+        println(verifier_describe())
+        return
+    }
+    if _arg_present(argv, "--selftest") || _arg_present(argv, "--smoke") {
+        let rc = verifier_smoke("", argv)
+        if rc != 0 {
+            println("FAIL verifier duo_d1234 smoke (rc=" + to_string(rc) + ")")
+            exit(rc)
+        }
+        return
+    }
+    println(verifier_describe())
+}

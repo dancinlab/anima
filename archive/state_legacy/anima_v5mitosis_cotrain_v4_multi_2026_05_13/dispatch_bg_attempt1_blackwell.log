@@ -1,0 +1,481 @@
+=== v5mitosis_cotrain_v4_multi vast.ai 4× H100 dispatch (v4-multi fresh-init DDP) ===
+Tue May 12 19:07:12 UTC 2026
+  fresh-init multi-GPU :: 20000 step from step 0
+  per_gpu_batch=2 world_size=4 effective_batch=8
+  arch: d=1024 n_head=16 ffn=4096 cells=256-256 ctx=256
+  routing: top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+  cost_cap=$80.0 absolute_max=$88.0 per_hr_max=$16.0
+[1/9] Searching 4× GPU offers (gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200,B200,RTX_PRO_6000_WS,RTX_PRO_6000_S,A100_SXM4,A100_PCIE] num_gpus=4 reliability>0.95 dph_total<16.0 disk_space>200 inet_down>200) — cheapest with gpu_ram>=75000MB ...
+  Selected: id=33655267 dph=$5.3347 gpu=RTX_PRO_6000_S num_gpus=4 gpu_ram=97887MB rel=0.967
+[2/9] cost gate OK (est $26.67)
+[3/9] Renting...
+  Instance ID: 36635742
+[4/9] Waiting SSH (direct-IP) ...
+  ... 1/180 status=None
+  ... 2/180 status=None
+  ... 3/180 status=None
+  ... 4/180 status=loading
+  ... 5/180 status=loading
+  ... 6/180 status=loading
+  ... 7/180 status=loading
+  ... 8/180 status=loading
+  ... 9/180 status=loading
+  ... 10/180 status=loading
+  ... 11/180 status=loading
+  ... 12/180 status=loading
+  ... 13/180 status=loading
+  ... 14/180 status=loading
+  ... 15/180 status=loading
+  ... 16/180 status=loading
+  ... 17/180 status=loading
+  ... 18/180 status=loading
+  ... 19/180 status=loading
+  ... 20/180 status=loading
+  ... 21/180 status=loading
+  ... 22/180 status=loading
+  ... 23/180 status=loading
+  ... 24/180 status=loading
+  ... 25/180 status=loading
+  ... 26/180 status=loading
+  ... 27/180 status=loading
+  ... 28/180 status=loading
+  ... 29/180 status=running
+  SSH ready: 154.59.156.41:47420 (30x5s)
+[5/9] Uploading code+corpus+probe ...
+Warning: Permanently added '[154.59.156.41]:47420' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[154.59.156.41]:47420' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[154.59.156.41]:47420' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[154.59.156.41]:47420' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[154.59.156.41]:47420' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[6/9] (image already has torch — skip pip install)
+Warning: Permanently added '[154.59.156.41]:47420' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+GPU 0: NVIDIA RTX PRO 6000 Blackwell Server Edition (UUID: GPU-6b8504f2-3765-c328-d8b5-2cb435b30142)
+GPU 1: NVIDIA RTX PRO 6000 Blackwell Server Edition (UUID: GPU-9d47adbc-2459-b8ae-fda5-d409be2d795f)
+GPU 2: NVIDIA RTX PRO 6000 Blackwell Server Edition (UUID: GPU-9e5b36f3-6800-a4ca-2e75-9a18557d035d)
+GPU 3: NVIDIA RTX PRO 6000 Blackwell Server Edition (UUID: GPU-a73978b4-8503-cc51-7138-4daef622d39f)
+torch= 2.5.1+cu121 cuda= True n_gpu= 4
+[7/9] Train v4-multi DDP (torchrun nproc_per_node=4) ...
+  >>> attempt 1: per_gpu_batch=2 (effective 8)
+Warning: Permanently added '[154.59.156.41]:47420' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+W0512 19:12:07.639000 589 site-packages/torch/distributed/run.py:793] 
+W0512 19:12:07.639000 589 site-packages/torch/distributed/run.py:793] *****************************************
+W0512 19:12:07.639000 589 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0512 19:12:07.639000 589 site-packages/torch/distributed/run.py:793] *****************************************
+/opt/conda/lib/python3.11/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA RTX PRO 6000 Blackwell Server Edition with CUDA capability sm_120 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_50 sm_60 sm_70 sm_75 sm_80 sm_86 sm_90.
+If you want to use the NVIDIA RTX PRO 6000 Blackwell Server Edition GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+[W512 19:12:09.000121458 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] DDP: rank=0 world_size=4 local_rank=0 device=cuda:0 is_ddp=True
+[INFO] torch=2.5.1+cu121 cuda=True
+[INFO] gpu=NVIDIA RTX PRO 6000 Blackwell Server Edition
+[INFO] cfg = {'vocab_size': 256, 'd_model': 1024, 'n_head': 16, 'ffn_dim': 4096, 'max_seq': 256, 'n_layer': 1, 'initial_cells': 256, 'max_cells': 256, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+/opt/conda/lib/python3.11/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA RTX PRO 6000 Blackwell Server Edition with CUDA capability sm_120 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_50 sm_60 sm_70 sm_75 sm_80 sm_86 sm_90.
+If you want to use the NVIDIA RTX PRO 6000 Blackwell Server Edition GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+/opt/conda/lib/python3.11/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA RTX PRO 6000 Blackwell Server Edition with CUDA capability sm_120 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_50 sm_60 sm_70 sm_75 sm_80 sm_86 sm_90.
+If you want to use the NVIDIA RTX PRO 6000 Blackwell Server Edition GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+/opt/conda/lib/python3.11/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA RTX PRO 6000 Blackwell Server Edition with CUDA capability sm_120 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_50 sm_60 sm_70 sm_75 sm_80 sm_86 sm_90.
+If you want to use the NVIDIA RTX PRO 6000 Blackwell Server Edition GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+[W512 19:12:10.449451549 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:12:10.466826038 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:12:10.476991162 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] n_params(engine+router incl)=5,373,167,872  router_out_dim=256 top_k=8
+[INFO] mitosis FROZEN (cells static at max from step 0) — DDP-safe path; fresh-init
+NCCL version 2.21.5+cuda12.4
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank3]:     sys.exit(cotrain(parse_args()))
+[rank3]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 592, in cotrain
+[rank3]:     engine = DDP(engine_inner, device_ids=[local_rank], output_device=local_rank,
+[rank3]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 825, in __init__
+[rank3]:     _verify_param_shape_across_processes(self.process_group, parameters)
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/distributed/utils.py", line 288, in _verify_param_shape_across_processes
+[rank3]:     return dist._verify_params_across_processes(process_group, tensors, logger)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]: torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/NCCLUtils.hpp:317, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.21.5
+[rank3]: ncclUnhandledCudaError: Call to CUDA function failed.
+[rank3]: Last error:
+[rank3]: Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank1]:     sys.exit(cotrain(parse_args()))
+[rank1]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 592, in cotrain
+[rank1]:     engine = DDP(engine_inner, device_ids=[local_rank], output_device=local_rank,
+[rank1]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 825, in __init__
+[rank1]:     _verify_param_shape_across_processes(self.process_group, parameters)
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/distributed/utils.py", line 288, in _verify_param_shape_across_processes
+[rank1]:     return dist._verify_params_across_processes(process_group, tensors, logger)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]: torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/NCCLUtils.hpp:317, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.21.5
+[rank1]: ncclUnhandledCudaError: Call to CUDA function failed.
+[rank1]: Last error:
+[rank1]: Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank2]:     sys.exit(cotrain(parse_args()))
+[rank2]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 592, in cotrain
+[rank2]:     engine = DDP(engine_inner, device_ids=[local_rank], output_device=local_rank,
+[rank2]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 825, in __init__
+[rank2]:     _verify_param_shape_across_processes(self.process_group, parameters)
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/distributed/utils.py", line 288, in _verify_param_shape_across_processes
+[rank2]:     return dist._verify_params_across_processes(process_group, tensors, logger)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]: torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/NCCLUtils.hpp:317, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.21.5
+[rank2]: ncclUnhandledCudaError: Call to CUDA function failed.
+[rank2]: Last error:
+[rank2]: Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank0]:     sys.exit(cotrain(parse_args()))
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 592, in cotrain
+[rank0]:     engine = DDP(engine_inner, device_ids=[local_rank], output_device=local_rank,
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 825, in __init__
+[rank0]:     _verify_param_shape_across_processes(self.process_group, parameters)
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/distributed/utils.py", line 288, in _verify_param_shape_across_processes
+[rank0]:     return dist._verify_params_across_processes(process_group, tensors, logger)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/NCCLUtils.hpp:317, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.21.5
+[rank0]: ncclUnhandledCudaError: Call to CUDA function failed.
+[rank0]: Last error:
+[rank0]: Cuda failure 'invalid argument'
+[rank0]:[W512 19:17:32.344843143 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W0512 19:17:32.187000 589 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 720 closing signal SIGTERM
+W0512 19:17:32.188000 589 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 721 closing signal SIGTERM
+W0512 19:17:32.188000 589 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 722 closing signal SIGTERM
+E0512 19:17:32.956000 589 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 3 (pid: 723) of binary: /opt/conda/bin/python3.11
+Traceback (most recent call last):
+  File "/opt/conda/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+training/cotrain_v5mitosis_v4_multi.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-05-12_19:17:32
+  host      : 1ecdfe42da00
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 723)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+dispatch_h100_v4_multi.sh: line 214: [: 0
+0: integer expression expected
+  train rc=1 (oom_count=0
+0) — no further retry
+[8/9] Downloading (MANDATORY before pod delete — memory feedback_orchestrator_h100_gotchas) ...
+Warning: Permanently added '[154.59.156.41]:47420' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+scp: /workspace/anima/output/ckpt_final.pt: No such file or directory
+Warning: Permanently added '[154.59.156.41]:47420' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+scp: /workspace/anima/output/cotrain_v4_multi_result.json: No such file or directory
+Warning: Permanently added '[154.59.156.41]:47420' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[WARN] pull failed — SETTING SAVE_POD=1 (pod retained for manual recovery)
+[9/9] DONE
+Tue May 12 19:18:01 UTC 2026
+[cleanup] SAVE_POD=1 — keeping instance 36635742 (exit=0)

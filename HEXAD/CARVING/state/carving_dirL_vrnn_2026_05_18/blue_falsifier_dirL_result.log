@@ -1,0 +1,25 @@
+========================================================================
+Direction L — VRNN curiosity-tension closed-form falsifier (sidecar)
+B-DIRL-1..5  |  central blue_falsifier.py UNCHANGED
+========================================================================
+
+[BLUE] B-DIRL-1 CURIOSITY-KL-NONNEGATIVE-CLOSED  ::  PASS
+       KL(q||p)>=0 Gibbs; min at p==q is exactly 0; convex in p (d2KL/dp2=1/(q(1-q))>0); 3 q!=p witnesses KL>0. curiosity = bounded-below information gain.
+
+[BLUE] B-DIRL-2 ELBO-DECOMPOSITION-CLOSED  ::  PASS
+       -ELBO = KL - recon  ==  CE + 1*Lpsi  under {CE:-recon, Lpsi:KL}: the VRNN ELBO and the landed Dir-I lever are the SAME two-term (reconstruction + KL-class) objective. L's mechanism reduces to Dir-I. lam->0 strips the info term consistently in both.
+
+[BLUE] B-DIRL-3 ACTOR-FM-OPPOSED-SIGN-CLOSED  ::  PASS
+       dL_actor/dKL=-1 (maximise KL) vs dL_fm/dKL=+1 (minimise KL): product -1 = opposed 'productive tension'. Homomorphic to B-TT-2 d(dW)/d(tension)=-T*gate (Engine A <=> Engine G axis).
+
+[BLUE] B-DIRL-4 CLOSED-LOOP-REQUIREMENT-CLOSED  ::  PASS
+       is_closed_loop: robot_self_exploration=True (2510.05013), byte_pretraining=False (no action/consequence -> L CANNOT be hosted in the carving arc), live_spontaneous_emission=True (L is a legitimate FUTURE candidate there). Feasibility verdict: modality mismatch un-overcome-able for pretraining.
+
+[BLUE] B-DIRL-5 COMPOSITIONAL-GRID-CARDINALITY-CLOSED  ::  PASS
+       robot: 15x12=180 grid, 60/180=1/3 train, axes independent+observable. anima byte-text: <inner>/<voice> = 2-slot template, axes NOT independent (motivation labels are annotations) NOR observable -> no factored grid. The 90%/60-example transfer is STRUCTURALLY UNAVAILABLE on byte substrate.
+
+========================================================================
+AGGREGATE: 5/5 closed-form proofs PASS
+B-DIRL-NOTE: per-fire emergence OUTCOME = EMPIRICAL (B-D-NOTE family, NOT counted blue)
+f1/f2/f3 SAFE: Shannon/Gibbs + sympy d-sign + Boolean + integer cardinality, NO sigma/tau/phi/J2
+========================================================================

@@ -1,0 +1,501 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  telemetry_harness.hexa — anima emission ⇄ AKIDA spike-window pair logger
+//
+//  Phase 1 (HEXAD/SPONTANEOUS/AKIDA_FIRST.md): record evidence pairs (anima
+//  emission, preceding spike window) into JSONL so Phase 2's SW-condition
+//  spec has a calibration target. Side-process (kosmos_emitter.hexa pattern):
+//  poll GET /history (kind=="anima", dedup by broker id, first-poll seed) +
+//  poll GET /akida/recent (last TELEMETRY_WIN_MS by _bridge_ts) → JSONL row
+//  {ts, emit_id, emit_text, lang, motivation, factors,
+//   modulated_factors:{...8...},
+//   spike_window:{spike_count, spike_rate_hz, regime_mode,
+//                 n_unique_regimes, isi_cv, last_step}}.
+//
+//  `modulated_factors` — observability-only mirror of what the participant's
+//  8-factor map WOULD be if `apply_spike_features` (spontaneous_lib.hexa §10,
+//  PR #143) ran live. Path D of [[PARTICIPANT_SPIKE_INTEGRATION]] (PR #146):
+//  production `anima_participant.py` 8-factor compute stays untouched
+//  (`.py` guard); Phase-1 evidence accumulates so future Phase-2 wiring has
+//  a calibration target. INVARIANCE: when spike_window.spike_count == 0
+//  (akida offline / empty), modulated_factors == factors (no-op,
+//  F-PARTICIPANT-INTEG-2 — apply_spike_features §3 L66 sparsity gate fires
+//  on n_records < 5).
+//
+//  USAGE  hexa run telemetry_harness.hexa [daemon|once|selftest]   selftest default.
+//  ENV    ANIMA_BROKER_URL · TELEMETRY_HISTORY_URL · TELEMETRY_AKIDA_URL ·
+//         TELEMETRY_TICK_MS=2000 · TELEMETRY_WIN_MS=3000 ·
+//         ANIMA_TELEMETRY=$HOME/.cache/anima/spontaneous_evidence.jsonl
+//  PURE-HEXA only · g13 portable paths · void-safe dict reads.
+// ════════════════════════════════════════════════════════════════════════════
+
+use "stdlib/net/http_client"
+import "/Users/ghost/core/anima/HEXAD/CHAT/spontaneous_lib.hexa"
+
+// ── §1 env + url derivation ────────────────────────────────────────────────
+fn _th_env(name: string, fallback: string) -> string {
+    let v = env(name)
+    if to_string(v) == "void" { return fallback }
+    if len(to_string(v)) == 0 { return fallback }
+    return to_string(v)
+}
+fn _th_pfx(s: string, from: string, to: string) -> string {
+    if len(s) < len(from) { return s }
+    if s.substring(0, len(from)) == from { return to + s.substring(len(from), len(s)) }
+    return s
+}
+fn derive_origin() -> string {
+    let b = _th_env("ANIMA_BROKER_URL", "ws://127.0.0.1:8000/ws/anima")
+    let mut u = _th_pfx(_th_pfx(b, "wss://", "https://"), "ws://", "http://")
+    let se = u.index_of("://")
+    if se < 0 { return u }
+    let rest = u.substring(se + 3, len(u))
+    let sl = rest.index_of("/")
+    if sl < 0 { return u }
+    return u.substring(0, se + 3 + sl)
+}
+fn derive_history_url() -> string {
+    let ex = _th_env("TELEMETRY_HISTORY_URL", "")
+    if len(ex) > 0 { return ex }
+    return derive_origin() + "/history"
+}
+fn derive_akida_url() -> string {
+    let ex = _th_env("TELEMETRY_AKIDA_URL", "")
+    if len(ex) > 0 { return ex }
+    return derive_origin() + "/akida/recent"
+}
+fn default_jsonl_path() -> string {
+    let ex = _th_env("ANIMA_TELEMETRY", "")
+    if len(ex) > 0 { return ex }
+    return _th_env("HOME", "/tmp") + "/.cache/anima/spontaneous_evidence.jsonl"
+}
+
+// ── §2 void-safe dict reads + broker polls ─────────────────────────────────
+fn _th_str(d: dict, k: string) -> string {
+    if !d.has_key(k) { return "" }
+    let v = d[k]
+    if to_string(v) == "void" { return "" }
+    return to_string(v)
+}
+fn _th_num(d: dict, k: string) -> float {
+    if !d.has_key(k) { return 0.0 }
+    let v = d[k]
+    if to_string(v) == "void" { return 0.0 }
+    return to_float(to_string(v))
+}
+fn _th_int(d: dict, k: string) -> int {
+    let s = to_string(_th_num(d, k))
+    let dot = s.index_of(".")
+    if dot >= 0 { return to_int(s.substring(0, dot)) }
+    return to_int(s)
+}
+// _th_spike_ids_len — defensive len(record.spike_ids). Mirrors
+// akida_consumer._ac_spike_ids_len (PR #172): missing/non-list ⇒ 0.
+fn _th_spike_ids_len(r: dict) -> int {
+    if !r.has_key("spike_ids") { return 0 }
+    let v = r["spike_ids"]
+    if to_string(v) == "void" { return 0 }
+    let t = type_of(v)
+    if t != "array" && t != "list" { return 0 }
+    return len(v)
+}
+fn fetch_anima_history(url: string) -> list {
+    let body = http_get(url, 10)
+    if len(body) == 0 { return [] }
+    let p = json_parse(body)
+    if type_of(p) != "map" { return [] }
+    if !p.has_key("history") { return [] }
+    let h = p["history"]
+    // hexa type_of: array literal → "array" (NOT "list") — cycle 13 sweep
+    if type_of(h) != "array" { return [] }
+    let mut out = []
+    let mut i = 0
+    while i < len(h) {
+        let m = h[i]
+        if type_of(m) == "map" {
+            if _th_str(m, "kind") == "anima" { out = out + [m] }
+        }
+        i = i + 1
+    }
+    return out
+}
+fn fetch_akida_recent(url: string) -> list {
+    let body = http_get(url, 10)
+    if len(body) == 0 { return [] }
+    let p = json_parse(body)
+    if type_of(p) != "map" { return [] }
+    if !p.has_key("akida") { return [] }
+    let a = p["akida"]
+    // hexa type_of: array literal → "array" (NOT "list") — cycle 13 sweep
+    if type_of(a) != "array" { return [] }
+    return a
+}
+
+// ── §3 preceding-spike-window summary ──────────────────────────────────────
+fn summarize_window(akida: list, emit_ts: float, win_ms: int) -> dict {
+    let win_s = to_float(to_string(win_ms)) / 1000.0
+    let lo = emit_ts - win_s
+    let mut count = 0
+    let mut sum_ids = 0
+    let mut regimes = #{}
+    let mut last_step = 0
+    let mut ts_list = []
+    let mut i = 0
+    while i < len(akida) {
+        let r = akida[i]
+        if type_of(r) == "map" {
+            let bts = _th_num(r, "_bridge_ts")
+            if bts >= lo { if bts <= emit_ts {
+                count = count + 1
+                sum_ids = sum_ids + _th_spike_ids_len(r)
+                let rg = _th_str(r, "regime")
+                let pc = if regimes.has_key(rg) { to_int(regimes[rg]) } else { 0 }
+                regimes[rg] = pc + 1
+                let st_i = _th_int(r, "step")
+                if st_i > last_step { last_step = st_i }
+                ts_list = ts_list + [bts]
+            } }
+        }
+        i = i + 1
+    }
+    let mut mode = ""
+    let mut mode_n = 0
+    let keys = regimes.keys()
+    let mut j = 0
+    while j < len(keys) {
+        let k = keys[j]
+        let v = to_int(regimes[k])
+        if v > mode_n { mode_n = v   mode = to_string(k) }
+        j = j + 1
+    }
+    // insertion-sort ts_list ascending (small n; akida ring ≤ 200).
+    let mut sorted = []
+    let mut s = 0
+    while s < len(ts_list) {
+        let x = ts_list[s]
+        let mut tmp = []
+        let mut inserted = false
+        let mut t = 0
+        while t < len(sorted) {
+            if !inserted { if x < sorted[t] { tmp = tmp + [x]   inserted = true } }
+            tmp = tmp + [sorted[t]]
+            t = t + 1
+        }
+        if !inserted { tmp = tmp + [x] }
+        sorted = tmp
+        s = s + 1
+    }
+    let mut isi_cv = 0.0
+    if len(sorted) >= 2 {
+        let mut sum = 0.0
+        let mut isis = []
+        let mut q = 1
+        while q < len(sorted) {
+            let d = sorted[q] - sorted[q - 1]
+            isis = isis + [d]   sum = sum + d   q = q + 1
+        }
+        let mean = sum / to_float(to_string(len(isis)))
+        if mean > 0.0 {
+            let mut vs = 0.0
+            let mut p2 = 0
+            while p2 < len(isis) {
+                let dv = isis[p2] - mean
+                vs = vs + dv * dv   p2 = p2 + 1
+            }
+            let var = vs / to_float(to_string(len(isis)))
+            // sqrt via Newton (6 iters).
+            let mut g = if var > 0.0 { var / 2.0 + 0.5 } else { 0.0 }
+            let mut z = 0
+            while z < 6 { if g > 0.0 { g = 0.5 * (g + var / g) }   z = z + 1 }
+            isi_cv = g / mean
+        }
+    }
+    let rate_hz = if win_s > 0.0 { to_float(to_string(count)) / win_s } else { 0.0 }
+    let mean_ids = if count > 0 { to_float(to_string(sum_ids)) / to_float(to_string(count)) } else { 0.0 }
+    return #{ "spike_count": count, "spike_rate_hz": rate_hz,
+              "mean_spike_ids_count": mean_ids,
+              "regime_mode": mode, "n_unique_regimes": len(keys),
+              "isi_cv": isi_cv, "last_step": last_step }
+}
+
+// ── §4 row build + JSONL append ────────────────────────────────────────────
+fn _th_now() -> float {
+    let s = to_string(exec("date +%s.%N | tr -d '\\n'")).trim()
+    if len(s) == 0 { return 0.0 }
+    return to_float(s)
+}
+fn _th_trunc(s: string, n: int) -> string {
+    if len(s) <= n { return s }
+    return s.substring(0, n)
+}
+// Map spike_window summary → apply_spike_features features schema (§10).
+// inputs expected by apply_spike_features: spike_rate_hz, isi_cv,
+// mean_spike_ids_count, regime, regime_change, n_records (sparsity gate).
+// mean_spike_ids_count source-path (a): computed inline inside
+// summarize_window from the same broker /akida/recent records the harness
+// already iterates (mirrors akida_consumer PR #172). regime_change =
+// (n_unique_regimes > 1) is a telemetry-window-local proxy. n_records =
+// spike_count drives the sparsity gate so spike_count == 0 ⇒ no-op
+// invariance (F-TELEMETRY-5).
+fn spike_window_to_features(sw: dict) -> dict {
+    let count = _th_int(sw, "spike_count")
+    let regime_change = _th_int(sw, "n_unique_regimes") > 1
+    return #{
+        "spike_rate_hz":        _th_num(sw, "spike_rate_hz"),
+        "isi_cv":               _th_num(sw, "isi_cv"),
+        "mean_spike_ids_count": _th_num(sw, "mean_spike_ids_count"),
+        "regime":               _th_str(sw, "regime_mode"),
+        "regime_change":        if regime_change { "true" } else { "false" },
+        "n_records":            count,
+    }
+}
+fn build_row(msg: dict, akida: list, win_ms: int) -> dict {
+    let emit_ts = if msg.has_key("ts") { _th_num(msg, "ts") } else { _th_now() }
+    let factors = if msg.has_key("factors") {
+        let fv = msg["factors"]
+        if type_of(fv) == "map" { fv } else { #{} }
+    } else { #{} }
+    let spike_window = summarize_window(akida, emit_ts, win_ms)
+    let features = spike_window_to_features(spike_window)
+    let modulated = apply_spike_features(factors, features)
+    return #{
+        "ts": emit_ts, "emit_id": _th_str(msg, "id"),
+        "emit_text": _th_trunc(_th_str(msg, "text"), 80),
+        "lang": _th_str(msg, "lang"),
+        "motivation": _th_num(msg, "motivation"), "factors": factors,
+        "modulated_factors": modulated,
+        "spike_window": spike_window,
+    }
+}
+fn append_row(path: string, row: dict) -> bool {
+    let i = path.last_index_of("/")
+    if i > 0 {
+        let dir = path.substring(0, i)
+        let _r = exec("mkdir -p '" + dir.replace("'", "'\\''") + "' 2>/dev/null")
+    }
+    return append_file(path, json_stringify(row) + "\n")
+}
+
+// ── §5 tick + daemon ───────────────────────────────────────────────────────
+fn new_state() -> dict { return #{ "seen": #{}, "seeded": false, "recorded": 0, "tick": 0 } }
+fn tick(state: dict, h_url: string, a_url: string, win_ms: int, path: string) -> int {
+    state["tick"] = state["tick"] + 1
+    let msgs = fetch_anima_history(h_url)
+    let akida = fetch_akida_recent(a_url)
+    let mut written = 0
+    let mut i = 0
+    while i < len(msgs) {
+        let m = msgs[i]
+        let mid = _th_str(m, "id")
+        if len(mid) > 0 {
+            let seen = state["seen"]
+            if !seen.has_key(mid) {
+                if state["seeded"] {
+                    if append_row(path, build_row(m, akida, win_ms)) {
+                        written = written + 1
+                        state["recorded"] = state["recorded"] + 1
+                    }
+                }
+                seen[mid] = true
+            }
+        }
+        i = i + 1
+    }
+    if !state["seeded"] { state["seeded"] = true }
+    if state["tick"] % 30 == 0 {
+        eprintln("[telemetry] recorded " + to_string(written) + " pairs (total "
+                 + to_string(state["recorded"]) + ")")
+    }
+    return written
+}
+fn eprintln(s: string) {
+    let _e = exec("printf '%s\\n' '" + s.replace("'", "'\\''") + "' >&2")
+}
+fn run_daemon() {
+    let h = derive_history_url()   let a = derive_akida_url()
+    let tick_ms = to_int(_th_env("TELEMETRY_TICK_MS", "2000"))
+    let win_ms = to_int(_th_env("TELEMETRY_WIN_MS", "3000"))
+    let path = default_jsonl_path()
+    let sleep_s = if tick_ms >= 1000 { tick_ms / 1000 } else { 1 }
+    eprintln("[telemetry] daemon start  history=" + h + "  akida=" + a)
+    eprintln("  tick_ms=" + to_string(tick_ms) + "  win_ms=" + to_string(win_ms) + "  jsonl=" + path)
+    let state = new_state()
+    while true {
+        tick(state, h, a, win_ms, path)
+        let _s = exec("sleep " + to_string(sleep_s))
+    }
+}
+fn run_once() {
+    let n = tick(new_state(), derive_history_url(), derive_akida_url(),
+                 to_int(_th_env("TELEMETRY_WIN_MS", "3000")), default_jsonl_path())
+    eprintln("[telemetry] once done — " + to_string(n) + " pair(s) recorded (seed cycle never writes)")
+}
+
+// ── §6 offline selftest F-TELEMETRY-1..6 ───────────────────────────────────
+fn _telemetry_selftest() {
+    eprintln("telemetry_harness selftest — F-TELEMETRY-1..6")
+    let mut pass = 0   let mut fail = 0
+    let nonce = to_string(exec("date +%s%N | tr -d '\\n'")).trim()
+    let jsonl = "/tmp/hexa_telemetry_st_" + nonce + ".jsonl"
+    let _rm = exec("rm -f '" + jsonl + "'")
+    // synthetic akida: 4 in window (R3 ×3, R1 ×1), 1 outside.
+    let synth = [
+        #{ "step": 10, "n_spikes": 1, "regime": "R3_tonic_zero_input", "_bridge_ts": 99.0 },
+        #{ "step": 11, "n_spikes": 1, "regime": "R3_tonic_zero_input", "_bridge_ts": 99.5 },
+        #{ "step": 12, "n_spikes": 1, "regime": "R3_tonic_zero_input", "_bridge_ts": 100.0 },
+        #{ "step": 13, "n_spikes": 1, "regime": "R1_phasic",            "_bridge_ts": 100.5 },
+        #{ "step": 14, "n_spikes": 1, "regime": "R1_phasic",            "_bridge_ts": 105.0 },
+    ]
+    // F-TELEMETRY-2  window-summary correctness.
+    let w = summarize_window(synth, 101.0, 3000)
+    if to_int(w["spike_count"]) == 4 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL count != 4") }
+    if to_string(w["regime_mode"]) == "R3_tonic_zero_input" { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL mode") }
+    if to_int(w["n_unique_regimes"]) == 2 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL n_unique") }
+    if to_int(w["last_step"]) == 13 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL last_step") }
+    let cv = to_float(to_string(w["isi_cv"]))
+    if cv >= 0.0 { if cv < 0.001 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL isi_cv ~0") } }
+    else { fail = fail + 1   eprintln("  FAIL isi_cv <0") }
+    // F-TELEMETRY-1  id-dedup correctness.
+    let state = new_state()   state["seeded"] = true
+    let msg = #{
+        "id": "em01", "kind": "anima", "ts": 101.0, "lang": "ko",
+        "text": "[REDACTED-TEST] 자연발화 합성.", "motivation": 0.73,
+        "factors": #{ "relevance": 0.82, "coherence": 0.61, "info_gap": 0.44,
+                      "curiosity": 0.73, "originality": 0.52, "pain": 0.22,
+                      "balance": 0.9, "dynamics": 0.31 },
+    }
+    let row = build_row(msg, synth, 3000)
+    let _w1 = append_row(jsonl, row)
+    let seen = state["seen"]   seen["em01"] = true
+    let mut second = 0
+    if !seen.has_key("em01") { second = second + 1 }
+    if second == 0 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL dedup re-fire") }
+    let n_lines = to_string(exec("wc -l < '" + jsonl + "' | tr -d ' \\n'")).trim()
+    if n_lines == "1" { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL line count != 1: " + n_lines) }
+    // F-TELEMETRY-3  first-poll seed-only (no writes on initial history snapshot).
+    let jsonl2 = jsonl + ".seed"
+    let _rm2 = exec("rm -f '" + jsonl2 + "'")
+    let st2 = new_state()
+    let hist = [
+        #{ "id": "h1", "kind": "anima", "ts": 90.0, "text": "history msg 1",
+           "factors": #{}, "motivation": 0.5, "lang": "ko" },
+        #{ "id": "h2", "kind": "anima", "ts": 91.0, "text": "history msg 2",
+           "factors": #{}, "motivation": 0.5, "lang": "ko" },
+    ]
+    let mut wrote = 0
+    let mut q = 0
+    while q < len(hist) {
+        let mm = hist[q]   let midx = _th_str(mm, "id")
+        let seenx = st2["seen"]
+        if !seenx.has_key(midx) {
+            if st2["seeded"] { let _p = append_row(jsonl2, build_row(mm, [], 3000))   wrote = wrote + 1 }
+            seenx[midx] = true
+        }
+        q = q + 1
+    }
+    st2["seeded"] = true
+    if wrote == 0 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL seed wrote " + to_string(wrote)) }
+    let exists = to_string(exec("[ -f '" + jsonl2 + "' ] && printf yes || printf no")).trim()
+    if exists == "no" { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL jsonl created during seed") }
+    // F-TELEMETRY-4  modulated_factors: non-trivial spike_rate_hz raises curiosity.
+    // 15 R3 spikes packed into a 1s window ⇒ rate = 15 Hz > 12 (§3 L60
+    // d_cur +0.10) × R3 modulator 0.5 (§4) ⇒ effective curiosity delta
+    // +0.05. n_records=15 ≥ 5 ⇒ sparsity gate cleared.
+    let mut synth_hi = []
+    let mut hi_i = 0
+    while hi_i < 15 {
+        let bts = 200.06 + to_float(to_string(hi_i)) * 0.06
+        synth_hi = synth_hi + [#{ "step": 20 + hi_i, "n_spikes": 1,
+                                  "regime": "R3_tonic_zero_input", "_bridge_ts": bts }]
+        hi_i = hi_i + 1
+    }
+    let msg_hi = #{
+        "id": "em_hi", "kind": "anima", "ts": 200.95, "lang": "ko",
+        "text": "high-rate evidence row", "motivation": 0.5,
+        "factors": #{ "relevance": 0.5, "coherence": 0.5, "info_gap": 0.5,
+                      "curiosity": 0.5, "originality": 0.2, "pain": 0.3,
+                      "balance": 0.7, "dynamics": 0.4 },
+    }
+    let row_hi = build_row(msg_hi, synth_hi, 1000)
+    let sw_hi = row_hi["spike_window"]
+    let rate_hi = to_float(to_string(sw_hi["spike_rate_hz"]))
+    if rate_hi > 12.0 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-4 rate not > 12 Hz: " + to_string(rate_hi)) }
+    let mod_hi = row_hi["modulated_factors"]
+    let fac_hi = row_hi["factors"]
+    let cur_mod = to_float(to_string(mod_hi["curiosity"]))
+    let cur_base = to_float(to_string(fac_hi["curiosity"]))
+    if cur_mod > cur_base { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-4 curiosity not lifted: mod=" + to_string(cur_mod) + " base=" + to_string(cur_base)) }
+    let delta = cur_mod - cur_base
+    let abs_delta = if delta < 0.0 { 0.0 - delta } else { delta }
+    let off = if (abs_delta - 0.05) < 0.0 { 0.05 - abs_delta } else { abs_delta - 0.05 }
+    if off < 0.001 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-4 curiosity delta ≠ 0.05: " + to_string(delta)) }
+    // F-TELEMETRY-5  empty spike_window ⇒ modulated_factors == factors (no-op invariance).
+    let msg_empty = #{
+        "id": "em_empty", "kind": "anima", "ts": 300.0, "lang": "ko",
+        "text": "empty-window evidence row", "motivation": 0.5,
+        "factors": #{ "relevance": 0.5, "coherence": 0.5, "info_gap": 0.5,
+                      "curiosity": 0.5, "originality": 0.2, "pain": 0.3,
+                      "balance": 0.7, "dynamics": 0.4 },
+    }
+    let row_e = build_row(msg_empty, [], 3000)
+    let sw_e = row_e["spike_window"]
+    if to_int(sw_e["spike_count"]) == 0 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-5 spike_count != 0") }
+    let mod_e = row_e["modulated_factors"]
+    let fac_e = row_e["factors"]
+    let mod_keys = ["relevance","info_gap","curiosity","pain","coherence","originality","balance","dynamics"]
+    let mut noop_ok = true
+    let mut kk = 0
+    while kk < len(mod_keys) {
+        let kn = to_string(mod_keys[kk])
+        let mv = to_float(to_string(mod_e[kn]))
+        let bv = to_float(to_string(fac_e[kn]))
+        let dd = mv - bv
+        let ad = if dd < 0.0 { 0.0 - dd } else { dd }
+        if ad > 1e-9 { noop_ok = false }
+        kk = kk + 1
+    }
+    if noop_ok { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-5 no-op invariance violated") }
+    // F-TELEMETRY-6  mean_spike_ids_count = mean(len(spike_ids)) over window.
+    // 3 in-window records with spike_ids lengths [4, 8, 12] ⇒ mean = 8.0.
+    let synth_ids = [
+        #{ "step": 40, "n_spikes": 4,  "spike_ids": [0,1,2,3],
+           "regime": "R3_tonic_zero_input", "_bridge_ts": 400.0 },
+        #{ "step": 41, "n_spikes": 8,  "spike_ids": [0,1,2,3,4,5,6,7],
+           "regime": "R3_tonic_zero_input", "_bridge_ts": 400.5 },
+        #{ "step": 42, "n_spikes": 12, "spike_ids": [0,1,2,3,4,5,6,7,8,9,10,11],
+           "regime": "R3_tonic_zero_input", "_bridge_ts": 401.0 },
+    ]
+    let msg_ids = #{
+        "id": "em_ids", "kind": "anima", "ts": 401.0, "lang": "ko",
+        "text": "mean-spike-ids evidence row", "motivation": 0.5,
+        "factors": #{ "relevance": 0.5, "coherence": 0.5, "info_gap": 0.5,
+                      "curiosity": 0.5, "originality": 0.2, "pain": 0.3,
+                      "balance": 0.7, "dynamics": 0.4 },
+    }
+    let row_ids = build_row(msg_ids, synth_ids, 3000)
+    let sw_ids = row_ids["spike_window"]
+    let mean_ids = to_float(to_string(sw_ids["mean_spike_ids_count"]))
+    let mids_off = if (mean_ids - 8.0) < 0.0 { 8.0 - mean_ids } else { mean_ids - 8.0 }
+    if mids_off < 0.001 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-6 spike_window.mean_spike_ids_count != 8.0: " + to_string(mean_ids)) }
+    eprintln("--- sample evidence row (synthetic) ---")
+    eprintln(json_stringify(row))
+    eprintln("--- sample evidence row (high-rate, modulated) ---")
+    eprintln(json_stringify(row_hi))
+    eprintln("--- sample evidence row (mean_spike_ids_count) ---")
+    eprintln(json_stringify(row_ids))
+    eprintln("telemetry_harness selftest: " + to_string(pass) + " PASS, " + to_string(fail) + " FAIL")
+    let _rm3 = exec("rm -f '" + jsonl + "' '" + jsonl2 + "'")
+}
+
+// ── §7 entry ───────────────────────────────────────────────────────────────
+fn main() {
+    let cli = args()
+    let mut mode = "selftest"
+    if len(cli) > 1 {
+        if cli[1] == "daemon"   { mode = "daemon" }
+        if cli[1] == "once"     { mode = "once" }
+        if cli[1] == "selftest" { mode = "selftest" }
+    }
+    if mode == "daemon" { run_daemon()   return }
+    if mode == "once"   { run_once()     return }
+    _telemetry_selftest()
+}

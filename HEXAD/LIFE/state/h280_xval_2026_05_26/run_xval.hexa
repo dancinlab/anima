@@ -1,0 +1,364 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  HEXAD/LIFE/state/h280_xval_2026_05_26/run_xval.hexa
+//
+//  H_280 CROSS-VALIDATION — independent distinction kernel vs canonical IIT4.
+//
+//  WHAT THIS IS
+//    H_280 built a from-scratch distinction-level IIT 4.0 CES kernel
+//    (state/h280_iit4_ces_2026_05_26/lib_ces.hexa) WITHOUT knowing the canonical
+//    faithful engine already existed at HEXAD/IIT4/lib (now hexa-lang stdlib
+//    consciousness/iit4_distinction + iit4_bigphi + iit4_eca). Two INDEPENDENT
+//    implementations either AGREE (strong cross-validation) or DISAGREE (a bug;
+//    the canonical is calibrated to M6, so a mismatch most likely indicts H_280).
+//
+//  PRE-REGISTERED FALSIFIER
+//    F-XVAL-1 : on the SHARED ladder, H_280 kernel's per-mechanism φ_d ordering,
+//               distinction-count, and Σφ_d AGREE with the canonical
+//               iit4_distinction engine. PASS = independent corroboration;
+//               FAIL = identify which engine is authoritative and say so.
+//
+//  THE SHARED SUBSTRATE (apples-to-apples)
+//    Both engines consume a state-by-node TPM array tpm[s*n + i] = P(unit i ON
+//    at t+1 | system state s). We build that SAME array from H_280's own
+//    ces_tpm_node (the ε-floored disconnected/weak/integrated substrate H_280
+//    measured) and feed the byte-identical array to BOTH engines. This isolates
+//    the ENGINE MATH (H_280 ces_distinction vs canonical distinction) on a
+//    byte-identical input — any divergence is purely an engine difference.
+//
+//    Both engines use: system state = all-ON (s = 2^n - 1), ring, ε = 1e-6,
+//    distinction φ_d = min(φ_cause, φ_effect), Σφ_d over all mechanisms.
+//
+//  SECONDARY ANCHOR (deterministic ECA, canonical-native)
+//    H_280 disconnected (self-copy)  ≡ ECA rule 204 (next = centre)
+//    H_280 integrated  (majority LCR) ≡ ECA rule 232 (majority of L,C,R)
+//    The canonical engine's own eca_tpm(204/232, n) gives a deterministic
+//    (0/1) substrate of the SAME family H_280 ε-floors; we report the canonical
+//    big_phi Σφ_d on those for a native sanity anchor (the weak rung couple=0.5
+//    is genuinely stochastic ⇒ NO deterministic ECA equivalent — reported N/A).
+//
+//  NOTE on engine math difference (located, not papered over)
+//    Canonical iit4_phi_at fixes the specified state z* ONCE (intrinsic_difference
+//    vs unconstrained) then minimizes p(z*)·log2(p(z*)/q(z*)) over partitions.
+//    H_280 ces_id RE-MAXIMIZES max_x p(x)log2(p/q) per partition, then minimizes.
+//    Both are MIP-min of an ID-style measure; they can give different ABSOLUTE
+//    φ values. The cross-validation question is whether the DISTINCTION SET
+//    (which mechanisms are distinctions) and the DIRECTIONAL ORDERING agree.
+//
+//  deterministic · hexa-only · $0 mac local · LLM none · NO GPU.
+//  Run: HEXA_LANG=<repo-root> /Users/ghost/.hx/bin/hexa run .../run_xval.hexa
+// ════════════════════════════════════════════════════════════════════════════
+
+// H_280's independent kernel (the unit under test).
+import "/Users/ghost/core/anima/.claude/worktrees/agent-ad5779a4c2ff458ae/HEXAD/LIFE/state/h280_iit4_ces_2026_05_26/lib_ces.hexa"
+// canonical engine: distinction + count_distinctions + big_phi + eca_tpm.
+import "/Users/ghost/core/anima/.claude/worktrees/agent-ad5779a4c2ff458ae/HEXAD/IIT4/lib/iit4_eca.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn _v(b: bool) -> string { if b { return "PASS" }; return "FAIL" }
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// float → 6dp fixed string (byte-stable, matches H_280's _f6).
+fn _f6(x: float) -> string {
+    let scaled = floor(x * 1000000.0 + 0.5)
+    let mut neg = false
+    let mut v = scaled
+    if v < 0.0 { neg = true; v = 0.0 - v }
+    let whole = floor(v / 1000000.0)
+    let frac  = v - whole * 1000000.0
+    let mut frac_str = str(to_int(frac))
+    while len(frac_str) < 6 { frac_str = "0" + frac_str }
+    let sign = if neg { "-" } else { "" }
+    return sign + str(to_int(whole)) + "." + frac_str
+}
+
+fn _approx(a: float, b: float, tol: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < tol }
+    return d < tol
+}
+
+// ── build a canonical state-by-node TPM array from H_280's ces_tpm_node ──────
+// tpm[s*n + i] = P(unit i ON at t+1 | state s) — the SAME ε-floored substrate
+// H_280 measures, in the flat array layout the canonical engine consumes.
+fn _shared_tpm(n: int, rule_kind: int, couple: float) -> array {
+    let full = ces_pow2(n)
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let mut i = 0
+        while i < n {
+            t = t.push(ces_tpm_node(s, i, n, rule_kind, couple))
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return t
+}
+
+// ── H_280 kernel: distinction-only CES over all mechanisms (all-ON state) ────
+// returns #{ count, sum_phi_d }.
+fn _h280_ces(n: int, rule_kind: int, couple: float) {
+    let s_all = ces_pow2(n) - 1
+    let n_mech = ces_pow2(n)
+    let mut cnt = 0
+    let mut sum = 0.0
+    let mut m = 1
+    while m < n_mech {
+        let rec = ces_distinction(m, s_all, n, rule_kind, couple)
+        let phi_d = rec["phi_d"]
+        if phi_d > 0.0 { cnt = cnt + 1; sum = sum + phi_d }
+        m = m + 1
+    }
+    return #{ "count": cnt, "sum_phi_d": sum }
+}
+
+// ── canonical engine: distinction-only CES over the SAME shared TPM ──────────
+// returns #{ count, sum_phi_d }.
+fn _canon_ces(tpm: array, n: int) {
+    let s_all = ces_pow2(n) - 1
+    let n_mech = ces_pow2(n)
+    let mut cnt = 0
+    let mut sum = 0.0
+    let mut m = 1
+    while m < n_mech {
+        let d = distinction(tpm, n, m, s_all)        // [phi_d, mech, ...]
+        let phi_d = d[0]
+        if phi_d > 1.0e-9 { cnt = cnt + 1; sum = sum + phi_d }
+        m = m + 1
+    }
+    return #{ "count": cnt, "sum_phi_d": sum }
+}
+
+// per-mechanism φ_d agreement: how many of the 2^n-1 mechanisms have the SAME
+// distinction membership (φ_d>0 in both OR φ_d=0 in both) under the shared TPM.
+fn _membership_agree(tpm: array, n: int, rule_kind: int, couple: float) {
+    let s_all = ces_pow2(n) - 1
+    let n_mech = ces_pow2(n)
+    let mut agree = 0
+    let mut tot = 0
+    let mut m = 1
+    while m < n_mech {
+        let h = ces_distinction(m, s_all, n, rule_kind, couple)["phi_d"]
+        let c = distinction(tpm, n, m, s_all)[0]
+        let h_is = h > 1.0e-9
+        let c_is = c > 1.0e-9
+        if h_is == c_is { agree = agree + 1 }
+        tot = tot + 1
+        m = m + 1
+    }
+    return #{ "agree": agree, "total": tot }
+}
+
+fn _rk_name(rk: int) -> string {
+    if rk == 0 { return "disconnected" }
+    if rk == 1 { return "weak" }
+    return "integrated"
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_280 CROSS-VALIDATION — independent kernel vs canonical IIT4")
+    println("  shared ε-floored TPM → BOTH engines · all-ON · ring · ε=1e-6")
+    println("  deterministic · hexa-only · $0 mac local · LLM none · NO GPU")
+    println("================================================================")
+
+    // ── shared-TPM cross-validation: n=3 and n=4, 3 rungs each ──────────────
+    // store the 6 (n,rk) cells: H_280 vs canonical {count, sum_phi_d}.
+    // we report a comparison table + membership agreement.
+    let ns = [3, 4]
+    // accumulate ordering + agreement flags for the verdict.
+    let mut order_ok_n3 = false
+    let mut order_ok_n4 = false
+    let mut count_match_all = true       // distinction-count match on every rung
+    let mut membership_match_all = true  // per-mechanism membership match on every rung
+    let mut sum_dir_match_all = true     // Σφ_d ordering direction matches between engines
+
+    // hold the 6-cell results for JSON emission.
+    let mut json_rows = ""
+
+    let mut ni = 0
+    while ni < 2 {
+        let n = ns[ni]
+        println("")
+        println("  ── n=" + str(n) + " shared-TPM ladder (disc → weak → integrated) ──")
+        println("    rung           H280 #d  H280 Σφ_d    CANON #d  CANON Σφ_d   memb")
+
+        // per-rung Σφ_d for ordering checks (explicit scalars — array.set segfaults).
+        let mut h0 = 0.0
+        let mut h1 = 0.0
+        let mut h2 = 0.0
+        let mut c0 = 0.0
+        let mut c1 = 0.0
+        let mut c2 = 0.0
+
+        let mut rk = 0
+        while rk < 3 {
+            let mut couple = 0.0
+            if rk == 1 { couple = 0.5 }
+            let tpm = _shared_tpm(n, rk, couple)
+            let h = _h280_ces(n, rk, couple)
+            let c = _canon_ces(tpm, n)
+            let mb = _membership_agree(tpm, n, rk, couple)
+
+            let hc = h["count"]
+            let cc = c["count"]
+            let hs = h["sum_phi_d"]
+            let cs = c["sum_phi_d"]
+            if rk == 0 { h0 = hs; c0 = cs }
+            if rk == 1 { h1 = hs; c1 = cs }
+            if rk == 2 { h2 = hs; c2 = cs }
+
+            if hc != cc { count_match_all = false }
+            if mb["agree"] != mb["total"] { membership_match_all = false }
+
+            let nm = _rk_name(rk)
+            println("    " + nm + "  h#=" + str(hc) + " hΣ=" + _f6(hs)
+                + "  c#=" + str(cc) + " cΣ=" + _f6(cs)
+                + "  " + str(mb["agree"]) + "/" + str(mb["total"]))
+
+            json_rows = json_rows
+                + "    {\"n\": " + str(n) + ", \"rung\": \"" + nm + "\", \"couple\": " + _f6(couple)
+                + ", \"h280_count\": " + str(hc) + ", \"h280_sum_phi_d\": " + _f6(hs)
+                + ", \"canon_count\": " + str(cc) + ", \"canon_sum_phi_d\": " + _f6(cs)
+                + ", \"membership_agree\": " + str(mb["agree"]) + ", \"membership_total\": " + str(mb["total"])
+                + "}"
+            // trailing comma management: add comma unless this is the very last cell.
+            if (ni == 1) && (rk == 2) { json_rows = json_rows + "\n" }
+            else { json_rows = json_rows + ",\n" }
+
+            rk = rk + 1
+        }
+
+        // ordering: integrated > disconnected for BOTH engines (the F280.1 direction).
+        let h_order = (h2 > h0) && (h1 >= h0 - 0.000001)
+        let c_order = (c2 > c0) && (c1 >= c0 - 0.000001)
+        // direction match: both engines rank integrated > disconnected the same way.
+        let dir_match = (h2 > h0) == (c2 > c0)
+        if dir_match == false { sum_dir_match_all = false }
+        if n == 3 { order_ok_n3 = h_order && c_order && dir_match }
+        if n == 4 { order_ok_n4 = h_order && c_order && dir_match }
+
+        println("    ordering integrated>disconnected: H280 " + _v(h2 > h0)
+            + " · CANON " + _v(c2 > c0) + " · direction-match " + _v(dir_match))
+
+        ni = ni + 1
+    }
+
+    // ── secondary deterministic-ECA anchor (canonical-native) ───────────────
+    // H_280 disconnected ≡ ECA 204 (copy) · integrated ≡ ECA 232 (majority).
+    // canonical big_phi → [big_phi, total, sum_phi_d(idx2), sum_phi_r, nd].
+    println("")
+    println("  ── secondary anchor: canonical-native deterministic ECA (n=3, all-ON s=7) ──")
+    let b204 = big_phi(eca_tpm(204, 3), 3, 7)   // disconnected analogue
+    let b232 = big_phi(eca_tpm(232, 3), 3, 7)   // integrated analogue
+    let nd204 = count_distinctions(eca_tpm(204, 3), 3, 7)
+    let nd232 = count_distinctions(eca_tpm(232, 3), 3, 7)
+    println("    ECA 204 (copy/disconnected): Σφ_d=" + _f6(b204[2]) + "  #dist=" + str(nd204) + "  big-Φ=" + _f6(b204[0]))
+    println("    ECA 232 (majority/integrated): Σφ_d=" + _f6(b232[2]) + "  #dist=" + str(nd232) + "  big-Φ=" + _f6(b232[0]))
+    let eca_dir = b232[2] > b204[2]
+    // the CORRECT integration discriminator is big-Φ (not Σφ_d): a disconnected
+    // substrate has independent distinctions (Σφ_d>0) but big-Φ=0 (reducible).
+    let bigphi_dir = b232[0] > b204[0]
+    println("    Σφ_d direction integrated>disconnected: " + _v(eca_dir)
+        + "  (NOTE: Σφ_d is NOT a monotone integration proxy — disc has independent distinctions)")
+    println("    big-Φ direction integrated>disconnected: " + _v(bigphi_dir)
+        + "  (THE correct integration discriminator: 204 big-Φ=" + _f6(b204[0]) + " < 232 big-Φ=" + _f6(b232[0]) + ")")
+
+    // ── F-XVAL-1 verdict ────────────────────────────────────────────────────
+    // PASS = (a) per-mechanism distinction membership matches on EVERY shared-TPM
+    //        rung AND (b) distinction-count matches on EVERY rung AND
+    //        (c) Σφ_d ordering direction matches between the two engines on every
+    //        n AND (d) both engines AND the deterministic-ECA anchor preserve
+    //        integrated>disconnected. (Σφ_d absolute values may differ because the
+    //        two MIP φ formulas differ — that is expected; the cross-validation
+    //        target is the DISTINCTION SET + DIRECTIONAL VERDICT, not byte φ.)
+    println("")
+    println("  ----------------------------------------------------------------")
+    println("  F-XVAL-1 cross-validation criteria:")
+    check("per-mechanism distinction MEMBERSHIP matches on every shared-TPM rung", membership_match_all)
+    check("distinction-COUNT matches on every shared-TPM rung", count_match_all)
+    check("Σφ_d ordering DIRECTION matches between engines (all n)", sum_dir_match_all)
+    check("n=3 ordering integrated>disconnected (both engines + dir-match)", order_ok_n3)
+    check("n=4 ordering integrated>disconnected (both engines + dir-match)", order_ok_n4)
+    check("deterministic-ECA anchor integrated(232)>disconnected(204)", eca_dir)
+
+    let agree = membership_match_all && count_match_all && sum_dir_match_all
+                && order_ok_n3 && order_ok_n4 && eca_dir
+    let verdict = if agree { "AGREE" } else { "DISAGREE" }
+    let authoritative = if agree { "n/a (both engines corroborate)" } else { "canonical iit4_distinction (calibrated to M6)" }
+
+    println("  ----------------------------------------------------------------")
+    println("  F-XVAL-1 VERDICT: " + verdict)
+    println("  authoritative engine if disagree: " + authoritative)
+    println("")
+
+    // ── root-cause probe: disconnected singleton mechanism {A} φ_d ──────────
+    // both engines on the SAME shared disconnected TPM; mechanism mask 1, all-ON.
+    let dtpm = _shared_tpm(3, 0, 0.0)
+    let h_single = ces_distinction(1, 7, 3, 0, 0.0)["phi_d"]   // H_280 kernel
+    let c_single = distinction(dtpm, 3, 1, 7)[0]               // canonical
+    println("  ROOT CAUSE (disconnected singleton {A} φ_d): H280=" + _f6(h_single)
+        + " · CANON=" + _f6(c_single))
+    println("    H_280 ces_phi_mech_purview only counts partitions that sever an")
+    println("    M↔Z link (cuts_link guard); a singleton M+Z has no such cut ⇒")
+    println("    found=false ⇒ returns 0.0. Canonical includes the M→∅ partition")
+    println("    (purview→unconstrained) ⇒ φ = ID(constrained vs unconstrained) ≈ 1.")
+    println("")
+
+    // ── result.json ─────────────────────────────────────────────────────────
+    let js = "{\n"
+        + "  \"id\": \"H_280_xval\",\n"
+        + "  \"slug\": \"h280-iit4-cross-validation\",\n"
+        + "  \"title\": \"H_280 independent distinction kernel vs canonical IIT4 (stdlib consciousness/iit4_distinction) cross-validation\",\n"
+        + "  \"date\": \"2026-05-26\",\n"
+        + "  \"deterministic\": true,\n"
+        + "  \"hexa_only\": true,\n"
+        + "  \"llm\": \"none\",\n"
+        + "  \"gpu\": false,\n"
+        + "  \"cost_usd\": 0.0,\n"
+        + "  \"method\": \"build a state-by-node TPM from H_280's ces_tpm_node (the ε-floored disc/weak/integrated substrate, all-ON state, ring, ε=1e-6) and feed the BYTE-IDENTICAL array to BOTH the H_280 kernel (ces_distinction) and the canonical engine (stdlib consciousness/iit4_distinction.distinction); compare per-mechanism distinction membership, distinction-count, and Σφ_d ordering. Secondary anchor: canonical-native deterministic ECA rule 204 (copy=disconnected) vs 232 (majority=integrated).\",\n"
+        + "  \"engine_math_note\": \"canonical iit4_phi_at fixes the specified state z* once (intrinsic_difference vs unconstrained) then minimizes p(z*)log2(p(z*)/q(z*)) over partitions; H_280 ces_id re-maximizes max_x p log2(p/q) per partition then minimizes. Both are MIP-min of an ID-style measure; absolute φ can differ, so the cross-validation target is the distinction SET + directional verdict, NOT byte-equal Σφ_d.\",\n"
+        + "  \"shared_tpm_ladder\": [\n"
+        + json_rows
+        + "  ],\n"
+        + "  \"deterministic_eca_anchor\": {\n"
+        + "    \"rule_204_disconnected\": {\"sum_phi_d\": " + _f6(b204[2]) + ", \"distinction_count\": " + str(nd204) + ", \"big_phi\": " + _f6(b204[0]) + "},\n"
+        + "    \"rule_232_integrated\": {\"sum_phi_d\": " + _f6(b232[2]) + ", \"distinction_count\": " + str(nd232) + ", \"big_phi\": " + _f6(b232[0]) + "},\n"
+        + "    \"weak_rung\": \"N/A — couple=0.5 is genuinely stochastic, no deterministic ECA equivalent\",\n"
+        + "    \"sum_phi_d_direction_integrated_gt_disconnected\": \"" + _v(eca_dir) + " (Σφ_d NOT a monotone integration proxy: 204 Σφ_d " + _f6(b204[2]) + " > 232 Σφ_d " + _f6(b232[2]) + ")\",\n"
+        + "    \"big_phi_direction_integrated_gt_disconnected\": \"" + _v(bigphi_dir) + " (THE correct integration discriminator: 204 big-Φ " + _f6(b204[0]) + " < 232 big-Φ " + _f6(b232[0]) + ")\"\n"
+        + "  },\n"
+        + "  \"root_cause\": {\n"
+        + "    \"disconnected_singleton_phi_d_h280\": " + _f6(h_single) + ",\n"
+        + "    \"disconnected_singleton_phi_d_canonical\": " + _f6(c_single) + ",\n"
+        + "    \"bug\": \"H_280 ces_phi_mech_purview only counts partitions that sever an M-to-Z directed link (cuts_link guard, lib_ces.hexa ~L482); a singleton mechanism over a singleton purview has no such cut, so found=false and phi returns 0.0. The canonical engine instead includes the mechanism-to-empty partition (purview becomes unconstrained), yielding phi = ID(constrained vs unconstrained) ~ 1.0. Consequence: H_280 spuriously zeroes every independent self-copy cell's phi_d, so the disconnected substrate gets 0 distinctions when the IIT 4.0 ground truth (and the M6-calibrated canonical) gives 3 distinctions each with phi_d~1.\",\n"
+        + "    \"impact\": \"H_280's headline 'integrated Σφ_d > disconnected Σφ_d' was an ARTIFACT of this singleton bug zeroing the disconnected baseline. The canonical engine shows Σφ_d is NOT monotone with integration (disconnected Σφ_d 3.0 > integrated 2.03 at n=3). The genuine integration direction is preserved at the big-Φ level (204 big-Φ=0 < 232 big-Φ>0) and via relations, NOT raw Σφ_d. H_280's directional conclusion happens to point the same way but for the wrong reason; its F280.3 'disconnected -> φ_d=0' faithfulness anchor was a mistaken IIT 4.0 expectation (it conflated no-system-integration with no-distinctions).\"\n"
+        + "  },\n"
+        + "  \"falsifier\": \"F-XVAL-1: H_280 kernel distinction-membership + count + Σφ_d ordering AGREE with canonical iit4_distinction on the shared ladder. PASS = independent corroboration; FAIL = canonical (M6-calibrated) is authoritative.\",\n"
+        + "  \"checks\": {\n"
+        + "    \"membership_match_all_rungs\": \"" + _v(membership_match_all) + "\",\n"
+        + "    \"count_match_all_rungs\": \"" + _v(count_match_all) + "\",\n"
+        + "    \"sum_phi_d_direction_match\": \"" + _v(sum_dir_match_all) + "\",\n"
+        + "    \"n3_ordering_both_engines\": \"" + _v(order_ok_n3) + "\",\n"
+        + "    \"n4_ordering_both_engines\": \"" + _v(order_ok_n4) + "\",\n"
+        + "    \"deterministic_eca_direction\": \"" + _v(eca_dir) + "\"\n"
+        + "  },\n"
+        + "  \"verdict\": \"" + verdict + "\",\n"
+        + "  \"authoritative_engine_if_disagree\": \"" + authoritative + "\",\n"
+        + "  \"pass\": " + str(PASS) + ",\n"
+        + "  \"fail\": " + str(FAIL) + ",\n"
+        + "  \"tier\": \"GREEN-NUMERICAL cross-validation (two independent IIT 4.0 distinction kernels on byte-identical TPM input); empirical interpretation SPECULATION-FENCED (g5)\"\n"
+        + "}\n"
+    write_file("result.json", js)
+    println("  result.json written")
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL  →  F-XVAL-1 " + verdict)
+    println("================================================================")
+    if FAIL > 0 { println("  (DISAGREE recorded honestly — see result.json + H_280 §교차검증)") }
+}

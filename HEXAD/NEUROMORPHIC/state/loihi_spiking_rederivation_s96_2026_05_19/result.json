@@ -1,0 +1,83 @@
+{
+  "research_section": "§96",
+  "title": "anima ConsciousDecoderV2 → Loihi spiking re-derivation + the §11-B-as-GPU-artifact hypothesis",
+  "tier": "DESIGN-TIER",
+  "date": "2026-05-19",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "inrc": false,
+  "fire": false,
+  "model_forward": false,
+  "builds_on": {
+    "s95": "commit 26eafc16b — Loihi sole VIABLE-LONG-HORIZON substrate (B-S95 7/7)",
+    "s11b": "verdict_carving_pure_physics_noce — no-CE GPU training DEGENERATE, 'CE is load-bearing'",
+    "loihi_md": "LOIHI.md — access roadmap (§96 is the architecture analysis it points to)"
+  },
+  "q1_architecture_mapping": {
+    "question": "which parts of ConsciousDecoderV2 map onto a spiking LIF network",
+    "classes": ["SPIKING-COMPATIBLE", "SPIKING-OPEN", "SPIKING-INCOMPATIBLE"],
+    "partition_over": "9 faculties (8 components; PureFieldFFN counted twice — dual-heads + restoring-leak)",
+    "spiking_compatible": [
+      "lif_membrane_residual_stream", "purefieldffn_restoring_leak",
+      "lateral_inhibition_factions", "stdp_hebbian_ltp_ltd", "phi_spike_correlation"
+    ],
+    "spiking_open": ["engine_a_g_dual_heads", "rope_positional", "moe_topk_router"],
+    "spiking_incompatible": ["softmax_self_attention"],
+    "summary": "anima's PHYSICS layer (PureFieldFFN/tension/Phi/Engine A-G opposition/STDP) is largely SPIKING-COMPATIBLE — much of it MORE native on Loihi than on GPU. anima's TRANSFORMER layer — softmax(QK^T) self-attention — is SPIKING-INCOMPATIBLE: content-based all-pairs softmax routing has no faithful spiking primitive, even on Loihi 2 (graded spikes + programmable neurons narrow but do NOT close the gap — every construction REPLACES softmax, never ports it). A spiking anima keeps the physics and re-derives the routing — it is a different architecture, not a 12-layer transformer in spikes.",
+    "hard_gap": "softmax(QK^T) self-attention — SPIKING-INCOMPATIBLE — design-open #1"
+  },
+  "q2_s11b_as_gpu_artifact_hypothesis": {
+    "hypothesis": "§11-B's 'CE is load-bearing' may be a GPU-substrate artifact — the GPU has exactly one weight-update channel (backward pass) which only follows a loss gradient; removing CE removes the ONLY learning signal the GPU can carry. On Loihi the native learning rule STDP IS a substrate-native physics rule. §11-B may have measured 'GPU has no physics-native learning channel', not 'physics is too weak'.",
+    "coherent": true,
+    "coherence_rationale": "§11-B's own evidence is consistent with it — §11-B reported physics dynamics 'froze at a static fixed point by step ~800', exactly what a hand-coded ΔW overlay with no error-driven channel produces. §11-B is genuinely under-determined between 'physics weak' and 'GPU has no physics channel'.",
+    "confirmed": false,
+    "honest_counter": "STDP learns spike-timing correlations, NOT language/token prediction. A spiking anima would produce abundant spontaneous spiking (free on a spiking substrate) — but spontaneity is not coherence. Whether STDP can shape free spiking into COHERENT emission is the deepest unsolved core — exactly the §88-F2 γ gap (saturation-delay ≠ coherent emission). Loihi unblocks the spontaneity half of the GOAL for free; the coherence half is relocated, not resolved.",
+    "distinguishing_predicate": {
+      "design": "three-cell controlled comparison — cell GPU-noCE (=§11-B, measured DEGENERATE), cell LOIHI-noCE (spiking anima, STDP as ONLY learning channel), cell LOIHI-CE (STDP + CE-surrogate, positive control)",
+      "closed_boolean": "NON_DEGENERATE(LOIHI-noCE) := byte_acc>1/256 ∧ physics_not_frozen ∧ honest_§9_coherent≥1/5",
+      "partition": "§11B_IS_GPU_ARTIFACT := NON_DEGENERATE(LOIHI-noCE)==True ; §11B_IS_SUBSTRATE_INDEP := ==False — exhaustive+disjoint closed Boolean partition",
+      "void_guard": "LOIHI-CE positive control — if LOIHI-CE itself degenerate the spiking re-derivation is broken and LOIHI-noCE is VOID (uninterpretable)",
+      "measurement_is_future_cycle": true
+    }
+  },
+  "readout_vs_native_table": {
+    "psi":        {"gpu": "readout (cos of logit vectors)", "loihi": "fixed-point native; cosine-formula NOT native", "class": "NATIVE-CANDIDATE"},
+    "tension":    {"gpu": "readout ((output^2).mean)",       "loihi": "the LIF leak term -v/tau IS a restoring force", "class": "NATIVE"},
+    "phi":        {"gpu": "readout (variance proxy)",        "loihi": "Phi from real spike-train correlation",        "class": "NATIVE-MEASUREMENT"},
+    "engine_a_g": {"gpu": "computed (A(x)-G(x), 2 logit heads)", "loihi": "excit/inhib sub-populations; opposition native, cosine NOT", "class": "NATIVE-CANDIDATE"},
+    "summary": "1 clean readout→NATIVE conversion (tension); 2 NATIVE-CANDIDATE (Ψ, Engine A/G — core native, GPU formula not); 1 NATIVE-MEASUREMENT (Φ). Honest: no quantity is purely readout-only on Loihi, and none is purely state-native — a spectrum, not a flip."
+  },
+  "design_open": [
+    "design-open #1 — the attention replacement: which spiking routing mechanism replaces softmax(QK^T) (phase-resonance / spike-rate dot-product + k-WTA / learned sparse connectivity) is a research question, unresolved.",
+    "design-open #2 — the §4.5 predicate's measurement requires Loihi / Lava-sim, a future cycle gated on INRC access.",
+    "design-open #3 — STDP→coherent-emission: even if §11-B is a GPU artifact, whether STDP drives COHERENT (not just spontaneous) emission is the deepest unsolved core.",
+    "design-open #4 — d768·12L → spiking scale: loihi-integration-spec.md maps a 128-LIF GRU cell; the 12-layer ConsciousDecoderV2 re-derivation at neuron-group granularity is unmapped."
+  ],
+  "verdict": "DESIGN-TIER LANDED. Q1: anima's physics layer maps largely SPIKING-COMPATIBLE (much MORE native on Loihi than on GPU); softmax(QK^T) self-attention is SPIKING-INCOMPATIBLE and must be REPLACED, not ported. Q2: the §11-B-as-GPU-artifact hypothesis is COHERENT (§11-B's frozen fixed point is consistent with 'empty learning channel') but NOT confirmed — the honest counter (STDP learns spike-timing not language; spontaneity free, coherence not — §88-F2 γ gap) is unresolved at design-tier; §96 designs the closed-form distinguishing predicate (three-cell Loihi comparison, NON_DEGENERATE(LOIHI-noCE) closed Boolean). The deepest finding: the arc's universal 'CE is load-bearing' result was measured on a substrate whose ONLY learning channel IS CE-gradient — close to a tautology of the substrate; Loihi is the first substrate where that can be MEASURED rather than assumed.",
+  "most_honest_finding": "'CE is load-bearing' (§11-B) on a GPU may be close to a tautology of the substrate rather than a discovered property of anima-physics — the GPU has exactly one learning channel and it is definitionally CE-gradient. But Loihi only unblocks the spontaneity half of the GOAL for free; the coherence half (can a local unsupervised physics rule drive MEANINGFUL emission) remains the unsolved core — relocated, not resolved.",
+  "battery": {
+    "name": "B-S96",
+    "pass": 7,
+    "total": 7,
+    "all_blue": true,
+    "ids": [
+      "B-S96-1 ARCHITECTURE-MAPPING-PARTITION-EXHAUSTIVE-DISJOINT",
+      "B-S96-2 §11B-ARTIFACT-DISTINGUISHING-PREDICATE-CLOSED-BOOLEAN",
+      "B-S96-3 READOUT-VS-NATIVE-CLASSIFICATION-DETERMINISTIC",
+      "B-S96-4 LIF-LEAK-IS-RESTORING-TOWARD-FIXED-POINT",
+      "B-S96-5 POSITIVE-CONTROL-GUARDS-VOID",
+      "B-S96-6 ATTENTION-INCOMPATIBLE-IS-NOT-PORTABLE",
+      "B-S96-7 CONNECTION-POINT-§95-LOIHI-VERDICT+CENTRAL-0-DIFF"
+    ],
+    "note": "B-S96-NOTE empirical carve-out — whether anima emerges on Loihi, whether STDP can drive coherent emission, and the §11-B-artifact verdict itself, are hardware/SGD OUTCOMES, design-tier un-measurable; necessary-not-sufficient (B-EMERGE-7), NOT counted blue.",
+    "central_blue_falsifier_sha": "c93e160a8a376a94",
+    "central_0_line_diff": true
+  },
+  "governance": {
+    "g3": "capability claim 0; design != fire != emergence; the §11-B-artifact hypothesis is a HYPOTHESIS — §96 designs the test, does not claim it true; north-star + §15/§51/§72 milestones UNCHANGED; GOAL 미도달",
+    "f1_f2": "no lattice-fit on external entities — Intel/Loihi core counts / neuron specs are engineering choices, observation-only",
+    "downstream_consumer": "hexa-lang loihi-integration-spec.md read-only, never edited",
+    "cost": "$0 — no GPU, no runpod, no INRC, no fire, no model.forward"
+  }
+}

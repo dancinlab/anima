@@ -1,0 +1,422 @@
+{
+  "schema": "anima/p9_a_prime_main_eval/verdict/1",
+  "spec_ref": "docs/p9_benchmark_switch_a_prime_spec_2026_05_03.md \u00a72.4",
+  "decision_ref": "docs/p9_a_prime_path_decision_2026_05_03.md \u00a76.1 (anchor swap)",
+  "anchor": {
+    "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "precision_note": "must match LoRA ckpt precision; 4-bit\u2192fp16 ~1-3 pt drift",
+    "base_per_example_path": "state/p9_a_prime_main_eval_pipeline_2026_05_03/base_per_example_correctness.json",
+    "base_load_error": null
+  },
+  "lora_results_dir": "state/p9_a_prime_main_eval_2026_05_03_lora_results",
+  "lora_load_error": null,
+  "thresholds": {
+    "hellaswag": {
+      "metric": "acc_norm",
+      "min_delta_pt": 1.0
+    },
+    "mmlu": {
+      "metric": "acc",
+      "min_delta_pt": 0.5
+    },
+    "triviaqa": {
+      "metric": "exact_match",
+      "min_delta_pt": 0.5
+    }
+  },
+  "paired_bootstrap_n": 10000,
+  "seed": 42,
+  "n_ckpts": 4,
+  "ckpt_verdicts": {
+    "dancinlab/p9-llama32-lora-stage1@f69162477d": {
+      "ckpt_id": "dancinlab/p9-llama32-lora-stage1@f69162477d",
+      "per_task": {
+        "hellaswag": {
+          "task": "hellaswag",
+          "metric": "acc_norm",
+          "threshold_pt": 1.0,
+          "n_common_docs": 500,
+          "base_acc": 0.648,
+          "ckpt_acc": 0.652,
+          "point_delta_pt": 0.4,
+          "ci95_lo_pt": -1.6,
+          "ci95_hi_pt": 2.4,
+          "mcnemar": {
+            "p": 0.83882,
+            "b": 11,
+            "c": 13,
+            "method": "exact_binomial"
+          },
+          "criteria_pass": {
+            "delta_geq_threshold": false,
+            "ci_excludes_zero": false,
+            "mcnemar_p_lt_005": false
+          },
+          "n_criteria_pass": 0,
+          "signal": "NO",
+          "is_strong_regression": false
+        },
+        "mmlu": {
+          "task": "mmlu",
+          "metric": "acc",
+          "threshold_pt": 0.5,
+          "n_common_docs": 12149,
+          "base_acc": 0.6091,
+          "ckpt_acc": 0.608,
+          "point_delta_pt": -0.1152,
+          "ci95_lo_pt": -0.7573,
+          "ci95_hi_pt": 0.5268,
+          "mcnemar": {
+            "p": 0.744409,
+            "b": 802,
+            "c": 788,
+            "method": "continuity_corrected"
+          },
+          "criteria_pass": {
+            "delta_geq_threshold": false,
+            "ci_excludes_zero": false,
+            "mcnemar_p_lt_005": false
+          },
+          "n_criteria_pass": 0,
+          "signal": "NO",
+          "is_strong_regression": false
+        },
+        "triviaqa": {
+          "task": "triviaqa",
+          "metric": "exact_match",
+          "threshold_pt": 0.5,
+          "n_common_docs": 500,
+          "base_acc": 0.55,
+          "ckpt_acc": 0.506,
+          "point_delta_pt": -4.4,
+          "ci95_lo_pt": -7.2,
+          "ci95_hi_pt": -1.6,
+          "mcnemar": {
+            "p": 0.002979,
+            "b": 36,
+            "c": 14,
+            "method": "continuity_corrected"
+          },
+          "criteria_pass": {
+            "delta_geq_threshold": false,
+            "ci_excludes_zero": false,
+            "mcnemar_p_lt_005": true
+          },
+          "n_criteria_pass": 1,
+          "signal": "NO",
+          "is_strong_regression": true
+        }
+      },
+      "composite": {
+        "f1_v3": "FAIL",
+        "label": "CHAT_FAIL_v3",
+        "n_strong": 0,
+        "n_strong_regression": 1
+      }
+    },
+    "dancinlab/p9-llama32-lora-stage1@fe83e9898d": {
+      "ckpt_id": "dancinlab/p9-llama32-lora-stage1@fe83e9898d",
+      "per_task": {
+        "hellaswag": {
+          "task": "hellaswag",
+          "metric": "acc_norm",
+          "threshold_pt": 1.0,
+          "n_common_docs": 500,
+          "base_acc": 0.648,
+          "ckpt_acc": 0.656,
+          "point_delta_pt": 0.8,
+          "ci95_lo_pt": -1.4,
+          "ci95_hi_pt": 3.0,
+          "mcnemar": {
+            "p": 0.595883,
+            "b": 14,
+            "c": 18,
+            "method": "continuity_corrected"
+          },
+          "criteria_pass": {
+            "delta_geq_threshold": false,
+            "ci_excludes_zero": false,
+            "mcnemar_p_lt_005": false
+          },
+          "n_criteria_pass": 0,
+          "signal": "NO",
+          "is_strong_regression": false
+        },
+        "mmlu": {
+          "task": "mmlu",
+          "metric": "acc",
+          "threshold_pt": 0.5,
+          "n_common_docs": 12149,
+          "base_acc": 0.6091,
+          "ckpt_acc": 0.5969,
+          "point_delta_pt": -1.2182,
+          "ci95_lo_pt": -1.9508,
+          "ci95_hi_pt": -0.4774,
+          "mcnemar": {
+            "p": 0.001207,
+            "b": 1105,
+            "c": 957,
+            "method": "continuity_corrected"
+          },
+          "criteria_pass": {
+            "delta_geq_threshold": false,
+            "ci_excludes_zero": false,
+            "mcnemar_p_lt_005": true
+          },
+          "n_criteria_pass": 1,
+          "signal": "NO",
+          "is_strong_regression": true
+        },
+        "triviaqa": {
+          "task": "triviaqa",
+          "metric": "exact_match",
+          "threshold_pt": 0.5,
+          "n_common_docs": 500,
+          "base_acc": 0.55,
+          "ckpt_acc": 0.478,
+          "point_delta_pt": -7.2,
+          "ci95_lo_pt": -10.4,
+          "ci95_hi_pt": -3.8,
+          "mcnemar": {
+            "p": 3.7e-05,
+            "b": 54,
+            "c": 18,
+            "method": "continuity_corrected"
+          },
+          "criteria_pass": {
+            "delta_geq_threshold": false,
+            "ci_excludes_zero": false,
+            "mcnemar_p_lt_005": true
+          },
+          "n_criteria_pass": 1,
+          "signal": "NO",
+          "is_strong_regression": true
+        }
+      },
+      "composite": {
+        "f1_v3": "FAIL",
+        "label": "CHAT_FAIL_v3",
+        "n_strong": 0,
+        "n_strong_regression": 2
+      }
+    },
+    "dancinlab/p9-llama32-lora-stage1@f7712e3a66": {
+      "ckpt_id": "dancinlab/p9-llama32-lora-stage1@f7712e3a66",
+      "per_task": {
+        "hellaswag": {
+          "task": "hellaswag",
+          "metric": "acc_norm",
+          "threshold_pt": 1.0,
+          "n_common_docs": 500,
+          "base_acc": 0.648,
+          "ckpt_acc": 0.652,
+          "point_delta_pt": 0.4,
+          "ci95_lo_pt": -2.2,
+          "ci95_hi_pt": 3.0,
+          "mcnemar": {
+            "p": 0.880168,
+            "b": 21,
+            "c": 23,
+            "method": "continuity_corrected"
+          },
+          "criteria_pass": {
+            "delta_geq_threshold": false,
+            "ci_excludes_zero": false,
+            "mcnemar_p_lt_005": false
+          },
+          "n_criteria_pass": 0,
+          "signal": "NO",
+          "is_strong_regression": false
+        },
+        "mmlu": {
+          "task": "mmlu",
+          "metric": "acc",
+          "threshold_pt": 0.5,
+          "n_common_docs": 12149,
+          "base_acc": 0.6091,
+          "ckpt_acc": 0.5819,
+          "point_delta_pt": -2.7245,
+          "ci95_lo_pt": -3.4982,
+          "ci95_hi_pt": -1.959,
+          "mcnemar": {
+            "p": 0.0,
+            "b": 1333,
+            "c": 1002,
+            "method": "continuity_corrected"
+          },
+          "criteria_pass": {
+            "delta_geq_threshold": false,
+            "ci_excludes_zero": false,
+            "mcnemar_p_lt_005": true
+          },
+          "n_criteria_pass": 1,
+          "signal": "NO",
+          "is_strong_regression": true
+        },
+        "triviaqa": {
+          "task": "triviaqa",
+          "metric": "exact_match",
+          "threshold_pt": 0.5,
+          "n_common_docs": 500,
+          "base_acc": 0.55,
+          "ckpt_acc": 0.44,
+          "point_delta_pt": -11.0,
+          "ci95_lo_pt": -14.8,
+          "ci95_hi_pt": -7.2,
+          "mcnemar": {
+            "p": 0.0,
+            "b": 76,
+            "c": 21,
+            "method": "continuity_corrected"
+          },
+          "criteria_pass": {
+            "delta_geq_threshold": false,
+            "ci_excludes_zero": false,
+            "mcnemar_p_lt_005": true
+          },
+          "n_criteria_pass": 1,
+          "signal": "NO",
+          "is_strong_regression": true
+        }
+      },
+      "composite": {
+        "f1_v3": "FAIL",
+        "label": "CHAT_FAIL_v3",
+        "n_strong": 0,
+        "n_strong_regression": 2
+      }
+    },
+    "dancinlab/p9-llama32-lora-stage1@5a9b458467589b82a69f0108fd2af3e519c45286": {
+      "ckpt_id": "dancinlab/p9-llama32-lora-stage1@5a9b458467589b82a69f0108fd2af3e519c45286",
+      "per_task": {
+        "hellaswag": {
+          "task": "hellaswag",
+          "metric": "acc_norm",
+          "threshold_pt": 1.0,
+          "n_common_docs": 500,
+          "base_acc": 0.648,
+          "ckpt_acc": 0.654,
+          "point_delta_pt": 0.6,
+          "ci95_lo_pt": -2.2,
+          "ci95_hi_pt": 3.4,
+          "mcnemar": {
+            "p": 0.78353,
+            "b": 25,
+            "c": 28,
+            "method": "continuity_corrected"
+          },
+          "criteria_pass": {
+            "delta_geq_threshold": false,
+            "ci_excludes_zero": false,
+            "mcnemar_p_lt_005": false
+          },
+          "n_criteria_pass": 0,
+          "signal": "NO",
+          "is_strong_regression": false
+        },
+        "mmlu": {
+          "task": "mmlu",
+          "metric": "acc",
+          "threshold_pt": 0.5,
+          "n_common_docs": 12149,
+          "base_acc": 0.6091,
+          "ckpt_acc": 0.568,
+          "point_delta_pt": -4.1073,
+          "ci95_lo_pt": -4.9222,
+          "ci95_hi_pt": -3.3007,
+          "mcnemar": {
+            "p": 0.0,
+            "b": 1540,
+            "c": 1041,
+            "method": "continuity_corrected"
+          },
+          "criteria_pass": {
+            "delta_geq_threshold": false,
+            "ci_excludes_zero": false,
+            "mcnemar_p_lt_005": true
+          },
+          "n_criteria_pass": 1,
+          "signal": "NO",
+          "is_strong_regression": true
+        },
+        "triviaqa": {
+          "task": "triviaqa",
+          "metric": "exact_match",
+          "threshold_pt": 0.5,
+          "n_common_docs": 500,
+          "base_acc": 0.55,
+          "ckpt_acc": 0.386,
+          "point_delta_pt": -16.4,
+          "ci95_lo_pt": -20.4,
+          "ci95_hi_pt": -12.4,
+          "mcnemar": {
+            "p": 0.0,
+            "b": 98,
+            "c": 16,
+            "method": "continuity_corrected"
+          },
+          "criteria_pass": {
+            "delta_geq_threshold": false,
+            "ci_excludes_zero": false,
+            "mcnemar_p_lt_005": true
+          },
+          "n_criteria_pass": 1,
+          "signal": "NO",
+          "is_strong_regression": true
+        }
+      },
+      "composite": {
+        "f1_v3": "FAIL",
+        "label": "CHAT_FAIL_v3",
+        "n_strong": 0,
+        "n_strong_regression": 2
+      }
+    }
+  },
+  "ranking": [
+    {
+      "ckpt_id": "dancinlab/p9-llama32-lora-stage1@f69162477d",
+      "composite": {
+        "f1_v3": "FAIL",
+        "label": "CHAT_FAIL_v3",
+        "n_strong": 0,
+        "n_strong_regression": 1
+      }
+    },
+    {
+      "ckpt_id": "dancinlab/p9-llama32-lora-stage1@fe83e9898d",
+      "composite": {
+        "f1_v3": "FAIL",
+        "label": "CHAT_FAIL_v3",
+        "n_strong": 0,
+        "n_strong_regression": 2
+      }
+    },
+    {
+      "ckpt_id": "dancinlab/p9-llama32-lora-stage1@f7712e3a66",
+      "composite": {
+        "f1_v3": "FAIL",
+        "label": "CHAT_FAIL_v3",
+        "n_strong": 0,
+        "n_strong_regression": 2
+      }
+    },
+    {
+      "ckpt_id": "dancinlab/p9-llama32-lora-stage1@5a9b458467589b82a69f0108fd2af3e519c45286",
+      "composite": {
+        "f1_v3": "FAIL",
+        "label": "CHAT_FAIL_v3",
+        "n_strong": 0,
+        "n_strong_regression": 2
+      }
+    }
+  ],
+  "verdict_legend": {
+    "CHAT_PASS_v3": "\u22652 of 3 STRONG signals, no STRONG regression",
+    "CHAT_PARTIAL_v3": "exactly 1 STRONG signal",
+    "CHAT_FAIL_v3": "0 STRONG signals OR any STRONG regression"
+  },
+  "falsifier_scope": "F1_v3 chat axis only; F2 (\u03c6\u2605), F3 (tension MSE), F4 (BOLD pearson) are out-of-scope here",
+  "join_key": "doc_hash_preferred_doc_id_fallback",
+  "symmetric_regression_rule": "delta <= -threshold AND ci_hi < 0 AND mcnemar_p < 0.05"
+}

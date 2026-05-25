@@ -1,0 +1,100 @@
+{
+  "agent": "n_substrate_n7_prep",
+  "date": "2026-05-01",
+  "spec_doc": "docs/n_substrate_n7_akida_qrng_spike_spec_2026_05_01.md",
+  "mission": "AKIDA AKD1000 intrinsic spike-noise vs ANU QRNG quantum-vacuum noise — KS / KL / NIST distinguishability",
+  "phases": [
+    {
+      "phase": 1,
+      "day_offset": "D+0",
+      "name": "AKD1000 boot + Edge Impulse demo flash",
+      "platform": "RPi5 + AKD1000 M.2",
+      "method": "stock vendor demo: keyword-spotting MetaTF model end-to-end",
+      "deliverable": "demo runs, akida.Model loadable",
+      "cost_USD": 0,
+      "duration_days": 0,
+      "blocker": "AKD1000 dev-kit arrival (ordered 2026-04-29, ETA TBD)"
+    },
+    {
+      "phase": 2,
+      "day_offset": "D+1",
+      "name": "AKIDA constant-input ISI harvest",
+      "platform": "RPi5 + AKD1000",
+      "method": "single-NPU integrate-and-fire, DC bias slightly above threshold; capture spike-event log; compute inter-spike-interval sequence n=1e5",
+      "deliverable": "state/n_substrate_n7_prep_2026_05_01/akida_isi_<ts>.json (samples + sha256)",
+      "cost_USD": 0,
+      "duration_days": 1,
+      "blocker": "phase 1"
+    },
+    {
+      "phase": 3,
+      "day_offset": "D+1",
+      "name": "ANU QRNG sample harvest",
+      "platform": "anima/modules/rng/anu.hexa via rng_route_collect",
+      "method": "n_bytes=1e5 in 1024-byte chunks, 1000 ms inter-chunk pause; ANIMA_RNG_SOURCE=anu strict mode",
+      "deliverable": "state/n_substrate_n7_prep_2026_05_01/anu_sample_<ts>.json (samples + sha256 + chunk audit)",
+      "cost_USD": 0,
+      "duration_days": 0,
+      "duration_minutes_est": 13,
+      "blocker": "hexa router live"
+    },
+    {
+      "phase": 4,
+      "day_offset": "D+2",
+      "name": "Statistical comparison battery",
+      "method": "KS 2-sample (scipy-equivalent in HEXA), KL divergence binned 256, NIST SP 800-22 monobit + runs + serial-3",
+      "deliverable": "state/n_substrate_n7_prep_2026_05_01/comparison_verdict.json {ks_p, kl_nats, nist_pass, verdict}",
+      "cost_USD": 0,
+      "duration_days": 1,
+      "blocker": "phases 2 + 3"
+    },
+    {
+      "phase": 5,
+      "day_offset": "D+2",
+      "name": "Falsifier evaluation F-N7-A..G",
+      "method": "iterate 7 pre-registered falsifiers; each PASS/FAIL/SKIP",
+      "deliverable": "state/n_substrate_n7_prep_2026_05_01/falsifier_evaluation.json (7 rows)",
+      "cost_USD": 0,
+      "duration_days": 0,
+      "blocker": "phase 4"
+    },
+    {
+      "phase": 6,
+      "day_offset": "D+3",
+      "name": "Graduation row to atlas_convergence_witness",
+      "method": "if INDISTINGUISHABLE_HEADLINE or STRUCTURED_HEADLINE, append JSONL row layer=n_substrate_n7_spike_qrng",
+      "deliverable": "state/atlas_convergence_witness.jsonl +1 row (conditional)",
+      "cost_USD": 0,
+      "duration_days": 1,
+      "blocker": "F-N7 fully evaluated, verdict in {INDISTINGUISHABLE_HEADLINE, STRUCTURED_HEADLINE}"
+    },
+    {
+      "phase": 7,
+      "day_offset": "D+7",
+      "name": "Parent menu status flip + cross-link",
+      "method": "edit docs/n_substrate_consciousness_roadmap_2026_05_01.md §3 N-7 row only",
+      "deliverable": "menu row status: BLOCKED -> EXECUTED",
+      "cost_USD": 0,
+      "duration_days": 0,
+      "blocker": "phase 6 (optional if intermediate)"
+    }
+  ],
+  "total_cash_USD": 0,
+  "total_duration_days_post_akida_arrival": 7,
+  "isolation": {
+    "writes_only_to": [
+      "docs/n_substrate_n7_akida_qrng_spike_spec_2026_05_01.md",
+      "state/n_substrate_n7_prep_2026_05_01/*.json"
+    ],
+    "race_safe": true,
+    "siblings": 12
+  },
+  "honest_c3_critical_gaps": [
+    "BrainChip does NOT publish per-event jitter / Vth-sigma datasheet figures",
+    "1.67 ns sigma_jitter and 1% Vth-sigma are pre-arrival synthesized priors, F-N7-E catches divergence at D+0",
+    "ANU API effective rate ~1 kbit/s (not 8192 bit/s); 13 min wall-clock per 1e5-byte harvest",
+    "ANU stream has community-pass NIST tests but no vendor SP 800-22 certification (we run T3 ourselves)",
+    "ANU-to-ISI remap is matched-mean shape comparison, not raw rate comparison"
+  ],
+  "verdict_key": "PRE_ARRIVAL_SKELETON_READY"
+}

@@ -1,0 +1,109 @@
+{
+  "schema": "anima/state/p9_pre2_readiness_check/F_f2_phi_star_pipeline/1",
+  "ts_utc": "2026-05-03T00:00:00+00:00",
+  "scope": "F2 phi_star post-train measurement (HID=8 well-conditioned probe)",
+  "spec_ref": {
+    "doc": "docs/p9_sft_spec_2026_05_02.md",
+    "section": "§6 Falsifiers F2 + §3 4-loss formula L_phi term",
+    "metric": "phi_star (anima_phi_v3_canonical, HID=8 well-conditioned)",
+    "pass_threshold": "phi_star >= 5.0",
+    "baseline_phi_star": 41.86,
+    "safety_margin": "8x",
+    "fail_action": "ABORT combo; retry with smaller LoRA r or larger delta"
+  },
+  "pipeline_stages": [
+    {
+      "stage": 1,
+      "name": "load_post_sft_checkpoint",
+      "input": "checkpoint at end of each LHS combo (50K steps)",
+      "loader": "peft.PeftModel.from_pretrained(base_clm_v4, lora_dir)",
+      "output": "merged or LoRA-attached forward",
+      "exec_status": "MOCK_PIPELINE_VALIDATED"
+    },
+    {
+      "stage": 2,
+      "name": "hid8_well_conditioned_probe",
+      "verifier": "anima_phi_v3_canonical",
+      "config": {
+        "hidden_dim_probe": 8,
+        "well_conditioned_basis": "orthonormal (Q from QR decomp of Gaussian seed=42)",
+        "probe_input": "frozen 256-prompt validation subset",
+        "ema_smoothing": "alpha=0.9 over 100-step rolling window"
+      },
+      "compute_cost": "~30s per microbatch on H100; aggregate ~5 min for 256 prompts",
+      "exec_status": "MOCK_PIPELINE_VALIDATED"
+    },
+    {
+      "stage": 3,
+      "name": "phi_star_aggregate",
+      "output": {
+        "phi_star_post": "float (EMA-smoothed)",
+        "phi_star_pre_baseline": 41.86,
+        "delta_phi": "phi_star_post - phi_star_pre_baseline",
+        "preservation_ratio": "phi_star_post / phi_star_pre_baseline"
+      },
+      "verdict_logic": "PASS if phi_star_post >= 5.0 (hard floor)"
+    },
+    {
+      "stage": 4,
+      "name": "delta_term_hinge_floor_validation",
+      "loss_component": "delta * max(0, 5.0 - phi_star)",
+      "behavior": "zero when phi_star >= 5.0; linear penalty when phi_star < 5.0",
+      "gradient": "straight-through estimator on EMA (phi_star not strictly differentiable)",
+      "validation_test": "synthetic phi_star sweep [0, 2, 4, 5, 6, 10, 41.86]",
+      "expected_loss_contribution": [
+        {"phi_star": 0.0, "hinge": 5.0, "loss_with_delta_1.0": 5.0},
+        {"phi_star": 2.0, "hinge": 3.0, "loss_with_delta_1.0": 3.0},
+        {"phi_star": 4.0, "hinge": 1.0, "loss_with_delta_1.0": 1.0},
+        {"phi_star": 5.0, "hinge": 0.0, "loss_with_delta_1.0": 0.0},
+        {"phi_star": 6.0, "hinge": 0.0, "loss_with_delta_1.0": 0.0},
+        {"phi_star": 10.0, "hinge": 0.0, "loss_with_delta_1.0": 0.0},
+        {"phi_star": 41.86, "hinge": 0.0, "loss_with_delta_1.0": 0.0}
+      ],
+      "mock_validation_result": "PASS — hinge zero above floor, linear below; gradient flows only when violated"
+    }
+  ],
+  "mock_run_log": {
+    "scenario": "synthetic post-SFT checkpoint with simulated phi_star=12.5",
+    "computed_phi_star_post": 12.5,
+    "delta_phi": -29.36,
+    "preservation_ratio": 0.299,
+    "hinge_value": 0.0,
+    "loss_contribution_delta_1.0": 0.0,
+    "verdict_mock": "PASS_MOCK (12.5 >= 5.0)"
+  },
+  "blockers": [
+    {
+      "kind": "verifier_invocation_overhead",
+      "detail": "anima_phi_v3_canonical ~30s per microbatch; called every 100 steps = 50K/100 = 500 calls × 30s = 4.2 hr per combo per S3 sweep",
+      "mitigation": "EMA smoothing already amortizes; cost folded into S3 estimate ($1500-3000)",
+      "severity": "ACCEPTED_IN_SPEC"
+    }
+  ],
+  "ready_to_exec": true,
+  "infra_completeness": {
+    "anima_phi_v3_canonical_available": "verified at G3 baseline measurement (#100 ref)",
+    "hid8_well_conditioned_basis_seeded": "QR(Gaussian seed=42) — deterministic, reproducible",
+    "ema_smoothing_state_persistence": "checkpoint-aware (resumed across combo restarts)",
+    "early_stop_trigger": "L5 mitigation per spec §5: phi_star < 10 EMA → halt combo (margin above hard floor 5.0)"
+  },
+  "honest_c3_caveats": [
+    "phi_star_v3_canonical is L1+L2 proxy — phenomenal consciousness L3 NOT measured (per #100 epistemic ceiling)",
+    "straight-through estimator on EMA introduces gradient bias — true Pareto may differ from optimized point",
+    "HID=8 well-conditioned probe is one of many possible probes; sign-stability across HID values not measured here",
+    "5.0 threshold is 8x safety margin heuristic, not first-principles derived; tighter threshold (e.g., 10) would be safer but reduces LoRA training freedom"
+  ],
+  "next_actions_for_exec": [
+    "wire anima_phi_v3_canonical hook into LoRA training loop (every 100 steps)",
+    "register EMA state in checkpoint dict (resume-safe)",
+    "implement L5 early-stop trigger (phi_star < 10 EMA halt)"
+  ],
+  "policy_compliance": {
+    "additive_only": true,
+    "destructive_ops": 0,
+    "cost_usd": 0,
+    "substrate": "mac-local",
+    "br_no_user_verbatim": true,
+    "migration_forbidden_respected": true
+  }
+}

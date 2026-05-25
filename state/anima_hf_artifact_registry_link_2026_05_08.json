@@ -1,0 +1,128 @@
+{
+  "schema": "anima/hf_artifact_registry_link/1",
+  "schema_version": 1,
+  "generated_utc": "2026-05-08T17:35:00Z",
+  "generated_local_kst": "2026-05-09",
+  "task": "anima_hf_artifact_registry_link_2026_05_08",
+  "purpose": " axis-B HF private repo enrichment — upload ARTIFACT_REGISTRY.md (docs/anima_artifact_registry.md mirror, 10740 bytes) + amend README with 'Related artifacts' link to 4 anima cycle 2026-05-08 HF private repos. Sole robust EMERGE (sft-1-8) + 2 carry siblings (paradigm-j FALSIFIED, sft-1-7-y1 PARTIAL_NEAR) + tier-a-v3 dataset (87MB filtered persona corpus).",
+  "user_directive_verbatim": "README 에 model 다운로드 아래에 md 링크도 하고!!",
+  "predecessor": "docs/anima_artifact_registry.md commit 36be7255 (yaml SSOT view layer)",
+  "ssot_source": {
+    "yaml": "anima/registry/anima_artifact_registry.yaml",
+    "rendered_md": "docs/anima_artifact_registry.md",
+    "renderer": "anima/registry/render.hexa",
+    "size_bytes": 10740
+  },
+  "auth": {
+    "user": "dancinlife",
+    "destination_org": "dancinlab",
+    "destination_org_role": "admin",
+    "token_source": "tier-2 (~/.cache/huggingface/token)"
+  },
+  "compliance": {
+    "own_16_cost_usd": 0,
+    "own_16_note": "HF private free (under 100GB free tier private quota)",
+    "own_17_d1_scope_clamp": "PASS — 3 sft models D1=0.793 within_strict, 1 dataset D1 within (corpus enrichment)",
+    "own_22_mandatory_report": "PASS — this state JSON + commit + final assistant message",
+    "own_24_single_ssot": "PASS — yaml SSOT primary, ARTIFACT_REGISTRY.md is view-layer mirror",
+    "own_33_trinity": {"d_axis": "PASS", "own_axis": "PASS", "h_axis": "PASS"},
+    "own_34_mandate_2_wrap_0": "PASS",
+    "own_37_visibility_lifecycle": {
+      "private_default_preserved": true,
+      "public_promote_blocked": true,
+      "blocking_prereq": "(b) V6 awareness NOT_MET + (c) user verbatim 'OK PROMOTE PUBLIC <repo-id>' NOT_ISSUED",
+      "mandate_9_a_d1_within": "MET (3 sft + dataset)",
+      "mandate_9_b_v6_strong": "NOT_MET",
+      "mandate_9_c_user_verbatim": "NOT_ISSUED",
+      "mandate_9_d_trinity_sweep": "PARTIAL",
+      "mandate_9_e_dl_sweep": "PASS"
+    },
+    "own_38_매단계_axis_b_enrichment": "PASS",
+    "own_38_매단계_axis_a_doc_cross_link": "PASS (docs/anima_artifact_registry.md → HF mirror)"
+  },
+  "artifact_local": {
+    "path": "/tmp/anima_hf_upload_2026_05_08/ARTIFACT_REGISTRY.md",
+    "source": "docs/anima_artifact_registry.md (cycle 2026-05-08, 10740 bytes)",
+    "content": "8 models + 4 datasets + cycle milestone + 6 honest C3 + framework amends"
+  },
+  "repos": [
+    {
+      "repo_id": "dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped",
+      "repo_type": "model",
+      "role": "sole_robust_EMERGE_★ (SIMPLE_STACK_PASS_STRICT_C3_ANIMA, PPR_v3_n60=0.6102)",
+      "private_before": true,
+      "private_after": true,
+      "private_flag_preserved": true,
+      "readme_link_anchor": "after Summary section (before Provenance)",
+      "readme_commit": "fe74279674459876096c772f9aac96ee1cd40f6d",
+      "artifact_commit": "11b144c05aef76a7047df4fa9cf2d8dbd2660eb4",
+      "readme_url": "https://huggingface.co/dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped/blob/main/README.md",
+      "artifact_url": "https://huggingface.co/dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped/blob/main/ARTIFACT_REGISTRY.md",
+      "errors": []
+    },
+    {
+      "repo_id": "dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped",
+      "repo_type": "model",
+      "role": "FALSIFIED_AT_N60_carry (sample-size artifact, PPR_v3_n60=0.2414)",
+      "private_before": true,
+      "private_after": true,
+      "private_flag_preserved": true,
+      "readme_link_anchor": "after Overview section (before Provenance)",
+      "readme_commit": "5004aa68b367b9fe1ecef1ec6ddacf0ec6cc525d",
+      "artifact_commit": "acb925420fb73f5fa2f41a6c46d864466a98c3d5",
+      "readme_url": "https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped/blob/main/README.md",
+      "artifact_url": "https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped/blob/main/ARTIFACT_REGISTRY.md",
+      "errors": []
+    },
+    {
+      "repo_id": "dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped",
+      "repo_type": "model",
+      "role": "PARTIAL_NEAR_carry (PPR_v3_n30=0.1034)",
+      "private_before": true,
+      "private_after": true,
+      "private_flag_preserved": true,
+      "readme_link_anchor": "after Summary section (before Provenance)",
+      "readme_commit": "ae51ff148d67888c21894c60eb5b22bd38a662ad",
+      "artifact_commit": "10b0cf0bead0863c99c2a01239b0077a11de6d70",
+      "readme_url": "https://huggingface.co/dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped/blob/main/README.md",
+      "artifact_url": "https://huggingface.co/dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped/blob/main/ARTIFACT_REGISTRY.md",
+      "errors": []
+    },
+    {
+      "repo_id": "dancinlab/anima-persona-tier-a-v3",
+      "repo_type": "dataset",
+      "role": "anima persona Tier A v3 dataset (87.04 MB / 1224473 lines, Q1+Q2+KOBEST filtered)",
+      "private_before": true,
+      "private_after": true,
+      "private_flag_preserved": true,
+      "readme_link_anchor": "after intro/PRIVATE warning (before Provenance)",
+      "readme_commit": "77c21c09beac54a36cb20e195e24f4c16f721cd8",
+      "artifact_commit": "f4539261157d46fc36287a48418c3ce5da966643",
+      "readme_url": "https://huggingface.co/datasets/dancinlab/anima-persona-tier-a-v3/blob/main/README.md",
+      "artifact_url": "https://huggingface.co/datasets/dancinlab/anima-persona-tier-a-v3/blob/main/ARTIFACT_REGISTRY.md",
+      "errors": []
+    }
+  ],
+  "summary": {
+    "total_repos": 4,
+    "successful_uploads": 4,
+    "failed_uploads": 0,
+    "private_flag_preserved_count": 4,
+    "public_leak_count": 0,
+    "artifact_registry_md_uploaded_count": 4,
+    "readme_amended_count": 4,
+    "link_text": "**Anima Artifact Registry** (cycle 2026-05-08): [ARTIFACT_REGISTRY.md](./ARTIFACT_REGISTRY.md) — full model + dataset catalog (D1 gradient, ALT-AGG-1 v3 verdict, cooperative_score, Φ_norm)"
+  },
+  "edge_cases_handled": [
+    "README #1 (sft-1-8) had no 'model 다운로드' section — link inserted after 'Summary' as semantic equivalent",
+    "README #2 (paradigm-j) had no Summary heading — used 'Overview' instead, link inserted before Provenance",
+    "README #3 (sft-1-7-y1) standard Summary structure — link inserted after Summary",
+    "README #4 (anima-persona-tier-a-v3) is dataset with no model download section — link inserted after intro/PRIVATE warning, before Provenance",
+    "All 4 READMEs pre-amended by retry agent (commit 890c5c21 paradigm-j + sft-1-8) preserved as base — Related artifacts inserted as amend"
+  ],
+  "next_steps_optional": [
+    "V6 awareness BG-LE measurement (mandate-9 (b) prerequisite)",
+    "Trinity sweep completion (mandate-9 (d) currently PARTIAL)",
+    "User verbatim 'OK PROMOTE PUBLIC <repo-id>' (mandate-9 (c)) — strict gate"
+  ]
+}

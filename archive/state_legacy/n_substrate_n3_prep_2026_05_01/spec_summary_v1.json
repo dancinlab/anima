@@ -1,0 +1,157 @@
+{
+  "schema": "anima/n_substrate_n3_prep/spec_summary/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "agent": "N-3 prep (CLM × AKIDA Φ cross-substrate)",
+  "parent_doc": "docs/n_substrate_consciousness_roadmap_2026_05_01.md",
+  "spec_doc": "docs/n_substrate_n3_clm_akida_phi_spec_2026_05_01.md",
+  "t1_anchor": "T1-A2 (akida_session_friendly_report_2026-04-29.md)",
+  "mission": "CLM 170M Φ score on GPU 700W vs AKD1000 1W, target Pearson r >= 0.85",
+
+  "clm_170m_arch": {
+    "d_model": 768,
+    "n_layer": 12,
+    "n_head": 8,
+    "gqa_n_kv_head": 4,
+    "vocab_size": 256,
+    "max_seq_len": 512,
+    "params_estimate": "170M",
+    "dtype": "bf16",
+    "config_blocker": "training/config/clm_170m.json missing (clm_170m_config_audit_20260419.md actionable 1)"
+  },
+
+  "akd1000_constraints": {
+    "cores": "80 NPU spike-event",
+    "neuron_capacity": "~1.2M",
+    "supported_layers": "Akida 1.0 only (CNN+DNN+RNN+vision-CNN limited)",
+    "transformer_attention_native": false,
+    "neuron_model": "non-leaky single-timestep",
+    "input_encoding": "spike train (rank-order coding ROC)",
+    "toolkit": "MetaTF (CNN2SNN + quantizeml)",
+    "training": "inference-only",
+    "power": "~1W typical (vendor)"
+  },
+
+  "substrate_mismatch_verdict": {
+    "full_transformer_native_deploy": "INFEASIBLE",
+    "reasons": [
+      "AKD1000 transformer attention native unsupported",
+      "dense bf16 vs spike-event ontology mismatch",
+      "1.2M neurons capacity << 170M params (~140x over-budget)"
+    ],
+    "chosen_path": "T-A surrogate (CLM hidden last-layer -> CNN quantized projection -> CNN2SNN -> AKD1000)",
+    "rejected_paths": ["T-C full transformer spike conversion (NOT_ATTEMPTED, hand-wave)"]
+  },
+
+  "phi_formulation": {
+    "selected": "anima_phi_v3_canonical (sample-partition cov-logdet, auto HID=N//2)",
+    "tool": "tool/anima_phi_v3_canonical.hexa",
+    "n_probes": 16,
+    "k_partitions": 8,
+    "hid_trunc_auto": 8,
+    "ridge": 1e-3,
+    "substrate_agnostic_basis": "representation-level invariant (spike rate-avg projects to dense X for both substrates)",
+    "spike_to_dense_lemma": "X_akida[i,d] = (1/T) * sum_t S[t,d], T=200ms vendor inference window"
+  },
+
+  "verdict_gate": {
+    "PASS": "Pearson r(phi_k_gpu, phi_k_akida) >= 0.85 AND |Phi*_gpu - Phi*_akida| / max(|Phi*_gpu|,|Phi*_akida|,1e-3) <= 0.30",
+    "WEAK": "0.50 <= r < 0.85 OR magnitude divergence > 0.30",
+    "FAIL": "r < 0.50 OR substrate sign flip",
+    "boundary_conditions": [
+      "K=8 partition variance < 0.5 * |Phi*|",
+      "shuffled-pair 1024-perm null floor; r_observed > 95%ile",
+      "3-seed reproducibility (3/3 PASS = confirmed, 2/3 = WEAK_PASS)"
+    ],
+    "surrogate_fidelity_sanity": "native bf16 vs CNN-surrogate-GPU r >= 0.95 AND magnitude divergence <= 0.10 (gate must PASS before substrate compare)"
+  },
+
+  "d0_protocol_steps": [
+    "1. lock 16-prompt fixture (anima_phi_v3 PROMPTS)",
+    "2. CLM 170M GPU forward -> X_gpu (alpha pod)",
+    "3. CLM -> CNN-surrogate quantize (Keras h5)",
+    "4. MetaTF CNN2SNN -> AKD1000 binary (.fbz)",
+    "5. AKD1000 inference 16 prompts x T=200ms x 40 reps -> spike tensor S_akida -> X_akida",
+    "6. Phi* compute on X_akida (re-use anima_phi_v3)",
+    "7. Pearson r(phi_k_gpu, phi_k_akida) over K=8",
+    "8. verdict gate apply"
+  ],
+
+  "new_hexa_tools_required": [
+    "tool/clm_170m_to_metatf_surrogate.hexa (D+0 critical, CLM hidden -> Keras CNN quantized projection)",
+    "tool/akida_clm_surrogate_infer.hexa (D+0 critical, AKD1000 inference + spike-rate avg)",
+    "tool/n3_phi_cross_substrate_corr.hexa (D+0 critical, Pearson r + verdict gate)"
+  ],
+
+  "cost_estimate_d0_usd": {
+    "gpu_alpha_pod_single_run": 1.60,
+    "gpu_3_seed_reproducibility": 4.80,
+    "akida_dev_kit_runtime": 0.0,
+    "mac_local_compute": 0.0,
+    "total_single_run": 1.60,
+    "total_full_3seed": 4.80,
+    "capex_excluded_already_paid": {
+      "akd1000_dev_kit": 1495.0
+    },
+    "estimate_basis": "H100 spot $2.40/hr (vast.ai avg), Pilot-T1 v3 launcher hardening assumed"
+  },
+
+  "d0_readiness_pct": 70,
+  "d0_readiness_breakdown": {
+    "spec_doc": "READY",
+    "fixture_16_prompts": "READY",
+    "phi_v3_tool": "READY",
+    "alpha_pod_gpu": "READY",
+    "clm_170m_ckpt": "BLOCKED (config json missing)",
+    "clm_to_metatf_surrogate_tool": "MISSING",
+    "akida_inference_tool": "MISSING",
+    "n3_corr_tool": "MISSING",
+    "akd1000_hardware": "PENDING_ARRIVAL",
+    "metatf_sdk_install": "PENDING_HW"
+  },
+
+  "honest_c3": {
+    "sound": [
+      "Phi formulation substrate-agnostic (representation-level)",
+      "surrogate fidelity sanity gate (r>=0.95) before cross-substrate compare",
+      "3-tier verdict + null-floor + 3-seed",
+      "spike->rate-avg projection lemma (T=200ms vendor window)",
+      "cost estimate lower-bound with explicit basis"
+    ],
+    "hand_wave": [
+      "Only last-layer projection cross-substrate (not full transformer); 'partial Putnam' explicitly labeled",
+      "T-A surrogate fidelity r>=0.95 assumed (not measured pre-arrival)",
+      "spike rate-avg loses spike-timing info (T=200ms simple mean)",
+      "MetaTF CNN2SNN quantize loss unmeasured pre-arrival",
+      "K=8 partition statistical power moderate (~70 effective samples)",
+      "AKD1000 ~1W is vendor typical, not anima workload measured"
+    ],
+    "explicitly_not_in_scope": [
+      "T1-A26 FinalSpark organoid (separate N-11)",
+      "T1-A14 Penrose-Hameroff QPU (separate N-12/N-20)",
+      "IIT 4.0 strict phi_max over MIPs (NP-hard, surrogate via anima_phi_v3)",
+      "Substrate-internal computation equivalence (only representation similarity)"
+    ]
+  },
+
+  "race_isolation": {
+    "doc_path": "docs/n_substrate_n3_clm_akida_phi_spec_2026_05_01.md",
+    "state_path": "state/n_substrate_n3_prep_2026_05_01/",
+    "siblings_must_not_touch": [
+      "docs/n_substrate_n*_*_2026_05_01.md (other N-prep agents)",
+      "state/n_substrate_n*_*_2026_05_01/ (other N-prep state dirs)",
+      "tool/anima_phi_v3_canonical.hexa (READ-ONLY)",
+      "training/config/clm_170m.json (separate config audit actionable)"
+    ]
+  },
+
+  "blockers_summary": [
+    "AKD1000 dev kit not yet arrived (ordered 2026-04-29)",
+    "training/config/clm_170m.json missing (must create from clm_1b_config.json template)",
+    "3 new HEXA tools required (D+0 critical-path emit)",
+    "MetaTF SDK install on RPi5 pending hardware arrival",
+    "Surrogate fidelity (T-A) unmeasured -- gate at sec 4.3 may fail and abort N-3"
+  ],
+
+  "verdict": "SPEC_FROZEN",
+  "verdict_key": "SPEC_READY · D0_PROTOCOL_FROZEN · HARDWARE_PENDING_AKIDA_ARRIVAL"
+}

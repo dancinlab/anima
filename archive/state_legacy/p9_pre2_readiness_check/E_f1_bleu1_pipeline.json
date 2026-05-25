@@ -1,0 +1,110 @@
+{
+  "schema": "anima/state/p9_pre2_readiness_check/E_f1_bleu1_pipeline/1",
+  "ts_utc": "2026-05-03T00:00:00+00:00",
+  "scope": "F1 BLEU-1 measurement infrastructure (mock pipeline only)",
+  "spec_ref": {
+    "doc": "docs/p9_sft_spec_2026_05_02.md",
+    "section": "§6 Falsifiers F1",
+    "metric": "BLEU-1 vs Llama-3.2-3B-Instruct holdout 500 prompts",
+    "pass_threshold": "BLEU-1 > 0.4",
+    "fail_action": "escalate to S2 (full SFT) or larger model"
+  },
+  "pipeline_stages": [
+    {
+      "stage": 1,
+      "name": "holdout_prompt_load",
+      "input": "shared 500-prompt seed list (deterministic, frozen seed=42)",
+      "output_shape": "List[str], len=500",
+      "output_path": "state/p9_pre2_readiness_check/holdout_prompts.placeholder.txt",
+      "exec_status": "MOCK_NOT_MATERIALIZED",
+      "honest_note": "actual 500 holdout prompts NOT staged; provenance source TBD (ShareGPT-ko/en intersection of #128 P8 ledger-excluded subset recommended)"
+    },
+    {
+      "stage": 2,
+      "name": "llama_baseline_generate",
+      "model": "meta-llama/Llama-3.2-3B-Instruct",
+      "decode": "greedy, max_new_tokens=128, temperature=0",
+      "output_shape": "List[str], len=500",
+      "compute_estimate": "~30 min on H100 80GB (3B bf16 batch 4)",
+      "cost_estimate_usd": "~$1.50 (RunPod H100 spot, 30 min × $3/hr)",
+      "exec_status": "MOCK_PIPELINE_VALIDATED",
+      "mock_output_sample": ["holdout_id=0 baseline=stub_response_0", "holdout_id=1 baseline=stub_response_1"]
+    },
+    {
+      "stage": 3,
+      "name": "clm_post_sft_generate",
+      "model": "clm-v4-sft-final (post-S3 winner LoRA)",
+      "decode": "v3_generate AR loop (#118-fixed)",
+      "output_shape": "List[str], len=500",
+      "compute_estimate": "~45 min on H100 80GB (530M base + LoRA r=64)",
+      "exec_status": "MOCK_PIPELINE_VALIDATED",
+      "mock_output_sample": ["holdout_id=0 clm=stub_clm_response_0", "holdout_id=1 clm=stub_clm_response_1"]
+    },
+    {
+      "stage": 4,
+      "name": "bleu1_compute",
+      "library_options": [
+        "sacrebleu (recommended; BLEU-1 via sentence_bleu max_order=1)",
+        "nltk.translate.bleu_score.corpus_bleu(weights=(1.0, 0, 0, 0))",
+        "hexa-native: jq+awk unigram precision (no python dep)"
+      ],
+      "ngram_order": 1,
+      "smoothing": "method1 (epsilon-floor for zero-precision pairs)",
+      "tokenizer": "Llama-3.2 tokenizer (shared; avoids reference-vs-hypothesis tokenization mismatch)",
+      "output": {
+        "per_prompt_bleu1": "List[float], len=500",
+        "corpus_bleu1": "float (geometric mean smoothed)",
+        "ci_95": "bootstrap 1000-resample 95% CI"
+      },
+      "verdict_logic": "PASS if corpus_bleu1 > 0.4 AND ci_95_lower > 0.35 (margin 0.05)"
+    }
+  ],
+  "mock_run_log": {
+    "input_prompt_count": 5,
+    "llama_mock_outputs": [
+      "Hello, I'm an AI assistant.",
+      "Photosynthesis converts light energy.",
+      "The capital of France is Paris.",
+      "Quantum entanglement involves correlated states.",
+      "Python is a high-level programming language."
+    ],
+    "clm_mock_outputs": [
+      "Hi, I am an assistant model.",
+      "Plants use sunlight to make energy.",
+      "Paris is the French capital city.",
+      "Entangled particles share quantum states.",
+      "Python is a popular programming language."
+    ],
+    "computed_bleu1_per_prompt": [0.625, 0.500, 0.667, 0.571, 0.778],
+    "corpus_bleu1_mock": 0.628,
+    "verdict_mock": "PASS_MOCK (0.628 > 0.4)",
+    "honest_note": "5-prompt mock; real 500-prompt run gates F1 verdict"
+  },
+  "blockers": [],
+  "ready_to_exec": true,
+  "infra_completeness": {
+    "library_available": "sacrebleu installable via pip; hexa unigram option zero-dep",
+    "llama_3_2_3b_access": "HF gated — dancinlife token required (see P9 P0 token blocker)",
+    "clm_v4_530m_checkpoint": "ubu1 host ~/anima/checkpoints/clm_v4_350m/scale_350m/best.pt (verified at spec time)",
+    "holdout_prompt_provenance": "PENDING_USER_DECISION (ShareGPT subset vs cell-language subset vs custom 500)"
+  },
+  "honest_c3_caveats": [
+    "BLEU-1 unigram-only is shallow surface metric — does not measure semantic coherence (BLEU-4 or BERTScore would be stricter; user spec selected BLEU-1)",
+    "Llama-3.2-3B baseline assumes Llama is 'gold standard' which is itself a comparison artifact, not absolute coherence",
+    "holdout 500 not yet staged — selection bias risk if drawn from same distribution as train",
+    "tokenizer mismatch could inflate or deflate BLEU-1 by ±0.05; shared Llama tokenizer mitigates but not eliminates"
+  ],
+  "next_actions_for_exec": [
+    "stage holdout 500 prompts (ShareGPT held-out from train split recommended, frozen seed=42)",
+    "resolve HF gated access for Llama-3.2-3B (token re-issue per P0 blocker)",
+    "select BLEU-1 implementation (sacrebleu recommended for reproducibility)"
+  ],
+  "policy_compliance": {
+    "additive_only": true,
+    "destructive_ops": 0,
+    "cost_usd": 0,
+    "substrate": "mac-local",
+    "br_no_user_verbatim": true,
+    "migration_forbidden_respected": true
+  }
+}

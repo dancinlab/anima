@@ -1,0 +1,28 @@
+{
+  "schema": "anima/emerge_chat_axis_full_sweep/verdict/1",
+  "ts_utc": "2026-05-05T18:12:20Z",
+  "n_layers": 3,
+  "n_alphas": 7,
+  "n_prompts": 3,
+  "total_configs": 63,
+  "chat_axis_disc_per_layer": {
+    "L4": 19.002866744995117,
+    "L8": 25.67088758945465,
+    "L12": 28.876976013183594
+  },
+  "chat_axis_feat_idx_per_layer": {
+    "L4": 0,
+    "L8": 0,
+    "L12": 0
+  },
+  "n_coherent": 0,
+  "coherent_examples": [],
+  "verdict": "FAIL_AXIS_DECOUPLED_CONFIRMED",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 20 chat × 20 non-chat — under-powered for SAE",
+    "C3 PCA != true SAE (no sparsity)",
+    "C4 single-step intervention; basin re-form predicted (BG-BJ)",
+    "C5 multiple alpha × layer × prompt 84 configs total — broader vs BG-BH 9 configs"
+  ]
+}

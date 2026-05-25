@@ -1,0 +1,90 @@
+{
+  "schema": "anima/state/p9_path_a_retrain_v2_spec/sft_corpus_mix/1",
+  "cycle": "BG-Phi 2026-05-04",
+  "ts_utc": "2026-05-04T_BG_phi_design",
+  "total_examples": 50000,
+  "rationale": "Match v1 cardinality for budget parity; 60% anima dominant to preserve axis signal (F-PA-RETRAIN-v2-4); 30% academic distillation directly addresses verdict-surface benchmarks; 10% chat-template alignment preserves Instruct-base chat behavior",
+  "slices": {
+    "A_anima_axis": {
+      "pct": 60,
+      "examples": 30000,
+      "source": "deterministic sub-sample of v1 sft_data_full_50k_augmented.jsonl",
+      "source_path": "state/p9_p0_measure_2026_05_03/sft_data_full_50k_augmented.jsonl",
+      "sampling_method": "uniform random, seed=20260504",
+      "license": "license-mosaic per v1 (CC-BY-SA mix + internal + Meta Llama 3.2)",
+      "rationale": "preserve axis-conditioning signal at majority share; F-PA-RETRAIN-v2-4 verifies preservation"
+    },
+    "B_academic_distillation": {
+      "pct": 30,
+      "examples": 15000,
+      "sub_slices": {
+        "B1_mmlu_train": {
+          "examples": 5000,
+          "source": "MMLU auxiliary_train split (NOT dev/test)",
+          "rendering": "5-shot template matching test-time eval",
+          "license": "MIT",
+          "verifier_check": "dataset.disjoint(auxiliary_train_idx, test_idx) — mandatory pre-launch"
+        },
+        "B2_triviaqa_train": {
+          "examples": 5000,
+          "source": "TriviaQA train split (NOT validation/test)",
+          "rendering": "0-shot question-answer EM pairs",
+          "license": "Apache 2.0",
+          "verifier_check": "dataset.disjoint(train_idx, test_idx) — mandatory pre-launch"
+        },
+        "B3_wikipedia_subset": {
+          "examples": 5000,
+          "source": "Wikipedia paragraph-summary pairs (subset TBD at EXEC; candidate Wikitext-103 or wiki40b)",
+          "rendering": "paragraph -> summary or paragraph -> next-sentence",
+          "license": "CC-BY-SA",
+          "honest_c3_open_choice": "exact subset deferred to EXEC; doc choice in retrain orchestrator hexa header"
+        }
+      },
+      "rationale": "rehearsal against verdict-surface benchmark distributions (MMLU+TriviaQA train splits) plus general factual recall (Wikipedia)"
+    },
+    "C_chat_template_alignment": {
+      "pct": 10,
+      "examples": 5000,
+      "sub_slices": {
+        "C1_openorca": {
+          "examples": 2500,
+          "source": "OpenOrca subset",
+          "license": "Apache 2.0 (subset)",
+          "rationale": "strong instruction-following baseline; preserves Instruct-base chat behavior"
+        },
+        "C2_sharegpt_style": {
+          "examples": 2500,
+          "source": "ShareGPT-style chat dialogue, deduplicated",
+          "license": "license-mosaic (filter out non-redistributable)",
+          "rationale": "natural chat distribution; per v1 sft_data_format.json sources"
+        }
+      },
+      "rationale": "Instruct-base chat-template alignment lost in v1 due to aggressive single-task SFT; this slice restores it"
+    }
+  },
+  "preprocessing_pipeline": [
+    "1. Load v1 corpus + sub-sample slice A (seed=20260504)",
+    "2. Load + render slice B (MMLU 5-shot template, TriviaQA QA template, Wikipedia para-summary)",
+    "3. Load + filter slice C (OpenOrca subset + ShareGPT dedup)",
+    "4. Verifier check: assert disjoint(B1.train_idx, MMLU_test_idx) AND disjoint(B2.train_idx, TriviaQA_test_idx)",
+    "5. Apply Llama-3.2-3B-Instruct chat template uniformly across all slices (consistent token rendering)",
+    "6. Tokenize with Llama tokenizer; max_seq_len=2048; truncate-or-pack",
+    "7. Shuffle global with seed=20260504",
+    "8. Emit JSONL shards 1k examples each to state/p9_path_a_retrain_v2_<exec_cycle>/corpus/"
+  ],
+  "verifier_checks_mandatory_pre_launch": [
+    "MMLU: assert auxiliary_train and test indices disjoint",
+    "TriviaQA: assert train and test indices disjoint",
+    "Wikipedia subset: license CC-BY-SA verified in dataset card",
+    "Total examples == 50000 +/- 1% (rounding tolerance)",
+    "All slices use Llama-3.2-3B-Instruct chat template (uniform rendering)",
+    "Tokenization yields no records with > max_seq_len=2048 BEFORE truncation (count truncation events)"
+  ],
+  "honest_c3_corpus": [
+    "60/30/10 ratio is heuristic; sensitivity analysis (50/40/10, 70/20/10) deferred to v3",
+    "MMLU train sub-sample at seed=20260504 may not stratify across 57 subjects to match test composition",
+    "TriviaQA train sub-sample skews toward Wikipedia-derived QA, mild redundancy with B3 Wikipedia slice",
+    "OpenOrca + ShareGPT exact subsets deferred to EXEC; license stack must be verified dataset-card-by-dataset-card",
+    "Slice A sub-sample at seed=20260504 may differ from v1 trained-on subset; the 30k anima examples in v2 are a different deterministic subset of v1's 50k — this is intentional for variance, but means v2 anima coverage is not a strict superset of v1"
+  ]
+}

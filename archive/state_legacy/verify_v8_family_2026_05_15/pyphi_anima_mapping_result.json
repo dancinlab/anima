@@ -1,0 +1,73 @@
+{
+  "timestamp": "2026-05-15 01:16:32 UTC",
+  "pyphi_available": true,
+  "ckpts": [
+    {
+      "label": "cond.5 v1",
+      "path": "state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_cotrain.pt",
+      "n_3": {
+        "phi": 0.0,
+        "state": [
+          1,
+          0,
+          0
+        ],
+        "status": "OK"
+      },
+      "canonical_iit3_phi": 2.3125,
+      "n_4": {
+        "phi": 0.0,
+        "state": [
+          1,
+          1,
+          0,
+          0
+        ],
+        "status": "OK"
+      }
+    },
+    {
+      "label": "cond.5 v2",
+      "path": "state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_v2_cotrain.pt",
+      "n_3": {
+        "phi": 0.0,
+        "state": [
+          1,
+          0,
+          0
+        ],
+        "status": "OK"
+      },
+      "n_4": {
+        "phi": 0.0,
+        "state": [
+          1,
+          1,
+          0,
+          0
+        ],
+        "status": "OK"
+      }
+    }
+  ],
+  "final_verdicts": [
+    [
+      "cond.5 v1",
+      0.0,
+      "INSUFFICIENT"
+    ],
+    [
+      "cond.5 v2",
+      0.0,
+      "INSUFFICIENT"
+    ]
+  ],
+  "anima_phi_star_anchor": {
+    "range": [
+      4.16,
+      4.86
+    ],
+    "source": "state/verify_a_stage1_2026_05_15/stage2_ckpt_phi_real.json",
+    "note": "anima \u03a6\u2605 proxy (H_162 IIT 4.0 lower bound) \u226b PyPhi formal IIT 3.0 (small-N constraint)"
+  }
+}

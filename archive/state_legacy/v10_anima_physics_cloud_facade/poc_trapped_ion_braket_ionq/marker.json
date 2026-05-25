@@ -1,0 +1,50 @@
+{
+  "schema": "anima_physics/cloud_facade_trapped_ion/1_braket_ionq_forte",
+  "cycle": "anima_physics_cloud_facade_poc_trapped_ion_braket_ionq",
+  "verdict": "PREP_DRY_RUN_PASS",
+  "substrate": "trapped_ion",
+  "provider": "aws_braket_ionq_forte_1",
+  "device_arn": "arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1",
+  "backend_name": "aws_braket_ionq_DEGRADED_SDK_BUILD",
+  "actual_backend": "",
+  "credentials_present": true,
+  "dry_run_mode": true,
+  "degraded": false,
+  "n_qubits": 4,
+  "seed": 42,
+  "shots": 0,
+  "api_call_count": 0,
+  "gates": {
+    "G1": true,
+    "G2": false,
+    "G3": false,
+    "G4": false
+  },
+  "ghz_entropy_nat": 0.0,
+  "unentangled_entropy_nat": 0.0,
+  "g1_min_ghz": 0.5,
+  "program_sha256": "77bf6c7be4621705bcd97512ee6de14b85fc1bf69ff79789a347309631afb95f",
+  "task_arn_ghz": "",
+  "task_arn_unentangled": "",
+  "raw_probe_stdout_ghz": "{\"actual_backend\":\"\",\"api_call_count\":0,\"backend_name\":\"aws_braket_ionq_DEGRADED_SDK_BUILD\",\"credentials_present\":true,\"degraded\":true,\"device_arn\":\"arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1\",\"dry_run\":true,\"entropy_pattern_nat\":0.0,\"error\":\"circuit build failed: ModuleNotFoundError: No module named 'opt_einsum'\",\"n_qubits\":4,\"program\":\"ghz\",\"seed\":42,\"sha256_program\":\"77bf6c7be4621705bcd97512ee6de14b85fc1bf69ff79789a347309631afb95f\",\"shots\":0,\"task_arn\":\"\"}",
+  "raw_probe_stdout_unentangled": "",
+  "error": "circuit build failed: ModuleNotFoundError: No module named 'opt_einsum'",
+  "files": [
+    "anima-physics/scripts/anima_physics_braket_ionq_probe.py",
+    "anima-physics/trapped_ion/cloud_facade_poc.hexa",
+    "state/v10_anima_physics_cloud_facade/poc_trapped_ion_braket_ionq/marker.json"
+  ],
+  "limits_raw_10_honest": [
+    "AWS Braket IonQ Forte 1 bills per shot + per task; DRY_RUN=1 default ensures zero-cost prep",
+    "DRY_RUN PASS verifies SDK + circuit build + auth path only — NOT real ion-gate dynamics",
+    "4-qubit GHZ POC = substrate sanity check; trapped-ion gate noise 진짜 hardware 만 reproduce",
+    "Forte 1 up to 36 qubits; this probe uses 4 — far below capability ceiling",
+    "G3 byte-identical NOT_APPLICABLE on real HW (gate decoherence + sampling noise)",
+    "physics.hexa trapped_ion dispatch site NOT modified (sibling cycle)",
+    "Forte 1 may have queue depth at LIVE submit time; device offline → DEGRADED honest",
+    "raw#9 strict respected via exec(awk/sha/python3); helper script raw#37 transient"
+  ],
+ "next_phase": "anima/.own authorizes concurrent LIVE on QuEra+IonQ; ANIMA_BRAKET_DRY_RUN=0 → LIVE 4-gate evaluation",
+  "cost_usd": 0.0,
+  "timestamp": "2026-05-21T08:22:55Z"
+}

@@ -1,0 +1,38 @@
+{
+  "ts": "2026-05-01",
+  "agent": "N-19 PCI TMS-free EXEC",
+  "target_doc": "docs/n_substrate_n19_pci_spec_2026_05_01.md",
+  "proposed_section": "§4.4 NEW (TMS-free path)",
+  "rationale": "N-21 #5 Sarasso TEP review (docs/n_21_test5_sarasso_tep_review_2026_05_01.md §3 + §4 #3) and the present N-19 TMS-free EXEC cycle both surface the eLife 98920 (2025) + Comm Biol s42003-024-06613-8 (2024) finding that spontaneous-EEG complexity metrics achieve 100% wake-vs-propofol separation WITHOUT TMS. This collapses the $1.6-21K capex line in §5 to ~$0 for healthy-subject N=1 longitudinal use, while keeping clinical-tier TMS-PCI as the gold-standard reserved for §3 cohort path.",
+  "proposed_section_text": "### §4.4 TMS-free spontaneous PCI surrogate path (NEW 2026-05-01)\\n\\n**Background**: eLife 98920 (2025, Garcia-Saez et al.) demonstrated that resting-state EEG complexity metrics — fluidity (variance of dynamic functional connectivity), Lempel-Ziv complexity, functional repertoire size, and Global Activation Potential — achieve 100% wake-vs-propofol separation in healthy subjects WITHOUT TMS perturbation. Communications Biology 2024 (Toker et al., s42003-024-06613-8) independently showed that a 16-feature spontaneous-EEG ridge-regression model (LZC, edge-of-chaos LLE, DCC, branching ratio, Fano factor, ...) predicts gold-standard TMS-PCI with mean absolute error 0.065 and threshold 0.35 perfect separation.\\n\\n**N-19 surrogate definition (provisional)**:\\n```\\nPCI_surrogate_n19 = 0.50 * LZ_norm + 0.30 * PE_mean + 0.20 * Hjorth_Complexity_norm\\n```\\nwhere all three components are pre-existing real-mode HEXA tools (clm_eeg_lz76_real, clm_eeg_pe_real, clm_eeg_hjorth_real) operating on 16ch OpenBCI Cyton+Daisy 125 Hz scalp EEG. Cutoffs unchanged from §4.3: 16ch adapted = 0.25 (provisional, calibration cohort needed), static clinical reference = 0.31.\\n\\n**Apr 28 D-day pilot result (this cycle, n=1 user, 6 wake-resting epochs)**:\\n- All 6 epochs PASS the 0.25 cutoff and the 0.31 reference.\\n- 5/6 epochs land inside the eLife 2025 canonical wake band [0.65, 0.85]; the one below-band epoch is unfiltered raw with 50Hz line-noise dominance.\\n- Mean PCI_surrogate (filtered + ICA): 0.685.\\n- This is NOT a clinical PCI verdict — only N=1 user, wake-only, no propofol/sleep contrast.\\n\\n**Hardware capex impact**: drops from $1.6-21K (TMS lab share or Magstim 200² used) to **~$0** for healthy N=1 longitudinal use, since the OpenBCI Cyton+Daisy is already owned. TMS path remains the gold standard for §3 cohort + DOC clinical applications.\\n\\n**Limitations (additive to §6 and §8)**:\\n- Surrogate ≠ gold-standard PCI; the wake-vs-anesthesia 100% separation reported in eLife 2025 was on n=15 subjects with 60ch EEG, not 16ch.\\n- Within-subject negative contrast (sleep, anesthesia) is required to falsify the surrogate's monotonicity claim.\\n- Functional repertoire and dFC-fluidity components were NOT computed this cycle (require Hilbert-phase + avalanche pipelines not yet in HEXA toolchain).\\n- Cross-validation against actual TMS-PCI in same subject not feasible without TMS hardware (circular dependency).",
+  "proposed_section_8_disclosure_addendum": [
+    "13. eLife 2025 spontaneous-PCI surrogate validated in healthy + propofol only; not yet in DOC patients (mirrors N-21 #5 §6 disclosure).",
+    "14. N-19 surrogate v1 weights (0.50/0.30/0.20) are operational pre-commitments derived from the relative effect-size ranking of LZ vs LLE vs spectral-spread features in Comm Biol 2024 Table 2 / Fig 3; NOT fitted on user data.",
+    "15. PCI_surrogate maps onto TMS-PCI scale by scale-matching against Casarotto 2016 cutoff 0.31; this scale-matching has been validated in eLife 2025 for the LZ component and in Comm Biol 2024 for the full ridge regression, but NOT for the present 3-component reduced model on 16ch.",
+    "16. The Apr 28 D-day session is single-subject (raw#10 user-only N=1) under wake-resting; no propofol or sleep negative control is available, so surrogate validity cannot be established intra-subject this cycle."
+  ],
+  "proposed_cp2_clm_weight_contribution": {
+    "rationale": "Per #72 §27 if N-19 surrogate PASS, CP2-CLM weight contribution can be added.",
+    "n19_axis_now_eligible": true,
+    "proposed_w6_initial": 0.10,
+    "proposed_w6_after_n10_calibration": 0.15,
+    "linkage_to_existing_n19_spec_§7": "extend §7.1 axis definition: PCI_surrogate replaces (or augments) PCI_st when TMS unavailable; PCI_surrogate threshold uses same 0.25 cutoff per §4.3.",
+    "stage_proposal": [
+      "Stage 1 (this cycle, 2026-05-01): Apr 28 wake epochs surrogate PASS demonstrated, w6=0.10 OK to add to CP2-CLM",
+      "Stage 2 (next cycle): add fluidity-dFC + functional-repertoire computation; refit weights",
+      "Stage 3 (lab-share path 6mo): TMS-PCI ground-truth contrast in same subject; validate surrogate-vs-gold MAE"
+    ]
+  },
+  "proposed_state_files": {
+    "this_cycle": [
+      "state/n_19_pci_tmsfree_2026_05_01/eeg_data_inventory.json",
+      "state/n_19_pci_tmsfree_2026_05_01/pci_surrogate_compute.json",
+      "state/n_19_pci_tmsfree_2026_05_01/n_19_spec_update_proposals.json"
+    ],
+    "future_cycles": [
+      "state/n_19_pci_tmsfree_<NEXT_DATE>/fluidity_dfc.json (Stage 2)",
+      "state/n_19_pci_tmsfree_<NEXT_DATE>/functional_repertoire.json (Stage 2)",
+      "state/n_19_pci_tmsfree_<NEXT_DATE>/cross_validation_vs_tms.json (Stage 3, requires TMS lab share)"
+    ]
+  }
+}

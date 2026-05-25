@@ -1,0 +1,16 @@
+{
+  "ko_hangul_ratio_mean": 0.018262622511088417,
+  "ko_hangul_ratio_floor": 0.5,
+  "ko_hangul_pass": false,
+  "bigram_known_mean": 0.062353322527387,
+  "bigram_known_floor": 0.95,
+  "bigram_known_pass": false,
+  "semantic_score_mean": 0.0017039661671617665,
+  "semantic_score_floor": 0.5,
+  "semantic_score_pass": false,
+  "real_words_per_trial_mean": 0.7222222222222222,
+  "real_words_floor": 3.0,
+  "real_words_pass": false,
+  "n_responses": 90,
+  "honest_note": "semantic_score is char-trigram cosine to domain anchor (proxy, not sentence-transformer embedding). bigram_known is proxy on small KNOWN_BIGRAMS set (~12 sentences worth of bigrams) — floor 0.95 is calibrated for this proxy. real_words counts whitespace tokens with Hangul len≥2 excluding persona prefix."
+}

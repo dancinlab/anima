@@ -1,0 +1,70 @@
+[measure] start ts=2026-05-03T01:46:34
+[measure] input=/tmp/sft_data_full_50k.jsonl output=/tmp/sft_data_full_50k_augmented.jsonl
+[measure] device=cuda torch=2.11.0+cu130
+[measure] tokenizer vocab=64000
+[measure] decoder params=477,648,512 ckpt loaded
+[measure] loaded 50000 records
+[measure] tokenizing...
+[measure] tokenize done 10.1s
+[measure] 1088/50000 elapsed=5s rate=215rec/s eta=228s errors=0
+[measure] 2192/50000 elapsed=10s rate=217rec/s eta=221s errors=0
+[measure] 3296/50000 elapsed=15s rate=217rec/s eta=215s errors=0
+[measure] 4400/50000 elapsed=20s rate=217rec/s eta=210s errors=0
+[measure] 5504/50000 elapsed=25s rate=217rec/s eta=205s errors=0
+[measure] 6608/50000 elapsed=30s rate=217rec/s eta=200s errors=0
+[measure] 7696/50000 elapsed=35s rate=217rec/s eta=195s errors=0
+[measure] 8784/50000 elapsed=40s rate=217rec/s eta=190s errors=0
+[measure] 9872/50000 elapsed=45s rate=217rec/s eta=185s errors=0
+[measure] 10960/50000 elapsed=50s rate=217rec/s eta=180s errors=0
+[measure] 12048/50000 elapsed=55s rate=217rec/s eta=175s errors=0
+[measure] 13136/50000 elapsed=60s rate=217rec/s eta=170s errors=0
+[measure] 14224/50000 elapsed=65s rate=217rec/s eta=165s errors=0
+[measure] 15312/50000 elapsed=70s rate=217rec/s eta=160s errors=0
+[measure] 16400/50000 elapsed=75s rate=217rec/s eta=155s errors=0
+[measure] 17488/50000 elapsed=80s rate=217rec/s eta=150s errors=0
+[measure] 18576/50000 elapsed=86s rate=217rec/s eta=145s errors=0
+[measure] 19664/50000 elapsed=91s rate=217rec/s eta=140s errors=0
+[measure] 20752/50000 elapsed=96s rate=217rec/s eta=135s errors=0
+[measure] 21840/50000 elapsed=101s rate=217rec/s eta=130s errors=0
+[measure] 22928/50000 elapsed=106s rate=217rec/s eta=125s errors=0
+[measure] 24016/50000 elapsed=111s rate=217rec/s eta=120s errors=0
+[measure] 25104/50000 elapsed=116s rate=217rec/s eta=115s errors=0
+[measure] 26192/50000 elapsed=121s rate=217rec/s eta=110s errors=0
+[measure] 27280/50000 elapsed=126s rate=217rec/s eta=105s errors=0
+[measure] 28368/50000 elapsed=131s rate=217rec/s eta=100s errors=0
+[measure] 29456/50000 elapsed=136s rate=217rec/s eta=95s errors=0
+[measure] 30544/50000 elapsed=141s rate=217rec/s eta=90s errors=0
+[measure] 31632/50000 elapsed=146s rate=217rec/s eta=85s errors=0
+[measure] 32720/50000 elapsed=151s rate=217rec/s eta=80s errors=0
+[measure] 33808/50000 elapsed=156s rate=217rec/s eta=75s errors=0
+[measure] 34896/50000 elapsed=161s rate=217rec/s eta=70s errors=0
+[measure] 35984/50000 elapsed=166s rate=217rec/s eta=65s errors=0
+[measure] 37072/50000 elapsed=171s rate=217rec/s eta=60s errors=0
+[measure] 38160/50000 elapsed=176s rate=217rec/s eta=55s errors=0
+[measure] 39248/50000 elapsed=181s rate=217rec/s eta=50s errors=0
+[measure] 40336/50000 elapsed=186s rate=217rec/s eta=45s errors=0
+[measure] 41424/50000 elapsed=191s rate=217rec/s eta=40s errors=0
+[measure] 42512/50000 elapsed=196s rate=217rec/s eta=35s errors=0
+[measure] 43600/50000 elapsed=201s rate=217rec/s eta=30s errors=0
+[measure] 44688/50000 elapsed=206s rate=217rec/s eta=25s errors=0
+[measure] 45776/50000 elapsed=211s rate=217rec/s eta=19s errors=0
+[measure] 46864/50000 elapsed=216s rate=217rec/s eta=14s errors=0
+[measure] 47952/50000 elapsed=221s rate=217rec/s eta=9s errors=0
+[measure] 49040/50000 elapsed=226s rate=217rec/s eta=4s errors=0
+[measure] DONE elapsed=230.9s rate=217rec/s errors=0 fwd_mean=73.2ms/batch
+{
+  "phase": "p9_p0_measure_clm_v4_tension",
+  "input": "/tmp/sft_data_full_50k.jsonl",
+  "output": "/tmp/sft_data_full_50k_augmented.jsonl",
+  "n_records": 50000,
+  "n_errors": 0,
+  "elapsed_s": 230.93693494796753,
+  "rate_rec_s": 216.50932541936402,
+  "fwd_ms_mean_per_batch": 73.24253288269044,
+  "batch": 16,
+  "T": 64,
+  "device": "cuda",
+  "ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+  "n_params": 477648512,
+  "vocab_size": 64000
+}

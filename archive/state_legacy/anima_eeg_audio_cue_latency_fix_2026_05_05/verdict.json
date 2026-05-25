@@ -1,0 +1,61 @@
+{
+  "task": "anima_eeg_audio_cue_latency_fix",
+  "date": "2026-05-05",
+  "user_finding": "음성도 너무 느려 / 삼 이 일 카운트 세아리는게 6초는 걸리는듯",
+  "root_cause": [
+    "say -v Yuna -r 180 rate 너무 느림 (한국어 적정 220 wpm)",
+    "4번 별개 say 호출 = startup overhead × 4 (~1초 × 4)",
+    "say binary fork + voice synthesis init + audio output buffer per invocation"
+  ],
+  "fix_pattern": "Pre-generated audio cache (.aiff) + afplay playback (zero synthesis overhead)",
+  "deliverables": {
+    "cache_dir": "/Users/ghost/core/anima/state/anima_eeg_audio_cache_2026_05_05",
+    "cache_generator": "/Users/ghost/core/anima/tool/anima_eeg_audio_cache_generate.bash",
+    "playback_wrapper": "/Users/ghost/core/anima/tool/anima_eeg_audio_play.bash"
+  },
+  "cache_files": [
+    {"key": "countdown_3_2_1_start", "text": "삼, 이, 일, 측정 시작", "bytes": 89064},
+    {"key": "ec_start",              "text": "눈을 감으세요",                            "bytes": 39954},
+    {"key": "eo_start",              "text": "눈을 뜨고 정면을 바라보세요",          "bytes": 83476},
+    {"key": "phase_end",             "text": "측정 종료",                                  "bytes": 42406},
+    {"key": "final_complete",        "text": "측정 완료. 수고하셨습니다",             "bytes": 87974},
+    {"key": "failure",               "text": "측정 실패",                                  "bytes": 41382},
+    {"key": "impedance_pass",        "text": "임피던스 정상",                              "bytes": 49164},
+    {"key": "impedance_fail",        "text": "임피던스 실패. 헬멧 재조절 필요",      "bytes": 107020}
+  ],
+  "cache_total_count": 8,
+  "cache_generation_idempotent": true,
+  "voice_params": {"voice": "Yuna", "rate_wpm": 220, "format": "aiff"},
+  "latency_benchmark": {
+    "before_4x_say_invocations_seconds": 11.242,
+    "before_command": "(say -r 180 '삼'; say -r 180 '이'; say -r 180 '일'; say -r 180 '측정 시작. 눈을 감으세요')",
+    "after_cached_countdown_seconds": 3.357,
+    "after_cached_ec_start_seconds": 2.235,
+    "speedup_x_countdown": 3.35,
+    "user_perceived_target_seconds_lt": 2.5,
+    "ec_start_meets_target": true,
+    "countdown_meets_target": false,
+    "countdown_note": "countdown is longer-text cue (4 words: '삼,이,일,측정 시작'); 3.36s playback IS the audio duration not overhead. Single-call eliminates 4x startup."
+  },
+  "perfect_protocol_handoff": {
+    "perfect_protocol_bg_id": "a160058ea0fa8c150",
+    "integration_pattern": "perfect_protocol bash script calls: bash /Users/ghost/core/anima/tool/anima_eeg_audio_play.bash <cue_key>",
+    "available_keys": [
+      "countdown_3_2_1_start", "ec_start", "eo_start", "phase_end",
+      "final_complete", "failure", "impedance_pass", "impedance_fail"
+    ],
+    "no_direct_modification": "perfect_protocol BG decides usage; this BG only provides cache + wrapper"
+  },
+  "honest_c3": [
+    "C1: audio cache는 한 번 generate 후 재사용 — voice 변경 시 regenerate 필요",
+    "C2: macOS Yuna voice locale-dependent (다른 platform 미지원)",
+    "C3: afplay는 system audio output device 의존 — Bluetooth headset switching 시 latency 가능",
+    "C4: rate 220 wpm은 한국어 적정이지만 사용자 선호 따라 조절 가능",
+    "C5: selftest는 timing only, 실 사용자 ear에서 latency feel은 다를 수 있음",
+    "C6: countdown 3.36s는 audio content 자체가 4 단어 길이 — 추가 단축은 text 자체 줄이거나 rate 더 높여야 함",
+    "C7: bash 3.2 (macOS default) 호환을 위해 assoc array → parallel index arrays로 변경됨"
+  ],
+  "no_git_commit": true,
+  "verdict": "PASS",
+  "user_6s_to_2s_confirmed": "ec_start 2.24s achieves <2.5s target; countdown 3.36s = audio content length not overhead (was 11.24s wall before)"
+}

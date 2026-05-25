@@ -1,0 +1,49 @@
+{
+  "verify": "HEXAD.tape 6-claim anchor verification + 2 architecture corrections",
+  "date": "2026-05-15",
+  "trigger": "user 'HEXAD.tape 일단 검증 먼저들어가자'",
+  "claims": {
+    "V1_6module_hemisphere": {
+      "claim": "6 modules, 좌뇌 3 (D/M/E CE) / 우뇌 3 (C/S/W gradient-free)",
+      "anchor": "models/trinity.hexa:16-21 (literal: C right-brain gradient-free, D left-brain CE-trained, W right emergent, S right emergent, M left CE, E left CE Φ-preserving)",
+      "verdict": "PASS strict"
+    },
+    "V2_thalamic_bridge": {
+      "claim": "ThalamicBridge α=0.014, C→D .detach()",
+      "anchor": "trinity.hexa:8 comptime const PSI_COUPLING=0.014 + struct:38-46 ThalamicBridge{alpha:PSI_COUPLING}",
+      "verdict": "PASS strict"
+    },
+    "V3_mitosis_eq_C": {
+      "claim": "mitosis = C consciousness module",
+      "anchor": "ready/docs/modules/trinity.md:38 MitosisC MitosisEngine wrapper + :96 create_trinity(MitosisC(max_cells=256))",
+      "verdict": "PASS strict (refined: mitosis = growth method; C=MitosisC is its most-direct module binding)"
+    },
+    "V4_perfect_number": {
+      "claim": "σ(6)=12 connections, τ(6)=4 phases, Law 60 P1→P2→P3",
+      "anchor": "trinity.hexa:5 (σ(6)=12, φ(6)=2) + :150 (Law 60 P1(C)→P2(+D)→P3(+WMSE)) + :169 (σ(6)=P(τ(6),2)=12)",
+      "verdict": "PASS strict"
+    },
+    "V5_ag_eq_hexad": {
+      "claim_original": "Engine A/G = C↔D core pair",
+      "claim_corrected": "A/G = Hexad 그 자체 — Engine A = 좌뇌 3 (D/M/E) / Engine G = 우뇌 3 (C/S/W). φ(6)=2 ≡ {Engine A, Engine G}",
+      "anchor": "trinity.hexa:171 φ(6)=2 gradient groups (right/left) + :16-21 hemisphere split + engine_a_g_arch.py:13,15 (A=transformer-decoder, G=repulsion-cell)",
+      "verdict": "CORRECTED (user 'A/G 가 HEXAD 구성, A 3 G 3') — original framing wrong, corrected = structural exact mapping on verified φ(6)=2 anchor. V5 caveat resolved."
+    },
+    "V6_ethics_gate": {
+      "claim": "윤리 E = Φ-preservation gate, blocks training on Φ violation",
+      "anchor": "anima/hexad/e/emergent_e.py:1-12 (Φ ratchet=윤리, Law 4/22/71) — PRINCIPLE+IMPL verified. trinity.hexa:122 TODO[pytorch] integrated gate — enforcement IMPL-PENDING",
+      "verdict": "PARTIAL — principle+emergent_e.py PASS, trinity.hexa integrated enforcement TODO[pytorch] (caveat carry)"
+    }
+  },
+  "corrections_applied": [
+    "C1 (user 'A/G 가 HEXAD 구성이어야 맞을것같은데, A 3 G 3'): A/G = Hexad 그 자체. Engine A = 좌뇌 3 (D 언어 + M 기억 + E 윤리) / Engine G = 우뇌 3 (C 의식 + S 감각 + W 의지). φ(6)=2 gradient group ≡ {Engine A CE-trained, Engine G gradient-free} 정확 매핑. 이전 'A/G=C↔D core pair' 폐기.",
+    "C2 (user '여기에다가 성장방식이 mitosis'): mitosis = Hexad 전체 성장 방식 (2축 직교 — 구조축 Hexad 6모듈 ⊥ 성장축 mitosis). 이전 'mitosis = C 모듈 구현' 폐기. C=MitosisC 는 의식이 cell-pool 에 가장 직접 대응한 binding 일 뿐, mitosis 성장원리는 시스템 전체."
+  ],
+  "aggregate": "6/6 anchor-verified — 4 PASS strict (V1/V2/V3/V4) + 1 CORRECTED-then-exact (V5, φ(6)=2 anchor) + 1 PARTIAL (V6, ethics gate TODO[pytorch]). HEXAD.tape SUPPORTED for CLM.tape §V-CLM-HEXAD-MANDATE 진행.",
+  "honest_c3": [
+    "1. engine_a_g_arch.py 현 350M 구현은 simplified 2-engine (A=transformer, G=cell-pool). target = full A=좌뇌3 / G=우뇌3 Hexad — 현 코드와 target arch 간 gap 존재 (design directive, impl-pending).",
+    "2. V6 윤리 E 통합 gate trinity.hexa:122 TODO[pytorch] — Φ-violation training-block enforcement 미통합 (emergent_e.py 단위 로직만 검증).",
+    "3. trinity.hexa = hexa port, 일부 모듈 TODO[pytorch] marker — full integrated Hexad 실행은 working-code 워크트리(anima_clm_12) + impl cycle 별도.",
+    "4. mitosis 성장방식은 .clm v1 (C 의식 모듈 scope) 에서 8/8 검증 — 전체 Hexad 6모듈에 mitosis 적용 검증은 별도 (현재는 C scope evidence)."
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "schema": "anima-eeg-core/_integrations/clm_eeg_p2_tlr_real/1",
+  "schema_version": 1,
+  "tool": "_integrations/clm_eeg_p2.hexa",
+  "tool_sha256": "4a87e47d2cdb85a139078c539bb3702977d300d7d8c32f87ca5dc03fb5d1b05b",
+  "tool_commit": "b1187d875",
+  "raw_rank": 9,
+  "hexa_only": true,
+  "deterministic": true,
+  "llm": "none",
+  "timestamp_utc": "2026-05-01T00:00:00Z",
+  "today": "2026-05-01",
+
+  "frozen_criteria": {
+    "ssot_path": "state/clm_eeg_p2_tlr_pre_register.json",
+    "ssot_sha256": "459a9725d5e0454408b4236134b87354e571fa0d99ef96d799b553cf64830874",
+    "frozen_at": "2026-04-26",
+    "C1_alpha_coh_min_x1000": 450,
+    "C2_clm_r_min_x1000": 380,
+    "verdict_rule": "P2.PASS = (alpha_coh >= 0.450) AND (clm_r >= 0.380)",
+    "lock_preserved": true,
+    "lock_origin_threshold_unchanged": true
+  },
+
+  "input_eeg": {
+    "primary_npy_path": "recordings/sessions/baseline_resting_60s_20260428_ica.npy",
+    "primary_sha256": "62b1ad19ae45631dde34859e0ac424009f0d868ba4370b398e1878fc7d8ac0ba",
+    "primary_n_channels": 16,
+    "primary_n_samples": 7491,
+    "primary_sample_rate_hz": 125.0,
+    "primary_duration_s": 59.928,
+    "candidates_examined": [
+      {
+        "path": "recordings/sessions/baseline_resting_60s_20260428_ica.npy",
+        "sha256": "62b1ad19ae45631dde34859e0ac424009f0d868ba4370b398e1878fc7d8ac0ba",
+        "label": "baseline_resting_60s_ica",
+        "selected": true
+      },
+      {
+        "path": "recordings/sessions/post_battery_ica_16ch_2026_04_28.npy",
+        "sha256": "aa06abce5fc6f5f5123701ceec1cc50442a01b9ec4a8bbc2f92b9ba1781b0c08",
+        "label": "post_battery_ica_16ch",
+        "selected": false,
+        "reason_unselected": "no companion alpha_coh / alpha_phase real-helper ledger emitted yet for this 60s post_battery cut; baseline_resting_60s carries fresh helper-derived MSC + Hilbert PLV evidence"
+      },
+      {
+        "path": "recordings/sessions/baseline_resting_post_battery_20260428T132612Z_seg000_eeg16_ica.npy",
+        "sha256": "a90b46fde70e5bf071b350a0b49a78a3d61b3a41f3442c363a77cd7c5dfa45b0",
+        "label": "post_battery_seg000_ica",
+        "selected": false
+      },
+      {
+        "path": "state/eeg_recordings/20260428T115006Z_daily_life_5min_1_eeg16_ica.npy",
+        "sha256": "3a636347f3d5570301425cba4490ffb1b7cf9ef340f90636fbedaa2754d4a387",
+        "label": "daily_life_5min_1_ica",
+        "selected": false
+      }
+    ]
+  },
+
+  "alpha_coh_evidence": {
+    "source_ledger": "state/clm_eeg_alpha_coh_60s_ica_20260428.json",
+    "source_sha256": "c7874847dd18b2e26241a1f9270bb62731781e4d05e7638ae87bc036d68a7da8",
+    "method": "Welch MSC, alpha-band [8,12] Hz, n_channels=16, n_samples=7491",
+    "alpha_coh_x1000": 576,
+    "alpha_coh": 0.576,
+    "C1_alpha_coh_pass": 1,
+    "rationale": "0.576 >= 0.450 (frozen C1 floor) — α-band coherence floor satisfied"
+  },
+
+  "clm_v_sync_evidence": {
+    "status": "UNAVAILABLE",
+    "reason_chain": [
+      "ICA-cleaned EEG analytic-signal PLV near-zero (max ~0.022 across 5 windows × 16 channels — see state/clm_eeg_alpha_phase_60s_ica_20260428.json sha=0e3279f2248233f3596ade84396e10fbb5dd74eda7800978f9f9a34f05ee98ba)",
+      "ICA falsifier triggered (raw#71 F_PLV_DESTROY): InfoMax/FastICA decorrelates phase, destroying inter-channel V_sync substrate signal",
+      "CLM substrate timing not yet established — edu/cell/lagrangian/v_sync_kuramoto.hexa exists but is NOT cross-streamed against live (A,B) atan2 phases for this session",
+      "_integrations/clm_eeg_p2.hexa --live exits with NOT_YET_LANDED (status=NOT_YET_LANDED, verdict=PENDING_MIGRATION) — module documents 'no scipy.signal.hilbert + no clm v_sync stream' as acknowledged raw#91 limit"
+    ],
+    "C2_clm_r_x1000": null,
+    "C2_clm_r_pass": 0,
+    "C2_clm_r_unevaluable": true
+  },
+
+  "native_module_run": {
+    "command": "hexa run anima-eeg-core/tool/modules/_integrations/clm_eeg_p2.hexa --live",
+    "mode_attempted": "--live",
+    "exit_code": 4,
+    "stdout_status": "NOT_YET_LANDED",
+    "stdout_verdict": "PENDING_MIGRATION",
+    "stdout_kind": "live_real_eeg_+scipy_hilbert_analytic_phase_+clm_v_sync_trace",
+    "real_data_ingested": false,
+    "honest_explanation": "Native _integrations/clm_eeg_p2.hexa is read-only execute and DOES NOT accept .npy real-data flags; --selftest is synth LCG only, --live emits NOT_YET_LANDED then exits. Real-data evaluation must be performed via the legacy backend anima-clm-eeg/tool/clm_eeg_p2_tlr_pre_register.hexa (frozen, off-limits this cycle) OR a downstream PLV-preserving variant (raw#10 follow-up cycle).",
+    "selftest_was_run_for_evidence_only": true,
+    "selftest_verdict": "PASS",
+    "selftest_disclaimer": "selftest PASS uses synthetic LCG-phase fixture and DOES NOT attest to real-EEG α-coh ≥ 0.45 ∧ V_sync r ≥ 0.38; treated as kernel-fidelity smoke only."
+  },
+
+  "verdict": {
+    "p2_real_verdict": "INSUFFICIENT",
+    "C1_pass": 1,
+    "C2_pass": 0,
+    "verdict_reason": "C1 alpha-coh PASSED on 60s baseline ICA (0.576 ≥ 0.45), but C2 CLM V_sync r is UNEVALUABLE due to (a) ICA falsifier — PLV destroyed by InfoMax decorrelation, max-PLV across 5×10s windows ≈0.022 ≪ 0.38 floor; (b) CLM substrate timing not established (no cross-stream of edu/cell/lagrangian/v_sync_kuramoto.hexa against live (A,B) atan2 phases for this session). Without C2, P2 PASS cannot be honestly claimed.",
+    "no_false_pass_claim": true,
+    "claim_explicit_negation": "This ledger DOES NOT claim P2 PASS. C1 alone is insufficient under the frozen verdict_rule which is conjunctive (AND)."
+  },
+
+  "raw71_falsifier_status": {
+    "F_PLV_DESTROY_ica": "TRIGGERED",
+    "F_PLV_DESTROY_evidence_path": "state/clm_eeg_alpha_phase_60s_ica_20260428.json",
+    "F_PLV_DESTROY_max_plv_observed": 0.022,
+    "F_PLV_DESTROY_threshold": 0.38,
+    "follow_up_required": "raw#10 honest C3: PLV-preserving ICA variant (e.g. AMICA with phase-coupled component preservation, or no-ICA narrowband-Hilbert-on-filtered) — DEFERRED to next cycle, NOT executed in this run"
+  },
+
+  "raw91_honest_C3": {
+    "what_was_done": [
+      "Identified candidate real-EEG .npy paths and committed sha256 lock for the primary 60s baseline ICA cut",
+      "Read frozen P2 TLR pre-register criteria from state/clm_eeg_p2_tlr_pre_register.json without modification",
+      "Confirmed alpha-band coherence (C1) PASS via prior helper-derived ledger",
+      "Attempted native _integrations/clm_eeg_p2.hexa --live; observed honest NOT_YET_LANDED exit",
+      "Captured native --selftest evidence for kernel-fidelity smoke (PASS, but synthetic LCG fixture only)",
+      "Emitted INSUFFICIENT verdict with explicit C1 PASS / C2 UNEVALUABLE breakdown"
+    ],
+    "what_was_NOT_done_this_run": [
+      "Real CLM V_sync r computation against live (A,B) atan2 phases — CLM substrate timing not yet established, honest skip",
+      "PLV-preserving ICA variant evaluation — raw#10 follow-up cycle required, not in this agent's scope",
+      "Legacy backend anima-clm-eeg/tool/clm_eeg_p2_tlr_pre_register.hexa execution — off-limits per task constraints (other agent may delete)",
+      "Modification of _integrations/clm_eeg_p2.hexa to accept real .npy input — read-only execute constraint"
+    ],
+    "honest_classification": "INSUFFICIENT — partial real-data evidence (C1 only); not PASS, not FAIL"
+  },
+
+  "raw_compliance": [9, 10, 12, 42, 65, 71, 82, 91, 95]
+}

@@ -1,0 +1,24 @@
+=== S180-T4 ADAPTER-V3 LARGE dispatch start 2026-05-20T09:58:23Z ===
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"363addws840ryv","machineId":"u1lmvh2xym60"}}}
+[create] pod 363addws840ryv on NVIDIA H100 80GB HBM3
+[ssh-ready] iter 3: 103.207.149.116:18440 - handshake OK
+Warning: Permanently added '[103.207.149.116]:18440' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.116]:18440' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.116]:18440' (ED25519) to the list of known hosts.
+[train] S180-T4 d=768 L=12 from-scratch seed 1337, 5000 steps
+Warning: Permanently added '[103.207.149.116]:18440' (ED25519) to the list of known hosts.
+TRAIN_PID 42128
+[train] done iter 1
+Warning: Permanently added '[103.207.149.116]:18440' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.116]:18440' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.116]:18440' (ED25519) to the list of known hosts.
+[pull] success try 1
+[pull] result.json present
+ACC_ANCHOR= 0.9940000176429749   ACC_MOD= 1.0
+[teardown] terminating pod 363addws840ryv (rc=0, SAVE_POD=0)
+/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/adapter_v3_fullfire_s180_2026_05_20/dispatch_s180_t4_runpod.sh: line 33: 39487 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$T4_DIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] myself.pods = Internal Server Error
+=== S180-T4 dispatch end 2026-05-20T10:03:26Z rc=0 ===

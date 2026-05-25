@@ -1,0 +1,44 @@
+{
+  "ts": "2026-05-01",
+  "project_dir": "/tmp/n15_mvf23_lean4",
+  "first_build": {
+    "command": "lake build",
+    "exit_code": 1,
+    "failure_reason": "auto-generated Main.lean stub referenced undefined identifier `hello`",
+    "n15_proofs_status": "BOTH_PASSED_AXIOM_FREE_BEFORE_FAILURE",
+    "raw_log": [
+      "info: n15_mvf23: no previous manifest, creating one from scratch",
+      "info: toolchain not updated; already up-to-date",
+      "[2/6] Built N15Mvf23 (2.5s)",
+      "info: N15Mvf23.lean:20:0: 'N15.mvf2_symmetry' does not depend on any axioms",
+      "info: N15Mvf23.lean:21:0: 'N15.mvf3_transitivity' does not depend on any axioms",
+      "[3/6] Building Main (476ms)",
+      "error: Main.lean:4:24: Unknown identifier `hello`",
+      "error: Lean exited with code 1",
+      "[5/6] Built N15Mvf23:c.o (2.8s)",
+      "Some required targets logged failures:",
+      "- Main",
+      "error: build failed"
+    ]
+  },
+  "fix": "Replaced lake-init Main.lean stub `s!\"Hello, {hello}!\"` with `IO.println \"N15 MVF2 + MVF3 build OK\"` (cosmetic only; no impact on proofs).",
+  "final_build": {
+    "command": "lake build",
+    "exit_code": 0,
+    "result": "PASS",
+    "raw_log": [
+      "[2/6] Replayed N15Mvf23",
+      "info: N15Mvf23.lean:20:0: 'N15.mvf2_symmetry' does not depend on any axioms",
+      "info: N15Mvf23.lean:21:0: 'N15.mvf3_transitivity' does not depend on any axioms",
+      "[4/6] Built Main (1.7s)",
+      "[5/6] Built Main:c.o (301ms)",
+      "[6/6] Built n15_mvf23:exe (507ms)",
+      "Build completed successfully (6 jobs)."
+    ]
+  },
+  "key_evidence": [
+    "Lean's #print axioms diagnostic prints `'<name>' does not depend on any axioms` for both theorems — the strongest possible axiom-free signal.",
+    "No `sorry` in N15Mvf23.lean (grep -c sorry == 0).",
+    "Build completed across 6 lake jobs cleanly after Main stub fix."
+  ]
+}

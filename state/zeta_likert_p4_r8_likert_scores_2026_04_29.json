@@ -1,0 +1,44 @@
+{
+  "schema": "anima/zeta_likert_p4_r8_likert_scores/1",
+  "ts": "2026-04-29T00:00:00Z",
+  "roadmap_entry": 78,
+  "adapter": "state/trained_adapters/p4_r8/final/",
+  "base_model_spec": "mistralai/Mistral-7B-v0.3",
+  "lora_r": 96,
+  "prompt_count": 20,
+  "prompt_set": "bench/zeta_likert/v1_frozen.json",
+  "rubric_weights": {"length_fit":0.20,"tone_match":0.25,"lexical_div":0.20,"ko_coverage":0.20,"eos_wellform":0.15},
+  "anima_mean_likert": 4.08369,
+  "zeta_mean_likert": 3.66547,
+  "delta_likert": 0.418217,
+  "anima_win_count": 20,
+  "anima_win_rate": 1,
+  "anima_dim_mean": {
+    "length_fit": 0.678051,
+    "tone_match": 0.436,
+    "lexical_div": 1,
+    "ko_coverage": 0.881556,
+    "eos_wellform": 1
+  },
+  "zeta_dim_mean": {
+    "length_fit": 0.440927,
+    "tone_match": 0.284,
+    "lexical_div": 1,
+    "ko_coverage": 0.935909,
+    "eos_wellform": 0.8
+  },
+  "per_category": {"daily":{"n":4,"anima_mean":4.13094,"zeta_mean":3.62514,"delta":0.505802},"emotion":{"n":4,"anima_mean":4.19422,"zeta_mean":3.68833,"delta":0.505887},"task":{"n":4,"anima_mean":4.06088,"zeta_mean":3.86067,"delta":0.200211},"roleplay":{"n":4,"anima_mean":4.01421,"zeta_mean":3.58424,"delta":0.429971},"meta":{"n":4,"anima_mean":4.01818,"zeta_mean":3.56897,"delta":0.449212}},
+  "latency_p50_ms": null,
+  "latency_p95_ms": null,
+  "latency_p99_ms": null,
+  "latency_note": "latency=0 since stub responses (no LLM forward pass); real measurement deferred to GPU dispatch",
+  "honest_c3_axes": [
+    "axis1_model_substitution: stub_anima_response/stub_zeta_response USED in place of real Mistral-7B-v0.3+p4_r8 LoRA forward pass",
+    "axis2_inference_environment: hexa interpreter on Mac (no transformers/peft/torch installed; no GPU dispatch)",
+    "axis3_judge_type: deterministic 5-feature rubric (length_fit/tone_match/lexical_div/ko_coverage/eos_wellform) — NO external LLM judge used",
+    "axis4_dtype_temp: N/A — no model forward pass; deterministic stub strings (temp=0 trivially)",
+    "axis5_session_30turn: NOT measured (single-turn responses only); .roadmap exit_criteria 30-turn session unfulfilled this cycle",
+    "axis6_zeta_baseline_provenance: hardcoded stub_zeta_response per bench/zeta_likert.hexa lines 501-516 (NOT live Scatter Lab Spotwrite-1 API call)",
+    "axis7_v1_frozen_sha: state/zeta_likert_v1_sha256.json sha256 verified at write time (raw#15 drift detection)"
+  ]
+}

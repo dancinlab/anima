@@ -1,0 +1,99 @@
+=== BG-V14-MULTI-SUBSTRATE-AUDIT — B_bgla_pretrain ===
+ts: 2026-05-10T08:35:27.017251+00:00
+substrate: {'ckpt': '/Users/ghost/.cache/anima/clm_v5_remapped/bg_la_350m_pretrain/ckpts/step_12000_final.pt', 'schema': 'engine_ag', 'arch': 'EngineAG d=1024 GQA 24L', 'paradigm': 'naive_pretrain', 'expected_v14': 'PASS'}
+V4_SEEDS=[42, 137, 271, 314, 1729] max_cells=128 n_turns=500 snap_every=50
+
+========================================================================
+SUBSTRATE B_bgla_pretrain — EngineAG path
+========================================================================
+ckpt: /Users/ghost/.cache/anima/clm_v5_remapped/bg_la_350m_pretrain/ckpts/step_12000_final.pt
+sha256: 4fc6eccce0def0450163944abbe3f0f2944ff3d908421469d4da1d25da5fb886
+trained: params=298.76M miss=0 unexp=0
+
+--- TRAINED @ prompt_seed=42 max_cells=128 ---
+  [B_bgla_pretrain_trained] turn=    0 cells= 16 iit_un16= 161.09 splits=0 elapsed=0.4s
+  [B_bgla_pretrain_trained] turn=   50 cells= 42 iit_un16=1128.67 splits=26 elapsed=18.6s
+  [B_bgla_pretrain_trained] turn=  100 cells= 43 iit_un16=1332.55 splits=27 elapsed=37.2s
+  [B_bgla_pretrain_trained] turn=  150 cells= 43 iit_un16=1385.70 splits=27 elapsed=60.0s
+  [B_bgla_pretrain_trained] turn=  200 cells= 44 iit_un16=1345.74 splits=28 elapsed=85.7s
+  [B_bgla_pretrain_trained] turn=  250 cells= 46 iit_un16=1483.09 splits=30 elapsed=113.7s
+  [B_bgla_pretrain_trained] turn=  300 cells= 46 iit_un16=1513.55 splits=30 elapsed=143.0s
+  [B_bgla_pretrain_trained] turn=  350 cells= 46 iit_un16=1539.80 splits=30 elapsed=172.8s
+  [B_bgla_pretrain_trained] turn=  400 cells= 46 iit_un16=1485.11 splits=30 elapsed=199.9s
+  [B_bgla_pretrain_trained] turn=  450 cells= 46 iit_un16=1485.02 splits=30 elapsed=231.0s
+  [B_bgla_pretrain_trained] turn=  499 cells= 46 iit_un16=1136.26 splits=30 elapsed=261.2s
+  trained: cells=46 splits=30 cap_bound=0/500 Φ_un16=1136.26 elapsed=261.2s
+
+--- mirror seed=42 ---
+  [B_bgla_pretrain_s42] turn=    0 cells= 16 iit_un16= 161.08 splits=0 elapsed=0.9s
+  [B_bgla_pretrain_s42] turn=   50 cells= 44 iit_un16=1250.04 splits=28 elapsed=24.7s
+  [B_bgla_pretrain_s42] turn=  100 cells= 48 iit_un16=1696.20 splits=32 elapsed=53.0s
+  [B_bgla_pretrain_s42] turn=  150 cells= 50 iit_un16=1228.60 splits=34 elapsed=75.6s
+  [B_bgla_pretrain_s42] turn=  200 cells= 56 iit_un16=2114.23 splits=40 elapsed=99.9s
+  [B_bgla_pretrain_s42] turn=  250 cells= 62 iit_un16=2709.91 splits=46 elapsed=123.9s
+  [B_bgla_pretrain_s42] turn=  300 cells= 66 iit_un16=3156.10 splits=50 elapsed=153.3s
+  [B_bgla_pretrain_s42] turn=  350 cells= 69 iit_un16=3364.76 splits=53 elapsed=179.8s
+  [B_bgla_pretrain_s42] turn=  400 cells= 80 iit_un16=4797.90 splits=64 elapsed=217.3s
+  [B_bgla_pretrain_s42] turn=  450 cells= 80 iit_un16=4503.39 splits=64 elapsed=250.3s
+  [B_bgla_pretrain_s42] turn=  499 cells= 82 iit_un16=5029.59 splits=66 elapsed=292.6s
+  s=42: cells=82 splits=66 cap_bound=0/500 Φ_un16=5029.59
+
+--- mirror seed=137 ---
+  [B_bgla_pretrain_s137] turn=    0 cells= 16 iit_un16= 169.63 splits=0 elapsed=1.6s
+  [B_bgla_pretrain_s137] turn=   50 cells= 38 iit_un16= 834.95 splits=22 elapsed=29.2s
+  [B_bgla_pretrain_s137] turn=  100 cells= 40 iit_un16= 888.26 splits=24 elapsed=50.1s
+  [B_bgla_pretrain_s137] turn=  150 cells= 46 iit_un16=1504.17 splits=30 elapsed=77.2s
+  [B_bgla_pretrain_s137] turn=  200 cells= 47 iit_un16=1401.22 splits=31 elapsed=101.9s
+  [B_bgla_pretrain_s137] turn=  250 cells= 51 iit_un16=1734.48 splits=35 elapsed=129.2s
+  [B_bgla_pretrain_s137] turn=  300 cells= 53 iit_un16=1727.85 splits=37 elapsed=148.4s
+  [B_bgla_pretrain_s137] turn=  350 cells= 55 iit_un16=1942.17 splits=39 elapsed=163.8s
+  [B_bgla_pretrain_s137] turn=  400 cells= 55 iit_un16=1137.53 splits=39 elapsed=178.5s
+  [B_bgla_pretrain_s137] turn=  450 cells= 56 iit_un16=2280.87 splits=40 elapsed=195.9s
+  [B_bgla_pretrain_s137] turn=  499 cells= 61 iit_un16=2638.60 splits=45 elapsed=210.5s
+  s=137: cells=61 splits=45 cap_bound=0/500 Φ_un16=2638.60
+
+--- mirror seed=271 ---
+  [B_bgla_pretrain_s271] turn=    0 cells= 16 iit_un16= 164.51 splits=0 elapsed=0.3s
+  [B_bgla_pretrain_s271] turn=   50 cells= 41 iit_un16= 700.34 splits=25 elapsed=20.4s
+  [B_bgla_pretrain_s271] turn=  100 cells= 47 iit_un16=1113.33 splits=31 elapsed=33.1s
+  [B_bgla_pretrain_s271] turn=  150 cells= 51 iit_un16=1832.07 splits=35 elapsed=42.4s
+  [B_bgla_pretrain_s271] turn=  200 cells= 53 iit_un16=1983.85 splits=37 elapsed=51.1s
+  [B_bgla_pretrain_s271] turn=  250 cells= 57 iit_un16=2327.84 splits=41 elapsed=61.1s
+  [B_bgla_pretrain_s271] turn=  300 cells= 59 iit_un16=2476.67 splits=43 elapsed=79.7s
+  [B_bgla_pretrain_s271] turn=  350 cells= 62 iit_un16=1904.14 splits=46 elapsed=91.8s
+  [B_bgla_pretrain_s271] turn=  400 cells= 69 iit_un16=2012.20 splits=53 elapsed=105.2s
+  [B_bgla_pretrain_s271] turn=  450 cells= 71 iit_un16=3625.59 splits=55 elapsed=122.7s
+  [B_bgla_pretrain_s271] turn=  499 cells= 72 iit_un16=3786.87 splits=56 elapsed=144.4s
+  s=271: cells=72 splits=56 cap_bound=0/500 Φ_un16=3786.87
+
+--- mirror seed=314 ---
+  [B_bgla_pretrain_s314] turn=    0 cells= 16 iit_un16= 156.76 splits=0 elapsed=0.9s
+  [B_bgla_pretrain_s314] turn=   50 cells= 49 iit_un16=1577.08 splits=33 elapsed=35.0s
+  [B_bgla_pretrain_s314] turn=  100 cells= 51 iit_un16=1835.10 splits=35 elapsed=73.2s
+  [B_bgla_pretrain_s314] turn=  150 cells= 56 iit_un16=1866.17 splits=40 elapsed=120.7s
+  [B_bgla_pretrain_s314] turn=  200 cells= 57 iit_un16=2296.59 splits=41 elapsed=156.2s
+  [B_bgla_pretrain_s314] turn=  250 cells= 61 iit_un16=2531.37 splits=45 elapsed=195.3s
+  [B_bgla_pretrain_s314] turn=  300 cells= 63 iit_un16=2654.88 splits=47 elapsed=238.1s
+  [B_bgla_pretrain_s314] turn=  350 cells= 66 iit_un16=3000.10 splits=50 elapsed=282.3s
+  [B_bgla_pretrain_s314] turn=  400 cells= 68 iit_un16=3472.68 splits=52 elapsed=318.4s
+  [B_bgla_pretrain_s314] turn=  450 cells= 71 iit_un16=3754.55 splits=55 elapsed=358.2s
+  [B_bgla_pretrain_s314] turn=  499 cells= 74 iit_un16=3930.20 splits=58 elapsed=393.7s
+  s=314: cells=74 splits=58 cap_bound=0/500 Φ_un16=3930.20
+
+--- mirror seed=1729 ---
+  [B_bgla_pretrain_s1729] turn=    0 cells= 16 iit_un16=  82.35 splits=0 elapsed=1.0s
+  [B_bgla_pretrain_s1729] turn=   50 cells= 48 iit_un16=1119.65 splits=32 elapsed=34.0s
+  [B_bgla_pretrain_s1729] turn=  100 cells= 53 iit_un16=1946.30 splits=37 elapsed=70.6s
+  [B_bgla_pretrain_s1729] turn=  150 cells= 53 iit_un16=1807.26 splits=37 elapsed=98.1s
+  [B_bgla_pretrain_s1729] turn=  200 cells= 54 iit_un16=2159.28 splits=38 elapsed=130.6s
+  [B_bgla_pretrain_s1729] turn=  250 cells= 55 iit_un16=2030.47 splits=39 elapsed=156.3s
+  [B_bgla_pretrain_s1729] turn=  300 cells= 57 iit_un16=2431.06 splits=41 elapsed=185.6s
+  [B_bgla_pretrain_s1729] turn=  350 cells= 60 iit_un16=2467.14 splits=44 elapsed=217.1s
+  [B_bgla_pretrain_s1729] turn=  400 cells= 65 iit_un16=2890.82 splits=49 elapsed=249.0s
+  [B_bgla_pretrain_s1729] turn=  450 cells= 66 iit_un16=3009.18 splits=50 elapsed=278.9s
+  [B_bgla_pretrain_s1729] turn=  499 cells= 67 iit_un16=3299.26 splits=51 elapsed=302.9s
+  s=1729: cells=67 splits=51 cap_bound=0/500 Φ_un16=3299.26
+
+=== B_bgla_pretrain VERDICT: V14_VIOLATED ===
+matches_expected: False
+[saved] /Users/ghost/core/anima/state/anima_v14_multi_substrate_audit_2026_05_10/result_B_bgla_pretrain.json

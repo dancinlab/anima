@@ -1,0 +1,22 @@
+{
+  "cycle": 5,
+  "date": "2026-05-23",
+  "host": "mini",
+  "trunc_len": 190,
+  "max_new": 10,
+  "seeds": [2026, 42, 99, 7, 123],
+  "splits": {
+    "ubm": [27, 14, 14, 14, 28],
+    "gen_a": [26, 2, 2, 24, 2],
+    "gen_b": [2, 2, 8, 2, 2],
+    "gen_c": [11, 13, 2, 11, 2],
+    "byteshuf": [2, 24, 2, 2, 2],
+    "noise": [2, 2, 2, 2, 2]
+  },
+  "mean": { "ubm": 19.4, "generic": 7.4, "garbage": 4.2 },
+  "std": { "ubm": 7.4027, "generic": 8.20105, "garbage": 6.95701 },
+  "F_SRH_1c": { "cmp": "ubm_vs_generic", "z": 1.53608, "floor": 2.0, "verdict": "FAIL" },
+  "z_generic_vs_garbage": 0.420803,
+  "VERDICT": "NULL",
+  "verdict_rule": "UBM-SPECIFIC iff F-SRH-1c PASS & ubm>generic · COHERENT-TEXT iff ubm~generic & generic>garbage · else NULL"
+}

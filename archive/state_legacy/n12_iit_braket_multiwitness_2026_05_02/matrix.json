@@ -1,0 +1,58 @@
+{
+  "phi_matrix": {
+    "sv1": {
+      "and": 0.99931,
+      "xor": 0.995406,
+      "maj": 1.989338,
+      "copy": 0.0,
+      "xor_and_mix": 0.998739
+    },
+    "forte1": {
+      "and": 1.169727,
+      "xor": 1.170086,
+      "maj": 2.213303,
+      "copy": 0.257105,
+      "xor_and_mix": 1.319999
+    },
+    "cepheus": {
+      "and": 2.494281,
+      "xor": 1.469685,
+      "maj": 2.689955,
+      "copy": 1.413964
+    }
+  },
+  "pearson_r": {
+    "sv1_vs_forte1_n5": 0.9960616679904287,
+    "sv1_vs_cepheus_n4": 0.7794201296332964,
+    "forte1_vs_cepheus_n4": 0.7801779825614363,
+    "threshold_pass": 0.5
+  },
+  "ordering": {
+    "sv1": [
+      "copy",
+      "xor",
+      "and",
+      "maj"
+    ],
+    "forte1": [
+      "copy",
+      "and",
+      "xor",
+      "maj"
+    ],
+    "cepheus": [
+      "copy",
+      "xor",
+      "and",
+      "maj"
+    ],
+    "preserved_across_3": false
+  },
+  "verdict": "MULTI-WITNESSED",
+  "multi_witnessed": true,
+  "substrates": {
+    "sv1": "silicon classical state-vector simulator",
+    "forte1": "IonQ Forte 1 trapped Yb+ ion QPU",
+    "cepheus": "Rigetti Cepheus-1-108Q superconducting transmon QPU"
+  }
+}

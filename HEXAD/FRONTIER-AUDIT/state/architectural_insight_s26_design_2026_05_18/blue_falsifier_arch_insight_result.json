@@ -1,0 +1,335 @@
+{
+  "section": "§26",
+  "title": "B-ARCH-INSIGHT-1..4 closed-form sidecar battery",
+  "n_pass": 4,
+  "n_total": 4,
+  "all_pass": true,
+  "batteries": [
+    {
+      "id": "B-ARCH-INSIGHT-1",
+      "name": "CANDIDATE-CARDINALITY-MIN-CLOSED",
+      "n_candidates": 3,
+      "threshold": 3,
+      "cardinality_ok": true,
+      "ids_distinct": true,
+      "names_distinct": true,
+      "sympy_invariant": "len(CANDIDATES) = 3 >= 3",
+      "passed": true
+    },
+    {
+      "id": "B-ARCH-INSIGHT-2",
+      "name": "GOAL-LEGITIMACY-§7-CONJUNCTION-CLOSED",
+      "section_7_formula": "And(¬generic-LM-pretrain, ¬generic-then-graft, anima-physics-is-source)",
+      "truth_table_8_row": [
+        {
+          "cond_1": false,
+          "cond_2": false,
+          "cond_3": false,
+          "passes": false
+        },
+        {
+          "cond_1": false,
+          "cond_2": false,
+          "cond_3": true,
+          "passes": false
+        },
+        {
+          "cond_1": false,
+          "cond_2": true,
+          "cond_3": false,
+          "passes": false
+        },
+        {
+          "cond_1": false,
+          "cond_2": true,
+          "cond_3": true,
+          "passes": false
+        },
+        {
+          "cond_1": true,
+          "cond_2": false,
+          "cond_3": false,
+          "passes": false
+        },
+        {
+          "cond_1": true,
+          "cond_2": false,
+          "cond_3": true,
+          "passes": false
+        },
+        {
+          "cond_1": true,
+          "cond_2": true,
+          "cond_3": false,
+          "passes": false
+        },
+        {
+          "cond_1": true,
+          "cond_2": true,
+          "cond_3": true,
+          "passes": true
+        }
+      ],
+      "truth_table_only_TTT_passes": true,
+      "per_candidate_top3": [
+        {
+          "id": "DH-DL",
+          "cond_1": true,
+          "cond_2": true,
+          "cond_3": true,
+          "section_7_pass": true
+        },
+        {
+          "id": "JEPA-Psi",
+          "cond_1": true,
+          "cond_2": true,
+          "cond_3": true,
+          "section_7_pass": true
+        },
+        {
+          "id": "PTD",
+          "cond_1": true,
+          "cond_2": true,
+          "cond_3": true,
+          "section_7_pass": true
+        }
+      ],
+      "all_top3_legitimate": true,
+      "passed": true
+    },
+    {
+      "id": "B-ARCH-INSIGHT-3",
+      "name": "DIFFERENTIATION-FROM-CLOSED-SET-CLOSED",
+      "closed_set_size": 31,
+      "closed_set_size_threshold": 24,
+      "closed_set_size_ok": true,
+      "closed_set_distinct": true,
+      "per_candidate_top3": [
+        {
+          "id": "DH-DL",
+          "in_closed_set": false,
+          "disjoint": true
+        },
+        {
+          "id": "JEPA-Psi",
+          "in_closed_set": false,
+          "disjoint": true
+        },
+        {
+          "id": "PTD",
+          "in_closed_set": false,
+          "disjoint": true
+        }
+      ],
+      "all_disjoint": true,
+      "intersection_top3_with_closed_set": [],
+      "intersection_empty": true,
+      "passed": true
+    },
+    {
+      "id": "B-ARCH-INSIGHT-4",
+      "name": "ANIMA-IDENTITY-PRESERVED-CLOSED",
+      "identity_formula": "And(HEXAD_8_module, Engine_A_G_axis, Psi_half_fixed_point, MITOSIS_cell_pool)",
+      "truth_table_16_row": [
+        {
+          "hexad": false,
+          "engine_a_g": false,
+          "psi_half": false,
+          "mitosis": false,
+          "passes": false
+        },
+        {
+          "hexad": false,
+          "engine_a_g": false,
+          "psi_half": false,
+          "mitosis": true,
+          "passes": false
+        },
+        {
+          "hexad": false,
+          "engine_a_g": false,
+          "psi_half": true,
+          "mitosis": false,
+          "passes": false
+        },
+        {
+          "hexad": false,
+          "engine_a_g": false,
+          "psi_half": true,
+          "mitosis": true,
+          "passes": false
+        },
+        {
+          "hexad": false,
+          "engine_a_g": true,
+          "psi_half": false,
+          "mitosis": false,
+          "passes": false
+        },
+        {
+          "hexad": false,
+          "engine_a_g": true,
+          "psi_half": false,
+          "mitosis": true,
+          "passes": false
+        },
+        {
+          "hexad": false,
+          "engine_a_g": true,
+          "psi_half": true,
+          "mitosis": false,
+          "passes": false
+        },
+        {
+          "hexad": false,
+          "engine_a_g": true,
+          "psi_half": true,
+          "mitosis": true,
+          "passes": false
+        },
+        {
+          "hexad": true,
+          "engine_a_g": false,
+          "psi_half": false,
+          "mitosis": false,
+          "passes": false
+        },
+        {
+          "hexad": true,
+          "engine_a_g": false,
+          "psi_half": false,
+          "mitosis": true,
+          "passes": false
+        },
+        {
+          "hexad": true,
+          "engine_a_g": false,
+          "psi_half": true,
+          "mitosis": false,
+          "passes": false
+        },
+        {
+          "hexad": true,
+          "engine_a_g": false,
+          "psi_half": true,
+          "mitosis": true,
+          "passes": false
+        },
+        {
+          "hexad": true,
+          "engine_a_g": true,
+          "psi_half": false,
+          "mitosis": false,
+          "passes": false
+        },
+        {
+          "hexad": true,
+          "engine_a_g": true,
+          "psi_half": false,
+          "mitosis": true,
+          "passes": false
+        },
+        {
+          "hexad": true,
+          "engine_a_g": true,
+          "psi_half": true,
+          "mitosis": false,
+          "passes": false
+        },
+        {
+          "hexad": true,
+          "engine_a_g": true,
+          "psi_half": true,
+          "mitosis": true,
+          "passes": true
+        }
+      ],
+      "truth_table_only_TTTT_passes": true,
+      "per_candidate_top3": [
+        {
+          "id": "DH-DL",
+          "hexad_8_module": true,
+          "engine_a_g": true,
+          "psi_half_fixed_point": true,
+          "mitosis_cell_pool": true,
+          "identity_preserved": true
+        },
+        {
+          "id": "JEPA-Psi",
+          "hexad_8_module": true,
+          "engine_a_g": true,
+          "psi_half_fixed_point": true,
+          "mitosis_cell_pool": true,
+          "identity_preserved": true
+        },
+        {
+          "id": "PTD",
+          "hexad_8_module": true,
+          "engine_a_g": true,
+          "psi_half_fixed_point": true,
+          "mitosis_cell_pool": true,
+          "identity_preserved": true
+        }
+      ],
+      "all_top3_preserved": true,
+      "passed": true
+    }
+  ],
+  "empirical_carve_out": {
+    "id": "B-ARCH-INSIGHT-NOTE",
+    "type": "empirical carve-out",
+    "scope": "Actual capability emergence per candidate = future-fire SGD outcome. Battery proves DESIGN candidate-set is GOAL-legitimate + differentiated + anima-identity-preserving, NOT that any candidate works.",
+    "family": "B-D-NOTE / B-CARVE-E6-NOTE / B-PHASE-B-NOTE / B-INTRA-NOTE / B-PUREPHYS-NOTE / B-DIRL-NOTE family",
+    "counted_blue": false
+  },
+  "candidates_top3": [
+    {
+      "id": "DH-DL",
+      "name": "Decision-Head Dual-Loss",
+      "anima_fit_stars": 5
+    },
+    {
+      "id": "JEPA-Psi",
+      "name": "JEPA-Ψ — Ψ-anchored Joint-Embedding Predictive Architecture",
+      "anima_fit_stars": 4
+    },
+    {
+      "id": "PTD",
+      "name": "Physics-Trace-Distillation (anima self-trace corpus)",
+      "anima_fit_stars": 3
+    }
+  ],
+  "closed_set_excluded": [
+    "Dir-A",
+    "Dir-B",
+    "Dir-C",
+    "Dir-D",
+    "Dir-E",
+    "Dir-F",
+    "Dir-G",
+    "Dir-H",
+    "Dir-I",
+    "§13-J",
+    "§13-K",
+    "§13-L",
+    "§13-M",
+    "§22-N",
+    "§22-O",
+    "§22-P",
+    "§21-Q-CALM",
+    "§17",
+    "§11-A",
+    "§11-B",
+    "§16",
+    "§23-A",
+    "§24",
+    "UBM-E6-alpha",
+    "UBM-E6-beta",
+    "UBM-E6-gamma",
+    "UBM-E6-weave",
+    "UBM-E7-alpha-scaleup",
+    "§14-archive-salvage",
+    "§18-llm-judge-metric",
+    "§9-cascade-rate-metric"
+  ]
+}

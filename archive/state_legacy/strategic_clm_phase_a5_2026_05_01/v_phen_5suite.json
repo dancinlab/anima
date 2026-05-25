@@ -1,0 +1,91 @@
+{
+  "schema": "anima/clm_phase_a5_v_phen/1",
+  "ts": "2026-05-02T08:38:01Z",
+  "substrate": {
+    "model": "CLM_v4_530M (continuous-state recurrent decoder_v3)",
+    "ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "d_model": 768,
+    "n_layer": 16,
+    "vocab": 64000
+  },
+  "method": {
+    "forward": "manual_forward (A.1 pattern: tok_emb\u2192blocks(x,sig,None)\u2192ln_f)",
+    "tokenizer": "sentencepiece tokenizer_64k_multilingual",
+    "n_probes": 16,
+    "prompts_source": "/tmp/clm_phase_a5/v_phen_prompts.json"
+  },
+  "honest_C3_raw10": "CLM d_model=768 vs ALM Mistral-7B d_model=4096; metrics modified: SVD spectral entropy uses d=16 (#probes) basis like r14; top1_prob computed over CLM vocab=64000 vs ALM=32000.",
+  "v_phen": {
+    "GWT_entropy": {
+      "svd_spectral_entropy_norm": 0.36773115503792153,
+      "threshold": 0.55,
+      "verdict": "FAIL"
+    },
+    "LZ_complexity": {
+      "LZ76_count": 830,
+      "n_bits": 12288,
+      "LZ_norm": 0.9176040751626432,
+      "threshold": 0.65,
+      "verdict": "PASS"
+    },
+    "HOT_metacog": {
+      "mean_top1_prob": 0.6609319001436234,
+      "std_top1_prob": 0.13305309029880316,
+      "informative": true,
+      "threshold": "mean in (0.05,0.99) & std>0.05",
+      "verdict": "PASS"
+    },
+    "mirror": {
+      "mean_off_diag_cosine": 0.7562646709094355,
+      "threshold": 0.5,
+      "verdict": "PASS"
+    },
+    "predictive": {
+      "r_squared_loo_cv": 0.0798676968270714,
+      "resid_var": 0.054482952548699136,
+      "total_var": 0.05921208543686969,
+      "n_pcs_used": 3,
+      "method": "PCA \u2192 top-K \u2192 LOO-CV linreg of log(top1_prob)",
+      "threshold": 0.5,
+      "verdict": "FAIL"
+    },
+    "summary": {
+      "passes": [
+        "LZ",
+        "HOT",
+        "mirror"
+      ],
+      "n_pass": 3,
+      "n_total": 5,
+      "verdict_X_of_5": "3/5"
+    }
+  },
+  "alm_r14_comparison": {
+    "alm_substrate": "mistralai/Mistral-7B-v0.3 + LoRA r14",
+    "alm_n_pass": 3,
+    "alm_passes": [
+      "LZ",
+      "HOT",
+      "mirror"
+    ],
+    "alm_metrics": {
+      "GWT_entropy_norm": 0.4785,
+      "LZ_norm": 1.125,
+      "HOT_mean_top1": 0.5606,
+      "mirror_off_diag": 0.5186,
+      "pred_r2_loo": 0.0853
+    },
+    "clm_metrics": {
+      "GWT_entropy_norm": 0.36773115503792153,
+      "LZ_norm": 0.9176040751626432,
+      "HOT_mean_top1": 0.6609319001436234,
+      "mirror_off_diag": 0.7562646709094355,
+      "pred_r2_loo": 0.0798676968270714
+    },
+    "delta_passes": 0
+  },
+  "cp2_clm_suite_7": {
+    "note": "CP2-CLM Suite 7 = 14-gate per-prompt + 5 V_phen + \u03c6* (A.1 = 1167.62) + CDS (A.1 = 0.397) + AN11_a (Frobenius) + AN11_c (JSD) + verdict_matrix; this run completes the V_phen leg.",
+    "phase_a5_role": "V_phen leg of Suite 7"
+  }
+}

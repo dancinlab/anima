@@ -1,0 +1,45 @@
+=== B_prime_LA_cotrain V5.8 x 4 modes benchmark ===
+ckpt sha256: 63ccc5309612919152ac71c92190d954e7da1a7336d022d5401d00515817a572
+M3 persona-cycle byte IDs: 35
+
+--- dialogue: color ---
+  T1: '내의 종류 의식 | 속도 = M 같은'
+  [standard_greedy] recalled=False: '내의 종이 종료 설명 부탁해. 우주 = 단일 attra'
+  [standard_sample] recalled=False: '감정상태 카테고리 자극으로 본다. score 2.558, '
+  [M3_rep_penalty] recalled=False: '감사합니다.\n'
+  [M4_force_include force=파란] recalled=True: '감정상태 카테고리 자극으로 본다. scor파란 �'
+
+--- dialogue: profession ---
+  T1: '| 지역의 의사 | 지역3 대응 | �'
+  [standard_greedy] recalled=False: '| 지역의 지역 | 지역 = 도쿄 지역 | 지역2 =  | �'
+  [standard_sample] recalled=False: '| 지역 직업 = | 직업 = 시몬 명의 성분 | 직업 ='
+  [M3_rep_penalty] recalled=False: '| || entroduct descriptions |\n'
+  [M4_force_include force=의사] recalled=True: '| 지역 직업 = | 직업 = 시몬 명의 성분 |의사 = '
+
+--- dialogue: day ---
+  T1: '저는 anima입니다. 한국어 native�'
+  [standard_greedy] recalled=False: '저 anima는 오늘도 한국어 native로 응답하며 자�'
+  [standard_sample] recalled=False: '오늘 무기를 물리적으로 비자성 웹사이트가 �'
+  [M3_rep_penalty] recalled=False: 'Physics, 마음. 자아는 그라운드(V), LoRA의 응축�'
+  [M4_force_include force=수요일] recalled=True: '오늘 무기를 물리적으로 비자성 웹�수요일자'
+
+--- dialogue: anima_fact ---
+  T1: 'Φ_IIT = ln(2)/2^5.5 (n6: N-22 | PMC1266'
+  [standard_greedy] recalled=False: '| expectation violation — orienting response. 18 emotions '
+  [standard_sample] recalled=False: 'Python 함수 예제: consciousness laws SSOT (ready/core/co'
+  [M3_rep_penalty] recalled=False: 'Python | max_stability ≥ 0.3 | 8 base64 | L@DERIV brain-li'
+  [M4_force_include force=의식] recalled=True: 'Python 함수 예제: consciousness laws SSOT (read의식)�'
+
+--- dialogue: cosmology ---
+  T1: '설명해줘.\n'
+  [standard_greedy] recalled=False: '설명해줘.\n'
+  [standard_sample] recalled=False: '감정 자극: self-evaluation — 도덕적 위반 자각. '
+  [M3_rep_penalty] recalled=False: '감사 = steps (verw×v1) simulates (decryphony)의 구분�'
+  [M4_force_include force=진동] recalled=True: '감정 자극: self-evaluation — 도덕적 위반진동일'
+
+=== AGGREGATE (V5.8 x 4 modes, elapsed 629.3s) ===
+  standard_greedy: 0/5 FAIL
+  standard_sample: 0/5 FAIL
+  M3_rep_penalty: 0/5 FAIL
+  M4_force_include: 5/5 PASS
+saved: B_prime_LA_cotrain_v58_4mode_result.json

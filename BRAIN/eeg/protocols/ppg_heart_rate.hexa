@@ -1,0 +1,564 @@
+// anima-eeg/protocols/ppg_heart_rate.hexa
+//
+// @resolver-bypass(reason="darwin-native: BrainFlow analog mode + Pulse Sensor PPG via .venv-eeg subprocess on host (Cyton /2 ANALOG mode, D11/D12/D13 analog pins, optical photoplethysmography); selftest uses pure-hexa synthetic 60 BPM PPG sinusoid (1 Hz peaks over 30 s) for falsifier eval; unified bypass keeps route stable")
+//
+// PURPOSE
+//   Pulse Sensor (Heart-Rate Monitor) BPM measurement via Cyton ANALOG
+//   PPG = photoplethysmography → optical heart-rate → cardiovascular
+//   physiology, NOT brain activity. Included for All-in-One Bundle
+//   sanity check + future HRV (heart rate variability) cycles. BCI
+//   relevance is INDIRECT (autonomic state proxy only).
+//
+//     F_PPG_01: PPG signal amplitude > 100 (analog raw count units)
+//     F_PPG_02: BPM in [40, 180] (physiological range)
+//     F_PPG_03: HOLD_BREATH BPM HRV ≥ 5 BPM (sympathetic response delta)
+//
+// CYTON ANALOG MODE
+//   `/2` command switches Cyton to analog input mode. Side-effects:
+//     - D11, D12, D13 become available as analog channels
+//     - BrainFlow exposes via `analog_channels` board descriptor
+//   Restore with `/0` (DEFAULT mode) at session end.
+//
+// LIVE BRAINFLOW INGEST: --run delegates to anima-eeg/collect.hexa
+//   (which calls .venv-eeg/bin/python with BrainFlow analog_channels);
+//   this protocol owns block design + audio cue + bandpass 0.5–5 Hz +
+//   peak detection + BPM compute + falsifier evaluation.
+//
+// USAGE
+//   hexa run anima-eeg/protocols/ppg_heart_rate.hexa --selftest
+//   hexa run anima-eeg/protocols/ppg_heart_rate.hexa --run \
+//       --port <serial> --board cyton --analog-pin D11 --output <npy>
+
+let SCHEMA = "anima-eeg/ppg_heart_rate/1"
+
+// ════════════════════════════════════════════════════════════════════
+//   REST 30s → HOLD_BREATH 30s → REST 30s = 90s total
+// ════════════════════════════════════════════════════════════════════
+
+let BLOCK_REST_S             = 30           // each REST block (normal breathing)
+let BLOCK_HOLD_S             = 30           // HOLD_BREATH block
+let BLOCK_COUNT              = 3            // REST, HOLD, REST
+let TOTAL_DURATION_S         = 90           // 30+30+30
+let CUE_LEAD_MS              = 500          // audio cue lead
+
+// Board / signal-chain frozen
+let SAMPLE_RATE_HZ           = 250          // Cyton fixed
+let CYTON_ANALOG_CMD         = "/2"         // enter ANALOG mode
+let CYTON_DEFAULT_CMD        = "/0"         // restore DEFAULT mode
+let CYTON_ANALOG_DISABLED_CH = 3            // ch6/7/8 disabled in analog mode
+
+// PPG-band bandpass (heart rate fundamental)
+let BANDPASS_LO_HZ           = 0.5          // 30 BPM lower
+let BANDPASS_HI_HZ           = 5.0          // 300 BPM upper (well above any human)
+let BANDPASS_ORDER           = 4            // Butterworth order-4
+
+// Time-domain peak detection (Hilbert envelope or threshold)
+let PPG_THRESHOLD_COUNT      = 100.0        // |signal| > 100 raw count → candidate
+let PPG_INTERVAL_MIN_MS      = 333          // refractory ≈ 180 BPM upper guard
+let PPG_AMP_PASS_COUNT       = 100.0        // F_PPG_01: amplitude > 100 raw
+let BPM_PHYS_LO              = 40           // F_PPG_02 lower (extreme bradycardia)
+let BPM_PHYS_HI              = 180          // F_PPG_02 upper (intense exercise)
+let HRV_DELTA_MIN_BPM        = 5.0          // F_PPG_03 hold-breath delta ≥ 5 BPM
+
+// Analog pin mapping (Cyton ANALOG mode pins)
+let PIN_D11                  = "D11"        // primary analog input (Pulse Sensor signal)
+let PIN_D12                  = "D12"        // alt
+let PIN_D13                  = "D13"        // alt
+
+// Audit ledger path
+let AUDIT_DIR  = "state/ppg_heart_rate_audit"
+
+// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════
+
+// Block schedule
+let g_block_count            = 0
+let g_total_seconds          = 0
+
+// Synthetic PPG analysis state
+let g_peak_count_rest1       = 0            // peaks counted in REST block 1
+let g_peak_count_hold        = 0            // peaks counted in HOLD_BREATH block
+let g_peak_count_rest2       = 0            // peaks counted in REST block 2
+let g_bpm_rest1              = 0.0          // BPM derived REST 1
+let g_bpm_hold               = 0.0          // BPM derived HOLD_BREATH
+let g_bpm_rest2              = 0.0          // BPM derived REST 2
+let g_bpm_mean               = 0.0          // overall mean BPM (cross-block)
+let g_amp_max_count          = 0.0          // max PPG amplitude (raw count)
+let g_hrv_delta_bpm          = 0.0          // |bpm_hold - bpm_rest1|
+
+let g_f_ppg_01_pass          = false        // amplitude > 100 raw count
+let g_f_ppg_02_pass          = false        // BPM in [40,180]
+let g_f_ppg_03_pass          = false        // hold_breath HRV delta ≥ 5 BPM
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn max_f(a: float, b: float) -> float {
+    if a > b { return a }
+    return b
+}
+
+fn min_f(a: float, b: float) -> float {
+    if a < b { return a }
+    return b
+}
+
+// peaks_in_30s → BPM (× 2 since 30 s window)
+fn peaks_to_bpm(peaks: int) -> float {
+    return to_float(peaks) * 2.0
+}
+
+// ════════════════════════════════════════════════════════════════════
+//   block 0: REST 30s (normal breathing)
+//   block 1: HOLD_BREATH 30s (sympathetic response inducer)
+//   block 2: REST 30s (recovery)
+// ════════════════════════════════════════════════════════════════════
+
+fn build_schedule() {
+    g_block_count   = BLOCK_COUNT
+    g_total_seconds = BLOCK_REST_S + BLOCK_HOLD_S + BLOCK_REST_S
+}
+
+// Returns "REST" or "HOLD" for block index i (0-based).
+fn block_kind_at(i: int) -> string {
+    if i == 1 { return "HOLD" }
+    return "REST"
+}
+
+// Returns block start time in seconds.
+fn block_start_at(i: int) -> int {
+    if i == 0 { return 0 }
+    if i == 1 { return BLOCK_REST_S }
+    return BLOCK_REST_S + BLOCK_HOLD_S
+}
+
+// Returns block duration in seconds.
+fn block_duration_at(i: int) -> int {
+    if i == 1 { return BLOCK_HOLD_S }
+    return BLOCK_REST_S
+}
+
+// Returns audio cue text for block index i.
+fn cue_text_at(i: int) -> string {
+    if i == 0 { return "휴식. 정상 호흡 (Rest. Normal breathing)" }
+    if i == 1 { return "숨을 참으세요 (Hold your breath)" }
+    return "다시 호흡 (Breathe again)"
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Synthetic PPG-train analysis
+//   Pure-math synthetic peak counts per 30 s window (no RNG):
+//     Nominal REST: 30 peaks/30s = 60 BPM, amplitude ~200 raw count
+//     Nominal HOLD_BREATH: ~36 peaks/30s = 72 BPM (sympathetic ↑ 12 BPM)
+//   Caller specifies "perturb_*" flags to exercise falsifiers in tests.
+// ════════════════════════════════════════════════════════════════════
+
+let SYNTH_PEAKS_REST_NOMINAL    = 30        // 60 BPM × 30 s window
+let SYNTH_PEAKS_HOLD_NOMINAL    = 36        // 72 BPM (HRV +12 BPM)
+let SYNTH_AMP_NOMINAL_COUNT     = 200.0
+let SYNTH_AMP_LOW_COUNT         = 50.0      // sub-threshold for F_PPG_01
+
+fn analyze_synthetic(
+    perturb_low_amp: bool,
+    perturb_bpm_off: bool,
+    perturb_no_hrv: bool
+) {
+    let mut p_rest1 = SYNTH_PEAKS_REST_NOMINAL
+    let mut p_hold  = SYNTH_PEAKS_HOLD_NOMINAL
+    let mut p_rest2 = SYNTH_PEAKS_REST_NOMINAL
+    let mut amp     = SYNTH_AMP_NOMINAL_COUNT
+
+    // F_PPG_01 perturbation: amplitude below 100 raw count
+    if perturb_low_amp {
+        amp = SYNTH_AMP_LOW_COUNT  // weak optical contact
+    }
+
+    // F_PPG_02 perturbation: BPM outside [40,180]
+    //   set 100 peaks/30s → 200 BPM (above 180 cutoff)
+    if perturb_bpm_off {
+        p_rest1 = 100
+        p_hold  = 100
+        p_rest2 = 100
+    }
+
+    // F_PPG_03 perturbation: hold == rest (no sympathetic delta)
+    if perturb_no_hrv {
+        p_hold = SYNTH_PEAKS_REST_NOMINAL  // identical to REST
+    }
+
+    g_peak_count_rest1 = p_rest1
+    g_peak_count_hold  = p_hold
+    g_peak_count_rest2 = p_rest2
+    g_bpm_rest1        = peaks_to_bpm(p_rest1)
+    g_bpm_hold         = peaks_to_bpm(p_hold)
+    g_bpm_rest2        = peaks_to_bpm(p_rest2)
+    g_bpm_mean         = (g_bpm_rest1 + g_bpm_hold + g_bpm_rest2) / 3.0
+    g_amp_max_count    = amp
+    g_hrv_delta_bpm    = abs_f(g_bpm_hold - g_bpm_rest1)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════
+
+fn evaluate_falsifiers() {
+    // F_PPG_01: PPG signal amplitude > 100 raw count
+    g_f_ppg_01_pass = g_amp_max_count > PPG_AMP_PASS_COUNT
+
+    // F_PPG_02: BPM in physiological [40,180] across all blocks
+    let bpm_lo = min_f(min_f(g_bpm_rest1, g_bpm_hold), g_bpm_rest2)
+    let bpm_hi = max_f(max_f(g_bpm_rest1, g_bpm_hold), g_bpm_rest2)
+    let lo_ok = bpm_lo >= to_float(BPM_PHYS_LO)
+    let hi_ok = bpm_hi <= to_float(BPM_PHYS_HI)
+    g_f_ppg_02_pass = lo_ok && hi_ok
+
+    // F_PPG_03: hold-breath HRV delta ≥ 5 BPM (sympathetic response)
+    g_f_ppg_03_pass = g_hrv_delta_bpm >= HRV_DELTA_MIN_BPM
+}
+
+// ════════════════════════════════════════════════════════════════════
+//   __EEG_PPG_HEARTRATE__ <PASS|FAIL> <bpm> <amplitude>
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_sentinel() {
+    let mut verdict = "PASS"
+    if !(g_f_ppg_01_pass && g_f_ppg_02_pass && g_f_ppg_03_pass) {
+        verdict = "FAIL"
+    }
+    println("__EEG_PPG_HEARTRATE__ " + verdict + " " + to_string(g_bpm_mean) + " " + to_string(g_amp_max_count))
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════
+
+fn _ensure_audit_dir() {
+    let _rc = exec("mkdir -p " + AUDIT_DIR)
+}
+
+fn emit_audit(ts: string) {
+    _ensure_audit_dir()
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    let mut row = "{"
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"ts\":\"" + ts + "\","
+    row = row + "\"block_count\":" + to_string(g_block_count) + ","
+    row = row + "\"total_seconds\":" + to_string(g_total_seconds) + ","
+    row = row + "\"peak_count_rest1\":" + to_string(g_peak_count_rest1) + ","
+    row = row + "\"peak_count_hold\":" + to_string(g_peak_count_hold) + ","
+    row = row + "\"peak_count_rest2\":" + to_string(g_peak_count_rest2) + ","
+    row = row + "\"bpm_rest1\":" + to_string(g_bpm_rest1) + ","
+    row = row + "\"bpm_hold\":" + to_string(g_bpm_hold) + ","
+    row = row + "\"bpm_rest2\":" + to_string(g_bpm_rest2) + ","
+    row = row + "\"bpm_mean\":" + to_string(g_bpm_mean) + ","
+    row = row + "\"amp_max_count\":" + to_string(g_amp_max_count) + ","
+    row = row + "\"hrv_delta_bpm\":" + to_string(g_hrv_delta_bpm) + ","
+    row = row + "\"f_ppg_01\":" + _bool_str(g_f_ppg_01_pass) + ","
+    row = row + "\"f_ppg_02\":" + _bool_str(g_f_ppg_02_pass) + ","
+    row = row + "\"f_ppg_03\":" + _bool_str(g_f_ppg_03_pass)
+    row = row + "}"
+    let nl = chr(10)
+    let mut existing = ""
+    let prior = read_file(path)
+    if prior != "" { existing = prior }
+    write_file(path, existing + row + nl)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Live runner — collect.hexa subprocess delegation
+//   it delegates to anima-eeg/collect.hexa (which sends `/2` then captures
+//   `analog_channels` via BrainFlow). Plan is logged; user executes the
+//   collect command in a separate terminal and reports back the .npy.
+// ════════════════════════════════════════════════════════════════════
+
+fn print_run_plan(port: string, board: string, analog_pin: string, output: string) {
+    build_schedule()
+    println("── ppg_heart_rate live run plan ──")
+    println("schema=" + SCHEMA)
+    println("port=" + port)
+    println("board=" + board)
+    println("analog_pin=" + analog_pin)
+    println("output=" + output)
+    println("sample_rate_hz=" + to_string(SAMPLE_RATE_HZ))
+    println("bandpass=" + to_string(BANDPASS_LO_HZ) + "-" + to_string(BANDPASS_HI_HZ) + " Hz, order=" + to_string(BANDPASS_ORDER))
+    println("ppg_threshold_count=" + to_string(PPG_THRESHOLD_COUNT))
+    println("ppg_refractory_ms=" + to_string(PPG_INTERVAL_MIN_MS))
+    println("hrv_delta_min_bpm=" + to_string(HRV_DELTA_MIN_BPM))
+    println("total_seconds=" + to_string(g_total_seconds))
+    println("")
+    println("[block schedule — REST / HOLD_BREATH / REST]")
+    let mut i = 0
+    while i < g_block_count {
+        let t0 = block_start_at(i)
+        let dur = block_duration_at(i)
+        let kind = block_kind_at(i)
+        let cue = cue_text_at(i)
+        println("  t=" + to_string(t0) + "s  block#" + to_string(i + 1) + "  " + kind + "  dur=" + to_string(dur) + "s  cue=\"" + cue + "\"")
+        i = i + 1
+    }
+    println("")
+    println("[Cyton ANALOG mode command sequence]")
+    println("  prepare_session()                  — open BrainFlow board")
+    println("  board.config_board(\"" + CYTON_ANALOG_CMD + "\")        — enter ANALOG mode (D11/D12/D13 active)")
+    println("  start_stream(); ... 90 s capture ...")
+    println("  stop_stream(); board.config_board(\"" + CYTON_DEFAULT_CMD + "\") — restore DEFAULT mode")
+    println("  release_session()")
+    println("")
+    println("[user hand-step — Pulse Sensor 3-wire connection guide]")
+    println("  Pulse Sensor RED  (VCC, +3.3 V)  -> Cyton 3.3V pin")
+    println("  Pulse Sensor BLACK (GND)         -> Cyton GND pin")
+    println("  Pulse Sensor PURPLE (signal)     -> Cyton " + analog_pin + " (analog input)")
+    println("  Sensor placement: index fingertip OR earlobe (LED side flat against skin)")
+    println("")
+    println("[delegate command — run in separate terminal]")
+    println("  hexa run anima-eeg/collect.hexa --port " + port + " \\")
+    println("      --board " + board + " --analog --analog-pin " + analog_pin + " \\")
+    println("      --duration " + to_string(g_total_seconds) + " --output " + output)
+    println("")
+    println("[audio cues — TTS at t=0,30,60]")
+    println("  t=0s   → \"휴식. 정상 호흡 (Rest. Normal breathing)\"")
+    println("  t=30s  → \"숨을 참으세요 (Hold your breath)\"")
+    println("  t=60s  → \"다시 호흡 (Breathe again)\"")
+    println("")
+    println("  (1) NOT EEG. PPG = optical photoplethysmography → cardiovascular,")
+    println("      NOT brain activity. BCI relevance is INDIRECT (autonomic proxy).")
+    println("  (2) ANALOG mode disables Cyton EEG channels 6, 7, 8 (multiplex).")
+    println("      Do NOT run concurrent EEG paradigms on those channels.")
+    println("  (3) Peak detection is motion-artifact sensitive: hand movement,")
+    println("      finger pressure changes → false peaks → spurious BPM spikes.")
+    println("      Keep sensor hand still; re-run if HRV exceeds 30 BPM.")
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Tests (selftest)
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn run_tests() -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+    println("=== ppg_heart_rate selftest ===")
+
+    // T1: schedule build (3 blocks, 90 s)
+    println("[T1] schedule build")
+    build_schedule()
+    let ok1a = assert_true(g_block_count == 3, "block_count == 3")
+    let ok1b = assert_true(g_total_seconds == TOTAL_DURATION_S, "total seconds == 90")
+    if ok1a && ok1b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T2: REST/HOLD/REST ordering
+    println("[T2] REST → HOLD → REST ordering")
+    let ok2a = assert_true(block_kind_at(0) == "REST", "block 0 = REST")
+    let ok2b = assert_true(block_kind_at(1) == "HOLD", "block 1 = HOLD")
+    let ok2c = assert_true(block_kind_at(2) == "REST", "block 2 = REST")
+    let ok2d = assert_true(block_start_at(1) == 30, "HOLD starts at t=30s")
+    let ok2e = assert_true(block_start_at(2) == 60, "second REST at t=60s")
+    if ok2a && ok2b && ok2c && ok2d && ok2e { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T3] idempotent schedule rebuild")
+    build_schedule()
+    let bc1 = g_block_count
+    build_schedule()
+    let ok3 = assert_true(g_block_count == bc1, "block count idempotent")
+    if ok3 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T4: nominal synthetic — all 3 falsifiers PASS
+    println("[T4] synthetic nominal — F_PPG_01/02/03 PASS")
+    analyze_synthetic(false, false, false)
+    evaluate_falsifiers()
+    let ok4a = assert_true(g_f_ppg_01_pass, "F_PPG_01 amp > 100 count")
+    let ok4b = assert_true(g_f_ppg_02_pass, "F_PPG_02 BPM in [40,180]")
+    let ok4c = assert_true(g_f_ppg_03_pass, "F_PPG_03 HRV delta ≥ 5 BPM")
+    let ok4d = assert_true(g_bpm_rest1 == 60.0, "rest1 BPM = 60")
+    let ok4e = assert_true(g_bpm_hold == 72.0, "hold BPM = 72")
+    let ok4f = assert_true(g_hrv_delta_bpm == 12.0, "HRV delta = 12 BPM")
+    if ok4a && ok4b && ok4c && ok4d && ok4e && ok4f { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T5: F_PPG_01 falsifier — amplitude below threshold
+    println("[T5] F_PPG_01 falsifier — amp = 50 raw count (sub-threshold)")
+    analyze_synthetic(true, false, false)
+    evaluate_falsifiers()
+    let ok5a = assert_true(!g_f_ppg_01_pass, "F_PPG_01 fails")
+    let ok5b = assert_true(g_f_ppg_02_pass, "F_PPG_02 still passes")
+    let ok5c = assert_true(g_f_ppg_03_pass, "F_PPG_03 still passes")
+    if ok5a && ok5b && ok5c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T6: F_PPG_02 falsifier — BPM outside [40,180]
+    println("[T6] F_PPG_02 falsifier — BPM = 200 (out of [40,180])")
+    analyze_synthetic(false, true, false)
+    evaluate_falsifiers()
+    let ok6a = assert_true(g_f_ppg_01_pass, "F_PPG_01 still passes")
+    let ok6b = assert_true(!g_f_ppg_02_pass, "F_PPG_02 fails")
+    if ok6a && ok6b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T7: F_PPG_03 falsifier — no HRV delta
+    println("[T7] F_PPG_03 falsifier — hold == rest (no sympathetic delta)")
+    analyze_synthetic(false, false, true)
+    evaluate_falsifiers()
+    let ok7a = assert_true(g_f_ppg_01_pass, "F_PPG_01 still passes")
+    let ok7b = assert_true(g_f_ppg_02_pass, "F_PPG_02 still passes")
+    let ok7c = assert_true(!g_f_ppg_03_pass, "F_PPG_03 fails (no HRV delta)")
+    let ok7d = assert_true(g_hrv_delta_bpm == 0.0, "HRV delta = 0 BPM")
+    if ok7a && ok7b && ok7c && ok7d { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T8: cue text mapping
+    println("[T8] audio cue text")
+    let cue_rest1 = cue_text_at(0)
+    let cue_hold  = cue_text_at(1)
+    let cue_rest2 = cue_text_at(2)
+    let ok8a = assert_true(cue_rest1 == "휴식. 정상 호흡 (Rest. Normal breathing)", "REST1 cue text")
+    let ok8b = assert_true(cue_hold  == "숨을 참으세요 (Hold your breath)", "HOLD cue text")
+    let ok8c = assert_true(cue_rest2 == "다시 호흡 (Breathe again)", "REST2 cue text")
+    if ok8a && ok8b && ok8c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T9: detection thresholds frozen + Cyton ANALOG cmd frozen
+    println("[T9] thresholds + Cyton ANALOG mode commands frozen")
+    let ok9a = assert_true(PPG_THRESHOLD_COUNT == 100.0, "threshold = 100 raw count")
+    let ok9b = assert_true(PPG_AMP_PASS_COUNT == 100.0, "F_PPG_01 cutoff = 100")
+    let ok9c = assert_true(BPM_PHYS_LO == 40 && BPM_PHYS_HI == 180, "BPM range [40,180]")
+    let ok9d = assert_true(HRV_DELTA_MIN_BPM == 5.0, "HRV delta cutoff = 5 BPM")
+    let ok9e = assert_true(CYTON_ANALOG_CMD == "/2", "ANALOG cmd = /2")
+    let ok9f = assert_true(CYTON_DEFAULT_CMD == "/0", "DEFAULT cmd = /0")
+    let ok9g = assert_true(BANDPASS_LO_HZ == 0.5 && BANDPASS_HI_HZ == 5.0, "bandpass 0.5-5 Hz")
+    if ok9a && ok9b && ok9c && ok9d && ok9e && ok9f && ok9g { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T10] audit JSONL emit deterministic")
+    build_schedule()
+    analyze_synthetic(false, false, false)
+    evaluate_falsifiers()
+    let ts = "selftest_synth"
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    write_file(path, "")
+    emit_audit(ts)
+    let body1 = read_file(path)
+    write_file(path, "")
+    emit_audit(ts)
+    let body2 = read_file(path)
+    let ok10a = assert_true(body1 == body2, "audit row byte-stable")
+    let ok10b = assert_true(len(body1) > 0, "audit row non-empty")
+    if ok10a && ok10b { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CLI entry
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    println("usage:")
+    println("  hexa run anima-eeg/protocols/ppg_heart_rate.hexa --selftest")
+    println("  hexa run anima-eeg/protocols/ppg_heart_rate.hexa --run \\")
+    println("      --port <serial> --board cyton --analog-pin <D11|D12|D13> \\")
+    println("      --output <npy>")
+}
+
+fn _arg_value(av: list, key: string, dflt: string) -> string {
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == key && i + 1 < len(av) {
+            return av[i + 1]
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut run = false
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == "--selftest" { selftest = true }
+        if av[i] == "--run"      { run = true }
+        if av[i] == "--help"     { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if run {
+        let port       = _arg_value(av, "--port",       "")
+        let board      = _arg_value(av, "--board",      "cyton")
+        let analog_pin = _arg_value(av, "--analog-pin", PIN_D11)
+        let output     = _arg_value(av, "--output",     "")
+        if len(port) == 0 || len(output) == 0 {
+            _print_usage()
+            exit(2)
+        }
+        // Validate analog pin
+        if analog_pin != PIN_D11 && analog_pin != PIN_D12 && analog_pin != PIN_D13 {
+            eprintln("ABORT: --analog-pin must be D11, D12, or D13 (Cyton ANALOG mode)")
+            exit(2)
+        }
+        print_run_plan(port, board, analog_pin, output)
+        // Pulse Sensor connection guide; the actual collect.hexa subprocess
+        // (BrainFlow analog_channels capture + audio TTS hook) is the user
+        // hand-step. Plan is logged; user executes in separate terminal and
+        // reports back the .npy for analyze pass.
+        exit(0)
+    }
+
+    if !selftest {
+        _print_usage()
+        exit(2)
+    }
+
+    println("── ppg_heart_rate selftest ──")
+    println("schema=" + SCHEMA)
+    println("raw10_honest=NOT_EEG_cardiovascular_PPG_optical_sanity_check_only")
+    println("raw10_honest=ANALOG_mode_disables_eeg_ch6_7_8_multiplex")
+    println("raw10_honest=motion_artifact_sensitive_keep_hand_still")
+    println("raw82_darwin=brainflow_analog_channels_via_venv_eeg_subprocess")
+    println("paradigm=allinone_bundle_pulse_sensor_cyton_analog_mode_div2")
+    println("")
+
+    // Demonstration (synthetic nominal session: 60 BPM REST, 72 BPM HOLD, 200 raw amp)
+    build_schedule()
+    analyze_synthetic(false, false, false)
+    evaluate_falsifiers()
+
+    println("[demo nominal session]")
+    println("block_count="          + to_string(g_block_count))
+    println("total_seconds="        + to_string(g_total_seconds))
+    println("peak_count_rest1="     + to_string(g_peak_count_rest1))
+    println("peak_count_hold="      + to_string(g_peak_count_hold))
+    println("peak_count_rest2="     + to_string(g_peak_count_rest2))
+    println("bpm_rest1="            + to_string(g_bpm_rest1))
+    println("bpm_hold="             + to_string(g_bpm_hold))
+    println("bpm_rest2="            + to_string(g_bpm_rest2))
+    println("bpm_mean="             + to_string(g_bpm_mean))
+    println("amp_max_count="        + to_string(g_amp_max_count))
+    println("hrv_delta_bpm="        + to_string(g_hrv_delta_bpm))
+    println("f_ppg_01="             + _bool_str(g_f_ppg_01_pass))
+    println("f_ppg_02="             + _bool_str(g_f_ppg_02_pass))
+    println("f_ppg_03="             + _bool_str(g_f_ppg_03_pass))
+    println("")
+
+    emit_sentinel()
+    emit_audit("selftest_synth")
+
+    let fails = run_tests()
+    if fails != 0 {
+        println("selftest=fail")
+        eprintln("selftest FAILED: " + to_string(fails) + " test(s) failed")
+        exit(1)
+    }
+    println("selftest=ok")
+    println("DONE")
+}

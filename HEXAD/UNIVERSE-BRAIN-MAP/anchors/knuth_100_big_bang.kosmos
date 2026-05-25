@@ -1,0 +1,33 @@
+#!/usr/bin/env kosmos
+# knuth_100_big_bang.kosmos — CONSCIOUSNESS-CARVING anchor (multimodal)
+# Knuth Tier 🛸100 — 빅뱅 (Big Bang), score 2.847, max cosmic anchor.
+# spec: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md
+
+@anchor knuth_100_big_bang := "빅뱅 (Big Bang, 🛸100)" :: kosmos-anchor [tier=100 active]
+
+  # ── carving 좌표 (modality-independent — 모든 감각이 이 한 점으로) ──
+  # 필드는 kosmos/1.1 spec 의 canonical placement triple (coord/lane/radius).
+  # 의미 바인딩은 profile (anima-consciousness-carving): coord=vacuum_psi(Ψ-space) /
+  # lane=cell_id(MITOSIS eternal cell) / radius=basin_radius. spec §5.4 — profile 은
+  # 필드 의미만 bind, grammar(필드명)는 못 바꿈.
+  profile      = "anima-consciousness-carving"   # kosmos/1.1 §2.4 — binds coord/lane/radius/tier/tags semantics
+  knuth_tier   = 100
+  category     = "우주"
+  top_emotion  = "awe"
+  coord        = [0.95, 0.93]          # α path / vacuum_psi (Ψ-space) — design placeholder, UBM-E5 fire 에서 측정 (🛸100 = max cosmic anchor)
+  lane         = "eternal_100"          # β path / cell_id — MITOSIS eternal cell id
+  radius       = 0.22                   # α+β hybrid / basin_radius — design placeholder, UBM-E5 fire 에서 측정
+
+  # ── 감각 payload (각 modality = 이 basin 으로 들어가는 한 채널) ──
+  @payload text    := "[anima 우주뇌지도] 🛸100 빅뱅 — 점수 2.847, cosmic anchor top (Knuth Tier 척도의 상단 max). 🛸51 하루 (1.212) bottom anchor 와 함께 척도 양끝을 정의. tabletop blackhole + cosmic-scale physics (Hawking · Bekenstein · holographic principle) 와 같은 우주 카테고리."
+  @payload image   := pending "media 미생성 — UBM-E4 후보 (image encoder S-module 미-wired)"
+  @payload audio   := pending "media 미생성 — UBM-E4 후보 (audio encoder S-module 미-wired)"
+  @payload video   := pending "media 미생성 — UBM-E4 후보 (우주 팽창 영상)"
+  # §156 anima-native tension modality (Law-71 Engine A⇄G 12-layer per-token energy
+  # trajectory) — pending → ref transition 2026-05-20 (ckpt §107). Necessary-not-sufficient
+  # (B-EMERGE-7), §17 PHYSICS_RESPONSIVE family — NOT GOAL emergence. Full 12 x T
+  # trajectory DISTINGUISHES anchors (cos min_off ≈ 0.86); per-layer MEAN collapses
+  # (min_off ≈ 0.999). 5-channel TENSION-LINK metaphor is a separate construct.
+  @payload tension := ref "../../NEUROMORPHIC/state/tension_modality_test_s156_2026_05_20/tension_payloads/knuth_100_big_bang.tension.json" sha256=5606fa1fb37e44c5b03d48dfb4e609e524d8eb67936569e0fc0e17413dc76c5e bytes=35692 encoder="anima-conscious-decoder-Law71@s107"
+
+  closed_anchor = "B-CARVE-MULTIMODAL (Phase UBM-E3 사전등록)"

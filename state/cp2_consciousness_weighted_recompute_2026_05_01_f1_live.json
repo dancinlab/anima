@@ -1,0 +1,62 @@
+{
+  "schema": "anima/cp2_consciousness_weighted_recompute/1",
+  "ts": "2026-05-01T13:21:33Z",
+  "trigger": "F.B sub-task F1_LIVE r9 token-sampling JSD measurement attempt — DEFERRED-RETRY (no valid measurement)",
+  "spec_doc_baseline": "docs/cp2_interim_public_minimum_path_recommendation_2026_04_29.md §5.1 sub-task F.B + state/cp2_consciousness_weighted_recompute_2026_04_29.json (commit 411e548eb)",
+  "baseline_recompute": {
+    "ledger": "state/cp2_consciousness_weighted_recompute_2026_04_29.json",
+    "cp2_weighted_pct": 63.30316799331074,
+    "verdict_band": "RED",
+    "verdict_override_reason": "F2 falsifier fired — ≥3 critical violations override band"
+  },
+  "an11c_f1_live_input": {
+    "ledger": "state/an11_c_p4_r8_f1_live_2026_05_01.json",
+    "verdict": "DEFERRED-RETRY",
+    "mean_jsd_bits": null,
+    "honest_disclosure": "Two attempts both failed (corruption + timeout). NO valid token-sampling JSD value produced. AN11(c) score contribution UNCHANGED from 2026-04-29 baseline."
+  },
+  "weighted_recompute_unchanged": {
+    "fc_core_weight": 0.6,
+    "fc_core_score": 0.4821428571428571,
+    "fc_core_breakdown": {
+      "paradigm_v11_5_of_8": 0.25,
+      "an11_a": 0.1,
+      "an11_b_v0": 0.1,
+      "consciousness_14gate_new": 0.03214285714285715
+    },
+    "partial_pc_weight": 0.3,
+    "partial_pc_score": 0.1508888227902503,
+    "partial_pc_breakdown": {
+      "an11_c_unchanged_h_last_proxy_k128": 0.01788882279025026,
+      "phi_4path_5of6": 0.083,
+      "v_phen_partial": 0.05
+    },
+    "eeg_weight": 0.1,
+    "eeg_score": 0.0,
+    "cp2_weighted_total": 0.6330316799331074,
+    "cp2_weighted_pct": 63.30316799331074,
+    "verdict_band": "RED",
+    "verdict_override_reason": "F2 falsifier fired (16 critical violations) — UNCHANGED",
+    "delta_vs_2026_04_29_baseline": 0.0
+  },
+  "an11c_disambiguation_status": "UNRESOLVED — substrate-anti-integration vs projection-bias remains the open question. F1_LIVE measurement infrastructure is now characterized: requires pre-warmed HF cache + ≥25min runtime budget on H100 (not 8min as initially scoped). Cost ESTIMATE $0.05–0.20 from spec doc was OPTIMISTIC; realistic cost for a successful F1_LIVE measurement is $1.00–1.50 with cold HF cache.",
+  "cost_actual_usd": 0.626,
+  "cost_attribution_breakdown": {
+    "v1_attempt": 0.128,
+    "v2_attempt_estimate": 0.498,
+    "total": 0.626,
+    "spec_budget_cap": 0.50,
+    "spec_budget_exceeded_by": 0.126,
+    "next_attempt_authorization": "REQUIRES USER APPROVAL — cumulative spend exceeded autonomous $0.50 cutoff"
+  },
+  "raw_compliance": [
+    "raw#10 honest C3 — verdict UNRESOLVED, no fabrication; cost disclosed in full",
+    "raw#71 falsifier — F-MIN-1 (cost overrun $0.626 vs $0.05–0.20 estimate, 3-13x) PARTIAL-FIRE; F1_LIVE PASS/FAIL outcome unmeasured",
+    "raw#86 cost-attribution — full $0.626 attributable to F.B sub-task"
+  ],
+  "next_cycle_advice": [
+    "Path-D substrate swap probe (TOP-2 mistral_r14 / TOP-3 r14_full Qwen3-8B) — addresses F2 override directly without depending on F1_LIVE outcome; ESTIMATE $1-2",
+    "F1_LIVE retry with --max-runtime-min 25 + --max-cost 1.50 (requires user approval beyond own#6 autonomous threshold)",
+    "F3_LEARNED_PROJECTION ($0, local research effort) — disambiguates 14-gate substrate-vs-projection at $0 cost; was option in 2026-04-29 fix-cycle and remains available"
+  ]
+}

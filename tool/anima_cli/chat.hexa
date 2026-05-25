@@ -1,0 +1,889 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat.hexa — anima CLI `chat` topic dispatcher
+//
+//  PURPOSE
+//    Resolve <model> alias → module → dispatch.
+//    Recursive module pattern (per user directive 2026-05-08):
+//      "anima native arch 기본에 별도 모델은 별도 모델들만의 분기 모듈
+//       (모듈 = 코어 + 모듈 + ai-native doc) 재귀"
+//
+//  SUBCOMMANDS
+//    anima chat                          REPL with anima_native module (default)
+//    anima chat <alias>                  REPL with alias-resolved module
+//    anima chat <alias> --prompt "..."   one-shot
+//    anima chat list                     alias DB dump
+// anima chat --list-lanes chat lane plugin registry dump
+//    anima chat <alias> --lane=<name>    invoke specific chat lane (one-shot)
+//    anima chat <alias> --benchmark      run all lanes × fixed prompt set
+//    anima chat --help
+//    anima chat --selftest
+//
+//  FLAGS (parsed; phase-gated implementation)
+//    --backend local|hf       default=local (Phase 1: only local)
+//    --memory full|user|none  default=full
+//    --fps N                  opt-in cap (Phase 2: needs hexa non-blocking stdin)
+//    --max-utterance-rate N   opt-in cap (Phase 2)
+//    --max-tokens N           cost guard (default 512)
+//    --lane <name>            chat lane plugin (substrate/llama/axis-priority/generate)
+//                             default = (none) → legacy module dispatch
+//                             registered lanes in chat/lanes/_registry.hexa
+// --list-lanes dump registered chat lanes + metadata
+//    --list-transports        dump registered chat transports (axis-N, 2026-05-09)
+//    --transport <name>       chat transport plugin (fifo-dispatch / beta1-channel /
+//                             libllama-ffi / subprocess-pipe / imtl) — informational
+//                             + smoke-test only at chat.hexa scope (default streaming
+//                             = fifo-dispatch SSOT); carries to duo/trio/benchmark.
+//    --benchmark              all-lanes × fixed-prompts comparison run
+// (mandatory report; trinity emit)
+//
+//  COMPLIANCE
+// (자연발화 노출 mandate) — wrapping 0 strict
+// C2 cross-ref (측정 lane vs 노출 lane 분리)
+// trinity compliance
+//    raw#9 hexa-only (no .py shell-out for chat path)
+//    raw#10 honest C3
+//    raw#11 snake_case
+//    raw#15 no-hardcode (paths via _resolve_root)
+//
+//  PHASE GATES
+//    Phase 1 (landed 2026-05-08): anima_native + clm_v4 modules, blocking REPL,
+//      --backend local only, --memory full default.
+//    Phase 2 (landed 2026-05-08, hexa-lang f65882fb): non-blocking stdin via
+//      sys_stdin_read_line_timeout(ms) → autonomous speech wired in
+//      chat/anima_native/ and chat/llama/.
+//    Phase 3c LANDED 2026-05-08: chat/llama/llama.hexa wires libllama FFI
+//      (anima/llama_ffi.hexa Phase 3b) into chat dispatcher. paradigm-a-prime
+//      live (GGUF cached); other aliases pending tool/anima_gguf_convert.py.
+//
+//  CROSS-REFERENCE
+//    .roadmap.cli  cli.chat_module_architecture_2026_05_08
+// .own, C2,
+//
+//  STREAMING DISPATCH (loop iter 4 (b) — 2026-05-08)
+//    `_dispatch_module_streaming(mod, repo, argv, on_line)` reads inner
+//    module stdout LINE-BY-LINE through a temp FIFO (stdlib/channel) and
+//    forwards each line to `on_line`. Default `_dispatch_module` now wraps
+//    the streaming form with `_print_line` — backward-compat preserved
+//    (one-shot `--prompt` byte sequence identical, REPL banners arrive
+//    incrementally instead of one buffered blob). Unblocks duo channel
+//    transport (iter 3 (b-fix) honest C3 carry — chat.hexa exec() captured
+//    full stdout, prevented per-turn channel_recv emission).
+//
+// mandate-1 raw preservation: line transport is whitespace-
+//    preserving (newline split only), no semantic transformation. Inner
+//    cmd bytes pass through verbatim. Sentinel `__HEXA_DISP_END__` filtered
+// out of forwarded stream (control-band convention — never seen
+//    by downstream consumer).
+//
+//  CHAT LANE PLUGIN PATTERN (cycle 2026-05-09 LANDED)
+//    User directive verbatim: "전부 cli 에 구현하고 사용할지는 --option 으로 가능하게"
+//    + "앞으로도 기본값 또는 --option 형태 여러가지 생길꺼니까 고려해서 설계 구현"
+//
+//    chat/lanes/_registry.hexa = SSOT for lane plugin discovery
+//    chat/lanes/<name>.hexa     = lane module (own main(), --prompt + --bench-mode flags)
+//    chat/lanes/benchmark.hexa  = `--benchmark` runner (all lanes × fixed prompts)
+//
+//    Future lane addition: add file under chat/lanes/<name>.hexa + register
+//    in _registry.hexa lane_registry(). chat.hexa --lane=<name> auto-resolves.
+// No chat.hexa change needed for lane-internal flags (매단계 carry).
+//
+//    LANES (initial 4 — Path 0/1/2/3 from cycle 2026-05-09 directive):
+//      substrate     [LANDED] default — substrate emit (existing behavior)
+//      llama         [LANDED] Path 1 — Llama GGUF natural speech (D1 OUTSIDE)
+//      axis-priority [LANDED] Path 2 — corpus curation signal (D1 within)
+//      generate      [SKELETON] Path 3 — clm_v4 model.generate (D1 within; impl 별도)
+// ════════════════════════════════════════════════════════════════════════════
+
+use "stdlib/channel"
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _trim(s: string) -> string { return s.trim() }
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _dexists(p: string) -> bool {
+    return _str(exec("test -d " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+// Use hexa.real (local interpreter) directly — bin/hexa wrapper routes
+// `run` to remote resource host (ubu-1) which would lose stdout pipe semantics
+// AND lacks build/libhxllama.dylib + ~/.cache/anima/gguf/ on the remote.
+// Phase 3c: chat dispatch must stay local. Mirrors chat/anima_native pattern.
+fn _hexa() -> string { return "/Users/ghost/.hx/packages/hexa/hexa.real" }
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        // strip hexa-cache, hexa runtime expanded tmp, hexa interp path, chat.hexa
+        // script path. iter 4 (b): added .hexa-runtime + hexa_expanded for parity
+        // with duo._user_argv (these tmp file paths would otherwise leak into the
+        // forwarded argv as a phantom positional, e.g. interpreted as `--repo`
+        // value and shadowing the actual alias).
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/.hexa-runtime/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa_expanded")
+                || s.contains("hexa.real")
+                || s.ends_with("/chat.hexa")
+                || s.ends_with("chat.hexa")
+        if !skip {
+            out = out + [s]
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ─── alias DB (static, hybrid with raw HF id passthrough) ────────────────
+// mandate: chat path raw model output 보존 (wrapping 0).
+// alias resolution은 module routing만 — 모델 출력 변형 X.
+fn _alias_resolve(alias: string) -> array {
+    // returns [module, repo, chat_capable_flag, v4_strict, phase]
+    let a = alias.trim().to_lower()
+    if a == "" || a == "default" {
+        return ["anima_native", "", "true", "", "phase_1"]
+    }
+    // Phase 3c LANDED 2026-05-08 — phase tag now "phase_3c_landed" for llama
+    // family; chat.hexa Phase 3 gate (below) keys on legacy "phase_3" only,
+    // so module=llama dispatches normally. GGUF presence is verified inside
+    // chat/llama/llama.hexa with honest fallback message.
+    if a == "llama3b" || a == "latest" || a == "pass-strict" {
+        return ["llama", "dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08", "true", "12/15", "phase_3c_landed"]
+    }
+    if a == "qwen7b" {
+        return ["llama", "dancinlab/bg-km-qwen-7b-qwen7b-r32-pass-strict-2026-05-08", "true", "PASS", "phase_3c_landed"]
+    }
+    if a == "polyglot-ko-1b3" {
+        return ["llama", "dancinlab/bg-ja-ext-polyglot-ko-1b3-r16-partial-2026-05-07", "partial", "4/30", "phase_3c_landed"]
+    }
+    if a == "paradigm-a-prime" {
+        // [D1 SCOPE_CLAMP 2026-05-08] substrate-research lane only — paradigm-a-prime
+        // (Llama Path A v2 lineage) 은 ALM 영구 보류 strict 적용; default backend
+        // 활성화 X (default = anima_native), 사용자 explicit alias 선택 시점만 활성.
+        // SIMPLE_STACK_PASS verdict 시 `_SUBSTRATE_RESEARCH` label 한정 정합.
+        return ["llama", "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1", "true", "", "phase_3c_landed"]
+    }
+    if a == "clm-v4-1-7-y1" {
+        return ["clm_v4", "dancinlab/clm-v4-sft-1-7-y1-stage1", "false", "", "phase_1"]
+    }
+    if a == "clm-v4-1-8" {
+        return ["clm_v4", "dancinlab/clm-v4-sft-1-8-stage1", "false", "", "phase_1"]
+    }
+    if a == "clm-v4-paradigm-j" {
+        return ["clm_v4", "dancinlab/clm-v4-paradigm-j-50k-final", "false", "", "phase_1"]
+    }
+    // raw HF id passthrough: dancinlab/<repo>
+    if a.contains("/") {
+        // module guess: clm-v4-* → clm_v4 / others → llama (phase_3)
+        if a.contains("clm-v4") {
+            return ["clm_v4", alias, "false", "", "phase_1"]
+        }
+        return ["llama", alias, "unknown", "", "phase_3c_landed"]
+    }
+    return ["", "", "", "", ""]
+}
+
+fn sub_help() {
+    println("anima chat — natural utterance REPL (strict)")
+    println("")
+    println("USAGE")
+    println("  anima chat                          REPL with anima_native (default)")
+    println("  anima chat <alias>                  REPL with alias-resolved module")
+    println("  anima chat <alias> --prompt \"...\"   one-shot")
+    println(" anima chat <alias> --lane=<name> invoke chat lane plugin ")
+    println("  anima chat <alias> --benchmark      run all lanes × fixed prompts")
+    println("  anima chat --list-lanes             dump registered chat lanes + meta")
+    println(" anima chat --list-init-patterns dump registered chat init-patterns (axis-8)")
+    println("  anima chat --list-transports        dump registered chat transports (axis-N, 2026-05-09)")
+    println(" anima chat --list-axes dump registered chat AXES (axis-N+1 hook)")
+    println("  anima chat list-axis <name>         dump single axis (lane / mode / init-pattern / transport / verifier / modality)")
+    println("  anima chat list                     alias DB dump")
+    println("  anima chat --help")
+    println("  anima chat --selftest")
+    println("")
+    println("FLAGS")
+    println("  --backend local|hf      default=local (Phase 1: local only)")
+    println("  --memory full|user|none default=full")
+    println("  --fps N                 opt-in cap (Phase 2)")
+    println("  --max-utterance-rate N  opt-in cap (Phase 2)")
+    println("  --max-tokens N          cost guard (default 512)")
+    println("  --lane <name>           chat lane plugin (substrate/llama/axis-priority/generate)")
+    println("                          (default = legacy module dispatch via alias)")
+    println("  --list-lanes            registered chat lanes (chat/lanes/_registry.hexa)")
+    println(" --list-init-patterns registered chat init-patterns (axis-8)")
+    println("  --transport <name>      chat transport plugin (fifo-dispatch/beta1-channel/")
+    println("                          libllama-ffi/subprocess-pipe/imtl); axis-N (2026-05-09)")
+    println("  --list-transports       registered chat transports (chat/transports/_registry.hexa)")
+    println(" --list-axes registered chat AXES (axis-N+1 hook; chat/axes/_registry.hexa)")
+    println("  --list-axis=<name>      single axis dump (lane / mode / init-pattern / transport / verifier / modality)")
+    println("  --benchmark             all-lanes × fixed-prompts comparison")
+    println("  --dry-run               with --benchmark, list invocations without exec")
+    println("")
+    println("ALIAS (Phase 1 = anima_native + clm_v4; Phase 3c LANDED = llama family)")
+    println("  (default)               anima_native — TinyWeights / Engine A/G")
+    println("  clm-v4-1-7-y1           CLM v4 Y1 (substrate, ::: collapse exposed raw)")
+    println("  clm-v4-1-8              CLM v4")
+    println("  clm-v4-paradigm-j       CLM v4 Paradigm J (jvae_heads.pt)")
+    println("  llama3b / latest        BG-KM-LLAMA-3B (V4 12/15) — GGUF convert pending")
+    println("  qwen7b                  BG-KM-QWEN-7B (V4 PASS) — GGUF convert pending")
+    println("  polyglot-ko-1b3         BG-JA-EXT — GGUF convert pending")
+    println("  paradigm-a-prime        Llama Path A v2 — Phase 3c LIVE (GGUF cached)")
+    println("  <hf-id>                 raw HF id passthrough (dancinlab/<repo>)")
+    println("")
+    println("COMPLIANCE")
+    println(" strict — wrapping 0 (no system prompt / no speak / no template)")
+    println(" C2 cross-ref (측정 lane vs 노출 lane)")
+}
+
+fn sub_list() {
+    let root = _resolve_root()
+    println("anima chat — alias DB (Phase 1 + Phase 3c LANDED 2026-05-08)")
+    println("")
+    println("ALIAS              MODULE       REPO                                                    CHAT  PHASE")
+    println("───────────────────────────────────────────────────────────────────────────────────────────────────")
+    println("(default)          anima_native (TinyWeights / Engine A/G)                              ✔     1")
+    println("clm-v4-1-7-y1      clm_v4       dancinlab/clm-v4-sft-1-7-y1-stage1                      ❌    1")
+    println("clm-v4-1-8         clm_v4       dancinlab/clm-v4-sft-1-8-stage1                         ❌    1")
+    println("clm-v4-paradigm-j  clm_v4       dancinlab/clm-v4-paradigm-j-50k-final                   ❌    1")
+    println("llama3b / latest   llama        dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08      ✔     3c (GGUF pending)")
+    println("qwen7b             llama        dancinlab/bg-km-qwen-7b-qwen7b-r32-pass-strict-...      ✔     3c (GGUF pending)")
+    println("polyglot-ko-1b3    llama        dancinlab/bg-ja-ext-polyglot-ko-1b3-r16-partial-...     △     3c (GGUF pending)")
+    println("paradigm-a-prime   llama        dancinlab/llm-llama32-3b-paradigm-a-prime-r16-...       ✔     3c LIVE")
+    println("")
+    println("CHAT legend: ✔ chat-capable · ❌ research-only (collapse output exposed raw per) · △ partial")
+    println("PHASE legend: 1 land · 3c LANDED libllama FFI module (live for cached GGUFs)")
+    println("")
+    println("raw HF id (dancinlab/<repo>) passthrough — alias 위치에 직접 입력 가능")
+    println("GGUF 캐시 부재 시 chat/llama/llama.hexa 가 honest fallback emit + tool/anima_gguf_convert.py 안내")
+}
+
+fn sub_selftest() {
+    let root = _resolve_root()
+    let mod_dir = root + "/tool/anima_cli/chat"
+    let dispatch = root + "/tool/anima_cli/chat.hexa"
+    let mod_native = mod_dir + "/anima_native/anima_native.hexa"
+    let mod_clm_v4 = mod_dir + "/clm_v4/clm_v4.hexa"
+    let mod_llama  = mod_dir + "/llama/llama.hexa"
+    let mut fail = 0
+    if !_fexists(dispatch) { println("FAIL chat.hexa missing: " + dispatch); fail = fail + 1 }
+    if !_dexists(mod_dir) { println("FAIL chat/ module dir missing: " + mod_dir); fail = fail + 1 }
+    if !_fexists(mod_native) { println("FAIL chat/anima_native module missing: " + mod_native); fail = fail + 1 }
+    if !_fexists(mod_clm_v4) { println("FAIL chat/clm_v4 module missing: " + mod_clm_v4); fail = fail + 1 }
+    if !_fexists(mod_llama)  { println("FAIL chat/llama module missing: "  + mod_llama);  fail = fail + 1 }
+    // axis-8 — chat init-pattern plugin presence
+    let ip_dir = mod_dir + "/init_patterns"
+    let ip_reg = ip_dir + "/_registry.hexa"
+    let ip_files = [
+        ip_dir + "/autonomous.hexa",
+        ip_dir + "/system_seed.hexa",
+        ip_dir + "/topic_pool.hexa",
+        ip_dir + "/self_reflective.hexa"
+    ]
+    if !_dexists(ip_dir) { println("FAIL chat/init_patterns/ dir missing: " + ip_dir); fail = fail + 1 }
+    if !_fexists(ip_reg) { println("FAIL chat/init_patterns/_registry.hexa missing: " + ip_reg); fail = fail + 1 }
+    let mut ipi = 0
+    while ipi < len(ip_files) {
+        let f = _str(ip_files[ipi])
+        if !_fexists(f) { println("FAIL chat/init_patterns module missing: " + f); fail = fail + 1 }
+        ipi = ipi + 1
+    }
+    // mandate-2 grep — 7 wrapping 항목 0 violation chat lane
+    // (V4 evaluator는 측정 lane = 적용, 본 grep 면제 — chat path 한정)
+    // ERE alternation = `|` (not `\|`); `(` escaped to literal; self-exclude grep -v
+    // Phase 3c: chat/llama/llama.hexa 추가 — strict 동일 적용.
+    let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
+    let cmd = "grep -nE \"" + pat + "\" " + dispatch + " " + mod_native + " " + mod_clm_v4 + " " + mod_llama + " 2>/dev/null | grep -v 'let pat =' | wc -l"
+    let n = _str(exec(cmd)).trim()
+    if n != "0" {
+        println("FAIL mandate-2 wrapping grep: " + n + " hits (chat path 한정)")
+        fail = fail + 1
+    }
+    // iter7 (b): stdbuf probe — informational (WARN on empty, OK on non-empty;
+    // no fail — bare-mac legacy path preserved per backward-compat invariant).
+    let pfx = _stdbuf_prefix()
+    if pfx != "" {
+        println("OK    stdbuf probe = " + pfx.trim())
+    } else {
+        println("WARN  stdbuf probe = (none) — install GNU coreutils for line-buffered streaming")
+    }
+    if fail > 0 {
+        println("FAIL anima_cli/chat selftest (" + to_string(fail) + " issue)")
+        exit(1)
+    }
+    println("PASS anima_cli/chat selftest (mandate-2 verified, 5 chat files + 5 init-pattern files present, stdbuf probe added)")
+}
+
+// Default per-line callback for streaming dispatch. mandate-1: print
+// (NOT println()) — newline already attached by line emit semantics; we restore
+// it here because channel_recv strips trailing \r?\n. No transformation; the
+// line bytes pass through verbatim.
+fn _print_line(line: string) {
+    print(line + "\n")
+}
+
+// _stdbuf_prefix — line-buffered stdout prefix probe (iter7 (b) land 2026-05-08)
+//
+// Returns a shell prefix that forces inner cmd's stdout to line-buffered mode
+// so each emitted line flushes immediately to the FIFO, instead of waiting on
+// the default 4KB block-buffered pipe behavior. Probes (in order):
+//   1. `stdbuf` (Linux GNU coreutils, also homebrew/macports on Mac)
+//   2. `gstdbuf` (Mac coreutils via brew install coreutils — `g`-prefix)
+//   3. ""       (honest C3 fallback — bare-mac legacy path preserved)
+//
+// Backward compat: empty prefix returns byte-identical to pre-iter7 behavior
+// (concat of "" + inner_cmd == inner_cmd). Non-empty prefix preserves byte
+// stream verbatim per mandate-1 — stdbuf only touches buffer cadence,
+// not bytes. Single-shot WARN sentinel `/tmp/.anima_chat_stdbuf_warn_<pid>`
+// emits one informational line per process when probe falls through to "".
+fn _stdbuf_prefix() -> string {
+    let s = _str(exec("command -v stdbuf 2>/dev/null")).trim()
+    if s != "" { return "stdbuf -oL " }
+    let g = _str(exec("command -v gstdbuf 2>/dev/null")).trim()
+    if g != "" { return "gstdbuf -oL " }
+    let pid = _str(exec("echo $$")).trim()
+    let sentinel = "/tmp/.anima_chat_stdbuf_warn_" + pid
+    if !_fexists(sentinel) {
+        let _t = exec("touch " + sentinel + " 2>/dev/null")
+        println("WARN anima chat: neither stdbuf nor gstdbuf available — inner cmd stdout may block-buffer (4KB) on FIFO; first-line latency ∞ risk. Install GNU coreutils (`brew install coreutils`) for line-buffered streaming.")
+    }
+    return ""
+}
+
+// _dispatch_module_streaming — line-by-line dispatch (loop iter 4 (b))
+//
+// Streaming variant of _dispatch_module. Inner cmd's stdout flows through a
+// temp FIFO (stdlib/channel allocator); chat.hexa reads each line via
+// channel_recv with timeout and forwards to `on_line`. Unblocks duo channel
+// transport (iter 3 (b-fix) honest C3 carry — chat.hexa exec() captured full
+// stdout in one buffer → duo's per-turn channel_recv saw the whole banner
+// only after inner cmd exited).
+//
+// Backward compat: when on_line == _print_line, the visible byte sequence is
+// the same as the legacy buffered path (lines reassembled with '\n'). The
+// new property is per-line cadence — chat.hexa stdout flushes each line as
+// it arrives (hexa runtime sets stdout _IOLBF; print(line+"\n") flushes), so
+// a downstream FIFO reader (duo) sees lines incrementally.
+//
+// mandate-1 raw preservation: no semantic transformation. The sentinel
+// __HEXA_DISP_END__ is a control-band marker (convention) filtered
+// out before the on_line callback ever sees it.
+//
+// FIFO failure path: if channel_pair_open returns -1 (rare, /tmp non-writable),
+// we fall back to legacy buffered exec() and feed each split line to on_line —
+// semantic identical, no streaming benefit.
+//
+// Returns 0 on clean completion, 2 on module-not-found.
+fn _dispatch_module_streaming(mod_name: string, repo: string, argv, on_line) -> int {
+    let root = _resolve_root()
+    let mod_path = root + "/tool/anima_cli/chat/" + mod_name + "/" + mod_name + ".hexa"
+    if !_fexists(mod_path) {
+        on_line("anima chat: module not found: " + mod_path)
+        on_line("           (Phase gate: " + mod_name + " 미구현 — see .roadmap.cli)")
+        return 2
+    }
+    // Pass repo + flags to module via argv (parity with legacy form).
+    let mut i = 0
+    let mut extra = ""
+    while i < len(argv) {
+        let s = _str(argv[i])
+        extra = extra + " " + s
+        i = i + 1
+    }
+    let _stdbuf_pfx = _stdbuf_prefix()
+    let inner_cmd = _stdbuf_pfx + _hexa() + " run " + mod_path + " --repo \"" + repo + "\"" + extra
+    // Allocate a temp FIFO via stdlib/channel — we use only the read side.
+    // pair[0] = c2p (parent reads), pair[1] = p2c (parent writes; unused here).
+    // (The unused write pair is opened so we can call channel_close() on it
+    //  to unlink the inode at tear-down — not for I/O.)
+    let pair = channel_pair_open()
+    let read_fd = pair[0]
+    let write_fd = pair[1]
+    if read_fd < 0 {
+        // Fallback: legacy buffered path (FIFO creation failed). Feed lines
+        // to callback for parity. mandate-1 — bytes still verbatim.
+        let out = _str(exec(inner_cmd))
+        let parts = out.split("\n")
+        let mut k = 0
+        while k < len(parts) - 1 {
+            on_line(_str(parts[k]))
+            k = k + 1
+        }
+        // Last fragment: emit only if non-empty (avoid trailing blank line).
+        if len(parts) > 0 {
+            let tail = _str(parts[len(parts) - 1])
+            if tail != "" { on_line(tail) }
+        }
+        return 0
+    }
+    let fifo_path = channel_path_for(read_fd)
+    let END = "__HEXA_DISP_END__"
+    // Background the inner cmd writing to the FIFO. Append END sentinel
+    // after the cmd exits so the read loop terminates deterministically.
+    //
+    // Backgrounding gotcha: hexa's exec() uses popen(cmd, "r") and reads to
+    // EOF on the pipe. A naked `(...) &` would inherit popen's stdout fd in
+    // the backgrounded subshell, keeping the pipe open and blocking exec()
+    // forever. We close subshell stdin/stdout/stderr (`</dev/null
+    // >/dev/null 2>&1`) BEFORE the `&` so popen sees EOF immediately and
+    // exec() returns. The inner cmd's stdout is already redirected to the
+    // FIFO inside the subshell, so the /dev/null on subshell stdout doesn't
+    // suppress the actual chat output.
+    //
+    // mandate-1: stderr is folded into the FIFO via `2>&1` so
+    // diagnostic chatter (e.g. llama.cpp gguf banner, hxllama warnings)
+    // reaches the chat lane verbatim — same semantics as legacy buffered
+    // _dispatch_module exec(cmd) where popen captures stdout+stderr.
+    let bg_cmd = "(" + inner_cmd
+        + " > '" + fifo_path + "' 2>&1; "
+        + "printf '%s\\n' '" + END + "' > '" + fifo_path + "') "
+        + "</dev/null >/dev/null 2>&1 &"
+    let _r = exec(bg_cmd)
+    // Per-line ceiling: 10 min. Chat output cadence (LLM token streams) is
+    // typically <60s/line; long generations stay within 10min. Two consecutive
+    // empty reads (timeout / EOF) → terminate (defensive — END sentinel is
+    // the canonical exit). mandate-1 — raw bytes through.
+    let timeout_ms = 600000
+    let mut done = false
+    let mut empty_streak = 0
+    while !done {
+        let line = _str(channel_recv(read_fd, timeout_ms))
+        if line == END {
+            done = true
+        } else if line == "" {
+            empty_streak = empty_streak + 1
+            if empty_streak >= 2 { done = true }   // EOF / dual-timeout guard
+        } else {
+            empty_streak = 0
+            on_line(line)
+        }
+    }
+    let _c1 = channel_close(read_fd)
+    let _c2 = channel_close(write_fd)
+    return 0
+}
+
+// _dispatch_module — backward-compat wrapper around streaming form.
+// External byte sequence preserved (one-shot --prompt mode identical); REPL
+// banners now arrive incrementally instead of one buffered blob (Phase 3c
+// honest C3 #5 / iter 3 (b-fix) C3 carry resolved).
+fn _dispatch_module(mod_name: string, repo: string, argv) {
+    let _rc = _dispatch_module_streaming(mod_name, repo, argv, _print_line)
+}
+
+// ─── chat lane plugin dispatch (cycle 2026-05-09 LANDED) ────────────────────
+//
+// The chat lane plugin pattern (chat/lanes/_registry.hexa SSOT) is invoked
+// via three flags, all routed below.  Lane modules are own-main()-bearing
+// hexa scripts at chat/lanes/<file>.hexa; we shell out to hexa.real with
+// the surfaced argv, identical to the legacy _dispatch_module path but
+// without the FIFO streaming layer (lane runs are short-lived one-shots).
+//
+// mandate-1: lane invocation pipes raw stdout (no transform); the
+// only chat.hexa-side framing is the optional [BENCH ...] markers emitted
+// by the lane modules themselves (control-band convention).
+//
+// yaml↔md: the registry SSOT lives in chat/lanes/_registry.hexa
+// (programmatic lookup via shell_lane_lookup helper invoke) AND in
+// anima/registry/anima_artifact_registry.yaml#chat_lanes (md mirror via
+// docs/anima_artifact_registry.md regenerate).
+//
+// Future-proof extension: a NEW lane = drop chat/lanes/<file>.hexa with
+// fn main() + register entry in _registry.hexa lane_registry().  No
+// chat.hexa change needed for lane-internal flags (each lane parses its
+// own --foo via _arg_value).  This is the future-proof --option pattern
+// the user directive 2026-05-09 mandates.
+
+fn _lane_file_lookup(name: string) -> string {
+    // Mirror of chat/lanes/_registry.hexa lane_file() — vendored for
+    // chat.hexa no-import constraint.  When _registry adds new lanes,
+    // append below AND in registry hexa (yaml↔md mirror).
+    if name == "substrate" { return "substrate.hexa" }
+    if name == "llama" { return "llama.hexa" }
+    if name == "axis-priority" { return "axis_corpus_priority.hexa" }
+    if name == "generate" { return "clm_v4_generate.hexa" }
+    return ""
+}
+
+fn sub_list_lanes() {
+    let root = _resolve_root()
+    let registry = root + "/tool/anima_cli/chat/lanes/_registry.hexa"
+    if !_fexists(registry) {
+        println("anima chat --list-lanes: registry missing: " + registry)
+        exit(2)
+    }
+    // Delegate to _registry.hexa main() — it dumps lane_describe() per row.
+    let cmd = _hexa() + " run " + registry + " 2>&1"
+    print(_str(exec(cmd)))
+    println("")
+    println("(Lane dispatch: anima chat <alias> --lane=<name>)")
+    println("(Benchmark all: anima chat <alias> --benchmark)")
+}
+
+// anima chat --list-transports — chat transport plugin registry dump (axis-N)
+// (cycle 2026-05-09 — axis-N transport plugin pattern; user directive:
+//  "채팅 방식 여러개 있었잖아 연결모듈들 모두 벤치마킹하는식으로 진행해야함")
+fn sub_list_transports() {
+    let root = _resolve_root()
+    let registry = root + "/tool/anima_cli/chat/transports/_registry.hexa"
+    if !_fexists(registry) {
+        println("anima chat --list-transports: registry missing: " + registry)
+        exit(2)
+    }
+    let cmd = _hexa() + " run " + registry + " 2>&1"
+    print(_str(exec(cmd)))
+    println("")
+    println("(Transport smoke: anima chat --transport=<name> --selftest)")
+    println("(Benchmark cross-product: anima chat <alias> --benchmark --transport=all)")
+}
+
+// axis-8 — chat init-pattern plugin registry dump (mirror of --list-lanes)
+fn sub_list_init_patterns() {
+    let root = _resolve_root()
+    let registry = root + "/tool/anima_cli/chat/init_patterns/_registry.hexa"
+    if !_fexists(registry) {
+        println("anima chat --list-init-patterns: registry missing: " + registry)
+        exit(2)
+    }
+    let cmd = _hexa() + " run " + registry + " 2>&1"
+    print(_str(exec(cmd)))
+    println("")
+    println("(Init-pattern dispatch: anima dialogue --duo|--trio --init-pattern=<name>)")
+    println("(Benchmark sweep: anima chat --benchmark --mode=ai-duo --init-pattern=all)")
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// axis-N+1 hook (T+1 step, cycle 2026-05-10) — generic axis dispatch
+//
+// 본 helper 들은 raw#15 ADDITIVE — 기존 4 hardcode 분기 (--list-lanes /
+// --list-init-patterns / --list-transports) 는 그대로 유지 (back-compat).
+// 신규 진입점:
+//   anima chat --list-axes              → 모든 axis (lane/mode/init-pattern/transport)
+//   anima chat list-axes                → 동일 (positional alias)
+//   anima chat --list-axis=<name>       → 특정 axis 의 names 만 dump
+//   anima chat list-axis <name>         → 동일 (positional)
+//
+// generic dispatch 는 axes/_registry.hexa SSOT 를 통해 axis-5+ 자동 흡수
+// (verifier registry 추가 시 chat.hexa 코드 변경 0 줄).
+// ─────────────────────────────────────────────────────────────────────────
+fn sub_list_axes() {
+    let root = _resolve_root()
+    let registry = root + "/tool/anima_cli/chat/axes/_registry.hexa"
+    if !_fexists(registry) {
+        println("anima chat --list-axes: meta-registry missing: " + registry)
+        exit(2)
+    }
+    let cmd = _hexa() + " run " + registry + " 2>&1"
+    print(_str(exec(cmd)))
+    println("")
+    println("(Axis 별 dump: anima chat list-axis <name>)")
+    println("(Axis 별 detail: anima chat --list-<lanes|modes|init-patterns|transports>)")
+}
+
+// _route_list_axis — generic axis dispatcher (hook 핵심).
+// axis name (lane / mode / init-pattern / transport / 미래 axis) 을 받아
+// 해당 axis 의 registry 또는 inline anchor 에 위임. axes/_registry.hexa
+// 에 row 추가 시 본 함수만으로 자동 인식 (axis-N+1 hook 정의).
+fn _route_list_axis(axis_name: string) {
+    let root = _resolve_root()
+    let axes_reg = root + "/tool/anima_cli/chat/axes/_registry.hexa"
+    if !_fexists(axes_reg) {
+        println("anima chat list-axis: meta-registry missing: " + axes_reg)
+        exit(2)
+    }
+    // axes/_registry.hexa 에서 row lookup. inline anchor (mode) 는
+    // benchmark.hexa _bench_modes 로 위임, 그 외는 standalone registry 의
+    // main selftest 결과를 그대로 emit (registry meta 노출).
+    let trimmed = axis_name.trim()
+    if trimmed == "" {
+        println("anima chat list-axis: axis name 필요 — 예: lane / mode / init-pattern / transport")
+        println("                       (전체: anima chat --list-axes)")
+        exit(2)
+    }
+    // Hardcoded axis → registry/inline mapping (vendored mirror of
+    // axes_registry — yaml↔md SSOT carry; 본 mirror 는 axes
+    // registry 를 invoke 하지 않고도 generic dispatch 가능하도록 유지).
+    if trimmed == "lane" {
+        let p = root + "/tool/anima_cli/chat/lanes/_registry.hexa"
+        if !_fexists(p) { println("anima chat list-axis: registry missing: " + p); exit(2) }
+        print(_str(exec(_hexa() + " run " + p + " 2>&1")))
+        return
+    }
+    if trimmed == "mode" {
+        // T+2 promote (2026-05-10) — modes/_registry.hexa standalone registry.
+        // Backward-compat fallback: 파일 부재 시 vendored inline emit.
+        let p = root + "/tool/anima_cli/chat/modes/_registry.hexa"
+        if _fexists(p) {
+            print(_str(exec(_hexa() + " run " + p + " 2>&1")))
+            return
+        }
+        // Fallback (raw#15 additive — promote 이전 동작 보존)
+        println("PASS chat/axes#mode (inline anchor fallback → benchmark.hexa _bench_modes)")
+        println("  default = 1:1")
+        println("  1:1     [LANDED] single user → single model (default; current behavior)")
+        println("  ai-duo  [LANDED] 2 models dialogue (chat/duo/duo.hexa)")
+        println("  ai-trio [SKELETON] 3 models round-robin OR moderated (chat/trio/trio.hexa)")
+        return
+    }
+    if trimmed == "init-pattern" {
+        let p = root + "/tool/anima_cli/chat/init_patterns/_registry.hexa"
+        if !_fexists(p) { println("anima chat list-axis: registry missing: " + p); exit(2) }
+        print(_str(exec(_hexa() + " run " + p + " 2>&1")))
+        return
+    }
+    if trimmed == "transport" {
+        let p = root + "/tool/anima_cli/chat/transports/_registry.hexa"
+        if !_fexists(p) { println("anima chat list-axis: registry missing: " + p); exit(2) }
+        print(_str(exec(_hexa() + " run " + p + " 2>&1")))
+        return
+    }
+    if trimmed == "verifier" {
+        // axis-5 (axis-N+1) — T+3 land 2026-05-10. raw#15 additive —
+        // 기존 4 case (lane/mode/init-pattern/transport) 보존.
+        let p = root + "/tool/anima_cli/chat/verifiers/_registry.hexa"
+        if !_fexists(p) { println("anima chat list-axis: registry missing: " + p); exit(2) }
+        print(_str(exec(_hexa() + " run " + p + " 2>&1")))
+        return
+    }
+    if trimmed == "modality" {
+        // axis-6 axis-N+2 — T+6 land 2026-05-10. raw#15 additive.
+        // 6-axis mark — modality (text/audio/vision/multi_modal/tactile).
+        let p = root + "/tool/anima_cli/chat/modalities/_registry.hexa"
+        if !_fexists(p) { println("anima chat list-axis: registry missing: " + p); exit(2) }
+        print(_str(exec(_hexa() + " run " + p + " 2>&1")))  // @allow-bare-exec @allow-silent-exit
+        return
+    }
+    println("anima chat list-axis: unknown axis '" + trimmed + "'")
+    println("            run `anima chat --list-axes` for registered axes")
+    exit(2)
+}
+
+fn sub_lane_dispatch(lane: string, repo: string, argv) {
+    let root = _resolve_root()
+    let file = _lane_file_lookup(lane)
+    if file == "" {
+        println("anima chat: unknown lane '" + lane + "'")
+        println("            run `anima chat --list-lanes` for registered lanes")
+        exit(2)
+    }
+    let lane_path = root + "/tool/anima_cli/chat/lanes/" + file
+    if !_fexists(lane_path) {
+        println("anima chat: lane file missing: " + lane_path)
+        exit(2)
+    }
+    // Forward argv (excl. our own flags) plus repo to the lane.  The lane
+    // module parses --prompt / --max-tokens / --temp / --bench-mode itself
+    // (per-lane discretion; future-proof).
+    let mut extra = ""
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        // strip our flag pair (we already extracted lane name)
+        if s == "--lane" && i + 1 < len(argv) { i = i + 2; continue }
+        if s.starts_with("--lane=") { i = i + 1; continue }
+        extra = extra + " " + s
+        i = i + 1
+    }
+    let repo_arg = if repo != "" { " --repo " + repo } else { "" }
+    let cmd = _hexa() + " run " + lane_path + repo_arg + extra + " 2>&1"
+    print(_str(exec(cmd)))
+}
+
+fn sub_benchmark(repo: string, argv) {
+    let root = _resolve_root()
+    let bench = root + "/tool/anima_cli/chat/lanes/benchmark.hexa"
+    if !_fexists(bench) {
+        println("anima chat --benchmark: runner missing: " + bench)
+        exit(2)
+    }
+    let mut extra = ""
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s == "--benchmark" { i = i + 1; continue }
+        extra = extra + " " + s
+        i = i + 1
+    }
+    let repo_arg = if repo != "" { " --repo " + repo } else { "" }
+    let cmd = _hexa() + " run " + bench + repo_arg + extra + " 2>&1"
+    print(_str(exec(cmd)))
+}
+
+// _arg_value_eq — supports BOTH `--lane name` and `--lane=name` forms
+// (the user directive uses `--option` style; standardize parse here).
+fn _arg_value_eq(argv, key: string, dflt: string) -> string {
+    let prefix = key + "="
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s == key && i + 1 < len(argv) { return _str(argv[i + 1]) }
+        if s.starts_with(prefix) {
+            return s.substring(len(prefix), len(s))
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _arg_present_eq(argv, key: string) -> bool {
+    let prefix = key + "="
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s == key { return true }
+        if s.starts_with(prefix) { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--help") { sub_help(); return }
+    if _arg_present(argv, "--selftest") { sub_selftest(); return }
+
+    // anima chat --list-lanes (chat lane plugin registry dump)
+    // No alias required — the registry is alias-agnostic.
+    if _arg_present(argv, "--list-lanes") {
+        sub_list_lanes()
+        return
+    }
+
+    // anima chat --list-transports (axis-N transport plugin registry dump)
+    // No alias required — the registry is alias-agnostic.
+    if _arg_present(argv, "--list-transports") {
+        sub_list_transports()
+        return
+    }
+
+    // axis-8 — chat init-pattern plugin registry dump
+    if _arg_present(argv, "--list-init-patterns") {
+        sub_list_init_patterns()
+        return
+    }
+
+    // axis-N+1 hook (T+1 step, cycle 2026-05-10) — meta-registry dump
+    // anima chat --list-axes / anima chat list-axes
+    if _arg_present(argv, "--list-axes") {
+        sub_list_axes()
+        return
+    }
+    if len(argv) > 0 && _str(argv[0]) == "list-axes" {
+        sub_list_axes()
+        return
+    }
+
+    // anima chat --list-axis=<name> / anima chat list-axis <name>
+    if _arg_present_eq(argv, "--list-axis") {
+        let axis_name = _arg_value_eq(argv, "--list-axis", "")
+        _route_list_axis(axis_name)
+        return
+    }
+    if len(argv) > 0 && _str(argv[0]) == "list-axis" {
+        let axis_name = if len(argv) > 1 { _str(argv[1]) } else { "" }
+        _route_list_axis(axis_name)
+        return
+    }
+
+    // anima chat list
+    if len(argv) > 0 && _str(argv[0]) == "list" {
+        sub_list()
+        return
+    }
+
+    // resolve model alias (first positional or "default")
+    let model_arg = if len(argv) > 0 && !_str(argv[0]).starts_with("--") { _str(argv[0]) } else { "default" }
+    let resolved = _alias_resolve(model_arg)
+    let mod_name = _str(resolved[0])
+    let repo = _str(resolved[1])
+    let phase = _str(resolved[4])
+
+    if mod_name == "" {
+        println("anima chat: unknown alias '" + model_arg + "'")
+        println("            run `anima chat list` for known aliases")
+        println("            raw HF id (dancinlab/<repo>) also accepted")
+        exit(2)
+    }
+
+    // Phase 3c LANDED 2026-05-08 — chat/llama/llama.hexa wires libllama FFI
+    // into chat dispatcher. The legacy phase_3 gate is removed; GGUF presence
+    // is verified inside the module (honest fallback emit if missing). Any
+    // residual phase_3 tag (legacy alias DB entries) is treated as an error.
+    if phase == "phase_3" {
+        println("anima chat: alias '" + model_arg + "' → module=" + mod_name + " (phase_3 legacy tag)")
+        println("            chat.hexa _alias_resolve should now emit phase_3c_landed for llama family.")
+        exit(2)
+    }
+
+    // --backend hf gate (Phase 3 deferred)
+    let backend = _arg_value(argv, "--backend", "local")
+    if backend == "hf" {
+        println("anima chat: --backend hf — Phase 3 not yet implemented")
+        println("            Phase 1 = --backend local only (anima_native + clm_v4)")
+        exit(2)
+    }
+
+    // strip the model arg before passing to module/lane
+    let module_argv = if len(argv) > 0 && !_str(argv[0]).starts_with("--") { argv[1:] } else { argv }
+
+    // anima chat <alias> --benchmark — run all lanes × fixed prompts.
+    // Routed BEFORE --lane so `--benchmark` short-circuits any concurrent
+    // --lane=<name> (benchmark already iterates all lanes).
+    if _arg_present(module_argv, "--benchmark") {
+        sub_benchmark(repo, module_argv)
+        return
+    }
+
+    // anima chat <alias> --lane=<name> — dispatch chat lane plugin.
+    // Supports both `--lane=foo` and `--lane foo` forms.
+    if _arg_present_eq(module_argv, "--lane") {
+        let lane = _arg_value_eq(module_argv, "--lane", "")
+        if lane == "" {
+            println("anima chat: --lane requires a name (substrate / llama / axis-priority / generate)")
+            println("            run `anima chat --list-lanes` for registered lanes")
+            exit(2)
+        }
+        sub_lane_dispatch(lane, repo, module_argv)
+        return
+    }
+
+    // legacy module dispatch (unchanged) — alias → module routing
+    _dispatch_module(mod_name, repo, module_argv)
+}

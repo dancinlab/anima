@@ -1,0 +1,48 @@
+{
+  "hypothesis": "H_214",
+  "slug": "self-i-emergence-from-substrate",
+  "domain": "LIFE",
+  "title": "self-i-emergence-from-substrate — closure-partition Φ as 'I' indicator",
+  "date": "2026-05-23",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "seed": 42,
+  "params": {"d_model": 8, "init_cells_per_region": 8, "n_steps": 20, "frag_step": 15, "k_self_pre": 0.8, "k_self_post": 0.2, "k_other": 0.2},
+  "trajectory": {
+    "phi_self":     [1.82031, 1.87833, 1.96151, 2.0015, 2.05378, 2.10581, 2.10565, 2.13803, 2.07496, 2.07683, 1.97555, 1.92661, 1.83956, 1.83282, 1.81738, 1.76517, 1.6809, 1.60433, 1.52993, 1.50783],
+    "phi_other":    [1.69942, 1.60947, 1.56353, 1.56603, 1.6059, 1.46378, 1.39507, 1.34979, 1.33209, 1.2846, 1.30967, 1.24741, 1.15743, 1.15314, 1.07329, 0.98463, 0.915599, 0.86422, 0.814645, 0.772101],
+    "dw_self":      [0.121035, 0.277155, 0.425105, 0.654504, 0.826125, 0.934224, 1.06657, 1.22415, 1.47124, 1.67161, 1.90603, 2.1102, 2.29807, 2.48116, 2.57389, 2.79078, 3.01786, 3.1894, 3.31065, 3.43305],
+    "dw_other":     [0.159143, 0.364587, 0.566118, 0.703264, 0.886912, 1.07434, 1.167, 1.38042, 1.54686, 1.67237, 1.84842, 1.98949, 2.1123, 2.24762, 2.43725, 2.59127, 2.74581, 3.03805, 3.19796, 3.3624],
+    "splits_self":  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "splits_other": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "n_self":       [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
+    "n_other":      [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
+    "k_self_active":[0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.2, 0.2, 0.2, 0.2, 0.2]
+  },
+  "derived": {
+    "phi_margin_pre":    0.508437,
+    "dw_margin":         -0.0205788,
+    "phi_converge_post": 0.95289,
+    "splits_self_total": 0,
+    "splits_other_total":0
+  },
+  "criteria": {
+    "C1_phi_margin_pre_ge_0p10":   true,
+    "C2_dw_margin_ge_0p20":        false,
+    "C3_phi_converge_post_le_0p10":false,
+    "C4_re_run_byte_equal":        false
+  },
+  "falsifiers": {
+    "F1_SELF_PHI_DOMINANCE": { "metric": "phi_self[10] > phi_other[10]", "verdict": "PASS" },
+    "F2_FROZEN_LIKE":        { "metric": "dw_self[final] <= dw_other[final]", "verdict": "FAIL" },
+    "F3_FRAG_DISSOLVE":      { "metric": "phi_self[final] <= 1.5*phi_other[final]", "verdict": "FAIL" },
+    "F4_DETERMINISM":        { "metric": "re-run phi_self[10] byte-equal", "verdict": "FAIL" },
+    "F5_PRIMITIVE_SANITY":   { "metric": "all phi finite >= 0", "verdict": "PASS" }
+  },
+  "n_criteria_pass": 1,
+  "n_falsifier_pass": 2,
+  "verdict": "PARTIAL",
+  "cross_link": {"H_205": "PR #216", "H_132": "frozen-cell sister", "D3": "docs/anima_persona_substrate_native_design_2026_05_12.md"}
+}

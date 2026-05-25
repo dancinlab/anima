@@ -1,0 +1,13 @@
+[engines/snn_consciousness] F-SNN-1..5 falsifier suite
+  [F-SNN-1] rest-decay mean_v=-64.9667 v_rest=-65.0 spikes=0
+F-SNN-1 PASS
+  [F-SNN-2] threshold-cross spikes=48 (expect >5)
+F-SNN-2 PASS
+  [F-SNN-3] propagation iso=48 coupled=48
+F-SNN-3 PASS
+  [F-SNN-4] monotone spikes(I=2)=24 spikes(I=5)=84
+F-SNN-4 PASS
+  [F-SNN-5] long-run rate=33.0 Hz total=264
+F-SNN-5 PASS
+[engines/snn_consciousness] 5/5 PASS
+run_rc=0 run_wall=1s

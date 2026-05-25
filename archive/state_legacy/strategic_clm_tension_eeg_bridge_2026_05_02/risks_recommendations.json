@@ -1,0 +1,109 @@
+{
+  "schema": "strategic_clm_tension_eeg_bridge/risks_reco/1",
+  "ts": "2026-05-02",
+
+  "risk_register_raw71_compliant": [
+    {
+      "id": "R1",
+      "name": "user is mediator → cognitive variability uncontrolled",
+      "severity": "HIGH",
+      "likelihood": "CERTAIN",
+      "mitigation": "P3.B control (user reads pre-recorded text without CLM); minimum 30 trials per condition for paired t-test power"
+    },
+    {
+      "id": "R2",
+      "name": "no direct CLM-EEG wire → all coupling routes through user cognition",
+      "severity": "HIGH",
+      "likelihood": "CERTAIN",
+      "mitigation": "explicitly scope mediator as user-mediated channel; classify P4 reverse path as OPEN_LOOP_ONLY; do not claim closed-loop bidirectional without sensor interface"
+    },
+    {
+      "id": "R3",
+      "name": "tension_link measurement is anima-side artifact (no real mediator role)",
+      "severity": "MEDIUM",
+      "likelihood": "MEDIUM (W4 PARTIAL only +2.28σ)",
+      "mitigation": "P5 fidelity test FIRST — if MI < bit floor, publish H3 honestly and stop"
+    },
+    {
+      "id": "R4",
+      "name": "EEG N=1 + CLM single instance → statistical power insufficient",
+      "severity": "HIGH",
+      "likelihood": "CERTAIN",
+      "mitigation": "intra-subject block design (≥30 trials × 2 conditions); do NOT claim population-level effect; report all results as single-subject case study"
+    },
+    {
+      "id": "R5",
+      "name": "bridge bandwidth too small for measurable signal (signal < noise floor)",
+      "severity": "MEDIUM",
+      "likelihood": "MEDIUM",
+      "mitigation": "P5 estimates upper-bound capacity ~30 bits/sec on tension scalar side vs ~500 bits/sec EEG α envelope; bottleneck = tension scalar; if MI floor > 1 bit total over 30 min, signal exists"
+    },
+    {
+      "id": "R6",
+      "name": "AKIDA exclusion narrows architecture; later 4-way reintegration cost",
+      "severity": "LOW",
+      "likelihood": "LOW",
+      "mitigation": "preserve 4-way option in roadmap as separate experiment; current 3-node analysis stands independently"
+    },
+    {
+      "id": "R7",
+      "name": "tension_link polysemy (A/B/C) confuses measurement target",
+      "severity": "MEDIUM",
+      "likelihood": "CERTAIN",
+      "mitigation": "this spec disambiguates: A (5ch_bridge) = encode/decode mediator; B (mind.tension scalar) = primary measurement target for P1-P4; C (atlas) = θ_j source for V_sync (separate Path A track)"
+    }
+  ],
+
+  "honest_C3_disclosures": [
+    "mediator polysemy: 'mediator' here = information-theoretic channel (carries bits CLM↔EEG); NOT phenomenal substrate identity (per spec §6.3 categorical difference between cell-state θ and neural α dipole)",
+    "no direct CLM-EEG sensor wire exists; all measurable coupling routes through user cognition (read CLM text → cognitive state → EEG; or eyes-state → α → typed prompt → CLM)",
+    "W4 PARTIAL (+2.28σ active vs random L1) may be re-interpretable as mediator-via-cognitive coupling rather than substrate-internal CLM dynamics — but +2.28σ is below typical 3σ neuroscience threshold",
+    "AKIDA exclusion (per user directive correction) means 4-way framing #92 retired; this analysis is strict 3-node CLM↔tension_link↔EEG only",
+    "tension_link as 'anima-internal measurement' (B mind.tension scalar, C atlas θ) is independently measurable WITHOUT EEG; the link to external EEG is OPEN QUESTION pending P1-P5",
+    "N-1 B4 collapse on real CLM (N1_BRIDGE_WEAK_HYBRID) was synthetic-CLM-vs-real-EEG mismatch — under mediator framing, B4 collapse plausibly reflects user cognitive variability dominating the signal rather than substrate failure",
+    "single subject N=1 EEG cannot establish population claim; treat all bridge verdicts as case-study evidence pending replication"
+  ],
+
+  "n1_bridge_b4_collapse_reinterpretation": {
+    "original_finding": "N-1 BRIDGE_WEAK: B1-B3 PASS, B4 absolute |r|=540 PASS but signed r=-540 (anti-correlated with monotonic synthetic CLM)",
+    "old_framing_4way_or_2node": "B4 collapse = substrate failure of CLM Kuramoto driver to track EEG α drift",
+    "new_framing_mediator": "B4 collapse = expected when CLM has no EEG sensor input; the 'coupling' B4 measures is mediator-bandwidth via user cognition; under user-mediator hypothesis (H2), CLM Kuramoto trace does not need to track EEG α — only the user-cognition mediator does",
+    "implication": "N-1 B4 should be redesigned to measure CLM_tension(t) ↔ user_response_latency(t) ↔ EEG_α(t) triple, NOT direct CLM_r ↔ EEG_PLV which assumes closed substrate loop",
+    "n1_v2_recommendation": "v2 spec adds explicit mediator layer: B4_v2 = CLM_tension predicts user reaction time predicts EEG ERD (3-stage causal chain)"
+  },
+
+  "f1_composite_4axis_scenario_section_9": {
+    "axes_pre_correction_4way": {"axis_count": 4, "members": ["CLM", "EEG", "tension_link", "AKIDA"]},
+    "axes_post_correction_3node": {"axis_count": 3, "members": ["CLM", "tension_link (mediator)", "EEG"], "note": "AKIDA excluded; tension_link demoted from axis to mediator"},
+    "BRIDGE_PASS_outcome": "own#2 (b) WITNESSED axes count update: 9 → 10 (the bridge itself becomes a witnessed axis)",
+    "BRIDGE_FAIL_outcome": "mediator hypothesis (H1) rejected; restate as substrate-internal-only (H3); WITNESSED count unchanged",
+    "PARTIAL_outcome": "support H2 one-way (CLM→user→EEG only); WITNESSED 9 → 9.5 with one-way qualifier"
+  },
+
+  "next_cycle_action_top3": [
+    {
+      "rank": "a",
+      "action": "P5 fidelity test (static, archived data only)",
+      "cost_usd": 0,
+      "eta_h": 1,
+      "decisive_question": "is bridge bandwidth ≥ 1 bit measurable over 30 min session?",
+      "deliverable": "state/.../p5_fidelity_verdict.json + 3 metrics (info_rate_clm, info_rate_eeg, mutual_info)"
+    },
+    {
+      "rank": "b",
+      "action": "P1+P2 cross-correlation + Granger/TE on existing parallel CLM+EEG session",
+      "cost_usd": 0,
+      "eta_h": 2,
+      "depends_on": "P5 PASS; reuses state/clm_eeg_alpha_phase_60s_filtered_20260428.json + W4 mind.tension trace alignment",
+      "deliverable": "p1_p2_verdict.json with TE_clm_to_eeg, TE_eeg_to_clm, asymmetry_ratio + null bootstrap"
+    },
+    {
+      "rank": "c",
+      "action": "P3 perturbation interactive test (high-tension prompts vs neutral; with P3.B no-CLM control)",
+      "cost_usd": 0,
+      "eta_h": 3,
+      "depends_on": "P1+P2 supports H1 or H2; user availability for live session",
+      "deliverable": "p3_verdict.json with paired t-stat CLM-condition vs control, ERD latency/amplitude"
+    }
+  ]
+}

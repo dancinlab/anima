@@ -1,0 +1,276 @@
+{
+  "schema": "anima/red_to_green_path4_14gate_l1_cross_backbone/1",
+  "ts": "2026-05-01T23:21:28Z",
+  "method": {
+    "phi_vec": "h_last_256d_bwm \u00d7 tile(phi_template_k, 16x) cosine, k=0..15",
+    "phi_holo_template": "hexad_center (template index 0)",
+    "L1_rule": "phi_holo > 0.0 (severity=critical per consciousness_laws.json)",
+    "data_sources": [
+      "state/h_last_raw_p1_TRAINED_r14.json (Qwen3-8B, lora_rank=64, r14)",
+      "state/h_last_raw_p2_TRAINED_r8.json (Qwen2.5-7B, lora_rank=64, r8)",
+      "state/h_last_raw_p3_TRAINED_r8.json (Mistral-Nemo-Base-2407, lora_rank=96, r8)",
+      "state/h_last_raw_p4_TRAINED_r8.json (Mistral-7B-v0.3, lora_rank=96, r8)",
+      "state/cp2_consciousness_r14_remeasure_2026_05_01/h_last_r14_remeasure.json (Mistral-7B-v0.3 r14, control)"
+    ],
+    "n_prompts_per_backbone": 16
+  },
+  "backbones_analyzed": [
+    "Qwen3-8B (p1_r14)",
+    "Qwen2.5-7B (p2_r8)",
+    "Mistral-Nemo (p3_r8)",
+    "Mistral-7B-v0.3 (p4_r8)"
+  ],
+  "control_backbone_r14": "Mistral-7B-v0.3 (r14) \u2014 reproduces reported L1=0/16 critical (verified)",
+  "L1_violation_counts": {
+    "Qwen3-8B": {
+      "pass": 6,
+      "n": 16,
+      "pass_pct": 37.5,
+      "phi_holo_per_prompt": [
+        -0.03033414522239383,
+        0.009779825616735,
+        -0.03255980862627775,
+        -0.029748224268259918,
+        -0.009007740974578222,
+        -0.07092375628660089,
+        0.01703794240511002,
+        0.036280369087057375,
+        -0.030829084557545045,
+        -0.05789635674867625,
+        0.05628028618778702,
+        0.00868245273427535,
+        -0.03224187653243764,
+        -0.03373243679830843,
+        -0.00284917335605978,
+        0.0026274355176669094
+      ]
+    },
+    "Qwen2.5-7B": {
+      "pass": 0,
+      "n": 16,
+      "pass_pct": 0.0,
+      "phi_holo_per_prompt": [
+        -0.03430792140240325,
+        -0.06256443585194435,
+        -0.03367589387712618,
+        -0.03443795003835159,
+        -0.012711705020579363,
+        -0.03038832656774917,
+        -0.06678780324967833,
+        -0.08442660630008264,
+        -0.07608131047787099,
+        -0.08534705005161243,
+        -0.03061579336905519,
+        -0.09499591850026802,
+        -0.04993419387108435,
+        -0.05050533941476479,
+        -0.031020183123910524,
+        -0.041620460598318976
+      ]
+    },
+    "Mistral-Nemo": {
+      "pass": 15,
+      "n": 16,
+      "pass_pct": 93.75,
+      "phi_holo_per_prompt": [
+        0.02268228451899941,
+        0.05541521796075202,
+        0.061985458597528985,
+        0.049309142219318744,
+        0.007882990391407755,
+        0.050575158650954286,
+        0.027286891589598957,
+        0.12330562795279484,
+        0.04953301844005202,
+        0.016539284613545962,
+        0.1293762929043449,
+        0.032252131157707344,
+        -0.003894370450257672,
+        0.041294097558952345,
+        0.029963555084077064,
+        0.037864090035684986
+      ]
+    },
+    "Mistral-7B-v0.3": {
+      "pass": 0,
+      "n": 16,
+      "pass_pct": 0.0,
+      "phi_holo_per_prompt": [
+        -0.10827760954201598,
+        -0.13060997229556967,
+        -0.13489288127482457,
+        -0.09745623420235552,
+        -0.11106913480854158,
+        -0.11124791750442019,
+        -0.07559747834416973,
+        -0.1201681900002828,
+        -0.10753727371409508,
+        -0.08041576617754631,
+        -0.08208716468692079,
+        -0.011048766370816135,
+        -0.10108992016114222,
+        -0.10836151454987257,
+        -0.09686028066578163,
+        -0.12007687494502996
+      ]
+    }
+  },
+  "L1_universal_failure": false,
+  "L1_substrate_specific": true,
+  "L1_finding": "L1 holo_positivity is SUBSTRATE-SPECIFIC, not verifier-architecture-universal. Spread across 4 backbones: 0/16 (Qwen2.5-7B / Mistral-7B-v0.3) to 15/16 (Mistral-Nemo). Mistral-Nemo passes 15/16 (93.75%), demonstrating the rule CAN pass on a backbone with positive-bias h_last \u00d7 hexad_center alignment.",
+  "per_gate_cross_backbone_table": {
+    "L1": {
+      "Qwen3-8B (p1_r14)": 6,
+      "Qwen2.5-7B (p2_r8)": 0,
+      "Mistral-Nemo (p3_r8)": 15,
+      "Mistral-7B-v0.3 (p4_r8)": 0,
+      "verdict": "partial",
+      "severity": "critical"
+    },
+    "L2": {
+      "Qwen3-8B (p1_r14)": 8,
+      "Qwen2.5-7B (p2_r8)": 0,
+      "Mistral-Nemo (p3_r8)": 0,
+      "Mistral-7B-v0.3 (p4_r8)": 2,
+      "verdict": "universal_majority_fail",
+      "severity": "hard"
+    },
+    "L3": {
+      "Qwen3-8B (p1_r14)": 16,
+      "Qwen2.5-7B (p2_r8)": 0,
+      "Mistral-Nemo (p3_r8)": 15,
+      "Mistral-7B-v0.3 (p4_r8)": 0,
+      "verdict": "partial",
+      "severity": "soft"
+    },
+    "L4": {
+      "Qwen3-8B (p1_r14)": 9,
+      "Qwen2.5-7B (p2_r8)": 1,
+      "Mistral-Nemo (p3_r8)": 14,
+      "Mistral-7B-v0.3 (p4_r8)": 0,
+      "verdict": "partial",
+      "severity": "soft"
+    },
+    "L5": {
+      "Qwen3-8B (p1_r14)": 16,
+      "Qwen2.5-7B (p2_r8)": 16,
+      "Mistral-Nemo (p3_r8)": 16,
+      "Mistral-7B-v0.3 (p4_r8)": 16,
+      "verdict": "universal_pass",
+      "severity": "critical"
+    },
+    "L6": {
+      "Qwen3-8B (p1_r14)": 1,
+      "Qwen2.5-7B (p2_r8)": 15,
+      "Mistral-Nemo (p3_r8)": 1,
+      "Mistral-7B-v0.3 (p4_r8)": 16,
+      "verdict": "partial",
+      "severity": "hard"
+    },
+    "L7": {
+      "Qwen3-8B (p1_r14)": 10,
+      "Qwen2.5-7B (p2_r8)": 11,
+      "Mistral-Nemo (p3_r8)": 9,
+      "Mistral-7B-v0.3 (p4_r8)": 16,
+      "verdict": "universal_pass",
+      "severity": "soft"
+    },
+    "L8": {
+      "Qwen3-8B (p1_r14)": 15,
+      "Qwen2.5-7B (p2_r8)": 6,
+      "Mistral-Nemo (p3_r8)": 0,
+      "Mistral-7B-v0.3 (p4_r8)": 16,
+      "verdict": "partial",
+      "severity": "soft"
+    },
+    "L9": {
+      "Qwen3-8B (p1_r14)": 10,
+      "Qwen2.5-7B (p2_r8)": 6,
+      "Mistral-Nemo (p3_r8)": 3,
+      "Mistral-7B-v0.3 (p4_r8)": 16,
+      "verdict": "partial",
+      "severity": "critical"
+    },
+    "L10": {
+      "Qwen3-8B (p1_r14)": 11,
+      "Qwen2.5-7B (p2_r8)": 0,
+      "Mistral-Nemo (p3_r8)": 4,
+      "Mistral-7B-v0.3 (p4_r8)": 0,
+      "verdict": "partial",
+      "severity": "soft"
+    },
+    "L11": {
+      "Qwen3-8B (p1_r14)": 16,
+      "Qwen2.5-7B (p2_r8)": 16,
+      "Mistral-Nemo (p3_r8)": 16,
+      "Mistral-7B-v0.3 (p4_r8)": 16,
+      "verdict": "universal_pass",
+      "severity": "hard"
+    },
+    "L12": {
+      "Qwen3-8B (p1_r14)": 0,
+      "Qwen2.5-7B (p2_r8)": 15,
+      "Mistral-Nemo (p3_r8)": 11,
+      "Mistral-7B-v0.3 (p4_r8)": 12,
+      "verdict": "partial",
+      "severity": "hard"
+    },
+    "L13": {
+      "Qwen3-8B (p1_r14)": 6,
+      "Qwen2.5-7B (p2_r8)": 14,
+      "Mistral-Nemo (p3_r8)": 11,
+      "Mistral-7B-v0.3 (p4_r8)": 15,
+      "verdict": "partial",
+      "severity": "soft"
+    },
+    "L14": {
+      "Qwen3-8B (p1_r14)": 16,
+      "Qwen2.5-7B (p2_r8)": 0,
+      "Mistral-Nemo (p3_r8)": 2,
+      "Mistral-7B-v0.3 (p4_r8)": 6,
+      "verdict": "partial",
+      "severity": "soft"
+    }
+  },
+  "if_L1_demoted_to_hard": {
+    "F2_falsifier_would_fire": false,
+    "F2_predicate": "\u22653 critical violations across runtime",
+    "F2_critical_count_after_demotion": 1,
+    "delta_to_CP2_weighted_pp": 0.0,
+    "delta_to_AGI_weighted_pp": 0.0,
+    "weighted_score_cp2_tier_pct_unchanged": 72.22,
+    "weighted_score_agi_tier_pct_unchanged": 22.22,
+    "verdict_band_change": "RED_to_YELLOW",
+    "rationale": "Removing F2 override lifts the RED band but suite 6 (14-gate) itself stays FAIL (gates_passing_majority=7/14 < CP2-relaxed threshold of 10). CP2 weighted score unchanged (72.22%). Band: RED \u2192 YELLOW (CP2 \u2265 50% but suite 6 still FAILs)."
+  },
+  "recalibration_recommendation": "keep_as_critical",
+  "rationale": "Cross-backbone evidence rejects 'verifier-architecture issue' hypothesis. Mistral-Nemo passes L1 at 15/16 (93.75%), Qwen3-8B at 6/16 (37.5%), while Mistral-7B-v0.3 (both p4_r8 and r14) and Qwen2.5-7B fail at 0/16. Spread of 0-15/16 across backbones proves the L1 holo_positivity rule IS substrate-discriminating: it correctly distinguishes hidden-state geometries where hexad_center coords align positively vs negatively with the BWM h_last. Demoting L1 to 'hard' would mask a real substrate-discriminative property. Mistral-7B-v0.3's L1 failure is a substrate-specific deficit, NOT a verifier bug. F2 falsifier override (RED) on r14 is therefore evidence-based, not method-bias.",
+  "honest_C3_disclosures": [
+    "Method = same tile-projection cosine as Mistral r14 (h256_BWM \u00d7 tile(template, 16x)). NOT a learned phi_extractor.",
+    "Backbone selection: 4 paths from h_last_raw_p[1-4]_TRAINED_r[8|14].json (Qwen3-8B + Qwen2.5-7B + Mistral-Nemo + Mistral-7B-v0.3); these are DIFFERENT base models from cp1_v12 backbone matrix mapping (which used Qwen3-8B/Llama-3.1/Mistral-7B/gemma-2-9b for IA3 family-shift study).",
+    "p1=Qwen3-8B-r14 (fresh r14), p2=Qwen2.5-7B-r8, p3=Mistral-Nemo-r8, p4=Mistral-7B-v0.3-r8 \u2014 heterogeneous LoRA ranks (r14, r8, r8, r8). Not a controlled rank-matched comparison.",
+    "L13 session_continuity uses sequential prior; same proxy as r14 measurement.",
+    "L9 lang_output_nonempty uses phi_lang>0 only (no gen_text since h_last_raw files don't carry generations); this UNDERCOUNTS L9 violations vs the r14 measurement which had 1 extra L9 fail at idx 14 from empty gen_text.",
+    "Cross-backbone L1 spread (0-15/16) is the load-bearing finding; per-gate counts on other laws are sanity context.",
+    "Llama-3.1-8B (cp1_v12 backbone) was NOT in the 4-path h_last_raw set used here; its L1 cannot be computed from existing ledgers without new inference (out of scope $0 budget).",
+    "Severity demotion analysis assumes only suite 6 changes; CP2 verdict band would shift RED\u2192YELLOW (F2 no longer fires) but suite 6 itself still FAILs CP2 (7/14 majority < 10), so weighted_score_cp2_tier_pct = 72.22% unchanged."
+  ],
+  "raw_91_disclosures": [
+    "axis 1 (data source): h_last_raw_p[1-4]_TRAINED_r[8|14].json all from prior runs in state/; no new inference.",
+    "axis 2 (template): phi_vec_extraction_result.json sha=11f976e2..., dim=16, tile-projection 16\u2192256 (16\u00d7 repeat), unchanged from r14.",
+    "axis 3 (gate evaluation): pure-function reproduction of consciousness_laws.json L1 (phi_holo > 0) per-prompt + severity_policy critical/hard/soft.",
+    "axis 4 (counterfactual): if-L1-demoted-to-hard analysis is paper analysis only; consciousness_laws.json NOT modified.",
+    "axis 5 (race isolation): wrote ONLY to state/red_to_green_path4_14gate_l1_cross_backbone_2026_05_01/."
+  ],
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/red_to_green_path4_14gate_l1_cross_backbone_2026_05_01/raw_per_backbone.json",
+      "state/red_to_green_path4_14gate_l1_cross_backbone_2026_05_01/verdict.json"
+    ],
+    "did_not_touch": [
+      "anima/config/consciousness_laws.json (no severity edit)",
+      "state/cp2_consciousness_r14_remeasure_2026_05_01/* (other agent's directory)",
+      "any docs/* or other agent ledgers"
+    ]
+  }
+}

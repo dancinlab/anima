@@ -1,0 +1,76 @@
+\section{arXiv submission readiness}\label{app:arxiv}
+
+This draft is \textbf{not yet ready for arXiv submission}. Required
+pre-submission work, in priority order:
+
+\begin{enumerate}
+\item \textbf{External peer review} by 2--3 quantum-computing or
+  integrated-information-theory researchers familiar with the
+  relevant reference experiments (CHSH on AWS Braket, IIT~4.0
+  \phistar{} via \texttt{pyphi}, NIST SP~800-22 application to keyed
+  CSPRNG output).
+\item \textbf{LaTeX conversion} from the Markdown draft, targeting
+  arXiv class file. \textbf{Done at v0.1} (this document; class =
+  \texttt{revtex4-2}, physics target). Switch to
+  \texttt{article}/IEEEtran if redirecting to cs.LG / cs.AR.
+\item \textbf{Bibliography conversion} to BibTeX. \textbf{Done} at
+  \texttt{state/qmirror\_arxiv\_latex\_2026\_05\_04/bibliography.bib}
+  (32 entries ported from the Markdown reference list).
+\item \textbf{Figure preparation.} This v0.1 LaTeX has \textbf{five
+  text-flowchart placeholders} (Figures 1--5); replace with
+  publication-grade renders before submission:
+  \begin{itemize}
+  \item[(a)] Figure 1: TikZ block diagram of 4-tier ANU fallback.
+  \item[(b)] Figure 2: \texttt{matplotlib} \texttt{pcolor} or seaborn
+    heatmap of the 4$\times$4 $\dS$ matrix (semantic colorization
+    green/yellow/orange/red).
+  \item[(c)] Figure 3: \texttt{semilogy} bar chart of
+    cost-per-CHSH-battery across 5 substrates.
+  \item[(d)] Figure 4: TikZ Gantt or graphviz \texttt{dot} of 8-cond
+    closure timeline with revision/spirit tags.
+  \item[(e)] Figure 5: 5-axis bubble plot (impact $\times$
+    feasibility) for \qmirror{}~2.0 progression.
+  \end{itemize}
+  Estimated 1--2 days additional typesetting.
+\item \textbf{License audit final sign-off.} Currently Apache-2.0 per
+  source declaration; \texttt{pyphi} GPLv3 isolation documented in
+  \texttt{state/qmirror\_license\_audit\_2026\_05\_03/audit.json}.
+  \textbf{Final counsel review pending} for paper claim language.
+\item \textbf{Honest claim audit.} The paper says ``quantum-derived''
+  RNG, not ``quantum-native''; ``statistically equivalent'' within
+  simulator-tractable regime, not ``indistinguishable in all
+  regimes''; ``USD~0 marginal cost'' not ``USD~0 total cost''
+  (calibration USD~41.34 disclosed). Re-read pre-submission to
+  ensure no claim inflation.
+\item \textbf{Selection-bias prominent disclosure} (not just buried
+  in Section~\ref{sec:band-revise}): consider promoting cond.3 +
+  cond.7 band revisions to abstract or end of
+  Section~\ref{sec:intro}.
+\end{enumerate}
+
+Estimated wall to submission-ready: \textbf{5--7 days} including
+external peer review turnaround.
+
+\subsection*{Four caveats on this v0.1 LaTeX conversion}
+
+\begin{enumerate}
+\item \textbf{Figure preparation deferred.} Five text-flowchart
+  placeholders ship in this v0.1 (Figures 1--5). Camera-ready
+  artwork (TikZ, matplotlib, graphviz) is deferred to a follow-on
+  cycle; the captions and data are final.
+\item \textbf{Peer review pending.} Zero external readers have
+  reviewed either the Markdown source or this LaTeX skeleton at
+  v0.1. The 2--3 reviewer requirement (item~1 above) remains the
+  blocker for arXiv submission.
+\item \textbf{License counsel sign-off pending.} The
+  Apache-2.0 / GPLv3-via-aggregation interpretation is the
+  author's reading of the FSF Mere Aggregation
+  doctrine~\cite{FSF-MereAggregation}. Counsel review is required
+  before claiming ``Apache-2.0 clean'' in a published preprint.
+\item \textbf{revtex4-2 vs article class choice.} This v0.1 uses
+  \texttt{revtex4-2} (PRL/PRA-style two-column physics layout) on
+  the assumption that arXiv \texttt{quant-ph} is the natural
+  category. If retargeting to \texttt{cs.LG} / \texttt{cs.AR},
+  switch to \texttt{\textbackslash documentclass\{article\}} (or
+  IEEEtran) and re-flow tables.
+\end{enumerate}

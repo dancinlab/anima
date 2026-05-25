@@ -1,0 +1,103 @@
+## clm_v4_tokenizer_caller_migration_phase_3_2026_05_04 run.log
+## BG-ω Phase 3 caller migration EXEC — ubu1-only eval_clm_v4_hellaswag.py
+## ts_utc: 2026-05-04T01:13–01:16Z
+
+──────────────────────────────────────────────────────────────────────
+STEP 1 — In-flight gate
+──────────────────────────────────────────────────────────────────────
+$ ssh ubu1 'pgrep -af "eval_clm_v4_hellaswag|hellaswag.*eval"'
+1858498 /home/aiden/venv_orchestrator/bin/python /home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03/eval_llama_lora_ckpt.py --ckpt-repo need-singularity/p9-llama32-lora-stage1 --ckpt-revision 5a9b458467589b82a69f0108fd2af3e519c45286 --task hellaswag --limit 500 --output /home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03/lora_results/step_8000_hellaswag.json
+2232908 bash -c pgrep -af "eval_clm_v4_hellaswag|hellaswag.*eval"
+
+→ DISPOSITION: GATE OPEN for Phase 3 target.
+   The matched process is `eval_llama_lora_ckpt.py` (Llama-3.2 LoRA HellaSwag eval), a DIFFERENT caller in `p9_a_prime_main_eval_*`. The Phase 3 target `eval_clm_v4_hellaswag.py` is NOT running. Migration safe to proceed.
+
+──────────────────────────────────────────────────────────────────────
+STEP 2 — Source acquisition (read-only)
+──────────────────────────────────────────────────────────────────────
+$ ssh ubu1 'cat ~/anima/state/p9_path_b_sanity_probe_2026_05_03/eval_clm_v4_hellaswag.py'
+→ 15356 bytes, 360 lines. Byte-fallback workaround located at line 94:
+    return [byte + BYTE_FALLBACK_OFFSET for byte in b]
+  (BYTE_FALLBACK_OFFSET=4, line 72). ByteFallbackTokenizer class lines 79–105.
+  Output schema: hellaswag_raw.json + result.json. Sentinel: VERDICT log line.
+
+──────────────────────────────────────────────────────────────────────
+STEP 3 — Authoring tool/p9_path_b_hellaswag_eval.hexa
+──────────────────────────────────────────────────────────────────────
+File: /Users/ghost/core/anima/tool/p9_path_b_hellaswag_eval.hexa
+Size: 30437 bytes, 494 lines (within 25-50K target)
+Pattern source: tool/p9_sentinel_train_50k.hexa (Phase 2 most-complex, b4e1570c0)
+Tokenizer resolver: copied verbatim from tool/clm_v4_tokenizer_load.hexa (98b614363)
+Modes: --selftest, --encode-test, --apply
+Target: replaces ByteFallbackTokenizer with CanonicalSPTokenizer (sp.encode/sp.decode)
+        verdict.json schema unchanged; sentinel: __P9_PATH_B_HELLASWAG__ <PASS|FAIL>
+
+──────────────────────────────────────────────────────────────────────
+STEP 4 — Helper AST validate (Mac)
+──────────────────────────────────────────────────────────────────────
+$ /opt/homebrew/bin/python3 — extracted parts.push("…") literals via regex,
+  decoded \\n/\\t/\\"/\\\\, ran ast.parse on synthesized 17393-byte helper.
+→ AST_OK lines=361 size_bytes=17393
+
+──────────────────────────────────────────────────────────────────────
+STEP 5 — Helper SCP + selftest on ubu1
+──────────────────────────────────────────────────────────────────────
+$ scp /tmp/_phase3_helper_synth.py ubu1:/tmp/p9_path_b_hellaswag_eval_helper.hexa_tmp
+$ ssh ubu1 '/home/aiden/venv_orchestrator/bin/python3 /tmp/p9_path_b_hellaswag_eval_helper.hexa_tmp selftest'
+→ {"schema":"anima/p9_path_b_hellaswag_eval/selftest/1",
+    "tokenizer_path":".../snapshots/10ee03687.../tokenizer_64k_multilingual.model",
+    "vocab_size":64000,"n_calib_prompts":16,"n_match_exact_roundtrip":16,
+    "decoder_import_ok":true,"lm_eval_import_ok":true,
+    "verdict":"PASS","sentinel":"__P9_PATH_B_HELLASWAG__ PASS",
+    "ts_utc":"2026-05-04T01:15:16Z"}
+→ Saved: state/clm_v4_tokenizer_caller_migration_phase_3_2026_05_04/selftest.json
+
+──────────────────────────────────────────────────────────────────────
+STEP 6 — Encode-test on ubu1 (F-MIG-2 parity record)
+──────────────────────────────────────────────────────────────────────
+$ ssh ubu1 '/home/aiden/venv_orchestrator/bin/python3 /tmp/p9_path_b_hellaswag_eval_helper.hexa_tmp encode-test'
+→ canonical_total_tokens_16_prompts=153
+  legacy_byte_fallback_total_tokens_16_prompts=611
+  canonical_vs_legacy_ratio=0.2504  (4× BPE compression vs byte-per-token workaround)
+  All 16 rows: sequences_equal=false (by design — replacing the workaround is the goal)
+→ Saved: state/clm_v4_tokenizer_caller_migration_phase_3_2026_05_04/encode_test.json
+
+──────────────────────────────────────────────────────────────────────
+STEP 7 — F-MIG-3 (Mac scan)
+──────────────────────────────────────────────────────────────────────
+$ find /Users/ghost/core/anima -name 'eval_clm_v4_hellaswag.py'
+→ (no output) — caller is ubu1-only as scoped by migration spec.
+F-MIG-3 = PASS (trivially, per cycle spec).
+
+──────────────────────────────────────────────────────────────────────
+STEP 8 — Park ubu1 .py → .py.txt
+──────────────────────────────────────────────────────────────────────
+$ ssh ubu1 'mv ~/anima/state/p9_path_b_sanity_probe_2026_05_03/eval_clm_v4_hellaswag.py
+            ~/anima/state/p9_path_b_sanity_probe_2026_05_03/eval_clm_v4_hellaswag.py.txt'
+→ -rw-r--r-- 1 aiden aiden 15356 5월 3 23:29 .../eval_clm_v4_hellaswag.py.txt
+   (legacy preserved at line 94 for audit trail per raw#37 rename-not-delete)
+
+──────────────────────────────────────────────────────────────────────
+STEP 9 — F-MIG-4 (ubu1 grep-zero in active .py within state/p9_path_b_*/)
+──────────────────────────────────────────────────────────────────────
+$ ssh ubu1 'find ~/anima/state/p9_path_b_*/ -name "*.py" -not -name "*.py.txt" |
+            xargs grep -l "i+4 for i in\|byte + BYTE_FALLBACK_OFFSET"'
+→ (no output; xargs exit=123 means no match in any input file)
+
+Active .py files remaining in state/p9_path_b_*/:
+  /home/aiden/anima/state/p9_path_b_sanity_probe_v2_2026_05_03/eval_clm_v4_hellaswag_v2.py
+  ↑ already canonical sp.encode (line 77, committed in ece5c571d). Out of Phase 3 scope.
+
+F-MIG-4 = PASS — zero active byte-fallback .py callers in state/p9_path_b_*/ scope.
+
+──────────────────────────────────────────────────────────────────────
+TOTALS
+──────────────────────────────────────────────────────────────────────
+F-MIG-1 = PASS  (16/16 round-trip identity)
+F-MIG-2 = DOCUMENTED  (canonical:legacy = 0.2504 over 16 prompts; legacy was workaround)
+F-MIG-3 = PASS  (zero .py on Mac for this caller — ubu1-only by design)
+F-MIG-4 = PASS  (zero active byte-fallback in state/p9_path_b_*/ post-park)
+in_flight_gate = OPEN
+verdict = PASS
+callers_migrated_total = 6 / 6
+ts_utc = 2026-05-04T01:16:00Z

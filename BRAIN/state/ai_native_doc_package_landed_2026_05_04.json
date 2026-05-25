@@ -1,0 +1,116 @@
+{
+  "schema": "hexa-brain/ai-native-doc-package/1",
+  "ts_utc": "2026-05-04T00:00:00Z",
+  "bg_lane": "HEXA-BRAIN-AINATIVE",
+  "cycle": "v1.1.0 dual-subsystem ai-native package land",
+  "verdict": "LANDED",
+  "doc_count": 6,
+  "doc_count_breakdown": {
+    "manifests": 5,
+    "index": 1,
+    "anima_cross_link_external": 1
+  },
+  "total_size_bytes": 56794,
+  "total_size_kb_approx": 55,
+  "total_size_kb_with_anima": 64,
+  "subsystems_documented": ["eeg", "core", "cli", "cross_link"],
+  "index_path": "docs/ai-native/_INDEX.md",
+  "docs": [
+    {
+      "name": "v1_0_0_spinoff_2026_05_04.ai.md",
+      "subsystem": "provenance",
+      "bytes": 6592,
+      "purpose": "v1.0.0 origin handoff + same-day v1.0->v1.1 transition record"
+    },
+    {
+      "name": "eeg_subsystem_module_manifest_2026_05_04.ai.md",
+      "subsystem": "eeg",
+      "bytes": 11504,
+    },
+    {
+      "name": "core_subsystem_module_manifest_2026_05_04.ai.md",
+      "subsystem": "core",
+      "bytes": 12075,
+    },
+    {
+      "name": "cli_dispatch_design_2026_05_04.ai.md",
+      "subsystem": "cli",
+      "bytes": 13937,
+    },
+    {
+      "name": "anima_consumer_cross_link_2026_05_04.ai.md",
+      "subsystem": "cross_link",
+      "bytes": 7187,
+      "purpose": "anima monorepo consumer contract + stability protocol + version pin"
+    },
+    {
+      "name": "_INDEX.md",
+      "subsystem": "index",
+      "bytes": 5499,
+      "purpose": "1-page reading order + SSOT artifacts table + next-cycle todos"
+    }
+  ],
+  "anima_side_doc": {
+    "path": "anima/docs/ai-native/hexa_brain_consumer_cross_link_2026_05_04.ai.md",
+    "bytes": 7849,
+    "status": "LANDED",
+    "scope": "additive only — no other anima files modified"
+  },
+  "hexa_brain_version": {
+    "current": "1.1.0",
+    "current_commit": "d75f7c3d",
+    "v1_0_0_commit": "1ffd00ee",
+    "spinoff_anima_source": "1b306eec24999ffd28505995655674b0f2beaa31",
+    "tag_published": false,
+    "tag_planned": "v1.1.0"
+  },
+  "predecessor_bgs_observed": {
+    "bg_hexa_brain_spinoff": "LANDED — commit 1ffd00ee (v1.0.0 flat-layout spinoff)",
+    "bg_hexa_brain_spinoff_extend": "LANDED — commits aff69814 + c8860844 + d75f7c3d (eeg/ reorg, core/ merge, dispatcher)"
+  },
+  "wait_loop_observation": "predecessor BGs landed mid-flight (between my poll t=0 and t~5min). Initial poll showed empty eeg/ + 3-file core/ + no bin/, but by the time I started writing docs the v1.1.0 commits had landed and reorg was in working tree. Wait loop killed early because state changed faster than the 60s polling cadence reflected.",
+  "honest_c3": [
+    {
+      "id": 1,
+      "title": "Mid-flight v1.0.0 → v1.1.0 transition required mid-writing pivot",
+      "detail": "First 3 docs (v1_0_0, eeg_manifest, core_manifest) were initially written assuming v1.0.0 flat-layout reality. They landed accidentally inside eeg/docs/ai-native/ because the 'extend' BG ran the eeg/ subdir reorg between my mkdir and my first Write call. After detection I moved them to docs/ai-native/ at root and rewrote content for v1.1.0 dual-subsystem reality. v1.0.0 spinoff doc retains its name (v1_0_0_spinoff_*) as a historical handoff record but its body now documents the v1.0->v1.1 same-day transition."
+    },
+    {
+      "id": 2,
+      "title": "Doc package describes verb routing for 30 of 98 dispatchable hexa files",
+      "detail": "bin/hexa-brain exposes 16 eeg verbs + 14 core verbs = 30 routed verbs. The eeg subsystem has ~63 hexa files (30 eeg/*.hexa + 33 protocols/) and core has 68 files. Total ~131 hexa files in the package; 30 are first-class dispatcher targets. The remaining ~101 are reachable only via direct hexa run. The CLI design doc C3 #4 documents this gap; v1.2 expansion is a stated todo."
+    },
+    {
+      "id": 3,
+      "title": "No CI runs the doc package's claimed invariants",
+      "detail": "Each manifest's §3 'Public API surface' table claims dispatcher routing maps to specific files. There is no aggregate CI that verifies these mappings stay aligned with bin/hexa-brain after future edits. A v1.x lint target could parse the manifest tables + grep the dispatcher's case statements; not present in v1.1.0."
+    },
+    {
+      "id": 4,
+      "title": "Anima-side doc is the only forward-pointer; no automated lint enforces it",
+      "detail": "If a future anima cleanup deletes anima/docs/ai-native/hexa_brain_consumer_cross_link_2026_05_04.ai.md, anima readers lose the only in-tree pointer to hexa-brain. Mitigation: this verdict + the hexa-brain side cross-link both reference the anima-side path; recovery is possible by anyone reading either side."
+    },
+    {
+      "id": 5,
+      "title": "Doc package does not yet land a git commit",
+      "detail": "These 6 ai-native docs (hexa-brain) + 1 anima cross-link land as new files in working trees but the BG that ran me does not git commit. Per spec 'DO commit on hexa-brain repo (additive — these are NEW files in v1.x)' — that hexa-brain commit is the next step (next BG in the chain or human follow-up). Anima side per spec is intentionally NOT committed on main."
+    },
+    {
+      "id": 6,
+      "title": "Wait-loop strategy was naive; recovered by reactive replan",
+      "detail": "Spec wait condition was 'eeg/ + core/ exist as directories'. Both existed at t=0 (empty/partial scaffold) but were not yet populated. My poll counted directory-emptiness as 'not done', but by the time I detected progress, the v1.1.0 reorg had already landed in working tree. Killed wait loop and pivoted to documenting actual v1.1.0 state. Lesson: presence of named directories is not equivalent to completion of a populating BG; future BGs should poll on file-count or specific marker files, not directory existence."
+    }
+  ],
+  "task_completion": {
+    "part_a_six_ainative_docs": "DONE — 5 manifests + 1 INDEX in hexa-brain/docs/ai-native/",
+    "part_b_module_manifest_format": "DONE — all 5 manifests follow §1 Purpose / §2 File inventory / §3 Public API surface / §4 Dependencies / §5 Sibling subsystems / §6 Future evolution / §7 Honest C3 / §8 Composability shape",
+    "part_c_anima_cross_link": "DONE — anima/docs/ai-native/hexa_brain_consumer_cross_link_2026_05_04.ai.md (additive, no other anima files modified)",
+    "part_d_verdict_json": "this file"
+  },
+  "directive_compliance": {
+    "raw9_md_only_with_bash_for_poll": "OK — bash only for mkdir + poll loop; docs are .md; bin/hexa-brain bash dispatcher is pre-existing predecessor BG output",
+    "raw10_5plus_honest_c3_per_doc": "OK — each manifest has 6 honest C3 (eeg/core/cli) or 5 (cross_link, v1.0_spinoff); index has 5; verdict has 6",
+    "raw15_anima_additive_only": "OK — only one new anima file added; no anima file modified",
+    "raw71_doc_package_no_falsifier": "OK — spec did not require falsifier-formal pre-register; manifests claim testable invariants (e.g. verb→file mappings are CI-verifiable in v1.x)"
+  }
+}

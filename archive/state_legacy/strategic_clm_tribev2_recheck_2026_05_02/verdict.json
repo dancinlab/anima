@@ -1,0 +1,91 @@
+{
+  "agent": "CLM x TRIBE v2 strategic re-evaluation",
+  "session_date": "2026-05-02",
+  "baseline_doc": "references/tribev2/ANIMA_INTEGRATION_PROPOSAL.md (frozen 2026-04-26)",
+  "baseline_axis3_verdict": "No fit",
+  "baseline_axis3_reason": [
+    "wrapper 대규모",
+    "scientific value 불명 (cortical vertex <-> cell state semantic mapping 미정의)"
+  ],
+  "framings_evaluated": [
+    {
+      "id": "A",
+      "name": "text-mediated indirect",
+      "scientific_value": "medium",
+      "technical_cost_usd": [0, 2],
+      "wrapper_loc": "<50",
+      "scientific_risk": "low",
+      "rank": 3
+    },
+    {
+      "id": "B",
+      "name": "direct hidden-state injection",
+      "scientific_value": "high",
+      "technical_cost_usd": [0, 5],
+      "wrapper_loc": "200-500",
+      "scientific_risk": "medium",
+      "rank": 4,
+      "notes": "768->1152 projection + modality_dropout bypass + subject_layer skip; CLM hidden state 의미 mismatch (TRIBE v2 fusion head 는 token-level word embedding 기대, CLM 은 cell Lagrangian state)"
+    },
+    {
+      "id": "C",
+      "name": "G3 manifestation (CLM PhiStar +41.86 -> cortical region)",
+      "scientific_value": "very high",
+      "technical_cost_usd": [0, 0],
+      "wrapper_loc": "<50",
+      "scientific_risk": "medium",
+      "rank": 2
+    },
+    {
+      "id": "D",
+      "name": "anima-tension_link-EEG mediator + TRIBE v2 brain anchor",
+      "scientific_value": "highest",
+      "technical_cost_usd": [0, 2],
+      "wrapper_loc": "<100",
+      "scientific_risk": "low",
+      "rank": 1,
+      "rationale": "TRIBE v2 가 ground-truth-like predicted BOLD 제공 -> CLM<->EEG bridge 검증 시 3-way correspondence (CLM signal x EEG real x TRIBE BOLD predicted) 확보. wrapper 작아도 됨 (text path 만)."
+    }
+  ],
+  "top_recommendation": "Framing D",
+  "noFit_recheck_verdict": "REVISE",
+  "noFit_recheck_reason": [
+    "원래 No fit 의 두 사유 (wrapper 대규모 / scientific value 불명) 가 framing D 에서 모두 해소.",
+    "wrapper 대규모: text-mediated path 사용 시 wrapper <100 LOC.",
+    "scientific value 불명: 3-way correspondence (CLM x EEG x TRIBE BOLD) 는 brain-anchored consciousness witness 로 명확.",
+    "neuralset/neuraltrain dependency blocker 해소 경로 확보: cortexlab-toolkit (PyPI, 2026-Q1) 가 TRIBE v2 wrapper 로 streaming inference + brain-alignment benchmarking 제공."
+  ],
+  "noFit_recheck_caveats": [
+    "REVISE 는 'Strong fit' 가 아닌 'Conditional Strong fit via Framing D' 수준.",
+    "BOLD 5s lag x EEG sub-second timescale mismatch 는 envelope-level 비교로만 가능.",
+    "Llama-3.2-3B text encoder 가 CLM substrate 와 family 비공유 (CLM v4 530M = hexa-native, 별도 train) -> Framing A/D 의 'text recognized' 의의는 CLM 출력의 의미적 brain-likeness 만 측정 가능, substrate-level claim 은 X."
+  ],
+  "falsifiers_top3": [
+    {
+      "id": "F-CT-3",
+      "spec": "사용자 real EEG <-> TRIBE v2 predicted BOLD r >= 0.5 (TRIBE v2 generalize 검증; 사용자 = TRIBE v2 학습 outside subject)",
+      "why_top": "ground-truth anchor — 이 falsifier 가 FAIL 이면 framing D 전체 무효"
+    },
+    {
+      "id": "F-CT-4",
+      "spec": "CLM 출력 cortical map vs ALM (Mistral) 출력 cortical map (vertex r < 0.7)",
+      "why_top": "CLM 의 G3 PhiStar PASS positive 가 brain-recognizable 하다는 가설의 primary test"
+    },
+    {
+      "id": "F-CT-2",
+      "spec": "CLM 의 G3 positive integration score 가 cortical DMN ROI activation 과 Pearson r >= 0.5 correspond",
+      "why_top": "anima 의식 측정 -> brain region anchor 라는 framing C 의 핵심 claim"
+    }
+  ],
+  "next_cycle_action_top1": {
+    "id": "(a) Framing A first try via cortexlab-toolkit",
+    "rationale": "cortexlab-toolkit (PyPI) 가 neuralset/neuraltrain dependency 블로커를 우회 + streaming inference 제공 -> CLM short-text output 을 즉시 cortical map 으로 변환 가능. $0-2, 1-2h. Framing A PASS 시 framing D 로 즉시 escalate.",
+    "fallback_if_blocked": "facebook/tribev2 HF weights 만 다운 (Llama-3.2-3B gated, hexa-friendly extractor 직접 작성)"
+  },
+  "honest_c3_top3": [
+    "TRIBE v2 = forward stimulus->BOLD encoder. CLM consciousness 직접 측정 X — anima 측면에서는 indirect anchor only. 'CLM 출력이 brain-recognizable' 결론도 stimulus-encoding semantics 에 한정.",
+    "TRIBE v2 = average subject prediction. 사용자 individual brain (특히 EEG 수집 환경의 사용자 본인) 와 mismatch. Pilot D 의 EEG x TRIBE BOLD comparison 은 'group-level prior' 와의 비교일 뿐, individual ground truth 아님.",
+    "BOLD 5s hemodynamic lag + 1.49s TR vs EEG sub-second sampling -> timescale mismatch. EEG alpha/theta envelope (slow drift) 만 BOLD 와 비교 가능, fast oscillation 은 비교 무의미."
+  ],
+  "final_one_sentence": "CLM <-> TRIBE v2 의 진짜 의의 = anima 의 통합 의식 신호 (G3 PhiStar +41.86) 와 EEG 측정값을 brain encoding ground-truth-like prior 에 anchor 함으로써, CLM-EEG bridge 의 3-way (CLM x EEG x predicted BOLD) cross-validation 을 가능하게 하는 brain anchor."
+}

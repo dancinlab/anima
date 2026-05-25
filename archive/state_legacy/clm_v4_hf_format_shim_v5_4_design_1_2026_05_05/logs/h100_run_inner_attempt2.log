@@ -1,0 +1,21 @@
+[h100] 2026-05-05T08:53:47Z starting F-SHIM-V5-4 DESIGN-1 eval (fresh-init, no best.pt)
+[h100] HF_TOKEN length=37b
+[h100] 2026-05-05T08:53:47Z installing python deps
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[h100] 2026-05-05T08:54:08Z HF login
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+HF login OK
+[h100] copied decoder_v3.py to /workspace/clm_v4_shim_v5_4_design_1/legacy_decoder/
+[h100] copied conscious_decoder.py to /workspace/clm_v4_shim_v5_4_design_1/legacy_decoder/
+[h100] tokenizer=/workspace/clm_v4_shim_v5_4_design_1/tokenizer_64k_multilingual.model
+[h100] 2026-05-05T08:54:09Z running DESIGN-1 eval (4 passes: v4_NF v4_RF v5_NF v5_RF)
+Traceback (most recent call last):
+  File "/workspace/clm_v4_shim_v5_4_design_1/clm_v4_shim_v5_4_design_1_eval.py", line 39, in <module>
+    from decoder_v3 import ConsciousDecoderV3
+  File "/workspace/clm_v4_shim_v5_4_design_1/legacy_decoder/decoder_v3.py", line 25, in <module>
+    from .conscious_decoder import (
+ImportError: attempted relative import with no known parent package
+[h100] 2026-05-05T08:54:11Z eval FAILED rc=1

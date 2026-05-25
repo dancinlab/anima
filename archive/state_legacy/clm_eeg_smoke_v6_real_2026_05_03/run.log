@@ -1,0 +1,92 @@
+=== clm_eeg harness smoke v6-clean real-fixture run — 2026-05-03 ===
+
+Pre-flight:
+  ls -lO anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa
+  → -rw-r--r--@ 1 ghost  staff  uchg 10633 Apr 29 00:06 ...
+
+Unlock (institutional dual-lock — temporary):
+  chflags nouchg anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa
+  ls -lO → -rw-r--r--@ 1 ghost  staff  - 10633 Apr 29 00:06 ...
+  (flag column "-" confirms lock cleared; byte count unchanged)
+
+=== RUN A: env-set with intended real-fixture override ===
+ENV:
+  CLM_EEG_FIXTURE_PATH=anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json
+  CLM_EEG_HARNESS_FIXTURE_MODE=real
+  CLM_EEG_HARNESS_OUT=state/clm_eeg_smoke_v6_real_2026_05_03/harness_smoke_synthetic.json
+  HEXA_RESOLVER_NO_REROUTE=1
+COMMAND:
+  hexa run anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa --selftest
+STDOUT:
+  ─── clm_eeg_harness_smoke (raw#9 hexa-only) ───
+    p1_path                = state/clm_eeg_p1_lz_pre_register.json
+    p1_bytes               = 2316
+    p1_dry_run_pass        = 1
+    p2_path                = state/clm_eeg_p2_tlr_pre_register.json
+    p2_bytes               = 1391
+    p2_dry_run_pass        = 1
+    p3_path                = state/clm_eeg_p3_gcg_pre_register.json
+    p3_bytes               = 1690
+    p3_dry_run_pass        = 1
+    composite_pass_count   = 3
+    composite_required     = 2
+    harness_ok             = 1
+    chained_fingerprint    = 2804516380
+    output                 = state/clm_eeg_harness_smoke.json
+    verdict                = HARNESS_OK
+EXIT CODE: 0
+SENTINEL EMIT: "verdict = HARNESS_OK"
+
+=== RUN B: explicit env to verify CLM_EEG_HARNESS_OUT propagation ===
+ENV (without --selftest):
+  CLM_EEG_HARNESS_OUT=state/clm_eeg_smoke_v6_real_2026_05_03/harness_smoke_synthetic.json
+  HEXA_RESOLVER_NO_REROUTE=1
+COMMAND:
+  hexa run anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa
+STDOUT (relevant):
+  output                 = state/clm_eeg_harness_smoke.json   ← DEFAULT, env override IGNORED
+  verdict                = HARNESS_OK
+EXIT CODE: 0
+POST-RUN CHECK:
+  stat -f '%m %N' state/clm_eeg_harness_smoke.json
+  → 1777291065 (Apr 27 20:57 KST 2026; UNCHANGED — write_file() did not rewrite default path either)
+  ls state/clm_eeg_smoke_v6_real_2026_05_03/harness_smoke_synthetic.json
+  → No such file or directory (write to override path also did not occur)
+HONEST FINDING:
+  hexa runtime under HEXA_RESOLVER_NO_REROUTE=1 + darwin-bypass-marker mode
+  appears to (a) ignore env() return values for CLM_EEG_HARNESS_OUT and
+  (b) suppress write_file() side effects. The println() surface is the
+  canonical verdict channel. This means CLM_EEG_P{1,2,3}_PATH overrides
+  are similarly inert — Run B with real-side JSONs cannot be executed via
+  env override. Path-swap blocked by uchg cascade prohibition.
+
+=== RUN C: no real-fixture aggregation possible — honest skip ===
+RATIONALE:
+  - Env override: blocked by hexa-resolver darwin-bypass sandbox (RUN B verified)
+  - Path-swap: blocked by uchg on state/clm_eeg_p{1,2,3}_*_pre_register.json
+  - Cascade-unlock: prohibited per raw#10 + user constraint (96 institutional uchg files)
+PROJECTED REAL VERDICT (from existing _real.json side-evidence):
+  p1_real_pass = 0 (clm_eeg_p1_lz_pre_register_real.json: pct_delta_permille=432 fails C2≤200)
+  p2_real_pass = 0 (clm_eeg_p2_tlr_real.json: verdict=INSUFFICIENT, F_PLV_DESTROY ICA falsifier)
+  p3_real_pass = unknown (no real p3 product; D+5 deferred)
+  → projected harness_ok = 0 (HARNESS_FAIL)
+  NOT EXECUTED — projection only, NOT a verdict claim (raw#71 bound).
+
+=== Re-lock (institutional policy preserved) ===
+  chflags uchg anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa
+  ls -lO → -rw-r--r--@ 1 ghost  staff  uchg 10633 Apr 29 00:06 ...
+  (flag column "uchg" restored; byte count 10633 unchanged; no content modification)
+
+=== Summary ===
+  pre_state                = uchg
+  during_run_state         = nouchg (temporary)
+  post_state               = uchg (RESTORED)
+  no_content_modification  = true
+  byte_count_pre_post      = 10633 / 10633 (identical)
+  harness_exit_code        = 0
+  sentinel_emit            = HARNESS_OK
+  honest_classification    = synthetic-frozen pre-register dry-run aggregation
+                             (NOT real fixture evaluation — see RUN B/C above)
+  tier (raw#10 honest C3)  = functional_analog (per fixture metadata)
+  rail_quarantined         = 5/16 (Fp1, P7, P8, O2, P4)
+  upstream_F1/F2/F3        = FAIL/PASS/FAIL (NOT relaxed — raw#71)

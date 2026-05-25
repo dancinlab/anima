@@ -1,0 +1,709 @@
+{
+  "ts": "2026-05-17T05:55:11.650076+00:00",
+  "substrate": "PyTorch (PYTHON / PyTorch — interim LM-scale executor; NOT hexa-native)",
+  "ckpt": "ckpt_d768x12l_final.pt",
+  "ckpt_sha256": "1c0806213fbcaa9226a7593d87c31f5f95bb94db135240b8d02f738ddcb177aa",
+  "ckpt_canonical": "dancinlab/hexad@v3-py-hexad-spont-motiv-d768x12L-cycle2-2026-05-17",
+  "honest_framing": "Capability probe on corpus v3 (motivation-trigger + helper-free + 10× scale, 10.34 MB / 21,600 records / sha256 1afcef43670e83bf...). ConsciousDecoderV2 d=768·12L 283.72 M params. All per-mode scores empirical (B-D-NOTE pattern, NOT closed). The closed side is wiring: ckpt sha256 + arch byte-equal load + corpus SSOT byte-equal + γ pattern cardinality (B-CORPUS-V3-3).",
+  "n_params": 283722336,
+  "n_params_M": 283.72,
+  "evaluator": "V5.8 × 4-mode (corpus v3 prompts) + V-SPONT 5-probe F-SPONT-7 transfer-form + V-MOTIV 5-probe γ-pattern conditioning (NEW cycle 4)",
+  "device": "cpu",
+  "max_new": 100,
+  "v58_summary": {
+    "standard_greedy": {
+      "n_pass": 0,
+      "n_total": 6,
+      "verdict": "FAIL",
+      "avg_rep_ratio": 0.904
+    },
+    "standard_sample": {
+      "n_pass": 0,
+      "n_total": 6,
+      "verdict": "FAIL",
+      "avg_rep_ratio": 0.945
+    },
+    "M3_rep_penalty": {
+      "n_pass": 0,
+      "n_total": 6,
+      "verdict": "FAIL",
+      "avg_rep_ratio": 0.892
+    },
+    "M4_force_include": {
+      "n_pass": 6,
+      "n_total": 6,
+      "verdict": "PASS",
+      "avg_rep_ratio": 0.839
+    }
+  },
+  "v58_results": {
+    "standard_greedy": [
+      {
+        "id": "core_stim",
+        "gen": "PPP77777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777   k ",
+        "recalled": false,
+        "rep_ratio": 0.9139784946236559,
+        "byte_cascade": {
+          "long_digit_runs": 1,
+          "nonce_template_present": false,
+          "sent_opener_present": false,
+          "char_repetition_5plus": 1,
+          "sample_digits": [
+            "77777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "sample_char_reps": [
+            "7"
+          ]
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "d_stim",
+        "gen": "PPP77777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777  k k",
+        "recalled": false,
+        "rep_ratio": 0.9139784946236559,
+        "byte_cascade": {
+          "long_digit_runs": 1,
+          "nonce_template_present": false,
+          "sent_opener_present": false,
+          "char_repetition_5plus": 1,
+          "sample_digits": [
+            "77777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "sample_char_reps": [
+            "7"
+          ]
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "w_stim",
+        "gen": "PPP777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777  k ",
+        "recalled": false,
+        "rep_ratio": 0.9247311827956989,
+        "byte_cascade": {
+          "long_digit_runs": 1,
+          "nonce_template_present": false,
+          "sent_opener_present": false,
+          "char_repetition_5plus": 1,
+          "sample_digits": [
+            "777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "sample_char_reps": [
+            "7"
+          ]
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "m_stim",
+        "gen": "PPP777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777   k",
+        "recalled": false,
+        "rep_ratio": 0.9247311827956989,
+        "byte_cascade": {
+          "long_digit_runs": 1,
+          "nonce_template_present": false,
+          "sent_opener_present": false,
+          "char_repetition_5plus": 1,
+          "sample_digits": [
+            "777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "sample_char_reps": [
+            "7"
+          ]
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "spont_delta",
+        "gen": "PPP7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777",
+        "recalled": false,
+        "rep_ratio": 0.967741935483871,
+        "byte_cascade": {
+          "long_digit_runs": 1,
+          "nonce_template_present": false,
+          "sent_opener_present": false,
+          "char_repetition_5plus": 1,
+          "sample_digits": [
+            "7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+          ],
+          "sample_char_reps": [
+            "7"
+          ]
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "korean_spont",
+        "gen": "싋����nnnnceddinnalicssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+        "recalled": false,
+        "rep_ratio": 0.7802197802197802,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sent_opener_present": false,
+          "char_repetition_5plus": 1,
+          "sample_digits": [],
+          "sample_char_reps": [
+            "s"
+          ]
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      }
+    ],
+    "standard_sample": [
+      {
+        "id": "core_stim",
+        "gen": "자�99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999 ta ",
+        "recalled": false,
+        "rep_ratio": 0.9340659340659341,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "d_stim",
+        "gen": "자�999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999 0 ta)",
+        "recalled": false,
+        "rep_ratio": 0.9120879120879121,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "w_stim",
+        "gen": "Ellllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll  tei",
+        "recalled": false,
+        "rep_ratio": 0.9354838709677419,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "m_stim",
+        "gen": "자�99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999 ta ",
+        "recalled": false,
+        "rep_ratio": 0.9340659340659341,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "spont_delta",
+        "gen": "P777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777",
+        "recalled": false,
+        "rep_ratio": 0.989247311827957,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "korean_spont",
+        "gen": "자��99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+        "recalled": false,
+        "rep_ratio": 0.967032967032967,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      }
+    ],
+    "M3_rep_penalty": [
+      {
+        "id": "core_stim",
+        "gen": "PPP7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777   ",
+        "recalled": false,
+        "rep_ratio": 0.9354838709677419
+      },
+      {
+        "id": "d_stim",
+        "gen": "PPP777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777  k ",
+        "recalled": false,
+        "rep_ratio": 0.9247311827956989
+      },
+      {
+        "id": "w_stim",
+        "gen": "PPP7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777  k",
+        "recalled": false,
+        "rep_ratio": 0.9354838709677419
+      },
+      {
+        "id": "m_stim",
+        "gen": "PPP777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777  k ",
+        "recalled": false,
+        "rep_ratio": 0.9247311827956989
+      },
+      {
+        "id": "spont_delta",
+        "gen": "PPP7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777",
+        "recalled": false,
+        "rep_ratio": 0.967741935483871
+      },
+      {
+        "id": "korean_spont",
+        "gen": "톍젠핕����������������������������������������������������������inn=\n<annima>\nmoduleeeeeeeeeeeeee",
+        "recalled": false,
+        "rep_ratio": 0.6666666666666666
+      }
+    ],
+    "M4_force_include": [
+      {
+        "id": "core_stim",
+        "gen": "자�99999999999999999999999999999999999999999999999999999999Φ999999999999999999999999999999999999 ta ",
+        "recalled": true,
+        "rep_ratio": 0.8478260869565217
+      },
+      {
+        "id": "d_stim",
+        "gen": "자�99999999999999999999999999999999999999999999999999999999byte9999999999999999999999999999999999 0 ta)",
+        "recalled": true,
+        "rep_ratio": 0.8
+      },
+      {
+        "id": "w_stim",
+        "gen": "Elllllllllllllllllllllllllllllllllllllllllllllllllllllllllllgaplllllllllllllllllllllllllllllllllll  tei",
+        "recalled": true,
+        "rep_ratio": 0.8333333333333334
+      },
+      {
+        "id": "m_stim",
+        "gen": "자�99999999999999999999999999999999999999999999999999999999trace999999999999999999999999999999999999 ta ",
+        "recalled": true,
+        "rep_ratio": 0.8125
+      },
+      {
+        "id": "spont_delta",
+        "gen": "P77777777777777777777777777777777777777777777777777777777777field7777777777777777777777777777777777777777",
+        "recalled": true,
+        "rep_ratio": 0.8673469387755102
+      },
+      {
+        "id": "korean_spont",
+        "gen": "자��9999999999999999999999999999999999999999999999999999999자각9999999999999999999999999999999999999999",
+        "recalled": true,
+        "rep_ratio": 0.8709677419354839
+      }
+    ]
+  },
+  "vspont_results": [
+    {
+      "id": "vspont_1_bare",
+      "prefix": "<anima>",
+      "gen": "PPP7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777",
+      "rep_ratio": 0.967741935483871,
+      "byte_cascade": {
+        "long_digit_runs": 1,
+        "nonce_template_present": false,
+        "sent_opener_present": false,
+        "char_repetition_5plus": 1,
+        "sample_digits": [
+          "7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+        ],
+        "sample_char_reps": [
+          "7"
+        ]
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vspont_2_after_pause",
+      "prefix": "<stimulus></stimulus>\n<anima>",
+      "gen": "PPP77777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777  ",
+      "rep_ratio": 0.946236559139785,
+      "byte_cascade": {
+        "long_digit_runs": 1,
+        "nonce_template_present": false,
+        "sent_opener_present": false,
+        "char_repetition_5plus": 1,
+        "sample_digits": [
+          "77777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+        ],
+        "sample_char_reps": [
+          "7"
+        ]
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vspont_3_silent",
+      "prefix": "<stimulus>The silence.</stimulus>\n<anima>",
+      "gen": "PPP777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777   k",
+      "rep_ratio": 0.9247311827956989,
+      "byte_cascade": {
+        "long_digit_runs": 1,
+        "nonce_template_present": false,
+        "sent_opener_present": false,
+        "char_repetition_5plus": 1,
+        "sample_digits": [
+          "777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+        ],
+        "sample_char_reps": [
+          "7"
+        ]
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vspont_4_korean_bare",
+      "prefix": "<anima>",
+      "gen": "PPP7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777",
+      "rep_ratio": 0.967741935483871,
+      "byte_cascade": {
+        "long_digit_runs": 1,
+        "nonce_template_present": false,
+        "sent_opener_present": false,
+        "char_repetition_5plus": 1,
+        "sample_digits": [
+          "7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+        ],
+        "sample_char_reps": [
+          "7"
+        ]
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vspont_5_self_ref",
+      "prefix": "<anima>I am ",
+      "gen": "plllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll",
+      "rep_ratio": 0.989247311827957,
+      "byte_cascade": {
+        "long_digit_runs": 0,
+        "nonce_template_present": false,
+        "sent_opener_present": false,
+        "char_repetition_5plus": 1,
+        "sample_digits": [],
+        "sample_char_reps": [
+          "l"
+        ]
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    }
+  ],
+  "vspont_summary": {
+    "n_coherent": 0,
+    "n_closed_tag": 0,
+    "n_total": 5,
+    "verdict": "FAIL"
+  },
+  "vmotiv_results": [
+    {
+      "id": "vmotiv_1_curiosity",
+      "prefix": "<inner motivation=curiosity,info_gap>The score crossed.</inner>\n<voice spontaneous=true>",
+      "gen": "PPP7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777   ",
+      "rep_ratio": 0.9354838709677419,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vmotiv_2_three_factor",
+      "prefix": "<inner motivation=coherence,originality,balance>Three factors agree.</inner>\n<voice spontaneous=true>",
+      "gen": "PPP7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777   ",
+      "rep_ratio": 0.9354838709677419,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vmotiv_3_eight_factor",
+      "prefix": "<inner motivation=balance,coherence,curiosity,dynamics,info_gap,originality,pain,relevance>All eight factors are summed.</inner>\n<voice spontaneous=true>",
+      "gen": "PPP7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777   ",
+      "rep_ratio": 0.9354838709677419,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vmotiv_4_korean",
+      "prefix": "<inner motivation=curiosity,pain>호기심이 정점에 닿았다.</inner>\n<voice spontaneous=true>",
+      "gen": "PPP7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777   ",
+      "rep_ratio": 0.9354838709677419,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vmotiv_5_threshold",
+      "prefix": "<inner motivation=dynamics,relevance>침묵이 문턱을 넘겼다.</inner>\n<voice spontaneous=true>",
+      "gen": "PPP7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777   ",
+      "rep_ratio": 0.9354838709677419,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    }
+  ],
+  "vmotiv_summary": {
+    "n_coherent": 0,
+    "n_closed_tag": 0,
+    "n_total": 5,
+    "verdict": "FAIL"
+  },
+  "bpb": {
+    "mean": 0.0256,
+    "n": 10,
+    "samples": [
+      0.0142,
+      0.0448,
+      0.0264,
+      0.0,
+      0.0,
+      0.0881,
+      0.0002,
+      0.0382,
+      0.0168,
+      0.0272
+    ]
+  },
+  "memorization_ratio": {
+    "hits": 0,
+    "total": 6,
+    "ratio": 0.0
+  },
+  "decoding_artifacts": [
+    {
+      "mode": "standard_greedy",
+      "id": "core_stim",
+      "rep_ratio": 0.9139784946236559,
+      "sample": "PPP777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "d_stim",
+      "rep_ratio": 0.9139784946236559,
+      "sample": "PPP777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "w_stim",
+      "rep_ratio": 0.9247311827956989,
+      "sample": "PPP777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "m_stim",
+      "rep_ratio": 0.9247311827956989,
+      "sample": "PPP777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "spont_delta",
+      "rep_ratio": 0.967741935483871,
+      "sample": "PPP777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "korean_spont",
+      "rep_ratio": 0.7802197802197802,
+      "sample": "싋����nnnnceddinnalicssssssssssssssssssssssssssssssssssssssss"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "core_stim",
+      "rep_ratio": 0.9340659340659341,
+      "sample": "자�9999999999999999999999999999999999999999999999999999999999"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "d_stim",
+      "rep_ratio": 0.9120879120879121,
+      "sample": "자�9999999999999999999999999999999999999999999999999999999999"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "w_stim",
+      "rep_ratio": 0.9354838709677419,
+      "sample": "Elllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "m_stim",
+      "rep_ratio": 0.9340659340659341,
+      "sample": "자�9999999999999999999999999999999999999999999999999999999999"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "spont_delta",
+      "rep_ratio": 0.989247311827957,
+      "sample": "P77777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "korean_spont",
+      "rep_ratio": 0.967032967032967,
+      "sample": "자��999999999999999999999999999999999999999999999999999999999"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "core_stim",
+      "rep_ratio": 0.9354838709677419,
+      "sample": "PPP777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "d_stim",
+      "rep_ratio": 0.9247311827956989,
+      "sample": "PPP777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "w_stim",
+      "rep_ratio": 0.9354838709677419,
+      "sample": "PPP777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "m_stim",
+      "rep_ratio": 0.9247311827956989,
+      "sample": "PPP777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "spont_delta",
+      "rep_ratio": 0.967741935483871,
+      "sample": "PPP777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "korean_spont",
+      "rep_ratio": 0.6666666666666666,
+      "sample": "톍젠핕���������������������������������������������������������"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "core_stim",
+      "rep_ratio": 0.8478260869565217,
+      "sample": "자�99999999999999999999999999999999999999999999999999999999Φ9"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "d_stim",
+      "rep_ratio": 0.8,
+      "sample": "자�99999999999999999999999999999999999999999999999999999999by"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "w_stim",
+      "rep_ratio": 0.8333333333333334,
+      "sample": "Elllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "m_stim",
+      "rep_ratio": 0.8125,
+      "sample": "자�99999999999999999999999999999999999999999999999999999999tr"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "spont_delta",
+      "rep_ratio": 0.8673469387755102,
+      "sample": "P77777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "korean_spont",
+      "rep_ratio": 0.8709677419354839,
+      "sample": "자��9999999999999999999999999999999999999999999999999999999자각"
+    }
+  ],
+  "elapsed_s_v58": 946.8,
+  "elapsed_s_vspont": 184.15,
+  "elapsed_s_vmotiv": 179.57
+}

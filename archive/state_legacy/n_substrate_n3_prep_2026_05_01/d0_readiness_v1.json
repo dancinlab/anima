@@ -1,0 +1,40 @@
+{
+  "schema": "anima/n_substrate_n3_prep/d0_readiness/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "agent": "N-3 prep",
+  "readiness_pct": 70,
+
+  "ready_components": [
+    {"id": "spec_doc", "path": "docs/n_substrate_n3_clm_akida_phi_spec_2026_05_01.md", "status": "READY"},
+    {"id": "phi_tool", "path": "tool/anima_phi_v3_canonical.hexa", "status": "READY"},
+    {"id": "fixture_prompts", "embedded_in": "anima_phi_v3_canonical.hexa", "n": 16, "status": "READY"},
+    {"id": "alpha_pod", "type": "H100", "status": "READY (existing infra)"}
+  ],
+
+  "missing_components": [
+    {"id": "clm_170m_config_json", "path": "training/config/clm_170m.json", "status": "MISSING", "blocker_doc": "docs/clm_170m_config_audit_20260419.md sec 5 actionable 1", "effort": "1-2h template adapt from clm_1b_config.json"},
+    {"id": "tool_clm_to_metatf_surrogate", "path": "tool/clm_170m_to_metatf_surrogate.hexa", "status": "MISSING", "effort": "0.5d HEXA emit (Keras CNN quantized projection head)"},
+    {"id": "tool_akida_inference", "path": "tool/akida_clm_surrogate_infer.hexa", "status": "MISSING", "effort": "0.5d HEXA emit (RPi5 + MetaTF python helper)"},
+    {"id": "tool_n3_phi_corr", "path": "tool/n3_phi_cross_substrate_corr.hexa", "status": "MISSING", "effort": "0.25d HEXA emit (mac local Pearson r + verdict gate)"}
+  ],
+
+  "pending_hardware": [
+    {"id": "akd1000_dev_kit", "status": "ORDERED_2026_04_29_AWAITING_ARRIVAL", "eta": "TBD"},
+    {"id": "metatf_sdk_rpi5", "status": "PENDING_HARDWARE_ARRIVAL", "effort": "1d post-arrival install"}
+  ],
+
+  "d0_critical_path_sequence": [
+    "T-1d: AKD1000 dev kit unboxing + RPi5 OS + MetaTF install",
+    "T-0d: emit 3 new HEXA tools (1.25d total work)",
+    "T+0 morning: training/config/clm_170m.json create + smoke",
+    "T+0 noon: spec sec 3 step 2-7 single-run measurement (~$1.60)",
+    "T+0 evening: spec sec 4 verdict gate + 3-seed reproducibility (~$4.80 cumulative)"
+  ],
+
+  "estimated_d0_total_cost_usd": {
+    "single_run": 1.60,
+    "3_seed_reproducibility": 4.80,
+    "currency": "USD",
+    "basis": "H100 vast.ai spot ~$2.40/hr"
+  }
+}

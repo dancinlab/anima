@@ -1,0 +1,367 @@
+{
+  "_meta": {
+    "description": "RunPod 운영 — 규칙/트러블슈팅/해결방법 통합 (100% 무결점 수렴 목표)",
+    "updated": "2026-04-11",
+    "schema_version": "2.1",
+    "convergence": {
+      "total_issues": 16,
+      "resolved": 16,
+      "absolute_rules": 12,
+      "violations": 0
+    },
+    "gpu_limit": {
+      "h100_max": 2,
+      "note": "H100 SXM 최대 2개 임대 가능 (계정 한도)"
+    },
+    "authorization": {
+      "h100_approved": true,
+      "h100_max_gpus": 2,
+      "purpose": "CLM + ALM → AGI goal 달성",
+      "instruction": "'keep going to goal' 지시 시 H100 2대까지 자동 발사 허용. 확인 질문 불필요.",
+      "approved_by": "user",
+      "date": "2026-04-11"
+    }
+  },
+  "active_pods": {
+    "8xmtaigu9i7b4x": {
+      "name": "anima-agi",
+      "gpu": "1x H100 SXM 80GB",
+      "location": "DE",
+      "cost_per_hr": 2.99,
+      "created": "2026-04-11T12:13:18Z",
+      "purpose": "ALM 14B LoRA → Zeta level → AGI goal",
+      "image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+      "ssh": "ssh -i ~/.runpod/ssh/RunPod-Key-Go root@87.120.211.206 -p 18709",
+      "note": "3rd attempt. runpod official image = SSH 30s ready"
+    }
+  },
+  "decommissioned_pods": {
+    "uv29o97mosl9cq": {
+      "name": "anima-h100",
+      "gpu": "1x H100 SXM 80GB",
+      "cost_per_hr": 2.99,
+      "created": "2026-04-11",
+      "decommissioned": "2026-04-11",
+      "reason": "hexa 런타임 개선 우선, 학습 미시작 상태에서 폐기"
+    },
+    "msgtbyfj09x896": {
+      "name": "anima-h100 (old)",
+      "gpu": "1x H100 SXM 80GB",
+      "cost_per_hr": 2.69,
+      "decommissioned": "2026-04-11"
+    }
+  },
+  "absolute_rules": {
+    "_description": "절대 위반 금지 규칙. 위반 시 crash/data loss 확정.",
+    "R01_no_concurrent_io": {
+      "rule": "학습 중 대용량 다운로드/scp 절대 금지",
+      "reason": "NFS I/O 포화 → 양쪽 crash (incident: nfs_io_conflict, qwen_download_kills_training)",
+      "action": "순차 실행: 다운로드 완료 → 학습 시작"
+    },
+    "R02_check_disk_before_launch": {
+      "rule": "학습 발사 전 du -sh /workspace/ 확인 (df 무시!)",
+      "reason": "df는 NFS 전체 표시, 실제 쿼터와 무관 (incident: disk_quota, volume_quota_50gb)",
+      "action": "du -sh /workspace/ < volume_gb의 80%"
+    },
+    "R03_delete_after_r2": {
+      "rule": "R2 업로드 완료된 체크포인트 즉시 삭제",
+      "reason": "체크포인트 누적 = 디스크 폭발 (incident: disk_quota)",
+      "action": "R2 verify → rm -rf"
+    },
+    "R04_bf16_foreach_false": {
+      "rule": "AdamW(foreach=False) 필수",
+      "reason": "foreach=True + mixed dtype = 14건 crash (incident: bf16_dtype_14_incidents)",
+      "action": "acceleration_flow.json bf16_master_rule 참조"
+    },
+    "R05_72b_needs_2gpu": {
+      "rule": "72B 모델은 H100 2대 필수 (1대 불가)",
+      "reason": "4-bit도 80GB 초과 (incident: 72b_oom_on_h100)",
+      "action": "gpuCount=2, max_memory={0:'70GiB', 1:'70GiB'}"
+    },
+    "R06_pin_versions_for_72b": {
+      "rule": "72B 학습 시 transformers==4.46.0, torchvision==0.19.1 고정",
+      "reason": "transformers 5.x BNB 호환성 문제 (incident: set_submodule_missing)",
+      "action": "pip install transformers==4.46.0 torch==2.4.1 torchvision==0.19.1 bitsandbytes==0.44.1"
+    },
+    "R07_config_not_weight_shape": {
+      "rule": "4-bit 모델에서 .weight.shape 접근 금지 → model.config 사용",
+      "reason": "bnb dequantize 블로킹 → hang (incident: 72b_purefield_hang)",
+      "action": "config.hidden_size, config.intermediate_size 사용"
+    },
+    "R08_dtype_try_except": {
+      "rule": "4-bit 파라미터 dtype 변환 시 try/except 필수",
+      "reason": "quantized param은 dtype 변경 불가 (incident: dtype_incompatible_set_data)",
+      "action": "try .to(dtype) except → .to(device) only"
+    },
+    "R09_checkpoint_every_large": {
+      "rule": "checkpoint_every >= 2000 (NFS Pod) / >= 4000 (대형 모델)",
+      "reason": "체크포인트 2GB × 빈번 저장 = 디스크 폭발",
+      "action": "--checkpoint-every 4000"
+    },
+    "R10_verify_script_exists": {
+      "rule": "학습 발사 전 서버에 학습 스크립트 존재 확인",
+      "reason": "watchdog가 없는 스크립트로 재시작 → 무한 crash 루프 (incident: watchdog_script_mismatch)",
+      "action": "ls /workspace/train_anima_lm.py && md5sum 비교"
+    },
+    "R11_nohup_check_disk": {
+      "rule": "nohup 전 root 파티션 여유 확인 (df -h /)",
+      "reason": "디스크 풀이면 nohup 즉시 죽음 (incident: nohup_empty_log)",
+      "action": "df -h / (최소 1GB 여유)"
+    },
+    "R12_pod_stop_loses_gpu": {
+      "rule": "Pod 중지하면 GPU 보장 안 됨 — 중요 학습 중 중지 금지",
+      "reason": "resume 시 GPU 없으면 재시작 불가 (incident: pod2_gpu_unavailable)",
+      "action": "학습 중에는 절대 중지하지 말 것. 완료 후 삭제."
+    }
+  },
+  "troubleshooting_log": {
+    "_description": "발생 순서대로 기록. 각 이슈는 absolute_rules로 승격됨.",
+    "issues": [
+      {
+        "id": "TS-001",
+        "date": "2026-03-31",
+        "severity": "HIGH",
+        "title": "tmux 미설치",
+        "symptom": "tmux: command not found",
+        "fix": "nohup 사용",
+        "rule": null
+      },
+      {
+        "id": "TS-002",
+        "date": "2026-03-31",
+        "severity": "CRITICAL",
+        "title": "bf16 dtype 14건 crash",
+        "symptom": "AdamW foreach + mixed dtype crash",
+        "fix": "foreach=False, 매step dtype fix",
+        "rule": "R04"
+      },
+      {
+        "id": "TS-003",
+        "date": "2026-04-01",
+        "severity": "HIGH",
+        "title": "디스크 쿼터 초과",
+        "symptom": "torch.save 실패",
+        "fix": "구 체크포인트 삭제",
+        "rule": "R02, R03, R09"
+      },
+      {
+        "id": "TS-004",
+        "date": "2026-04-01",
+        "severity": "CRITICAL",
+        "title": "학습 중 다운로드 → 학습 kill",
+        "symptom": "프로세스 에러 없이 죽음",
+        "fix": "순차 실행",
+        "rule": "R01"
+      },
+      {
+        "id": "TS-005",
+        "date": "2026-04-01",
+        "severity": "MEDIUM",
+        "title": "watchdog 무한 crash 루프",
+        "symptom": "4번 연속 재시작, 로그 빔",
+        "fix": "스크립트 존재 확인 + 실패 카운터",
+        "rule": "R10"
+      },
+      {
+        "id": "TS-006",
+        "date": "2026-04-02",
+        "severity": "CRITICAL",
+        "title": "v0.2 체크포인트 저장 실패",
+        "symptom": "PytorchStreamWriter failed",
+        "fix": "v0.1 체크포인트 삭제 후 19GB 확보",
+        "rule": "R02, R03"
+      },
+      {
+        "id": "TS-007",
+        "date": "2026-04-03",
+        "severity": "CRITICAL",
+        "title": "NFS I/O 동시 crash",
+        "symptom": "학습 + 72B 다운로드 → 양쪽 crash",
+        "fix": "순차 파이프라인",
+        "rule": "R01"
+      },
+      {
+        "id": "TS-008",
+        "date": "2026-04-03",
+        "severity": "HIGH",
+        "title": "set_submodule 누락 (PyTorch 2.4)",
+        "symptom": "AttributeError: no attribute 'set_submodule'",
+        "fix": "PyTorch 2.11 업그레이드",
+        "rule": "R06"
+      },
+      {
+        "id": "TS-009",
+        "date": "2026-04-03",
+        "severity": "CRITICAL",
+        "title": "72B OOM on 1xH100",
+        "symptom": "CUDA OOM 78.9/79.2GB",
+        "fix": "2xH100 + transformers 4.46",
+        "rule": "R05, R06"
+      },
+      {
+        "id": "TS-010",
+        "date": "2026-04-03",
+        "severity": "HIGH",
+        "title": "72B PureField hang (4-bit)",
+        "symptom": "Adding PureField 14분+ hang",
+        "fix": "model.config에서 shape 가져오기",
+        "rule": "R07"
+      },
+      {
+        "id": "TS-011",
+        "date": "2026-04-03",
+        "severity": "HIGH",
+        "title": "dtype 변환 불가 (4-bit)",
+        "symptom": "RuntimeError: incompatible tensor type",
+        "fix": "try/except dtype → device fallback",
+        "rule": "R08"
+      },
+      {
+        "id": "TS-012",
+        "date": "2026-04-03",
+        "severity": "HIGH",
+        "title": "NFS scp 쓰기 실패",
+        "symptom": "scp: close remote: Failure",
+        "fix": "대량 체크포인트 삭제 후 재시도",
+        "rule": "R03"
+      },
+      {
+        "id": "TS-013",
+        "date": "2026-04-03",
+        "severity": "MEDIUM",
+        "title": "Pod GPU 재확보 불가",
+        "symptom": "podResume: not enough free GPUs",
+        "fix": "새 Pod 생성",
+        "rule": "R12"
+      },
+      {
+        "id": "TS-014",
+        "date": "2026-04-03",
+        "severity": "CRITICAL",
+        "title": "v0.1~v0.3 Phi 정체 (alpha 고정)",
+        "symptom": "Phi=0.025 변화 없음",
+        "fix": "alpha_end Law60 override 수정 (commit 7084737)",
+        "rule": null,
+        "lesson": "PureField 크기 ≠ 의식 강도. alpha가 핵심."
+      },
+      {
+        "id": "TS-015",
+        "date": "2026-04-03",
+        "severity": "LOW",
+        "title": "alpha 로그 출력 오류",
+        "symptom": "로그에 Alpha: 0.01→0.014 표시, 실제는 0.01→0.5",
+        "fix": "출력 코드 수정 필요 (line 1973)",
+        "rule": null,
+        "lesson": "로그 출력과 실제 값이 다를 수 있음. 학습 중 Alpha 컬럼 확인."
+      },
+      {
+        "id": "TS-016",
+        "date": "2026-04-03",
+        "severity": "MEDIUM",
+        "title": "corpus 미도착 상태에서 학습 시작",
+        "symptom": "FileNotFoundError: corpus_v10.txt — SCP 업로드 완료 전에 auto_pipeline 시작됨",
+        "fix": "wait_and_train.sh — corpus 존재+크기 확인 후 학습",
+        "rule": "R10"
+      },
+      {
+        "id": "TS-017",
+        "date": "2026-04-11",
+        "severity": "HIGH",
+        "title": "HF 다운로드 rate-limited (인증 없음)",
+        "symptom": "Fetching 8 files 극히 느림, 'unauthenticated requests' 경고",
+        "fix": "HF_TOKEN 환경변수 + ~/.cache/huggingface/token 설정",
+        "rule": "R13",
+        "lesson": "인증 없으면 HF 다운로드 10x 느려짐. Pod 생성 시 즉시 HF_TOKEN 설정."
+      },
+      {
+        "id": "TS-018",
+        "date": "2026-04-11",
+        "severity": "HIGH",
+        "title": "1.2GB 텍스트 단일 토크나이즈 RAM 119GB",
+        "symptom": "tokenizer(text) 단일 호출로 1.2GB 처리 → RAM 119GB, CPU 15분+",
+        "fix": "청크 단위 토크나이즈 (500줄/청크) 또는 코퍼스 500MB 이하로 분할",
+        "rule": "R14",
+        "lesson": "코퍼스 > 500MB면 반드시 청크 토크나이즈. 단일 호출은 O(n²) 메모리."
+      },
+      {
+        "id": "TS-019",
+        "date": "2026-04-11",
+        "severity": "MEDIUM",
+        "title": "SCP 디렉토리 대상 실패",
+        "symptom": "scp file root@host:/workspace/data/ → 'dest open Failure'",
+        "fix": "명시적 파일명 지정: scp file root@host:/workspace/data/corpus.txt",
+        "rule": null,
+        "lesson": "RunPod SCP는 디렉토리 대상 불안정. 항상 전체 경로+파일명 명시."
+      },
+      {
+        "id": "TS-020",
+        "date": "2026-04-11",
+        "severity": "LOW",
+        "title": "rsync 미설치",
+        "symptom": "rsync: command not found (dancindocker/anima:v2)",
+        "fix": "scp 사용 또는 apt install rsync",
+        "rule": null,
+        "lesson": "RunPod 컨테이너에 rsync 기본 미포함. scp가 안전."
+      },
+      {
+        "id": "TS-021",
+        "date": "2026-04-11",
+        "severity": "HIGH",
+        "title": "학습 모듈 의존성 누락 (신규 Pod)",
+        "symptom": "ModuleNotFoundError: perf_hooks, archive.trinity_legacy, consciousness_laws.json 없음",
+        "fix": "전체 의존성 SCP: consciousness_laws.json, perf_hooks.py, trinity_legacy.py, __init__.py",
+        "rule": "R15",
+        "lesson": "신규 Pod 배포 시 import 체인 전체 검증 필수. PYTHONPATH + 모든 하위 모듈."
+      }
+    ]
+  },
+  "absolute_rules": {
+    "_new_rules": "2026-04-11 추가",
+    "R13_hf_token_required": {
+      "rule": "Pod 생성 즉시 HF_TOKEN 설정 필수",
+      "reason": "인증 없으면 다운로드 10x 느림 (incident: TS-017)",
+      "action": "echo $HF_TOKEN > ~/.cache/huggingface/token && export HF_TOKEN=..."
+    },
+    "R14_chunk_tokenize": {
+      "rule": "코퍼스 > 500MB면 청크 단위 토크나이즈 필수",
+      "reason": "단일 tokenizer() 호출로 1.2GB → RAM 119GB, 15분+ (incident: TS-018)",
+      "action": "500줄/청크 또는 코퍼스 사전 분할"
+    },
+    "R15_full_dep_verify": {
+      "rule": "신규 Pod 배포 시 python3 -c 'from X import Y' 전체 검증 필수",
+      "reason": "import 체인 누락으로 학습 실패 반복 (incident: TS-021)",
+      "action": "PYTHONPATH 설정 + 모든 모듈 import 테스트 후 학습 발사"
+    },
+    "R16_check_pod_before_create": {
+      "rule": "Pod 생성/사용 전 반드시 runpodctl pod list 로 기존 pod 상태 확인",
+      "reason": "이미 실행 중인 pod가 있을 수 있음. 중복 생성 = 비용 낭비 + GPU 쿼터 소진",
+      "action": "runpodctl pod list → active_pods 확인 → 없으면 생성, 있으면 재사용"
+    }
+  },
+  "preflight_checklist": [
+    "0. runpodctl pod list (기존 pod 확인 — R16, 항상 최우선!)",
+    "1. du -sh /workspace/ (쿼터 80% 이하 확인, df 무시!)",
+    "2. df -h / (root 파티션 1GB+ 여유)",
+    "3. ps aux | grep python (유령 프로세스 kill)",
+    "4. nvidia-smi (GPU VRAM 비어있는지)",
+    "5. ls /workspace/train_anima_lm.py && md5sum (스크립트 존재+최신)",
+    "6. ls /workspace/data/corpus_v*.txt (corpus 존재)",
+    "7. R2 업로드 완료된 체크포인트 삭제 확인",
+    "8. 72B 학습 시: transformers==4.46.0, gpuCount=2 확인",
+    "9. echo $HF_TOKEN (HF 토큰 설정 확인 — R13)",
+    "10. python3 -c 'from train_alm import *' (import 체인 검증 — R15)",
+    "11. corpus < 500MB 확인, 초과 시 청크 분할 — R14"
+  ],
+  "env_vars": {
+    "PYTHONUNBUFFERED": "1",
+    "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True",
+    "PATH": "/opt/conda/bin:$PATH",
+    "HF_TOKEN": "~/.cache/huggingface/token에서 로드"
+  },
+  "r2_backup": {
+    "bucket": "anima-models",
+    "endpoint": "https://ce4bdcce7c74d4e3c78fdf944c4d1d7b.r2.cloudflarestorage.com",
+    "workflow": "학습 완료 → scp to local → R2 upload → 서버 체크포인트 삭제",
+    "retention": "최신 버전만 유지, 구 버전 폐기"
+  }
+}

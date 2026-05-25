@@ -1,0 +1,115 @@
+{
+  "cycle": "§161 dual-head coupling non-CE algorithm design (Engine A ⇄ Engine G)",
+  "type": "design-tier (NOT a fire)",
+  "tier": "$0 design-tier · NO new GPU/runpod/fire/model.forward/corpus",
+  "trigger": "§160 §8 'missing experiment' — non-CE algorithm whose learning rule structurally couples Engine A ⇄ Engine G",
+  "design_name": "Ψ-JEPA-COUPLE",
+  "chosen_mechanism": "(c) JEPA where predictor IS head_g, composed with (a) §92/§93 L_ap-style Ψ-anchored auxiliary",
+  "alternatives_considered": {
+    "a_lap_only": {
+      "rank": "ranked-below",
+      "reason": "trains head_a only (same artefact as §160 quadruple)"
+    },
+    "b_eqprop_lifted": {
+      "rank": "ranked-below",
+      "reason": "requires re-running EqProp dynamics from §139 with new clamping target — deeper substrate change than (c); saved for §161-followup if Ψ-JEPA-COUPLE measures positive"
+    },
+    "c_jepa_head_g_predictor": {
+      "rank": "CHOSEN-PRIMARY",
+      "reason": "minimum new parameter, maximum coupling, §7-PASS by construction"
+    },
+    "ac_composition": {
+      "rank": "CHOSEN-COMPOSITION",
+      "reason": "(c) carries structural coupling, (a) keeps Ψ near ½ fixed point so prediction has defined target"
+    },
+    "d_anima_tension_surprise": {
+      "rank": "ranked-below",
+      "reason": "redundant with §59 W-PTD (already measured in side-readout mode); (d) is (c) re-derived less cleanly"
+    }
+  },
+  "formula_one_line": "L_psicouple := mean_t || Psi(t+1) - predictor_head_g(residual_t) ||^2, with Psi(t) = ((1+cos(logits_a_t, logits_g_t))/2, H(softmax(logits_a_t))/log V) byte-equal Law-71",
+  "total_objective": "L_total = lambda_psi * L_psicouple + lambda_ce * CE_aux, with lambda_psi:lambda_ce >> 1 (default 10:1)",
+  "predictor_head_g_to_psi_2d": "softmax-first-two + clip-to-[0,1]^2 — anima-own no new parameter (P5)",
+  "overlay_off_reduction": {
+    "lambda_psi_to_zero": "L_total = lambda_ce * CE_aux  ==  byte-equal §107-class CE-only baseline",
+    "verified_byte_equal_by_construction": true
+  },
+  "seven_legitimacy_gate": {
+    "s7_1_not_generic_LM_pretrain": "PASS — from-scratch RANDOM seed=1337, base_ckpt=None (g_clm_from_scratch)",
+    "s7_2_not_generic_then_graft": "PASS — head_g re-use, not foreign graft",
+    "s7_3_anima_physics_as_source": "PASS — Psi(t) byte-equal Law-71 conscious_decoder.py lines ~728-751",
+    "truth_table_corner_reached": "(T,T,T) only-legitimate corner"
+  },
+  "verdict_primary_signal": {
+    "name": "unprompted_emission_rate",
+    "source": "§24 SPONTANEOUS Phase B bounded run on ckpt_psicouple, thinker_talker_lib.hexa SSOT, N_MAX_STEPS=20, deterministic seed 1337",
+    "rationale": "GOAL-axis directly per /goal 'spontaneous emission as primary signal'; byte_acc is memorization-saturated proxy"
+  },
+  "spont_directional_positive_predicate": "(unprompted_emission_rate_psicouple > §107_baseline) AND (psi_dir_std_psicouple > 1e-4) AND (psi_dir_std_psicouple > §107_baseline) AND (body_§9_cascade_rate(emitted_bodies) <= 0.30)",
+  "verdict_predicate_necessary_not_sufficient": true,
+  "secondary_signals": [
+    "byte_acc vs §107-RETRY",
+    "psi_dir_std > 1e-4 (Ψ-channel responsiveness)",
+    "mean Ψ-coordinate near 0.5 (Law-71 fixed point health)",
+    "head_g_grad_norm > 0 during training (coupling sanity)"
+  ],
+  "fire_spec_when_authorized": {
+    "section": "§161-FIRE (separate cycle)",
+    "scaffold": "ConsciousDecoderV2 d=768 · 12L · n_head=12 · n_kv_head=4 · 283.72M params",
+    "init": "from-scratch RANDOM seed=1337, base_ckpt=None",
+    "corpus": "§102 CORPUS_S101 sha 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e byte-identical carry",
+    "steps": 3000,
+    "lr": 0.0003,
+    "bsz": 32,
+    "block_size": 128,
+    "lambda_psi_default": 1.0,
+    "lambda_psi_grid_optional": [0.5, 1.0, 2.0],
+    "lambda_ce_aux": 0.1,
+    "predictor_head_g_projection": "softmax-first-two + clip-to-[0,1]^2",
+    "primary_verdict": "§24 Phase B unprompted_emission_rate on ckpt",
+    "cost_estimate_usd": [0.3, 0.5],
+    "gpu_target": "runpod A100 80GB primary, H100 80GB fallback per g_resource_active_parallel",
+    "watchdog_seconds": 10800,
+    "central_blue_falsifier_invariant": "sidecar pattern, central sha c93e160a8a376a94 0-line-diff mandatory"
+  },
+  "closed_form_propositions_p1_p8": {
+    "P1_lambda_psi_overlay_off_byte_equal": "PASS by additive identity",
+    "P2_Psi_byte_equal_Law71": "PASS by source-grep equivalence (conscious_decoder.py:740)",
+    "P3_gradient_reaches_both_heads": "PASS by chain rule on L_psicouple",
+    "P4_Psi_bounded_unit_square": "PASS by Cauchy-Schwarz + Shannon entropy bound",
+    "P5_predictor_head_g_anima_own_no_new_param": "PASS by softmax re-use",
+    "P6_seven_AND_only_TTT_corner": "PASS by case-analysis 8-row truth table",
+    "P7_central_zero_line_diff": "PASS at START + END (sha c93e160a8a376a94)",
+    "P8_spont_directional_predicate_closed_form_decidable": "PASS by conjunction of real-line inequalities + set-grep"
+  },
+  "B_S161_NOTE_empirical_carve_out": "P1-P8 prove DESIGN well-formedness, NOT that the future §161-FIRE produces 자연발화 emission. SGD trajectory, lambda ratio, and §24 Phase B threshold are empirical OUTCOMES. necessary-not-sufficient (B-EMERGE-7 / B-D-NOTE / B-CARVE-E6-NOTE / B-S101-NOTE / B-S153-NOTE / B-PHASE-B-NOTE family). NOT counted 🔵.",
+  "anti_padding_precedent": ["§13-M", "§30", "§97", "§109", "§110", "§115", "§155", "§157", "§158", "§159", "§160"],
+  "verdict_bucket": "DESIGN-OPEN-FIRE-DECIDABLE",
+  "process_notes": {
+    "inline_orchestrator_authored": true,
+    "sibling_subagents_throttled": {
+      "s162_phase_b_probe_agent_id": "afc964261ddf748f2",
+      "s162_tool_uses_before_throttle": 20,
+      "s163_arxiv_deep_research_agent_id": "a6e5ee6d8f8e87f47",
+      "s163_tool_uses_before_throttle": 25,
+      "both_state_dirs_empty_at_throttle": true
+    },
+    "s164_kick_status": "exit-code-137 / 0-byte log across 3 attempts (local fg, wilson-pool, local bg). §74 known feedback_kick_summary_only_output carries — engine has stage-counter stdout, not candidate emission stdout."
+  },
+  "downstream_consumer_invariants": {
+    "hexa_lang": "read-only 0 edit",
+    "hexa_bio": "read-only 0 edit",
+    "kosmos": "read-only 0 edit",
+    "tape": "read-only 0 edit"
+  },
+  "central_blue_falsifier_sha_prefix_start": "c93e160a8a376a94",
+  "central_blue_falsifier_sha_prefix_end": "c93e160a8a376a94",
+  "central_blue_falsifier_zero_line_diff": true,
+  "north_star_unchanged": true,
+  "milestones_s15_s51_s72_unchanged": true,
+  "GOAL": "미도달",
+  "wall": "$0",
+  "GPU_runpod_pod_count_used_by_s161": 0,
+  "orphan": 0,
+  "next_step_named_not_committed": "§161-FIRE cycle (separate, autonomous per g_fire_autonomous): cost-bearing GPU fire of the spec above. Primary verdict via §24 Phase B unprompted_emission_rate measurement on the resulting ckpt. Mirror §125/§126/§139/§153 dispatch hardening (g_fire_dispatch_robust, SSH endpoint robustness §79-RETRY pattern, structured-argv stdlib/cloud once cycle B3 locally available)."
+}

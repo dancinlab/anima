@@ -1,0 +1,358 @@
+%apsrev4-2.bst 2019-01-14 (MD) hand-edited version of apsrev4-1.bst
+%Control: key (0)
+%Control: author (72) initials jnrlst
+%Control: editor formatted (1) identically to author
+%Control: production of article title (-1) disabled
+%Control: page (0) single
+%Control: year (1) truncated
+%Control: production of eprint (0) enabled
+\begin{thebibliography}{31}%
+\makeatletter
+\providecommand \@ifxundefined [1]{%
+ \@ifx{#1\undefined}
+}%
+\providecommand \@ifnum [1]{%
+ \ifnum #1\expandafter \@firstoftwo
+ \else \expandafter \@secondoftwo
+ \fi
+}%
+\providecommand \@ifx [1]{%
+ \ifx #1\expandafter \@firstoftwo
+ \else \expandafter \@secondoftwo
+ \fi
+}%
+\providecommand \natexlab [1]{#1}%
+\providecommand \enquote  [1]{``#1''}%
+\providecommand \bibnamefont  [1]{#1}%
+\providecommand \bibfnamefont [1]{#1}%
+\providecommand \citenamefont [1]{#1}%
+\providecommand \href@noop [0]{\@secondoftwo}%
+\providecommand \href [0]{\begingroup \@sanitize@url \@href}%
+\providecommand \@href[1]{\@@startlink{#1}\@@href}%
+\providecommand \@@href[1]{\endgroup#1\@@endlink}%
+\providecommand \@sanitize@url [0]{\catcode `\\12\catcode `\$12\catcode
+  `\&12\catcode `\#12\catcode `\^12\catcode `\_12\catcode `\%12\relax}%
+\providecommand \@@startlink[1]{}%
+\providecommand \@@endlink[0]{}%
+\providecommand \url  [0]{\begingroup\@sanitize@url \@url }%
+\providecommand \@url [1]{\endgroup\@href {#1}{\urlprefix }}%
+\providecommand \urlprefix  [0]{URL }%
+\providecommand \Eprint [0]{\href }%
+\providecommand \doibase [0]{https://doi.org/}%
+\providecommand \selectlanguage [0]{\@gobble}%
+\providecommand \bibinfo  [0]{\@secondoftwo}%
+\providecommand \bibfield  [0]{\@secondoftwo}%
+\providecommand \translation [1]{[#1]}%
+\providecommand \BibitemOpen [0]{}%
+\providecommand \bibitemStop [0]{}%
+\providecommand \bibitemNoStop [0]{.\EOS\space}%
+\providecommand \EOS [0]{\spacefactor3000\relax}%
+\providecommand \BibitemShut  [1]{\csname bibitem#1\endcsname}%
+\let\auto@bib@innerbib\@empty
+%</preamble>
+\bibitem [{\citenamefont {{Qiskit Development Team}}(2026)}]{Qiskit}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibnamefont {{Qiskit Development
+  Team}}},\ }\href@noop {} {\bibinfo {title} {{Qiskit Aer Documentation}}},\
+  \bibinfo {howpublished} {\url{https://qiskit.org/aer}} (\bibinfo {year}
+  {2026}),\ \bibinfo {note} {accessed 2026-05-03}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{Quantum AI Team, Google LLC}}(2026)}]{Cirq}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibnamefont {{Quantum AI Team,
+  Google LLC}}},\ }\href@noop {} {\bibinfo {title} {{Cirq Documentation}}},\
+  \bibinfo {howpublished} {\url{https://quantumai.google/cirq}} (\bibinfo
+  {year} {2026}),\ \bibinfo {note} {accessed 2026-05-03}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Rukhin}\ \emph {et~al.}(2010)\citenamefont {Rukhin},
+  \citenamefont {Soto}, \citenamefont {Nechvatal}, \citenamefont {Smid},
+  \citenamefont {Barker}, \citenamefont {Leigh}, \citenamefont {Levenson},
+  \citenamefont {Vangel}, \citenamefont {Banks}, \citenamefont {Heckert},
+  \citenamefont {Dray},\ and\ \citenamefont {Vo}}]{NIST-SP-800-22}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Rukhin}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Soto}},
+  \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Nechvatal}}, \bibinfo
+  {author} {\bibfnamefont {M.}~\bibnamefont {Smid}}, \bibinfo {author}
+  {\bibfnamefont {E.}~\bibnamefont {Barker}}, \bibinfo {author} {\bibfnamefont
+  {S.}~\bibnamefont {Leigh}}, \bibinfo {author} {\bibfnamefont
+  {M.}~\bibnamefont {Levenson}}, \bibinfo {author} {\bibfnamefont
+  {M.}~\bibnamefont {Vangel}}, \bibinfo {author} {\bibfnamefont
+  {D.}~\bibnamefont {Banks}}, \bibinfo {author} {\bibfnamefont
+  {A.}~\bibnamefont {Heckert}}, \bibinfo {author} {\bibfnamefont
+  {J.}~\bibnamefont {Dray}},\ and\ \bibinfo {author} {\bibfnamefont
+  {S.}~\bibnamefont {Vo}},\ }\href@noop {} {\emph {\bibinfo {title} {{A
+  Statistical Test Suite for Random and Pseudorandom Number Generators for
+  Cryptographic Applications}}}},\ \bibinfo {type} {Tech. Rep.}\ \bibinfo
+  {number} {SP 800-22 Rev. 1a}\ (\bibinfo  {institution} {National Institute of
+  Standards and Technology},\ \bibinfo {year} {2010})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Albantakis}\ \emph {et~al.}(2023)\citenamefont
+  {Albantakis}, \citenamefont {Barbosa}, \citenamefont {Findlay}, \citenamefont
+  {Grasso}, \citenamefont {Haun}, \citenamefont {Marshall}, \citenamefont
+  {Mayner}, \citenamefont {Zaeemzadeh}, \citenamefont {Boly}, \citenamefont
+  {Juel}, \citenamefont {Sasai}, \citenamefont {Fujii}, \citenamefont {David},
+  \citenamefont {Hendren}, \citenamefont {Lang},\ and\ \citenamefont
+  {Tononi}}]{Tononi-IIT4}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {L.}~\bibnamefont
+  {Albantakis}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Barbosa}},
+  \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Findlay}}, \bibinfo
+  {author} {\bibfnamefont {M.}~\bibnamefont {Grasso}}, \bibinfo {author}
+  {\bibfnamefont {A.~M.}\ \bibnamefont {Haun}}, \bibinfo {author}
+  {\bibfnamefont {W.}~\bibnamefont {Marshall}}, \bibinfo {author}
+  {\bibfnamefont {W.~G.~P.}\ \bibnamefont {Mayner}}, \bibinfo {author}
+  {\bibfnamefont {A.}~\bibnamefont {Zaeemzadeh}}, \bibinfo {author}
+  {\bibfnamefont {M.}~\bibnamefont {Boly}}, \bibinfo {author} {\bibfnamefont
+  {B.~E.}\ \bibnamefont {Juel}}, \bibinfo {author} {\bibfnamefont
+  {S.}~\bibnamefont {Sasai}}, \bibinfo {author} {\bibfnamefont
+  {K.}~\bibnamefont {Fujii}}, \bibinfo {author} {\bibfnamefont
+  {I.}~\bibnamefont {David}}, \bibinfo {author} {\bibfnamefont
+  {J.}~\bibnamefont {Hendren}}, \bibinfo {author} {\bibfnamefont {J.~P.}\
+  \bibnamefont {Lang}},\ and\ \bibinfo {author} {\bibfnamefont
+  {G.}~\bibnamefont {Tononi}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo
+  {journal} {PLOS Computational Biology}\ }\textbf {\bibinfo {volume} {19}},\
+  \bibinfo {pages} {e1011465} (\bibinfo {year} {2023})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Mayner}\ \emph {et~al.}(2018)\citenamefont {Mayner},
+  \citenamefont {Marshall}, \citenamefont {Albantakis}, \citenamefont
+  {Findlay}, \citenamefont {Marchman},\ and\ \citenamefont {Tononi}}]{pyphi}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {W.~G.~P.}\
+  \bibnamefont {Mayner}}, \bibinfo {author} {\bibfnamefont {W.}~\bibnamefont
+  {Marshall}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont
+  {Albantakis}}, \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Findlay}},
+  \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Marchman}},\ and\
+  \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Tononi}},\ }\href@noop {}
+  {\bibfield  {journal} {\bibinfo  {journal} {PLOS Computational Biology}\
+  }\textbf {\bibinfo {volume} {14}},\ \bibinfo {pages} {e1006343} (\bibinfo
+  {year} {2018})},\ \bibinfo {note} {software at
+  \url{https://github.com/wmayner/pyphi}; commit b78d0e3, feature/iit-4.0
+  branch used in this work}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Clauser}\ \emph {et~al.}(1969)\citenamefont
+  {Clauser}, \citenamefont {Horne}, \citenamefont {Shimony},\ and\
+  \citenamefont {Holt}}]{CHSH-1969}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~F.}\ \bibnamefont
+  {Clauser}}, \bibinfo {author} {\bibfnamefont {M.~A.}\ \bibnamefont {Horne}},
+  \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Shimony}},\ and\ \bibinfo
+  {author} {\bibfnamefont {R.~A.}\ \bibnamefont {Holt}},\ }\href@noop {}
+  {\bibfield  {journal} {\bibinfo  {journal} {Physical Review Letters}\
+  }\textbf {\bibinfo {volume} {23}},\ \bibinfo {pages} {880} (\bibinfo {year}
+  {1969})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Tsirelson}(1980)}]{Tsirelson-1980}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {B.~S.}\ \bibnamefont
+  {Tsirelson}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
+  {Letters in Mathematical Physics}\ }\textbf {\bibinfo {volume} {4}},\
+  \bibinfo {pages} {93} (\bibinfo {year} {1980})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Aspect}\ \emph {et~al.}(1982)\citenamefont {Aspect},
+  \citenamefont {Grangier},\ and\ \citenamefont {Roger}}]{Aspect-1982}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Aspect}}, \bibinfo {author} {\bibfnamefont {P.}~\bibnamefont {Grangier}},\
+  and\ \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Roger}},\
+  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Physical Review
+  Letters}\ }\textbf {\bibinfo {volume} {49}},\ \bibinfo {pages} {91} (\bibinfo
+  {year} {1982})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Barker}\ and\ \citenamefont
+  {Kelsey}(2015)}]{NIST-SP-800-90A}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {E.}~\bibnamefont
+  {Barker}}\ and\ \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Kelsey}},\ }\href@noop {} {\emph {\bibinfo {title} {{Recommendation for
+  Random Number Generation Using Deterministic Random Bit Generators}}}},\
+  \bibinfo {type} {Tech. Rep.}\ \bibinfo {number} {SP 800-90A Rev. 1}\
+  (\bibinfo  {institution} {National Institute of Standards and Technology},\
+  \bibinfo {year} {2015})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{Free Software
+  Foundation}}(2026)}]{FSF-MereAggregation}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibnamefont {{Free Software
+  Foundation}}},\ }\href@noop {} {\bibinfo {title} {{GNU GPL FAQ: What is the
+  difference between an "aggregate" and other kinds of "modified
+  versions"?}}},\ \bibinfo {howpublished}
+  {\url{https://www.gnu.org/licenses/gpl-faq.html#MereAggregation}} (\bibinfo
+  {year} {2026}),\ \bibinfo {note} {accessed 2026-05-03}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Temme}\ \emph {et~al.}(2017)\citenamefont {Temme},
+  \citenamefont {Bravyi},\ and\ \citenamefont {Gambetta}}]{ZNE-2017}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {K.}~\bibnamefont
+  {Temme}}, \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Bravyi}},\ and\
+  \bibinfo {author} {\bibfnamefont {J.~M.}\ \bibnamefont {Gambetta}},\
+  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Physical Review
+  Letters}\ }\textbf {\bibinfo {volume} {119}},\ \bibinfo {pages} {180509}
+  (\bibinfo {year} {2017})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Viola}\ and\ \citenamefont {Lloyd}(1998)}]{DD-1999}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {L.}~\bibnamefont
+  {Viola}}\ and\ \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Lloyd}},\
+  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Physical Review
+  A}\ }\textbf {\bibinfo {volume} {58}},\ \bibinfo {pages} {2733} (\bibinfo
+  {year} {1998})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{Apache Software Foundation}}(2004)}]{Apache-2.0}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibnamefont {{Apache Software
+  Foundation}}},\ }\href@noop {} {\bibinfo {title} {{Apache License, Version
+  2.0}}},\ \bibinfo {howpublished}
+  {\url{https://www.apache.org/licenses/LICENSE-2.0}} (\bibinfo {year}
+  {2004})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Symul}\ \emph {et~al.}(2011)\citenamefont {Symul},
+  \citenamefont {Assad},\ and\ \citenamefont {Lam}}]{ANU-QRNG}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.}~\bibnamefont
+  {Symul}}, \bibinfo {author} {\bibfnamefont {S.~M.}\ \bibnamefont {Assad}},\
+  and\ \bibinfo {author} {\bibfnamefont {P.~K.}\ \bibnamefont {Lam}},\
+  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Applied Physics
+  Letters}\ }\textbf {\bibinfo {volume} {98}},\ \bibinfo {pages} {231103}
+  (\bibinfo {year} {2011})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{U.S. Supreme Court}}(1991)}]{Feist-1991}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibnamefont {{U.S. Supreme
+  Court}}},\ }\href@noop {} {\bibinfo {title} {{Feist Publications, Inc., v.
+  Rural Telephone Service Co., Inc.}}},\ \bibinfo {howpublished} {499 U.S. 340}
+  (\bibinfo {year} {1991}),\ \bibinfo {note} {uS Supreme Court doctrine on
+  copyrightability of facts}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{National Institute of Standards and
+  Technology}}(2008)}]{HMAC-DRBG-2008}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibnamefont {{National Institute of
+  Standards and Technology}}},\ }\href@noop {} {\emph {\bibinfo {title} {{The
+  Keyed-Hash Message Authentication Code (HMAC)}}}},\ \bibinfo {type} {Tech.
+  Rep.}\ \bibinfo {number} {FIPS 198-1}\ (\bibinfo  {institution} {NIST},\
+  \bibinfo {year} {2008})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Arute}\ \emph {et~al.}(2019)\citenamefont {Arute},
+  \citenamefont {Arya}, \citenamefont {Babbush}, \citenamefont {Bacon},
+  \citenamefont {Bardin}, \citenamefont {Barends}, \citenamefont {Biswas},
+  \citenamefont {Boixo}, \citenamefont {Brandao}, \citenamefont {Buell} \emph
+  {et~al.}}]{Sycamore-2019}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {F.}~\bibnamefont
+  {Arute}}, \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont {Arya}},
+  \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Babbush}}, \bibinfo
+  {author} {\bibfnamefont {D.}~\bibnamefont {Bacon}}, \bibinfo {author}
+  {\bibfnamefont {J.~C.}\ \bibnamefont {Bardin}}, \bibinfo {author}
+  {\bibfnamefont {R.}~\bibnamefont {Barends}}, \bibinfo {author} {\bibfnamefont
+  {R.}~\bibnamefont {Biswas}}, \bibinfo {author} {\bibfnamefont
+  {S.}~\bibnamefont {Boixo}}, \bibinfo {author} {\bibfnamefont {F.~G. S.~L.}\
+  \bibnamefont {Brandao}}, \bibinfo {author} {\bibfnamefont {D.~A.}\
+  \bibnamefont {Buell}}, \emph {et~al.},\ }\href@noop {} {\bibfield  {journal}
+  {\bibinfo  {journal} {Nature}\ }\textbf {\bibinfo {volume} {574}},\ \bibinfo
+  {pages} {505} (\bibinfo {year} {2019})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Flammia}\ \emph {et~al.}(2012)\citenamefont
+  {Flammia}, \citenamefont {Gross}, \citenamefont {Liu},\ and\ \citenamefont
+  {Eisert}}]{Flammia-Gross-2012}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.~T.}\ \bibnamefont
+  {Flammia}}, \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {Gross}},
+  \bibinfo {author} {\bibfnamefont {Y.-K.}\ \bibnamefont {Liu}},\ and\ \bibinfo
+  {author} {\bibfnamefont {J.}~\bibnamefont {Eisert}},\ }\href@noop {}
+  {\bibfield  {journal} {\bibinfo  {journal} {New Journal of Physics}\ }\textbf
+  {\bibinfo {volume} {14}},\ \bibinfo {pages} {095022} (\bibinfo {year}
+  {2012})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Greenberger}\ \emph {et~al.}(1989)\citenamefont
+  {Greenberger}, \citenamefont {Horne},\ and\ \citenamefont
+  {Zeilinger}}]{GHZ-1989}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {D.~M.}\ \bibnamefont
+  {Greenberger}}, \bibinfo {author} {\bibfnamefont {M.~A.}\ \bibnamefont
+  {Horne}},\ and\ \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Zeilinger}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Bell's
+  Theorem, Quantum Theory and Conceptions of the Universe}}}\ (\bibinfo
+  {publisher} {Springer},\ \bibinfo {year} {1989})\ pp.\ \bibinfo {pages}
+  {69--72}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Mermin}(1990)}]{Mermin-1990}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.~D.}\ \bibnamefont
+  {Mermin}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
+  {Physical Review Letters}\ }\textbf {\bibinfo {volume} {65}},\ \bibinfo
+  {pages} {1838} (\bibinfo {year} {1990})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Kitaev}(2003)}]{Kitaev-2003}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~Y.}\ \bibnamefont
+  {Kitaev}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Annals
+  of Physics}\ }\textbf {\bibinfo {volume} {303}},\ \bibinfo {pages} {2}
+  (\bibinfo {year} {2003})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Fowler}\ \emph {et~al.}(2012)\citenamefont {Fowler},
+  \citenamefont {Mariantoni}, \citenamefont {Martinis},\ and\ \citenamefont
+  {Cleland}}]{Surface-Code-2012}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~G.}\ \bibnamefont
+  {Fowler}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Mariantoni}},
+  \bibinfo {author} {\bibfnamefont {J.~M.}\ \bibnamefont {Martinis}},\ and\
+  \bibinfo {author} {\bibfnamefont {A.~N.}\ \bibnamefont {Cleland}},\
+  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Physical Review
+  A}\ }\textbf {\bibinfo {volume} {86}},\ \bibinfo {pages} {032324} (\bibinfo
+  {year} {2012})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Knill}\ and\ \citenamefont
+  {Laflamme}(1997)}]{Knill-Laflamme-1998}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {E.}~\bibnamefont
+  {Knill}}\ and\ \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont
+  {Laflamme}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
+  {Physical Review A}\ }\textbf {\bibinfo {volume} {55}},\ \bibinfo {pages}
+  {900} (\bibinfo {year} {1997})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Bravyi}\ and\ \citenamefont
+  {Kitaev}(2005)}]{Bravyi-Kitaev-2005}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Bravyi}}\ and\ \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Kitaev}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
+  {Physical Review A}\ }\textbf {\bibinfo {volume} {71}},\ \bibinfo {pages}
+  {022316} (\bibinfo {year} {2005})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Hensen}\ \emph {et~al.}(2015)\citenamefont {Hensen},
+  \citenamefont {Bernien}, \citenamefont {Dr{\'e}au}, \citenamefont {Reiserer},
+  \citenamefont {Kalb}, \citenamefont {Blok}, \citenamefont {Ruitenberg},
+  \citenamefont {Vermeulen}, \citenamefont {Schouten}, \citenamefont
+  {Abell{\'a}n} \emph {et~al.}}]{Hensen-2015}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {B.}~\bibnamefont
+  {Hensen}}, \bibinfo {author} {\bibfnamefont {H.}~\bibnamefont {Bernien}},
+  \bibinfo {author} {\bibfnamefont {A.~E.}\ \bibnamefont {Dr{\'e}au}}, \bibinfo
+  {author} {\bibfnamefont {A.}~\bibnamefont {Reiserer}}, \bibinfo {author}
+  {\bibfnamefont {N.}~\bibnamefont {Kalb}}, \bibinfo {author} {\bibfnamefont
+  {M.~S.}\ \bibnamefont {Blok}}, \bibinfo {author} {\bibfnamefont
+  {J.}~\bibnamefont {Ruitenberg}}, \bibinfo {author} {\bibfnamefont {R.~F.~L.}\
+  \bibnamefont {Vermeulen}}, \bibinfo {author} {\bibfnamefont {R.~N.}\
+  \bibnamefont {Schouten}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont
+  {Abell{\'a}n}}, \emph {et~al.},\ }\href@noop {} {\bibfield  {journal}
+  {\bibinfo  {journal} {Nature}\ }\textbf {\bibinfo {volume} {526}},\ \bibinfo
+  {pages} {682} (\bibinfo {year} {2015})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{Amazon Web Services}}(2026)}]{AWS-Braket}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibnamefont {{Amazon Web
+  Services}}},\ }\href@noop {} {\bibinfo {title} {{Amazon Braket
+  Documentation}}},\ \bibinfo {howpublished}
+  {\url{https://aws.amazon.com/braket/}} (\bibinfo {year} {2026}),\ \bibinfo
+  {note} {accessed 2026-05-03}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{IonQ}}(2026{\natexlab{a}})}]{IonQ-Aria}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibnamefont {{IonQ}}},\ }\href@noop
+  {} {\bibinfo {title} {{Aria-1 specifications}}},\ \bibinfo {howpublished}
+  {\url{https://ionq.com/quantum-systems/aria}} (\bibinfo {year}
+  {2026}{\natexlab{a}}),\ \bibinfo {note} {accessed 2026-05-03}\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {{IonQ}}(2026{\natexlab{b}})}]{IonQ-Forte}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibnamefont {{IonQ}}},\ }\href@noop
+  {} {\bibinfo {title} {{Forte-1 specifications}}},\ \bibinfo {howpublished}
+  {\url{https://ionq.com/quantum-systems/forte}} (\bibinfo {year}
+  {2026}{\natexlab{b}}),\ \bibinfo {note} {accessed 2026-05-03}\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {{Rigetti Computing}}(2026)}]{Rigetti-Cepheus}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibnamefont {{Rigetti Computing}}},\
+  }\href@noop {} {\bibinfo {title} {{Cepheus 108Q specifications}}},\ \bibinfo
+  {howpublished} {AWS Braket catalog} (\bibinfo {year} {2026}),\ \bibinfo
+  {note} {accessed 2026-05-03}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {{IBM Quantum}}(2026)}]{IBM-Heron}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibnamefont {{IBM Quantum}}},\
+  }\href@noop {} {\bibinfo {title} {{Heron r2 processor specifications}}},\
+  \bibinfo {howpublished} {\url{https://quantum.ibm.com/services/resources}}
+  (\bibinfo {year} {2026}),\ \bibinfo {note} {accessed 2026-05-03}\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {{need-singularity}}(2026)}]{Hexa-Lang}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibnamefont {{need-singularity}}},\
+  }\href@noop {} {\bibinfo {title} {{Hexa-lang specification (raw\#9
+  family)}}},\ \bibinfo {howpublished} {GitHub: need-singularity/hexa}
+  (\bibinfo {year} {2026}),\ \bibinfo {note} {accessed 2026-05-03}\BibitemShut
+  {NoStop}%
+\end{thebibliography}%

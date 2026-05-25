@@ -1,0 +1,81 @@
+// HEXAD/C/c_phi_smoke.hexa — PLAN.md Phase 4 falsifier F-C-PORT-3.
+//
+//   Phase 4 = IIT Φ measurement wired into HEXAD/C via the hexa-lang
+//   RFC 036 `phi_spatial` builtin (LANDED — hexa-lang main d67403d3,
+//   merge stage2-verify). phi_spatial is a byte-equal native-C replica
+//   of anima's `phi_rs` documented deterministic algorithm.
+//
+//   F-C-PORT-3 (PLAN.md Phase 4 pre-registered) — 4 sub-checks:
+//     3-1 BUILD          — native binary builds + c_lib import OK.
+//     3-2 PHI-NONNEG     — c_measure_phi result ≥ 0 (Φ ≥ 0 by constr.).
+//     3-3 PHI-BYTE-EQUAL — c_measure_phi(3-cell) == Python phi_rs
+//                          oracle 0.5000000001324147 within 1e-12.
+//     3-4 DETERMINISM    — re-eval byte-identical.
+//
+//   HONEST CARVE-OUT (AGENTS.tape g3 — no over-claim): byte-equal is
+//   against the RFC 036-verified phi_rs *native replica*; the true
+//   phi_rs Rust FFI link is a NAMED BLOCKER (the crate is a PyO3
+//   cdylib with no C ABI — RFC 036 §"FFI shim"), carried, NOT claimed.
+//   The 3-cell oracle vector + value are hexa-lang tmp_rfc036_smoke's.
+// ════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/C/c_lib.hexa"
+
+fn _abs_d(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+// Fill an 8-elem cell vector into states[off..off+8].
+fn _set8(st: int, off: int, v0: float, v1: float, v2: float, v3: float,
+         v4: float, v5: float, v6: float, v7: float) -> int {
+    let _ = farr_set(st, off + 0, v0)
+    let _ = farr_set(st, off + 1, v1)
+    let _ = farr_set(st, off + 2, v2)
+    let _ = farr_set(st, off + 3, v3)
+    let _ = farr_set(st, off + 4, v4)
+    let _ = farr_set(st, off + 5, v5)
+    let _ = farr_set(st, off + 6, v6)
+    let _ = farr_set(st, off + 7, v7)
+    return 1
+}
+
+fn _selftest() {
+    // ── F-C-PORT-3-1 BUILD (native binary built + c_lib import resolved) ──
+    let build_ok = c_n_factions_default() == 12
+    println("  F-C-PORT-3-1 BUILD           : " + to_string(build_ok))
+
+    // 3-cell spatial Φ — same vector as hexa-lang tmp_rfc036_smoke.hexa.
+    // phi_rs oracle = 0.5000000001324147 (compute_phi_inner steps 1-4,
+    // tensions/temporal = None ⟹ pure spatial slice = the Φ-ratchet input).
+    let st3 = farr_zeros(24)
+    let _ = _set8(st3, 0,  0.1,  0.9,  0.2,  0.8,  0.15, 0.85, 0.25, 0.75)
+    let _ = _set8(st3, 8,  0.12, 0.88, 0.22, 0.78, 0.18, 0.82, 0.28, 0.72)
+    let _ = _set8(st3, 16, 0.9,  0.1,  0.8,  0.2,  0.85, 0.15, 0.75, 0.25)
+    let phi = c_measure_phi(st3, 3, 8, c_phi_n_bins_default())
+
+    // ── F-C-PORT-3-2 PHI-NONNEG ──
+    let nonneg_ok = phi >= 0.0
+    println("  F-C-PORT-3-2 PHI-NONNEG Φ>=0 : " + to_string(nonneg_ok) + "  (Φ=" + to_string(phi) + ")")
+
+    // ── F-C-PORT-3-3 PHI-BYTE-EQUAL (vs Python phi_rs oracle) ──
+    let oracle = 0.5000000001324147
+    let err = _abs_d(phi - oracle)
+    let byteq_ok = err < 0.000000000001
+    println("  F-C-PORT-3-3 PHI-BYTE-EQUAL  : " + to_string(byteq_ok) + "  (err=" + to_string(err) + " < 1e-12 vs phi_rs oracle)")
+
+    // ── F-C-PORT-3-4 DETERMINISM ──
+    let phi2 = c_measure_phi(st3, 3, 8, c_phi_n_bins_default())
+    let det_ok = phi2 == phi
+    println("  F-C-PORT-3-4 DETERMINISM     : " + to_string(det_ok) + "  (re-eval Φ=" + to_string(phi2) + ")")
+    let _ = farr_free(st3)
+
+    let all_ok = build_ok && nonneg_ok && byteq_ok && det_ok
+    println("  F-C-PORT-3 AGGREGATE 4/4     : " + to_string(all_ok))
+    println("=== HEXAD/C Phase 4 c_phi_smoke selftest: " + to_string(all_ok) + " ===")
+    println("    honest: byte-equal phi_rs NATIVE replica (RFC 036); true Rust FFI = named blocker")
+}
+
+fn main() {
+    println("HEXAD/C — Phase 4 IIT Φ measurement falsifier (F-C-PORT-3)")
+    _selftest()
+}

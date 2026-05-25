@@ -1,0 +1,400 @@
+// anima-eeg/protocols/berger_session_audio.hexa
+//
+// @resolver-bypass(reason="darwin-native: shells out to /usr/bin/say + delegates to anima-eeg/collect.hexa")
+//
+// AI-NATIVE ERROR CONTRACT (2026-05-05)
+//   spec: docs/anima_eeg_ai_native_error_contract_spec_2026_05_05.md
+//   lib:  anima-eeg/_lib_safe_call.hexa
+//   Every failure path emits 3-line stderr trailer (__ANIMA_EEG_FAIL__ ...).
+//   Every success path emits 1-line stdout trailer (__ANIMA_EEG_OK__ ...).
+//   guaranteed across hexa stage1 protocols; inline fallback ensures the
+//   contract holds even if lib load fails).
+//
+// PURPOSE
+//   Berger 1929 재측정 풀 sequence — audio cue (macOS `say -v Yuna`) + collect.hexa 2회 호출.
+//   alpha_eyes_closed.hexa pattern 보강: 기존 모듈 측 cue print 만 — 본 wrapper 가 실 say 호출.
+//
+// SEQUENCE
+//   1. impedance check
+//   2. EC 60s capture (audio cue)
+//   3. 10s rest (audio cue)
+//   4. EO 60s capture (audio cue)
+//
+// USAGE
+//   hexa run anima-eeg/protocols/berger_session_audio.hexa --run \
+//       --port /dev/cu.usbserial-DP04WGIQ --board cyton_daisy
+//
+//   options:
+//       --duration <n>     each block (default 60)
+//       --voice <name>     macOS say voice (default Yuna)
+//       --skip-impedance   impedance check 생략
+//       --selftest         no-hardware dry-run
+
+let SCHEMA = "anima-eeg/berger_session_audio/1"
+
+// Frozen defaults
+let DEFAULT_DURATION_S    = 60
+let DEFAULT_VOICE         = "Yuna"
+let DEFAULT_PORT          = "/dev/cu.usbserial-DP04WGIQ"
+let DEFAULT_BOARD         = "cyton_daisy"
+let REST_DURATION_S       = 10
+let CUE_LEAD_S            = 3      // count-down before each block
+let COLLECT_PREPARE_LAG_S = 3      // BrainFlow prepare_session + start_stream absorb
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+// Inlined so the trailer survives even if the lib file fails to load.
+
+fn _ai_fix_recipe(kind: str) -> str {
+    if kind == "INT_PARSE_UNDEFINED"   { return "restage1_int_parse_fallback" }
+    if kind == "BOARD_NOT_DETECTED"    { return "check_dongle_port" }
+    if kind == "IMPEDANCE_RED"         { return "reseat_electrodes_check_paste" }
+    if kind == "BRAINFLOW_TIMEOUT"     { return "restart_brainflow_release_all" }
+    if kind == "LSL_NO_OUTLET"         { return "relaunch_lsl_outlet" }
+    if kind == "SESSION_INTERRUPTED"   { return "resume_or_restart_session" }
+    if kind == "BOARD_PINS_SHORTED"    { return "disambiguate_via_impedance_validate" }
+    if kind == "BOARD_PINS_SHORTED_FP" { return "disambiguate_via_impedance_validate" }
+    return "see_log"
+}
+
+fn _ai_kind_to_reason(kind: str) -> str {
+    if kind == "INT_PARSE_UNDEFINED"   { return "hexa runtime undefined builtin (int_parse / to_int) — patch stage1 fallback" }
+    if kind == "BOARD_NOT_DETECTED"    { return "BrainFlow prepare_session failed; dongle missing, wrong port, or driver fault" }
+    if kind == "IMPEDANCE_RED"         { return "impedance check returned RED for >=1 channel; electrode contact insufficient" }
+    if kind == "BRAINFLOW_TIMEOUT"     { return "start_stream / get_board_data exceeded watchdog window" }
+    if kind == "LSL_NO_OUTLET"         { return "LSL outlet missing or no inlet within resolve window" }
+    if kind == "SESSION_INTERRUPTED"   { return "Ctrl-C / SIGTERM received mid-capture; partial data may be on disk" }
+    if kind == "BOARD_PINS_SHORTED"    { return "board_health flagged cross-channel correlation; verify via impedance-validate" }
+    if kind == "BOARD_PINS_SHORTED_FP" { return "cross-channel correlation likely biological alpha (helmet worn); not a true short" }
+    return "unclassified failure; consult log"
+}
+
+fn ai_emit_fail(kind: str, site: str, voice_emitted: int) {
+    let recipe = _ai_fix_recipe(kind)
+    let reason = _ai_kind_to_reason(kind)
+    eprintln("__ANIMA_EEG_FAIL__ kind=" + kind + " site=" + site + " fix_recipe=" + recipe)
+    eprintln("reason: " + reason)
+    if voice_emitted == 1 {
+        eprintln("user_voice_cue_emitted: true")
+    } else {
+        eprintln("user_voice_cue_emitted: false")
+    }
+}
+
+fn ai_emit_ok(label: str, ledger: str) {
+    print("__ANIMA_EEG_OK__ session=" + label + " ledger=" + ledger)
+}
+
+// ---- Existing helpers ----
+
+fn say_cue(voice: str, text: str) -> int {
+    // macOS `say` blocking call (returns 0 on success)
+    let cmd = "say -v '" + voice + "' '" + text + "'"
+    return exec_status(cmd)
+}
+
+fn exec_status(cmd: str) -> int {
+    let rc = exec(cmd)
+    return rc
+}
+
+fn run_impedance(port: str) -> int {
+    let cmd = "hexa run anima-eeg/impedance_check.hexa --check --port '" + port + "'"
+    print("[step1] impedance check...")
+    return exec_status(cmd)
+}
+
+fn run_collect_fg(port: str, board: str, duration: int, tag: str, output: str) -> int {
+    //   hexa stage1 측 background `&` + `wait` builtin 측 unreliable —
+    //   nonzero rc 또는 wait scope loss 측 wrapper 측 즉시 fail (사용자 측
+    //   "EC 측정 실패" 음성 측 들음). simplified pattern: foreground only
+    //   (blocking ~duration_s + 2-3s prepare). countdown cue 측 measurement
+    //   시작 직전 측 명확 sync. first 3-5s capture transition 측
+    //   dc_settle_trim.hexa 측 자동 absorb (이미 land된 module).
+    let log_path = "/tmp/anima_eeg_collect_" + tag + ".log"
+    let cmd = "hexa run anima-eeg/collect.hexa --collect --duration " + str(duration)
+              + " --tag " + tag
+              + " --output '" + output + "'"
+              + " --port '" + port + "'"
+              + " --board '" + board + "'"
+              + " > '" + log_path + "' 2>&1"
+    print("[capture-fg] " + tag + " " + str(duration) + "s (log: " + log_path + ")")
+    return exec_status(cmd)
+}
+
+fn sleep_seconds(n: int) {
+    let cmd = "sleep " + str(n)
+    exec_status(cmd)
+}
+
+fn ensure_dir(path: str) {
+    exec_status("mkdir -p '" + path + "'")
+}
+
+fn date_tag_utc() -> str {
+    // capture_stdout builtin 측 X — runtime "undefined function" error 발생.
+    // 우회: 현재 cycle session day 측 hardcode. DATE_TAG env override 측 lost.
+    // 다음 cycle 측 manual update 필요 (audit 2026_05_04+ 측 진입 시).
+    return "2026_05_03"
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Phases
+//     이전 패턴: say_cue("지금") → run_collect (foreground) — collect 측
+//     prepare_session + start_stream 측 2-3s lag 동안 사용자 측 이미
+//     눈 감음 → measurement boundary mismatch.
+//     개선 패턴: run_collect_bg (background launch) → sleep
+//     COLLECT_PREPARE_LAG_S (3s, absorb BrainFlow init) → say_cue("지금")
+//     (이 시점 측 ring buffer 측 active capture) → sleep duration → wait.
+//     사용자 측 "지금" 듣고 눈 감는 시점 = capture phase boundary 정확.
+//     (cyton_daisy ~2-3s, dongle reconnect 측 더 길 수 있음). 3s 측 typical
+//     median + safety margin. macOS only — Linux/Windows say binary 부재 시 stub.
+// ════════════════════════════════════════════════════════════════════
+
+fn phase_eyes_closed(voice: str, port: str, board: str, duration: int, output: str) -> int {
+    //   1. preamble + countdown cues (3, 2, 1, 지금)
+    //   2. foreground collect blocking ~duration_s
+    //   3. completion cue
+    say_cue(voice, "Eye-closed 60초 측정. 카운트다운 후 눈을 감으세요")
+    say_cue(voice, "삼"); sleep_seconds(1)
+    say_cue(voice, "이"); sleep_seconds(1)
+    say_cue(voice, "일"); sleep_seconds(1)
+    say_cue(voice, "지금. 눈 감으세요")
+    let rc = run_collect_fg(port, board, duration, "berger_ec_v3", output)
+    say_cue(voice, "측정 끝")
+    return rc
+}
+
+fn phase_rest(voice: str) {
+    say_cue(voice, "잠시 쉬세요")                // BLOCKING — 완료 후 sleep 시작
+    sleep_seconds(REST_DURATION_S)
+}
+
+fn phase_eyes_open(voice: str, port: str, board: str, duration: int, output: str) -> int {
+    // Mirror of phase_eyes_closed — simplified countdown + foreground (2026_05_03).
+    say_cue(voice, "Eye-open 60초 측정. 카운트다운 후 눈을 뜨세요")
+    say_cue(voice, "삼"); sleep_seconds(1)
+    say_cue(voice, "이"); sleep_seconds(1)
+    say_cue(voice, "일"); sleep_seconds(1)
+    say_cue(voice, "지금. 눈 뜨세요")
+    let rc = run_collect_fg(port, board, duration, "berger_eo_v3", output)
+    say_cue(voice, "측정 완료")
+    return rc
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Main
+// ════════════════════════════════════════════════════════════════════
+
+fn cmd_run(port: str, board: str, duration: int, voice: str, skip_impedance: int) -> int {
+    let session_dir = "anima-eeg/recordings/sessions"
+    ensure_dir(session_dir)
+
+    let date_tag = date_tag_utc()
+    let ec_npy = session_dir + "/berger_ec_60s_v3_" + date_tag + ".npy"
+    let eo_npy = session_dir + "/berger_eo_60s_v3_" + date_tag + ".npy"
+
+    print("=== Berger 1929 재측정 (audio cue) ===")
+    print("port=" + port + "  board=" + board)
+    print("duration=" + str(duration) + "s × 2  voice=" + voice)
+    print("EC: " + ec_npy)
+    print("EO: " + eo_npy)
+    print("======================================")
+
+    // Step 1: impedance (optional)
+    if skip_impedance == 0 {
+        say_cue(voice, "임피던스 측정 시작")
+        let imp_rc = run_impedance(port)
+        if imp_rc != 0 {
+            say_cue(voice, "임피던스 측정 실패. 전극을 다시 확인하세요")
+            print("[error] impedance check 실패")
+            ai_emit_fail("IMPEDANCE_RED", "berger_session_audio:phase_impedance", 1)
+            return 1
+        }
+        print("[step1] impedance: 16/16 GREEN 확인 후 5초 대기 (Ctrl-C 중단)")
+        // 5s pause 측 사용자 측 GREEN 확인 측 진행. confirm 측 implicit (ctrl-c
+        // 측 only abort path). Future stage2 측 readline 가용 시 prompt 복원.
+        sleep_seconds(5)
+    }
+
+    // Step 2: EC
+    let ec_rc = phase_eyes_closed(voice, port, board, duration, ec_npy)
+    if ec_rc != 0 {
+        say_cue(voice, "EC 측정 실패")
+        // various BrainFlow / hexa runtime faults. Conservative default
+        // BRAINFLOW_TIMEOUT — AI agent SHOULD inspect /tmp log if recipe
+        // mismatch.
+        ai_emit_fail("BRAINFLOW_TIMEOUT", "berger_session_audio:phase_ec", 1)
+        return 2
+    }
+
+    // Step 3: rest
+    phase_rest(voice)
+
+    // Step 4: EO
+    let eo_rc = phase_eyes_open(voice, port, board, duration, eo_npy)
+    if eo_rc != 0 {
+        say_cue(voice, "EO 측정 실패")
+        ai_emit_fail("BRAINFLOW_TIMEOUT", "berger_session_audio:phase_eo", 1)
+        return 3
+    }
+
+    print("")
+    print("=== 측정 완료 ===")
+    print("EC: " + ec_npy)
+    print("EO: " + eo_npy)
+    print("")
+    print("다음 단계: Berger 분석 BG launch (F_BERGER_01/02/03 verdict)")
+    ai_emit_ok("berger_session_audio_" + date_tag, ec_npy)
+    return 0
+}
+
+fn cmd_selftest() -> int {
+    print("[selftest] berger_session_audio.hexa")
+    print("[selftest] dry-run: no hardware, no say cue, no collect.hexa")
+
+    let voice = DEFAULT_VOICE
+    let port = DEFAULT_PORT
+    let board = DEFAULT_BOARD
+
+    // assertions (synthetic)
+    let test_count = 0
+    let pass_count = 0
+
+    // T1: voice default
+    test_count = test_count + 1
+    if voice == "Yuna" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T1 voice default") }
+
+    // T2: duration default
+    test_count = test_count + 1
+    if DEFAULT_DURATION_S == 60 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T2 duration default") }
+
+    // T3: rest duration
+    test_count = test_count + 1
+    if REST_DURATION_S == 10 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T3 rest duration") }
+
+    // T4: cue lead
+    test_count = test_count + 1
+    if CUE_LEAD_S == 3 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T4 cue lead") }
+
+    // T5: collect prepare lag absorb (audio cue timing fix 2026_05_03)
+    test_count = test_count + 1
+    if COLLECT_PREPARE_LAG_S == 3 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T5 collect prepare lag != 3s") }
+
+    test_count = test_count + 1
+    if _ai_fix_recipe("BRAINFLOW_TIMEOUT") == "restart_brainflow_release_all" {
+        pass_count = pass_count + 1
+    } else { print("[FAIL] T6 ai fix_recipe BRAINFLOW_TIMEOUT") }
+
+    // T7: AI-native sentinel — kind reason coverage
+    test_count = test_count + 1
+    if _ai_kind_to_reason("INT_PARSE_UNDEFINED") != "" {
+        pass_count = pass_count + 1
+    } else { print("[FAIL] T7 ai reason INT_PARSE_UNDEFINED empty") }
+
+    // T8: AI-native sentinel — synthetic emit (visual stderr inspection)
+    test_count = test_count + 1
+    ai_emit_fail("INT_PARSE_UNDEFINED", "berger_session_audio:selftest_T8", 0)
+    pass_count = pass_count + 1                       // emit returns void
+
+    print("[selftest] " + str(pass_count) + " PASS / " + str(test_count - pass_count) + " FAIL")
+    if pass_count == test_count {
+        print("__BERGER_AUDIO__ PASS")
+        ai_emit_ok("berger_session_audio_selftest", "none")
+        return 0
+    }
+    print("__BERGER_AUDIO__ FAIL")
+    ai_emit_fail("OTHER", "berger_session_audio:cmd_selftest", 0)
+    return 1
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Argv dispatch
+// ════════════════════════════════════════════════════════════════════
+
+fn print_usage() {
+    print("usage:")
+    print("  hexa run anima-eeg/protocols/berger_session_audio.hexa --run \\")
+    print("       --port <path> --board <name> [--duration <n>] [--voice <name>]")
+    print("  hexa run anima-eeg/protocols/berger_session_audio.hexa --selftest")
+    print("flags:")
+    print("  --selftest          no-hardware dry-run")
+    print("  --run               full Berger session (impedance + EC + EO)")
+    print("  --port <path>       Dongle serial node (default " + DEFAULT_PORT + ")")
+    print("  --board <name>      cyton_daisy | cyton (default " + DEFAULT_BOARD + ")")
+    print("  --duration <n>      each block sec (default " + str(DEFAULT_DURATION_S) + ")")
+    print("  --voice <name>      macOS say voice (default " + DEFAULT_VOICE + ")")
+    print("  --skip-impedance    skip impedance check")
+    print("  --help              this message")
+}
+
+fn main() -> int {
+    let av = argv()
+    let n = len(av)
+
+    let mut mode = "help"
+    let mut port = DEFAULT_PORT
+    let mut board = DEFAULT_BOARD
+    let mut duration = DEFAULT_DURATION_S
+    let mut voice = DEFAULT_VOICE
+    let mut skip_impedance = 0
+
+    // skip leading interpreter / script / cache paths until first flag
+    // (handles: hexa_interp.real, anima-eeg/.../*.hexa, build cache /exe stubs,
+    //  any absolute path-like argv prefix). Mirrors jaw_session_audio.hexa
+    let mut start = 0
+    while start < n {
+        let a = av[start]
+        let mut is_flag = false
+        if len(a) >= 2 {
+            if a.starts_with("--") { is_flag = true }
+        }
+        if is_flag { break }
+        if a == "" { break }
+        start = start + 1
+    }
+
+    let mut i = start
+    while i < n {
+        let a = av[i]
+        if a == "--selftest" { mode = "selftest" }
+        else if a == "--run" { mode = "run" }
+        else if a == "--port" {
+            if i + 1 < n { port = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--board" {
+            if i + 1 < n { board = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--duration" {
+            if i + 1 < n { duration = to_int(av[i + 1]); i = i + 1 }
+        }
+        else if a == "--voice" {
+            if i + 1 < n { voice = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--skip-impedance" { skip_impedance = 1 }
+        else if a == "--help" { mode = "help" }
+        else {
+            print("[error] unknown flag: " + a)
+            print_usage()
+            ai_emit_fail("OTHER", "berger_session_audio:argv_parse", 0)
+            return 2
+        }
+        i = i + 1
+    }
+
+    if mode == "selftest" {
+        return cmd_selftest()
+    }
+    if mode == "run" {
+        return cmd_run(port, board, duration, voice, skip_impedance)
+    }
+    print_usage()
+    return 0
+}

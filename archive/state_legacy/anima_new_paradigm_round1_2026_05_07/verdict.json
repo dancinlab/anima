@@ -1,0 +1,78 @@
+{
+  "bg_id": "BG-HE",
+  "title": "anima_new_paradigm_round1 — 새 paradigm 10 H seed + evaluator V2 strict spec",
+  "ts_start": "2026-05-06T17:18:19Z",
+  "ts_end": "2026-05-06T17:29:25Z",
+  "user_directive": "교훈으로 새로운 패러다임도 도전해보고",
+  "phase": "Phase 1 ($0 mac local file-write only)",
+  "h_count_added": 10,
+  "h_id_range": "H_093-H_102",
+  "h_added": [
+    {"id": "H_093", "slug": "sft-only-paradigm", "domain": "corpus|substrate"},
+    {"id": "H_094", "slug": "instruction-tuning-two-stage", "domain": "corpus|substrate"},
+    {"id": "H_095", "slug": "dpo-rlhf-preference-learning", "domain": "corpus|substrate|consciousness"},
+    {"id": "H_096", "slug": "in-context-few-shot", "domain": "corpus|substrate"},
+    {"id": "H_097", "slug": "curriculum-learning", "domain": "corpus|substrate"},
+    {"id": "H_098", "slug": "persona-conditioned-training", "domain": "corpus|substrate|consciousness"},
+    {"id": "H_099", "slug": "multi-objective-training", "domain": "corpus|substrate"},
+    {"id": "H_100", "slug": "constitutional-ai-anima-rules", "domain": "corpus|substrate|consciousness"},
+    {"id": "H_101", "slug": "corpus-chat-template-strict-80", "domain": "corpus"},
+    {"id": "H_102", "slug": "anima-emerge-paradigm-cross-link", "domain": "substrate|consciousness"}
+  ],
+  "evaluator_v2_spec_landed": true,
+  "evaluator_v2_spec_path": "docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md",
+  "files_landed": [
+    "hypotheses/H_093_sft_only_paradigm.md",
+    "hypotheses/H_094_instruction_tuning_two_stage.md",
+    "hypotheses/H_095_dpo_rlhf_preference_learning.md",
+    "hypotheses/H_096_in_context_few_shot.md",
+    "hypotheses/H_097_curriculum_learning.md",
+    "hypotheses/H_098_persona_conditioned_training.md",
+    "hypotheses/H_099_multi_objective_training.md",
+    "hypotheses/H_100_constitutional_ai.md",
+    "hypotheses/H_101_corpus_chat_template_strict_80.md",
+    "hypotheses/H_102_anima_emerge_paradigm_cross_link.md",
+    "docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md",
+    "hypotheses/README.md (updated index + migration_status)",
+    "state/anima_new_paradigm_round1_2026_05_07/verdict.json"
+  ],
+  "files_count": 13,
+  "constraints_compliance": {
+    "raw_9_hexa_only_orchestration": true,
+    "raw_15_additive_no_overwrite_existing_H001_H092": true,
+    "raw_10_honest_c3_per_H_min_5": true,
+    "raw_12_pre_register_frozen_each_H": true,
+    "own_21_hypotheses_ssot": true,
+    "cost_zero_mac_local_only": true,
+    "no_training_run_in_this_bg": true
+  },
+  "evaluator_v2_strict_summary": {
+    "c2_2_meaningful_strict_v2": "length >=10 + Korean coherence + n-gram non-degeneracy + NOT prompt repeat",
+    "c2_3_natural_strict_v2": "NOT degenerate + Korean particles >=3 + NOT random char chain + grammatical endings >=1",
+    "c2_4_context_match_strict_v2": "named_speaker_leak == 0 AND domain_keyword_overlap >=1 AND (embedding_similarity >=0.3 OR manual_review_approve)",
+    "domain_keyword_table_count": 10,
+    "domain_keyword_table_extended_recommended": 5,
+    "honest_c3_count": 8
+  },
+  "cross_links": {
+    "evidence_motivation": "docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md",
+    "bg_ha_downgrade_evidence": "state/anima_native_ko_chat_template_train_2026_05_07/verdict.json",
+    "ledger": "docs/anima_consciousness_check_simple_stack_2026_05_06.md (row 11 BG-HA strict 강등)",
+    "sister_active_cycle": "project_anima_emerge_paradigm_2026_05_05_cycle_state (H_102 cross-link)"
+  },
+  "next_lane": {
+    "phase_2": "evaluator V2 hexa entry implementation + retroactive re-eval all anima native models (BG-FY/BG-HA/BG-HD)",
+    "phase_3_training_paradigm_cycles": [
+      "BG-HF SFT-only 18M (H_093)",
+      "BG-HG few-shot eval (H_096) — inference-only, $0 cost",
+      "BG-HH curriculum 18M (H_097)",
+      "BG-HI persona-conditioned 18M (H_098)",
+      "BG-HJ multi-obj 18M (H_099)",
+      "BG-HK constitutional 18M (H_100)",
+      "BG-HL chat-template ratio sweep (H_101)",
+      "BG-HM substrate-coupled emerge (H_102, post-G3 frozen)"
+    ]
+  },
+  "verdict_class": "PHASE_1_FILE_WRITE_PASS — all 10 H seeded + evaluator V2 spec landed + README updated; verdict pending Phase 2/3 cycle execution",
+  "raw_82_retraction_clause": "post-hoc edit any of 10 H frontmatter or evaluator V2 spec triggers raw#82 retraction protocol; raw#15 additive only for future strengthening (e.g., V3 spec, H_103+)"
+}

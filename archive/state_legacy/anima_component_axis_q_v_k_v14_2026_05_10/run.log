@@ -1,0 +1,31 @@
+=== BG-COMPONENT-Q-V-K-V14 ===
+ts: 2026-05-10T13:57:53.750651+00:00
+V4_SEEDS=[42, 137, 271]  N_TURNS=200  MAX_CELLS=128
+COMPONENTS: {'q_proj': 'attn.q_proj.weight', 'k_proj': 'attn.k_proj.weight', 'v_proj': 'attn.v_proj.weight'}
+SLABS: slab1_early=0..7, slab2_middle=8..15, slab3_late=16..23
+CONDITIONS: 9 (3 components × 3 slabs)
+
+--- loading B (BG-LA pretrain), snapshotting layer state_dicts ---
+  B loaded: 10.2s
+  B layer sds snapshotted: 0.1s n_layers=24
+  B model freed
+
+--- A will be reloaded per condition (memory-frugal mode) ---
+  CKPT_PHASE2 = /Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt
+
+--- ablation V14 (n_turns=200, seeds=[42, 137, 271]) ---
+
+  --- Q1_q_slab1_early (component=q_proj slab=slab1_early) ---
+  Q1_q_slab1_early: verdict=V14_PASS (preserved)  Φ_un16 trained=2876.92 mirror_mean=1615.49  beats_un=3/3 beats_proxy=3/3  cells=62  swap=8,388,608p  (214.3s)
+
+  --- Q2_q_slab2_middle (component=q_proj slab=slab2_middle) ---
+  Q2_q_slab2_middle: verdict=V14_PARTIAL (FLIPPED)  Φ_un16 trained=1712.21 mirror_mean=1615.49  beats_un=2/3 beats_proxy=3/3  cells=59  swap=8,388,608p  (330.1s)
+    [flip-event] q_proj × slab2_middle: V14 flipped (p_floor=0.1250)
+
+  --- Q3_q_slab3_late (component=q_proj slab=slab3_late) ---
+  Q3_q_slab3_late: verdict=V14_PASS (preserved)  Φ_un16 trained=2229.84 mirror_mean=1615.49  beats_un=3/3 beats_proxy=3/3  cells=59  swap=8,388,608p  (794.4s)
+
+  --- V1_v_slab1_early (component=v_proj slab=slab1_early) ---
+  V1_v_slab1_early: verdict=V14_PASS (preserved)  Φ_un16 trained=2772.07 mirror_mean=1615.49  beats_un=3/3 beats_proxy=3/3  cells=62  swap=2,097,152p  (1610.6s)
+
+  --- V2_v_slab2_middle (component=v_proj slab=slab2_middle) ---

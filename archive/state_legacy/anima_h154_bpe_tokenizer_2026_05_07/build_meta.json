@@ -1,0 +1,175 @@
+{
+  "bg_id": "BG-HQ",
+  "h_id": "H_154",
+  "spec": "F-anima-h154-bpe-paradigm-shift-1",
+  "ts_start": "2026-05-07T03:32:43",
+  "ts_end": "2026-05-07T03:32:48",
+  "host": "aiden-b650m-k",
+  "on_ubu": true,
+  "corpus_path": "/home/aiden/core/anima/state/anima_h098_h101_corpus_v3_2026_05_07/corpus_persona_chat_template.txt",
+  "corpus_size_bytes": 31475255,
+  "corpus_size_mb": 30.02,
+  "model_path": "/home/aiden/core/anima/state/anima_h154_bpe_tokenizer_2026_05_07/anima_bpe_8k.model",
+  "vocab_path": "/home/aiden/core/anima/state/anima_h154_bpe_tokenizer_2026_05_07/anima_bpe_8k.vocab",
+  "model_type": "bpe",
+  "character_coverage": 0.9995,
+  "target_vocab_size": 8000,
+  "final_vocab_size": 8000,
+  "reduced_vocab": false,
+  "fallback_err": null,
+  "status": "OK",
+  "specials": {
+    "<pad>": 0,
+    "<unk>": 1,
+    "<bos>": 2,
+    "<eos>": 3,
+    "user_defined": [
+      "사용자:",
+      "도우미:",
+      "[anima]"
+    ]
+  },
+  "smoke_samples": [
+    {
+      "input": "안녕하세요",
+      "n_tokens": 1,
+      "ids_head": [
+        3581
+      ],
+      "pieces_head": [
+        "▁안녕하세요"
+      ],
+      "decoded": "안녕하세요",
+      "roundtrip_match": true
+    },
+    {
+      "input": "사용자: 한국어 가능?",
+      "n_tokens": 5,
+      "ids_head": [
+        4606,
+        4,
+        51,
+        682,
+        4674
+      ],
+      "pieces_head": [
+        "▁",
+        "사용자:",
+        "▁한국어",
+        "▁가능",
+        "?"
+      ],
+      "decoded": "사용자: 한국어 가능?",
+      "roundtrip_match": true
+    },
+    {
+      "input": "도우미: 네, 한국어 가능합니다.",
+      "n_tokens": 8,
+      "ids_head": [
+        4606,
+        5,
+        2192,
+        4627,
+        51,
+        682,
+        206,
+        4621
+      ],
+      "pieces_head": [
+        "▁",
+        "도우미:",
+        "▁네",
+        ",",
+        "▁한국어",
+        "▁가능",
+        "합니다",
+        "."
+      ],
+      "decoded": "도우미: 네, 한국어 가능합니다.",
+      "roundtrip_match": true
+    },
+    {
+      "input": "[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]",
+      "n_tokens": 14,
+      "ids_head": [
+        33,
+        42,
+        52,
+        4633,
+        51,
+        57,
+        16,
+        41,
+        54,
+        16,
+        48,
+        56,
+        53,
+        4651
+      ],
+      "pieces_head": [
+        "▁[",
+        "anima",
+        "▁역할",
+        ":",
+        "▁한국어",
+        "▁native",
+        "▁+",
+        "▁자기",
+        "▁발견",
+        "▁+",
+        "▁의식",
+        "▁lane",
+        "▁entity",
+        "]"
+      ],
+      "decoded": "[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]",
+      "roundtrip_match": true
+    },
+    {
+      "input": "anima는 한국어 entity 입니다",
+      "n_tokens": 6,
+      "ids_head": [
+        683,
+        4635,
+        51,
+        53,
+        4606,
+        199
+      ],
+      "pieces_head": [
+        "▁anima",
+        "는",
+        "▁한국어",
+        "▁entity",
+        "▁",
+        "입니다"
+      ],
+      "decoded": "anima는 한국어 entity 입니다",
+      "roundtrip_match": true
+    },
+    {
+      "input": "코드를 짜줘",
+      "n_tokens": 5,
+      "ids_head": [
+        2420,
+        4670,
+        4606,
+        5138,
+        5496
+      ],
+      "pieces_head": [
+        "▁코드",
+        "를",
+        "▁",
+        "짜",
+        "줘"
+      ],
+      "decoded": "코드를 짜줘",
+      "roundtrip_match": true
+    }
+  ],
+  "compression_chars_per_token": 3.054,
+  "compression_lines_sampled": 864,
+  "elapsed_s": 4.2
+}

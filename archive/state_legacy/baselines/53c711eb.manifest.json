@@ -1,0 +1,32 @@
+{
+  "schema_version":"hxc_corpus_manifest/1",
+  "commit":"53c711eb",
+  "ts_utc":"2026-04-28T12:19Z",
+  "reconstruction_status":"RECONSTRUCTION_INCOMPLETE_AGGREGATE_ONLY",
+  "raw_91_honest_c3":"Witness ledger /Users/ghost/core/anima/state/format_witness/2026-04-28_a25_v2_full_deployment_6repo_80pct_measured.jsonl preserves PER-REPO aggregate (files_count, raw_bytes, enc_bytes, saving_pct, byte_eq_pass) but does NOT preserve per-file paths or per-file sha256 hashes. Therefore byte-perfect reconstruction of the 53c711eb corpus manifest is not possible from witness alone. Synthesizing per-file paths post-hoc would introduce errors (corpus drift since 53c711eb means current per-file enumeration would differ from the actual 383-file slice that was measured). This file records ONLY the aggregate dimensions that ARE preserved in witness, marked as reconstruction_attempted_partial.",
+  "total_files":383,
+  "total_raw_bytes":9916852,
+  "per_repo_aggregate":{
+    "anima":           {"files":84, "raw_bytes":738008,  "enc_bytes":447397, "saving_pct":39.3778, "byte_eq_pass":84,  "byte_eq_fail":0, "corpus_filter":"state/discovery_absorption + state/format_witness + state/atlas_convergence_witness + state/proposals/refinement"},
+    "nexus":           {"files":106,"raw_bytes":5128120, "enc_bytes":633974, "saving_pct":87.6373, "byte_eq_pass":104, "byte_eq_fail":0, "empty_skip":2, "corpus_filter":"96 small-file JSON + 10 jsonl (growth_bus 2.6MB + hexa_pitfalls_log 2.0MB + discovery_log)"},
+    "CANON": {"files":61, "raw_bytes":483382,  "enc_bytes":275201, "saving_pct":43.0676, "byte_eq_pass":61,  "byte_eq_fail":0, "corpus_filter":"atlas_convergence_witness + iter_NNN.jsonl + papers/READMEs"},
+    "hexa-lang":       {"files":41, "raw_bytes":2142706, "enc_bytes":549776, "saving_pct":74.3420, "byte_eq_pass":41,  "byte_eq_fail":0, "corpus_filter":"stdlib hxc_*.hexa + tool/*.hexa + state/aot_cache_gc.jsonl"},
+    "airgenome":       {"files":40, "raw_bytes":277767,  "enc_bytes":124841, "saving_pct":55.0555, "byte_eq_pass":39,  "byte_eq_fail":0, "empty_skip":1, "corpus_filter":"config + capture log + rig_trend_history + state"},
+    "hive":            {"files":51, "raw_bytes":1146869, "enc_bytes":145597, "saving_pct":87.3048, "byte_eq_pass":50,  "byte_eq_fail":0, "empty_skip":1, "corpus_filter":"triad_audit + state ledger + hexa_lang_edits + hxc_d1_canary"}
+  },
+  "per_class_aggregate":[
+    {"class":"text-heavy",          "files":117,"raw_bytes":1559008,"enc_bytes":825101,"saving_pct":47.08},
+    {"class":"json-heavy",          "files":108,"raw_bytes":5260287,"enc_bytes":457054,"saving_pct":91.31},
+    {"class":"struct-audit",        "files":1,  "raw_bytes":13814,  "enc_bytes":3609,  "saving_pct":73.87},
+    {"class":"small-file",          "files":95, "raw_bytes":20003,  "enc_bytes":19884, "saving_pct":0.59},
+    {"class":"synthetic-repetitive","files":1,  "raw_bytes":1282,   "enc_bytes":1188,  "saving_pct":7.33},
+    {"class":"mixed",               "files":45, "raw_bytes":3062033,"enc_bytes":869525,"saving_pct":71.60}
+  ],
+  "aggregate_saving_pct":78.0496,
+  "byte_eq_pass":379,
+  "empty_skip":4,
+  "witness_path":"/Users/ghost/core/anima/state/format_witness/2026-04-28_a25_v2_full_deployment_6repo_80pct_measured.jsonl",
+  "files":[],
+  "files_note":"per-file path/sha256/class array not preserved in witness; reconstruction_status=RECONSTRUCTION_INCOMPLETE_AGGREGATE_ONLY. Future baseline measurements MUST cite a hxc_corpus_manifest/1 schema instance under state/baselines/<commit>.manifest.json BEFORE measurement.",
+  "recommendation":"Going forward, every raw 137 strengthening commit citing a measured saving_pct MUST also cite a state/baselines/<commit>.manifest.json path with files[] populated. raw 142 D3 corpus drift detection: any measurement claim WITHOUT manifest = projection only, NOT MEASURED."
+}

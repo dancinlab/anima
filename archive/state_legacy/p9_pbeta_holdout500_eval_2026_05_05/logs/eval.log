@@ -1,0 +1,112 @@
+[pbeta-holdout500] 01:59:39 start n_target=2 smoke=True
+[pbeta-holdout500] 01:59:39 CLM_CKPT=/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt
+[pbeta-holdout500] 01:59:39 ADAPTER_PATH=/home/aiden/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000
+[pbeta-holdout500] 01:59:39 HOLDOUT_PATH=/home/aiden/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/inputs/sft_holdout_500.jsonl
+[pbeta-holdout500] 01:59:39 adapter_sha256=6e49989ab5c72d8e...
+[pbeta-holdout500] 01:59:39 tokenizer vocab=64000
+[pbeta-holdout500] 01:59:40 torch=2.11.0+cu128 cuda=True device=cuda
+[pbeta-holdout500] 01:59:42 decoder built params=477,648,512
+[pbeta-holdout500] 01:59:44 ckpt loaded 2.14s missing=0 unexpected=0
+[pbeta-holdout500] 01:59:47 adapter loaded via PeftModel.from_pretrained
+[pbeta-holdout500] 01:59:47 computing Φ★ canonical (16 calib prompts, K=8)
+[pbeta-holdout500] 01:59:47 Φ★ min=41.3723 mean=42.3670 per_partition=[43.6427694882294, 41.46019122562456, 41.37234246358103, 41.55250978322818, 42.63222855537759, 42.41983099980303, 43.2922975740801, 42.56385155224701] elapsed=0.56s
+[pbeta-holdout500] 01:59:47 holdout loaded n=500
+[pbeta-holdout500] 01:59:48 progress 1/2 mean_bleu1=0.000000 mean_ce=7.3837
+[pbeta-holdout500] 01:59:48 progress 2/2 mean_bleu1=0.000000 mean_ce=6.9965
+[pbeta-holdout500] 01:59:48 eval done 2 in 0.9s
+[pbeta-holdout500] 01:59:48 summary written /home/aiden/anima/state/p9_pbeta_holdout500_eval_2026_05_05/results/summary.json
+[pbeta-holdout500] 01:59:48 FINAL: Φ★_mean=42.3670  Φ★_min=41.3723  F1_BLEU1_mean=0.000000  CE_mean=6.9965
+[pbeta-holdout500] 01:59:54 start n_target=500 smoke=False
+[pbeta-holdout500] 01:59:54 CLM_CKPT=/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt
+[pbeta-holdout500] 01:59:54 ADAPTER_PATH=/home/aiden/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000
+[pbeta-holdout500] 01:59:54 HOLDOUT_PATH=/home/aiden/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/inputs/sft_holdout_500.jsonl
+[pbeta-holdout500] 01:59:54 adapter_sha256=6e49989ab5c72d8e...
+[pbeta-holdout500] 01:59:54 tokenizer vocab=64000
+[pbeta-holdout500] 01:59:54 torch=2.11.0+cu128 cuda=True device=cuda
+[pbeta-holdout500] 01:59:57 decoder built params=477,648,512
+[pbeta-holdout500] 01:59:57 ckpt loaded 0.65s missing=0 unexpected=0
+[pbeta-holdout500] 02:00:00 adapter loaded via PeftModel.from_pretrained
+[pbeta-holdout500] 02:00:00 computing Φ★ canonical (16 calib prompts, K=8)
+[pbeta-holdout500] 02:00:00 Φ★ min=41.3723 mean=42.3670 per_partition=[43.6427694882294, 41.46019122562456, 41.37234246358103, 41.55250978322818, 42.63222855537759, 42.41983099980303, 43.2922975740801, 42.56385155224701] elapsed=0.56s
+[pbeta-holdout500] 02:00:00 holdout loaded n=500
+[pbeta-holdout500] 02:00:00 pre-flight smoke: testing 2 records
+[pbeta-holdout500] 02:00:00 smoke OK, proceeding to full eval
+[pbeta-holdout500] 02:00:15 progress 25/500 mean_bleu1=0.003750 mean_ce=7.8028
+[pbeta-holdout500] 02:00:31 progress 50/500 mean_bleu1=0.005625 mean_ce=7.8739
+[pbeta-holdout500] 02:00:46 progress 75/500 mean_bleu1=0.006250 mean_ce=7.8606
+[pbeta-holdout500] 02:01:02 progress 100/500 mean_bleu1=0.006562 mean_ce=7.9293
+[pbeta-holdout500] 02:01:18 progress 125/500 mean_bleu1=0.008500 mean_ce=7.9357
+[pbeta-holdout500] 02:01:32 progress 150/500 mean_bleu1=0.008750 mean_ce=7.9619
+[pbeta-holdout500] 02:01:46 progress 175/500 mean_bleu1=0.008750 mean_ce=7.9188
+[pbeta-holdout500] 02:02:01 progress 200/500 mean_bleu1=0.008750 mean_ce=7.9493
+[pbeta-holdout500] 02:02:18 progress 225/500 mean_bleu1=0.008750 mean_ce=7.9712
+[pbeta-holdout500] 02:02:33 progress 250/500 mean_bleu1=0.008250 mean_ce=7.9958
+[pbeta-holdout500] 02:02:48 progress 275/500 mean_bleu1=0.007727 mean_ce=7.9937
+[pbeta-holdout500] 02:03:04 progress 300/500 mean_bleu1=0.008021 mean_ce=8.0202
+[pbeta-holdout500] 02:03:18 progress 325/500 mean_bleu1=0.008365 mean_ce=7.9953
+[pbeta-holdout500] 02:03:33 progress 350/500 mean_bleu1=0.008393 mean_ce=8.0036
+[pbeta-holdout500] 02:03:47 progress 375/500 mean_bleu1=0.008167 mean_ce=8.0093
+[pbeta-holdout500] 02:04:03 progress 400/500 mean_bleu1=0.007734 mean_ce=8.0072
+[pbeta-holdout500] 02:04:19 progress 425/500 mean_bleu1=0.007941 mean_ce=8.0011
+[pbeta-holdout500] 02:04:33 progress 450/500 mean_bleu1=0.007569 mean_ce=8.0081
+[pbeta-holdout500] 02:04:48 progress 475/500 mean_bleu1=0.007500 mean_ce=7.9924
+[pbeta-holdout500] 02:05:05 progress 500/500 mean_bleu1=0.007500 mean_ce=8.0078
+[pbeta-holdout500] 02:05:05 eval done 500 in 304.3s
+[pbeta-holdout500] 02:05:05 summary written /home/aiden/anima/state/p9_pbeta_holdout500_eval_2026_05_05/results/summary.json
+[pbeta-holdout500] 02:05:05 FINAL: Φ★_mean=42.3670  Φ★_min=41.3723  F1_BLEU1_mean=0.007500  CE_mean=8.0078
+[pbeta-holdout500] 02:13:14 start n_target=2 smoke=True
+[pbeta-holdout500] 02:13:14 CLM_CKPT=/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt
+[pbeta-holdout500] 02:13:14 ADAPTER_PATH=/home/aiden/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000
+[pbeta-holdout500] 02:13:14 HOLDOUT_PATH=/home/aiden/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/inputs/sft_holdout_500.jsonl
+[pbeta-holdout500] 02:13:14 adapter_sha256=6e49989ab5c72d8e...
+[pbeta-holdout500] 02:13:14 tokenizer vocab=64000
+[pbeta-holdout500] 02:13:15 torch=2.11.0+cu128 cuda=True device=cuda
+[pbeta-holdout500] 02:13:17 decoder built params=477,648,512
+[pbeta-holdout500] 02:13:18 ckpt loaded 0.60s missing=0 unexpected=0
+[pbeta-holdout500] 02:13:20 adapter loaded via PeftModel.from_pretrained
+[pbeta-holdout500] 02:13:20 computing Φ★ canonical (16 calib prompts, K=8)
+[pbeta-holdout500] 02:13:21 Φ★ min=41.3723 mean=42.3670 per_partition=[43.6427694882294, 41.46019122562456, 41.37234246358103, 41.55250978322818, 42.63222855537759, 42.41983099980303, 43.2922975740801, 42.56385155224701] elapsed=0.56s
+[pbeta-holdout500] 02:13:21 holdout loaded n=500
+[pbeta-holdout500] 02:13:21 progress 1/2 mean_bleu1=0.000000 mean_ce=7.3837
+[pbeta-holdout500] 02:13:22 progress 2/2 mean_bleu1=0.000000 mean_ce=6.9965
+[pbeta-holdout500] 02:13:22 eval done 2 in 0.9s
+[pbeta-holdout500] 02:13:22 summary written /home/aiden/anima/state/p9_pbeta_holdout500_eval_2026_05_05/results/summary.json
+[pbeta-holdout500] 02:13:22 FINAL: Φ★_mean=42.3670  Φ★_min=41.3723  F1_BLEU1_mean=0.000000  CE_mean=6.9965
+[pbeta-holdout500] 02:13:30 start n_target=500 smoke=False
+[pbeta-holdout500] 02:13:30 CLM_CKPT=/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt
+[pbeta-holdout500] 02:13:30 ADAPTER_PATH=/home/aiden/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000
+[pbeta-holdout500] 02:13:30 HOLDOUT_PATH=/home/aiden/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/inputs/sft_holdout_500.jsonl
+[pbeta-holdout500] 02:13:30 adapter_sha256=6e49989ab5c72d8e...
+[pbeta-holdout500] 02:13:30 tokenizer vocab=64000
+[pbeta-holdout500] 02:13:31 torch=2.11.0+cu128 cuda=True device=cuda
+[pbeta-holdout500] 02:13:33 decoder built params=477,648,512
+[pbeta-holdout500] 02:13:34 ckpt loaded 0.60s missing=0 unexpected=0
+[pbeta-holdout500] 02:13:36 adapter loaded via PeftModel.from_pretrained
+[pbeta-holdout500] 02:13:36 computing Φ★ canonical (16 calib prompts, K=8)
+[pbeta-holdout500] 02:13:37 Φ★ min=41.3723 mean=42.3670 per_partition=[43.6427694882294, 41.46019122562456, 41.37234246358103, 41.55250978322818, 42.63222855537759, 42.41983099980303, 43.2922975740801, 42.56385155224701] elapsed=0.56s
+[pbeta-holdout500] 02:13:37 holdout loaded n=500
+[pbeta-holdout500] 02:13:37 pre-flight smoke: testing 2 records
+[pbeta-holdout500] 02:13:37 smoke OK, proceeding to full eval
+[pbeta-holdout500] 02:13:52 progress 25/500 mean_bleu1=0.003750 mean_ce=7.8028
+[pbeta-holdout500] 02:14:07 progress 50/500 mean_bleu1=0.005625 mean_ce=7.8739
+[pbeta-holdout500] 02:14:23 progress 75/500 mean_bleu1=0.006250 mean_ce=7.8606
+[pbeta-holdout500] 02:14:39 progress 100/500 mean_bleu1=0.006562 mean_ce=7.9293
+[pbeta-holdout500] 02:14:55 progress 125/500 mean_bleu1=0.008500 mean_ce=7.9357
+[pbeta-holdout500] 02:15:09 progress 150/500 mean_bleu1=0.008750 mean_ce=7.9619
+[pbeta-holdout500] 02:15:23 progress 175/500 mean_bleu1=0.008750 mean_ce=7.9188
+[pbeta-holdout500] 02:15:38 progress 200/500 mean_bleu1=0.008750 mean_ce=7.9493
+[pbeta-holdout500] 02:15:55 progress 225/500 mean_bleu1=0.008750 mean_ce=7.9712
+[pbeta-holdout500] 02:16:10 progress 250/500 mean_bleu1=0.008250 mean_ce=7.9958
+[pbeta-holdout500] 02:16:24 progress 275/500 mean_bleu1=0.007727 mean_ce=7.9937
+[pbeta-holdout500] 02:16:41 progress 300/500 mean_bleu1=0.008021 mean_ce=8.0202
+[pbeta-holdout500] 02:16:55 progress 325/500 mean_bleu1=0.008365 mean_ce=7.9953
+[pbeta-holdout500] 02:17:09 progress 350/500 mean_bleu1=0.008393 mean_ce=8.0036
+[pbeta-holdout500] 02:17:24 progress 375/500 mean_bleu1=0.008167 mean_ce=8.0093
+[pbeta-holdout500] 02:17:40 progress 400/500 mean_bleu1=0.007734 mean_ce=8.0072
+[pbeta-holdout500] 02:17:55 progress 425/500 mean_bleu1=0.007941 mean_ce=8.0011
+[pbeta-holdout500] 02:18:10 progress 450/500 mean_bleu1=0.007569 mean_ce=8.0081
+[pbeta-holdout500] 02:18:25 progress 475/500 mean_bleu1=0.007500 mean_ce=7.9924
+[pbeta-holdout500] 02:18:41 progress 500/500 mean_bleu1=0.007500 mean_ce=8.0078
+[pbeta-holdout500] 02:18:41 eval done 500 in 304.3s
+[pbeta-holdout500] 02:18:41 summary written /home/aiden/anima/state/p9_pbeta_holdout500_eval_2026_05_05/results/summary.json
+[pbeta-holdout500] 02:18:41 FINAL: Φ★_mean=42.3670  Φ★_min=41.3723  F1_BLEU1_mean=0.007500  CE_mean=8.0078

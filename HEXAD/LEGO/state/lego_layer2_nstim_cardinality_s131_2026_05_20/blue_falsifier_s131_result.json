@@ -1,0 +1,146 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S131-7 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S131-1 ETA-BOUNDED-ALL-NSTIM-POINTS",
+      "passed": true,
+      "evidence": {
+        "eta_values": [
+          0.3084066832220316,
+          0.21775604467362555,
+          0.1402491860870074,
+          0.15345293246192473
+        ],
+        "all_in_unit_interval": true
+      }
+    },
+    {
+      "name": "B-S131-2 RANGE-RATIO-3-BUCKET-CLOSED-PARTITION",
+      "passed": true,
+      "evidence": {
+        "exhaustive": true,
+        "disjoint": true,
+        "ratio": 2.1989908948969092,
+        "reclass": "STRONGLY-NSTIM-DEPENDENT",
+        "recorded": "STRONGLY-NSTIM-DEPENDENT",
+        "match": true
+      }
+    },
+    {
+      "name": "B-S131-3 SS-DECOMPOSITION-IDENTITY-CLOSED-ALL-NSTIM",
+      "passed": true,
+      "evidence": {
+        "per_nstim_anova_identity": [
+          {
+            "n_stim": 4,
+            "identity_holds": true
+          },
+          {
+            "n_stim": 12,
+            "identity_holds": true
+          },
+          {
+            "n_stim": 24,
+            "identity_holds": true
+          },
+          {
+            "n_stim": 48,
+            "identity_holds": true
+          }
+        ],
+        "all_hold": true
+      }
+    },
+    {
+      "name": "B-S131-4 ENGINE-IS-CANONICAL-LEGO-LIB-POST-§129",
+      "passed": true,
+      "evidence": {
+        "canonical_engine_imported": true,
+        "importlib_NOT_used": true,
+        "canonical_engine_exists": true,
+        "canonical_engine_sha16": "8f71d4af62249f65"
+      }
+    },
+    {
+      "name": "B-S131-5 N-FIXED-NSTIM-VARIES-ORTHOGONALITY-CLOSED",
+      "passed": true,
+      "evidence": {
+        "N_total_fixed_256": true,
+        "nstim_points": [
+          4,
+          12,
+          24,
+          48
+        ],
+        "nstim_varies": true
+      }
+    },
+    {
+      "name": "B-S131-6 ETA-PEAK-AT-MIN-NSTIM-MEASURED",
+      "passed": true,
+      "evidence": {
+        "peak_n_stim": 4,
+        "min_n_stim_in_range": 4,
+        "peak_at_min": true
+      }
+    },
+    {
+      "name": "B-S131-7 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S131-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "4-cardinality-point-measurement",
+    "family": "B-EMERGE-7 / B-S125-NOTE / B-S126-NOTE / B-S127-NOTE / B-S124-NOTE",
+    "honest_scope": "η² peak at n_stim=4 OUTCOME is measured on §117's specific LIF parametrisation (N=256). 4 n_stim points (4/12/24/48) — fewer than would be needed to fit a continuous η²(n_stim) curve; geometric step ×~2 spans 12× cardinality range. The η² range ratio 2.199× is the measured magnitude of n_stim modulation at this parametrisation; whether the peak shifts or shape changes at different N values is unanswered. Necessary-not-sufficient (B-EMERGE-7); GOAL 미도달; north-star + §15/§51/§72 milestones UNCHANGED."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "7/7",
+    "all_closed_pass": true,
+    "eta_values_by_nstim": [
+      [
+        4,
+        0.3084066832220316
+      ],
+      [
+        12,
+        0.21775604467362555
+      ],
+      [
+        24,
+        0.1402491860870074
+      ],
+      [
+        48,
+        0.15345293246192473
+      ]
+    ],
+    "eta_range_ratio": 2.1989908948969092,
+    "peak_n_stim": 4,
+    "probe_verdict": "STRONGLY-NSTIM-DEPENDENT",
+    "battery_verdict": "STRONGLY-NSTIM-DEPENDENT-7-7-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "necessary_not_sufficient_B_EMERGE_7": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}

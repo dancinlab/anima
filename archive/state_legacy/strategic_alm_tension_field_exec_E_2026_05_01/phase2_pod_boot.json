@@ -1,0 +1,21 @@
+{
+  "ts": "2026-05-02T05:50:00Z",
+  "phase": "2_5pod_boot",
+  "status": "NOT_LAUNCHED",
+  "decision": "ABORT_BEFORE_BURN",
+  "rationale": [
+    "Phase 1 selftests 1/4 PASS only (Comp 2 only). Spinning up 5 H100 SXM pods at ~$2.5-3.5/hr each ($12.5-17.5/hr aggregate cold-boot+download window of ~30 min = $6-9, plus 60-90 min runtime = $12-18) to inject components that cannot be executed (hexa toolchain absent) would produce zero verifiable measurement and burn ~$15-20.",
+    "The pods themselves run runpod/pytorch:2.4.0 images — no hexa runtime present pod-side either. Even if Comp 1/3/4 were copied to pods they could not execute.",
+    "Per honest C3 anchor #1 (mission constraint): 'this is sandbox + protocol prove-out, not flag-planting'. Burning $15-20 to claim '5-seed completion' without functional bridge would be flag-planting.",
+    "Per mission honest-C3 instruction: 'if any phase fails ... document precisely and continue with what's feasible. Partial 3-seed > faked 5-seed.' Here partial-zero-seed > faked-five-seed.",
+    "Alpha pod lzw79649ob80uk is RUNNING with Mistral-7B-v0.3 + r14 vLLM loaded but per mission constraint MUST NOT be touched (sequential #52 EXEC race-isolation)."
+  ],
+  "pods_intended": 5,
+  "pods_launched": 0,
+  "cost_actual_usd": 0.0,
+  "cost_budget_usd": 20.0,
+  "cost_saved_vs_blind_burn_usd": 17.5,
+  "alpha_pod_untouched": true,
+  "alpha_pod_id": "lzw79649ob80uk",
+  "alpha_pod_status": "RUNNING (vLLM r14 loaded, 0% GPU util at probe time, 69 GB GPU mem reserved by vLLM cache)"
+}

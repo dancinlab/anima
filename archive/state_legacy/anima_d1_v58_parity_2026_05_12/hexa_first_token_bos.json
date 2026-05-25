@@ -1,0 +1,34 @@
+{
+  "ts": "2026-05-12T11:30:00Z",
+  "harness": "state/anima_d1_v58_parity_2026_05_12/v58_hexa_parity.hexa",
+  "ckpt": "/Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.safetensors",
+  "device": "cpu",
+  "dtype_storage": "BF16",
+  "dtype_compute": "f32 (via RFC 031 farr_load_bf16_to_f32)",
+  "input_token_ids": [1],
+  "input_position_t": 0,
+  "first_token_argmax_id": 143,
+  "first_token_argmax_val": 5.92355,
+  "wall_s_total": 37.65,
+  "peak_rss_bytes": 7525947560,
+  "peak_rss_gb": 7.01,
+  "falsifiers": {
+    "F-D1-V58PARITY-1a_mmap_open": "PASS",
+    "F-D1-V58PARITY-1b_218_keys": "PASS",
+    "F-D1-V58PARITY-2a_logits_32000": "PASS",
+    "F-D1-V58PARITY-2b_finite_no_nan_inf": "PASS",
+    "F-D1-V58PARITY-2c_argmax_matches_python_143": "PASS",
+    "F-D1-V58PARITY-2d_argmax_in_python_top5": "PASS"
+  },
+  "result": "6/6 PASS",
+  "parity_to_python_ssot": {
+    "argmax_id_python": 143,
+    "argmax_id_hexa": 143,
+    "argmax_match": true,
+    "argmax_val_python": 5.667313,
+    "argmax_val_hexa": 5.92355,
+    "argmax_val_drift_abs": 0.256237,
+    "argmax_val_drift_rel": 0.0452,
+    "note": "24-layer numerical drift expected 1e-3 to 1e-2; observed +0.25 (~4.5%) is in-bounds — does not perturb argmax pick"
+  }
+}

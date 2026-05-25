@@ -1,0 +1,61 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  state/anima_d1_v58_hexa_eval_2026_05_12/v58_hexa_tiny_probe.hexa
+//
+//  PURPOSE
+//    Diagnostic — confirm chat_generate works with cap_len > 5-step PSCC §43
+//    baseline. PSCC §43 verified cap_len=16 OK; the main 5-cell harness used
+//    cap_len=320 and process disappeared mid-cell. Test cap_len intermediate
+//    (32) on a TINY prompt (<10 tokens, max_new=2) to isolate whether the
+//    issue is cap_len-dependent or prompt-length-dependent.
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/CHAT/chat_lib.hexa"
+
+
+fn main() {
+    println("=== v58_hexa_tiny_probe.hexa ===")
+    let chat = chat_default()
+    let ckpt = chat["ckpt_path"]
+    println("ckpt: " + ckpt)
+    if !file_exists(ckpt) {
+        println("SKIP — ckpt absent")
+        return
+    }
+    println("load_weights ...")
+    let chat_loaded = chat_load_weights(chat)
+    let nk = len(dict_keys(chat_loaded["weights"]))
+    println("weights keys = " + to_string(nk))
+    if nk != 218 {
+        println("FAIL — expected 218 weights")
+        chat_close(chat)
+        return
+    }
+
+    // tiny prompt: "안녕" only (4-6 prefill tokens)
+    let prompt = "안녕"
+    println("prompt: '" + prompt + "'  (encoding...)")
+    let encoded = tok_encode(prompt)
+    println("encoded len = " + to_string(len(encoded)))
+    let mut i = 0
+    print("  ids: ")
+    while i < len(encoded) {
+        if i > 0 { print(", ") }
+        print(to_string(encoded[i]))
+        i = i + 1
+    }
+    println("")
+
+    // KV cache cap_len = 32 (above 5-step baseline, below 320)
+    let cap_len = 32
+    println("init kv_cache cap_len=" + to_string(cap_len))
+    chat_init_kv_cache_default(chat, cap_len)
+    println("kv_cache initialized")
+
+    // greedy, max_new=2
+    println("chat_generate(greedy, max_new=2) ...")
+    let resp = chat_generate(chat, prompt, "greedy", 2, 0.0, [], 1.0, 1.0, 0.0, 42, [], false)
+    println("response = '" + resp + "'")
+    println("response len = " + to_string(len(resp)))
+    println("=== tiny_probe DONE ===")
+    chat_close(chat)
+}

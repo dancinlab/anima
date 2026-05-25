@@ -1,0 +1,74 @@
+{
+  "provider": "runpod",
+  "image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "gpu": "1× H100 SXM 80GB",
+  "spot": true,
+  "hourly_rate_usd": 2.99,
+  "volume_gb": 50,
+  "env": {
+    "PYTHONUNBUFFERED": "1",
+    "PIP_BREAK_SYSTEM_PACKAGES": "1",
+    "RESOURCE_LOCAL_PY": "1"
+  },
+  "preflight_steps": [
+    "pip install --break-system-packages torch==2.4.0 (or pre-installed in image)",
+    "scp ckpt: convo_5k.pt (70MB, sha=2f0ba391...) -> /workspace/convo_5k.pt",
+    "scp corpus: anima_dialogue_tier_a_iter2_2026_05_08.txt (76MB) -> /workspace/dialogue.txt",
+    "scp script: training/convo_5k_finetune.py -> /workspace/finetune.py",
+    "scp arch: state/.../forward_smoke.py -> /workspace/forward_smoke.py",
+    "verify: python3 -c \"import torch; assert torch.cuda.is_available()\"",
+    "sha verify: shasum -a 256 /workspace/convo_5k.pt | grep 2f0ba391"
+  ],
+  "fire_command": "RESOURCE_LOCAL_PY=1 python3 /workspace/finetune.py --ckpt /workspace/convo_5k.pt --corpus /workspace/dialogue.txt --out /workspace/convo_5k_ft.pt --log /workspace/ft.log --steps 10000 --batch 32 --seq 256 --lr 1e-5 --lr-min 1e-6 --warmup 500 --device cuda --save-every 2500",
+  "post_run_pull_steps": [
+    "scp /workspace/convo_5k_ft.pt MAC:/Users/ghost/core/anima/state/anima_convo_5k_ft_design_2026_05_10/convo_5k_ft_step_10000.pt",
+    "scp /workspace/ft.log MAC:.../convo_5k_ft.log",
+    "scp /workspace/ft_summary.json MAC:.../",
+    "verify pull: shasum + size match before pod terminate (mandate)"
+  ],
+  "estimated_costs": {
+    "5k_step": {
+      "wall_clock_min_h100": 13,
+      "cost_usd": 0.65,
+      "comment": "0.15 sec/step on H100 (assume 4× faster than mac CPU 0.7s)"
+    },
+    "10k_step": {
+      "wall_clock_min_h100": 27,
+      "cost_usd": 1.35
+    },
+    "20k_step": {
+      "wall_clock_min_h100": 53,
+      "cost_usd": 2.65
+    },
+    "overhead": {
+      "boot_pod_min": 3,
+      "preflight_min": 5,
+      "post_run_pull_min": 5,
+      "buffer_min": 10,
+      "total_overhead_min": 23,
+      "cost_usd": 1.15
+    },
+    "total_envelope_5k": 1.80,
+    "total_envelope_10k": 2.50,
+    "total_envelope_20k": 3.80,
+    "user_envelope_authorized": "5-20",
+    "envelope_status": "WELL_UNDER (recommended 10K @ $2.50, max 20K @ $3.80 << $20 cap)"
+  },
+  "rollback_plan": {
+    "trigger": "FT chat-cap eval FAILS (post-FT sampling test still gibberish or no Korean output)",
+    "safety_net": [
+      "1. original convo_5k.pt PRESERVED on R2 (canonical key conscious-lm/convo-ft/convo_5k.pt) + HF cache (sha 2f0ba391...) — raw#15 additive, no mutation",
+      "2. FT ckpt saved as separate file (convo_5k_ft_step_*.pt) — clear lineage",
+      "3. Φ proxy + tension trace logged each save_every — diagnostic data even on failure",
+      "4. cost ≤ $4 (rec) / ≤ $20 (cap) bounded — no runaway spend",
+      "5. honest C3 closure — if FT fails, evidence reinforces #115 architectural chat-incapability hypothesis (not strict counter-evidence to chat-cap reachability — only hardens prior)"
+    ]
+  },
+  "h100_safety_checklist_own_30": [
+    "[ ] ckpts pull verified BEFORE pod terminate",
+    "[ ] sha256 + size match between mac and pod",
+    "[ ] adapter_config / state_dict has no pod-path leak (peft pattern, raw#10)",
+    "[ ] retain pod on pull fail",
+    "[ ] PEP 668 --break-system-packages set (Ubuntu 24.04 if used; 22.04 base less likely needed)"
+  ]
+}

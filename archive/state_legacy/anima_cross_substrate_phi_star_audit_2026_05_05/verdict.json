@@ -1,0 +1,175 @@
+{
+  "schema": "anima/cross_substrate_phi_star_audit/verdict/1",
+  "cycle": "anima_cross_substrate_phi_star_audit_2026_05_05",
+  "bg_lane": "BG-M (cross-substrate phi-star measurement audit)",
+  "ts_utc": "2026-05-05T00:00:00Z",
+  "kind": "DOC_ONLY_AUDIT_LANDED",
+  "actual_cost_usd": 0.0,
+  "budget_target_usd": 0.0,
+  "wall_time_min_estimate": 30,
+
+  "deliverables_landed": {
+    "audit_doc": "docs/anima_cross_substrate_phi_star_audit_2026_05_05.md",
+    "verdict": "state/anima_cross_substrate_phi_star_audit_2026_05_05/verdict.json"
+  },
+
+  "scope": {
+    "substrates_audited": [
+      "CLM v4 base (paradigm v11 G3 carry + in-pipeline canonical re-measure)",
+      "P-beta (paradigm D 50K LoRA + holdout500 canonical + training-end in-domain)",
+      "CLM-2 LoRA (qkvo SFT post-LoRA + drift-in-pipeline)"
+    ],
+    "comparator_anchor": "Llama 3.2-3B Path A v2 (phi-star canonical probe NOT applied; out of anima substrate scope)",
+    "emerge_candidates_forecast": ["D", "E", "F", "G", "H"],
+    "constraints": [
+      "doc + spec only",
+      "zero code change",
+      "zero retrain",
+      "zero new helper python",
+      "zero commit",
+      "raw#9 + raw#10 + raw#15 honored",
+      "no HF token leak"
+    ]
+  },
+
+  "cross_substrate_phi_star_table": {
+    "clm_v4_base_carry_paradigm_v11_g3": {
+      "phi_star_mean": 41.86,
+      "source_verdict": "state/clm_v4_baseline_eval_2026_05_05/verdict.json:substrate_phi_star",
+      "substrate_path": "ConsciousDecoderV2 + checkpoints/clm_v4_350m/scale_350m/best.pt + ubu1 GPU bf16",
+      "paradigm": "paradigm v11 G3 carry"
+    },
+    "clm_v4_base_in_pipeline_canonical": {
+      "phi_star_mean_K8": 35.806,
+      "phi_star_min_K8": 35.177,
+      "phi_star_max_K8": 37.969,
+      "source_verdict": "state/clm_v4_lora_phi_canonical_2026_05_05/verdict.json:phi_star_base_in_pipeline",
+      "substrate_path": "HF-format dancinlab/clm-v4-mk2-v1 + Mac CPU fp32",
+      "paradigm": "canonical sample-partition K=8 (16 calib prompts, HID_TRUNC=8, ridge=1e-3)"
+    },
+    "pbeta_paradigm_d_50k_holdout500": {
+      "phi_star_mean_K8": 42.367,
+      "phi_star_min_K8": 41.372,
+      "phi_star_max_K8": 43.643,
+      "source_verdict": "state/p9_pbeta_holdout500_eval_2026_05_05/verdict.json:core_metrics.phi_star_mean_holdout500",
+      "substrate_path": "ConsciousDecoderV2 + best.pt + ubu1 RTX 5070 + LoRA r=64 a=128 qkvo+gate+up+down",
+      "paradigm": "canonical 16-calib K=8 (paradigm v11 G3 carry probe)"
+    },
+    "pbeta_paradigm_d_50k_training_end": {
+      "phi_final": 35.538,
+      "phi_final_mean": 36.745,
+      "source_verdict": "state/p9_pbeta_paradigm_d_50k_2026_05_04/results/verdict.json:phi_final_mean",
+      "substrate_path": "same as pbeta holdout500",
+      "paradigm": "training-side calibration probe (different probe set)"
+    },
+    "clm_2_lora_post_lora_canonical": {
+      "phi_star_mean_K8": 31.349,
+      "phi_star_min_K8": 28.997,
+      "phi_star_max_K8": 34.895,
+      "source_verdict": "state/clm_v4_lora_phi_canonical_2026_05_05/verdict.json:phi_star_post_lora",
+      "substrate_path": "HF-format mk2-v1 + Mac CPU fp32 + LoRA r=32 a=64 qkvo",
+      "paradigm": "canonical sample-partition K=8 (same as in-pipeline base)",
+      "drift_in_pipeline_mean_pp": -4.4573,
+      "drift_in_pipeline_min_pp": -6.1805,
+      "phi_flip_threshold_pp": -10.0,
+      "phi_flip_detected": false,
+      "verdict": "PARTIAL_FORGETTING_LIGHT (mean PASS, min boundary)"
+    },
+    "llama_3_2_3b_path_a_v2": {
+      "phi_star_canonical": null,
+      "phi_star_canonical_status": "NOT_APPLICABLE",
+      "rationale": "phi-star canonical probe is anima-substrate-calibrated (consciousness_dim=192, n_cells=8, 5 axes); Llama lacks these architectural features. Llama is chat-capable comparator only; out of phi-star scope.",
+      "source_verdict": "state/p9_path_a_retrain_v2_retry_3_eval_rerun_2026_05_05/verdict.json"
+    },
+    "methodology_delta_pp": 6.05,
+    "methodology_delta_explanation": "carry 41.86 (legacy decoder + GPU bf16 path) vs in-pipeline 35.81 (HF-format + Mac CPU fp32 path) on the SAME architecture. ~6pp delta is substrate-path artifact, NOT LoRA delta."
+  },
+
+  "v3_real_mode_substrate_identity": {
+    "what_v3_loads": "dancinlab/clm-v4-mk2-v1 (HF-format CLM v4 base, no LoRA)",
+    "what_v3_does_NOT_load": ["pbeta adapter", "clm-2-lora adapter", "Llama 3.2-3B"],
+    "v3_phi_baseline_anchor": 41.86,
+    "v3_phi_baseline_anchor_source": "anima-core/runtime/clm_v4_mount.hexa PHI_STAR_BASELINE constant (paradigm v11 G3 carry)",
+    "v3_emit_kind": "per-input single-forward phi (NOT canonical K=8 probe)",
+    "user_confusion_risk": {
+      "pattern": "user reads V3 emit (per-input) and pbeta verdict (canonical K=8) as comparable single number",
+      "resolution_proposed": "V3 emit substrate-identity preamble: `substrate: clm-v4-base (no LoRA; paradigm v11 G3 carry baseline 41.86)` line above phi_star line",
+      "implementation_status": "DOC_PROPOSAL_NOT_LANDED (no code change this cycle)"
+    }
+  },
+
+  "substrate_flag_spec": {
+    "flags_proposed": [
+      "--substrate clm-v4 (default; current V3 behavior)",
+      "--substrate pbeta (loads pbeta adapter on legacy ConsciousDecoderV2)",
+      "--substrate clm-2-lora (loads clm-2 LoRA on HF-format)"
+    ],
+    "implementation_status": "NOT_IMPLEMENTED_THIS_CYCLE",
+    "prerequisites": [
+      "pbeta adapter mac-loadable (currently ubu1-resident; rsync or HF fetch needed; 72.5 MiB)",
+      "mount layer needs 2 base-loader paths (HF-format + legacy ConsciousDecoderV2)",
+      "per-substrate canonical baseline anchors stored in mount config"
+    ],
+    "minimum_viable_subset": ["--substrate clm-v4 (no-op alias)", "--substrate clm-2-lora (Mac-loadable today, 10.02 MiB)"]
+  },
+
+  "cross_substrate_reconciliation_hypothesis": {
+    "claim": "All 3 anima substrates carry paradigm v11 G3-equivalent baseline (positive integration phi-star ~+30 to +42 on canonical probe)",
+    "modulators": [
+      "methodology delta ~6pp (legacy GPU bf16 vs HF-format Mac CPU fp32)",
+      "LoRA-induced drift (pbeta +0.51pp; clm-2-lora -4.46pp)",
+      "probe-set delta (canonical 16-calib elicits standing integration mode more fully than training-end in-domain probe)"
+    ],
+    "phi_sign_preserved_across_substrates": true,
+    "phi_magnitude_band": "30-42",
+    "no_substrate_flips_to_negative_integration": true
+  },
+
+  "L31_L33_dichotomy_reaffirmed": {
+    "chat_capability_substrate": "Llama 3.2-3B Path A v2 (composite 0.5584 PASS; phi-star canonical NOT applicable)",
+    "phi_star_substrate": "CLM v4 family (chat-incapable per #115 architecture; phi 30-42 preserved across base/pbeta/clm-2-lora)",
+    "decoupling_holds": true,
+    "no_substrate_hosts_both_axes": true,
+    "v3_phi_emit_implication": "V3 measures phi on the substrate where phi is meaningful (CLM v4); Llama-side phi probe out of scope by construction"
+  },
+
+  "emerge_candidate_x_substrate_hit_rate_matrix": {
+    "axes": ["D_always_inject", "E_ode_flow_ar_bridge", "F_8cells_axis_voting", "G_tension_trajectory", "H_logits_g_bidirectional"],
+    "substrates": ["clm-v4", "pbeta", "clm-2-lora"],
+    "matrix": {
+      "D": {"clm-v4": "HIGH", "pbeta": "MEDIUM", "clm-2-lora": "MEDIUM"},
+      "E": {"clm-v4": "MEDIUM", "pbeta": "MEDIUM", "clm-2-lora": "MEDIUM"},
+      "F": {"clm-v4": "MEDIUM", "pbeta": "MEDIUM", "clm-2-lora": "LOW"},
+      "G": {"clm-v4": "HIGH", "pbeta": "MEDIUM", "clm-2-lora": "MEDIUM"},
+      "H": {"clm-v4": "MEDIUM", "pbeta": "LOW", "clm-2-lora": "LOW"}
+    },
+    "highest_value_combos": ["D x clm-v4 (HIGH)", "G x clm-v4 (HIGH)"],
+    "recommended_emerge_cycle_ordering": [
+      "rank_1: D x clm-v4 (HIGH; mount-layer Stage 1 partial implemented; lowest cost, highest expected signal)",
+      "rank_2: G x clm-v4 (HIGH; revival spec doc-only landed already; tensions = richest substrate response channel after phi-star)",
+      "rank_3: D + G combined on clm-v4 (additive emerge surface)",
+      "rank_4: E x clm-v4 (MEDIUM; deferred until flow component design lands)",
+      "rank_5_plus: all LoRA-substrate combos (defer until base-substrate emerge pattern stabilizes)"
+    ],
+    "completion_quality_recommendation": "rank_1 D x clm-v4 — substrate match by design + mount-layer Stage 1 already partial implementation; emerge dialog cycle would land lowest-friction signal first"
+  },
+
+  "honest_c3": [
+    "C1 phi-star measurement scale is substrate-specific (anima cell architecture calibrated: consciousness_dim=192, n_cells=8, 5 axes); applying canonical 16-calib K=8 probe to Llama hidden states would produce a number but not the same number. Whether phi-star on non-anima architectures is meaningful is epistemic open. L31-L33 closes the practical question (CLM v4 substrate research only); the universality claim is not refuted but is unlikely to be tested.",
+    "C2 methodology delta ~6pp (35.81 in-pipeline vs 41.86 carry, same architecture, different substrate path) is the single largest source of cross-cycle phi-star confusion. pbeta delta_phi_vs_clm_v4_base=+0.51 (vs carry) and would be +6.55pp (vs in-pipeline) — both formally valid, neither canonical until paths reconciled. clm_v4_lora_phi_canonical next_action[3] flagged for future architectural cycle.",
+    "C3 V3 real-mode per-input phi (single forward) and cycle-verdict canonical-probe phi (K=8 over 16 fixed prompts) are two different statistics. 41.86 anchor applies to canonical only; V3 emits per-input. Whether per-input phi is interpretable on the same scale as canonical is not validated. A K=8 sweep over user-supplied prompts would test this; deferred.",
+    "C4 emerge candidate hit-rate forecast is heuristic-only, not backed by Stage 3 empirical sessions. HIGH/MEDIUM/LOW reflect architectural compatibility + mount-layer surfaceability; actual emerge value depends on dialogue dynamics. The forecast is a search-order heuristic, not a verdict.",
+    "C5 V3 emit currently does NOT annotate substrate identity in output; substrate-identity preamble is doc proposal only (audit doc §2.3). Until landed, user confusion risk persists — phi emit value may be interpreted as cross-substrate measurement when it is single-substrate per-input deflection."
+  ],
+
+  "next_actions": [
+    {"id": "V3_EMIT_SUBSTRATE_PREAMBLE", "action": "Add `substrate: clm-v4-base (no LoRA; paradigm v11 G3 carry baseline 41.86)` line to V3 probe emit format in clm_v4_mount.hexa", "owner": "future cycle, $0, ~10min Mac", "kind": "code_change_doc_only_in_this_cycle"},
+    {"id": "SUBSTRATE_FLAG_IMPL", "action": "Implement --substrate {clm-v4|pbeta|clm-2-lora} flag in bin/anima-core-dialogue.bash + clm_v4_mount.hexa multi-loader; clm-2-lora subset Mac-loadable now, pbeta needs adapter rsync first", "owner": "future cycle, $0, ~30min Mac"},
+    {"id": "PHI_PROBE_PATH_STANDARDIZE", "action": "Standardize on single canonical phi-probe substrate path (HF-format vs legacy decoder; Mac CPU fp32 vs ubu1 GPU bf16) and re-anchor 41.86 carry on that path; carries from clm_v4_lora_phi_canonical next_action[3]", "owner": "future architectural cycle"},
+    {"id": "EMERGE_D_X_CLM_V4_LAND", "action": "Land emerge candidate D Stage 1 4-mode taxonomy (none/zero/canonical/user_supplied) in mount layer per docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md", "owner": "future emerge cycle, $0"},
+    {"id": "EMERGE_G_X_CLM_V4_LAND", "action": "Land emerge candidate G tension trajectory revival in mount layer per docs/anima_emerge_candidate_g_h_consolidated_revival_spec_2026_05_05.md", "owner": "future emerge cycle, $0"}
+  ],
+
+  "verdict": "AUDIT_LANDED_DOC_ONLY",
+  "verdict_one_line": "3-substrate phi-star landscape documented (CLM v4 base 41.86 carry / 35.81 in-pipeline; pbeta 42.37 holdout500; CLM-2 LoRA 31.35 post-LoRA NO_FLIP); V3 real-mode substrate identity = clm-v4-base (no LoRA); --substrate flag spec for forward; L31-L33 chat/phi dichotomy reaffirmed; emerge x substrate matrix: D x clm-v4 + G x clm-v4 highest expected emerge value."
+}

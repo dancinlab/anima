@@ -1,0 +1,236 @@
+{
+  "_meta": {
+    "name": "CLM r5 execution plan tracker — post-AOT-unblock",
+    "schema_version": "1.0",
+    "created": "2026-04-19",
+    "author": "Aiden",
+    "design_ref": "training/clm_r5_design.md",
+    "spec_ref": "shared/roadmaps/anima.json#destinations.dest1_clm",
+    "train_config_ref": "training/clm_1b_config.json"
+  },
+
+  "round_id": "clm1b-r5",
+  "status": "READY",
+  "blockers": [],
+  "blockers_resolved": [
+    {
+      "id": "B1-hexa-interp-OOM-train-clm",
+      "date_resolved": "2026-04-19",
+      "resolution_ref": "docs/clm_aot_build_plan_20260419.md",
+      "summary": "hexa 인터프리터 OOM on 3504-LOC train_clm.hexa — Mac local `hexa build` AOT success: 2.1s wall, 172MB RSS peak, /tmp/clm.bin 404KB Mach-O arm64. Smoke exit 0: 3 train_step finite loss + CE + phi gate + CLM-PhiB-2 PASS.",
+      "path_chosen": "Path A (hexa build direct)",
+      "paths_not_needed": ["Path B (entry split)", "Path C (stage0 direct)", "Path D (hetzner Linux AOT)"],
+      "interpreter_profile_obsolete": {
+        "wall_before_hang_s": 160,
+        "rss_growth_rate_gb_per_15s": 4,
+        "peak_rss_gb": 30,
+        "kernel_hangs_caused": 2
+      },
+      "aot_profile": {
+        "wall_s": 2.1,
+        "rss_mb_peak": 172,
+        "binary_size_kb": 404,
+        "binary_format": "Mach-O 64-bit arm64",
+        "c_intermediate_lines": 3464,
+        "c_intermediate_kb": 164,
+        "clang_warnings": 3,
+        "clang_warning_type": "expression-result-unused (stmt-expr stage1 codegen quirk, harmless)"
+      }
+    }
+  ],
+
+  "artifacts": {
+    "source_hexa": "training/train_clm.hexa",
+    "source_loc": 3504,
+    "source_size_kb": 137,
+    "build_artifact_c": "build/artifacts/clm.bin.c",
+    "build_artifact_bin_mac": "/tmp/clm.bin",
+    "build_artifact_bin_linux": "/tmp/clm_v2_linux.bin (hetzner, 382624 bytes ELF x86_64)",
+    "smoke_log": "/tmp/clm_smoke.log",
+    "smoke_exit_code": 0,
+    "build_command": "hexa build training/train_clm.hexa -o /tmp/clm.bin",
+    "build_chain": ["hexa_v2 (stage1 self-host) emit C", "clang -O2 -Wno-trigraphs -fbracket-depth=4096"]
+  },
+
+  "smoke_results": {
+    "scale_configs_initialized": ["34m", "1b", "1.5b", "2.8b_v5"],
+    "dd175_manifest_loaded": true,
+    "train_step_smoke_loss_finite": true,
+    "real_decoder_pipeline_3step_finite": true,
+    "forward_logits_shape_ok": true,
+    "ce_loss_targets_0_3_ok": true,
+    "ce_loss_random_ok": true,
+    "ce_grad_len_ok": true,
+    "phase_manager_mid_ok": true,
+    "phi_gate_ok": true,
+    "clm_phib_2_regression_flag_on": true,
+    "clm_phib_2_regression_loss": 5.54518,
+    "known_quirk": "println(\"34m approximate params:\", _d34_total) emits label but omits int value — stage1 codegen multi-arg println quirk with complex int expr. No PASS/FAIL impact."
+  },
+
+  "next_actions": [
+    {
+      "id": "r5-a1-hetzner-linux-build",
+      "status": "completed",
+      "completed_date": "2026-04-19",
+      "completion_ref": "docs/clm_linux_build_20260419.md",
+      "desc": "Re-run `hexa build training/train_clm.hexa -o /tmp/clm-linux.bin` on hetzner for Linux x86_64 binary",
+      "owner": "next session or BG agent",
+      "eta_min": 5,
+      "result": {
+        "binary_path": "/tmp/clm_v2_linux.bin",
+        "binary_size_bytes": 382624,
+        "binary_format": "ELF 64-bit LSB pie x86_64 dynamically linked",
+        "build_wall_s": 8.374,
+        "clang_warnings": 3,
+        "clang_warning_type": "expression-result-unused (same stage1 codegen quirk as Mac, harmless)",
+        "c_intermediate": "build/artifacts/clm_v2_linux.bin.c",
+        "ffi_libs_built": {
+          "libhxblas.so": "/home/hexa-lang/self/native/build/libhxblas.so (25656 bytes, gcc -O3 -fPIC -shared -fopenmp hxblas_linux.c -lopenblas -lgomp -lm)",
+          "libhxlmhead.so": "/home/hexa-lang/self/native/build/libhxlmhead.so (16072 bytes, same flags + hxlmhead_linux.c)"
+        },
+        "smoke_result": {
+          "scale": "smoke (d=256 L=4 block=128 params=4008192)",
+          "steps": 1,
+          "val_ce": 5.54518,
+          "exit_code": 0,
+          "wall_s": 15.689,
+          "ckpt": "/tmp/clm_smoke4/step_0 (43MB HEXACKPT-v1)",
+          "ld_library_path": "/home/hexa-lang/self/native/build",
+          "dlopen_verified_via_LD_DEBUG": true,
+          "libs_resolved": ["libhxblas.so", "libhxlmhead.so"],
+          "note": "@link Mac .dylib path rewritten to libhxblas.so / libhxlmhead.so by runtime.c hexa_ffi_dlopen Linux branch (basename + <dir>/lib<name>.so)"
+        }
+      }
+    },
+    {
+      "id": "r5-a2-mmap-loader",
+      "status": "completed",
+      "completed_date": "2026-04-19",
+      "desc": "mmap-equivalent byte-window corpus loader — exec(\"dd\") per window path audited + inlined into train_clm.hexa L36-81",
+      "owner": "Aiden",
+      "eta_h": 4,
+      "expected_gain": "17 d ETA → 3-5 d",
+      "result": {
+        "standalone_module": "training/clm_mmap_loader.hexa (335 LOC, 14/14 self-test PASS per 2026-04-16)",
+        "inlined_subset_in_train_clm": "training/train_clm.hexa L36-81 (corpus_open + corpus_window only, hot path)",
+        "inline_rationale": "pod2 relaunch scaffold transpiles a fixed DEP list; avoid module-resolution surgery (feedback_hexa_silent_exit_5_imports)",
+        "ffi_native_mmap_deferred": "real mmap(2) FFI would need hexa C-shim; current dd+od path is page-cache friendly (~32 KiB/step resident); swap-in path documented in clm_mmap_loader.hexa header",
+        "smoke_verified_on_hetzner": true,
+        "smoke_corpus": "/root/Dev/anima/data/corpus.txt (5243172 bytes, 5.2 MiB)",
+        "smoke_evidence": "[clm_mmap_loader] opened /root/Dev/anima/data/corpus.txt len=5243172 bytes (~5 MiB) — appears twice per run (load_corpus + _current_corpus_desc)"
+      }
+    },
+    {
+      "id": "r5-a3-launcher",
+      "status": "completed",
+      "completed_date": "2026-04-19",
+      "desc": "Wire --config JSON + --resume into train_clm.hexa CLI dispatch. Instead of a separate clm_r5_launch.hexa wrapper (would triple the dep bundle), flags land on the existing binary so one bundle = one fire.",
+      "owner": "Aiden",
+      "eta_h": 2,
+      "result": {
+        "binary": "/tmp/clm_v3_linux.bin (hetzner ELF x86_64, rebuilt from train_clm.hexa with r5-a3 wiring)",
+        "build_wall_s_est": 8.5,
+        "clang_warnings": 3,
+        "clang_warning_type": "expression-result-unused (stage1 codegen quirk, harmless, unchanged from v2)",
+        "config_parser": {
+          "entry": "--config <path> flag in CLI dispatch",
+          "scalar_extractor": "_cfg_json_read_scalar / _cfg_json_read_int / _cfg_json_read_float — mirrors clm_val.hexa:json_read_scalar, handles quoted strings + bare numbers",
+          "fields_mapped": [
+            "model_tag -> ScaleConfig.name",
+            "d_model / n_layer / n_head / n_kv_head / block_size",
+            "consciousness_dim / atoms / cells_per_atom",
+            "batch_size / lr_max",
+            "steps / save_every (picked up only when CLI value matches default literal)"
+          ],
+          "override_semantics": "JSON fields override --scale template defaults; explicit CLI --batch/--lr/--steps/--save-every override JSON (detected via string-equals-default sentinel)",
+          "smoke_log_line": "[train_clm] config applied: name=clmsmoke d=256 nl=4 nh=8 kv=4 blk=128 batch=4 lr=0.0003 steps=1 save_every=1"
+        },
+        "resume_support": {
+          "flag": "--resume",
+          "scan": "_resume_find_last_step(ckpt_dir) — shell: ls step_* | sed extract trailing integer | sort -n | tail -1, returns -1 for missing",
+          "semantics": "counter-only resume (scans + logs last step; training continues with fresh weights). Full weight restore deferred to r5-a3.5 (load_checkpoint() HEXACKPT-v1 decoder not yet wired). Sufficient to prove launcher plumbing end-to-end for smoke.",
+          "smoke_log_line": "[train_clm] --resume: last ckpt step=0 in /tmp/clm_v3_smoke (counter-only resume; weights fresh)"
+        },
+        "smoke_results": {
+          "config_smoke": {
+            "ckpt_dir": "/tmp/clm_v3_smoke",
+            "steps": 1,
+            "val_ce": 5.54518,
+            "exit_code": 0,
+            "ckpt_bytes": 43281520,
+            "total_params": 4008192,
+            "note": "1 step on small-config (d=256 L=4 blk=128, same geometry as scale_smoke) proves --config scalar extraction end-to-end. 170M config (d=768 L=12 blk=512) parsed correctly but per-step CPU wall exceeded 10 min; GPU fire required for 170M+ smokes."
+          },
+          "resume_smoke": {
+            "steps_requested": 1,
+            "last_step_detected": 0,
+            "counter_log": "--resume: last ckpt step=0",
+            "exit_code": 0,
+            "ckpt_rotated_and_resaved": true
+          }
+        },
+        "known_quirks_inherited_from_r5_a1": [
+          "Multi-arg println with int value: '[train_scale] step=' emits label but omits step number (stage1 codegen). Ckpt meta.json still carries step correctly.",
+          "--save-every 1 triggers MFS rotation on each save; fine for smoke, pod fire uses save_every >= 2000 per runpod_mfs_quota rule."
+        ]
+      }
+    },
+    {
+      "id": "r5-a4-bundle-script",
+      "status": "completed",
+      "completed_date": "2026-04-19",
+      "desc": "training/clm_r5_bundler.hexa — stage + tarball + R2 upload OR direct-scp modes (r5 §1.3 option A)",
+      "owner": "next session",
+      "eta_h": 1,
+      "result": {
+        "artifact_path": "training/clm_r5_bundler.hexa",
+        "loc": 587,
+        "modes": ["tar (default, with optional --upload-r2)", "direct (scp stage dir to pod)"],
+        "bundle_contents": [
+          "bin/clm_v2_linux.bin (r5-a1 hetzner ELF x86_64)",
+          "lib/libhxblas.so + libhxlmhead.so (r5-a1 hetzner .so)",
+          "config/clm_170m.json",
+          "tokenizer/README.txt (byte-level marker, vocab=256)",
+          "helpers/fetch_corpus.txt (rclone R2 → pod cheat-sheet)",
+          "MANIFEST.json"
+        ],
+        "corpus_handling": "R2 → pod via rclone on pod (NOT packed into tarball — 5.38GB would bloat bundle)",
+        "r2_upload_target": "r2:anima-models/clm170m/r5/bundle/clm_r5_bundle.tar.gz",
+        "gates": ["--selftest (offline)", "--dry-run (no I/O)", "LIVE_FIRE_OK=1 (exec)"],
+        "auto_pull_hetzner": "Auto-scp from hetzner:/tmp/clm_v2_linux.bin + /home/hexa-lang/self/native/build/*.so when not present locally",
+        "compliance": ["R37", "AN13", "L3-PY — zero .py/.rs/.sh"]
+      }
+    },
+    {
+      "id": "r5-a5-pod-fire",
+      "desc": "Pod fire H100 with Linux binary + corpus + bundled deps (prerequisite: a1-a4)",
+      "owner": "user confirm (r5 design: not yet PREP → FIRE)",
+      "eta_h": 1,
+      "config_ref": "training/clm_1b_config.json"
+    }
+  ],
+
+  "prerequisites_for_fire": [
+    "a1 Linux binary built on hetzner",
+    "a2 mmap loader replaced",
+    "a3 launcher with --resume",
+    "a4 dep bundler",
+    "2/2 consecutive resume smokes PASS (r5 §1.1 done-criterion)",
+    "100-step micro-bench steps/sec >= 5x r4 baseline (r5 §1.2 done-criterion)"
+  ],
+
+  "forbidden_shortcuts": [
+    "Do NOT run `hexa run training/train_clm.hexa` on any host (interpreter OOM known, kernel hang risk)",
+    "Do NOT skip Linux rebuild and scp Mac arm64 binary to H100 x86_64 pod",
+    "Do NOT modify train_clm.hexa to reduce LOC purely to fit interpreter (AOT is the fix, not source truncation)"
+  ],
+
+  "rules_refs": [
+    "feedback_hexa_first_strict",
+    "feedback_py_ban_total",
+    "feedback_no_quantization",
+    "feedback_safe_path_auto",
+    "feedback_one_shot_best"
+  ]
+}

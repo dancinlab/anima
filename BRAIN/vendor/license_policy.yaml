@@ -1,0 +1,49 @@
+# vendor/license_policy.yaml — per-layer allow-lists
+# schema: hexa-brain/vendor/license_policy/1
+# last_updated: 2026-05-12
+#
+# Each protected layer (top-level directory under repo root) has:
+#   allow_spdx     — set of SPDX ids tolerated for TIGHT coupling (in_process)
+#   loose_extra    — extra SPDX ids tolerated when coupling is loose
+#                    (http / cli / subprocess), since the GPL/AGPL/NC viral
+#                    clauses do not cross the IPC boundary
+#
+# Rule (enforced by bin/check_licenses.sh):
+#   if a dep with coupling_modes ⊆ {http, cli, subprocess}: license ∈ allow ∪ loose_extra
+#   if any in_process coupling:                              license ∈ allow only
+#
+# See LICENSE_FIREWALL.md for the human-readable policy.
+
+schema: hexa-brain/vendor/license_policy/1
+
+# Common allow-list shared across all 4 layers. Listed inline per layer for
+# byte-level clarity (no YAML anchors — pyyaml-optional parser stays trivial).
+layers:
+
+  - path: eeg/
+    allow_spdx: [MIT, BSD-3-Clause, BSD-2-Clause, Apache-2.0, ISC]
+    loose_extra: [AGPL-3.0, CC-BY-NC-4.0, no-license, UNKNOWN]
+    rationale: |
+      Scalp-EEG capture pipeline. MIT/Apache/BSD/ISC are tight-coupling safe.
+      Loose-coupling escape covers AGPL substrates (BrainGenix-NES via HTTP)
+      and CC-NC substrates (Cortical Labs CL1 via HTTP).
+
+  - path: eeg_core/
+    allow_spdx: [MIT, BSD-3-Clause, BSD-2-Clause, Apache-2.0, ISC]
+    loose_extra: [AGPL-3.0, CC-BY-NC-4.0, no-license, UNKNOWN]
+    rationale: |
+      Lower-level EEG primitives. Same policy as eeg/.
+
+  - path: core/
+    allow_spdx: [MIT, BSD-3-Clause, BSD-2-Clause, Apache-2.0, ISC]
+    loose_extra: [AGPL-3.0, CC-BY-NC-4.0, no-license, UNKNOWN]
+    rationale: |
+      Repo-root `core/` directory (paradigm/metric host pre-migration). Same
+      policy. If empty/absent the checker simply finds zero files — no error.
+
+  - path: tool/
+    allow_spdx: [MIT, BSD-3-Clause, BSD-2-Clause, Apache-2.0, ISC]
+    loose_extra: [AGPL-3.0, CC-BY-NC-4.0, no-license, UNKNOWN]
+    rationale: |
+      Paradigms + metrics + filters live here post-2026-05-05 feature-grouped
+      migration. Same policy.

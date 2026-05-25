@@ -1,0 +1,44 @@
+{
+  "ts": "2026-05-12T11:35:00Z",
+  "harness": "state/anima_d1_v58_parity_2026_05_12/v58_hexa_multi_parity.hexa",
+  "ckpt": "/Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.safetensors",
+  "device": "cpu",
+  "dtype_storage": "BF16",
+  "dtype_compute": "f32 (via RFC 031 farr_load_bf16_to_f32)",
+  "kv_cache": "24 layers × cap_len 16 × kv_dim 256 (per-layer farr)",
+  "rope": "per-step cos/sin rotation at positions 0..4",
+  "initial_seed_ids": [1],
+  "n_steps": 5,
+  "steps": [
+    {"step": 0, "position_t": 0, "token_in": 1,   "hexa_argmax_id": 143, "hexa_argmax_val": 5.92355,  "python_argmax_id": 143, "python_argmax_val": 5.667313,  "match": true, "kv_cache_len_after": 1},
+    {"step": 1, "position_t": 1, "token_in": 143, "hexa_argmax_id": 131, "hexa_argmax_val": 6.63204,  "python_argmax_id": 131, "python_argmax_val": 5.866,     "match": true, "kv_cache_len_after": 2},
+    {"step": 2, "position_t": 2, "token_in": 131, "hexa_argmax_id": 240, "hexa_argmax_val": 9.60577,  "python_argmax_id": 240, "python_argmax_val": 8.758,     "match": true, "kv_cache_len_after": 3},
+    {"step": 3, "position_t": 3, "token_in": 240, "hexa_argmax_id": 152, "hexa_argmax_val": 11.4133,  "python_argmax_id": 152, "python_argmax_val": 12.204,    "match": true, "kv_cache_len_after": 4},
+    {"step": 4, "position_t": 4, "token_in": 152, "hexa_argmax_id": 159, "hexa_argmax_val": 13.1187,  "python_argmax_id": 159, "python_argmax_val": 13.092,    "match": true, "kv_cache_len_after": 5}
+  ],
+  "hexa_chain":   [143, 131, 240, 152, 159],
+  "python_chain": [143, 131, 240, 152, 159],
+  "chain_match_byte_by_byte": true,
+  "total_wall_s": 94.67,
+  "per_forward_avg_s": 18.93,
+  "peak_rss_bytes": 11799962792,
+  "peak_rss_gb": 10.99,
+  "falsifiers": {
+    "F-D1-V58MULTI-1a_mmap_open": "PASS",
+    "F-D1-V58MULTI-1b_218_keys": "PASS",
+    "F-D1-V58MULTI-2_step_chain_match_5of5": "PASS",
+    "F-D1-V58MULTI-3_kv_grow_5of5": "PASS"
+  },
+  "result": "15/15 PASS",
+  "parity_to_python_ssot": {
+    "chain_argmax_equal": true,
+    "value_drift_per_step": [
+      {"step": 0, "abs_drift": 0.25624, "rel_drift": 0.0452},
+      {"step": 1, "abs_drift": 0.76604, "rel_drift": 0.1306},
+      {"step": 2, "abs_drift": 0.84777, "rel_drift": 0.0968},
+      {"step": 3, "abs_drift": -0.79070, "rel_drift": -0.0648},
+      {"step": 4, "abs_drift": 0.02687, "rel_drift": 0.0021}
+    ],
+    "note": "Float drift accumulates across 24-layer pipeline but stays bounded — argmax pick is invariant at every step. KV cache + per-step RoPE rotation byte-by-byte verified."
+  }
+}

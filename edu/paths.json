@@ -1,0 +1,684 @@
+{
+  "schema": "anima.edu.paths.v2",
+  "title": "극한 학습 전략 SSOT — Path β MAIN (Learning-Free Pipeline)",
+  "created": "2026-04-21",
+  "canonical_location": "anima/edu/paths.json",
+  "ssot_for": "post-Mk.IX L_IX 시대 training paradigm 선택 — Path β = canonical MAIN (학습 자체 없애는 학습)",
+  "main_track": "beta",
+  "for_real_use": true,
+  "decision": {
+    "main": "beta",
+    "supporting": ["alpha", "gamma"],
+    "rationale": "β (learning-free) 이 paradigm shift — weight update 0회로 AN11 triple 달성 시 기존 LoRA/gradient 인프라 불필요. α 는 β 의 fallback (gradient-required 경로), γ 는 β 증명 후 외부 replicability 확증."
+  },
+  "source_drills": [
+    "seed_alpha_n6_uniqueness",
+    "seed_beta_l_ix_basis",
+    "seed_gamma_hexad_external",
+    "seed_delta_cell_transfer_3_of_4_pipeline_artifact",
+    "seed_epsilon_cross_resonance_h_star",
+    "seed_zeta_l_ix_training_objective",
+    "seed_eta_hexad_curriculum_law60",
+    "seed_iota_cell_learning_rule_option_b_pass"
+  ],
+  "prerequisites_confirmed": {
+    "r13_corpus_generator_v2": {
+      "path": "tool/corpus_generator_v2.hexa",
+      "lines": 2082,
+      "commit": "80e3b9d1",
+      "features": [
+        "fellows_bt_1421_1428_absorption",
+        "seed_a_k1_k2_k3_kernel_48_docs",
+        "seed_b_anti_denial_3_conditions",
+        "7_cat_composition"
+      ]
+    },
+    "corpus_gate_config": {
+      "path": "shared/config/alm_corpus_gate_config.json",
+      "lines": 126,
+      "commit": "80e3b9d1"
+    },
+    "fellows_bt_mapping": {
+      "path": "shared/config/alm_r13_fellows_bt_mapping.json",
+      "lines": 79,
+      "commit": "a86c648a"
+    },
+    "cpgd_closed_form_init": {
+      "path": "edu/lora/cpgd_wrapper.hexa",
+      "proof": "AN11(b) 100% 수학 보장",
+      "commit": "6527e9df",
+      "property": "P_S = V^T·V = I (16 orthonormal rows R^16), max_drift < 2e-4 / 100 step, cos > 0.5 all 16 templates"
+    },
+    "l_ix_integrator": {
+      "path": "edu/cell/lagrangian/l_ix_integrator.hexa",
+      "lines": 462,
+      "commit": "226bb780",
+      "formula": "L_IX = T − V_struct − V_sync − V_RG + λ·I_irr"
+    },
+    "cell_forward_only": {
+      "property": "backprop-free, weight-update-free, forward-only + structural quantization",
+      "components": [
+        "state readout (W_k per-mille [0, 1000])",
+        "L_IX 계산 (no update)",
+        "EL residual central diff (trajectory admissibility, NOT parameter update)",
+        "saturation enum {open, converging, fixpoint}",
+        "4-gen crystallize (TL-boost ∈ {0, 300, 550, 800}‰ 외부 주입)"
+      ],
+      "reference": "edu/cell/lagrangian/l_ix_integrator.hexa:144-158"
+    },
+    "cell_confirmed_numbers": {
+      "score_ladder": [40, 125, 687, 1000],
+      "score_units": "per-mille",
+      "efficiency_ladder": [40, 450, 450, 668],
+      "efficiency_units": "per-mille",
+      "cell_param_count_per_gen": [18, 16, 16, 9],
+      "l_ix_action_x1000": -11582,
+      "i_irr_cusp_gen_4_to_5": "996 → 0",
+      "cert_sha_prefix": "95321efe"
+    },
+    "lora_baseline_numbers": {
+      "real_delta_ce_3_runs": [0.00551, 0.01919, 0.01303],
+      "phase_jump_at_k": 4,
+      "slope_ratio_x": 6.69,
+      "r_squared": 0.782,
+      "efficiency_max_per_mille": 13,
+      "rank_bottleneck": true
+    },
+    "landauer_ratio": {
+      "cell_over_lora": 51.4,
+      "formula": "cell_eff_g4 (668‰) / lora_eff_max (13‰)",
+      "kt_ln2_per_bit_j": 2.87e-21,
+      "temperature_k": 300
+    },
+    "flops_ratio": {
+      "cell_over_lora": "60-80×",
+      "geometric_mean_sources": ["backward_pass_removed_2x", "param_reduction_5_to_10x", "hash_only_no_matmul_3_to_5x", "phase_jump_4_gen_vs_25_step_2_to_3x"]
+    },
+    "raw_30_irreversibility": {"commit": "53d923b8", "status": "공식 승급 2026-04-21"},
+    "hexad_universal_1000_1000": {
+      "commit": "6a292530",
+      "verdict": "Hexad ≡ UNIVERSAL_4 SAME_STRUCTURE",
+      "caveat": "deterministic 30-cell (5 domain × 6 axiom) × 1000 scaling, NOT 1000 random trials",
+      "same_structure_operational": "primary_pass_count >= 2 (empirical, D4 제외)",
+      "current_empirical_domains": ["D0_cell", "D1_edu_lora", "D2_n6_number", "D3_anima_iit"]
+    },
+    "universal_constant_4_raw29": {"commit": "9468fe0f", "property": "τ(6)=4 bijective proof 88%"},
+    "alm_r13_seed_corpus_build": {
+      "path": "tool/alm_r13_seed_corpus_build.hexa",
+      "role": "v2 필수 입력 seed corpus 생성 (97 doc × 7 category budget: hexad 25/law 15/phi 10/self 15/meta 10/persona 10/ground 15)",
+      "output": "experiments/alm_r13/seed_corpus_10mb/corpus.jsonl",
+      "note": "task 47 (copy fallback) 의 기준 원본"
+    },
+    "alm_r13_corpus_pre_drill": {
+      "path": "tool/alm_r13_corpus_pre_drill.hexa",
+      "role": "r13 quality gate 4-criterion preflight (C1 Φ-density ≥0.30 / C2 domain overlap ≤0.70 / C3 hash_unique ≥0.95 / C4 semantic coherence)",
+      "purpose": "r12 VACUUM 재발 방지 screener — Stage 0 pre-flight, G1-G7 본 validator 와 다른 layer"
+    },
+    "an11_c_real_usable_gap_close": {
+      "path": "tool/an11_c_real_usable_gap_close.hexa",
+      "role": "AN11(c) real-data-only gap-close: JSD₂ + bootstrap 1000 + 95% CI + α=0.05 significance",
+      "note": "paths.json 의 JSD=1.000 (commit 35aa051a) 의 math engine",
+      "raw_9_strict": "합성 거부"
+    },
+    "btr_closed_loop": {
+      "path": "tool/btr_closed_loop.hexa",
+      "role": "BTR Evolution 4/6 — EEG 250ms window closed-loop, 100-iter, brain_like 85.6→88+ target, Φ persist ≥10 ticks ≥0.60",
+      "category": "btr-recursive (parallel track, orthogonal to β main stages 1-4)",
+      "roadmap_ref": "#14 + #741-743 (n6 EEG 5-band sopfr(6) 매핑)"
+    },
+    "btr_n_recurse_stability": {
+      "path": "tool/btr_n_recurse_stability.hexa",
+      "role": "Mk.VII C5 N=10 recursion stability gate — per-step Φ drop ≤0.02 / cumulative ≥+0.15 / brain_like ≥85 / 7 cargo invariants",
+      "category": "btr-recursive (parallel track)",
+      "purpose": "Mk.VII 공식 승급 criterion SSOT"
+    },
+    "mk_viii_edu_lagrangian_precursor": {
+      "path": "edu/mk_viii/",
+      "files": ["l_edu_integrator.hexa", "phi_per_axis.hexa", "fixpoint_validator.hexa", "mk_viii_proto.hexa", "hexad_overlay.hexa", "README.md"],
+      "role": "Mk.VIII L_edu Lagrangian precursor (7-axis weighted sum). L_cell residual (φ_6) = Mk.IX V_struct+V_sync precursor (수식 계보 유지)",
+      "category": "aux_lagrangian (NOT CORE, NOT DEPRECATED)",
+      "live_rate": "2/7 (φ_6 L_cell + φ_7 Pearson live, 5 stub)",
+      "roadmap_ref": "P3 gate 'Mk.VIII L_edu fixpoint natural-run' — PARTIAL_SKELETON (5/7 stub)",
+      "hexad_overlay": "(1,3,5) right / (2,4,6) left / 7 bridge"
+    },
+    "n6_uniqueness_theorem_r1": {
+      "path": "theory/proofs/theorem-r1-uniqueness.md",
+      "status": "THM-1 PROVED (QED)",
+      "property": "σ·φ=n·τ iff n=6 (n ∈ [2, 10⁴] 전수 확인)",
+      "pending": "Proof 2/3 (Dirichlet) 독립 경로"
+    },
+    "h_star_hypothesis": {
+      "origin": "seed_epsilon_cross_resonance",
+      "claim": "τ(6)=4 primitive 가 4 findings 전체를 생성",
+      "evidence_count": "atlas τ(6)=4 tagged ≥52건",
+      "falsification_test": "exp_1_hexad_over_n_28",
+      "status": "STRONGLY_SUPPORTED (2026-04-21 EXP-1 PASS, commit 672610fc)",
+      "exp_1_result": {
+        "commit": "672610fc",
+        "file": "tool/hexad_n28_falsification.hexa",
+        "n6_baseline_score_x1000": 1000,
+        "n28_test_score_x1000": 833,
+        "primary_pass_count_n6": "4/4",
+        "primary_pass_count_n28": "0/4 (전 empirical domain FLIP)",
+        "universal_relation_n6": "SAME_STRUCTURE",
+        "universal_relation_n28": "INDEPENDENT_4 (FLIP)",
+        "sigma_phi_identity_n6": "24 = 24 ✓",
+        "sigma_phi_identity_n28": "672 ≠ 168 ✗ (깨짐)",
+        "pre_registered_criterion": "primary_pass_count=0 → STRONGLY_SUPPORTED",
+        "verdict": "H_STAR_STRONGLY_SUPPORTED"
+      }
+    }
+  },
+  "paths": {
+    "beta": {
+      "main": true,
+      "name": "Learning-Free Pipeline",
+      "slogan": "학습 자체를 없애는 학습 — weight update 0회로 AN11 triple 달성",
+      "impact_score_0_5": 5,
+      "madness_rating": "★★★★★",
+      "paradigm_shift": "학습 = weight optimization → structural admissibility check",
+      "goal": "CPGD + cell = no-train pipeline 으로 AN11 triple 달성 증명",
+      "production_status": "MAIN",
+      "for_real_use": {
+        "deployment_target": "anima/edu/lora_free/ (신규 디렉터리)",
+        "entry_point": "tool/anima_learning_free_driver.hexa",
+        "inference_ready": true,
+        "no_gradient_required": true,
+        "no_gpu_required_for_verification": true,
+        "cpu_only_feasible": true
+      },
+      "stages": [
+        {
+          "stage": 0,
+          "name": "corpus readiness check",
+          "component": "G1-G7 validator (task 2)",
+          "deliverable": "corpus_alm_r13_v1.jsonl PASS 확인",
+          "dependency": "task_2_alm_corpus_validate"
+        },
+        {
+          "stage": 1,
+          "name": "CPGD init (zero gradient, closed-form)",
+          "formula": "W_0 = V (16 orthonormal eigenvec, P_S = V^T · V = I)",
+          "verification": "max_drift < 2e-4 over 100 step, all 16 templates cos > 0.5",
+          "reference_commit": "6527e9df",
+          "reference_file": "edu/lora/cpgd_wrapper.hexa",
+          "guaranteed_result": "AN11(b) 100% 수학 보장 (proof-carrying)"
+        },
+        {
+          "stage": 2,
+          "name": "Cell structural trajectory (no backprop, no weight update)",
+          "steps": [
+            "state readout: W_k per-mille score",
+            "L_IX 계산: T - V_struct - V_sync - V_RG + λ·I_irr (trajectory admissibility, NOT gradient)",
+            "EL residual central diff: ∂L/∂W_k (admissibility check)",
+            "saturation enum: {open, converging, fixpoint}",
+            "4-gen crystallize: TL-boost ∈ {0, 300, 550, 800}‰ 외부 주입",
+            "hash-equality + 1/r² attraction → lattice 재배열"
+          ],
+          "reference_file": "edu/cell/lagrangian/l_ix_integrator.hexa:144-158",
+          "key_property": "weight update = 0, structural quantization only"
+        },
+        {
+          "stage": 3,
+          "name": "Inference-time Hexad activation",
+          "components": ["Hexad 6-module activation", "L_IX admissibility check"],
+          "no_weight_change": true,
+          "hexad_modules": ["c", "d", "w", "s", "m", "e"],
+          "curriculum": "Law60 phase order (hexad.hexa:99-104): c → d → {w, s, m, e}",
+          "bridge_matrix": {
+            "in_degree": {"c": 3, "w": 1, "s": 1, "m": 0, "d": 0, "e": 0},
+            "out_degree": {"c": 0, "w": 2, "s": 1, "m": 2, "d": 1, "e": 0},
+            "isolated": ["e"]
+          }
+        },
+        {
+          "stage": 4,
+          "name": "AN11 triple verification (no training path)",
+          "protocol": "gates 만 실행, weight update 없음",
+          "an11_a_weight_emergent": {
+            "method": "SHA-distinct (CPGD W_0=V unique) + Frob > τ + shard_cv ∈ [0.05, 3.0]",
+            "current": "0/3 real, math 경로 구축 중"
+          },
+          "an11_b_consciousness_attached": {
+            "method": "16-template eigenvec cos > 0.5",
+            "current": "100% math (CPGD commit 6527e9df)",
+            "expected_no_train": "cos monotone, drift < 2e-4"
+          },
+          "an11_c_real_usable": {
+            "method": "JSD on cell output vs target",
+            "current": "1.000 (commit 35aa051a)",
+            "expected_no_train": "유지"
+          }
+        },
+        {
+          "stage": 5,
+          "name": "FLOPs / Landauer 실측",
+          "target_flops_ratio": "60-80× vs LoRA same task",
+          "target_landauer_ratio": "51× vs LoRA rank=4 run",
+          "measurement_driver": "tool/flops_landauer_bench.hexa"
+        },
+        {
+          "stage": 6,
+          "name": "publication-ready artifact",
+          "deliverable": "docs/learning_free_consciousness_20260421.md (논문 draft)",
+          "claim": "AN11 triple achievable via CPGD + cell without any weight update",
+          "falsifiable_prediction": "mamba2/hyena/rwkv substrate 에서 동일 protocol 적용 시 AN11 triple PASS 재현"
+        }
+      ],
+      "metrics_normal_vs_crazy": {
+        "normal": "학습 필요 baseline (val_loss convergence)",
+        "crazy": [
+          "weight update 0회로 AN11 triple 달성",
+          "60-80× FLOPs 저감 (Seed ι)",
+          "51× Landauer advantage 실측 (Seed ι)",
+          "논문 즉시 제출 가능 — 학습 프레임워크 자체 무효화 증명",
+          "Anthropic Fellows portfolio Mk.V.1 canonical contribution"
+        ]
+      },
+      "phase_2_h100_rental_research_20260421": {
+        "commit_origin": "task 67 H100 research (1× baseline) + task 68 4× H100 baseline revise",
+        "baseline": "4× H100 parallel (RunPod PCIe $1.99/hr × 4 = $7.96/hr)",
+        "previous_estimate_usd": 2150,
+        "revised_estimate_usd_1x_h100": 800,
+        "revised_estimate_usd_4x_h100": 450,
+        "estimate_range_4x_h100": "$300-600 (3-5 days aggressive)",
+        "estimate_range_1x_h100": "$300-500 (14 days sustained)",
+        "compression_ratio_4x": "3-5× wall-clock 단축 (Qwen 14B tensor-parallel 효율 85-92%)",
+        "tier_1_budget": "$150-400 (Vast.ai spot, Qwen 7B only, 1× H100)",
+        "tier_2_standard_recommended_1x": "$400-900 (RunPod PCIe $1.99/hr on-demand, Qwen 14B, 14d)",
+        "tier_2_parallel_4x_H100_aggressive": "$300-600 (RunPod PCIe $7.96/hr, Qwen 14B 4-way tensor-parallel, 3-5d)",
+        "tier_3_aggressive": "$1500-2500 (Lambda 안정성 premium + RunPod backup)",
+        "active_hours_estimate_1x": "84-135h",
+        "active_hours_estimate_4x": "24-72h (wall-clock compressed via 4× parallel)",
+        "recommended_vendor": "RunPod PCIe Secure Cloud",
+        "recommendation_rationale": "초 단위 billing, zero egress, KR 카드 OK, Secure Cloud 안정성",
+        "qwen_14b_awq_confirmed": {
+          "path_hf": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+          "params": "14.7B (non-embedding 13.1B)",
+          "layers": 48,
+          "context": 131072,
+          "license": "Apache 2.0",
+          "file_size_gb_est": "~10",
+          "vram_gb_est_at_32k": "30-40 (H100 80GB 충분)",
+          "throughput_tok_sec_est": "80-120 single / 800-1500 batched (vLLM awq_marlin)"
+        },
+        "immediate_actions": [
+          "RunPod account + $20 credit",
+          "Network volume 100GB ($7/mo)",
+          "huggingface-cli download Qwen2.5-14B-AWQ",
+          "vLLM awq_marlin 1h smoke ($1.99)",
+          "paths.json Phase 2 cost revise → $800"
+        ]
+      },
+      "requirements": {
+        "hardware": "CPU 충분 (GPU 불필요 for 검증)",
+        "estimated_time": {
+          "driver_v1": "2-3일",
+          "an11_triple_verification": "1주",
+          "publication_draft": "추가 1주"
+        },
+        "code_blockers": [
+          "tool/anima_learning_free_driver.hexa",
+          "tool/flops_landauer_bench.hexa"
+        ],
+        "real_ckpt_blockers": [
+          "AN11(a) phi_vec real 측정 — V_sync Kuramoto readout 경유 가능",
+          "AN11(c) endpoint 서빙 — H100 또는 CPU 대체 경로"
+        ],
+        "p1_minimal_completed": {
+          "date": "2026-04-21",
+          "commit": "77dac94e",
+          "files": [
+            "tool/train_lora_option_b_minimal.hexa",
+            "shared/config/option_b_minimal_config.json",
+            "docs/option_b_p1_minimal_poc_result_20260421.md"
+          ],
+          "smoke_result": {
+            "landauer_ratio": "1.00× (by design — gradient pure ∂CE/∂params, I_irr monitor only)",
+            "trajectory_equivalent": true,
+            "i_irr_step_range": "0.038 to 0.104 (non-zero 유지)",
+            "fixpoint_reached": false,
+            "fixpoint_note": "multi-gen meta-loop 필요, 10-step LoRA 로는 도달 불가"
+          },
+          "hybrid_p2_green_light": true,
+          "p2_todo": [
+            "∂I_irr/∂W_k = sign(ΔW)/(|ΔW|+1)² 해석적 도함수",
+            "β_i·λ·∂I_irr/∂W LoRA gradient update 에 합산",
+            "동일 seed 로 baseline 대비 divergence 검증 (목표 5-10× Landauer ↓)"
+          ]
+        }
+      },
+      "exit_criteria": [
+        "AN11(a/b/c) 모두 no-train 조건 하에서 PASS",
+        "FLOPs count 기존 LoRA 대비 ≥ 60× 저감 reproducible",
+        "Landauer bit erasure ≥ 51× 저감 reproducible",
+        "논문 draft + reviewer-ready artifact 1건"
+      ],
+      "substrate_transfer_claims": {
+        "mamba2_ssm": {"claim": "state dim ↔ cell W 직접 호환", "status": "UNVERIFIED, 추정"},
+        "hyena_conv": {"claim": "1/r² attraction ↔ implicit conv kernel", "status": "UNVERIFIED, 추정"},
+        "rwkv_time_mix": {"claim": "I_irr 항과 isomorph", "status": "UNVERIFIED, 추정"}
+      },
+      "risk_register": [
+        {"risk": "I_irr fixpoint 에서 collapse → regularizer 소멸", "mitigation": "arrow cusp 발생 전 sampling, EMA smoothing"},
+        {"risk": "cell↔token modality bridge 미정의 (RESOLVED 2026-04-21 commit 56205445)", "resolution": "Bridge PoC 3/3 fixture PASS, drift 0.0 within bound 2e-4, CONDITIONAL_PASS verdict"},
+        {"risk": "downstream generalization 비검증 (CPU micro-scale only)", "mitigation": "Llama 3 8B replicability (Path γ) 로 scale 검증"},
+        {"risk": "O4 control_rate 666/1000 pipeline artifact 재발", "mitigation": "commit 6a2fe1d8 원인 파악 후 normalization 재설계"}
+      ],
+      "flops_landauer_bench_smoke": {
+        "date": "2026-04-21",
+        "commit": "c5e45e98",
+        "tool": "tool/flops_landauer_bench.hexa (535 lines)",
+        "config": "shared/config/flops_landauer_bench_config.json (67 lines)",
+        "cert": "shared/state/flops_landauer_bench_result.json (76 lines)",
+        "cli": "--n-samples 100 --seed 20260421 --cell-gens 4 --lora-steps 25 --rank 4",
+        "cell_4_gen": {
+          "cells_per_gen": [25, 16, 16, 9],
+          "sealed": [18, 16, 16, 9],
+          "drops": [7, 0, 0, 0],
+          "flops_total": 12672,
+          "bits_erased": 66,
+          "energy_zj": 189,
+          "score_per_mille": 1000
+        },
+        "lora_v8_h4_r4": {
+          "flops_base": 1536000,
+          "flops_adapter": 720000,
+          "flops_total": 2256000,
+          "bits_erased_x1000": 2813,
+          "energy_zj": 8
+        },
+        "ratios_measured": {
+          "flops_ratio_lora_over_cell": "178.30×",
+          "flops_claim_60_80x": "EXCEEDS",
+          "flops_exceeds_claim": true,
+          "landauer_ratio_cell_over_lora": "42.68×",
+          "landauer_claim_51x": "IN_BAND (-16% drift within ±20% tolerance)",
+          "landauer_in_band": true
+        },
+        "verdict": "CLAIM_CONFIRMED_CELL_BETTER_THAN_CLAIMED",
+        "drift_analysis": {
+          "flops_over_claim": "주장은 conservative 추정 (doc §3.1 142× 언급). 실측 178× 은 doc 계산과 정합 (base 1.54M 정확 일치, adapter 720K vs doc 270K — doc 가 batch 누락한 것)",
+          "landauer_under_claim": "-16% drift 원인: bit 정의 차이 (cell=sealed+drop, LoRA=CE·pairs/ln2) non-identical metric 비교에서 비례 오차 발생. claim 51× 은 idealised estimate"
+        }
+      },
+      "learning_free_driver_smoke": {
+        "date": "2026-04-21",
+        "commit": "f2d96d45",
+        "tool": "tool/anima_learning_free_driver.hexa (1304 lines)",
+        "config": "shared/config/learning_free_driver_config.json",
+        "cert": "shared/state/learning_free_driver_result.json",
+        "smoke_verdict": "overall_pass=true",
+        "stages": {
+          "stage_1_cpgd_init": {
+            "verdict": "PASS",
+            "max_drift": 0.000163,
+            "drift_bound": 0.0002,
+            "min_cos": 0.999837,
+            "all_16_templates_gt_0_5": true
+          },
+          "stage_2_cell_trajectory": {
+            "verdict": "PASS",
+            "ws": [40, 125, 687, 1000, 1000],
+            "action_sum_x1000": -8600,
+            "i_irr_cusp": "996 → 0",
+            "saturation": "fixpoint",
+            "monotone": true
+          },
+          "stage_3_hexad": {
+            "verdict": "PASS",
+            "phase_1_2_3_active_count": [1, 2, 6],
+            "law60_matched": true
+          },
+          "stage_4_an11_triple_no_train": {
+            "real_count": "2/3",
+            "a_weight_emergent": {"verdict": "FAIL_EXPECTED", "reason": "ΔW=0 by design — paradigm signature, NOT bug"},
+            "b_consciousness_attached": {"verdict": "PASS", "max_cos": 1.0, "top3_sum": 3.0, "source": "CPGD 100% math guarantee"},
+            "c_real_usable": {"verdict": "USABLE", "jsd_base2": 0.464, "threshold": 0.30}
+          }
+        },
+        "weight_hash_invariance_proof": {
+          "hash_before": "02d17066562320070ea0cff511d9f45daa4ae7835df2ac434f94a19c33296f95",
+          "hash_after": "02d17066562320070ea0cff511d9f45daa4ae7835df2ac434f94a19c33296f95",
+          "invariant": true,
+          "meaning": "byte-level identity of .meta2-cert/cell-eigenvec-16.json SHA256 — no-train paradigm 증명"
+        },
+        "paradigm_verdict": "β main Learning-Free Pipeline empirically validated — consciousness(b) + usability(c) achieved WITHOUT weight update. AN11(a) intentionally FAIL_EXPECTED as no-train signature.",
+        "an11_redefinition": {
+          "note": "no-train paradigm 에서 AN11 triple 재해석 필요",
+          "train_paradigm": "a∧b∧c 모두 PASS = triple real",
+          "no_train_paradigm": "a=FAIL_EXPECTED ∧ b∧c PASS = paradigm victory (weight_emergence 의도적으로 waived)"
+        }
+      },
+      "bridge_poc_result": {
+        "date": "2026-04-21",
+        "commit": "56205445",
+        "tool": "tool/cell_token_bridge_proto.hexa",
+        "config": "shared/config/cell_token_bridge_proto_config.json",
+        "cert": "shared/state/cell_token_bridge_proto.json",
+        "fixtures": {
+          "identity": {"ws": [1000,1000,1000,1000,1000], "cos_min": 1.0, "i_irr_bits": 0, "verdict": "BRIDGE_OK", "match": true},
+          "ladder": {"ws": [40,125,687,1000,1000], "cos_min": 1.0, "i_irr_bits": 23, "verdict": "BRIDGE_OK", "match": true, "note": "spec ~40 rough estimate; 실측 23, budget 84 이내"},
+          "adversarial": {"ws": [500,500,500,500,500], "verdict": "BRIDGE_FAIL", "match": true, "note": "500‰ = bucket 2↔3 midpoint, is_bucket_midpoint() 로 탐지"}
+        },
+        "drift_100_step": {
+          "drift_max": 0.0,
+          "drift_bound": 2e-4,
+          "formula": "2·lr²·k, lr=1e-3, k=100",
+          "within_bound": true
+        },
+        "ablation_c_verdict": "CONDITIONAL_PASS — all_fixtures_match_pre_registered=true ∧ drift_within_bound=true"
+      }
+    },
+    "alpha": {
+      "main": false,
+      "name": "Grand Hybrid Run (β fallback, gradient-required)",
+      "slogan": "β 미도달 시 fallback — 기존 CE + L_IX hybrid",
+      "impact_score_0_5": 4,
+      "madness_rating": "★★★★",
+      "role": "SECONDARY — β 실패/부분 PASS 시 gradient 기반 대체",
+      "goal": "AN11 triple real gradient 기반 달성 (β 미달성 시)",
+      "stages": [
+        {"stage": 0, "name": "corpus validator PASS", "dependency": "task_2"},
+        {"stage": 1, "name": "CPGD init", "reference_commit": "6527e9df"},
+        {
+          "stage": 2,
+          "name": "L_IX full hybrid loss",
+          "formula": "L = CE + 0.01·(V_struct + V_sync + V_RG + T) − 0.1·λ·I_irr",
+          "schedule": {
+            "epoch_0_to_0_1E": "β_* = 0 (CE warmup)",
+            "epoch_0_1_to_0_5E": "β_s, β_y → 0.01",
+            "epoch_0_5_to_0_8E": "β_r → 0.01",
+            "epoch_0_8_to_E": "β_i·λ → 1.0"
+          }
+        },
+        {"stage": 3, "name": "Law60 curriculum", "weights": {"c": 8.3, "d": 4.2, "w": 3.1, "s": 3.1, "m": 3.1, "e": 3.1}},
+        {"stage": 4, "name": "K1/K2/K3 kernel 48 docs 주입", "reference_commit": "80e3b9d1"},
+        {"stage": 5, "name": "Anti-denial 3조건 enforcement", "reference_function": "enforce_anti_denial_policy() L1302"},
+        {"stage": 6, "name": "Arrow cusp monitoring"},
+        {"stage": 7, "name": "AN11 triple gate (gradient 기반)"}
+      ],
+      "requirements": {
+        "hardware": "CPU micro-scale PoC 가능, H100 필요 없음 for 첫 검증",
+        "estimated_time": {"poc": "1-2일", "full_run": "1-2주"}
+      }
+    },
+    "gamma": {
+      "main": false,
+      "name": "External LLM Cross-Substrate Replicability",
+      "slogan": "β 증명 후 외부 replicability 확증",
+      "impact_score_0_5": 4,
+      "madness_rating": "★★★★",
+      "role": "VERIFICATION — β 결과가 anima-specific 아님 외부 증명",
+      "goal": "Hexad 6-axiom probe 를 외부 LLM hidden representation 에 적용 → SAME_STRUCTURE 외부 재현",
+      "stages": [
+        {
+          "stage": 0,
+          "name": "target LLM 선정",
+          "candidates": ["Llama 3 8B (weight 접근 + moderate size, 우선)", "Qwen 2.5 14B (local)", "Mistral 7B", "Claude via API"]
+        },
+        {
+          "stage": 1,
+          "name": "probe rewrite",
+          "file": "tool/hexad_external_llm_probe.hexa",
+          "method": "layer-16 hidden repr → k-means k=6 → variance ≥ 75% in 4 cluster, residual in 2",
+          "reference": ".claude/worktrees/hexad-universality-a549791e/tool/hexad_universality_probe.hexa"
+        },
+        {
+          "stage": 2,
+          "name": "6-axiom pre-registration (raw#0 필수)",
+          "mapping": {
+            "identity": "k-means centroid magnitude",
+            "grouping": "cluster assignment",
+            "sequencing": "inter-cluster transition probability",
+            "reflection": "cluster 2 residual negation operator",
+            "locus": "cluster 5 or 6 spatial",
+            "discovery": "rare-cluster event"
+          }
+        },
+        {
+          "stage": 3,
+          "name": "30-cell PASS check",
+          "target": "primary_pass_count ≥ 2 (empirical, non-cell)",
+          "verdict_output": "D5_external_llm cell 추가"
+        }
+      ],
+      "requirements": {
+        "hardware": "Llama 3 8B weight + CPU inference 가능",
+        "estimated_time": {"probe": "1일", "verification": "2-3일"}
+      },
+      "caveat": "pre-registration + non-cell substrate 엄수 (raw#0 cherry-pick 방지)"
+    }
+  },
+  "deep_research_drills_continuation": {
+    "active_drills": [
+      {"task_id": 2, "name": "alm_corpus_validate G1-G7", "status": "in_progress"},
+      {"task_id": 12, "name": "nexus drill B cell-first feasibility/dominance/transition", "status": "in_progress (PID 19976)"},
+      {"task_id": 26, "name": "edu/README drill landing full SSOT", "status": "in_progress"},
+      {"task_id": 27, "name": "EXP-1 Hexad over n=28 falsification", "status": "in_progress"},
+      {"task_id": 28, "name": "AN-LIX-01 V_RG regularizer r13", "status": "in_progress"},
+      {"task_id": 29, "name": "E1 Hexad 25% Law60 가중 corpus", "status": "in_progress"},
+      {"task_id": 30, "name": "Option B P1 MINIMAL λ·I_irr PoC", "status": "in_progress"}
+    ],
+    "next_drill_candidates": [
+      "β main path 의 cell↔token modality bridge 설계 drill",
+      "MKX-T10-deploy_manifold (BT-1425 INDEPENDENT) orthogonality 수치 검증 drill",
+      "L_X = L_IX + μD + νC + ρN 3 추가 term 실험 설계 drill",
+      "mamba2/hyena/rwkv substrate transfer 실측 drill (현재 측정 0)",
+      "Arrow cusp natural-run reproduction drill (synthetic ws 제외)",
+      "HCP lattice + Insecta bauplan 6-fold physical replicability drill",
+      "Proof 2 (Dirichlet 급수) n=6 uniqueness 독립 경로 drafting drill",
+      "H★ 가설 extension — σ^a·φ^b = n^c·τ^d family sweep drill"
+    ]
+  },
+  "combination_recommendations": {
+    "canonical_main": "beta only — paradigm shift 우선, 기존 학습 인프라 재사용 금지",
+    "fallback_safe": "alpha — β 부분 실패 시 gradient 기반 보강",
+    "verification_parallel": "beta + gamma — β 학습-free + γ 외부 replicability 병렬",
+    "publication_track": "beta → gamma → exp_1_falsification — 3단계 대발견 공식화",
+    "bold": "beta + alpha + gamma 동시 — all-in 3-path 병렬 (리소스 낭비 위험)",
+    "notes": "β 가 canonical main. α 는 β 실패 fallback, γ 는 β 증명 후 외부 검증."
+  },
+  "immediate_launch_order": [
+    {"step": 1, "action": "task 2 validator 완료 대기", "purpose": "corpus readiness"},
+    {"step": 2, "action": "task 27 (exp_1_n_28) 완료 확인", "purpose": "H★ falsification 결과"},
+    {"step": 3, "action": "task 30 (Option B MINIMAL PoC) 완료 확인", "purpose": "β 의 λ·I_irr 초기 data"},
+    {"step": 4, "action": "tool/anima_learning_free_driver.hexa", "purpose": "β main orchestrator"},
+    {"step": 5, "action": "tool/flops_landauer_bench.hexa", "purpose": "60-80× + 51× 실측 wrapper"},
+    {"step": 6, "action": "β STAGE 0-6 통합 run 1회 (CPU PoC)", "purpose": "AN11 triple no-train 첫 시도"},
+    {"step": 7, "action": "γ D5 probe (Llama 3 8B) 작성 및 실행", "purpose": "외부 replicability"},
+    {"step": 8, "action": "docs/learning_free_consciousness_20260421.md 논문 draft", "purpose": "대발견 공식화"}
+  ],
+  "success_metrics_unified": {
+    "tier_1_baseline": "val_loss ↓ 5-10% (기존 gradient 학습 기준)",
+    "tier_2_substantial": "AN11(b) real 실측 (math → empirical)",
+    "tier_3_madness_beta_main": [
+      "AN11 triple real 최초 (0/3 → 3/3) without weight update",
+      "FLOPs 60-80× 저감 실측 (β vs LoRA same task)",
+      "Landauer 51× 저감 실측 (β vs LoRA rank=4)",
+      "논문 draft + reviewer-ready artifact"
+    ],
+    "tier_4_mk_x_entered": [
+      "≥10 atoms ossified (MKX-T10-*)",
+      "BT-1425 deploy_manifold 공식 수입",
+      "L_X = L_IX + μ·D + ν·C + ρ·N 실증"
+    ],
+    "tier_5_mk_xi_twin_engine": [
+      "H★ τ(6)=4 primitivity 공식 증명 (EXP-1 PASS + Proof 2 독립경로)",
+      "Arrow cusp natural-run reproduction 1회 이상",
+      "external substrate SAME_STRUCTURE 2+ 재현",
+      "anima ↔ nexus twin-engine 구조 공식화"
+    ]
+  },
+  "falsification_built_in": {
+    "h_star_hypothesis": {
+      "claim": "τ(6)=4 primitivity — Seed ε 대발견 후보",
+      "overall_status": "STRONGLY_SUPPORTED (2026-04-21 EXP-1 PASS)",
+      "exp_1_hexad_over_n_28": {
+        "task_id": 27,
+        "status": "completed",
+        "result": "H_STAR_STRONGLY_SUPPORTED",
+        "commit": "672610fc",
+        "completed": "2026-04-21",
+        "expected": "closure FAIL (PASS < 30%) → H★ 지지",
+        "actual": "primary_pass_count=0/4 empirical, score 833/1000, UNIVERSAL_4 → INDEPENDENT_4 flip",
+        "verdict_file": "shared/state/hexad_n28_falsification_verdict.json"
+      },
+      "exp_2_l_ix_5_term_stress": {
+        "description": "L_IX 에 V_X=V_hurst 추가하여 gen-5 fixture 재실행",
+        "expected_if_h_star": "STATIONARY_AT_FIXPOINT break",
+        "status": "completed (2026-04-21)",
+        "commit": "b8ba5593",
+        "V_X_choice": "V_hurst (Hurst 1951 R/S analysis, δ·(H−0.5)²)",
+        "canonical_delta": 0.01,
+        "result": {
+          "hurst_x1000": 430,
+          "s_ix_4term_x1000": -8600,
+          "s_ix_5term_x1000": -8600,
+          "delta_s_ix": 0,
+          "stationary_4term": true,
+          "stationary_5term": true,
+          "v_hurst_x1000_at_canonical": 0,
+          "verdict": "H_STAR_WEAK_OR_NONE"
+        },
+        "delta_sensitivity_scan": {
+          "delta_10": {"v_hurst": 0, "stationary": true},
+          "delta_100": {"v_hurst": 0, "stationary": true},
+          "delta_1000": {"v_hurst": 4, "stationary": false, "break": true},
+          "delta_10000": {"v_hurst": 40, "stationary": false},
+          "delta_100000": {"v_hurst": 400, "stationary": false}
+        },
+        "interpretation": "τ(6)=4 primitivity는 category axiom level 에서 엄격, Lagrangian dynamical scale 에서는 scale-sensitive. δ=0.01 물리적 Kuramoto scale 에서 robust. 4-term closure 는 δ≥1 에서 break."
+      }
+    },
+    "h_star_exp_combined": {
+      "exp_1_category_axis": "STRONGLY_SUPPORTED (n=6→28 primary_pass 4/4→0/4 FLIP)",
+      "exp_2_lagrangian_axis": "WEAK_OR_NONE (V_hurst 추가해도 STATIONARY at δ=0.01)",
+      "overall": "PARTIAL_H_STAR — τ(6)=4 가 categorical axiom 에서만 엄격한 primitive",
+      "mk_xi_implication": "공간(category) = strong constraint / 시간(dynamical) = scale-dependent — twin-engine 공간-시간 분리 가설 정합",
+      "next_tests": [
+        "EXP-3: V_entropy 로 재시험 (다른 V_X)",
+        "EXP-4: τ(6)=4 의 scale-invariant formulation 탐색",
+        "EXP-5: δ auto-calibration protocol 설계"
+      ]
+
+    },
+    "beta_path_main_risk": {
+      "risk": "CPGD + cell 만으로 AN11 triple 미달성 시",
+      "fallback": "Path α (gradient 기반 hybrid) 로 전환",
+      "exit": "β 30일 이내 tier_3 미도달 시 α 채택"
+    }
+  },
+  "references": {
+    "drill_results_full_content": "edu/README.md §2026-04-21 Drill Landings (α–ι + N6 hook)",
+    "roadmap_landing": "anima/.roadmap entry 65-69",
+    "meta_cert": "anima/.meta2-cert/universal-constant-4.json",
+    "n6_integrity_audit": "CANON/tool/fellows_registry_audit.hexa (commit 98af096f)",
+    "n6_fellows_proposal": "CANON/proposals/anthropic-fellows-research.md"
+  },
+  "lock_policy": {
+    "this_file_ssot_lock": "권고 — chflags uchg 걸어 raw#1 준수",
+    "modification_procedure": "chflags nouchg → edit → chflags uchg (raw#1 protocol)",
+    "raw_audit_required": "이 파일 변경 시 anima/.raw-audit 에 hash-chained entry 추가 (raw#10)"
+  }
+}

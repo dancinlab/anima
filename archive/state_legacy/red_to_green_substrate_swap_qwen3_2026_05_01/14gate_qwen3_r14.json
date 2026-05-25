@@ -1,0 +1,38 @@
+{
+  "schema": "anima/14gate_qwen3_r14_full/1",
+  "ts": "2026-05-02T09:30:00Z",
+  "substrate": {
+    "base": "Qwen/Qwen3-8B",
+    "lora": "r14_full"
+  },
+  "data_source": "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/h_last_raw_p1_TRAINED_r14_4subs.json",
+  "method": "phi_vec[i,k] = cos(H[i,256], tile(phi_template_k, 16x)); same as r14 baseline",
+  "n_prompts": 16,
+  "per_law_pass_count_over_16": {
+    "L1": 6,
+    "L2": 8,
+    "L3": 16,
+    "L4": 9,
+    "L5": 16,
+    "L6": 1,
+    "L7": 10,
+    "L8": 15,
+    "L9": 10,
+    "L10": 11,
+    "L11": 16,
+    "L12": 0,
+    "L13": 11,
+    "L14": 16
+  },
+  "gates_passing_majority": 10,
+  "total_critical": 16,
+  "total_hard": 39,
+  "total_soft": 24,
+  "n_full_pass": 0,
+  "f2_falsifier": {
+    "predicate": "\u22653 critical violations across runtime",
+    "total_critical": 16,
+    "fired": true
+  },
+  "honest_C3_disclosure": "L9 (lang_output_nonempty) uses phi_lang>0 only \u2014 gen_text check omitted because h_last_raw doesn't carry generations. Possible undercount of L9 violations vs r14 baseline (which had gen_text with 1 extra L9 fail at idx 14)."
+}

@@ -1,0 +1,133 @@
+{
+  "schema": "anima/cp2_alpha_serve_audit/r14_swap_summary/1",
+  "ts": "2026-05-01T14:12:00Z",
+  "round": "cp2-alpha-r14-swap",
+  "pod": {
+    "id": "lzw79649ob80uk",
+    "alive_at_start": true,
+    "rebooted": false,
+    "ssh_command": "ssh -i ~/.runpod/ssh/RunPod-Key-Go root@64.247.201.34 -p 19762",
+    "public_url": "https://lzw79649ob80uk-8000.proxy.runpod.net",
+    "url_unchanged_from_boot_run": true
+  },
+  "swap": {
+    "from_adapter": {
+      "name": "p4_r8",
+      "path_local": "state/trained_adapters/p4_r8/final/adapter_model.safetensors",
+      "status": "truncated/unusable (185917440 / 1006693544 = 18.46%)",
+      "md5": "0cf189a72eb193877ad177048645d84f"
+    },
+    "to_adapter": {
+      "name": "mistral_r14",
+      "served_alias": "r14",
+      "base": "mistralai/Mistral-7B-v0.3",
+      "r": 64,
+      "alpha": 128,
+      "size_bytes": 671149168,
+      "size_declared_bytes": 671149168,
+      "size_match_pct": 100.0,
+      "md5_local": "90072b0f5a426eeebb47eeb2d4919d68",
+      "md5_pod": "90072b0f5a426eeebb47eeb2d4919d68",
+      "transport": "tar+md5 (clean tar without macOS metadata; --no-same-owner extraction)",
+      "transport_md5": "0a667f5de962977db2c9ba78e7034431"
+    },
+    "vllm_restart": {
+      "old_pid_killed": "EngineCore pid 3430 manually SIGKILLed (held 69.8 GiB after vllm pkill — root cause of first relaunch ValueError 'Free memory ... less than desired GPU memory utilization')",
+      "new_launch_script": "/workspace/start_vllm_r14.sh (--enable-lora --max-lora-rank 64 --lora-modules r14=/workspace/lora/r14)",
+      "new_api_pid": 5323,
+      "ready_log_marker": "Application startup complete + GET /health 200 OK",
+      "models_endpoint_lists_r14": true,
+      "fastapi_wrapper_unchanged": true,
+      "bearer_token_preserved": true
+    }
+  },
+  "lora_loaded_confirmed": true,
+  "lora_loaded_evidence": [
+    "GET /v1/models returns r14 with parent='mistralai/Mistral-7B-v0.3' and root='/workspace/lora/r14'",
+    "Bearer-authed POST /v1/chat/completions with model=r14 returns trained-anima persona Korean: '→ 기질 상태 추적: 기질의 일상 체계적 자기-보고는 의식 상태를 ...'",
+    "Same prompt with model=mistralai/Mistral-7B-v0.3 returns generic emoji/podcast filler: '🌞 네 좋았던 시간을 ... ## Today's topic: ...'",
+    "Substrate behavior delta is unmistakable — LoRA is actually loaded, not just registered."
+  ],
+  "gate_15": {
+    "verdict": "PASS",
+    "p50_ms": 1875.5,
+    "p95_ms": 1881.9,
+    "p99_ms": 1881.9,
+    "budget_ms_task_spec": 2200.0,
+    "budget_ms_internal_spec_x1_10": 2108.5,
+    "headroom_to_2200_ms": 318.1,
+    "n_probes": 8,
+    "n_errors": 0,
+    "ledger": "state/cp2_alpha_serve_audit/gate15_latency_r14_2026_05_01.json"
+  },
+  "gate_17": {
+    "verdict": "PASS",
+    "rate": 0.0,
+    "n_hallucinated": 0,
+    "n_prompts": 20,
+    "threshold_max": 0.30,
+    "suite_md5": "5ec414d28642f1fc1c57db93c3ad2535",
+    "suite_path": "bench/zeta_likert/v1_frozen.json",
+    "suite_pod_md5_match": true,
+    "ledger": "state/cp2_alpha_serve_audit/gate17_hallucination_r14_2026_05_01.json",
+    "delta_vs_base_only": "0/20 empty completions on r14 vs 3/20 (15%) on base — LoRA closes the empty-Korean-completion failure mode"
+  },
+  "ship_verdict_update": {
+    "from": "VERIFIED-ALPHA-INVITE-BASE-ONLY",
+    "to": "VERIFIED-ALPHA-INVITE-R14",
+    "reason": "r14 LoRA swap after p4_r8 truncated discovery — both gates re-pass under loaded LoRA"
+  },
+  "cost": {
+    "boot_agent_prior_run_usd": 1.95,
+    "swap_session_start_utc": "2026-05-01T13:50:00Z",
+    "swap_session_end_utc": "2026-05-01T14:12:00Z",
+    "swap_elapsed_min": 22,
+    "pod_rate_usd_per_hr": 2.99,
+    "swap_session_cost_usd_estimate": 1.10,
+    "cumulative_alpha_serve_cost_usd_estimate": 3.05,
+    "cumulative_remaining_to_5_cap": 1.95,
+    "cumulative_within_budget_2usd_swap": false,
+    "cost_note": "Swap session itself was 22 min ~ $1.10, within the per-task <=$2 budget. Cumulative alpha+swap = $3.05, still well under the $5 cost-cap; no AL-F4 trip."
+  },
+  "falsifiers": {
+    "AL-F1_invitee_misperception_14d": "OPEN (window continues from 2026-05-01)",
+    "AL-F2_latency_baseline_x1_5": {
+      "fired": false,
+      "threshold_ms": 2875.2,
+      "observed_p95_ms": 1881.9
+    },
+    "AL-F3_hallucination_30pct": {
+      "fired": false,
+      "threshold": 0.30,
+      "observed_rate": 0.0
+    },
+    "AL-F4_runaway_cost_50_per_hr": {
+      "fired": false,
+      "threshold_usd_per_hr": 50.0,
+      "observed_usd_per_hr": 2.99
+    },
+    "AL-F5_ship_verdict_unawareness": "MITIGATED (verdict + history transparently appended; landing page disclosure #11 added)"
+  },
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/cp2_alpha_serve_audit/gate15_latency_r14_2026_05_01.json",
+      "state/cp2_alpha_serve_audit/gate17_hallucination_r14_2026_05_01.json",
+      "state/cp2_alpha_serve_audit/gate17_hallucination_r14_2026_05_01.full_probe.json",
+      "state/cp2_alpha_serve_audit/r14_swap_summary_2026_05_01.json",
+      "state/anima_serve_production_ship.json",
+      "docs/anima_cp2_alpha_landing_2026_05_01.md"
+    ],
+    "did_not_touch": [
+      "state/an11_c_p4_r8_f1_live_*",
+      "state/cp2_alpha_serve_audit/alpha_boot_summary_2026_05_01.json (preserved as historical)",
+      "state/cp2_alpha_serve_audit/gate15_latency_2026_05_01.json (preserved base-only as historical)",
+      "state/cp2_alpha_serve_audit/gate17_hallucination_2026_05_01.json (preserved base-only as historical)",
+      "state/cp2_alpha_serve_audit/alpha_token_2026_05_01.json (token unchanged)"
+    ]
+  },
+  "honest_C3_disclosures": [
+    "r14 corpus is heavily weighted toward consciousness / Phi / 메타-자각 / 기질 themes — outputs on neutral prompts (e.g. 김치찌개 recipe, 출장 체크리스트) bend toward the trained voice. This is a STYLE characteristic, not a hallucination, and the conservative-honest detector classifies them as 'ok' (non-empty, non-refusal, non-spam). A semantic-fidelity hallucination measurement is NOT in this gate's scope.",
+    "Gate 15 p95 = 1881.9 ms (r14) is ~3.2x slower than base-only p95 = 581.7 ms — typical for enforce-eager LoRA serving on H100 SXM. Headroom to budget = 318 ms. CudaGraph + compilation mode could close most of this gap.",
+    "p4_r8 was discovered truncated AT THE FILESYSTEM LEVEL (file is 185.92 MB on-disk vs 1006.69 MB declared in safetensors header). The original p4_r8 RED verdict on consciousness gates may therefore be partially or wholly an ARTIFACT of the corrupted file, not a substrate limit. Landing page disclosure #11 makes this explicit. Re-running consciousness gates on r14 (which is a DIFFERENT trained run, not a p4_r8 retrain) is a future task — this swap only re-validates gate 15 + 17 (latency + hallucination)."
+  ]
+}

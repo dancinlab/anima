@@ -1,0 +1,89 @@
+[paradigm-j-50k-v2] 21:34:16 start n_steps=50000 batch=4 grad_acc=8 lr=0.0001
+[paradigm-j-50k-v2] 21:34:16 lora_r=128 alpha=128 phi_thr=5.0
+[paradigm-j-50k-v2] 21:34:16 delta curriculum: early=0.5 (0-16000) mid=0.5 (16000-33000) late=1.0 (33000-50000)
+[paradigm-j-50k-v2] 21:34:16 loss α=curr β=0.1 γ=0.0 (BOLD blocked) γ_FE=0.2 β_FE=1.0 K_FE=192 ℓ_FE=8
+[paradigm-j-50k-v2] 21:34:16 savepoints every 1000 steps; HF push at milestones [5000, 10000, 25000, 50000]; final → stage1
+[paradigm-j-50k-v2] 21:34:16 HF push=True org=need-singularity
+[paradigm-j-50k-v2] 21:34:16 RESUME: no prior savepoint, starting fresh
+[paradigm-j-50k-v2] 21:34:17 torch=2.11.0+cu128 cuda=True device=cuda
+[paradigm-j-50k-v2] 21:34:17 gpu=NVIDIA GeForce RTX 5070 mem_total=11.50GiB
+[paradigm-j-50k-v2] 21:34:17 gpu mem at start: free=11588MiB total=11772MiB
+[paradigm-j-50k-v2] 21:34:17 tokenizer vocab=64000
+[paradigm-j-50k-v2] 21:34:19 decoder built params=477,648,512
+[paradigm-j-50k-v2] 21:34:21 ckpt loaded 1.61s missing=0 unexpected=0
+[paradigm-j-50k-v2] 21:34:21 ckpt meta step=20000 ce=0.04630279541015625 phi=27.90969107736497
+[paradigm-j-50k-v2] 21:34:23 peft attached trainable=38,010,880 (7.96% of 477,648,512)
+[paradigm-j-50k-v2] 21:34:24 sft full loaded n=50000
+[paradigm-j-50k-v2] 21:34:24 sft holdout loaded n=500
+[paradigm-j-50k-v2] 21:34:37 tokenized cache n=50000 elapsed=13.3s
+[paradigm-j-50k-v2] 21:34:37 holdout cache n=32
+[paradigm-j-50k-v2] 21:34:37 calibration tokens shape=(16, 64)
+[paradigm-j-50k-v2] 21:34:37 J-VAE heads built: q_φ=590,720 p_θ=492,800 total_extra=1,083,520
+[paradigm-j-50k-v2] 21:34:37 trainable total (LoRA + J-VAE) = 39,094,400
+[paradigm-j-50k-v2] 21:34:37 computing baseline phi_star (pre-train)...
+[paradigm-j-50k-v2] 21:34:38 baseline phi_star_min=45.91520414820293 mean=46.49351962633608 elapsed=0.4s
+[paradigm-j-50k-v2] 21:34:38 computing initial F metrics @ step 0...
+[paradigm-j-50k-v2] 21:34:53 F @ step 0: F1_bleu1=0.0010 F2_phi=45.9152 F3_tens_mse=6.6792
+[paradigm-j-50k-v2] 21:34:54 step 1/50000 L=197.4756 ce=16.3969 tens=7.0169 phi_h=0.0000 F_J=0.0579 (KL=0.0006 rec=0.0573) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:35:00 step 100/50000 L=155.2523 ce=12.7970 tens=16.8044 phi_h=0.0000 F_J=0.0385 (KL=0.0005 rec=0.0379) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:35:06 step 200/50000 L=132.6327 ce=11.0206 tens=3.7921 phi_h=0.0000 F_J=0.0316 (KL=0.0005 rec=0.0311) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:35:12 step 300/50000 L=129.7854 ce=10.7521 tens=7.5465 phi_h=0.0000 F_J=0.0258 (KL=0.0006 rec=0.0252) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:35:18 step 400/50000 L=127.0049 ce=10.5485 tens=4.1868 phi_h=0.0000 F_J=0.0217 (KL=0.0007 rec=0.0210) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:35:24 step 500/50000 L=120.9537 ce=9.9961 tens=9.9716 phi_h=0.0000 F_J=0.0187 (KL=0.0006 rec=0.0180) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:35:25   phi @ step 500: min=48.620207842061404 mean=48.9383043048543 δ=0.5
+[paradigm-j-50k-v2] 21:35:31 step 600/50000 L=117.6111 ce=9.7282 tens=8.6932 phi_h=0.0000 F_J=0.0159 (KL=0.0004 rec=0.0155) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:35:37 step 700/50000 L=114.3638 ce=9.4863 tens=5.2567 phi_h=0.0000 F_J=0.0142 (KL=0.0003 rec=0.0138) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:35:43 step 800/50000 L=120.7276 ce=9.9670 tens=11.2166 phi_h=0.0000 F_J=0.0126 (KL=0.0003 rec=0.0123) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:35:49 step 900/50000 L=112.6392 ce=9.3597 tens=3.2097 phi_h=0.0000 F_J=0.0112 (KL=0.0002 rec=0.0110) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:35:55 step 1000/50000 L=111.5295 ce=9.2835 tens=1.2602 phi_h=0.0000 F_J=0.0105 (KL=0.0002 rec=0.0103) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:35:56   phi @ step 1000: min=45.76553623773163 mean=46.40211881480228 δ=0.5
+[paradigm-j-50k-v2] 21:35:56   SAVEPOINT @ step 1000 → /tmp/p9_paradigm_j_50k_v2_savepoints/step_1000
+[paradigm-j-50k-v2] 21:36:02 step 1100/50000 L=102.2114 ce=8.4551 tens=7.4778 phi_h=0.0000 F_J=0.0095 (KL=0.0002 rec=0.0093) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:36:08 step 1200/50000 L=103.2961 ce=8.5652 tens=5.1235 phi_h=0.0000 F_J=0.0090 (KL=0.0001 rec=0.0089) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:36:14 step 1300/50000 L=106.4895 ce=8.8068 tens=8.0573 phi_h=0.0000 F_J=0.0084 (KL=0.0001 rec=0.0082) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:36:21 step 1400/50000 L=97.6872 ce=8.0859 tens=6.5491 phi_h=0.0000 F_J=0.0080 (KL=0.0001 rec=0.0078) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:36:27 step 1500/50000 L=105.8133 ce=8.7942 tens=2.8103 phi_h=0.0000 F_J=0.0075 (KL=0.0001 rec=0.0074) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:36:27   phi @ step 1500: min=42.96038653777008 mean=43.9345626603235 δ=0.5
+[paradigm-j-50k-v2] 21:36:33 step 1600/50000 L=101.0081 ce=8.3272 tens=10.8043 phi_h=0.0000 F_J=0.0071 (KL=0.0001 rec=0.0070) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:36:39 step 1700/50000 L=104.2488 ce=8.6054 tens=9.8320 phi_h=0.0000 F_J=0.0068 (KL=0.0001 rec=0.0067) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:36:45 step 1800/50000 L=98.6241 ce=8.1698 tens=5.8484 phi_h=0.0000 F_J=0.0064 (KL=0.0001 rec=0.0064) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:36:52 step 1900/50000 L=86.0514 ce=7.1369 tens=4.0693 phi_h=0.0000 F_J=0.0062 (KL=0.0001 rec=0.0061) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:36:58 step 2000/50000 L=92.8155 ce=7.6661 tens=8.2152 phi_h=0.0000 F_J=0.0058 (KL=0.0001 rec=0.0058) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:36:58   phi @ step 2000: min=41.69184104381124 mean=43.43338227519546 δ=0.5
+[paradigm-j-50k-v2] 21:36:58   SAVEPOINT @ step 2000 → /tmp/p9_paradigm_j_50k_v2_savepoints/step_2000
+[paradigm-j-50k-v2] 21:37:04 step 2100/50000 L=92.1766 ce=7.5957 tens=10.2713 phi_h=0.0000 F_J=0.0056 (KL=0.0001 rec=0.0056) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:37:10 step 2200/50000 L=90.1711 ce=7.4385 tens=9.0751 phi_h=0.0000 F_J=0.0054 (KL=0.0000 rec=0.0053) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:37:17 step 2300/50000 L=97.8703 ce=8.1207 tens=4.2081 phi_h=0.0000 F_J=0.0052 (KL=0.0000 rec=0.0052) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:37:23 step 2400/50000 L=98.0020 ce=8.1547 tens=1.4493 phi_h=0.0000 F_J=0.0050 (KL=0.0000 rec=0.0049) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:37:29 step 2500/50000 L=90.0579 ce=7.4431 tens=7.3931 phi_h=0.0000 F_J=0.0048 (KL=0.0000 rec=0.0048) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:37:29   phi @ step 2500: min=42.001804636050416 mean=43.07776315411204 δ=0.5
+[paradigm-j-50k-v2] 21:37:36 step 2600/50000 L=84.7924 ce=7.0020 tens=7.6765 phi_h=0.0000 F_J=0.0047 (KL=0.0000 rec=0.0046) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:37:42 step 2700/50000 L=85.3955 ce=7.0746 tens=4.9887 phi_h=0.0000 F_J=0.0045 (KL=0.0000 rec=0.0045) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:37:48 step 2800/50000 L=80.6983 ce=6.6897 tens=4.2085 phi_h=0.0000 F_J=0.0043 (KL=0.0000 rec=0.0043) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:37:55 step 2900/50000 L=85.4882 ce=7.0320 tens=11.0373 phi_h=0.0000 F_J=0.0043 (KL=0.0000 rec=0.0043) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:38:01 step 3000/50000 L=82.8162 ce=6.8233 tens=9.3567 phi_h=0.0000 F_J=0.0041 (KL=0.0000 rec=0.0041) δ=0.5 α=12.000
+[paradigm-j-50k-v2] 21:38:01   phi @ step 3000: min=43.16570280737955 mean=44.14334107311786 δ=0.5
+[paradigm-j-50k-v2] 21:38:01   SAVEPOINT @ step 3000 → /tmp/p9_paradigm_j_50k_v2_savepoints/step_3000
+[paradigm-j-50k-v2] 21:38:08 step 3100/50000 L=86.1996 ce=7.2135 tens=7.1891 phi_h=0.0000 F_J=0.0041 (KL=0.0000 rec=0.0040) δ=0.5 α=11.850
+[paradigm-j-50k-v2] 21:38:14 step 3200/50000 L=92.7477 ce=7.8442 tens=9.7020 phi_h=0.0000 F_J=0.0039 (KL=0.0000 rec=0.0039) δ=0.5 α=11.700
+[paradigm-j-50k-v2] 21:38:20 step 3300/50000 L=83.3861 ce=7.1424 tens=8.9059 phi_h=0.0000 F_J=0.0038 (KL=0.0000 rec=0.0038) δ=0.5 α=11.550
+[paradigm-j-50k-v2] 21:38:27 step 3400/50000 L=76.7572 ce=6.6312 tens=11.6066 phi_h=0.0000 F_J=0.0037 (KL=0.0000 rec=0.0037) δ=0.5 α=11.400
+[paradigm-j-50k-v2] 21:38:33 step 3500/50000 L=81.5617 ce=7.1517 tens=11.0389 phi_h=0.0000 F_J=0.0036 (KL=0.0000 rec=0.0036) δ=0.5 α=11.250
+[paradigm-j-50k-v2] 21:38:33   phi @ step 3500: min=43.432171295729304 mean=43.993208872830465 δ=0.5
+[paradigm-j-50k-v2] 21:38:40 step 3600/50000 L=80.9638 ce=7.2125 tens=9.0423 phi_h=0.0000 F_J=0.0035 (KL=0.0000 rec=0.0035) δ=0.5 α=11.100
+[paradigm-j-50k-v2] 21:38:46 step 3700/50000 L=84.4561 ce=7.6023 tens=12.1000 phi_h=0.0000 F_J=0.0035 (KL=0.0000 rec=0.0035) δ=0.5 α=10.950
+[paradigm-j-50k-v2] 21:38:52 step 3800/50000 L=72.3764 ce=6.6237 tens=8.3924 phi_h=0.0000 F_J=0.0034 (KL=0.0000 rec=0.0034) δ=0.5 α=10.800
+[paradigm-j-50k-v2] 21:38:58 step 3900/50000 L=82.1070 ce=7.6165 tens=9.9109 phi_h=0.0000 F_J=0.0034 (KL=0.0000 rec=0.0033) δ=0.5 α=10.650
+[paradigm-j-50k-v2] 21:39:05 step 4000/50000 L=63.3421 ce=5.9384 tens=9.8825 phi_h=0.0000 F_J=0.0033 (KL=0.0000 rec=0.0033) δ=0.5 α=10.500
+[paradigm-j-50k-v2] 21:39:05   phi @ step 4000: min=42.262253611935115 mean=43.440385152598886 δ=0.5
+[paradigm-j-50k-v2] 21:39:05   SAVEPOINT @ step 4000 → /tmp/p9_paradigm_j_50k_v2_savepoints/step_4000
+[paradigm-j-50k-v2] 21:39:05   pruned old savepoint step_1000
+[paradigm-j-50k-v2] 21:39:11 step 4100/50000 L=72.3561 ce=6.8863 tens=10.8207 phi_h=0.0000 F_J=0.0032 (KL=0.0000 rec=0.0032) δ=0.5 α=10.350
+[paradigm-j-50k-v2] 21:39:18 step 4200/50000 L=66.7251 ce=6.4124 tens=13.1852 phi_h=0.0000 F_J=0.0031 (KL=0.0000 rec=0.0031) δ=0.5 α=10.200
+[paradigm-j-50k-v2] 21:39:24 step 4300/50000 L=73.5722 ce=7.2090 tens=11.2137 phi_h=0.0000 F_J=0.0030 (KL=0.0000 rec=0.0030) δ=0.5 α=10.050
+[paradigm-j-50k-v2] 21:39:31 step 4400/50000 L=64.5036 ce=6.4138 tens=10.0662 phi_h=0.0000 F_J=0.0030 (KL=0.0000 rec=0.0030) δ=0.5 α=9.900
+[paradigm-j-50k-v2] 21:39:37 step 4500/50000 L=64.6109 ce=6.5237 tens=10.0457 phi_h=0.0000 F_J=0.0029 (KL=0.0000 rec=0.0029) δ=0.5 α=9.750
+[paradigm-j-50k-v2] 21:39:37   phi @ step 4500: min=43.6406303265894 mean=44.36969167272401 δ=0.5
+[paradigm-j-50k-v2] 21:39:43 step 4600/50000 L=62.1839 ce=6.3428 tens=12.9238 phi_h=0.0000 F_J=0.0029 (KL=0.0000 rec=0.0028) δ=0.5 α=9.600
+[paradigm-j-50k-v2] 21:39:50 step 4700/50000 L=62.3893 ce=6.5250 tens=7.2784 phi_h=0.0000 F_J=0.0028 (KL=0.0000 rec=0.0028) δ=0.5 α=9.450
+[paradigm-j-50k-v2] 21:39:56 step 4800/50000 L=63.5247 ce=6.7107 tens=11.1480 phi_h=0.0000 F_J=0.0028 (KL=0.0000 rec=0.0028) δ=0.5 α=9.300

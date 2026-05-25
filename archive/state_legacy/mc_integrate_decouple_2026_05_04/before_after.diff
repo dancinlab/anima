@@ -1,0 +1,60 @@
+diff --git a/modules/mc_integrate/mc_integrate.hexa b/modules/mc_integrate/mc_integrate.hexa
+index 122719e4..65ea035e 100644
+--- a/modules/mc_integrate/mc_integrate.hexa
++++ b/modules/mc_integrate/mc_integrate.hexa
+@@ -129,12 +129,50 @@ fn _file_exists(p: string) -> bool {
+     return false
+ }
+ 
+-fn _seed_anu() -> int {
++// _resolve_anu_source — 4-tier resolution for the ANU bootstrap source.
++//
++// Priority order (decoupled from nexus/sim_bridge/godel_q hardcode):
++//   1. MC_INTEGRATE_ANU_SOURCE env var — explicit override (full path to .hexa)
++//   2. ANU_SOURCE_HEXA env var — generic override
++//   3. ~/core/sim-universe/modules/godel_q/anu_source.hexa (sister standalone)
++//   4. ~/core/nexus/sim_bridge/godel_q/anu_source.hexa (legacy nexus path; back-compat)
++// Returns "" if no candidate exists. Caller falls back to urandom.
++fn _resolve_anu_source() -> string {
++    let env1 = to_string(exec("printenv MC_INTEGRATE_ANU_SOURCE 2>/dev/null || true")).trim()
++    if len(env1) > 0 { if _file_exists(env1) { return env1 } }
++    let env2 = to_string(exec("printenv ANU_SOURCE_HEXA 2>/dev/null || true")).trim()
++    if len(env2) > 0 { if _file_exists(env2) { return env2 } }
++    let home = env_var("HOME")
++    let cand_simu = home + "/core/sim-universe/modules/godel_q/anu_source.hexa"
++    if _file_exists(cand_simu) { return cand_simu }
++    let cand_nexus = home + "/core/nexus/sim_bridge/godel_q/anu_source.hexa"
++    if _file_exists(cand_nexus) { return cand_nexus }
++    return ""
++}
++
++// _resolve_hexa_bin — locate the hexa interpreter binary (4-tier).
++//   1. HEXA_BIN env var
++//   2. `command -v hexa`
++//   3. ~/.hx/bin/hexa  (canonical hx-managed location)
++//   4. ~/core/hexa-lang/hexa  (dev checkout fallback)
++fn _resolve_hexa_bin() -> string {
++    let env_bin = to_string(exec("printenv HEXA_BIN 2>/dev/null || true")).trim()
++    if len(env_bin) > 0 { if _file_exists(env_bin) { return env_bin } }
++    let path_bin = to_string(exec("command -v hexa 2>/dev/null || true")).trim()
++    if len(path_bin) > 0 { if _file_exists(path_bin) { return path_bin } }
+     let home = env_var("HOME")
+-    let anu_src = home + "/core/nexus/sim_bridge/godel_q/anu_source.hexa"
+-    let bin = home + "/core/hexa-lang/hexa"
+-    if !_file_exists(anu_src) { return 0 - 1 }
+-    if !_file_exists(bin) { return 0 - 1 }
++    let hx_bin = home + "/.hx/bin/hexa"
++    if _file_exists(hx_bin) { return hx_bin }
++    let dev_bin = home + "/core/hexa-lang/hexa"
++    if _file_exists(dev_bin) { return dev_bin }
++    return ""
++}
++
++fn _seed_anu() -> int {
++    let anu_src = _resolve_anu_source()
++    if len(anu_src) == 0 { return 0 - 1 }
++    let bin = _resolve_hexa_bin()
++    if len(bin) == 0 { return 0 - 1 }
+     let cmd = "'" + bin + "' run '" + anu_src + "' 2>/dev/null | head -c 32"
+     let hex = to_string(exec(cmd)).trim()
+     if len(hex) < 16 { return 0 - 1 }

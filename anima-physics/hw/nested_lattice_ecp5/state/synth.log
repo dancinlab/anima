@@ -1,0 +1,1940 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, clang++ 21.0.0 -fPIC -O3)
+
+-- Running command `
+        read_verilog /Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v /Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v
+        synth_ecp5 -top nested_lattice_top -json /Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/state/nested_lattice.json
+        stat
+    ' --
+
+1. Executing Verilog-2005 frontend: /Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v
+Parsing Verilog input from `/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v' to AST representation.
+Generating RTLIL representation for module `\mix3'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: /Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v
+Parsing Verilog input from `/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v' to AST representation.
+Generating RTLIL representation for module `\nested_lattice_top'.
+Successfully finished Verilog frontend.
+
+3. Executing SYNTH_LATTICE pass.
+
+3.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/cells_sim_ecp5.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/cells_sim_ecp5.v' to AST representation.
+Generating RTLIL representation for module `\LUT4'.
+Generating RTLIL representation for module `\$__ABC9_LUT5'.
+Generating RTLIL representation for module `\$__ABC9_LUT6'.
+Generating RTLIL representation for module `\$__ABC9_LUT7'.
+Generating RTLIL representation for module `\L6MUX21'.
+Generating RTLIL representation for module `\TRELLIS_RAM16X2'.
+Generating RTLIL representation for module `\PFUMX'.
+Generating RTLIL representation for module `\TRELLIS_DPR16X4'.
+Generating RTLIL representation for module `\DPR16X4C'.
+Generating RTLIL representation for module `\LUT2'.
+Generating RTLIL representation for module `\TRELLIS_FF'.
+Generating RTLIL representation for module `\TRELLIS_IO'.
+Generating RTLIL representation for module `\INV'.
+Generating RTLIL representation for module `\TRELLIS_COMB'.
+Generating RTLIL representation for module `\VLO'.
+Generating RTLIL representation for module `\VHI'.
+Generating RTLIL representation for module `\FD1P3AX'.
+Generating RTLIL representation for module `\FD1P3AY'.
+Generating RTLIL representation for module `\FD1P3BX'.
+Generating RTLIL representation for module `\FD1P3DX'.
+Generating RTLIL representation for module `\FD1P3IX'.
+Generating RTLIL representation for module `\FD1P3JX'.
+Generating RTLIL representation for module `\FD1S3AX'.
+Generating RTLIL representation for module `\FD1S3AY'.
+Generating RTLIL representation for module `\FD1S3BX'.
+Generating RTLIL representation for module `\FD1S3DX'.
+Generating RTLIL representation for module `\FD1S3IX'.
+Generating RTLIL representation for module `\FD1S3JX'.
+Generating RTLIL representation for module `\IFS1P3BX'.
+Generating RTLIL representation for module `\IFS1P3DX'.
+Generating RTLIL representation for module `\IFS1P3IX'.
+Generating RTLIL representation for module `\IFS1P3JX'.
+Generating RTLIL representation for module `\OFS1P3BX'.
+Generating RTLIL representation for module `\OFS1P3DX'.
+Generating RTLIL representation for module `\OFS1P3IX'.
+Generating RTLIL representation for module `\OFS1P3JX'.
+Generating RTLIL representation for module `\IB'.
+Generating RTLIL representation for module `\IBPU'.
+Generating RTLIL representation for module `\IBPD'.
+Generating RTLIL representation for module `\OB'.
+Generating RTLIL representation for module `\OBZ'.
+Generating RTLIL representation for module `\OBZPU'.
+Generating RTLIL representation for module `\OBZPD'.
+Generating RTLIL representation for module `\OBCO'.
+Generating RTLIL representation for module `\BB'.
+Generating RTLIL representation for module `\BBPU'.
+Generating RTLIL representation for module `\BBPD'.
+Generating RTLIL representation for module `\ILVDS'.
+Generating RTLIL representation for module `\OLVDS'.
+Generating RTLIL representation for module `\CCU2C'.
+Generating RTLIL representation for module `\DP16KD'.
+Replacing existing blackbox module `\FD1P3AX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:2.1-2.261.
+Generating RTLIL representation for module `\FD1P3AX'.
+Replacing existing blackbox module `\FD1P3AY' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:3.1-3.261.
+Generating RTLIL representation for module `\FD1P3AY'.
+Replacing existing blackbox module `\FD1P3BX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:4.1-4.261.
+Generating RTLIL representation for module `\FD1P3BX'.
+Replacing existing blackbox module `\FD1P3DX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:5.1-5.261.
+Generating RTLIL representation for module `\FD1P3DX'.
+Replacing existing blackbox module `\FD1P3IX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:6.1-6.261.
+Generating RTLIL representation for module `\FD1P3IX'.
+Replacing existing blackbox module `\FD1P3JX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:7.1-7.261.
+Generating RTLIL representation for module `\FD1P3JX'.
+Replacing existing blackbox module `\FD1S3AX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:8.1-8.261.
+Generating RTLIL representation for module `\FD1S3AX'.
+Replacing existing blackbox module `\FD1S3AY' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:9.1-9.261.
+Generating RTLIL representation for module `\FD1S3AY'.
+Replacing existing blackbox module `\FD1S3BX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:10.1-10.261.
+Generating RTLIL representation for module `\FD1S3BX'.
+Replacing existing blackbox module `\FD1S3DX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:11.1-11.261.
+Generating RTLIL representation for module `\FD1S3DX'.
+Replacing existing blackbox module `\FD1S3IX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:12.1-12.261.
+Generating RTLIL representation for module `\FD1S3IX'.
+Replacing existing blackbox module `\FD1S3JX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:13.1-13.261.
+Generating RTLIL representation for module `\FD1S3JX'.
+Replacing existing blackbox module `\IFS1P3BX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:26.1-26.301.
+Generating RTLIL representation for module `\IFS1P3BX'.
+Replacing existing blackbox module `\IFS1P3DX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:27.1-27.301.
+Generating RTLIL representation for module `\IFS1P3DX'.
+Replacing existing blackbox module `\IFS1P3IX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:28.1-28.301.
+Generating RTLIL representation for module `\IFS1P3IX'.
+Replacing existing blackbox module `\IFS1P3JX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:29.1-29.301.
+Generating RTLIL representation for module `\IFS1P3JX'.
+Replacing existing blackbox module `\OFS1P3BX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:31.1-31.302.
+Generating RTLIL representation for module `\OFS1P3BX'.
+Replacing existing blackbox module `\OFS1P3DX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:32.1-32.302.
+Generating RTLIL representation for module `\OFS1P3DX'.
+Replacing existing blackbox module `\OFS1P3IX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:33.1-33.302.
+Generating RTLIL representation for module `\OFS1P3IX'.
+Replacing existing blackbox module `\OFS1P3JX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:34.1-34.302.
+Generating RTLIL representation for module `\OFS1P3JX'.
+Replacing existing blackbox module `\IB' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:2.1-2.157.
+Generating RTLIL representation for module `\IB'.
+Replacing existing blackbox module `\IBPU' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:3.1-3.157.
+Generating RTLIL representation for module `\IBPU'.
+Replacing existing blackbox module `\IBPD' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:4.1-4.157.
+Generating RTLIL representation for module `\IBPD'.
+Replacing existing blackbox module `\OB' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:5.1-5.157.
+Generating RTLIL representation for module `\OB'.
+Replacing existing blackbox module `\OBZ' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:6.1-6.164.
+Generating RTLIL representation for module `\OBZ'.
+Replacing existing blackbox module `\OBZPU' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:7.1-7.164.
+Generating RTLIL representation for module `\OBZPU'.
+Replacing existing blackbox module `\OBZPD' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:8.1-8.164.
+Generating RTLIL representation for module `\OBZPD'.
+Replacing existing blackbox module `\OBCO' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:9.1-9.90.
+Generating RTLIL representation for module `\OBCO'.
+Replacing existing blackbox module `\BB' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:10.1-10.179.
+Generating RTLIL representation for module `\BB'.
+Replacing existing blackbox module `\BBPU' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:11.1-11.179.
+Generating RTLIL representation for module `\BBPU'.
+Replacing existing blackbox module `\BBPD' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:12.1-12.179.
+Generating RTLIL representation for module `\BBPD'.
+Replacing existing blackbox module `\ILVDS' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:13.1-13.139.
+Generating RTLIL representation for module `\ILVDS'.
+Replacing existing blackbox module `\OLVDS' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:14.1-14.146.
+Generating RTLIL representation for module `\OLVDS'.
+Successfully finished Verilog frontend.
+
+3.2. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/cells_bb_ecp5.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/cells_bb_ecp5.v' to AST representation.
+Generating RTLIL representation for module `\GSR'.
+Generating RTLIL representation for module `\PUR'.
+Generating RTLIL representation for module `\SGSR'.
+Generating RTLIL representation for module `\PDPW16KD'.
+Generating RTLIL representation for module `\MULT18X18D'.
+Generating RTLIL representation for module `\ALU54B'.
+Generating RTLIL representation for module `\CLKDIVF'.
+Generating RTLIL representation for module `\PCSCLKDIV'.
+Generating RTLIL representation for module `\DCSC'.
+Generating RTLIL representation for module `\DCCA'.
+Generating RTLIL representation for module `\ECLKSYNCB'.
+Generating RTLIL representation for module `\ECLKBRIDGECS'.
+Generating RTLIL representation for module `\DELAYF'.
+Generating RTLIL representation for module `\DELAYG'.
+Generating RTLIL representation for module `\USRMCLK'.
+Generating RTLIL representation for module `\DQSBUFM'.
+Generating RTLIL representation for module `\DDRDLLA'.
+Generating RTLIL representation for module `\DLLDELD'.
+Generating RTLIL representation for module `\IDDRX1F'.
+Generating RTLIL representation for module `\IDDRX2F'.
+Generating RTLIL representation for module `\IDDR71B'.
+Generating RTLIL representation for module `\IDDRX2DQA'.
+Generating RTLIL representation for module `\ODDRX1F'.
+Generating RTLIL representation for module `\ODDRX2F'.
+Generating RTLIL representation for module `\ODDR71B'.
+Generating RTLIL representation for module `\OSHX2A'.
+Generating RTLIL representation for module `\TSHX2DQA'.
+Generating RTLIL representation for module `\TSHX2DQSA'.
+Generating RTLIL representation for module `\ODDRX2DQA'.
+Generating RTLIL representation for module `\ODDRX2DQSB'.
+Generating RTLIL representation for module `\EHXPLLL'.
+Generating RTLIL representation for module `\DTR'.
+Generating RTLIL representation for module `\OSCG'.
+Generating RTLIL representation for module `\EXTREFB'.
+Generating RTLIL representation for module `\JTAGG'.
+Generating RTLIL representation for module `\DCUA'.
+Successfully finished Verilog frontend.
+
+3.3. Executing HIERARCHY pass (managing design hierarchy).
+
+3.3.1. Analyzing design hierarchy..
+Top module:  \nested_lattice_top
+Used module:     \mix3
+
+3.3.2. Analyzing design hierarchy..
+Top module:  \nested_lattice_top
+Used module:     \mix3
+Removed 0 unused modules.
+
+3.4. Executing PROC pass (convert processes to netlists).
+
+3.4.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.4.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12 in module nested_lattice_top.
+Removed a total of 0 dead cases.
+
+3.4.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 0 assignments to connections.
+
+3.4.4. Executing PROC_INIT pass (extract init attributes).
+
+3.4.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+
+3.4.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+3.4.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+     1/15: $0\m1[2:0]
+     2/15: $0\m0[2:0]
+     3/15: $0\c3[2:0]
+     4/15: $0\c2[2:0]
+     5/15: $0\c1[2:0]
+     6/15: $0\c0[2:0]
+     7/15: $0\b3[2:0]
+     8/15: $0\b2[2:0]
+     9/15: $0\b1[2:0]
+    10/15: $0\b0[2:0]
+    11/15: $0\a3[2:0]
+    12/15: $0\a2[2:0]
+    13/15: $0\a1[2:0]
+    14/15: $0\a0[2:0]
+    15/15: $0\step_count[15:0]
+
+3.4.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.4.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\nested_lattice_top.\step_count' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$274' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\a0' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$279' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\a1' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$284' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\a2' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$289' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\a3' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$294' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\b0' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$299' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\b1' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$304' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\b2' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$309' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\b3' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$314' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\c0' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$319' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\c1' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$324' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\c2' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$329' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\c3' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$334' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\m0' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$339' with positive edge clock and positive level reset.
+Creating register for signal `\nested_lattice_top.\m1' using process `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+  created $adff cell `$procdff$344' with positive edge clock and positive level reset.
+
+3.4.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.4.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 1 empty switch in `\nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+Removing empty process `nested_lattice_top.$proc$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:111$12'.
+Cleaned up 1 empty switch.
+
+3.4.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+<suppressed ~30 debug messages>
+Optimizing module mix3.
+<suppressed ~1 debug messages>
+
+3.5. Executing CHECK pass (checking for obvious problems).
+Checking module nested_lattice_top...
+Checking module mix3...
+Found and reported 0 problems.
+
+3.6. Executing FLATTEN pass (flatten design).
+Deleting now unused module mix3.
+<suppressed ~14 debug messages>
+
+3.7. Executing TRIBUF pass.
+
+3.8. Executing DEMINOUT pass (demote inout ports to input or output).
+
+3.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.10. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+Removed 16 unused cells and 122 unused wires.
+<suppressed ~17 debug messages>
+
+3.11. Executing CHECK pass (checking for obvious problems).
+Checking module nested_lattice_top...
+Found and reported 0 problems.
+
+3.12. Executing OPT pass (performing simple optimizations).
+
+3.12.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.12.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 120 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.12.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \nested_lattice_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+      Replacing known input bits on port A of cell $flatten\u_na0.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_na0.sum [2:0] -> { 1'0 \u_na0.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_na1.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_na1.sum [2:0] -> { 1'0 \u_na1.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_na2.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_na2.sum [2:0] -> { 1'0 \u_na2.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_na3.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_na3.sum [2:0] -> { 1'0 \u_na3.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nb0.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_nb0.sum [2:0] -> { 1'0 \u_nb0.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nb1.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_nb1.sum [2:0] -> { 1'0 \u_nb1.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nb2.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_nb2.sum [2:0] -> { 1'0 \u_nb2.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nb3.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_nb3.sum [2:0] -> { 1'0 \u_nb3.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nc0.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_nc0.sum [2:0] -> { 1'0 \u_nc0.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nc1.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_nc1.sum [2:0] -> { 1'0 \u_nc1.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nc2.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_nc2.sum [2:0] -> { 1'0 \u_nc2.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nc3.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_nc3.sum [2:0] -> { 1'0 \u_nc3.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nm0.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_nm0.sum [2:0] -> { 1'0 \u_nm0.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nm1.$ternary$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:29$6: \u_nm1.sum [2:0] -> { 1'0 \u_nm1.sum [1:0] }
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~44 debug messages>
+
+3.12.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \nested_lattice_top.
+Performed a total of 0 changes.
+
+3.12.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 120 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.12.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.12.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+
+3.12.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.12.9. Finished fast OPT passes. (There is nothing left to do.)
+
+3.13. Executing FSM pass (extract and optimize FSM).
+
+3.13.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+3.13.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+3.13.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.13.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+
+3.13.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.13.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+3.13.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+3.13.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+3.14. Executing OPT pass (performing simple optimizations).
+
+3.14.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.14.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 120 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \nested_lattice_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~44 debug messages>
+
+3.14.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \nested_lattice_top.
+Performed a total of 0 changes.
+
+3.14.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 120 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.14.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$274 ($adff) from module nested_lattice_top (D = $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:123$14_Y, Q = \step_count).
+Adding EN signal on $procdff$344 ($adff) from module nested_lattice_top (D = \nm1, Q = \m1).
+Adding EN signal on $procdff$279 ($adff) from module nested_lattice_top (D = \na0, Q = \a0).
+Adding EN signal on $procdff$324 ($adff) from module nested_lattice_top (D = \nc1, Q = \c1).
+Adding EN signal on $procdff$284 ($adff) from module nested_lattice_top (D = \na1, Q = \a1).
+Adding EN signal on $procdff$289 ($adff) from module nested_lattice_top (D = \na2, Q = \a2).
+Adding EN signal on $procdff$339 ($adff) from module nested_lattice_top (D = \nm0, Q = \m0).
+Adding EN signal on $procdff$294 ($adff) from module nested_lattice_top (D = \na3, Q = \a3).
+Adding EN signal on $procdff$329 ($adff) from module nested_lattice_top (D = \nc2, Q = \c2).
+Adding EN signal on $procdff$299 ($adff) from module nested_lattice_top (D = \nb0, Q = \b0).
+Adding EN signal on $procdff$304 ($adff) from module nested_lattice_top (D = \nb1, Q = \b1).
+Adding EN signal on $procdff$309 ($adff) from module nested_lattice_top (D = \nb2, Q = \b2).
+Adding EN signal on $procdff$334 ($adff) from module nested_lattice_top (D = \nc3, Q = \c3).
+Adding EN signal on $procdff$314 ($adff) from module nested_lattice_top (D = \nb3, Q = \b3).
+Adding EN signal on $procdff$319 ($adff) from module nested_lattice_top (D = \nc0, Q = \c0).
+
+3.14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+Removed 15 unused cells and 15 unused wires.
+<suppressed ~16 debug messages>
+
+3.14.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.14.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.14.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \nested_lattice_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~28 debug messages>
+
+3.14.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \nested_lattice_top.
+Performed a total of 0 changes.
+
+3.14.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 105 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.14.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.14.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+
+3.14.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.14.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.15. Executing WREDUCE pass (reducing word size of cells).
+Removed top 15 bits (of 16) from port B of cell nested_lattice_top.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:123$14 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_na0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_na1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_na2.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_na3.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_nb0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_nb1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_nb2.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_nb3.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_nc0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_nc1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_nc2.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_nc3.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_nm0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 1 bits (of 3) from port B of cell nested_lattice_top.$flatten\u_nm1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+Removed top 1 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 1 bits (of 4) from port B of cell nested_lattice_top.$flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+Removed top 2 bits (of 5) from port A of cell nested_lattice_top.$flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port B of cell nested_lattice_top.$flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell nested_lattice_top.$flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2_Y.
+Removed top 2 bits (of 5) from wire nested_lattice_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1_Y.
+
+3.16. Executing PEEPOPT pass (run peephole optimizers).
+
+3.17. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+Removed 0 unused cells and 28 unused wires.
+<suppressed ~1 debug messages>
+
+3.18. Executing SHARE pass (SAT-based resource sharing).
+
+3.19. Executing TECHMAP pass (map to technology primitives).
+
+3.19.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/cmp2lut.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/cmp2lut.v' to AST representation.
+Generating RTLIL representation for module `\_90_lut_cmp_'.
+Successfully finished Verilog frontend.
+
+3.19.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~6 debug messages>
+
+3.20. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+
+3.22. Executing TECHMAP pass (map to technology primitives).
+
+3.22.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/mul2dsp.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/mul2dsp.v' to AST representation.
+Generating RTLIL representation for module `\_80_mul'.
+Generating RTLIL representation for module `\_90_soft_mul'.
+Successfully finished Verilog frontend.
+
+3.22.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~4 debug messages>
+
+3.23. Executing TECHMAP pass (map to technology primitives).
+
+3.23.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/dsp_map_18x18.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/dsp_map_18x18.v' to AST representation.
+Generating RTLIL representation for module `$__MUL18X18'.
+Successfully finished Verilog frontend.
+
+3.23.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~3 debug messages>
+
+3.24. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module nested_lattice_top:
+  creating $macc model for $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_nb3.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_nb2.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_nb1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_nb0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_na3.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_na2.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_na1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_na0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_nm0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_nm1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_nc3.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_nc0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_nc1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $flatten\u_nc2.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4 ($sub).
+  creating $macc model for $flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3 ($add).
+  creating $macc model for $flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:123$14 ($add).
+  creating $macc model for $flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:86$11 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:85$10 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:84$9 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:83$8 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:82$7 ($add).
+  merging $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:82$7 into $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1.
+  merging $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:83$8 into $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1.
+  merging $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:84$9 into $flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1.
+  merging $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:85$10 into $flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1.
+  merging $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:86$11 into $flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1.
+  merging $macc model for $flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2.
+  merging $macc model for $flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2.
+  merging $macc model for $flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2.
+  merging $macc model for $flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$2 into $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  merging $macc model for $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$1 into $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3.
+  creating $alu model for $macc $flatten\u_nm0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $flatten\u_nc2.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:123$14.
+  creating $alu model for $macc $flatten\u_na0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $flatten\u_na1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $flatten\u_na2.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $flatten\u_na3.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $flatten\u_nm1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $flatten\u_nb0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $flatten\u_nc0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $flatten\u_nb1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $flatten\u_nc1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $flatten\u_nb2.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $flatten\u_nc3.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $alu model for $macc $flatten\u_nb3.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4.
+  creating $macc cell for $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$403
+  creating $macc cell for $flatten\u_nc0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$404
+  creating $macc cell for $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$405
+  creating $macc cell for $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$406
+  creating $macc cell for $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$407
+  creating $macc cell for $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$408
+  creating $macc cell for $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$409
+  creating $macc cell for $flatten\u_nc3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$410
+  creating $macc cell for $flatten\u_nm0.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$411
+  creating $macc cell for $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$412
+  creating $macc cell for $flatten\u_nm1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$413
+  creating $macc cell for $flatten\u_nc1.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$414
+  creating $macc cell for $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$415
+  creating $macc cell for $flatten\u_nc2.$add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:24$3: $auto$alumacc.cc:382:replace_macc$416
+  creating $alu cell for $flatten\u_nb3.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$417
+  creating $alu cell for $flatten\u_nc3.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$420
+  creating $alu cell for $flatten\u_nb2.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$423
+  creating $alu cell for $flatten\u_nc1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$426
+  creating $alu cell for $flatten\u_nb1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$429
+  creating $alu cell for $flatten\u_nc0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$432
+  creating $alu cell for $flatten\u_nb0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$435
+  creating $alu cell for $flatten\u_nm1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$438
+  creating $alu cell for $flatten\u_na3.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$441
+  creating $alu cell for $flatten\u_na2.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$444
+  creating $alu cell for $flatten\u_na1.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$447
+  creating $alu cell for $flatten\u_na0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$450
+  creating $alu cell for $add$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/nested_lattice_top.v:123$14: $auto$alumacc.cc:512:replace_alu$453
+  creating $alu cell for $flatten\u_nc2.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$456
+  creating $alu cell for $flatten\u_nm0.$sub$/Users/ghost/core/anima/anima-physics/hw/nested_lattice_ecp5/src/mix3.v:28$4: $auto$alumacc.cc:512:replace_alu$459
+  created 15 $alu and 14 $macc cells.
+
+3.25. Executing OPT pass (performing simple optimizations).
+
+3.25.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.25.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 105 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.25.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \nested_lattice_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~28 debug messages>
+
+3.25.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \nested_lattice_top.
+Performed a total of 0 changes.
+
+3.25.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 105 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.25.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.25.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+Removed 33 unused cells and 38 unused wires.
+<suppressed ~44 debug messages>
+
+3.25.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.25.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.25.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \nested_lattice_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~28 debug messages>
+
+3.25.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \nested_lattice_top.
+Performed a total of 0 changes.
+
+3.25.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 72 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.25.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.25.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+
+3.25.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.25.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.26. Executing MEMORY pass.
+
+3.26.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+3.26.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+3.26.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+3.26.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+3.26.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+3.26.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+
+3.26.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+3.26.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+3.26.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+
+3.26.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+3.27. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+
+3.28. Executing MEMORY_LIBMAP pass (mapping memories to cells).
+
+3.29. Executing TECHMAP pass (map to technology primitives).
+
+3.29.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/lutrams_map_trellis.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/lutrams_map_trellis.v' to AST representation.
+Generating RTLIL representation for module `$__TRELLIS_DPR16X4_'.
+Successfully finished Verilog frontend.
+
+3.29.2. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/brams_map_16kd.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/brams_map_16kd.v' to AST representation.
+Generating RTLIL representation for module `$__DP16KD_'.
+Generating RTLIL representation for module `$__PDPW16KD_'.
+Successfully finished Verilog frontend.
+
+3.29.3. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~5 debug messages>
+
+3.30. Executing OPT pass (performing simple optimizations).
+
+3.30.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+<suppressed ~25 debug messages>
+
+3.30.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 72 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.30.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.30.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+
+3.30.5. Finished fast OPT passes.
+
+3.31. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+3.32. Executing OPT pass (performing simple optimizations).
+
+3.32.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.32.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 72 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.32.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \nested_lattice_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~28 debug messages>
+
+3.32.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \nested_lattice_top.
+Performed a total of 0 changes.
+
+3.32.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 72 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.32.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.32.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+
+3.32.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.32.9. Finished fast OPT passes. (There is nothing left to do.)
+
+3.33. Executing TECHMAP pass (map to technology primitives).
+
+3.33.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+3.33.2. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/arith_map_ccu2c.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/arith_map_ccu2c.v' to AST representation.
+Generating RTLIL representation for module `\_80_ccu2c_alu'.
+Successfully finished Verilog frontend.
+
+3.33.3. Continuing TECHMAP pass.
+Using template $paramod$2116a631f856d4d4902c2618dca73dafa3b8c9c0\_90_alu for cells of type $alu.
+Using template $paramod$2af30114e9bd4ccb04dad757b3f0a8f6bf0615b0\_80_ccu2c_alu for cells of type $alu.
+Using extmapper maccmap for cells of type $macc_v2.
+  add \c2 (3 bits, unsigned)
+  add { \b2 [1:0] 1'0 } (3 bits, unsigned)
+  add \a2 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \a3 (3 bits, unsigned)
+  add { \a2 [1:0] 1'0 } (3 bits, unsigned)
+  add \a3 (3 bits, unsigned)
+  add \m1 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \c1 (3 bits, unsigned)
+  add { \b1 [1:0] 1'0 } (3 bits, unsigned)
+  add \a1 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \m1 (3 bits, unsigned)
+  add { \c2 [1:0] 1'0 } (3 bits, unsigned)
+  add \b3 (3 bits, unsigned)
+  add \c3 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \a2 (3 bits, unsigned)
+  add { \a1 [1:0] 1'0 } (3 bits, unsigned)
+  add \a2 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \m0 (3 bits, unsigned)
+  add { \c1 [1:0] 1'0 } (3 bits, unsigned)
+  add \a0 (3 bits, unsigned)
+  add \c0 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \c3 (3 bits, unsigned)
+  add { \b3 [1:0] 1'0 } (3 bits, unsigned)
+  add \a3 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \a1 (3 bits, unsigned)
+  add { \a0 [1:0] 1'0 } (3 bits, unsigned)
+  add \a1 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \b2 (3 bits, unsigned)
+  add { \b3 [1:0] 1'0 } (3 bits, unsigned)
+  add \b2 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \b1 (3 bits, unsigned)
+  add { \b2 [1:0] 1'0 } (3 bits, unsigned)
+  add \b1 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \a0 (3 bits, unsigned)
+  add { \a3 [1:0] 1'0 } (3 bits, unsigned)
+  add \a0 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \b0 (3 bits, unsigned)
+  add { \b1 [1:0] 1'0 } (3 bits, unsigned)
+  add \b0 (3 bits, unsigned)
+  add \m0 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \c0 (3 bits, unsigned)
+  add { \b0 [1:0] 1'0 } (3 bits, unsigned)
+  add \a0 (3 bits, unsigned)
+  add \m0 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \b3 (3 bits, unsigned)
+  add { \b0 [1:0] 1'0 } (3 bits, unsigned)
+  add \b3 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+Using extmapper simplemap for cells of type $adffe.
+Using extmapper simplemap for cells of type $mux.
+Using template $paramod$78e969f2586efcf3a5b0b0440bcca0db83d5cca2\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000011 for cells of type $fa.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000011 for cells of type $lcu.
+Using extmapper simplemap for cells of type $pos.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $logic_or.
+Using extmapper simplemap for cells of type $logic_and.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $and.
+No more expansions possible.
+<suppressed ~966 debug messages>
+
+3.34. Executing OPT pass (performing simple optimizations).
+
+3.34.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+<suppressed ~786 debug messages>
+
+3.34.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 498 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Computing hashes of 482 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Computing hashes of 480 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Computing hashes of 477 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Computing hashes of 475 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+<suppressed ~69 debug messages>
+Removed a total of 23 cells.
+
+3.34.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.34.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+Removed 145 unused cells and 1412 unused wires.
+<suppressed ~146 debug messages>
+
+3.34.5. Finished fast OPT passes.
+
+3.35. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+
+3.36. Executing DFFLEGALIZE pass (convert FFs to types supported by the target).
+
+3.37. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 388 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Computing hashes of 331 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+<suppressed ~171 debug messages>
+Removed a total of 57 cells.
+
+3.38. Executing TECHMAP pass (map to technology primitives).
+
+3.38.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/cells_map_trellis.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/cells_map_trellis.v' to AST representation.
+Generating RTLIL representation for module `$_DFF_N_'.
+Generating RTLIL representation for module `$_DFF_P_'.
+Generating RTLIL representation for module `$_DFFE_NN_'.
+Generating RTLIL representation for module `$_DFFE_PN_'.
+Generating RTLIL representation for module `$_DFFE_NP_'.
+Generating RTLIL representation for module `$_DFFE_PP_'.
+Generating RTLIL representation for module `$_DFF_NP0_'.
+Generating RTLIL representation for module `$_DFF_NP1_'.
+Generating RTLIL representation for module `$_DFF_PP0_'.
+Generating RTLIL representation for module `$_DFF_PP1_'.
+Generating RTLIL representation for module `$_SDFF_NP0_'.
+Generating RTLIL representation for module `$_SDFF_NP1_'.
+Generating RTLIL representation for module `$_SDFF_PP0_'.
+Generating RTLIL representation for module `$_SDFF_PP1_'.
+Generating RTLIL representation for module `$_DFFE_NP0P_'.
+Generating RTLIL representation for module `$_DFFE_NP1P_'.
+Generating RTLIL representation for module `$_DFFE_PP0P_'.
+Generating RTLIL representation for module `$_DFFE_PP1P_'.
+Generating RTLIL representation for module `$_DFFE_NP0N_'.
+Generating RTLIL representation for module `$_DFFE_NP1N_'.
+Generating RTLIL representation for module `$_DFFE_PP0N_'.
+Generating RTLIL representation for module `$_DFFE_PP1N_'.
+Generating RTLIL representation for module `$_SDFFE_NP0P_'.
+Generating RTLIL representation for module `$_SDFFE_NP1P_'.
+Generating RTLIL representation for module `$_SDFFE_PP0P_'.
+Generating RTLIL representation for module `$_SDFFE_PP1P_'.
+Generating RTLIL representation for module `$_SDFFE_NP0N_'.
+Generating RTLIL representation for module `$_SDFFE_NP1N_'.
+Generating RTLIL representation for module `$_SDFFE_PP0N_'.
+Generating RTLIL representation for module `$_SDFFE_PP1N_'.
+Generating RTLIL representation for module `$_ALDFF_NP_'.
+Generating RTLIL representation for module `$_ALDFF_PP_'.
+Generating RTLIL representation for module `$_ALDFFE_NPN_'.
+Generating RTLIL representation for module `$_ALDFFE_NPP_'.
+Generating RTLIL representation for module `$_ALDFFE_PPN_'.
+Generating RTLIL representation for module `$_ALDFFE_PPP_'.
+Generating RTLIL representation for module `\FD1P3AX'.
+Generating RTLIL representation for module `\FD1P3AY'.
+Generating RTLIL representation for module `\FD1P3BX'.
+Generating RTLIL representation for module `\FD1P3DX'.
+Generating RTLIL representation for module `\FD1P3IX'.
+Generating RTLIL representation for module `\FD1P3JX'.
+Generating RTLIL representation for module `\FD1S3AX'.
+Generating RTLIL representation for module `\FD1S3AY'.
+Generating RTLIL representation for module `\FD1S3BX'.
+Generating RTLIL representation for module `\FD1S3DX'.
+Generating RTLIL representation for module `\FD1S3IX'.
+Generating RTLIL representation for module `\FD1S3JX'.
+Generating RTLIL representation for module `\IFS1P3BX'.
+Generating RTLIL representation for module `\IFS1P3DX'.
+Generating RTLIL representation for module `\IFS1P3IX'.
+Generating RTLIL representation for module `\IFS1P3JX'.
+Generating RTLIL representation for module `\OFS1P3BX'.
+Generating RTLIL representation for module `\OFS1P3DX'.
+Generating RTLIL representation for module `\OFS1P3IX'.
+Generating RTLIL representation for module `\OFS1P3JX'.
+Generating RTLIL representation for module `\IB'.
+Generating RTLIL representation for module `\IBPU'.
+Generating RTLIL representation for module `\IBPD'.
+Generating RTLIL representation for module `\OB'.
+Generating RTLIL representation for module `\OBZ'.
+Generating RTLIL representation for module `\OBZPU'.
+Generating RTLIL representation for module `\OBZPD'.
+Generating RTLIL representation for module `\OBCO'.
+Generating RTLIL representation for module `\BB'.
+Generating RTLIL representation for module `\BBPU'.
+Generating RTLIL representation for module `\BBPD'.
+Generating RTLIL representation for module `\ILVDS'.
+Generating RTLIL representation for module `\OLVDS'.
+Successfully finished Verilog frontend.
+
+3.38.2. Continuing TECHMAP pass.
+Using template $_DFFE_PP0P_ for cells of type $_DFFE_PP0P_.
+Using template $_DFFE_PP1P_ for cells of type $_DFFE_PP1P_.
+No more expansions possible.
+<suppressed ~129 debug messages>
+
+3.39. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.40. Executing SIMPLEMAP pass (map simple cells to gate primitives).
+
+3.41. Executing LATTICE_GSR pass (implement FF init values).
+Handling GSR in nested_lattice_top.
+
+3.42. Executing ATTRMVCP pass (move or copy attributes).
+
+3.43. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+Removed 0 unused cells and 405 unused wires.
+<suppressed ~1 debug messages>
+
+3.44. Executing TECHMAP pass (map to technology primitives).
+
+3.44.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/latches_map.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/latches_map.v' to AST representation.
+Generating RTLIL representation for module `$_DLATCH_N_'.
+Generating RTLIL representation for module `$_DLATCH_P_'.
+Successfully finished Verilog frontend.
+
+3.44.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~4 debug messages>
+
+3.45. Executing ABC9 pass.
+
+3.45.1. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.45.2. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.45.3. Executing PROC pass (convert processes to netlists).
+
+3.45.3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.45.3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2341 in module $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.
+Removed a total of 0 dead cases.
+
+3.45.3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 1 assignment to connection.
+
+3.45.3.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2342'.
+  Set init value: \Q = 1'0
+
+3.45.3.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \muxlsr in `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2341'.
+
+3.45.3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+3.45.3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2342'.
+Creating decoders for process `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2341'.
+     1/1: $0\Q[0:0]
+
+3.45.3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.45.3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.\Q' using process `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2341'.
+  created $adff cell `$procdff$2347' with positive edge clock and positive level reset.
+
+3.45.3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.45.3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2342'.
+Found and cleaned up 1 empty switch in `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2341'.
+Removing empty process `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2341'.
+Cleaned up 1 empty switch.
+
+3.45.4. Executing PROC pass (convert processes to netlists).
+
+3.45.4.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.45.4.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2355 in module $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.
+Removed a total of 0 dead cases.
+
+3.45.4.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 1 assignment to connection.
+
+3.45.4.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2356'.
+  Set init value: \Q = 1'1
+
+3.45.4.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \muxlsr in `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2355'.
+
+3.45.4.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+3.45.4.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2356'.
+Creating decoders for process `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2355'.
+     1/1: $0\Q[0:0]
+
+3.45.4.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.45.4.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.\Q' using process `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2355'.
+  created $adff cell `$procdff$2361' with positive edge clock and positive level reset.
+
+3.45.4.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.45.4.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2356'.
+Found and cleaned up 1 empty switch in `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2355'.
+Removing empty process `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2355'.
+Cleaned up 1 empty switch.
+
+3.45.5. Executing SCC pass (detecting logic loops).
+Found 0 SCCs in module nested_lattice_top.
+Found 0 SCCs.
+
+3.45.6. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.45.7. Executing TECHMAP pass (map to technology primitives).
+
+3.45.7.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+3.45.7.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~170 debug messages>
+
+3.45.8. Executing OPT pass (performing simple optimizations).
+
+3.45.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.
+Optimizing module $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.
+
+3.45.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF'.
+Computing hashes of 2 cells of `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF'.
+Finding duplicate cells in `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF'.
+Finding identical cells in module `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF'.
+Computing hashes of 2 cells of `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF'.
+Finding duplicate cells in `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF'.
+Removed a total of 0 cells.
+
+3.45.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.45.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.
+  Optimizing cells in module $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.
+Performed a total of 0 changes.
+
+3.45.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF'.
+Computing hashes of 2 cells of `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF'.
+Finding duplicate cells in `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF'.
+Finding identical cells in module `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF'.
+Computing hashes of 2 cells of `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF'.
+Finding duplicate cells in `$paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF'.
+Removed a total of 0 cells.
+
+3.45.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.45.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF..
+Finding unused cells or wires in module $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF..
+
+3.45.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.
+Optimizing module $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.
+
+3.45.8.9. Finished fast OPT passes. (There is nothing left to do.)
+
+3.45.9. Executing TECHMAP pass (map to technology primitives).
+
+3.45.9.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/abc9_map.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/abc9_map.v' to AST representation.
+Successfully finished Verilog frontend.
+
+3.45.9.2. Continuing TECHMAP pass.
+Using template $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF for cells of type $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.
+Using template $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF for cells of type $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.
+No more expansions possible.
+<suppressed ~62 debug messages>
+
+3.45.10. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/abc9_model.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/abc9_model.v' to AST representation.
+Generating RTLIL representation for module `$__ABC9_DELAY'.
+Generating RTLIL representation for module `$__ABC9_SCC_BREAKER'.
+Generating RTLIL representation for module `$__DFF_N__$abc9_flop'.
+Generating RTLIL representation for module `$__DFF_P__$abc9_flop'.
+Successfully finished Verilog frontend.
+
+3.45.11. Executing ABC9_OPS pass (helper functions for ABC9).
+<suppressed ~2 debug messages>
+
+3.45.12. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.45.13. Executing ABC9_OPS pass (helper functions for ABC9).
+<suppressed ~2 debug messages>
+
+3.45.14. Executing TECHMAP pass (map to technology primitives).
+
+3.45.14.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+3.45.14.2. Continuing TECHMAP pass.
+Using template $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C for cells of type $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod\LUT2\INIT=4'1010 for cells of type LUT2.
+Using template $paramod\LUT4\INIT=16'1001011010101010 for cells of type LUT4.
+Using extmapper simplemap for cells of type $mux.
+No more expansions possible.
+<suppressed ~209 debug messages>
+
+3.45.15. Executing OPT pass (performing simple optimizations).
+
+3.45.15.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+<suppressed ~18 debug messages>
+
+3.45.15.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 59 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Computing hashes of 57 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+<suppressed ~6 debug messages>
+Removed a total of 2 cells.
+
+3.45.15.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \nested_lattice_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.45.15.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \nested_lattice_top.
+Performed a total of 0 changes.
+
+3.45.15.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 57 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.45.15.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.45.15.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+Removed 0 unused cells and 55 unused wires.
+<suppressed ~1 debug messages>
+
+3.45.15.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.45.15.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.45.15.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \nested_lattice_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.45.15.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \nested_lattice_top.
+Performed a total of 0 changes.
+
+3.45.15.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\nested_lattice_top'.
+Computing hashes of 57 cells of `\nested_lattice_top'.
+Finding duplicate cells in `\nested_lattice_top'.
+Removed a total of 0 cells.
+
+3.45.15.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.45.15.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \nested_lattice_top..
+
+3.45.15.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module nested_lattice_top.
+
+3.45.15.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.45.16. Executing AIGMAP pass (map logic to AIG).
+Module nested_lattice_top: replaced 18 cells with 120 new cells, skipped 39 cells.
+  replaced 3 cell types:
+      14 $_MUX_
+       2 $_OR_
+       2 $_XOR_
+  not replaced 3 cell types:
+       4 $_AND_
+       4 $_NOT_
+      31 $specify2
+
+3.45.17. Executing AIGMAP pass (map logic to AIG).
+Module nested_lattice_top: replaced 167 cells with 1121 new cells, skipped 222 cells.
+  replaced 3 cell types:
+      36 $_MUX_
+      16 $_OR_
+     115 $_XOR_
+  not replaced 8 cell types:
+      51 $_AND_
+      33 $_NOT_
+      14 $scopeinfo
+      43 $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF
+      15 $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF
+       8 $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C
+      43 $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF_$abc9_byp
+      15 $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF_$abc9_byp
+
+3.45.17.1. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.45.17.2. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.45.17.3. Executing XAIGER backend.
+<suppressed ~11 debug messages>
+Extracted 520 AND gates and 1392 wires from module `nested_lattice_top' to a netlist network with 61 inputs and 117 outputs.
+
+3.45.17.4. Executing ABC9_EXE pass (technology mapping using ABC9).
+
+3.45.17.5. Executing ABC9.
+Running ABC command: "<yosys-exe-dir>/yosys-abc" -s -f <abc-temp-dir>/abc.script 2>&1
+ABC: ======== ABC command line "source <abc-temp-dir>/abc.script"
+ABC: + read_lut <abc-temp-dir>/input.lut 
+ABC: + read_box <abc-temp-dir>/input.box 
+ABC: + &read <abc-temp-dir>/input.xaig 
+ABC: + &ps 
+ABC: <abc-temp-dir>/input : i/o =     61/    117  and =     423  lev =   15 (1.27)  mem = 0.01 MB  box = 66  bb = 58
+ABC: + &scorr 
+ABC: Warning: The network is combinational.
+ABC: + &sweep 
+ABC: + &dc2 
+ABC: + &dch -f -r 
+ABC: + &ps 
+ABC: <abc-temp-dir>/input : i/o =     61/    117  and =     493  lev =   15 (1.10)  mem = 0.01 MB  ch =   52  box = 66  bb = 58
+ABC: cst =       0  cls =     52  lit =      52  unused =     532  proof =     0
+ABC: + &if -W 300 -v 
+ABC: K = 7. Memory (bytes): Truth =    0. Cut =   76. Obj =  156. Set =  780. CutMin = no
+ABC: Node =     493.  Ch =    52.  Total mem =    0.15 MB. Peak cut mem =    0.04 MB.
+ABC: P:  Del = 1575.00.  Ar =     201.0.  Edge =      295.  Cut =     9165.  T =     0.00 sec
+ABC: P:  Del = 1575.00.  Ar =     201.0.  Edge =      295.  Cut =     9153.  T =     0.00 sec
+ABC: P:  Del = 1575.00.  Ar =     162.0.  Edge =      315.  Cut =    13805.  T =     0.00 sec
+ABC: F:  Del = 1575.00.  Ar =     117.0.  Edge =      276.  Cut =     9374.  T =     0.00 sec
+ABC: A:  Del = 1575.00.  Ar =     109.0.  Edge =      271.  Cut =     9656.  T =     0.00 sec
+ABC: A:  Del = 1575.00.  Ar =     109.0.  Edge =      271.  Cut =     9639.  T =     0.00 sec
+ABC: Total time =     0.01 sec
+ABC: + &write -n <abc-temp-dir>/output.aig 
+ABC: + &mfs 
+ABC: The network is not changed by "&mfs".
+ABC: + &ps -l 
+ABC: <abc-temp-dir>/input : i/o =     61/    117  and =     620  lev =   15 (1.10)  mem = 0.02 MB  box = 66  bb = 58
+ABC: Mapping (K=7)  :  lut =     67  edge =     271  lev =    3 (0.30)  levB =    9  mem = 0.01 MB
+ABC: LUT = 67 : 2=1 1.5 %  3=18 26.9 %  4=38 56.7 %  5=0 0.0 %  6=7 10.4 %  7=3 4.5 %  Ave = 4.04
+ABC: + &write -n <abc-temp-dir>/output.aig 
+ABC: + &verify 
+ABC: Networks are equivalent.  Time =     0.01 sec
+ABC: + time 
+ABC: elapse: 0.03 seconds, total: 0.03 seconds
+
+3.45.17.6. Executing AIGER frontend.
+<suppressed ~366 debug messages>
+Removed 1117 unused cells and 1582 unused wires.
+
+3.45.17.7. Executing ABC9_OPS pass (helper functions for ABC9).
+ABC RESULTS:              $lut cells:       69
+ABC RESULTS:   $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C cells:        8
+ABC RESULTS:   $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF_$abc9_byp cells:       43
+ABC RESULTS:   $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF_$abc9_byp cells:       15
+ABC RESULTS:           input signals:       61
+ABC RESULTS:          output signals:       18
+Removing temp directory.
+
+3.45.18. Executing TECHMAP pass (map to technology primitives).
+
+3.45.18.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/abc9_unmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/abc9_unmap.v' to AST representation.
+Generating RTLIL representation for module `$__DFF_x__$abc9_flop'.
+Generating RTLIL representation for module `$__ABC9_SCC_BREAKER'.
+Successfully finished Verilog frontend.
+
+3.45.18.2. Continuing TECHMAP pass.
+Using template $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF for cells of type $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.
+Using template $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF_$abc9_byp for cells of type $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF_$abc9_byp.
+Using template $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C for cells of type $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C.
+Using template $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF for cells of type $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF.
+Using template $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF_$abc9_byp for cells of type $paramod$b50ed6cf3f2b5c0e07657602cb4455d90f2562f9\TRELLIS_FF_$abc9_byp.
+No more expansions possible.
+<suppressed ~134 debug messages>
+Removed 3 unused cells and 2676 unused wires.
+
+3.46. Executing TECHMAP pass (map to technology primitives).
+
+3.46.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/cells_map_trellis.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/cells_map_trellis.v' to AST representation.
+Generating RTLIL representation for module `$_DFF_N_'.
+Generating RTLIL representation for module `$_DFF_P_'.
+Generating RTLIL representation for module `$_DFFE_NN_'.
+Generating RTLIL representation for module `$_DFFE_PN_'.
+Generating RTLIL representation for module `$_DFFE_NP_'.
+Generating RTLIL representation for module `$_DFFE_PP_'.
+Generating RTLIL representation for module `$_DFF_NP0_'.
+Generating RTLIL representation for module `$_DFF_NP1_'.
+Generating RTLIL representation for module `$_DFF_PP0_'.
+Generating RTLIL representation for module `$_DFF_PP1_'.
+Generating RTLIL representation for module `$_SDFF_NP0_'.
+Generating RTLIL representation for module `$_SDFF_NP1_'.
+Generating RTLIL representation for module `$_SDFF_PP0_'.
+Generating RTLIL representation for module `$_SDFF_PP1_'.
+Generating RTLIL representation for module `$_DFFE_NP0P_'.
+Generating RTLIL representation for module `$_DFFE_NP1P_'.
+Generating RTLIL representation for module `$_DFFE_PP0P_'.
+Generating RTLIL representation for module `$_DFFE_PP1P_'.
+Generating RTLIL representation for module `$_DFFE_NP0N_'.
+Generating RTLIL representation for module `$_DFFE_NP1N_'.
+Generating RTLIL representation for module `$_DFFE_PP0N_'.
+Generating RTLIL representation for module `$_DFFE_PP1N_'.
+Generating RTLIL representation for module `$_SDFFE_NP0P_'.
+Generating RTLIL representation for module `$_SDFFE_NP1P_'.
+Generating RTLIL representation for module `$_SDFFE_PP0P_'.
+Generating RTLIL representation for module `$_SDFFE_PP1P_'.
+Generating RTLIL representation for module `$_SDFFE_NP0N_'.
+Generating RTLIL representation for module `$_SDFFE_NP1N_'.
+Generating RTLIL representation for module `$_SDFFE_PP0N_'.
+Generating RTLIL representation for module `$_SDFFE_PP1N_'.
+Generating RTLIL representation for module `$_ALDFF_NP_'.
+Generating RTLIL representation for module `$_ALDFF_PP_'.
+Generating RTLIL representation for module `$_ALDFFE_NPN_'.
+Generating RTLIL representation for module `$_ALDFFE_NPP_'.
+Generating RTLIL representation for module `$_ALDFFE_PPN_'.
+Generating RTLIL representation for module `$_ALDFFE_PPP_'.
+Generating RTLIL representation for module `\FD1P3AX'.
+Generating RTLIL representation for module `\FD1P3AY'.
+Generating RTLIL representation for module `\FD1P3BX'.
+Generating RTLIL representation for module `\FD1P3DX'.
+Generating RTLIL representation for module `\FD1P3IX'.
+Generating RTLIL representation for module `\FD1P3JX'.
+Generating RTLIL representation for module `\FD1S3AX'.
+Generating RTLIL representation for module `\FD1S3AY'.
+Generating RTLIL representation for module `\FD1S3BX'.
+Generating RTLIL representation for module `\FD1S3DX'.
+Generating RTLIL representation for module `\FD1S3IX'.
+Generating RTLIL representation for module `\FD1S3JX'.
+Generating RTLIL representation for module `\IFS1P3BX'.
+Generating RTLIL representation for module `\IFS1P3DX'.
+Generating RTLIL representation for module `\IFS1P3IX'.
+Generating RTLIL representation for module `\IFS1P3JX'.
+Generating RTLIL representation for module `\OFS1P3BX'.
+Generating RTLIL representation for module `\OFS1P3DX'.
+Generating RTLIL representation for module `\OFS1P3IX'.
+Generating RTLIL representation for module `\OFS1P3JX'.
+Generating RTLIL representation for module `\IB'.
+Generating RTLIL representation for module `\IBPU'.
+Generating RTLIL representation for module `\IBPD'.
+Generating RTLIL representation for module `\OB'.
+Generating RTLIL representation for module `\OBZ'.
+Generating RTLIL representation for module `\OBZPU'.
+Generating RTLIL representation for module `\OBZPD'.
+Generating RTLIL representation for module `\OBCO'.
+Generating RTLIL representation for module `\BB'.
+Generating RTLIL representation for module `\BBPU'.
+Generating RTLIL representation for module `\BBPD'.
+Generating RTLIL representation for module `\ILVDS'.
+Generating RTLIL representation for module `\OLVDS'.
+Generating RTLIL representation for module `$lut'.
+Successfully finished Verilog frontend.
+
+3.46.2. Continuing TECHMAP pass.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'10010110 for cells of type $lut.
+Using template $paramod$6f625205336ac6ce7b8747324becdbce1049bc9c$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'01100011 for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000010\LUT=4'1001 for cells of type $lut.
+Using template $paramod$5f040d122da80f91213eae559ad561a9bcf34e5b$lut for cells of type $lut.
+Using template $paramod$4282def8dbd6df3d1248ad282c629bee684502c2$lut for cells of type $lut.
+Using template $paramod$39a86449ae8523b31e0839626a8ec80562431992$lut for cells of type $lut.
+Using template $paramod$a20d493743c6e762e93052351143ea302aa9a813$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'01101001 for cells of type $lut.
+Using template $paramod$595b4955041ceff09e28d600fe79275c24ba9878$lut for cells of type $lut.
+Using template $paramod$fd904e9e35cfd343a9df248824bd3f1408724879$lut for cells of type $lut.
+Using template $paramod$ef65616ade632b717306d3d0b0ba51ca32e18d76$lut for cells of type $lut.
+Using template $paramod$c01aefe1868624e86d07fe8dcc315b26954f8000$lut for cells of type $lut.
+Using template $paramod$c3b7275b8ddcb5674da7cc0066ba523b0bdc3ebf$lut for cells of type $lut.
+Using template $paramod$175104ad114973f30397e1a69eae08cff730fc58$lut for cells of type $lut.
+Using template $paramod$f857bdfd499f2d260fec7676092360e160d92149$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'11010010 for cells of type $lut.
+Using template $paramod$243fb93e736df5581df7bafa378886f2bdf5bea9$lut for cells of type $lut.
+Using template $paramod$b6b4523bf27476cbcd93f3bb21a33c1b0356ab5d$lut for cells of type $lut.
+Using template $paramod$286d6b18e782cb14d345c8422500571fedf77570$lut for cells of type $lut.
+Using template $paramod$1142521e27dabbedeb51320be15c59309358a940$lut for cells of type $lut.
+Using template $paramod$8f1adf75db9b306439703812085e57db63548c9a$lut for cells of type $lut.
+Using template $paramod$c67ff654dfa9062d61db52bd013fb1271e5b9a9b$lut for cells of type $lut.
+Using template $paramod$7f0c33ebaba0ede46854143fc6bff56677faafba$lut for cells of type $lut.
+Using template $paramod$c54bd6c33a75b92a5c1a0a63b947d0598bf77e3b$lut for cells of type $lut.
+Using template $paramod$bbb10333e84a7e80f65e1494ebbfbf3f28568fcd$lut for cells of type $lut.
+Using template $paramod$7fa49b35e5e800381275fb118a5611b789ac7649$lut for cells of type $lut.
+Using template $paramod$b5c0aa1df47f5d62d9f34fca23dca1fd346f4e04$lut for cells of type $lut.
+Using template $paramod$620cb3737cee90698ac86ed2f3db6d4152ab0c82$lut for cells of type $lut.
+Using template $paramod$9acd2019cab5fd77d6f6cf765d713ffcc8752b28$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'00000100 for cells of type $lut.
+Using template $paramod$2f7deae5fb594b0c70bb82efd4d3682a7baaa352$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000001\LUT=2'01 for cells of type $lut.
+No more expansions possible.
+<suppressed ~570 debug messages>
+
+3.47. Executing OPT_LUT_INS pass (discard unused LUT inputs).
+Optimizing LUTs in nested_lattice_top.
+  Optimizing lut $abc$5119$lut\nm0[2].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 0)
+  Optimizing lut $abc$5119$lut\nm0[2].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 0)
+  Optimizing lut $abc$5119$lut$aiger5118$340.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 3)
+  Optimizing lut $abc$5119$lut$aiger5118$340.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 3)
+  Optimizing lut $abc$5119$lut$aiger5118$340.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut6 (4 -> 3)
+  Optimizing lut $abc$5119$lut$aiger5118$340.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut7 (4 -> 3)
+  Optimizing lut $abc$5119$lut$aiger5118$475.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 3)
+  Optimizing lut $abc$5119$lut$aiger5118$475.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut5 (4 -> 3)
+  Optimizing lut $abc$5119$lut$aiger5118$475.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut7 (4 -> 3)
+  Optimizing lut $abc$5119$lut$aiger5118$446.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 3)
+  Optimizing lut $abc$5119$lut\nc0[2].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut1 (4 -> 0)
+  Optimizing lut $abc$5119$lut\nc0[2].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 0)
+  Optimizing lut $abc$5119$lut$aiger5118$475.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut1 (4 -> 3)
+  Optimizing lut $abc$5119$lut$aiger5118$446.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut1 (4 -> 3)
+Removed 0 unused cells and 147 unused wires.
+
+3.48. Executing AUTONAME pass.
+Renamed 330 objects in module nested_lattice_top (35 iterations).
+<suppressed ~330 debug messages>
+
+3.49. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `nested_lattice_top'. Setting top module to nested_lattice_top.
+
+3.49.1. Analyzing design hierarchy..
+Top module:  \nested_lattice_top
+
+3.49.2. Analyzing design hierarchy..
+Top module:  \nested_lattice_top
+Removed 0 unused modules.
+
+3.50. Printing statistics.
+
+=== nested_lattice_top ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      223 wires
+      595 wire bits
+      223 public wires
+      595 public wire bits
+        5 ports
+       61 port bits
+       14 cells
+       14   $scopeinfo
+      219 submodules
+        8   CCU2C
+       16   L6MUX21
+      111   LUT4
+       26   PFUMX
+       58   TRELLIS_FF
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+       14 nested_lattice_top
+
+        +----------Count including submodules.
+        | 
+      223 wires
+      595 wire bits
+      223 public wires
+      595 public wire bits
+        5 ports
+       61 port bits
+        - memories
+        - memory bits
+        - processes
+       14 cells
+       14   $scopeinfo
+      219 submodules
+        8   CCU2C
+       16   L6MUX21
+      111   LUT4
+       26   PFUMX
+       58   TRELLIS_FF
+
+3.51. Executing CHECK pass (checking for obvious problems).
+Checking module nested_lattice_top...
+Found and reported 0 problems.
+
+3.52. Executing JSON backend.
+
+4. Printing statistics.
+
+=== nested_lattice_top ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      223 wires
+      595 wire bits
+      223 public wires
+      595 public wire bits
+        5 ports
+       61 port bits
+      233 cells
+       14   $scopeinfo
+        8   CCU2C
+       16   L6MUX21
+      111   LUT4
+       26   PFUMX
+       58   TRELLIS_FF
+
+End of script. Logfile hash: c0f3fd16c2, time: 0.42s, user: 0.35s, system: 0.02s, MEM: 45.12 MB peak
+Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, clang++ 21.0.0 -fPIC -O3)
+Time spent: 52% 22x read_verilog (0 sec), 13% 1x abc9_exe (0 sec), ...

@@ -1,0 +1,68 @@
+{
+  "schema": "anima/n_substrate_n13_prep/f1_weight/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "n13_track": "Photonic-IIT (T1-A13)",
+  "f1_composite_purpose": "own#2 (b) multi-substrate convergence verdict (Putnam multi-realizability empirical anchor)",
+
+  "weight_factors": {
+    "substrate_distinctness": {
+      "value": 0.95,
+      "scale": "0 (identical to existing N-tracks) to 1 (fully novel ontology)",
+      "rationale": "Photonic substrate is ontologically distinct from CLM (digital float), AKIDA (spike-event), EEG (biological signal), QRNG (quantum noise) -- continuous-amplitude optical field is a genuinely new substrate class"
+    },
+    "measurement_maturity": {
+      "value": 0.10,
+      "scale": "0 (zero published methodology) to 1 (well-established gold standard)",
+      "rationale": "Zero published refs for IIT-Phi on photonic substrates (verified 2026-05-01 web search). Most immature among all N-tracks"
+    },
+    "access_path_readiness": {
+      "value": 0.20,
+      "scale": "0 (impossible) to 1 (immediately actionable on $0 budget)",
+      "rationale": "All 4 vendors lack public cloud API. Vendor partnership or hardware purchase required. Pricing undisclosed for PCIe SKUs"
+    },
+    "falsifier_strength": {
+      "value": 0.85,
+      "scale": "0 (no falsifier) to 1 (full BIDIRECTIONAL with null + cross-axis)",
+      "rationale": "5 pre-registered predicates with null floor (PRED-4) + cross-axis dependency (PRED-2 with N-3, PRED-5 with N-4) + inter-vendor consistency (PRED-3)"
+    }
+  },
+
+  "raw_weight_now": 0.0162,
+  "raw_weight_calculation": "0.95 * 0.10 * 0.20 * 0.85 = 0.01615",
+
+  "comparable_n_tracks": {
+    "N_3_clm_akida": {
+      "weight_estimate": "0.40 - 0.60",
+      "factors_estimate": "distinctness 0.85, maturity 0.70, access 0.80, falsifier 0.85"
+    },
+    "N_1_clm_eeg": {
+      "weight_estimate": "0.50 - 0.70",
+      "factors_estimate": "distinctness 0.80, maturity 0.85, access 0.95, falsifier 0.85"
+    },
+    "N_19_pci_clinical": {
+      "weight_estimate": "0.60 - 0.80",
+      "factors_estimate": "distinctness 0.90, maturity 0.95 (PCI clinical gold standard), access 0.50 (TMS rental needed), falsifier 0.90"
+    }
+  },
+
+  "n13_contribution_scenarios": [
+    {
+      "timepoint": "2026-05-01 (now)",
+      "n13_status": "spec only, 0 measurements",
+      "f1_contribution": "0 (counted in N-track denominator only, numerator 0)"
+    },
+    {
+      "timepoint": "T+6mo (estimated, vendor partnership + first P-A measurement)",
+      "n13_status": "PASS likely outcome",
+      "f1_contribution": "+0.5 to +1.0 percent of composite (marginal but real, adds 4th substrate axis)"
+    },
+    {
+      "timepoint": "T+12mo (continuous-state IIT methodology if academic gap closes + 3-vendor cross via PRED-3)",
+      "n13_status": "weight rises to 0.30 - 0.50",
+      "f1_contribution": "Substrate diversity 4th axis -- own#2 (b) 'Phi extends to optical substrate' strong closure"
+    }
+  ],
+
+  "n13_alone_cannot_close_own2b": true,
+  "n13_role_in_f1": "BOOST after majority of N-1 / N-3 / N-19 / N-11 / N-12 PASS. Acts as photonic substrate diversity anchor, not standalone closure mechanism"
+}

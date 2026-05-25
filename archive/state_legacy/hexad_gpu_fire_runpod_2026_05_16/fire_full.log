@@ -1,0 +1,75 @@
+=== HOST ===
+9889ed435eed
+Sat May 16 10:46:03 UTC 2026
+NVIDIA A100-SXM4-80GB, 81920 MiB, 590.48.01
+Cuda compilation tools, release 12.4, V12.4.131
+Build cuda_12.4.r12.4/compiler.34097967_0
+=== stage hexa binary + sidecar ===
+/Users/ghost/core/anima/HEXAD/D/:
+total 36
+drwxr-xr-x 2 root root    73 May 16 10:46 .
+drwxr-xr-x 3 root root    23 May 16 10:45 ..
+-rw-r--r-- 1 root root  2231 May 16 10:46 corpus_loader_lib.hexa
+-rw-r--r-- 1 root root 29326 May 16 10:46 d_train5_lib.hexa
+
+/Users/ghost/core/anima/training/:
+total 152
+drwxr-xr-x 2 root root     51 May 16 10:46 .
+drwxr-xr-x 4 root root     47 May 16 10:45 ..
+-rw-r--r-- 1 root root 151943 May 16 10:46 corpus_consciousness_v1.jsonl
+=== [GPU SMOKE] build runtime_cuda.c (nvcc, links cublas) — rfc040 real-GPU proof ===
+RUNTIME_CUDA_COMPILE_RC=0
+-rw-r--r-- 1 root root 10664 May 16 10:46 runtime_cuda.o
+0000000000000350 T _Z21_hx_cuda_farr_to_hostl
+0000000000000330 T _Z23_hx_cuda_farr_to_devicel
+00000000000004d0 T _Z24_hx_cuda_farr_matmul_gpullllll
+0000000000000440 T _Z25_hx_cuda_farr_device_freel
+00000000000002d0 T _Z26_hx_cuda_device_count_implv
+0000000000000270 T _Z26_hx_cuda_runtime_availablev
+0000000000000008 b _ZL8g_cublas
+                 U cublasCreate_v2
+                 U cublasDgemm_v2
+                 U cudaMalloc
+=== [GPU SMOKE] cuBLAS matmul bench (5 shapes) — nvidia-smi util>0 proof ===
+BENCH_BUILD_RC=0
+[bench] device 0: pci=0000:4E:00.0 (cc=8.0, 81152 MB total)
+[bench] M=64 K=64 N=64 warm=3 iter=200
+[bench]  cpu_ms=0.11 gpu_ms_avg=0.011 gflops=48.5 max|Δ|=4.441e-15 max_rel=2.162e-13
+[bench] M=256 K=256 N=256 warm=3 iter=100
+[bench]  cpu_ms=8.56 gpu_ms_avg=0.010 gflops=3531.9 max|Δ|=1.066e-14 max_rel=1.409e-11
+[bench] M=512 K=512 N=512 warm=2 iter=50
+[bench]  cpu_ms=65.46 gpu_ms_avg=0.031 gflops=8585.8 max|Δ|=2.487e-14 max_rel=2.118e-10
+[bench] M=768 K=768 N=768 warm=2 iter=30
+[bench]  cpu_ms=205.98 gpu_ms_avg=0.075 gflops=12032.1 max|Δ|=2.842e-14 max_rel=4.665e-10
+[bench] M=1024 K=1024 N=1024 warm=2 iter=20
+[bench]  cpu_ms=486.21 gpu_ms_avg=0.159 gflops=13525.7 max|Δ|=3.197e-14 max_rel=1.085e-10
+[bench] M=768 K=3072 N=768 warm=2 iter=20
+[bench]  cpu_ms=1194.27 gpu_ms_avg=0.275 gflops=13172.1 max|Δ|=3.695e-13 max_rel=5.896e-10
+[bench] M=768 K=768 N=3072 warm=2 iter=20
+[bench]  cpu_ms=1390.53 gpu_ms_avg=0.273 gflops=13270.4 max|Δ|=1.137e-13 max_rel=3.363e-09
+[bench] DONE — 7 shapes
+BENCH_RUN_RC=0
+=== gpu_matmul_bench_result.json ===
+{
+  "device_pci": "0000:4E:00.0",
+  "device_cc": "8.0",
+  "device_mem_mb": 81152,
+  "shapes": [
+  { "M":64, "K":64, "N":64, "cpu_ms":0.111, "gpu_ms_avg":0.0108, "gpu_gflops":48.50, "max_abs_delta":4.441e-15, "max_rel_delta":2.162e-13, "n_iter":200 },
+  { "M":256, "K":256, "N":256, "cpu_ms":8.565, "gpu_ms_avg":0.0095, "gpu_gflops":3531.89, "max_abs_delta":1.066e-14, "max_rel_delta":1.409e-11, "n_iter":100 },
+  { "M":512, "K":512, "N":512, "cpu_ms":65.455, "gpu_ms_avg":0.0313, "gpu_gflops":8585.84, "max_abs_delta":2.487e-14, "max_rel_delta":2.118e-10, "n_iter":50 },
+  { "M":768, "K":768, "N":768, "cpu_ms":205.983, "gpu_ms_avg":0.0753, "gpu_gflops":12032.09, "max_abs_delta":2.842e-14, "max_rel_delta":4.665e-10, "n_iter":30 },
+  { "M":1024, "K":1024, "N":1024, "cpu_ms":486.206, "gpu_ms_avg":0.1588, "gpu_gflops":13525.66, "max_abs_delta":3.197e-14, "max_rel_delta":1.085e-10, "n_iter":20 },
+  { "M":768, "K":3072, "N":768, "cpu_ms":1194.272, "gpu_ms_avg":0.2751, "gpu_gflops":13172.05, "max_abs_delta":3.695e-13, "max_rel_delta":5.896e-10, "n_iter":20 },
+  { "M":768, "K":768, "N":3072, "cpu_ms":1390.529, "gpu_ms_avg":0.2731, "gpu_gflops":13270.37, "max_abs_delta":1.137e-13, "max_rel_delta":3.363e-09, "n_iter":20 }
+  ]
+}
+=== nvidia-smi during-bench (top 8 by util) ===
+0 %, 425 MiB, 67.73 W
+0 %, 425 MiB, 67.45 W
+0 %, 425 MiB, 67.45 W
+0 %, 0 MiB, 61.07 W
+=== [d_corpus_fire] d=256 4L nh=4 nkv=2 h=512 T=64 nsamp=16 80step seed=44 ===
+================================================================
+d_corpus_fire — §7 #1 real-corpus from-scratch FIRE (F-D-FIRE)
+================================================================

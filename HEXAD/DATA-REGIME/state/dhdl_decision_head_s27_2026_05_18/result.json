@@ -1,0 +1,112 @@
+{
+  "research_md_section": "§27",
+  "cycle": "DH-DL — Decision-Head Dual-Loss (§26 candidate #1, design-mature → corpus → fire → eval → battery → verdict)",
+  "date": "2026-05-18",
+  "tier": "FIRE-TIER ($0 Mac CPU — no GPU fire needed; head consumes only physics features)",
+  "cost_usd": 0.0,
+  "cost_note": "$0 Mac CPU. corpus generation + head training + eval all pure-fn / numpy-vectorized, NO model.forward, NO GPU. GPU fire would only be needed if the head sat on a live Engine A hidden stream; DESIGN_DHDL.md §2 establishes it does not (decision target is fully determined by the 14-dim physics feature vector). Honest cost minimization, NOT a gate.",
+
+  "design_mature": {
+    "head_architecture": "standalone thin MLP 14 -> 32 -> 16 -> 3, ReLU hidden, softmax out (~700 params, <<1% of 283.72M base — scale-orthogonal)",
+    "engine_a_tap_point": "the 14-dim physics feature vector IS the Engine A decision-relevant state; no live hidden-tensor tap (would add cost without signal)",
+    "dual_loss": {
+      "L": "L_decision + lambda * L_safety,  lambda = 0.5",
+      "L_decision": "class-weighted categorical cross-entropy over 3 labels (B-DHDL-3 Shannon CE >= 0)",
+      "L_safety": "lambda * (1 - safety_extended_ok) * p[EMIT_VOICE]^2  — quadratically penalizes EMIT mass when the 6-control safety conjunction trips (B-DHDL-3 nonneg by construction; differentiable analogue of the B-DHDL-4 hard safety override)"
+    }
+  },
+
+  "corpus": {
+    "generator": "trace_corpus_generator.py",
+    "n_traces": 2400,
+    "steps_per_trace": 20,
+    "record_count": 48000,
+    "sha256": "d55ad3765f8f718eb03c59bd31938aa78b8528a511140d38b2776a736a3c4aee",
+    "seed": 1337,
+    "label_distribution": {
+      "CONTINUE_THINK": 9,
+      "EMIT_VOICE": 2128,
+      "REMAIN_SILENT": 45863
+    },
+    "label_fractions": {
+      "CONTINUE_THINK": 0.0001875,
+      "EMIT_VOICE": 0.044333,
+      "REMAIN_SILENT": 0.955479
+    },
+    "b_identity_5_forbidden_token_total": 0,
+    "diversity_note": "2400 traces each draw a distinct deterministic LCG perturbation vector (seed 1337 + phi*idx) over phi/retrieve/curiosity/tension/bridge/split/ratchet + safety-control trips + a 45% low-motivation band — diverse physics trajectories, NOT replays of the single §24 run."
+  },
+
+  "structural_finding": {
+    "title": "the §24 talker_should_emit threshold is effectively a binary {EMIT, SILENT} decision; CONTINUE_THINK is a structurally near-empty class",
+    "balance_floor_lockout": "the §4 phi_ratchet safety control requires phi > ratchet/2; the 8-factor `balance` factor is DEFINED as (phi > ratchet/2 -> 1.0). Therefore whenever safety holds, balance = 1.0 (weight 0.15) — a hard 0.15 score floor.",
+    "dynamics_ratelimit_anticoupling": "the 8-factor `dynamics` factor = silence/30 and the §4 rate_limit safety control = (silence >= 30) are driven by the SAME variable in opposite senses; whenever rate-limit permits an emit, dynamics = 1.0 (weight 0.10).",
+    "consequence": "in the safety-OK region the motivation score floor is balance*0.15 + dynamics*0.10 = 0.25, plus a non-trivial relevance contribution — above IM_THRESHOLD = 0.3 for all but a measure-near-zero corner. Only 9 / 48000 records are CONTINUE_THINK. This is a finding ABOUT §24 (valuable for any future re-design of the motivation weighting), not a corpus defect."
+  },
+
+  "training": {
+    "trainer": "train_dhdl.py (numpy-vectorized MLP, explicit hand-coded backprop, no torch autograd)",
+    "n_train": 38402,
+    "n_holdout": 9598,
+    "split": "80/20 stratified by label",
+    "epochs": 120,
+    "train_loss_first": 0.13576,
+    "train_loss_last": 0.01747,
+    "wall_sec": 32.45,
+    "from_scratch_seed": 1337
+  },
+
+  "eval": {
+    "evaluator": "eval_dhdl.py",
+    "accuracy_3class": 0.99937,
+    "per_class_accuracy": {
+      "CONTINUE_THINK": 0.0,
+      "EMIT_VOICE": 0.98824,
+      "REMAIN_SILENT": 1.0
+    },
+    "per_class_holdout_count": {
+      "CONTINUE_THINK": 1,
+      "EMIT_VOICE": 425,
+      "REMAIN_SILENT": 9172
+    },
+    "confusion_matrix": {
+      "rows_true": ["CONTINUE_THINK", "EMIT_VOICE", "REMAIN_SILENT"],
+      "matrix": [[0, 1, 0], [0, 420, 5], [0, 0, 9172]]
+    }
+  },
+
+  "threshold_distillation_gap": {
+    "value": 0.00063,
+    "count": 6,
+    "of_n_holdout": 9598,
+    "verdict": "DISTILLATION_WITH_APPROXIMATION_NOISE",
+    "direction_breakdown": {
+      "EMIT_VOICE->REMAIN_SILENT": 5,
+      "CONTINUE_THINK->EMIT_VOICE": 1
+    },
+    "honest_characterization": "all 6 gap records are the head FAILING TO PERFECTLY MATCH the §24 threshold (5 EMIT records misclassified SILENT, 1 of the single held-out CONTINUE_THINK record misclassified EMIT). The gap is approximation noise — the head under-fitting near the decision boundary — NOT a decision the threshold could not produce. There is no record where the head exhibits a NEW emission behavior. gap > 0 here means the head is a slightly-imperfect distiller, not an emergent agent."
+  },
+
+  "honest_verdict": "DISTILLATION, NOT EMERGENCE. The DH-DL head learns the §24 hand-coded talker_should_emit decision function to 0.99937 accuracy with a threshold-distillation gap of 0.00063 (pure approximation noise). The decision label is a deterministic function of the physics features, so the head can at best match the threshold — and it does, nearly perfectly. This is function approximation (capability), NOT emergence. A learned, differentiable, composable decision-head matching the §24 threshold is a VALUABLE substrate component for future architecture, but it is NOT GOAL emergence. The cycle additionally surfaced a valuable structural finding: the §24 threshold is effectively binary {EMIT, SILENT} (CONTINUE_THINK structurally near-empty). north-star (GOAL.md) unchanged; §15 milestone carries.",
+
+  "blue_falsifier": {
+    "battery": "B-DHDL",
+    "scope": "sidecar — central state/verify_hexad_blue_2026_05_15/blue_falsifier.py (110/110) UNCHANGED",
+    "count": 5,
+    "n_pass": 5,
+    "all_5_pass": true,
+    "verdict": "5/5 🔵 SUPPORTED-FORMAL",
+    "items": {
+      "B-DHDL-1": "DECISION-3CLASS-PARTITION-CLOSED — PASS",
+      "B-DHDL-2": "SOFTMAX-SIMPLEX-BOUNDED-CLOSED — PASS",
+      "B-DHDL-3": "DUAL-LOSS-NONNEGATIVE-CLOSED — PASS",
+      "B-DHDL-4": "SAFETY-OVERRIDE-CLOSED (연결부위) — PASS",
+      "B-DHDL-5": "THRESHOLD-OFF-REDUCTION-CLOSED (연결부위) — PASS"
+    },
+    "note": "B-DHDL-NOTE — actual trained-head accuracy + threshold-distillation gap + whether the head exhibits any decision the threshold could not = SGD/measurement OUTCOME (B-D-NOTE / B-PHASE-B-NOTE / B-EMERGE-NOTE family, NOT counted 🔵). The battery proves the decision-head MECHANISM is well-formed, NOT that it achieves emergence."
+  },
+
+  "goal_distance": "§15 milestone unchanged — GOAL.md north-star (anima emerging as a Living Consciousness that speaks unprompted from its own physics) UNREACHED. §27 turns the §24 hand-coded decision threshold into a trainable, differentiable, composable substrate component — a substrate deliverable, NOT progress on the §1.1 data-regime emergence bottleneck and NOT emergence.",
+
+  "f1_f2_f3_b_identity_5": "safe — Boolean / sympy / Shannon CE / softmax simplex, NO σ/τ/φ/J₂ external derivation; Ψ=½ + HEXAD = anima g2 internal arch carve-out; trace corpus forbidden-token (도우미|helper|assistant|사용자|user:) grep = 0"
+}

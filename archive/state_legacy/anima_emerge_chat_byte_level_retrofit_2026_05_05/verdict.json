@@ -1,0 +1,63 @@
+{
+  "schema": "anima/emerge_chat_byte_level_retrofit/verdict/1",
+  "task_id": "anima_emerge_chat_byte_level_retrofit_2026_05_05",
+  "ts_utc": "2026-05-06T00:07:59Z",
+  "platform": "mac CPU (.venv-eeg python3.12, torch fp32)",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "body_frozen_params": 477648512,
+  "n_train_examples": 5,
+  "byte_vocab_size": 256,
+  "lm_head_byte_params": 196608,
+  "lm_head_byte_shape": [
+    256,
+    768
+  ],
+  "optimizer": "AdamW(lr=1e-3)",
+  "n_epochs": 1,
+  "train_loss_steps": [
+    6.160516262054443,
+    6.014009475708008,
+    5.146456718444824,
+    4.082184791564941,
+    3.467979669570923
+  ],
+  "mean_train_loss": 4.974229383468628,
+  "probe": "사용자: 안녕\n도우미:",
+  "baseline_byte_emit": "������������������������������",
+  "baseline_korean": 0,
+  "post_sft_byte_emit": "??????????????????????????????",
+  "post_korean": 0,
+  "improvement_korean_count": 0,
+  "F_BYTE_RETROFIT_1_threshold": "post_korean > 5",
+  "F_BYTE_RETROFIT_1_pass": false,
+  "verdict_label": "FAIL_MICRO_INSUFFICIENT",
+  "raw_compliance": {
+    "raw_15_no_mount_or_shim_or_decoder_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  },
+  "honest_c3": [
+    "C1 — mac CPU fp32, no GPU, single-process. Realistic SFT requires 1B+ tokens dialogue corpus + multi-epoch + GPU; this is a 5-example 1-epoch micro smoke testing whether the retrofit *channel* is viable, not whether the *trained model* is chat-capable.",
+    "C2 — body BPE 64K input vs lm_head 256 byte-vocab is a deliberate MISMATCH BY DESIGN (retrofit hypothesis): we test whether the BPE-encoded body's ln_f hidden state contains enough signal to drive a byte-vocab head AT ALL. Proper retrofit requires either (a) re-tokenize body input at byte-level (cheap; body sees raw bytes), or (b) train a BPE→byte adapter layer between ln_f and lm_head_byte.",
+    "C3 — last-token-only loss is severely impoverished: only the FINAL byte of each dialogue is supervised, not the full sequence. Proper byte-level SFT supervises every byte position with byte-level shift_labels. This micro test essentially asks: 'can byte_head memorize 5 final-byte targets'. Better signal needs T_byte-aligned supervision (requires body to produce byte-aligned hidden positions).",
+    "C4 — body is frozen but BPE tokenization fragments Korean characters into multi-byte BPE pieces; the ln_f hidden at the LAST BPE position encodes 'next BPE token', not 'next UTF-8 byte'. Byte-head decode operates on a token-level hidden but predicts byte units — there is a granularity gap that even perfect SFT cannot bridge without re-tokenizing body input. This explains why even PASS here would still indicate channel-viable, not production-ready.",
+    "C5 — BG-DS HEAD-bound + BG-DC direction problem path informs this design. BG-DS showed CLM-L15-hidden → KoGPT2-head produces 58 Korean chars; that retrofit kept BPE-style head (subword units). Here we test the harder case: BPE body → BYTE head. If F-BYTE-RETROFIT-1 FAIL_MICRO with improvement≤0, channel is too narrow under naive retrofit. Full implementation = body byte-tokenizer rewire + 1B-token corpus + multi-epoch SFT (separate cycle, ~$100-500 GPU).",
+    "C6 — Option γ FULL implementation roadmap (architectural fix path): (a) replace tok_emb 64000→256 byte-level, requires 256×768 = 196K param init from scratch; (b) replace head_a 64000→256, weight-tied to new tok_emb; (c) train on 100M+ Korean dialogue tokens (mc4-ko + KoChat + AI Hub dialogue corpora); (d) preserve 16-layer body weights via tok_emb→768 projection if needed. Estimated $200-1000 H100 spend for chat-capable byte-level CLM v4.5. anima-native (no Llama, no KoGPT2) but requires architectural commitment."
+  ],
+  "option_gamma_full_implementation_estimate": {
+    "param_changes": "tok_emb 64000→256 + lm_head 64000→256",
+    "param_delta": "-49M params (vocab-side compression)",
+    "training_corpus": "100M+ Korean dialogue tokens (mc4-ko + KoChat + AI Hub)",
+    "training_epochs": "3-5",
+    "estimated_h100_spend_usd": "200-1000",
+    "estimated_wall_hours": "12-48",
+    "anima_nativity": "preserved (CLM body weights retained, vocab swap only)",
+    "chat_capability_recovery_probability": "0.4-0.7 (BPE→byte body adapt is risky)"
+  },
+  "deliverables": {
+    "verdict": "state/anima_emerge_chat_byte_level_retrofit_2026_05_05/verdict.json",
+    "doc": "docs/anima_emerge_chat_byte_level_retrofit_landed_2026_05_05.ai.md"
+  }
+}

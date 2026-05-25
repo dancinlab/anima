@@ -1,0 +1,92 @@
+{
+  "schema": "anima/p9_qmirror_seeded/comparison/v1",
+  "ts_utc": "2026-05-03T22:39:56Z",
+  "comparison": "qmirror-seeded ablation_A (2K mini) vs ablation_A (50K full, seed=42)",
+  "falsifier": "F-QSEED-1",
+  "falsifier_rule": "BLEU-1 in [0.005, 0.012] (noise floor maintained, no anomaly from qmirror seeding)",
+  "verdict": "F_QSEED_1_PASS",
+
+  "qmirror_seeded_2k": {
+    "phase": "p9_qmirror_seeded_ablation_A_2k",
+    "n_steps": 2000,
+    "seed_source": "qmirror QRNG (HMAC-DRBG SHA-256 <- IonQ Forte 1 4096-bit quantum entropy)",
+    "BLEU1_final": 0.0068359375,
+    "F2_phi_final": 45.73125201599973,
+    "F3_tension_mse_final": 8.501986998133361,
+    "phi_baseline": 45.814137464931335,
+    "phi_summary_mean": 46.039970059469375,
+    "phi_summary_min": 45.12799542231276,
+    "phi_summary_max": 48.69968210331474,
+    "phi_n_checkpoints": 6,
+    "delta_baseline_to_final_phi": -0.08288544893160577,
+    "train_elapsed_sec": 179.76,
+    "aborted": false
+  },
+
+  "ablation_A_50k_baseline": {
+    "phase": "p9_p1_6_ablation_A",
+    "n_steps": 50000,
+    "seed_source": "deterministic (SEED=42) -> np.random.seed / torch.manual_seed / random.seed",
+    "BLEU1_final": 0.005859375,
+    "BLEU1_holdout500_reeval": 0.006513,
+    "F2_phi_final": 44.606997123566565,
+    "F3_tension_mse_final": 7.781576167210005,
+    "phi_baseline": 45.91520414820293,
+    "phi_summary_mean": 43.586139731923204,
+    "phi_summary_min": 41.14991460426886,
+    "phi_summary_max": 50.08665815676261,
+    "phi_n_checkpoints": 102,
+    "delta_baseline_to_final_phi": -1.308207024636367,
+    "train_elapsed_sec": 3115.08,
+    "aborted": false
+  },
+
+  "delta_qmirror_minus_baseline": {
+    "BLEU1_final_delta": 0.0009765625,
+    "BLEU1_pct_change": "+16.7% (0.00586 -> 0.00684, 32-prompt subset; both inside noise band)",
+    "BLEU1_vs_holdout500_reeval_pct": "+5.0% (0.00651 -> 0.00684; well within 1-sigma seed-jitter for 32-prompt eval)",
+    "F2_phi_final_delta": 1.1242548924331648,
+    "F3_tension_mse_final_delta": 0.7204099889766773,
+    "phi_baseline_delta": -0.10106668326861827,
+    "_interpretation": [
+      "BLEU-1 lifts +16.7% over 50K baseline at only 2K steps; this is consistent with the alpha=12 early-curriculum pulling CE loss harder than the original 50K run sees in its early/mid bands.",
+      "Phi_final sits +1.12 above the 50K final phi (45.73 vs 44.61). Higher is better (further from threshold 5.0); the 2K run did NOT erode phi.",
+      "Phi baseline difference (-0.10) is within rounding of float-stable matmul order / cuDNN nondeterminism; chain-of-custody on qmirror seed itself is bit-exact verified."
+    ]
+  },
+
+  "noise_floor_band_check": {
+    "band_lo": 0.005,
+    "band_hi": 0.012,
+    "qmirror_BLEU1": 0.0068359375,
+    "in_band": true,
+    "band_width": 0.007,
+    "z_position_within_band": 0.262,
+    "_band_rationale": [
+      "Lower bound 0.005: ablation_A_50k F1=0.00586 (32-prompt subset) is the empirical floor.",
+      "Upper bound 0.012: 2x ablation_A baseline; loosely informed by ablation_B_seed42 outlier (0.0120) which was the high end of the 4-seed P1.5 ensemble distribution.",
+      "Both bounds are 1-shot empirical, not statistical CIs. A strict equivalence test would require >=3 paired (qmirror vs seed=42) runs at matching step counts."
+    ]
+  },
+
+  "qmirror_provenance_chain": {
+    "step_1_quantum_source": "IonQ Forte 1 (Aria-class trapped-ion QPU via AWS Braket)",
+    "step_2_quantum_circuit": "|+>^16 (16-qubit Hadamard-prepared product state), 256 shots, Z-basis measurement",
+    "step_3_raw_bits": "4096 bits (16 qubits * 256 shots)",
+    "step_4_drbg_algorithm": "HMAC-DRBG SHA-256 (NIST SP 800-90A Rev.1 sec.10.1.2)",
+    "step_5_drbg_inputs": {
+      "entropy": "4096-bit IonQ measurement",
+      "nonce": "AWS Braket task ARN bdf470b9-...",
+      "personalization_string": "anima.nexus.qrng.ionq_forte1.2026-05-02"
+    },
+    "step_6_chain_verification": "first 1024 output bytes re-derived in this run; SHA-256 = ddf057ba61916c3183fe245345c6f5108e3ffb88fa573e33474f32740f0da81b (matches hmac_drbg_seed.json)",
+    "step_7_cond4_attestation": "qmirror cond.4 = NIST SP 800-22 tier-1+ 7/7 PASS at 10^6 bits (clean reference impl)",
+    "step_8_ml_consumption": "33068 bytes total drawn (32004 in train loop = 2000 steps * 4 batch * 4 bytes/uint32)"
+  },
+
+  "honest_caveats_c3": [
+    "Step-count mismatch: 2K vs 50K is 25x. The +16.7% BLEU-1 delta is interpretable as 'qmirror seeding does not collapse training' but NOT as 'qmirror beats determinism'. A step-matched 2K control with seed=42 would be the proper apples-to-apples comparison.",
+    "Quantum provenance is via deterministic HMAC-DRBG expansion of a one-shot quantum measurement; the per-step uint32 draws are not live quantum samples. The cond.4 attestation only certifies the EXPANDED stream's statistical quality, not per-call quantum-ness.",
+    "Single-run, single-seed-source result. The 'no anomaly' verdict means 'this one run lands in the empirical band'; it does not statistically falsify a hypothesis like 'qmirror seeding shifts BLEU-1 distribution by sigma > 0.001'."
+  ]
+}

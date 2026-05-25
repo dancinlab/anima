@@ -1,0 +1,59 @@
+{
+  "battery": "B-L3-1..3 — RESEARCH.md §32 L3 routing 21-vs-43 analysis",
+  "sidecar": true,
+  "central_blue_falsifier_modified": false,
+  "results": [
+    {
+      "name": "B-L3-1 PARTITION-EXHAUSTIVE-DISJOINT",
+      "pass": true,
+      "checks": {
+        "substr_disjoint": true,
+        "substr_card": true,
+        "substr_union_64": true,
+        "substr_int_identity": true,
+        "genuine_disjoint": true,
+        "genuine_card": true,
+        "genuine_union_64": true,
+        "genuine_int_identity": true,
+        "genuine_subset_substr": true,
+        "artifact_count_4": true,
+        "sympy_21_43_eq_64": true,
+        "sympy_17_47_eq_64": true
+      }
+    },
+    {
+      "name": "B-L3-2 SEPARATION-METRIC-BOUNDED",
+      "pass": true,
+      "n_checks": 158,
+      "all_bounded": true
+    },
+    {
+      "name": "B-L3-3 ANALYSIS-DETERMINISTIC",
+      "pass": true,
+      "checks": {
+        "no_torch_dl": true,
+        "no_backward_grad": true,
+        "no_cross_entropy": true,
+        "no_rng": true,
+        "rerun_bit_identical": true,
+        "matches_committed_result": true
+      },
+      "forbidden_hits": {
+        "torch_or_dl": [],
+        "backward_grad": [],
+        "cross_entropy": [],
+        "random_rng": []
+      },
+      "rerun_sha256": "4fcb8529bf0452116e96dcab104c5d96d11ea61b3ad28a989fd1f5489fae4edc"
+    }
+  ],
+  "note": {
+    "name": "B-L3-NOTE CAUSATION-EMPIRICAL",
+    "counted_blue": false,
+    "text": "Whether the separating feature (tier >= 77) CAUSES §16 routing success, vs correlates via the §16 curriculum coupling (curriculum_rank weights tier/303 at 0.30) or an unmeasured cause, needs a controlled ablation fire. The analysis establishes CORRELATION; causation is empirical. B-D-NOTE / B-S16-NOTE / B-CARVE-E6-NOTE family — NOT counted blue."
+  },
+  "n_pass": 3,
+  "n_total": 3,
+  "all_blue": true,
+  "summary": "B-L3 3/3 🔵"
+}

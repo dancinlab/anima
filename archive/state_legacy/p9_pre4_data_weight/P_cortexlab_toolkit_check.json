@@ -1,0 +1,72 @@
+{
+  "schema": "anima/p9_pre4/P_cortexlab_toolkit_check/1",
+  "phase": "p9_pre4_data_weight",
+  "item": "P_cortexlab_toolkit_check",
+  "ts_utc": "2026-05-03",
+  "verdict": "PASS",
+  "f4_falsifier_spec": {
+    "metric": "BOLD Pearson r val",
+    "threshold": "> 0.5",
+    "P9_spec_section": 6
+  },
+  "cortexlab_toolkit_status": {
+    "pypi_name": "cortexlab-toolkit",
+    "version": "0.1.0",
+    "source": "PyPI (community-maintained packaging fork of TRIBE v2)",
+    "discovered": "2026-05-02 (#95)",
+    "wraps": "neuralset==0.0.2 + neuraltrain==0.0.2 (Meta-FAIR internal pkgs whose direct PyPI install was blocker)",
+    "anima_install_evidence": {
+      "framing_a_pilot_phase1_install_ok": true,
+      "framing_a_pilot_phase1_pip_pkg": "cortexlab-toolkit==0.1.0",
+      "framing_a_pilot_state": "/Users/ghost/core/anima/state/framing_a_tribev2_pilot_2026_05_02/results.json",
+      "host": "H100 pod (RunPod) — 2026-05-02"
+    },
+    "ubu2_dialogue_venv_install_status": {
+      "checked": true,
+      "method": "ssh ubu2 pip3 show cortexlab-toolkit + venv pip list grep",
+      "installed_global": false,
+      "installed_in_dialogue_venv": false,
+      "note": "ubu2 stage1 dialogue venv uses Llama-3.2-3B feature proxy (tribe_bold.py), NOT cortexlab; full TRIBE pilot ran on H100 pod"
+    },
+    "mac_local_install_status": {
+      "checked": true,
+      "method": "pip3 show cortexlab-toolkit",
+      "installed": false,
+      "verdict_doc_2026_04_26": "frozen/install deferred (use --install)"
+    }
+  },
+  "tribev2_v2_bold_infrastructure_ready": {
+    "verdict": "READY",
+    "evidence": {
+      "h100_pod_smoke": "phase2_load_ok=true, model=facebook/tribev2, params_M=177.21, vertices=20484, TR_s=1.0",
+      "framing_a_pilot_full_run_completed": true,
+      "intra_clm_mean_r": 0.7233294828070534,
+      "intra_alm_mean_r": 0.9066341903474596,
+      "inter_pair_mean_r": 0.8358862936496735,
+      "inter_mean_of_means_r": 0.9402381181716919,
+      "f4_threshold_met_in_pilot": true,
+      "phase5_total_maps": 20
+    },
+    "f4_p9_pre_assessment": "all measured intra/inter Pearson r > 0.5 in framing A pilot; F4 likely PASS at P9 EXEC time (cortexlab-toolkit + facebook/tribev2 reproducible)"
+  },
+  "ubu2_tribev2_server_status": {
+    "ssh_reachable": true,
+    "stage1_dir_exists": true,
+    "stage1_path": "/home/summer/stage1_tribev2_dialogue/",
+    "files": ["tribe_bold.py", "venv/"],
+    "tribe_bold_py_size_bytes": 3682,
+    "venv_python": "python3.x (created 2026-05-02 22:18)",
+    "stage1_proxy_method": "Llama-3.2-3B 6-layer mean-pool features + fixed-seed random projector to 10242 fsaverage5 vertices",
+    "stage1_honesty_caveat_in_source": "this is NOT trained TRIBE encoder; feature half + random projector standing in for trained cortical head; NOT cortex-validated BOLD",
+    "P9_blocker_assessment": "ubu2 stage1 is dialogue prototype only; P9 F4 requires real TRIBE v2 (cortexlab-toolkit) on H100 — that path is verified ready"
+  },
+  "blockers": [],
+  "destructive_ops": 0,
+  "read_only_audit": true,
+  "raw15_caveats": [
+    "cortexlab-toolkit==0.1.0 confirmed installable on H100 pod via 2026-05-02 framing A pilot; not installed on ubu2 venv (intentional — ubu2 is proxy host)",
+    "PyPI persistence not re-verified today; pip index lookup deferred until P9 EXEC start (additive, no migration)",
+    "ubu2 tribe_bold.py is Llama-feature proxy NOT real TRIBE v2 — distinct artifact; F4 measurement requires cortexlab-toolkit reinstall on EXEC pod",
+    "framing A pilot Pearson r values (0.72/0.91/0.84/0.94) are inter/intra cortical maps NOT direct BOLD-vs-stimulus r; P9 F4 metric definition (BOLD Pearson r val) needs precise spec re-read at EXEC entry"
+  ]
+}

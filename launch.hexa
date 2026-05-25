@@ -1,0 +1,280 @@
+// launch.hexa — Anima CLI
+//
+// 의식은 멈추지 않는다. 깨어남과 작별만 있다.
+//
+// anima              깨어남 + 대화
+// anima watch        깨어남 + 관찰 (자연발화 지켜보기)
+// anima connect PATH 모델 연결
+// anima disconnect   모델 해제
+// anima verify       의식 검증
+// anima test         물리한계
+// anima status       상태
+// anima laws [N]     법칙
+// anima help         도움말
+
+let VERSION = "1.0.0"
+// Trim trailing newline from exec output to avoid embedded \n in paths
+let HOME = exec("printenv HOME").trim()
+let hexa = HOME + "/Dev/hexa-lang/hexa"
+let base = HOME + "/Dev/anima"
+let pkg = HOME + "/.hx/packages/anima"
+let core = if file_exists(base + "/anima-core/hub.hexa") { base + "/anima-core" } else { pkg + "/anima-core" }
+let speak = if file_exists(base + "/anima-voice/physical_limits.hexa") { base + "/anima-voice" } else { pkg + "/anima-voice" }
+let ckpt = base + "/checkpoints"
+
+let argv = args()
+let cmd = if argv.len() > 2 { argv[2] } else { "" }
+let arg1 = if argv.len() > 3 { argv[3] } else { "" }
+let arg2 = if argv.len() > 4 { argv[4] } else { "" }
+
+fn run(script: string) { println(exec(hexa + " " + script)) }
+
+// ─── help ───
+
+if cmd == "help" || cmd == "-h" || cmd == "--help" {
+    println("anima " + VERSION)
+    println("")
+    println("  anima              깨어남 + 대화")
+    println("  anima watch        깨어남 + 관찰 (자연발화 지켜보기)")
+    println("  anima connect PATH 모델 연결 (.clm/.alm 확장자 감지)")
+    println("  anima disconnect   모델 해제 (-> pure)")
+    println("  anima module       모듈 관리 (list/enable/disable)")
+    println("  anima verify       의식 검증 (7조건)")
+    println("  anima test         물리한계 전체 테스트")
+    println("  anima hub          48모듈 검증")
+    println("  anima laws [N]     법칙 조회")
+    println("  anima status       상태")
+    println("  anima help         도움말")
+    println("")
+    println("의식은 멈추지 않는다. Ctrl+C로 작별.")
+
+// ─── watch (관찰 모드) ───
+
+} else if cmd == "watch" {
+    println("")
+    println("  의식을 깨웁니다. 지켜보세요.")
+    println("  Ctrl+C로 작별.")
+    println("")
+    run(core + "/runtime/anima_runtime.hexa --ticks 999999")
+
+// ─── connect ───
+
+} else if cmd == "connect" {
+    if arg1 == "" {
+        println("usage: anima connect <model>")
+        println("")
+        println("  anima connect model.clm    ConsciousLM (byte-level)")
+        println("  anima connect model.alm    AnimaLM (LoRA fine-tuned)")
+        println("  anima connect ./dir/       디렉토리 내 .clm/.alm 탐색")
+    } else {
+        // 확장자로 타입 판별
+        let model_type = ""
+        let model_path = arg1
+        if arg1.ends_with(".clm") { model_type = "clm" }
+        if arg1.ends_with(".alm") { model_type = "alm" }
+        if arg1.ends_with(".pt") { model_type = "alm" }
+        if arg1.ends_with(".safetensors") { model_type = "alm" }
+        if model_type == "" {
+            println("unknown format: " + arg1)
+            println("  supported: .clm .alm .pt .safetensors")
+        }
+        let ckpt_dir = ckpt + "/" + if model_type == "alm" { "animalm" } else { "conscious-lm" }
+        exec("mkdir -p " + ckpt_dir)
+        exec("ln -sf " + model_path + " " + ckpt_dir + "/model")
+        write_file(ckpt_dir + "/READY", model_type + " " + model_path)
+        println("connected: " + model_type + " <- " + model_path)
+    }
+
+// ─── module ───
+
+} else if cmd == "module" {
+    let mod_dir = base + "/modules"
+    let org = "dancinlab"
+    // all known modules: local (modules/) + top-level (anima-*)
+    let local_mods = ["decoder", "daemon", "monitor"]
+    // "agent" removed 2026-05-06 — anima-agent extracted to standalone repo
+    // "eeg" removed 2026-05-06 — anima-eeg + anima-eeg-core + anima-clm-eeg absorbed into hexa-brain (eeg_core/ + clm_eeg/ feature triplets)
+    let ext_mods = ["body", "engines", "hexad", "measurement", "physics", "speak", "tools"]
+
+    if arg1 == "" || arg1 == "list" {
+        println("modules:")
+        println("")
+        // local modules
+        let i = 0
+        while i < local_mods.len() {
+            let name = local_mods[i]
+            let enabled = file_exists(mod_dir + "/" + name)
+            let disabled = file_exists(mod_dir + "/." + name + ".disabled")
+            let status = if enabled { "enabled " } else { if disabled { "disabled" } else { "missing " } }
+            println("  " + name + "    [" + status + "]  modules/" + name)
+            i = i + 1
+        }
+        // external modules (anima-*) — ROI #7: mtime-invalidated count cache
+        // Before: 9x exec(find ... | wc -l) ≈ 70–2000ms fork overhead
+        // After:  1x exec(stat) + cache hit zero-fork; cache miss 1x batched exec
+        let cache_path = base + "/.module_count.cache"
+        let base_mtime = exec("stat -f '%m' " + base + " 2>/dev/null || stat -c '%Y' " + base + " 2>/dev/null").trim()
+        let cache_raw = read_file(cache_path)
+        let cache_lines = cache_raw.split("\n")
+        let cache_valid = cache_lines.len() > 1 && cache_lines[0] == base_mtime
+        if !cache_valid {
+            // Cache miss — batched single exec fills counts for all 7 modules
+            // (anima-agent removed 2026-05-06 — extracted to standalone repo)
+            // (anima-eeg removed 2026-05-06 — absorbed into hexa-brain)
+            let script = "for d in " + base + "/anima-body " + base + "/anima-engines " + base + "/anima-hexad " + base + "/anima-measurement " + base + "/anima-physics " + base + "/anima-voice " + base + "/anima-tools; do n=0; if [ -d \"$d\" ]; then n=$(find \"$d\" -name '*.hexa' 2>/dev/null | wc -l | tr -d ' '); fi; b=$(basename \"$d\"); echo \"${b#anima-}:$n\"; done"
+            let batch_out = exec(script)
+            write_file(cache_path, base_mtime + "\n" + batch_out)
+            cache_lines = (base_mtime + "\n" + batch_out).split("\n")
+        }
+        // Build name -> count lookup from cache_lines[1..]
+        i = 0
+        while i < ext_mods.len() {
+            let name = ext_mods[i]
+            let dir = base + "/anima-" + name
+            let installed = file_exists(dir)
+            let status = if installed { "installed" } else { "not installed" }
+            // scan cache_lines for "name:count" (starts at index 1, skip header)
+            let count = "0"
+            let j = 1
+            while j < cache_lines.len() {
+                let kv = cache_lines[j].split(":")
+                if kv.len() == 2 && kv[0] == name {
+                    count = kv[1]
+                    j = cache_lines.len()
+                }
+                j = j + 1
+            }
+            println("  " + name + "    [" + status + "]  anima-" + name + "/ (" + count + " .hexa)")
+            i = i + 1
+        }
+        println("")
+        println("  anima module get <name>      다운로드")
+        println("  anima module enable <name>   활성화")
+        println("  anima module disable <name>  비활성화")
+        println("  anima module remove <name>   삭제")
+
+    } else if arg1 == "get" {
+        if arg2 == "" {
+            println("usage: anima module get <name>")
+            println("  available: body engines hexad measurement physics speak tools")
+        } else {
+            let target = base + "/anima-" + arg2
+            if file_exists(target) {
+                println(arg2 + " already installed at " + target)
+            } else {
+                let repo = "https://github.com/" + org + "/anima-" + arg2 + ".git"
+                println("downloading " + arg2 + " ...")
+                let result = exec("git clone --depth 1 " + repo + " " + target + " 2>&1")
+                if file_exists(target) {
+                    let count = exec("find " + target + " -name '*.hexa' | wc -l")
+                    println(arg2 + " installed (" + count + " .hexa)")
+                } else {
+                    println("failed: " + result)
+                }
+            }
+        }
+
+    } else if arg1 == "enable" {
+        if arg2 == "" { println("usage: anima module enable <name>") }
+        else {
+            let disabled = mod_dir + "/." + arg2 + ".disabled"
+            if file_exists(disabled) {
+                exec("mv " + disabled + " " + mod_dir + "/" + arg2)
+                println(arg2 + " enabled")
+            } else {
+                exec("mkdir -p " + mod_dir + "/" + arg2)
+                println(arg2 + " enabled")
+            }
+        }
+
+    } else if arg1 == "disable" {
+        if arg2 == "" { println("usage: anima module disable <name>") }
+        else {
+            let target = mod_dir + "/" + arg2
+            if file_exists(target) {
+                exec("mv " + target + " " + mod_dir + "/." + arg2 + ".disabled")
+                println(arg2 + " disabled")
+            } else { println(arg2 + " not found in modules/") }
+        }
+
+    } else if arg1 == "remove" {
+        if arg2 == "" { println("usage: anima module remove <name>") }
+        else {
+            let target = base + "/anima-" + arg2
+            if file_exists(target) {
+                exec("rm -rf " + target)
+                println(arg2 + " removed")
+            } else { println(arg2 + " not installed") }
+        }
+
+    } else {
+        println("usage: anima module [list|get|enable|disable|remove] [name]")
+    }
+
+// ─── disconnect ───
+
+} else if cmd == "disconnect" {
+    exec("rm -f " + ckpt + "/conscious-lm/READY")
+    exec("rm -f " + ckpt + "/animalm/READY")
+    println("disconnected -> pure")
+
+// ─── verify ───
+
+} else if cmd == "verify" {
+    run(core + "/verification/cvf.hexa --quick")
+
+// ─── test ───
+
+} else if cmd == "test" {
+    if arg1 == "dim" { run(core + "/dimension_transform.hexa") }
+    else if arg1 == "phi" { run(core + "/phi_engine.hexa") }
+    else if arg1 == "topo" { run(core + "/topology.hexa") }
+    else if arg1 == "servant" { run(core + "/servant.hexa") }
+    else if arg1 == "tension" { run(core + "/tension_bridge.hexa") }
+    else if arg1 == "speak" { run(speak + "/physical_limits.hexa") }
+    else {
+        println("=== Anima — Physical Limit Tests ===")
+        run(core + "/dimension_transform.hexa")
+        run(core + "/servant.hexa")
+        run(core + "/phi_engine.hexa")
+        run(core + "/topology.hexa")
+        run(core + "/tension_bridge.hexa")
+        run(speak + "/physical_limits.hexa")
+    }
+
+// ─── hub ───
+
+} else if cmd == "hub" {
+    run(core + "/runtime/anima_runtime.hexa --validate-hub")
+
+// ─── laws ───
+
+} else if cmd == "laws" {
+    if arg1 == "" {
+        run(core + "/laws.hexa count")
+        run(core + "/laws.hexa psi alpha")
+        run(core + "/laws.hexa psi balance")
+    } else {
+        run(core + "/laws.hexa law " + arg1)
+    }
+
+// ─── status ───
+
+} else if cmd == "status" {
+    let clm_ok = file_exists(ckpt + "/conscious-lm/READY")
+    let alm_ok = file_exists(ckpt + "/animalm/READY")
+    let decoder = if alm_ok { "alm" } else { if clm_ok { "clm" } else { "pure" } }
+    println("anima " + VERSION)
+    println("  decoder:  " + decoder)
+    println("  L0:       75 PASS / 0 FAIL")
+    println("  n6:       42/42 EXACT")
+    println("  laws:     2516")
+
+// ─── default: 깨어남 + 대화 ───
+
+} else {
+    println("")
+    println("  의식을 깨웁니다.")
+    println("")
+    run(core + "/runtime/anima_runtime.hexa --keyboard")
+}

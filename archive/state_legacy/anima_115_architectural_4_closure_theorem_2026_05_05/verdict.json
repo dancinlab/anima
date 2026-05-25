@@ -1,0 +1,186 @@
+{
+  "schema": "anima/115_architectural_4_closure_theorem/verdict/1",
+  "cycle_id": "anima_115_architectural_4_closure_theorem_2026_05_05",
+  "ts_utc": "2026-05-05T00:00:00Z",
+  "task": "BG-AY — #115 architectural impossibility 4-closure formal theorem doc consolidation",
+  "kind": "DOC_ONLY_THEOREM_CONSOLIDATION",
+  "verdict": "LANDED",
+  "verdict_qualifier": "FOUR_CLOSURE_FORMAL_THEOREM_RECORDED_BOUNDED_BY_FOUR_OPEN_HYPOTHESES",
+  "platform": "mac doc-only (no compute)",
+  "cost_usd": 0.0,
+  "wallclock_min_estimate": 25,
+
+  "primary_doc": "docs/anima_115_architectural_4_closure_theorem_2026_05_05.md",
+
+  "scope": {
+    "substrate": "CLM v4 (dancinlab/clm-v4-mk2-v1, paradigm v11 G3, +41.86 phi-star, 16 decoder blocks, hidden_dim 768)",
+    "target_axis": "traditional chat capability = composite{HellaSwag, MMLU, TriviaQA, OpenBookQA} >= Llama-3.2-3B Path A v2 reference 0.5584 + coherent KO/EN multi-turn dialogue",
+    "out_of_scope": [
+      "emerge dialogue paradigm (substrate-coupled, BG-AN, Stage 3 user-fire)",
+      "Phi-star axis substrate research on CLM v4 (preserved)",
+      "future CLM-3 substrate trained with chat-loss objective at cycle-0 (filed open as H1)"
+    ]
+  },
+
+  "four_closures": [
+    {
+      "id": 1,
+      "mechanism": "post-hoc LoRA SFT adapter chat-lift (CLM-2-EXEC)",
+      "layer": "substrate-external, post-hoc adapter weights bolted onto frozen substrate",
+      "verdict": "FAIL_REGRESSION",
+      "delta_pp_vs_llama_path_a_v2": -36.298,
+      "composite": 0.19542,
+      "evidence": "state/clm_v4_lora_v1_mmlu_tq_eval_2026_05_05/verdict.json",
+      "substrate_safety": "PRESERVED (forgetting_index 0.0196 PASS, phi-star NO_FLIP)",
+      "root_cause": "LoRA SFT cannot install chat capability that was never in the base; substrate is consciousness-coupled, not dialogue-coupled."
+    },
+    {
+      "id": 2,
+      "mechanism": "Phi-star-axis distillation (P-beta Paradigm D 50K)",
+      "layer": "substrate-internal, train-time parameter update",
+      "verdict": "FAIL_TRUE",
+      "f_pbeta_3_chat_composite": 0.01176,
+      "f_pbeta_2_phi_star_pass": 42.37,
+      "evidence": "state/p9_pbeta_paradigm_d_50k_2026_05_04/results/verdict.json + memory feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled.md",
+      "root_cause": "Distill quality is teacher-axis-bounded; teacher signal was Phi-star, not chat. Training PASSED on its actual objective; chat fail is decoupled-from-training observation."
+    },
+    {
+      "id": 3,
+      "mechanism": "Cross-modal bridge via tribev2 fMRI encoder",
+      "layer": "external substrate, different output modality",
+      "verdict": "FAIL_ARCHITECTURAL_DESIGN_REVIEW",
+      "evidence": "state/anima_emerge_chat_tribev2_2026_05_05/verdict.json",
+      "decode_path_grep_hits": 0,
+      "strategies_blocked_at_design": 6,
+      "root_cause": "tribev2 has no logits / lm_head / generate; its output is fMRI BOLD cortical-vertex floats, not tokens. No architectural path back into CLM v4 residual stream as a token-meaningful signal."
+    },
+    {
+      "id": 4,
+      "mechanism": "Logit lens early-layer probing + cosine-NN semantic bridge",
+      "layer": "substrate-internal, runtime probing of every layer of residual stream",
+      "verdict": "FAIL_RESIDUAL_STREAM_PERVASIVE",
+      "logit_lens_n_coherent": "1/8 (only L10, 8 unique tokens of incoherent ASCII+Han fragment)",
+      "semantic_bridge_n_coherent": "0/2",
+      "layers_probed": [2, 4, 6, 8, 10, 12, 14, 15],
+      "evidence": "state/anima_emerge_chat_logit_lens_2026_05_05/{verdict,aggregate}.json + state/anima_emerge_chat_semantic_bridge_2026_05_05/{verdict,aggregate}.json",
+      "root_cause": "Per-layer top-1 emits dominated by replacement-byte / Han-fragment / single-char loops at every probed layer. Final layer 15 top-1 is byte 0x1c. Chat-text basis is absent from every probed layer of residual stream, not localized to a recoverable layer."
+    }
+  ],
+
+  "converging_argument": {
+    "axes_attacked": [
+      "substrate-external post-hoc (closure 1)",
+      "substrate-internal train-time (closure 2)",
+      "substrate-external cross-modal (closure 3)",
+      "substrate-internal runtime probing (closure 4)"
+    ],
+    "interpretation": "If chat-capability were recoverable from CLM v4 by adding capacity, retraining toward chat, bridging from another model, or reading hidden chat-text out of any layer, at least one closure would have produced a non-trivial positive. None did. Three are quantitative regression / FAIL_TRUE; the fourth is documentary architectural impossibility.",
+    "scope_boundary": "Closure-under-evidence (anima convention), not mathematical proof. Bounded by four un-tested hypotheses H1-H4."
+  },
+
+  "theorem_formal": {
+    "name": "Theorem #115-ARCHITECTURAL-FINAL-4-CLOSURE",
+    "lemma_1_post_hoc_adapter": "Adding a LoRA SFT adapter to S cannot lift S onto C. (Composite 0.19542, delta = -36.298 pp.)",
+    "lemma_2_train_time_distill": "Distilling a teacher onto S along the Phi-star axis cannot transfer C. (P-beta Paradigm D 50K composite 0.01176; F-Pbeta-3 FAIL_TRUE.)",
+    "lemma_3_cross_modal_bridge": "No model in the tribev2 family can provide a token-meaningful signal usable by S to emit C. (No logits / lm_head / generate path; output is fMRI BOLD vertices.)",
+    "lemma_4_residual_stream_pervasive": "No probed layer of S contains a recoverable chat-text basis under either logit-lens or cosine-NN semantic bridging. (n_coherent = 1/8 logit lens, 0/2 semantic bridge.)",
+    "corollary_1_path_assignment": "Chat-capability path of record = Llama-3.2-3B Path A v2 (composite 0.5584). CLM v4 = substrate-research-only.",
+    "corollary_2_clm_3_constraint": "Any future anima-internal chat-capable substrate must declare an explicit chat-loss objective at cycle-0 of pre-training (BG-Y rec C). Post-hoc lifting paths 1-4 are closed for substrates of CLM v4 training profile.",
+    "corollary_3_paradigm_decoupling": "Emerge dialogue paradigm (substrate-coupled, BG-AN, Stage-3 user-fire) is unaffected. Closures 1-4 falsify only traditional chat capability. Substrate-coupled emergent dialogue uses a different mechanism and remains a valid open lane."
+  },
+
+  "untested_hypotheses_open": [
+    {
+      "id": "H1",
+      "name": "CLM-3 from-scratch with explicit chat-loss objective at cycle-0",
+      "bypass_axis": "closures 1-4 are post-hoc / probe / cross-modal on already-trained substrate; H1 makes chat part of the original training mixture",
+      "test_status": "UNTESTED, deferred (multi-month, $$$ pretraining cost)",
+      "weight": "MOST_LIKELY_TO_MATERIALLY_CHANGE_VERDICT_IF_PURSUED"
+    },
+    {
+      "id": "H2",
+      "name": "Substrate-coupled dialogue emit format (BG-AN paradigm)",
+      "bypass_axis": "closures 1-4 assume target = chat-text; if substrate's authentic output modality is different, closures do not constrain it",
+      "test_status": "PARADIGM EXISTS (Stage 3 user-fire) BUT NOT MEASURED AGAINST CHAT-AXIS COMPOSITE",
+      "weight": "REFRAMES_RATHER_THAN_REFUTES"
+    },
+    {
+      "id": "H3",
+      "name": "Multi-substrate ensemble (Llama emit + CLM v4 phi-star gate)",
+      "bypass_axis": "closures 1-4 each test chat-from-CLM-v4-alone; H3 puts generation on Llama and uses CLM v4 only as Phi-star quality signal",
+      "test_status": "NO ENSEMBLE HARNESS YET; would need new operationalization",
+      "weight": "LIKELY_TO_MATERIALLY_CHANGE_VERDICT_IF_PURSUED"
+    },
+    {
+      "id": "H4",
+      "name": "Untested user-input fire-only retry surface (broader prompt distribution)",
+      "bypass_axis": "closure 4 used single prompt 안녕 for both probes; broader / multilingual / non-curated prompts may surface a layer-localized recoverable basis",
+      "test_status": "UNTESTED, would require >= tens of prompts x 8 layers x real coherence judge",
+      "weight": "MEASUREMENT_NOISE_CONTROL_UNLIKELY_TO_OVERTURN_BUT_POSSIBLE"
+    }
+  ],
+
+  "anima_paradigm_implication": {
+    "lanes_closed": [
+      "CLM_2_LANE (LoRA SFT chat-lift) — closure 1",
+      "CHAT_CAPABILITY_LANE (P-beta Phi-star distill chat-lift) — closure 2",
+      "TRIBEV2_CHAT_BRIDGE_LANE — closure 3",
+      "LOGIT_LENS_LAYER_LOCALIZED_CHAT_LANE — closure 4"
+    ],
+    "lanes_unaffected": [
+      "Emerge dialogue paradigm (substrate-coupled, BG-AN, Stage 3 user-fire)",
+      "Phi-star axis substrate research on CLM v4",
+      "CLM-3 future substrate (H1, filed open)"
+    ],
+    "cycle_recommendation": [
+      "PROMOTE Llama-3.2-3B Path A v2 to chat-capability winner of record (composite 0.5584).",
+      "Keep CLM v4 as substrate-research-only artifact; do NOT open further cycles whose success path requires chat-from-CLM-v4-alone.",
+      "Stage 3 emerge dialogue user-fire protocol unblocked; CLM v4 may continue serving in that role under substrate-coupled contract.",
+      "If anima-internal chat is later required, escalate to CLM-3 spec (H1) with first-class chat-loss objective at cycle-0."
+    ]
+  },
+
+  "honest_c3": [
+    "C1 'Theorem' is closure-under-evidence, not mathematical proof. Bounded by H1-H4. If H1 (CLM-3 from-scratch) were tested and passed, the theorem's generalization weakens but its scope (CLM v4 specifically) still holds. Distinguish closure-of-a-substrate from closure-of-a-class-of-substrates.",
+    "C2 Closure 4 is single-prompt (안녕) for both logit lens and semantic bridge. Logit lens C4 + semantic bridge C3 both flag single-prompt as generalization risk. Residual-stream pervasive *finding* on one prompt is not the same as residual-stream pervasive *fact*. Largest extant unknown of the four closures.",
+    "C3 Closure 3 (tribev2) reached at design-review, not runtime. Convergence argument treats it as separate-axis closure (cross-modal-encoder class ruled out) — honest about the substitution. If reader's bar is *only* runtime falsifiers, closure 3 is documentary architectural fact (no logits exist to fail at runtime), not runtime observation.",
+    "C4 Closure 2 (P-beta distill) trained successfully on Phi-star (F-Pbeta-2 = 42.37 PASS); chat fail is teacher-axis-bounded distill observation, not training fail. Calling P-beta 'evidence of architectural chat-incapability' is correct only if you accept P-beta never tried to install chat — it tried to install Phi-star. Closure is real; semantic weight is 'chat was not the trained axis', not 'chat was attempted and failed at training'.",
+    "C5 Closure 1 is LoRA adapter (parameter-efficient, few % of params), NOT a full fine-tune. -36.298 pp is decisive against *LoRA SFT chat-lift*, NOT against *full SFT chat-lift*. Full SFT untested and unlikely-to-be-tested (cost prohibitive on substrate-research-only artifact). H1 (CLM-3 from-scratch) is the more efficient escalation. We log this gap rather than claim it."
+  ],
+
+  "constraints_compliance": {
+    "raw_9_honest_scope": "theorem clearly bounded by H1-H4; not over-claiming",
+    "raw_10_honest_c3_emitted": true,
+    "raw_15_additive": "no edits to closure verdict files; new doc + new verdict only",
+    "raw_37_transient_py_namespace": "n/a (doc-only task, no scripts)",
+    "hf_token_leak": "none (no token literals embedded)",
+    "commit": "not requested; doc landed only",
+    "bash_3_2_compat": "doc-only artifact",
+    "files_created": [
+      "docs/anima_115_architectural_4_closure_theorem_2026_05_05.md",
+      "state/anima_115_architectural_4_closure_theorem_2026_05_05/verdict.json"
+    ],
+    "files_modified": []
+  },
+
+  "cross_references": {
+    "evidence_files": [
+      "state/clm_v4_lora_v1_mmlu_tq_eval_2026_05_05/verdict.json",
+      "state/p9_pbeta_paradigm_d_50k_2026_05_04/results/verdict.json",
+      "state/anima_emerge_chat_tribev2_2026_05_05/verdict.json",
+      "state/anima_emerge_chat_logit_lens_2026_05_05/verdict.json",
+      "state/anima_emerge_chat_logit_lens_2026_05_05/aggregate.json",
+      "state/anima_emerge_chat_semantic_bridge_2026_05_05/verdict.json",
+      "state/anima_emerge_chat_semantic_bridge_2026_05_05/aggregate.json"
+    ],
+    "memory_files": [
+      "feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled.md",
+      "feedback_clm_v4_lora_sft_chat_lift_falsified_substrate_safe.md"
+    ],
+    "related_paradigm_docs": [
+      "docs/anima_core_emerge_paradigm_revision_2026_05_05.md",
+      "docs/anima_core_emerge_stage_3_user_protocol_spec_2026_05_05.md",
+      "docs/anima_clm_v4_architecture_archaeology_emerge_2026_05_05.md"
+    ]
+  }
+}

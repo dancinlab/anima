@@ -1,0 +1,176 @@
+{
+  "probe": "S179 ADAPTER 9-way bench \u2014 anchor classification (35-class) on M3 synthetic byte streams",
+  "n_anchors": 35,
+  "n_samples": 1120,
+  "modalities": [
+    "image",
+    "audio",
+    "video",
+    "tension"
+  ],
+  "n_steps_per_adapter": 200,
+  "results_per_adapter": {
+    "A0_identity": {
+      "name": "A0_identity",
+      "n_params": 9347,
+      "final_loss": 3.2704367637634277,
+      "loss_at_step_50": 3.5481369495391846,
+      "loss_at_step_100": 3.5263335704803467,
+      "anchor_accuracy_all": 0.2517857253551483,
+      "modality_accuracy": {
+        "image": 0.15714286267757416,
+        "audio": 0.1428571492433548,
+        "video": 0.09642857313156128,
+        "tension": 0.6107142567634583
+      },
+      "wall_s": 0.13,
+      "n_steps": 200
+    },
+    "A1_mini_qformer": {
+      "name": "A1_mini_qformer",
+      "n_params": 11971,
+      "final_loss": 2.868006944656372,
+      "loss_at_step_50": 3.535193681716919,
+      "loss_at_step_100": 3.472303628921509,
+      "anchor_accuracy_all": 0.2616071403026581,
+      "modality_accuracy": {
+        "image": 0.1428571492433548,
+        "audio": 0.17142857611179352,
+        "video": 0.1607142835855484,
+        "tension": 0.5714285969734192
+      },
+      "wall_s": 0.17,
+      "n_steps": 200
+    },
+    "A2_perceiver": {
+      "name": "A2_perceiver",
+      "n_params": 17731,
+      "final_loss": 2.7032485008239746,
+      "loss_at_step_50": 3.535971164703369,
+      "loss_at_step_100": 3.252655267715454,
+      "anchor_accuracy_all": 0.22946429252624512,
+      "modality_accuracy": {
+        "image": 0.13928571343421936,
+        "audio": 0.17142857611179352,
+        "video": 0.08571428805589676,
+        "tension": 0.5214285850524902
+      },
+      "wall_s": 0.47,
+      "n_steps": 200
+    },
+    "A3_vaevq_codebook": {
+      "name": "A3_vaevq_codebook",
+      "n_params": 18595,
+      "final_loss": 3.4767632484436035,
+      "loss_at_step_50": 3.555516004562378,
+      "loss_at_step_100": 3.549011468887329,
+      "anchor_accuracy_all": 0.10803571343421936,
+      "modality_accuracy": {
+        "image": 0.07500000298023224,
+        "audio": 0.11785714328289032,
+        "video": 0.04285714402794838,
+        "tension": 0.1964285671710968
+      },
+      "wall_s": 0.11,
+      "n_steps": 200
+    },
+    "A4_mrt5_merge": {
+      "name": "A4_mrt5_merge",
+      "n_params": 10436,
+      "final_loss": 2.917351007461548,
+      "loss_at_step_50": 3.4703261852264404,
+      "loss_at_step_100": 3.4544525146484375,
+      "anchor_accuracy_all": 0.19910714030265808,
+      "modality_accuracy": {
+        "image": 0.11071428656578064,
+        "audio": 0.125,
+        "video": 0.0892857164144516,
+        "tension": 0.4714285731315613
+      },
+      "wall_s": 0.13,
+      "n_steps": 200
+    },
+    "A5_iob_5channel": {
+      "name": "A5_iob_5channel",
+      "n_params": 8567,
+      "final_loss": 3.5578396320343018,
+      "loss_at_step_50": 3.548311948776245,
+      "loss_at_step_100": 3.5910792350769043,
+      "anchor_accuracy_all": 0.02857142873108387,
+      "modality_accuracy": {
+        "image": 0.02857142873108387,
+        "audio": 0.02857142873108387,
+        "video": 0.02857142873108387,
+        "tension": 0.02857142873108387
+      },
+      "wall_s": 0.09,
+      "n_steps": 200
+    },
+    "A6_cycle_consistent": {
+      "name": "A6_cycle_consistent",
+      "n_params": 11459,
+      "final_loss": 2.959429979324341,
+      "loss_at_step_50": 3.523063898086548,
+      "loss_at_step_100": 3.463470935821533,
+      "anchor_accuracy_all": 0.24821428954601288,
+      "modality_accuracy": {
+        "image": 0.14642857015132904,
+        "audio": 0.16785714030265808,
+        "video": 0.1428571492433548,
+        "tension": 0.5357142686843872
+      },
+      "wall_s": 0.14,
+      "n_steps": 200
+    },
+    "A7_neurolm_nlc": {
+      "name": "A7_neurolm_nlc",
+      "n_params": 13539,
+      "final_loss": 2.7919504642486572,
+      "loss_at_step_50": 3.5175697803497314,
+      "loss_at_step_100": 3.4148800373077393,
+      "anchor_accuracy_all": 0.24642856419086456,
+      "modality_accuracy": {
+        "image": 0.1428571492433548,
+        "audio": 0.18214285373687744,
+        "video": 0.12857143580913544,
+        "tension": 0.5321428775787354
+      },
+      "wall_s": 0.09,
+      "n_steps": 200
+    },
+    "A8_iit_phi_sup": {
+      "name": "A8_iit_phi_sup",
+      "n_params": 10403,
+      "final_loss": 3.0019145011901855,
+      "loss_at_step_50": 3.363933801651001,
+      "loss_at_step_100": 3.325032949447632,
+      "anchor_accuracy_all": 0.24821428954601288,
+      "modality_accuracy": {
+        "image": 0.1428571492433548,
+        "audio": 0.1785714328289032,
+        "video": 0.13214285671710968,
+        "tension": 0.5392857193946838
+      },
+      "wall_s": 0.16,
+      "n_steps": 200
+    },
+    "A9_tensionlink_5ch": {
+      "name": "A9_tensionlink_5ch",
+      "n_params": 9623,
+      "final_loss": 3.4805867671966553,
+      "loss_at_step_50": 3.7888526916503906,
+      "loss_at_step_100": 3.556328535079956,
+      "anchor_accuracy_all": 0.04732142761349678,
+      "modality_accuracy": {
+        "image": 0.03214285895228386,
+        "audio": 0.04285714402794838,
+        "video": 0.01785714365541935,
+        "tension": 0.09642857313156128
+      },
+      "wall_s": 0.1,
+      "n_steps": 200
+    }
+  },
+  "total_wall_s": 2.4,
+  "honest_carve_out": "All 9 adapter families implemented from-scratch (no pretrained weights, no external graft). Concept-level port from literature, anima \u00a77 \u2460 \u2461 \u2462 all PASS. Synthetic byte streams (M3) per anchor tier \u2014 NOT real-world modality. Measurement = whether adapter can learn anchor classification structure from byte-level supervision. Per-modality accuracy reveals which adapter is modality-agnostic vs modality-specific. NOT GOAL emergence (B-EMERGE-7); anchor classification capability \u2260 V-SPONT honest coherent emission."
+}

@@ -1,0 +1,446 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_savant_routing_overlay.hexa — SAVANT routing modifier
+//
+//  PURPOSE (SAVANT-TOOL Phase 3-c)
+//    mitosis_hook.hexa 의 `_mit_combine_outputs` 는 cell pool 의 tensions 를
+//    softmax 로 변환해 cell outputs 를 weighted-combine. 본 overlay 는
+//    *softmax 직전 tensions 를 top-k mask* 해서 SAVANT 모드의 "inhibition
+//    release" 효과를 routing 표면에 구현.
+//
+//    Interpretation: SAVANT-TOOL.tape §3 dropout rate 가 *살아남을 cells
+//    의 비율* (= keep_rate). GZ_LOWER (0.2123) = top 21% only fire;
+//    GZ_CENTER (1/e ≈ 0.3679) = top 37% fire; OFF (= no overlay) = all fire.
+//
+//    Top-k mask: tensions 의 상위 keep_rate * n cells 만 살리고 나머지는 매우
+//    작은 값 (-1e9) 으로 마스크. 이후 softmax 는 거의 0 weight 로 routing 차단.
+//
+//    mitosis_hook.hexa 본체 무수정 — 본 file 은 standalone overlay. caller
+//    (예: anima_chat 의 future patch) 가 tensions 를 받아 overlay 적용 후
+//    mitosis_hook 의 fold 호출.
+//
+//  API
+//    savant_top_k_keep_n(n_cells, keep_rate)         -> int   — n_keep 계산
+//    savant_tension_mask(tensions, keep_rate)        -> list  — masked tensions
+//    savant_routing_overlay(tensions, savant_enabled, dropout) -> list — full overlay
+//    savant_tensions_to_weights(tensions)            -> list  — softmax (verify weights)
+//
+//  FALSIFIERS
+//    F-SAVANT-OVERLAY-1 KEEP-RATE-EXACT  keep_rate=0.5 n=10 → 5 살아남음, 5 mask
+//    F-SAVANT-OVERLAY-2 SAVANT-VS-OFF    savant_dropout=0.2123 → 더 sparse; OFF → no-op
+//    F-SAVANT-OVERLAY-3 SOFTMAX-COMPAT   mask 후 softmax → 살아남은 cells 가중치 sum ~ 1.0
+//    F-SAVANT-OVERLAY-4 MIN-1-CELL       keep_rate * n < 1 일 때도 최소 1 cell 살림
+//    F-SAVANT-OVERLAY-5 PRESERVE-ORDER   살아남은 cells 의 tension 값 본래 그대로 (mask 만)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── §1 SAVANT 상수 (mirror) ─────────────────────────────────────────────────
+
+fn so_gz_center() { return 1.0 / 2.71828182845904 }
+fn so_gz_lower()  { return 0.5 - log(4.0 / 3.0) }
+fn so_mask_val()  { return 0.0 - 1.0e9 }      // -1e9, softmax 후 ~ 0
+
+
+// ── §2 Top-k keep ─────────────────────────────────────────────────────────
+
+// savant_top_k_keep_n(n_cells, keep_rate) — 살아남을 cell 수.
+//   keep_rate=0.2123, n=8 → int(8 * 0.2123) = 1 (with min 1)
+//   keep_rate=0.3679, n=8 → int(8 * 0.3679) = 2
+//   keep_rate * n < 1 → 1 (보장: 최소 1 cell 살림)
+fn savant_top_k_keep_n(n_cells: int, keep_rate: float) {
+    if n_cells <= 0 { return 0 }
+    let raw = n_cells * keep_rate
+    let mut k = int(raw)
+    if k < 1 { k = 1 }
+    if k > n_cells { k = n_cells }
+    return k
+}
+
+
+// savant_tension_mask(tensions, keep_rate) — top-k tensions 살리고 rest mask.
+//   tensions 의 본래 순서 보존, 위치 그대로. 살아남는 cell 의 tension 본래 값,
+//   masked cell 의 tension = -1e9.
+fn savant_tension_mask(tensions, keep_rate: float) {
+    let n = len(tensions)
+    if n == 0 { return [] }
+    let n_keep = savant_top_k_keep_n(n, keep_rate)
+    if n_keep >= n {
+        // no-op clone
+        let mut out = []
+        let mut i = 0
+        while i < n {
+            out.push(tensions[i])
+            i = i + 1
+        }
+        return out
+    }
+    // Find top-k threshold: sort desc, take k-th value as cutoff.
+    // hexa-lang 의 list sort 가 builtin 인지 불확실 — manual selection.
+    // n_keep 번째 큰 값 찾기: 매 iteration 에 max 추출.
+    let mut work = []
+    let mut i = 0
+    while i < n {
+        work.push(tensions[i])
+        i = i + 1
+    }
+    let mask = so_mask_val()
+    let mut threshold_val = 0.0
+    let mut iter = 0
+    while iter < n_keep {
+        // find max in work that isn't already mask
+        let mut max_v = mask
+        let mut max_idx = -1
+        let mut j = 0
+        while j < n {
+            if work[j] > max_v {
+                max_v = work[j]
+                max_idx = j
+            }
+            j = j + 1
+        }
+        if max_idx >= 0 {
+            threshold_val = work[max_idx]
+            work[max_idx] = mask  // 다음 iter 에서 안 잡히게
+        }
+        iter = iter + 1
+    }
+    // 이제 threshold_val = n_keep 번째 큰 값. tensions 중 >= threshold_val
+    // 인 것만 살림. (Ties 처리: 동일 값 여러 개면 n_keep 보다 더 많이 살릴 수도
+    // 있지만 routing-level 에서는 문제 없음. 정확 top-k 필요 시 별도 indexing.)
+    let mut out = []
+    let mut k = 0
+    let mut kept_count = 0
+    while k < n {
+        let t = tensions[k]
+        // kept_count < n_keep 인 동안 t >= threshold 면 살림
+        // 동률 tie-break: 앞 index 우선
+        if t >= threshold_val {
+            if kept_count < n_keep {
+                out.push(t)
+                kept_count = kept_count + 1
+            }
+            if kept_count >= n_keep && t < threshold_val + 1e-12 {
+                // 이미 keep limit 초과 + tie → mask
+                if len(out) > k {
+                    // shouldn't happen
+                }
+            }
+        }
+        if t < threshold_val {
+            out.push(mask)
+        }
+        // tie 추가 (kept_count >= n_keep)
+        if t >= threshold_val && kept_count >= n_keep {
+            // 위에서 이미 push 했는지 체크: 위 if 문에서 kept_count++ 한 직후엔
+            // 정상. 단 다시 들어오는 case 가 있을 때만 보정 필요.
+        }
+        k = k + 1
+    }
+    // 위 logic 의 결과 길이가 n 과 같은지 보정 — defensive:
+    if len(out) != n {
+        // fallback: 간단 logic — t >= threshold 면 keep, else mask
+        out = []
+        let mut m = 0
+        while m < n {
+            if tensions[m] >= threshold_val { out.push(tensions[m]) }
+            if tensions[m] < threshold_val  { out.push(mask) }
+            m = m + 1
+        }
+    }
+    return out
+}
+
+
+// savant_routing_overlay(tensions, enabled, dropout) — full overlay.
+//   enabled=false → no-op (tensions clone)
+//   enabled=true  → top (dropout * n) cells 살림
+//   dropout 는 SAVANT-TOOL.tape 의 "살아남을 cells 의 비율" 로 해석.
+fn savant_routing_overlay(tensions, enabled: bool, dropout: float) {
+    if !enabled {
+        let mut out = []
+        let n = len(tensions)
+        let mut i = 0
+        while i < n { out.push(tensions[i]) i = i + 1 }
+        return out
+    }
+    return savant_tension_mask(tensions, dropout)
+}
+
+
+// savant_tensions_to_weights(tensions) — softmax (verify routing distribution).
+//   Numerical-stable: subtract max.
+fn savant_tensions_to_weights(tensions) {
+    let n = len(tensions)
+    if n == 0 { return [] }
+    let mut max_t = tensions[0]
+    let mut i = 1
+    while i < n {
+        if tensions[i] > max_t { max_t = tensions[i] }
+        i = i + 1
+    }
+    let mut exps = []
+    let mut s_exp = 0.0
+    i = 0
+    while i < n {
+        let e = exp(tensions[i] - max_t)
+        exps.push(e)
+        s_exp = s_exp + e
+        i = i + 1
+    }
+    let mut weights = []
+    i = 0
+    while i < n {
+        weights.push(exps[i] / s_exp)
+        i = i + 1
+    }
+    return weights
+}
+
+
+fn so_all_weights_frozen() { return true }
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  §3 Falsifiers
+// ══════════════════════════════════════════════════════════════════════════════
+
+fn f_overlay_1_keep_rate() {
+    println("  F-SAVANT-OVERLAY-1 (KEEP-RATE-EXACT) ...")
+    // n=10, keep_rate=0.5 → int(5) = 5
+    let k1 = savant_top_k_keep_n(10, 0.5)
+    if k1 != 5 {
+        println("    FAIL: keep_n(10, 0.5) != 5, got", k1)
+        return false
+    }
+    // n=8, keep_rate=GZ_LOWER ≈ 0.2123 → int(1.698) = 1
+    let k2 = savant_top_k_keep_n(8, so_gz_lower())
+    if k2 != 1 {
+        println("    FAIL: keep_n(8, GZ_LOWER) != 1, got", k2)
+        return false
+    }
+    // n=8, keep_rate=GZ_CENTER ≈ 0.3679 → int(2.943) = 2
+    let k3 = savant_top_k_keep_n(8, so_gz_center())
+    if k3 != 2 {
+        println("    FAIL: keep_n(8, GZ_CENTER) != 2, got", k3)
+        return false
+    }
+    // mask 검증: n=10, keep_rate=0.5, tensions=[0..9] → top 5 (5..9) 살림, 0..4 mask
+    let tensions = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+    let masked = savant_tension_mask(tensions, 0.5)
+    if len(masked) != 10 {
+        println("    FAIL: masked length != 10, got", len(masked))
+        return false
+    }
+    let mask = so_mask_val()
+    // indices 0-4 mask, 5-9 살아남음
+    let mut i = 0
+    while i < 5 {
+        if masked[i] != mask {
+            println("    FAIL: masked[", i, "] != mask, got", masked[i])
+            return false
+        }
+        i = i + 1
+    }
+    while i < 10 {
+        if masked[i] != tensions[i] {
+            println("    FAIL: masked[", i, "] != original, got", masked[i])
+            return false
+        }
+        i = i + 1
+    }
+    println("    PASS (top-k exact, mask + keep verified)")
+    return true
+}
+
+
+fn f_overlay_2_savant_vs_off() {
+    println("  F-SAVANT-OVERLAY-2 (SAVANT-VS-OFF) ...")
+    let tensions = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]
+    // OFF: no-op
+    let off_out = savant_routing_overlay(tensions, false, 0.2123)
+    if len(off_out) != 8 {
+        println("    FAIL: OFF length mismatch")
+        return false
+    }
+    let mut i = 0
+    while i < 8 {
+        if off_out[i] != tensions[i] {
+            println("    FAIL: OFF [", i, "] modified")
+            return false
+        }
+        i = i + 1
+    }
+    // ON with GZ_LOWER (0.2123): top 1 cell 살림 → index 7 (tension=7.0)
+    let on_out = savant_routing_overlay(tensions, true, so_gz_lower())
+    let mask = so_mask_val()
+    let mut keep_count = 0
+    i = 0
+    while i < 8 {
+        if on_out[i] != mask { keep_count = keep_count + 1 }
+        i = i + 1
+    }
+    if keep_count != 1 {
+        println("    FAIL: GZ_LOWER expected 1 cell kept, got", keep_count)
+        return false
+    }
+    if on_out[7] != 7.0 {
+        println("    FAIL: highest tension cell not preserved")
+        return false
+    }
+    // GZ_CENTER (0.3679): top 2 cells 살림 → indices 6, 7
+    let center_out = savant_routing_overlay(tensions, true, so_gz_center())
+    let mut center_keep = 0
+    i = 0
+    while i < 8 {
+        if center_out[i] != mask { center_keep = center_keep + 1 }
+        i = i + 1
+    }
+    if center_keep != 2 {
+        println("    FAIL: GZ_CENTER expected 2 cells kept, got", center_keep)
+        return false
+    }
+    println("    PASS (OFF no-op; ON GZ_LOWER → 1 cell, GZ_CENTER → 2 cells)")
+    return true
+}
+
+
+fn f_overlay_3_softmax_compat() {
+    println("  F-SAVANT-OVERLAY-3 (SOFTMAX-COMPAT) ...")
+    let tensions = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
+    let masked = savant_routing_overlay(tensions, true, so_gz_lower())
+    let weights = savant_tensions_to_weights(masked)
+    // sum 검증 (softmax 후 weights sum = 1.0)
+    let mut s = 0.0
+    let mut i = 0
+    while i < 8 {
+        s = s + weights[i]
+        i = i + 1
+    }
+    let mut diff = s - 1.0
+    if diff < 0.0 { diff = 0.0 - diff }
+    if diff > 1e-9 {
+        println("    FAIL: weights sum != 1.0, got", s)
+        return false
+    }
+    // 살아남은 cell (index 7, tension=8.0) 의 weight 가 거의 1.0
+    if weights[7] < 0.999 {
+        println("    FAIL: kept cell weight too low, got", weights[7])
+        return false
+    }
+    // masked cells weight 거의 0
+    i = 0
+    while i < 7 {
+        if weights[i] > 1e-6 {
+            println("    FAIL: masked cell weight too high, got", weights[i])
+            return false
+        }
+        i = i + 1
+    }
+    println("    PASS (softmax sum=1; kept cell ~ 1.0; masked ~ 0)")
+    return true
+}
+
+
+fn f_overlay_4_min_1_cell() {
+    println("  F-SAVANT-OVERLAY-4 (MIN-1-CELL) ...")
+    // n=2, keep_rate=0.1 → int(0.2)=0, but min 1 enforced
+    let k1 = savant_top_k_keep_n(2, 0.1)
+    if k1 != 1 {
+        println("    FAIL: keep_n(2, 0.1) min should be 1, got", k1)
+        return false
+    }
+    // n=1 → 1 (전체)
+    let k2 = savant_top_k_keep_n(1, 0.5)
+    if k2 != 1 {
+        println("    FAIL: keep_n(1, 0.5) != 1, got", k2)
+        return false
+    }
+    // n=0 → 0
+    let k3 = savant_top_k_keep_n(0, 0.5)
+    if k3 != 0 {
+        println("    FAIL: keep_n(0, 0.5) != 0, got", k3)
+        return false
+    }
+    // savant_tension_mask 의 n=2 + 매우 작은 keep_rate → 1 cell 살림
+    let tensions = [0.5, 1.5]
+    let masked = savant_tension_mask(tensions, 0.1)
+    let mask = so_mask_val()
+    let mut keep = 0
+    let mut i = 0
+    while i < 2 {
+        if masked[i] != mask { keep = keep + 1 }
+        i = i + 1
+    }
+    if keep != 1 {
+        println("    FAIL: n=2 keep_rate=0.1 expected 1 kept, got", keep)
+        return false
+    }
+    if masked[1] != 1.5 {
+        println("    FAIL: top tension not preserved")
+        return false
+    }
+    println("    PASS (min 1 cell always preserved, edge n=1/n=0)")
+    return true
+}
+
+
+fn f_overlay_5_preserve_order() {
+    println("  F-SAVANT-OVERLAY-5 (PRESERVE-ORDER) ...")
+    // tension order: ascending, then shuffled — kept positions 보존 확인
+    let tensions = [5.0, 1.0, 8.0, 2.0, 6.0]  // top 2: 8.0 (idx 2), 6.0 (idx 4)
+    let masked = savant_tension_mask(tensions, 0.4)  // int(5*0.4)=2
+    let mask = so_mask_val()
+    if masked[2] != 8.0 {
+        println("    FAIL: index 2 (value 8.0) not preserved, got", masked[2])
+        return false
+    }
+    if masked[4] != 6.0 {
+        println("    FAIL: index 4 (value 6.0) not preserved, got", masked[4])
+        return false
+    }
+    if masked[0] != mask {
+        println("    FAIL: index 0 should be masked, got", masked[0])
+        return false
+    }
+    if masked[1] != mask {
+        println("    FAIL: index 1 should be masked, got", masked[1])
+        return false
+    }
+    if masked[3] != mask {
+        println("    FAIL: index 3 should be masked, got", masked[3])
+        return false
+    }
+    println("    PASS (positional order preserved, only mask-or-keep)")
+    return true
+}
+
+
+fn main() {
+    println("════════════════════════════════════════════════════════════════")
+    println("  anima SAVANT routing overlay (F-SAVANT-OVERLAY-1..5)")
+    println("════════════════════════════════════════════════════════════════")
+    println("  GZ_LOWER  (savant top-k):  ", so_gz_lower(), "(top ~21% cells)")
+    println("  GZ_CENTER (generalist):    ", so_gz_center(), "(top ~37% cells)")
+    println("────────────────────────────────────────────────────────────────")
+
+    let f1 = f_overlay_1_keep_rate()
+    let f2 = f_overlay_2_savant_vs_off()
+    let f3 = f_overlay_3_softmax_compat()
+    let f4 = f_overlay_4_min_1_cell()
+    let f5 = f_overlay_5_preserve_order()
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if f3 { n_pass = n_pass + 1 }
+    if f4 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+
+    println("────────────────────────────────────────────────────────────────")
+    println("  VERDICT:", n_pass, "/ 5 PASS")
+    println("────────────────────────────────────────────────────────────────")
+    if n_pass == 5 {
+        println("  ✅ F-SAVANT-OVERLAY-1..5 5/5 PASS — SAVANT routing overlay LANDED")
+        println("  Top-k mask: GZ_LOWER 21% cells fire (savant), GZ_CENTER 37% (generalist)")
+        println("  mitosis_hook.hexa 본체 무수정. caller 가 tensions overlay 후 softmax 호출.")
+    }
+}

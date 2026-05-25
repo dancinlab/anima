@@ -1,0 +1,46 @@
+{
+  "schema": "anima/emerge_chat_repe_steering/verdict/1",
+  "task_id": "anima_emerge_chat_repe_steering_2026_05_05",
+  "ts_utc": "2026-05-05T17:26:07Z",
+  "platform": "mac CPU (.venv-eeg python3.12, torch fp32)",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "n_chat_pairs": 15,
+  "n_non_chat_pairs": 15,
+  "layers_probed": [
+    4,
+    8,
+    12
+  ],
+  "alphas": [
+    0.5,
+    1.0,
+    2.0,
+    4.0
+  ],
+  "chat_direction_norms": {
+    "4": 13.690255165100098,
+    "8": 16.748228073120117,
+    "12": 17.099365234375
+  },
+  "n_configs": 13,
+  "n_coherent": 0,
+  "best_config": null,
+  "best_text_preview": null,
+  "verdict": "FAIL_115_FORMAL_CLOSURE",
+  "wall_sec": 118.0,
+  "cost_usd": 0.0,
+  "raw_compliance": {
+    "raw_15_no_production_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  },
+  "honest_c3": [
+    "C1 — mac CPU fp32 only; no quantization, no gradient. Inference dynamics may differ subtly from H100 fp16/bf16 production runs (RoPE-cache-rebuild order noise + numeric drift).",
+    "C2 — only 30 contrast pairs (15 chat + 15 non-chat). RepE / CAA literature typical = 100-1000+ pairs for stable mean-direction estimation. Under-powered: per-layer chat_direction may be dominated by per-text lexical noise rather than semantic chat-axis. Replication needed at >=200 pairs to confirm.",
+    "C3 — last-token residual capture only; multi-token CAA proper would mean-pool over all token positions (or extract per-token then aggregate). Last-token captures next-token-prediction state, which is a biased subspace; a chat-axis present in earlier-token residuals would be missed. Position-mean would give a different direction estimate.",
+    "C4 — 'semi-coherent' heuristic (>=5 alpha-or-Korean chars + most-common-char <= 50% length) is anima-internal. It does NOT measure conversational validity, instruction-following, or chat appropriateness. n_coherent >= 1 indicates ONLY that the model emits non-degenerate text under steering at SOME (layer, alpha); it is necessary-not-sufficient for chat rescue.",
+    "C5 — BG-AZ predicted null result: substrate residual stream of CLM v4 is Phi-axis-dominated (per CLM-2-EXEC, Pbeta paradigm-D, and #115 architectural analysis). Even if a chat-direction exists in the linear subspace, residual-add steering may not flip the dominant attractor. FAIL_115_FORMAL_CLOSURE here would constitute the formal empirical close of the linear-steering rescue path; PASS_RESCUE_PATH would warrant a follow-up calibrated sweep at higher pair count and lm-eval composite."
+  ]
+}

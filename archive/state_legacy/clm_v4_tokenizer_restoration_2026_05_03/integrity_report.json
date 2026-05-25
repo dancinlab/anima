@@ -1,0 +1,52 @@
+{
+  "schema": "anima/clm_v4_tokenizer_integrity/1",
+  "recorded_at_utc": "2026-05-03T15:09:00Z",
+  "tokenizer_path": "state/clm_v4_tokenizer_restoration_2026_05_03/tokenizer_64k_multilingual.model",
+  "sha256_model": "bb851d39fbe3286dda11fc43da78d9bbf29ac6400d61b75616c8c750b710b8ab",
+  "sha256_vocab": "972fc0ba2f2633cfa685c70eeab84ce2a22a1327975e989a3b1d5cf5efa480a4",
+  "size_model_bytes": 1306349,
+  "size_vocab_bytes": 989272,
+  "created_at_source": "2026-04-01T10:11:00 (file mtime on ready/anima/config/)",
+  "origin_path_sister_repo": "ready/anima/config/tokenizer_64k_multilingual.{model,vocab}",
+  "training_script": "ready/scripts/train_tokenizer.py",
+  "training_corpus_default": "anima/data/corpus_v10_ko.txt (training script default)",
+  "spec": {
+    "vocab_size": 64000,
+    "model_type": "bpe",
+    "pad_id": 0,
+    "bos_id": 1,
+    "eos_id": 2,
+    "unk_id": 3,
+    "byte_fallback": true,
+    "normalization": "nfkc",
+    "character_coverage": 0.9995,
+    "split_digits": true,
+    "max_sentencepiece_length": 16,
+    "allow_whitespace_only_pieces": true
+  },
+  "roundtrip_tests": {
+    "english": {
+      "tokens": 6,
+      "pass": true,
+      "text": "Consciousness emerges from structure."
+    },
+    "korean": {
+      "tokens": 4,
+      "pass": true,
+      "text": "의식은 구조에서 창발한다."
+    },
+    "mixed_symbols": {
+      "tokens": 6,
+      "pass": true,
+      "text": "Φ=1.234, α=0.014"
+    },
+    "unk_count_on_korean": 0
+  },
+  "byte_fallback_id_range": {
+    "start": 4,
+    "end": 259,
+    "note": "<0x00>..<0xFF> after 4 special tokens"
+  },
+  "restoration_provenance": "RECOVERY_NOT_REBUILD",
+  "verdict": "INTEGRITY_OK_AT_64000"
+}

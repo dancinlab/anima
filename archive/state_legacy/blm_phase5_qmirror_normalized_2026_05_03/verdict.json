@@ -1,0 +1,56 @@
+{
+  "schema": "anima/blm_phase5/qmirror_normalized_retry/1",
+  "version": "v1_aborted_methodologically_invalid",
+  "ts_utc": "2026-05-03T22:10:00Z",
+  "scope": "Phase 5 retry proposal: renormalize per-substrate phi via qmirror canonical reference distribution, then re-test F-CT-ALIGNED-1/2 silver. ABORTED before BG launch due to mathematical falsification of the proposed methodology.",
+  "verdict": "PROPOSAL_FALSIFIED_PRE_EXEC",
+  "falsifier": "F-QCAL-1",
+  "falsifier_disposition": "no_test_executed_methodology_invalid",
+  "n_silver": 0,
+  "silver_pass_pairs": [],
+  "composite_verdict": "ABORTED_NO_REGEN",
+  "math_proof": {
+    "claim": "Per-substrate z-score normalization (with any reference mean mu_ref and std sigma_ref) is a strictly positive-affine transformation per substrate.",
+    "consequence": "Both Pearson r and Spearman r between two paired vectors are INVARIANT under independent positive-affine transformations of each vector.",
+    "implication": "Replacing per-substrate self-z-score with qmirror-reference-z-score MUST yield IDENTICAL Pearson and Spearman r to those already reported in blm_phase5_aligned_exec_2026_05_03/verdict.json. The proposed F-QCAL-1 retry cannot move any pair across the silver threshold (|r_s|>=0.20, p_perm<0.05, CI_lo>=0.10).",
+    "numerical_demonstration_seed42_n100": {
+      "raw":                  {"pearson": 0.961103, "spearman": 0.958212},
+      "self_z_score":         {"pearson": 0.961103, "spearman": 0.958212},
+      "qmirror_ref_z_score":  {"pearson": 0.961103, "spearman": 0.958212}
+    }
+  },
+  "predicted_re_run_results_if_executed": {
+    "CLM-EEG":  {"spearman_r": 0.1290,  "pearson_r": 0.1574,  "predicted_silver_pass": false},
+    "CLM-BOLD": {"spearman_r": -0.0579, "pearson_r": -0.0519, "predicted_silver_pass": false},
+    "EEG-BOLD": {"spearman_r": -0.1382, "pearson_r": -0.0861, "predicted_silver_pass": false},
+    "predicted_n_silver": 0,
+    "predicted_composite": "MULTI_ALIGNED_FAIL (identical to blm_phase5_aligned_exec_2026_05_03)"
+  },
+  "secondary_finding_qmirror_cond6_reference": {
+    "qmirror_cond6_artifact": "state/braket_iit40_mip_2026_05_02/verdict.json",
+    "phi_star_values": {"and_ionq_forte1": 0.0, "maj_ionq_forte1": 0.0, "and_sv1": 0.0, "maj_sv1": 0.0},
+    "issue_1_metric_mismatch": "qmirror cond.6 phi_star is computed by pyphi 4.0 sia() MIP-search on a state-by-node TPM (transition probability matrix). anima_phi_v3_canonical (used in BLM Phase 4/5) is covariance-logdet sample-partition phi on hidden activations. The two metrics measure different mathematical objects and are not commensurable as a 'normalization anchor' even if Spearman were not already invariant.",
+    "issue_2_degenerate_reference": "All 4 stored TPMs yield phi_star = 0.0 byte-identical because the marginalized TPM is row-uniform (no causal connectivity in IIT 4.0 sense). A single-point reference (constant 0.0) cannot define a distribution to z-score against (sigma_ref = 0 -> division by zero or undefined z-scores).",
+    "issue_3_distribution_construction": "Generating a 1000-random-circuit qmirror phi distribution would require either (a) running pyphi 4.0 sia() on 1000 small (N<=6) random TPMs (which would still be IIT-4.0-phi values, NOT covariance-logdet phi values, so still incommensurable) or (b) running anima_phi_v3_canonical on hidden states extracted from quantum circuit state vectors -- but quantum state vectors have no concept of a 'sequence of N=16 prompt activations,' so the formula would need to be re-defined."
+  },
+  "why_phase5_actually_failed": "Phase 5 FAIL is NOT a normalization artifact. It reflects a substantive empirical finding: the anima_phi_v3_canonical formula (covariance-logdet sample-partition phi on top-variance hidden dims) does not transfer between CLM hidden states, EEG fixation-locked epochs, and BOLD HRF-lagged windows -- even when the stimulus is shared (CLM-BOLD pair was true text-shared, n=158, power=0.93 at silver threshold, r_s=-0.058 with CI tight around 0). The phi-formula likely captures substrate-specific covariance structure, not a substrate-invariant 'integration' quantity.",
+  "viable_alternatives": [
+    "ALT-1 (RSA): Representational similarity analysis -- compute substrate-specific RDMs (representational dissimilarity matrices) per stimulus, then correlate RDMs across substrates (RSA toolbox). RDMs are invariant to many cross-substrate confounds and are the standard cross-modal alignment tool in cognitive neuroscience (Kriegeskorte 2008). $0 CPU.",
+    "ALT-2 (Encoding model): Per-substrate ridge-regression encoding model from CLM hidden states -> EEG/BOLD; cross-validate r per voxel/channel; report mean r across held-out folds. Standard fMRI encoding pipeline (Huth/Gallant 2016). $0 CPU.",
+    "ALT-3 (Substrate-matched phi): Re-define phi to be substrate-appropriate per modality -- e.g., complex network phi for EEG (PyPhi on phase-coupling graphs), HRF-deconvolved BOLD before covariance-phi, CLM with longer context windows. Still won't make phi cross-substrate-shared, but at least each substrate has a phi that respects its native dynamics.",
+    "ALT-4 (Acknowledge H1 FAIL is the answer): The Phase 5 result is the answer -- phi-formula is not substrate-shared. Update .roadmap.blm_brain_lm cond.3 (3-way alignment >=0.5 STRONG) to NOT_FEASIBLE_VIA_PHI_TRANSFER and pivot the BLM (brain-LM bridge) program to RSA/encoding-model methods."
+  ],
+  "honest_c3_caveats": [
+    "C-Q1: The qmirror cond.6 reference (4 TPMs, all phi_star=0.0) cannot serve as a normalization anchor for cross-substrate phi for two independent reasons: (a) Spearman is invariant to per-substrate affine transforms, so re-normalization cannot change r; (b) qmirror cond.6 phi_star (pyphi sia on TPM) and anima_phi_v3_canonical (cov-logdet on hidden activations) are different mathematical objects.",
+    "C-Q2: Even if a NEW canonical anchor were constructed by running anima_phi_v3_canonical on hidden states extracted from 1000 random quantum circuits, this would still constitute an affine renormalization per substrate (mu_ref, sigma_ref are constants per substrate), so Spearman invariance still kills the proposed F-QCAL-1 silver recovery. The only way phi normalization could change Spearman is via a NON-MONOTONIC transformation, which would fundamentally alter the meaning of phi.",
+    "C-Q3: Phase 5 FAIL is empirically robust at adequate power (CLM-BOLD n=158, power=0.93). The genuine null is not a 'normalization mistake' artifact -- it is the answer the experiment delivered.",
+    "C-Q4: The decision to ABORT rather than execute the proposed 2-4h CPU run is itself a cost-saving falsification: the user budget (raw#15 'no destructive ops, $0 ubu local') is preserved by NOT running a mathematically guaranteed-null retry. RAW#71 (falsifier-bound) is satisfied by F-QCAL-1 disposition = 'no_test_executed_methodology_invalid' with the math proof as the falsification artifact."
+  ],
+  "raw_invariants": [
+    "raw#9 no .py creation (this is a verdict-only artifact in state/, math proof done inline above)",
+    "raw#10 honest C3 -- 4 explicit caveats explaining why retry was aborted",
+    "raw#15 SSOT this artifact, no destructive ops; $0 ubu (no BG run launched)",
+    "raw#71 falsifier F-QCAL-1 disposed pre-exec via math proof"
+  ],
+  "elapsed_sec": 0
+}

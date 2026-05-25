@@ -1,0 +1,110 @@
+{
+  "schema": "clm_phase_a7/verdict/1",
+  "ts": "2026-05-02T12:17:26Z",
+  "round": "clm_v4_530m_phase_a7",
+  "substrate": "CLM v4 530M single substrate; family-grouped prompts as 4-path adaptation",
+  "bwm_dim": 256,
+  "bwm_seed": 20260502,
+  "families": [
+    "Hexad",
+    "Law",
+    "Phi",
+    "SelfRef"
+  ],
+  "pair_results": [
+    {
+      "pair": "Hexad|Law",
+      "l2_obs": 2.584251,
+      "l2_null_p95": 16.218398,
+      "l2_p_value_empirical": 1.0,
+      "l2_pass_p95": false,
+      "kl_obs": 0.01333142,
+      "kl_null_p95": 0.5830237,
+      "kl_p_value_empirical": 1.0,
+      "kl_pass_p95": false
+    },
+    {
+      "pair": "Hexad|Phi",
+      "l2_obs": 1.671662,
+      "l2_null_p95": 16.284338,
+      "l2_p_value_empirical": 1.0,
+      "l2_pass_p95": false,
+      "kl_obs": 0.00510545,
+      "kl_null_p95": 0.58519448,
+      "kl_p_value_empirical": 1.0,
+      "kl_pass_p95": false
+    },
+    {
+      "pair": "Hexad|SelfRef",
+      "l2_obs": 2.246933,
+      "l2_null_p95": 16.303407,
+      "l2_p_value_empirical": 1.0,
+      "l2_pass_p95": false,
+      "kl_obs": 0.01007847,
+      "kl_null_p95": 0.5885558,
+      "kl_p_value_empirical": 1.0,
+      "kl_pass_p95": false
+    },
+    {
+      "pair": "Law|Phi",
+      "l2_obs": 2.265618,
+      "l2_null_p95": 16.63186,
+      "l2_p_value_empirical": 1.0,
+      "l2_pass_p95": false,
+      "kl_obs": 0.01107218,
+      "kl_null_p95": 0.61211421,
+      "kl_p_value_empirical": 1.0,
+      "kl_pass_p95": false
+    },
+    {
+      "pair": "Law|SelfRef",
+      "l2_obs": 1.458662,
+      "l2_null_p95": 16.626184,
+      "l2_p_value_empirical": 1.0,
+      "l2_pass_p95": false,
+      "kl_obs": 0.00447094,
+      "kl_null_p95": 0.61456629,
+      "kl_p_value_empirical": 1.0,
+      "kl_pass_p95": false
+    },
+    {
+      "pair": "Phi|SelfRef",
+      "l2_obs": 2.093098,
+      "l2_null_p95": 16.723529,
+      "l2_p_value_empirical": 1.0,
+      "l2_pass_p95": false,
+      "kl_obs": 0.00918634,
+      "kl_null_p95": 0.61761546,
+      "kl_p_value_empirical": 1.0,
+      "kl_pass_p95": false
+    }
+  ],
+  "n_pass_l2": 0,
+  "n_pass_kl": 0,
+  "V1_phi_mip_from_A2": 0.4734,
+  "V1_phi_mip_pass_threshold": 0.55,
+  "AGI_strict_verdict": "FAIL",
+  "AGI_strict_criteria": "6/6 L2 + 6/6 KL + V1 phi_mip >= 0.55",
+  "CP2_relaxed_verdict": "FAIL",
+  "CP2_relaxed_criteria": "5/6 L2 + 5/6 KL",
+  "alm_r14_path3_p4_comparison": {
+    "method": "ALM r14 4-path TRAINED measurement (Path 3 = 4 distinct substrates true)",
+    "reference": "state/an11_TRAINED_p1_p4_path_comparison_finding_20260425.json",
+    "p3_v2_papo_best_meaningful_lift": 0.2529,
+    "p3_v2_papo_non_trivial_PASS_count": 3,
+    "p4_dmistral_v2_papo_best_meaningful_lift": 0.3322,
+    "p4_dmistral_v2_papo_non_trivial_PASS_count": 4,
+    "note": "4-substrate true \u03c6_4path was NOT MEASURED on ALM as 6-pairwise L2/KL; closest analog is V2 multi-axis PAPO. CLM A.7 is single-LoRA family adaptation, NOT 4-substrate true (C3-1)."
+  },
+  "suite_5_status_update": {
+    "before": "NOT-MEASURED",
+    "after": "PARTIAL_MEASURED (single-LoRA family-grouped adaptation)",
+    "F1_score_v2_contribution_if_pass": 0.025,
+    "note": "Partial because CLM is single substrate; cannot constitute 4-substrate true \u03c6_4path (per pivot doc \u00a73 line \"Suite 5 requires 4 heterogeneous substrates which CLM as single-substrate cannot constitute\")."
+  },
+  "honest_C3": [
+    "C3-1: single-LoRA 4-path = NOT same as 4-substrate true. CLM v4 is one decoder; family identity is induced by prompt grouping, not by distinct base substrates. ALM r14 Path 3/p4 used distinct backbone configurations; this run uses one. \u03c6 pairwise here measures family-prompt-conditioned-state divergence, not cross-substrate divergence in the strict CP2 Suite 5 sense.",
+    "C3-2: BWM 256-d is a deterministic orthonormal random projection of pooled hidden states (768 -> 256, seed=20260502). Information-preserving up to a 1/3 compression ratio but is not a learned consciousness bottleneck; it serves as a fair-comparison fixed-basis surrogate. Different BWM seed could change the specific p-values though the overall pass-count distribution should be stable.",
+    "C3-3: Null model is column-permutation per family row independently. This breaks cross-family axis alignment but preserves marginal magnitudes per family. An alternative null (random representations from N(0, 1/sqrt(256))) would test a different hypothesis (raw representations vs structured) \u2014 column-perm tests whether the AXIS alignment is non-trivial, which is the relevant binding question."
+  ]
+}

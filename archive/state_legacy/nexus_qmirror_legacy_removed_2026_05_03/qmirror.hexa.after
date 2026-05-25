@@ -1,0 +1,375 @@
+// nexus/cli/qmirror.hexa — qmirror subcommand router (REFACTORED 2026-05-03)
+//
+// REFACTOR NOTE (anima cycle, 2026-05-03):
+//   This router was previously a pure-local dispatcher importing in-tree
+//   modules at $NEXUS/modules/qmirror/*.hexa. As of the qmirror standalone
+//   migration (anima cycle, see docs/nexus_qmirror_cli_refactor_landed_2026_05_03.ai.md),
+//   it is now a thin pass-through to the standalone qmirror CLI:
+//
+//       nexus qmirror <subcmd> [flags...]
+//          ↓
+//       qmirror <subcmd> [flags...]   (standalone CLI from need-singularity/qmirror)
+//
+//   The standalone CLI lives at one of:
+//     1. $QMIRROR_ROOT (env override)             ← preferred
+//     2. /Users/ghost/core/qmirror                 ← Mac dev convention
+//     3. $HOME/core/qmirror                        ← user-home convention
+//     4. PATH-resolved `qmirror` binary            ← future hx-installed
+//
+//   In-tree modules at $NEXUS/modules/qmirror/ have been REMOVED as of v0.3.0
+//   (see docs/nexus_qmirror_legacy_removed_2026_05_03.ai.md). The 5th tier
+//   (legacy-intree fallback) was a silent fallback that bypassed operator intent;
+//   it is now a hard fail with an actionable error.
+//
+// Invoked via:  nexus qmirror <subcmd> [flags...]
+//   ─ via wrapper bin/nexus-cli → engine/nexus_cli.hexa cmd_qmirror →
+//     this script. Pure delegation: NO logic duplication; nexus-side adds only
+//     a one-line preamble + audit log; ALL subcmd logic lives in the standalone.
+//
+// Subcommands (forwarded verbatim to standalone):
+//   status     — closure 8/8 cond table + verdict
+//   chsh       — CHSH Bell test (Tsirelson S statistic)
+//   nist       — NIST tier-1+ on QRNG sample
+//   iit        — IIT 4.0 φ★ MIP measurement
+//   qrng       — pull quantum random bits (4-tier ANU fallback)
+//   selftest   — full Phase 1 + Phase 2 falsifier sweep
+//
+// CHANGELOG:
+//   v0.3.0 (2026-05-03) — Removed 5th-tier `legacy-intree` fallback. Now
+//                         enforces standalone-only (4-tier resolution); hard
+//                         fail with `hx install qmirror` hint when missing.
+//                         In-tree $NEXUS/modules/qmirror/ deleted.
+//   v0.2.0 (2026-05-03) — Initial shellout refactor (5-tier resolution with
+//                         deprecated in-tree fallback retained as resilience).
+//
+// Constraints honored:
+//   raw#9   — hexa-only (no .py created); standalone manages its own bridges
+//   raw#15  — write-confined (audit log only on nexus side)
+//   raw#10  — 4 honest C3 caveats embedded in `cmd_help`
+//
+// Cost: $0 (Mac local; live ANU only on --live opt-in).
+//
+// @no-lock-needed
+// @resolver-bypass(reason="Pure local CLI router; standalone manages its own bridges.")
+
+let VERSION = "0.3.0"  // bumped: legacy-intree fallback removed (standalone-only)
+
+// ─── env / path resolve ───
+
+let HOME = env("HOME")
+let NEXUS = env("NEXUS")
+let QMIRROR_ROOT_ENV = env("QMIRROR_ROOT")
+
+fn nexus_root() -> str {
+    if NEXUS.len() > 0 { return NEXUS }
+    return HOME + "/core/nexus"  // @allow-devpath
+}
+
+let NX = nexus_root()
+let HEXA_BIN = NX + "/bin/hexa"
+let LOG_PATH = NX + "/logs/nexus_cli.log"
+
+// (v0.3.0) In-tree fallback REMOVED — standalone-only enforcement.
+
+// ─── arg helpers ───
+
+fn shq(s: str) -> str {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn has_flag(a: [str], flag: str) -> bool {
+    let prefix = flag + "="
+    for x in a {
+        if x == flag { return true }
+        if x.starts_with(prefix) { return true }
+    }
+    return false
+}
+
+fn json_mode(a: [str]) -> bool {
+    return has_flag(a, "--json")
+}
+
+// ─── quiet-mode plumbing (U3 — orpheus programmatic consumption) ───
+
+let mut _QUIET: bool = false
+
+fn _quiet() -> bool { return _QUIET }
+
+fn _p(s: str) {
+    if _QUIET { eprintln(s) } else { println(s) }
+}
+
+fn _e(s: str) { eprintln(s) }
+
+fn quiet_mode(a: [str]) -> bool {
+    return has_flag(a, "--quiet")
+}
+
+// ─── audit log (jsonl) ───
+
+fn _ts_now() -> str {
+    return exec("date -u '+%Y-%m-%dT%H:%M:%SZ'").trim()
+}
+
+fn _audit(subcmd: str, args_str: str, exit_code: int, route: str) {
+    let line = "{\"ts\":\"" + _ts_now() + "\",\"caller\":\"qmirror_router\",\"subcmd\":\"qmirror " +
+               subcmd + "\",\"args\":\"" + args_str.replace("\"", "\\\"") +
+               "\",\"exit_code\":" + str(exit_code) +
+               ",\"route\":\"" + route + "\"" +
+               ",\"router_version\":\"" + VERSION + "\"}"
+    exec("echo " + shq(line) + " >> " + shq(LOG_PATH) + " 2>/dev/null")
+}
+
+// ─── path / invocation resolution ───
+
+fn _file_exists(p: str) -> bool {
+    let r = exec("[ -f " + shq(p) + " ] && echo yes || echo no").trim()
+    return r == "yes"
+}
+
+// Resolution order (v0.3.0 — standalone-only, 4 tiers):
+//   1. $QMIRROR_ROOT env
+//   2. /Users/ghost/core/qmirror
+//   3. $HOME/core/qmirror
+//   4. PATH-resolved `qmirror`
+//
+// (v0.2.0 5th tier `legacy-intree` removed; in-tree modules deleted.)
+//
+// Returns shape: "<route>|<command-prefix>"
+//   route ∈ { "standalone-env", "standalone-mac", "standalone-home",
+//             "standalone-path", "none" }
+//   command-prefix is the prefix for the subcmd to be appended (no trailing space).
+fn _resolve_qmirror_invocation() -> str {
+    // 1. $QMIRROR_ROOT env
+    if QMIRROR_ROOT_ENV.len() > 0 {
+        let cli = QMIRROR_ROOT_ENV + "/cli/qmirror.hexa"
+        if _file_exists(cli) {
+            return "standalone-env|QMIRROR_ROOT=" + shq(QMIRROR_ROOT_ENV) + " " + shq(HEXA_BIN) + " run " + shq(cli)
+        }
+    }
+    // 2. Mac dev convention
+    let mac_root = "/Users/ghost/core/qmirror"
+    let mac_cli = mac_root + "/cli/qmirror.hexa"
+    if _file_exists(mac_cli) {
+        return "standalone-mac|QMIRROR_ROOT=" + shq(mac_root) + " " + shq(HEXA_BIN) + " run " + shq(mac_cli)
+    }
+    // 3. $HOME/core/qmirror
+    let home_root = HOME + "/core/qmirror"
+    let home_cli = home_root + "/cli/qmirror.hexa"
+    if _file_exists(home_cli) {
+        return "standalone-home|QMIRROR_ROOT=" + shq(home_root) + " " + shq(HEXA_BIN) + " run " + shq(home_cli)
+    }
+    // 4. PATH-resolved qmirror binary
+    let path_bin = exec("command -v qmirror 2>/dev/null || true").trim()
+    if path_bin.len() > 0 {
+        return "standalone-path|" + shq(path_bin)
+    }
+    return "none|"
+}
+
+// Strip the trailing "__NEXUS_QMIRROR_RC__:N" line from raw exec output before printing.
+fn _strip_rc_trailer(raw: str) -> str {
+    let lines = raw.split("\n")
+    let mut out = ""
+    let mut k = 0
+    while k < lines.len() {
+        let l = lines[k]
+        if l.trim().starts_with("__NEXUS_QMIRROR_RC__:") == false {
+            if out.len() > 0 { out = out + "\n" }
+            out = out + l
+        }
+        k = k + 1
+    }
+    return out
+}
+
+// Forward: invoke standalone qmirror with subcmd + extra args. Returns (route, exit_code).
+// Streams stdout/stderr live (no buffering) by direct `exec` → terminal pipes inherit.
+//
+// (v0.3.0) Hard fail when none of the 4 standalone tiers resolve — no silent
+// in-tree fallback. Operator must explicitly install/locate qmirror.
+fn _forward(sub: str, extra: [str]) -> str {
+    let resolved = _resolve_qmirror_invocation()
+    let parts = resolved.split("|")
+    let route = parts[0]
+    let prefix = if parts.len() >= 2 { parts[1] } else { "" }
+
+    if route == "none" {
+        _e("nexus qmirror: ERROR — qmirror standalone not found (4-tier resolution failed)")
+        _e("  tier 1 ($QMIRROR_ROOT env)              : not set or invalid")
+        _e("  tier 2 (/Users/ghost/core/qmirror)      : not found")
+        _e("  tier 3 ($HOME/core/qmirror)             : not found")
+        _e("  tier 4 (PATH `qmirror`)                 : not found")
+        _e("")
+        _e("  remediation: install via `hx install qmirror`,")
+        _e("               or set $QMIRROR_ROOT to a checkout of need-singularity/qmirror,")
+        _e("               or clone to /Users/ghost/core/qmirror (Mac dev convention).")
+        _e("")
+        _e("  NOTE: As of router v0.3.0 the legacy in-tree fallback ($NEXUS/modules/qmirror)")
+        _e("  has been REMOVED. nexus qmirror is now standalone-only.")
+        _audit(sub, "no-qmirror-found", 127, "none")
+        return route + "|127"
+    }
+
+    // standalone-{env,mac,home,path}
+    let mut cmd = prefix + " " + shq(sub)
+    for x in extra {
+        cmd = cmd + " " + shq(x)
+    }
+    let full = cmd + "; echo \"__NEXUS_QMIRROR_RC__:$?\""
+    let raw = exec(full + " 2>&1")
+    let mut rc = 0
+    let lines = raw.split("\n")
+    let mut k = 0
+    while k < lines.len() {
+        let l = lines[k].trim()
+        if l.starts_with("__NEXUS_QMIRROR_RC__:") {
+            rc = to_int(l.substr(21, l.len() - 21))
+        }
+        k = k + 1
+    }
+    print(_strip_rc_trailer(raw))
+    let extra_summary = ""
+    let mut e_i = 0
+    let mut es = ""
+    while e_i < extra.len() {
+        if e_i > 0 { es = es + " " }
+        es = es + extra[e_i]
+        e_i = e_i + 1
+    }
+    _audit(sub, es, rc, route)
+    return route + "|" + str(rc)
+}
+
+// ─── help ───
+
+fn cmd_help() {
+    println("nexus qmirror " + VERSION + " — quantum mirror subcommand router")
+    println("")
+    println("usage: nexus qmirror <subcmd> [flags...]")
+    println("")
+    println("ROUTING (v0.3.0 — standalone-only, 4-tier):")
+    println("  This router shells out to the qmirror standalone CLI.")
+    println("  Resolution order:")
+    println("    1. $QMIRROR_ROOT env")
+    println("    2. /Users/ghost/core/qmirror")
+    println("    3. $HOME/core/qmirror")
+    println("    4. PATH-resolved `qmirror` binary")
+    println("  (v0.2.0 5th-tier `legacy-intree` fallback REMOVED — hard fail if none resolve.)")
+    println("")
+    println("subcommands (forwarded verbatim to standalone):")
+    println("  status                                  closure 8/8 cond table + verdict")
+    println("  chsh [--vendor=ionq|rigetti|ibm|sim]    CHSH Bell test, S statistic   [cond.1,3]")
+    println("  nist [--bits=1000000]                   NIST tier-1+ on QRNG sample   [cond.2]")
+    println("  iit [--n-qubits=4]                      IIT 4.0 phi-star measurement  [cond.4]")
+    println("  qrng [--bits=64]                        quantum random bits (4-tier)  [cond.7]")
+    println("  selftest                                full F1..F5 sweep             [cond.8]")
+    println("")
+    println("global flags (forwarded):")
+    println("  --json     machine-parseable JSON tail")
+    println("  --quiet    (with --json) route preamble/raw to stderr; only JSON tail to stdout")
+    println("  --help,-h  this help (router-level) OR forwarded subhelp")
+    println("")
+    println("--- caveats (raw#10 C3) ---")
+    println("  1. Deletion irreversibility: the v0.2.0 in-tree modules at")
+    println("     $NEXUS/modules/qmirror/ have been REMOVED on disk. Recovery requires")
+    println("     `git log --diff-filter=D` + checkout; no on-disk fallback remains.")
+    println("  2. Fresh-install dependency: a clean nexus install (or any environment")
+    println("     where qmirror is not reachable via the 4 tiers) will hard-fail with")
+    println("     exit 127. Pre-flight: ensure `hx install qmirror` or set $QMIRROR_ROOT.")
+    println("  3. Hard-fail not silent: when all 4 tiers fail, this router exits 127 with")
+    println("     a structured error message. Any caller that previously relied on the")
+    println("     v0.2.0 silent in-tree fallback will now surface the failure loudly.")
+    println("  4. Audit log enum change: `route` field no longer emits `legacy-intree`;")
+    println("     valid values are { standalone-env, standalone-mac, standalone-home,")
+    println("     standalone-path, none, rejected }. Log-parsing consumers must update.")
+    println("")
+    println("cost estimate (Mac local): $0 — all subcmds run mock by default.")
+    println("                           live ANU only via env opt-in (NEXUS_QMIRROR_LIVE=1).")
+}
+
+fn cmd_subhelp(sub: str) {
+    // Forward --help to standalone for accurate per-subcmd help text.
+    let _ = _forward(sub, ["--help"])
+}
+
+// ─── main ───
+
+fn main() {
+    // argv shape (Mac stage interpreter):  [argv0, script, sub, flags...]
+    // OR  (Linux):  [argv0, "run", script, sub, flags...]
+    let _raw = args()
+    let mut _sidx = -1
+    let mut _i = 0
+    while _i < _raw.len() {
+        if _raw[_i].ends_with(".hexa") { _sidx = _i; break }
+        _i = _i + 1
+    }
+    let mut _user_start = 2
+    if _sidx >= 0 { _user_start = _sidx + 1 }
+
+    let mut a: [str] = ["nexus_qmirror_cli", "qmirror_router"]
+    let mut _ua = _user_start
+    while _ua < _raw.len() {
+        a = a + [_raw[_ua]]
+        _ua = _ua + 1
+    }
+    let n = len(a)
+
+    if n < 3 {
+        cmd_help()
+        return
+    }
+
+    let sub = a[2]
+
+    // quiet-mode (router-side, mostly informational; standalone manages its own).
+    if quiet_mode(a) {
+        if json_mode(a) {
+            _QUIET = true
+        } else {
+            _e("nexus qmirror: --quiet ignored (only meaningful with --json)")
+        }
+    }
+
+    // help dispatch
+    if has_flag(a, "--help") || has_flag(a, "-h") {
+        if sub == "--help" || sub == "-h" || sub == "help" {
+            cmd_help()
+        } else {
+            cmd_subhelp(sub)
+        }
+        return
+    }
+
+    if sub == "help" { cmd_help(); return }
+
+    // Subcmd whitelist (preserve nexus-side surface).
+    let mut valid = false
+    if sub == "status"   { valid = true }
+    if sub == "chsh"     { valid = true }
+    if sub == "nist"     { valid = true }
+    if sub == "iit"      { valid = true }
+    if sub == "qrng"     { valid = true }
+    if sub == "selftest" { valid = true }
+    if valid == false {
+        _e("nexus qmirror: unknown subcommand '" + sub + "'")
+        _e("run 'nexus qmirror help' for usage")
+        _audit(sub, "", 2, "rejected")
+        exit(2)
+    }
+
+    // Collect extras (everything after the subcmd).
+    let mut extras: [str] = []
+    let mut e_i = 3
+    while e_i < n {
+        extras = extras + [a[e_i]]
+        e_i = e_i + 1
+    }
+
+    let result = _forward(sub, extras)
+    let parts = result.split("|")
+    let rc = if parts.len() >= 2 { to_int(parts[1]) } else { 0 }
+    if rc != 0 { exit(rc) }
+}

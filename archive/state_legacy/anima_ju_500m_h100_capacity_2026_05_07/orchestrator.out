@@ -1,0 +1,27 @@
+[2026-05-07T15:03:48] === BG-JU 500M H100 capacity test orchestrator started ===
+[2026-05-07T15:03:48] mac_state_dir=/Users/ghost/core/anima/state/anima_ju_500m_h100_capacity_2026_05_07
+[2026-05-07T15:03:48] corpus=/Users/ghost/core/anima/state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt conscious_lm=/Users/ghost/core/anima/ready/models/conscious_lm.py
+[2026-05-07T15:03:48] this_script=/Users/ghost/core/anima/tool/transient_py/anima_ju_500m_h100_capacity_test.py
+[2026-05-07T15:03:48] creating H100 SXM pod (RunPod SECURE cloud)…
+[2026-05-07T15:03:51] pod created: id=70r9xrl1var2g0 machine=? $2.99/hr
+[2026-05-07T15:04:09] pod status: RUNNING
+[2026-05-07T15:04:29] pod status: RUNNING
+[2026-05-07T15:04:31] ssh ready: root@64.247.201.49:13635
+[2026-05-07T15:04:37] GPU smoke OK: GPU 0: NVIDIA H100 80GB HBM3 (UUID: GPU-8f62317d-f779-de5a-419c-ecd52f14c564)
+2.8.0+cu128 True NVIDIA H100 80GB HBM3
+[2026-05-07T15:04:40] staging files (corpus 22MB + conscious_lm.py + this script)…
+[2026-05-07T15:05:51] training launched on pod rc=-1
+[2026-05-07T15:06:28] heartbeat synced; cost=$0.10 pod_status_step=0 pod_status=init
+[2026-05-07T15:12:43] heartbeat synced; cost=$0.41 pod_status_step=800 pod_status=eval_done v5=0/15 v58=0/5 manual=0/15
+[2026-05-07T15:18:55] heartbeat synced; cost=$0.72 pod_status_step=1600 pod_status=DONE final_class=V5_FAIL
+[2026-05-07T15:18:58] training emitted verdict.json on pod — pulling artifacts
+[2026-05-07T15:18:58] pulling artifacts from pod…
+[2026-05-07T15:23:59] scp pull state rc=-2 err=Command '['scp', '-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'ConnectTimeout=15', '-r', '-P', '13635', 'root@64.247.201.49:/workspace/anima_ju/state/.', '/Users/ghost
+[2026-05-07T15:23:59] deleting pod (teardown)…
+[2026-05-07T15:24:00] pod delete rc=0 out={
+  "deleted": true,
+  "id": "70r9xrl1var2g0"
+}
+ err=
+[2026-05-07T15:24:00] ledger appended: /Users/ghost/core/anima/state/anima_model_attempts_ledger.jsonl bg_id=BG-JU final_class=V5_FAIL
+[2026-05-07T15:24:00] === BG-JU complete: final_class=V5_FAIL cost=$0.72 ===

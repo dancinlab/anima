@@ -1,0 +1,71 @@
+marker: atp_pytorch_transpile_landed
+date: 2026-05-03
+cycle: VLM unblock cond.3 (gate #1 of 5)
+status: LANDED
+verdict: F-VLM-TRANSPILE-1 PASS
+
+source: anima-voice/audio_token_predictor.hexa
+source_sha: d290f1ae7
+source_loc: 1576
+target: tool/transient_py/atp_pytorch.py
+target_loc: 645
+target_namespace: .own 2 (auto-gen .py for ubu1/RunPod ML training)
+
+architecture_preserved:
+  d_model: 384
+  n_heads: 6
+  d_head: 64
+  d_ff: 1536
+  n_layers: 3
+  rvq_stages: 8
+  vocab_size: 1024
+  text_vocab_size: 32000  # VLM addition
+
+smoke_test:
+  executed_on: ubu1
+  device: cuda (RTX 5070 sm_120)
+  venv: /home/aiden/venv_orchestrator/bin/python
+  torch_version: 2.11.0+cu128
+  input: text_tokens [2, 64] + intent_emb [2, 384]
+  output:
+    rvq_logits: 8 × [2, 64, 1024]
+    text_logits: [2, 64, 32000]
+    hidden: [2, 64, 384]
+  generate: [2, 4, 8] in [0, 1024)  # AR + CFG + top-k + delayed-pattern
+  fwd_latency_ms: 89.18
+  params_total: 35345664
+  params_M: 35.35
+  verdict: PASS
+
+vlm_unblock_readiness: READY for stage1 LoRA training
+  cond.3 satisfied; remaining 4 conditions unchanged
+  next cycle: VLM stage1 LoRA training (separate BG, NOT this cycle per task constraint)
+
+deferred:
+  - Phase 2 Track A transpiler tool/atp_to_pytorch.hexa (eliminates drift)
+  - Numerical equivalence test vs hexa interpreter
+  - KV-cache causal invariant unit tests
+  - RVQ stage isolation cross-check vs MusicGen reference
+
+artifacts:
+  - tool/transient_py/atp_pytorch.py (645 LoC, .own 2)
+  - state/atp_transpile_audit_2026_05_03/smoke_test_result.json
+  - state/atp_transpile_audit_2026_05_03/hexa_to_py_diff.json
+  - state/atp_transpile_audit_2026_05_03/hand_port_decisions.md
+  - docs/atp_pytorch_transpile_landed_2026_05_03.ai.md
+
+honest_c3_caveats:
+  1. Hand-port may diverge from source semantics (init scale, RoPE precompute, SDPA edge cases, sampling RNG)
+  2. Smoke test verifies shape+finite, NOT gradient flow / loss / audio quality
+  3. KV-cache causal invariants not unit-tested (low-risk for parallel teacher-forced training)
+  4. RVQ stage isolation not cross-checked vs MusicGen reference
+  5. Retirement criteria depends on source stability (no mtime guard yet beyond SHA)
+
+cost: $0 (Mac local hand-port + 1 ssh smoke run)
+constraint_compliance:
+  raw#9: PASS — Mac canonical = .hexa unchanged; .py only in tool/transient_py/
+  raw#15: PASS — no personal-path leak (paths use /Users/ghost/core/anima only in artifacts)
+  raw#10: PASS — 5 honest C3 caveats above
+  task_no_vlm_train: PASS — only smoke test, no training
+  task_no_hexa_mutate: PASS — anima-voice/audio_token_predictor.hexa untouched
+  task_no_other_py: PASS — only tool/transient_py/atp_pytorch.py written

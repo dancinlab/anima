@@ -1,0 +1,18 @@
+$ /Users/ghost/.hx/bin/hexa run anima-eeg-core/tool/modules/_metrics/pe_native.hexa --selftest
+
+hexa-resolver: route=darwin-bypass reason=metadata-only-argv (raw#103)
+== _metrics/pe_native selftest (PORT, raw#9 hexa-only) ==
+[selftest] native-only: 16ch x 256 synthetic fixture (m=3, tau=1, scales 1/2/5/10)
+[selftest] random:     pe_x1000 = 976  s1 = 996  s2 = 991  s5 = 978  s10 = 939
+[selftest] structured: pe_x1000 = 327  s1 = 88  s2 = 154  s5 = 424  s10 = 644
+[selftest] const:      pe_x1000 = 0  s1 = 0
+[selftest] ordering OK: pe_random > pe_structured > pe_const
+[selftest] raw#65 idempotent OK: byte-identical pe_x1000 + 4 scale means
+[selftest] raw#71 F_PE_01 floor OK: pe_random=976 >= 100
+[selftest] raw#71 falsifiers preregistered:
+           F_PE_01: pe_x1000 < 100             (degenerate: const / pure-DC)
+           F_PE_02: pe_x1000 > 990             (saturated: white-noise tip)
+           F_PE_03: pe_x1000 == -2147483647    (helper-failure sentinel)
+selftest=ok (native_only; cross_validate=not_requested)
+
+EXIT=0

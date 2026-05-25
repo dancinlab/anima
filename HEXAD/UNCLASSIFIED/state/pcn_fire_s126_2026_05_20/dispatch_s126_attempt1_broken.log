@@ -1,0 +1,19 @@
+tee: /Users/ghost/core/anima/state/nonce_ff_fire_s126_2026_05_20/dispatch_s126.log: No such file or directory
+=== §125 PCN-C4 dispatch start 2026-05-19T16:16:31Z ===
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA A100 80GB PCIe
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"i0ht6pyti9lbpx","machineId":"ombov6q2s4es"}}}
+[create] pod i0ht6pyti9lbpx on NVIDIA H100 80GB HBM3
+state/pcn_fire_s126_2026_05_20/dispatch_s126_runpod.sh: line 83: /Users/ghost/core/anima/state/nonce_ff_fire_s126_2026_05_20/s126_pod_id.txt: No such file or directory
+[ssh-ready] iter 3: 103.207.149.148:15214 — port mapped AND handshake OK
+Warning: Permanently added '[103.207.149.148]:15214' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.148]:15214' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.148]:15214' (ED25519) to the list of known hosts.
+[teardown] terminating pod i0ht6pyti9lbpx (rc=0, SAVE_POD=0)
+Connection to 103.207.149.148 closed by remote host.
+scp: Connection closed
+[teardown] myself.pods = {"data":{"myself":{"pods":[{"id":"ix1sskvwknoijy"},{"id":"p5cyseplc93frt"}]}}}
+=== §125 PCN-C4 dispatch end 2026-05-19T16:17:18Z rc=0 ===
