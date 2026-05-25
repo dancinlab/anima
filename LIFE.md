@@ -49,8 +49,9 @@
 
 ### 축 C — full-IIT4 cause-effect structure (해금됨)
 > `stdlib/consciousness/iit4` (#542 thin shim, main 랜딩) 가 full IIT 4.0 cause-effect Φ-structure 를 hexa-native 로 제공 → "별도 대형 spec" frontier 해금.
-- [ ] C1 — IIT4 cause-effect structure 로 H_266/H_268/H_278 재검 (proxy → faithful 승격)
+- [ ] C1 — IIT4 cause-effect structure 로 H_266/H_268/H_278 재검 (proxy → faithful 승격) · **경로 = `HEXAD/IIT4/lib` 경유** (M6 remeasure `state/iit4_m6_remeasure_2026_05_25/` 가 n=4 부분 선행)
 - [ ] C2 — Φ-structure (distinctions·relations) 기반 신규 H: 생명 vs 의식 구조 차이 정량
+> ⚠ cycle#22(2026-05-26): H_280(#561)이 distinction 층을 독립 재구현했으나 `HEXAD/IIT4/lib`(distinction **+ relation**, M6 n=4 7/7 done)와 중복 — "relations intractable" 주장은 `iit4_relation.hexa` 가 반증. 축 C 는 `HEXAD/IIT4/lib` 경유로 진행 (재발명 금지, g61). H_280 독립 kernel 은 교차검증 자료로 잔존. 상세 = LIFE.log#cycle22.
 
 ### 축 D — LLM-동반 연속 가설 발견 (영구)
 > TECS-L 축 C 와 동형. `/cycle` + LLM 가설 생성 → verify gate → promote. 끝없는 운전.
