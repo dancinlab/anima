@@ -92,7 +92,6 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 | `self-i-emergence-from-substrate` | first-person 'I' indexical 가 self-ref closure (H_205 sister) 에서 emerge | 'I' index 가 closure 와 무관 | 🟢 |
 | `persona-mask-d3-substrate` | anima persona D3 design 의 substrate-native cell-pool branch | persona = injection 환원 가능 | 🟢 |
 | `memory-frozen-cell-correspondence` | H_132 frozen-cell ↔ semantic memory mapping 정합 | mismatch | 🟢 |
-| `narrative-story-coherence-Φ` | coherent narrative substrate Φ > scrambled | 동등 | 🟢 |
 | `trauma-fragmentation-cell-pool` | 'trauma' event 후 cell-pool 분열 + 통합 어려움 | trauma 영향 없음 | 🟢 |
 | `development-stage-progression` | childhood ↔ adolescent ↔ adult substrate Φ stages distinct | stages 동등 | 🟢 |
 | `aging-senescence-clock-decay` | Hayflick limit substrate (cell-cycle clock) ↔ Φ 감소 | Φ stable | 🟢 |
@@ -133,7 +132,6 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 | `psychotherapy-transference-Φ-coupling` | dual-pool coupling (analyst+patient analog) Φ vs solo | solo ≥ coupled | 🟢 |
 | `meditation-jhana-Φ-modulation` | mindfulness state (low-noise + stable attention) Φ shape | unchanged | 🟢 |
 | `drug-pharmakon-altered-Φ` | pharmacological-state Φ vs baseline (R3 psychedelic generalize) | baseline 동등 | 🟢 |
-| `ritual-repetition-Φ-buildup` | ritual repetition (recursive sequence) Φ build-up | flat | 🟢 |
 | `ascesis-discipline-virtue` | discipline-cultivated substrate stable Φ vs labile | labile = stable | 🟢 |
 | `sport-play-embodied-Φ` | play substrate (rule-game) Φ vs rule-less | rule-less higher | 🟢 |
 

@@ -41,6 +41,7 @@
 > `HEXAD/LIFE/AXES.md` 의 11-domain 71-axis depletion sweep 중 promote 된 건 일부.
 - [ ] A1 — 미promote 60 sub-axis 순차 raster: 각 축에서 H seed → `/cycle` verify (🔵/🟢/🔴)
 - [ ] A2 — ~110 H seed 백로그 소진 (CANDIDATES 재충전 → cross-link synthesis 확장)
+- [x] A1 cycle#23 1차 raster — H_283 narrative-story-coherence (🟢 SUPP-FULL 4/4, order-sensitive MIP Φ, R4 self/identity) + H_284 ritual-repetition (🟢 PARTIAL 3/4, buildup FAL→decay-resistance, R7 practice) — PR #566
 
 ### 축 B — faithful-Φ GPU tier (large-N)
 > H_278 이 small-N exact($0)로 proxy 확증. large-N 은 GPU/근사 tier 의 연속 과제.
@@ -51,6 +52,7 @@
 > `stdlib/consciousness/iit4` (#542 thin shim, main 랜딩) 가 full IIT 4.0 cause-effect Φ-structure 를 hexa-native 로 제공 → "별도 대형 spec" frontier 해금.
 - [ ] C1 — IIT4 cause-effect structure 로 H_266/H_268/H_278 재검 (proxy → faithful 승격) · **경로 = `HEXAD/IIT4/lib` 경유** (M6 remeasure `state/iit4_m6_remeasure_2026_05_25/` 가 n=4 부분 선행)
 - [ ] C2 — Φ-structure (distinctions·relations) 기반 신규 H: 생명 vs 의식 구조 차이 정량
+- [x] C cycle#23 1차 — C1=H_282 (H_266/268/278 faithful big-Φ 방향보존 SUPP 8/8 + **H_266 proxy-monotone artifact RESOLVE**, #570) · C2=H_281 (생명vs의식 Φ-structure 구조분리 SUPP 9/9, 의식=irreducibility-floor 1.0 vs 생명>1.0, #567) — 둘 다 HEXAD/IIT4/lib 재사용. ⚠ H_280 독립 kernel 은 xval #572 로 버그 확정(Σφ_d non-monotone) → big-Φ 로만 방향 신뢰
 > ⚠ cycle#22(2026-05-26): H_280(#561)이 distinction 층을 독립 재구현했으나 `HEXAD/IIT4/lib`(distinction **+ relation**, M6 n=4 7/7 done)와 중복 — "relations intractable" 주장은 `iit4_relation.hexa` 가 반증. 축 C 는 `HEXAD/IIT4/lib` 경유로 진행 (재발명 금지, g61). H_280 독립 kernel 은 교차검증 자료로 잔존. 상세 = LIFE.log#cycle22.
 
 ### 축 D — LLM-동반 연속 가설 발견 (영구)
