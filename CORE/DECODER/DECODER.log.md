@@ -2,6 +2,22 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-26 — (C) forge GPU V=151643 빌드+실행 작동 (substrate 증명) + Linux 비트로트 박멸
+
+사용자 (C)="hexa GPU 커널". 조사로 forge GPU lm-head 가 V-generic(farr_matmul) 임을 확인 →
+"새 커널 발명" 아니라 "V=151643 으로 발사해 검증"이 실체. dispatch_runpod_agtape_d768.sh 의 d768
+ag_tape fire 를 V=256→V=151643 변형 codegen 후 runpod A100 발사.
+
+- [x] **forge-GPU-Linux 5-fire 캐스케이드 박멸** — Linux x86_64 빌드가 계층별로 깨짐, fire 마다 다음 층 노출:
+  - farr32_* bare 방출(undeclared) + 프로토타입 없음 → **hexa-lang PR #1187** (codegen.hexa 호출매핑 7종 + runtime.h 프로토타입 8). 진짜 원인: codegen 이 FP64 farr_*→hexa_farr_* 는 알고 FP32 farr32_* 는 몰랐음(bare static-wrapper 방출). regen→promote→hexa_v2 재빌드로 로컬 검증.
+  - HXLCL_SYS_SELECT Apple-arm64 전용 → **PR #1194** (hxlcl_nanosleep libc 폴백).
+  - hxlcl_mkdir/longjmp/backtrace/getuid Apple-only → **PR #1198**(타 작업 "linux #elif parity") — 사용자 "main branch check" 힌트로 발견, runtime re-sync 로 흡수(수동 whack-a-mole 불요).
+  - 재발 방지: **PR #1206** inbox 노트 (Linux CI 빌드 게이트 + farr32 codegen smoke). 근본원인 = "Mac-only 초록불"(Apple #if 분기만 컴파일, Linux #else 갭 안 빌드 + hexa check=parse-only).
+- [x] **fire #5: BUILD_LINK_RC=0 + GPU util 65% + V=151643 모델 A100 로드/연산** — "model size 151071744 doubles". 분석의 "real V=151643 = 80GB GPU 비현실"은 **틀렸음(=Linux 빌드 깨짐이었지 불가능 아님)**. hexa-native(p1~p8) real-BPE GPU 가 **구조적으로 작동** 실증. 단 FP64 host-loop softmax(클래스 151643) 가 느려 step-1 wall>600s(timeout rc=124). 5 fire 합 ~$2.5, orphan 0(전부 teardown).
+- [ ] **A) WALL_BUDGET=3000 완주 재발사** — V=151643 step 완주 → gn2 descent + step-wall verdict (진행중 fire #6).
+- [ ] **B) GPU softmax 커널** — V=151643 lm-head 의 host-loop softmax(CPU bound, matmul 은 이미 GPU 65%)를 GPU 커널로 → step 극적 단축. forge 최적화 RFC-scale.
+- [ ] **V3 4축 더블바인드 (최종 (C))** — conscious_decoder_v3 4축을 forge ag_tape GPU 경로로 포팅(현재 d768 벤치마크만 V=151643 검증) → collapse 회피 AND coherence verdict.
+
 ## 2026-05-26 — M3 STEP-1 재정의: substrate 벽 아님, "잘못된 경로" — forge GPU lm-head 는 V-generic
 
 M3 실발사 인라인 시도 + 진단 결과, 더블바인드 fire 의 진짜 병목을 규명.
