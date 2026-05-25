@@ -324,3 +324,67 @@ H2.2 nested Φ 의 faithful 측정은 anima Φ★ engine 의 cosmic-scale extens
 - §Criteria verdict_rule: SUPPORTED unreachable 유지; PARTIAL_THEORETICAL = C1+C3 met
   요구 — C1 이 measured PRIOR-DOMINATED (NOT met) 이므로 PARTIAL 미도달, **lane-open
   유지** (multi-decade research framework, frozen L1 대로).
+
+### Cycle #2 — C2 (Φ_universe nested) proxy 측정 (2026-05-25)
+
+Cycle #1 §(3) 가 pre-register 한 C2 측정을 실행 — **단, GPU 불필요로 판명**. pre-register 의
+~$0.30 RTX-5070 추정은 *faithful Φ★ IIT4* (2^n subset 폭발) 가정이었으나, LIFE lane 전체가
+공용으로 쓰는 `phi_spatial` proxy (RFC 036, `lib/phi_helper.hexa`) 는 closed-form
+O(n·dim·n_bins) 공간 상호정보 슬라이스 — **mac local CPU 에서 $0, GPU 0, deterministic**
+으로 측정 가능. 6 cosmic scale (sparse→dense) toy hierarchy 에 proxy-Φ 측정 →
+H2.2 nested scale-invariance 검정 (CV ≤ 0.15 → C2 met; CV > 0.15 → frozen F2 TRIGGERED).
+
+**Run verdict output (VERBATIM from `hexa run run_c2.hexa`)**:
+
+```
+  [cosmic_web]  rule=30  couple=0.000000  Φ=0.571954
+  [galaxy_cluster]  rule=110  couple=0.100000  Φ=0.623906
+  [stellar]  rule=90  couple=0.200000  Φ=0.000011
+  [planetary]  rule=54  couple=0.300000  Φ=3.490562
+  [biological]  rule=110  couple=0.450000  Φ=2.884365
+  [neural]  rule=110  couple=0.600000  Φ=4.415291
+  Φ across 6 scales:  mean=1.997681  min=0.000011  max=4.415291
+  stddev=1.671844  CV=0.836892  (threshold 0.150000)
+  F-C2-NEST-1 SCALE-INV : CV 0.836892 <= 0.150000 ? -> SCALE_VARIANT
+  F-C2-NEST-2 POSITIVE  : ALL_POSITIVE (nested existence)
+  F-C2-NEST-3 DETERMIN  : PASS  (Φ_scale0 a=0.571954 b=0.571954)
+  F-C2-NEST-4 MONOTONE  : PASS  (neural Φ=4.415291 > 0)
+  C2 VERDICT: C2_SCALE_VARIANT_F2_TRIGGERED
+```
+
+```
+phase: Cycle_2 (C2 measured proxy; C3 holographic + C5 anima-self 여전히 DEFERRED/lane-open)
+cell: C2 (Φ_universe nested) — proxy 측정 완료
+c2_verdict: C2_SCALE_VARIANT_F2_TRIGGERED  (CV=0.836892 ≫ 0.15)
+falsifiers_triggered: F-C2-NEST-1 SCALE_VARIANT (frozen F2 방향)
+verify_fence: ⚪ SPECULATION-FENCED (hexa verify --fence; proxy/toy, atlas 인증 N/A by design)
+cell_coverage: 2/5 (C1 prior-dominated + C2 scale-variant, 둘 다 proxy-level)
+cost: $0 · GPU none
+```
+
+**해석 (honest)**: nested toy hierarchy 의 proxy-Φ 는 scale-VARIANT (CV 0.84 ≫ 0.15) —
+**frozen F2 TRIGGERED 방향**: proxy-Φ 는 우주 계층 전반에서 scale-invariant 하게 창발하지
+않는다. pre-register 예측의 "scale-variant → frozen F2" 분기와 정확히 일치.
+
+**raw honest limits (Cycle #2)**:
+- **L-C2.1**: 이것은 **proxy/toy 수준** — faithful Φ★ IIT4 가 아님. `phi_spatial` 은 공간
+  상호정보 slice 일 뿐, anima Φ★ engine 의 cosmic-scale extension (frozen L4) 이 아니다.
+  따라서 directional evidence 이지 H2.2 의 formal refutation 이 아니다.
+- **L-C2.2**: 6-scale rule/couple 격자는 임의 toy mapping (rule 30/90/110/54, couple
+  0.0~0.6) — 실제 cosmic substrate 의 충실한 모델이 아님. scale-variance 자체가 toy
+  파라미터 선택에 의존 가능 (frozen L5 substrate underdetermination).
+- **L-C2.3**: stellar scale Φ=0.000011 의 거의-0 값이 CV 를 크게 부풀림 — single-scale
+  outlier 가 scale-variance 판정을 지배. robustness 는 seed/scale 추가 측정 필요
+  (H_269 multi-seed fragility 와 동일 주의).
+- **L-C2.4**: SUPPORTED 여전히 unreachable; C2 는 NOT met (scale-variant). C3
+  (holographic) / C5 (anima self-reflection) 은 DEFERRED — **lane-open 유지** (frozen L1).
+
+**Cross-link**:
+- H2.2 → §Falsifiers frozen F2: proxy-Φ scale-variance 가 F2 방향 (nested Φ 비-scale-
+  invariant) 으로 directional 발동 — faithful Φ★ 측정 시 formal 검정으로 승격 대상.
+- H_269 (multi-seed robustness): C2 의 stellar near-0 outlier 는 H_269 가 정량화한
+  seed/scale fragility surface 와 동류 — proxy-Φ magnitude 의 single-config 취약성 재확인.
+- §Criteria verdict_rule: C2 measured NOT met (scale-variant) → C1+C2 둘 다 NOT met,
+  PARTIAL_THEORETICAL (C1+C3) 미도달 유지, **lane-open 지속**. cell coverage 1/5 → **2/5**.
+
+**artifacts**: `HEXAD/LIFE/state/h002_universe_phi_nested_2026_05_25/{run_c2.hexa, result_c2.json}`.
