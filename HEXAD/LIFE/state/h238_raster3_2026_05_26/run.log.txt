@@ -1,0 +1,130 @@
+H_238 — verdict landscape meta-map · RASTER #3 (2026-05-26, axis D2, raw#12)
+  source: HEXAD/LIFE/H_*.md DISK per-file scan (verdict_class → status fallback)
+
+  N(H files) = 69  (H_238 self-excluded · disk scan)
+
+  ── full H landscape (disk sort -V, deterministic) ──
+  i   id      | tier      | src            | canonical_domains
+  0  H_002  | RUNNING  | verdict_class  | physics
+  1  H_003  | RUNNING  | verdict_class  | life
+  2  H_004  | RUNNING  | verdict_class  | consciousness
+  3  H_007  | SUPPORTED  | verdict_class  | physics
+  4  H_012  | SUPPORTED  | verdict_class  | life
+  5  H_018  | SUPPORTED  | verdict_class  | consciousness
+  6  H_025  | RUNNING  | verdict_class  | consciousness
+  7  H_029  | RUNNING  | status_fallback  | consciousness
+  8  H_030  | RUNNING  | status_fallback  | life
+  9  H_053  | SUPPORTED  | verdict_class  | life
+  10  H_054  | SUPPORTED  | verdict_class  | life
+  11  H_071  | RUNNING  | status_fallback  | consciousness
+  12  H_090  | RUNNING  | status_fallback  | consciousness
+  13  H_132  | SUPPORTED  | verdict_class  | life
+  14  H_157  | RUNNING  | verdict_class  | consciousness+physics+math
+  15  H_171  | FALSIFIED  | verdict_class  | consciousness+life
+  16  H_200  | RUNNING  | verdict_class  | life
+  17  H_201  | SUPPORTED  | verdict_class  | life
+  18  H_202  | RUNNING  | status_fallback  | life+consciousness+physics
+  19  H_203  | PARTIAL  | verdict_class  | life+physics
+  20  H_204  | PARTIAL  | verdict_class  | life+consciousness
+  21  H_205  | SUPPORTED  | verdict_class  | life+consciousness
+  22  H_206  | PARTIAL  | verdict_class  | life
+  23  H_207  | FALSIFIED  | verdict_class  | physics+life
+  24  H_208  | FALSIFIED  | verdict_class  | math+consciousness
+  25  H_209  | FALSIFIED  | verdict_class  | life+consciousness
+  26  H_210  | SUPPORTED  | verdict_class  | ethics+life+physics
+  27  H_211  | PARTIAL  | verdict_class  | information+math+physics
+  28  H_212  | PARTIAL  | verdict_class  | consciousness+math
+  29  H_213  | RUNNING  | status_fallback  | consciousness+physics
+  30  H_214  | PARTIAL  | verdict_class  | life+consciousness+physics
+  31  H_215  | SUPPORTED  | verdict_class  | physics+information+consciousness
+  32  H_216  | RUNNING  | verdict_class  | meta+math+consciousness
+  33  H_217  | SUPPORTED  | verdict_class  | meta+physics+math
+  34  H_218  | RUNNING  | status_fallback  | information+physics+math
+  35  H_219  | SUPPORTED  | verdict_class  | meta+consciousness+physics
+  36  H_220  | PARTIAL  | verdict_class  | life+consciousness
+  37  H_221  | FALSIFIED  | verdict_class  | consciousness+physics
+  38  H_222  | FALSIFIED  | verdict_class  | consciousness+physics
+  39  H_223  | SUPPORTED  | verdict_class  | consciousness+physics
+  40  H_224  | PARTIAL  | verdict_class  | meta+math+consciousness
+  41  H_225  | FALSIFIED  | verdict_class  | physics+math+information
+  42  H_226  | SUPPORTED  | verdict_class  | ethics+life+physics
+  43  H_227  | FALSIFIED  | verdict_class  | meta+consciousness+physics
+  44  H_228  | FALSIFIED  | verdict_class  | consciousness+physics+ethics
+  45  H_229  | SUPPORTED  | verdict_class  | consciousness+physics+ethics
+  46  H_230  | SUPPORTED  | verdict_class  | life+consciousness+ethics+physics
+  47  H_231  | PARTIAL  | verdict_class  | consciousness+ethics+physics
+  48  H_232  | FALSIFIED  | verdict_class  | physics+math+information
+  49  H_234  | PARTIAL  | verdict_class  | meta+consciousness+information+physics
+  50  H_235  | PARTIAL  | verdict_class  | consciousness+physics
+  51  H_239  | RUNNING  | verdict_class  | meta+information+math+consciousness
+  52  H_240  | RUNNING  | verdict_class  | consciousness+physics
+  53  H_241  | RUNNING  | verdict_class  | information+physics
+  54  H_242  | RUNNING  | verdict_class  | physics
+  55  H_244  | RUNNING  | verdict_class  | consciousness+physics
+  56  H_245  | RUNNING  | verdict_class  | physics+consciousness
+  57  H_246  | SUPPORTED  | verdict_class  | physics+consciousness
+  58  H_247  | RUNNING  | verdict_class  | physics+life
+  59  H_248  | RUNNING  | verdict_class  | physics+life+consciousness
+  60  H_249  | RUNNING  | verdict_class  | physics+life
+  61  H_250  | FALSIFIED  | verdict_class  | physics+math+information
+  62  H_251  | FALSIFIED  | verdict_class  | physics+math+consciousness
+  63  H_252  | PARTIAL  | verdict_class  | meta+consciousness+information+math
+  64  H_253  | PARTIAL  | verdict_class  | physics+math
+  65  H_254  | RUNNING  | verdict_class  | physics+life
+  66  H_255  | RUNNING  | verdict_class  | physics+life
+  67  H_256  | RUNNING  | verdict_class  | physics+life
+  68  H_257  | RUNNING  | status_fallback  | physics+life
+
+  ── tier distribution ──
+  SUPPORTED  : 17 / 69
+  PARTIAL    : 13 / 69
+  FALSIFIED  : 12 / 69
+  RUNNING    : 27 / 69
+  sum_tiers  : 69 (== N? true)
+  SUPP/(SUPP+FAL) ratio = 0.586207
+
+  ── 7-domain cluster (canonical) ──
+  domain         | total | SUPP | PART | FALS | RUNN | SUPP_rate
+  life  | 28 | 9 | 5 | 3 | 11 | 0.321429
+  consciousness  | 39 | 8 | 9 | 8 | 14 | 0.205128
+  physics  | 43 | 10 | 7 | 9 | 17 | 0.232558
+  math  | 15 | 1 | 5 | 5 | 4 | 0.0666667
+  information  | 10 | 1 | 3 | 3 | 3 | 0.1
+  ethics  | 6 | 4 | 1 | 1 | 0 | 0.666667
+  meta  | 8 | 2 | 3 | 1 | 2 | 0.25
+  nonempty_domains : 7 / 7
+
+  ── headline: life vs consciousness SUPP-rate ──
+  life          SUPP-rate = 0.321429  (9/28)
+  consciousness SUPP-rate = 0.205128  (8/39)
+  life > consciousness : true
+  gap_now   = 0.1163
+  gap_prior (cycle#16 N=51) = 0.121429
+  gap_delta = -0.00512863  (ε=0.02)
+  TREND : stable
+
+  ── F238.6 (pre-registered raster#3): life > consciousness at larger N ──
+  F238.6 PASS (life_rate > consc_rate) : true
+
+  ── H238.3 axis: SUPP rate {ethics+info+meta} vs {consc+phys} ──
+  group_A (ethics+information+meta)   SUPP=7 / 24  rate=0.291667
+  group_B (consciousness+physics)     SUPP=18 / 82  rate=0.219512
+  H238.3 (A > B): true
+
+  ── H238.4 axis: domain-set Jaccard ≥ 0.5 pairs ──
+  n_high_J_pairs = 742
+
+  ── unmapped domain tokens (alias-map fall-through) ──
+  [language, time, self/identity, developmental, practice, dilution, identity, emit-rate, emit-gate, emergence, corpus, philosophy, measurement-integrity, meta-measurement]  (count=14)
+
+  ── criteria (meta) ──
+  C1 REPRODUCIBLE  (N≥22 ∧ sum==N) : true
+  C2 SUPPRATE_UPDATE (≥3 nonempty) : true
+  C3 ALL_CLASSIFIED (no UNCLASS)   : true
+  C4 BYTE_IDENTICAL                : true
+
+  VERDICT_RULE: SUPPORTED(meta) iff C1 ∧ C2 · else PARTIAL · FALSIFIED if ¬C1
+  VERDICT     : SUPPORTED
+
+  result.json written → /Users/ghost/core/anima/HEXAD/LIFE/state/h238_raster3_2026_05_26/result.json
+=== H_238 raster#3 smoke complete: SUPPORTED ===
