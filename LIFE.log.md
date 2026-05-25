@@ -3,6 +3,14 @@
 Append-only history sister of `LIFE.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#24 — 영구엔진 2라운드 (A2 split-brain + C edge-of-chaos)
+
+- [x] 사용자 "계속" → cycle#24 $0 2-agent (C축 H_285 edge-of-chaos · A2축 H_286 split-brain)
+- [x] **H_286** split-brain-dual-Φ 🟢 CLOSED-NEGATIVE 4/6 (#577) — AXES R12 `split-brain-dual-Φ` seed promote. callosotomy CML 8-cell ring: Tononi "전체-Φ 붕괴" 예측이 **phi_spatial proxy 상 FALSIFIED** (severance 가 whole-Φ 를 +11% *상승*, 8/8 seed robust), 각 반구 Φ>0 잔존. metric-pathology 규명: cut bridge → MIP→0 → total−MIP proxy inflation. honest: proxy 상 closed-negative(IIT 자체 아님), faithful big-Φ 후속 lane(HEXAD/IIT4 에 split TPM lib 부재). AXES R12 seed 자기 PR 소비
+- [ ] **H_285** edge-of-chaos faithful big-Φ (C축, H_204/H_007 재검) — rate-limit 2회 사망(throttle hot) → cooldown 후 재발사 예정. 랜딩 시 README 98→99 + 본 엔트리 [x] 갱신
+- [x] consolidation(부분) — README 97→98 (H_286 행) + LIFE.md 축 A2 milestone. H_285 랜딩 후 잔여 fold
+- [x] **인프라**: rate-limit throttle 가 cycle#24 에서도 H_285 2연속 즉사(31s/5 tool-use) — agent 발사 대신 parent git 작업(consolidation)은 throttle 무관, cooldown 540s+ 후 단독 재발사 패턴 재확인 [[feedback-agent-early-commit-rate-limit]]
+
 ## 2026-05-26 — cycle#23 — axis-C IIT4 Φ-structure + AXES-A1 + H_280 버그 교훈 (영구엔진 첫 multi-axis 라운드)
 
 - [x] 영구엔진 전환 후 첫 `/cycle` multi-axis 라운드 — 사용자 "1,2 별도" 선택 → 5-agent fan-out (C1·C2·xval·A1·D2)
