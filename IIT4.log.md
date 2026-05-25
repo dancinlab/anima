@@ -2,6 +2,19 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25 — M6 LIFE faithful 재측정 LAND (iit4_eca.hexa · 7/7 🟢) — 🎉 도메인 7/7 COMPLETE
+
+- [x] `HEXAD/IIT4/lib/iit4_eca.hexa` 작성 — ECA→TPM bridge (substrate adapter). Wolfram rule + n-ring → state-by-node TPM. LIFE 의 결정적 binary CA 가 IIT4 TPM 으로 직접 변환됨
+- [x] `state/iit4_m6_remeasure_2026_05_25/run_m6.hexa` + `FAITHFUL_REMEASURE.md` — LIFE ECA 룰 인과 big-Φ 재측정 (n=4 ring, state 1010)
+  - **헤드라인 표**: rule 110=7.55 · 30=8.66 · 54=10.03 (LIFE cosmic-scale, 통합 nd=10) · rule 0=0(const) · 204=0(identity reducible) · 90=0(state-1010 특이)
+  - controls 7/7: rule0=0 · rule204=0 · coupled>0 · bound 0≤Φ≤total · ECA identity bridge · determinism
+  - wall 7.2s (8 big_phi @ n=4), $0
+- [x] **F-IIT4-6 PROXY-DIVERGENCE 🟢** — proxy phi_spatial(상관 snapshot MI) vs IIT4 big-Φ(인과 TPM irreducibility) 측정축 차이 정량·정성 규명. faithful 인과 Φ 최초 확보 → **L-C2.1 caveat 종결**
+- [x] faithful 가 드러낸 것: big-Φ **state-dependent** (rule 90 state 1010 에서 0) — correlational snapshot-MI 가 가리던 정보 (IIT 핵심: Φ=특정상태의 경험)
+- [x] honest: n=4 ring + single state demonstration; full n=8 6-scale = mechanical scale-up. structure-cut big-Φ. proxy-CV 직접 co-compute deferred (입력형 상이)
+- [x] IIT4.md M6 체크 + status → **7/7 COMPLETE** 갱신
+- [x] **IIT4 도메인 완결**: M0~M6 엔진 end-to-end (TPM→repertoire→distinction→relation→Φ-structure→big-Φ→LIFE 재측정), 67 checks 전부 🟢
+
 ## 2026-05-25 — M5 calibration LAND (analytic reference · 14/14 🟢)
 
 - [x] `HEXAD/IIT4/CALIBRATION.md` + `state/iit4_m5_calib_2026_05_25/run_m5.hexa` 작성

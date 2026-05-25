@@ -1,0 +1,42 @@
+// HEXAD/IIT4/lib/iit4_eca.hexa — IIT 4.0 engine M6: ECA substrate bridge.
+//
+//   ROLE
+//     Bridges the LIFE lane's substrate (elementary cellular automata — the
+//     deterministic binary dynamical systems behind H_002 C2 / H_278 etc.) into
+//     an IIT 4.0 state-by-node TPM, so the faithful causal engine (M1-M4) can
+//     re-measure them. A small ring of n cells under an ECA rule IS a TPM:
+//     cell i's next value is determined by its 3-cell neighborhood, so each
+//     of the 2^n states maps deterministically to per-cell next-probabilities
+//     (0 or 1). This is the SAME family of substrates the proxy phi_spatial
+//     (RFC 036, correlational MI) measured — now measured CAUSALLY.
+//
+//   eca_tpm(rule, n) — Wolfram rule ∈ [0,255] · n cells in a periodic ring.
+//     TPM[s*n + i] = bit_{(4·L + 2·C + R)}(rule), where (L,C,R) are the left/
+//     centre/right neighbours of cell i in state s (ring wrap). Deterministic
+//     ⇒ entries are 0.0 / 1.0.
+//
+//   IMPORT-SAFE  NO `fn main()` / NO top-level call. snake_case · English code.
+//   Imports iit4_bigphi (single chain → big_phi + all M1-M4 fns visible).
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_bigphi.hexa"
+
+
+// build a state-by-node TPM for elementary CA `rule` on a periodic ring of n cells.
+fn eca_tpm(rule: int, n: int) -> array {
+    let full = iit4_pow2(n)
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let mut i = 0
+        while i < n {
+            let l = iit4_bit(s, (i - 1 + n) % n)         // left neighbour (ring wrap)
+            let c = iit4_bit(s, i)                        // centre
+            let r = iit4_bit(s, (i + 1) % n)             // right neighbour
+            let idx = 4 * l + 2 * c + r                  // Wolfram neighbourhood index 0..7
+            t = t.push(to_float(iit4_bit(rule, idx)))    // next value = bit idx of rule
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return t
+}
