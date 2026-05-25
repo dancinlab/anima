@@ -206,3 +206,17 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: CANDIDATES §C 잔여 2건 (death=merge cross-link · trained-vs-bare CA Φ) · §D cross-link · §G AXES R1 promote (ethics·info·language·time). 발견된 hexa 실행 함정(pool-route gate · RNG single-stream 결정론)은 hexa-lang inbox 후보.
 
 ---
+
+## Cycle #15 — §D cross-link 2 (death=merge · trained-CA Φ) + §B follow-up 2 (H_018 C2 · H_132 C2) — 2026-05-25
+
+- **focus**: cycle#14 의 §C 全소비 후속. §D cross-link synthesis 2건(NEW H_264/265) + §B done-가설 follow-up criterion 2건(기존 H_018/H_132 확장). 격리 worktree 병렬 fan-out (서버 rate-limit 2회로 H_264/H_265 재시도, 동시성 ~4 로 완주).
+- **change**: H_264/H_265 NEW (README 51→53 H). H_018/H_132 에 C2 섹션 추가. 각 PR main 직착지 (pr-cycle auto-merge).
+- **fire**: 전건 $0 mac-local deterministic hexa smoke, cross-process sha256 결정론. `state/h264_*`, `state/h265_*`, `state/h018_c2_*`, `state/h132_c2_*` (2026-05-25).
+- **verdict**: 1 SUPPORTED + 1 PARTIAL + 2 PASS
+  - [x] **H_264 death-merge-into-other — SUPPORTED 3/3** (PR #477): 죽음=타 cell 비대칭 흡수-통합 (H_025⊕H_054). info_transfer 0.25(=α) 보존-이전, rel_preserve max_weight 0.316 > random 0.286 (target-mode 가 정보 운명 결정). pool Φ↓ 6/6 (cell-level 보존 ≠ pool-Φ 향상, H_054 Φ-collapse 정합). self-correction: 초기 metric tautology → rel_preserve 교체. H_025(symmetric self-annihilation) distinct.
+  - [x] **H_265 trained-vs-bare-ca-phi — PARTIAL 2/3** (PR #480): 학습(mitosis 진화)이 Φ 유의 변경(C1 PASS) but 방향 反(C2 FAL). Φ_bare(rule110)=0.556 (H_007 byte-equal) vs Φ_trained N=0 2.84 → N=500 0.124, trend −2.717. untrained random-init 이 최고 spatial-Φ(5× peak), 진화가 trajectory homogenize → Φ **dampen**. 학습=spatial Φ lever 아님 dampener. honest: "trained"=mitosis 진화 proxy(gradient descent 아님, hexa autograd 부재), phi_spatial ≠ 내부 cosine ratchet target (두 Φ 정의 반대 방향).
+  - [x] **H_018 C2 organic-merge-split-rate — PASS** (PR #479): forced-trigger OFF default 동역학 자발 reorganization. LOOSE(k=0.2) rate 0.16 (split 4+merge 4, 2→4→6→…→2 완결 cycle) / TIGHT(k=0.8) 0.00 (homeostatic). regime-dep. Cycle#1 forced genesis 넘어 organic 동역학 입증.
+  - [x] **H_132 C2 longterm-stability — PASS** (PR #478): frozen subset 가 100/200 step 동안 max|Δw|=0.0 · splits=0, 비-frozen 정상 성장(free_splits 14, pool 6→20). pre-restore Lorenz drift ≈0.9 (freeze ≠ no-op). 단기 불변의 장기·활성-성장 대비 연장 입증.
+- **next**: CANDIDATES §B 잔여 4건 (H_003 H3.5 · H_007 C2 λ-sweep · H_054 C2 · H_002 C2) · §G AXES R1 promote (ethics·info·language·time) · H_238 meta-map 다음 raster. cycle#15 hexa 함정 재현: pool-route gate(`/Users/ghost/.hx/bin/hexa` 절대경로 또는 env-prefix 또는 heredoc 우회) + RNG single-stream(cross-process sha256 결정론).
+
+---
