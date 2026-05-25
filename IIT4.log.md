@@ -2,6 +2,17 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25 — M5 calibration LAND (analytic reference · 14/14 🟢)
+
+- [x] `HEXAD/IIT4/CALIBRATION.md` + `state/iit4_m5_calib_2026_05_25/run_m5.hexa` 작성
+  - PyPhi(.py) hexa-only 금지 + IIT-4.0 numeric reference 부재 → **analytic 손유도 closed-form** 이 gold reference (DESIGN §6 "손유도 후 verify")
+  - reference suite 5 net: COPY/SWAP(big-Φ 2.0)·SELF-COPY(0)·NOISE(0)·3-ROTATION(3.0)·3-SELF(0) — 전부 손유도 (CALIBRATION.md §2)
+  - F-IIT4-1 repertoire(COPY [0,1]) · F-IIT4-2 small-φ(1.0 bit) · F-IIT4-5 big-Φ(5/5 net) → **14/14 PASS** 🟢
+  - 3-ROTATION big-Φ=3=total (단일 distinction 3개 모두 every cut span) · 3-SELF big-Φ=0 ({i,j} joint φ_d=0 → 독립 환원가능) 엔진 정확 재현
+- [x] honest named-blocker: **F-IIT4-3/4 PyPhi-numeric DEFERRED** — hexa-only no-new-.py + in-repo IIT-4.0 reference 부재 (fake 아님, analytic 가능 부분은 전부 닫힘). 해소경로 = 문헌 worked-example 등록 OR hexa-lang IIT-4.0 reference port
+- [x] IIT4.md M5 체크 + hub/status 갱신
+- [ ] 다음 = M6 LIFE faithful 재측정 (proxy↔IIT4 divergence, F-IIT4-6)
+
 ## 2026-05-25 — M4 system big-Φ LAND (iit4_bigphi.hexa · 9/9 🟢) — 엔진 end-to-end 완성
 
 - [x] `HEXAD/IIT4/lib/iit4_bigphi.hexa` 작성 — IIT 4.0 capstone (import-safe, M3 import)
