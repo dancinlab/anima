@@ -261,7 +261,13 @@ fn main() {
     println("    ECA 204 (copy/disconnected): Σφ_d=" + _f6(b204[2]) + "  #dist=" + str(nd204) + "  big-Φ=" + _f6(b204[0]))
     println("    ECA 232 (majority/integrated): Σφ_d=" + _f6(b232[2]) + "  #dist=" + str(nd232) + "  big-Φ=" + _f6(b232[0]))
     let eca_dir = b232[2] > b204[2]
-    println("    deterministic-ECA direction integrated>disconnected: " + _v(eca_dir))
+    // the CORRECT integration discriminator is big-Φ (not Σφ_d): a disconnected
+    // substrate has independent distinctions (Σφ_d>0) but big-Φ=0 (reducible).
+    let bigphi_dir = b232[0] > b204[0]
+    println("    Σφ_d direction integrated>disconnected: " + _v(eca_dir)
+        + "  (NOTE: Σφ_d is NOT a monotone integration proxy — disc has independent distinctions)")
+    println("    big-Φ direction integrated>disconnected: " + _v(bigphi_dir)
+        + "  (THE correct integration discriminator: 204 big-Φ=" + _f6(b204[0]) + " < 232 big-Φ=" + _f6(b232[0]) + ")")
 
     // ── F-XVAL-1 verdict ────────────────────────────────────────────────────
     // PASS = (a) per-mechanism distinction membership matches on EVERY shared-TPM
@@ -291,6 +297,19 @@ fn main() {
     println("  authoritative engine if disagree: " + authoritative)
     println("")
 
+    // ── root-cause probe: disconnected singleton mechanism {A} φ_d ──────────
+    // both engines on the SAME shared disconnected TPM; mechanism mask 1, all-ON.
+    let dtpm = _shared_tpm(3, 0, 0.0)
+    let h_single = ces_distinction(1, 7, 3, 0, 0.0)["phi_d"]   // H_280 kernel
+    let c_single = distinction(dtpm, 3, 1, 7)[0]               // canonical
+    println("  ROOT CAUSE (disconnected singleton {A} φ_d): H280=" + _f6(h_single)
+        + " · CANON=" + _f6(c_single))
+    println("    H_280 ces_phi_mech_purview only counts partitions that sever an")
+    println("    M↔Z link (cuts_link guard); a singleton M+Z has no such cut ⇒")
+    println("    found=false ⇒ returns 0.0. Canonical includes the M→∅ partition")
+    println("    (purview→unconstrained) ⇒ φ = ID(constrained vs unconstrained) ≈ 1.")
+    println("")
+
     // ── result.json ─────────────────────────────────────────────────────────
     let js = "{\n"
         + "  \"id\": \"H_280_xval\",\n"
@@ -311,7 +330,14 @@ fn main() {
         + "    \"rule_204_disconnected\": {\"sum_phi_d\": " + _f6(b204[2]) + ", \"distinction_count\": " + str(nd204) + ", \"big_phi\": " + _f6(b204[0]) + "},\n"
         + "    \"rule_232_integrated\": {\"sum_phi_d\": " + _f6(b232[2]) + ", \"distinction_count\": " + str(nd232) + ", \"big_phi\": " + _f6(b232[0]) + "},\n"
         + "    \"weak_rung\": \"N/A — couple=0.5 is genuinely stochastic, no deterministic ECA equivalent\",\n"
-        + "    \"direction_integrated_gt_disconnected\": \"" + _v(eca_dir) + "\"\n"
+        + "    \"sum_phi_d_direction_integrated_gt_disconnected\": \"" + _v(eca_dir) + " (Σφ_d NOT a monotone integration proxy: 204 Σφ_d " + _f6(b204[2]) + " > 232 Σφ_d " + _f6(b232[2]) + ")\",\n"
+        + "    \"big_phi_direction_integrated_gt_disconnected\": \"" + _v(bigphi_dir) + " (THE correct integration discriminator: 204 big-Φ " + _f6(b204[0]) + " < 232 big-Φ " + _f6(b232[0]) + ")\"\n"
+        + "  },\n"
+        + "  \"root_cause\": {\n"
+        + "    \"disconnected_singleton_phi_d_h280\": " + _f6(h_single) + ",\n"
+        + "    \"disconnected_singleton_phi_d_canonical\": " + _f6(c_single) + ",\n"
+        + "    \"bug\": \"H_280 ces_phi_mech_purview only counts partitions that sever an M-to-Z directed link (cuts_link guard, lib_ces.hexa ~L482); a singleton mechanism over a singleton purview has no such cut, so found=false and phi returns 0.0. The canonical engine instead includes the mechanism-to-empty partition (purview becomes unconstrained), yielding phi = ID(constrained vs unconstrained) ~ 1.0. Consequence: H_280 spuriously zeroes every independent self-copy cell's phi_d, so the disconnected substrate gets 0 distinctions when the IIT 4.0 ground truth (and the M6-calibrated canonical) gives 3 distinctions each with phi_d~1.\",\n"
+        + "    \"impact\": \"H_280's headline 'integrated Σφ_d > disconnected Σφ_d' was an ARTIFACT of this singleton bug zeroing the disconnected baseline. The canonical engine shows Σφ_d is NOT monotone with integration (disconnected Σφ_d 3.0 > integrated 2.03 at n=3). The genuine integration direction is preserved at the big-Φ level (204 big-Φ=0 < 232 big-Φ>0) and via relations, NOT raw Σφ_d. H_280's directional conclusion happens to point the same way but for the wrong reason; its F280.3 'disconnected -> φ_d=0' faithfulness anchor was a mistaken IIT 4.0 expectation (it conflated no-system-integration with no-distinctions).\"\n"
         + "  },\n"
         + "  \"falsifier\": \"F-XVAL-1: H_280 kernel distinction-membership + count + Σφ_d ordering AGREE with canonical iit4_distinction on the shared ladder. PASS = independent corroboration; FAIL = canonical (M6-calibrated) is authoritative.\",\n"
         + "  \"checks\": {\n"

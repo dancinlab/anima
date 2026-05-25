@@ -21,7 +21,8 @@
   ── secondary anchor: canonical-native deterministic ECA (n=3, all-ON s=7) ──
     ECA 204 (copy/disconnected): Σφ_d=3.000000  #dist=3  big-Φ=0.000000
     ECA 232 (majority/integrated): Σφ_d=2.026359  #dist=6  big-Φ=4.867130
-    deterministic-ECA direction integrated>disconnected: FAIL
+    Σφ_d direction integrated>disconnected: FAIL  (NOTE: Σφ_d is NOT a monotone integration proxy — disc has independent distinctions)
+    big-Φ direction integrated>disconnected: PASS  (THE correct integration discriminator: 204 big-Φ=0.000000 < 232 big-Φ=4.867130)
 
   ----------------------------------------------------------------
   F-XVAL-1 cross-validation criteria:
@@ -34,6 +35,12 @@
   ----------------------------------------------------------------
   F-XVAL-1 VERDICT: DISAGREE
   authoritative engine if disagree: canonical iit4_distinction (calibrated to M6)
+
+  ROOT CAUSE (disconnected singleton {A} φ_d): H280=0.000000 · CANON=0.999998
+    H_280 ces_phi_mech_purview only counts partitions that sever an
+    M↔Z link (cuts_link guard); a singleton M+Z has no such cut ⇒
+    found=false ⇒ returns 0.0. Canonical includes the M→∅ partition
+    (purview→unconstrained) ⇒ φ = ID(constrained vs unconstrained) ≈ 1.
 
   result.json written
 ================================================================
