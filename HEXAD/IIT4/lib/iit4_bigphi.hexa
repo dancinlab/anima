@@ -1,0 +1,128 @@
+// HEXAD/IIT4/lib/iit4_bigphi.hexa — IIT 4.0 engine M4: system big-Φ.
+//
+//   ROLE
+//     The capstone. Builds on M3 (iit4_relation.hexa) to measure the system-
+//     level irreducibility of the Φ-structure over its minimum partition (MIP)
+//     — the faithful IIT 4.0 big-Φ (Φ_s). (design = DESIGN.md §2 ⑥.)
+//
+//   big-Φ (DESIGN.md §2 ⑥)
+//     For each non-trivial directional bipartition (A | B) of the n system units
+//     (unit 0 pinned to A so each unordered partition is counted once):
+//       - a distinction SURVIVES the cut iff its mechanism + cause purview +
+//         effect purview lie entirely on one side (M ∪ Pc ∪ Pe ⊆ A or ⊆ B);
+//         otherwise the cut severs a connection it depends on ⇒ destroyed.
+//       - a relation survives iff both its distinctions survive on the SAME side.
+//       structure_partitioned(θ) = Σφ_d(surviving) + Σφ_r(surviving).
+//       loss(θ) = total − structure_partitioned(θ).
+//     big-Φ = min over θ of loss(θ) — the structure destroyed by the LEAST-
+//     damaging cut. big-Φ > 0 ⇒ the system is an irreducible complex; big-Φ = 0
+//     ⇒ reducible (some partition splits it into independent parts losslessly).
+//
+//   HONEST CARVE-OUT (DESIGN.md §3 · §8 C3-1)
+//     Structure-cut big-Φ: irreducibility measured as Φ-structure destroyed by
+//     the system MIP (faithful in spirit — integrated vs reducible). The exact
+//     IIT 4.0 big-Φ recomputes the cause-effect structure on the partitioned
+//     TPM with a normalization factor; that + PyPhi numeric calibration is M5
+//     (F-IIT4-5). big-Φ here ∈ [0, total] by construction.
+//
+//   IMPORT-SAFE  NO `fn main()` / NO top-level call. snake_case · English code.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_relation.hexa"
+
+
+// which side of cut A|B does a distinction lie on?  1 = ⊆A · 2 = ⊆B · 0 = spans.
+// distinction layout = [phi_d, mech, cause_pv, cause_state, effect_pv, effect_state, ...].
+fn iit4_distinction_side(d: array, a_mask: int, n: int) -> int {
+    let mech = d[1].to_int()
+    let cpv = d[2].to_int()
+    let epv = d[4].to_int()
+    let mut in_a = 0
+    let mut in_b = 0
+    let mut u = 0
+    while u < n {
+        let involved = (iit4_bit(mech, u) == 1) || (iit4_bit(cpv, u) == 1) || (iit4_bit(epv, u) == 1)
+        if involved {
+            if iit4_bit(a_mask, u) == 1 { in_a = 1 } else { in_b = 1 }
+        }
+        u = u + 1
+    }
+    if (in_a == 1) && (in_b == 1) { return 0 }
+    if in_a == 1 { return 1 }
+    return 2
+}
+
+
+// ── system big-Φ — [big_phi, total, sum_phi_d, sum_phi_r, n_distinctions]. ──
+fn big_phi(tpm: array, n: int, sys_state: int) -> array {
+    let full = iit4_pow2(n)
+
+    // collect distinctions (φ_d > 0).
+    let mut dists = []
+    let mut sum_d = 0.0
+    let mut m = 1
+    while m < full {
+        let d = distinction(tpm, n, m, sys_state)
+        if d[0] > 1.0e-9 {
+            dists = dists.push(d)
+            sum_d = sum_d + d[0]
+        }
+        m = m + 1
+    }
+    let nd = len(dists)
+
+    // 2nd-order relations (unpartitioned total).
+    let mut sum_r = 0.0
+    let mut i = 0
+    while i < nd {
+        let mut j = i + 1
+        while j < nd {
+            let r = relation_2nd(dists[i], dists[j], n)
+            if r > 1.0e-9 { sum_r = sum_r + r }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    let total = sum_d + sum_r
+
+    if n < 2 { return [0.0, total, sum_d, sum_r, to_float(nd)] }
+
+    // min over non-trivial directional bipartitions (unit 0 pinned to A).
+    let all_mask = full - 1
+    let mut min_loss = 1.0e308
+    let mut a = 1
+    while a < all_mask {
+        if iit4_bit(a, 0) == 1 {                          // a ⊇ {0} and a ⊊ all ⇒ B non-empty
+            // per-distinction side + surviving distinction φ.
+            let mut sides = []
+            let mut surv = 0.0
+            let mut k = 0
+            while k < nd {
+                let s = iit4_distinction_side(dists[k], a, n)
+                sides = sides.push(to_float(s))
+                if s != 0 { surv = surv + dists[k][0] }
+                k = k + 1
+            }
+            // surviving relations (both distinctions one-sided, same side).
+            let mut ii = 0
+            while ii < nd {
+                let mut jj = ii + 1
+                while jj < nd {
+                    let r = relation_2nd(dists[ii], dists[jj], n)
+                    if r > 1.0e-9 {
+                        let si = sides[ii].to_int()
+                        let sj = sides[jj].to_int()
+                        if (si != 0) && (sj != 0) && (si == sj) { surv = surv + r }
+                    }
+                    jj = jj + 1
+                }
+                ii = ii + 1
+            }
+            let loss = total - surv
+            if loss < min_loss { min_loss = loss }
+        }
+        a = a + 1
+    }
+    if min_loss > 1.0e307 { min_loss = 0.0 }
+    if min_loss < 0.0 { min_loss = 0.0 }
+    return [min_loss, total, sum_d, sum_r, to_float(nd)]
+}
