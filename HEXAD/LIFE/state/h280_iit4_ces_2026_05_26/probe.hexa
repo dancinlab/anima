@@ -1,0 +1,27 @@
+// probe: confirm hexa primitives needed for H_280 CES kernel.
+
+fn _log2(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    return ln(x) / ln(2.0)
+}
+
+fn main() {
+    // log2 sanity: log2(8) = 3
+    println("log2(8.0) = " + str(_log2(8.0)))
+    // ID at a single state: p*log2(p/q), p=1.0, q=0.5 -> 1.0
+    let p = 1.0
+    let q = 0.5
+    println("id_single(1.0,0.5) = " + str(p * _log2(p / q)))
+    // farr basics
+    let a = farr_zeros(4)
+    let _ = farr_set(a, 0, 0.25)
+    let _ = farr_set(a, 1, 0.25)
+    let _ = farr_set(a, 2, 0.25)
+    let _ = farr_set(a, 3, 0.25)
+    println("farr_get(a,2) = " + str(farr_get(a, 2)))
+    let _ = farr_free(a)
+    // dict literal + missing-key -> void check
+    let d = #{"x": 1, "y": 2}
+    println("d.x = " + str(d["x"]))
+    println("probe ok")
+}
