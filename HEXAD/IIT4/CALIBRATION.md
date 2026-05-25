@@ -53,3 +53,19 @@ DESIGN §6 의 M5 calibration target 은 "PyPhi/published reference + hexa recom
 - **F-IIT4-3/4 PyPhi-numeric DEFERRED** — hexa-only 가 신규 `.py` 를 금지하고, IIT-4.0 numeric reference 가 repo 에 없음. 해소 경로: (a) PyPhi IIT-4.0 worked-example 값을 문헌에서 입수해 in-repo reference 로 등록 후 대조, 또는 (b) hexa-lang 에 PyPhi-equivalent IIT-4.0 reference 포트(별도 lane). **이것은 fake 가 아닌 정직한 미해소** — analytic 으로 검증 가능한 부분(repertoire·small-φ·big-Φ closed-form)은 전부 닫혔다.
 - **analytic ≠ probabilistic** — 손유도 reference 는 deterministic(0/1 collapse) 네트워크. fractional-φ probabilistic 네트워크의 정밀 대조는 PyPhi-numeric(위 blocker) 영역.
 - **structure-cut big-Φ** — DESIGN §8 C3-1 대로 exact IIT 4.0 big-Φ(partitioned-TPM 재계산+정규화)의 spirit-faithful proxy. 단조성·경계·integrated↔reducible 분리는 검증됨; 절대 스케일의 PyPhi 일치는 위 blocker.
+
+## 5. F-IIT4-3/4 status update — formalism-gap (not calibration-gap) 분류
+
+이번 세션의 stdlib 승격(hexa-lang #1051)으로 PyPhi-numeric 대조 *접근*은 가능해졌지만, 실측 결과 **차이는 calibration bug 가 아니라 formalism delta** 임이 분명해짐:
+
+| 축 | PyPhi 기본 | 우리 엔진 |
+|---|---|---|
+| IIT 버전 | **IIT 3.0** (cause-effect EMD/L1) | **IIT 4.0** (intrinsic difference, max-state) |
+| big-Φ 정의 | MIP normalized 정확값 | **structure-cut** (Σφ_d+φ_r 잃은 양, DESIGN §8 C3-1 spirit-faithful) |
+| partition 집합 | PyPhi 특정 schema | all-directional bipartition |
+
+이 셋이 다르므로 **수치 일치가 원리상 기대되지 않음** — 같은 네트워크라도 IIT-3.0 PyPhi Φ vs IIT-4.0-structure-cut Φ 는 다른 양. M5 의 analytic deterministic 검증은 두 formalism 모두에서 같은 결정적 답(0 또는 closed-form)을 주는 영역이라 PASS; 일반 probabilistic 네트워크의 절대 일치는 formalism 정합 작업 필요.
+
+### F-IIT4-3/4 verdict 재분류
+- **🟠 DEFERRED** → **🟠 CHARACTERIZED-DEFERRED** (calibration 갭 아님 · formalism 갭)
+- 진짜 PASS 경로: (a) PyPhi 의 IIT-4.0 모드 + 동일 partition schema 입수해 cross-check, 또는 (b) 엔진을 PyPhi 의 exact IIT-4.0 partition+normalization 으로 refactor — 둘 다 별도 lane(M5 future). 본 lane(IIT4 13/13) 의 honest scope 안에서는 더 닫을 수 없음을 정직 명시.
