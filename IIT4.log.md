@@ -2,6 +2,17 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25 — /cycle#2 확장 라운드 LAND (M10·M11·M12) — rate-limit salvage/inline 복구
+
+병렬 3-agent 발사 → **서버 rate-limit(429-class)으로 전멸** (사용량 한도 아님, 13~23 tool-use 만에 사망). 복구: M10 worktree 생존분 salvage + M11/M12 메인세션 inline 재작성. 전부 착지.
+
+- [x] **M10 exclusion-postulate** (PR #536, 3/3 🟢) — `iit4_complex.hexa`: `subsystem_tpm`(외부 unit background-conditioning) + `find_complex`(全 subset big-Φ argmax). 통합코어{0,1}+독립셀{2} → complex=mask3({0,1}, Φ=2.0), unit2 **배제** (전체{0,1,2}는 reducible) → IIT exclusion 공준 실증. **salvage**: rate-limit 죽은 agent 의 uncommitted lib+smoke+result.json 보존·재검증·착지(README 보완).
+- [x] **M11 proxy↔IIT4 cocompute** (PR #537, 5/5 🟢) — 동일 ECA 위 self-contained 상관-MI proxy(RFC036-family, 정식 phi_spatial builtin 아님 명시) ‖ 인과 big-Φ. **양방향 divergence**: rule30 proxy=0 인데 big-Φ=8.66(상관X 인과O) · rule0/90 big-Φ=0 인데 proxy>0(상관O 인과X) → 두 축 독립 수치증명. M6/M8 "입력형 상이" deferred 해소. **inline 재작성**.
+- [x] **M12 bounded large-n** (PR #538, 7/7 🟢) — M9 bounded-mode 로 LIFE 룰 큰 n: regression cap≥n==exact(n=4 7.5475 일치) · bounded(cap=3) n=5 표(110=15.40 등) · **n=6 rule110=6.82**(exact-impractical 영역 도달, ~5분). cap<n=lower-bound 명시 · n=7/8 deferred(budget). **inline 재작성**.
+- [x] IIT4.md M10/M11/M12 `- [x]` + status → **13/13** 갱신. 엔진 검증 누적 123 checks 🟢.
+- [x] 운영 교훈: 병렬 sub-agent 가 서버 429 에 취약(전멸 가능) → salvage(worktree 생존분)+inline(메인세션 429 무관) 으로 무손실 복구. [[feedback-agent-early-commit-rate-limit]] 패턴 확증.
+- [ ] 다음 후보: exclusion multi-complex spectrum · n=8 bg fire · phi_spatial 정식 builtin 대조
+
 ## 2026-05-25 — /cycle#1 확장 라운드 LAND (M7·M8·M9 병렬) + @title 설정
 
 3개 background worktree 에이전트 병렬 발사 → 전부 merge (trackers 일괄 wrap-up).
