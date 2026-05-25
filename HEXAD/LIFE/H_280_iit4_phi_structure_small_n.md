@@ -407,3 +407,75 @@ all-OFF / mixed state 의 CES 로 state-dependence 측정; (c) **TPM-family swee
 (L7 axis): logistic / XOR net 으로 방향 verdict 의 substrate-family robustness;
 (d) **n=5 distinction-only** (L5 경계 탐색): 31 mechanism 의 mac-local exact 한계
 측정 (super-exp ceiling 의 실측 위치).
+
+## 11. 교차검증 (cross-validation vs canonical IIT4) — 2026-05-26
+
+> 정정 배너(상단)가 식별한 재발명을 직접 검정했다. 본 절은 §8 의 verdict 를
+> **수정하지 않는다** (post-hoc 금지, raw#82). H_280 의 distinction-level 결론
+> 중 핵심 수치(disconnected Σφ_d=0)가 **버그였음**을 교차검증으로 노출하고,
+> 권위 엔진(canonical)을 명시한다.
+
+**방법** (`state/h280_xval_2026_05_26/run_xval.hexa`): H_280 의 `ces_tpm_node`
+로부터 state-by-node TPM 배열을 만들어 *byte-identical* 한 동일 기질을 두 엔진에
+모두 투입했다 — H_280 커널(`ces_distinction`)과 canonical 엔진(hexa-lang stdlib
+`consciousness/iit4_distinction.distinction`, M6 보정 완료). all-ON 상태, ring,
+ε=1e-6. n=3·4 × {disconnected, weak, integrated} 사다리에서 mechanism 별
+distinction 멤버십 · distinction-count · Σφ_d 순서를 비교. 보조 앵커로
+canonical-native 결정론적 ECA(rule 204=copy=disconnected, rule 232=majority=
+integrated, big_phi/Σφ_d)를 측정 (weak couple=0.5 는 진성 stochastic → 결정론
+ECA 등가 없음 N/A).
+
+**F-XVAL-1** (사전등록): H_280 커널의 distinction-membership + count + Σφ_d 순서가
+공유 사다리에서 canonical 과 **일치**한다. PASS = 독립 corroboration; FAIL =
+canonical(M6 보정)이 권위 엔진.
+
+**비교 표** (shared ε-floored TPM, 동일 입력):
+
+| n | rung | H280 #dist | H280 Σφ_d | CANON #dist | CANON Σφ_d | 멤버십 일치 |
+|---|------|-----------:|----------:|------------:|-----------:|:-----------:|
+| 3 | disconnected | 0 | 0.000000 | **3** | **2.999993** | 4/7 |
+| 3 | weak | 7 | 0.727886 | 7 | 1.541443 | 7/7 |
+| 3 | integrated | 7 | 2.316161 | 6 | 2.026356 | 6/7 |
+| 4 | disconnected | 0 | 0.000000 | **4** | **3.999990** | 11/15 |
+| 4 | weak | 13 | 1.277920 | 12 | 2.205156 | 15/15 |
+| 4 | integrated | 14 | 3.856634 | 14 | 3.963037 | 15/15 |
+
+보조 ECA 앵커(n=3, all-ON s=7): rule 204 → Σφ_d=3.0 · #dist=3 · **big-Φ=0.0** ·
+rule 232 → Σφ_d=2.026 · #dist=6 · **big-Φ=4.867**.
+
+**판정: DISAGREE (🔴 — F-XVAL-1 FALSIFIED, 0 PASS / 6 FAIL).**
+권위 엔진 = **canonical `iit4_distinction`** (M6 보정).
+
+**근본 원인** (root cause, minimal probe 로 격리): disconnected self-copy 셀
+하나(mechanism {A} over purview {A})에서 H_280 φ_d=0.000000, canonical
+φ_d=0.999998. H_280 `ces_phi_mech_purview` 의 `cuts_link` 가드는 *M↔Z directed
+link 를 실제로 끊는 partition* 만 센다 — singleton mechanism + singleton purview
+는 그런 cut 이 없으므로 `found=false` → φ=0.0 반환. canonical 은 mechanism→∅
+partition(purview→unconstrained)을 포함해 φ = ID(constrained vs unconstrained)
+≈ 1 을 준다. **canonical 이 IIT 4.0 ground truth 와 일치**: 독립 self-copy 셀은
+각각 distinction(φ_d≈1)이며, 단지 *system 이 reducible*(big-Φ=0)일 뿐이다.
+
+**영향**: H_280 의 헤드라인 "integrated Σφ_d > disconnected Σφ_d" 는 이 singleton
+버그가 disconnected baseline 을 *허위로 0 으로 만든* **artifact** 였다. canonical
+로 보면 **Σφ_d 는 통합도의 monotone proxy 가 아니다** (n=3 에서 disconnected
+Σφ_d=3.0 > integrated 2.03). 진짜 통합 방향은 **big-Φ 수준에서 보존**된다
+(204 big-Φ=0 < 232 big-Φ=4.867) — Σφ_d 가 아니라. 즉 H_280 의 방향 결론은
+*우연히 같은 쪽을 가리켰을 뿐 이유가 틀렸고*, F280.3 의 "disconnected → φ_d=0"
+faithfulness 앵커 자체가 **잘못된 IIT 4.0 기대**였다(system 비통합 ≠ distinction
+부재 — 둘을 혼동). H_266/H_278 의 *binary-direction* verdict 자체는 canonical
+big-Φ 로도 보존되므로 무효화되지 않으나, 그 검정에 H_280 의 distinction-level
+Σφ_d 수치를 인용해서는 안 된다.
+
+**잔여 차이 메모(non-bug)**: φ 공식 자체도 다르다 — canonical `iit4_phi_at` 는
+specified state z* 를 1회 고정(intrinsic_difference vs unconstrained) 후
+p(z*)·log2(p(z*)/q(z*)) 를 partition 위에서 최소화; H_280 `ces_id` 는 partition
+마다 max_x p·log2(p/q) 를 재최대화 후 최소화. 이는 weak/integrated rung 의 Σφ_d
+절대값 차이를 설명하나, disconnected 의 0-vs-3 distinction-count 괴리는 위 cut
+가드 버그가 단독 원인이다(멤버십 표 참조).
+
+**산출물**: runner `state/h280_xval_2026_05_26/run_xval.hexa` · 비교
+`state/h280_xval_2026_05_26/result.json` · 로그 `run_xval.log` · g5 fence
+`state/h280_xval_2026_05_26/.verdicts/h280-iit4-cross-validation/F-XVAL-1.txt`
+(⚪ SPECULATION-FENCED verbatim). 결정론 = result.json cross-process
+byte-identical. 후속(축 C frontier)은 정정 배너대로 `HEXAD/IIT4/lib`(canonical)
+경유로만 진행 — H_280 커널은 교차검증 자료로 보존하되 측정 도구로 재사용 금지.
