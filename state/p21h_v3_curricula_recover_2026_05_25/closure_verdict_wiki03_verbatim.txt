@@ -1,0 +1,26 @@
+=== PURE closure auto-judge ===
+result: state/p21h_v3_recover_2026_05_25/out_main/result.json
+sha:    ab35a06e072f5d62
+
+[criterion 1] multilingual_probe
+  per-lang verdicts: en=WEAK · ko=WEAK · zh=WEAK · ru=WEAK · ja=WEAK
+  passing langs:     0/5  ()
+  threshold:         ≥4
+  verdict:           FAIL
+
+[criterion 2] register_collapse
+  n_anima_register_hits_total: 0
+  threshold:                   < 4
+  verdict:                     PASS
+
+[criterion 3] motivation_8factor
+  motivation_score: missing
+  threshold:        ≥ 0.30
+  verdict:          FAIL
+
+[criterion 4] dream_stage_at_eval
+  phi_envelope present: false (phi=—)
+  verdict:              FAIL
+
+=== AGGREGATE ===
+1/4 PASS · closure FAIL
