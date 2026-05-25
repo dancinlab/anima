@@ -1,0 +1,43 @@
+// probe2.hexa — H_281 robustness probe: struct_ratio over ALL 16 states for the
+//   chosen LIFE {110,30,54} vs CONSCIOUSNESS/integrated {150,105} set + anchors.
+import "/Users/ghost/core/anima/.claude/worktrees/agent-a90863c4861193ba9/HEXAD/IIT4/lib/iit4_eca.hexa"
+
+fn sr(rule: int, n: int) {
+    let mut acc = 0.0
+    let mut cnt = 0
+    let mut nd_acc = 0.0
+    let mut st = 0
+    let full = iit4_pow2(n)
+    while st < full {
+        let bp = big_phi(eca_tpm(rule, n), n, st)
+        let bphi = bp[0]
+        let total = bp[1]
+        if bphi > 1.0e-9 {
+            acc = acc + (total / bphi)
+            nd_acc = nd_acc + bp[4]
+            cnt = cnt + 1
+        }
+        st = st + 1
+    }
+    let mut mean_sr = 0.0
+    let mut mean_nd = 0.0
+    if cnt > 0 { mean_sr = acc / to_float(cnt); mean_nd = nd_acc / to_float(cnt) }
+    println("  rule " + str(rule) + " | nonzero_states=" + str(cnt)
+        + "/" + str(full) + " mean_struct_ratio=" + str(mean_sr)
+        + " mean_nd=" + str(mean_nd))
+}
+
+fn main() {
+    let n = 4
+    println("=== H_281 probe2 — state-averaged struct_ratio, n=4 ===")
+    println("-- LIFE rules --")
+    sr(110, n)
+    sr(30, n)
+    sr(54, n)
+    println("-- CONSCIOUSNESS / integrated (XOR-feedback) rules --")
+    sr(150, n)
+    sr(105, n)
+    println("-- reducible / null anchors --")
+    sr(204, n)   // identity → big-Phi=0 everywhere (no nonzero states)
+    sr(0, n)     // constant → big-Phi=0
+}
