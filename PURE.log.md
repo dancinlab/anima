@@ -34,7 +34,7 @@
 - [x] H_242/H_241 sigmoid/correlate input M5 → M3 amend — PR #379 §A1 amend
 - [x] H_244 reframe 완료 확인 (autonomy-emergent) — PR #379 §confirmation
 - [x] PURE stack land — admin auto-bypass merge (cycle 다수)
-- [ ] H_240 vs H_246 near-dup 정리 — PR #379 D3 dedup doc, maintainer 택1 권고 (R2 option A)
+- [x] H_240 vs H_246 near-dup 정리 — dedup 실행: not-near-dup 확정, H_246 §Cross-Links stale H_240 mention → H_248 교체 (R2 option A); canonical = H_246+H_248, 현 H_240 (bilingual-Φ) 별개 lane keep
 
 ---
 
