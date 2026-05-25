@@ -2,6 +2,15 @@
 
 Append-only history sister of `STDLIB.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25T23:55:00Z — cycle 14 · l2_norm wave 2b · natural-floor 확정 ⭐️
+
+- [x] wave 2b serving/+tool/ — #482 MERGED, **1/39 migrate** (tool/p_s_projector_proto frob_norm_flat → frobenius_norm). 38 defer.
+- [x] wave 2b HEXAD/ — **0/9 migrate** (전부 defer, PR 없음). synth_probe 는 wave 1 이미 흡수.
+- [!] **결정적 finding — anima custom sqrt 편재**: wave 2b 의 38 defer 압도적 다수가 non-libm sqrt — `sqrt_newton`(40-iter Newton-Raphson, ~20 파일) · `fsqrt` · `my_sqrt` · `sqrtf_native` · `isqrt`(정수, 7 파일) · `sqrt_approx`(3-round). stdlib l2_norm 은 libm sqrt 위임 → byte-equal 불가. 그 외 defer = pre-sqrt floor guard · typed-array farr_get · 통계량(RMS/stdev/CV) · complex magnitude · fused single-pass loop · 2D nested/map shape.
+- [!] **natural-floor 4 subtree 교차 확정**: training/alm(wave 2a, custom-eps defer) + anima-engines(pearson, guard defer) + HEXAD(0/9) + serving/tool(1/39). 대량 byte-equal sweep 의 migratable 잔여 ≈ 고갈. 남은 site 는 본질적으로 도메인-특화 수치(custom sqrt / guard / 통계량)라 generic stdlib 와 byte-equal 부적합.
+- [+] **신규 dedup 후보 식별 (별도 도메인)**: anima 의 custom sqrt 구현(sqrt_newton 등) 자체가 ~30+ 파일에 산재 — 이들끼리 byte-equal 이면 stdlib/math/sqrt_newton 으로 consolidate 가능. 단 libm sqrt 로의 전환은 behavior-change(non-byte-equal)이므로 STDLIB import-only goal 밖. 별도 의사결정 필요.
+- **세션 누적 최종**: provider 9 PR + caller 6 PR (#460/461/462/467/473/482) + INBOX #925 + docs #475. anima open = 0. STDLIB 도메인 자연 수렴점 도달.
+
 ## 2026-05-25T23:45:00Z — cycle 9-13 · phase 5 대량 sweep + provider-gap fill + natural-floor 🛸
 
 - [x] **provider stdlib (hexa-lang) — 9 PR MERGED**: #863 cluster distance/knn · #869 k-means · #883 k-means++ D² (25× WCSS) · #884 sha256 alias · #885 linalg/norm · #901 autocorr+PSD (welch 3× var↓) · #910 norm tunable-eps · #911 pearson_autocorr · #924 sha256 bytes/stream
