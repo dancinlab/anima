@@ -1,0 +1,244 @@
+// HEXAD/IIT4/lib/iit4_tpm.hexa — IIT 4.0 engine M1: TPM + cause/effect
+// repertoires + intrinsic difference.
+//
+//   ROLE
+//     Foundational layer of the faithful IIT 4.0 cause-effect Φ-structure
+//     engine (design = HEXAD/IIT4/DESIGN.md). Where the LIFE proxy lane
+//     (phi_spatial / H_278) measured CORRELATIONAL mutual information between
+//     cell state vectors, this layer computes the CAUSAL cause/effect
+//     repertoires from a transition probability matrix (TPM) — the IIT 4.0
+//     primitive that distinctions (M2), relations (M3) and big-Φ (M4) build on.
+//
+//   TPM REPRESENTATION (conditional-independence, state-by-node)
+//     `tpm` is a flat float array of length 2^n * n, row-major:
+//         tpm[state * n + unit] = P(unit_t+1 = ON | system state = `state` at t).
+//     `state` ∈ [0, 2^n) encodes unit i in bit i (0 = OFF, 1 = ON). Under the
+//     IIT 4.0 conditional-independence assumption (DESIGN §8 C3-3) the joint
+//     transition factorizes over units, so a state-by-node TPM is sufficient.
+//
+//   REPERTOIRES (DESIGN §2 ②)
+//     effect_repertoire(mech, purview) — p_e(Z_t+1 | M_t = mech-state). Each
+//       purview unit's ON-probability is the TPM averaged over the non-mechanism
+//       units (max-entropy marginalization); the purview distribution is their
+//       product (conditional independence).
+//     cause_repertoire(mech, purview) — p_c(Z_t-1 | M_t = mech-state). Bayes
+//       with a uniform prior over the past purview state: for each candidate
+//       past purview state v, the likelihood that the mechanism would be in its
+//       current state, then normalize.
+//     unconstrained_effect / unconstrained_cause — the q references for
+//       intrinsic information (effect = marginal product; cause = uniform).
+//
+//   INTRINSIC DIFFERENCE (DESIGN §2.1 — IIT 4.0 ≠ 3.0 분기점)
+//     intrinsic_difference(p, q) = max_x [ p(x) · log2( p(x) / q(x) ) ], the
+//     pointwise term MAXIMIZED over states (NOT a KL sum). Returns
+//     [value, specified_state]. Tie-break = lowest-index state (DESIGN §8 C3-4,
+//     cross-run determinism). log2 = log/log(2); q smoothed by +1e-10.
+//
+//   IMPORT-SAFE
+//     NO `fn main()` and NO top-level call — importing runs nothing (hexa: only
+//     top-level calls fire on import; pure `fn` defs do not). Smoke/calibration
+//     callers import this file and invoke the fns below.
+//
+//   COMPLIANCE  snake_case (raw#11) · honest impl (raw#9) · English code ·
+//     bitwise ops avoided (multiplication/modulo only — phi_native §5 pattern).
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── bit helpers — integer arithmetic only (no bitwise; phi_native pattern) ──
+fn iit4_pow2(k: int) -> int {
+    let mut v = 1
+    let mut i = 0
+    while i < k {
+        v = v * 2
+        i = i + 1
+    }
+    return v
+}
+
+// bit i of `state` (0 or 1).
+fn iit4_bit(state: int, i: int) -> int {
+    let pw = iit4_pow2(i)
+    if (state / pw) % 2 == 1 { return 1 }
+    return 0
+}
+
+// ascending list of absolute unit indices set in `mask` (within [0, n)).
+fn iit4_units(mask: int, n: int) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        if iit4_bit(mask, i) == 1 { out = out.push(i) }
+        i = i + 1
+    }
+    return out
+}
+
+// compact purview-local state → absolute-position bitmask.
+// bit b of `compact` = state of the b-th purview unit `units[b]`.
+fn iit4_expand(compact: int, units: array) -> int {
+    let mut out = 0
+    let mut b = 0
+    let k = len(units)
+    while b < k {
+        if iit4_bit(compact, b) == 1 { out = out + iit4_pow2(units[b]) }
+        b = b + 1
+    }
+    return out
+}
+
+
+// ── TPM accessor ────────────────────────────────────────────────────────────
+fn tpm_on(tpm: array, n: int, state: int, unit: int) -> float {
+    return tpm[state * n + unit]
+}
+
+
+// ── marginal P(target ON at t+1) with `fix_mask` units pinned to `fix_state`,
+//    non-fixed units averaged uniformly (max-entropy marginalization). ────────
+//    fix_mask = 0 ⇒ unconstrained marginal over all states.
+fn iit4_marginal_on(tpm: array, n: int, fix_mask: int, fix_state: int, target: int) -> float {
+    let full = iit4_pow2(n)
+    let mut total = 0.0
+    let mut count = 0
+    let mut s = 0
+    while s < full {
+        // s consistent with fix_state on every fixed unit?
+        let mut ok = 1
+        let mut i = 0
+        while i < n {
+            if iit4_bit(fix_mask, i) == 1 {
+                if iit4_bit(s, i) != iit4_bit(fix_state, i) { ok = 0 }
+            }
+            i = i + 1
+        }
+        if ok == 1 {
+            total = total + tpm_on(tpm, n, s, target)
+            count = count + 1
+        }
+        s = s + 1
+    }
+    if count == 0 { return 0.0 }
+    return total / to_float(count)
+}
+
+
+// ── effect repertoire p_e(Z_t+1 | M_t = mech_state) over `purview_mask`. ─────
+//    Returns a distribution over 2^|purview| compact states (product of the
+//    per-purview-unit ON marginals — conditional independence).
+fn effect_repertoire(tpm: array, n: int, mech_mask: int, mech_state: int, purview_mask: int) -> array {
+    let units = iit4_units(purview_mask, n)
+    let k = len(units)
+    // per-purview-unit ON probability under the mechanism constraint.
+    let mut p_on = []
+    let mut j = 0
+    while j < k {
+        p_on = p_on.push(iit4_marginal_on(tpm, n, mech_mask, mech_state, units[j]))
+        j = j + 1
+    }
+    // product distribution over 2^k compact purview states.
+    let nstates = iit4_pow2(k)
+    let mut rep = []
+    let mut cs = 0
+    while cs < nstates {
+        let mut prob = 1.0
+        let mut b = 0
+        while b < k {
+            if iit4_bit(cs, b) == 1 { prob = prob * p_on[b] }
+            else { prob = prob * (1.0 - p_on[b]) }
+            b = b + 1
+        }
+        rep = rep.push(prob)
+        cs = cs + 1
+    }
+    return rep
+}
+
+
+// ── cause repertoire p_c(Z_t-1 | M_t = mech_state) over `purview_mask`. ──────
+//    Bayes with uniform prior: for each candidate past purview state, the
+//    likelihood the mechanism would be in its current state (non-purview units
+//    averaged), then normalize over all past purview states.
+fn cause_repertoire(tpm: array, n: int, mech_mask: int, mech_state: int, purview_mask: int) -> array {
+    let p_units = iit4_units(purview_mask, n)
+    let k = len(p_units)
+    let m_units = iit4_units(mech_mask, n)
+    let mk = len(m_units)
+    let nstates = iit4_pow2(k)
+
+    let mut raw = []
+    let mut total = 0.0
+    let mut cs = 0
+    while cs < nstates {
+        let pv_abs = iit4_expand(cs, p_units)          // past purview fixed to cs
+        let mut like = 1.0
+        let mut mi = 0
+        while mi < mk {
+            let mu = m_units[mi]
+            // P(mech unit mu = ON at t+1 | purview = cs, non-purview averaged).
+            let p1 = iit4_marginal_on(tpm, n, purview_mask, pv_abs, mu)
+            if iit4_bit(mech_state, mu) == 1 { like = like * p1 }
+            else { like = like * (1.0 - p1) }
+            mi = mi + 1
+        }
+        raw = raw.push(like)
+        total = total + like
+        cs = cs + 1
+    }
+
+    // normalize (uniform prior ⇒ likelihood / Σ likelihood).
+    let mut rep = []
+    let mut i = 0
+    while i < nstates {
+        if total > 0.0 { rep = rep.push(raw[i] / total) }
+        else { rep = rep.push(1.0 / to_float(nstates)) }
+        i = i + 1
+    }
+    return rep
+}
+
+
+// ── unconstrained references (q for intrinsic information) ──────────────────
+// effect: the purview marginal product with NO mechanism constraint.
+fn unconstrained_effect(tpm: array, n: int, purview_mask: int) -> array {
+    return effect_repertoire(tpm, n, 0, 0, purview_mask)
+}
+
+// cause: uniform over 2^|purview| (the prior).
+fn unconstrained_cause(purview_mask: int, n: int) -> array {
+    let units = iit4_units(purview_mask, n)
+    let nstates = iit4_pow2(len(units))
+    let u = 1.0 / to_float(nstates)
+    let mut rep = []
+    let mut i = 0
+    while i < nstates {
+        rep = rep.push(u)
+        i = i + 1
+    }
+    return rep
+}
+
+
+// ── intrinsic difference (DESIGN §2.1) ──────────────────────────────────────
+// ID(p ∥ q) = max_x p(x)·log2(p(x)/q(x)). Returns [value, specified_state].
+// Tie-break = lowest-index state (strict > keeps the first maximizer).
+fn intrinsic_difference(p: array, q: array) -> array {
+    let n = len(p)
+    let ln2 = log(2.0)
+    let mut best_val = 0.0 - 1.0e308
+    let mut best_state = 0
+    let mut x = 0
+    while x < n {
+        let px = p[x]
+        let mut term = 0.0
+        if px > 1.0e-12 {                              // px = 0 ⇒ p·log = 0
+            let qx = q[x] + 1.0e-10                     // smoothing (avoid /0, log 0)
+            term = px * (log(px) - log(qx)) / ln2
+        }
+        if term > best_val {
+            best_val = term
+            best_state = x
+        }
+        x = x + 1
+    }
+    return [best_val, to_float(best_state)]
+}
