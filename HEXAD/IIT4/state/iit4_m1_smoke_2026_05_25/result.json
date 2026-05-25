@@ -1,0 +1,27 @@
+{
+  "milestone": "M1",
+  "module": "HEXAD/IIT4/lib/iit4_tpm.hexa",
+  "date": "2026-05-25",
+  "what": "TPM (state-by-node, conditional-independence) + cause/effect repertoires + intrinsic difference — IIT 4.0 causal primitive layer",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU",
+  "network_hand_verified": "2-unit COPY/SWAP (unit0_t+1=unit1_t, unit1_t+1=unit0_t)",
+  "checks": [
+    {"name": "effect {0}=ON over {1} = [0,1]", "result": "PASS"},
+    {"name": "effect repertoire sums to 1", "result": "PASS"},
+    {"name": "cause {0}=ON over {1} = [0,1]", "result": "PASS"},
+    {"name": "cause repertoire sums to 1", "result": "PASS"},
+    {"name": "unconstrained effect over {1} = [0.5,0.5]", "result": "PASS"},
+    {"name": "ID([0,1] || [.5,.5]) value = 1.0 bit", "result": "PASS"},
+    {"name": "ID specified state = 1", "result": "PASS"},
+    {"name": "ID(p || p) = 0", "result": "PASS"},
+    {"name": "effect over {0,1} sums to 1", "result": "PASS"},
+    {"name": "n=3 effect over {0,1,2} sums to 1", "result": "PASS"},
+    {"name": "n=3 cause over {0,1,2} sums to 1", "result": "PASS"},
+    {"name": "n=3 effect all >= 0", "result": "PASS"},
+    {"name": "n=3 cause all >= 0", "result": "PASS"}
+  ],
+  "tally": {"pass": 13, "fail": 0},
+  "verdict": "🟢 SUPPORTED-NUMERICAL — M1 repertoire layer deterministic exact, 13/13 hand-verifiable + structural checks PASS",
+  "honest_scope": "Structural + hand-derived correctness. Reference calibration vs PyPhi/published IIT-4.0 values = M5 (F-IIT4-1/2). Distinctions/relations/big-Φ = M2-M4.",
+  "next": "M2 distinctions (iit4_distinction.hexa) — small-φ via min-partition ID, MICE purview search"
+}

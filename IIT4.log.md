@@ -2,6 +2,23 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25 — M1 repertoire LAND (iit4_tpm.hexa · 13/13 🟢)
+
+- [x] `HEXAD/IIT4/lib/iit4_tpm.hexa` 작성 — IIT 4.0 인과 primitive 레이어 (import-safe)
+  - TPM = state-by-node flat array `tpm[s*n+u]` (conditional-independence 가정)
+  - `effect_repertoire` = 비-mechanism unit max-entropy marginalize → purview 곱 분포
+  - `cause_repertoire` = uniform prior Bayes (past purview likelihood 정규화)
+  - `unconstrained_effect/cause` = informativeness 의 q reference (marginal / uniform)
+  - `intrinsic_difference(p,q)` = max_x p·log2(p/q) + specified state (tie-break 최저index)
+  - bit ops = 곱/나머지만 (bitwise 회피, phi_native §5 패턴)
+- [x] smoke `state/iit4_m1_smoke_2026_05_25/run_m1.hexa` — COPY n=2 손계산 검증 네트워크
+  - effect/cause {0}=ON over {1} = [0,1] · unconstrained = [0.5,0.5] · ID=1.0 bit @state1 · ID(p,p)=0
+  - n=3 rotation 구조 sanity (sum=1, ≥0)
+  - **13/13 PASS** (`hexa run`, deterministic) → result.json 🟢 SUPPORTED-NUMERICAL
+- [x] hexa_v2 transpiler 재빌드 필요했음 (`hexa cc` — self/native/hexa_v2 부재) → 빌드 후 통과
+- [x] IIT4.md M1 체크 + hub/status 갱신
+- [ ] 다음 = M2 distinctions (`iit4_distinction.hexa` — small-φ min-partition ID · MICE purview search)
+
 ## 2026-05-25 — M0 design spec LAND (HEXAD/IIT4/DESIGN.md)
 
 - [x] `HEXAD/IIT4/DESIGN.md` 작성 — 8 §: (1) 2축 갭 framing (partition×primitive, IIT4=인과 칸) (2) IIT 4.0 6단계 매핑 + intrinsic difference 공식 (3) scope·복잡도 envelope (4) hexa 모듈 레이아웃 (5) M1–M6 분해+단위검증 (6) calibration target (7) falsifier ×6 frozen (8) C3 ×5
