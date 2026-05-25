@@ -2,6 +2,20 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25 — 엔진 → hexa-lang stdlib 승격 + creator-only 거버넌스 (cross-repo SSOT 완성)
+
+엔진이 anima-locked 에서 **hexa-lang stdlib 공용 자산**으로 이전. anima/hexa-brain 이 같은 엔진을 호출하는 multi-caller 아키텍처 확립.
+
+- [x] **hexa-lang #1051**: `stdlib/consciousness/iit4_*` 6 모듈 + iit4_test 승격 (`fn`→`pub fn`, internal import → `stdlib/...`, bitops 이미 stdlib). iit4_test ALL PASS — stdlib 해석 실측.
+- [x] **anima #542**: 엔진 6 lib → stdlib thin shim (−1088 LoC). iit4_eca 는 ECA 어댑터로 잔류 (engine⊥adapter, g61). M5 14/14·M6 7/7·M10 3/3 byte-equivalent.
+- [x] **hexa-brain #1**: `eeg/eeg_to_tpm.hexa` EEG→TPM 어댑터 + `eeg_iit4_demo` (합성 EEG 5/5 PASS, coupled big-Φ=1.59 > indep 0.44). 동일 stdlib 엔진을 EEG substrate 로 재사용.
+- [x] **sidecar commons g61 확장** (0.10.7 `30620ee`): primitives → primitives+domain engines · engine⊥adapter · import-root SSOT 명문화.
+- [x] **sidecar stdlib-ssot-guard 0.1.0** (`669aa1d`): PreToolUse 비차단 advisory (anima-locked import + stdlib pub fn 중복 nudge) + SessionStart stdlib-root 검증. 라이브 검증 PASS.
+- [x] **sidecar /stdlib 0.1.0** skill: `check`(g61 위반 스캔) + `promote`(이전+thin-shim 런북).
+- [x] **sidecar master 모드 0.3.0** (`51d9c01`): master profile/tier + `~/.sidecar/master` 창작자 마커 + `sidecar master on|off|status` verb. stdlib-ssot-guard + /stdlib → master 티어 태깅 (`9f15920` · `656044e`).
+- [x] 이 시스템 master 모드 ON (profile=master, marker present, guard 활성).
+- [ ] DEFERRED 잔존: F-IIT4-3/4 PyPhi-numeric exact 대조 (M5 named-blocker, stdlib 승격으로 접근 가능해짐 → 차기 closure 후보) · n=8 6-scale full bg fire(M9 bounded) · 실제 ADS1299 capture → eeg_estimate_tpm 라이브.
+
 ## 2026-05-25 — /cycle#2 확장 라운드 LAND (M10·M11·M12) — rate-limit salvage/inline 복구
 
 병렬 3-agent 발사 → **서버 rate-limit(429-class)으로 전멸** (사용량 한도 아님, 13~23 tool-use 만에 사망). 복구: M10 worktree 생존분 salvage + M11/M12 메인세션 inline 재작성. 전부 착지.

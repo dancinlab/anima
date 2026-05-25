@@ -21,6 +21,7 @@ LIFE (cycle#14~21, 22 NEW H 완결)의 全 Φ 측정은 `phi_spatial` proxy(공�
 | [`HEXAD/IIT4/lib/iit4_bigphi.hexa`](HEXAD/IIT4/lib/iit4_bigphi.hexa) | **M4 LANDED** — system big-Φ (structure-cut MIP irreducibility) (9/9 smoke 🟢, integrated≠reducible) |
 | [`HEXAD/IIT4/CALIBRATION.md`](HEXAD/IIT4/CALIBRATION.md) | **M5 LANDED** — analytic reference calibration (5 net, 14/14 🟢; F-IIT4-3/4 PyPhi-numeric DEFERRED) |
 | [`HEXAD/IIT4/lib/iit4_eca.hexa`](HEXAD/IIT4/lib/iit4_eca.hexa) · [`FAITHFUL_REMEASURE.md`](HEXAD/IIT4/FAITHFUL_REMEASURE.md) | **M6 LANDED** — ECA→TPM bridge + LIFE substrate faithful 인과 big-Φ 재측정 (7/7 🟢, L-C2.1 종결) |
+| 🌐 **hexa-lang `stdlib/consciousness/iit4_*`** (hexa-lang PR #1051) | **공용 SSOT 승격** (commons g61) — 엔진 6 모듈이 stdlib 으로 이전, anima/lib 는 thin shim(#542 caller). 어댑터는 repo별: anima `iit4_eca`(ECA) · hexa-brain `eeg/eeg_to_tpm.hexa`(EEG, hexa-brain PR #1). 거버넌스: sidecar **stdlib-ssot-guard** + `/stdlib` skill (둘 다 master tier, creator-only). |
 | [`HEXAD/LIFE/`](HEXAD/LIFE/) | proxy-lane predecessor (H_002 C2 · H_204 · H_223 · H_279 = faithful 재측정 대상) |
 | [`HEXAD/LIFE/H_278_faithful_phi_small_n.md`](HEXAD/LIFE/H_278_faithful_phi_small_n.md) | exact MIP-EI(스칼라) — IIT4 의 직전 단계, 출발점 (partition 축만 faithful) |
 | [`HEXAD/LIFE/lib/phi_helper.hexa`](HEXAD/LIFE/lib/phi_helper.hexa) · [`phi_native.hexa`](HEXAD/LIFE/lib/phi_native.hexa) | RFC 036 상관-MI primitive (proxy lane, READ-ONLY 비교 baseline) |
