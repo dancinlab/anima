@@ -50,6 +50,8 @@
 // raw#12  pre-registered predicate (ENERGY_THRESHOLD = 0.95, frozen above)
 // raw#15  no-hardcode (threshold + paths + round as constants)
 
+import "stdlib/linalg/norm.hexa"
+
 let ENERGY_THRESHOLD = 0.95
 let ROOT = exec("pwd").trim()
 let EIGENVEC_SSOT = ROOT + "/.meta2-cert/cell-eigenvec-16.json"
@@ -183,14 +185,11 @@ fn broadcast_sub(M: array, mu: array, m: int, n: int) -> array {
 }
 
 // Frobenius norm of a flat array (used on rows / matrices).
+// 2026-05-25 phase 5 M1 sweep 2b: delegates to stdlib/linalg/norm (hexa-lang
+// #885). Was inline Σ arr_i² → sqrt(s); byte-equal to frobenius_norm(arr, n, 1)
+// (native builtin sqrt, simple single-pass Σ-then-sqrt).
 fn frob_norm_flat(arr: array) -> float {
-    let mut s = 0.0
-    let mut i = 0
-    while i < len(arr) {
-        s = s + arr[i] * arr[i]
-        i = i + 1
-    }
-    return sqrt(s)
+    return frobenius_norm(arr, len(arr), 1)
 }
 
 fn frob_norm_matrix(M: array) -> float {
