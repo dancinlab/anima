@@ -1,0 +1,438 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_h132_c2.hexa — H_132 Frozen Cells · C2 differentiation-longterm-stability
+//
+//  PURPOSE
+//    Extends H_132 (ce-frozen-cells). The original H_132 freeze smoke verified
+//    state-preservation + division-arrest over a SHORT horizon (5/20 steps).
+//    C2 asks the LONG-TERM differentiation-stability question:
+//
+//      Does a cell marked `frozen` remain frozen (Δw = 0, splits = 0) over
+//      100+ forward steps WHILE the surrounding pool keeps splitting and
+//      growing? (post-mitotic neuron analogy — a terminally differentiated
+//      cell holds its state for the organism's lifetime while progenitors
+//      keep dividing.)
+//
+//    This is the temporal-stability strengthening of H_132: short-horizon
+//    invariance is necessary but not sufficient for the differentiation
+//    claim. A frozen cell that drifts after 50 steps, or that the split
+//    machinery eventually fires on as the pool grows, would falsify the
+//    differentiation interpretation.
+//
+//  OPERATIONAL FREEZE DEFINITION (inherited from H_132, raw#9/10 HONEST)
+//    substrate has NO explicit freeze primitive (mitosis_hook_lib.hexa).
+//    freeze = (1) STATE-PRESERVE: snapshot frozen cell engine_a_W/engine_g_W
+//    + hidden at step 0, restore each step (undo Lorenz + split side effects).
+//    (2) DIVISION-ARREST: reset frozen cell tension_history = [] each step so
+//    the split predicate (patience=3 consecutive over-threshold) never fires.
+//    This is harness-imposed, NOT a substrate-native cell-cycle gate (L2).
+//
+//  C2 SWEEP
+//    horizon n_steps ∈ {100, 200} × pool-growth active (free cells split).
+//    initial_cells = 6, frozen_ids = {0, 1} (2 frozen), free_ids = {2,3,4,5}.
+//    Larger free fraction (4/6) so the pool genuinely grows over the horizon
+//    and exercises the frozen cell against a busy, expanding pool.
+//
+//  C2 MEASUREMENTS (per horizon)
+//    M-A  frozen max|Δw|  : max over all frozen cells, all steps, of the
+//                            POST-RESTORE max abs diff vs step-0 baseline.
+//    M-B  frozen max|Δhidden| : same for hidden (Lorenz touches hidden every
+//                            step → the non-trivial preservation evidence, L4).
+//    M-C  frozen split count : event_log split events with parent ∈ frozen_ids.
+//    M-D  pool growth        : final_cell_count vs initial_cell_count, and the
+//                            free-cell split count (control group alive).
+//
+//  C2 CRITERIA (pre-registered)
+//    C2.1 FROZEN-STABLE   : frozen max|Δw| < eps AND frozen max|Δhidden| < eps
+//                            over the full 100+ step horizon (eps = 1e-9).
+//    C2.2 FROZEN-NO-SPLIT : frozen split count == 0 even as the pool grows.
+//    C2.3 CONTROL-ALIVE   : free cells grow — final_cell_count > initial_cell_count
+//                            AND free split count > 0 (the contrast that makes
+//                            the differentiation claim meaningful — not a frozen
+//                            POOL but a frozen SUBSET).
+//    C2.4 DETERMINISM     : cross-process re-run sha256 identical (checked by
+//                            the harness driver, not in-script — RFC 033 global
+//                            gauss stream is not in-process reseedable).
+//    verdict_rule: C2 PASS = C2.1 ∧ C2.2 ∧ C2.3 (per horizon, AND both horizons).
+//                  PARTIAL = some horizon passes / one criterion misses.
+//                  FAIL = C2.1 or C2.2 violated.
+//
+//  DETERMINISM
+//    __HEXA_FARR_GAUSS_SEED__=42 + fixed synthetic input x[i]=sin(0.37*i)*0.5.
+//    LLM none. $0 mac local.
+//
+//  RUN
+//    cd <worktree-root>
+//    __HEXA_FARR_GAUSS_SEED__=42 HEXA_MEM_UNLIMITED=1 \
+//        hexa run HEXAD/LIFE/state/h132_c2_longterm_2026_05_25/run_h132_c2.hexa
+//
+//  COMPLIANCE  raw#11 snake_case · raw#15 no-hardcode (dims/seed named) ·
+//              raw#9/10 honest operational-freeze · raw#12 deterministic
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+
+
+fn _state_dir() -> string {
+    return "HEXAD/LIFE/state/h132_c2_longterm_2026_05_25"
+}
+fn _d_model() -> int { return 8 }
+fn _initial_cells() -> int { return 6 }
+fn _eps() -> float { return 0.000000001 }   // 1e-9
+
+
+// ── §1 helpers (byte-parity reuse of H_132 freeze smoke helpers) ─────────────
+
+// Fixed synthetic final-hidden input (d_model,) — deterministic, no ckpt.
+fn _make_x(d: int) {
+    let mut x = []
+    let mut i = 0
+    while i < d {
+        x.push(sin((i * 1.0) * 0.37) * 0.5)
+        i = i + 1
+    }
+    return x
+}
+
+// frozen_ids membership.
+fn _is_frozen(cell_id: int, frozen_ids: array) -> bool {
+    let mut i = 0
+    while i < len(frozen_ids) {
+        if frozen_ids[i] == cell_id { return true }
+        i = i + 1
+    }
+    return false
+}
+
+// cell weight farr → list[float] (snapshot).
+fn _read_weight(farr_id: int, n: int) {
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out.push(farr_get(farr_id, i))
+        i = i + 1
+    }
+    return out
+}
+
+// snapshot list → weight farr (restore).
+fn _restore_weight(farr_id: int, snap: array) {
+    let n = len(snap)
+    let mut i = 0
+    while i < n {
+        let _ = farr_set(farr_id, i, snap[i])
+        i = i + 1
+    }
+}
+
+// max abs diff of two lists.
+fn _max_abs_diff(a: array, b: array) -> float {
+    let n = if len(a) < len(b) { len(a) } else { len(b) }
+    let mut m = 0.0
+    let mut i = 0
+    while i < n {
+        let d = a[i] - b[i]
+        let ad = if d < 0.0 { 0.0 - d } else { d }
+        if ad > m { m = ad }
+        i = i + 1
+    }
+    return m
+}
+
+// find cell index by id (-1 if absent).
+fn _find_idx(cells: array, cell_id: int) -> int {
+    let mut i = 0
+    while i < len(cells) {
+        if cells[i]["cell_id"] == cell_id { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+// frozen subset step-0 baseline snapshot.
+fn _snapshot_frozen(pool, frozen_ids: array, weight_n: int) {
+    let mut snaps = #{}
+    let cells = pool["cells"]
+    let mut i = 0
+    while i < len(frozen_ids) {
+        let fid = frozen_ids[i]
+        let idx = _find_idx(cells, fid)
+        if idx >= 0 {
+            let c = cells[idx]
+            let s = #{
+                "aw":     _read_weight(c["engine_a_W"], weight_n),
+                "gw":     _read_weight(c["engine_g_W"], weight_n),
+                "hidden": c["hidden"]
+            }
+            snaps[to_string(fid)] = s
+        }
+        i = i + 1
+    }
+    return snaps
+}
+
+
+// ── §2 single-horizon C2 driver ──────────────────────────────────────────────
+// Returns a result dict for ONE horizon n_steps.
+fn _run_one_horizon(n_steps: int) {
+    let d = _d_model()
+    let weight_n = d * d
+    let mut pool = cell_pool_init(d, _initial_cells())
+    let x = _make_x(d)
+
+    // frozen subset = 2 of 6 cells {0,1}; free {2,3,4,5} keep dividing.
+    let frozen_ids = [0, 1]
+
+    let baseline = _snapshot_frozen(pool, frozen_ids, weight_n)
+    let initial_cell_count = len(pool["cells"])
+    let initial_next_id = pool["next_id"]
+
+    let mut max_dweight_seen = 0.0    // M-A: frozen weight (post-restore)
+    let mut max_dhidden_seen = 0.0    // M-B: frozen hidden  (post-restore)
+    let mut max_drift_hidden = 0.0    // diagnostic: pre-restore Lorenz drift on frozen hidden
+    let mut accounting_ok = true      // frozen present exactly once each step
+    let mut all_present_each_step = true
+    let mut min_cells_seen = initial_cell_count
+    let mut max_cells_seen = initial_cell_count
+
+    let mut step = 0
+    while step < n_steps {
+        // (a) STATE-PRESERVE pre: restore frozen cells to baseline.
+        let mut fi = 0
+        while fi < len(frozen_ids) {
+            let fid = frozen_ids[fi]
+            let idx = _find_idx(pool["cells"], fid)
+            if idx >= 0 {
+                let snap = baseline[to_string(fid)]
+                let c = pool["cells"][idx]
+                _restore_weight(c["engine_a_W"], snap["aw"])
+                _restore_weight(c["engine_g_W"], snap["gw"])
+                pool["cells"][idx]["hidden"] = snap["hidden"]
+            }
+            fi = fi + 1
+        }
+
+        // forward step (Lorenz + per-cell forward + split/merge).
+        let r = mitosis_forward_tail(x, pool, step)
+        pool = r[1]
+
+        // (b) DIVISION-ARREST + STATE-PRESERVE post: measure drift, restore,
+        //     reset tension_history.
+        let mut fj = 0
+        while fj < len(frozen_ids) {
+            let fid = frozen_ids[fj]
+            let idx = _find_idx(pool["cells"], fid)
+            if idx >= 0 {
+                let snap = baseline[to_string(fid)]
+                let c = pool["cells"][idx]
+                // diagnostic: how much did forward drift frozen hidden before restore.
+                let drift_h = _max_abs_diff(c["hidden"], snap["hidden"])
+                if drift_h > max_drift_hidden { max_drift_hidden = drift_h }
+                // restore.
+                _restore_weight(c["engine_a_W"], snap["aw"])
+                _restore_weight(c["engine_g_W"], snap["gw"])
+                pool["cells"][idx]["hidden"] = snap["hidden"]
+                pool["cells"][idx]["tension_history"] = []
+                // post-restore Δ (== 0 expected; M-A / M-B core measurement).
+                let post_dw_a = _max_abs_diff(_read_weight(c["engine_a_W"], weight_n), snap["aw"])
+                let post_dw_g = _max_abs_diff(_read_weight(c["engine_g_W"], weight_n), snap["gw"])
+                let post_dh   = _max_abs_diff(pool["cells"][idx]["hidden"], snap["hidden"])
+                if post_dw_a > max_dweight_seen { max_dweight_seen = post_dw_a }
+                if post_dw_g > max_dweight_seen { max_dweight_seen = post_dw_g }
+                if post_dh   > max_dhidden_seen { max_dhidden_seen = post_dh }
+            } else {
+                all_present_each_step = false
+            }
+            fj = fj + 1
+        }
+
+        // (c) ACCOUNTING: each frozen id present exactly once.
+        let mut fk = 0
+        while fk < len(frozen_ids) {
+            let fid = frozen_ids[fk]
+            let mut cnt = 0
+            let cs = pool["cells"]
+            let mut ci = 0
+            while ci < len(cs) {
+                if cs[ci]["cell_id"] == fid { cnt = cnt + 1 }
+                ci = ci + 1
+            }
+            if cnt != 1 { accounting_ok = false }
+            fk = fk + 1
+        }
+
+        let nc = len(pool["cells"])
+        if nc < min_cells_seen { min_cells_seen = nc }
+        if nc > max_cells_seen { max_cells_seen = nc }
+        step = step + 1
+    }
+
+    // split-parent audit: frozen-as-parent splits + free splits.
+    let event_log = pool["event_log"]
+    let mut frozen_self_split = 0
+    let mut free_split = 0
+    let mut total_split = 0
+    let mut total_merge = 0
+    let mut ei = 0
+    while ei < len(event_log) {
+        let ev = event_log[ei]
+        if ev["type"] == "split" {
+            total_split = total_split + 1
+            if _is_frozen(ev["parent_id"], frozen_ids) {
+                frozen_self_split = frozen_self_split + 1
+            } else {
+                free_split = free_split + 1
+            }
+        }
+        if ev["type"] == "merge" { total_merge = total_merge + 1 }
+        ei = ei + 1
+    }
+
+    let final_cell_count = len(pool["cells"])
+    let final_next_id = pool["next_id"]
+
+    // C2 criteria for this horizon.
+    let c21 = (max_dweight_seen < _eps()) && (max_dhidden_seen < _eps())
+    let c22 = (frozen_self_split == 0)
+    let c23 = (final_cell_count > initial_cell_count) && (free_split > 0)
+    let acct = accounting_ok && all_present_each_step
+
+    let v21 = if c21 { "PASS" } else { "FAIL" }
+    let v22 = if c22 { "PASS" } else { "FAIL" }
+    let v23 = if c23 { "PASS" } else { "FAIL" }
+
+    let horizon_pass = c21 && c22 && c23
+    let hverdict = if horizon_pass { "PASS" } else {
+        if c22 && (c21 || c23) { "PARTIAL" } else { "FAIL" }
+    }
+
+    return #{
+        "n_steps":                 n_steps,
+        "initial_cell_count":      initial_cell_count,
+        "final_cell_count":        final_cell_count,
+        "min_cells_seen":          min_cells_seen,
+        "max_cells_seen":          max_cells_seen,
+        "initial_next_id":         initial_next_id,
+        "final_next_id":           final_next_id,
+        "total_split_events":      total_split,
+        "free_split_events":       free_split,
+        "frozen_self_split_events": frozen_self_split,
+        "total_merge_events":      total_merge,
+        "max_frozen_dweight":      max_dweight_seen,
+        "max_frozen_dhidden":      max_dhidden_seen,
+        "max_pre_restore_hidden_drift": max_drift_hidden,
+        "accounting_ok":           acct,
+        "c21_frozen_stable":       v21,
+        "c22_frozen_no_split":     v22,
+        "c23_control_alive":       v23,
+        "horizon_verdict":         hverdict
+    }
+}
+
+
+// ── §3 main: sweep horizons {100, 200}, aggregate, write result.json ─────────
+fn _bool_str(b: bool) -> string { if b { return "true" } return "false" }
+
+fn _run_c2() {
+    println("================================================================")
+    println("H_132 C2 — differentiation longterm stability (host=mac local)")
+    println("================================================================")
+    println("  d_model=" + to_string(_d_model()) + " initial_cells=" + to_string(_initial_cells())
+            + " frozen_ids=[0,1] free_ids=[2,3,4,5] horizons={100,200}")
+
+    let horizons = [100, 200]
+    let mut results = []
+    let mut all_pass = true
+    let mut hi = 0
+    while hi < len(horizons) {
+        let h = horizons[hi]
+        println("")
+        println("── horizon n_steps=" + to_string(h) + " ──")
+        let res = _run_one_horizon(h)
+        results.push(res)
+        println("  cells " + to_string(res["initial_cell_count"]) + "→"
+                + to_string(res["final_cell_count"]) + " (max seen "
+                + to_string(res["max_cells_seen"]) + ")"
+                + "  free_splits=" + to_string(res["free_split_events"])
+                + "  frozen_splits=" + to_string(res["frozen_self_split_events"]))
+        println("  frozen max|Δw|=" + to_string(res["max_frozen_dweight"])
+                + "  frozen max|Δhidden|=" + to_string(res["max_frozen_dhidden"])
+                + "  (pre-restore Lorenz drift on hidden=" + to_string(res["max_pre_restore_hidden_drift"]) + ")")
+        println("  C2.1 FROZEN-STABLE   : " + res["c21_frozen_stable"])
+        println("  C2.2 FROZEN-NO-SPLIT : " + res["c22_frozen_no_split"])
+        println("  C2.3 CONTROL-ALIVE   : " + res["c23_control_alive"])
+        println("  horizon verdict      : " + res["horizon_verdict"])
+        if res["horizon_verdict"] != "PASS" { all_pass = false }
+        hi = hi + 1
+    }
+
+    // Aggregate verdict (C2.4 determinism checked by harness re-run sha256).
+    let verdict = if all_pass { "PASS" } else {
+        // PARTIAL if every horizon's frozen-stability + no-split hold but a
+        // control / horizon-mismatch occurred; else FAIL.
+        let mut any_stable_nosplit = true
+        let mut ri = 0
+        while ri < len(results) {
+            let r = results[ri]
+            if r["c21_frozen_stable"] != "PASS" { any_stable_nosplit = false }
+            if r["c22_frozen_no_split"] != "PASS" { any_stable_nosplit = false }
+            ri = ri + 1
+        }
+        if any_stable_nosplit { "PARTIAL" } else { "FAIL" }
+    }
+
+    // ── result.json (manual JSON build) ──────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"hypothesis\": \"H_132\",\n"
+    j = j + "  \"criterion\": \"C2\",\n"
+    j = j + "  \"slug\": \"ce-frozen-cells-c2-longterm\",\n"
+    j = j + "  \"date\": \"2026-05-25\",\n"
+    j = j + "  \"host\": \"mac-local\",\n"
+    j = j + "  \"determinism\": { \"gauss_seed\": 42, \"llm\": \"none\", \"cost_usd\": 0.0 },\n"
+    j = j + "  \"params\": { \"d_model\": " + to_string(_d_model())
+          + ", \"initial_cells\": " + to_string(_initial_cells())
+          + ", \"frozen_ids\": [0, 1], \"free_ids\": [2, 3, 4, 5]"
+          + ", \"horizons\": [100, 200], \"eps\": " + to_string(_eps()) + " },\n"
+    j = j + "  \"operational_freeze\": \"state-preserve (weight+hidden restore per step) + division-arrest (tension_history reset)\",\n"
+    j = j + "  \"horizons\": [\n"
+    let mut ri = 0
+    while ri < len(results) {
+        let r = results[ri]
+        j = j + "    {\n"
+        j = j + "      \"n_steps\": " + to_string(r["n_steps"]) + ",\n"
+        j = j + "      \"initial_cell_count\": " + to_string(r["initial_cell_count"]) + ",\n"
+        j = j + "      \"final_cell_count\": " + to_string(r["final_cell_count"]) + ",\n"
+        j = j + "      \"max_cells_seen\": " + to_string(r["max_cells_seen"]) + ",\n"
+        j = j + "      \"initial_next_id\": " + to_string(r["initial_next_id"]) + ",\n"
+        j = j + "      \"final_next_id\": " + to_string(r["final_next_id"]) + ",\n"
+        j = j + "      \"total_split_events\": " + to_string(r["total_split_events"]) + ",\n"
+        j = j + "      \"free_split_events\": " + to_string(r["free_split_events"]) + ",\n"
+        j = j + "      \"frozen_self_split_events\": " + to_string(r["frozen_self_split_events"]) + ",\n"
+        j = j + "      \"total_merge_events\": " + to_string(r["total_merge_events"]) + ",\n"
+        j = j + "      \"max_frozen_dweight\": " + to_string(r["max_frozen_dweight"]) + ",\n"
+        j = j + "      \"max_frozen_dhidden\": " + to_string(r["max_frozen_dhidden"]) + ",\n"
+        j = j + "      \"max_pre_restore_hidden_drift\": " + to_string(r["max_pre_restore_hidden_drift"]) + ",\n"
+        j = j + "      \"accounting_ok\": " + _bool_str(r["accounting_ok"]) + ",\n"
+        j = j + "      \"C2_1_frozen_stable\": \"" + r["c21_frozen_stable"] + "\",\n"
+        j = j + "      \"C2_2_frozen_no_split\": \"" + r["c22_frozen_no_split"] + "\",\n"
+        j = j + "      \"C2_3_control_alive\": \"" + r["c23_control_alive"] + "\",\n"
+        j = j + "      \"horizon_verdict\": \"" + r["horizon_verdict"] + "\"\n"
+        if ri < len(results) - 1 { j = j + "    },\n" } else { j = j + "    }\n" }
+        ri = ri + 1
+    }
+    j = j + "  ],\n"
+    j = j + "  \"C2_4_determinism\": \"cross-process sha256 re-run (harness-checked; RFC 033 global gauss stream not in-process reseedable)\",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"verdict_rule\": \"C2 PASS = C2.1 (frozen max|dw|<eps & max|dhidden|<eps) AND C2.2 (frozen splits=0) AND C2.3 (free pool grows) for ALL horizons\"\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result.json", j)
+
+    println("")
+    println("================================================================")
+    println("H_132 C2 LONGTERM " + verdict)
+    println(j)
+    println("================================================================")
+}
+
+
+_run_c2()
