@@ -14,7 +14,7 @@
       "hexa_files": 21,
       "py_files": 0,
       "py_files_in_history": "deleted in commit 68d2236c (.py 791개 → .hexa 흡수 + 원본 폐기)",
-      "implementation_status": "stub-only — most modules are declarative skeleton with TODO markers; 2 files have real logic (rp_adaptive_response.hexa 288L w/ 8 selftests, scripts/organize_recordings.hexa 192L partial)",
+      "implementation_status": "stub-only — most modules are declarative skeleton with TODO markers; 2 files have real logic (rp_adaptive_response.hexa 288L w/ 8 selftests, scripts/organize_recordings.hexa 192L partial)"
     }
   },
   "modules": [
@@ -44,7 +44,7 @@
       "target_path": "anima-eeg/neurofeedback.hexa (additive: migration_phase2_pilot/neurofeedback.hexa first, then approved-merge)",
       "rewrite_estimate_loc": 230,
       "risk": "low",
-      "phase": 2,
+      "phase": 2
     },
     {
       "module": "calibrate",
@@ -73,7 +73,7 @@
       "target_path": "anima-eeg/collect.hexa + /tmp/collect_helper.hexa_tmp",
       "rewrite_estimate_loc": 320,
       "risk": "high",
-      "phase": 4,
+      "phase": 4
     },
     {
       "module": "eeg_recorder",
@@ -202,7 +202,7 @@
       "target_path": "anima-eeg/rp_adaptive_response.hexa (no changes)",
       "rewrite_estimate_loc": 0,
       "risk": "none",
-      "phase": "exempt",
+      "phase": "exempt"
     },
     {
       "module": "protocols/__init__",
@@ -314,7 +314,7 @@
     "EMIT-TMP": 1,
     "WRAPPER_OR_HEXA_STDLIB": 1,
     "ALREADY_FULL": 1,
-    "total": 20,
+    "total": 20
   },
   "phase_distribution": {
     "phase_2_pilot_low_risk_full": ["__init__", "neurofeedback", "protocols/__init__"],
@@ -349,6 +349,6 @@
     "no fallback paths (single deterministic execution)",
     "--selftest mode with kv-line output (selftest=ok)",
     "raw10_honest field for synthetic vs phenomenal data distinction",
-    "byte-identical re-run reproducibility (selftest hash should match across runs)",
+    "byte-identical re-run reproducibility (selftest hash should match across runs)"
   ]
 }
