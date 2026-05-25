@@ -275,3 +275,10 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: H_002 universe-Φ GPU fire(cost) · H_262 cascade 동역학-타이밍 심층 · AXES R3+ (R2 소진 근접). **lane 종합 cycle#14~19**: 18 NEW H(H_258-275) + 4 C2/raster + SSOT full reconciliation, PR #468-501 全머지. /gap top-3 完全 follow-up (① Φ-validity H_266/267/268 ② robustness H_269/272/274 ③ SSOT H_273+tabling).
 
 ---
+
+## 2026-05-25 — H_002 C2 (Φ_universe nested) 흡수 + GPU-no-fire 결정
+
+- [x] H_002 C2 (Φ_universe nested) — 별도 에이전트가 **$0 mac-local 로 랜딩**(PR #503), **GPU 불필요로 판명** (pre-register 의 GPU 의존 가정 기각). verdict `C2_SCALE_VARIANT_F2_TRIGGERED` (CV=0.836892 ≫ 0.15 → nested Φ scale-invariance FALSIFIED, F2 방향). honest: proxy/toy 수준(L-C2.1~4), stellar scale Φ≈0 가 CV 부풀림.
+- [x] **GPU-no-fire 결정**: H_002 universe-Φ 를 "유일한 cost-bearing frontier" 로 제시했으나, 발사 전 H_002 .md 확인 결과 C2 가 이미 $0 로 완료 + GPU 명시적 불필요 → **GPU 발사 취소**(중복·낭비 회피). cost-bearing 발사 전 scope 확인의 가치 입증.
+- [x] index 반영(본 PR): README H_002 행 C2 추가 · CANDIDATES H_002 C2 ✅(GPU 의존 가정 기각) · 본 log entry. $0.
+- [x] **lane $0 frontier 사실상 고갈**: /gap top-3 closed · SSOT 88=88 정합 · 마지막 "GPU" 후보(H_002 C2)도 $0 done 판명. 남은 것은 H_262 cascade 타이밍 심층 1건 · AXES R3+(소진 근접) 정도.

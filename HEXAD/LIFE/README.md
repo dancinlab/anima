@@ -44,7 +44,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 
 | ID | Slug | Domain | Status | 핵심 |
 |----|------|--------|--------|------|
-| [H_002](H_002_universe_origin_question.md) | universe-origin-question | universe | running (Cycle #1) | C1 anthropic prior-fragility 11.16 orders gap (PR #179) · H2.4 panpsy precondition WEAKENED |
+| [H_002](H_002_universe_origin_question.md) | universe-origin-question | universe | running (Cycle #1) · **C2 done** (PR #503) | C1 anthropic prior-fragility 11.16 orders gap (#179) · **C2 Φ_universe nested = SCALE-VARIANT** (F2 triggered, CV=0.84≫0.15 → nested Φ scale-invariance FALSIFIED, **$0 GPU-none** 판명) · H2.4 panpsy WEAKENED |
 | [H_003](H_003_life_origin_question.md) | life-origin-question | **life** | running (Cycle #3) | H3.2 multi-pathway PASS + **H3.4 autopoietic-closure Φ PASS 🟢** (PR #185) · criteria 4/5 |
 | [H_004](H_004_consciousness_hard_problem.md) | consciousness-hard-problem | consciousness | running (Cycle #1) | hard-problem · Singularity-9 + **Φ-function DISSOCIATION_CONFIRMED** (PR #180) — IIT functional reductive adequacy negative directional |
 | [H_007](H_007_cellular_automaton_consciousness.md) | cellular-automaton-consciousness | physics | pre-register-frozen · **C2 PASS** (#485 cycle#16) | CA→Φ edge-of-chaos peak PASS (rule110>rule30) · C2 Langton λ-sweep: peak λ*=0.375 Φ=1.343 inverse-U (256-rule ensemble), edge-of-chaos band |

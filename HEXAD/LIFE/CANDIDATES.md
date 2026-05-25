@@ -47,7 +47,7 @@
 | H_018 C2 | organic merge/split rate | default 동역학 하 자연 merge rate (현재 forced-trigger 만) | 🟢 |
 | H_132 C2 | differentiation 장기 안정 | frozen 세포가 pool 성장 중 100+ step 안정? | 🟢 |
 | H_007 C2 | larger lattice / λ-sweep | Langton λ 연속 sweep → Φ peak 위치 정밀화 | ✅ → **H_007 C2 PASS** (#485 cycle#16, peak λ*=0.375 inverse-U) |
-| H_002 C2 | Φ_universe pre-register | universe-scale Φ 측정 protocol (GPU 의존, design-only 가능) | ⬜ |
+| H_002 C2 | Φ_universe pre-register | universe-scale Φ 측정 — **GPU 불필요로 판명, $0 mac-local** (pre-register 의 GPU 의존 가정 기각) | ✅ → **C2 SCALE-VARIANT, F2 triggered** (#503, CV=0.84≫0.15, nested Φ scale-invariance FALSIFIED) |
 
 ## C. NEW seed — 사용자 테마 4축 (✅ 全소비: H_200/H_201 초기 2건 + cycle#14 H_258-263 6건 + mirror-self=H_220 + regeneration-healing=H_206)
 
