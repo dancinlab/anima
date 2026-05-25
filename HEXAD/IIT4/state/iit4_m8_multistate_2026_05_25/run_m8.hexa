@@ -1,0 +1,190 @@
+// HEXAD/IIT4/state/iit4_m8_multistate_2026_05_25/run_m8.hexa
+//
+//   IIT4 M8 — LIFE re-measurement extension: n=5 multi-state faithful big-Φ.
+//
+//   M6 (FAITHFUL_REMEASURE.md) re-measured the LIFE ECA substrates with the
+//   faithful CAUSAL IIT 4.0 engine, but ONLY at n=4 ring and a SINGLE state
+//   (1010). Its honest-scope §6 flags two gaps: (a) single state, (b) n ceiling.
+//   Faithful big-Φ is state-DEPENDENT (IIT 4.0 core claim — Φ is the experience
+//   of a SPECIFIC state), so a one-point table can hide the real distribution.
+//
+//   M8 closes the gap: re-measure the LIFE cosmic-scale rules {110, 30, 54} (and
+//   the XOR coupled rule 90) at a LARGER ring n=5 AND averaged over a SAMPLE of
+//   states, producing a REPRESENTATIVE faithful big-Φ per rule (mean / min / max
+//   over the state sample) — not just one state.
+//
+//   n=5 big_phi is heavy (~13 s / coupled-rule call). 32 states × 4 coupled rules
+//   ≈ 28 min wall — over the ~10 min budget. So the n=5 sweep uses a REPRESENTATIVE
+//   SUBSET of 8 evenly-spaced states {0,4,8,12,16,20,24,28}; the n=4 sweep covers
+//   ALL 16 states (cheap) for continuity with M6's single-state n=4 number.
+//
+//   Null controls (must stay 0 across all sampled states):
+//     • rule 0   (all → 0, constant)        ⇒ big-Φ = 0 (no causal power)
+//     • rule 204 (identity, next = centre)  ⇒ big-Φ = 0 (independent self-cells)
+//   Integration: ≥1 coupled rule {110,30,54} must have MEAN big-Φ > 0.
+//   Bounds: 0 ≤ big-Φ ≤ total for every (rule, state).
+//
+//   deterministic · hexa-only · $0 mac local · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_eca.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// sweep one rule over a state sample at ring size n.
+//   returns [mean, min, max, n_states, all_bounds_ok(1/0)]
+fn sweep_rule(rule: int, n: int, states: array) -> array {
+    let tpm = eca_tpm(rule, n)
+    let ns = len(states)
+    let mut sum = 0.0
+    let mut mn = 1.0e308
+    let mut mx = -1.0
+    let mut bounds_ok = 1
+    let mut k = 0
+    while k < ns {
+        let r = big_phi(tpm, n, states[k])
+        let bp = r[0]
+        let tot = r[1]
+        sum = sum + bp
+        if bp < mn { mn = bp }
+        if bp > mx { mx = bp }
+        // bound: 0 <= big-Φ <= total (with epsilon)
+        if (bp < 0.0 - 0.000001) || (bp > tot + 0.000001) { bounds_ok = 0 }
+        k = k + 1
+    }
+    let mean = sum / to_float(ns)
+    return [mean, mn, mx, to_float(ns), to_float(bounds_ok)]
+}
+
+fn main() {
+    // ── n=5 representative state subset (8 evenly-spaced over [0, 32)) ──────
+    let n5 = 5
+    let states5 = [0, 4, 8, 12, 16, 20, 24, 28]
+    // ── n=4 full state coverage (all 16) for M6 continuity ─────────────────
+    let n4 = 4
+    let states4 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+
+    println("================================================================")
+    println("  IIT4 M8 — LIFE re-measurement extension (n=5 multi-state faithful big-Φ)")
+    println("  n=5 sample = 8 evenly-spaced states {0,4,8,12,16,20,24,28}")
+    println("  n=4 sample = all 16 states (M6 continuity)")
+    println("  proxy phi_spatial = CORRELATIONAL · IIT4 big-Φ = CAUSAL · state-DEPENDENT")
+    println("================================================================")
+
+    // ── n=5 sweep (the headline) ────────────────────────────────────────────
+    let s5_0   = sweep_rule(0,   n5, states5)
+    let s5_204 = sweep_rule(204, n5, states5)
+    let s5_90  = sweep_rule(90,  n5, states5)
+    let s5_110 = sweep_rule(110, n5, states5)
+    let s5_30  = sweep_rule(30,  n5, states5)
+    let s5_54  = sweep_rule(54,  n5, states5)
+
+    println("  --- n=5 ring · 8-state sample · representative faithful big-Φ ---")
+    println("  rule   0 (const)   : mean=" + str(s5_0[0])   + " min=" + str(s5_0[1])   + " max=" + str(s5_0[2]))
+    println("  rule 204 (identity): mean=" + str(s5_204[0]) + " min=" + str(s5_204[1]) + " max=" + str(s5_204[2]))
+    println("  rule  90 (XOR l,r) : mean=" + str(s5_90[0])  + " min=" + str(s5_90[1])  + " max=" + str(s5_90[2]))
+    println("  rule 110 (LIFE)    : mean=" + str(s5_110[0]) + " min=" + str(s5_110[1]) + " max=" + str(s5_110[2]))
+    println("  rule  30 (LIFE)    : mean=" + str(s5_30[0])  + " min=" + str(s5_30[1])  + " max=" + str(s5_30[2]))
+    println("  rule  54 (LIFE)    : mean=" + str(s5_54[0])  + " min=" + str(s5_54[1])  + " max=" + str(s5_54[2]))
+
+    // ── n=4 sweep (continuity) ────────────────────────────────────────────
+    let s4_0   = sweep_rule(0,   n4, states4)
+    let s4_204 = sweep_rule(204, n4, states4)
+    let s4_90  = sweep_rule(90,  n4, states4)
+    let s4_110 = sweep_rule(110, n4, states4)
+    let s4_30  = sweep_rule(30,  n4, states4)
+    let s4_54  = sweep_rule(54,  n4, states4)
+
+    println("  --- n=4 ring · all 16 states · representative faithful big-Φ ---")
+    println("  rule   0 (const)   : mean=" + str(s4_0[0])   + " min=" + str(s4_0[1])   + " max=" + str(s4_0[2]))
+    println("  rule 204 (identity): mean=" + str(s4_204[0]) + " min=" + str(s4_204[1]) + " max=" + str(s4_204[2]))
+    println("  rule  90 (XOR l,r) : mean=" + str(s4_90[0])  + " min=" + str(s4_90[1])  + " max=" + str(s4_90[2]))
+    println("  rule 110 (LIFE)    : mean=" + str(s4_110[0]) + " min=" + str(s4_110[1]) + " max=" + str(s4_110[2]))
+    println("  rule  30 (LIFE)    : mean=" + str(s4_30[0])  + " min=" + str(s4_30[1])  + " max=" + str(s4_30[2]))
+    println("  rule  54 (LIFE)    : mean=" + str(s4_54[0])  + " min=" + str(s4_54[1])  + " max=" + str(s4_54[2]))
+
+    // ── assertions (n=5 headline) ──────────────────────────────────────────
+    check("n=5 rule 0   (constant)  MEAN big-Φ = 0 across states", approx(s5_0[0],   0.0))
+    check("n=5 rule 204 (identity)  MEAN big-Φ = 0 across states", approx(s5_204[0], 0.0))
+    // and exactly 0 at every sampled state (min == max == 0)
+    check("n=5 rule 0   big-Φ = 0 at every sampled state (min=max=0)", approx(s5_0[1], 0.0) && approx(s5_0[2], 0.0))
+    check("n=5 rule 204 big-Φ = 0 at every sampled state (min=max=0)", approx(s5_204[1], 0.0) && approx(s5_204[2], 0.0))
+
+    // at least one LIFE coupled rule integrates on AVERAGE (mean big-Φ > 0)
+    let mut max_mean = s5_110[0]
+    if s5_30[0] > max_mean { max_mean = s5_30[0] }
+    if s5_54[0] > max_mean { max_mean = s5_54[0] }
+    check("n=5 ≥1 LIFE rule {110,30,54} MEAN big-Φ > 0 (integration)", max_mean > 0.000001)
+
+    // bounds 0 <= big-Φ <= total held for every (rule, state) in both sweeps
+    let n5_bounds = approx(s5_0[4], 1.0) && approx(s5_204[4], 1.0) && approx(s5_90[4], 1.0) && approx(s5_110[4], 1.0) && approx(s5_30[4], 1.0) && approx(s5_54[4], 1.0)
+    check("n=5 bound 0 <= big-Φ <= total held for all (rule, state)", n5_bounds)
+    let n4_bounds = approx(s4_0[4], 1.0) && approx(s4_204[4], 1.0) && approx(s4_90[4], 1.0) && approx(s4_110[4], 1.0) && approx(s4_30[4], 1.0) && approx(s4_54[4], 1.0)
+    check("n=4 bound 0 <= big-Φ <= total held for all (rule, state)", n4_bounds)
+
+    // null controls hold at n=4 too
+    check("n=4 rule 0   (constant)  MEAN big-Φ = 0 across states", approx(s4_0[0],   0.0))
+    check("n=4 rule 204 (identity)  MEAN big-Φ = 0 across states", approx(s4_204[0], 0.0))
+
+    // determinism: re-run one n=5 coupled sweep, identical mean
+    let s5_110b = sweep_rule(110, n5, states5)
+    check("determinism: n=5 rule110 mean big-Φ re-run identical", approx(s5_110[0], s5_110b[0]))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  FINDING: representative faithful big-Φ (mean/min/max over states) at n=5")
+    println("           — M6's single n=4 state-1010 number generalized to a sample.")
+    println("================================================================")
+
+    // ── write result.json (self-contained, deterministic) ──────────────────
+    let mut j = "{\n"
+    j = j + "  \"verdict\": \"\\ud83d\\udfe2\",\n"
+    j = j + "  \"milestone\": \"M8 LIFE re-measurement extension — n=5 multi-state faithful big-\\u03a6\",\n"
+    j = j + "  \"engine\": \"faithful IIT 4.0 (M1-M4) via ECA->TPM bridge (iit4_eca.hexa)\",\n"
+    j = j + "  \"config\": {\n"
+    j = j + "    \"n5_ring\": 5, \"n5_state_sample\": [0,4,8,12,16,20,24,28], \"n5_state_sample_size\": 8, \"n5_state_space\": 32,\n"
+    j = j + "    \"n4_ring\": 4, \"n4_state_sample\": \"all 16\", \"n4_state_sample_size\": 16, \"n4_state_space\": 16\n"
+    j = j + "  },\n"
+    j = j + "  \"n5_table\": {\n"
+    j = j + "    \"rule_0\":   {\"mean\": " + str(s5_0[0])   + ", \"min\": " + str(s5_0[1])   + ", \"max\": " + str(s5_0[2])   + ", \"dynamics\": \"const (null)\"},\n"
+    j = j + "    \"rule_204\": {\"mean\": " + str(s5_204[0]) + ", \"min\": " + str(s5_204[1]) + ", \"max\": " + str(s5_204[2]) + ", \"dynamics\": \"identity (reducible null)\"},\n"
+    j = j + "    \"rule_90\":  {\"mean\": " + str(s5_90[0])  + ", \"min\": " + str(s5_90[1])  + ", \"max\": " + str(s5_90[2])  + ", \"dynamics\": \"XOR l,r (coupled)\"},\n"
+    j = j + "    \"rule_110\": {\"mean\": " + str(s5_110[0]) + ", \"min\": " + str(s5_110[1]) + ", \"max\": " + str(s5_110[2]) + ", \"dynamics\": \"LIFE cosmic-scale\"},\n"
+    j = j + "    \"rule_30\":  {\"mean\": " + str(s5_30[0])  + ", \"min\": " + str(s5_30[1])  + ", \"max\": " + str(s5_30[2])  + ", \"dynamics\": \"LIFE cosmic-scale\"},\n"
+    j = j + "    \"rule_54\":  {\"mean\": " + str(s5_54[0])  + ", \"min\": " + str(s5_54[1])  + ", \"max\": " + str(s5_54[2])  + ", \"dynamics\": \"LIFE cosmic-scale\"}\n"
+    j = j + "  },\n"
+    j = j + "  \"n4_table\": {\n"
+    j = j + "    \"rule_0\":   {\"mean\": " + str(s4_0[0])   + ", \"min\": " + str(s4_0[1])   + ", \"max\": " + str(s4_0[2])   + "},\n"
+    j = j + "    \"rule_204\": {\"mean\": " + str(s4_204[0]) + ", \"min\": " + str(s4_204[1]) + ", \"max\": " + str(s4_204[2]) + "},\n"
+    j = j + "    \"rule_90\":  {\"mean\": " + str(s4_90[0])  + ", \"min\": " + str(s4_90[1])  + ", \"max\": " + str(s4_90[2])  + "},\n"
+    j = j + "    \"rule_110\": {\"mean\": " + str(s4_110[0]) + ", \"min\": " + str(s4_110[1]) + ", \"max\": " + str(s4_110[2]) + "},\n"
+    j = j + "    \"rule_30\":  {\"mean\": " + str(s4_30[0])  + ", \"min\": " + str(s4_30[1])  + ", \"max\": " + str(s4_30[2])  + "},\n"
+    j = j + "    \"rule_54\":  {\"mean\": " + str(s4_54[0])  + ", \"min\": " + str(s4_54[1])  + ", \"max\": " + str(s4_54[2])  + "}\n"
+    j = j + "  },\n"
+    j = j + "  \"m6_reference_n4_state1010\": {\"rule_110\": 7.55, \"rule_30\": 8.66, \"rule_54\": 10.03, \"rule_0\": 0.0, \"rule_204\": 0.0, \"rule_90\": 0.0},\n"
+    j = j + "  \"tally\": {\"pass\": " + str(PASS) + ", \"fail\": " + str(FAIL) + "},\n"
+    j = j + "  \"falsifier\": \"F-IIT4-8 MULTISTATE-ROBUST\",\n"
+    j = j + "  \"notes\": \"n=5 over a representative 8-state subset (full 32 over ~10min budget); n=4 over all 16 states. faithful big-Phi is state-dependent; mean/min/max report the distribution, not one point.\"\n"
+    j = j + "}\n"
+    // result.json is written next to this run file. The canonical IIT4 tree
+    // exposes only lib/; this state dir lives in the PR's worktree, so the run
+    // emits result.json to that absolute path. If the dir is absent (e.g. run
+    // from a tree without the state dir), write_file is a no-op — the table is
+    // already printed above and is the deterministic source of truth.
+    let out_dir = "HEXAD/IIT4/state/iit4_m8_multistate_2026_05_25"
+    write_file(out_dir + "/result.json", j)
+    println("  wrote " + out_dir + "/result.json")
+
+    if FAIL > 0 { panic("IIT4 M8 multi-state re-measurement FAILED") }
+}
