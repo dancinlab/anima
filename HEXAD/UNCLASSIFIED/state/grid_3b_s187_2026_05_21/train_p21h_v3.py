@@ -62,9 +62,89 @@ def lr_schedule(step, total_steps, warmup_steps=50, peak_lr=3e-4, min_lr=3e-5):
     return min_lr + (peak_lr - min_lr) * cos_factor
 
 
+_SCRIPT_LANGS = ("en", "ko", "ja", "zh", "ru")
+
+
+def _dominant_script(text):
+    """Return the dominant script lang of `text` (one of _SCRIPT_LANGS) using the
+    same native-char heuristic as train_p21m.native_ratio. Returns 'en' when no
+    non-Latin script dominates (Latin fallback). Read-only; no RNG.
+    """
+    if not text:
+        return "en"
+    best_lang, best_r = "en", -1.0
+    for lang in _SCRIPT_LANGS:
+        r = native_ratio(text, lang)
+        if r > best_r:
+            best_lang, best_r = lang, r
+    return best_lang
+
+
+def curriculum_block_len(step, phase_steps, full_T, min_T=64, n_phases=4):
+    """AXIS-A curriculum: ramp effective sequence length short -> long over the
+    first `phase_steps` steps in `n_phases` discrete stages (easy -> hard).
+
+    Returns None when phase_steps <= 0 (disabled) OR step >= phase_steps, which
+    signals the caller to use the full block_size -> byte-identical sampling for
+    the disabled case (no regression).
+    """
+    if phase_steps <= 0 or step >= phase_steps:
+        return None
+    # phase index 0..n_phases-1 across [0, phase_steps)
+    frac = step / max(1, phase_steps)
+    phase = min(n_phases - 1, int(frac * n_phases))
+    # geometric ramp from min_T to full_T across phases
+    if n_phases <= 1:
+        return full_T
+    ratio = (full_T / max(1, min_T)) ** (phase / (n_phases - 1))
+    cur_T = int(min_T * ratio)
+    return max(min_T, min(cur_T, full_T))
+
+
+def contrastive_lang_loss(feat, langs, temperature=0.1):
+    """AXIS-F supervised contrastive loss over per-sequence features.
+
+    feat:  (B, D) grad-carrying per-sequence representation.
+    langs: list[str] length B -- the dominant script of each sequence.
+
+    SupCon-style: for each anchor, positives = same-lang sequences in the batch,
+    negatives = the rest. Returns a zero tensor (grad-safe) when fewer than 2
+    languages OR no language has >=2 members -- so a batch without contrastive
+    structure contributes nothing (honest degradation, no spurious gradient).
+    """
+    import torch as _t
+    B = feat.size(0)
+    if B < 2:
+        return feat.sum() * 0.0
+    # need at least one positive pair
+    from collections import Counter
+    counts = Counter(langs)
+    if not any(c >= 2 for c in counts.values()):
+        return feat.sum() * 0.0
+    z = _t.nn.functional.normalize(feat.float(), dim=-1)
+    sim = z @ z.t() / float(temperature)        # (B, B)
+    # numerical stability
+    sim = sim - sim.max(dim=1, keepdim=True).values.detach()
+    label = _t.tensor(
+        [hash(l) for l in langs], device=feat.device
+    ).unsqueeze(0)
+    same = (label == label.t()).float()          # (B, B) 1 if same lang
+    eye = _t.eye(B, device=feat.device)
+    same = same - eye                            # exclude self
+    logits_mask = 1.0 - eye                      # exclude self from denom
+    exp_sim = _t.exp(sim) * logits_mask
+    log_prob = sim - _t.log(exp_sim.sum(dim=1, keepdim=True) + 1e-12)
+    pos_per_row = same.sum(dim=1)
+    valid = pos_per_row > 0
+    if valid.sum() == 0:
+        return feat.sum() * 0.0
+    mean_log_prob_pos = (same * log_prob).sum(dim=1)[valid] / pos_per_row[valid]
+    return -mean_log_prob_pos.mean()
+
+
 class TokenizedSampler:
     def __init__(self, text, tokenizer, block_size, seed=1337, n_aug=5,
-                 max_tokens=6_000_000):
+                 max_tokens=6_000_000, lang_balanced=False):
         ids = tokenizer.encode(text, add_special_tokens=False)
         if len(ids) > max_tokens:
             ids = ids[:max_tokens]
@@ -73,20 +153,84 @@ class TokenizedSampler:
         self.n_aug = n_aug
         self.rngs = [random.Random(seed + 13 * k) for k in range(n_aug)]
         self.step_count = 0
+        self.tokenizer = tokenizer
+        # AXIS-E: per-script start-index pools (built only when balanced enabled).
+        # When disabled these stay None and the legacy uniform-random path runs
+        # unchanged (byte-identical sampling -- no regression).
+        self.lang_balanced = bool(lang_balanced)
+        self.script_pools = None
+        if self.lang_balanced:
+            self._build_script_pools()
         print(f"[P21H] tokenized mixed corpus: {len(self.ids):,} tokens "
-              f"(block={block_size})", flush=True)
+              f"(block={block_size}) lang_balanced={self.lang_balanced}",
+              flush=True)
 
-    def sample_batch(self, bsz, device):
+    def _build_script_pools(self):
+        """AXIS-E: scan the token stream in block-sized windows, tag each window
+        by dominant script, and bucket its start index. Used for round-robin
+        per-script balanced sampling. Built once at construction (decode cost is
+        one full pass; only paid when lang_balanced=1)."""
         N = len(self.ids)
+        T = self.T
+        pools = {lang: [] for lang in _SCRIPT_LANGS}
+        # Stride by T so windows are disjoint (cheap, one decode per window).
+        for s in range(0, max(1, N - T - 2), T):
+            window = self.ids[s:s + T].tolist()
+            try:
+                txt = self.tokenizer.decode(window, skip_special_tokens=True)
+            except Exception:
+                txt = ""
+            pools[_dominant_script(txt)].append(s)
+        nonempty = {k: v for k, v in pools.items() if v}
+        self.script_pools = nonempty if nonempty else None
+        sizes = {k: len(v) for k, v in pools.items()}
+        print(f"[P21H][axis-E] script pools: {sizes}", flush=True)
+
+    def sample_batch(self, bsz, device, cur_T=None):
+        """Sample one batch.
+
+        cur_T (AXIS-A curriculum): effective sequence length for this batch. When
+        None (default), uses self.T -> identical RNG range + slice length as the
+        legacy path (byte-identical, no regression). When set < self.T, shorter
+        contexts are sampled (easier curriculum phase).
+        """
+        N = len(self.ids)
+        T = self.T if cur_T is None else max(8, min(int(cur_T), self.T))
         aug = self.step_count % self.n_aug
         rng = self.rngs[aug]
-        starts = [rng.randint(0, N - self.T - 2) for _ in range(bsz)]
+        if self.lang_balanced and self.script_pools:
+            # AXIS-E: round-robin across available scripts, sampling a start
+            # index from each script's pool in turn (balanced exposure).
+            langs_avail = sorted(self.script_pools.keys())
+            starts = []
+            for i in range(bsz):
+                lang = langs_avail[(self.step_count * bsz + i) % len(langs_avail)]
+                pool = self.script_pools[lang]
+                cand = pool[rng.randint(0, len(pool) - 1)]
+                # clamp so the window fits when cur_T differs from build-time T
+                cand = min(cand, max(0, N - T - 2))
+                starts.append(cand)
+        else:
+            starts = [rng.randint(0, N - T - 2) for _ in range(bsz)]
         ctx = torch.stack(
-            [self.ids[s:s + self.T] for s in starts], dim=0).to(device)
+            [self.ids[s:s + T] for s in starts], dim=0).to(device)
         tgt = torch.stack(
-            [self.ids[s + 1:s + self.T + 1] for s in starts], dim=0).to(device)
+            [self.ids[s + 1:s + T + 1] for s in starts], dim=0).to(device)
         self.step_count += 1
         return ctx, tgt, aug
+
+    def window_langs(self, ctx):
+        """AXIS-F helper: classify each sampled sequence in `ctx` (B, T) by its
+        dominant script. Read-only (no RNG); used to build contrastive labels.
+        Returns a list[str] of length B."""
+        langs = []
+        for row in ctx:
+            try:
+                txt = self.tokenizer.decode(row.tolist(), skip_special_tokens=True)
+            except Exception:
+                txt = ""
+            langs.append(_dominant_script(txt))
+        return langs
 
 
 @torch.no_grad()
@@ -286,8 +430,18 @@ def run(cfg):
 
     # ─── training loop ──
     corpus_text = load_corpus_text(cfg["mixed_corpus"])
+    # AXIS-E: lang-balanced sampler (per-script round-robin). Default 0 -> legacy
+    # uniform-random sampling path runs unchanged (byte-identical, no regression).
+    lang_balanced = int(cfg.get("lang_balanced", 0) or 0) == 1
     sampler = TokenizedSampler(corpus_text, tokenizer, cfg["block_size"],
-                                seed=cfg["seed"], n_aug=cfg["n_aug"])
+                                seed=cfg["seed"], n_aug=cfg["n_aug"],
+                                lang_balanced=lang_balanced)
+    # AXIS-A: curriculum sequence-length schedule (short -> long ramp over the
+    # first `curriculum_phase_steps` steps). 0 -> disabled -> cur_T stays None ->
+    # full block_size every step (byte-identical sampling, no regression).
+    curriculum_phase_steps = int(cfg.get("curriculum_phase_steps", 0) or 0)
+    # AXIS-F: contrastive lang loss weight. 0.0 -> term skipped (no regression).
+    contrastive_w = float(cfg.get("contrastive_lang", 0.0) or 0.0)
 
     t0 = time.time()
     log = []
@@ -342,7 +496,11 @@ def run(cfg):
         for pg in optimizer.param_groups:
             pg["lr"] = lr_now
 
-        ctx, tgt, aug_slot = sampler.sample_batch(cfg["bsz"], device)
+        # AXIS-A: effective curriculum block length for this step (None when
+        # disabled -> full block_size -> byte-identical sampling).
+        cur_T = curriculum_block_len(step, curriculum_phase_steps,
+                                     cfg["block_size"])
+        ctx, tgt, aug_slot = sampler.sample_batch(cfg["bsz"], device, cur_T=cur_T)
         model.train()
         logits_a, logits_g, tensions, _, mit_info = model(ctx, mitosis_step=step)
         L_ce = F.cross_entropy(
@@ -361,6 +519,19 @@ def run(cfg):
                 logits_g.reshape(-1, vocab_size).float(), tgt.reshape(-1),
             )
             L_total = L_total + float(cfg.get("head_g_weight", 0.1) or 0.1) * L_ce_g
+        # ─── AXIS-F: contrastive lang loss (H_257 axis-F impl) ──────────────
+        # SupCon over a compact per-sequence feature = per-layer mean tension
+        # (B, L), grouped by each sequence's dominant script. Pulls same-lang
+        # sequences together / pushes different-lang apart. Default
+        # contrastive_lang=0.0 -> term skipped entirely -> identical loss
+        # (no regression). Degrades to zero when the batch lacks >=2 same-lang
+        # members (honest: no spurious gradient).
+        if contrastive_w > 0.0 and len(tensions) > 0:
+            # (B, L) per-sequence feature: mean tension over T for each layer.
+            seq_feat = torch.stack([t.mean(dim=1) for t in tensions], dim=1)
+            seq_langs = sampler.window_langs(ctx)
+            L_con = contrastive_lang_loss(seq_feat, seq_langs)
+            L_total = L_total + contrastive_w * L_con
         if mit_info is not None:
             aux = mit_info["aux_loss"]
             L_total = L_total + cfg["lambda_mitosis"] * aux
@@ -669,16 +840,22 @@ def main():
     # Each axis default reads its P21H_* env-var directly so the lever reaches
     # the train code even if a dispatcher drops the explicit --flag (H_257
     # silent-bypass defense-in-depth). Env unset -> prior default -> no regression.
-    # Impl status: head-g-enable / head-g-objective / freeze-embed are WIRED into
-    # run() below; curriculum / distill / lang-balanced / contrastive remain
-    # TODO[axis-impl] (parsed + read + logged, but the ML feature is not built --
-    # honest scope: wiring alone is insufficient for these 4).
+    # Impl status (M4 axis-feature-impl, 2026-05-25):
+    #   WIRED + ML FEATURE BUILT: head-g-enable / head-g-objective (axis-C/C2),
+    #     freeze-embed (axis-D), curriculum-phase-steps (axis-A: seq-len ramp),
+    #     lang-balanced (axis-E: per-script round-robin sampler),
+    #     contrastive-lang (axis-F: SupCon over per-seq tension feature).
+    #   TODO[axis-impl] STILL: distill-teacher (axis-B) -- a sound KD term needs a
+    #     teacher model loaded in-environment to produce logits; none is present
+    #     here, and faking a KL target is dishonest. Left wired (env+cfg+log) but
+    #     with NO loss term until a teacher is provisioned. See
+    #     M4_AXIS_FEATURE_IMPL_2026_05_25.md for the rationale.
     ap.add_argument("--curriculum-phase-steps", type=int,
                     default=int(os.environ.get("P21H_CURRICULUM_PHASE_STEPS", "0") or 0),
-                    help="TODO[axis-impl] axis-A curriculum phase length in steps (0=disable)")
+                    help="axis-A curriculum: seq-len ramp over first N steps (0=disable)")
     ap.add_argument("--distill-teacher", type=str,
                     default=os.environ.get("P21H_DISTILL_TEACHER", ""),
-                    help="TODO[axis-impl] axis-B teacher model id / path for KD (empty=disable)")
+                    help="TODO[axis-impl] axis-B teacher model id/path for KD (empty=disable; NO KD term until a teacher model is provisioned in-env)")
     ap.add_argument("--head-g-objective", type=str,
                     default=os.environ.get("P21H_HEAD_G_OBJECTIVE", ""),
                     help="axis-C head-G auxiliary objective name (empty=disable; 'lm'=head_g LM CE)")
@@ -693,10 +870,10 @@ def main():
                     help="axis-D freeze tied tok_emb/head_a weights (0=off 1=on)")
     ap.add_argument("--lang-balanced", type=int,
                     default=int(os.environ.get("P21H_LANG_BALANCED", "0") or 0),
-                    help="TODO[axis-impl] axis-E lang-balanced sampler (0=off 1=on)")
+                    help="axis-E lang-balanced per-script round-robin sampler (0=off 1=on)")
     ap.add_argument("--contrastive-lang", type=float,
                     default=float(os.environ.get("P21H_CONTRASTIVE_LANG", "0.0") or 0.0),
-                    help="TODO[axis-impl] axis-F contrastive lang loss weight (0.0=disable)")
+                    help="axis-F contrastive lang (SupCon) loss weight (0.0=disable)")
     args = ap.parse_args()
     # AXIS-MAP read-back log (MVP): confirm env-var passthrough is wired.
     # H_257 silent-bypass fix — dispatcher env-var must reach this print.
