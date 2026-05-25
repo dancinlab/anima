@@ -38,7 +38,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
 
-## 가설 인덱스 (92 H disk = 92 tabled (carry-note 0) + 1 lib · cycle#21 H_278/279 (faithful Φ★ small-N SUPP + attention-salience FAL) · cycle#20 H_276/277 · cycle#19 H_274/275 · cycle#18 H_270-273 · cycle#17 H_266-269 foundation-audit · cycle#14-16 H_258-265+H_007 C2)
+## 가설 인덱스 (93 H disk = 93 tabled (carry-note 0) + 1 lib · cycle#22 H_280 (faithful IIT 4.0 CES distinction-level small-n SUPP) · cycle#21 H_278/279 (faithful Φ★ small-N SUPP + attention-salience FAL) · cycle#20 H_276/277 · cycle#19 H_274/275 · cycle#18 H_270-273 · cycle#17 H_266-269 foundation-audit · cycle#14-16 H_258-265+H_007 C2)
 
 > Status 컬럼 = **lifecycle** (pre-register-frozen · running 등) 또는 **evidence** (SUPPORTED · PARTIAL · FALSIFIED 등) 혼용 가능 (H_273 audit: 8건 dual-semantic — H_007/012/018/053/054/132/171/201).
 
@@ -136,6 +136,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_277](H_277_turing_completeness_phi_threshold.md) | turing-completeness-phi-threshold | physics · information | PARTIAL 2/3 (PR #510, cycle#20) | 계산 보편성 ≠ Φ 지렛대 — 非보편 rule184(Φ=1.198) > 보편 rule110(Φ=0.556) → computability 축 ⊥ Wolfram dynamical-class 축, seed 예측(P1) 정직 falsified |
 | [H_278](H_278_faithful_phi_small_n.md) | faithful-phi-small-n | meta · consciousness | SUPPORTED 3/3 (PR #515, cycle#21) | H_002 C2 proxy upgrade — exact MIP-EI Φ(n=8, 128 bipartition 전수)로 6-scale 재측정: faithful CV 2.15 ≈ proxy CV 2.10 → **scale-variant verdict HOLD** (artifact 아닌 진짜 negative, L-C2.1 caveat 축소) · $0 GPU-none (small-N exact tractable) · honest: not full IIT4 4.0 |
 | [H_279](H_279_attention_salience_phi.md) | attention-salience-phi | consciousness · meta | 🔴 FALSIFIED 1/4 (PR #514, cycle#21) | attention-as-Φ-amplification FAL (AXES R3 promote) — attended(high-norm) salience-gap +0.40 但 phi_att<phi_unatt Δ=−0.93: salience(진폭) ⊥ Φ(다양성) (H_265/H_275 동기화-死-Φ 패턴 일치). L2: cosine-Φ 의존 |
+| [H_280](H_280_iit4_phi_structure_small_n.md) | iit4-phi-structure-small-n | meta · consciousness · information | SUPPORTED 3/3 (cycle#22) | lane 최초 **faithful IIT 4.0 cause-effect structure (CES)** — distinction-level Φ-structure(Σφ_d) exact (n=3,4 전수, TPM·cause/effect repertoire·MIP·intrinsic-difference 측도): ladder Σφ_d disc 0.0 < weak 0.73 < integrated 2.32 → **H_266(integrated>disconnected)·H_278 방향 PRESERVED**. F280.1 DIR + F280.3 FAITHFUL(ID anchor log₂2=1 exact) PASS · $0 GPU-none. honest: relations ADVISORY/DEFERRED (full face-lattice = super-exp open frontier) · proxy-Φ degenerate on all-ON fixed point (L6) |
 | [lib/phi_helper](lib/phi_helper.hexa) | phi-helper (shared infra) | infra | infra (PR #317) | shared Φ helper — config SSOT + phi_default wrapper, 28+ H phi_spatial 호출 단일 home (gap F6+F7) |
 
 > **carry-H ✅ 全 tabled (H_273 reconciliation 2026-05-25)**: 이전 26 missing-row (H_210-221/224/228-232 + H_241/246/250-253/255/257) 全건 위 표에 정식 행으로 tabling 완료 (carry-note 0). **infra**: phi_n_bins ROBUSTNESS_PASS (PR #219).
