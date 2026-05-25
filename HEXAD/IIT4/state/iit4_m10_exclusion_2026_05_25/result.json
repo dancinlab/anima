@@ -1,0 +1,24 @@
+{
+  "id": "IIT4-M10",
+  "slug": "exclusion-postulate-maximal-complex",
+  "milestone": "M10 — exclusion postulate (maximal complex search)",
+  "domain": "iit4 · consciousness",
+  "date": "2026-05-25",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "engine": "HEXAD/IIT4/lib/iit4_complex.hexa (subsystem_tpm + find_complex)",
+  "tie_break": "strictly-greater Φ; on Φ-tie prefer larger subset, then lower mask",
+  "background_conditioning": "external units pinned to sys_state values (documented modeling choice; g5)",
+  "tests": {
+    "T1_copyswap_n2": { "sys_state": 3, "complex_mask": 3, "complex_phi": 2, "complex_size": 2, "expect_mask": 3, "expect_phi": 2.0, "verdict": "PASS" },
+    "T2_embedded_core_n3": { "sys_state": 7, "whole_big_phi": 0.0, "complex_mask": 3, "complex_phi": 2, "complex_size": 2, "expect_mask": 3, "expect_excludes_unit": 2, "expect_phi": 2.0, "verdict": "PASS" },
+    "T3_all_noise_n2": { "sys_state": 3, "complex_mask": 0, "complex_phi": 0.0, "complex_size": 0, "expect_no_complex": true, "verdict": "PASS" }
+  },
+  "pass": 3,
+  "fail": 0,
+  "embedded_core_finding": "find_complex returns mask=3 ({0,1}, Φ=2.0) excluding self-cell {2}; whole {0,1,2} is reducible (big-Φ=0) so the exclusion postulate carves the integrated pair as the conscious entity",
+  "verdict": "🟢 SUPPORTED-NUMERICAL",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (background-conditioned subsystem big-Φ; full partitioned-normalization + PyPhi calibration = M5 carve-out)"
+}
