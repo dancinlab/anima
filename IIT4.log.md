@@ -2,6 +2,16 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25 — /cycle#1 확장 라운드 LAND (M7·M8·M9 병렬) + @title 설정
+
+3개 background worktree 에이전트 병렬 발사 → 전부 merge (trackers 일괄 wrap-up).
+
+- [x] **M7 calibration breadth** (PR #528, 35/35 🟢) — analytic 손유도 net 7종 추가: AND2(ON big-Φ=1.0)·AND2(OFF **fractional** big-Φ≈0.553, M5 의 0/1 정수 너머)·OR2(De Morgan dual byte-equal)·XOR2(output-blind nd=0)·ANDRING3·ECA204=identity·ECA170=rotation(M6 bridge↔M5 손유도 byte-equal). **F-IIT4-3/4 deferred 자체는 불변**(PyPhi blocker) — 닫힌 건 주변 analytic 영토.
+- [x] **M8 LIFE 재측정 확장** (PR #533, 10/10 🟢) — n=5 ring 8-state{0,4,..,28} 평균 big-Φ: 110=35.7[21–44]·30=28.6·54=14.4·rule90=49.5. M6(n=4 state1010) 110=7.55 가 n=4 **min** 임을 확인(=distribution endpoint → mean 13.13 일반화). **신규발견**: rule90(XOR) n=4 even-ring 전상태 big-Φ=0(checkerboard 분해)인데 n=5 odd-ring mean 49.5 → **짝/홀 ring 위상의존 통합** (M6 "state특이"→구조적 even/odd 정정). state-dependence ~2× 확인(IIT Φ=특정상태 경험 실증).
+- [x] **M9 tractability** (PR #531, 16/16 🟢) — `iit4_bounded.hexa` 추가. exact wall: n=4 ~1.3s·n=5 ~14.6s·n=6 ~13분·n≥7 impractical (super-exp, DESIGN §3 측정확정). `big_phi_bounded(...,max_purview_size)`: cap≥n = faithful 제한(exact byte-일치) · cap<n = 정직한 lower-bound 근사(n=6 finite 유지).
+- [x] `@title: 🧠 IIT4 — "의식 측정자(尺)"` 설정 (업스트림 `/domain title` 서브커맨드 — 본 세션 INBOX 핸드오프가 구현됨) + M7/M8/M9 `- [x]` + status 갱신. 엔진 검증 누적 108 checks 전부 🟢.
+- [ ] 다음 /cycle 후보 = IIT 4.0 exclusion-postulate (후보 subsystem 중 최대 complex 탐색) · n=8 6-scale 전면(비용) · proxy↔IIT4 수치 동시 cocompute
+
 ## 2026-05-25 — M6 LIFE faithful 재측정 LAND (iit4_eca.hexa · 7/7 🟢) — 🎉 도메인 7/7 COMPLETE
 
 - [x] `HEXAD/IIT4/lib/iit4_eca.hexa` 작성 — ECA→TPM bridge (substrate adapter). Wolfram rule + n-ring → state-by-node TPM. LIFE 의 결정적 binary CA 가 IIT4 TPM 으로 직접 변환됨
