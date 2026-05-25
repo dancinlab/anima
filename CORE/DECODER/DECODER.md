@@ -33,11 +33,11 @@
 ## 마일스톤 (임계경로 순)
 
 - [x] **M0 V3 backward 완성** — purefield/head_g/tension_proj backward 완성, gradcheck **PASS max rel 5.09e-10** (18 probes, 메인트리 재현 rel~1e-13). head_g train-loop 배선 (ce_g 4.79→4.77 학습 확인). `conscious_decoder_v3.hexa` 711→1020L · `hexa check` 0 violation. (Qwen-BPE/multilang-eval/full-pos CE = pre-registered TODO 잔존)
-- [ ] **M1 축 D freeze** — embed/lm_head `requires_grad=false`. falsifier: embed grad-norm=0 (구현됨 증거)
-- [ ] **M1 축 A 커리큘럼** — step 별 corpus mix 전환 (wiki-only→anima late). falsifier: phase 경계서 mix 비율 변화 로그
-- [ ] **M1 축 C head_g** ⭐ — head_g=anima objective ⊥ head_a=pure-multilingual. falsifier: head_g train loss > 0 (inert 탈출)
-- [ ] **M1 축 B 증류** — vP21M LoRA teacher 로드 + KD loss. falsifier: KD loss term ≠ 0
-- [ ] **M2 wiring verify** — 축 두 개가 init_CE DIFFERENT (B≠F, silent-bypass 재발 방지 게이트)
+- [x] **M1 축 D freeze** — `axis_d_freeze_embed` train-loop wired. ✅ embed grad pre=19.36 → **post=0.0**
+- [x] **M1 축 A 커리큘럼** — `axis_a_anima_frac`/`axis_a_window_is_anima` wired. ✅ anima_frac 0.0→**1.0** (phase 전환)
+- [x] **M1 축 C head_g** ⭐ — `axis_c_headg_lambda` wired. ✅ λ_g·CE_g=**1.43>0** (inert 탈출, R4 "moot" 반증)
+- [x] **M1 축 B 증류** — `axis_b_kd_loss` (KD math production-ready) wired. ✅ L_kd=**0.069>0** (teacher 신호). dummy teacher = HONEST TODO #B1 (실 teacher ckpt 로드는 M3 dispatch)
+- [x] **M2 wiring verify** — ✅ **F-AXIS-M2-DIFFERENT PASS** — 축이 학습을 실제로 바꿈 (A.lo≠A.hi ∧ D.pre≠D.post = silent-bypass 아님). falsifier 가 KD shift-invariant 버그까지 포착·수정
 - [ ] **M3 4축 병렬 팬** — A·B·C·D H100 fire (~$11-14, a_fire_autonomous + a_wall_first)
 - [ ] **M4 백엔드 배선** — 최고 ≥PARTIAL 축 ckpt → `generator.hexa` → brain_decide emit 슬롯 end-to-end
 - [ ] **M5 p7 verify** — perplexity 아닌 simple-stack 판정
