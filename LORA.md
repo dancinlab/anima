@@ -13,10 +13,10 @@
 
 ## milestones
 
-- [ ] M1 — VP21M production swap criteria 5/5 PASS (v11 또는 v13 결정, eternal threshold 재정의 가능)
+- [ ] M1 — VP21M production swap criteria 5/5 PASS (v11 또는 v13 결정, eternal threshold 재정의 가능) · 📋 decision memo (PR #504) 추천=옵션(b) floor≤50→v11; 사용자 게이트 + caveat 2 (corpus_v5/v4 라벨·crit5 미측정)
 - [ ] M2 — mini production 배포 + 30-day register-leak monitor (continuous_total ≤ 50 30d stable)
-- [ ] M3 — V3 ConsciousDecoderV3 (5000-step, Qwen warm-init, noise=0 + n_kv=2) final_CE 측정 + Qwen baseline 대비 parity (Δfinal_CE ≤ 0.1 nats)
-- [ ] M4 — AXIS_MAP-FAN 7-axis env-var wiring fix + 진짜 ablation 측정 (각 axis 별 Δfinal_CE 정량)
+- [ ] M3 — V3 ConsciousDecoderV3 (5000-step, Qwen warm-init, noise=0 + n_kv=2) final_CE 측정 + Qwen baseline 대비 parity (Δfinal_CE ≤ 0.1 nats) · ⏸ R8a'' LOST (SECURE preempt 2회, PR #505) → PENDING; closure = Qwen baseline 결정 후 ON-DEMAND 2-pod (~$6)
+- [ ] M4 — AXIS_MAP-FAN 7-axis env-var wiring fix + 진짜 ablation 측정 (각 axis 별 Δfinal_CE 정량) · 🔧 wiring fix DONE (PR #507, H_257 완전해소) 단 7축 中 2축(head_g·freeze_embed)만 진짜 wired, 4축 TODO[axis-impl]; ablation 재발사 미실행
 - [x] M5 — PREFIRE_WIRING_AUDIT_CHECKLIST.md 도입 + 모든 향후 substrate fire 가 audit 통과
 
 ## production
@@ -106,10 +106,9 @@ R8 base/warm-init reform:
 
 - ~~R8a init_CE step=1 14.46 floor 돌파~~ → ✅ **M3 부분 진행** — R8c 4-cell 측정 floor 자체 의문 + noise final_CE axis 재정의 (12.2 = random baseline +0.27)
 - ✅ **M3 부분 진행** — R8c 4-cell probe fire COMPLETE (noise/kv 분리 측정 — 3 falsifier 전부 init_CE axis FALSIFIED)
-- 🔥 **M3 in-flight** — R8a'' fire (5000-step noise=0 학습 dynamics, Qwen-parity 측정 lane)
-- 🔧 **M4 prerequisite** — PR #342 n_kv_head wiring fix (OPEN) → merge 후 R8a' 진짜 n_kv=2 재발사 (H_254 byte-equal probe)
-- 📋 **M4 main path** — H_257 흡수: 7-axis unwired (grep-static) 진단 완료 → env-var `$CMD` passthrough fix 先, 후 7-axis 재발사로 진짜 ablation (H255.2 re-fire 4/7 byte-equal = trivial identity 확인됨, ~$0.50-1.00)
-- 🟡 **M1 lever** — Wave-17 fire 미발사 (eternal U-shape sweep, R8c verdict + R8a'' 결과 후 우선순위 재평가; v11/v13 swap 후보 결정 lever)
+- ⏸ **M3 PENDING (cycle 24, PR #505)** — R8a'' LOST/DEAD (pod teardown + SSH refused + result 0건, SECURE preempt 2회째 → R8a/R8a'/R8a'' 5000-step 완주 **0/3**). final_CE LOST · Qwen baseline 미측정. closure = 사용자 Qwen baseline candidate 결정 → ON-DEMAND 2-pod 병렬 (~$6) + M5 PREFIRE 선결 (verdict `HEXAD/V3/R8A2_QWEN_PARITY_VERDICT_2026_05_25.md`)
+- 🔧 **M4 wiring DONE (cycle 24, PR #507)** — H_257 완전해소. **발견: PR #385 는 half-fix** (dispatch→train `--flag` passthrough만, train script 가 env→cfg→loop 미연결 = 7축 여전히 inert). grep `os.environ` 0→8 line. 단 head_g·freeze_embed **2축만 진짜 wired** (기존 code path 존재), curriculum·distill·lang-balanced·contrastive **4축 = ML feature 미구현 TODO[axis-impl]**. gate-off default 무회귀. 진짜 ablation 재발사는 post-merge 별도 (M5 PREFIRE + ON-DEMAND)
+- 📋 **M1 decision memo (cycle 24, PR #504)** — Wave-17 anti-correlation 구조적 → 추천 **옵션(b) continuous floor≤50 → v11 swap**. 사용자 게이트 (최종 swap 결정). swap 전 선결: corpus_v5(SSOT) vs corpus_v4(README) 라벨 확인 + crit5 tag-leak `swap_criteria_check.hexa` 측정 (memo `HEXAD/LORA/M1_SWAP_DECISION_MEMO_2026_05_25.md`)
 - 📋 **M5 신규** — PREFIRE_WIRING_AUDIT_CHECKLIST.md 도입 (R8a #342 silent-fail 교훈 흡수, 향후 모든 substrate fire 의 사전 audit gate)
 - 📋 **M2 신규** — mini production 배포 자동화 + 30-day register-leak monitor (M1 PASS 후 trigger)
 
@@ -118,5 +117,8 @@ R8 base/warm-init reform:
 - `HEXAD/LORA/SAGA_SESSION3.md` — 6-lever 상세 saga 로그
 - `HEXAD/LORA/WAVES_MATRIX.md` — wave + axis 마스터 매트릭스
 - `HEXAD/LORA/WAVE17_VERDICT_2026_05_24.md` — Wave-17 4-pod sweep 8-section verdict
+- `HEXAD/LORA/M1_SWAP_DECISION_MEMO_2026_05_25.md` — M1 swap go/no-go 결정 memo (cycle 24, 추천 옵션 b → v11)
+- `HEXAD/LORA/M4_AXIS_WIRING_FIX_2026_05_25.md` — M4 H_257 env-var wiring fix (cycle 24, 2/7축 wired)
+- `HEXAD/V3/R8A2_QWEN_PARITY_VERDICT_2026_05_25.md` — M3 R8a'' LOST → PENDING verdict (cycle 24)
 - `HEXAD/V3/R8_SAGA_INDEX.md` — R8 saga TOC
 - HF: `dancinlab/anima-vp21m-{v5,v6,v7,v8,v11,v12,v13,v14,v15,v16}` PRIVATE
