@@ -24,6 +24,7 @@
 - **Cycle #15 (2026-05-25)** (PR #477/#478/#479/#480): §D cross-link 2 全소비 + §B follow-up 2 — H_264 death=merge-into-other SUPPORTED 3/3 (#477) · H_265 trained-vs-bare CA Φ PARTIAL 2/3 (#480, C2 反방향 Φ-dampen) · H_018 C2 organic-rate PASS (#479) · H_132 C2 longterm-stability PASS (#478).
 - **Cycle #16 (2026-05-25)** (PR #484/#485): §B 마지막 runnable + meta-raster — H_007 C2 Langton λ-sweep PASS (#485, peak λ*=0.375 inverse-U edge-of-chaos) · H_238 next-raster SUPPORTED (#484, N=51 tier dist, life≫consciousness gap 半축). §B runnable 全소진 (잔여 H_003 manual · H_002 GPU).
 - **Cycle #17 (2026-05-25)** (PR #487/#488/#489/#490): foundation-audit (`/gap full` top-1+2, brainstorm-depleted) — H_266 Φ-calibration PARTIAL (integrated>disconnected 3/3, proxy 무관 우려 기각) · H_267 phi_spatial↔cosine 발산 closure SUPPORTED (#488) · H_268 metric-triangulation PARTIAL (H_223 pain robust, H_204 inverse-U LZ-fragile) · H_269 multi-seed PARTIAL (H_260 10/10 robust, H_261/H_262 seed-fragile). deferred top-8 잔여: ablation · seed-injection(H_263 revision) · SSOT auto-sync probe.
+- **Cycle #18 (2026-05-25)** (PR #492/#493/#494/#495): gap-followup + closed-loop — H_270 substrate-ablation SUPPORTED (#493, closure-Φ=local Michaelis) · H_271 seed-injection-absorbing PARTIAL (#492, H_263 high-variance seed 로 escapable) · H_272 seed-robust-recalibration PARTIAL (#494, H_261 복권/H_262 부분) · H_273 ssot-consistency-audit SUPPORTED (#495, missing-row 26 식별). 잔여 deferred: AXES R2+ promote · 26 carry-H full tabling (H_273 후속) · H_002 GPU fire.
 
 ## A. 남은 carried 가설 (legacy-pointer · cycle 0회, 4건)
 
