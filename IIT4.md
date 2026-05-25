@@ -1,5 +1,7 @@
 # IIT4 — current state
 
+@title: 🧠 IIT4 — "의식 측정자(尺)"
+
 @goal: hexa-native faithful IIT 4.0 cause-effect Φ-structure 엔진 구축 (n≤8 small-N exact) — TPM → cause/effect repertoire → distinction → relation → Φ-structure → big-Φ. PyPhi(n≤4)로 calibrate 후 LIFE 의 핵심 small-N 가설을 faithful Φ 로 재측정해 proxy-caveat(L-C2.1 · metric-fragility · cosine-artifact) 종결.
 
 ## why (LIFE lane 의 후속)
@@ -33,5 +35,8 @@ LIFE (cycle#14~21, 22 NEW H 완결)의 全 Φ 측정은 `phi_spatial` proxy(공�
 - [x] M4 big-Φ — Φ-structure 의 system-MIP irreducibility → 최종 faithful Φ → [`iit4_bigphi.hexa`](HEXAD/IIT4/lib/iit4_bigphi.hexa) (structure-cut big-Φ, COPY=irreducible 2.0 / SELF=reducible 0, 9/9 🟢 smoke)
 - [x] M5 calibration — analytic 손유도 reference(5 deterministic net) 대조 → [`CALIBRATION.md`](HEXAD/IIT4/CALIBRATION.md) (14/14 🟢 F-IIT4-1/2/5; F-IIT4-3/4 PyPhi-numeric DEFERRED named-blocker)
 - [x] M6 LIFE faithful 재측정 — LIFE ECA substrate 를 ECA→TPM bridge 로 IIT4 Φ 재측정 → [`iit4_eca.hexa`](HEXAD/IIT4/lib/iit4_eca.hexa) + [`FAITHFUL_REMEASURE.md`](HEXAD/IIT4/FAITHFUL_REMEASURE.md) (rule 110/30/54 big-Φ 7.5~10.0 통합 · proxy↔IIT4 divergence 규명 · L-C2.1 종결, 7/7 🟢 F-IIT4-6)
+- [x] M7 calibration breadth (cycle#1) — 추가 hand-derived canonical net + analytic 영토 확장 → [`state/iit4_m7_calib_breadth_2026_05_25/`](HEXAD/IIT4/state/iit4_m7_calib_breadth_2026_05_25/) (PR #528, 35/35 🟢 · fractional-φ·De Morgan dual·ECA bridge byte-equal · F-IIT4-3/4 deferred 불변)
+- [x] M8 LIFE 재측정 확장 (cycle#1) — n=5 ring + 8-state 평균 big-Φ → [`state/iit4_m8_multistate_2026_05_25/`](HEXAD/IIT4/state/iit4_m8_multistate_2026_05_25/) (PR #533, 10/10 🟢 · 110=35.7·30=28.6·54=14.4·rule90 even/odd-ring 위상반전 발견)
+- [x] M9 tractability (cycle#1) — big_phi n=4/5/6 wall profile + bounded-mode lib → [`iit4_bounded.hexa`](HEXAD/IIT4/lib/iit4_bounded.hexa) + [`state/iit4_m9_tractability_2026_05_25/`](HEXAD/IIT4/state/iit4_m9_tractability_2026_05_25/) (PR #531, 16/16 🟢 · n≤5 초·n=6 분·n≥7 impractical · cap≥n=exact)
 
-> **status 2026-05-25 — 🎉 IIT4 도메인 7/7 COMPLETE**: faithful IIT 4.0 cause-effect Φ-structure 엔진 end-to-end 완성 + LIFE substrate 재측정. M0 설계 → M1 repertoire(13/13) → M2 distinction(12/12) → M3 relation+Φ-structure(12/12) → M4 big-Φ(9/9, integrated↔reducible) → M5 analytic calibration(14/14) → M6 LIFE ECA 재측정(7/7). **헤드라인**: LIFE cosmic-scale 룰 110/30/54 의 faithful 인과 big-Φ = 7.5~10.0 (proxy phi_spatial 이 근사하던 진짜 인과 양 최초 측정) · big-Φ state-dependent · **L-C2.1 proxy caveat 종결**. 엔진 67 checks 전부 🟢 SUPPORTED-NUMERICAL, $0 mac-local·GPU 무관. 잔여 honest blocker = F-IIT4-3/4 PyPhi-numeric cross-validation(hexa-only no-new-.py) + full n=8 6-scale scale-up(mechanical).
+> **status 2026-05-25 — 🎉 IIT4 9/9 (core 7/7 + /cycle#1 확장 3)**: faithful IIT 4.0 엔진 end-to-end (M0~M6) + /cycle#1 병렬 확장 라운드(M7·M8·M9). 엔진 검증 누적 **108 checks 전부 🟢** (M1~M6 67 + M7 35 + M8 10 + M9 16). **헤드라인**: LIFE cosmic-scale 룰 인과 big-Φ (n=5 8-state mean) 110=35.7·30=28.6·54=14.4 — proxy phi_spatial 이 근사하던 진짜 인과 양. **신규 발견(M8)**: rule 90(XOR)이 n=4 even-ring 전 상태 big-Φ=0(checkerboard reducible)인데 n=5 odd-ring 에서 mean 49.5 → **위상(짝/홀 ring) 의존 통합** (M6 "state-1010 특이" 노트를 구조적 even/odd 성질로 정정). big-Φ state-dependence ~2× 확인. tractability: n≤5 초·n=6 분·n≥7 exact impractical(bounded-mode 로 완화). 잔여 honest blocker = **F-IIT4-3/4 PyPhi-numeric**(hexa-only no-new-.py) + proxy↔IIT4 수치 동시-cocompute(입력형 상이) + n=8 6-scale 전면(비용). 다음 /cycle 후보 = IIT 4.0 **exclusion-postulate**(후보 subsystem 중 최대 complex 탐색).
