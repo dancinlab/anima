@@ -1,0 +1,147 @@
+// HEXAD/LIFE/state/h285_faithful_bigphi_edge_of_chaos_2026_05_26/run_h285.hexa
+//
+//   H_285 — faithful IIT4 big-Φ at edge-of-chaos (H_204 inverse-U + H_007 λ-sweep
+//   causal re-measurement). Both H_204 and H_007 measured Φ with the PROXY
+//   phi_spatial (RFC 036, CORRELATIONAL spatial MI). H_268 flagged the proxy
+//   LZ-fragile. Here we re-measure the SAME Wolfram-class ladder with the
+//   faithful CAUSAL IIT 4.0 engine (M1-M4) via the ECA→TPM bridge — reusing the
+//   M6-validated engine (big_phi · eca_tpm), NO reimplementation.
+//
+//   WOLFRAM-CLASS LADDER (n=4 periodic ring):
+//     class I/II ORDERED        : rule 0   (all→0 const)      · rule 204 (identity)
+//     class IV   EDGE-OF-CHAOS  : rule 110 (Turing-universal) · rule 54 (gliders)
+//     class III  CHAOTIC        : rule 30  (pseudo-random)    · rule 90 (XOR, Sierpinski)
+//
+//   STATE-DEPENDENCE (faithful IIT core, FAITHFUL_REMEASURE §4): big-Φ is
+//   state-dependent. The M6 anchor table is a SINGLE state (1010). A faithful
+//   class comparison must average over states. PRIMARY measure here = MEAN big-Φ
+//   over all 2^n system states. The single-state 1010 value is ALSO reported
+//   (M6 anchor reproduction = F285.3 FAITHFULNESS).
+//
+//   FALSIFIERS (pre-registered, frozen 2026-05-26 BEFORE measuring):
+//     F285.1 PEAK         : mean big-Φ maximised at edge-of-chaos (class IV),
+//                           NOT at ordered (class I/II) nor chaotic (class III).
+//     F285.2 ORDERING     : bigΦ(edge) > bigΦ(ordered) AND bigΦ(edge) > bigΦ(chaotic).
+//     F285.3 FAITHFULNESS : reproduce M6 anchors (rule204 single-state bigΦ=0,
+//                           rule110 single-state bigΦ≈7.55 @ state 1010) +
+//                           bound 0 <= big-Φ <= total for every rule/state.
+//
+//   deterministic · hexa-only · $0 mac local · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_eca.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float, eps: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < eps }
+    return d < eps
+}
+
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// mean big-Φ over ALL 2^n system states for a given rule (state-averaged, faithful).
+// also tracks: bound violations (0 <= bigPhi <= total per state), single-state @ 1010.
+fn mean_bigphi(rule: int, n: int) -> array {
+    let tpm = eca_tpm(rule, n)
+    let full = iit4_pow2(n)
+    let mut sum = 0.0
+    let mut bound_ok = 1                 // 1 = all states satisfy 0<=bigPhi<=total
+    let mut s = 0
+    while s < full {
+        let r = big_phi(tpm, n, s)       // [bigPhi, total, sum_d, sum_r, nd]
+        let bp = r[0]
+        let tot = r[1]
+        sum = sum + bp
+        if bp < (0.0 - 0.000001) { bound_ok = 0 }
+        if bp > (tot + 0.000001) { bound_ok = 0 }
+        s = s + 1
+    }
+    let mean = sum / to_float(full)
+    // single-state @ 1010 (decimal 10) for M6 anchor reproduction
+    let r10 = big_phi(tpm, n, 10)
+    return [mean, r10[0], to_float(bound_ok), to_float(full)]
+}
+
+fn main() {
+    let n = 4
+    println("================================================================")
+    println("  H_285 — faithful CAUSAL big-Φ at edge-of-chaos (n=" + str(n) + " ring)")
+    println("  PRIMARY = MEAN big-Φ over all 2^n states (state-averaged, faithful)")
+    println("  proxy (H_007/H_204) = CORRELATIONAL phi_spatial · here = CAUSAL IIT4")
+    println("================================================================")
+
+    // ── Wolfram-class ladder: state-averaged faithful big-Φ ──────────────
+    // ORDERED (class I/II)
+    let o0   = mean_bigphi(0,   n)       // rule 0   — all→0 constant (class I)
+    let o204 = mean_bigphi(204, n)       // rule 204 — identity (class II)
+    // EDGE-OF-CHAOS (class IV)
+    let e110 = mean_bigphi(110, n)       // rule 110 — Turing-universal (class IV)
+    let e54  = mean_bigphi(54,  n)       // rule 54  — gliders (class IV)
+    // CHAOTIC (class III)
+    let c30  = mean_bigphi(30,  n)       // rule 30  — pseudo-random (class III)
+    let c90  = mean_bigphi(90,  n)       // rule 90  — XOR / Sierpinski (class III)
+
+    println("  -- ORDERED (class I/II) --")
+    println("  rule   0 : meanΦ=" + str(o0[0])   + "  state1010Φ=" + str(o0[1]))
+    println("  rule 204 : meanΦ=" + str(o204[0]) + "  state1010Φ=" + str(o204[1]))
+    println("  -- EDGE-OF-CHAOS (class IV) --")
+    println("  rule 110 : meanΦ=" + str(e110[0]) + "  state1010Φ=" + str(e110[1]))
+    println("  rule  54 : meanΦ=" + str(e54[0])  + "  state1010Φ=" + str(e54[1]))
+    println("  -- CHAOTIC (class III) --")
+    println("  rule  30 : meanΦ=" + str(c30[0])  + "  state1010Φ=" + str(c30[1]))
+    println("  rule  90 : meanΦ=" + str(c90[0])  + "  state1010Φ=" + str(c90[1]))
+
+    // ── class aggregates (mean over 2 representatives per class) ──────────
+    let ord_mean  = (o0[0]   + o204[0]) / 2.0
+    let edge_mean = (e110[0] + e54[0])  / 2.0
+    let cha_mean  = (c30[0]  + c90[0])  / 2.0
+    println("================================================================")
+    println("  CLASS-MEAN (state-averaged big-Φ, 2 rules/class):")
+    println("    ORDERED      = " + str(ord_mean))
+    println("    EDGE-OF-CHAOS= " + str(edge_mean))
+    println("    CHAOTIC      = " + str(cha_mean))
+
+    // class IV best representative (for argmax peak among all 6 rules)
+    let mut peak_val = o0[0]
+    let mut peak_label = "ord:rule0"
+    if o204[0] > peak_val { peak_val = o204[0]; peak_label = "ord:rule204" }
+    if e110[0] > peak_val { peak_val = e110[0]; peak_label = "edge:rule110" }
+    if e54[0]  > peak_val { peak_val = e54[0];  peak_label = "edge:rule54" }
+    if c30[0]  > peak_val { peak_val = c30[0];  peak_label = "cha:rule30" }
+    if c90[0]  > peak_val { peak_val = c90[0];  peak_label = "cha:rule90" }
+    println("  ARGMAX (per-rule peak) = " + peak_label + "  Φ=" + str(peak_val))
+    println("================================================================")
+
+    // ── F285.1 PEAK : edge-of-chaos class-mean is the maximum class-mean ──
+    let edge_top = (edge_mean > ord_mean + 0.000001) && (edge_mean > cha_mean + 0.000001)
+    check("F285.1 PEAK — edge-of-chaos class-mean is maximal (> ordered AND > chaotic)", edge_top)
+
+    // ── F285.2 ORDERING : explicit pairwise (same condition, separate falsifier) ─
+    check("F285.2 ORDERING — bigΦ(edge) > bigΦ(ordered)", edge_mean > ord_mean + 0.000001)
+    check("F285.2 ORDERING — bigΦ(edge) > bigΦ(chaotic)", edge_mean > cha_mean + 0.000001)
+
+    // ── F285.3 FAITHFULNESS : M6 anchors @ single state 1010 ─────────────
+    check("F285.3 FAITHFULNESS — rule204 single-state(1010) big-Φ = 0 (M6 anchor)", approx(o204[1], 0.0, 0.000001))
+    check("F285.3 FAITHFULNESS — rule110 single-state(1010) big-Φ ≈ 7.5475 (M6 anchor)", approx(e110[1], 7.5475, 0.01))
+    check("F285.3 FAITHFULNESS — rule0 single-state(1010) big-Φ = 0 (M6 anchor)", approx(o0[1], 0.0, 0.000001))
+
+    // ── F285.3 bound : 0 <= big-Φ <= total for EVERY rule across all states ─
+    let all_bounds = (o0[2] > 0.5) && (o204[2] > 0.5) && (e110[2] > 0.5) && (e54[2] > 0.5) && (c30[2] > 0.5) && (c90[2] > 0.5)
+    check("F285.3 FAITHFULNESS — bound 0<=big-Φ<=total for all 6 rules × all states", all_bounds)
+
+    // ── determinism (re-run identical) ───────────────────────────────────
+    let e110b = mean_bigphi(110, n)
+    check("determinism — rule110 mean big-Φ re-run identical", approx(e110[0], e110b[0], 0.0000001))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("================================================================")
+    // machine-parseable summary line
+    println("H285_SUMMARY ord=" + str(ord_mean) + " edge=" + str(edge_mean) + " cha=" + str(cha_mean) + " argmax=" + peak_label)
+    if FAIL > 0 { panic("H_285 faithful big-Φ edge-of-chaos re-measurement FAILED") }
+}
