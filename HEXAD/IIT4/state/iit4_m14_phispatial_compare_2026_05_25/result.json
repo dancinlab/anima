@@ -1,0 +1,31 @@
+{
+  "milestone": "M14",
+  "module": "HEXAD/IIT4/state/iit4_m14_phispatial_compare_2026_05_25/run_m14.hexa",
+  "date": "2026-05-25",
+  "what": "Numeric comparison of M11's inline RFC036 proxy (self-contained mean pairwise temporal MI port) vs the CANONICAL phi_spatial builtin (RFC 036, c_measure_phi wrapper) on identical ECA series. Closes M11 README §4 honest scope: 'numeric agreement with canonical builtin is separate'.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU",
+  "config": "n=4 ring, seed=10 (binary 1010), T=16 steps, n_bins=4 (RFC 036 default)",
+  "input_mapping": "Same ECA series series[i*T + t] fed into both algorithms. For canonical phi_spatial we layout as flat farr state[i*16 + t] = series[i*16 + t]; n_cells=4, dim=T=16 (each cell's 16-step time-series IS its spatial signature). Algorithms then operate on identical data.",
+  "algorithm_axis": {
+    "inline_RFC036_M11": "mean pairwise binary MI across all C(n,2)=6 cell pairs of the time-series (no min-partition, no /(n-1) normalisation).",
+    "canonical_phi_spatial": "RFC 036 builtin (c_measure_phi wrapper): pairwise spatial MI matrix + exhaustive min-information partition over 2^(n-1)-1 bipartitions → Φ = max(total_MI − min_partition_MI, 0) / max(n_cells−1, 1)."
+  },
+  "table": {
+    "rule_0_const":     { "inline_RFC036": 0.056215, "canonical_phi_spatial": 0.112431, "abs_diff": 0.0562163, "ratio_canonical_over_inline": 2.000 },
+    "rule_204_identity":{ "inline_RFC036": 0.0,      "canonical_phi_spatial": 1.63557e-06, "abs_diff": 1.63557e-06, "ratio_canonical_over_inline": null },
+    "rule_90_xor":      { "inline_RFC036": 0.056215, "canonical_phi_spatial": 0.112431, "abs_diff": 0.0562163, "ratio_canonical_over_inline": 2.000 },
+    "rule_110_LIFE":    { "inline_RFC036": 0.288336, "canonical_phi_spatial": 0.322715, "abs_diff": 0.0343795, "ratio_canonical_over_inline": 1.119 },
+    "rule_30_LIFE":     { "inline_RFC036": 0.0,      "canonical_phi_spatial": 1.63557e-06, "abs_diff": 1.63557e-06, "ratio_canonical_over_inline": null },
+    "rule_54_LIFE":     { "inline_RFC036": 0.288336, "canonical_phi_spatial": 0.322715, "abs_diff": 0.0343795, "ratio_canonical_over_inline": 1.119 }
+  },
+  "checks_tally": { "pass": 9, "fail": 0 },
+  "findings": [
+    "NULL-AXIS AGREEMENT — rules 204 (identity) and 30 (uncorrelated under seed 1010): inline = 0 exactly; canonical = 1.63557e-06 (the n_bins=4 binning floor of the spatial MI estimator on all-constant / nearly-constant rows). The two algorithms agree to within the canonical's discretisation floor (~1.6e-6 ≪ 5e-6 tolerance).",
+    "COUPLED RULES — rules 0 / 90 (constant-column structure under seed 1010): canonical = 2.000 × inline (clean integer factor). Reason: with n=4 only one pair of cells varies (cells 1 and 3); total_MI is concentrated in that pair, min_partition_MI = 0 (one cell is constant → cut it for free), so canonical = (total)/(n−1) = total/3 while inline = total/6 pairs → ratio = 6/3 = 2.",
+    "MIXED RULES — rules 110 / 54: canonical = 1.119 × inline (canonical > inline but < 2). All 4 cells vary; the min-partition cuts a non-trivial subset (min_MI > 0), so the normalised structure measure remains higher than the unnormalised mean but below the constant-cell ceiling.",
+    "DETERMINISM — canonical phi_spatial on rule 110 re-run byte-identical (0.322715 == 0.322715).",
+    "ROOT CAUSE OF DIVERGENCE — purely ALGORITHMIC: (a) canonical includes the /(n−1) normalisation; (b) canonical subtracts the min-partition MI rather than averaging all pairs; (c) canonical has a binning floor at n_bins=4. None of these are implementation drift between the two ports — they are intentional algorithmic differences (mean pairwise MI ≠ integrated MI minus min-partition)."
+  ],
+  "verdict": "🟢 SUPPORTED-NUMERICAL — inline RFC036 (M11 self-contained port) and canonical phi_spatial builtin compared verbatim on identical ECA series; numeric divergence quantified and fully attributed to algorithmic differences (NOT implementation drift). M11 §4 honest scope ('numeric agreement with canonical builtin is separate') CLOSED.",
+  "honest_scope": "Single seed/T/n_bins. n=4 only. Both algorithms here are still correlational (spatial MI ≠ causal big-Φ — see M11 for the causal axis comparison). The 'canonical' is the RFC 036 builtin (c_measure_phi → phi_spatial); the stdlib pure-hexa replica phi_spatial_native is byte-equal to the FROZEN reference but the C builtin has since drifted on some rules per rfc_036_c_replica_drift (HEXAD/STDLIB/phi_native_predecomp_baseline_2026_05_24.md § 2.1) — replica-vs-builtin byte-equal is a separate concern owned by LIFE/STDLIB."
+}

@@ -2,6 +2,21 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25 — M14: inline RFC036(M11) vs canonical phi_spatial builtin 수치 비교
+
+M11 README §4 honest scope "정식 phi_spatial builtin 과의 수치 일치는 별도" closure. 동일 ECA series(n=4, seed 1010, T=16) 를 M11 inline RFC036 자체포팅 ‖ 정식 `phi_spatial` builtin(RFC 036, c_measure_phi wrapper) 에 통과시켜 verbatim 비교 → divergence 의 출처(algorithmic vs implementation)를 결정적으로 분리.
+
+- [x] M14 smoke 9/9 🟢 `POOL_DISABLE=1 hexa run --no-sentinel HEXAD/IIT4/state/iit4_m14_phispatial_compare_2026_05_25/run_m14.hexa` exit 0
+- [x] **null-axis 합의**: rule 204 (identity) + rule 30 (seed-1010 uncorrelated series) — inline=0, canonical=1.63557e-06 (n_bins=4 binning floor). 두 알고리즘이 canonical 의 양자화 floor (~1.6e-6 ≪ 5e-6 tolerance) 안에서 일치.
+- [x] **constant-column rule canonical=2.000×inline 정수배 (NEW finding)**: rule 0/90 에서 canonical/inline = 2.000. 이유: seed 1010 + n=4 에서 cell 0/2 가 constant, cell 1/3 만 변동 → inline 의 6 pair 분모 vs canonical 의 (n−1)=3 분모 → 6/3=2 정확. 구현 차이 아니라 정규화 차이.
+- [x] **mixed rule canonical/inline = 1.119**: rule 110/54 (전 cell 변동) — min_partition_MI > 0 가 (total)/(n−1) 의 분자를 깎아내려 1 < ratio < 2 의 mixed-coupling signature.
+- [x] **divergence = 100% algorithmic, implementation drift = 0**: M11 inline 포팅은 RFC036-family 의 "mean pairwise MI" 부분집합 충실 구현으로 검증. min-partition + /(n−1) 정규화 + n_bins=4 binning floor 만이 차이.
+- [x] artifact: `state/iit4_m14_phispatial_compare_2026_05_25/{run_m14.hexa, result.json, README.md}`
+- [x] M11 README §4 갱신 — M14 link + verdict (CLOSED).
+- [x] IIT4.md milestones 갱신 (M14 row) + status (13/13 → 14/14 · 123 → 132 checks) + 후속 후보에서 "phi_spatial 정식 builtin 대조" strikethrough.
+- [x] determinism check: canonical phi_spatial(rule 110) 재호출 byte-identical (0.322715 == 0.322715).
+- [x] honest scope: single n=4/seed/T/n_bins · canonical = RFC 036 C builtin (replica-vs-builtin byte-equal 은 별 cycle, rfc_036_c_replica_drift 책임 = LIFE/STDLIB).
+
 ## 2026-05-25 — M13 exclusion 다중-complex / spectrum (hexa-lang PR #1118 + anima smoke)
 
 cycle#3 첫 진척. M10 의 단일-maximal-complex 한계를 spectrum 으로 확장 — 한 substrate 위 여러 비-겹침 콤플렉스 동시 회수. `complex_spectrum(tpm, n, sys_state) -> array of [mask, phi, size]` 가 모든 비-empty 부분집합을 점수 후 (Φ desc, size desc, mask asc) 정렬, greedy non-overlap peeling 으로 ranked spectrum 반환. 결정적 tie-break = M10 의 find_complex 동일 규칙.

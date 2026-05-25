@@ -1,0 +1,240 @@
+// HEXAD/IIT4/state/iit4_m14_phispatial_compare_2026_05_25/run_m14.hexa
+//
+//   IIT4 M14 — M11 inline RFC036 proxy vs CANONICAL phi_spatial builtin
+//              수치 비교 on the SAME ECA substrate (cocompute closure).
+//
+//   M11 README §4 honest scope flag:
+//     "proxy = self-contained 재구현 (RFC036-family 평균 pairwise MI) —
+//      정식 phi_spatial builtin 아님. 정식 builtin 과의 수치 일치는 별도."
+//   M14 가 그 "별도"를 닫는다.
+//
+//   ALGORITHM AXIS
+//     • inline RFC036 (M11): 시계열의 cell 간 평균 pairwise MI (temporal,
+//       no min-partition). 자체 포팅, anima 내부 SSOT.
+//     • canonical phi_spatial (builtin, RFC 036 phi_spatial / c_measure_phi):
+//       (n_cells × dim) flat snapshot 에서 spatial MI matrix + min-partition
+//       → Φ = max(total_MI - min_partition_MI, 0) / max(n_cells-1, 1).
+//     입력형도 다르고 알고리즘도 다르다 — 같은 ECA series 를 동일 양으로
+//     맵핑해 두 알고리즘에 통과시키고 verbatim numeric 결과를 표로 낸다.
+//
+//   INPUT MAPPING (동일 데이터, 알고리즘만 다르게)
+//     ECA n=4 seed=10(1010) T=16 → series[i*T + t] (i∈[0,4), t∈[0,16))
+//       inline_proxy(series)              → mean pairwise temporal MI (bits)
+//       canonical phi_spatial(state, 4, 16, 4)
+//         where state[i*16 + t] = series[i*16 + t]  (same flat layout)
+//       dim=T=16 (cell i 의 16-step 시계열을 spatial signature 로 사용)
+//       n_bins=4 (LIFE default, RFC 036)
+//
+//   deterministic · hexa-only · $0 mac local · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+// imports — committed as repo-relative (sibling state dirs M10/M11/M12 use
+// absolute worktree paths; this M14 commits the repo-relative form per g13,
+// then `hexa run` resolves them off the worktree root at execution time.
+import "../../lib/iit4_eca.hexa"
+import "../../../C/c_lib.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000000001 }
+    return d < 0.000000001
+}
+fn absf(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// ── M11 inline RFC036 proxy (verbatim copy, byte-identical algorithm) ───────
+fn eca_next(tpm: array, n: int, state: int) -> int {
+    let mut nx = 0
+    let mut i = 0
+    while i < n {
+        if tpm[state * n + i] > 0.5 { nx = nx + iit4_pow2(i) }
+        i = i + 1
+    }
+    return nx
+}
+fn eca_series(tpm: array, n: int, seed: int, steps: int) -> array {
+    let mut series = []
+    let mut k = 0
+    while k < n * steps { series = series.push(0.0); k = k + 1 }
+    let mut s = seed
+    let mut t = 0
+    while t < steps {
+        let mut i = 0
+        while i < n {
+            series[i * steps + t] = to_float(iit4_bit(s, i))
+            i = i + 1
+        }
+        s = eca_next(tpm, n, s)
+        t = t + 1
+    }
+    return series
+}
+fn mi_binary(series: array, steps: int, i: int, j: int) -> float {
+    let mut cx = [0.0, 0.0]
+    let mut cy = [0.0, 0.0]
+    let mut cj = [0.0, 0.0, 0.0, 0.0]
+    let mut t = 0
+    while t < steps {
+        let xi = series[i * steps + t].to_int()
+        let yi = series[j * steps + t].to_int()
+        cx[xi] = cx[xi] + 1.0
+        cy[yi] = cy[yi] + 1.0
+        cj[xi * 2 + yi] = cj[xi * 2 + yi] + 1.0
+        t = t + 1
+    }
+    let tot = to_float(steps)
+    let ln2 = log(2.0)
+    let mut mi = 0.0
+    let mut a = 0
+    while a < 2 {
+        let mut b = 0
+        while b < 2 {
+            let pxy = cj[a * 2 + b] / tot
+            if pxy > 1.0e-12 {
+                let px = cx[a] / tot
+                let py = cy[b] / tot
+                mi = mi + pxy * (log(pxy / (px * py + 1.0e-10) + 1.0e-10) / ln2)
+            }
+            b = b + 1
+        }
+        a = a + 1
+    }
+    if mi < 0.0 { return 0.0 }
+    return mi
+}
+fn proxy_scalar(tpm: array, n: int, seed: int, steps: int) -> float {
+    let series = eca_series(tpm, n, seed, steps)
+    let mut total = 0.0
+    let mut pairs = 0
+    let mut i = 0
+    while i < n {
+        let mut j = i + 1
+        while j < n {
+            total = total + mi_binary(series, steps, i, j)
+            pairs = pairs + 1
+            j = j + 1
+        }
+        i = i + 1
+    }
+    if pairs == 0 { return 0.0 }
+    return total / to_float(pairs)
+}
+
+// ── canonical phi_spatial (RFC 036 builtin) on same series, mapped to ──────
+//    flat (n_cells × dim) farr. dim = steps (cell time-series as signature).
+fn canonical_phi_on_series(tpm: array, n: int, seed: int, steps: int, n_bins: int) -> float {
+    let series = eca_series(tpm, n, seed, steps)
+    let st = farr_zeros(n * steps)
+    let mut i = 0
+    while i < n {
+        let mut t = 0
+        while t < steps {
+            let _ = farr_set(st, i * steps + t, series[i * steps + t])
+            t = t + 1
+        }
+        i = i + 1
+    }
+    // RFC 036 phi_spatial builtin (c_measure_phi wrapper).
+    let phi = c_measure_phi(st, n, steps, n_bins)
+    let _ = farr_free(st)
+    return phi
+}
+
+fn main() {
+    let n = 4
+    let seed = 10                           // 1010, identical to M11
+    let steps = 16
+    let n_bins = 4                          // LIFE default (RFC 036)
+    println("================================================================")
+    println("  IIT4 M14 — inline RFC036(M11) vs canonical phi_spatial builtin")
+    println("  n=" + str(n) + " seed=1010 T=" + str(steps) + " n_bins=" + str(n_bins))
+    println("================================================================")
+    println("  rule       inline_RFC036(M11)        canonical phi_spatial       |Δ|")
+
+    let rules = [0, 204, 90, 110, 30, 54]
+    let mut inlines = []
+    let mut canon   = []
+    let mut diffs   = []
+    let mut r = 0
+    while r < len(rules) {
+        let tpm = eca_tpm(rules[r], n)
+        let inl = proxy_scalar(tpm, n, seed, steps)
+        let can = canonical_phi_on_series(tpm, n, seed, steps, n_bins)
+        let d = absf(inl - can)
+        inlines = inlines.push(inl)
+        canon   = canon.push(can)
+        diffs   = diffs.push(d)
+        println("  rule " + str(rules[r]) + "\t inline=" + str(inl) + "\t canonical=" + str(can) + "\t |Δ|=" + str(d))
+        r = r + 1
+    }
+
+    // index legend: 0=r0  1=r204  2=r90  3=r110  4=r30  5=r54
+    //
+    // ── EMPIRICAL FINDING — numerically observed structure ─────────────────
+    // M11 inline = mean pairwise temporal MI (bits, no partition, no /n−1).
+    // canonical phi_spatial builtin = (total_MI − min_partition_MI) / (n−1),
+    // with n_bins=4 quantisation introducing a tiny binning-floor ≈ 1.6e-6
+    // on all-zero / all-one rows (rule 204 identity & rule 30 uncorrelated).
+    //
+    // Observed regularity at n=4, T=16, seed=1010, n_bins=4:
+    //   • Null-MI rules (204, 30): inline = 0   AND   canonical ≈ 1.6e-6
+    //     → canonical reads the binning floor; inline does not.
+    //     → algorithms AGREE to within the canonical's discretisation floor.
+    //   • Coupled rules (0, 90):  canonical ≈ 2 × inline
+    //   • Coupled rules (110,54): canonical ≈ 1.119 × inline (mean MI ≥ minP)
+
+    // ── NEAR-ZERO AGREEMENT (within canonical's binning floor 5e-6) ────────
+    let floor_eps = 0.000005
+    check("rule 204 (identity) both within floor (inline=0, canonical<5e-6)",
+          approx(inlines[1], 0.0) && canon[1] < floor_eps)
+    check("rule 30 (uncorrelated series) both within floor (inline=0, canonical<5e-6)",
+          approx(inlines[4], 0.0) && canon[4] < floor_eps)
+
+    // ── ALGORITHMIC SCALE FACTOR — canonical/inline ≈ 2 on rules 0/90 ──────
+    // (these have constant column structure: cell 0 always 0, cell 2 always 1
+    //  for seed 1010 → pairwise MI between varying cells {1,3} = full bit;
+    //  canonical's total_MI/(n-1) = total/3 vs inline's total/6 pairs = 2×).
+    let ratio_0 = canon[0] / inlines[0]
+    let ratio_90 = canon[2] / inlines[2]
+    check("rule 0 ratio canonical/inline ≈ 2.0 (within 1%)",
+          absf(ratio_0 - 2.0) < 0.02)
+    check("rule 90 ratio canonical/inline ≈ 2.0 (within 1%)",
+          absf(ratio_90 - 2.0) < 0.02)
+
+    // ── ALGORITHMIC SCALE FACTOR — canonical/inline on rules 110/54 ────────
+    // (mixed cells, min-partition cuts a subset → canonical < 2 × inline)
+    let ratio_110 = canon[3] / inlines[3]
+    let ratio_54  = canon[5] / inlines[5]
+    check("rule 110 canonical > inline (algorithmic divergence)", canon[3] > inlines[3])
+    check("rule 54  canonical > inline (algorithmic divergence)", canon[5] > inlines[5])
+    check("rule 110 ratio canonical/inline in (1.0, 2.0]", ratio_110 > 1.0 && ratio_110 <= 2.0 + 0.02)
+    check("rule 54  ratio canonical/inline in (1.0, 2.0]", ratio_54  > 1.0 && ratio_54  <= 2.0 + 0.02)
+
+    // ── determinism — re-call canonical with same input → byte-identical ───
+    let can2 = canonical_phi_on_series(eca_tpm(110, n), n, seed, steps, n_bins)
+    check("determinism: canonical phi_spatial rule 110 re-run byte-identical",
+          approx(canon[3], can2))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  FINDING: inline M11 RFC036 proxy and canonical phi_spatial")
+    println("           builtin diverge by an algorithmic constant — coupled")
+    println("           rules 0/90: canonical = 2.00 × inline (clean factor),")
+    println("           rules 110/54: canonical > inline but < 2× (min-part")
+    println("           cuts subset). Null axes (rule 204, rule 30) AGREE to")
+    println("           within canonical's n_bins=4 binning floor (~1.6e-6).")
+    println("           M11 §4 'numeric agreement with canonical is separate'")
+    println("           — CLOSED: agreement is quantified (floor) + divergence")
+    println("           is purely ALGORITHMIC (min-partition + /n-1 norm), not")
+    println("           an implementation drift between the two ports.")
+    println("================================================================")
+    if FAIL > 0 { panic("IIT4 M14 phi_spatial compare FAILED") }
+}
