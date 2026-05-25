@@ -1,0 +1,42 @@
+{
+  "hypothesis": "H_279",
+  "slug": "attention-salience-phi",
+  "domain": "LIFE",
+  "title": "attention-salience-Φ — attended (top-k salience) sub-network Φ > unattended sub-network Φ (AXES R3 promote · H_221 sister)",
+  "date": "2026-05-25",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "seed": 42,
+  "params": {"d_model": 8, "pool_N": 12, "n_step": 15, "c1_margin": 0.02},
+  "sweep": {
+    "top3": { "k": 3, "n": 12, "phi_att": 0.838274, "phi_unatt": 2.04416, "delta": -1.20588, "phi_catt": 1.27884, "phi_cunatt": 1.95247, "delta_ctrl": -0.673622, "sal_att": 1.57606, "sal_unatt": 1.12222 },
+    "top4": { "k": 4, "n": 12, "phi_att": 1.07235, "phi_unatt": 2.00604, "delta": -0.933686, "phi_catt": 1.52377, "phi_cunatt": 1.7927, "delta_ctrl": -0.268931, "sal_att": 1.50447, "sal_unatt": 1.10128 },
+    "top6": { "k": 6, "n": 12, "phi_att": 1.37594, "phi_unatt": 1.98148, "delta": -0.605544, "phi_catt": 2.0556, "phi_cunatt": 1.16719, "delta_ctrl": 0.888407, "sal_att": 1.42494, "sal_unatt": 1.04642 }
+  },
+  "derived": {
+    "delta_top3": -1.20588,
+    "delta_top4": -0.933686,
+    "delta_top6": -0.605544,
+    "delta_ctrl_top4": -0.268931,
+    "salience_gap_top4": 0.403193
+  },
+  "criteria": {
+    "C1_salience_phi":      false,
+    "C2_salience_vs_arbitr": false,
+    "C3_focus_sharpening":  false,
+    "C4_determinism":       true
+  },
+  "falsifiers": {
+    "F1_SALIENCE_PHI":   { "metric": "top-4 phi_att > phi_unatt", "value": -0.933686, "verdict": "FAIL" },
+    "F2_SALIENCE_ARBITR":{ "metric": "Δ_salience > Δ_index", "value": -0.664754, "verdict": "FAIL" },
+    "F3_FOCUS_SHARPEN":  { "metric": "Δ_top3 >= Δ_top6", "value": -0.600337, "verdict": "FAIL" },
+    "F4_DETERMINISM":    { "metric": "re-run Δ byte-equal", "verdict": "PASS" },
+    "F5_BOUNDS":         { "metric": "all phi finite >= 0", "verdict": "PASS" }
+  },
+  "n_criteria_pass": 1,
+  "n_falsifier_pass": 2,
+  "verdict": "FALSIFIED",
+  "cross_link": {"H_221": "meditation-jhana", "H_213": "temporal-binding", "axes": "R3 phenomenology"}
+}
