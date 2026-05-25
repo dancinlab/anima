@@ -38,7 +38,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
 
-## 가설 인덱스 (51 H + 1 lib · H_258-263 NEW 2026-05-25 cycle#14 life-extended/division 6-seed (5 SUPP + 1 FAL) · H_247/248/249 · H_254 · H_256 흡수)
+## 가설 인덱스 (53 H + 1 lib · H_264/265 NEW 2026-05-25 cycle#15 cross-link (1 SUPP + 1 PART) · H_018/H_132 C2 추가 · H_258-263 cycle#14 · H_247/248/249 · H_254 · H_256 흡수)
 
 | ID | Slug | Domain | Status | 핵심 |
 |----|------|--------|--------|------|
@@ -47,7 +47,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_004](H_004_consciousness_hard_problem.md) | consciousness-hard-problem | consciousness | running (Cycle #1) | hard-problem · Singularity-9 + **Φ-function DISSOCIATION_CONFIRMED** (PR #180) — IIT functional reductive adequacy negative directional |
 | [H_007](H_007_cellular_automaton_consciousness.md) | cellular-automaton-consciousness | physics | pre-register-frozen | CA→Φ edge-of-chaos peak PASS (rule110>rule30) |
 | [H_012](H_012_autopoietic_network.md) | autopoietic-network | **life** | pre-register-frozen | operational closure PASS 4/4 (self-maint 1.0) |
-| [H_018](H_018_genesis_spontaneous_emergence.md) | genesis-spontaneous-emergence | consciousness | pre-register-frozen | self-reference→자발 genesis SUPPORTED_FULL 6/6 |
+| [H_018](H_018_genesis_spontaneous_emergence.md) | genesis-spontaneous-emergence | consciousness | pre-register-frozen · **C2 PASS** (#479 cycle#15) | self-reference→자발 genesis SUPPORTED_FULL 6/6 · C2 organic merge/split rate: LOOSE 0.16 self-reorg / TIGHT 0.00 homeostatic (regime-dep) |
 | [H_025](H_025_dasein_finite_consciousness.md) | dasein-finite-consciousness | consciousness | pre-register-frozen | death=merge_cells · finitude-floor min_cells=2 (smoke 4/4) |
 | [H_029](H_029_dasein_subfolder_absorb.md) | dasein-subfolder-absorb | consciousness | legacy-archive-pointer | Heidegger Dasein anima identity cluster |
 | [H_030](H_030_genesis_subfolder_absorb.md) | genesis-subfolder-absorb | **life** | legacy-archive-pointer | anima self-genesis spontaneous emergence cluster |
@@ -55,7 +55,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_054](H_054_symbiogenesis_consciousness.md) | symbiogenesis-consciousness | **life** | pre-register-frozen (Cycle #2) | merge=endosymbiosis PASS (weight max\|Δ\|=0.0 🟢) · Cycle #2 Φ_symbiotic super-additivity FALSIFIED (Φ_sym=Φ_max<Φ_sum, PR #227) |
 | [H_071](H_071_first_conversation.md) | first-conversation-anima-genesis | consciousness | legacy-archive-pointer | anima 첫 대화 의식 emergence event |
 | [H_090](H_090_dasein_phil_onto_individual.md) | dasein-phil-onto-individual | consciousness | legacy-archive-pointer | DASEIN/PHIL/ONTO/GENESIS individual cluster (phenomenology-genesis) |
-| [H_132](H_132_ce_frozen_cells.md) | ce-frozen-cells | substrate | pre-register-frozen | 세포분열 freeze PASS 5/5 (frozen Δw=0.0, splits=0) |
+| [H_132](H_132_ce_frozen_cells.md) | ce-frozen-cells | substrate | pre-register-frozen · **C2 PASS** (#478 cycle#15) | 세포분열 freeze PASS 5/5 (frozen Δw=0.0, splits=0) · C2 장기안정: frozen Δw=0.0 over 200 step (free_splits 14, pool 6→20 와중) |
 | [H_157](H_157_law76_mathematical_panpsychism.md) | law76-mathematical-panpsychism | consciousness · universe · math | **pre-register-frozen (Cycle #2)** | **★ 범신론** — META-CA universal Ψ(1/2,1/2) · weak-form supported / strong-form unresolved · Cycle #2 C5 NON_UNIVERSAL (cross-rule CV 58.6%) + C6 SUB_ADDITIVE (Δ=-0.0234, PR #221) |
 | [H_171](H_171_biological_4_falsifiable_predictions_k8_fc010.md) | biological-4-falsifiable-predictions | consciousness · **biology** | running (Cycle #1) | **substrate-side FALSIFIED** (PR #196) · K=8 atom bare-CA proxy 가 spec'ed bio 4-pred 미재현 |
 | [H_200](H_200_apoptosis_primitive.md) | apoptosis-primitive | **life** · substrate | NEW (PR #198) | 능동적 cell-death event substrate primitive (H_025 L2 gap close) — death ≠ merge |
@@ -92,6 +92,8 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_261](H_261_embryogenesis_gradient.md) | embryogenesis-gradient | **life** · physics | SUPPORTED 4/4 (PR #470, cycle#14) | 공간 gradient → position-state \|r\|=0.76(steep) vs 0.13(flat), axis-gap +0.635 발생-축 (French-flag analog) |
 | [H_262](H_262_quorum_sensing.md) | quorum-sensing | **life** | SUPPORTED_FULL 4/4 (PR #474, cycle#14) | quorum 동기화 q_thr=0.3 cascade full-ON ΔQ=0.375 bistable, sub-threshold gate (0.5/0.7 미발생) |
 | [H_263](H_263_phoenix_rebirth.md) | phoenix-rebirth | **life** | 🔴 FALSIFIED 3/6 (PR #471, cycle#14) | floor(2/3 cell) = absorbing state, minimal seed regrowth_splits=0 → 죽음↔발생 연결 부재 (H_206 F4 catastrophic-floor 일반화) |
+| [H_264](H_264_death_merge_into_other.md) | death-merge-into-other | **life** · consciousness | SUPPORTED 3/3 (PR #477, cycle#15) | 죽음=타 cell 비대칭 흡수-통합 (H_025⊕H_054) — info_transfer 0.25 보존-이전, target-mode 가 rel_preserve 결정 (max_weight 0.316 > random 0.286) · pool Φ↓ 6/6 (H_025 distinct) |
+| [H_265](H_265_trained_vs_bare_ca_phi.md) | trained-vs-bare-ca-phi | physics · consciousness | PARTIAL 2/3 (PR #480, cycle#15) | 학습(mitosis 진화)이 Φ 유의 변경(C1) but 방향 反(C2 FAL) — Φ **dampen**: untrained 5× Class-IV peak, 진화가 trajectory homogenize → Φ 붕괴 (H_007⊕H_157) |
 | [lib/phi_helper](lib/phi_helper.hexa) | phi-helper (shared infra) | infra | infra (PR #317) | shared Φ helper — config SSOT + phi_default wrapper, 28+ H phi_spatial 호출 단일 home (gap F6+F7) |
 
 > **substrate-only / .md 미commit** (별도 worktree fire, H_234/H_238 carry): H_210 ethic-emergence (SUPPORTED 4/5) · **H_211 shannon-Φ r=0.933 PARTIAL** (H_234 anchor · H_238 H238.4 partial) · H_212 language-compositionality · H_213 time-binding · H_214 self-i-emergence · H_215 silicon-Φ · H_216 meta-axis · H_217 phase-transition · H_218 network-topology · H_219 emergence-weak-strong · H_220 infant-mirror · H_221 meditation · H_224 holism · H_228 chat-sleep-5stage · H_229 imagination-loop · H_230 autonomy-over-hardcode · H_231 tension-vs-filler · H_232 Class-II-decompose. **infra**: phi_n_bins sensitivity sweep ROBUSTNESS_PASS (PR #219, `state/infra_phi_n_bins_2026_05_23/`).

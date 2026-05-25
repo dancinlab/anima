@@ -21,6 +21,7 @@
 - **Cycle #4 R1** (PR #196/#197/#198/#199): H_171 K=8 · H_053 cambrian-burst · H_200 NEW apoptosis-primitive · H_201 NEW asymmetric-division
 - **Cycle #5 (in flight, 2026-05-23)**: R3 cross-link + R2 panpsy + R5 substrate-gap (8 disjoint, see §"다음 cycle picks")
 - **Cycle #14 (2026-05-25)** (PR #468/#469/#470/#471/#472/#474): §C NEW seed 6 runnable 병렬 — H_258 mortality-salience · H_259 aging-senescence · H_260 contact-inhibition · H_261 embryogenesis-gradient · H_262 quorum-sensing (5 SUPP) · H_263 phoenix-rebirth (FAL). mirror-self-model SKIP (=H_220 기존).
+- **Cycle #15 (2026-05-25)** (PR #477/#478/#479/#480): §D cross-link 2 全소비 + §B follow-up 2 — H_264 death=merge-into-other SUPPORTED 3/3 (#477) · H_265 trained-vs-bare CA Φ PARTIAL 2/3 (#480, C2 反방향 Φ-dampen) · H_018 C2 organic-rate PASS (#479) · H_132 C2 longterm-stability PASS (#478).
 
 ## A. 남은 carried 가설 (legacy-pointer · cycle 0회, 4건)
 
@@ -72,12 +73,12 @@
 | `quorum-sensing` | cell 다수 동기화 ⇒ 집단 의사결정 emergence | cell signaling smoke | 🟢 |
 | `phoenix-rebirth` | pool 전멸(2 cell까지) 후 minimal seed 에서 부활 — 죽음·발생 연결 | full-cycle smoke | 🟢 |
 
-## D. Cross-link synthesis — 이미 done 결과 결합 (2건 잔여, 4건 → Cycle #5 in-flight)
+## D. Cross-link synthesis — 이미 done 결과 결합 (✅ 잔여 2건 全소비 cycle#15, 4건 → Cycle #5 in-flight)
 
 | 결합 | 새 가설 | runnable | tag |
 |------|--------|----------|-----|
-| H_025 death=merge ⊕ H_054 endosymb | death = merge-into-other (죽음 = 흡수 통합)? Heidegger × Margulis 통합 | merge-as-death smoke | 🟢 |
-| H_007 Φ class ⊕ H_157 trained-invariance | Φ class 가 학습으로 변하나(trained CA Φ 측정) | trained-vs-bare CA Φ 비교 | 🟢 |
+| H_025 death=merge ⊕ H_054 endosymb | death = merge-into-other (죽음 = 흡수 통합)? Heidegger × Margulis 통합 | merge-as-death smoke | ✅ → **H_264 SUPPORTED 3/3** (#477) |
+| H_007 Φ class ⊕ H_157 trained-invariance | Φ class 가 학습으로 변하나(trained CA Φ 측정) | trained-vs-bare CA Φ 비교 | ✅ → **H_265 PARTIAL 2/3** (#480, Φ-dampen 反방향) |
 
 > 4건 (H_007⊕H_018 · H_054⊕H_132 · H_003H3.4⊕H_157 · H_018⊕H_012) Cycle #5 에서 NEW H_202..H_205 로 fan-out.
 
