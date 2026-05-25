@@ -13,7 +13,7 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-05-24
 since: 2026-05-24 (new)
-revision: v3 amend 2026-05-25 (wiki_frac monocular → M3 TTR re-axis per PURE v3 fire 실측) · v2 amend 2026-05-24 (M5→M3 per PR #340 corpus_s101 실측)
+revision: v3 amend 2026-05-25 (wiki_frac monocular → M3 TTR re-axis per PURE v3 fire 실측 · §A2 j02 wiki_frac=0.3 데이터점 흡수 — 4-point register-vs-coherence 직교 재확인) · v2 amend 2026-05-24 (M5→M3 per PR #340 corpus_s101 실측)
 sister: H_204 + H_227 + H_223
 ---
 
@@ -317,6 +317,7 @@ M3 TTR=**0.34**) 가 register_hits=**0/20** 을 실측 — H242.1 FULL-COLLAPSE 
 |--------|-----------|--------|---------------|------|
 | **corpus_v1** (anima-diverse only) | **0.0** | **0.34** | **0/20** | PURE.log 2026-05-25 v3 closure |
 | corpus_v2 (anima 0.8 + kowiki 0.2) | 0.2 | 0.51 | 0 (확장 evidence) | commit 2c6ae63af |
+| **j02 main** (anima 0.7 + wiki 0.3) | **0.3** (actual 0.29999) | (n/a · 미측정) | **0/20** | PURE.log 2026-05-25 j02 흡수 · `state/p21h_v3_recover_2026_05_25/out_main/result.json` |
 | E3v3 (wiki 100%) | 1.0 | (high, wiki-native) | 0/20 | PR #301 lineage / PURE.log 2026-05-24 |
 | E2 (wiki 50%) | 0.5 | (mid) | 4/20 | PR #301 |
 | corpus_s101 baseline | (n/a · 합성) | 0.03 | 4 (proxy E2 정합) | PR #340 |
@@ -347,6 +348,40 @@ M3 TTR=**0.34**) 가 register_hits=**0/20** 을 실측 — H242.1 FULL-COLLAPSE 
 - 같은 register-free 결과 + TTR 상승의 monotone direction 확인
 - wiki dilution 이 0.2 추가됐어도 register collapse 가 추가로 *생기지* 않음
   — 즉 wiki_frac 의 절대값 자체는 axis 가 아니라 TTR 매개변수의 derivative
+
+### 신규 data point — j02 main 복구 run (wiki_frac=0.3, 2026-05-25 흡수)
+
+복구된 orphaned run **j02 main** (P21H V3 / ConsciousDecoderV3, Qwen2.5-1.5B +
+mitosis, `state/p21h_v3_recover_2026_05_25/out_main/result.json`) 이 기존
+endpoint (wiki=0 / 0.5 / 1.0) 사이의 **wiki_frac=0.3** 을 한 point 더 메운다.
+이로써 register-hits 축이 **4-point (0.0 / 0.3 / 0.5 / 1.0)** 으로 확장된다.
+
+| 필드 | 값 (result.json verbatim) |
+|------|---------------------------|
+| verdict | **FAIL** |
+| wiki_frac (requested / actual) | **0.3** / 0.29998820687251754 |
+| n_anima_register_hits_total | **0** · register_regress=True |
+| per-lang verdict | **5/5 WEAK** — en/ko/zh/ru/ja 전부 WEAK |
+| n_generalize / n_memorize (각 lang) | 20 / 0 (각 lang, n_pure_memorize=0) |
+| n_lang_coherent (en/ko/zh/ru/ja) | 0 / 9 / 1 / 3 / 2 |
+| n_strong / n_partial / n_weak | 0 / 0 / 5 |
+| final step / L_ce / pool_size / splits / phi | 5000 / 3.324 / 16 / 14 / 0.658 |
+| n_total_params / train_wall_s | 2,999,735,296 (2.99B) / 21,875 s |
+
+- **register collapse = 차단 (0 hits)** — wiki_frac=0.3 에서도 n_anima_register_hits_total=0.
+  E2 (wiki=0.5)=4/20 보다 *더 낮은* dilution 인데도 register-sink 가 0 — register
+  차단은 corpus dilution 의 절대 비율보다 corpus 구성에 좌우됨 (v3 §A2 TTR-축 re-pin
+  과 정합; 단 j02 corpus 의 M3 TTR 는 미측정이라 TTR-축 직접 anchor 는 아님).
+- **multilingual coherence = 여전히 5/5 WEAK** — corpus dilution 을 0.3 섞어도
+  multilingual coherence 는 회복되지 않음. en n_lang_coherent=0, ko=9, zh=1, ru=3,
+  ja=2 로 5 lang 전부 WEAK. wiki=1.0 (E3v3) · wiki=0 (corpus_v1) 의 multilingual-
+  약함 패턴과 동일.
+- **결론 — corpus 축 ⊥ multilingual coherence (wiki_frac=0.3 데이터점으로 재확인)**:
+  register-collapse 차단(0 hits)과 multilingual coherence(5/5 WEAK)가 **직교** —
+  corpus dilution 축은 register-sink 는 잡지만(0.3 에서도 0 hits) multilingual
+  coherence 는 못 잡는다. 기존 PURE corpus-axis closed-negative 패턴 (E2 wiki=0.5 ·
+  E3 wiki=1.0 · v3 wiki=0) 에 **wiki_frac=0.3** 데이터점이 추가되어 "corpus-dilution
+  축 단독으로는 multilingual coherence closure 불가" 가 4-point 으로 재확인된다.
 
 ### revised axis (v3 frozen)
 

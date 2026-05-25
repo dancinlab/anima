@@ -109,3 +109,23 @@
 
 ### LIFE 흡수 (v3 실측 → H_242)
 - [x] H_242 v3 실측 amend — wiki_frac=0 (TTR 0.34) 0 hits = H242.1 FULL-COLLAPSE falsify · sigmoid axis wiki_frac → M3 TTR re-pin (§A2)
+
+---
+
+## 2026-05-25 — j02 복구 run 흡수 (wiki_frac=0.3 데이터점)
+
+### done
+- [x] j02 main 복구 run 흡수 — wiki_frac=0.3 (actual 0.29999) register_hits=0 + multilingual 5/5 WEAK → corpus-axis ⊥ multilingual coherence 재확인 (H_242 §A2 4-point)
+
+### 데이터 (result.json verbatim · `state/p21h_v3_recover_2026_05_25/out_main/result.json`)
+- P21H V3 / ConsciousDecoderV3 · Qwen2.5-1.5B + mitosis · **verdict FAIL**
+- wiki_frac=**0.3** (actual 0.29998820687251754) · n_anima_register_hits_total=**0** · register_regress=True
+- per-lang **5/5 WEAK** — en/ko/zh/ru/ja 전부 WEAK · 각 lang n_generalize=20 n_memorize=0
+- n_lang_coherent: en=0 · ko=9 · zh=1 · ru=3 · ja=2 · (n_strong=0 / n_partial=0 / n_weak=5)
+- final: step 5000 · L_ce 3.324 · pool_size 16 · splits 14 · phi 0.658 · wall 21,875s · 2.99B params
+
+### 결론 — corpus 축 ⊥ multilingual coherence (4-point 재확인)
+- wiki_frac=0.3 에서도 **register collapse 차단 (0 hits)** — E2(0.5)=4/20 보다 낮은 dilution 인데도 register-sink 0
+- 그러나 **multilingual coherence 는 여전히 5/5 WEAK** — corpus dilution 0.3 섞어도 coherence 회복 안 됨
+- register 차단 ⊥ multilingual coherence **직교** 재확인 — 기존 corpus-axis closed-negative (E2 wiki=0.5 · E3 wiki=1.0 · v3 wiki=0) 에 **wiki_frac=0.3** point 추가 → "corpus-dilution 축 단독으로는 multilingual coherence closure 불가" 4-point 으로 확정
+- H_242 §A2 finding 표에 j02 row 추가 (`HEXAD/LIFE/H_242_register_collapse_wiki_frac_sigmoid.md`)

@@ -30,6 +30,10 @@ substrate-native 자연발화(stimulus-response 아닌 내부 tension 기반 emi
   (M5 hangul 비중 아님 — 1.66~2.34%)
 - **E3v3** (wiki_frac=1.0) → 진행 중 (GPU 63% 정상 · wiki endpoint 보강)
 
+## corpus-axis closure milestone
+
+- [x] j02 wiki_frac=0.3 FAIL 흡수 — register_hits=0 + multilingual 5/5 WEAK → corpus-axis ⊥ multilingual coherence 재확인 (4-point: wiki 0.0/0.3/0.5/1.0 · H_242 §A2)
+
 ## Phase D 설계 핵심
 
 | 원칙 | 값 |
