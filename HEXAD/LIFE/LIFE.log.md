@@ -293,3 +293,15 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: H_002 **faithful Φ★ GPU upgrade** (cost-bearing IIT4 정밀판 — C2 셀은 #503 proxy 로 이미 닫힘, 이건 정밀도 업그레이드 ⇒ **예산 승인 전 발사 금지**) · AXES R4+ ($0 광맥 소진 근접). **lane 종합 cycle#14~20**: 20 NEW H(H_258-277) + 4 C2/raster + SSOT full reconciliation, PR #468-510 全머지. /gap top-3 完全 follow-up + cascade closed-loop 정점(H_274→H_276).
 
 ---
+
+## Cycle #21 — faithful-Φ upgrade + AXES 마지막 seed (`/cycle 1,2`) — 2026-05-25
+
+- **focus**: `/cycle 1,2` (옵션1 AXES R4+ $0 probe + 옵션2 faithful Φ★). **옵션2 GPU 발사 안 함** — scope-check 결과 faithful Φ★ 엔진 미구현(L4) + GPU 과대추정(large-N intractable=GPU도 못 풂, small-N exact=$0) → $0 small-N exact 로 재구성. [[feedback-scope-check-before-cost-fire]] 두 번째 비용-차단.
+- **change**: H_278/279 NEW 2건. README 90→92 disk=tabled. 둘 다 $0·GPU 0.
+- **verdict**: 1 SUPPORTED + 1 FALSIFIED
+  - [x] **H_278 faithful-phi-small-n — SUPPORTED 3/3** (PR #515): H_002 C2 proxy upgrade. exact MIP-EI Φ(n=8, scale당 128 bipartition 전수)로 6-scale 재측정 → faithful CV 2.15 ≈ 동일-substrate proxy CV 2.10, **H_002 C2 scale-variant verdict faithful 하에서도 HOLD** (artifact 아닌 진짜 negative → L-C2.1 "faithful 아님" caveat 한 칸 축소). **faithful Φ★ "GPU 필요" 가정 최종 기각** — small-N exact 는 mac-local $0, GPU 는 intractable large-N 전용. honest: not full IIT4 4.0 (cause-effect structure/TPM 없음).
+  - [x] **H_279 attention-salience-Φ — 🔴 FALSIFIED 1/4** (PR #514): AXES R3 phenomenology 마지막 미promote seed. attention-as-Φ-amplification FAL — attended(high-norm) salience-gap +0.40 但 phi_att<phi_unatt Δ_top4=−0.93. **salience(진폭) ⊥ Φ(다양성)** — H_265(학습 dampen)·H_275(cyclic<undir)·H_279 = 진폭/동기화 ≠ 통합 反상관 **cross-H 서명**. L2 cosine-Φ 의존(H_278 faithful 재검 가능).
+- **hexa-run 게이트 정정**: H_278 발견 — `$HOME/.` env-prefix 가 harness 에서 불안정(pool-route 0.6.9 heavy-refuse, 셸 $HOME 미확장). **literal `/Users/...` 값 prefix**(예 `LOCAL=/Users/ghost/.x hexa run ...`)가 local-bound exemption(line 436) 확실 발동. [[reference-life-cycle-hexa-run-gotchas]] 갱신.
+- **next**: AXES 사실상 depleted · large-N faithful Φ (intractable, GPU 무관) · full-IIT4 cause-effect structure (별도 대형 spec). **lane 종합 cycle#14~21**: 22 NEW H(H_258-279) + 4 C2/raster + SSOT full reconciliation, PR #468-515 全머지, README disk↔index 92=92. /gap top-3 完全 follow-up + cascade closed-loop 정점 + faithful-Φ proxy 확증. **$0 frontier 종결** — 잔여는 전부 intractable(GPU 무관) 또는 대형 spec.
+
+---
