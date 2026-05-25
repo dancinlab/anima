@@ -140,6 +140,21 @@ fn _v3_gelu(x: float) -> float {
     let inner = c * (x + 0.044715 * x * x * x)
     return 0.5 * x * (1.0 + _v3_tanh(inner))
 }
+// gelu'(x) for the tanh-approx (exact derivative of the tanh-approx form
+// above — analytic vjp for the M0 V3-extension backward).
+//   gelu(x) = 0.5·x·(1 + t),  t = tanh(inner),  inner = c·(x + a·x³)
+//   inner'  = c·(1 + 3a·x²)
+//   t'      = (1 − t²)·inner'
+//   gelu'   = 0.5·(1 + t) + 0.5·x·t'
+fn _v3_gelu_grad(x: float) -> float {
+    let c = 0.7978845608028654   // sqrt(2/pi)
+    let a = 0.044715
+    let inner = c * (x + a * x * x * x)
+    let t = _v3_tanh(inner)
+    let inner_p = c * (1.0 + 3.0 * a * x * x)
+    let t_p = (1.0 - t * t) * inner_p
+    return 0.5 * (1.0 + t) + 0.5 * x * t_p
+}
 
 // ─── PureFieldFFN forward (Engine A ⇄ Engine G repulsion) ──────────────
 // output = engine_a(x) − engine_g(x) ;  tension = mean(output²) per token.
@@ -231,6 +246,167 @@ pub fn v3_purefield_fwd(x: int, M: int, pf_off: int,
     let _ = farr_free(hid)
 }
 
+// ─── PureFieldFFN backward (M0 — closed analytic vjp) ───────────────────
+// Reverse of v3_purefield_fwd. Composes the standard Linear→GELU→Linear
+// reverse-mode twice (engine_a + engine_g) plus the tension scalar's
+// d(out) contribution. NO new flame API — pure leaf arithmetic mirroring
+// nn_linear_bwd's closed vjp, applied per-token (the forward is per-token).
+//
+//   forward (per engine, per token i):
+//     h1[k]  = Σ_j W1[k·d+j]·x[j] + b1[k]
+//     hid[k] = gelu(h1[k])
+//     o[c]   = Σ_k W2[c·di+k]·hid[k] + b2[c]
+//   out[c]   = o_a[c] − o_g[c] ; tension = (1/d)·Σ_c out[c]²
+//
+//   upstream:  d_out[c] (residual) ;  d_tension (scalar, per token)
+//   combined:  g_out[c] = d_out[c] + d_tension·(2/d)·out[c]
+//     engine_a sees  +g_out[c] ; engine_g sees  −g_out[c]
+//   d_W2[c·di+k] += g_o[c]·hid[k] ;  d_b2[c] += g_o[c]
+//   d_hid[k]      = Σ_c W2[c·di+k]·g_o[c] ;  d_h1[k] = d_hid[k]·gelu'(h1[k])
+//   d_W1[k·d+j]  += d_h1[k]·x[j] ;  d_b1[k] += d_h1[k]
+//   d_x[j]       += Σ_k W1[k·d+j]·d_h1[k]
+//
+// Inputs:
+//   x        [T·d]      forward input (RMSNormed x — same as fed to fwd)
+//   out      [T·d]      forward output (a − g) — needed for tension d_out
+//   d_out    [T·d]      upstream grad on pf_out (residual stream)
+//   d_tension[T]        upstream grad on per-token tension scalar
+// Outputs (caller-allocated, ACCUMULATED into):
+//   dMg      packed grad buffer; pf_off = block's pf slot (same layout as M)
+//   dx_out   [T·d]      grad w.r.t. x (ACCUMULATED — caller pre-zeros/holds)
+pub fn v3_purefield_bwd(x: int, out: int, d_out: int, d_tension: int,
+                        M: int, dMg: int, pf_off: int,
+                        dx_out: int, T: int, d: int) {
+    let di = 4 * d
+    let oaW1 = pf_off + v3_pf_off_a_W1(d)
+    let oab1 = pf_off + v3_pf_off_a_b1(d)
+    let oaW2 = pf_off + v3_pf_off_a_W2(d)
+    let oab2 = pf_off + v3_pf_off_a_b2(d)
+    let ogW1 = pf_off + v3_pf_off_g_W1(d)
+    let ogb1 = pf_off + v3_pf_off_g_b1(d)
+    let ogW2 = pf_off + v3_pf_off_g_W2(d)
+    let ogb2 = pf_off + v3_pf_off_g_b2(d)
+
+    let h1 = farr_zeros(di)       // pre-activation
+    let hid = farr_zeros(di)      // post-GELU
+    let d_h1 = farr_zeros(di)
+    let g_o = farr_zeros(d)       // combined d_out (residual + tension)
+
+    let mut i = 0
+    while i < T {
+        // combined output grad: g_o[c] = d_out[c] + d_tension[i]·(2/d)·out[c]
+        let dt_i = farr_get(d_tension, i)
+        let mut c0 = 0
+        while c0 < d {
+            let go = farr_get(d_out, i * d + c0)
+                   + dt_i * (2.0 / to_float(d)) * farr_get(out, i * d + c0)
+            let _ = farr_set(g_o, c0, go)
+            c0 = c0 + 1
+        }
+
+        // ── engine_a reverse (sees +g_o) ──
+        // recompute h1/hid (forward not cached — recompute is cheap, exact)
+        let mut k = 0
+        while k < di {
+            let mut acc = farr_get(M, oab1 + k)
+            let mut j = 0
+            while j < d {
+                acc = acc + farr_get(M, oaW1 + k * d + j) * farr_get(x, i * d + j)
+                j = j + 1
+            }
+            let _ = farr_set(h1, k, acc)
+            let _ = farr_set(hid, k, _v3_gelu(acc))
+            k = k + 1
+        }
+        // d_W2_a / d_b2_a, then d_hid (engine sees sign +1)
+        let mut kk = 0
+        while kk < di {
+            let _ = farr_set(d_h1, kk, 0.0)
+            kk = kk + 1
+        }
+        let mut cc = 0
+        while cc < d {
+            let go_c = farr_get(g_o, cc)            // engine_a sign = +1
+            let _ = farr_set(dMg, oab2 + cc, farr_get(dMg, oab2 + cc) + go_c)
+            let mut k2 = 0
+            while k2 < di {
+                // d_W2[c·di+k] += go·hid[k]
+                let cur = farr_get(dMg, oaW2 + cc * di + k2)
+                let _ = farr_set(dMg, oaW2 + cc * di + k2, cur + go_c * farr_get(hid, k2))
+                // accumulate d_hid[k] = Σ_c W2[c·di+k]·go_c
+                let dh = farr_get(d_h1, k2) + farr_get(M, oaW2 + cc * di + k2) * go_c
+                let _ = farr_set(d_h1, k2, dh)
+                k2 = k2 + 1
+            }
+            cc = cc + 1
+        }
+        // d_h1[k] = d_hid[k]·gelu'(h1[k]) ; then d_W1/d_b1/d_x
+        let mut k3 = 0
+        while k3 < di {
+            let dh1 = farr_get(d_h1, k3) * _v3_gelu_grad(farr_get(h1, k3))
+            let _ = farr_set(dMg, oab1 + k3, farr_get(dMg, oab1 + k3) + dh1)
+            let mut j3 = 0
+            while j3 < d {
+                let cur = farr_get(dMg, oaW1 + k3 * d + j3)
+                let _ = farr_set(dMg, oaW1 + k3 * d + j3, cur + dh1 * farr_get(x, i * d + j3))
+                let curx = farr_get(dx_out, i * d + j3)
+                let _ = farr_set(dx_out, i * d + j3, curx + farr_get(M, oaW1 + k3 * d + j3) * dh1)
+                j3 = j3 + 1
+            }
+            k3 = k3 + 1
+        }
+
+        // ── engine_g reverse (sees −g_o) ──
+        let mut kg = 0
+        while kg < di {
+            let mut accg = farr_get(M, ogb1 + kg)
+            let mut jg = 0
+            while jg < d {
+                accg = accg + farr_get(M, ogW1 + kg * d + jg) * farr_get(x, i * d + jg)
+                jg = jg + 1
+            }
+            let _ = farr_set(h1, kg, accg)
+            let _ = farr_set(hid, kg, _v3_gelu(accg))
+            let _ = farr_set(d_h1, kg, 0.0)
+            kg = kg + 1
+        }
+        let mut cg = 0
+        while cg < d {
+            let go_cg = 0.0 - farr_get(g_o, cg)     // engine_g sign = −1
+            let _ = farr_set(dMg, ogb2 + cg, farr_get(dMg, ogb2 + cg) + go_cg)
+            let mut k2g = 0
+            while k2g < di {
+                let cur = farr_get(dMg, ogW2 + cg * di + k2g)
+                let _ = farr_set(dMg, ogW2 + cg * di + k2g, cur + go_cg * farr_get(hid, k2g))
+                let dh = farr_get(d_h1, k2g) + farr_get(M, ogW2 + cg * di + k2g) * go_cg
+                let _ = farr_set(d_h1, k2g, dh)
+                k2g = k2g + 1
+            }
+            cg = cg + 1
+        }
+        let mut k3g = 0
+        while k3g < di {
+            let dh1g = farr_get(d_h1, k3g) * _v3_gelu_grad(farr_get(h1, k3g))
+            let _ = farr_set(dMg, ogb1 + k3g, farr_get(dMg, ogb1 + k3g) + dh1g)
+            let mut j3g = 0
+            while j3g < d {
+                let cur = farr_get(dMg, ogW1 + k3g * d + j3g)
+                let _ = farr_set(dMg, ogW1 + k3g * d + j3g, cur + dh1g * farr_get(x, i * d + j3g))
+                let curx = farr_get(dx_out, i * d + j3g)
+                let _ = farr_set(dx_out, i * d + j3g, curx + farr_get(M, ogW1 + k3g * d + j3g) * dh1g)
+                j3g = j3g + 1
+            }
+            k3g = k3g + 1
+        }
+
+        i = i + 1
+    }
+    let _ = farr_free(h1)
+    let _ = farr_free(hid)
+    let _ = farr_free(d_h1)
+    let _ = farr_free(g_o)
+}
+
 // ─── tension_proj forward ──────────────────────────────────────────────
 // consciousness_signal[i·d + c] = tension[i] · tension_proj[c]
 // (torch: nn.Linear(1, d, bias=False) applied to tension.unsqueeze(-1).)
@@ -245,6 +421,38 @@ pub fn v3_tension_proj_fwd(tension: int, M: int, tp_off: int,
                              t_i * farr_get(M, tp_off + c))
             c = c + 1
         }
+        i = i + 1
+    }
+}
+
+// ─── tension_proj backward (M0 — closed analytic vjp) ───────────────────
+// Reverse of v3_tension_proj_fwd. signal[i·d+c] = tension[i]·tp[c].
+//   d_tp[c]      += Σ_i tension[i]·d_signal[i·d+c]
+//   d_tension[i] += Σ_c tp[c]·d_signal[i·d+c]
+// Inputs:
+//   tension  [T]        forward input
+//   d_signal [T·d]      upstream grad on consciousness_signal
+// Outputs (ACCUMULATED):
+//   dMg      packed grad buffer ; tp_off = tension_proj slot
+//   d_tension_out [T]   grad w.r.t. tension scalar (ACCUMULATED)
+pub fn v3_tension_proj_bwd(tension: int, M: int, tp_off: int,
+                           d_signal: int, dMg: int, d_tension_out: int,
+                           T: int, d: int) {
+    let mut i = 0
+    while i < T {
+        let t_i = farr_get(tension, i)
+        let mut acc_t = farr_get(d_tension_out, i)
+        let mut c = 0
+        while c < d {
+            let ds = farr_get(d_signal, i * d + c)
+            // d_tp[c] += tension[i]·d_signal
+            let cur = farr_get(dMg, tp_off + c)
+            let _ = farr_set(dMg, tp_off + c, cur + t_i * ds)
+            // d_tension[i] += tp[c]·d_signal
+            acc_t = acc_t + farr_get(M, tp_off + c) * ds
+            c = c + 1
+        }
+        let _ = farr_set(d_tension_out, i, acc_t)
         i = i + 1
     }
 }
@@ -293,6 +501,97 @@ pub fn v3_head_g_fwd(zT: int, M: int, hg_off: int,
     }
 }
 
+// ─── head_g backward (M0 — closed analytic vjp, untied linear) ──────────
+// Reverse of v3_head_g_fwd. logits_g[k] = Σ_j hg[k·d+j]·zT[j] (no bias).
+//   d_hg[k·d+j] += d_lg[k]·zT[j]            (outer product)
+//   d_zT[j]     += Σ_k hg[k·d+j]·d_lg[k]    (transpose-matvec)
+// Inputs:
+//   zT    [d]          forward input (final-RMSNorm last-token state)
+//   d_lg  [V]          upstream grad on logits_g
+// Outputs (ACCUMULATED):
+//   dMg   packed grad buffer ; hg_off = head_g slot
+//   d_zT_out [d]       grad w.r.t. zT (ACCUMULATED)
+pub fn v3_head_g_bwd(zT: int, M: int, hg_off: int,
+                     d_lg: int, dMg: int, d_zT_out: int, V: int, d: int) {
+    let mut k = 0
+    while k < V {
+        let dlk = farr_get(d_lg, k)
+        let mut j = 0
+        while j < d {
+            // d_hg[k·d+j] += d_lg[k]·zT[j]
+            let cur = farr_get(dMg, hg_off + k * d + j)
+            let _ = farr_set(dMg, hg_off + k * d + j, cur + dlk * farr_get(zT, j))
+            j = j + 1
+        }
+        k = k + 1
+    }
+    // d_zT[j] += Σ_k hg[k·d+j]·d_lg[k]
+    let mut j2 = 0
+    while j2 < d {
+        let mut acc = farr_get(d_zT_out, j2)
+        let mut k2 = 0
+        while k2 < V {
+            acc = acc + farr_get(M, hg_off + k2 * d + j2) * farr_get(d_lg, k2)
+            k2 = k2 + 1
+        }
+        let _ = farr_set(d_zT_out, j2, acc)
+        j2 = j2 + 1
+    }
+}
+
+// ─── head_g grad step (M0 wiring — dual-head CE → head_g backward) ───────
+// Given the V3 forward's final zT [d] (captured via v3_forward_logits zT_out)
+// and logits_g [V] + last-token target, compute the head_g grad and
+// accumulate it into the full-size grad buffer dMg (V3 layout). This makes
+// the Engine-G emission head TRAINABLE end-to-end (gradient flows into
+// head_g's own weight slot — the dual-head learning signal).
+//   dl_g[k] = softmax(logits_g)[k] − [k = target]    (CE last-position)
+//   v3_head_g_bwd(zT, M, hg_off, dl_g, dMg, d_zT_scratch, V, d)
+// Returns the head_g CE (for the L_total metric). d_zT_scratch [d] is a
+// caller buffer for the (unused-here) zT grad — it would feed the spine
+// backward in the full V3 graph (follow-up M1 wiring).
+pub fn v3_headg_grad(zT: int, M: int, logits_g: int, target_t: int,
+                     dMg: int, d_zT_scratch: int,
+                     d: int, nh: int, nkv: int, h: int, V: int,
+                     n_layer: int) -> float {
+    let hg_off = v3_off_head_g(d, nh, nkv, h, V, n_layer)
+    // stable softmax over logits_g
+    let mut mx = farr_get(logits_g, 0)
+    let mut i = 1
+    while i < V {
+        if farr_get(logits_g, i) > mx { mx = farr_get(logits_g, i) }
+        i = i + 1
+    }
+    let dl = farr_zeros(V)
+    let mut tot = 0.0
+    let mut i2 = 0
+    while i2 < V {
+        let e = dt_exp(farr_get(logits_g, i2) - mx)
+        let _ = farr_set(dl, i2, e)
+        tot = tot + e
+        i2 = i2 + 1
+    }
+    // CE = -ln(p[target]) ; dl[k] = p[k] - [k==target]
+    let p_tgt = farr_get(dl, target_t) / tot
+    let ce = 0.0 - dt_ln(p_tgt + 0.0000000001)
+    let mut k = 0
+    while k < V {
+        let p_k = farr_get(dl, k) / tot
+        let tgt = if k == target_t { 1.0 } else { 0.0 }
+        let _ = farr_set(dl, k, p_k - tgt)
+        k = k + 1
+    }
+    // zero d_zT_scratch (bwd accumulates into it)
+    let mut zz = 0
+    while zz < d {
+        let _ = farr_set(d_zT_scratch, zz, 0.0)
+        zz = zz + 1
+    }
+    v3_head_g_bwd(zT, M, hg_off, dl, dMg, d_zT_scratch, V, d)
+    let _ = farr_free(dl)
+    return ce
+}
+
 // ─── V3 full forward (composes flame V2 spine + V3 extensions) ──────────
 // This mirrors conscious_decoder_v3.py ConsciousDecoderV3.forward:
 //   x = embed(idx)  (+layer-0 noise if training)
@@ -331,9 +630,13 @@ pub fn v3_head_g_fwd(zT: int, M: int, hg_off: int,
 // — flame nn_attn_core_fwd is full-sequence causal only. generate() with
 // incremental decode (conscious_decoder_v3.py:505 generate) is a follow-up
 // flame extension. Training (full-sequence) does not need it.
+// M0 ADDITIVE: zT_out captures the final-RMSNorm last-token state [d] so
+// the train driver can run the head_g backward (v3_head_g_bwd) end-to-end
+// — pass a 0-length / unused buffer is NOT allowed; callers MUST allocate
+// a d-len zT_out farr. (The two driver callers updated accordingly.)
 pub fn v3_forward_logits(ids: int, M: int,
                          logits_a_out: int, logits_g_out: int,
-                         tension_per_layer_out: int,
+                         tension_per_layer_out: int, zT_out: int,
                          cos: int, sin: int,
                          T: int, d: int, nh: int, nkv: int, h: int,
                          V: int, n_layer: int, cdim: int,
@@ -556,6 +859,12 @@ pub fn v3_forward_logits(ids: int, M: int,
     let zxn = farr_zeros(d)
     let zinv = farr_zeros(1)
     nn_rmsnorm_fwd(zr, gF_buf, zT, zxn, zinv, d)
+    // M0: export zT (final-RMSNorm last-token state) for the head_g backward
+    let mut zc = 0
+    while zc < d {
+        let _ = farr_set(zT_out, zc, farr_get(zT, zc))
+        zc = zc + 1
+    }
     // head_a (tied to tok_emb) — reuse flame lm_head over M[oTemb..]
     let temb_buf = farr_zeros(V * d)
     let mut te = 0
