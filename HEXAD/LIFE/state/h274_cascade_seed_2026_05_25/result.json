@@ -1,0 +1,52 @@
+{
+  "hypothesis": "H_274",
+  "slug": "quorum-cascade-seed-dependence",
+  "domain": "LIFE",
+  "title": "quorum-cascade seed-dependence mechanism — which initial-tension statistic predicts coop cascade success? (H_262/H_272 depth)",
+  "date": "2026-05-25",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "method": "one process per seed (gauss-seed env), 10 seeds 0..9; replicate H_272 H_262 adaptive-base sweep, capture coop cascade pool initial tension distribution + cascade outcome; per-predictor success-vs-fail group separation",
+  "n_seeds": 10,
+  "n_success": 5,
+  "n_fail": 5,
+  "per_seed_success": [true, true, true, false, true, false, true, false, false, false],
+  "coop_maxq": [1.0, 1.0, 1.0, 0.25, 1.0, 0.1875, 1.0, 0.3125, 0.375, 0.25],
+  "predictors": {
+    "mean": { "succ_mean": 0.293575, "fail_mean": 0.270117, "delta": 0.023458, "pooled_std": 0.0153367, "d": 1.52953, "rank_sep": false, "higher_succ": true, "values": [0.294891, 0.294891, 0.273324, 0.27733, 0.298836, 0.232838, 0.305932, 0.28291, 0.280103, 0.277403] },
+    "var": { "succ_mean": 0.0062744, "fail_mean": 0.00492229, "delta": 0.00135211, "pooled_std": 0.00227112, "d": 0.595348, "rank_sep": false, "higher_succ": true, "values": [0.00394695, 0.00394695, 0.0101421, 0.00286704, 0.00522674, 0.00520587, 0.00810924, 0.00592248, 0.00250445, 0.0081116] },
+    "std": { "succ_mean": 0.077741, "fail_mean": 0.0685526, "delta": 0.00918838, "pooled_std": 0.0150592, "d": 0.610149, "rank_sep": false, "higher_succ": true, "values": [0.0628247, 0.0628247, 0.100708, 0.0535447, 0.0722962, 0.0721517, 0.0900513, 0.0769577, 0.0500445, 0.0900644] },
+    "max": { "succ_mean": 0.454494, "fail_mean": 0.405035, "delta": 0.0494586, "pooled_std": 0.0464557, "d": 1.06464, "rank_sep": false, "higher_succ": true, "values": [0.42864, 0.42864, 0.526331, 0.414707, 0.408976, 0.342022, 0.479882, 0.424079, 0.361552, 0.482816] },
+    "min": { "succ_mean": 0.148367, "fail_mean": 0.133745, "delta": 0.0146214, "pooled_std": 0.0341201, "d": 0.428527, "rank_sep": false, "higher_succ": true, "values": [0.162386, 0.162386, 0.107203, 0.172656, 0.168043, 0.096985, 0.141816, 0.135407, 0.187736, 0.075943] },
+    "range": { "succ_mean": 0.306128, "fail_mean": 0.27129, "delta": 0.034838, "pooled_std": 0.0713791, "d": 0.48807, "rank_sep": false, "higher_succ": true, "values": [0.266255, 0.266255, 0.419129, 0.24205, 0.240932, 0.245037, 0.338067, 0.288672, 0.173816, 0.406873] },
+    "topk_mass": { "succ_mean": 0.394842, "fail_mean": 0.355567, "delta": 0.0392746, "pooled_std": 0.0253685, "d": 1.54816, "rank_sep": false, "higher_succ": true, "values": [0.369533, 0.369533, 0.409856, 0.341017, 0.395523, 0.319161, 0.429763, 0.380766, 0.343896, 0.392995] },
+    "n_above": { "succ_mean": 5.0, "fail_mean": 3.2, "delta": 1.8, "pooled_std": 1.21655, "d": 1.47959, "rank_sep": false, "higher_succ": true, "values": [5.0, 5.0, 4.0, 2.0, 6.0, 1.0, 5.0, 5.0, 3.0, 5.0] }
+  },
+  "best_predictor": {
+    "name": "topk_mass",
+    "d": 1.54816,
+    "rank_sep": false,
+    "higher_succ": true,
+    "succ_mean": 0.394842,
+    "fail_mean": 0.355567,
+    "delta": 0.0392746
+  },
+  "criteria": {
+    "C1_separates":  false,
+    "C2_interpret":  false,
+    "C3_determinism": true
+  },
+  "falsifiers": {
+    "F1_SEPARATES":   { "metric": "best predictor |d|>=0.8 AND rank-sep", "verdict": "FAIL" },
+    "F2_INTERPRET":   { "metric": "best predictor upper-tail/spread, higher-in-success", "verdict": "FAIL" },
+    "F3_NONTRIVIAL":  { "metric": ">=1 success AND >=1 fail seed", "verdict": "PASS" },
+    "F4_GROUNDTRUTH": { "metric": "success coop_maxq==1.0 AND fail<0.5 (matches H_272)", "verdict": "PASS" },
+    "F5_DETERMINISM": { "metric": "same-seed cross-process byte-equal", "verdict": "PASS" }
+  },
+  "n_criteria_pass": 1,
+  "n_falsifier_pass": 3,
+  "verdict": "FALSIFIED",
+  "cross_link": {"H_262": "quorum-sensing (cascade origin)", "H_272": "seed-robust recalibration (5/10 cascade, under-drive residual diagnosis)", "H_269": "multiseed-robustness"}
+}
