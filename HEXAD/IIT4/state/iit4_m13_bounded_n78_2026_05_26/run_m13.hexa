@@ -1,0 +1,92 @@
+// HEXAD/IIT4/state/iit4_m13_bounded_n78_2026_05_26/run_m13.hexa
+//
+//   IIT4 M13 — bounded-mode big-Φ pushed to n=7 / n=8 (M12-deferred).
+//
+//   M12 reached n=6 (exact-impractical regime) with big_phi_bounded(cap=3) and
+//   honestly DEFERRED n=7/n=8 ("feasible but minutes+ → needs a background run").
+//   M13 IS that background run: push the faithful (causal, bounded-restriction)
+//   big-Φ of the LIFE cosmic-scale ECA rules to the **H_002 C2 n=8 scale** that
+//   exact IIT4 cannot reach — WITHOUT GPU ($0 mac-local; large-N exact is super-exp
+//   GPU-immune per DESIGN.md, the bounded restriction is the tractable path).
+//
+//   • regression — cap ≥ n reproduces exact (bounded is a faithful restriction)
+//   • n=7 bounded(cap=3) LIFE rules (rule110/30/54) seed 1010101
+//   • n=8 bounded(cap=3) rule110 seed 10101010  ← H_002 C2 scale, headline
+//   • determinism re-run
+//
+//   deterministic · hexa-only · $0 mac local · LLM none · NO GPU · BACKGROUND.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_bounded.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// inline ECA→TPM builder (mirror M12; iit4_bit/iit4_pow2 visible via iit4_bounded chain)
+fn m13_eca_tpm(rule: int, n: int) -> array {
+    let full = iit4_pow2(n)
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let mut i = 0
+        while i < n {
+            let l = iit4_bit(s, (i - 1 + n) % n)
+            let c = iit4_bit(s, i)
+            let r = iit4_bit(s, (i + 1) % n)
+            t = t.push(to_float(iit4_bit(rule, 4 * l + 2 * c + r)))
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return t
+}
+
+fn main() {
+    println("================================================================")
+    println("  IIT4 M13 — bounded big-Φ n=7/n=8 (M12-deferred · H_002 C2 scale)")
+    println("================================================================")
+
+    // ── regression: cap >= n == exact (faithful restriction anchor) ─────
+    let t110_4 = m13_eca_tpm(110, 4)
+    let exact4 = big_phi(t110_4, 4, 10)
+    let bnd4   = big_phi_bounded(t110_4, 4, 10, 4)
+    println("  regression n=4 rule110: exact=" + str(exact4[0]) + " bounded(cap4)=" + str(bnd4[0]))
+    check("regression cap>=n == exact (faithful restriction, 7.5475)", approx(exact4[0], bnd4[0]))
+
+    // ── n=7 bounded(cap=3) LIFE rules · seed 1010101 (=85) ──────────────
+    let n7  = 7
+    let st7 = 85
+    println("  bounded(cap=3) n=7 seed=1010101:")
+    let b110_7 = big_phi_bounded(m13_eca_tpm(110, n7), n7, st7, 3)
+    let b30_7  = big_phi_bounded(m13_eca_tpm(30,  n7), n7, st7, 3)
+    let b54_7  = big_phi_bounded(m13_eca_tpm(54,  n7), n7, st7, 3)
+    println("    rule110=" + str(b110_7[0]) + " (nd=" + str(b110_7[4]) + ")  rule30=" + str(b30_7[0]) + "  rule54=" + str(b54_7[0]))
+    check("n=7 rule110 bounded finite > 0", b110_7[0] > 0.000001)
+    check("n=7 bounded all finite >= 0", (b110_7[0]>=0.0)&&(b30_7[0]>=0.0)&&(b54_7[0]>=0.0))
+
+    // ── n=8 bounded(cap=3) rule110 · seed 10101010 (=170) — H_002 C2 scale
+    let n8  = 8
+    let st8 = 170
+    println("  bounded(cap=3) n=8 rule110 seed=10101010 (H_002 C2 scale):")
+    let b110_8 = big_phi_bounded(m13_eca_tpm(110, n8), n8, st8, 3)
+    println("    rule110 big-Φ=" + str(b110_8[0]) + " (nd=" + str(b110_8[4]) + ")")
+    check("n=8 rule110 bounded finite > 0 (H_002 C2 scale REACHED)", b110_8[0] > 0.000001)
+
+    // ── determinism re-run (n=8) ────────────────────────────────────────
+    let b110_8b = big_phi_bounded(m13_eca_tpm(110, n8), n8, st8, 3)
+    check("determinism: n=8 rule110 bounded re-run identical", approx(b110_8[0], b110_8b[0]))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  n=8 H_002 C2 scale reached via bounded restriction ($0, NO GPU)")
+    println("================================================================")
+    if FAIL > 0 { panic("IIT4 M13 bounded n=7/8 FAILED") }
+}
