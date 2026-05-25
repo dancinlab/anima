@@ -14,8 +14,9 @@ ag_tape fire 를 V=256→V=151643 변형 codegen 후 runpod A100 발사.
   - hxlcl_mkdir/longjmp/backtrace/getuid Apple-only → **PR #1198**(타 작업 "linux #elif parity") — 사용자 "main branch check" 힌트로 발견, runtime re-sync 로 흡수(수동 whack-a-mole 불요).
   - 재발 방지: **PR #1206** inbox 노트 (Linux CI 빌드 게이트 + farr32 codegen smoke). 근본원인 = "Mac-only 초록불"(Apple #if 분기만 컴파일, Linux #else 갭 안 빌드 + hexa check=parse-only).
 - [x] **fire #5: BUILD_LINK_RC=0 + GPU util 65% + V=151643 모델 A100 로드/연산** — "model size 151071744 doubles". 분석의 "real V=151643 = 80GB GPU 비현실"은 **틀렸음(=Linux 빌드 깨짐이었지 불가능 아님)**. hexa-native(p1~p8) real-BPE GPU 가 **구조적으로 작동** 실증. 단 FP64 host-loop softmax(클래스 151643) 가 느려 step-1 wall>600s(timeout rc=124). 5 fire 합 ~$2.5, orphan 0(전부 teardown).
-- [ ] **A) WALL_BUDGET=3000 완주 재발사** — V=151643 step 완주 → gn2 descent + step-wall verdict (진행중 fire #6).
-- [ ] **B) GPU softmax 커널** — V=151643 lm-head 의 host-loop softmax(CPU bound, matmul 은 이미 GPU 65%)를 GPU 커널로 → step 극적 단축. forge 최적화 RFC-scale.
+- [x] **A) WALL=3000(50분) 완주 재발사 — rc=124 TIMEOUT** (fire #6, orphan 0). "init epoch gn2: 2" 만 찍히고 step-1 미완. **정의적 결론**: forge GPU **matmul 은 빠름(util 65%)** 인데, gn2/loss over V=151643 가 병목 — d768 gn2(flame_d768_*.hexa:209-227)가 logits 78M 값을 **host 로 materialize(t_get) 후 max+sum-exp+(p−onehot)²+seed 를 전부 O(78M) host FP64 루프**. step-1 wall>3000s. 즉 GPU lm-head 의 행렬곱은 됐으나 loss 가 host-resident.
+- [~] **B) GPU-resident loss path = RFC-scale** — forge GPU 커널 목록(softmax_rows/rmsnorm/silu/matmul_t/add/mul/scale/outer)에 **GPU CE/loss/seed 커널 부재**. `farr_softmax_rows_gpu` 로 softmax 만 GPU 해도 host materialization + seed/(p−onehot)² O(V) 루프 잔존 → 미봉. 진짜 B = ① logits 를 farr(GPU-resident)로 유지(host t_get 제거) ② GPU softmax + GPU seed(p−onehot) + GPU reduction(gn2). GPU CE/seed-grad 커널 신규 작성 = RFC-scale forge 작업.
+- [ ] **V3 4축 ag_tape 포팅 (최종 더블바인드)** — B(GPU loss path) 위에 V3 4축 loss 를 GPU-resident 로 구성 → collapse 회피 AND coherence verdict.
 - [ ] **V3 4축 더블바인드 (최종 (C))** — conscious_decoder_v3 4축을 forge ag_tape GPU 경로로 포팅(현재 d768 벤치마크만 V=151643 검증) → collapse 회피 AND coherence verdict.
 
 ## 2026-05-26 — M3 STEP-1 재정의: substrate 벽 아님, "잘못된 경로" — forge GPU lm-head 는 V-generic
