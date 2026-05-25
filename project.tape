@@ -25,8 +25,11 @@
   dont = "publish a FAIL / WIP ckpt as PUBLIC"
 
 @D a_fire_autonomous := "cost-bearing fire — dispatch autonomously, in parallel, now" :: governance [required active]
-  do   = "GPU / runpod work — state estimated cost in one line, then dispatch autonomously / parallel / bg · provider = runpod · no user gate"
-  dont = "ask 'may I use GPU?' · defer a fire to shrink scope or avoid cost · stop work because it is cost-bearing"
+  do   = "GPU / runpod work — state estimated cost in one line, then dispatch autonomously · parallel · bg"
+  do   = "NO user gate — fire needs no user consult / approval / confirm · provider = runpod"
+  do   = "no cost-cap directive by default — a cost ceiling / budget gate must never block a fire"
+  dont = "ask 'may I use GPU?' · defer a fire to shrink scope or avoid cost · stop because cost-bearing"
+  dont = "introduce a $ cap / budget gate / step-limit that requires user sign-off before firing"
 
 @D a_wall_first := "wall time first — take the faster parallel path regardless of cost" :: governance [required active]
   do   = "adopt more H100s in parallel / a bigger GPU / extra pods whenever it shortens wall time · reject a serial chain that is honestly slower"
