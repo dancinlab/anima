@@ -20,12 +20,12 @@
 # init cross-entropy floor of an untrained CLM = ln(vocab_size).
 # Positive formal result — H_247 §C4.
 
-@C chat_init_ce_floor := "init_CE floor = ln(151936) = 11.931… (untrained CLM lower bound)" :: formula [slug=chat-init-ce-floor group=CHAT]
+@C chat_init_ce_floor := "init_CE floor = ln(151936) = 11.931214658529285 (untrained CLM lower bound)" :: formula [slug=chat-init-ce-floor group=CHAT]
   method = "expr"
-  cmd    = "hexa verify --expr ln 151936 11.931"
+  cmd    = "hexa verify --expr ln 151936 11.931214658529285"
   raw    = ".verdicts/chat-init-ce-floor/chat_init_ce_floor.txt"
   src    = "HEXAD/LIFE/H_247_init_ce_catastrophic_floor.md §C4"
-  status = "verdict PENDING — `--expr` is integer-compare (rejects float 11.931); needs a 🟢 numerical-tolerance path. gated OUT of /paper until persisted."
+  status = "🟢 SUPPORTED-NUMERICAL — ln calculator landed (hexa-lang #1128), verdict persisted, atlas-absorbed (g69, node @F verified-ln-num · hexa-lang #1131). /paper-eligible."
 
 # ───────────────────────────────────────────────────────────────────────
 # PURE — pure-corpus-axis-closed-negative (slug · group=PURE · paper-track)
