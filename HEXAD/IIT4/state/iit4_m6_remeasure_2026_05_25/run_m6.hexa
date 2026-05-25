@@ -1,0 +1,88 @@
+// HEXAD/IIT4/state/iit4_m6_remeasure_2026_05_25/run_m6.hexa
+//
+//   IIT4 M6 — LIFE substrate faithful re-measurement (proxy → causal Φ).
+//
+//   The LIFE lane (H_002 C2 / H_278) measured elementary CA substrates with the
+//   PROXY phi_spatial (RFC 036, CORRELATIONAL spatial MI of evolved snapshots),
+//   honest limit L-C2.1: "이것은 faithful Φ★ IIT4 가 아니다". Here we re-measure
+//   the SAME ECA rules with the faithful CAUSAL IIT 4.0 engine (M1-M4) via the
+//   ECA→TPM bridge — the first faithful causal Φ for these substrates.
+//
+//   Verifiable controls (hand-derivable):
+//     • rule 0   (all → 0, constant)         ⇒ big-Φ = 0 (no causal power)
+//     • rule 204 (identity, next = centre)   ⇒ big-Φ = 0 (independent self-cells, reducible)
+//     • coupled rules (90/110/30/54, neighbour-dependent) ⇒ big-Φ > 0 for ≥1 (integrated)
+//   Headline = the faithful big-Φ TABLE for the LIFE cosmic-scale rules.
+//
+//   deterministic · hexa-only · $0 mac local · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_eca.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn main() {
+    let n = 4
+    let st = 10                                          // sys_state 1010 (alternating)
+    println("================================================================")
+    println("  IIT4 M6 — LIFE ECA substrate faithful re-measurement (n=" + str(n) + " ring, state=1010)")
+    println("  proxy phi_spatial = CORRELATIONAL · IIT4 big-Φ = CAUSAL")
+    println("================================================================")
+
+    // ── faithful causal big-Φ per ECA rule ──────────────────────────────
+    let b0   = big_phi(eca_tpm(0,   n), n, st)
+    let b204 = big_phi(eca_tpm(204, n), n, st)
+    let b90  = big_phi(eca_tpm(90,  n), n, st)
+    let b110 = big_phi(eca_tpm(110, n), n, st)
+    let b30  = big_phi(eca_tpm(30,  n), n, st)
+    let b54  = big_phi(eca_tpm(54,  n), n, st)
+
+    println("  rule   0 (const)   : big-Φ=" + str(b0[0])   + " total=" + str(b0[1])   + " nd=" + str(b0[4]))
+    println("  rule 204 (identity): big-Φ=" + str(b204[0]) + " total=" + str(b204[1]) + " nd=" + str(b204[4]))
+    println("  rule  90 (XOR l,r) : big-Φ=" + str(b90[0])  + " total=" + str(b90[1])  + " nd=" + str(b90[4]))
+    println("  rule 110 (LIFE)    : big-Φ=" + str(b110[0]) + " total=" + str(b110[1]) + " nd=" + str(b110[4]))
+    println("  rule  30 (LIFE)    : big-Φ=" + str(b30[0])  + " total=" + str(b30[1])  + " nd=" + str(b30[4]))
+    println("  rule  54 (LIFE)    : big-Φ=" + str(b54[0])  + " total=" + str(b54[1])  + " nd=" + str(b54[4]))
+
+    // ── verifiable controls ─────────────────────────────────────────────
+    check("rule 0 (constant) big-Φ = 0", approx(b0[0], 0.0))
+    check("rule 204 (identity) big-Φ = 0 (reducible self-cells)", approx(b204[0], 0.0))
+
+    // at least one neighbour-coupled rule integrates (big-Φ > 0)
+    let mut max_coupled = b90[0]
+    if b110[0] > max_coupled { max_coupled = b110[0] }
+    if b30[0]  > max_coupled { max_coupled = b30[0] }
+    if b54[0]  > max_coupled { max_coupled = b54[0] }
+    check("coupled rule big-Φ > 0 (integration emerges)", max_coupled > 0.000001)
+
+    // bounds: 0 <= big-Φ <= total for every rule
+    check("rule 110 bound 0 <= big-Φ <= total", (b110[0] >= 0.0 - 0.000001) && (b110[0] <= b110[1] + 0.000001))
+
+    // ── ECA→TPM bridge sanity: rule 204 = identity (next_i == cell_i) ───
+    let t204 = eca_tpm(204, n)
+    // state 10 (1010): cell0=0,cell1=1,cell2=0,cell3=1 → next == same
+    check("eca rule204 next(cell0)=0 @1010", approx(t204[10 * n + 0], 0.0))
+    check("eca rule204 next(cell1)=1 @1010", approx(t204[10 * n + 1], 1.0))
+
+    // ── determinism (re-run identical) ──────────────────────────────────
+    let b110b = big_phi(eca_tpm(110, n), n, st)
+    check("determinism: rule110 big-Φ re-run identical", approx(b110[0], b110b[0]))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  FINDING: faithful CAUSAL big-Φ measured for LIFE ECA substrates")
+    println("           (L-C2.1 proxy caveat closed — see FAITHFUL_REMEASURE.md)")
+    println("================================================================")
+    if FAIL > 0 { panic("IIT4 M6 re-measurement FAILED") }
+}
