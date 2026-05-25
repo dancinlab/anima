@@ -129,3 +129,22 @@
 - 그러나 **multilingual coherence 는 여전히 5/5 WEAK** — corpus dilution 0.3 섞어도 coherence 회복 안 됨
 - register 차단 ⊥ multilingual coherence **직교** 재확인 — 기존 corpus-axis closed-negative (E2 wiki=0.5 · E3 wiki=1.0 · v3 wiki=0) 에 **wiki_frac=0.3** point 추가 → "corpus-dilution 축 단독으로는 multilingual coherence closure 불가" 4-point 으로 확정
 - H_242 §A2 finding 표에 j02 row 추가 (`HEXAD/LIFE/H_242_register_collapse_wiki_frac_sigmoid.md`)
+
+---
+
+## 2026-05-26 — A-curriculum fire(2차) + V3 hexa 포팅 + 회수 milestone
+
+### done
+- [x] **F-CURRICULA-1 1차 fire LOST** — stale Mac dispatch (launcher script-path 누락 argv) → 158분 idle burn $3.92 · OOM fix(#535) + dispatcher #423 확인 후 재발사
+- [x] **F-CURRICULA-1 2차 fire FIRED (pool→ubu-2)** — pod wfeksdl8e8f327 A100 SXM · ubu-2 origin/main 최신화 + dry-run argv 확인(train_p21h_v3.py 포함) + 5분 early-life-check 3/3 HEALTHY(ps+log+gpu) · idle burn 구조적 차단
+- [x] **V3 학습 스택 hexa-lang flame 포팅** — conscious_decoder_v3·mitosis_lib·train_p21h_v3 (#557) + glue kosmos_io·build_multilingual_corpus (#555, byte-identical) · additive(.py 유지) · smoke PASS
+- [x] **flame coverage gap → hexa-lang inbox** (#1122) — full-position CE · V3-extension backward(ag_tape) · Qwen BPE · from_qwen warm-start · RoPE base 등 P1-3
+- [x] **commons g71 + g57** (sidecar #153) — pool 최신화 우선 + 5분 early-life-check 거버넌스화
+
+### open (회수 obligation — 다음 세션 이어받기)
+- [ ] **F-CURRICULA-1 회수** — fire 완주 ~02:04 KST. ubu-2 dispatcher(PID 412255)가 result.json 자동 pull(SAVE_POD=1 안전). verdict+HF+teardown 은 로컬 harvest 라운드 필요. 상세 → `state/pure_phase_d_curriculum_v2_2026_05_24/FIRE_TRACKING.md`
+- [ ] verdict 흡수 — PASS=corpus-axis 돌파(신규 논문) / FAIL=closed-negative 5-point
+
+### saga 교훈 (메모리 영구화)
+- `feedback_agent_bash_pool_route_runpod_orphan` — subagent Bash 기본 Linux 라우팅 → runpod dispatch orphan
+- `feedback_pod_running_does_not_equal_train_alive` — pod RUNNING+watchdog ≠ train alive, SSH ps/log/gpu 검증 필수

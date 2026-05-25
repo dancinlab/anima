@@ -56,3 +56,6 @@ substrate-native 자연발화(stimulus-response 아닌 내부 tension 기반 emi
 ## Milestones
 
 - [x] PURE closed-negative verdict 영구화 — closure/multilingual eval 실행 → `.verdicts/pure-corpus-axis-closed-negative/` + CLAIMS.tape status terminal
+- [x] V3 학습 스택 hexa-lang flame 포팅 — conscious_decoder_v3·mitosis_lib·train_p21h_v3 (#557) + glue kosmos_io·corpus (#555) · flame gap → hexa-lang inbox (#1122)
+- [ ] **F-CURRICULA-1 fire 회수** — pod `wfeksdl8e8f327` (A100 SXM, ubu-2 dispatcher PID 412255, ssh 154.54.102.24:15857, 발사 23:34 KST → 완주 ETA ~02:04). ubu-2 경유 SSH 로 result.json 확인 → ckpt+result+log+anchors 회수 (`state/p21h_v3_curricula_recover_2026_05_25/`) byte-exact → closure_auto_judge verdict → HF tier-gate (PASS=PUBLIC `dancinlab/anima-curricula-v1` / FAIL=PRIVATE) → pod teardown → CLAIMS.tape 갱신. ⚠ runpod 작업 `dangerouslyDisableSandbox=true` 필수. SAVE_POD=1 으로 안전, watchdog 90min 자동차단.
+- [ ] A-curriculum verdict 흡수 — PASS=corpus-axis 돌파(신규 논문감) / FAIL=closed-negative 5-point 강화 (`pure-corpus-axis-closed-negative` 갱신)
