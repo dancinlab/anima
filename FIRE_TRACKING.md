@@ -41,3 +41,42 @@ the recover-and-monitor effort after the dispatcher died.
   `result.json`. Re-polling because auto-pull is dead.
 
 <!-- monitor appends below -->
+
+### 2026-05-25 16:43 UTC — anchor step1500 (ja_ja); 17:43 best ckpt step2375 CE=2.3786
+Steady progress 1375→3000 over the polling window. Best CE 2.3786 @ step2375.
+Anchors emitted at each 500-step ckpt across ru/ja/ko languages.
+
+### 2026-05-25 18:31 UTC — last GOOD poll: step 3000/5000 (60%), ko_ko anchor written
+Last confirmed live state.
+
+### 2026-05-25 18:43 UTC — POD DEATH detected (Connection refused)
+- SSH port 15857 → **Connection refused** on 18:43, 18:55, and 3 manual
+  retries (15s apart). Host `154.54.102.24` PINGS fine (0% loss, 184ms)
+  but **port 15857 REFUSED** = RunPod container stopped/terminated (the
+  physical proxy host stays up; the per-pod forwarded port dies when the
+  container dies).
+- `runpodctl pod list -a` returns `[]` under the WORKING key
+  (`rpa_43SES1…`, 50-char, secret-store) → pod `wfeksdl8e8f327`
+  **not in this account's pod list** (running OR exited).
+- Key audit: Mac `~/.runpod/config.toml` + ubu-2 `~/.runpod/config.toml`
+  both hold a STALE 52-char `rpa_43SES…` key → **401 unauthorized**.
+  Only the Mac secret-store key (50-char `rpa_43SES1…`) authenticates,
+  and it sees ZERO pods. `hexa cloud` has no list verb (transport only).
+- **Verdict: F-CURRICULA-1 (wiki_frac=1.0 curriculum-mix) re-fire LOST**
+  at step 3000/5000. Pod gone, artifacts unrecoverable (on-pod volume,
+  invisible to the working key). No mid-ckpt pull possible.
+
+### Why this is NOT a total mission loss
+- The dead pod's variant was the **wiki_frac=1.0** extreme of the corpus
+  sweep. That endpoint is ALREADY a published closed-negative point
+  (`dancinlab/anima-v3-e3` PUBLIC, wiki=1.0) and is covered by the
+  `pure_wiki_sweep` CLAIMS.tape claim. The lost run would have, at most,
+  reinforced the existing closed-negative (curriculum ORDERING of the
+  same pure-wiki corpus); it was very unlikely to break the ceiling.
+- A SEPARATE, fully-completed **wiki_frac=0.3** P21H V3 run already exists
+  locally at `state/p21h_v3_recover_2026_05_25/out_main/` (step 5000,
+  byte-exact ckpts, recovered earlier from a SIGHUP-orphaned pod). It
+  was NOT yet HF-uploaded. This recovery uploaded it tier-gated PRIVATE
+  (closure FAIL) and judged it — it adds the wiki=0.3 sweep point.
+
+### Monitor stopped (task b38si25lg) — pod dead, no further poll value.

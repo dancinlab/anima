@@ -45,6 +45,18 @@
   raw    = ".verdicts/pure-corpus-axis-closed-negative/register.txt"
   src    = "HEXAD/LIFE/H_242 §A2 (H242.1 FULL-COLLAPSE falsify)"
 
+# wiki_frac=0.3 intermediate point (P21H V3, recovered SIGHUP-orphan run).
+# closure_auto_judge 1/4 PASS · FAIL: register_collapse PASS (0 hits) yet all
+# 5 langs WEAK. Adds the 0.3 sweep point → closed-negative now holds at
+# {0.0, 0.3, 0.5, 1.0}. The F-CURRICULA-1 (wiki=1.0 curriculum-mix) re-fire
+# was LOST at step 3000/5000 (pod wfeksdl8e8f327 self-terminated); its
+# endpoint is already covered by pure_wiki_sweep / anima-v3-e3.
+@C pure_wikifrac03_closed_negative := "wiki_frac=0.3 — register_collapse PASS (0 hits) yet all 5 langs WEAK · closure FAIL 1/4" :: run [slug=pure-corpus-axis-closed-negative group=PURE]
+  method = "run"
+  cmd    = "hexa run HEXAD/PURE/eval/closure_auto_judge.hexa state/p21h_v3_recover_2026_05_25/out_main/result.json"
+  raw    = "state/p21h_v3_curricula_recover_2026_05_25/closure_verdict_wiki03_verbatim.txt"
+  src    = "state/p21h_v3_recover_2026_05_25/ · HF dancinlab/anima-p21h-v3-wikifrac03-recovered-2026-05-25 (PRIVATE)"
+
 # ───────────────────────────────────────────────────────────────────────
 # LIFE — open slot (group=LIFE · paper-track)
 # Candidate canonical claim — NOT yet verdict-persisted. List here so the
