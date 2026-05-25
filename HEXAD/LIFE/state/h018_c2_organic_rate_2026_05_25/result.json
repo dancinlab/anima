@@ -1,0 +1,38 @@
+{
+  "hypothesis": "H_018",
+  "criterion": "C2",
+  "slug": "h018-c2-organic-rate",
+  "title": "organic merge/split rate under default dynamics",
+  "domain": "LIFE",
+  "date": "2026-05-25",
+  "host": "mac-local",
+  "deterministic": true,
+  "seed": 42,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "raw_protocol": "raw#15 additive (Cycle#1 frozen, C2 appended)",
+  "d_model": 8,
+  "init_cells": 2,
+  "forced_trigger": "OFF (selffeed idle loop, no external drive)",
+  "closure_k_map": "split_patience=round(1+7k), merge_patience=round(5+35k), merge_threshold=0.001+0.02*(1-k)",
+  "sweep": {
+    "loose_k0.2_steps50": { "k": 0.2, "steps": 50, "split_patience": 2, "merge_patience": 12, "merge_threshold": 0.017, "organic_splits": 4, "organic_merges": 4, "total_events": 8, "rate": 0.16, "first_split": 1, "first_merge": 14, "final_cells": 2, "phi": 0.0587754, "traj": [2, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 4, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] },
+    "tight_k0.8_steps50": { "k": 0.8, "steps": 50, "split_patience": 7, "merge_patience": 33, "merge_threshold": 0.005, "organic_splits": 0, "organic_merges": 0, "total_events": 0, "rate": 0.0, "first_split": -1, "first_merge": -1, "final_cells": 2, "phi": 0.0458304, "traj": [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] },
+    "loose_k0.2_steps100": { "k": 0.2, "steps": 100, "split_patience": 2, "merge_patience": 12, "merge_threshold": 0.017, "organic_splits": 4, "organic_merges": 4, "total_events": 8, "rate": 0.08, "first_split": 1, "first_merge": 13, "final_cells": 2, "phi": 1.01029, "traj": [2, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] },
+    "tight_k0.8_steps100": { "k": 0.8, "steps": 100, "split_patience": 7, "merge_patience": 33, "merge_threshold": 0.005, "organic_splits": 0, "organic_merges": 0, "total_events": 0, "rate": 0.0, "first_split": -1, "first_merge": -1, "final_cells": 2, "phi": 0.800124, "traj": [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] }
+  },
+  "falsifiers": {
+    "F_C2_1_SPONTANEOUS":  { "metric": "any regime total organic events > 0", "verdict": "PASS" },
+    "F_C2_2_REGIME_DEP":   { "metric": "loose.rate != tight.rate at matched horizon", "dep50": true, "dep100": true, "verdict": "PASS" },
+    "F_C2_3_BOTH_CHANNELS":{ "metric": "organic split>0 AND merge>0", "total_splits": 8, "total_merges": 8, "verdict": "PASS" },
+    "F_C2_4_BOUNDS":       { "metric": "all final_cells in [2,128]", "verdict": "PASS" },
+    "F_C2_5_RATE_SIGN":    { "metric": "all rates finite & >= 0", "verdict": "PASS" }
+  },
+  "c2_sub_criteria": {
+    "C2_1_spontaneous": "MET",
+    "C2_2_regime_dependent": "MET",
+    "C2_3_determinism": "checked out-of-band via sha256(result.json) cross-process"
+  },
+  "n_pass": 5,
+  "verdict": "PASS"
+}
