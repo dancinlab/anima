@@ -194,7 +194,6 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 | `anesthesia-loss-of-Φ` | anesthesia → Φ → 0 (Tononi prediction) | Φ preserved | ⬜ |
 | `vegetative-residual-Φ` | PVS residual Φ pattern vs full-coma | identical | ⬜ |
 | `locked-in-preserved-Φ` | locked-in Φ ≈ healthy (intact substrate, motor-decoupled) | decoupling kills Φ | ⬜ |
-| `split-brain-dual-Φ` | callosotomy → 2 distinct Φ-subsystems | single integrated | 🟢 (toy 2-pool) |
 | `hemispherectomy-half-Φ` | half-brain Φ vs full | identical | ⬜ |
 | `conjoined-twins-shared-Φ` | conjoined neural-share Φ vs separate | separate identical | ⬜ |
 
