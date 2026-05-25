@@ -1,0 +1,117 @@
+# source: state/p21h_v3_recover_2026_05_25/out_main/result.json + state/pure_phase_d_v3_result_2026_05_24/result.json
+#         (multilingual_probe.hexa score-run N/A — result.json carries computed per_lang_verdicts, not raw rows_by_lang;
+#          score mode requires rows_by_lang [absent] → direct field extract via jq instead. NO fabrication.)
+# claim:  register_hits=0 yet multilingual coherence stays WEAK — corpus-axis ⊥ multilingual closure
+# verdict: 🔴 CLOSED-negative — register collapse (hits=0) does NOT cause coherence to emerge; axes orthogonal
+# extract date: 2026-05-25
+
+================================================================================
+REGISTER ORTHOGONALITY — register_hits=0 at BOTH wiki_frac endpoints, yet WEAK coherence
+================================================================================
+
+--- wiki_frac=0.3 (j02 · state/p21h_v3_recover_2026_05_25/out_main/result.json) ---
+$ jq "{verdict, n_anima_register_hits_total, register_regress, n_strong, n_partial, n_weak, per_lang_verdicts: [.per_lang_verdicts[] | {lang, verdict, n_memorize, n_lang_coherent, total}], wiki_frac_actual: .mix_info.wiki_frac_actual}"
+{
+  "verdict": "FAIL",
+  "n_anima_register_hits_total": 0,
+  "register_regress": true,
+  "n_strong": 0,
+  "n_partial": 0,
+  "n_weak": 5,
+  "per_lang_verdicts": [
+    {
+      "lang": "en",
+      "verdict": "WEAK",
+      "n_memorize": 0,
+      "n_lang_coherent": 0,
+      "total": 20
+    },
+    {
+      "lang": "ko",
+      "verdict": "WEAK",
+      "n_memorize": 0,
+      "n_lang_coherent": 9,
+      "total": 20
+    },
+    {
+      "lang": "zh",
+      "verdict": "WEAK",
+      "n_memorize": 0,
+      "n_lang_coherent": 1,
+      "total": 20
+    },
+    {
+      "lang": "ru",
+      "verdict": "WEAK",
+      "n_memorize": 0,
+      "n_lang_coherent": 3,
+      "total": 20
+    },
+    {
+      "lang": "ja",
+      "verdict": "WEAK",
+      "n_memorize": 0,
+      "n_lang_coherent": 2,
+      "total": 20
+    }
+  ],
+  "wiki_frac_actual": 0.29998820687251754
+}
+
+--- wiki_frac=0.0 (v3 · state/pure_phase_d_v3_result_2026_05_24/result.json) ---
+$ jq "{verdict, n_anima_register_hits_total, register_regress, n_strong, n_partial, n_weak, per_lang_verdicts: [.per_lang_verdicts[] | {lang, verdict, n_memorize, n_lang_coherent, total}], wiki_frac_actual: .mix_info.wiki_frac_actual}"
+{
+  "verdict": "FAIL",
+  "n_anima_register_hits_total": 0,
+  "register_regress": true,
+  "n_strong": 0,
+  "n_partial": 1,
+  "n_weak": 4,
+  "per_lang_verdicts": [
+    {
+      "lang": "en",
+      "verdict": "WEAK",
+      "n_memorize": 0,
+      "n_lang_coherent": 2,
+      "total": 20
+    },
+    {
+      "lang": "ko",
+      "verdict": "WEAK",
+      "n_memorize": 0,
+      "n_lang_coherent": 6,
+      "total": 20
+    },
+    {
+      "lang": "zh",
+      "verdict": "WEAK",
+      "n_memorize": 0,
+      "n_lang_coherent": 0,
+      "total": 20
+    },
+    {
+      "lang": "ru",
+      "verdict": "PARTIAL",
+      "n_memorize": 0,
+      "n_lang_coherent": 13,
+      "total": 20
+    },
+    {
+      "lang": "ja",
+      "verdict": "WEAK",
+      "n_memorize": 0,
+      "n_lang_coherent": 6,
+      "total": 20
+    }
+  ],
+  "wiki_frac_actual": 0.0000484593976686696
+}
+
+================================================================================
+ORTHOGONALITY READOUT
+  - n_anima_register_hits_total = 0 at wiki_frac ∈ {0.0, 0.3}  → register collapse achieved (no anima-register leak)
+  - n_memorize = 0 for all 10 lang-rows                        → no register memorization on either run
+  - YET coherence stays WEAK: best lang n_lang_coherent = 13/20 (ru @ wiki_frac=0, sole PARTIAL); all others WEAK
+  - moving the corpus dilution axis 0.0 → 0.3 does NOT lift any lang to PARTIAL+ (it DROPS ru PARTIAL→WEAK)
+  ⇒ register-collapse axis and multilingual-coherence axis are orthogonal; corpus dilution alone cannot close coherence.
+================================================================================

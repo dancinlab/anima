@@ -38,12 +38,14 @@
   cmd    = "hexa run HEXAD/PURE/eval/closure_auto_judge.hexa (E2 · E3 · v3)"
   raw    = ".verdicts/pure-corpus-axis-closed-negative/closure.txt"
   src    = "PURE.log.md 2026-05-25 · state/pure_phase_d_v3_result_2026_05_24/"
+  status = "🔴 CLOSED-negative — corpus-axis ⊥ multilingual closure (verdict persisted)"
 
 @C pure_register_orthogonal := "register_hits=0 at wiki_frac=0 (TTR 0.34) yet coherence stays WEAK — corpus-axis ⊥ multilingual closure" :: run [slug=pure-corpus-axis-closed-negative group=PURE]
   method = "run"
   cmd    = "hexa run HEXAD/PURE/eval/multilingual_probe.hexa (v3 ckpt)"
   raw    = ".verdicts/pure-corpus-axis-closed-negative/register.txt"
   src    = "HEXAD/LIFE/H_242 §A2 (H242.1 FULL-COLLAPSE falsify)"
+  status = "🔴 CLOSED-negative — corpus-axis ⊥ multilingual closure (verdict persisted)"
 
 # ───────────────────────────────────────────────────────────────────────
 # LIFE — open slot (group=LIFE · paper-track)
