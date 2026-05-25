@@ -1,0 +1,23 @@
+{
+  "milestone": "M4",
+  "module": "HEXAD/IIT4/lib/iit4_bigphi.hexa",
+  "date": "2026-05-25",
+  "what": "system big-Φ — Φ-structure irreducibility over the system MIP (structure-cut). The capstone: integrated vs reducible (DESIGN §2 ⑥)",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU",
+  "decisive_test": "COPY/SWAP (mutual dependence) ⇒ big-Φ = total = 2.0 (IRREDUCIBLE complex); SELF-COPY (independent channels) ⇒ big-Φ = 0 (REDUCIBLE). The engine separates integrated from reducible — the core IIT claim.",
+  "checks": [
+    {"name": "COPY big-Φ > 0 (irreducible)", "result": "PASS", "value": "big-Φ=2.0=total"},
+    {"name": "COPY big-Φ = total (only cut severs all)", "result": "PASS"},
+    {"name": "COPY big-Φ <= total (bound)", "result": "PASS"},
+    {"name": "COPY big-Φ >= 0 (bound)", "result": "PASS"},
+    {"name": "SELF-COPY total > 0 (has distinctions)", "result": "PASS", "value": "total=2.0"},
+    {"name": "SELF-COPY big-Φ = 0 (reducible — clean split)", "result": "PASS"},
+    {"name": "noise total = 0", "result": "PASS"},
+    {"name": "noise big-Φ = 0", "result": "PASS"},
+    {"name": "n=1 big-Φ = 0 (no partition)", "result": "PASS"}
+  ],
+  "tally": {"pass": 9, "fail": 0},
+  "verdict": "🟢 SUPPORTED-NUMERICAL — M4 system big-Φ deterministic exact, 9/9 incl. decisive integrated-vs-reducible separation PASS",
+  "honest_scope": "Structure-cut big-Φ ∈ [0, total]. Exact IIT 4.0 big-Φ (recompute structure on partitioned TPM + normalization) + PyPhi numeric calibration = M5 (F-IIT4-5). Engine M0-M4 now end-to-end: TPM → big-Φ.",
+  "next": "M5 calibration — PyPhi / published IIT-4.0 reference (n≤4 canonical networks) 대조 (F-IIT4-1..5)"
+}

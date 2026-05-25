@@ -2,6 +2,21 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25 — M4 system big-Φ LAND (iit4_bigphi.hexa · 9/9 🟢) — 엔진 end-to-end 완성
+
+- [x] `HEXAD/IIT4/lib/iit4_bigphi.hexa` 작성 — IIT 4.0 capstone (import-safe, M3 import)
+  - `iit4_distinction_side` = distinction 의 M∪Pc∪Pe 가 cut 의 한 쪽(1/2)인지 span(0)인지
+  - `big_phi(sys_state)` = 全 distinction+relation 수집 → 全 non-trivial 시스템 bipartition(unit0 pin) 위 surviving structure → loss=total−surviving → **min loss = big-Φ** (least-damaging cut 가 파괴하는 structure). big-Φ ∈ [0, total]
+- [x] smoke `state/iit4_m4_smoke_2026_05_25/run_m4.hexa` — **결정적 integrated vs reducible**
+  - COPY/SWAP(unit0⇄unit1 상호의존): big-Φ=2.0=total → **IRREDUCIBLE complex** (유일 cut 가 전부 절단)
+  - SELF-COPY(unit_u=unit_u 독립채널): total=2.0, big-Φ=0 → **REDUCIBLE** ({0}|{1} cut 무손실; {0,1} mechanism 은 독립이라 φ_d=0 → distinction 아님이 핵심)
+  - noise=0/0 · n=1 big-Φ=0(partition 없음) · 0≤big-Φ≤total bound
+  - **9/9 PASS** (`hexa run`, deterministic) → result.json 🟢 SUPPORTED-NUMERICAL
+- [x] **엔진 M0~M4 end-to-end 완성**: TPM → repertoire → distinction → relation → Φ-structure → big-Φ. 통합 vs 환원가능 분리 = IIT 핵심 주장 실증
+- [x] honest: structure-cut big-Φ (faithful in spirit). 정확한 IIT4 big-Φ(partitioned TPM 재계산+정규화) + PyPhi 수치 = M5 (F-IIT4-5)
+- [x] IIT4.md M4 체크 + hub/status 갱신
+- [ ] 다음 = M5 calibration (PyPhi/논문 n≤4 reference 대조, F-IIT4-1..5)
+
 ## 2026-05-25 — M3 relations + Φ-structure LAND (iit4_relation.hexa · 12/12 🟢)
 
 - [x] `HEXAD/IIT4/lib/iit4_relation.hexa` 작성 — IIT 4.0 relation/structure 레이어 (import-safe, M2 import; transitive import → M1 fns 정상)
