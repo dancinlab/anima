@@ -1,0 +1,50 @@
+{
+  "id": "H_278",
+  "slug": "faithful-phi-small-n",
+  "title": "faithful Phi-star small-N exact (MIP-EI) - H_002 C2 proxy upgrade",
+  "date": "2026-05-25",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "gpu": false,
+  "cost_usd": 0.0,
+  "gpu_resolution": "GPU bottleneck is LARGE-N intractability (super-exp); small-N (n<=8, 2^n<=256) is mac-local CPU $0 tractable - no GPU needed",
+  "parent": "H_002 C2 (phi_universe nested) proxy upgrade",
+  "phi_faithful_def": "exact MIP over all 2^(n-1) bipartitions; Phi = cross-cut MI at MIP / min(|A|,|B|); MI estimator = RFC 036 phi_mi_pair (same primitive as proxy)",
+  "phi_proxy_def": "phi_spatial RFC036 = max(total_MI - min_partition_MI, 0) / max(n-1,1)",
+  "faithful_scope": "FAITHFUL-ER than phi_spatial (true MIP minimization + IIT small-side normalization), but NOT full IIT4 4.0 (no cause-effect repertoire, no TPM, no Phi-structure)",
+  "n_scales": 6,
+  "lattice": {"n": 8, "dim": 12, "warm": 8, "n_bins": 4, "note": "N reduced 16->8 vs H_002 C2 for n<=8 exact MIP; rules/coupling identical"},
+  "bipartitions_per_scale": 128,
+  "per_scale_ledger": [
+    {"scale": "cosmic_web", "rule": 30, "couple": 0.000000, "phi_faithful": 0.134574, "phi_proxy": 0.163812},
+    {"scale": "galaxy_cluster", "rule": 110, "couple": 0.100000, "phi_faithful": 0.000011, "phi_proxy": 0.000005},
+    {"scale": "stellar", "rule": 90, "couple": 0.200000, "phi_faithful": 0.000011, "phi_proxy": 0.000005},
+    {"scale": "planetary", "rule": 54, "couple": 0.300000, "phi_faithful": 4.000011, "phi_proxy": 3.000005},
+    {"scale": "biological", "rule": 110, "couple": 0.450000, "phi_faithful": 0.000011, "phi_proxy": 0.000005},
+    {"scale": "neural", "rule": 110, "couple": 0.600000, "phi_faithful": 0.000011, "phi_proxy": 0.000005}
+  ],
+  "faithful": {"mean": 0.689105, "min": 0.000011, "max": 4.000011, "cv": 2.149885},
+  "proxy": {"mean": 0.527306, "min": 0.000005, "max": 3.000005, "cv": 2.100186},
+  "h002_c2_proxy_cv_ref_n16": 0.836892,
+  "cv_threshold": 0.150000,
+  "faithful_scale_class": "SCALE_VARIANT",
+  "proxy_scale_class_n8": "SCALE_VARIANT",
+  "scale_variant_verdict": "HOLD",
+  "cv_direction_vs_h002": "faithful_CV_higher_than_h002_ref",
+  "falsifiers": {
+    "F_H278_1_tractable": "PASS",
+    "F_H278_2_cv_verdict": "SCALE_VARIANT (faithful CV 2.149885 vs thr 0.150000)",
+    "F_H278_3_determ": "PASS (a=0.134574 b=0.134574)",
+    "F_H278_4_proxy_sane": "PRESENT (proxy-CV 2.100186)",
+    "F_H278_5_mip_valid": "PASS"
+  },
+  "criteria": {
+    "C1_faithful_compute": "PASS",
+    "C2_cv_compare": "PASS (HOLD)",
+    "C3_determinism": "PASS"
+  },
+  "verdict_rule": "SUPPORTED = C1 (faithful computed) AND C2 (CV compared); scale-variant HOLD/FLIP reported not gated",
+  "verdict": "SUPPORTED",
+  "verify_fence": "SPECULATION-FENCED (hexa verify --fence): faithful Phi VALUES are deterministic closed-form arithmetic; the empirical INTERPRETATION (scale-variant/-invariant) is a toy-substrate outcome, NOT an atlas identity - g5 honest fence"
+}
