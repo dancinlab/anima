@@ -42,6 +42,7 @@
 - [ ] A1 — 미promote 60 sub-axis 순차 raster: 각 축에서 H seed → `/cycle` verify (🔵/🟢/🔴)
 - [ ] A2 — ~110 H seed 백로그 소진 (CANDIDATES 재충전 → cross-link synthesis 확장)
 - [x] A1 cycle#23 1차 raster — H_283 narrative-story-coherence (🟢 SUPP-FULL 4/4, order-sensitive MIP Φ, R4 self/identity) + H_284 ritual-repetition (🟢 PARTIAL 3/4, buildup FAL→decay-resistance, R7 practice) — PR #566
+- [x] A2 cycle#24 — H_286 split-brain-dual-Φ (🟢 CLOSED-NEGATIVE 4/6, R12 split-brain seed): callosotomy 전체-Φ 붕괴 proxy 상 FALSIFIED(split +11%, 8/8 seed robust), subsystem Φ>0 · metric-pathology MIP→0 inflation — PR #577. [H_285 edge-of-chaos big-Φ in-flight, 축 C]
 
 ### 축 B — faithful-Φ GPU tier (large-N)
 > H_278 이 small-N exact($0)로 proxy 확증. large-N 은 GPU/근사 tier 의 연속 과제.
