@@ -2,6 +2,17 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-26 — C lane n=8: WALL-BLOCKED 🟠 (scaling n=4..7 carry 로 종결)
+
+deferred-closure C lane 의 n=8 확장 시도. rule 110, n=8, bounded k=3 — Mac-local 단일 프로세스로 여러 차례 발사했으나 모두 34~42분 무출력 → honest wall-blocker 로 종결.
+
+- [x] `state/iit4_c_n8_wallblock_2026_05_25/{README.md, run_c_n8.hexa}` — wall-block 문서 + 재현 스크립트
+- [x] 원인: n=8 bounded = mechanism 2^8 × purview anchored-sample × repertoire 2^8, n=7 대비 state-space 2배 + 조합 폭증. 비결정 hang 아닌 시간 envelope 초과 (엔진 정확, n≤7 deterministic 재현)
+- [x] scaling finding carry: rule 110 big-Φ = 7.55(n4) → 6.82(n6 exact) → 8.57362(n7 bounded). n=6→7 단조 증가로 bounded trend-보존 검증. n=8 값 미측정
+- [x] 운영 메모: cycle#3 병렬 발사 시 n=8 agent(a1636)가 monitor-wait phantom 루프 + 중복 hexa 프로세스 발생 → 메인 세션이 dedup kill + end.txt sentinel 로 stand-down 유도 후 단일 추적 bg 로 재발사 (역시 wall)
+- [x] 재시도 path: (a) cap=2 보수 bound, (b) 원격 고사양 호스트 빌드 sync, (c) sparse-mechanism 가지치기 — 별도 fire envelope
+- [x] C lane 종결: n=7 의미있는 bounded 결과 확보 + n=8 wall honest 문서화로 closure
+
 ## 2026-05-25 — M14: inline RFC036(M11) vs canonical phi_spatial builtin 수치 비교
 
 M11 README §4 honest scope "정식 phi_spatial builtin 과의 수치 일치는 별도" closure. 동일 ECA series(n=4, seed 1010, T=16) 를 M11 inline RFC036 자체포팅 ‖ 정식 `phi_spatial` builtin(RFC 036, c_measure_phi wrapper) 에 통과시켜 verbatim 비교 → divergence 의 출처(algorithmic vs implementation)를 결정적으로 분리.
