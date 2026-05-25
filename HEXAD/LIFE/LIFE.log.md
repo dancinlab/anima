@@ -247,3 +247,18 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: deferred top-8 잔여 — ablation · seed-injection(H_263 absorbing-state revision) · SSOT auto-sync probe. 또는 H_261/H_262 재calibration(seed-robust 재측정). LIFE NEW-가설 well 은 brainstorm 으로 재충전됨(deferred 9 + 신규축).
 
 ---
+
+## Cycle #18 — gap-followup + closed-loop (ablation · seed-injection · re-calibration · SSOT audit) — 2026-05-25
+
+- **focus**: `/cycle` (scope = /gap deferred top-8 + 재calibration). cycle#17 foundation-audit 이 찾은 결함을 직접 수리/심화 — closed-loop. AXES R2+ 는 AXES.md 정독 필요로 defer.
+- **change**: H_270~273 NEW 4건. README 60 tabled 행 + carry-note 정정(H_273 26 missing 반영). 각 PR main 직착지.
+- **fire**: $0 mac-local deterministic, cross-process sha256. `state/h27{0,1,2,3}_*_2026_05_25/`.
+- **verdict**: 2 SUPPORTED + 2 PARTIAL
+  - [x] **H_270 substrate-ablation — SUPPORTED 3/3** (PR #493): H_204 closure inverse-U 5-arm ablation. load-bearing=decay·michaelis-saturation·closure-coupling, non-essential=**diffusion** → closure-Φ inverse-U 는 **per-site Michaelis 동역학 산물, 공간 효과 아님** (H_204 "범신론 임계"는 local 현상). baseline H_204 byte-equal.
+  - [x] **H_271 seed-injection-absorbing — PARTIAL 4/6** (PR #492): H_263 absorbing model revision. no-inject 0 (H_263 재현) · inject-lo(mag 1.0) 0 · inject-hi(mag 4.0) regrowth_splits 21~24 탈출. absorbing 은 intrinsic 도 임의-metastable 도 아닌 **충분히 큰 변동성(threshold∈(1,4])의 genesis-seed 로만 escapable**. Φ_post≥0.7·Φ_pre but full rebirth(n_pre) 미달 = escape≠완전부활. 죽음↔발생 조건부 부활.
+  - [x] **H_272 seed-robust-recalibration — PARTIAL 2/3** (PR #494): H_269 fragility 를 effect vs criterion 으로 분해. **H_261 10/10 복권** — cycle#14 의 4/10 은 순전히 criterion 결함(절대 floor flat\|r\|≤0.2 가 over-strict proxy), relative-axis 재설계 하 effect REAL. **H_262 5/10 부분** — adaptive base_gain 이 over-drive 완전 제거 but coop cascade under-drive 잔존(substrate tension 구조 seed-의존). 재설계 사유 pre-register(cherry-pick 아님).
+  - [x] **H_273 ssot-consistency-audit — SUPPORTED 3/3** (PR #495): README↔disk 3-way audit. orphan-row 0 · **missing-row 26** (18=H_210-232 stale "미commit" 노트가 실제 존재 파일 오기 + 8=H_241/246/250/251/252/253/255/257 완전 unindexed) · verdict-drift 0 genuine + 8 dual-semantic(Status 컬럼 lifecycle vs evidence 혼용). 디스크 81 vs README 55 행 = 인덱스 undercount 정량화. gap#3(/gap F8 canonical-ssot) 확증.
+- **consolidation (PR #496 차)**: README count 정직화(86 disk = 60 tabled + 26 carry-note) + carry-note 정정(미commit→commit 완료, 8 신규 추가) + 4 cycle#18 행. **full 26-row tabling 은 별도 reconciliation 권고**(per-file verdict read 필요).
+- **next**: AXES R2+ promote · 26 carry-H full tabling(H_273 후속) · H_002 GPU fire · H_262 cascade seed-의존 심층. **lane 종합**: cycle#14~18 = 16 NEW H(H_258-273) + 4 C2/raster, Φ-proxy 토대 directionally valid + fragility surface 정량, SSOT drift 식별·부분closure.
+
+---
