@@ -38,7 +38,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
 
-## 가설 인덱스 (88 H disk = 88 tabled (carry-note 0, H_273 reconciliation 유지) + 1 lib · cycle#19 H_274/275 (cascade-seed FAL + causality-DAG-Φ SUPP) · cycle#18 H_270-273 gap-followup · cycle#17 H_266-269 foundation-audit · cycle#16 H_007 C2 + H_238 raster · cycle#14-15 H_258-265)
+## 가설 인덱스 (90 H disk = 90 tabled (carry-note 0) + 1 lib · cycle#20 H_276/277 (cascade-timing SUPP_FULL + turing-Φ PART) · cycle#19 H_274/275 · cycle#18 H_270-273 gap-followup · cycle#17 H_266-269 foundation-audit · cycle#16 H_007 C2 + H_238 raster · cycle#14-15 H_258-265)
 
 > Status 컬럼 = **lifecycle** (pre-register-frozen · running 등) 또는 **evidence** (SUPPORTED · PARTIAL · FALSIFIED 등) 혼용 가능 (H_273 audit: 8건 dual-semantic — H_007/012/018/053/054/132/171/201).
 
@@ -132,6 +132,8 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_273](H_273_ssot_consistency_audit.md) | ssot-consistency-audit | meta | SUPPORTED 3/3 (PR #495, cycle#18) | README↔disk audit — orphan-row 0, **missing-row 26** (18 stale-note + 8 unindexed), verdict-drift 0 genuine + 8 dual-semantic Status |
 | [H_274](H_274_quorum_cascade_seed_dependence.md) | quorum-cascade-seed-dependence | meta · **life** | 🔴 FALSIFIED 1/3 (PR #501, cycle#19) | H_262 cascade seed-의존 메커니즘 — 초기 tension top-tail mass large 예측력(\|d\|=1.55) but 결정론 rank-sep 부재 → cascade = 초기분포 × 동역학 타이밍(latch hysteresis) 상호작용 (예측력 有, 결정론 無) |
 | [H_275](H_275_causality_pearl_graph_phi.md) | causality-pearl-graph-phi | information · physics | SUPPORTED 3/3 (PR #500, cycle#19) | Pearl causal-DAG Φ (AXES R5 promote) — phi_dag 0.989 > cyclic 0.744 > undirected 0.605, acyclicity → 통합도 우위 · cyclic<undir = "통합≠동기화" IIT manifest (ring feedback 가 동기화로 diversity 죽임) |
+| [H_276](H_276_cascade_dynamics_timing.md) | cascade-dynamics-timing | meta · **life** | SUPPORTED_FULL 3/3 (PR #509, cycle#20) | H_274 후속 — H_262 cascade 예측가능성이 *초기조건* 아닌 ***시간전개*** 축에 존재: 발생지연 단조감소 · 전파 유한속도(≤1칸/스텝) · 발동후 한방향 시간래칫 (H_262/H_274/H_207 sister) |
+| [H_277](H_277_turing_completeness_phi_threshold.md) | turing-completeness-phi-threshold | physics · information | PARTIAL 2/3 (PR #510, cycle#20) | 계산 보편성 ≠ Φ 지렛대 — 非보편 rule184(Φ=1.198) > 보편 rule110(Φ=0.556) → computability 축 ⊥ Wolfram dynamical-class 축, seed 예측(P1) 정직 falsified |
 | [lib/phi_helper](lib/phi_helper.hexa) | phi-helper (shared infra) | infra | infra (PR #317) | shared Φ helper — config SSOT + phi_default wrapper, 28+ H phi_spatial 호출 단일 home (gap F6+F7) |
 
 > **carry-H ✅ 全 tabled (H_273 reconciliation 2026-05-25)**: 이전 26 missing-row (H_210-221/224/228-232 + H_241/246/250-253/255/257) 全건 위 표에 정식 행으로 tabling 완료 (carry-note 0). **infra**: phi_n_bins ROBUSTNESS_PASS (PR #219).
