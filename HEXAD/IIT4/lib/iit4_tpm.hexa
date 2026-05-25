@@ -42,24 +42,21 @@
 //   COMPLIANCE  snake_case (raw#11) · honest impl (raw#9) · English code ·
 //     bitwise ops avoided (multiplication/modulo only — phi_native §5 pattern).
 // ════════════════════════════════════════════════════════════════════════════
+import "stdlib/math/bitops.hexa"     // canonical bit primitives — pow2_int · bit_set
 
 
-// ── bit helpers — integer arithmetic only (no bitwise; phi_native pattern) ──
+// ── bit helpers — thin shims over hexa-lang stdlib/math/bitops (SSOT) ───────
+//    iit4_pow2 / iit4_bit keep their names (callers in M2-M6 + eca/bounded/
+//    complex unchanged) but delegate to stdlib pow2_int / bit_set — the
+//    canonical primitives that were themselves promoted FROM anima's phi_native
+//    (_phi_pow2 / _phi_bit_set, RFC stdlib_scaffold §3). No duplicate impl.
 fn iit4_pow2(k: int) -> int {
-    let mut v = 1
-    let mut i = 0
-    while i < k {
-        v = v * 2
-        i = i + 1
-    }
-    return v
+    return pow2_int(k)
 }
 
 // bit i of `state` (0 or 1).
 fn iit4_bit(state: int, i: int) -> int {
-    let pw = iit4_pow2(i)
-    if (state / pw) % 2 == 1 { return 1 }
-    return 0
+    return bit_set(state, i)
 }
 
 // ascending list of absolute unit indices set in `mask` (within [0, n)).
