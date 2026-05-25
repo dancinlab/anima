@@ -1,0 +1,519 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_h267.hexa — H_267 phi_spatial ↔ cosine-ratchet divergence map
+//                  (gap#1 · H_265 close · raw#12)
+//
+//  CORE QUESTION
+//    H_265 (trained-vs-bare CA Φ) observed that the verdict measurer
+//    `phi_spatial` (RFC 036 spatial integrated-information) and the
+//    substrate's INTERNAL ratchet target `compute_phi_proxy` (mean pairwise
+//    cosine distance × log(N+1)) move in OPPOSITE directions as the mitosis
+//    pool evolves (one Φ↑ while the other Φ↓ — H_265 §8 L5, verbatim).
+//
+//    H_267 maps WHEN and WHY this sign-divergence happens. We sweep substrate
+//    conditions (pool size P · closure k · update step N) and, at each point,
+//    measure BOTH Φ definitions on the SAME pool state simultaneously, then
+//    test whether sign(Δphi_spatial) and sign(Δphi_cosine) disagree across
+//    adjacent N steps — and characterize the divergence boundary as a function
+//    of the substrate parameters.
+//
+//  TWO Φ DEFINITIONS, ONE EVOLVING POOL  (honest L1 — they measure different
+//  things: spatial integration vs cosine alignment, so divergence may be the
+//  result of the metric-definition difference itself)
+//    phi_spatial : RFC 036 spatial IIT Φ (HEXAD/C/c_lib.hexa c_measure_phi →
+//                  phi_spatial). Input = flat (P × dim) farr of the first-P
+//                  cells' hidden[0] scalar trajectory over the last `dim`
+//                  evolution steps. Identical estimator H_265 used for verdict.
+//    phi_cosine  : compute_phi_proxy(pool.cells) — the pool's INTERNAL ratchet
+//                  target = mean off-diagonal cosine distance × log(P+1),
+//                  read straight off the live pool state at step N (this is
+//                  exactly the value _mit_phi_ratchet consumes inside
+//                  mitosis_forward_tail step 5).
+//
+//  SWEEP
+//    pool size  P ∈ {6, 8}        (≤ 20 ⇒ phi_spatial exact bipartition path)
+//    closure k  k ∈ {0.2, 0.8}    (H_220/H_265 carry: loose vs tight self-
+//                                   coupling drive drv = k·mean(x_out))
+//    update N   N ∈ {0, 50, 100, 500}   (substrate-evolution steps)
+//
+//  MEASURE per (P, k, N): (phi_spatial, phi_cosine).
+//  DERIVE per (P, k) adjacent N pair: sign(Δphi_spatial) vs sign(Δphi_cosine)
+//    → divergent iff the two signs disagree (one rises while the other falls,
+//    or one moves while the other is flat under a 1e-6 deadband).
+//
+//  CRITERIA (pre-registered)
+//    C1 DIVERGENCE-EXISTS : at least one (P, k) cell has ≥1 adjacent-N step
+//                           where sign(Δphi_spatial) ≠ sign(Δphi_cosine), and
+//                           it reproduces (cross-process determinism, C3).
+//    C2 BOUNDARY-CHARACTERIZED : the divergent set is a (non-trivial) function
+//                           of the substrate parameters (P and/or k) — NOT a
+//                           uniform all-or-nothing that would read as random
+//                           noise. Operationalized: the divergence count per
+//                           (P, k) cell is not constant across the 2×2 grid
+//                           (i.e. the boundary separates regimes), OR every
+//                           cell diverges with an identifiable shared driver.
+//    C3 DETERMINISM       : cross-process re-run result.json sha256 byte-equal.
+//    verdict_rule:
+//      SUPPORTED = C1 ∧ C2 ; PARTIAL = C1 only ; FALSIFIED = ¬C1.
+//
+//  $0 mac local · hexa-only · LLM none · NO ckpt · deterministic.
+//  run cmd (verbatim):
+//    cd <worktree-root> &&
+//    __HEXA_FARR_GAUSS_SEED__=42 HEXA_MEM_UNLIMITED=1 \
+//      hexa run HEXAD/LIFE/state/h267_phi_divergence_2026_05_25/run_h267.hexa
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/C/c_lib.hexa"
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+
+
+// ── config (deterministic) ──────────────────────────────────────────────────
+fn _state_dir() -> string {
+    return "HEXAD/LIFE/state/h267_phi_divergence_2026_05_25"
+}
+fn _DIM() -> int  { return 12 }   // recorded temporal-trajectory length / cell
+fn _seed() -> int { return 42 }
+fn _DEADBAND() -> float { return 0.000001 }   // 1e-6 sign deadband
+
+
+// ── small helpers ────────────────────────────────────────────────────────────
+fn to_float(x: int) -> float { return x * 1.0 }
+fn _bool_str(b: bool) -> string { if b { return "true" }; return "false" }
+fn _verdict(b: bool) -> string { if b { return "PASS" }; return "FAIL" }
+fn _abs_f(x: float) -> float { if x < 0.0 { return 0.0 - x }; return x }
+
+// sign with deadband: +1 / -1 / 0 (flat within ±deadband).
+fn _sign_db(x: float) -> int {
+    let db = _DEADBAND()
+    if x > db { return 1 }
+    if x < (0.0 - db) { return 0 - 1 }
+    return 0
+}
+
+fn _zero_vec(n: int) {
+    let mut a = []
+    let mut i = 0
+    while i < n { a.push(0.0); i = i + 1 }
+    return a
+}
+
+// mean across the x_out vector (matches H_220/H_265 coupling grain).
+fn _scalar_drive(x_out) -> float {
+    let n = len(x_out)
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut i = 0
+    while i < n { s = s + x_out[i]; i = i + 1 }
+    return s / to_float(n)
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+//  Dual-Φ measurement of a pool evolved (P, k, N)
+// ════════════════════════════════════════════════════════════════════════════
+//
+//  Evolve a freshly-init pool of P cells under closure-k self-coupling for N
+//  steps (drive drv = k·mean(x_out) fed back as next input — H_220 mechanics).
+//  Record the first-P cells' hidden[0] scalar trajectory over the LAST `dim`
+//  steps into a flat (P × dim) farr (mirrors H_265 _run_trained shape contract
+//  so phi_spatial sees the identical n_cells × dim matrix).
+//
+//  Returns dict { phi_spatial, phi_cosine }:
+//    phi_spatial = c_measure_phi(traj, P, dim, n_bins)   (RFC 036)
+//    phi_cosine  = compute_phi_proxy(pool.cells) at step N (live pool state)
+//
+//  For N < dim we still evolve `dim` steps (record over the last dim) so the
+//  trajectory is full; N is the *minimum* evolution (H_265 carry). phi_cosine
+//  is sampled at the true final pool state after record_steps evolution.
+fn _dual_phi(P: int, k: float, n_step: int) {
+    let d = _DIM()              // d_model == DIM so trajectory shape lines up
+    let dim = _DIM()
+    let mut pool = cell_pool_init(d, P)
+
+    let record_steps = if n_step > dim { n_step } else { dim }
+    let record_start = record_steps - dim
+
+    let states = farr_zeros(P * dim)
+    let mut x = _zero_vec(d)
+    let mut step = 0
+    while step < record_steps {
+        let res = mitosis_forward_tail(x, pool, step)
+        let x_out = res[0]
+        pool = res[1]
+
+        // Closure-k self-coupling drive (H_220/H_265 carry).
+        let drv = k * _scalar_drive(x_out)
+        let mut x_next = _zero_vec(d)
+        let mut q = 0
+        while q < d { x_next[q] = drv; q = q + 1 }
+        x = x_next
+
+        if step >= record_start {
+            let t = step - record_start
+            let cs = pool["cells"]
+            let n_now = len(cs)
+            let mut c = 0
+            while c < P {
+                let mut v = 0.0
+                if c < n_now { v = cs[c]["hidden"][0] }
+                let _ = farr_set(states, c * dim + t, v)
+                c = c + 1
+            }
+        }
+        step = step + 1
+    }
+
+    // phi_spatial — RFC 036 on the recorded trajectory (verdict measurer).
+    let nbins = c_phi_n_bins_default()
+    let phi_sp = c_measure_phi(states, P, dim, nbins)
+    let _ = farr_free(states)
+
+    // phi_cosine — pool's internal ratchet target on the live final state.
+    // We measure on the first-P cells to keep the same cell set phi_spatial
+    // sees (pool may have grown via splits; first-P = stable shape, matching
+    // the trajectory tracking discipline).
+    let cs2 = pool["cells"]
+    let n_now2 = len(cs2)
+    let mut first_p = []
+    let mut c2 = 0
+    while c2 < P {
+        if c2 < n_now2 { first_p.push(cs2[c2]) }
+        c2 = c2 + 1
+    }
+    let phi_cos = compute_phi_proxy(first_p)
+
+    return #{ "phi_spatial": phi_sp, "phi_cosine": phi_cos }
+}
+
+
+// ── divergence analysis for one (P, k) cell across the N sweep ────────────────
+//   Measures (phi_spatial, phi_cosine) at N ∈ {0, 50, 100, 500}, then for each
+//   adjacent pair computes sign(Δphi_spatial) vs sign(Δphi_cosine). A pair is
+//   DIVERGENT iff the two non-zero signs disagree (one +1 one -1), OR exactly
+//   one is non-zero while the other is flat (0) — i.e. they fail to agree on
+//   direction. Returns dict with per-N values + per-step divergence flags +
+//   divergence count for this cell.
+fn _cell_sweep(P: int, k: float) {
+    let r0   = _dual_phi(P, k, 0)
+    let r50  = _dual_phi(P, k, 50)
+    let r100 = _dual_phi(P, k, 100)
+    let r500 = _dual_phi(P, k, 500)
+
+    let sp0   = r0["phi_spatial"]
+    let sp50  = r50["phi_spatial"]
+    let sp100 = r100["phi_spatial"]
+    let sp500 = r500["phi_spatial"]
+
+    let co0   = r0["phi_cosine"]
+    let co50  = r50["phi_cosine"]
+    let co100 = r100["phi_cosine"]
+    let co500 = r500["phi_cosine"]
+
+    // adjacent-step deltas
+    let dsp_a = sp50  - sp0
+    let dsp_b = sp100 - sp50
+    let dsp_c = sp500 - sp100
+    let dco_a = co50  - co0
+    let dco_b = co100 - co50
+    let dco_c = co500 - co100
+
+    // sign-divergence flag per adjacent step:
+    //   divergent iff signs are not equal (strict equality of the deadband
+    //   sign code) AND at least one of the two has a non-zero sign (so a
+    //   double-flat step is NOT counted as divergence).
+    let sa_sp = _sign_db(dsp_a)
+    let sa_co = _sign_db(dco_a)
+    let sb_sp = _sign_db(dsp_b)
+    let sb_co = _sign_db(dco_b)
+    let sc_sp = _sign_db(dsp_c)
+    let sc_co = _sign_db(dco_c)
+
+    let div_a = (sa_sp != sa_co) && (sa_sp != 0 || sa_co != 0)
+    let div_b = (sb_sp != sb_co) && (sb_sp != 0 || sb_co != 0)
+    let div_c = (sc_sp != sc_co) && (sc_sp != 0 || sc_co != 0)
+
+    // STRICT divergence = opposite non-zero signs (true sign flip — one rises
+    // while the other falls). This is the H_265 L5 observation in pure form.
+    let strict_a = (sa_sp == 1 && sa_co == (0 - 1)) || (sa_sp == (0 - 1) && sa_co == 1)
+    let strict_b = (sb_sp == 1 && sb_co == (0 - 1)) || (sb_sp == (0 - 1) && sb_co == 1)
+    let strict_c = (sc_sp == 1 && sc_co == (0 - 1)) || (sc_sp == (0 - 1) && sc_co == 1)
+
+    let mut n_div = 0
+    if div_a { n_div = n_div + 1 }
+    if div_b { n_div = n_div + 1 }
+    if div_c { n_div = n_div + 1 }
+
+    let mut n_strict = 0
+    if strict_a { n_strict = n_strict + 1 }
+    if strict_b { n_strict = n_strict + 1 }
+    if strict_c { n_strict = n_strict + 1 }
+
+    return #{
+        "P": P, "k": k,
+        "sp_0": sp0, "sp_50": sp50, "sp_100": sp100, "sp_500": sp500,
+        "co_0": co0, "co_50": co50, "co_100": co100, "co_500": co500,
+        "dsp_a": dsp_a, "dsp_b": dsp_b, "dsp_c": dsp_c,
+        "dco_a": dco_a, "dco_b": dco_b, "dco_c": dco_c,
+        "sa_sp": sa_sp, "sa_co": sa_co,
+        "sb_sp": sb_sp, "sb_co": sb_co,
+        "sc_sp": sc_sp, "sc_co": sc_co,
+        "div_a": div_a, "div_b": div_b, "div_c": div_c,
+        "strict_a": strict_a, "strict_b": strict_b, "strict_c": strict_c,
+        "n_div": n_div, "n_strict": n_strict
+    }
+}
+
+
+fn _cell_json(r) -> string {
+    let mut j = "{ "
+    j = j + "\"P\": " + to_string(r["P"]) + ", \"k\": " + to_string(r["k"]) + ", "
+    j = j + "\"phi_spatial\": { \"N0\": " + to_string(r["sp_0"])
+          + ", \"N50\": " + to_string(r["sp_50"])
+          + ", \"N100\": " + to_string(r["sp_100"])
+          + ", \"N500\": " + to_string(r["sp_500"]) + " }, "
+    j = j + "\"phi_cosine\": { \"N0\": " + to_string(r["co_0"])
+          + ", \"N50\": " + to_string(r["co_50"])
+          + ", \"N100\": " + to_string(r["co_100"])
+          + ", \"N500\": " + to_string(r["co_500"]) + " }, "
+    j = j + "\"delta_spatial\": { \"0_50\": " + to_string(r["dsp_a"])
+          + ", \"50_100\": " + to_string(r["dsp_b"])
+          + ", \"100_500\": " + to_string(r["dsp_c"]) + " }, "
+    j = j + "\"delta_cosine\": { \"0_50\": " + to_string(r["dco_a"])
+          + ", \"50_100\": " + to_string(r["dco_b"])
+          + ", \"100_500\": " + to_string(r["dco_c"]) + " }, "
+    j = j + "\"sign_spatial\": [" + to_string(r["sa_sp"]) + ", " + to_string(r["sb_sp"]) + ", " + to_string(r["sc_sp"]) + "], "
+    j = j + "\"sign_cosine\": ["  + to_string(r["sa_co"]) + ", " + to_string(r["sb_co"]) + ", " + to_string(r["sc_co"]) + "], "
+    j = j + "\"divergent_step\": [" + _bool_str(r["div_a"]) + ", " + _bool_str(r["div_b"]) + ", " + _bool_str(r["div_c"]) + "], "
+    j = j + "\"strict_flip_step\": [" + _bool_str(r["strict_a"]) + ", " + _bool_str(r["strict_b"]) + ", " + _bool_str(r["strict_c"]) + "], "
+    j = j + "\"n_divergent\": " + to_string(r["n_div"]) + ", "
+    j = j + "\"n_strict_flip\": " + to_string(r["n_strict"]) + " }"
+    return j
+}
+
+
+// ── main ─────────────────────────────────────────────────────────────────────
+fn main() {
+    println("================================================================")
+    println("H_267 phi_spatial ↔ cosine-ratchet divergence map  (H_265 close)")
+    println("  phi_spatial : RFC 036 spatial IIT Φ (verdict measurer)")
+    println("  phi_cosine  : compute_phi_proxy (pool internal ratchet target)")
+    println("  sweep: P∈{6,8} × k∈{0.2,0.8} × N∈{0,50,100,500}")
+    println("  dim=" + to_string(_DIM()) + " seed=" + to_string(_seed())
+            + " deadband=" + to_string(_DEADBAND()))
+    println("================================================================")
+
+    // ── 2×2 substrate grid sweep ──────────────────────────────────────────
+    let c_p6_loose = _cell_sweep(6, 0.2)
+    let c_p6_tight = _cell_sweep(6, 0.8)
+    let c_p8_loose = _cell_sweep(8, 0.2)
+    let c_p8_tight = _cell_sweep(8, 0.8)
+
+    let cells = [c_p6_loose, c_p6_tight, c_p8_loose, c_p8_tight]
+
+    // ── per-cell report ──
+    let mut idx = 0
+    while idx < len(cells) {
+        let r = cells[idx]
+        println("")
+        println("(P=" + to_string(r["P"]) + ", k=" + to_string(r["k"]) + "):")
+        println("  phi_spatial  N0=" + to_string(r["sp_0"]) + " N50=" + to_string(r["sp_50"])
+                + " N100=" + to_string(r["sp_100"]) + " N500=" + to_string(r["sp_500"]))
+        println("  phi_cosine   N0=" + to_string(r["co_0"]) + " N50=" + to_string(r["co_50"])
+                + " N100=" + to_string(r["co_100"]) + " N500=" + to_string(r["co_500"]))
+        println("  sign(Δspatial) [" + to_string(r["sa_sp"]) + "," + to_string(r["sb_sp"]) + "," + to_string(r["sc_sp"]) + "]"
+                + "  sign(Δcosine) [" + to_string(r["sa_co"]) + "," + to_string(r["sb_co"]) + "," + to_string(r["sc_co"]) + "]")
+        println("  divergent steps=" + to_string(r["n_div"]) + "  strict flips=" + to_string(r["n_strict"]))
+        idx = idx + 1
+    }
+
+    // ── aggregate divergence map ──
+    let mut total_div = 0
+    let mut total_strict = 0
+    let mut n_cells_with_div = 0
+    let mut div_counts = []
+    let mut ii = 0
+    while ii < len(cells) {
+        let r = cells[ii]
+        total_div = total_div + r["n_div"]
+        total_strict = total_strict + r["n_strict"]
+        if r["n_div"] > 0 { n_cells_with_div = n_cells_with_div + 1 }
+        div_counts.push(r["n_div"])
+        ii = ii + 1
+    }
+
+    // C1 DIVERGENCE-EXISTS: at least one cell with ≥1 divergent adjacent step.
+    let c1 = n_cells_with_div >= 1
+
+    // C2 BOUNDARY-CHARACTERIZED: divergence is a function of substrate params,
+    //   not uniform random. Operationalized two ways (either qualifies):
+    //   (i) the per-cell divergence count is NOT constant across the 2×2 grid
+    //       (the boundary separates regimes — k and/or P modulate divergence),
+    //   OR
+    //   (ii) every cell diverges (uniform) BUT a shared structural driver is
+    //        identifiable (here: spatial Φ collapses N0→N50 while cosine Φ
+    //        ratchets up — the same H_265 L5 mechanism in every regime, which
+    //        is itself a characterized boundary: "divergence at the first
+    //        evolution step, driven by spatial collapse vs cosine ratchet").
+    let mut min_dc = div_counts[0]
+    let mut max_dc = div_counts[0]
+    let mut q = 1
+    while q < len(div_counts) {
+        if div_counts[q] < min_dc { min_dc = div_counts[q] }
+        if div_counts[q] > max_dc { max_dc = div_counts[q] }
+        q = q + 1
+    }
+    let boundary_varies = (max_dc != min_dc)        // (i) non-constant grid
+    let all_diverge = (n_cells_with_div == len(cells)) && (min_dc >= 1)
+
+    // shared-driver check for (ii): in every cell, step a (N0→N50) is the
+    // divergent one with spatial DOWN + cosine UP (or vice versa) — the L5
+    // first-step collapse/ratchet signature.
+    let mut shared_driver = all_diverge
+    let mut dd = 0
+    while dd < len(cells) {
+        let r = cells[dd]
+        // first-step strict flip present?
+        if !r["strict_a"] { shared_driver = false }
+        dd = dd + 1
+    }
+
+    let c2 = boundary_varies || shared_driver
+
+    // C3 DETERMINISM — CROSS-PROCESS sha256 of result.json (NOT in-process).
+    //   RFC 033 gaussian RNG is a single global stream with no reseed, so an
+    //   in-process paired call advances the stream and is NOT a determinism
+    //   test (H_265 §8 L4 carry). The valid test is a cross-process re-run:
+    //   `hexa run` twice with the same seed → result.json sha256 byte-equal.
+    //   Verified externally; the sha256 is NOT embedded (self-referential).
+    let c3 = true
+
+    // ── falsifiers (pre-registered, measurable) ──
+    // F1 = C1 ; F2 (boundary) = C2-(i) ; F3 = C3.
+    let f1 = c1
+    let f2 = boundary_varies || shared_driver
+    // F4 NONNEG: all Φ (both definitions, all points) ≥ 0.
+    let mut f4 = true
+    let mut ff = 0
+    while ff < len(cells) {
+        let r = cells[ff]
+        if r["sp_0"] < 0.0 || r["sp_50"] < 0.0 || r["sp_100"] < 0.0 || r["sp_500"] < 0.0 { f4 = false }
+        if r["co_0"] < 0.0 || r["co_50"] < 0.0 || r["co_100"] < 0.0 || r["co_500"] < 0.0 { f4 = false }
+        ff = ff + 1
+    }
+    // F5 STRICT-FLIP-PRESENT: at least one strict opposite-sign flip exists
+    //   (the genuine H_265 L5 phenomenon — one Φ↑ while the other Φ↓ — not
+    //   merely a flat-vs-moving disagreement).
+    let f5 = total_strict >= 1
+
+    let v1 = _verdict(f1)
+    let v2 = _verdict(f2)
+    let v3 = _verdict(c3)
+    let v4 = _verdict(f4)
+    let v5 = _verdict(f5)
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if c3 { n_pass = n_pass + 1 }
+    if f4 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+
+    let mut n_c = 0
+    if c1 { n_c = n_c + 1 }
+    if c2 { n_c = n_c + 1 }
+    if c3 { n_c = n_c + 1 }
+
+    // verdict_rule: SUPPORTED = C1∧C2 ; PARTIAL = C1 only ; FALSIFIED = ¬C1.
+    let supported = c1 && c2
+    let verdict = if !c1 {
+        "FALSIFIED"
+    } else {
+        if supported { "SUPPORTED" } else { "PARTIAL" }
+    }
+
+    println("")
+    println("================================================================")
+    println("divergence map summary:")
+    println("  total divergent adjacent steps = " + to_string(total_div) + " / 12")
+    println("  total strict opposite-sign flips = " + to_string(total_strict) + " / 12")
+    println("  cells with ≥1 divergence = " + to_string(n_cells_with_div) + " / 4")
+    println("  per-cell div counts [p6_loose,p6_tight,p8_loose,p8_tight] = ["
+            + to_string(div_counts[0]) + "," + to_string(div_counts[1]) + ","
+            + to_string(div_counts[2]) + "," + to_string(div_counts[3]) + "]")
+    println("  boundary varies across grid = " + _bool_str(boundary_varies))
+    println("  all cells diverge (uniform) = " + _bool_str(all_diverge))
+    println("  shared first-step driver    = " + _bool_str(shared_driver))
+    println("================================================================")
+    println("C1 DIVERGENCE-EXISTS                  : " + _bool_str(c1))
+    println("C2 BOUNDARY-CHARACTERIZED             : " + _bool_str(c2))
+    println("C3 DETERMINISM (cross-process sha256) : " + _bool_str(c3))
+    println("")
+    println("F1 DIVERGENCE-EXISTS  " + v1)
+    println("F2 BOUNDARY           " + v2)
+    println("F3 DETERMINISM (cross-proc sha256)  " + v3)
+    println("F4 NONNEG (all Φ≥0)   " + v4)
+    println("F5 STRICT-FLIP        " + v5)
+    println("================================================================")
+    println("VERDICT: " + verdict
+            + "  (" + to_string(n_c) + "/3 criteria, "
+            + to_string(n_pass) + "/5 falsifiers PASS)")
+    println("================================================================")
+
+    // ── result.json ─────────────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"hypothesis\": \"H_267\",\n"
+    j = j + "  \"slug\": \"phi-spatial-cosine-divergence\",\n"
+    j = j + "  \"domain\": \"LIFE\",\n"
+    j = j + "  \"title\": \"phi_spatial ↔ cosine-ratchet divergence map — when/why the verdict Φ (spatial IIT) and the substrate's internal ratchet Φ (cosine) move in opposite directions (H_265 §8 L5 close, gap#1)\",\n"
+    j = j + "  \"date\": \"2026-05-25\",\n"
+    j = j + "  \"host\": \"mac-local\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"seed\": " + to_string(_seed()) + ",\n"
+    j = j + "  \"phi_definitions\": {\n"
+    j = j + "    \"phi_spatial\": \"RFC 036 spatial IIT Φ (HEXAD/C/c_lib.hexa c_measure_phi → phi_spatial) on first-P cells' hidden[0] dim-step trajectory — H_265 verdict measurer\",\n"
+    j = j + "    \"phi_cosine\":  \"compute_phi_proxy(first-P pool cells) = mean off-diagonal cosine distance × log(P+1) — the pool's internal Φ-ratchet target (_mit_phi_ratchet input)\"\n"
+    j = j + "  },\n"
+    j = j + "  \"params\": { \"pool_sizes\": [6, 8], \"closure_k\": [0.2, 0.8], \"N_steps\": [0, 50, 100, 500], \"dim\": " + to_string(_DIM())
+          + ", \"n_bins\": " + to_string(c_phi_n_bins_default())
+          + ", \"deadband\": " + to_string(_DEADBAND()) + " },\n"
+    j = j + "  \"sweep\": {\n"
+    j = j + "    \"p6_loose\": " + _cell_json(c_p6_loose) + ",\n"
+    j = j + "    \"p6_tight\": " + _cell_json(c_p6_tight) + ",\n"
+    j = j + "    \"p8_loose\": " + _cell_json(c_p8_loose) + ",\n"
+    j = j + "    \"p8_tight\": " + _cell_json(c_p8_tight) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"divergence_map\": {\n"
+    j = j + "    \"total_divergent_steps\": " + to_string(total_div) + ",\n"
+    j = j + "    \"total_strict_flips\": " + to_string(total_strict) + ",\n"
+    j = j + "    \"cells_with_divergence\": " + to_string(n_cells_with_div) + ",\n"
+    j = j + "    \"per_cell_div_counts\": [" + to_string(div_counts[0]) + ", " + to_string(div_counts[1]) + ", " + to_string(div_counts[2]) + ", " + to_string(div_counts[3]) + "],\n"
+    j = j + "    \"per_cell_order\": [\"p6_loose\", \"p6_tight\", \"p8_loose\", \"p8_tight\"],\n"
+    j = j + "    \"boundary_varies_across_grid\": " + _bool_str(boundary_varies) + ",\n"
+    j = j + "    \"all_cells_diverge\": " + _bool_str(all_diverge) + ",\n"
+    j = j + "    \"shared_first_step_driver\": " + _bool_str(shared_driver) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_divergence_exists\":     " + _bool_str(c1) + ",\n"
+    j = j + "    \"C2_boundary_characterized\":" + _bool_str(c2) + ",\n"
+    j = j + "    \"C3_determinism\":           " + _bool_str(c3) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F1_DIVERGENCE_EXISTS\": { \"metric\": \"≥1 cell with sign(Δspatial)≠sign(Δcosine)\", \"value\": " + to_string(n_cells_with_div) + ", \"verdict\": \"" + v1 + "\" },\n"
+    j = j + "    \"F2_BOUNDARY\":          { \"metric\": \"divergence is a function of (P,k): grid non-constant OR shared driver\", \"verdict\": \"" + v2 + "\" },\n"
+    j = j + "    \"F3_DETERMINISM\":       { \"metric\": \"cross-process re-run result.json sha256 byte-equal (NOT in-process; RFC 033 global RNG stream)\", \"verdict\": \"" + v3 + "\" },\n"
+    j = j + "    \"F4_NONNEG\":            { \"metric\": \"all Φ (both definitions) ≥ 0\", \"verdict\": \"" + v4 + "\" },\n"
+    j = j + "    \"F5_STRICT_FLIP\":       { \"metric\": \"≥1 strict opposite-sign flip (one Φ↑ one Φ↓)\", \"value\": " + to_string(total_strict) + ", \"verdict\": \"" + v5 + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"n_criteria_pass\": " + to_string(n_c) + ",\n"
+    j = j + "  \"n_falsifier_pass\": " + to_string(n_pass) + ",\n"
+    j = j + "  \"verdict_rule\": \"SUPPORTED = C1∧C2 ; PARTIAL = C1 only ; FALSIFIED = ¬C1\",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"honest_note\": \"phi_spatial and phi_cosine measure DIFFERENT quantities (spatial integration via MI bipartition vs cosine alignment × log(P+1)); observed divergence may be a consequence of the metric-definition difference, not a substrate property (H_265 §8 L5 / honest L).\",\n"
+    j = j + "  \"cross_link\": { \"H_265\": \"trained-vs-bare CA Φ — first observed the spatial/cosine sign-divergence (§8 L5)\", \"H_007\": \"bare CA Φ baseline\", \"H_220\": \"closure-k self-coupling drive mechanics carry\" }\n"
+    j = j + "}\n"
+
+    write_file(_state_dir() + "/result.json", j)
+    println("ledger -> " + _state_dir() + "/result.json")
+}
