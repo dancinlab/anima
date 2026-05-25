@@ -220,3 +220,15 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: CANDIDATES §B 잔여 4건 (H_003 H3.5 · H_007 C2 λ-sweep · H_054 C2 · H_002 C2) · §G AXES R1 promote (ethics·info·language·time) · H_238 meta-map 다음 raster. cycle#15 hexa 함정 재현: pool-route gate(`/Users/ghost/.hx/bin/hexa` 절대경로 또는 env-prefix 또는 heredoc 우회) + RNG single-stream(cross-process sha256 결정론).
 
 ---
+
+## Cycle #16 — §B 마지막 runnable (H_007 C2 λ-sweep) + meta next-raster (H_238) — 2026-05-25
+
+- **focus**: cycle#15 후속. §B follow-up 마지막 runnable(H_007 C2) + verdict-landscape meta 갱신(H_238 next-raster). 동시성 2 (rate-limit 회피). 정정: stale 마일스톤 발견 — AXES R1 promote 는 이미 H_210-213 등록 완료(README "promote 대기" 노트 stale), Cycle#5 종료(#6-15 후속), H_054 C2 cycle#2 FALSIFIED.
+- **change**: 신규 H 0 (둘 다 extend). H_007 .md C2 섹션 + H_238 .md next-raster 섹션. README H_007/H_238 행 갱신.
+- **fire**: $0 mac-local deterministic. `state/h007_c2_lambda_sweep_2026_05_25/` + (H_238 README-파싱 집계).
+- **verdict**: 1 PASS + 1 SUPPORTED
+  - [x] **H_007 C2 langton-lambda-sweep — PASS** (PR #485): Langton λ 연속 sweep. peak λ*=0.375, Φ=1.343, 명확한 inverse-U — 양 endpoint(λ=0 all-dead·λ=1 all-alive) degenerate Φ-floor, interior(0.125~0.875) Φ≫floor, peak 가 edge-of-chaos band(0.3~0.7). **256-rule ensemble estimator** 핵심(단일-rule 은 spike artifact). cross-process sha256 동일. C1 이산 ranking 과 상보.
+  - [x] **H_238 next-raster — SUPPORTED** (PR #484): N=51 README 결정론 파싱. tier dist SUPP 10/PART 6/FAL 7/RUN 28. life SUPP-rate 0.412→0.321 vs consciousness 0.167→0.200 — 부등호 유지하나 gap 0.245→0.121 **半축** (carry-RUNNING 분모 증가). 신규 8건(H_258-265) 8/8 정합 분류, 2 closed-negative(H_263 FAL·H_265 PART) 정상 흡수. L2 small-N single-flip(H238.3 부등호 reversal).
+- **next**: §B runnable 全소진 (잔여 H_003 H3.5 manual-review · H_002 C2 GPU-dep). LIFE clearly-runnable $0 backlog 고갈 = /cycle fixpoint 근접. `/gap full`(2026-05-25) top-3: ① Φ-proxy 구성타당도 미검증(phi_native vs cosine ratchet 方向 불일치) ② single seed/scale/substrate ③ SSOT/temporal drift. 다음 lane 후보 = Φ-calibration H (gap#1) 또는 AXES R2+ 신규 promote 또는 H_002 GPU fire.
+
+---
