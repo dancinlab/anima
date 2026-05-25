@@ -60,8 +60,8 @@ let DEFAULT_GRID_RAW_PATH = "state/f5_cycle1_ablation_grid/grid_raw.json"
 
 fn _lcg_step(state: int) -> int {
     // glibc LCG: state * 1103515245 + 12345 mod 2^31
-    let mut a = 1103515245
-    let mut c = 12345
+    let a = 1103515245
+    let c = 12345
     let m = 2147483648  // 2^31
     let next = (state * a + c) % m
     return next
@@ -102,7 +102,7 @@ fn _cell_value(seed: int, f: int, c: int, i: int) -> float {
     // Deterministic cell[i] for faction f, cell-in-faction c, seed s, dim i
     // = sin(structured_phase) + noise(LCG-hashed)
     let phase = to_float(f * 7 + i * 13) * 0.618033 + to_float(seed) * 0.314159
-    let mut h = _hash_seed(seed, f, c, i)
+    let h = _hash_seed(seed, f, c, i)
     let u = to_float(h) / 2147483648.0
     return sin(phase) * 0.5 + cos(phase * 0.3) * 0.3 + (u - 0.5) * 0.15
 }
@@ -134,7 +134,7 @@ fn _phi_observed(cells: int, freedom: int, metacog: int, seed: int) -> float {
         while c < cells_per {
             let mut i = 0
             while i < DIM {
-                let mut v = _cell_value(seed, f, c, i)
+                let v = _cell_value(seed, f, c, i)
                 centroids[f][i] = centroids[f][i] + v / to_float(cells_per)
                 global_mean[i] = global_mean[i] + v / to_float(n_total)
                 i = i + 1
@@ -156,7 +156,7 @@ fn _phi_observed(cells: int, freedom: int, metacog: int, seed: int) -> float {
         while c < cells_per {
             let mut i = 0
             while i < DIM {
-                let mut v = _cell_value(seed, f, c, i)
+                let v = _cell_value(seed, f, c, i)
                 let dg = v - global_mean[i]
                 gv = gv + dg * dg
                 let dc = v - centroids[f][i]
@@ -404,7 +404,7 @@ fn _selftest() -> int {
     // T1: LCG determinism
     total = total + 1
     let s1 = _lcg_step(42)
-    let mut s2 = _lcg_step(42)
+    let s2 = _lcg_step(42)
     if s1 == s2 {
         println("[T1 PASS] LCG bit-exact reproducibility (seed=42)")
         passed = passed + 1
@@ -542,10 +542,10 @@ fn _run(output_path: string, raw_path: string) -> int {
     let _mk = exec("mkdir -p \"$(dirname " + output_path + ")\"")
 
     let stats = _run_grid_streaming(raw_path)
-    let mut count = to_int(stats[0])
+    let count = to_int(stats[0])
     let max_obs = stats[1]
     let mean_obs = stats[2]
-    let mut max_add = stats[3]
+    let max_add = stats[3]
     println("[run] grid sweep + inline additive baseline complete:")
     println("[run]   count=" + str(count))
     println("[run]   max_phi_observed=" + str(max_obs))
@@ -616,3 +616,4 @@ fn main() {
     exit(0)
 }
 
+main()

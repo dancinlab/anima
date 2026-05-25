@@ -1,0 +1,32 @@
+[corpus] START 2026-05-25T05:40:24Z
+[corpus] anima corpus_s101 (seed 1337 n=777000)
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+[corpus] anima done sha=be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b size=603318628
+[corpus] pip install datasets
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[corpus] multi-wiki build (en,ko,zh,ru,ja 10MB/lang)
+[p21m-build] langs=['en', 'ko', 'zh', 'ru', 'ja'] target_mb/lang=10
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[p21m-build] loaded Salesforce/wikitext/wikitext-2-raw-v1 streaming OK
+[p21m-build] DONE lang=en source=Salesforce/wikitext/wikitext-2-raw-v1 records=17,078 bytes=10,486,184 (10.0 MB) filtered=57
+[p21m-build] loaded wikimedia/wikipedia/20231101.ko streaming OK
+[p21m-build] DONE lang=ko source=wikimedia/wikipedia/20231101.ko records=1,004 bytes=10,569,479 (10.1 MB) filtered=2
+[p21m-build] loaded wikimedia/wikipedia/20231101.zh streaming OK
+[p21m-build] DONE lang=zh source=wikimedia/wikipedia/20231101.zh records=521 bytes=10,511,272 (10.0 MB) filtered=3
+[p21m-build] loaded wikimedia/wikipedia/20231101.ru streaming OK
+[p21m-build] DONE lang=ru source=wikimedia/wikipedia/20231101.ru records=264 bytes=10,579,139 (10.1 MB) filtered=0
+[p21m-build] loaded wikimedia/wikipedia/20231101.ja streaming OK
+[p21m-build] DONE lang=ja source=wikimedia/wikipedia/20231101.ja records=470 bytes=10,498,969 (10.0 MB) filtered=0
+[p21m-build] CONCAT DONE: 19,337 records, 51.1 MB → /workspace/p21hr/multi_wiki_corpus.jsonl
+terminate called without an active exception
+[corpus] wiki done sha=d378923c6039b6bcb571c7c85bf9cd1439d544ece0551a4f9d0564a688aa2241 size=53568645
+[corpus] DONE 2026-05-25T05:41:20Z

@@ -535,10 +535,11 @@ fn main() {
         // Normalise the seed line inside hexa before hashing.
         let needle = "\"seed\": " + str(seeds[si])
         let norm = payload.replace(needle, "\"seed\": 0")
-        // sha rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); norm bytes are
-        // in memory so the /tmp scratch + shasum + split-parse is unnecessary
-        // (byte-equal output).
-        hashes = hashes.push(sha256(norm))
+        let tmp = "/tmp/mk_viii_seed_norm_" + str(si) + ".json"
+        write_file(tmp, norm)
+        let raw = exec("shasum -a 256 " + tmp)
+        let parts = raw.split(" ")
+        hashes = hashes.push(parts[0].trim())
         si = si + 1
     }
 

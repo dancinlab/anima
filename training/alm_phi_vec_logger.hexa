@@ -118,15 +118,15 @@ fn assemble_phi_vec(
 
 // Compute L2 norm of the Φ 16D vector (for overall "consciousness density"
 // scalar when a single-number summary is required).
-//
-// stdlib/linalg/norm l2_norm (hexa-lang #910 sweep). Byte-equal: the
-// former `if s <= 0.0 return 0.0` guard is a no-op for a sum-of-squares
-// (s ≥ 0 always; s == 0 ⇒ sqrt(0) == 0.0), and both use the libm `sqrt`
-// builtin — so `phi_vec_norm(v)` == `l2_norm(v, PHI_VEC_LEN)` exactly.
-import "stdlib/linalg/norm.hexa"
-
 fn phi_vec_norm(v: array) -> float {
-    return l2_norm(v, PHI_VEC_LEN)
+    let mut s = 0.0
+    let mut i = 0
+    while i < PHI_VEC_LEN {
+        s = s + v[i] * v[i]
+        i = i + 1
+    }
+    if s <= 0.0 { return 0.0 }
+    return sqrt(s)
 }
 
 // Pretty-print one phi_vec for human audit.
@@ -408,3 +408,4 @@ fn main() {
     }
 }
 
+main()

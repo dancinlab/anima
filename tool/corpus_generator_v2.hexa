@@ -1000,9 +1000,7 @@ fn run(total_req: int) -> bool {
     println("[verdict] 5-gate = " + (if five_pass { "PASS" } else { "FAIL" }))
 
     // ─── write 4-gate result JSON ───
-    // sha rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out removed (byte-equal output; "" on missing file preserved).
-    let sha_for_file = sha256_file(out_corpus)
+    let sha_for_file = _str(exec("shasum -a 256 " + out_corpus + " 2>/dev/null | awk '{print $1}'")).trim()
     let pass_ratio = if total > 0 { to_float(dens.hits) / to_float(total) } else { 0.0 }
 
     let body4 = "{\n"
@@ -1931,9 +1929,8 @@ fn run_alm_r13_7cat() -> bool {
     let n6_ccc_mean = if hexad_n6_enriched > 0 { n6_ccc_sum / to_float(hexad_n6_enriched) } else { 0.0 }
     println("[alm_r13] hexad n6_enriched docs = " + to_string(hexad_n6_enriched) + " (CCC mean=" + fmt4(n6_ccc_mean) + ")")
 
-    // ── sha256 via stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface) ──
-    // shell-out removed (byte-equal output; "" on missing file preserved).
-    let sha = sha256_file(out_path)
+    // ── sha256 via exec ──
+    let sha = _str(exec("shasum -a 256 " + out_path + " 2>/dev/null | awk '{print $1}'")).trim()
 
     // ── manifest ──
     let mut mf = "{\n"

@@ -441,10 +441,12 @@ fn load_real_cell_cert(path: string) -> array {
 // Final dim-vector is unit-normalized. Byte-identical across reruns.
 
 fn sha256_hex_of_string(s: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out + tmp-file removed (byte-equal output, no fork-exec, no /tmp race,
-    // no shell-special-char escaping concern).
-    return sha256(s)
+    // Use a short, length-derived filename to avoid shell issues with long/special chars.
+    let tmp_base = "/tmp/phi_extractor_cpu_hash_" + to_string(len(s)) + ".txt"
+    write_file(tmp_base, s)
+    let r = _str(exec("shasum -a 256 " + tmp_base + " 2>/dev/null | awk '{print $1}'")).trim()
+    let _ = exec("rm -f " + tmp_base)
+    return r
 }
 
 fn hex_char_to_int(c: int) -> int {

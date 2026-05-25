@@ -83,8 +83,8 @@ fn _hexa() -> string {
 }
 
 fn _user_argv(raw) -> array {
-    let mut out = []
-    let mut i = 0
+    let out = []
+    let i = 0
     while i < len(raw) {
         let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
@@ -96,7 +96,7 @@ fn _user_argv(raw) -> array {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let mut i = 0
+    let i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -105,7 +105,7 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _arg_value(argv, key: string, dflt: string) -> string {
-    let mut i = 0
+    let i = 0
     while i < len(argv) {
         if _str(argv[i]) == key && i + 1 < len(argv) {
             return _str(argv[i + 1])
@@ -122,7 +122,7 @@ fn _shell_quote(s: string) -> string {
 }
 
 fn _pad_right(s: string, w: int) -> string {
-    let mut out = s
+    let out = s
     while len(out) < w {
         out = out + " "
     }
@@ -130,18 +130,12 @@ fn _pad_right(s: string, w: int) -> string {
 }
 
 fn _sha256_file(p: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out removed (byte-equal output; "" on missing file preserved).
     if !_fexists(p) { return "" }
-    return sha256_file(p)
+    return _str(exec("shasum -a 256 " + _shell_quote(p) + " | awk '{print $1}'")).trim()
 }
 
 fn _sha256_dir(p: string) -> string {
-    // stable sha across a whole directory: list · sort · concat contents · hash.
-    // DEFERRED from the phase-5 sha256 sweep: the find | sort | xargs shasum |
-    // shasum composite is a directory walk + stream-of-streams hash, not a single
-    // file/string digest — out of stdlib sha256 scope this wave. A hexa-native
-    // dir-walk + per-file sha256_file loop is a follow-up.
+    // stable sha across a whole directory: list · sort · concat contents · hash
     if !_dexists(p) { return "" }
     let cmd = "find " + _shell_quote(p) + " -type f | LC_ALL=C sort | "
             + "xargs shasum -a 256 2>/dev/null | shasum -a 256 | awk '{print $1}'"
@@ -223,7 +217,7 @@ fn _check_one(stem: string, tool_rel: string, emit_rel: string,
         _restore_baseline(emit_abs, baseline_tmp, baseline_existed, kind)
         return ["error", "", "", "run_a exit=" + ec_a]
     }
-    let mut hash_a = ""
+    let hash_a = ""
     let snap_a_path = "/tmp/_anima_repro_run_a_" + stem
     if kind == "dir" {
         hash_a = _sha256_dir(emit_abs)
@@ -246,7 +240,7 @@ fn _check_one(stem: string, tool_rel: string, emit_rel: string,
         exec("rm -rf " + _shell_quote(snap_a_path))
         return ["error", hash_a, "", "run_b exit=" + ec_b]
     }
-    let mut hash_b = ""
+    let hash_b = ""
     let snap_b_path = "/tmp/_anima_repro_run_b_" + stem
     if kind == "dir" {
         hash_b = _sha256_dir(emit_abs)
@@ -260,8 +254,8 @@ fn _check_one(stem: string, tool_rel: string, emit_rel: string,
     // final restore — no side effects
     _restore_baseline(emit_abs, baseline_tmp, baseline_existed, kind)
 
-    let mut detail = ""
-    let mut verdict = "drift"
+    let detail = ""
+    let verdict = "drift"
     if hash_a == hash_b && hash_a != "" {
         verdict = "match"
     } else {
@@ -311,24 +305,24 @@ fn _write_result(rows, match_count: int, drift_count: int,
     let out_path = state_dir + "/anima_reproducibility_result.json"
     let ts = _ts_iso()
 
-    let mut body = "{\"schema\":\"anima.reproducibility.v1\",\"ts\":\"" + ts + "\","
+    let body = "{\"schema\":\"anima.reproducibility.v1\",\"ts\":\"" + ts + "\","
     body = body + "\"env_pin\":\"HEXA_REPRODUCIBLE=1 SOURCE_DATE_EPOCH=0\","
     body = body + "\"total\":" + str(total) + ","
     body = body + "\"match_count\":" + str(match_count) + ","
     body = body + "\"drift_count\":" + str(drift_count) + ","
     body = body + "\"error_count\":" + str(error_count) + ","
     body = body + "\"tools\":["
-    let mut i = 0
+    let i = 0
     while i < len(rows) {
         let r = rows[i]
         if i > 0 { body = body + "," }
         let stem = _str(r[0])
         let tool_rel = _str(r[1])
         let emit_rel = _str(r[2])
-        let mut verdict = _str(r[3])
+        let verdict = _str(r[3])
         let ha = _str(r[4])
         let hb = _str(r[5])
-        let mut detail = _str(r[6])
+        let detail = _str(r[6])
         body = body + "{\"stem\":\"" + stem + "\","
         body = body + "\"tool\":\"" + tool_rel + "\","
         body = body + "\"emit\":\"" + emit_rel + "\","
@@ -363,21 +357,21 @@ fn _render_table(rows, match_count: int, drift_count: int,
                  error_count: int, total: int) {
     println(_pad_right("tool", 32) + "  " + _pad_right("verdict", 8)
             + "  " + _pad_right("hash_a", 14) + "  " + "detail")
-    let mut i = 0
+    let i = 0
     while i < len(rows) {
         let r = rows[i]
         let stem = _str(r[0])
-        let mut verdict = _str(r[3])
+        let verdict = _str(r[3])
         let ha = _str(r[4])
-        let mut short = ha
+        let short = ha
         if len(ha) > 12 { short = ha.substring(0, 12) }
-        let mut detail = _str(r[6])
+        let detail = _str(r[6])
         if len(detail) > 60 { detail = detail.substring(0, 60) + "…" }
         println(_pad_right(stem, 32) + "  " + _pad_right(verdict, 8)
                 + "  " + _pad_right(short, 14) + "  " + detail)
         i = i + 1
     }
-    let mut summary = str(match_count) + "/" + str(total) + " match"
+    let summary = str(match_count) + "/" + str(total) + " match"
     if drift_count > 0 { summary = summary + " · " + str(drift_count) + " drift" }
     if error_count > 0 { summary = summary + " · " + str(error_count) + " error" }
     println(_pad_right("TOTAL", 32) + "  " + summary)
@@ -406,7 +400,7 @@ fn sub_help() {
     println("")
     println("REGISTERED TOOLS (7)")
     let tgts = _targets()
-    let mut i = 0
+    let i = 0
     while i < len(tgts) {
         let t = tgts[i]
         println("  " + _pad_right(_str(t[0]), 28) + " → " + _str(t[2]))
@@ -418,7 +412,7 @@ fn sub_help() {
 
 fn _match_target(targets, needle: string) -> int {
     // match by stem, tool_rel, or emit_rel substring; -1 if not found
-    let mut i = 0
+    let i = 0
     while i < len(targets) {
         let t = targets[i]
         let stem = _str(t[0])
@@ -436,12 +430,12 @@ fn _match_target(targets, needle: string) -> int {
 
 fn sub_all(emit_json: bool) {
     let tgts = _targets()
-    let mut rows = []
-    let mut match_count = 0
-    let mut drift_count = 0
-    let mut error_count = 0
+    let rows = []
+    let match_count = 0
+    let drift_count = 0
+    let error_count = 0
     let total = len(tgts)
-    let mut i = 0
+    let i = 0
     while i < total {
         let t = tgts[i]
         let stem = _str(t[0])
@@ -449,7 +443,7 @@ fn sub_all(emit_json: bool) {
         let emit_rel = _str(t[2])
         let kind = _str(t[3])
         let r = _check_one(stem, tool_rel, emit_rel, kind)
-        let mut verdict = _str(r[0])
+        let verdict = _str(r[0])
         let ha = _str(r[1])
         let hb = _str(r[2])
         let det = _str(r[3])
@@ -481,14 +475,14 @@ fn sub_single(needle: string, emit_json: bool) {
     let emit_rel = _str(t[2])
     let kind = _str(t[3])
     let r = _check_one(stem, tool_rel, emit_rel, kind)
-    let mut verdict = _str(r[0])
+    let verdict = _str(r[0])
     let ha = _str(r[1])
     let hb = _str(r[2])
     let det = _str(r[3])
-    let mut rows = [[stem, tool_rel, emit_rel, verdict, ha, hb, det]]
-    let mut mc = 0
-    let mut dc = 0
-    let mut ec = 0
+    let rows = [[stem, tool_rel, emit_rel, verdict, ha, hb, det]]
+    let mc = 0
+    let dc = 0
+    let ec = 0
     if verdict == "match" { mc = 1 }
     if verdict == "drift" { dc = 1 }
     if verdict == "error" { ec = 1 }
@@ -523,7 +517,7 @@ fn sub_selftest() {
     }
 
     let r = _check_one(stem, tool_rel, emit_rel, kind)
-    let mut verdict = _str(r[0])
+    let verdict = _str(r[0])
     let ha = _str(r[1])
     let hb = _str(r[2])
     let det = _str(r[3])
@@ -549,7 +543,7 @@ fn sub_selftest() {
         exit(1)
     }
     // idempotency check: 2-run diff = 0 (asserted above via verdict==match)
-    let mut short = ha
+    let short = ha
     if len(ha) > 12 { short = ha.substring(0, 12) }
     println("PASS anima_cli/reproducibility selftest (" + stem + " 2-run diff=0 · hash="
             + short + " · schema=" + sch + ")")
@@ -569,3 +563,4 @@ fn main() {
     sub_all(emit_json)
 }
 
+main()

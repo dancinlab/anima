@@ -68,8 +68,6 @@
 //    hexa tool/meta2_hashchain_verify.hexa --out  <json># custom output
 // ════════════════════════════════════════════════════════════════════════════
 
-use "stdlib/core/hash/sha256"
-
 let OUT_DEFAULT  = "state/meta2_hashchain_verify.json"
 let ROOT_DEFAULT = ".meta2-cert"
 let SCHEMA_TAG   = "anima.meta2.hashchain.verify.v1"
@@ -108,20 +106,18 @@ fn split_lines(text: string) -> list {
 
 // sha256 of a file on disk
 fn sha256_file(p: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
-    // (hexa-lang #884 — avoids local-vs-builtin name shadow); shell-out removed
-    // (byte-equal output; "" on missing file preserved).
     if !fexists(p) { return "" }
-    return sha256_of_file(p)
+    let r = _str(exec("shasum -a 256 " + _sh_quote(p) + " 2>/dev/null | awk '{print $1}'")).trim()
+    return r
 }
 
-// sha256 of an arbitrary bytes-string
+// sha256 of an arbitrary bytes-string (write to tmp, hash, unlink)
 fn sha256_of_bytes(s: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); the old
-    // write-to-/tmp-.bin + shasum + unlink dance is unnecessary — sha256(s)
-    // hashes the exact UTF-8 bytes of s, byte-equal to hashing those same
-    // bytes written to a file.
-    return sha256(s)
+    let tmp = "/tmp/meta2_hashchain_buf_" + str(len(s)) + "_" + _str(exec("date +%s%N")).trim() + ".bin"
+    write_file(tmp, s)
+    let r = _str(exec("shasum -a 256 " + _sh_quote(tmp) + " 2>/dev/null | awk '{print $1}'")).trim()
+    let _ = exec("rm -f " + _sh_quote(tmp))
+    return r
 }
 
 // ─── directory walk ────────────────────────────────────────────────────────
@@ -664,3 +660,4 @@ fn main() {
     exit(1)
 }
 
+main()

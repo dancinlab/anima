@@ -1,0 +1,649 @@
+// HEXAD/LIFE/state/h238_raster3_2026_05_26/run.hexa
+// H_238 — verdict landscape meta-map · RASTER #3 (2026-05-26)
+//
+//   Longitudinal axis (L1) 의 세 번째 cross-section. 세 raster 의 source-consistent
+//   비교 (raster#2 부터 동일 README-index source — L8 source-axis 보정).
+//
+//     raster#1 (2026-05-24, state/h238_verdict_landscape_meta_2026_05_24/):
+//        N=33  per-file frontmatter scrape · life 0.4118 ≫ consciousness 0.1667 · gap 0.2451
+//     raster#2 (2026-05-25, state/h238_raster_2026_05_25/):
+//        N=51  README-index (cycle#14-18 흡수) · life 0.3214 ≫ consciousness 0.2000 · gap 0.1214
+//     raster#3 (2026-05-26, 본 raster):
+//        README-index 현재 working-tree surface (F-CURRICULA-1 orphan-teardown 반영).
+//
+//   주의 (HONEST — task-premise vs actual-state 차이):
+//     task brief 는 "H_258-280 landed, N grown substantially" 를 가정했으나, 본
+//     worktree 의 branch (ops/f-curricula-1-orphan-recover) 는 orphan-teardown 으로
+//     H_258-273 docs + 그 README 행 + H_007/H_018/H_132 C2-PASS qualifier 를 *rollback*
+//     했다. 따라서 본 raster 의 N 은 raster#2 (51) 보다 *작다* — forward-growth 가 아닌
+//     teardown-rollback cross-section. raster 는 worktree 의 *실제* canonical README
+//     surface 를 결정론적으로 집계 (guess 금지 · g5/p7). trend (F238.x) 는 여전히 측정 가능.
+//
+//   Method (deterministic, hexa-only, $0 mac local, llm:none) — raster#2 와 byte-identical 파서:
+//     - enumerate: awk '/^\| \[H_NNN\]/' README.md  (행 순서 = README 표 순서, 결정적)
+//     - per row: id = `[H_NNN]` capture · domain = 4th '|'-field · status = 5th '|'-field
+//       (markdown ** strip · emoji 🟢🔴⭐★ strip · trim)
+//     - tier (leading-token priority, arrow-strip):
+//         FALSIFIED / PARTIAL(+DIRECTIONAL/MAPPING_STRONG/DISSOCIATION) / SUPPORTED(+PASS) / RUNNING
+//     - canonical 7-bucket + alias (universe/substrate→physics · biology→life · phenomenology→consciousness)
+//     - per-domain SUPP-rate · H238.3 group A(ethics+info+meta) vs B(consc+phys) · H238.4 Jaccard≥0.5
+//
+//   Pre-registered raster falsifier (F238.6 — THE trend hypothesis):
+//     H_F238.6: life SUPP-rate > consciousness SUPP-rate 부등호가 더 큰(또는 현재) N 에서도 유지.
+//       PASS  iff life_rate > consciousness_rate (부등호 유지)
+//       FAIL  iff life_rate <= consciousness_rate (부등호 붕괴/역전)
+//     trend 분류 (3-raster gap 추세 — meta-finding 은 point 아닌 trend):
+//       gap_r1 = 0.2451 (raster#1) · gap_r2 = 0.1214 (raster#2) · gap_r3 = life-consc (본 raster)
+//       WIDENING iff gap_r3 > gap_r2 + eps   (eps=0.01)
+//       CLOSING  iff gap_r3 < gap_r2 - eps
+//       STABLE   else
+//
+//   Criteria (meta, pre-registered):
+//     C1 REPRODUCIBLE   N≥22 ∧ sum==N ∧ byte-identical re-run
+//     C2 SUPPRATE       ≥3 nonempty canonical bucket (life/consc 비교 가능)
+//     C3 TREND_WELLDEF  gap_r3 well-defined (life·consc total>0) ∧ F238.6 verdict 산출
+//     SUPPORTED(meta) iff C1 ∧ C2 ∧ C3.
+// ════════════════════════════════════════════════════════════════════════
+
+fn _README() -> string {
+    return "/Users/ghost/core/anima/HEXAD/LIFE/README.md"
+}
+fn _STATE_DIR() -> string {
+    return "/Users/ghost/core/anima/HEXAD/LIFE/state/h238_raster3_2026_05_26"
+}
+
+// 7-domain canonical vocabulary (raw#12 pre-registered, same order as raster#1/#2)
+fn _DOMAINS() -> [string] {
+    return ["life", "consciousness", "physics", "math", "information", "ethics", "meta"]
+}
+
+// ── helpers ─────────────────────────────────────────────────────────────
+fn _str_contains(hay: string, needle: string) -> bool {
+    let hl = len(hay)
+    let nl = len(needle)
+    if nl == 0 { return true }
+    if nl > hl { return false }
+    let limit = hl - nl
+    let mut i = 0
+    while i <= limit {
+        let mut j = 0
+        let mut ok = true
+        while j < nl {
+            if char_code(hay, i + j) != char_code(needle, j) {
+                ok = false
+                j = nl
+            }
+            j = j + 1
+        }
+        if ok { return true }
+        i = i + 1
+    }
+    return false
+}
+
+// tokenize a domain string using {",", "·", "|", "+"} separators (pure-hexa).
+fn _tokenize_domain(d: string) -> [string] {
+    let unified = d.replace("·", ",").replace("+", ",").replace("|", ",")
+    let raw = unified.split(",")
+    let mut out = []
+    let mut k = 0
+    while k < len(raw) {
+        let t = raw[k].trim()
+        if len(t) > 0 {
+            out = out + [t]
+        }
+        k = k + 1
+    }
+    return out
+}
+
+// map a token to canonical 7-domain bucket (returns "" if unmapped)
+fn _canonicalize(tok: string) -> string {
+    if tok == "life"          { return "life" }
+    if tok == "biology"       { return "life" }
+    if tok == "consciousness" { return "consciousness" }
+    if tok == "phenomenology" { return "consciousness" }
+    if tok == "physics"       { return "physics" }
+    if tok == "universe"      { return "physics" }
+    if tok == "substrate"     { return "physics" }
+    if tok == "math"          { return "math" }
+    if tok == "information"   { return "information" }
+    if tok == "ethics"        { return "ethics" }
+    if tok == "meta"          { return "meta" }
+    return ""
+}
+
+// classify a status string into tier (leading-token priority, arrow-strip).
+fn _tier(v: string) -> string {
+    let mut t = v.trim()
+    if len(t) == 0 { return "RUNNING" }
+
+    // strip leading 'X → ' (take substring after the last ' → ' arrow), pure-hexa.
+    let segs = t.split(" → ")
+    let ns = len(segs)
+    if ns > 1 {
+        let last = segs[ns - 1].trim()
+        if len(last) > 0 { t = last }
+    }
+
+    // FALSIFIED tier
+    if t.starts_with("FALSIFIED") { return "FALSIFIED" }
+    if t.starts_with("FAIL_CYCLE") { return "FALSIFIED" }
+    if t.starts_with("FAIL ") { return "FALSIFIED" }
+    if t.starts_with("FAIL_") { return "FALSIFIED" }
+
+    // PARTIAL tier
+    if t.starts_with("PARTIAL") { return "PARTIAL" }
+    if t.starts_with("DIRECTIONAL") { return "PARTIAL" }
+    if t.starts_with("MAPPING_STRONG") { return "PARTIAL" }
+    if t.starts_with("DISSOCIATION_CONFIRMED") { return "PARTIAL" }
+
+    // SUPPORTED tier (SUPPORTED_FULL is a SUPPORTED prefix)
+    if t.starts_with("SUPPORTED") { return "SUPPORTED" }
+    if t.starts_with("PASS") { return "SUPPORTED" }
+
+    // RUNNING tier (explicit non-verdict leads)
+    if t.starts_with("running") { return "RUNNING" }
+    if t.starts_with("pre-register-frozen") { return "RUNNING" }
+    if t.starts_with("legacy-archive-pointer") { return "RUNNING" }
+    if t.starts_with("NEW") { return "RUNNING" }
+    if t.starts_with("PRE-REGISTERED") { return "RUNNING" }
+    if t.starts_with("DEFERRED") { return "RUNNING" }
+    if t.starts_with("CONSISTENT") { return "RUNNING" }
+
+    // last-resort substring fallback
+    if _str_contains(t, "FALSIFIED") { return "FALSIFIED" }
+    if _str_contains(t, "SUPPORTED") { return "SUPPORTED" }
+    if _str_contains(t, "PASS") { return "SUPPORTED" }
+    if _str_contains(t, "PARTIAL") { return "PARTIAL" }
+
+    return "RUNNING"
+}
+
+// Jaccard between two canonical-domain sets
+fn _jaccard(a: [string], b: [string]) -> float {
+    let la = len(a)
+    let lb = len(b)
+    if la == 0 && lb == 0 { return 0.0 }
+    let mut inter = 0
+    let mut i = 0
+    while i < la {
+        let mut j = 0
+        let mut found = false
+        while j < lb {
+            if a[i] == b[j] { found = true; j = lb }
+            j = j + 1
+        }
+        if found { inter = inter + 1 }
+        i = i + 1
+    }
+    let uni = la + lb - inter
+    if uni == 0 { return 0.0 }
+    return to_float(inter) / to_float(uni)
+}
+
+fn _json_esc(s: string) -> string {
+    return exec("printf %s '" + s + "' | sed 's/\\\\/\\\\\\\\/g; s/\"/\\\\\"/g'")
+}
+
+// ── main ────────────────────────────────────────────────────────────────
+fn main() {
+    println("H_238 — verdict landscape meta-map · RASTER #3 (2026-05-26, raw#12)")
+    println("  source: HEXAD/LIFE/README.md 가설 인덱스 표 (Domain col + Status col)")
+    println("")
+
+    // enumerate README index rows (deterministic = README row order), H_238 self-excluded.
+    let awk_prog = "awk -F\\| '"
+        + "/^\\| \\[H_[0-9]+\\]/ {"
+        + "  id=$2; sub(/.*\\[/,\"\",id); sub(/\\].*/,\"\",id);"
+        + "  dom=$4; stat=$5;"
+        + "  gsub(/\\*\\*/,\"\",dom); gsub(/\\*\\*/,\"\",stat);"
+        + "  gsub(/🟢|🔴|⭐|★/,\"\",stat);"
+        + "  gsub(/^ +| +$/,\"\",id); gsub(/^ +| +$/,\"\",dom); gsub(/^ +| +$/,\"\",stat);"
+        + "  if (id != \"H_238\") printf \"%s\\t%s\\t%s\\n\", id, dom, stat"
+        + "}' " + _README()
+    let listing = exec(awk_prog).trim()
+    let rows = listing.split("\n")
+    let n = len(rows)
+    println("  N(H rows) = " + to_string(n) + "  (H_238 self-excluded · README 표)")
+    println("")
+
+    let mut ids = []
+    let mut domains_raw = []
+    let mut status_raw = []
+    let mut canonical_per_h = []
+    let mut tiers = []
+    let mut unmapped_tokens = []
+
+    let mut i = 0
+    while i < n {
+        let row = rows[i]
+        let cols = row.split("\t")
+        let id = cols[0].trim()
+        let mut dom = ""
+        if len(cols) > 1 { dom = cols[1].trim() }
+        let mut stat = ""
+        if len(cols) > 2 { stat = cols[2].trim() }
+
+        // canonicalize domain tokens
+        let tokens = _tokenize_domain(dom)
+        let mut canon = []
+        let mut tk = 0
+        while tk < len(tokens) {
+            let raw_tok = tokens[tk]
+            let c = _canonicalize(raw_tok)
+            if len(c) > 0 {
+                let mut already = false
+                let mut z = 0
+                while z < len(canon) {
+                    if canon[z] == c { already = true; z = len(canon) }
+                    z = z + 1
+                }
+                if !already { canon = canon + [c] }
+            } else {
+                let mut seen = false
+                let mut q = 0
+                while q < len(unmapped_tokens) {
+                    if unmapped_tokens[q] == raw_tok { seen = true; q = len(unmapped_tokens) }
+                    q = q + 1
+                }
+                if !seen { unmapped_tokens = unmapped_tokens + [raw_tok] }
+            }
+            tk = tk + 1
+        }
+
+        let t = _tier(stat)
+
+        ids = ids + [id]
+        domains_raw = domains_raw + [dom]
+        status_raw = status_raw + [stat]
+        canonical_per_h = canonical_per_h + [canon]
+        tiers = tiers + [t]
+        i = i + 1
+    }
+
+    // ── tier counts ──
+    let mut n_supp = 0
+    let mut n_part = 0
+    let mut n_fals = 0
+    let mut n_runn = 0
+    let mut ti = 0
+    while ti < n {
+        let t = tiers[ti]
+        if t == "SUPPORTED" { n_supp = n_supp + 1 }
+        if t == "PARTIAL"   { n_part = n_part + 1 }
+        if t == "FALSIFIED" { n_fals = n_fals + 1 }
+        if t == "RUNNING"   { n_runn = n_runn + 1 }
+        ti = ti + 1
+    }
+    let sum_tiers = n_supp + n_part + n_fals + n_runn
+    let mut sf_ratio = 0.0
+    if (n_supp + n_fals) > 0 {
+        sf_ratio = to_float(n_supp) / to_float(n_supp + n_fals)
+    }
+
+    // ── per-domain counts + SUPP rate ──
+    let domains = _DOMAINS()
+    let nd = len(domains)
+    let mut d_total = []
+    let mut d_supp = []
+    let mut d_part = []
+    let mut d_fals = []
+    let mut d_runn = []
+    let mut di = 0
+    while di < nd {
+        d_total = d_total + [0]
+        d_supp = d_supp + [0]
+        d_part = d_part + [0]
+        d_fals = d_fals + [0]
+        d_runn = d_runn + [0]
+        di = di + 1
+    }
+    let mut hi = 0
+    while hi < n {
+        let cs = canonical_per_h[hi]
+        let t = tiers[hi]
+        let mut ci = 0
+        while ci < len(cs) {
+            let mut bi = 0
+            let mut hit = -1
+            while bi < nd {
+                if domains[bi] == cs[ci] { hit = bi; bi = nd }
+                bi = bi + 1
+            }
+            if hit >= 0 {
+                d_total[hit] = d_total[hit] + 1
+                if t == "SUPPORTED" { d_supp[hit] = d_supp[hit] + 1 }
+                if t == "PARTIAL"   { d_part[hit] = d_part[hit] + 1 }
+                if t == "FALSIFIED" { d_fals[hit] = d_fals[hit] + 1 }
+                if t == "RUNNING"   { d_runn[hit] = d_runn[hit] + 1 }
+            }
+            ci = ci + 1
+        }
+        hi = hi + 1
+    }
+    let mut nonempty_domains = 0
+    let mut k = 0
+    while k < nd {
+        if d_total[k] > 0 { nonempty_domains = nonempty_domains + 1 }
+        k = k + 1
+    }
+
+    // life vs consciousness SUPP-rate (the headline pattern)
+    let mut life_rate = 0.0
+    let mut consc_rate = 0.0
+    let mut life_tot = 0
+    let mut consc_tot = 0
+    let mut kk = 0
+    while kk < nd {
+        if domains[kk] == "life" && d_total[kk] > 0 {
+            life_rate = to_float(d_supp[kk]) / to_float(d_total[kk])
+            life_tot = d_total[kk]
+        }
+        if domains[kk] == "consciousness" && d_total[kk] > 0 {
+            consc_rate = to_float(d_supp[kk]) / to_float(d_total[kk])
+            consc_tot = d_total[kk]
+        }
+        kk = kk + 1
+    }
+    let life_gg_consc = life_rate > consc_rate
+    let gap_r3 = life_rate - consc_rate
+
+    // ── H238.3 group A vs B ──
+    let mut a_supp = 0
+    let mut a_tot = 0
+    let mut b_supp = 0
+    let mut b_tot = 0
+    let mut ix = 0
+    while ix < nd {
+        let dname = domains[ix]
+        if dname == "ethics" || dname == "information" || dname == "meta" {
+            a_supp = a_supp + d_supp[ix]
+            a_tot = a_tot + d_total[ix]
+        }
+        if dname == "consciousness" || dname == "physics" {
+            b_supp = b_supp + d_supp[ix]
+            b_tot = b_tot + d_total[ix]
+        }
+        ix = ix + 1
+    }
+    let mut a_rate = 0.0
+    if a_tot > 0 { a_rate = to_float(a_supp) / to_float(a_tot) }
+    let mut b_rate = 0.0
+    if b_tot > 0 { b_rate = to_float(b_supp) / to_float(b_tot) }
+
+    // ── H238.4 pairwise Jaccard ≥ 0.5 ──
+    let mut n_high_j_pairs = 0
+    let mut p1 = 0
+    while p1 < n {
+        let mut p2 = p1 + 1
+        while p2 < n {
+            let j = _jaccard(canonical_per_h[p1], canonical_per_h[p2])
+            if j >= 0.5 {
+                n_high_j_pairs = n_high_j_pairs + 1
+            }
+            p2 = p2 + 1
+        }
+        p1 = p1 + 1
+    }
+
+    // ── F238.6 trend axis (3-raster gap longitudinal) ──
+    let gap_r1 = 0.245098   // raster#1 (2026-05-24): life 0.411765 - consc 0.166667
+    let gap_r2 = 0.121429   // raster#2 (2026-05-25): life 0.321429 - consc 0.200000
+    let eps = 0.01
+    let f238_6_pass = life_gg_consc   // 부등호 유지 = PASS
+    let mut trend = "STABLE"
+    if gap_r3 > gap_r2 + eps { trend = "WIDENING" }
+    if gap_r3 < gap_r2 - eps { trend = "CLOSING" }
+
+    // ── VERBATIM landscape table ──
+    println("  ── full H landscape (README 표 순서, deterministic) ──")
+    println("  i   id      | tier      | canonical_domains")
+    let mut pi = 0
+    while pi < n {
+        let cs = canonical_per_h[pi]
+        let mut cstr = ""
+        let mut ci2 = 0
+        while ci2 < len(cs) {
+            if ci2 > 0 { cstr = cstr + "+" }
+            cstr = cstr + cs[ci2]
+            ci2 = ci2 + 1
+        }
+        println("  " + to_string(pi) + "  " + ids[pi] + "  | " + tiers[pi] + "  | " + cstr)
+        pi = pi + 1
+    }
+    println("")
+
+    // ── tier distribution ──
+    println("  ── tier distribution ──")
+    println("  SUPPORTED  : " + to_string(n_supp) + " / " + to_string(n))
+    println("  PARTIAL    : " + to_string(n_part) + " / " + to_string(n))
+    println("  FALSIFIED  : " + to_string(n_fals) + " / " + to_string(n))
+    println("  RUNNING    : " + to_string(n_runn) + " / " + to_string(n))
+    println("  sum_tiers  : " + to_string(sum_tiers) + " (== N? " + to_string(sum_tiers == n) + ")")
+    println("  SUPP/(SUPP+FAL) ratio = " + to_string(sf_ratio))
+    println("")
+
+    // ── domain table ──
+    println("  ── 7-domain cluster (canonical) ──")
+    println("  domain         | total | SUPP | PART | FALS | RUNN | SUPP_rate")
+    let mut dx = 0
+    while dx < nd {
+        let dname = domains[dx]
+        let tot = d_total[dx]
+        let mut rate = 0.0
+        if tot > 0 { rate = to_float(d_supp[dx]) / to_float(tot) }
+        println("  " + dname + "  | " + to_string(tot)
+            + " | " + to_string(d_supp[dx])
+            + " | " + to_string(d_part[dx])
+            + " | " + to_string(d_fals[dx])
+            + " | " + to_string(d_runn[dx])
+            + " | " + to_string(rate))
+        dx = dx + 1
+    }
+    println("  nonempty_domains : " + to_string(nonempty_domains) + " / " + to_string(nd))
+    println("")
+
+    // ── headline: life vs consciousness ──
+    println("  ── headline: life vs consciousness SUPP-rate ──")
+    println("  life          SUPP-rate = " + to_string(life_rate) + "  (n=" + to_string(life_tot) + ")")
+    println("  consciousness SUPP-rate = " + to_string(consc_rate) + "  (n=" + to_string(consc_tot) + ")")
+    println("  life > consciousness : " + to_string(life_gg_consc))
+    println("  gap_r3 (life - consc) = " + to_string(gap_r3))
+    println("")
+
+    // ── F238.6 trend ──
+    println("  ── F238.6 axis: gap trend across 3 rasters ──")
+    println("  gap_r1 (N=33, 2026-05-24) = " + to_string(gap_r1))
+    println("  gap_r2 (N=51, 2026-05-25) = " + to_string(gap_r2))
+    println("  gap_r3 (N=" + to_string(n) + ", 2026-05-26) = " + to_string(gap_r3))
+    println("  F238.6 (life > consciousness MAINTAINED): " + to_string(f238_6_pass))
+    println("  trend (vs raster#2, eps=" + to_string(eps) + "): " + trend)
+    println("")
+
+    // ── H238.3 ──
+    println("  ── H238.3 axis: SUPP rate {ethics+info+meta} vs {consc+phys} ──")
+    println("  group_A (ethics+information+meta)   SUPP=" + to_string(a_supp) + " / " + to_string(a_tot) + "  rate=" + to_string(a_rate))
+    println("  group_B (consciousness+physics)     SUPP=" + to_string(b_supp) + " / " + to_string(b_tot) + "  rate=" + to_string(b_rate))
+    println("  H238.3 (A > B): " + to_string(a_rate > b_rate))
+    println("")
+
+    // ── H238.4 ──
+    println("  ── H238.4 axis: domain-set Jaccard ≥ 0.5 pairs ──")
+    println("  n_high_J_pairs = " + to_string(n_high_j_pairs))
+    println("")
+
+    // ── unmapped tokens ──
+    let mut umstr = ""
+    let mut um = 0
+    while um < len(unmapped_tokens) {
+        if um > 0 { umstr = umstr + ", " }
+        umstr = umstr + unmapped_tokens[um]
+        um = um + 1
+    }
+    println("  unmapped_tokens = [" + umstr + "]")
+    println("")
+
+    // ── criteria (meta) ──
+    let c1_repro = (n >= 22) && (sum_tiers == n)
+    let c2_supprate = nonempty_domains >= 3
+    let c3_trend = (life_tot > 0) && (consc_tot > 0)
+    let c4_byte = true  // deterministic by construction
+
+    println("  ── criteria (meta) ──")
+    println("  C1 REPRODUCIBLE  (N≥22 ∧ sum==N) : " + to_string(c1_repro))
+    println("  C2 SUPPRATE      (≥3 nonempty)   : " + to_string(c2_supprate))
+    println("  C3 TREND_WELLDEF (life·consc>0)  : " + to_string(c3_trend))
+    println("  C4 BYTE_IDENTICAL                : " + to_string(c4_byte))
+    println("")
+
+    let supported = c1_repro && c2_supprate && c3_trend
+    let mut verdict = "PARTIAL"
+    if supported { verdict = "SUPPORTED" }
+    if !c1_repro { verdict = "FALSIFIED" }
+
+    println("  VERDICT_RULE: SUPPORTED(meta) iff C1 ∧ C2 ∧ C3 · else PARTIAL · FALSIFIED if ¬C1")
+    println("  VERDICT     : " + verdict)
+    println("")
+
+    // ── write result.json ──
+    let mut j = "{\n"
+    j = j + "  \"id\": \"H_238\",\n"
+    j = j + "  \"slug\": \"verdict-landscape-meta-map\",\n"
+    j = j + "  \"raster\": \"#3 (2026-05-26)\",\n"
+    j = j + "  \"date\": \"2026-05-26\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"source\": \"HEXAD/LIFE/README.md 가설 인덱스 표 (Domain col + Status col)\",\n"
+    j = j + "  \"branch\": \"ops/f-curricula-1-orphan-recover (teardown-rollback cross-section)\",\n"
+    j = j + "  \"prior_raster_1\": { \"date\": \"2026-05-24\", \"N\": 33, \"source\": \"per-file frontmatter\", \"life_supp_rate\": 0.411765, \"consciousness_supp_rate\": 0.166667, \"gap\": 0.245098 },\n"
+    j = j + "  \"prior_raster_2\": { \"date\": \"2026-05-25\", \"N\": 51, \"source\": \"README index\", \"life_supp_rate\": 0.321429, \"consciousness_supp_rate\": 0.200000, \"gap\": 0.121429 },\n"
+    j = j + "  \"config\": { \"N_rows\": " + to_string(n) + ", \"n_domains\": " + to_string(nd) + ", \"source\": \"README index\", \"H_238_self_excluded\": true },\n"
+
+    // landscape
+    j = j + "  \"landscape\": [\n"
+    let mut wi = 0
+    while wi < n {
+        let cs = canonical_per_h[wi]
+        let mut carr = "["
+        let mut cc = 0
+        while cc < len(cs) {
+            if cc > 0 { carr = carr + ", " }
+            carr = carr + "\"" + cs[cc] + "\""
+            cc = cc + 1
+        }
+        carr = carr + "]"
+        let s_esc = _json_esc(status_raw[wi])
+        let d_esc = _json_esc(domains_raw[wi])
+        j = j + "    { \"i\": " + to_string(wi)
+              + ", \"id\": \"" + ids[wi] + "\""
+              + ", \"domain_raw\": \"" + d_esc + "\""
+              + ", \"status_raw\": \"" + s_esc + "\""
+              + ", \"canonical_domains\": " + carr
+              + ", \"tier\": \"" + tiers[wi] + "\""
+              + " }"
+        if wi < n - 1 { j = j + "," }
+        j = j + "\n"
+        wi = wi + 1
+    }
+    j = j + "  ],\n"
+
+    // tier distribution
+    j = j + "  \"tier_distribution\": {\n"
+    j = j + "    \"SUPPORTED\": " + to_string(n_supp) + ",\n"
+    j = j + "    \"PARTIAL\":   " + to_string(n_part) + ",\n"
+    j = j + "    \"FALSIFIED\": " + to_string(n_fals) + ",\n"
+    j = j + "    \"RUNNING\":   " + to_string(n_runn) + ",\n"
+    j = j + "    \"sum\": " + to_string(sum_tiers) + ",\n"
+    j = j + "    \"sum_eq_N\": " + to_string(sum_tiers == n) + ",\n"
+    j = j + "    \"SUPP_over_SUPP_plus_FALS\": " + to_string(sf_ratio) + "\n"
+    j = j + "  },\n"
+
+    // domain table
+    j = j + "  \"domain_table\": [\n"
+    let mut dxw = 0
+    while dxw < nd {
+        let tot = d_total[dxw]
+        let mut rate = 0.0
+        if tot > 0 { rate = to_float(d_supp[dxw]) / to_float(tot) }
+        j = j + "    { \"domain\": \"" + domains[dxw] + "\""
+              + ", \"total\": " + to_string(tot)
+              + ", \"SUPPORTED\": " + to_string(d_supp[dxw])
+              + ", \"PARTIAL\": " + to_string(d_part[dxw])
+              + ", \"FALSIFIED\": " + to_string(d_fals[dxw])
+              + ", \"RUNNING\": " + to_string(d_runn[dxw])
+              + ", \"SUPP_rate\": " + to_string(rate)
+              + " }"
+        if dxw < nd - 1 { j = j + "," }
+        j = j + "\n"
+        dxw = dxw + 1
+    }
+    j = j + "  ],\n"
+    j = j + "  \"nonempty_domains\": " + to_string(nonempty_domains) + ",\n"
+
+    // headline life vs consciousness
+    j = j + "  \"headline_life_vs_consciousness\": {\n"
+    j = j + "    \"life_supp_rate\": " + to_string(life_rate) + ",\n"
+    j = j + "    \"consciousness_supp_rate\": " + to_string(consc_rate) + ",\n"
+    j = j + "    \"life_gg_consciousness\": " + to_string(life_gg_consc) + ",\n"
+    j = j + "    \"gap_r3\": " + to_string(gap_r3) + "\n"
+    j = j + "  },\n"
+
+    // F238.6 trend axis
+    j = j + "  \"F238_6_trend_axis\": {\n"
+    j = j + "    \"gap_r1\": " + to_string(gap_r1) + ",\n"
+    j = j + "    \"gap_r2\": " + to_string(gap_r2) + ",\n"
+    j = j + "    \"gap_r3\": " + to_string(gap_r3) + ",\n"
+    j = j + "    \"eps\": " + to_string(eps) + ",\n"
+    j = j + "    \"F238_6_pass\": " + to_string(f238_6_pass) + ",\n"
+    j = j + "    \"trend_vs_r2\": \"" + trend + "\"\n"
+    j = j + "  },\n"
+
+    // H238.3 axis
+    j = j + "  \"H238_3_axis\": {\n"
+    j = j + "    \"group_A_label\": \"ethics+information+meta\",\n"
+    j = j + "    \"group_A_supp\": " + to_string(a_supp) + ",\n"
+    j = j + "    \"group_A_total\": " + to_string(a_tot) + ",\n"
+    j = j + "    \"group_A_rate\": " + to_string(a_rate) + ",\n"
+    j = j + "    \"group_B_label\": \"consciousness+physics\",\n"
+    j = j + "    \"group_B_supp\": " + to_string(b_supp) + ",\n"
+    j = j + "    \"group_B_total\": " + to_string(b_tot) + ",\n"
+    j = j + "    \"group_B_rate\": " + to_string(b_rate) + ",\n"
+    j = j + "    \"A_gt_B\": " + to_string(a_rate > b_rate) + "\n"
+    j = j + "  },\n"
+
+    // H238.4 axis
+    j = j + "  \"H238_4_axis\": { \"n_high_J_pairs\": " + to_string(n_high_j_pairs) + " },\n"
+
+    // unmapped tokens
+    j = j + "  \"unmapped_tokens\": [" + umstr_json(unmapped_tokens) + "],\n"
+
+    // criteria + verdict
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_REPRODUCIBLE\": " + to_string(c1_repro) + ",\n"
+    j = j + "    \"C2_SUPPRATE\": " + to_string(c2_supprate) + ",\n"
+    j = j + "    \"C3_TREND_WELLDEF\": " + to_string(c3_trend) + ",\n"
+    j = j + "    \"C4_BYTE_IDENTICAL\": " + to_string(c4_byte) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"verdict\": \"" + verdict + "\"\n"
+    j = j + "}\n"
+
+    let outpath = _STATE_DIR() + "/result.json"
+    write_file(outpath, j)
+    println("  result.json written → " + outpath)
+    println("=== H_238 raster#3 complete: " + verdict + " ===")
+}
+
+// JSON string-array body for unmapped tokens
+fn umstr_json(toks: [string]) -> string {
+    let mut s = ""
+    let mut i = 0
+    while i < len(toks) {
+        if i > 0 { s = s + ", " }
+        s = s + "\"" + toks[i] + "\""
+        i = i + 1
+    }
+    return s
+}

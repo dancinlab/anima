@@ -93,7 +93,7 @@ fn h2_first_packet() -> bool {
     let t_vocoder = 36    // neural_vocoder.hexa (480 smp/frame, 50 fps, 12 frames)
     let t_ring    = 4     // plc_crossfade.hexa ring-buffer hand-off
 
-    let mut total = t_intent + t_token + t_rvq + t_vocoder + t_ring
+    let total = t_intent + t_token + t_rvq + t_vocoder + t_ring
     let budget = 100  // goal.md #26 = (σ-φ)² ms
     let ok = total <= budget
 
@@ -358,7 +358,7 @@ fn main() {
         hr()
         let r7 = h7_stage_isolation()
         hr()
-        let mut lp = 0
+        let lp = 0
         if r6 { lp = lp + 1 }
         if r7 { lp = lp + 1 }
         println(" LATENCY SUMMARY: " + to_string(lp) + "/2 PASS")
@@ -387,7 +387,7 @@ fn main() {
     let r7 = h7_stage_isolation()
     hr()
 
-    let mut pass_count = 0
+    let pass_count = 0
     if r1 { pass_count = pass_count + 1 }
     if r2 { pass_count = pass_count + 1 }
     if r3 { pass_count = pass_count + 1 }
@@ -405,3 +405,4 @@ fn main() {
     hr()
 }
 
+main()

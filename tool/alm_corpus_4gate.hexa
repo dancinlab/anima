@@ -93,16 +93,18 @@ fn dexists(p) {
 fn now_stamp() { return exec("date -u +%FT%TZ").trim() }
 
 fn sha256_of_file(p) {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out removed (byte-equal output; "" on missing file preserved).
     if !fexists(p) { return "" }
-    return sha256_file(p)
+    return exec("shasum -a 256 " + p + " 2>/dev/null | awk '{print $1}'").trim()
 }
 
 fn sha256_of_str(s) {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out + tmp-file removed (byte-equal output, no fork-exec, no /tmp race).
-    return sha256(s)
+    // Deterministic hash via shasum pipe. Avoid shell injection by writing
+    // to a temp file first.
+    let tmp = "/tmp/alm_4gate_sha_" + exec("printf %s $$").trim() + ".txt"
+    write_file(tmp, s)
+    let h = exec("shasum -a 256 " + tmp + " 2>/dev/null | awk '{print $1}'").trim()
+    let _ = exec("rm -f " + tmp)
+    return h
 }
 
 fn atomic_write(path, body) {
@@ -694,3 +696,4 @@ fn main() {
     exit(code)
 }
 
+main()

@@ -77,8 +77,6 @@
 
 // ─── Constants ──────────────────────────────────────────────
 
-import "stdlib/linalg/list_matvec.hexa"
-
 let LAMBDA_INV   = 0.5       // inverse weight inside L_enact
 let LAMBDA_ENACT = 0.01      // outer auxiliary weight (training loop scale)
 
@@ -182,6 +180,22 @@ fn mse(pred: array, target: array) -> float {
 }
 
 // matvec — row-major flat matrix.
+fn matvec(m: array, x: array, rows: int, cols: int) -> array {
+    let mut out = []
+    let mut r = 0
+    while r < rows {
+        let mut s = 0.0
+        let mut c = 0
+        while c < cols {
+            s = s + m[r * cols + c] * x[c]
+            c = c + 1
+        }
+        out = out.push(s)
+        r = r + 1
+    }
+    return out
+}
+
 // ─── Inverse head ─────────────────────────────────────────────
 // Maps concat(s_t, s_{t+1}) ∈ R^{2·D_s} → â_t ∈ R^{D_a} via
 // tanh(W_inv · z + b_inv). Minimal parametric model for the inverse leg.
@@ -460,3 +474,4 @@ fn main() {
     }
 }
 
+main()

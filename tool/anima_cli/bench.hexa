@@ -67,10 +67,10 @@ fn _json_field(path: string, key: string) -> string {
 }
 
 fn _user_argv(raw) -> array {
-    let mut out = []
-    let mut i = 0
+    let out = []
+    let i = 0
     while i < len(raw) {
-        let mut s = _str(raw[i])
+        let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
             out = out + [s]
         }
@@ -80,7 +80,7 @@ fn _user_argv(raw) -> array {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let mut i = 0
+    let i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -89,8 +89,8 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _table_row(cells) -> string {
-    let mut s = ""
-    let mut i = 0
+    let s = ""
+    let i = 0
     while i < len(cells) {
         if i > 0 { s = s + "  " }
         s = s + _str(cells[i])
@@ -118,7 +118,7 @@ fn _to_int(s: string) -> int {
 }
 
 fn _pad_right(s: string, w: int) -> string {
-    let mut out = s
+    let out = s
     while len(out) < w {
         out = out + " "
     }
@@ -157,9 +157,9 @@ fn _run_one(mn: string) -> array {
     let first = _str(exec(cmd)).trim()
     let t1 = _to_int(_now_ms())
     let dur = t1 - t0
-    let mut status = "FAIL"
+    let status = "FAIL"
     if first.contains("PASS") { status = "PASS" }
-    let mut detail = ""
+    let detail = ""
     if status == "FAIL" { detail = first }
     return [status, str(dur), detail]
 }
@@ -184,14 +184,14 @@ fn _write_result(rows, total_ms: int, pass_count: int, mod_count: int) {
     let ts = _ts_iso()
 
     // build JSON body (compact, deterministic)
-    let mut body = "{\"schema\":\"anima.bench.v1\",\"ts\":\"" + ts + "\","
+    let body = "{\"schema\":\"anima.bench.v1\",\"ts\":\"" + ts + "\","
     body = body + "\"total_ms\":" + str(total_ms) + ","
     body = body + "\"pass_count\":" + str(pass_count) + ","
     body = body + "\"module_count\":" + str(mod_count) + ","
     body = body + "\"prior_total_ms\":" + str(prior) + ","
     body = body + "\"regression_delta_ms\":" + str(delta) + ","
     body = body + "\"modules\":["
-    let mut i = 0
+    let i = 0
     while i < len(rows) {
         let r = rows[i]
         if i > 0 { body = body + "," }
@@ -232,7 +232,7 @@ fn _shell_quote(s: string) -> string {
 fn _render_table(rows, total_ms: int, pass_count: int, mod_count: int) {
     println(_table_row([_pad_right("module", 12), _pad_right("status", 6),
                        _pad_right("duration", 10), "detail"]))
-    let mut i = 0
+    let i = 0
     while i < len(rows) {
         let r = rows[i]
         let name = _str(r[0])
@@ -284,17 +284,17 @@ fn sub_help() {
 
 fn sub_all(emit_json: bool) {
     let mods = _modules()
-    let mut rows = []
-    let mut total_ms = 0
-    let mut pass_count = 0
+    let rows = []
+    let total_ms = 0
+    let pass_count = 0
     let mod_count = len(mods)
-    let mut i = 0
+    let i = 0
     while i < mod_count {
         let m = _str(mods[i])
         let r = _run_one(m)
         let st = _str(r[0])
         let dms = _to_int(_str(r[1]))
-        let mut detail = _str(r[2])
+        let detail = _str(r[2])
         total_ms = total_ms + dms
         if st == "PASS" { pass_count = pass_count + 1 }
         rows = rows + [[m, st, str(dms), detail]]
@@ -313,7 +313,7 @@ fn sub_all(emit_json: bool) {
     let delta_s = _json_field(_resolve_root() + "/state/anima_bench_result.json",
                               ".regression_delta_ms")
     if delta_s != "" && delta_s != "0" {
-        let mut sign = ""
+        let sign = ""
         let d = _to_int(delta_s)
         if d > 0 { sign = "+" }
         println("regression_delta: " + sign + delta_s + "ms (vs prior run)")
@@ -322,8 +322,8 @@ fn sub_all(emit_json: bool) {
 
 fn sub_single(mn: string, emit_json: bool) {
     let mods = _modules()
-    let mut ok = false
-    let mut i = 0
+    let ok = false
+    let i = 0
     while i < len(mods) {
         if _str(mods[i]) == mn { ok = true }
         i = i + 1
@@ -337,9 +337,9 @@ fn sub_single(mn: string, emit_json: bool) {
     let r = _run_one(mn)
     let st = _str(r[0])
     let dms = _to_int(_str(r[1]))
-    let mut detail = _str(r[2])
-    let mut rows = [[mn, st, str(dms), detail]]
-    let mut pc = 0
+    let detail = _str(r[2])
+    let rows = [[mn, st, str(dms), detail]]
+    let pc = 0
     if st == "PASS" { pc = 1 }
     _write_result(rows, dms, pc, 1)
     if emit_json {
@@ -385,10 +385,10 @@ fn main() {
     if _arg_present(argv, "--help") || len(argv) == 0 { sub_help(); return }
     let emit_json = _arg_present(argv, "--json")
     // first non-flag token is the subcommand
-    let mut i = 0
-    let mut sub = ""
+    let i = 0
+    let sub = ""
     while i < len(argv) {
-        let mut s = _str(argv[i])
+        let s = _str(argv[i])
         if !s.starts_with("--") { sub = s; break }
         i = i + 1
     }
@@ -401,3 +401,4 @@ fn main() {
     sub_single(sub, emit_json)
 }
 
+main()

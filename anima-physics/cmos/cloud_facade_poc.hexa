@@ -44,8 +44,6 @@
 //
 // raw#9 hexa-only strict / raw#37 .py FORBIDDEN / raw#15 SSOT this file
 
-use "stdlib/core/hash/sha256"
-
 let SCHEMA           = "anima_physics/cloud_facade_cmos/1"
 let CIR_TEMPLATE     = "anima-physics/cmos/cmos_ring_osc.cir"
 let CIR_TMP_POS      = "/tmp/anima_cmos_ring_osc_pos.cir"
@@ -188,9 +186,8 @@ fn run_facade() -> bool {
     println("[backend] name=" + backend_name)
 
     // 4. Netlist sha256 (frozen-contract reproducibility marker).
-    // rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out removed (byte-equal; cut -c1-64 was the full 64-char digest).
-    let netlist_sha = sha256_of_file(CIR_TEMPLATE)
+    let cmd_nlsha = "shasum -a 256 " + shell_escape(CIR_TEMPLATE) + " | cut -c1-64"
+    let netlist_sha = exec(cmd_nlsha).trim()
     println("[netlist] sha256=" + netlist_sha)
 
     // 5. Gates.
@@ -282,6 +279,10 @@ fn run_facade() -> bool {
 // model. f ≈ 1/(2·N·τ_p), power = C·V²·f. No ngspice call in falsifier.
 // ═══════════════════════════════════════════════════════════════
 
+fn abs_f_cm(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
 
 fn sqrt_f_cm(x: float) -> float {
     if x <= 0.0 { return 0.0 }
@@ -348,7 +349,7 @@ fn fc_cm_3() -> bool {
     let p2 = dynamic_power(c, 2.0 * v, f)
     // doubling V → 4× power
     let ratio = p2 / p1
-    let dev = abs(ratio - 4.0)
+    let dev = abs_f_cm(ratio - 4.0)
     println("  [F-CMOS-3] P_2V/P_V=" + to_string(ratio) + " expected=4 dev=" + to_string(dev))
     return dev < 0.01
 }
@@ -449,3 +450,4 @@ fn main() {
     exit(1)
 }
 
+main()

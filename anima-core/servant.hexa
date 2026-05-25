@@ -267,8 +267,8 @@ fn main() {
     // ── 2. EMA 응답 테스트 ──
     println("")
     println("-- 2. EMA 스무딩 응답 --")
-    let mut ema = 0.0
-    let mut step = 0
+    let ema = 0.0
+    let step = 0
     while step < 10 {
         ema = ema_update(ema, 5.0, EMA_ALPHA)
         if step % 3 == 0 {
@@ -284,11 +284,11 @@ fn main() {
     println("-- 3. FSM 완전 순환 (DORMANT -> ... -> DORMANT) --")
     println("  step  SI    phase        counter  dropout")
     println("  ----  ----  -----------  -------  -------")
-    let mut state = servant_new()
+    let state = servant_new()
     // SI sequence: calm(3) -> spike(5 above summon) -> sustained(4) -> drop(5 below sustain) -> fade(3)
     let si_seq = [1.0, 1.5, 2.0, 4.0, 4.5, 5.0, 4.0, 3.5, 4.2, 3.0, 2.5, 1.5, 1.0, 0.5, 0.2, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0]
     let fac_seq = [0, 0, 0, 3, 3, 7, 7, 5, 5, 5, 5, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
-    let mut i = 0
+    let i = 0
     let phases_visited = [0, 0, 0, 0]
     while i < si_seq.len() {
         state = servant_step(state, si_seq[i], fac_seq[i])
@@ -303,8 +303,8 @@ fn main() {
     // ── 4. Dropout 범위 검증 ──
     println("")
     println("-- 4. Dropout 보간 범위 (물리적 한계) --")
-    let mut si_test = 0.0
-    let mut in_range = true
+    let si_test = 0.0
+    let in_range = true
     while si_test <= 8.0 {
         let d = interpolate_dropout(si_test)
         if d < GOLDEN_LOWER - EPS { in_range = false }
@@ -337,10 +337,10 @@ fn main() {
     // ── 6. 히스테리시스 안정성 (진동 SI) ──
     println("")
     println("-- 6. 히스테리시스 안정성 (진동 SI 입력) --")
-    let mut osc_state = servant_new()
-    let mut toggles = 0
-    let mut prev_phase = DORMANT
-    let mut osc_step = 0
+    let osc_state = servant_new()
+    let toggles = 0
+    let prev_phase = DORMANT
+    let osc_step = 0
     while osc_step < 40 {
         // SI oscillates around summon threshold: 2.5 <-> 3.5
         let osc_si = 3.0 + sin(to_float(osc_step) * 0.8) * 0.6
@@ -365,7 +365,7 @@ fn main() {
     // ── 8. n6 검증 ──
     println("")
     println("-- 8. n6 atlas 검증 --")
-    let mut n6_pass = 0
+    let n6_pass = 0
     let n6_total = 9
 
     let check_summon = SI_SUMMON == to_float(N6_N) / to_float(N6_PHI)
@@ -425,3 +425,4 @@ fn main() {
     println("============================================")
 }
 
+main()

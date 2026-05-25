@@ -72,12 +72,6 @@
 // Expect:
 //   [alm_symbol_qualia] ALL 5/5 PASS
 
-// 2026-05-25 phase 5 M1 wave 2a: vec_norm body delegated to
-// stdlib/linalg/norm l2_norm (hexa-lang #885). Byte-equal — local
-// `sqrt_safe(Σ a²)` == `l2_norm(a, d)` for real arrays. cosine_sim +
-// l2_normalise kept local (1e-7 epsilon differs from stdlib 1e-12).
-import "stdlib/linalg/norm.hexa"
-
 // --- Constants --------------------------------------------------
 
 let N_SYMBOLS = 30        // symbol table size (small to avoid OOM)
@@ -148,8 +142,13 @@ fn vec_dot(a: array, b: array, d: int) -> float {
 }
 
 fn vec_norm(a: array, d: int) -> float {
-    // L2 norm via stdlib/linalg/norm — was inline sqrt_safe(Σ a²).
-    return l2_norm(a, d)
+    let mut s = 0.0
+    let mut i = 0
+    while i < d {
+        s = s + a[i] * a[i]
+        i = i + 1
+    }
+    return sqrt_safe(s)
 }
 
 // Cosine similarity: dot(a,b) / (||a|| * ||b||). Returns 0 if either
@@ -499,3 +498,4 @@ fn main() {
     }
 }
 
+main()

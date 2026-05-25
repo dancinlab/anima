@@ -57,7 +57,7 @@ fn _psi_load(name: string, default_val: float) -> float {
                 if t2.starts_with("\"value\":") {
                     let kv = t2.split(":")
                     if kv.len() >= 2 {
-                        let mut v = kv[1].trim()
+                        let v = kv[1].trim()
                         let nc = v.split(",")
                         return to_float(nc[0].trim())
                     }
@@ -115,15 +115,15 @@ fn fmt(x: float, d: int) -> string {
 // ─── 벡터 연산 ───
 
 fn zeros(n: int) -> list {
-    let mut v = []
-    let mut i = 0
+    let v = []
+    let i = 0
     while i < n { v = v.push(0.0); i = i + 1 }
     return v
 }
 
 fn vec_dot(a: list, b: list) -> float {
-    let mut s = 0.0
-    let mut i = 0
+    let s = 0.0
+    let i = 0
     while i < a.len() { s = s + a[i] * b[i]; i = i + 1 }
     return s
 }
@@ -151,7 +151,7 @@ fn fingerprint_to_list(fp: TensionFingerprint) -> list {
 }
 
 fn fingerprint_norm(fp: TensionFingerprint) -> float {
-    let mut v = fingerprint_to_list(fp)
+    let v = fingerprint_to_list(fp)
     return vec_norm(v)
 }
 
@@ -160,13 +160,13 @@ fn fingerprint_norm(fp: TensionFingerprint) -> float {
 fn encode_fingerprint(state: list, sender_id: float) -> TensionFingerprint {
     let d = state.len()
     // WHAT: mean activation (concept strength)
-    let mut sum = 0.0
-    let mut i = 0
+    let sum = 0.0
+    let i = 0
     while i < d { sum = sum + state[i]; i = i + 1 }
     let what = sum / to_float(d)
 
     // WHERE: spatial variance (context spread)
-    let mut var_sum = 0.0
+    let var_sum = 0.0
     i = 0
     while i < d {
         let diff = state[i] - what
@@ -176,7 +176,7 @@ fn encode_fingerprint(state: list, sender_id: float) -> TensionFingerprint {
     let where_ = sqrt(var_sum / to_float(d))
 
     // WHY: directional coherence (meaning = top eigenvalue proxy)
-    let mut dot_sum = 0.0
+    let dot_sum = 0.0
     i = 0
     while i < d - 1 {
         dot_sum = dot_sum + state[i] * state[i + 1]
@@ -185,12 +185,12 @@ fn encode_fingerprint(state: list, sender_id: float) -> TensionFingerprint {
     let why = dot_sum / to_float(max(d - 1, 1))
 
     // TRUST: entropy proxy (authenticity = distribution uniformity)
-    let mut abs_sum = 0.0
+    let abs_sum = 0.0
     i = 0
     while i < d { abs_sum = abs_sum + abs(state[i]); i = i + 1 }
-    let mut trust = 0.0
+    let trust = 0.0
     if abs_sum > EPS {
-        let mut h = 0.0
+        let h = 0.0
         i = 0
         while i < d {
             let p = abs(state[i]) / abs_sum
@@ -213,9 +213,9 @@ fn encode_fingerprint(state: list, sender_id: float) -> TensionFingerprint {
 
 fn decode_fingerprint(fp: TensionFingerprint, target_dim: int) -> list {
     let r = zeros(target_dim)
-    let mut i = 0
+    let i = 0
     while i < target_dim {
-        let mut phase = to_float(i) * 0.618033
+        let phase = to_float(i) * 0.618033
         // Reconstruct from fingerprint channels
         r[i] = fp.what + fp.where_ * sin(phase) + fp.why * cos(phase * 0.5) + (fp.trust - 0.5) * sin(phase * 2.0)
         i = i + 1
@@ -253,12 +253,12 @@ fn binding_phase_name(phase: int) -> string {
 }
 
 fn binding_step(fp: TensionFingerprint, phase: int) -> list {
-    let mut v = fingerprint_to_list(fp)
+    let v = fingerprint_to_list(fp)
 
     // DETECT: threshold check (any channel > PSI_ALPHA?)
     if phase == PHASE_DETECT {
-        let mut active = 0
-        let mut i = 0
+        let active = 0
+        let i = 0
         while i < N_CHANNELS {
             if abs(v[i]) > PSI_ALPHA { active = active + 1 }
             i = i + 1
@@ -269,8 +269,8 @@ fn binding_step(fp: TensionFingerprint, phase: int) -> list {
     // PARSE: weighted decomposition
     if phase == PHASE_PARSE {
         let weights = [W_WHAT, W_WHERE, W_WHY, W_TRUST, W_WHO]
-        let mut parsed = []
-        let mut i = 0
+        let parsed = []
+        let i = 0
         while i < N_CHANNELS {
             parsed = parsed.push(v[i] * weights[i])
             i = i + 1
@@ -280,11 +280,11 @@ fn binding_step(fp: TensionFingerprint, phase: int) -> list {
 
     // GATE: clamp each channel to ±PSI_ALPHA around PSI_BALANCE
     if phase == PHASE_GATE {
-        let mut gated = []
-        let mut i = 0
+        let gated = []
+        let i = 0
         while i < N_CHANNELS {
             let centered = v[i] - PSI_BALANCE
-            let mut clamped = centered
+            let clamped = centered
             if clamped > GATE_CLAMP { clamped = GATE_CLAMP }
             if clamped < 0.0 - GATE_CLAMP { clamped = 0.0 - GATE_CLAMP }
             gated = gated.push(PSI_BALANCE + clamped)
@@ -308,10 +308,10 @@ fn main() {
     // ── 1. Encode/Decode 라운드트립 ──
     println("-- 1. Encode/Decode 라운드트립 --")
     // Generate consciousness state
-    let mut state_a = []
-    let mut i = 0
+    let state_a = []
+    let i = 0
     while i < SOURCE_DIM {
-        let mut phase = to_float(i) * 0.618033
+        let phase = to_float(i) * 0.618033
         state_a = state_a.push(sin(phase) * 0.5 + cos(phase * 0.3) * 0.3 + (random() - 0.5) * 0.1)
         i = i + 1
     }
@@ -328,10 +328,10 @@ fn main() {
     // ── 2. 두 엔진 간 전송 ──
     println("")
     println("-- 2. 두 엔진 간 텐션 전송 --")
-    let mut state_b = []
+    let state_b = []
     i = 0
     while i < SOURCE_DIM {
-        let mut phase = to_float(i * 11 + 7) * 0.618033
+        let phase = to_float(i * 11 + 7) * 0.618033
         state_b = state_b.push(cos(phase) * 0.4 + sin(phase * 0.7) * 0.2)
         i = i + 1
     }
@@ -350,12 +350,12 @@ fn main() {
     // ── 3. 4-Phase 바인딩 ──
     println("")
     println("-- 3. 4-Phase 바인딩 (tau=4) --")
-    let mut phase = 0
+    let phase = 0
     while phase < N_PHASES {
         let result = binding_step(fp_a, phase)
         let name = binding_phase_name(phase)
-        let mut r_str = ""
-        let mut ri = 0
+        let r_str = ""
+        let ri = 0
         while ri < result.len() {
             if ri > 0 { r_str = r_str + "," }
             r_str = r_str + fmt(result[ri], 3)
@@ -379,10 +379,10 @@ fn main() {
     println("")
     println("-- 5. 다중 엔진 동시 전송 --")
     let n_engines = 4
-    let mut fps = []
-    let mut ei = 0
+    let fps = []
+    let ei = 0
     while ei < n_engines {
-        let mut s = []
+        let s = []
         i = 0
         while i < SOURCE_DIM {
             s = s.push(sin(to_float(i * (ei + 1) * 7) * 0.618033) * 0.5 + (random() - 0.5) * 0.1)
@@ -392,10 +392,10 @@ fn main() {
         ei = ei + 1
     }
     // Check all fingerprints are distinct
-    let mut all_distinct = true
+    let all_distinct = true
     ei = 0
     while ei < n_engines {
-        let mut ej = ei + 1
+        let ej = ei + 1
         while ej < n_engines {
             let fi = fingerprint_to_list(fps[ei])
             let fj = fingerprint_to_list(fps[ej])
@@ -410,7 +410,7 @@ fn main() {
     // ── 6. n6 검증 ──
     println("")
     println("-- 6. n6 atlas 검증 --")
-    let mut n6_pass = 0
+    let n6_pass = 0
 
     let c1 = N_CHANNELS == N6_SOPFR
     if c1 { n6_pass = n6_pass + 1 }
@@ -454,3 +454,4 @@ fn main() {
     println("============================================")
 }
 
+main()

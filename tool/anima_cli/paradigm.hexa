@@ -42,7 +42,7 @@ fn _jq(path: string, expr: string) -> string {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let mut i = 0
+    let i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -51,8 +51,8 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _user_argv(raw) -> array {
-    let mut out = []
-    let mut i = 0
+    let out = []
+    let i = 0
     while i < len(raw) {
         let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
@@ -98,7 +98,7 @@ fn _weight_line(root: string) -> string {
 }
 
 fn _dir_count(dir: string) -> string {
-    let mut out = _str(exec("ls -1 " + dir + " 2>/dev/null | wc -l | tr -d ' '")).trim()
+    let out = _str(exec("ls -1 " + dir + " 2>/dev/null | wc -l | tr -d ' '")).trim()
     if out == "" { return "0" }
     return out
 }
@@ -192,3 +192,4 @@ fn main() {
     exit(2)
 }
 
+main()

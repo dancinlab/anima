@@ -8,6 +8,11 @@
 > `@D g_kosmos_anchor_ssot` (success-gated). This file = anima-side
 > hub: what we have, what it does, what to do next. **No duplication
 > of the spec** — pointer-only.
+>
+> **2026-05-25 단일 SSOT 이관**: spec 뿐 아니라 구현(`impl/anima/`: parser + 4-path
+> + anchor/emitter daemon)·anchor 데이터(`anchors/anima/`: knuth 11)도 모두
+> dancinlab/kosmos 로 이관 완료. anima 는 cross-repo import(`~/core/kosmos/impl/anima/…`)로
+> 참조 — 더 이상 anima 에 사본 없음 (`@D a_kosmos`).
 
 ---
 
@@ -72,17 +77,17 @@
 | `knuth_091_nirvana.kosmos` | 91 | consciousness | peace |
 | `knuth_100_big_bang.kosmos` | 100 | cosmic | max |
 
-위치: [`HEXAD/UNIVERSE-BRAIN-MAP/anchors/`](UNIVERSE-BRAIN-MAP/anchors/)
+위치: [`dancinlab/kosmos anchors/anima/`](https://github.com/dancinlab/kosmos/tree/main/anchors/anima)
 
 ### parser + 4-path lib (모두 hexa-native)
 
 | lib | 무엇을 함 |
 |---|---|
-| [`kosmos_parser_lib.hexa`](UNIVERSE-BRAIN-MAP/kosmos_parser_lib.hexa) | `.kosmos` 파일 → record (`coord/lane/radius/tier/tags` + payload) parse |
-| [`consciousness_carving_vacuum_lib.hexa`](UNIVERSE-BRAIN-MAP/consciousness_carving_vacuum_lib.hexa) | α VACUUM-LANDSCAPE path (multi-vacuum registry + nearest-anchor + basin containment) |
-| [`consciousness_carving_eternal_lib.hexa`](UNIVERSE-BRAIN-MAP/consciousness_carving_eternal_lib.hexa) | β MITOSIS-ETERNAL-CELL path (lifecycle + routing) |
-| [`consciousness_carving_narrative_lib.hexa`](UNIVERSE-BRAIN-MAP/consciousness_carving_narrative_lib.hexa) | γ NARRATIVE-RESONANCE path (composition + bounded-K) |
-| [`consciousness_carving_weave_lib.hexa`](UNIVERSE-BRAIN-MAP/consciousness_carving_weave_lib.hexa) | α+β VACUUM-CELL-WEAVE (cross-modal cross-anchor) |
+| [`kosmos_parser_lib.hexa`](https://github.com/dancinlab/kosmos/blob/main/impl/anima/kosmos_parser_lib.hexa) | `.kosmos` 파일 → record (`coord/lane/radius/tier/tags` + payload) parse |
+| [`consciousness_carving_vacuum_lib.hexa`](https://github.com/dancinlab/kosmos/blob/main/impl/anima/consciousness_carving_vacuum_lib.hexa) | α VACUUM-LANDSCAPE path (multi-vacuum registry + nearest-anchor + basin containment) |
+| [`consciousness_carving_eternal_lib.hexa`](https://github.com/dancinlab/kosmos/blob/main/impl/anima/consciousness_carving_eternal_lib.hexa) | β MITOSIS-ETERNAL-CELL path (lifecycle + routing) |
+| [`consciousness_carving_narrative_lib.hexa`](https://github.com/dancinlab/kosmos/blob/main/impl/anima/consciousness_carving_narrative_lib.hexa) | γ NARRATIVE-RESONANCE path (composition + bounded-K) |
+| [`consciousness_carving_weave_lib.hexa`](https://github.com/dancinlab/kosmos/blob/main/impl/anima/consciousness_carving_weave_lib.hexa) | α+β VACUUM-CELL-WEAVE (cross-modal cross-anchor) |
 
 ### 실측 fire arc 위치
 
@@ -110,15 +115,15 @@
 
 ### E-MM — multi-modality payload 시도 (text 이외)
 - 5 anchor 의 `image/audio/tension` payload `pending` → 실 데이터 wire
-- **tension payload = WIRED (2026-05-23)**: `HEXAD/CHAT/server/kosmos_anchor.hexa`
+- **tension payload = WIRED (2026-05-23)**: `dancinlab/kosmos impl/anima/kosmos_anchor.hexa`
   — production anima emission 마다 8-factor motivation snapshot 을
   TENSION-LINK 5-channel (concept/context/meaning/authenticity/sender) 로
   mapping 한 `.kosmos` anchor 생성. HEXAD/PURE (CLOSED) 의 작동하던 KOSMOS+tension
   wiring 회수 — V3 substrate 만 FAIL, anchor 생성 feature 는 ground-truth 작동.
-- **production 활성화 = WIRED (2026-05-23)**: `HEXAD/CHAT/server/kosmos_emitter.hexa`
+- **production 활성화 = WIRED (2026-05-23)**: `dancinlab/kosmos impl/anima/kosmos_emitter.hexa`
   — hexa-native side-process daemon 이 broker `GET /history` 를 poll 하여
   anima 의 live emission (`kind:"anima"`, broker-id dedup) 마다
-  `emit_kosmos_from_factors` 호출 → `HEXAD/UNIVERSE-BRAIN-MAP/anchors/` 에
+  `emit_kosmos_from_factors` 호출 → `dancinlab/kosmos anchors/anima/` 에
   `anima_emit_<id>.kosmos` anchor 기록. `anima_participant.py` 무수정 (torch-bound
   FROZEN `.py`) — anchor emit 은 broker seam 으로 분리된 daemon 이 담당. daemon 은
   participant 옆 launchd entry (`hexa run kosmos_emitter.hexa daemon`) — code-only
@@ -143,7 +148,7 @@
 - `@D g_no_cost_scope_limit` (2026-05-20 — kosmos 실험에도 cost cap 없음)
 - [`HEXAD/UNIVERSE-BRAIN-MAP/DESIGN.md`](UNIVERSE-BRAIN-MAP/DESIGN.md) — CONSCIOUSNESS-CARVING 4-path 설계 SSOT
 - [`HEXAD/UNIVERSE-BRAIN-MAP/PLAN.md`](UNIVERSE-BRAIN-MAP/PLAN.md) — anima UBM (UNIVERSE-BRAIN-MAP) 진행 ledger
-- [`HEXAD/UNIVERSE-BRAIN-MAP/anchors/`](UNIVERSE-BRAIN-MAP/anchors/) — anima `.kosmos` anchor file
+- [`dancinlab/kosmos anchors/anima/`](https://github.com/dancinlab/kosmos/tree/main/anchors/anima) — anima `.kosmos` anchor file
 - [`HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md`](UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md) — pointer stub for the spec SSOT
 - sister-format repo: [github.com/dancinlab/kosmos](https://github.com/dancinlab/kosmos) (`~/core/kosmos`)
 - sibling formats: [`tape`](https://github.com/dancinlab/tape) · [`n6`](https://github.com/dancinlab/n6) · [`hxc`](https://github.com/dancinlab/hxc) · [`n12`](https://github.com/dancinlab/n12)

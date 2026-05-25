@@ -63,8 +63,8 @@ fn _ts_iso() -> string {
 }
 
 fn _user_argv(raw) -> array {
-    let mut out = []
-    let mut i = 0
+    let out = []
+    let i = 0
     while i < len(raw) {
         let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
@@ -76,7 +76,7 @@ fn _user_argv(raw) -> array {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let mut i = 0
+    let i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -85,7 +85,7 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _arg_value(argv, key: string, dflt: string) -> string {
-    let mut i = 0
+    let i = 0
     while i < len(argv) {
         if _str(argv[i]) == key && i + 1 < len(argv) {
             return _str(argv[i + 1])
@@ -100,7 +100,7 @@ fn _exec_line(cmd: string) -> string {
 }
 
 fn _count_files(root: string, sub: string, pattern: string) -> string {
-    let mut p = root + "/" + sub
+    let p = root + "/" + sub
     if !_dexists(p) { return "0" }
     let c = _exec_line("find " + p + " -type f -name '" + pattern + "' 2>/dev/null | wc -l | tr -d ' '")
     if c == "" { return "0" }
@@ -108,7 +108,7 @@ fn _count_files(root: string, sub: string, pattern: string) -> string {
 }
 
 fn _loc_sum(root: string, sub: string, pattern: string) -> string {
-    let mut p = root + "/" + sub
+    let p = root + "/" + sub
     if !_dexists(p) { return "0" }
     let c = _exec_line("find " + p + " -type f -name '" + pattern + "' -print0 2>/dev/null | xargs -0 awk 'END{print NR}' 2>/dev/null")
     if c == "" { return "0" }
@@ -136,7 +136,7 @@ fn _roadmap_total(root: string) -> string {
 }
 
 fn _proposal_bucket(root: string, bucket: string) -> string {
-    let mut p = root + "/state/proposals/" + bucket
+    let p = root + "/state/proposals/" + bucket
     if !_dexists(p) { return "0" }
     // Pending / rejected are flat *.json; approved/archived may nest.
     let v = _exec_line("find " + p + " -type f -name '*.json' 2>/dev/null | wc -l | tr -d ' '")
@@ -147,7 +147,7 @@ fn _proposal_bucket(root: string, bucket: string) -> string {
 fn _schema_top(root: string, n: int) -> array {
     // Returns array of "count  schema" lines (top-N); expensive for large trees
     // but deterministic. Uses ACTIVE schema field only from state/*.json.
-    let mut out = []
+    let out = []
     if !_dexists(root + "/state") { return out }
     let n_s = _str(n)
     let cmd = "find " + root + "/state -type f -name '*.json' 2>/dev/null"
@@ -155,7 +155,7 @@ fn _schema_top(root: string, n: int) -> array {
            + " | sort | uniq -c | sort -rn | head -n " + n_s
     let raw = _str(exec(cmd))
     let lines = raw.split("\n")
-    let mut i = 0
+    let i = 0
     while i < len(lines) {
         let line = _str(lines[i]).trim()
         if line != "" { out = out + [line] }
@@ -179,14 +179,14 @@ fn _branch_count(root: string) -> string {
 fn _top_tools(root: string, n: int) -> array {
     // Largest tool/*.hexa by LOC — top-N. Skips tool/anima_cli/* subdir by
     // convention (thin orchestrators), keeping list meaningful.
-    let mut out = []
+    let out = []
     if !_dexists(root + "/tool") { return out }
     let n_s = _str(n)
     let cmd = "find " + root + "/tool -maxdepth 2 -type f -name '*.hexa' 2>/dev/null"
            + " | xargs wc -l 2>/dev/null | grep -v ' total$' | sort -rn | head -n " + n_s
     let raw = _str(exec(cmd))
     let lines = raw.split("\n")
-    let mut i = 0
+    let i = 0
     while i < len(lines) {
         let line = _str(lines[i]).trim()
         if line != "" { out = out + [line] }
@@ -196,7 +196,7 @@ fn _top_tools(root: string, n: int) -> array {
 }
 
 fn _cert_count(root: string) -> string {
-    let mut p = root + "/.meta2-cert"
+    let p = root + "/.meta2-cert"
     if !_dexists(p) { return "0" }
     let v = _exec_line("find " + p + " -type f -name '*.json' 2>/dev/null | wc -l | tr -d ' '")
     if v == "" { return "0" }
@@ -208,8 +208,8 @@ fn _cert_count(root: string) -> string {
 fn _row(label: string, val: string) -> string {
     // Left-pad label to 20 cols (hexa has no substr — build manually).
     let need = 20 - label.len()
-    let mut p = ""
-    let mut i = 0
+    let p = ""
+    let i = 0
     while i < need {
         p = p + " "
         i = i + 1
@@ -294,7 +294,7 @@ fn sub_report(compact: bool) {
     if len(schemas) == 0 {
         println("  (none)")
     } else {
-        let mut i = 0
+        let i = 0
         while i < len(schemas) {
             println("  " + _str(schemas[i]))
             i = i + 1
@@ -311,7 +311,7 @@ fn sub_report(compact: bool) {
     if len(top) == 0 {
         println("  (none)")
     } else {
-        let mut i = 0
+        let i = 0
         while i < len(top) {
             println("  " + _str(top[i]))
             i = i + 1
@@ -354,18 +354,18 @@ fn _emit_json(root: string, outpath: string) {
 
     // schema top10 as "N schema" lines
     let schemas = _schema_top(root, 10)
-    let mut s_arr = "["
-    let mut i = 0
+    let s_arr = "["
+    let i = 0
     while i < len(schemas) {
         let line = _str(schemas[i]).trim()
         // split on first whitespace: <count> <schema>
         let parts = line.split(" ")
-        let mut cnt = ""
-        let mut name = ""
-        let mut j = 0
-        let mut filled = false
+        let cnt = ""
+        let name = ""
+        let j = 0
+        let filled = false
         while j < len(parts) {
-            let mut p = _str(parts[j]).trim()
+            let p = _str(parts[j]).trim()
             if p != "" {
                 if !filled { cnt = p; filled = true }
                 else {
@@ -381,17 +381,17 @@ fn _emit_json(root: string, outpath: string) {
     s_arr = s_arr + "]"
 
     let top = _top_tools(root, 10)
-    let mut t_arr = "["
-    let mut i2 = 0
+    let t_arr = "["
+    let i2 = 0
     while i2 < len(top) {
         let line = _str(top[i2]).trim()
         let parts = line.split(" ")
-        let mut loc = ""
-        let mut path = ""
-        let mut j = 0
-        let mut filled = false
+        let loc = ""
+        let path = ""
+        let j = 0
+        let filled = false
         while j < len(parts) {
-            let mut p = _str(parts[j]).trim()
+            let p = _str(parts[j]).trim()
             if p != "" {
                 if !filled { loc = p; filled = true }
                 else {
@@ -448,7 +448,7 @@ fn _emit_json(root: string, outpath: string) {
     // Validate + pretty-print through jq (also catches malformed numerics)
     let tmp = "/tmp/anima_stats_emit.json"
     exec("cat > " + tmp + " <<'JSONEOF'\n" + body + "\nJSONEOF")
-    let mut pretty = _str(exec("jq -S . " + tmp + " 2>/dev/null"))
+    let pretty = _str(exec("jq -S . " + tmp + " 2>/dev/null"))
     exec("rm -f " + tmp)
     if pretty.trim() == "" {
         // fall back to raw body (jq unavailable / malformed)
@@ -488,7 +488,7 @@ fn sub_selftest() {
     exec("printf '{}\\n' > " + sandbox + "/state/proposals/pending/p2.json")
     exec("printf '{}\\n' > " + sandbox + "/state/proposals/approved/a1.json")
 
-    let mut ok = true
+    let ok = true
     // use internal helpers with sandbox root
     let c_hexa = _count_files(sandbox, "tool", "*.hexa")
     if c_hexa != "2" { println("FAIL hexa_count=" + c_hexa); ok = false }
@@ -560,3 +560,4 @@ fn main() {
     sub_report(compact)
 }
 
+main()

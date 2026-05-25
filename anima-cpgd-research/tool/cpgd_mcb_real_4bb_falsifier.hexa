@@ -513,9 +513,11 @@ fn cell_canonical(alias: string, rank: int, k: int,
 }
 
 fn sha256_of_string(s: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out + tmp-file removed (byte-equal output, no fork-exec, no /tmp race).
-    return sha256(s)
+    let tmp = "/tmp/cpgd_mcb_sha_" + to_string(len(s)) + ".txt"
+    write_file(tmp, s)
+    let r = _str(exec("shasum -a 256 " + tmp + " | awk '{print $1}'")).trim()
+    let _ = exec("rm -f " + tmp)
+    return r
 }
 
 // ─── pathological negative-falsify on first PASS cell ─────────────────────

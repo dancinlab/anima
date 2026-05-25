@@ -163,9 +163,9 @@ fn _build_ssot(balance: float, method: string, threshold: float, alert: bool, ra
 }
 
 fn _digest(s: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out + exec_with_status tuple unwrap removed (byte-equal output, no fork-exec).
-    return sha256(s)
+    let q = _sh_quote(s)
+    let r = exec_with_status("printf %s " + q + " | shasum -a 256 | awk '{print $1}'")
+    return to_string(r[0]).trim()
 }
 
 fn _self_test() {
@@ -231,3 +231,4 @@ fn main() {
     exit(0)
 }
 
+main()

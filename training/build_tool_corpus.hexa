@@ -99,12 +99,12 @@ fn build_params(names: [string], types: [string], descs: [string], count: int) -
 // Build full tool schema (OpenAI function object)
 fn build_tool(name: string, desc: string, params_json: string) -> string {
     return "{\"type\":\"function\",\"function\":{\"name\":\"" + json_esc(name) + "\",\"description\":\"" + json_esc(desc) + "\",\"parameters\":" + params_json + "}}"
-}
+end
 
 // Build one JSONL line
 fn build_line(tool_json: string, instruction: string, call_name: string, call_args: string, result: string) -> string {
     return "{\"tool\":" + tool_json + ",\"instruction\":\"" + json_esc(instruction) + "\",\"tool_call\":{\"name\":\"" + json_esc(call_name) + "\",\"arguments\":" + call_args + "},\"result\":\"" + json_esc(result) + "\"}"
-}
+end
 
 // =====================================================================
 // Category 1: file_ops (5 examples)
@@ -127,7 +127,7 @@ fn gen_file_ops() -> [string] {
     lines = lines.push(build_line(tool_delete, "Remove the temporary log file at /tmp/debug.log", "delete_file", "{\"path\":\"/tmp/debug.log\"}", "Deleted: /tmp/debug.log"))
     lines = lines.push(build_line(tool_move, "Rename config.old to config.yaml", "move_file", "{\"source\":\"config.old\",\"destination\":\"config.yaml\"}", "Moved config.old -> config.yaml"))
     return lines
-}
+end
 
 // =====================================================================
 // Category 2: web_search (5 examples)
@@ -144,7 +144,7 @@ fn gen_web_search() -> [string] {
     lines = lines.push(build_line(tool_search, "Look up the population of Seoul", "web_search", "{\"query\":\"Seoul population 2026\",\"max_results\":3}", "[1] Seoul metropolitan population: 9.7 million (2026 est.) - worldpopulationreview.com"))
     lines = lines.push(build_line(tool_fetch, "Fetch the raw content of our API status page", "fetch_url", "{\"url\":\"https://status.example.com/api/v1/health\"}", "{\"status\":\"operational\",\"uptime\":\"99.97%\",\"last_incident\":\"2026-04-01\"}"))
     return lines
-}
+end
 
 // =====================================================================
 // Category 3: calendar (5 examples)
@@ -162,7 +162,7 @@ fn gen_calendar() -> [string] {
     lines = lines.push(build_line(tool_delete, "Cancel the sprint review meeting", "delete_event", "{\"event_id\":\"evt_x7y8z9\"}", "Event deleted: Sprint Review (evt_x7y8z9)"))
     lines = lines.push(build_line(tool_list, "Show me all events for April 20th", "list_events", "{\"start_date\":\"2026-04-20\",\"end_date\":\"2026-04-20\"}", "No events scheduled for 2026-04-20"))
     return lines
-}
+end
 
 // =====================================================================
 // Category 4: email_send (5 examples)
@@ -179,7 +179,7 @@ fn gen_email() -> [string] {
     lines = lines.push(build_line(tool_send, "Email the client the project status update", "send_email", "{\"to\":\"client@partner.co\",\"subject\":\"Project Alpha - Weekly Status\",\"body\":\"Dear Client, this week we completed 3 milestones: API integration, load testing, and documentation. Next week: UAT begins.\"}", "Email sent to client@partner.co (Message-ID: msg_ghi789)"))
     lines = lines.push(build_line(tool_read, "Show me unread emails from today", "read_emails", "{\"folder\":\"inbox\",\"limit\":10}", "[1] From: alerts@monitoring.io Subject: CPU usage spike on prod-03, [2] From: jira@atlassian.net Subject: PROJ-1234 assigned to you"))
     return lines
-}
+end
 
 // =====================================================================
 // Category 5: database_query (5 examples)
@@ -196,7 +196,7 @@ fn gen_database() -> [string] {
     lines = lines.push(build_line(tool_query, "Find users who signed up in the last 24 hours", "database_query", "{\"query\":\"SELECT email, created_at FROM users WHERE created_at >= NOW() - INTERVAL '24 hours' ORDER BY created_at DESC\",\"database\":\"production\"}", "user1@email.com (2026-04-16 14:22), user2@email.com (2026-04-16 11:05), user3@email.com (2026-04-15 23:41)"))
     lines = lines.push(build_line(tool_schema, "What columns does the events table have?", "describe_table", "{\"table_name\":\"events\",\"database\":\"analytics\"}", "events: id (BIGINT PK), event_type (VARCHAR), user_id (INT), payload (JSONB), timestamp (TIMESTAMPTZ), session_id (UUID)"))
     return lines
-}
+end
 
 // =====================================================================
 // Category 6: code_exec (5 examples)
@@ -212,7 +212,7 @@ fn gen_code_exec() -> [string] {
     lines = lines.push(build_line(tool_exec, "Parse this JSON and extract all email addresses", "execute_code", "{\"language\":\"python\",\"code\":\"import json; data = json.loads('{\\\"users\\\":[{\\\"email\\\":\\\"a@b.com\\\"},{\\\"email\\\":\\\"c@d.com\\\"}]}'); print([u['email'] for u in data['users']])\"}", "['a@b.com', 'c@d.com']"))
     lines = lines.push(build_line(tool_exec, "What is the current disk usage?", "execute_code", "{\"language\":\"bash\",\"code\":\"df -h / | tail -1\"}", "/dev/sda1 500G 234G 266G 47% /"))
     return lines
-}
+end
 
 // =====================================================================
 // Category 7: image_gen (5 examples)
@@ -228,7 +228,7 @@ fn gen_image_gen() -> [string] {
     lines = lines.push(build_line(tool_gen, "Create a simple icon for the settings page", "generate_image", "{\"prompt\":\"Simple flat design gear icon, monochrome gray, 2D, no gradients, centered on transparent background\",\"width\":256,\"height\":256}", "Image generated: /tmp/gen_img_004.png (256x256, 12KB)"))
     lines = lines.push(build_line(tool_gen, "Generate a profile avatar for my account", "generate_image", "{\"prompt\":\"Professional avatar illustration, geometric abstract face, warm earth tones, hexagonal pattern background\",\"width\":512,\"height\":512}", "Image generated: /tmp/gen_img_005.png (512x512, 340KB)"))
     return lines
-}
+end
 
 // =====================================================================
 // Category 8: translation (5 examples)
@@ -244,7 +244,7 @@ fn gen_translation() -> [string] {
     lines = lines.push(build_line(tool_trans, "Convert this French text to English: 'Le modele de conscience artificielle'", "translate_text", "{\"text\":\"Le modele de conscience artificielle\",\"source_lang\":\"fr\",\"target_lang\":\"en\"}", "The artificial consciousness model"))
     lines = lines.push(build_line(tool_trans, "Translate 'neural network training complete' to Chinese", "translate_text", "{\"text\":\"neural network training complete\",\"source_lang\":\"en\",\"target_lang\":\"zh\"}", "神经网络训练完成"))
     return lines
-}
+end
 
 // =====================================================================
 // Category 9: math_compute (5 examples)
@@ -260,7 +260,7 @@ fn gen_math() -> [string] {
     lines = lines.push(build_line(tool_calc, "Solve the quadratic equation x^2 - 5x + 6 = 0", "math_compute", "{\"expression\":\"solve(x**2 - 5*x + 6, x)\",\"precision\":2}", "[2.00, 3.00]"))
     lines = lines.push(build_line(tool_calc, "Compute the standard deviation of [12, 15, 18, 22, 25, 30]", "math_compute", "{\"expression\":\"std([12, 15, 18, 22, 25, 30])\",\"precision\":4}", "6.2716"))
     return lines
-}
+end
 
 // =====================================================================
 // Category 10: system_monitor (5 examples)
@@ -277,7 +277,7 @@ fn gen_system_monitor() -> [string] {
     lines = lines.push(build_line(tool_status, "What is the current CPU load?", "system_status", "{\"resource\":\"cpu\"}", "CPU: 24 cores, Load avg: 3.42 / 2.81 / 2.15, User: 42.1%, System: 8.3%, Idle: 49.6%"))
     lines = lines.push(build_line(tool_logs, "Any errors in the system log recently?", "read_logs", "{\"source\":\"syslog\",\"lines\":20}", "[15:58:02] ERR  OOM killer invoked on pid 8421 (java), freed 2.1GB\\n[16:00:15] WARN  Disk /dev/sdb1 at 92% capacity"))
     return lines
-}
+end
 
 // =====================================================================
 // Main: generate + write + verify
@@ -470,3 +470,4 @@ fn main() {
     }
 }
 
+main()

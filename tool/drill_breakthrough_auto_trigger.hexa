@@ -72,13 +72,9 @@ fn _file_exists(p: string) -> bool {
 }
 
 fn _sha16(p: string) -> string {
-    // full digest rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256
-    // alias surface); shell-out + awk substr removed. 16-char prefix preserved
-    // (byte-equal; "" on missing file preserved).
     if !_file_exists(p) { return "" }
-    let full = sha256_file(p)
-    if full.len() < 16 { return full }
-    return full.substring(0, 16)
+    let cmd = "shasum -a 256 " + p + " 2>/dev/null | awk '{print substr($1,1,16)}'"
+    return _str(exec(cmd)).trim()
 }
 
 fn _bool_str(b: bool) -> string { if b { return "true" } else { return "false" } }

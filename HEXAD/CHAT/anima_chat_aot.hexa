@@ -4721,10 +4721,9 @@ fn _cmd_ckpt(argv, idx: int, argc: int) {
         let ex = file_exists(real)
         println("exists: " + to_string(ex))
         if !ex { return 3 }
-        // sha256 via stdlib FIPS 180-4 builtin (hexa-lang #884); the sha256_file
-        // builtin needs no `use` import (preserves this AOT file's no-cross-module
-        // constraint) and is byte-equal to the prior sha256sum/shasum shell-out.
-        let h = sha256_file(real)
+        // sha256 + size via shell (mac+linux portable)
+        let hcmd = "(sha256sum '" + real + "' 2>/dev/null || shasum -a 256 '" + real + "' 2>/dev/null) | awk '{print $1}'"
+        let h = to_string(exec(hcmd)).trim()
         println("sha256: " + h)
         let szcmd = "stat -f%z '" + real + "' 2>/dev/null || stat -c%s '" + real + "' 2>/dev/null"
         let sz = to_string(exec(szcmd)).trim()

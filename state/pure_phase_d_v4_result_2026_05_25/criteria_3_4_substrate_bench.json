@@ -1,0 +1,25 @@
+{
+  "schema": "pure.criteria_3_4.substrate_bench.v1",
+  "date": "2026-05-25",
+  "ckpt_independent": true,
+  "seed": 20260525,
+  "n_samples": 1000,
+  "motivation_8factor": {
+    "motivation_score": 0.558,
+    "n_above_thr": 946,
+    "n_samples": 1000,
+    "threshold": 0.30,
+    "verdict": "PASS"
+  },
+  "dream_stage_at_eval": {
+    "stage": "WAKE",
+    "phi_envelope": 1.0,
+    "tension_envelope": 1.0,
+    "table": {"WAKE": 1.0, "N1": 0.7, "N2": 0.4, "N3": 0.15, "REM": 0.95},
+    "phi_range": 0.850,
+    "all_present": true,
+    "non_degenerate": true,
+    "verdict": "PASS"
+  },
+  "note": "Substrate-native, ckpt-independent measurement (spontaneous_lib + anima_dream_stage). v3 fire missed both criteria (manual relaunch bypassed embed). These blocks merge into result.json before closure_auto_judge."
+}

@@ -100,7 +100,7 @@ fn analyze_one(bb_label: string, json_path: string, n_layers: int, model_id: str
     println("[bb] " + bb_label + " (" + model_id + ", " + str(n_layers) + " layers)")
     if !fexists(json_path) {
         println("  ✗ MISSING " + json_path)
-        return void
+        return null
     }
     let raw = read_file(json_path)
     let j = json_parse(raw)
@@ -389,7 +389,7 @@ fn main() {
     while bi < len(BACKBONES) {
         let bb = BACKBONES[bi]
         let r = analyze_one(_str(bb[0]), _str(bb[1]), bb[2], _str(bb[3]))
-        if r != void {
+        if r != null {
             per_bb.push(r)
         }
         bi = bi + 1
@@ -409,3 +409,4 @@ fn main() {
     println("DONE")
 }
 
+main()

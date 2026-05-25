@@ -66,12 +66,10 @@ fn resolve_source() -> str {
 fn _sha256_prefix(s: str) -> str {
     // sha256 prefix-8 of token (raw#15: NEVER print value, only prefix)
     if s.len() == 0 { return "(empty)" }
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // the printf-stdin shell-out + GNU/BSD fallback is gone. raw#15 token-leak
-    // safety is STRENGTHENED, not weakened: sha256(s) is an in-process builtin —
-    // the token never reaches argv NOR a pipe/subprocess, so there is no `ps`
-    // leak surface at all. 8-char prefix slice unchanged (byte-equal digest).
-    return sha256(s).substring(0, 8)
+    // pipe via stdin to avoid argv exposure (no ps leak)
+    // shasum (BSD/macOS) preferred; sha256sum (Linux/Alpine) fallback for docker routing.
+    let cmd = "printf '%s' " + _sh_q(s) + " | (shasum -a 256 2>/dev/null || sha256sum) | awk '{print $1}' | cut -c1-8"
+    return exec(cmd).trim()
 }
 
 // ─── Subcommands ───────────────────────────────────────────────────────

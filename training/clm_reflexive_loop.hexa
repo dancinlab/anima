@@ -51,8 +51,6 @@
 
 // ─── Constants ────────────────────────────────────────────────
 
-import "stdlib/info/entropy_histogram.hexa"
-
 let RL_MI_BINS     = 8
 let RL_WEIGHT_GAIN = 0.25
 
@@ -62,6 +60,12 @@ fn fabs(x: float) -> float {
     if x < 0.0 { return 0.0 - x }
     return x
 }
+
+fn ln_safe(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    return ln(x)
+}
+
 fn det_rand(n: int, seed: int) -> array {
     let mut out = []
     let mut s = seed
@@ -103,6 +107,76 @@ fn vec_max(v: array) -> float {
     }
     return m
 }
+
+fn bin_index(x: float, lo: float, hi: float, nb: int) -> int {
+    if hi <= lo { return 0 }
+    let t = (x - lo) / (hi - lo)
+    let mut idx = to_int(t * to_float(nb))
+    if idx < 0 { idx = 0 }
+    if idx >= nb { idx = nb - 1 }
+    return idx
+}
+
+fn count_hits(bin_ids: array, n_bins: int) -> array {
+    let n = len(bin_ids)
+    let mut counts = []
+    let mut k = 0
+    while k < n_bins {
+        let mut c = 0.0
+        let mut i = 0
+        while i < n {
+            if bin_ids[i] == k { c = c + 1.0 }
+            i = i + 1
+        }
+        counts = counts.push(c)
+        k = k + 1
+    }
+    return counts
+}
+
+fn entropy_hist(v: array, lo: float, hi: float, nb: int) -> float {
+    let n = len(v)
+    if n == 0 { return 0.0 }
+    let mut bin_ids = []
+    let mut i = 0
+    while i < n {
+        bin_ids = bin_ids.push(bin_index(v[i], lo, hi, nb))
+        i = i + 1
+    }
+    let counts = count_hits(bin_ids, nb)
+    let inv_n = 1.0 / to_float(n)
+    let mut h = 0.0
+    let mut k = 0
+    while k < nb {
+        let p = counts[k] * inv_n
+        if p > 0.0 { h = h - p * ln_safe(p) }
+        k = k + 1
+    }
+    return h
+}
+
+fn joint_entropy_hist(a: array, b: array, lo: float, hi: float, nb: int) -> float {
+    let n = len(a)
+    let mut pair_ids = []
+    let mut i = 0
+    while i < n {
+        let ia = bin_index(a[i], lo, hi, nb)
+        let ib = bin_index(b[i], lo, hi, nb)
+        pair_ids = pair_ids.push(ia * nb + ib)
+        i = i + 1
+    }
+    let counts = count_hits(pair_ids, nb * nb)
+    let inv_n = 1.0 / to_float(n)
+    let mut h = 0.0
+    let mut k = 0
+    while k < nb * nb {
+        let p = counts[k] * inv_n
+        if p > 0.0 { h = h - p * ln_safe(p) }
+        k = k + 1
+    }
+    return h
+}
+
 // ─── Inlined reflexive head (mirrors anima-engines/anima_reflexive) ──
 
 struct ReflexiveHead {
@@ -394,3 +468,4 @@ fn main() {
     }
 }
 
+main()

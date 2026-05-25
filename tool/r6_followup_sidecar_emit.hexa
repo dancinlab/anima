@@ -120,7 +120,7 @@ println("[3] adversarial_baseline drift annotation…")
 let path1 = "/Users/ghost/core/anima/state/adversarial_baseline_20260422.json"
 let declared = exec("jq -r '.source_cert_sha256' " + path1).trim()
 let src = exec("jq -r '.source_cert' " + path1).trim()
-let actual = sha256_file("/Users/ghost/core/anima/" + src)  // rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); byte-equal, no fork-exec
+let actual = exec("shasum -a 256 /Users/ghost/core/anima/" + src + " | cut -d' ' -f1").trim()
 let drift_manifest = "{\n"
                   + "  \"schema\": \"anima/r6_adversarial_baseline_drift/1\",\n"
                   + "  \"ts\": \"" + TS_ISO_NOW + "\",\n"

@@ -83,8 +83,6 @@
 
 // ─── Primitives (self-contained) ────────────────────────────
 
-import "stdlib/linalg/list_matvec.hexa"
-
 fn fabs(x: float) -> float {
     if x < 0.0 { return 0.0 - x }
     return x
@@ -185,6 +183,22 @@ fn det_rand_wide(n: int, seed: int) -> array {
 
 // ─── Matrix primitive (row-major flat) ───────────────────────
 // matvec: y = M @ x   with M: [rows × cols] row-major, x: [cols].
+
+fn matvec(m: array, x: array, rows: int, cols: int) -> array {
+    let mut out = []
+    let mut r = 0
+    while r < rows {
+        let mut s = 0.0
+        let mut c = 0
+        while c < cols {
+            s = s + m[r * cols + c] * x[c]
+            c = c + 1
+        }
+        out = out.push(s)
+        r = r + 1
+    }
+    return out
+}
 
 // ─── Head ─────────────────────────────────────────────────────
 
@@ -549,3 +563,4 @@ fn main() {
     }
 }
 
+main()

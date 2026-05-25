@@ -41,8 +41,6 @@
 //   read-only on cluster #33 cert; produces NEW dated baseline file
 // ════════════════════════════════════════════════════════════════════════════
 
-use "stdlib/core/hash/sha256"
-
 let LAST_CERT       = "state/adversarial_bench_last.json"
 let BASELINE_OUT    = "state/adversarial_baseline_20260422.json"
 let BENCH_TOOL      = "tool/adversarial_bench.hexa"
@@ -73,17 +71,14 @@ fn now_utc() {
 }
 
 fn sha256_file(p) {
-    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
-    // (hexa-lang #884 — avoids local-vs-builtin name shadow); shell-out removed
-    // (byte-equal output; "" on missing file preserved).
     if !fexists(p) { return "" }
-    return sha256_of_file(p)
+    return _str(exec("shasum -a 256 " + p + " 2>/dev/null | awk '{print $1}'")).trim()
 }
 
 fn sha256_str(s) {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out + tmp-file removed (byte-equal output, no fork-exec, no /tmp race).
-    return sha256(s)
+    let tmp = "/tmp/_adv_baseline_hash.txt"
+    write_file(tmp, s)
+    return _str(exec("shasum -a 256 " + tmp + " 2>/dev/null | awk '{print $1}'")).trim()
 }
 
 fn atomic_write(path, body) {
@@ -344,3 +339,4 @@ fn main() {
     exit(code)
 }
 
+main()

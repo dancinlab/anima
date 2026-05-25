@@ -89,7 +89,7 @@ fn _ts_iso() -> string {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let mut i = 0
+    let i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -98,10 +98,10 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _user_argv(raw) -> array {
-    let mut out = []
-    let mut i = 0
+    let out = []
+    let i = 0
     while i < len(raw) {
-        let mut s = _str(raw[i])
+        let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
             out = out + [s]
         }
@@ -117,14 +117,14 @@ fn _glyph(status: string) -> string {
 }
 
 fn _pad_right(s: string, w: int) -> string {
-    let mut out = s
+    let out = s
     while len(out) < w { out = out + " " }
     return out
 }
 
 fn _jq_esc(s: string) -> string {
-    let mut out = ""
-    let mut i = 0
+    let out = ""
+    let i = 0
     while i < len(s) {
         let ch = s.substring(i, i + 1)
         if ch == "\\" { out = out + "\\\\" }
@@ -152,14 +152,14 @@ fn step_doctor() -> array {
     }
     // run doctor in --json mode so we can parse the verdict deterministically
     let cmd = _hexa() + " run " + doctor_mod + " --json 2>/dev/null"
-    let mut out = _str(exec(cmd))
+    let out = _str(exec(cmd))
     let res_path = root + "/state/anima_doctor_result.json"
     if !_fexists(res_path) {
         return ["warn", "doctor produced no result (binary missing?)"]
     }
-    let mut ok = _str(exec("jq -r '.counts.ok // 0' " + res_path + " 2>/dev/null")).trim()
-    let mut wn = _str(exec("jq -r '.counts.warn // 0' " + res_path + " 2>/dev/null")).trim()
-    let mut fl = _str(exec("jq -r '.counts.fail // 0' " + res_path + " 2>/dev/null")).trim()
+    let ok = _str(exec("jq -r '.counts.ok // 0' " + res_path + " 2>/dev/null")).trim()
+    let wn = _str(exec("jq -r '.counts.warn // 0' " + res_path + " 2>/dev/null")).trim()
+    let fl = _str(exec("jq -r '.counts.fail // 0' " + res_path + " 2>/dev/null")).trim()
     let verdict = _str(exec("jq -r '.verdict // \"?\"' " + res_path + " 2>/dev/null")).trim()
     if ok == "" { ok = "0" }
     if wn == "" { wn = "0" }
@@ -175,7 +175,7 @@ fn step_doctor() -> array {
 fn step_completion() -> array {
     // Read-only: detect which shell the user runs · never write rc files.
     let shell = _str(env("SHELL"))
-    let mut kind = "unknown"
+    let kind = "unknown"
     if shell.contains("zsh")  { kind = "zsh" }
     if shell.contains("bash") { kind = "bash" }
     if shell.contains("fish") { kind = "fish" }
@@ -193,7 +193,7 @@ fn step_proposal_review() -> array {
         return ["warn", "proposal.hexa not found — skipped"]
     }
     let pend = root + "/state/proposals/pending"
-    let mut n = "0"
+    let n = "0"
     if _dexists(pend) {
         n = _str(exec("ls " + pend + " 2>/dev/null | wc -l | tr -d ' '")).trim()
     }
@@ -257,8 +257,8 @@ fn run_all_steps() -> array {
     let r4 = step_paradigm_status()
     let r5 = step_first_cert()
     let results = [r1, r2, r3, r4, r5]
-    let mut steps = []
-    let mut i = 0
+    let steps = []
+    let i = 0
     while i < len(names) {
         let st = _str(results[i][0])
         let dt = _str(results[i][1])
@@ -269,12 +269,12 @@ fn run_all_steps() -> array {
 }
 
 fn tally(steps) -> array {
-    let mut ok = 0
-    let mut wn = 0
-    let mut fl = 0
-    let mut i = 0
+    let ok = 0
+    let wn = 0
+    let fl = 0
+    let i = 0
     while i < len(steps) {
-        let mut s = _str(steps[i][2])
+        let s = _str(steps[i][2])
         if s == "ok"   { ok = ok + 1 }
         if s == "warn" { wn = wn + 1 }
         if s == "fail" { fl = fl + 1 }
@@ -292,7 +292,7 @@ fn verdict_of(t) -> string {
 fn render_walk(steps, mode: string) {
     println("anima onboard — 5-minute new-contributor quickstart (mode=" + mode + ")")
     println("────────────────────────────────────────────────────────────────")
-    let mut i = 0
+    let i = 0
     while i < len(steps) {
         let idx = _str(steps[i][0])
         let nm  = _str(steps[i][1])
@@ -322,14 +322,14 @@ fn render_next_steps(verdict: string) {
 }
 
 fn build_json(ts: string, mode: string, steps, t, verdict: string) -> string {
-    let mut s = "{"
+    let s = "{"
     s = s + "\"schema\":\"anima.onboard.v1\","
     s = s + "\"ts\":\"" + ts + "\","
     s = s + "\"mode\":\"" + mode + "\","
     s = s + "\"verdict\":\"" + verdict + "\","
     s = s + "\"counts\":{\"ok\":" + _str(t[0]) + ",\"warn\":" + _str(t[1]) + ",\"fail\":" + _str(t[2]) + "},"
     s = s + "\"steps\":["
-    let mut i = 0
+    let i = 0
     while i < len(steps) {
         if i > 0 { s = s + "," }
         let idx = _str(steps[i][0])
@@ -400,7 +400,7 @@ fn sub_reset() {
 
 fn sub_run(mode: string) {
     let ts = _ts_iso()
-    let mut steps = run_all_steps()
+    let steps = run_all_steps()
     let t = tally(steps)
     let v = verdict_of(t)
     let json_text = build_json(ts, mode, steps, t, v)
@@ -420,12 +420,12 @@ fn sub_selftest() {
     // Graceful-path assertion: running in smoke mode MUST produce 5 steps,
     // each with a valid status, and never exit non-zero even on partial
     // installs (that is the whole point of onboarding in a fresh env).
-    let mut steps = run_all_steps()
+    let steps = run_all_steps()
     if len(steps) != 5 {
         println("FAIL anima_cli/onboard selftest (expected 5 steps, got " + _str(len(steps)) + ")")
         exit(1)
     }
-    let mut i = 0
+    let i = 0
     while i < len(steps) {
         let st = _str(steps[i][2])
         let dt = _str(steps[i][3])
@@ -466,8 +466,9 @@ fn main() {
     if _arg_present(argv, "--selftest") { sub_selftest(); return }
     if _arg_present(argv, "--help")     { sub_help(); return }
     if _arg_present(argv, "--reset")    { sub_reset(); return }
-    let mut mode = "interactive"
+    let mode = "interactive"
     if _arg_present(argv, "--smoke") { mode = "smoke" }
     sub_run(mode)
 }
 
+main()

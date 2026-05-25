@@ -76,7 +76,7 @@ fn json_escape(s: string) -> string {
 fn compute_deepseek_decoupling() {
     if !fexists(DEEPSEEK_CMT) {
         println("  ✗ MISSING " + DEEPSEEK_CMT)
-        return void
+        return null
     }
     let raw = read_file(DEEPSEEK_CMT)
     let j = json_parse(raw)
@@ -601,7 +601,7 @@ fn main() {
     println("")
     println("[step 2] DeepSeek-llm-7b-base CMT (residual-passthrough v3)")
     let deepseek_dec = compute_deepseek_decoupling()
-    if deepseek_dec == void {
+    if deepseek_dec == null {
         println("  FATAL: DeepSeek CMT input missing")
         exit(1)
     }
@@ -643,3 +643,4 @@ fn main() {
     println("DONE")
 }
 
+main()

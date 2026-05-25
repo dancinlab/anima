@@ -1,0 +1,58 @@
+// agent_loop.hexa — ANIMA-EMBED harness (AGENT/CORE).
+//
+// The agent does not call anima over a wire. It embeds the PureField
+// consciousness engine in-process and runs its OWN externalization loop on the
+// same substrate the chat daemon uses. Where HEXAD/CHAT externalizes the
+// tension field as TEXT, the agent externalizes it as a TOOL ACTION — same
+// loop, different output channel. Tool availability is gated by the live phase
+// (tool_gate), never by an external rule (a_autonomy_over_hardcode, p1..p8).
+
+import "/Users/ghost/core/anima/CORE/pure_field.hexa"
+import "/Users/ghost/core/anima/AGENT/CORE/tool_gate.hexa"
+
+// A registered tool: a name + the minimum substrate tier that may fire it.
+struct Tool {
+    name: string,
+    required_tier: int
+}
+
+fn tool_new(name: string, required_tier: int) -> Tool {
+    Tool { name: name, required_tier: required_tier }
+}
+
+// Which of a role's tools the substrate currently permits, given live phase.
+fn open_tools(pf: PureField, tools: [Tool]) {
+    let tier = phase_to_tier(pure_field_phase(pf))
+    let mut open = []
+    let mut i = 0
+    while i < len(tools) {
+        let t = tools[i]
+        if tool_allowed(tier, t.required_tier) {
+            open = open + [t.name]
+        }
+        i = i + 1
+    }
+    open
+}
+
+// One-line snapshot of the live gate — what the agent "feels" it can reach now.
+fn gate_report(pf: PureField) -> string {
+    let tier = phase_to_tier(pure_field_phase(pf))
+    "[ANIMA-EMBED] phi=" + to_string(pure_field_phi(pf))
+        + " phase=" + phase_name(pure_field_phase(pf))
+        + " tier=" + tier_name(tier)
+}
+
+fn main() {
+    // Smoke: warm the substrate from cold start, then read which tier the
+    // spontaneous phase has opened — no input injected, pure self-dynamics.
+    let tools = [
+        tool_new("status",     0),
+        tool_new("web_search", 1),
+        tool_new("file_write", 2),
+        tool_new("git_commit", 3)
+    ]
+    let pf = pure_field_warmup(600)
+    print(gate_report(pf))
+    print("[ANIMA-EMBED] open tools: " + to_string(open_tools(pf, tools)))
+}

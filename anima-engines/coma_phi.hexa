@@ -602,7 +602,8 @@ fn cm_phi_cortical_half(state: int, seed: int, first_half: bool) -> float {
     let mut sub_tape = []
     let mut k = 0
     while k < K_CX {
-        let mut t_start = 0
+        let mut t = 0
+        let t_start = 0
         if !first_half { t_start = half_win }
         let mut t = t_start
         while t < (t_start + half_win) {
@@ -802,3 +803,4 @@ fn main() {
     }
 }
 
+main()

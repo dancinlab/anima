@@ -70,13 +70,6 @@
 // Expect:
 //   [alm_self_dissolution] ALL 5/5 PASS
 
-// 2026-05-25 phase 5 M1 wave 2a: vec_norm body delegated to
-// stdlib/linalg/norm l2_norm (hexa-lang #885). Byte-equal — local
-// `sqrt_safe(Σ v²)` == `l2_norm(v, d)` for real arrays. cosine_sim +
-// vec_normalize kept local (1e-7 guard + zero-fallback differ from
-// stdlib defaults).
-import "stdlib/linalg/norm.hexa"
-
 // ---- Constants ----------------------------------------------------------
 
 let SELF_DIM       = 32       // representation dimension
@@ -137,8 +130,13 @@ fn vec_dot(a: array, b: array, d: int) -> float {
 }
 
 fn vec_norm(v: array, d: int) -> float {
-    // L2 norm via stdlib/linalg/norm — was inline sqrt_safe(Σ v²).
-    return l2_norm(v, d)
+    let mut s = 0.0
+    let mut i = 0
+    while i < d {
+        s = s + v[i] * v[i]
+        i = i + 1
+    }
+    return sqrt_safe(s)
 }
 
 fn vec_add(a: array, b: array, d: int) -> array {
@@ -607,3 +605,4 @@ fn main() {
     }
 }
 
+main()

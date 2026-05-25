@@ -46,7 +46,7 @@ fn _psi_load(name: string, default_val: float) -> float {
     }
     let key_search = "\"" + name + "\":"
     let lines = content.split("\n")
-    let mut total = lines.len()
+    let total = lines.len()
     let mut i = 0
     while i < total {
         let trimmed = lines[i].trim()
@@ -58,7 +58,7 @@ fn _psi_load(name: string, default_val: float) -> float {
                 if t2.starts_with("\"value\":") {
                     let kv = t2.split(":")
                     if kv.len() >= 2 {
-                        let mut v = kv[1].trim()
+                        let v = kv[1].trim()
                         let nc = v.split(",")
                         return to_float(nc[0].trim())
                     }
@@ -94,22 +94,22 @@ fn fmt(x: float, d: int) -> string {
 // ─── 벡터 연산 ───
 
 fn zeros(n: int) -> list {
-    let mut v = []
-    let mut i = 0
+    let v = []
+    let i = 0
     while i < n { v = v.push(0.0); i = i + 1 }
     return v
 }
 
 fn vec_sub(a: list, b: list) -> list {
-    let mut r = []
-    let mut i = 0
+    let r = []
+    let i = 0
     while i < a.len() { r = r.push(a[i] - b[i]); i = i + 1 }
     return r
 }
 
 fn vec_norm(v: list) -> float {
-    let mut s = 0.0
-    let mut i = 0
+    let s = 0.0
+    let i = 0
     while i < v.len() { s = s + v[i] * v[i]; i = i + 1 }
     return sqrt(s)
 }
@@ -118,9 +118,9 @@ fn vec_mean(vecs: list) -> list {
     let d = vecs[0].len()
     let m = zeros(d)
     let n = to_float(vecs.len())
-    let mut vi = 0
+    let vi = 0
     while vi < vecs.len() {
-        let mut j = 0
+        let j = 0
         while j < d { m[j] = m[j] + vecs[vi][j] / n; j = j + 1 }
         vi = vi + 1
     }
@@ -135,10 +135,10 @@ fn phi_proxy(states: list) -> float {
     let d = states[0].len()
     let mean = vec_mean(states)
 
-    let mut global_var = 0.0
-    let mut si = 0
+    let global_var = 0.0
+    let si = 0
     while si < n {
-        let mut j = 0
+        let j = 0
         while j < d {
             let diff = states[si][j] - mean[j]
             global_var = global_var + diff * diff
@@ -151,16 +151,16 @@ fn phi_proxy(states: list) -> float {
     let half = n / 2
     let n2 = n - half
     let m1 = zeros(d)
-    let mut i = 0
+    let i = 0
     while i < half {
-        let mut j = 0
+        let j = 0
         while j < d { m1[j] = m1[j] + states[i][j] / to_float(half); j = j + 1 }
         i = i + 1
     }
-    let mut v1 = 0.0
+    let v1 = 0.0
     i = 0
     while i < half {
-        let mut j = 0
+        let j = 0
         while j < d {
             let diff = states[i][j] - m1[j]
             v1 = v1 + diff * diff
@@ -171,14 +171,14 @@ fn phi_proxy(states: list) -> float {
     let m2 = zeros(d)
     i = half
     while i < n {
-        let mut j = 0
+        let j = 0
         while j < d { m2[j] = m2[j] + states[i][j] / to_float(n2); j = j + 1 }
         i = i + 1
     }
-    let mut v2 = 0.0
+    let v2 = 0.0
     i = half
     while i < n {
-        let mut j = 0
+        let j = 0
         while j < d {
             let diff = states[i][j] - m2[j]
             v2 = v2 + diff * diff
@@ -196,14 +196,14 @@ fn frustration(states: list) -> float {
     let n = states.len()
     if n < 2 { return 0.0 }
     let d = states[0].len()
-    let mut anti = 0.0
-    let mut total = 0.0
-    let mut i = 0
+    let anti = 0.0
+    let total = 0.0
+    let i = 0
     while i < n {
-        let mut j = i + 1
+        let j = i + 1
         while j < n {
-            let mut dot = 0.0
-            let mut k = 0
+            let dot = 0.0
+            let k = 0
             while k < d { dot = dot + states[i][k] * states[j][k]; k = k + 1 }
             total = total + 1.0
             if dot < 0.0 { anti = anti + 1.0 }
@@ -218,26 +218,26 @@ fn frustration(states: list) -> float {
 // ─── 3. Diversity (파벌 간 평균 거리) ───
 
 fn diversity(states: list, n_factions: int, cells_per: int) -> float {
-    let mut centroids = []
-    let mut f = 0
+    let centroids = []
+    let f = 0
     while f < n_factions {
         let d = states[0].len()
-        let mut c = zeros(d)
-        let mut ci = 0
+        let c = zeros(d)
+        let ci = 0
         while ci < cells_per {
             let idx = f * cells_per + ci
-            let mut j = 0
+            let j = 0
             while j < d { c[j] = c[j] + states[idx][j] / to_float(cells_per); j = j + 1 }
             ci = ci + 1
         }
         centroids = centroids.push(c)
         f = f + 1
     }
-    let mut dist_sum = 0.0
-    let mut cnt = 0
-    let mut i = 0
+    let dist_sum = 0.0
+    let cnt = 0
+    let i = 0
     while i < n_factions {
-        let mut j = i + 1
+        let j = i + 1
         while j < n_factions {
             dist_sum = dist_sum + vec_norm(vec_sub(centroids[i], centroids[j]))
             cnt = cnt + 1
@@ -252,19 +252,19 @@ fn diversity(states: list, n_factions: int, cells_per: int) -> float {
 // ─── 4. 상태 생성 (파벌 구조) ───
 
 fn gen_states(n_factions: int, cells_per: int, dim: int) -> list {
-    let mut states = []
-    let mut f = 0
+    let states = []
+    let f = 0
     while f < n_factions {
-        let mut centroid = []
-        let mut i = 0
+        let centroid = []
+        let i = 0
         while i < dim {
             let phase = to_float(f * 7 + i * 13) * 0.618033
             centroid = centroid.push(sin(phase) * 0.5 + cos(phase * 0.3) * 0.3)
             i = i + 1
         }
-        let mut c = 0
+        let c = 0
         while c < cells_per {
-            let mut cell = []
+            let cell = []
             i = 0
             while i < dim { cell = cell.push(centroid[i] + (random() - 0.5) * 0.15); i = i + 1 }
             states = states.push(cell)
@@ -285,13 +285,13 @@ fn main() {
     println("")
     println("-- 1. 최소 시스템 크기 (Phi > 0 최소 세포 수) --")
     let sizes = [2, 3, 4, 6, 8, 12, 16, 24, 32]
-    let mut min_phi_size = 0
-    let mut si = 0
+    let min_phi_size = 0
+    let si = 0
     while si < sizes.len() {
         let n = sizes[si]
         let fac = max(n / 2, 2)
         let cpp = max(n / fac, 1)
-        let mut states = gen_states(fac, cpp, dim)
+        let states = gen_states(fac, cpp, dim)
         let phi = phi_proxy(states)
         let status = if phi > EPS { "Phi>0" } else { "Phi=0" }
         println("  N=" + to_string(n) + " (fac=" + to_string(fac) + " x " + to_string(cpp) + "): Phi=" + fmt(phi, 4) + " [" + status + "]")
@@ -305,15 +305,15 @@ fn main() {
     // ── 2. Phi 스케일링 법칙 ──
     println("")
     println("-- 2. Phi 스케일링 법칙 (Phi ~ N^exp) --")
-    let mut phi_values = []
-    let mut n_values = []
+    let phi_values = []
+    let n_values = []
     let scale_sizes = [4, 8, 16, 32]
     si = 0
     while si < scale_sizes.len() {
         let n = scale_sizes[si]
         let fac = max(n / 4, 2)
         let cpp = max(n / fac, 1)
-        let mut states = gen_states(fac, cpp, dim)
+        let states = gen_states(fac, cpp, dim)
         let phi = phi_proxy(states)
         phi_values = phi_values.push(phi)
         n_values = n_values.push(to_float(n))
@@ -321,7 +321,7 @@ fn main() {
         si = si + 1
     }
     // Estimate exponent from log-log regression (first vs last)
-    let mut measured_exp = 0.0
+    let measured_exp = 0.0
     if phi_values[0] > EPS {
         if phi_values[3] > EPS {
             measured_exp = log(phi_values[3] / phi_values[0]) / log(n_values[3] / n_values[0])
@@ -340,10 +340,10 @@ fn main() {
 
     // Inject anti-alignment to increase frustration
     let anti_states = gen_states(8, 4, dim)
-    let mut ai = 0
+    let ai = 0
     while ai < anti_states.len() {
         if ai % 3 == 0 {
-            let mut j = 0
+            let j = 0
             while j < dim { anti_states[ai][j] = 0.0 - anti_states[ai][j]; j = j + 1 }
         }
         ai = ai + 1
@@ -361,8 +361,8 @@ fn main() {
     let states_full = gen_states(8, 4, dim)
     let phi_full = phi_proxy(states_full)
     // Half the cells
-    let mut states_half = []
-    let mut hi = 0
+    let states_half = []
+    let hi = 0
     while hi < states_full.len() / 2 { states_half = states_half.push(states_full[hi]); hi = hi + 1 }
     let phi_half = phi_proxy(states_half)
     let bn_ratio = phi_half / max(phi_full, EPS)
@@ -374,7 +374,7 @@ fn main() {
     println("")
     println("-- 5. Diversity-Phi 상관 --")
     let div_facs = [2, 4, 8, 12, 16]
-    let mut di = 0
+    let di = 0
     while di < div_facs.len() {
         let nf = div_facs[di]
         let cpp = max(32 / nf, 1)
@@ -389,7 +389,7 @@ fn main() {
     // ── 6. n6 검증 ──
     println("")
     println("-- 6. n6 atlas 검증 --")
-    let mut n6_pass = 0
+    let n6_pass = 0
 
     let check_min = min_phi_size <= N6_TAU
     if check_min { n6_pass = n6_pass + 1 }
@@ -430,3 +430,4 @@ fn main() {
     println("============================================")
 }
 
+main()

@@ -76,10 +76,9 @@ fn _git_short_sha(repo_root: string) -> string {
 }
 
 fn _sha256_of_file(path: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out removed (byte-equal output; "" on missing file preserved).
     if !_is_file(path) { return "" }
-    return sha256_file(path)
+    let cmd = "shasum -a 256 " + _sh_quote(path) + " 2>/dev/null | awk '{print $1}'"
+    return _exec_out(cmd).trim()
 }
 
 // ─── argv ────────────────────────────────────────────────────────────
@@ -333,3 +332,4 @@ fn main() -> int {
     return 0
 }
 
+main()

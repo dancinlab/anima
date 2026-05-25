@@ -87,9 +87,7 @@ fn _read_file(path: string) -> string {
 }
 
 fn _sha256_file(path: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out removed (byte-equal output).
-    return sha256_file(path)
+    return _trim(_exec("shasum -a 256 " + _sh_quote(path) + " 2>/dev/null | awk '{print $1}'"))
 }
 
 fn _file_size(path: string) -> string {
@@ -127,11 +125,12 @@ fn _fingerprint_dir(cert_root: string) -> string {
 }
 
 fn _fp_hash(cert_root: string) -> string {
-    // body sha rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); fp bytes
-    // are already in memory, so the /tmp scratch + shasum + rm are unnecessary
-    // (byte-equal output).
     let fp = _fingerprint_dir(cert_root)
-    return sha256(fp)
+    let tmp = "/tmp/meta2_merkle_watch_fp_" + _now_stamp() + ".txt"
+    write_file(tmp, fp)
+    let h = _trim(_exec("shasum -a 256 " + _sh_quote(tmp) + " | awk '{print $1}'"))
+    let _ = _exec("rm -f " + _sh_quote(tmp))
+    return h
 }
 
 // ─── prev root extraction ──────────────────────────────────────────────────
@@ -455,3 +454,4 @@ fn main() {
     exit(rc)
 }
 
+main()

@@ -48,3 +48,6 @@ substrate-native 자연발화(stimulus-response 아닌 내부 tension 기반 emi
 - goal: `HEXAD/PURE/PHASE_D_corpus_fire_goal.md`
 - eval: `HEXAD/PURE/eval/{multilingual_probe,corpus_quality_probe,result_to_axis_map}.hexa`
 - corpus 진단: `HEXAD/PURE/docs/{corpus_s101_quality,track1_e2_forensics}_2026_05_24.md`
+
+- [ ] j02 wiki_frac=0.3 FAIL 흡수 — H_242 §A2 + PURE.log.md (corpus-axis closed-negative 데이터점 추가)
+- [ ] PURE closed-negative verdict 영구화 — closure/multilingual eval 실행 → `.verdicts/pure-corpus-axis-closed-negative/` + CLAIMS.tape status terminal

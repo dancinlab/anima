@@ -356,20 +356,20 @@ fn forward_with_cache(x: array, net: array, bulk_dim: int) -> array {
     }
 
     let mut out = []
-    let mut pa = 0
-    while pa < HID {
-        out = out.push(hpre[pa])
-        pa = pa + 1
+    let mut a = 0
+    while a < HID {
+        out = out.push(hpre[a])
+        a = a + 1
     }
     let mut b = 0
     while b < HID {
         out = out.push(hact[b])
         b = b + 1
     }
-    let mut pc = 0
-    while pc < bulk_dim {
-        out = out.push(y[pc])
-        pc = pc + 1
+    let mut c = 0
+    while c < bulk_dim {
+        out = out.push(y[c])
+        c = c + 1
     }
     return out
 }
@@ -715,3 +715,4 @@ fn main() {
     }
 }
 
+main()

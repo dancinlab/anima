@@ -66,8 +66,6 @@
 // symlink is gitignored in this worktree, see .gitignore line 70).  We
 // document the spec's canonical "shared/config/" alias below for tooling
 // that expects the airgenome SSOT layout; runtime resolves from config/.
-use "stdlib/core/hash/sha256"
-
 let CFG_PATH = "config/adversarial_bench_config.json"
 let CFG_PATH_CANONICAL = "shared/config/adversarial_bench_config.json"
 let DEFAULT_OUT = "state/adversarial_bench_last.json"
@@ -123,17 +121,16 @@ fn json_escape(s: string) -> string {
 }
 
 fn sha256_file(path: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
-    // (hexa-lang #884 — avoids local-vs-builtin name shadow); shell-out removed
-    // (byte-equal output; "" on missing file preserved).
     if !fexists(path) { return "" }
-    return sha256_of_file(path)
+    let r = _str(exec("shasum -a 256 " + path + " 2>/dev/null | awk '{print $1}'")).trim()
+    return r
 }
 
 fn sha256_str(s: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out + tmp-file removed (byte-equal output, no fork-exec, no /tmp race).
-    return sha256(s)
+    let tmp = "/tmp/_adv_bench_hash_in.txt"
+    write_file(tmp, s)
+    let r = _str(exec("shasum -a 256 " + tmp + " 2>/dev/null | awk '{print $1}'")).trim()
+    return r
 }
 
 // ─── argv helpers ───────────────────────────────────────────────────────────
@@ -554,3 +551,4 @@ fn main() {
     exit(1)
 }
 
+main()

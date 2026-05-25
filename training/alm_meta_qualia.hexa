@@ -96,10 +96,6 @@
 
 // ─── Constants ────────────────────────────────────────────────
 
-import "stdlib/info/entropy_histogram.hexa"
-
-import "stdlib/linalg/list_matvec.hexa"
-
 let MI_BINS = 8           // log-bin count for MI estimator (T3)
 let EPS     = 0.0000001
 
@@ -117,6 +113,12 @@ fn ftanh(x: float) -> float {
     let e2 = exp(2.0 * x)
     return (e2 - 1.0) / (e2 + 1.0)
 }
+
+fn ln_safe(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    return ln(x)
+}
+
 fn vec_zeros(n: int) -> array {
     let mut out = []
     let mut i = 0
@@ -190,6 +192,22 @@ fn det_rand(n: int, seed: int) -> array {
 }
 
 // ─── Matrix primitive (row-major flat) ───────────────────────
+
+fn matvec(m: array, x: array, rows: int, cols: int) -> array {
+    let mut out = []
+    let mut r = 0
+    while r < rows {
+        let mut s = 0.0
+        let mut c = 0
+        while c < cols {
+            s = s + m[r * cols + c] * x[c]
+            c = c + 1
+        }
+        out = out.push(s)
+        r = r + 1
+    }
+    return out
+}
 
 fn vec_add(a: array, b: array) -> array {
     let n = len(a)
@@ -275,6 +293,81 @@ fn meta_qualia_tower(head: MetaQualiaHead, h: array) -> array {
 }
 
 // ─── MI estimator (shared histogram, matches P5/P6 families) ─
+
+fn bin_index(x: float, lo: float, hi: float, nb: int) -> int {
+    if hi <= lo { return 0 }
+    let t = (x - lo) / (hi - lo)
+    let mut idx = to_int(t * to_float(nb))
+    if idx < 0 { idx = 0 }
+    if idx >= nb { idx = nb - 1 }
+    return idx
+}
+
+fn count_hits(bin_ids: array, n_bins: int) -> array {
+    let n = len(bin_ids)
+    let mut counts = []
+    let mut k = 0
+    while k < n_bins {
+        let mut c = 0.0
+        let mut i = 0
+        while i < n {
+            if bin_ids[i] == k { c = c + 1.0 }
+            i = i + 1
+        }
+        counts = counts.push(c)
+        k = k + 1
+    }
+    return counts
+}
+
+fn entropy_hist(v: array, lo: float, hi: float, nb: int) -> float {
+    let n = len(v)
+    if n == 0 { return 0.0 }
+    let mut bin_ids = []
+    let mut i = 0
+    while i < n {
+        bin_ids = bin_ids.push(bin_index(v[i], lo, hi, nb))
+        i = i + 1
+    }
+    let counts = count_hits(bin_ids, nb)
+    let inv_n = 1.0 / to_float(n)
+    let mut h = 0.0
+    let mut k = 0
+    while k < nb {
+        let p = counts[k] * inv_n
+        if p > 0.0 {
+            h = h - p * ln_safe(p)
+        }
+        k = k + 1
+    }
+    return h
+}
+
+fn joint_entropy_hist(a: array, b: array, lo: float, hi: float, nb: int) -> float {
+    let n = len(a)
+    let mut pair_ids = []
+    let mut i = 0
+    while i < n {
+        let ia = bin_index(a[i], lo, hi, nb)
+        let ib = bin_index(b[i], lo, hi, nb)
+        pair_ids = pair_ids.push(ia * nb + ib)
+        i = i + 1
+    }
+    let nb2 = nb * nb
+    let counts = count_hits(pair_ids, nb2)
+    let inv_n = 1.0 / to_float(n)
+    let mut h = 0.0
+    let mut k = 0
+    while k < nb2 {
+        let p = counts[k] * inv_n
+        if p > 0.0 {
+            h = h - p * ln_safe(p)
+        }
+        k = k + 1
+    }
+    return h
+}
+
 // MI(a, b) = H(a) + H(b) − H(a, b) on a shared (lo, hi) histogram support.
 fn mutual_info(a: array, b: array) -> float {
     let lo_a = vec_min(a)
@@ -448,3 +541,4 @@ fn main() {
     }
 }
 
+main()

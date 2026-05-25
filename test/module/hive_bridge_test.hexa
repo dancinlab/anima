@@ -65,7 +65,7 @@ fn test_err_response(code: string) -> TestResponse {
 fn test_pii_gate(body: string) -> bool {
     let lower = body.to_lower()
     let blocked = ["password=", "secret=", "api_key=", "token=", "ssn=", "credit_card=", "private_key"]
-    let mut i = 0
+    let i = 0
     while i < len(blocked) {
         if lower.contains(blocked[i]) { return false }
         i = i + 1
@@ -188,3 +188,4 @@ fn main() {
     }
 }
 
+main()

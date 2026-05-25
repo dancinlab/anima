@@ -262,12 +262,6 @@ fn _ansi_show() -> string    { return _esc() + "[?25h" }
 fn _ansi_alt_on() -> string  { return _esc() + "[?1049h" }
 fn _ansi_alt_off() -> string { return _esc() + "[?1049l" }
 
-fn _color(cfg, name: string) -> string {
-    let c = cfg["colors"]
-    if c.contains_key(name) { return _str(c[name]) }
-    return ""
-}
-
 fn _glyph(cfg, name: string) -> string {
     let g = cfg["glyphs"]
     if g.contains_key(name) { return _str(g[name]) }
@@ -826,3 +820,4 @@ fn main() {
     exit(0)
 }
 
+main()

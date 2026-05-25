@@ -17,12 +17,12 @@
 //   - corpus/corpus_alm_70b.jsonl              (90 MB)
 
 fn main() {
-    let argv = args()
-    let mode = if argv.len() > 1 { argv[1] } else { "smoke" }
+    let args = std_args()
+    let mode = if args.len() > 1 { args[1] } else { "smoke" }
 
     if mode != "smoke" && mode != "production" {
         println("usage: alm14b_r9_bootstrap.hexa <smoke|production>")
-        exit(2)
+        std_exit(2)
     }
 
     let payload =
@@ -93,7 +93,8 @@ fn main() {
         "fi\n"
 
     let script_path = "/tmp/_alm14b_r9_bootstrap.sh"
-    write_file(script_path, payload)
-    exec("bash " + script_path)
+    std_write(script_path, payload)
+    std_exec("bash " + script_path)
 }
 
+main()

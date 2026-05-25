@@ -47,12 +47,6 @@
 // Expect:
 //   [alm_replay] ALL 5/5 PASS
 
-// 2026-05-25 phase 5 M1 wave 2a: vec_norm body delegated to
-// stdlib/linalg/norm l2_norm (hexa-lang #885). Byte-equal — local
-// `sqrt(vec_dot(a,a))` == `l2_norm(a, len(a))` Σ-then-sqrt. cosine_sim
-// body kept local (1e-6 epsilon differs from stdlib 1e-12 default).
-import "stdlib/linalg/norm.hexa"
-
 // ─── Constants ────────────────────────────────────────────────
 
 let INPUT_DIM  = 4
@@ -241,8 +235,8 @@ fn vec_dot(a: array, b: array) -> float {
 }
 
 fn vec_norm(a: array) -> float {
-    // L2 norm via stdlib/linalg/norm — was inline sqrt(vec_dot(a,a)).
-    return l2_norm(a, len(a))
+    let d = vec_dot(a, a)
+    return sqrt(d)
 }
 
 fn cosine_sim(a: array, b: array) -> float {
@@ -481,3 +475,4 @@ fn main() {
     }
 }
 
+main()

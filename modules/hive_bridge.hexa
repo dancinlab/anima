@@ -103,7 +103,7 @@ fn audit(method: string, direction: string, req_summary: string, resp_ok: bool, 
 fn pii_gate(body: string) -> bool {
     let lower = body.to_lower()
     let blocked = ["password=", "secret=", "api_key=", "token=", "ssn=", "credit_card=", "private_key"]
-    let mut i = 0
+    let i = 0
     while i < len(blocked) {
         if lower.contains(blocked[i]) {
             audit("pii_gate", "block", blocked[i], false, "E_GATE_REJECT")
@@ -180,8 +180,8 @@ fn send(method: string, body_json: string, timeout_s: int) -> BridgeResponse {
 // ─── Retry Wrapper ───
 
 fn send_with_retry(method: string, body_json: string, timeout_s: int) -> BridgeResponse {
-    let mut attempt = 0
-    let mut last_resp = err_response("E_HIVE_DOWN", "no attempts")
+    let attempt = 0
+    let last_resp = err_response("E_HIVE_DOWN", "no attempts")
     while attempt < MAX_RETRIES {
         last_resp = send(method, body_json, timeout_s)
         if last_resp.ok {
@@ -195,7 +195,7 @@ fn send_with_retry(method: string, body_json: string, timeout_s: int) -> BridgeR
         }
         // exponential backoff — sleep via exec
         let delay_ms = BACKOFF_BASE_MS * (attempt + 1)
-        let mut delay_s = delay_ms / 1000
+        let delay_s = delay_ms / 1000
         if delay_s < 1 { delay_s = 1 }
         exec("sleep " + to_string(delay_s))
         attempt = attempt + 1
@@ -380,7 +380,7 @@ fn main() {
         let rev = anima_on_hive_query("{\"query\":\"test\"}")
         let t7 = rev.contains("review")
         if t7 { println("T7 reverse:   PASS") } else { println("T7 reverse:   FAIL") }
-        let mut pass = 0
+        let pass = 0
         if t1 { pass = pass + 1 }
         if t2 { pass = pass + 1 }
         if t3 { pass = pass + 1 }
@@ -394,3 +394,4 @@ fn main() {
     }
 }
 
+main()

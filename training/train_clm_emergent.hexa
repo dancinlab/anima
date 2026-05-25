@@ -151,15 +151,15 @@ fn vec_dot(a: array, b: array) -> float {
 // ─── Deterministic LCG for reproducible "random" init ────────
 
 fn lcg_next(s: int) -> int {
-    let lcg_a = 1103515245
-    let lcg_c = 12345
-    let lcg_m = 2147483648
-    return (lcg_a * s + lcg_c) % lcg_m
+    let a = 1103515245
+    let c = 12345
+    let m = 2147483648
+    return (a * s + c) % m
 }
 
 fn lcg_uniform(s: int) -> float {
-    let lcg_m = 2147483648
-    return (s * 1.0) / (lcg_m * 1.0) * 2.0 - 1.0
+    let m = 2147483648
+    return (s * 1.0) / (m * 1.0) * 2.0 - 1.0
 }
 
 // ─── Micro-CLM forward pass (toy, non-differentiable) ────────
@@ -220,13 +220,13 @@ fn micro_clm_logits(h_last: array, vocab: int) -> array {
 
 fn ce_loss(logits: array, target: int) -> float {
     let n = len(logits)
-    let mut mx = logits[0]
+    let mut m = logits[0]
     let mut i = 1
-    while i < n { if logits[i] > mx { mx = logits[i] }; i = i + 1 }
+    while i < n { if logits[i] > m { m = logits[i] }; i = i + 1 }
     let mut z = 0.0
     i = 0
-    while i < n { z = z + fexp(logits[i] - mx); i = i + 1 }
-    let log_z = mx + flog(z)
+    while i < n { z = z + fexp(logits[i] - m); i = i + 1 }
+    let log_z = m + flog(z)
     return log_z - logits[target]
 }
 
@@ -267,11 +267,11 @@ fn eng_holographic(h: array, q: array) -> float {
 fn eng_gwt(h: array) -> float {
     let n = len(h); if n < 4 { return 0.0 }
     let half = n / 2
-    let mut fst = []; let mut snd = []
+    let mut a = []; let mut b = []
     let mut i = 0
-    while i < half { fst = fst.push(h[i]); i = i + 1 }
-    while i < n    { snd = snd.push(h[i]); i = i + 1 }
-    let d = vec_mean(fst) - vec_mean(snd); return d * d
+    while i < half { a = a.push(h[i]); i = i + 1 }
+    while i < n    { b = b.push(h[i]); i = i + 1 }
+    let d = vec_mean(a) - vec_mean(b); return d * d
 }
 
 fn eng_reflexivity(h: array) -> float {
@@ -517,3 +517,4 @@ fn main() {
     }
 }
 
+main()

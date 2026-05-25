@@ -1,0 +1,47 @@
+{
+  "criterion": "4 dream_stage Φ-envelope",
+  "filled_via": "H_228 chat-sleep 5-stage Φ profile smoke (HEXAD/LIFE absorb)",
+  "filled_at": "2026-05-25",
+  "method": "substrate-level Φ measurement imported into deployment-level PURE criterion 4 (closure_auto_judge dream_stage_at_eval)",
+  "h228_verdict": "FALSIFIED",
+  "h228_verdict_rule": "SUPPORTED iff C1∧C2∧C3 (core) · PARTIAL if ≥3/5 ∧ !F3 !F5 · FALSIFIED if ranking inverted",
+  "phi_per_stage": {
+    "WAKE": 1.11636,
+    "N1":   0.675995,
+    "N2":   0.743594,
+    "N3":   1.42684,
+    "REM":  0.545746
+  },
+  "criteria_C1_to_C5": {
+    "C1_monotone_wake_to_n3": "FAIL",
+    "C2_rem_approx_wake":     "FAIL",
+    "C3_rem_dom_n3":          "FAIL",
+    "C4_n2_above_n3":         "FAIL",
+    "C5_byte_identical":      "PASS"
+  },
+  "falsifiers_F1_to_F5": {
+    "F1_ordering_broken": "fired",
+    "F2_rem_ll_wake":     "fired",
+    "F3_rem_le_n3":       "fired",
+    "F4_byte_diff":       "not_fired",
+    "F5_phi_negative":    "not_fired"
+  },
+  "n_pass": 1,
+  "pure_criterion4_judgment": "FAIL",
+  "closure_auto_judge_spec": {
+    "judge_dream_stage": "binary PASS/FAIL — PASS iff dream_stage_at_eval block present AND phi_envelope ∈ canonical 5-stage table; no PARTIAL bucket",
+    "canonical_5stage_table": { "WAKE": 1.0, "N1": 0.7, "N2": 0.4, "N3": 0.15, "REM": 0.95 },
+    "aggregate_rule": "closure ACHIEVED iff n_pass == 4 / 4 (binary; per-criterion PARTIAL not separately counted)"
+  },
+  "mapping_rationale": "H_228 substrate Φ band (WAKE 1.12 · N1 0.68 · N2 0.74 · N3 1.43 · REM 0.55) FALSIFIED the canonical deployment envelope (WAKE 1.0 > N1 0.7 > N2 0.4 > N3 0.15 · REM 0.95): F3 fired (Φ_REM 0.55 ≤ Φ_N3 1.43), N1<N2 ordering broken, REM≪WAKE. phi_spatial proxy captures drive-amplitude but decay-induced synchrony (L3) inflates N3 spatial-slice MI — substrate band does NOT manifest as the canonical 5 distinct bands → PURE criterion 4 FAIL (substrate-measured, no longer missing).",
+  "phi_tier": "🟢 NUMERICAL (RFC 036 phi_spatial native replica; true phi_rs Rust FFI = named blocker — NOT 🔵, NOT LLM-judged)",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "source_h228_result_path": "/Users/ghost/core/anima/HEXAD/LIFE/state/h228_chat_sleep_5stage_2026_05_24/result.json",
+  "source_h228_result_sha256": "4d82e5f212f501a9294f24ee31fc65fcf24d422d679f097a481db56fb7de0e4e",
+  "source_h228_smoke_path": "/Users/ghost/core/anima/HEXAD/LIFE/state/h228_chat_sleep_5stage_2026_05_24/run_h228.hexa",
+  "source_h228_spec_path": "/Users/ghost/core/anima/HEXAD/LIFE/H_228_chat_sleep_5stage_phi_profile.md",
+  "directive_parent": "CLAUDE.md @D a_chat_sleep_imagination (5-stage = substrate context Φ scale + tension envelope, NOT boolean emit gate)"
+}

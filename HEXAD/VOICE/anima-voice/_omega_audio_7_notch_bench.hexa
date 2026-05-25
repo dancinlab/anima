@@ -6,9 +6,8 @@ import "anima_audio.hexa"
 let R = 5
 
 fn _wav_hash(path: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out removed (byte-equal output; "" on missing file preserved).
-    return sha256_file(path)
+    let s = exec("shasum -a 256 " + path + " 2>/dev/null | awk '{print $1}'").trim()
+    return s
 }
 
 println("=== ω-audio-7 notch organ bench ===")

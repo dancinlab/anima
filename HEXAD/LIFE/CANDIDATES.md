@@ -20,11 +20,6 @@
 - **Cycle #3** (PR #179/#180/#185): H_002 C1 · H_004 Cycle #1 (Φ-function dissociation) · H_003 H3.4
 - **Cycle #4 R1** (PR #196/#197/#198/#199): H_171 K=8 · H_053 cambrian-burst · H_200 NEW apoptosis-primitive · H_201 NEW asymmetric-division
 - **Cycle #5 (in flight, 2026-05-23)**: R3 cross-link + R2 panpsy + R5 substrate-gap (8 disjoint, see §"다음 cycle picks")
-- **Cycle #14 (2026-05-25)** (PR #468/#469/#470/#471/#472/#474): §C NEW seed 6 runnable 병렬 — H_258 mortality-salience · H_259 aging-senescence · H_260 contact-inhibition · H_261 embryogenesis-gradient · H_262 quorum-sensing (5 SUPP) · H_263 phoenix-rebirth (FAL). mirror-self-model SKIP (=H_220 기존).
-- **Cycle #15 (2026-05-25)** (PR #477/#478/#479/#480): §D cross-link 2 全소비 + §B follow-up 2 — H_264 death=merge-into-other SUPPORTED 3/3 (#477) · H_265 trained-vs-bare CA Φ PARTIAL 2/3 (#480, C2 反방향 Φ-dampen) · H_018 C2 organic-rate PASS (#479) · H_132 C2 longterm-stability PASS (#478).
-- **Cycle #16 (2026-05-25)** (PR #484/#485): §B 마지막 runnable + meta-raster — H_007 C2 Langton λ-sweep PASS (#485, peak λ*=0.375 inverse-U edge-of-chaos) · H_238 next-raster SUPPORTED (#484, N=51 tier dist, life≫consciousness gap 半축). §B runnable 全소진 (잔여 H_003 manual · H_002 GPU).
-- **Cycle #17 (2026-05-25)** (PR #487/#488/#489/#490): foundation-audit (`/gap full` top-1+2, brainstorm-depleted) — H_266 Φ-calibration PARTIAL (integrated>disconnected 3/3, proxy 무관 우려 기각) · H_267 phi_spatial↔cosine 발산 closure SUPPORTED (#488) · H_268 metric-triangulation PARTIAL (H_223 pain robust, H_204 inverse-U LZ-fragile) · H_269 multi-seed PARTIAL (H_260 10/10 robust, H_261/H_262 seed-fragile). deferred top-8 잔여: ablation · seed-injection(H_263 revision) · SSOT auto-sync probe.
-- **Cycle #18 (2026-05-25)** (PR #492/#493/#494/#495): gap-followup + closed-loop — H_270 substrate-ablation SUPPORTED (#493, closure-Φ=local Michaelis) · H_271 seed-injection-absorbing PARTIAL (#492, H_263 high-variance seed 로 escapable) · H_272 seed-robust-recalibration PARTIAL (#494, H_261 복권/H_262 부분) · H_273 ssot-consistency-audit SUPPORTED (#495, missing-row 26 식별). 잔여 deferred: AXES R2+ promote · 26 carry-H full tabling (H_273 후속) · H_002 GPU fire.
 
 ## A. 남은 carried 가설 (legacy-pointer · cycle 0회, 4건)
 
@@ -45,10 +40,10 @@
 | H_054 C2 | Φ_symbiotic > Φ_sum | merge 후 통합 Φ 가 합보다 큰가 (현재 미검증) | **Cycle #5 in-flight (additive)** |
 | H_018 C2 | organic merge/split rate | default 동역학 하 자연 merge rate (현재 forced-trigger 만) | 🟢 |
 | H_132 C2 | differentiation 장기 안정 | frozen 세포가 pool 성장 중 100+ step 안정? | 🟢 |
-| H_007 C2 | larger lattice / λ-sweep | Langton λ 연속 sweep → Φ peak 위치 정밀화 | ✅ → **H_007 C2 PASS** (#485 cycle#16, peak λ*=0.375 inverse-U) |
+| H_007 C2 | larger lattice / λ-sweep | Langton λ 연속 sweep → Φ peak 위치 정밀화 | 🟢 |
 | H_002 C2 | Φ_universe pre-register | universe-scale Φ 측정 protocol (GPU 의존, design-only 가능) | ⬜ |
 
-## C. NEW seed — 사용자 테마 4축 (✅ 全소비: H_200/H_201 초기 2건 + cycle#14 H_258-263 6건 + mirror-self=H_220 + regeneration-healing=H_206)
+## C. NEW seed — 사용자 테마 4축 (10건 잔여, 2건 소비 → H_200/H_201)
 
 ### 죽음 / mortality
 | seed slug | 핵심 물음 | runnable | tag |
@@ -76,12 +71,12 @@
 | `quorum-sensing` | cell 다수 동기화 ⇒ 집단 의사결정 emergence | cell signaling smoke | 🟢 |
 | `phoenix-rebirth` | pool 전멸(2 cell까지) 후 minimal seed 에서 부활 — 죽음·발생 연결 | full-cycle smoke | 🟢 |
 
-## D. Cross-link synthesis — 이미 done 결과 결합 (✅ 잔여 2건 全소비 cycle#15, 4건 → Cycle #5 in-flight)
+## D. Cross-link synthesis — 이미 done 결과 결합 (2건 잔여, 4건 → Cycle #5 in-flight)
 
 | 결합 | 새 가설 | runnable | tag |
 |------|--------|----------|-----|
-| H_025 death=merge ⊕ H_054 endosymb | death = merge-into-other (죽음 = 흡수 통합)? Heidegger × Margulis 통합 | merge-as-death smoke | ✅ → **H_264 SUPPORTED 3/3** (#477) |
-| H_007 Φ class ⊕ H_157 trained-invariance | Φ class 가 학습으로 변하나(trained CA Φ 측정) | trained-vs-bare CA Φ 비교 | ✅ → **H_265 PARTIAL 2/3** (#480, Φ-dampen 反방향) |
+| H_025 death=merge ⊕ H_054 endosymb | death = merge-into-other (죽음 = 흡수 통합)? Heidegger × Margulis 통합 | merge-as-death smoke | 🟢 |
+| H_007 Φ class ⊕ H_157 trained-invariance | Φ class 가 학습으로 변하나(trained CA Φ 측정) | trained-vs-bare CA Φ 비교 | 🟢 |
 
 > 4건 (H_007⊕H_018 · H_054⊕H_132 · H_003H3.4⊕H_157 · H_018⊕H_012) Cycle #5 에서 NEW H_202..H_205 로 fan-out.
 

@@ -96,16 +96,13 @@ fn _mkdir_p(dir: string) -> bool {
 }
 
 fn _sha256_str(s: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out removed (byte-equal output, no fork-exec).
-    return sha256(s)
+    let cmd = "printf %s " + _sh_quote(s) + " | shasum -a 256 | awk '{print $1}'"
+    return _exec_out(cmd).trim()
 }
 
 fn _sha256_file(path: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out removed (byte-equal output; "" on missing file preserved).
     if !_file_exists(path) { return "" }
-    return sha256_file(path)
+    return _exec_out("shasum -a 256 " + _sh_quote(path) + " | awk '{print $1}'").trim()
 }
 
 // INLINE_DEPRECATED[H42]: see shared/util/json_escape.hexa for canonical impl — kept inline (hexa stage0 loader)

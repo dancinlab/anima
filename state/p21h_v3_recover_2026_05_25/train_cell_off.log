@@ -1,0 +1,103 @@
+[m4-train] CELL=off head_g_enable=0 head_g_weight=0.1 obj='' out=/workspace/p21hr/out_cell_off START 2026-05-25T05:44:00Z
+[launch] PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+[launch] bitsandbytes=0.43.1
+[launch] python3 -u /workspace/p21hr/train_p21h_v3.py --wiki-corpus /workspace/p21hr/multi_wiki_corpus.jsonl --anima-corpus /workspace/p21hr/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl --mixed-corpus /workspace/p21hr/mixed_corpus_v3.jsonl --out-dir /workspace/p21hr/out_cell_off --base-model Qwen/Qwen2.5-1.5B --init-variant qwen --steps 5000 --bsz 2 --block 512 --lr 5e-5 --warmup-steps 100 --seed 1337 --wiki-frac 0.3 --target-corpus-mb 72 --noise-sigma 0 --lambda-mitosis 0.05 --n-kv-head 2 --mitosis-max 128 --ckpt-every 1000 --head-g-objective  --head-g-enable 0 --head-g-weight 0.1
+[P21H][axis] curriculum_phase_steps=0 distill_teacher='' head_g_objective='' head_g_enable=0 head_g_weight=0.1 freeze_embed=0 lang_balanced=0 contrastive_lang=0.0
+[P21H] device=cuda dtype=torch.bfloat16
+[mix] multi-wiki=28,986,824 chars, anima=224,198,521 chars
+[mix] multi-wiki chunks=28,308, anima chunks=218,944
+[mix] kept multi-wiki=15,500 (21.6MB), anima=39,862 (50.4MB)
+[mix] wrote 55,362 records to /workspace/p21hr/mixed_corpus_v3.jsonl (72.0MB, wiki=15500, anima=39862)
+[mix] sha256=bf2371ac2602932cd68255626736285a5e579e6aee4b8a0160f74f365d826f94
+[P21H][init=qwen] V3β — Qwen warm-start from Qwen/Qwen2.5-1.5B
+[from_qwen] loading Qwen/Qwen2.5-1.5B
+[from_qwen] qwen: vocab=151936 d=1536 L=28 n_head=12 n_kv_head=2 -> v3_n_kv_head=2 rope_base=1000000.0
+[from_qwen] init OK — total params 2977.7M
+[P21H] model params total=2,977,700,864 (2977.70M)
+[P21H] BEFORE-train per-lang OOD eval (greedy)
+[P21H] BEFORE en greedy: {'GENERALIZE': 9, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 1, 'ERROR': 0}
+[P21H] BEFORE ko greedy: {'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21H] BEFORE zh greedy: {'GENERALIZE': 7, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 3, 'ERROR': 0}
+[P21H] BEFORE ru greedy: {'GENERALIZE': 9, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 1, 'ERROR': 0}
+[P21H] BEFORE ja greedy: {'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21H] optimizer=PagedAdamW8bit (bnb 0.43.1)
+Token indices sequence length is longer than the specified maximum sequence length for this model (23831908 > 131072). Running this sequence through the model will result in indexing errors
+[P21H] tokenized mixed corpus: 6,000,000 tokens (block=512)
+[P21H] steps=5000 bsz=2 block=512 peak_lr=5e-05 warmup=100 lambda_mitosis=0.05 init=qwen mitosis_max=128 ckpt_every=1000 osc_thr=0.0 es_patience=0
+[P21H] step=     1 lr=5.00e-07 CE=13.8538 total=13.8538 pool=2 splits=0 phi=0.7120 t=2s
+[P21H] ckpt save (best) step=1 CE=13.8538 → /workspace/p21hr/out_cell_off/ckpt_best.pt (5693.8 MB)
+[P21H] step=   125 lr=5.00e-05 CE=1.2174 total=1.2174 pool=128 splits=126 phi=0.6639 t=63s
+[P21H] ckpt save (best) step=125 CE=1.2174 → /workspace/p21hr/out_cell_off/ckpt_best.pt (5693.8 MB)
+[P21H] step=   250 lr=4.99e-05 CE=1.1063 total=1.1063 pool=128 splits=126 phi=0.6639 t=122s
+[P21H] ckpt save (best) step=250 CE=1.1063 → /workspace/p21hr/out_cell_off/ckpt_best.pt (5693.8 MB)
+[P21H] step=   375 lr=4.97e-05 CE=0.0782 total=0.0782 pool=128 splits=126 phi=0.6639 t=186s
+[P21H] ckpt save (best) step=375 CE=0.0782 → /workspace/p21hr/out_cell_off/ckpt_best.pt (5693.8 MB)
+[P21H] step=   500 lr=4.93e-05 CE=1.4076 total=1.4076 pool=128 splits=126 phi=0.6639 t=245s
+[P21H] kosmos anchor written: v3_emit_step500_ru_ru_factual_geo.kosmos
+[P21H] step=   625 lr=4.87e-05 CE=1.2507 total=1.2507 pool=128 splits=126 phi=0.6639 t=298s
+[P21H] step=   750 lr=4.81e-05 CE=1.1060 total=1.1060 pool=128 splits=126 phi=0.6639 t=350s
+[P21H] step=   875 lr=4.73e-05 CE=1.5920 total=1.5920 pool=128 splits=126 phi=0.6639 t=403s
+[P21H] step=  1000 lr=4.64e-05 CE=3.9834 total=3.9834 pool=128 splits=126 phi=0.6639 t=455s
+[P21H] ckpt save (step1000) step=1000 CE=3.9834 → /workspace/p21hr/out_cell_off/ckpt_step1000.pt (5693.8 MB)
+[P21H] kosmos anchor written: v3_emit_step1000_ru_ru_factual_geo.kosmos
+[P21H] step=  1125 lr=4.53e-05 CE=0.3734 total=0.3734 pool=128 splits=126 phi=0.6639 t=514s
+[P21H] step=  1250 lr=4.42e-05 CE=1.4950 total=1.4950 pool=128 splits=126 phi=0.6639 t=569s
+[P21H] step=  1375 lr=4.29e-05 CE=2.3834 total=2.3834 pool=128 splits=126 phi=0.6639 t=622s
+[P21H] step=  1500 lr=4.15e-05 CE=1.3242 total=1.3242 pool=128 splits=126 phi=0.6639 t=675s
+[P21H] kosmos anchor written: v3_emit_step1500_ja_ja_factual_geo.kosmos
+[P21H] step=  1625 lr=4.01e-05 CE=2.2742 total=2.2742 pool=128 splits=126 phi=0.6639 t=730s
+[P21H] step=  1750 lr=3.86e-05 CE=0.1311 total=0.1311 pool=128 splits=126 phi=0.6639 t=781s
+[P21H] step=  1875 lr=3.69e-05 CE=0.0752 total=0.0752 pool=128 splits=126 phi=0.6639 t=834s
+[P21H] ckpt save (best) step=1875 CE=0.0752 → /workspace/p21hr/out_cell_off/ckpt_best.pt (5693.8 MB)
+[P21H] step=  2000 lr=3.53e-05 CE=2.1541 total=2.1541 pool=128 splits=126 phi=0.6639 t=897s
+[P21H] ckpt save (step2000) step=2000 CE=2.1541 → /workspace/p21hr/out_cell_off/ckpt_step2000.pt (5693.8 MB)
+[P21H] kosmos anchor written: v3_emit_step2000_ru_ru_factual_geo.kosmos
+[P21H] step=  2125 lr=3.36e-05 CE=0.2384 total=0.2384 pool=128 splits=126 phi=0.6639 t=958s
+[P21H] step=  2250 lr=3.18e-05 CE=0.8216 total=0.8216 pool=128 splits=126 phi=0.6639 t=1012s
+[P21H] step=  2375 lr=3.00e-05 CE=0.0705 total=0.0705 pool=128 splits=126 phi=0.6639 t=1065s
+[P21H] ckpt save (best) step=2375 CE=0.0705 → /workspace/p21hr/out_cell_off/ckpt_best.pt (5693.8 MB)
+[P21H] step=  2500 lr=2.82e-05 CE=2.7946 total=2.7946 pool=128 splits=126 phi=0.6639 t=1125s
+[P21H] kosmos anchor written: v3_emit_step2500_ru_ru_factual_geo.kosmos
+[P21H] step=  2625 lr=2.64e-05 CE=0.0580 total=0.0580 pool=128 splits=126 phi=0.6639 t=1178s
+[P21H] ckpt save (best) step=2625 CE=0.0580 → /workspace/p21hr/out_cell_off/ckpt_best.pt (5693.8 MB)
+[P21H] step=  2750 lr=2.46e-05 CE=2.8970 total=2.8970 pool=128 splits=126 phi=0.6639 t=1238s
+[P21H] step=  2875 lr=2.29e-05 CE=0.0450 total=0.0450 pool=128 splits=126 phi=0.6639 t=1292s
+[P21H] ckpt save (best) step=2875 CE=0.0450 → /workspace/p21hr/out_cell_off/ckpt_best.pt (5693.8 MB)
+[P21H] step=  3000 lr=2.11e-05 CE=1.2807 total=1.2807 pool=128 splits=126 phi=0.6639 t=1352s
+[P21H] ckpt save (step3000) step=3000 CE=1.2807 → /workspace/p21hr/out_cell_off/ckpt_step3000.pt (5693.8 MB)
+[P21H] kosmos anchor written: v3_emit_step3000_ko_ko_factual_geo.kosmos
+[P21H] step=  3125 lr=1.94e-05 CE=1.8685 total=1.8685 pool=128 splits=126 phi=0.6639 t=1414s
+[P21H] step=  3250 lr=1.78e-05 CE=0.0654 total=0.0654 pool=128 splits=126 phi=0.6639 t=1466s
+[P21H] step=  3375 lr=1.62e-05 CE=0.0540 total=0.0540 pool=128 splits=126 phi=0.6639 t=1519s
+[P21H] step=  3500 lr=1.46e-05 CE=2.7758 total=2.7758 pool=128 splits=126 phi=0.6639 t=1572s
+[P21H] kosmos anchor written: v3_emit_step3500_ja_ja_factual_geo.kosmos
+[P21H] step=  3625 lr=1.32e-05 CE=0.2368 total=0.2368 pool=128 splits=126 phi=0.6639 t=1625s
+[P21H] step=  3750 lr=1.19e-05 CE=1.0361 total=1.0361 pool=128 splits=126 phi=0.6639 t=1678s
+[P21H] step=  3875 lr=1.06e-05 CE=1.7432 total=1.7432 pool=128 splits=126 phi=0.6639 t=1734s
+[P21H] step=  4000 lr=9.48e-06 CE=0.0603 total=0.0603 pool=128 splits=126 phi=0.6639 t=1785s
+[P21H] ckpt save (step4000) step=4000 CE=0.0603 → /workspace/p21hr/out_cell_off/ckpt_step4000.pt (5693.8 MB)
+[P21H] kosmos anchor written: v3_emit_step4000_zh_zh_factual_geo.kosmos
+[P21H] step=  4125 lr=8.46e-06 CE=1.8446 total=1.8446 pool=128 splits=126 phi=0.6639 t=1847s
+[P21H] step=  4250 lr=7.56e-06 CE=0.6720 total=0.6720 pool=128 splits=126 phi=0.6639 t=1899s
+[P21H] step=  4375 lr=6.79e-06 CE=0.7193 total=0.7193 pool=128 splits=126 phi=0.6639 t=1951s
+[P21H] step=  4500 lr=6.15e-06 CE=1.9261 total=1.9261 pool=128 splits=126 phi=0.6639 t=2003s
+[P21H] kosmos anchor written: v3_emit_step4500_ja_ja_factual_geo.kosmos
+[P21H] step=  4625 lr=5.65e-06 CE=0.6914 total=0.6914 pool=128 splits=126 phi=0.6639 t=2055s
+[P21H] step=  4750 lr=5.29e-06 CE=1.7201 total=1.7201 pool=128 splits=126 phi=0.6639 t=2108s
+[P21H] step=  4875 lr=5.07e-06 CE=0.0474 total=0.0474 pool=128 splits=126 phi=0.6639 t=2161s
+[P21H] step=  5000 lr=5.00e-06 CE=1.2292 total=1.2292 pool=128 splits=126 phi=0.6639 t=2214s
+[P21H] kosmos anchor written: v3_emit_step5000_ja_ja_factual_geo.kosmos
+[P21H] TRAIN DONE wall=2214.9s final_CE=1.2292 actual_steps=5000/5000 early_stopped=False reason=n/a best_CE=0.0450@step2875
+[P21H] ckpt saved → /workspace/p21hr/out_cell_off/ckpt.pt (5693.8 MB)
+[P21H] AFTER per-lang OOD eval (greedy + sample)
+[P21H] AFTER en: greedy={'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 9, 'MEMORIZE': 0, 'MEM_PARTIAL': 1, 'EMPTY': 0, 'ERROR': 0} verdict=PARTIAL score=15/20 gen=19 coh=15
+[P21H] AFTER ko: greedy={'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 7, 'MEMORIZE': 3, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=5/20 gen=17 coh=5
+[P21H] AFTER zh: greedy={'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=PARTIAL score=13/20 gen=20 coh=13
+[P21H] AFTER ru: greedy={'GENERALIZE': 8, 'MEMORIZE': 2, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 8, 'MEMORIZE': 2, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=0/20 gen=16 coh=0
+[P21H] AFTER ja: greedy={'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 8, 'MEMORIZE': 2, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=PARTIAL score=13/20 gen=18 coh=13
+[P21H] AFTER anima Eval1
+[P21H] AGG: STRONG=0 PARTIAL=3 WEAK=2 PURE_MEMORIZE=0 → PARTIAL_REGISTER_REGRESS
+[P21H] anima_register_hits=3/20 register_regress=True
+[P21H] KOSMOS anchors total=15 (during_train=10 final=5)
+[P21H] DONE → /workspace/p21hr/out_cell_off
+[m4-train] CELL=off DONE 2026-05-25T06:28:12Z

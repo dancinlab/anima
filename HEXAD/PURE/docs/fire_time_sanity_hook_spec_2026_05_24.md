@@ -102,7 +102,6 @@ penalize 한다.
 |---|---|---|---|
 | Phase 1 (PR #408) | spec + stub fn 시그니처 | < 250 (spec ~150 + stub ~80) | 없음 |
 | Phase 2 ✅ B14 · synthetic 검증 only | `run_coffeshop_sanity` impl — JSON parse · delta 계산 · verdict 출력 + 5-falsifier smoke | ~280 hook + ~110 smoke | PR #398 closure_auto_judge import 안정 |
-| Phase 2b ✅ B15 · TTR hard-block gate | `fire_sanity_corpus_ttr_gate` 추가 — M3 TTR < 0.30 시 launch BLOCK + 2-case smoke (F-TTR-1/2) | ~65 hook + ~35 smoke | corpus_quality_probe.hexa (M3 logic 인라인 재구현) |
 | Phase 3 | `dispatch_p21h_v3.hexa --coffeshop-sanity` wire + auto-trigger branch | ~80 | 첫 ckpt-bearing fire 후 threshold calibrate |
 
 Phase 1 의 stub 은 `fn run_coffeshop_sanity(fire_result_path, baseline_seed) -> map`
@@ -187,42 +186,3 @@ honest C3 잔여: ckpt-bearing fire 부재 → synthetic-fixture-only 검증.
 delta thresholds = design 값 (§ 5), 실 fire calibration 미선행. Phase 3
 dispatcher wire (`--coffeshop-sanity` flag + auto-trigger branch) 는 첫
 ckpt-bearing fire 의 result.json 도착 후 별도 PR.
-
-## § 11 B15 결과 — corpus TTR hard-block gate
-
-`fire_sanity_corpus_ttr_gate(corpus_path) -> map` 추가 (Phase 2b, 2026-05-24).
-
-### 배경
-
-corpus_s101 의 M3 TTR = 0.03 (극단적 반복) 이 register collapse 의 직접 원인으로
-식별됐다 (PURE saga). corpus_v1 은 TTR = 0.34 (정상 다양성). 이 gate 는 TTR <
-0.30 인 corpus 로 fire 를 발사하는 것을 사전 차단해 낭비-$ 결과가 자동으로
-재발하지 않도록 한다.
-
-### 구현
-
-- 함수: `fire_sanity_corpus_ttr_gate(corpus_path)`
-- 상수: `_thresh_corpus_ttr() = 0.30`
-- M3 TTR 로직은 `corpus_quality_probe.hexa` 에서 인라인 재구현 (import 시
-  `main()` auto-invoke 부작용 방지). 수식 동일: unique whitespace-token 수 / 전체
-  token 수, 상위 500 000 바이트 sample 제한.
-- 반환 map 필드: `gate` · `corpus_path` · `threshold` · `ttr` · `verdict` · `message`
-- verdict = `"BLOCK"` (ttr < 0.30 또는 파일 미존재), `"PASS"` (ttr >= 0.30)
-
-### smoke F-TTR-1..2 (2/2 PASS)
-
-| case | corpus 구성 | 관측 TTR | 예상 | 결과 |
-|---|---|---|---|---|
-| F-TTR-1 | "aaa aaa … aaa" × 60줄 (2 unique token) | 0.00555 | BLOCK | ✓ |
-| F-TTR-2 | 50 개 unique 영어 단어 (TTR = 1.0) | 1.0 | PASS | ✓ |
-
-전체 smoke 집계: **F-SAN-1..5 + F-TTR-1..2 = 7/7 PASS**.
-
-### honest C3
-
-- TTR 은 whitespace 토크나이저 기반 (서브워드 아님). 짧은 고-TTR corpus 가 SFT
-  에서는 여전히 반복 패턴을 보일 수 있다 (필요충분 아닌 필요조건).
-- threshold 0.30 은 corpus_s101 (0.03) vs corpus_v1 (0.34) 실측값으로
-  보정됐으나 단 2점 관측. 추가 fire 후 calibrate 권장.
-- dispatcher wire (Phase 3) 전까지 gate 는 standalone 호출 또는 hook 내부에서
-  수동 invoke 형태로만 사용 가능.

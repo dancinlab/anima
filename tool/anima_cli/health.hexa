@@ -69,7 +69,7 @@ fn _ts_iso() -> string {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let mut i = 0
+    let i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -78,10 +78,10 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _user_argv(raw) -> array {
-    let mut out = []
-    let mut i = 0
+    let out = []
+    let i = 0
     while i < len(raw) {
-        let mut s = _str(raw[i])
+        let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
             out = out + [s]
         }
@@ -188,22 +188,22 @@ fn _index_of_from(hay: string, needle: string, start: int) -> int {
 
 fn _pluck_int(line: string, key: string) -> int {
     let needle = "\"" + key + "\""
-    let mut k = line.index_of(needle)
+    let k = line.index_of(needle)
     if k < 0 { return -1 }
     let colon = _index_of_from(line, ":", k + len(needle))
     if colon < 0 { return -1 }
     let mut i = colon + 1
     let n = len(line)
     while i < n {
-        let mut c = line.substring(i, i + 1)
+        let c = line.substring(i, i + 1)
         if c != " " && c != "\t" { break }
         i = i + 1
     }
     let mut j = i
     while j < n {
-        let mut c = line.substring(j, j + 1)
+        let c = line.substring(j, j + 1)
         let cc = char_code(c, 0)
-        let mut ok = (cc >= 48 && cc <= 57) || cc == 45
+        let ok = (cc >= 48 && cc <= 57) || cc == 45
         if !ok { break }
         j = j + 1
     }
@@ -213,14 +213,14 @@ fn _pluck_int(line: string, key: string) -> int {
 
 fn _pluck_bool(line: string, key: string) -> int {
     let needle = "\"" + key + "\""
-    let mut k = line.index_of(needle)
+    let k = line.index_of(needle)
     if k < 0 { return -1 }
     let colon = _index_of_from(line, ":", k + len(needle))
     if colon < 0 { return -1 }
     let mut i = colon + 1
     let n = len(line)
     while i < n {
-        let mut c = line.substring(i, i + 1)
+        let c = line.substring(i, i + 1)
         if c != " " && c != "\t" { break }
         i = i + 1
     }
@@ -231,7 +231,7 @@ fn _pluck_bool(line: string, key: string) -> int {
 
 fn _pluck_str(line: string, key: string) -> string {
     let needle = "\"" + key + "\""
-    let mut k = line.index_of(needle)
+    let k = line.index_of(needle)
     if k < 0 { return "" }
     let colon = _index_of_from(line, ":", k + len(needle))
     if colon < 0 { return "" }
@@ -439,11 +439,11 @@ fn run_all(cfg_path: string, samples_path: string, cycle_path: string) -> array 
 }
 
 fn tally(indicators) -> array {
-    let mut ok = 0
-    let mut wn = 0
-    let mut br = 0
-    let mut un = 0
-    let mut i = 0
+    let ok = 0
+    let wn = 0
+    let br = 0
+    let un = 0
+    let i = 0
     while i < len(indicators) {
         let v = _str(indicators[i][5])
         if v == "ok"      { ok = ok + 1 }
@@ -473,7 +473,7 @@ fn _pad(s: string, w: int) -> string {
 fn render_table(indicators, show_budget: bool) {
     println("anima health — SLI/SLO (4 indicators · SSOT=config/sli_slo.json)")
     println("────────────────────────────────────────────────────────────────")
-    let mut header = "   "
+    let header = "   "
                + _pad("id", 26)
                + _pad("observed", 12)
                + _pad("objective", 12)
@@ -482,21 +482,21 @@ fn render_table(indicators, show_budget: bool) {
     header = header + "verdict"
     println(header)
     println("----------------------------------------------------------------")
-    let mut i = 0
+    let i = 0
     while i < len(indicators) {
         let id  = _str(indicators[i][0])
         let obs = indicators[i][2]
         let obj = indicators[i][3]
         let n   = _str(indicators[i][4])
         let v   = _str(indicators[i][5])
-        let mut obs_s = "-"
+        let obs_s = "-"
         let obj_s = _ppm_to_pct(obj)
-        let mut bud_s = "-"
+        let bud_s = "-"
         if v != "unknown" {
             obs_s = _ppm_to_pct(obs)
             bud_s = _budget_remaining_pct(obs, obj)
         }
-        let mut row = " " + _glyph(v) + " "
+        let row = " " + _glyph(v) + " "
                 + _pad(id, 26)
                 + _pad(obs_s, 12)
                 + _pad(obj_s, 12)
@@ -514,7 +514,7 @@ fn render_alert(indicators) -> int {
     let mut hits = 0
     println("anima health --alert  (BREACH/WARN/UNKNOWN only)")
     println("----------------------------------------------------------------")
-    let mut i = 0
+    let i = 0
     while i < len(indicators) {
         let v = _str(indicators[i][5])
         if v != "ok" {
@@ -523,7 +523,7 @@ fn render_alert(indicators) -> int {
             let obs = indicators[i][2]
             let obj = indicators[i][3]
             let det = _str(indicators[i][6])
-            let mut obs_s = "-"
+            let obs_s = "-"
             if v != "unknown" { obs_s = _ppm_to_pct(obs) }
             println(" " + _glyph(v) + " " + id
                     + "  observed=" + obs_s
@@ -544,8 +544,8 @@ fn render_alert(indicators) -> int {
 // ─── JSON emitter ──────────────────────────────────────────────────────────
 
 fn jq_esc(s: string) -> string {
-    let mut out = ""
-    let mut i = 0
+    let out = ""
+    let i = 0
     while i < len(s) {
         let ch = s.substring(i, i + 1)
         if ch == "\\" { out = out + "\\\\" }
@@ -569,7 +569,7 @@ fn build_json(ts: string, window_days: int, indicators, tall, verdict: string) -
           + ",\"breach\":" + _str(tall[2])
           + ",\"unknown\":" + _str(tall[3]) + "},"
     s = s + "\"indicators\":["
-    let mut i = 0
+    let i = 0
     while i < len(indicators) {
         if i > 0 { s = s + "," }
         let id  = jq_esc(_str(indicators[i][0]))
@@ -580,8 +580,8 @@ fn build_json(ts: string, window_days: int, indicators, tall, verdict: string) -
         let v   = _str(indicators[i][5])
         let det = jq_esc(_str(indicators[i][6]))
         let src = jq_esc(_str(indicators[i][7]))
-        let mut obs_str = "null"
-        let mut bud_str = "null"
+        let obs_str = "null"
+        let bud_str = "null"
         if v != "unknown" {
             obs_str = "\"" + _ppm_to_str(obs) + "\""
             bud_str = "\"" + _budget_remaining_pct(obs, obj) + "\""
@@ -692,7 +692,7 @@ fn sub_selftest() {
         exit(1)
     }
     // JSON round-trip
-    let mut j = build_json("REDACTED", 30, inds, t, v)
+    let j = build_json("REDACTED", 30, inds, t, v)
     if !j.contains("anima.health.v1") {
         println("FAIL selftest: schema tag missing")
         exit(1)
@@ -779,3 +779,4 @@ fn main() {
     sub_run(json_only, show_budget, alert_only)
 }
 
+main()

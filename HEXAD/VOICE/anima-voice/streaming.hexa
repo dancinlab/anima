@@ -239,7 +239,7 @@ fn synth_chunk_samples(energy: float, freq_hz: float, seed_phase: float, n_sampl
     let mut out = []
     let inv_sr = 1.0 / to_float(SAMPLE_RATE)
     let two_pi = 6.283185307
-    let mut amp = 0.2 * energy
+    let amp = 0.2 * energy
     if amp > 0.6 { amp = 0.6 }
     if amp < 0.0 { amp = 0.0 }
     let mut i = 0
@@ -287,7 +287,7 @@ fn compute_frame_energy(tension: float, arousal: float, frame_idx: int) -> float
     // energy = arousal * 0.5 * (1 + tension * PSI_ALPHA * 10)
     let base = arousal * 0.5
     let tension_boost = tension * PSI_ALPHA * 10.0
-    let mut energy = base * (1.0 + tension_boost)
+    let energy = base * (1.0 + tension_boost)
     // Breathing rhythm micro-variation (20-frame = 200ms cycle)
     let breath_phase = frame_idx % 20
     if breath_phase < 10 {
@@ -304,7 +304,7 @@ fn compute_zcr(tension: float, frame_idx: int) -> float {
     // Speech: ZCR in range 0.02-0.10
     let base_zcr = 0.04
     let tension_mod = tension * PSI_ALPHA * 20.0
-    let mut zcr = base_zcr + tension_mod
+    let zcr = base_zcr + tension_mod
     if zcr > 0.3 { zcr = 0.3 }
     if zcr < 0.001 { zcr = 0.001 }
     return zcr
@@ -312,9 +312,9 @@ fn compute_zcr(tension: float, frame_idx: int) -> float {
 
 fn is_speech_active(energy: float, zcr: float) -> int {
     // Dual-criteria: both energy AND ZCR must agree
-    let mut energy_ok = 0
+    let energy_ok = 0
     if energy > VAD_ENERGY_THRESH { energy_ok = 1 }
-    let mut zcr_ok = 0
+    let zcr_ok = 0
     if zcr > VAD_ZCR_LO && zcr < VAD_ZCR_THRESH { zcr_ok = 1 }
     if energy_ok == 1 && zcr_ok == 1 { return 1 }
     return 0
@@ -415,8 +415,8 @@ fn plc_detect_loss(expected_seq: int, received_seq: int) -> int {
 
 fn plc_energy_factor(consec_lost: int) -> float {
     // Exponential decay: decay^n
-    let mut factor = 1.0
-    let mut i = 0
+    let factor = 1.0
+    let i = 0
     while i < consec_lost {
         factor = factor * PLC_DECAY
         i = i + 1
@@ -449,9 +449,9 @@ fn plc_conceal_chunk(prev_tail: str, consec_lost: int, gap_ms: int) -> str {
     if gap_ms > PLC_MAX_MS {
         return "silence[" + to_string(gap_ms) + "ms>budget=" + to_string(PLC_MAX_MS) + "ms]"
     }
-    let mut energy = plc_energy_factor(consec_lost)
+    let energy = plc_energy_factor(consec_lost)
     let n_samples = SAMPLE_RATE * gap_ms / 1000
-    let mut state_name = "Conceal"
+    let state_name = "Conceal"
     if consec_lost >= PLC_MAX_CONSEC { state_name = "Muted" }
     if consec_lost >= PLC_MUTE_THRESH { state_name = "Fadeout" }
     return "plc[state=" + state_name + ",samples=" + to_string(n_samples) + ",energy=" + to_string(energy) + ",consec=" + to_string(consec_lost) + ",src=" + prev_tail + "]"
@@ -488,7 +488,7 @@ fn classify_xfade(prev_speaking: int, curr_speaking: int) -> int {
 fn apply_crossfade(tail_a: str, head_b: str, xfade_type: int) -> str {
     // Apply Hann-windowed crossfade between two adjacent chunks
     let type_name = xfade_type_name(xfade_type)
-    let mut desc = "xfade[type=" + type_name + ",ms=" + to_string(CROSSFADE_MS) + ",samp=" + to_string(CROSSFADE_SAMP) + ",window=hann"
+    let desc = "xfade[type=" + type_name + ",ms=" + to_string(CROSSFADE_MS) + ",samp=" + to_string(CROSSFADE_SAMP) + ",window=hann"
 
     if xfade_type == XFADE_ONSET {
         // Silence -> voice: ascending Hann half (pop prevention)
@@ -521,9 +521,9 @@ fn ring_init() -> str {
 
 fn ring_write(write_pos: int, read_pos: int, count: int, chunk_tag: str) -> str {
     let new_write = (write_pos + 1) % RING_CAPACITY
-    let mut new_count = count + 1
-    let mut new_read = read_pos
-    let mut status = "ok"
+    let new_count = count + 1
+    let new_read = read_pos
+    let status = "ok"
     if new_count > RING_CAPACITY {
         new_read = (read_pos + 1) % RING_CAPACITY
         new_count = RING_CAPACITY
@@ -536,8 +536,8 @@ fn ring_read(write_pos: int, read_pos: int, count: int) -> str {
     if count <= 0 {
         return to_string(read_pos) + ",0,empty"
     }
-    let mut new_read = (read_pos + 1) % RING_CAPACITY
-    let mut new_count = count - 1
+    let new_read = (read_pos + 1) % RING_CAPACITY
+    let new_count = count - 1
     return to_string(new_read) + "," + to_string(new_count) + ",ok"
 }
 
@@ -631,11 +631,11 @@ fn compute_generation_budget_ms() -> int {
 fn process_chunk_plc_xfade(prev_tail: str, curr_chunk: str, expected_seq: int, received_seq: int, plc_state: int, consec_lost: int, prev_vad_state: int, curr_vad_state: int) -> str {
     // Detect loss
     let loss_count = plc_detect_loss(expected_seq, received_seq)
-    let mut packet_ok = 1
+    let packet_ok = 1
     if loss_count > 0 { packet_ok = 0 }
 
     // Update PLC state
-    let mut new_consec = 0
+    let new_consec = 0
     if packet_ok == 0 {
         new_consec = consec_lost + loss_count
     }
@@ -646,7 +646,7 @@ fn process_chunk_plc_xfade(prev_tail: str, curr_chunk: str, expected_seq: int, r
     let curr_speaking = vad_is_speaking(curr_vad_state)
 
     // Generate output
-    let mut output = ""
+    let output = ""
 
     if new_plc_state == PLC_NORMAL {
         // Normal: apply VAD-aware crossfade at boundary
@@ -696,62 +696,62 @@ fn simulate_streaming(tension: float, arousal: float, valence: float, n_ticks: i
     // Full integration: VAD -> chunk gen -> PLC+crossfade -> ring buffer -> sink
 
     // ── Session state ──
-    let mut sched = SCHED_PREFILL
-    let mut vad_state = S_SILENCE
-    let mut vad_counter = 0
-    let mut vad_hangover = 0
-    let mut prev_vad_state = S_SILENCE
+    let sched = SCHED_PREFILL
+    let vad_state = S_SILENCE
+    let vad_counter = 0
+    let vad_hangover = 0
+    let prev_vad_state = S_SILENCE
 
-    let mut ring_w = 0
-    let mut ring_r = 0
-    let mut ring_count = 0
-    let mut bp_state = BP_NORMAL
+    let ring_w = 0
+    let ring_r = 0
+    let ring_count = 0
+    let bp_state = BP_NORMAL
 
-    let mut frames_gen = 0
-    let mut chunks_emitted = 0
-    let mut first_packet_emitted = 0
-    let mut first_packet_tick = -1
-    let mut frames_in_chunk = 0
-    let mut chunks_produced = 0
-    let mut chunks_dropped = 0
-    let mut vad_speech_frames = 0
-    let mut vad_silent_frames = 0
+    let frames_gen = 0
+    let chunks_emitted = 0
+    let first_packet_emitted = 0
+    let first_packet_tick = -1
+    let frames_in_chunk = 0
+    let chunks_produced = 0
+    let chunks_dropped = 0
+    let vad_speech_frames = 0
+    let vad_silent_frames = 0
 
     // PLC state
-    let mut plc_state = PLC_NORMAL
-    let mut plc_consec_lost = 0
-    let mut plc_expected_seq = 0
-    let mut plc_received_seq = 0
-    let mut plc_recoveries = 0
-    let mut plc_concealments = 0
+    let plc_state = PLC_NORMAL
+    let plc_consec_lost = 0
+    let plc_expected_seq = 0
+    let plc_received_seq = 0
+    let plc_recoveries = 0
+    let plc_concealments = 0
 
     // Crossfade tracking
-    let mut prev_chunk_tail = "init"
-    let mut xfade_count = 0
-    let mut xfade_onset_count = 0
-    let mut xfade_offset_count = 0
+    let prev_chunk_tail = "init"
+    let xfade_count = 0
+    let xfade_onset_count = 0
+    let xfade_offset_count = 0
 
     // Latency tracking
-    let mut max_observed_latency_ms = 0
-    let mut stale_drops = 0
+    let max_observed_latency_ms = 0
+    let stale_drops = 0
 
     // ── PCM sink state (Mk.III V-P2-1) ──
     // Real audio byte output — raw PCM16-LE @ SAMPLE_RATE, appended per chunk.
     let sink_path = pcm_sink_path()
     pcm_sink_reset(sink_path)
-    let mut sink_bytes_total = 0
-    let mut sink_chunks_written = 0
-    let mut sink_phase = 0.0
+    let sink_bytes_total = 0
+    let sink_chunks_written = 0
+    let sink_phase = 0.0
 
-    let mut tick = 0
+    let tick = 0
     while tick < n_ticks {
         // ── 1. VAD: classify this frame (dual-criteria) ──
-        let mut energy = compute_frame_energy(tension, arousal, tick)
-        let mut zcr = compute_zcr(tension, tick)
+        let energy = compute_frame_energy(tension, arousal, tick)
+        let zcr = compute_zcr(tension, tick)
         let active = is_speech_active(energy, zcr)
 
         let trans = vad_transition(vad_state, active, vad_counter, vad_hangover)
-        let mut new_vad_state = S_SILENCE
+        let new_vad_state = S_SILENCE
         // parse first digit of VAD transition
         if trans.starts_with("0") { new_vad_state = 0 }
         if trans.starts_with("1") { new_vad_state = 1 }
@@ -785,7 +785,7 @@ fn simulate_streaming(tension: float, arousal: float, valence: float, n_ticks: i
         }
 
         // ── 2. Scheduler: prefill / first packet / streaming ──
-        let mut should_gen = 1
+        let should_gen = 1
 
         if sched == SCHED_PREFILL {
             frames_gen = frames_gen + 1
@@ -856,8 +856,8 @@ fn simulate_streaming(tension: float, arousal: float, valence: float, n_ticks: i
 
                     // Simulate occasional packet loss (every 37th chunk)
                     // This exercises the PLC path during demo/testing
-                    let mut actual_seq = plc_expected_seq
-                    let mut simulated_loss = 0
+                    let actual_seq = plc_expected_seq
+                    let simulated_loss = 0
                     if chunks_produced % 37 == 0 && chunks_produced > 10 {
                         // Simulate a single packet loss
                         actual_seq = plc_expected_seq + 1
@@ -867,7 +867,7 @@ fn simulate_streaming(tension: float, arousal: float, valence: float, n_ticks: i
 
                     // Detect loss
                     let loss = plc_detect_loss(plc_expected_seq, plc_received_seq)
-                    let mut pkt_ok = 1
+                    let pkt_ok = 1
                     if loss > 0 { pkt_ok = 0 }
 
                     // PLC state transition
@@ -960,17 +960,17 @@ fn simulate_streaming(tension: float, arousal: float, valence: float, n_ticks: i
     }
 
     // ── Build result summary ──
-    let mut first_packet_ms = -1
+    let first_packet_ms = -1
     if first_packet_tick >= 0 {
         first_packet_ms = (first_packet_tick + 1) * 1000 / FRAME_HZ
     }
     let duration_ms = n_ticks * 1000 / FRAME_HZ
-    let mut speech_pct = 0
+    let speech_pct = 0
     if n_ticks > 0 {
         speech_pct = vad_speech_frames * 100 / n_ticks
     }
 
-    let mut result = "StreamingSession["
+    let result = "StreamingSession["
     result = result + "duration=" + to_string(duration_ms) + "ms"
     result = result + ",first_packet=" + to_string(first_packet_ms) + "ms"
     if first_packet_ms >= 0 && first_packet_ms <= FIRST_PACKET_BUDGET_MS {
@@ -1016,7 +1016,7 @@ fn stream_synthesize(phi: float, tension: float, arousal: float, valence: float,
     let n_ticks = duration_ms * FRAME_HZ / 1000
     let session_result = simulate_streaming(tension, arousal, valence, n_ticks)
 
-    let mut result = "HexaSpeakStream[phi=" + to_string(phi) + ",cells=" + to_string(cells) + ","
+    let result = "HexaSpeakStream[phi=" + to_string(phi) + ",cells=" + to_string(cells) + ","
     result = result + "session=" + session_result + "]"
     return result
 }
@@ -1239,3 +1239,4 @@ fn main() {
     println("────────────────────────────────────────────────────────────")
 }
 
+main()

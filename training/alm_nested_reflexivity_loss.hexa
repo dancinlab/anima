@@ -77,12 +77,6 @@
 // Expect:
 //   [alm_nested_reflexivity_loss] ALL 5/5 PASS
 
-// 2026-05-25 phase 5 M1 wave 2a: vec_norm body delegated to
-// stdlib/linalg/norm l2_norm (hexa-lang #885). Byte-equal — local
-// `sqrt_safe(vec_dot(v,v))` == `l2_norm(v, len(v))` for real arrays.
-// cosine_sim body kept local (EPS guard differs from stdlib default).
-import "stdlib/linalg/norm.hexa"
-
 // ─── Constants ──────────────────────────────────────────────
 
 let TOWER_K       = 5         // default tower depth (levels 0..4)
@@ -141,8 +135,7 @@ fn vec_dot(a: array, b: array) -> float {
 }
 
 fn vec_norm(v: array) -> float {
-    // L2 norm via stdlib/linalg/norm — was sqrt_safe(vec_dot(v,v)).
-    return l2_norm(v, len(v))
+    return sqrt_safe(vec_dot(v, v))
 }
 
 fn vec_add(a: array, b: array) -> array {
@@ -477,3 +470,4 @@ fn main() {
     }
 }
 
+main()

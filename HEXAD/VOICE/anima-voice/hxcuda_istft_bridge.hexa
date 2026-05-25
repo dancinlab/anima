@@ -27,10 +27,6 @@
 // Hexa quirks honoured:
 //   - No cross-file `use "..."` imports (silent exit on 3+ module chains).
 //     All FFI declarations, constants, and helpers are inlined here.
-//     EXCEPTION (2026-05-25): a single `import "stdlib/signal/core_window.hexa"`
-//     is added to source the periodic Hann variant used by make_hann_window.
-//     One import (this file's only one) stays under the 3+ module-chain
-//     silent-exit threshold; verified with `hexa parse` clean.
 //   - Lists are pass-by-value; output arrays are built via .push() concat.
 //   - No `a[i] = v` bare mutation on growable arrays.
 //
@@ -41,8 +37,6 @@
 //
 // Performance (GPU path, RTX 3090, n_fft=512, hop=128, 1s@24kHz):
 //   STFT:  0.015ms   iSTFT: 0.023ms   round-trip: 0.037ms   SNR: 129.5dB
-
-import "stdlib/signal/core_window.hexa"  // hann_window_periodic (denom = n_fft, matches CUDA STFT contract)
 
 // ═══════════════════════════════════════════════════════════════════
 // Section 1. Constants
@@ -223,16 +217,12 @@ fn bridge_gpu_available() -> bool {
 // ═══════════════════════════════════════════════════════════════════
 
 fn make_hann_window(n_fft: int) -> [float] {
-    // Periodic Hann (denominator n_fft, NOT n_fft - 1) — matches the
-    // convention used by CUDA STFT kernels. Sourced from
-    // stdlib/signal/core_window.hexa::hann_window_periodic to consolidate
-    // with the canonical SSOT. The returned [float] list shape is
-    // preserved (vs the stdlib's farr-handle generator) because callers
-    // of make_hann_window pass `w: [float]` into stft_forward / istft.
     let mut w = []
     let mut i = 0
+    let inv_n = 1.0 / to_float(n_fft)
     while i < n_fft {
-        let v = hann_window_periodic(i, n_fft)
+        // Hann: 0.5 * (1 - cos(2*pi*i / n_fft))
+        let v = 0.5 * (1.0 - cos(TWO_PI * to_float(i) * inv_n))
         w = w.push(v)
         i = i + 1
     }

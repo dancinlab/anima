@@ -50,9 +50,8 @@ fn file_exists(path: string) -> bool {
 }
 
 fn sha256_short(s: string) -> string {
-    // full digest rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256
-    // alias surface); shell-out removed (byte-equal). 16-char prefix preserved.
-    return sha256(s).substring(0, 16)
+    let cmd = "printf '%s' " + shell_escape(s) + " | sha256sum | cut -c1-16"
+    return exec(cmd).trim()
 }
 
 fn sqrt_f(x: float) -> float {

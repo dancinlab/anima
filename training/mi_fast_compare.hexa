@@ -213,6 +213,7 @@ fn mi_fast(a: array, b: array) -> float {
 // Compare harness: 4 synthetic trace pairs mimicking addiction_phi shapes
 // ═══════════════════════════════════════════════════════════════
 
+fn abs_f(x: float) -> float { if x < 0.0 { return 0.0 - x }; return x }
 
 fn gen_tri(n: int, freq: float, amp: float, phase: float) -> array {
     let mut out = []
@@ -246,7 +247,7 @@ fn gen_noise(n: int, seed: int) -> array {
 fn pair_check(name: string, a: array, b: array) -> bool {
     let mi_o = old_mi(a, b)
     let mi_n = mi_fast(a, b)
-    let diff = abs(mi_o - mi_n)
+    let diff = abs_f(mi_o - mi_n)
     let ok = diff <= 0.01
     let status = if ok { "PASS" } else { "FAIL" }
     println("  [" + name + "] old=" + str(mi_o) + " new=" + str(mi_n) + " |Δ|=" + str(diff) + " " + status)
@@ -294,3 +295,4 @@ fn main() {
     }
 }
 
+main()

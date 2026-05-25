@@ -73,8 +73,8 @@ fn _hexa_bin() -> string {
 }
 
 fn _user_argv(raw) -> array {
-    let mut out = []
-    let mut i = 0
+    let out = []
+    let i = 0
     while i < len(raw) {
         let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
@@ -86,7 +86,7 @@ fn _user_argv(raw) -> array {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let mut i = 0
+    let i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -184,7 +184,7 @@ fn _run_selftest(root: string, modn: string) -> string {
     let path = root + "/tool/anima_cli/" + modn + ".hexa"
     if !_fexists(path) { return "MISS" }
     let cmd = _hexa_bin() + " run " + path + " --selftest 2>&1 | head -n 1"
-    let mut out = _str(exec(cmd))
+    let out = _str(exec(cmd))
     if out.contains("PASS") { return "PASS" }
     return "FAIL"
 }
@@ -218,7 +218,7 @@ fn sub_list(as_json: bool) {
     if as_json {
         let cmd = "printf '%s' " + _sh_q(ids.trim())
                 + " | jq -R -s 'split(\"\\n\") | map(select(length>0))'"
-        let mut arr = _str(exec(cmd)).trim()
+        let arr = _str(exec(cmd)).trim()
         if arr == "" { arr = "[]" }
         println("{\"schema\":\"anima.replay.v1\",\"ts\":\"" + _ts_iso()
               + "\",\"sessions\":" + arr + ",\"count\":" + n + "}")
@@ -236,7 +236,7 @@ fn sub_list(as_json: bool) {
 }
 
 fn _render_text(root: string, sid: string, shas: string, do_verify: bool) -> string {
-    let mut out = "anima replay — session " + sid + "\n"
+    let out = "anima replay — session " + sid + "\n"
             + "handoff: docs/session_handoff_" + sid + ".md\n"
     let n = _commit_count(shas)
     out = out + "commits: " + n + "\n\n"
@@ -245,7 +245,7 @@ fn _render_text(root: string, sid: string, shas: string, do_verify: bool) -> str
         return out
     }
     let lines = shas.trim().split("\n")
-    let mut i = 0
+    let i = 0
     while i < len(lines) {
         let sha = _str(lines[i]).trim()
         if sha == "" { i = i + 1; continue }
@@ -254,8 +254,8 @@ fn _render_text(root: string, sid: string, shas: string, do_verify: bool) -> str
             i = i + 1
             continue
         }
-        let mut subj = _commit_subject(root, sha)
-        let mut stat = _commit_stat_summary(root, sha)
+        let subj = _commit_subject(root, sha)
+        let stat = _commit_stat_summary(root, sha)
         out = out + "  [" + str(i+1) + "] " + sha + "  " + subj + "\n"
         out = out + "       stat: " + stat + "\n"
         if do_verify {
@@ -265,7 +265,7 @@ fn _render_text(root: string, sid: string, shas: string, do_verify: bool) -> str
                 out = out + "       verify: (no tool/anima_cli/*.hexa touched)\n"
             } else {
                 let ml = mods.split("\n")
-                let mut j = 0
+                let j = 0
                 while j < len(ml) {
                     let m = _str(ml[j]).trim()
                     if m != "" {
@@ -282,17 +282,17 @@ fn _render_text(root: string, sid: string, shas: string, do_verify: bool) -> str
 }
 
 fn _collect_rows(root: string, shas: string, do_verify: bool) -> array {
-    let mut rows = []
+    let rows = []
     if shas.trim() == "" { return rows }
     let lines = shas.trim().split("\n")
-    let mut i = 0
+    let i = 0
     while i < len(lines) {
         let sha = _str(lines[i]).trim()
         if sha == "" { i = i + 1; continue }
         let exists = _commit_exists(root, sha)
-        let mut subj = ""
-        let mut stat = ""
-        let mut verify_rows = []
+        let subj = ""
+        let stat = ""
+        let verify_rows = []
         if exists {
             subj = _commit_subject(root, sha)
             stat = _commit_stat_summary(root, sha)
@@ -301,7 +301,7 @@ fn _collect_rows(root: string, shas: string, do_verify: bool) -> array {
                 let mods = _candidate_selftest_tools(files).trim()
                 if mods != "" {
                     let ml = mods.split("\n")
-                    let mut j = 0
+                    let j = 0
                     while j < len(ml) {
                         let m = _str(ml[j]).trim()
                         if m != "" {
@@ -325,17 +325,17 @@ fn _rows_to_json(rows) -> string {
     // We use jq to correctly escape subjects containing quotes.
     let tmp = "/tmp/anima_replay_rows_" + _str(exec("date +%s%N")).trim() + ".tsv"
     exec(": > " + tmp)
-    let mut i = 0
+    let i = 0
     while i < len(rows) {
         let r = rows[i]
         let sha = _str(r[0])
         let exists = r[1]
-        let mut subj = _str(r[2])
-        let mut stat = _str(r[3])
+        let subj = _str(r[2])
+        let stat = _str(r[3])
         let vrs  = r[4]
         // encode verify rows as "tool=status,tool=status"
-        let mut vstr = ""
-        let mut j = 0
+        let vstr = ""
+        let j = 0
         while j < len(vrs) {
             let vr = vrs[j]
             if j > 0 { vstr = vstr + "," }
@@ -355,7 +355,7 @@ fn _rows_to_json(rows) -> string {
                 + "verify: (if (.[4]|length)==0 then [] else "
                 + " (.[4] | split(\",\") | map(split(\"=\") | {tool:.[0], status:.[1]})) end)}"
     let cmd = "jq -R -s 'split(\"\\n\") | map(select(length>0)) | map(" + jq_prog + ")' " + tmp
-    let mut out = _str(exec(cmd))
+    let out = _str(exec(cmd))
     exec("rm -f " + tmp)
     if out.trim() == "" { return "[]" }
     return out
@@ -364,15 +364,15 @@ fn _rows_to_json(rows) -> string {
 fn _write_result(root: string, sid: string, shas_count: string, do_verify: bool, rows) -> string {
     let path = _result_path(root, sid)
     exec("mkdir -p " + root + "/state 2>/dev/null")
-    let mut arr = _rows_to_json(rows)
+    let arr = _rows_to_json(rows)
     // summarize verify counts
-    let mut pass_n = 0
-    let mut fail_n = 0
-    let mut miss_n = 0
-    let mut i = 0
+    let pass_n = 0
+    let fail_n = 0
+    let miss_n = 0
+    let i = 0
     while i < len(rows) {
         let vrs = rows[i][4]
-        let mut j = 0
+        let j = 0
         while j < len(vrs) {
             let st = _str(vrs[j][1])
             if st == "PASS" { pass_n = pass_n + 1 }
@@ -413,7 +413,7 @@ fn sub_replay(argv, sid: string) {
     }
     let shas = _extract_commit_shas(handoff)
     let n = _commit_count(shas)
-    let mut rows = _collect_rows(root, shas, do_verify)
+    let rows = _collect_rows(root, shas, do_verify)
     let state_path = _write_result(root, sid, n, do_verify, rows)
     if as_json {
         println(_str(exec("cat " + state_path + " 2>/dev/null")))
@@ -479,7 +479,7 @@ fn sub_selftest() {
         exit(1)
     }
     // rows with verify=true; sha1 touches _dummy, sha2 touches none
-    let mut rows = _collect_rows(tmp, shas, true)
+    let rows = _collect_rows(tmp, shas, true)
     if len(rows) != 2 {
         println("FAIL anima_cli/replay selftest (rows len=" + str(len(rows)) + ")")
         exec("rm -rf " + tmp)
@@ -536,3 +536,4 @@ fn main() {
     exit(2)
 }
 
+main()

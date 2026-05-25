@@ -32,8 +32,6 @@
 // @no-lock-needed
 // @resolver-bypass(reason="Driver subprocess + xxd; no managed runtime needed.")
 
-use "stdlib/core/hash/sha256"
-
 let HOME              = env("HOME")
 let QMIRROR_ROOT_ENV  = env("QMIRROR_ROOT")
 let LIVE_ENV          = env("NEXUS_QMIRROR_LIVE")
@@ -312,7 +310,7 @@ fn main() {
         return
     }
 
-    let sha = sha256_of_file(OUT_BIN)  // rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); byte-equal, no fork-exec
+    let sha = exec("shasum -a 256 " + shq(OUT_BIN) + " | awk '{print $1}'").trim()  // @allow-bare-exec
     let tier = tier_label(prov_str)
 
     append_provenance_ok(tier, n_actual, sha, msg_str)

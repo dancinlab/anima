@@ -42,11 +42,9 @@ fn _phi_in_canonical(phi: float) -> bool {
 }
 
 fn _short_sha(path: str) -> str {
-    // 16-char prefix of sha256. Returns "?" on missing file / hash failure (non-fatal —
+    // 16-char prefix of sha256. Returns "?" on missing file / shasum failure (non-fatal —
     // sha is provenance metadata, not a closure criterion).
-    // full digest rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256
-    // alias surface); shell-out removed (byte-equal; "" → "?" path preserved).
-    let raw = sha256_file(path)
+    let raw = exec("shasum -a 256 " + path + " 2>/dev/null | awk '{print $1}'").trim()
     if raw == "" { return "?" }
     let n = len(raw)
     if n < 16 { return raw }

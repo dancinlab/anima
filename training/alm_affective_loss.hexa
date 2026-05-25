@@ -85,13 +85,6 @@
 // Expect:
 //   [alm_affective_loss] ALL 5/5 PASS
 
-// 2026-05-25 phase 5 M1 wave 2a: vec_norm body delegated to
-// stdlib/linalg/norm l2_norm (hexa-lang #885). Byte-equal — local
-// `sqrt_safe(Σ v²)` == `l2_norm(v, d)` for real arrays (Σ v² ≥ 0, so
-// the sqrt_safe x<=0 guard is unreachable). emotion_congruence body
-// kept local (1e-7 epsilon + [-1,1]→[0,1] rescale differ from stdlib).
-import "stdlib/linalg/norm.hexa"
-
 // ─── Constants ──────────────────────────────────────────────
 
 let CONGRUENCE_THRESHOLD = 0.7   // hinge gate: congruence must exceed this
@@ -150,8 +143,13 @@ fn vec_dot(a: array, b: array, d: int) -> float {
 }
 
 fn vec_norm(v: array, d: int) -> float {
-    // L2 norm via stdlib/linalg/norm — was inline sqrt_safe(Σ v²).
-    return l2_norm(v, d)
+    let mut s = 0.0
+    let mut i = 0
+    while i < d {
+        s = s + v[i] * v[i]
+        i = i + 1
+    }
+    return sqrt_safe(s)
 }
 
 // Negate a vector: out[i] = -v[i].
@@ -409,3 +407,4 @@ fn main() {
     }
 }
 
+main()

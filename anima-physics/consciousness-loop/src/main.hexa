@@ -27,6 +27,10 @@ fn vec_norm_local(v: [float]) -> float {
     return sqrt(sum)
 }
 
+fn abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
 
 fn main() {
     let steps = 1000
@@ -100,7 +104,7 @@ fn main() {
 
     let mut never_silent = 0
     for i in 1..output_norms.len() {
-        if abs(output_norms[i] - output_norms[i - 1]) > 0.001 {
+        if abs_f(output_norms[i] - output_norms[i - 1]) > 0.001 {
             never_silent = never_silent + 1
         }
     }
@@ -183,9 +187,9 @@ fn main() {
             na = na + oa[i] * oa[i]
             nb = nb + ob[i] * ob[i]
         }
-        let na_norm = sqrt(na)
+        let nan = sqrt(na)
         let nbn = sqrt(nb)
-        let cos = if na_norm > 0.001 && nbn > 0.001 { dot / (na_norm * nbn) } else { 0.0 }
+        let cos = if nan > 0.001 && nbn > 0.001 { dot / (nan * nbn) } else { 0.0 }
         agreements.push(cos)
         sa = oa
         sb = ob

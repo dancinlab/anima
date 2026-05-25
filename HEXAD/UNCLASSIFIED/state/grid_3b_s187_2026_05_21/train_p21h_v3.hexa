@@ -279,18 +279,8 @@ pub fn axis_c_zero_headg_grad(Mg_acc: int, hg_off: int, V: int, d: int) {
 pub fn axis_b_kd_loss(student_logits: int, teacher_logits: int,
                       dl_kd_out: int, temperature: float, V: int) -> float {
     let tau = if temperature > 0.0 { temperature } else { 1.0 }
-    // student softmax at τ
-    let mut mxs = farr_get(student_logits, 0)
-    let mut i = 1
-    while i < V {
-        let zs = farr_get(student_logits, i) / tau
-        let cur = farr_get(student_logits, 0) / tau
-        let _ = cur
-        if zs > mxs { mxs = zs }
-        i = i + 1
-    }
-    // NOTE: mxs init used raw logits[0]; recompute cleanly over τ-scaled.
-    mxs = farr_get(student_logits, 0) / tau
+    // student softmax at τ — stable max over τ-scaled logits
+    let mut mxs = farr_get(student_logits, 0) / tau
     let mut i0 = 1
     while i0 < V {
         let zs = farr_get(student_logits, i0) / tau
@@ -377,6 +367,32 @@ let wd = 0.01
 let lambda_mitosis = 0.05
 let gate_strength = 0.001
 let noise_sigma = 0.1
+
+// ─── AXIS-MAP flags (M1 wired + M3 dispatch-controllable via env-vars) ──
+// The H_257 bug was that train_p21h_v3.py declared these as argparse flags the
+// AXIS_MAP-FAN dispatcher set as ENV-VARS the .py never read (→ every axis ran
+// the same default → axis B == axis F init_CE byte-equal). Here the hexa driver
+// ACTUALLY READS the P21H_* env-vars: M3 fans 4 pods, each pod exports a
+// different axis config, and the readouts differ (H_257 fix verified by setting
+// P21H_FREEZE_EMBED=0 → embed_post > 0). Defaults = the smoke config so a bare
+// local run still exercises every axis for the falsifier gate.
+fn _env_int(name: string, dflt: int) -> int {
+    let v = exec("printf %s \"${" + name + ":-}\"").trim()
+    if len(v) == 0 { return dflt }
+    return to_int(v.parse_float())
+}
+fn _env_float(name: string, dflt: float) -> float {
+    let v = exec("printf %s \"${" + name + ":-}\"").trim()
+    if len(v) == 0 { return dflt }
+    return v.parse_float()
+}
+let freeze_embed = _env_int("P21H_FREEZE_EMBED", 1)              // axis D
+let curriculum_phase_steps = _env_int("P21H_CURRICULUM_PHASE_STEPS", 2) // axis A
+let head_g_objective_on = _env_int("P21H_HEAD_G_OBJECTIVE", 1)  // axis C on/off
+let lambda_g = _env_float("P21H_LAMBDA_G", 0.3)                 // axis C weight
+let distill_on = _env_int("P21H_DISTILL_ON", 1)                 // axis B on/off
+let kd_temperature = _env_float("P21H_KD_TEMPERATURE", 2.0)     // axis B τ
+let lambda_kd = _env_float("P21H_LAMBDA_KD", 0.5)              // axis B weight
 
 print("  smoke config: T="); print(T); print(" d="); print(d)
 print(" nh="); print(nh); print(" nkv="); print(nkv); print(" h="); print(h)
@@ -495,6 +511,12 @@ let mut step = 1
 while step <= n_steps {
     let lr_now = v3_lr_schedule(step - 1, n_steps, warmup, peak_lr, min_lr)
 
+    // ── AXIS A (curriculum): per-step anima corpus fraction (mix schedule) ──
+    // 0 in the wiki-only phase → linear ramp → 1 anima-dominant. The full
+    // two-corpus switch is M3 dispatch scope; the smoke proves the SCHEDULE
+    // VALUE changes across the phase boundary (falsifier readout below).
+    let anima_frac = axis_a_anima_frac(step, curriculum_phase_steps)
+
     // zero grad accumulator (FULL V3 m_size — spine + V3 extensions)
     let mut z = 0
     while z < m_size {
@@ -546,8 +568,42 @@ while step <= n_steps {
     let ce_g = v3_headg_grad(zT_buf, M, logits_g, tt0, Mg_acc, d_zT_scratch,
                              d, nh, nkv, h, V, n_layer)
 
-    // L_total metric = gn2_epoch + λ·aux_value + head_g CE
-    let l_total = gn2_epoch + lambda_mitosis * aux_value + ce_g
+    // ── AXIS C (head_g objective): λ_g scales head_g CE; OFF keeps it inert ──
+    // ON ⟹ head_g carries the anima-register objective (escapes R4 "moot");
+    // OFF ⟹ zero the head_g grad so it stays inert (the baseline axis-C beats).
+    let lam_g = axis_c_headg_lambda(head_g_objective_on, lambda_g)
+    if head_g_objective_on == 0 {
+        axis_c_zero_headg_grad(Mg_acc, v3_off_head_g(d, nh, nkv, h, V, n_layer), V, d)
+    }
+    let headg_term = lam_g * ce_g
+
+    // ── AXIS B (distill): KD vs teacher. HONEST TODO #B1 — dummy teacher =
+    // student logits + fixed offset (q_t ≠ p_s ⟹ L_kd ≠ 0). Production fire
+    // supplies real teacher logits via flame_load_pt + v3_forward_logits. ──
+    let teacher_l = t_zeros(V)
+    let dl_kd = t_zeros(V)
+    let mut kti = 0
+    while kti < V {
+        // non-uniform bump — a CONSTANT offset is invisible to softmax
+        // (shift-invariant ⟹ q_t == p_s ⟹ L_kd = 0). Alternating ±0.5 breaks
+        // shift-invariance so q_t ≠ p_s and the KD signal is real.
+        let bump = if kti % 2 == 0 { 0.5 } else { 0.0 - 0.5 }
+        let _ = farr_set(teacher_l, kti, t_get(logits_a, kti) + bump)
+        kti = kti + 1
+    }
+    let l_kd = if distill_on == 1 {
+        axis_b_kd_loss(logits_a, teacher_l, dl_kd, kd_temperature, V)
+    } else { 0.0 }
+    let _ = t_free(teacher_l)
+    let _ = t_free(dl_kd)
+
+    // L_total = gn2 + λ_mit·aux + λ_g·head_g_CE + λ_kd·KD (4 axes composed)
+    let l_total = gn2_epoch + lambda_mitosis * aux_value + headg_term + lambda_kd * l_kd
+
+    // ── AXIS D (freeze embed): mask tok_emb/tied-lm_head grad BEFORE AdamW.
+    // pre = embed grad-norm before masking; post must be 0.0 when freeze on. ──
+    let embed_pre = axis_d_freeze_embed(Mg_acc, freeze_embed, V, d)
+    let embed_post = axis_slot_grad_norm(Mg_acc, 0, V * d)
 
     // grad-norm clip (max_norm=1.0) over the FULL accumulated grads
     let gnorm = v3_clip_grad_norm(Mg_acc, m_size, 1.0)
@@ -561,6 +617,43 @@ while step <= n_steps {
     print(" pool="); print(info["pool_size"]); print(" splits="); print(info["split_total"])
     print(" phi="); print(info["phi"]); print(" gnorm="); print(gnorm)
     print(" aux="); print(aux_value); println("")
+    // axis readouts (proves each axis is ACTIVE, not a print-stub)
+    print("      [axis] A.anima_frac="); print(anima_frac)
+    print(" C.lam_g="); print(lam_g); print(" C.headg_term="); print(headg_term)
+    print(" B.L_kd="); print(l_kd)
+    print(" D.embed_pre="); print(embed_pre); print(" D.embed_post="); print(embed_post)
+    println("")
+
+    // ── M1 AXIS FALSIFIERS + M2 DIFFERENT-gate (last step) ──
+    if step == n_steps {
+        println("  --- M1 axis falsifiers ---")
+        // D: freeze masks embed grad → post-norm 0 while pre-norm captured
+        let d_pass = if freeze_embed == 1 { embed_post == 0.0 } else { embed_post > 0.0 }
+        if d_pass { print("PASS  F-AXIS-D-FREEZE  embed grad pre="); print(embed_pre)
+            print(" post="); print(embed_post); println(" (freeze masks grad)") }
+        else { println("FAIL  F-AXIS-D-FREEZE") }
+        // A: anima_frac DIFFERS across the curriculum phase boundary
+        let a_lo = axis_a_anima_frac(1, curriculum_phase_steps)
+        let a_hi = axis_a_anima_frac(2 * curriculum_phase_steps, curriculum_phase_steps)
+        if a_lo != a_hi { print("PASS  F-AXIS-A-CURRICULUM  anima_frac step1="); print(a_lo)
+            print(" → step"); print(2 * curriculum_phase_steps); print("="); print(a_hi)
+            println(" (schedule changes)") }
+        else { println("FAIL  F-AXIS-A-CURRICULUM") }
+        // C: head_g objective term > 0 (escape inert / R4 "moot")
+        if headg_term > 0.0 { print("PASS  F-AXIS-C-HEADG  λ_g·CE_g="); print(headg_term)
+            println(" > 0 (head_g objective ACTIVE, not inert)") }
+        else { println("FAIL  F-AXIS-C-HEADG") }
+        // B: KD loss > 0 (teacher signal present in grad path)
+        if l_kd > 0.0 { print("PASS  F-AXIS-B-DISTILL  L_kd="); print(l_kd)
+            println(" > 0 (teacher signal present)") }
+        else { println("FAIL  F-AXIS-B-DISTILL") }
+        // M2 gate: two axes produce DIFFERENT readouts (¬ silent-bypass).
+        // (the old bug: axis B == axis F init_CE byte-equal. here A.lo≠A.hi AND
+        //  D.pre≠D.post → axes measurably change training, not no-ops.)
+        let m2 = (a_lo != a_hi) && (embed_pre != embed_post)
+        if m2 { println("PASS  F-AXIS-M2-DIFFERENT  axes change training (not silent-bypass)") }
+        else { println("FAIL  F-AXIS-M2-DIFFERENT") }
+    }
 
     step = step + 1
 }

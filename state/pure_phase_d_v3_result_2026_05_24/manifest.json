@@ -1,0 +1,27 @@
+{
+  "fire": "PURE_PhaseD_v3",
+  "date": "2026-05-24",
+  "base_model": "Qwen/Qwen2.5-1.5B",
+  "init_variant": "qwen",
+  "seed": 1337,
+  "steps": 5000,
+  "final_CE": 1.6197,
+  "corpus": "corpus_v1 (100% anima-diverse, M3 TTR 0.34)",
+  "corpus_sha16": "6228ab60a4dc6ac8",
+  "mitosis": {
+    "pool": 16,
+    "splits": 14,
+    "phi": 0.6579
+  },
+  "closure_verdict": "FAIL (1/4)",
+  "criteria": {
+    "multilingual": "1/5 PARTIAL (ru); en/ko/zh/ja WEAK — FAIL",
+    "register_hits": "0 (<4) — PASS",
+    "motivation_8factor": "not measured (embed skipped)",
+    "dream_stage": "not measured (embed skipped)"
+  },
+  "ckpt_best_sha256": "b1662935c64ffdca96820fc94ed4b405ae96608d3f12f55fd31aa65e4e7ade96",
+  "result_sha256": "2643bd72a5c0e5a96b5d46f18800519b6711a06404fbe96b8301ea1a94b8e94f",
+  "n_params": "2.99B (Qwen 1.5B + V3 mitosis expansion)",
+  "visibility": "PRIVATE (closure FAIL · a_hf_autonomous tier-gate)"
+}

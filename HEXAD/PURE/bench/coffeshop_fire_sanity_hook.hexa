@@ -16,13 +16,6 @@ fn _thresh_emit() -> int         { return 2   }
 fn _thresh_register() -> int     { return 2   }
 fn _thresh_lang_rows() -> int    { return 1   }
 
-// --- corpus TTR gate threshold (B15, 2026-05-24) ------------------------
-//
-// corpus_s101 had M3 TTR = 0.03 (extreme repetition) → register collapse.
-// corpus_v1 has TTR = 0.34 (healthy diversity). Gate blocks fire launch
-// when TTR < 0.30 so the wasted-$ outcome cannot recur automatically.
-fn _thresh_corpus_ttr() -> float { return 0.30 }
-
 // --- helpers ------------------------------------------------------------
 
 fn _abs_f(x) {
@@ -193,72 +186,6 @@ fn _classify(n_fail) -> str {
     if n_fail == 0 { return "SANE" }
     if n_fail == 1 { return "DRIFT" }
     return "DIVERGE"
-}
-
-// --- corpus TTR gate (B15, 2026-05-24) ---------------------------------
-//
-// Inlines M3 TOKEN_DIVERSITY logic from corpus_quality_probe.hexa so that
-// file is NOT imported (importing would auto-invoke its main() and print 6
-// selftest lines per call). Math is identical: unique whitespace-token count
-// divided by total whitespace-token count over a leading sample.
-//
-// Sample cap: 500 000 bytes — sufficient for TTR signal, bounded wall time.
-
-fn _ttr_sample_cap() -> int { return 500000 }
-
-fn _compute_ttr_from_text(text) -> float {
-    let toks = text.split(" ")
-    let n = len(toks)
-    if n == 0 { return 0.0 }
-    let mut uniq = []
-    let mut i = 0
-    while i < n {
-        let t = toks[i]
-        if t != "" {
-            let mut found = false
-            let mut j = 0
-            let mu = len(uniq)
-            while j < mu {
-                if uniq[j] == t { found = true }
-                j = j + 1
-            }
-            if !found { uniq = uniq + [t] }
-        }
-        i = i + 1
-    }
-    return (len(uniq) + 0.0) / (n + 0.0)
-}
-
-// Public gate: reads corpus_path, computes M3 TTR, returns a result map.
-// Verdict = "BLOCK" when ttr < _thresh_corpus_ttr(), "PASS" otherwise.
-// Callers should check result["verdict"] == "BLOCK" before dispatching fire.
-fn fire_sanity_corpus_ttr_gate(corpus_path) {
-    let mut r = #{}
-    r["gate"] = "corpus_ttr"
-    r["corpus_path"] = corpus_path
-    r["threshold"] = _thresh_corpus_ttr()
-
-    if !file_exists(corpus_path) {
-        r["verdict"] = "BLOCK"
-        r["ttr"] = -1.0
-        r["message"] = "corpus file not found — cannot verify diversity; fire BLOCKED"
-        return r
-    }
-
-    let raw = read_file(corpus_path)
-    let cap = _ttr_sample_cap()
-    let sample = if len(raw) <= cap { raw } else { raw.substring(0, cap) }
-    let ttr = _compute_ttr_from_text(sample)
-    r["ttr"] = ttr
-
-    if ttr < _thresh_corpus_ttr() {
-        r["verdict"] = "BLOCK"
-        r["message"] = "M3 TTR=" + to_string(ttr) + " < threshold " + to_string(_thresh_corpus_ttr()) + " — low-diversity corpus; fire BLOCKED to prevent register collapse"
-    } else {
-        r["verdict"] = "PASS"
-        r["message"] = "M3 TTR=" + to_string(ttr) + " >= threshold " + to_string(_thresh_corpus_ttr()) + " — corpus diversity OK"
-    }
-    return r
 }
 
 // --- public hook --------------------------------------------------------

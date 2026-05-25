@@ -85,10 +85,10 @@ fn invoke_probe(circuit_kind: string, cutoff_dim: int) -> string {
     return out.trim()
 }
 
-// Compute sha256 of a string via stdlib FIPS 180-4 builtin (hexa-lang #884).
+// Compute sha256 of a string via shell.
 fn sha256_hex(s: string) -> string {
-    // shell-out removed (byte-equal output). cut -c1-64 was the full 64-char digest.
-    return sha256(s)
+    let cmd = "printf '%s' " + shell_escape(s) + " | shasum -a 256 | cut -c1-64"
+    return exec(cmd).trim()
 }
 
 // Extract a numeric field from JSON via awk (no python parse — keep raw#9 strict).

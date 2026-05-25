@@ -44,11 +44,6 @@
 // Section 0. Constants
 // ════════════════════════════════════════════════════════════════════
 
-// 2026-05-25 phase 5 M1 sweep: vec_norm delegated to stdlib/linalg/norm
-// (hexa-lang #885). Body now wraps `l2_norm(a, len(a))` — byte-equal for
-// the simple sum-of-squares + libm sqrt path.
-import "stdlib/linalg/norm.hexa"
-
 let EMBED_DIM = 384
 let FF_DIM = 1536
 let RVQ_STAGES = 8
@@ -137,8 +132,15 @@ fn make_ramp(n: int) -> array {
 }
 
 fn vec_norm(a: array) -> float {
-    // L2 norm via stdlib/linalg/norm — was inline sqrt(Σ a_i²).
-    return l2_norm(a, len(a))
+    // L2 norm: sqrt(sum(a_i^2))
+    let mut sum = 0.0
+    let mut i = 0
+    let n = len(a)
+    while i < n {
+        sum = sum + a[i] * a[i]
+        i = i + 1
+    }
+    sqrt(sum)
 }
 
 fn vec_add(a: array, b: array) -> array {
@@ -490,17 +492,6 @@ fn stage5_probe() -> bool {
 
     // Hann crossfade over CROSSFADE_SAMP=144 samples at boundary
     // Hann window: w(n) = 0.5 * (1 - cos(2*pi*n / (N-1)))
-    //
-    // INTENTIONAL: NOT rewired to stdlib/signal/core_window::hann_window —
-    // this file's header (see Section header) constrains it to be
-    // "Self-contained — NO cross-file imports (hexa silent-exit bug on
-    // 3+ modules)". Adding the stdlib import would risk regressing the
-    // dry-run probe to a silent exit. The shape here (symmetric Hann,
-    // libm cos) is byte-identical to stdlib's hann_window — see
-    // dancinlab/hexa-lang#864 for the canonical SSOT. If a future hexa-lang
-    // toolchain release lifts the 3+-module import bug, this site
-    // (and the `make_hann_window` site in hxcuda_istft_bridge — though
-    // that's a single import so safe) becomes rewirable.
     let fade_len = CROSSFADE_SAMP
     let mut faded = []
     i = 0
@@ -816,3 +807,4 @@ fn main() {
     hr()
 }
 
+main()

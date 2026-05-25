@@ -74,10 +74,14 @@ fn fsize(p: string) -> int {
 }
 
 fn sha256_of(p: string) -> string {
-    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
-    // shell-out + GNU/BSD detection removed (byte-equal output; "" on missing file preserved).
     if !fexists(p) { return "" }
-    return sha256_file(p)
+    let gnu = _str(exec("command -v sha256sum 2>/dev/null")).trim()
+    let cmd = if gnu != "" {
+        "sha256sum " + p + " 2>/dev/null | awk '{print $1}'"
+    } else {
+        "shasum -a 256 " + p + " 2>/dev/null | awk '{print $1}'"
+    }
+    return _str(exec(cmd)).trim()
 }
 
 fn sqrt_newton(x: float) -> float {

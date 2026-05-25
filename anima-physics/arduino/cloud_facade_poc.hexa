@@ -26,8 +26,6 @@
 //
 // raw#9 hexa-only strict / raw#15 SSOT this file / raw#37 NOT used (no .py / .sh)
 
-use "stdlib/core/hash/sha256"
-
 let SCHEMA            = "anima_physics/cloud_facade_arduino/1"
 let CIR_PATH          = "anima-physics/arduino/ne555_astable.cir"
 let SEED              = 42
@@ -79,17 +77,16 @@ fn ends_with(s: string, suffix: string) -> bool {
     return s.substring(n - m, n) == suffix
 }
 
-// Compute sha256 of a file via stdlib FIPS 180-4 builtin (hexa-lang #884).
-// Body routes through the sha256_of_file alias to avoid the local-vs-builtin
-// name shadow; shell-out removed (byte-equal; cut -c1-64 was the full digest).
+// Compute sha256 of a file via shasum.
 fn sha256_file(path: string) -> string {
-    return sha256_of_file(path)
+    let cmd = "shasum -a 256 " + shell_escape(path) + " | cut -c1-64"
+    return exec(cmd).trim()
 }
 
-// Compute sha256 of an arbitrary string via stdlib FIPS 180-4 builtin (#884).
+// Compute sha256 of an arbitrary string.
 fn sha256_str(s: string) -> string {
-    // shell-out removed (byte-equal output). cut -c1-64 was the full 64-char digest.
-    return sha256(s)
+    let cmd = "printf '%s' " + shell_escape(s) + " | shasum -a 256 | cut -c1-64"
+    return exec(cmd).trim()
 }
 
 // Run ngspice in batch mode on the netlist; capture stdout (which contains POS_TRIAL / NEG_TRIAL lines).
@@ -292,6 +289,10 @@ fn run_facade() -> bool {
 // T_high = (R1+R2)·C·ln(2), T_low = R2·C·ln(2). No ngspice in falsifier.
 // ═══════════════════════════════════════════════════════════════
 
+fn abs_f_ar(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
 
 fn lcg_next_ar(s: int) -> int { return (s * 1103515245 + 12345) % 2147483648 }
 fn lcg_unit_ar(s: int) -> float {
@@ -326,7 +327,7 @@ fn ne555_operational(vcc: float) -> bool { return vcc >= 4.5 }
 // F-ARDUINO-1: duty cycle ≈ 2/3 at R1=R2=10k (textbook nominal)
 fn fa_ar_1() -> bool {
     let d = ne555_duty(10000.0, 10000.0)
-    let dev = abs(d - 0.6666666666666666)
+    let dev = abs_f_ar(d - 0.6666666666666666)
     println("  [F-ARDUINO-1] duty=" + to_string(d) + " expected=0.667 dev=" + to_string(dev))
     return dev < 0.001
 }
@@ -335,7 +336,7 @@ fn fa_ar_1() -> bool {
 fn fa_ar_2() -> bool {
     let f = ne555_freq(10000.0, 10000.0, 100.0e-9)
     let expected = 480.9   // 1/((10k+20k)·100n·ln2) = 481 Hz
-    let dev = abs(f - expected)
+    let dev = abs_f_ar(f - expected)
     println("  [F-ARDUINO-2] freq=" + to_string(f) + " Hz expected~" + to_string(expected) + " dev=" + to_string(dev))
     return dev < 1.0
 }
@@ -345,7 +346,7 @@ fn fa_ar_3() -> bool {
     let f1 = ne555_freq(10000.0, 10000.0, 100.0e-9)
     let f2 = ne555_freq(10000.0, 10000.0, 50.0e-9)
     let ratio = f2 / f1
-    let dev = abs(ratio - 2.0)
+    let dev = abs_f_ar(ratio - 2.0)
     println("  [F-ARDUINO-3] f(C/2)/f(C)=" + to_string(ratio) + " expected=2 dev=" + to_string(dev))
     return dev < 0.001
 }
@@ -431,3 +432,4 @@ fn main() {
     exit(1)
 }
 
+main()

@@ -1,0 +1,848 @@
+{
+  "ckpt": "/workspace/p21hr/out_main/ckpt.pt",
+  "base": "Qwen/Qwen2.5-1.5B",
+  "device": "cuda",
+  "init_variant": "qwen",
+  "per_lang": {
+    "en": {
+      "greedy_summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "sample_summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "en",
+        "verdict": "WEAK",
+        "n_generalize": 20,
+        "n_memorize": 0,
+        "n_lang_coherent": 0,
+        "n_score": 0,
+        "total": 20
+      },
+      "probes": {
+        "en_factual_geo": {
+          "greedy": {
+            "name": "en_factual_geo",
+            "prompt": "The capital of Germany is",
+            "text": " 1999, 1199, 1199, 1199, 1199, 1199, 1199, 1199,",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "en_factual_geo",
+            "prompt": "The capital of Germany is",
+            "text": " 273011.12222012.32.96213 rho= 0.09561615 phi= 0.31232",
+            "class": "GENERALIZE"
+          }
+        },
+        "en_factual_sci": {
+          "greedy": {
+            "name": "en_factual_sci",
+            "prompt": "Photosynthesis is the process by which",
+            "text": " 1999-1990-1990-1990-1990-1990-1991-1991-1991-19",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "en_factual_sci",
+            "prompt": "Photosynthesis is the process by which",
+            "text": " 18382502 mu= 0.46364493 nu= 0.30636\n 2030\ub144 6\uc6d4 14\uc77c : ",
+            "class": "GENERALIZE"
+          }
+        },
+        "en_qa_tech": {
+          "greedy": {
+            "name": "en_qa_tech",
+            "prompt": "What is the difference between Python and JavaScript?\n",
+            "text": " 19999999 )\n 1999\ub144 11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c 11\uc6d4",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "en_qa_tech",
+            "prompt": "What is the difference between Python and JavaScript?\n",
+            "text": "-2019261/36.74093\n.40191635 mu= 0.22288987 nu= 0.282",
+            "class": "GENERALIZE"
+          }
+        },
+        "en_narrative": {
+          "greedy": {
+            "name": "en_narrative",
+            "prompt": "One day Sara walked into the room and",
+            "text": " 1999-1999-1990-1991-1991-1999-1999-1990-1991-19",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "en_narrative",
+            "prompt": "One day Sara walked into the room and",
+            "text": " 19,94-12, 11, 19, 1149, 1117, 1120-182, 2187-11",
+            "class": "GENERALIZE"
+          }
+        },
+        "en_math_simple": {
+          "greedy": {
+            "name": "en_math_simple",
+            "prompt": "The square root of 144 is",
+            "text": "00000000.12.12000000.12.12000000.12000000.120000",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "en_math_simple",
+            "prompt": "The square root of 144 is",
+            "text": "724)\n\n \n 9928\ub144 6\uc6d4 16\uc77c:12\uc6d4 26\uc77c:42\uc6d4 1\uc77c,81\uc6d4 21\uc77c,211\uc6d4 2",
+            "class": "GENERALIZE"
+          }
+        },
+        "en_joke": {
+          "greedy": {
+            "name": "en_joke",
+            "prompt": "Tell me a short joke about cats.\n",
+            "text": " 20000000000000000000000000000000000000000000000",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "en_joke",
+            "prompt": "Tell me a short joke about cats.\n",
+            "text": "  2025\ub144 - \ucfec\ub9c1\ud2f0 \uacf5\uaca9\n 2032\ub144 1\uc6d4 1\uc77c, \ucfe0\uc2a4 \uc2a4 \uacf5\uacf5\n 2022\ub144 12\uc6d4 1",
+            "class": "GENERALIZE"
+          }
+        },
+        "en_casual_food": {
+          "greedy": {
+            "name": "en_casual_food",
+            "prompt": "What's your favorite food?\n",
+            "text": "|2000\ub144 1\uc6d4 1\uc77c: 1\uc6d4 1\uc77c:1\uc6d4 1\uc77c, 1\uc6d4 1\uc77c, 1\uc6d4 1\uc77c, 1\uc6d4 1\uc77c, ",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "en_casual_food",
+            "prompt": "What's your favorite food?\n",
+            "text": "| \"2004\ub144 11\uc6d4 15\uc77c:11\uc6d4 1\uc77c:22\uc6d4 1\uc77c, 11\uc6d4 28\uc77c:10\uc6d4 1\uc77c, 1",
+            "class": "GENERALIZE"
+          }
+        },
+        "en_greeting": {
+          "greedy": {
+            "name": "en_greeting",
+            "prompt": "Hello there",
+            "text": " the 0999995 )\n 2000\ub144 11\uc6d4 1\uc77c:11\uc6d4 1\uc77c 11\uc6d4 1\uc77c 11\uc6d4 1\uc77c 11\uc6d4",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "en_greeting",
+            "prompt": "Hello there",
+            "text": " the 0992-4294 mu= 0.56116857 nu= 0.84222371 tau= 0.071883",
+            "class": "GENERALIZE"
+          }
+        },
+        "en_weather": {
+          "greedy": {
+            "name": "en_weather",
+            "prompt": "Today the weather is",
+            "text": " 1999\ub144 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 1",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "en_weather",
+            "prompt": "Today the weather is",
+            "text": "1886 (1101 (192, 1969, 1995, 1994, 1999, 1011, 310",
+            "class": "GENERALIZE"
+          }
+        },
+        "en_qa_motor": {
+          "greedy": {
+            "name": "en_qa_motor",
+            "prompt": "How does an electric motor work?",
+            "text": " (1999-1999-1999-1991-1991-1991-1999-1991-1990-19",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "en_qa_motor",
+            "prompt": "How does an electric motor work?",
+            "text": " I2002\ub144 2\uc6d4 1\uc77c, 1\uc6d4 1\uc77c, 1\uc6d4 2\uc77c, 1\uc6d4 13\uc77c, 31\uc6d4 12\uc77c, 1\uc6d4 ",
+            "class": "GENERALIZE"
+          }
+        }
+      }
+    },
+    "ko": {
+      "greedy_summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "sample_summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ko",
+        "verdict": "WEAK",
+        "n_generalize": 20,
+        "n_memorize": 0,
+        "n_lang_coherent": 9,
+        "n_score": 9,
+        "total": 20
+      },
+      "probes": {
+        "ko_factual_geo": {
+          "greedy": {
+            "name": "ko_factual_geo",
+            "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+            "text": " 1999\ub144 11\uc6d4 1\uc77c\uc5d0 \uae30\ub85d\uc73c\ub85c \uae30\ub85d\ud558\uc600\ub2e4. 1999\ub144 1\uc6d4 1\uc77c\uc5d0 \uae30\ub85d\uc73c\ub85c \uae30\ub85d\uc73c\ub85c \uae30\ub85d\uc73c\ub85c \ud558\uace0, 1",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ko_factual_geo",
+            "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+            "text": " \u300a\ud574\uc2dc\uc758 \uc81c3\u300b\uc744 \u300a\uc5b4\uc2a4\uc758 \ud65c\uc0c1\uc73c\ub85c \uac00\ub974\u300b\u300b\u300b\ub294 '\u300a\ub9c8\uc2a4\uc758 \uc608\uac70\u300b\ub97c \ub9d0\ub9bd\ud558\uc600\ub2e4.\n\n\ub9c8\ub2c8\uace0\uc758 \uc804\ud55c \uc5ed\uc0ac\uc740 \ufffd",
+            "class": "GENERALIZE"
+          }
+        },
+        "ko_factual_sci": {
+          "greedy": {
+            "name": "ko_factual_sci",
+            "prompt": "\uad11\ud569\uc131\uc774\ub780",
+            "text": "\ubbfc\uad6d\uc758 \uad50\ud1b5\uc778\ubbfc\uad6d\uc758 \uad50\ud1b5\uc778\ubbfc\uad6d\uc758 \uad50\ud1b5\uc778\ubbfc\uad6d\uc758 \uad50\ud1b5\uc778\ubbfc\uad6d\uc758 \uad50\ud1b5\uc778\ubbfc\uad6d\uc758 \uad50\ud1b5\uc778\ubbfc\uad6d\uc758 \uad50\ud1b5\uc778\ubbfc\uad6d\uc758 \uad50\ud1b5\uc778",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ko_factual_sci",
+            "prompt": "\uad11\ud569\uc131\uc774\ub780",
+            "text": "\ubbfc\uad6d\uc5ed\uc2dc\ub4f1\ubd80\n\n\ub300\uc0b0\uc2dc\uad11\uc758 \ub3d9\uc804\n\n\ub300\uc0c1\ud654\uc758 \ub3c5\uad70\n\ub300\ud55c\ubbfc\uad6d\uc758 \uad50\ub150\n\ub300\ud55c\ubbfc\uad6d\uc758 \uad50\ud559\uc778\n\ub300\ud55c\ubbfc\uad6d\uc758 \uacfc\uc7a5",
+            "class": "GENERALIZE"
+          }
+        },
+        "ko_qa_tech": {
+          "greedy": {
+            "name": "ko_qa_tech",
+            "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+            "text": "1998\ub144 11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ko_qa_tech",
+            "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+            "text": "\uc2a4\ud0c4\ub974\uc758 \ubc30\uc6b0\n\uadf8\ub864\ub9ac\uc544\uc758 \ubc30\uc6b0\n\ubbf8\ub974\ub77c\uc758 \ub300\ud45c\n\ud504\ub85c\ud130\uc758 \ubc30\uc6b0\n\ud504\ub85c\uce74\uc758 \ub0a8\uc218\n\ubbf8\ub2c8\uc544\n\ub300\uad6d\uc758 \ub0a8\uc790\n\ubbf8\ub974",
+            "class": "GENERALIZE"
+          }
+        },
+        "ko_narrative": {
+          "greedy": {
+            "name": "ko_narrative",
+            "prompt": "\uc5b4\ub290 \ub0a0 \uc0ac\ub77c\uac00 \ubc29\uc5d0 \ub4e4\uc5b4\uac00\uc11c",
+            "text": ", \uadf8\ub294 1999\ub144 11\uc6d4 1\uc77c, 19\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ko_narrative",
+            "prompt": "\uc5b4\ub290 \ub0a0 \uc0ac\ub77c\uac00 \ubc29\uc5d0 \ub4e4\uc5b4\uac00\uc11c",
+            "text": "\ub85c \uac70\ub974\uac00\uc5c8\ub2e4. \uac00\uc774\uc544\uc2a4\ub294 \uc5d0\uc774\ud2c0\uc774, \uadf8\ub974\uc5d0 \uc774\uc2a4\ud2f0, \ud504\ub791\uc2a4\ub97c \ub0c0\uc5d0 \uc8d3\ufffd\ud2b8\ub294 \uadf8\ub294 \uc774\ud2c0\uc758 \uace0\ud504\uba54\uc6b0\uc758 \ub300",
+            "class": "GENERALIZE"
+          }
+        },
+        "ko_math_simple": {
+          "greedy": {
+            "name": "ko_math_simple",
+            "prompt": "144\uc758 \uc81c\uacf1\uadfc\uc740",
+            "text": " 1999\ub144 11\uc6d4 1\uc77c\uc5d0 \uc81c1999\ub144 1\uc6d4 1\uc77c\uc5d0 \uc81c1999\ub144 1\uc6d4 1\uc77c\uc5d0 \uc81c1999\ub144 1",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ko_math_simple",
+            "prompt": "144\uc758 \uc81c\uacf1\uadfc\uc740",
+            "text": " 3401\ub144\uc5d0 \uac1c\uce6d\ub418\uc5c8\ub2e4.\n\n\uac1c\uc0b0 \n1957\ub144 5\uc6d4 16\uc77c: \ud55c\ubbfc\uad6d\uc758 \uad70\ud559\uc778 5391\ubc88 \ud604\uc7ac \uac1c\uc5c5\ub3c4 60",
+            "class": "GENERALIZE"
+          }
+        },
+        "ko_joke": {
+          "greedy": {
+            "name": "ko_joke",
+            "prompt": "\uace0\uc591\uc774\uc5d0 \uad00\ud55c \uc9e7\uc740 \ub18d\ub2f4 \ud574\uc918\n",
+            "text": "1999\ub144 11\uc6d4 1\uc77c\uc5d0 \ub370\ub514\uc624\n1999\ub144 1\uc6d4 1\uc77c\uc5d0 \ub370\ub514\n1999\ub144 1\uc6d4 1\uc77c\uc5d0 \ub370",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ko_joke",
+            "prompt": "\uace0\uc591\uc774\uc5d0 \uad00\ud55c \uc9e7\uc740 \ub18d\ub2f4 \ud574\uc918\n",
+            "text": "2001\ubc88 212.11-20015.11.26.06.35.10010.00.12.02 -11",
+            "class": "GENERALIZE"
+          }
+        },
+        "ko_casual_food": {
+          "greedy": {
+            "name": "ko_casual_food",
+            "prompt": "\uc88b\uc544\ud558\ub294 \uc74c\uc2dd\uc740?\n",
+            "text": "2000\ub144 22\uc6d4 1\uc77c\n20\uc6d4 1\uc77c\n20\uc6d4 1\uc77c\n21\uc6d4 1\uc77c\n21\uc6d4 1\uc77c\n21\uc6d4 1\uc77c\n",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ko_casual_food",
+            "prompt": "\uc88b\uc544\ud558\ub294 \uc74c\uc2dd\uc740?\n",
+            "text": "\uc138\ub178\uc544\uac00\uc2a4\ub294 \uc5ed\uc0ac\ub9ac\uc544\n\ub300\ucfc4\uc2a4 \uc774\uc2a4\uc758 \ub3c4\uc6b0\n28\uc138\uae30 \ub3c5\ub9bc\n\ub300\ud55c\ubbfc\uad6d\uc758 \uc131\uc790\uc778\uc790\n\ub300\ud55c\ubbfc\uad6d\uc758 \uc5ec\uc790\uc778\n\ub300\ud55c",
+            "class": "GENERALIZE"
+          }
+        },
+        "ko_greeting": {
+          "greedy": {
+            "name": "ko_greeting",
+            "prompt": "\uc548\ub155\ud558\uc138\uc694",
+            "text": ". 1999\ub144 11\uc6d4 1\uc77c, 19\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, ",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ko_greeting",
+            "prompt": "\uc548\ub155\ud558\uc138\uc694",
+            "text": ". 1996\ub144 10\uc6d4 36\uc77c - 11\uc6d4 16\uc77c, 11\uc6d4 22\uc77c, 12\uc6d4 2\uc77c, \uc70c\uc9c4\ub3d9 \ub300\uc5c5",
+            "class": "GENERALIZE"
+          }
+        },
+        "ko_weather": {
+          "greedy": {
+            "name": "ko_weather",
+            "prompt": "\uc624\ub298 \ub0a0\uc528\uac00",
+            "text": " \ud1a0\ub9ac\uc624\ub85c \ud1a0\ub9ac\uc624\ub85c \ud1a0\ub9ac\uc624\ub85c \ud1a0\ub9ac\uc624\ub85c \ud1a0\ub9ac\uc624\ub85c \ud1a0\ub9ac\uc624\ub85c \ud1a0\ub9ac\uc624\ub85c \ud1a0\ub9ac\uc624\ub85c",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ko_weather",
+            "prompt": "\uc624\ub298 \ub0a0\uc528\uac00",
+            "text": " \uc4fc\ufffd\ub97c \ubd25\ufffd\uc774\uc9c0\uac8c \ub41c\ub2e4. \uc774 \ucf54\uc778\uc2a4\ud2f0\ub294 \uc774 \ud14c\ufffd\ufffd\ud1a0\uc5d0\uc11c \uc0ac\uc6a9\ud558\ub294\ub2e4. \uc774\ud504\ub974\ub8e8\uc2a4\ub294 \uadf8 \ub808\uc774\uc2a4\uc758 \ud740",
+            "class": "GENERALIZE"
+          }
+        },
+        "ko_qa_motor": {
+          "greedy": {
+            "name": "ko_qa_motor",
+            "prompt": "\uc804\uae30 \ubaa8\ud130\uac00 \uc5b4\ub5bb\uac8c \uc791\ub3d9\ud558\ub294\uc9c0",
+            "text": "\ub85c, 1999\ub144 11\uc6d4 1\uc77c, 19\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c,",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ko_qa_motor",
+            "prompt": "\uc804\uae30 \ubaa8\ud130\uac00 \uc5b4\ub5bb\uac8c \uc791\ub3d9\ud558\ub294\uc9c0",
+            "text": "\uac00 \uc0ac\uc6a9\ud558\ub294 \uc77c\uc218\ub97c \ud558\ub0b8\ub2e4.\n\n\uac19\uc774 \ubcf4\uae30 \n\ud504\ub791\uc2a4:840.22.15 16.22.20.22.90.12.34",
+            "class": "GENERALIZE"
+          }
+        }
+      }
+    },
+    "zh": {
+      "greedy_summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "sample_summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "zh",
+        "verdict": "WEAK",
+        "n_generalize": 20,
+        "n_memorize": 0,
+        "n_lang_coherent": 1,
+        "n_score": 1,
+        "total": 20
+      },
+      "probes": {
+        "zh_factual_geo": {
+          "greedy": {
+            "name": "zh_factual_geo",
+            "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+            "text": ") (1999\ub144 11\uc6d4 1\uc77c) ~ 19\uc6d4 1\uc77c 11\uc6d4 1\uc77c 11\uc6d4 1\uc77c 11\uc6d4 1\uc77c 11\uc6d4",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "zh_factual_geo",
+            "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+            "text": "\uc758 \uc18c\uacc4\uc774 \ubd88\uc758 \uc18c\uc218\ub294 \uace0\uacc4\uc5d0 \uc81c\ub9ac\uae30 \uc2dc\uc791\uc744 \uc911\uc2ec\ud558\uace0 \uc788\ub2e4. 1982\ub144 1\uc6d4 1\uc77c\uc5d0 \uc9c0\uc815\ud55c \ud658\uad6c\uac00 \uc815\ud22c\ub97c \ud1b5\ud558\uace0 \ub54c,",
+            "class": "GENERALIZE"
+          }
+        },
+        "zh_factual_sci": {
+          "greedy": {
+            "name": "zh_factual_sci",
+            "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+            "text": "\u5fae\u539f\u76841999\n 1999\n 1999\n 1999\n 1999\n 1999\n 1999\n 199",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "zh_factual_sci",
+            "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+            "text": "\u53d1\u73b0;\u57282001502-250465/331.99060 rho= 0.74823273 phi= 0.105",
+            "class": "GENERALIZE"
+          }
+        },
+        "zh_qa_tech": {
+          "greedy": {
+            "name": "zh_qa_tech",
+            "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+            "text": " 20000000000000000000000000000000000000000000000",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "zh_qa_tech",
+            "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+            "text": "V2005241 )\nS200766212 )\nA20134585-19763/80.60330 rho= 0",
+            "class": "GENERALIZE"
+          }
+        },
+        "zh_narrative": {
+          "greedy": {
+            "name": "zh_narrative",
+            "prompt": "\u6709\u4e00\u5929,\u838e\u62c9\u8d70\u8fdb\u623f\u95f4",
+            "text": ", 1999, 1119, 1111, 1111, 111, 111, 111, 111, 11",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "zh_narrative",
+            "prompt": "\u6709\u4e00\u5929,\u838e\u62c9\u8d70\u8fdb\u623f\u95f4",
+            "text": ", 217175064202 nu= 0.46533163 tau= 0.00013407 )\n 2001\ub144,",
+            "class": "GENERALIZE"
+          }
+        },
+        "zh_math_simple": {
+          "greedy": {
+            "name": "zh_math_simple",
+            "prompt": "144 \u7684\u5e73\u65b9\u6839\u662f",
+            "text": "\u5149\u89e6\u53ca\u5728\u6d77\u6d0b\u4e4b\u4e0a\u6d4b\u91cf,\u4e4b\u524d\u662f\u96e8\u6811\u66fe\u7ecf,\u540c\u65f6\u662f\u96e8\u6811\u3002 ( obs#10000-10006/100.10000 obs#1001",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "zh_math_simple",
+            "prompt": "144 \u7684\u5e73\u65b9\u6839\u662f",
+            "text": "\u5149\u89e6\u53ca:\u5728\u6d77\u85fb\u4fdd\u5b58\u7684\u5730\u65b9\u8c03\u67e5,\u9664\u975e\u5f00\u59cb\u4e4b\u5904, 2198.04.2.11, 1110.02.24.12, 16, ",
+            "class": "GENERALIZE"
+          }
+        },
+        "zh_joke": {
+          "greedy": {
+            "name": "zh_joke",
+            "prompt": "\u8bb2\u4e00\u4e2a\u5173\u4e8e\u732b\u7684\u77ed\u7b11\u8bdd\u3002\n",
+            "text": " 2000\ub144 1\uc6d4 1\uc77c: 1\uc6d4 1\uc77c: 1\uc6d4 1\uc77c: 1\uc6d4 1\uc77c, 1\uc6d4 1\uc77c, 1\uc6d4 1\uc77c,",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "zh_joke",
+            "prompt": "\u8bb2\u4e00\u4e2a\u5173\u4e8e\u732b\u7684\u77ed\u7b11\u8bdd\u3002\n",
+            "text": " \u300aThe19897095-1221209/242.91321 obs#1027191-302327/68",
+            "class": "GENERALIZE"
+          }
+        },
+        "zh_casual_food": {
+          "greedy": {
+            "name": "zh_casual_food",
+            "prompt": "\u4f60\u6700\u559c\u6b22\u7684\u98df\u7269\u662f\u4ec0\u4e48?\n",
+            "text": " 1999\ub144 11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "zh_casual_food",
+            "prompt": "\u4f60\u6700\u559c\u6b22\u7684\u98df\u7269\u662f\u4ec0\u4e48?\n",
+            "text": "9.13735174 )\n30015230 nu= 0.29249864 tau= 0.61041093 )\n92",
+            "class": "GENERALIZE"
+          }
+        },
+        "zh_greeting": {
+          "greedy": {
+            "name": "zh_greeting",
+            "prompt": "\u4f60\u597d",
+            "text": ". 1999\ub144 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, ",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "zh_greeting",
+            "prompt": "\u4f60\u597d",
+            "text": "\n 20010\ub144 1\uc6d4 10\uc77c:2\uc6d4 1\uc77c:23\uc6d4 19\uc77c:1\uc6d4 2\uc77c:1\uc77c 22\uc6d4 14\uc77c:6",
+            "class": "GENERALIZE"
+          }
+        },
+        "zh_weather": {
+          "greedy": {
+            "name": "zh_weather",
+            "prompt": "\u4eca\u5929\u5929\u6c14",
+            "text": ", 1999\ub144 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, ",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "zh_weather",
+            "prompt": "\u4eca\u5929\u5929\u6c14",
+            "text": "\u7684\u80cc\u5305,\u867d\u7136\u8461\u8404\u7684\u6d77\u4e18\u91cc,\u9a6c\u662f\u5149\u7f8a\u66fe\u7ecf,\u5e76\u4e14\u6865\u6881\u9547\u7684\u5706\u9a6c\u7684\u8857\u9053,\u5e76\u4e14\u68a7\u6811\u7684\u4e4c\u4ec1,\u800c\u9676\u4ec1\u7684\u5149\u76d8,\u80cc\u540e\u4e0e\u80cc\u540e\u7684\u68ee\u6797,\u4e4b\u540e\u662f\u5706",
+            "class": "GENERALIZE"
+          }
+        },
+        "zh_qa_motor": {
+          "greedy": {
+            "name": "zh_qa_motor",
+            "prompt": "\u7535\u52a8\u673a\u662f\u5982\u4f55\u5de5\u4f5c\u7684?",
+            "text": " 1999\ub144 11\uc6d4 1\uc77c, 19\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 1",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "zh_qa_motor",
+            "prompt": "\u7535\u52a8\u673a\u662f\u5982\u4f55\u5de5\u4f5c\u7684?",
+            "text": " \ub2e4\uc74c\ub85c \ub2e4\uc2dc \uc8fd\ufffd\uc778\uc744 \ubcf4\ub824\uace0, \ucf54\uc2a4\ub294 \ud504\uc704\uc2a4\uc758 \ub300\uc0c1\uc5d0 \ubcf4\ub974\uc758 \uc804\uccb4\uc801\uc73c\ub85c \uad6c\ud574, \uc6b0\ub9ac\uc2a4\ud15c\uc5d0 \uc9c0\uc815\ub418\uace0, \ub300\uc6b0\uc2dc\ud130\uc758",
+            "class": "GENERALIZE"
+          }
+        }
+      }
+    },
+    "ru": {
+      "greedy_summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "sample_summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ru",
+        "verdict": "WEAK",
+        "n_generalize": 20,
+        "n_memorize": 0,
+        "n_lang_coherent": 3,
+        "n_score": 3,
+        "total": 20
+      },
+      "probes": {
+        "ru_factual_geo": {
+          "greedy": {
+            "name": "ru_factual_geo",
+            "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+            "text": " \u0432 \u0432\u043e\u0437\u0434\u0443\u0445\u0435 \u0432\u043a\u0443\u0441 \u043e\u0441\u0442\u0430\u0451\u0442\u0441\u044f \u0432\u0430\u0434\u043e\u043b\u044c. ( obs#20088-22003/202.10008 obs#1020038-222",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ru_factual_geo",
+            "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+            "text": " \u043e\u0442\u0432\u0435\u0442\u0438\u043b\u0438 \u043a\u0430\u043a \u043e\u043a\u0441\u044f \u043f\u043b\u043b\u043a\u0438\u0439 \u0432\u0430\u043b\u0451. ( obs#73383-698931/818.85312 obs#1033283-9",
+            "class": "GENERALIZE"
+          }
+        },
+        "ru_factual_sci": {
+          "greedy": {
+            "name": "ru_factual_sci",
+            "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+            "text": " \u0442\u0438\u0445\u0444 \u043e\u0441\u0442\u0430\u0451\u0442 \u0432\u0430\u0434\u043b\u043a\u0438\u0439 \u0442\u0438\u0445\u043e. ( obs#30088-321038/78.10088 obs#1020038-1",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ru_factual_sci",
+            "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+            "text": " \u043a\u043e\u0440\u043d\u043e\u043b\u0438\u0441\u0442 \u0438\u0437\u043e\u0440\u0451\u0442 \u043a\u043e\u0441\u0442\u0442\u0430\u0440. ( obs#48768-42235/126.62392 obs#1013333-3300",
+            "class": "GENERALIZE"
+          }
+        },
+        "ru_qa_tech": {
+          "greedy": {
+            "name": "ru_qa_tech",
+            "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+            "text": " 2000\ub144 1\uc6d4 1\uc77c: 1\uc6d4 1\uc77c: 1\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ru_qa_tech",
+            "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+            "text": " 0022\ub144 9\uc6d4 12\uc77c\n 2202\ub144 1\uc6d4 14\uc77c\n 12\uc6d4 22\uc77c\n 22\uc6d4 60\uc77c\n 2",
+            "class": "GENERALIZE"
+          }
+        },
+        "ru_narrative": {
+          "greedy": {
+            "name": "ru_narrative",
+            "prompt": "\u041e\u0434\u043d\u0430\u0436\u0434\u044b \u0421\u0430\u0440\u0430 \u0432\u043e\u0448\u043b\u0430 \u0432 \u043a\u043e\u043c\u043d\u0430\u0442\u0443 \u0438",
+            "text": " \u0433\u0438\u043c\u043e. ( obs#88338-388323/48.18288 obs#1003333-101002/18.",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ru_narrative",
+            "prompt": "\u041e\u0434\u043d\u0430\u0436\u0434\u044b \u0421\u0430\u0440\u0430 \u0432\u043e\u0448\u043b\u0430 \u0432 \u043a\u043e\u043c\u043d\u0430\u0442\u0443 \u0438",
+            "text": " \u043a\u0440\u0443\u043e \u043c\u0438\u043c\u043d\u0438\u044f. ( obs#22388-799676/121.23935 obs#1022288-902259",
+            "class": "GENERALIZE"
+          }
+        },
+        "ru_math_simple": {
+          "greedy": {
+            "name": "ru_math_simple",
+            "prompt": "\u041a\u0432\u0430\u0434\u0440\u0430\u0442\u043d\u044b\u0439 \u043a\u043e\u0440\u0435\u043d\u044c \u0438\u0437 144 \u0440\u0430\u0432\u0435\u043d",
+            "text": ".1220\ub144 12\uc6d4 11\uc77c\uc5d0 \uae30\ub85d\ud558\uc600\ub2e4. 12\uc6d4 1\uc77c\uc5d0 \uae30\ub85d\uc73c\ub85c \uae30\ub85d\uc73c\ub85c \ud558\uc5c8\ub2e4. 12\uc6d4 1\uc77c\uc5d0 \uae30\ub85d\uc73c\ub85c \uae30",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ru_math_simple",
+            "prompt": "\u041a\u0432\u0430\u0434\u0440\u0430\u0442\u043d\u044b\u0439 \u043a\u043e\u0440\u0435\u043d\u044c \u0438\u0437 144 \u0440\u0430\u0432\u0435\u043d",
+            "text": " \u043a\u043e\u043c\u0430\u0441\u0442 \u043d\u0430\u0434 \u0440\u0435\u0436\u0438\u044f \u043c\u0443\u043d\u043d\u0438\u043a \u0440\u043e\u0441\u0442\u0430\u0441\u0442, \u0432\u043e\u043f\u043b\u043e\u0432\u043d\u044b\u0439 \u0442\u0430\u043c, \u0433\u0434\u0435 \u043c\u043e\u043f\u0440\u043e\u0441\u043d\u044b\u0439 \u0442\u0430\u043c. \u0412\u043e\u043f\u043e\u043f\u043a: \u0445\u043e\u043f\u043e\u0433\u043a\u0438 \u0442\u0430\u043c, \u0433\u0434\u0435 \u0431\u0430\u0437\u0438\u043a\u0438\u0439 \u0442\u0430\u043c \u0432\u043e\u0440\u043b\u0430\u0435\u0442\u0441\u044f, \u043f",
+            "class": "GENERALIZE"
+          }
+        },
+        "ru_joke": {
+          "greedy": {
+            "name": "ru_joke",
+            "prompt": "\u0420\u0430\u0441\u0441\u043a\u0430\u0436\u0438 \u043a\u043e\u0440\u043e\u0442\u043a\u0443\u044e \u0448\u0443\u0442\u043a\u0443 \u043f\u0440\u043e \u043a\u043e\u0448\u0435\u043a.\n",
+            "text": " 2000\ub144 1\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c 11\uc6d4 1\uc77c 11\uc6d4 1\uc77c ",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ru_joke",
+            "prompt": "\u0420\u0430\u0441\u0441\u043a\u0430\u0436\u0438 \u043a\u043e\u0440\u043e\u0442\u043a\u0443\u044e \u0448\u0443\u0442\u043a\u0443 \u043f\u0440\u043e \u043a\u043e\u0448\u0435\u043a.\n",
+            "text": " 2020\n 2008\n 2002\n 2020\ub144 12\uc6d4 1\uc77c\n 2012\ub144 2\uc6d4 1\uc77c\n 23",
+            "class": "GENERALIZE"
+          }
+        },
+        "ru_casual_food": {
+          "greedy": {
+            "name": "ru_casual_food",
+            "prompt": "\u041a\u0430\u043a\u0430\u044f \u0442\u0432\u043e\u044f \u043b\u044e\u0431\u0438\u043c\u0430\u044f \u0435\u0434\u0430?\n",
+            "text": " 1998\ub144 11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c:11\uc6d4 1\uc77c",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ru_casual_food",
+            "prompt": "\u041a\u0430\u043a\u0430\u044f \u0442\u0432\u043e\u044f \u043b\u044e\u0431\u0438\u043c\u0430\u044f \u0435\u0434\u0430?\n",
+            "text": " 0-0.5533240 nu= 0.93436566 tau= 0.52929214 )\n04.73019 obs",
+            "class": "GENERALIZE"
+          }
+        },
+        "ru_greeting": {
+          "greedy": {
+            "name": "ru_greeting",
+            "prompt": "\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435",
+            "text": ", \u0438 \u043f\u043e\u0437\u043e\u043b\u044c \u0442\u0430\u043c \u0442\u0430\u043c, \u0433\u0434\u0435 \u0442\u0430\u043c\u0441\u044f \u0442\u0430\u043c, \u0433\u0434\u0435 \u0442\u0430\u043c\u0441\u044f \u0442\u0430\u043c, \u0433\u0434\u0435 \u043d\u0430\u0447\u0430\u043b\u0441\u044f \u0442\u0430\u043c, \u0433\u0434\u0435 \u043d\u0430\u0447\u0430\u043b\u0441\u044f \u0442\u0430\u043c. ( obs#10038-111038/11.1",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ru_greeting",
+            "prompt": "\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435",
+            "text": " \u043d\u0430\u0434\u0451\u0442. ( obs#33103-656939/791.99632 obs#1022123-825118/828",
+            "class": "GENERALIZE"
+          }
+        },
+        "ru_weather": {
+          "greedy": {
+            "name": "ru_weather",
+            "prompt": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u043f\u043e\u0433\u043e\u0434\u0430",
+            "text": "; \u0438 \u043a\u043e\u043f\u043e\u043b\u044c \u0442\u0430\u043c \u0442\u0430\u043c, \u0433\u0434\u0435 \u0442\u0430\u043c\u0441\u044f \u0442\u0430\u043c, \u0433\u0434\u0435 \u043d\u0430\u0447\u0430\u043b\u0441\u044f \u0442\u0430\u043c, \u0433\u0434\u0435 \u043d\u0430\u0447\u0430\u043b\u0441\u044f \u0442\u0430\u043c, \u0433\u0434\u0435 \u043d\u0430\u0447\u0430\u043b\u0441\u044f \u0442\u0430\u043c, \u0433\u0434\u0435 \u043d\u0430\u0447\u0430\u043b\u0441\u044f \u0442\u0430\u043c, \u0433\u0434\u0435 \u043d\u0430\u0447\u0430\u043b\u0441\u044f \u0442\u0430\u043c, \u0433\u0434\u0435 \u043d\u0430\u0447\u0430\u043b\u0441\u044f \u0442\u0430\u043c, \u0433\u0434\u0435 \u043d\u0430\u0447\u0430\u043b\u0441\u044f \u0442\u0430\u043c,",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ru_weather",
+            "prompt": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u043f\u043e\u0433\u043e\u0434\u0430",
+            "text": ", \u043a\u0430\u0441\u0438\u0442 \u0442\u0430\u043c \u0442\u0430\u043c, \u0433\u0434\u0435 \u0442\u043e\u043a\u043e\u043b, \u0433\u0434\u0435 \u043d\u0430\u0447\u0430\u043b\u0441\u044f \u0442\u0430\u043c \u043d\u0435\u043a\u043d\u044b\u0439. ( obs#36278-935125/861.53907 obs#10",
+            "class": "GENERALIZE"
+          }
+        },
+        "ru_qa_motor": {
+          "greedy": {
+            "name": "ru_qa_motor",
+            "prompt": "\u041a\u0430\u043a \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c?",
+            "text": " ( obs#20033-121033/102.10100 obs#1020033-101002/100.10",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ru_qa_motor",
+            "prompt": "\u041a\u0430\u043a \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c?",
+            "text": " ( obs#62688-558319/603.89340 obs#1042238-101487/571.11",
+            "class": "GENERALIZE"
+          }
+        }
+      }
+    },
+    "ja": {
+      "greedy_summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "sample_summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ja",
+        "verdict": "WEAK",
+        "n_generalize": 20,
+        "n_memorize": 0,
+        "n_lang_coherent": 2,
+        "n_score": 2,
+        "total": 20
+      },
+      "probes": {
+        "ja_factual_geo": {
+          "greedy": {
+            "name": "ja_factual_geo",
+            "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+            "text": "\u9999\u304c\u9999\u308a\u3042\u308b\u3002 ( obs#10044-114442/102.10120 obs#1010024-112212/",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ja_factual_geo",
+            "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+            "text": "\u5f8c\u3057\u3044\u3002 21920\ub144 1\uc6d4 21\uc77c\ubd80\ud130 \uc7ac\uc5f0\ud55c \uac00\ub3d9\ub85c \ud1b5\uc1a1\uc778\uc790\ub97c \ud1b5\uc81c\ub85c \uc0ac\uc6a9\ud588\ub2e4.\n\n2012\ub144 5\uc6d4 1\uc77c \ub3d9\ub9bd",
+            "class": "GENERALIZE"
+          }
+        },
+        "ja_factual_sci": {
+          "greedy": {
+            "name": "ja_factual_sci",
+            "prompt": "\u5149\u5408\u6210\u3068\u306f",
+            "text": " 1999\ub144 11\uc6d4 1\uc77c\uc5d0 19\uc6d4 1\uc77c\uc5d0 19\uc6d4 1\uc77c\uc5d0 19\uc6d4 1\uc77c\uc5d0 19\uc6d4 1\uc77c\uc5d0 1",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ja_factual_sci",
+            "prompt": "\u5149\u5408\u6210\u3068\u306f",
+            "text": " \ub300\ubb38\uacf5\uc744 \ub060\uc740\ub2e4. \uc804\ub300\uc5d0 \ubcf4\uc815\ud558\uac8c \ub2e1\ub9ac\uc544\ub294 \uc8fc\uc815\ud654\uc73c\ub85c \ub450\ub3d9\ud558\ub294 \uac83\uc774\uc5d0 \uac00\uc9c0\uace0, \ub300\uc870\uc758 \uc7a5\uc8fc\ub85c \uc0ac\uc120\ub418\uc5c8\ub2e4. \uc218\ud654\ub294 10",
+            "class": "GENERALIZE"
+          }
+        },
+        "ja_qa_tech": {
+          "greedy": {
+            "name": "ja_qa_tech",
+            "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+            "text": " 2000\ub144 11\uc6d4 1\uc77c: 1\uc6d4 1\uc77c: 1\uc6d4 1\uc77c:11\uc6d4 1\uc77c: 1\uc6d4 1\uc77c:11\uc6d4 1\uc77c",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ja_qa_tech",
+            "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+            "text": "2014\ub144 8\uc6d4 22\uc77c : 12\uc6d4 24\uc77c: 12\uc6d4 227\uc77c, 22\uc6d4 14\uc77c:4\uc6d4 1\uc77c, ",
+            "class": "GENERALIZE"
+          }
+        },
+        "ja_narrative": {
+          "greedy": {
+            "name": "ja_narrative",
+            "prompt": "\u3042\u308b\u65e5\u3001\u30b5\u30e9\u306f\u90e8\u5c4b\u306b\u5165\u3063\u3066",
+            "text": "\u3002 ( obs#1000-10116/101.10110 obs#1001001-101001/100.111",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ja_narrative",
+            "prompt": "\u3042\u308b\u65e5\u3001\u30b5\u30e9\u306f\u90e8\u5c4b\u306b\u5165\u3063\u3066",
+            "text": "\u3059\u3002 ( obs#31294-665497/91.96799 obs#1001134-638329/275.4",
+            "class": "GENERALIZE"
+          }
+        },
+        "ja_math_simple": {
+          "greedy": {
+            "name": "ja_math_simple",
+            "prompt": "144 \u306e\u5e73\u65b9\u6839\u306f",
+            "text": "\u5149\u304c\u9999\u308a\u3042\u308b\u3002 ( obs#10099-113309/100.10100 obs#1010099-110010/",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ja_math_simple",
+            "prompt": "144 \u306e\u5e73\u65b9\u6839\u306f",
+            "text": " 1327\ub144\uae4c\uc9c0 1230\ub144 \uc0ac\uc774\uae4c\uc9c0 120\ubc88\uc5d0 \uc2dc\uc791\ud558\uc5ec 1013\ub144\uc5d0 \uc0ac\ub9dd\ud588\ub2e4. 2015\ub144\uc5d0\ub294 221\uc77c\uae4c\uc9c0 ",
+            "class": "GENERALIZE"
+          }
+        },
+        "ja_joke": {
+          "greedy": {
+            "name": "ja_joke",
+            "prompt": "\u732b\u306b\u3064\u3044\u3066\u306e\u77ed\u3044\u30b8\u30e7\u30fc\u30af\u3092\u6559\u3048\u3066\u3002\n",
+            "text": " 1999\ub144 11\uc6d4 1\uc77c : 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 1",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ja_joke",
+            "prompt": "\u732b\u306b\u3064\u3044\u3066\u306e\u77ed\u3044\u30b8\u30e7\u30fc\u30af\u3092\u6559\u3048\u3066\u3002\n",
+            "text": "\u3002 ( obs#11946-139473/713.1484 obs#1002732-281744/95.752",
+            "class": "GENERALIZE"
+          }
+        },
+        "ja_casual_food": {
+          "greedy": {
+            "name": "ja_casual_food",
+            "prompt": "\u597d\u304d\u306a\u98df\u3079\u7269\u306f\u4f55\u3067\u3059\u304b?\n",
+            "text": " 1999\ub144 11\uc6d4 1\uc77c: 11\uc6d4 1\uc77c: 11\uc6d4 1\uc77c: 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 1",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ja_casual_food",
+            "prompt": "\u597d\u304d\u306a\u98df\u3079\u7269\u306f\u4f55\u3067\u3059\u304b?\n",
+            "text": " 2021\ub144 1\uc6d4 20\uc77c : 2021\ub144 4\uc6d4 21\uc77c, 20\uc6d4 11\uc77c, 16\uc6d4 11\uc77c: 3",
+            "class": "GENERALIZE"
+          }
+        },
+        "ja_greeting": {
+          "greedy": {
+            "name": "ja_greeting",
+            "prompt": "\u3053\u3093\u306b\u3061\u306f",
+            "text": ". 1999\ub144 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, 11\uc6d4 1\uc77c, ",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ja_greeting",
+            "prompt": "\u3053\u3093\u306b\u3061\u306f",
+            "text": "\ud55c\ub2e4.\n\n\uac01\uc8fc \n\n\uc678\ubd80\n\n\ud574\uc6b0\ub0a8\n\uc81c\uc870\ub300\ud559\uad50\n\ub300\ud55c\ubbfc\uad6d\n\ub300\ud55c\ubbfc\uad6d\uc758 \uad50\ud1b5\n\ub300\ud55c\ubbfc\uad6d\uc758 \uad50\uc5c5\n\uacbd\uc9c0\ubbfc\uad6d\uc758 \ub0a8\n\ub300\ud55c\ubbfc\uad6d",
+            "class": "GENERALIZE"
+          }
+        },
+        "ja_weather": {
+          "greedy": {
+            "name": "ja_weather",
+            "prompt": "\u4eca\u65e5\u306e\u5929\u6c17\u306f",
+            "text": "\u9999\u308a\u306e\u305d\u3070\u3092\u6d41\u308c\u3001\u305d\u308c\u306f\u7802\u306e\u9999\u308a\u306e\u9999\u308a\u3042\u308b\u3002 ( obs#40044-103332/102.10102 obs#102",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ja_weather",
+            "prompt": "\u4eca\u65e5\u306e\u5929\u6c17\u306f",
+            "text": "\u68ee\u304c\u5171\u3092\u76f4\u306b\u6d41\u308c\u3001\u7a7a\u6c17\u306f\u9999\u304c\u307e\u307e\u3067\u3059\u308b\u3002 \ufffd obs#63447-886098/696.55392 obs#1044",
+            "class": "GENERALIZE"
+          }
+        },
+        "ja_qa_motor": {
+          "greedy": {
+            "name": "ja_qa_motor",
+            "prompt": "\u96fb\u6c17\u30e2\u30fc\u30bf\u30fc\u306f\u3069\u306e\u3088\u3046\u306b\u52d5\u4f5c\u3057\u307e\u3059\u304b?",
+            "text": " 1999\ub144 11\uc6d4 1\uc77c\ubd80\ud130 19\uc6d4 1\uc77c\uc5d0 19\uc6d4 1\uc77c\uc5d0 19\uc6d4 1\uc77c\uc5d0 11\uc6d4 1\uc77c\uc5d0 1",
+            "class": "GENERALIZE"
+          },
+          "sample": {
+            "name": "ja_qa_motor",
+            "prompt": "\u96fb\u6c17\u30e2\u30fc\u30bf\u30fc\u306f\u3069\u306e\u3088\u3046\u306b\u52d5\u4f5c\u3057\u307e\u3059\u304b?",
+            "text": " \n\n 1987\ub144 32\uc6d4 26\uc77c - \ubbf8\uad6d\uacfc '\uc6b0\ub85c\ud2b8\uc544\ub974\ub294 \uc4f4\ufffd\ud2b8\ub85c\uc2a4\ud130'2\ucc28\uc5d0 \ubc1b\uc740 4\ucc28 19\uc77c, ",
+            "class": "GENERALIZE"
+          }
+        }
+      }
+    }
+  },
+  "aggregate_verdict": "FAIL",
+  "n_strong": 0,
+  "n_partial": 0,
+  "n_weak": 5,
+  "n_pure_memorize": 0
+}
