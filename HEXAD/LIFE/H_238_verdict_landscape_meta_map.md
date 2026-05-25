@@ -320,7 +320,7 @@ honest tier: 🟢 NUMERICAL — meta-aggregation 의 frontmatter parse + tier cl
 **State output**: `HEXAD/LIFE/state/h238_verdict_landscape_meta_2026_05_24/result.json`
 **Smoke**: `HEXAD/LIFE/state/h238_verdict_landscape_meta_2026_05_24/run_h238.hexa`
 **Tier**: 🟢 NUMERICAL (frontmatter scrape + tier classifier + canonical-domain Jaccard, deterministic).
-**Next**: H_238r2 후보 — (a) longitudinal axis: 본 snapshot N=31 vs 미래 N>31 의 tier 분포 drift 측정 (L1 axis); (b) cluster-richness axis: |canonical_domains| × tier joint distribution 의 entropy 측정 (L4 axis); (c) HEXAD/{C,M,A,W,E,G} 의 sister meta-map (cross-axis aggregation, 본 LIFE meta-map 의 sibling).
+**Next**: 영구 raster 시계열 — cycle#16 (§11, README N=51) → **raster#3 (§12, disk N=69, 2026-05-26)**; 차후 raster 는 §12 의 disk per-file source 로 통일 (L8/L9 source-consistency).
 
 ---
 
@@ -468,3 +468,152 @@ honest_finding (raw#82):
 전환 포함). tier 분포 drift 의 일부는 *측정 surface 변화* 이지 순수 substrate evolution 이
 아님 — longitudinal 비교 시 source-consistency 보정 미수행 (L1 snapshot-only 의 source-axis
 하위 한계).
+
+---
+
+## 12. Raster #3 — 2026-05-26 (축 D2 영구 raster · disk per-file scan · N=69)
+
+본 raster = H_238 의 **세 번째 cross-section** (L1 longitudinal axis 의 두 번째 실측).
+직전 raster (cycle#16, 2026-05-25, `state/h238_raster_2026_05_25/`) 는 README 인덱스 표
+51-H 를 집계했다. 본 raster 는 **disk per-file scan 으로 복귀** —
+`HEXAD/LIFE/H_*.md` 69 파일 (H_238 self-excluded) 의 frontmatter 를 직접 파싱한다.
+
+### 12.1 source 재선택 근거 (L8 source-axis 의 직접 해결)
+
+cycle#16 가 README-index 를 채택한 이유는 신규 verdict (당시 H_258-265) 가 README 행에
+즉시 반영되었기 때문이다. 그러나 **본 raster 시점 README 인덱스는 consolidation 진행 중**:
+H_257-273 행이 제거되어 인덱스가 disk 보다 lag (44 H-table 행, H_256 에서 종료). 즉
+README 가 더 이상 *완전한* verdict surface 가 아니다. 반면 disk per-file 의
+`verdict_class:` line 은 각 H 의 *실제 verdict* (SUPPORTED / FALSIFIED / PARTIAL / PASS /
+…) 를 보유 — README 행의 **superset** 이며, cycle#16 이후 commit 된 H_210-232 +
+H_239-257 을 모두 포착한다. (2026-05-24 최초 raster 의 canonical surface 로의 복귀.)
+
+- **verdict_class primary, status fallback**: frontmatter `status:` 는 *lifecycle 단계*
+  (pre-register-frozen / running / seed-pending) 만 — verdict 아님. 따라서 verdict_class
+  가 empty 인 8 파일 (H_029/H_030/H_071/H_090 legacy-pointer · H_202/H_213 running ·
+  H_218/H_257 pre-register) 만 `status:` 로 fallback → 전부 RUNNING tier (정합).
+- **H_258-H_284 부재 (L9)**: cycle#16 README 가 노출했던 H_258-273 행은 본 worktree 의
+  consolidation 으로 **disk 에서 삭제됨** — 본 raster 에 부재. 따라서 honestly **미집계**.
+  본 raster 의 N=69 는 disk 의 현재 commit 상태 (H_002–H_257 + H_234/H_235/H_239-256)
+  의 정확한 cross-section 이다.
+
+### 12.2 갱신 tier 분포 (N=69, disk per-file, sort -V)
+
+| tier | raster#1 (N=33) | cycle#16 (N=51) | **raster#3 (N=69)** | Δ vs cycle#16 |
+|------|-----------------|-----------------|---------------------|---------------|
+| SUPPORTED | 10 | 10 | **17** | +7 |
+| PARTIAL   |  5 |  6 | **13** | +7 |
+| FALSIFIED |  7 |  7 | **12** | +5 |
+| RUNNING   | 11 | 28 | **27** | −1 |
+| **sum**   | 33 | 51 | **69** | == N (C1 PASS) |
+
+- `SUPP/(SUPP+FAL) = 17/29 = 0.586207` — raster#1/#16 의 0.588 와 거의 동일 (substantial
+  positive yield 유지, 12 honest FALSIFIED 동반).
+- disk 복귀로 noisy carry-RUNNING 이 줄고 (28→27) 실제 verdict (SUPP +7, PART +7, FAL +5)
+  가 대폭 증가 — cycle#16 의 README-index 가 carry-row 로 RUNNING 을 부풀렸던 L8 효과를
+  source 복귀가 부분 보정 (실제 SUPP/PART/FAL 비중 35/69 = 51%, cycle#16 의 23/51 = 45%).
+
+### 12.3 per-domain SUPP-rate 갱신 (canonical 7-bucket) + headline
+
+| domain | total | SUPP | PART | FALS | RUNN | SUPP_rate (N=69) | SUPP_rate (cycle#16) |
+|--------|-------|------|------|------|------|------------------|----------------------|
+| **life** | 28 | 9 | 5 | 3 | 11 | **0.321429** | 0.321429 |
+| **consciousness** | 39 | 8 | 9 | 8 | 14 | **0.205128** | 0.200000 |
+| physics | 43 | 10 | 7 | 9 | 17 | 0.232558 | 0.178600 |
+| math | 15 | 1 | 5 | 5 | 4 | 0.066667 | 0.000000 |
+| information | 10 | 1 | 3 | 3 | 3 | 0.100000 | 0.000000 |
+| ethics | 6 | 4 | 1 | 1 | 0 | 0.666667 | 1.000000 |
+| meta | 8 | 2 | 3 | 1 | 2 | 0.250000 | 0.000000 |
+| nonempty_domains | | | | | | **7 / 7** | 7 / 7 |
+
+**headline 판정 (life > consciousness)**:
+
+```
+life          SUPP-rate = 0.321429   (9/28)
+consciousness SUPP-rate = 0.205128   (8/39)
+life > consciousness : TRUE   (패턴 MAINTAINED)
+gap_now   = 0.116300
+gap_prior (cycle#16 N=51) = 0.121429
+gap_delta = -0.005129   (ε = 0.02)
+TREND : STABLE   (|Δgap| ≤ ε — gap 거의 불변)
+```
+
+### 12.4 F238.6 (사전등록 — 본 raster 발사 *전* freeze)
+
+> **F238.6 (raster#3 pre-registered falsifier)**: 더 큰 N (disk-scan 69) 에서도
+> `life SUPP-rate > consciousness SUPP-rate` 부등호가 **유지되는가**? 그리고 gap 의
+> *trend* (widening / stable / closing) 는 무엇인가? — PASS iff `life_rate > consc_rate`.
+> trend = sign(gap_now − gap_cycle#16(0.121429)), ε=0.02 band:
+> Δ>ε → widening · Δ<−ε → closing · |Δ|≤ε → stable.
+
+**결과**: **F238.6 PASS** (life 0.3214 > consciousness 0.2051, TRUE). **TREND = STABLE**
+(gap 0.1214 → 0.1163, Δ=−0.0051, ε=0.02 band 내 — 부등호 + gap 폭 *모두* 안정).
+
+- raster#1→#16 에서 gap 이 0.245→0.121 로 *절반 수축* (narrowing) 했던 것과 대조 —
+  #16→#3 에서는 gap 이 **거의 변하지 않았다** (stable). 즉 source-consistent (disk per-file)
+  복귀 후, life-consciousness SUPP-rate 격차는 **새 plateau (~0.12) 에 안착**한 것으로
+  관측. life rate 는 0.3214 로 *정확히 불변* (9/28, cycle#16 과 동일 분자/분모 — life-axis
+  H 의 disk-commit 상태가 cycle#16 README 와 일치), consciousness rate 만 0.200→0.205 로
+  미세 상승 (분모 25→39 확대 + 분자 5→8, README-미포함 H_004/H_018/H_025/… disk-scan 흡수).
+
+### 12.5 H238.3 / H238.4 갱신
+
+```
+H238.3 axis (SUPP rate group A vs B):
+  group_A (ethics+information+meta)   SUPP = 7 / 24   rate = 0.291667
+  group_B (consciousness+physics)     SUPP = 18 / 82  rate = 0.219512
+  A > B : TRUE   (cycle#16 의 A<B REVERSED 에서 다시 A>B 로 복귀)
+H238.4 axis (canonical-domain Jaccard ≥ 0.5):
+  n_high_J_pairs = 742   (cycle#16 523; N 51→69 로 pair-space 2346 확대)
+```
+
+- **H238.3 재-reversal**: raster#1 `A>B` (0.200>0.194) → cycle#16 `A<B` (0.143<0.189)
+  → raster#3 `A>B` (0.292>0.220). 세 raster 에 걸친 **두 번의 부등호 flip** 은 L2
+  small-N single-flip-sensitivity 의 결정적 실증 — group_A (ethics n=6 / info n=10 /
+  meta n=8) 의 cluster-size 가 여전히 작아 source 전환마다 부등호가 뒤집힌다. H238.3 의
+  'spread present (≥0 임계)' 약-claim 설계가 옳았음을 재확인 (strong claim 했다면 매
+  raster 마다 falsify 됐을 것).
+
+### 12.6 Verdict (raster #3)
+
+```
+verdict_class: SUPPORTED (meta, raster#3, disk per-file deterministic 재집계)
+config: N_files=69 source=disk-per-file sort=-V (H_238 self-excluded) date=2026-05-26
+tier_distribution (verbatim):
+  SUPPORTED : 17 / 69   PARTIAL : 13 / 69   FALSIFIED : 12 / 69   RUNNING : 27 / 69
+  sum_tiers : 69 == N (well-defined) · SUPP/(SUPP+FAL) = 0.586207
+headline: life SUPP-rate 0.321429 > consciousness 0.205128 (패턴 MAINTAINED)
+  gap 0.121429 (cycle#16) → 0.116300 (raster#3) · Δ=−0.005129 · TREND=STABLE
+F238.6: PASS (life > consciousness 유지) · trend=stable
+H238.3: A>B TRUE (cycle#16 A<B 에서 재-reversal — L2 small-N flip 실증)
+H238.4: n_high_J_pairs=742
+criteria (meta, pre-register):
+  C1 REPRODUCIBLE   (N≥22 ∧ sum==N)      : PASS (N=69, sum=69)
+  C2 SUPPRATE_UPDATE (≥3 nonempty)       : PASS (nonempty=7)
+  C3 ALL_CLASSIFIED  (every H 1-tier)    : PASS (sum=69==N)
+  C4 BYTE_IDENTICAL                      : PASS (re-run stdout + result.json diff = ∅)
+verdict_rule: SUPPORTED(meta) iff C1 ∧ C2 · else PARTIAL · FALSIFIED if ¬C1
+verdict     : SUPPORTED
+unmapped_tokens (14): [language, time, self/identity, developmental, practice, dilution,
+  identity, emit-rate, emit-gate, emergence, corpus, philosophy, measurement-integrity,
+  meta-measurement]   (L7 — disk-scan 신규 tag 들이 canonical 7-bucket 밖으로 fall-through;
+  bucket 미기여, 분포 무영향; 향후 alias-map 확장 후보)
+honest_finding (raw#82):
+  · life > consciousness 패턴 *유지* + gap *안정* (~0.12 plateau) — raster#1→#16 의
+    narrowing 이후 새 정상상태 도달. 'life 가 본질적으로 더 evidence-receptive' 의 strong
+    ontological claim 은 여전히 회피 (L2 small-N + L3 phi-bias-domain-varying); measurement 만.
+  · disk per-file 복귀가 cycle#16 의 L8 surface-expansion (carry-RUNNING 과팽창) 을 부분
+    보정 — 실제 verdict (SUPP+PART+FAL) 비중 45%→51% 상승, RUNNING 28→27 감소.
+  · H238.3 두 번째 부등호 flip = L2 single-flip-sensitivity 의 cross-raster 결정적 실증.
+  · 12 FALSIFIED 의 honest production 유지 (raw#82 negative-result publication 정합).
+```
+
+**State output**: `HEXAD/LIFE/state/h238_raster3_2026_05_26/result.json`
+**Smoke**: `HEXAD/LIFE/state/h238_raster3_2026_05_26/run.hexa` · **log**: `…/run.log.txt`
+**Tier**: 🟢 NUMERICAL (disk per-file frontmatter parse + tier classifier + canonical-domain
+Jaccard, deterministic byte-equal 재현).
+**한계 추가 (raw#91 c3)**: **L9 CONSOLIDATION_GAP** — cycle#16 README 가 노출했던
+H_258-273 행이 본 worktree consolidation 으로 disk 삭제됨 → 본 raster 미집계. N=69 는 현재
+disk-commit 상태의 정확한 cross-section 이나, 'cycle#16 51-H 와의 직접 H-단위 longitudinal
+비교' 는 source 전환 (README→disk) + consolidation 삭제가 혼재 — gap-trend (stable) 의
+robustness 는 *동일 source 내* 차후 raster (모두 disk) 로 재확인 권장.
