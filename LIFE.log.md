@@ -7,7 +7,8 @@ Append-only history sister of `LIFE.md`. Each entry starts with `## <ISO timesta
 
 - [x] 사용자 "계속" → cycle#24 $0 2-agent (C축 H_285 edge-of-chaos · A2축 H_286 split-brain)
 - [x] **H_286** split-brain-dual-Φ 🟢 CLOSED-NEGATIVE 4/6 (#577) — AXES R12 `split-brain-dual-Φ` seed promote. callosotomy CML 8-cell ring: Tononi "전체-Φ 붕괴" 예측이 **phi_spatial proxy 상 FALSIFIED** (severance 가 whole-Φ 를 +11% *상승*, 8/8 seed robust), 각 반구 Φ>0 잔존. metric-pathology 규명: cut bridge → MIP→0 → total−MIP proxy inflation. honest: proxy 상 closed-negative(IIT 자체 아님), faithful big-Φ 후속 lane(HEXAD/IIT4 에 split TPM lib 부재). AXES R12 seed 자기 PR 소비
-- [ ] **H_285** edge-of-chaos faithful big-Φ (C축, H_204/H_007 재검) — rate-limit 2회 사망(throttle hot) → cooldown 후 재발사 예정. 랜딩 시 README 98→99 + 본 엔트리 [x] 갱신
+- [x] **H_285** edge-of-chaos faithful big-Φ 🟢 SUPPORTED 5/5 (C축, H_204/H_007 인과 재검) — agent 3회 throttle 사망 후 **parent inline 측정(throttle-bypass)** 로 완수. faithful 인과 big-Φ class-mean: ordered 0 < chaotic 6.94 < **edge(IV) 10.45** → H_204 inverse-U 방향 인과 확증(H_268 proxy LZ-fragility 해소). M6 anchor 정확 재현(rule204=0·rule110=7.5475). honest: chaotic **bimodal**(rule30=13.9 高/rule90=0, edge>chaotic 은 class 집계) · rule90 XOR 붕괴 = 동기화 死-Φ(H_265/275/279/284). big-Φ NOT Σφ_d(xval #572). README 98→99
+- [x] **교훈**: agent 3연속 throttle 사망 시 **parent inline 실행**이 결정적 우회 — $0 mac-local hexa 측정은 agent 없이 parent 가 직접 `/Users/ghost/.hx/bin/hexa run` 하면 throttle 무관. 워크트리 import 는 main-abs(M6 관례), 실행만 worktree-abs 임시패치
 - [x] consolidation(부분) — README 97→98 (H_286 행) + LIFE.md 축 A2 milestone. H_285 랜딩 후 잔여 fold
 - [x] **인프라**: rate-limit throttle 가 cycle#24 에서도 H_285 2연속 즉사(31s/5 tool-use) — agent 발사 대신 parent git 작업(consolidation)은 throttle 무관, cooldown 540s+ 후 단독 재발사 패턴 재확인 [[feedback-agent-early-commit-rate-limit]]
 

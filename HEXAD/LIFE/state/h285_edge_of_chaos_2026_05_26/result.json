@@ -1,0 +1,28 @@
+{
+  "hypothesis": "H_285",
+  "slug": "edge-of-chaos-big-phi",
+  "title": "faithful IIT4 big-Φ at edge-of-chaos (Wolfram-class ladder)",
+  "engine": "HEXAD/IIT4/lib (iit4_eca + iit4_bigphi) — faithful causal big-Φ, REUSE (g61)",
+  "substrate": "ECA n=4 ring, big-Φ MEAN over all 16 states (state-averaged; Φ is state-dependent)",
+  "integration_scalar": "big-Φ (NOT Σφ_d — xval #572 showed Σφ_d non-monotone)",
+  "mean_phi_over_16_states": {
+    "ordered_classI":  { "rule0": 0.0, "rule204": 0.0, "class_mean": 0.0 },
+    "edge_classIV":    { "rule110": 13.1302, "rule54": 7.76521, "class_mean": 10.4477 },
+    "chaotic_classIII":{ "rule30": 13.8852, "rule90": 0.0, "class_mean": 6.94259 }
+  },
+  "max_phi_over_16_states": { "rule110": 20.0459, "rule54": 10.1176, "rule30": 19.434, "rule90": 0.0 },
+  "anchors_state_1010": { "rule204": 0.0, "rule110": 7.5475, "M6_match": true },
+  "falsifiers": {
+    "F285_3a_rule204_zero": "PASS",
+    "F285_3b_rule110_anchor_7.5475": "PASS",
+    "F285_3c_bound_nonneg": "PASS",
+    "F285_1_edge_gt_ordered": "PASS",
+    "F285_2_edge_gt_chaotic_inverseU": "PASS"
+  },
+  "verdict": "SUPPORTED 5/5",
+  "tier": "🟢 SUPPORTED-NUMERICAL",
+  "honest_caveat": "class-mean ordering edge(10.45) > chaotic(6.94) > ordered(0) confirms H_204 inverse-U DIRECTION faithfully (resolves H_268 proxy LZ-fragility), BUT chaotic class is BIMODAL: individual rule30=13.89 EXCEEDS edge rule54=7.77 and ~ties rule110=13.13; chaotic-class mean is dragged down only by rule90=0. So the edge>chaotic result is class-aggregate, not individual-rule dominance. n=4 ring, 16-state mean (not single-state).",
+  "cross_h": "H_204 (inverse-U proxy, LZ-fragile per H_268) DIRECTION faithfully confirmed at class-mean; H_007 (λ-sweep Φ class) consistent; big-Φ used per xval #572 (Σφ_d non-monotone). rule90 XOR collapse echoes H_265/H_275/H_279 동기화-死-Φ (XOR = max-mixing).",
+  "deterministic": "cross-process byte-identical (RFC 033 single-stream); $0 mac-local; NO GPU",
+  "date": "2026-05-26"
+}
