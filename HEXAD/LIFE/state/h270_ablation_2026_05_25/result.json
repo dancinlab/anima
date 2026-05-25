@@ -1,0 +1,149 @@
+{
+  "id": "H_270",
+  "cycle": "Cycle_LIFE_H_270_NEW",
+  "slug": "substrate-ablation",
+  "title": "substrate ablation — load-bearing component identification for the H_204 closure inverse-U finding (/gap F2)",
+  "hypothesis": "the H_204 closure inverse-U finding (Φ(k) peaks at interior k; C4 threshold; F1 intact) separates substrate components into load-bearing vs non-essential under one-at-a-time ablation",
+  "date": "2026-05-25",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial proxy + ablation sweep; NOT 🔵 formal IIT 4.0)",
+  "phi_primitive": "RFC 036 phi_spatial (n_bins=4); H_204 / H_003 H3.4 byte-equal carry",
+  "representative_finding": "H_204 Cycle #1 closure inverse-U (PARTIAL_DIRECTIONAL 3/4)",
+  "model": "8-site periodic catalytic lattice (H_204 carry); one-at-a-time ablation of {diffusion, decay, michaelis-saturation, closure-coupling}",
+  "seed_base": 169329156,
+  "config": { "M_sites": 8, "dim": 12, "warm": 0, "n_seeds": 5, "K_rate": 0.6, "decay": 0.1, "diffuse": 0.05, "n_bins": 4, "neutral_closure_k": 0.5, "boundary": "periodic", "observable": "A+B+C site mass" },
+  "survival_criterion": "finding SURVIVES iff S1 (argmax Φ at interior k) AND S2 (peak|ΔΦ/Δk|>2×median) AND S3 (Φ(k=1)>Φ(k=0)); component LOAD-BEARING iff ablation BREAKS finding",
+  "mitosis_components_scope_note": "task vocabulary {split, merge, gaussian-noise} are MITOSIS-substrate components (tool/hexa_native/mitosis_hook_lib.hexa), NOT present in the H_204 catalytic-lattice substrate. The H_204 finding is deterministic with zero gaussian draws (baseline byte-equal re-run). These three are trivially non-essential to this finding (never invoked). The four ablated arms are the components the finding actually depends on.",
+  "baseline_reproduces_h204": true,
+  "arms": [
+    {
+      "arm": 0,
+      "name": "BASELINE",
+      "sweep": [
+        { "k": 0.00, "phi_mean": 3.69079 },
+        { "k": 0.10, "phi_mean": 5.10585 },
+        { "k": 0.25, "phi_mean": 5.38703 },
+        { "k": 0.50, "phi_mean": 5.25399 },
+        { "k": 0.75, "phi_mean": 4.73928 },
+        { "k": 1.00, "phi_mean": 4.46947 }
+      ],
+      "argmax_k": "0.25",
+      "max_phi": 5.38703,
+      "peak_dphi": 14.1505,
+      "median_dphi": 1.87456,
+      "S1_shape_inverse_u": true,
+      "S2_c4_threshold": true,
+      "S3_f1_intact": true,
+      "survives": true
+    },
+    {
+      "arm": 1,
+      "name": "A1_NO_DIFFUSION",
+      "sweep": [
+        { "k": 0.00, "phi_mean": 3.68471 },
+        { "k": 0.10, "phi_mean": 4.90209 },
+        { "k": 0.25, "phi_mean": 5.25661 },
+        { "k": 0.50, "phi_mean": 5.0633 },
+        { "k": 0.75, "phi_mean": 4.70118 },
+        { "k": 1.00, "phi_mean": 4.44089 }
+      ],
+      "argmax_k": "0.25",
+      "max_phi": 5.25661,
+      "peak_dphi": 12.1738,
+      "median_dphi": 1.44847,
+      "S1_shape_inverse_u": true,
+      "S2_c4_threshold": true,
+      "S3_f1_intact": true,
+      "survives": true
+    },
+    {
+      "arm": 2,
+      "name": "A2_NO_DECAY",
+      "sweep": [
+        { "k": 0.00, "phi_mean": 4.99119 },
+        { "k": 0.10, "phi_mean": 5.35257 },
+        { "k": 0.25, "phi_mean": 5.17337 },
+        { "k": 0.50, "phi_mean": 4.858 },
+        { "k": 0.75, "phi_mean": 4.50118 },
+        { "k": 1.00, "phi_mean": 4.23461 }
+      ],
+      "argmax_k": "0.10",
+      "max_phi": 5.35257,
+      "peak_dphi": 3.61383,
+      "median_dphi": 1.26147,
+      "S1_shape_inverse_u": true,
+      "S2_c4_threshold": true,
+      "S3_f1_intact": false,
+      "survives": false
+    },
+    {
+      "arm": 3,
+      "name": "A3_NO_MICHAELIS",
+      "sweep": [
+        { "k": 0.00, "phi_mean": 3.35509 },
+        { "k": 0.10, "phi_mean": 4.61693 },
+        { "k": 0.25, "phi_mean": 4.64681 },
+        { "k": 0.50, "phi_mean": 3.90657 },
+        { "k": 0.75, "phi_mean": 3.40995 },
+        { "k": 1.00, "phi_mean": 3.11877 }
+      ],
+      "argmax_k": "0.25",
+      "max_phi": 4.64681,
+      "peak_dphi": 12.6184,
+      "median_dphi": 1.98651,
+      "S1_shape_inverse_u": true,
+      "S2_c4_threshold": true,
+      "S3_f1_intact": false,
+      "survives": false
+    },
+    {
+      "arm": 4,
+      "name": "A4_NEUTRAL_CLOSURE",
+      "sweep": [
+        { "k": 0.00, "phi_mean": 5.25399 },
+        { "k": 0.10, "phi_mean": 5.25399 },
+        { "k": 0.25, "phi_mean": 5.25399 },
+        { "k": 0.50, "phi_mean": 5.25399 },
+        { "k": 0.75, "phi_mean": 5.25399 },
+        { "k": 1.00, "phi_mean": 5.25399 }
+      ],
+      "argmax_k": "0.00",
+      "max_phi": 5.25399,
+      "peak_dphi": 0.0,
+      "median_dphi": 0.0,
+      "S1_shape_inverse_u": false,
+      "S2_c4_threshold": false,
+      "S3_f1_intact": false,
+      "survives": false
+    }
+  ],
+  "classification": {
+    "diffusion":        "non_essential",
+    "decay":            "load_bearing",
+    "michaelis_sat":    "load_bearing",
+    "closure_coupling": "load_bearing",
+    "n_load_bearing": 3,
+    "n_non_essential": 1
+  },
+  "determinism_recheck": { "in_process_byte_equal_all_arms": true },
+  "criteria": {
+    "C1_at_least_one_load_bearing": { "value": 3, "verdict": "PASS" },
+    "C2_at_least_one_non_essential": { "value": 1, "verdict": "PASS" },
+    "C3_determinism": { "verdict": "PASS" }
+  },
+  "verdict_rule": "SUPPORTED iff (baseline reproduces H_204) AND C1 AND C2 AND C3; FALSIFIED if all non-essential OR all load-bearing OR determinism fail",
+  "verdict": "SUPPORTED",
+  "criteria_met": 3,
+  "honest_limits": [
+    "L1: phi_spatial = 🟢 NUMERICAL spatial-slice replica of phi_rs, NOT full IIT 4.0. H_204 / H_003 H3.4 lineage carry.",
+    "L2: ablation = neutralization within ONE substrate family (single-parameter zeroing / saturation-drop / closure-flattening). Other neutralization parametrizations (partial diffusion, sigmoid saturation) would give graded survival, not the binary survive/break used here.",
+    "L3: survival is a 3-clause boolean (S1∧S2∧S3) on a COARSE 6-point k grid (H_204 L4 carry). A finer grid could shift argmax between adjacent interior points without changing the interior/endpoint distinction, but a near-endpoint argmax is grid-resolution sensitive.",
+    "L4: WINDOW-SENSITIVE (H_204 L3 / H_003 H3.4 L3 carry). All Φ measured on the WARM=0 DIM=12 living transient; past convergence Φ→~0 for all arms. Load-bearing classification is a transient-window claim.",
+    "L5: {split, merge, gaussian-noise} are mitosis-substrate components absent from this finding's substrate; their 'non-essential' status here is by-absence (the finding never invokes them), NOT a measured ablation on a substrate that uses them. A separate cycle would ablate them against a mitosis-substrate finding (e.g. F-PERSONA / Φ-proxy ratchet).",
+    "L6: one-at-a-time ablation does not test interactions — two jointly-load-bearing components could each individually appear non-essential (redundancy) or jointly break when each alone survives. Factorial ablation is a future cycle.",
+    "L7: determinism here is in-process byte-equal across re-eval; full cross-process determinism (RFC 033 single global RNG stream caveat) is asserted via result.json sha256 comparison across two separate `hexa run` invocations — recorded in the doc, not self-checked in-process."
+  ]
+}
