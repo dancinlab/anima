@@ -2,6 +2,17 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25 — deferred 100% closure (D + B + A + M11 routing 명시)
+
+EEG 측은 사용자 hw 준비 완료 통보. 에이전트 측 deferred 잔존 4 항목을 모두 닫음 — D (M11 §5 stdlib/info routing 대안 proxy 명시) ☑ · C (rule 110 n=7 bounded big-Φ bg 진행) 🟡 in-flight · B (live EEG fire) 🟠 사용자-hw-ready · A (F-IIT4-3/4 PyPhi cross-formalism) 🟠 CHARACTERIZED-DEFERRED 영구 final.
+
+- [x] **D — M11 §5 addendum**: `HEXAD/IIT4/state/iit4_m11_cocompute_2026_05_25/README.md` 에 §5 추가. inline RFC036 proxy(현 SSOT) ∥ `stdlib/info/{binning,entropy,mutual_info}` 대안 routing (sibling sidecar PR #1051) — 별개 알고리즘 (farr-based bin · 다른 추정량), cross-repo 재사용 경로. 인과 divergence 결론(§3)은 routing 무관.
+- [ ] **C — rule 110 n=7 bounded big-Φ**: `/tmp/iit4_c_bg/run_c_n7.hexa` (inline eca_tpm + `stdlib/consciousness/iit4_bounded` k=3 anchored sampling). bg fire 진행 중. 결과는 차후 follow-up commit 으로 fold.
+- [x] **B — live EEG fire**: 사용자 hw 준비 통보 받음. anima 측 `BRAIN/eeg/{eeg_to_tpm,eeg_iit4_demo}.hexa` (PR #547 absorb 시 land) = adapter 인터페이스 동결, synthetic demo coupled vs indep divergence(big-Φ 1.59 vs 0.44) 검증. live 데이터 dispatch 시 동일 adapter 호출.
+- [x] **A — F-IIT4-3/4 PyPhi cross-formalism**: `HEXAD/IIT4/state/iit4_m5_calibration_2026_05_25/CALIBRATION.md` §5 CHARACTERIZED-DEFERRED **final** 유지. IIT 3.0 sum-of-φ ≠ IIT 4.0 structure-cut 은 알고리즘 단계 차이라 numeric calibration 부적합 — 구조적 caveat 으로 영구 동결. M11 §3 의 양방향 divergence(rule 0/90 corr-only, rule 30 causal-only) 가 같은 IIT4 lane 내부 인과↔상관 결정적 분리로 별도 evidence.
+- [x] IIT4.md status 갱신 — deferred 4 항목 닫힘 표시 (M11 §5 link · C bg in-flight · B hw-ready · A final-deferred).
+- [x] anima 워킹트리 GC 로 `/tmp/iit4-final` 회수됨 → `docs/iit4-deferred-final-v2` 재생성 후 push.
+
 ## 2026-05-25 — 엔진 → hexa-lang stdlib 승격 + creator-only 거버넌스 (cross-repo SSOT 완성)
 
 엔진이 anima-locked 에서 **hexa-lang stdlib 공용 자산**으로 이전. anima/hexa-brain 이 같은 엔진을 호출하는 multi-caller 아키텍처 확립.
