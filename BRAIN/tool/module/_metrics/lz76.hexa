@@ -1,0 +1,270 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg-core/tool/modules/_metrics/lz76.hexa  (Phase 3 — metric #1)
+//
+//  PURPOSE
+//    Lempel-Ziv 1976 (Kaspar-Schuster 1987 production-count) complexity LZc on
+//    implementation at anima-clm-eeg/tool/clm_eeg_lz76_real.hexa (commit
+//    ef3efeb09 frozen) — re-implementation deferred until Phase 5 port.
+//
+//    has a stable CLI surface, emits exit(0) iff PASS, prints kv-style
+//    "  c(n) productions = N" and "  b(n)_x1000 [= lz76_norm] = N" lines.
+//    Re-implementing 1055 LoC of Kaspar-Schuster bit math under Phase 0
+//    Phase 3 deliverable = thin wrapper exposing kv-block surface to
+//    eeg_core.hexa dispatcher; legacy file remains untouched.
+//
+//  API
+//    _metric_lz76_kv(npy_path: string, sidecar_kv: string) -> string
+//      Returns kv-block:
+//        schema=anima-eeg-core/_metrics/lz76/1
+//        metric=lz76
+//        npy_path=<path>
+//        c_n=<int>                       (production count)
+//        lz76_norm_x1000=<int>           (b(n) = c·log2(n)/n × 1000)
+//        verdict=<PASS|FAIL|FALSIFIED>
+//        backend=anima-clm-eeg/tool/clm_eeg_lz76_real.hexa
+//        backend_rc=<int>
+//        raw71_falsifier_count=<int>
+//        raw71_triggered_ids=<csv>
+//        raw91_evidence=production_count_path|legacy_kaspar_schuster_1987
+//        raw91_limit=median_binarisation_finite_length_bias_n_lt_120k
+//
+//  RAW#71 FALSIFIERS (≥3 preregister, frozen 2026-04-28)
+//    F_LZ_01: c_n <= 1                  → algorithm-broken (degenerate)
+//    F_LZ_02: lz76_norm_x1000 < 100      → catastrophic structure (sub-sine)
+//    F_LZ_03: lz76_norm_x1000 > 1500     → impossible LZc (>1.5; KS-87 bound 1+ε)
+//
+//  CLI
+//    hexa run lz76.hexa --selftest
+//    hexa run lz76.hexa --input <npy_path> [--sidecar k=v,k=v]
+//
+//
+//  @resolver-bypass(reason="darwin-native: legacy backend requires .venv-eeg")
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA       = "anima-eeg-core/_metrics/lz76/1"
+let METRIC_NAME  = "lz76"
+let LEGACY_PATH  = "anima-clm-eeg/tool/clm_eeg_lz76_real.hexa"
+
+let F_LZ_01_CN_MIN          = 1        // c_n must be > 1
+let F_LZ_02_NORM_LO_X1000   = 100
+let F_LZ_03_NORM_HI_X1000   = 1500
+
+// ─── helpers ────────────────────────────────────────────────────────────
+
+fn _hexa_bin() -> string {
+    let hl = env("HEXA_LANG")
+    if hl != "" { return hl + "/hexa.real" }
+    return "/Users/ghost/core/hexa-lang/hexa.real"
+}
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn is_digit_ch(c: string) -> int {
+    if c == "0" || c == "1" || c == "2" || c == "3" || c == "4" { return 1 }
+    if c == "5" || c == "6" || c == "7" || c == "8" || c == "9" { return 1 }
+    return 0
+}
+
+fn digit_val(c: string) -> int {
+    if c == "0" { return 0 }
+    if c == "1" { return 1 }
+    if c == "2" { return 2 }
+    if c == "3" { return 3 }
+    if c == "4" { return 4 }
+    if c == "5" { return 5 }
+    if c == "6" { return 6 }
+    if c == "7" { return 7 }
+    if c == "8" { return 8 }
+    if c == "9" { return 9 }
+    return -1
+}
+
+fn find_in_str(s: string, needle: string) -> int {
+    let n = len(s); let m = len(needle)
+    if m <= 0 { return 0 }
+    if n < m { return -1 }
+    let mut i = 0
+    while i <= n - m {
+        let mut j = 0; let mut ok = 1
+        while j < m {
+            if s[i + j] != needle[j] { ok = 0; j = m }
+            j = j + 1
+        }
+        if ok == 1 { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+// extract the integer at the END of the line containing the marker.
+// scan from end-of-line backwards and capture the last contiguous digit run.
+// This correctly handles labels with embedded digits like "lz76", "log10".
+fn parse_int_after_marker(blob: string, marker: string) -> int {
+    let p = find_in_str(blob, marker)
+    if p < 0 { return -2147483647 }
+    let n = len(blob)
+    // find end-of-line (or end-of-blob)
+    let mut eol = p + len(marker)
+    while eol < n && blob[eol] != "\n" { eol = eol + 1 }
+    // scan back from eol-1 to collect trailing digits
+    let mut k = eol - 1
+    let mut digits_end = -1
+    while k >= 0 {
+        let c = blob[k]
+        if is_digit_ch(c) == 1 { digits_end = k; break }
+        if c == " " || c == "\t" || c == "\r" { k = k - 1; continue }
+        // any other non-digit non-ws → no trailing int on this line
+        return -2147483647
+    }
+    if digits_end < 0 { return -2147483647 }
+    let mut digits_start = digits_end
+    while digits_start > 0 {
+        let c = blob[digits_start - 1]
+        if is_digit_ch(c) == 1 { digits_start = digits_start - 1 }
+        else { break }
+    }
+    let mut neg = 0
+    if digits_start > 0 { if blob[digits_start - 1] == "-" { neg = 1 } }
+    let mut acc = 0
+    let mut q = digits_start
+    while q <= digits_end {
+        acc = acc * 10 + digit_val(blob[q])
+        q = q + 1
+    }
+    if neg == 1 { return -acc }
+    return acc
+}
+
+// ─── public-ish API ────────────────────────────────────────────────────
+
+fn _metric_lz76_kv(npy_path: string, sidecar_kv: string) -> string {
+    let mut args = ""
+    if npy_path != "" { args = "--input " + _sh_quote(npy_path) }
+    else { args = "--selftest --selftest-mode random" }
+    let cmd = _hexa_bin() + " run " + LEGACY_PATH + " " + args
+    eprintln("[_metrics/lz76] cmd=" + cmd)
+    let r = exec_with_status(cmd)
+    let out = to_string(r[0])
+    let rc  = to_int(r[1])
+
+    // legacy emits "  c(n) productions            = N"
+    //               "  b(n)_x1000  [= lz76_norm]   = N"
+    let c_n = parse_int_after_marker(out, "c(n) productions")
+    let lz_norm = parse_int_after_marker(out, "b(n)_x1000")
+
+    // this wrapper hermetic).
+    let mut triggered = ""
+    let mut trig_count = 0
+    if c_n != -2147483647 {
+        if c_n <= F_LZ_01_CN_MIN { triggered = triggered + "F_LZ_01,"; trig_count = trig_count + 1 }
+    }
+    if lz_norm != -2147483647 {
+        if lz_norm < F_LZ_02_NORM_LO_X1000 { triggered = triggered + "F_LZ_02,"; trig_count = trig_count + 1 }
+        if lz_norm > F_LZ_03_NORM_HI_X1000 { triggered = triggered + "F_LZ_03,"; trig_count = trig_count + 1 }
+    }
+    // strip trailing comma
+    let nT = len(triggered)
+    if nT > 0 { triggered = triggered.substring(0, nT - 1) }
+
+    // verdict policy: backend rc==0 ∧ no falsifier triggered ⇒ PASS
+    //                 backend rc!=0 → FAIL; falsifier hit → FALSIFIED
+    let mut verdict = "FAIL"
+    if rc == 0 && trig_count == 0 { verdict = "PASS" }
+    if trig_count > 0 { verdict = "FALSIFIED" }
+
+    let mut kv = ""
+    kv = kv + "schema=" + SCHEMA + "\n"
+    kv = kv + "metric=" + METRIC_NAME + "\n"
+    kv = kv + "npy_path=" + npy_path + "\n"
+    kv = kv + "sidecar_kv=" + sidecar_kv + "\n"
+    kv = kv + "c_n=" + str(c_n) + "\n"
+    kv = kv + "lz76_norm_x1000=" + str(lz_norm) + "\n"
+    kv = kv + "value_x1000=" + str(lz_norm) + "\n"
+    kv = kv + "verdict=" + verdict + "\n"
+    kv = kv + "backend=" + LEGACY_PATH + "\n"
+    kv = kv + "backend_rc=" + str(rc) + "\n"
+    kv = kv + "raw71_falsifier_count=3\n"
+    kv = kv + "raw71_triggered_count=" + str(trig_count) + "\n"
+    kv = kv + "raw71_triggered_ids=" + triggered + "\n"
+    kv = kv + "raw91_evidence=production_count_path|legacy_kaspar_schuster_1987\n"
+    kv = kv + "raw91_limit=median_binarisation_finite_length_bias_n_lt_120k\n"
+    kv = kv + "raw95_enforce_layer=in_module\n"
+    return kv
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_prefix = false
+        if a.ends_with(".hexa") { is_prefix = true }
+        if !is_prefix { if a.ends_with("/exe") { is_prefix = true } }
+        if !is_prefix { if a == "run" { is_prefix = true } }
+        if !is_prefix { if a.ends_with("hexa.real") || a.ends_with("/hexa") { is_prefix = true } }
+        if is_prefix { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run lz76.hexa --selftest")
+    eprintln("       hexa run lz76.hexa --input <npy>")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut input = ""
+    let mut sidecar = ""
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--input"    { input = av[i+1]; i = i + 2; continue }
+        if a == "--sidecar"  { sidecar = av[i+1]; i = i + 2; continue }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if selftest {
+        println("== _metrics/lz76 selftest (random selftest mode) ==")
+        let kv = _metric_lz76_kv("", sidecar)
+        print(kv)
+        // selftest verdict: legacy random mode should emit a c_n value > 1.
+        let p = find_in_str(kv, "c_n=")
+        if p < 0 { eprintln("reason: c_n not in kv-block"); exit(1) }
+        let cn = parse_int_after_marker(kv, "c_n=")
+        if cn <= 1 {
+            eprintln("reason: selftest c_n=" + str(cn) + " <= 1")
+            exit(1)
+        }
+        println("selftest=ok")
+        exit(0)
+    }
+
+    if input == "" {
+        eprintln("ABORT: need --selftest or --input <npy>")
+        _print_usage()
+        exit(2)
+    }
+
+    let kv = _metric_lz76_kv(input, sidecar)
+    print(kv)
+    let v_p = find_in_str(kv, "verdict=")
+    if v_p < 0 { eprintln("reason: missing verdict"); exit(3) }
+    // exit 0 only if PASS
+    if find_in_str(kv, "verdict=PASS") >= 0 { exit(0) }
+    if find_in_str(kv, "verdict=FALSIFIED") >= 0 { exit(1) }
+    exit(2)
+}

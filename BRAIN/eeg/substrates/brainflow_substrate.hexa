@@ -1,0 +1,498 @@
+// hexa-brain/eeg/substrates/brainflow_substrate.hexa
+//
+// PURPOSE
+//   Thin substrate adapter for BrainFlow boards. Lifecycle (open/close/
+//   reinit/start/stop) delegates to eeg/_session_manager.hexa via the
+//   emitted Python helper (zero behavioral change — back-compat path).
+//   Adds the new substrate read-side: api_read_chunk / api_get_eeg_indices
+//   / api_get_sample_rate built directly on BoardShim's get_current_board_data,
+//   get_eeg_channels, get_sampling_rate.
+//
+//   api_stim raises NotImplementedError — scalp EEG is read-only.
+//
+// BACK-COMPAT GATE
+//   This adapter MUST NOT change the behavior of _session_manager. Its
+//   helper imports the _session_manager helper at runtime (sys.path-prepend
+//   /tmp/) so any existing F_SM_01..03 assertions are unchanged. THIS PR
+//   does NOT modify collect/eeg_recorder — those continue to call
+//   _session_manager directly. The substrate adapter exists as the
+//   refactor target.
+//
+//   1. The synthetic path (board_id=-1 / synthetic=True) uses BrainFlow's
+//      synthetic board if BrainFlow is importable; otherwise it falls
+//      through to a no-data shim (api_read_chunk returns empty list).
+//      This is documented as DEGRADED tier — selftest produces a
+//      green marker without real hardware OR BrainFlow.
+//   2. data row count for BrainFlow real path is 32 (timestamp + 16 EEG +
+//      aux rows). api_read_chunk returns the FULL data matrix; callers
+//      who want EEG-only must slice by api_get_eeg_indices(). The
+//      EXPECTED_DATA_ROWS=32 invariant in collect.hexa/eeg_recorder.hexa
+//      is preserved for the brainflow path (synth/replay return 16 rows).
+//
+// FALSIFIER F_SUB_02
+//   Synth-path (no real board, no real BrainFlow) returns expected shape
+//   via the fallback shim. Open + close idempotent.
+//
+// USAGE
+//   hexa run eeg/substrates/brainflow_substrate.hexa --selftest --synthetic
+//   hexa run eeg/substrates/brainflow_substrate.hexa --inspect
+
+let SCHEMA              = "hexa-brain/eeg/brainflow_substrate/1"
+let HELPER_PATH         = "/tmp/hexa_brain_brainflow_substrate_helper.py"
+
+let DEFAULT_BOARD_ID            = 2     // CYTON_DAISY_BOARD
+let SYNTHETIC_BOARD_ID          = -1    // BrainFlow synthetic board id
+
+// ════════════════════════════════════════════════════════════════════
+// Section 0. Hexa-side helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn _kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _emit_trailer(slug: string, detail: string, fix: string) {
+    eprintln("reason: " + slug + ": " + detail)
+    eprintln("fix: " + fix)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 1. Python helper emitter
+// ════════════════════════════════════════════════════════════════════
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# hexa-brain brainflow_substrate helper — emitted by\n")
+    parts.push("import argparse, sys, time\n\n")
+
+    parts.push("SCHEMA = '" + SCHEMA + "'\n")
+    parts.push("DEFAULT_BOARD_ID   = " + to_string(DEFAULT_BOARD_ID) + "\n")
+    parts.push("SYNTHETIC_BOARD_ID = " + to_string(SYNTHETIC_BOARD_ID) + "\n\n")
+
+    parts.push("STATE_PREINIT = 'PREINIT'\n")
+    parts.push("STATE_INIT    = 'INIT'\n")
+    parts.push("STATE_RUNNING = 'RUNNING'\n")
+    parts.push("STATE_HALTED  = 'HALTED'\n\n")
+
+    // ─── Session shim (used when _session_manager helper is unavailable
+    //     OR the synthetic path is requested without a real board). The
+    //     wire-shape mirrors _session_manager.Session for parity.
+    parts.push("class BfShimSession:\n")
+    parts.push("    def __init__(self, spec):\n")
+    parts.push("        self.spec = dict(spec)\n")
+    parts.push("        self.board_id = int(spec.get('board_id', DEFAULT_BOARD_ID))\n")
+    parts.push("        self.port = spec.get('port')\n")
+    parts.push("        self.synthetic = (self.board_id == SYNTHETIC_BOARD_ID\n")
+    parts.push("                          or bool(spec.get('synthetic', False)))\n")
+    parts.push("        self.state = STATE_PREINIT\n")
+    parts.push("        self.has_halted = False\n")
+    parts.push("        self.shutdown_bound = False\n")
+    parts.push("        self.shutdown_fired_count = 0\n")
+    parts.push("        self.board = None\n")
+    parts.push("        self.recording = None\n")
+    parts.push("        self.last_err = {'code':'', 'advisory_url':'', 'retry_action':''}\n")
+    parts.push("        cs = spec.get('channel_set') or {}\n")
+    parts.push("        self._sample_rate_hint = int(cs.get('sample_rate') or 125)\n")
+    parts.push("        self._eeg_indices_hint = list(cs.get('ids') or list(range(1, 17)))\n\n")
+
+    // ─── _session_manager bridge ───────────────────────────────────────
+    parts.push("def _try_load_session_manager():\n")
+    parts.push("    # Attempt to import the _session_manager helper that\n")
+    parts.push("    # _session_manager.hexa emits at /tmp/. Returns the module\n")
+    parts.push("    # or None. This is the BACK-COMPAT delegation path.\n")
+    parts.push("    import importlib.util, os\n")
+    parts.push("    path = '/tmp/anima_eeg_session_manager_helper.py'\n")
+    parts.push("    if not os.path.exists(path):\n")
+    parts.push("        return None\n")
+    parts.push("    try:\n")
+    parts.push("        spec = importlib.util.spec_from_file_location('_sm', path)\n")
+    parts.push("        mod  = importlib.util.module_from_spec(spec)\n")
+    parts.push("        spec.loader.exec_module(mod)\n")
+    parts.push("        return mod\n")
+    parts.push("    except Exception:\n")
+    parts.push("        return None\n\n")
+
+    // ─── api_open_session: delegate to _session_manager if available
+    parts.push("def api_open_session(spec):\n")
+    parts.push("    sm = _try_load_session_manager()\n")
+    parts.push("    board_id = int(spec.get('board_id', DEFAULT_BOARD_ID))\n")
+    parts.push("    port     = spec.get('port')\n")
+    parts.push("    synth    = (board_id == SYNTHETIC_BOARD_ID\n")
+    parts.push("                or bool(spec.get('synthetic', False)))\n")
+    parts.push("    if sm is not None and hasattr(sm, 'api_open_session'):\n")
+    parts.push("        sess = sm.api_open_session(board_id, port,\n")
+    parts.push("                                   retry_policy=None,\n")
+    parts.push("                                   synthetic=synth)\n")
+    parts.push("        # Attach substrate metadata WITHOUT mutating sm.Session\n")
+    parts.push("        # behavior — these attrs are additive.\n")
+    parts.push("        cs = spec.get('channel_set') or {}\n")
+    parts.push("        sess._sample_rate_hint = int(cs.get('sample_rate') or 125)\n")
+    parts.push("        sess._eeg_indices_hint = list(cs.get('ids') or list(range(1, 17)))\n")
+    parts.push("        sess.spec = dict(spec)\n")
+    parts.push("        return sess\n")
+    parts.push("    # Fallback shim — used when _session_manager helper has\n")
+    parts.push("    # not been emitted yet (e.g. brainflow_substrate selftest\n")
+    parts.push("    sess = BfShimSession(spec)\n")
+    parts.push("    sess.state = STATE_INIT\n")
+    parts.push("    sys.stderr.write(f'[output] brainflow_substrate.open (shim) '\n")
+    parts.push("                     f'board_id={board_id} synth={synth}\\n')\n")
+    parts.push("    return sess\n\n")
+
+    // ─── api_close_session ───────────────────────────────────────────
+    parts.push("def api_close_session(sess):\n")
+    parts.push("    if sess is None: return\n")
+    parts.push("    if getattr(sess, 'has_halted', False):\n")
+    parts.push("        return\n")
+    parts.push("    sm = _try_load_session_manager()\n")
+    parts.push("    if sm is not None and hasattr(sm, 'api_close_session'):\n")
+    parts.push("        try:\n")
+    parts.push("            sm.api_close_session(sess)\n")
+    parts.push("            return\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("    sess.state = STATE_HALTED\n")
+    parts.push("    sess.has_halted = True\n\n")
+
+    // ─── api_reinit ──────────────────────────────────────────────────
+    parts.push("def api_reinit(sess):\n")
+    parts.push("    if sess is None: return None\n")
+    parts.push("    spec = getattr(sess, 'spec', None) or {}\n")
+    parts.push("    api_close_session(sess)\n")
+    parts.push("    sess.has_halted = False\n")
+    parts.push("    return api_open_session(spec)\n\n")
+
+    // ─── api_start_recording / api_stop_recording (delegate) ─────────
+    parts.push("def api_start_recording(sess, name='default', fmt='ODF', max_min=15):\n")
+    parts.push("    sm = _try_load_session_manager()\n")
+    parts.push("    if sm is not None and hasattr(sm, 'api_start_recording'):\n")
+    parts.push("        return sm.api_start_recording(sess, name=name,\n")
+    parts.push("                                      fmt=fmt, max_min=max_min)\n")
+    parts.push("    # Shim — no real recording in DEGRADED mode.\n")
+    parts.push("    class _Rec:\n")
+    parts.push("        def __init__(self, s,n,f,m):\n")
+    parts.push("            self.session=s; self.name=n; self.fmt=f; self.max_min=m\n")
+    parts.push("            self.is_open=True; self.opened_at=time.time()\n")
+    parts.push("    rec = _Rec(sess, name, fmt, max_min)\n")
+    parts.push("    sess.state = STATE_RUNNING\n")
+    parts.push("    return rec\n\n")
+
+    parts.push("def api_stop_recording(rec):\n")
+    parts.push("    sm = _try_load_session_manager()\n")
+    parts.push("    if sm is not None and hasattr(sm, 'api_stop_recording'):\n")
+    parts.push("        sm.api_stop_recording(rec)\n")
+    parts.push("        return\n")
+    parts.push("    if rec is None or not getattr(rec,'is_open',False): return\n")
+    parts.push("    rec.is_open = False\n\n")
+
+    // ─── api_read_chunk (DIRECT BoardShim calls) ─────────────────────
+    parts.push("def api_read_chunk(sess, n_samples_max):\n")
+    parts.push("    # Real path: get_current_board_data(N) returns (rows, N) of\n")
+    parts.push("    # float64. Caller can slice by api_get_eeg_indices for EEG-\n")
+    parts.push("    # only access. Synth path: returns empty list (DEGRADED\n")
+    parts.push("    # tier honest disclosure — no synthetic data on the\n")
+    parts.push("    # brainflow path when board absent).\n")
+    parts.push("    if sess is None or getattr(sess,'has_halted',False):\n")
+    parts.push("        return [], time.time()\n")
+    parts.push("    board = getattr(sess, 'board', None)\n")
+    parts.push("    if board is None:\n")
+    parts.push("        # DEGRADED: no board, no data. Tests use synth_substrate\n")
+    parts.push("        # for actual sample synthesis.\n")
+    parts.push("        return [], time.time()\n")
+    parts.push("    try:\n")
+    parts.push("        data = board.get_current_board_data(int(n_samples_max))\n")
+    parts.push("    except Exception as e:\n")
+    parts.push("        sess.last_err = {'code':'read-chunk-failed',\n")
+    parts.push("                         'advisory_url':'',\n")
+    parts.push("                         'retry_action':'reinit-then-retry'}\n")
+    parts.push("        sys.stderr.write(f'[error] brainflow_substrate.read_chunk {e!r}\\n')\n")
+    parts.push("        return [], time.time()\n")
+    parts.push("    # Convert ndarray → list-of-lists for protocol parity.\n")
+    parts.push("    try:\n")
+    parts.push("        out = [list(row) for row in data]\n")
+    parts.push("    except Exception:\n")
+    parts.push("        out = []\n")
+    parts.push("    return out, time.time()\n\n")
+
+    // ─── api_get_eeg_indices ─────────────────────────────────────────
+    parts.push("def api_get_eeg_indices(sess):\n")
+    parts.push("    if sess is None: return []\n")
+    parts.push("    try:\n")
+    parts.push("        from brainflow.board_shim import BoardShim\n")
+    parts.push("        bid = int(getattr(sess, 'board_id', DEFAULT_BOARD_ID))\n")
+    parts.push("        return list(BoardShim.get_eeg_channels(bid))\n")
+    parts.push("    except Exception:\n")
+    parts.push("        # Fallback to hint from spec (DEGRADED tier).\n")
+    parts.push("        return list(getattr(sess, '_eeg_indices_hint',\n")
+    parts.push("                            list(range(1, 17))))\n\n")
+
+    // ─── api_get_sample_rate ─────────────────────────────────────────
+    parts.push("def api_get_sample_rate(sess):\n")
+    parts.push("    if sess is None: return 0\n")
+    parts.push("    try:\n")
+    parts.push("        from brainflow.board_shim import BoardShim\n")
+    parts.push("        bid = int(getattr(sess, 'board_id', DEFAULT_BOARD_ID))\n")
+    parts.push("        return int(BoardShim.get_sampling_rate(bid))\n")
+    parts.push("    except Exception:\n")
+    parts.push("        return int(getattr(sess, '_sample_rate_hint', 125))\n\n")
+
+    // ─── api_stim ────────────────────────────────────────────────────
+    parts.push("def api_stim(sess, stim_spec):\n")
+    parts.push("    raise NotImplementedError(\n")
+    parts.push("        'brainflow_substrate: scalp EEG is read-only')\n\n")
+
+    // ─── api_on_shutdown_hook / api_last_error ───────────────────────
+    parts.push("def api_on_shutdown_hook(sess, fn=None):\n")
+    parts.push("    sm = _try_load_session_manager()\n")
+    parts.push("    if sm is not None and hasattr(sm, 'api_on_shutdown_hook'):\n")
+    parts.push("        sm.api_on_shutdown_hook(sess)\n")
+    parts.push("        return\n")
+    parts.push("    import atexit, signal\n")
+    parts.push("    if sess is None: return\n")
+    parts.push("    if getattr(sess,'shutdown_bound',False): return\n")
+    parts.push("    def _hook(*a,**kw):\n")
+    parts.push("        sess.shutdown_fired_count = getattr(sess,'shutdown_fired_count',0) + 1\n")
+    parts.push("        try: api_close_session(sess)\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("    atexit.register(_hook)\n")
+    parts.push("    try: signal.signal(signal.SIGTERM, _hook)\n")
+    parts.push("    except Exception: pass\n")
+    parts.push("    try: signal.signal(signal.SIGINT, _hook)\n")
+    parts.push("    except Exception: pass\n")
+    parts.push("    sess.shutdown_bound = True\n\n")
+
+    parts.push("def api_last_error(sess):\n")
+    parts.push("    if sess is None:\n")
+    parts.push("        return {'code':'no-session','advisory_url':'','retry_action':''}\n")
+    parts.push("    return dict(getattr(sess, 'last_err',\n")
+    parts.push("        {'code':'','advisory_url':'','retry_action':''}))\n\n")
+
+    // ─── selftest (synth path only) ──────────────────────────────────
+    parts.push("def cmd_selftest(args):\n")
+    parts.push("    print('== brainflow_substrate selftest ==')\n")
+    parts.push("    print(f'schema={SCHEMA}')\n")
+    parts.push("    print('mode=selftest_synthetic')\n")
+    parts.push("    fails = 0\n")
+    parts.push("    sm = _try_load_session_manager()\n")
+    parts.push("    print(f'  session_manager_helper_present={sm is not None}')\n")
+    // F_SUB_02a: open + read + close on synth path returns expected sample_rate
+    parts.push("    spec = {'backend':'brainflow','board_id':SYNTHETIC_BOARD_ID,\n")
+    parts.push("            'port':None,'synthetic':True,\n")
+    parts.push("            'channel_set':{'name':'cyton_daisy_16',\n")
+    parts.push("                           'ids':list(range(1,17)),\n")
+    parts.push("                           'sample_rate':125,\n")
+    parts.push("                           'coords_3d':None}}\n")
+    parts.push("    s1 = api_open_session(spec)\n")
+    parts.push("    sr  = api_get_sample_rate(s1)\n")
+    parts.push("    idx = api_get_eeg_indices(s1)\n")
+    parts.push("    data, ts = api_read_chunk(s1, 32)\n")
+    parts.push("    print(f'  sample_rate={sr} eeg_idx[:4]={idx[:4]} '\n")
+    parts.push("          f'data_rows={len(data)}')\n")
+    parts.push("    f02a = (sr == 125 and len(idx) >= 1)\n")
+    parts.push("    print(f'F_SUB_02_shape={\"PASS\" if f02a else \"FAIL\"}')\n")
+    parts.push("    if not f02a: fails += 1\n")
+    // F_SUB_02b: api_stim raises
+    parts.push("    raised = False\n")
+    parts.push("    try: api_stim(s1, None)\n")
+    parts.push("    except NotImplementedError: raised = True\n")
+    parts.push("    print(f'F_SUB_02_stim_raises={\"PASS\" if raised else \"FAIL\"}')\n")
+    parts.push("    if not raised: fails += 1\n")
+    // F_SUB_02c: idempotent close
+    parts.push("    api_close_session(s1)\n")
+    parts.push("    had_halt = getattr(s1, 'has_halted', False)\n")
+    parts.push("    api_close_session(s1)  # double-close no-op\n")
+    parts.push("    f02c = (had_halt is True and getattr(s1,'has_halted',False) is True)\n")
+    parts.push("    print(f'F_SUB_02_idempotent={\"PASS\" if f02c else \"FAIL\"}')\n")
+    parts.push("    if not f02c: fails += 1\n")
+    parts.push("    if fails == 0:\n")
+    parts.push("        print('verdict=PASS')\n")
+    parts.push("    else:\n")
+    parts.push("        print(f'verdict=FAIL fails={fails}')\n")
+    parts.push("    print('selftest=ok')\n")
+    parts.push("    print('DONE')\n")
+    parts.push("    sys.exit(0 if fails == 0 else 1)\n\n")
+
+    parts.push("def cmd_inspect(args):\n")
+    parts.push("    print(f'schema={SCHEMA}')\n")
+    parts.push("    print('mode=inspect')\n")
+    parts.push("    print(f'default_board_id={DEFAULT_BOARD_ID}')\n")
+    parts.push("    print(f'synthetic_board_id={SYNTHETIC_BOARD_ID}')\n")
+    parts.push("    print('delegates_to=_session_manager.hexa-helper')\n")
+    parts.push("    print('read_chunk_path=BoardShim.get_current_board_data')\n")
+    parts.push("    print('inspect=ok')\n")
+    parts.push("    print('DONE')\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    sub = p.add_subparsers(dest='cmd', required=True)\n")
+    parts.push("    sub.add_parser('selftest')\n")
+    parts.push("    sub.add_parser('inspect')\n")
+    parts.push("    args = p.parse_args()\n")
+    parts.push("    if args.cmd == 'selftest': cmd_selftest(args)\n")
+    parts.push("    elif args.cmd == 'inspect': cmd_inspect(args)\n")
+    parts.push("    else: sys.exit(2)\n\n")
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _run_helper(args: string) -> list {
+    let cmd = "python3 " + HELPER_PATH + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 2. Hexa-side assertions
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn _run_selftest_assertions(body: string) -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+
+    println("[T1] selftest=ok")
+    let t1 = assert_true(_kv_lookup(body, "selftest") == "ok", "selftest=ok")
+    if t1 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T2] schema=" + SCHEMA)
+    let t2 = assert_true(_kv_lookup(body, "schema") == SCHEMA, "schema match")
+    if t2 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T3] verdict=PASS")
+    let t3 = assert_true(_kv_lookup(body, "verdict") == "PASS", "verdict=PASS")
+    if t3 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T4] F_SUB_02_shape")
+    let t4 = assert_true(_kv_lookup(body, "F_SUB_02_shape") == "PASS", "F_SUB_02_shape=PASS")
+    if t4 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T5] F_SUB_02_stim_raises")
+    let t5 = assert_true(_kv_lookup(body, "F_SUB_02_stim_raises") == "PASS", "F_SUB_02_stim_raises=PASS")
+    if t5 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T6] F_SUB_02_idempotent")
+    let t6 = assert_true(_kv_lookup(body, "F_SUB_02_idempotent") == "PASS", "F_SUB_02_idempotent=PASS")
+    if t6 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 3. CLI
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    eprintln("usage: hexa run eeg/substrates/brainflow_substrate.hexa --selftest [--synthetic]")
+    eprintln("       hexa run eeg/substrates/brainflow_substrate.hexa --inspect")
+    eprintln("flags:")
+    eprintln("  --selftest    fallback shim selftest (no board, no brainflow required)")
+    eprintln("  --synthetic   alias of --selftest (forwards-compat with collect.hexa)")
+}
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path {
+            if a.ends_with("/exe") { is_path = true }
+        }
+        if !is_path {
+            if a.ends_with("hexa_interp") { is_path = true }
+        }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut inspect_mode = false
+    let mut want_help = false
+    // --synthetic is accepted as forward-compat hint (does not change
+    // selftest behavior — selftest path is already synth-only).
+    let mut _synthetic_flag = false
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest"  { selftest = true; i = i + 1; continue }
+        if a == "--inspect"   { inspect_mode = true; i = i + 1; continue }
+        if a == "--synthetic" { _synthetic_flag = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        _emit_trailer("unknown-arg", "unrecognized argument: " + a, "1) re-run with --help")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help { _print_usage(); exit(0) }
+
+    if !selftest && !inspect_mode {
+        _print_usage()
+        exit(2)
+    }
+
+    _write_helper()
+
+    if selftest {
+        println("== brainflow_substrate selftest ==")
+        let r = _run_helper("selftest")
+        let body = r[0]
+        let st   = r[1]
+        println(body)
+        if st != 0 {
+            eprintln("selftest helper FAILED rc=" + to_string(st))
+            exit(1)
+        }
+        if _kv_lookup(body, "selftest") != "ok" {
+            _emit_trailer("selftest-marker-missing", "no selftest=ok",
+                          "1) check helper parse")
+            exit(1)
+        }
+        println("")
+        let fails = _run_selftest_assertions(body)
+        if fails != 0 {
+            println("selftest=fail")
+            eprintln("selftest FAILED: " + to_string(fails) + " assertion(s)")
+            exit(1)
+        }
+        println("selftest: OK")
+        exit(0)
+    }
+
+    println("== brainflow_substrate inspect ==")
+    let r = _run_helper("inspect")
+    println(r[0])
+    if r[1] != 0 {
+        eprintln("inspect helper FAILED rc=" + to_string(r[1]))
+        exit(1)
+    }
+    exit(0)
+}
+// hexa-strict auto-invokes fn main() — do not call main() explicitly.

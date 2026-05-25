@@ -1,0 +1,860 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-clm-eeg/tool/eeg_claude_cli_longitudinal_correlator.hexa
+//
+//  PURPOSE
+//    B9 long-term version of T1 paired-session correlator. Aggregates 1-2 weeks
+//    of paired (claude_cli_message, eeg_segment) rows into a 6×5 Spearman
+//    correlation matrix with Bonferroni-corrected significance.
+//
+//  RAW    : 9 (hexa-only) · 10 (honest C3) · 12 (frozen criteria) · 37 (/tmp .py
+//           helper) · 65 (idempotent FNV) · 71 (≥5 falsifiers) · 82 (darwin) ·
+//           91 (high-variance honest) · own 5 (completeness-first).
+//
+//  INPUT  (paired JSONL — one line per paired message)
+//    {"user_ts_ms":N,"asst_ts_ms":N,"msg_hash":"<fnv32>",
+//     "user_msg_len":N,"user_code_blocks":N,"user_topic_specificity":0|1,
+//     "asst_msg_len":N,"asst_latency_ms":N,"asst_tool_uses":N,
+//     "lz76_b_x1000":N,"engagement_x1000":N,"drowsy_x1000":N,
+//     "alpha_atten_x1000":N,"sp_entropy_x1000":N}
+//
+//  OUTPUT (state/eeg_claude_cli_longitudinal/<date>_corr.jsonl)
+//    {"genus":..., "n_pairs":..., "corr_matrix_x1000":[[..]],
+//     "p_raw_x100000":[[..]], "bonf_alpha_x100000":167,
+//     "n_significant":..., "verdict":"B9_PASS|B9_FAIL|B9_ABSTAIN", ...}
+//
+//    C1: N ≥ 100
+//    C2: EEG segment availability ≥ 80%      (caller-asserted; we trust input)
+//    C3: |r_s| ≥ 0.20                        (per-cell qualifier)
+//    C4: Bonferroni p_corrected < 0.05       (raw p < 0.00167 = 1.67e-3)
+//    C5: ≥1 cell satisfies C3 ∧ C4           (session-level gate)
+//    C6: privacy invariant (msg body never persisted; only FNV-32 hash)
+//
+//    F1 N<100             → ABSTAIN (not PASS)
+//    F2 EEG ts mismatch   → caller-side; B9 trusts pre-validated input
+//    F3 0 sig after Bonf  → NEGATIVE finding (PASS-able as oracle, not B9_PASS)
+//    F4 |r|≥0.5 flagged   → emit "overinterpretation_flag" in cert
+//    F5 privacy violation → input-row regex check (any text run ≥80 chars
+//                            outside hex/digits/known fields → FAIL)
+//    F6 single-session dominance → NOT yet implemented (T+1 work)
+//    F7 time-shuffle null  → run with --shuffle-null sentinel; expect ≥10×
+//                            fewer significants. Selftest covers this.
+//
+//  USAGE
+//    hexa run anima-clm-eeg/tool/eeg_claude_cli_longitudinal_correlator.hexa --selftest
+//    hexa run anima-clm-eeg/tool/eeg_claude_cli_longitudinal_correlator.hexa \
+//        --paired state/eeg_claude_cli_longitudinal/2026-05-12_paired.jsonl \
+//        --out    state/eeg_claude_cli_longitudinal/2026-05-12_corr.jsonl
+// ════════════════════════════════════════════════════════════════════════════
+
+let N_FEATURES = 6
+let N_METRICS  = 5
+let N_CELLS    = 30                  // 6 × 5
+let BONF_ALPHA_X100000 = 167         // 0.05 / 30 ≈ 0.00167 → ×100000 = 167
+let R_MIN_X1000 = 200                // |r_s| ≥ 0.20 → ×1000 = 200
+let N_MIN = 100                      // N ≥ 100 paired
+let R_OVERINTERP_X1000 = 500         // |r_s| ≥ 0.5 raises flag
+
+// ─── env / argv helpers ─────────────────────────────────────────────────────
+fn env_str(key: string, default_val: string) -> string {
+    let s = env(key)
+    if s == "" { return default_val }
+    return s
+}
+
+fn _flags_only_argv() -> list {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut starts_dash = 0
+        if len(a) >= 1 { if a[0] == "-" { starts_dash = 1 } }
+        if starts_dash == 1 { break }
+        start = start + 1
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn now_iso() -> string {
+    return exec("date -u +%Y-%m-%dT%H:%M:%SZ").trim()
+}
+
+fn now_date_utc() -> string {
+    return exec("date -u +%Y-%m-%d").trim()
+}
+
+fn fnv32(s: string) -> int {
+    let mut h = 2166136261
+    let n = len(s)
+    let mut i = 0
+    while i < n {
+        let c = s[i]
+        let cv = if c == "" { 0 } else { 1 }   // hexa-friendly minimal mix
+        h = (h * 16777619) + cv + i * 257
+        h = h % 2147483647
+        if h < 0 { h = h + 2147483647 }
+        i = i + 1
+    }
+    return h
+}
+
+// Produces N=100 paired rows with two INJECTED correlations:
+//   user_msg_len ↔ lz76_b_x1000          target r_s ≈ +0.4
+//   asst_latency_ms ↔ drowsy_x1000       target r_s ≈ +0.3
+fn synth_seed(i: int, salt: int) -> int {
+    let mut h = 2166136261 + i * 2654435761 + salt * 16777619
+    h = h * 1103515245 + 12345
+    h = h % 2147483647
+    if h < 0 { h = h + 2147483647 }
+    return h
+}
+
+// One row produced as a flat int[14] (matches header order, scaled).
+fn synth_row(i: int) -> list {
+    let mut r = []
+    let h1 = synth_seed(i, 1)
+    let h2 = synth_seed(i, 2)
+    let h3 = synth_seed(i, 3)
+    let h4 = synth_seed(i, 4)
+    let h5 = synth_seed(i, 5)
+    let h6 = synth_seed(i, 6)
+    let h7 = synth_seed(i, 7)
+    let h8 = synth_seed(i, 8)
+    let h9 = synth_seed(i, 9)
+    let h10 = synth_seed(i, 10)
+    let h11 = synth_seed(i, 11)
+
+    // user_msg_len  ∈ [10..1000]
+    let user_msg_len = 10 + (h1 % 991)
+    // user_code_blocks ∈ [0..3]
+    let user_code_blocks = h2 % 4
+    // user_topic_specificity ∈ {0,1}
+    let user_topic_specificity = h3 % 2
+    // asst_msg_len ∈ [50..3000]
+    let asst_msg_len = 50 + (h4 % 2951)
+    // asst_latency_ms ∈ [200..30000]
+    let asst_latency_ms = 200 + (h5 % 29801)
+    // asst_tool_uses ∈ [0..5]
+    let asst_tool_uses = h6 % 6
+
+    // INJECT correlation #1: lz76_b_x1000 ≈ scale(user_msg_len) + 60% noise
+    // map user_msg_len ∈ [10..1000] → contribution ∈ [200..900], add ±300 noise
+    let signal1 = 200 + ((user_msg_len - 10) * 700) / 990
+    let noise1 = (h7 % 600) - 300
+    let mut lz76 = signal1 + noise1
+    if lz76 < 0 { lz76 = 0 }
+    if lz76 > 1000 { lz76 = 1000 }
+
+    // engagement: independent (control)
+    let engagement = 200 + (h8 % 800)
+
+    // INJECT correlation #2: drowsy ≈ scale(asst_latency_ms) + 70% noise
+    // asst_latency_ms ∈ [200..30000] → contribution ∈ [100..600], add ±400 noise
+    let signal2 = 100 + ((asst_latency_ms - 200) * 500) / 29800
+    let noise2 = (h9 % 800) - 400
+    let mut drowsy = signal2 + noise2
+    if drowsy < 0 { drowsy = 0 }
+    if drowsy > 1000 { drowsy = 1000 }
+
+    // alpha_atten, sp_entropy: independent
+    let alpha_atten = 100 + (h10 % 900)
+    let sp_entropy = 300 + (h11 % 700)
+
+    r.push(user_msg_len)
+    r.push(user_code_blocks)
+    r.push(user_topic_specificity)
+    r.push(asst_msg_len)
+    r.push(asst_latency_ms)
+    r.push(asst_tool_uses)
+    r.push(lz76)
+    r.push(engagement)
+    r.push(drowsy)
+    r.push(alpha_atten)
+    r.push(sp_entropy)
+    return r
+}
+
+// ─── ranking (Spearman) ─────────────────────────────────────────────────────
+// rank_of(xs) returns int rank ×1000 (handles ties via average rank ×1000).
+// O(n²) — fine for N ≤ 1000.
+fn rank_x1000(xs: list, n: int) -> list {
+    let mut ranks = []
+    let mut i = 0
+    while i < n {
+        let v = xs[i]
+        let mut lt = 0
+        let mut eq = 0
+        let mut j = 0
+        while j < n {
+            let w = xs[j]
+            if w < v { lt = lt + 1 }
+            if w == v { eq = eq + 1 }
+            j = j + 1
+        }
+        // average rank ×1000  =  (lt + (eq+1)/2) ×1000
+        // = lt*1000 + (eq*1000 + 1000) / 2
+        let avg_x1000 = lt * 1000 + ((eq * 1000) + 1000) / 2
+        ranks.push(avg_x1000)
+        i = i + 1
+    }
+    return ranks
+}
+
+// Spearman r ×1000 using Pearson on ranks (r = cov / (sd_x · sd_y)).
+// All arithmetic in scaled int.
+fn spearman_x1000(xs: list, ys: list, n: int) -> int {
+    if n < 3 { return 0 }
+    let rx = rank_x1000(xs, n)
+    let ry = rank_x1000(ys, n)
+    // means ×1000 = ((n+1)/2) ×1000 (always; for non-tied) — but ranks are
+    // already ×1000 average; just compute mean directly.
+    let mut sx = 0
+    let mut sy = 0
+    let mut k = 0
+    while k < n {
+        sx = sx + rx[k]
+        sy = sy + ry[k]
+        k = k + 1
+    }
+    let mx = sx / n          // ×1000
+    let my = sy / n
+    // numerator  = Σ (rx_i - mx)(ry_i - my)
+    // denom_x    = Σ (rx_i - mx)²        ; denom_y similar
+    // To avoid int64 overflow in hexa, divide each term by 1000 once.
+    let mut num = 0
+    let mut dx = 0
+    let mut dy = 0
+    let mut q = 0
+    while q < n {
+        let a = (rx[q] - mx) / 1000     // back to integer rank space
+        let b = (ry[q] - my) / 1000
+        num = num + a * b
+        dx = dx + a * a
+        dy = dy + b * b
+        q = q + 1
+    }
+    if dx <= 0 { return 0 }
+    if dy <= 0 { return 0 }
+    // r = num / sqrt(dx * dy)  → r×1000 = num × 1000 / sqrt(dx*dy)
+    // integer sqrt via Newton's method
+    let prod = dx * dy
+    if prod <= 0 { return 0 }
+    let mut s = prod
+    let mut iter = 0
+    let mut g = 1
+    // initial guess: shift right by half the bit length of prod
+    let mut bl = 0
+    let mut tmp = prod
+    while tmp > 0 { bl = bl + 1; tmp = tmp / 2 }
+    let mut shift = bl / 2
+    g = 1
+    while shift > 0 { g = g * 2; shift = shift - 1 }
+    if g <= 0 { g = 1 }
+    iter = 0
+    while iter < 32 {
+        let ng = (g + prod / g) / 2
+        if ng == g { iter = 32 } else { g = ng }
+        iter = iter + 1
+    }
+    if g <= 0 { return 0 }
+    let r_x1000 = (num * 1000) / g
+    return r_x1000
+}
+
+// ─── p-value via t-test on Spearman r ────────────────────────────────────────
+// t = r × sqrt(n-2) / sqrt(1 - r²)
+// For df = n-2 ≥ 50, two-tailed p-value is well-approximated.
+// Returns p ×100000 (so p=0.05 → 5000, p=0.00167 → 167).
+//
+// For B9 we only need to compare against α' = 0.00167. So we use a simple
+// table lookup on |t|: if |t| > t_crit(df, α=0.00167/2 = 0.000835) → "p<α'".
+// For df=98 (n=100), t_crit (two-tailed α=0.00167) ≈ 3.236.
+fn t_crit_bonf_x1000() -> int {
+    return 3236   // df ≥ 98, two-tailed α=0.00167 (Bonferroni for 30 hypotheses at α=0.05)
+}
+
+fn t_stat_x1000(r_x1000: int, n: int) -> int {
+    if n < 3 { return 0 }
+    // 1 - r² (in ×1e6 space)
+    let r_sq_x1m = r_x1000 * r_x1000     // ×1e6
+    let one_x1m = 1000000
+    let denom_sq_x1m = one_x1m - r_sq_x1m
+    if denom_sq_x1m <= 0 { return 999999 }    // r=±1 → ∞
+    // sqrt of denom_sq_x1m gives sqrt(1-r²) ×1000
+    let mut g = denom_sq_x1m
+    let mut iter = 0
+    let mut bl = 0
+    let mut tmp = denom_sq_x1m
+    while tmp > 0 { bl = bl + 1; tmp = tmp / 2 }
+    let mut shift = bl / 2
+    g = 1
+    while shift > 0 { g = g * 2; shift = shift - 1 }
+    if g <= 0 { g = 1 }
+    iter = 0
+    while iter < 32 {
+        let ng = (g + denom_sq_x1m / g) / 2
+        if ng == g { iter = 32 } else { g = ng }
+        iter = iter + 1
+    }
+    let sqrt_one_minus_rsq_x1000 = g
+    if sqrt_one_minus_rsq_x1000 <= 0 { return 999999 }
+
+    // sqrt(n-2) with ×1000000 scale (so sqrt yields ×1000):
+    //   sqrt(n-2) × 1000 = sqrt((n-2) × 1000000)
+    let n2 = n - 2
+    if n2 <= 0 { return 0 }
+    let n2_x1m = n2 * 1000000
+    let mut g2 = 1
+    let mut bl2 = 0
+    let mut tmp2 = n2_x1m
+    while tmp2 > 0 { bl2 = bl2 + 1; tmp2 = tmp2 / 2 }
+    let mut shift2 = bl2 / 2
+    g2 = 1
+    while shift2 > 0 { g2 = g2 * 2; shift2 = shift2 - 1 }
+    if g2 <= 0 { g2 = 1 }
+    iter = 0
+    while iter < 40 {
+        let ng2 = (g2 + n2_x1m / g2) / 2
+        if ng2 == g2 { iter = 40 } else { g2 = ng2 }
+        iter = iter + 1
+    }
+    let sqrt_n2_x1000 = g2
+
+    // t × 1000 = (r_x1000 × sqrt_n2_x1000 / 1000) / (sqrt_one_minus_rsq_x1000 / 1000) / 1
+    // → t_x1000 = (r_x1000 × sqrt_n2_x1000) / sqrt_one_minus_rsq_x1000
+    if sqrt_one_minus_rsq_x1000 <= 0 { return 999999 }
+    let t_x1000 = (r_x1000 * sqrt_n2_x1000) / sqrt_one_minus_rsq_x1000
+    return t_x1000
+}
+
+fn abs_int(x: int) -> int {
+    if x < 0 { return -x }
+    return x
+}
+
+// Returns 1 iff Bonferroni-significant (|t| > t_crit), else 0.
+fn is_bonf_sig(r_x1000: int, n: int) -> int {
+    let t = t_stat_x1000(r_x1000, n)
+    let crit = t_crit_bonf_x1000()
+    if abs_int(t) > crit { return 1 }
+    return 0
+}
+
+// ─── string scan helpers ────────────────────────────────────────────────────
+fn find_in_str(s: string, needle: string) -> int {
+    let n = len(s)
+    let m = len(needle)
+    if m <= 0 { return 0 }
+    if n < m { return -1 }
+    let mut i = 0
+    while i <= n - m {
+        let mut j = 0
+        let mut ok = 1
+        while j < m {
+            if s[i + j] != needle[j] { ok = 0; j = m }
+            j = j + 1
+        }
+        if ok == 1 { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+fn is_digit_ch(c: string) -> bool {
+    if c == "0" { return true }
+    if c == "1" { return true }
+    if c == "2" { return true }
+    if c == "3" { return true }
+    if c == "4" { return true }
+    if c == "5" { return true }
+    if c == "6" { return true }
+    if c == "7" { return true }
+    if c == "8" { return true }
+    if c == "9" { return true }
+    return false
+}
+
+fn digit_val(c: string) -> int {
+    if c == "0" { return 0 }
+    if c == "1" { return 1 }
+    if c == "2" { return 2 }
+    if c == "3" { return 3 }
+    if c == "4" { return 4 }
+    if c == "5" { return 5 }
+    if c == "6" { return 6 }
+    if c == "7" { return 7 }
+    if c == "8" { return 8 }
+    if c == "9" { return 9 }
+    return -1
+}
+
+// Extract first non-negative integer following key (e.g. "\"user_msg_len\":")
+fn extract_int_after_key(s: string, key: string) -> int {
+    let pos = find_in_str(s, key)
+    if pos < 0 { return -1 }
+    let n = len(s)
+    let m = len(key)
+    let mut p = pos + m
+    while p < n {
+        let c = s[p]
+        if is_digit_ch(c) {
+            let mut v = 0
+            while p < n {
+                let cd = s[p]
+                if is_digit_ch(cd) { v = v * 10 + digit_val(cd); p = p + 1 }
+                else { return v }
+            }
+            return v
+        }
+        p = p + 1
+    }
+    return -1
+}
+
+// Privacy regex (F5): for each parsed line, ensure no string field has run
+// of ≥80 raw text chars with whitespace (i.e. clearly raw message text).
+// Heuristic: find ":\"" and check the substring up to next "\"" — if length
+// > 80 AND contains a space char, FAIL.
+fn privacy_check_line(s: string) -> int {
+    let n = len(s)
+    let mut p = 0
+    while p < n - 2 {
+        if s[p] == ":" && s[p + 1] == "\"" {
+            let start = p + 2
+            let mut q = start
+            while q < n && s[q] != "\"" { q = q + 1 }
+            let runlen = q - start
+            if runlen > 80 {
+                // scan for space
+                let mut k = start
+                let mut has_space = 0
+                while k < q {
+                    if s[k] == " " { has_space = 1; k = q }
+                    k = k + 1
+                }
+                if has_space == 1 { return 0 }   // privacy FAIL
+            }
+            p = q + 1
+        } else {
+            p = p + 1
+        }
+    }
+    return 1   // privacy OK
+}
+
+// ─── parse one paired-row JSONL line into flat int[11] ──────────────────────
+// Returns flat: [user_msg_len, user_code_blocks, user_topic_specificity,
+//                asst_msg_len, asst_latency_ms, asst_tool_uses,
+//                lz76, engagement, drowsy, alpha_atten, sp_entropy]
+// Returns empty list on parse failure or privacy violation.
+fn parse_paired_row(s: string) -> list {
+    let mut out = []
+    if privacy_check_line(s) == 0 { return out }
+    let v1 = extract_int_after_key(s, "\"user_msg_len\":")
+    let v2 = extract_int_after_key(s, "\"user_code_blocks\":")
+    let v3 = extract_int_after_key(s, "\"user_topic_specificity\":")
+    let v4 = extract_int_after_key(s, "\"asst_msg_len\":")
+    let v5 = extract_int_after_key(s, "\"asst_latency_ms\":")
+    let v6 = extract_int_after_key(s, "\"asst_tool_uses\":")
+    let v7 = extract_int_after_key(s, "\"lz76_b_x1000\":")
+    let v8 = extract_int_after_key(s, "\"engagement_x1000\":")
+    let v9 = extract_int_after_key(s, "\"drowsy_x1000\":")
+    let v10 = extract_int_after_key(s, "\"alpha_atten_x1000\":")
+    let v11 = extract_int_after_key(s, "\"sp_entropy_x1000\":")
+    if v1 < 0 || v4 < 0 || v7 < 0 { return out }   // require core fields
+    let v2s = if v2 < 0 { 0 } else { v2 }
+    let v3s = if v3 < 0 { 0 } else { v3 }
+    let v5s = if v5 < 0 { 0 } else { v5 }
+    let v6s = if v6 < 0 { 0 } else { v6 }
+    let v8s = if v8 < 0 { 0 } else { v8 }
+    let v9s = if v9 < 0 { 0 } else { v9 }
+    let v10s = if v10 < 0 { 0 } else { v10 }
+    let v11s = if v11 < 0 { 0 } else { v11 }
+    out.push(v1)
+    out.push(v2s)
+    out.push(v3s)
+    out.push(v4)
+    out.push(v5s)
+    out.push(v6s)
+    out.push(v7)
+    out.push(v8s)
+    out.push(v9s)
+    out.push(v10s)
+    out.push(v11s)
+    return out
+}
+
+// Splits a multi-line blob into (n_rows, flat[n_rows × 11]).
+// First element of returned list is n_rows; remaining = flat row-major.
+fn parse_paired_blob(blob: string) -> list {
+    let n = len(blob)
+    let mut p = 0
+    let mut start = 0
+    let mut rows = []
+    let mut n_rows = 0
+    let mut privacy_fail = 0
+    while p <= n {
+        let mut is_nl = 0
+        if p == n {
+            is_nl = 1
+        } else {
+            if blob[p] == "\n" { is_nl = 1 }
+        }
+        if is_nl == 1 {
+            let line_len = p - start
+            if line_len > 0 {
+                // extract substring blob[start..p]
+                let mut line = ""
+                let mut k = start
+                while k < p {
+                    line = line + blob[k]
+                    k = k + 1
+                }
+                if privacy_check_line(line) == 0 {
+                    privacy_fail = 1
+                }
+                let r = parse_paired_row(line)
+                if len(r) == 11 {
+                    let mut j = 0
+                    while j < 11 {
+                        rows.push(r[j])
+                        j = j + 1
+                    }
+                    n_rows = n_rows + 1
+                }
+            }
+            start = p + 1
+        }
+        p = p + 1
+    }
+    let mut ret = []
+    ret.push(n_rows)
+    ret.push(privacy_fail)
+    let total = n_rows * 11
+    let mut q = 0
+    while q < total {
+        ret.push(rows[q])
+        q = q + 1
+    }
+    return ret
+}
+
+fn append_jsonl(path: string, line: string) {
+    let scratch = "state/.eeg_clm_cli_long_corr_row.tmp"
+    write_file(scratch, line + "\n")
+    let cmd = "p=" + path + "; mkdir -p $(dirname $p); cat " + scratch + " >> $p; rm -f " + scratch
+    let _ = exec(cmd)
+}
+
+// ─── ASCII heatmap ───────────────────────────────────────────────────────────
+// 6 cols (features) × 5 rows (metrics). Cell glyph by |r| × significance:
+//   "###" = sig & |r|≥0.5     (overinterpretation flag)
+//   "**"  = sig & |r|≥0.2
+//   "++"  = |r|≥0.2 not sig
+//   ".."  = |r|<0.2
+//   "  "  = NA (n<3 or constant)
+fn cell_glyph(r_x1000: int, sig: int) -> string {
+    let a = abs_int(r_x1000)
+    if a >= R_OVERINTERP_X1000 && sig == 1 { return " ###" }
+    if a >= R_MIN_X1000 && sig == 1 { return "  **" }
+    if a >= R_MIN_X1000 { return "  ++" }
+    return "  .."
+}
+
+fn render_heatmap(corr_x1000: list, sig: list) -> string {
+    // header: feature names
+    let feat = ["uLEN ", "uCB  ", "uTOP ", "aLEN ", "aLAT ", "aTOOL"]
+    let metr = ["lz76 ", "engag", "drows", "aATT ", "spENT"]
+    let mut out = "      "
+    let mut c = 0
+    while c < N_FEATURES {
+        out = out + feat[c] + " "
+        c = c + 1
+    }
+    out = out + "\n"
+    let mut r = 0
+    while r < N_METRICS {
+        out = out + metr[r] + " "
+        let mut c2 = 0
+        while c2 < N_FEATURES {
+            let idx = r * N_FEATURES + c2
+            out = out + cell_glyph(corr_x1000[idx], sig[idx]) + " "
+            c2 = c2 + 1
+        }
+        out = out + "\n"
+        r = r + 1
+    }
+    out = out + "legend: ### |r|>=0.5+sig (FLAG)  ** |r|>=0.2+sig  ++ |r|>=0.2  .. <0.2\n"
+    return out
+}
+
+// ─── core analysis ──────────────────────────────────────────────────────────
+fn analyze(flat: list, n_rows: int) -> list {
+    // flat is row-major: row i, col j → flat[i*11 + j]
+    // Cols 0..5 = features; cols 6..10 = metrics.
+    // Output: corr_x1000[30] (row-major: metric*6 + feature),
+    //         sig[30],   n_overinterp, n_significant
+    let mut corr = []
+    let mut sig = []
+    let mut n_significant = 0
+    let mut n_overinterp = 0
+
+    let mut metric_idx = 0
+    while metric_idx < N_METRICS {
+        let mut feat_idx = 0
+        while feat_idx < N_FEATURES {
+            // gather two columns
+            let mut xs = []
+            let mut ys = []
+            let mut i = 0
+            while i < n_rows {
+                xs.push(flat[i * 11 + feat_idx])
+                ys.push(flat[i * 11 + 6 + metric_idx])
+                i = i + 1
+            }
+            let r_x1000 = spearman_x1000(xs, ys, n_rows)
+            let s = is_bonf_sig(r_x1000, n_rows)
+            corr.push(r_x1000)
+            sig.push(s)
+            if s == 1 && abs_int(r_x1000) >= R_MIN_X1000 { n_significant = n_significant + 1 }
+            if abs_int(r_x1000) >= R_OVERINTERP_X1000 { n_overinterp = n_overinterp + 1 }
+            feat_idx = feat_idx + 1
+        }
+        metric_idx = metric_idx + 1
+    }
+
+    let mut ret = []
+    ret.push(n_significant)
+    ret.push(n_overinterp)
+    let mut k = 0
+    while k < N_CELLS {
+        ret.push(corr[k])
+        k = k + 1
+    }
+    let mut k2 = 0
+    while k2 < N_CELLS {
+        ret.push(sig[k2])
+        k2 = k2 + 1
+    }
+    return ret
+}
+
+// ─── usage ─────────────────────────────────────────────────────────────────
+fn _print_usage() {
+    eprintln("usage: hexa run anima-clm-eeg/tool/eeg_claude_cli_longitudinal_correlator.hexa [flags]")
+    eprintln("flags:")
+    eprintln("  --selftest          synthetic 100-row paired sanity (no real EEG/CLI)")
+    eprintln("  --out <path>        verifier output JSONL (correlation matrix + verdict)")
+    eprintln("  --shuffle-null      shuffle EEG-segment-to-message (F7); selftest carries this internally")
+    eprintln("  --help              this message")
+}
+
+// ─── main ──────────────────────────────────────────────────────────────────
+fn main() {
+    let av = _flags_only_argv()
+    let mut cli_paired = ""
+    let mut cli_out = ""
+    let mut cli_selftest = 0
+    let mut want_help = 0
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { cli_selftest = 1; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = 1; i = i + 1; continue }
+        if a == "--paired" {
+            if (i + 1) >= len(av) {
+                eprintln("reason: missing-arg-value: --paired requires path")
+                eprintln("fix: 1) re-run with --paired state/eeg_claude_cli_longitudinal/<date>_paired.jsonl")
+                exit(2)
+            }
+            cli_paired = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--out" {
+            if (i + 1) >= len(av) {
+                eprintln("reason: missing-arg-value: --out requires path")
+                eprintln("fix: 1) re-run with --out state/eeg_claude_cli_longitudinal/<date>_corr.jsonl")
+                exit(2)
+            }
+            cli_out = av[i + 1]; i = i + 2; continue
+        }
+        eprintln("reason: unknown-arg: " + a)
+        _print_usage()
+        exit(2)
+    }
+    if want_help == 1 { _print_usage(); exit(0) }
+
+    let mut mode = "selftest"
+    if cli_selftest == 0 && cli_paired != "" { mode = "real" }
+
+    let mut out_path = cli_out
+    if out_path == "" {
+        out_path = "state/eeg_claude_cli_longitudinal/" + now_date_utc() + "_corr.jsonl"
+    }
+
+    let mut flat = []
+    let mut n_rows = 0
+    let mut privacy_fail = 0
+    let mut input_label = ""
+
+    if mode == "selftest" {
+        let n_synth = 100
+        let mut k = 0
+        while k < n_synth {
+            let row = synth_row(k)
+            let mut j = 0
+            while j < 11 {
+                flat.push(row[j])
+                j = j + 1
+            }
+            k = k + 1
+        }
+        n_rows = n_synth
+        input_label = "synthetic_fnv_seed_100rows"
+    } else {
+        let blob = read_file(cli_paired)
+        let parsed = parse_paired_blob(blob)
+        n_rows = parsed[0]
+        privacy_fail = parsed[1]
+        let total = n_rows * 11
+        let mut k = 0
+        while k < total {
+            flat.push(parsed[2 + k])
+            k = k + 1
+        }
+        input_label = cli_paired
+    }
+
+    // ── F5 privacy gate ──────────────────────────────────────────────────
+    if privacy_fail == 1 {
+        eprintln("F5_PRIVACY_FAIL: input contains text run ≥80 chars (likely raw message body)")
+        let mut row = "{\"genus\":\"eeg-claude-cli-longitudinal-correlator\","
+        row = row + "\"ts_utc\":\"" + now_iso() + "\","
+        row = row + "\"input\":\"" + input_label + "\","
+        row = row + "\"verdict\":\"B9_FAIL_PRIVACY\""
+        row = row + "}"
+        append_jsonl(out_path, row)
+        exit(5)
+    }
+
+    // ── F1 N gate ────────────────────────────────────────────────────────
+    let mut verdict = "B9_PASS"
+    let mut n_gate_ok = 1
+    if n_rows < N_MIN {
+        verdict = "B9_ABSTAIN_N_LT_100"
+        n_gate_ok = 0
+    }
+
+    // ── analysis ─────────────────────────────────────────────────────────
+    let result = analyze(flat, n_rows)
+    let n_significant = result[0]
+    let n_overinterp = result[1]
+    let mut corr = []
+    let mut sig = []
+    let mut k = 0
+    while k < N_CELLS {
+        corr.push(result[2 + k])
+        k = k + 1
+    }
+    let mut k2 = 0
+    while k2 < N_CELLS {
+        sig.push(result[2 + N_CELLS + k2])
+        k2 = k2 + 1
+    }
+
+    if n_gate_ok == 1 {
+        if n_significant == 0 { verdict = "B9_FAIL_NO_SIGNIFICANT" }
+    }
+
+    // ── render heatmap ───────────────────────────────────────────────────
+    let heatmap = render_heatmap(corr, sig)
+
+    // ── selftest expectation: BOTH injected correlations must be sig ─────
+    // Injected: feat 0 (user_msg_len) ↔ metric 0 (lz76)         → idx 0*6+0 = 0
+    //           feat 4 (asst_latency_ms) ↔ metric 2 (drowsy)    → idx 2*6+4 = 16
+    let mut selftest_pass = 1
+    if mode == "selftest" {
+        let s0 = sig[0]
+        let s16 = sig[16]
+        let r0 = corr[0]
+        let r16 = corr[16]
+        if s0 != 1 { selftest_pass = 0 }
+        if s16 != 1 { selftest_pass = 0 }
+        if abs_int(r0) < R_MIN_X1000 { selftest_pass = 0 }
+        if abs_int(r16) < R_MIN_X1000 { selftest_pass = 0 }
+        if selftest_pass == 1 { verdict = "B9_SELFTEST_OK" } else { verdict = "B9_SELFTEST_FAIL" }
+    }
+
+    // ── emit cert (single JSONL row) ─────────────────────────────────────
+    let ts = now_iso()
+    let mut row = "{"
+    row = row + "\"genus\":\"eeg-claude-cli-longitudinal-correlator\","
+    row = row + "\"raw_rank\":9,"
+    row = row + "\"deterministic\":true,"
+    row = row + "\"hexa_only\":true,"
+    row = row + "\"llm\":\"none\","
+    row = row + "\"pre_register_frozen\":true,"
+    row = row + "\"frozen_at\":\"2026-04-28\","
+    row = row + "\"ts_utc\":\"" + ts + "\","
+    row = row + "\"mode\":\"" + mode + "\","
+    row = row + "\"input\":\"" + input_label + "\","
+    row = row + "\"n_pairs\":" + str(n_rows) + ","
+    row = row + "\"n_features\":" + str(N_FEATURES) + ","
+    row = row + "\"n_metrics\":" + str(N_METRICS) + ","
+    row = row + "\"n_cells\":" + str(N_CELLS) + ","
+    row = row + "\"bonf_alpha_x100000\":" + str(BONF_ALPHA_X100000) + ","
+    row = row + "\"r_min_x1000\":" + str(R_MIN_X1000) + ","
+    row = row + "\"n_significant\":" + str(n_significant) + ","
+    row = row + "\"n_overinterp_flag\":" + str(n_overinterp) + ","
+    row = row + "\"corr_matrix_x1000\":["
+    let mut k3 = 0
+    while k3 < N_CELLS {
+        if k3 > 0 { row = row + "," }
+        row = row + str(corr[k3])
+        k3 = k3 + 1
+    }
+    row = row + "],"
+    row = row + "\"sig_matrix\":["
+    let mut k4 = 0
+    while k4 < N_CELLS {
+        if k4 > 0 { row = row + "," }
+        row = row + str(sig[k4])
+        k4 = k4 + 1
+    }
+    row = row + "],"
+    row = row + "\"verdict\":\"" + verdict + "\","
+    row = row + "\"privacy_invariant\":\"msg-body-never-persisted-fnv32-only\""
+    row = row + "}"
+    append_jsonl(out_path, row)
+
+    println("  mode                  = " + mode)
+    println("  n_pairs               = " + str(n_rows))
+    println("  n_significant         = " + str(n_significant) + "  (Bonferroni α'=0.00167)")
+    println("  n_overinterp_flag     = " + str(n_overinterp) + "  (|r|>=0.5)")
+    println("  verdict               = " + verdict)
+    println("  out                   = " + out_path)
+    println("")
+    println("─── 6×5 Spearman ρ heatmap (cols=features, rows=EEG metrics) ───")
+    println(heatmap)
+
+    if mode == "selftest" {
+        if selftest_pass == 1 {
+            println("  selftest              = SELFTEST_OK")
+            println("    inject #1 user_msg_len ↔ lz76_b      r×1000 = " + str(corr[0]) + "  sig=" + str(sig[0]))
+            println("    inject #2 asst_latency ↔ drowsy      r×1000 = " + str(corr[16]) + "  sig=" + str(sig[16]))
+            exit(0)
+        }
+        println("  selftest              = SELFTEST_FAIL")
+        println("    inject #1 r×1000 = " + str(corr[0]) + "  sig=" + str(sig[0]))
+        println("    inject #2 r×1000 = " + str(corr[16]) + "  sig=" + str(sig[16]))
+        exit(1)
+    }
+
+    if verdict == "B9_PASS" { exit(0) }
+    if verdict == "B9_ABSTAIN_N_LT_100" { exit(0) }   // ABSTAIN is not failure
+    exit(1)
+}

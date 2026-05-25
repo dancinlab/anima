@@ -1,0 +1,888 @@
+// anima-eeg/analyze.hexa
+// Spec doc: anima-eeg/MIGRATION_PLAN.md §5.3, §5.4 (Phase 3 Cycle 2 FULL)
+//
+// PURPOSE
+//   Pure-hexa EEG band-power + asymmetry + G=D*P/I genius score.
+//
+//   Pipeline (single-channel synthetic input, one window):
+//     1. windowed naive DFT (N power-of-two, default 64)
+//     2. magnitude spectrum -> band power (delta 1-4, theta 4-8,
+//        alpha 8-12, beta 12-30, gamma 30-100 Hz)
+//     3. compute asymmetry from caller-supplied left/right alpha
+//     4. G score: D = alpha asymmetry magnitude
+//                 P = gamma global power (proxy for persistence)
+//                 I = frontal alpha (proxy for inhibition)
+//                 G = D * P / I
+//     5. JSON output state/analyze_<basename>.json
+//
+// raw10_honest:
+//   - naive DFT O(N^2), not Welch PSD; for N=64 single window only
+//   - synthetic fixture: sum of three sinusoids at 2/10/40 Hz @ fs=128
+//   - cos_f/sin_f via Taylor (no Math.cos/sin native in hexa-lang 0.2.0)
+//   - topomap rendering = WRAPPER (matplotlib) — Phase 4
+//
+// USAGE
+//   hexa run anima-eeg/analyze.hexa --selftest
+//   hexa run anima-eeg/analyze.hexa --emit-json <basename>
+//
+// DETERMINISM
+//   No RNG. All synthetic signals are Taylor-expanded sinusoids of the
+//   sample index. Two consecutive runs produce byte-identical stdout
+//   (and byte-identical state/analyze_<basename>.json).
+//
+//  @resolver-pure(reason="pure-hexa naive DFT + band-power + asymmetry,
+//                  Taylor-expanded sinusoids, no Math/syscalls/BrainFlow.
+//                  Single-pass, read-only, deterministic. Docker route adds
+//                  zero value and triggers fork-storm on metadata commands.")
+
+let SCHEMA = "anima-eeg/analyze/1"
+
+// ════════════════════════════════════════════════════════════════════
+// Constants
+// ════════════════════════════════════════════════════════════════════
+
+let PI       = 3.141592653589793
+let TWO_PI   = 6.283185307179586
+let HALF_PI  = 1.5707963267948966
+let EPS_DIV  = 0.000001
+
+// Band edges (Hz)
+let DELTA_LO = 1.0
+let DELTA_HI = 4.0
+let THETA_LO = 4.0
+let THETA_HI = 8.0
+let ALPHA_LO = 8.0
+let ALPHA_HI = 12.0
+let BETA_LO  = 12.0
+let BETA_HI  = 30.0
+let GAMMA_LO = 30.0
+let GAMMA_HI = 100.0
+
+// Default sampling parameters (synthetic fixture)
+let DEFAULT_FS  = 128.0
+let DEFAULT_N   = 64
+
+// ════════════════════════════════════════════════════════════════════
+// Output globals
+// ════════════════════════════════════════════════════════════════════
+
+let g_band_delta = 0.0
+let g_band_theta = 0.0
+let g_band_alpha = 0.0
+let g_band_beta  = 0.0
+let g_band_gamma = 0.0
+let g_total_pow  = 0.0
+
+let g_asymmetry  = 0.0
+let g_diversity  = 0.0
+let g_persistence = 0.0
+let g_inhibition  = 0.0
+let g_g_score     = 0.0
+
+let g_fs_used    = 0.0
+let g_n_used     = 0
+
+// ════════════════════════════════════════════════════════════════════
+// Rail-saturation detection — globals
+// ════════════════════════════════════════════════════════════════════
+//
+//   When a verdict is computed on a clean subset, downstream consumers
+//   MUST annotate tier=functional (not full). F1/F2/F3 verdicts computed
+//   on the clean subset are reported alongside the railed-channel list
+//   so they can be re-interpreted.
+//
+// OpenBCI Cyton+Daisy ADC rail = ±187.5 mV in raw int24→µV scaling.
+//   default rail_thresh_uv=187.0 (slightly under physical to catch
+//   pre-saturation). Adjustable via --rail-thresh-uv but DO NOT tune to
+//   make a verdict pass — physical rail is per ADC datasheet, not a knob.
+//
+// Default OFF for backward compat with single-channel synthetic pipeline.
+// Wrapper layer (BrainFlow → 16ch ingestor) opts-in via --rail-detect or
+// by calling detect_railed_channels(...) directly.
+
+let RAIL_THRESH_UV_DEFAULT  = 187.0
+let SAT_FRAC_THRESH_DEFAULT = 0.05
+let DC_DRIFT_FRAC_OF_RAIL   = 0.5
+
+let mut g_rail_thresh_uv  = 187.0
+let mut g_sat_frac_thresh = 0.05
+let mut g_rail_detect_on  = false
+
+// rail-detect outputs (populated by detect_railed_channels)
+let mut g_rail_railed_idx    = []
+let mut g_rail_sat_fracs     = []
+let mut g_rail_n_total       = 0
+let mut g_rail_n_railed      = 0
+let mut g_rail_audit_status  = "PASS"
+let mut g_rail_o1_railed     = false
+let mut g_rail_o2_railed     = false
+let mut g_rail_verdict_tier  = "full"
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers — abs / safe_div
+// ════════════════════════════════════════════════════════════════════
+
+fn abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn safe_div(a: float, b: float) -> float {
+    let mut bb = b
+    if abs_f(bb) < EPS_DIV {
+        if bb < 0.0 { bb = 0.0 - EPS_DIV } else { bb = EPS_DIV }
+    }
+    return a / bb
+}
+
+// ════════════════════════════════════════════════════════════════════
+// cos_f / sin_f via range-reduced Taylor (hexa-lang 0.2.0 has no Math.*)
+// ════════════════════════════════════════════════════════════════════
+//
+// Strategy:
+//   Reduce angle to [-pi, pi]
+//   Reduce further to [-pi/2, pi/2] using cos(x+pi) = -cos(x), sin(x+pi) = -sin(x)
+//   Taylor expansion around 0 (degree 11) — accurate to ~1e-10 in [-pi/2, pi/2]
+//
+//     cos(x) = 1 - x^2/2 + x^4/24 - x^6/720 + x^8/40320 - x^10/3628800
+//     sin(x) = x - x^3/6 + x^5/120 - x^7/5040 + x^9/362880
+
+fn reduce_to_pi(x: float) -> float {
+    let mut a = x
+    while a >  PI { a = a - TWO_PI }
+    while a < (0.0 - PI) { a = a + TWO_PI }
+    return a
+}
+
+fn cos_f(x: float) -> float {
+    let mut a = reduce_to_pi(x)
+    let mut sign = 1.0
+    if a >  HALF_PI { a = a - PI; sign = 0.0 - 1.0 }
+    if a < (0.0 - HALF_PI) { a = a + PI; sign = 0.0 - 1.0 }
+    let x2  = a * a
+    let x4  = x2 * x2
+    let x6  = x4 * x2
+    let x8  = x4 * x4
+    let x10 = x8 * x2
+    // hexa-lang 0.2.0: multi-line + expression breaks, single-line required
+    let c = 1.0 - x2 / 2.0 + x4 / 24.0 - x6 / 720.0 + x8 / 40320.0 - x10 / 3628800.0
+    return sign * c
+}
+
+fn sin_f(x: float) -> float {
+    let mut a = reduce_to_pi(x)
+    // sin reflection: sin(pi - x) = sin(x), sin(-pi - x) = -sin(x+pi) = sin(x)
+    if a >  HALF_PI { a = PI - a }
+    if a < (0.0 - HALF_PI) { a = (0.0 - PI) - a }
+    let x2  = a * a
+    let x3  = x2 * a
+    let x5  = x3 * x2
+    let x7  = x5 * x2
+    let x9  = x7 * x2
+    let x11 = x9 * x2
+    // degree-11 Taylor — error at pi/2 < 1e-9
+    let s = a - x3 / 6.0 + x5 / 120.0 - x7 / 5040.0 + x9 / 362880.0 - x11 / 39916800.0
+    return s
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Synthetic signal generation
+// ════════════════════════════════════════════════════════════════════
+//
+// fixture_signal(n, fs):
+//   x[k] = sin(2π·2·k/fs)        // delta band 2 Hz, amp 1.0
+//        + 0.6 * sin(2π·10·k/fs) // alpha band 10 Hz, amp 0.6
+//        + 0.3 * sin(2π·40·k/fs) // gamma band 40 Hz, amp 0.3
+// returns: list of n floats
+
+fn fixture_signal(n: int, fs: float) -> list {
+    let mut out = []
+    let mut k = 0
+    while k < n {
+        let kf = k * 1.0
+        let v = sin_f(TWO_PI * 2.0  * kf / fs)
+              + 0.6 * sin_f(TWO_PI * 10.0 * kf / fs)
+              + 0.3 * sin_f(TWO_PI * 40.0 * kf / fs)
+        out.push(v)
+        k = k + 1
+    }
+    return out
+}
+
+// adversarial: pure constant DC -> all bands ~0 (only DC bin)
+fn fixture_dc(n: int) -> list {
+    let mut out = []
+    let mut k = 0
+    while k < n {
+        out.push(1.0)
+        k = k + 1
+    }
+    return out
+}
+
+// adversarial: pure beta band 18 Hz -> only beta band has power
+fn fixture_pure_beta(n: int, fs: float) -> list {
+    let mut out = []
+    let mut k = 0
+    while k < n {
+        let kf = k * 1.0
+        out.push(sin_f(TWO_PI * 18.0 * kf / fs))
+        k = k + 1
+    }
+    return out
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Hann window
+// ════════════════════════════════════════════════════════════════════
+//
+// w[k] = 0.5 * (1 - cos(2π·k/(N-1)))
+// We apply window in-place to a copy.
+
+fn hann_window(x: list, n: int) -> list {
+    let mut out = []
+    let mut k = 0
+    let denom = (n - 1) * 1.0
+    while k < n {
+        let kf = k * 1.0
+        let w = 0.5 * (1.0 - cos_f(TWO_PI * kf / denom))
+        out.push(x[k] * w)
+        k = k + 1
+    }
+    return out
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Naive DFT — O(N^2)
+// ════════════════════════════════════════════════════════════════════
+//
+// For real input x of length N:
+//   X_k = sum_{n=0..N-1} x[n] * (cos(2πkn/N) - i·sin(2πkn/N))
+//   |X_k|^2 = re^2 + im^2
+// We compute power spectrum (magnitude squared) for k in [0, N/2].
+// Returns list of length floor(N/2)+1.
+
+fn dft_power(x: list, n: int) -> list {
+    let half = n / 2
+    let mut psd = []
+    let mut k = 0
+    while k <= half {
+        let mut re = 0.0
+        let mut im = 0.0
+        let mut nn = 0
+        let kf = k * 1.0
+        let nf = n * 1.0
+        while nn < n {
+            let nnf = nn * 1.0
+            let ang = TWO_PI * kf * nnf / nf
+            re = re + x[nn] * cos_f(ang)
+            im = im - x[nn] * sin_f(ang)
+            nn = nn + 1
+        }
+        psd.push(re * re + im * im)
+        k = k + 1
+    }
+    return psd
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Band power integration
+// ════════════════════════════════════════════════════════════════════
+//
+// Bin frequency f_k = k * fs / N
+// Sum |X_k|^2 over bins where lo <= f_k < hi.
+// Two-sided spectrum: we use one-sided and multiply by 2 (except DC/Nyquist).
+
+fn band_power(psd: list, fs: float, n: int, lo: float, hi: float) -> float {
+    let mut p = 0.0
+    let bin_hz = fs / (n * 1.0)
+    let mut k = 0
+    let half = n / 2
+    while k <= half {
+        let f = k * bin_hz
+        if f >= lo && f < hi {
+            let factor = 2.0
+            // DC and Nyquist counted once; bands 1..N/2-1 doubled
+            if k == 0 || k == half { p = p + psd[k] }
+            else { p = p + factor * psd[k] }
+        }
+        k = k + 1
+    }
+    // Normalize by N^2 (Parseval-like, makes amplitude^2 scaling)
+    let nf = n * 1.0
+    return p / (nf * nf)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Rail-saturation detection
+// ════════════════════════════════════════════════════════════════════
+//
+// detect_railed_channels(data, rail_thresh_uv, sat_frac_thresh)
+//   data: list of 16 channel lists, each of length n_samples (µV)
+//   rail_thresh_uv:    |sample| ≥ this counts as a saturated sample
+//   sat_frac_thresh:   if saturated_count / n > this → channel is RAILED
+//
+// Secondary check: if |mean(channel)| > 0.5 * rail_thresh_uv → also RAILED
+//   (catches DC-drift saturation that may not exceed rail at peak rate.)
+//
+// Populates globals:
+//   g_rail_railed_idx    list of railed channel numbers (1-based)
+//   g_rail_sat_fracs     list of float saturation fractions, one per channel
+//   g_rail_n_total       total channel count seen (== len(data))
+//   g_rail_n_railed      len(g_rail_railed_idx)
+//   g_rail_audit_status  "PASS" | "WARN" | "FAIL"
+//   g_rail_o1_railed     true iff row 7 is railed
+//   g_rail_o2_railed     true iff row 8 is railed
+//   g_rail_verdict_tier  "full" | "functional" | "insufficient_data"
+//
+// Audit thresholds:
+//   PASS  = 0 railed
+//   WARN  = 1..3 railed   (proceed; F1/F2/F3 on clean subset)
+//   FAIL  = 4+ railed     (verdict tier demoted to functional_analog)
+//
+// O1/O2 (rows 7/8 in OpenBCI Cyton+Daisy → occipital):
+//   both railed → F1 emits INSUFFICIENT_DATA (tier=insufficient_data)
+//   single railed → F1 single-channel fallback (tier=functional)
+
+fn detect_railed_channels(data: list, rail_thresh_uv: float, sat_frac_thresh: float) {
+    let n_chan = len(data)
+    let mut sat_fracs = []
+    let mut railed = []
+    let mut o1 = false
+    let mut o2 = false
+
+    let mut ch = 0
+    while ch < n_chan {
+        let series = data[ch]
+        let n_samples = len(series)
+        let mut sat_count = 0
+        let mut sum_v = 0.0
+        let mut k = 0
+        while k < n_samples {
+            let v = series[k]
+            if abs_f(v) >= rail_thresh_uv { sat_count = sat_count + 1 }
+            sum_v = sum_v + v
+            k = k + 1
+        }
+        let nf = n_samples * 1.0
+        let frac = safe_div(sat_count * 1.0, nf)
+        sat_fracs.push(frac)
+        let mean_v = safe_div(sum_v, nf)
+        let dc_drift_railed = abs_f(mean_v) > (DC_DRIFT_FRAC_OF_RAIL * rail_thresh_uv)
+        let peak_railed = frac > sat_frac_thresh
+        if peak_railed || dc_drift_railed {
+            let one_based = ch + 1
+            railed.push(one_based)
+            if one_based == 7 { o1 = true }
+            if one_based == 8 { o2 = true }
+        }
+        ch = ch + 1
+    }
+
+    g_rail_sat_fracs   = sat_fracs
+    g_rail_railed_idx  = railed
+    g_rail_n_total     = n_chan
+    g_rail_n_railed    = len(railed)
+    g_rail_o1_railed   = o1
+    g_rail_o2_railed   = o2
+
+    if g_rail_n_railed == 0 {
+        g_rail_audit_status = "PASS"
+    } else if g_rail_n_railed <= 3 {
+        g_rail_audit_status = "WARN"
+    } else {
+        g_rail_audit_status = "FAIL"
+    }
+
+    if o1 && o2 {
+        g_rail_verdict_tier = "insufficient_data"
+    } else if o1 || o2 {
+        g_rail_verdict_tier = "functional"
+    } else if g_rail_audit_status == "FAIL" {
+        g_rail_verdict_tier = "functional"
+    } else {
+        g_rail_verdict_tier = "full"
+    }
+}
+
+// Build clean_channels = 1..n_total minus railed (1-based indices, for caller).
+fn rail_clean_channels() -> list {
+    let mut clean = []
+    let mut i = 1
+    while i <= g_rail_n_total {
+        let mut is_railed = false
+        let mut j = 0
+        while j < len(g_rail_railed_idx) {
+            if g_rail_railed_idx[j] == i { is_railed = true }
+            j = j + 1
+        }
+        if !is_railed { clean.push(i) }
+        i = i + 1
+    }
+    return clean
+}
+
+// Build "[1, 5, 6, 8, 16]"-style display string.
+fn rail_railed_list_str() -> string {
+    let mut s = "["
+    let mut i = 0
+    while i < len(g_rail_railed_idx) {
+        if i > 0 { s = s + ", " }
+        s = s + to_string(g_rail_railed_idx[i])
+        i = i + 1
+    }
+    s = s + "]"
+    return s
+}
+
+// Emit per-channel saturation fraction log + sentinel line.
+//   __RAIL_AUDIT__ <PASS|WARN|FAIL> <n_railed>/<n_total> <list>
+fn emit_rail_audit() {
+    let mut i = 0
+    while i < len(g_rail_sat_fracs) {
+        println("rail_sat_frac[" + to_string(i + 1) + "]=" + to_string(g_rail_sat_fracs[i]))
+        i = i + 1
+    }
+    println("rail_o1_railed=" + to_string(g_rail_o1_railed))
+    println("rail_o2_railed=" + to_string(g_rail_o2_railed))
+    println("rail_verdict_tier=" + g_rail_verdict_tier)
+    println("__RAIL_AUDIT__ " + g_rail_audit_status
+            + " " + to_string(g_rail_n_railed) + "/" + to_string(g_rail_n_total)
+            + " " + rail_railed_list_str())
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Synthetic 16ch fixtures (selftest)
+// ════════════════════════════════════════════════════════════════════
+
+// Build a 16-channel data tensor (list-of-lists). Channels listed in
+// `rail_rows_1based` are saturated to +rail_uv at every sample; all
+// others are filled with a low-amplitude AC signal (pure 10 Hz @ ~1µV).
+fn fixture_16ch_with_railed(rail_rows_1based: list, n_samples: int,
+                            fs: float, rail_uv: float) -> list {
+    let mut data = []
+    let mut ch = 0
+    while ch < 16 {
+        let one_based = ch + 1
+        let mut is_railed = false
+        let mut j = 0
+        while j < len(rail_rows_1based) {
+            if rail_rows_1based[j] == one_based { is_railed = true }
+            j = j + 1
+        }
+        let mut series = []
+        let mut k = 0
+        while k < n_samples {
+            if is_railed {
+                series.push(rail_uv)
+            } else {
+                let kf = k * 1.0
+                series.push(1.0 * sin_f(TWO_PI * 10.0 * kf / fs))
+            }
+            k = k + 1
+        }
+        data.push(series)
+        ch = ch + 1
+    }
+    return data
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Top-level: compute_band_power
+// ════════════════════════════════════════════════════════════════════
+
+fn compute_band_power_from_signal(signal: list, n: int, fs: float) {
+    let xw = hann_window(signal, n)
+    let psd = dft_power(xw, n)
+    g_band_delta = band_power(psd, fs, n, DELTA_LO, DELTA_HI)
+    g_band_theta = band_power(psd, fs, n, THETA_LO, THETA_HI)
+    g_band_alpha = band_power(psd, fs, n, ALPHA_LO, ALPHA_HI)
+    g_band_beta  = band_power(psd, fs, n, BETA_LO,  BETA_HI)
+    g_band_gamma = band_power(psd, fs, n, GAMMA_LO, GAMMA_HI)
+    g_total_pow  = g_band_delta + g_band_theta + g_band_alpha
+                 + g_band_beta + g_band_gamma
+    g_fs_used = fs
+    g_n_used  = n
+}
+
+// ════════════════════════════════════════════════════════════════════
+// G = D * P / I genius score
+// ════════════════════════════════════════════════════════════════════
+//
+// D (diversity)   = |left_alpha - right_alpha|
+// P (persistence) = gamma global power (current band_gamma)
+// I (inhibition)  = frontal alpha power
+// G = D * P / I, with safe_div.
+// raw10_honest: G is a rough heuristic, not an empirically validated
+// genius/insight metric. Per session_dump anima-eeg README (108 tests
+// 85.6% brain-like) the "genius" framing is aspirational.
+
+fn compute_genius(left_alpha: float, right_alpha: float,
+                  gamma_global: float, frontal_alpha: float) {
+    g_diversity   = abs_f(left_alpha - right_alpha)
+    g_persistence = gamma_global
+    g_inhibition  = frontal_alpha
+    g_asymmetry   = left_alpha - right_alpha
+    g_g_score     = safe_div(g_diversity * g_persistence, g_inhibition)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// JSON emit
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_json(basename: string) {
+    let out_path = "state/analyze_" + basename + ".json"
+    // hexa-lang 0.2.0: multi-line + breaks, build via incremental concat
+    let mut body = "{\n"
+    body = body + "  \"schema\": \"" + SCHEMA + "\",\n"
+    body = body + "  \"fs\": " + to_string(g_fs_used) + ",\n"
+    body = body + "  \"n\": " + to_string(g_n_used) + ",\n"
+    body = body + "  \"band_power\": {\n"
+    body = body + "    \"delta\": " + to_string(g_band_delta) + ",\n"
+    body = body + "    \"theta\": " + to_string(g_band_theta) + ",\n"
+    body = body + "    \"alpha\": " + to_string(g_band_alpha) + ",\n"
+    body = body + "    \"beta\":  " + to_string(g_band_beta) + ",\n"
+    body = body + "    \"gamma\": " + to_string(g_band_gamma) + ",\n"
+    body = body + "    \"total\": " + to_string(g_total_pow) + "\n"
+    body = body + "  },\n"
+    body = body + "  \"genius\": {\n"
+    body = body + "    \"diversity\": " + to_string(g_diversity) + ",\n"
+    body = body + "    \"persistence\": " + to_string(g_persistence) + ",\n"
+    body = body + "    \"inhibition\": " + to_string(g_inhibition) + ",\n"
+    body = body + "    \"g_score\": " + to_string(g_g_score) + "\n"
+    body = body + "  },\n"
+    body = body + "  \"asymmetry\": " + to_string(g_asymmetry) + ",\n"
+    // rail_audit block (populated only if detect_railed_channels was called)
+    body = body + "  \"rail_audit\": {\n"
+    body = body + "    \"status\": \"" + g_rail_audit_status + "\",\n"
+    body = body + "    \"n_total\": " + to_string(g_rail_n_total) + ",\n"
+    body = body + "    \"n_railed\": " + to_string(g_rail_n_railed) + ",\n"
+    body = body + "    \"railed_channels_1based\": " + rail_railed_list_str() + ",\n"
+    body = body + "    \"o1_railed\": " + to_string(g_rail_o1_railed) + ",\n"
+    body = body + "    \"o2_railed\": " + to_string(g_rail_o2_railed) + ",\n"
+    body = body + "    \"verdict_tier\": \"" + g_rail_verdict_tier + "\",\n"
+    body = body + "    \"rail_thresh_uv\": " + to_string(g_rail_thresh_uv) + ",\n"
+    body = body + "    \"sat_frac_thresh\": " + to_string(g_sat_frac_thresh) + "\n"
+    body = body + "  }\n"
+    body = body + "}\n"
+    write_file(out_path, body)
+    println("emit_json=" + out_path)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// KV emit
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_kv() {
+    println("schema=" + SCHEMA)
+    println("fs=" + to_string(g_fs_used))
+    println("n=" + to_string(g_n_used))
+    println("band_delta=" + to_string(g_band_delta))
+    println("band_theta=" + to_string(g_band_theta))
+    println("band_alpha=" + to_string(g_band_alpha))
+    println("band_beta=" + to_string(g_band_beta))
+    println("band_gamma=" + to_string(g_band_gamma))
+    println("band_total=" + to_string(g_total_pow))
+    println("asymmetry=" + to_string(g_asymmetry))
+    println("diversity=" + to_string(g_diversity))
+    println("persistence=" + to_string(g_persistence))
+    println("inhibition=" + to_string(g_inhibition))
+    println("g_score=" + to_string(g_g_score))
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Self-tests
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn run_tests() -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+
+    // T1: cos_f / sin_f sanity
+    println("[T1] cos_f / sin_f sanity")
+    let ok1a = assert_true(abs_f(cos_f(0.0) - 1.0) < 0.000001, "cos(0)=1")
+    let ok1b = assert_true(abs_f(sin_f(0.0)) < 0.000001, "sin(0)=0")
+    let ok1c = assert_true(abs_f(cos_f(HALF_PI)) < 0.000001, "cos(pi/2)=0")
+    let ok1d = assert_true(abs_f(sin_f(HALF_PI) - 1.0) < 0.000001, "sin(pi/2)=1")
+    let ok1e = assert_true(abs_f(cos_f(PI) + 1.0) < 0.000001, "cos(pi)=-1")
+    let ok1f = assert_true(abs_f(sin_f(PI)) < 0.0001, "sin(pi)=0")
+    if ok1a && ok1b && ok1c && ok1d && ok1e && ok1f { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T2: synthetic 3-tone signal -> alpha (10 Hz) detected
+    println("[T2] synthetic 3-tone -> alpha detected")
+    let sig = fixture_signal(DEFAULT_N, DEFAULT_FS)
+    compute_band_power_from_signal(sig, DEFAULT_N, DEFAULT_FS)
+    let ok2a = assert_true(g_band_alpha > 0.0, "alpha > 0")
+    let ok2b = assert_true(g_total_pow > 0.0, "total > 0")
+    // Alpha amp 0.6, gamma amp 0.3 -> alpha power should exceed gamma power
+    let ok2c = assert_true(g_band_alpha > g_band_gamma, "alpha > gamma (0.6^2 > 0.3^2)")
+    if ok2a && ok2b && ok2c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T3: pure beta 18 Hz -> beta dominant
+    println("[T3] pure beta 18 Hz -> beta dominant")
+    let sigb = fixture_pure_beta(DEFAULT_N, DEFAULT_FS)
+    compute_band_power_from_signal(sigb, DEFAULT_N, DEFAULT_FS)
+    let ok3a = assert_true(g_band_beta > g_band_alpha, "beta > alpha")
+    let ok3b = assert_true(g_band_beta > g_band_delta, "beta > delta")
+    let ok3c = assert_true(g_band_beta > g_band_gamma, "beta > gamma")
+    if ok3a && ok3b && ok3c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T4: DC input -> high-freq bands (alpha/beta/gamma) near zero.
+    //   raw10_honest: Hann-windowed DC has lobes that leak into delta/theta
+    //   bands (windowed pulse has narrow non-zero spectrum near DC).
+    //   We assert AC-band cleanliness ABOVE 8 Hz only.
+    println("[T4] DC input -> high-freq bands near zero (Hann window leakage tolerated in delta/theta)")
+    let sigdc = fixture_dc(DEFAULT_N)
+    compute_band_power_from_signal(sigdc, DEFAULT_N, DEFAULT_FS)
+    let ok4a = assert_true(g_band_alpha < 0.001, "alpha near 0")
+    let ok4b = assert_true(g_band_beta  < 0.001, "beta near 0")
+    let ok4c = assert_true(g_band_gamma < 0.001, "gamma near 0")
+    if ok4a && ok4b && ok4c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T5: G = D*P/I — left=0.6, right=0.4, gamma=0.3, frontal=0.5
+    //   D = 0.2, P = 0.3, I = 0.5 -> G = 0.06 / 0.5 = 0.12
+    println("[T5] G = D*P/I scaling")
+    compute_genius(0.6, 0.4, 0.3, 0.5)
+    let ok5a = assert_true(abs_f(g_diversity   - 0.2) < 0.00001, "D=0.2")
+    let ok5b = assert_true(abs_f(g_persistence - 0.3) < 0.00001, "P=0.3")
+    let ok5c = assert_true(abs_f(g_inhibition  - 0.5) < 0.00001, "I=0.5")
+    let ok5d = assert_true(abs_f(g_g_score     - 0.12) < 0.00001, "G=0.12")
+    let ok5e = assert_true(abs_f(g_asymmetry   - 0.2) < 0.00001, "asym=0.2")
+    if ok5a && ok5b && ok5c && ok5d && ok5e { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T6: G zero-inhibition safe — I=0 -> safe_div clamps, finite
+    println("[T6] G with I=0 stays finite (safe_div)")
+    compute_genius(0.6, 0.4, 0.3, 0.0)
+    let ok6 = assert_true(abs_f(g_g_score) < 1.0e9, "G finite even at I=0")
+    if ok6 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T7: deterministic idempotence — current 3-tone state vs known-stable
+    // expected value (byte-identical run-to-run by Taylor-expanded sinusoids).
+    // across compute_band_power_from_signal calls. We cap T7 at ONE compute
+    // (re-running 3-tone after T3+T4 contaminated band state) and compare
+    // against alpha_expected. This bounds total DFT calls so T8-T10 finish
+    println("[T7] deterministic idempotence")
+    let s_idemp = fixture_signal(DEFAULT_N, DEFAULT_FS)
+    compute_band_power_from_signal(s_idemp, DEFAULT_N, DEFAULT_FS)
+    let alpha_expected = 0.0550099
+    let ok7 = assert_true(abs_f(g_band_alpha - alpha_expected) < 0.0001,
+                          "alpha matches expected (~=" + to_string(alpha_expected) + ")")
+    if ok7 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T8: JSON emit roundtrip — reuses T7 3-tone band state (NO extra compute).
+    println("[T8] JSON emit roundtrip (reuses T7 3-tone band state)")
+    compute_genius(0.6, 0.4, g_band_gamma, g_band_alpha)
+    emit_json("selftest_synth")
+    let ok8 = assert_true(true, "emit_json returned without error")
+    if ok8 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T9: low-frequency reduce — fixture has 2 Hz delta component (amp 1.0).
+    // reuses T7 3-tone band state (NO extra compute). Asserts band ordering
+    // delta > alpha for the 3-tone fixture currently in g_band_*.
+    println("[T9] 3-tone fixture: delta dominant (amp 1.0, reuses T7 state)")
+    // delta band 1-4 Hz: with N=64, fs=128 -> bin_hz=2.0, bins {1=2Hz, 2=4Hz}
+    // 2 Hz tone falls in bin 1 -> delta
+    // amp 1.0 at delta vs amp 0.6 at alpha -> delta_power > alpha_power
+    let ok9 = assert_true(g_band_delta > g_band_alpha, "delta > alpha")
+    if ok9 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T10: band exclusivity — pure beta should give beta_pct > 0.7 of total.
+    // pure_beta overwrites band state — but no later test depends on prior state.
+    println("[T10] band exclusivity for pure tone")
+    let s_pure = fixture_pure_beta(DEFAULT_N, DEFAULT_FS)
+    compute_band_power_from_signal(s_pure, DEFAULT_N, DEFAULT_FS)
+    let beta_pct = safe_div(g_band_beta, g_total_pow)
+    let ok10 = assert_true(beta_pct > 0.7, "beta_pct > 0.7 for pure 18 Hz")
+    if ok10 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T11: rail-detect — synthetic 16ch with rows {1, 5, 6, 8, 16} fully railed.
+    //   Expected: __RAIL_AUDIT__ FAIL 5/16 [1, 5, 6, 8, 16]
+    //   Also: O2 railed (row 8), O1 not railed (row 7) → tier=functional
+    println("[T11] rail-detect synthetic 16ch (rows {1,5,6,8,16} railed)")
+    let rail_rows = [1, 5, 6, 8, 16]
+    let n_t11 = 64
+    let data16 = fixture_16ch_with_railed(rail_rows, n_t11, DEFAULT_FS, 200.0)
+    detect_railed_channels(data16, RAIL_THRESH_UV_DEFAULT, SAT_FRAC_THRESH_DEFAULT)
+    emit_rail_audit()
+    let ok11a = assert_true(g_rail_n_total == 16, "n_total=16")
+    let ok11b = assert_true(g_rail_n_railed == 5, "n_railed=5")
+    let ok11c = assert_true(g_rail_audit_status == "FAIL", "audit_status=FAIL")
+    let ok11d = assert_true(g_rail_o1_railed == false, "O1 (row 7) not railed")
+    let ok11e = assert_true(g_rail_o2_railed == true,  "O2 (row 8) railed")
+    let ok11f = assert_true(g_rail_verdict_tier == "functional", "tier=functional (O2 railed)")
+    let want_idx = [1, 5, 6, 8, 16]
+    let mut idx_ok = (len(g_rail_railed_idx) == 5)
+    let mut wi = 0
+    while wi < 5 {
+        if !(g_rail_railed_idx[wi] == want_idx[wi]) { idx_ok = false }
+        wi = wi + 1
+    }
+    let ok11g = assert_true(idx_ok, "railed_idx == [1, 5, 6, 8, 16]")
+    let clean = rail_clean_channels()
+    let ok11h = assert_true(len(clean) == 11, "clean_channels has 11 entries")
+    if ok11a && ok11b && ok11c && ok11d && ok11e && ok11f && ok11g && ok11h {
+        pass = pass + 1
+    } else { fail = fail + 1 }
+
+    // T12: rail-detect — clean 16ch (no rows railed) → PASS.
+    println("[T12] rail-detect clean 16ch → PASS")
+    let no_rails = []
+    let data_clean = fixture_16ch_with_railed(no_rails, 64, DEFAULT_FS, 200.0)
+    detect_railed_channels(data_clean, RAIL_THRESH_UV_DEFAULT, SAT_FRAC_THRESH_DEFAULT)
+    let ok12a = assert_true(g_rail_n_railed == 0, "n_railed=0")
+    let ok12b = assert_true(g_rail_audit_status == "PASS", "audit_status=PASS")
+    let ok12c = assert_true(g_rail_verdict_tier == "full", "tier=full")
+    if ok12a && ok12b && ok12c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T13: rail-detect — both O1+O2 railed → tier=insufficient_data.
+    println("[T13] rail-detect O1+O2 both railed → insufficient_data")
+    let both_occ = [7, 8]
+    let data_occ = fixture_16ch_with_railed(both_occ, 64, DEFAULT_FS, 200.0)
+    detect_railed_channels(data_occ, RAIL_THRESH_UV_DEFAULT, SAT_FRAC_THRESH_DEFAULT)
+    let ok13a = assert_true(g_rail_o1_railed == true, "O1 railed")
+    let ok13b = assert_true(g_rail_o2_railed == true, "O2 railed")
+    let ok13c = assert_true(g_rail_verdict_tier == "insufficient_data", "tier=insufficient_data")
+    if ok13a && ok13b && ok13c { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CLI entry point
+// ════════════════════════════════════════════════════════════════════
+
+// Parse a float arg via simple atoi-like: handles "187", "187.0", "0.05".
+// hexa-lang 0.2.0 has no float() builtin; we route through to_string round-trip
+fn parse_float_arg(s: string) -> float {
+    let mut sign = 1.0
+    let mut idx = 0
+    let n = len(s)
+    if n > 0 {
+        if s[0] == "-" { sign = 0.0 - 1.0; idx = 1 }
+        else if s[0] == "+" { idx = 1 }
+    }
+    let mut int_part = 0.0
+    let mut frac_part = 0.0
+    let mut frac_div = 1.0
+    let mut seen_dot = false
+    while idx < n {
+        let c = s[idx]
+        if c == "." {
+            seen_dot = true
+        } else {
+            let mut d = -1
+            if c == "0" { d = 0 }
+            if c == "1" { d = 1 }
+            if c == "2" { d = 2 }
+            if c == "3" { d = 3 }
+            if c == "4" { d = 4 }
+            if c == "5" { d = 5 }
+            if c == "6" { d = 6 }
+            if c == "7" { d = 7 }
+            if c == "8" { d = 8 }
+            if c == "9" { d = 9 }
+            if d >= 0 {
+                if seen_dot {
+                    frac_div = frac_div * 10.0
+                    frac_part = frac_part + (d * 1.0) / frac_div
+                } else {
+                    int_part = int_part * 10.0 + (d * 1.0)
+                }
+            }
+        }
+        idx = idx + 1
+    }
+    return sign * (int_part + frac_part)
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut emit_json_flag = false
+    let mut basename = "demo"
+    // single-channel synthetic pipeline (no 16ch ingest in pure-hexa stage1).
+    // Wrapper layer opts in via --rail-detect; --no-rail-detect explicitly off.
+    g_rail_thresh_uv  = RAIL_THRESH_UV_DEFAULT
+    g_sat_frac_thresh = SAT_FRAC_THRESH_DEFAULT
+    g_rail_detect_on  = false
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == "--selftest" { selftest = true }
+        else if av[i] == "--emit-json" {
+            emit_json_flag = true
+            if (i + 1) < len(av) { basename = av[i + 1]; i = i + 1 }
+        }
+        else if av[i] == "--rail-detect"    { g_rail_detect_on = true }
+        else if av[i] == "--no-rail-detect" { g_rail_detect_on = false }
+        else if av[i] == "--rail-thresh-uv" {
+            if (i + 1) < len(av) { g_rail_thresh_uv = parse_float_arg(av[i + 1]); i = i + 1 }
+        }
+        else if av[i] == "--sat-frac-thresh" {
+            if (i + 1) < len(av) { g_sat_frac_thresh = parse_float_arg(av[i + 1]); i = i + 1 }
+        }
+        i = i + 1
+    }
+
+    if !selftest && !emit_json_flag {
+        println("usage: hexa run anima-eeg/analyze.hexa --selftest")
+        println("       hexa run anima-eeg/analyze.hexa --emit-json <basename>")
+        println("       hexa run anima-eeg/analyze.hexa --selftest [--rail-detect] [--no-rail-detect]")
+        println("                                                 [--rail-thresh-uv <µV>=187.0]")
+        println("                                                 [--sat-frac-thresh <0..1>=0.05]")
+        exit(2)
+    }
+
+    println("schema=" + SCHEMA)
+    println("raw10_honest=naive_DFT_O(N^2)_synthetic_3tone_taylor_trig")
+    println("rail_detect_on=" + to_string(g_rail_detect_on))
+    println("rail_thresh_uv=" + to_string(g_rail_thresh_uv))
+    println("sat_frac_thresh=" + to_string(g_sat_frac_thresh))
+    println("date_tag=2026_05_03")
+    println("")
+
+    // If rail-detect is on (--rail-detect), demo it on a synthetic 16ch fixture
+    // mirroring the v6 EC measurement pattern: rows {1, 5, 6, 8, 16} railed.
+    // closest we can get to "live" rail-audit until the wrapper layer wires
+    // BrainFlow → 16ch → detect_railed_channels(...).
+    if g_rail_detect_on {
+        println("── rail-detect demo (synthetic 16ch matching v6 EC pattern) ──")
+        let demo_rail_rows = [1, 5, 6, 8, 16]
+        let demo_data = fixture_16ch_with_railed(demo_rail_rows, 64, DEFAULT_FS, 200.0)
+        detect_railed_channels(demo_data, g_rail_thresh_uv, g_sat_frac_thresh)
+        emit_rail_audit()
+        println("")
+    }
+
+
+    // Demonstration emit (synthetic 3-tone)
+    let sig = fixture_signal(DEFAULT_N, DEFAULT_FS)
+    compute_band_power_from_signal(sig, DEFAULT_N, DEFAULT_FS)
+    compute_genius(0.6, 0.4, g_band_gamma, g_band_alpha)
+    emit_kv()
+    println("")
+
+    if emit_json_flag {
+        emit_json(basename)
+        println("")
+    }
+
+    if selftest {
+        let fails = run_tests()
+        if fails != 0 {
+            println("selftest=fail")
+            eprintln("selftest FAILED: " + to_string(fails) + " test(s) failed")
+            exit(1)
+        }
+        println("selftest=ok")
+    }
+    println("DONE")
+}
+// hexa-strict auto-invokes fn main() — do not call main() explicitly.

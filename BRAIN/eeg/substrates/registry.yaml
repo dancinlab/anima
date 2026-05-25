@@ -1,0 +1,60 @@
+# hexa-brain/eeg/substrates/registry.yaml
+# Per-backend substrate metadata. raw#10 honest: this file is hand-curated,
+# NOT auto-derived from .hexa headers. Mismatches against the actual file
+# header SCHEMA constants must be reconciled manually.
+#
+# schema: hexa-brain/eeg/substrates_registry/1
+#
+# FIELDS
+#   id          internal substrate identifier (matches the .hexa basename)
+#   dep_id      references vendor/external_deps.yaml (Part A firewall)
+#               — "none" for substrates with zero external deps
+#   coupling    in_process | http | subprocess | cli (license firewall axis)
+#   tier        PHENOMENAL | DEGRADED | NOT_IMPLEMENTED
+#   read_only   true if api_stim raises NotImplementedError
+#   status      active | declared-not-implemented
+#   notes       1-line raw#10 honesty disclosure
+#
+# Part A integration: bin/check_licenses.sh consumes this file to verify
+# that in_process substrates only pull from allow-listed licenses.
+
+substrates:
+  - id: synth
+    dep_id: none
+    coupling: in_process
+    tier: PHENOMENAL
+    read_only: true
+    status: active
+    notes: "deterministic LCG seed=1; no external dep; first-class substrate"
+
+  - id: replay
+    dep_id: none
+    coupling: in_process
+    tier: PHENOMENAL
+    read_only: true
+    status: active
+    notes: "disk .npy playback; numpy import optional (handwritten fallback)"
+
+  - id: brainflow
+    dep_id: brainflow
+    coupling: in_process
+    tier: PHENOMENAL
+    read_only: true
+    status: active
+    notes: "wraps _session_manager.hexa; verifies brainflow upstream license MIT"
+
+  - id: nes
+    dep_id: braingenix-nes
+    coupling: http
+    tier: NOT_IMPLEMENTED
+    read_only: true
+    status: declared-not-implemented
+    notes: "Part C-1; AGPL-3.0 — http-loopback only, NEVER in_process import"
+
+  - id: cl1
+    dep_id: cl-sdk
+    coupling: http
+    tier: NOT_IMPLEMENTED
+    read_only: false
+    status: declared-not-implemented
+    notes: "future biological-neuron substrate; CC-BY-NC-4.0 — http-loopback only"

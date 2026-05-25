@@ -1,0 +1,284 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg-core/tool/modules/_integrations/clm_eeg_p1.hexa
+//                                                  (Phase 6 — _integrations #1)
+//
+//  PURPOSE
+//    Mk.XII CLM EEG P1 pre-register harness — composes the resting-baseline
+//    paradigm with the LZ76 metric for V_phen_EEG-LZ × CLM-LZ alignment
+//    (omega_cycle_alm_free_paradigms_20260426.md §4 P1).
+//
+//    HYPOTHESIS
+//      LZ76(EEG resting 1s window) and LZ76(CLM hidden state) co-vary, and
+//      |Δ| / human_baseline is bounded.
+//
+//    DECISION: PORT (selftest), WRAP-DESIGN-REFERENCE (live).
+//    Legacy backend lives at anima-clm-eeg/tool/clm_eeg_p1_lz_pre_register.hexa
+//    (353 LoC, frozen 2026-04-26). It ports the LZ76 proxy + frozen criteria
+//    here for selftest determinism (LCG seed=42 fixture). Live mode is
+//    NOT_YET_LANDED — requires real resting EEG ingest + clm hidden-state
+//    cross-stream which are not in this dispatcher's reach.
+//
+//  PRE-REGISTERED CRITERIA (frozen — mirror of legacy SSOT)
+//    C1.  LZ76(EEG)   ≥ 0.65          (LZ76_EEG_MIN_X1000=650)
+//    C2.  |Δ| / human ≤ 0.20          (DELTA_HUMAN_MAX_PERMILLE=200)
+//    Verdict P1.PASS = (C1 AND C2)
+//
+//  RAW#71 FALSIFIERS (≥3 preregistered, frozen 2026-04-29)
+//    F_P1_01: lz76_proxy < C1                           → LZ_FLOOR_BREACH
+//    F_P1_02: |Δ|/human > C2                            → BASELINE_DRIFT
+//    F_P1_03: distinct_pattern_count < 3                → LOW_DIVERSITY
+//    F_P1_04: paradigm verdict != PASS                  → PARADIGM_FAILED
+//    F_P1_05: human_baseline missing/zero               → CRITERIA_INVALID
+//
+//  API
+//    _integration_clm_eeg_p1_kv(args_kv: string) -> string
+//      kv-block:
+//        schema=anima-eeg-core/_integrations/clm_eeg_p1/1
+//        metric=lz76_eeg_clm_p1
+//        verdict=<PASS|FALSIFIED|FAIL>
+//        value_x1000=<lz76_proxy_x1000>
+//        ...
+//
+//  CLI
+//    hexa run clm_eeg_p1.hexa --selftest
+//    hexa run clm_eeg_p1.hexa --live   (→ NOT_YET_LANDED honest C3)
+//
+//
+//  @resolver-bypass(reason="darwin-native: live mode requires real EEG resting
+//                   recording + clm hidden-state stream; selftest synth-only.")
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA            = "anima-eeg-core/_integrations/clm_eeg_p1/1"
+let MODULE_NAME       = "clm_eeg_p1"
+let LEGACY_PATH       = "anima-clm-eeg/tool/clm_eeg_p1_lz_pre_register.hexa"
+
+// frozen criteria (mirror of legacy SSOT)
+let LZ76_EEG_MIN_X1000        = 650
+let DELTA_HUMAN_MAX_PERMILLE  = 200
+let HUMAN_BASELINE_LZ76_X1000 = 850
+
+// LCG (deterministic — match legacy seed=42 fixture)
+let LCG_A = 1103515245
+let LCG_C = 12345
+let LCG_M = 2147483648
+
+let SENTINEL = -2147483647
+
+// ─── helpers ────────────────────────────────────────────────────────────
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_prefix = false
+        if a.ends_with(".hexa") { is_prefix = true }
+        if !is_prefix { if a.ends_with("/exe") { is_prefix = true } }
+        if !is_prefix { if a == "run" { is_prefix = true } }
+        if !is_prefix { if a.ends_with("hexa.real") || a.ends_with("/hexa") { is_prefix = true } }
+        if is_prefix { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn _kv_get(kv: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = kv.split(",")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _to_int_or(s: string, dflt: int) -> int {
+    if s == "" { return dflt }
+    return to_int(s)
+}
+
+fn _lcg_next(state: int) -> int {
+    let mut s = state * LCG_A + LCG_C
+    if s < 0 { s = -s }
+    s = s - (s / LCG_M) * LCG_M
+    return s
+}
+
+// count distinct elements in an array of ints
+fn _count_distinct(arr: array) -> int {
+    let n = len(arr)
+    if n <= 0 { return 0 }
+    let mut distinct = 0
+    let mut i = 0
+    while i < n {
+        let mut seen = 0
+        let mut j = 0
+        while j < i {
+            if arr[i] == arr[j] { seen = 1; j = i }
+            j = j + 1
+        }
+        if seen == 0 { distinct = distinct + 1 }
+        i = i + 1
+    }
+    return distinct
+}
+
+// LZ76 proxy: distinct-key fraction (matches legacy)
+fn _lz76_proxy_x1000(distinct: int, n: int) -> int {
+    if n <= 0 { return 0 }
+    let r = (distinct * 1000) / n
+    if r > 1000 { return 1000 }
+    if r < 0 { return 0 }
+    return r
+}
+
+fn _abs(x: int) -> int { if x < 0 { return -x } return x }
+
+// ─── public API ────────────────────────────────────────────────────────
+
+fn _integration_clm_eeg_p1_kv(args_kv: string) -> string {
+    let seed       = _to_int_or(_kv_get(args_kv, "seed"),      42)
+    let n_channels = _to_int_or(_kv_get(args_kv, "n_channels"), 16)
+    let inj_low    = _to_int_or(_kv_get(args_kv, "inject_low_lz"),  0)
+    let inj_drift  = _to_int_or(_kv_get(args_kv, "inject_drift"),   0)
+    let inj_zero   = _to_int_or(_kv_get(args_kv, "inject_zero_distinct"), 0)
+
+    // synthesise per-channel pattern key 0..31 via LCG (legacy mirror)
+    let mut keys = []
+    let mut state = seed
+    let mut c = 0
+    while c < n_channels {
+        state = _lcg_next(state)
+        let mut k = state - (state / 32) * 32
+        if k < 0 { k = -k }
+        // injection forces all keys identical (low diversity)
+        if inj_zero == 1 { k = 7 }
+        keys.push(k)
+        c = c + 1
+    }
+    let mut distinct = _count_distinct(keys)
+    if distinct < 1 { distinct = 0 }
+
+    let mut lz_proxy = _lz76_proxy_x1000(distinct, n_channels)
+    if inj_low == 1 { lz_proxy = 400 }            // forces below C1 floor
+    let mut human_baseline = HUMAN_BASELINE_LZ76_X1000
+    if inj_drift == 1 { human_baseline = 100 }    // forces |Δ|/human large
+
+    let abs_delta = _abs(lz_proxy - human_baseline)
+    let pct_x1000 = if human_baseline > 0 { (abs_delta * 1000) / human_baseline } else { SENTINEL }
+
+    // criteria
+    let c1_pass = if lz_proxy >= LZ76_EEG_MIN_X1000 { 1 } else { 0 }
+    let c2_pass = if pct_x1000 != SENTINEL && pct_x1000 <= DELTA_HUMAN_MAX_PERMILLE { 1 } else { 0 }
+
+    let mut triggered = ""
+    let mut trig_count = 0
+    if c1_pass == 0                          { triggered = triggered + "F_P1_01,"; trig_count = trig_count + 1 }
+    if c2_pass == 0                          { triggered = triggered + "F_P1_02,"; trig_count = trig_count + 1 }
+    if distinct < 3                          { triggered = triggered + "F_P1_03,"; trig_count = trig_count + 1 }
+    // F_P1_04: paradigm-link surrogate — distinct < 1 means paradigm degenerate
+    if distinct == 0                         { triggered = triggered + "F_P1_04,"; trig_count = trig_count + 1 }
+    if human_baseline <= 0                   { triggered = triggered + "F_P1_05,"; trig_count = trig_count + 1 }
+    let nT = len(triggered)
+    if nT > 0 { triggered = triggered.substring(0, nT - 1) }
+
+    let mut verdict = "PASS"
+    if trig_count > 0 { verdict = "FALSIFIED" }
+
+    let mut kv = ""
+    kv = kv + "schema=" + SCHEMA + "\n"
+    kv = kv + "module=" + MODULE_NAME + "\n"
+    kv = kv + "metric=lz76_eeg_clm_p1\n"
+    kv = kv + "paradigm=resting_baseline\n"
+    kv = kv + "n_channels=" + str(n_channels) + "\n"
+    kv = kv + "seed=" + str(seed) + "\n"
+    kv = kv + "distinct_pattern_count=" + str(distinct) + "\n"
+    kv = kv + "lz76_proxy_x1000=" + str(lz_proxy) + "\n"
+    kv = kv + "human_baseline_lz76_x1000=" + str(human_baseline) + "\n"
+    kv = kv + "abs_delta_x1000=" + str(abs_delta) + "\n"
+    kv = kv + "pct_delta_permille=" + str(pct_x1000) + "\n"
+    kv = kv + "C1_lz76_min_x1000=" + str(LZ76_EEG_MIN_X1000) + "\n"
+    kv = kv + "C2_delta_max_permille=" + str(DELTA_HUMAN_MAX_PERMILLE) + "\n"
+    kv = kv + "C1_pass=" + str(c1_pass) + "\n"
+    kv = kv + "C2_pass=" + str(c2_pass) + "\n"
+    kv = kv + "verdict=" + verdict + "\n"
+    kv = kv + "value_x1000=" + str(lz_proxy) + "\n"
+    kv = kv + "backend=" + LEGACY_PATH + "\n"
+    kv = kv + "backend_status=ported_in_module_synth_lcg_seed42\n"
+    kv = kv + "raw71_falsifier_count=5\n"
+    kv = kv + "raw71_triggered_count=" + str(trig_count) + "\n"
+    kv = kv + "raw71_triggered_ids=" + triggered + "\n"
+    kv = kv + "raw91_evidence=lz76_proxy_+criteria_C1_C2_+lcg_seed_42_synth_keys\n"
+    kv = kv + "raw91_limit=lz_proxy_not_kaspar_schuster_+no_real_eeg_no_clm_substrate\n"
+    kv = kv + "raw95_enforce_layer=in_module\n"
+    return kv
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _print_usage() {
+    eprintln("usage: hexa run clm_eeg_p1.hexa --selftest")
+    eprintln("       hexa run clm_eeg_p1.hexa --live   (→ NOT_YET_LANDED)")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut live = false
+    let mut seed = 42
+    let mut n_channels = 16
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest"   { selftest = true; i = i + 1; continue }
+        if a == "--live"       { live = true; i = i + 1; continue }
+        if a == "--seed"       { seed = to_int(av[i+1]); i = i + 2; continue }
+        if a == "--n-channels" { n_channels = to_int(av[i+1]); i = i + 2; continue }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if !selftest && !live {
+        eprintln("ABORT: must pass --selftest or --live")
+        _print_usage()
+        exit(2)
+    }
+
+    if live && !selftest {
+        println("── _integrations/clm_eeg_p1 LIVE ──")
+        println("schema=" + SCHEMA)
+        println("status=NOT_YET_LANDED")
+        println("kind=live_real_eeg_+clm_hidden_state_cross_stream")
+        println("verdict=PENDING_MIGRATION")
+        println("backend=" + LEGACY_PATH)
+        eprintln("reason: not-yet-landed: live requires real resting EEG + clm hidden trace")
+        eprintln("fix: run legacy directly: hexa run " + LEGACY_PATH + " (post-arrival D+1)")
+        exit(4)
+    }
+
+    println("== _integrations/clm_eeg_p1 selftest (synth LCG seed=" + str(seed) + ") ==")
+    let args_kv = "seed=" + str(seed) + ",n_channels=" + str(n_channels)
+    let kv = _integration_clm_eeg_p1_kv(args_kv)
+    print(kv)
+
+    let lines = kv.split("\n")
+    let mut found_pass = 0
+    let mut k = 0
+    while k < len(lines) {
+        let ln = lines[k].trim()
+        if ln == "verdict=PASS" { found_pass = 1 }
+        k = k + 1
+    }
+    if found_pass == 0 {
+        eprintln("reason: nominal selftest verdict not PASS — falsifier triggered or sentinel")
+        exit(1)
+    }
+    println("selftest=ok")
+    exit(0)
+}
