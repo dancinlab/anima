@@ -36,7 +36,7 @@ LIFE 의 proxy `phi_spatial`(RFC036)은 진화한 snapshot 의 cell 간 **상관
 
 ## 4. honest scope (C3)
 
-- **proxy = self-contained 재구현** (RFC036-family 평균 pairwise MI) — 정식 `phi_spatial` builtin 아님 (g5: canonical 주장 안 함). 정식 builtin 과의 수치 일치는 별도(LIFE/C toolchain import 필요).
+- **proxy = self-contained 재구현** (RFC036-family 평균 pairwise MI) — 정식 `phi_spatial` builtin 아님 (g5: canonical 주장 안 함). 정식 builtin 과의 수치 일치는 별도(LIFE/C toolchain import 필요). → **M14 로 CLOSED 2026-05-25**: [`state/iit4_m14_phispatial_compare_2026_05_25/`](../iit4_m14_phispatial_compare_2026_05_25/) — 동일 ECA series 에서 inline 와 canonical phi_spatial 을 verbatim 비교. null-axis (rule 204, 30) 는 canonical 의 n_bins=4 binning floor (~1.6e-6) 안에서 합의, constant-column rule (0, 90) 은 canonical = **2.000 × inline** 정수배, mixed rule (110, 54) 은 1.119 비율. divergence = 100% algorithmic (min-partition + /(n−1) 정규화 + binning floor), implementation drift = 0. 9/9 🟢.
 - 단일 seed/T, n=4. multi-seed/larger-n 일반화는 후속.
 - IIT4 측은 structure-cut big-Φ — 절대 스케일 PyPhi 대조는 M5 named-blocker(F-IIT4-3/4) 잔존.
 - **salvage 출처**: cycle#2 병렬 에이전트 서버 rate-limit(429) 사망 → 메인 세션 인라인 재작성.
