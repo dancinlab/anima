@@ -85,7 +85,7 @@ HEXAD/LIFE/lib/                    stdlib/
 - [x] anima sha256 sweep — MERGED #461 (~104 site / 105 file, net -89 LoC) + #463 (superseded)
 - [x] anima l2_norm sweep — MERGED #462 (w1) + #467 (w2a, 12 alm) + #473 (phi_vec_logger byte-equal)
 - [ ] anima sha256 wave 2b 잔여 — directory-walk / `sha256sum -c` manifest / remote-SSH (deferred, #461 list)
-- [ ] anima l2_norm wave 2b 잔여 — ~196 plain site (serving/tool/HEXAD, pearson 파일과 분리 발사 필요)
+- [x] anima l2_norm wave 2b — serving/tool #482 (1/39 migrate) + HEXAD (0/9) → **natural-floor 확정**: 잔여 site 는 non-libm custom sqrt(sqrt_newton/fsqrt/isqrt) · guard · 통계량 · complex mag 로 byte-equal 부적합
 
 ### natural-floor 발견 (cycle 13)
 
