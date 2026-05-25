@@ -170,7 +170,7 @@ fn load_jsonl(path: str, cap_records: int) -> list {
         if len(line) > 2 {
             let rec = parse_record(line)
             if len(rec["text"]) > 0 {
-                out = out + [rec]
+                out.push(rec)   // O(1) in-place — was `out + [rec]` (O(n²), OOM on 91k wiki recs)
                 if cap_records >= 0 && len(out) >= cap_records { return out }
             }
         }
