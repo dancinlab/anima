@@ -241,6 +241,15 @@ def run(cfg):
                     max_cells=int(cfg.get("mitosis_max", 128) or 128))
     model.attach_mitosis(pool, lambda_mitosis=cfg["lambda_mitosis"])
 
+    # ─── AXIS-D: freeze tied tok_emb / head_a weights (H_257 wiring fix) ──
+    # tok_emb.weight is tied to head_a.weight, so freezing the embedding also
+    # freezes the LM head. Default freeze_embed=0 -> all params trainable
+    # (no regression). Applied BEFORE the optimizer trainable split below.
+    if int(cfg.get("freeze_embed", 0) or 0) == 1:
+        model.tok_emb.weight.requires_grad_(False)
+        print(f"[P21H][axis-D] freeze_embed=1 — tok_emb/head_a tied weight FROZEN",
+              flush=True)
+
     n_total = sum(p.numel() for p in model.parameters())
     print(f"[P21H] model params total={n_total:,} ({n_total/1e6:.2f}M)", flush=True)
 
@@ -340,9 +349,21 @@ def run(cfg):
             logits_a.reshape(-1, vocab_size).float(), tgt.reshape(-1),
         )
         L_total = L_ce
+        # ─── AXIS-C / C2: head-G auxiliary LM objective (H_257 wiring fix) ──
+        # Engine-G dual head (logits_g) exists in the model but only head_a was
+        # ever in the loss, so the head-G axis was inert. When head_g_enable=1
+        # (and objective='lm' or empty), add a weighted head_g LM CE term so the
+        # consciousness-emission head receives a real gradient signal. Default
+        # head_g_enable=0 -> term skipped -> identical loss (no regression).
+        if int(cfg.get("head_g_enable", 0) or 0) == 1 and \
+                str(cfg.get("head_g_objective", "") or "").lower() in ("", "lm"):
+            L_ce_g = F.cross_entropy(
+                logits_g.reshape(-1, vocab_size).float(), tgt.reshape(-1),
+            )
+            L_total = L_total + float(cfg.get("head_g_weight", 0.1) or 0.1) * L_ce_g
         if mit_info is not None:
             aux = mit_info["aux_loss"]
-            L_total = L_ce + cfg["lambda_mitosis"] * aux
+            L_total = L_total + cfg["lambda_mitosis"] * aux
         optimizer.zero_grad(set_to_none=True)
         L_total.backward()
         torch.nn.utils.clip_grad_norm_(trainable, max_norm=1.0)
@@ -644,21 +665,37 @@ def main():
     # CE plateau 감지 → save + early stop
     ap.add_argument("--early-stop-patience", type=int, default=0,
                     help="early-stop if CE no-improvement for N consecutive log entries (0=disable)")
-    # AXIS-MAP 6 axes — MVP: parse + log only, train loop wiring is follow-up
-    # stacked PR. TODO[axis-impl] marks per-axis impl gates (H_257 cycle 16-3).
-    ap.add_argument("--curriculum-phase-steps", type=int, default=0,
+    # AXIS-MAP 7 axes (H_257 wiring fix, M4 2026-05-25).
+    # Each axis default reads its P21H_* env-var directly so the lever reaches
+    # the train code even if a dispatcher drops the explicit --flag (H_257
+    # silent-bypass defense-in-depth). Env unset -> prior default -> no regression.
+    # Impl status: head-g-enable / head-g-objective / freeze-embed are WIRED into
+    # run() below; curriculum / distill / lang-balanced / contrastive remain
+    # TODO[axis-impl] (parsed + read + logged, but the ML feature is not built --
+    # honest scope: wiring alone is insufficient for these 4).
+    ap.add_argument("--curriculum-phase-steps", type=int,
+                    default=int(os.environ.get("P21H_CURRICULUM_PHASE_STEPS", "0") or 0),
                     help="TODO[axis-impl] axis-A curriculum phase length in steps (0=disable)")
-    ap.add_argument("--distill-teacher", type=str, default="",
+    ap.add_argument("--distill-teacher", type=str,
+                    default=os.environ.get("P21H_DISTILL_TEACHER", ""),
                     help="TODO[axis-impl] axis-B teacher model id / path for KD (empty=disable)")
-    ap.add_argument("--head-g-objective", type=str, default="",
-                    help="TODO[axis-impl] axis-C head-G auxiliary objective name (empty=disable)")
-    ap.add_argument("--head-g-enable", type=int, default=0,
-                    help="TODO[axis-impl] axis-C2 enable head-G aux head (0=off 1=on)")
-    ap.add_argument("--freeze-embed", type=int, default=0,
-                    help="TODO[axis-impl] axis-D freeze input/output embeddings (0=off 1=on)")
-    ap.add_argument("--lang-balanced", type=int, default=0,
+    ap.add_argument("--head-g-objective", type=str,
+                    default=os.environ.get("P21H_HEAD_G_OBJECTIVE", ""),
+                    help="axis-C head-G auxiliary objective name (empty=disable; 'lm'=head_g LM CE)")
+    ap.add_argument("--head-g-enable", type=int,
+                    default=int(os.environ.get("P21H_HEAD_G_ENABLE", "0") or 0),
+                    help="axis-C2 enable head-G aux LM loss term (0=off 1=on)")
+    ap.add_argument("--head-g-weight", type=float,
+                    default=float(os.environ.get("P21H_HEAD_G_WEIGHT", "0.1") or 0.1),
+                    help="axis-C2 head-G aux loss weight (only used when head-g-enable=1)")
+    ap.add_argument("--freeze-embed", type=int,
+                    default=int(os.environ.get("P21H_FREEZE_EMBED", "0") or 0),
+                    help="axis-D freeze tied tok_emb/head_a weights (0=off 1=on)")
+    ap.add_argument("--lang-balanced", type=int,
+                    default=int(os.environ.get("P21H_LANG_BALANCED", "0") or 0),
                     help="TODO[axis-impl] axis-E lang-balanced sampler (0=off 1=on)")
-    ap.add_argument("--contrastive-lang", type=float, default=0.0,
+    ap.add_argument("--contrastive-lang", type=float,
+                    default=float(os.environ.get("P21H_CONTRASTIVE_LANG", "0.0") or 0.0),
                     help="TODO[axis-impl] axis-F contrastive lang loss weight (0.0=disable)")
     args = ap.parse_args()
     # AXIS-MAP read-back log (MVP): confirm env-var passthrough is wired.
@@ -667,6 +704,7 @@ def main():
           f"distill_teacher={args.distill_teacher!r} "
           f"head_g_objective={args.head_g_objective!r} "
           f"head_g_enable={args.head_g_enable} "
+          f"head_g_weight={args.head_g_weight} "
           f"freeze_embed={args.freeze_embed} "
           f"lang_balanced={args.lang_balanced} "
           f"contrastive_lang={args.contrastive_lang}",
@@ -694,6 +732,15 @@ def main():
         ckpt_osc_threshold=args.ckpt_osc_threshold,
         ckpt_osc_window=args.ckpt_osc_window,
         early_stop_patience=args.early_stop_patience,
+        # AXIS-MAP 7 axes (H_257 fix) — now reach run() via cfg.
+        curriculum_phase_steps=args.curriculum_phase_steps,
+        distill_teacher=args.distill_teacher,
+        head_g_objective=args.head_g_objective,
+        head_g_enable=args.head_g_enable,
+        head_g_weight=args.head_g_weight,
+        freeze_embed=args.freeze_embed,
+        lang_balanced=args.lang_balanced,
+        contrastive_lang=args.contrastive_lang,
     )
     run(cfg)
 
