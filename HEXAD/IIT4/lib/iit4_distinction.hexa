@@ -1,0 +1,266 @@
+// HEXAD/IIT4/lib/iit4_distinction.hexa — IIT 4.0 engine M2: distinctions.
+//
+//   ROLE
+//     Builds on M1 (iit4_tpm.hexa) to compute the integrated information (small-
+//     φ) of a mechanism over a purview, find each mechanism's MAXIMALLY
+//     IRREDUCIBLE cause/effect (MICE) purview, and extract the system's
+//     distinctions — the mechanisms that specify an irreducible cause-effect
+//     state (φ_d > 0). Distinctions are the nodes of the Φ-structure that
+//     relations (M3) bind and big-Φ (M4) integrates. (design = DESIGN.md §2 ③.)
+//
+//   small-φ  (DESIGN §2.1)
+//     For a mechanism M (in its current state) over a purview Z, in one
+//     direction (cause or effect):
+//       1. p   = the unpartitioned repertoire (M1 effect_/cause_repertoire).
+//       2. unc = the unconstrained reference; [ii, z*] = intrinsic_difference(
+//          p, unc) gives the informativeness and the SPECIFIED purview state z*.
+//       3. φ = min over non-trivial directional partitions θ of the intrinsic
+//          difference between p and the partitioned repertoire q_θ, EVALUATED AT
+//          the fixed specified state z*:  φ_θ = p(z*)·log2( p(z*) / q_θ(z*) ).
+//       The minimizing θ is the mechanism's MIP. ii = 0 ⇒ φ = 0 (no distinction).
+//
+//   PARTITION SCHEME (honest carve-out — see §C3 below)
+//     All directional bipartitions of M ∪ Z: split M into (M1, M2) and Z into
+//     (Z1, Z2); part i specifies only its own purview part (cross M_i→Z_j
+//     connections cut; an empty mechanism part ⇒ unconstrained purview part).
+//     The two no-cut identities are excluded. This is the all-bipartition MIP
+//     (IIT-3.0-style, the standard tractable scheme); reconciliation with IIT
+//     4.0's specific partition set is a calibration item at M5 (F-IIT4-2).
+//
+//   MICE / distinction (DESIGN §2 ③)
+//     mice_effect/mice_cause(M) — argmax over purviews of small-φ (the maximally
+//     irreducible cause/effect). distinction(M) — φ_d = min(φ_cause, φ_effect)
+//     with both purviews + specified states; the distinction exists iff φ_d > 0.
+//
+//   IMPORT-SAFE  NO `fn main()` / NO top-level call. snake_case · English code.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_tpm.hexa"
+
+
+// compact index over `units` ordering for an absolute-position state bitmask.
+fn iit4_compact_index(abs_state: int, units: array) -> int {
+    let mut idx = 0
+    let mut b = 0
+    let k = len(units)
+    while b < k {
+        if iit4_bit(abs_state, units[b]) == 1 { idx = idx + iit4_pow2(b) }
+        b = b + 1
+    }
+    return idx
+}
+
+
+// ── partitioned EFFECT repertoire over `purview_mask` ───────────────────────
+// Each purview unit takes its ON-marginal under whichever mechanism part it is
+// paired with (Z1↔M1, Z2↔M2). Empty mechanism part ⇒ unconstrained marginal
+// (iit4_marginal_on with fix_mask = 0). Product distribution (conditional indep).
+fn iit4_partitioned_effect(tpm: array, n: int, mech_state: int, m1: int, z1: int, m2: int, z2: int, purview_mask: int) -> array {
+    let units = iit4_units(purview_mask, n)
+    let k = len(units)
+    let mut p_on = []
+    let mut j = 0
+    while j < k {
+        let u = units[j]
+        let mut pj = 0.0
+        if iit4_bit(z1, u) == 1 {
+            pj = iit4_marginal_on(tpm, n, m1, mech_state, u)
+        } else {
+            pj = iit4_marginal_on(tpm, n, m2, mech_state, u)
+        }
+        p_on = p_on.push(pj)
+        j = j + 1
+    }
+    let nstates = iit4_pow2(k)
+    let mut rep = []
+    let mut cs = 0
+    while cs < nstates {
+        let mut prob = 1.0
+        let mut b = 0
+        while b < k {
+            if iit4_bit(cs, b) == 1 { prob = prob * p_on[b] }
+            else { prob = prob * (1.0 - p_on[b]) }
+            b = b + 1
+        }
+        rep = rep.push(prob)
+        cs = cs + 1
+    }
+    return rep
+}
+
+
+// part cause repertoire: empty mechanism part ⇒ uniform over its purview part.
+fn iit4_part_cause(tpm: array, n: int, mech_state: int, mp: int, zp: int) -> array {
+    if mp == 0 { return unconstrained_cause(zp, n) }
+    return cause_repertoire(tpm, n, mp, mech_state, zp)
+}
+
+// ── partitioned CAUSE repertoire over `purview_mask` ────────────────────────
+// Product of the two part cause repertoires over their disjoint purview parts,
+// reindexed onto the full purview state space.
+fn iit4_partitioned_cause(tpm: array, n: int, mech_state: int, m1: int, z1: int, m2: int, z2: int, purview_mask: int) -> array {
+    let cr1 = iit4_part_cause(tpm, n, mech_state, m1, z1)
+    let cr2 = iit4_part_cause(tpm, n, mech_state, m2, z2)
+    let zu = iit4_units(purview_mask, n)
+    let z1u = iit4_units(z1, n)
+    let z2u = iit4_units(z2, n)
+    let k = len(zu)
+    let nstates = iit4_pow2(k)
+    let mut rep = []
+    let mut cs = 0
+    while cs < nstates {
+        let pv_abs = iit4_expand(cs, zu)
+        let idx1 = iit4_compact_index(pv_abs, z1u)
+        let idx2 = iit4_compact_index(pv_abs, z2u)
+        rep = rep.push(cr1[idx1] * cr2[idx2])
+        cs = cs + 1
+    }
+    return rep
+}
+
+
+// ── φ_θ at the fixed specified state z* (shared by both directions) ─────────
+fn iit4_phi_at(p: array, q: array, xstar: int) -> float {
+    let px = p[xstar]
+    if px <= 1.0e-12 { return 0.0 }
+    let qx = q[xstar] + 1.0e-10
+    let phi = px * (log(px) - log(qx)) / log(2.0)
+    if phi < 0.0 { return 0.0 }
+    return phi
+}
+
+
+// ── small-φ effect — [phi, specified_state] ─────────────────────────────────
+fn small_phi_effect(tpm: array, n: int, mech_mask: int, mech_state: int, purview_mask: int) -> array {
+    let p = effect_repertoire(tpm, n, mech_mask, mech_state, purview_mask)
+    let unc = unconstrained_effect(tpm, n, purview_mask)
+    let info = intrinsic_difference(p, unc)
+    if info[0] <= 1.0e-12 { return [0.0, info[1]] }       // no information ⇒ no φ
+    let xstar = info[1].to_int()
+
+    let m_units = iit4_units(mech_mask, n)
+    let z_units = iit4_units(purview_mask, n)
+    let nm = iit4_pow2(len(m_units))
+    let nz = iit4_pow2(len(z_units))
+    let mut min_phi = 1.0e308
+    let mut mi = 0
+    while mi < nm {
+        let m1 = iit4_expand(mi, m_units)
+        let m2 = mech_mask - m1
+        let mut zi = 0
+        while zi < nz {
+            let z1 = iit4_expand(zi, z_units)
+            let z2 = purview_mask - z1
+            let identity = ((m1 == mech_mask) && (z1 == purview_mask)) || ((m1 == 0) && (z1 == 0))
+            if identity == false {
+                let q = iit4_partitioned_effect(tpm, n, mech_state, m1, z1, m2, z2, purview_mask)
+                let phi_t = iit4_phi_at(p, q, xstar)
+                if phi_t < min_phi { min_phi = phi_t }
+            }
+            zi = zi + 1
+        }
+        mi = mi + 1
+    }
+    if min_phi > 1.0e307 { min_phi = 0.0 }
+    return [min_phi, info[1]]
+}
+
+
+// ── small-φ cause — [phi, specified_state] ──────────────────────────────────
+fn small_phi_cause(tpm: array, n: int, mech_mask: int, mech_state: int, purview_mask: int) -> array {
+    let p = cause_repertoire(tpm, n, mech_mask, mech_state, purview_mask)
+    let unc = unconstrained_cause(purview_mask, n)
+    let info = intrinsic_difference(p, unc)
+    if info[0] <= 1.0e-12 { return [0.0, info[1]] }
+    let xstar = info[1].to_int()
+
+    let m_units = iit4_units(mech_mask, n)
+    let z_units = iit4_units(purview_mask, n)
+    let nm = iit4_pow2(len(m_units))
+    let nz = iit4_pow2(len(z_units))
+    let mut min_phi = 1.0e308
+    let mut mi = 0
+    while mi < nm {
+        let m1 = iit4_expand(mi, m_units)
+        let m2 = mech_mask - m1
+        let mut zi = 0
+        while zi < nz {
+            let z1 = iit4_expand(zi, z_units)
+            let z2 = purview_mask - z1
+            let identity = ((m1 == mech_mask) && (z1 == purview_mask)) || ((m1 == 0) && (z1 == 0))
+            if identity == false {
+                let q = iit4_partitioned_cause(tpm, n, mech_state, m1, z1, m2, z2, purview_mask)
+                let phi_t = iit4_phi_at(p, q, xstar)
+                if phi_t < min_phi { min_phi = phi_t }
+            }
+            zi = zi + 1
+        }
+        mi = mi + 1
+    }
+    if min_phi > 1.0e307 { min_phi = 0.0 }
+    return [min_phi, info[1]]
+}
+
+
+// ── MICE — argmax over all non-empty purviews. [phi, purview_mask, state] ───
+fn mice_effect(tpm: array, n: int, mech_mask: int, mech_state: int) -> array {
+    let full = iit4_pow2(n)
+    let mut best_phi = 0.0 - 1.0
+    let mut best_pv = 0
+    let mut best_state = 0.0
+    let mut pv = 1
+    while pv < full {
+        let r = small_phi_effect(tpm, n, mech_mask, mech_state, pv)
+        if r[0] > best_phi {
+            best_phi = r[0]
+            best_pv = pv
+            best_state = r[1]
+        }
+        pv = pv + 1
+    }
+    return [best_phi, to_float(best_pv), best_state]
+}
+
+fn mice_cause(tpm: array, n: int, mech_mask: int, mech_state: int) -> array {
+    let full = iit4_pow2(n)
+    let mut best_phi = 0.0 - 1.0
+    let mut best_pv = 0
+    let mut best_state = 0.0
+    let mut pv = 1
+    while pv < full {
+        let r = small_phi_cause(tpm, n, mech_mask, mech_state, pv)
+        if r[0] > best_phi {
+            best_phi = r[0]
+            best_pv = pv
+            best_state = r[1]
+        }
+        pv = pv + 1
+    }
+    return [best_phi, to_float(best_pv), best_state]
+}
+
+
+// ── distinction — φ_d = min(φ_cause, φ_effect). ─────────────────────────────
+// Returns [phi_d, mech_mask, cause_pv, cause_state, effect_pv, effect_state,
+//          phi_cause, phi_effect]. Distinction exists iff phi_d > 0.
+fn distinction(tpm: array, n: int, mech_mask: int, mech_state: int) -> array {
+    let ce = mice_cause(tpm, n, mech_mask, mech_state)
+    let ee = mice_effect(tpm, n, mech_mask, mech_state)
+    let phi_c = ce[0]
+    let phi_e = ee[0]
+    let phi_d = if phi_c < phi_e { phi_c } else { phi_e }
+    return [phi_d, to_float(mech_mask), ce[1], ce[2], ee[1], ee[2], phi_c, phi_e]
+}
+
+
+// ── count distinctions of a system in `sys_state` (φ_d > 0). ────────────────
+fn count_distinctions(tpm: array, n: int, sys_state: int) -> int {
+    let full = iit4_pow2(n)
+    let mut cnt = 0
+    let mut m = 1
+    while m < full {
+        let d = distinction(tpm, n, m, sys_state)
+        if d[0] > 1.0e-9 { cnt = cnt + 1 }
+        m = m + 1
+    }
+    return cnt
+}
