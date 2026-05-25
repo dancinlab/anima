@@ -17,6 +17,21 @@ M11 README §4 honest scope "정식 phi_spatial builtin 과의 수치 일치는 
 - [x] determinism check: canonical phi_spatial(rule 110) 재호출 byte-identical (0.322715 == 0.322715).
 - [x] honest scope: single n=4/seed/T/n_bins · canonical = RFC 036 C builtin (replica-vs-builtin byte-equal 은 별 cycle, rfc_036_c_replica_drift 책임 = LIFE/STDLIB).
 
+## 2026-05-25 — M13 exclusion 다중-complex / spectrum (hexa-lang PR #1118 + anima smoke)
+
+cycle#3 첫 진척. M10 의 단일-maximal-complex 한계를 spectrum 으로 확장 — 한 substrate 위 여러 비-겹침 콤플렉스 동시 회수. `complex_spectrum(tpm, n, sys_state) -> array of [mask, phi, size]` 가 모든 비-empty 부분집합을 점수 후 (Φ desc, size desc, mask asc) 정렬, greedy non-overlap peeling 으로 ranked spectrum 반환. 결정적 tie-break = M10 의 find_complex 동일 규칙.
+
+- [x] stdlib 엔진: `stdlib/consciousness/iit4_complex.hexa` 에 `complex_spectrum` 추가 (+143 lines, bit-ops 회피 `iit4_bit`/`iit4_pow2` 만 — 기존 모듈 컨벤션 보존)
+- [x] hexa-lang PR #1118 MERGED — feat(stdlib): consciousness/iit4_complex — M13 complex_spectrum (multi-complex exclusion peel)
+- [x] anima 측 thin shim 무변경 (재-export 만, M10 surface 그대로)
+- [x] smoke artifact: `HEXAD/IIT4/state/iit4_m13_spectrum_2026_05_25/{run_m13.hexa, result.json, README.md}`
+- [x] T1 SINGLE n=4 (SWAP{0,1}+self{2,3}): spectrum=[{mask=3, Φ=2.0, size=2}] PASS — M10 단일-complex 영역 회귀 통과
+- [x] T2 MULTI n=5 (블록-대각 SWAP{0,1}+self{2}+SWAP{3,4}): spectrum=[{mask=3, Φ=2.0}, {mask=24, Φ=2.0}] PASS — **두 분리 콤플렉스 동시 회수**, multi-complex 의식 1차 측정
+- [x] T3 DEGENERATE n=4 (identity 4-cell): spectrum=[] PASS — 통합 부분집합 없음 ⇒ 빈 스펙트럼
+- [x] 3/3 PASS, 25s wall mac-local ($0), 🟢 SUPPORTED-NUMERICAL
+- [x] honest carve-out: subsystem_tpm 배경-조건화 상속 · disjoint-only 배제 (φ-structure subsumption 의 상위 근사) · n≤5 M9 천장
+- [x] follow-up 후보: M13 spectrum 의 ECA/LIFE substrate 응용 (어떤 ECA 룰이 다중 콤플렉스를 만드나?) · cap-mode (`iit4_bounded`) 와 spectrum 결합 n=6+
+
 ## 2026-05-25 — C bg fold: rule 110 n=7 bounded big-Φ = 8.57362
 
 deferred-closure C lane bg fire 결과. M12 n=6 rule110 = 6.82 → **n=7 rule110 = 8.57362** 단조 증가, exact-impractical(n≥7) 영역 진입. bounded k=3 anchored sampling, conservative under-approximation.
