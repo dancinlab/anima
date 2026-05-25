@@ -3,6 +3,14 @@
 Append-only history sister of `LIFE.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#22 — H_280 IIT4 CES smoke (랜딩됨, 단 재발명 — 정정)
+
+- [x] `/cycle` round (영구 엔진 첫 라운드) — 사용자 선택 "spec + n=3 smoke 둘 다" → H_280 발사
+- [x] H_280 full-IIT4 Φ-structure distinction-level 🟢 SUPPORTED (#561 머지, sha 214bd1584) — F280.1 direction PASS(Σφ_d integrated 2.316 > disconnected 0) · F280.2 monotone PASS · F280.3 faithfulness PASS(ID log₂2=1.0 등 4 anchor) · F280.4 determinism PASS · relations DEFERRED(advisory). README 92→93 정합
+- [ ] ⚠ **dispatch 실책 정정**: H_280 은 stale working-tree LIFE.md(옛 "current state" 버전)를 보고 발사돼 **기존 `HEXAD/IIT4/` 엔진을 재발명**함 — `lib/iit4_distinction.hexa` + `lib/iit4_relation.hexa` + `iit4_bigphi` + `iit4_eca` 가 이미 main 에 존재, M6 LIFE remeasure(`state/iit4_m6_remeasure_2026_05_25/`)가 n=4·6 ECA 룰 faithful big-Φ + Φ-structure-total(relations 포함) 7/7 🟢 측정 완료(rule 54: bigΦ=10.03 / total=14.69 / 10 distinctions). H_280 의 "relations intractable open frontier" 주장은 `iit4_relation.hexa` 가 반증 → H_280 doc 상단 정정 배너 추가, distinction-level 독립구현은 교차검증 자료로만 잔존
+- [ ] **근본원인**: 공유 워킹트리 branch(ops/f-curricula-1-…)의 LIFE.md 가 main 의 영구-엔진 reframe + HEXAD/IIT4 랜딩 이전 stale 스냅샷. [[feedback-fetch-main-domain-ssot-before-cycle-dispatch]] 기록 — cycle agent 발사 전 origin/main 의 도메인 SSOT + 기존 lib 확인 필수
+- [ ] 축 C 후속(정정된 경로): C1 = `HEXAD/IIT4/lib` 경유 H_266/H_268/H_278 faithful 재검(M6 가 부분 선행) · H_280 독립 distinction kernel ↔ `iit4_distinction.hexa` 교차검증(독립 구현 일치 시 cross-validation 가치)
+
 ## 2026-05-25 — 영구 엔진 전환 (perpetual multi-axis) + SSOT publish
 
 - [x] 사용자 directive: "anima LIFE 도메인도 끝나지 않는 엔진으로" (TECS-L 와 동형)

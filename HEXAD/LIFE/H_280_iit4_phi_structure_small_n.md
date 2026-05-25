@@ -18,6 +18,14 @@ sister: H_266 (integrated>disconnected calibration, direction parent), H_278 (fa
 
 # H_280 — full IIT 4.0 Φ-structure (cause-effect structure) small-n
 
+> ⚠ **정정 (2026-05-26, post-merge)**: 본 가설은 stale context 하에 발사돼 기존
+> `HEXAD/IIT4/` 엔진(`lib/iit4_distinction.hexa` + **`lib/iit4_relation.hexa`** +
+> `iit4_bigphi` + `iit4_eca`, M6 LIFE remeasure n=4·6 ECA 룰 7/7 🟢)을 **재발명**했다.
+> 핵심 결론 "relations = 초지수 intractable open frontier" 는 **부정확** — `iit4_relation.hexa`
+> 가 이미 relations 를 구현하고 `FAITHFUL_REMEASURE.md` 가 Φ-structure-total(relations 포함)을
+> n=4 에서 측정 완료했다. 본 문서의 distinction-level 독립 구현은 **교차검증 자료로만 유효**하며,
+> 정식 축 C frontier 는 `HEXAD/IIT4/lib` 경유로 진행한다 (재발명 금지, g61). 상세 = LIFE.log#cycle22.
+
 ## 1. Hypothesis
 
 LIFE Φ-lane 는 지금까지 **system-level Φ** 만 측정했다 — proxy
