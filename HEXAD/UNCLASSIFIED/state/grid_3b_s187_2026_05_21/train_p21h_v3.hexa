@@ -368,20 +368,31 @@ let lambda_mitosis = 0.05
 let gate_strength = 0.001
 let noise_sigma = 0.1
 
-// ─── AXIS-MAP flags (M1 — actually wired into the train loop below) ──────
-// These mirror train_p21h_v3.py argparse (--freeze-embed / --curriculum-
-// phase-steps / --head-g-objective / --distill-teacher). In the .py they
-// were print()-only stubs; here each drives a DIFFERENT training dynamic.
-// Production fire sets them via the dispatcher (see M3 dispatch note); the
-// smoke tier hard-codes a config that EXERCISES every axis so the falsifier
-// readouts + the M2 DIFFERENT-gate are produced in one run.
-let freeze_embed = 1           // axis D: 1 = freeze tok_emb/tied-lm_head grad
-let curriculum_phase_steps = 2 // axis A: phase length in steps (0 = off)
-let head_g_objective_on = 1    // axis C: 1 = head_g anima-register objective ON
-let lambda_g = 0.3             // axis C: head_g register objective weight
-let distill_on = 1             // axis B: 1 = KD teacher signal ON ("" path → 0)
-let kd_temperature = 2.0       // axis B: KD softmax temperature τ (Hinton)
-let lambda_kd = 0.5            // axis B: KD loss weight in L_total
+// ─── AXIS-MAP flags (M1 wired + M3 dispatch-controllable via env-vars) ──
+// The H_257 bug was that train_p21h_v3.py declared these as argparse flags the
+// AXIS_MAP-FAN dispatcher set as ENV-VARS the .py never read (→ every axis ran
+// the same default → axis B == axis F init_CE byte-equal). Here the hexa driver
+// ACTUALLY READS the P21H_* env-vars: M3 fans 4 pods, each pod exports a
+// different axis config, and the readouts differ (H_257 fix verified by setting
+// P21H_FREEZE_EMBED=0 → embed_post > 0). Defaults = the smoke config so a bare
+// local run still exercises every axis for the falsifier gate.
+fn _env_int(name: string, dflt: int) -> int {
+    let v = exec("printf %s \"${" + name + ":-}\"").trim()
+    if len(v) == 0 { return dflt }
+    return to_int(v.parse_float())
+}
+fn _env_float(name: string, dflt: float) -> float {
+    let v = exec("printf %s \"${" + name + ":-}\"").trim()
+    if len(v) == 0 { return dflt }
+    return v.parse_float()
+}
+let freeze_embed = _env_int("P21H_FREEZE_EMBED", 1)              // axis D
+let curriculum_phase_steps = _env_int("P21H_CURRICULUM_PHASE_STEPS", 2) // axis A
+let head_g_objective_on = _env_int("P21H_HEAD_G_OBJECTIVE", 1)  // axis C on/off
+let lambda_g = _env_float("P21H_LAMBDA_G", 0.3)                 // axis C weight
+let distill_on = _env_int("P21H_DISTILL_ON", 1)                 // axis B on/off
+let kd_temperature = _env_float("P21H_KD_TEMPERATURE", 2.0)     // axis B τ
+let lambda_kd = _env_float("P21H_LAMBDA_KD", 0.5)              // axis B weight
 
 print("  smoke config: T="); print(T); print(" d="); print(d)
 print(" nh="); print(nh); print(" nkv="); print(nkv); print(" h="); print(h)
