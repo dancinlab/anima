@@ -2,6 +2,22 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25 — M2 distinctions LAND (iit4_distinction.hexa · 12/12 🟢)
+
+- [x] `HEXAD/IIT4/lib/iit4_distinction.hexa` 작성 — IIT 4.0 distinction 레이어 (import-safe, M1 import)
+  - `small_phi_effect/cause` = min over directional bipartition 의 intrinsic difference @ specified state z* (MIP). ii=0 → φ=0
+  - `iit4_partitioned_effect` = per-purview-unit 을 paired mechanism part 의 marginal 로 (empty part → unconstrained)
+  - `iit4_partitioned_cause` = 두 part cause repertoire 곱 (disjoint purview, reindex)
+  - `mice_effect/cause` = 全 purview argmax → 가장 환원불가능한 cause/effect
+  - `distinction` = φ_d = min(φ_c, φ_e) + 양 purview/state · `count_distinctions`
+- [x] smoke `state/iit4_m2_smoke_2026_05_25/run_m2.hexa` — COPY n=2 손계산 + noise null control
+  - small_phi_effect {0}=ON over {1}=1.0 · over {0}=0.0 · cause=1.0 · MICE φ=1.0 purview {1}
+  - distinction {0}/{1}=ON φ_d=1.0 (대칭) · count≥2 · noise φ=0 distinctions=0
+  - **12/12 PASS** (`hexa run`, deterministic) → result.json 🟢 SUPPORTED-NUMERICAL
+- [x] honest: partition scheme = all-directional-bipartition MIP (IIT-3.0-style tractable). IIT 4.0 specific partition set + PyPhi 수치 calibration = M5 (F-IIT4-2/3)
+- [x] IIT4.md M2 체크 + hub/status 갱신
+- [ ] 다음 = M3 relations (`iit4_relation.hexa` — distinction purview 겹침 congruent face + Φ-structure 조립)
+
 ## 2026-05-25 — M1 repertoire LAND (iit4_tpm.hexa · 13/13 🟢)
 
 - [x] `HEXAD/IIT4/lib/iit4_tpm.hexa` 작성 — IIT 4.0 인과 primitive 레이어 (import-safe)
