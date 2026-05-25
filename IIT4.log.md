@@ -2,6 +2,20 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25 — M3 relations + Φ-structure LAND (iit4_relation.hexa · 12/12 🟢)
+
+- [x] `HEXAD/IIT4/lib/iit4_relation.hexa` 작성 — IIT 4.0 relation/structure 레이어 (import-safe, M2 import; transitive import → M1 fns 정상)
+  - `iit4_overlap_congruent` = 두 purview 가 ≥1 unit 공유 AND 공유 unit 의 specified state 일치
+  - `relation_2nd` = cause OR effect purview congruent overlap → φ_r = min(φ_d_i, φ_d_j), 아니면 0
+  - `phi_structure(sys_state)` = 全 mechanism distinction(φ_d>0) 수집 + 全 pair 2nd-order relation → [n_distinctions, Σφ_d, n_relations, Σφ_r, total]
+- [x] smoke `state/iit4_m3_smoke_2026_05_25/run_m3.hexa` — synthetic distinction(n=3) + COPY + noise null
+  - congruent overlap φ_r=0.5(min) · incongruent=0 · disjoint=0 · overlap_congruent helper 3 case
+  - COPY Φ-structure: n_distinctions≥2, Σφ_d≥2.0, total≥Σφ_d · noise: 0/0/0
+  - **12/12 PASS** (`hexa run`, deterministic) → result.json 🟢 SUPPORTED-NUMERICAL
+- [x] honest: 2nd-order relations only (pairs), min-of-φ_d binding. higher-order + exact IIT4 relation φ = n≤5 frontier, M5 calibration (F-IIT4-4)
+- [x] IIT4.md M3 체크 + hub/status 갱신
+- [ ] 다음 = M4 big-Φ (`iit4_bigphi.hexa` — Φ-structure 의 system-MIP irreducibility → 최종 faithful Φ)
+
 ## 2026-05-25 — M2 distinctions LAND (iit4_distinction.hexa · 12/12 🟢)
 
 - [x] `HEXAD/IIT4/lib/iit4_distinction.hexa` 작성 — IIT 4.0 distinction 레이어 (import-safe, M1 import)

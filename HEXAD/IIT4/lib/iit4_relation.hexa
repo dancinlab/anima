@@ -1,0 +1,108 @@
+// HEXAD/IIT4/lib/iit4_relation.hexa — IIT 4.0 engine M3: relations + Φ-structure.
+//
+//   ROLE
+//     Builds on M2 (iit4_distinction.hexa) to bind distinctions whose purviews
+//     overlap CONGRUENTLY into relations, and assemble the Φ-structure — the
+//     set {distinctions} ∪ {relations} whose system-level irreducibility big-Φ
+//     (M4) measures. (design = DESIGN.md §2 ④⑤.)
+//
+//   RELATION (2nd order — DESIGN.md §2 ④)
+//     Two distinctions relate when their cause OR effect purviews share at least
+//     one unit AND specify CONGRUENT states on the shared (overlap) units (same
+//     value on each shared unit). The relation's φ_r is bounded by the weaker
+//     distinction: φ_r = min(φ_d_i, φ_d_j). Disjoint or incongruent overlap ⇒
+//     no relation (φ_r = 0).
+//
+//   Φ-STRUCTURE (DESIGN.md §2 ⑤)
+//     phi_structure(sys_state) collects every mechanism with φ_d > 0 (the
+//     distinctions) and every congruent 2nd-order relation among them, and
+//     reports [n_distinctions, Σφ_d, n_relations, Σφ_r, total = Σφ_d + Σφ_r].
+//     `total` is the unpartitioned structure value M4 tests for irreducibility.
+//
+//   HONEST CARVE-OUT (DESIGN.md §3 · §8 C3-1)
+//     2nd-order relations only (pairs). Higher-order relations (3..k-way
+//     congruent overlaps) + the exact IIT 4.0 relation measure are the
+//     combinatorial-explosion frontier — scoped n ≤ 5 and deferred to M5
+//     calibration (F-IIT4-4). The min-of-φ_d binding is a faithful-ER proxy of
+//     the relation's irreducibility, not the full IIT 4.0 relation φ.
+//
+//   IMPORT-SAFE  NO `fn main()` / NO top-level call. snake_case · English code.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_distinction.hexa"
+
+
+// non-empty congruent overlap between two purviews (with their specified states)?
+//   pv_*       = purview bitmask · state_* = compact state index over that purview.
+//   Returns 1 if the purviews share ≥1 unit AND agree on every shared unit, else 0.
+fn iit4_overlap_congruent(pv_i: int, state_i: int, pv_j: int, state_j: int, n: int) -> int {
+    let units_i = iit4_units(pv_i, n)
+    let units_j = iit4_units(pv_j, n)
+    let abs_i = iit4_expand(state_i, units_i)            // absolute ON-mask of state_i
+    let abs_j = iit4_expand(state_j, units_j)
+    let mut overlap = 0
+    let mut congruent = 1
+    let mut u = 0
+    while u < n {
+        if (iit4_bit(pv_i, u) == 1) && (iit4_bit(pv_j, u) == 1) {
+            overlap = overlap + 1
+            if iit4_bit(abs_i, u) != iit4_bit(abs_j, u) { congruent = 0 }
+        }
+        u = u + 1
+    }
+    if (overlap > 0) && (congruent == 1) { return 1 }
+    return 0
+}
+
+
+// ── 2nd-order relation φ_r between two distinctions. ────────────────────────
+// distinction layout (from iit4_distinction.distinction):
+//   [phi_d, mech_mask, cause_pv, cause_state, effect_pv, effect_state, phi_c, phi_e]
+fn relation_2nd(d_i: array, d_j: array, n: int) -> float {
+    let c = iit4_overlap_congruent(d_i[2].to_int(), d_i[3].to_int(), d_j[2].to_int(), d_j[3].to_int(), n)
+    let e = iit4_overlap_congruent(d_i[4].to_int(), d_i[5].to_int(), d_j[4].to_int(), d_j[5].to_int(), n)
+    if (c == 1) || (e == 1) {
+        if d_i[0] < d_j[0] { return d_i[0] }
+        return d_j[0]
+    }
+    return 0.0
+}
+
+
+// ── Φ-structure assembly for a system in `sys_state`. ───────────────────────
+// Returns [n_distinctions, sum_phi_d, n_relations, sum_phi_r, total].
+fn phi_structure(tpm: array, n: int, sys_state: int) -> array {
+    let full = iit4_pow2(n)
+
+    // collect distinctions (φ_d > 0).
+    let mut dists = []
+    let mut sum_d = 0.0
+    let mut m = 1
+    while m < full {
+        let d = distinction(tpm, n, m, sys_state)
+        if d[0] > 1.0e-9 {
+            dists = dists.push(d)
+            sum_d = sum_d + d[0]
+        }
+        m = m + 1
+    }
+    let nd = len(dists)
+
+    // 2nd-order relations over all distinction pairs.
+    let mut sum_r = 0.0
+    let mut nr = 0
+    let mut i = 0
+    while i < nd {
+        let mut j = i + 1
+        while j < nd {
+            let r = relation_2nd(dists[i], dists[j], n)
+            if r > 1.0e-9 {
+                nr = nr + 1
+                sum_r = sum_r + r
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+
+    return [to_float(nd), sum_d, to_float(nr), sum_r, sum_d + sum_r]
+}
