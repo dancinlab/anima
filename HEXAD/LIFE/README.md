@@ -38,14 +38,14 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
 
-## 가설 인덱스 (53 H + 1 lib · H_264/265 NEW 2026-05-25 cycle#15 cross-link (1 SUPP + 1 PART) · H_018/H_132 C2 추가 · H_258-263 cycle#14 · H_247/248/249 · H_254 · H_256 흡수)
+## 가설 인덱스 (53 H + 1 lib · cycle#16 H_007 C2 λ-sweep + H_238 next-raster · H_264/265 NEW cycle#15 cross-link · H_018/H_132 C2 · H_258-263 cycle#14 · H_247/248/249 · H_254 · H_256 흡수)
 
 | ID | Slug | Domain | Status | 핵심 |
 |----|------|--------|--------|------|
 | [H_002](H_002_universe_origin_question.md) | universe-origin-question | universe | running (Cycle #1) | C1 anthropic prior-fragility 11.16 orders gap (PR #179) · H2.4 panpsy precondition WEAKENED |
 | [H_003](H_003_life_origin_question.md) | life-origin-question | **life** | running (Cycle #3) | H3.2 multi-pathway PASS + **H3.4 autopoietic-closure Φ PASS 🟢** (PR #185) · criteria 4/5 |
 | [H_004](H_004_consciousness_hard_problem.md) | consciousness-hard-problem | consciousness | running (Cycle #1) | hard-problem · Singularity-9 + **Φ-function DISSOCIATION_CONFIRMED** (PR #180) — IIT functional reductive adequacy negative directional |
-| [H_007](H_007_cellular_automaton_consciousness.md) | cellular-automaton-consciousness | physics | pre-register-frozen | CA→Φ edge-of-chaos peak PASS (rule110>rule30) |
+| [H_007](H_007_cellular_automaton_consciousness.md) | cellular-automaton-consciousness | physics | pre-register-frozen · **C2 PASS** (#485 cycle#16) | CA→Φ edge-of-chaos peak PASS (rule110>rule30) · C2 Langton λ-sweep: peak λ*=0.375 Φ=1.343 inverse-U (256-rule ensemble), edge-of-chaos band |
 | [H_012](H_012_autopoietic_network.md) | autopoietic-network | **life** | pre-register-frozen | operational closure PASS 4/4 (self-maint 1.0) |
 | [H_018](H_018_genesis_spontaneous_emergence.md) | genesis-spontaneous-emergence | consciousness | pre-register-frozen · **C2 PASS** (#479 cycle#15) | self-reference→자발 genesis SUPPORTED_FULL 6/6 · C2 organic merge/split rate: LOOSE 0.16 self-reorg / TIGHT 0.00 homeostatic (regime-dep) |
 | [H_025](H_025_dasein_finite_consciousness.md) | dasein-finite-consciousness | consciousness | pre-register-frozen | death=merge_cells · finitude-floor min_cells=2 (smoke 4/4) |
@@ -75,7 +75,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_227](H_227_strong_emergence_phase_transition.md) | strong-emergence-phase-transition | meta · consciousness · physics | FALSIFIED (PR #270) | sigmoid P(f) + f_c localize (H_219 follow-up) — R²≥0.8 sigmoid-fit reject, monotone decline 만 유지 |
 | [H_234](H_234_cross_substrate_phi_coupling_density.md) | cross-substrate-phi-coupling-density | meta · consciousness · information · physics | PARTIAL (PR #293) | H_204+H_211+H_223 unified meta — 2/3 axis mono reproducible (closure r=0.938 + pain r=0.999), entropy axis r=0 |
 | [H_235](H_235_saturation_regime_extended.md) | saturation-regime-extended | consciousness · physics | PARTIAL (PR #292) | intensity 2-10 super-linear vs saturation (H_223 H223.4 follow-up) — peak ΔΦ=4.0 후 ceiling-decline |
-| [H_238](H_238_verdict_landscape_meta_map.md) | verdict-landscape-meta-map | meta (cross-cycle) | SUPPORTED (PR #297) | 33-H tier landscape meta-map — SUPP 10/PART 5/FAL 7/RUN 11, SUPP-rate life 0.41 ≫ consciousness 0.17 |
+| [H_238](H_238_verdict_landscape_meta_map.md) | verdict-landscape-meta-map | meta (cross-cycle) | SUPPORTED (PR #297) · **next-raster** (#484 cycle#16) | 33-H tier landscape — SUPP 10/PART 5/FAL 7/RUN 11 · 2026-05-25 raster N=51: SUPP 10/PART 6/FAL 7/RUN 28, life SUPP-rate 0.412→0.321 vs consciousness 0.167→0.200 (부등호 유지, gap 0.245→0.121 半축) |
 | [H_239](H_239_alternative_phi_metric_cross_validation.md) | alternative-phi-metric-cross-validation | meta · physics · information | CONSISTENT (PR #309) | phi_spatial vs LZ vs entropy-ratio cross-tool — 3-metric ordering Spearman 일치 (artifact 아님, gap F4) |
 | [H_240](H_240_bilingual_integration_phi_cross_lingual_leak.md) | bilingual-integration-phi-cross-lingual-leak | consciousness · language | DEFERRED (PR #316, renamed H_239→H_240) | bilingual-integration Φ cross-lingual-leak (Grosjean×Green×IIT) — smoke 별도 cycle (slug collision 해소) |
 | [H_242](H_242_register_collapse_wiki_frac_sigmoid.md) | register-collapse-wiki-frac-sigmoid | substrate · language | PRE-REGISTERED (PR #314) | LoRA Track-1 E2 — wiki_frac → register-collapse sigmoid, data pending |
