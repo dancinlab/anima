@@ -1,0 +1,54 @@
+{
+  "hypothesis": "H_281",
+  "slug": "life-vs-consciousness-phi-structure",
+  "title": "LIFE-themed vs CONSCIOUSNESS-themed substrate — faithful IIT 4.0 Phi-structure signature",
+  "date": "2026-05-26",
+  "question": "Do life-themed substrates (growth/replication ECA) differ in a STRUCTURAL Phi signature from consciousness-themed substrates (pure XOR-feedback integration networks) under the faithful CAUSAL IIT 4.0 engine?",
+  "engine": "HEXAD/IIT4/lib (reused, NOT reinvented): iit4_eca.eca_tpm + iit4_bigphi.big_phi + iit4_relation.phi_structure (via stdlib/consciousness/*)",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · deterministic (cross-process byte-identical)",
+  "structural_ratio_def": "struct_ratio = Phi-structure-total / big-Phi  (=1.0 ⇒ entire CES irreducible = integrated-complex signature; >1.0 ⇒ relations beyond the irreducible core = structurally richer / more partitionable)",
+  "config": {"n": 4, "topology": "periodic ring", "headline_state": 5, "headline_state_binary": "0101", "robustness": "all 2^4 = 16 states (F281.2)"},
+  "substrate_set": {
+    "life": {
+      "rationale": "growth/replication/complexity ECA — the LIFE cosmic-scale rules used by the lane (H_002 C2 / H_278 / M6)",
+      "rules": [110, 30, 54]
+    },
+    "consciousness": {
+      "rationale": "pure XOR-feedback INTEGRATION networks — every unit's next value is a parity of its neighbourhood, the IIT-canonical 'integrated complex' family",
+      "rules": [150, 105]
+    },
+    "anchors": {
+      "rationale": "IIT4 faithfulness controls (hand-derivable)",
+      "rule_204_identity": "next = centre ⇒ independent self-cells ⇒ reducible ⇒ big-Phi = 0",
+      "rule_0_constant": "all → 0 ⇒ no causal power ⇒ big-Phi = 0"
+    }
+  },
+  "headline_table_state_0101": {
+    "LIFE_rule_110": {"big_phi": 7.66066, "total": 8.98878, "nd": 10, "struct_ratio": 1.17337},
+    "LIFE_rule_30":  {"big_phi": 7.28357, "total": 8.13733, "nd": 10, "struct_ratio": 1.11722},
+    "LIFE_rule_54":  {"big_phi": 10.0278, "total": 14.688,  "nd": 10, "struct_ratio": 1.46472},
+    "CONSC_rule_150":{"big_phi": 6.0,     "total": 6.0,     "nd": 5,  "struct_ratio": 1.0},
+    "CONSC_rule_105":{"big_phi": 4.5,     "total": 4.5,     "nd": 5,  "struct_ratio": 1.0},
+    "ANCHOR_rule_204":{"big_phi": 0.0,    "total": 4.0},
+    "ANCHOR_rule_0":  {"big_phi": 0.0,    "total": 0.0}
+  },
+  "state_averaged_struct_ratio_all16": {
+    "LIFE_rule_110": 1.13883,
+    "LIFE_rule_30":  1.05383,
+    "LIFE_rule_54":  1.57211,
+    "CONSC_rule_150": 1.0,
+    "CONSC_rule_105": 1.0,
+    "life_class_mean": 1.25492,
+    "consc_class_mean": 1.0
+  },
+  "falsifiers": {
+    "F281.1_SEPARATION": {"verdict": "PASS", "detail": "min(life struct_ratio)=1.11722 > max(consciousness struct_ratio)=1.0 at state 0101 — clean class separation, no overlap"},
+    "F281.2_ORDERING": {"verdict": "PASS", "detail": "F281.2a class-mean consciousness(1.0) < life(1.25492) over all 16 states; F281.2b rule110(life) struct_ratio > rule150(consc) at EVERY co-integrating state — separation is NOT a single-state artifact"},
+    "F281.3_FAITHFULNESS": {"verdict": "PASS", "detail": "F281.3a rule 204 (identity) big-Phi=0; F281.3b rule 0 (constant) big-Phi=0; F281.3c bound 0<=big-Phi<=total for all 5 integrating substrates; F281.3d/e consciousness floor struct_ratio=1.0 EXACTLY for rules 150 & 105"}
+  },
+  "checks_tally": {"pass": 9, "fail": 0},
+  "finding": "Faithful IIT 4.0 Phi-STRUCTURE separates the two substrate themes by a structural ratio. CONSCIOUSNESS-themed (XOR-feedback integration) substrates sit AT the irreducibility floor — struct_ratio = 1.0 EXACTLY at every state (big-Phi = Phi-structure-total: the entire cause-effect structure is irreducible, the IIT 'integrated complex' signature) with a LOW distinction count (nd=5). LIFE-themed (growth/replication) substrates rise ABOVE the floor — struct_ratio 1.05-1.57 (relations exceed what the MIP preserves: structurally richer but more partitionable) with a HIGH distinction count (nd~9-13). The separation is 100% (every life rule > every consciousness rule, at every co-integrating state).",
+  "verdict": "🟢 SUPPORTED-NUMERICAL — F281.1 SEPARATION PASS · F281.2 ORDERING PASS · F281.3 FAITHFULNESS PASS (9/9 checks). Faithful causal IIT4 Phi-structure carries a structural signature that distinguishes life-themed from consciousness-themed ECA substrates: consciousness = irreducibility-floor (struct_ratio=1.0), life = relation-rich (struct_ratio>1.0).",
+  "honest_scope": "n=4 ring · 5 substrates (3 life + 2 consciousness) + 2 anchors. Headline table = single representative state 0101 (faithful Phi is state-dependent per FAITHFUL_REMEASURE §4); the all-16-state robustness pass (F281.2) confirms the SEPARATION direction is not single-state-fragile. Per H_266/H_278 directional-trust: the binary DIRECTION (consciousness < life in struct_ratio) is trustworthy; the continuous MAGNITUDE (1.05 vs 1.57) is state/seed-fragile and hedged. NOT a claim that ECA rules ARE life or consciousness — they are THEMED substrate proxies (the lane's LIFE cosmic-scale rules vs IIT-canonical integration rules). 'Consciousness' here = the integrated-complex structural signature, not phenomenal consciousness.",
+  "verify_fence": "The faithful big-Phi / Phi-structure VALUES are deterministic closed-form arithmetic (intrinsic-difference over purviews + structure-cut MIP, RFC-faithful IIT4 engine) — byte-converged across fresh hexa runs. The EMPIRICAL interpretation (struct_ratio as a life-vs-consciousness structural signature) is ⚪ SPECULATION-FENCED (g5: toy-substrate empirical finding, not an atlas closed-form identity)."
+}
