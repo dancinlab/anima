@@ -15,7 +15,8 @@ LIFE (cycle#14~21, 22 NEW H 완결)의 全 Φ 측정은 `phi_spatial` proxy(공�
 | [`HEXAD/IIT4/DESIGN.md`](HEXAD/IIT4/DESIGN.md) | **M0 설계 스펙** — 6단계 매핑 · intrinsic difference · scope envelope · falsifier · 모듈 레이아웃 |
 | [`HEXAD/IIT4/lib/iit4_tpm.hexa`](HEXAD/IIT4/lib/iit4_tpm.hexa) | **M1 LANDED** — TPM(state-by-node)·cause/effect repertoire·intrinsic difference (13/13 smoke 🟢) |
 | [`HEXAD/IIT4/lib/iit4_distinction.hexa`](HEXAD/IIT4/lib/iit4_distinction.hexa) | **M2 LANDED** — small-φ(min-partition ID)·MICE·distinction (12/12 smoke 🟢) |
-| [`HEXAD/IIT4/lib/`](HEXAD/IIT4/lib/) | 엔진 구현 (M3 relation · M4 bigphi 예정) |
+| [`HEXAD/IIT4/lib/iit4_relation.hexa`](HEXAD/IIT4/lib/iit4_relation.hexa) | **M3 LANDED** — 2nd-order relation(congruent overlap)·Φ-structure 조립 (12/12 smoke 🟢) |
+| [`HEXAD/IIT4/lib/`](HEXAD/IIT4/lib/) | 엔진 구현 (M4 bigphi 예정) |
 | [`HEXAD/LIFE/`](HEXAD/LIFE/) | proxy-lane predecessor (H_002 C2 · H_204 · H_223 · H_279 = faithful 재측정 대상) |
 | [`HEXAD/LIFE/H_278_faithful_phi_small_n.md`](HEXAD/LIFE/H_278_faithful_phi_small_n.md) | exact MIP-EI(스칼라) — IIT4 의 직전 단계, 출발점 (partition 축만 faithful) |
 | [`HEXAD/LIFE/lib/phi_helper.hexa`](HEXAD/LIFE/lib/phi_helper.hexa) · [`phi_native.hexa`](HEXAD/LIFE/lib/phi_native.hexa) | RFC 036 상관-MI primitive (proxy lane, READ-ONLY 비교 baseline) |
@@ -26,9 +27,9 @@ LIFE (cycle#14~21, 22 NEW H 완결)의 全 Φ 측정은 `phi_spatial` proxy(공�
 - [x] M0 design spec — hexa-native IIT4 엔진 설계 (n≤8 scope · PyPhi 4.0 알고리즘 단계 매핑 · 복잡도/메모리 envelope · falsifier 사전등록) → [`HEXAD/IIT4/DESIGN.md`](HEXAD/IIT4/DESIGN.md)
 - [x] M1 repertoire — TPM → cause/effect repertoire (각 mechanism 2^n × purview 2^n × {cause,effect}) hexa impl + 단위 검증 → [`iit4_tpm.hexa`](HEXAD/IIT4/lib/iit4_tpm.hexa) (13/13 🟢 smoke)
 - [x] M2 distinctions — per-mechanism MIP 최소화 → φ>0 distinction 추출 → [`iit4_distinction.hexa`](HEXAD/IIT4/lib/iit4_distinction.hexa) (small-φ·MICE·distinction, 12/12 🟢 smoke)
-- [ ] M3 structure — relations (distinction purview 겹침) + Φ-structure 조립
+- [x] M3 structure — relations (distinction purview 겹침) + Φ-structure 조립 → [`iit4_relation.hexa`](HEXAD/IIT4/lib/iit4_relation.hexa) (2nd-order relation·congruent overlap·Φ-structure, 12/12 🟢 smoke)
 - [ ] M4 big-Φ — Φ-structure 의 system-MIP irreducibility → 최종 faithful Φ
 - [ ] M5 calibration — PyPhi reference(n≤4 known-value) 대조 calibrate (H_266 gold 판 — faithful 검증)
 - [ ] M6 LIFE faithful 재측정 — H_002 C2 · H_204 closure inverse-U · H_223 pain · H_279 salience 를 IIT4 Φ 로 재측정 → proxy↔IIT4 비교, caveat 종결
 
-> **status 2026-05-25**: M0 + M1 + M2 LANDED (3/7). M2 = `iit4_distinction.hexa` (small-φ via min-partition intrinsic difference · MICE purview search · distinction 추출) — COPY n=2 손계산 + noise null-control **12/12 🟢 SUPPORTED-NUMERICAL** (`state/iit4_m2_smoke_2026_05_25/`). 다음 = M3 relations (`iit4_relation.hexa` — distinction purview congruent overlap → Φ-structure 조립). small-N(n≤8) exact 라 $0 mac-local·GPU 무관.
+> **status 2026-05-25**: M0~M3 LANDED (4/7). M3 = `iit4_relation.hexa` (2nd-order relation = congruent purview overlap → φ_r=min(φ_d) · Φ-structure 조립 [n_distinctions·Σφ_d·n_relations·Σφ_r·total]) — synthetic relation 검증 + COPY structure + noise null-control **12/12 🟢 SUPPORTED-NUMERICAL** (`state/iit4_m3_smoke_2026_05_25/`). 다음 = M4 big-Φ (`iit4_bigphi.hexa` — Φ-structure 의 system-MIP irreducibility → 최종 faithful Φ). small-N(n≤8) exact 라 $0 mac-local·GPU 무관.
