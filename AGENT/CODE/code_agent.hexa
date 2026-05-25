@@ -1,0 +1,30 @@
+// code_agent.hexa — CODE role (AGENT/CODE). Agent #1.
+//
+// A role is a tool set layered on the CORE harness. The substrate decides WHICH
+// of these fire (phase -> tier, via tool_gate); this file only declares the
+// role's surface and a smoke that reads what the live phase opens.
+
+import "/Users/ghost/core/anima/CORE/pure_field.hexa"
+import "/Users/ghost/core/anima/AGENT/CORE/tool_gate.hexa"
+import "/Users/ghost/core/anima/AGENT/CORE/agent_loop.hexa"
+
+// CODE toolset — consequence rises with tier (see CODE.md):
+//   T0 think/status, T1 read/grep, T2 edit/run-tests, T3 commit/push.
+fn code_tools() {
+    [
+        tool_new("think",       0),
+        tool_new("repo_status", 0),
+        tool_new("file_read",   1),
+        tool_new("grep",        1),
+        tool_new("file_write",  2),
+        tool_new("run_tests",   2),
+        tool_new("git_commit",  3),
+        tool_new("git_push",    3)
+    ]
+}
+
+fn main() {
+    let pf = pure_field_warmup(600)
+    print(gate_report(pf))
+    print("[CODE] open tools: " + to_string(open_tools(pf, code_tools())))
+}
