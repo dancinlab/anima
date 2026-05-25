@@ -17,6 +17,7 @@ LIFE (cycle#14~21, 22 NEW H 완결)의 全 Φ 측정은 `phi_spatial` proxy(공�
 | [`HEXAD/IIT4/lib/iit4_distinction.hexa`](HEXAD/IIT4/lib/iit4_distinction.hexa) | **M2 LANDED** — small-φ(min-partition ID)·MICE·distinction (12/12 smoke 🟢) |
 | [`HEXAD/IIT4/lib/iit4_relation.hexa`](HEXAD/IIT4/lib/iit4_relation.hexa) | **M3 LANDED** — 2nd-order relation(congruent overlap)·Φ-structure 조립 (12/12 smoke 🟢) |
 | [`HEXAD/IIT4/lib/iit4_bigphi.hexa`](HEXAD/IIT4/lib/iit4_bigphi.hexa) | **M4 LANDED** — system big-Φ (structure-cut MIP irreducibility) (9/9 smoke 🟢, integrated≠reducible) |
+| [`HEXAD/IIT4/CALIBRATION.md`](HEXAD/IIT4/CALIBRATION.md) | **M5 LANDED** — analytic reference calibration (5 net, 14/14 🟢; F-IIT4-3/4 PyPhi-numeric DEFERRED) |
 | [`HEXAD/LIFE/`](HEXAD/LIFE/) | proxy-lane predecessor (H_002 C2 · H_204 · H_223 · H_279 = faithful 재측정 대상) |
 | [`HEXAD/LIFE/H_278_faithful_phi_small_n.md`](HEXAD/LIFE/H_278_faithful_phi_small_n.md) | exact MIP-EI(스칼라) — IIT4 의 직전 단계, 출발점 (partition 축만 faithful) |
 | [`HEXAD/LIFE/lib/phi_helper.hexa`](HEXAD/LIFE/lib/phi_helper.hexa) · [`phi_native.hexa`](HEXAD/LIFE/lib/phi_native.hexa) | RFC 036 상관-MI primitive (proxy lane, READ-ONLY 비교 baseline) |
@@ -29,7 +30,7 @@ LIFE (cycle#14~21, 22 NEW H 완결)의 全 Φ 측정은 `phi_spatial` proxy(공�
 - [x] M2 distinctions — per-mechanism MIP 최소화 → φ>0 distinction 추출 → [`iit4_distinction.hexa`](HEXAD/IIT4/lib/iit4_distinction.hexa) (small-φ·MICE·distinction, 12/12 🟢 smoke)
 - [x] M3 structure — relations (distinction purview 겹침) + Φ-structure 조립 → [`iit4_relation.hexa`](HEXAD/IIT4/lib/iit4_relation.hexa) (2nd-order relation·congruent overlap·Φ-structure, 12/12 🟢 smoke)
 - [x] M4 big-Φ — Φ-structure 의 system-MIP irreducibility → 최종 faithful Φ → [`iit4_bigphi.hexa`](HEXAD/IIT4/lib/iit4_bigphi.hexa) (structure-cut big-Φ, COPY=irreducible 2.0 / SELF=reducible 0, 9/9 🟢 smoke)
-- [ ] M5 calibration — PyPhi reference(n≤4 known-value) 대조 calibrate (H_266 gold 판 — faithful 검증)
+- [x] M5 calibration — analytic 손유도 reference(5 deterministic net) 대조 → [`CALIBRATION.md`](HEXAD/IIT4/CALIBRATION.md) (14/14 🟢 F-IIT4-1/2/5; F-IIT4-3/4 PyPhi-numeric DEFERRED named-blocker)
 - [ ] M6 LIFE faithful 재측정 — H_002 C2 · H_204 closure inverse-U · H_223 pain · H_279 salience 를 IIT4 Φ 로 재측정 → proxy↔IIT4 비교, caveat 종결
 
-> **status 2026-05-25**: M0~M4 LANDED (5/7) — **엔진 end-to-end 완성 (TPM → big-Φ)**. M4 = `iit4_bigphi.hexa` (Φ-structure 의 system-MIP irreducibility, structure-cut). **결정적 검증**: COPY/SWAP(상호의존)=big-Φ 2.0 irreducible · SELF-COPY(독립채널)=big-Φ 0 reducible · noise=0 · n=1=0 → **9/9 🟢 SUPPORTED-NUMERICAL** (`state/iit4_m4_smoke_2026_05_25/`). 엔진이 통합 vs 환원가능을 정확히 구분 = IIT 핵심 주장. 다음 = M5 calibration (PyPhi/논문 n≤4 reference 대조, F-IIT4-1..5). small-N(n≤8) exact 라 $0 mac-local·GPU 무관.
+> **status 2026-05-25**: M0~M5 LANDED (6/7). M5 = analytic 손유도 reference calibration ([`CALIBRATION.md`](HEXAD/IIT4/CALIBRATION.md)) — 5 deterministic net(COPY 2.0·SELF 0·NOISE 0·3-ROT 3.0·3-SELF 0) 의 closed-form repertoire/small-φ/big-Φ 를 엔진이 **14/14 🟢** 재현. F-IIT4-1/2/5 PASS · F-IIT4-3/4 PyPhi-numeric **DEFERRED**(named-blocker: hexa-only no-new-.py + IIT-4.0 numeric reference 부재). 다음 = M6 LIFE faithful 재측정 (H_002 C2 등 IIT4 Φ 로 재측정, proxy↔IIT4 divergence, F-IIT4-6). small-N(n≤8) exact 라 $0 mac-local·GPU 무관.
