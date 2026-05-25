@@ -3,6 +3,18 @@
 Append-only history sister of `LIFE.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#23 — axis-C IIT4 Φ-structure + AXES-A1 + H_280 버그 교훈 (영구엔진 첫 multi-axis 라운드)
+
+- [x] 영구엔진 전환 후 첫 `/cycle` multi-axis 라운드 — 사용자 "1,2 별도" 선택 → 5-agent fan-out (C1·C2·xval·A1·D2)
+- [x] **H_281** C2 생명vs의식 Φ-structure 🟢 SUPPORTED-NUMERICAL 9/9 (#567) — struct_ratio(=total/big-Φ)로 분리: 의식(XOR-feedback rule150/105)=irreducibility-floor **1.0 exact** vs 생명(rule110/30/54) **>1.0**(relation-rich), 분리도 100%. HEXAD/IIT4/lib 재사용
+- [x] **H_282** C1 proxy→faithful 재검 🟢 SUPPORTED 8/8 (#570) — H_266/268/278 faithful big-Φ 3/3 방향보존 + **H_266 proxy-monotone artifact RESOLVE** (인과엔진이 int>ffd>dis 복원, proxy 의 chain<dis 가 spatial-MI 가짜신호였음 확정)
+- [x] **H_283** narrative-coherence 🟢 SUPP-FULL 4/4 + **H_284** ritual-repetition 🟢 PARTIAL 3/4 (#566, AXES A1) — H_283 order-sensitive Φ(순서가 Φ 만듦, R4), H_284 buildup FAL→decay-resistance(동기화 死-Φ cross-H 서명 H_265/275/279 재확인, R7)
+- [x] **xval** H_280 distinction-kernel ↔ canonical `iit4_distinction` 🔴 DISAGREE 0/6 (#572) — H_280 의 `cuts_link` guard 가 독립세포 φ_d=0 zeroing **버그** → 헤드라인 "integrated Σφ_d>disc" = artifact, Σφ_d **non-monotone**(canonical disc 3.0>int 2.03). canonical authoritative, 통합방향은 big-Φ 로만. README H_280 행 강등 + H_280 doc §11 교차검증
+- [x] consolidation PR — README **93→97 H** 정합(H_281/282/283/284 행 + H_280 강등) · LIFE.md 축A/축C cycle#23 진척 · AXES.md 소비행 2개(narrative R4·ritual R7) 제거
+- [ ] **D2** verdict-landscape meta-map raster (H_238 연장, H_258-284 포함) — in-flight, 랜딩 시 H_238 self-update + LIFE.md milestone 추가 예정
+- [x] **인프라 교훈 3건**: (1) stale working-tree LIFE.md shadow → H_280 이 HEXAD/IIT4 재발명+버그 ([[feedback-fetch-main-domain-ssot-before-cycle-dispatch]], INBOX life-domain-stale #564 부분해소) (2) 5-agent 동시 burst → throttle 3/5 사망 → **순차 1개씩 재발사로 전원 복구** ([[feedback-agent-early-commit-rate-limit]]) (3) hexa `array.set(i,v)` segfault → `farr_*` 사용
+- [x] cross-H 종합: faithful IIT4 가 proxy artifact **2건 교정**(H_266 monotone · H_280 Σφ_d) → **방향은 big-Φ 신뢰 · distinction-Σφ_d 는 비단조** 확립. 의식=irreducibility-floor vs 생명=relation-rich 구조서명 신규 발견
+
 ## 2026-05-26 — cycle#22 — H_280 IIT4 CES smoke (랜딩됨, 단 재발명 — 정정)
 
 - [x] `/cycle` round (영구 엔진 첫 라운드) — 사용자 선택 "spec + n=3 smoke 둘 다" → H_280 발사
