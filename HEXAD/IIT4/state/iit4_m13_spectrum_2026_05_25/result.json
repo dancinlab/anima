@@ -1,0 +1,26 @@
+{
+  "id": "IIT4-M13",
+  "slug": "exclusion-multi-complex-spectrum",
+  "milestone": "M13 — exclusion multi-complex / spectrum (ranked non-overlapping complexes)",
+  "domain": "iit4 · consciousness",
+  "date": "2026-05-25",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "engine": "stdlib/consciousness/iit4_complex.hexa (complex_spectrum) via anima shim HEXAD/IIT4/lib/iit4_complex.hexa",
+  "algorithm": "enumerate 2^n-1 non-empty subsets → score subsystem big_phi (background-conditioned) → sort by (Φ desc, size desc, mask asc) → greedy peel non-overlapping → ranked spectrum",
+  "tie_break": "strictly-greater Φ; on Φ-tie larger subset; on size-tie lower mask",
+  "background_conditioning": "external units pinned to sys_state (documented modeling choice; g5)",
+  "tests": {
+    "T1_single_n4": { "sys_state": 15, "spectrum": [{"mask": 3, "phi": 2, "size": 2}], "expect_count": 1, "expect_first": {"mask": 3, "phi": 2.0, "size": 2}, "verdict": "PASS" },
+    "T2_multi_n5_blockdiag": { "sys_state": 31, "spectrum": [{"mask": 3, "phi": 2, "size": 2}, {"mask": 24, "phi": 2, "size": 2}], "expect_count": 2, "expect_first": {"mask": 3, "phi": 2.0, "size": 2}, "expect_second": {"mask": 24, "phi": 2.0, "size": 2}, "verdict": "PASS" },
+    "T3_degenerate_n4_identity": { "sys_state": 15, "spectrum": [], "expect_count": 0, "verdict": "PASS" }
+  },
+  "pass": 3,
+  "fail": 0,
+  "finding": "complex_spectrum recovers the SINGLE-complex regime (M10 carry-through, T1 n=4) AND the MULTI-complex regime (T2 n=5 block-diagonal: 2 disjoint SWAP pairs both surface as Φ=2.0 complexes, ranked by lower mask first via deterministic tie-break) AND the EMPTY-spectrum regime (T3 n=4 identity rule: no integrated subset exists, spectrum=[]). Exclusion-peeling correctly carves disjoint conscious regions per IIT 4.0 multi-complex semantics.",
+  "scope_envelope": "exact n ≤ 5 per M9 tractability — subset enumeration is 2^n−1 big_phi calls, worst-case bounded by the n-unit big_phi at the full mask (~tens of seconds at n=5 mac-local)",
+  "verdict": "🟢 SUPPORTED-NUMERICAL",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (background-conditioned subsystem big-Φ; disjoint-only exclusion peel — fine-grained φ-structure subsumption is strict super-set of disjointness for non-overlapping candidates; full partitioned-normalization + PyPhi calibration = M5 carve-out)"
+}
