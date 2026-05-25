@@ -1,0 +1,81 @@
+{
+  "tool": "mk_xii_hard_pass_composite",
+  "version": "v2",
+  "raw_rank": 9,
+  "hexa_only": true,
+  "deterministic": true,
+  "llm": "none",
+  "destructive": false,
+  "composite_rule": "VALIDATED iff (preflight.GREEN AND 5/5 gate PASS AND not empirical_override); PARTIAL iff (3-4/5 PASS AND not empirical_override); NOT_VALIDATED otherwise. D-day replay forces NOT_VALIDATED when pilot CORROBORATION_FAIL.",
+  "backbones": ["gemma", "mistral", "qwen3", "llama"],
+  "inputs": {
+    "preflight": {
+      "path": "anima-clm-eeg/state/mk_xii_preflight_v1.json",
+      "bytes": 2393,
+      "pass": 1,
+      "probe": "cascade.verdict == MK_XII_PREFLIGHT_GREEN"
+    },
+    "G0_AN11_b": {
+      "bench_dir": "state/v10_benchmark_v4",
+      "backbones_pass": 4,
+      "backbones_total": 4,
+      "pass": 1,
+      "probe": "per-backbone g_gate.json gate=G0_AN11_b pass=true; majority >=3/4"
+    },
+    "G1_BTom": {
+      "bench_dir": "state/v10_benchmark_v4",
+      "backbones_pass": 4,
+      "backbones_total": 4,
+      "pass": 1,
+      "probe": "per-backbone g_gate.json gate=G1_BTom pass=true; majority >=3/4"
+    },
+    "G7_composite": {
+      "bench_dir": "state/v10_benchmark_v4",
+      "backbones_pass": 4,
+      "backbones_total": 4,
+      "pass": 1,
+      "probe": "per-backbone g_gate.json gate=G7_composite pass=true; majority >=3/4"
+    },
+    "G8_TFD": {
+      "path": "anima-clm-eeg/state/g8_transversal_mi_matrix_v1.json",
+      "bytes": 2078,
+      "pass": 1,
+      "probe": "summary.g8_pass == 1 (all 10 pairwise MI <= 0.1 bit)"
+    },
+    "G9_DAG": {
+      "path": "state/g9_dag_cascade_analyzer.json",
+      "bytes": 1274,
+      "pass": 1,
+      "probe": "g9_pass == 1 (edge<=7 AND cascade_max<=2)"
+    }
+  },
+  "empirical_replay": {
+    "dday_pilot_path": "state/mk_xii_eeg_audit/2026-04-28_pilot_n1.jsonl",
+    "dday_pilot_bytes": 600,
+    "replay_requested": 0,
+    "dday_fail_detected": 1,
+    "empirical_override_active": 0,
+    "reference_commit": "6748462dc",
+    "reference_finding": "P3 GCG FALSIFIED + Mk.XII pilot N=1 CORROBORATION_FAIL · C1=1<5 / C4=999 no advers / C5=0 no CLM substrate"
+  },
+  "composite": {
+    "pass_count": 5,
+    "required": 5,
+    "tier": 2,
+    "verdict": "MK_XII_VALIDATED",
+    "offender": "NONE",
+    "cascade_abort": 0,
+    "chained_fingerprint": 3959294777
+  },
+  "raw71_falsifiers": [
+    {"id": "F1", "name": "verdict_monotonicity", "description": "any single PASS->FAIL flip must demote composite (never promote); 6-way force-zero suite covers preflight+G0+G1+G7+G8+G9"},
+    {"id": "F2", "name": "offender_uniqueness", "description": "under exactly-one-gate-fail, offender label equals failing gate (no wrong-attribution)"},
+    {"id": "F3", "name": "empirical_overrides_surrogate", "description": "D-day replay forces NOT_VALIDATED when pilot N=1 audit reports CORROBORATION_FAIL even if all surrogate gates PASS"}
+  ],
+  "deferred": {
+    "G10_hexad_triangulation": "post-EEG D+5..D+21 — requires EEG hardware arrival + P3 GCG family*band 4-backbone results",
+    "first_validation_window": "D+22..D+30 (post-EEG-arrival)",
+    "fallback": "Mk.XI v10 4-backbone LoRA ensemble (graceful degradation, mk_xii_proposal_outline §7)"
+  },
+  "note": "Strict aggregator. Today (2026-05-01) ground truth: P3 FALSIFIED + Mk.XII pilot N=1 CORROBORATION_FAIL (commit 6748462dc). Composite verdict honestly NOT GREEN under D-day replay regardless of surrogate gate scores — empirical override branch surfaces this fact."
+}

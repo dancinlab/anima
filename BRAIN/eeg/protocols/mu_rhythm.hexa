@@ -1,0 +1,514 @@
+// anima-eeg/protocols/mu_rhythm.hexa
+//
+// @resolver-bypass(reason="hardware experiment subprocess via collect.hexa")
+//
+// Source: Pfurtscheller G. & Lopes da Silva F.H. (1999) "Event-related EEG/MEG
+//   synchronization and desynchronization: basic principles" — μ-rhythm ERD.
+// Mirror: anima-eeg/protocols/alpha_eyes_closed.hexa (Berger 1929) block design.
+//
+// PURPOSE
+//   Sensorimotor μ-rhythm (8-13 Hz) suppression / event-related desynchronization
+//   (ERD) reproduction. C3/C4 motor cortex μ pickup vs O1/O2 occipital baseline.
+//   Single self-validating session: board sanity + SRB2/BIAS + 60 Hz notch +
+//
+//     F_MU_01: μ peak in 8-13 Hz at C3/C4
+//     F_MU_02: REST C3/C4 amplitude > MOVE C3/C4 amplitude (suppression)
+//     F_MU_03: REST/MOVE C3/C4 ERD ratio ≥ 1.5
+//
+// LIVE BRAINFLOW INGEST: --run gates on a sibling helper subprocess.
+//   This file lands the protocol skeleton + analysis + selftest. --run
+//   delegates to anima-eeg/collect.hexa for raw stream capture; this
+//   protocol owns block design + audio cue + μ-band analysis + falsifier
+//   evaluation. Audio TTS hook is a separate BG.
+//
+// USAGE
+//   hexa run anima-eeg/protocols/mu_rhythm.hexa --selftest
+//   hexa run anima-eeg/protocols/mu_rhythm.hexa --run \
+//       --port /dev/cu.usbserial-DP04WGIQ \
+//       --board cyton_daisy \
+//       --output anima-eeg/recordings/sessions/mu_rhythm_2026_05_03.npy
+
+let SCHEMA = "anima-eeg/mu_rhythm/1"
+
+// ════════════════════════════════════════════════════════════════════
+//   Interleaved REST → MOVE → REST → MOVE × 5 = 10 × 30 s = 300 s
+// ════════════════════════════════════════════════════════════════════
+
+let BLOCK_DURATION_S         = 30           // each REST or MOVE block
+let BLOCK_REPEATS            = 5            // 5 REST + 5 MOVE interleaved
+let TOTAL_DURATION_S         = 300          // 5 min
+let CUE_LEAD_MS              = 500          // audio cue lead before block start
+
+// Board / signal-chain frozen
+let SAMPLE_RATE_HZ           = 250          // Cyton+Daisy fixed
+let CHANNEL_COUNT            = 16           // Cyton+Daisy 16ch
+let BANDPASS_LO_HZ           = 1.0
+let BANDPASS_HI_HZ           = 50.0
+let BANDPASS_ORDER           = 4            // Butterworth order-4
+
+// μ-band analysis frozen (Pfurtscheller 1999; same range as α, different topology)
+let MU_LO_HZ                 = 8.0          // μ-rhythm lower bound
+let MU_HI_HZ                 = 13.0         // μ-rhythm upper bound
+let WELCH_NPERSEG_S          = 2            // 2 s windows for Welch PSD
+let ERD_RATIO_MIN            = 1.5          // F_MU_03 threshold (REST/MOVE)
+
+// Channel mapping (10-20 system; user must verify physical placement)
+//   Cyton+Daisy default mapping per references/.../03-Cyton-Daisy.md:
+//     N3P (ch3) -> C3   left motor cortex
+//     N4P (ch4) -> C4   right motor cortex
+//     N7P (ch7) -> O1   left occipital  (μ-immune baseline)
+//     N8P (ch8) -> O2   right occipital (μ-immune baseline)
+let CHAN_C3                  = "C3"         // left sensorimotor (Cyton N3P)
+let CHAN_C4                  = "C4"         // right sensorimotor (Cyton N4P)
+let CHAN_O1                  = "O1"         // left occipital baseline (Cyton N7P)
+let CHAN_O2                  = "O2"         // right occipital baseline (Cyton N8P)
+
+// Audit ledger path
+let AUDIT_DIR  = "state/mu_rhythm_audit"
+
+// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════
+
+// Block schedule
+let g_block_count            = 0           // total blocks scheduled
+let g_block_rest_count       = 0
+let g_block_move_count       = 0
+let g_total_seconds          = 0
+
+// Synthetic μ analysis state
+let g_mu_peak_hz             = 0.0         // dominant peak in 8-13 Hz at C3/C4
+let g_mu_peak_chan           = "?"
+let g_c3_rest_uv             = 0.0
+let g_c4_rest_uv             = 0.0
+let g_c3_move_uv             = 0.0
+let g_c4_move_uv             = 0.0
+let g_o1_rest_uv             = 0.0         // occipital baseline (μ-immune)
+let g_o2_rest_uv             = 0.0
+let g_rest_mu_power          = 0.0         // C3/C4 averaged REST μ power
+let g_move_mu_power          = 0.0         // C3/C4 averaged MOVE μ power
+let g_erd_ratio              = 0.0         // REST / MOVE
+
+let g_f_mu_01_pass           = false       // peak in 8-13 Hz at C3/C4
+let g_f_mu_02_pass           = false       // REST C3/C4 > MOVE C3/C4
+let g_f_mu_03_pass           = false       // ERD ratio >= 1.5
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn max_f(a: float, b: float) -> float {
+    if a > b { return a }
+    return b
+}
+
+fn avg2_f(a: float, b: float) -> float {
+    return (a + b) / 2.0
+}
+
+// ════════════════════════════════════════════════════════════════════
+//   Interleaved REST → MOVE → REST → MOVE → ... starting with REST.
+//   5 × REST + 5 × MOVE = 10 blocks × 30 s = 300 s.
+// ════════════════════════════════════════════════════════════════════
+
+fn build_schedule() {
+    g_block_rest_count = BLOCK_REPEATS
+    g_block_move_count = BLOCK_REPEATS
+    g_block_count      = g_block_rest_count + g_block_move_count
+    g_total_seconds    = g_block_count * BLOCK_DURATION_S
+}
+
+// Returns "REST" or "MOVE" for block index i (0-based).
+fn block_kind_at(i: int) -> string {
+    if (i % 2) == 0 { return "REST" }
+    return "MOVE"
+}
+
+// Returns audio cue text for block index i.
+fn cue_text_at(i: int) -> string {
+    if block_kind_at(i) == "REST" { return "쉬세요 (Rest)" }
+    return "주먹 쥐었다 펴세요 (Make fist)"
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Synthetic μ-band analysis
+//   Pure-math synthetic μ power per channel × condition (no RNG):
+//     REST condition: C3/C4 strong μ (~25 µV²/Hz peak @ 10 Hz),
+//                     O1/O2 mild α (~15 µV²/Hz, μ-immune baseline)
+//     MOVE condition: C3/C4 suppressed to ~10 µV²/Hz (ERD),
+//                     O1/O2 ~15 µV²/Hz (unchanged — eyes open during both)
+//   ERD ratio nominal = 25 / 10 = 2.5 (>= 1.5 threshold).
+//   Caller specifies "perturb_*" flags to exercise falsifiers in tests.
+// ════════════════════════════════════════════════════════════════════
+
+let SYNTH_C_REST_MU_UV2      = 25.0
+let SYNTH_C_MOVE_MU_UV2      = 10.0
+let SYNTH_O_BASELINE_MU_UV2  = 15.0
+let SYNTH_PEAK_HZ_NOMINAL    = 10.0
+
+fn analyze_synthetic(
+    perturb_no_mu: bool,
+    perturb_no_suppression: bool,
+    perturb_weak_erd: bool
+) {
+    // Baseline values
+    let mut c_rest = SYNTH_C_REST_MU_UV2
+    let mut c_move = SYNTH_C_MOVE_MU_UV2
+    let mut o_base = SYNTH_O_BASELINE_MU_UV2
+    let mut peak   = SYNTH_PEAK_HZ_NOMINAL
+
+    // F_MU_01 perturbation: peak outside 8-13 Hz
+    if perturb_no_mu {
+        peak = 5.0   // 5 Hz theta — outside μ band
+    }
+
+    // F_MU_02 perturbation: no suppression (REST ≈ MOVE)
+    if perturb_no_suppression {
+        c_move = 26.0   // MOVE ≥ REST → suppression fails
+    }
+
+    // F_MU_03 perturbation: weak ERD (ratio < 1.5)
+    if perturb_weak_erd {
+        c_move = 20.0   // 25/20 = 1.25 < 1.5
+    }
+
+    g_mu_peak_hz   = peak
+    g_mu_peak_chan = "C3"
+
+    g_c3_rest_uv = c_rest
+    g_c4_rest_uv = c_rest
+    g_c3_move_uv = c_move
+    g_c4_move_uv = c_move
+    g_o1_rest_uv = o_base
+    g_o2_rest_uv = o_base
+
+    g_rest_mu_power = avg2_f(g_c3_rest_uv, g_c4_rest_uv)
+    g_move_mu_power = avg2_f(g_c3_move_uv, g_c4_move_uv)
+    if g_move_mu_power > 0.0 {
+        g_erd_ratio = g_rest_mu_power / g_move_mu_power
+    } else {
+        g_erd_ratio = 0.0
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════
+
+fn evaluate_falsifiers() {
+    // F_MU_01: peak in 8-13 Hz
+    g_f_mu_01_pass = g_mu_peak_hz >= MU_LO_HZ && g_mu_peak_hz <= MU_HI_HZ
+
+    // F_MU_02: REST C3/C4 amplitude > MOVE C3/C4 amplitude (suppression)
+    let rest_max = max_f(g_c3_rest_uv, g_c4_rest_uv)
+    let move_max = max_f(g_c3_move_uv, g_c4_move_uv)
+    g_f_mu_02_pass = rest_max > move_max
+
+    // F_MU_03: REST/MOVE ERD ratio >= 1.5
+    g_f_mu_03_pass = g_erd_ratio >= ERD_RATIO_MIN
+}
+
+// ════════════════════════════════════════════════════════════════════
+//   __EEG_MU_RHYTHM__ <PASS|FAIL> <peak_hz> <erd_ratio>
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_sentinel() {
+    let mut verdict = "PASS"
+    if !(g_f_mu_01_pass && g_f_mu_02_pass && g_f_mu_03_pass) {
+        verdict = "FAIL"
+    }
+    println("__EEG_MU_RHYTHM__ " + verdict + " " + to_string(g_mu_peak_hz) + " " + to_string(g_erd_ratio))
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_audit(ts: string) {
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    let mut row = "{"
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"ts\":\"" + ts + "\","
+    row = row + "\"block_count\":" + to_string(g_block_count) + ","
+    row = row + "\"block_rest\":" + to_string(g_block_rest_count) + ","
+    row = row + "\"block_move\":" + to_string(g_block_move_count) + ","
+    row = row + "\"total_seconds\":" + to_string(g_total_seconds) + ","
+    row = row + "\"mu_peak_hz\":" + to_string(g_mu_peak_hz) + ","
+    row = row + "\"mu_peak_chan\":\"" + g_mu_peak_chan + "\","
+    row = row + "\"c3_rest_uv\":" + to_string(g_c3_rest_uv) + ","
+    row = row + "\"c4_rest_uv\":" + to_string(g_c4_rest_uv) + ","
+    row = row + "\"c3_move_uv\":" + to_string(g_c3_move_uv) + ","
+    row = row + "\"c4_move_uv\":" + to_string(g_c4_move_uv) + ","
+    row = row + "\"o1_rest_uv\":" + to_string(g_o1_rest_uv) + ","
+    row = row + "\"o2_rest_uv\":" + to_string(g_o2_rest_uv) + ","
+    row = row + "\"rest_mu_power\":" + to_string(g_rest_mu_power) + ","
+    row = row + "\"move_mu_power\":" + to_string(g_move_mu_power) + ","
+    row = row + "\"erd_ratio\":" + to_string(g_erd_ratio) + ","
+    row = row + "\"f_mu_01\":" + _bool_str(g_f_mu_01_pass) + ","
+    row = row + "\"f_mu_02\":" + _bool_str(g_f_mu_02_pass) + ","
+    row = row + "\"f_mu_03\":" + _bool_str(g_f_mu_03_pass)
+    row = row + "}"
+    let nl = chr(10)
+    let mut existing = ""
+    let prior = read_file(path)
+    if prior != "" { existing = prior }
+    write_file(path, existing + row + nl)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Live runner — collect.hexa subprocess delegation
+//   it delegates to anima-eeg/collect.hexa and then post-analyzes the .npy.
+//   --run prints the audio cue schedule and shells out the collect command;
+//   paths hardcoded (all CLI args).
+// ════════════════════════════════════════════════════════════════════
+
+fn print_run_plan(port: string, board: string, output: string) {
+    build_schedule()
+    println("── mu_rhythm live run plan ──")
+    println("schema=" + SCHEMA)
+    println("port=" + port)
+    println("board=" + board)
+    println("output=" + output)
+    println("sample_rate_hz=" + to_string(SAMPLE_RATE_HZ))
+    println("channel_count=" + to_string(CHANNEL_COUNT))
+    println("notch_hz=" + to_string(NOTCH_HZ))
+    println("bandpass=" + to_string(BANDPASS_LO_HZ) + "-" + to_string(BANDPASS_HI_HZ) + " Hz, order=" + to_string(BANDPASS_ORDER))
+    println("mu_band=" + to_string(MU_LO_HZ) + "-" + to_string(MU_HI_HZ) + " Hz")
+    println("erd_ratio_min=" + to_string(ERD_RATIO_MIN))
+    println("total_seconds=" + to_string(g_total_seconds))
+    println("")
+    println("[block schedule — interleaved REST/MOVE × 5]")
+    let mut i = 0
+    while i < g_block_count {
+        let t0 = i * BLOCK_DURATION_S
+        let kind = block_kind_at(i)
+        let cue = cue_text_at(i)
+        println("  t=" + to_string(t0) + "s  block#" + to_string(i + 1) + "  " + kind + "  cue=\"" + cue + "\"")
+        i = i + 1
+    }
+    println("")
+    println("[user hand-step — montage assumption]")
+    println("  N3P (ch3)  -> C3  (left motor cortex, ~5cm left of vertex Cz)")
+    println("  N4P (ch4)  -> C4  (right motor cortex, ~5cm right of vertex Cz)")
+    println("  N7P (ch7)  -> O1  (1\" above inion, 1\" left)  [μ-immune baseline]")
+    println("  N8P (ch8)  -> O2  (1\" above inion, 1\" right) [μ-immune baseline]")
+    println("  SRB2       -> A1 earlobe (white wire)")
+    println("  BIAS       -> A2 earlobe (black wire)")
+    println("")
+    println("[delegate command — run in separate terminal]")
+    println("  hexa run anima-eeg/collect.hexa --port " + port + " \\")
+    println("      --board " + board + " --duration " + to_string(g_total_seconds) + " \\")
+    println("      --output " + output)
+    println("")
+    println("[audio cues — follow on speaker / TTS at t=0,30,60,90,120,150,180,210,240,270]")
+    println("[motion protocol — MOVE block: 손 주먹 쥐었다 펴기 ~1 Hz pace; REST block: 손 가만히]")
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Tests (selftest)
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn run_tests() -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+    println("=== mu_rhythm selftest ===")
+
+    // T1: schedule build (10 blocks, 300 s)
+    println("[T1] schedule build")
+    build_schedule()
+    let ok1a = assert_true(g_block_count == 10, "block_count == 10")
+    let ok1b = assert_true(g_block_rest_count == 5, "REST blocks == 5")
+    let ok1c = assert_true(g_block_move_count == 5, "MOVE blocks == 5")
+    let ok1d = assert_true(g_total_seconds == TOTAL_DURATION_S, "total seconds == 300")
+    if ok1a && ok1b && ok1c && ok1d { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T2: interleaved REST/MOVE ordering
+    println("[T2] interleaved REST/MOVE ordering")
+    let ok2a = assert_true(block_kind_at(0) == "REST", "block 0 = REST")
+    let ok2b = assert_true(block_kind_at(1) == "MOVE", "block 1 = MOVE")
+    let ok2c = assert_true(block_kind_at(8) == "REST", "block 8 = REST")
+    let ok2d = assert_true(block_kind_at(9) == "MOVE", "block 9 = MOVE")
+    if ok2a && ok2b && ok2c && ok2d { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T3] idempotent schedule rebuild")
+    build_schedule()
+    let bc1 = g_block_count
+    build_schedule()
+    let ok3 = assert_true(g_block_count == bc1, "block count idempotent")
+    if ok3 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T4: nominal synthetic — all 3 falsifiers PASS
+    println("[T4] synthetic nominal — F_MU_01/02/03 PASS")
+    analyze_synthetic(false, false, false)
+    evaluate_falsifiers()
+    let ok4a = assert_true(g_f_mu_01_pass, "F_MU_01 μ peak in 8-13 Hz")
+    let ok4b = assert_true(g_f_mu_02_pass, "F_MU_02 REST C3/C4 > MOVE C3/C4")
+    let ok4c = assert_true(g_f_mu_03_pass, "F_MU_03 ERD ratio >= 1.5")
+    let ok4d = assert_true(g_erd_ratio >= ERD_RATIO_MIN, "ERD ratio = " + to_string(g_erd_ratio))
+    if ok4a && ok4b && ok4c && ok4d { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T5: F_MU_01 falsifier — peak outside μ band
+    println("[T5] F_MU_01 falsifier — peak @ 5 Hz (theta)")
+    analyze_synthetic(true, false, false)
+    evaluate_falsifiers()
+    let ok5a = assert_true(!g_f_mu_01_pass, "F_MU_01 fails")
+    let ok5b = assert_true(g_f_mu_02_pass, "F_MU_02 still passes")
+    let ok5c = assert_true(g_f_mu_03_pass, "F_MU_03 still passes")
+    if ok5a && ok5b && ok5c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T6: F_MU_02 falsifier — no suppression (MOVE ≥ REST)
+    println("[T6] F_MU_02 falsifier — no suppression")
+    analyze_synthetic(false, true, false)
+    evaluate_falsifiers()
+    let ok6a = assert_true(g_f_mu_01_pass, "F_MU_01 still passes")
+    let ok6b = assert_true(!g_f_mu_02_pass, "F_MU_02 fails (no suppression)")
+    if ok6a && ok6b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T7: F_MU_03 falsifier — weak ERD (ratio < 1.5)
+    println("[T7] F_MU_03 falsifier — weak ERD")
+    analyze_synthetic(false, false, true)
+    evaluate_falsifiers()
+    let ok7a = assert_true(g_f_mu_01_pass, "F_MU_01 still passes")
+    let ok7b = assert_true(g_f_mu_02_pass, "F_MU_02 still passes (REST > MOVE)")
+    let ok7c = assert_true(!g_f_mu_03_pass, "F_MU_03 fails (ratio < 1.5)")
+    if ok7a && ok7b && ok7c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T8: cue text mapping
+    println("[T8] audio cue text")
+    let cue_rest = cue_text_at(0)
+    let cue_move = cue_text_at(1)
+    let ok8a = assert_true(cue_rest == "쉬세요 (Rest)", "REST cue text")
+    let ok8b = assert_true(cue_move == "주먹 쥐었다 펴세요 (Make fist)", "MOVE cue text")
+    if ok8a && ok8b { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T9] audit JSONL emit deterministic")
+    build_schedule()
+    analyze_synthetic(false, false, false)
+    evaluate_falsifiers()
+    let ts = "selftest_synth"
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    write_file(path, "")
+    emit_audit(ts)
+    let body1 = read_file(path)
+    write_file(path, "")
+    emit_audit(ts)
+    let body2 = read_file(path)
+    let ok9a = assert_true(body1 == body2, "audit row byte-stable")
+    let ok9b = assert_true(len(body1) > 0, "audit row non-empty")
+    if ok9a && ok9b { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CLI entry
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    println("usage:")
+    println("  hexa run anima-eeg/protocols/mu_rhythm.hexa --selftest")
+    println("  hexa run anima-eeg/protocols/mu_rhythm.hexa --run \\")
+    println("      --port <serial> --board <cyton_daisy> --output <npy>")
+}
+
+fn _arg_value(av: list, key: string, dflt: string) -> string {
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == key && i + 1 < len(av) {
+            return av[i + 1]
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut run = false
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == "--selftest" { selftest = true }
+        if av[i] == "--run"      { run = true }
+        if av[i] == "--help"     { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if run {
+        let port   = _arg_value(av, "--port",   "")
+        let board  = _arg_value(av, "--board",  "cyton_daisy")
+        let output = _arg_value(av, "--output", "")
+        if len(port) == 0 || len(output) == 0 {
+            _print_usage()
+            exit(2)
+        }
+        print_run_plan(port, board, output)
+        // the actual collect.hexa subprocess + audio TTS hook is the
+        // user hand-step. Plan is logged; user executes in separate
+        // terminal and reports back the .npy for analyze pass.
+        exit(0)
+    }
+
+    if !selftest {
+        _print_usage()
+        exit(2)
+    }
+
+    println("── mu_rhythm selftest ──")
+    println("schema=" + SCHEMA)
+    println("raw10_honest=synthetic_mu_no_real_brainflow_no_audio_terminal_only")
+    println("raw82_darwin=clock_gettime_monotonic_via_collect_hexa")
+    println("source=Pfurtscheller_1999_mu_ERD_C3_C4_motor_cortex")
+    println("")
+
+    // Demonstration (synthetic nominal session)
+    build_schedule()
+    analyze_synthetic(false, false, false)
+    evaluate_falsifiers()
+
+    println("[demo nominal session]")
+    println("block_count="     + to_string(g_block_count))
+    println("total_seconds="   + to_string(g_total_seconds))
+    println("mu_peak_hz="      + to_string(g_mu_peak_hz))
+    println("mu_peak_chan="    + g_mu_peak_chan)
+    println("c3_rest_uv="      + to_string(g_c3_rest_uv))
+    println("c4_rest_uv="      + to_string(g_c4_rest_uv))
+    println("c3_move_uv="      + to_string(g_c3_move_uv))
+    println("c4_move_uv="      + to_string(g_c4_move_uv))
+    println("o1_rest_uv="      + to_string(g_o1_rest_uv))
+    println("o2_rest_uv="      + to_string(g_o2_rest_uv))
+    println("rest_mu_power="   + to_string(g_rest_mu_power))
+    println("move_mu_power="   + to_string(g_move_mu_power))
+    println("erd_ratio="       + to_string(g_erd_ratio))
+    println("f_mu_01="         + _bool_str(g_f_mu_01_pass))
+    println("f_mu_02="         + _bool_str(g_f_mu_02_pass))
+    println("f_mu_03="         + _bool_str(g_f_mu_03_pass))
+    println("")
+
+    emit_sentinel()
+    emit_audit("selftest_synth")
+
+    let fails = run_tests()
+    if fails != 0 {
+        println("selftest=fail")
+        eprintln("selftest FAILED: " + to_string(fails) + " test(s) failed")
+        exit(1)
+    }
+    println("selftest=ok")
+    println("DONE")
+}

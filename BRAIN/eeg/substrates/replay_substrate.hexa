@@ -1,0 +1,484 @@
+// hexa-brain/eeg/substrates/replay_substrate.hexa
+//
+// PURPOSE: replay backend that walks disk-stored .npy files. spec.path
+//   points at "eeg/recordings/sessions/<file>.npy" (or any absolute path).
+//   This unblocks dual_stream.hexa:211 (Phase 5 wiring deferred to
+//   follow-up PR).
+//
+//   1. Output: 16 rows (EEG channels) ≠ brainflow's 32. No timestamp/aux.
+//   2. sample_rate read from sidecar <path>.meta.json or defaults to 125.
+//   3. EOF: read_chunk returns truncated tail then [] (no looping).
+//
+// Falsifier F_SUB_03 — synth → npy → replay round-trip byte-identical.
+
+let SCHEMA              = "hexa-brain/eeg/replay_substrate/1"
+let HELPER_PATH         = "/tmp/hexa_brain_replay_substrate_helper.py"
+let EXPECTED_CHANNEL_COUNT = 16
+let DEFAULT_SAMPLE_RATE    = 125
+
+fn _kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _emit_trailer(slug: string, detail: string, fix: string) {
+    eprintln("reason: " + slug + ": " + detail)
+    eprintln("fix: " + fix)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 1. Python helper emitter (part A: header + session class)
+// ════════════════════════════════════════════════════════════════════
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# hexa-brain replay_substrate helper — emitted by\n")
+    parts.push("import argparse, ast, json, os, struct, sys, tempfile, time\n\n")
+
+    parts.push("SCHEMA = '" + SCHEMA + "'\n")
+    parts.push("EXPECTED_CHANNEL_COUNT = " + to_string(EXPECTED_CHANNEL_COUNT) + "\n")
+    parts.push("DEFAULT_SAMPLE_RATE    = " + to_string(DEFAULT_SAMPLE_RATE) + "\n\n")
+
+    parts.push("STATE_PREINIT = 'PREINIT'\n")
+    parts.push("STATE_INIT    = 'INIT'\n")
+    parts.push("STATE_RUNNING = 'RUNNING'\n")
+    parts.push("STATE_HALTED  = 'HALTED'\n\n")
+
+    parts.push("class ReplaySession:\n")
+    parts.push("    def __init__(self, spec):\n")
+    parts.push("        self.spec = dict(spec)\n")
+    parts.push("        self.path = spec.get('path')\n")
+    parts.push("        if not self.path:\n")
+    parts.push("            raise ValueError('replay_substrate: spec.path required')\n")
+    parts.push("        self.state = STATE_PREINIT\n")
+    parts.push("        self.has_halted = False\n")
+    parts.push("        self.shutdown_bound = False\n")
+    parts.push("        self.shutdown_fired_count = 0\n")
+    parts.push("        self.recording = None\n")
+    parts.push("        self.last_err = {'code':'','advisory_url':'','retry_action':''}\n")
+    parts.push("        self.cursor = 0\n")
+    parts.push("        self.data = None\n")
+    parts.push("        self.data_rows = 0\n")
+    parts.push("        self.data_cols = 0\n")
+    parts.push("        self._numpy = False\n")
+    parts.push("        cs = self.spec.get('channel_set') or {}\n")
+    parts.push("        self.sample_rate = int(cs.get('sample_rate') or DEFAULT_SAMPLE_RATE)\n")
+    parts.push("        self.eeg_indices = list(cs.get('ids') or list(range(1, EXPECTED_CHANNEL_COUNT + 1)))\n\n")
+
+    parts.push("def _read_meta_for(path):\n")
+    parts.push("    meta_path = path + '.meta.json'\n")
+    parts.push("    if not os.path.exists(meta_path):\n")
+    parts.push("        return {}\n")
+    parts.push("    try:\n")
+    parts.push("        with open(meta_path, 'r') as f:\n")
+    parts.push("            return json.load(f)\n")
+    parts.push("    except Exception:\n")
+    parts.push("        return {}\n\n")
+    parts.push("def _read_npy_float32_2d(path):\n")
+    parts.push("    # NPY v1.0 float32 little-endian 2D parser (no numpy dep).\n")
+    parts.push("    with open(path, 'rb') as f:\n")
+    parts.push("        magic = f.read(6)\n")
+    parts.push("        if magic != b'\\x93NUMPY':\n")
+    parts.push("            raise ValueError('not-a-npy-file')\n")
+    parts.push("        major = f.read(1)[0]; minor = f.read(1)[0]\n")
+    parts.push("        if major == 1:\n")
+    parts.push("            hlen = struct.unpack('<H', f.read(2))[0]\n")
+    parts.push("        else:\n")
+    parts.push("            hlen = struct.unpack('<I', f.read(4))[0]\n")
+    parts.push("        header = f.read(hlen).decode('latin-1').strip()\n")
+    parts.push("        d = ast.literal_eval(header)\n")
+    parts.push("        if d.get('descr') != '<f4':\n")
+    parts.push("            raise ValueError(f'unsupported-dtype:{d.get(\"descr\")!r}')\n")
+    parts.push("        if d.get('fortran_order'):\n")
+    parts.push("            raise ValueError('fortran-order-unsupported')\n")
+    parts.push("        shape = d.get('shape', (0,))\n")
+    parts.push("        if len(shape) != 2:\n")
+    parts.push("            raise ValueError(f'expected-2d-got-{len(shape)}d')\n")
+    parts.push("        rows, cols = int(shape[0]), int(shape[1])\n")
+    parts.push("        n = rows * cols\n")
+    parts.push("        floats = struct.unpack('<' + 'f'*n, f.read(4*n))\n")
+    parts.push("        out = [list(floats[r*cols:(r+1)*cols]) for r in range(rows)]\n")
+    parts.push("        return rows, cols, out\n\n")
+
+    parts.push("def api_open_session(spec):\n")
+    parts.push("    sess = ReplaySession(spec)\n")
+    parts.push("    if not os.path.exists(sess.path):\n")
+    parts.push("        sess.last_err = {'code':'replay-path-missing',\n")
+    parts.push("                         'advisory_url':'',\n")
+    parts.push("                         'retry_action':'check-path-then-retry'}\n")
+    parts.push("        sys.stderr.write(f'[error] replay_substrate: path missing {sess.path}\\n')\n")
+    parts.push("        sess.state = STATE_HALTED; sess.has_halted = True\n")
+    parts.push("        return sess\n")
+    parts.push("    try:\n")
+    parts.push("        import numpy as np\n")
+    parts.push("        arr = np.load(sess.path, allow_pickle=False)\n")
+    parts.push("        sess.data = arr\n")
+    parts.push("        sess._numpy = True\n")
+    parts.push("        sess.data_rows = int(arr.shape[0]) if arr.ndim >= 1 else 0\n")
+    parts.push("        sess.data_cols = int(arr.shape[1]) if arr.ndim >= 2 else 0\n")
+    parts.push("    except ImportError:\n")
+    parts.push("        rows, cols, raw = _read_npy_float32_2d(sess.path)\n")
+    parts.push("        sess.data = raw\n")
+    parts.push("        sess._numpy = False\n")
+    parts.push("        sess.data_rows = rows\n")
+    parts.push("        sess.data_cols = cols\n")
+    parts.push("    except Exception as e:\n")
+    parts.push("        sess.last_err = {'code':'replay-load-failed',\n")
+    parts.push("                         'advisory_url':'',\n")
+    parts.push("                         'retry_action':'check-file-then-retry'}\n")
+    parts.push("        sys.stderr.write(f'[error] replay_substrate load: {e!r}\\n')\n")
+    parts.push("        sess.state = STATE_HALTED; sess.has_halted = True\n")
+    parts.push("        return sess\n")
+    parts.push("    meta = _read_meta_for(sess.path)\n")
+    parts.push("    if 'sample_rate' in meta:\n")
+    parts.push("        sess.sample_rate = int(meta['sample_rate'])\n")
+    parts.push("    sess.state = STATE_INIT\n")
+    parts.push("    sys.stderr.write(f'[output] replay_substrate.open path={sess.path} '\n")
+    parts.push("                     f'rows={sess.data_rows} cols={sess.data_cols} '\n")
+    parts.push("                     f'sr={sess.sample_rate}\\n')\n")
+    parts.push("    return sess\n\n")
+    parts.push("def api_close_session(sess):\n")
+    parts.push("    if sess is None: return\n")
+    parts.push("    if getattr(sess,'has_halted',False): return\n")
+    parts.push("    sess.state = STATE_HALTED\n")
+    parts.push("    sess.has_halted = True\n\n")
+
+    parts.push("def api_reinit(sess):\n")
+    parts.push("    if sess is None: return None\n")
+    parts.push("    api_close_session(sess)\n")
+    parts.push("    sess.has_halted = False\n")
+    parts.push("    return api_open_session(sess.spec)\n\n")
+
+    parts.push("def api_start_recording(sess, name='default', fmt='NPY', max_min=-1):\n")
+    parts.push("    if sess is None or getattr(sess,'has_halted',False): return None\n")
+    parts.push("    class _Rec:\n")
+    parts.push("        def __init__(s,n,f,m):\n")
+    parts.push("            s.name=n; s.fmt=f; s.max_min=m; s.is_open=True\n")
+    parts.push("    rec = _Rec(name, fmt, max_min)\n")
+    parts.push("    sess.recording = rec\n")
+    parts.push("    sess.state = STATE_RUNNING\n")
+    parts.push("    return rec\n\n")
+
+    parts.push("def api_stop_recording(rec):\n")
+    parts.push("    if rec is None or not getattr(rec,'is_open',False): return\n")
+    parts.push("    rec.is_open = False\n\n")
+    parts.push("def api_read_chunk(sess, n_samples_max):\n")
+    parts.push("    if sess is None or getattr(sess,'has_halted',False):\n")
+    parts.push("        return [], 0.0\n")
+    parts.push("    n = max(0, int(n_samples_max))\n")
+    parts.push("    cursor = sess.cursor\n")
+    parts.push("    cols = sess.data_cols\n")
+    parts.push("    if cursor >= cols:\n")
+    parts.push("        return [], float(cursor) / float(sess.sample_rate)\n")
+    parts.push("    end = min(cursor + n, cols)\n")
+    parts.push("    if sess._numpy:\n")
+    parts.push("        chunk = sess.data[:, cursor:end]\n")
+    parts.push("        out = [list(chunk[r]) for r in range(sess.data_rows)]\n")
+    parts.push("    else:\n")
+    parts.push("        out = [list(sess.data[r][cursor:end]) for r in range(sess.data_rows)]\n")
+    parts.push("    sess.cursor = end\n")
+    parts.push("    ts = float(end) / float(sess.sample_rate)\n")
+    parts.push("    return out, ts\n\n")
+
+    parts.push("def api_get_eeg_indices(sess):\n")
+    parts.push("    if sess is None: return []\n")
+    parts.push("    return list(sess.eeg_indices)\n\n")
+
+    parts.push("def api_get_sample_rate(sess):\n")
+    parts.push("    if sess is None: return 0\n")
+    parts.push("    return int(sess.sample_rate)\n\n")
+
+    parts.push("def api_stim(sess, stim_spec):\n")
+    parts.push("    raise NotImplementedError(\n")
+    parts.push("        'replay_substrate: read-only playback')\n\n")
+    parts.push("def api_on_shutdown_hook(sess, fn=None):\n")
+    parts.push("    import atexit, signal\n")
+    parts.push("    if sess is None or getattr(sess,'shutdown_bound',False): return\n")
+    parts.push("    def _hook(*a,**kw):\n")
+    parts.push("        sess.shutdown_fired_count = getattr(sess,'shutdown_fired_count',0) + 1\n")
+    parts.push("        try: api_close_session(sess)\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("    atexit.register(_hook)\n")
+    parts.push("    try: signal.signal(signal.SIGTERM, _hook)\n")
+    parts.push("    except Exception: pass\n")
+    parts.push("    try: signal.signal(signal.SIGINT, _hook)\n")
+    parts.push("    except Exception: pass\n")
+    parts.push("    sess.shutdown_bound = True\n\n")
+
+    parts.push("def api_last_error(sess):\n")
+    parts.push("    if sess is None:\n")
+    parts.push("        return {'code':'no-session','advisory_url':'','retry_action':''}\n")
+    parts.push("    return dict(getattr(sess,'last_err',\n")
+    parts.push("        {'code':'','advisory_url':'','retry_action':''}))\n\n")
+    parts.push("def _write_test_npy(path, rows, cols, seed=1):\n")
+    parts.push("    A, C, M = 1664525, 1013904223, 4294967296\n")
+    parts.push("    st = seed\n")
+    parts.push("    flat = []\n")
+    parts.push("    for r in range(rows):\n")
+    parts.push("        for c in range(cols):\n")
+    parts.push("            st = (A * st + C) % M\n")
+    parts.push("            u = st / float(M)\n")
+    parts.push("            flat.append((u - 0.5) * 100.0)\n")
+    parts.push("    header_dict = (f\"{{'descr': '<f4', 'fortran_order': False, \"\n")
+    parts.push("                   f\"'shape': ({rows}, {cols}), }}\")\n")
+    parts.push("    pad_total = 16 - ((10 + len(header_dict) + 1) % 16)\n")
+    parts.push("    header = header_dict + ' ' * pad_total + '\\n'\n")
+    parts.push("    with open(path, 'wb') as f:\n")
+    parts.push("        f.write(b'\\x93NUMPY')\n")
+    parts.push("        f.write(bytes([1, 0]))\n")
+    parts.push("        f.write(struct.pack('<H', len(header)))\n")
+    parts.push("        f.write(header.encode('latin-1'))\n")
+    parts.push("        f.write(struct.pack('<' + 'f'*len(flat), *flat))\n")
+    parts.push("    return flat\n\n")
+
+    parts.push("def cmd_selftest(args):\n")
+    parts.push("    print('== replay_substrate selftest ==')\n")
+    parts.push("    print(f'schema={SCHEMA}')\n")
+    parts.push("    print('mode=selftest_synthetic')\n")
+    parts.push("    fails = 0\n")
+    parts.push("    tmp = tempfile.mkdtemp(prefix='hexa_brain_replay_test_')\n")
+    parts.push("    path = os.path.join(tmp, 'test_synth.npy')\n")
+    parts.push("    rows, cols = 16, 50\n")
+    parts.push("    truth_flat = _write_test_npy(path, rows, cols, seed=1)\n")
+    parts.push("    with open(path + '.meta.json', 'w') as fmeta:\n")
+    parts.push("        json.dump({'sample_rate': 125,\n")
+    parts.push("                   'channels': list(range(1, 17))}, fmeta)\n")
+    parts.push("    spec = {'backend':'replay','path':path,\n")
+    parts.push("            'channel_set':{'name':'cyton_daisy_16',\n")
+    parts.push("                           'ids':list(range(1,17)),\n")
+    parts.push("                           'sample_rate':125,'coords_3d':None}}\n")
+    parts.push("    sess = api_open_session(spec)\n")
+    parts.push("    print(f'  state_after_open={sess.state}')\n")
+    parts.push("    sr   = api_get_sample_rate(sess)\n")
+    parts.push("    idx  = api_get_eeg_indices(sess)\n")
+    parts.push("    data, ts = api_read_chunk(sess, cols)\n")
+    parts.push("    shape_ok = (len(data) == rows and len(data[0]) == cols\n")
+    parts.push("                and sr == 125 and len(idx) == 16)\n")
+    parts.push("    print(f'  rows={len(data)} cols={len(data[0])} sr={sr} '\n")
+    parts.push("          f'idx[:4]={idx[:4]}')\n")
+    parts.push("    print(f'F_SUB_03_shape={\"PASS\" if shape_ok else \"FAIL\"}')\n")
+    parts.push("    if not shape_ok: fails += 1\n")
+    parts.push("    flat_read = []\n")
+    parts.push("    for r in range(rows):\n")
+    parts.push("        for c in range(cols):\n")
+    parts.push("            flat_read.append(data[r][c])\n")
+    parts.push("    b_truth = struct.pack('<' + 'f'*len(truth_flat), *truth_flat)\n")
+    parts.push("    b_read  = struct.pack('<' + 'f'*len(flat_read),  *flat_read)\n")
+    parts.push("    f03b = (b_truth == b_read)\n")
+    parts.push("    print(f'  byte_identical={f03b} len={len(b_truth)}')\n")
+    parts.push("    print(f'F_SUB_03_roundtrip={\"PASS\" if f03b else \"FAIL\"}')\n")
+    parts.push("    if not f03b: fails += 1\n")
+    parts.push("    data2, ts2 = api_read_chunk(sess, 100)\n")
+    parts.push("    eof_ok = (len(data2) == 0)\n")
+    parts.push("    print(f'  eof_data_len={len(data2)} ts2={ts2}')\n")
+    parts.push("    print(f'F_SUB_03_eof={\"PASS\" if eof_ok else \"FAIL\"}')\n")
+    parts.push("    if not eof_ok: fails += 1\n")
+    parts.push("    api_close_session(sess); api_close_session(sess)\n")
+    parts.push("    halted = sess.has_halted\n")
+    parts.push("    raised = False\n")
+    parts.push("    try: api_stim(sess, None)\n")
+    parts.push("    except NotImplementedError: raised = True\n")
+    parts.push("    f03d = (halted is True and raised is True)\n")
+    parts.push("    print(f'F_SUB_03_close_stim={\"PASS\" if f03d else \"FAIL\"}')\n")
+    parts.push("    if not f03d: fails += 1\n")
+    parts.push("    spec_missing = dict(spec); spec_missing['path'] = path + '.NOPE'\n")
+    parts.push("    sess_m = api_open_session(spec_missing)\n")
+    parts.push("    err = api_last_error(sess_m)\n")
+    parts.push("    f03e = (sess_m.has_halted is True and err.get('code') == 'replay-path-missing')\n")
+    parts.push("    print(f'F_SUB_03_missing_path={\"PASS\" if f03e else \"FAIL\"}')\n")
+    parts.push("    if not f03e: fails += 1\n")
+    parts.push("    try: os.unlink(path); os.unlink(path + '.meta.json'); os.rmdir(tmp)\n")
+    parts.push("    except Exception: pass\n")
+    parts.push("    if fails == 0:\n")
+    parts.push("        print('verdict=PASS')\n")
+    parts.push("    else:\n")
+    parts.push("        print(f'verdict=FAIL fails={fails}')\n")
+    parts.push("    print('selftest=ok')\n")
+    parts.push("    print('DONE')\n")
+    parts.push("    sys.exit(0 if fails == 0 else 1)\n\n")
+
+    parts.push("def cmd_inspect(args):\n")
+    parts.push("    print(f'schema={SCHEMA}')\n")
+    parts.push("    print('mode=inspect')\n")
+    parts.push("    print('format=npy-float32-2d')\n")
+    parts.push("    print('meta_sidecar=<path>.meta.json:sample_rate')\n")
+    parts.push("    print('numpy_optional=true')\n")
+    parts.push("    print('inspect=ok')\n")
+    parts.push("    print('DONE')\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    sub = p.add_subparsers(dest='cmd', required=True)\n")
+    parts.push("    sub.add_parser('selftest')\n")
+    parts.push("    sub.add_parser('inspect')\n")
+    parts.push("    args = p.parse_args()\n")
+    parts.push("    if args.cmd == 'selftest': cmd_selftest(args)\n")
+    parts.push("    elif args.cmd == 'inspect': cmd_inspect(args)\n")
+    parts.push("    else: sys.exit(2)\n\n")
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _run_helper(args: string) -> list {
+    let cmd = "python3 " + HELPER_PATH + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 2. Hexa-side assertions
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn _run_selftest_assertions(body: string) -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+
+    println("[T1] selftest=ok")
+    let t1 = assert_true(_kv_lookup(body, "selftest") == "ok", "selftest=ok")
+    if t1 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T2] schema=" + SCHEMA)
+    let t2 = assert_true(_kv_lookup(body, "schema") == SCHEMA, "schema match")
+    if t2 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T3] verdict=PASS")
+    let t3 = assert_true(_kv_lookup(body, "verdict") == "PASS", "verdict=PASS")
+    if t3 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T4] F_SUB_03_shape (16x50 npy parse)")
+    let t4 = assert_true(_kv_lookup(body, "F_SUB_03_shape") == "PASS", "F_SUB_03_shape=PASS")
+    if t4 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T5] F_SUB_03_roundtrip (byte-identical synth→npy→replay)")
+    let t5 = assert_true(_kv_lookup(body, "F_SUB_03_roundtrip") == "PASS", "F_SUB_03_roundtrip=PASS")
+    if t5 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T6] F_SUB_03_eof (chunk past end returns empty)")
+    let t6 = assert_true(_kv_lookup(body, "F_SUB_03_eof") == "PASS", "F_SUB_03_eof=PASS")
+    if t6 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T7] F_SUB_03_close_stim (idempotent close + stim raises)")
+    let t7 = assert_true(_kv_lookup(body, "F_SUB_03_close_stim") == "PASS", "F_SUB_03_close_stim=PASS")
+    if t7 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T8] F_SUB_03_missing_path (last_err populated)")
+    let t8 = assert_true(_kv_lookup(body, "F_SUB_03_missing_path") == "PASS", "F_SUB_03_missing_path=PASS")
+    if t8 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 3. CLI
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    eprintln("usage: hexa run eeg/substrates/replay_substrate.hexa --selftest")
+    eprintln("       hexa run eeg/substrates/replay_substrate.hexa --inspect")
+}
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path {
+            if a.ends_with("/exe") { is_path = true }
+        }
+        if !is_path {
+            if a.ends_with("hexa_interp") { is_path = true }
+        }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut inspect_mode = false
+    let mut want_help = false
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--inspect"  { inspect_mode = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        _emit_trailer("unknown-arg", "unrecognized argument: " + a, "1) re-run with --help")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help { _print_usage(); exit(0) }
+
+    if !selftest && !inspect_mode {
+        _print_usage()
+        exit(2)
+    }
+
+    _write_helper()
+
+    if selftest {
+        println("== replay_substrate selftest ==")
+        let r = _run_helper("selftest")
+        let body = r[0]
+        let st   = r[1]
+        println(body)
+        if st != 0 {
+            eprintln("selftest helper FAILED rc=" + to_string(st))
+            exit(1)
+        }
+        if _kv_lookup(body, "selftest") != "ok" {
+            _emit_trailer("selftest-marker-missing", "no selftest=ok",
+                          "1) check helper parse")
+            exit(1)
+        }
+        println("")
+        let fails = _run_selftest_assertions(body)
+        if fails != 0 {
+            println("selftest=fail")
+            eprintln("selftest FAILED: " + to_string(fails) + " assertion(s)")
+            exit(1)
+        }
+        println("selftest: OK")
+        exit(0)
+    }
+
+    println("== replay_substrate inspect ==")
+    let r = _run_helper("inspect")
+    println(r[0])
+    if r[1] != 0 {
+        eprintln("inspect helper FAILED rc=" + to_string(r[1]))
+        exit(1)
+    }
+    exit(0)
+}
+// hexa-strict auto-invokes fn main() — do not call main() explicitly.

@@ -1,0 +1,73 @@
+// hexa-brain/eeg/eeg_iit4_demo.hexa — EEG → stdlib IIT 4.0 big-Φ pipeline demo.
+//
+//   Demonstrates hexa-brain reusing the shared stdlib consciousness engine
+//   (hexa-lang stdlib/consciousness/iit4_*) via the local EEG→TPM adapter —
+//   the same big_phi anima runs on its ECA substrate, here on EEG.
+//
+//   Synthetic EEG (deterministic): a COUPLED 2-channel pair (swap dynamics —
+//   ch0/ch1 hand off each other, integrated) vs an INDEPENDENT 2-channel pair
+//   (each holds itself, reducible). The adapter estimates a TPM from each and
+//   the engine scores big-Φ — coupled should integrate (> 0), independent not.
+//
+//   STUB scope: synthetic input + frequency-estimated TPM ⇒ Φ is an estimate,
+//   not a closed form. Real ADS1299 capture → eeg_estimate_tpm is the same call.
+//
+//   deterministic · hexa-only · $0 · LLM none.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/BRAIN/eeg/eeg_to_tpm.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// COUPLED EEG: 2 ch swap — ch0,ch1 alternate in anti-phase (each drives the other).
+// samples flat [ch*n_samp + t]; values 0.0/1.0 (binarize at mean=0.5 recovers them).
+fn synth_coupled(n_samp: int) -> array {
+    let mut s = []
+    let mut t = 0
+    while t < n_samp { s = s.push(to_float(t % 2)); t = t + 1 }          // ch0: 0,1,0,1,...
+    t = 0
+    while t < n_samp { s = s.push(to_float((t + 1) % 2)); t = t + 1 }    // ch1: 1,0,1,0,...
+    return s
+}
+
+// INDEPENDENT EEG: 2 ch, each constant-distinct (no cross-coupling).
+fn synth_independent(n_samp: int) -> array {
+    let mut s = []
+    let mut t = 0
+    while t < n_samp { s = s.push(to_float(t % 2)); t = t + 1 }          // ch0: 0,1,0,1 (self-periodic)
+    t = 0
+    while t < n_samp { s = s.push(to_float(t % 2)); t = t + 1 }          // ch1: identical to ch0 (no independent info beyond ch0)
+    return s
+}
+
+fn main() {
+    println("================================================================")
+    println("  hexa-brain EEG → stdlib/consciousness/iit4 big-Φ (adapter demo)")
+    println("================================================================")
+    let n_ch = 2
+    let n_samp = 64
+
+    let bc = eeg_big_phi(synth_coupled(n_samp), n_ch, n_samp, 1)         // state 01
+    let bi = eeg_big_phi(synth_independent(n_samp), n_ch, n_samp, 1)
+    println("  coupled  EEG → big-Φ = " + str(bc[0]) + " (total " + str(bc[1]) + ")")
+    println("  indep.   EEG → big-Φ = " + str(bi[0]))
+
+    check("pipeline runs: coupled big-Φ finite >= 0", bc[0] >= 0.0 - 0.000001)
+    check("pipeline runs: indep big-Φ finite >= 0", bi[0] >= 0.0 - 0.000001)
+    check("coupled big-Φ > 0 (EEG integration detected)", bc[0] > 0.000001)
+    check("coupled >= independent (integration ordering)", bc[0] >= bi[0] - 0.000001)
+
+    // determinism
+    let bc2 = eeg_big_phi(synth_coupled(n_samp), n_ch, n_samp, 1)
+    check("determinism: coupled re-run identical", (bc[0] - bc2[0]) < 0.000001 && (bc2[0] - bc[0]) < 0.000001)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  → EEG reuses the SAME stdlib IIT4 engine as anima (engine ⊥ adapter, g61)")
+    println("================================================================")
+    if FAIL > 0 { panic("EEG IIT4 demo FAILED") }
+}

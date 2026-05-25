@@ -1,0 +1,188 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg-core/tool/modules/_artifact/artifact_meta_classifier.hexa
+//
+//    Aggregate the 7 per-artifact detectors → composite verdict.
+//      • dominant_artifact_type ∈ {EMI, BLINK, MOTION, EMG, ECG, REF_DRIFT,
+//        AGING, NONE}
+//      • composite_quality_score ∈ [0,100] (100 = perfect; deduct per
+//        DOMINANT 20pt, per MILD 5pt)
+//      • recommended_cleaning_chain — ordered list of suppressors to
+//        apply, ordered by impact (DOMINANT first, then MILD).
+//
+//    Voting ensemble — each detector returns verdict; meta tallies. No
+//    learnt weights yet (all detectors equally weighted). Future: stacking
+//    once labelled cleaning outcome data accumulated.
+//
+//    quality = 100 − 20*N(DOMINANT) − 5*N(MILD)  (clip to [0,100])
+//    pass = (quality ≥ 80)
+//
+//    F1 all-CLEAN     → quality=100, NONE
+//    F2 line60        → EMI dominant
+//    F3 blink synth   → BLINK dominant
+//    F4 motion synth  → MOTION dominant
+//    F5 drift synth   → REF_DRIFT dominant
+//    F6 mixed         → multiple dominants, low quality
+//
+//  @resolver-bypass(reason="darwin-native: dispatches sub-detectors via hexa.real")
+// ════════════════════════════════════════════════════════════════════════════
+
+let ART_DIR = "anima-eeg-core/tool/modules/_artifact"
+let LEDGER  = "state/eeg_artifact_audit/2026_04_28_meta.jsonl"
+
+fn is_digit_ch(c: string) -> int {
+    if c == "0" || c == "1" || c == "2" || c == "3" || c == "4" { return 1 }
+    if c == "5" || c == "6" || c == "7" || c == "8" || c == "9" { return 1 }
+    return 0
+}
+fn digit_val(c: string) -> int {
+    if c == "0" { return 0 } if c == "1" { return 1 } if c == "2" { return 2 }
+    if c == "3" { return 3 } if c == "4" { return 4 } if c == "5" { return 5 }
+    if c == "6" { return 6 } if c == "7" { return 7 } if c == "8" { return 8 }
+    if c == "9" { return 9 } ; return -1
+}
+fn find_in_str(s: string, needle: string) -> int {
+    let n = len(s); let m = len(needle); if m <= 0 { return 0 }; if n < m { return -1 }
+    let mut i = 0
+    while i <= n - m {
+        let mut j = 0; let mut ok = 1
+        while j < m { if s[i + j] != needle[j] { ok = 0; j = m }; j = j + 1 }
+        if ok == 1 { return i }; i = i + 1
+    }
+    return -1
+}
+fn parse_int_kv(blob: string, key: string) -> int {
+    let kp = find_in_str(blob, key); if kp < 0 { return -2147483647 }
+    let n = len(blob); let mut q = kp + len(key); let mut acc = 0; let mut neg = 0; let mut hd = 0
+    while q < n && blob[q] != "\n" {
+        let c = blob[q]; if c == "-" && hd == 0 { neg = 1 }
+        if is_digit_ch(c) == 1 { acc = acc * 10 + digit_val(c); hd = 1 }
+        q = q + 1
+    }
+    if hd == 0 { return -2147483647 }; if neg == 1 { return -acc }; return acc
+}
+fn now_iso() -> string { return exec("date -u +%Y-%m-%dT%H:%M:%SZ").trim() }
+
+fn parse_str_after(blob: string, key: string) -> string {
+    let kp = find_in_str(blob, key); if kp < 0 { return "" }
+    let n = len(blob); let mut q = kp + len(key); let mut out = ""
+    while q < n && blob[q] != "\n" { out = out + blob[q]; q = q + 1 }
+    return out
+}
+
+fn invoke_detector(det_name: string, mode_arg: string, src_arg: string) -> string {
+    let hexa_lang = env("HEXA_LANG")
+    let mut hexa_bin = "/Users/ghost/core/hexa-lang/hexa.real"
+    if hexa_lang != "" { hexa_bin = hexa_lang + "/hexa.real" }
+    let path = ART_DIR + "/" + det_name + ".hexa"
+    let mut flag = "--selftest-mode"
+    if mode_arg == "real" { flag = "--input" }
+    let cmd = hexa_bin + " run " + path + " -- " + flag + " \"" + src_arg + "\""
+    let r = exec_with_status(cmd)
+    return to_string(r[0])
+}
+
+fn run_meta(mode_arg: string, src_arg: string, fs_arg: int) -> string {
+    let emi_blob   = invoke_detector("environmental_emi_classifier",  mode_arg, src_arg)
+    let blink_blob = invoke_detector("eye_blink_detector",            mode_arg, src_arg)
+    let mot_blob   = invoke_detector("motion_artifact_detector",      mode_arg, src_arg)
+    let emg_blob   = invoke_detector("emg_muscle_detector",           mode_arg, src_arg)
+    let ecg_blob   = invoke_detector("ecg_heart_artifact_detector",   mode_arg, src_arg)
+    let ref_blob   = invoke_detector("reference_drift_detector",      mode_arg, src_arg)
+    let age_blob   = invoke_detector("electrode_aging_classifier",    mode_arg, src_arg)
+
+    let v_emi   = parse_str_after(emi_blob,   "verdict=")
+    let v_blink = parse_str_after(blink_blob, "verdict=")
+    let v_mot   = parse_str_after(mot_blob,   "verdict=")
+    let v_emg   = parse_str_after(emg_blob,   "verdict=")
+    let v_ecg   = parse_str_after(ecg_blob,   "verdict=")
+    let v_ref   = parse_str_after(ref_blob,   "verdict=")
+    let v_age   = parse_str_after(age_blob,   "verdict=")
+
+    let names = ["EMI", "BLINK", "MOTION", "EMG", "ECG", "REF_DRIFT", "AGING"]
+    let verds = [v_emi, v_blink, v_mot, v_emg, v_ecg, v_ref, v_age]
+
+    let mut n_dom = 0; let mut n_mild = 0
+    let mut dominant_chain = ""
+    let mut mild_chain = ""
+    let mut dominant_first = "NONE"
+    let mut i = 0
+    while i < len(verds) {
+        let v = verds[i]; let nm = names[i]
+        if v == "DOMINANT" {
+            n_dom = n_dom + 1
+            if dominant_first == "NONE" { dominant_first = nm }
+            if dominant_chain == "" { dominant_chain = nm } else { dominant_chain = dominant_chain + "+" + nm }
+        }
+        if v == "MILD" {
+            n_mild = n_mild + 1
+            if mild_chain == "" { mild_chain = nm } else { mild_chain = mild_chain + "+" + nm }
+        }
+        i = i + 1
+    }
+    let mut quality = 100 - 20 * n_dom - 5 * n_mild
+    if quality < 0 { quality = 0 }
+    let pass_flag = if quality >= 80 { 1 } else { 0 }
+
+    let mut chain = ""
+    if dominant_chain != "" { chain = dominant_chain }
+    if mild_chain != "" {
+        if chain == "" { chain = mild_chain } else { chain = chain + "→" + mild_chain }
+    }
+    if chain == "" { chain = "NONE" }
+
+    let mut out = "module=artifact_meta_classifier\n"
+    out = out + "ts=" + now_iso() + "\n"
+    out = out + "mode=" + mode_arg + "\n"
+    out = out + "input=" + src_arg + "\n"
+    out = out + "pass=" + str(pass_flag) + "\n"
+    out = out + "composite_quality_score=" + str(quality) + "\n"
+    out = out + "n_dominant=" + str(n_dom) + "\n"
+    out = out + "n_mild=" + str(n_mild) + "\n"
+    out = out + "dominant_artifact_type=" + dominant_first + "\n"
+    out = out + "recommended_cleaning_chain=" + chain + "\n"
+    out = out + "── per-detector ──\n"
+    out = out + "emi=" + v_emi + "\n"
+    out = out + "blink=" + v_blink + "\n"
+    out = out + "motion=" + v_mot + "\n"
+    out = out + "emg=" + v_emg + "\n"
+    out = out + "ecg=" + v_ecg + "\n"
+    out = out + "ref_drift=" + v_ref + "\n"
+    out = out + "aging=" + v_age + "\n"
+
+    // ledger
+    exec("mkdir -p state/eeg_artifact_audit")
+    let prior = read_file(LEDGER); let mut existing = ""
+    if prior != "" { existing = prior }
+    let row = "{\"ts\":\"" + now_iso() + "\",\"tool\":\"_artifact/meta\",\"mode\":\"" + mode_arg + "\",\"input\":\"" + src_arg + "\",\"quality\":" + str(quality) + ",\"n_dominant\":" + str(n_dom) + ",\"n_mild\":" + str(n_mild) + ",\"dominant\":\"" + dominant_first + "\",\"chain\":\"" + chain + "\",\"emi\":\"" + v_emi + "\",\"blink\":\"" + v_blink + "\",\"motion\":\"" + v_mot + "\",\"emg\":\"" + v_emg + "\",\"ecg\":\"" + v_ecg + "\",\"ref_drift\":\"" + v_ref + "\",\"aging\":\"" + v_age + "\"}\n"
+    write_file(LEDGER, existing + row)
+    return out
+}
+
+fn flags_only_argv() -> list {
+    let av = argv(); let mut start = 0
+    while start < len(av) {
+        let a = av[start]; let mut sd = 0
+        if len(a) >= 1 { if a[0] == "-" { sd = 1 } }
+        if sd == 1 { break }; start = start + 1
+    }
+    let mut out = []; let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+fn main() {
+    let av = flags_only_argv()
+    let mut mode = "selftest"; let mut src = "white"; let mut fs_arg = 125
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--input" { mode = "real"; src = av[i+1]; i = i + 2; continue }
+        if a == "--selftest-mode" { mode = "selftest"; src = av[i+1]; i = i + 2; continue }
+        if a == "--fs" { fs_arg = to_int(av[i+1]); i = i + 2; continue }
+        i = i + 1
+    }
+    let res = run_meta(mode, src, fs_arg)
+    print(res)
+    let pf = parse_int_kv(res, "pass=")
+    if pf == 1 { exit(0) }
+    exit(1)
+}

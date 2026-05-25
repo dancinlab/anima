@@ -1,0 +1,104 @@
+# vendor/external_deps.yaml — hand-curated catalog of external deps
+# schema: hexa-brain/vendor/external_deps/1
+# last_updated: 2026-05-12
+#
+# This catalog is the SSOT for the license firewall (bin/check_licenses.sh).
+# It is HAND-CURATED — not auto-derived from any package manager (project has
+# no requirements.txt / pyproject.toml by design, raw#9 strict).
+#
+# Per-entry fields:
+#   id                       — short snake_case identifier
+#   name                     — human-readable name
+#   spdx                     — SPDX license id (or "UNKNOWN" / "no-license")
+#   source_url               — upstream canonical URL
+#   coupling_modes           — list of: in_process | subprocess | http | cli
+#   blocked_import_patterns  — list of regex fragments (matched in source files
+#                              via grep, see check_licenses.sh)
+#   status                   — active | declared-not-implemented
+#   advisory                 — free-form note for human readers
+#
+# Tight coupling = in_process (Python `import` / `from` inside the protected
+# layer). Loose coupling = subprocess/http/cli (no source import).
+#
+# See LICENSE_FIREWALL.md for layer policy and escape hatches.
+
+schema: hexa-brain/vendor/external_deps/1
+
+deps:
+
+  - id: brainflow
+    name: BrainFlow
+    spdx: MIT
+    source_url: https://github.com/brainflow-dev/brainflow
+    coupling_modes: [in_process]
+    blocked_import_patterns: []
+    status: active
+    advisory: |
+      Upstream license confirmed MIT (LICENSE file at repo root, BSD/MIT-style
+      headers in core C++ + Python bindings). Used by eeg/_session_manager.hexa
+      and friends via `from brainflow.board_shim import BoardShim`. MIT-clean
+      for tight in_process coupling — no firewall block.
+
+  - id: numpy
+    name: NumPy
+    spdx: BSD-3-Clause
+    source_url: https://github.com/numpy/numpy
+    coupling_modes: [in_process]
+    blocked_import_patterns: []
+    status: active
+    advisory: |
+      BSD-3-Clause is on the allow-list for all 4 protected layers.
+
+  - id: pyserial
+    name: pyserial
+    spdx: BSD-3-Clause
+    source_url: https://github.com/pyserial/pyserial
+    coupling_modes: [in_process]
+    blocked_import_patterns: []
+    status: active
+    advisory: |
+      BSD-3-Clause. Used by FTDI latency-fix paths on Linux/macOS.
+
+  - id: braingenix_nes
+    name: BrainGenix-NES
+    spdx: AGPL-3.0
+    source_url: https://gitlab.braingenix.org/carboncopies/BrainGenix-NES
+    coupling_modes: [http, subprocess]
+    blocked_import_patterns:
+      - "braingenix"
+      - "BrainGenix"
+    status: declared-not-implemented
+    advisory: |
+      AGPL-3.0 — NEVER tight-couple (would license-infect MIT body).
+      Phase C-1 will integrate via LOOPBACK-ONLY HTTP at 127.0.0.1:8410
+      (loose-http-only). Any `import braingenix` / `from braingenix ...` in
+      the 4 protected layers (eeg/, eeg_core/, core/, tool/) is a HARD FAIL.
+
+  - id: cl_sdk
+    name: Cortical-Labs cl-sdk
+    spdx: CC-BY-NC-4.0
+    source_url: https://github.com/Cortical-Labs/cl-sdk
+    coupling_modes: [http]
+    blocked_import_patterns:
+      - "cl_sdk"
+      - "cortical_labs"
+    status: declared-not-implemented
+    advisory: |
+      CC-BY-NC-4.0 is NOT an OSI-approved software license and forbids
+      commercial use. NEVER tight-couple. The `cl` regex from earlier drafts
+      was too broad (matches `import cloudpickle` etc.) — restrict to
+      `cl_sdk` and `cortical_labs` namespaces only. Future CL1 adapter must
+      go through HTTP loopback (separate process boundary, see
+      LICENSE_FIREWALL.md §loose-coupling-escape).
+
+  - id: neuroglancer_py
+    name: neuroglancer (Python bindings)
+    spdx: Apache-2.0
+    source_url: https://github.com/google/neuroglancer
+    coupling_modes: [in_process]
+    blocked_import_patterns: []
+    status: declared-not-implemented
+    advisory: |
+      Apache-2.0 is on the allow-list. Optional verify-only dep for the
+      Phase B-1 Precomputed exporter (`eeg/export_neuroglancer.hexa --verify`).
+      Listed for catalog completeness; no firewall action needed.

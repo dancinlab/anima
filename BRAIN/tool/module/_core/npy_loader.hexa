@@ -1,0 +1,285 @@
+// anima-eeg-core/tool/modules/_core/npy_loader.hexa
+//
+// PURPOSE
+//   Phase 1 _core/ module #1 — load .npy + sidecar metadata via .venv-eeg/bin/python
+//   helper. Extracts EEG channels (BoardShim.get_eeg_channels(2)) from 32-row layout
+//   and emits sha256.
+//
+// API (callable from sibling modules / pipelines)
+//   _core_npy_load_kv(path: string) -> string
+//     returns kv-block text:
+//       schema=anima-eeg-core/_core/npy_loader/1
+//       sha256=<hex>
+//       n_channels=<int>
+//       n_samples=<int>
+//       sample_rate=<float>
+//       eeg_indices=<csv-int>
+//       metadata_path=<str-or-empty>
+//       metadata_task=<str>
+//       metadata_session_ts=<str>
+//       verdict=PASS|FAIL
+//
+// CLI
+//   hexa run anima-eeg-core/tool/modules/_core/npy_loader.hexa --selftest
+//   hexa run anima-eeg-core/tool/modules/_core/npy_loader.hexa --load <path.npy>
+//
+//  @resolver-bypass(reason="darwin-native: uses .venv-eeg/bin/python BrainFlow venv;
+
+let SCHEMA       = "anima-eeg-core/_core/npy_loader/1"
+let HELPER_PATH  = "/tmp/anima_eeg_core_npy_loader_helper.py"
+let VENV_PYTHON  = ".venv-eeg/bin/python"
+let DEFAULT_BOARD_ID = 2
+
+// ─── helpers ────────────────────────────────────────────────────────────
+
+fn _kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("import argparse, hashlib, json, os, sys\n")
+    parts.push("import numpy as np\n\n")
+
+    parts.push("def emit(k, v):\n")
+    parts.push("    print(f'{k}={v}')\n\n")
+
+    parts.push("def sha256_file(path):\n")
+    parts.push("    h = hashlib.sha256()\n")
+    parts.push("    with open(path, 'rb') as f:\n")
+    parts.push("        for chunk in iter(lambda: f.read(65536), b''):\n")
+    parts.push("            h.update(chunk)\n")
+    parts.push("    return h.hexdigest()\n\n")
+
+    parts.push("def get_eeg_indices(board_id):\n")
+    parts.push("    try:\n")
+    parts.push("        from brainflow.board_shim import BoardShim\n")
+    parts.push("        return list(BoardShim.get_eeg_channels(int(board_id)))\n")
+    parts.push("    except Exception:\n")
+    parts.push("        # Cyton-Daisy fallback: BoardShim returns 1..16 for board_id 2.\n")
+    parts.push("        return list(range(1, 17))\n\n")
+
+    parts.push("def load_metadata(npy_path):\n")
+    parts.push("    sidecar = npy_path + '.meta.json'\n")
+    parts.push("    if not os.path.exists(sidecar):\n")
+    parts.push("        return ('', {})\n")
+    parts.push("    try:\n")
+    parts.push("        with open(sidecar, 'r') as f:\n")
+    parts.push("            return (sidecar, json.load(f))\n")
+    parts.push("    except Exception:\n")
+    parts.push("        return (sidecar, {})\n\n")
+
+    parts.push("def cmd_load(args):\n")
+    parts.push("    path = args.path\n")
+    parts.push("    if not os.path.exists(path):\n")
+    parts.push("        emit('verdict', 'FAIL')\n")
+    parts.push("        emit('reason', 'npy-missing')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    sha = sha256_file(path)\n")
+    parts.push("    arr = np.load(path)\n")
+    parts.push("    if arr.ndim != 2:\n")
+    parts.push("        emit('verdict', 'FAIL')\n")
+    parts.push("        emit('reason', f'ndim={arr.ndim}-not-2')\n")
+    parts.push("        sys.exit(3)\n")
+    parts.push("    rows, cols = int(arr.shape[0]), int(arr.shape[1])\n")
+    parts.push("    eeg_idx = get_eeg_indices(args.board_id)\n")
+    parts.push("    # extract EEG-only rows when full 32-row BrainFlow layout\n")
+    parts.push("    if rows >= max(eeg_idx) + 1:\n")
+    parts.push("        eeg_data = arr[eeg_idx, :]\n")
+    parts.push("        n_channels = len(eeg_idx)\n")
+    parts.push("    else:\n")
+    parts.push("        # already-extracted layout (rows == n_channels)\n")
+    parts.push("        eeg_data = arr\n")
+    parts.push("        n_channels = rows\n")
+    parts.push("        eeg_idx = list(range(rows))\n")
+    parts.push("    n_samples = cols\n")
+    parts.push("    meta_path, meta = load_metadata(path)\n")
+    parts.push("    sample_rate = float(meta.get('sample_rate', args.default_sr))\n")
+    parts.push("    emit('schema', '" + SCHEMA + "')\n")
+    parts.push("    emit('path', path)\n")
+    parts.push("    emit('sha256', sha)\n")
+    parts.push("    emit('rows', rows)\n")
+    parts.push("    emit('cols', cols)\n")
+    parts.push("    emit('n_channels', n_channels)\n")
+    parts.push("    emit('n_samples', n_samples)\n")
+    parts.push("    emit('sample_rate', sample_rate)\n")
+    parts.push("    emit('eeg_indices', ','.join(str(i) for i in eeg_idx))\n")
+    parts.push("    emit('extracted_min', float(eeg_data.min()))\n")
+    parts.push("    emit('extracted_max', float(eeg_data.max()))\n")
+    parts.push("    emit('metadata_path', meta_path)\n")
+    parts.push("    emit('metadata_task', str(meta.get('task', '')))\n")
+    parts.push("    emit('metadata_session_ts', str(meta.get('session_ts', '')))\n")
+    parts.push("    emit('verdict', 'PASS')\n\n")
+
+    parts.push("def cmd_selftest(args):\n")
+    parts.push("    out_dir = '/tmp/anima_eeg_core_npy_loader_selftest'\n")
+    parts.push("    os.makedirs(out_dir, exist_ok=True)\n")
+    parts.push("    rows = 32\n")
+    parts.push("    cols = 250  # 2s @ 125Hz\n")
+    parts.push("    sr = 125.0\n")
+    parts.push("    rng = np.random.default_rng(20260428)\n")
+    parts.push("    data = np.zeros((rows, cols), dtype=np.float32)\n")
+    parts.push("    eeg_idx = list(range(1, 17))\n")
+    parts.push("    t = np.arange(cols) / sr\n")
+    parts.push("    for k, ch in enumerate(eeg_idx):\n")
+    parts.push("        data[ch] = (0.6*np.sin(2*np.pi*(8.0+k*0.5)*t) +\n")
+    parts.push("                    0.4*rng.standard_normal(cols)).astype(np.float32)\n")
+    parts.push("    npy_path = os.path.join(out_dir, 'selftest_synth.npy')\n")
+    parts.push("    np.save(npy_path, data)\n")
+    parts.push("    meta = {'schema':'anima-eeg/eeg_recorder/1','task':'selftest_synthetic',\n")
+    parts.push("            'session_ts':'20260428T000000Z','sample_rate':sr,\n")
+    parts.push("            'eeg_indices':eeg_idx,'rows':rows,'cols':cols,\n")
+    parts.push("            'tier':'DEGRADED'}\n")
+    parts.push("    with open(npy_path + '.meta.json','w') as f: json.dump(meta, f)\n")
+    parts.push("    args.path = npy_path\n")
+    parts.push("    args.board_id = " + to_string(DEFAULT_BOARD_ID) + "\n")
+    parts.push("    args.default_sr = sr\n")
+    parts.push("    cmd_load(args)\n")
+    parts.push("    emit('selftest', 'ok')\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    sub = p.add_subparsers(dest='cmd', required=True)\n")
+    parts.push("    sub.add_parser('selftest')\n")
+    parts.push("    c = sub.add_parser('load')\n")
+    parts.push("    c.add_argument('--path', required=True)\n")
+    parts.push("    c.add_argument('--board-id', dest='board_id', type=int, default=" + to_string(DEFAULT_BOARD_ID) + ")\n")
+    parts.push("    c.add_argument('--default-sr', dest='default_sr', type=float, default=125.0)\n")
+    parts.push("    args = p.parse_args()\n")
+    parts.push("    if args.cmd == 'selftest':\n")
+    parts.push("        # selftest needs default fields\n")
+    parts.push("        class A: pass\n")
+    parts.push("        a = A(); a.default_sr = 125.0\n")
+    parts.push("        cmd_selftest(a)\n")
+    parts.push("    elif args.cmd == 'load': cmd_load(args)\n\n")
+
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _run_helper(args: string) -> array {
+    let cmd = VENV_PYTHON + " " + HELPER_PATH + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+// ─── public-ish API for sibling modules ────────────────────────────────
+
+fn _core_npy_load_kv(path: string) -> string {
+    _write_helper()
+    let r = _run_helper("load --path " + _sh_quote(path))
+    return r[0]
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _print_usage() {
+    eprintln("usage: hexa run npy_loader.hexa --selftest")
+    eprintln("       hexa run npy_loader.hexa --load <path.npy>")
+}
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path { if a.ends_with("/exe") { is_path = true } }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j]); j = j + 1
+    }
+    return out
+}
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut load_mode = false
+    let mut path = ""
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--load" {
+            load_mode = true
+            if (i+1) >= len(av) { eprintln("missing arg --load"); exit(2) }
+            path = av[i+1]; i = i + 2; continue
+        }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        eprintln("unknown arg: " + a); _print_usage(); exit(2)
+    }
+
+    if !selftest && !load_mode {
+        eprintln("ABORT: --selftest or --load <path>")
+        _print_usage()
+        exit(2)
+    }
+
+    _write_helper()
+
+    if selftest {
+        println("== _core npy_loader selftest ==")
+        let r = _run_helper("selftest")
+        let body = r[0]
+        let rc   = r[1]
+        println(body)
+        if rc != 0 { eprintln("helper rc=" + to_string(rc)); exit(1) }
+        let mut pass = 0
+        let mut fail = 0
+        let t1 = assert_true(_kv_lookup(body, "selftest") == "ok", "selftest=ok")
+        if t1 { pass = pass + 1 } else { fail = fail + 1 }
+        let t2 = assert_true(_kv_lookup(body, "schema") == SCHEMA, "schema=" + SCHEMA)
+        if t2 { pass = pass + 1 } else { fail = fail + 1 }
+        let t3 = assert_true(_kv_lookup(body, "verdict") == "PASS", "verdict=PASS")
+        if t3 { pass = pass + 1 } else { fail = fail + 1 }
+        let t4 = assert_true(_kv_lookup(body, "n_channels") == "16", "n_channels=16")
+        if t4 { pass = pass + 1 } else { fail = fail + 1 }
+        let t5 = assert_true(_kv_lookup(body, "n_samples") == "250", "n_samples=250")
+        if t5 { pass = pass + 1 } else { fail = fail + 1 }
+        let sha = _kv_lookup(body, "sha256")
+        let t6 = assert_true(sha.len() == 64, "sha256 len=64")
+        if t6 { pass = pass + 1 } else { fail = fail + 1 }
+        println("")
+        println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL")
+        if fail != 0 { exit(1) }
+        println("selftest: OK")
+        exit(0)
+    }
+
+    // load_mode
+    let body = _core_npy_load_kv(path)
+    println(body)
+    let v = _kv_lookup(body, "verdict")
+    if v != "PASS" { exit(1) }
+    exit(0)
+}
