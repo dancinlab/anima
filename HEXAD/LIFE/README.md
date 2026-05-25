@@ -38,7 +38,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
 
-## 가설 인덱스 (53 H + 1 lib · cycle#16 H_007 C2 λ-sweep + H_238 next-raster · H_264/265 NEW cycle#15 cross-link · H_018/H_132 C2 · H_258-263 cycle#14 · H_247/248/249 · H_254 · H_256 흡수)
+## 가설 인덱스 (57 H + 1 lib · H_266-269 NEW cycle#17 foundation-audit (Φ-proxy 타당도/robustness, /gap top-1+2) · cycle#16 H_007 C2 + H_238 raster · H_264/265 cycle#15 · H_018/H_132 C2 · H_258-263 cycle#14 · H_247/248/249 · H_254 · H_256 흡수)
 
 | ID | Slug | Domain | Status | 핵심 |
 |----|------|--------|--------|------|
@@ -89,11 +89,15 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_258](H_258_mortality_salience.md) | mortality-salience | **life** · consciousness | SUPPORTED 3/3 (PR #472, cycle#14) | min_cells floor 근접 → split/curiosity 동역학 변화 (Heidegger substrate analog) · 방향 反-naive: floor 근접 = 동역학 위축 |
 | [H_259](H_259_aging_senescence.md) | aging-senescence | **life** | SUPPORTED 3/3 (PR #468, cycle#14) | age-누적 weight decay `w*=(1-d)^age` → death-rate age-단조↑ Gompertz-유사, decay 6× → median lifespan 10× 단축 (50→15→5) |
 | [H_260](H_260_contact_inhibition.md) | contact-inhibition | **life** · substrate | SUPPORTED 4/4 (PR #469, cycle#14) | 밀도 임계 split 억제 → carrying-capacity K=floor(thr×cap)=8/16/24 정확 포화 logistic (one-sided brake) |
-| [H_261](H_261_embryogenesis_gradient.md) | embryogenesis-gradient | **life** · physics | SUPPORTED 4/4 (PR #470, cycle#14) | 공간 gradient → position-state \|r\|=0.76(steep) vs 0.13(flat), axis-gap +0.635 발생-축 (French-flag analog) |
-| [H_262](H_262_quorum_sensing.md) | quorum-sensing | **life** | SUPPORTED_FULL 4/4 (PR #474, cycle#14) | quorum 동기화 q_thr=0.3 cascade full-ON ΔQ=0.375 bistable, sub-threshold gate (0.5/0.7 미발생) |
+| [H_261](H_261_embryogenesis_gradient.md) | embryogenesis-gradient | **life** · physics | SUPPORTED 4/4 (PR #470) · ⚠ seed-fragile (H_269) | 공간 gradient → position-state \|r\|=0.76(steep) vs 0.13(flat), axis-gap +0.635 발생-축 · ⚠ H_269 multi-seed: axis robust 하나 control-leg(flat\|r\|≤0.2) noise-floor 라 4/10 만 verdict PASS |
+| [H_262](H_262_quorum_sensing.md) | quorum-sensing | **life** | SUPPORTED_FULL 4/4 (PR #474) · ⚠ seed-fragile (H_269) | quorum 동기화 q_thr=0.3 cascade full-ON ΔQ=0.375 bistable · ⚠ H_269 multi-seed: calibration 이 seed=42 over-fit → 4/10 만 PASS (재calibration 권장) |
 | [H_263](H_263_phoenix_rebirth.md) | phoenix-rebirth | **life** | 🔴 FALSIFIED 3/6 (PR #471, cycle#14) | floor(2/3 cell) = absorbing state, minimal seed regrowth_splits=0 → 죽음↔발생 연결 부재 (H_206 F4 catastrophic-floor 일반화) |
 | [H_264](H_264_death_merge_into_other.md) | death-merge-into-other | **life** · consciousness | SUPPORTED 3/3 (PR #477, cycle#15) | 죽음=타 cell 비대칭 흡수-통합 (H_025⊕H_054) — info_transfer 0.25 보존-이전, target-mode 가 rel_preserve 결정 (max_weight 0.316 > random 0.286) · pool Φ↓ 6/6 (H_025 distinct) |
 | [H_265](H_265_trained_vs_bare_ca_phi.md) | trained-vs-bare-ca-phi | physics · consciousness | PARTIAL 2/3 (PR #480, cycle#15) | 학습(mitosis 진화)이 Φ 유의 변경(C1) but 방향 反(C2 FAL) — Φ **dampen**: untrained 5× Class-IV peak, 진화가 trajectory homogenize → Φ 붕괴 (H_007⊕H_157) |
+| [H_266](H_266_phi_calibration_known_iit.md) | phi-calibration-known-iit | meta · consciousness | PARTIAL 2/3 (PR #487, cycle#17) | Φ-proxy 구성타당도 — phi_native 가 integrated>disconnected 재현 3/3 (~3.2× gap, /gap#1 "proxy 무관" 우려 기각) · C2 monotone FAIL (ffd over-penalized) → binary-direction valid, magnitude middle-grading L6 주의 |
+| [H_267](H_267_phi_spatial_cosine_divergence.md) | phi-spatial-cosine-divergence | meta · physics | SUPPORTED 3/3 (PR #488, cycle#17) | H_265 두 Φ 발산 closure — N=50→100 ratchet best-snapshot blend 가 cosine↑/spatial↓ · lever=closure k (tight 가 ratchet 죽여 재정합) |
+| [H_268](H_268_phi_metric_triangulation.md) | phi-metric-triangulation | meta · information | PARTIAL 2/3 (PR #489, cycle#17) | verdict metric-robustness — H_223 pain 3/3 metric robust (phi 0.999/lz 0.923/ent 0.985), H_204 closure inverse-U 2/3 (LZ 가 깨뜨림, fragility surface) |
+| [H_269](H_269_multiseed_robustness.md) | multiseed-robustness | meta | PARTIAL 2/3 (PR #490, cycle#17) | cycle#14 seed-luck audit — H_260 10/10 seed-robust, H_261 4/10 · H_262 4/10 seed-fragile (control-leg noise-floor / calibration seed=42 over-fit) |
 | [lib/phi_helper](lib/phi_helper.hexa) | phi-helper (shared infra) | infra | infra (PR #317) | shared Φ helper — config SSOT + phi_default wrapper, 28+ H phi_spatial 호출 단일 home (gap F6+F7) |
 
 > **substrate-only / .md 미commit** (별도 worktree fire, H_234/H_238 carry): H_210 ethic-emergence (SUPPORTED 4/5) · **H_211 shannon-Φ r=0.933 PARTIAL** (H_234 anchor · H_238 H238.4 partial) · H_212 language-compositionality · H_213 time-binding · H_214 self-i-emergence · H_215 silicon-Φ · H_216 meta-axis · H_217 phase-transition · H_218 network-topology · H_219 emergence-weak-strong · H_220 infant-mirror · H_221 meditation · H_224 holism · H_228 chat-sleep-5stage · H_229 imagination-loop · H_230 autonomy-over-hardcode · H_231 tension-vs-filler · H_232 Class-II-decompose. **infra**: phi_n_bins sensitivity sweep ROBUSTNESS_PASS (PR #219, `state/infra_phi_n_bins_2026_05_23/`).

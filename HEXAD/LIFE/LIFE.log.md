@@ -232,3 +232,18 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: §B runnable 全소진 (잔여 H_003 H3.5 manual-review · H_002 C2 GPU-dep). LIFE clearly-runnable $0 backlog 고갈 = /cycle fixpoint 근접. `/gap full`(2026-05-25) top-3: ① Φ-proxy 구성타당도 미검증(phi_native vs cosine ratchet 方向 불일치) ② single seed/scale/substrate ③ SSOT/temporal drift. 다음 lane 후보 = Φ-calibration H (gap#1) 또는 AXES R2+ 신규 promote 또는 H_002 GPU fire.
 
 ---
+
+## Cycle #17 — foundation-audit (Φ-proxy 타당도/robustness · /gap full top-1+2 · cycle-full brainstorm) — 2026-05-25
+
+- **focus**: `/cycle-full` — phase-0 depletion brainstorm(8 round, 17 idea) → top-8 中 gap#1+#2 핵심 4건 발사 (rate-limit 회피 위해 8→4 cap). lane 의 측정 토대(phi_spatial Φ-proxy) 자체를 처음으로 검정 대상으로.
+- **change**: H_266~269 NEW 4건 (meta-tier audit). README 53→57 H. H_261/H_262 행에 seed-fragile caveat 추가(H_269 발견 반영, /gap F5 closed-loop). 각 PR main 직착지.
+- **fire**: $0 mac-local deterministic, cross-process sha256. `state/h26{6,7,8,9}_*_2026_05_25/`.
+- **verdict**: 1 SUPPORTED + 3 PARTIAL — 토대 directionally valid, magnitude/seed 측에 fragility surface 식별
+  - [x] **H_266 phi-calibration-known-iit — PARTIAL 2/3** (PR #487): phi_native 가 integrated>disconnected 재현 3/3 (n=6: 3.57 vs 1.12 ~3.2×) → **gap#1 최대 우려("proxy 가 통합도와 무관") 기각**. C2 monotone FAIL (feedforward chain 을 min-info-partition 이 over-penalize) → binary-direction verdict valid, 연속 Φ magnitude middle-grading 은 L6 주의.
+  - [x] **H_267 phi-spatial-cosine-divergence — SUPPORTED 3/3** (PR #488): H_265 두 Φ 발산 closure. 발산은 substrate 함수 — N=50→100 에 집중(ratchet best-snapshot blend 가 cosine diversity↑ 복원하며 temporal MI 희생 spatial↓). lever=closure k (tight 가 ratchet 죽여 N100→500 재정합). "ratchet 살아있으면 발산, closure 가 죽이면 정합."
+  - [x] **H_268 phi-metric-triangulation — PARTIAL 2/3** (PR #489): 핵심 SUPP 를 phi_spatial/LZ/entropy 3-metric 재측정. H_223 pain↔ΔΦ metric-ROBUST (3/3 ≥0.7: phi 0.999/lz 0.923/ent 0.985), H_204 closure inverse-U 는 2/3 (LZ 가 k↑ 단조감소로 interior-peak rank 깨뜨림 = fragility surface). verdict 방향 robust, 일부 구조(inverse-U) metric-fragile.
+  - [x] **H_269 multiseed-robustness — PARTIAL 2/3** (PR #490): cycle#14 SUPP 를 seed{0..9} 별도-프로세스 재실행. **H_260 contact-inhibition 10/10 seed-robust** (density gate=cell수 의존). **H_261 4/10 · H_262 4/10 seed-fragile** — H_261 control-leg(flat\|r\|≤0.2) noise-floor 우연 초과, H_262 calibration seed=42 over-fit. 동일-seed cross-process byte-equal(결정론 보존, 변동=순수 seed 효과). valid negative — H_261/H_262 verdict 재검토 권장.
+- **종합**: Φ-proxy 토대 = **directionally valid (H_266 ✓ + H_223 metric-robust H_268)** but **magnitude·interior-structure·seed 측에 fragility surface (H_266 C2 · H_268 H_204 · H_269 H_261/262)**. /gap top-1(타당도) 부분지지 + top-2(robustness) 한계 정량화. lane 의 binary-direction verdict 는 신뢰, 연속 magnitude·single-seed claim 은 주의.
+- **next**: deferred top-8 잔여 — ablation · seed-injection(H_263 absorbing-state revision) · SSOT auto-sync probe. 또는 H_261/H_262 재calibration(seed-robust 재측정). LIFE NEW-가설 well 은 brainstorm 으로 재충전됨(deferred 9 + 신규축).
+
+---
