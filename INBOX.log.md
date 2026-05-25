@@ -2,6 +2,33 @@
 
 Append-only history sister of `INBOX.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-26 — arxiv-a2-iit-empirical-ingest (hexa-lang ARXIV A2 handoff · g60)
+
+- [ ] Status: open — hexa-lang ARXIV A2 가 흡수한 IIT/의식 논문 11편 → anima LIFE H_xxx cross-link 핸드오프 (g60). owner = anima 세션 (cross-link 소비 + V5-engine seed 채택 판단).
+
+**출처**: hexa-lang `ARXIV` 도메인 A2 마일스톤 (PR: hexa-lang `feat(ARXIV): A2 ANIMA axis absorption`). verdict = `hexa-lang:ARXIV/.verdicts/arxiv-anima-absorb/triage_a2.txt` · docs(한글) = `hexa-lang:ARXIV/docs/a2-anima-axis.md` · `hexa-lang:CLAIMS.tape` @C slug=arxiv-anima-absorb.
+
+**무엇**: arXiv 8 query → 11편 흡수 (A1 12편 IIT-코어와 **중복 0**, 경험적 의식 측정자·causal-emergence·AI-의식 이론). verify-able 0 (in-tree IIT primitive 부재 — V5 IIT 엔진 후 회수). A2 가치 = citation + **anima cross-pollination**.
+
+**anima LIFE H_xxx cross-link (6 H 핸드오프)** — `LIFE.md` + `HEXAD/LIFE/README.md` 매핑:
+
+| anima H | 현재 상태 | 흡수 논문 → 기여 |
+|---|---|---|
+| **H_239** alt-Φ-metric 교차검증 (CONSISTENT) | running | 1608.08450 ETC 압축-복잡도 · 1701.07061 LZc · 1011.5334 neural-complexity → 교차검증에 **신규 Φ-proxy 3개 추가** |
+| **H_209** EEG 1/f 스펙트럼 (FALSIFIED 2/5) | running | 2509.19254 (hd-EEG 1/f+LZc+sample-entropy NOC replica **직접 타겟**) · 1701.07061 |
+| **H_222/H_244** dream-REM/sleep-stage Φ (FAL/pre-reg) | running | 1604.00002 ketamine 네트워크 통합 손실 (마취/수면단계 Φ 감소 substrate proxy) |
+| **H_275** causal-DAG Φ (SUPPORTED dag>cyclic>undir) | promoted | 2405.09207 exact-EI + 2201.10154 NIS (effective-information = verify-able causal-emergence primitive) |
+| **H_002** Φ_universe nested scale-variant (SCALE-VARIANT) | closed | 2509.10891 multiscale causal power, 마우스 칼슘 이미징 (cross-scale 경험 데이터) |
+| **H_277** turing-completeness ⊥ dyn-class (PARTIAL) | running | 2011.09850 Conscious Turing Machine (GWT computability framing sister) |
+
+**V5/LIFE axis-C engine seed (verify-able-CANDIDATE → 첫 🟢 타겟)**:
+- `effective_information(TPM)` closed-form (**2405.09207** linear-Gaussian exact) = 가장 싼 첫 IIT recompute primitive. `stdlib/consciousness/iit4` (#542 해금) 에 노출되면 첫 진짜 🟢 ARXIV-ANIMA + LIFE axis-C C1 (proxy→faithful 승격) 동시 달성.
+- 추가 candidate: 1011.5334 neural-complexity closed-form · 1608.08450 ETC proxy (MIP 불필요) · 2011.09850 CTM.
+
+**필링 이력 (g48 ack)**: A2 가 dirty orphan-recover 브랜치(`ops/f-curricula-1-orphan-recover-2026-05-25`)에서 핸드오프를 working-copy edit 로만 기록(공유 dirty 트리 commit 회피)했고, **hexa-lang ARXIV A6 가 격리 worktree(off origin/main)로 본 항목을 anima main 에 PR 로 커밋했다** (cross-repo handoff 메커니즘 정립 + 3 debt 정산). anima 세션은 이 항목을 소비 + V5-engine seed 채택만 판단하면 된다.
+
+**cross-ref**: hexa-lang `ARXIV` 도메인 (A1 arxiv-ingest-poc 12편 IIT-코어 + A2 본편 + A6 핸드오프 메커니즘) · sibling V5-IIT lane (verify_cli/stdlib, 동시 진행) · LIFE 영구 축 B(large-N faithful-Φ)·C(full-IIT4 cause-effect, #542).
+
 ## 2026-05-23 — broker `/ws/akida_ingest` → `/akida/recent` deque gap (anima cycle 10)
 - [x] 4-가설 트리 CLOSED — bridge RESTORE 후 `/akida/recent` 가 empty deque 반환하던 gap 의 (a)handler no-op (b)다른 deque write (c)JSON parse 실패 (d)maxlen=0 가설을 source-level 로 전부 FALSIFIED. handler `broker.py:340` `STATE.akida_history.append(msg)` 존재, `/akida/recent`(`:163-165`) 동일 deque(`maxlen=200`, `:69`) read, bridge frame 유효 JSON(`stamp_spike`), send mode TEXT(`receive_text` 호환).
 - [x] 관련 PR #187(silent json drop visibility)·#188(akida_consumer "list"→"array")·#189(akida_bridge default endpoint `/ws/akida`→`/ws/akida_ingest`) 정합 확인.
