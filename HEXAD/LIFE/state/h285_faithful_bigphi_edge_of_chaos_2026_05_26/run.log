@@ -1,0 +1,33 @@
+================================================================
+  H_285 — faithful CAUSAL big-Φ at edge-of-chaos (n=4 ring)
+  PRIMARY = MEAN big-Φ over all 2^n states (state-averaged, faithful)
+  proxy (H_007/H_204) = CORRELATIONAL phi_spatial · here = CAUSAL IIT4
+================================================================
+  -- ORDERED (class I/II) --
+  rule   0 : meanΦ=0.0  state1010Φ=0.0
+  rule 204 : meanΦ=0.0  state1010Φ=0.0
+  -- EDGE-OF-CHAOS (class IV) --
+  rule 110 : meanΦ=13.1302  state1010Φ=7.5475
+  rule  54 : meanΦ=7.76521  state1010Φ=10.0278
+  -- CHAOTIC (class III) --
+  rule  30 : meanΦ=13.8852  state1010Φ=8.66311
+  rule  90 : meanΦ=0.0  state1010Φ=0.0
+================================================================
+  CLASS-MEAN (state-averaged big-Φ, 2 rules/class):
+    ORDERED      = 0.0
+    EDGE-OF-CHAOS= 10.4477
+    CHAOTIC      = 6.94259
+  ARGMAX (per-rule peak) = cha:rule30  Φ=13.8852
+================================================================
+  [PASS] F285.1 PEAK — edge-of-chaos class-mean is maximal (> ordered AND > chaotic)
+  [PASS] F285.2 ORDERING — bigΦ(edge) > bigΦ(ordered)
+  [PASS] F285.2 ORDERING — bigΦ(edge) > bigΦ(chaotic)
+  [PASS] F285.3 FAITHFULNESS — rule204 single-state(1010) big-Φ = 0 (M6 anchor)
+  [PASS] F285.3 FAITHFULNESS — rule110 single-state(1010) big-Φ ≈ 7.5475 (M6 anchor)
+  [PASS] F285.3 FAITHFULNESS — rule0 single-state(1010) big-Φ = 0 (M6 anchor)
+  [PASS] F285.3 FAITHFULNESS — bound 0<=big-Φ<=total for all 6 rules × all states
+  [PASS] determinism — rule110 mean big-Φ re-run identical
+================================================================
+  RESULT: 8 PASS / 0 FAIL
+================================================================
+H285_SUMMARY ord=0.0 edge=10.4477 cha=6.94259 argmax=cha:rule30

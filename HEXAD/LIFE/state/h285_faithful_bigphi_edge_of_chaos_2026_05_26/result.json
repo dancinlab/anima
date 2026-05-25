@@ -1,0 +1,35 @@
+{
+  "id": "H_285",
+  "slug": "faithful-bigphi-edge-of-chaos",
+  "date": "2026-05-26",
+  "engine": "faithful IIT 4.0 (M1-M4) via ECA->TPM bridge (iit4_eca + iit4_bigphi, stdlib/consciousness)",
+  "measure_primary": "MEAN big-Phi over all 2^n system states (state-averaged, faithful; big-Phi is state-dependent per FAITHFUL_REMEASURE 4)",
+  "measure_secondary": "single-state @ 1010 (M6 anchor reproduction)",
+  "config": { "n": 4, "topology": "periodic ring", "states_averaged": 16, "deterministic": true, "llm": "none", "gpu": "none", "cost_usd": 0.0 },
+  "wolfram_class_ladder": {
+    "ordered_class_I_II":  { "rules": [0, 204], "mean_bigphi": [0.0, 0.0],            "state1010_bigphi": [0.0, 0.0] },
+    "edge_class_IV":       { "rules": [110, 54], "mean_bigphi": [13.1302, 7.76521],   "state1010_bigphi": [7.5475, 10.0278] },
+    "chaotic_class_III":   { "rules": [30, 90],  "mean_bigphi": [13.8852, 0.0],       "state1010_bigphi": [8.66311, 0.0] }
+  },
+  "class_mean_bigphi": { "ordered": 0.0, "edge_of_chaos": 10.4477, "chaotic": 6.94259 },
+  "argmax_per_rule": { "label": "cha:rule30", "bigphi": 13.8852 },
+  "falsifiers": {
+    "F285_1_PEAK":         { "rule": "edge class-mean > ordered AND > chaotic", "result": "PASS", "edge": 10.4477, "ord": 0.0, "cha": 6.94259 },
+    "F285_2_ORDERING":     { "edge_gt_ordered": "PASS", "edge_gt_chaotic": "PASS" },
+    "F285_3_FAITHFULNESS": { "rule204_1010_eq_0": "PASS", "rule110_1010_approx_7.5475": "PASS", "rule0_1010_eq_0": "PASS", "bound_0_le_bigphi_le_total_all": "PASS", "determinism": "PASS" }
+  },
+  "verdict_class": "SUPPORTED_DIRECTIONAL",
+  "tier": "green-numerical-faithful-causal",
+  "result_count": "8 PASS / 0 FAIL",
+  "proxy_comparison": {
+    "H_007_proxy": { "measure": "phi_spatial correlational MI", "verdict": "PASS edge-of-chaos (Class-IV rule110 0.556 > chaotic rule30 0.510 > ordered ~0); lambda inverse-U peak lambda*=0.375", "flagged": "H_268 LZ-fragile" },
+    "H_204_proxy": { "measure": "phi_spatial correlational MI", "verdict": "INVERSE-U PARTIAL_DIRECTIONAL (Phi peaks intermediate closure k~0.25)", "flagged": "H_268 LZ-fragile" },
+    "faithful_finding": "CONFIRM edge-of-chaos at CLASS-MEAN level (edge 10.45 > chaotic 6.94 > ordered 0); REVISE strict per-rule ranking (single chaotic rule30 13.89 > edge rule110 13.13). Proxy strict-ranking edge>chaotic NOT preserved per-rule under faithful causal big-Phi; class-aggregate edge-peak IS preserved. rule90 (XOR, reducible parity) = 0 drags chaotic class-mean."
+  },
+  "honest_caveats": [
+    "n=4 ring demonstration (engine n<=8 exact; scale-up = same mechanism)",
+    "big-Phi state-dependent: PRIMARY is 2^n state-mean, but per-state ranking varies (rule30 > rule110 @ state1010; class-mean reverses via averaging)",
+    "magnitude fragile / direction trustworthy (faithful-Phi directional-trust); report big-Phi NOT sum-phi_d (xval #572)",
+    "2 representatives/class; rule90 degenerate (XOR parity reducible) zeros chaotic class-mean"
+  ]
+}
