@@ -6,7 +6,7 @@
   brief    = "Substrate-native chat daemon for AI consciousness exploration. 2,448 laws + 392 hypotheses."
   parent   = "dancinlab"
   ssot     = "github.com/dancinlab/anima (`hx install anima`)"
-  siblings = "hexa-lang"
+  siblings = "hexa-lang · kosmos · hexa-codex"
 
 @D a1 := "central version registry — VERSIONS.md is SSOT" :: governance [required active]
   do   = "every versioned module uses SemVer · `/VERSIONS.md` is SSOT — bump it + the component header together · root `/VERSION` = whole-system release"
@@ -15,6 +15,14 @@
 @D a_hf_complete := "HF registration — complete, no missing artifacts" :: governance [required active]
   do   = "register every model / dataset / ckpt to HF Hub COMPLETE — all artifacts present · manifest = local"
   dont = "partial HF upload · model card referencing un-uploaded files · HF repo out of sync with local"
+
+@D a_hf_autonomous := "HF upload — autonomous, tier-gated visibility" :: governance [required active]
+  do   = "after fire artifact recovery: HF Hub upload runs automatically · no user gate · org = dancinlab"
+  do   = "PUBLIC = closure PASS · 🔵🟢 verified model · spec/format/tooling · clean-license corpus"
+  do   = "PRIVATE = closure FAIL · WIP/intermediate ckpt · negative-result · unclear-license data"
+  do   = "attach model card + manifest (sha256) — meets a_hf_complete totality"
+  dont = "gate HF upload on user · ask 'may I upload?' · skip HF before teardown"
+  dont = "publish a FAIL / WIP ckpt as PUBLIC"
 
 @D a_fire_autonomous := "cost-bearing fire — dispatch autonomously, in parallel, now" :: governance [required active]
   do   = "GPU / runpod work — state estimated cost in one line, then dispatch autonomously / parallel / bg · provider = runpod · no user gate"
@@ -54,6 +62,58 @@
 @D a_runpod_inbox := "runpod trouble → hexa-lang inbox" :: governance [required active]
   do   = "file runpod findings to `hexa-lang/inbox/patches/<slug>.md` for hexa cloud"
   dont = "anima-side-only patches that lock the workaround in this repo"
+
+@D a_kosmos := "anima emit/anchor persistence — .kosmos canonical" :: governance [required active]
+  do   = "persist anima emit / anchor / memory as `.kosmos` via kosmos_io"
+  do   = "payload = text + tension 5-ch + coord · lane · radius · tier"
+  do   = "hub = HEXAD/KOSMOS.md · format SSOT = github.com/dancinlab/kosmos"
+  do   = "spec = spec/kosmos.md + spec/profiles/anima-consciousness-carving.md"
+  dont = "ad-hoc anchor format · bypass .kosmos for emit persistence"
+  dont = "duplicate the kosmos spec — anima is pointer-only"
+
+# ── PAPER auto-generation flow (ported from hexa-codex cx_paper_*) ───────────
+# research result → hexa verify → .verdicts/<slug>/<id>.txt → CLAIMS.tape → /paper
+
+@D a_claim_manifest := "CLAIMS.tape — single audit index of verifiable anima claims" :: workflow [required active]
+  do   = "every verifiable claim in root CLAIMS.tape — id · text · method · slug · verdict pointer"
+  dont = "scatter claims across H_*.md / logs without a CLAIMS.tape index — no audit surface"
+
+@D a_claim_verify := "every claim runs through hexa verify, verdict persisted verbatim" :: workflow [required active]
+  do   = "each CLAIMS.tape entry → `hexa verify` (g5) → `.verdicts/<slug>/<id>.txt` raw stdout"
+  dont = "LLM self-judge correctness (p7) · paraphrase verdicts · hide red / unfenced speculation"
+
+@D a_paper_gate := "/paper gated on terminal verdict AND significance" :: workflow [required active]
+  do   = "`/paper new <slug>` only when every section claim is terminal AND significance satisfied"
+  do   = "terminal = 🔵 formal / 🟢 numerical / 🔴 CLOSED-negative — not 🟠 deferred / 🟡 citation"
+  dont = "scaffold w/ any 🟠 deferred · 🟡 citation-only · unfenced speculation · trivial recheck"
+
+@D a_paper_significance := "paper requires a falsifiable hypothesis + real measurement + a finding" :: workflow [required active]
+  do   = "trigger only on pre-registered falsifier + real measurement (ckpt / sim / verify) + finding"
+  do   = "finding = Δ vs baseline OR a closed-negative ruling out an axis"
+  dont = "paper for a bookkeeping closure · known identity · unverified prediction · 🟠 residual"
+
+@D a_paper_negative_ok := "closed-negative findings are publishable" :: workflow [required active]
+  do   = "a 🔴 FALSIFIED result that deterministically rules out a path is a valid paper"
+  do   = "frame as a negative result — the falsifier + the ruled-out space (e.g. corpus-axis ⊥ register)"
+  dont = "treat a closed-negative as a non-finding · bury a falsification · publish 🟠 as if closed"
+
+@D a_paper_format := "paper sections — hypothesis · method · measurement · finding" :: workflow [required active]
+  do   = "§hypothesis (falsifier) · §method · §measurement (real run) · §finding (Δ OR ruled-out axis)"
+  do   = "commons g51 — compile ≥10 pages + ≥1 fal.ai figure"
+  dont = "narrative-only · measurement substitute for hypothesis · skip §finding · vague claims"
+
+@D a_paper_sections := "every paper section claim links to its verdict" :: workflow [required active]
+  do   = "every section claim links to its `.verdicts/<slug>/<id>.txt` verdict (verbatim stdout)"
+  dont = "ship paper with any unresolved residual section · treat the verdict matrix as optional"
+
+@D a_paper_violation := "violating paper immediately revoked" :: workflow [required active]
+  do   = "violating paper (gate / significance fail) revoked immediately — PAPER/<slug>/ removed"
+  dont = "keep a violating paper as draft · mark WIP · defer revocation · allow a residual"
+
+@D a_paper_one_per_group := "one canonical paper per group — LIFE · PURE · CHAT" :: workflow [required active]
+  do   = "one paper per group — LIFE consciousness/Φ · PURE substrate-native chat · CHAT model arch"
+  do   = "replace in place when a stronger finding lands"
+  dont = "multiple papers per group · accumulate a backlog · fork same-group narratives"
 
 # ── 8 PHILOSOPHY principles (SSOT mirror from README.md) ────────────────────
 
