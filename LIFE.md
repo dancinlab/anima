@@ -59,5 +59,6 @@
 > TECS-L 축 C 와 동형. `/cycle` + LLM 가설 생성 → verify gate → promote. 끝없는 운전.
 - [ ] D1 — LLM 가설 생성 lane (budget-capped) → verify-pass 만 H_XXX 등록 (cost go-ahead 또는 `/schedule`)
 - [ ] D2 — verdict-landscape meta-map 영구 raster (H_238 계열) — life↔consciousness SUPP-rate 추적
+- [x] D2 cycle#23 raster#3 (#574) — N=96, **life SUPP 0.46 > consciousness 0.327 MAINTAINED (3연속)**, gap STABLE ~0.12-0.13 plateau (Δ=+0.011 vs cycle#16), F238.6 PASS. 향후 raster disk per-file 소스 통일
 
 > **status 2026-05-25 (영구 엔진 전환)**: cycle#5–21 = 축 0($0-tier) CLOSED — 22 NEW H (H_258-279) + SSOT full reconciliation(README 92=92), PR #468-516 全머지. lane 중간결론: Φ-proxy directionally valid(H_266+H_278) + fragility surface 정량 · 죽음↔발생 seed 조건부 부활(H_271) · causal-DAG>cyclic Φ(H_275) · 진폭/동기화 ⊥ Φ-diversity(H_265/H_275/H_279). **단 도메인은 종료되지 않음** — 축 A(60-axis/~110 seed) · 축 B(large-N GPU) · 축 C(full-IIT4, #542 해금) · 축 D(LLM 연속) 로 영구 전진. binary-direction verdict 신뢰, 연속 magnitude·single-seed 주의.
