@@ -1,0 +1,182 @@
+// HEXAD/IIT4/lib/iit4_bounded.hexa — IIT 4.0 engine M9: bounded-mode big-Φ.
+//
+//   ROLE
+//     Extends the tractable-n ceiling of the faithful IIT 4.0 engine WITHOUT
+//     touching any existing lib. big_phi (M4) is exact but expensive at large n
+//     because each mechanism's MICE search (iit4_distinction.mice_*) scans ALL
+//     2ⁿ−1 purviews × the full purview/mechanism bipartition set. The dominant
+//     cost is the purview enumeration. (cost envelope = DESIGN.md §3.)
+//
+//   BOUNDED MODE  (the M9 lever)
+//     big_phi_bounded(tpm, n, sys_state, max_purview_size) restricts each MICE
+//     argmax to purviews of size (popcount) ≤ max_purview_size. Everything else
+//     — partitions, distinctions binding, relations, system MIP — is IDENTICAL
+//     to big_phi. The purview state space per candidate is still 2^|purview|, so
+//     capping the largest purviews removes the most expensive evaluations first.
+//
+//   FAITHFUL RESTRICTION vs APPROXIMATION  (honesty — g5 · DESIGN.md §3)
+//     • max_purview_size ≥ n  ⇒ the cap excludes NOTHING; big_phi_bounded is a
+//       byte-faithful RESTRICTION and equals exact big_phi (verified in the M9
+//       smoke). This is the "no-op cap" identity.
+//     • max_purview_size < n  ⇒ the cap removes large purviews from the MICE
+//       argmax. The reported φ_d is then a LOWER BOUND on each mechanism's true
+//       small-φ (the unconstrained argmax can only be ≥ a constrained argmax),
+//       so big_phi_bounded is an explicit APPROXIMATION — NOT the exact IIT 4.0
+//       big-Φ. It is a documented tractability tradeoff: it makes larger n
+//       feasible at the cost of possibly missing a high-φ large purview. We do
+//       NOT claim the capped value is faithful.
+//
+//   IMPORT-SAFE  NO `fn main()` / NO top-level call. snake_case · English code.
+//   Imports iit4_bigphi (single chain → all M1-M4 fns + big_phi visible).
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_bigphi.hexa"
+
+
+// popcount of a bitmask within [0, n) — number of set units.
+fn iit4_popcount(mask: int, n: int) -> int {
+    let mut c = 0
+    let mut i = 0
+    while i < n {
+        if iit4_bit(mask, i) == 1 { c = c + 1 }
+        i = i + 1
+    }
+    return c
+}
+
+
+// ── bounded MICE effect — argmax over purviews of size ≤ cap. ───────────────
+// Identical to iit4_distinction.mice_effect except the purview loop SKIPS any
+// purview with popcount > cap. cap ≥ n ⇒ scans every purview (exact).
+fn mice_effect_bounded(tpm: array, n: int, mech_mask: int, mech_state: int, cap: int) -> array {
+    let full = iit4_pow2(n)
+    let mut best_phi = 0.0 - 1.0
+    let mut best_pv = 0
+    let mut best_state = 0.0
+    let mut pv = 1
+    while pv < full {
+        if iit4_popcount(pv, n) <= cap {
+            let r = small_phi_effect(tpm, n, mech_mask, mech_state, pv)
+            if r[0] > best_phi {
+                best_phi = r[0]
+                best_pv = pv
+                best_state = r[1]
+            }
+        }
+        pv = pv + 1
+    }
+    return [best_phi, to_float(best_pv), best_state]
+}
+
+// ── bounded MICE cause — argmax over purviews of size ≤ cap. ────────────────
+fn mice_cause_bounded(tpm: array, n: int, mech_mask: int, mech_state: int, cap: int) -> array {
+    let full = iit4_pow2(n)
+    let mut best_phi = 0.0 - 1.0
+    let mut best_pv = 0
+    let mut best_state = 0.0
+    let mut pv = 1
+    while pv < full {
+        if iit4_popcount(pv, n) <= cap {
+            let r = small_phi_cause(tpm, n, mech_mask, mech_state, pv)
+            if r[0] > best_phi {
+                best_phi = r[0]
+                best_pv = pv
+                best_state = r[1]
+            }
+        }
+        pv = pv + 1
+    }
+    return [best_phi, to_float(best_pv), best_state]
+}
+
+
+// ── bounded distinction — same layout as iit4_distinction.distinction. ──────
+// [phi_d, mech_mask, cause_pv, cause_state, effect_pv, effect_state, phi_c, phi_e].
+fn distinction_bounded(tpm: array, n: int, mech_mask: int, mech_state: int, cap: int) -> array {
+    let ce = mice_cause_bounded(tpm, n, mech_mask, mech_state, cap)
+    let ee = mice_effect_bounded(tpm, n, mech_mask, mech_state, cap)
+    let phi_c = ce[0]
+    let phi_e = ee[0]
+    let phi_d = if phi_c < phi_e { phi_c } else { phi_e }
+    return [phi_d, to_float(mech_mask), ce[1], ce[2], ee[1], ee[2], phi_c, phi_e]
+}
+
+
+// ── bounded system big-Φ — [big_phi, total, sum_phi_d, sum_phi_r, n_distinctions]. ──
+// Structurally IDENTICAL to iit4_bigphi.big_phi: the ONLY change is that
+// distinctions come from distinction_bounded (capped purview argmax). The
+// relation binding, total, and system-MIP minimization are byte-identical to M4
+// so that max_purview_size ≥ n reproduces big_phi exactly (no-op cap identity).
+fn big_phi_bounded(tpm: array, n: int, sys_state: int, max_purview_size: int) -> array {
+    let full = iit4_pow2(n)
+    let cap = max_purview_size
+
+    // collect distinctions (φ_d > 0) using the capped MICE search.
+    let mut dists = []
+    let mut sum_d = 0.0
+    let mut m = 1
+    while m < full {
+        let d = distinction_bounded(tpm, n, m, sys_state, cap)
+        if d[0] > 1.0e-9 {
+            dists = dists.push(d)
+            sum_d = sum_d + d[0]
+        }
+        m = m + 1
+    }
+    let nd = len(dists)
+
+    // 2nd-order relations (unpartitioned total).
+    let mut sum_r = 0.0
+    let mut i = 0
+    while i < nd {
+        let mut j = i + 1
+        while j < nd {
+            let r = relation_2nd(dists[i], dists[j], n)
+            if r > 1.0e-9 { sum_r = sum_r + r }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    let total = sum_d + sum_r
+
+    if n < 2 { return [0.0, total, sum_d, sum_r, to_float(nd)] }
+
+    // min over non-trivial directional bipartitions (unit 0 pinned to A).
+    let all_mask = full - 1
+    let mut min_loss = 1.0e308
+    let mut a = 1
+    while a < all_mask {
+        if iit4_bit(a, 0) == 1 {                          // a ⊇ {0} and a ⊊ all ⇒ B non-empty
+            // per-distinction side + surviving distinction φ.
+            let mut sides = []
+            let mut surv = 0.0
+            let mut k = 0
+            while k < nd {
+                let s = iit4_distinction_side(dists[k], a, n)
+                sides = sides.push(to_float(s))
+                if s != 0 { surv = surv + dists[k][0] }
+                k = k + 1
+            }
+            // surviving relations (both distinctions one-sided, same side).
+            let mut ii = 0
+            while ii < nd {
+                let mut jj = ii + 1
+                while jj < nd {
+                    let r = relation_2nd(dists[ii], dists[jj], n)
+                    if r > 1.0e-9 {
+                        let si = sides[ii].to_int()
+                        let sj = sides[jj].to_int()
+                        if (si != 0) && (sj != 0) && (si == sj) { surv = surv + r }
+                    }
+                    jj = jj + 1
+                }
+                ii = ii + 1
+            }
+            let loss = total - surv
+            if loss < min_loss { min_loss = loss }
+        }
+        a = a + 1
+    }
+    if min_loss > 1.0e307 { min_loss = 0.0 }
+    if min_loss < 0.0 { min_loss = 0.0 }
+    return [min_loss, total, sum_d, sum_r, to_float(nd)]
+}
