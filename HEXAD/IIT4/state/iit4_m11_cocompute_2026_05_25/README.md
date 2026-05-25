@@ -40,3 +40,11 @@ LIFE 의 proxy `phi_spatial`(RFC036)은 진화한 snapshot 의 cell 간 **상관
 - 단일 seed/T, n=4. multi-seed/larger-n 일반화는 후속.
 - IIT4 측은 structure-cut big-Φ — 절대 스케일 PyPhi 대조는 M5 named-blocker(F-IIT4-3/4) 잔존.
 - **salvage 출처**: cycle#2 병렬 에이전트 서버 rate-limit(429) 사망 → 메인 세션 인라인 재작성.
+
+## 5. 후속 routing — stdlib/info 대안 proxy (2026-05-25)
+
+본 M11 의 proxy 는 RFC036-family 평균 pairwise MI 의 **inline** 재구현이다. anima 외부에서 같은 비교를 돌리려면 도메인 의존 없는 standalone proxy 가 필요한데, 같은 hexa-lang **stdlib** 에 `stdlib/info/{binning,entropy,mutual_info}` (g61 commons primitive 레이어 · sidecar PR #1051 sibling) 가 존재한다. 이것을 별개 알고리즘 proxy 로 라우팅하는 선택지를 명시:
+
+- **현 inline proxy** (이 README §2): RFC036 평균 pairwise MI 자체 포팅 — anima 내부 보존, deferred 닫기 SSOT.
+- **대안 stdlib/info routing**: 동일 ECA 시계열 → `binning.uniform_bins` → `entropy.shannon_h` → `mutual_info.pairwise_mi` — **별개 알고리즘** (farr-based bin · 다른 추정량), cross-repo 재사용 가능. hexa-brain/eeg/외부 도메인은 이 경로 채택 권장.
+- 두 proxy 모두 "상관" 축 추정이라 §3 의 인과 divergence 결론은 routing 무관. stdlib/info 결과치는 호스트 도메인의 재현 책임 (M11 본문에는 inline 결과만 SSOT).
