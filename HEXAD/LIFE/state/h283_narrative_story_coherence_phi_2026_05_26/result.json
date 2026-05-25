@@ -1,0 +1,40 @@
+{
+  "hypothesis": "H_283",
+  "slug": "narrative-story-coherence-phi",
+  "domain": "LIFE",
+  "title": "narrative-story-coherence-Φ — coherent (causal-order) narrative substrate Φ > scrambled-order narrative substrate Φ (AXES R4 promote · H_213 temporal-binding sister)",
+  "date": "2026-05-26",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "seed": 42,
+  "params": {"d_model": 8, "pool_N": 8, "n_events": 10, "c1_margin": 0.02},
+  "sweep": {
+    "t6": { "t": 6, "phi_coh": 0.641993, "phi_scr": 0.251106, "delta": 0.390886 },
+    "t8": { "t": 8, "phi_coh": 2.01737, "phi_scr": 0.721303, "delta": 1.29607 },
+    "t10": { "t": 10, "phi_coh": 4.70411, "phi_scr": 1.63919, "delta": 3.06492 }
+  },
+  "derived": {
+    "delta_t6": 0.390886,
+    "delta_t8": 1.29607,
+    "delta_t10": 3.06492
+  },
+  "criteria": {
+    "C1_coherence_phi":  true,
+    "C2_robust":         true,
+    "C3_window":         true,
+    "C4_determinism":    true
+  },
+  "falsifiers": {
+    "F1_COHERENCE_PHI": { "metric": "T=8 coherent > scrambled", "value": 1.29607, "verdict": "PASS" },
+    "F2_ROBUST":        { "metric": "coherent >= scrambled all T", "verdict": "PASS" },
+    "F3_WINDOW":        { "metric": "Δ_T10 >= Δ_T6", "value": 2.67404, "verdict": "PASS" },
+    "F4_DETERMINISM":   { "metric": "re-run Δ byte-equal", "verdict": "PASS" },
+    "F5_BOUNDS":        { "metric": "all phi finite >= 0", "verdict": "PASS" }
+  },
+  "n_criteria_pass": 4,
+  "n_falsifier_pass": 5,
+  "verdict": "SUPPORTED_FULL",
+  "cross_link": {"H_213": "temporal-binding", "H_278": "MIP-Phi", "H_205": "self-ref-closure", "axes": "R4 self/identity"}
+}
