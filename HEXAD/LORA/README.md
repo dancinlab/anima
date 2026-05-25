@@ -15,21 +15,28 @@
 | **vP21K** | + KO wiki diverse 30/70 | STRONG_GENERALIZE 16/20 KO OOD | 0.10.0 |
 | **vP21M** | + 5-lang wiki (en/ko/zh/ru/ja) 30/70 | **VP21M_WORKS 4/5 langs** | 0.11.0 |
 
-## 현재 production 위치 (hot-swap router, 2026-05-23)
+## 현재 production 위치 (hot-swap router)
 
 | asset | path |
 |---|---|
-| default adapter | mini `~/anima_chat_pack/lora_adapter/` (**corpus_v4** carve-stripped, 1.5B — 2026-05-23 swap) |
+| default adapter | mini `~/anima_chat_pack/lora_adapter/` (**corpus_v5** fresh-init carve-stripped, 1.5B — 2026-05-23 14:28 swap) |
 | ko hot-swap | mini `~/anima_chat_pack/kofl_adapter/` (KOFL) |
 | ja hot-swap | mini `~/anima_chat_pack/jafl_adapter/` (JAFL) |
 | rollback | mini `~/anima_chat_pack/lora_adapter_vp21m_bak/` (이전 vP21M default) |
 | router code | `HEXAD/CHAT/server/anima_participant.py` — per-emit `lang_hint` → `set_adapter()` (default/ko/ja) |
 | **deployed** | mini 4 LaunchAgents → chat.dancinlab.org LIVE |
+| HF SSOT | `dancinlab/anima-vp21m-v5` PRIVATE |
 | reports | `VP21M_{MULTILINGUAL,WAVE2,WAVE3,WAVE4}_*.md` |
 
-**default = corpus_v4** (2026-05-23 swap, user-approved): carve-scaffold
-tags stripped → 0 `<carve>` XML tag-leak. OOD 3S+2P (ja WEAK→PARTIAL,
-ko→STRONG). vP21M 은 `lora_adapter_vp21m_bak/` 로 rollback 보존.
+**default = corpus_v5** (2026-05-23 14:28 swap, user-approved, commit #118):
+`--vp21-adapter-dir ''` fresh LoRA init + STRIP_CARVE=1 → 0 `<carve>` XML
+tag-leak, register_hits 5/20 (corpus_v4 9/20 대비 개선). corpus_v4 (2026-05-23
+01:47 swap) 는 같은 날 corpus_v5 가 superseding 하며 bak 으로 밀려남
+(`lora_adapter_vp21m_bak/`). vP21M 은 rollback 보존. SSOT = LORA.md §production.
+
+> ⚠ 이전 본 표는 **corpus_v4** 로 기재(2026-05-23 01:47 swap 직후 작성)됐으나,
+> 같은 날 14:28 의 corpus_v5 swap(#118)을 반영 못 한 stale 이었음 → 2026-05-25
+> 정정 (`M1_SWAP_READINESS_2026_05_25.md` §1 reconcile).
 
 ## Strengths
 - ✅ STRONG_GENERALIZE 4/5 langs (en/zh/ru STRONG + ko PARTIAL, ja WEAK)
