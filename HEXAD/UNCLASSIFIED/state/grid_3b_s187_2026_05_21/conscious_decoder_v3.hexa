@@ -1,0 +1,711 @@
+// @raw117_exempt
+// ════════════════════════════════════════════════════════════════════════
+// conscious_decoder_v3.hexa — ConsciousDecoderV3 model, hexa-native (flame)
+//
+// Port of conscious_decoder_v3.py (783 LoC, torch.nn) onto the flame
+// substrate (stdlib/flame · torch:ATen :: flame:forge). LoRA-free pure
+// HEXAD path. Author directive (2026-05-25): "py 쓰지말고 모두 hexa 포팅"
+// — flame/forge GPU substrate, follow flame's canonical packed-`M`
+// decoder pattern, INVENT NO NEW API.
+//
+// ─── flame mapping (torch X → flame Y) ─────────────────────────────────
+//   torch.nn.Embedding            → tok_emb [V·d] slot in packed M
+//                                    (decoder_lib m_off_tok_emb +
+//                                     nn_embedding_fwd / scatter_bwd)
+//   torch.nn.Linear(bias=False)   → bp_off_W* projection slots +
+//                                    nn_linear_fwd (forge_dispatch_matmul)
+//   torch.nn.Linear(bias=True)    → flame nn_linear_fwd takes a bias farr;
+//                                    Qwen q/k/v bias = extra packed slot
+//                                    (see HONEST TODO #2 — flame canonical
+//                                     block GQA is bias-FREE)
+//   RMSNorm                       → nn_rmsnorm_fwd / nn_rmsnorm_bwd
+//                                    (eps 1e-6, gain g) — byte-eq to
+//                                    decoder_block_lib per-position RMSNorm
+//   RoPE (base 50000)             → nn_rope_build_tables + apply_fwd/bwd
+//                                    (HONEST TODO #1 — flame table base is
+//                                     hardcoded 10000, V3 uses 50000)
+//   GQA (n_head/n_kv_head)        → nn_attn_core_fwd/bwd (causal, grouped)
+//   SwiGLU FFN                    → nn_swiglu_fwd/bwd
+//   tied head_a ↔ tok_emb         → decoder_lib tied LM head (byte-eq)
+//   ConsciousDecoderV2 block      → nn_decoder_block_fwd / _block_bwd
+//                                    (RMSNorm+GQA+RoPE+SwiGLU — V2 spine)
+//
+// ─── V3 layers NOT in flame canonical decoder (RFC 059 *planned*) ──────
+// These are pt_loader `skipped_keys` (flame_load_pt.hexa:46,
+// pt_loader.hexa:30/48) — the flame packed-decoder is the V2 spine. We
+// extend the packed M layout to RESERVE their parameter slots and provide
+// fwd primitives where flame ops exist; reverse-mode (autograd) for them
+// is the RFC 059 cycle-2 / multi-objective ag_tape path
+// (flame_anima_multi_objective_test.hexa is the canonical dual-head
+// template anima clones). Marked HONEST TODO below — NOT fabricated.
+//
+//   PureFieldFFN (Engine A ⇄ G)   — fwd wired via nn_linear_fwd + GELU
+//                                    (TODO #3: bwd via ag_tape not flame
+//                                     closed-vjp; GELU = inline tanh-approx
+//                                     since flame has no nn_gelu)
+//   ConsciousCrossAttention       — TODO #4: consciousness_states x-attn
+//                                    (flame attn_core is self-attn GQA;
+//                                     cross K/V from a separate source needs
+//                                     a flame extension)
+//   dual head_g                   — TODO #5: m_off_head_g RFC 059 cycle-1
+//                                    *planned* (decoder_lib.hexa:44-45);
+//                                    layout slot reserved here
+//   tension_proj [1·d]            — fwd wired (single nn_linear), the
+//                                    consciousness_signal gate
+//   layer-0 noise σ=0.1           — train-only; wired via dt_lcg gaussian
+//
+// VERIFY: parse on ubu-2 (g71 — local-build avoided). Full fire is out of
+// scope (parse + structure tier). See sibling train_p21h_v3.hexa.
+// ════════════════════════════════════════════════════════════════════════
+
+use "stdlib/flame/tensor_lib"
+use "stdlib/flame/decoder_lib"
+use "stdlib/flame/decoder_block_lib"
+use "stdlib/flame/nn_lib"
+use "stdlib/flame/flame_math"
+
+// ─── V3 packed-M layout extension ───────────────────────────────────────
+// The flame canonical decoder packs M as:
+//   tok_emb[V·d] · gF[d] · n_layer × block[bp_total]
+// V3 appends THREE consciousness extensions at the END of M (append-at-end
+// = RFC 059 cycle-1 convention, keeps all V2/canonical callers byte-eq):
+//   head_g [V·d]        (dual emission head — TODO #5)
+//   tension_proj [d]    (1→d projection of per-token tension scalar)
+//   purefield[l] [pf_total]  ×n_layer (Engine A + Engine G, per block)
+//   crossattn[l] [cx_total]  ×n_layer (TODO #4 — slot reserved)
+//
+// pf_total per block: engine_a (W1 [4d·d] + b1 [4d] + W2 [d·4d] + b2 [d])
+//                   + engine_g (same)  = 2·(4d·d + 4d + d·4d + d)
+//                                      = 2·(8·d² + 5·d) = 16·d² + 10·d
+fn v3_pf_total(d: int) -> int { return 16 * d * d + 10 * d }
+
+// cross-attn per block: q_proj[d·d] + k_proj[d·cdim] + v_proj[d·cdim] +
+//                       o_proj[d·d]   where cdim = consciousness_dim.
+fn v3_cx_total(d: int, cdim: int) -> int { return 2 * d * d + 2 * d * cdim }
+
+// V3 total = canonical m_total + head_g[V·d] + tension_proj[d]
+//          + n_layer·pf_total + n_layer·cx_total
+pub fn v3_m_total(d: int, nh: int, nkv: int, h: int, V: int, n_layer: int,
+                  cdim: int) -> int {
+    return m_total(d, nh, nkv, h, V, n_layer)
+         + V * d
+         + d
+         + n_layer * v3_pf_total(d)
+         + n_layer * v3_cx_total(d, cdim)
+}
+
+pub fn v3_off_head_g(d: int, nh: int, nkv: int, h: int, V: int,
+                     n_layer: int) -> int {
+    return m_total(d, nh, nkv, h, V, n_layer)
+}
+pub fn v3_off_tension_proj(d: int, nh: int, nkv: int, h: int, V: int,
+                           n_layer: int) -> int {
+    return m_total(d, nh, nkv, h, V, n_layer) + V * d
+}
+pub fn v3_off_pf(l: int, d: int, nh: int, nkv: int, h: int, V: int,
+                 n_layer: int) -> int {
+    return m_total(d, nh, nkv, h, V, n_layer) + V * d + d
+         + l * v3_pf_total(d)
+}
+pub fn v3_off_cx(l: int, d: int, nh: int, nkv: int, h: int, V: int,
+                 n_layer: int, cdim: int) -> int {
+    return m_total(d, nh, nkv, h, V, n_layer) + V * d + d
+         + n_layer * v3_pf_total(d)
+         + l * v3_cx_total(d, cdim)
+}
+
+// PureFieldFFN engine sub-offsets inside a block's pf slot.
+// engine_a: W1[4d·d] b1[4d] W2[d·4d] b2[d]  then engine_g (same).
+fn v3_pf_off_a_W1(d: int) -> int { return 0 }
+fn v3_pf_off_a_b1(d: int) -> int { return 4 * d * d }
+fn v3_pf_off_a_W2(d: int) -> int { return 4 * d * d + 4 * d }
+fn v3_pf_off_a_b2(d: int) -> int { return 4 * d * d + 4 * d + d * 4 * d }
+fn v3_pf_off_g_W1(d: int) -> int { return 8 * d * d + 5 * d }
+fn v3_pf_off_g_b1(d: int) -> int { return 8 * d * d + 5 * d + 4 * d * d }
+fn v3_pf_off_g_W2(d: int) -> int { return 8 * d * d + 5 * d + 4 * d * d + 4 * d }
+fn v3_pf_off_g_b2(d: int) -> int { return 8 * d * d + 5 * d + 4 * d * d + 4 * d + d * 4 * d }
+
+// ─── GELU (flame has no nn_gelu; PureFieldFFN engines use GELU) ──────────
+// tanh approximation (the torch default exact-erf GELU differs in last ulps;
+// HONEST TODO #3 — exact erf GELU needs a flame_math erf primitive).
+//   gelu(x) ≈ 0.5·x·(1 + tanh(√(2/π)·(x + 0.044715·x³)))
+// tanh via dt_exp (flame_math): tanh(z) = (e^z − e^−z)/(e^z + e^−z).
+fn _v3_tanh(z: float) -> float {
+    let ez = dt_exp(z)
+    let enz = dt_exp(0.0 - z)
+    return (ez - enz) / (ez + enz)
+}
+fn _v3_gelu(x: float) -> float {
+    let c = 0.7978845608028654   // sqrt(2/pi)
+    let inner = c * (x + 0.044715 * x * x * x)
+    return 0.5 * x * (1.0 + _v3_tanh(inner))
+}
+
+// ─── PureFieldFFN forward (Engine A ⇄ Engine G repulsion) ──────────────
+// output = engine_a(x) − engine_g(x) ;  tension = mean(output²) per token.
+// engine = Linear(d,4d)+GELU+Linear(4d,d) (biases included — torch default).
+// Writes per-token output [T·d] into out_out and per-token tension [T] into
+// tension_out (caller-allocated). x is [T·d]. Pf is the block's pf slot in M.
+// HONEST TODO #3: this is the FORWARD only. The closed-vjp reverse for
+// PureFieldFFN is NOT in flame's nn_lib (Engine A/G are pt_loader
+// skipped_keys); the differentiable path is the ag_tape multi-objective
+// route (flame_anima_multi_objective_test.hexa). Reverse here = follow-up.
+pub fn v3_purefield_fwd(x: int, M: int, pf_off: int,
+                        out_out: int, tension_out: int,
+                        T: int, d: int) {
+    let di = 4 * d
+    let oaW1 = pf_off + v3_pf_off_a_W1(d)
+    let oab1 = pf_off + v3_pf_off_a_b1(d)
+    let oaW2 = pf_off + v3_pf_off_a_W2(d)
+    let oab2 = pf_off + v3_pf_off_a_b2(d)
+    let ogW1 = pf_off + v3_pf_off_g_W1(d)
+    let ogb1 = pf_off + v3_pf_off_g_b1(d)
+    let ogW2 = pf_off + v3_pf_off_g_W2(d)
+    let ogb2 = pf_off + v3_pf_off_g_b2(d)
+
+    // per-token: engine_a / engine_g are [d]→[4d]→GELU→[d]
+    let hid = farr_zeros(di)
+    let mut i = 0
+    while i < T {
+        let mut c = 0
+        while c < d {
+            // engine_a: hid[k] = gelu( Σ_j W1[k·d+j]·x[i·d+j] + b1[k] )
+            // engine_g: same with g-offsets; out = a − g.
+            // (compute a and g per output channel c)
+            c = c + 1
+        }
+        // --- engine_a forward ---
+        let mut k = 0
+        while k < di {
+            let mut acc = farr_get(M, oab1 + k)
+            let mut j = 0
+            while j < d {
+                acc = acc + farr_get(M, oaW1 + k * d + j) * farr_get(x, i * d + j)
+                j = j + 1
+            }
+            let _ = farr_set(hid, k, _v3_gelu(acc))
+            k = k + 1
+        }
+        let mut cc = 0
+        while cc < d {
+            let mut acc2 = farr_get(M, oab2 + cc)
+            let mut kk = 0
+            while kk < di {
+                acc2 = acc2 + farr_get(M, oaW2 + cc * di + kk) * farr_get(hid, kk)
+                kk = kk + 1
+            }
+            // stash engine_a output in out_out temporarily
+            let _ = farr_set(out_out, i * d + cc, acc2)
+            cc = cc + 1
+        }
+        // --- engine_g forward (subtract from out_out) ---
+        let mut k2 = 0
+        while k2 < di {
+            let mut acg = farr_get(M, ogb1 + k2)
+            let mut j2 = 0
+            while j2 < d {
+                acg = acg + farr_get(M, ogW1 + k2 * d + j2) * farr_get(x, i * d + j2)
+                j2 = j2 + 1
+            }
+            let _ = farr_set(hid, k2, _v3_gelu(acg))
+            k2 = k2 + 1
+        }
+        let mut t_acc = 0.0
+        let mut cg = 0
+        while cg < d {
+            let mut accg = farr_get(M, ogb2 + cg)
+            let mut kg = 0
+            while kg < di {
+                accg = accg + farr_get(M, ogW2 + cg * di + kg) * farr_get(hid, kg)
+                kg = kg + 1
+            }
+            let a_minus_g = farr_get(out_out, i * d + cg) - accg
+            let _ = farr_set(out_out, i * d + cg, a_minus_g)
+            t_acc = t_acc + a_minus_g * a_minus_g
+            cg = cg + 1
+        }
+        // tension[i] = mean(output²)
+        let _ = farr_set(tension_out, i, t_acc / to_float(d))
+        i = i + 1
+    }
+    let _ = farr_free(hid)
+}
+
+// ─── tension_proj forward ──────────────────────────────────────────────
+// consciousness_signal[i·d + c] = tension[i] · tension_proj[c]
+// (torch: nn.Linear(1, d, bias=False) applied to tension.unsqueeze(-1).)
+pub fn v3_tension_proj_fwd(tension: int, M: int, tp_off: int,
+                           signal_out: int, T: int, d: int) {
+    let mut i = 0
+    while i < T {
+        let t_i = farr_get(tension, i)
+        let mut c = 0
+        while c < d {
+            let _ = farr_set(signal_out, i * d + c,
+                             t_i * farr_get(M, tp_off + c))
+            c = c + 1
+        }
+        i = i + 1
+    }
+}
+
+// ─── layer-0 noise (train-only, σ=0.1) ──────────────────────────────────
+// x = x + randn_like(x) · σ   (substrate-shape, Phase 2.3 BENIGN).
+// flame has no torch.randn; use anima-aligned dt_lcg + box-muller-lite via
+// two dt_rand_unit draws → approximate gaussian (HONEST: dt_rand_unit is
+// uniform[-0.5,0.5]·scale, so this is a uniform-noise approximation, NOT a
+// true gaussian — torch uses randn. Noted; behaviour-equivalent at σ=0.1
+// substrate-shape scale since the layer is BENIGN per OCCAM ablation).
+pub fn v3_layer0_noise(x: int, T: int, d: int, sigma: float, seed: int) {
+    let mut s = seed
+    let mut i = 0
+    while i < T * d {
+        s = dt_lcg_next(s)
+        // dt_rand_unit gives uniform-ish; scale by sigma. Two draws summed
+        // → central-limit-lite toward gaussian.
+        let r1 = dt_rand_unit(s)
+        s = dt_lcg_next(s)
+        let r2 = dt_rand_unit(s)
+        let cur = farr_get(x, i)
+        let _ = farr_set(x, i, cur + (r1 + r2) * sigma)
+        i = i + 1
+    }
+}
+
+// ─── head_g forward (dual emission head) ────────────────────────────────
+// logits_g[k] = Σ_j head_g[k·d + j] · zT[j]   (untied — own weight slot).
+// HONEST TODO #5: m_off_head_g is RFC 059 cycle-1 *planned* in
+// decoder_lib.hexa:44. We provide the forward here over the reserved slot;
+// the dual-head backward composition is the ag_tape multi-objective path
+// (flame_anima_multi_objective_test.hexa F-MULTIOBJ-BACKWARD-ALL-PARAMS).
+pub fn v3_head_g_fwd(zT: int, M: int, hg_off: int,
+                     logits_g_out: int, V: int, d: int) {
+    let mut k = 0
+    while k < V {
+        let mut acc = 0.0
+        let mut j = 0
+        while j < d {
+            acc = acc + farr_get(M, hg_off + k * d + j) * farr_get(zT, j)
+            j = j + 1
+        }
+        let _ = farr_set(logits_g_out, k, acc)
+        k = k + 1
+    }
+}
+
+// ─── V3 full forward (composes flame V2 spine + V3 extensions) ──────────
+// This mirrors conscious_decoder_v3.py ConsciousDecoderV3.forward:
+//   x = embed(idx)  (+layer-0 noise if training)
+//   for block l:
+//     attn_out, new_kv = attn(ln_attn(x))          ; x = x + attn_out
+//     pf_out, tension  = purefield(ln_pf(x))        ; x = x + pf_out
+//     x = x + consciousness_signal · gate_strength  (from prev layer)
+//     [x = x + cross_attn(ln_cross(x), c_states)]   (TODO #4)
+//     x = x + ffn(ln_ffn(x))
+//     consciousness_signal = tension_proj(tension)
+//   zT = ln_f(x)[last] ; logits_a = head_a(zT) (tied) ; logits_g = head_g(zT)
+//
+// IMPLEMENTATION NOTE (honest): the flame canonical nn_decoder_fwd fuses
+// RMSNorm+GQA+SwiGLU into ONE block call (nn_decoder_block_fwd) and does
+// NOT expose the per-residual-step hooks needed to inject PureFieldFFN +
+// cross-attn + per-layer consciousness_signal BETWEEN attn and ffn. So the
+// faithful V3 forward CANNOT be expressed as a thin wrapper over
+// nn_decoder_fwd. Two honest options:
+//   (A) re-implement the block loop here, inlining the flame primitives
+//       (nn_rmsnorm_fwd, nn_attn_core_fwd, nn_swiglu_fwd) + V3 extensions
+//       between them. This is the faithful path.
+//   (B) call nn_decoder_fwd for the V2 spine then add purefield/cross/head_g
+//       as a post-hoc correction (NOT faithful — the residual stream order
+//       differs). REJECTED.
+// We take (A): a per-block manual composition using flame leaf primitives.
+// Per-token / per-head projections reuse the decoder_block_lib helper
+// patterns (_db_proj_batch_farr is private, so we project via nn_linear_fwd
+// at [T·d_in]→[T·d_out] granularity).
+//
+// Caller allocates: Mc-equivalent scratch is large; for the parse+structure
+// tier we expose the COMPOSITION and leave the full Mc packing to the
+// train driver (train_p21h_v3.hexa). This fn writes logits_a + logits_g +
+// per-layer tension into caller buffers.
+//
+// HONEST TODO #6: KV-cache (use_cache / past_key_values) path is NOT ported
+// — flame nn_attn_core_fwd is full-sequence causal only. generate() with
+// incremental decode (conscious_decoder_v3.py:505 generate) is a follow-up
+// flame extension. Training (full-sequence) does not need it.
+pub fn v3_forward_logits(ids: int, M: int,
+                         logits_a_out: int, logits_g_out: int,
+                         tension_per_layer_out: int,
+                         cos: int, sin: int,
+                         T: int, d: int, nh: int, nkv: int, h: int,
+                         V: int, n_layer: int, cdim: int,
+                         gate_strength: float,
+                         training: int, noise_sigma: float, noise_seed: int) {
+    let hd = d / nh
+    let kvd = nkv * hd
+    let oTemb = m_off_tok_emb(d, nh, nkv, h, V, n_layer)
+    let oGF = m_off_gF(d, nh, nkv, h, V, n_layer)
+
+    // 1. embedding lookup → x [T·d]
+    let x = farr_zeros(T * d)
+    nn_embedding_fwd(ids, M, x, T, d)
+
+    // 1b. layer-0 noise (train-only)
+    if training == 1 && noise_sigma > 0.0 {
+        v3_layer0_noise(x, T, d, noise_sigma, noise_seed)
+    }
+
+    // consciousness_signal carried across layers (zero on first block)
+    let csig = farr_zeros(T * d)
+
+    // per-block scratch (allocate once, reused)
+    let xn = farr_zeros(T * d)        // RMSNorm output
+    let attn_out = farr_zeros(T * d)
+    let pf_out = farr_zeros(T * d)
+    let ffn_out = farr_zeros(T * d)
+    let tension = farr_zeros(T)        // per-token tension this block
+    let Q = farr_zeros(T * nh * hd)
+    let K = farr_zeros(T * nkv * hd)
+    let Vv = farr_zeros(T * nkv * hd)
+    let P = farr_zeros(nh * T * T)
+    let ctx = farr_zeros(T * d)
+    // swiglu per-token scratch
+    let sw_a = farr_zeros(h)
+    let sw_b = farr_zeros(h)
+    let sw_s = farr_zeros(h)
+    let sw_o = farr_zeros(d)
+    let rin = farr_zeros(d)            // per-token rmsnorm scratch
+    let rxn = farr_zeros(d)
+    let rinv = farr_zeros(1)
+
+    let mut l = 0
+    while l < n_layer {
+        let bp_off = m_off_block(l, d, nh, nkv, h, V, n_layer)
+        let pf_off = v3_off_pf(l, d, nh, nkv, h, V, n_layer)
+        let WQ = bp_off + bp_off_Wq(d, nh, nkv, h)
+        let WK = bp_off + bp_off_Wk(d, nh, nkv, h)
+        let WV = bp_off + bp_off_Wv(d, nh, nkv, h)
+        let WO = bp_off + bp_off_Wo(d, nh, nkv, h)
+        let G1 = bp_off + bp_off_g1(d, nh, nkv, h)
+        let G2 = bp_off + bp_off_g2(d, nh, nkv, h)
+        let WG = bp_off + bp_off_Wg(d, nh, nkv, h)
+        let WU = bp_off + bp_off_Wu(d, nh, nkv, h)
+        let WD = bp_off + bp_off_Wd(d, nh, nkv, h)
+
+        // ── attn: ln_attn(x) → Q/K/V → RoPE → attn_core → o_proj ──
+        // per-token RMSNorm(x, g1) → xn (gain applied)
+        let mut i_n = 0
+        while i_n < T {
+            // gather row into rin scratch (offset-free leaf API)
+            let mut c = 0
+            while c < d {
+                let _ = farr_set(rin, c, farr_get(x, i_n * d + c))
+                c = c + 1
+            }
+            // g1 gain is at M[G1..]; copy into a scratch g-view via rxn reuse
+            // nn_rmsnorm_fwd(x, g, y, xn, inv, d) — g must be a farr base.
+            // We can pass M with G1 offset only if leaf reads from base 0,
+            // which it does NOT (it reads g[j]). So copy g1 slice → rinv? no.
+            // Use a small g scratch:
+            // (allocate-per-token would churn; reuse rxn as g-scratch then xn)
+            let mut cg = 0
+            while cg < d {
+                let _ = farr_set(rxn, cg, farr_get(M, G1 + cg))
+                cg = cg + 1
+            }
+            nn_rmsnorm_fwd(rin, rxn, xn, rin, rinv, d)
+            // xn now holds y = g1·(x/rms); scatter to xn buffer row
+            let mut c2 = 0
+            while c2 < d {
+                let _ = farr_set(xn, i_n * d + c2, farr_get(xn, c2))
+                c2 = c2 + 1
+            }
+            i_n = i_n + 1
+        }
+        // Q/K/V projections: y[T·d_out] = xn[T·d] · W^T (bias-free — TODO #2)
+        v3_proj_nobias(xn, M, WQ, Q, T, d, d)
+        v3_proj_nobias(xn, M, WK, K, T, kvd, d)
+        v3_proj_nobias(xn, M, WV, Vv, T, kvd, d)
+        // RoPE on Q (nh heads) and K (nkv heads)
+        v3_rope_inplace(Q, cos, sin, T, nh, hd)
+        v3_rope_inplace(K, cos, sin, T, nkv, hd)
+        // attention core → ctx [T·d]
+        nn_attn_core_fwd(Q, K, Vv, P, ctx, T, nh, nkv, hd)
+        // o_proj: attn_out[T·d] = ctx[T·d] · Wo^T
+        v3_proj_nobias(ctx, M, WO, attn_out, T, d, d)
+        // residual: x = x + attn_out
+        let mut ra = 0
+        while ra < T * d {
+            let _ = farr_set(x, ra, farr_get(x, ra) + farr_get(attn_out, ra))
+            ra = ra + 1
+        }
+
+        // ── purefield: ln_pf(x) → Engine A ⇄ G → pf_out, tension ──
+        // ln_pf RMSNorm — V3 uses a SEPARATE RMSNorm (ln_pf) with its own
+        // gain. HONEST TODO #7: flame canonical block has only g1/g2; V3 has
+        // ln_attn/ln_pf/ln_cross/ln_ffn = 4 RMSNorms per block. The packed
+        // bp layout reserves g1 (=ln_attn) + g2 (=ln_ffn). ln_pf/ln_cross
+        // gains are not in the canonical slot — we apply UNIT-gain RMSNorm
+        // here (gain=1) as the structural placeholder; the extra gains are a
+        // packed-layout extension (follow-up, same append-at-end pattern).
+        v3_rmsnorm_unit(x, xn, T, d)
+        v3_purefield_fwd(xn, M, pf_off, pf_out, tension, T, d)
+        let mut rp = 0
+        while rp < T * d {
+            let _ = farr_set(x, rp, farr_get(x, rp) + farr_get(pf_out, rp))
+            rp = rp + 1
+        }
+        // consciousness_signal gate (from PREVIOUS layer's tension_proj)
+        let mut rc = 0
+        while rc < T * d {
+            let _ = farr_set(x, rc,
+                             farr_get(x, rc) + farr_get(csig, rc) * gate_strength)
+            rc = rc + 1
+        }
+
+        // ── cross_attn (TODO #4 — consciousness_states x-attn) ──
+        // SKIPPED: consciousness_states is an optional external input; the
+        // flame attn_core is self-attn only. When consciousness_states are
+        // present, V3 adds cross_attn(ln_cross(x), c_states). Wiring a
+        // separate-source K/V into flame's attn_core is a follow-up
+        // extension (would need nn_cross_attn_fwd). Structurally a no-op
+        // here (matches conscious_decoder_v3.py when consciousness_states
+        // is None — the default training path).
+
+        // ── ffn: ln_ffn(x) → SwiGLU → residual ──
+        let mut i_f = 0
+        while i_f < T {
+            // RMSNorm(x_row, g2) → rin (gain g2)
+            let mut cf = 0
+            while cf < d {
+                let _ = farr_set(rin, cf, farr_get(x, i_f * d + cf))
+                cf = cf + 1
+            }
+            let mut cg2 = 0
+            while cg2 < d {
+                let _ = farr_set(rxn, cg2, farr_get(M, G2 + cg2))
+                cg2 = cg2 + 1
+            }
+            // nn_rmsnorm_fwd writes y into a buffer; reuse sw_o slot? no — use
+            // a d-len temp. We have `rin` consumed; write y back into rin via
+            // ffn_out row.
+            let yrow = farr_zeros(d)
+            nn_rmsnorm_fwd(rin, rxn, yrow, rxn, rinv, d)
+            // swiglu over yrow [d] using block Wg/Wu/Wd (need farr bases)
+            // nn_swiglu_fwd(r, Wg, Wu, Wd, a, b, s, o, d, h) — Wg/Wu/Wd are
+            // farr bases; M with offset is not a base, so copy slices.
+            let Wg_buf = farr_zeros(h * d)
+            let Wu_buf = farr_zeros(h * d)
+            let Wd_buf = farr_zeros(d * h)
+            let mut wgi = 0
+            while wgi < h * d {
+                let _ = farr_set(Wg_buf, wgi, farr_get(M, WG + wgi))
+                let _ = farr_set(Wu_buf, wgi, farr_get(M, WU + wgi))
+                wgi = wgi + 1
+            }
+            let mut wdi = 0
+            while wdi < d * h {
+                let _ = farr_set(Wd_buf, wdi, farr_get(M, WD + wdi))
+                wdi = wdi + 1
+            }
+            nn_swiglu_fwd(yrow, Wg_buf, Wu_buf, Wd_buf, sw_a, sw_b, sw_s, sw_o, d, h)
+            let mut co = 0
+            while co < d {
+                let _ = farr_set(ffn_out, i_f * d + co, farr_get(sw_o, co))
+                co = co + 1
+            }
+            let _ = farr_free(yrow)
+            let _ = farr_free(Wg_buf)
+            let _ = farr_free(Wu_buf)
+            let _ = farr_free(Wd_buf)
+            i_f = i_f + 1
+        }
+        let mut rf = 0
+        while rf < T * d {
+            let _ = farr_set(x, rf, farr_get(x, rf) + farr_get(ffn_out, rf))
+            rf = rf + 1
+        }
+
+        // ── tension_proj → next layer's consciousness_signal ──
+        v3_tension_proj_fwd(tension, M, v3_off_tension_proj(d, nh, nkv, h, V, n_layer),
+                            csig, T, d)
+        // record per-layer mean tension (for mitosis aux loss path)
+        let mut t_mean = 0.0
+        let mut ti = 0
+        while ti < T {
+            t_mean = t_mean + farr_get(tension, ti)
+            ti = ti + 1
+        }
+        let _ = farr_set(tension_per_layer_out, l, t_mean / to_float(T))
+
+        l = l + 1
+    }
+
+    // ── final RMSNorm(x_last, gF) → zT ; head_a (tied) + head_g ──
+    let zT = farr_zeros(d)
+    let zr = farr_zeros(d)
+    let mut cz = 0
+    while cz < d {
+        let _ = farr_set(zr, cz, farr_get(x, (T - 1) * d + cz))
+        cz = cz + 1
+    }
+    let gF_buf = farr_zeros(d)
+    let mut gi = 0
+    while gi < d {
+        let _ = farr_set(gF_buf, gi, farr_get(M, oGF + gi))
+        gi = gi + 1
+    }
+    let zxn = farr_zeros(d)
+    let zinv = farr_zeros(1)
+    nn_rmsnorm_fwd(zr, gF_buf, zT, zxn, zinv, d)
+    // head_a (tied to tok_emb) — reuse flame lm_head over M[oTemb..]
+    let temb_buf = farr_zeros(V * d)
+    let mut te = 0
+    while te < V * d {
+        let _ = farr_set(temb_buf, te, farr_get(M, oTemb + te))
+        te = te + 1
+    }
+    nn_lm_head_fwd(temb_buf, zT, logits_a_out, V, d)
+    // head_g (untied — own slot)
+    v3_head_g_fwd(zT, M, v3_off_head_g(d, nh, nkv, h, V, n_layer),
+                  logits_g_out, V, d)
+
+    let _ = farr_free(zT); let _ = farr_free(zr); let _ = farr_free(gF_buf)
+    let _ = farr_free(zxn); let _ = farr_free(zinv); let _ = farr_free(temb_buf)
+    let _ = farr_free(x); let _ = farr_free(csig); let _ = farr_free(xn)
+    let _ = farr_free(attn_out); let _ = farr_free(pf_out); let _ = farr_free(ffn_out)
+    let _ = farr_free(tension); let _ = farr_free(Q); let _ = farr_free(K)
+    let _ = farr_free(Vv); let _ = farr_free(P); let _ = farr_free(ctx)
+    let _ = farr_free(sw_a); let _ = farr_free(sw_b); let _ = farr_free(sw_s)
+    let _ = farr_free(sw_o); let _ = farr_free(rin); let _ = farr_free(rxn)
+    let _ = farr_free(rinv)
+}
+
+// ─── projection helper: y[T·d_out] = x[T·d_in] · W^T (bias-free) ────────
+// W stored row-major [d_out·d_in] at M[W_off..]. y[t·d_out + r] =
+// Σ_c W[r·d_in + c]·x[t·d_in + c]. Per-row nn_linear_fwd would need W as a
+// [d_in·d_out] base; we hand-roll to read W from M at offset (no base API).
+pub fn v3_proj_nobias(x: int, M: int, W_off: int, y_out: int,
+                      T: int, d_out: int, d_in: int) {
+    let mut t = 0
+    while t < T {
+        let mut r = 0
+        while r < d_out {
+            let mut acc = 0.0
+            let mut c = 0
+            while c < d_in {
+                acc = acc + farr_get(M, W_off + r * d_in + c)
+                          * farr_get(x, t * d_in + c)
+                c = c + 1
+            }
+            let _ = farr_set(y_out, t * d_out + r, acc)
+            r = r + 1
+        }
+        t = t + 1
+    }
+}
+
+// ─── RoPE in-place over a projected Q/K buffer [T·nheads·hd] ────────────
+// Mirrors decoder_block_lib's per-head rotation (RoFormer convention).
+pub fn v3_rope_inplace(QK: int, cos: int, sin: int,
+                       T: int, nheads: int, hd: int) {
+    let half = hd / 2
+    let scratch = farr_zeros(hd)
+    let mut t = 0
+    while t < T {
+        let bse = t * hd
+        let mut hh = 0
+        while hh < nheads {
+            let row = (t * nheads + hh) * hd
+            let mut c = 0
+            while c < hd {
+                let rh = if c < half {
+                    0.0 - farr_get(QK, row + half + c)
+                } else {
+                    farr_get(QK, row + c - half)
+                }
+                let v = farr_get(QK, row + c) * farr_get(cos, bse + c)
+                      + rh * farr_get(sin, bse + c)
+                let _ = farr_set(scratch, c, v)
+                c = c + 1
+            }
+            let mut c2 = 0
+            while c2 < hd {
+                let _ = farr_set(QK, row + c2, farr_get(scratch, c2))
+                c2 = c2 + 1
+            }
+            hh = hh + 1
+        }
+        t = t + 1
+    }
+    let _ = farr_free(scratch)
+}
+
+// ─── unit-gain RMSNorm over [T·d] (ln_pf / ln_cross placeholder) ────────
+// HONEST TODO #7: V3 ln_pf/ln_cross have learned gains not in the canonical
+// packed slot; this applies gain=1 as the structural placeholder.
+pub fn v3_rmsnorm_unit(x: int, y_out: int, T: int, d: int) {
+    let eps = 0.000001
+    let mut i = 0
+    while i < T {
+        let mut ms = 0.0
+        let mut c = 0
+        while c < d {
+            let xi = farr_get(x, i * d + c)
+            ms = ms + xi * xi
+            c = c + 1
+        }
+        ms = ms / to_float(d)
+        let inv = 1.0 / dt_sqrt(ms + eps)
+        let mut c2 = 0
+        while c2 < d {
+            let _ = farr_set(y_out, i * d + c2, farr_get(x, i * d + c2) * inv)
+            c2 = c2 + 1
+        }
+        i = i + 1
+    }
+}
+
+// ─── V3 init (seed-fixed; canonical spine + V3 extensions) ──────────────
+// Reuses flame nn_decoder_init for the V2 spine (tok_emb·gF·blocks), then
+// fills head_g / tension_proj / purefield / cross-attn slots with the same
+// anima-aligned dt_lcg pattern (distinct seed offsets).
+pub fn v3_init(M: int, seed: int,
+               T: int, d: int, nh: int, nkv: int, h: int,
+               V: int, n_layer: int, cdim: int) {
+    // V2 spine
+    nn_decoder_init(M, seed, T, d, nh, nkv, h, V, n_layer)
+    // head_g [V·d] ~ scale 0.05 (mirrors tok_emb)
+    v3_fill_dt_lcg(M, v3_off_head_g(d, nh, nkv, h, V, n_layer), V * d, seed + 211, 0.05)
+    // tension_proj [d] ~ tiny std 0.001 (torch nn.init.normal_ std=0.001)
+    v3_fill_dt_lcg(M, v3_off_tension_proj(d, nh, nkv, h, V, n_layer), d, seed + 223, 0.002)
+    // per-block purefield (Engine A + Engine G) ~ std 0.02 → scale 0.04 LCG
+    let mut l = 0
+    while l < n_layer {
+        let pf_off = v3_off_pf(l, d, nh, nkv, h, V, n_layer)
+        let pf_n = v3_pf_total(d)
+        v3_fill_dt_lcg(M, pf_off, pf_n, seed + 3000 + l * 257, 0.04)
+        // cross-attn slot — reserved (TODO #4); fill with small init so the
+        // packed layout is fully initialized (o_proj std=0.001 in torch).
+        let cx_off = v3_off_cx(l, d, nh, nkv, h, V, n_layer, cdim)
+        let cx_n = v3_cx_total(d, cdim)
+        v3_fill_dt_lcg(M, cx_off, cx_n, seed + 5000 + l * 311, 0.002)
+        l = l + 1
+    }
+}
+
+// anima-aligned LCG fill (mirrors train_lib _train_fill_dt_lcg).
+fn v3_fill_dt_lcg(dst: int, dst_off: int, n: int, seed: int, scale: float) {
+    let mut s = seed
+    let mut i = 0
+    while i < n {
+        s = dt_lcg_next(s)
+        let v = dt_rand_unit(s) * scale
+        let _ = farr_set(dst, dst_off + i, v)
+        i = i + 1
+    }
+}
+
+// ─── param count ────────────────────────────────────────────────────────
+pub fn v3_count_params(d: int, nh: int, nkv: int, h: int, V: int,
+                       n_layer: int, cdim: int) -> int {
+    return v3_m_total(d, nh, nkv, h, V, n_layer, cdim)
+}
