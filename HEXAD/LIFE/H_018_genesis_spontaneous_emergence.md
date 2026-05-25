@@ -228,3 +228,146 @@ VERDICT: SUPPORTED_FULL  (6/6 falsifiers PASS)
 
 **State output**: `state/h018_genesis_2026_05_23/result.json`
 **Smoke**: `state/h018_genesis_2026_05_23/run_genesis.hexa` (hexa-only, LLM none)
+
+---
+
+## C2 — ORGANIC merge/split rate (Cycle 2, 2026-05-25)
+
+> raw#15 additive — Cycle#1 (Hypothesis / Predictions / Variables / Criteria
+> C1–C5 / Falsifiers F-GEN-1..6 / Honest Limits L1–L7 / Verdict) 는 위에서
+> 그대로 frozen. 아래 C2 는 기존 본체를 수정하지 않고 **추가**된 별도 criterion.
+
+### C2 동기 (왜 별도 criterion 인가)
+
+Cycle#1 은 **forced-trigger genesis** 만 검증했다 — SELFFEED/DRIVE seed 를
+명시적으로 주입한 뒤 substrate 가 bootstrap split 하는지를 본다. C2 는 다른
+질문이다: **외부 강제 트리거를 끈 default 동역학** (selffeed idle loop — 외부
+입력 0, internal Lorenz autonomous chaos + 자기참조 되먹임만) 하에서 substrate
+가 **스스로 (organic)** merge AND split 을 일으키는가, 그리고 그 자발 event
+**rate (event/step)** 가 closure regime 에 의존하는가.
+
+- **organic ≡ no external drive injected per step**. 유일 perturbation 은
+  (a) primordial init + (b) `_mit_inject_autonomous_perturbation` 내부 Lorenz
+  chaos + (c) self-reference loop. 이것이 substrate 의 default idle dynamics —
+  환경 context 가 전혀 공급되지 않는 상태.
+- **a_substrate_native_speak cross-link**: "user messages = environment context,
+  not a response obligation · anima may speak during user silence". C2 는
+  바로 그 silence 구간의 MITOSIS 자가-구동성 측정 — 외부 자극 없이 내부
+  상태만으로 분열/병합 동역학이 작동하는가.
+- **H_012 autopoietic closure (sister)**: closure k = substrate 가 조직적
+  경계를 얼마나 강하게 유지하는가. tight closure 는 reorganization 에 저항
+  (homeostatic stability), loose closure 는 자유롭게 재조직 (plasticity).
+
+### C2 설계
+
+- **default 동역학 (forced-trigger OFF)** = SELFFEED idle loop. step 0 seed =
+  primordial cell-0 own hidden state, 이후 `x_{t+1}` = step t 의 combined
+  output. 외부 vector 는 어느 step 에서도 주입되지 않음.
+- **closure regime k ∈ [0,1]** (단일 scalar, init 후 pool dict 의 predicate
+  knob 을 monotone 하게 설정 — lib 은 mutable dict 반환):
+  `split_patience = round(1 + 7k)` · `merge_patience = round(5 + 35k)` ·
+  `merge_threshold = 0.001 + 0.02·(1−k)`. genesis split predicate
+  `(tension > adaptive_thr)` 자체는 **불변** — patience window 만 조절.
+  - **LOOSE (k=0.2)**: patience 낮음 + merge_threshold 넓음 → 쉽게 재조직 →
+    HIGH organic rate 예측.
+  - **TIGHT (k=0.8)**: patience 높음 + merge_threshold 좁음 → 재조직 저항 →
+    LOW organic rate 예측.
+- **SWEEP**: k ∈ {0.2 loose, 0.8 tight} × steps ∈ {50, 100}. d=8, 2-cell init.
+- **MEASURE** per (k, steps): `organic_split_count` · `organic_merge_count` ·
+  `total_events` · `rate = total/steps` · cell-count trajectory · Φ.
+
+### C2 Criteria (pre-registered)
+
+- **C2.1 SPONTANEOUS**: default 동역학에서 organic (merge+split) event > 0
+  (substrate 가 외부 강제 없이 스스로 분열/병합 — self-energize).
+- **C2.2 REGIME-DEP**: organic rate 가 closure regime 에 의존 (loose ≠ tight,
+  matched step horizon 에서 rate 가 엄밀히 다름).
+- **C2.3 DETERMINISM**: cross-process re-run byte-equal (sha256(result.json)
+  비교 — RFC 033 단일 global gauss stream 때문에 in-process 반복은 결정론
+  test 가 **아님**, 별도 프로세스 재실행으로 검증).
+- **verdict_rule**: C2 PASS = C2.1 ∧ C2.2 · PARTIAL = C2.1/C2.2 중 정확히
+  하나 · FAIL = 둘 다 UNMET (default 동역학에서 organic event 전무 — substrate
+  가 완전 inert, 강한 p5 NO-SPEAK 정합 finding).
+
+### C2 Falsifiers (measurable, ledger-backed)
+
+- **F-C2-1 SPONTANEOUS**: 모든 regime 의 total organic event = 0 → C2.1 FALSIFIED.
+- **F-C2-2 REGIME-DEP**: 모든 horizon 에서 loose.rate == tight.rate → C2.2 FALSIFIED.
+- **F-C2-3 BOTH-CHANNELS**: organic split = 0 AND merge = 0 (전 regime) →
+  양 채널 모두 침묵 (split-only 또는 merge-only 가 아닌 완전 무동작).
+- **F-C2-4 BOUNDS**: 어떤 final_cells 든 [2,128] 밖 → CB1 invariant 위반.
+- **F-C2-5 RATE-SIGN**: 어떤 rate 든 < 0 또는 non-finite → ledger 버그.
+
+### C2 Honest Limits (추가)
+
+- **C2-L1 (closure k 는 design parameterization)**: k → patience/threshold
+  매핑 계수 (1+7k, 5+35k, 0.001+0.02(1−k)) 는 본 cycle 의 design 선택이며
+  unique 하지 않음. 다른 매핑이면 rate 의 절대값은 달라질 수 있음 (단조성과
+  loose>tight 부호는 보존 예상). L3 hidden-constants 한계의 C2 판본.
+- **C2-L2 (2-point sweep)**: k ∈ {0.2, 0.8} 2점만 — regime dependence 의
+  **부호** (loose ≠ tight) 는 측정하나 rate(k) 의 형태 (monotone? threshold?)
+  는 미측정. 조밀 k-grid 는 차후 cycle.
+- **C2-L3 (organic = "no external drive" idealization)**: Cycle#1 L2 carry —
+  selffeed seed 는 primordial init 에 의존하므로 완전한 무자극 아님.
+  "organic" 은 *step 당 외부 입력 0* 의미일 뿐.
+- **C2-L4 (단일 seed 결정론)**: Cycle#1 L1/L6 carry — seed=42 고정, rate 는
+  단발 결정론 관측. seed 분산은 미측정 (SRH split_count chaotic 교훈).
+
+### C2 Verdict
+
+본 cycle (2026-05-25) — raw#15 additive, runnable smoke 실행 + cross-process
+determinism 검증.
+
+```
+verdict_class: PASS  (C2.1 MET ∧ C2.2 MET)
+evidence_summary: 4-condition deterministic smoke (d=8, 2-cell primordial init,
+                  selffeed idle / forced-trigger OFF, seed=42), 5/5 falsifiers PASS.
+  LOOSE  k=0.2 steps=50  : splits=4 merges=4 total=8 rate=0.16  final_cells=2  phi=0.059
+  TIGHT  k=0.8 steps=50  : splits=0 merges=0 total=0 rate=0.00  final_cells=2  phi=0.046
+  LOOSE  k=0.2 steps=100 : splits=4 merges=4 total=8 rate=0.08  final_cells=2  phi=1.010
+  TIGHT  k=0.8 steps=100 : splits=0 merges=0 total=0 rate=0.00  final_cells=2  phi=0.800
+falsifiers_triggered: none (F-C2-1..5 all PASS)
+c2_sub_criteria: C2.1 SPONTANEOUS MET · C2.2 REGIME-DEP MET (dep50=T dep100=T) ·
+                 C2.3 DETERMINISM byte-equal cross-process (sha256 match 2 runs)
+key_finding: default 동역학 (외부 강제 OFF) 하에서 substrate 는 LOOSE closure
+             에서 스스로 분열·병합한다 — organic 2→4→6 split 후 6→...→2 merge
+             back 의 완결 reorganization cycle (first_split=1, first_merge≈13-14).
+             organic rate 는 closure regime 에 강하게 의존: LOOSE rate 0.08-0.16
+             vs TIGHT rate 0.00 (TIGHT 는 50/100 step 내내 cell-count 2 고정 —
+             tight closure = homeostatic stability, reorganization 저항). 양
+             채널 (split 8 + merge 8) 모두 자발 발화 — substrate 는 외부 자극
+             없이도 내부 동역학만으로 self-reorganize 한다 (Cycle#1 forced
+             genesis 를 넘어, default idle 에서의 organic 동역학 확인).
+honest_note: closure k → predicate 매핑은 design parameterization (C2-L1);
+             2-point sweep 은 부호만 검증 rate(k) 형태 미측정 (C2-L2);
+             organic 은 step-당-외부입력-0 idealization (C2-L3); 단일 seed
+             결정론 (C2-L4). TIGHT 의 rate=0 은 50/100 horizon 한정 —
+             merge_patience=33 이 100-step 내 충분한 below-threshold window 를
+             확보 못 했을 뿐, 더 긴 horizon 에서는 발화 가능.
+```
+
+#### C2 Run verdict (VERBATIM — `hexa run` stdout 2026-05-25)
+
+```
+H_018 C2 — ORGANIC merge/split rate under default dynamics
+  d_model=8 init_cells=2 forced-trigger=OFF (selffeed idle) seed=42
+  sweep: k in {0.2 loose, 0.8 tight} x steps in {50, 100}
+LOOSE50  k=0.2 steps=50 splits=4 merges=4 total=8 rate=0.16 final_cells=2 phi=0.0587754
+TIGHT50  k=0.8 steps=50 splits=0 merges=0 total=0 rate=0.0 final_cells=2 phi=0.0458304
+LOOSE100 k=0.2 steps=100 splits=4 merges=4 total=8 rate=0.08 final_cells=2 phi=1.01029
+TIGHT100 k=0.8 steps=100 splits=0 merges=0 total=0 rate=0.0 final_cells=2 phi=0.800124
+F-C2-1 SPONTANEOUS   PASS
+F-C2-2 REGIME-DEP    PASS (dep50=T dep100=T)
+F-C2-3 BOTH-CHANNELS PASS (splits=8 merges=8)
+F-C2-4 BOUNDS        PASS
+F-C2-5 RATE-SIGN     PASS
+C2 VERDICT: PASS  (5/5 falsifiers PASS)
+```
+
+**C2 determinism (cross-process)**: `sha256(result.json)` =
+`ab31c87e103443a5967ac5f3732a8897b9b4faa6df1f435960bf10e8b49f0f2f` — 두 독립
+프로세스 재실행 byte-equal (in-process 반복은 RFC 033 단일 gauss stream 때문에
+결정론 test 아님).
+
+**C2 state output**: `state/h018_c2_organic_rate_2026_05_25/result.json`
+**C2 smoke**: `state/h018_c2_organic_rate_2026_05_25/run_h018_c2.hexa` (hexa-only, LLM none)
