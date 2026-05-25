@@ -1,0 +1,42 @@
+================================================================
+  H_280 CROSS-VALIDATION — independent kernel vs canonical IIT4
+  shared ε-floored TPM → BOTH engines · all-ON · ring · ε=1e-6
+  deterministic · hexa-only · $0 mac local · LLM none · NO GPU
+================================================================
+
+  ── n=3 shared-TPM ladder (disc → weak → integrated) ──
+    rung           H280 #d  H280 Σφ_d    CANON #d  CANON Σφ_d   memb
+    disconnected  h#=0 hΣ=0.000000  c#=3 cΣ=2.999993  4/7
+    weak  h#=7 hΣ=0.727886  c#=7 cΣ=1.541443  7/7
+    integrated  h#=7 hΣ=2.316161  c#=6 cΣ=2.026356  6/7
+    ordering integrated>disconnected: H280 PASS · CANON FAIL · direction-match FAIL
+
+  ── n=4 shared-TPM ladder (disc → weak → integrated) ──
+    rung           H280 #d  H280 Σφ_d    CANON #d  CANON Σφ_d   memb
+    disconnected  h#=0 hΣ=0.000000  c#=4 cΣ=3.999990  11/15
+    weak  h#=13 hΣ=1.277920  c#=12 cΣ=2.205156  15/15
+    integrated  h#=14 hΣ=3.856634  c#=14 cΣ=3.963037  15/15
+    ordering integrated>disconnected: H280 PASS · CANON FAIL · direction-match FAIL
+
+  ── secondary anchor: canonical-native deterministic ECA (n=3, all-ON s=7) ──
+    ECA 204 (copy/disconnected): Σφ_d=3.000000  #dist=3  big-Φ=0.000000
+    ECA 232 (majority/integrated): Σφ_d=2.026359  #dist=6  big-Φ=4.867130
+    deterministic-ECA direction integrated>disconnected: FAIL
+
+  ----------------------------------------------------------------
+  F-XVAL-1 cross-validation criteria:
+  [FAIL] per-mechanism distinction MEMBERSHIP matches on every shared-TPM rung
+  [FAIL] distinction-COUNT matches on every shared-TPM rung
+  [FAIL] Σφ_d ordering DIRECTION matches between engines (all n)
+  [FAIL] n=3 ordering integrated>disconnected (both engines + dir-match)
+  [FAIL] n=4 ordering integrated>disconnected (both engines + dir-match)
+  [FAIL] deterministic-ECA anchor integrated(232)>disconnected(204)
+  ----------------------------------------------------------------
+  F-XVAL-1 VERDICT: DISAGREE
+  authoritative engine if disagree: canonical iit4_distinction (calibrated to M6)
+
+  result.json written
+================================================================
+  RESULT: 0 PASS / 6 FAIL  →  F-XVAL-1 DISAGREE
+================================================================
+  (DISAGREE recorded honestly — see result.json + H_280 §교차검증)

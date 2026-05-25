@@ -1,0 +1,41 @@
+{
+  "id": "H_280_xval",
+  "slug": "h280-iit4-cross-validation",
+  "title": "H_280 independent distinction kernel vs canonical IIT4 (stdlib consciousness/iit4_distinction) cross-validation",
+  "date": "2026-05-26",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "gpu": false,
+  "cost_usd": 0.0,
+  "method": "build a state-by-node TPM from H_280's ces_tpm_node (the ε-floored disc/weak/integrated substrate, all-ON state, ring, ε=1e-6) and feed the BYTE-IDENTICAL array to BOTH the H_280 kernel (ces_distinction) and the canonical engine (stdlib consciousness/iit4_distinction.distinction); compare per-mechanism distinction membership, distinction-count, and Σφ_d ordering. Secondary anchor: canonical-native deterministic ECA rule 204 (copy=disconnected) vs 232 (majority=integrated).",
+  "engine_math_note": "canonical iit4_phi_at fixes the specified state z* once (intrinsic_difference vs unconstrained) then minimizes p(z*)log2(p(z*)/q(z*)) over partitions; H_280 ces_id re-maximizes max_x p log2(p/q) per partition then minimizes. Both are MIP-min of an ID-style measure; absolute φ can differ, so the cross-validation target is the distinction SET + directional verdict, NOT byte-equal Σφ_d.",
+  "shared_tpm_ladder": [
+    {"n": 3, "rung": "disconnected", "couple": 0.000000, "h280_count": 0, "h280_sum_phi_d": 0.000000, "canon_count": 3, "canon_sum_phi_d": 2.999993, "membership_agree": 4, "membership_total": 7},
+    {"n": 3, "rung": "weak", "couple": 0.500000, "h280_count": 7, "h280_sum_phi_d": 0.727886, "canon_count": 7, "canon_sum_phi_d": 1.541443, "membership_agree": 7, "membership_total": 7},
+    {"n": 3, "rung": "integrated", "couple": 0.000000, "h280_count": 7, "h280_sum_phi_d": 2.316161, "canon_count": 6, "canon_sum_phi_d": 2.026356, "membership_agree": 6, "membership_total": 7},
+    {"n": 4, "rung": "disconnected", "couple": 0.000000, "h280_count": 0, "h280_sum_phi_d": 0.000000, "canon_count": 4, "canon_sum_phi_d": 3.999990, "membership_agree": 11, "membership_total": 15},
+    {"n": 4, "rung": "weak", "couple": 0.500000, "h280_count": 13, "h280_sum_phi_d": 1.277920, "canon_count": 12, "canon_sum_phi_d": 2.205156, "membership_agree": 15, "membership_total": 15},
+    {"n": 4, "rung": "integrated", "couple": 0.000000, "h280_count": 14, "h280_sum_phi_d": 3.856634, "canon_count": 14, "canon_sum_phi_d": 3.963037, "membership_agree": 15, "membership_total": 15}
+  ],
+  "deterministic_eca_anchor": {
+    "rule_204_disconnected": {"sum_phi_d": 3.000000, "distinction_count": 3, "big_phi": 0.000000},
+    "rule_232_integrated": {"sum_phi_d": 2.026359, "distinction_count": 6, "big_phi": 4.867130},
+    "weak_rung": "N/A — couple=0.5 is genuinely stochastic, no deterministic ECA equivalent",
+    "direction_integrated_gt_disconnected": "FAIL"
+  },
+  "falsifier": "F-XVAL-1: H_280 kernel distinction-membership + count + Σφ_d ordering AGREE with canonical iit4_distinction on the shared ladder. PASS = independent corroboration; FAIL = canonical (M6-calibrated) is authoritative.",
+  "checks": {
+    "membership_match_all_rungs": "FAIL",
+    "count_match_all_rungs": "FAIL",
+    "sum_phi_d_direction_match": "FAIL",
+    "n3_ordering_both_engines": "FAIL",
+    "n4_ordering_both_engines": "FAIL",
+    "deterministic_eca_direction": "FAIL"
+  },
+  "verdict": "DISAGREE",
+  "authoritative_engine_if_disagree": "canonical iit4_distinction (calibrated to M6)",
+  "pass": 0,
+  "fail": 6,
+  "tier": "GREEN-NUMERICAL cross-validation (two independent IIT 4.0 distinction kernels on byte-identical TPM input); empirical interpretation SPECULATION-FENCED (g5)"
+}

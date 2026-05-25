@@ -49,9 +49,9 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 // H_280's independent kernel (the unit under test).
-import "/Users/ghost/core/anima/HEXAD/LIFE/state/h280_iit4_ces_2026_05_26/lib_ces.hexa"
+import "/Users/ghost/core/anima/.claude/worktrees/agent-ad5779a4c2ff458ae/HEXAD/LIFE/state/h280_iit4_ces_2026_05_26/lib_ces.hexa"
 // canonical engine: distinction + count_distinctions + big_phi + eca_tpm.
-import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_eca.hexa"
+import "/Users/ghost/core/anima/.claude/worktrees/agent-ad5779a4c2ff458ae/HEXAD/IIT4/lib/iit4_eca.hexa"
 
 let mut PASS = 0
 let mut FAIL = 0
@@ -188,14 +188,18 @@ fn main() {
         println("  ── n=" + str(n) + " shared-TPM ladder (disc → weak → integrated) ──")
         println("    rung           H280 #d  H280 Σφ_d    CANON #d  CANON Σφ_d   memb")
 
-        // per-rung Σφ_d for ordering checks.
-        let mut h_sum = [0.0, 0.0, 0.0]
-        let mut c_sum = [0.0, 0.0, 0.0]
+        // per-rung Σφ_d for ordering checks (explicit scalars — array.set segfaults).
+        let mut h0 = 0.0
+        let mut h1 = 0.0
+        let mut h2 = 0.0
+        let mut c0 = 0.0
+        let mut c1 = 0.0
+        let mut c2 = 0.0
 
-        let couples = [0.0, 0.5, 0.0]
         let mut rk = 0
         while rk < 3 {
-            let couple = couples[rk]
+            let mut couple = 0.0
+            if rk == 1 { couple = 0.5 }
             let tpm = _shared_tpm(n, rk, couple)
             let h = _h280_ces(n, rk, couple)
             let c = _canon_ces(tpm, n)
@@ -205,8 +209,9 @@ fn main() {
             let cc = c["count"]
             let hs = h["sum_phi_d"]
             let cs = c["sum_phi_d"]
-            h_sum = h_sum.set(rk, hs)
-            c_sum = c_sum.set(rk, cs)
+            if rk == 0 { h0 = hs; c0 = cs }
+            if rk == 1 { h1 = hs; c1 = cs }
+            if rk == 2 { h2 = hs; c2 = cs }
 
             if hc != cc { count_match_all = false }
             if mb["agree"] != mb["total"] { membership_match_all = false }
@@ -230,16 +235,16 @@ fn main() {
         }
 
         // ordering: integrated > disconnected for BOTH engines (the F280.1 direction).
-        let h_order = (h_sum[2] > h_sum[0]) && (h_sum[1] >= h_sum[0] - 0.000001)
-        let c_order = (c_sum[2] > c_sum[0]) && (c_sum[1] >= c_sum[0] - 0.000001)
+        let h_order = (h2 > h0) && (h1 >= h0 - 0.000001)
+        let c_order = (c2 > c0) && (c1 >= c0 - 0.000001)
         // direction match: both engines rank integrated > disconnected the same way.
-        let dir_match = (h_sum[2] > h_sum[0]) == (c_sum[2] > c_sum[0])
+        let dir_match = (h2 > h0) == (c2 > c0)
         if dir_match == false { sum_dir_match_all = false }
         if n == 3 { order_ok_n3 = h_order && c_order && dir_match }
         if n == 4 { order_ok_n4 = h_order && c_order && dir_match }
 
-        println("    ordering integrated>disconnected: H280 " + _v(h_sum[2] > h_sum[0])
-            + " · CANON " + _v(c_sum[2] > c_sum[0]) + " · direction-match " + _v(dir_match))
+        println("    ordering integrated>disconnected: H280 " + _v(h2 > h0)
+            + " · CANON " + _v(c2 > c0) + " · direction-match " + _v(dir_match))
 
         ni = ni + 1
     }
