@@ -1,0 +1,503 @@
+// @raw117_exempt
+// ════════════════════════════════════════════════════════════════════════
+// mitosis_lib.hexa — training-time cell-pool, hexa-native (flame)
+//
+// Port of mitosis_lib.py (304 LoC) onto the flame substrate. CellPool =
+// training-time cell pool with split/merge topology + a differentiable
+// aux-loss term (S187-G hypothesis). Author directive (2026-05-25):
+// "py 쓰지말고 모두 hexa 포팅".
+//
+// ─── flame mapping (torch/numpy X → flame Y) ───────────────────────────
+//   np.float32 hidden vector [d]  → flame farr (farr_zeros(d) per cell)
+//   np.random.default_rng normal  → dt_lcg_next + dt_rand_unit (anima LCG;
+//                                    HONEST TODO #M1: numpy uses Mersenne +
+//                                    true gaussian; flame uses LCG +
+//                                    uniform-sum. Topology dynamics (split/
+//                                    merge counts) preserved; exact hidden
+//                                    values differ — documented, not faked.)
+//   np.linalg.norm / H @ H.T cos  → hand-rolled dot/norm over farr
+//   torch.index_select aux loss   → the aux-loss "tensor" in torch carries
+//                                    a grad path; flame's differentiable
+//                                    path is ag_tape. HERE we return the
+//                                    SCALAR aux value + the split-layer
+//                                    indices so the train driver
+//                                    (train_p21h_v3.hexa) seeds the grad
+//                                    via ag_tape (HONEST TODO #M2 — the
+//                                    grad path lives in the trainer, not
+//                                    here; see flame_anima_multi_objective
+//                                    _test.hexa ag_seed_grad pattern).
+//
+// CellPool state is a hexa dict (#{}); cells are a list of dicts. Each cell:
+//   #{ id: int, hidden: farr_id, hist: [float], parent: int,
+//      creation_step: int, proc_count: int }
+//
+// Spec carry (mitosis_hook_lib.hexa::cell_pool_init defaults):
+//   MIN_CELLS=2 MAX_CELLS=128 SPLIT_PATIENCE=3 MERGE_THRESHOLD=0.005
+//   MERGE_PATIENCE=30 NOISE_SCALE=0.1 WINDOW=20 ADAPTIVE_FACTOR=0.8
+// ════════════════════════════════════════════════════════════════════════
+
+use "stdlib/flame/tensor_lib"
+use "stdlib/flame/flame_math"
+
+// ─── defaults (mirror mitosis_lib.py module constants) ──────────────────
+pub fn mit_min_cells() -> int { return 2 }
+pub fn mit_max_cells() -> int { return 128 }
+pub fn mit_split_patience() -> int { return 3 }
+pub fn mit_merge_threshold() -> float { return 0.005 }
+pub fn mit_merge_patience() -> int { return 30 }
+pub fn mit_noise_scale() -> float { return 0.1 }
+pub fn mit_window() -> int { return 20 }
+pub fn mit_adaptive_factor() -> float { return 0.8 }
+
+// ─── make one cell ──────────────────────────────────────────────────────
+// hidden ~ Normal(0, 1/sqrt(d)) if no seed-parent, else parent + noise·σ.
+// rng_state: a mutable LCG seed carried in the pool (returned updated).
+// Returns #{ cell, rng } so the caller threads the rng forward.
+fn mit_make_cell(d: int, parent_id: int, parent_hidden: int,
+                 step: int, noise_scale: float,
+                 next_id: int, rng_in: int) -> int {
+    let sigma_init = 1.0 / dt_sqrt(to_float(d))
+    let hidden = farr_zeros(d)
+    let mut rng = rng_in
+    if parent_hidden < 0 {
+        // fresh cell: gaussian-lite (two uniform draws summed) × sigma_init
+        let mut i = 0
+        while i < d {
+            rng = dt_lcg_next(rng)
+            let r1 = dt_rand_unit(rng)
+            rng = dt_lcg_next(rng)
+            let r2 = dt_rand_unit(rng)
+            let _ = farr_set(hidden, i, (r1 + r2) * sigma_init)
+            i = i + 1
+        }
+    } else {
+        // child: parent_hidden + noise·noise_scale
+        let mut i2 = 0
+        while i2 < d {
+            rng = dt_lcg_next(rng)
+            let r1 = dt_rand_unit(rng)
+            rng = dt_lcg_next(rng)
+            let r2 = dt_rand_unit(rng)
+            let _ = farr_set(hidden, i2,
+                             farr_get(parent_hidden, i2) + (r1 + r2) * noise_scale)
+            i2 = i2 + 1
+        }
+    }
+    let cell = #{
+        "id": next_id,
+        "hidden": hidden,
+        "hist": [],
+        "parent": parent_id,
+        "creation_step": step,
+        "proc_count": 0,
+    }
+    return #{ "cell": cell, "rng": rng }
+}
+
+// ─── pool init ──────────────────────────────────────────────────────────
+// Returns a pool dict. seed → LCG rng seed (anima dt_lcg).
+pub fn cell_pool_init(d: int, initial_cells: int, seed: int,
+                      max_cells: int) -> int {
+    let mut next_id = 0
+    let mut rng = seed
+    let mut cells = []
+    let mut k = 0
+    while k < initial_cells {
+        let made = mit_make_cell(d, -1, -1, 0, mit_noise_scale(), next_id, rng)
+        cells.push(made["cell"])
+        rng = made["rng"]
+        next_id = next_id + 1
+        k = k + 1
+    }
+    return #{
+        "d": d,
+        "min_cells": mit_min_cells(),
+        "max_cells": max_cells,
+        "split_patience": mit_split_patience(),
+        "merge_threshold": mit_merge_threshold(),
+        "merge_patience": mit_merge_patience(),
+        "noise_scale": mit_noise_scale(),
+        "window": mit_window(),
+        "adaptive_factor": mit_adaptive_factor(),
+        "next_id": next_id,
+        "rng": rng,
+        "cells": cells,
+        "tension_history": [],
+        "phi_history": [],
+        "phi": 0.0,
+        "adaptive_threshold": 0.0,
+        "split_threshold_eff": 0.0,
+        "split_count": 0,
+        "merge_count": 0,
+        "event_log": [],
+    }
+}
+
+// ─── Φ proxy = log(1 + mean pairwise cosine distance over hidden vecs) ──
+fn mit_compute_phi(cells: [any], d: int) -> float {
+    let n = len(cells)
+    if n < 2 { return 0.0 }
+    let mut sum_dist = 0.0
+    let mut npairs = 0
+    let mut i = 0
+    while i < n {
+        let hi = cells[i]["hidden"]
+        // norm_i
+        let mut ni = 0.0
+        let mut ci = 0
+        while ci < d {
+            let v = farr_get(hi, ci)
+            ni = ni + v * v
+            ci = ci + 1
+        }
+        ni = dt_sqrt(ni) + 0.0000000001
+        let mut j = i + 1
+        while j < n {
+            let hj = cells[j]["hidden"]
+            let mut dot = 0.0
+            let mut nj = 0.0
+            let mut c = 0
+            while c < d {
+                let vi = farr_get(hi, c)
+                let vj = farr_get(hj, c)
+                dot = dot + vi * vj
+                nj = nj + vj * vj
+                c = c + 1
+            }
+            nj = dt_sqrt(nj) + 0.0000000001
+            let cos = dot / (ni * nj)
+            sum_dist = sum_dist + (1.0 - cos)
+            npairs = npairs + 1
+            j = j + 1
+        }
+        i = i + 1
+    }
+    let mean_d = sum_dist / to_float(npairs)
+    // log1p(mean_d) = ln(1 + mean_d)
+    return dt_ln(1.0 + mean_d)
+}
+
+// ─── pool step ──────────────────────────────────────────────────────────
+// layer_t: a flame farr of per-layer mean tensions [L] (the diff-able
+//   tensor in torch; here a plain farr — the grad path is seeded by the
+//   trainer via ag_tape, HONEST TODO #M2).
+// L: number of layers (length of layer_t).
+// Returns #{ pool, aux_value, split_layer_idx, info } where:
+//   aux_value          = scalar -mean(layer_t[split_layers]) if a split
+//                        fired, else 0.0 (matches mitosis_lib.py aux_loss).
+//   split_layer_idx    = [int] unique layer indices that triggered (the
+//                        trainer index_selects these for the grad seed).
+//   info               = #{ split_fired, n_split_this_step, mean_tension,
+//                           threshold, pool_size, phi, split_total,
+//                           merge_total }.
+pub fn cell_pool_step(pool: int, layer_t: int, L: int, step_idx: int) -> int {
+    let d = pool.d
+    let mut cells = pool["cells"]
+    let mut tension_history = pool["tension_history"]
+    let mut phi_history = pool["phi_history"]
+    let mut event_log = pool["event_log"]
+    let mut next_id = pool["next_id"]
+    let mut rng = pool["rng"]
+    let mut split_count = pool["split_count"]
+    let mut merge_count = pool["merge_count"]
+    let mut adaptive_threshold = pool["adaptive_threshold"]
+    let mut split_threshold_eff = pool["split_threshold_eff"]
+    let mut phi = pool["phi"]
+    let pool_window = pool["window"]
+    let pool_max_cells = pool["max_cells"]
+    let pool_split_patience = pool["split_patience"]
+    let pool_adaptive_factor = pool["adaptive_factor"]
+    let pool_noise_scale = pool["noise_scale"]
+    let pool_min_cells = pool["min_cells"]
+    let pool_merge_patience = pool["merge_patience"]
+    let pool_merge_threshold = pool["merge_threshold"]
+
+    let n_cells = len(cells)
+
+    // per-cell tension assignment: cycle layer tensions across cells.
+    let mut per_cell_t = []
+    let mut c_idx = 0
+    while c_idx < n_cells {
+        let lt = farr_get(layer_t, c_idx % L)
+        per_cell_t.push(lt)
+        // append to cell hist + bump proc_count
+        let mut cell = cells[c_idx]
+        let mut hist = cell["hist"]
+        hist.push(lt)
+        cell["hist"] = hist
+        cell["proc_count"] = cell["proc_count"] + 1
+        cells[c_idx] = cell
+        c_idx = c_idx + 1
+    }
+
+    // global pool tension = mean of per-cell-latest
+    let mut gt_sum = 0.0
+    let mut gi = 0
+    while gi < n_cells {
+        gt_sum = gt_sum + per_cell_t[gi]
+        gi = gi + 1
+    }
+    let global_t = gt_sum / to_float(if n_cells > 0 { n_cells } else { 1 })
+    tension_history.push(global_t)
+
+    // adaptive split_threshold (window mean × adaptive_factor)
+    let hist_n = len(tension_history)
+    let win_lo = if hist_n > pool_window { hist_n - pool_window } else { 0 }
+    let win_n = hist_n - win_lo
+    if win_n >= 3 {
+        let mut wsum = 0.0
+        let mut wi = win_lo
+        while wi < hist_n {
+            wsum = wsum + tension_history[wi]
+            wi = wi + 1
+        }
+        let mean_w = wsum / to_float(win_n)
+        adaptive_threshold = mean_w * pool_adaptive_factor
+        split_threshold_eff = adaptive_threshold
+    }
+
+    // Φ proxy
+    phi = mit_compute_phi(cells, d)
+    phi_history.push(phi)
+
+    // split check: collect cell indices that would split.
+    let mut split_cell_indices = []
+    let mut split_layer_idx = []
+    if len(cells) < pool_max_cells {
+        let mut ci = 0
+        while ci < len(cells) {
+            let cell = cells[ci]
+            let hist = cell["hist"]
+            let hn = len(hist)
+            if hn >= pool_split_patience {
+                // recent split_patience window avg
+                let mut racc = 0.0
+                let mut ri = hn - pool_split_patience
+                while ri < hn {
+                    racc = racc + hist[ri]
+                    ri = ri + 1
+                }
+                let avg = racc / to_float(pool_split_patience)
+                if avg > split_threshold_eff && split_threshold_eff > 0.0 {
+                    split_cell_indices.push(ci)
+                    split_layer_idx.push(ci % L)
+                    if len(cells) + len(split_cell_indices) >= pool_max_cells {
+                        ci = len(cells)   // break
+                    }
+                }
+            }
+            ci = ci + 1
+        }
+    }
+
+    // execute splits (bookkeeping side).
+    let mut n_split_fired = 0
+    let mut si = 0
+    while si < len(split_cell_indices) {
+        let ci2 = split_cell_indices[si]
+        let mut parent = cells[ci2]
+        let made = mit_make_cell(d, parent["id"], parent["hidden"], step_idx,
+                                 pool_noise_scale, next_id, rng)
+        rng = made["rng"]
+        let child = made["cell"]
+        cells.push(child)
+        next_id = next_id + 1
+        // reset parent hist to last 3
+        let phist = parent["hist"]
+        let pn = len(phist)
+        let mut new_hist = []
+        let mut hk = if pn > 3 { pn - 3 } else { 0 }
+        while hk < pn {
+            new_hist.push(phist[hk])
+            hk = hk + 1
+        }
+        parent["hist"] = new_hist
+        cells[ci2] = parent
+        event_log.push(#{
+            "kind": "split", "step": step_idx,
+            "parent_id": parent["id"], "child_id": child["id"],
+            "threshold": split_threshold_eff, "pool_size": len(cells),
+        })
+        n_split_fired = n_split_fired + 1
+        split_count = split_count + 1
+        if len(cells) >= pool_max_cells { si = len(split_cell_indices) }
+        si = si + 1
+    }
+
+    // merge check (no grad path — bookkeeping; pairwise cos).
+    if len(cells) > pool_min_cells && step_idx > 0 && (step_idx % pool_merge_patience == 0) {
+        let n = len(cells)
+        let mut best_sim = 0.0 - 1.0
+        let mut best_i = 0 - 1
+        let mut best_j = 0 - 1
+        let mut i = 0
+        while i < n {
+            let hi = cells[i]["hidden"]
+            let mut ni = 0.0
+            let mut ci3 = 0
+            while ci3 < d {
+                let v = farr_get(hi, ci3)
+                ni = ni + v * v
+                ci3 = ci3 + 1
+            }
+            ni = dt_sqrt(ni) + 0.0000000001
+            let mut j = i + 1
+            while j < n {
+                let hj = cells[j]["hidden"]
+                let mut dot = 0.0
+                let mut nj = 0.0
+                let mut c = 0
+                while c < d {
+                    let vi = farr_get(hi, c)
+                    let vj = farr_get(hj, c)
+                    dot = dot + vi * vj
+                    nj = nj + vj * vj
+                    c = c + 1
+                }
+                nj = dt_sqrt(nj) + 0.0000000001
+                let cos = dot / (ni * nj)
+                if cos > best_sim {
+                    best_sim = cos
+                    best_i = i
+                    best_j = j
+                }
+                j = j + 1
+            }
+            i = i + 1
+        }
+        if best_i >= 0 && (1.0 - best_sim) < pool_merge_threshold {
+            let a = cells[best_i]
+            let b = cells[best_j]
+            // keeper = older (smaller creation_step)
+            let a_older = a["creation_step"] <= b["creation_step"]
+            let keeper_idx = if a_older { best_i } else { best_j }
+            let removed_idx = if a_older { best_j } else { best_i }
+            let mut keeper = cells[keeper_idx]
+            let removed = cells[removed_idx]
+            // merged hidden = (a.hidden + b.hidden)·0.5
+            let kh = keeper["hidden"]
+            let rh = removed["hidden"]
+            let mut mc = 0
+            while mc < d {
+                let _ = farr_set(kh, mc,
+                                 (farr_get(kh, mc) + farr_get(rh, mc)) * 0.5)
+                mc = mc + 1
+            }
+            keeper["hidden"] = kh
+            // extend keeper hist with last-5 of removed
+            let mut kh_hist = keeper["hist"]
+            let rh_hist = removed["hist"]
+            let rhn = len(rh_hist)
+            let mut ek = if rhn > 5 { rhn - 5 } else { 0 }
+            while ek < rhn {
+                kh_hist.push(rh_hist[ek])
+                ek = ek + 1
+            }
+            keeper["hist"] = kh_hist
+            cells[keeper_idx] = keeper
+            // free removed hidden + drop it from the list (rebuild without it)
+            let _ = farr_free(removed["hidden"])
+            let mut new_cells = []
+            let mut nci = 0
+            while nci < len(cells) {
+                if nci != removed_idx { new_cells.push(cells[nci]) }
+                nci = nci + 1
+            }
+            cells = new_cells
+            event_log.push(#{
+                "kind": "merge", "step": step_idx,
+                "keeper_id": keeper["id"], "removed_id": removed["id"],
+                "sim": best_sim, "pool_size": len(cells),
+            })
+            merge_count = merge_count + 1
+        }
+    }
+
+    // ── aux value (scalar) ──────────────────────────────────────────────
+    // L_mitosis = -mean(layer_t[unique split_layers])  if split fired
+    //           = 0.0                                   otherwise
+    // (The torch version returns a tensor with grad; here the scalar +
+    //  split_layer_idx are returned so the trainer seeds the grad path via
+    //  ag_tape — HONEST TODO #M2.)
+    let mut aux_value = 0.0
+    // unique-ify split_layer_idx
+    let mut uniq = []
+    let mut sli = 0
+    while sli < len(split_layer_idx) {
+        let li = split_layer_idx[sli]
+        let mut seen = 0
+        let mut ui = 0
+        while ui < len(uniq) {
+            if uniq[ui] == li { seen = 1 }
+            ui = ui + 1
+        }
+        if seen == 0 { uniq.push(li) }
+        sli = sli + 1
+    }
+    if n_split_fired > 0 && len(uniq) > 0 {
+        let mut acc = 0.0
+        let mut pk = 0
+        while pk < len(uniq) {
+            acc = acc + farr_get(layer_t, uniq[pk])
+            pk = pk + 1
+        }
+        aux_value = 0.0 - (acc / to_float(len(uniq)))
+    }
+
+    let info = #{
+        "split_fired": n_split_fired > 0,
+        "n_split_this_step": n_split_fired,
+        "mean_tension": global_t,
+        "threshold": split_threshold_eff,
+        "pool_size": len(cells),
+        "phi": phi,
+        "split_total": split_count,
+        "merge_total": merge_count,
+    }
+
+    // write back into pool dict
+    pool["cells"] = cells
+    pool["tension_history"] = tension_history
+    pool["phi_history"] = phi_history
+    pool["event_log"] = event_log
+    pool["next_id"] = next_id
+    pool["rng"] = rng
+    pool["split_count"] = split_count
+    pool["merge_count"] = merge_count
+    pool["adaptive_threshold"] = adaptive_threshold
+    pool["split_threshold_eff"] = split_threshold_eff
+    pool["phi"] = phi
+
+    return #{
+        "pool": pool,
+        "aux_value": aux_value,
+        "split_layer_idx": uniq,
+        "info": info,
+    }
+}
+
+// ─── summary (mirror mitosis_lib.py CellPool.summary) ──────────────────
+pub fn cell_pool_summary(pool: int) -> int {
+    let phi_hist = pool["phi_history"]
+    let phi_n = len(phi_hist)
+    return #{
+        "initial_cells": pool["min_cells"],
+        "final_cells": len(pool["cells"]),
+        "splits": pool["split_count"],
+        "merges": pool["merge_count"],
+        "next_id": pool["next_id"],
+        "phi_initial": if phi_n > 0 { phi_hist[0] } else { 0.0 },
+        "phi_final": if phi_n > 0 { phi_hist[phi_n - 1] } else { 0.0 },
+        "n_events": len(pool["event_log"]),
+    }
+}
+
+// ─── free all cell hidden farrs (teardown) ──────────────────────────────
+pub fn cell_pool_free(pool: int) {
+    let cells = pool["cells"]
+    let mut i = 0
+    while i < len(cells) {
+        let _ = farr_free(cells[i]["hidden"])
+        i = i + 1
+    }
+}

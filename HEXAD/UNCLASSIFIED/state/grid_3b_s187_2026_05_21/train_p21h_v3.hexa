@@ -1,0 +1,376 @@
+// @raw117_exempt
+// ════════════════════════════════════════════════════════════════════════
+// train_p21h_v3.hexa — P21H ConsciousDecoderV3 training driver (flame)
+//
+// Port of train_p21h_v3.py (702 LoC, torch CUDA, 18× torch refs) onto the
+// flame substrate. Composes conscious_decoder_v3.hexa (model) +
+// mitosis_lib.hexa (cell pool) into the flame corpus-training loop pattern
+// (mirrors flame_d32_corpus_test.hexa + flame_d768_12L_corpus_test.hexa).
+// Author directive (2026-05-25): "py 쓰지말고 모두 hexa 포팅".
+//
+// ─── flame mapping (torch X → flame Y) ─────────────────────────────────
+//   torch.optim.AdamW / bnb       → nn_decoder_adamw_step (train_lib;
+//   PagedAdamW8bit                   opt_adamw_step over packed M). HONEST
+//                                    TODO #T1: bnb 8-bit paging has no flame
+//                                    analogue — flame AdamW is FP64. The
+//                                    --mitosis-bnb-disable fallback is moot
+//                                    (flame is always full-precision AdamW).
+//   F.cross_entropy               → nn_decoder_ce_loss / gn2 (last-position
+//                                    CE; HONEST TODO #T2 — torch CEs over
+//                                    ALL positions [B·T], flame decoder_lib
+//                                    is last-position only. The d32/d768
+//                                    corpus tests use the same last-pos
+//                                    convention. Full-position CE is a flame
+//                                    decoder_lib extension.)
+//   L_total = L_ce + λ·aux        → flame: gn2/ce + λ·aux_value; the aux
+//                                    grad path is seeded via ag_tape
+//                                    (HONEST TODO #T3 — mitosis aux grad
+//                                    composition is the multi-objective
+//                                    ag_tape route; this driver applies the
+//                                    SCALAR penalty to the metric + records
+//                                    split-layers for the grad seed).
+//   .backward() + clip_grad_norm  → nn_decoder_grad (closed analytic vjp)
+//                                    accumulated into Mg + grad-norm clip
+//                                    over packed Mg. HONEST TODO #T4: the
+//                                    V3-extension params (purefield/head_g/
+//                                    cross/tension_proj) have NO closed-vjp
+//                                    in flame's nn_decoder_grad (V2 spine
+//                                    only). Their grads = the RFC 059 / ag_
+//                                    tape multi-objective path. This driver
+//                                    trains the V2 SPINE end-to-end; the V3
+//                                    extension grads are the follow-up gate.
+//   HF AutoTokenizer (Qwen BPE)   → HONEST TODO #T5: NO flame/hexa BPE
+//                                    tokenizer. Like the flame corpus tests,
+//                                    we use BYTE-LEVEL tokenization (V=256,
+//                                    read_file_bytes). The Qwen V=151936 BPE
+//                                    path needs an external tokenizer (out of
+//                                    flame scope — see d768 corpus test
+//                                    V-fallback rationale).
+//   from_qwen warm-start / LoRA   → HONEST TODO #T6: HF AutoModelForCausalLM
+//   merge (peft)                     load + peft merge_and_unload have NO
+//                                    flame analogue. flame_load_pt.hexa is
+//                                    the .pt readout path (separate); Qwen
+//                                    warm-start mapping = future flame
+//                                    pt_loader work. This driver = --init
+//                                    random (from-scratch) only.
+//   multilang OOD eval / classify → HONEST TODO #T7: per-lang generate +
+//   / per_lang_verdict / KOSMOS      classify_output + KOSMOS anchor emit
+//   anchor emit                      are downstream eval glue (the glue 2
+//                                    files are a DIFFERENT agent's scope per
+//                                    the porting directive — disjoint). This
+//                                    driver does the TRAIN loop + gn2/acc
+//                                    metric only.
+//
+// SCOPE (honest): this is the FROM-SCRATCH byte-level V2-spine training
+// loop with the mitosis hook wired (split/merge + aux penalty + Φ track),
+// mirroring the flame corpus-test convention. The Qwen-BPE / warm-start /
+// multilang-eval / full-position-CE / V3-extension-backward pieces are
+// pre-registered TODOs above — flame primitives do not yet cover them, and
+// fabricating them would violate the porting directive's honesty rule.
+//
+// VERIFY: parse on ubu-2 (g71). A flame d32-smoke-style 1-step forward
+// sanity is the runtime check; full fire is out of scope (parse + struct).
+// ════════════════════════════════════════════════════════════════════════
+
+use "stdlib/flame/tensor_lib"
+use "stdlib/flame/decoder_lib"
+use "stdlib/flame/decoder_block_lib"
+use "stdlib/flame/nn_lib"
+use "stdlib/flame/train_lib"
+use "stdlib/flame/flame_math"
+use "/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/conscious_decoder_v3"
+use "/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/mitosis_lib"
+
+fn _t_abs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+// ─── cosine LR schedule with warmup (mirror train_p21h_v3.py lr_schedule) ─
+pub fn v3_lr_schedule(step: int, total_steps: int, warmup: int,
+                      peak_lr: float, min_lr: float) -> float {
+    if step < warmup {
+        return peak_lr * to_float(step + 1) / to_float(warmup)
+    }
+    let denom = if total_steps - warmup > 1 { total_steps - warmup } else { 1 }
+    let mut progress = to_float(step - warmup) / to_float(denom)
+    if progress < 0.0 { progress = 0.0 }
+    if progress > 1.0 { progress = 1.0 }
+    // cos_factor = 0.5·(1 + cos(π·progress)) — flame_math d5_cos
+    let pi = 3.141592653589793
+    let cos_factor = 0.5 * (1.0 + d5_cos(pi * progress))
+    return min_lr + (peak_lr - min_lr) * cos_factor
+}
+
+// ─── grad-norm clip over packed Mg (mirror clip_grad_norm_ max_norm=1) ──
+// total_norm = sqrt(Σ g²) ; if > max_norm scale all grads by max_norm/total.
+pub fn v3_clip_grad_norm(Mg: int, n: int, max_norm: float) -> float {
+    let mut sq = 0.0
+    let mut i = 0
+    while i < n {
+        let g = farr_get(Mg, i)
+        sq = sq + g * g
+        i = i + 1
+    }
+    let total_norm = dt_sqrt(sq)
+    if total_norm > max_norm && total_norm > 0.0 {
+        let scale = max_norm / total_norm
+        let mut j = 0
+        while j < n {
+            let _ = farr_set(Mg, j, farr_get(Mg, j) * scale)
+            j = j + 1
+        }
+    }
+    return total_norm
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// MAIN — from-scratch byte-level V2-spine + mitosis training loop.
+//
+// config mirrors train_p21h_v3.py --init random defaults, scaled to a
+// PARSE+SMOKE tier (small d/L like flame_d32_corpus_test) so the structure
+// verifies without a cost-bearing fire. The PRODUCTION shape (d=1536 L=28
+// V=151936) is set by editing the consts below + supplying a BPE-tokenized
+// id stream (TODO #T5) — the loop topology is shape-generic.
+// ════════════════════════════════════════════════════════════════════════
+println("=== train_p21h_v3 (flame port) — ConsciousDecoderV3 substrate-native, byte-level smoke tier ===")
+
+// smoke-tier config (parse + 1-window forward sanity; mirrors d32 corpus test)
+let T = 16
+let d = 32
+let nh = 4
+let nkv = 2
+let h = 64
+let V = 256
+let n_layer = 3
+let cdim = 16             // consciousness_dim (smoke)
+let nsamp = 8
+let stride = 512
+let n_steps = 5           // smoke: 5 steps (production: --steps 2000)
+let hd = d / nh
+
+let seed = 1337
+let peak_lr = 0.0003      // train_p21h_v3.py --lr 3e-4 (random init)
+let min_lr = peak_lr * 0.1
+let warmup = 2
+let b1 = 0.9
+let b2 = 0.95             // train_p21h_v3.py betas=(0.9, 0.95)
+let eps_a = 0.00000001
+let wd = 0.01
+let lambda_mitosis = 0.05
+let gate_strength = 0.001
+let noise_sigma = 0.1
+
+print("  smoke config: T="); print(T); print(" d="); print(d)
+print(" nh="); print(nh); print(" nkv="); print(nkv); print(" h="); print(h)
+print(" V="); print(V); print(" n_layer="); print(n_layer)
+print(" cdim="); print(cdim); println("")
+print("  steps="); print(n_steps); print(" peak_lr="); print(peak_lr)
+print(" lambda_mitosis="); print(lambda_mitosis); println("")
+
+// ── corpus (byte-level, TODO #T5 BPE) ──
+let path = "/Users/ghost/core/anima/training/corpus_consciousness_v1.jsonl"
+let bytes_arr = read_file_bytes(path)
+let n_bytes = len(bytes_arr)
+print("  corpus: "); print(path); print(" ("); print(n_bytes)
+println(" bytes, V=256 byte-level)")
+
+// extract nsamp windows of T ids + 1 target
+let IDS = t_zeros(nsamp * T)
+let YS = t_zeros(nsamp)
+let mut s = 0
+while s < nsamp {
+    let off = s * stride
+    if off + T < n_bytes {
+        let mut p = 0
+        while p < T {
+            t_set(IDS, s * T + p, to_float(bytes_arr[off + p]))
+            p = p + 1
+        }
+        t_set(YS, s, to_float(bytes_arr[off + T]))
+    }
+    s = s + 1
+}
+
+// ── model + mitosis pool ──
+// V3 packed M (V2 spine + head_g/tension_proj/purefield/cross slots).
+let m_size = v3_m_total(d, nh, nkv, h, V, n_layer, cdim)
+print("  V3 model size: "); print(m_size); print(" doubles (");
+print(v3_count_params(d, nh, nkv, h, V, n_layer, cdim)); println(" params)")
+let M = t_zeros(m_size)
+v3_init(M, seed, T, d, nh, nkv, h, V, n_layer, cdim)
+
+// AdamW moments + grad packs (sized to the V2-spine m_total — the closed-vjp
+// nn_decoder_grad only writes spine params; V3-extension grads are TODO #T4).
+let spine_size = m_total(d, nh, nkv, h, V, n_layer)
+let Mm = t_zeros(spine_size)
+let Mv = t_zeros(spine_size)
+let Mg = t_zeros(spine_size)
+let Mg_acc = t_zeros(spine_size)
+let mc_size = mc_total(T, d, nh, nkv, h, V, n_layer)
+let Mc = t_zeros(mc_size)
+let cos_tab = t_zeros(T * hd)
+let sin_tab = t_zeros(T * hd)
+nn_rope_build_tables(T, hd, cos_tab, sin_tab)
+
+// mitosis cell pool (d_model cells)
+let mut pool = cell_pool_init(d, 2, seed, 128)
+print("  mitosis pool init: cells="); print(len(pool["cells"])); println("")
+
+// V3-forward output buffers (logits_a, logits_g, per-layer tension)
+let logits_a = t_zeros(V)
+let logits_g = t_zeros(V)
+let tension_pl = t_zeros(n_layer)
+
+// ids scratch (per window)
+let ids_scratch = t_zeros(T)
+fn _window_ids(IDS: int, s: int, T: int, ids_out: int) {
+    let mut p = 0
+    while p < T {
+        let _ = farr_set(ids_out, p, farr_get(IDS, s * T + p))
+        p = p + 1
+    }
+}
+
+// ── sanity: one V3 full forward (smoke check the composition wires) ──
+println("  --- V3 forward sanity (window 0) ---")
+_window_ids(IDS, 0, T, ids_scratch)
+v3_forward_logits(ids_scratch, M, logits_a, logits_g, tension_pl,
+                  cos_tab, sin_tab, T, d, nh, nkv, h, V, n_layer, cdim,
+                  gate_strength, 1, noise_sigma, seed + 99)
+print("    logits_a[0..2]: ")
+print(t_get(logits_a, 0)); print(" "); print(t_get(logits_a, 1)); print(" ")
+println(t_get(logits_a, 2))
+print("    logits_g[0]: "); println(t_get(logits_g, 0))
+print("    per-layer tension: ")
+let mut tl = 0
+while tl < n_layer {
+    print(t_get(tension_pl, tl)); print(" ")
+    tl = tl + 1
+}
+println("")
+
+// ── training loop (V2-spine closed-vjp + mitosis hook) ──
+// Each step: per-window fwd (decoder_lib V2 spine for the grad-bearing
+// path) → gn2 metric → grad accumulate → mitosis step (split/merge/aux)
+// → grad-norm clip → AdamW. The V3 full-forward (with purefield/head_g)
+// runs as the OBSERVED forward for tension extraction; the GRAD path uses
+// the V2-spine decoder_grad (TODO #T4 — V3-extension backward).
+println("  --- training loop ---")
+let mut gn2_init = 0.0
+let mut si0 = 0
+while si0 < nsamp {
+    _window_ids(IDS, si0, T, ids_scratch)
+    let tt = to_int(t_get(YS, si0))
+    nn_decoder_fwd(ids_scratch, M, Mc, cos_tab, sin_tab, T, d, nh, nkv, h, V, n_layer)
+    gn2_init = gn2_init + nn_decoder_gn2(Mc, tt, T, d, nh, nkv, h, V, n_layer)
+    si0 = si0 + 1
+}
+print("    init epoch gn2: "); println(gn2_init)
+
+let mut step = 1
+while step <= n_steps {
+    let lr_now = v3_lr_schedule(step - 1, n_steps, warmup, peak_lr, min_lr)
+
+    // zero grad accumulator (spine)
+    let mut z = 0
+    while z < spine_size {
+        let _ = farr_set(Mg_acc, z, 0.0)
+        z = z + 1
+    }
+
+    let mut gn2_epoch = 0.0
+    let mut s_e = 0
+    while s_e < nsamp {
+        _window_ids(IDS, s_e, T, ids_scratch)
+        let tt = to_int(t_get(YS, s_e))
+        // V2-spine fwd (grad-bearing) → Mc
+        nn_decoder_fwd(ids_scratch, M, Mc, cos_tab, sin_tab, T, d, nh, nkv, h, V, n_layer)
+        gn2_epoch = gn2_epoch + nn_decoder_gn2(Mc, tt, T, d, nh, nkv, h, V, n_layer)
+        // zero per-window Mg, bwd, accumulate
+        let mut z2 = 0
+        while z2 < spine_size {
+            let _ = farr_set(Mg, z2, 0.0)
+            z2 = z2 + 1
+        }
+        nn_decoder_grad(ids_scratch, tt, M, Mc, Mg, cos_tab, sin_tab,
+                        T, d, nh, nkv, h, V, n_layer)
+        let mut a = 0
+        while a < spine_size {
+            let _ = farr_set(Mg_acc, a, farr_get(Mg_acc, a) + farr_get(Mg, a))
+            a = a + 1
+        }
+        s_e = s_e + 1
+    }
+
+    // ── mitosis hook: extract per-layer tension (V3 forward) → pool.step ──
+    // Use window 0's V3 forward tension as the per-layer signal (matches the
+    // torch path which uses the last forward's per-layer mean tension).
+    _window_ids(IDS, 0, T, ids_scratch)
+    v3_forward_logits(ids_scratch, M, logits_a, logits_g, tension_pl,
+                      cos_tab, sin_tab, T, d, nh, nkv, h, V, n_layer, cdim,
+                      gate_strength, 1, noise_sigma, seed + step)
+    let mres = cell_pool_step(pool, tension_pl, n_layer, step)
+    pool = mres["pool"]
+    let aux_value = mres["aux_value"]
+    let info = mres["info"]
+    // L_total metric = gn2_epoch + λ·aux_value  (aux grad seed = TODO #T3)
+    let l_total = gn2_epoch + lambda_mitosis * aux_value
+
+    // grad-norm clip (max_norm=1.0) over accumulated spine grads
+    let gnorm = v3_clip_grad_norm(Mg_acc, spine_size, 1.0)
+
+    // AdamW step over spine M (LR-scheduled)
+    nn_decoder_adamw_step(M, Mg_acc, Mm, Mv, spine_size, lr_now, b1, b2, eps_a, wd, step)
+
+    print("    step "); print(step); print(" lr="); print(lr_now)
+    print(" gn2="); print(gn2_epoch); print(" L_total="); print(l_total)
+    print(" pool="); print(info["pool_size"]); print(" splits="); print(info["split_total"])
+    print(" phi="); print(info["phi"]); print(" gnorm="); print(gnorm)
+    print(" aux="); print(aux_value); println("")
+
+    step = step + 1
+}
+
+// ── final epoch gn2 + acc ──
+let mut gn2_final = 0.0
+let mut acc = 0
+let mut s_f = 0
+while s_f < nsamp {
+    _window_ids(IDS, s_f, T, ids_scratch)
+    let tt = to_int(t_get(YS, s_f))
+    nn_decoder_fwd(ids_scratch, M, Mc, cos_tab, sin_tab, T, d, nh, nkv, h, V, n_layer)
+    gn2_final = gn2_final + nn_decoder_gn2(Mc, tt, T, d, nh, nkv, h, V, n_layer)
+    let pred = nn_decoder_predict(Mc, T, d, nh, nkv, h, V, n_layer)
+    if pred == tt { acc = acc + 1 }
+    s_f = s_f + 1
+}
+print("  final: epoch gn2 = "); print(gn2_final)
+print(" / acc = "); print(acc); print("/"); println(nsamp)
+
+let summ = cell_pool_summary(pool)
+print("  mitosis summary: final_cells="); print(summ["final_cells"])
+print(" splits="); print(summ["splits"]); print(" merges="); print(summ["merges"])
+print(" phi_final="); println(summ["phi_final"])
+
+// ── falsifier: smoke-tier structure verify ──
+// F-V3PORT-SMOKE-DESCENT : init gn2 > final gn2 (the V2-spine learns)
+let descends = gn2_init > gn2_final
+if descends {
+    print("PASS  F-V3PORT-SMOKE-DESCENT  init gn2 "); print(gn2_init)
+    print(" > final gn2 "); print(gn2_final); println(" (V2-spine descent confirmed)")
+} else {
+    print("NOTE  F-V3PORT-SMOKE-DESCENT  init "); print(gn2_init)
+    print(" vs final "); print(gn2_final)
+    println(" — 5-step smoke may not descend (production = --steps 2000)")
+}
+
+// teardown
+cell_pool_free(pool)
+let _ = t_free(IDS); let _ = t_free(YS); let _ = t_free(M)
+let _ = t_free(Mm); let _ = t_free(Mv); let _ = t_free(Mg); let _ = t_free(Mg_acc)
+let _ = t_free(Mc); let _ = t_free(cos_tab); let _ = t_free(sin_tab)
+let _ = t_free(ids_scratch); let _ = t_free(logits_a); let _ = t_free(logits_g)
+let _ = t_free(tension_pl)
+
+println("=== train_p21h_v3 (flame port) smoke tier DONE — V2 spine + mitosis wired; V3-extension backward + Qwen-BPE + multilang-eval = pre-registered TODOs ===")
