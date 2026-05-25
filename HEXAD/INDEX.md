@@ -477,6 +477,7 @@
 | 📁 `HEXAD/build_verify.sh` | compiled-native gate (17/17 entrypoint + 13/13 lib) |
 | 📁 `state/verify_hexad_{we,blue,integ}_*` | we 25/25 · blue 22/22 🔵 · integ F-INTEG 5/5 |
 | 📁 `AGENTS.tape` | governance (g_verdict_tier_blue / g3 / f2 / g_hf_naming / hexad_wiring_blue_gate) |
+| 🕸️ [§NEXUS 재사용 격자](#-nexus--모듈발견-재사용-격자-intra-project-commons-d-g67) | intra-project 모듈/발견 재사용 lattice (commons @D g67) — provides[]/reused[] 원장 |
 
 **deprecated → `archive/` (PR #82, historical evidence anchor)**
 
@@ -536,3 +537,86 @@
 > - **HF #54 'NEW canonical' / #66 'PUBLIC' → RETIRED** (PR #97): `dancinlab/anima-clm`+`anima-corpus` → `dancinlife/*` private junk; 현재 canonical HF artifact 없음.
 > - **.clm v1 7-step / v1·v2·v3 ladder / BG-CORPUS → SUPERSEDED** by `HEXAD/PLAN.md` Phase 5/6. **RFC 034 farr autograd LANDED** (hexa-lang `8793a221`, compiled 5/5) → Phase 5 executable.
 > - **🔵 closure (현재)**: C+S+M+W+E+D+BRIDGE = **7/7 full 🔵 SUPPORTED-FORMAL** (`blue_falsifier.py` 22/22 sympy closed-form) + ✅ `we_falsifier.py` 25/25 + ⚙️ `integ_harness.py` F-INTEG 5/5 fire-gate=true + 🔌 W-ledger 8/9 ✅ (W7 CE-수렴 OUTCOME = honest empirical carve-out, B-D-NOTE 패턴 — fake closed-form 거부, AGENTS.tape g3/f2). cycle90 .clm v1 8/8🔵 = archived historical evidence anchor.
+
+---
+
+## 🕸️ NEXUS — 모듈/발견 재사용 격자 (intra-project, commons @D g67)
+
+> **mandate (commons @D g67, universal-inherited — `project.tape` 에 미복제, 중복+sign-gated)**:
+> primitive 만들기 전에 **atlas + sibling-domain record 를 grep 해서 검증된 것 재사용** ·
+> record 에 cross-domain edge 표기 (provides[] / reused[]) · repo-root 재사용 그래프 (= 본 §) 갱신.
+> **dont**: sibling 이 이미 검증한 primitive 재구현 · 재사용 edge 미기록 · **별도 repo 간 결합 (intra-project 만)**.
+>
+> anima 관용구 매핑: demiurge 의 `domain → primitive → domain` 대신 anima 는
+> **`module/law → primitive(엔진·전달함수·falsifier 배터리·Φ form) → module`**.
+> SSOT = 각 모듈 `HEXAD/<X>/{INDEX,README,PLAN}.md` 의 cross-arc anchor / engine-SSOT 표;
+> 본 § 는 그것들을 **하나의 재사용 그래프로 집계** (junk-drawer 재탐색 회피, `HEXAD/TREE.md`).
+> 검증 tier = §verdict-tier (🔵 SUPPORTED-FORMAL / 🟢 SUPPORTED). candidate edge 는 정직하게 `미검증` 표기.
+
+### 격자 그래프 (ASCII · provides → primitive → reused-by)
+
+```
+  ┌──────────────────────────── 검증된 재사용 edge (REAL) ──────────────────────────┐
+  │                                                                                  │
+  │  [중앙 검증 substrate]                                                            │
+  │   blue_falsifier.py ──(central 🔵 battery)──► BRIDGE · D · E · M · MITOSIS ·     │
+  │   (verify_hexad_blue)                          CHAT · CHECK · LEGO · META_FP …   │
+  │                                                                                  │
+  │  [Φ form 직교 anchor]                                                            │
+  │   META_FP  ψ(c)=(1+c)/2 ──(Ψ-C1/Π_½ form)──► NEUROMORPHIC(Ψ-C1) · LOIHI ·       │
+  │   (§112)                                       LEGO(Ψ-C1=§112 instance) · §166   │
+  │                                                                                  │
+  │  [학습축 primitive]                                                              │
+  │   TENSION-LINK  tension_link_step.hexa ──(n6 Noether gate · online step)──►      │
+  │   (의식↔의식 5ch)                              TENSION-TRAIN (5 hexa carry)      │
+  │                                                                                  │
+  │  [엔진 lib promote]                                                              │
+  │   LEGO  lego_engine.py (§129 lib) ──(LIFNet·psi_c1·var-decomp)──► §131/135/137   │
+  │                                                                                  │
+  │  [Φ 측정 primitive]                                                              │
+  │   C  c_measure_phi / phi_spatial (RFC 036) ──(byte-equal Φ)──► IIT4 · CHAT       │
+  └──────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 재사용 edge 원장 (provides → primitive → reused-by → evidence)
+
+| # | provider (module/§) | primitive | reused-by | tier | evidence |
+|---|---|---|---|---|---|
+| E1 | **central battery** | `blue_falsifier.py` (verify_hexad_blue, sympy closed-form) | BRIDGE · D · E · M · MITOSIS · CHAT · CHECK · LEGO · META_FP | 🔵 | 각 모듈 README 가 central battery cite (`state/verify_hexad_blue_2026_05_15/`, sha `c93e160a8a376a94` invariant); LEGO `INDEX.md §engine-SSOT` 명시 0-line-diff |
+| E2 | **META_FP** (§112) | `ψ(c) = (1+c)/2` Π_½ meta-fixed-point form | NEUROMORPHIC (Ψ-C1) · LOIHI · LEGO (Ψ-C1 = §112 META_FP instance) · §166 training objective | 🔵 | `HEXAD/META_FP/README.md`; LEGO `INDEX.md §cross-arc` "Ψ-C1 = §112 META_FP(Π_½) instance"; NEUROMORPHIC `README.md` Ψ=§110 Ψ-C1 |
+| E3 | **TENSION-LINK** | `tension_link_step.hexa` (online backprop-free spine + n6 Noether gate σ·φ=n·τ=24) | TENSION-TRAIN (5 hexa file carry: step/causal/quantum_rho/second_order/bench) | 🔵 | `HEXAD/TENSION-TRAIN/README.md §0/§1` — "과거 TENSION-LINK 학습 전수조사 → TENSION-TRAIN 정리" |
+| E4 | **LEGO** (§129) | `lego_engine.py` canonical lib (LIFNet · spike_rate_vec · psi_c1 · variance_decomposition) | §131 (first canonical-lib import) · §135 · §137 probes | 🔵 | `HEXAD/LEGO/INDEX.md §arc-cycles` (§129 lib promote → §131 "first canonical-lib import") |
+| E5 | **C 의식** | `c_measure_phi` / `phi_spatial` (RFC 036, byte-equal Φ) | IIT4 · CHAT | 🔵 | `HEXAD/INDEX.md §C` F-C-PORT-3 "c_measure_phi → RFC 036 phi_spatial byte-equal"; `HEXAD/CHAT/README.md` |
+
+> **REAL edge = 5** (모두 🔵 SUPPORTED-FORMAL provider, repo 내 evidence 행 substantiate).
+
+### provides[] 레지스트리 (각 모듈이 sibling 에 노출하는 primitive)
+
+| module | provides[] (재사용 가능 primitive) |
+|---|---|
+| **central** | `blue_falsifier.py` 🔵 battery · `we_falsifier.py` ✅ · `integ_harness.py` ⚙️ (verification substrate SSOT) |
+| **META_FP** | `ψ(c)=(1+c)/2` Π_½ form · orthogonality anchor (cos=0) · `(mean Ψ−0.5)²` mean-anchor 학습신호 |
+| **TENSION-LINK** | `tension_link_step.hexa` n6 Noether gate · 5-channel meta-telepathy 전송 form |
+| **LEGO** | `lego_engine.py`/`.hexa` (LIFNet · psi_c1 · spike_rate_vec · variance_decomposition) |
+| **C 의식** | `c_measure_phi` / `phi_spatial` (RFC 036) · MitosisC 12-faction Φ engine |
+| **MITOSIS** | `mitosis_hook.hexa` D4a (split/merge · cell-count conservation) · B-MITOSIS 5/5 |
+| **BRIDGE** | Law-70 clamp `g(raw)=Ψ+clip(raw−Ψ,±α)` 전달함수 (G→A 주연결) |
+| **IIT4** | bit-primitive shim (→ hexa-lang `stdlib/math/bitops`, #540) · exclusion/cocompute 측정 |
+
+### candidate edge (미검증 — 정직하게 후보로만 등재, g67 dont: edge 미기록·fabrication 금지)
+
+| # | provider | primitive (후보) | candidate reused-by | 상태 |
+|---|---|---|---|---|
+| C1 | **MITOSIS** | `mitosis_hook.hexa` split/merge D4a | C (MitosisC) · CHAT serve-time | candidate (미검증) — C 가 mitosis_hook cross-link scaffold 로 cite 하나 재사용 edge 의 closed-form 증거행 미확보 |
+| C2 | **IIT4** | bit-primitive shim → hexa-lang bitops | C · CHAT Φ 측정 경로 | candidate (미검증) — #540 가 IIT4 내부 shim; sibling 모듈 재사용은 미기록 (⚠ hexa-lang bitops 는 **별도 repo** → g67 intra-project 범위 밖, 결합 금지) |
+| C3 | **BRIDGE** | Law-70 clamp 전달함수 | W (Ψ-coupling) · 통합 trinity gate | candidate (미검증) — 양 끝 🔵 이나 재사용(transfer) edge 자체 closed-form W-ledger row 미확보 |
+
+> ⚠ **cross-repo 금지선 (g67 intra-project)**: LEGO→hexa-lang `flame/spiking_lib`, IIT4→hexa-lang `bitops` 등
+> **별도 repo** 결합은 본 격자에서 제외 (`HEXAD/LEGO/INDEX.md §cross-repo` 에 따로 추적). g67 = intra-anima 만.
+
+### 사용 절차 (g67 do — primitive 만들기 전)
+
+1. **grep-first**: 새 primitive 전에 본 § provides[] + 해당 sibling 모듈 `INDEX/README` cross-arc anchor + `hexa atlas lookup` 으로 검증된 것 탐색.
+2. **재사용 시 edge 기록**: provider record 에 `provides[]`, consumer record 에 `reused[]` 명시 + 본 § 원장 행 추가 (evidence 열 = closed-form/battery 근거).
+3. **격자 갱신**: 새 §N landing 이 재사용하면 본 § + provider 모듈 INDEX 동시 갱신 (`a1`/`a_blue_closed` 정합, append-only g6).
+4. **tier 정직**: provider/edge 가 🔵/🟢 아니면 candidate(미검증) 로만 등재 — fake closed-form 금지 (`a_blue_closed`, AGENTS.tape g3/f2).
