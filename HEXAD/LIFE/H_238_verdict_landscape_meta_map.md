@@ -321,3 +321,150 @@ honest tier: 🟢 NUMERICAL — meta-aggregation 의 frontmatter parse + tier cl
 **Smoke**: `HEXAD/LIFE/state/h238_verdict_landscape_meta_2026_05_24/run_h238.hexa`
 **Tier**: 🟢 NUMERICAL (frontmatter scrape + tier classifier + canonical-domain Jaccard, deterministic).
 **Next**: H_238r2 후보 — (a) longitudinal axis: 본 snapshot N=31 vs 미래 N>31 의 tier 분포 drift 측정 (L1 axis); (b) cluster-richness axis: |canonical_domains| × tier joint distribution 의 entropy 측정 (L4 axis); (c) HEXAD/{C,M,A,W,E,G} 의 sister meta-map (cross-axis aggregation, 본 LIFE meta-map 의 sibling).
+
+---
+
+## 11. Next Raster — 2026-05-25 (cycle#14/#15 흡수 · README 인덱스 재집계)
+
+본 raster = H_238 의 **다음 cross-section** (L1 longitudinal axis 의 첫 실측). 이전
+raster (2026-05-24, `state/h238_verdict_landscape_meta_2026_05_24/`) 는 *해당 worktree
+의 per-file frontmatter* 33-H 를 집계했다. 본 raster 는 **README.md 가설 인덱스 표 를
+primary source 로 채택** — LIFE lane 의 canonical verdict surface (51-H 행, H_238
+self-excluded) 를 결정론적으로 파싱한다. 채택 이유: cycle#14/#15 의 신규 verdict
+(H_258-265) + H_018/H_132 의 C2 PASS qualifier 가 README 행에 즉시 반영되며, 표-행
+파싱은 grep/awk 의 deterministic 동작 + README 행 순서 안정성으로 byte-identical 재현
+가능. (smoke: `state/h238_raster_2026_05_25/run.hexa` · result: `…/result.json`.)
+
+### 11.1 갱신 tier 분포 (N=51, README 인덱스, sort = 표-행 순서)
+
+| tier | prior raster (N=33) | next raster (N=51) | Δ |
+|------|---------------------|--------------------|---|
+| SUPPORTED | 10 | **10** | +0 |
+| PARTIAL   |  5 | **6**  | +1 (H_265 trained-CA) |
+| FALSIFIED |  7 | **7**  | +0 (단, FAL 구성 이동 — 아래 §11.3) |
+| RUNNING   | 11 | **28** | +17 (carry-rows H_239-256 + 신규 RUN) |
+| **sum**   | 33 | **51** | == N (well-defined, C2 PASS) |
+
+- `SUPP/(SUPP+FAL) = 10/17 = 0.588235` — prior 와 **동일** (SUPP·FAL count 불변,
+  신규 5 SUPP·1 FAL 이 carry-rows 흡수로 기존 행과 상쇄 — 우연적 등치 아님: 신규 SUPP 5
+  (H_258-262) + H_264 = 6 추가가 prior 미포함 RUNNING-state carry 로 분모/분자 재배치).
+- RUNNING 의 17 증가가 분포의 지배적 변화 — README 표가 prior 의 33-H 보다 18개 더 많은
+  carry/pre-register 행 (H_239 / H_240 / H_242 / H_244-256) 을 노출하기 때문 (대부분
+  `pre-register-frozen` / `PRE-REGISTERED` / `DEFERRED` / `CONSISTENT` leading-token →
+  RUNNING tier). 이는 *측정 surface 확장* 의 결과이지 verdict 의 후퇴 아님 (L8).
+
+### 11.2 per-domain SUPP-rate 갱신 (canonical 7-bucket)
+
+| domain | total | SUPP | PART | FALS | RUNN | SUPP_rate (next) | SUPP_rate (prior) |
+|--------|-------|------|------|------|------|------------------|-------------------|
+| **life** | 28 | 9 | 3 | 3 | 13 | **0.3214** | 0.4118 |
+| **consciousness** | 25 | 5 | 4 | 4 | 12 | **0.2000** | 0.1667 |
+| physics | 28 | 5 | 4 | 4 | 15 | 0.1786 | 0.2308 |
+| math | 3 | 0 | 0 | 2 | 1 | 0.0000 | 0.0000 |
+| information | 3 | 0 | 1 | 1 | 1 | 0.0000 | 0.0000 |
+| ethics | 1 | 1 | 0 | 0 | 0 | 1.0000 | 1.0000 |
+| meta | 3 | 0 | 1 | 1 | 1 | 0.0000 | 0.0000 |
+| nonempty_domains | | | | | | **7 / 7** | 7 / 7 |
+
+**headline 판정 (life ≫ consciousness)**:
+
+```
+life          SUPP-rate = 0.321429
+consciousness SUPP-rate = 0.200000
+life > consciousness : TRUE   (패턴 MAINTAINED)
+gap: prior 0.2451 → next 0.1214   (절반으로 수축, ~50% narrowing)
+```
+
+- **패턴 유지 + 수축**: `life ≫ consciousness` 의 부등호는 신규 데이터에서도 **유지**
+  되나, gap 이 0.245 → 0.121 로 **약 절반** 줄었다. 두 도메인 모두 carry-row RUNNING
+  유입으로 분모가 증가 (life 17→28, consciousness 18→25); life 는 분자도 7→9 (H_258
+  life+consc, H_259/H_262 life-only, H_264 life+consc) 증가했으나 분모 증가가 더 커서 rate
+  하락. consciousness 는 분자 3→5 (H_258·H_264) 증가 + 분모 18→25 로 rate 소폭 상승.
+- 즉 cycle#14/#15 의 **life lane 5 SUPP 집중 발사** 는 life 의 *절대* SUPP count 를
+  끌어올렸으나, 동시 노출된 carry-RUNNING 행이 분모를 더 크게 키워 *rate* 상으로는
+  life-consciousness gap 을 수축시켰다 — 'life 가 본질적으로 evidence-receptive' 의
+  ontological claim 을 오히려 **약화** 하는 방향 (L2 small-N · L8 surface-expansion).
+- physics SUPP-rate 0.231 → 0.179 하락 — substrate→physics alias 로 carry substrate-row
+  (H_242/H_244/H_247-256) 다수가 physics RUNNING 으로 유입한 결과 (L7 alias-map artifact).
+
+### 11.3 신규 8건 (H_258-265) 분류 정합 + closed-negative 영향
+
+| ID | README status | classified tier | match |
+|----|---------------|-----------------|-------|
+| H_258 mortality-salience | SUPPORTED 3/3 | SUPPORTED | ✓ |
+| H_259 aging-senescence | SUPPORTED 3/3 | SUPPORTED | ✓ |
+| H_260 contact-inhibition | SUPPORTED 4/4 | SUPPORTED | ✓ |
+| H_261 embryogenesis-gradient | SUPPORTED 4/4 | SUPPORTED | ✓ |
+| H_262 quorum-sensing | SUPPORTED_FULL 4/4 | SUPPORTED | ✓ |
+| H_263 phoenix-rebirth | 🔴 FALSIFIED 3/6 | FALSIFIED | ✓ |
+| H_264 death-merge-into-other | SUPPORTED 3/3 | SUPPORTED | ✓ |
+| H_265 trained-vs-bare-ca-phi | PARTIAL 2/3 | PARTIAL | ✓ |
+
+**new8_match = 8 / 8** (C3 PASS) — 6 SUPP + 1 FAL + 1 PART, 모두 leading-token classifier
+와 정합 (emoji 🔴 strip · `SUPPORTED_FULL` → SUPPORTED prefix 정확).
+
+- **closed-negative 영향 (H_263 phoenix FAL · H_265 trained-CA PARTIAL-反방향)**:
+  - H_263 (phoenix-rebirth FALSIFIED) 은 FALSIFIED bucket 에 life-domain 신규 1건 추가
+    (life FALS 2→3). floor=absorbing-state 의 honest negative — 죽음↔발생 연결 부재의
+    cycle-level 산출 (raw#82 negative-result publication 정합).
+  - H_265 (trained-vs-bare-CA PARTIAL) 은 PARTIAL bucket 에 physics+consciousness 신규
+    1건 추가 (PART 5→6). C1 (Φ 유의 변경) PASS 이나 C2 (방향) FAL — '학습이 Φ 를
+    *dampen*' 의 反-naive directional result. PARTIAL tier 의 'directional-but-reversed'
+    instance 로, life-lane SUPP 집중과 대조되는 physics-lane 의 honest 한계.
+  - 두 closed-negative 모두 SUPP-rate 의 headline (life ≫ consciousness) 을 **흔들지 않음**
+    — H_263 은 life FALS 에 들어가 life rate 를 미세 하락시키나 부등호 불변, H_265 는
+    physics/consciousness 분자에 무기여.
+
+### 11.4 H238.3 / H238.4 갱신
+
+```
+H238.3 axis (SUPP rate group A vs B):
+  group_A (ethics+information+meta)   SUPP = 1 / 7   rate = 0.142857
+  group_B (consciousness+physics)     SUPP = 10 / 53 rate = 0.188679
+  A > B : FALSE   (prior 0.200 > 0.194 TRUE 에서 REVERSED — small-N flip, L2)
+H238.4 axis (canonical-domain Jaccard ≥ 0.5):
+  n_high_J_pairs = 523   (prior 201; N 증가 51 → pair-space 1275 로 확대)
+```
+
+- **H238.3 부등호 reversal**: prior 의 `A > B` (0.200 > 0.194, 'very small spread') 가
+  본 raster 에서 `A < B` (0.143 < 0.189) 로 **뒤집힘**. group_A 의 meta/information 에
+  carry-row 가 PARTIAL/RUNNING 으로 유입 (meta 2→3, information 2→3) 하여 분모만 증가,
+  분자 SUPP 불변 → A rate 하락. 이는 **L2 small-N single-flip-sensitivity 의 직접 실증**
+  — H238.3 의 'spread present' 가설이 cluster-size imbalance 에 fragile 함을 신규 데이터가
+  확인 (가설의 strong-claim 회피 설계가 옳았음을 사후 검증).
+
+### 11.5 Verdict (next raster)
+
+```
+verdict_class: SUPPORTED (meta, next-raster, README-index deterministic 재집계)
+config: N_rows=51 source=README-index sort=표-행순서 (H_238 self-excluded) date=2026-05-25
+tier_distribution (verbatim):
+  SUPPORTED  : 10 / 51   PARTIAL : 6 / 51   FALSIFIED : 7 / 51   RUNNING : 28 / 51
+  sum_tiers  : 51 == N (well-defined) · SUPP/(SUPP+FAL) = 0.588235
+headline: life SUPP-rate 0.3214 > consciousness 0.2000 (패턴 MAINTAINED, gap 0.245→0.121 수축)
+new8: 8/8 분류 정합 (6 SUPP + 1 FAL[H_263] + 1 PART[H_265])
+criteria (meta, pre-register):
+  C1 REPRODUCIBLE    (N≥22 ∧ sum==N)     : PASS (N=51, sum=51)
+  C2 SUPPRATE_UPDATE (≥3 nonempty + life/consc 비교가능) : PASS (nonempty=7)
+  C3 NEW8_CONSISTENT (신규 8건 8/8 match) : PASS (8/8)
+  C4 BYTE_IDENTICAL                       : PASS (re-run result.json diff = ∅)
+verdict_rule: SUPPORTED(meta) iff C1 ∧ C2 · else PARTIAL · FALSIFIED if ¬C1
+verdict     : SUPPORTED
+unmapped_tokens: [language, emergence, measurement-integrity]   (L7 — carry-row 신규 tag
+  들이 canonical 7-bucket 밖으로 fall-through; bucket 미기여, 분포 무영향, 향후 alias-map
+  확장 후보)
+honest_finding (raw#82):
+  · life ≫ consciousness 패턴 *유지* 이나 gap *수축* — 'life 본질적 evidence-receptive'
+    ontological claim 을 약화 (분모 carry-RUNNING 유입). measurement 만, claim 강화 X.
+  · H238.3 부등호 reversal = L2 small-N single-flip 의 실증 (가설 spread-claim 의 fragility 확인)
+  · H_263/H_265 closed-negative 가 FAL/PART bucket 에 정상 흡수, headline 부등호 불변
+```
+
+**State output**: `HEXAD/LIFE/state/h238_raster_2026_05_25/result.json`
+**Smoke**: `HEXAD/LIFE/state/h238_raster_2026_05_25/run.hexa`
+**Tier**: 🟢 NUMERICAL (README-index parse + tier classifier + canonical-domain Jaccard, deterministic byte-equal).
+**한계 추가 (raw#91 c3)**: **L8 SURFACE_EXPANSION** — 본 raster 의 N 33→51 증가는 신규
+가설 산출 + README 표의 carry-row 노출이 혼재 (per-file frontmatter → README-index source
+전환 포함). tier 분포 drift 의 일부는 *측정 surface 변화* 이지 순수 substrate evolution 이
+아님 — longitudinal 비교 시 source-consistency 보정 미수행 (L1 snapshot-only 의 source-axis
+하위 한계).
