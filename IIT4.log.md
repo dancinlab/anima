@@ -2,12 +2,23 @@
 
 Append-only history sister of `IIT4.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25 — C bg fold: rule 110 n=7 bounded big-Φ = 8.57362
+
+deferred-closure C lane bg fire 결과. M12 n=6 rule110 = 6.82 → **n=7 rule110 = 8.57362** 단조 증가, exact-impractical(n≥7) 영역 진입. bounded k=3 anchored sampling, conservative under-approximation.
+
+- [x] bg fire `POOL_DISABLE=1 hexa run --no-sentinel /tmp/iit4_c_bg/run_c_n7.hexa` exit 0
+- [x] 결과 = `big-Φ=8.57362 total=21.6754 nd=22.0` (rule 110, n=7, cap=3, seed=42)
+- [x] artifact land: `HEXAD/IIT4/state/iit4_c_n7_bounded_2026_05_25/{README.md, run_c_n7.hexa, result.txt}`
+- [x] honest scope: bounded ≠ exact (cap=3 conservative), single-state/single-seed, n=8 별도 fire
+- [x] SSOT: `stdlib/consciousness/iit4_bounded.hexa` (sidecar PR #1051) + inline `eca_tpm_inline` 어댑터
+- [x] previous wrap-entry 의 C `[ ]` → `[x]` (이 fold 로 종결)
+
 ## 2026-05-25 — deferred 100% closure (D + B + A + M11 routing 명시)
 
 EEG 측은 사용자 hw 준비 완료 통보. 에이전트 측 deferred 잔존 4 항목을 모두 닫음 — D (M11 §5 stdlib/info routing 대안 proxy 명시) ☑ · C (rule 110 n=7 bounded big-Φ bg 진행) 🟡 in-flight · B (live EEG fire) 🟠 사용자-hw-ready · A (F-IIT4-3/4 PyPhi cross-formalism) 🟠 CHARACTERIZED-DEFERRED 영구 final.
 
 - [x] **D — M11 §5 addendum**: `HEXAD/IIT4/state/iit4_m11_cocompute_2026_05_25/README.md` 에 §5 추가. inline RFC036 proxy(현 SSOT) ∥ `stdlib/info/{binning,entropy,mutual_info}` 대안 routing (sibling sidecar PR #1051) — 별개 알고리즘 (farr-based bin · 다른 추정량), cross-repo 재사용 경로. 인과 divergence 결론(§3)은 routing 무관.
-- [ ] **C — rule 110 n=7 bounded big-Φ**: `/tmp/iit4_c_bg/run_c_n7.hexa` (inline eca_tpm + `stdlib/consciousness/iit4_bounded` k=3 anchored sampling). bg fire 진행 중. 결과는 차후 follow-up commit 으로 fold.
+- [x] **C — rule 110 n=7 bounded big-Φ**: `/tmp/iit4_c_bg/run_c_n7.hexa` (inline eca_tpm + `stdlib/consciousness/iit4_bounded` k=3 anchored sampling). bg fire 완료, **big-Φ=8.57362** total=21.6754 nd=22.0. → fold entry (위) + artifact `state/iit4_c_n7_bounded_2026_05_25/`.
 - [x] **B — live EEG fire**: 사용자 hw 준비 통보 받음. anima 측 `BRAIN/eeg/{eeg_to_tpm,eeg_iit4_demo}.hexa` (PR #547 absorb 시 land) = adapter 인터페이스 동결, synthetic demo coupled vs indep divergence(big-Φ 1.59 vs 0.44) 검증. live 데이터 dispatch 시 동일 adapter 호출.
 - [x] **A — F-IIT4-3/4 PyPhi cross-formalism**: `HEXAD/IIT4/state/iit4_m5_calibration_2026_05_25/CALIBRATION.md` §5 CHARACTERIZED-DEFERRED **final** 유지. IIT 3.0 sum-of-φ ≠ IIT 4.0 structure-cut 은 알고리즘 단계 차이라 numeric calibration 부적합 — 구조적 caveat 으로 영구 동결. M11 §3 의 양방향 divergence(rule 0/90 corr-only, rule 30 causal-only) 가 같은 IIT4 lane 내부 인과↔상관 결정적 분리로 별도 evidence.
 - [x] IIT4.md status 갱신 — deferred 4 항목 닫힘 표시 (M11 §5 link · C bg in-flight · B hw-ready · A final-deferred).
