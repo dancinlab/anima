@@ -1,0 +1,21 @@
+// H_437 smoke — 3-factor emit product
+
+fn total_emits(n: i64, env: f64, rate: f64) -> f64 {
+    let nf = n as f64
+    return nf * env * rate
+}
+
+fn check_h437() -> bool {
+    let env = 0.8
+    let rate = 0.5
+    let h1 = total_emits(10, env, rate) > 0.0
+    let h2 = total_emits(0, env, rate) == 0.0
+    let lin_n = total_emits(20, env, rate) == 2.0 * total_emits(10, env, rate)
+    return h1 && h2 && lin_n
+}
+
+fn main() {
+    let ok = check_h437()
+    if !ok { print("H_437 FAIL"); return }
+    print("H_437 blue total emits OK")
+}
