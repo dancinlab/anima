@@ -1,0 +1,20 @@
+// H_433 smoke — emit × CORE × DECODER
+
+fn output_rate(m: f64, v_total: i64) -> f64 {
+    let vt = v_total as f64
+    return m * (m * vt)  // M^2 · |V|
+}
+
+fn check_h433() -> bool {
+    let vt = 100
+    let h2 = output_rate(0.5, vt) > 0.0
+    let h3 = output_rate(0.0, vt) == 0.0
+    let mono = output_rate(0.9, vt) > output_rate(0.5, vt)
+    return h2 && h3 && mono
+}
+
+fn main() {
+    let ok = check_h433()
+    if !ok { print("H_433 FAIL"); return }
+    print("H_433 blue emit-CORE-decoder OK")
+}
