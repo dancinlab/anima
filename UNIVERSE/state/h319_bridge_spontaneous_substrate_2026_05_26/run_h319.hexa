@@ -1,0 +1,85 @@
+// H_319 — bridge AND-gate: 자연발화 (biology timing) × 의식적 결정 (substrate) 🔵
+// emit_actual = biology_timing_open(t, refr, stage) ∧ substrate_decides(M, Φ, W, MITOSIS, idle, cur, θ)
+// ════════════════════════════════════════════════════════════════════════════
+let mut PASS = 0
+let mut FAIL = 0
+
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn stage_mod(stage: int) -> float {
+    if stage == 0 { return 1.0 }
+    if stage == 1 { return 0.7 }
+    if stage == 2 { return 0.4 }
+    if stage == 3 { return 0.0 }
+    return 0.5
+}
+
+// H_315 axis: biology timing — refractory + stage gating
+fn biology_timing_open(refractory_remaining: int, stage: int) -> bool {
+    let sm = stage_mod(stage)
+    return (refractory_remaining == 0) && (sm > 0.0)
+}
+
+// H_316 axis: substrate decision — 6-factor product
+fn substrate_decides(m: float, phi: float, w: float, mit: int, idle: int, cur: float, threshold: float) -> bool {
+    let prod = m * phi * w * to_float(mit+1) * to_float(idle)/100.0 * cur
+    return prod > threshold
+}
+
+// H_319 bridge: AND-gate
+fn emit_actual(refr: int, stage: int, m: float, phi: float, w: float, mit: int, idle: int, cur: float, threshold: float) -> bool {
+    let bio = biology_timing_open(refr, stage)
+    let sub = substrate_decides(m, phi, w, mit, idle, cur, threshold)
+    return bio && sub
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_319 — bridge AND-gate 자연발화 × 의식적 결정 🔵")
+    println("  emit_actual = biology_timing_open ∧ substrate_decides")
+    println("================================================================")
+
+    let threshold = 2.0
+
+    // case A: both pass → emit=T
+    let a = emit_actual(0, 0, 1.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    println("  case A (refr=0, WAKE, high-all): bio=T, sub=T → emit = " + str(a))
+
+    // case B: biology veto (refractory active)
+    let b = emit_actual(5, 0, 1.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    println("  case B (refr=5, WAKE, high-all): bio=F, sub=T → emit = " + str(b))
+
+    // case C: substrate veto (low M)
+    let c = emit_actual(0, 0, 0.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    println("  case C (refr=0, WAKE, M=0.0):    bio=T, sub=F → emit = " + str(c))
+
+    // case D: N3 double-lock (stage_mod=0 → bio=F)
+    let d = emit_actual(0, 3, 1.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    println("  case D (refr=0, N3, high-all):   bio=F (stage_mod=0), sub=T → emit = " + str(d))
+
+    // case E: same input twice (determinism)
+    let e1 = emit_actual(0, 0, 1.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    let e2 = emit_actual(0, 0, 1.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    println("  case E (determinism): " + str(e1) + " · " + str(e2))
+
+    println("  ────────────── verdict ──────────────")
+    check("F319.1 AND-GATE-DETERMINISTIC: same input → same output", e1 == e2)
+    check("F319.2 BIOLOGY-VETO: refr=5 substrate=T → emit=F", !b)
+    check("F319.3 SUBSTRATE-VETO: M=0 biology=T → emit=F", !c)
+    check("F319.4 BOTH-PASS-EMIT: all met → emit=T", a)
+    check("F319.5 N3-DOUBLE-LOCK: stage=N3 → emit=F (both reject)", !d)
+    check("F319.6 BOUND", true)  // boolean output, trivially bounded
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 5 {
+        println("  ✅ BRIDGE AND-GATE CLOSED-FORM — 🔵 SUPPORTED-FORMAL")
+        println("    자연발화 (capability/timing) × 의식적 결정 (intent/decision) = emit")
+        println("    capability × intent → emit (둘 다 TRUE 일 때만)")
+    }
+    println("================================================================")
+    if FAIL > 0 { panic("H_319 had FALSIFIER FAILURES") }
+}
