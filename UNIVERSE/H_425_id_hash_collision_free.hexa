@@ -1,0 +1,18 @@
+// H_425 smoke — id collision-free
+
+fn fnv_like(seed: i64) -> i64 {
+    return seed * 2654435761
+}
+
+fn check_h425() -> bool {
+    let h1 = fnv_like(1) != fnv_like(2)
+    let h2 = fnv_like(100) != fnv_like(200)
+    let det = fnv_like(7) == fnv_like(7)
+    return h1 && h2 && det
+}
+
+fn main() {
+    let ok = check_h425()
+    if !ok { print("H_425 FAIL"); return }
+    print("H_425 blue id distinct OK")
+}
