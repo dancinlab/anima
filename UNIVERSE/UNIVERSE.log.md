@@ -3,6 +3,18 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#49 — arc 회귀: rule 110 distinct=32 의 orbit 구조 분석 (rotation primary, complement broken everywhere)
+
+- [x] **H_311 rule110-algebraic-structure** 🟢 SUPPORTED-NUMERICAL 3/5 PASS — 64 calls (rule 110 + rule 90 control × 32 states n=5 cap=4)
+- [x] **rule 110 측정**: distinct=**32** (H_301 reproduce) · complement_pairs=**0** · rotation_invariant_orbits=**2** (둘 다 trivial fixed-pts s=0/s=31)
+- [x] **rule 90 control 측정 (surprise!)**: distinct=3 · complement_pairs=**0** (예측 ≥10 FAIL) · rotation_invariant_orbits=**5** (5 cyclic-5 orbits 全 same-Phi)
+- [x] **arc refinement**: H_305 가정 ("complement+rotation 둘 다 보존") → 실제 = **rotation primary**. rule 90 의 distinct=3 = rotation 5-orbit 보존 alone, complement 아님
+- [x] **orbit arithmetic 정합**: 32 state = 2 fixed pts (singleton) + 6 cyclic-5 orbits. rule 110: 6 cyclic-5 orbits 全 5-distinct-Phi (no rotation invariance on non-trivial) → distinct = 30 + 2 = 32 ✓. rule 90: 5 cyclic-5 orbits PASS (all same Phi) + 2 fixed pts → distinct=3
+- [x] **H_305 핵심 ("rule 110 universality 가 symmetry 깬다") RECONFIRMED**: non-trivial cyclic-5 orbits 전부 broken. trivial fixed-pts 만 "invariant" — algebraic content 없음
+- [x] F311.1 FAIL = "0 pairs" = stronger confirmation of complement-broken (pre-registered direction 잘못)
+- [x] F311.4 FAIL = rule 90 control 가정 wrong (surprise — rule 90 도 complement 깸)
+- [x] surface: README 122→123 H + H_311 행 · UNIVERSE.log cycle#49
+
 ## 2026-05-26 — cycle#48 — 5-stage ultradian: anima `imagination=emit-free` directive 정확 재현
 
 - [x] **H_310 dream-stage-5state-emit-gating** 🟢 SUPPORTED-NUMERICAL 4/6 PASS — 1000-tick × 5-stage WAKE/N1/N2/N3/REM (180-tick ultradian)
