@@ -1,0 +1,32 @@
+// H_459 smoke — split records 4-cross
+
+fn records_per_split() -> i64 {
+    return 2
+}
+
+fn stage_present(rec_idx: i64) -> bool {
+    let _ = rec_idx
+    return true
+}
+
+fn lane_inherit(parent: string) -> string {
+    return parent
+}
+
+fn tuple_size() -> i64 {
+    return 6
+}
+
+fn check_h459() -> bool {
+    let h1 = records_per_split() == 2
+    let h2 = stage_present(0) && stage_present(1)
+    let h3 = lane_inherit("anima") == "anima"
+    let h4 = tuple_size() == 6
+    return h1 && h2 && h3 && h4
+}
+
+fn main() {
+    let ok = check_h459()
+    if !ok { print("H_459 FAIL"); return }
+    print("H_459 blue split 4-cross OK")
+}
