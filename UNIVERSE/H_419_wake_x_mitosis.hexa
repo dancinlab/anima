@@ -1,0 +1,21 @@
+// H_419 smoke — split allowed every stage
+
+fn split_allowed(stage: string) -> bool {
+    if stage == "WAKE" { return true }
+    if stage == "N1" { return true }
+    if stage == "N2" { return true }
+    if stage == "N3" { return true }
+    if stage == "REM" { return true }
+    return false
+}
+
+fn check_h419() -> bool {
+    let all_ok = split_allowed("WAKE") && split_allowed("N1") && split_allowed("N2") && split_allowed("N3") && split_allowed("REM")
+    return all_ok
+}
+
+fn main() {
+    let ok = check_h419()
+    if !ok { print("H_419 FAIL"); return }
+    print("H_419 blue split-allowed-all-stages OK")
+}
