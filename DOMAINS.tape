@@ -7,3 +7,4 @@
 @domain CORE := "CORE/CORE.md"
 @domain DECODER := "CORE/DECODER/DECODER.md"
 @domain WAKE := "./WAKE.md"
+@domain ANIMA := "./ANIMA.md"
