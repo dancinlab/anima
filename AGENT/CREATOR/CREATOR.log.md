@@ -2,6 +2,19 @@
 
 Append-only history sister of `CREATOR.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T05:00:00Z — M4 L2 PROG Remotion 백엔드 closure
+
+- [x] `AGENT/CREATOR/prog_backend_remotion.hexa` 작성 — 5 pub fn (`prog_remotion_new` · `_configure` · `_codegen` · `_render` · `_summary`)
+- [x] Remotion = React-based programmatic video — fal.ai 와 다르게 외부 HTTP X, 로컬 Node `npx remotion render` 실행 모델
+- [x] `_codegen(state, spec)` — spec → React Composition TSX 문자열 생성 (composition_id + components count 반영)
+- [x] `_render(state, spec, out_path)` — STUB · M1 MediaAsset L2 반환 (backend="remotion" · stub_mode=true · reason 명시)
+- [x] 거부 경로 — `remotion_not_configured` (project_path 비어있음) · `real_render_not_implemented` (REAL+configured 라도 M4 단계 stub)
+- [x] DRYRUN 기본 — 외부 Node spawn 0
+- [x] `prog_backend_remotion_smoke.hexa` 7-case verify — C1 new unconfigured · C2 configure (valid+empty 거부) · C3 codegen TSX 문자열 · C4 DRYRUN render synthetic asset · C5 REAL uncfg = remotion_not_configured · C6 REAL cfg = real_render_not_implemented · C7 summary
+- [x] `hexa parse` 2/2 OK
+- [x] CREATOR.md M4 line `[ ] → [x]` (3/6 → 4/6)
+- [ ] M5 L3 GEN — fal seedance 2.0 + omnishow ByteDance HOIVG adapter (다음 마일스톤)
+
 ## 2026-05-27T04:45:00Z — backend dynamic model catalog 확장 (M3.5)
 
 - [x] 사용자 명시 변경 — backend.hexa 의 model 관리가 **고정 X · runtime 동적** 가능해야 함 (list / register / set_default 기능 추가)
