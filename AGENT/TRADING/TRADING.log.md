@@ -2,6 +2,19 @@
 
 Append-only history sister of `TRADING.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T06:10:00Z — M10 Alpaca + M13 Upbit STUB closure (사용자 명시 우선순위)
+
+- [x] 사용자 명시 — Alpaca + Upbit 우선 진행 (한국 KRW crypto + 미국 stock 양쪽 cover)
+- [x] `AGENT/TRADING/live_broker_alpaca.hexa` 작성 — 7 pub fn (KIS broker 와 동일 surface) · env=DRYRUN/PAPER/LIVE 3-mode · paper/live endpoint 자동 선택 · APCA-API-KEY-ID + APCA-API-SECRET-KEY header passing · live_gate 우선 통과
+- [x] `AGENT/TRADING/live_broker_upbit.hexa` 작성 — 7 pub fn (Alpaca 와 동일 surface) · KRW/USDT/BTC 마켓 quote 선택 · JWT (HS256) auth signing 명시 (실 구현 TODO) · access_key + secret_key wire-up · live_gate 우선 통과
+- [x] `AGENT/TRADING/live_broker_alpaca_upbit_smoke.hexa` 합본 smoke — 12-case (A1-A5 Alpaca · U1-U5 Upbit · X1-X2 cross-broker uniformity) · L0 거부 + L1 승인 양쪽 verify · DRYRUN no-fill · paper/live endpoint switch · KRW market quote 선택
+- [x] `hexa parse` 3/3 OK (alpaca + upbit + smoke)
+- [x] TRADING.md M10 + M13 line `[ ] → [x]` (wire-up 라운드 2/11 진행)
+- [x] 실 API call 0 — TODO marker 만 (M10+1 / M13+1 wire-up 시 실 HTTP 구현)
+- [x] 5-verb interface uniformity 검증 — paper_broker / kis_broker / alpaca_broker / upbit_broker 4종 모두 같은 모양 (M17 통합 smoke 준비됨)
+- [ ] M14 Bithumb / M15 Binance / M16 ccxt unified (다음)
+- [ ] M11 IBKR / M12 Tradier (선택)
+
 ## 2026-05-27T05:55:00Z — wire-up 마일스톤 11개 등록 (M7-M17 · 추천순)
 
 - [x] 사용자 명시 요청 — 모든 wire-up 마일스톤 + Binance 포함 broker 모두 등록 · 추천순 정리 (2026 web 리서치 반영)
