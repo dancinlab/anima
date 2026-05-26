@@ -1,0 +1,47 @@
+================================================================
+  H_301 — n=5 32-state sweep extended (rule 60·110·30)
+================================================================
+  rule 60:
+    min          : 15.5
+    p25          : 16.5
+    median       : 16.5
+    mean         : 18.125
+    p75          : 21
+    max          : 24.5
+    count Phi>1  : 32.0/32
+    st=21 (alt)  : 18.5
+    distinct vals: 6.0
+  rule 110:
+    min          : 15.4993
+    p25          : 20.8811
+    median       : 25.6229
+    mean         : 27.0708
+    p75          : 32.8328
+    max          : 41.7124
+    count Phi>1  : 32.0/32
+    st=21 (alt)  : 31.6855
+    distinct vals: 32.0
+  rule 30:
+    min          : 13.2051
+    p25          : 16.1931
+    median       : 20.8669
+    mean         : 23.6055
+    p75          : 30.632
+    max          : 52.7883
+    count Phi>1  : 32.0/32
+    st=21 (alt)  : 26.1019
+    distinct vals: 29.0
+  ──────────────
+  [PASS] F301.1 STATE-INV-NONZERO-60:  rule 60  count Phi>1 >= 26
+  [PASS] F301.2 STATE-INV-NONZERO-110: rule 110 count Phi>1 >= 26
+  [PASS] F301.3 STATE-INV-NONZERO-30:  rule 30  count Phi>1 >= 26
+  [PASS] F301.4 ALT-FAIR-60:  rule 60  st=21 in [p25, p75]
+  [PASS] F301.5 ALT-FAIR-110: rule 110 st=21 in [p25, p75]
+  [PASS] F301.6 ALT-FAIR-30:  rule 30  st=21 in [p25, p75]
+  [PASS] F301.7 BOUND: all min >= 0
+  [FAIL] F301.8 DETERMINISM: rule 60 st=21 ~= 16.5 (H_297 panel value)
+================================================================
+  RESULT: 7 PASS / 1 FAIL
+  HEADLINE distinct-value counts: rule60=6.0 rule110=32.0 rule30=29.0 (rule90=3 from H_300)
+================================================================
+panic: H_301 had FALSIFIER FAILURES
