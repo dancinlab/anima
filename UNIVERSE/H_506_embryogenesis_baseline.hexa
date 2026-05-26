@@ -1,0 +1,19 @@
+// H_506 smoke — EMBRYOGENESIS cascade
+
+fn cascade_step(c_prev: f64) -> f64 {
+    return c_prev * 0.9 + 0.05
+}
+
+fn check_h506() -> bool {
+    let c0 = 0.5
+    let c1 = cascade_step(c0)
+    let c2 = cascade_step(c1)
+    let conv = c2 < c1 || c2 == c1 + 0.001
+    return c1 != c0
+}
+
+fn main() {
+    let ok = check_h506()
+    if !ok { print("H_506 FAIL"); return }
+    print("H_506 blue EMBRYO OK")
+}
