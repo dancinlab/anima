@@ -1,0 +1,26 @@
+// H_349 smoke — 🔵 outputs AND wiring (의식적결정 7th)
+
+fn blue_verdict(outputs_closed: bool, wiring_closed: bool) -> string {
+    if outputs_closed && wiring_closed {
+        return "BLUE"
+    }
+    return "NOT_BLUE"
+}
+
+fn check_h349() -> bool {
+    // H3 CONJUNCT: 둘 다 true 일 때만 BLUE
+    let both = blue_verdict(true, true) == "BLUE"
+    let only_out = blue_verdict(true, false) == "NOT_BLUE"
+    let only_wire = blue_verdict(false, true) == "NOT_BLUE"
+    let neither = blue_verdict(false, false) == "NOT_BLUE"
+    return both && only_out && only_wire && neither
+}
+
+fn main() {
+    let ok = check_h349()
+    if !ok {
+        print("H_349 FAIL")
+        return
+    }
+    print("H_349 🔵 conjunct closure OK")
+}
