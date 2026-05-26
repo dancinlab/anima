@@ -1,0 +1,16 @@
+// H_378 smoke — BRIDGE associative
+
+fn check_h378() -> bool {
+    let a = true
+    let b = false
+    let c = true
+    let h1 = (a && (b && c)) == ((a && b) && c)
+    let h2 = (a || (b || c)) == ((a || b) || c)
+    return h1 && h2
+}
+
+fn main() {
+    let ok = check_h378()
+    if !ok { print("H_378 FAIL"); return }
+    print("H_378 blue associative OK")
+}
