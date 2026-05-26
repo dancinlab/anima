@@ -1,0 +1,17 @@
+================================================================
+  H_327 — tier-gated visibility 🔵
+================================================================
+  visibility map: 🔵→1 🟢→1 🟡→0 🟠→0 🔴→0
+  [PASS] F327.1 PUBLIC-IFF-PASS: 🔵+🟢 → PUBLIC, 다른 全 → PRIVATE
+  [PASS] F327.2 PRIVATE-IFF-NOT-PASS: ¬PASS → PRIVATE
+  [PASS] F327.3 NEVER-FAIL-AS-PUBLIC: 🔴 → PRIVATE always
+  [PASS] F327.4 BLUE-AS-PUBLIC: 🔵 → PUBLIC always
+  [PASS] F327.5 GREEN-AS-PUBLIC: 🟢 → PUBLIC always
+  [PASS] F327.6 DETERMINISTIC
+  [PASS] F327.7 BOUND: visibility ∈ {0, 1}
+================================================================
+  RESULT: 7 PASS / 0 FAIL
+  ✅ TIER-GATED VISIBILITY — 🔵 SUPPORTED-FORMAL
+    visibility(tier) = PUBLIC iff tier ∈ {🔵, 🟢}, else PRIVATE
+    a_hf_autonomous directive cite 정합
+================================================================
