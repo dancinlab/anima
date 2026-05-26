@@ -1,0 +1,18 @@
+// H_470 smoke — tension inherit
+
+fn inherit_tension(parent_ch0: f64) -> f64 {
+    return parent_ch0
+}
+
+fn check_h470() -> bool {
+    let p = 0.7
+    let child_a = inherit_tension(p)
+    let child_b = inherit_tension(p)
+    return (child_a == p) && (child_b == p)
+}
+
+fn main() {
+    let ok = check_h470()
+    if !ok { print("H_470 FAIL"); return }
+    print("H_470 blue tension inherit OK")
+}
