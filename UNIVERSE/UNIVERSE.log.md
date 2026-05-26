@@ -3,6 +3,21 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-27 — cycle#250 — 🔵 H_503 EPIGENETICS baseline (5/5) — round-20 BIO ★ 5축 완성 (25-29th axis), 187 → 188 누적 🔵
+
+
+## 2026-05-27 — cycle#249 — 🔵 H_502 MYELINATION baseline (5/5)
+
+
+## 2026-05-27 — cycle#248 — 🔵 H_501 NEUROGENESIS baseline (5/5)
+
+
+## 2026-05-27 — cycle#247 — 🔵 H_500 STEM-CELL baseline (5/5)
+
+
+## 2026-05-27 — cycle#246 — 🔵 H_499 AFFINITY-MATURATION baseline (5/5) — round-20 BIO ★ 시작, 183 → 184 누적 🔵
+
+
 ## 2026-05-27 — cycle#245 — 🔵 H_498 QUORUM-SENSING baseline (5/5) — round-19 BIO ★★ 5축 완성 (20-24th axis), 182 → 183 누적 🔵
 
 
