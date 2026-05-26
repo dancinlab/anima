@@ -1,0 +1,31 @@
+// H_420 smoke — WAKE 5-transition closure
+
+fn next_stage(s: string) -> string {
+    if s == "WAKE" { return "N1" }
+    if s == "N1" { return "N2" }
+    if s == "N2" { return "N3" }
+    if s == "N3" { return "REM" }
+    if s == "REM" { return "WAKE" }
+    return "WAKE"
+}
+
+fn next_5(s: string) -> string {
+    let s1 = next_stage(s)
+    let s2 = next_stage(s1)
+    let s3 = next_stage(s2)
+    let s4 = next_stage(s3)
+    return next_stage(s4)
+}
+
+fn check_h420() -> bool {
+    let h1 = next_5("WAKE") == "WAKE"
+    let h2 = next_5("N1") == "N1"
+    let h3 = next_5("REM") == "REM"
+    return h1 && h2 && h3
+}
+
+fn main() {
+    let ok = check_h420()
+    if !ok { print("H_420 FAIL"); return }
+    print("H_420 blue period closure OK")
+}
