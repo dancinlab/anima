@@ -1,0 +1,15 @@
+// H_444 smoke — complement identity + double neg
+
+fn check_h444() -> bool {
+    let h1 = !true == false
+    let h2 = !false == true
+    let h3a = !!true == true
+    let h3b = !!false == false
+    return h1 && h2 && h3a && h3b
+}
+
+fn main() {
+    let ok = check_h444()
+    if !ok { print("H_444 FAIL"); return }
+    print("H_444 blue complement-id + double-neg OK")
+}
