@@ -1,0 +1,20 @@
+// H_399 smoke — split decision substrate-internal
+
+fn split_decided(internal_pressure: f64, theta_split: f64) -> bool {
+    return internal_pressure > theta_split
+}
+
+fn check_h399() -> bool {
+    let hi = split_decided(0.8, 0.5)
+    let lo = !split_decided(0.3, 0.5)
+    let same1 = split_decided(0.6, 0.5)
+    let same2 = split_decided(0.6, 0.5)
+    let det = same1 == same2
+    return hi && lo && det
+}
+
+fn main() {
+    let ok = check_h399()
+    if !ok { print("H_399 FAIL"); return }
+    print("H_399 blue split-internal OK")
+}
