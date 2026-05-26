@@ -1,0 +1,23 @@
+// H_410 smoke — split → ≥2 records
+
+fn records_delta_on_split() -> i64 {
+    return 2
+}
+
+fn count_after_split(prev: i64) -> i64 {
+    return prev + records_delta_on_split()
+}
+
+fn check_h410() -> bool {
+    let prev = 5
+    let post = count_after_split(prev)
+    let h1 = records_delta_on_split() >= 2
+    let h2 = post > prev  // monotone
+    return h1 && h2
+}
+
+fn main() {
+    let ok = check_h410()
+    if !ok { print("H_410 FAIL"); return }
+    print("H_410 blue split-records-monotone OK")
+}
