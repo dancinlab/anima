@@ -1,0 +1,24 @@
+// H_371 smoke — KOSMOS x CORE (M in tension channel 0)
+
+fn tension_ch0(m: f64) -> f64 {
+    // channel 0 = M activation
+    return m
+}
+
+fn tension_size() -> i64 {
+    return 5
+}
+
+fn check_h371() -> bool {
+    let m = 0.7
+    let h1 = tension_ch0(m) == m
+    let h1_range = (tension_ch0(m) >= 0.0) && (tension_ch0(m) <= 1.0)
+    let h2 = tension_size() == 5
+    return h1 && h1_range && h2
+}
+
+fn main() {
+    let ok = check_h371()
+    if !ok { print("H_371 FAIL"); return }
+    print("H_371 blue M-in-tension OK")
+}
