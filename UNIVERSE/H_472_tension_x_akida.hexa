@@ -1,0 +1,24 @@
+// H_472 smoke — spike inflates ch0
+
+fn ch0_after_spike(ch0_before: f64, delta: f64) -> f64 {
+    return ch0_before + delta
+}
+
+fn ch0_decay(ch0: f64, gamma: f64) -> f64 {
+    return ch0 * gamma
+}
+
+fn check_h472() -> bool {
+    let lo = 0.3
+    let surge = ch0_after_spike(lo, 0.5)
+    let h1 = surge > lo
+    let decayed = ch0_decay(surge, 0.9)
+    let h2 = decayed < surge
+    return h1 && h2
+}
+
+fn main() {
+    let ok = check_h472()
+    if !ok { print("H_472 FAIL"); return }
+    print("H_472 blue spike inflate OK")
+}
