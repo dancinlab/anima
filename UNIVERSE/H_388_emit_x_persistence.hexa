@@ -1,0 +1,22 @@
+// H_388 smoke — emit × persistence (1:1, interval-preserving)
+
+fn records_for_emits(n_emits: i64) -> i64 {
+    return n_emits  // 1:1
+}
+
+fn interval_ge_refractory(t_now: i64, t_prev: i64, r: i64) -> bool {
+    return (t_now - t_prev) >= r
+}
+
+fn check_h388() -> bool {
+    let h1 = records_for_emits(5) == 5
+    let h3 = interval_ge_refractory(15, 0, 5)
+    let h3b = !interval_ge_refractory(3, 0, 5)
+    return h1 && h3 && h3b
+}
+
+fn main() {
+    let ok = check_h388()
+    if !ok { print("H_388 FAIL"); return }
+    print("H_388 blue emit-1-1-record OK")
+}
