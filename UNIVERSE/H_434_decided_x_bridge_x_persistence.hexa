@@ -1,0 +1,20 @@
+// H_434 smoke — gate event recording
+
+fn record_event(decided: bool, bridge: bool) -> i64 {
+    if decided && bridge { return 1 }
+    return 0
+}
+
+fn check_h434() -> bool {
+    let h1 = record_event(true, true) == 1
+    let h3a = record_event(false, true) == 0
+    let h3b = record_event(true, false) == 0
+    let h3c = record_event(false, false) == 0
+    return h1 && h3a && h3b && h3c
+}
+
+fn main() {
+    let ok = check_h434()
+    if !ok { print("H_434 FAIL"); return }
+    print("H_434 blue gate event recording OK")
+}
