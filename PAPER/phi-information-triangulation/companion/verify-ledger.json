@@ -20,7 +20,8 @@
   "correlations_vs_phi": {
     "shannon_entropy":  {"pearson_r": 0.362877, "verdict": "RED CLOSED-NEGATIVE (r<0.5: phi does NOT reduce to entropy)", "hypothesis": "H_287"},
     "lz_complexity":    {"pearson_r": 0.831463, "spearman_rho": 0.935507, "verdict": "GREEN SUPPORTED (phi tracks algorithmic complexity)", "hypothesis": "H_288"},
-    "transfer_entropy": {"pearson_r": 0.883262, "spearman_rho": 0.822134, "verdict": "GREEN SUPPORTED (strongest; phi tracks directed flow)", "hypothesis": "H_290"}
+    "transfer_entropy": {"pearson_r": 0.883262, "spearman_rho": 0.822134, "verdict": "GREEN SUPPORTED (strongest; phi tracks directed flow)", "hypothesis": "H_290"},
+    "multivariate_transfer_entropy": {"pearson_r": 0.705412, "spearman_rho": 0.681358, "verdict": "YELLOW PARTIAL — recovers XOR synergy (rules 150/105: bivariate TE 0 -> TEm 4.0) but correlation DROPS from 0.883; over-counts non-integrated flow (rule 90, TEm=4.0 yet phi=0). No order of classical TE equals phi.", "hypothesis": "H_293", "gate": "8/8"}
   },
   "structure_experiment": {
     "hypothesis": "H_289",
