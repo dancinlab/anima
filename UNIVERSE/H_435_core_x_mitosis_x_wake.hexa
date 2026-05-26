@@ -1,0 +1,20 @@
+// H_435 smoke — 4-factor product
+
+fn total_split(m: f64, per_cell: f64, env: f64, n: i64) -> f64 {
+    let nf = n as f64
+    return m * per_cell * env * nf
+}
+
+fn check_h435() -> bool {
+    let h1 = total_split(0.5, 0.1, 0.8, 10) > 0.0
+    let h2_m = total_split(0.0, 0.1, 0.8, 10) == 0.0
+    let h2_n = total_split(0.5, 0.1, 0.8, 0) == 0.0
+    let h2_env = total_split(0.5, 0.1, 0.0, 10) == 0.0
+    return h1 && h2_m && h2_n && h2_env
+}
+
+fn main() {
+    let ok = check_h435()
+    if !ok { print("H_435 FAIL"); return }
+    print("H_435 blue 4-factor product OK")
+}
