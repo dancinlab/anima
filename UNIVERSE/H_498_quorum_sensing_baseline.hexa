@@ -1,0 +1,19 @@
+// H_498 smoke — QUORUM-SENSING threshold
+
+fn collective_triggered(n_active: i64, n_quorum: i64) -> bool {
+    return n_active >= n_quorum
+}
+
+fn check_h498() -> bool {
+    let q = 5
+    let h1 = collective_triggered(5, q)
+    let h1_over = collective_triggered(8, q)
+    let h3 = !collective_triggered(3, q)
+    return h1 && h1_over && h3
+}
+
+fn main() {
+    let ok = check_h498()
+    if !ok { print("H_498 FAIL"); return }
+    print("H_498 blue QUORUM OK")
+}
