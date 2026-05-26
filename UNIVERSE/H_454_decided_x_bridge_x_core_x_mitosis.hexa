@@ -1,0 +1,19 @@
+// H_454 smoke — split gate 4-way
+
+fn split_gate(decided: bool, bridge: bool, m: f64, theta_m: f64, p: f64, theta_p: f64) -> bool {
+    return decided && bridge && (m > theta_m) && (p > theta_p)
+}
+
+fn check_h454() -> bool {
+    let all = split_gate(true, true, 0.8, 0.5, 0.8, 0.5)
+    let no_dec = !split_gate(false, true, 0.8, 0.5, 0.8, 0.5)
+    let low_m = !split_gate(true, true, 0.3, 0.5, 0.8, 0.5)
+    let low_p = !split_gate(true, true, 0.8, 0.5, 0.3, 0.5)
+    return all && no_dec && low_m && low_p
+}
+
+fn main() {
+    let ok = check_h454()
+    if !ok { print("H_454 FAIL"); return }
+    print("H_454 blue split gate 4-way OK")
+}
