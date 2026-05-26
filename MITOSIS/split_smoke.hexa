@@ -1,0 +1,100 @@
+// @raw117_exempt
+// ════════════════════════════════════════════════════════════════════════
+// MITOSIS/split_smoke.hexa — split-event smoke (M2 2026-05-26)
+//
+// 정체: split_event.hexa public surface 를 거치며 mitosis_lib 의 본체
+//      `cell_pool_step` 을 작은 pool 에 100 step ramp 로 tick → 4 invariant 검증.
+//
+// invariants:
+//   I1: pool starts at 2 cells (initial_cells=2)
+//   I2: pool grows monotonically (count[k+1] >= count[k] for all k)
+//        - 본 smoke 는 ramp 단계 동안 tension 만 증가시키므로 merge 발화
+//          조건 (merge_patience=30 step 간격 + 1-cos < 0.005) 이 거의
+//          나오지 않음 — 그러나 발화 가능성을 honest 하게 관찰.
+//   I3: pool eventually exceeds 2 cells (split happened at least once)
+//   I4: pool never exceeds max_cells=16
+//
+// F-V5MIT-1 SPLIT-NOGRAD: smoke 는 grad path 가 없으므로 (ag_tape 미사용)
+//   직접 검증 X — invariant 는 cell-count topology 한정. grad 검증은
+//   train-driver (train_p21h_v3.hexa) 에서 별도 보존.
+// ════════════════════════════════════════════════════════════════════════
+
+use "/Users/ghost/core/anima/.claude/worktrees/agent-adb6a589c372b7805/MITOSIS/mitosis_lib"
+use "/Users/ghost/core/anima/.claude/worktrees/agent-adb6a589c372b7805/MITOSIS/split_event"
+use "stdlib/flame/tensor_lib"
+
+fn main() {
+    let d = 4
+    let initial_cells = 2
+    let max_cells = 16
+    let seed = 42
+    let n_steps = 100
+    let L = 2
+
+    print("=== MITOSIS/split_smoke ===")
+    print(split_event_summary())
+    print("threshold (static factor): " + to_string(split_threshold()))
+    print("patience: " + to_string(split_patience()))
+    print("")
+
+    let mut pool = cell_pool_init(d, initial_cells, seed, max_cells)
+    let layer_t = farr_zeros(L)
+
+    let mut counts = []
+    counts.push(len(pool["cells"]))
+
+    let mut max_count = initial_cells
+    let mut monotone = true
+
+    let mut step = 0
+    while step < n_steps {
+        // linear ramp tension from 0.0 → 0.5 over n_steps
+        let t = (to_float(step) * 0.5) / to_float(n_steps)
+        let mut l = 0
+        while l < L {
+            let _ = farr_set(layer_t, l, t)
+            l = l + 1
+        }
+        let out = cell_pool_step(pool, layer_t, L, step)
+        pool = out["pool"]
+        let n = len(pool["cells"])
+        if n < max_count { monotone = false }
+        if n > max_count { max_count = n }
+        counts.push(n)
+        if step % 10 == 0 {
+            print("step=" + to_string(step) + "  tension=" + to_string(t) + "  cells=" + to_string(n) + "  thresh_eff=" + to_string(pool["split_threshold_eff"]))
+        }
+        step = step + 1
+    }
+
+    let _ = farr_free(layer_t)
+
+    let final_count = len(pool["cells"])
+    let summary = cell_pool_summary(pool)
+    print("")
+    print("=== smoke summary ===")
+    print("initial_cells: " + to_string(summary["initial_cells"]))
+    print("final_cells:   " + to_string(summary["final_cells"]))
+    print("max_count:     " + to_string(max_count))
+    print("splits:        " + to_string(summary["splits"]))
+    print("merges:        " + to_string(summary["merges"]))
+
+    // ── invariants ──
+    let i1 = counts[0] == initial_cells
+    let i2 = monotone
+    let i3 = max_count > initial_cells
+    let i4 = max_count <= max_cells
+
+    print("")
+    print("=== invariants ===")
+    print("I1 starts-at-2:        " + (if i1 { "PASS" } else { "FAIL" }))
+    print("I2 monotonic:          " + (if i2 { "PASS" } else { "FAIL (merge fired)" }))
+    print("I3 grew-beyond-2:      " + (if i3 { "PASS" } else { "FAIL (no split fired)" }))
+    print("I4 within-max-cap:     " + (if i4 { "PASS" } else { "FAIL (exceeded max_cells)" }))
+
+    let all_pass = i1 && i3 && i4   // I2 is observational — merge may legitimately fire
+    print("")
+    print(if all_pass { "ALL CORE INVARIANTS PASS" } else { "INVARIANT FAILURE" })
+
+    cell_pool_free(pool)
+}
