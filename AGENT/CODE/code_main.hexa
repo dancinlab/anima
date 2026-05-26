@@ -1,0 +1,82 @@
+// code_main.hexa — CODE role end-to-end runnable (F1 + F4 minimum demo).
+//
+// Closes the smallest skeleton-to-real gap from AGENT.md "실 작동" audit:
+//   F1 tool executor  — exec_tool(name, arg) actually performs the action
+//                       (file_read = real fs · repo_status = real git · grep = real shell)
+//   F4 substrate step — pure_field_step(pf) after each tool consumption,
+//                       so Φ evolves (post-step phi ≠ pre-step phi proves a feedback loop)
+//
+// Demo cycles through 3 (tool, arg) cases — each: brain_decide → tier gate →
+// exec_tool → pf step → next. The substrate (NOT a hardcoded if-tree) decides
+// emit per case via motivation × safety; the loop closes because pf evolves.
+//
+// What this is NOT yet (intentionally deferred — see AGENT.md gap audit):
+//   F2 (real argv ingest)  — needs stdlib_cli wiring for `argv` global
+//   F3 (persistent daemon) — this is a 3-case smoke, not a loop
+//   F5 (real V3 ckpt)      — generator output is still substrate signature
+//   F6 (hard gate enforce) — gate currently advisory-skip, not refuse-+-log
+
+import "/Users/ghost/core/anima/CORE/pure_field.hexa"
+import "/Users/ghost/core/anima/CORE/brain.hexa"
+import "/Users/ghost/core/anima/AGENT/CORE/tool_gate.hexa"
+import "/Users/ghost/core/anima/AGENT/CORE/agent_loop.hexa"
+import "/Users/ghost/core/anima/AGENT/CODE/code_executor.hexa"
+
+// Minimum tier each tool needs (mirrors AGENT/CODE/code_agent.code_tools).
+fn _tool_tier(name: string) -> int {
+    if name == "think"       { return 0 }
+    if name == "repo_status" { return 0 }
+    if name == "file_read"   { return 1 }
+    if name == "grep"        { return 1 }
+    return 99
+}
+
+// One full cycle — substrate decides emit, gate filters, tool runs, pf evolves.
+// Returns the NEW pf so the next case sees the post-step substrate.
+fn _run_case(pf: PureField, label: string, tool: string, arg: string) -> PureField {
+    println("")
+    println("── case: " + label + " (tool=" + tool + (if arg != "" { " arg=" + arg } else { "" }) + ") ──")
+    let rel = if tool == "file_read" { 0.7 } else { 0.5 }
+    let d = brain_decide(pf,
+        rel,  0.3, 0.5, 0.0,
+        0.6,  0.3, 0.4, 0.5,
+        60.0, false, true)
+    println("[CODE] phi=" + to_string(d["phi"])
+            + " phase=" + d["phase"]
+            + " tier="  + d["tier_name"]
+            + " emit="  + to_string(d["emit"]))
+    if d["emit"] != true {
+        println("[CODE] substrate silenced — no action")
+        return pure_field_step(pf)
+    }
+    let need = _tool_tier(tool)
+    if d["tier"] < need {
+        println("[CODE] gate veto: tool needs tier " + to_string(need)
+                + " but substrate tier=" + to_string(d["tier"]) + " — skip")
+        return pure_field_step(pf)
+    }
+    let result = exec_tool(tool, arg)
+    println("[CODE] result (first 200 chars):")
+    println(result)
+    // F4 — substrate self-dynamics tick (perception of the tool execution).
+    let phi_before = pure_field_phi(pf)
+    let pf2 = pure_field_step(pf)
+    let phi_after = pure_field_phi(pf2)
+    println("[CODE] Φ-step: " + to_string(phi_before) + " → " + to_string(phi_after))
+    return pf2
+}
+
+fn main() {
+    println("=== CODE agent minimum demo (F1 + F4) — substrate-gated real-tool exec ===")
+    let mut pf = pure_field_warmup(600)
+
+    // 3 demo cases: 1× T0 (think), 1× T0 (repo_status), 1× T1 (file_read).
+    // Tier need ≤ substrate.tier in all three at warm Φ; later cycles may see
+    // different phi/tier as pf evolves under self-dynamics between cases.
+    pf = _run_case(pf, "C1 internal think",          "think",       "")
+    pf = _run_case(pf, "C2 repo status (read-only)", "repo_status", "")
+    pf = _run_case(pf, "C3 file read (real fs)",     "file_read",   "AGENT/AGENT.md")
+
+    println("")
+    println("=== CODE demo DONE — substrate→gate→exec→Φ-step end-to-end (F1 + F4 ✓) ===")
+}

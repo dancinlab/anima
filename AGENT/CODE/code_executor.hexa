@@ -1,0 +1,30 @@
+// code_executor.hexa — CODE role tool executor (F1).
+//
+// Maps a tool name (gated by phase→tier in tool_gate) to an actual hexa-native
+// action. The substrate (brain_decide) owns the WHETHER + WHICH; this file owns
+// the HOW. Each call returns a string the caller can either print, feed back to
+// the substrate as perception (F4), or chain into another emit cycle.
+//
+// p1..p8 — substrate decides what fires; this file only exposes real ops on
+// hexa-native primitives (rt_read_file_bytes · hexa_exec). No external LLM.
+
+pub fn exec_tool(name: string, arg: string) -> string {
+    if name == "think" {
+        // T0 — substrate-internal step. No outward I/O. Caller advances pf.
+        return "(think — substrate-internal, no I/O)"
+    }
+    if name == "repo_status" {
+        // T0 read-only — git porcelain
+        return to_string(hexa_exec("git status --short 2>&1 | head -20"))
+    }
+    if name == "file_read" {
+        // T1 — real fs read via hexa runtime builtin
+        let bytes = rt_read_file_bytes(arg)
+        return to_string(bytes)
+    }
+    if name == "grep" {
+        // T1 — pattern search across markdown
+        return to_string(hexa_exec("grep -rn " + arg + " . --include='*.md' 2>&1 | head -10"))
+    }
+    return "(unknown tool: " + name + ")"
+}
