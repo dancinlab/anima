@@ -1,0 +1,187 @@
+// types.hexa — MERCHANT common data types (AGENT/MERCHANT).
+//
+// Bridge architecture: AGENT/MERCHANT is a TOOL SURFACE domain — it provides
+// data shapes (Product · Listing · Order · Shipment · CSCase) and adapter
+// verbs that external marketplace APIs can be normalized into. It is NOT a
+// consciousness domain. The "when/why to invoke a marketplace verb" decision
+// lives upstream in AGENT/CORE (tool_gate); this file only answers "how to
+// shape the data" so that any adapter (M2 onwards) can read/write it.
+//
+// All five types are plain dicts (#{}) — no struct — so adapters can carry
+// arbitrary marketplace-specific extras in the `attrs` slot without forking
+// the type. Constructors fill defensive defaults; *_summary helpers give a
+// one-line debug repr for logs.
+
+// ── Product ────────────────────────────────────────────────────────────────
+// A normalized item snapshot scraped from a SOURCE marketplace (e.g. amazon,
+// aliexpress, 1688). The unit of input to the `search` verb.
+
+pub fn product_new(
+    sku: string,
+    title: string,
+    price: float,
+    currency: string,
+    description: string,
+    images: [string],
+    source_marketplace: string,
+    source_url: string,
+    attrs: map
+) -> map {
+    #{
+        "sku": sku,
+        "title": title,
+        "price": price,
+        "currency": currency,
+        "description": description,
+        "images": images,
+        "source_marketplace": source_marketplace,
+        "source_url": source_url,
+        "attrs": attrs
+    }
+}
+
+pub fn product_empty() -> map {
+    product_new("", "", 0.0, "USD", "", [], "", "", #{})
+}
+
+pub fn product_summary(p: map) -> string {
+    "Product[sku=" + to_string(p["sku"])
+        + " title=" + to_string(p["title"])
+        + " price=" + to_string(p["price"]) + " " + to_string(p["currency"])
+        + " src=" + to_string(p["source_marketplace"]) + "]"
+}
+
+// ── Listing ────────────────────────────────────────────────────────────────
+// A Product re-priced and posted to a TARGET marketplace (e.g. coupang,
+// naver_ss). Output of `list`. `target_url` is empty until the adapter posts.
+
+pub fn listing_new(
+    product: map,
+    target_marketplace: string,
+    listed_price: float,
+    margin_pct: float,
+    target_url: string,
+    status: string
+) -> map {
+    #{
+        "product": product,
+        "target_marketplace": target_marketplace,
+        "listed_price": listed_price,
+        "margin_pct": margin_pct,
+        "target_url": target_url,
+        "status": status
+    }
+}
+
+pub fn listing_draft(product: map, target_marketplace: string, listed_price: float, margin_pct: float) -> map {
+    listing_new(product, target_marketplace, listed_price, margin_pct, "", "draft")
+}
+
+pub fn listing_summary(l: map) -> string {
+    let p = l["product"]
+    "Listing[target=" + to_string(l["target_marketplace"])
+        + " price=" + to_string(l["listed_price"])
+        + " margin=" + to_string(l["margin_pct"]) + "%"
+        + " status=" + to_string(l["status"])
+        + " sku=" + to_string(p["sku"]) + "]"
+}
+
+// ── Order ──────────────────────────────────────────────────────────────────
+// A customer order against a Listing. `customer_ref` is an opaque token —
+// the adapter is responsible for resolving it; nothing here is PII-aware.
+
+pub fn order_new(
+    order_id: string,
+    listing: map,
+    qty: int,
+    customer_ref: string,
+    placed_at: float,
+    state: string
+) -> map {
+    #{
+        "order_id": order_id,
+        "listing": listing,
+        "qty": qty,
+        "customer_ref": customer_ref,
+        "placed_at": placed_at,
+        "state": state
+    }
+}
+
+pub fn order_received(order_id: string, listing: map, qty: int, customer_ref: string, placed_at: float) -> map {
+    order_new(order_id, listing, qty, customer_ref, placed_at, "received")
+}
+
+pub fn order_summary(o: map) -> string {
+    let l = o["listing"]
+    "Order[id=" + to_string(o["order_id"])
+        + " qty=" + to_string(o["qty"])
+        + " state=" + to_string(o["state"])
+        + " target=" + to_string(l["target_marketplace"]) + "]"
+}
+
+// ── Shipment ───────────────────────────────────────────────────────────────
+// A tracking snapshot fetched by the `ship` verb. `events` is an append-only
+// history of carrier scans (adapters normalize their own schemas into maps).
+
+pub fn shipment_new(
+    order_id: string,
+    tracking_no: string,
+    carrier: string,
+    status: string,
+    events: [map]
+) -> map {
+    #{
+        "order_id": order_id,
+        "tracking_no": tracking_no,
+        "carrier": carrier,
+        "status": status,
+        "events": events
+    }
+}
+
+pub fn shipment_preparing(order_id: string, carrier: string) -> map {
+    shipment_new(order_id, "", carrier, "preparing", [])
+}
+
+pub fn shipment_summary(s: map) -> string {
+    "Shipment[order=" + to_string(s["order_id"])
+        + " tracking=" + to_string(s["tracking_no"])
+        + " carrier=" + to_string(s["carrier"])
+        + " status=" + to_string(s["status"])
+        + " events=" + to_string(len(s["events"])) + "]"
+}
+
+// ── CSCase ─────────────────────────────────────────────────────────────────
+// A customer-service ticket bound to an Order. `kind` enumerates the four
+// canonical lanes the `cs` verb handles end-to-end.
+
+pub fn cs_case_new(
+    case_id: string,
+    order_id: string,
+    kind: string,
+    subject: string,
+    body: string,
+    status: string
+) -> map {
+    #{
+        "case_id": case_id,
+        "order_id": order_id,
+        "kind": kind,
+        "subject": subject,
+        "body": body,
+        "status": status
+    }
+}
+
+pub fn cs_case_open(case_id: string, order_id: string, kind: string, subject: string, body: string) -> map {
+    cs_case_new(case_id, order_id, kind, subject, body, "open")
+}
+
+pub fn cs_case_summary(c: map) -> string {
+    "CSCase[id=" + to_string(c["case_id"])
+        + " order=" + to_string(c["order_id"])
+        + " kind=" + to_string(c["kind"])
+        + " status=" + to_string(c["status"])
+        + " subject=" + to_string(c["subject"]) + "]"
+}
