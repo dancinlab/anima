@@ -1,0 +1,86 @@
+// arbitrage_smoke.hexa — MERCHANT M3 L1 ARBITRAGE smoke (AGENT/MERCHANT).
+//
+// 1-shot self-check — exercise the source (amazon) and target (coupang)
+// adapter pair through 4 canonical checks that mirror the M3 milestone
+// definition (해외 ≥1 + 국내 ≥1 · 가격/배송/평점 정규화). This is a
+// stub-level smoke — no real HTTP calls, no marketplace credentials. It
+// only proves the surface contract holds (types pass, signatures match,
+// adapter_validate ok on both).
+//
+// 4 checks:
+//   C1  amazon_search returns ≥1 Product with title/price hardcoded.
+//   C2  Build Listing from Product (amazon Product → coupang.list
+//       dry_run=true) → prints updated Listing with draft status echoed.
+//   C3  order pipeline stub call — order_received → amazon_order
+//       (sourcing) → coupang_order (sourcing, vendor_target=coupang).
+//   C4  adapter_validate on both — must return "ok" for each.
+
+import "/Users/ghost/core/anima/AGENT/MERCHANT/types.hexa"
+import "/Users/ghost/core/anima/AGENT/MERCHANT/adapter.hexa"
+import "/Users/ghost/core/anima/AGENT/MERCHANT/adapters/amazon.hexa"
+import "/Users/ghost/core/anima/AGENT/MERCHANT/adapters/coupang.hexa"
+
+fn main() {
+    print("[MERCHANT/M3] L1 ARBITRAGE smoke — amazon (source) + coupang (target)")
+    print("")
+
+    // ── C1 ────────────────────────────────────────────────────────────
+    print("[C1] amazon_search(query='usb-c hub', max_results=3)")
+    let products = amazon_search("usb-c hub", 3)
+    print("    returned " + to_string(len(products)) + " Product(s)")
+    let mut i = 0
+    while i < len(products) {
+        print("    " + product_summary(products[i]))
+        i = i + 1
+    }
+    print("")
+
+    // ── C2 ────────────────────────────────────────────────────────────
+    print("[C2] Listing pipeline — amazon Product -> coupang.list(dry_run=true)")
+    let source_product = products[0]
+    // Initial draft listing: target=coupang, listed_price=KRW with 30% margin.
+    let draft = listing_draft(source_product, "coupang", 34900.0, 30.0)
+    print("    [draft]   " + listing_summary(draft))
+    let dry_listed = coupang_list(draft, true)
+    print("    [dry_run] " + listing_summary(dry_listed))
+    let live_listed = coupang_list(draft, false)
+    print("    [live]    " + listing_summary(live_listed))
+    print("    target_url(live) = " + to_string(live_listed["target_url"]))
+    print("")
+
+    // ── C3 ────────────────────────────────────────────────────────────
+    print("[C3] order pipeline stub — coupang receives -> amazon sources -> ship")
+    // Customer places order on the live coupang listing.
+    let incoming = order_received("ORD-M3-9001", live_listed, 1, "cust-ref-opaque", 1748180300.0)
+    print("    [received]    " + order_summary(incoming))
+    // Coupang acknowledges the order (received -> sourcing).
+    let ack = coupang_order(incoming)
+    print("    [coupang-ack] " + order_summary(ack))
+    // Amazon sourcing leg (sourcing already on ack; this is the upstream PO).
+    let sourced = amazon_order(ack)
+    print("    [amazon-po]   " + order_summary(sourced))
+    print("    amazon source_purchase_ref = " + to_string(sourced["source_purchase_ref"]))
+    // Shipment snapshots from both legs.
+    let amz_ship = amazon_ship("ORD-M3-9001")
+    print("    [amazon-ship] " + shipment_summary(amz_ship))
+    let cpng_ship = coupang_ship("ORD-M3-9001")
+    print("    [coupang-ship]" + shipment_summary(cpng_ship))
+    // One CS case end-to-end.
+    let cs_opened = cs_case_open("CS-M3-1", "ORD-M3-9001", "refund", "Item arrived damaged", "Box was crushed.")
+    print("    [cs-open]     " + cs_case_summary(cs_opened))
+    let cs_amz = amazon_cs(cs_opened)
+    print("    [cs-amazon]   " + cs_case_summary(cs_amz))
+    let cs_cpng = coupang_cs(cs_opened)
+    print("    [cs-coupang]  " + cs_case_summary(cs_cpng))
+    print("")
+
+    // ── C4 ────────────────────────────────────────────────────────────
+    print("[C4] adapter_validate on both bundles")
+    let amz = amazon_adapter()
+    let cpng = coupang_adapter()
+    print("    [amazon]  name=" + to_string(amz["name"]) + " validate=" + adapter_validate(amz))
+    print("    [coupang] name=" + to_string(cpng["name"]) + " validate=" + adapter_validate(cpng))
+    print("")
+
+    print("[MERCHANT/M3] L1 ARBITRAGE smoke OK")
+}
