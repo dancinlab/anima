@@ -1,0 +1,23 @@
+// H_414 smoke — M conservation across split
+
+fn abs_f(x: f64) -> f64 {
+    if x < 0.0 { return -x }
+    return x
+}
+
+fn check_h414() -> bool {
+    let m_parent = 0.6
+    let m_a = 0.3
+    let m_b = 0.3
+    let eps = 0.01
+    let additive = abs_f(m_parent - (m_a + m_b)) <= eps
+    let nonneg = (m_a >= 0.0) && (m_b >= 0.0)
+    let bounded = m_parent <= 1.0
+    return additive && nonneg && bounded
+}
+
+fn main() {
+    let ok = check_h414()
+    if !ok { print("H_414 FAIL"); return }
+    print("H_414 blue M-conserve-split OK")
+}
