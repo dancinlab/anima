@@ -1,0 +1,24 @@
+// H_484 smoke — APOPTOSIS baseline
+
+fn apoptosis_triggered(phi: f64, theta_apo: f64) -> bool {
+    return phi < theta_apo
+}
+
+fn n_after_apoptosis(n_before: i64) -> i64 {
+    if n_before < 1 { return 0 }
+    return n_before - 1
+}
+
+fn check_h484() -> bool {
+    let theta = 0.1
+    let low = apoptosis_triggered(0.05, theta)
+    let high = !apoptosis_triggered(0.5, theta)
+    let dec = n_after_apoptosis(10) == 9
+    return low && high && dec
+}
+
+fn main() {
+    let ok = check_h484()
+    if !ok { print("H_484 FAIL"); return }
+    print("H_484 blue APOPTOSIS OK")
+}
