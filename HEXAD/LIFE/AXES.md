@@ -101,7 +101,6 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 
 | slug | hypothesis | falsifier | tag |
 |------|------------|-----------|-----|
-| `kolmogorov-complexity-Φ` | K-complexity (compressed length proxy) ↔ Φ monotone | inverted | 🟢 |
 | `formal-language-chomsky-hierarchy` | regular/context-free/recursive language Φ ordering | mixed | 🟢 |
 | `network-topology-scale-free` | scale-free Φ > random Erdős-Rényi (matched density) | random ≥ scale-free | 🟢 |
 | `noise-1f-pink-Φ-peak` | H_209 sister (already in-flight) — pink > white in Φ | flat | (covered) |
