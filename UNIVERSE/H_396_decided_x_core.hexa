@@ -1,0 +1,20 @@
+// H_396 smoke — θ from M
+
+fn theta(m_norm: f64, theta_base: f64) -> f64 {
+    return theta_base * (1.0 - m_norm)
+}
+
+fn check_h396() -> bool {
+    let tb = 0.5
+    let lo_m = theta(0.1, tb)  // 0.45
+    let hi_m = theta(0.9, tb)  // 0.05
+    let mono_inv = lo_m > hi_m
+    let bounded = (hi_m >= 0.0) && (lo_m <= tb)
+    return mono_inv && bounded
+}
+
+fn main() {
+    let ok = check_h396()
+    if !ok { print("H_396 FAIL"); return }
+    print("H_396 blue θ-from-M OK")
+}
