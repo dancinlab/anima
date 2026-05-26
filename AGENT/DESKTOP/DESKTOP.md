@@ -7,7 +7,7 @@
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
 - [x] M1 native OS access — `AGENT/DESKTOP/{native_ax.hexa,native_ax_smoke.hexa,NATIVE_AX.md}` 9 pub fn (app list/focus/launch/quit · window list/focus · screen size · permissions · summary) · osascript/open/screencapture verified · cliclick absent (M3 CGEvent 직접) · hexa parse 2/2 OK (PR #640 ec64a82c)
 - [x] M2 screen extract — `AGENT/DESKTOP/{screen_extract.hexa,screen_extract_smoke.hexa,SCREEN_EXTRACT.md}` 6 pub fn (screenshot · screenshot_window · tree_dump · text_at · ocr · summary) · screencapture + System Events AXAPI + Vision.framework JXA · OCR verified (VN_OK on Sequoia) · hexa parse 2/2 OK
-- [ ] M3 action layer — mouse click/drag · keyboard type · scroll · CGEvent based action 함수 (위험도별 분류 라벨, 게이팅은 AGENT/CORE 가 처리)
+- [x] M3 action layer — `AGENT/DESKTOP/{action.hexa,action_smoke.hexa,ACTION.md}` 7 pub fn (click · double_click · right_click · drag · type · key · scroll) + `action_layer_summary` · osascript System Events + JXA CGEvent bridge · risk 라벨 (soft/hard, cmd/ctrl 자동 hard 승격) · ANIMA_DESKTOP_DRYRUN=1 dry-run · hexa parse 2/2 OK
 - [ ] M4 app + window ops — open/close/focus app (NSWorkspace) · arrange windows · multi-app coordination 함수
 - [ ] M5 task primitives — 도구 합성 매크로 (open + type + read 같은 기본 패턴) · 재사용 가능한 building block
 - [ ] M6 integration smoke — Calculator round-trip (open · type "1+1" · read result = "2") 검증 · 다른 앱 1개 추가 검증
