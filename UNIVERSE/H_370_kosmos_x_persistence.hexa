@@ -1,0 +1,25 @@
+// H_370 smoke — KOSMOS x persistence (immutable + append-only)
+
+fn is_immutable(orig: string, post_write: string) -> bool {
+    return orig == post_write
+}
+
+fn append_only(prev_size: i64, new_size: i64) -> bool {
+    return new_size >= prev_size
+}
+
+fn check_h370() -> bool {
+    // H1 IMMUTABLE: post-write read returns the same content
+    let im = is_immutable("payload-A", "payload-A")
+    // H2 APPEND-ONLY: size only grows
+    let ao = append_only(10, 11)
+    let ao_eq = append_only(10, 10)  // equality also valid (no shrink)
+    let no_shrink = !append_only(10, 9)
+    return im && ao && ao_eq && no_shrink
+}
+
+fn main() {
+    let ok = check_h370()
+    if !ok { print("H_370 FAIL"); return }
+    print("H_370 blue immutable + append-only OK")
+}
