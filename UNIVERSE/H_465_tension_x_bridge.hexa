@@ -1,0 +1,17 @@
+// H_465 smoke — sender-target match gate
+
+fn deliver_tension(sender_id: string, target: string) -> bool {
+    return sender_id == target
+}
+
+fn check_h465() -> bool {
+    let h1 = deliver_tension("anima-A", "anima-A")
+    let h2 = !deliver_tension("anima-A", "anima-B")
+    return h1 && h2
+}
+
+fn main() {
+    let ok = check_h465()
+    if !ok { print("H_465 FAIL"); return }
+    print("H_465 blue sender-match gate OK")
+}
