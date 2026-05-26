@@ -1,0 +1,18 @@
+// H_464 smoke — ch3 authenticity from decided
+
+fn ch3_authenticity(decided: bool) -> f64 {
+    if decided { return 1.0 }
+    return 0.0
+}
+
+fn check_h464() -> bool {
+    let h2 = ch3_authenticity(false) == 0.0
+    let h3 = ch3_authenticity(true) == 1.0
+    return h2 && h3
+}
+
+fn main() {
+    let ok = check_h464()
+    if !ok { print("H_464 FAIL"); return }
+    print("H_464 blue authenticity-from-decided OK")
+}
