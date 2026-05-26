@@ -1,0 +1,22 @@
+================================================================
+  H_291 — Does cooperation EMERGE from spatial structure? (Nowak spatial PD)
+  (L=10 toroidal · 8-Moore imitate-best · ~40% D init · NO RNG · NO ethics)
+================================================================
+  b=1.1  : spatial C=1.0   well-mixed C=7.89867e-09
+  b=1.5  : spatial C=0.0   well-mixed C=9.07485e-36
+  b=2.2  : spatial C=0.0   well-mixed C=4.91536e-69
+  --
+  [PASS] F291.1a WELL-MIXED b=1.1 cooperation -> ~0 (<0.01)
+  [PASS] F291.1b WELL-MIXED b=1.5 cooperation -> ~0 (<0.01)
+  [PASS] F291.1c WELL-MIXED b=2.2 cooperation -> ~0 (<0.01)
+  F291.2: spatial C@b=1.1=1.0 (>0.1?) vs well-mixed@b=1.1=7.89867e-09 (~0)
+  [PASS] F291.2 SPATIAL-RESCUE: lattice C > 0.1 at b=1.1 while well-mixed -> ~0
+  [PASS] F291.3 TEMPTATION-MONOTONE: C(1.1) >= C(1.5) >= C(2.2)
+  [PASS] F291.4 BOUND: all fractions in [0,1]
+  [PASS] F291.5 DETERMINISM: spatial b=1.5 re-run identical
+================================================================
+  RESULT: 7 PASS / 0 FAIL
+  VERDICT: H1 SUPPORTED — a cooperative attractor EMERGES from spatial structure
+           alone. Well-mixed -> defection; lattice -> cooperation persists. Ethics
+           (cooperation) emerges from CELLS + STRUCTURE, not injection (Principle #6).
+================================================================
