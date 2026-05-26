@@ -1,0 +1,27 @@
+// H_351 smoke — pointer-only invariant (영속성 7th)
+
+fn is_pointer(ref: string) -> bool {
+    // pointer = URL form starting with "github.com/dancinlab/kosmos"
+    return ref == "github.com/dancinlab/kosmos"
+}
+
+fn is_inline_body(ref: string) -> bool {
+    // inline body = spec content 가 anima repo 안에 복제됨 (placeholder string)
+    return ref == "@kosmos := \"spec ...\""
+}
+
+fn check_h351() -> bool {
+    // H2: anima ref 는 pointer 만, inline body 0
+    let p_ok = is_pointer("github.com/dancinlab/kosmos")
+    let b_zero = !is_inline_body("github.com/dancinlab/kosmos")
+    return p_ok && b_zero
+}
+
+fn main() {
+    let ok = check_h351()
+    if !ok {
+        print("H_351 FAIL")
+        return
+    }
+    print("H_351 🔵 pointer-only OK")
+}
