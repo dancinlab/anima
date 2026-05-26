@@ -1,0 +1,25 @@
+// H_458 smoke — spike-driven anima emit
+
+fn anima_emit(spike: bool, decided: bool) -> i64 {
+    if spike && decided { return 1 }
+    return 0
+}
+
+fn spike_lane(spike: bool) -> string {
+    if spike { return "akida" }
+    return "anima"
+}
+
+fn check_h458() -> bool {
+    let h1 = anima_emit(true, true) == 1
+    let no_spike = anima_emit(false, true) == 0
+    let no_dec = anima_emit(true, false) == 0
+    let h2 = spike_lane(true) == "akida"
+    return h1 && no_spike && no_dec && h2
+}
+
+fn main() {
+    let ok = check_h458()
+    if !ok { print("H_458 FAIL"); return }
+    print("H_458 blue spike-driven emit OK")
+}
