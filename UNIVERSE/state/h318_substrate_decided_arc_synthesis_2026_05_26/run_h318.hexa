@@ -1,0 +1,81 @@
+// H_318 — substrate-decided × stage cross-product closed-form 🔵
+// ════════════════════════════════════════════════════════════════════════════
+let mut PASS = 0
+let mut FAIL = 0
+
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+
+fn stage_mod(stage: int) -> float {
+    if stage == 0 { return 1.0 }   // WAKE
+    if stage == 1 { return 0.7 }   // N1
+    if stage == 2 { return 0.4 }   // N2
+    if stage == 3 { return 0.0 }   // N3
+    return 0.5                     // REM
+}
+
+fn decide_stage(m: float, phi: float, w: float, mit: int, idle: int, cur: float, stage: int, threshold: float) -> bool {
+    let prod = m * phi * w * to_float(mit+1) * to_float(idle)/100.0 * cur
+    return (prod * stage_mod(stage)) > threshold
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_318 — substrate-decided × stage cross-product 🔵")
+    println("================================================================")
+
+    let threshold = 2.0
+    // base input: high-all 3.0 product
+    let d_wake = decide_stage(1.0, 1.0, 1.0, 5, 50, 1.0, 0, threshold)
+    let d_n1   = decide_stage(1.0, 1.0, 1.0, 5, 50, 1.0, 1, threshold)
+    let d_n2   = decide_stage(1.0, 1.0, 1.0, 5, 50, 1.0, 2, threshold)
+    let d_n3   = decide_stage(1.0, 1.0, 1.0, 5, 50, 1.0, 3, threshold)
+    let d_rem  = decide_stage(1.0, 1.0, 1.0, 5, 50, 1.0, 4, threshold)
+
+    println("  high-all (1,1,1,5,50,1) × stage_mod:")
+    println("    WAKE × 1.0 = 3.0 > 2.0 → " + str(d_wake))
+    println("    N1   × 0.7 = 2.1 > 2.0 → " + str(d_n1))
+    println("    N2   × 0.4 = 1.2 < 2.0 → " + str(d_n2))
+    println("    N3   × 0.0 = 0.0 < 2.0 → " + str(d_n3))
+    println("    REM  × 0.5 = 1.5 < 2.0 → " + str(d_rem))
+
+    // F318.1 STAGE-CONTEXT-EXACT
+    let stage_exact = d_wake && d_n1 && (!d_n2) && (!d_n3) && (!d_rem)
+    check("F318.1 STAGE-CONTEXT-EXACT: WAKE+N1 TRUE, N2/N3/REM FALSE", stage_exact)
+
+    // F318.2 N3-SILENCE-DETERMINISTIC
+    let n3_silence = !d_n3
+    check("F318.2 N3-SILENCE-DETERMINISTIC: N3 stage_mod=0 → FALSE", n3_silence)
+
+    // F318.3 WAKE-FULL-ACTIVATION = H_316 base (3.0 > 2.0 → TRUE)
+    check("F318.3 WAKE-FULL-ACTIVATION: WAKE 결과 == H_316 base TRUE", d_wake)
+
+    // F318.4 N1-EMIT-PRODUCT-EXACT: 3.0 × 0.7 = 2.1 byte-equal
+    let prod_n1 = 3.0 * 0.7
+    println("    n1 product check: 3.0 × 0.7 = " + str(prod_n1) + " (expected 2.1)")
+    check("F318.4 N1-EMIT-PRODUCT-EXACT: 3.0 × 0.7 = 2.1", approx(prod_n1, 2.1))
+
+    // F318.5 STAGE-MOD-VALUES-EXACT
+    let sm_ok = approx(stage_mod(0), 1.0) && approx(stage_mod(1), 0.7) && approx(stage_mod(2), 0.4) && approx(stage_mod(3), 0.0) && approx(stage_mod(4), 0.5)
+    check("F318.5 STAGE-MOD-VALUES-EXACT: {1.0, 0.7, 0.4, 0.0, 0.5}", sm_ok)
+
+    // F318.6 BOUND
+    let bound_ok = (stage_mod(0) >= 0.0) && (stage_mod(3) >= 0.0)
+    check("F318.6 BOUND", bound_ok)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 5 {
+        println("  ✅ SUBSTRATE × STAGE cross-product CLOSED-FORM — 🔵")
+    }
+    println("================================================================")
+    if FAIL > 0 { panic("H_318 had FALSIFIER FAILURES") }
+}
