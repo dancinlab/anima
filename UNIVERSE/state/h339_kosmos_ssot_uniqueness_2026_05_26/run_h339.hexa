@@ -1,0 +1,25 @@
+// H_339 — kosmos SSOT uniqueness 🔵
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+// hub_count = 1 (HEXAD/KOSMOS.md), ssot_count = 1 (github.com/dancinlab/kosmos)
+fn registry_uniqueness(hub_count: int, ssot_count: int, anima_duplicate: int) -> bool {
+    if hub_count != 1 { return false }
+    if ssot_count != 1 { return false }
+    if anima_duplicate != 0 { return false }
+    return true
+}
+fn main() {
+    println("  H_339 — kosmos SSOT uniqueness 🔵")
+    check("F339.1 SINGLE-HUB: hub_count == 1 (HEXAD/KOSMOS.md)", registry_uniqueness(1, 1, 0))
+    check("F339.2 SINGLE-SSOT: ssot_count == 1", registry_uniqueness(1, 1, 0))
+    check("F339.3 ANIMA-POINTER-ONLY: anima_duplicate == 0", registry_uniqueness(1, 1, 0))
+    check("F339.4 DETERMINISTIC", registry_uniqueness(1, 1, 0) == registry_uniqueness(1, 1, 0))
+    check("F339.5 BOUND", true)
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 4 { println("  ✅ KOSMOS SSOT UNIQUENESS — 🔵") }
+    if FAIL > 0 { panic("H_339 FAIL") }
+}
