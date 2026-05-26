@@ -1,0 +1,237 @@
+// backtest.hexa — Paper backtest wrapper (M3 closure)
+// Bridge architecture: tool surface only — no consciousness framing.
+//
+// Consumes M2 types (Symbol/Quote/Position/Order/Trade/Portfolio) and runs
+// a strategy over a candle series; produces metrics + a trade log.
+//
+// Surface:
+//   trading_backtest_config(symbol, initial_balance, fee_bps, slippage_bps)
+//   trading_backtest_run(config, candles, signal_fn)
+//   trading_backtest_metrics(trades, equity_curve)
+//   trading_backtest_apply_signal(portfolio, signal, candle, cfg)
+//   trading_backtest_summary(result)
+
+import "/Users/ghost/core/anima/AGENT/TRADING/types.hexa"
+
+// ---------------------------------------------------------------
+// 1. config — paper backtest knobs
+//   symbol: Symbol Map (M2)
+//   initial_balance: float (quote currency)
+//   fee_bps: int (basis points, 10 bps = 0.1%)
+//   slippage_bps: int (basis points)
+// ---------------------------------------------------------------
+pub fn trading_backtest_config(symbol, initial_balance, fee_bps, slippage_bps) {
+    return #{
+        "symbol": symbol,
+        "initial_balance": initial_balance,
+        "fee_bps": fee_bps,
+        "slippage_bps": slippage_bps,
+        "kind": "BacktestConfig",
+    }
+}
+
+// ---------------------------------------------------------------
+// 2. apply_signal — execute a single buy/sell/hold signal on a candle
+//   signal: "buy" · "sell" · "hold"
+//   candle: Map with "close" · "ts"
+//   returns: { trade: Trade or void, new_portfolio: Portfolio }
+// ---------------------------------------------------------------
+pub fn trading_backtest_apply_signal(portfolio, signal, candle, cfg) {
+    let close = candle["close"]
+    let ts = candle["ts"]
+    let fee_bps = cfg["fee_bps"]
+    let slip_bps = cfg["slippage_bps"]
+    let bps_div = 10000.0
+
+    if signal == "hold" {
+        return #{
+            "trade": "",
+            "portfolio": portfolio,
+        }
+    }
+
+    if signal == "buy" {
+        // require flat position to enter long
+        let n_open = portfolio["n_positions"]
+        if n_open > 0 {
+            return #{
+                "trade": "",
+                "portfolio": portfolio,
+            }
+        }
+        // size = full cash / close (single-position single-symbol paper)
+        let cash = portfolio["cash_balance"]
+        let slip_price = close * (1.0 + slip_bps / bps_div)
+        let qty = cash / slip_price
+        let fee = cash * fee_bps / bps_div
+        let new_cash = 0.0
+        let new_pos = trading_position(cfg["symbol"], "long", slip_price, qty, close)
+        let ord = trading_order(cfg["symbol"], "buy", "market", qty, slip_price)
+        let trd = trading_trade(ord, slip_price, qty, fee, ts)
+        let new_port = trading_portfolio(new_cash, [new_pos], portfolio["realized_pnl"] - fee)
+        return #{
+            "trade": trd,
+            "portfolio": new_port,
+        }
+    }
+
+    if signal == "sell" {
+        // require an open long
+        let n_open = portfolio["n_positions"]
+        if n_open == 0 {
+            return #{
+                "trade": "",
+                "portfolio": portfolio,
+            }
+        }
+        let pos = portfolio["positions"][0]
+        let qty = pos["quantity"]
+        let entry = pos["entry_price"]
+        let slip_price = close * (1.0 - slip_bps / bps_div)
+        let gross = qty * slip_price
+        let fee = gross * fee_bps / bps_div
+        let realized = (slip_price - entry) * qty - fee
+        let new_cash = portfolio["cash_balance"] + gross - fee
+        let ord = trading_order(cfg["symbol"], "sell", "market", qty, slip_price)
+        let trd = trading_trade(ord, slip_price, qty, fee, ts)
+        let new_port = trading_portfolio(new_cash, [], portfolio["realized_pnl"] + realized)
+        return #{
+            "trade": trd,
+            "portfolio": new_port,
+        }
+    }
+
+    return #{
+        "trade": "",
+        "portfolio": portfolio,
+    }
+}
+
+// ---------------------------------------------------------------
+// 3. metrics — compute backtest summary metrics
+//   trades: list of Trade
+//   equity_curve: list of float
+//   returns: { n_trades, total_return_pct, max_drawdown_pct, win_rate }
+// ---------------------------------------------------------------
+pub fn trading_backtest_metrics(trades, equity_curve) {
+    let n = equity_curve.len()
+    if n == 0 {
+        return #{
+            "n_trades": 0,
+            "total_return_pct": 0.0,
+            "max_drawdown_pct": 0.0,
+            "win_rate": 0.0,
+            "kind": "BacktestMetrics",
+        }
+    }
+
+    let initial = equity_curve[0]
+    let final_eq = equity_curve[n - 1]
+    let total_return_pct = (final_eq - initial) / initial * 100.0
+
+    // max drawdown
+    let peak = initial
+    let max_dd = 0.0
+    let i = 0
+    while i < n {
+        let eq = equity_curve[i]
+        if eq > peak {
+            peak = eq
+        }
+        let dd = (peak - eq) / peak * 100.0
+        if dd > max_dd {
+            max_dd = dd
+        }
+        i = i + 1
+    }
+
+    // win rate: trades whose sell beat its buy (paired) — naive paired scan
+    let n_trades = trades.len()
+    let wins = 0
+    let pairs = 0
+    let j = 0
+    while j + 1 < n_trades {
+        let buy_trd = trades[j]
+        let sell_trd = trades[j + 1]
+        let buy_side = buy_trd["order"]["side"]
+        let sell_side = sell_trd["order"]["side"]
+        if buy_side == "buy" {
+            if sell_side == "sell" {
+                pairs = pairs + 1
+                if sell_trd["fill_price"] > buy_trd["fill_price"] {
+                    wins = wins + 1
+                }
+                j = j + 2
+                continue
+            }
+        }
+        j = j + 1
+    }
+    let win_rate = 0.0
+    if pairs > 0 {
+        win_rate = wins / pairs * 1.0
+    }
+
+    return #{
+        "n_trades": n_trades,
+        "n_pairs": pairs,
+        "total_return_pct": total_return_pct,
+        "max_drawdown_pct": max_dd,
+        "win_rate": win_rate,
+        "initial_equity": initial,
+        "final_equity": final_eq,
+        "kind": "BacktestMetrics",
+    }
+}
+
+// ---------------------------------------------------------------
+// 4. run — execute a backtest over a candle series
+//   signals: list of strings ("buy"/"sell"/"hold"), same length as candles
+//   returns: { trades, equity_curve, metrics, final_portfolio }
+// ---------------------------------------------------------------
+pub fn trading_backtest_run(cfg, candles, signals) {
+    let n = candles.len()
+    let port = trading_portfolio(cfg["initial_balance"], [], 0.0)
+    let trades = []
+    let equity_curve = []
+
+    let i = 0
+    while i < n {
+        let candle = candles[i]
+        let sig = signals[i]
+        let step = trading_backtest_apply_signal(port, sig, candle, cfg)
+        port = step["portfolio"]
+        let t = step["trade"]
+        if type_of(t) == "map" {
+            trades = trades + [t]
+        }
+        // mark-to-market: update current_price on any open position for equity
+        let positions = port["positions"]
+        let np = positions.len()
+        if np > 0 {
+            let p = positions[0]
+            let mtm_pos = trading_position(p["symbol"], p["side"], p["entry_price"], p["quantity"], candle["close"])
+            port = trading_portfolio(port["cash_balance"], [mtm_pos], port["realized_pnl"])
+        }
+        equity_curve = equity_curve + [port["total_equity"]]
+        i = i + 1
+    }
+
+    let metrics = trading_backtest_metrics(trades, equity_curve)
+
+    return #{
+        "trades": trades,
+        "equity_curve": equity_curve,
+        "metrics": metrics,
+        "final_portfolio": port,
+        "kind": "BacktestResult",
+    }
+}
+
+// ---------------------------------------------------------------
+// 5. summary — one-line backtest result
+// ---------------------------------------------------------------
+pub fn trading_backtest_summary(result) {
+    let m = result["metrics"]
+    return "TRADING backtest: " + str(m["n_trades"]) + " trades · return " + str(m["total_return_pct"]) + "% · max_dd " + str(m["max_drawdown_pct"]) + "% · win_rate " + str(m["win_rate"])
+}

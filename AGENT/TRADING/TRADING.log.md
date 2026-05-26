@@ -2,6 +2,18 @@
 
 Append-only history sister of `TRADING.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T02:40:00Z — M3 scan + backtest closure
+
+- [x] `AGENT/TRADING/backtest.hexa` 작성 — paper backtest wrapper 5 pub fn (`trading_backtest_config` · `_apply_signal` · `_metrics` · `_run` · `_summary`)
+- [x] M2 types 소비 — Symbol/Quote/Position/Order/Trade/Portfolio 모두 surface 에 통합
+- [x] fee_bps + slippage_bps 모델링 (basis points 단위 · realistic broker cost)
+- [x] mark-to-market equity curve + max drawdown + win rate metrics
+- [x] `AGENT/TRADING/backtest_smoke.hexa` 5-case verify — C1 config · C2 apply_signal buy · C3 apply_signal sell · C4 metrics on synthetic equity curve · C5 full 5-candle run
+- [x] `hexa parse` 2/2 OK
+- [x] TRADING.md M3 line `[ ] → [x]` (2/6 → 3/6)
+- [ ] scanner.hexa stub body 실제 구현 (carry M3.5 또는 M6 통합 smoke 시점)
+- [ ] M4 paper_trade — broker.hexa stub + simulated portfolio (다음 마일스톤)
+
 ## 2026-05-27T02:25:00Z — M2 데이터 타입 closure
 
 - [x] `AGENT/TRADING/types.hexa` 작성 — 6 canonical 타입 (Symbol · Quote · Position · Order · Trade · Portfolio) + 2 helper (`trading_type_kind` · `trading_type_summary`) = 8 pub fn
