@@ -1,0 +1,30 @@
+// H_365 smoke — AKIDA × MITOSIS (spike → split, conservation)
+
+fn split_weights(w_parent: f64) -> f64 {
+    // split into 2 equal children
+    return w_parent / 2.0
+}
+
+fn n_cells_after_split(n_before: i64) -> i64 {
+    return n_before + 1
+}
+
+fn check_h365() -> bool {
+    let w = 1.0
+    let w_child = split_weights(w)
+    // H2 CONSERVATION-PRESERVED
+    let conserve = (w_child + w_child) == w
+    // H3 MONOTONE-N
+    let n = n_cells_after_split(8)
+    let mono = n > 8
+    return conserve && mono
+}
+
+fn main() {
+    let ok = check_h365()
+    if !ok {
+        print("H_365 FAIL")
+        return
+    }
+    print("H_365 🔵 AKIDA × MITOSIS OK")
+}
