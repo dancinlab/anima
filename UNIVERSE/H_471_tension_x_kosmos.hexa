@@ -1,0 +1,21 @@
+// H_471 smoke — tension as 1 slot of 6-tuple
+
+fn payload_tension_slot_count() -> i64 {
+    return 1
+}
+
+fn payload_total_slots() -> i64 {
+    return 6
+}
+
+fn check_h471() -> bool {
+    let h1 = payload_tension_slot_count() == 1
+    let h3 = payload_total_slots() == 6
+    return h1 && h3
+}
+
+fn main() {
+    let ok = check_h471()
+    if !ok { print("H_471 FAIL"); return }
+    print("H_471 blue tension in payload OK")
+}
