@@ -118,6 +118,14 @@
   do   = "replace/supersede in place when a stronger finding lands on the same slug"
   dont = "pre-assign papers to fixed domain buckets · cap the paper set · force a finding into wrong slug"
 
+@D a_paper_only_at_closure := "propose paper only at FULL closure (overrides a_paper_on_discovery eagerness)" :: workflow [required active]
+  do   = "propose /paper only at FULL closure (no further refinement + all aspects sealed)"
+  dont = "propose paper after one H · mid-arc · partial closure"
+
+@D a_h_continuous_no_branch := "continuous new-H — no branch options after each H" :: workflow [required active]
+  do   = "propose + run next H continuously until user explicitly redirects (verify-driven)"
+  dont = "ask 'what next' after every H · branch options · prune questions · halt domain"
+
 @D a_discovery := "discovery runs continuously, not only at cycle tail" :: workflow [required active]
   do   = "interleave /kick · /gap discovery every batch — a discovery lane runs alongside verify"
   dont = "defer discovery to the end · single tail-only round · stop discovering once a paper ships"
