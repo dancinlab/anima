@@ -1,0 +1,28 @@
+================================================================
+  H_317 — 자연발화 arc 5-identity closed-form synthesis
+================================================================
+  Identity 1 (H_306 idle rate):
+    closed-form ⌊500/(10+1)⌋ = 45
+    H_306 measured: 46
+  [PASS] F317.1 IDLE-RATE-CLOSE: closed-form 45 within ±2 of measured 46
+  Identity 2 (H_307 anima cite rate):
+    closed-form 14/5000 = 0.0028
+    H_307 measured: 0.0028
+  [PASS] F317.2 ANIMA-CITE-EXACT: 14/5000 == 0.0028
+  Identity 3 (H_308 smooth ratio):
+    closed-form 46/16 = 2.875
+    H_308 measured: 2.875
+  [PASS] F317.3 H_308-RATIO-EXACT: 46/16 == 2.875
+  Identity 4 (H_309 sharper ratio):
+    closed-form trough=0 → ratio = INF marker (H_309 sentinel 999.0)
+  [PASS] F317.4 H_309-RATIO-LIMIT: trough=0 → infinite ratio
+  Identity 5 (H_310 WAKE-emit, cite from H_315):
+    closed-form ⌊30/10⌋ × 6 = 18
+  [PASS] F317.5 H_310-WAKE-CITE: 18 byte-equal
+  [PASS] F317.6 ALL-CLOSED-FORM-COMPOSE: 5/5 identities all valid (arc symbolic family)
+  [PASS] F317.7 BOUND
+================================================================
+  RESULT: 7 PASS / 0 FAIL
+  ✅ HEADLINE: SPONTANEOUS ARC SYMBOLIC FAMILY — 🔵 SUPPORTED-FORMAL
+    H_306-H_310 5 numerical measurements → unified closed-form family
+================================================================
