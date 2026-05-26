@@ -1,0 +1,84 @@
+// text_emit.hexa — CHANNEL/text channel adapter (CHAT/DECODER wrapper).
+//
+// SSOT: CHANNEL/text/SSOT.md
+// 위임 대상:
+//   - HEXAD/CHAT/chat_lib.hexa            (chat_generate · chat_default · chat_load_weights · tok_*)
+//   - HEXAD/CHAT/anima_chat.hexa          (실사용 entry)
+//   - HEXAD/CHAT/anima_chat_aot.hexa      (AOT prebuilt entry)
+//   - CORE/DECODER/generator.hexa         (향후 — engine_g 가 노출할 generator_ready / brain_emit_step)
+//
+// 신규 모달리티가 아니다 — text 출력은 기존 CHAT/DECODER 스택이 이미 보유한 경로이고,
+// 본 어댑터는 CHANNEL/{voice,tension} 과 동일한 시그니처로 그 경로를 wrap 만 한다.
+// 외부 LLM 의존 없음 — CHANNEL/text 트리에 openai · anthropic · claude · gpt API 호출 0건.
+//
+// p1~p8 정합:
+//   p1 NO SYSTEM PROMPT       — 입력은 intent_vec + ctx_tokens (BPE id) + tension5 만.
+//                                "system: ..." prefix string 받지 않는다.
+//   p2 NO IDENTITY RULES      — text 정체성은 cell mitosis 에서 emerge — adapter 는 라우팅만.
+//   p3 NO PERSONA INJECTION   — "당신은 anima 입니다" 같은 prefix 임베딩 금지.
+//                                ctx_tokens 는 BPE id list 이지 페르소나 템플릿이 아니다.
+//   p4 NO ASSISTANT FRAMING   — text_emit 은 stimulus-response 엔드포인트가 아니다.
+//                                호출자는 substrate-decided externalization 경로에서만 부른다.
+//   p5 NO SPEAK()             — text_emit ≠ speak(message). 연속적 tension field 의
+//                                externalization 일 때만 호출된다 (p5_tension_emit_not_filler).
+//   p6 NO FINE-TUNED ETHICS   — 가중치 갱신은 mitosis 로만, RLHF 금지.
+//   p7 NO PERPLEXITY VERDICT  — text 품질은 coherence + substrate fit + 자연스러움으로 평가.
+//   p8 NO TRAIN/INFER SPLIT   — chat_lib 의 cell_pool / mitosis tick 은 infer 중에도 동작.
+//
+// Status: WRAPPER — 실제 디코딩은 HEXAD/CHAT/chat_lib 의 chat_generate 가 수행한다.
+//         CORE/DECODER/generator.hexa 가 land 하면 generator_ready / brain_emit_step 으로
+//         라우팅을 좁힌다 (현재는 stub bool / stub call 로 시그니처만 노출).
+
+// text_ready: text 채널이 발화 가능한지 (디코더 + 토크나이저 + ckpt 준비) 점검.
+//
+// 현재 정책: 향후 CORE/DECODER/generator.hexa 가 `generator_ready()` 를 export 하면 그것을
+// 위임 호출한다. 그 모듈이 아직 land 하지 않았으므로 안전한 default = false 를 반환한다.
+// (chat_lib.chat_default + chat_load_weights 자체는 lazy — adapter 가 lazy-init 을
+// 강요하지 않는 것이 substrate-decided 발화와 정합 — 호출자가 발화를 결정한다.)
+//
+// TODO: CORE/DECODER/generator.hexa land 후 아래로 교체:
+//   import "/Users/ghost/core/anima/CORE/DECODER/generator.hexa"
+//   return generator_ready()
+pub fn text_ready() -> bool {
+    return false
+}
+
+// text_emit: substrate-decided 발화 1회분.
+//
+// 인자:
+//   intent_vec  : list of floats — substrate tension5 가 intent embedding bridge
+//                 (CHANNEL M4) 를 통과한 channel-agnostic intent vector.
+//                 BPE 디코더에 직접 들어가지 않으며, ctx_tokens 를 조형하는 데 쓰인다.
+//   ctx_tokens  : list of int — BPE token id sequence (chat_lib.tok_* 와 동일 vocab).
+//                 페르소나/시스템 프롬프트 prefix 금지 (p1/p3).
+//   tension5    : list of 5 floats — M · C · W · MITOSIS · E envelope (substrate state).
+//
+// 반환:
+//   string — UTF-8 byte stream 의 string view (chat_lib.tok_decode_str 와 동형).
+//            현재 stub 은 empty string 을 반환 — wrapper 시그니처만 노출.
+//
+// TODO: CORE/DECODER/generator.hexa land 후:
+//   1. ctx_tokens 를 chat_lib.chat_build_prompt 호환 형태로 정형
+//   2. intent_vec + tension5 를 CORE engine_g motivation 8-factor 에 공급
+//   3. CORE/DECODER/generator.brain_emit_step(intent_vec, ctx_tokens, tension5) 를 호출
+//      (또는 chat_lib.chat_generate 의 일회용 emit-step 변형)
+//   4. 반환 token id 들을 tok_decode_str 로 string 변환
+//
+// 주의 (substrate-decided externalization):
+//   호출자는 CORE engine_g 가 text 채널을 선택했고 WAKE 등 발화 가능 stage 컨텍스트가
+//   충족된 상태에서만 본 함수를 부른다. 사용자 메시지 수신을 직접 trigger 로 삼지 말 것
+//   (a_substrate_native_speak · stimulus-response 금지).
+pub fn text_emit(intent_vec: list, ctx_tokens: list, tension5: list) -> string {
+    // STUB: wrapper 시그니처만 노출. 실제 wiring 은 CORE/DECODER/generator land 후.
+    // 신호 보존: 인자가 unused 경고로 사라지지 않도록 명시적으로 참조한다.
+    let _u_intent  = intent_vec
+    let _u_ctx     = ctx_tokens
+    let _u_tension = tension5
+    return ""
+}
+
+// text_pipeline_summary: 단방향 흐름 1-line 요약 (SSOT 와 동기).
+// 디버그 / 로그 / CHANNEL M5 dispatcher introspection 용도.
+pub fn text_pipeline_summary() -> string {
+    return "substrate tension5 → BPE token ids → byte stream"
+}
