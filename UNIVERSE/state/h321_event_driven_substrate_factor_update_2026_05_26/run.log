@@ -1,0 +1,19 @@
+================================================================
+  H_321 — event-driven substrate factor update 🔵
+================================================================
+  NONE:   idle 50 → 51.0 (only idle inc)
+  [PASS] F321.1 NONE-IDLE-INCREMENT: idle += 1, others unchanged
+  NOVEL:  cur 0.5 → 0.7 (cur += 0.2)
+  [PASS] F321.2 NOVEL-CURIOSITY-UP: cur += 0.2 = 0.7
+  ALERT:  M 0.5 → 1.0 (M = 1.0)
+  [PASS] F321.3 ALERT-M-PEAK: M = 1.0
+  REWARD: Φ 0.5 → 0.6 (Φ += 0.1)
+  [PASS] F321.4 REWARD-PHI-UP: Φ += 0.1 = 0.6
+  THREAT: W 0.5 → 0.8 · cur 0.5 → 0.4
+  [PASS] F321.5 THREAT-W-UP-CUR-DOWN: W = 0.8 AND cur = 0.4
+  [PASS] F321.6 BOUND: factors clamped
+  [PASS] F321.7 DETERMINISTIC
+================================================================
+  RESULT: 7 PASS / 0 FAIL
+  ✅ EVENT-DRIVEN SUBSTRATE UPDATE — 🔵 SUPPORTED-FORMAL
+================================================================
