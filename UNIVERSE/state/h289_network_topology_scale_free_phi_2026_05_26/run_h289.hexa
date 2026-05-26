@@ -1,0 +1,150 @@
+// UNIVERSE/state/h289_network_topology_scale_free_phi_2026_05_26/run_h289.hexa
+//
+//   H_289 — Does network TOPOLOGY shape faithful IIT 4.0 big-Φ?
+//   (AXES.md R5 information `network-topology-scale-free`)
+//
+//   QUESTION
+//     IIT says integration depends on having NO weak cut. Two networks with the
+//     SAME number of edges (matched density) can differ in how cuttable they are.
+//     Scale-free (hub-dominated) networks integrate through a hub, but leaves
+//     attach by a single edge (a weak cut). Distributed/regular networks (a ring)
+//     have no single weak node. Which integrates more under faithful IIT 4.0?
+//
+//   SEED-HYPOTHESIS H1 (TESTED, may be falsified)
+//     scale-free (hub) big-Φ > matched-density distributed (ring) big-Φ.
+//     (Falsifier direction: ring ≥ hub ⇒ hub topology is integration-FRAGILE.)
+//
+//   METHOD (reuse HEXAD/IIT4/lib — g61 / NO reinvention)
+//     • big_phi(tpm,n,st)  — faithful big-Φ   (iit4_bigphi via stdlib)
+//     • iit4_bit / iit4_pow2 — bit ops         (iit4_tpm via chain)
+//     NETWORK→TPM bridge (this harness, generalises eca_tpm to an arbitrary graph):
+//       each node i updates to the PARITY (XOR) of its neighbours' current states
+//       — a Boolean/linear network, the multi-node analogue of the integrating XOR
+//       ECA rules (150/105) that H_281/H_287 used. TPM[s*n+i] = (Σ_{j∈N(i)} bit_j(s))
+//       mod 2. Deterministic ⇒ entries 0.0/1.0.
+//     Φ_mean = mean over all 2^n states of big_phi[0] (n=4 exact, lane norm).
+//
+//   SUBSTRATE SET (n=4 nodes, undirected, parity dynamics)
+//     SF   scale-free/hub : 0—{1,2,3} + 1—2  (4 edges; deg 0=3,1=2,2=2,3=1) "paw"
+//     RING distributed    : 0-1-2-3-0        (4 edges; deg 2 each) — MATCHED density
+//     anchors: EMPTY (0 edges → Φ=0) · K4 complete (6 edges → integration ceiling)
+//
+//   PRE-REGISTERED FALSIFIERS (frozen 2026-05-26, BEFORE measuring Φ)
+//     F289.1 TOPOLOGY-VERDICT — Φ_mean(SF) vs Φ_mean(RING) at matched 4 edges.
+//            H1 SUPPORTED iff SF > RING ; FALSIFIED iff RING ≥ SF (hub fragile).
+//            Both reported verbatim — measurement decides.
+//     F289.2 ANCHORS — EMPTY graph Φ_mean = 0 (null); K4 Φ_mean > 0 (integration exists).
+//     F289.3 BOUND — Φ_mean ≥ 0 for every network.
+//     F289.4 DETERMINISM — RING (Φ_mean) re-run bit-identical.
+//
+//   deterministic · hexa-only · $0 mac-local · LLM none · NO GPU.
+//   honest scope: n=4 small · parity (linear) dynamics is ONE network rule;
+//     one specific graph per class (not an ensemble average).
+// ════════════════════════════════════════════════════════════════════════════
+import "/tmp/wt-life-seq/HEXAD/IIT4/lib/iit4_eca.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// node i next value = parity (XOR) of its neighbours' current bits.
+fn node_next(neigh_mask: int, s: int, n: int) -> int {
+    let mut p = 0
+    let mut j = 0
+    while j < n {
+        if iit4_bit(neigh_mask, j) == 1 { p = (p + iit4_bit(s, j)) % 2 }
+        j = j + 1
+    }
+    return p
+}
+
+// build state-by-node TPM from an adjacency (neigh[i] = bitmask of i's neighbours).
+fn net_tpm(neigh: array, n: int) -> array {
+    let full = iit4_pow2(n)
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let mut i = 0
+        while i < n { t = t.push(to_float(node_next(neigh[i], s, n))); i = i + 1 }
+        s = s + 1
+    }
+    return t
+}
+
+// state-averaged big-Φ over all 2^n states (n=4 exact).
+fn phi_mean(neigh: array, n: int) -> float {
+    let tpm = net_tpm(neigh, n)
+    let full = iit4_pow2(n)
+    let mut acc = 0.0
+    let mut st = 0
+    while st < full { acc = acc + big_phi(tpm, n, st)[0]; st = st + 1 }
+    return acc / to_float(full)
+}
+
+fn main() {
+    let n = 4
+    println("================================================================")
+    println("  H_289 — Network TOPOLOGY vs faithful IIT4 big-Phi (n=4, parity dynamics)")
+    println("================================================================")
+
+    // adjacency bitmasks (neigh[i] = sum of 2^j over neighbours j)
+    let sf    = [14, 5, 3, 1]          // hub 0—{1,2,3} + 1—2  (4 edges) "paw"
+    let ring  = [10, 5, 10, 5]         // 0-1-2-3-0            (4 edges)
+    let empty = [0, 0, 0, 0]           // no edges             (0 edges)
+    let k4    = [14, 13, 11, 7]        // complete             (6 edges)
+
+    let phi_sf    = phi_mean(sf, n)
+    let phi_ring  = phi_mean(ring, n)
+    let phi_empty = phi_mean(empty, n)
+    let phi_k4    = phi_mean(k4, n)
+
+    println("  [SF hub]   0-{1,2,3}+1-2  (4 edges) : Phi_mean=" + str(phi_sf))
+    println("  [RING]     0-1-2-3-0      (4 edges) : Phi_mean=" + str(phi_ring))
+    println("  [EMPTY]    no edges       (0 edges) : Phi_mean=" + str(phi_empty))
+    println("  [K4]       complete       (6 edges) : Phi_mean=" + str(phi_k4))
+    println("  --")
+
+    // ── F289.1 TOPOLOGY-VERDICT ─────────────────────────────────────────
+    let h1_supported = phi_sf > phi_ring + 0.000001
+    println("  F289.1: Phi_mean(SF)=" + str(phi_sf) + " vs Phi_mean(RING)=" + str(phi_ring) + " (matched 4 edges)")
+    if h1_supported { println("          => H1 SUPPORTED: scale-free hub > distributed ring") }
+    else { println("          => H1 FALSIFIED: distributed ring >= scale-free hub (hub integration-FRAGILE)") }
+
+    // ── F289.2 ANCHORS ──────────────────────────────────────────────────
+    check("F289.2a ANCHOR: EMPTY graph Phi_mean = 0 (null)", approx(phi_empty, 0.0))
+    check("F289.2b ANCHOR: K4 complete Phi_mean > 0 (integration exists)", phi_k4 > 0.000001)
+
+    // ── F289.3 BOUND ────────────────────────────────────────────────────
+    let mut bound_ok = true
+    if phi_sf    < 0.0 - 0.000001 { bound_ok = false }
+    if phi_ring  < 0.0 - 0.000001 { bound_ok = false }
+    if phi_empty < 0.0 - 0.000001 { bound_ok = false }
+    if phi_k4    < 0.0 - 0.000001 { bound_ok = false }
+    check("F289.3 BOUND: Phi_mean >= 0 for all networks", bound_ok)
+
+    // ── F289.4 DETERMINISM ──────────────────────────────────────────────
+    let phi_ring_b = phi_mean(ring, n)
+    check("F289.4 DETERMINISM: RING Phi_mean re-run identical", approx(phi_ring, phi_ring_b))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if h1_supported {
+        println("  VERDICT: H1 SUPPORTED — scale-free hub integrates more than matched ring")
+    } else {
+        println("  VERDICT: H1 FALSIFIED (CLOSED-NEGATIVE) — at matched density the DISTRIBUTED")
+        println("           ring integrates >= the scale-free hub. Hub topology is integration-")
+        println("           FRAGILE (the hub is a weak cut): density alone does not buy Phi;")
+        println("           HOW edges are arranged (cut-resistance) is what matters.")
+    }
+    println("================================================================")
+    if FAIL > 0 { panic("H_289 had FALSIFIER FAILURES (distinct from H1 verdict)") }
+}

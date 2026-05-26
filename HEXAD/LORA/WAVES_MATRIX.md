@@ -5,7 +5,7 @@
 > R8/R8a/R8c spec + cluster X/Y/Z 자연실험 + LIFE H_247-249 흡수 의 read-once 표.
 > **2026-05-24 update**: V3 axis-FAN 5/7+2 partial (PR #249) · cluster X/Y/Z byte-equal (PR #251) · from_qwen audit (PR #255) · random baseline (PR #256) · R8a/R8c spec (PR #257/#250) · LIFE H_247-249 (PR #327).
 >
-> source files: `SAGA_SESSION3.md` · `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_WAVE{11..16}_2026_05_23.md` · `../V3/AXIS_MAP.md` · PR #206 `AXIS_MAP_RESULTS.md` (→ #249 5/7+2) · PR #214 `AXIS_R8_BASE_WARM_INIT.md` · PR #211 `AXIS_MAP_BUG_POSTMORTEM.md` · PR #255 `from_qwen audit` · PR #256 `RANDOM_BASELINE_INIT_CE_BENCHMARK` · PR #257 `AXIS_R8A_QWEN_TARGET_MATCH_FIRE_SPEC` · PR #250 `AXIS_R8C_PROBE_UPDATE_3_CELL` · PR #327 `HEXAD/LIFE/H_247-249`.
+> source files: `SAGA_SESSION3.md` · `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_WAVE{11..16}_2026_05_23.md` · `../V3/AXIS_MAP.md` · PR #206 `AXIS_MAP_RESULTS.md` (→ #249 5/7+2) · PR #214 `AXIS_R8_BASE_WARM_INIT.md` · PR #211 `AXIS_MAP_BUG_POSTMORTEM.md` · PR #255 `from_qwen audit` · PR #256 `RANDOM_BASELINE_INIT_CE_BENCHMARK` · PR #257 `AXIS_R8A_QWEN_TARGET_MATCH_FIRE_SPEC` · PR #250 `AXIS_R8C_PROBE_UPDATE_3_CELL` · PR #327 `UNIVERSE/H_247-249`.
 
 ## § Wave 매트릭스
 
@@ -112,7 +112,7 @@
 
 ## § LIFE 흡수 tally (today's LORA/V3 → LIFE hypotheses)
 
-> 오늘 LORA/V3 진전이 HEXAD/LIFE hypothesis 로 흡수됨. H_246 이 main max (선행 landed). H_247-249 = PR #327 MERGED (#311 재흡수, renumber).
+> 오늘 LORA/V3 진전이 UNIVERSE hypothesis 로 흡수됨. H_246 이 main max (선행 landed). H_247-249 = PR #327 MERGED (#311 재흡수, renumber).
 
 | H | title (요지) | verification | source PR | 흡수 PR |
 |---|---|---|---|---|
@@ -158,8 +158,8 @@
 | #255 | docs(V3): ConsciousDecoderV3 from_qwen() audit — cluster Z 3-suspect rank | OPEN | — |
 | #256 | docs(V3): random-baseline init_CE 벤치마크 — ln(151936)=11.93 closed-form | OPEN | — |
 | #257 | docs(V3): AXIS R8a fire spec — Qwen target match (n_kv_head=2 + noise=0) ~$2.75 | OPEN | — |
-| #321 | feat(HEXAD/LIFE): H_245 strategy diversity temporal emergence | CLOSED | — |
-| #327 | feat(HEXAD/LIFE): H_247+H_248+H_249 — init_CE floor + autonomy emit + cluster | MERGED | — |
+| #321 | feat(UNIVERSE): H_245 strategy diversity temporal emergence | CLOSED | — |
+| #327 | feat(UNIVERSE): H_247+H_248+H_249 — init_CE floor + autonomy emit + cluster | MERGED | — |
 
 > 35 LORA/V3-relevant PRs session-3 (2026-05-24 갱신); 17 MERGED + 1 CLOSED + 17 OPEN.
 

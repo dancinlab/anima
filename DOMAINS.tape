@@ -2,7 +2,7 @@
 @V := "domains" :: index
 
 @domain BRAIN := "./BRAIN.md"
-@domain LIFE := "./LIFE.md"
+@domain UNIVERSE := "./UNIVERSE/UNIVERSE.md"
 @domain AGENT := "./AGENT/AGENT.md"
 @domain CORE := "CORE/CORE.md"
 @domain DECODER := "CORE/DECODER/DECODER.md"

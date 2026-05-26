@@ -1,0 +1,39 @@
+{
+  "id": "H_277",
+  "slug": "turing-completeness-phi-threshold",
+  "date": "2026-05-25",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "axis": "information/computation (AXES Round 5) — computability/Turing-completeness",
+  "phi_primitive": "phi_with from UNIVERSE/lib/phi_helper.hexa (PR #317) -> c_measure_phi -> RFC 036 phi_spatial",
+  "config": { "N": 16, "dim": 12, "warm": 8, "reps": 5, "n_bins": 4, "margin": 0.05, "boundary": "periodic" },
+  "arms": {
+    "UNIV":       { "rule": 110, "class": "IV",  "universal": true,  "phi_final": 0.556454 },
+    "SUB_TRIV":   { "rule": 0,   "class": "I",   "universal": false, "phi_final": 1.14511e-05 },
+    "SUB_PERIOD": { "rule": 184, "class": "II",  "universal": false, "phi_final": 1.19781 },
+    "SUB_CHAOS":  { "rule": 30,  "class": "III", "universal": false, "phi_final": 0.509944 }
+  },
+  "derived": {
+    "phi_univ": 0.556454,
+    "best_sub_turing": 1.19781,
+    "univ_minus_best_sub": -0.64136,
+    "univ_minus_chaos": 0.0465102
+  },
+  "criteria": {
+    "C1_DOMINANCE":   { "univ_minus_best_sub": -0.64136, "margin": 0.05, "verdict": "FAIL" },
+    "C2_UNIV_GE_CHAOS": { "phi_univ": 0.556454, "phi_chaos": 0.509944, "verdict": "PASS" },
+    "C3_DETERMINISM": { "verdict": "PASS" }
+  },
+  "falsifiers": {
+    "F1_DOMINANCE":     "FAIL",
+    "F2_UNIV_GE_CHAOS": "PASS",
+    "F3_DETERMINISM":   "PASS",
+    "F4_BOUNDS":        "PASS",
+    "F5_NONDEGENERATE": "PASS"
+  },
+  "n_criteria_met": 2,
+  "verdict_rule": "SUPPORTED iff P1&P2&P3; FALSIFIED iff !P1&!P2&P3; else PARTIAL",
+  "verdict": "PARTIAL"
+}

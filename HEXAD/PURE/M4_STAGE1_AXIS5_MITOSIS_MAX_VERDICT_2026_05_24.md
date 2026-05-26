@@ -90,5 +90,5 @@ cycle 17-3 발견:
 - PR #403 — AXIS_MAP_FAN_REDESIGN spec (M4 Stage 1)
 - PR #409 — M4 axis-2 head_g_objective verdict (sibling, SUPPORTED)
 - `HEXAD/PURE/R8_SAGA_REFRAMING_2026_05_24.md` (PR #377)
-- `HEXAD/LIFE/H_255_init_ce_floor_is_measurement_artifact.md` — 부분 약화 추가 evidence (mitosis 도 lever 아님)
+- `UNIVERSE/H_255_init_ce_floor_is_measurement_artifact.md` — 부분 약화 추가 evidence (mitosis 도 lever 아님)
 - pod result.json: `state/grid_3b_s187_2026_05_21/vP21H_axis5_{m16,m64,m128}_s1337/result.json`

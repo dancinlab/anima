@@ -5,7 +5,7 @@
 ## Scope
 
 - **in scope**: anima 전체 grep 으로 general primitive 후보 도출 · hexa-lang stdlib 구조 설계 · upstream RFC + module land · anima 측 import path 교체 · byte-equal 보장
-- **out of scope**: domain-specific 로직 (HEXAD/LIFE/H_* sweep 본체 등) · anima @I (substrate-native chat daemon) 의 substrate 모듈
+- **out of scope**: domain-specific 로직 (UNIVERSE/H_* sweep 본체 등) · anima @I (substrate-native chat daemon) 의 substrate 모듈
 
 ## Why stdlib
 
@@ -14,7 +14,7 @@
 | **g0 Occam** | 부품 최소 — duplicate helper 제거, 진본 1 곳 |
 | **g1** | hexa-native first — hexa stdlib 가 canonical home |
 | **g11** | no gap workarounds — anima 측 _phi_pow2 같은 우회는 hexa stdlib bitops 으로 fix at source |
-| **g20** | no hardcoding · implement generically — domain-specific 위치 (HEXAD/LIFE/lib) 가 general primitive 와 부적합 |
+| **g20** | no hardcoding · implement generically — domain-specific 위치 (UNIVERSE/lib) 가 general primitive 와 부적합 |
 | **g59** | hexa-lang upstream — anima 의 general primitive 는 본질적으로 hexa-lang 측 |
 
 ## Cross-repo
@@ -22,7 +22,7 @@
 ```
 anima (caller)          ⇄          hexa-lang (provider)
 ─────────────────                  ──────────────────────
-HEXAD/LIFE/lib/                    stdlib/
+UNIVERSE/lib/                    stdlib/
   phi_helper.hexa     ──import──→    info/
   H_*/run_*.hexa                       entropy.hexa
                                        mutual_info.hexa
@@ -66,8 +66,8 @@ HEXAD/LIFE/lib/                    stdlib/
 
 ### migration (phase 2 — anima 측 교체)
 
-- [x] `HEXAD/LIFE/lib/phi_native.hexa` decompose to stdlib import — MERGED anima #424 commit e8158581d (332→56 LoC, -83%)
-- [x] `HEXAD/LIFE/lib/phi_helper.hexa` import path — 변경 불필요 (caller 가 phi_native_spatial public surface 만 의존, 새 shim 이 같은 fn 노출)
+- [x] `UNIVERSE/lib/phi_native.hexa` decompose to stdlib import — MERGED anima #424 commit e8158581d (332→56 LoC, -83%)
+- [x] `UNIVERSE/lib/phi_helper.hexa` import path — 변경 불필요 (caller 가 phi_native_spatial public surface 만 의존, 새 shim 이 같은 fn 노출)
 - [x] PHI verify harness 재실행 — 5/5 PASS, baseline bit-identical
 
 ### phase 3 — 후속 candidate

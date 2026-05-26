@@ -17,7 +17,7 @@
 
 ## 2026-05-25 (cycle 23 — LIFE 도메인 흡수)
 
-- [x] HEXAD/LIFE 가설 lane sweep — LORA 사가가 12 H_XXX 로 정식화돼 있음 확인
+- [x] UNIVERSE 가설 lane sweep — LORA 사가가 12 H_XXX 로 정식화돼 있음 확인
 - [x] **verdict 확정 2건 흡수**:
   - [x] **H_255 H255.2 🔴 FALSIFIED** — 14+ init_CE floor 가 REAL (cycle 15-1 4/7 axes byte-equal 14.79/14.18/14.46 재현). LORA.md L11 "14.x floor 미재현" stale 정정 → floor 진짜, R8c 12.315 은 별개 regime, 2 nats gap = GPU class/PROBE_STEPS (env-drift 아님)
   - [x] **H_257 H257.1 grep-static** — AXIS_MAP-FAN 7-axis unwired (train_p21h_v3.py 0 os.environ + dispatch env-var no `$CMD` passthrough) → cluster X/Y/Z 분류 · head_g FALSIFIED · 5/7+2 FAIL 결론 (PR #249) 전부 trivial identity (무효). **M4 root cause 진단 완료**

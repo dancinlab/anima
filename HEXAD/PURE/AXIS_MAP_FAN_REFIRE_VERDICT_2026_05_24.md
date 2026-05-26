@@ -94,8 +94,8 @@ R8c 4-cell probe baseline (PR #374) 의 init_CE 12.315 nats 와 본 re-fire 의 
 - `HEXAD/PURE/R8C_PROBE_VERDICT_2026_05_24.md` (PR #374) — R8c baseline 12.315 nats SSOT (본 doc 의 12.x vs 14.x 격차 reference)
 - `HEXAD/PURE/R8A2_JOINT_VERDICT_TEMPLATE.md` (PR #375) — R8a'' joint verdict (도착 시 본 doc cross-fire)
 - `HEXAD/PURE/axis_map_fan_verdict.hexa` (PR #376) — 7-axis poll control-plane (본 4-pod 결과 흡수 driver)
-- `HEXAD/LIFE/H_255_init_ce_floor_is_measurement_artifact.md` — H255.2 prediction FALSIFIED 직접 update
-- `HEXAD/LIFE/H_257_axis_map_fan_env_var_silent_bypass.md` — H257.3 PASS (B = F byte-equal) 직접 corroboration
+- `UNIVERSE/H_255_init_ce_floor_is_measurement_artifact.md` — H255.2 prediction FALSIFIED 직접 update
+- `UNIVERSE/H_257_axis_map_fan_env_var_silent_bypass.md` — H257.3 PASS (B = F byte-equal) 직접 corroboration
 
 ## 9. Next actions
 

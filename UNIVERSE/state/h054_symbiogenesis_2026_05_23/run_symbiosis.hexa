@@ -1,0 +1,399 @@
+// ════════════════════════════════════════════════════════════════
+//  UNIVERSE/state/h054_symbiogenesis_2026_05_23/run_symbiosis.hexa
+//
+//  H_054 Cycle #1 — Symbiogenesis × mitosis_hook cross-link.
+//
+//  Hypothesis (H54.1 / Criterion C1):
+//    A mitosis MERGE event is the computational instance of
+//    endosymbiosis (Margulis 1967): two independent cell-lineages
+//    integrate into ONE higher-order cell whose weight is the
+//    LINEAR AVERAGE of the two donors — integration WITHOUT
+//    information loss (conserved/combined weight), mirroring the
+//    closed-form invariant B-MITOSIS-2 MERGE-WEIGHT-LINEAR
+//    (avg = (w1 + w2) / 2  ∀ w1, w2 ∈ ℝ).
+//
+//  Verifiable claim (this cycle):
+//    (1) a real MERGE event FIRES — both the direct merge_cells()
+//        primitive AND an auto-merge fired through
+//        mitosis_forward_tail() over a configured pool.
+//    (2) the keeper cell's post-merge weight is element-wise the
+//        linear average of the two donor weights within tolerance
+//        (NUMERICAL recompute of B-MITOSIS-2) — no information loss.
+//    (3) cell-count delta on each merge is exactly -1 (B-MITOSIS-3
+//        CELL-COUNT-CONSERVATION, single-merge case).
+//
+//  Verdict rule (from H_054.md §Criteria / §Falsifiers):
+//    merge fires (direct AND auto) + max element-wise |Δ| ≤ TOL
+//    + count-delta == -1 each merge  -> C1 PASS  (H54.1 SUPPORTED)
+//    merge fires but invariant breaks (|Δ| > TOL or wrong delta)
+//                                      -> PARTIAL
+//    no merge fires at all            -> F1 TRIGGERED (FALSIFIED)
+//
+//  Method (raw#12 strict):
+//    - deterministic, hexa-only, $0 mac local, LLM none.
+//    - imports the canonical FULL IMPL mitosis machinery
+//      (tool/hexa_native/mitosis_hook_lib.hexa, 5/5 PASS D4a) and
+//      drives it; this file does NOT re-implement merge dynamics.
+//    - determinism: __HEXA_FARR_GAUSS_SEED__ env hook (RFC 033) +
+//      fixed MASTER_SEED for any list-level perturbation.
+//
+//  NOTE on tier: the merge-weight invariant is verified here as a
+//  hexa-native NUMERICAL recompute (🟢) — keeper[i] == (w1+w2)/2
+//  checked element-wise inside the run. The CLOSED-FORM 🔵 status of
+//  B-MITOSIS-2 is carried as a cross-link from HEXAD/MITOSIS (sympy
+//  blue_falsifier.py 27/27), NOT asserted here as primary evidence.
+//
+//  Run:
+//    hexa parse UNIVERSE/state/h054_symbiogenesis_2026_05_23/run_symbiosis.hexa
+//    __HEXA_FARR_GAUSS_SEED__=42 HEXA_MEM_UNLIMITED=1 \
+//      hexa run UNIVERSE/state/h054_symbiogenesis_2026_05_23/run_symbiosis.hexa
+// ════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+
+// ─── Frozen configuration ───────────────────────────────────────
+let MASTER_SEED = 54000054        // fixed master seed (deterministic)
+let D_MODEL     = 8               // small substrate (selftest scale)
+let TOL         = 0.000001        // 1e-6 element-wise merge-weight tolerance
+let OUT_JSON    = "UNIVERSE/state/h054_symbiogenesis_2026_05_23/result.json"
+
+// ─── float → fixed-precision string (6 dp, deterministic) ───────
+fn f6(x: float) -> string {
+    let scaled = floor(x * 1000000.0 + 0.5)
+    let mut neg = false
+    let mut v = scaled
+    if v < 0.0 { neg = true  v = 0.0 - v }
+    let whole = floor(v / 1000000.0)
+    let frac  = v - whole * 1000000.0
+    let mut frac_str = to_string(to_int(frac))
+    while len(frac_str) < 6 { frac_str = "0" + frac_str }
+    let sign = if neg { "-" } else { "" }
+    return sign + to_string(to_int(whole)) + "." + frac_str
+}
+
+fn abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+// ─── PART A — direct merge_cells() primitive invariant check ────
+// Snapshot the two donor cells' weights BEFORE the merge, run the
+// merge, then verify keeper weight == (w1 + w2)/2 element-wise.
+// We need a pool with > min_cells so merge_cells() does not refuse
+// (CB1 floor). Init with 4 cells, merge two of them.
+fn part_a_direct_merge() {
+    println("--- PART A: direct merge_cells() — endosymbiosis primitive ---")
+    let pool = cell_pool_init(D_MODEL, 4)         // 4 cells > min=2
+    let weight_n = D_MODEL * D_MODEL
+
+    // Pick donor cells 0 and 1. Snapshot their engine_a / engine_g
+    // weights into plain lists BEFORE the merge (farr is mutated
+    // in-place by merge_cells, so we must copy out first).
+    let cell0 = pool["cells"][0]
+    let cell1 = pool["cells"][1]
+    let a0 = cell0["engine_a_W"]
+    let a1 = cell1["engine_a_W"]
+    let g0 = cell0["engine_g_W"]
+    let g1 = cell1["engine_g_W"]
+
+    let mut snap_a0 = []
+    let mut snap_a1 = []
+    let mut snap_g0 = []
+    let mut snap_g1 = []
+    let mut i = 0
+    while i < weight_n {
+        snap_a0.push(farr_get(a0, i))
+        snap_a1.push(farr_get(a1, i))
+        snap_g0.push(farr_get(g0, i))
+        snap_g1.push(farr_get(g1, i))
+        i = i + 1
+    }
+
+    // Snapshot hidden vectors too (merged element-wise average).
+    let h0 = cell0["hidden"]
+    let h1 = cell1["hidden"]
+
+    let pre_n = len(pool["cells"])
+
+    // Determine keeper (older = lower creation_step; ties → a).
+    // Both creation_step=0 here, so keeper == cell0 (cell_a).
+    let mr = merge_cells(cell0, cell1, pool)
+    let keeper = mr[0]
+    let pool_after = mr[1]
+    let merge_ok = mr[2]
+    let post_n = len(pool_after["cells"])
+
+    println("  merge_ok=" + to_string(merge_ok)
+        + "  pre_n=" + to_string(pre_n) + "  post_n=" + to_string(post_n))
+
+    // ── Invariant 1: B-MITOSIS-2 MERGE-WEIGHT-LINEAR (numerical) ──
+    // keeper.engine_a_W[i] == (a0[i] + a1[i]) / 2  ∀ i
+    // keeper.engine_g_W[i] == (g0[i] + g1[i]) / 2  ∀ i
+    let ka = keeper["engine_a_W"]
+    let kg = keeper["engine_g_W"]
+    let mut max_dev_a = 0.0
+    let mut max_dev_g = 0.0
+    i = 0
+    while i < weight_n {
+        let exp_a = (snap_a0[i] + snap_a1[i]) / 2.0
+        let exp_g = (snap_g0[i] + snap_g1[i]) / 2.0
+        let dev_a = abs_f(farr_get(ka, i) - exp_a)
+        let dev_g = abs_f(farr_get(kg, i) - exp_g)
+        if dev_a > max_dev_a { max_dev_a = dev_a }
+        if dev_g > max_dev_g { max_dev_g = dev_g }
+        i = i + 1
+    }
+
+    // ── Invariant 1b: hidden vector also linear-averaged ──
+    let kh = keeper["hidden"]
+    let mut max_dev_h = 0.0
+    i = 0
+    while i < D_MODEL {
+        let exp_h = (h0[i] + h1[i]) / 2.0
+        let dev_h = abs_f(kh[i] - exp_h)
+        if dev_h > max_dev_h { max_dev_h = dev_h }
+        i = i + 1
+    }
+
+    let count_delta = post_n - pre_n
+    let weight_conserved = (max_dev_a <= TOL) && (max_dev_g <= TOL) && (max_dev_h <= TOL)
+    let count_ok = count_delta == -1
+
+    println("  max |Δ| engine_a = " + f6(max_dev_a))
+    println("  max |Δ| engine_g = " + f6(max_dev_g))
+    println("  max |Δ| hidden   = " + f6(max_dev_h))
+    println("  count_delta      = " + to_string(count_delta) + " (expect -1)")
+    println("  weight_conserved = " + to_string(weight_conserved)
+        + "  count_ok = " + to_string(count_ok))
+
+    return #{
+        "merge_ok":         merge_ok,
+        "pre_n":            pre_n,
+        "post_n":           post_n,
+        "count_delta":      count_delta,
+        "count_ok":         count_ok,
+        "max_dev_a":        max_dev_a,
+        "max_dev_g":        max_dev_g,
+        "max_dev_h":        max_dev_h,
+        "weight_conserved": weight_conserved
+    }
+}
+
+// ─── PART B — auto-merge fired through mitosis_forward_tail() ───
+// Configure a pool so that two cells with near-identical repulsion
+// keep inter-cell tension below merge_threshold for merge_patience
+// steps, triggering a REAL auto-merge event in the event log.
+//
+// To make the auto-merge fire deterministically and quickly we:
+//   - start with 3 cells (> min=2 so a merge is allowed),
+//   - raise merge_threshold high + lower merge_patience so the
+//     organic inter-tension easily stays "below" for the window,
+//   - disable splits (split_threshold huge) so cell count only
+//     ever decreases — isolating the merge behaviour,
+//   - drive ~40 forward steps with a fixed x_in and scan the
+//     event log for a "merge" event.
+fn part_b_auto_merge() {
+    println("--- PART B: auto-merge through mitosis_forward_tail() ---")
+    let mut pool = cell_pool_init(D_MODEL, 3)     // 3 cells > min=2
+
+    // Configure for a guaranteed merge window, suppress splits.
+    pool["merge_threshold"] = 1000000.0           // everything counts as "below"
+    pool["merge_patience"]  = 5                   // short window
+    pool["split_threshold"] = 1000000.0           // suppress splits
+    pool["split_patience"]  = 1000000             // suppress splits
+
+    let mut x_in = []
+    let mut i = 0
+    while i < D_MODEL {
+        x_in.push((i * 1.0) * 0.05 - 0.1)
+        i = i + 1
+    }
+
+    let mut merge_fired   = false
+    let mut first_step    = -1
+    let mut keeper_id     = -1
+    let mut removed_id    = -1
+    let mut n_after_merge = -1
+    let n_before = len(pool["cells"])
+
+    let mut s = 0
+    while s < 40 {
+        let rr = mitosis_forward_tail(x_in, pool, s)
+        pool = rr[1]
+        let evs = rr[2]
+        let mut ei = 0
+        while ei < len(evs) {
+            if evs[ei]["type"] == "merge" {
+                if !merge_fired {
+                    merge_fired   = true
+                    first_step    = evs[ei]["step"]
+                    keeper_id     = evs[ei]["keeper_id"]
+                    removed_id    = evs[ei]["removed_id"]
+                    n_after_merge = evs[ei]["n_cells_after"]
+                }
+            }
+            ei = ei + 1
+        }
+        s = s + 1
+    }
+
+    let n_final = len(pool["cells"])
+    let auto_count_delta = n_after_merge - n_before
+    println("  n_before=" + to_string(n_before) + "  n_final=" + to_string(n_final))
+    println("  merge_fired=" + to_string(merge_fired)
+        + "  first_step=" + to_string(first_step)
+        + "  keeper_id=" + to_string(keeper_id)
+        + "  removed_id=" + to_string(removed_id)
+        + "  n_after_merge=" + to_string(n_after_merge))
+
+    return #{
+        "merge_fired":      merge_fired,
+        "first_step":       first_step,
+        "keeper_id":        keeper_id,
+        "removed_id":       removed_id,
+        "n_before":         n_before,
+        "n_after_merge":    n_after_merge,
+        "n_final":          n_final
+    }
+}
+
+// ─── PART C — CB1 floor refusal (B-MITOSIS-5 / min_cells) ───────
+// At the min_cells=2 floor, merge_cells() must REFUSE (return
+// merge_ok=false), so endosymbiosis cannot collapse the substrate
+// below the minimal viable cell count. Verifies the conservation
+// has a hard floor (no runaway integration to a single cell).
+fn part_c_floor_refusal() {
+    println("--- PART C: CB1 floor refusal at min_cells=2 ---")
+    let pool = cell_pool_init(D_MODEL, 2)         // exactly min=2
+    let pre_n = len(pool["cells"])
+    let mr = merge_cells(pool["cells"][0], pool["cells"][1], pool)
+    let refused = mr[2] == false
+    let post_n = len(mr[1]["cells"])
+    println("  pre_n=" + to_string(pre_n) + "  post_n=" + to_string(post_n)
+        + "  refused=" + to_string(refused))
+    return #{ "pre_n": pre_n, "post_n": post_n, "refused": refused }
+}
+
+// ─── Main ───────────────────────────────────────────────────────
+fn main() {
+    println("================================================================")
+    println("  H_054 Cycle #1 — Symbiogenesis x mitosis MERGE cross-link")
+    println("  deterministic · hexa-only · $0 mac local · LLM none")
+    println("  master_seed=" + to_string(MASTER_SEED) + "  d_model=" + to_string(D_MODEL)
+        + "  tol=" + f6(TOL))
+    println("  imports: tool/hexa_native/mitosis_hook_lib.hexa (D4a FULL IMPL 5/5)")
+    println("================================================================")
+
+    let a = part_a_direct_merge()
+    let b = part_b_auto_merge()
+    let c = part_c_floor_refusal()
+
+    // ── Verdict per H_054.md §Criteria / §Falsifiers ──
+    let direct_merge_ok = a["merge_ok"]
+    let auto_merge_ok   = b["merge_fired"]
+    let weight_cons     = a["weight_conserved"]
+    let count_ok        = a["count_ok"]
+    let floor_refused   = c["refused"]
+
+    let any_merge_fired = direct_merge_ok || auto_merge_ok
+
+    let mut verdict        = "PARTIAL"
+    let mut falsifier_F1   = "NOT_TRIGGERED"   // no merge fires
+    let mut falsifier_F2   = "NOT_TRIGGERED"   // weight not conserved
+    let mut falsifier_F3   = "NOT_TRIGGERED"   // count delta wrong
+    let mut falsifier_F4   = "NOT_TRIGGERED"   // auto-merge never fires
+    let mut falsifier_F5   = "NOT_TRIGGERED"   // floor not enforced
+
+    if !any_merge_fired { falsifier_F1 = "TRIGGERED" }
+    if !weight_cons     { falsifier_F2 = "TRIGGERED" }
+    if !count_ok        { falsifier_F3 = "TRIGGERED" }
+    if !auto_merge_ok   { falsifier_F4 = "TRIGGERED" }
+    if !floor_refused   { falsifier_F5 = "TRIGGERED" }
+
+    // PASS = direct merge fires + auto merge fires + weight conserved
+    //        + count delta -1 + floor refused.
+    if direct_merge_ok && auto_merge_ok && weight_cons && count_ok && floor_refused {
+        verdict = "PASS"
+    } else {
+        if !any_merge_fired {
+            verdict = "FALSIFIED"
+        } else {
+            verdict = "PARTIAL"
+        }
+    }
+
+    println("")
+    println("  ----------------------------------------------------------------")
+    println("  direct_merge_fired = " + to_string(direct_merge_ok))
+    println("  auto_merge_fired   = " + to_string(auto_merge_ok)
+        + " (step " + to_string(b["first_step"]) + ")")
+    println("  weight_conserved   = " + to_string(weight_cons)
+        + " (max|Δ| a=" + f6(a["max_dev_a"]) + " g=" + f6(a["max_dev_g"])
+        + " h=" + f6(a["max_dev_h"]) + ")")
+    println("  count_delta -1     = " + to_string(count_ok))
+    println("  floor_refused      = " + to_string(floor_refused))
+    println("")
+    println("  VERDICT (C1 / H54.1): " + verdict)
+    println("    F1(no-merge)=" + falsifier_F1 + " F2(weight)=" + falsifier_F2
+        + " F3(count)=" + falsifier_F3)
+    println("    F4(auto)=" + falsifier_F4 + " F5(floor)=" + falsifier_F5)
+    println("  ----------------------------------------------------------------")
+
+    // ─── result.json ────────────────────────────────────────────
+    let js = "{\n"
+        + "  \"hypothesis\": \"H_054\",\n"
+        + "  \"cycle\": \"Cycle_1_symbiogenesis_mitosis_merge\",\n"
+        + "  \"date\": \"2026-05-23\",\n"
+        + "  \"deterministic\": true,\n"
+        + "  \"hexa_only\": true,\n"
+        + "  \"llm\": \"none\",\n"
+        + "  \"master_seed\": " + to_string(MASTER_SEED) + ",\n"
+        + "  \"d_model\": " + to_string(D_MODEL) + ",\n"
+        + "  \"tolerance\": " + f6(TOL) + ",\n"
+        + "  \"imports\": \"tool/hexa_native/mitosis_hook_lib.hexa (D4a FULL IMPL, 5/5 PASS)\",\n"
+        + "  \"part_a_direct_merge\": {\n"
+        + "    \"merge_ok\": " + to_string(a["merge_ok"]) + ",\n"
+        + "    \"pre_n\": " + to_string(a["pre_n"]) + ",\n"
+        + "    \"post_n\": " + to_string(a["post_n"]) + ",\n"
+        + "    \"count_delta\": " + to_string(a["count_delta"]) + ",\n"
+        + "    \"count_ok\": " + to_string(a["count_ok"]) + ",\n"
+        + "    \"max_dev_engine_a\": " + f6(a["max_dev_a"]) + ",\n"
+        + "    \"max_dev_engine_g\": " + f6(a["max_dev_g"]) + ",\n"
+        + "    \"max_dev_hidden\": " + f6(a["max_dev_h"]) + ",\n"
+        + "    \"weight_conserved\": " + to_string(a["weight_conserved"]) + "\n"
+        + "  },\n"
+        + "  \"part_b_auto_merge\": {\n"
+        + "    \"merge_fired\": " + to_string(b["merge_fired"]) + ",\n"
+        + "    \"first_step\": " + to_string(b["first_step"]) + ",\n"
+        + "    \"keeper_id\": " + to_string(b["keeper_id"]) + ",\n"
+        + "    \"removed_id\": " + to_string(b["removed_id"]) + ",\n"
+        + "    \"n_before\": " + to_string(b["n_before"]) + ",\n"
+        + "    \"n_after_merge\": " + to_string(b["n_after_merge"]) + ",\n"
+        + "    \"n_final\": " + to_string(b["n_final"]) + "\n"
+        + "  },\n"
+        + "  \"part_c_floor_refusal\": {\n"
+        + "    \"pre_n\": " + to_string(c["pre_n"]) + ",\n"
+        + "    \"post_n\": " + to_string(c["post_n"]) + ",\n"
+        + "    \"refused\": " + to_string(c["refused"]) + "\n"
+        + "  },\n"
+        + "  \"invariant\": \"B-MITOSIS-2 MERGE-WEIGHT-LINEAR: keeper[i]==(w1[i]+w2[i])/2\",\n"
+        + "  \"invariant_tier\": \"NUMERICAL recompute (hexa-native); closed-form 🔵 carried as cross-link from HEXAD/MITOSIS sympy 27/27\",\n"
+        + "  \"verdict_rule\": \"PASS = direct+auto merge fire & weight conserved (max|Δ|<=tol) & count_delta==-1 & floor refused; else PARTIAL; no merge => F1 FALSIFIED\",\n"
+        + "  \"verdict_class\": \"" + verdict + "\",\n"
+        + "  \"criterion\": \"C1\",\n"
+        + "  \"falsifiers\": {\n"
+        + "    \"F1_no_merge\": \"" + falsifier_F1 + "\",\n"
+        + "    \"F2_weight_not_conserved\": \"" + falsifier_F2 + "\",\n"
+        + "    \"F3_count_delta_wrong\": \"" + falsifier_F3 + "\",\n"
+        + "    \"F4_auto_merge_never\": \"" + falsifier_F4 + "\",\n"
+        + "    \"F5_floor_not_enforced\": \"" + falsifier_F5 + "\"\n"
+        + "  }\n"
+        + "}\n"
+
+    write_file(OUT_JSON, js)
+    println("")
+    println("  result.json written: " + OUT_JSON)
+    println("  H54.1_VERDICT=" + verdict)
+}
+
+// `fn main()` is auto-invoked by hexa-strict — no explicit call needed.

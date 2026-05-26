@@ -10,7 +10,7 @@ Append-only history sister of `INBOX.md`. Each entry starts with `## <ISO timest
 
 **무엇**: arXiv 8 query → 11편 흡수 (A1 12편 IIT-코어와 **중복 0**, 경험적 의식 측정자·causal-emergence·AI-의식 이론). verify-able 0 (in-tree IIT primitive 부재 — V5 IIT 엔진 후 회수). A2 가치 = citation + **anima cross-pollination**.
 
-**anima LIFE H_xxx cross-link (6 H 핸드오프)** — `LIFE.md` + `HEXAD/LIFE/README.md` 매핑:
+**anima LIFE H_xxx cross-link (6 H 핸드오프)** — `LIFE.md` + `UNIVERSE/README.md` 매핑:
 
 | anima H | 현재 상태 | 흡수 논문 → 기여 |
 |---|---|---|
@@ -51,7 +51,7 @@ Append-only history sister of `INBOX.md`. Each entry starts with `## <ISO timest
 - [ ] design-only · 우선순위 낮음 (H_201 / `H_201_asymmetric_division.md` 발) — `split_cell` 형제 primitive 로 child weight 에 σ=`child_delta_sigma` gaussian noise in-place(parent=stem 불변), `child_delta_sigma=0.0` 이면 `split_cell` 과 동일(backward-compat). `_mit_check_splits` 가 `cell_pool["asym_child_sigma"]`(default 0.0) 읽어 dispatch.
 - [ ] 현황 — H_201 Cycle #1 PASS(5.13× diversity margin · 4/4 stem persistence)는 harness-imposed post-split mutation(`farr_add_gaussian_noise`)으로 시연 = Honest Limit L2. substrate-native 비대칭(세포 자력 분화 결정)은 (i) D3 persona lane (cell-level 자기-알기) · (ii) D4a/D4b mitosis_hook production 사용 시에만 필요. 검증 = F-ASYM-1..6 substrate-native 재실행 → 동일 verdict 기대.
 
-## 2026-05-23 — `apoptose_cell` substrate primitive — target: hexa-lang / mitosis-lang (HEXAD/LIFE/H_200 cycle)
+## 2026-05-23 — `apoptose_cell` substrate primitive — target: hexa-lang / mitosis-lang (UNIVERSE/H_200 cycle)
 - [ ] spec-only filing · P3 (substrate gap, non-blocking) — `mitosis_hook_lib.hexa` 가 cell 제거로 `merge_cells`(weight 평균 transfer)만 제공; 진짜 biological apoptosis(weight 전달 없이 능동 소멸)는 substrate 부재. 제안 `apoptose_cell(target, pool)` = target.W free · pool[other] UNCHANGED · n−=1 · CB1 floor(`min_cells`) 동일 적용. `merge_cells`/`split_cell`/`cell_pool_init` 시그니처 불변(신규 builtin 추가만).
 - [ ] anima-side 재현 완료(upstream 불필요) — `run_proxy.hexa` 3-arm Φ 비교(deterministic · $0 mac local): Φ_b=1.73465 merge ≠ Φ_c=1.67608 pseudo-apop, |gap|=0.0586 > SEP_FLOOR 1e-6, 4/4 falsifier(F-AP-1..5) PASS. 진짜 primitive land 시 H_025 L2(Dasein 죽음-자각 honest gap) 닫히고 "능동적 죽음" 이 정량 substrate observable 화.
 - [ ] non-ask(g11) — anima 측에 fake `apoptose_cell` 박지 않음; land 전까지 H_025 L2 honest carry · H_200 pseudo-proxy directional 유지.
