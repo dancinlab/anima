@@ -3,6 +3,19 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#42 — rule 110 alt-bias ≈1.55× consistent across N (H_303 outlier-low 정량)
+
+- [x] **H_304 rule110-mean-phi-n-trajectory** 🟢 SUPPORTED-NUMERICAL — alt-state vs mean-Phi ensemble comparison across n=4, n=5
+- [x] **헤드라인 발견**: rule 110 alt-state 가 distribution mean 을 ~50% 일관적 underestimate
+  - n=4 cap=3: mean(16-state ensemble)=**11.95** vs alt(st=5)=7.66 (ratio **1.560**)
+  - n=5 cap=4: mean(32-state ensemble)=**27.07** vs alt(st=21)=17.69 (ratio **1.530**)
+- [x] **alt-bias 정합도**: ~1.55× understatement factor REMARKABLY STABLE across N — alt-state st=21 (또는 st=5) 가 rule 110 의 consistent biased low estimator
+- [x] H_301 mean=27.07 정확 cross-confirm (engine determinism 재확인)
+- [x] H_303 alt(rule 110 n=5 st=21)=17.694 정확 cross-confirm
+- [x] **함의**: H_298 의 rule 110 N-trajectory (7.66→17.7→9.5) 는 *측정 정확* 이지만 *true 통합의 ~52% lower-bound*. corrected mean-trajectory ≈ 12 → 27 → ?(n=6 deferred)
+- [x] honest L1: n=6 cap=3 ensemble (64 states) wall budget 초과 (>10min); mean-N-trajectory shape (dip 유지 vs 제거) UNRESOLVED. F304.2/F304.3 DEFERRED
+- [x] surface: README 116→117 H + H_304 행 · UNIVERSE.log cycle#42
+
 ## 2026-05-26 — cycle#41 — H_301 invalidation 회수 + anchor 가정 universal 검증
 
 - [x] **H_303 alt-state-recovery-and-anchor-sweep** 🟢 SUPPORTED-NUMERICAL 7/8 PASS — bug-free snapshot-before-sort 패턴으로 진짜 st=21 측정 + rule 204/0 全 32-state anchor sweep
