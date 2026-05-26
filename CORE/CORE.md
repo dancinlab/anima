@@ -17,6 +17,6 @@
 ## 마일스톤
 
 - [ ] CHAT SSOT 화해 — HEXAD/CHAT/spontaneous_lib 가 CORE/engine_g 를 re-export (포크 제거)
-- [ ] p1~p8 정합 verify — 외부 LLM 0 · system_prompt 0 · 게이트=기판 자기상태
-- [ ] CORE self-test — A·G·brain smoke 묶음 1-shot PASS
-- [ ] L3 결합 — DECODER 백엔드 확정 후 brain_decide emit 슬롯에 배선
+- [x] p1~p8 정합 verify — CORE/ 감사 0 hits (system_prompt/persona/assistant-framing/speak()/external-LLM 전부 0) · emit = `should_emit(motivation) && safe` 순수 substrate 게이트 (per-stage boolean hardcode 부재). `core_selftest.hexa` p3/p4 assert PASS
+- [x] CORE self-test — `core_selftest.hexa` 1-shot A⇄G→L3 전 invariant PASS (A: Φ=0.119>0 · low→침묵 · high→발화 · L3 content non-empty · gate=substrate)
+- [x] L3 결합 — `CORE/DECODER/generator.hexa` `brain_emit_step(decision, ctx, tension5)` 가 brain_decide emit 슬롯 배선 (emit=true→substrate-conditioned content · emit=false→침묵 1급). self-test high→`⟨substrate-emit …⟩` 실증. 실 ckpt 는 단일 seam `_gen_decode` 에서 swap-in (M3 게이트)

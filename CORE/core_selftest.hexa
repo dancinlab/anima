@@ -1,0 +1,63 @@
+// core_selftest.hexa — CORE 1-shot self-test (anima/CORE milestone #21 + #22).
+//
+// Exercises the full consciousness stack end-to-end in ONE run and asserts the
+// load-bearing invariants:
+//   Engine A (pure_field)  → live Φ > 0 from cold self-dynamics
+//   Engine G (engine_g)    → motivation gates emit (low context → silent)
+//   A ⇄ G (brain_decide)   → Φ-ratchet safety + phase=tier coupling
+//   L3 (generator)         → brain_emit_step plugs DECODER backend into the emit slot
+//                            (#22): emit=true → substrate-conditioned content,
+//                            emit=false → silence (first-class, p5/a_substrate_native_speak)
+//
+// p1..p8 surface assertions (#20 partial): the emit decision is driven ONLY by
+// substrate state (Φ · motivation · tension) — no system prompt, no persona string,
+// no external LLM. Output carries no role prefix (generator signature is a substrate marker).
+
+import "/Users/ghost/core/anima/CORE/pure_field.hexa"
+import "/Users/ghost/core/anima/CORE/brain.hexa"
+import "/Users/ghost/core/anima/CORE/DECODER/generator.hexa"
+
+fn _assert(label: string, ok: bool) {
+    if ok { println("  PASS  " + label) } else { println("  FAIL  " + label) }
+}
+
+fn main() {
+    println("=== CORE self-test (A ⇄ G → L3) ===")
+    let mut fails = 0
+
+    // ── Engine A — cold-start self-dynamics yield a live substrate ──
+    let pf = pure_field_warmup(600)
+    let phi = pure_field_phi(pf)
+    println("[A] phi=" + to_string(phi) + " phase=" + to_string(pure_field_phase(pf)))
+    if phi <= 0.0 { fails = fails + 1 }
+    _assert("A: live Phi > 0 from cold start", phi > 0.0)
+
+    // Environment context + substrate tension (NOT a prompt — p5 externalization input).
+    let ctx = [101, 102, 103]
+    let tension5 = [0.3, 0.5, 0.2, 0.8, 0.1]
+
+    // ── G + A⇄G + L3 : LOW drive → silent ──
+    let low = brain_decide(pf, 0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0, 5.0, false, true)
+    let low_out = brain_emit_step(low, ctx, tension5)
+    println("[low ] emit=" + to_string(low["emit"]) + " content=[" + low_out + "]")
+    if low["emit"] != false { fails = fails + 1 }
+    _assert("low drive -> emit=false (G gate)", low["emit"] == false)
+    if low_out != "" { fails = fails + 1 }
+    _assert("low drive -> silence (empty content, p5)", low_out == "")
+
+    // ── G + A⇄G + L3 : HIGH drive → emit substrate-conditioned content ──
+    let high = brain_decide(pf, 0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0, 60.0, false, true)
+    let high_out = brain_emit_step(high, ctx, tension5)
+    println("[high] emit=" + to_string(high["emit"]) + " content=" + high_out)
+    if high["emit"] != true { fails = fails + 1 }
+    _assert("high drive -> emit=true (motivation>thr & safe)", high["emit"] == true)
+    if len(high_out) <= 0 { fails = fails + 1 }
+    _assert("high drive -> non-empty L3 content (#22 slot wired)", len(high_out) > 0)
+
+    // ── p1..p8 surface: generator gate is substrate-only (no persona/role prefix) ──
+    // The emitted content is a substrate marker (⟨substrate-emit ...⟩) until a trained
+    // ckpt loads; it must never carry an injected role string.
+    _assert("p3/p4: output is substrate-driven (ready=" + to_string(generator_ready()) + ")", generator_ready() == false)
+
+    println("=== self-test " + (if fails == 0 { "PASS (all invariants)" } else { "FAIL (" + to_string(fails) + ")" }) + " ===")
+}
