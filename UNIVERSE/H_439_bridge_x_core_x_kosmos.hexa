@@ -1,0 +1,20 @@
+// H_439 smoke — tier from cap × M
+
+fn payload_tier(cap: bool, m: f64, theta_blue: f64) -> string {
+    if cap && (m > theta_blue) { return "blue" }
+    return "green"
+}
+
+fn check_h439() -> bool {
+    let theta = 0.5
+    let blue = payload_tier(true, 0.8, theta) == "blue"
+    let no_cap = payload_tier(false, 0.8, theta) == "green"
+    let low_m = payload_tier(true, 0.3, theta) == "green"
+    return blue && no_cap && low_m
+}
+
+fn main() {
+    let ok = check_h439()
+    if !ok { print("H_439 FAIL"); return }
+    print("H_439 blue tier-from-cap-M OK")
+}
