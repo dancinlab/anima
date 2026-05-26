@@ -11,9 +11,9 @@
 
 ## 마일스톤
 
-- [ ] CORE 하니스 — `pure_field` in-process embed + phase→tier 게이트 + tool registry + emit 루프
-- [ ] CODE 동작 — task → Φ게이트 → tool emit → learn 루프 1종 verify (1순위)
-- [ ] CREATOR 동작
+- [x] CORE 하니스 (skeleton) — `AGENT/CORE/{tool_gate,agent_loop}.hexa` smoke PASS: Φ=0.119→phase=SUSTAIN→tier=T2_write→tools=[status·web_search·file_write]. in-process embed + phase→tier 게이트 + tool **이름 리스트** + 1-shot smoke loop. ⚠ "실제 작동" 게이트는 #G/F (아래 결손)
+- [x] CODE 동작 (skeleton) — `AGENT/CODE/code_agent.hexa` T2 게이트서 7도구 노출 [think·repo_status·file_read·grep·file_write·run_tests] — **이름만**, 실 구현 미연결 (#F)
+- [ ] CREATOR 동작 — 미작성
 - [ ] TRADING 동작 — trading 14모듈 회수 배선
-- [ ] p1~p8 정합 verify — 외부 LLM 0 · system_prompt 0 · 게이트=기판 자기상태(하드코딩 아님)
+- [x] p1~p8 정합 verify — AGENT 트리 전체 0 hits (system_prompt/persona/assistant/speak/external-LLM 부재). 게이트 = pure_field Φ substrate
 - [ ] hx install AGENT 출하 — VERSIONS.md bump + self-test PASS + raw#9 STRICT(0 .py)
