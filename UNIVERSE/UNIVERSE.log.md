@@ -3,6 +3,16 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#47 — sharper bump OVER-correction: Goldilocks zone bracketing (H_308 ↔ H_309)
+
+- [x] **H_309 sharper-bump-biology-range** 🟢 SUPPORTED-NUMERICAL 5/6 PASS — baseline=0.1, span=300, amp=0.9 (H_308 의 0.3/400/0.7 sharpen)
+- [x] **헤드라인**: idle=41 peak=41 **trough=0** ratio=**∞×** — sharper bump 가 H_308 (2.875× undershoot) 의 opposite **over-correction**
+- [x] **bracketing 정량**: H_306 piecewise ∞ → H_308 baseline=0.3 = 2.875 → H_309 baseline=0.1 = ∞. biology [3,15] Goldilocks ∈ (0.1, 0.3) — H_312 path baseline=0.2/span=350 interpolation 예측 ratio ∈ [5, 10]
+- [x] **threshold sweep refinement**: 55→48→41→31→17 (5 distinct values, no plateau) — H_308 (91→73→62→47→26) 보다 더 매끈한 rate-coding curve
+- [x] F309.1 FAIL principled over-correction (∞×) — direction-correct, magnitude opposite from H_308
+- [x] **3-point bracketing 정합**: (1) discontinuous piecewise = ∞ · (2) broad quadratic baseline=0.3 = 2.875 · (3) narrow quadratic baseline=0.1 = ∞ — bisection 패턴
+- [x] surface: README 120→121 H + H_309 행 · UNIVERSE.log cycle#47
+
 ## 2026-05-26 — cycle#46 — smooth circadian: H_306 ∞× → 2.875× finite ratio 회수 (direction-correct undershoot)
 
 - [x] **H_308 circadian-smooth-finite-ratio** 🟢 SUPPORTED-NUMERICAL 5/6 PASS — quadratic-bump circadian replacement
