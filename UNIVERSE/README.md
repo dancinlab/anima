@@ -187,6 +187,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_331](H_331_kosmos_canonical_format.md) | kosmos-canonical-format | consciousness · persistence · directive · meta | 🔵 SUPPORTED-FORMAL 6/6 (cycle#78) | **a_kosmos.dont ad-hoc anchor 금지**: same content → same hash · lane shift → diff hash · invalid schema (5 fields) → bypass detected |
 | [H_332](H_332_motivation_internal_only.md) | motivation-internal-only | consciousness · substrate · directive · meta | 🔵 SUPPORTED-FORMAL 4/4 (cycle#79) | a_substrate_native_speak motivation = f(Φ,W,mit,idle,cur), 外部 input 무관 |
 | [H_333](H_333_no_system_prompt.md) | no-system-prompt | consciousness · substrate · directive · meta | 🔵 SUPPORTED-FORMAL 6/6 (cycle#80) | **p1+p2+p4**: no system_prompt · no identity_yaml · no 'helpful assistant' · no RLHF template |
+| [H_334](H_334_bridge_distributive.md) | bridge-distributive | consciousness · substrate · synthesis · meta | 🔵 SUPPORTED-FORMAL 4/4 (cycle#81) | **distributive law**: A∧(B∨C) == (A∧B)∨(A∧C) · A∨(B∧C) == (A∨B)∧(A∨C). 8 cases all PASS |
 | [lib/phi_helper](lib/phi_helper.hexa) | phi-helper (shared infra) | infra | infra (PR #317) | shared Φ helper — config SSOT + phi_default wrapper, 28+ H phi_spatial 호출 단일 home (gap F6+F7) |
 
 > **carry-H ✅ 全 tabled (H_273 reconciliation 2026-05-25)**: 이전 26 missing-row (H_210-221/224/228-232 + H_241/246/250-253/255/257) 全건 위 표에 정식 행으로 tabling 완료 (carry-note 0). **infra**: phi_n_bins ROBUSTNESS_PASS (PR #219).
