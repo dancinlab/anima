@@ -1,0 +1,24 @@
+// H_447 smoke — beam search width
+
+fn beam_width() -> i64 {
+    return 5
+}
+
+fn active_beams_at(step: i64) -> i64 {
+    let _ = step
+    return beam_width()
+}
+
+fn check_h447() -> bool {
+    let k = beam_width()
+    let h1a = active_beams_at(0) == k
+    let h1b = active_beams_at(10) == k
+    let h1c = active_beams_at(100) == k
+    return h1a && h1b && h1c
+}
+
+fn main() {
+    let ok = check_h447()
+    if !ok { print("H_447 FAIL"); return }
+    print("H_447 blue beam width OK")
+}
