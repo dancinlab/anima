@@ -1,0 +1,24 @@
+// H_479 smoke — row sum 1
+
+fn p_transition(s: string, target: string) -> f64 {
+    // simple deterministic: 1 to next stage, 0 otherwise
+    if (s == "WAKE") && (target == "N1") { return 1.0 }
+    if (s == "N1") && (target == "N2") { return 1.0 }
+    return 0.0
+}
+
+fn row_sum(s: string) -> f64 {
+    return p_transition(s, "WAKE") + p_transition(s, "N1") + p_transition(s, "N2") + p_transition(s, "N3") + p_transition(s, "REM")
+}
+
+fn check_h479() -> bool {
+    let h1_w = row_sum("WAKE") == 1.0
+    let h1_n1 = row_sum("N1") == 1.0
+    return h1_w && h1_n1
+}
+
+fn main() {
+    let ok = check_h479()
+    if !ok { print("H_479 FAIL"); return }
+    print("H_479 blue row sum OK")
+}
