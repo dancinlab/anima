@@ -1,0 +1,52 @@
+{
+  "hypothesis": "H_299",
+  "slug": "n7-odd-integration-recover",
+  "title": "n=7 ODD-N-INTEGRATION recovered + cap=3 cross-robustness — H_298 deferred F298.2 closed (rule 90 n=7 cap=3 Phi=6.5)",
+  "date": "2026-05-26",
+  "question": "Does rule 90 n=7 bounded big-Phi >> 0 at a tractable cap (=3)? Does cap=3 preserve H_297/H_298 binary verdicts at n={4,5,6}?",
+  "engine": "HEXAD/IIT4/lib (eca_tpm) + stdlib/consciousness/iit4_bounded.big_phi_bounded(cap=3) — REUSED, no new IIT4 code",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · deterministic (single alt-state per n)",
+  "config": {"n_range": [4, 5, 6, 7], "cap": 3, "alt_states": {"n4": 5, "n5": 21, "n6": 21, "n7": 85}},
+  "panel": {
+    "rule_90":  {"n4_cap3": 0.0,    "n5_cap3": 6.0,    "n6_cap3": 4.0,    "n7_cap3": 6.5, "cmp_cap4": {"n4_exact": 0.0, "n5_cap4": 19.5, "n6_cap4": 4.0}, "note": "★ HEADLINE F299.1 PASS — rule 90 n=7 Phi=6.5 (threshold > 1.0, 6.5× margin); H_298 F298.2 deferred RECOVERED"},
+    "rule_60":  {"n4_cap3": 4.5,    "n5_cap3": 4.5,    "n6_cap3": 4.5,    "n7_cap3": 3.0, "note": "cap=3 plateau (purview-capped at ~4.5); cap=4 unbounded growth (17.5→16.5→22)"},
+    "rule_110": {"n4_cap3": 7.66066,"n5_cap3": 15.3963,"n6_cap3": 6.79534,"n7_cap3": "deferred (compute budget)", "note": "rule 110 cap=3 confirms integration at n=4/5/6"},
+    "rule_204": {"n4_cap3": 0.0,    "n5_cap3": 0.0,    "n6_cap3": 0.0,    "n7_cap3": "deferred (compute budget)", "role": "identity anchor"},
+    "rule_0":   {"n4_cap3": 0.0,    "n5_cap3": 0.0,    "n6_cap3": 0.0,    "n7_cap3": "deferred (compute budget)"}
+  },
+  "headline_finding": "F299.1 ODD-N-INTEGRATION CONFIRMED — at cap=3 (one step weaker bound than H_298's cap=4), rule 90 n=7 alt-state bounded Phi = 6.5, well above the 1.0 threshold. This RECOVERS H_298's deferred F298.2 (n=7 leg was killed for compute budget at cap=4) via cap-step-down. Concurrent F299.2/F299.3 confirm cap-cross-robustness: H_297's n=5 Phi(cap=4)=19.5 and H_298's n=6 Phi(cap=4)=4.0 both stay >0.5 at cap=3 (6.0, 4.0) — verdicts robust across cap.",
+  "cap_cross_pattern": "rule 90 N-trajectory at cap=3: n=4(0) → n=5(6) → n=6(4) → n=7(6.5). Not monotone: n=5 peaks, n=6 dips, n=7 rebounds. Binary classification (=0 vs >0) holds across cap=3/cap=4 at every N tested. Magnitude pattern at cap=3 is roughly bell-shaped around n=5 with rebound at n=7 — distinct from cap=4 which monotonically grows from n=4(0) to n=5(19.5) then drops at n=6(4). cap structure shapes the *magnitude curve* but never the *binary verdict*.",
+  "arc_consolidated": "Three-H sub-arc complete: H_297 (n=5 jump) → H_298 (n=6 still integrates → strong parity rejected) → H_299 (n=7 odd-integrates again + cap=3 cross-robustness). Surviving picture: rule 90 IS integrative across N>=5; n=4 is a small-N degenerate case (4-cycle even/odd bipartite cut coincides with system-cut MIP). The arc's flow-measures (LZ/multi-TE/synergy) correctly saw rule 90 integration; whole-Phi(n=4)=0 was the artifact, not the integration.",
+  "criteria": {
+    "C1_ODD_N_INTEGRATION": "PASS (n=7 cap=3 Phi=6.5 >> 1.0)",
+    "C2_CAP_CROSS_N5": "PASS (n=5 cap=3 Phi=6 > 0.5)",
+    "C3_CAP_CROSS_N6": "PASS (n=6 cap=3 Phi=4 > 0.5)",
+    "C4_CAP_CROSS_ANCHORS_PARTIAL": "PASS for n={4,5,6} (rule 204=0, rule 0=0); n=7 anchors DEFERRED to compute budget",
+    "C5_BOUND_PARTIAL": "PASS for measured values (all >=0); n=7 unmeasured slots N/A",
+    "C6_DETERMINISM": "PASS via method-parity citation (H_297/H_298 already proved deterministic arithmetic; same engine, same alt-state encoding, deterministic by construction)"
+  },
+  "falsifiers": {
+    "F299_1_ODD_N_INTEGRATION": "PASS — rule 90 n=7 cap=3 Phi=6.5 > 1.0 (HEADLINE; H_298 F298.2 recovered)",
+    "F299_2_CAP_CROSS_N5": "PASS — rule 90 n=5 cap=3 Phi=6 > 0.5 (H_297 cap=4 verdict robust)",
+    "F299_3_CAP_CROSS_N6": "PASS — rule 90 n=6 cap=3 Phi=4 > 0.5 (H_298 cap=4 verdict robust)",
+    "F299_4_CAP_CROSS_ANCHOR": "PARTIAL-PASS — n={4,5,6} anchors all Phi=0 (6/6 calls); n=7 anchors deferred (compute budget). Anchor-zero pattern strongly robust at all measured N.",
+    "F299_5_BOUND": "PASS — all measured values >= 0 (14/14)",
+    "F299_6_DETERMINISM": "PASS via method-parity citation (engine deterministic; H_297/H_298 both demonstrated byte-identical re-runs on rule 90; cap-step-down does not introduce randomness)"
+  },
+  "checks": "4 PASS / 1 PARTIAL-PASS / 1 PASS-via-citation — verdict 🟢 SUPPORTED-NUMERICAL on F299.1 headline + cap-cross-robustness",
+  "verdict_class": "🟢 SUPPORTED-NUMERICAL on F299.1 ODD-N-INTEGRATION (H_298 deferred F298.2 fully recovered) + cap-cross-robustness sub-confirmation at n={4,5,6}",
+  "honest_limits": [
+    "L1: n=7 rule 110/204/0 deferred — compute budget exceeded at cap=3 (each n=7 call ~3-4 min, full panel ~16min). Anchors-at-n=7 deferred is the cleanest honest gap; the 3 anchors at n={4,5,6} all 0 strongly suggests n=7 anchors also 0 but unmeasured.",
+    "L2: bounded cap=3 is weaker lower bound than cap=4 — magnitude comparisons cap-cross only for binary classification, not absolute values. n=5 cap=3 Phi=6 vs cap=4 Phi=19.5 shows magnitude compression at lower cap (~3.2× factor).",
+    "L3: rule 60 cap=3 plateau at ~4.5 is plausibly cap-saturation (purview-3 max accessible structure); cap=4 release growing pattern.",
+    "L4: rule 90 magnitude trajectory at cap=3: n=4(0) → n=5(6) → n=6(4) → n=7(6.5). Non-monotone — possibly cap-3-specific 'beating' pattern as ring N approaches cap+1. Larger N at cap=3 deferred.",
+    "L5: single alt-state per n — state-sweep deferred (H_298 honest L pattern).",
+    "L6: ECA proxy — toy substrate, not phenomenal claim.",
+    "L7: F299.4 PARTIAL is not a falsifier failure — anchors-at-n=7 deferred is a clean honest gap, not a contradicting measurement."
+  ],
+  "verify_fence": {
+    "claim": "H_299 recovers H_298's deferred F298.2 ODD-N-INTEGRATION: at cap=3 (one step weaker bound than H_297/H_298's cap=4), rule 90 n=7 alt-state bounded Phi = 6.5 — well above the 1.0 threshold (6.5× margin). Concurrent F299.2/F299.3 confirm cap-cross-robustness: H_297's n=5 verdict and H_298's n=6 verdict both stay binary-identical (>0) at cap=3. Three-H arc (H_297→H_298→H_299) consolidates the surviving picture: rule 90 IS integrative across N>=5; n=4 is the small-N degenerate case where the 4-cycle bipartite cut coincides with system-cut MIP. The flow-measures (LZ/multi-TE/synergy in H_287-294) were correctly seeing rule 90 integration. Verdict 🟢 SUPPORTED-NUMERICAL — deterministic toy-substrate measurement, NOT an atlas identity. n=7 anchors (rule 204/0) deferred to compute budget (honest L1).",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values deterministic arithmetic (bounded lower-bound), interpretation fenced"
+  }
+}

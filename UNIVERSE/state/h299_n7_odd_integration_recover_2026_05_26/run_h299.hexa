@@ -1,0 +1,146 @@
+// UNIVERSE/state/h299_n7_odd_integration_recover_2026_05_26/run_h299.hexa
+//
+//   H_299 — n=7 odd-integration recovery + cap=3 cross-robustness
+//
+//   QUESTION
+//     H_298 (cycle#36) deferred F298.2 ODD-N-INTEGRATION (rule 90 n=7
+//     bounded Phi > 1.0) due to cap=4 wall budget overrun (single call
+//     >5min). H_299 recovers it at cap=3 (lower bound, ~3x faster). Side-
+//     product: cap=3 cross-robustness of H_297/H_298 verdicts at n={4,5,6}.
+//
+//   HYPOTHESES
+//     H1 ODD-N-INTEGRATION (preregistered): rule 90 n=7 alt-state st=85
+//        bounded Phi(cap=3) > 1.0
+//     H2 CROSS-CAP-ROBUSTNESS: cap=3 lower bound preserves binary verdict
+//        (=0 vs >0) at n=4 (=0), n=5 (>0), n=6 (>0)
+//
+//   METHOD — single alt-state per n, panel of 5 rules each
+//     - eca_tpm(rule, n) at n=4..7
+//     - big_phi_bounded(tpm, n, st, cap=3) — lower bound
+//     - alt-state: n=4 st=5 (0101), n=5 st=21 (10101),
+//                  n=6 st=21 (010101), n=7 st=85 (1010101)
+//
+//   PRE-REGISTERED FALSIFIERS (frozen 2026-05-26, BEFORE measure)
+//     F299.1 ODD-N-INTEGRATION: rule 90 n=7 cap=3 Phi > 1.0 (headline)
+//     F299.2 CROSS-CAP-ROBUSTNESS-N5: rule 90 n=5 cap=3 Phi > 0.5
+//     F299.3 CROSS-CAP-ROBUSTNESS-N6: rule 90 n=6 cap=3 Phi > 0.5
+//     F299.4 CROSS-CAP-ANCHOR: rule 204 + rule 0 cap=3 Phi=0 at n∈{4,5,6,7}
+//     F299.5 BOUND: all values >= 0
+//     F299.6 DETERMINISM: rule 90 n=7 cap=3 Phi re-run identical
+//
+//   deterministic · hexa-only · $0 mac-local · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+import "/tmp/wt-c37/HEXAD/IIT4/lib/iit4_eca.hexa"
+import "stdlib/consciousness/iit4_bounded.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx_zero(a: float) -> bool {
+    if a < 0.0 { return (0.0 - a) < 0.000001 }
+    return a < 0.000001
+}
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// alt-state st = sum_{i even, i<n} 2^i (bits 0,2,4,... set)
+fn alt_state(n: int) -> int {
+    let mut st = 0
+    let mut i = 0
+    while i < n {
+        if (i % 2) == 0 { st = st + iit4_pow2(i) }
+        i = i + 1
+    }
+    return st
+}
+
+fn phi_b(rule: int, n: int, cap: int) -> float {
+    let tpm = eca_tpm(rule, n)
+    let st = alt_state(n)
+    let r = big_phi_bounded(tpm, n, st, cap)
+    return r[0]
+}
+
+fn main() {
+    let cap = 3
+    println("================================================================")
+    println("  H_299 — n=7 odd-integration recovery + cap=3 cross-cap (alt-state)")
+    println("================================================================")
+
+    // n=4 (small ring) — cap=3 = n-1, near-exact
+    println("  n=4 (alt-state st=5, cap=3)")
+    let p90_n4  = phi_b(90,  4, cap); println("    rule 90  : " + str(p90_n4))
+    let p60_n4  = phi_b(60,  4, cap); println("    rule 60  : " + str(p60_n4))
+    let p110_n4 = phi_b(110, 4, cap); println("    rule 110 : " + str(p110_n4))
+    let p204_n4 = phi_b(204, 4, cap); println("    rule 204 : " + str(p204_n4))
+    let p0_n4   = phi_b(0,   4, cap); println("    rule 0   : " + str(p0_n4))
+
+    // n=5
+    println("  n=5 (alt-state st=21, cap=3)")
+    let p90_n5  = phi_b(90,  5, cap); println("    rule 90  : " + str(p90_n5))
+    let p60_n5  = phi_b(60,  5, cap); println("    rule 60  : " + str(p60_n5))
+    let p110_n5 = phi_b(110, 5, cap); println("    rule 110 : " + str(p110_n5))
+    let p204_n5 = phi_b(204, 5, cap); println("    rule 204 : " + str(p204_n5))
+    let p0_n5   = phi_b(0,   5, cap); println("    rule 0   : " + str(p0_n5))
+
+    // n=6
+    println("  n=6 (alt-state st=21, cap=3)")
+    let p90_n6  = phi_b(90,  6, cap); println("    rule 90  : " + str(p90_n6))
+    let p60_n6  = phi_b(60,  6, cap); println("    rule 60  : " + str(p60_n6))
+    let p110_n6 = phi_b(110, 6, cap); println("    rule 110 : " + str(p110_n6))
+    let p204_n6 = phi_b(204, 6, cap); println("    rule 204 : " + str(p204_n6))
+    let p0_n6   = phi_b(0,   6, cap); println("    rule 0   : " + str(p0_n6))
+
+    // n=7 — headline
+    println("  n=7 (alt-state st=85, cap=3) — F299.1 HEADLINE")
+    let p90_n7  = phi_b(90,  7, cap); println("    rule 90  : " + str(p90_n7))
+    let p60_n7  = phi_b(60,  7, cap); println("    rule 60  : " + str(p60_n7))
+    let p110_n7 = phi_b(110, 7, cap); println("    rule 110 : " + str(p110_n7))
+    let p204_n7 = phi_b(204, 7, cap); println("    rule 204 : " + str(p204_n7))
+    let p0_n7   = phi_b(0,   7, cap); println("    rule 0   : " + str(p0_n7))
+
+    // ── F299.1 ODD-N-INTEGRATION (HEADLINE) ─────────────────────────────
+    let odd_integrates = p90_n7 > 1.0
+    println("  F299.1: rule 90 n=7 cap=3 Phi = " + str(p90_n7) + " (threshold > 1.0)")
+    check("F299.1 ODD-N-INTEGRATION: rule 90 n=7 cap=3 Phi > 1.0", odd_integrates)
+
+    // ── F299.2 CROSS-CAP-ROBUSTNESS-N5 ──────────────────────────────────
+    check("F299.2 CROSS-CAP-ROBUSTNESS-N5: rule 90 n=5 cap=3 Phi > 0.5 (H_297 cap=4 verdict robust)", p90_n5 > 0.5)
+
+    // ── F299.3 CROSS-CAP-ROBUSTNESS-N6 ──────────────────────────────────
+    check("F299.3 CROSS-CAP-ROBUSTNESS-N6: rule 90 n=6 cap=3 Phi > 0.5 (H_298 cap=4 verdict robust)", p90_n6 > 0.5)
+
+    // ── F299.4 CROSS-CAP-ANCHOR ─────────────────────────────────────────
+    let anchor_ok = approx_zero(p204_n4) && approx_zero(p0_n4) && approx_zero(p204_n5) && approx_zero(p0_n5) && approx_zero(p204_n6) && approx_zero(p0_n6) && approx_zero(p204_n7) && approx_zero(p0_n7)
+    check("F299.4 CROSS-CAP-ANCHOR: rule 204 + rule 0 Phi=0 at all of n∈{4,5,6,7} cap=3", anchor_ok)
+
+    // ── F299.5 BOUND ────────────────────────────────────────────────────
+    let mut bound_ok = true
+    let vals = [p90_n4, p60_n4, p110_n4, p204_n4, p0_n4,
+                p90_n5, p60_n5, p110_n5, p204_n5, p0_n5,
+                p90_n6, p60_n6, p110_n6, p204_n6, p0_n6,
+                p90_n7, p60_n7, p110_n7, p204_n7, p0_n7]
+    let mut i = 0
+    while i < 20 {
+        if !(vals[i] >= 0.0 - 0.000001) { bound_ok = false }
+        i = i + 1
+    }
+    check("F299.5 BOUND: all cap=3 Phi >= 0", bound_ok)
+
+    // ── F299.6 DETERMINISM ──────────────────────────────────────────────
+    let p90_n7_re = phi_b(90, 7, cap)
+    let det = (p90_n7 == p90_n7_re)
+    check("F299.6 DETERMINISM: rule 90 n=7 cap=3 re-run identical", det)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    let mut headline = "MIXED"
+    if odd_integrates && (p90_n5 > 0.5) && (p90_n6 > 0.5) { headline = "STRONG-CONFIRM (n=7 odd integrates + cap-robust)" }
+    if (!odd_integrates) { headline = "ODD-N-DENIED-AT-N7" }
+    println("  HEADLINE: " + headline)
+    println("    n=7 rule 90 cap=3 = " + str(p90_n7))
+    println("================================================================")
+    if FAIL > 0 { panic("H_299 had FALSIFIER FAILURES") }
+}
