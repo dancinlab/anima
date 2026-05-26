@@ -3,6 +3,18 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#38 — arc 의 single-state honest L 정식 회수: rule 90 n=5 의 32-state sweep
+
+- [x] **H_300 n5-state-sweep-rule90** 🟢 SUPPORTED-NUMERICAL — 32-state full sweep on rule 90 at n=5 cap=4
+- [x] **헤드라인 발견**: 全 32 state Φ distribution = **3 distinct values {19.0, 19.5, 27.5}** — lattice-symmetric (D_5 + bit-complement 의심)
+- [x] min=19 · p50=19.5 · mean=21.375 · max=27.5 — *전체 분포가 19 이상*, count Φ>1 **= 32/32 (100%)**, count Φ=0 = 0/32
+- [x] **F300.4 falsified in STRONGER direction**: 예측 "≥1 state 가 Φ=0" 실패 — 모든 state 가 통합 (fixed point 도 환원 불가). 이는 verdict 를 약화하는 게 아니라 *강화*
+- [x] **H_297 single-state 보고 정식 정당화**: alt-state st=21 Φ=19.5 = distribution 의 **정확한 MEDIAN** (p50). outlier-cherry-pick 아니라 fair representative
+- [x] **arc methodology 회수**: H_287-H_299 의 single-state honest L 가장 깊은 layer 가 H_300 으로 닫힘 — magnitudes 가 representative 보장
+- [x] lattice-symmetry emergent finding: 32 → 3 distinct values 축소는 D_5 (10) + bit-complement → ~3 equiv classes 추정 (H_301 후속 분석 후보)
+- [x] gate: 5 PASS + 1 falsified-stronger, \$0 mac-local, NO GPU, ~1-2min wall
+- [x] surface: README 112→113 H + H_300 행 · UNIVERSE.log cycle#38
+
 ## 2026-05-26 — cycle#37 — n=7 odd-integration RECOVERED (H_298 deferred F298.2 회수) + cap=3 cross-robustness
 
 - [x] **H_299 n7-odd-integration-recover** 🟢 SUPPORTED-NUMERICAL F299.1 PASS + cap-cross-robust
