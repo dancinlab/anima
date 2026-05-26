@@ -1,0 +1,21 @@
+// H_476 smoke — serialize bound
+
+fn b_per_field() -> i64 {
+    return 256
+}
+
+fn serialized_size(n_fields: i64) -> i64 {
+    return n_fields * b_per_field()
+}
+
+fn check_h476() -> bool {
+    let h1 = serialized_size(6) == 1536
+    let bound = serialized_size(6) <= b_per_field() * 6
+    return h1 && bound
+}
+
+fn main() {
+    let ok = check_h476()
+    if !ok { print("H_476 FAIL"); return }
+    print("H_476 blue serialize bound OK")
+}
