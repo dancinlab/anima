@@ -1,0 +1,3 @@
+fn winner(score: f64, ext: bool) -> bool { if ext { return false } return score > 0.5 }
+fn check_h566() -> bool { return winner(0.8,false) && !winner(0.8,true) }
+fn main() { if check_h566() { print("H_566 OK") } else { print("H_566 FAIL") } }
