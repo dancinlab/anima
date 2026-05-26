@@ -1,0 +1,26 @@
+// H_462 smoke — TENSION baseline
+
+fn channel_count() -> i64 {
+    return 5
+}
+
+fn channel_name(idx: i64) -> string {
+    if idx == 0 { return "concept" }
+    if idx == 1 { return "context" }
+    if idx == 2 { return "meaning" }
+    if idx == 3 { return "authenticity" }
+    if idx == 4 { return "sender" }
+    return "void"
+}
+
+fn check_h462() -> bool {
+    let h1 = channel_count() == 5
+    let h2 = channel_name(0) == "concept" && channel_name(4) == "sender"
+    return h1 && h2
+}
+
+fn main() {
+    let ok = check_h462()
+    if !ok { print("H_462 FAIL"); return }
+    print("H_462 blue TENSION 5-ch baseline OK")
+}
