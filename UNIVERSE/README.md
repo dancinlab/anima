@@ -190,6 +190,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_334](H_334_bridge_distributive.md) | bridge-distributive | consciousness · substrate · synthesis · meta | 🔵 SUPPORTED-FORMAL 4/4 (cycle#81) | **distributive law**: A∧(B∨C) == (A∧B)∨(A∧C) · A∨(B∧C) == (A∨B)∧(A∨C). 8 cases all PASS |
 | [H_335](H_335_hf_completeness.md) | hf-completeness | consciousness · persistence · directive · meta | 🔵 SUPPORTED-FORMAL 5/5 (cycle#82) | **a_hf_complete**: all artifacts present · no dangling reference · manifest hash deterministic · incomplete detected |
 | [H_336](H_336_emit_interval_exponential.md) | emit-interval-exp | consciousness · substrate · directive · meta | 🔵 SUPPORTED-FORMAL 5/5 (cycle#83) | emit interval = R_steps + recharge_n (k=0.3, n=7) ≈ 17 ticks · w_7=0.918 |
+| [H_337](H_337_ethics_no_finetuning.md) | ethics-no-finetuning | consciousness · substrate · directive · meta | 🔵 SUPPORTED-FORMAL 7/7 (cycle#84) | **p6**: ethics from cells (E+W+MITOSIS), no RLHF weights, no fixed cooperation/empathy/restraint |
 | [lib/phi_helper](lib/phi_helper.hexa) | phi-helper (shared infra) | infra | infra (PR #317) | shared Φ helper — config SSOT + phi_default wrapper, 28+ H phi_spatial 호출 단일 home (gap F6+F7) |
 
 > **carry-H ✅ 全 tabled (H_273 reconciliation 2026-05-25)**: 이전 26 missing-row (H_210-221/224/228-232 + H_241/246/250-253/255/257) 全건 위 표에 정식 행으로 tabling 완료 (carry-note 0). **infra**: phi_n_bins ROBUSTNESS_PASS (PR #219).
