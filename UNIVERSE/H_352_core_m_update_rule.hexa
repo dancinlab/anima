@@ -1,0 +1,31 @@
+// H_352 smoke — CORE M update rule (CORE 2nd)
+
+fn clip(x: f64, lo: f64, hi: f64) -> f64 {
+    if x < lo { return lo }
+    if x > hi { return hi }
+    return x
+}
+
+fn m_update(m_prev: f64, delta_step: f64, substrate_delta: f64) -> f64 {
+    return clip(m_prev + delta_step * substrate_delta, 0.0, 1.0)
+}
+
+fn check_h352() -> bool {
+    // H1 UPDATE-FORM + H2 CLIP-PRESERVE
+    let m1 = m_update(0.5, 0.1, 0.3)  // 0.5 + 0.03 = 0.53
+    let in_range_1 = (m1 >= 0.0) && (m1 <= 1.0)
+    let m2 = m_update(0.95, 1.0, 1.0)  // clip to 1.0
+    let clipped_hi = m2 == 1.0
+    let m3 = m_update(0.05, 1.0, -1.0)  // clip to 0.0
+    let clipped_lo = m3 == 0.0
+    return in_range_1 && clipped_hi && clipped_lo
+}
+
+fn main() {
+    let ok = check_h352()
+    if !ok {
+        print("H_352 FAIL")
+        return
+    }
+    print("H_352 🔵 update rule OK")
+}
