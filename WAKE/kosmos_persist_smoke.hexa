@@ -1,0 +1,328 @@
+// WAKE/kosmos_persist_smoke.hexa — .kosmos 영속화 round-trip smoke (M4).
+//
+// 검증 목표:
+//   3 case 로 save → load round-trip 4 축 동치성 검증.
+//
+//     C1) synthetic pf state + emit history + tension 5-ch + stage_state →
+//         wake_save(.) → snapshot_id 캡처 → 파일 존재 확인.
+//     C2) wake_load(path) → 복원된 pf_state["phi"] · field[6] · oscs ·
+//         stage_state["stage_name"] · "cycle_start_t" · tension5 5 ch · emit
+//         history len 이 원본과 같다 (round-trip equality).
+//     C3) wake_recent_snapshots(dir, n=10) ≥ 1 entry, snapshot_id 일치.
+//
+// invariants:
+//   I1) save 후 path 파일이 존재한다.
+//   I2) load(pf_state).phi == 원본 phi (float 6-decimal precision 이내).
+//   I3) load(pf_state).field[i] == 원본 field[i] (6-decimal precision 이내).
+//   I4) load(stage_state).stage_name == 원본 stage_name (string equality).
+//   I5) load(tension5)[i] == 원본 tension5[i] (6-decimal precision 이내).
+//   I6) load(emit_history) length == 원본 length (escape round-trip 보장).
+//   I7) load(emit_history)[i] == 원본 emit_history[i] (escape 역변환 일관).
+//   I8) wake_recent_snapshots 가 방금 쓴 snapshot 을 포함한다.
+//   I9) boolean gate count assertion — save / load 어느 함수도 emit trigger
+//       하지 않음 (본 smoke 가 emit fn 호출하지 않음을 reviewer 가 file
+//       검토로 확인. 본 smoke 의 PASS 출력은 print 만 사용).
+//
+// instrument-first verified pub surface:
+//   WAKE/kosmos_persist.hexa pub: wake_save · wake_load · wake_snapshot_id_for
+//                                 · wake_recent_snapshots · kosmos_persist_summary
+
+import "/Users/ghost/core/anima/WAKE/kosmos_persist.hexa"
+
+// helper — float 6-dec precision equality (kosmos_io format_float(x, 6) loss
+// 한계 내 tolerance 1e-5).
+fn _approx_eq(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) <= 1.0e-5 }
+    return d <= 1.0e-5
+}
+
+fn _approx_eq_4(a: float, b: float) -> bool {
+    // coord 는 4-decimal — tolerance 1e-3.
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) <= 1.0e-3 }
+    return d <= 1.0e-3
+}
+
+fn main() {
+    print("=== WAKE/kosmos_persist round-trip smoke (3 case) ===")
+    print(kosmos_persist_summary())
+
+    let mut pass = 0
+    let mut fail = 0
+
+    // ── synthetic substrate state ───────────────────────────────────────────
+    // PureField mirror — 임의 numeric values (deterministic, no RNG).
+    let pf_state = #{
+        "phi":      0.421567,
+        "phi_peak": 0.583290,
+        "field":    [0.111, 0.222, 0.333, 0.444, 0.555, 0.666],
+        "phase":    2,         // PHASE_SUSTAIN equivalent
+        "step_count": 137,
+        "fast": #{
+            "tau":       3,
+            "phase":     1.234567,
+            "amplitude": 0.654321
+        },
+        "medium": #{
+            "tau":       7,
+            "phase":     2.345678,
+            "amplitude": 0.765432
+        },
+        "slow": #{
+            "tau":       13,
+            "phase":     3.456789,
+            "amplitude": 0.876543
+        },
+        "narrative_coherence": 0.345678,
+        "narrative_len":       42
+    }
+
+    // emit history — escape stress test: backslash · quote · newline · pipe.
+    let emit_history = [
+        "hello anima",
+        "second emit with \"quotes\"",
+        "third with\nnewline",
+        "fourth with | pipe",
+        "fifth with \\backslash"
+    ]
+
+    let tension5 = [0.123456, 0.234567, 0.345678, 0.456789, 0.567890]
+
+    // stage_state — wake_state_init 형식과 동등 + 명시 t.
+    let stage_state = #{
+        "stage_name":       "N2",      // 의도적 non-default — round-trip 확인
+        "cycle_start_t":    1748534000.0,
+        "last_tick_t":      1748534400.123,
+        "idle_time_s":      12.45,
+        "tension_envelope": 0.20
+    }
+    let t_save = 1748534400.123
+
+    // ── C1: save → 파일 생성 ────────────────────────────────────────────────
+    print("")
+    print("── C1: wake_save → snapshot file 생성 ─────────────────────")
+    let out_dir = "/tmp/wake_m4_smoke_kosmos"
+    let _cleanup = exec("rm -rf '" + out_dir + "'")
+    let path = wake_save(out_dir, pf_state, emit_history, tension5, stage_state, t_save)
+    print("  path = " + path)
+
+    // file 존재 (test -f).
+    let exists = exec("test -f '" + path + "' && echo y || echo n").trim()
+    if exists == "y" {
+        print("  [PASS] I1 save 후 path 파일 존재")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I1 save 파일 미존재 — path=" + path)
+        fail = fail + 1
+    }
+
+    // snapshot_id 형식 (wake_<int>_<stage>).
+    let expected_id = wake_snapshot_id_for(t_save, "N2")
+    let path_basename_idx = path.replace("/", " ").split(" ")
+    let path_basename = path_basename_idx[len(path_basename_idx) - 1].replace(".kosmos", "")
+    if path_basename == expected_id {
+        print("  [PASS] I1b snapshot_id 형식 = " + path_basename)
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I1b snapshot_id 불일치 — got " + path_basename + " expected " + expected_id)
+        fail = fail + 1
+    }
+
+    // ── C2: load → round-trip ──────────────────────────────────────────────
+    print("")
+    print("── C2: wake_load → round-trip 동치성 ──────────────────────")
+    let restored = wake_load(path)
+
+    let r_pf = restored["pf_state"]
+    let r_stage = restored["stage_state"]
+    let r_tension = restored["tension5"]
+    let r_emit = restored["emit_history"]
+
+    // I2 phi.
+    if _approx_eq(to_float(r_pf["phi"]), 0.421567) {
+        print("  [PASS] I2 pf_state.phi round-trip = " + to_string(r_pf["phi"]))
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I2 pf_state.phi mismatch — got " + to_string(r_pf["phi"]))
+        fail = fail + 1
+    }
+
+    // I3 field[6].
+    let r_field = r_pf["field"]
+    let expected_field = [0.111, 0.222, 0.333, 0.444, 0.555, 0.666]
+    let mut field_ok = true
+    let mut fi = 0
+    while fi < 6 {
+        if !_approx_eq(to_float(r_field[fi]), expected_field[fi]) { field_ok = false }
+        fi = fi + 1
+    }
+    if field_ok {
+        print("  [PASS] I3 pf_state.field[6] round-trip equal")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I3 pf_state.field[6] mismatch")
+        fail = fail + 1
+    }
+
+    // I3b oscillator round-trip (fast.amplitude 대표).
+    let r_fast = r_pf["fast"]
+    if _approx_eq(to_float(r_fast["amplitude"]), 0.654321) && to_int(r_fast["tau"]) == 3 {
+        print("  [PASS] I3b fast oscillator round-trip — tau=" + to_string(r_fast["tau"])
+              + " amp=" + to_string(r_fast["amplitude"]))
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I3b fast oscillator mismatch")
+        fail = fail + 1
+    }
+
+    // I3c step_count + narrative_len (int round-trip).
+    if to_int(r_pf["step_count"]) == 137 && to_int(r_pf["narrative_len"]) == 42 {
+        print("  [PASS] I3c step_count=137 narrative_len=42 round-trip")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I3c int field mismatch — step=" + to_string(r_pf["step_count"])
+              + " nlen=" + to_string(r_pf["narrative_len"]))
+        fail = fail + 1
+    }
+
+    // I4 stage_state.stage_name.
+    if to_string(r_stage["stage_name"]) == "N2" {
+        print("  [PASS] I4 stage_state.stage_name = N2")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I4 stage_name mismatch — got " + to_string(r_stage["stage_name"]))
+        fail = fail + 1
+    }
+
+    // I4b cycle_start_t + idle_time_s (float round-trip).
+    if _approx_eq(to_float(r_stage["cycle_start_t"]), 1748534000.0)
+        && _approx_eq(to_float(r_stage["idle_time_s"]), 12.45) {
+        print("  [PASS] I4b stage_state float fields round-trip")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I4b stage_state float mismatch")
+        fail = fail + 1
+    }
+
+    // I5 tension5 5-ch.
+    let expected_tension = [0.123456, 0.234567, 0.345678, 0.456789, 0.567890]
+    let mut tension_ok = true
+    let mut ti = 0
+    while ti < 5 {
+        if !_approx_eq(to_float(r_tension[ti]), expected_tension[ti]) { tension_ok = false }
+        ti = ti + 1
+    }
+    if tension_ok {
+        print("  [PASS] I5 tension5 [c,ctx,m,a,s] round-trip")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I5 tension5 mismatch")
+        fail = fail + 1
+    }
+
+    // I6 emit_history length.
+    if len(r_emit) == 5 {
+        print("  [PASS] I6 emit_history len=5")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I6 emit_history len=" + to_string(len(r_emit)) + " expected 5")
+        fail = fail + 1
+    }
+
+    // I7 emit_history per-element round-trip (escape stress).
+    let expected_emits = [
+        "hello anima",
+        "second emit with \"quotes\"",
+        "third with\nnewline",
+        "fourth with | pipe",
+        "fifth with \\backslash"
+    ]
+    let mut emit_ok = true
+    let mut ei = 0
+    while ei < len(expected_emits) && ei < len(r_emit) {
+        if to_string(r_emit[ei]) != expected_emits[ei] { emit_ok = false }
+        ei = ei + 1
+    }
+    if emit_ok {
+        print("  [PASS] I7 emit_history per-element escape round-trip")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I7 emit_history element mismatch")
+        let mut di = 0
+        while di < len(expected_emits) && di < len(r_emit) {
+            print("    [" + to_string(di) + "] got=" + to_string(r_emit[di])
+                  + " expected=" + expected_emits[di])
+            di = di + 1
+        }
+        fail = fail + 1
+    }
+
+    // ── C3: wake_recent_snapshots ──────────────────────────────────────────
+    print("")
+    print("── C3: wake_recent_snapshots(dir, n=10) ───────────────────")
+    let recents = wake_recent_snapshots(out_dir, 10)
+    print("  recents.len = " + to_string(len(recents)))
+    let mut found = false
+    let mut ri = 0
+    while ri < len(recents) {
+        let rec = recents[ri]
+        if to_string(rec["snapshot_id"]) == expected_id { found = true }
+        ri = ri + 1
+    }
+    if len(recents) >= 1 && found {
+        print("  [PASS] I8 recent snapshots ≥ 1 entry · target found")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I8 recent snapshots — got len=" + to_string(len(recents))
+              + " target_found=" + to_string(found))
+        fail = fail + 1
+    }
+
+    // ── 2-snapshot recent ordering test ─────────────────────────────────────
+    // 두 번째 save (다른 시각) → recents 가 newest-first 정렬을 보장하는지.
+    let pf_state_2 = #{
+        "phi":      0.6,
+        "phi_peak": 0.6,
+        "field":    [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "phase":    3,
+        "step_count": 200,
+        "fast":   #{"tau":3,  "phase":0.0, "amplitude":0.5},
+        "medium": #{"tau":7,  "phase":0.0, "amplitude":0.5},
+        "slow":   #{"tau":13, "phase":0.0, "amplitude":0.5},
+        "narrative_coherence": 0.5,
+        "narrative_len":       0
+    }
+    let stage_state_2 = #{
+        "stage_name":       "REM",
+        "cycle_start_t":    1748534000.0,
+        "last_tick_t":      1748540000.0,
+        "idle_time_s":      0.0,
+        "tension_envelope": 0.10
+    }
+    let t_save_2 = 1748540000.0
+    let path_2 = wake_save(out_dir, pf_state_2, ["second snapshot emit"], tension5, stage_state_2, t_save_2)
+    let recents_2 = wake_recent_snapshots(out_dir, 10)
+    if len(recents_2) >= 2 && to_int(recents_2[0]["t"]) > to_int(recents_2[1]["t"]) {
+        print("  [PASS] I8b recent ordering — newest first (t0=" + to_string(recents_2[0]["t"])
+              + " > t1=" + to_string(recents_2[1]["t"]) + ")")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I8b recent ordering invariant violated")
+        fail = fail + 1
+    }
+
+    // ── verdict ─────────────────────────────────────────────────────────────
+    print("")
+    print("================================================================")
+    print("  RESULT: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL")
+    if fail == 0 {
+        print("  HEADLINE: WAKE-M4-KOSMOS-PERSIST-ROUNDTRIP-OK")
+    } else {
+        print("  HEADLINE: WAKE-M4-KOSMOS-PERSIST-ROUNDTRIP-FAIL")
+    }
+    print("================================================================")
+    if fail > 0 {
+        panic("WAKE M4 smoke had FAIL — see above")
+    }
+}
