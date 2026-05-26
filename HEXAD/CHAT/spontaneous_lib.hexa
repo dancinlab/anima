@@ -23,11 +23,16 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 
-// ── §1 thresholds (closed constants — design choice, anchored to anima_alive) ─
+// ── SSOT 화해 (CORE.md #19, 2026-05-26) ──────────────────────────────────────
+// motivation/emit/safety/threshold/weight 의 20 fn 은 CORE/engine_g 가 SSOT.
+// 본 파일은 더 이상 그것들을 fork-정의하지 않고 engine_g 를 import 해 re-export 한다
+// (hexa import 전이성 검증됨 — consumer 가 engine_g fn 을 透過로 봄; 값 byte-identical).
+// 본 파일 고유(factor_* 8 · spike map §10 · seed §7 · gibberish §8 · meta §9 ·
+// §169 production/measurement variants)만 자체 정의로 남는다.
+import "/Users/ghost/core/anima/CORE/engine_g.hexa"
 
-fn spont_im_threshold() -> float        { return 0.3 }   // anima_alive PROACTIVE_THRESHOLD carry (F-SPONT-1)
-fn spont_interrupt_threshold() -> float { return 0.6 }   // higher 임계, talker interrupt 가능
-fn spont_idle_speak_after() -> float    { return 30.0 }  // anima_alive IDLE_SPEAK_AFTER carry (F-SPONT-7)
+// ── §1 thresholds — spont_im_threshold · spont_interrupt_threshold ·
+//     spont_idle_speak_after → engine_g SSOT (re-export via import 위)
 // §169 RATE-LIMIT-GOVERNANCE split (2026-05-20, REVISED per user
 // directive 2026-05-20 "RATE-LIMIT-GOVERNANCE-SPLIT 관련해서 제한
 // 걸어두지마"): production fn returns a RECOMMENDED DEFAULT (30.0s
@@ -62,8 +67,9 @@ fn spont_min_emit_interval_measurement(n_max: int, think_interval: float) -> flo
     return t_total / 3.0
 }
 
-fn spont_min_emit_interval() -> float   { return spont_min_emit_interval_production() }  // rate_limit safety (F-SPONT-5/7); §169 backward-compat alias
-fn spont_tts_cooldown() -> float        { return 3.0 }   // anima_alive carry, self-hearing guard
+// spont_min_emit_interval() → engine_g SSOT (값 30.0 동일). 본 파일 고유
+// _production/_measurement variants(위 §169)는 유지 — engine_g 에 없음.
+fn spont_tts_cooldown() -> float        { return 3.0 }   // anima_alive carry, self-hearing guard (CHAT-unique)
 
 
 // ── §2 8 factor pure fns (each → [0, 1], closed bounded-set) ─────────────────
@@ -129,69 +135,15 @@ fn factor_dynamics(silence_seconds: float) -> float {
 }
 
 
-// ── §3 weights (sum=1.0 closed conservation, B-SPONT-7) ──────────────────────
-
-fn spont_weight_relevance()   -> float { return 0.20 }
-fn spont_weight_info_gap()    -> float { return 0.10 }
-fn spont_weight_curiosity()   -> float { return 0.15 }
-fn spont_weight_pain()        -> float { return 0.10 }
-fn spont_weight_coherence()   -> float { return 0.10 }
-fn spont_weight_originality() -> float { return 0.10 }
-fn spont_weight_balance()     -> float { return 0.15 }
-fn spont_weight_dynamics()    -> float { return 0.10 }
-//  sum = 0.20 + 0.10 + 0.15 + 0.10 + 0.10 + 0.10 + 0.15 + 0.10 = 1.00 ✓
+// ── §3 weights — spont_weight_* (8, sum=1.0) → engine_g SSOT (값 byte-identical)
 
 
-// ── §4 motivation_score (linear weighted sum, B-SPONT-1 MOTIVATION-LINEAR) ───
-
-fn motivation_score(rel: float, gap: float, cur: float, pain: float,
-                    coh: float, orig: float, bal: float, dyn_v: float) -> float {
-    // NB: param name `dyn_v` (not `dyn`) — `dyn` is reserved keyword in hexa-lang
-    // lexer (commit 820c9ae4 2026-04-09, parser_tensor_shape.hexa dim wildcard).
-    return spont_weight_relevance()   * rel
-         + spont_weight_info_gap()    * gap
-         + spont_weight_curiosity()   * cur
-         + spont_weight_pain()        * pain
-         + spont_weight_coherence()   * coh
-         + spont_weight_originality() * orig
-         + spont_weight_balance()     * bal
-         + spont_weight_dynamics()    * dyn_v
-}
+// ── §4 motivation_score (linear weighted sum) → engine_g SSOT (re-export)
 
 
-// ── §5 emission predicates (closed Boolean, B-SPONT-4 MONOTONE) ──────────────
-
-fn should_emit(score: float) -> bool {
-    return score > spont_im_threshold()
-}
-
-fn should_interrupt(score: float) -> bool {
-    return score > spont_interrupt_threshold()
-}
-
-
-// ── §6 safety predicates (closed, B-SPONT-5 SAFETY-CONJUNCTION) ──────────────
-
-// Safety #1 kill_switch — env var ANIMA_SPONT_OFF=1 시 off (default ON)
-fn safety_kill_switch_on(env_off: bool) -> bool { return env_off == false }
-
-// Safety #2 rate_limit — seconds_since_last >= 30s (F-SPONT-7 carry)
-fn safety_rate_limit_ok(seconds_since_last: float) -> bool {
-    return seconds_since_last >= spont_min_emit_interval()
-}
-
-// Safety #3 phi_ratchet — phi > ratchet/2 (B-E-1 SAFETY-GATE-EXACT carry)
-fn safety_phi_ratchet_ok(phi: float, ratchet: float) -> bool {
-    return phi > ratchet / 2.0
-}
-
-// Safety #4 content_filter — caller가 외부 gibberish check 결과를 pass
-fn safety_content_ok(content_clean: bool) -> bool { return content_clean }
-
-// Composite: all 4 must be true (AND closure)
-fn safety_combined(kill: bool, rate: bool, phi_r: bool, content: bool) -> bool {
-    return kill && rate && phi_r && content
-}
+// ── §5 emission predicates (should_emit · should_interrupt) → engine_g SSOT
+// ── §6 safety predicates (safety_kill_switch_on · _rate_limit_ok ·
+//     _phi_ratchet_ok · _content_ok · _combined) → engine_g SSOT (re-export)
 
 
 // ── §7 seed strategy rotation (F-SPONT-2, ≥3 weighted) ───────────────────────
