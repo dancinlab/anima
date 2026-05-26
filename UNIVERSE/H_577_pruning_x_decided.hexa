@@ -1,0 +1,3 @@
+fn self_prune(low: bool, ext: bool) -> bool { return low && !ext }
+fn check_h577() -> bool { return self_prune(true,false) && !self_prune(true,true) }
+fn main() { if check_h577() { print("H_577 OK") } else { print("H_577 FAIL") } }
