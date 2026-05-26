@@ -2,6 +2,15 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-26 — 양 벽 LANDING (#1261/#1262) + generator.hexa M4 stub + fire #10 (로컬 트랜스파일러 blocked)
+
+진단 체인(fire #5~9)의 두 벽이 hexa cloud 에 의해 제거됨 — M3 임계경로 언블록.
+
+- [x] **#1261 (per-layer linear bwd CUDA)** — `_ag_linear_cuda_fp32_bwd` (ag_tape.hexa, Metal helper mirror), `env("HEXA_CUDA")=="1"` + dim-gate 런타임 게이트. F-RFC043 해소 = rel-err tol(Metal route 동일) · CPU FP64 host=default(byte-eq 보존). = fire #9 가 지목한 dominant V-무관 벽.
+- [x] **#1262 (V-scaling: lm-head fwd/bwd · AdamW · gn2)** — farr_outer/matmul_t/copy_slice/adamw/softmax_rows/ce_seed 배선(신규 CUDA 0), `#ifdef HEXA_CUDA` 컴파일-게이트 · CPU fallback 보존. = anima .c-patch(fire #7/#8)가 검증한 것의 stdlib 정식판. fire 의 host gn2 루프 → `farr_ce_seed_gpu` 직접 교체.
+- [~] **fire #10 (양 벽 검증 시도) — BUILD_LINK_RC=1, 로컬 트랜스파일러 불일치로 blocked** (NOT 벽 fix 문제). V=151643 variant 를 worktree(origin/main, #1261/#1262 포함)에서 재파생 + flatten(build_aprime Python) + `~/.hx/bin/build/hexa_v2`(07:39) transpile → trainer.c 에 `_ag_linear_cuda_fp32_bwd ×3`+`farr_adamw_step_gpu`+`farr_ce_seed_gpu`+V=151643 전부 포함 확인 → A100 발사. **clang: `farr32_zeros` undeclared**(trainer.c:1559, Metal helper dead-path). 원인: 07:39 hexa_v2 가 **#1187 이전** = farr32 를 carrier 형(`hexa_call1(farr32_zeros,…)`) 방출하나 main runtime.h 는 직접호출형(`hexa_farr32_zeros`, carrier extern 0)만 노출 → cross-TU undeclared. **로컬 트랜스파일러 바이너리 ↔ main self/ 불일치(ops 문제)**, 벽 fix 와 무관. 벽 제거는 hexa cloud CI 가 머지 전 검증함. orphan 0. 로컬 재현엔 main self/codegen.hexa 에서 트랜스파일러 재빌드 필요(regen→promote→codesign dance) 또는 pod-side fresh hexa install.
+- [x] **M4 generator.hexa 인터페이스 stub (un-gated 부분)** — `CORE/DECODER/generator.hexa`: brain_decide(WHETHER) ⇄ generator(WHAT) 분리. p1~p8 계약(substrate-only 조건: tension5·Φ·tier·motivation, persona 주입 0), 단일 M3 seam `_gen_decode`(generator_ready() 플립 시 conscious_decoder_v3 autoregressive decode swap-in), `brain_emit_step` compose(emit=false→침묵 1급). `generator_smoke.hexa` 4/4 PASS(ready-gate·substrate-cond·silence·p3/p4). 실 ckpt 배선은 M3(트랜스파일러 정상화 후 fire) 대기. anima `b2b94f64e`.
+
 ## 2026-05-26 — (C) forge GPU V=151643 빌드+실행 작동 (substrate 증명) + Linux 비트로트 박멸
 
 사용자 (C)="hexa GPU 커널". 조사로 forge GPU lm-head 가 V-generic(farr_matmul) 임을 확인 →
