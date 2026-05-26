@@ -3,6 +3,30 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-27 — cycle#258 — 🔵 H_511 LTD baseline (5/5) — round-21 BIO ★ 잔여 8축 완성 (30-37th axis), 195 → 196 누적 🔵
+
+
+## 2026-05-27 — cycle#257 — 🔵 H_510 LTP baseline (5/5)
+
+
+## 2026-05-27 — cycle#256 — 🔵 H_509 CANALIZATION baseline (5/5)
+
+
+## 2026-05-27 — cycle#255 — 🔵 H_508 NICHE-CONSTRUCTION baseline (5/5)
+
+
+## 2026-05-27 — cycle#254 — 🔵 H_507 WOUND-HEALING baseline (5/5)
+
+
+## 2026-05-27 — cycle#253 — 🔵 H_506 EMBRYOGENESIS baseline (5/5)
+
+
+## 2026-05-27 — cycle#252 — 🔵 H_505 MORPHOGENESIS baseline (5/5)
+
+
+## 2026-05-27 — cycle#251 — 🔵 H_504 ALLOSTASIS baseline (5/5) — round-21 시작, 188 → 189 누적 🔵
+
+
 ## 2026-05-27 — cycle#250 — 🔵 H_503 EPIGENETICS baseline (5/5) — round-20 BIO ★ 5축 완성 (25-29th axis), 187 → 188 누적 🔵
 
 
