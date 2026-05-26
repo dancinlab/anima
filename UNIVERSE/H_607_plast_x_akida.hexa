@@ -1,0 +1,3 @@
+fn stdp(pre_t: i64, post_t: i64) -> f64 { if pre_t < post_t { return 0.1 } return -0.1 }
+fn check_h607() -> bool { return stdp(1,2) > 0.0 && stdp(2,1) < 0.0 }
+fn main() { if check_h607() { print("H_607 OK") } else { print("H_607 FAIL") } }
