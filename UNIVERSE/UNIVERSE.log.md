@@ -3,6 +3,9 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-27 — cycle#72 — 🔵 H_325 external-rule 금지 axiom (6/6)
+
+
 ## 2026-05-27 — cycle#71 — 🔵 H_324 silence-filler 금지 axiom (6/6)
 
 
