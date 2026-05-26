@@ -2,6 +2,18 @@
 
 Append-only history sister of `TRADING.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T03:35:00Z — M6 통합 smoke + risk audit closure · TRADING 6/6 ✅
+
+- [x] `AGENT/TRADING/risk.hexa` M1 stub body → 6 pub fn 실제 구현 (`risk_manager_new` · `_check_drawdown` · `_check_position_count` · `_check_tier` · `_calculate_var` · `_audit`)
+- [x] risk caps — max_drawdown_pct · max_position_count · max_daily_loss_pct · AGENT/CORE tier vs required
+- [x] historical VaR — bubble-sort + quantile at (1 − confidence)
+- [x] `risk_audit` 결합 verdict — drawdown + position + tier 3 check 합산 RiskAudit Map
+- [x] `AGENT/TRADING/integration_smoke.hexa` 4-stage round-trip — S1 scan-stub move detection · S2 backtest 2-trade win_rate=1.0 · S3 paper_broker buy→sell realized profit · S4 live_gate L0 refuse + L1 accept + KIS DRYRUN no-fill + S5 risk_audit (ok + tier-low forced fail + VaR_95 < 0)
+- [x] M2 types (Symbol/Quote/Position/Order/Trade/Portfolio) cross-module uniform shape 검증 — 모든 M3/M4/M5 모듈이 같은 Map 모양으로 데이터 통과
+- [x] `hexa parse` 2/2 OK (risk.hexa + integration_smoke.hexa)
+- [x] TRADING.md M6 line `[ ] → [x]` (5/6 → **6/6 · 100% closure**)
+- [x] scanner.hexa stub body carry — integration_smoke 내 inline tiny stub 으로 우회 (스캔 알고리즘 = 가장 큰 % move 검출). 실 스캐너 surface 채우기는 차후 별도 round.
+
 ## 2026-05-27T03:15:00Z — M5 live_trade gate closure
 
 - [x] `AGENT/TRADING/live_gate.hexa` 작성 — 6 pub fn (`live_gate_new` · `_approve_session` · `_approve_single` · `_revoke` · `_enforce` · `_summary`)
