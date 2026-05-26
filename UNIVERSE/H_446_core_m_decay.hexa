@@ -1,0 +1,25 @@
+// H_446 smoke — M exp decay
+
+fn gamma_decay() -> f64 {
+    return 0.95
+}
+
+fn m_decay(m_prev: f64) -> f64 {
+    return m_prev * gamma_decay()
+}
+
+fn check_h446() -> bool {
+    let g = gamma_decay()
+    let range = (g > 0.0) && (g < 1.0)
+    let m1 = m_decay(1.0)  // 0.95
+    let m2 = m_decay(m1)   // 0.9025
+    let mono = m2 < m1
+    let approach_zero = m_decay(0.01) < 0.01
+    return range && mono && approach_zero
+}
+
+fn main() {
+    let ok = check_h446()
+    if !ok { print("H_446 FAIL"); return }
+    print("H_446 blue M decay OK")
+}
