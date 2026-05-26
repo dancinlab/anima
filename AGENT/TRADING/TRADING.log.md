@@ -2,6 +2,15 @@
 
 Append-only history sister of `TRADING.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T02:10:00Z — M1 13-module 회수 closure
+
+- [x] 13 .hexa 모듈 `anima-agent/hexa/module/trading/` → `AGENT/TRADING/` canonical 이전 (cp)
+- [x] bridge architecture 정합 — 5 핵심 (autonomous · executor · risk · regime · scanner) + 부수 4 (init · strategies · strategy · test_ensemble) `consciousness`/`phi`/`tension` 식별자·주석 → `tier`/`AGENT/CORE` framing
+- [x] `hexa parse` 13/13 OK
+- [x] RECOVERY.md SSOT (회수 매트릭스 + 키워드 잔존 grep + parse 검증)
+- [x] TRADING.md M1 line `[ ] → [x]`
+- [ ] M2 데이터 타입 (다음 마일스톤)
+
 ## 2026-05-27T01:55:00Z — domain init
 
 - [x] TRADING.md scaffold (6 milestone · 13 legacy module 회수 roadmap)
