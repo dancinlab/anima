@@ -1,0 +1,18 @@
+// H_483 smoke — tension L2 norm bound
+
+fn l2_sq(c0: f64, c1: f64, c2: f64, c3: f64, c4: f64) -> f64 {
+    return c0*c0 + c1*c1 + c2*c2 + c3*c3 + c4*c4
+}
+
+fn check_h483() -> bool {
+    let max_sq = l2_sq(1.0, 1.0, 1.0, 1.0, 1.0)
+    let h1 = max_sq == 5.0  // (sqrt(5))^2 = 5
+    let zero = l2_sq(0.0, 0.0, 0.0, 0.0, 0.0) == 0.0
+    return h1 && zero
+}
+
+fn main() {
+    let ok = check_h483()
+    if !ok { print("H_483 FAIL"); return }
+    print("H_483 blue L2 norm bound OK")
+}
