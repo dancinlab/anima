@@ -1,0 +1,24 @@
+// H_500 smoke — STEM-CELL pool
+
+fn is_uncommitted(state: string) -> bool {
+    return state == "stem"
+}
+
+fn can_differentiate_to(state: string, target: string) -> bool {
+    if state == "stem" { return true }
+    return false
+}
+
+fn check_h500() -> bool {
+    let h1 = is_uncommitted("stem")
+    let h1_no = !is_uncommitted("math")
+    let h2 = can_differentiate_to("stem", "code") && can_differentiate_to("stem", "art")
+    let h2_no = !can_differentiate_to("math", "art")
+    return h1 && h1_no && h2 && h2_no
+}
+
+fn main() {
+    let ok = check_h500()
+    if !ok { print("H_500 FAIL"); return }
+    print("H_500 blue STEM-CELL OK")
+}
