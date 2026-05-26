@@ -28,8 +28,8 @@ fn main() {
     assert_eq("C1.next_asset_id", s["next_asset_id"], 1)
     assert_eq("C1.log_empty", s["asset_log"].len(), 0)
 
-    // C2: L1 still generation
-    let r1 = creator_backend_generate_still(s, "anima portrait calm cyan", 1024, 1024)
+    // C2: L1 still generation (model="" → default stub)
+    let r1 = creator_backend_generate_still(s, "anima portrait calm cyan", 1024, 1024, "")
     let s1 = r1["state"]
     let still_asset = r1["asset"]
     assert_eq("C2.asset_kind", still_asset["kind"], "MediaAsset")
@@ -37,6 +37,7 @@ fn main() {
     assert_eq("C2.media_type_still", still_asset["media_type"], "still")
     assert_eq("C2.width", still_asset["meta"]["width"], 1024)
     assert_eq("C2.provenance_backend", still_asset["provenance"]["backend"], "openai-images-2.0")
+    assert_eq("C2.model_default_stub", still_asset["provenance"]["model"], "stub")
     assert_eq("C2.state_advanced", s1["next_asset_id"], 2)
 
     // C3: L2 prog render
@@ -54,8 +55,8 @@ fn main() {
     assert_eq("C3.provenance_backend", prog_asset["provenance"]["backend"], "remotion-codegen")
     assert_eq("C3.state_advanced", s2["next_asset_id"], 3)
 
-    // C4: L3 clip generation
-    let r3 = creator_backend_generate_clip(s2, "anima riding a wave", 15.0)
+    // C4: L3 clip generation (with explicit model override)
+    let r3 = creator_backend_generate_clip(s2, "anima riding a wave", 15.0, "fal-ai/seedance-2.0-pro")
     let s3 = r3["state"]
     let clip_asset = r3["asset"]
     assert_eq("C4.tier_L3", clip_asset["tier"], "L3")
@@ -63,15 +64,19 @@ fn main() {
     assert_eq("C4.duration", clip_asset["meta"]["duration_s"], 15.0)
     assert_eq("C4.sample_rate_24k", clip_asset["meta"]["sample_rate_hz"], 24000)
     assert_eq("C4.provenance_backend", clip_asset["provenance"]["backend"], "fal-seedance-2.0")
+    assert_eq("C4.model_override", clip_asset["provenance"]["model"], "fal-ai/seedance-2.0-pro")
     assert_eq("C4.state_advanced", s3["next_asset_id"], 4)
 
-    // C5: dispatcher routes by tier label
-    let req_l1 = #{ "tier": "L1", "prompt": "test", "size_w": 512, "size_h": 512 }
+    // C5: dispatcher routes by tier label + model option threading
+    let req_l1 = #{ "tier": "L1", "prompt": "test", "size_w": 512, "size_h": 512, "model": "fal-ai/flux-1.1-pro" }
     let r4 = creator_backend_dispatch(s3, req_l1)
     assert_eq("C5.dispatch_L1_tier", r4["asset"]["tier"], "L1")
+    assert_eq("C5.dispatch_L1_model", r4["asset"]["provenance"]["model"], "fal-ai/flux-1.1-pro")
     let req_l3 = #{ "tier": "L3", "prompt": "clip", "duration_s": 5.0 }
     let r5 = creator_backend_dispatch(r4["state"], req_l3)
     assert_eq("C5.dispatch_L3_tier", r5["asset"]["tier"], "L3")
+    // model omitted in dispatch req → falls back to "stub"
+    assert_eq("C5.dispatch_L3_model_default", r5["asset"]["provenance"]["model"], "stub")
 
     // C6: unknown tier → error, state unchanged
     let req_bad = #{ "tier": "L9", "prompt": "x", "size_w": 1, "size_h": 1 }
