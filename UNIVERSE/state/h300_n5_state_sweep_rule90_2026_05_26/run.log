@@ -1,0 +1,60 @@
+================================================================
+  H_300 — n=5 32-state sweep on rule 90 (cap=4)
+================================================================
+    st=0 : 27.5
+    st=1 : 19.5
+    st=2 : 19.5
+    st=3 : 19
+    st=4 : 19.5
+    st=5 : 27.5
+    st=6 : 19
+    st=7 : 19.5
+    st=8 : 19.5
+    st=9 : 19
+    st=10 : 27.5
+    st=11 : 19.5
+    st=12 : 19
+    st=13 : 19.5
+    st=14 : 19.5
+    st=15 : 27.5
+    st=16 : 19.5
+    st=17 : 19
+    st=18 : 27.5
+    st=19 : 19.5
+    st=20 : 19
+    st=21 : 19.5
+    st=22 : 19.5
+    st=23 : 27.5
+    st=24 : 27.5
+    st=25 : 19.5
+    st=26 : 19.5
+    st=27 : 19
+    st=28 : 19.5
+    st=29 : 27.5
+    st=30 : 19
+    st=31 : 19.5
+  ──────────────
+  DISTRIBUTION STATS (32 states)
+    min          : 19
+    p25          : 19.5
+    median       : 19.5
+    mean         : 21.375
+    p75          : 27.5
+    p90          : 27.5
+    max          : 27.5
+    count Phi>1  : 32/32
+    count Phi=0  : 0/32
+    st=21 (alt)  : 19.5
+  [PASS] F300.1 STATE-INVARIANT-NONZERO: >=26/32 states Phi > 1.0
+  [PASS] F300.2 ALT-STATE-NOT-OUTLIER: st=21 Phi <= p90
+  [PASS] F300.3 DISTRIBUTION-PROFILE: max >= 15 AND mean >= 5
+  [FAIL] F300.4 ANCHOR-STATES-NONEMPTY: >=1 state Phi = 0
+  [PASS] F300.5 BOUND: all 32 values >= 0
+  [PASS] F300.6 DETERMINISM: st=21 re-run identical AND matches H_297 (~19.5)
+================================================================
+  RESULT: 5 PASS / 1 FAIL
+  HEADLINE: ROBUST-STATE-INVARIANT (alt=representative)
+    distribution: min=19 p50=19.5 mean=21.375 max=27.5
+    st=21 Phi=19.5 (rank among 32, p90=27.5)
+================================================================
+panic: H_300 had FALSIFIER FAILURES
