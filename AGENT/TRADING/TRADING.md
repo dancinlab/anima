@@ -22,13 +22,13 @@
 
 ### 🇺🇸 미국 / 글로벌 주식
 
-- [ ] M10 Alpaca US 주식 — `live_broker_alpaca.hexa` 신규 · ✨ 2026 BrokerChooser "Best Broker for Algorithmic Trading" 인증 · paper-friendly · zero-cost (commission-free) · 간단한 API key/secret pair (header passing) · paper/live 2 endpoint · `secret get alpaca.api_key + alpaca.api_secret` · 1시간 안에 strategy 가동 가능
+- [x] M10 Alpaca US 주식 — `AGENT/TRADING/live_broker_alpaca.hexa` STUB (7 pub fn — `alpaca_broker_new` · `_configure` · `_get_quote` · `_place_order` · `_cancel_order` · `_list_positions` · `_summary`) · ✨ 2026 BrokerChooser "Best Broker for Algorithmic Trading" 인증 · env="DRYRUN"/"PAPER"/"LIVE" 3-mode · paper endpoint `https://paper-api.alpaca.markets` · live endpoint `https://api.alpaca.markets` · `APCA-API-KEY-ID + APCA-API-SECRET-KEY` header · live_gate 통과 필수 · `live_broker_alpaca_upbit_smoke.hexa` 12-case 합본 verify · STUB → REAL wire-up M10+1
 - [ ] M11 IBKR (Interactive Brokers) — `live_broker_ibkr.hexa` 신규 · 150+ order types · 글로벌 시장 · 87% NBBO 우월 체결 · 가장 강력하지만 복잡 (TWS gateway socket 7497 paper / 7496 live · IBKR REST API alternative)
 - [ ] M12 Tradier — `live_broker_tradier.hexa` 신규 (선택) · middle option · 120 req/min standard · 600 premium · 가벼운 US 시장
 
 ### ₿ Crypto 거래소
 
-- [ ] M13 Upbit — `live_broker_upbit.hexa` 신규 · 한국 1위 (시장 점유율 71.6%) · FIU 라이센스 · KRW 마켓 · REST + WebSocket · 0.25% fee
+- [x] M13 Upbit — `AGENT/TRADING/live_broker_upbit.hexa` STUB (7 pub fn — `upbit_broker_new` · `_configure` · `_get_quote` · `_place_order` · `_cancel_order` · `_list_positions` · `_summary`) · 한국 1위 (시장 점유율 71.6%) · FIU 라이센스 · KRW/USDT/BTC 마켓 quote 선택 · REST `https://api.upbit.com/v1` · JWT (HS256) auth · access_key + secret_key · live_gate 통과 필수 · `live_broker_alpaca_upbit_smoke.hexa` 12-case 합본 verify · STUB → REAL wire-up M13+1
 - [ ] M14 Bithumb — `live_broker_bithumb.hexa` 신규 · 한국 2위 · FIU 라이센스 · 자동매매 + bots API · 448 coins · 0.04% fee
 - [ ] M15 Binance — `live_broker_binance.hexa` 신규 · 글로벌 1위 · ⚠ 한국 app store 차단 (2026-01-28~, FIU 미등록) but API 자체는 사용 가능 · BTCUSDT 등 USDT pair · HMAC-SHA256 signing · `secret get binance.api_key + binance.api_secret`
 - [ ] M16 ccxt unified — `live_broker_ccxt.hexa` (선택) · 100+ exchange 단일 라이브러리 wrapper · OKX/Bybit/Coinbase 등 다 한 surface 로
