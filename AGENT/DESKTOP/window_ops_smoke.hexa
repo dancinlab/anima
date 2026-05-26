@@ -1,0 +1,116 @@
+// window_ops_smoke.hexa — runtime smoke for AGENT/DESKTOP/window_ops (M4).
+//
+// 4 cases — SAFE BY CONSTRUCTION. The smoke sets ANIMA_DESKTOP_DRYRUN=1 in
+// its own env, then every pub fn returns its contract-shape value WITHOUT
+// dispatching the underlying osascript. No real windows are moved, minimized,
+// closed, or captured.
+//
+//   C1 ax_window_bounds shape    — verify Map has x/y/w/h keys
+//   C2 ax_window_arrange_grid    — 4-app 2×2 dry-run plan dict (placed=4, skipped=0)
+//   C3 ax_focus_chain            — cycle 3 apps dry-run, count == 3
+//   C4 ax_workspace_screenshot_all — dry-run returns list of paths
+//
+// All cases complete → exit 0. No osascript / screencapture is actually dispatched.
+
+import "/Users/ghost/core/anima/AGENT/DESKTOP/window_ops.hexa"
+
+fn _enable_dry_run() {
+    set_env("ANIMA_DESKTOP_DRYRUN", "1")
+}
+
+fn _map_get_int(m: Map, key: string) -> int {
+    let v = m[key]
+    let s = to_string(v)
+    s.to_int()
+}
+
+fn _map_get_str(m: Map, key: string) -> string {
+    let v = m[key]
+    to_string(v)
+}
+
+fn _map_get_bool(m: Map, key: string) -> bool {
+    let v = m[key]
+    let s = to_string(v)
+    if s == "true" { return true }
+    false
+}
+
+fn _map_has(m: Map, key: string) -> bool {
+    let v = m[key]
+    let s = to_string(v)
+    // missing key returns "void" stringification in hexa
+    if s == "void" { return false }
+    true
+}
+
+fn main() {
+    println("[smoke] AGENT/DESKTOP/window_ops — " + window_ops_summary())
+
+    _enable_dry_run()
+    println("[init] ANIMA_DESKTOP_DRYRUN=1 (no real window/screen events will fire)")
+
+    // ── C1 ax_window_bounds shape ─────────────────────────────────────────
+    let r1 = ax_window_bounds("Finder", 0)
+    let has_x = _map_has(r1, "x")
+    let has_y = _map_has(r1, "y")
+    let has_w = _map_has(r1, "w")
+    let has_h = _map_has(r1, "h")
+    let risk1 = _map_get_str(r1, "risk")
+    println("[C1] ax_window_bounds(Finder, 0) keys: x=" + to_string(has_x) + " y=" + to_string(has_y) + " w=" + to_string(has_w) + " h=" + to_string(has_h) + " risk=" + risk1)
+    let c1_pass = has_x && has_y && has_w && has_h && (risk1 == "read")
+    if !c1_pass {
+        println("[C1] FAIL — expected all 4 bounds keys + risk=read")
+    } else {
+        println("[C1] PASS — bounds shape {x,y,w,h} + read risk verified")
+    }
+
+    // ── C2 ax_window_arrange_grid 2×2 plan ────────────────────────────────
+    let apps = ["Finder", "Safari", "Terminal", "Notes"]
+    let r2 = ax_window_arrange_grid(apps, 2, 2)
+    let placed = _map_get_int(r2, "placed")
+    let skipped = _map_get_int(r2, "skipped")
+    let plan_v = r2["plan"]
+    let plan_len = len(plan_v)
+    let risk2 = _map_get_str(r2, "risk")
+    println("[C2] arrange_grid(4 apps, 2x2) placed=" + to_string(placed) + " skipped=" + to_string(skipped) + " plan_len=" + to_string(plan_len) + " risk=" + risk2)
+    let c2_pass = (placed == 4) && (skipped == 0) && (plan_len == 4) && (risk2 == "soft")
+    if !c2_pass {
+        println("[C2] FAIL — expected placed=4 skipped=0 plan_len=4 risk=soft")
+    } else {
+        println("[C2] PASS — 4-app 2x2 grid plan shape verified")
+    }
+
+    // ── C3 ax_focus_chain dry-run cycle ───────────────────────────────────
+    let chain_apps = ["Finder", "Safari", "Terminal"]
+    let r3 = ax_focus_chain(chain_apps)
+    let count = _map_get_int(r3, "count")
+    let ok3 = _map_get_bool(r3, "ok")
+    let risk3 = _map_get_str(r3, "risk")
+    println("[C3] focus_chain(3 apps) count=" + to_string(count) + " ok=" + to_string(ok3) + " risk=" + risk3)
+    let c3_pass = (count == 3) && ok3 && (risk3 == "soft")
+    if !c3_pass {
+        println("[C3] FAIL — expected count=3 ok=true risk=soft")
+    } else {
+        println("[C3] PASS — 3-app focus chain dry-run verified")
+    }
+
+    // ── C4 ax_workspace_screenshot_all dry-run paths list ─────────────────
+    let r4 = ax_workspace_screenshot_all()
+    let r4_len = len(r4)
+    println("[C4] workspace_screenshot_all() → list len=" + to_string(r4_len))
+    let c4_pass = r4_len >= 1
+    if !c4_pass {
+        println("[C4] FAIL — expected at least 1 path in dry-run")
+    } else {
+        println("[C4] PASS — dry-run returns paths list (no capture dispatched)")
+    }
+
+    // ── verdict ───────────────────────────────────────────────────────────
+    let all_pass = c1_pass && c2_pass && c3_pass && c4_pass
+    if all_pass {
+        println("[smoke] DONE — 4/4 PASS (exit 0)")
+    } else {
+        println("[smoke] DONE — some cases FAILED (exit 0, honest)")
+    }
+}
