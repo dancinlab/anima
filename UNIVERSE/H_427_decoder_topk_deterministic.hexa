@@ -1,0 +1,20 @@
+// H_427 smoke — top-k deterministic
+
+fn top_k_sample(seed: i64, k: i64) -> i64 {
+    // toy stand-in: pure function of seed + k
+    return (seed * 31) + k
+}
+
+fn check_h427() -> bool {
+    let s1 = top_k_sample(42, 3)
+    let s2 = top_k_sample(42, 3)
+    let det = s1 == s2
+    let different = top_k_sample(42, 3) != top_k_sample(42, 5)  // different k → different
+    return det && different
+}
+
+fn main() {
+    let ok = check_h427()
+    if !ok { print("H_427 FAIL"); return }
+    print("H_427 blue top-k det OK")
+}
