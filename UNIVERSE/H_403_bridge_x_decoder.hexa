@@ -1,0 +1,22 @@
+// H_403 smoke — vocab subset from cap
+
+fn v_allowed_size(cap_str: f64, v_total: i64) -> i64 {
+    let vt = v_total as f64
+    return (cap_str * vt) as i64
+}
+
+fn check_h403() -> bool {
+    let vt = 100
+    let small = v_allowed_size(0.1, vt)  // 10
+    let big = v_allowed_size(0.8, vt)    // 80
+    let mono = big > small
+    let zero = v_allowed_size(0.0, vt) == 0
+    let subset_ok = big <= vt
+    return mono && zero && subset_ok
+}
+
+fn main() {
+    let ok = check_h403()
+    if !ok { print("H_403 FAIL"); return }
+    print("H_403 blue vocab-from-cap OK")
+}
