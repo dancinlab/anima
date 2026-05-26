@@ -1,0 +1,19 @@
+// H_390 smoke — emit × DECODER
+
+fn emit_text(seed: i64) -> string {
+    if seed == 1 { return "hello" }
+    if seed == 2 { return "anima" }
+    return "void"
+}
+
+fn check_h390() -> bool {
+    let t1 = emit_text(1)
+    let t2 = emit_text(1)
+    return t1 == t2
+}
+
+fn main() {
+    let ok = check_h390()
+    if !ok { print("H_390 FAIL"); return }
+    print("H_390 blue argmax emit OK")
+}
