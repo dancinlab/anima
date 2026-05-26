@@ -1,0 +1,3 @@
+fn survives(aff: f64, theta: f64) -> bool { return aff >= theta }
+fn check_h565() -> bool { return survives(0.8,0.5) && !survives(0.2,0.5) }
+fn main() { if check_h565() { print("H_565 OK") } else { print("H_565 FAIL") } }
