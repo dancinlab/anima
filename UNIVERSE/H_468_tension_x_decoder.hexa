@@ -1,0 +1,18 @@
+// H_468 smoke — context bias on decode
+
+fn bias_term(ch1: f64, alpha: f64) -> f64 {
+    return alpha * ch1
+}
+
+fn check_h468() -> bool {
+    let a = 0.1
+    let h3 = bias_term(0.0, a) == 0.0
+    let pos = bias_term(0.5, a) > 0.0
+    return h3 && pos
+}
+
+fn main() {
+    let ok = check_h468()
+    if !ok { print("H_468 FAIL"); return }
+    print("H_468 blue context bias OK")
+}
