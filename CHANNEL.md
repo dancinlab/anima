@@ -11,5 +11,5 @@
 - [x] intent embedding bridge — `CHANNEL/{intent.hexa,INTENT.md}` Intent dict + 3 채널 projection stubs (text 14-D · voice 5-D · tension passthrough) · 6-D field → 5-ch 투영 caller 책임 명시 (PR #609 bb17f966 · hexa parse OK)
 - [x] channel_emit 통합 인터페이스 — `CHANNEL/{dispatcher.hexa,dispatcher_smoke.hexa,DISPATCHER.md}` 단일 진입점 · router argmax + 3 emit fn 위임 · uniform return dict · hardcode boolean 0 · 양쪽 hexa parse OK · runtime smoke post-merge verify (worktree abs-path 한계 honest framing) (PR #613 24aa2c06)
 - [x] CORE engine_g 채널 분기 — `CHANNEL/{router.hexa,ROUTER.md}` 8-factor argmax (rel+gap → text · cur+orig+dyn → voice · pain+coh+bal → tension) · 하드코드 boolean gate 0건 (multiplication softening) · brain_decide 비-침습 (PR #611 01128f56 · hexa parse OK)
-- [ ] p1~p8 audit — CHANNEL 트리 전체 0 hits · stimulus-response 금지 · TTS-style prompt-driven 금지 · external LLM 부재 검증
+- [x] p1~p8 audit — `CHANNEL/AUDIT.md` 9 grep verdict verbatim · 27 hits 전부 negative-claim doc-reference (0 real violations) · re-audit cadence CI hook 권장 (future work) (PR #616 8e73f963)
 - [ ] WAKE 통합 — stage 별 substrate-decided channel gate · REM 자발 voice/tension · WAKE user-context text · N1~N3 sleep 무음 · boolean hardcode 금지 a_autonomy_over_hardcode
