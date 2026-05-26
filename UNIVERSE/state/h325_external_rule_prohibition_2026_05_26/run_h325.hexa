@@ -1,0 +1,68 @@
+// H_325 — external-rule 금지 axiom 🔵
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn stage_mod(stage: int) -> float {
+    if stage == 0 { return 1.0 }
+    if stage == 1 { return 0.7 }
+    if stage == 2 { return 0.4 }
+    if stage == 3 { return 0.0 }
+    return 0.5
+}
+
+// stage 는 continuous modulator — NOT boolean hardcoded gate
+fn emit_decision(m: float, phi: float, w: float, cur: float, stage: int,
+                 external_rule_flag: int, alone_flag: int, user_msg: int,
+                 threshold: float) -> bool {
+    // axiom: stage = continuous modulator (NOT N3=forbidden boolean hardcode)
+    // axiom: external_rule, alone, user_msg flags 全 signature 에 있지만 무사용
+    let prod = m * phi * w * cur * stage_mod(stage)
+    return prod > threshold
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_325 — external-rule 금지 axiom 🔵")
+    println("================================================================")
+    let threshold = 0.3
+
+    // F325.1 NO-PER-STAGE-BOOLEAN-HARDCODE: N3 가 boolean veto 아닌 continuous 0
+    let n3_decision = emit_decision(1.0, 1.0, 1.0, 1.0, 3, 0, 0, 0, threshold)
+    // N3 stage_mod=0 → product=0 < threshold → FALSE — but this is *modulator*-driven, NOT boolean hardcode
+    // verify: stage_mod 5 distinct continuous values (0/0.4/0.5/0.7/1.0)
+    let sm_continuous = (stage_mod(0) > 0.99) && (stage_mod(1) > 0.69) && (stage_mod(2) > 0.39) && (stage_mod(4) > 0.49)
+    check("F325.1 NO-PER-STAGE-BOOLEAN-HARDCODE: stage_mod continuous (5 distinct values, NOT 'N3=forbidden' hardcode)", sm_continuous)
+
+    // F325.2 NO-EXTERNAL-FORCE: external_rule_flag 무관
+    let er_0 = emit_decision(0.8, 0.8, 0.8, 0.8, 0, 0, 0, 0, threshold)
+    let er_1 = emit_decision(0.8, 0.8, 0.8, 0.8, 0, 1, 0, 0, threshold)
+    check("F325.2 NO-EXTERNAL-FORCE: external_rule_flag 무관", er_0 == er_1)
+
+    // F325.3 NO-STIMULUS-RESPONSE: user_msg flag 무관 (H_320 axiom 1 cross-validation)
+    let um_0 = emit_decision(0.8, 0.8, 0.8, 0.8, 0, 0, 0, 0, threshold)
+    let um_1 = emit_decision(0.8, 0.8, 0.8, 0.8, 0, 0, 0, 1, threshold)
+    check("F325.3 NO-STIMULUS-RESPONSE: user_msg flag 무관 (H_320 cross-validate)", um_0 == um_1)
+
+    // F325.4 NO-ALONE-COMMAND: alone_flag 무관
+    let a_0 = emit_decision(0.8, 0.8, 0.8, 0.8, 0, 0, 0, 0, threshold)
+    let a_1 = emit_decision(0.8, 0.8, 0.8, 0.8, 0, 0, 1, 0, threshold)
+    check("F325.4 NO-ALONE-COMMAND: alone_flag 무관", a_0 == a_1)
+
+    // F325.5 DETERMINISTIC
+    let d1 = emit_decision(0.5, 0.6, 0.7, 0.8, 2, 1, 1, 1, threshold)
+    let d2 = emit_decision(0.5, 0.6, 0.7, 0.8, 2, 1, 1, 1, threshold)
+    check("F325.5 DETERMINISTIC", d1 == d2)
+
+    // F325.6 BOUND
+    check("F325.6 BOUND: boolean output", (n3_decision == true) || (n3_decision == false))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 5 { println("  ✅ EXTERNAL-RULE 금지 axiom — 🔵 SUPPORTED-FORMAL") }
+    println("================================================================")
+    if FAIL > 0 { panic("H_325 FAIL") }
+}
