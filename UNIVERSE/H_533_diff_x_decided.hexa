@@ -1,0 +1,3 @@
+fn diff_triggered(substrate_score: f64, theta: f64, external: bool) -> bool { if external { return false } return substrate_score > theta }
+fn check_h533() -> bool { return diff_triggered(0.8, 0.5, false) && !diff_triggered(0.8, 0.5, true) }
+fn main() { if check_h533() { print("H_533 OK") } else { print("H_533 FAIL") } }
