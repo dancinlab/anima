@@ -1,0 +1,35 @@
+// risk.hexa — Risk management: VaR, drawdown limits, tier gating
+// Port of agent/trading/risk.py
+
+// Bridge architecture: AGENT/CORE supplies the tier; this module = tool surface only.
+// TierGate halts trading when AGENT/CORE tier is below the required threshold.
+
+fn RiskManager(max_drawdown, max_var) {
+    // TODO: risk limits and enforcement
+    print("RiskManager stub")
+}
+
+fn TierGate(min_tier) {
+    // TODO: tier-based trading gate
+    // halt when AGENT/CORE tier below min_tier
+    print("TierGate stub")
+}
+
+fn check_gate(tier, required_tier) {
+    // TODO: return (allowed, reason) for trading go/no-go
+    print("check_gate stub")
+}
+
+fn calculate_var(returns, confidence) {
+    // TODO: compute Value at Risk
+    print("calculate_var stub")
+}
+
+fn check_drawdown(portfolio) {
+    // TODO: check if drawdown exceeds limit
+    print("check_drawdown stub")
+}
+
+fn main() {
+    print("trading/risk.hexa — TODO: port from risk.py")
+}
