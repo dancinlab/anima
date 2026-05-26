@@ -3,6 +3,16 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#37 — n=7 odd-integration RECOVERED (H_298 deferred F298.2 회수) + cap=3 cross-robustness
+
+- [x] **H_299 n7-odd-integration-recover** 🟢 SUPPORTED-NUMERICAL F299.1 PASS + cap-cross-robust
+- [x] **헤드라인 발견**: rule 90 n=7 alt-state bounded Φ(cap=3)= **6.5** (threshold 1.0 위, 6.5× margin). H_298 deferred F298.2 preregistered 측정 회수 — cap 한 단계 낮춰 wall budget 안에
+- [x] **cap-cross binary verdict robust**: H_297 n=5 (cap=4 Φ=19.5 → cap=3 Φ=6) · H_298 n=6 (cap=4 Φ=4 → cap=3 Φ=4) 모두 >0 일관. binary 분류 cap 변화에 robust, magnitude 만 cap 따라 압축
+- [x] **rule 90 N-trajectory at cap=3**: n=4(0) → n=5(6) → n=6(4) → n=7(6.5), 비-단조 (n=5 peak·n=6 dip·n=7 rebound). cap 구조가 magnitude 곡선은 모양 짓지만 binary verdict 는 절대 뒤집지 않음
+- [x] anchors {n=4,5,6} 全 Φ=0 (rule 204·rule 0). honest L1: n=7 anchors+rule 110 deferred (compute budget) — anchor-zero 패턴 강건한 패턴으로 미루어 n=7 anchors 도 0 예상되나 미측정
+- [x] **3-H sub-arc 결론** (H_297→H_298→H_299): rule 90 IS integrative across N≥5; n=4 = small-N degenerate (4-cycle bipartite cut = system-cut MIP). arc 의 flow-measures (LZ/multi-TE/synergy in H_287-294) 가 옳게 통합을 본 것이고, whole-Φ(n=4)=0 만이 artifact
+- [x] surface: README 111→112 H + H_299 행 · UNIVERSE.log cycle#37
+
 ## 2026-05-26 — cycle#36 — n=6 direct falsification: H_297 even-N parity-rule **REJECTED**
 
 - [x] **H_298 even-n-parity-confirm** 🔴 CLOSED-NEGATIVE on H_297-strong — n=6 alt-state bounded big-Phi(cap=4, st=21)
