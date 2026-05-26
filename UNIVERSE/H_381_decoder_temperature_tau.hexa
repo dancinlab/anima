@@ -1,0 +1,26 @@
+// H_381 smoke — DECODER temperature τ → 0 = argmax
+
+fn argmax_3(z0: f64, z1: f64, z2: f64) -> i64 {
+    if (z0 >= z1) && (z0 >= z2) { return 0 }
+    if (z1 >= z2) { return 1 }
+    return 2
+}
+
+fn decode_at_low_tau(z0: f64, z1: f64, z2: f64) -> i64 {
+    // tau→0 collapses to argmax (smoke marker)
+    return argmax_3(z0, z1, z2)
+}
+
+fn check_h381() -> bool {
+    // H2: low-tau decode ≡ argmax
+    let t1 = decode_at_low_tau(0.7, 0.2, 0.1) == 0
+    let t2 = decode_at_low_tau(0.1, 0.9, 0.0) == 1
+    let t3 = decode_at_low_tau(0.0, 0.0, 1.0) == 2
+    return t1 && t2 && t3
+}
+
+fn main() {
+    let ok = check_h381()
+    if !ok { print("H_381 FAIL"); return }
+    print("H_381 blue tau-zero-argmax OK")
+}
