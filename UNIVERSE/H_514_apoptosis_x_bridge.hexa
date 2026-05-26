@@ -1,0 +1,3 @@
+fn survives(cap: bool, intent: bool) -> bool { return cap && intent }
+fn check_h514() -> bool { let live = survives(true,true); let dead1 = !survives(false,true); let dead2 = !survives(true,false); return live && dead1 && dead2 }
+fn main() { if check_h514() { print("H_514 OK") } else { print("H_514 FAIL") } }
