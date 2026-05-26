@@ -1,0 +1,19 @@
+// H_424 smoke — BRIDGE identity elements
+
+fn check_h424() -> bool {
+    let a = true
+    let b = false
+    let h1a = (a && true) == a
+    let h1b = (b && true) == b
+    let h2a = (a || false) == a
+    let h2b = (b || false) == b
+    let h3 = (false || true) == true
+    let h4 = (true && false) == false
+    return h1a && h1b && h2a && h2b && h3 && h4
+}
+
+fn main() {
+    let ok = check_h424()
+    if !ok { print("H_424 FAIL"); return }
+    print("H_424 blue identity elements OK")
+}
