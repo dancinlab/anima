@@ -3,6 +3,16 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#41 — H_301 invalidation 회수 + anchor 가정 universal 검증
+
+- [x] **H_303 alt-state-recovery-and-anchor-sweep** 🟢 SUPPORTED-NUMERICAL 7/8 PASS — bug-free snapshot-before-sort 패턴으로 진짜 st=21 측정 + rule 204/0 全 32-state anchor sweep
+- [x] **진짜 st=21 값 회수**: rule 60=16.5 (H_297/H_302 일치) · rule 110=17.694 · rule 30=20.2686 — H_301 의 18.5/31.69/26.10 모두 sorted[21] artifact 였음 확인
+- [x] **F303.5 FALSIFIED** — rule 110 true st=21 (17.694) < p25 (20.88), **rule 110 alt-state IS outlier-low**. H_301 의 "all rules alt-fair" 결론은 rule 110 에서 tautology 였음
+- [x] arc methodology 분류: rule 90 alt=MEDIAN (lucky) · rule 60 alt=p25 (lower edge) · rule 30 alt=lower-mid IQR · **rule 110 alt=BELOW p25 outlier-low**
+- [x] **anchor 가정 universal 검증**: rule 204 + rule 0 **全 32 state Φ=0** (64 probes, all_zero=1.0). H_287-H_302 가 운영해온 "anchors stay 0" assumption 정식 확인 at n=5 cap=4
+- [x] 含意: H_298 의 rule 110 n=5=17.694 single-state 보고는 *정확 측정* 이지만 *underrepresentative* — true distribution median 25.6, mean 27.1. H_298 의 rule 110 N-trajectory (7.66 → 17.7 → 9.5) 도 likely understated
+- [x] surface: README 115→116 H + H_303 행 · UNIVERSE.log cycle#41
+
 ## 2026-05-26 — cycle#40 — engine 결정성 확인 + H_301 silent bug 식별 (F301.8 root cause)
 
 - [x] **H_302 engine-determinism-diagnosis** 🟢 SUPPORTED-NUMERICAL — 6-falsifier 진단, 5 PASS / 1 FAIL (FAIL=bug-exposure)
