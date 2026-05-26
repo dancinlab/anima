@@ -1,0 +1,22 @@
+// H_409 smoke — stage in record
+
+fn is_valid_stage(s: string) -> bool {
+    if s == "WAKE" { return true }
+    if s == "N1" { return true }
+    if s == "N2" { return true }
+    if s == "N3" { return true }
+    if s == "REM" { return true }
+    return false
+}
+
+fn check_h409() -> bool {
+    let all_ok = is_valid_stage("WAKE") && is_valid_stage("N1") && is_valid_stage("N2") && is_valid_stage("N3") && is_valid_stage("REM")
+    let bad = !is_valid_stage("OFF")
+    return all_ok && bad
+}
+
+fn main() {
+    let ok = check_h409()
+    if !ok { print("H_409 FAIL"); return }
+    print("H_409 blue stage-field OK")
+}
