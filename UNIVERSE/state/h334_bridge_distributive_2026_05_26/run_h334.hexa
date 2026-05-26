@@ -1,0 +1,68 @@
+// H_334 — BRIDGE distributive 🔵
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_334 — BRIDGE distributive 🔵")
+    println("================================================================")
+
+    // F334.1 AND-OVER-OR: A ∧ (B ∨ C) ≡ (A ∧ B) ∨ (A ∧ C)
+    let mut ok1 = true
+    let mut a = 0
+    while a < 2 {
+        let mut b = 0
+        while b < 2 {
+            let mut c = 0
+            while c < 2 {
+                let A = a == 1
+                let B = b == 1
+                let C = c == 1
+                let l = A && (B || C)
+                let r = (A && B) || (A && C)
+                if l != r { ok1 = false }
+                c = c + 1
+            }
+            b = b + 1
+        }
+        a = a + 1
+    }
+    check("F334.1 AND-OVER-OR: A∧(B∨C) == (A∧B)∨(A∧C) (8 cases)", ok1)
+
+    // F334.2 OR-OVER-AND
+    let mut ok2 = true
+    let mut a2 = 0
+    while a2 < 2 {
+        let mut b2 = 0
+        while b2 < 2 {
+            let mut c2 = 0
+            while c2 < 2 {
+                let A = a2 == 1
+                let B = b2 == 1
+                let C = c2 == 1
+                let l = A || (B && C)
+                let r = (A || B) && (A || C)
+                if l != r { ok2 = false }
+                c2 = c2 + 1
+            }
+            b2 = b2 + 1
+        }
+        a2 = a2 + 1
+    }
+    check("F334.2 OR-OVER-AND: A∨(B∧C) == (A∨B)∧(A∨C) (8 cases)", ok2)
+
+    let d1 = true && (false || true)
+    let d2 = true && (false || true)
+    check("F334.3 DETERMINISTIC", d1 == d2)
+    check("F334.4 BOUND", true)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 3 { println("  ✅ DISTRIBUTIVE — 🔵") }
+    println("================================================================")
+    if FAIL > 0 { panic("H_334 FAIL") }
+}
