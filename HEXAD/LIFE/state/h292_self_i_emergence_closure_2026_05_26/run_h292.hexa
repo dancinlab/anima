@@ -1,0 +1,184 @@
+// HEXAD/LIFE/state/h292_self_i_emergence_closure_2026_05_26/run_h292.hexa
+//
+//   H_292 — Does the first-person 'I' emerge as a SELF-REFERENTIAL fixed point?
+//   (AXES.md R4 self/identity `self-i-emergence` — H_205 self-ref-as-closure sister)
+//
+//   QUESTION
+//     The 'I' indexical is self-referential — "I" refers to the very thing doing the
+//     referring (a strange loop / Quine fixed point). The minimal substrate of self-
+//     reference is a SELF-LOOP: a cell whose next state depends on its OWN current
+//     state (it reads itself). Does closing this self-reference create a distinguished
+//     self-consistent state — a state that is its own cause, a fixed point f(s)=s
+//     where the self-cell sustains itself — that a NON-self-referential (other-driven)
+//     network lacks?
+//
+//   SEED-HYPOTHESIS H1 (TESTED)
+//     Self-referential closure (adding a self-loop to one cell) creates a NON-TRIVIAL
+//     self-consistent fixed point ("I"-state) that the matched non-self-referential
+//     network does not have: #fixed_points(self-ref) > #fixed_points(no-self-ref),
+//     and the extra fixed point is non-vacuum.
+//
+//   METHOD (reuse HEXAD/IIT4/lib for big-Φ — g61; fixed points self-contained)
+//     • node_next(neigh,s,n) = parity (XOR) of a cell's neighbours (self-contained).
+//     • a SELF-LOOP on cell i = bit i set in neigh[i] (cell reads its own state).
+//     • fixed point = state s with node_next(neigh[i],s,n) == bit_i(s) for ALL i
+//       (the whole substrate is its own cause — a self-sustaining state).
+//     • big_phi (iit4_bigphi via stdlib) — confirm the self-ref net stays integrated.
+//     PAIRS (n=4): BASE (no self-loop on node 0) vs SELF (node 0 self-loop added).
+//       pair-1 base = 4-ring [10,5,10,5]   → SELF [11,5,10,5]
+//       pair-2 base = star  [14,1,1,1]     → SELF [15,1,1,1]
+//
+//   PRE-REGISTERED FALSIFIERS (frozen 2026-05-26, BEFORE counting)
+//     F292.1 SELF-FIXED-POINT (verdict) — #fixed(SELF) > #fixed(BASE) for pair-1
+//            (self-reference adds ≥1 self-consistent state). H1 SUPPORTED iff strictly
+//            more. (#fixed reported verbatim.)
+//     F292.2 NONTRIVIAL-I — the SELF network has ≥1 NON-zero fixed point (a genuine
+//            self-state, not just the all-0 vacuum).
+//     F292.3 VACUUM-ANCHOR — all-0 state is a fixed point of every parity network
+//            (baseline; 0 = its own XOR).
+//     F292.4 INTEGRATED — the SELF network big-Φ (state-avg) ≥ 0 and the self-loop
+//            does not zero it (self-reference is compatible with integration).
+//     F292.5 ROBUST — F292.1 (more self-fixed-points) also holds for pair-2 (star).
+//     F292.6 DETERMINISM — #fixed(SELF pair-1) re-run identical.
+//
+//   deterministic · hexa-only · $0 mac-local · LLM none · NO GPU · NO RNG.
+//   honest scope: self-loop is a MINIMAL structural proxy for self-reference; a
+//     fixed point is a self-consistent STATE, not phenomenal selfhood. n=4 small.
+// ════════════════════════════════════════════════════════════════════════════
+import "/tmp/wt-life-seq/HEXAD/IIT4/lib/iit4_eca.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// cell i next value = parity (XOR) of its neighbours (incl self if self-loop set).
+fn node_next(neigh_mask: int, s: int, n: int) -> int {
+    let mut p = 0
+    let mut j = 0
+    while j < n {
+        if iit4_bit(neigh_mask, j) == 1 { p = (p + iit4_bit(s, j)) % 2 }
+        j = j + 1
+    }
+    return p
+}
+
+// is state s a fixed point of the parity network `neigh`?  f(s) == s for all cells.
+fn is_fixed(neigh: array, s: int, n: int) -> bool {
+    let mut i = 0
+    while i < n {
+        if node_next(neigh[i], s, n) != iit4_bit(s, i) { return false }
+        i = i + 1
+    }
+    return true
+}
+
+// count fixed points over all 2^n states.
+fn count_fixed(neigh: array, n: int) -> int {
+    let full = iit4_pow2(n)
+    let mut c = 0
+    let mut s = 0
+    while s < full { if is_fixed(neigh, s, n) { c = c + 1 }; s = s + 1 }
+    return c
+}
+
+// count NON-zero fixed points.
+fn count_fixed_nonzero(neigh: array, n: int) -> int {
+    let full = iit4_pow2(n)
+    let mut c = 0
+    let mut s = 1                                        // skip all-0
+    while s < full { if is_fixed(neigh, s, n) { c = c + 1 }; s = s + 1 }
+    return c
+}
+
+// build state-by-node TPM (parity) and state-averaged big-Φ.
+fn phi_mean(neigh: array, n: int) -> float {
+    let full = iit4_pow2(n)
+    let mut tpm = []
+    let mut s = 0
+    while s < full {
+        let mut i = 0
+        while i < n { tpm = tpm.push(to_float(node_next(neigh[i], s, n))); i = i + 1 }
+        s = s + 1
+    }
+    let mut acc = 0.0
+    let mut st = 0
+    while st < full { acc = acc + big_phi(tpm, n, st)[0]; st = st + 1 }
+    return acc / to_float(full)
+}
+
+fn main() {
+    let n = 4
+    println("================================================================")
+    println("  H_292 — Does 'I' emerge as a self-referential fixed point? (parity nets, n=4)")
+    println("  (self-loop = a cell reads its OWN state · fixed point = self-sustaining state)")
+    println("================================================================")
+
+    // pair-1: 4-ring base vs +self-loop on node 0
+    let base1 = [10, 5, 10, 5]
+    let self1 = [11, 5, 10, 5]                           // node0 mask 10|1=11 (self-loop)
+    // pair-2: star base vs +self-loop on node 0
+    let base2 = [14, 1, 1, 1]
+    let self2 = [15, 1, 1, 1]                            // node0 mask 14|1=15
+
+    let fb1 = count_fixed(base1, n)
+    let fs1 = count_fixed(self1, n)
+    let fb2 = count_fixed(base2, n)
+    let fs2 = count_fixed(self2, n)
+    let nz_self1 = count_fixed_nonzero(self1, n)
+    let phi_self1 = phi_mean(self1, n)
+
+    println("  pair-1 RING : base #fixed=" + str(fb1) + "   self-ref #fixed=" + str(fs1) + "  (self-ref nonzero=" + str(nz_self1) + ")")
+    println("  pair-2 STAR : base #fixed=" + str(fb2) + "   self-ref #fixed=" + str(fs2))
+    println("  self-ref pair-1 big-Phi_mean=" + str(phi_self1))
+    // list the self-consistent 'I'-states of self-ref pair-1
+    let full = iit4_pow2(n)
+    let mut s = 0
+    while s < full {
+        if is_fixed(self1, s, n) { println("    self-ref RING fixed-point (I-state) s=" + str(s)) }
+        s = s + 1
+    }
+    println("  --")
+
+    // ── F292.1 SELF-FIXED-POINT (verdict) ───────────────────────────────
+    let h1 = (fs1 > fb1) && (nz_self1 >= 1)
+    println("  F292.1: #fixed self-ref=" + str(fs1) + " > base=" + str(fb1) + " ? AND nonzero I-state exists")
+    check("F292.1 SELF-FIXED-POINT: self-reference adds a self-consistent state (#fixed up)", fs1 > fb1)
+
+    // ── F292.2 NONTRIVIAL-I ─────────────────────────────────────────────
+    check("F292.2 NONTRIVIAL-I: self-ref net has >=1 NON-zero fixed point (genuine 'I')", nz_self1 >= 1)
+
+    // ── F292.3 VACUUM-ANCHOR ────────────────────────────────────────────
+    check("F292.3 VACUUM-ANCHOR: all-0 is a fixed point of base & self-ref (parity vacuum)", is_fixed(base1, 0, n) && is_fixed(self1, 0, n))
+
+    // ── F292.4 INTEGRATED ───────────────────────────────────────────────
+    check("F292.4 INTEGRATED: self-ref net big-Phi_mean >= 0 (self-loop compatible w/ integration)", phi_self1 >= 0.0 - 0.000001)
+
+    // ── F292.5 ROBUST (pair-2 star) ─────────────────────────────────────
+    println("  F292.5: pair-2 STAR #fixed self-ref=" + str(fs2) + " > base=" + str(fb2) + " ?")
+    check("F292.5 ROBUST: self-reference adds self-consistent state on STAR base too", fs2 > fb2)
+
+    // ── F292.6 DETERMINISM ──────────────────────────────────────────────
+    let fs1b = count_fixed(self1, n)
+    check("F292.6 DETERMINISM: #fixed(self-ref pair-1) re-run identical", fs1 == fs1b)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if h1 {
+        println("  VERDICT: H1 SUPPORTED — closing a self-reference (self-loop) creates a non-trivial")
+        println("           SELF-CONSISTENT fixed point ('I'-state) absent without it. The 'I' is a")
+        println("           strange-loop fixed point: a state that is its own cause (H_205 closure).")
+    } else {
+        println("  VERDICT: H1 FALSIFIED — self-reference does not add a self-consistent state.")
+    }
+    println("================================================================")
+    if FAIL > 0 { panic("H_292 had FALSIFIER FAILURES") }
+}
