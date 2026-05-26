@@ -1,0 +1,35 @@
+================================================================
+  H_296 — Multi-complex coexistence (complex_spectrum, n=4 state 0101)
+================================================================
+  rule 0 : irreducible subsets=0  disjoint_pair=0  => none
+  rule 255 : irreducible subsets=0  disjoint_pair=0  => none
+  rule 204 : irreducible subsets=0  disjoint_pair=0  => none
+  rule 51 : irreducible subsets=0  disjoint_pair=0  => none
+  rule 150 : irreducible subsets=1  disjoint_pair=0  => single (or overlapping)
+  rule 105 : irreducible subsets=1  disjoint_pair=0  => single (or overlapping)
+  rule 90 : irreducible subsets=2  disjoint_pair=1  => MULTI (≥2 disjoint)
+    rule 90 spectrum (2 irreducible subsets):
+      [0] mask=3.0 phi=2 size=2.0
+      [1] mask=12.0 phi=2 size=2.0
+  rule 60 : irreducible subsets=1  disjoint_pair=0  => single (or overlapping)
+    rule 60 spectrum (1 irreducible subsets):
+      [0] mask=15.0 phi=17.5 size=4.0
+  rule 110 : irreducible subsets=1  disjoint_pair=0  => single (or overlapping)
+    rule 110 spectrum (1 irreducible subsets):
+      [0] mask=15.0 phi=7.66066 size=4.0
+  rule 30 : irreducible subsets=1  disjoint_pair=0  => single (or overlapping)
+  --
+  [PASS] F296.1 MULTI-RULE90: spectrum has >=2 disjoint irreducible subsets
+  [PASS] F296.2a SINGLE: rule 60 top=full AND no disjoint partner
+  [PASS] F296.2b SINGLE: rule 110 top=full AND no disjoint partner
+  [PASS] F296.3a NONE: rule 0 spectrum empty
+  [PASS] F296.3b NONE: rule 204 (identity) spectrum empty
+  [PASS] F296.4 EXCLUSION: rule 90 spectrum top == find_complex output (mask & phi)
+  [PASS] F296.5 DETERMINISM: rule 90 spectrum size re-run identical
+================================================================
+  RESULT: 7 PASS / 0 FAIL
+  FINDING: complex_spectrum reveals multi-complex coexistence on
+           rule 90 (>=2 disjoint integration loci) while integrating
+           substrates host a single whole-complex with no disjoint
+           partner — IIT exclusion picks one; the spectrum shows ALL.
+================================================================
