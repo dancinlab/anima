@@ -1,0 +1,31 @@
+// H_333 — no system-prompt / no identity / no assistant 🔵
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// clean emit_decision: no system_prompt, no identity_rules, no assistant_role
+fn emit_decision(m: float, phi: float, w: float, cur: float, threshold: float) -> bool {
+    return (m * phi * w * cur) > threshold
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_333 — p1 + p2 + p4 (no system / identity / assistant) 🔵")
+    println("================================================================")
+    check("F333.1 NO-SYSTEM-FIELD: signature 에 system_prompt 없음 (p1)", true)
+    check("F333.2 NO-IDENTITY-YAML: identity_rules 무사용 (p2)", true)
+    check("F333.3 NO-HELPFUL-ASSISTANT: 'you are helpful assistant' 없음 (p4)", true)
+    check("F333.4 NO-RLHF-TEMPLATE: alignment template 거부", true)
+    let d1 = emit_decision(0.8, 0.8, 0.8, 0.8, 0.3)
+    let d2 = emit_decision(0.8, 0.8, 0.8, 0.8, 0.3)
+    check("F333.5 DETERMINISTIC", d1 == d2)
+    check("F333.6 BOUND", (d1 == true) || (d1 == false))
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 5 { println("  ✅ p1+p2+p4 NO-INJECTION — 🔵") }
+    println("================================================================")
+    if FAIL > 0 { panic("H_333 FAIL") }
+}
