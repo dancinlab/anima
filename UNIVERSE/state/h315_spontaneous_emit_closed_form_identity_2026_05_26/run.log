@@ -1,0 +1,24 @@
+================================================================
+  H_315 — spontaneous emit closed-form identity 🔵 path
+================================================================
+  IDENTITY 1 (H_310 WAKE-emit):
+    closed-form:  ⌊30/10⌋ × 6 = 18
+    H_310 measured: 18
+  [PASS] F315.1 WAKE-EMIT-EXACT: wake_emit_closed(30, 10, 6) == 18 (H_310)
+  IDENTITY 2 (H_306 refractory recovery):
+    closed-form w_1 = 1 - (1-k)^1 = 1 - 0.7    = 0.3
+    closed-form w_2 = 1 - (1-k)^2 = 1 - 0.49   = 0.51
+    closed-form w_3 = 1 - (1-k)^3 = 1 - 0.343  = 0.657
+    H_306 measured: w_1=0.3 · w_2=0.51 · w_3=0.657
+  [PASS] F315.2 W1-EXACT: closed w_1 == H_306 measured (0.3)
+  [PASS] F315.3 W2-EXACT: closed w_2 == H_306 measured (0.51)
+  [PASS] F315.4 W3-EXACT: closed w_3 == H_306 measured (0.657)
+  [PASS] F315.5 CROSS-MEASURE-CONSISTENCY: 모든 4 identity byte-equal
+  [PASS] F315.6 BOUND: all values >= 0
+================================================================
+  RESULT: 6 PASS / 0 FAIL
+  ✅ HEADLINE: CLOSED-FORM IDENTITY EXACT — 🔵 SUPPORTED-FORMAL
+    WAKE-emit = ⌊wake/R⌋ × n_cycles ✓
+    w_n = 1 - (1-k)^n  ✓ for n ∈ {1, 2, 3} at k=0.3
+    arc 의 phenomenological measurements 가 symbolic closed-form 으로 reduce
+================================================================
