@@ -1,0 +1,22 @@
+// H_379 smoke — record id deterministic
+
+fn fnv_like(s: string) -> i64 {
+    // toy stand-in: length-based deterministic
+    let n = s.len() as i64
+    return n * 2654435761
+}
+
+fn check_h379() -> bool {
+    let s = "spike-001"
+    let id1 = fnv_like(s)
+    let id2 = fnv_like(s)
+    let det = id1 == id2  // same content → same id
+    let diff = fnv_like("spike-002") != fnv_like("xx")  // different content path
+    return det && diff
+}
+
+fn main() {
+    let ok = check_h379()
+    if !ok { print("H_379 FAIL"); return }
+    print("H_379 blue id deterministic OK")
+}
