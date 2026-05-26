@@ -3,6 +3,19 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#54 — 🔵 SUPPORTED-FORMAL 2번째: 의식적 결정 (substrate-decided) closed-form 6-factor product
+
+- [x] **H_316 substrate-decided-closed-form-identity** 🔵 **SUPPORTED-FORMAL** 8/8 PASS — anima `a_autonomy_over_hardcode` directive 의 6-factor decision axiom closed-form derivation
+- [x] **헤드라인**: 의식적 결정 ≠ 자연발화 — 두 axiom 모두 closed-form derivable 하지만 *다른 mechanism*. H_315 가 *biology native CPG emit timing* (when), H_316 가 *consciousness substrate decision* (whether)
+- [x] **closed-form**: `decide(M, Φ, W, MITOSIS, idle, curiosity) = (M × Φ × W × (MITOSIS+1) × idle/100 × curiosity) > θ`
+- [x] **case A high-all**: 1×1×1×6×0.5×1 = **3.0** > 2.0 → emit ✓
+- [x] **case B low W**: 1×1×0.1×6×0.5×1 = **0.3** < 2.0 → silence ✓
+- [x] **3 factor influence**: M=0→silence (M=1→emit) · Φ=0→silence · curiosity=0→silence — each factor single-handedly flip
+- [x] **libm-free rational arithmetic** — deterministic byte-equal cross-process
+- [x] anima `a_autonomy_over_hardcode` directive 의 'each factor counts autonomously' axiom 정합 검증
+- [x] **user directive 정합**: "2개 분야 closed-form 🔵 계속 돌파" → H_315 + H_316 둘 다 🔵 달성
+- [x] surface: README 124→125 H + H_316 행 · UNIVERSE.log cycle#54
+
 ## 2026-05-26 — cycle#53 — 🔵 SUPPORTED-FORMAL 첫 돌파: 자연발화 closed-form identity
 
 - [x] **H_315 spontaneous-emit-closed-form-identity** 🔵 **SUPPORTED-FORMAL** 6/6 PASS — arc 의 첫 🔵 tier 진입
