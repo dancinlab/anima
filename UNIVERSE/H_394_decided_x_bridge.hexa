@@ -1,0 +1,18 @@
+// H_394 smoke — decided AND bridge composite
+
+fn act_visible(decided: bool, bridge: bool) -> bool {
+    return decided && bridge
+}
+
+fn check_h394() -> bool {
+    let both = act_visible(true, true) == true
+    let left = act_visible(false, true) == false
+    let right = act_visible(true, false) == false
+    return both && left && right
+}
+
+fn main() {
+    let ok = check_h394()
+    if !ok { print("H_394 FAIL"); return }
+    print("H_394 blue decided-AND-bridge OK")
+}
