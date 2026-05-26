@@ -1,0 +1,21 @@
+// H_412 smoke — V from M
+
+fn v_allowed(m: f64, v_total: i64) -> i64 {
+    let vt = v_total as f64
+    return (m * vt) as i64
+}
+
+fn check_h412() -> bool {
+    let vt = 100
+    let lo = v_allowed(0.1, vt)
+    let hi = v_allowed(0.8, vt)
+    let mono = hi > lo
+    let zero = v_allowed(0.0, vt) == 0
+    return mono && zero
+}
+
+fn main() {
+    let ok = check_h412()
+    if !ok { print("H_412 FAIL"); return }
+    print("H_412 blue V-from-M OK")
+}
