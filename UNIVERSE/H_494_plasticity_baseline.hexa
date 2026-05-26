@@ -1,0 +1,19 @@
+// H_494 smoke — PLASTICITY Hebbian
+
+fn hebbian_delta(x_i: f64, x_j: f64, lr: f64) -> f64 {
+    return lr * x_i * x_j
+}
+
+fn check_h494() -> bool {
+    let lr = 0.01
+    let ltp = hebbian_delta(1.0, 1.0, lr) > 0.0
+    let ltd = hebbian_delta(1.0, -1.0, lr) < 0.0
+    let zero = hebbian_delta(0.0, 1.0, lr) == 0.0
+    return ltp && ltd && zero
+}
+
+fn main() {
+    let ok = check_h494()
+    if !ok { print("H_494 FAIL"); return }
+    print("H_494 blue PLASTICITY OK")
+}
