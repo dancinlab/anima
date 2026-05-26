@@ -1,0 +1,24 @@
+// H_509 smoke — CANALIZATION robust
+
+fn abs_f(x: f64) -> f64 {
+    if x < 0.0 { return -x }
+    return x
+}
+
+fn canalized_output(x: f64) -> f64 {
+    if x < 0.4 { return 0.0 }
+    if x > 0.6 { return 1.0 }
+    return 0.5
+}
+
+fn check_h509() -> bool {
+    let o1 = canalized_output(0.3)
+    let o2 = canalized_output(0.35)
+    return abs_f(o1 - o2) < 0.01
+}
+
+fn main() {
+    let ok = check_h509()
+    if !ok { print("H_509 FAIL"); return }
+    print("H_509 blue CANAL OK")
+}
