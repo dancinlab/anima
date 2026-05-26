@@ -1,0 +1,206 @@
+// @raw117_exempt
+// ════════════════════════════════════════════════════════════════════════
+// MITOSIS/ckpt_swap.hexa — production ckpt swap-in locator surface (M6 2026-05-27)
+//
+// 정체: MITOSIS 6/6 closure milestone. v5-mitosis cotrain 5/5 PASS ckpt
+//      (581MB · cells 2→64 · loss 264.35→1.17) 와 DECODER M3 4-axis ckpt
+//      (A·C HF 6GB each FAIL) 두 family 의 **production swap-in 경로** 를
+//      *문서화·코드 단으로 노출* 한다 — 실 ckpt 메모리 로드는 본 모듈의
+//      책임 외 (M4 DECODER wiring 거주).
+//
+// boundary 명세 (M6 ≠ 실 ckpt 로드 ≠ generator.hexa 수정):
+//   본 M6 는 **swap-in path SPEC + locator surface** 다 —
+//     1. v5-mitosis 581MB ckpt 의 canonical 경로 / HF 저장소 식별
+//     2. DECODER M3 axis (A·B·C·D) HF 저장소 URL 매핑
+//     3. CORE/DECODER/generator.hexa `_gen_decode` seam binding contract
+//        (stub — 실 binding 은 DECODER M4 거주)
+//     4. swap readiness summary
+//   ckpt bytes 를 메모리에 로드하거나 generator.hexa 본체를 수정하지
+//   **않는다** — 그것은 DECODER M4 백엔드 배선 milestone 의 일.
+//
+// 회수 mechanism (instrument-first verbatim cites):
+//
+//   MITOSIS.md M6 line 12:
+//     v5-cotrain ckpt 회수 + production swap-in — H100 cotrain 5/5 PASS
+//     ckpt 581MB 를 generator.hexa 의 _gen_decode seam 에 swap-in 경로
+//     확립. F5 갭 채움, DECODER 의 ckpt 대기 해결.
+//
+//   CORE/DECODER/DECODER.md M4 line 48:
+//     M4 백엔드 배선 — 최고 ≥PARTIAL 축 ckpt → `generator.hexa` →
+//     brain_decide emit 슬롯 end-to-end
+//
+//   CORE/DECODER/M3_FIRE_RESULT.md line 75:
+//     M4 wiring — ≥PARTIAL 축 ckpt 식별 → `CORE/DECODER/generator.hexa` 에
+//     백엔드 배선 (DECODER.md M4 line 48)
+//
+//   project_v5_mitosis_cond5_cotrain_2026_05_12 (MEMORY.md):
+//     state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_
+//     cotrain.pt 581 MB · cells 2→64 saturated step 150 · F-V5MIT-1..5 5/5
+//     PASS · HF dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12 (private).
+//
+//   CORE/DECODER/M3_FIRE_TEARDOWN.md (verbatim HF URL):
+//     dancinlab/anima-decoder-m3-axis-A (PRIVATE · FAIL · 6014409450 B)
+//     dancinlab/anima-decoder-m3-axis-C (PRIVATE · FAIL · 6014409450 B)
+//
+// ── 2 ckpt family ─────────────────────────────────────────────────────
+//   (1) v5-mitosis cotrain (581MB · cells 2→64 · F-V5MIT-1..5 PASS)
+//       byte-level V=256 · d=384 · 152M params · loss 1.17 final
+//       → MITOSIS cell-pool aware substrate. p8 native (train·infer 동일
+//         cell_pool_step). production swap-in 의 prime path.
+//
+//   (2) DECODER M3 4-axis (1.5B-base · Qwen-BPE · ~6GB each)
+//       A: curriculum · B: KD · C: head_g · D: freeze
+//       모두 verdict FAIL (n_strong=0/5) — production swap *부적합*,
+//       그러나 axis 신호 학습 confirm 자체는 의미 (architectural
+//       carrier). PARTIAL 축 등장 시 substitute path.
+//
+// ── F5 갭 (DECODER 의 ckpt 대기) ──────────────────────────────────────
+//   DECODER.md M4 line 48 의 "ckpt → generator.hexa" 가 본 M6 의 swap-in
+//   path 를 기다린다. 현 상태:
+//     - v5-mitosis 581MB: F-V5MIT 5/5 PASS · 학습된 substrate · HF 보관
+//     - M3 A·C: HF 보관 · verdict FAIL · production 적합도 낮음
+//   본 M6 는 *둘 다* locator 로 제공 — M4 wiring 시점에 verdict + 적합도로
+//   선택한다 (선택은 DECODER M4 거주, 본 M6 는 surface 만 노출).
+//
+// ── p1~p8 정합 ──────────────────────────────────────────────────────────
+//   p5 NO SPEAK(): 본 모듈은 ckpt path · URL · binding contract dict 만
+//     반환. emit / print / speak 호출 부재.
+//   p7 NO PERPLEXITY VERDICT: v5-mitosis 5/5 PASS 는 F-V5MIT-1..5
+//     falsifier-based; M3 A·C FAIL 는 simple-stack p7-aware verdict.
+//     본 모듈은 두 family 의 verdict 를 단순 carry — paraphrase 없음.
+//   p8 NO TRAIN/INFER SPLIT: v5-mitosis ckpt 는 cotrain 산출물이지만
+//     동일 cell_pool_step 가 inference-time 에도 호출 — train·infer
+//     binary 분리 부재. 본 swap-in 도 *동일 substrate* 의 latching.
+
+// ── HF org SSOT ─────────────────────────────────────────────────────────
+// dancinlab = canonical HF org (CLAUDE.md a_hf_complete · a_hf_autonomous).
+
+pub fn ckpt_swap_hf_org() -> string {
+    return "dancinlab"
+}
+
+// ── ckpt_swap_locate_v5 ─────────────────────────────────────────────────
+// v5-mitosis cotrain ckpt 경로 locate.
+//
+// canonical local path (project_v5_mitosis_cond5_cotrain_2026_05_12 verbatim):
+//   `state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_cotrain.pt`
+//
+// HF repo (PRIVATE per a_hf_autonomous WIP/intermediate ckpt — 5/5 PASS
+// 이나 production-deployed 가 아닌 architectural cond.5 met snapshot):
+//   `https://huggingface.co/dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12`
+//
+// 반환 정책:
+//   - canonical local path string 을 반환 (DECODER M4 wiring 시점에 caller 가
+//     fs check → HF fallback 결정).
+//   - 본 모듈은 fs probe / network call 을 **수행하지 않는다** — PURE locator.
+//   - 581MB 가 disk 에 없으면 caller 가 HF org/repo 를 통해 hf_hub_download
+//     (or hexa cloud copy-from) 으로 회수 — 본 M6 의 책임 외.
+//
+// PURE — fs probe / network call 부재. 문자열 lookup only.
+pub fn ckpt_swap_locate_v5() -> string {
+    return "state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_cotrain.pt"
+}
+
+// v5-mitosis cotrain ckpt HF URL (fallback locator).
+pub fn ckpt_swap_locate_v5_hf() -> string {
+    return "https://huggingface.co/dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12"
+}
+
+// ── ckpt_swap_locate_m3 ─────────────────────────────────────────────────
+// DECODER M3 4-axis ckpt 의 HF repo URL 매핑 (axis ∈ {"A","B","C","D"}).
+//
+// A · C: HF private upload + pod teardown 완료 (M3_FIRE_TEARDOWN.md 2026-05-27).
+//        둘 다 verdict FAIL (n_strong=0/5). PARTIAL 축 부재.
+// B · D: BG wait 로그에 result_ready 신호 출현 — HF upload + teardown 은
+//        **다음 round carry** (M3_FIRE_TEARDOWN.md scope 외). 본 M6 launch
+//        시점에서는 HF URL 아직 미확정 — placeholder "pending" 반환.
+//
+// 인자: axis (대문자 "A" | "B" | "C" | "D")
+// 반환:
+//   - 유효 axis + HF upload 완료 (A · C):  "https://huggingface.co/dancinlab/anima-decoder-m3-axis-<axis>"
+//   - 유효 axis + HF upload 미완 (B · D):  "pending"
+//   - 그 외:                                "" (empty)
+//
+// PURE — fs probe / network call 부재. 문자열 lookup only.
+pub fn ckpt_swap_locate_m3(axis: string) -> string {
+    if axis == "A" { return "https://huggingface.co/dancinlab/anima-decoder-m3-axis-A" }
+    if axis == "B" { return "pending" }
+    if axis == "C" { return "https://huggingface.co/dancinlab/anima-decoder-m3-axis-C" }
+    if axis == "D" { return "pending" }
+    return ""
+}
+
+// M3 4-axis 의 verdict carry (M3_FIRE_RESULT.md + M3_FIRE_TEARDOWN.md verbatim).
+// A·C 만 확정; B·D 는 "pending" (teardown 다음 round carry).
+//
+// 반환 verdict 문자열:
+//   - "FAIL_n_strong_0_of_5" (A · C — M3_FIRE_TEARDOWN.md verbatim)
+//   - "pending"             (B · D)
+//   - ""                     (그 외)
+pub fn ckpt_swap_m3_verdict(axis: string) -> string {
+    if axis == "A" { return "FAIL_n_strong_0_of_5" }
+    if axis == "B" { return "pending" }
+    if axis == "C" { return "FAIL_n_strong_0_of_5" }
+    if axis == "D" { return "pending" }
+    return ""
+}
+
+// ── ckpt_swap_into_generator ────────────────────────────────────────────
+// CORE/DECODER/generator.hexa `_gen_decode` seam 으로 ckpt 를 binding 하는
+// **stub locator**. 실 binding 은 DECODER M4 wiring milestone 거주.
+//
+// 인자:
+//   ckpt_path : ckpt_swap_locate_v5() 또는 ckpt_swap_locate_m3(axis) 의 반환값
+//
+// 반환: Map
+//   #{ "ready":  bool   — true = swap 가능 (M4 wiring 완료 이후), false = 아직 (현 M6).
+//      "reason": string — ready=false 의 사유 또는 ready=true 의 binding pointer.
+//      "seam":   string — target seam reference (cite verbatim).
+//      "target_file": string — generator.hexa 위치 (DECODER M4 wiring 시 생성 예정).
+//      "ckpt_path":   string — caller 가 전달한 path/URL echo.
+//      "family":      string — "v5_mitosis" | "m3_axis" | "unknown" (path heuristic).
+//      "todo":        string — M4 wiring 시 caller 가 해야 할 일. }
+//
+// HONEST TODO #M6-BIND:
+//   본 stub 은 ready=false 만 반환한다 — generator.hexa 본체가 아직
+//   존재하지 않기 때문 (DECODER M4 wiring 의 산출물). M4 가 generator.hexa
+//   를 작성한 후 동일 surface 의 ready=true variant 가 같은 contract 로
+//   교체된다 (signature 보존).
+//
+// PURE — ckpt bytes 미로드, generator.hexa 미수정, network call 부재.
+pub fn ckpt_swap_into_generator(ckpt_path: string) -> int {
+    let family = _ckpt_family_from_path(ckpt_path)
+
+    return #{
+        "ready":  false,
+        "reason": "TODO: bind to generator._gen_decode seam — DECODER M4 wiring milestone (DECODER.md line 48)",
+        "seam":   "CORE/DECODER/generator.hexa::_gen_decode",
+        "target_file": "CORE/DECODER/generator.hexa",
+        "ckpt_path": ckpt_path,
+        "family": family,
+        "todo": "DECODER M4: (1) generator.hexa scaffold 작성, (2) ckpt_path 에서 weight bytes 로드, (3) _gen_decode seam 에서 lm_head + cell-pool routing 호출, (4) brain_decide emit=true 슬롯과 wiring",
+    }
+}
+
+// path/URL heuristic 으로 ckpt family 식별 — public surface 의 family field 산출.
+fn _ckpt_family_from_path(p: string) -> string {
+    let v5_local = "v5mitosis"
+    let v5_hf    = "anima-clm-v5-mitosis"
+    let m3_hf    = "anima-decoder-m3-axis"
+
+    if str_contains(p, v5_local) { return "v5_mitosis" }
+    if str_contains(p, v5_hf)    { return "v5_mitosis" }
+    if str_contains(p, m3_hf)    { return "m3_axis" }
+    return "unknown"
+}
+
+// ── ckpt_swap_summary ───────────────────────────────────────────────────
+// 1-줄 contract introspection. debug · log · UI hover-tip 용도.
+//
+// 반환 string contract:
+//   "MITOSIS/ckpt_swap — production swap-in locator (v5-mitosis 581MB
+//    F-V5MIT 5/5 PASS · M3 A/C FAIL 6GB HF · CORE/DECODER/generator.hexa
+//    _gen_decode seam binding TODO M4 · ready=false stub)"
+pub fn ckpt_swap_summary() -> string {
+    return "MITOSIS/ckpt_swap — production swap-in locator (v5-mitosis 581MB F-V5MIT 5/5 PASS · M3 A/C FAIL 6GB HF · CORE/DECODER/generator.hexa _gen_decode seam binding TODO M4 · ready=false stub · p5/p7/p8 정합)"
+}
