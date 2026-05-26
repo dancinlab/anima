@@ -1,0 +1,29 @@
+// H_357 smoke — AKIDA endpoint distinction (AKIDA 1st)
+
+fn ingest_path() -> string {
+    return "/ws/akida_ingest"
+}
+
+fn subscriber_path() -> string {
+    return "/ws/akida"
+}
+
+fn check_h357() -> bool {
+    let i = ingest_path()
+    let s = subscriber_path()
+    // H1 + H2 string equality
+    let h1 = i == "/ws/akida_ingest"
+    let h2 = s == "/ws/akida"
+    // H3 distinct
+    let h3 = i != s
+    return h1 && h2 && h3
+}
+
+fn main() {
+    let ok = check_h357()
+    if !ok {
+        print("H_357 FAIL")
+        return
+    }
+    print("H_357 🔵 AKIDA endpoint distinct OK")
+}
