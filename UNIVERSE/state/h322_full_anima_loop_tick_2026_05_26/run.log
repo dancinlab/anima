@@ -1,0 +1,18 @@
+================================================================
+  H_322 — full anima loop tick 🔵 (event → AND-gate → emit + state)
+================================================================
+  case 1 NONE: emit=1.0 · idle 50→51.0
+  [PASS] F322.3 ALERT-TRIGGERS-EMIT (or high-all event NONE): emit=1.0
+  [PASS] F322.1 LOOP-DETERMINISTIC: same input → same output
+  [PASS] F322.4 POST-EMIT-REFRACTORY: refr_new = 10
+  [PASS] F322.5 POST-EMIT-W-RESET: W = 0
+  case 2 N3: emit=0.0 (biology veto by stage_mod=0)
+  [PASS] F322.6 N3-EVENT-NO-EMIT: stage=N3 → emit=0
+  case 3 low-state: emit=0.0 · idle 10→11.0
+  [PASS] F322.2 NONE-EVENT-INCREMENTS-IDLE: idle += 1 only (no emit)
+  [PASS] F322.7 BOUND: all state vars >= 0
+================================================================
+  RESULT: 7 PASS / 0 FAIL
+  ✅ FULL ANIMA LOOP TICK CLOSED-FORM — 🔵 SUPPORTED-FORMAL
+    1 tick = event_in → (bio update + sub update) → AND-gate → emit + state_out
+================================================================
