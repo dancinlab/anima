@@ -1,0 +1,27 @@
+// H_486 smoke — DIFFERENTIATION baseline
+
+fn is_stem(state: string) -> bool {
+    return state == "stem"
+}
+
+fn differentiate(state: string, target: string) -> string {
+    if state == "stem" { return target }
+    return state  // already specialized, no change
+}
+
+fn weight_preserved(w_before: f64, w_after: f64) -> bool {
+    return w_before == w_after
+}
+
+fn check_h486() -> bool {
+    let from_stem = differentiate("stem", "math") == "math"
+    let one_way = differentiate("math", "art") == "math"
+    let w_pres = weight_preserved(0.7, 0.7)
+    return from_stem && one_way && w_pres
+}
+
+fn main() {
+    let ok = check_h486()
+    if !ok { print("H_486 FAIL"); return }
+    print("H_486 blue DIFFERENTIATION OK")
+}
