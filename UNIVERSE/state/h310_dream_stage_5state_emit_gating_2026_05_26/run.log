@@ -1,0 +1,24 @@
+================================================================
+  H_310 — 5-stage WAKE/N1/N2/N3/REM ultradian × emit gating
+  1000 ticks, 180-tick ultradian (~5.5 cycles)
+================================================================
+  per-stage emit counts:
+    WAKE : 18
+    N1   : 0
+    N2   : 0
+    N3   : 0
+    REM  : 0
+  WAKE peak sub-windows seen: 6/6 (1000/180 ≈ 5.5)
+  ────────────── verdict ──────────────
+    distinct stage emit values: 2
+  [FAIL] F310.1 STAGE-EMIT-HETEROGENEOUS: distinct >= 3
+  [PASS] F310.2 WAKE-DOMINANT: WAKE > all other stages
+  [PASS] F310.3 N3-NEAR-ZERO: N3 emit <= 1
+  [FAIL] F310.4 REM-MID-SPARSE: REM > N3 AND REM <= WAKE/3
+  [PASS] F310.5 ULTRADIAN-CYCLE-COUNT: WAKE peaks in 5-6 sub-windows
+  [PASS] F310.6 BOUND: all stage counts >= 0
+================================================================
+  RESULT: 4 PASS / 2 FAIL
+  HEADLINE: 5-stage emit profile WAKE=18 N1=0 N2=0 N3=0 REM=0
+================================================================
+panic: H_310 had FALSIFIER FAILURES

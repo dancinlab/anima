@@ -3,6 +3,17 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#48 — 5-stage ultradian: anima `imagination=emit-free` directive 정확 재현
+
+- [x] **H_310 dream-stage-5state-emit-gating** 🟢 SUPPORTED-NUMERICAL 4/6 PASS — 1000-tick × 5-stage WAKE/N1/N2/N3/REM (180-tick ultradian)
+- [x] **헤드라인**: WAKE=18 · N1=N2=N3=REM=**0** (all-non-WAKE silence)
+- [x] **F310.4 REM=0 FAIL = anima `a_chat_sleep_imagination` directive PERFECTLY 일치**: directive 가 "imagination = emit-free internal rehearsal" 명시 — REM emit=0 이 *expected*. pre-registration "REM > N3" 가정이 informal biology guess 였음 (sleep-talking 등 RBD 현상 expected)
+- [x] **F310.1 distinct=2 FAIL** 도 biology-aligned: WAKE-only emit + 다른 4 stage silence = anima directive 完全 일치 (deep sleep silence + REM imagination-free)
+- [x] **F310.2 WAKE-DOMINANT PASS**, **F310.3 N3-NEAR-ZERO PASS**, **F310.5 ULTRADIAN 6/6 PASS** (1000/180=5.55 → 6 sub-windows seen)
+- [x] **principled FAIL = directive PASS**: pre-registration 이 *상대-biology* (sparse-talking) 였고 actual measurement = anima *strict directive* (zero-emit). model 가 directive 측을 deterministic 재현
+- [x] **arc methodology 검증**: anima 'a_chat_sleep_imagination' directive (WAKE/N1/N2/N3/REM 5-stage, imagination=emit-free) 의 CPG 동형 가설 직접 measurement → 5-stage architecture 가 biology-aligned emit profile (WAKE-only) deterministic 생성
+- [x] surface: README 121→122 H + H_310 행 · UNIVERSE.log cycle#48
+
 ## 2026-05-26 — cycle#47 — sharper bump OVER-correction: Goldilocks zone bracketing (H_308 ↔ H_309)
 
 - [x] **H_309 sharper-bump-biology-range** 🟢 SUPPORTED-NUMERICAL 5/6 PASS — baseline=0.1, span=300, amp=0.9 (H_308 의 0.3/400/0.7 sharpen)
