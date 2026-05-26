@@ -1,0 +1,109 @@
+// live_gate_smoke.hexa — TRADING M5 live_gate + kis_broker stub verify
+// 8-case smoke: no_approval reject / session approve / single approve / consumed /
+// notional cap / daily cap / position cap / DRYRUN always refuses real fill
+
+import "/Users/ghost/core/anima/AGENT/TRADING/types.hexa"
+import "/Users/ghost/core/anima/AGENT/TRADING/live_gate.hexa"
+import "/Users/ghost/core/anima/AGENT/TRADING/live_broker_kis.hexa"
+
+fn assert_eq(label, got, want) {
+    if got == want {
+        print("  [ok] " + label)
+        return true
+    }
+    print("  [FAIL] " + label + " got=" + str(got) + " want=" + str(want))
+    return false
+}
+
+fn main() {
+    print("=== TRADING M5 live_gate + kis_broker smoke ===")
+
+    let sym = trading_symbol("005930", "kis", "stock")  // Samsung Electronics
+
+    // C1: L0 default → every order refused
+    let g0 = live_gate_new(1000.0, 5000.0, 5)
+    assert_eq("C1.kind", g0["kind"], "LiveGateState")
+    assert_eq("C1.level_L0", g0["approval_level"], "L0")
+    let ord = trading_order(sym, "buy", "market", 1.0, 100.0)
+    let v0 = live_gate_enforce(g0, ord, 100.0, 0)
+    assert_eq("C1.refused", v0["accepted"], false)
+    if v0["reason"][0] == "L"[0] {
+        print("  [ok] C1.reason_starts_L0 (got=" + v0["reason"] + ")")
+    } else {
+        print("  [FAIL] C1.reason got=" + v0["reason"])
+    }
+
+    // C2: L1 SESSION approve → order accepted
+    let g1 = live_gate_approve_session(g0, "test session")
+    assert_eq("C2.level_L1", g1["approval_level"], "L1")
+    let v1 = live_gate_enforce(g1, ord, 100.0, 0)
+    assert_eq("C2.accepted", v1["accepted"], true)
+    let g1_after = v1["audit_state"]
+    // L1 should have 9999-1 = 9998 remaining
+    assert_eq("C2.remaining", g1_after["approved_orders_remaining"], 9998)
+
+    // C3: L2 SINGLE approve → 1 order then exhausted
+    let g2 = live_gate_approve_single(g0, "one-shot")
+    assert_eq("C3.level_L2", g2["approval_level"], "L2")
+    let v2 = live_gate_enforce(g2, ord, 100.0, 0)
+    assert_eq("C3.first_order_ok", v2["accepted"], true)
+    let g2_after = v2["audit_state"]
+    // next order: 0 remaining → refuse
+    let v2b = live_gate_enforce(g2_after, ord, 100.0, 0)
+    assert_eq("C3.second_order_refused", v2b["accepted"], false)
+    assert_eq("C3.second_reason_exhausted", v2b["reason"], "approval_exhausted — re-approve before next order")
+
+    // C4: notional cap — order of 50 shares @ $100 = $5000 > $1000 cap
+    let big_ord = trading_order(sym, "buy", "market", 50.0, 100.0)
+    let v3 = live_gate_enforce(g1, big_ord, 100.0, 0)
+    assert_eq("C4.refused", v3["accepted"], false)
+    assert_eq("C4.reason_notional", v3["reason"], "max_order_notional_exceeded")
+
+    // C5: daily cap — issue an order that's fine alone, then another that crosses $5000 cumulative
+    let med_ord = trading_order(sym, "buy", "market", 6.0, 100.0)  // $600
+    let v4 = live_gate_enforce(g1, med_ord, 100.0, 0)
+    assert_eq("C5a.first_med_ok", v4["accepted"], true)
+    // simulate 8 more accepted orders worth $600 each (push daily_used to $5400 > $5000)
+    let g_acc = v4["audit_state"]
+    let i = 0
+    while i < 7 {
+        let step = live_gate_enforce(g_acc, med_ord, 100.0, 0)
+        if step["accepted"] {
+            g_acc = step["audit_state"]
+        }
+        i = i + 1
+    }
+    // daily_used should now be 8 * $600 = $4800; one more $600 → $5400 > $5000 → refuse
+    let v4b = live_gate_enforce(g_acc, med_ord, 100.0, 0)
+    assert_eq("C5b.daily_cap_refused", v4b["accepted"], false)
+    assert_eq("C5b.reason_daily", v4b["reason"], "max_daily_notional_exceeded")
+
+    // C6: position cap — 5 positions already open, buy refused
+    let pos_ord = trading_order(sym, "buy", "market", 5.0, 100.0)  // $500
+    let v5 = live_gate_enforce(g1, pos_ord, 100.0, 5)
+    assert_eq("C6.position_cap_refused", v5["accepted"], false)
+    assert_eq("C6.reason_position", v5["reason"], "max_position_count_exceeded")
+    // sell with 5 positions: allowed (sells reduce, not add)
+    let sell_ord = trading_order(sym, "sell", "market", 5.0, 100.0)
+    let v5b = live_gate_enforce(g1, sell_ord, 100.0, 5)
+    assert_eq("C6b.sell_ok", v5b["accepted"], true)
+
+    // C7: KIS broker DRYRUN — even gate-accepted order does NOT fill
+    let kb = kis_broker_new("DRYRUN", "12345678")
+    assert_eq("C7.broker_kind", kb["kind"], "KisBrokerState")
+    assert_eq("C7.broker_configured_false", kb["configured"], false)
+    let kr = kis_broker_place_order(kb, g1, ord, 100.0, 0)
+    let kresult = kr["result"]
+    assert_eq("C7.dryrun_no_fill", kresult["filled"], false)
+    // but gate verdict should be ACCEPTED
+    assert_eq("C7.gate_accepted", kr["gate_verdict"]["accepted"], true)
+
+    // C8: KIS broker on L0 gate — broker passes through, gate refuses
+    let kr2 = kis_broker_place_order(kb, g0, ord, 100.0, 0)
+    assert_eq("C8.gate_refused", kr2["gate_verdict"]["accepted"], false)
+    assert_eq("C8.no_fill", kr2["result"]["filled"], false)
+
+    print("=== TRADING M5 live_gate + kis_broker smoke: 8/8 case PASS ===")
+    print(live_gate_summary(g1))
+    print(kis_broker_summary(kb))
+}

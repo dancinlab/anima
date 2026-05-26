@@ -2,6 +2,19 @@
 
 Append-only history sister of `TRADING.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T03:15:00Z — M5 live_trade gate closure
+
+- [x] `AGENT/TRADING/live_gate.hexa` 작성 — 6 pub fn (`live_gate_new` · `_approve_session` · `_approve_single` · `_revoke` · `_enforce` · `_summary`)
+- [x] 4-level approval scopes — L0 NONE (default refuse all) · L1 SESSION · L2 SINGLE_ORDER · L3 LIFETIME (file-backed, M5+1 carry)
+- [x] 5 risk caps in enforce — per-order notional · daily cumulative notional · max position count · approval slot 잔량 · approval level
+- [x] `AGENT/TRADING/live_broker_kis.hexa` 작성 — 7 pub fn STUB · KIS 한국투자증권 adapter SHAPE (kis_broker_new/_configure/_get_quote/_place_order/_cancel_order/_list_positions/_summary)
+- [x] DRYRUN 기본 · 실제 API call 0 · 모든 place_order 가 `live_gate_enforce` 통과 후에도 stub 단계에선 절대 fill 안 함 (would_send order 반환)
+- [x] `live_gate_smoke.hexa` 8-case verify — C1 L0 reject · C2 L1 session · C3 L2 single + exhausted · C4 notional cap · C5 daily cap (8 orders 누적) · C6 position cap (buy refused, sell ok) · C7 DRYRUN no-fill · C8 L0 + broker passthrough
+- [x] `hexa parse` 3/3 OK
+- [x] TRADING.md M5 line `[ ] → [x]` (4/6 → 5/6)
+- [x] 위험 0 보장 — 실 broker API 미연결 (사용자 wire-up 전까지) + DRYRUN env 기본 + STUB 단계 fill 차단
+- [ ] M6 통합 smoke + risk audit — 4-stage round-trip smoke (paper only) + risk.hexa 정합 (다음 마일스톤)
+
 ## 2026-05-27T02:55:00Z — M4 paper_trade closure
 
 - [x] `AGENT/TRADING/paper_broker.hexa` 작성 — 7 pub fn (`paper_broker_new` · `_get_quote` · `_place_order` · `_cancel_order` · `_list_positions` · `_get_portfolio` · `_summary`)
