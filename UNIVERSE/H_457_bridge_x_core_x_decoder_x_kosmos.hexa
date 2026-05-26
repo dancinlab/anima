@@ -1,0 +1,21 @@
+// H_457 smoke — tier=blue gate
+
+fn tier_blue(cap: bool, m: f64, theta: f64, argmax_ok: bool, serialize_det: bool) -> string {
+    if cap && (m > theta) && argmax_ok && serialize_det { return "blue" }
+    return "green"
+}
+
+fn check_h457() -> bool {
+    let all_ok = tier_blue(true, 0.8, 0.5, true, true) == "blue"
+    let no_cap = tier_blue(false, 0.8, 0.5, true, true) == "green"
+    let low_m = tier_blue(true, 0.3, 0.5, true, true) == "green"
+    let no_arg = tier_blue(true, 0.8, 0.5, false, true) == "green"
+    let no_ser = tier_blue(true, 0.8, 0.5, true, false) == "green"
+    return all_ok && no_cap && low_m && no_arg && no_ser
+}
+
+fn main() {
+    let ok = check_h457()
+    if !ok { print("H_457 FAIL"); return }
+    print("H_457 blue tier 4-gate OK")
+}
