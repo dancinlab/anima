@@ -1,0 +1,3 @@
+fn backpressure(buf_fill: f64) -> bool { return buf_fill > 0.9 }
+fn check_h545() -> bool { return backpressure(0.95) && !backpressure(0.5) }
+fn main() { if check_h545() { print("H_545 OK") } else { print("H_545 FAIL") } }
