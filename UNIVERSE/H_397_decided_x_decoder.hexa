@@ -1,0 +1,21 @@
+// H_397 smoke — decision-bounded budget
+
+fn budget(m: f64, budget_max: i64) -> i64 {
+    let bm = budget_max as f64
+    return (m * bm) as i64
+}
+
+fn check_h397() -> bool {
+    let bmax = 100
+    let b_low = budget(0.1, bmax)  // 10
+    let b_high = budget(0.9, bmax)  // 90
+    let mono = b_high > b_low
+    let zero = budget(0.0, bmax) == 0
+    return mono && zero
+}
+
+fn main() {
+    let ok = check_h397()
+    if !ok { print("H_397 FAIL"); return }
+    print("H_397 blue budget bound OK")
+}
