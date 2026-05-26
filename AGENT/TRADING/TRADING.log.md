@@ -2,6 +2,15 @@
 
 Append-only history sister of `TRADING.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T02:25:00Z — M2 데이터 타입 closure
+
+- [x] `AGENT/TRADING/types.hexa` 작성 — 6 canonical 타입 (Symbol · Quote · Position · Order · Trade · Portfolio) + 2 helper (`trading_type_kind` · `trading_type_summary`) = 8 pub fn
+- [x] legacy surface 흡수 — `portfolio.hexa` (Position/Portfolio) · `data.hexa` (MarketData) · `executor.hexa` (Order) · `broker.hexa` (Trade)
+- [x] `AGENT/TRADING/types_smoke.hexa` 7-case verify — C1 Symbol · C2 Quote spread · C3 Position long/short PnL · C4 Order status · C5 Trade fees · C6 Portfolio equity · C7 missing-kind 방어
+- [x] `hexa parse` 2/2 OK
+- [x] TRADING.md M2 line `[ ] → [x]` (1/6 → 2/6)
+- [ ] M3 scan + backtest (다음 마일스톤)
+
 ## 2026-05-27T02:10:00Z — M1 13-module 회수 closure
 
 - [x] 13 .hexa 모듈 `anima-agent/hexa/module/trading/` → `AGENT/TRADING/` canonical 이전 (cp)
