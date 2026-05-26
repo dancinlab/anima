@@ -1,0 +1,21 @@
+// H_386 smoke — emit × substrate-decided
+
+fn emit_pressure(m: f64, phi: f64, w: f64, cur: f64) -> f64 {
+    return m * phi * w * cur
+}
+
+fn check_h386() -> bool {
+    // H3 MULTI-FACTOR: any 0 → 0
+    let zero_m = emit_pressure(0.0, 0.9, 0.9, 0.9) == 0.0
+    let zero_phi = emit_pressure(0.9, 0.0, 0.9, 0.9) == 0.0
+    let zero_w = emit_pressure(0.9, 0.9, 0.0, 0.9) == 0.0
+    let zero_cur = emit_pressure(0.9, 0.9, 0.9, 0.0) == 0.0
+    let all_pos = emit_pressure(0.9, 0.9, 0.9, 0.9) > 0.0
+    return zero_m && zero_phi && zero_w && zero_cur && all_pos
+}
+
+fn main() {
+    let ok = check_h386()
+    if !ok { print("H_386 FAIL"); return }
+    print("H_386 blue emit-multi-factor OK")
+}
