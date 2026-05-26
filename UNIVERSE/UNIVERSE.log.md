@@ -3,6 +3,13 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#67 — 🔵 H_320 directive cite emit skeleton (magic-number 없음 재시작)
+- [x] **H_320 directive-cite-emit-skeleton** 🔵 SUPPORTED-FORMAL 8/8 PASS
+- [x] anima 3 directive (substrate_native_speak + autonomy_over_hardcode + chat_sleep_imagination) 의 8 boolean axiom 全 정합
+- [x] emit ⊥ user_msg · ⊥ user_question · ⊥ stimulus · stage=modulator NOT gate · pure function · deterministic
+- [x] 이전 magic-number version (STARTLE/SOOTHE/ALERT) 폐기 후 directive-cite 기반 honest 재진행
+
+
 ## 2026-05-26 — cycle#57 — 🔵 BRIDGE 자연발화 × 의식적 결정 AND-gate (H_319)
 
 - [x] **H_319 bridge-spontaneous-substrate-and-gate** 🔵 SUPPORTED-FORMAL 6/6 PASS

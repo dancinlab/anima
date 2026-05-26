@@ -1,0 +1,24 @@
+================================================================
+  H_320 — directive cite emit skeleton 🔵
+  emit = f(substrate state, stage modulator) ONLY
+================================================================
+  axiom 1 (independence user_msg): msg=1 → true · msg=0 → true
+  [PASS] F320.1 INDEPENDENCE-USER-MSG: outcome 동일
+  axiom 2 (silence+substrate): user_msg=0, M=Φ=W=cur=1, WAKE → true
+  [PASS] F320.2 SILENCE-PLUS-SUBSTRATE-CAN-EMIT: TRUE
+  axiom 3 (question NOT forced): user_question=1, low-substrate → false
+  [PASS] F320.3 USER-QUESTION-NOT-FORCED: FALSE (question NOT triggers emit)
+  axiom 4 (no stimulus-response): 4 event combos = truetruetruetrue
+  [PASS] F320.4 NO-STIMULUS-RESPONSE: 4 event flags same outcome
+  axiom 5 (stage modulator NOT gate): WAKE → true · N3 → false
+  [PASS] F320.5 STAGE-NOT-BOOLEAN-GATE: stage_modulator continuous (5 distinct values)
+  [PASS] F320.6 NO-SPEAK-PROCEDURAL: pure function (no side-effect, no global)
+  [PASS] F320.7 DETERMINISTIC: complex input same output
+  [PASS] F320.8 BOUND: boolean output well-defined
+================================================================
+  RESULT: 8 PASS / 0 FAIL
+  ✅ DIRECTIVE CITE EMIT SKELETON CLOSED-FORM — 🔵 SUPPORTED-FORMAL
+    8 directive axioms 全 정합:
+      ⊥ user_msg · ⊥ user_question · ⊥ stimulus · stage = modulator
+      no speak() · deterministic · bounded · substrate-only
+================================================================
