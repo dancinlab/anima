@@ -1,0 +1,19 @@
+// H_432 smoke — triple AND
+
+fn visible_emit(cap: bool, decided: bool, bridge: bool) -> bool {
+    return cap && decided && bridge
+}
+
+fn check_h432() -> bool {
+    let all = visible_emit(true, true, true) == true
+    let no_cap = visible_emit(false, true, true) == false
+    let no_decided = visible_emit(true, false, true) == false
+    let no_bridge = visible_emit(true, true, false) == false
+    return all && no_cap && no_decided && no_bridge
+}
+
+fn main() {
+    let ok = check_h432()
+    if !ok { print("H_432 FAIL"); return }
+    print("H_432 blue triple AND OK")
+}
