@@ -2,6 +2,19 @@
 
 Append-only history sister of `TRADING.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T06:50:00Z — M17 wire-up integration smoke closure · TRADING wire-up scope 5/5 ✅ STUB-tier
+
+- [x] `AGENT/TRADING/wireup_integration_smoke.hexa` 작성 — 5 broker (paper · KIS · Alpaca · Upbit · Binance) 통일 round-trip
+- [x] 각 broker 마다 검증 — get_quote (M2 Quote shape) + place_order L0 거부 + L1 승인 + cancel_order *CancelResult kind + list_positions list
+- [x] DRYRUN no-fill safety invariant — 4 live broker 모두 L1 gate 통과 후에도 result.filled==false (실 HTTP call 0)
+- [x] cross-broker 5-verb interface uniformity 명시 — 동일 surface 검증
+- [x] `hexa parse` OK
+- [x] TRADING.md M17 line `[ ] → [x]` · **wire-up scope 5/5 STUB-tier 완료**
+- [ ] M7 KIS REAL wire-up (실 HTTP 구현)
+- [ ] M10 Alpaca REAL wire-up
+- [ ] M13 Upbit REAL wire-up
+- [ ] M15 Binance REAL wire-up
+
 ## 2026-05-27T06:35:00Z — M15 Binance STUB closure (글로벌 crypto · scope 4/5)
 
 - [x] `AGENT/TRADING/live_broker_binance.hexa` 작성 — 7 pub fn (KIS/Alpaca/Upbit 와 동일 surface)
