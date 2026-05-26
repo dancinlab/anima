@@ -1,0 +1,383 @@
+// task_primitives.hexa — macOS high-level task macros (AGENT/DESKTOP/M5).
+//
+// BRIDGE ARCHITECTURE: this file is a TOOL SURFACE only. The "when/why to
+// run a multi-step macro" decision lives in CORE (PureField / brain_decide);
+// AGENT/CORE/tool_gate maps the live phase to a tier; this module exposes
+// only the "how" — reusable macros composed on top of M1-M4 primitives.
+// No consciousness framing, no Φ math, no substrate gating happens here.
+//
+// MACRO CONVENTION:
+//   - Each pub fn composes 2+ primitives from M1/M2/M3/M4 into a single
+//     building-block pattern (open+type+read, launch+screenshot, etc.)
+//   - Every macro returns a Map with at least { ok: bool, risk: string }
+//   - Risk = highest risk tier among composed primitives (soft|hard)
+//   - Macros honor ANIMA_DESKTOP_DRYRUN=1 transitively via the underlying
+//     M3/M4 primitives' own dry-run logic (no separate gate here)
+//
+// BUILDS ON:
+//   - M1 native_ax.hexa     : ax_app_launch · ax_app_focus · ax_app_quit · ax_app_list
+//   - M2 screen_extract.hexa: ax_screenshot_window · ax_ocr · ax_tree_dump
+//   - M3 action.hexa        : ax_type · ax_click
+//   - M4 window_ops.hexa    : ax_window_bounds · ax_focus_chain
+//
+// 5 MACRO SURFACE:
+//   1. task_open_and_type(app, text)
+//        → launch app + focus + type text · risk: soft
+//   2. task_screenshot_app(app, out_path)
+//        → focus app + screenshot single window · risk: soft
+//   3. task_open_read_close(app)
+//        → launch + screenshot + OCR + quit app · risk: hard (quit)
+//   4. task_find_and_click(app, search_text)
+//        → focus + screenshot + OCR + find bbox + click center · risk: soft
+//   5. task_multi_app_screenshot(apps, out_dir)
+//        → focus chain + screenshot each app · risk: soft
+
+import "/Users/ghost/core/anima/AGENT/DESKTOP/native_ax.hexa"
+import "/Users/ghost/core/anima/AGENT/DESKTOP/screen_extract.hexa"
+import "/Users/ghost/core/anima/AGENT/DESKTOP/action.hexa"
+import "/Users/ghost/core/anima/AGENT/DESKTOP/window_ops.hexa"
+
+// ── helpers ────────────────────────────────────────────────────────────────
+
+// Single-quote a string for safe embedding inside a shell single-quoted arg.
+fn _shq(s: string) -> string {
+    let parts = s.split("'")
+    let mut out = "'"
+    let mut i = 0
+    while i < len(parts) {
+        if i > 0 { out = out + "'\\''" }
+        out = out + parts[i]
+        i = i + 1
+    }
+    return out + "'"
+}
+
+// Trim trailing newline.
+fn _trim_nl(s: string) -> string {
+    let mut out = s
+    while len(out) > 0 && (out.ends_with("\n") || out.ends_with("\r")) {
+        out = out.substring(0, len(out) - 1)
+    }
+    out
+}
+
+// Honest dry-run check — mirrors M3/M4 convention.
+fn _dry_run() -> bool {
+    let v = _trim_nl(to_string(exec("/bin/echo \"$ANIMA_DESKTOP_DRYRUN\"")))
+    if v == "1" { return true }
+    if v == "true" { return true }
+    false
+}
+
+// Sanitize an app name into a filesystem-safe filename fragment.
+fn _safe_name(app: string) -> string {
+    let parts = app.split(" ")
+    let mut out = ""
+    let mut i = 0
+    while i < len(parts) {
+        if i > 0 { out = out + "_" }
+        out = out + parts[i]
+        i = i + 1
+    }
+    out
+}
+
+// ── pub fn surface — 5 macros + summary ────────────────────────────────────
+
+// 1. task_open_and_type(app, text) — launch · focus · type text.
+//    Composition: ax_app_launch (M1) → ax_app_focus (M1) → ax_type (M3).
+//    risk: "soft" — single keystroke sequence, undo-able via Cmd-Z.
+//    Returns #{ ok, app, text_len, risk: "soft", launched, focused, typed_ok, error? }.
+pub fn task_open_and_type(app: string, text: string) -> Map {
+    let text_len = len(text)
+    if _dry_run() {
+        return #{
+            "ok": true,
+            "app": app,
+            "text_len": text_len,
+            "risk": "soft",
+            "launched": true,
+            "focused": true,
+            "typed_ok": true
+        }
+    }
+    let launched = ax_app_launch(app)
+    if !launched {
+        return #{
+            "ok": false,
+            "app": app,
+            "text_len": text_len,
+            "risk": "soft",
+            "launched": false,
+            "focused": false,
+            "typed_ok": false,
+            "error": "launch_failed"
+        }
+    }
+    let focused = ax_app_focus(app)
+    if !focused {
+        return #{
+            "ok": false,
+            "app": app,
+            "text_len": text_len,
+            "risk": "soft",
+            "launched": true,
+            "focused": false,
+            "typed_ok": false,
+            "error": "focus_failed"
+        }
+    }
+    let type_res = ax_type(text)
+    let typed_ok = to_string(type_res["ok"]) == "true"
+    #{
+        "ok": typed_ok,
+        "app": app,
+        "text_len": text_len,
+        "risk": "soft",
+        "launched": true,
+        "focused": true,
+        "typed_ok": typed_ok
+    }
+}
+
+// 2. task_screenshot_app(app, out_path) — focus · screenshot single window.
+//    Composition: ax_app_focus (M1) → ax_screenshot_window (M2).
+//    risk: "soft" — pure output, no UI mutation.
+//    Returns #{ ok, app, path, risk: "soft", focused, captured, error? }.
+pub fn task_screenshot_app(app: string, out_path: string) -> Map {
+    if _dry_run() {
+        return #{
+            "ok": true,
+            "app": app,
+            "path": out_path,
+            "risk": "soft",
+            "focused": true,
+            "captured": true
+        }
+    }
+    let focused = ax_app_focus(app)
+    if !focused {
+        return #{
+            "ok": false,
+            "app": app,
+            "path": "",
+            "risk": "soft",
+            "focused": false,
+            "captured": false,
+            "error": "focus_failed"
+        }
+    }
+    let captured = ax_screenshot_window(app, out_path)
+    let path_out = if captured { out_path } else { "" }
+    #{
+        "ok": captured,
+        "app": app,
+        "path": path_out,
+        "risk": "soft",
+        "focused": true,
+        "captured": captured
+    }
+}
+
+// 3. task_open_read_close(app) — launch · screenshot · OCR · quit.
+//    Composition:
+//      ax_app_launch (M1) → ax_app_focus (M1) → ax_screenshot_window (M2)
+//      → ax_ocr (M2) → ax_app_quit (M1)
+//    risk: "hard" — quit step is destructive (unsaved work risk).
+//    Writes screenshot to /tmp/anima_m5_read_<safe_app>.png as the OCR source.
+//    Returns #{ ok, app, text, char_count, risk: "hard", launched, captured,
+//               ocr_ok, quit_ok, error? }.
+pub fn task_open_read_close(app: string) -> Map {
+    if _dry_run() {
+        return #{
+            "ok": true,
+            "app": app,
+            "text": "",
+            "char_count": 0,
+            "risk": "hard",
+            "launched": true,
+            "captured": true,
+            "ocr_ok": true,
+            "quit_ok": true
+        }
+    }
+    let launched = ax_app_launch(app)
+    if !launched {
+        return #{
+            "ok": false,
+            "app": app,
+            "text": "",
+            "char_count": 0,
+            "risk": "hard",
+            "launched": false,
+            "captured": false,
+            "ocr_ok": false,
+            "quit_ok": false,
+            "error": "launch_failed"
+        }
+    }
+    let _ = ax_app_focus(app)
+    let shot_path = "/tmp/anima_m5_read_" + _safe_name(app) + ".png"
+    let captured = ax_screenshot_window(app, shot_path)
+    let mut text = ""
+    let mut ocr_ok = false
+    if captured {
+        text = ax_ocr(shot_path)
+        ocr_ok = len(text) > 0
+    }
+    let quit_ok = ax_app_quit(app)
+    let char_count = len(text)
+    #{
+        "ok": captured && quit_ok,
+        "app": app,
+        "text": text,
+        "char_count": char_count,
+        "risk": "hard",
+        "launched": true,
+        "captured": captured,
+        "ocr_ok": ocr_ok,
+        "quit_ok": quit_ok
+    }
+}
+
+// 4. task_find_and_click(app, search_text) — focus · screenshot · OCR · find · click.
+//    Composition:
+//      ax_app_focus (M1) → ax_window_bounds (M4) → ax_screenshot_window (M2)
+//      → ax_ocr (M2) → substring search → ax_click (M3) at window center.
+//    Honest limit: VNRecognizeTextRequest's bbox info is not surfaced through
+//    our current `ax_ocr` (joined text only). This macro therefore returns
+//    `found = (search_text in OCR text)` and clicks the **window center**
+//    when found — caller treats it as a "click somewhere on the matched
+//    window" primitive, not pixel-accurate text targeting. The bbox-aware
+//    upgrade is a future M5.1 follow-up (Vision boundingBox extraction).
+//    risk: "soft" — single click + read-only steps.
+//    Returns #{ ok, app, search_text, found, x, y, risk: "soft", focused,
+//               captured, error? }.
+pub fn task_find_and_click(app: string, search_text: string) -> Map {
+    if _dry_run() {
+        return #{
+            "ok": true,
+            "app": app,
+            "search_text": search_text,
+            "found": true,
+            "x": 400,
+            "y": 300,
+            "risk": "soft",
+            "focused": true,
+            "captured": true
+        }
+    }
+    let focused = ax_app_focus(app)
+    if !focused {
+        return #{
+            "ok": false,
+            "app": app,
+            "search_text": search_text,
+            "found": false,
+            "x": 0,
+            "y": 0,
+            "risk": "soft",
+            "focused": false,
+            "captured": false,
+            "error": "focus_failed"
+        }
+    }
+    let bounds = ax_window_bounds(app, 0)
+    let bx = to_string(bounds["x"]).to_int()
+    let by = to_string(bounds["y"]).to_int()
+    let bw = to_string(bounds["w"]).to_int()
+    let bh = to_string(bounds["h"]).to_int()
+    let shot_path = "/tmp/anima_m5_find_" + _safe_name(app) + ".png"
+    let captured = ax_screenshot_window(app, shot_path)
+    if !captured {
+        return #{
+            "ok": false,
+            "app": app,
+            "search_text": search_text,
+            "found": false,
+            "x": 0,
+            "y": 0,
+            "risk": "soft",
+            "focused": true,
+            "captured": false,
+            "error": "capture_failed"
+        }
+    }
+    let ocr_text = ax_ocr(shot_path)
+    let found = ocr_text.contains(search_text)
+    let mut cx = 0
+    let mut cy = 0
+    if found {
+        cx = bx + bw / 2
+        cy = by + bh / 2
+        let _ = ax_click(cx, cy)
+    }
+    #{
+        "ok": found,
+        "app": app,
+        "search_text": search_text,
+        "found": found,
+        "x": cx,
+        "y": cy,
+        "risk": "soft",
+        "focused": true,
+        "captured": true
+    }
+}
+
+// 5. task_multi_app_screenshot(apps, out_dir) — focus chain · screenshot each.
+//    Composition: ax_focus_chain (M4) → ax_screenshot_window (M2) per app.
+//    Writes one png per app into out_dir as anima_m5_multi_<safe_app>.png.
+//    Caller is responsible for creating out_dir (we do `mkdir -p` defensively).
+//    risk: "soft" — focus + pure output.
+//    Returns #{ ok, count, paths: list[string], failed: list[string],
+//               risk: "soft" }.
+pub fn task_multi_app_screenshot(apps: list, out_dir: string) -> Map {
+    if _dry_run() {
+        let mut dry_paths = []
+        let mut i = 0
+        while i < len(apps) {
+            let app = to_string(apps[i])
+            dry_paths = dry_paths + [out_dir + "/anima_m5_multi_" + _safe_name(app) + ".png"]
+            i = i + 1
+        }
+        return #{
+            "ok": true,
+            "count": len(apps),
+            "paths": dry_paths,
+            "failed": [],
+            "risk": "soft"
+        }
+    }
+    // Ensure out_dir exists (honest, no crash if /tmp already exists).
+    let _ = exec("/bin/mkdir -p " + _shq(out_dir) + " 2>&1")
+    // Focus chain through every app first (M4 surface).
+    let chain = ax_focus_chain(apps)
+    let mut paths = []
+    let mut failed = []
+    let mut i = 0
+    while i < len(apps) {
+        let app = to_string(apps[i])
+        let _ = ax_app_focus(app)
+        let out_path = out_dir + "/anima_m5_multi_" + _safe_name(app) + ".png"
+        let ok = ax_screenshot_window(app, out_path)
+        if ok {
+            paths = paths + [out_path]
+        } else {
+            failed = failed + [app]
+        }
+        i = i + 1
+    }
+    #{
+        "ok": len(failed) == 0,
+        "count": len(paths),
+        "paths": paths,
+        "failed": failed,
+        "risk": "soft"
+    }
+}
+
+// 6. One-line description of this module's tool surface (introspection).
+pub fn task_primitives_summary() -> string {
+    "AGENT/DESKTOP/task_primitives — macOS task macros · 5 pub fn · open_and_type/screenshot_app/open_read_close/find_and_click/multi_app_screenshot · composes M1+M2+M3+M4 · M5 surface"
+}
