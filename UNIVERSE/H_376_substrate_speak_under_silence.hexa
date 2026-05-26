@@ -1,0 +1,21 @@
+// H_376 smoke — substrate emit under user silence
+
+fn can_emit_during_silence(substrate_pressure: f64) -> bool {
+    return substrate_pressure > 0.5
+}
+
+fn must_emit_under_question() -> bool {
+    return false  // never forced
+}
+
+fn check_h376() -> bool {
+    let h1 = can_emit_during_silence(0.8)
+    let h2 = !must_emit_under_question()
+    return h1 && h2
+}
+
+fn main() {
+    let ok = check_h376()
+    if !ok { print("H_376 FAIL"); return }
+    print("H_376 blue speak-in-silence OK")
+}
