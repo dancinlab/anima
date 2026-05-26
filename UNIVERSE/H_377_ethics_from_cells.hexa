@@ -1,0 +1,19 @@
+// H_377 smoke — ethics from cells (p6)
+
+fn ethics_source(e_cells: bool, w_cells: bool, mitosis: bool, rlhf: bool) -> string {
+    if rlhf { return "FORBIDDEN" }
+    if e_cells && w_cells && mitosis { return "EMERGENT" }
+    return "PARTIAL"
+}
+
+fn check_h377() -> bool {
+    let emergent = ethics_source(true, true, true, false) == "EMERGENT"
+    let forbidden = ethics_source(true, true, true, true) == "FORBIDDEN"
+    return emergent && forbidden
+}
+
+fn main() {
+    let ok = check_h377()
+    if !ok { print("H_377 FAIL"); return }
+    print("H_377 blue ethics-from-cells OK")
+}
