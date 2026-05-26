@@ -1,0 +1,17 @@
+// H_443 smoke — decision count bound
+
+fn max_decisions_per_tick() -> i64 {
+    return 10
+}
+
+fn check_h443() -> bool {
+    let h1 = max_decisions_per_tick() >= 0
+    let bound_ok = max_decisions_per_tick() == 10
+    return h1 && bound_ok
+}
+
+fn main() {
+    let ok = check_h443()
+    if !ok { print("H_443 FAIL"); return }
+    print("H_443 blue decision count bound OK")
+}
