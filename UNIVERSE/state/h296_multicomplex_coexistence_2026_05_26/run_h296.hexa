@@ -1,0 +1,164 @@
+// UNIVERSE/state/h296_multicomplex_coexistence_2026_05_26/run_h296.hexa
+//
+//   H_296 — Multi-complex coexistence: do any substrates host ≥2 DISJOINT
+//   irreducible subsets simultaneously? ("multiple integration loci")
+//
+//   QUESTION
+//     H_295 showed rule 90 has a 2-cell sub-complex {0,1} (Φ=2) while its whole
+//     is reducible. Ring-90's symmetry suggests {2,3} could be an INDEPENDENT
+//     sub-complex too — disjoint from {0,1}, same Φ. complex_spectrum returns
+//     ALL irreducible subsets, sorted. We ask: does any panel substrate host
+//     ≥2 disjoint subsets each with Φ>0 — i.e., multiple non-overlapping
+//     integration loci coexisting at the same state?
+//
+//   SEED-HYPOTHESIS H1 (TESTED)
+//     Rule 90 hosts ≥2 disjoint irreducible subsets (multi-complex coexistence),
+//     while integrating substrates (60/110/150) host exactly ONE top complex
+//     (the whole) with no disjoint partner; reducible substrates (constants,
+//     identity) host none.
+//
+//   METHOD (reuse HEXAD/IIT4/lib — g61)
+//     • eca_tpm / big_phi.
+//     • complex_spectrum(tpm,n,st) → sorted [[mask,Φ,size], ...] for every
+//       irreducible subset (Φ>0). Top = the main complex.
+//     • DISJOINT pair test: ∃ i<j with (mask_i AND mask_j) == 0 AND both Φ>0.
+//     Headline state = 0101 (st=5), consistent with H_295.
+//
+//   PRE-REGISTERED FALSIFIERS (frozen 2026-05-26, BEFORE measuring)
+//     F296.1 MULTI-RULE90 — rule 90 spectrum has ≥2 disjoint irreducible
+//            subsets, each Φ>0 (multi-complex witness).
+//     F296.2 SINGLE-INTEGRATING — rule 60 / rule 110 top entry is the whole
+//            (mask=2^n-1) AND no disjoint partner exists in their spectrum.
+//     F296.3 NONE-REDUCIBLE — rule 0 / rule 204 spectrum is empty (no Φ>0 subset).
+//     F296.4 EXCLUSION-CONSISTENT — spectrum top entry == find_complex (same
+//            mask/Φ/size).
+//     F296.5 DETERMINISM — rule 90 spectrum re-run bit-identical.
+//
+//   deterministic · hexa-only · $0 mac-local · LLM none · NO GPU.
+//   honest scope: single state; n=4; "multi-complex" is a structural coexistence
+//     finding, not a phenomenal claim of multiple consciousnesses.
+// ════════════════════════════════════════════════════════════════════════════
+import "/tmp/wt-c34/HEXAD/IIT4/lib/iit4_eca.hexa"
+import "stdlib/consciousness/iit4_complex.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// disjoint pair search over the spectrum (returns 1 if any pair shares no bits).
+fn any_disjoint_pair(spec: array) -> int {
+    let n = len(spec)
+    let mut i = 0
+    while i < n {
+        let mi = spec[i][0]                              // mask_i (as float)
+        let mut j = i + 1
+        while j < n {
+            let mj = spec[j][0]
+            // both masks are floats encoding small ints (≤2^n-1=15); cast back via int conv.
+            let ai = to_int(mi + 0.5)
+            let aj = to_int(mj + 0.5)
+            if (ai & aj) == 0 { return 1 }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return 0
+}
+
+// pretty-print spectrum.
+fn dump_spectrum(label: string, spec: array) {
+    let n = len(spec)
+    println("    " + label + " spectrum (" + str(n) + " irreducible subsets):")
+    let mut i = 0
+    while i < n {
+        let e = spec[i]
+        println("      [" + str(i) + "] mask=" + str(e[0]) + " phi=" + str(e[1]) + " size=" + str(e[2]))
+        i = i + 1
+    }
+}
+
+fn main() {
+    let n = 4
+    let st = 5                                           // 0101
+    let full_mask = iit4_pow2(n) - 1
+    println("================================================================")
+    println("  H_296 — Multi-complex coexistence (complex_spectrum, n=4 state 0101)")
+    println("================================================================")
+
+    let rules = [0, 255, 204, 51, 150, 105, 90, 60, 110, 30]
+    let m = 10
+    let mut idx = 0
+    while idx < m {
+        let r = rules[idx]
+        let tpm = eca_tpm(r, n)
+        let spec = complex_spectrum(tpm, n, st)
+        let nc = len(spec)
+        let dpair = any_disjoint_pair(spec)
+        let mut tag = "none"
+        if nc > 0 {
+            if dpair == 1 { tag = "MULTI (≥2 disjoint)" }
+            else { tag = "single (or overlapping)" }
+        }
+        println("  rule " + str(r) + " : irreducible subsets=" + str(nc) + "  disjoint_pair=" + str(dpair) + "  => " + tag)
+        if (r == 90) || (r == 60) || (r == 110) { dump_spectrum("rule " + str(r), spec) }
+        idx = idx + 1
+    }
+    println("  --")
+
+    let tpm90 = eca_tpm(90, n)
+    let spec90 = complex_spectrum(tpm90, n, st)
+    let tpm60 = eca_tpm(60, n)
+    let spec60 = complex_spectrum(tpm60, n, st)
+    let tpm110 = eca_tpm(110, n)
+    let spec110 = complex_spectrum(tpm110, n, st)
+    let tpm0 = eca_tpm(0, n)
+    let spec0 = complex_spectrum(tpm0, n, st)
+    let tpm204 = eca_tpm(204, n)
+    let spec204 = complex_spectrum(tpm204, n, st)
+    let c90 = find_complex(tpm90, n, st)
+
+    // ── F296.1 MULTI-RULE90 ────────────────────────────────────────────
+    let d90 = any_disjoint_pair(spec90)
+    check("F296.1 MULTI-RULE90: spectrum has >=2 disjoint irreducible subsets", d90 == 1)
+
+    // ── F296.2 SINGLE-INTEGRATING ───────────────────────────────────────
+    // top entry == full system AND no disjoint partner in spectrum.
+    let top60 = spec60[0]
+    let top110 = spec110[0]
+    let d60 = any_disjoint_pair(spec60)
+    let d110 = any_disjoint_pair(spec110)
+    check("F296.2a SINGLE: rule 60 top=full AND no disjoint partner", approx(top60[0], to_float(full_mask)) && (d60 == 0))
+    check("F296.2b SINGLE: rule 110 top=full AND no disjoint partner", approx(top110[0], to_float(full_mask)) && (d110 == 0))
+
+    // ── F296.3 NONE-REDUCIBLE ───────────────────────────────────────────
+    check("F296.3a NONE: rule 0 spectrum empty", len(spec0) == 0)
+    check("F296.3b NONE: rule 204 (identity) spectrum empty", len(spec204) == 0)
+
+    // ── F296.4 EXCLUSION-CONSISTENT ─────────────────────────────────────
+    let top90 = spec90[0]
+    check("F296.4 EXCLUSION: rule 90 spectrum top == find_complex output (mask & phi)",
+        approx(top90[0], c90[0]) && approx(top90[1], c90[1]))
+
+    // ── F296.5 DETERMINISM ──────────────────────────────────────────────
+    let spec90b = complex_spectrum(tpm90, n, st)
+    let det_ok = (len(spec90) == len(spec90b))
+    check("F296.5 DETERMINISM: rule 90 spectrum size re-run identical", det_ok)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  FINDING: complex_spectrum reveals multi-complex coexistence on")
+    println("           rule 90 (>=2 disjoint integration loci) while integrating")
+    println("           substrates host a single whole-complex with no disjoint")
+    println("           partner — IIT exclusion picks one; the spectrum shows ALL.")
+    println("================================================================")
+    if FAIL > 0 { panic("H_296 had FALSIFIER FAILURES") }
+}

@@ -3,6 +3,15 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#34 — 다중-complex 공존: rule90 = 두 disjoint 부분-complex (H_295 정량 확장)
+
+- [x] **H_296 multicomplex-coexistence** 🟢 SUPPORTED-NUMERICAL 7/7 (`UNIVERSE/state/h296_multicomplex_coexistence_2026_05_26/`) — H_295 직접 후속 (complex_spectrum 재사용)
+- [x] **발견**: rule 90 spectrum 이 **두 disjoint irreducible 부분집합 동시 노출** — cells{0,1}(mask 3, Φ=2) AND cells{2,3}(mask 12, Φ=2), 두 부분 *동시에* irreducible + *겹침 없음*. 통합 substrate(60/110/150/105/30) 단일 entry = 전체 mask(15). reducible(0/255/204/51) spectrum 비어있음
+- [x] **H_295 정량 확장**: rule 90 의 부분-complex 가 *둘* 임을 명시 — 4-셀 ring 이 **두 독립 2-셀 통합 loci 로 분할** (전체 Φ=0 의 정체). ECA parity-ring 의 even-cell/odd-cell 결합 구조가 그 분할의 substrate. IIT 배제는 "the" complex 로 하나만 선택하나 *구조적 실재* 는 다중
+- [x] engine 재사용 (g61): HEXAD/IIT4/lib + stdlib iit4_complex.complex_spectrum(전수 부분집합 탐색). 새 IIT4 코드 0줄. $0 · NO GPU
+- [x] surface: README 108→109 H + H_296 행 · UNIVERSE.log cycle#34
+- [ ] Next: 전수-state spectrum (multi-disjoint robustness) · 큰 N multi-complex 패턴 · bipartite-coupled non-XOR substrate 재현
+
 ## 2026-05-26 — cycle#33 — 새 축: IIT 배제 공준 — 통합=전체 complex, rule90=부분 complex (흐름-arc anomaly 해소)
 
 - [x] **H_295 exclusion-complex-whole** 🟢 SUPPORTED-NUMERICAL 6/6 (`UNIVERSE/state/h295_exclusion_complex_whole_2026_05_26/`) — 새 축(배제 공준), 흐름 arc 와 다름. find_complex 재사용
