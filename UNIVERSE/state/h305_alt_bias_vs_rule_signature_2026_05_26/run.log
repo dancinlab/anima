@@ -1,0 +1,29 @@
+================================================================
+  H_305 — alt-bias × rule signature (4 rules × 32 states cap=4)
+================================================================
+  Computing rule 90...
+    mean = 21.375 · alt(st=21) = 19.5 · ratio = 1.09615
+  Computing rule 60...
+    mean = 18.125 · alt(st=21) = 16.5 · ratio = 1.09848
+  Computing rule 30...
+    mean = 23.6055 · alt(st=21) = 20.2686 · ratio = 1.16463
+  Computing rule 110...
+    mean = 27.0708 · alt(st=21) = 17.694 · ratio = 1.52994
+  ────────────── verdict ──────────────
+  [PASS] F305.1 RULE-90: mean≈21.375 AND alt≈19.5
+  [PASS] F305.2 RULE-60: mean≈18.125 AND alt≈16.5
+  [PASS] F305.3 RULE-30: mean≈23.6 AND alt≈20.27
+  [PASS] F305.4 RULE-110: mean≈27.07 AND alt≈17.69
+    ratios: rule90=1.09615 rule60=1.09848 rule30=1.16463 rule110=1.52994
+  [PASS] F305.5 RANK-MONOTONE: q(90) ≤ q(60) ≤ q(30) ≤ q(110) (distinct-count rank ↔ ratio rank)
+  [PASS] F305.6 ALT-BIAS-AT-110-EXTREME: ratio(110) > 1.3 AND all others < 1.2
+  [PASS] F305.7 BOUND: all mean + alt >= 0
+================================================================
+  RESULT: 7 PASS / 0 FAIL
+  ALT-BIAS × RULE-SIGNATURE TABLE:
+    rule  distinct  mean        alt          ratio
+    90    3         21.375  19.5  1.09615
+    60    6         18.125  16.5  1.09848
+    30    29        23.6055  20.2686  1.16463
+    110   32        27.0708  17.694  1.52994
+================================================================
