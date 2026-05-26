@@ -1,0 +1,18 @@
+// H_405 smoke — split cap gate
+
+fn split_possible(cap: bool, pressure: f64, theta: f64) -> bool {
+    return cap && (pressure > theta)
+}
+
+fn check_h405() -> bool {
+    let yes = split_possible(true, 0.8, 0.5)
+    let no_cap = !split_possible(false, 0.8, 0.5)
+    let lo_p = !split_possible(true, 0.3, 0.5)
+    return yes && no_cap && lo_p
+}
+
+fn main() {
+    let ok = check_h405()
+    if !ok { print("H_405 FAIL"); return }
+    print("H_405 blue split-cap gate OK")
+}
