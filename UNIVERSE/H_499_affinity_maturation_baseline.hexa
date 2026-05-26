@@ -1,0 +1,19 @@
+// H_499 smoke — AFFINITY-MATURATION
+
+fn max_affinity_at(gen: i64, base: f64, step: f64) -> f64 {
+    return base + step * (gen as f64)
+}
+
+fn check_h499() -> bool {
+    let s = 0.05
+    let a0 = max_affinity_at(0, 0.5, s)
+    let a1 = max_affinity_at(1, 0.5, s)
+    let a2 = max_affinity_at(2, 0.5, s)
+    return (a1 >= a0) && (a2 >= a1)
+}
+
+fn main() {
+    let ok = check_h499()
+    if !ok { print("H_499 FAIL"); return }
+    print("H_499 blue AFFINITY-MATUR OK")
+}
