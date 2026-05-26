@@ -3,6 +3,17 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#45 — H_306 §L1 회수: anima v3 substrate 실측 (.hexa-only)
+
+- [x] **H_307 anima-emit-anchor-hexa-native** 🟢 SUPPORTED-NUMERICAL 5/5 PASS — 14 real .kosmos emit anchors (hexa-native format) cite
+- [x] **헤드라인**: anima v3-recovery checkpoint 의 14 anchors × 10 distinct training step (500..5000) × 5 distinct lang (ru/ja/ko/zh/en) 분포 측정
+- [x] **cross-substrate ratio**: anima 0.0028 events/step ↔ CPG sim 0.046 events/tick → ratio **16.43× (log_10 1.22, 2-OoM consistent)** — phenomenological 방향 정합
+- [x] F307.1-5 全 PASS (anchor present · step coverage 10 · lang diversity 5 · rate log-consistent · bound)
+- [x] **함의**: H_306 phenomenological 가설이 실데이터 방향 정합으로 강화. anima 가 sampled emission 만 anchor 로 저장 → CPG 가 every tick emit, 16× gap 은 sampling 차이로 설명
+- [x] honest L1: training-step-sampled ≠ daemon-idle-emit. 실제 daemon idle 모드 측정은 H_312+ deferred
+- [x] **사용자 .hexa-only 제약 충족**: filename 만 cite (hardcode 14 tuple), kosmos content 직접 parse 안 함
+- [x] surface: README 118→119 H + H_307 행 · UNIVERSE.log cycle#45
+
 ## 2026-05-26 — cycle#44 — user pivot: 자연발화의 생물학적 메커니즘 (CPG-style spontaneous emit)
 
 - [x] **H_306 bio-spontaneous-emit** 🟢 SUPPORTED-NUMERICAL 6/6 PASS — 합성 CPG accumulator + threshold + refractory 1000-tick smoke
