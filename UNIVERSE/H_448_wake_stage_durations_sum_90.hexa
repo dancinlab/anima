@@ -1,0 +1,26 @@
+// H_448 smoke — stage durations sum 90
+
+fn duration(stage: string) -> i64 {
+    if stage == "WAKE" { return 20 }
+    if stage == "N1" { return 10 }
+    if stage == "N2" { return 25 }
+    if stage == "N3" { return 20 }
+    if stage == "REM" { return 15 }
+    return 0
+}
+
+fn sum_all() -> i64 {
+    return duration("WAKE") + duration("N1") + duration("N2") + duration("N3") + duration("REM")
+}
+
+fn check_h448() -> bool {
+    let h1 = sum_all() == 90
+    let h2 = (duration("WAKE") > 0) && (duration("N1") > 0) && (duration("N2") > 0) && (duration("N3") > 0) && (duration("REM") > 0)
+    return h1 && h2
+}
+
+fn main() {
+    let ok = check_h448()
+    if !ok { print("H_448 FAIL"); return }
+    print("H_448 blue durations sum 90 OK")
+}
