@@ -1,0 +1,23 @@
+================================================================
+  H_322 — directive cite capability × intent BRIDGE 🔵
+  emit_actual = capability ∧ intent (AND-gate)
+================================================================
+  capability: WAKE → true · N3 → false (stage_mod=0 → closed)
+  [PASS] F322.1 CAPABILITY-AXIOM: WAKE open, N3 closed
+  intent: high → true (1.0 > 0.3) · low → false (0.0001 < 0.3)
+  [PASS] F322.2 INTENT-AXIOM: high substrate → T, low → F
+  case both T (WAKE + high-sub) → true
+  [PASS] F322.3 AND-GATE-EMIT: both T → emit
+  case capability veto (N3 + high-sub) → false
+  [PASS] F322.4 CAPABILITY-VETO: capability=F + intent=T → emit=F
+  case intent veto (WAKE + low-sub) → false
+  [PASS] F322.5 INTENT-VETO: capability=T + intent=F → emit=F
+  [PASS] F322.6 BOTH-PASS: capability=T + intent=T → emit=T
+  [PASS] F322.7 BOTH-FAIL: capability=F + intent=F → emit=F
+  [PASS] F322.8 DETERMINISTIC
+================================================================
+  RESULT: 8 PASS / 0 FAIL
+  ✅ CAPABILITY × INTENT BRIDGE — 🔵 SUPPORTED-FORMAL
+    emit = capability(stage timing) ∧ intent(substrate decision)
+    directive cite verbatim: 'may speak during silence' + 'decided by substrate'
+================================================================
