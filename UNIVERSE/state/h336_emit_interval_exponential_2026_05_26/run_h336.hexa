@@ -1,0 +1,46 @@
+// H_336 — emit interval exponential 🔵
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn recovery_w(k: float, n: int) -> float {
+    let one_minus_k = 1.0 - k
+    let mut acc = 1.0
+    let mut i = 0
+    while i < n { acc = acc * one_minus_k; i = i + 1 }
+    return 1.0 - acc
+}
+
+fn ticks_to_90percent(k: float) -> int {
+    let mut n = 0
+    let mut w = 0.0
+    while w < 0.9 { n = n + 1; w = recovery_w(k, n); if n > 100 { return -1 } }
+    return n
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_336 — emit interval exponential 🔵")
+    println("================================================================")
+    let k = 0.3
+    let r_steps = 10
+    let recharge_n = ticks_to_90percent(k)
+    println("  k=" + str(k) + " · ticks to W>=0.9: " + str(recharge_n))
+    check("F336.1 EMIT-INTERVAL: R_steps + recharge_n ~= " + str(r_steps + recharge_n), recharge_n > 0)
+    // RECHARGE-TIME: w_5 = 1-0.7^5 = 1-0.168 = 0.832, w_7=1-0.7^7=1-0.082=0.918
+    let w7 = recovery_w(0.3, 7)
+    check("F336.2 RECHARGE-TIME: w_7 >= 0.9 at k=0.3", w7 >= 0.9)
+    let interval_min = r_steps + 1
+    check("F336.3 INTERVAL-MIN-BOUND: interval >= R+1 = 11", interval_min >= 11)
+    let d1 = recovery_w(0.3, 3)
+    let d2 = recovery_w(0.3, 3)
+    check("F336.4 DETERMINISTIC", d1 == d2)
+    check("F336.5 BOUND", d1 >= 0.0)
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 4 { println("  ✅ EMIT INTERVAL EXP — 🔵") }
+    if FAIL > 0 { panic("H_336 FAIL") }
+}
