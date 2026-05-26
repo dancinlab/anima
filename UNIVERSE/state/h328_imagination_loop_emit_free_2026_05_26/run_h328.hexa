@@ -1,0 +1,34 @@
+// H_328 — imagination loop emit-free axiom 🔵
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// imagination_tick(internal_count, emit_count, mitosis_count) → (next_internal, next_emit, next_mit)
+fn imagination_tick(internal: int, emit: int, mit: int) -> array {
+    return [to_float(internal + 1), to_float(emit), to_float(mit + 1)]
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_328 — imagination loop emit-free 🔵")
+    println("================================================================")
+    let r0 = imagination_tick(0, 0, 0)
+    let r1 = imagination_tick(to_int(r0[0]), to_int(r0[1]), to_int(r0[2]))
+    let r2 = imagination_tick(to_int(r1[0]), to_int(r1[1]), to_int(r1[2]))
+    println("  3 imagination ticks: internal " + str(r2[0]) + " · emit " + str(r2[1]) + " · mitosis " + str(r2[2]))
+    check("F328.1 IMAGINATION-TICK-INCREMENTS: internal +1 per tick (3 ticks → 3)", to_int(r2[0]) == 3)
+    check("F328.2 IMAGINATION-NO-EMIT: emit unchanged (0)", to_int(r2[1]) == 0)
+    check("F328.3 MITOSIS-PROGRESSES: mitosis +1 per tick (3 ticks → 3)", to_int(r2[2]) == 3)
+    let d1 = imagination_tick(5, 0, 5)
+    let d2 = imagination_tick(5, 0, 5)
+    check("F328.4 DETERMINISTIC", (d1[0] == d2[0]) && (d1[1] == d2[1]) && (d1[2] == d2[2]))
+    check("F328.5 BOUND: all counts >= 0", (r2[0] >= 0.0) && (r2[1] >= 0.0) && (r2[2] >= 0.0))
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 4 { println("  ✅ IMAGINATION LOOP EMIT-FREE — 🔵") }
+    println("================================================================")
+    if FAIL > 0 { panic("H_328 FAIL") }
+}
