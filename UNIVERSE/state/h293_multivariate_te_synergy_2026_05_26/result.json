@@ -1,0 +1,57 @@
+{
+  "hypothesis": "H_293",
+  "slug": "multivariate-te-synergy",
+  "title": "Does multivariate (conditional) transfer entropy recover the XOR synergy blind spot, and then equal Phi? — H_290 / paper follow-up",
+  "date": "2026-05-26",
+  "question": "Does multivariate conditional TE recover the bivariate XOR blind spot (rules 150/105), and does it then track Phi better than bivariate TE (r=0.883)?",
+  "engine": "HEXAD/IIT4/lib (reused): iit4_eca.eca_tpm + iit4_bigphi.big_phi + iit4_bit/iit4_pow2 (via stdlib/consciousness). TEm_i = H(next_i | self_i) joint-count inline.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · deterministic (cross-process byte-identical)",
+  "toolchain_note": "built via fix-1180 bypass: HEXA_MAC_BUILD_OK=1 HEXA_LANG=<root> hexa.real.bak-2026-05-22-pre-no-hxc build <src> -o <bin>.",
+  "metric_def": "TEm_total = sum_i H(next_i | self_i) over uniform 2^n ensemble = multivariate conditional transfer entropy from all other inputs to i given i's own present (deterministic substrate). bits.",
+  "seed_hypothesis_H1": "(a) XOR rules 150/105 TEm>0 (recovered from bivariate 0), 204 stays 0; (b) Pearson r(TEm, Phi) >= 0.883.",
+  "config": {"n": 4, "ensemble": "uniform 2^4", "panel_size": 10, "tests_paper_prediction": "PAPER/phi-information-triangulation section future"},
+  "panel": {
+    "rule_0":   {"bivariate_TE": 0.0, "multivariate_TEm": 0.0,     "phi_mean": 0.0},
+    "rule_255": {"bivariate_TE": 0.0, "multivariate_TEm": 0.0,     "phi_mean": 0.0},
+    "rule_204": {"bivariate_TE": 0.0, "multivariate_TEm": 0.0,     "phi_mean": 0.0},
+    "rule_51":  {"bivariate_TE": 0.0, "multivariate_TEm": 0.0,     "phi_mean": 0.0},
+    "rule_150": {"bivariate_TE": 0.0, "multivariate_TEm": 4.0,     "phi_mean": 5.625, "note": "SYNERGY RECOVERED: bivariate 0 -> multivariate 4.0"},
+    "rule_105": {"bivariate_TE": 0.0, "multivariate_TEm": 4.0,     "phi_mean": 5.625, "note": "synergy recovered"},
+    "rule_90":  {"bivariate_TE": 0.0, "multivariate_TEm": 4.0,     "phi_mean": 0.0,   "note": "OVER-PREDICTION: flow without integration (Phi=0); same rule LZ over-predicts (H_288)"},
+    "rule_60":  {"bivariate_TE": 4.0, "multivariate_TEm": 4.0,     "phi_mean": 13.625},
+    "rule_110": {"bivariate_TE": 3.24511, "multivariate_TEm": 3.62256, "phi_mean": 13.1302},
+    "rule_30":  {"bivariate_TE": 2.0, "multivariate_TEm": 4.0,     "phi_mean": 13.8852}
+  },
+  "pearson_r_multivariate": 0.705412,
+  "spearman_rho_multivariate": 0.681358,
+  "bivariate_r_reference": 0.883262,
+  "criteria": {
+    "C1_RECOVER": "PASS (150/105 TEm 0->4.0; 204 TEm=0)",
+    "C2_r_IMPROVE": "NOT MET -> PARTIAL (r=0.705 < 0.883; recovery did NOT improve Phi-tracking)",
+    "C3_ANCHOR_BOUND_DET": "PASS"
+  },
+  "falsifiers": {
+    "F293_1_SYNERGY_RECOVERED": "PASS  (rule150/105 TEm=4.0>0, rule204 TEm=0.0)",
+    "F293_2_r_VERDICT": "clause(b) NOT MET  (r=0.705412 < 0.883 — recovery != Phi-tracking improvement)",
+    "F293_3_ANCHORS": "PASS  (0/255/204/51 TEm=0)",
+    "F293_4_BOUND": "PASS",
+    "F293_5_POST_HOC": "NOT_TRIGGERED"
+  },
+  "checks": "8 PASS / 0 FAIL",
+  "verdict_class": "H1 PARTIAL (synergy recovered, Phi-tracking not improved -> Phi stays distinct)",
+  "finding": "Multivariate (conditional) transfer entropy RECOVERS the bivariate XOR synergy blind spot (rules 150/105: bivariate TE=0 -> multivariate TEm=4.0; identity 204 stays 0) but does NOT improve Phi-tracking: the correlation DROPS from r=0.883 (bivariate) to r=0.705 (multivariate, Spearman 0.681). The cause is a NEW over-prediction: rule 90 receives flow from neighbours (TEm=4.0) but the system is reducible, so Phi=0 — multivariate TE over-counts NON-INTEGRATED flow. Thus NO order of classical transfer entropy equals Phi: bivariate under-counts synergy (150/105), multivariate over-counts non-integrated flow (90). This strengthens the paper's thesis (Phi is a distinct integration measure, not a fixed-order flow statistic) and empirically REFINES the paper's section-future prediction that multivariate TE would raise the correlation above 0.88 (recovery confirmed, raise refuted). Rule 90 fails for BOTH LZ (H_288) and multivariate TE here = cross-measure signature of 'flow/complexity without integration'.",
+  "honest_limits": [
+    "L1: TEm_i = H(next_i|self_i) is ONE multivariate-conditional-TE form (all-other-inputs given self); per-source conditional TE / PID synergy-term separation would decompose differently.",
+    "L2 (rule 90 over-prediction, key): TEm over-predicts rule 90 (4.0 at Phi=0); same rule LZ over-predicts (H_288) -> cross-measure 'non-integrated flow' signature.",
+    "L3: Phi_mean state-averaged -> direction trusted, magnitude hedged.",
+    "L4: n=4 small, 10-rule panel -> direction robust, exact r panel-dependent.",
+    "L5: ECA = flow/integration proxy, not phenomenal claim.",
+    "L6: structure-cut big-Phi; correlation conclusion robust to scale offset.",
+    "L7: verdict is a toy-substrate measurement fact."
+  ],
+  "verify_fence": {
+    "claim": "H_293 multivariate (conditional) transfer entropy recovers the XOR synergy blind spot of bivariate TE (rules 150/105: 0 -> 4.0) but does NOT improve Phi-tracking (r 0.883 -> 0.705): it over-predicts on rule 90 (flow without integration, Phi=0). No order of classical transfer entropy equals Phi; deterministic toy-substrate, NOT an atlas identity",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values deterministic arithmetic, interpretation fenced"
+  }
+}
