@@ -3,6 +3,14 @@
 Append-only history sister of `LIFE.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — 축 B large-N bounded big-Φ (M13, GPU fire 취소 후 $0 도달)
+
+- [x] 사용자 "B축 GPU fire" 지시 → **scope-check 가 발사 차단** ([[feedback-scope-check-before-cost-fire]] 3번째): DESIGN.md 상 large-N exact=super-exp **GPU-immune** + bounded 근사=$0 CPU(M12 이미 n=6). GPU 파드는 lever 아님 → 권장 "$0 background bounded n=7/8" 로 전환(사용자 "권장" 승인)
+- [x] **M13** bounded big-Φ n=7/8 🟢 5/5 (`HEXAD/IIT4/state/iit4_m13_bounded_n78_2026_05_26/`) — M12 가 미룬 tier. **n=8 H_002 C2 scale 도달**($0 mac-local NO GPU). rule110 cap=3 ladder: n4 7.5475(=exact 앵커)·n5 15.40·n6 6.82·n7 9.03(nd23)·n8 6.82(nd20). 결정론 byte-identical
+- [x] 발견: bounded(cap<n) ladder **n-비단조**(lower-bound tightness 가 n×seed×state 의존) → magnitude fragile(lane directional-trust 서명 일관). cap≥n=exact(faithful 제한)
+- [x] **인프라**: agent 3회 throttle 사망 패턴 후 **parent inline/background hexa run = throttle 우회** 재확인 (H_285 inline + M13 background). 워크트리 import 는 main-abs(M12/M6 관례), 실행만 worktree-abs 임시패치 후 복원
+- [x] 축 B milestone flip: B1 done(n=8 도달) · B2 부분(gap 곡선은 exact super-exp 라 unmeasurable, bounded 가 deliverable)
+
 ## 2026-05-26 — cycle#24 — 영구엔진 2라운드 (A2 split-brain + C edge-of-chaos)
 
 - [x] 사용자 "계속" → cycle#24 $0 2-agent (C축 H_285 edge-of-chaos · A2축 H_286 split-brain)

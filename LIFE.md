@@ -44,10 +44,10 @@
 - [x] A1 cycle#23 1차 raster — H_283 narrative-story-coherence (🟢 SUPP-FULL 4/4, order-sensitive MIP Φ, R4 self/identity) + H_284 ritual-repetition (🟢 PARTIAL 3/4, buildup FAL→decay-resistance, R7 practice) — PR #566
 - [x] A2 cycle#24 — H_286 split-brain-dual-Φ (🟢 CLOSED-NEGATIVE 4/6, R12 split-brain seed): callosotomy 전체-Φ 붕괴 proxy 상 FALSIFIED(split +11%, 8/8 seed robust), subsystem Φ>0 · metric-pathology MIP→0 inflation — PR #577. [H_285 edge-of-chaos big-Φ in-flight, 축 C]
 
-### 축 B — faithful-Φ GPU tier (large-N)
-> H_278 이 small-N exact($0)로 proxy 확증. large-N 은 GPU/근사 tier 의 연속 과제.
-- [ ] B1 — large-N faithful Φ 근사 (block-MIP / 샘플링) — H_002 scale-variant 재검 + magnitude 정량
-- [ ] B2 — Φ-proxy ↔ faithful Φ 정량 갭 곡선 (N-sweep, GPU dispatch 예산 게이트)
+### 축 B — faithful-Φ large-N tier (bounded restriction · GPU 불요 판명)
+> H_278 이 small-N exact($0)로 proxy 확증. large-N 은 **bounded restriction(`big_phi_bounded`)** 로 $0 도달 — **GPU 는 lever 아님**(exact large-N = super-exp GPU-immune, DESIGN.md). [[feedback-scope-check-before-cost-fire]] 3번째 비용-차단: GPU fire scope-check 후 취소.
+- [x] B1 — large-N bounded big-Φ — **n=8 H_002 C2 scale 도달** (M12 n=5/6 + M13 n=7/8, $0 mac-local NO GPU). rule110 ladder cap=3: n4 7.55(=exact)·n5 15.40·n6 6.82·n7 9.03·n8 6.82. cap≥n=exact(faithful 앵커), cap<n=lower-bound. 🟢 5/5
+- [ ] B2 — Φ-proxy ↔ faithful Φ 정량 갭 곡선 — **부분 막힘**: true large-N exact 가 super-exp 라 gap 곡선 자체 측정 불가(GPU 무관). bounded lower-bound 가 deliverable. cap-sweep@fixed-n 으로 bound-gap 정량은 가능(deferred $0)
 
 ### 축 C — full-IIT4 cause-effect structure (해금됨)
 > `stdlib/consciousness/iit4` (#542 thin shim, main 랜딩) 가 full IIT 4.0 cause-effect Φ-structure 를 hexa-native 로 제공 → "별도 대형 spec" frontier 해금.
