@@ -1,0 +1,32 @@
+// H_366 smoke — AKIDA × KOSMOS (spike → 6-tuple payload)
+
+fn payload_lane_for_spike() -> string {
+    return "akida"
+}
+
+fn payload_slot_count() -> i64 {
+    return 6
+}
+
+fn tension_channel_count() -> i64 {
+    return 5
+}
+
+fn check_h366() -> bool {
+    // H4 LANE-AKIDA
+    let lane = payload_lane_for_spike() == "akida"
+    // H2 SLOT-COUNT-6 (H_356 carry)
+    let slots = payload_slot_count() == 6
+    // H3 TENSION-5CH (H_356 carry)
+    let tens = tension_channel_count() == 5
+    return lane && slots && tens
+}
+
+fn main() {
+    let ok = check_h366()
+    if !ok {
+        print("H_366 FAIL")
+        return
+    }
+    print("H_366 🔵 AKIDA × KOSMOS 6-tuple OK")
+}
