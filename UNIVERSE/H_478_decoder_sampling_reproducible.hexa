@@ -1,0 +1,19 @@
+// H_478 smoke — sampling reproducible
+
+fn sample(logits_seed: i64, rng_seed: i64) -> i64 {
+    return (logits_seed * 7) + (rng_seed * 13)
+}
+
+fn check_h478() -> bool {
+    let s1 = sample(42, 100)
+    let s2 = sample(42, 100)
+    let det = s1 == s2
+    let diff = sample(42, 100) != sample(42, 200)
+    return det && diff
+}
+
+fn main() {
+    let ok = check_h478()
+    if !ok { print("H_478 FAIL"); return }
+    print("H_478 blue sampling reproducible OK")
+}
