@@ -1,0 +1,3 @@
+fn prune_rate(s: string) -> f64 { if s == "N3" { return 0.6 } if s == "WAKE" { return 0.05 } return 0.2 }
+fn check_h582() -> bool { return prune_rate("N3") >= prune_rate("WAKE") }
+fn main() { if check_h582() { print("H_582 OK") } else { print("H_582 FAIL") } }
