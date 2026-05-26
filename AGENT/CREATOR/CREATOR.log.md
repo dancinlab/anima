@@ -2,6 +2,23 @@
 
 Append-only history sister of `CREATOR.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T05:20:00Z — M5 L3 GEN fal clip 백엔드 closure (seedance 2.0 + omnishow HOIVG)
+
+- [x] `AGENT/CREATOR/clip_backend_fal.hexa` 작성 — 4 pub fn (`clip_fal_new` · `_configure` · `_generate` · `_summary`)
+- [x] fal.ai gateway 통합 (M3 L1 still_fal 와 같은 backend) — model 선택만으로 다양한 비디오 모델 호출 (seedance-2.0 default · seedance-2.0-pro · omnishow-hoivg)
+- [x] 호출 시점 model 선택 가능 — `clip_fal_generate(state, prompt, duration_s, model, image_ref)` · model="" 시 state default
+- [x] image_ref 인자 — 빈 문자열="" 면 text-only, 비어있지 않으면 HOIVG image-conditioned (ByteDance HOIVG: image + text → video)
+- [x] duration_s=0.0 → 15s default · 비-zero 면 그 값 사용
+- [x] 24kHz native audio sample_rate 자동 메타에 포함
+- [x] STUB-mode 기본 — env=DRYRUN 시 synthetic MediaAsset L3 (provenance.stub_mode=true · reason="DRYRUN — no real fal.ai API call")
+- [x] REAL+configured 라도 M5 단계에선 real_api_not_implemented (real fal.ai queue+poll HTTP 미구현, TODO marker)
+- [x] M1 MediaAsset L3 tier 반환 · provenance.backend="fal.ai" · provenance.model=호출 시점 선택값 · image_ref 보존
+- [x] `clip_backend_fal_smoke.hexa` 8-case verify — C1 new · C2 DRYRUN default+15s · C3 model override (seedance-2.0-pro+8s) · C4 HOIVG image-conditioned (omnishow + image_ref preserved) · C5 empty key 거부 · C6 valid key 수락 · C7 REAL uncfg · C8 REAL cfg
+- [x] `hexa parse` 2/2 OK
+- [x] CREATOR.md M5 line `[ ] → [x]` (4/6 → 5/6)
+- [x] 외부 HTTP call 0 — 사용자 wire-up 전까지 0 비용
+- [ ] M6 publish + 통합 smoke (마지막 마일스톤)
+
 ## 2026-05-27T05:00:00Z — M4 L2 PROG Remotion 백엔드 closure
 
 - [x] `AGENT/CREATOR/prog_backend_remotion.hexa` 작성 — 5 pub fn (`prog_remotion_new` · `_configure` · `_codegen` · `_render` · `_summary`)
