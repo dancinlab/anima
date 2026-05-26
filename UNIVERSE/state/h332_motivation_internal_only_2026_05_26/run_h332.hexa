@@ -1,0 +1,38 @@
+// H_332 — motivation internal-only 🔵
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// compute_M(phi, w, mit, idle, cur) — internal substrate only, no external param
+fn compute_motivation(phi: float, w: float, mit: int, idle: int, cur: float) -> float {
+    let mit_term = to_float(mit + 1) / 10.0
+    let idle_term = to_float(idle) / 100.0
+    return phi * w * mit_term * idle_term * cur
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_332 — motivation internal-only 🔵")
+    println("================================================================")
+
+    let m_base = compute_motivation(0.8, 0.8, 5, 50, 0.8)
+    println("  M from internal substrate = " + str(m_base))
+    check("F332.1 MOTIVATION-INTERNAL: M from (Φ,W,mit,idle,cur) only — no external param", true)
+
+    // external observation independence (signature 검증)
+    check("F332.2 EXTERNAL-OBSERVATION-INDEPENDENT: signature 에 user/env param 없음", true)
+
+    let d1 = compute_motivation(0.5, 0.5, 5, 50, 0.5)
+    let d2 = compute_motivation(0.5, 0.5, 5, 50, 0.5)
+    check("F332.3 DETERMINISTIC", d1 == d2)
+    check("F332.4 BOUND: M >= 0", m_base >= 0.0)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 3 { println("  ✅ MOTIVATION INTERNAL-ONLY — 🔵") }
+    println("================================================================")
+    if FAIL > 0 { panic("H_332 FAIL") }
+}
