@@ -1,0 +1,3 @@
+fn plastic_delta(co_active: bool) -> f64 { if co_active { return 0.1 } return -0.05 }
+fn check_h599() -> bool { return plastic_delta(true) > 0.0 && plastic_delta(false) < 0.0 }
+fn main() { if check_h599() { print("H_599 OK") } else { print("H_599 FAIL") } }
