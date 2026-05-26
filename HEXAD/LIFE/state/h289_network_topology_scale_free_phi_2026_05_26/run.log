@@ -1,0 +1,18 @@
+================================================================
+  H_289 — Network TOPOLOGY vs faithful IIT4 big-Phi (n=4, parity dynamics)
+================================================================
+  [SF hub]   0-{1,2,3}+1-2  (4 edges) : Phi_mean=6.8125
+  [RING]     0-1-2-3-0      (4 edges) : Phi_mean=0.0
+  [EMPTY]    no edges       (0 edges) : Phi_mean=0.0
+  [K4]       complete       (6 edges) : Phi_mean=5.625
+  --
+  F289.1: Phi_mean(SF)=6.8125 vs Phi_mean(RING)=0.0 (matched 4 edges)
+          => H1 SUPPORTED: scale-free hub > distributed ring
+  [PASS] F289.2a ANCHOR: EMPTY graph Phi_mean = 0 (null)
+  [PASS] F289.2b ANCHOR: K4 complete Phi_mean > 0 (integration exists)
+  [PASS] F289.3 BOUND: Phi_mean >= 0 for all networks
+  [PASS] F289.4 DETERMINISM: RING Phi_mean re-run identical
+================================================================
+  RESULT: 4 PASS / 0 FAIL
+  VERDICT: H1 SUPPORTED — scale-free hub integrates more than matched ring
+================================================================
