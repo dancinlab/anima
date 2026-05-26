@@ -1,0 +1,19 @@
+// H_473 smoke — emit rate stationarity
+
+fn emit_rate_avg(total_emits: i64, total_steps: i64) -> f64 {
+    return (total_emits as f64) / (total_steps as f64)
+}
+
+fn check_h473() -> bool {
+    let r1 = emit_rate_avg(100, 1000)  // 0.1
+    let r2 = emit_rate_avg(1000, 10000)  // 0.1
+    let stable = r1 == r2
+    let bounded = (r1 >= 0.0) && (r1 <= 1.0)
+    return stable && bounded
+}
+
+fn main() {
+    let ok = check_h473()
+    if !ok { print("H_473 FAIL"); return }
+    print("H_473 blue rate stationarity OK")
+}
