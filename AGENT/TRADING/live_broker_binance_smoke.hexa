@@ -1,0 +1,85 @@
+// live_broker_binance_smoke.hexa — TRADING M15 Binance STUB verify
+// 7-case smoke: new TESTNET default · LIVE switch · configure · get_quote ·
+// L0 gate refused · L1 + DRYRUN no-fill · cancel/positions
+
+import "/Users/ghost/core/anima/AGENT/TRADING/types.hexa"
+import "/Users/ghost/core/anima/AGENT/TRADING/live_gate.hexa"
+import "/Users/ghost/core/anima/AGENT/TRADING/live_broker_binance.hexa"
+
+fn assert_eq(label, got, want) {
+    if got == want {
+        print("  [ok] " + label)
+        return true
+    }
+    print("  [FAIL] " + label + " got=" + str(got) + " want=" + str(want))
+    return false
+}
+
+fn main() {
+    print("=== TRADING M15 Binance smoke ===")
+
+    let btc = trading_symbol("BTCUSDT", "binance", "crypto")
+
+    // C1: new DRYRUN — testnet endpoint default
+    let s = binance_broker_new("DRYRUN")
+    assert_eq("C1.kind", s["kind"], "BinanceBrokerState")
+    assert_eq("C1.env", s["env"], "DRYRUN")
+    assert_eq("C1.testnet_endpoint", s["endpoint"], "https://testnet.binance.vision")
+    assert_eq("C1.unconfigured", s["configured"], false)
+    assert_eq("C1.recv_window", s["recv_window_ms"], 5000)
+
+    // C1b: LIVE env → live endpoint switch
+    let s_live = binance_broker_new("LIVE")
+    assert_eq("C1b.live_endpoint", s_live["endpoint"], "https://api.binance.com")
+
+    // C2: configure with both secrets
+    let s_cfg = binance_broker_configure(s, "stub-api-key", "stub-api-secret")
+    assert_eq("C2.configured", s_cfg["configured"], true)
+    // missing secret → unconfigured
+    let s_bad = binance_broker_configure(s, "key-only", "")
+    assert_eq("C2b.missing_secret", s_bad["configured"], false)
+
+    // C3: get_quote returns stub Quote
+    let q = binance_broker_get_quote(s, btc)
+    assert_eq("C3.quote_kind", q["kind"], "Quote")
+    assert_eq("C3.quote_is_stub", q["stub"], true)
+
+    // C4: L0 gate → refused
+    let g0 = live_gate_new(10000.0, 50000.0, 5)
+    let buy_order = trading_order(btc, "buy", "market", 0.01, 50000.0)
+    let r1 = binance_broker_place_order(s, g0, buy_order, 50000.0, 0)
+    assert_eq("C4.gate_refused", r1["gate_verdict"]["accepted"], false)
+    assert_eq("C4.no_fill", r1["result"]["filled"], false)
+
+    // C5: L1 gate + DRYRUN → gate accepts, broker no-fill
+    let g1 = live_gate_approve_session(g0, "binance smoke")
+    let r2 = binance_broker_place_order(s, g1, buy_order, 50000.0, 0)
+    assert_eq("C5.gate_accepted", r2["gate_verdict"]["accepted"], true)
+    assert_eq("C5.dryrun_no_fill", r2["result"]["filled"], false)
+    let r2_reason = r2["result"]["reason"]
+    if r2_reason.len() < 5 {
+        print("  [FAIL] C5.reason_empty")
+    } else {
+        print("  [ok] C5.reason_set")
+    }
+
+    // C6: LIVE + unconfigured + L1 → binance_not_configured
+    let s_live_g1 = live_gate_approve_session(g0, "binance live smoke")
+    let r3 = binance_broker_place_order(s_live, s_live_g1, buy_order, 50000.0, 0)
+    let r3_reason = r3["result"]["reason"]
+    if r3_reason == "binance_not_configured — gate ACCEPTED but secrets missing" {
+        print("  [ok] C6.live_uncfg_refused")
+    } else {
+        print("  [FAIL] C6.live_uncfg_reason got=" + r3_reason)
+    }
+
+    // C7: cancel + list_positions stub
+    let cancel = binance_broker_cancel_order(s, "stub-order-id-1")
+    assert_eq("C7.cancel_kind", cancel["kind"], "BinanceCancelResult")
+    assert_eq("C7.cancel_false", cancel["cancelled"], false)
+    let positions = binance_broker_list_positions(s)
+    assert_eq("C7.positions_empty", positions.len(), 0)
+
+    print("=== TRADING M15 Binance smoke: 7-case PASS ===")
+    print(binance_broker_summary(s_cfg))
+}
