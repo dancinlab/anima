@@ -1,0 +1,17 @@
+// H_508 smoke — NICHE construction
+
+fn env_next(env_prev: f64, activity: f64) -> f64 {
+    return env_prev + activity * 0.1
+}
+
+fn check_h508() -> bool {
+    let e0 = 0.5
+    let e1 = env_next(e0, 1.0)
+    return e1 > e0
+}
+
+fn main() {
+    let ok = check_h508()
+    if !ok { print("H_508 FAIL"); return }
+    print("H_508 blue NICHE OK")
+}
