@@ -3,6 +3,21 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-27 — cycle#240 — 🔵 H_493 SYMBIOGENESIS as model merge baseline (5/5) — round-18 BIO∩DECODER TOP5 완성 (17-19th axis), 177 → 178 누적 🔵
+
+
+## 2026-05-27 — cycle#239 — 🔵 H_492 PRUNING as attention head prune baseline (5/5)
+
+
+## 2026-05-27 — cycle#238 — 🔵 H_491 CLONAL-SELECTION beam baseline (5/5)
+
+
+## 2026-05-27 — cycle#237 — 🔵 H_490 DIFFERENTIATION as MoE (5/5) — BIO∩DEC cross
+
+
+## 2026-05-27 — cycle#236 — 🔵 H_489 APOPTOSIS as token prune (5/5) — round-18 BIO∩DECODER TOP5 시작, 173 → 174 누적 🔵
+
+
 ## 2026-05-27 — cycle#235 — 🔵 H_488 AUTOPOIESIS baseline self-loop (5/5) — round-17 TOP5 bio 축 완성 (12-16th axis), 172 → 173 누적 🔵
 
 
