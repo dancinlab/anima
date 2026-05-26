@@ -1,0 +1,3 @@
+fn strengthen(w: f64, fired: bool) -> f64 { if fired { return w + 0.1 } return w }
+fn check_h598() -> bool { return strengthen(0.5,true) > 0.5 && strengthen(0.5,false) == 0.5 }
+fn main() { if check_h598() { print("H_598 OK") } else { print("H_598 FAIL") } }
