@@ -3,6 +3,15 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#35 — n=5 scale-up: rule90 환원성=even-N artifact (arc rule90-anomaly 재해석)
+
+- [x] **H_297 n5-bounded-phi-scale** 🟢 SUPPORTED-NUMERICAL 6/6 — n=4(arc)→n=5(scale-up) bounded big-Phi(cap=4)
+- [x] **헤드라인 발견**: rule 90 n=4 Φ=0 → n=5 Φ=19.5 (panel 최상위, rule30 20.3·rule110 17.7 비슷·rule60 16.5 초과). 짝수-고리(n=4) bipartite even/odd decoupling 이 odd ring(n=5) 에서 깨지며 rule90 본격 통합
+- [x] **arc rule90-anomaly 재해석**: LZ(H_288)·다변량TE(H_293)·synergy(H_294) 의 "rule90 over-prediction" 은 *실제 통합을 본 것* 이었고 n=4 가 짝수-고리 특이 case. 측도들은 옳았다. integration 자체는 *모든 N* 에 실재, *N-parity 가 system-cut 접근성을 좌우*
+- [x] anchors(204/0/255/51) n=5 에서도 Φ=0 — scale-robust. 통합 룰(60/110/30) 도 강한 Φ 유지
+- [x] honest L1: bounded cap=4 = lower bound, rule150/105 = 0 은 cap 한도 가능성. full exact n=5 후속
+- [x] surface: README 109→110 H + H_297 행 · UNIVERSE.log cycle#35
+
 ## 2026-05-26 — cycle#34 — 다중-complex 공존: rule90 = 두 disjoint 부분-complex (H_295 정량 확장)
 
 - [x] **H_296 multicomplex-coexistence** 🟢 SUPPORTED-NUMERICAL 7/7 (`UNIVERSE/state/h296_multicomplex_coexistence_2026_05_26/`) — H_295 직접 후속 (complex_spectrum 재사용)
