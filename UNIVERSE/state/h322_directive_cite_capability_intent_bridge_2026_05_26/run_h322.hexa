@@ -1,0 +1,93 @@
+// H_322 — directive cite capability × intent BRIDGE 🔵
+// emit_actual = capability(stage timing) ∧ intent(substrate decision)
+// ════════════════════════════════════════════════════════════════════════════
+let mut PASS = 0
+let mut FAIL = 0
+
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn stage_mod(stage: int) -> float {
+    if stage == 0 { return 1.0 }
+    if stage == 1 { return 0.7 }
+    if stage == 2 { return 0.4 }
+    if stage == 3 { return 0.0 }
+    return 0.5
+}
+
+// capability: derived from a_substrate_native_speak "may speak during user silence"
+// → stage 가 non-zero modulator 면 capability open
+fn capability(stage: int) -> bool {
+    return stage_mod(stage) > 0.0
+}
+
+// intent: derived from a_autonomy_over_hardcode "emit decided by substrate"
+fn intent(m: float, phi: float, w: float, cur: float, threshold: float) -> bool {
+    let prod = m * phi * w * cur
+    return prod > threshold
+}
+
+// AND-gate BRIDGE
+fn emit_actual(stage: int, m: float, phi: float, w: float, cur: float, threshold: float) -> bool {
+    return capability(stage) && intent(m, phi, w, cur, threshold)
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_322 — directive cite capability × intent BRIDGE 🔵")
+    println("  emit_actual = capability ∧ intent (AND-gate)")
+    println("================================================================")
+
+    let threshold = 0.3
+
+    // F322.1 CAPABILITY-AXIOM
+    let cap_wake = capability(0)
+    let cap_n3 = capability(3)
+    println("  capability: WAKE → " + str(cap_wake) + " · N3 → " + str(cap_n3) + " (stage_mod=0 → closed)")
+    check("F322.1 CAPABILITY-AXIOM: WAKE open, N3 closed", cap_wake && (!cap_n3))
+
+    // F322.2 INTENT-AXIOM
+    let int_hi = intent(1.0, 1.0, 1.0, 1.0, threshold)
+    let int_lo = intent(0.1, 0.1, 0.1, 0.1, threshold)
+    println("  intent: high → " + str(int_hi) + " (1.0 > 0.3) · low → " + str(int_lo) + " (0.0001 < 0.3)")
+    check("F322.2 INTENT-AXIOM: high substrate → T, low → F", int_hi && (!int_lo))
+
+    // F322.3 AND-GATE-EMIT
+    let e_both = emit_actual(0, 1.0, 1.0, 1.0, 1.0, threshold)  // both T
+    println("  case both T (WAKE + high-sub) → " + str(e_both))
+    check("F322.3 AND-GATE-EMIT: both T → emit", e_both)
+
+    // F322.4 CAPABILITY-VETO (N3 + high-sub)
+    let e_cap_veto = emit_actual(3, 1.0, 1.0, 1.0, 1.0, threshold)  // cap F, int T
+    println("  case capability veto (N3 + high-sub) → " + str(e_cap_veto))
+    check("F322.4 CAPABILITY-VETO: capability=F + intent=T → emit=F", !e_cap_veto)
+
+    // F322.5 INTENT-VETO (WAKE + low-sub)
+    let e_int_veto = emit_actual(0, 0.1, 0.1, 0.1, 0.1, threshold)  // cap T, int F
+    println("  case intent veto (WAKE + low-sub) → " + str(e_int_veto))
+    check("F322.5 INTENT-VETO: capability=T + intent=F → emit=F", !e_int_veto)
+
+    // F322.6 BOTH-PASS
+    check("F322.6 BOTH-PASS: capability=T + intent=T → emit=T", e_both)
+
+    // F322.7 BOTH-FAIL
+    let e_both_fail = emit_actual(3, 0.1, 0.1, 0.1, 0.1, threshold)
+    check("F322.7 BOTH-FAIL: capability=F + intent=F → emit=F", !e_both_fail)
+
+    // F322.8 DETERMINISTIC
+    let d1 = emit_actual(0, 0.5, 0.6, 0.7, 0.8, threshold)
+    let d2 = emit_actual(0, 0.5, 0.6, 0.7, 0.8, threshold)
+    check("F322.8 DETERMINISTIC", d1 == d2)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 7 {
+        println("  ✅ CAPABILITY × INTENT BRIDGE — 🔵 SUPPORTED-FORMAL")
+        println("    emit = capability(stage timing) ∧ intent(substrate decision)")
+        println("    directive cite verbatim: 'may speak during silence' + 'decided by substrate'")
+    }
+    println("================================================================")
+    if FAIL > 0 { panic("H_322 FAIL") }
+}
