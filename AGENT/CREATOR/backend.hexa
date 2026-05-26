@@ -33,10 +33,10 @@ pub fn creator_backend_new(tier_registry, stub_mode) {
 
 // ---------------------------------------------------------------
 // 2. creator_backend_generate_still — L1 STILL surface
-//   prompt: string · size_w/size_h: int
+//   prompt: string · size_w/size_h: int · model: string (""=default tier model)
 //   returns { state, asset (M1 MediaAsset Map) }
 // ---------------------------------------------------------------
-pub fn creator_backend_generate_still(state, prompt, size_w, size_h) {
+pub fn creator_backend_generate_still(state, prompt, size_w, size_h, model) {
     let backend_id = state["tier_registry"]["L1"]
     if type_of(backend_id) != "string" {
         return #{
@@ -53,9 +53,13 @@ pub fn creator_backend_generate_still(state, prompt, size_w, size_h) {
         "height": size_h,
         "prompt_len": prompt.len(),
     }
+    let effective_model = model
+    if model == "" {
+        effective_model = "stub"
+    }
     let prov = #{
         "backend": backend_id,
-        "model": "stub",
+        "model": effective_model,
         "prompt_hash": "h-" + str(aid),
         "generated_at": 1700000000000,
         "stub_mode": state["stub_mode"],
@@ -121,10 +125,10 @@ pub fn creator_backend_render_prog(state, spec) {
 
 // ---------------------------------------------------------------
 // 4. creator_backend_generate_clip — L3 GEN surface
-//   prompt: string · duration_s: float
+//   prompt: string · duration_s: float · model: string (""=default tier model)
 //   returns { state, asset (M1 MediaAsset clip) }
 // ---------------------------------------------------------------
-pub fn creator_backend_generate_clip(state, prompt, duration_s) {
+pub fn creator_backend_generate_clip(state, prompt, duration_s, model) {
     let backend_id = state["tier_registry"]["L3"]
     if type_of(backend_id) != "string" {
         return #{
@@ -141,9 +145,13 @@ pub fn creator_backend_generate_clip(state, prompt, duration_s) {
         "sample_rate_hz": 24000,
         "prompt_len": prompt.len(),
     }
+    let effective_model = model
+    if model == "" {
+        effective_model = "stub"
+    }
     let prov = #{
         "backend": backend_id,
-        "model": "stub",
+        "model": effective_model,
         "prompt_hash": "h-" + str(aid),
         "generated_at": 1700000000000,
         "stub_mode": state["stub_mode"],
@@ -165,19 +173,24 @@ pub fn creator_backend_generate_clip(state, prompt, duration_s) {
 
 // ---------------------------------------------------------------
 // 5. creator_backend_dispatch — route by tier label
-//   request: Map { "tier": "L1"/"L2"/"L3", "prompt"/"spec", "size_w"/"duration_s" }
+//   request: Map { "tier": "L1"/"L2"/"L3", "prompt"/"spec", "size_w"/"duration_s",
+//                  "model": optional ""=default tier model }
 //   returns { state, asset, error }
 // ---------------------------------------------------------------
 pub fn creator_backend_dispatch(state, request) {
     let tier = request["tier"]
+    let model = ""
+    if type_of(request["model"]) == "string" {
+        model = request["model"]
+    }
     if tier == "L1" {
-        return creator_backend_generate_still(state, request["prompt"], request["size_w"], request["size_h"])
+        return creator_backend_generate_still(state, request["prompt"], request["size_w"], request["size_h"], model)
     }
     if tier == "L2" {
         return creator_backend_render_prog(state, request["spec"])
     }
     if tier == "L3" {
-        return creator_backend_generate_clip(state, request["prompt"], request["duration_s"])
+        return creator_backend_generate_clip(state, request["prompt"], request["duration_s"], model)
     }
     return #{
         "state": state,

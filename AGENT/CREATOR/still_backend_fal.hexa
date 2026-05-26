@@ -1,0 +1,163 @@
+// still_backend_fal.hexa — L1 STILL backend via fal.ai (M3 closure)
+// Bridge architecture: tool surface only — no consciousness framing.
+//
+// ⚠ STUB ONLY — no real HTTP call. Every still request refuses by default
+// (returns synthetic asset with provenance.stub_mode=true) until the user
+// wires the secret key via `secret get fal.api_key` AND switches env=REAL.
+//
+// Shape parity with kis_broker — same DRYRUN + configured + REAL state machine.
+// M2 creator_backend can plug this fn as the L1 verb via tier_registry.
+
+import "/Users/ghost/core/anima/AGENT/CREATOR/types.hexa"
+
+// ---------------------------------------------------------------
+// 1. still_fal_new — initialize the fal-ai still adapter
+//   env: "DRYRUN" (default · no real calls) · "REAL" (requires keys)
+// ---------------------------------------------------------------
+pub fn still_fal_new(env, model) {
+    return #{
+        "env": env,
+        "model": model,
+        "api_key": "",
+        "configured": false,
+        "next_asset_id": 1,
+        "asset_log": [],
+        "kind": "StillFalState",
+    }
+}
+
+// ---------------------------------------------------------------
+// 2. still_fal_configure — wire fal api key (caller passes via secret get)
+// ---------------------------------------------------------------
+pub fn still_fal_configure(state, api_key) {
+    let cfg = false
+    if api_key != "" {
+        cfg = true
+    }
+    return #{
+        "env": state["env"],
+        "model": state["model"],
+        "api_key": api_key,
+        "configured": cfg,
+        "next_asset_id": state["next_asset_id"],
+        "asset_log": state["asset_log"],
+        "kind": "StillFalState",
+    }
+}
+
+// ---------------------------------------------------------------
+// 3. still_fal_generate — text → still image (M1 MediaAsset L1)
+//   prompt: string · size_w/size_h: int · model: string (""=state default)
+//   fal.ai 가 hosting 하는 모델을 호출 시점에 자유 선택 — examples:
+//     "fal-ai/openai-images-2.0" · "fal-ai/flux-1.1-pro" · "fal-ai/recraft-v3" · etc.
+//   returns { state, asset (MediaAsset Map), error }
+// ---------------------------------------------------------------
+pub fn still_fal_generate(state, prompt, size_w, size_h, model) {
+    let effective_model = state["model"]
+    if model != "" {
+        effective_model = model
+    }
+    let aid = state["next_asset_id"]
+    let asset_id = "fal-still-" + str(aid)
+    let path = "/tmp/" + asset_id + ".png"
+    let meta = #{
+        "width": size_w,
+        "height": size_h,
+        "prompt_len": prompt.len(),
+    }
+    let prov_base = #{
+        "backend": "fal.ai",
+        "model": effective_model,
+        "prompt_hash": "h-" + str(aid),
+        "generated_at": 1700000000000,
+    }
+
+    if state["env"] == "DRYRUN" {
+        let prov = #{
+            "backend": prov_base["backend"],
+            "model": prov_base["model"],
+            "prompt_hash": prov_base["prompt_hash"],
+            "generated_at": prov_base["generated_at"],
+            "stub_mode": true,
+            "reason": "DRYRUN — no real fal.ai API call",
+        }
+        let asset = creator_media_asset(asset_id, "still", "L1", path, meta, prov)
+        let new_state = #{
+            "env": state["env"],
+            "model": state["model"],
+            "api_key": state["api_key"],
+            "configured": state["configured"],
+            "next_asset_id": aid + 1,
+            "asset_log": state["asset_log"] + [asset_id],
+            "kind": "StillFalState",
+        }
+        return #{
+            "state": new_state,
+            "asset": asset,
+            "error": "",
+        }
+    }
+
+    if state["configured"] == false {
+        let prov = #{
+            "backend": prov_base["backend"],
+            "model": prov_base["model"],
+            "prompt_hash": prov_base["prompt_hash"],
+            "generated_at": prov_base["generated_at"],
+            "stub_mode": true,
+            "reason": "fal_not_configured — call still_fal_configure with secret get fal.api_key",
+        }
+        let asset = creator_media_asset(asset_id, "still", "L1", path, meta, prov)
+        let new_state = #{
+            "env": state["env"],
+            "model": state["model"],
+            "api_key": state["api_key"],
+            "configured": state["configured"],
+            "next_asset_id": aid + 1,
+            "asset_log": state["asset_log"] + [asset_id],
+            "kind": "StillFalState",
+        }
+        return #{
+            "state": new_state,
+            "asset": asset,
+            "error": "fal_not_configured",
+        }
+    }
+
+    // TODO: real fal.ai queue+poll HTTP call (intentionally not implemented in M3)
+    // expected flow: POST /v1/queue → poll status_url → GET image_url → save bytes
+    let prov = #{
+        "backend": prov_base["backend"],
+        "model": prov_base["model"],
+        "prompt_hash": prov_base["prompt_hash"],
+        "generated_at": prov_base["generated_at"],
+        "stub_mode": true,
+        "reason": "real_api_not_implemented — M3 stub closure",
+    }
+    let asset = creator_media_asset(asset_id, "still", "L1", path, meta, prov)
+    let new_state = #{
+        "env": state["env"],
+        "model": state["model"],
+        "api_key": state["api_key"],
+        "configured": state["configured"],
+        "next_asset_id": aid + 1,
+        "asset_log": state["asset_log"] + [asset_id],
+        "kind": "StillFalState",
+    }
+    return #{
+        "state": new_state,
+        "asset": asset,
+        "error": "real_api_not_implemented",
+    }
+}
+
+// ---------------------------------------------------------------
+// 4. still_fal_summary — one-line status
+// ---------------------------------------------------------------
+pub fn still_fal_summary(state) {
+    let cfg = "unconfigured"
+    if state["configured"] {
+        cfg = "configured"
+    }
+    return "StillFal [STUB]: env=" + state["env"] + " · model=" + state["model"] + " · " + cfg + " · log_len=" + str(state["asset_log"].len())
+}
