@@ -1,0 +1,20 @@
+// H_411 smoke — record union dedup
+
+fn union_size(size_a: i64, size_b: i64, overlap: i64) -> i64 {
+    return size_a + size_b - overlap
+}
+
+fn check_h411() -> bool {
+    let n = 8
+    let self_union = union_size(n, n, n)  // full overlap → n
+    let h1 = self_union == n
+    let disj = union_size(n, n, 0)  // disjoint → 2n
+    let h_growth = disj > n
+    return h1 && h_growth
+}
+
+fn main() {
+    let ok = check_h411()
+    if !ok { print("H_411 FAIL"); return }
+    print("H_411 blue record union dedup OK")
+}
