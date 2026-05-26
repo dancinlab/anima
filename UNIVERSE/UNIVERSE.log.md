@@ -3,6 +3,15 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#36 — n=6 direct falsification: H_297 even-N parity-rule **REJECTED**
+
+- [x] **H_298 even-n-parity-confirm** 🔴 CLOSED-NEGATIVE on H_297-strong — n=6 alt-state bounded big-Phi(cap=4, st=21)
+- [x] **헤드라인 발견**: rule 90 n=4 Φ=0 → n=5 Φ=19.5 → n=6 Φ=**4.0** (parity-return threshold 0.5 위, ≠ 0). H1 EVEN-N-PARITY 가설 **부정** — H_297 strong reading ("rule 90 환원성 = even-N parity rule") 폐기
+- [x] **arc 재해석 정정**: n=4 은 *small-N 특이 case* — 4-cycle 의 even/odd bipartite cut 이 system-cut MIP 와 정확히 일치하므로 그 N 에서만 reducible. n=6 부터 3+3 bipartite cut 이 trivial 하지 않게 되어 rule 90 통합. surviving 해석 = H_297 *weak* reading ("n=4 has degenerate bipartite structure") 만 유지
+- [x] rule 60(22)·rule 110(9.532) n=6 강건 통합 · anchors 204/0 모두 Φ=0 (scale-robust 유지)
+- [x] honest L1: n=7 leg 가 cap=4 compute budget 초과 (단일 bounded_big_phi(cap=4) n=7 >5분), deferred. n=7 cap=3 lower bound 또는 off-mac compute 필요. H2 ODD-N-INTEGRATION 은 H_297 n=5 Φ=19.5 가 corroborate (preregistered 는 아님)
+- [x] surface: README 110→111 H + H_298 행 · UNIVERSE.log cycle#36
+
 ## 2026-05-26 — cycle#35 — n=5 scale-up: rule90 환원성=even-N artifact (arc rule90-anomaly 재해석)
 
 - [x] **H_297 n5-bounded-phi-scale** 🟢 SUPPORTED-NUMERICAL 6/6 — n=4(arc)→n=5(scale-up) bounded big-Phi(cap=4)

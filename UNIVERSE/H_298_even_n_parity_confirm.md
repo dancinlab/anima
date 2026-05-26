@@ -44,14 +44,19 @@ H2 부정 = odd-N integration 가설 부정 (n=5 가 특이성, more odd N 필�
 - 결정성: closed-form arithmetic, cross-process byte-identical.
 - bounded big-Phi(cap<n) = lower bound — *binary* 분류(≈0 vs ≫0) 는 robust, exact magnitude 는 아님 (honest L1).
 
-## 6. 가능한 결과
+## 6. 측정 결과 (실측 2026-05-26)
 
-| 시나리오 | 의미 |
-|---|---|
-| H1 PASS + H2 PASS | H_297 even-N bipartite artifact **strong confirm** — parity-binary 패턴 확정 |
-| H1 PASS + H2 FAIL | even-N artifact 但 odd-N (n=5) integration 은 n=5 specific — partial |
-| H1 FAIL + H2 PASS | n=4 이 작은-N 특이성 — even-N parity 가설 **부정** (rule 90 = 통합/scale-up 일반) |
-| H1 FAIL + H2 FAIL | rule 90 는 scale-irregular — 더 복잡한 메커니즘 |
+| rule | n=4 (exact) | n=5 (H_297 bounded alt-state) | n=6 (H_298 bounded alt-state st=21) |
+|---|---|---|---|
+| **rule 90** | **0** | **19.5** | **4.0** ★ (≠ 0, parity rule **부정**) |
+| rule 60 | 17.5 | 16.5 | 22 |
+| rule 110 | 7.66 | 17.7 | 9.532 |
+| rule 204 | 0 | 0 | 0 (anchor) |
+| rule 0 | 0 | 0 | 0 |
+
+**시나리오 매핑**: H1 FAIL (rule 90 n=6 Φ=4 > 0.5 threshold) + H2 DEFERRED (n=7 leg 가 cap=4 compute budget 초과; n=5 Φ=19.5 가 odd-ring 통합을 corroborate). → **"H1 FAIL + H2 PASS-by-corroboration" 행이 사실에 가장 가까움**: n=4 이 작은-N 특이성, H_297 strong parity 가설 부정.
+
+surviving 해석 = H_297 weak reading: "n=4 4-cycle 의 bipartite even/odd cut 이 system-cut MIP 와 정확히 일치 → 그 N 에서만 reducible 보임". n=6 부터는 3+3 bipartite cut 이 더 이상 trivial 분할이 아니라 rule 90 가 통합. parity-binary 패턴은 단순 N-mod-2 가 아니라 *small-N 특이 case 의 부재* 였다.
 
 ## 7. honest limits / C3
 
