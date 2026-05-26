@@ -1,0 +1,3 @@
+fn token_w(freq: i64) -> f64 { return (freq as f64) * 0.01 }
+fn check_h603() -> bool { return token_w(100) > token_w(10) }
+fn main() { if check_h603() { print("H_603 OK") } else { print("H_603 FAIL") } }
