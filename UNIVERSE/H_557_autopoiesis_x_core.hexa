@@ -1,0 +1,3 @@
+fn m_with_floor(decay: f64, floor: f64) -> f64 { if decay < floor { return floor } return decay }
+fn check_h557() -> bool { return m_with_floor(0.01, 0.1) == 0.1 }
+fn main() { if check_h557() { print("H_557 OK") } else { print("H_557 FAIL") } }
