@@ -1,0 +1,4 @@
+fn n_channels() -> i64 { return 5 }
+fn ch_role(k: i64) -> string { if k == 0 { return "tension_ch_0" } if k == 4 { return "tension_ch_4" } return "tension_ch_x" }
+fn check_h541() -> bool { return n_channels() == 5 && ch_role(0) == "tension_ch_0" }
+fn main() { if check_h541() { print("H_541 OK") } else { print("H_541 FAIL") } }
