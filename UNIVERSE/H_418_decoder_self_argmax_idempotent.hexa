@@ -1,0 +1,28 @@
+// H_418 smoke — argmax idempotent
+
+fn argmax_3(z0: f64, z1: f64, z2: f64) -> i64 {
+    if (z0 >= z1) && (z0 >= z2) { return 0 }
+    if (z1 >= z2) { return 1 }
+    return 2
+}
+
+fn apply_twice(z0: f64, z1: f64, z2: f64) -> i64 {
+    let first = argmax_3(z0, z1, z2)
+    // one-hot then argmax: if first=0 → one_hot=(1,0,0) → argmax=0
+    if first == 0 { return argmax_3(1.0, 0.0, 0.0) }
+    if first == 1 { return argmax_3(0.0, 1.0, 0.0) }
+    return argmax_3(0.0, 0.0, 1.0)
+}
+
+fn check_h418() -> bool {
+    let z = (0.7, 0.2, 0.1)
+    let once = argmax_3(0.7, 0.2, 0.1)
+    let twice = apply_twice(0.7, 0.2, 0.1)
+    return once == twice
+}
+
+fn main() {
+    let ok = check_h418()
+    if !ok { print("H_418 FAIL"); return }
+    print("H_418 blue argmax idempotent OK")
+}
