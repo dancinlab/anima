@@ -1,0 +1,24 @@
+// H_415 smoke — M=0 fixed point
+
+fn clip(x: f64, lo: f64, hi: f64) -> f64 {
+    if x < lo { return lo }
+    if x > hi { return hi }
+    return x
+}
+
+fn m_update(m_prev: f64, sd: f64) -> f64 {
+    return clip(m_prev + 0.1 * sd, 0.0, 1.0)
+}
+
+fn check_h415() -> bool {
+    let fixed = m_update(0.0, 0.0) == 0.0
+    let needs_sd = m_update(0.0, 0.5) > 0.0
+    let no_spontaneous = m_update(0.0, 0.0) == 0.0
+    return fixed && needs_sd && no_spontaneous
+}
+
+fn main() {
+    let ok = check_h415()
+    if !ok { print("H_415 FAIL"); return }
+    print("H_415 blue M=0 stationary OK")
+}
