@@ -1,0 +1,24 @@
+// H_413 smoke — M cap per stage
+
+fn m_max(stage: string) -> f64 {
+    if stage == "WAKE" { return 1.0 }
+    if stage == "REM" { return 0.8 }
+    if stage == "N1" { return 0.5 }
+    if stage == "N2" { return 0.3 }
+    if stage == "N3" { return 0.1 }
+    return 0.0
+}
+
+fn check_h413() -> bool {
+    let w = m_max("WAKE")
+    let n3 = m_max("N3")
+    let ge = w >= n3
+    let pos = (n3 > 0.0) && (m_max("N2") > 0.0)
+    return ge && pos
+}
+
+fn main() {
+    let ok = check_h413()
+    if !ok { print("H_413 FAIL"); return }
+    print("H_413 blue M cap per stage OK")
+}
