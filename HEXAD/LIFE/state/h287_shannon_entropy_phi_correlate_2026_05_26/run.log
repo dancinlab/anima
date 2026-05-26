@@ -1,0 +1,37 @@
+================================================================
+  H_287 — Does faithful IIT4 big-Phi REDUCE to Shannon entropy?
+  (n=4 ring · H_out=output-image entropy bits · Phi_mean=state-avg big-Phi)
+================================================================
+  rule 0 : H_out=0.0 bits   Phi_mean=0.0
+  rule 255 : H_out=0.0 bits   Phi_mean=0.0
+  rule 204 : H_out=4.0 bits   Phi_mean=0.0
+  rule 51 : H_out=4.0 bits   Phi_mean=0.0
+  rule 150 : H_out=4.0 bits   Phi_mean=5.625
+  rule 105 : H_out=4.0 bits   Phi_mean=5.625
+  rule 90 : H_out=2.0 bits   Phi_mean=0.0
+  rule 60 : H_out=3.0 bits   Phi_mean=13.625
+  rule 110 : H_out=3.25 bits   Phi_mean=13.1302
+  rule 30 : H_out=3.375 bits   Phi_mean=13.8852
+  --
+  F287.2: Pearson r(H_out, Phi_mean) over 10 rules = 0.362877
+          => H1 FALSIFIED (r < 0.5): Phi does NOT reduce to Shannon entropy
+  F287.1: identity rule 204  H_out=4.0 Phi_mean=0.0
+          best integrating rule=60 H_out=3.0 Phi_mean=13.625
+  [PASS] F287.1a WITNESS: identity 204 H_out >= 3.99 (near-max entropy)
+  [PASS] F287.1b WITNESS: identity 204 Phi_mean < 1e-9 (zero integration)
+  [PASS] F287.1c WITNESS: an integrating rule has Phi_mean > 0.5 at high entropy
+  [PASS] F287.3a ANCHOR: rule 0 (constant) H_out = 0
+  [PASS] F287.3b ANCHOR: rule 0 (constant) Phi_mean = 0
+  [PASS] F287.3c ANCHOR: rule 255 (constant) H_out = 0
+  [PASS] F287.3d ANCHOR: rule 255 (constant) Phi_mean = 0
+  [PASS] F287.3e ANCHOR: rule 204 (identity) H_out = 4.0 (bijection)
+  [PASS] F287.3f ANCHOR: rule 51 (complement) H_out = 4.0 (bijection)
+  [PASS] F287.4 BOUND: 0 <= H_out <= 4 and Phi_mean >= 0 for all rules
+  [PASS] F287.5 DETERMINISM: rule 204 (H_out, Phi_mean) re-run identical
+================================================================
+  RESULT: 11 PASS / 0 FAIL
+  VERDICT: H1 FALSIFIED (CLOSED-NEGATIVE) — faithful big-Phi does NOT
+           reduce to Shannon entropy. The identity substrate (max info,
+           zero integration) is the decisive witness: information is
+           necessary but NOT sufficient for integration. IIT distinction holds.
+================================================================
