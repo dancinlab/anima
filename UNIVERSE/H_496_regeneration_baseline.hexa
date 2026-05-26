@@ -1,0 +1,21 @@
+// H_496 smoke — REGENERATION recovery
+
+fn n_after_recovery(n_loss: i64, n_baseline: i64, dt_steps: i64) -> i64 {
+    let recovered = n_loss + dt_steps  // 1 split per step
+    if recovered > n_baseline { return n_baseline }
+    return recovered
+}
+
+fn check_h496() -> bool {
+    let baseline = 10
+    let after_loss = 4
+    let h1 = n_after_recovery(after_loss, baseline, 3) > after_loss
+    let h3 = n_after_recovery(after_loss, baseline, 100) == baseline  // no overshoot
+    return h1 && h3
+}
+
+fn main() {
+    let ok = check_h496()
+    if !ok { print("H_496 FAIL"); return }
+    print("H_496 blue REGEN OK")
+}
