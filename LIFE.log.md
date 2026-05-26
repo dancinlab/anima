@@ -3,6 +3,15 @@
 Append-only history sister of `LIFE.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#26 — 축 A/R5 information: Φ ∥ Kolmogorov(LZ) 복잡도 (포그라운드 순차, "모두 순차" 지시)
+
+- [x] **H_288 kolmogorov-complexity-Φ** 🟢 SUPPORTED-NUMERICAL 9/9 (`HEXAD/LIFE/state/h288_kolmogorov_complexity_phi_correlate_2026_05_26/`) — AXES R5(information) `kolmogorov-complexity-Φ` seed 소비
+- [x] **발견**: faithful big-Φ 는 Kolmogorov(LZ76 시공간) 복잡도를 **추종함** (10-룰 panel Pearson r=0.831, Spearman ρ=0.936). **H_287 과 핵심 대비**: 동일 panel 에서 Shannon 엔트로피 ⊥ Φ (r=0.363)였으나 LZ 복잡도 ∥ Φ (r=0.831) → Φ 는 *통계적 정보량*(비트 수)이 아니라 *알고리즘적 복잡도*(시공간 패턴 비압축성)와 같은 축. H_287+H_288 = 이중-측도 발견 완성
+- [x] honest caveat: rule90(Sierpinski 자기유사 LZ=0.24)이 Φ=0 → **LZ over-prediction witness** (필요조건 아닌 충분조건 부재, 동기화-死 H_285/265/275/279 정합). LZ 는 강한 상관자이나 동치 아님
+- [x] ⚠ **TOOLCHAIN 사건**: 세션 중 동시 hexa-lang 에이전트의 fix-1180 symlink 수술로 `hexa`(PATH)가 bare hexa-cc 로 회귀 → `hexa run`/`build -o` 가 소스를 **C codegen 으로 clobber** + import 미해소. 우회 = old-driver `hexa.real.bak-2026-05-22-pre-no-hxc build`(hexa_v2 transpiler 직접 호출). [[reference-life-cycle-hexa-run-gotchas]] 갱신 (canonical 소스는 /tmp 복사본으로 build, 원본 직접 build 금지)
+- [x] engine 재사용 (g61): `HEXAD/IIT4/lib` eca_tpm+big_phi+iit4_bit, 새 IIT4 코드 0줄. LZ76(Kaspar-Schuster)+Pearson/Spearman inline. surface: README 100→101 H + H_288 행 · AXES R5 seed 제거
+- [ ] Next (순차 진행 중): R27 H_289 network-topology-scale-free · R28 H_290 transfer-entropy 대체측도 · R29 H_291 ethic-emergence · R30 H_292 self-i-emergence
+
 ## 2026-05-26 — cycle#25 — 축 A/R5 information: Φ ⊥ Shannon 엔트로피 (포그라운드 단일 라운드)
 
 - [x] `/cycle` 포그라운드 진행 (background fan-out 대신 단일 sequential 라운드, 사용자 "포그라운드진행" 지시) — 격리 worktree `life/cycle-fg-2026-05-26` @ origin/main (stale 워킹트리 차이 reconcile 선행: cycle#22-24 차이 확인)

@@ -1,0 +1,31 @@
+================================================================
+  H_288 — Does faithful IIT4 big-Phi track Kolmogorov (LZ) complexity?
+  (LZ_norm = LZ76 spacetime NL=14 T=64 single-seed · Phi_mean = state-avg big-Phi n=4)
+================================================================
+  rule 0 : LZ_norm=0.0437828   Phi_mean=0.0
+  rule 255 : LZ_norm=0.0437828   Phi_mean=0.0
+  rule 204 : LZ_norm=0.0437828   Phi_mean=0.0
+  rule 51 : LZ_norm=0.0656743   Phi_mean=0.0
+  rule 150 : LZ_norm=0.273643   Phi_mean=5.625
+  rule 105 : LZ_norm=0.273643   Phi_mean=5.625
+  rule 90 : LZ_norm=0.240806   Phi_mean=0.0
+  rule 60 : LZ_norm=0.295534   Phi_mean=13.625
+  rule 110 : LZ_norm=0.820928   Phi_mean=13.1302
+  rule 30 : LZ_norm=1.05079   Phi_mean=13.8852
+  --
+  F288.2: Pearson r(LZ_norm, Phi_mean)=0.831463   Spearman rho=0.935507
+          => H1 SUPPORTED (r >= 0.5): Phi tracks LZ-complexity
+  F288.1: rule 90 (sync-death) LZ_norm=0.240806 Phi_mean=0.0 ; constant rule 0 LZ_norm=0.0437828
+  [PASS] F288.1a WITNESS: rule 90 Phi_mean < 1e-9 (zero integration)
+  [PASS] F288.1b WITNESS: rule 90 LZ_norm > rule0 LZ_norm + 0.1 (non-trivial complexity at zero Phi)
+  [PASS] F288.3a ANCHOR: rule 0 (constant) LZ_norm < 0.1
+  [PASS] F288.3b ANCHOR: rule 0 (constant) Phi_mean = 0
+  [PASS] F288.3c ANCHOR: rule 255 (constant) LZ_norm < 0.1
+  [PASS] F288.3d ANCHOR: rule 255 (constant) Phi_mean = 0
+  [PASS] F288.3e ANCHOR: rule 204 (identity) Phi_mean = 0
+  [PASS] F288.4 BOUND: LZ_norm >= 0 and Phi_mean >= 0 for all rules
+  [PASS] F288.5 DETERMINISM: rule 30 (LZ_norm, Phi_mean) re-run identical
+================================================================
+  RESULT: 9 PASS / 0 FAIL
+  VERDICT: H1 SUPPORTED — Phi tracks Kolmogorov (LZ) complexity (r>=0.5)
+================================================================
