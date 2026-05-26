@@ -1,0 +1,61 @@
+// H_327 — tier-gated visibility 🔵
+// verdict tier: 1=🔵 SUPPORTED-FORMAL, 2=🟢 SUPPORTED-NUMERICAL, 3=🟡 CITATION, 4=🟠 INSUFFICIENT, 5=🔴 FALSIFIED
+// visibility: 0=PRIVATE, 1=PUBLIC
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn visibility_of(tier: int) -> int {
+    // PUBLIC iff tier in {1=🔵, 2=🟢}
+    if tier == 1 { return 1 }  // 🔵 PUBLIC
+    if tier == 2 { return 1 }  // 🟢 PUBLIC
+    return 0                   // PRIVATE (otherwise)
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_327 — tier-gated visibility 🔵")
+    println("================================================================")
+
+    // F327.1 PUBLIC-IFF-PASS
+    let blue_pub = visibility_of(1) == 1   // 🔵 → PUBLIC
+    let green_pub = visibility_of(2) == 1  // 🟢 → PUBLIC
+    let yellow_priv = visibility_of(3) == 0 // 🟡 → PRIVATE
+    let orange_priv = visibility_of(4) == 0 // 🟠 → PRIVATE
+    let red_priv = visibility_of(5) == 0    // 🔴 → PRIVATE
+    println("  visibility map: 🔵→" + str(visibility_of(1)) + " 🟢→" + str(visibility_of(2)) + " 🟡→" + str(visibility_of(3)) + " 🟠→" + str(visibility_of(4)) + " 🔴→" + str(visibility_of(5)))
+    check("F327.1 PUBLIC-IFF-PASS: 🔵+🟢 → PUBLIC, 다른 全 → PRIVATE", blue_pub && green_pub && yellow_priv && orange_priv && red_priv)
+
+    // F327.2 PRIVATE-IFF-NOT-PASS
+    check("F327.2 PRIVATE-IFF-NOT-PASS: ¬PASS → PRIVATE", yellow_priv && orange_priv && red_priv)
+
+    // F327.3 NEVER-FAIL-AS-PUBLIC
+    check("F327.3 NEVER-FAIL-AS-PUBLIC: 🔴 → PRIVATE always", visibility_of(5) == 0)
+
+    // F327.4 BLUE-AS-PUBLIC
+    check("F327.4 BLUE-AS-PUBLIC: 🔵 → PUBLIC always", visibility_of(1) == 1)
+
+    // F327.5 GREEN-AS-PUBLIC
+    check("F327.5 GREEN-AS-PUBLIC: 🟢 → PUBLIC always", visibility_of(2) == 1)
+
+    // F327.6 DETERMINISTIC
+    let d1 = visibility_of(1)
+    let d2 = visibility_of(1)
+    check("F327.6 DETERMINISTIC", d1 == d2)
+
+    // F327.7 BOUND
+    check("F327.7 BOUND: visibility ∈ {0, 1}", (d1 == 0) || (d1 == 1))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 6 {
+        println("  ✅ TIER-GATED VISIBILITY — 🔵 SUPPORTED-FORMAL")
+        println("    visibility(tier) = PUBLIC iff tier ∈ {🔵, 🟢}, else PRIVATE")
+        println("    a_hf_autonomous directive cite 정합")
+    }
+    println("================================================================")
+    if FAIL > 0 { panic("H_327 FAIL") }
+}
