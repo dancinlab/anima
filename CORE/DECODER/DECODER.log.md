@@ -2,6 +2,14 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-26 — 트랜스파일러 정상화(세션 블로커 해소) + fire #11/#12 (gn2-metric host 루프 = 잔존 벽)
+
+- [x] **트랜스파일러 정상화 (fire #10 blocker 해소)** — 로컬 hexa_v2 들이 #1187 farr32 직접호출 매핑 부재(carrier-form 방출 → cross-TU undeclared). 해결: clean main 워크트리서 `hexa cc --regen`(hexa_cc.c.new #1187 보유) + **`runtime.o` 를 `-D_DARWIN_C_SOURCE`(macOS 플래그, 기존 `-D_GNU_SOURCE` 오류였음)로 빌드** → `/tmp/hexat_correct` link + codesign. 변환 검증: 직접호출형 `hexa_farr32_` **33**, carrier **0**. 11 fire 만에 첫 정상 빌드.
+- [x] **fire #11 (correct transpiler, WALL=600)** — **BUILD_LINK_RC=0** (양 벽 #1261/#1262 + farr32 fix + HEXA_CUDA=1 통합 trainer.c 가 A100 컴파일+링크+실행) + **GPU util 89%** (GPU 작동). 단 rc=124 @601s, "init epoch gn2" 미출력 → GPU 바쁜데 미완주 = **또 다른 host 벽 잔존.**
+- [x] **🎯 잔존 벽 발견 (fire #11 .c 정독)** — #1262 가 `farr_ce_seed_gpu` 로 seed/ce_loss 를 GPU 계산했으나, **그 직후 `gn2=Σseed²` 메트릭을 V=151643 host 루프 `t_get(seed, mk)`** 로 계산 (GPU-resident seed 에 per-element t_get = device-sync 벽). #1262 가 seed 생산은 GPU化했지만 메트릭 집계 루프를 host 에 남김.
+- [~] **mk2-C7 fix + fire #12 (WALL=600, 검증중)** — gn2-metric host 루프를 `farr_ce_seed_gpu` 가 이미 계산한 `ce_loss`(GPU) 1-원소 읽기로 교체 → trainer.c 의 host O(V)/O(V·d) 루프 **0**. fire #12 가 step 완주(rc=0 + init gn2 + step wall) 판정. PASS 시 #1262 residual 을 hexa-lang #1255 에 추가 file.
+- [x] **CORE 도메인 4/4 완성 (병행)** — #19 SSOT 화해(spontaneous_lib fork 제거→engine_g) + #20 p1~p8 감사 0 + #21 self-test(A⇄G→L3) + #22 L3 결합(generator brain_emit_step). anima `763e34eff`.
+
 ## 2026-05-26 — 양 벽 LANDING (#1261/#1262) + generator.hexa M4 stub + fire #10 (로컬 트랜스파일러 blocked)
 
 진단 체인(fire #5~9)의 두 벽이 hexa cloud 에 의해 제거됨 — M3 임계경로 언블록.
