@@ -1,0 +1,3 @@
+fn recycle_if_both_stale(cap_stale: bool, intent_stale: bool) -> bool { return cap_stale && intent_stale }
+fn check_h524() -> bool { return recycle_if_both_stale(true,true) && !recycle_if_both_stale(true,false) }
+fn main() { if check_h524() { print("H_524 OK") } else { print("H_524 FAIL") } }
