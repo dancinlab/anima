@@ -1,0 +1,80 @@
+// H_320 — event-driven biology state update closed-form 🔵
+// event_type: 0=NONE, 1=STARTLE, 2=SOOTHE, 3=ALERT
+// ════════════════════════════════════════════════════════════════════════════
+let mut PASS = 0
+let mut FAIL = 0
+
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+
+// returns [refr_new, circ_new]
+fn biology_after_event(refr_prev: int, circ_prev: float, event_type: int) -> array {
+    if event_type == 1 {
+        // STARTLE: refr=0, circ_phase shift +0.1
+        let mut c = circ_prev + 0.1
+        if c > 1.0 { c = 1.0 }
+        return [0.0, c]
+    }
+    if event_type == 2 {
+        // SOOTHE: refr += 5
+        return [to_float(refr_prev + 5), circ_prev]
+    }
+    if event_type == 3 {
+        // ALERT: refr=0, circ=1.0
+        return [0.0, 1.0]
+    }
+    // NONE: identity
+    return [to_float(refr_prev), circ_prev]
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_320 — event-driven biology state update 🔵")
+    println("================================================================")
+
+    let init_refr = 3
+    let init_circ = 0.5
+
+    // NONE
+    let r_none = biology_after_event(init_refr, init_circ, 0)
+    println("  NONE:    (refr=3, circ=0.5) → (" + str(r_none[0]) + ", " + str(r_none[1]) + ")")
+    check("F320.1 EVENT-NONE-IDENTITY: NONE → unchanged", approx(r_none[0], 3.0) && approx(r_none[1], 0.5))
+
+    // STARTLE
+    let r_startle = biology_after_event(init_refr, init_circ, 1)
+    println("  STARTLE: (refr=3, circ=0.5) → (" + str(r_startle[0]) + ", " + str(r_startle[1]) + ")")
+    check("F320.2 STARTLE-RESET-REFRACTORY: refr_new = 0", approx(r_startle[0], 0.0))
+    check("F320.2b STARTLE-CIRC-SHIFT: circ_new = 0.6", approx(r_startle[1], 0.6))
+
+    // SOOTHE
+    let r_soothe = biology_after_event(init_refr, init_circ, 2)
+    println("  SOOTHE:  (refr=3, circ=0.5) → (" + str(r_soothe[0]) + ", " + str(r_soothe[1]) + ")")
+    check("F320.3 SOOTHE-EXTEND-REFRACTORY: refr += 5 → 8", approx(r_soothe[0], 8.0))
+
+    // ALERT
+    let r_alert = biology_after_event(init_refr, init_circ, 3)
+    println("  ALERT:   (refr=3, circ=0.5) → (" + str(r_alert[0]) + ", " + str(r_alert[1]) + ")")
+    check("F320.4 ALERT-CIRC-PEAK: circ = 1.0", approx(r_alert[1], 1.0))
+
+    // determinism
+    let r_d1 = biology_after_event(init_refr, init_circ, 1)
+    let r_d2 = biology_after_event(init_refr, init_circ, 1)
+    check("F320.5 DETERMINISTIC", approx(r_d1[0], r_d2[0]) && approx(r_d1[1], r_d2[1]))
+
+    // bound
+    check("F320.6 BOUND", (r_none[0] >= 0.0) && (r_startle[0] >= 0.0) && (r_soothe[0] >= 0.0) && (r_alert[0] >= 0.0))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 6 { println("  ✅ EVENT-DRIVEN BIOLOGY UPDATE — 🔵 SUPPORTED-FORMAL") }
+    println("================================================================")
+    if FAIL > 0 { panic("H_320 FAIL") }
+}
