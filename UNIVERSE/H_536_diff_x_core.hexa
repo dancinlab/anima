@@ -1,0 +1,3 @@
+fn is_modulator(role: string) -> bool { return role == "m_modulator" }
+fn check_h536() -> bool { return is_modulator("m_modulator") && !is_modulator("stem") }
+fn main() { if check_h536() { print("H_536 OK") } else { print("H_536 FAIL") } }
