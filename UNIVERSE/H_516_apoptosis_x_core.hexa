@@ -1,0 +1,3 @@
+fn apo_candidate(m: f64, theta: f64) -> bool { return m < theta }
+fn check_h516() -> bool { let zero = apo_candidate(0.0, 0.1); let high = !apo_candidate(0.9, 0.1); return zero && high }
+fn main() { if check_h516() { print("H_516 OK") } else { print("H_516 FAIL") } }
