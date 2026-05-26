@@ -1,0 +1,21 @@
+// H_485 smoke — AUTOPHAGY baseline
+
+fn recycle_ratio(f: f64, f_max: f64) -> f64 {
+    if f < 0.0 { return 0.0 }
+    if f > f_max { return f_max }
+    return f
+}
+
+fn check_h485() -> bool {
+    let fmax = 0.5
+    let h1 = (recycle_ratio(0.3, fmax) >= 0.0) && (recycle_ratio(0.3, fmax) <= 1.0)
+    let h2 = recycle_ratio(0.0, fmax) == 0.0
+    let h3 = recycle_ratio(0.9, fmax) == fmax
+    return h1 && h2 && h3
+}
+
+fn main() {
+    let ok = check_h485()
+    if !ok { print("H_485 FAIL"); return }
+    print("H_485 blue AUTOPHAGY OK")
+}
