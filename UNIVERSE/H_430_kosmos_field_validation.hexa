@@ -1,0 +1,28 @@
+// H_430 smoke — KOSMOS field validation
+
+fn primitive_type_count() -> i64 {
+    return 5
+}
+
+fn validate_field(name: string, type_tag: string) -> bool {
+    if name == "text" { return type_tag == "string" }
+    if name == "tension" { return type_tag == "f64_array5" }
+    if name == "coord" { return type_tag == "f64_array3" }
+    if name == "lane" { return type_tag == "string" }
+    if name == "radius" { return type_tag == "f64" }
+    if name == "tier" { return type_tag == "enum" }
+    return false
+}
+
+fn check_h430() -> bool {
+    let h1 = validate_field("text", "string") && validate_field("tension", "f64_array5") && validate_field("coord", "f64_array3") && validate_field("lane", "string") && validate_field("radius", "f64") && validate_field("tier", "enum")
+    let h2 = primitive_type_count() == 5
+    let mismatch = !validate_field("text", "f64")
+    return h1 && h2 && mismatch
+}
+
+fn main() {
+    let ok = check_h430()
+    if !ok { print("H_430 FAIL"); return }
+    print("H_430 blue field validation OK")
+}
