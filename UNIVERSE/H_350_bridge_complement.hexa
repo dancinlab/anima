@@ -1,0 +1,20 @@
+// H_350 smoke — BRIDGE complement law (BRIDGE 7th)
+
+fn check_h350() -> bool {
+    // H1 AND-COMPLEMENT: A ∧ ¬A ≡ 0
+    let a1 = (true && !true) == false
+    let a2 = (false && !false) == false
+    // H2 OR-COMPLEMENT: A ∨ ¬A ≡ 1
+    let o1 = (true || !true) == true
+    let o2 = (false || !false) == true
+    return a1 && a2 && o1 && o2
+}
+
+fn main() {
+    let ok = check_h350()
+    if !ok {
+        print("H_350 FAIL")
+        return
+    }
+    print("H_350 🔵 complement OK")
+}
