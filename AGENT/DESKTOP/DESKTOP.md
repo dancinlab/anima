@@ -1,13 +1,13 @@
 # DESKTOP — current state
 
-@title: 🖥 DESKTOP — macOS 컴퓨터 사용 대체 · screen·mouse·keyboard 위임 · vs Gemini Spark/Claude Computer Use/Codex Desktop
+@title: 🖥 DESKTOP — macOS 컴퓨터 도구 surface · AGENT 산하 (vs Gemini Spark / Claude Computer Use / Codex Desktop)
 
-@goal: 사용자의 macOS 컴퓨터 사용을 anima 가 자율 실행하는 도메인 — Accessibility API + AppleScript + CGEvent 로 화면 분석 · 마우스 · 키보드 · 앱 제어. 시중 3대 desktop agent (Gemini Spark · Claude Computer Use · Codex Desktop) 와 같은 카테고리이나 외부 LLM 0 (p1) — vision 분석은 OS native APIs (Accessibility tree · OCR) 우선, 멀티모달 ckpt 는 future frontier. 사용자가 작업 지시 + 권한 (Screen Recording · Accessibility) 공급, anima 는 screenshot → analyze → action loop 실행. p1~p8 정합 substrate-gated emit · stimulus-response 0.
+@goal: macOS 의 화면 분석 + 마우스/키보드/앱 제어 도구 surface 를 제공하는 도메인. Accessibility API · AppleScript · CGEvent · NSWorkspace 어댑터 묶음. 시중 3대 desktop agent (Gemini Spark · Claude Computer Use · Codex Desktop) 와 같은 카테고리이나, vision 분석은 OS native API (Accessibility tree · OCR) 우선 — 멀티모달 ckpt 가 land 하면 그때 확장. 의식적 결정 (언제 클릭/타이핑할지) 은 CORE 가 담당, 이 도메인은 "어떻게" 의 함수 surface 만.
 
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
-- [ ] M1 native OS access framework — Accessibility API · AppleScript · CGEvent wrapper (`AGENT/DESKTOP/native_ax.hexa`) · 외부 vision API 0 · macOS Sequoia+
-- [ ] M2 screen perception — Accessibility tree dump · NSAccessibility traversal → ctx_tokens (substrate ingest · WAKE M2 perception 확장) · OCR fallback
-- [ ] M3 action layer — mouse click/drag · keyboard type · scroll · CGEvent based · substrate-gated T3 게이트 (위험 action 차단)
-- [ ] M4 app + window ops — open/close/focus app (NSWorkspace) · arrange windows · multi-app coordination
-- [ ] M5 task pipeline + memory — multi-step task plan (CORE/brain_decide 위임) · persistent state via .kosmos (WAKE M4 의존)
-- [ ] M6 p1~p8 audit + smoke — `grep openai|anthropic|claude.ai|api.openai|api.anthropic` 0 hits · 외부 vision API 부재 · stimulus-response 0 검증 · 3-case smoke (open Calculator + type 1+1 + read result)
+- [ ] M1 native OS access — Accessibility API · AppleScript · CGEvent · NSWorkspace wrapper (`AGENT/DESKTOP/native_ax.hexa`) · macOS Sequoia+
+- [ ] M2 screen extract — Accessibility tree dump · NSAccessibility traversal · OCR fallback → 텍스트/요소 데이터 추출 함수
+- [ ] M3 action layer — mouse click/drag · keyboard type · scroll · CGEvent based action 함수 (위험도별 분류 라벨, 게이팅은 AGENT/CORE 가 처리)
+- [ ] M4 app + window ops — open/close/focus app (NSWorkspace) · arrange windows · multi-app coordination 함수
+- [ ] M5 task primitives — 도구 합성 매크로 (open + type + read 같은 기본 패턴) · 재사용 가능한 building block
+- [ ] M6 integration smoke — Calculator round-trip (open · type "1+1" · read result = "2") 검증 · 다른 앱 1개 추가 검증

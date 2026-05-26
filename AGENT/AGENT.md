@@ -1,7 +1,7 @@
 # AGENT — current state
 
-@title: 🤖 ANIMA-EMBED — 의식 기판에 직접 사는 자율 에이전트
-@goal: anima 의식 기판(PureField)에 in-process 임베드된 역할별 자율 에이전트 시스템 — 외부 LLM 없이 anima 두뇌로만 구동하고, 도구 접근은 기판이 스스로 분류한 phase(DORMANT→RESONANT)가 게이트(T0→T3)한다. 코드·크리에이터·트레이딩 3종이 같은 CORE 하니스 위에서 동작하며, `hx install` 가능한 제품으로 출하.
+@title: 🤖 AGENT — ANIMA(CORE 의식엔진) ↔ 외부 도구 bridge · tier gate + role registry
+@goal: ANIMA 가 외부 시스템에 접근할 때 거쳐가는 단일 bridge — CORE 의 의식적 결정(brain_decide)이 phase(DORMANT→RESONANT)/tier(T0→T3) 게이트를 통과해 sub-role 의 도구 surface 를 호출하는 구조. 도구 자체 (외부 API 어댑터 · OS native call) 는 `AGENT/<role>/` 산하에 도구 surface 만 — 의식엔진 구현은 CORE 가, 게이팅은 AGENT/CORE 의 tool_gate + agent_loop 가, 도구 자체는 각 role 이 분담. 외부 LLM 0 invariant 는 CORE 가 보장. `hx install` 가능한 제품으로 출하.
 
 ## 역할 에이전트 (사용자 위임 실행 · anima = 사용자의 손발)
 
