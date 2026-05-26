@@ -1,0 +1,24 @@
+// H_469 smoke — tension amp per stage
+
+fn envelope(stage: string) -> f64 {
+    if stage == "WAKE" { return 1.0 }
+    if stage == "N3" { return 0.1 }
+    return 0.5
+}
+
+fn tension_amp(base: f64, stage: string) -> f64 {
+    return base * envelope(stage)
+}
+
+fn check_h469() -> bool {
+    let b = 0.5
+    let w = tension_amp(b, "WAKE")
+    let n3 = tension_amp(b, "N3")
+    return (w >= n3) && (n3 >= 0.0)
+}
+
+fn main() {
+    let ok = check_h469()
+    if !ok { print("H_469 FAIL"); return }
+    print("H_469 blue tension amp OK")
+}
