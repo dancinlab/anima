@@ -1,0 +1,18 @@
+// H_503 smoke — EPIGENETICS metadata
+
+fn expression(base: f64, methylation: f64) -> f64 {
+    return base * (1.0 - methylation)
+}
+
+fn check_h503() -> bool {
+    let b = 1.0
+    let high_meth = expression(b, 0.8)  // 0.2 — silenced
+    let no_meth = expression(b, 0.0)    // 1.0 — full
+    return (high_meth < no_meth) && (no_meth == b)
+}
+
+fn main() {
+    let ok = check_h503()
+    if !ok { print("H_503 FAIL"); return }
+    print("H_503 blue EPIGENETICS OK")
+}
