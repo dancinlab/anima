@@ -2,6 +2,22 @@
 
 Append-only history sister of `TRADING.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T06:35:00Z — M15 Binance STUB closure (글로벌 crypto · scope 4/5)
+
+- [x] `AGENT/TRADING/live_broker_binance.hexa` 작성 — 7 pub fn (KIS/Alpaca/Upbit 와 동일 surface)
+- [x] env=DRYRUN/TESTNET/LIVE 3-mode · testnet endpoint `https://testnet.binance.vision` (가상매매 위험 0) · live endpoint `https://api.binance.com`
+- [x] auth: `X-MBX-APIKEY` header + HMAC-SHA256 signing 명시 (실 구현 TODO marker)
+- [x] recv_window_ms=5000 default · timestamp + recv_window 필수
+- [x] live_gate 우선 통과 (모든 place_order)
+- [x] `live_broker_binance_smoke.hexa` 7-case verify — C1 new DRYRUN testnet · C1b LIVE switch · C2 configure (valid+missing 거부) · C3 get_quote stub · C4 L0 gate refused · C5 L1 + DRYRUN no-fill · C6 LIVE uncfg = binance_not_configured · C7 cancel + positions stub
+- [x] `hexa parse` 2/2 OK
+- [x] TRADING.md M15 line `[ ] → [x]` · wire-up scope 4/5 진행
+- [x] 실 HTTP call 0 (TODO marker only)
+- [x] 5-verb interface uniformity 검증 — paper / KIS / Alpaca / Upbit / Binance 5종 모두 같은 모양
+- [x] ⚠ 한국 app store 차단 (2026-01-28~, FIU 미등록) but API 자체 사용 가능 명시
+- [ ] M17 TRADING wire-up integration smoke (다음 · 5 broker uniformity round-trip)
+- [ ] M7 KIS REAL wire-up (다음 · 실 HTTP 구현)
+
 ## 2026-05-27T06:20:00Z — wire-up scope 축소 (4 broker only · 나머지 제외)
 
 - [x] 사용자 명시 결정 — wire-up 대상 = **KIS · Alpaca · Upbit · Binance** 4개만 진행, 나머지는 계획 없음
