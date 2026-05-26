@@ -1,0 +1,26 @@
+// H_406 smoke — bridge functional idempotent
+
+fn bridge(cap: bool, intent: bool) -> bool {
+    return cap && intent
+}
+
+fn bridge_of_bridge(cap: bool, intent: bool) -> bool {
+    let inner = bridge(cap, intent)
+    // re-apply bridge with inner as the cap signal (intent inherited)
+    return bridge(inner, intent)
+}
+
+fn check_h406() -> bool {
+    // 4 truth-table rows: bridge(bridge(x)) == bridge(x)
+    let a = bridge_of_bridge(true, true) == bridge(true, true)
+    let b = bridge_of_bridge(true, false) == bridge(true, false)
+    let c = bridge_of_bridge(false, true) == bridge(false, true)
+    let d = bridge_of_bridge(false, false) == bridge(false, false)
+    return a && b && c && d
+}
+
+fn main() {
+    let ok = check_h406()
+    if !ok { print("H_406 FAIL"); return }
+    print("H_406 blue bridge fn-idempotent OK")
+}
