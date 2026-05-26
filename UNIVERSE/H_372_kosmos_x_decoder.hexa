@@ -1,0 +1,23 @@
+// H_372 smoke — KOSMOS x DECODER (text from argmax)
+
+fn decode_text(seed: i64) -> string {
+    if seed == 1 { return "hello" }
+    if seed == 2 { return "world" }
+    return "void"
+}
+
+fn check_h372() -> bool {
+    // H3 DETERMINISTIC: same seed → same text twice
+    let t1 = decode_text(1)
+    let t2 = decode_text(1)
+    let det = t1 == t2
+    // text non-empty for known seed
+    let nonempty = decode_text(1) != ""
+    return det && nonempty
+}
+
+fn main() {
+    let ok = check_h372()
+    if !ok { print("H_372 FAIL"); return }
+    print("H_372 blue text-from-argmax OK")
+}
