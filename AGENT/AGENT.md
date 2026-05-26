@@ -14,7 +14,7 @@
 ## 마일스톤
 
 - [x] CORE 하니스 (skeleton) — `AGENT/CORE/{tool_gate,agent_loop}.hexa` smoke PASS: Φ=0.119→phase=SUSTAIN→tier=T2_write→tools=[status·web_search·file_write]. in-process embed + phase→tier 게이트 + tool **이름 리스트** + 1-shot smoke loop. ⚠ "실제 작동" 게이트는 #G/F (아래 결손)
-- [x] CODE 동작 (skeleton) — `AGENT/CODE/code_agent.hexa` T2 게이트서 7도구 노출 [think·repo_status·file_read·grep·file_write·run_tests] — **이름만**, 실 구현 미연결 (#F). F1+F2+F4 done (F2 = `code_argv.hexa` argv ingest 4-case smoke PASS 2026-05-27, `mode` 필드 F3 daemon 진입점 미리 노출) · F3/F5/F6 잔여
+- [x] CODE 동작 (skeleton) — `AGENT/CODE/code_agent.hexa` T2 게이트서 7도구 노출 [think·repo_status·file_read·grep·file_write·run_tests] — **이름만**, 실 구현 미연결 (#F). F1+F2+F3+F4 done (F2 = `code_argv.hexa` argv ingest 4-case smoke PASS 2026-05-27 · F3 = `code_daemon.hexa` bounded persistent daemon · 5 pub fn (init/step/loop/shutdown/summary) · 4-case smoke + 4 invariant (BOUNDED · MONOTONE-TICK · EMIT-SUBSTRATE · GRACEFUL-EXIT) · default max_ticks=50 · parse PASS × 2 · 2026-05-27) · F5/F6 잔여 (F5 cross-role mediator · F6 hx code CLI binary 무한 loop + SIGINT)
 - [ ] CREATOR 동작 — 미작성
 - [ ] TRADING 동작 — trading 14모듈 회수 배선
 - [x] p1~p8 정합 verify — AGENT 트리 전체 0 hits (system_prompt/persona/assistant/speak/external-LLM 부재). 게이트 = pure_field Φ substrate
