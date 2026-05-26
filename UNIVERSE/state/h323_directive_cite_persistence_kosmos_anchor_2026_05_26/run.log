@@ -1,0 +1,20 @@
+================================================================
+  H_323 — directive cite persistence (kosmos anchor) 🔵
+  anchor = text · tension_5ch · coord · lane · radius · tier
+================================================================
+  anchor A (text_len=120, tension_5ch, 3D coord, lane=2, tier=500): valid=true
+  [PASS] F323.1 ANCHOR-FIELDS-PRESENT: 6 mandatory fields all valid
+  [PASS] F323.2 TENSION-5CH-LEN: tension_len != 5 → invalid
+  hash A repeated: 1329307011 · 1329307011
+  [PASS] F323.3 CONTENT-DETERMINISTIC-HASH: same anchor → same hash
+  hash B (text_len changed): 836557921 (vs A 1329307011)
+  [PASS] F323.4 HASH-DIFFERENT-ANCHOR-DIFFERENT: text_len diff → hash diff
+  [PASS] F323.5 ROUND-TRIP-IDENTITY: re-hash from same fields == original
+  [PASS] F323.6 BOUND: hash ≥ 0, fields valid
+================================================================
+  RESULT: 6 PASS / 0 FAIL
+  ✅ PERSISTENCE (kosmos anchor) — 🔵 SUPPORTED-FORMAL
+    anchor 가 6 mandatory fields + deterministic content hash
+    same anchor → same hash · diff anchor → diff hash · round-trip identity
+    directive cite: a_kosmos.do (text + tension 5ch + coord + lane + radius + tier)
+================================================================
