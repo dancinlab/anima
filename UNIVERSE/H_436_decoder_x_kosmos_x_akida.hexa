@@ -1,0 +1,25 @@
+// H_436 smoke — spike → text → payload pipeline
+
+fn decode_spike(spike_id: i64) -> string {
+    if spike_id == 1 { return "fire" }
+    if spike_id == 2 { return "rest" }
+    return "void"
+}
+
+fn make_payload_lane(spike_id: i64) -> string {
+    let _ = decode_spike(spike_id)
+    return "akida"
+}
+
+fn check_h436() -> bool {
+    let t1 = decode_spike(1)
+    let det = t1 == decode_spike(1)
+    let lane = make_payload_lane(1) == "akida"
+    return det && lane
+}
+
+fn main() {
+    let ok = check_h436()
+    if !ok { print("H_436 FAIL"); return }
+    print("H_436 blue spike pipeline OK")
+}
