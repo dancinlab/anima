@@ -1,0 +1,23 @@
+// H_481 smoke — schema_version
+
+fn current_version() -> i64 {
+    return 1
+}
+
+fn is_compatible(reader_v: i64, payload_v: i64) -> bool {
+    return reader_v >= payload_v
+}
+
+fn check_h481() -> bool {
+    let h1 = current_version() > 0
+    let backward = is_compatible(2, 1)
+    let same = is_compatible(1, 1)
+    let not_forward = !is_compatible(1, 2)
+    return h1 && backward && same && not_forward
+}
+
+fn main() {
+    let ok = check_h481()
+    if !ok { print("H_481 FAIL"); return }
+    print("H_481 blue schema_version OK")
+}
