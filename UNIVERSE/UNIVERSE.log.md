@@ -3,6 +3,21 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-27 — cycle#158 — 🔵 H_411 영속성 self record-union-dedup (5/5) — 영속성 matrix row 완성, 95 → 96 누적 🔵
+
+
+## 2026-05-27 — cycle#157 — 🔵 H_410 영속성 × MITOSIS (5/5)
+
+
+## 2026-05-27 — cycle#156 — 🔵 H_409 영속성 × WAKE (5/5)
+
+
+## 2026-05-27 — cycle#155 — 🔵 H_408 영속성 × DECODER (5/5)
+
+
+## 2026-05-27 — cycle#154 — 🔵 H_407 영속성 × CORE (5/5) — 영속성 matrix row 시작, 91 → 92 누적 🔵
+
+
 ## 2026-05-27 — cycle#153 — 🔵 H_406 BRIDGE self functional-idempotent (5/5) — BRIDGE matrix row 완성, 90 → 91 누적 🔵
 
 
