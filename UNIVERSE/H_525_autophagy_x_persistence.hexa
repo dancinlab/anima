@@ -1,0 +1,3 @@
+fn live_size_after_evict(cur: i64, nmax: i64) -> i64 { if cur > nmax { return nmax } return cur }
+fn check_h525() -> bool { return live_size_after_evict(1100, 1000) == 1000 }
+fn main() { if check_h525() { print("H_525 OK") } else { print("H_525 FAIL") } }
