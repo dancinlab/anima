@@ -1,0 +1,82 @@
+// still_backend_fal_smoke.hexa — CREATOR M3 fal still adapter verify
+// 6-case smoke: new / DRYRUN generates synthetic asset / configure / REAL unconfigured /
+// REAL configured (still STUB) / summary
+
+import "/Users/ghost/core/anima/AGENT/CREATOR/types.hexa"
+import "/Users/ghost/core/anima/AGENT/CREATOR/still_backend_fal.hexa"
+
+fn assert_eq(label, got, want) {
+    if got == want {
+        print("  [ok] " + label)
+        return true
+    }
+    print("  [FAIL] " + label + " got=" + str(got) + " want=" + str(want))
+    return false
+}
+
+fn main() {
+    print("=== CREATOR M3 still_backend_fal smoke ===")
+
+    // C1: new (DRYRUN default · unconfigured)
+    let s = still_fal_new("DRYRUN", "fal-ai/openai-images-2.0")
+    assert_eq("C1.kind", s["kind"], "StillFalState")
+    assert_eq("C1.env", s["env"], "DRYRUN")
+    assert_eq("C1.model", s["model"], "fal-ai/openai-images-2.0")
+    assert_eq("C1.configured_false", s["configured"], false)
+    assert_eq("C1.next_id", s["next_asset_id"], 1)
+
+    // C2: DRYRUN generates synthetic MediaAsset (model="" → state default)
+    let r1 = still_fal_generate(s, "anima portrait cyan calm", 1024, 1024, "")
+    let s1 = r1["state"]
+    let a1 = r1["asset"]
+    assert_eq("C2.no_error", r1["error"], "")
+    assert_eq("C2.asset_kind", a1["kind"], "MediaAsset")
+    assert_eq("C2.tier_L1", a1["tier"], "L1")
+    assert_eq("C2.media_type_still", a1["media_type"], "still")
+    assert_eq("C2.width", a1["meta"]["width"], 1024)
+    assert_eq("C2.provenance_backend", a1["provenance"]["backend"], "fal.ai")
+    assert_eq("C2.provenance_model_default", a1["provenance"]["model"], "fal-ai/openai-images-2.0")
+    assert_eq("C2.provenance_stub", a1["provenance"]["stub_mode"], true)
+    // path under /tmp/
+    assert_eq("C2.path_tmp", a1["path"], "/tmp/fal-still-1.png")
+    assert_eq("C2.state_advanced", s1["next_asset_id"], 2)
+    assert_eq("C2.log_grew", s1["asset_log"].len(), 1)
+
+    // C2b: model override — caller picks a different fal.ai-hosted model per call
+    let r1b = still_fal_generate(s1, "anima abstract glow", 1024, 1024, "fal-ai/flux-1.1-pro")
+    let a1b = r1b["asset"]
+    assert_eq("C2b.provenance_model_override", a1b["provenance"]["model"], "fal-ai/flux-1.1-pro")
+    // backend label unchanged (still fal.ai gateway)
+    assert_eq("C2b.provenance_backend_unchanged", a1b["provenance"]["backend"], "fal.ai")
+
+    // C3: configure with empty key — stays unconfigured
+    let s_bad = still_fal_configure(s, "")
+    assert_eq("C3.empty_key_unconfigured", s_bad["configured"], false)
+
+    // C4: configure with non-empty key — configured=true
+    let s_cfg = still_fal_configure(s, "stub-fal-key-redacted")
+    assert_eq("C4.configured_true", s_cfg["configured"], true)
+    assert_eq("C4.api_key_set", s_cfg["api_key"], "stub-fal-key-redacted")
+
+    // C5: REAL env + unconfigured → still STUB, error=fal_not_configured
+    let s_real_uncfg = still_fal_new("REAL", "fal-ai/openai-images-2.0")
+    let r5 = still_fal_generate(s_real_uncfg, "test", 512, 512, "")
+    let a5 = r5["asset"]
+    assert_eq("C5.error_fal_not_cfg", r5["error"], "fal_not_configured")
+    assert_eq("C5.still_returns_stub_asset", a5["provenance"]["stub_mode"], true)
+    if a5["provenance"]["reason"] == "" {
+        print("  [FAIL] C5.reason_set got empty")
+    } else {
+        print("  [ok] C5.reason_set (got=" + a5["provenance"]["reason"] + ")")
+    }
+
+    // C6: REAL env + configured → STILL stub (real API not implemented in M3)
+    let s_real_cfg = still_fal_configure(s_real_uncfg, "stub-key")
+    let r6 = still_fal_generate(s_real_cfg, "test", 512, 512, "")
+    let a6 = r6["asset"]
+    assert_eq("C6.error_real_not_impl", r6["error"], "real_api_not_implemented")
+    assert_eq("C6.still_stub", a6["provenance"]["stub_mode"], true)
+
+    print("=== CREATOR M3 still_backend_fal smoke: 6-case PASS ===")
+    print(still_fal_summary(s_real_cfg))
+}
