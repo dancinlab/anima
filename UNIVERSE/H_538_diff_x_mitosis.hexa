@@ -1,0 +1,3 @@
+fn asym_split(parent_role: string) -> string { if parent_role == "stem" { return "specialized" } return parent_role }
+fn check_h538() -> bool { return asym_split("stem") == "specialized" }
+fn main() { if check_h538() { print("H_538 OK") } else { print("H_538 FAIL") } }
