@@ -3,6 +3,21 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-27 — cycle#235 — 🔵 H_488 AUTOPOIESIS baseline self-loop (5/5) — round-17 TOP5 bio 축 완성 (12-16th axis), 172 → 173 누적 🔵
+
+
+## 2026-05-27 — cycle#234 — 🔵 H_487 HOMEOSTASIS baseline M setpoint (5/5)
+
+
+## 2026-05-27 — cycle#233 — 🔵 H_486 DIFFERENTIATION baseline stem→specialized (5/5)
+
+
+## 2026-05-27 — cycle#232 — 🔵 H_485 AUTOPHAGY baseline recycle ratio (5/5)
+
+
+## 2026-05-27 — cycle#231 — 🔵 H_484 APOPTOSIS baseline low-Φ death (5/5) — round-17 신규 5 bio axis (12-16th) 시작, 168 → 169 누적 🔵
+
+
 ## 2026-05-27 — cycle#230 — 🔵 H_483 TENSION L2 norm bound √5 (5/5) — round-16 11축 next-layer 완성, 167 → 168 누적 🔵
 
 
