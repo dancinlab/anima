@@ -63,7 +63,6 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 
 | slug | hypothesis | falsifier | tag |
 |------|------------|-----------|-----|
-| `ethic-emergence` | mitosis pool 에 cooperation/defection payoff 도입 시 cooperative attractor emerge | defect attractor 만 winning | 🟢 |
 | `language-compositionality` | composite state 의 Φ > primitive state Φ 합 (compositional binding) | sub-additive (H_157 C6 sister) | 🟢 |
 | `culture-meme-Φ` | meme propagation network 의 Φ vs random network | random Φ ≥ meme Φ | 🟢 |
 | `economy-game-ESS` | ESS strategy substrate 의 Φ > non-ESS Φ | non-ESS 동등 또는 higher | 🟢 |
@@ -247,7 +246,7 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 
 | rank | seed | round | rationale |
 |------|------|-------|-----------|
-| 1 | `ethic-emergence` | R2 | anima alignment 직접 · Principle #3 |
+| 1 | ~~`ethic-emergence`~~ | R2 | ✅ CONSUMED → H_291 (cycle#29): 공간 PD b=1.1 협력 100% vs well-mixed 배신, 윤리=구조 창발 (조건부) |
 | 2 | ~~`shannon-entropy-Φ-correlate`~~ | R5 | ✅ CONSUMED → H_287 (cycle#25): Φ⊥엔트로피 CLOSED-NEGATIVE, r=0.363<0.5 이중 dissociation |
 | 3 | `language-compositionality` | R2 | anima = LLM substrate |
 | 4 | `time-temporal-binding-window` | R3 | 의식의 형식 자체 |

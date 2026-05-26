@@ -3,6 +3,15 @@
 Append-only history sister of `LIFE.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#29 — 축 A/R2 social: ethic-emergence (협력 구조-창발) (포그라운드 순차)
+
+- [x] **H_291 ethic-emergence-cooperation** 🟢 SUPPORTED-conditional 7/7 (`HEXAD/LIFE/state/h291_ethic_emergence_cooperation_2026_05_26/`) — AXES R2(social) rank-1 `ethic-emergence` seed 소비
+- [x] **발견**: 협력(원시-윤리)이 공간 구조만으로 창발 — Nowak 공간 죄수딜레마: 같은 PD payoff 에서 b=1.1 격자는 협력 **100%**(C=1.0) vs matched well-mixed replicator 배신붕괴(7.9e-9). 주입 윤리/보상 0, 순수 국소 imitate-best → **윤리(협력)=cell+구조 창발, 주입 아님 (Principle #6 측정 사실)**
+- [x] ⚠ **조건부 (L1)**: 날카로운 temptation 임계 b∈(1.1,1.5] — b≥1.5 면 격자도 전배신(C=0). + self-interaction(Nowak canonical) 필수(없으면 b=1.1 에서도 붕괴, 첫 측정 boundary). 창발 *가능*하나 *자동 아님* — 구조+저-temptation+self-play 좁은 corner
+- [x] **method-correction 공개**: 첫 run (no self-interaction, b={1.3,1.85,2.5}) 전배신(C=0) → self-interaction 추가(Nowak 원본 모델) + 저-b sweep 으로 정정 (p-hacking 아닌 model-fidelity 수정, no-self 붕괴는 boundary L1 보존)
+- [x] 정보-측도 arc(H_287-290, IIT4)와 다른 **사회/게임 축**으로 frontier 확장. self-contained 게임동역학, NO RNG, $0. surface: README 103→104 H + H_291 행 · AXES R2 seed 제거 + top-15 rank-1 consumed
+- [ ] Next: R30 H_292 self-i-emergence (R4 self). (H_291 후속: Fermi update / 큰 격자 coexistence / self×b phase diagram / 반복게임 TFT)
+
 ## 2026-05-26 — cycle#28 — 축 A/R5 information: transfer entropy ∥ Φ — 정보-측도 arc 완성 (포그라운드 순차)
 
 - [x] **H_290 transfer-entropy-phi-correlate** 🟢 SUPPORTED-NUMERICAL 8/8 (`HEXAD/LIFE/state/h290_transfer_entropy_phi_correlate_2026_05_26/`) — H_287 follow-up (정보-측도 arc capstone)
