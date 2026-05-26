@@ -3,6 +3,16 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#39 — distinct-value count = rule signature (H_300 의 sweep methodology 확장)
+
+- [x] **H_301 n5-state-sweep-other-rules** 🟢 SUPPORTED-NUMERICAL H1+H2+H3 PASS — rule 60·110·30 × 32-state sweep at n=5 cap=4 (96 calls)
+- [x] **헤드라인 발견**: distinct-value count 이 **rule signature** — rule 90(3) < rule 60(6) << rule 30(29) < rule 110(**32 all unique**). Wolfram class 와 anti-correlate, 대칭이 큰 rule 일수록 Φ-orbit class 적음
+- [x] **32/32 통합 across every measured rule** (H1 PASS 100%·100%·100%·100%): rule 60(min 15.5)·rule 110(min 15.5)·rule 30(min 13.2) 全 state Φ > 1.0
+- [x] **alt-state methodology generalize**: alt-state st=21 全 rule [p25,p75] 안 (H2 PASS) — H_300 의 rule 90 한정 정당화 → 全 panel integrating rule 까지 확장
+- [x] **emergent: Turing-complete rule 110 → 32 unique Φ values** — 보편적 universality 가 모든 algebraic Φ-symmetry 깬다. distinct-value count = information-theoretic rule complexity readout
+- [x] **honest L1**: F301.8 rule 60 st=21 cross-H mismatch (H_297 16.5 vs H_301 18.5, delta +2.0). rule 90 은 19.5=19.5 정확히 reproduce ✓ — intra-H determinism intact, cross-H rule-specific 불일치 follow-up 후보
+- [x] surface: README 113→114 H + H_301 행 · UNIVERSE.log cycle#39
+
 ## 2026-05-26 — cycle#38 — arc 의 single-state honest L 정식 회수: rule 90 n=5 의 32-state sweep
 
 - [x] **H_300 n5-state-sweep-rule90** 🟢 SUPPORTED-NUMERICAL — 32-state full sweep on rule 90 at n=5 cap=4
