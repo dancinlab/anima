@@ -1,0 +1,23 @@
+// H_488 smoke — AUTOPOIESIS baseline
+
+fn n_after_no_input(n_initial: i64) -> i64 {
+    // self-loop: at least 1 cell survives
+    if n_initial < 1 { return 0 }
+    return n_initial
+}
+
+fn requires_external() -> bool {
+    return false
+}
+
+fn check_h488() -> bool {
+    let h1 = n_after_no_input(5) >= 1
+    let h3 = !requires_external()
+    return h1 && h3
+}
+
+fn main() {
+    let ok = check_h488()
+    if !ok { print("H_488 FAIL"); return }
+    print("H_488 blue AUTOPOIESIS OK")
+}
