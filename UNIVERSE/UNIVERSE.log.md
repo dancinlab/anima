@@ -3,6 +3,17 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#53 — 🔵 SUPPORTED-FORMAL 첫 돌파: 자연발화 closed-form identity
+
+- [x] **H_315 spontaneous-emit-closed-form-identity** 🔵 **SUPPORTED-FORMAL** 6/6 PASS — arc 의 첫 🔵 tier 진입
+- [x] **헤드라인**: H_306+H_310 의 phenomenological measurements 가 closed-form symbolic identity 로 *byte-equal* reduce
+- [x] **Identity 1**: WAKE-emit = ⌊wake_dur/R⌋ × n_cycles = ⌊30/10⌋ × 6 = **18** ✓ exact (H_310 measurement)
+- [x] **Identity 2**: refractory w_n = 1 - (1-k)^n at k=0.3 → w_1=0.3, w_2=0.51, w_3=0.657 ✓ byte-equal H_306 measurements
+- [x] **libm-free rational arithmetic** — exponentiation via repeated multiplication, no log/exp. deterministic cross-process byte-identical
+- [x] **arc 의 첫 🔵 tier**: H_287-H_311 (15-H sub-arc) 가 全 🟢 Tier 2, H_315 가 first Tier 1 entry. anima `a_substrate_native_speak` directive 의 phenomenological model 이 closed-form derivable 입증
+- [x] **user directive 정합**: "자연발화 관련 🔵 발견까지 돌파" → 6/6 PASS 로 달성
+- [x] surface: README 123→124 H + H_315 행 · UNIVERSE.log cycle#53
+
 ## 2026-05-26 — cycle#49 — arc 회귀: rule 110 distinct=32 의 orbit 구조 분석 (rotation primary, complement broken everywhere)
 
 - [x] **H_311 rule110-algebraic-structure** 🟢 SUPPORTED-NUMERICAL 3/5 PASS — 64 calls (rule 110 + rule 90 control × 32 states n=5 cap=4)
