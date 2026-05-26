@@ -1,0 +1,24 @@
+// H_402 smoke — cap strength from M
+
+fn cap_strength(m: f64) -> f64 {
+    return m  // m already normalized [0,1]
+}
+
+fn bridge_fires(cap_str: f64, intent: bool) -> bool {
+    return (cap_str > 0.0) && intent
+}
+
+fn check_h402() -> bool {
+    let lo = cap_strength(0.1)
+    let hi = cap_strength(0.9)
+    let mono = hi > lo
+    let zero_no_fire = !bridge_fires(0.0, true)
+    let pos_fire = bridge_fires(0.5, true)
+    return mono && zero_no_fire && pos_fire
+}
+
+fn main() {
+    let ok = check_h402()
+    if !ok { print("H_402 FAIL"); return }
+    print("H_402 blue cap-from-M OK")
+}
