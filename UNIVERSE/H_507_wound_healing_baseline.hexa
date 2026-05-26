@@ -1,0 +1,17 @@
+// H_507 smoke — WOUND-HEALING signal
+
+fn repair_rate(signal: f64) -> f64 {
+    return signal * 0.5
+}
+
+fn check_h507() -> bool {
+    let r1 = repair_rate(1.0)
+    let r2 = repair_rate(0.0)
+    return (r1 > r2) && (r2 == 0.0)
+}
+
+fn main() {
+    let ok = check_h507()
+    if !ok { print("H_507 FAIL"); return }
+    print("H_507 blue WOUND OK")
+}
