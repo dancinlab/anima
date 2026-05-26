@@ -1,0 +1,17 @@
+================================================================
+  IIT4 M13 — bounded big-Φ n=7/n=8 (M12-deferred · H_002 C2 scale)
+================================================================
+  regression n=4 rule110: exact=7.5475 bounded(cap4)=7.5475
+  [PASS] regression cap>=n == exact (faithful restriction, 7.5475)
+  bounded(cap=3) n=7 seed=1010101:
+    rule110=9.02732 (nd=23.0)  rule30=3.85376  rule54=4.00657
+  [PASS] n=7 rule110 bounded finite > 0
+  [PASS] n=7 bounded all finite >= 0
+  bounded(cap=3) n=8 rule110 seed=10101010 (H_002 C2 scale):
+    rule110 big-Φ=6.81723 (nd=20.0)
+  [PASS] n=8 rule110 bounded finite > 0 (H_002 C2 scale REACHED)
+  [PASS] determinism: n=8 rule110 bounded re-run identical
+================================================================
+  RESULT: 5 PASS / 0 FAIL
+  n=8 H_002 C2 scale reached via bounded restriction ($0, NO GPU)
+================================================================
