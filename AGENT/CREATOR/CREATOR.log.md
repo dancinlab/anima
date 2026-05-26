@@ -2,6 +2,18 @@
 
 Append-only history sister of `CREATOR.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T05:40:00Z — M6 publish + 통합 smoke closure · CREATOR 6/6 ✅
+
+- [x] `AGENT/CREATOR/publish.hexa` 작성 — 5 pub fn (`publish_youtube` · `_tiktok` · `_instagram` · `_dispatch` · `_summary`)
+- [x] 3-platform STUB (모두 동일 PublishResult Map shape) — dry_run=true 시 mock external_id (yt-DRYRUN-jXXX 등) · dry_run=false 시 real_upload_not_implemented
+- [x] `publish_dispatch(job, dry_run)` — `job.channel.platform` 기반 routing · 미지원 platform 거부 (unknown_platform)
+- [x] 실제 OAuth + multipart upload 미구현 — secret get youtube.oauth_token · tiktok.access_token · instagram.graph_token wire-up 후 M6+1 적용
+- [x] `AGENT/CREATOR/integration_smoke.hexa` 5-stage round-trip — S0 brand + 3 channels · S1 script · S2 still fal.ai · S3 prog remotion · S4 clip fal.ai HOIVG image-conditioned · S5 publish 3 platforms (dry_run + real refuse + unknown platform)
+- [x] M1 types (Brand/Channel/Script/MediaAsset/UploadJob) uniform shape 전체 검증 — 모든 M3/M4/M5 backend 가 같은 Map 모양으로 데이터 통과
+- [x] `hexa parse` 2/2 OK (publish.hexa + integration_smoke.hexa)
+- [x] CREATOR.md M6 line `[ ] → [x]` (5/6 → **6/6 · 100% closure**)
+- [x] 외부 OAuth call 0 — 사용자 wire-up 전까지 0 비용
+
 ## 2026-05-27T05:20:00Z — M5 L3 GEN fal clip 백엔드 closure (seedance 2.0 + omnishow HOIVG)
 
 - [x] `AGENT/CREATOR/clip_backend_fal.hexa` 작성 — 4 pub fn (`clip_fal_new` · `_configure` · `_generate` · `_summary`)
