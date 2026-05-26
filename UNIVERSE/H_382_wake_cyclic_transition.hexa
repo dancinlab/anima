@@ -1,0 +1,29 @@
+// H_382 smoke — WAKE cyclic transition
+
+fn next_stage(s: string) -> string {
+    if s == "WAKE" { return "N1" }
+    if s == "N1" { return "N2" }
+    if s == "N2" { return "N3" }
+    if s == "N3" { return "REM" }
+    if s == "REM" { return "WAKE" }
+    return "WAKE"
+}
+
+fn check_h382() -> bool {
+    // H1 cyclic: 5 transitions returns to WAKE
+    let s1 = next_stage("WAKE")          // N1
+    let s2 = next_stage(s1)              // N2
+    let s3 = next_stage(s2)              // N3
+    let s4 = next_stage(s3)              // REM
+    let s5 = next_stage(s4)              // WAKE
+    let closure = s5 == "WAKE"
+    // H2 deterministic replay
+    let det = next_stage("N2") == next_stage("N2")
+    return closure && det
+}
+
+fn main() {
+    let ok = check_h382()
+    if !ok { print("H_382 FAIL"); return }
+    print("H_382 blue cyclic 5-stage OK")
+}
