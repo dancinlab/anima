@@ -1,0 +1,3 @@
+fn can_split(is_winner: bool) -> bool { return is_winner }
+fn check_h572() -> bool { return can_split(true) && !can_split(false) }
+fn main() { if check_h572() { print("H_572 OK") } else { print("H_572 FAIL") } }
