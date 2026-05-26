@@ -1,0 +1,28 @@
+// H_421 smoke — split closure (doubles)
+
+fn after_split(n: i64) -> i64 {
+    return n * 2
+}
+
+fn after_k_splits(n0: i64, k: i64) -> i64 {
+    let mut n = n0
+    let mut i: i64 = 0
+    while i < k {
+        n = after_split(n)
+        i = i + 1
+    }
+    return n
+}
+
+fn check_h421() -> bool {
+    let h1 = after_split(1) == 2
+    let h2 = after_split(after_split(1)) == 4
+    let h3 = after_k_splits(1, 3) == 8  // 2^3
+    return h1 && h2 && h3
+}
+
+fn main() {
+    let ok = check_h421()
+    if !ok { print("H_421 FAIL"); return }
+    print("H_421 blue split doubles OK")
+}
