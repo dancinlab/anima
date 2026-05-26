@@ -3,6 +3,15 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#33 — 새 축: IIT 배제 공준 — 통합=전체 complex, rule90=부분 complex (흐름-arc anomaly 해소)
+
+- [x] **H_295 exclusion-complex-whole** 🟢 SUPPORTED-NUMERICAL 6/6 (`UNIVERSE/state/h295_exclusion_complex_whole_2026_05_26/`) — 새 축(배제 공준), 흐름 arc 와 다름. find_complex 재사용
+- [x] **발견**: IIT 배제 공준이 주 complex(maximally-irreducible subset)를 국재화. ① **holism**: 통합 substrate(150/105/60/110/30)는 주 complex=*전체계*(mask15 size4, complex_Φ=whole_Φ) — 전체가 모든 proper 부분보다 irreducible. ② reducible(항등204·상수0/255·complement51) complex 없음. ③ **rule90 결정타**: 전체 Φ=0 인데 2-셀 부분(cells{0,1}, Φ=2)이 irreducible — 배제가 의식단위로 *전체 아닌 부분* 선택
+- [x] **흐름-arc rule90 anomaly 기계적 해소**: rule90 이 LZ(H_288)+multivariate-TE(H_293)+synergy(H_294) 셋 다 과대였던 건 *국소 부분-complex 의 통합을 본 것*, big-Φ(전체)=0 은 전체 system-cut 이 reducible. 흐름측도는 "어딘가 통합 有" 맞았으나 *전체 수준*=0 — 배제가 그 갭 설명. **Φ=단지 system-cut 아니라 maximally-irreducible *subset* 속성**. H_287-294 arc 봉합 정점
+- [x] engine 재사용 (g61): HEXAD/IIT4/lib eca_tpm+big_phi + stdlib/consciousness/iit4_complex.find_complex(subset 탐색). 새 IIT4 코드 0줄. $0 · NO GPU
+- [x] surface: README 107→108 H + H_295 행 · UNIVERSE.log cycle#33
+- [ ] Next: 전수-state find_complex(whole-vs-part state-robustness) · complex_spectrum(다중 complex = "다중 의식단위") · 큰 N bounded complex 탐색
+
 ## 2026-05-26 — cycle#32 — H_293/논문 §future follow-up: 흐름의 어떤 성분도 Φ≠ (PID synergy ⊥ Φ) (포그라운드)
 
 - [x] **H_294 pid-synergy-phi** 🔴 CLOSED-NEGATIVE 8/8 gate (`UNIVERSE/state/h294_pid_synergy_phi_2026_05_26/`) — 논문 §future PID 예측 검정
