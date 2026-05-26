@@ -2,6 +2,16 @@
 
 Append-only history sister of `TRADING.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T05:55:00Z — wire-up 마일스톤 11개 등록 (M7-M17 · 추천순)
+
+- [x] 사용자 명시 요청 — 모든 wire-up 마일스톤 + Binance 포함 broker 모두 등록 · 추천순 정리 (2026 web 리서치 반영)
+- [x] M7-M9 한국 주식 — KIS 한국투자증권 (1순위 · REST + WebSocket · LLM 친화 · 공식 GitHub) · LS 증권 (2순위 · 구 eBest) · 키움증권 Open API+ (3순위 · ⚠ 알고리즘 계좌 등록 의무)
+- [x] M10-M12 미국 글로벌 주식 — Alpaca (1순위 · ✨ 2026 BrokerChooser "Best Broker for Algo Trading" · paper-friendly zero-cost) · IBKR (2순위 · 150+ order types · TWS gateway) · Tradier (선택 middle)
+- [x] M13-M16 Crypto — Upbit (한국 1위 · 시장 71.6% · FIU 라이센스) · Bithumb (한국 2위 · 448 coins · 0.04% fee) · Binance (글로벌 1위 · ⚠ 한국 app 차단 2026-01-28+ but API 자체 사용 가능) · ccxt unified (선택 · 100+ exchange wrapper)
+- [x] M17 TRADING wire-up integration smoke — 모든 broker 5-verb interface 동일 검증
+- [x] TRADING.md 에 wire-up 라운드 section 추가 (`## wire-up 라운드`)
+- [x] CREATOR.md 에 wire-up 라운드 section 추가 (M7-M13 · fal.ai/remotion REAL + YouTube/TikTok/Instagram publish REAL)
+
 ## 2026-05-27T03:35:00Z — M6 통합 smoke + risk audit closure · TRADING 6/6 ✅
 
 - [x] `AGENT/TRADING/risk.hexa` M1 stub body → 6 pub fn 실제 구현 (`risk_manager_new` · `_check_drawdown` · `_check_position_count` · `_check_tier` · `_calculate_var` · `_audit`)
