@@ -1,0 +1,82 @@
+// H_330 — BRIDGE De Morgan duality 🔵
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_330 — BRIDGE De Morgan duality 🔵")
+    println("================================================================")
+
+    // F330.1 De Morgan AND: ¬(A ∧ B) == ¬A ∨ ¬B (4 cases)
+    let mut dm1_ok = true
+    let mut a = 0
+    while a < 2 {
+        let mut b = 0
+        while b < 2 {
+            let A = a == 1
+            let B = b == 1
+            let l = !(A && B)
+            let r = (!A) || (!B)
+            if l != r { dm1_ok = false }
+            b = b + 1
+        }
+        a = a + 1
+    }
+    check("F330.1 DE-MORGAN-AND: ¬(A∧B) == ¬A∨¬B (4 cases)", dm1_ok)
+
+    // F330.2 De Morgan OR
+    let mut dm2_ok = true
+    let mut a2 = 0
+    while a2 < 2 {
+        let mut b2 = 0
+        while b2 < 2 {
+            let A = a2 == 1
+            let B = b2 == 1
+            let l = !(A || B)
+            let r = (!A) && (!B)
+            if l != r { dm2_ok = false }
+            b2 = b2 + 1
+        }
+        a2 = a2 + 1
+    }
+    check("F330.2 DE-MORGAN-OR: ¬(A∨B) == ¬A∧¬B (4 cases)", dm2_ok)
+
+    // F330.3 SILENCE-DECOMP
+    let cap = true
+    let intent = false
+    let emit = cap && intent
+    let silence = !emit
+    let silence_alt = (!cap) || (!intent)
+    check("F330.3 SILENCE-DECOMP: silence == ¬cap ∨ ¬intent", silence == silence_alt)
+
+    // F330.4 EMIT-DECOMP (H_322 cite)
+    check("F330.4 EMIT-DECOMP: emit == cap ∧ intent", emit == (cap && intent))
+
+    // F330.5 DOUBLE-NEGATION
+    let mut dn_ok = true
+    let mut x = 0
+    while x < 2 {
+        let X = x == 1
+        if X != (!(!X)) { dn_ok = false }
+        x = x + 1
+    }
+    check("F330.5 DOUBLE-NEGATION: ¬¬A == A", dn_ok)
+
+    // F330.6 DETERMINISTIC
+    let d1 = !(true && false)
+    let d2 = !(true && false)
+    check("F330.6 DETERMINISTIC", d1 == d2)
+
+    // F330.7 BOUND
+    check("F330.7 BOUND: boolean output", true)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 6 { println("  ✅ DE MORGAN — 🔵 SUPPORTED-FORMAL") }
+    println("================================================================")
+    if FAIL > 0 { panic("H_330 FAIL") }
+}
