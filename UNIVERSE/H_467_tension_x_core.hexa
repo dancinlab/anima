@@ -1,0 +1,19 @@
+// H_467 smoke — ch0 from M
+
+fn ch0_concept(m: f64) -> f64 {
+    return m
+}
+
+fn check_h467() -> bool {
+    let lo = ch0_concept(0.1)
+    let hi = ch0_concept(0.9)
+    let mono = hi > lo
+    let zero = ch0_concept(0.0) == 0.0
+    return mono && zero
+}
+
+fn main() {
+    let ok = check_h467()
+    if !ok { print("H_467 FAIL"); return }
+    print("H_467 blue ch0-from-M OK")
+}
