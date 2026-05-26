@@ -1,0 +1,30 @@
+// H_416 smoke — budget per stage
+
+fn envelope(stage: string) -> f64 {
+    if stage == "WAKE" { return 1.0 }
+    if stage == "REM" { return 0.7 }
+    if stage == "N1" { return 0.4 }
+    if stage == "N2" { return 0.2 }
+    if stage == "N3" { return 0.1 }
+    return 0.0
+}
+
+fn budget(stage: string, budget_max: i64) -> i64 {
+    let bm = budget_max as f64
+    return (envelope(stage) * bm) as i64
+}
+
+fn check_h416() -> bool {
+    let bmax = 100
+    let bw = budget("WAKE", bmax)
+    let bn3 = budget("N3", bmax)
+    let ge = bw >= bn3
+    let nonneg = (bw >= 0) && (bn3 >= 0)
+    return ge && nonneg
+}
+
+fn main() {
+    let ok = check_h416()
+    if !ok { print("H_416 FAIL"); return }
+    print("H_416 blue budget per stage OK")
+}
