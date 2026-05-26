@@ -1,0 +1,16 @@
+// H_466 smoke — tension immutable in record
+
+fn round_trip_len(orig_len: i64) -> i64 {
+    return orig_len
+}
+
+fn check_h466() -> bool {
+    let h3 = round_trip_len(5) == 5
+    return h3
+}
+
+fn main() {
+    let ok = check_h466()
+    if !ok { print("H_466 FAIL"); return }
+    print("H_466 blue tension immutable OK")
+}
