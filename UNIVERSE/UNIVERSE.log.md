@@ -1,7 +1,17 @@
-# LIFE — log
+# UNIVERSE — log (renamed from LIFE 2026-05-26)
 
-Append-only history sister of `LIFE.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
+Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+
+## 2026-05-26 — cycle#31 — H_290/논문 follow-up: multivariate TE 가 시너지 회복하나 Φ≠ (포그라운드)
+
+- [x] **arxiv-prep**: 정보-측도 논문 phi-information-triangulation arxiv 번들 생성 (main.bbl + out/tar.gz, 10p) — PR #590. 업로드 준비 완료
+- [x] **H_293 multivariate-te-synergy** 🟡 PARTIAL 8/8 gate (`UNIVERSE/state/h293_multivariate_te_synergy_2026_05_26/`) — H_290/논문 §future 예측 검정 (개명 후 UNIVERSE/ 첫 H)
+- [x] **발견**: multivariate(conditional) TE 가 이변량 XOR 시너지 맹점을 **회복**(rule150/105: bivariate 0 → TEm=4.0, 항등 204 는 0 유지) 하나 **Φ-추종 악화**(r 0.883→0.705 ρ 0.681). 원인 = rule90 이 이웃 흐름 받지만(TEm=4.0) reducible 이라 Φ=0 → multivariate TE 가 *비통합 흐름* 과대평가
+- [x] **메타 결론**: **어떤 차수의 고전 transfer entropy 도 Φ 와 같지 않다** — 이변량=시너지 과소(150/105), 다변량=비통합흐름 과대(90). rule90 은 LZ(H_288)+TEm 양쪽 과대 = "흐름/복잡도 有 통합 無" cross-measure 서명. 논문(H_287-290) thesis(Φ=별개 통합측도, 고정-차수 흐름통계 아님) 강화 + 논문 §future "multivariate TE r>0.88 상승" 예측 정밀반증(회복✓ 상승✗)
+- [x] engine 재사용 (g61): HEXAD/IIT4/lib(이동 안 함) eca_tpm+big_phi+iit4_bit, 새 IIT4 코드 0줄. fix-1180 우회 old-driver build. $0
+- [x] surface: README 105→106 H + H_293 행 · UNIVERSE.log(본 엔트리) · 도메인 = UNIVERSE(개명 후 첫 cycle)
+- [ ] Next: PID synergy/redundancy/unique 분해 vs Φ · 각 source 별 conditional TE(rule90 과대 항 식별) · 큰 N TE-차수↔Φ 갭 scale
 
 ## 2026-05-26 — cycle#30 — 축 A/R4 self: self-i-emergence (자기참조 'I'-고정점) (포그라운드 순차, "모두 순차" 드라이브 종료)
 
