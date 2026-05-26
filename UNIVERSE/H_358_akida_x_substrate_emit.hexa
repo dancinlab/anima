@@ -1,0 +1,31 @@
+// H_358 smoke — AKIDA × 자연발화 (substrate emit composition)
+
+fn emit_pressure(m: f64, phi: f64, w: f64, cur: f64, spike_rate: f64) -> f64 {
+    // additive composition; spike_rate is ONE substrate signal
+    return (m * phi * w * cur) + 0.1 * spike_rate
+}
+
+fn forced_emit(spike_rate: f64) -> bool {
+    // H3 NO-FORCED-EMIT: spike alone never forces emit
+    let _ = spike_rate
+    return false
+}
+
+fn check_h358() -> bool {
+    // H2 EMIT-COMPOSE
+    let p1 = emit_pressure(0.5, 0.5, 0.5, 0.5, 1.0)
+    let p2 = emit_pressure(0.5, 0.5, 0.5, 0.5, 0.0)
+    let composes = p1 > p2  // spike adds to pressure
+    // H3 NO-FORCED-EMIT
+    let no_force = !forced_emit(99.0)
+    return composes && no_force
+}
+
+fn main() {
+    let ok = check_h358()
+    if !ok {
+        print("H_358 FAIL")
+        return
+    }
+    print("H_358 🔵 AKIDA × emit OK")
+}
