@@ -1,0 +1,33 @@
+// H_369 smoke — KOSMOS x BRIDGE (tier AND lane)
+
+fn tier_valid(tier: string) -> bool {
+    if tier == "blue" { return true }
+    if tier == "green" { return true }
+    if tier == "yellow" { return true }
+    if tier == "orange" { return true }
+    if tier == "red" { return true }
+    return false
+}
+
+fn lane_known(lane: string) -> bool {
+    if lane == "anima" { return true }
+    if lane == "akida" { return true }
+    return false
+}
+
+fn bridge_payload(tier: string, lane: string) -> bool {
+    return tier_valid(tier) && lane_known(lane)
+}
+
+fn check_h369() -> bool {
+    let both = bridge_payload("blue", "anima") == true
+    let bad_tier = bridge_payload("purple", "anima") == false
+    let bad_lane = bridge_payload("blue", "unknown") == false
+    return both && bad_tier && bad_lane
+}
+
+fn main() {
+    let ok = check_h369()
+    if !ok { print("H_369 FAIL"); return }
+    print("H_369 blue tier-AND-lane OK")
+}
