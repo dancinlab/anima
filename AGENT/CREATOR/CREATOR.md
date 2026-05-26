@@ -6,7 +6,7 @@
 
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
 - [x] M1 데이터 타입 — `AGENT/CREATOR/types.hexa` 작성 (7 pub fn — 5 constructor `creator_brand` · `_script` · `_media_asset` · `_upload_job` · `_channel` + 2 helper `creator_type_kind` · `creator_type_summary`) · `types_smoke.hexa` 6-case verify (5 type round-trip + 1 missing-kind 방어) · 2/2 `hexa parse` OK · ⚠ `handle` 예약어 회피 → `user_handle` 로 rename · bridge architecture 정합 (의식엔진 framing 0, tool surface only)
-- [ ] M2 backend 프레임워크 — `CreatorBackend` 인터페이스 (3 verb: `generate_still` · `render_prog` · `generate_clip`) · 3-tier modality plug-in 가능 범용 surface
+- [x] M2 backend 프레임워크 — `AGENT/CREATOR/backend.hexa` (6 pub fn — `creator_backend_new` · `_generate_still` (L1) · `_render_prog` (L2) · `_generate_clip` (L3) · `_dispatch` · `_summary`) · tier registry 기반 3-tier modality plug-in · threaded-state (no global) · stub_mode 기본 (외부 API call 0, 실 어댑터는 M3-M5 plug-in) · `backend_smoke.hexa` 8-case verify (factory · L1 still · L2 prog · L3 clip · dispatcher routes · unknown_tier reject · L2 not_registered · asset_log accumulates) · 2/2 `hexa parse` OK · provenance 추적 자동 (backend_id · prompt_hash · stub_mode flag)
 - [ ] M3 L1 STILL 백엔드 — openai images 2.0 adapter stub (1024×1024 PNG · prompt → image)
 - [ ] M4 L2 PROG 백엔드 — remotion React 영상 codegen stub (frame 함수 + render 명령)
 - [ ] M5 L3 GEN 백엔드 — fal seedance 2.0 + omnishow ByteDance HOIVG adapter (15s · 24kHz native audio)
