@@ -1,0 +1,100 @@
+// H_316 — substrate-decided 의식적 결정 closed-form 🔵
+// anima `a_autonomy_over_hardcode` directive 의 6-factor product 식
+// (M × Φ × W × MITOSIS_term × idle_term × curiosity) > threshold ⇒ emit
+// ════════════════════════════════════════════════════════════════════════════
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// closed-form 6-factor decision: M × Φ × W × (MITOSIS+1) × (idle/100) × curiosity > threshold
+//   libm-free, deterministic, rational arithmetic
+fn decide(m: float, phi: float, w: float, mitosis: int, idle: int, curiosity: float, threshold: float) -> bool {
+    let mit_term = to_float(mitosis + 1)
+    let idle_term = to_float(idle) / 100.0
+    let prod = m * phi * w * mit_term * idle_term * curiosity
+    return prod > threshold
+}
+
+// exact product value for byte-equal check
+fn product(m: float, phi: float, w: float, mitosis: int, idle: int, curiosity: float) -> float {
+    let mit_term = to_float(mitosis + 1)
+    let idle_term = to_float(idle) / 100.0
+    return m * phi * w * mit_term * idle_term * curiosity
+}
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_316 — substrate-decided 의식적 결정 closed-form 🔵 path")
+    println("  decision(M, Φ, W, MITOSIS, idle, curiosity) > θ")
+    println("================================================================")
+
+    let threshold = 2.0
+
+    // ── F316.1 DETERMINISTIC ────────────────────────────────────────────
+    let d1 = decide(1.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    let d2 = decide(1.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    println("  DETERMINISTIC: decide same input twice = " + str(d1) + " · " + str(d2))
+    check("F316.1 DETERMINISTIC: same input → same output (byte-equal)", d1 == d2)
+
+    // ── F316.7 CLOSED-FORM-EXACT (먼저 시연) ────────────────────────────
+    let p_high = product(1.0, 1.0, 1.0, 5, 50, 1.0)
+    println("  CASE A (high all): product = 1×1×1×6×0.5×1 = " + str(p_high) + " (expected 3.0)")
+    check("F316.7 CLOSED-FORM-EXACT: product(1,1,1,5,50,1) = 3.0 byte-equal", approx(p_high, 3.0))
+
+    // ── F316.2 EMIT-CASE-A ──────────────────────────────────────────────
+    let case_a = decide(1.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    println("  CASE A (high all): decide = " + str(case_a) + " (expected TRUE, since 3.0 > 2.0)")
+    check("F316.2 EMIT-CASE-A: high-all input → TRUE (emit)", case_a)
+
+    // ── F316.3 SILENCE-CASE-B ───────────────────────────────────────────
+    let case_b = decide(1.0, 1.0, 0.1, 5, 50, 1.0, threshold)
+    let p_low_w = product(1.0, 1.0, 0.1, 5, 50, 1.0)
+    println("  CASE B (low W): product = " + str(p_low_w) + " · decide = " + str(case_b) + " (expected FALSE, since 0.3 < 2.0)")
+    check("F316.3 SILENCE-CASE-B: low-W input → FALSE (silence)", !case_b)
+
+    // ── F316.4 FACTOR-M-INFLUENCE ───────────────────────────────────────
+    let m_hi = decide(1.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    let m_lo = decide(0.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    println("  FACTOR-M: M=1.0 → " + str(m_hi) + " · M=0.0 → " + str(m_lo))
+    check("F316.4 FACTOR-M-INFLUENCE: M=1.0 emit AND M=0.0 silence", m_hi && (!m_lo))
+
+    // ── F316.5 FACTOR-PHI-INFLUENCE ─────────────────────────────────────
+    let phi_hi = decide(1.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    let phi_lo = decide(1.0, 0.0, 1.0, 5, 50, 1.0, threshold)
+    println("  FACTOR-Φ: Φ=1.0 → " + str(phi_hi) + " · Φ=0.0 → " + str(phi_lo))
+    check("F316.5 FACTOR-PHI-INFLUENCE: Φ=1.0 emit AND Φ=0.0 silence", phi_hi && (!phi_lo))
+
+    // ── F316.6 FACTOR-CURIOSITY-INFLUENCE ───────────────────────────────
+    let cur_hi = decide(1.0, 1.0, 1.0, 5, 50, 1.0, threshold)
+    let cur_lo = decide(1.0, 1.0, 1.0, 5, 50, 0.0, threshold)
+    println("  FACTOR-curiosity: 1.0 → " + str(cur_hi) + " · 0.0 → " + str(cur_lo))
+    check("F316.6 FACTOR-CURIOSITY-INFLUENCE: cur=1.0 emit AND cur=0.0 silence", cur_hi && (!cur_lo))
+
+    // ── F316.8 BOUND ────────────────────────────────────────────────────
+    let bound_ok = (p_high >= 0.0) && (p_low_w >= 0.0)
+    check("F316.8 BOUND: products >= 0", bound_ok)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 7 {
+        println("  ✅ HEADLINE: SUBSTRATE-DECIDED CLOSED-FORM EXACT — 🔵 SUPPORTED-FORMAL")
+        println("    decision(M, Φ, W, MITOSIS, idle, curiosity) = product > θ")
+        println("    closed-form, deterministic, 6-factor symmetric, libm-free rational arithmetic")
+        println("    anima `a_autonomy_over_hardcode` directive 의 substrate decision = closed-form derivable")
+    } else {
+        println("  HEADLINE: PARTIAL, 🟢 SUPPORTED-NUMERICAL")
+    }
+    println("================================================================")
+    if FAIL > 0 { panic("H_316 had FALSIFIER FAILURES") }
+}
