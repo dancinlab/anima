@@ -1,0 +1,19 @@
+// H_407 smoke — M snapshot in record
+
+fn write_m_snapshot(m_at_write: f64) -> f64 {
+    return m_at_write
+}
+
+fn check_h407() -> bool {
+    let m = 0.6
+    let snap = write_m_snapshot(m)
+    let h1 = snap == m
+    let h2 = (snap >= 0.0) && (snap <= 1.0)
+    return h1 && h2
+}
+
+fn main() {
+    let ok = check_h407()
+    if !ok { print("H_407 FAIL"); return }
+    print("H_407 blue M-snapshot OK")
+}
