@@ -1,0 +1,17 @@
+// H_511 smoke — LTD decrease
+
+fn ltd_delta(pre: f64, post: f64) -> f64 {
+    return -pre * post * 0.1
+}
+
+fn check_h511() -> bool {
+    let neg = ltd_delta(1.0, 1.0) < 0.0
+    let zero = ltd_delta(0.0, 1.0) == 0.0
+    return neg && zero
+}
+
+fn main() {
+    let ok = check_h511()
+    if !ok { print("H_511 FAIL"); return }
+    print("H_511 blue LTD OK")
+}
