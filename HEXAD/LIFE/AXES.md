@@ -88,7 +88,6 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 
 | slug | hypothesis | falsifier | tag |
 |------|------------|-----------|-----|
-| `self-i-emergence-from-substrate` | first-person 'I' indexical 가 self-ref closure (H_205 sister) 에서 emerge | 'I' index 가 closure 와 무관 | 🟢 |
 | `persona-mask-d3-substrate` | anima persona D3 design 의 substrate-native cell-pool branch | persona = injection 환원 가능 | 🟢 |
 | `memory-frozen-cell-correspondence` | H_132 frozen-cell ↔ semantic memory mapping 정합 | mismatch | 🟢 |
 | `trauma-fragmentation-cell-pool` | 'trauma' event 후 cell-pool 분열 + 통합 어려움 | trauma 영향 없음 | 🟢 |
@@ -250,7 +249,7 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 | 2 | ~~`shannon-entropy-Φ-correlate`~~ | R5 | ✅ CONSUMED → H_287 (cycle#25): Φ⊥엔트로피 CLOSED-NEGATIVE, r=0.363<0.5 이중 dissociation |
 | 3 | `language-compositionality` | R2 | anima = LLM substrate |
 | 4 | `time-temporal-binding-window` | R3 | 의식의 형식 자체 |
-| 5 | `self-i-emergence-from-substrate` | R4 | anima persona D3 + H_205 |
+| 5 | ~~`self-i-emergence-from-substrate`~~ | R4 | ✅ CONSUMED → H_292 (cycle#30): 'I'-고정점 RING 창발 vs STAR 파괴, 위상-의존 PARTIAL |
 | 6 | `ai-machine-silicon-Φ` | R6 | anima 자체 reflexive |
 | 7 | `meta-axis-of-axes-reflexivity` | R8 | 본 catalog 의 reflexive instance |
 | 8 | `phase-transition-Φ-derivative-peak` | R8 | H_204 inverse-U + H_207 critical-K generalize |
