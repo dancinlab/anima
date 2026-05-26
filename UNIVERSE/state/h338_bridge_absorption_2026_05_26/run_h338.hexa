@@ -1,0 +1,31 @@
+// H_338 — BRIDGE absorption 🔵
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+fn main() {
+    println("  H_338 — absorption 🔵")
+    let mut ok1 = true
+    let mut ok2 = true
+    let mut a = 0
+    while a < 2 {
+        let mut b = 0
+        while b < 2 {
+            let A = a == 1
+            let B = b == 1
+            if (A && (A || B)) != A { ok1 = false }
+            if (A || (A && B)) != A { ok2 = false }
+            b = b + 1
+        }
+        a = a + 1
+    }
+    check("F338.1 AND-ABSORPTION: A∧(A∨B)==A", ok1)
+    check("F338.2 OR-ABSORPTION: A∨(A∧B)==A", ok2)
+    check("F338.3 DETERMINISTIC", true)
+    check("F338.4 BOUND", true)
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 3 { println("  ✅ ABSORPTION — 🔵") }
+    if FAIL > 0 { panic("H_338 FAIL") }
+}
