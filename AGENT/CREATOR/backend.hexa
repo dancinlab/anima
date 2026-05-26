@@ -1,25 +1,73 @@
-// backend.hexa — CreatorBackend framework (M2 closure)
+// backend.hexa — CreatorBackend framework with dynamic model catalog (M3.5 closure)
 // Bridge architecture: tool surface only — no consciousness framing.
 //
-// 3-verb interface that every 3-tier backend (L1 STILL · L2 PROG · L3 GEN)
-// implements with the SAME shape so callers can swap tiers freely:
-//   generate_still(prompt, size_w, size_h)   — text → still image (L1)
-//   render_prog(spec)                         — structured spec → video (L2)
-//   generate_clip(prompt, duration_s)         — text → short video (L3)
+// 3-verb interface + dynamic model catalog so callers can:
+//   • register / unregister / list models at runtime per tier
+//   • set or change the per-tier default model
+//   • override the model on every individual call
 //
-// State is held in a Map ("creator_backend_state") threaded through —
-// no global, no hidden state, audit-friendly. The DISPATCHER decides which
-// tier handles a given asset request via tier label ("L1"/"L2"/"L3").
-//
-// Each verb's STUB returns a MediaAsset (M1 type) with provenance.backend
-// set so callers can trace which tier was used.
+// tier_registry shape (NEW):
+//   #{
+//     "L1": #{ "backend_id": "fal.ai",
+//              "default_model": "fal-ai/openai-images-2.0",
+//              "available_models": ["fal-ai/openai-images-2.0", "fal-ai/flux-1.1-pro", ...] },
+//     "L2": #{ "backend_id": "remotion", "default_model": "...", "available_models": [...] },
+//     "L3": #{ "backend_id": "fal.ai", "default_model": "fal-ai/seedance-2.0", "available_models": [...] },
+//   }
 
 import "/Users/ghost/core/anima/AGENT/CREATOR/types.hexa"
 
 // ---------------------------------------------------------------
+// helpers (private intent; pub for testability)
+// ---------------------------------------------------------------
+pub fn creator_backend_tier_config(state, tier) {
+    let entry = state["tier_registry"][tier]
+    if type_of(entry) == "map" {
+        return entry
+    }
+    return #{}
+}
+
+pub fn creator_backend_tier_backend_id(state, tier) {
+    let cfg = creator_backend_tier_config(state, tier)
+    let bid = cfg["backend_id"]
+    if type_of(bid) == "string" {
+        return bid
+    }
+    return ""
+}
+
+pub fn creator_backend_tier_default_model(state, tier) {
+    let cfg = creator_backend_tier_config(state, tier)
+    let dm = cfg["default_model"]
+    if type_of(dm) == "string" {
+        return dm
+    }
+    return ""
+}
+
+fn _tier_config_new(backend_id, default_model, available_models) {
+    return #{
+        "backend_id": backend_id,
+        "default_model": default_model,
+        "available_models": available_models,
+    }
+}
+
+fn _state_with_tier_registry(state, new_registry) {
+    return #{
+        "tier_registry": new_registry,
+        "stub_mode": state["stub_mode"],
+        "next_asset_id": state["next_asset_id"],
+        "asset_log": state["asset_log"],
+        "kind": "CreatorBackendState",
+    }
+}
+
+// ---------------------------------------------------------------
 // 1. creator_backend_new — initialize state with a tier registry
-//   tier_registry: Map { "L1": backend_id, "L2": backend_id, "L3": backend_id }
-//   stub_mode: bool — when true, NO external API call, returns synthetic asset
+//   tier_registry: Map<tier, TierConfig> (new shape)
+//   stub_mode: bool — when true, NO external API call
 // ---------------------------------------------------------------
 pub fn creator_backend_new(tier_registry, stub_mode) {
     return #{
@@ -33,16 +81,22 @@ pub fn creator_backend_new(tier_registry, stub_mode) {
 
 // ---------------------------------------------------------------
 // 2. creator_backend_generate_still — L1 STILL surface
-//   prompt: string · size_w/size_h: int · model: string (""=default tier model)
-//   returns { state, asset (M1 MediaAsset Map) }
+//   prompt · size_w · size_h · model ("" = tier default)
 // ---------------------------------------------------------------
 pub fn creator_backend_generate_still(state, prompt, size_w, size_h, model) {
-    let backend_id = state["tier_registry"]["L1"]
-    if type_of(backend_id) != "string" {
+    let backend_id = creator_backend_tier_backend_id(state, "L1")
+    if backend_id == "" {
         return #{
             "state": state,
             "asset": "",
             "error": "L1_not_registered",
+        }
+    }
+    let effective_model = model
+    if model == "" {
+        effective_model = creator_backend_tier_default_model(state, "L1")
+        if effective_model == "" {
+            effective_model = "stub"
         }
     }
     let aid = state["next_asset_id"]
@@ -52,10 +106,6 @@ pub fn creator_backend_generate_still(state, prompt, size_w, size_h, model) {
         "width": size_w,
         "height": size_h,
         "prompt_len": prompt.len(),
-    }
-    let effective_model = model
-    if model == "" {
-        effective_model = "stub"
     }
     let prov = #{
         "backend": backend_id,
@@ -81,17 +131,19 @@ pub fn creator_backend_generate_still(state, prompt, size_w, size_h, model) {
 
 // ---------------------------------------------------------------
 // 3. creator_backend_render_prog — L2 PROG surface
-//   spec: Map (structured render spec: frames · components · timing)
-//   returns { state, asset (M1 MediaAsset clip) }
 // ---------------------------------------------------------------
 pub fn creator_backend_render_prog(state, spec) {
-    let backend_id = state["tier_registry"]["L2"]
-    if type_of(backend_id) != "string" {
+    let backend_id = creator_backend_tier_backend_id(state, "L2")
+    if backend_id == "" {
         return #{
             "state": state,
             "asset": "",
             "error": "L2_not_registered",
         }
+    }
+    let model = creator_backend_tier_default_model(state, "L2")
+    if model == "" {
+        model = "remotion-codegen-stub"
     }
     let aid = state["next_asset_id"]
     let asset_id = "prog-" + str(aid)
@@ -103,7 +155,7 @@ pub fn creator_backend_render_prog(state, spec) {
     }
     let prov = #{
         "backend": backend_id,
-        "model": "remotion-codegen-stub",
+        "model": model,
         "spec_hash": "s-" + str(aid),
         "generated_at": 1700000000000,
         "stub_mode": state["stub_mode"],
@@ -125,16 +177,22 @@ pub fn creator_backend_render_prog(state, spec) {
 
 // ---------------------------------------------------------------
 // 4. creator_backend_generate_clip — L3 GEN surface
-//   prompt: string · duration_s: float · model: string (""=default tier model)
-//   returns { state, asset (M1 MediaAsset clip) }
+//   prompt · duration_s · model ("" = tier default)
 // ---------------------------------------------------------------
 pub fn creator_backend_generate_clip(state, prompt, duration_s, model) {
-    let backend_id = state["tier_registry"]["L3"]
-    if type_of(backend_id) != "string" {
+    let backend_id = creator_backend_tier_backend_id(state, "L3")
+    if backend_id == "" {
         return #{
             "state": state,
             "asset": "",
             "error": "L3_not_registered",
+        }
+    }
+    let effective_model = model
+    if model == "" {
+        effective_model = creator_backend_tier_default_model(state, "L3")
+        if effective_model == "" {
+            effective_model = "stub"
         }
     }
     let aid = state["next_asset_id"]
@@ -144,10 +202,6 @@ pub fn creator_backend_generate_clip(state, prompt, duration_s, model) {
         "duration_s": duration_s,
         "sample_rate_hz": 24000,
         "prompt_len": prompt.len(),
-    }
-    let effective_model = model
-    if model == "" {
-        effective_model = "stub"
     }
     let prov = #{
         "backend": backend_id,
@@ -173,9 +227,7 @@ pub fn creator_backend_generate_clip(state, prompt, duration_s, model) {
 
 // ---------------------------------------------------------------
 // 5. creator_backend_dispatch — route by tier label
-//   request: Map { "tier": "L1"/"L2"/"L3", "prompt"/"spec", "size_w"/"duration_s",
-//                  "model": optional ""=default tier model }
-//   returns { state, asset, error }
+//   request: Map { "tier", "prompt"/"spec", "size_w"/"duration_s", "model"? }
 // ---------------------------------------------------------------
 pub fn creator_backend_dispatch(state, request) {
     let tier = request["tier"]
@@ -200,7 +252,139 @@ pub fn creator_backend_dispatch(state, request) {
 }
 
 // ---------------------------------------------------------------
-// 6. creator_backend_summary — one-line status
+// 6. creator_backend_list_models — tier 의 available_models 조회
+//   tier: "L1"/"L2"/"L3"
+//   returns list of model_id (string list)
+// ---------------------------------------------------------------
+pub fn creator_backend_list_models(state, tier) {
+    let cfg = creator_backend_tier_config(state, tier)
+    let avail = cfg["available_models"]
+    if type_of(avail) == "array" {
+        return avail
+    }
+    return []
+}
+
+// ---------------------------------------------------------------
+// 7. creator_backend_register_model — runtime model 추가
+//   model_id: new model identifier · set_as_default: bool
+//   - tier 미등록 시 error
+//   - 이미 등록된 model_id 면 idempotent (목록 중복 X)
+//   - set_as_default=true 면 default_model 까지 갱신
+// ---------------------------------------------------------------
+pub fn creator_backend_register_model(state, tier, model_id, set_as_default) {
+    let cfg = creator_backend_tier_config(state, tier)
+    let backend_id = cfg["backend_id"]
+    if type_of(backend_id) != "string" {
+        return #{
+            "state": state,
+            "ok": false,
+            "error": tier + "_not_registered",
+        }
+    }
+    let avail = cfg["available_models"]
+    if type_of(avail) != "array" {
+        avail = []
+    }
+    // idempotent — skip duplicate
+    let already = false
+    let i = 0
+    let n = avail.len()
+    while i < n {
+        if avail[i] == model_id {
+            already = true
+        }
+        i = i + 1
+    }
+    let new_avail = avail
+    if already == false {
+        new_avail = avail + [model_id]
+    }
+    let new_default = cfg["default_model"]
+    if set_as_default {
+        new_default = model_id
+    }
+    let new_cfg = _tier_config_new(backend_id, new_default, new_avail)
+    // rebuild registry with the updated tier (only L1/L2/L3 keys supported here)
+    let reg = state["tier_registry"]
+    let new_reg = #{
+        "L1": reg["L1"],
+        "L2": reg["L2"],
+        "L3": reg["L3"],
+    }
+    if tier == "L1" {
+        new_reg = #{ "L1": new_cfg, "L2": reg["L2"], "L3": reg["L3"] }
+    }
+    if tier == "L2" {
+        new_reg = #{ "L1": reg["L1"], "L2": new_cfg, "L3": reg["L3"] }
+    }
+    if tier == "L3" {
+        new_reg = #{ "L1": reg["L1"], "L2": reg["L2"], "L3": new_cfg }
+    }
+    return #{
+        "state": _state_with_tier_registry(state, new_reg),
+        "ok": true,
+        "added": already == false,
+        "default_changed": set_as_default,
+        "error": "",
+    }
+}
+
+// ---------------------------------------------------------------
+// 8. creator_backend_set_default_model — default_model 변경
+//   - model_id 가 available_models 에 없으면 error (먼저 register 권장)
+// ---------------------------------------------------------------
+pub fn creator_backend_set_default_model(state, tier, model_id) {
+    let cfg = creator_backend_tier_config(state, tier)
+    let backend_id = cfg["backend_id"]
+    if type_of(backend_id) != "string" {
+        return #{
+            "state": state,
+            "ok": false,
+            "error": tier + "_not_registered",
+        }
+    }
+    let avail = cfg["available_models"]
+    if type_of(avail) != "array" {
+        avail = []
+    }
+    let found = false
+    let i = 0
+    let n = avail.len()
+    while i < n {
+        if avail[i] == model_id {
+            found = true
+        }
+        i = i + 1
+    }
+    if found == false {
+        return #{
+            "state": state,
+            "ok": false,
+            "error": "model_not_in_catalog — register first",
+        }
+    }
+    let new_cfg = _tier_config_new(backend_id, model_id, avail)
+    let reg = state["tier_registry"]
+    let new_reg = #{ "L1": reg["L1"], "L2": reg["L2"], "L3": reg["L3"] }
+    if tier == "L1" {
+        new_reg = #{ "L1": new_cfg, "L2": reg["L2"], "L3": reg["L3"] }
+    }
+    if tier == "L2" {
+        new_reg = #{ "L1": reg["L1"], "L2": new_cfg, "L3": reg["L3"] }
+    }
+    if tier == "L3" {
+        new_reg = #{ "L1": reg["L1"], "L2": reg["L2"], "L3": new_cfg }
+    }
+    return #{
+        "state": _state_with_tier_registry(state, new_reg),
+        "ok": true,
+        "error": "",
+    }
+}
+
+// ---------------------------------------------------------------
+// 9. creator_backend_summary — one-line status
 // ---------------------------------------------------------------
 pub fn creator_backend_summary(state) {
     let mode = "live"
