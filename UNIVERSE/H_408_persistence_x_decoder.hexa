@@ -1,0 +1,23 @@
+// H_408 smoke — text length bound
+
+fn budget_max() -> i64 {
+    return 100
+}
+
+fn text_len(t: string) -> i64 {
+    return t.len() as i64
+}
+
+fn check_h408() -> bool {
+    let t = "hello"
+    let l = text_len(t)
+    let h1 = l <= budget_max()
+    let h2 = l >= 0
+    return h1 && h2
+}
+
+fn main() {
+    let ok = check_h408()
+    if !ok { print("H_408 FAIL"); return }
+    print("H_408 blue text-len bound OK")
+}
