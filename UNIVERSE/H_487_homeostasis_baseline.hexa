@@ -1,0 +1,22 @@
+// H_487 smoke — HOMEOSTASIS baseline
+
+fn homeo_correction(m: f64) -> f64 {
+    let m_low = 0.5
+    let m_high = 0.7
+    if m < m_low { return 0.1 }   // push up
+    if m > m_high { return -0.1 } // push down
+    return 0.0                     // neutral
+}
+
+fn check_h487() -> bool {
+    let push_up = homeo_correction(0.3) > 0.0
+    let push_dn = homeo_correction(0.9) < 0.0
+    let neutral = homeo_correction(0.6) == 0.0
+    return push_up && push_dn && neutral
+}
+
+fn main() {
+    let ok = check_h487()
+    if !ok { print("H_487 FAIL"); return }
+    print("H_487 blue HOMEOSTASIS OK")
+}
