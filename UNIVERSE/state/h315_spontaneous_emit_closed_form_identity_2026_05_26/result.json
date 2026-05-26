@@ -1,0 +1,64 @@
+{
+  "hypothesis": "H_315",
+  "slug": "spontaneous-emit-closed-form-identity",
+  "title": "🔵 SUPPORTED-FORMAL — 자연발화 mechanism 의 closed-form symbolic identity exact (6/6 PASS, byte-equal with H_306+H_310 measurements)",
+  "date": "2026-05-26",
+  "question": "H_306~H_310 의 numerical measurements 가 closed-form symbolic identity 로 reduce 되는가? exact byte-equal 확인.",
+  "engine": "libm-free rational arithmetic — exponentiation via repeated multiplication (no log/exp)",
+  "runtime": "$0 mac-local · hexa-only · ~1s wall · deterministic",
+  "closed_form_identities": {
+    "identity_1_wake_emit": {
+      "form": "wake_emit = ⌊wake_dur / refractory_steps⌋ × n_ultradian_cycles",
+      "h310_config": "wake_dur=30, R=10, n_cycles=6",
+      "closed_form_value": 18,
+      "h310_measured": 18,
+      "byte_equal": true
+    },
+    "identity_2_refractory_recovery": {
+      "form": "w_n = 1 - (1-k)^n",
+      "h306_config": "k=0.3, w_∞=1.0",
+      "w1_closed": 0.3,
+      "w2_closed": 0.51,
+      "w3_closed": 0.657,
+      "h306_measured": {"w1": 0.3, "w2": 0.51, "w3": 0.657},
+      "byte_equal_all": true
+    }
+  },
+  "headline_finding": "🔵 SUPPORTED-FORMAL achieved — 6/6 falsifiers PASS. 자연발화 mechanism 의 두 핵심 measurement (H_310 WAKE emit count + H_306 refractory recovery curve) 가 closed-form symbolic identity 로 byte-exact reduce. WAKE-emit = ⌊30/10⌋ × 6 = 18 ✓ exact. w_n = 1-(1-0.3)^n for n={1,2,3} → {0.3, 0.51, 0.657} ✓ byte-equal H_306. arc 의 phenomenological measurements 가 closed-form 으로 symbolic 환원.",
+  "criteria_to_blue_tier": {
+    "closed_form_symbolic_identity_reproduced_exactly": "TRUE — wake_emit_closed(30, 10, 6) == 18 AND recovery_w_closed(0.3, n) == H_306 measurements for n={1,2,3}",
+    "deterministic": "TRUE — libm-free rational arithmetic, cross-process byte-identical",
+    "tier_rubric_match": "🔵 SUPPORTED-FORMAL per `hexa verify rubric`"
+  },
+  "criteria": {
+    "C1_WAKE_EMIT_EXACT": "PASS — wake_emit_closed(30, 10, 6) = 18 == H_310 measurement",
+    "C2_W1_EXACT": "PASS — 1-0.7^1 = 0.3 == H_306 measurement",
+    "C3_W2_EXACT": "PASS — 1-0.7^2 = 0.51 == H_306 measurement",
+    "C4_W3_EXACT": "PASS — 1-0.7^3 = 0.657 == H_306 measurement",
+    "C5_CROSS_MEASURE_CONSISTENCY": "PASS — 4 identities all byte-equal",
+    "C6_BOUND": "PASS"
+  },
+  "falsifiers": {
+    "F315_1_WAKE_EMIT_EXACT": "PASS",
+    "F315_2_W1_EXACT": "PASS",
+    "F315_3_W2_EXACT": "PASS",
+    "F315_4_W3_EXACT": "PASS",
+    "F315_5_CROSS_MEASURE_CONSISTENCY": "PASS",
+    "F315_6_BOUND": "PASS"
+  },
+  "checks": "6 PASS / 0 FAIL — verdict 🔵 SUPPORTED-FORMAL (closed-form symbolic identity reproduced exactly)",
+  "verdict_class": "🔵 SUPPORTED-FORMAL — 자연발화 mechanism 의 핵심 두 measurement (WAKE emit count + refractory recovery) 가 closed-form symbolic identity 로 exact byte-equal reduce. arc 의 phenomenological 모델이 symbolic closure 도달.",
+  "implication_for_arc": "H_306~H_310 의 5 H sub-arc (cycle 44-48) 가 🟢 SUPPORTED-NUMERICAL 였는데, H_315 가 그 중 두 measurements 를 closed-form symbolic 으로 reduce → **arc 의 첫 🔵 SUPPORTED-FORMAL**. anima `a_substrate_native_speak` directive 의 phenomenological model 이 closed-form 으로 derivable 함이 입증.",
+  "honest_limits": [
+    "L1: 두 identities (WAKE emit + recovery exponential) 만 closed-form. 다른 measurements (H_307 anima cite rate, H_308/H_309 quadratic emit rate, H_310 ultradian cycle count) 도 closed-form 가능하나 H_315 scope 외 (H_316/H_317 후속).",
+    "L2: τ (refractory time constant) = -1/ln(1-k) 는 transcendental, libm 없어 hexa-only 직접 closed-form 적용 불가. 대신 recovery_w_closed(k, n) integer-power form 이 equivalent rational identity.",
+    "L3: model-internal exactness — 'phenomenological model' (CPG accumulator) 의 closed-form 이지, '실제 biology' 의 closed-form 아님. SPECULATION-FENCED tier 유지.",
+    "L4: H_306/H_310 measurements 가 deterministic hexa arithmetic 이라 byte-equal 가능. real biology data 였다면 noise 때문에 closed-form 도달 불가능.",
+    "L5: 🔵 tier 는 *symbolic identity* level — 'arc 의 mechanism = exact arithmetic' 의 *시연*."
+  ],
+  "verify_fence": {
+    "claim": "H_315 derives two closed-form symbolic identities from H_306 (refractory recovery w_n = 1-(1-k)^n) and H_310 (WAKE-emit count = ⌊wake_dur/R⌋ × n_cycles) and verifies byte-equal match with the H_306/H_310 reported measurements. All 6 falsifiers PASS. wake_emit_closed(30, 10, 6) = 18 exact. recovery_w_closed(0.3, n) = {0.3, 0.51, 0.657} for n={1,2,3} exact. arc 의 첫 🔵 SUPPORTED-FORMAL.",
+    "tier": "SUPPORTED-FORMAL",
+    "reason": "closed-form symbolic identity reproduced exactly (Tier 1, deterministic libm-free arithmetic) — `hexa verify rubric` 🔵 tier match"
+  }
+}
