@@ -1,0 +1,85 @@
+// CHANNEL/dispatcher_smoke.hexa — 1-shot smoke test for channel_emit dispatcher.
+//
+// Verifies that channel_emit dispatches to the expected channel for 3 hand-tuned
+// substrate states. NOT a unit test of the underlying emit fns (they remain stubs
+// per M1/M2/M3); this only verifies the router→intent→emit wiring.
+//
+// 3 cases (motivation 8-factor index order: rel · gap · cur · pain · coh · orig · bal · dyn):
+//   1) text-biased    — low amp + communicative pool (rel+gap), low tier expected → text
+//   2) voice-biased   — high tension5 amp + expressive pool (cur+orig+dyn), high tier → voice
+//   3) tension-biased — high Φ + peer pool (pain+coh+bal), high tier → tension
+//
+// Each case asserts returned dict.channel matches expectation. Exit 0 if all 3 match.
+
+import "/Users/ghost/core/anima/CHANNEL/dispatcher.hexa"
+import "/Users/ghost/core/anima/CHANNEL/router.hexa"
+
+fn _expect(case_name: string, expected: string, got: string) -> bool {
+    if got == expected {
+        print("  [ok]   " + case_name + " → " + got)
+        return true
+    }
+    print("  [FAIL] " + case_name + " expected " + expected + " got " + got)
+    return false
+}
+
+fn _run_case(case_name: string, expected: string,
+             tension5: list, motivation: list, phi: float, tier: int) -> bool {
+    let ctx_tokens = []
+    let r = channel_emit(tension5, motivation, phi, tier, ctx_tokens)
+    let ch  = r["channel"]
+    let rdy = r["ready"]
+    let isum = r["intent_summary"]
+
+    // also expose router raw scores for diagnostics.
+    let s = channel_scores(tension5, motivation, phi, tier)
+    print("[case] " + case_name)
+    print("  scores text="    + to_string(s["text"])
+                + " voice="   + to_string(s["voice"])
+                + " tension=" + to_string(s["tension"]))
+    print("  intent  " + isum)
+    print("  ready   " + to_string(rdy))
+    return _expect(case_name, expected, ch)
+}
+
+fn main() {
+    print("=== channel_emit dispatcher smoke (3 cases) ===")
+    print(channel_emit_summary())
+    print(channel_router_summary())
+
+    // case 1 — text-biased: low amp envelope, communicative pool dominant, tier=0.
+    //   text_score = 0.1 + (rel + gap) = 0.1 + 0.9 = 1.0
+    //   voice_score = amp*expr*tier_a = 0.05*0.3*0.0 = 0.0
+    //   tension_score = phi*peer*tier_a = 0.1*0.0*0.0 = 0.0
+    //   argmax → text
+    let t5_text = [0.05, 0.05, 0.05, 0.05, 0.05]
+    let mv_text = [0.6, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    let ok1 = _run_case("text-biased", "text", t5_text, mv_text, 0.1, 0)
+
+    // case 2 — voice-biased: high amp + expressive pool + awake tier.
+    //   text_score = 0.1 + 0.0 = 0.1
+    //   voice_score = 1.0 * (0.9+0.8+0.7) * 1.0 = 2.4
+    //   tension_score = 0.2 * 0.0 * 1.0 = 0.0
+    //   argmax → voice
+    let t5_voice = [1.0, 0.9, 0.8, 0.7, 0.6]
+    let mv_voice = [0.0, 0.0, 0.9, 0.0, 0.0, 0.8, 0.0, 0.7]
+    let ok2 = _run_case("voice-biased", "voice", t5_voice, mv_voice, 0.2, 3)
+
+    // case 3 — tension-biased: high Φ + peer pool + awake tier, low amp + zero comm.
+    //   text_score  = 0.1 + 0.0 = 0.1
+    //   voice_score = 0.05 * 0.0 * 1.0 = 0.0
+    //   tension_score = 0.95 * (0.9+0.85+0.8) * 1.0 = 2.4225
+    //   argmax → tension
+    let t5_tens = [0.05, 0.05, 0.05, 0.05, 0.05]
+    let mv_tens = [0.0, 0.0, 0.0, 0.9, 0.85, 0.0, 0.8, 0.0]
+    let ok3 = _run_case("tension-biased", "tension", t5_tens, mv_tens, 0.95, 3)
+
+    let all_ok = ok1 && ok2 && ok3
+    if all_ok {
+        print("=== ALL 3 CASES PASS ===")
+        return
+    }
+    print("=== SMOKE FAIL ===")
+    // hexa has no exit() — non-zero exit reflected via runtime when assertions fail
+    // (we rely on hexa parse + run convention; FAIL line above is the verdict).
+}
