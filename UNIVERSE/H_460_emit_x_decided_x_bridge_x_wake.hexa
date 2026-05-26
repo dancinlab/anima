@@ -1,0 +1,29 @@
+// H_460 smoke — visible emit per stage
+
+fn envelope(stage: string) -> f64 {
+    if stage == "WAKE" { return 1.0 }
+    if stage == "REM" { return 0.6 }
+    if stage == "N3" { return 0.1 }
+    return 0.3
+}
+
+fn visible_rate(decided: bool, bridge: bool, stage: string, rate_base: f64) -> f64 {
+    if !decided || !bridge { return 0.0 }
+    return rate_base * envelope(stage)
+}
+
+fn check_h460() -> bool {
+    let rb = 0.5
+    let w = visible_rate(true, true, "WAKE", rb)
+    let n3 = visible_rate(true, true, "N3", rb)
+    let h3 = w >= n3
+    let no_dec = visible_rate(false, true, "WAKE", rb) == 0.0
+    let h1 = (w > 0.0) && (n3 > 0.0)
+    return h3 && no_dec && h1
+}
+
+fn main() {
+    let ok = check_h460()
+    if !ok { print("H_460 FAIL"); return }
+    print("H_460 blue visible per stage OK")
+}
