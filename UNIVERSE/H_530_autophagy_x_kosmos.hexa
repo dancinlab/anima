@@ -1,0 +1,4 @@
+fn arch_lane() -> string { return "autophagy" }
+fn arch_tier() -> string { return "archived" }
+fn check_h530() -> bool { return arch_lane() == "autophagy" && arch_tier() == "archived" }
+fn main() { if check_h530() { print("H_530 OK") } else { print("H_530 FAIL") } }
