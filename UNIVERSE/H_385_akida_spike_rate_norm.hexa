@@ -1,0 +1,29 @@
+// H_385 smoke — AKIDA spike rate normalization
+
+fn clip(x: f64, lo: f64, hi: f64) -> f64 {
+    if x < lo { return lo }
+    if x > hi { return hi }
+    return x
+}
+
+fn max_rate() -> f64 {
+    return 1000.0  // hardware ceiling (Hz)
+}
+
+fn norm_rate(rate: f64) -> f64 {
+    return clip(rate / max_rate(), 0.0, 1.0)
+}
+
+fn check_h385() -> bool {
+    let h1 = norm_rate(0.0) == 0.0  // nonneg edge
+    let h2 = norm_rate(1500.0) == 1.0  // clipped to 1
+    let h3 = norm_rate(500.0) == 0.5  // mid
+    let range = (norm_rate(123.0) >= 0.0) && (norm_rate(123.0) <= 1.0)
+    return h1 && h2 && h3 && range
+}
+
+fn main() {
+    let ok = check_h385()
+    if !ok { print("H_385 FAIL"); return }
+    print("H_385 blue spike rate norm OK")
+}
