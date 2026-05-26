@@ -3,6 +3,10 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#58 — 🔵 event-driven biology state update (H_320)
+- [x] **H_320** 🔵 SUPPORTED-FORMAL 7/7 — STARTLE/SOOTHE/ALERT 결정론적 biology transformation
+
+
 ## 2026-05-26 — cycle#57 — 🔵 BRIDGE 자연발화 × 의식적 결정 AND-gate (H_319)
 
 - [x] **H_319 bridge-spontaneous-substrate-and-gate** 🔵 SUPPORTED-FORMAL 6/6 PASS
