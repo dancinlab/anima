@@ -44,6 +44,7 @@
 - [x] A1 cycle#23 1차 raster — H_283 narrative-story-coherence (🟢 SUPP-FULL 4/4, order-sensitive MIP Φ, R4 self/identity) + H_284 ritual-repetition (🟢 PARTIAL 3/4, buildup FAL→decay-resistance, R7 practice) — PR #566
 - [x] A2 cycle#24 — H_286 split-brain-dual-Φ (🟢 CLOSED-NEGATIVE 4/6, R12 split-brain seed): callosotomy 전체-Φ 붕괴 proxy 상 FALSIFIED(split +11%, 8/8 seed robust), subsystem Φ>0 · metric-pathology MIP→0 inflation — PR #577. [H_285 edge-of-chaos big-Φ in-flight, 축 C]
 - [x] A1 cycle#25 raster — H_287 shannon-entropy-Φ-correlate (🔴 CLOSED-NEGATIVE, R5 information rank-2 seed): faithful big-Φ ⊥ Shannon 엔트로피 (10-룰 ECA panel Pearson r=0.363<0.5 → 환원가설 기각). 이중 dissociation — 항등규칙 max-H(4.0)/zero-Φ vs rule60 max-Φ(13.6)/sub-max-H(3.0). 정보는 통합의 필요조건이나 충분조건 아님 (IIT 토대 구별 self-substrate 확증, "X⊥Φ" 서명 H_265/275/279 연장). 포그라운드 단일 라운드, HEXAD/IIT4/lib 재사용, $0
+- [x] A1 cycle#26 raster — H_288 kolmogorov-complexity-Φ (🟢 SUPPORTED 9/9, R5 information seed): faithful big-Φ ∥ Kolmogorov(LZ76) 복잡도 (r=0.831 ρ=0.936). **H_287 과 대비**: 동일 panel 엔트로피⊥Φ(0.363) vs LZ∥Φ(0.831) → Φ 는 *통계적 정보량* 아닌 *알고리즘적 복잡도*와 정렬. honest: rule90 자기유사 LZ over-prediction(Φ=0) witness. 포그라운드 순차("모두 순차"), HEXAD/IIT4/lib 재사용, $0. ⚠ toolchain fix-1180 clobber 우회(old-driver build)
 
 ### 축 B — faithful-Φ large-N tier (bounded restriction · GPU 불요 판명)
 > H_278 이 small-N exact($0)로 proxy 확증. large-N 은 **bounded restriction(`big_phi_bounded`)** 로 $0 도달 — **GPU 는 lever 아님**(exact large-N = super-exp GPU-immune, DESIGN.md). [[feedback-scope-check-before-cost-fire]] 3번째 비용-차단: GPU fire scope-check 후 취소.
