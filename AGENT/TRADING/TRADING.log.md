@@ -2,6 +2,13 @@
 
 Append-only history sister of `TRADING.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T06:20:00Z — wire-up scope 축소 (4 broker only · 나머지 제외)
+
+- [x] 사용자 명시 결정 — wire-up 대상 = **KIS · Alpaca · Upbit · Binance** 4개만 진행, 나머지는 계획 없음
+- [x] 제외 (계획 없음) — M8 LS 증권 · M9 키움증권 · M11 IBKR · M12 Tradier · M14 Bithumb · M16 ccxt unified
+- [x] 유지 — M7 KIS REAL · M10 Alpaca ✅ STUB (REAL carry) · M13 Upbit ✅ STUB (REAL carry) · M15 Binance · M17 통합 smoke
+- [x] TRADING.md wire-up 라운드 section 재작성 — 5 라인 (4 broker + 1 통합)
+
 ## 2026-05-27T06:10:00Z — M10 Alpaca + M13 Upbit STUB closure (사용자 명시 우선순위)
 
 - [x] 사용자 명시 — Alpaca + Upbit 우선 진행 (한국 KRW crypto + 미국 stock 양쪽 cover)
