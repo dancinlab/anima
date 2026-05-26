@@ -1,0 +1,19 @@
+// H_449 smoke — merge decreases N
+
+fn n_after_merge(n_before: i64) -> i64 {
+    if n_before < 2 { return n_before }  // cannot merge
+    return n_before - 1
+}
+
+fn check_h449() -> bool {
+    let h1 = n_after_merge(5) == 4
+    let h3 = n_after_merge(1) == 1  // no-op
+    let mono_dec = n_after_merge(10) < 10
+    return h1 && h3 && mono_dec
+}
+
+fn main() {
+    let ok = check_h449()
+    if !ok { print("H_449 FAIL"); return }
+    print("H_449 blue merge decreases N OK")
+}
