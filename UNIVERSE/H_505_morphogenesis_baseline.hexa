@@ -1,0 +1,20 @@
+// H_505 smoke — MORPHOGENESIS pattern
+
+fn cell_type_at(c: f64) -> i64 {
+    if c < 0.3 { return 0 }
+    if c < 0.7 { return 1 }
+    return 2
+}
+
+fn check_h505() -> bool {
+    let a = cell_type_at(0.1) == 0
+    let b = cell_type_at(0.5) == 1
+    let c = cell_type_at(0.9) == 2
+    return a && b && c
+}
+
+fn main() {
+    let ok = check_h505()
+    if !ok { print("H_505 FAIL"); return }
+    print("H_505 blue MORPHO OK")
+}
