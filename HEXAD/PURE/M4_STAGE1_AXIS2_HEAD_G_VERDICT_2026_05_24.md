@@ -71,6 +71,6 @@ M3 milestone (V3 final_CE ≤ Qwen baseline + 0.1 nats) 위해서:
 - PR #403 — AXIS_MAP_FAN_REDESIGN spec (M4 Stage 1)
 - `HEXAD/PURE/R8_SAGA_REFRAMING_2026_05_24.md` (PR #377) — H_255 / H_257 saga reframing
 - `HEXAD/PURE/R8C_PROBE_VERDICT_2026_05_24.md` (PR #374) — noise/kv 4-cell verdict
-- `HEXAD/LIFE/H_254_n_kv_head_wiring_silent_misconfig.md` — silent-bypass family
-- `HEXAD/LIFE/H_257_axis_map_fan_env_var_silent_bypass.md` — sibling root cause
+- `UNIVERSE/H_254_n_kv_head_wiring_silent_misconfig.md` — silent-bypass family
+- `UNIVERSE/H_257_axis_map_fan_env_var_silent_bypass.md` — sibling root cause
 - pod result.json: `state/grid_3b_s187_2026_05_21/vP21H_axis2_{register_s1337,ce_s2026,none_s9999}/result.json`

@@ -27,7 +27,7 @@ Append-only history sister of `STDLIB.md`. Each entry starts with `## <ISO times
 ## 2026-05-25T07:00:00Z — cycle 9 · snapshot sync · 6 milestone retroactive close + 1 NEW open
 
 - [x] `stdlib/consciousness/phi_spatial.hexa` (RFC §5 2nd-wave) — already MERGED hexa-lang #780 → #792 (rename to phi_spatial_native for C builtin collision). 154 LoC. cycle 9 agent B = NO-OP, 71s detect + clean exit.
-- [x] anima `HEXAD/LIFE/lib/phi_native.hexa` migrate — already MERGED anima #424 (commit e8158581d, 332→56 LoC -83%). cycle 9 agent C = NO-OP, 96s detect + clean exit.
+- [x] anima `UNIVERSE/lib/phi_native.hexa` migrate — already MERGED anima #424 (commit e8158581d, 332→56 LoC -83%). cycle 9 agent C = NO-OP, 96s detect + clean exit.
 - [x] anima phi_helper.hexa import path — 변경 불필요 (caller 가 phi_native_spatial public surface 만 의존, 새 shim 이 같은 fn 노출 유지).
 - [x] PHI byte-equal regression rerun — verify_phi_native.hexa 재실행 5/5 PASS verbatim (rule=110/30/250/184/60 bit-identical to frozen baseline). C-replica drift `phi_c vs phi_h byte_equal=false` 은 RFC 036 documented (NOT regression).
 - [x] phase 3 clustering primitive — MERGED hexa-lang #863 (distance/knn) + #869 (k-means) + #883 (k-means++ D²-weighted, 25× WCSS reduction empirical). RFC-037 cluster trio complete.

@@ -5,7 +5,7 @@ train script 에 실제로 도달하고, 경로가 존재하는 axis 는 train-l
 (GPU 재발사 없음 — 진짜 ablation 은 merge 후 별도 step)
 
 - 일자: 2026-05-25
-- 인용 가설: `HEXAD/LIFE/H_257_axis_map_fan_env_var_silent_bypass.md`
+- 인용 가설: `UNIVERSE/H_257_axis_map_fan_env_var_silent_bypass.md`
 - 라이브 surface: `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/`
   - `train_p21h_v3.py` · `dispatch_p21h_v3_runpod.sh`
   - (state/ snapshot 이 곧 라이브 — 별도 canonical 복제본 없음. 두 파일 모두

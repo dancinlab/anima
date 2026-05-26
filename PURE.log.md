@@ -128,7 +128,7 @@
 - wiki_frac=0.3 에서도 **register collapse 차단 (0 hits)** — E2(0.5)=4/20 보다 낮은 dilution 인데도 register-sink 0
 - 그러나 **multilingual coherence 는 여전히 5/5 WEAK** — corpus dilution 0.3 섞어도 coherence 회복 안 됨
 - register 차단 ⊥ multilingual coherence **직교** 재확인 — 기존 corpus-axis closed-negative (E2 wiki=0.5 · E3 wiki=1.0 · v3 wiki=0) 에 **wiki_frac=0.3** point 추가 → "corpus-dilution 축 단독으로는 multilingual coherence closure 불가" 4-point 으로 확정
-- H_242 §A2 finding 표에 j02 row 추가 (`HEXAD/LIFE/H_242_register_collapse_wiki_frac_sigmoid.md`)
+- H_242 §A2 finding 표에 j02 row 추가 (`UNIVERSE/H_242_register_collapse_wiki_frac_sigmoid.md`)
 
 ---
 

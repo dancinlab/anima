@@ -1,7 +1,7 @@
 # R8a'' × Qwen-parity Verdict — M3 final_CE 측정 closure (2026-05-25)
 
 > path = V3 (PURE, R8 cluster) · status = **M3 PENDING (양측 미측정)** · cycle = LORA M3 (V3 ConsciousDecoderV3 Qwen-parity)
-> linked: `R8A2_JOINT_VERDICT_TEMPLATE.md` (PR #375 MERGED, 본 doc 가 fill 대상이었으나 R8a'' LOST 로 measurement 미도착) · `R8A2_FILL_IN_GUIDE_2026_05_24.md` (5-step closure 매뉴얼) · `HEXAD/LIFE/H_255_init_ce_floor_is_measurement_artifact.md` (init_CE floor closure sister) · `HEXAD/LORA/QWEN_BASELINE_FINAL_CE_PROTOCOL_2026_05_24.md` (baseline 정의 protocol, SPEC ONLY) · `HEXAD/PURE/R8C_PROBE_VERDICT_2026_05_24.md` (R8c 4-cell probe)
+> linked: `R8A2_JOINT_VERDICT_TEMPLATE.md` (PR #375 MERGED, 본 doc 가 fill 대상이었으나 R8a'' LOST 로 measurement 미도착) · `R8A2_FILL_IN_GUIDE_2026_05_24.md` (5-step closure 매뉴얼) · `UNIVERSE/H_255_init_ce_floor_is_measurement_artifact.md` (init_CE floor closure sister) · `HEXAD/LORA/QWEN_BASELINE_FINAL_CE_PROTOCOL_2026_05_24.md` (baseline 정의 protocol, SPEC ONLY) · `HEXAD/PURE/R8C_PROBE_VERDICT_2026_05_24.md` (R8c 4-cell probe)
 
 ---
 
@@ -78,7 +78,7 @@ R8a'' 가 LOST 이므로 V3 final_CE 의 **유일한 현존 근거**는 R8c 4-ce
 
 ## §4 H_255 흡수 — init_CE 는 더 이상 M3 metric 아님
 
-`HEXAD/LIFE/H_255_init_ce_floor_is_measurement_artifact.md` partial-closure 흡수:
+`UNIVERSE/H_255_init_ce_floor_is_measurement_artifact.md` partial-closure 흡수:
 
 - **R8a saga 의 "cluster Z 14.46 nats catastrophic init_CE floor"** 는 R8c 4-cell baseline (동일 config: head_g random + noise=0.1 + n_kv=4 + corpus_s101 + seed=1337) 측정 **12.315 nats** 와 −2.475 nats 격차로 재현 실패.
 - 12.315 − 11.93 (random baseline `ln(151936)`) = **+0.385 nats** = **정상 warm-init 범위** (catastrophic 아님). 4 cell 이 ±0.09 nats 안 일관 (12.225~12.315).
@@ -168,6 +168,6 @@ init_CE      : H_255 흡수 — 더 이상 M3 metric 아님 (R8c baseline 12.315
 - `HEXAD/PURE/R8C_PROBE_VERDICT_2026_05_24.md` — R8c 4-cell probe (100-step final_CE SSOT)
 - `HEXAD/PURE/R8_SAGA_INDEX.md` — R8 saga TOC
 - `HEXAD/LORA/QWEN_BASELINE_FINAL_CE_PROTOCOL_2026_05_24.md` — baseline (a)/(b)/(c) 정의 + fire spec (SPEC ONLY)
-- `HEXAD/LIFE/H_255_init_ce_floor_is_measurement_artifact.md` — init_CE floor partial-closure (final_CE 로 metric 이동)
+- `UNIVERSE/H_255_init_ce_floor_is_measurement_artifact.md` — init_CE floor partial-closure (final_CE 로 metric 이동)
 - `state/.../vP21H_r8c_baseline/result.json` — R8c baseline 12.315 nats SSOT (`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/`)
 - `LORA.md` — M3 milestone (line 16)

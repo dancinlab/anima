@@ -1,6 +1,6 @@
 # PHI — current state
 
-@goal: phi_rs algorithm 의 **hexa-native port** (pure-hexa source) — Rust crate 의존 제거 · `HEXAD/LIFE/lib/phi_native.hexa` · byte-equal vs RFC 036 C replica → 22+ HEXAD/LIFE H 의 🟢 NUMERICAL → 🔵 SUPPORTED-FORMAL promote path
+@goal: phi_rs algorithm 의 **hexa-native port** (pure-hexa source) — Rust crate 의존 제거 · `UNIVERSE/lib/phi_native.hexa` · byte-equal vs RFC 036 C replica → 22+ UNIVERSE H 의 🟢 NUMERICAL → 🔵 SUPPORTED-FORMAL promote path
 
 ## Scope
 
@@ -22,17 +22,17 @@
 
 ### algorithm spec ↦ hexa source
 
-- [x] phi_rs algorithm spec 정리 (RFC 036 part 1 C replica step-by-step pseudo-spec 추출) — `HEXAD/LIFE/lib/phi_native_spec_2026_05_24.md` 357 LoC · C source `~/core/hexa-lang/self/runtime.c` L7849-8004
+- [x] phi_rs algorithm spec 정리 (RFC 036 part 1 C replica step-by-step pseudo-spec 추출) — `UNIVERSE/lib/phi_native_spec_2026_05_24.md` 357 LoC · C source `~/core/hexa-lang/self/runtime.c` L7849-8004
   - step 1: `phi_bin_values` — bw = (max-min)/n_bins · clamp truncation · all-identical guard ε=1.19e-7
   - step 2: `phi_mi_pair` + `phi_entropy` — H = Σ -p·log2(p+1e-10) · MI = max(H(A)+H(B)-H(A,B), 0)
   - step 3: spatial pipeline — pair-wise MI upper-triangle 누적 · exact bipartition `2^(n-1)-1` masks (n_cells ≤ 20)
   - step 4: `Φ = max(total - min_part, 0) / max(n_cells - 1, 1)`
-- [x] `HEXAD/LIFE/lib/phi_native.hexa` 작성 — 332 LoC · 7 fn (phi_bin_values · phi_entropy · phi_native_mi_pair · phi_native_spatial · phi_native + 2 helper `_phi_pow2` / `_phi_bit_set`) · `hexa parse` OK · header line-cites spec § + runtime.c L7849-8004
-- [x] `HEXAD/LIFE/lib/phi_helper.hexa` 갱신 — +36 LoC · 신규 `phi_with_backend(state, n, dim, n_bins, backend)` + `phi_default_with_backend(state, backend)` · `backend ∈ {"c","native"}` panic on unknown · backward-compat ✅ (기존 `phi_default` / `phi_with` 유지) · `hexa parse` OK
+- [x] `UNIVERSE/lib/phi_native.hexa` 작성 — 332 LoC · 7 fn (phi_bin_values · phi_entropy · phi_native_mi_pair · phi_native_spatial · phi_native + 2 helper `_phi_pow2` / `_phi_bit_set`) · `hexa parse` OK · header line-cites spec § + runtime.c L7849-8004
+- [x] `UNIVERSE/lib/phi_helper.hexa` 갱신 — +36 LoC · 신규 `phi_with_backend(state, n, dim, n_bins, backend)` + `phi_default_with_backend(state, backend)` · `backend ∈ {"c","native"}` panic on unknown · backward-compat ✅ (기존 `phi_default` / `phi_with` 유지) · `hexa parse` OK
 
 ### verification (byte-equal)
 
-- [x] selftest `HEXAD/LIFE/state/lib_phi_native_verify_2026_05_24/verify_phi_native.hexa` — 211 LoC · **REAL mode 측정 완료** · 5/5 rule byte_equal=false vs c_measure_phi (abs diff ≤ 5e-6 · rule 110/250 micro-collapse 1000×) · 1/1 determinism PASS · spec § L1 정확 manifestation · results doc `results_2026_05_24.md` 214 LoC
+- [x] selftest `UNIVERSE/state/lib_phi_native_verify_2026_05_24/verify_phi_native.hexa` — 211 LoC · **REAL mode 측정 완료** · 5/5 rule byte_equal=false vs c_measure_phi (abs diff ≤ 5e-6 · rule 110/250 micro-collapse 1000×) · 1/1 determinism PASS · spec § L1 정확 manifestation · results doc `results_2026_05_24.md` 214 LoC
 - [x] determinism harness — `c_measure_phi(s)` 2회 호출 byte-identical (F-NATIVE-DET 1/1 PASS)
 - [x] honest tier — **L1 diagnostic 후 dual-tier escalation**:
   - vs **Rust phi_rs oracle** (5/5 rule 위 |d| ≤ 1e-12 IEEE summation reorder noise): **🔵 SUPPORTED-FORMAL** — Rust 가 ground truth · hexa port = byte-equal modulo IEEE reorder
@@ -41,9 +41,9 @@
 
 ### tier promote across 22+ H
 
-- [~] 22+ H opt-in audit (PARTIAL closure) — `HEXAD/LIFE/state/lib_phi_22h_audit_2026_05_24/audit_phi_22h.hexa` 250 LoC · 5 representative state A/B · MASS_MIGRATION_SAFE (5e-6 drift ≪ 모든 H threshold margin) · default "c" 유지 권고 · 22+ H caller 6 곳 식별 (H_007/H_211/H_222/H_225/H_250 + verify)
-- [x] 6 anchor (H_007/H_204/H_211/H_223/H_239/H_250) 위 byte-equal 재측정 — `HEXAD/LIFE/state/lib_phi_6anchor_remeasure_2026_05_24/` (143 LoC remeasure.hexa + 103 LoC results.md) · **6/6 verdict 변경 없음** · 5/6 within 5e-6 · H_211 rule 30 만 7.09e-6 marginal (Spearman rank invariant · production 1e-3 threshold 대비 무의미) · anchor-scale (N=16/dim=12) 위 MASS_MIGRATION_SAFE 확정
-- [x] verdict tier upgrade — `HEXAD/LIFE/state/phi_verdict_canonical_2026_05_24/verdict_canonical_2026_05_24.md` 153 LoC (7 §: 하나의 그림 + 3-way 측정 표 + tier 근거 + 22+H impact + honest_limits 6 + next steps + ledger) · 🔵 SUPPORTED-FORMAL evidence path 본격 활성 · dual-tier canonical (🔵 vs Rust · 🟢 vs C · 🟠 C vs Rust) SSOT · hexa-lang inbox patch g59 enforcement (`~/core/hexa-lang/inbox/notes/rfc_036_c_replica_drift_2026_05_24.md` 77 LoC) ⭐️
+- [~] 22+ H opt-in audit (PARTIAL closure) — `UNIVERSE/state/lib_phi_22h_audit_2026_05_24/audit_phi_22h.hexa` 250 LoC · 5 representative state A/B · MASS_MIGRATION_SAFE (5e-6 drift ≪ 모든 H threshold margin) · default "c" 유지 권고 · 22+ H caller 6 곳 식별 (H_007/H_211/H_222/H_225/H_250 + verify)
+- [x] 6 anchor (H_007/H_204/H_211/H_223/H_239/H_250) 위 byte-equal 재측정 — `UNIVERSE/state/lib_phi_6anchor_remeasure_2026_05_24/` (143 LoC remeasure.hexa + 103 LoC results.md) · **6/6 verdict 변경 없음** · 5/6 within 5e-6 · H_211 rule 30 만 7.09e-6 marginal (Spearman rank invariant · production 1e-3 threshold 대비 무의미) · anchor-scale (N=16/dim=12) 위 MASS_MIGRATION_SAFE 확정
+- [x] verdict tier upgrade — `UNIVERSE/state/phi_verdict_canonical_2026_05_24/verdict_canonical_2026_05_24.md` 153 LoC (7 §: 하나의 그림 + 3-way 측정 표 + tier 근거 + 22+H impact + honest_limits 6 + next steps + ledger) · 🔵 SUPPORTED-FORMAL evidence path 본격 활성 · dual-tier canonical (🔵 vs Rust · 🟢 vs C · 🟠 C vs Rust) SSOT · hexa-lang inbox patch g59 enforcement (`~/core/hexa-lang/inbox/notes/rfc_036_c_replica_drift_2026_05_24.md` 77 LoC) ⭐️
 
 ## Honest limits
 
@@ -56,7 +56,7 @@
 ## Cross-link
 
 - LIFE.md @goal G3 milestone "phi_rs Rust FFI promote" — 본 도메인이 그 milestone 대체 (hexa-only path 로 reframe)
-- HEXAD/LIFE/lib/phi_helper.hexa (PR #317 + Agent D 확장) — 28+ H 공용 Φ 호출 · 본 port 의 caller surface
+- UNIVERSE/lib/phi_helper.hexa (PR #317 + Agent D 확장) — 28+ H 공용 Φ 호출 · 본 port 의 caller surface
 - hexa-lang RFC 036 part 1 — C replica (실측 결과 Rust byte-equal claim falsified · inbox patch 후보)
 - hexa-lang RFC 084 (option A cdylib) · RFC 089 (cdylib dlopen) — hexa-only path 채택 → 본 RFC 들의 anima-side 영향 없음 (hexa-lang upstream maintainer 진행 carry)
 

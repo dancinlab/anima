@@ -54,7 +54,7 @@ v3(wiki=0)·j02(wiki=0.3) per-lang 정수는 register.txt verbatim 으로 완전
 
 - `state/pure_phase_d_v3_result_2026_05_24/result.json` (wiki_frac=0.0, sha `2643bd72a5c0e5a9`)
 - `state/p21h_v3_recover_2026_05_25/out_main/result.json` (wiki_frac=0.3, sha `ab35a06e072f5d62`)
-- `HEXAD/LIFE/H_242` §A2 4-point 표 (wiki 0.5/1.0 register count 인용)
+- `UNIVERSE/H_242` §A2 4-point 표 (wiki 0.5/1.0 register count 인용)
 - `CLAIMS.tape` group=PURE — `pure_wiki_sweep` + `pure_register_orthogonal` (둘 다 🔴 CLOSED-negative terminal)
 
 ## 빌드

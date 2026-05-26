@@ -1,0 +1,612 @@
+// UNIVERSE/state/h276_cascade_dynamics_timing_2026_05_25/run_h276.hexa
+//
+//   H_276 — quorum-cascade DYNAMICS / TIMING deep-dive
+//           (life · collective · H_262 quorum-sensing depth · raw#12 ·
+//            deterministic · LLM none · $0 mac local)
+//
+//   LINEAGE
+//     H_262 (quorum-sensing, SUPPORTED_FULL) established that a shared quorum
+//     signal gates a collective bistable state-switch: with cooperative coupling
+//     the partial quorum CASCADES to full ON, without it the pool stalls at a
+//     sub-majority quorum. H_274 (quorum-cascade seed-dependence) then asked
+//     WHICH initial-distribution statistic predicts cascade success and found
+//     the predictor is aggregate-but-not-deterministic (FALSIFIED on the strict
+//     perfect-rank-separation bar) — its L6 isolated the residual to the
+//     DYNAMICAL CASCADE TIMING (latch hysteresis × soft boost-trigger) that the
+//     initial distribution alone cannot capture.
+//
+//   H_276 OPENS THAT TIMING AXIS DIRECTLY.
+//     The prior cycles asked WHETHER the cascade fires (H_262) and WHETHER its
+//     success is predictable from initial conditions (H_274). H_276 asks HOW the
+//     cascade UNFOLDS OVER TIME — its onset latency, its spatial propagation
+//     speed, and its temporal monotonicity — on the lane-canonical CA substrate
+//     (RFC 036 phi_spatial / lib/phi_helper.hexa), NOT the mitosis substrate, so
+//     the timing claims are deterministic from a seed-phased init with ZERO
+//     gaussian draws (byte-equal re-run = cross-process determinism by construction).
+//
+//   SUBSTRATE (1D periodic CA cascade — carries H_262 quorum-gate into space)
+//     N cells on a ring. Each cell i holds a continuous activation a_i(t) and a
+//     hysteretic binary state s_i(t) ∈ {0,1} (up_thr ON / dn_thr OFF latch, the
+//     H_262 bistable single-cell latch carried verbatim). The collective drive
+//     is LOCAL-quorum-gated (the spatial generalization of H_262's global
+//     quorum): each cell sees the active fraction in its radius-r neighbourhood
+//     and receives a cooperative boost when that LOCAL quorum exceeds q_thr.
+//       a_i(t+1) = a_i(t) + base + boost_i(t) - leak·a_i(t)
+//       boost_i(t) = (localQ_i(t) > q_thr) ? coupling : 0
+//       localQ_i(t) = mean_{|j-i|<=r} s_j(t)          (periodic ring)
+//       s_i: ON if a_i>up_thr ; OFF if a_i<dn_thr ; else hold     (H_262 latch)
+//     Determinism: a_i(0), the seed pattern, and every update are seed-phased
+//     integer arithmetic — NO RNG, NO gaussian. The same `hexa run` twice is
+//     byte-identical (RFC 036 phi_spatial is itself deterministic). Φ of the
+//     cascade trajectory is measured via phi_spatial (lane-canonical proxy) to
+//     locate the integrated-information peak in TIME.
+//
+//   THREE PRE-REGISTERED TIMING CRITERIA (falsifiable, additive)
+//     C1 ONSET-LATENCY-vs-DENSITY :
+//         Seed the ring at a sweep of initial active densities ρ ∈ {ρ1<ρ2<ρ3<ρ4}
+//         (contiguous block of ON cells). The cascade ONSET latency τ(ρ) (first
+//         step Q reaches the majority 0.5) is MONOTONE NON-INCREASING in ρ — a
+//         denser seed ignites the collective switch SOONER. Non-onset = horizon+1
+//         (latest), so monotonicity is well-defined over mixed onset/non-onset.
+//         Pre-registered: τ(ρ1) >= τ(ρ2) >= τ(ρ3) >= τ(ρ4) AND >=1 density onsets.
+//     C2 PROPAGATION-FINITE-SPEED :
+//         With a SINGLE local seed block, the cascade FRONT (the farthest active
+//         cell from the seed centre) advances OUTWARD over time at a FINITE,
+//         POSITIVE, BOUNDED speed: the front radius R(t) is monotone non-decreasing,
+//         strictly grows on >=1 interval (speed>0), and never jumps more than
+//         FRONT_CAP cells per step (finite speed — no instantaneous global flip).
+//         Pre-registered: front_monotone AND max_front_growth >= 1 AND
+//         max_front_step <= FRONT_CAP.
+//     C3 MONOTONE-UNFOLDING :
+//         Once a cascade triggers (Q first crosses q_thr), the global active
+//         fraction Q(t) is MONOTONE NON-DECREASING for the remainder of the run —
+//         the cascade is a one-way temporal ratchet, never retreating before
+//         saturation. Pre-registered: for all t after trigger, Q(t+1) >= Q(t)
+//         - EPS (EPS guards float noise only; latch is integer-exact so EPS=0).
+//     Additive falsifiers (honesty-triad): F4 DETERMINISM (cross-process
+//     byte-equal — written to det.txt for the re-run compare), F5 BOUNDS (all
+//     Q ∈ [0,1], all latency ∈ [-1, max_steps), all front radius ∈ [0, N/2]),
+//     F6 PHI-NONTRIVIAL (the cascade trajectory has a non-zero phi_spatial peak
+//     during the transition window — the collective switch is integrated, not a
+//     trivial independent flip).
+//
+//   VERDICT_RULE (pre-registered)
+//     SUPPORTED_FULL = C1 ∧ C2 ∧ C3 ∧ F4 (all timing axes + determinism)
+//     SUPPORTED      = C1 ∧ C3            (onset-latency + monotone unfolding)
+//     PARTIAL        = C1 only
+//     FALSIFIED      = ¬C1               (onset latency not ordered by density →
+//                                         cascade timing not a function of seed density)
+//
+//   $0 mac local · hexa-only · LLM none · deterministic · raw#12.
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/UNIVERSE/lib/phi_helper.hexa"
+
+
+// ── state dir ─────────────────────────────────────────────────────────────────
+fn _state_dir() -> string {
+    return "UNIVERSE/state/h276_cascade_dynamics_timing_2026_05_25"
+}
+
+// ── substrate config (pre-registered) ─────────────────────────────────────────
+// N cells on a periodic ring. Φ measured via phi_spatial with the lane-canonical
+// dim (life_phi_dim = 12, from phi_helper). N = life_phi_n (16) so phi_spatial
+// receives the canonical (16 × 12) lattice.
+fn _N() -> int          { return 16 }       // == life_phi_n(); ring length
+fn _max_steps() -> int  { return 40 }       // H_262 horizon (verbatim)
+fn _leak() -> float     { return 0.05 }     // H_262 leak (verbatim)
+fn _up_thr() -> float   { return 1.0 }      // H_262 ON-latch (verbatim)
+fn _dn_thr() -> float   { return 0.4 }      // H_262 OFF-latch (verbatim)
+fn _coupling() -> float { return 0.20 }     // H_262 cooperative boost (verbatim)
+fn _base() -> float     { return 0.012 }    // intrinsic drive (calibrated: alone
+                                            // it does NOT reach up_thr within the
+                                            // horizon — cascade needs the boost)
+fn _q_thr() -> float    { return 0.30 }     // H_262 cascade-relevant q_thr (verbatim)
+fn _radius() -> int     { return 1 }        // local-quorum neighbourhood radius
+fn _front_cap() -> int  { return 3 }        // C2 finite-speed cap (cells/step)
+fn _phi_dim() -> int    { return 12 }       // == life_phi_dim(); Φ trajectory window
+
+// C1 density sweep — contiguous ON-block sizes (counts of ON cells out of N=16).
+fn _rho1() -> int { return 2 }
+fn _rho2() -> int { return 4 }
+fn _rho3() -> int { return 6 }
+fn _rho4() -> int { return 8 }
+
+
+// ── helpers ───────────────────────────────────────────────────────────────────
+fn to_float(x: int) -> float { return x * 1.0 }
+fn _bool_str(b: bool) -> string { if b { return "true" }; return "false" }
+fn _verdict_str(b: bool) -> string { if b { return "PASS" }; return "FAIL" }
+
+fn _abs_i(x: int) -> int { if x < 0 { return 0 - x }; return x }
+
+fn _int_arr_json(arr) -> string {
+    let n = len(arr)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(arr[i])
+        i = i + 1
+    }
+    return out + "]"
+}
+
+fn _float_arr_json(arr) -> string {
+    let n = len(arr)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(arr[i])
+        i = i + 1
+    }
+    return out + "]"
+}
+
+fn _zero_int_vec(n: int) {
+    let mut a = []
+    let mut i = 0
+    while i < n { a.push(0); i = i + 1 }
+    return a
+}
+
+fn _zero_float_vec(n: int) {
+    let mut a = []
+    let mut i = 0
+    while i < n { a.push(0.0); i = i + 1 }
+    return a
+}
+
+// ring-periodic local quorum: mean active state in [i-r, i+r].
+fn _local_q(state, i: int, n: int, r: int) -> float {
+    let mut s = 0.0
+    let mut cnt = 0
+    let mut k = 0 - r
+    while k <= r {
+        let idx = ((i + k) % n + n) % n
+        s = s + to_float(state[idx])
+        cnt = cnt + 1
+        k = k + 1
+    }
+    if cnt == 0 { return 0.0 }
+    return s / to_float(cnt)
+}
+
+// global active fraction Q = mean(state).
+fn _global_q(state, n: int) -> float {
+    let mut s = 0
+    let mut i = 0
+    while i < n { s = s + state[i]; i = i + 1 }
+    return to_float(s) / to_float(n)
+}
+
+// seed-phased initial activation in [0.1, 0.5] (deterministic; H_270-style,
+// NO RNG). cell i seeded ON gets a head-start activation above up_thr so its
+// state latches ON at t=0; others get a small sub-threshold activation.
+fn _seed_init_act(i: int, on: bool) -> float {
+    if on {
+        return 1.2   // > up_thr (1.0) → latches ON immediately
+    }
+    let phase = (i * 37) % 64
+    let f = (to_float((phase) % 64) + 1.0) / 65.0
+    return f * 0.18 + 0.06   // in [0.06, 0.24], sub-threshold
+}
+
+
+// ── core cascade integrator ───────────────────────────────────────────────────
+// seed_mode 0 = CONTIGUOUS block of `n_on` ON cells starting at index 0 (C1).
+// seed_mode 1 = SINGLE block of `n_on` ON cells centred at N/2 (C2 front probe).
+// records, per step: Q(t), front radius R(t) (max active distance from seed
+// centre), and a per-cell observable trajectory (active fraction history flattened
+// into the (N × dim) phi_spatial lattice for the Φ window).
+fn _run_cascade(n_on: int, seed_mode: int) {
+    let n = _N()
+    let dim = _phi_dim()
+    let max_steps = _max_steps()
+    let base = _base()
+    let leak = _leak()
+    let up = _up_thr()
+    let dn = _dn_thr()
+    let coupling = _coupling()
+    let q_thr = _q_thr()
+    let r = _radius()
+
+    let centre = if seed_mode == 1 { n / 2 } else { 0 }
+
+    let mut act = _zero_float_vec(n)
+    let mut state = _zero_int_vec(n)
+
+    // ── seed the ring ──
+    let mut i = 0
+    while i < n {
+        let mut on = false
+        if seed_mode == 1 {
+            // single block centred at N/2 spanning n_on cells.
+            let lo = centre - n_on / 2
+            if i >= lo { if i < lo + n_on { on = true } }
+        } else {
+            // contiguous block [0, n_on).
+            if i < n_on { on = true }
+        }
+        act[i] = _seed_init_act(i, on)
+        if on { state[i] = 1 }
+        i = i + 1
+    }
+
+    let mut q_series = []
+    let mut front_series = []
+    // phi lattice: flat (N × dim) farr — site s, time-window t → states[s*dim+t].
+    let phi_states = farr_zeros(n * dim)
+
+    let mut onset_step = -1          // first step Q >= 0.5 (majority)
+    let mut trigger_step = -1        // first step Q > q_thr (cascade trigger)
+    let mut max_front_step = 0       // max single-step front growth (finite speed)
+    let mut front_monotone = true    // R(t) non-decreasing?
+    let mut prev_front = -1
+    let mut q_monotone_after_trigger = true
+    let mut prev_q_after = -1.0
+
+    let mut step = 0
+    while step < max_steps {
+        // record observable for the phi window (first `dim` steps).
+        if step < dim {
+            let mut s = 0
+            while s < n {
+                let _ = farr_set(phi_states, s * dim + step, act[s])
+                s = s + 1
+            }
+        }
+
+        // current global quorum + front radius (BEFORE this step's update,
+        // i.e. on the latched states produced by the prior step / seed).
+        let q_now = _global_q(state, n)
+        q_series.push(q_now)
+
+        // front radius = max ring-distance from `centre` over active cells.
+        let mut front = 0
+        let mut c = 0
+        while c < n {
+            if state[c] == 1 {
+                let raw = _abs_i(c - centre)
+                let dist = if raw > n - raw { n - raw } else { raw }
+                if dist > front { front = dist }
+            }
+            c = c + 1
+        }
+        front_series.push(front)
+        if prev_front >= 0 {
+            let grow = front - prev_front
+            if grow < 0 { front_monotone = false }
+            if grow > max_front_step { max_front_step = grow }
+        }
+        prev_front = front
+
+        // onset / trigger bookkeeping.
+        if trigger_step < 0 { if q_now > q_thr { trigger_step = step } }
+        if onset_step < 0 { if q_now >= 0.5 { onset_step = step } }
+
+        // monotone-unfolding check (only AFTER trigger).
+        if trigger_step >= 0 {
+            if prev_q_after >= 0.0 {
+                if q_now + 1.0e-9 < prev_q_after { q_monotone_after_trigger = false }
+            }
+            prev_q_after = q_now
+        }
+
+        // ── activation update (local-quorum-gated boost) ──
+        let mut new_act = _zero_float_vec(n)
+        let mut new_state = _zero_int_vec(n)
+        let mut j = 0
+        while j < n {
+            let lq = _local_q(state, j, n, r)
+            let mut boost = 0.0
+            if lq > q_thr { boost = coupling }
+            let a_new = act[j] + base + boost - leak * act[j]
+            new_act[j] = a_new
+            // hysteretic latch (H_262 verbatim).
+            if a_new > up {
+                new_state[j] = 1
+            } else {
+                if a_new < dn { new_state[j] = 0 } else { new_state[j] = state[j] }
+            }
+            j = j + 1
+        }
+        act = new_act
+        state = new_state
+        step = step + 1
+    }
+
+    // final Q + cascade outcome.
+    let q_final = _global_q(state, n)
+    let switched = onset_step >= 0
+
+    // ── Φ trajectory peak (lane-canonical proxy on the recorded window) ──
+    // phi_spatial of the (N × dim) recorded activation lattice = the integrated
+    // information of the cascade's spatio-temporal pattern.
+    let phi_traj = phi_with(phi_states, n, dim, life_phi_nbins())
+    let _ = farr_free(phi_states)
+
+    // C2 front metrics over the front_series.
+    let mut max_front = 0
+    let mut k = 0
+    while k < len(front_series) {
+        if front_series[k] > max_front { max_front = front_series[k] }
+        k = k + 1
+    }
+    // max_front_growth = farthest the front ever reached minus the seed half-width.
+    let seed_half = n_on / 2
+    let max_front_growth = max_front - seed_half
+
+    return #{
+        "n_on":               n_on,
+        "seed_mode":          seed_mode,
+        "onset_step":         onset_step,
+        "trigger_step":       trigger_step,
+        "q_final":            q_final,
+        "switched":           switched,
+        "q_series":           q_series,
+        "front_series":       front_series,
+        "max_front":          max_front,
+        "max_front_growth":   max_front_growth,
+        "max_front_step":     max_front_step,
+        "front_monotone":     front_monotone,
+        "q_monotone_after_trigger": q_monotone_after_trigger,
+        "phi_traj":           phi_traj
+    }
+}
+
+
+// effective latency: non-onset (onset_step<0) maps to horizon+1 (latest), so a
+// mixed onset/non-onset sweep is still well-ordered for the C1 monotone test.
+fn _eff_latency(r) -> int {
+    let s = r["onset_step"]
+    if s < 0 { return _max_steps() + 1 }
+    return s
+}
+
+
+fn main() {
+    println("================================================================")
+    println("H_276 quorum-cascade DYNAMICS / TIMING deep-dive")
+    println("  lineage: H_262 quorum-sensing (SUPPORTED_FULL) · H_274 timing residual")
+    println("  substrate: 1D periodic CA cascade (RFC 036 phi_spatial / phi_helper)")
+    println("  N=" + to_string(_N()) + " max_steps=" + to_string(_max_steps())
+            + " base=" + to_string(_base()) + " leak=" + to_string(_leak())
+            + " coupling=" + to_string(_coupling()) + " q_thr=" + to_string(_q_thr())
+            + " radius=" + to_string(_radius()))
+    println("  Φ primitive: RFC 036 phi_spatial (n_bins=" + to_string(life_phi_nbins())
+            + ", dim=" + to_string(_phi_dim()) + ") — 🟢 NUMERICAL")
+    println("================================================================")
+
+    // ── C1: onset latency vs seed density (contiguous block sweep) ──────────
+    let d1 = _run_cascade(_rho1(), 0)
+    let d2 = _run_cascade(_rho2(), 0)
+    let d3 = _run_cascade(_rho3(), 0)
+    let d4 = _run_cascade(_rho4(), 0)
+
+    let l1 = _eff_latency(d1)
+    let l2 = _eff_latency(d2)
+    let l3 = _eff_latency(d3)
+    let l4 = _eff_latency(d4)
+
+    println("")
+    println("── C1 onset-latency vs seed-density (contiguous ON-block) ──")
+    println("  ρ (ON cells)   onset_step   eff_latency   q_final   switched")
+    println("  " + to_string(_rho1()) + "/16          " + to_string(d1["onset_step"])
+            + "            " + to_string(l1) + "           " + to_string(d1["q_final"])
+            + "      " + _bool_str(d1["switched"]))
+    println("  " + to_string(_rho2()) + "/16          " + to_string(d2["onset_step"])
+            + "            " + to_string(l2) + "           " + to_string(d2["q_final"])
+            + "      " + _bool_str(d2["switched"]))
+    println("  " + to_string(_rho3()) + "/16          " + to_string(d3["onset_step"])
+            + "            " + to_string(l3) + "           " + to_string(d3["q_final"])
+            + "      " + _bool_str(d3["switched"]))
+    println("  " + to_string(_rho4()) + "/16          " + to_string(d4["onset_step"])
+            + "            " + to_string(l4) + "           " + to_string(d4["q_final"])
+            + "      " + _bool_str(d4["switched"]))
+
+    let any_onset = d1["switched"] || d2["switched"] || d3["switched"] || d4["switched"]
+    let latency_monotone = (l1 >= l2) && (l2 >= l3) && (l3 >= l4)
+    let c1 = latency_monotone && any_onset
+
+    println("  latency monotone non-increasing in ρ (l1>=l2>=l3>=l4): " + _bool_str(latency_monotone))
+    println("  >=1 density onsets: " + _bool_str(any_onset))
+    println("  C1 ONSET-LATENCY-vs-DENSITY: " + _verdict_str(c1))
+
+    // ── C2: finite propagation speed (single seed block, front probe) ──────
+    // use the smallest seed that still cascades for the cleanest front (ρ4 dense
+    // seed centred; if it cascades, the front advances outward over time).
+    let fp = _run_cascade(_rho4(), 1)
+    let front_grow_ok = fp["max_front_growth"] >= 1
+    let front_finite  = fp["max_front_step"] <= _front_cap()
+    let c2 = fp["front_monotone"] && front_grow_ok && front_finite
+
+    println("")
+    println("── C2 propagation finite-speed (single seed centred at N/2) ──")
+    println("  front_series R(t) = " + _int_arr_json(fp["front_series"]))
+    println("  front monotone non-decreasing: " + _bool_str(fp["front_monotone"]))
+    println("  max front growth (>=1): " + to_string(fp["max_front_growth"]))
+    println("  max single-step front growth (<=" + to_string(_front_cap()) + "): "
+            + to_string(fp["max_front_step"]))
+    println("  C2 PROPAGATION-FINITE-SPEED: " + _verdict_str(c2))
+
+    // ── C3: monotone temporal unfolding (one-way ratchet after trigger) ────
+    // check on every cascading density arm (the cascade must never retreat).
+    let m1 = (!d1["switched"]) || d1["q_monotone_after_trigger"]
+    let m2 = (!d2["switched"]) || d2["q_monotone_after_trigger"]
+    let m3 = (!d3["switched"]) || d3["q_monotone_after_trigger"]
+    let m4 = (!d4["switched"]) || d4["q_monotone_after_trigger"]
+    let c3 = m1 && m2 && m3 && m4 && any_onset
+
+    println("")
+    println("── C3 monotone temporal unfolding (Q non-decreasing after trigger) ──")
+    println("  ρ" + to_string(_rho1()) + " monotone-after-trigger: " + _bool_str(d1["q_monotone_after_trigger"]))
+    println("  ρ" + to_string(_rho2()) + " monotone-after-trigger: " + _bool_str(d2["q_monotone_after_trigger"]))
+    println("  ρ" + to_string(_rho3()) + " monotone-after-trigger: " + _bool_str(d3["q_monotone_after_trigger"]))
+    println("  ρ" + to_string(_rho4()) + " monotone-after-trigger: " + _bool_str(d4["q_monotone_after_trigger"]))
+    println("  C3 MONOTONE-UNFOLDING: " + _verdict_str(c3))
+
+    // ── additive falsifiers (honesty-triad) ────────────────────────────────
+    // F4 DETERMINISM: in-process re-run byte-equal + cross-process via det.txt.
+    let d4b = _run_cascade(_rho4(), 0)
+    let det_in_proc = (d4b["q_final"] == d4["q_final"])
+                      && (d4b["onset_step"] == d4["onset_step"])
+                      && (d4b["phi_traj"] == d4["phi_traj"])
+
+    // F5 BOUNDS: all Q in [0,1], all latency in [-1, max_steps], front in [0, N/2].
+    let mut bounds_ok = true
+    if d1["q_final"] < 0.0 { bounds_ok = false }
+    if d1["q_final"] > 1.0 { bounds_ok = false }
+    if d4["q_final"] < 0.0 { bounds_ok = false }
+    if d4["q_final"] > 1.0 { bounds_ok = false }
+    if d1["onset_step"] < (0 - 1) { bounds_ok = false }
+    if d4["onset_step"] >= _max_steps() { bounds_ok = false }
+    if fp["max_front"] > _N() / 2 { bounds_ok = false }
+    if fp["max_front"] < 0 { bounds_ok = false }
+
+    // F6 PHI-NONTRIVIAL: cascade trajectory has a non-zero phi_spatial value
+    // (the collective transition carries integrated information; a trivial
+    // independent flip would give Φ≈0).
+    let phi_nontrivial = (d4["phi_traj"] > 0.0)
+
+    let f4 = det_in_proc
+    let f5 = bounds_ok
+    let f6 = phi_nontrivial
+
+    // ── verdict ─────────────────────────────────────────────────────────────
+    let verdict = if c1 && c2 && c3 && f4 {
+        "SUPPORTED_FULL"
+    } else {
+        if c1 && c3 {
+            "SUPPORTED"
+        } else {
+            if c1 { "PARTIAL" } else { "FALSIFIED" }
+        }
+    }
+
+    let mut n_c = 0
+    if c1 { n_c = n_c + 1 }
+    if c2 { n_c = n_c + 1 }
+    if c3 { n_c = n_c + 1 }
+
+    let mut n_f = 0
+    if c1 { n_f = n_f + 1 }
+    if c2 { n_f = n_f + 1 }
+    if c3 { n_f = n_f + 1 }
+    if f4 { n_f = n_f + 1 }
+    if f5 { n_f = n_f + 1 }
+    if f6 { n_f = n_f + 1 }
+
+    println("")
+    println("phi trajectory (cascade window, ρ4 contiguous): " + to_string(d4["phi_traj"]))
+    println("")
+    println("C1 ONSET-LATENCY-vs-DENSITY (τ(ρ) non-increasing)  : " + _bool_str(c1))
+    println("C2 PROPAGATION-FINITE-SPEED (front monotone+finite) : " + _bool_str(c2))
+    println("C3 MONOTONE-UNFOLDING (Q non-decr after trigger)    : " + _bool_str(c3))
+    println("")
+    println("F1 ONSET-DENSITY   " + _verdict_str(c1))
+    println("F2 PROPAGATION     " + _verdict_str(c2))
+    println("F3 MONOTONE        " + _verdict_str(c3))
+    println("F4 DETERMINISM     " + _verdict_str(f4))
+    println("F5 BOUNDS          " + _verdict_str(f5))
+    println("F6 PHI-NONTRIVIAL  " + _verdict_str(f6))
+    println("================================================================")
+    println("VERDICT: " + verdict + "  (" + to_string(n_c) + "/3 criteria, "
+            + to_string(n_f) + "/6 falsifiers PASS)")
+    println("================================================================")
+
+    // ── result.json (RELATIVE path) ─────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"id\": \"H_276\",\n"
+    j = j + "  \"slug\": \"cascade-dynamics-timing\",\n"
+    j = j + "  \"domain\": \"LIFE\",\n"
+    j = j + "  \"title\": \"quorum-cascade dynamics/timing deep-dive — how the collective cascade unfolds over time (onset latency vs density · propagation finite-speed · monotone temporal unfolding) on the RFC 036 phi_spatial CA substrate (H_262 depth)\",\n"
+    j = j + "  \"date\": \"2026-05-25\",\n"
+    j = j + "  \"host\": \"mac-local\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"honest_tier\": \"🟢 SUPPORTED-NUMERICAL (phi_spatial proxy + deterministic CA cascade timing sweep; NOT 🔵 formal IIT 4.0)\",\n"
+    j = j + "  \"phi_primitive\": \"RFC 036 phi_spatial (n_bins=" + to_string(life_phi_nbins()) + ", dim=" + to_string(_phi_dim()) + "); lib/phi_helper.hexa lane-canonical\",\n"
+    j = j + "  \"lineage\": \"H_262 quorum-sensing (SUPPORTED_FULL, global quorum-gate) → H_274 seed-dependence (FALSIFIED, residual = dynamical cascade timing) → H_276 opens the timing axis directly\",\n"
+    j = j + "  \"substrate\": \"1D periodic CA ring (N=" + to_string(_N()) + "); per-cell hysteretic latch (up=" + to_string(_up_thr()) + " dn=" + to_string(_dn_thr()) + ", H_262 verbatim) driven by a LOCAL-quorum-gated cooperative boost (boost=coupling when local active-fraction in radius-" + to_string(_radius()) + " neighbourhood exceeds q_thr=" + to_string(_q_thr()) + "); seed-phased deterministic init, ZERO RNG\",\n"
+    j = j + "  \"config\": { \"N\": " + to_string(_N()) + ", \"max_steps\": " + to_string(_max_steps())
+          + ", \"base\": " + to_string(_base()) + ", \"leak\": " + to_string(_leak())
+          + ", \"up_thr\": " + to_string(_up_thr()) + ", \"dn_thr\": " + to_string(_dn_thr())
+          + ", \"coupling\": " + to_string(_coupling()) + ", \"q_thr\": " + to_string(_q_thr())
+          + ", \"radius\": " + to_string(_radius()) + ", \"front_cap\": " + to_string(_front_cap())
+          + ", \"phi_dim\": " + to_string(_phi_dim()) + ", \"n_bins\": " + to_string(life_phi_nbins())
+          + ", \"density_sweep\": " + _int_arr_json([_rho1(), _rho2(), _rho3(), _rho4()]) + " },\n"
+    j = j + "  \"C1_onset_latency_vs_density\": {\n"
+    j = j + "    \"density_sweep\": " + _int_arr_json([_rho1(), _rho2(), _rho3(), _rho4()]) + ",\n"
+    j = j + "    \"onset_step\":    " + _int_arr_json([d1["onset_step"], d2["onset_step"], d3["onset_step"], d4["onset_step"]]) + ",\n"
+    j = j + "    \"eff_latency\":   " + _int_arr_json([l1, l2, l3, l4]) + ",\n"
+    j = j + "    \"q_final\":       " + _float_arr_json([d1["q_final"], d2["q_final"], d3["q_final"], d4["q_final"]]) + ",\n"
+    j = j + "    \"switched\":      [" + _bool_str(d1["switched"]) + ", " + _bool_str(d2["switched"]) + ", " + _bool_str(d3["switched"]) + ", " + _bool_str(d4["switched"]) + "],\n"
+    j = j + "    \"latency_monotone\": " + _bool_str(latency_monotone) + ",\n"
+    j = j + "    \"any_onset\": " + _bool_str(any_onset) + ",\n"
+    j = j + "    \"verdict\": \"" + _verdict_str(c1) + "\"\n"
+    j = j + "  },\n"
+    j = j + "  \"C2_propagation_finite_speed\": {\n"
+    j = j + "    \"seed_mode\": \"single block centred at N/2\",\n"
+    j = j + "    \"front_series\": " + _int_arr_json(fp["front_series"]) + ",\n"
+    j = j + "    \"front_monotone\": " + _bool_str(fp["front_monotone"]) + ",\n"
+    j = j + "    \"max_front\": " + to_string(fp["max_front"]) + ",\n"
+    j = j + "    \"max_front_growth\": " + to_string(fp["max_front_growth"]) + ",\n"
+    j = j + "    \"max_front_step\": " + to_string(fp["max_front_step"]) + ",\n"
+    j = j + "    \"front_cap\": " + to_string(_front_cap()) + ",\n"
+    j = j + "    \"verdict\": \"" + _verdict_str(c2) + "\"\n"
+    j = j + "  },\n"
+    j = j + "  \"C3_monotone_unfolding\": {\n"
+    j = j + "    \"q_series_rho4\": " + _float_arr_json(d4["q_series"]) + ",\n"
+    j = j + "    \"trigger_step_rho4\": " + to_string(d4["trigger_step"]) + ",\n"
+    j = j + "    \"monotone_after_trigger\": [" + _bool_str(d1["q_monotone_after_trigger"]) + ", " + _bool_str(d2["q_monotone_after_trigger"]) + ", " + _bool_str(d3["q_monotone_after_trigger"]) + ", " + _bool_str(d4["q_monotone_after_trigger"]) + "],\n"
+    j = j + "    \"verdict\": \"" + _verdict_str(c3) + "\"\n"
+    j = j + "  },\n"
+    j = j + "  \"phi_trajectory_rho4\": " + to_string(d4["phi_traj"]) + ",\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_onset_latency\": { \"verdict\": \"" + _verdict_str(c1) + "\" },\n"
+    j = j + "    \"C2_propagation\":   { \"verdict\": \"" + _verdict_str(c2) + "\" },\n"
+    j = j + "    \"C3_monotone\":      { \"verdict\": \"" + _verdict_str(c3) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F1_ONSET_DENSITY\":  { \"metric\": \"onset latency monotone non-increasing in seed density AND >=1 density onsets\", \"verdict\": \"" + _verdict_str(c1) + "\" },\n"
+    j = j + "    \"F2_PROPAGATION\":    { \"metric\": \"single-seed front monotone non-decreasing, grows >=1, max step <= front_cap (finite speed)\", \"verdict\": \"" + _verdict_str(c2) + "\" },\n"
+    j = j + "    \"F3_MONOTONE\":       { \"metric\": \"Q(t) non-decreasing for all t after cascade trigger (one-way temporal ratchet)\", \"verdict\": \"" + _verdict_str(c3) + "\" },\n"
+    j = j + "    \"F4_DETERMINISM\":    { \"metric\": \"re-run byte-equal (in-process + cross-process via det.txt)\", \"verdict\": \"" + _verdict_str(f4) + "\" },\n"
+    j = j + "    \"F5_BOUNDS\":         { \"metric\": \"all Q in [0,1], latency in [-1,max_steps), front in [0,N/2]\", \"verdict\": \"" + _verdict_str(f5) + "\" },\n"
+    j = j + "    \"F6_PHI_NONTRIVIAL\": { \"metric\": \"cascade trajectory phi_spatial > 0 (integrated collective transition)\", \"verdict\": \"" + _verdict_str(f6) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"n_criteria_pass\": " + to_string(n_c) + ",\n"
+    j = j + "  \"n_falsifier_pass\": " + to_string(n_f) + ",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"verdict_rule\": \"SUPPORTED_FULL iff C1 AND C2 AND C3 AND F4; SUPPORTED iff C1 AND C3; PARTIAL iff C1 only; FALSIFIED iff NOT C1\",\n"
+    j = j + "  \"honest_limits\": [\n"
+    j = j + "    \"L1: phi_spatial = 🟢 NUMERICAL spatial-slice replica of phi_rs, NOT full IIT 4.0 (RFC 036 §FFI shim named blocker). The Φ trajectory locates integrated information but is a proxy, carried verbatim from the LIFE-lane lib/phi_helper.hexa.\",\n"
+    j = j + "    \"L2: timing is measured on a SINGLE calibration (base=" + to_string(_base()) + ", coupling=" + to_string(_coupling()) + ", q_thr=" + to_string(_q_thr()) + ", radius=" + to_string(_radius()) + "). Onset-latency ordering and front speed are calibration-dependent: a higher base would let cells reach up_thr without the boost (no quorum-gate), and a larger radius would shrink the front-propagation regime toward an instantaneous global flip.\",\n"
+    j = j + "    \"L3: the CA cascade is a LOCAL-quorum SPATIAL generalization of H_262's GLOBAL quorum (each cell sees its radius-" + to_string(_radius()) + " neighbourhood, not the whole pool). This is the design choice that MAKES propagation finite-speed (C2) meaningful; it is a deliberate substrate extension, not a byte-equal carry of H_262's global gate.\",\n"
+    j = j + "    \"L4: onset latency is measured at the majority crossing Q>=0.5 and the density sweep is COARSE (4 contiguous block sizes 2/4/6/8 of N=16). A finer density grid could reveal a non-monotone micro-structure between adjacent densities that the coarse grid averages over; the monotone claim is at this grid resolution.\",\n"
+    j = j + "    \"L5: front radius is the ring-distance of the FARTHEST active cell from the seed centre; it measures the OUTER envelope of propagation, not a filled-front guarantee (interior cells may lag). C2 finite-speed is an envelope-speed claim. A filled-front (every interior cell active behind the front) claim would need a per-cell ignition-time map.\",\n"
+    j = j + "    \"L6: monotone-unfolding (C3) is checked AFTER the cascade trigger (Q first exceeds q_thr); the pre-trigger transient may be non-monotone (the seed block + leak can dip before the boost engages). C3 is a post-trigger ratchet claim, not a global-monotone claim over all t.\",\n"
+    j = j + "    \"L7: determinism is integer-exact (NO RNG, seed-phased init), so F4 is byte-equal BY CONSTRUCTION on this substrate — a stronger guarantee than H_262/H_274's cross-process gaussian-stream determinism, but it tests determinism of THIS substrate only, not the gaussian-stream path those cycles relied on.\"\n"
+    j = j + "  ],\n"
+    j = j + "  \"cross_link\": { \"H_262\": \"quorum-sensing (cascade origin, global quorum-gate, SUPPORTED_FULL)\", \"H_274\": \"quorum-cascade seed-dependence (FALSIFIED, residual = dynamical cascade timing — the axis H_276 opens)\", \"H_270\": \"substrate ablation (phi_spatial CA substrate sibling)\", \"H_207\": \"kuramoto synchronization (temporal-dynamics sister)\" }\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result.json", j)
+
+    // ── determinism artifact (cross-process compare seed) ───────────────────
+    let mut det = "H_276 determinism fingerprint (re-run byte-equal compare)\n"
+    det = det + "q_final_rho4 " + to_string(d4["q_final"]) + "\n"
+    det = det + "onset_rho4 " + to_string(d4["onset_step"]) + "\n"
+    det = det + "phi_traj_rho4 " + to_string(d4["phi_traj"]) + "\n"
+    det = det + "front_series " + _int_arr_json(fp["front_series"]) + "\n"
+    det = det + "in_process_byte_equal " + _bool_str(det_in_proc) + "\n"
+    write_file(_state_dir() + "/det.txt", det)
+
+    println("")
+    println("result.json -> " + _state_dir() + "/result.json")
+    println("det.txt     -> " + _state_dir() + "/det.txt")
+    println("=== H_276 cascade-dynamics-timing smoke complete: " + verdict + " ===")
+}

@@ -1,7 +1,7 @@
 # R8a'' × R8c Joint Verdict — fill-in TEMPLATE (R8 saga 통합 closure)
 
 > path = V3 (PURE, R8 cluster) · status = **PRE-FIRE TEMPLATE** · R8a'' 결과 ~3hr 후 도착 시 fill-in 하여 → `R8A2_JOINT_VERDICT_2026_05_24.md` rename + commit
-> linked: `R8C_PROBE_VERDICT_2026_05_24.md` (4-cell probe verdict, merged PR #374) · `HEXAD/LIFE/H_255_init_ce_floor_is_measurement_artifact.md` (H_255 sister) · `R8_SAGA_FINAL_TEMPLATE.md` (3-branch decision tree 원본)
+> linked: `R8C_PROBE_VERDICT_2026_05_24.md` (4-cell probe verdict, merged PR #374) · `UNIVERSE/H_255_init_ce_floor_is_measurement_artifact.md` (H_255 sister) · `R8_SAGA_FINAL_TEMPLATE.md` (3-branch decision tree 원본)
 >
 > 본 template 의 모든 `<TBD>` 셀은 **placeholder** 다. R8a'' 결과 도착 전까지 conclusion / verdict 작성 금지.
 

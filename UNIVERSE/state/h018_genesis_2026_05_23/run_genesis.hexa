@@ -1,0 +1,251 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_genesis.hexa — H_018 GENESIS spontaneous emergence smoke (raw#12)
+//
+//  QUESTION
+//    minimal primordial cell pool (2 cells, random init) 을 외부 입력 없이
+//    substrate 동역학으로 step 했을 때, spontaneous split (self-genesis) 가
+//    fire 하는가? 아니면 static (외부 에너지 필요) 인가?
+//
+//  3 CONDITIONS (모두 동일 primordial init: d=8, 2 cells, seed=42)
+//    A. ZERO     : x_in = const 0-vector — 완전 inert drive (no perturbation).
+//    B. SELFFEED : init 후 외부 입력 0. x_{t+1} = step t 의 combined output.
+//                  primordial init 만이 유일한 perturbation → 순수 self-reference.
+//                  ★ 이것이 "spontaneous self-genesis" 의 operational 정의.
+//    C. DRIVE    : x_in = const non-zero — explicit external drive (control).
+//
+//  PRIMARY METRIC (deterministic)
+//    spontaneous split count + cell-count trajectory + first-split step.
+//    split predicate = (tension > adaptive_thr) ∀ patience steps
+//    (mitosis_hook_lib :: _mit_check_splits). tension = mean((Ax-Gx)^2).
+//
+//  KEY MECHANISM
+//    x_in = 0 → engine_a(0) - engine_g(0) = 0 → tension = 0 → split 안 fire.
+//    Lorenz autonomous chaos (_mit_inject_autonomous_perturbation) 는 cell.hidden
+//    (→ Φ) 만 흔들 뿐, split 을 구동하는 tension 은 흔들지 않음. 따라서
+//    "외부 입력 0 + 내부 상태 0" = static. SELFFEED 는 hidden 의 primordial
+//    init 을 x 로 되먹여 tension 을 비-0 으로 bootstrap → genesis.
+//
+//  DETERMINISM
+//    __HEXA_FARR_GAUSS_SEED__=42 (RFC 033 gaussian) → 결정론적 재현.
+//    HEXA_MEM_UNLIMITED=1 (farr cap 회피).
+//
+//  $0 mac local · hexa-only · LLM none · NO ckpt (순수 substrate 동역학).
+//
+//  FALSIFIERS (pre-registered, ≥5; ledger 의 measurable 값)
+//    F-GEN-1 ZERO-STATIC    : ZERO 조건 split = 0 ∧ final_cells = 2.
+//    F-GEN-2 SELFFEED-GENESIS: SELFFEED split ≥ 1 (spontaneous genesis fired).
+//    F-GEN-3 FIRST-STEP     : SELFFEED first-split step ∈ [1, 30] (bootstrap 가능).
+//    F-GEN-4 DRIVE-CONTROL  : DRIVE split ≥ 1 (machinery 작동 control 확인).
+//    F-GEN-5 ZERO-LT-SELFFEED: ZERO split < SELFFEED split (drive 가 lever).
+//    F-GEN-6 BOUNDS         : 모든 조건 final_cells ∈ [2, 128] (CB1 보존).
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+
+
+// NOTE: run from the worktree root so result.json lands beside this smoke.
+// The import below uses the canonical shared lib path (read-only); the
+// write target is resolved relative to CWD (the worktree).
+fn _state_dir() -> string {
+    return "UNIVERSE/state/h018_genesis_2026_05_23"
+}
+fn _d_model() -> int { return 8 }
+fn _init_cells() -> int { return 2 }
+fn _n_steps() -> int { return 60 }
+fn _drive_const() -> float { return 1.0 }
+
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+fn _const_vec(n: int, v: float) {
+    let mut a = []
+    let mut i = 0
+    while i < n {
+        a.push(v)
+        i = i + 1
+    }
+    return a
+}
+
+// int array → JSON.
+fn _int_arr_json(arr) -> string {
+    let n = len(arr)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(arr[i])
+        i = i + 1
+    }
+    return out + "]"
+}
+
+
+// ── one experimental condition ───────────────────────────────────────────────
+// mode: "zero" | "selffeed" | "drive"
+// returns dict { splits, first, traj (cell-count per step), final_cells }.
+fn _run_condition(mode: string) {
+    let d = _d_model()
+    let mut pool = cell_pool_init(d, _init_cells())
+
+    // initial drive vector per mode.
+    let mut x = _const_vec(d, 0.0)
+    if mode == "drive" {
+        x = _const_vec(d, _drive_const())
+    }
+    if mode == "selffeed" {
+        // primordial seed = cell-0 own initial hidden state (NOT external).
+        x = pool["cells"][0]["hidden"]
+    }
+
+    let mut traj = []
+    let mut total_splits = 0
+    let mut first_split = -1
+    let n = _n_steps()
+    let mut step = 0
+    while step < n {
+        let res = mitosis_forward_tail(x, pool, step)
+        let x_out = res[0]
+        pool = res[1]
+        let evts = res[2]
+
+        // count split events this step.
+        let mut s_this = 0
+        let mut e = 0
+        while e < len(evts) {
+            if to_string(evts[e]["type"]) == "split" {
+                s_this = s_this + 1
+            }
+            e = e + 1
+        }
+        if s_this > 0 {
+            if first_split < 0 { first_split = step }
+            total_splits = total_splits + s_this
+        }
+        traj.push(len(pool["cells"]))
+
+        // self-feed: next input = this step's combined output (no external).
+        if mode == "selffeed" {
+            x = x_out
+        }
+        step = step + 1
+    }
+
+    return #{
+        "mode":        mode,
+        "splits":      total_splits,
+        "first":       first_split,
+        "traj":        traj,
+        "final_cells": len(pool["cells"]),
+        "phi":         pool["phi"]
+    }
+}
+
+
+// ── main ─────────────────────────────────────────────────────────────────────
+
+fn _run_genesis() {
+    println("================================================================")
+    println("H_018 GENESIS spontaneous emergence — substrate self-genesis smoke")
+    println("  d_model=" + to_string(_d_model()) + " init_cells=" + to_string(_init_cells())
+            + " steps=" + to_string(_n_steps()) + " seed=42")
+    println("================================================================")
+
+    let a = _run_condition("zero")
+    println("A ZERO     splits=" + to_string(a["splits"]) + " first=" + to_string(a["first"])
+            + " final_cells=" + to_string(a["final_cells"]) + " phi=" + to_string(a["phi"]))
+
+    let b = _run_condition("selffeed")
+    println("B SELFFEED splits=" + to_string(b["splits"]) + " first=" + to_string(b["first"])
+            + " final_cells=" + to_string(b["final_cells"]) + " phi=" + to_string(b["phi"]))
+
+    let c = _run_condition("drive")
+    println("C DRIVE    splits=" + to_string(c["splits"]) + " first=" + to_string(c["first"])
+            + " final_cells=" + to_string(c["final_cells"]) + " phi=" + to_string(c["phi"]))
+
+    // ── falsifiers ────────────────────────────────────────────────────────────
+    let f1 = (a["splits"] == 0) && (a["final_cells"] == 2)
+    let f2 = (b["splits"] >= 1)
+    let f3 = (b["first"] >= 1) && (b["first"] <= 30)
+    let f4 = (c["splits"] >= 1)
+    let f5 = (a["splits"] < b["splits"])
+    let f6 = (a["final_cells"] >= 2) && (a["final_cells"] <= 128)
+             && (b["final_cells"] >= 2) && (b["final_cells"] <= 128)
+             && (c["final_cells"] >= 2) && (c["final_cells"] <= 128)
+
+    let v1 = if f1 { "PASS" } else { "FAIL" }
+    let v2 = if f2 { "PASS" } else { "FAIL" }
+    let v3 = if f3 { "PASS" } else { "FAIL" }
+    let v4 = if f4 { "PASS" } else { "FAIL" }
+    let v5 = if f5 { "PASS" } else { "FAIL" }
+    let v6 = if f6 { "PASS" } else { "FAIL" }
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if f3 { n_pass = n_pass + 1 }
+    if f4 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+    if f6 { n_pass = n_pass + 1 }
+
+    // verdict_rule: SUPPORTED = F-GEN-2 ∧ F-GEN-5 ∧ F-GEN-1 PASS
+    //               (spontaneous self-genesis fires AND inert substrate stays
+    //                static AND drive is the lever). 6/6 = full.
+    let supported = f1 && f2 && f5
+    let verdict = if (n_pass == 6) { "SUPPORTED_FULL" }
+                  else { if supported { "SUPPORTED" }
+                  else { if (n_pass >= 4) { "PARTIAL" } else { "FALSIFIED" } } }
+
+    // ── result.json ─────────────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"hypothesis\": \"H_018\",\n"
+    j = j + "  \"domain\": \"LIFE\",\n"
+    j = j + "  \"title\": \"GENESIS spontaneous emergence from primordial substrate\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"host\": \"mac-local\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"seed\": 42,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"d_model\": " + to_string(_d_model()) + ",\n"
+    j = j + "  \"init_cells\": " + to_string(_init_cells()) + ",\n"
+    j = j + "  \"n_steps\": " + to_string(_n_steps()) + ",\n"
+    j = j + "  \"conditions\": {\n"
+    j = j + "    \"A_zero\":     { \"drive\": \"const 0-vector (inert)\", \"splits\": " + to_string(a["splits"])
+          + ", \"first_split\": " + to_string(a["first"]) + ", \"final_cells\": " + to_string(a["final_cells"])
+          + ", \"phi\": " + to_string(a["phi"]) + ", \"traj\": " + _int_arr_json(a["traj"]) + " },\n"
+    j = j + "    \"B_selffeed\": { \"drive\": \"primordial-init self-reference (no external)\", \"splits\": " + to_string(b["splits"])
+          + ", \"first_split\": " + to_string(b["first"]) + ", \"final_cells\": " + to_string(b["final_cells"])
+          + ", \"phi\": " + to_string(b["phi"]) + ", \"traj\": " + _int_arr_json(b["traj"]) + " },\n"
+    j = j + "    \"C_drive\":    { \"drive\": \"const non-zero external\", \"splits\": " + to_string(c["splits"])
+          + ", \"first_split\": " + to_string(c["first"]) + ", \"final_cells\": " + to_string(c["final_cells"])
+          + ", \"phi\": " + to_string(c["phi"]) + ", \"traj\": " + _int_arr_json(c["traj"]) + " }\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F_GEN_1_ZERO_STATIC\":     { \"metric\": \"zero splits=0 & final=2\", \"verdict\": \"" + v1 + "\" },\n"
+    j = j + "    \"F_GEN_2_SELFFEED_GENESIS\": { \"metric\": \"selffeed splits>=1\", \"value\": " + to_string(b["splits"]) + ", \"verdict\": \"" + v2 + "\" },\n"
+    j = j + "    \"F_GEN_3_FIRST_STEP\":      { \"metric\": \"selffeed first in [1,30]\", \"value\": " + to_string(b["first"]) + ", \"verdict\": \"" + v3 + "\" },\n"
+    j = j + "    \"F_GEN_4_DRIVE_CONTROL\":   { \"metric\": \"drive splits>=1\", \"value\": " + to_string(c["splits"]) + ", \"verdict\": \"" + v4 + "\" },\n"
+    j = j + "    \"F_GEN_5_ZERO_LT_SELFFEED\": { \"metric\": \"zero.splits < selffeed.splits\", \"verdict\": \"" + v5 + "\" },\n"
+    j = j + "    \"F_GEN_6_BOUNDS\":          { \"metric\": \"all final_cells in [2,128]\", \"verdict\": \"" + v6 + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"n_pass\": " + to_string(n_pass) + ",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\"\n"
+    j = j + "}\n"
+
+    write_file(_state_dir() + "/result.json", j)
+
+    println("")
+    println("F-GEN-1 ZERO-STATIC     " + v1)
+    println("F-GEN-2 SELFFEED-GENESIS " + v2)
+    println("F-GEN-3 FIRST-STEP      " + v3)
+    println("F-GEN-4 DRIVE-CONTROL   " + v4)
+    println("F-GEN-5 ZERO-LT-SELFFEED " + v5)
+    println("F-GEN-6 BOUNDS          " + v6)
+    println("================================================================")
+    println("VERDICT: " + verdict + "  (" + to_string(n_pass) + "/6 falsifiers PASS)")
+    println("================================================================")
+}
+
+
+_run_genesis()

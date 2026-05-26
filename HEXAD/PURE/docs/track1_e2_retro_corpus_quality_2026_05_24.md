@@ -6,7 +6,7 @@
 > input ↔ output 양측 byte-level evidence 로 cross-validate.
 >
 > anchor — input: PR #340 `track1_corpus_quality_2026_05_24.md`
-> · hypothesis: PR #350 `HEXAD/LIFE/H_241.md` + `H_242.md` (v2 amend)
+> · hypothesis: PR #350 `UNIVERSE/H_241.md` + `H_242.md` (v2 amend)
 > · output raw: `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21H_E2_2026_05_23/{heldout_vp21h_v3,vp21h_v3_eval1}.json`
 > · 추출 + scores: `state/pure_track1_e2_retro_2026_05_24/*`
 

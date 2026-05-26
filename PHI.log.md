@@ -4,7 +4,7 @@ Append-only history sister of `PHI.md`. Each entry starts with `## <ISO timestam
 
 ## 2026-05-24T21:00:00Z — cycle 5 · #9 verdict tier canonical promote LAND ⭐️
 
-- [x] PHI canonical verdict SSOT: HEXAD/LIFE/state/phi_verdict_canonical_2026_05_24/verdict_canonical_2026_05_24.md (~153 LoC, 7 §: 하나의 그림 + 3-way 측정 표 + tier 근거 + 22+ H impact + honest_limits ≥6 + next steps + ledger)
+- [x] PHI canonical verdict SSOT: UNIVERSE/state/phi_verdict_canonical_2026_05_24/verdict_canonical_2026_05_24.md (~153 LoC, 7 §: 하나의 그림 + 3-way 측정 표 + tier 근거 + 22+ H impact + honest_limits ≥6 + next steps + ledger)
 - [x] hexa-lang upstream inbox: ~/core/hexa-lang/inbox/notes/rfc_036_c_replica_drift_2026_05_24.md (g59 enforcement · YAML frontmatter slug/kind/filed_from/filed_at/priority/status · ~77 LoC · 5 rule 측정 표 + drift origin 추정 + 4-step proposal + cross-link 9 row)
 - [x] 🔵 SUPPORTED-FORMAL evidence path 본격 활성 — phi_native ↔ Rust phi_rs 5/5 |d| ≤ 1e-12
 - [x] dual-tier reporting canonical — 🔵 vs Rust · 🟢 vs C · 🟠 C vs Rust
@@ -15,7 +15,7 @@ Append-only history sister of `PHI.md`. Each entry starts with `## <ISO timestam
 
 ### Agent E (L1 root cause diagnostic + Rust phi_rs cross-validate) ✅
 
-- [x] `HEXAD/LIFE/state/lib_phi_l1_diagnostic_2026_05_24/diag_l1_binning.hexa` + `diag_summary_2026_05_24.md` + 2 run.txt
+- [x] `UNIVERSE/state/lib_phi_l1_diagnostic_2026_05_24/diag_l1_binning.hexa` + `diag_summary_2026_05_24.md` + 2 run.txt
 - [x] **L1a (step 1 binning)**: 0/40 cells diff vs C f32-cast sim — binary CA 위 step 1 split 없음. spec § L1 prediction "loose confirmed" (binary 입력은 분기 안 보임, 연속 입력 boundary stress 위는 미검증)
 - [x] **L1b (Rust phi_rs oracle, wheel `anima/anima-physics/.venv`)**: 5 rule × 4 step 위
   - hexa phi_native vs Rust phi_rs: 5/5 |d| ≤ 1e-12 (IEEE summation reorder noise · byte-equal modulo reorder)
@@ -25,8 +25,8 @@ Append-only history sister of `PHI.md`. Each entry starts with `## <ISO timestam
 
 ### Agent F (22+ H opt-in A/B audit) ✅ PARTIAL
 
-- [x] `HEXAD/LIFE/state/lib_phi_22h_audit_2026_05_24/audit_phi_22h.hexa` 250 LoC + `audit_2026_05_24.md` 한글 ~120 LoC + `result.json`
-- [x] **22+ H caller 매핑** 6 곳 (40 grep matches across `HEXAD/LIFE/state/*/*.hexa`):
+- [x] `UNIVERSE/state/lib_phi_22h_audit_2026_05_24/audit_phi_22h.hexa` 250 LoC + `audit_2026_05_24.md` 한글 ~120 LoC + `result.json`
+- [x] **22+ H caller 매핑** 6 곳 (40 grep matches across `UNIVERSE/state/*/*.hexa`):
   - H_007: `run_ca_phi.hexa:120` — c_measure_phi
   - H_211: `run_h211.hexa:278,305` — c_measure_phi
   - H_222: `run_h222.hexa:192` — c_measure_phi
@@ -48,7 +48,7 @@ Append-only history sister of `PHI.md`. Each entry starts with `## <ISO timestam
 
 - [!] **사고**: 백그라운드 agent 의 git operation 이 main repo 의 working tree 를 `feat/pure-debt-cleanup` 으로 swap — PHI.md / PHI.log.md / `lib/phi_native.hexa` 손실 (이 branch 에 미존재)
 - [x] **생존**: untracked dir 들 `lib_phi_l1_diagnostic_2026_05_24/` · `lib_phi_22h_audit_2026_05_24/` · `lib_phi_native_verify_2026_05_24/` · `lib/phi_native_spec_2026_05_24.md` 보존 (untracked 는 branch swap 시 working tree 잔류)
-- [x] **recovery**: PHI.md + PHI.log.md = Write 로 재작성 (memory 기반 full state) · `lib/phi_native.hexa` = Agent E 의 worktree `agent-a07653c5889f742f6/HEXAD/LIFE/lib/phi_native.hexa` 에서 copy 예정
+- [x] **recovery**: PHI.md + PHI.log.md = Write 로 재작성 (memory 기반 full state) · `lib/phi_native.hexa` = Agent E 의 worktree `agent-a07653c5889f742f6/UNIVERSE/lib/phi_native.hexa` 에서 copy 예정
 - [ ] **branch 정상화**: main working tree 의 branch 가 원래 세션 branch `docs/lora-vp21m-wave-16-corpus-v12` 또는 새 PHI-dedicated branch 로 복귀 필요 (별도 cycle)
 - [ ] **hexa-lang upstream inbox**: RFC 036 C replica 의 Rust byte-equal claim falsification (5 rule 위 drift 7e-7..5e-6, drift origin runtime.c:7874-7915 step 2-4 의심) → `hexa-lang/inbox/notes/rfc_036_c_replica_drift_2026_05_24.md` 신규 (g59)
 
@@ -72,9 +72,9 @@ Append-only history sister of `PHI.md`. Each entry starts with `## <ISO timestam
 
 ## 2026-05-24T19:20:00Z — cycle 2 · #2 phi_native.hexa + #4 verify harness LAND
 
-- [x] `HEXAD/LIFE/lib/phi_native.hexa` 332 LoC · 7 fn (phi_bin_values · phi_entropy · phi_native_mi_pair · phi_native_spatial · phi_native wrapper · 2 helper)
-- [x] `hexa parse HEXAD/LIFE/lib/phi_native.hexa` → OK (clean)
-- [x] `HEXAD/LIFE/state/lib_phi_native_verify_2026_05_24/verify_phi_native.hexa` 211 LoC · STUB mode 6/6 vacuous PASS (5 rule × byte_equal + 1 determinism)
+- [x] `UNIVERSE/lib/phi_native.hexa` 332 LoC · 7 fn (phi_bin_values · phi_entropy · phi_native_mi_pair · phi_native_spatial · phi_native wrapper · 2 helper)
+- [x] `hexa parse UNIVERSE/lib/phi_native.hexa` → OK (clean)
+- [x] `UNIVERSE/state/lib_phi_native_verify_2026_05_24/verify_phi_native.hexa` 211 LoC · STUB mode 6/6 vacuous PASS (5 rule × byte_equal + 1 determinism)
 - [x] caller surface 정확 — `phi_with(state, n, dim, n_bins)` + `phi_default(state)` 둘 다 phi_helper.hexa SSOT
 - [x] Agent A worktree isolation bypass 관측 (main 에 untracked 로 직접 land) — file 자체는 spec-true (header line-cited)
 - 🔥 **byte-equal 반전 발견** — phi_native(3-cell dim=8) vs **phi_rs Rust oracle** = diff **0.0** (byte-equal) · vs c_measure_phi (C replica) = |8.17e-7| · spec § L1 (C f32-cast 가 hexa 에 부재) 정확 예측 — hexa port 가 C 보다 Rust 에 더 가까움. cycle 4 의 L1 diagnostic 으로 5 rule 위 generalize 완료.
@@ -82,7 +82,7 @@ Append-only history sister of `PHI.md`. Each entry starts with `## <ISO timestam
 
 ## 2026-05-24T19:00:00Z — cycle 1 · #1 spec 추출 LAND
 
-- [x] RFC 036 C replica 4-step pseudo-spec 추출 → `HEXAD/LIFE/lib/phi_native_spec_2026_05_24.md` (357 LoC)
+- [x] RFC 036 C replica 4-step pseudo-spec 추출 → `UNIVERSE/lib/phi_native_spec_2026_05_24.md` (357 LoC)
 - [x] C source 위치 확정: `~/core/hexa-lang/self/runtime.c` L7849-8004 (5 fn)
 - [x] Rust 원본 위치 확정: `anima/phi-rs/src/lib.rs` L22-253
 - [x] 4 step 핵심 수식 line-cited (bin/MI/spatial/scalar)
@@ -94,7 +94,7 @@ Append-only history sister of `PHI.md`. Each entry starts with `## <ISO timestam
 
 - [x] domain rename: `PHI_RS` → `PHI` (Rust suffix `_rs` 제거, hexa-only 정합)
 - [x] scope reframe: Rust cdylib FFI (option A) DROP · hexa-native pure-hexa port (option B) 채택
-- [x] @goal reframe: phi_rs algorithm 의 hexa-native port (HEXAD/LIFE/lib/phi_native.hexa) · byte-equal vs RFC 036 C replica
+- [x] @goal reframe: phi_rs algorithm 의 hexa-native port (UNIVERSE/lib/phi_native.hexa) · byte-equal vs RFC 036 C replica
 - [x] cross-repo coordination 제거 (anima 단일 repo · hexa-lang upstream RFC 084/089 carry only)
 
 ## 2026-05-24T18:00:00Z — meta-domain 생성 (superseded)
