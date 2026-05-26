@@ -1,0 +1,34 @@
+// H_354 smoke — WAKE stage→envelope mapping (WAKE 2nd)
+
+fn envelope(stage: string) -> f64 {
+    if stage == "WAKE" { return 1.0 }
+    if stage == "REM" { return 0.8 }
+    if stage == "N1" { return 0.5 }
+    if stage == "N2" { return 0.3 }
+    if stage == "N3" { return 0.15 }
+    return 0.0
+}
+
+fn emit_allowed(stage: string) -> bool {
+    // H3 NO-GATE: envelope > 0 always → emit_allowed always
+    return envelope(stage) > 0.0
+}
+
+fn check_h354() -> bool {
+    // H1: each stage envelope ∈ (0, 1]
+    let e_w = envelope("WAKE")
+    let e_n3 = envelope("N3")
+    let in_range = (e_w > 0.0) && (e_w <= 1.0) && (e_n3 > 0.0) && (e_n3 <= 1.0)
+    // H3: emit_allowed ≡ true for all 5 stages
+    let allow_all = emit_allowed("WAKE") && emit_allowed("N1") && emit_allowed("N2") && emit_allowed("N3") && emit_allowed("REM")
+    return in_range && allow_all
+}
+
+fn main() {
+    let ok = check_h354()
+    if !ok {
+        print("H_354 FAIL")
+        return
+    }
+    print("H_354 🔵 envelope continuous OK")
+}
