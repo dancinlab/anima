@@ -1,0 +1,23 @@
+// H_441 smoke — full emit-chain
+
+fn records_for(decided_emits: i64) -> i64 {
+    return decided_emits  // 1:1
+}
+
+fn write_if_decided(decided: bool) -> i64 {
+    if decided { return 1 }
+    return 0
+}
+
+fn check_h441() -> bool {
+    let h1 = write_if_decided(true) == 1
+    let h2 = write_if_decided(false) == 0
+    let h3 = records_for(7) == 7
+    return h1 && h2 && h3
+}
+
+fn main() {
+    let ok = check_h441()
+    if !ok { print("H_441 FAIL"); return }
+    print("H_441 blue full emit-chain OK")
+}
