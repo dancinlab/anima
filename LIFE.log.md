@@ -3,6 +3,16 @@
 Append-only history sister of `LIFE.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#25 — 축 A/R5 information: Φ ⊥ Shannon 엔트로피 (포그라운드 단일 라운드)
+
+- [x] `/cycle` 포그라운드 진행 (background fan-out 대신 단일 sequential 라운드, 사용자 "포그라운드진행" 지시) — 격리 worktree `life/cycle-fg-2026-05-26` @ origin/main (stale 워킹트리 차이 reconcile 선행: cycle#22-24 차이 확인)
+- [x] **H_287 shannon-entropy-Φ-correlate** 🔴 CLOSED-NEGATIVE (`HEXAD/LIFE/state/h287_shannon_entropy_phi_correlate_2026_05_26/`, gate 11/11 PASS) — AXES R5(information) rank-2 seed 소비
+- [x] **발견**: faithful big-Φ 는 Shannon 엔트로피로 **환원되지 않음** (10-룰 ECA panel Pearson r=0.363 < 0.5 → 환원가설 H1 기각). **이중 dissociation**: (i) 항등규칙 204·complement 51 = 출력엔트로피 *최대*(4.0bit, 완전 단사)인데 big-Φ=0(셀 독립) — 정보 최대/통합 제로 witness; (ii) 반대로 최고 통합 rule60(Φ_mean=13.625)은 엔트로피 *sub-max*(3.0bit). H=4.0 고정 영역에서 Φ 가 0→5.6 vertical spread = 단조관계 부재. **정보는 통합의 필요조건이나 충분조건 아님** — IIT 토대 구별이 LIFE lane 자기 substrate 에서 결정적 확증
+- [x] "X ⊥ Φ" 서명 계열(H_265 학습 dampen · H_275 cyclic<undir · H_279 attention)에 가장 근본적인 X = **Shannon 엔트로피** 추가. H_281 과 동일 substrate panel (110/30/54 vs 150/105 + 204/0 anchor)에 엔트로피 축 직교 검정
+- [x] engine 재사용 (g61): `HEXAD/IIT4/lib` 의 `eca_tpm`+`big_phi`(via stdlib/consciousness) — 새 IIT4 코드 0줄. 엔트로피·Pearson 은 generic stat inline. 실행 = `cd hexa-lang && HEXA_LANG=… HEXA_MEM_UNLIMITED=1 hexa run <worktree-abs>` (parent inline, throttle 우회)
+- [x] surface 갱신: README 99→100 H disk + H_287 행 · AXES R5 seed row 제거(consumed) + top-15 rank-2 strikethrough · LIFE.log(본 엔트리)
+- [ ] Next: (a) n≤8 scale-up dissociation robustness · (b) 256-룰 전수 panel r 구간 · (c) transfer-entropy / 정상상태 엔트로피 대체 측도 재현 (H_287 L2)
+
 ## 2026-05-26 — 축 B large-N bounded big-Φ (M13, GPU fire 취소 후 $0 도달)
 
 - [x] 사용자 "B축 GPU fire" 지시 → **scope-check 가 발사 차단** ([[feedback-scope-check-before-cost-fire]] 3번째): DESIGN.md 상 large-N exact=super-exp **GPU-immune** + bounded 근사=$0 CPU(M12 이미 n=6). GPU 파드는 lever 아님 → 권장 "$0 background bounded n=7/8" 로 전환(사용자 "권장" 승인)

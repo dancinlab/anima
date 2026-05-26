@@ -101,7 +101,6 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 
 | slug | hypothesis | falsifier | tag |
 |------|------------|-----------|-----|
-| `shannon-entropy-Φ-correlate` | Shannon H × Φ Pearson r ≥ 0.5 across substrates | uncorrelated | 🟢 |
 | `kolmogorov-complexity-Φ` | K-complexity (compressed length proxy) ↔ Φ monotone | inverted | 🟢 |
 | `formal-language-chomsky-hierarchy` | regular/context-free/recursive language Φ ordering | mixed | 🟢 |
 | `network-topology-scale-free` | scale-free Φ > random Erdős-Rényi (matched density) | random ≥ scale-free | 🟢 |
@@ -251,7 +250,7 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 | rank | seed | round | rationale |
 |------|------|-------|-----------|
 | 1 | `ethic-emergence` | R2 | anima alignment 직접 · Principle #3 |
-| 2 | `shannon-entropy-Φ-correlate` | R5 | IIT underlying currency |
+| 2 | ~~`shannon-entropy-Φ-correlate`~~ | R5 | ✅ CONSUMED → H_287 (cycle#25): Φ⊥엔트로피 CLOSED-NEGATIVE, r=0.363<0.5 이중 dissociation |
 | 3 | `language-compositionality` | R2 | anima = LLM substrate |
 | 4 | `time-temporal-binding-window` | R3 | 의식의 형식 자체 |
 | 5 | `self-i-emergence-from-substrate` | R4 | anima persona D3 + H_205 |
