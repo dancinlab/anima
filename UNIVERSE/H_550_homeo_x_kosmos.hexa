@@ -1,0 +1,3 @@
+fn radius_clip(r: f64, rmax: f64) -> f64 { if r > rmax { return rmax } return r }
+fn check_h550() -> bool { return radius_clip(15.0, 10.0) == 10.0 && radius_clip(5.0, 10.0) == 5.0 }
+fn main() { if check_h550() { print("H_550 OK") } else { print("H_550 FAIL") } }
