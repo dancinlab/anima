@@ -1,0 +1,22 @@
+// H_368 smoke — KOSMOS x substrate-decided write
+
+fn write_source_is_internal(source: string) -> bool {
+    if source == "emit" { return true }
+    if source == "spike" { return true }
+    if source == "mitosis" { return true }
+    return false
+}
+
+fn check_h368() -> bool {
+    let int_emit = write_source_is_internal("emit")
+    let int_spike = write_source_is_internal("spike")
+    let ext_user = !write_source_is_internal("user_msg")
+    let ext_api = !write_source_is_internal("external_api")
+    return int_emit && int_spike && ext_user && ext_api
+}
+
+fn main() {
+    let ok = check_h368()
+    if !ok { print("H_368 FAIL"); return }
+    print("H_368 blue substrate-decided write OK")
+}
