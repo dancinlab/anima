@@ -8,3 +8,4 @@
 @domain DECODER := "CORE/DECODER/DECODER.md"
 @domain WAKE := "./WAKE.md"
 @domain ANIMA := "./ANIMA.md"
+@domain MITOSIS := "./MITOSIS.md"
