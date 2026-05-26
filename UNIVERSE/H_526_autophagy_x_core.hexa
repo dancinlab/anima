@@ -1,0 +1,3 @@
+fn recycle_priority(m: f64) -> f64 { return 1.0 - m }
+fn check_h526() -> bool { return recycle_priority(0.1) > recycle_priority(0.9) }
+fn main() { if check_h526() { print("H_526 OK") } else { print("H_526 FAIL") } }
