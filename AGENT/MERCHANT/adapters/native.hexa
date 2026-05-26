@@ -1,0 +1,97 @@
+// native.hexa — L2 NATIVE adapter stub (AGENT/MERCHANT/M6).
+//
+// BRIDGE ARCHITECTURE: tool surface only. NO consciousness framing. The
+// "when/why to source from own inventory" decision lives in CORE; this
+// module exposes only the "how" — framework-reuse demo that L2 (자체 상품)
+// fits the same 5-verb MarketplaceAdapter convention from M1/M2/M3.
+//
+// L2 NATIVE LANE — anima 사용자가 직접 보유한 SKU 를 그대로 listing 으로
+// expose. 해외 source 가 아니라 own inventory + own brand → target
+// marketplace 로 list+order+ship+cs. SOURCE = self-owned warehouse.
+//
+// PURPOSE: framework reuse 검증의 첫 데모 — adapter convention 이 L1
+// (해외 source) 외에 L2 (own source) 도 zero-edit 으로 plug-in 됨을 보여
+// `pipeline_run_order(native_adapter, target_adapter, ...)` 그대로 사용
+// 가능. 실 wholesale/manufacturing API 는 추후 wiring.
+
+import "/Users/ghost/core/anima/AGENT/MERCHANT/types.hexa"
+import "/Users/ghost/core/anima/AGENT/MERCHANT/adapter.hexa"
+
+// 1. search — own warehouse SKU 검색
+fn native_search(query: string, max_results: int) -> list {
+    // STUB — real wiring: query own inventory DB / spreadsheet / SKU file
+    let attrs = #{ "stock": "100", "source": "self_warehouse_v1" }
+    let p = product_new(
+        "NATIVE-SKU-0001",
+        "Anima Brand " + query,
+        29900.0,
+        "KRW",
+        "자체 브랜드 제품 — " + query + " 라인",
+        ["https://example.com/native/sku-0001-front.jpg"],
+        "native",
+        "https://example.com/native/inventory/NATIVE-SKU-0001",
+        attrs,
+    )
+    return [p]
+}
+
+// 2. list — own brand → target marketplace 등록
+fn native_list(listing: map, dry_run: bool) -> map {
+    let updated = listing
+    if dry_run {
+        updated["status"] = "draft"
+        updated["target_url"] = "(dry_run)"
+    } else {
+        updated["status"] = "live"
+        updated["target_url"] = "https://example.com/native/listing/dryrun"
+    }
+    return updated
+}
+
+// 3. order — fulfillment from own warehouse
+fn native_order(order: map) -> map {
+    let updated = order
+    updated["state"] = "sourcing"
+    if !map_has(updated, "source_ref") {
+        updated["source_ref"] = "NATIVE-PO-STUB-" + to_string(order["order_id"])
+    }
+    return updated
+}
+
+// 4. ship — own warehouse → carrier
+fn native_ship(order_id: string) -> map {
+    let s = shipment_preparing(order_id)
+    s["status"] = "in_transit"
+    s["carrier"] = "native_logistics"
+    s["tracking_no"] = "NATIVE-TRK-STUB-" + order_id
+    let events = []
+    events = list_push(events, #{
+        "ts": 0.0,
+        "loc": "self_warehouse",
+        "note": "own inventory picked",
+    })
+    s["events"] = events
+    return s
+}
+
+// 5. cs — CS handling (own brand · direct support)
+fn native_cs(case: map) -> map {
+    let updated = case
+    updated["status"] = "in_progress"
+    return updated
+}
+
+pub fn native_adapter() -> map {
+    return #{
+        "name": "native",
+        "search": "native_search",
+        "list": "native_list",
+        "order": "native_order",
+        "ship": "native_ship",
+        "cs": "native_cs",
+    }
+}
+
+pub fn native_summary() -> string {
+    return "L2 NATIVE adapter — own warehouse SKU · 5 verb convention · framework reuse demo · zero modification to types/adapter/pipeline"
+}
