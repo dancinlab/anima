@@ -1,0 +1,24 @@
+// H_404 smoke — bridge avail per stage
+
+fn bridge_avail(stage: string) -> f64 {
+    if stage == "WAKE" { return 1.0 }
+    if stage == "REM" { return 0.6 }
+    if stage == "N1" { return 0.4 }
+    if stage == "N2" { return 0.2 }
+    if stage == "N3" { return 0.1 }
+    return 0.0
+}
+
+fn check_h404() -> bool {
+    let w = bridge_avail("WAKE")
+    let n3 = bridge_avail("N3")
+    let ge = w >= n3
+    let pos = (bridge_avail("N2") > 0.0) && (n3 > 0.0)
+    return ge && pos
+}
+
+fn main() {
+    let ok = check_h404()
+    if !ok { print("H_404 FAIL"); return }
+    print("H_404 blue bridge avail OK")
+}
