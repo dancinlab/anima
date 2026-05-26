@@ -1,0 +1,29 @@
+// H_364 smoke — AKIDA × WAKE (spike envelope per stage)
+
+fn spike_envelope(stage: string) -> f64 {
+    if stage == "WAKE" { return 0.9 }
+    if stage == "REM" { return 0.7 }
+    if stage == "N1" { return 0.4 }
+    if stage == "N2" { return 0.2 }
+    if stage == "N3" { return 0.05 }
+    return 0.0
+}
+
+fn check_h364() -> bool {
+    // H1: each stage in [0, 1]
+    let e_w = spike_envelope("WAKE")
+    let e_n3 = spike_envelope("N3")
+    let in_range = (e_w > 0.0) && (e_w <= 1.0) && (e_n3 > 0.0) && (e_n3 <= 1.0)
+    // H2 WAKE-GE-N3
+    let order = e_w >= e_n3
+    return in_range && order
+}
+
+fn main() {
+    let ok = check_h364()
+    if !ok {
+        print("H_364 FAIL")
+        return
+    }
+    print("H_364 🔵 AKIDA × WAKE envelope OK")
+}
