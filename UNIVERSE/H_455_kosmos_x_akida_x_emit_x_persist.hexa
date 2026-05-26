@@ -1,0 +1,27 @@
+// H_455 smoke — chained 1:1:1
+
+fn spike_to_emit(spike: i64) -> i64 {
+    return spike  // 1:1
+}
+
+fn emit_to_record(emit: i64) -> i64 {
+    return emit  // 1:1
+}
+
+fn chain_lane() -> string {
+    return "akida"
+}
+
+fn check_h455() -> bool {
+    let e = spike_to_emit(5)
+    let r = emit_to_record(e)
+    let h1 = r == 5
+    let h2 = chain_lane() == "akida"
+    return h1 && h2
+}
+
+fn main() {
+    let ok = check_h455()
+    if !ok { print("H_455 FAIL"); return }
+    print("H_455 blue 1:1:1 chain OK")
+}
