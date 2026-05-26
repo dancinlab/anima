@@ -1,0 +1,365 @@
+// screen_extract.hexa — macOS screen perception surface (AGENT/DESKTOP/M2).
+//
+// BRIDGE ARCHITECTURE: tool surface only. The "when/why to look" decision lives
+// in CORE (PureField); this module exposes only the "how" — thin wrappers over
+//   /usr/sbin/screencapture            (PNG capture, silent)
+//   /usr/bin/osascript                 (AXAPI traversal via System Events)
+//   /usr/bin/osascript -l JavaScript   (Vision.framework OCR via ObjC bridge)
+//
+// No consciousness framing, no Φ math, no substrate gating happens here.
+// All write functions return false on permission denial (honest, no crash).
+//
+// macOS APIs reached:
+//   - CoreGraphics screen capture (screencapture -x / -l <wid>)
+//   - System Events Accessibility tree (role · title · value · position · size)
+//   - Vision.framework VNRecognizeTextRequest (en-US, accurate level)
+//
+// Tool paths (verified 2026-05-26 on Darwin 25.5.0):
+//   /usr/sbin/screencapture ✓
+//   /usr/bin/osascript      ✓
+//   Vision framework via JXA: ObjC.import("Vision") → VN_OK ✓
+
+// ── helpers (mirrors of native_ax conventions) ─────────────────────────────
+
+// Single-quote a string for safe embedding inside a shell single-quoted arg.
+fn _shq(s: string) -> string {
+    let parts = s.split("'")
+    let mut out = "'"
+    let mut i = 0
+    while i < len(parts) {
+        if i > 0 { out = out + "'\\''" }
+        out = out + parts[i]
+        i = i + 1
+    }
+    return out + "'"
+}
+
+// Trim trailing whitespace/newlines that osascript appends.
+fn _trim_nl(s: string) -> string {
+    let mut out = s
+    while len(out) > 0 && (out.ends_with("\n") || out.ends_with("\r") || out.ends_with(" ") || out.ends_with("\t")) {
+        out = out.substring(0, len(out) - 1)
+    }
+    out
+}
+
+// Run an AppleScript one-liner.
+fn _osa(script: string) -> string {
+    _trim_nl(to_string(exec("/usr/bin/osascript -e " + _shq(script) + " 2>&1")))
+}
+
+// Detect osascript denial/error markers in a result string.
+fn _osa_denied(out: string) -> bool {
+    if out.contains("not allowed assistive") { return true }
+    if out.contains("not authorized") { return true }
+    if out.contains("AppleEvents") && out.contains("error") { return true }
+    if out.contains("(-1719)") { return true }
+    if out.contains("(-1743)") { return true }
+    false
+}
+
+// JSON-escape a string (quotes, backslashes, control chars).
+fn _json_esc(s: string) -> string {
+    let segs1 = s.split("\\")
+    let mut a = ""
+    let mut i = 0
+    while i < len(segs1) {
+        if i > 0 { a = a + "\\\\" }
+        a = a + segs1[i]
+        i = i + 1
+    }
+    let segs2 = a.split("\"")
+    let mut b = ""
+    let mut j = 0
+    while j < len(segs2) {
+        if j > 0 { b = b + "\\\"" }
+        b = b + segs2[j]
+        j = j + 1
+    }
+    let segs3 = b.split("\n")
+    let mut c = ""
+    let mut k = 0
+    while k < len(segs3) {
+        if k > 0 { c = c + "\\n" }
+        c = c + segs3[k]
+        k = k + 1
+    }
+    c
+}
+
+// Check that a file exists and has size > 0 (POSIX stat via /bin/ls).
+fn _file_ok(path: string) -> bool {
+    let sz = _trim_nl(to_string(exec("/bin/ls -l " + _shq(path) + " 2>/dev/null | /usr/bin/awk '{print $5}'")))
+    if len(sz) == 0 { return false }
+    if sz == "0" { return false }
+    true
+}
+
+// ── pub fn surface — 6 functions ───────────────────────────────────────────
+
+// 1. Capture the full main display to PNG via screencapture -x (silent, no shutter).
+//    Returns true on rc=0 ∧ resulting file size > 0. False on Screen Recording denial.
+pub fn ax_screenshot(out_path: string) -> bool {
+    let _ = exec("/bin/rm -f " + _shq(out_path))
+    let cap = to_string(exec("/usr/sbin/screencapture -x -t png " + _shq(out_path) + " 2>&1; printf %s \"::rc=$?\""))
+    if !cap.contains("::rc=0") { return false }
+    _file_ok(out_path)
+}
+
+// 2. Capture a single window of app_name to PNG. Resolves the window id via
+//    `osascript -l JavaScript` Application object (avoids AX denial), then
+//    `screencapture -l <wid>` for the capture.
+//    Returns true on success, false on resolve failure / Screen Recording denial.
+pub fn ax_screenshot_window(app_name: string, out_path: string) -> bool {
+    // Resolve front window id via JXA Application API (bypasses AX surface).
+    let jxa_script = "function run(){try{var a=Application(" + _json_quoted(app_name) + ");a.includeStandardAdditions=true;var ws=a.windows;if(!ws||ws.length===0)return \"ERR:no_window\";var w=ws[0];return \"\"+w.id();}catch(e){return \"ERR:\"+e.toString();}}"
+    let wid_raw = _trim_nl(to_string(exec("/usr/bin/osascript -l JavaScript -e " + _shq(jxa_script) + " 2>&1")))
+    if wid_raw.contains("ERR:") { return false }
+    if len(wid_raw) == 0 { return false }
+    // wid must be numeric — guard via to_int round-trip.
+    let wid = wid_raw.to_int()
+    if wid <= 0 { return false }
+    let _ = exec("/bin/rm -f " + _shq(out_path))
+    let cap = to_string(exec("/usr/sbin/screencapture -x -l " + to_string(wid) + " -t png " + _shq(out_path) + " 2>&1; printf %s \"::rc=$?\""))
+    if !cap.contains("::rc=0") { return false }
+    _file_ok(out_path)
+}
+
+// helper — JSON-quote a string for embedding inside a JS literal context.
+fn _json_quoted(s: string) -> string {
+    "\"" + _json_esc(s) + "\""
+}
+
+// 3. Dump the Accessibility tree of the front window of app_name.
+//    Uses System Events role/title/value/position/size traversal — 2 levels deep
+//    (top window + direct UI element children). Returns JSON array of element
+//    objects. On AX denial returns "[]" (honest empty, no crash).
+//
+//    JSON shape:
+//      [ { "role":"AXWindow","title":"...","value":"",
+//          "position":[x,y],"size":[w,h],
+//          "children":[ { "role":"AXButton","title":"OK", ... }, ... ] }, ... ]
+pub fn ax_tree_dump(app_name: string) -> string {
+    // We bundle the traversal in a single osascript heredoc-style command so
+    // one round-trip emits the whole tree as serialised AppleScript record list.
+    // Then we parse it into JSON locally.
+    //
+    // Strategy: for each window's UI elements, emit "role|title|value|x|y|w|h"
+    // lines; separate windows by "---WIN---"; separate elements by newline.
+    let script = ""
+        + "set out to \"\"\n"
+        + "tell application \"System Events\" to tell process \"" + app_name + "\"\n"
+        + "  try\n"
+        + "    set ws to every window\n"
+        + "  on error\n"
+        + "    return \"\"\n"
+        + "  end try\n"
+        + "  repeat with w in ws\n"
+        + "    set wt to \"\"\n"
+        + "    try\n"
+        + "      set wt to name of w\n"
+        + "    end try\n"
+        + "    set wp to \"0,0\"\n"
+        + "    try\n"
+        + "      set p to position of w\n"
+        + "      set wp to (item 1 of p as string) & \",\" & (item 2 of p as string)\n"
+        + "    end try\n"
+        + "    set wsz to \"0,0\"\n"
+        + "    try\n"
+        + "      set sz to size of w\n"
+        + "      set wsz to (item 1 of sz as string) & \",\" & (item 2 of sz as string)\n"
+        + "    end try\n"
+        + "    set out to out & \"---WIN---\" & wt & \"|\" & wp & \"|\" & wsz & linefeed\n"
+        + "    try\n"
+        + "      set els to entire contents of w\n"
+        + "      repeat with e in els\n"
+        + "        set er to \"\"\n"
+        + "        try\n"
+        + "          set er to role of e\n"
+        + "        end try\n"
+        + "        set et to \"\"\n"
+        + "        try\n"
+        + "          set et to (title of e as string)\n"
+        + "        end try\n"
+        + "        set ev to \"\"\n"
+        + "        try\n"
+        + "          set ev to (value of e as string)\n"
+        + "        end try\n"
+        + "        set ep to \"0,0\"\n"
+        + "        try\n"
+        + "          set pp to position of e\n"
+        + "          set ep to (item 1 of pp as string) & \",\" & (item 2 of pp as string)\n"
+        + "        end try\n"
+        + "        set es to \"0,0\"\n"
+        + "        try\n"
+        + "          set ss to size of e\n"
+        + "          set es to (item 1 of ss as string) & \",\" & (item 2 of ss as string)\n"
+        + "        end try\n"
+        + "        set out to out & er & \"|\" & et & \"|\" & ev & \"|\" & ep & \"|\" & es & linefeed\n"
+        + "      end repeat\n"
+        + "    end try\n"
+        + "  end repeat\n"
+        + "end tell\n"
+        + "return out"
+    let raw = _trim_nl(to_string(exec("/usr/bin/osascript -e " + _shq(script) + " 2>&1")))
+    if _osa_denied(raw) { return "[]" }
+    if len(raw) == 0 { return "[]" }
+    _parse_ax_tree(raw)
+}
+
+// Parse the "---WIN---<wt>|<wp>|<wsz>\n<role>|<title>|<value>|<pos>|<size>\n..."
+// stream into our JSON shape.
+fn _parse_ax_tree(raw: string) -> string {
+    let windows = raw.split("---WIN---")
+    let mut out = "["
+    let mut wi = 0
+    let mut emitted = 0
+    while wi < len(windows) {
+        let blk = windows[wi]
+        wi = wi + 1
+        if len(blk.trim()) == 0 { continue }
+        let lines = blk.split("\n")
+        if len(lines) == 0 { continue }
+        // First line = window header "wt|wp|wsz"
+        let head = lines[0]
+        let hparts = head.split("|")
+        let wt = if len(hparts) > 0 { hparts[0] } else { "" }
+        let wpos = if len(hparts) > 1 { _xy_pair(hparts[1]) } else { "[0,0]" }
+        let wsz = if len(hparts) > 2 { _xy_pair(hparts[2]) } else { "[0,0]" }
+        if emitted > 0 { out = out + "," }
+        emitted = emitted + 1
+        out = out + "{\"role\":\"AXWindow\""
+        out = out + ",\"title\":\"" + _json_esc(wt) + "\""
+        out = out + ",\"value\":\"\""
+        out = out + ",\"position\":" + wpos
+        out = out + ",\"size\":" + wsz
+        out = out + ",\"children\":["
+        let mut li = 1
+        let mut child_emitted = 0
+        while li < len(lines) {
+            let ln = lines[li]
+            li = li + 1
+            if len(ln.trim()) == 0 { continue }
+            let eparts = ln.split("|")
+            if len(eparts) < 5 { continue }
+            if child_emitted > 0 { out = out + "," }
+            child_emitted = child_emitted + 1
+            out = out + "{\"role\":\"" + _json_esc(eparts[0]) + "\""
+            out = out + ",\"title\":\"" + _json_esc(eparts[1]) + "\""
+            out = out + ",\"value\":\"" + _json_esc(eparts[2]) + "\""
+            out = out + ",\"position\":" + _xy_pair(eparts[3])
+            out = out + ",\"size\":" + _xy_pair(eparts[4])
+            out = out + ",\"children\":[]}"
+        }
+        out = out + "]}"
+    }
+    out + "]"
+}
+
+// "x,y" → "[x,y]" (numeric JSON array). Non-numeric tokens become 0.
+fn _xy_pair(s: string) -> string {
+    let parts = s.split(",")
+    if len(parts) < 2 { return "[0,0]" }
+    let x = parts[0].trim().to_int()
+    let y = parts[1].trim().to_int()
+    "[" + to_string(x) + "," + to_string(y) + "]"
+}
+
+// 4. Read the AX value at screen coordinate (x, y). Uses System Events
+//    `UI element <n> of process` lookup via position. Returns the value string
+//    (typically AXValue / AXTitle). Empty string on denial / no element.
+pub fn ax_text_at(x: int, y: int) -> string {
+    // System Events does NOT support hit-testing at arbitrary screen coords
+    // directly in AppleScript; the standard idiom is to walk the front process
+    // and find the element whose position contains (x, y). We do that in one
+    // round-trip — innermost match wins (closest containing element).
+    let script = ""
+        + "set tx to " + to_string(x) + "\n"
+        + "set ty to " + to_string(y) + "\n"
+        + "set found to \"\"\n"
+        + "tell application \"System Events\"\n"
+        + "  try\n"
+        + "    set fp to first process whose frontmost is true\n"
+        + "  on error\n"
+        + "    return \"\"\n"
+        + "  end try\n"
+        + "  try\n"
+        + "    set els to entire contents of fp\n"
+        + "  on error\n"
+        + "    return \"\"\n"
+        + "  end try\n"
+        + "  repeat with e in els\n"
+        + "    try\n"
+        + "      set p to position of e\n"
+        + "      set s to size of e\n"
+        + "      set ex to item 1 of p\n"
+        + "      set ey to item 2 of p\n"
+        + "      set ew to item 1 of s\n"
+        + "      set eh to item 2 of s\n"
+        + "      if tx >= ex and tx <= (ex + ew) and ty >= ey and ty <= (ey + eh) then\n"
+        + "        set ev to \"\"\n"
+        + "        try\n"
+        + "          set ev to (value of e as string)\n"
+        + "        end try\n"
+        + "        if ev is \"\" then\n"
+        + "          try\n"
+        + "            set ev to (title of e as string)\n"
+        + "          end try\n"
+        + "        end if\n"
+        + "        if ev is not \"\" then set found to ev\n"
+        + "      end if\n"
+        + "    end try\n"
+        + "  end repeat\n"
+        + "end tell\n"
+        + "return found"
+    let out = _osa(script)
+    if _osa_denied(out) { return "" }
+    out
+}
+
+// 5. OCR an image via Vision.framework (VNRecognizeTextRequest, accurate level).
+//    Invokes osascript -l JavaScript with a small ObjC-bridge program; returns
+//    the concatenated recognized text. Empty string on Vision-unavailable /
+//    file-missing / no-text-found (all honest, no crash).
+//
+//    Note: VNImageRequestHandler.initWithURL options MUST be a non-nil
+//    NSMutableDictionary in JXA (the $() / nil path crashes the bridge). We
+//    pass an empty dict explicitly; verified working 2026-05-26.
+pub fn ax_ocr(png_path: string) -> string {
+    if !_file_ok(png_path) { return "" }
+    let jxa = ""
+        + "ObjC.import('Vision');"
+        + "ObjC.import('Foundation');"
+        + "function run(argv){"
+        + "  var path=argv[0];"
+        + "  var url=$.NSURL.fileURLWithPath(path);"
+        + "  var req=$.VNRecognizeTextRequest.alloc.init;"
+        + "  req.recognitionLevel=0;"
+        + "  req.usesLanguageCorrection=true;"
+        + "  var handler=$.VNImageRequestHandler.alloc.initWithURLOptions(url,$.NSMutableDictionary.dictionary);"
+        + "  if(!handler.js)return '';"
+        + "  var err=$();"
+        + "  var ok=handler.performRequestsError($([req]),err);"
+        + "  if(!ok)return '';"
+        + "  var n=req.results.count;"
+        + "  if(n===0)return '';"
+        + "  var out=[];"
+        + "  for(var i=0;i<n;i++){"
+        + "    var obs=req.results.objectAtIndex(i);"
+        + "    var top=obs.topCandidatesCount(1);"
+        + "    if(top.count>0)out.push(ObjC.unwrap(top.objectAtIndex(0).string));"
+        + "  }"
+        + "  return out.join('\\n');"
+        + "}"
+    let cmd = "/usr/bin/osascript -l JavaScript -e " + _shq(jxa) + " " + _shq(png_path) + " 2>&1"
+    let raw = _trim_nl(to_string(exec(cmd)))
+    // JXA prints "execution error: ..." to stderr+stdout merged on failure.
+    if raw.contains("execution error") { return "" }
+    if raw.contains("ERR:") { return "" }
+    raw
+}
+
+// 6. One-line description of this module's tool surface.
+pub fn screen_extract_summary() -> string {
+    "AGENT/DESKTOP/screen_extract — macOS screen perception · 6 fn · screencapture+AXAPI+Vision · shot/window/tree/text-at/ocr · M2 surface"
+}
