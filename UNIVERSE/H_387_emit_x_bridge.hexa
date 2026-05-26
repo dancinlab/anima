@@ -1,0 +1,19 @@
+// H_387 smoke — emit × BRIDGE
+
+fn visible_emit(cap: bool, user_intent: bool, curiosity: bool) -> bool {
+    return cap && (user_intent || curiosity)
+}
+
+fn check_h387() -> bool {
+    let h2 = !visible_emit(false, true, true)
+    let h3 = !visible_emit(true, false, false)
+    let curiosity_alone = visible_emit(true, false, true)
+    let intent_alone = visible_emit(true, true, false)
+    return h2 && h3 && curiosity_alone && intent_alone
+}
+
+fn main() {
+    let ok = check_h387()
+    if !ok { print("H_387 FAIL"); return }
+    print("H_387 blue emit-AND-bridge OK")
+}
