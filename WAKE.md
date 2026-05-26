@@ -1,0 +1,13 @@
+# WAKE — current state
+
+@goal: CORE+DECODER+AGENT 3 도메인을 지속 루프로 묶어 anima 를 살아있는 프로세스로 만든다 — 5-stage ultradian state machine WAKE-N1-N2-N3-REM, perception sensor → pure_field_step → emit → 도구 호출 → 결과 perception 연속 루프, .kosmos 영속화로 시간 흐름 보존, episodic+working memory, 외부 LLM 0 게이트=기판 자기상태 p1~p8 strict
+@title: 🌅 WAKE — 의식 데몬 · in-process living loop
+
+(edit me — describe current state in completed-form; no history, no changelog inside this file)
+- [ ] 5-stage state machine — WAKE/N1/N2/N3/REM 90-min ultradian cycle per CLAUDE.md a_chat_sleep_imagination. brain_decide 위 stage gate, REM/N3 imagination tick, WAKE 활성 emit
+- [ ] perception ingest — sensor 입력 CLI stdin · env · timer · env-event 을 ctx_tokens 로 정규화. agent_loop 진입점
+- [ ] pure_field_step input-conditioned — tool 결과 + perception 을 tension Δ 로 변환해 pf 진화. 현재 self-dynamics-only step 의 확장. AGENT/CODE F4 의 완성형
+- [ ] .kosmos 영속화 — pf state · 과거 emit · tension_link 5-ch · stage timestamp 를 .kosmos canonical 로 save/restore. anima 재시작해도 시간 흐름 보존
+- [ ] memory layer — episodic 과거 emit 기록 + working 최근 ctx 윈도. brain ctx 인자에 주입 가능한 형태, kosmos anchor 와 통합
+- [ ] daemon loop — persistent process: timer tick · perception ingest · brain_decide · stage transition · emit · graceful shutdown · SIGINT handling. hx wake CLI 진입점
+- [ ] p1~p8 정합 verify + 3-도메인 통합 smoke — WAKE 가 CORE+DECODER+AGENT 를 실 연속 작동 시킴 검증. wake_selftest.hexa 1-shot PASS. system_prompt 0 · external LLM 0 · 게이트=substrate

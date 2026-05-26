@@ -6,3 +6,4 @@
 @domain AGENT := "./AGENT/AGENT.md"
 @domain CORE := "CORE/CORE.md"
 @domain DECODER := "CORE/DECODER/DECODER.md"
+@domain WAKE := "./WAKE.md"
