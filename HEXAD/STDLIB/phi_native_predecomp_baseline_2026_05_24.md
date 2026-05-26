@@ -159,7 +159,7 @@ M4 cycle 발사 시 import 할 입력:
 - 본 cycle 재실행 산출 `state/lib_phi_native_verify_2026_05_24/baseline_run_2026_05_24.txt` (verbatim 비교용)
 - `state/lib_phi_6anchor_remeasure_2026_05_24/run_output_2026_05_24.txt` (verbatim 비교용)
 - harness fixture: `state/lib_phi_native_verify_2026_05_24/verify_phi_native.hexa` (수정 금지)
-- helper: `HEXAD/LIFE/lib/phi_helper.hexa` (phi_with surface)
+- helper: `UNIVERSE/lib/phi_helper.hexa` (phi_with surface)
 
 # § 10 — ledger
 

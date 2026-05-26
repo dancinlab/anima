@@ -3,7 +3,7 @@
 - status: DRAFT (pre-register-frozen falsifier · impl 별도 cycle)
 - date: 2026-05-24
 - domain: HEXAD/PURE (V3 saga rebrand) · substrate persona
-- substrate: H_239 (HEXAD/LIFE) bilingual-integration-Φ
+- substrate: H_239 (UNIVERSE) bilingual-integration-Φ
 - tier: DESIGN (impl + GPU fire = 별도 cycle) · honest C3 ≥5 frozen
 
 ---
@@ -56,7 +56,7 @@ substrate-internal 변별 driver 가 없어 routing 이 monopoly 로 붕괴. 6th
   inhibition gate 를 통과해야 하는 *비용* 을 지불 → 비대칭 differentiation 이
   routing 에 강제로 주입됨 (CE gradient 의 monopoly 와 *경쟁* 하는 substrate force).
 
-이 frame 의 이론 근거는 H_239 (HEXAD/LIFE, pre-register-frozen): Grosjean (1989)
+이 frame 의 이론 근거는 H_239 (UNIVERSE, pre-register-frozen): Grosjean (1989)
 residual activation + Green (1998) inhibitory control + IIT Φ inverse-U.
 
 ## § 3 Grosjean residual activation 의 cell-pool 적용
@@ -177,7 +177,7 @@ verdict_rule: **SUPPORTED iff F1∧F2∧F3∧F4∧F5** · **PARTIAL** 3-4 PASS (
 
 ## § 9 cross-link
 
-- **H_239** (HEXAD/LIFE) `H_239_bilingual_integration_phi_cross_lingual_leak.md` —
+- **H_239** (UNIVERSE) `H_239_bilingual_integration_phi_cross_lingual_leak.md` —
   Grosjean residual + Green asymmetry + IIT Φ inverse-U substrate frame (이론 모체).
 - **PR #296** `HEXAD/PURE/eval/bilingual_mi_probe.hexa` (MERGED) —
   `cross_lingual_mi` · `switch_cost_asymmetry` · `score_cross_lingual_leak` ·

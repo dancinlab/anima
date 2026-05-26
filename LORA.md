@@ -82,7 +82,7 @@ R8 base/warm-init reform:
 
 ## LIFE 흡수 (cross-domain · 2026-05-25)
 
-> HEXAD/LIFE 가설 lane 이 LORA 사가를 정식화 — verdict 확정 2건 흡수 + COFFESHOP 4-criterion 측정 frame 매핑.
+> UNIVERSE 가설 lane 이 LORA 사가를 정식화 — verdict 확정 2건 흡수 + COFFESHOP 4-criterion 측정 frame 매핑.
 
 ### COFFESHOP 4-criterion ↔ LIFE 측정 frame
 

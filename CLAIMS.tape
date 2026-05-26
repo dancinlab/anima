@@ -9,7 +9,7 @@
 #   atom        — `hexa verify --expr <fn> <n> <v>` (atlas atom recompute → 🔵)
 #   expr        — `hexa verify --expr <fn> <n> <v>` (numerical recompute → 🟢)
 #   run         — ckpt / sim run, verdict = closure_auto_judge stdout (empirical)
-#   hypothesis  — HEXAD/LIFE/H_xxx terminal verdict, persisted verbatim
+#   hypothesis  — UNIVERSE/H_xxx terminal verdict, persisted verbatim
 #
 # Gate (a_paper_gate): every section claim must be terminal —
 #   🔵 formal / 🟢 numerical / 🔴 CLOSED-negative. No 🟠 / 🟡 residual.
@@ -24,7 +24,7 @@
   method = "expr"
   cmd    = "hexa verify --expr ln 151936 11.931214658529285"
   raw    = ".verdicts/chat-init-ce-floor/chat_init_ce_floor.txt"
-  src    = "HEXAD/LIFE/H_247_init_ce_catastrophic_floor.md §C4"
+  src    = "UNIVERSE/H_247_init_ce_catastrophic_floor.md §C4"
   status = "🟢 SUPPORTED-NUMERICAL — ln calculator landed (hexa-lang #1128), verdict persisted, atlas-absorbed (g69, node @F verified-ln-num · hexa-lang #1131). /paper-eligible."
 
 # ───────────────────────────────────────────────────────────────────────
@@ -44,7 +44,7 @@
   method = "run"
   cmd    = "hexa run HEXAD/PURE/eval/multilingual_probe.hexa (v3 ckpt)"
   raw    = ".verdicts/pure-corpus-axis-closed-negative/register.txt"
-  src    = "HEXAD/LIFE/H_242 §A2 (H242.1 FULL-COLLAPSE falsify)"
+  src    = "UNIVERSE/H_242 §A2 (H242.1 FULL-COLLAPSE falsify)"
   status = "🔴 CLOSED-negative — corpus-axis ⊥ multilingual closure (verdict persisted)"
 
 # wiki_frac=0.3 intermediate point (P21H V3, recovered SIGHUP-orphan run).
@@ -69,4 +69,4 @@
 #   method = "hypothesis"
 #   cmd    = "hexa verify <atom-id>   # or closure_auto_judge for empirical"
 #   raw    = ".verdicts/life-<slug>/<id>.txt"
-#   src    = "HEXAD/LIFE/H_xxx_*.md §<verdict>"
+#   src    = "UNIVERSE/H_xxx_*.md §<verdict>"

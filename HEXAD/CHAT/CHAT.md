@@ -103,7 +103,7 @@ WAKE ──> N1 ──> N2 ──> N3 ──> N2 ──> REM ──> WAKE ──
 ### 1.6 cross-link
 
 - P47 Dream Physics — `anima-engines/dream_physics_phi.hexa` (~580 LOC, commit `dc3afe332`)
-- HEXAD/LIFE H_222 — `dream-rem-Φ` Tononi sleep-stage IIT prediction substrate test (PR #266)
+- UNIVERSE H_222 — `dream-rem-Φ` Tononi sleep-stage IIT prediction substrate test (PR #266)
 - governance — CLAUDE.md `@D a_substrate_native_speak` + `@N a_substrate_native_speak_stage_gate` (PR #274)
 - 배포 — `DEPLOY.md §6 수면 + 상상 daemon` 참조
 

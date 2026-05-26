@@ -189,7 +189,7 @@ EEG 측은 사용자 hw 준비 완료 통보. 에이전트 측 deferred 잔존 4
 ## 2026-05-25 — M0 design spec LAND (HEXAD/IIT4/DESIGN.md)
 
 - [x] `HEXAD/IIT4/DESIGN.md` 작성 — 8 §: (1) 2축 갭 framing (partition×primitive, IIT4=인과 칸) (2) IIT 4.0 6단계 매핑 + intrinsic difference 공식 (3) scope·복잡도 envelope (4) hexa 모듈 레이아웃 (5) M1–M6 분해+단위검증 (6) calibration target (7) falsifier ×6 frozen (8) C3 ×5
-- [x] predecessor 확인 (HEXAD/LIFE on main): H_278 = exact MIP-EI 가 **partition 축만** faithful (heuristic→exact-MIP), primitive 는 여전히 상관 MI → IIT4 가 메우는 칸 = 인과 cause-effect
+- [x] predecessor 확인 (UNIVERSE on main): H_278 = exact MIP-EI 가 **partition 축만** faithful (heuristic→exact-MIP), primitive 는 여전히 상관 MI → IIT4 가 메우는 칸 = 인과 cause-effect
 - [x] phi_helper.hexa / phi_native.hexa = RFC 036 상관-MI primitive (proxy lane, F-IIT4-6 비교 baseline 으로 READ-ONLY 재사용)
 - [x] 정식 출처 앵커: Albantakis et al. 2023 (arXiv:2212.14787) + Barbosa et al. 2020 (intrinsic difference)
 - [x] honest 경계: relations exact n≤5 (PyPhi 실용한계 동일) · PyPhi=calibration only (g5+hexa-only) · CI-TPM 가정 · ID tie-break 최저index · large-N 불변

@@ -1,0 +1,531 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  UNIVERSE/state/h280_iit4_ces_2026_05_26/lib_ces.hexa
+//
+//  H_280 — faithful IIT 4.0 cause-effect structure (CES / Φ-structure) kernel.
+//  small-N (n=3, n=4) EXACT. Distinction-level Φ-structure, faithful to the
+//  IIT 4.0 definitions (Albantakis et al. 2023). Relations are computed for
+//  n=3 (purview-overlap congruence) as an ADVISORY add-on; the primary,
+//  fully-faithful quantity is the distinction-only Σφ_d.
+//
+//  IMPORT-SAFE: no fn main(), no top-level call. Pure fn definitions only.
+//
+//  ── IIT 4.0 definitions implemented (honest, exact for small n) ───────────
+//
+//  SUBSTRATE
+//    n binary units. A *state* of a unit subset is an int bitmask. The system
+//    TPM is state-by-node: tpm_node(s, i) = P(unit i = 1 at t+1 | system in
+//    state s at t). We build it from per-unit deterministic update rules
+//    (majority / copy / XOR-style), giving a deterministic-but-noised TPM; a
+//    small ε floor keeps all repertoire entries > 0 (log-defined).
+//
+//  EFFECT REPERTOIRE  π_effect(M=m → Z)
+//    For mechanism M in state m over an effect purview Z:
+//      for each purview unit z∈Z, its marginal ON-prob =
+//        average over all completions r of the non-mechanism units of
+//        tpm_node( (m on M) ∪ (r on rest), z ),  r ~ uniform.
+//      π_effect(Z = zstate) = ∏_{z∈Z} ( on_prob if bit set else 1-on_prob ).
+//    (IIT 4.0 effect-side conditional independence — product over purview units.)
+//
+//  CAUSE REPERTOIRE  π_cause(M=m ← Z)
+//    For mechanism M in state m over a cause purview Z (the PAST units):
+//      for each past purview state zstate (2^|Z| of them):
+//        likelihood L(zstate) = ∏_{i∈M} P(unit i = m_i at t+1 | past = zstate
+//                               on Z, rest of past ~ uniform)
+//                             = ∏_{i∈M} ( avg_r tpm_node((zstate on Z)∪(r on
+//                               rest), i) matched to m_i ).
+//      π_cause(zstate) = L(zstate) / Σ_z' L(z')   (Bayes, uniform prior on Z).
+//
+//  INTRINSIC DIFFERENCE  ID(p, q)  (IIT 4.0 small-φ measure)
+//    ID(p,q) = max_x  p(x) · log2( p(x) / q(x) )
+//    the pointwise informativeness at the MAXIMALLY-DIFFERENT state. This is
+//    the IIT 4.0 "intrinsic difference" (NOT KL, NOT EMD) — the gold metric
+//    that uniquely satisfies the IIT 4.0 measure postulates.
+//
+//  MECHANISM φ OVER A PURVIEW  (integrated information of M w.r.t. Z)
+//    φ(M,Z,dir) = min over all partitions θ of (M | Z) of
+//                   ID( π_unpartitioned(M,Z,dir), π_partitioned(M,Z,θ,dir) )
+//    The MIP is the argmin partition; φ is its ID value. A partition cuts the
+//    mechanism into (M1,M2) and the purview into (Z1,Z2) and forms the product
+//    π(M1→Z1)·π(M2→Z2) (with the empty-part repertoire = unconstrained marginal).
+//
+//  MAX-φ PURVIEW (cause / effect separately)
+//    φ_cause(M)  = max over all non-empty cause purviews Z of φ(M,Z,cause)
+//    φ_effect(M) = max over all non-empty effect purviews Z of φ(M,Z,effect)
+//    The argmax purviews are the mechanism's max-φ cause / effect purviews.
+//
+//  DISTINCTION
+//    φ_d(M) = min( φ_cause(M), φ_effect(M) ).  M is a DISTINCTION iff φ_d > 0.
+//
+//  Φ-STRUCTURE (distinction-only — the primary faithful quantity)
+//    Σφ_d = Σ_{M: φ_d>0} φ_d(M),  distinction_count = #{M: φ_d>0}.
+//
+//  RELATIONS (advisory, n=3)
+//    A relation between two distinctions = the overlap (intersection) of their
+//    max-φ purviews, weighted by min φ_d. We compute a lightweight congruent-
+//    overlap relation sum as ADVISORY (the heaviest IIT 4.0 component); it is
+//    NOT the full face-lattice relation integration and is reported separately.
+// ════════════════════════════════════════════════════════════════════════════
+
+// ── elementary helpers ────────────────────────────────────────────────────
+fn ces_pow2(k: int) -> int {
+    let mut p = 1
+    let mut i = 0
+    while i < k { p = p * 2; i = i + 1 }
+    return p
+}
+fn ces_bit(mask: int, b: int) -> int {
+    let pw = ces_pow2(b)
+    if (mask / pw) % 2 == 1 { return 1 }
+    return 0
+}
+fn ces_popcount(mask: int, n: int) -> int {
+    let mut c = 0
+    let mut i = 0
+    while i < n { if ces_bit(mask, i) == 1 { c = c + 1 }; i = i + 1 }
+    return c
+}
+fn ces_log2(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    return ln(x) / ln(2.0)
+}
+fn ces_imin(a: int, b: int) -> int { if a < b { return a }; return b }
+fn ces_fmin(a: float, b: float) -> float { if a < b { return a }; return b }
+fn ces_fmax(a: float, b: float) -> float { if a > b { return a }; return b }
+fn ces_eps() -> float { return 0.000001 }
+
+// ── TPM (state-by-node) ────────────────────────────────────────────────────
+// Per-unit deterministic update with a small ε so all probs ∈ (0,1).
+// rule_kind selects the connectivity / dynamics of the substrate:
+//   0 = DISCONNECTED : each unit copies ITSELF (no inter-unit coupling).
+//   1 = WEAK         : each unit = copy self, but with prob `couple` follows
+//                      the OR of its two neighbours (partial coupling).
+//   2 = INTEGRATED   : each unit = MAJORITY of (self, left, right) — a fully
+//                      coupled, globally-constrained net (high integration).
+// All on a ring (periodic) of n units. Returns P(unit i = 1 | state s).
+fn ces_tpm_node(s: int, i: int, n: int, rule_kind: int, couple: float) -> float {
+    let self_on = ces_bit(s, i)
+    let li = (i + n - 1) % n
+    let ri = (i + 1) % n
+    let lon = ces_bit(s, li)
+    let ron = ces_bit(s, ri)
+    let eps = ces_eps()
+
+    if rule_kind == 0 {
+        // disconnected — copy self.
+        if self_on == 1 { return 1.0 - eps }
+        return eps
+    }
+    if rule_kind == 1 {
+        // weak — base = self; with weight `couple` blend in OR(neighbours).
+        let mut base = eps
+        if self_on == 1 { base = 1.0 - eps }
+        let mut nbr = eps
+        if (lon == 1) || (ron == 1) { nbr = 1.0 - eps }
+        let p = (1.0 - couple) * base + couple * nbr
+        return p
+    }
+    // integrated — majority of (self,left,right).
+    let cnt = self_on + lon + ron
+    if cnt >= 2 { return 1.0 - eps }
+    return eps
+}
+
+// ── effect repertoire ──────────────────────────────────────────────────────
+// per-purview-unit ON-prob under mechanism M=m, marginalizing rest ~ uniform.
+// returns the ON-probability of effect-purview unit `pu`.
+fn ces_effect_unit_on(m_mask: int, m_state: int, pu: int,
+                      n: int, rule_kind: int, couple: float) -> float {
+    // enumerate completions of the units NOT in M; M units fixed to m_state.
+    // rest = all units not in m_mask.
+    let n_states = ces_pow2(n)
+    let mut acc = 0.0
+    let mut cnt = 0
+    let mut s = 0
+    while s < n_states {
+        // does s agree with m_state on the mechanism units?
+        let mut ok = true
+        let mut i = 0
+        while i < n {
+            if ces_bit(m_mask, i) == 1 {
+                if ces_bit(s, i) != ces_bit(m_state, i) { ok = false }
+            }
+            i = i + 1
+        }
+        if ok {
+            acc = acc + ces_tpm_node(s, pu, n, rule_kind, couple)
+            cnt = cnt + 1
+        }
+        s = s + 1
+    }
+    if cnt == 0 { return 0.5 }
+    return acc / (cnt * 1.0)
+}
+
+// full effect repertoire over purview z_mask: distribution over 2^|Z| states.
+// out farr length = 2^|Z|, indexed by the COMPACT purview substate.
+fn ces_effect_repertoire(m_mask: int, m_state: int, z_mask: int,
+                        n: int, rule_kind: int, couple: float) -> int {
+    let zk = ces_popcount(z_mask, n)
+    let dist = farr_zeros(ces_pow2(zk))
+    // gather purview unit indices in order.
+    let units = farr_zeros(zk)
+    let mut k = 0
+    let mut i = 0
+    while i < n {
+        if ces_bit(z_mask, i) == 1 { let _ = farr_set(units, k, i * 1.0); k = k + 1 }
+        i = i + 1
+    }
+    // per-unit ON-prob.
+    let onp = farr_zeros(zk)
+    let mut u = 0
+    while u < zk {
+        let pu = to_int(farr_get(units, u))
+        let _ = farr_set(onp, u, ces_effect_unit_on(m_mask, m_state, pu, n, rule_kind, couple))
+        u = u + 1
+    }
+    // product distribution over compact substates.
+    let nz = ces_pow2(zk)
+    let mut zs = 0
+    while zs < nz {
+        let mut p = 1.0
+        let mut b = 0
+        while b < zk {
+            let on = ces_bit(zs, b)
+            let pon = farr_get(onp, b)
+            if on == 1 { p = p * pon } else { p = p * (1.0 - pon) }
+            b = b + 1
+        }
+        let _ = farr_set(dist, zs, p)
+        zs = zs + 1
+    }
+    let _ = farr_free(units)
+    let _ = farr_free(onp)
+    return dist
+}
+
+// ── cause repertoire ───────────────────────────────────────────────────────
+// likelihood that PAST purview state zstate produces current mechanism m_state.
+// L(zstate) = ∏_{i∈M} P(unit i = m_i | past = zstate on Z, rest ~ uniform).
+fn ces_cause_likelihood(m_mask: int, m_state: int, z_mask: int, zstate_compact: int,
+                       n: int, rule_kind: int, couple: float) -> float {
+    // build the explicit past purview assignment from compact zstate.
+    // map compact bit -> actual unit.
+    let zk = ces_popcount(z_mask, n)
+    let units = farr_zeros(zk)
+    let mut k = 0
+    let mut i = 0
+    while i < n {
+        if ces_bit(z_mask, i) == 1 { let _ = farr_set(units, k, i * 1.0); k = k + 1 }
+        i = i + 1
+    }
+    // enumerate completions of past units NOT in Z; Z units fixed.
+    let n_states = ces_pow2(n)
+    // accumulate, per mechanism unit, the matched-prob averaged over rest.
+    // we accumulate per-completion the product over M of matched prob, then avg.
+    let mut acc = 0.0
+    let mut cnt = 0
+    let mut s = 0
+    while s < n_states {
+        // does s agree with zstate on the Z units?
+        let mut ok = true
+        let mut b = 0
+        while b < zk {
+            let unit = to_int(farr_get(units, b))
+            let want = ces_bit(zstate_compact, b)
+            if ces_bit(s, unit) != want { ok = false }
+            b = b + 1
+        }
+        if ok {
+            // product over mechanism units of P(unit = m_i | past = s).
+            let mut prod = 1.0
+            let mut mi = 0
+            while mi < n {
+                if ces_bit(m_mask, mi) == 1 {
+                    let pon = ces_tpm_node(s, mi, n, rule_kind, couple)
+                    let want_m = ces_bit(m_state, mi)
+                    if want_m == 1 { prod = prod * pon } else { prod = prod * (1.0 - pon) }
+                }
+                mi = mi + 1
+            }
+            acc = acc + prod
+            cnt = cnt + 1
+        }
+        s = s + 1
+    }
+    let _ = farr_free(units)
+    if cnt == 0 { return 0.0 }
+    return acc / (cnt * 1.0)
+}
+
+// full cause repertoire over purview z_mask: normalized distribution over 2^|Z|.
+fn ces_cause_repertoire(m_mask: int, m_state: int, z_mask: int,
+                       n: int, rule_kind: int, couple: float) -> int {
+    let zk = ces_popcount(z_mask, n)
+    let nz = ces_pow2(zk)
+    let dist = farr_zeros(nz)
+    let mut sum = 0.0
+    let mut zs = 0
+    while zs < nz {
+        let l = ces_cause_likelihood(m_mask, m_state, z_mask, zs, n, rule_kind, couple)
+        let _ = farr_set(dist, zs, l)
+        sum = sum + l
+        zs = zs + 1
+    }
+    // normalize (Bayes, uniform prior over Z states).
+    if sum <= 0.0 {
+        // uniform fallback.
+        let mut u = 0
+        while u < nz { let _ = farr_set(dist, u, 1.0 / (nz * 1.0)); u = u + 1 }
+        return dist
+    }
+    let mut u = 0
+    while u < nz { let _ = farr_set(dist, u, farr_get(dist, u) / sum); u = u + 1 }
+    return dist
+}
+
+// ── intrinsic difference ID(p,q) = max_x p(x) log2(p(x)/q(x)) ──────────────
+fn ces_id(p: int, q: int, sz: int) -> float {
+    let eps = ces_eps()
+    let mut best = 0.0
+    let mut x = 0
+    while x < sz {
+        let px = farr_get(p, x)
+        let mut qx = farr_get(q, x)
+        if qx < eps { qx = eps }
+        if px > 0.0 {
+            let term = px * ces_log2(px / qx)
+            if term > best { best = term }
+        }
+        x = x + 1
+    }
+    return best
+}
+
+// ── partitioned repertoire ──────────────────────────────────────────────────
+// Given mechanism M and purview Z and a partition of M into (M∩cutA, M∩cutB)
+// and Z into (Z∩cutA, Z∩cutB), the partitioned repertoire is the product of
+// the two part-repertoires. An empty mechanism part → its purview part is
+// unconstrained (uniform). Returns a distribution over the full 2^|Z| states.
+// cut_mask marks which units are on side A (1) vs side B (0); only relevant for
+// units in M∪Z.
+fn ces_partitioned_rep(m_mask: int, m_state: int, z_mask: int, cut_mask: int,
+                      dir: int, n: int, rule_kind: int, couple: float) -> int {
+    let zk = ces_popcount(z_mask, n)
+    let nz = ces_pow2(zk)
+    // side masks within M and Z.
+    let mut mA = 0
+    let mut mB = 0
+    let mut zA = 0
+    let mut zB = 0
+    let mut i = 0
+    while i < n {
+        if ces_bit(m_mask, i) == 1 {
+            if ces_bit(cut_mask, i) == 1 { mA = mA + ces_pow2(i) } else { mB = mB + ces_pow2(i) }
+        }
+        if ces_bit(z_mask, i) == 1 {
+            if ces_bit(cut_mask, i) == 1 { zA = zA + ces_pow2(i) } else { zB = zB + ces_pow2(i) }
+        }
+        i = i + 1
+    }
+    // part-A repertoire over zA, part-B repertoire over zB.
+    let repA = ces_part_rep(mA, m_state, zA, dir, n, rule_kind, couple)
+    let repB = ces_part_rep(mB, m_state, zB, dir, n, rule_kind, couple)
+    // recombine into full Z distribution (compact index over Z units in order).
+    // build the bit-position map: for each Z unit (in order), is it in A or B,
+    // and what is its compact index within zA / zB.
+    let zUnits = farr_zeros(zk)
+    let zInA = farr_zeros(zk)
+    let zSub = farr_zeros(zk)
+    let mut k = 0
+    let mut cA = 0
+    let mut cB = 0
+    let mut u = 0
+    while u < n {
+        if ces_bit(z_mask, u) == 1 {
+            let _ = farr_set(zUnits, k, u * 1.0)
+            if ces_bit(cut_mask, u) == 1 {
+                let _ = farr_set(zInA, k, 1.0)
+                let _ = farr_set(zSub, k, cA * 1.0)
+                cA = cA + 1
+            } else {
+                let _ = farr_set(zInA, k, 0.0)
+                let _ = farr_set(zSub, k, cB * 1.0)
+                cB = cB + 1
+            }
+            k = k + 1
+        }
+        u = u + 1
+    }
+    let dist = farr_zeros(nz)
+    let mut zs = 0
+    while zs < nz {
+        // split zs (compact over Z) into A-substate and B-substate.
+        let mut aState = 0
+        let mut bState = 0
+        let mut b = 0
+        while b < zk {
+            let bit = ces_bit(zs, b)
+            if to_int(farr_get(zInA, b)) == 1 {
+                if bit == 1 { aState = aState + ces_pow2(to_int(farr_get(zSub, b))) }
+            } else {
+                if bit == 1 { bState = bState + ces_pow2(to_int(farr_get(zSub, b))) }
+            }
+            b = b + 1
+        }
+        let pA = farr_get(repA, aState)
+        let pB = farr_get(repB, bState)
+        let _ = farr_set(dist, zs, pA * pB)
+        zs = zs + 1
+    }
+    let _ = farr_free(repA)
+    let _ = farr_free(repB)
+    let _ = farr_free(zUnits)
+    let _ = farr_free(zInA)
+    let _ = farr_free(zSub)
+    return dist
+}
+
+// single-part repertoire: empty mechanism → uniform over its purview;
+// empty purview → length-1 [1.0]; else cause/effect repertoire.
+fn ces_part_rep(m_part: int, m_state: int, z_part: int,
+               dir: int, n: int, rule_kind: int, couple: float) -> int {
+    let zk = ces_popcount(z_part, n)
+    let nz = ces_pow2(zk)
+    if zk == 0 {
+        let d = farr_zeros(1)
+        let _ = farr_set(d, 0, 1.0)
+        return d
+    }
+    if m_part == 0 {
+        // unconstrained: uniform over purview (max-entropy, IIT cut convention).
+        let d = farr_zeros(nz)
+        let mut i = 0
+        while i < nz { let _ = farr_set(d, i, 1.0 / (nz * 1.0)); i = i + 1 }
+        return d
+    }
+    if dir == 1 {
+        return ces_effect_repertoire(m_part, m_state, z_part, n, rule_kind, couple)
+    }
+    return ces_cause_repertoire(m_part, m_state, z_part, n, rule_kind, couple)
+}
+
+// unpartitioned repertoire (dir 1 = effect, 0 = cause).
+fn ces_unpart_rep(m_mask: int, m_state: int, z_mask: int,
+                 dir: int, n: int, rule_kind: int, couple: float) -> int {
+    if dir == 1 {
+        return ces_effect_repertoire(m_mask, m_state, z_mask, n, rule_kind, couple)
+    }
+    return ces_cause_repertoire(m_mask, m_state, z_mask, n, rule_kind, couple)
+}
+
+// ── mechanism φ over a fixed purview = min over partitions of ID(unpart,part) ─
+// enumerate all partitions of (M ∪ Z) into A/B such that the cut is non-trivial
+// w.r.t. the mechanism-purview pair (at least one mechanism unit or one purview
+// unit crosses). Returns the MIP φ value.
+fn ces_phi_mech_purview(m_mask: int, m_state: int, z_mask: int,
+                       dir: int, n: int, rule_kind: int, couple: float) -> float {
+    let zk = ces_popcount(z_mask, n)
+    let nz = ces_pow2(zk)
+    let unpart = ces_unpart_rep(m_mask, m_state, z_mask, dir, n, rule_kind, couple)
+    // enumerate cut_masks over the n units; only M∪Z units matter (union via bit loop).
+    let mut union_mask = 0
+    let mut i = 0
+    while i < n {
+        if (ces_bit(m_mask, i) == 1) || (ces_bit(z_mask, i) == 1) {
+            union_mask = union_mask + ces_pow2(i)
+        }
+        i = i + 1
+    }
+    let uk = ces_popcount(union_mask, n)
+    // gather union unit indices.
+    let uunits = farr_zeros(uk)
+    let mut kk = 0
+    let mut j = 0
+    while j < n {
+        if ces_bit(union_mask, j) == 1 { let _ = farr_set(uunits, kk, j * 1.0); kk = kk + 1 }
+        j = j + 1
+    }
+    let n_cuts = ces_pow2(uk)
+    let mut best = 1.0e308
+    let mut found = false
+    let mut c = 0
+    while c < n_cuts {
+        // build cut_mask over real unit positions.
+        let mut cut_mask = 0
+        let mut b = 0
+        while b < uk {
+            if ces_bit(c, b) == 1 { cut_mask = cut_mask + ces_pow2(to_int(farr_get(uunits, b))) }
+            b = b + 1
+        }
+        // mechanism / purview unit counts on each side of the cut.
+        let mut mOnA = 0
+        let mut mOnB = 0
+        let mut zOnA = 0
+        let mut zOnB = 0
+        let mut ii = 0
+        while ii < n {
+            if ces_bit(m_mask, ii) == 1 {
+                if ces_bit(cut_mask, ii) == 1 { mOnA = mOnA + 1 } else { mOnB = mOnB + 1 }
+            }
+            if ces_bit(z_mask, ii) == 1 {
+                if ces_bit(cut_mask, ii) == 1 { zOnA = zOnA + 1 } else { zOnB = zOnB + 1 }
+            }
+            ii = ii + 1
+        }
+        // a valid partition must split the mechanism-purview connection:
+        // not both parts trivially empty on one side. We require the cut to be
+        // a genuine bipartition of the union (both sides non-empty) AND not the
+        // identity (which would give ID 0 trivially but is excluded as it does
+        // not cut). IIT: include all partitions where the cut severs at least
+        // one directed M→Z (or Z→M) link, i.e. (mOnA>0 & zOnB>0) or
+        // (mOnB>0 & zOnA>0).
+        let cuts_link = ((mOnA > 0) && (zOnB > 0)) || ((mOnB > 0) && (zOnA > 0))
+        if cuts_link {
+            let part = ces_partitioned_rep(m_mask, m_state, z_mask, cut_mask, dir, n, rule_kind, couple)
+            let d = ces_id(unpart, part, nz)
+            if (!found) || (d < best) { best = d; found = true }
+            let _ = farr_free(part)
+        }
+        c = c + 1
+    }
+    let _ = farr_free(unpart)
+    let _ = farr_free(uunits)
+    if !found { return 0.0 }
+    if best < 0.0 { return 0.0 }
+    return best
+}
+
+// ── max-φ purview (cause or effect) over all non-empty purviews ────────────
+// returns #{ "phi": maxphi, "purview": argmax_z_mask }.
+fn ces_max_phi_purview(m_mask: int, m_state: int, dir: int,
+                      n: int, rule_kind: int, couple: float) {
+    let n_p = ces_pow2(n)
+    let mut best = 0.0
+    let mut best_z = 0
+    let mut z = 1
+    while z < n_p {
+        let phi = ces_phi_mech_purview(m_mask, m_state, z, dir, n, rule_kind, couple)
+        if phi > best { best = phi; best_z = z }
+        z = z + 1
+    }
+    return #{ "phi": best, "purview": best_z }
+}
+
+// ── distinction φ_d(M) = min(φ_cause, φ_effect) ────────────────────────────
+// returns full record for one mechanism.
+fn ces_distinction(m_mask: int, m_state: int, n: int, rule_kind: int, couple: float) {
+    let ce = ces_max_phi_purview(m_mask, m_state, 0, n, rule_kind, couple)  // cause
+    let ef = ces_max_phi_purview(m_mask, m_state, 1, n, rule_kind, couple)  // effect
+    let phi_c = ce["phi"]
+    let phi_e = ef["phi"]
+    let phi_d = ces_fmin(phi_c, phi_e)
+    return #{
+        "mechanism": m_mask,
+        "phi_cause": phi_c,
+        "phi_effect": phi_e,
+        "phi_d": phi_d,
+        "cause_purview": ce["purview"],
+        "effect_purview": ef["purview"],
+        "is_distinction": phi_d > 0.0
+    }
+}

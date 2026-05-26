@@ -77,21 +77,21 @@ FINAL=$(jq '.final_ce' result.json)
 
 ### Branch A 진입 시
 1. `HEXAD/PURE/R8A2_JOINT_VERDICT_2026_05_24.md` (template fill-in rename) — base: main
-2. `HEXAD/LIFE/H_255_*.md` REVISION — STRENGTHENED status, axis 분리 — base: #1
+2. `UNIVERSE/H_255_*.md` REVISION — STRENGTHENED status, axis 분리 — base: #1
 3. `HEXAD/PURE/AXIS_MAP.md` UPDATE — cluster Z 의 noise=0 변형 신설 — base: #2
 4. `tool/training/dispatch_p21h_v3_runpod.sh` PATCH — Wave-17 default config 갱신 — base: #3
-5. `HEXAD/LIFE/H_257_*.md` REFRAMING UPDATE — env-var silent-bypass + wiring saga combined closure — base: #4
+5. `UNIVERSE/H_257_*.md` REFRAMING UPDATE — env-var silent-bypass + wiring saga combined closure — base: #4
 
 ### Branch B 진입 시
 1. `HEXAD/PURE/R8A2_JOINT_VERDICT_2026_05_24.md` (template fill-in rename) — base: main
 2. `HEXAD/PURE/R8_SAGA_PARTIAL_CLOSE_2026_05_24.md` (new retrospective) — base: #1
 3. `HEXAD/PURE/AXIS_R8B_LORA_ON_QWEN_SPEC.md` UPDATE — priority bump — base: #2
-4. `HEXAD/LIFE/H_255_*.md` STRENGTHENED — init_CE/final_CE/n_strong decoupling — base: #3
+4. `UNIVERSE/H_255_*.md` STRENGTHENED — init_CE/final_CE/n_strong decoupling — base: #3
 
 ### Branch C 진입 시
 1. `HEXAD/PURE/R8A2_JOINT_VERDICT_2026_05_24.md` (template fill-in rename, branch C verdict) — base: main
 2. `inbox/patches/hexa-lang-dispatcher-silent-fail-horizon-dependent-2026-05-24.md` (hexa-lang inbox 제출) — base: main (cross-repo)
-3. `HEXAD/LIFE/H_256_wiring_propagation_horizon_dependent.md` (신설 H_256) — base: #1
+3. `UNIVERSE/H_256_wiring_propagation_horizon_dependent.md` (신설 H_256) — base: #1
 4. `HEXAD/PURE/R8_SAGA_WIRING_BLOCKED_2026_05_24.md` (saga status update) — base: #3
 
 ---

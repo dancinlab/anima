@@ -1,0 +1,528 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_h260.hexa — H_260 contact-inhibition (division / 세포분열 축)
+//
+//  CORE QUESTION
+//    If the mitosis split predicate is modified so that pool density (cell
+//    count / capacity) above a critical threshold SUPPRESSES splits
+//    (contact-inhibition analog), does the pool self-regulate to a carrying
+//    capacity K (logistic saturation) rather than grow without bound?
+//
+//  SUBSTRATE
+//    pool = cell_pool_init(d_model=8, initial_cells=2) — small seed so growth
+//    is driven entirely by the density-gated split predicate.
+//    seed via __HEXA_FARR_GAUSS_SEED__=42 (RFC 033) — deterministic.
+//    Per step we run the lib's autonomous perturbation + per-cell forward to
+//    accumulate tension history (the natural split driver), then apply a
+//    CUSTOM contact-inhibition split check (NOT the lib's _mit_check_splits).
+//
+//  CONTACT-INHIBITION SPLIT PREDICATE (the modification under test)
+//    A cell is split-eligible when its last `patience` tensions all exceed
+//    split_threshold (same as lib). BUT a split fires only if the current
+//    pool density is below the inhibition threshold:
+//        density = n_cells / capacity
+//        split allowed iff density < inhibition_threshold
+//    This is the contact-inhibition analog: crowding (high density) halts
+//    division regardless of internal drive.
+//
+//  SWEEP (3 inhibition thresholds × 2 initial pool sizes = 6 conditions)
+//    inhibition_threshold ∈ {0.25 (low), 0.50 (mid), 0.75 (high)}
+//    initial pool size    ∈ {2 (below-K seed), 24 (above-K seed)}
+//    capacity = 32 (fixed) — the maximum the gate measures density against.
+//
+//  GROWTH DRIVER
+//    To isolate the density gate, every cell is forced sustained high tension
+//    (split_threshold set to 0.0 so any positive tension is "above"), so the
+//    ONLY thing limiting growth is the contact-inhibition density gate.
+//    Merges are disabled (we study division-side regulation only).
+//
+//  MEASURE per condition
+//    growth_curve  = pool size at recorded steps (logistic-shape check)
+//    K_steady      = pool size at final step (steady-state carrying capacity)
+//    K_predicted   = floor(inhibition_threshold * capacity) region
+//
+//  CRITERIA (pre-registered)
+//    C1 SATURATION  : K_steady saturates (does NOT reach capacity for any
+//                     threshold < 1.0; pool stops growing — last-window flat)
+//    C2 MONOTONE-K  : threshold↑ → K_steady↑ (strict monotone across low<mid<high)
+//    C3 LOGISTIC    : growth curve is logistic-like — initial acceleration
+//                     then deceleration (positive then non-increasing growth
+//                     increments) for the below-K seed
+//    C4 DETERMINISM : re-run K matrix byte-equal
+//    SUPPORTED = C1 ∧ C2 ; PARTIAL = C1 only ; FALSIFIED = ¬C1
+//
+//  $0 mac local · hexa-only · LLM none · NO ckpt · deterministic.
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+
+
+fn _state_dir() -> string {
+    return "UNIVERSE/state/h260_contact_inhibition_2026_05_25"
+}
+fn _d_model() -> int     { return 8 }
+fn _capacity() -> int    { return 32 }    // density denominator (max pool the gate measures against)
+fn _seed() -> int        { return 42 }
+fn _n_steps() -> int     { return 60 }    // evolution horizon — enough to saturate
+fn _patience() -> int    { return 3 }     // sustained-tension window before a cell is split-eligible
+fn _split_threshold() -> float { return 0.0 }  // 0.0 → any positive tension is "above" → growth limited only by density gate
+
+fn _thr_low()  -> float { return 0.25 }
+fn _thr_mid()  -> float { return 0.50 }
+fn _thr_high() -> float { return 0.75 }
+
+fn _init_below() -> int { return 2 }      // seed below all carrying capacities
+fn _init_above() -> int { return 24 }     // seed above low/mid K (tests no spurious growth + downward checks)
+
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+fn to_float(x: int) -> float { return x * 1.0 }
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn _int_arr_json(arr) -> string {
+    let n = len(arr)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(arr[i])
+        i = i + 1
+    }
+    return out + "]"
+}
+
+
+// ── custom contact-inhibition split check ─────────────────────────────────────
+//
+// Mirrors lib _mit_check_splits identification (last `patience` tensions all
+// above split_threshold) but gates the actual split on pool density:
+//     density = n_cells / capacity ; split allowed iff density < inhibition_thr
+//
+// Splits applied via lib split_cell (deterministic RFC 033 deepcopy + noise).
+// Returns updated cell_pool. n_cells is re-checked each split so the density
+// gate self-arrests mid-batch (true contact inhibition — once crowding hits
+// the threshold, remaining eligible cells do NOT split this step).
+fn _contact_inhibition_check(cell_pool, step: int, inhibition_thr: float, capacity: int) {
+    let cs = cell_pool["cells"]
+    let thr = _split_threshold()
+    let patience = _patience()
+
+    // Identify split-eligible cells (snapshot indices before mutation).
+    let mut eligible_idx = []
+    let mut i = 0
+    while i < len(cs) {
+        let th = cs[i]["tension_history"]
+        if len(th) >= patience {
+            let mut all_above = true
+            let start = len(th) - patience
+            let mut k = start
+            while k < len(th) {
+                if th[k] <= thr { all_above = false }
+                k = k + 1
+            }
+            if all_above {
+                eligible_idx.push(i)
+            }
+        }
+        i = i + 1
+    }
+
+    // Apply splits with a per-split density gate (contact inhibition).
+    let mut s = 0
+    while s < len(eligible_idx) {
+        let n_now = len(cell_pool["cells"])
+        let density = to_float(n_now) / to_float(capacity)
+        // Hard ceiling: never exceed capacity regardless of threshold.
+        if n_now >= capacity { break }
+        // Contact inhibition: crowding above threshold halts division.
+        if density >= inhibition_thr { break }
+
+        let idx = eligible_idx[s]
+        let parent = cell_pool["cells"][idx]
+        let split_result = split_cell(parent, cell_pool, step)
+        let new_parent = split_result[0]
+        let child = split_result[1]
+        cell_pool = split_result[2]
+        cell_pool["cells"][idx] = new_parent
+        cell_pool["cells"].push(child)
+        s = s + 1
+    }
+    return cell_pool
+}
+
+
+// ── one forward step WITHOUT lib split/merge (we own division) ───────────────
+//
+// Reproduces the tension-accumulation half of mitosis_forward_tail:
+//   1. autonomous Lorenz perturbation (lib)
+//   2. per-cell forward → tension → push to per-cell tension_history (cap 30)
+//   3. contact-inhibition split check (custom)
+// Merges intentionally omitted — division-side regulation only.
+fn _step_pool(cell_pool, step: int, x_in, inhibition_thr: float, capacity: int) {
+    let d_model = cell_pool["d_model"]
+
+    // 1. Lorenz autonomous chaos → per-cell hidden update.
+    cell_pool = _mit_inject_autonomous_perturbation(cell_pool, step)
+
+    // 2. Per-cell forward → tension history. Each cell forwards on its OWN
+    //    perturbed hidden state (the cell state being processed) so tension is
+    //    a function of the cell's repulsion dynamics — non-zero even with no
+    //    external drive. (External x_in is reserved for an optional shared
+    //    drive; here x_in is zero so the cell hidden is the sole signal.)
+    let mut i = 0
+    while i < len(cell_pool["cells"]) {
+        let cell = cell_pool["cells"][i]
+        let h_far = _mit_list_to_farr(cell["hidden"])
+        let result = _mit_cell_forward(cell, h_far, d_model)
+        let _ = farr_free(h_far)
+        let t = result["tension"]
+        cell_pool["cells"][i]["tension_history"].push(t)
+        let th = cell_pool["cells"][i]["tension_history"]
+        if len(th) > 30 {
+            let mut keep = []
+            let start = len(th) - 30
+            let mut k = start
+            while k < len(th) {
+                keep.push(th[k])
+                k = k + 1
+            }
+            cell_pool["cells"][i]["tension_history"] = keep
+        }
+        i = i + 1
+    }
+
+    // 3. Contact-inhibition split check.
+    cell_pool = _contact_inhibition_check(cell_pool, step, inhibition_thr, capacity)
+
+    return cell_pool
+}
+
+
+// ── run one (inhibition_threshold, initial_pool) condition ───────────────────
+//
+// Returns dict:
+//   { inhibition_thr, initial_pool, k_steady, growth_curve (list[int] @ rec
+//     steps), increments (list[int] growth deltas), n_steps }
+fn _run_condition(inhibition_thr: float, initial_pool: int) {
+    let d = _d_model()
+    let cap = _capacity()
+    let mut pool = cell_pool_init(d, initial_pool)
+
+    // Zero external drive — internal repulsion + Lorenz is the tension source.
+    let mut x = []
+    let mut z = 0
+    while z < d {
+        x.push(0.0)
+        z = z + 1
+    }
+
+    // Record pool size every 5 steps (+ step 0).
+    let mut growth_curve = []
+    growth_curve.push(len(pool["cells"]))
+
+    let n_steps = _n_steps()
+    let mut step = 0
+    while step < n_steps {
+        pool = _step_pool(pool, step, x, inhibition_thr, cap)
+        if ((step + 1) % 5) == 0 {
+            growth_curve.push(len(pool["cells"]))
+        }
+        step = step + 1
+    }
+
+    let k_steady = len(pool["cells"])
+
+    // Growth increments between consecutive recorded samples.
+    let mut increments = []
+    let mut gi = 1
+    while gi < len(growth_curve) {
+        increments.push(growth_curve[gi] - growth_curve[gi - 1])
+        gi = gi + 1
+    }
+
+    return #{
+        "inhibition_thr": inhibition_thr,
+        "initial_pool":   initial_pool,
+        "k_steady":       k_steady,
+        "growth_curve":   growth_curve,
+        "increments":     increments,
+        "n_steps":        n_steps
+    }
+}
+
+
+// ── logistic-shape check ──────────────────────────────────────────────────────
+//
+// Logistic = initial acceleration (some positive increment) then deceleration
+// (later increments non-increasing, eventually ~0). For a below-K seed:
+//   * at least one positive growth increment (the system grows), AND
+//   * the final increment ≤ an earlier peak increment (deceleration), AND
+//   * the last increment is 0 (flat saturation tail).
+fn _is_logistic(increments) -> bool {
+    let n = len(increments)
+    if n < 2 { return false }
+    // peak increment.
+    let mut peak = increments[0]
+    let mut i = 1
+    while i < n {
+        if increments[i] > peak { peak = increments[i] }
+        i = i + 1
+    }
+    let grew = peak > 0
+    let last = increments[n - 1]
+    let decel = last <= peak
+    let flat_tail = last == 0
+    return grew && decel && flat_tail
+}
+
+
+// ── main ─────────────────────────────────────────────────────────────────────
+
+fn _run_h260() {
+    let cap = _capacity()
+    println("================================================================")
+    println("H_260 contact-inhibition — density-gated split → carrying capacity")
+    println("  d_model=" + to_string(_d_model())
+            + " capacity=" + to_string(cap)
+            + " n_steps=" + to_string(_n_steps())
+            + " seed=" + to_string(_seed()))
+    println("  inhibition thresholds: low=" + to_string(_thr_low())
+            + " mid=" + to_string(_thr_mid())
+            + " high=" + to_string(_thr_high()))
+    println("  initial pool sizes: below=" + to_string(_init_below())
+            + " above=" + to_string(_init_above()))
+    println("  K_predicted ~ floor(threshold * capacity): low~"
+            + to_string(_thr_low() * to_float(cap))
+            + " mid~" + to_string(_thr_mid() * to_float(cap))
+            + " high~" + to_string(_thr_high() * to_float(cap)))
+    println("================================================================")
+
+    // F4 determinism — paired identical condition at head, before divergence.
+    let _det_a = _run_condition(_thr_mid(), _init_below())
+    let _det_b = _run_condition(_thr_mid(), _init_below())
+    let f4_in_process = (_det_a["k_steady"] == _det_b["k_steady"])
+
+    // 3 threshold × 2 initial = 6 conditions.
+    let r_low_b  = _run_condition(_thr_low(),  _init_below())
+    let r_mid_b  = _run_condition(_thr_mid(),  _init_below())
+    let r_high_b = _run_condition(_thr_high(), _init_below())
+    let r_low_a  = _run_condition(_thr_low(),  _init_above())
+    let r_mid_a  = _run_condition(_thr_mid(),  _init_above())
+    let r_high_a = _run_condition(_thr_high(), _init_above())
+
+    // Pretty-print growth curves.
+    println("condition          init  K_steady  growth_curve (every 5 steps)")
+    println("-----------------  ----  --------  ----------------------------")
+    println("low  (thr=0.25) b   " + to_string(r_low_b["initial_pool"])
+            + "    " + to_string(r_low_b["k_steady"])
+            + "      " + _int_arr_json(r_low_b["growth_curve"]))
+    println("mid  (thr=0.50) b   " + to_string(r_mid_b["initial_pool"])
+            + "    " + to_string(r_mid_b["k_steady"])
+            + "      " + _int_arr_json(r_mid_b["growth_curve"]))
+    println("high (thr=0.75) b   " + to_string(r_high_b["initial_pool"])
+            + "    " + to_string(r_high_b["k_steady"])
+            + "      " + _int_arr_json(r_high_b["growth_curve"]))
+    println("low  (thr=0.25) a  " + to_string(r_low_a["initial_pool"])
+            + "    " + to_string(r_low_a["k_steady"])
+            + "      " + _int_arr_json(r_low_a["growth_curve"]))
+    println("mid  (thr=0.50) a  " + to_string(r_mid_a["initial_pool"])
+            + "    " + to_string(r_mid_a["k_steady"])
+            + "      " + _int_arr_json(r_mid_a["growth_curve"]))
+    println("high (thr=0.75) a  " + to_string(r_high_a["initial_pool"])
+            + "    " + to_string(r_high_a["k_steady"])
+            + "      " + _int_arr_json(r_high_a["growth_curve"]))
+
+    // ── derived metrics ──
+    let k_low  = r_low_b["k_steady"]
+    let k_mid  = r_mid_b["k_steady"]
+    let k_high = r_high_b["k_steady"]
+
+    // C1 SATURATION: below-K seed pool does NOT reach capacity for any thr<1.0,
+    //   AND the growth tail is flat (last increment == 0 for each below seed).
+    let low_b_inc  = r_low_b["increments"]
+    let mid_b_inc  = r_mid_b["increments"]
+    let high_b_inc = r_high_b["increments"]
+    let low_b_flat  = low_b_inc[len(low_b_inc) - 1] == 0
+    let mid_b_flat  = mid_b_inc[len(mid_b_inc) - 1] == 0
+    let high_b_flat = high_b_inc[len(high_b_inc) - 1] == 0
+    let below_cap = (k_low < cap) && (k_mid < cap) && (k_high < cap)
+    let all_flat  = low_b_flat && mid_b_flat && high_b_flat
+    let c1 = below_cap && all_flat
+
+    // C2 MONOTONE-K: threshold↑ → K↑ strict monotone (below seed).
+    let c2 = (k_mid > k_low) && (k_high > k_mid)
+
+    // C3 LOGISTIC: below-K growth curves are logistic-shaped (accel then decel
+    //   then flat). Require all 3 below-seed conditions logistic.
+    let c3 = _is_logistic(low_b_inc) && _is_logistic(mid_b_inc) && _is_logistic(high_b_inc)
+
+    // C4 DETERMINISM.
+    let c4 = f4_in_process
+
+    // F5 BOUNDS: all K in [min_cells, capacity].
+    let f5 = (k_low >= 2) && (k_low <= cap)
+          && (k_mid >= 2) && (k_mid <= cap)
+          && (k_high >= 2) && (k_high <= cap)
+
+    // Falsifiers per spec.
+    let f1 = c1               // F1 SATURATION (¬C1 ⟹ unbounded growth FALSIFIED)
+    let f2 = c2               // F2 MONOTONE
+    let f3 = c3               // F3 LOGISTIC
+    let f4 = c4               // F4 DETERMINISM
+    // f5 bounds.
+
+    let v1 = if f1 { "PASS" } else { "FAIL" }
+    let v2 = if f2 { "PASS" } else { "FAIL" }
+    let v3 = if f3 { "PASS" } else { "FAIL" }
+    let v4 = if f4 { "PASS" } else { "FAIL" }
+    let v5 = if f5 { "PASS" } else { "FAIL" }
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if f3 { n_pass = n_pass + 1 }
+    if f4 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+
+    let mut n_c = 0
+    if c1 { n_c = n_c + 1 }
+    if c2 { n_c = n_c + 1 }
+    if c3 { n_c = n_c + 1 }
+    if c4 { n_c = n_c + 1 }
+
+    // verdict_rule: SUPPORTED = C1 ∧ C2 ; PARTIAL = C1 only ; FALSIFIED = ¬C1.
+    let supported = c1 && c2
+    let partial = c1
+    let verdict = if supported {
+        "SUPPORTED"
+    } else {
+        if partial { "PARTIAL" } else { "FALSIFIED" }
+    }
+
+    println("")
+    println("derived:")
+    println("  K_low  (thr=0.25) = " + to_string(k_low)  + "  (predicted ~" + to_string(_thr_low()  * to_float(cap)) + ")")
+    println("  K_mid  (thr=0.50) = " + to_string(k_mid)  + "  (predicted ~" + to_string(_thr_mid()  * to_float(cap)) + ")")
+    println("  K_high (thr=0.75) = " + to_string(k_high) + "  (predicted ~" + to_string(_thr_high() * to_float(cap)) + ")")
+    println("  capacity (hard ceiling) = " + to_string(cap))
+    println("  below-seed increments  low=" + _int_arr_json(low_b_inc))
+    println("                         mid=" + _int_arr_json(mid_b_inc))
+    println("                        high=" + _int_arr_json(high_b_inc))
+
+    println("")
+    println("C1 SATURATION  (K<cap ALL & flat tail)    : " + _bool_str(c1))
+    println("C2 MONOTONE-K  (K_low<K_mid<K_high)        : " + _bool_str(c2))
+    println("C3 LOGISTIC    (accel→decel→flat ALL)      : " + _bool_str(c3))
+    println("C4 DETERMINISM (re-run K byte-equal)       : " + _bool_str(c4))
+    println("")
+    println("F1 SATURATION       " + v1)
+    println("F2 MONOTONE-K       " + v2)
+    println("F3 LOGISTIC         " + v3)
+    println("F4 DETERMINISM      " + v4)
+    println("F5 BOUNDS           " + v5)
+    println("================================================================")
+    println("VERDICT: " + verdict
+            + "  (" + to_string(n_c) + "/4 criteria, "
+            + to_string(n_pass) + "/5 falsifiers PASS)")
+    println("================================================================")
+
+    // ── result.json ─────────────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"hypothesis\": \"H_260\",\n"
+    j = j + "  \"slug\": \"contact-inhibition\",\n"
+    j = j + "  \"domain\": \"LIFE\",\n"
+    j = j + "  \"title\": \"contact-inhibition — density-gated split predicate → carrying-capacity self-regulation (logistic saturation)\",\n"
+    j = j + "  \"date\": \"2026-05-25\",\n"
+    j = j + "  \"host\": \"mac-local\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"seed\": " + to_string(_seed()) + ",\n"
+    j = j + "  \"params\": {\"d_model\": " + to_string(_d_model())
+          + ", \"capacity\": " + to_string(cap)
+          + ", \"n_steps\": " + to_string(_n_steps())
+          + ", \"patience\": " + to_string(_patience())
+          + ", \"split_threshold\": " + to_string(_split_threshold())
+          + ", \"thr_low\": " + to_string(_thr_low())
+          + ", \"thr_mid\": " + to_string(_thr_mid())
+          + ", \"thr_high\": " + to_string(_thr_high())
+          + ", \"init_below\": " + to_string(_init_below())
+          + ", \"init_above\": " + to_string(_init_above()) + "},\n"
+    j = j + "  \"sweep\": {\n"
+
+    j = j + "    \"low_below\":  { \"inhibition_thr\": " + to_string(_thr_low())
+          + ", \"initial_pool\": " + to_string(r_low_b["initial_pool"])
+          + ", \"k_steady\": " + to_string(r_low_b["k_steady"])
+          + ", \"growth_curve\": " + _int_arr_json(r_low_b["growth_curve"])
+          + ", \"increments\": " + _int_arr_json(r_low_b["increments"]) + " },\n"
+
+    j = j + "    \"mid_below\":  { \"inhibition_thr\": " + to_string(_thr_mid())
+          + ", \"initial_pool\": " + to_string(r_mid_b["initial_pool"])
+          + ", \"k_steady\": " + to_string(r_mid_b["k_steady"])
+          + ", \"growth_curve\": " + _int_arr_json(r_mid_b["growth_curve"])
+          + ", \"increments\": " + _int_arr_json(r_mid_b["increments"]) + " },\n"
+
+    j = j + "    \"high_below\": { \"inhibition_thr\": " + to_string(_thr_high())
+          + ", \"initial_pool\": " + to_string(r_high_b["initial_pool"])
+          + ", \"k_steady\": " + to_string(r_high_b["k_steady"])
+          + ", \"growth_curve\": " + _int_arr_json(r_high_b["growth_curve"])
+          + ", \"increments\": " + _int_arr_json(r_high_b["increments"]) + " },\n"
+
+    j = j + "    \"low_above\":  { \"inhibition_thr\": " + to_string(_thr_low())
+          + ", \"initial_pool\": " + to_string(r_low_a["initial_pool"])
+          + ", \"k_steady\": " + to_string(r_low_a["k_steady"])
+          + ", \"growth_curve\": " + _int_arr_json(r_low_a["growth_curve"])
+          + ", \"increments\": " + _int_arr_json(r_low_a["increments"]) + " },\n"
+
+    j = j + "    \"mid_above\":  { \"inhibition_thr\": " + to_string(_thr_mid())
+          + ", \"initial_pool\": " + to_string(r_mid_a["initial_pool"])
+          + ", \"k_steady\": " + to_string(r_mid_a["k_steady"])
+          + ", \"growth_curve\": " + _int_arr_json(r_mid_a["growth_curve"])
+          + ", \"increments\": " + _int_arr_json(r_mid_a["increments"]) + " },\n"
+
+    j = j + "    \"high_above\": { \"inhibition_thr\": " + to_string(_thr_high())
+          + ", \"initial_pool\": " + to_string(r_high_a["initial_pool"])
+          + ", \"k_steady\": " + to_string(r_high_a["k_steady"])
+          + ", \"growth_curve\": " + _int_arr_json(r_high_a["growth_curve"])
+          + ", \"increments\": " + _int_arr_json(r_high_a["increments"]) + " }\n"
+
+    j = j + "  },\n"
+    j = j + "  \"derived\": {\n"
+    j = j + "    \"K_low\":  " + to_string(k_low) + ",\n"
+    j = j + "    \"K_mid\":  " + to_string(k_mid) + ",\n"
+    j = j + "    \"K_high\": " + to_string(k_high) + ",\n"
+    j = j + "    \"K_predicted_low\":  " + to_string(_thr_low()  * to_float(cap)) + ",\n"
+    j = j + "    \"K_predicted_mid\":  " + to_string(_thr_mid()  * to_float(cap)) + ",\n"
+    j = j + "    \"K_predicted_high\": " + to_string(_thr_high() * to_float(cap)) + ",\n"
+    j = j + "    \"capacity\": " + to_string(cap) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_saturation\":   " + _bool_str(c1) + ",\n"
+    j = j + "    \"C2_monotone_K\":   " + _bool_str(c2) + ",\n"
+    j = j + "    \"C3_logistic\":     " + _bool_str(c3) + ",\n"
+    j = j + "    \"C4_determinism\":  " + _bool_str(c4) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F1_SATURATION\": { \"metric\": \"K<capacity ALL thr & flat tail (bounded growth)\", \"verdict\": \"" + v1 + "\" },\n"
+    j = j + "    \"F2_MONOTONE_K\": { \"metric\": \"K_low < K_mid < K_high\", \"verdict\": \"" + v2 + "\" },\n"
+    j = j + "    \"F3_LOGISTIC\":   { \"metric\": \"accel then decel then flat tail (below seed)\", \"verdict\": \"" + v3 + "\" },\n"
+    j = j + "    \"F4_DETERMINISM\":{ \"metric\": \"re-run K byte-equal\", \"verdict\": \"" + v4 + "\" },\n"
+    j = j + "    \"F5_BOUNDS\":     { \"metric\": \"all K in [min_cells=2, capacity]\", \"verdict\": \"" + v5 + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"n_criteria_pass\": " + to_string(n_c) + ",\n"
+    j = j + "  \"n_falsifier_pass\": " + to_string(n_pass) + ",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"cross_link\": {\"H_200\": \"apoptosis-primitive\", \"H_201\": \"asymmetric-division\", \"H_220\": \"infant-mirror (division/self axis)\"}\n"
+    j = j + "}\n"
+
+    write_file(_state_dir() + "/result.json", j)
+    println("ledger -> " + _state_dir() + "/result.json")
+}
+
+
+_run_h260()
