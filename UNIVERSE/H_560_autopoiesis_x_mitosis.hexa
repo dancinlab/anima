@@ -1,0 +1,3 @@
+fn pool_survives(n: i64) -> i64 { if n < 1 { return 1 } return n }
+fn check_h560() -> bool { return pool_survives(0) == 1 && pool_survives(5) == 5 }
+fn main() { if check_h560() { print("H_560 OK") } else { print("H_560 FAIL") } }
