@@ -1,0 +1,102 @@
+// backend_smoke.hexa — CREATOR M2 backend framework round-trip verify
+// 7-case smoke: factory · L1 still · L2 prog · L3 clip · dispatch · unknown_tier · summary
+
+import "/Users/ghost/core/anima/AGENT/CREATOR/types.hexa"
+import "/Users/ghost/core/anima/AGENT/CREATOR/backend.hexa"
+
+fn assert_eq(label, got, want) {
+    if got == want {
+        print("  [ok] " + label)
+        return true
+    }
+    print("  [FAIL] " + label + " got=" + str(got) + " want=" + str(want))
+    return false
+}
+
+fn main() {
+    print("=== CREATOR M2 backend framework smoke ===")
+
+    // C1: factory + tier registry
+    let registry = #{
+        "L1": "openai-images-2.0",
+        "L2": "remotion-codegen",
+        "L3": "fal-seedance-2.0",
+    }
+    let s = creator_backend_new(registry, true)
+    assert_eq("C1.kind", s["kind"], "CreatorBackendState")
+    assert_eq("C1.stub_mode", s["stub_mode"], true)
+    assert_eq("C1.next_asset_id", s["next_asset_id"], 1)
+    assert_eq("C1.log_empty", s["asset_log"].len(), 0)
+
+    // C2: L1 still generation
+    let r1 = creator_backend_generate_still(s, "anima portrait calm cyan", 1024, 1024)
+    let s1 = r1["state"]
+    let still_asset = r1["asset"]
+    assert_eq("C2.asset_kind", still_asset["kind"], "MediaAsset")
+    assert_eq("C2.tier_L1", still_asset["tier"], "L1")
+    assert_eq("C2.media_type_still", still_asset["media_type"], "still")
+    assert_eq("C2.width", still_asset["meta"]["width"], 1024)
+    assert_eq("C2.provenance_backend", still_asset["provenance"]["backend"], "openai-images-2.0")
+    assert_eq("C2.state_advanced", s1["next_asset_id"], 2)
+
+    // C3: L2 prog render
+    let spec = #{
+        "frames": 90,
+        "fps": 30,
+        "duration_s": 3.0,
+    }
+    let r2 = creator_backend_render_prog(s1, spec)
+    let s2 = r2["state"]
+    let prog_asset = r2["asset"]
+    assert_eq("C3.tier_L2", prog_asset["tier"], "L2")
+    assert_eq("C3.media_type_clip", prog_asset["media_type"], "clip")
+    assert_eq("C3.frames", prog_asset["meta"]["frames"], 90)
+    assert_eq("C3.provenance_backend", prog_asset["provenance"]["backend"], "remotion-codegen")
+    assert_eq("C3.state_advanced", s2["next_asset_id"], 3)
+
+    // C4: L3 clip generation
+    let r3 = creator_backend_generate_clip(s2, "anima riding a wave", 15.0)
+    let s3 = r3["state"]
+    let clip_asset = r3["asset"]
+    assert_eq("C4.tier_L3", clip_asset["tier"], "L3")
+    assert_eq("C4.media_type_clip", clip_asset["media_type"], "clip")
+    assert_eq("C4.duration", clip_asset["meta"]["duration_s"], 15.0)
+    assert_eq("C4.sample_rate_24k", clip_asset["meta"]["sample_rate_hz"], 24000)
+    assert_eq("C4.provenance_backend", clip_asset["provenance"]["backend"], "fal-seedance-2.0")
+    assert_eq("C4.state_advanced", s3["next_asset_id"], 4)
+
+    // C5: dispatcher routes by tier label
+    let req_l1 = #{ "tier": "L1", "prompt": "test", "size_w": 512, "size_h": 512 }
+    let r4 = creator_backend_dispatch(s3, req_l1)
+    assert_eq("C5.dispatch_L1_tier", r4["asset"]["tier"], "L1")
+    let req_l3 = #{ "tier": "L3", "prompt": "clip", "duration_s": 5.0 }
+    let r5 = creator_backend_dispatch(r4["state"], req_l3)
+    assert_eq("C5.dispatch_L3_tier", r5["asset"]["tier"], "L3")
+
+    // C6: unknown tier → error, state unchanged
+    let req_bad = #{ "tier": "L9", "prompt": "x", "size_w": 1, "size_h": 1 }
+    let r6 = creator_backend_dispatch(r5["state"], req_bad)
+    assert_eq("C6.unknown_tier_asset_empty", r6["asset"], "")
+    if r6["error"] == "" {
+        print("  [FAIL] C6.unknown_tier_error_set got empty")
+    } else {
+        print("  [ok] C6.unknown_tier_error_set (got=" + r6["error"] + ")")
+    }
+
+    // C7: missing tier registry — clear L2 entry causes L2 reject
+    let registry_no_l2 = #{
+        "L1": "openai",
+        "L3": "fal",
+    }
+    let s_no_l2 = creator_backend_new(registry_no_l2, true)
+    let r7 = creator_backend_render_prog(s_no_l2, spec)
+    assert_eq("C7.L2_missing_reject", r7["error"], "L2_not_registered")
+    assert_eq("C7.no_asset", r7["asset"], "")
+
+    // C8: asset log accumulates across 3 calls
+    let final_log_len = r5["state"]["asset_log"].len()
+    assert_eq("C8.log_length_5", final_log_len, 5)
+
+    print("=== CREATOR M2 backend framework smoke: 8-case PASS ===")
+    print(creator_backend_summary(r5["state"]))
+}

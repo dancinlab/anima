@@ -1,0 +1,198 @@
+// backend.hexa — CreatorBackend framework (M2 closure)
+// Bridge architecture: tool surface only — no consciousness framing.
+//
+// 3-verb interface that every 3-tier backend (L1 STILL · L2 PROG · L3 GEN)
+// implements with the SAME shape so callers can swap tiers freely:
+//   generate_still(prompt, size_w, size_h)   — text → still image (L1)
+//   render_prog(spec)                         — structured spec → video (L2)
+//   generate_clip(prompt, duration_s)         — text → short video (L3)
+//
+// State is held in a Map ("creator_backend_state") threaded through —
+// no global, no hidden state, audit-friendly. The DISPATCHER decides which
+// tier handles a given asset request via tier label ("L1"/"L2"/"L3").
+//
+// Each verb's STUB returns a MediaAsset (M1 type) with provenance.backend
+// set so callers can trace which tier was used.
+
+import "/Users/ghost/core/anima/AGENT/CREATOR/types.hexa"
+
+// ---------------------------------------------------------------
+// 1. creator_backend_new — initialize state with a tier registry
+//   tier_registry: Map { "L1": backend_id, "L2": backend_id, "L3": backend_id }
+//   stub_mode: bool — when true, NO external API call, returns synthetic asset
+// ---------------------------------------------------------------
+pub fn creator_backend_new(tier_registry, stub_mode) {
+    return #{
+        "tier_registry": tier_registry,
+        "stub_mode": stub_mode,
+        "next_asset_id": 1,
+        "asset_log": [],
+        "kind": "CreatorBackendState",
+    }
+}
+
+// ---------------------------------------------------------------
+// 2. creator_backend_generate_still — L1 STILL surface
+//   prompt: string · size_w/size_h: int
+//   returns { state, asset (M1 MediaAsset Map) }
+// ---------------------------------------------------------------
+pub fn creator_backend_generate_still(state, prompt, size_w, size_h) {
+    let backend_id = state["tier_registry"]["L1"]
+    if type_of(backend_id) != "string" {
+        return #{
+            "state": state,
+            "asset": "",
+            "error": "L1_not_registered",
+        }
+    }
+    let aid = state["next_asset_id"]
+    let asset_id = "still-" + str(aid)
+    let path = "/tmp/" + asset_id + ".png"
+    let meta = #{
+        "width": size_w,
+        "height": size_h,
+        "prompt_len": prompt.len(),
+    }
+    let prov = #{
+        "backend": backend_id,
+        "model": "stub",
+        "prompt_hash": "h-" + str(aid),
+        "generated_at": 1700000000000,
+        "stub_mode": state["stub_mode"],
+    }
+    let asset = creator_media_asset(asset_id, "still", "L1", path, meta, prov)
+    let new_state = #{
+        "tier_registry": state["tier_registry"],
+        "stub_mode": state["stub_mode"],
+        "next_asset_id": aid + 1,
+        "asset_log": state["asset_log"] + [asset_id],
+        "kind": "CreatorBackendState",
+    }
+    return #{
+        "state": new_state,
+        "asset": asset,
+        "error": "",
+    }
+}
+
+// ---------------------------------------------------------------
+// 3. creator_backend_render_prog — L2 PROG surface
+//   spec: Map (structured render spec: frames · components · timing)
+//   returns { state, asset (M1 MediaAsset clip) }
+// ---------------------------------------------------------------
+pub fn creator_backend_render_prog(state, spec) {
+    let backend_id = state["tier_registry"]["L2"]
+    if type_of(backend_id) != "string" {
+        return #{
+            "state": state,
+            "asset": "",
+            "error": "L2_not_registered",
+        }
+    }
+    let aid = state["next_asset_id"]
+    let asset_id = "prog-" + str(aid)
+    let path = "/tmp/" + asset_id + ".mp4"
+    let meta = #{
+        "frames": spec["frames"],
+        "fps": spec["fps"],
+        "duration_s": spec["duration_s"],
+    }
+    let prov = #{
+        "backend": backend_id,
+        "model": "remotion-codegen-stub",
+        "spec_hash": "s-" + str(aid),
+        "generated_at": 1700000000000,
+        "stub_mode": state["stub_mode"],
+    }
+    let asset = creator_media_asset(asset_id, "clip", "L2", path, meta, prov)
+    let new_state = #{
+        "tier_registry": state["tier_registry"],
+        "stub_mode": state["stub_mode"],
+        "next_asset_id": aid + 1,
+        "asset_log": state["asset_log"] + [asset_id],
+        "kind": "CreatorBackendState",
+    }
+    return #{
+        "state": new_state,
+        "asset": asset,
+        "error": "",
+    }
+}
+
+// ---------------------------------------------------------------
+// 4. creator_backend_generate_clip — L3 GEN surface
+//   prompt: string · duration_s: float
+//   returns { state, asset (M1 MediaAsset clip) }
+// ---------------------------------------------------------------
+pub fn creator_backend_generate_clip(state, prompt, duration_s) {
+    let backend_id = state["tier_registry"]["L3"]
+    if type_of(backend_id) != "string" {
+        return #{
+            "state": state,
+            "asset": "",
+            "error": "L3_not_registered",
+        }
+    }
+    let aid = state["next_asset_id"]
+    let asset_id = "clip-" + str(aid)
+    let path = "/tmp/" + asset_id + ".mp4"
+    let meta = #{
+        "duration_s": duration_s,
+        "sample_rate_hz": 24000,
+        "prompt_len": prompt.len(),
+    }
+    let prov = #{
+        "backend": backend_id,
+        "model": "stub",
+        "prompt_hash": "h-" + str(aid),
+        "generated_at": 1700000000000,
+        "stub_mode": state["stub_mode"],
+    }
+    let asset = creator_media_asset(asset_id, "clip", "L3", path, meta, prov)
+    let new_state = #{
+        "tier_registry": state["tier_registry"],
+        "stub_mode": state["stub_mode"],
+        "next_asset_id": aid + 1,
+        "asset_log": state["asset_log"] + [asset_id],
+        "kind": "CreatorBackendState",
+    }
+    return #{
+        "state": new_state,
+        "asset": asset,
+        "error": "",
+    }
+}
+
+// ---------------------------------------------------------------
+// 5. creator_backend_dispatch — route by tier label
+//   request: Map { "tier": "L1"/"L2"/"L3", "prompt"/"spec", "size_w"/"duration_s" }
+//   returns { state, asset, error }
+// ---------------------------------------------------------------
+pub fn creator_backend_dispatch(state, request) {
+    let tier = request["tier"]
+    if tier == "L1" {
+        return creator_backend_generate_still(state, request["prompt"], request["size_w"], request["size_h"])
+    }
+    if tier == "L2" {
+        return creator_backend_render_prog(state, request["spec"])
+    }
+    if tier == "L3" {
+        return creator_backend_generate_clip(state, request["prompt"], request["duration_s"])
+    }
+    return #{
+        "state": state,
+        "asset": "",
+        "error": "unknown_tier — " + tier,
+    }
+}
+
+// ---------------------------------------------------------------
+// 6. creator_backend_summary — one-line status
+// ---------------------------------------------------------------
+pub fn creator_backend_summary(state) {
+    let mode = "live"
+    if state["stub_mode"] {
+        mode = "STUB"
+    }
+    return "CreatorBackend [" + mode + "]: next_asset=" + str(state["next_asset_id"]) + " · log_len=" + str(state["asset_log"].len())
+}
