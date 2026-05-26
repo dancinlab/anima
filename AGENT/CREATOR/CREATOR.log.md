@@ -2,6 +2,14 @@
 
 Append-only history sister of `CREATOR.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T05:55:00Z — wire-up 마일스톤 7개 등록 (M7-M13 · 위험 0 → 위험 증가 순)
+
+- [x] 사용자 명시 요청 — 모든 wire-up 마일스톤 등록 · 위험 0 → 외부 채널 게시 순으로 정렬
+- [x] M7-M9 생성 backend (비용만 · 외부 게시 X) — fal.ai still (1순위 · 가장 안전) · Remotion 로컬 (2순위 · 비용 0) · fal.ai clip (3순위 · 시간+비용)
+- [x] M10-M12 publish backend (외부 채널 공개 ⚠) — YouTube Data API v3 · TikTok Content Posting · Instagram Graph API
+- [x] M13 CREATOR wire-up integration smoke — 모든 REAL 모드 round-trip + dry_run 가드
+- [x] CREATOR.md 에 wire-up 라운드 section 추가 (`## wire-up 라운드`)
+
 ## 2026-05-27T05:40:00Z — M6 publish + 통합 smoke closure · CREATOR 6/6 ✅
 
 - [x] `AGENT/CREATOR/publish.hexa` 작성 — 5 pub fn (`publish_youtube` · `_tiktok` · `_instagram` · `_dispatch` · `_summary`)
