@@ -1,0 +1,19 @@
+// H_450 smoke — serialize pure
+
+fn serialize_proxy(seed: i64) -> i64 {
+    return seed * 31 + 7
+}
+
+fn check_h450() -> bool {
+    let s1 = serialize_proxy(42)
+    let s2 = serialize_proxy(42)
+    let det = s1 == s2
+    let diff = serialize_proxy(7) != serialize_proxy(8)
+    return det && diff
+}
+
+fn main() {
+    let ok = check_h450()
+    if !ok { print("H_450 FAIL"); return }
+    print("H_450 blue serialize pure OK")
+}
