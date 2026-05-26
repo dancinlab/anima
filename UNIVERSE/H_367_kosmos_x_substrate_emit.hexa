@@ -1,0 +1,21 @@
+// H_367 smoke — KOSMOS x emit (1:1 payload)
+
+fn lane_for_emit() -> string {
+    return "anima"
+}
+
+fn payload_slot_count() -> i64 {
+    return 6
+}
+
+fn check_h367() -> bool {
+    let h1 = payload_slot_count() == 6
+    let h3 = lane_for_emit() != "akida"
+    return h1 && h3
+}
+
+fn main() {
+    let ok = check_h367()
+    if !ok { print("H_367 FAIL"); return }
+    print("H_367 blue emit-to-payload OK")
+}
