@@ -1,0 +1,4 @@
+fn death_lane() -> string { return "apoptosis" }
+fn death_tier() -> string { return "closed" }
+fn check_h519() -> bool { return death_lane() == "apoptosis" && death_tier() == "closed" }
+fn main() { if check_h519() { print("H_519 OK") } else { print("H_519 FAIL") } }
