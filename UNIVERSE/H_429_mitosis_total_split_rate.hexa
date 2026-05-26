@@ -1,0 +1,19 @@
+// H_429 smoke — total split rate linear
+
+fn total_split_rate(per_cell: f64, n_cells: i64) -> f64 {
+    return per_cell * (n_cells as f64)
+}
+
+fn check_h429() -> bool {
+    let r = 0.1
+    let h1 = total_split_rate(r, 10) == 1.0
+    let h2 = total_split_rate(r, 0) == 0.0
+    let h3 = total_split_rate(r, 5) >= 0.0
+    return h1 && h2 && h3
+}
+
+fn main() {
+    let ok = check_h429()
+    if !ok { print("H_429 FAIL"); return }
+    print("H_429 blue total split rate OK")
+}
