@@ -1,0 +1,17 @@
+// H_504 smoke — ALLOSTASIS predict
+
+fn predict_demand(t: i64) -> f64 {
+    return (t as f64) * 0.05
+}
+
+fn check_h504() -> bool {
+    let d1 = predict_demand(1)
+    let d2 = predict_demand(2)
+    return d2 > d1
+}
+
+fn main() {
+    let ok = check_h504()
+    if !ok { print("H_504 FAIL"); return }
+    print("H_504 blue ALLOSTASIS OK")
+}
