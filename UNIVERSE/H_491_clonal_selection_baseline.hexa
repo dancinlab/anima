@@ -1,0 +1,24 @@
+// H_491 smoke — CLONAL-SELECTION beam
+
+fn beam_width() -> i64 {
+    return 3
+}
+
+fn surviving_max_affinity(round_n: i64, prev_max: f64) -> f64 {
+    return prev_max + 0.1 * (round_n as f64)
+}
+
+fn check_h491() -> bool {
+    let k = beam_width()
+    let h1 = k >= 1
+    let a0 = surviving_max_affinity(0, 0.5)
+    let a1 = surviving_max_affinity(1, a0)
+    let mono = a1 >= a0
+    return h1 && mono
+}
+
+fn main() {
+    let ok = check_h491()
+    if !ok { print("H_491 FAIL"); return }
+    print("H_491 blue CLONAL-beam OK")
+}
