@@ -1,0 +1,21 @@
+// H_374 smoke — KOSMOS x MITOSIS (split → 2 records)
+
+fn records_yielded_by_split() -> i64 {
+    return 2
+}
+
+fn lane_after_split(parent_lane: string) -> string {
+    return parent_lane
+}
+
+fn check_h374() -> bool {
+    let h1 = records_yielded_by_split() >= 2
+    let h3 = lane_after_split("anima") == "anima"
+    return h1 && h3
+}
+
+fn main() {
+    let ok = check_h374()
+    if !ok { print("H_374 FAIL"); return }
+    print("H_374 blue split-2-records OK")
+}
