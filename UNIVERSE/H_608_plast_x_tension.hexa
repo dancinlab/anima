@@ -1,0 +1,3 @@
+fn tension_ltp(ch_mag: f64) -> f64 { return ch_mag * 0.1 }
+fn check_h608() -> bool { return tension_ltp(0.8) > tension_ltp(0.2) }
+fn main() { if check_h608() { print("H_608 OK") } else { print("H_608 FAIL") } }
