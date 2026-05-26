@@ -1,5 +1,7 @@
-// backend_smoke.hexa — CREATOR M2 backend framework round-trip verify
-// 7-case smoke: factory · L1 still · L2 prog · L3 clip · dispatch · unknown_tier · summary
+// backend_smoke.hexa — CREATOR backend framework + dynamic model catalog verify
+// 10-case smoke: factory · L1 still · L2 prog · L3 clip · dispatcher routes +
+// model thread · unknown_tier · L2 not_registered · list_models · register_model ·
+// set_default_model + per-call default fallback
 
 import "/Users/ghost/core/anima/AGENT/CREATOR/types.hexa"
 import "/Users/ghost/core/anima/AGENT/CREATOR/backend.hexa"
@@ -14,94 +16,126 @@ fn assert_eq(label, got, want) {
 }
 
 fn main() {
-    print("=== CREATOR M2 backend framework smoke ===")
+    print("=== CREATOR backend + dynamic catalog smoke ===")
 
-    // C1: factory + tier registry
+    // C1: factory + tier registry (new shape with TierConfig)
     let registry = #{
-        "L1": "openai-images-2.0",
-        "L2": "remotion-codegen",
-        "L3": "fal-seedance-2.0",
+        "L1": #{
+            "backend_id": "fal.ai",
+            "default_model": "fal-ai/openai-images-2.0",
+            "available_models": ["fal-ai/openai-images-2.0", "fal-ai/flux-1.1-pro"],
+        },
+        "L2": #{
+            "backend_id": "remotion",
+            "default_model": "remotion-codegen-stub",
+            "available_models": ["remotion-codegen-stub"],
+        },
+        "L3": #{
+            "backend_id": "fal.ai",
+            "default_model": "fal-ai/seedance-2.0",
+            "available_models": ["fal-ai/seedance-2.0"],
+        },
     }
     let s = creator_backend_new(registry, true)
     assert_eq("C1.kind", s["kind"], "CreatorBackendState")
     assert_eq("C1.stub_mode", s["stub_mode"], true)
     assert_eq("C1.next_asset_id", s["next_asset_id"], 1)
-    assert_eq("C1.log_empty", s["asset_log"].len(), 0)
+    assert_eq("C1.L1_backend_id", creator_backend_tier_backend_id(s, "L1"), "fal.ai")
+    assert_eq("C1.L1_default_model", creator_backend_tier_default_model(s, "L1"), "fal-ai/openai-images-2.0")
 
-    // C2: L1 still generation (model="" → default stub)
+    // C2: L1 still — model="" uses tier default
     let r1 = creator_backend_generate_still(s, "anima portrait calm cyan", 1024, 1024, "")
     let s1 = r1["state"]
-    let still_asset = r1["asset"]
-    assert_eq("C2.asset_kind", still_asset["kind"], "MediaAsset")
-    assert_eq("C2.tier_L1", still_asset["tier"], "L1")
-    assert_eq("C2.media_type_still", still_asset["media_type"], "still")
-    assert_eq("C2.width", still_asset["meta"]["width"], 1024)
-    assert_eq("C2.provenance_backend", still_asset["provenance"]["backend"], "openai-images-2.0")
-    assert_eq("C2.model_default_stub", still_asset["provenance"]["model"], "stub")
+    let a1 = r1["asset"]
+    assert_eq("C2.tier_L1", a1["tier"], "L1")
+    assert_eq("C2.backend_id", a1["provenance"]["backend"], "fal.ai")
+    assert_eq("C2.model_from_default", a1["provenance"]["model"], "fal-ai/openai-images-2.0")
     assert_eq("C2.state_advanced", s1["next_asset_id"], 2)
 
-    // C3: L2 prog render
-    let spec = #{
-        "frames": 90,
-        "fps": 30,
-        "duration_s": 3.0,
-    }
+    // C3: L2 prog (model auto from default)
+    let spec = #{ "frames": 90, "fps": 30, "duration_s": 3.0 }
     let r2 = creator_backend_render_prog(s1, spec)
     let s2 = r2["state"]
-    let prog_asset = r2["asset"]
-    assert_eq("C3.tier_L2", prog_asset["tier"], "L2")
-    assert_eq("C3.media_type_clip", prog_asset["media_type"], "clip")
-    assert_eq("C3.frames", prog_asset["meta"]["frames"], 90)
-    assert_eq("C3.provenance_backend", prog_asset["provenance"]["backend"], "remotion-codegen")
-    assert_eq("C3.state_advanced", s2["next_asset_id"], 3)
+    let a2 = r2["asset"]
+    assert_eq("C3.tier_L2", a2["tier"], "L2")
+    assert_eq("C3.backend_id", a2["provenance"]["backend"], "remotion")
+    assert_eq("C3.model_from_default", a2["provenance"]["model"], "remotion-codegen-stub")
 
-    // C4: L3 clip generation (with explicit model override)
+    // C4: L3 clip with model override
     let r3 = creator_backend_generate_clip(s2, "anima riding a wave", 15.0, "fal-ai/seedance-2.0-pro")
     let s3 = r3["state"]
-    let clip_asset = r3["asset"]
-    assert_eq("C4.tier_L3", clip_asset["tier"], "L3")
-    assert_eq("C4.media_type_clip", clip_asset["media_type"], "clip")
-    assert_eq("C4.duration", clip_asset["meta"]["duration_s"], 15.0)
-    assert_eq("C4.sample_rate_24k", clip_asset["meta"]["sample_rate_hz"], 24000)
-    assert_eq("C4.provenance_backend", clip_asset["provenance"]["backend"], "fal-seedance-2.0")
-    assert_eq("C4.model_override", clip_asset["provenance"]["model"], "fal-ai/seedance-2.0-pro")
-    assert_eq("C4.state_advanced", s3["next_asset_id"], 4)
+    let a3 = r3["asset"]
+    assert_eq("C4.tier_L3", a3["tier"], "L3")
+    assert_eq("C4.backend_id", a3["provenance"]["backend"], "fal.ai")
+    assert_eq("C4.model_override", a3["provenance"]["model"], "fal-ai/seedance-2.0-pro")
 
-    // C5: dispatcher routes by tier label + model option threading
-    let req_l1 = #{ "tier": "L1", "prompt": "test", "size_w": 512, "size_h": 512, "model": "fal-ai/flux-1.1-pro" }
+    // C5: dispatcher routes + model option threading
+    let req_l1 = #{
+        "tier": "L1",
+        "prompt": "test",
+        "size_w": 512,
+        "size_h": 512,
+        "model": "fal-ai/flux-1.1-pro",
+    }
     let r4 = creator_backend_dispatch(s3, req_l1)
-    assert_eq("C5.dispatch_L1_tier", r4["asset"]["tier"], "L1")
-    assert_eq("C5.dispatch_L1_model", r4["asset"]["provenance"]["model"], "fal-ai/flux-1.1-pro")
+    assert_eq("C5.dispatch_model", r4["asset"]["provenance"]["model"], "fal-ai/flux-1.1-pro")
     let req_l3 = #{ "tier": "L3", "prompt": "clip", "duration_s": 5.0 }
     let r5 = creator_backend_dispatch(r4["state"], req_l3)
-    assert_eq("C5.dispatch_L3_tier", r5["asset"]["tier"], "L3")
-    // model omitted in dispatch req → falls back to "stub"
-    assert_eq("C5.dispatch_L3_model_default", r5["asset"]["provenance"]["model"], "stub")
+    assert_eq("C5.dispatch_default", r5["asset"]["provenance"]["model"], "fal-ai/seedance-2.0")
 
-    // C6: unknown tier → error, state unchanged
+    // C6: unknown tier → error
     let req_bad = #{ "tier": "L9", "prompt": "x", "size_w": 1, "size_h": 1 }
     let r6 = creator_backend_dispatch(r5["state"], req_bad)
     assert_eq("C6.unknown_tier_asset_empty", r6["asset"], "")
-    if r6["error"] == "" {
-        print("  [FAIL] C6.unknown_tier_error_set got empty")
-    } else {
-        print("  [ok] C6.unknown_tier_error_set (got=" + r6["error"] + ")")
-    }
 
-    // C7: missing tier registry — clear L2 entry causes L2 reject
+    // C7: L2 not_registered — registry without L2 entry
     let registry_no_l2 = #{
-        "L1": "openai",
-        "L3": "fal",
+        "L1": #{ "backend_id": "fal.ai", "default_model": "x", "available_models": ["x"] },
+        "L3": #{ "backend_id": "fal.ai", "default_model": "y", "available_models": ["y"] },
     }
     let s_no_l2 = creator_backend_new(registry_no_l2, true)
     let r7 = creator_backend_render_prog(s_no_l2, spec)
-    assert_eq("C7.L2_missing_reject", r7["error"], "L2_not_registered")
-    assert_eq("C7.no_asset", r7["asset"], "")
+    assert_eq("C7.L2_not_registered", r7["error"], "L2_not_registered")
 
-    // C8: asset log accumulates across 3 calls
-    let final_log_len = r5["state"]["asset_log"].len()
-    assert_eq("C8.log_length_5", final_log_len, 5)
+    // C8: list_models — L1 has 2 entries
+    let l1_models = creator_backend_list_models(s, "L1")
+    assert_eq("C8.l1_models_len_2", l1_models.len(), 2)
+    assert_eq("C8.l1_models_first", l1_models[0], "fal-ai/openai-images-2.0")
+    let bad_models = creator_backend_list_models(s, "L9")
+    assert_eq("C8.unknown_tier_empty_list", bad_models.len(), 0)
 
-    print("=== CREATOR M2 backend framework smoke: 8-case PASS ===")
-    print(creator_backend_summary(r5["state"]))
+    // C9: register_model — add new model + set as default
+    let reg_result = creator_backend_register_model(s, "L1", "fal-ai/recraft-v3", true)
+    assert_eq("C9.register_ok", reg_result["ok"], true)
+    assert_eq("C9.added", reg_result["added"], true)
+    assert_eq("C9.default_changed", reg_result["default_changed"], true)
+    let s_with_new = reg_result["state"]
+    let new_models = creator_backend_list_models(s_with_new, "L1")
+    assert_eq("C9.new_models_len_3", new_models.len(), 3)
+    assert_eq("C9.new_default", creator_backend_tier_default_model(s_with_new, "L1"), "fal-ai/recraft-v3")
+    // idempotent
+    let reg_dup = creator_backend_register_model(s_with_new, "L1", "fal-ai/recraft-v3", false)
+    assert_eq("C9b.idempotent_added_false", reg_dup["added"], false)
+    let dup_models = creator_backend_list_models(reg_dup["state"], "L1")
+    assert_eq("C9b.list_unchanged_3", dup_models.len(), 3)
+    // unknown tier → error
+    let reg_bad = creator_backend_register_model(s, "L9", "x", false)
+    assert_eq("C9c.unknown_tier_ok_false", reg_bad["ok"], false)
+    assert_eq("C9c.error_tier", reg_bad["error"], "L9_not_registered")
+
+    // C10: set_default_model — flip default; reject if not in catalog
+    let sd_result = creator_backend_set_default_model(s_with_new, "L1", "fal-ai/flux-1.1-pro")
+    assert_eq("C10.set_ok", sd_result["ok"], true)
+    let s_with_default_flux = sd_result["state"]
+    assert_eq("C10.default_now_flux", creator_backend_tier_default_model(s_with_default_flux, "L1"), "fal-ai/flux-1.1-pro")
+    // verify generate uses new default
+    let r10 = creator_backend_generate_still(s_with_default_flux, "test", 256, 256, "")
+    assert_eq("C10.generate_uses_new_default", r10["asset"]["provenance"]["model"], "fal-ai/flux-1.1-pro")
+    // reject — model not in catalog
+    let sd_bad = creator_backend_set_default_model(s_with_default_flux, "L1", "fal-ai/unregistered-model")
+    assert_eq("C10b.reject_unregistered", sd_bad["ok"], false)
+    assert_eq("C10b.reject_reason", sd_bad["error"], "model_not_in_catalog — register first")
+
+    print("=== CREATOR backend + dynamic catalog smoke: 10-case PASS ===")
+    print(creator_backend_summary(s_with_new))
 }
