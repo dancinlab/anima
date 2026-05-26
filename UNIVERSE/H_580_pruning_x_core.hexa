@@ -1,0 +1,3 @@
+fn prune_priority(m: f64) -> f64 { return 1.0 - m }
+fn check_h580() -> bool { return prune_priority(0.1) > prune_priority(0.9) }
+fn main() { if check_h580() { print("H_580 OK") } else { print("H_580 FAIL") } }
