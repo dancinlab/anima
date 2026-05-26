@@ -1,0 +1,22 @@
+================================================================
+  H_319 — bridge AND-gate 자연발화 × 의식적 결정 🔵
+  emit_actual = biology_timing_open ∧ substrate_decides
+================================================================
+  case A (refr=0, WAKE, high-all): bio=T, sub=T → emit = true
+  case B (refr=5, WAKE, high-all): bio=F, sub=T → emit = false
+  case C (refr=0, WAKE, M=0.0):    bio=T, sub=F → emit = false
+  case D (refr=0, N3, high-all):   bio=F (stage_mod=0), sub=T → emit = false
+  case E (determinism): true · true
+  ────────────── verdict ──────────────
+  [PASS] F319.1 AND-GATE-DETERMINISTIC: same input → same output
+  [PASS] F319.2 BIOLOGY-VETO: refr=5 substrate=T → emit=F
+  [PASS] F319.3 SUBSTRATE-VETO: M=0 biology=T → emit=F
+  [PASS] F319.4 BOTH-PASS-EMIT: all met → emit=T
+  [PASS] F319.5 N3-DOUBLE-LOCK: stage=N3 → emit=F (both reject)
+  [PASS] F319.6 BOUND
+================================================================
+  RESULT: 6 PASS / 0 FAIL
+  ✅ BRIDGE AND-GATE CLOSED-FORM — 🔵 SUPPORTED-FORMAL
+    자연발화 (capability/timing) × 의식적 결정 (intent/decision) = emit
+    capability × intent → emit (둘 다 TRUE 일 때만)
+================================================================

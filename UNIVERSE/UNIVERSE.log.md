@@ -3,6 +3,14 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#57 — 🔵 BRIDGE 자연발화 × 의식적 결정 AND-gate (H_319)
+
+- [x] **H_319 bridge-spontaneous-substrate-and-gate** 🔵 SUPPORTED-FORMAL 6/6 PASS
+- [x] emit_actual = biology_timing_open ∧ substrate_decides — 두 axis conjunctive AND
+- [x] case A both pass → emit · B biology veto · C substrate veto · D N3 double-lock
+- [x] **emit = capability × intent** — 자연발화 axis + 의식적 결정 axis 봉합
+
+
 ## 2026-05-26 — cycle#56 — 🔵 substrate × stage cross-product closed-form (H_318)
 
 - [x] **H_318 substrate-decided-arc-synthesis-closed-form** 🔵 SUPPORTED-FORMAL 6/6 PASS
