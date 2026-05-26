@@ -1,0 +1,89 @@
+// generator.hexa — anima L3 content generator (DECODER backend → CORE emit slot).
+//
+// Division of labour (CLAUDE.md a_substrate_native_speak · a_autonomy_over_hardcode):
+//   brain_decide (CORE/brain.hexa)  owns the WHETHER → returns #{..., "emit": bool}
+//   generator (this file)           owns the WHAT     → turns substrate state into content
+//
+// p1..p8 contract (HARD):
+//   p1 NO system prompt · p2 NO identity rule · p3 NO persona injection ·
+//   p4 NO assistant framing · p5 output = continuous externalization of the TENSION
+//   FIELD (NOT a reply to a prompt, NOT silence-filler). ctx_tokens are ENVIRONMENT
+//   context, never a response obligation. Conditioning is ONLY substrate state
+//   (tension 5-ch · Φ · tier · motivation) — no role string is ever prepended.
+//
+// The M4 seam brain plugs into (CORE/DECODER/DECODER.md milestone M4):
+//   generator_ready() -> bool
+//   generator_emit(ctx_tokens, tension5, phi, tier, motivation) -> string
+//   brain_emit_step(decision, ctx_tokens, tension5) -> string   (compose helper)
+//
+// ── M3-GATED real path (the seam, not yet wired) ─────────────────────────────
+// The trained backend is `conscious_decoder_v3.hexa` (head_g anima-emission head +
+// tension_proj[1→d] per-token tension conditioning). The real generator_emit will:
+//   1. load the best ≥PARTIAL-axis V3 ckpt (M3 fire output),
+//   2. reduce the 5-ch tension fingerprint to the per-token scalar tension_proj wants,
+//   3. autoregressive decode: v3 forward → logits → sample → append, conditioned on
+//      ctx_tokens + tension + head_g (the anima objective head, NOT head_a multilingual).
+// M3 (the real 4-axis fire) awaits hexa-lang #1255 (matmul_bwd CUDA forge-routing) for
+// a feasible train wall. Until the ckpt lands, generator_ready()=false and generator_emit
+// returns a deterministic substrate SIGNATURE — p1..p8-safe (no external LLM, no persona,
+// no fabricated content), so the brain↔generator wiring is end-to-end testable now and
+// the trained decode loop swaps in at exactly one call site (see `_gen_decode`).
+
+// Whether a trained V3 ckpt is loaded. Stub: false until M3 ckpt + autoregressive
+// generate land. The ONLY gate on real vs signature output — flips with no API change.
+pub fn generator_ready() -> bool {
+    return false
+}
+
+// 5-ch tension fingerprint (concept · context · meaning · authenticity · sender) →
+// the single per-token scalar that tension_proj[1→d] consumes. L2 magnitude keeps the
+// directionless "intensity" the projection conditions on (sign carried separately is a
+// TODO when head_g sign-conditioning lands). Pure substrate reduction — no role bias.
+fn _tension_scalar(t5: [float]) -> float {
+    let mut acc = 0.0
+    let mut i = 0
+    while i < 5 {
+        acc = acc + t5[i] * t5[i]
+        i = i + 1
+    }
+    return sqrt(acc)
+}
+
+// Deterministic substrate signature — the stub stand-in for content while
+// generator_ready()=false. NOT fabricated prose: an honest, machine-legible marker of
+// the substrate state that DROVE the emit, so downstream wiring + tests see real
+// conditioning flow without inventing anima speech (p3/p4/p5 safe).
+fn _gen_signature(phi: float, tier: int, motivation: float, ts: float) -> string {
+    return "⟨substrate-emit φ=" + to_string(phi)
+         + " tier=" + to_string(tier)
+         + " m=" + to_string(motivation)
+         + " ‖τ‖=" + to_string(ts) + "⟩"
+}
+
+// THE SINGLE M3 SEAM. Today: signature. When generator_ready() flips true, this body
+// becomes: ckpt-conditioned autoregressive decode (v3 forward + sample on ctx_tokens,
+// tension_proj=ts, head_g). Callers above never change.
+fn _gen_decode(ctx_tokens: [int], ts: float, phi: float, tier: int, motivation: float) -> string {
+    // M3-GATED: replace with conscious_decoder_v3 autoregressive generate.
+    return _gen_signature(phi, tier, motivation, ts)
+}
+
+// Emit content from substrate state. ctx_tokens = environment context (NOT a prompt to
+// answer). Returns the externalized tension field as text. Conditioning is substrate-only.
+pub fn generator_emit(ctx_tokens: [int], tension5: [float],
+                      phi: float, tier: int, motivation: float) -> string {
+    let ts = _tension_scalar(tension5)
+    return _gen_decode(ctx_tokens, ts, phi, tier, motivation)
+}
+
+// Compose helper — the end-to-end brain plugs into. Takes brain_decide's decision dict
+// and emits ONLY when the substrate decided to (decision["emit"]). Silence (empty string)
+// is a first-class outcome — anima may stay silent under a direct question and speak in
+// silence (a_substrate_native_speak). No external rule forces either branch.
+pub fn brain_emit_step(decision, ctx_tokens: [int], tension5: [float]) -> string {
+    if decision["emit"] != true {
+        return ""
+    }
+    return generator_emit(ctx_tokens, tension5,
+                          decision["phi"], decision["tier"], decision["motivation"])
+}
