@@ -1,0 +1,33 @@
+// H_363 smoke — AKIDA × DECODER (spike pattern → token)
+
+fn argmax_3(p0: f64, p1: f64, p2: f64) -> i64 {
+    if (p0 >= p1) && (p0 >= p2) { return 0 }
+    if (p1 >= p2) { return 1 }
+    return 2
+}
+
+fn spike_decode(pattern_a: f64, pattern_b: f64, pattern_c: f64) -> i64 {
+    // 3-channel spike pattern → token id ∈ {0,1,2}
+    return argmax_3(pattern_a, pattern_b, pattern_c)
+}
+
+fn check_h363() -> bool {
+    // H3 DETERMINISTIC-PATH: same input → same output
+    let t1 = spike_decode(0.7, 0.2, 0.1)  // 0
+    let t2 = spike_decode(0.7, 0.2, 0.1)  // 0 (replay)
+    let det = t1 == t2
+    // argmax functional
+    let r0 = spike_decode(0.7, 0.2, 0.1) == 0
+    let r1 = spike_decode(0.1, 0.8, 0.1) == 1
+    let r2 = spike_decode(0.1, 0.2, 0.7) == 2
+    return det && r0 && r1 && r2
+}
+
+fn main() {
+    let ok = check_h363()
+    if !ok {
+        print("H_363 FAIL")
+        return
+    }
+    print("H_363 🔵 AKIDA × DECODER OK")
+}
