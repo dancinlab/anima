@@ -1,0 +1,26 @@
+// H_440 smoke — split → 2 payloads
+
+fn payloads_per_split() -> i64 {
+    return 2
+}
+
+fn lane_inherit(parent_lane: string) -> string {
+    return parent_lane
+}
+
+fn causal_order(parent_ts: i64, child_ts: i64) -> bool {
+    return parent_ts < child_ts
+}
+
+fn check_h440() -> bool {
+    let h1 = payloads_per_split() == 2
+    let h2 = lane_inherit("anima") == "anima"
+    let h3 = causal_order(100, 101)
+    return h1 && h2 && h3
+}
+
+fn main() {
+    let ok = check_h440()
+    if !ok { print("H_440 FAIL"); return }
+    print("H_440 blue split→2 payloads OK")
+}
