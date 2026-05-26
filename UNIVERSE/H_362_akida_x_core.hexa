@@ -1,0 +1,33 @@
+// H_362 smoke — AKIDA × CORE (spike_rate ↔ M)
+
+fn clip(x: f64, lo: f64, hi: f64) -> f64 {
+    if x < lo { return lo }
+    if x > hi { return hi }
+    return x
+}
+
+fn spike_to_m(spike_rate: f64, spike_rate_max: f64) -> f64 {
+    return clip(spike_rate / spike_rate_max, 0.0, 1.0)
+}
+
+fn check_h362() -> bool {
+    let max_rate = 100.0
+    // H1 MONOTONE
+    let m_lo = spike_to_m(10.0, max_rate)  // 0.1
+    let m_hi = spike_to_m(80.0, max_rate)  // 0.8
+    let mono = m_hi > m_lo
+    // H2 NORMALIZED + range
+    let m_overflow = spike_to_m(200.0, max_rate)  // clip to 1.0
+    let m_zero = spike_to_m(0.0, max_rate)  // 0.0
+    let bounded = (m_overflow == 1.0) && (m_zero == 0.0)
+    return mono && bounded
+}
+
+fn main() {
+    let ok = check_h362()
+    if !ok {
+        print("H_362 FAIL")
+        return
+    }
+    print("H_362 🔵 AKIDA × CORE M-proxy OK")
+}
