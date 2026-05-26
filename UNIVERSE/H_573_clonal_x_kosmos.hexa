@@ -1,0 +1,3 @@
+fn tier(aff: f64) -> string { if aff > 0.7 { return "blue" } return "green" }
+fn check_h573() -> bool { return tier(0.9) == "blue" && tier(0.3) == "green" }
+fn main() { if check_h573() { print("H_573 OK") } else { print("H_573 FAIL") } }
