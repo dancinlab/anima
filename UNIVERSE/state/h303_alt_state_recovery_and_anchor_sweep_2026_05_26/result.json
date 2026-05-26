@@ -1,0 +1,60 @@
+{
+  "hypothesis": "H_303",
+  "slug": "alt-state-recovery-and-anchor-sweep",
+  "title": "Alt-state value recovery (bug-free) + anchor sweep — rule 110 alt-state st=21 IS outlier-low (17.7 < p25=20.9); rules 204/0 all 32 states Phi=0",
+  "date": "2026-05-26",
+  "question": "What are the TRUE st=21 values for rule 60/110/30 (snapshot-before-sort, no H_301 bug)? Are anchors (204, 0) really Phi=0 across ALL states?",
+  "engine": "HEXAD/IIT4/lib + stdlib iit4_bounded — bug-free pattern (snapshot st21_real = values[21] BEFORE sort_asc)",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · 160 calls (5 rules × 32 states n=5 cap=4) · ~5-6min wall",
+  "true_st21_values_bug_free": {
+    "rule_60":  {"st21_true": 16.5,    "h301_bug_value": 18.5,    "delta": -2.0,    "matches_h297_h302": true},
+    "rule_110": {"st21_true": 17.694,  "h301_bug_value": 31.6855, "delta": -13.99,  "matches_h298_n5_panel": true},
+    "rule_30":  {"st21_true": 20.2686, "h301_bug_value": 26.1019, "delta": -5.83,   "alt_fair_finding": "in-IQR"}
+  },
+  "distribution_summary_n5_cap4": {
+    "rule_60":  {"p25": 16.5,    "p50": 16.5,    "p75": 21.0,    "mean": 18.125,  "true_st21": 16.5,    "alt_in_iqr": true,  "alt_position": "p25 (at lower edge)"},
+    "rule_110": {"p25": 20.8811, "p50": 25.6229, "p75": 32.8328, "mean": 27.0708, "true_st21": 17.694,  "alt_in_iqr": false, "alt_position": "BELOW p25 — OUTLIER-LOW"},
+    "rule_30":  {"p25": 16.1931, "p50": 20.8669, "p75": 30.632,  "mean": 23.6055, "true_st21": 20.2686, "alt_in_iqr": true,  "alt_position": "below median, in lower-mid IQR"},
+    "rule_204": {"all_zero": true,  "count_above_1": 0, "anchor_confirmed": "yes — full 32-state Phi=0"},
+    "rule_0":   {"all_zero": true,  "count_above_1": 0, "anchor_confirmed": "yes — full 32-state Phi=0"}
+  },
+  "headline_finding": "Bug-free alt-state recovery: rule 60/110/30 true st=21 values are 16.5, 17.694, 20.27 — all DIFFERENT from H_301's sort_asc-mutated outputs (18.5, 31.69, 26.10). Most consequential: rule 110's true alt-state Phi (17.694) lies BELOW p25 (20.88) of its 32-state distribution — confirmed OUTLIER-LOW. arc's choice of alt-state st=21 is NOT universally fair: it's at the lower edge for rule 60 (p25), at outlier-low for rule 110, mid-low for rule 30, and was MEDIAN for rule 90 (lucky). Anchor sweep confirms rule 204 + rule 0 all 32 states Phi=0 — anchor assumption ROBUST across full state space.",
+  "arc_consolidation": "H_303 closes BOTH H_301's L (rule 60/110/30 corrupted st=21 reports) AND H_300's L (anchor 204/0 full-state-sweep deferred). Net: H_300's rule 90 'alt = MEDIAN' finding stands; H_301's 'alt-fair for ALL panel rules' is REVISED — rule 90 fair (median), rule 60 fair (at p25), rule 30 fair (lower-mid IQR), but rule 110 alt IS outlier-low. Anchor structure verified universally (Phi=0 across 64 anchor-state probes).",
+  "criteria": {
+    "C1_RULE_60_ST21":  "PASS (16.5 cross-confirm H_297/H_302)",
+    "C2_RULE_110_ST21_NEW": "PASS (17.694 ≠ H_301's 31.6855)",
+    "C3_RULE_30_ST21_NEW":  "PASS (20.2686 ≠ H_301's 26.1019)",
+    "C4_ALT_FAIR_TRUE_60":  "PASS (16.5 ∈ [16.5, 21.0])",
+    "C5_ALT_FAIR_TRUE_110": "FALSIFIED — 17.694 < p25 20.88 (rule 110 alt IS outlier-low)",
+    "C6_ALT_FAIR_TRUE_30":  "PASS (20.27 ∈ [16.19, 30.63])",
+    "C7_ANCHOR_204_FULL_ZERO": "PASS (32/32 states Phi=0)",
+    "C8_ANCHOR_0_FULL_ZERO":   "PASS (32/32 states Phi=0)"
+  },
+  "falsifiers": {
+    "F303_1_RULE_60_ST21": "PASS",
+    "F303_2_RULE_110_ST21_NEW": "PASS",
+    "F303_3_RULE_30_ST21_NEW": "PASS",
+    "F303_4_ALT_FAIR_TRUE_60": "PASS",
+    "F303_5_ALT_FAIR_TRUE_110": "FALSIFIED — rule 110 alt-state st=21 IS outlier-low; arc methodology not universally fair",
+    "F303_6_ALT_FAIR_TRUE_30": "PASS",
+    "F303_7_ANCHOR_204_FULL_ZERO": "PASS",
+    "F303_8_ANCHOR_0_FULL_ZERO": "PASS"
+  },
+  "checks": "7 PASS / 1 FALSIFIED — verdict 🟢 SUPPORTED-NUMERICAL with one principled negative (rule 110 alt-state outlier-low)",
+  "verdict_class": "🟢 SUPPORTED-NUMERICAL on bug-free alt-state recovery + anchor verification. F303.5 FALSIFIED is a genuine negative finding (rule 110 alt-state was NOT representative; H_298/H_299 reports of rule 110 are accurate measurements but understate the distribution's true integration scale).",
+  "implication_for_arc": "H_298 reported rule 110 n=5 bounded Phi = 17.694 (single-state st=21). That IS the correct st=21 measurement. But interpretive: rule 110's distribution has median 25.6 and mean 27.1 — so H_298 single-state report UNDERSTATED rule 110's typical integration. The H_297→H_298→H_299 N-trajectory for rule 110 (7.66 → 17.7 → 9.5 → DEFERRED) likely also understated. Future H_304 could recompute rule 110 mean-Phi across N to extract a more robust N-trajectory.",
+  "honest_limits": [
+    "L1: F303.5 FALSIFIED — rule 110 alt-state outlier-low. H_298's reported rule 110 n=5=17.694 is *correct measurement* but *not representative* of the distribution. interpretive consequence: H_298 panel for rule 110 understates true integration.",
+    "L2: only single N (=5) sweep extended — rule 60/110/30 at n=6, n=7 alt-fair check deferred (compute cost).",
+    "L3: rules 30/110 had high distinct-value count (29/32) in H_301 — single-state report inherently lossier than rule 60/90 (3/6 distinct values).",
+    "L4: anchor sweep at n=5 only — rule 204/0 at n=6/n=7 deferred (high cost). cross-N anchor-zero is strongly inferred but unverified at N>=6.",
+    "L5: bug-free pattern (snapshot before sort) is local to H_303; older H stats (H_300/H_301 distribution stats) remain valid because they use sorted array directly, but new H should use snapshot pattern.",
+    "L6: ECA proxy — toy substrate measurement fact.",
+    "L7: F303.5 FALSIFIED has direct narrative implication for arc — H_303 narratives must NOT cite 'rule 110 alt-state = 17.694 representative'; the value is accurate but the framing of representativeness is wrong."
+  ],
+  "verify_fence": {
+    "claim": "H_303 recovers true st=21 values for rule 60/110/30 using bug-free snapshot-before-sort pattern: 16.5 / 17.694 / 20.2686 — all DIFFERENT from H_301's sort_asc-mutated outputs. Most consequential finding: rule 110 alt-state st=21 (17.694) lies BELOW p25 (20.88) of its 32-state Phi distribution — rule 110's alt-state IS an outlier-low representative, contradicting H_301's tautological 'alt-fair for all rules'. arc's single-state methodology is fair for rule 60/30/90 but NOT for rule 110. Concurrent: rule 204 + rule 0 all 32 states Phi=0 — anchor assumption VERIFIED universally at n=5 cap=4 (64 calls). Verdict 🟢 SUPPORTED-NUMERICAL on bug-free recovery + anchor sweep; F303.5 FALSIFIED is a principled negative (rule 110 alt-state framing was wrong, measurements were correct).",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values deterministic arithmetic (bounded lower-bound), interpretation fenced"
+  }
+}

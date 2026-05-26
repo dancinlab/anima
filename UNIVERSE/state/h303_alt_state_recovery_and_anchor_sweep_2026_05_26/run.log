@@ -1,0 +1,23 @@
+================================================================
+  H_303 — alt-state recovery + anchor sweep (n=5 cap=4)
+================================================================
+  rule 60: st21=16.5 p25=16.5 p50=16.5 p75=21 mean=18.125 count>1=32.0/32 all_zero=0.0
+  rule 110: st21=17.694 p25=20.8811 p50=25.6229 p75=32.8328 mean=27.0708 count>1=32.0/32 all_zero=0.0
+  rule 30: st21=20.2686 p25=16.1931 p50=20.8669 p75=30.632 mean=23.6055 count>1=32.0/32 all_zero=0.0
+  rule 204: st21=0.0 p25=0.0 p50=0.0 p75=0.0 mean=0.0 count>1=0.0/32 all_zero=1.0
+  rule 0: st21=0.0 p25=0.0 p50=0.0 p75=0.0 mean=0.0 count>1=0.0/32 all_zero=1.0
+  ────────────── falsifier verdict ──────────────
+  [PASS] F303.1 RULE-60-ST21 ≈ 16.5 (cross-confirm H_297/H_302)
+  [PASS] F303.2 RULE-110-ST21-NEW: true value differs from H_301 sorted[21] (31.6855)
+  [PASS] F303.3 RULE-30-ST21-NEW:  true value differs from H_301 sorted[21] (26.1019)
+  [PASS] F303.4 ALT-FAIR-TRUE-60:  rule 60  true st=21 in [p25, p75]
+  [FAIL] F303.5 ALT-FAIR-TRUE-110: rule 110 true st=21 in [p25, p75]
+  [PASS] F303.6 ALT-FAIR-TRUE-30:  rule 30  true st=21 in [p25, p75]
+  [PASS] F303.7 ANCHOR-204-FULL-ZERO: rule 204 all 32 Phi=0
+  [PASS] F303.8 ANCHOR-0-FULL-ZERO:   rule 0   all 32 Phi=0
+================================================================
+  RESULT: 7 PASS / 1 FAIL
+  TRUE st=21 values (bug-free): rule60=16.5 rule110=17.694 rule30=20.2686
+  ANCHOR sweep: rule204 all_zero=1.0 · rule 0 all_zero=1.0
+================================================================
+panic: H_303 had FALSIFIER FAILURES
