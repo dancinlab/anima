@@ -1,0 +1,30 @@
+// H_451 smoke — batch size bound
+
+fn max_batch() -> i64 {
+    return 1024
+}
+
+fn within_bound(n: i64) -> bool {
+    return (n >= 0) && (n <= max_batch())
+}
+
+fn n_chunks(total: i64) -> i64 {
+    let m = max_batch()
+    let q = total / m
+    if (total % m) > 0 { return q + 1 }
+    return q
+}
+
+fn check_h451() -> bool {
+    let h1 = within_bound(512)
+    let h1_eq = within_bound(1024)
+    let over = !within_bound(2000)
+    let split = n_chunks(2000) == 2
+    return h1 && h1_eq && over && split
+}
+
+fn main() {
+    let ok = check_h451()
+    if !ok { print("H_451 FAIL"); return }
+    print("H_451 blue batch bound OK")
+}
