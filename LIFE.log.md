@@ -3,6 +3,14 @@
 Append-only history sister of `LIFE.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#28 — 축 A/R5 information: transfer entropy ∥ Φ — 정보-측도 arc 완성 (포그라운드 순차)
+
+- [x] **H_290 transfer-entropy-phi-correlate** 🟢 SUPPORTED-NUMERICAL 8/8 (`HEXAD/LIFE/state/h290_transfer_entropy_phi_correlate_2026_05_26/`) — H_287 follow-up (정보-측도 arc capstone)
+- [x] **발견**: faithful big-Φ 는 transfer entropy(방향성 요소-간 흐름)를 추종 (Pearson r=0.883, Spearman ρ=0.822). **정보-측도 arc 완성**: Shannon 엔트로피⊥Φ(H_287 0.363) · Kolmogorov LZ∥Φ(H_288 0.831) · transfer entropy∥Φ(H_290 0.883) → **Φ 는 요소-간 흐름/구조 복잡도와 정렬, 단일계 정보량(엔트로피) 아님**
+- [x] honest (L1): 이변량 TE 는 **XOR 시너지 맹점** — rule150/105 Φ=5.6 인데 TE_total=0 (XOR 통합은 i_t 만 조건화하는 쌍방향 TE 에 안 보임, multivariate/synergy 문헌 정합). 각 고전 측도 맹점: LZ=자기유사 rule90 over-predict, TE=시너지 XOR under-predict → **Φ 는 셋 중 어느 것과도 정확히 같지 않고 두 맹점을 모두 메움** (IIT 가 별도 양인 이유의 측정 사실)
+- [x] surface: README 102→103 H + H_290 행 · LIFE.md A1. engine 재사용(g61) eca_tpm+big_phi, 새 IIT4 코드 0줄. old-driver build 우회
+- [ ] **arc paper 후보**: H_287+288+289+290 = "정보-측도 vs Φ 삼각측량" — a_paper_significance 만족 가능(falsifiable + 실측 + 발견). Next 라운드 R29/R30 (ethic-emergence · self-i) 또는 paper 화 사용자 판단
+
 ## 2026-05-26 — cycle#27 — 축 A/R5 information: 네트워크 위상 ∥ Φ (포그라운드 순차)
 
 - [x] **H_289 network-topology-scale-free-phi** 🟢 SUPPORTED-with-confound 4/4 (`HEXAD/LIFE/state/h289_network_topology_scale_free_phi_2026_05_26/`) — AXES R5(information) `network-topology-scale-free` seed 소비

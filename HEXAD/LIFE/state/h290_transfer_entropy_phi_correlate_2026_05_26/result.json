@@ -1,0 +1,65 @@
+{
+  "hypothesis": "H_290",
+  "slug": "transfer-entropy-phi-correlate",
+  "title": "Does faithful IIT 4.0 big-Phi track transfer entropy (directed flow)? — information-measure arc capstone (Shannon perp / LZ || / TE ||, TE has XOR-synergy blind spot)",
+  "date": "2026-05-26",
+  "question": "Across the ECA panel, does faithful state-averaged big-Phi co-vary with total transfer entropy (Pearson r >= 0.5), i.e. does Phi track directed inter-element information FLOW?",
+  "engine": "HEXAD/IIT4/lib (reused, NOT reinvented): iit4_eca.eca_tpm (next-bit) + iit4_bigphi.big_phi (via stdlib/consciousness/*). Transfer entropy (joint-count) + Pearson/Spearman inlined in the harness.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · deterministic (cross-process byte-identical)",
+  "toolchain_note": "built via fix-1180 bypass: HEXA_MAC_BUILD_OK=1 HEXA_LANG=<root> hexa.real.bak-2026-05-22-pre-no-hxc build <src> -o <bin>. See reference-life-cycle-hexa-run-gotchas.",
+  "metric_defs": {
+    "TE_total": "sum_{i} sum_{j!=i} TE(j->i), lag-1 bivariate transfer entropy over the uniform 2^n state ensemble. TE(j->i) = sum p(i',i,j) log2[ p(i'|i,j) / p(i'|i) ], i'=next bit of cell i. bits.",
+    "Phi_mean": "mean over all 2^n states of big_phi(tpm, n, st)[0] (n=4 exact)."
+  },
+  "seed_hypothesis_H1": "Pearson r(TE_total, Phi_mean) >= 0.5 (Phi tracks directed inter-element flow).",
+  "config": {"n": 4, "ensemble": "uniform 2^4 states", "TE": "lag-1 bivariate", "panel_size": 10},
+  "panel": {
+    "rule_0":   {"TE_total": 0.0,     "Phi_mean": 0.0},
+    "rule_255": {"TE_total": 0.0,     "Phi_mean": 0.0},
+    "rule_204": {"TE_total": 0.0,     "Phi_mean": 0.0, "note": "identity — self-determined, no inter-cell flow"},
+    "rule_51":  {"TE_total": 0.0,     "Phi_mean": 0.0},
+    "rule_150": {"TE_total": 0.0,     "Phi_mean": 5.625, "note": "SYNERGY blind-spot: Phi>0 yet bivariate TE=0 (XOR)"},
+    "rule_105": {"TE_total": 0.0,     "Phi_mean": 5.625, "note": "SYNERGY blind-spot"},
+    "rule_90":  {"TE_total": 0.0,     "Phi_mean": 0.0},
+    "rule_60":  {"TE_total": 4.0,     "Phi_mean": 13.625},
+    "rule_110": {"TE_total": 3.24511, "Phi_mean": 13.1302},
+    "rule_30":  {"TE_total": 2.0,     "Phi_mean": 13.8852}
+  },
+  "pearson_r": 0.883262,
+  "spearman_rho": 0.822134,
+  "information_measure_arc": {
+    "H287_shannon_entropy": {"pearson_r": 0.362877, "relation": "perpendicular (single-system info)"},
+    "H288_kolmogorov_LZ":   {"pearson_r": 0.831463, "spearman_rho": 0.935507, "relation": "parallel (algorithmic complexity)"},
+    "H290_transfer_entropy": {"pearson_r": 0.883262, "spearman_rho": 0.822134, "relation": "parallel, strongest (directed flow)"},
+    "synthesis": "Phi aligns with INTER-ELEMENT flow/complexity (TE, LZ), NOT single-system information (Shannon entropy). Each classical measure has a blind spot: LZ over-predicts on self-similar rule 90 (Phi=0), bivariate TE under-predicts on synergistic XOR rules 150/105 (Phi>0, TE=0). Phi equals none of them exactly and fills both blind spots."
+  },
+  "criteria": {
+    "C1_ANCHORS": "PASS (0/255/204 TE=0, Phi=0)",
+    "C2_r_VERDICT": "H1 SUPPORTED (r=0.883262 >= 0.5)",
+    "C3_FLOW_BOUND_DET": "PASS (rule60 TE=4>0; bound; determinism)"
+  },
+  "falsifiers": {
+    "F290_1_ANCHORS": "PASS  (rule 0/255/204 TE_total=0, Phi_mean=0)",
+    "F290_2_r_VERDICT": "H1 SUPPORTED  (Pearson r=0.883262, Spearman rho=0.822134)",
+    "F290_3_FLOW_WITNESS": "PASS  (rule 60 TE_total=4.0 > 0, Phi_mean=13.625)",
+    "F290_4_BOUND": "PASS  (TE_total>=0, Phi_mean>=0 all rules)",
+    "F290_5_POST_HOC": "NOT_TRIGGERED"
+  },
+  "checks": "8 PASS / 0 FAIL",
+  "verdict_class": "H1 SUPPORTED (NUMERICAL)",
+  "finding": "Faithful causal IIT 4.0 big-Phi strongly tracks transfer entropy (directed inter-cell information flow): Pearson r=0.883, Spearman rho=0.822 over the 10-rule panel — the capstone of the information-measure arc. Synthesis with H_287/H_288: Shannon entropy (single-system) is orthogonal to Phi (r=0.363) while the INTER-ELEMENT measures LZ (r=0.831) and TE (r=0.883) align -> Phi is the same axis as inter-element flow/structural complexity, NOT single-system information capacity. HONEST: bivariate TE has an XOR-SYNERGY blind spot — rules 150/105 have Phi=5.625 yet TE_total=0 (XOR integration is synergistic, invisible to pairwise TE conditioning only on i's own present; consistent with the multivariate-information / synergy literature). So each classical measure has a blind spot: LZ over-predicts on self-similar rule 90 (Phi=0), TE under-predicts on synergistic XOR (Phi>0). Phi equals none of them exactly and fills both blind spots — a measurement-fact reason IIT posits Phi as a distinct quantity.",
+  "honest_limits": [
+    "L1 (XOR-SYNERGY blind spot, key): bivariate lag-1 TE gives TE_total=0 for rules 150/105 (XOR) yet Phi=5.625 — synergistic integration is invisible to pairwise TE; r=0.883 is thus an UNDER-estimate, multivariate/causation-entropy TE would recover it. Phi != bivariate TE.",
+    "L2: lag-1 bivariate is ONE TE definition; multi-lag, conditional (causation entropy), multivariate TE differ (recover XOR).",
+    "L3: Phi_mean averages a state-dependent quantity (FAITHFUL_REMEASURE 4) — direction robust, magnitude state-dependent.",
+    "L4: n=4 small, 10-rule panel — r absolute value panel-dependent, direction robust.",
+    "L5: ECA rules are flow proxies, not brain/life networks; labels are substrate-themes.",
+    "L6: structure-cut big-Phi, not full-IIT4 absolute calibration; correlation robust to scale offset.",
+    "L7: verdict is a measurement fact on a toy substrate, NOT 'consciousness = information flow'."
+  ],
+  "verify_fence": {
+    "claim": "H_290 faithful IIT 4.0 big-Phi TRACKS transfer entropy across a 10-rule ECA panel (Pearson r=0.883, Spearman rho=0.822), completing the arc Shannon-entropy perp Phi (0.363) / LZ-complexity || Phi (0.831) / TE || Phi (0.883) — Phi aligns with inter-element flow/complexity not single-system information; bivariate TE has an XOR-synergy blind spot (rules 150/105: Phi=5.6 yet TE=0); deterministic toy-substrate outcome, NOT an atlas identity",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values deterministic arithmetic, interpretation fenced"
+  }
+}
