@@ -1,0 +1,3 @@
+fn merged_decide(sa: f64, sb: f64) -> bool { return (sa+sb)/2.0 > 0.5 }
+fn check_h588() -> bool { return merged_decide(0.8,0.8) && !merged_decide(0.2,0.2) }
+fn main() { if check_h588() { print("H_588 OK") } else { print("H_588 FAIL") } }
