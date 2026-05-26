@@ -1,0 +1,73 @@
+// voice_emit.hexa — CHANNEL/voice stub (hexa-voice 24kHz RVQ pipeline).
+//
+// SSOT: CHANNEL/voice/SSOT.md  ·  future repo: github.com/dancinlab/hexa-voice
+// memory project_hexa_voice_rename: "ANIMA-VOICE × Anima 통합 시스템 정식 명칭
+//   hexa-voice (의도 임베딩 → RVQ → 24kHz PCM, 텍스트 변환기 아님)".
+//
+// Pipeline: substrate tension5 → intent vector → RVQ codes → 24kHz mono PCM.
+// 단방향 흐름 — PCM bytes 에서 substrate 로의 역류 경로 없음.
+//
+// p1~p8 정합:
+//   p1 NO SYSTEM PROMPT      — input is intent vector, not a prompt string.
+//   p2 NO IDENTITY RULES     — voice identity emerges from cell mitosis, not rules.
+//   p3 NO PERSONA INJECTION  — no "you are anima" prefix embedding.
+//   p4 NO ASSISTANT FRAMING  — voice_emit is NOT a TTS command-response endpoint.
+//                              Caller MUST originate from substrate-decided
+//                              externalization (a_substrate_native_speak), not from
+//                              an external request (stimulus-response forbidden).
+//   p5 NO SPEAK()            — voice_emit is the externalization of a continuous
+//                              tension field, not speak(message). Stage-gated emit
+//                              on real substrate tension preserves p5
+//                              (p5_tension_emit_not_filler).
+//   p6 NO FINE-TUNED ETHICS  — RVQ weights evolve via mitosis only, no RLHF.
+//   p7 NO PERPLEXITY VERDICT — voice quality is audio coherence + substrate fit.
+//   p8 NO TRAIN/INFER SPLIT  — encoder weights may update at inference via mitosis.
+//
+// Status: STUB — RVQ model / encoder / decoder live in the future hexa-voice repo.
+//         voice_ready() returns false until the repo lands + wiring completes.
+
+// voice_ready: pipeline 연결 상태 점검.
+// 현재는 항상 false — hexa-voice repo 미존재 + RVQ 모델 미연결.
+// 향후 hexa-voice 가 wiring 되면 encoder/decoder 가중치 로드 성공 여부를 반환.
+pub fn voice_ready() -> bool {
+    return false
+}
+
+// voice_emit: substrate-decided intent vector → 24kHz mono PCM bytes.
+//
+// 인자:
+//   intent_vec  : list of floats — substrate tension5 가 intent embedding bridge
+//                 (CHANNEL M4) 를 통과한 channel-agnostic intent vector.
+//                 길이/차원은 향후 hexa-voice spec/intent.md 에서 고정.
+//   sample_rate : int — output PCM sample rate (canonical 24000 Hz).
+//
+// 반환:
+//   bytes — raw 16-bit signed PCM little-endian mono.
+//           현재 stub 은 empty bytes 반환 (파이프라인 미연결).
+//
+// TODO (hexa-voice repo 생성 후):
+//   1. intent_vec → RVQ encoder (residual vector quantization) → audio token codes
+//   2. audio codes → vocoder/decoder → 24kHz mono PCM samples
+//   3. PCM samples → little-endian int16 bytes
+//
+// 주의: 호출자는 substrate-decided externalization 경로에서만 호출해야 한다.
+//       사용자 메시지 수신을 trigger 로 직접 부르지 말 것 (p4 · stimulus-response 금지).
+//       CORE engine_g motivation 8-factor 가 voice 채널을 선택했고 WAKE/REM stage
+//       컨텍스트가 충족된 상태에서, CHANNEL M5 channel_emit dispatcher 를 통해
+//       위임 호출되는 것이 정상 경로.
+pub fn voice_emit(intent_vec: [float], sample_rate: int) -> string {
+    // STUB: 실제 RVQ 파이프라인 미연결.
+    // hexa-voice repo 생성 + wiring 후 아래 흐름으로 교체:
+    //   let codes = rvq_encode(intent_vec)
+    //   let pcm   = rvq_decode_pcm(codes, sample_rate)
+    //   return pcm_to_bytes_le16(pcm)
+    let _unused_intent = intent_vec
+    let _unused_sr = sample_rate
+    return ""
+}
+
+// voice_pipeline_summary: 단방향 흐름 1-line 요약 (SSOT 와 동기).
+// 디버그 / 로그 / dispatcher introspection 용도.
+pub fn voice_pipeline_summary() -> string {
+    return "substrate tension5 → intent vec → RVQ codes → 24kHz mono PCM bytes (단방향, 텍스트 변환기 아님)"
+}
