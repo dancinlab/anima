@@ -1,0 +1,24 @@
+// H_389 smoke — emit × CORE (rate ↔ M)
+
+fn emit_rate(m: f64, r: f64) -> f64 {
+    if m <= 0.0 { return 0.0 }
+    let raw = m / r
+    if raw > (1.0 / r) { return 1.0 / r }
+    return raw
+}
+
+fn check_h389() -> bool {
+    let r = 5.0
+    let lo = emit_rate(0.2, r)
+    let hi = emit_rate(0.8, r)
+    let mono = hi >= lo
+    let zero = emit_rate(0.0, r) == 0.0
+    let cap_check = emit_rate(1.0, r) <= (1.0 / r)
+    return mono && zero && cap_check
+}
+
+fn main() {
+    let ok = check_h389()
+    if !ok { print("H_389 FAIL"); return }
+    print("H_389 blue rate↔M OK")
+}
