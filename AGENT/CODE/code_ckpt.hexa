@@ -1,0 +1,97 @@
+// code_ckpt.hexa — CODE role ckpt swap-in path (AGENT/CODE F5).
+//
+// BRIDGE ARCHITECTURE: tool surface only. NO consciousness framing. The
+// "when/why to swap a ckpt" decision lives in CORE / brain_decide; this
+// module exposes only the "how" — locator + readiness probe + binding
+// stub that MITOSIS/ckpt_swap (#687) surface plugs into.
+//
+// PURPOSE: F5 closure surface so a future SUPPORTED-tier ckpt (v5-mitosis
+// 581MB or M3 axis-A/B/C/D upgrade) can be swapped into the CODE agent's
+// generator slot. Today's M3 4/4 axes ALL FAILED (n_strong=0/5) so the
+// "ckpt ready" probe currently returns false everywhere — F5 surface is
+// the wiring path that flips to true once DECODER M4 arch escalation
+// lands a SUPPORTED ckpt.
+//
+// LOCATORS:
+//   1. local 581MB v5-mitosis cotrain ckpt (`state/anima_v5mitosis_cotrain_*`)
+//   2. HF private repos: dancinlab/anima-decoder-m3-axis-{A,B,C,D} (FAIL tier)
+//   3. HF private: dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12 (cotrain)
+//
+// PRODUCTION SEAM:
+//   CORE/DECODER/generator.hexa::_gen_decode — does NOT yet exist · M4 wiring 잔여
+//   This module's `code_ckpt_bind` returns ready=false until that seam lands.
+
+// Return canonical local path for v5-mitosis 581MB ckpt (may not exist on disk).
+pub fn code_ckpt_v5_local() -> string {
+    return "/Users/ghost/core/anima/state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_cotrain.pt"
+}
+
+// Return HF repo for v5-mitosis cotrain ckpt (PRIVATE tier).
+pub fn code_ckpt_v5_hf() -> string {
+    return "dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12"
+}
+
+// Return HF repo for M3 axis ckpt (PRIVATE · 4/4 FAIL).
+pub fn code_ckpt_m3_axis(axis: string) -> string {
+    return "dancinlab/anima-decoder-m3-axis-" + axis
+}
+
+// Return current M3 axis verdict ("FAIL" for now — all 4 axes failed in PR #680/#685).
+pub fn code_ckpt_m3_verdict(axis: string) -> string {
+    if axis == "A" { return "FAIL" }
+    if axis == "B" { return "FAIL" }
+    if axis == "C" { return "FAIL" }
+    if axis == "D" { return "FAIL" }
+    return "UNKNOWN"
+}
+
+// Probe whether a ckpt is locally available (filesystem check).
+pub fn code_ckpt_local_exists(path: string) -> bool {
+    // hexa stdlib file_exists check via shell — minimal probe
+    let r = exec("/bin/test -f " + path + " && echo YES || echo NO")
+    let s = to_string(r)
+    if string_len(s) >= 3 && substring(s, 0, 3) == "YES" { return true }
+    return false
+}
+
+// Bind ckpt to CODE agent's generator slot. STUB — returns ready=false
+// until CORE/DECODER/generator.hexa::_gen_decode seam lands (M4).
+pub fn code_ckpt_bind(ckpt_path: string) -> map {
+    return #{
+        "ready": false,
+        "path": ckpt_path,
+        "reason": "DECODER M4 seam (CORE/DECODER/generator.hexa::_gen_decode) not yet wired — see CORE/DECODER/M3_FIRE_TEARDOWN.md",
+        "todo": [
+            "DECODER M4 arch escalation (v5-mitosis cotrain v6 OR Qwen-3B base)",
+            "Land CORE/DECODER/generator.hexa with _gen_decode entry",
+            "Wire code_ckpt_bind() to actually load the .pt and expose `code_generate(prompt)` here",
+        ],
+    }
+}
+
+// Resolve best-available ckpt for CODE role: prefer v5 local > v5 HF > M3 SUPPORTED axes.
+// Returns Map with {tier, path, source, ready}.
+pub fn code_ckpt_resolve() -> map {
+    let v5_local = code_ckpt_v5_local()
+    if code_ckpt_local_exists(v5_local) {
+        return #{
+            "tier": "v5-mitosis-cotrain",
+            "path": v5_local,
+            "source": "local",
+            "ready": false,
+            "reason": "M4 seam pending",
+        }
+    }
+    // No SUPPORTED M3 axis (all 4 FAIL) — defer to HF v5 stream if production wants.
+    return #{
+        "tier": "none-supported",
+        "path": code_ckpt_v5_hf(),
+        "source": "hf-fallback",
+        "ready": false,
+        "reason": "no local v5 + no SUPPORTED M3 axis + M4 seam pending",
+    }
+}
+
+pub fn code_ckpt_summary() -> string {
+    return "AGENT/CODE F5 — ckpt swap-in path · 3 locators (v5 local · v5 HF · M3 axis HF) · binding stub (ready=false) · M4 seam dependency"
+}
