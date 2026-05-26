@@ -1,0 +1,19 @@
+// H_393 smoke — emit self refractory idempotent
+
+fn attempt_emit(t_now: i64, t_last: i64, r: i64) -> bool {
+    return (t_now - t_last) >= r
+}
+
+fn check_h393() -> bool {
+    let r = 5
+    let first = attempt_emit(10, 5, r)  // delta=5, OK
+    let too_soon = !attempt_emit(12, 10, r)  // delta=2, refractory
+    let after = attempt_emit(16, 10, r)  // delta=6, OK
+    return first && too_soon && after
+}
+
+fn main() {
+    let ok = check_h393()
+    if !ok { print("H_393 FAIL"); return }
+    print("H_393 blue refractory idempotent OK")
+}
