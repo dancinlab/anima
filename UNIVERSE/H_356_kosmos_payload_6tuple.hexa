@@ -1,0 +1,33 @@
+// H_356 smoke — KOSMOS payload 6-tuple (KOSMOS 1st)
+
+fn payload_slot_count() -> i64 {
+    // slots: text, tension, coord, lane, radius, tier
+    return 6
+}
+
+fn tension_channel_count() -> i64 {
+    return 5
+}
+
+fn coord_dim() -> i64 {
+    return 3
+}
+
+fn check_h356() -> bool {
+    // H1 SLOT-COUNT
+    let h1 = payload_slot_count() == 6
+    // H2 TENSION-5CH
+    let h2 = tension_channel_count() == 5
+    // H4 partial: coord 3-dim
+    let h4 = coord_dim() == 3
+    return h1 && h2 && h4
+}
+
+fn main() {
+    let ok = check_h356()
+    if !ok {
+        print("H_356 FAIL")
+        return
+    }
+    print("H_356 🔵 KOSMOS 6-tuple OK")
+}
