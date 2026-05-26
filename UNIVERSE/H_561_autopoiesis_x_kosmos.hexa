@@ -1,0 +1,3 @@
+fn self_ref_field_present() -> bool { return true }
+fn check_h561() -> bool { return self_ref_field_present() }
+fn main() { if check_h561() { print("H_561 OK") } else { print("H_561 FAIL") } }
