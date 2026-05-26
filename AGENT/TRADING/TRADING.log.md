@@ -2,6 +2,18 @@
 
 Append-only history sister of `TRADING.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T02:55:00Z — M4 paper_trade closure
+
+- [x] `AGENT/TRADING/paper_broker.hexa` 작성 — 7 pub fn (`paper_broker_new` · `_get_quote` · `_place_order` · `_cancel_order` · `_list_positions` · `_get_portfolio` · `_summary`)
+- [x] 5-verb broker interface — M5 live_broker 와 byte-identical surface (place_order/cancel_order/list_positions/get_quote/get_portfolio)
+- [x] simulated state — no global, threaded Map (PaperBrokerState · cash + positions + open_orders + trades + fee_bps + slippage_bps + next_order_id)
+- [x] market order 즉시 체결 · limit order pending queue · 거부 시 reason 명시 (insufficient_cash · no_position)
+- [x] `paper_broker_smoke.hexa` 7-case verify — C1 new · C2 get_quote (bid/ask spread) · C3 buy market · C4 sell market · C5 reject insufficient_cash · C6 limit queue + cancel · C7 portfolio mark-to-market
+- [x] `hexa parse` 2/2 OK
+- [x] TRADING.md M4 line `[ ] → [x]` (3/6 → 4/6)
+- [x] 위험 0 보장 — 실 broker API 미연결, 모든 체결 simulated
+- [ ] M5 live_trade gate — 실 broker (KIS/IBKR/Alpaca) + 사용자 명시 승인 게이트 (다음 마일스톤)
+
 ## 2026-05-27T02:40:00Z — M3 scan + backtest closure
 
 - [x] `AGENT/TRADING/backtest.hexa` 작성 — paper backtest wrapper 5 pub fn (`trading_backtest_config` · `_apply_signal` · `_metrics` · `_run` · `_summary`)
