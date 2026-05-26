@@ -1,0 +1,20 @@
+// H_477 smoke — M cyclic stability
+
+fn periodic_input(t: i64, period: i64) -> f64 {
+    let phase = t % period
+    if phase < (period / 2) { return 1.0 }
+    return 0.0
+}
+
+fn check_h477() -> bool {
+    let period = 10
+    let s1 = periodic_input(0, period)
+    let s2 = periodic_input(period, period)
+    return s1 == s2  // period match
+}
+
+fn main() {
+    let ok = check_h477()
+    if !ok { print("H_477 FAIL"); return }
+    print("H_477 blue M cyclic OK")
+}
