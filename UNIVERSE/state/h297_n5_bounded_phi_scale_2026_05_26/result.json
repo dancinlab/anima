@@ -1,0 +1,54 @@
+{
+  "hypothesis": "H_297",
+  "slug": "n5-bounded-phi-scale",
+  "title": "Rule 90's reducibility is an EVEN-N bipartite artifact: at n=5 (odd ring) bounded Phi=19.5 — flow-arc rule-90 over-prediction REINTERPRETED",
+  "date": "2026-05-26",
+  "question": "Do arc diagnostic findings (identity=0, integrating>0, rule90=0) survive scale-up to n=5, and is rule 90's reducibility N-parity dependent?",
+  "engine": "HEXAD/IIT4/lib (eca_tpm) + stdlib/consciousness/iit4_bounded.big_phi_bounded (cap<n = lower bound). Reused, no new IIT4 code.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · deterministic (cross-process byte-identical)",
+  "config": {"n_baseline": 4, "n_scaleup": 5, "cap": 4, "headline_state_n5": 21, "headline_state_n5_binary": "10101", "n4_state": 5},
+  "panel": {
+    "rule_0":   {"n4_exact": 0.0,    "n5_bounded": 0.0},
+    "rule_255": {"n4_exact": 0.0,    "n5_bounded": 0.0},
+    "rule_204": {"n4_exact": 0.0,    "n5_bounded": 0.0, "role": "identity anchor"},
+    "rule_51":  {"n4_exact": 0.0,    "n5_bounded": 0.0},
+    "rule_150": {"n4_exact": 6.0,    "n5_bounded": 0.0, "note": "bounded cap=4 lower bound — full exact n=5 unmeasured"},
+    "rule_105": {"n4_exact": 4.5,    "n5_bounded": 0.0, "note": "bounded cap=4 lower bound"},
+    "rule_90":  {"n4_exact": 0.0,    "n5_bounded": 19.5, "note": "★ N-PARITY JUMP: n=4 reducible -> n=5 highly integrated"},
+    "rule_60":  {"n4_exact": 17.5,   "n5_bounded": 16.5},
+    "rule_110": {"n4_exact": 7.66066,"n5_bounded": 17.694},
+    "rule_30":  {"n4_exact": 7.28357,"n5_bounded": 20.2686}
+  },
+  "headline_finding": "rule 90's whole-Phi at n=4 (=0) jumps to Phi=19.5 at n=5 — comparable to rules 30 (20.3) and 110 (17.7) and exceeding rule 60 (16.5). The reducibility was an EVEN-N BIPARTITE DECOUPLING artifact (4-cycle even/odd split, the substrate of H_295's sub-complex and H_296's multi-complex); on the odd ring (n=5) the decoupling fails and rule 90 becomes one of the most integrated substrates in the panel.",
+  "arc_reinterpretation": "The flow-arc cross-measure 'rule 90 over-prediction' (LZ in H_288, multivariate TE in H_293, synergy in H_294) is now reinterpreted: those measures were detecting REAL integration that the n=4 even-ring decoupling hid at the whole-system level. The flow signals were correct; n=4 was the special case. Integration in rule 90 is REAL across N — but the system-cut's accessibility is N-parity dependent.",
+  "criteria": {
+    "C1_SCALE_ANCHORS": "PASS (204/0 n=5 Phi=0)",
+    "C2_INTEGRATION_SURVIVES": "PASS (60=16.5, 110=17.7 at n=5)",
+    "C3_RULE90_N_PARITY": "H1 SUPPORTED (HEADLINE) — rule 90 Phi=19.5 at n=5",
+    "C4_BOUND_DET": "PASS"
+  },
+  "falsifiers": {
+    "F297_1a_ANCHOR_204": "PASS",
+    "F297_1b_ANCHOR_0": "PASS",
+    "F297_2_INTEGRATION_SURVIVES": "PASS",
+    "F297_3_RULE90_N_PARITY": "H1 SUPPORTED  (n=5 Phi=19.5 > 0)",
+    "F297_4_BOUND": "PASS",
+    "F297_5_DETERMINISM": "PASS"
+  },
+  "checks": "6 PASS / 0 FAIL",
+  "verdict_class": "H1 SUPPORTED (NUMERICAL, bounded lower-bound)",
+  "honest_limits": [
+    "L1: bounded cap=4 at n=5 is a LOWER bound; rules 150/105 = 0 may be cap-limited (not necessarily true Phi=0).",
+    "L2: single state st=21 (n=5); rule 90's Phi=19.5 may be state-dependent.",
+    "L3: only n=4 vs n=5 (one parity step); larger n=6 (even) / n=7 (odd) sweep deferred.",
+    "L4: rule 150/105 cap=5 exact (n=5 full big-Phi) deferred (compute cost).",
+    "L5: ECA proxy; not a phenomenal claim.",
+    "L6: structure-cut big-Phi; correlation conclusion robust.",
+    "L7: verdict is a toy-substrate measurement fact."
+  ],
+  "verify_fence": {
+    "claim": "H_297 rule 90's whole-Phi=0 at n=4 is an EVEN-N bipartite-decoupling artifact: at n=5 (odd ring, bounded big-Phi cap=4) rule 90 jumps to Phi=19.5 — top of the panel alongside rules 30 (20.3) and 110 (17.7); flow-arc 'rule 90 over-prediction' (LZ/multivariate-TE/synergy) was seeing real integration the even-ring decoupling hid; anchors (identity 204, constants) scale-robust at Phi=0; deterministic toy-substrate, NOT an atlas identity",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values deterministic arithmetic (bounded lower-bound), interpretation fenced"
+  }
+}
