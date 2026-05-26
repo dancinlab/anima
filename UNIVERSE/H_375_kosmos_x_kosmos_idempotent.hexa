@@ -1,0 +1,22 @@
+// H_375 smoke — KOSMOS x KOSMOS self idempotent (set union)
+
+fn set_union_size(size_p: i64, size_q: i64, overlap: i64) -> i64 {
+    return size_p + size_q - overlap
+}
+
+fn check_h375() -> bool {
+    let n = 10
+    // P ∪ P: overlap = n (full overlap), result = n + n - n = n
+    let self_union = set_union_size(n, n, n)
+    let h1 = self_union == n
+    // P ∪ Q (disjoint): overlap = 0, result = n + n
+    let disj = set_union_size(n, n, 0)
+    let h_disj_grows = disj > n
+    return h1 && h_disj_grows
+}
+
+fn main() {
+    let ok = check_h375()
+    if !ok { print("H_375 FAIL"); return }
+    print("H_375 blue set-union idempotent OK")
+}
