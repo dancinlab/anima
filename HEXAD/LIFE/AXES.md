@@ -102,7 +102,6 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 | slug | hypothesis | falsifier | tag |
 |------|------------|-----------|-----|
 | `formal-language-chomsky-hierarchy` | regular/context-free/recursive language Φ ordering | mixed | 🟢 |
-| `network-topology-scale-free` | scale-free Φ > random Erdős-Rényi (matched density) | random ≥ scale-free | 🟢 |
 | `noise-1f-pink-Φ-peak` | H_209 sister (already in-flight) — pink > white in Φ | flat | (covered) |
 | `thermodynamic-entropy-life` | low-entropy attractor (life-substrate) 가 Φ peak | high-entropy peak | 🟢 |
 | `causality-pearl-graph-Φ` | causal-graph (DAG) substrate Φ vs cyclic | cyclic equal | 🟢 |
@@ -256,7 +255,7 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 | 6 | `ai-machine-silicon-Φ` | R6 | anima 자체 reflexive |
 | 7 | `meta-axis-of-axes-reflexivity` | R8 | 본 catalog 의 reflexive instance |
 | 8 | `phase-transition-Φ-derivative-peak` | R8 | H_204 inverse-U + H_207 critical-K generalize |
-| 9 | `network-topology-scale-free` | R5 | mitosis pool topology 영향 |
+| 9 | ~~`network-topology-scale-free`~~ | R5 | ✅ CONSUMED → H_289 (cycle#27): SF허브 6.81≫4-cycle 0.0, 구조>edge수 (⚠ confound) |
 | 10 | `emergence-weak-vs-strong-Bedau` | R8 | Hc_607 direct instance |
 | 11 | `infant-mirror-self-recognition` | R13 | H_205 sister + developmental |
 | 12 | `meditation-jhana-Φ-modulation` | R7 | anima 'silence' / 자발 정지 (H_018 zero-drive 정합) |

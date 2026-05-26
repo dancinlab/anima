@@ -3,6 +3,15 @@
 Append-only history sister of `LIFE.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#27 — 축 A/R5 information: 네트워크 위상 ∥ Φ (포그라운드 순차)
+
+- [x] **H_289 network-topology-scale-free-phi** 🟢 SUPPORTED-with-confound 4/4 (`HEXAD/LIFE/state/h289_network_topology_scale_free_phi_2026_05_26/`) — AXES R5(information) `network-topology-scale-free` seed 소비
+- [x] **발견**: 네트워크 *위상*이 faithful big-Φ 좌우 — matched 4-edge 에서 scale-free 허브(paw) Φ_mean=6.81 ≫ 분산 4-cycle 0.0 (parity dynamics, n=4). **edge 수 아닌 구조(cut-내성)가 통합 지배** (EMPTY 0→SF 6.81>K4 5.625, density 비단조). eca_tpm 을 임의 그래프(net_tpm parity)로 일반화
+- [x] ⚠ **honest confound (L1)**: 4-cycle Φ=0 은 parity-짝수고리 이분 decoupling(node0≡node2 업데이트 b1⊕b3, node1≡node3 b0⊕b2 → 중복노드/선형 reducible)이 큰 몫 → magnitude 가 허브에 과대-유리 + 정규 cycle≠random ER → "scale-free>random ER" 문자그대로는 약형만 검정. robust=약형(위상>density)
+- [x] toolchain: n=5(128 big_phi 호출) 너무 느려 SIGTERM 후 **n=4 full state-average**(lane 표준)로 재설계. old-driver build 우회 유지
+- [x] surface: README 101→102 H + H_289 행 · AXES R5 seed 제거 + top-15 rank-9 consumed · LIFE.md A1
+- [ ] Next: R28 H_290 transfer-entropy(H_287 대체측도) · R29 H_291 ethic-emergence · R30 H_292 self-i-emergence. (H_289 후속: n≥5 ER 앙상블 = parity-degeneracy 없는 깨끗한 SF vs ER, Φ-엔진 가속 필요)
+
 ## 2026-05-26 — cycle#26 — 축 A/R5 information: Φ ∥ Kolmogorov(LZ) 복잡도 (포그라운드 순차, "모두 순차" 지시)
 
 - [x] **H_288 kolmogorov-complexity-Φ** 🟢 SUPPORTED-NUMERICAL 9/9 (`HEXAD/LIFE/state/h288_kolmogorov_complexity_phi_correlate_2026_05_26/`) — AXES R5(information) `kolmogorov-complexity-Φ` seed 소비
