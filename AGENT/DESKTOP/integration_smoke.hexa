@@ -1,0 +1,181 @@
+// integration_smoke.hexa — DESKTOP M6 round-trip integration smoke
+// (AGENT/DESKTOP/M6 closure · 6/6 milestone).
+//
+// BRIDGE ARCHITECTURE: pure smoke runner — verifies that M1+M2+M3+M4+M5
+// surfaces compose into an end-to-end round-trip. No consciousness framing,
+// no Φ math, no substrate gating. The "when/why to run smoke" decision lives
+// outside this file (test invocation by user/CI).
+//
+// ROUND-TRIP DESIGN:
+//   Case 1 — Calculator 1+1=2 (canonical desktop agent test)
+//     1. task_open_and_type("Calculator", "1+1=")
+//     2. task_screenshot_app("Calculator", "/tmp/desktop_m6_calc.png")
+//     3. ax_ocr(png) → search for "2" in output
+//     4. ax_app_quit("Calculator")
+//   Case 2 — TextEdit type-then-read (다른 앱 1개)
+//     1. task_open_and_type("TextEdit", "anima M6 round-trip")
+//     2. task_screenshot_app("TextEdit", "/tmp/desktop_m6_textedit.png")
+//     3. ax_ocr(png) → search for "round-trip" in output
+//     4. ax_app_quit("TextEdit")
+//
+// HONESTY: in DRYRUN mode (ANIMA_DESKTOP_DRYRUN=1) all underlying M1-M5
+// primitives return contract-shape dicts without OS dispatch. The smoke
+// then verifies contract integrity, NOT real macOS behavior. Real round-
+// trip needs interactive permissions (Accessibility + Screen Recording +
+// Automation) and is documented as a manual verification step.
+
+import "/Users/ghost/core/anima/AGENT/DESKTOP/native_ax.hexa"
+import "/Users/ghost/core/anima/AGENT/DESKTOP/screen_extract.hexa"
+import "/Users/ghost/core/anima/AGENT/DESKTOP/action.hexa"
+import "/Users/ghost/core/anima/AGENT/DESKTOP/window_ops.hexa"
+import "/Users/ghost/core/anima/AGENT/DESKTOP/task_primitives.hexa"
+
+// Strip trailing \n from a string.
+fn _strip_nl(s: string) -> string {
+    let n = string_len(s)
+    if n == 0 { return s }
+    let last = substring(s, n - 1, n)
+    if last == "\n" { return substring(s, 0, n - 1) }
+    return s
+}
+
+// Read env var ANIMA_DESKTOP_DRYRUN — match M3/M4/M5 convention.
+fn _is_dryrun() -> bool {
+    let v = _strip_nl(to_string(exec("/bin/echo \"$ANIMA_DESKTOP_DRYRUN\"")))
+    if v == "1" { return true }
+    return false
+}
+
+// Case 1: Calculator 1+1=2 round-trip.
+// Returns #{case, steps_completed, found_expected, app, expected, dryrun}
+pub fn smoke_case_calculator() -> map {
+    let dry = _is_dryrun()
+    let app = "Calculator"
+    let png = "/tmp/desktop_m6_calc.png"
+
+    let steps = []
+
+    // Step 1 — open + type "1+1="
+    let r1 = task_open_and_type(app, "1+1=")
+    if to_string(r1["ok"]) == "true" { steps = list_push(steps, "open_and_type") }
+
+    // Step 2 — screenshot
+    let r2 = task_screenshot_app(app, png)
+    if to_string(r2["ok"]) == "true" { steps = list_push(steps, "screenshot") }
+
+    // Step 3 — OCR + search for "2"
+    let txt = ""
+    if !dry { txt = to_string(ax_ocr(png)) }
+    let found = false
+    if dry {
+        // contract verify — every step returned contract shape
+        found = list_len(steps) >= 2
+    } else {
+        // production — search OCR output for the digit 2
+        if string_len(txt) > 0 {
+            let n = string_len(txt)
+            let i = 0
+            while i < n {
+                if substring(txt, i, i + 1) == "2" { found = true; break }
+                i = i + 1
+            }
+        }
+    }
+    if found { steps = list_push(steps, "ocr_found_2") }
+
+    // Step 4 — quit
+    let r4 = ax_app_quit(app)
+    if r4 { steps = list_push(steps, "quit") }
+
+    return #{
+        "case": "calculator",
+        "app": app,
+        "expected": "2",
+        "steps_completed": steps,
+        "found_expected": found,
+        "dryrun": dry,
+        "ocr_excerpt_len": string_len(txt),
+    }
+}
+
+// Case 2: TextEdit type-then-read round-trip.
+pub fn smoke_case_textedit() -> map {
+    let dry = _is_dryrun()
+    let app = "TextEdit"
+    let png = "/tmp/desktop_m6_textedit.png"
+    let needle = "round-trip"
+
+    let steps = []
+
+    let r1 = task_open_and_type(app, "anima M6 round-trip")
+    if to_string(r1["ok"]) == "true" { steps = list_push(steps, "open_and_type") }
+
+    let r2 = task_screenshot_app(app, png)
+    if to_string(r2["ok"]) == "true" { steps = list_push(steps, "screenshot") }
+
+    let txt = ""
+    if !dry { txt = to_string(ax_ocr(png)) }
+    let found = false
+    if dry {
+        found = list_len(steps) >= 2
+    } else {
+        if string_len(txt) > 0 {
+            // simple substring scan for "round-trip"
+            let n = string_len(txt)
+            let nl = string_len(needle)
+            let i = 0
+            while i + nl <= n {
+                if substring(txt, i, i + nl) == needle { found = true; break }
+                i = i + 1
+            }
+        }
+    }
+    if found { steps = list_push(steps, "ocr_found_needle") }
+
+    let r4 = ax_app_quit(app)
+    if r4 { steps = list_push(steps, "quit") }
+
+    return #{
+        "case": "textedit",
+        "app": app,
+        "expected": needle,
+        "steps_completed": steps,
+        "found_expected": found,
+        "dryrun": dry,
+        "ocr_excerpt_len": string_len(txt),
+    }
+}
+
+pub fn integration_smoke_run() -> map {
+    let c1 = smoke_case_calculator()
+    let c2 = smoke_case_textedit()
+    let dry = _is_dryrun()
+
+    let pass_c1 = false
+    if to_string(c1["found_expected"]) == "true" { pass_c1 = true }
+    let pass_c2 = false
+    if to_string(c2["found_expected"]) == "true" { pass_c2 = true }
+
+    let all_pass = pass_c1 && pass_c2
+    return #{
+        "calculator": c1,
+        "textedit": c2,
+        "all_pass": all_pass,
+        "dryrun": dry,
+    }
+}
+
+pub fn integration_smoke_summary() -> string {
+    return "AGENT/DESKTOP/M6 — Calculator 1+1=2 + TextEdit round-trip · DRYRUN-aware contract verify · real run needs Accessibility+ScreenRecording+Automation permissions"
+}
+
+fn main() {
+    let r = integration_smoke_run()
+    println("=== DESKTOP M6 integration smoke ===")
+    println("dryrun: " + to_string(r["dryrun"]))
+    let c1 = r["calculator"]
+    println("[C1 Calculator] steps=" + to_string(list_len(c1["steps_completed"])) + " found_expected=" + to_string(c1["found_expected"]))
+    let c2 = r["textedit"]
+    println("[C2 TextEdit] steps=" + to_string(list_len(c2["steps_completed"])) + " found_expected=" + to_string(c2["found_expected"]))
+    println("all_pass: " + to_string(r["all_pass"]))
+}
