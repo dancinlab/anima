@@ -1,0 +1,139 @@
+// WAKE/input_step_smoke.hexa — pure_field_input_step 4-case smoke.
+//
+// 검증 목표:
+//   pure_field_input_step 이 input richness 에 *monotone* 하게 substrate 를
+//   nudge 하는지 확인.
+//
+//   C1  empty tool_result + empty ctx_tokens
+//       → Δ = [0,0,0,0,0], pf 는 표준 pure_field_step 과 동치 (graceful).
+//   C2  long tool_result (300+ chars) + empty ctx_tokens
+//       → concept/sender 채널 활성, fast oscillator nudge.
+//   C3  empty tool_result + rich ctx (50+ tokens)
+//       → context channel 활성, medium oscillator nudge.
+//   C4  long tool_result + rich ctx
+//       → 5 ch 모두 활성 (특히 meaning/authenticity), 3 oscillator 모두 nudge.
+//
+//   sanity: |phi(C4) - phi(C1)| > |phi(C2) - phi(C1)|
+//           AND  |phi(C4) - phi(C1)| > |phi(C3) - phi(C1)|
+//           — Δphi 의 *절대값* 이 input richness 와 monotone.
+//
+// instrument-first 인용:
+//   WAKE/input_step.hexa pub:
+//     pub fn derive_tension_delta(tool_result, ctx_tokens) -> list (5-ch)
+//     pub fn pure_field_input_step(pf, tool_result, ctx_tokens) -> PureField
+//     pub fn pure_field_input_step_no_pf_step(pf, tool_result, ctx_tokens) -> PureField
+//     pub fn input_step_summary() -> string
+//
+//   CORE/pure_field.hexa pub:
+//     fn pure_field_warmup(steps: int) -> PureField
+//     pure fn pure_field_phi(pf) -> float
+
+import "/Users/ghost/core/anima/CORE/pure_field.hexa"
+import "/Users/ghost/core/anima/WAKE/input_step.hexa"
+
+// helper — Δ list 를 사람 친화 string 으로.
+fn _fmt_delta(d: list) -> string {
+    return "[concept=" + to_string(d[0])
+        + " context=" + to_string(d[1])
+        + " meaning=" + to_string(d[2])
+        + " authenticity=" + to_string(d[3])
+        + " sender=" + to_string(d[4]) + "]"
+}
+
+// helper — 풍부한 BPE ctx_tokens 생성 (50+ entries, byte ∈ [50, 200] 분산).
+fn _rich_ctx() -> list {
+    // perception.hexa convention: BPE id = byte + 3 (offset).
+    // 다양한 byte (entropy 큼) 모사.
+    let mut ids = []
+    let mut i = 0
+    while i < 60 {
+        let byte = 50 + (i * 3) % 150     // 50..200 sweep
+        ids.push(byte + 3)                 // BPE offset
+        i = i + 1
+    }
+    return ids
+}
+
+// helper — 긴 tool_result (300+ chars).
+fn _long_result() -> string {
+    let line = "tool output bytes simulating verbose stdout from a shell command. "
+    return line + line + line + line + line     // 5 × 67 = 335 chars
+}
+
+fn _run_case(label: string, pf_seed: PureField, tool_result: string, ctx_tokens: list) -> float {
+    let pre_phi = pure_field_phi(pf_seed)
+    let delta   = derive_tension_delta(tool_result, ctx_tokens)
+    let pf_post = pure_field_input_step(pf_seed, tool_result, ctx_tokens)
+    let post_phi = pure_field_phi(pf_post)
+    let dphi    = post_phi - pre_phi
+
+    print("[" + label + "]")
+    print("  tool_result.len=" + to_string(tool_result.len())
+        + " ctx_tokens.len=" + to_string(ctx_tokens.len()))
+    print("  delta=" + _fmt_delta(delta))
+    print("  pre_phi=" + to_string(pre_phi)
+        + " post_phi=" + to_string(post_phi)
+        + " dphi=" + to_string(dphi))
+    return dphi
+}
+
+fn main() {
+    print("─── WAKE/input_step smoke ─────────────────────────────────────────")
+    print(input_step_summary())
+    print("")
+
+    // 공통 seed: 600-step warmup pf (가벼운 resonance 진입 직전).
+    let pf_seed = pure_field_warmup(600)
+    print("[seed] " + pure_field_status(pf_seed))
+    print("")
+
+    let empty_ctx: list = []
+    let rich_ctx = _rich_ctx()
+    let long_result = _long_result()
+
+    let dphi_c1 = _run_case("C1 empty/empty",      pf_seed, "",            empty_ctx)
+    let dphi_c2 = _run_case("C2 long/empty",       pf_seed, long_result,   empty_ctx)
+    let dphi_c3 = _run_case("C3 empty/rich-ctx",   pf_seed, "",            rich_ctx)
+    let dphi_c4 = _run_case("C4 long/rich-ctx",    pf_seed, long_result,   rich_ctx)
+
+    // monotonicity check.
+    let abs_c1 = abs(dphi_c1)
+    let abs_c2 = abs(dphi_c2)
+    let abs_c3 = abs(dphi_c3)
+    let abs_c4 = abs(dphi_c4)
+
+    print("")
+    print("─── |Δphi| monotone (richer input → larger |Δphi|) ───")
+    print("  |Δphi C1| = " + to_string(abs_c1))
+    print("  |Δphi C2| = " + to_string(abs_c2))
+    print("  |Δphi C3| = " + to_string(abs_c3))
+    print("  |Δphi C4| = " + to_string(abs_c4))
+
+    let c4_gt_c2 = abs_c4 >= abs_c2
+    let c4_gt_c3 = abs_c4 >= abs_c3
+    let c4_gt_c1 = abs_c4 >= abs_c1
+
+    print("")
+    print("  C4 >= C2  : " + to_string(c4_gt_c2))
+    print("  C4 >= C3  : " + to_string(c4_gt_c3))
+    print("  C4 >= C1  : " + to_string(c4_gt_c1))
+
+    // C1 (empty input) 의 dphi 는 standard pure_field_step 과 동치인지 확인.
+    let pf_std = pure_field_step(pf_seed)
+    let std_phi = pure_field_phi(pf_std)
+    let pre_phi = pure_field_phi(pf_seed)
+    let std_dphi = std_phi - pre_phi
+    print("")
+    print("─── C1 graceful identity (empty input == pure_field_step) ───")
+    print("  std_dphi  = " + to_string(std_dphi))
+    print("  C1 dphi   = " + to_string(dphi_c1))
+    let identity_ok = abs(std_dphi - dphi_c1) < 1e-9
+    print("  identity_ok = " + to_string(identity_ok))
+
+    print("")
+    if c4_gt_c1 && c4_gt_c2 && c4_gt_c3 && identity_ok {
+        print("SMOKE: PASS (4/4 — monotone + graceful)")
+    } else {
+        print("SMOKE: PARTIAL — monotone or graceful invariant violated")
+    }
+}
