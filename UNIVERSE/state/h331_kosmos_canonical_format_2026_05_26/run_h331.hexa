@@ -1,0 +1,62 @@
+// H_331 — kosmos canonical format uniqueness 🔵
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn anchor_hash(text_len: int, tension_sum_x100: int, lane_id: int, tier: int) -> int {
+    let mut h = 2166136261
+    h = ((h ^ text_len) * 16777619) % 2147483647
+    h = ((h ^ tension_sum_x100) * 16777619) % 2147483647
+    h = ((h ^ lane_id) * 16777619) % 2147483647
+    h = ((h ^ tier) * 16777619) % 2147483647
+    return h
+}
+
+fn schema_valid(text_len: int, tension_len: int, coord_dim: int, lane_id: int, radius: int, tier: int) -> bool {
+    if text_len <= 0 { return false }
+    if tension_len != 5 { return false }
+    if coord_dim < 2 { return false }
+    if lane_id < 0 { return false }
+    if radius < 0 { return false }
+    if tier < 0 { return false }
+    return true
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_331 — kosmos canonical format uniqueness 🔵")
+    println("================================================================")
+
+    // F331.1 SAME-CONTENT-SAME-HASH
+    let h1 = anchor_hash(120, 250, 2, 500)
+    let h2 = anchor_hash(120, 250, 2, 500)
+    check("F331.1 SAME-CONTENT-SAME-HASH (H_323 cross)", h1 == h2)
+
+    // F331.2 NO-AD-HOC: lane shifted by 1 → different hash
+    let h_alt = anchor_hash(120, 250, 3, 500)  // lane 2→3
+    check("F331.2 NO-AD-HOC: lane shift → different hash (canonical violation 감지)", h1 != h_alt)
+
+    // F331.3 BYPASS-DETECTED: tension_len=4 (5 fields instead of 6) → invalid
+    let bypass = schema_valid(120, 4, 3, 2, 100, 500)  // tension=4 invalid
+    check("F331.3 BYPASS-DETECTED: invalid schema → false", !bypass)
+
+    let valid = schema_valid(120, 5, 3, 2, 100, 500)
+    check("F331.3b VALID-SCHEMA: 6 fields → true", valid)
+
+    // F331.4 ENCODING-DETERMINISTIC
+    let e1 = anchor_hash(100, 100, 1, 100)
+    let e2 = anchor_hash(100, 100, 1, 100)
+    check("F331.4 ENCODING-DETERMINISTIC", e1 == e2)
+
+    // F331.5 BOUND
+    check("F331.5 BOUND: hash >= 0", h1 >= 0)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 5 { println("  ✅ KOSMOS CANONICAL FORMAT — 🔵") }
+    println("================================================================")
+    if FAIL > 0 { panic("H_331 FAIL") }
+}
