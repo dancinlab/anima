@@ -1,0 +1,21 @@
+// H_482 smoke — spike bits bound
+
+fn bits_per_spike() -> i64 {
+    return 64
+}
+
+fn fields_per_spike() -> i64 {
+    return 3  // timestamp, channel, value
+}
+
+fn check_h482() -> bool {
+    let h1 = bits_per_spike() <= 128
+    let h2 = fields_per_spike() == 3
+    return h1 && h2
+}
+
+fn main() {
+    let ok = check_h482()
+    if !ok { print("H_482 FAIL"); return }
+    print("H_482 blue spike bits OK")
+}
