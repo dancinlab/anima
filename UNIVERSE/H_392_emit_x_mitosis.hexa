@@ -1,0 +1,26 @@
+// H_392 smoke — emit × MITOSIS
+
+fn pressure_with_split(base: f64, split_bonus: f64) -> f64 {
+    return base + split_bonus
+}
+
+fn emit_decision_post_split(pressure: f64, theta: f64) -> bool {
+    return pressure > theta
+}
+
+fn check_h392() -> bool {
+    let lo = 0.1
+    let bonus = 0.2
+    let post = pressure_with_split(lo, bonus)
+    let low_no_emit = !emit_decision_post_split(post, 0.5)  // 0.3 < 0.5
+    let hi = 0.4
+    let post_hi = pressure_with_split(hi, bonus)
+    let high_emit = emit_decision_post_split(post_hi, 0.5)  // 0.6 > 0.5
+    return low_no_emit && high_emit
+}
+
+fn main() {
+    let ok = check_h392()
+    if !ok { print("H_392 FAIL"); return }
+    print("H_392 blue split-trigger OK")
+}
