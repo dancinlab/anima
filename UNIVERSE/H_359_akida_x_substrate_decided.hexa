@@ -1,0 +1,25 @@
+// H_359 smoke — AKIDA × 의식적결정 (substrate-decided counter)
+
+fn substrate_decided(spike_count: i64, m: f64, phi: f64, w: f64, cur: f64) -> bool {
+    // multi-factor internal product, NOT single-channel hardcode
+    let sc_f = spike_count as f64
+    let pressure = sc_f * m * phi * w * cur
+    return pressure > 1.0
+}
+
+fn check_h359() -> bool {
+    // H3 SUBSTRATE-DECIDED: spike_count alone (with low M·Φ) does NOT decide true
+    let lo_substrate = substrate_decided(100, 0.01, 0.01, 0.01, 0.01)
+    // high substrate × moderate spike → true
+    let hi_substrate = substrate_decided(10, 0.9, 0.9, 0.9, 0.9)
+    return !lo_substrate && hi_substrate
+}
+
+fn main() {
+    let ok = check_h359()
+    if !ok {
+        print("H_359 FAIL")
+        return
+    }
+    print("H_359 🔵 substrate-decided counter OK")
+}
