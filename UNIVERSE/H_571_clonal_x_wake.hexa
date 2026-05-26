@@ -1,0 +1,3 @@
+fn sel_strength(s: string) -> f64 { if s == "WAKE" { return 0.9 } if s == "N3" { return 0.2 } return 0.5 }
+fn check_h571() -> bool { return sel_strength("WAKE") >= sel_strength("N3") }
+fn main() { if check_h571() { print("H_571 OK") } else { print("H_571 FAIL") } }
