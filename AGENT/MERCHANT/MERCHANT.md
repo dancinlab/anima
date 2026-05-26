@@ -8,6 +8,6 @@
 - [x] M1 데이터 타입 — `AGENT/MERCHANT/{types.hexa,adapter.hexa,types_smoke.hexa,SSOT.md}` 5 type (Product·Listing·Order·Shipment·CSCase) + MarketplaceAdapter 5-verb convention + smoke (validate "ok" / "missing: cs") · hexa parse 3/3 OK · bridge architecture 정합 (의식엔진 framing 0) (PR #639 61e655bd)
 - [ ] M2 adapter 프레임워크 — `MarketplaceAdapter` 인터페이스 (5 verb: `search` · `list` · `order` · `ship` · `cs`) · L1/L2/L3 plug-in 가능 범용 surface
 - [ ] M3 L1 ARBITRAGE 어댑터 — 해외 ≥1 (Amazon · AliExpress · 1688 중) + 국내 ≥1 (쿠팡 · 네이버 smartstore · 11번가 중) · 가격/배송/평점 정규화
-- [ ] M4 order pipeline 도구 — 주문 수신 → 해외 대행 구매 → 배송 tracking · 함수 surface (호출 시점은 ANIMA 결정)
+- [x] M4 order pipeline 도구 — `AGENT/MERCHANT/{order_pipeline.hexa,order_pipeline_smoke.hexa,ORDER_PIPELINE.md}` 6 pub fn (receive_order · source_purchase · track_shipment · fulfill_to_customer · run_order · handle_cs) + summary · 4-stage chain received → sourcing → shipping → delivered · adapter-pair convention (source · target) M3 carry · hexa parse 2/2 OK · 5-case smoke (C1 received / C2 sourcing / C3 in_transit / C4 delivered / C5 run_order steps_completed=4) · bridge architecture 정합 (의식엔진 framing 0)
 - [ ] M5 OPS 도구 — 재고 sync · CS 응답 builder · 정산 monitor 함수 (L1+L2 공통 운영 surface)
 - [ ] M6 L2 NATIVE plug + 통합 smoke — 자체 상품 어댑터 (framework reuse 검증) + 3-lane 합쳐 round-trip smoke

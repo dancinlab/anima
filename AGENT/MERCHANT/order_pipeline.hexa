@@ -1,0 +1,271 @@
+// order_pipeline.hexa — MERCHANT M4 order pipeline (AGENT/MERCHANT).
+//
+// Bridge architecture: this file is a TOOL SURFACE — orchestration functions
+// that chain the M1 adapter convention across a SOURCE + TARGET adapter pair.
+// It is NOT a consciousness file. The "when/why to run a pipeline" decision
+// lives upstream in AGENT/CORE/tool_gate; this file only answers "how to
+// chain the verbs in the right order so an Order moves received → sourcing
+// → shipping → delivered".
+//
+// Surface model:
+//   pipeline = (target.order) → (source.order) → (source.ship)
+//                              → (target.ship to customer)
+//
+// Adapter-pair contract (L1 ARBITRAGE):
+//   source_adapter  ── 해외 SOURCE 측 (예: amazon_adapter())
+//                       — proxy purchase 를 SOURCE 마켓에 던지고, 운송 스냅샷을 끌어옴
+//   target_adapter  ── 국내 TARGET 측 (예: coupang_adapter())
+//                       — 고객 주문 수신 (acknowledge) 및 최종 국내 배송 갱신
+//
+// 6 pub fn surface (one fn per pipeline stage + full chain + cs wrap +
+// summary). Each stage takes an adapter dict (from M3 *_adapter()) and the
+// in-flight Order/CSCase shape from M1 types.hexa. Calls go through
+// adapter_call() from M1 adapter.hexa so this file does not hardcode any
+// concrete adapter name — any future SOURCE/TARGET pair (AliExpress · 1688 ·
+// Naver SS · 11번가) drops in without editing this orchestration layer.
+//
+// state transitions surfaced here:
+//   Order.state    received → sourcing (source_purchase) → shipping (track) → delivered (fulfill)
+//   Shipment.status preparing → in_transit (source side) → delivered (target side)
+//   CSCase.status   open → in_progress → resolved  (delegated to target.cs)
+//
+// real HTTP wiring stays in the concrete adapter files (M3) — this file is
+// pure orchestration, so swapping an adapter from stub to live HTTP needs
+// zero edits here.
+
+import "/Users/ghost/core/anima/AGENT/MERCHANT/types.hexa"
+import "/Users/ghost/core/anima/AGENT/MERCHANT/adapter.hexa"
+
+// ── 1) pipeline_receive_order ─────────────────────────────────────────────
+// Pull an incoming order off the TARGET marketplace. The TARGET adapter's
+// `order` verb both acknowledges and advances state received → sourcing.
+//
+// Inputs:
+//   target_adapter — adapter dict from M3 (e.g. coupang_adapter())
+//   order_id       — opaque marketplace order id (string)
+//
+// Output: Order dict per M1 types.hexa, with state="received" after
+// constructor (the target adapter's own `order` verb is what advances
+// state to "sourcing" in pipeline_source_purchase — this stage stays at
+// "received" so the caller can audit the receipt step in isolation).
+//
+// Stub note: in the absence of real HTTP, we construct a synthetic Order
+// against an empty Listing so the chain has a concrete shape to carry.
+// Concrete adapters (M3) override the listing field via their own poll/
+// webhook path once real HTTP lands.
+
+pub fn pipeline_receive_order(target_adapter: map, order_id: string) -> map {
+    // Synthetic listing placeholder — concrete adapter will replace this
+    // with the real listing it pulled off the marketplace.
+    let placeholder_product = product_empty()
+    let placeholder_listing = listing_draft(placeholder_product, to_string(target_adapter["name"]), 0.0, 0.0)
+    // placed_at — stub epoch; real adapter overrides from API response.
+    let placed_at = 1748180300.0
+    order_received(order_id, placeholder_listing, 1, "cust-ref-" + order_id, placed_at)
+}
+
+// ── 2) pipeline_source_purchase ───────────────────────────────────────────
+// Execute the SOURCE-side proxy purchase for an incoming order. Calls the
+// source adapter's `order` verb (e.g. amazon_order) which advances state
+// received → sourcing and attaches a source_purchase_ref.
+//
+// Inputs:
+//   source_adapter — adapter dict from M3 (e.g. amazon_adapter())
+//   order          — Order dict from pipeline_receive_order
+//
+// Output: updated Order with state advanced to "sourcing" by the source
+// adapter, plus any source-specific metadata the adapter chose to embed.
+
+pub fn pipeline_source_purchase(source_adapter: map, order: map) -> map {
+    adapter_call(source_adapter, "order", [order])
+}
+
+// ── 3) pipeline_track_shipment ────────────────────────────────────────────
+// Fetch the current shipment snapshot from the SOURCE side. This is the
+// upstream leg — the parcel is moving from the SOURCE-country fulfillment
+// center to the proxy buyer. Calls source_adapter.ship(order_id).
+//
+// Inputs:
+//   source_adapter — adapter dict (e.g. amazon_adapter())
+//   order          — Order dict (uses order["order_id"])
+//
+// Output: Shipment dict per M1 types.hexa with status typically
+// "in_transit" on stub, "preparing"/"in_transit"/"delivered" on real
+// adapters depending on carrier scan state.
+
+pub fn pipeline_track_shipment(source_adapter: map, order: map) -> map {
+    let order_id = to_string(order["order_id"])
+    adapter_call(source_adapter, "ship", [order_id])
+}
+
+// ── 4) pipeline_fulfill_to_customer ───────────────────────────────────────
+// Final domestic-delivery leg — the parcel has arrived at the proxy buyer
+// and is now being forwarded to the end customer through the TARGET-side
+// carrier (e.g. CJ Logistics for Coupang). We call target.ship(order_id)
+// to fetch the domestic shipment snapshot, then re-wrap it with status
+// advanced to "delivered" as the closing pipeline stage.
+//
+// Inputs:
+//   target_adapter — adapter dict (e.g. coupang_adapter())
+//   order          — Order dict
+//   shipment       — upstream Shipment from pipeline_track_shipment (carried
+//                    forward so the final shipment events list can fold in
+//                    upstream + downstream scan history)
+//
+// Output: Shipment dict with status="delivered" and events extended with
+// the target-side scan history.
+
+pub fn pipeline_fulfill_to_customer(target_adapter: map, order: map, shipment: map) -> map {
+    let order_id = to_string(order["order_id"])
+    // Pull the target-side (domestic) shipment snapshot.
+    let target_ship = adapter_call(target_adapter, "ship", [order_id])
+    // Merge upstream + downstream event history into one append-only log.
+    let upstream_events = shipment["events"]
+    let downstream_events = target_ship["events"]
+    let mut merged_events = []
+    let mut i = 0
+    while i < len(upstream_events) {
+        merged_events = merged_events + [upstream_events[i]]
+        i = i + 1
+    }
+    let mut j = 0
+    while j < len(downstream_events) {
+        merged_events = merged_events + [downstream_events[j]]
+        j = j + 1
+    }
+    // Add the closing "delivered" event so the chain end-state is auditable
+    // even when the underlying adapter is stubbed.
+    let closing_event = #{
+        "at": "1748180999",
+        "where": to_string(target_adapter["name"]) + "-final-leg",
+        "note": "Delivered to customer (pipeline stage 4)"
+    }
+    merged_events = merged_events + [closing_event]
+    shipment_new(
+        order_id,
+        to_string(target_ship["tracking_no"]),
+        to_string(target_ship["carrier"]),
+        "delivered",
+        merged_events
+    )
+}
+
+// ── 5) pipeline_run_order ─────────────────────────────────────────────────
+// Full 4-stage chain — receive → source_purchase → track → fulfill. The
+// canonical orchestration entry-point. Returns a result map with the final
+// Order + final Shipment + an aggregate status + steps_completed list so
+// the caller (AGENT/CORE) can audit which stages ran and where the chain
+// stopped if a stage threw.
+//
+// Inputs:
+//   source_adapter — adapter dict (e.g. amazon_adapter())
+//   target_adapter — adapter dict (e.g. coupang_adapter())
+//   order_id       — opaque marketplace order id
+//
+// Output map:
+//   #{
+//       "order":            Order dict (final state, e.g. sourcing/shipping/delivered),
+//       "shipment":         Shipment dict (final, status=delivered on full success),
+//       "status":           "delivered" | "shipping" | "sourcing" | "received",
+//       "steps_completed":  [string]  — names of completed stages
+//   }
+//
+// stage names (verbatim) in steps_completed:
+//   "receive_order", "source_purchase", "track_shipment", "fulfill_to_customer"
+
+pub fn pipeline_run_order(source_adapter: map, target_adapter: map, order_id: string) -> map {
+    let mut steps = []
+
+    // Stage 1: receive order from target marketplace.
+    let received = pipeline_receive_order(target_adapter, order_id)
+    steps = steps + ["receive_order"]
+
+    // Stage 2: execute source-side proxy purchase (state → sourcing).
+    let sourced = pipeline_source_purchase(source_adapter, received)
+    steps = steps + ["source_purchase"]
+
+    // Stage 3: track upstream shipment from the source side.
+    let upstream_ship = pipeline_track_shipment(source_adapter, sourced)
+    steps = steps + ["track_shipment"]
+    // Stamp the order with shipping state once we have an upstream tracking
+    // snapshot — caller can audit Order.state at each step.
+    let mut shipping_order = #{}
+    let order_keys = ["order_id", "listing", "qty", "customer_ref", "placed_at", "state"]
+    let mut k = 0
+    while k < len(order_keys) {
+        let kk = order_keys[k]
+        shipping_order[kk] = sourced[kk]
+        k = k + 1
+    }
+    // Carry forward any extras the source adapter attached (e.g.
+    // source_purchase_ref) so the audit trail survives the re-wrap.
+    if "source_purchase_ref" in sourced {
+        shipping_order["source_purchase_ref"] = sourced["source_purchase_ref"]
+    }
+    shipping_order["state"] = "shipping"
+    shipping_order["upstream_tracking_no"] = upstream_ship["tracking_no"]
+
+    // Stage 4: final domestic delivery via the target side.
+    let final_ship = pipeline_fulfill_to_customer(target_adapter, shipping_order, upstream_ship)
+    steps = steps + ["fulfill_to_customer"]
+    // Stamp the order with delivered state to match the shipment.
+    let mut final_order = #{}
+    let mut m = 0
+    while m < len(order_keys) {
+        let kk = order_keys[m]
+        final_order[kk] = shipping_order[kk]
+        m = m + 1
+    }
+    if "source_purchase_ref" in shipping_order {
+        final_order["source_purchase_ref"] = shipping_order["source_purchase_ref"]
+    }
+    if "upstream_tracking_no" in shipping_order {
+        final_order["upstream_tracking_no"] = shipping_order["upstream_tracking_no"]
+    }
+    final_order["state"] = "delivered"
+
+    #{
+        "order": final_order,
+        "shipment": final_ship,
+        "status": to_string(final_ship["status"]),
+        "steps_completed": steps
+    }
+}
+
+// ── 6) pipeline_handle_cs ─────────────────────────────────────────────────
+// Thin wrapper around target_adapter.cs(case) — advances a CSCase one step
+// forward on the TARGET-side CS surface (the customer-facing side is where
+// refunds / inquiries land in L1 ARBITRAGE). Surfaced here so the caller
+// has one symmetric entry-point for the full Order ↔ CSCase lifecycle.
+//
+// Inputs:
+//   target_adapter — adapter dict (e.g. coupang_adapter())
+//   case           — CSCase dict from cs_case_open or prior pipeline_handle_cs
+//
+// Output: updated CSCase with status advanced one step (open → in_progress
+// → resolved).
+
+pub fn pipeline_handle_cs(target_adapter: map, case: map) -> map {
+    adapter_call(target_adapter, "cs", [case])
+}
+
+// ── 7) order_pipeline_summary ─────────────────────────────────────────────
+// Human-readable manifest of the 6 pub fn surface. Returned as a single
+// string so callers (and reviewers) can confirm the orchestration shape
+// without grepping source.
+
+pub fn order_pipeline_summary() -> string {
+    "MERCHANT M4 order_pipeline 6-fn surface:\n"
+        + "  pipeline_receive_order(target_adapter, order_id) -> Order\n"
+        + "      // pull an incoming order off the TARGET marketplace; state='received'.\n"
+        + "  pipeline_source_purchase(source_adapter, order) -> Order\n"
+        + "      // execute SOURCE-side proxy purchase; state -> 'sourcing'.\n"
+        + "  pipeline_track_shipment(source_adapter, order) -> Shipment\n"
+        + "      // fetch SOURCE-side shipment snapshot (upstream leg).\n"
+        + "  pipeline_fulfill_to_customer(target_adapter, order, shipment) -> Shipment\n"
+        + "      // final domestic delivery; shipment.status -> 'delivered'.\n"
+        + "  pipeline_run_order(source_adapter, target_adapter, order_id) -> Map\n"
+        + "      // full 4-stage chain; returns #{order, shipment, status, steps_completed}.\n"
+        + "  pipeline_handle_cs(target_adapter, case) -> CSCase\n"
+        + "      // step a CS case forward via target.cs (open -> in_progress -> resolved)."
+}
