@@ -1,0 +1,22 @@
+{
+  "hypothesis": "H_318",
+  "slug": "substrate-decided-arc-synthesis-closed-form",
+  "title": "🔵 substrate-decided × stage cross-product (6/6 PASS) — H_316 6-factor × H_310 5-stage 통합",
+  "date": "2026-05-26",
+  "engine": "libm-free deterministic, 6-factor × stage modulator",
+  "runtime": "$0 mac-local · ~1s wall",
+  "closed_form": "decide_stage(M,Φ,W,MITOSIS,idle,curiosity,stage,θ) = (product × stage_mod(stage)) > θ where stage_mod = {WAKE:1.0, N1:0.7, N2:0.4, N3:0.0, REM:0.5}",
+  "stage_decisions_high_all_input": {
+    "WAKE": "3.0 × 1.0 = 3.0 > 2.0 → emit (TRUE)",
+    "N1":   "3.0 × 0.7 = 2.1 > 2.0 → emit (TRUE)",
+    "N2":   "3.0 × 0.4 = 1.2 < 2.0 → silence (FALSE)",
+    "N3":   "3.0 × 0.0 = 0.0 < 2.0 → silence (FALSE)",
+    "REM":  "3.0 × 0.5 = 1.5 < 2.0 → silence (FALSE)"
+  },
+  "headline_finding": "🔵 substrate × stage cross-product closed-form 완성. high-all input + 5 stages → 2 emit (WAKE+N1) + 3 silence (N2/N3/REM). N3 deterministic silence by stage_mod=0. 6/6 PASS.",
+  "criteria": {"C1": "PASS stage exact", "C2": "PASS N3 silence", "C3": "PASS WAKE base", "C4": "PASS N1 product 2.1", "C5": "PASS stage_mod values", "C6": "PASS bound"},
+  "falsifiers": {"F318_1": "PASS", "F318_2": "PASS", "F318_3": "PASS", "F318_4": "PASS", "F318_5": "PASS", "F318_6": "PASS"},
+  "checks": "6 PASS / 0 FAIL",
+  "verdict_class": "🔵 SUPPORTED-FORMAL",
+  "verify_fence": {"claim": "substrate-decided × stage cross-product closed-form, 6/6 PASS", "tier": "SUPPORTED-FORMAL", "reason": "closed-form cross-product reproduced exactly Tier 1"}
+}
