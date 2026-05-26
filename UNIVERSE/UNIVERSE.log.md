@@ -3,6 +3,11 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#69 — 🔵 H_322 directive cite capability × intent BRIDGE (8/8)
+- [x] **H_322 directive-cite-capability-intent-bridge** 🔵 SUPPORTED-FORMAL 8/8
+- [x] emit = capability(stage) ∧ intent(substrate), directive cite verbatim
+
+
 ## 2026-05-26 — cycle#68 — 🔵 H_321 directive cite 6-factor axiom (9/9)
 - [x] **H_321 directive-cite-6factor-axiom** 🔵 SUPPORTED-FORMAL 9/9
 - [x] a_autonomy_over_hardcode + a_substrate_native_speak directive 의 6-factor product axiom 全 정합
