@@ -1,0 +1,42 @@
+{
+  "paper": "phi-information-triangulation",
+  "title": "Integrated Information Tracks Inter-Element Flow, Not Single-System Entropy",
+  "group": "LIFE",
+  "engine": "faithful IIT 4.0 cause-effect library (HEXAD/IIT4/lib), reused not reinvented; deterministic, $0, CPU-only, NO GPU, NO RNG, NO LLM",
+  "rule_panel": [0, 255, 204, 51, 150, 105, 90, 60, 110, 30],
+  "panel_values": {
+    "note": "all values are exact deterministic outputs; re-run bit-for-bit identical. big_phi = state-averaged faithful IIT4.0 big-Phi (N=4 exact).",
+    "rule_0":   {"H_out_bit": 0.0,   "LZ_norm": 0.0437828, "TE_total_bit": 0.0,     "phi_mean": 0.0},
+    "rule_255": {"H_out_bit": 0.0,   "LZ_norm": 0.0437828, "TE_total_bit": 0.0,     "phi_mean": 0.0},
+    "rule_204": {"H_out_bit": 4.0,   "LZ_norm": 0.0437828, "TE_total_bit": 0.0,     "phi_mean": 0.0,   "role": "identity bijection — max entropy, zero integration (Shannon dissociation witness)"},
+    "rule_51":  {"H_out_bit": 4.0,   "LZ_norm": 0.0656743, "TE_total_bit": 0.0,     "phi_mean": 0.0},
+    "rule_150": {"H_out_bit": 4.0,   "LZ_norm": 0.273643,  "TE_total_bit": 0.0,     "phi_mean": 5.625, "role": "XOR3 integrator — phi>0 yet bivariate TE=0 (synergy blind spot)"},
+    "rule_105": {"H_out_bit": 4.0,   "LZ_norm": 0.273643,  "TE_total_bit": 0.0,     "phi_mean": 5.625, "role": "XNOR — synergy blind spot"},
+    "rule_90":  {"H_out_bit": 2.0,   "LZ_norm": 0.240806,  "TE_total_bit": 0.0,     "phi_mean": 0.0,   "role": "Sierpinski — non-trivial LZ, zero phi (self-similar over-prediction)"},
+    "rule_60":  {"H_out_bit": 3.0,   "LZ_norm": 0.295534,  "TE_total_bit": 4.0,     "phi_mean": 13.625, "role": "max phi at sub-max entropy"},
+    "rule_110": {"H_out_bit": 3.25,  "LZ_norm": 0.820928,  "TE_total_bit": 3.24511, "phi_mean": 13.1302},
+    "rule_30":  {"H_out_bit": 3.375, "LZ_norm": 1.05079,   "TE_total_bit": 2.0,     "phi_mean": 13.8852}
+  },
+  "correlations_vs_phi": {
+    "shannon_entropy":  {"pearson_r": 0.362877, "verdict": "RED CLOSED-NEGATIVE (r<0.5: phi does NOT reduce to entropy)", "hypothesis": "H_287"},
+    "lz_complexity":    {"pearson_r": 0.831463, "spearman_rho": 0.935507, "verdict": "GREEN SUPPORTED (phi tracks algorithmic complexity)", "hypothesis": "H_288"},
+    "transfer_entropy": {"pearson_r": 0.883262, "spearman_rho": 0.822134, "verdict": "GREEN SUPPORTED (strongest; phi tracks directed flow)", "hypothesis": "H_290"}
+  },
+  "structure_experiment": {
+    "hypothesis": "H_289",
+    "dynamics": "parity (XOR-of-neighbours), N=4",
+    "scale_free_hub_4edge": 6.8125,
+    "regular_cycle_4edge": 0.0,
+    "empty_0edge": 0.0,
+    "complete_K4_6edge": 5.625,
+    "verdict": "GREEN SUPPORTED-with-confound (topology not density governs phi; cycle=0 partly parity-even-cycle decoupling confound)"
+  },
+  "preregistered_falsifiers": {
+    "H_287_shannon": {"gate": "11 PASS / 0 FAIL", "F287.1_dissociation_witness": "PASS", "F287.2_r_verdict": "H1 FALSIFIED r=0.362877<0.5 (the finding)", "F287.3_faithfulness_anchors": "PASS", "F287.4_bound": "PASS", "F287.5_determinism": "PASS"},
+    "H_288_lz": {"gate": "9 PASS / 0 FAIL", "F288.1_dissociation_witness_rule90": "PASS", "F288.2_r_verdict": "H1 SUPPORTED r=0.831463", "F288.3_anchors": "PASS", "F288.4_bound": "PASS", "F288.5_determinism": "PASS"},
+    "H_290_te": {"gate": "8 PASS / 0 FAIL", "F290.1_anchors": "PASS", "F290.2_r_verdict": "H1 SUPPORTED r=0.883262", "F290.3_flow_witness": "PASS", "F290.4_bound": "PASS", "F290.5_determinism": "PASS"},
+    "H_289_structure": {"gate": "4 PASS / 0 FAIL", "F289.1_topology_verdict": "SF 6.81 > RING 0.0", "F289.2_anchors": "PASS", "F289.3_bound": "PASS", "F289.4_determinism": "PASS"}
+  },
+  "verify_tier": "values = deterministic arithmetic (exact); engine anchors rule204/rule0 -> big-Phi=0 reproduced to machine precision; empirical interpretations SPECULATION-FENCED (not closed-form atlas identities)",
+  "reproduce": "github.com/dancinlab/anima : HEXAD/LIFE/H_287..H_290 (smoke source + run.log per experiment)"
+}
