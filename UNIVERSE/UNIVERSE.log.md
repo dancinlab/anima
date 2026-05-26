@@ -3,6 +3,21 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#43 — distinct-count × alt-bias rank-monotone 상관 (rule-signature methodology arc 봉합)
+
+- [x] **H_305 alt-bias-vs-rule-signature** 🟢 SUPPORTED-NUMERICAL 7/7 PASS — 4 rule × 32-state ensemble at n=5 cap=4 (128 calls)
+- [x] **헤드라인 발견**: ratio = mean / alt(st=21) 가 distinct-value count 와 strict rank-monotone:
+  - rule 90  (distinct=3)  → **1.096**
+  - rule 60  (distinct=6)  → **1.098**
+  - rule 30  (distinct=29) → **1.165**
+  - rule 110 (distinct=32) → **1.530** ← Turing-complete class 4 점프
+- [x] **F305.5 RANK-MONOTONE Spearman ρ=1.0 (perfect)** — 4 점 informal but 강력
+- [x] **F305.6 ALT-BIAS-AT-110-EXTREME PASS**: rule 110 ratio 1.530 vs 다른 3 rule 全 ≤ 1.165 (≥1.31× gap)
+- [x] **cross-H 엔진 결정성 perfect cross-check**: rule 90 mean 21.375 ↔ H_300 / rule 60 mean 18.125 ↔ H_301 / rule 30 mean 23.6 ↔ H_301 / rule 110 mean 27.07 ↔ H_304 모두 exact reproduce
+- [x] **arc 봉합 (H_300→H_301→H_303→H_304→H_305)**: rule-signature methodology arc 완료. distinct-count 가 BOTH Φ-distribution shape AND alt-state representativeness 의 SIMULTANEOUS proxy
+- [x] **actionable rule**: distinct ≤ 6 → alt 그대로 fair representative · distinct ≥ 29 → mean (or full distribution) 추가 보고 권장
+- [x] surface: README 116→117 H + H_305 행 · UNIVERSE.log cycle#43
+
 ## 2026-05-26 — cycle#42 — rule 110 alt-bias ≈1.55× consistent across N (H_303 outlier-low 정량)
 
 - [x] **H_304 rule110-mean-phi-n-trajectory** 🟢 SUPPORTED-NUMERICAL — alt-state vs mean-Phi ensemble comparison across n=4, n=5
