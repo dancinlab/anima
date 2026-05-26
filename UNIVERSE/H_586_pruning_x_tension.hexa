@@ -1,0 +1,3 @@
+fn prune_flat(ch_mag: f64, t: f64) -> bool { return ch_mag < t }
+fn check_h586() -> bool { return prune_flat(0.01,0.05) && !prune_flat(0.8,0.05) }
+fn main() { if check_h586() { print("H_586 OK") } else { print("H_586 FAIL") } }
