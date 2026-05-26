@@ -2,6 +2,29 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-26 — 🎉 fire #15 PASS — V=151643 step 32s, F-RFC046-AGTAPE-WALL gate 통과
+
+#1287 5 fix 전부 main 머지 후 (`#1290` S2/S4/S5 + `#1291` S1 hexa_cc.c regen + `#1293` S3 regen UX) clean main 워크트리에서 재발사.
+
+- [x] **fire #15 (all-fixes-landed, clean, no hacks) — trainer_rc=0 · wall_seconds=109**
+  ```
+  init epoch gn2: 24.7931
+  step 1 wall=32s  gn2 23.8586
+  step 2 wall=30s  final gn2 23.8586
+  === generic ag_tape d768·12L fire DONE ===
+  ```
+- [x] **F-RFC046-AGTAPE-WALL gate PASSED** — 32s ≪ 437.9s 기준 (전혀 미달했던 14 fire 대비 ~27× 가속).
+- [x] **학습 descent 실증** — init 24.79 → step1 23.86 → step2 23.86 (gn2 감소). substrate path 가 forward + gn2 + backward + AdamW 전부 작동 검증.
+- [x] **clean main 으로 build/transpile 검증** — 내 `setenv` hack 없이 dispatch S4 가 HEXA_CUDA=1 export, S2 가 macOS DARWIN flag, S3 가 regen runtime.o auto-build, S1 이 hexa_cc.c #1187 sync, S5 가 fire mk2-C7 적용. trainer.c 검증: hexa_farr32_=33 / carrier=0 · _ag_linear_cuda_fp32_bwd=3 · farr_ce_seed_gpu=2 · host gn2 루프=0.
+- [x] **DECODER substrate VERIFIED** — V=151643 hexa-native GPU decoder 가 실제로 32s/step 학습 진행. M3 4축 fire(b/c/d/e/f sub-milestone) 의 임계경로 GPU 속도 게이트가 풀림. anima 15 fire 누적 ~$7.0, orphan 0.
+
+남은 M3 sub-milestones (DECODER.md):
+- M3b 🟡 Qwen-BPE pod-side wiring (training/tokenizer_qwen.hexa FFI + tokenizer.json)
+- M3c ⬜ 실 multilang corpus 로딩
+- M3d ⬜ 실 teacher (vP21M LoRA ckpt)
+- M3e ⬜ 3B 스케일 config + 4축 dispatch 매트릭스
+- M3f ⬜ 발사 + Monitor + harvest
+
 ## 2026-05-26 — 트랜스파일러 정상화(세션 블로커 해소) + fire #11/#12 (gn2-metric host 루프 = 잔존 벽)
 
 - [x] **트랜스파일러 정상화 (fire #10 blocker 해소)** — 로컬 hexa_v2 들이 #1187 farr32 직접호출 매핑 부재(carrier-form 방출 → cross-TU undeclared). 해결: clean main 워크트리서 `hexa cc --regen`(hexa_cc.c.new #1187 보유) + **`runtime.o` 를 `-D_DARWIN_C_SOURCE`(macOS 플래그, 기존 `-D_GNU_SOURCE` 오류였음)로 빌드** → `/tmp/hexat_correct` link + codesign. 변환 검증: 직접호출형 `hexa_farr32_` **33**, carrier **0**. 11 fire 만에 첫 정상 빌드.
