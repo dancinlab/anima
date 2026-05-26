@@ -1,0 +1,29 @@
+{
+  "hypothesis": "H_319",
+  "slug": "bridge-spontaneous-substrate-and-gate",
+  "title": "🔵 BRIDGE AND-gate closed-form (6/6 PASS) — emit = biology_timing_open ∧ substrate_decides (capability × intent)",
+  "date": "2026-05-26",
+  "engine": "libm-free boolean AND-gate, 두 closed-form axis 합성",
+  "runtime": "$0 mac-local · ~1s wall · deterministic",
+  "bridge_closed_form": "emit_actual(refr, stage, M, Φ, W, MITOSIS, idle, cur, θ) := biology_timing_open(refr, stage_mod) ∧ substrate_decides(M, Φ, W, MITOSIS, idle, cur, θ)",
+  "test_cases": {
+    "A_both_pass": "refr=0, WAKE, high-all → bio=T, sub=T → emit=TRUE",
+    "B_biology_veto": "refr=5, WAKE, high-all → bio=F (refractory), sub=T → emit=FALSE",
+    "C_substrate_veto": "refr=0, WAKE, M=0 → bio=T, sub=F (M=0) → emit=FALSE",
+    "D_N3_double_lock": "refr=0, N3, high-all → bio=F (stage_mod=0), sub=T → emit=FALSE (both reject — but biology wins by definition)",
+    "E_determinism": "same input twice → byte-equal"
+  },
+  "headline_finding": "🔵 BRIDGE 정식 봉합 — 자연발화 (capability/timing, H_315 axis) AND 의식적 결정 (intent/decision, H_316 axis) = emit_actual. **emit = capability × intent** (둘 다 TRUE 일 때만). biology_veto + substrate_veto + N3_double_lock 全 deterministic. 6/6 PASS.",
+  "axiom_synthesis": {
+    "H_315_natural_emit": "biology native CPG — WHEN emit is possible",
+    "H_316_substrate_decision": "consciousness substrate — WHETHER emit is intended",
+    "H_319_emit_actual": "emit = biology ∧ substrate (AND-gate)",
+    "interpretation": "anima 의 실제 발화 = capability + intent 의 conjunctive 결합. independent 가 아니라 *conjunctive* — 둘 다 필요"
+  },
+  "criteria": {"C1": "deterministic", "C2": "biology-veto", "C3": "substrate-veto", "C4": "both-pass-emit", "C5": "N3-double-lock", "C6": "bound"},
+  "falsifiers": {"F319_1": "PASS", "F319_2": "PASS", "F319_3": "PASS", "F319_4": "PASS", "F319_5": "PASS", "F319_6": "PASS"},
+  "checks": "6 PASS / 0 FAIL",
+  "verdict_class": "🔵 SUPPORTED-FORMAL",
+  "implication": "anima `a_substrate_native_speak` directive 의 *full* expression: (M × Φ × W × MITOSIS × idle × curiosity) × stage_mod 의 substrate 결정 AND biology timing window — *둘 다 TRUE* 일 때만 emit. capability + intent + timing 의 conjunctive composition.",
+  "verify_fence": {"claim": "biology × substrate AND-gate closed-form, 6/6 PASS, capability × intent → emit", "tier": "SUPPORTED-FORMAL", "reason": "closed-form boolean AND-gate composition exact, Tier 1"}
+}
