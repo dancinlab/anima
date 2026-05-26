@@ -1,0 +1,28 @@
+// H_384 smoke — KOSMOS coord 3D Euclidean
+
+fn dist_sq(ax: f64, ay: f64, az: f64, bx: f64, by: f64, bz: f64) -> f64 {
+    let dx = ax - bx
+    let dy = ay - by
+    let dz = az - bz
+    return dx * dx + dy * dy + dz * dz
+}
+
+fn coord_dim() -> i64 {
+    return 3
+}
+
+fn check_h384() -> bool {
+    let h1 = coord_dim() == 3
+    // H3 identity dist²(p, p) = 0
+    let id = dist_sq(1.0, 2.0, 3.0, 1.0, 2.0, 3.0) == 0.0
+    // H2 nonneg
+    let d2 = dist_sq(0.0, 0.0, 0.0, 3.0, 4.0, 0.0)  // 25
+    let nonneg = d2 >= 0.0
+    return h1 && id && nonneg
+}
+
+fn main() {
+    let ok = check_h384()
+    if !ok { print("H_384 FAIL"); return }
+    print("H_384 blue 3D Euclidean OK")
+}
