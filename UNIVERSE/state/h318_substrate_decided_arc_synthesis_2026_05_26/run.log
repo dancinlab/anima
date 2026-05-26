@@ -1,0 +1,20 @@
+================================================================
+  H_318 — substrate-decided × stage cross-product 🔵
+================================================================
+  high-all (1,1,1,5,50,1) × stage_mod:
+    WAKE × 1.0 = 3.0 > 2.0 → true
+    N1   × 0.7 = 2.1 > 2.0 → true
+    N2   × 0.4 = 1.2 < 2.0 → false
+    N3   × 0.0 = 0.0 < 2.0 → false
+    REM  × 0.5 = 1.5 < 2.0 → false
+  [PASS] F318.1 STAGE-CONTEXT-EXACT: WAKE+N1 TRUE, N2/N3/REM FALSE
+  [PASS] F318.2 N3-SILENCE-DETERMINISTIC: N3 stage_mod=0 → FALSE
+  [PASS] F318.3 WAKE-FULL-ACTIVATION: WAKE 결과 == H_316 base TRUE
+    n1 product check: 3.0 × 0.7 = 2.1 (expected 2.1)
+  [PASS] F318.4 N1-EMIT-PRODUCT-EXACT: 3.0 × 0.7 = 2.1
+  [PASS] F318.5 STAGE-MOD-VALUES-EXACT: {1.0, 0.7, 0.4, 0.0, 0.5}
+  [PASS] F318.6 BOUND
+================================================================
+  RESULT: 6 PASS / 0 FAIL
+  ✅ SUBSTRATE × STAGE cross-product CLOSED-FORM — 🔵
+================================================================
