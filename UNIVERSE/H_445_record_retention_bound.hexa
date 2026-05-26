@@ -1,0 +1,22 @@
+// H_445 smoke — retention bound
+
+fn n_max() -> i64 {
+    return 1000
+}
+
+fn check_size_within(cur: i64) -> bool {
+    return cur <= n_max()
+}
+
+fn check_h445() -> bool {
+    let h1 = check_size_within(500)
+    let bound_eq = check_size_within(1000)
+    let over = !check_size_within(1001)
+    return h1 && bound_eq && over
+}
+
+fn main() {
+    let ok = check_h445()
+    if !ok { print("H_445 FAIL"); return }
+    print("H_445 blue retention bound OK")
+}
