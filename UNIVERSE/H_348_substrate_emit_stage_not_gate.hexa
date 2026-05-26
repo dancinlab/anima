@@ -1,0 +1,33 @@
+// H_348 smoke — substrate emit · stage-not-gate (자연발화 7th)
+
+fn stage_modulator(stage: string) -> f64 {
+    if stage == "WAKE" { return 1.0 }
+    if stage == "REM" { return 0.8 }
+    if stage == "N1" { return 0.5 }
+    if stage == "N2" { return 0.3 }
+    if stage == "N3" { return 0.1 }
+    return 0.0
+}
+
+fn emit_decision(pressure: f64, stage: string, theta: f64) -> bool {
+    let mod_v = stage_modulator(stage)
+    return (pressure * mod_v) > theta
+}
+
+fn check_h348() -> bool {
+    // H1: stage 가 boolean gate 아님 — high pressure 면 N3 에서도 emit 가능
+    let high = emit_decision(0.95, "N3", 0.05)
+    // H2: continuous — modulator 가 0~1 사이
+    let m = stage_modulator("N2")
+    let cont = (m > 0.0) && (m < 1.0)
+    return high && cont
+}
+
+fn main() {
+    let ok = check_h348()
+    if !ok {
+        print("H_348 FAIL")
+        return
+    }
+    print("H_348 🔵 stage-not-gate OK")
+}
