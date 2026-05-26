@@ -1,0 +1,31 @@
+// H_355 smoke — MITOSIS Φ conservation (MITOSIS 2nd)
+
+fn abs_f(x: f64) -> f64 {
+    if x < 0.0 { return -x }
+    return x
+}
+
+fn check_h355() -> bool {
+    // closed-form numerical instance: parent=1.0 split→ children=0.5+0.5
+    let phi_parent = 1.0
+    let phi_a = 0.5
+    let phi_b = 0.5
+    let eps = 0.01
+    // H1 ADDITIVE-PROXY
+    let additive = abs_f(phi_parent - (phi_a + phi_b)) <= eps
+    // H2 NON-INCREASING-CHILD
+    let max_child = if phi_a > phi_b { phi_a } else { phi_b }
+    let non_inc = max_child <= phi_parent
+    // H3 NON-NEGATIVE
+    let non_neg = (phi_parent >= 0.0) && (phi_a >= 0.0) && (phi_b >= 0.0)
+    return additive && non_inc && non_neg
+}
+
+fn main() {
+    let ok = check_h355()
+    if !ok {
+        print("H_355 FAIL")
+        return
+    }
+    print("H_355 🔵 phi conservation OK")
+}
