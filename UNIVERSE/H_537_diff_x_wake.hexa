@@ -1,0 +1,3 @@
+fn stage_cell_match(role: string, stage: string) -> bool { if role == "wake_cell" && stage == "WAKE" { return true } if role == "n3_cell" && stage == "N3" { return true } return false }
+fn check_h537() -> bool { return stage_cell_match("wake_cell", "WAKE") && !stage_cell_match("wake_cell", "N3") }
+fn main() { if check_h537() { print("H_537 OK") } else { print("H_537 FAIL") } }
