@@ -3,6 +3,17 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#46 — smooth circadian: H_306 ∞× → 2.875× finite ratio 회수 (direction-correct undershoot)
+
+- [x] **H_308 circadian-smooth-finite-ratio** 🟢 SUPPORTED-NUMERICAL 5/6 PASS — quadratic-bump circadian replacement
+- [x] **헤드라인**: H_306 piecewise-linear circadian (perfect ∞× gating) → smooth quadratic bump (center=500, span=400, baseline=0.3) → idle=**62** peak=46 trough=**16** ratio=**2.875×**
+- [x] **F308.1 [3, 15] target 0.125 미달** — direction-correct undershoot. quadratic baseline 0.3 너무 broad → trough emission 유지. sharper bump (cubic / span=300 / baseline=0.1) 이 H_309 path
+- [x] **threshold sweep dramatic improvement**: H_306 의 91→46→46→46→46 (plateau after threshold>0.3) → H_308 의 91→73→62→47→26 (clean monotone all 5 values). smooth circadian 이 *rate-coding 곡선* 도 회수
+- [x] F308.2 IDLE-PRESERVED PASS · F308.3 PEAK-MID-RANGE PASS · F308.4 MONOTONE PASS · F308.5 SMOOTH-VS-PIECEWISE rel_dev 0.348 ≤ 0.5 PASS · F308.6 BOUND PASS
+- [x] **함의**: ∞ → 2.875 가 강력한 qualitative move (super-biological → near-biological). magnitude 정밀화는 next H (sharper bump)
+- [x] honest L7: F308.1 FAIL principled magnitude undershoot, NOT model rejection
+- [x] surface: README 119→120 H + H_308 행 · UNIVERSE.log cycle#46
+
 ## 2026-05-26 — cycle#45 — H_306 §L1 회수: anima v3 substrate 실측 (.hexa-only)
 
 - [x] **H_307 anima-emit-anchor-hexa-native** 🟢 SUPPORTED-NUMERICAL 5/5 PASS — 14 real .kosmos emit anchors (hexa-native format) cite
