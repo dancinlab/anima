@@ -1,0 +1,18 @@
+// H_431 smoke — spike timestamp monotone
+
+fn is_strictly_monotone(t0: i64, t1: i64, t2: i64) -> bool {
+    return (t0 < t1) && (t1 < t2)
+}
+
+fn check_h431() -> bool {
+    let h1 = is_strictly_monotone(10, 20, 30)
+    let h2 = !is_strictly_monotone(10, 5, 20)  // out-of-order
+    let h3 = !is_strictly_monotone(10, 10, 20)  // dup
+    return h1 && h2 && h3
+}
+
+fn main() {
+    let ok = check_h431()
+    if !ok { print("H_431 FAIL"); return }
+    print("H_431 blue spike monotone OK")
+}
