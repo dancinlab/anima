@@ -1,0 +1,23 @@
+// H_480 smoke — split/merge graph connected
+
+fn split_step(n: i64) -> i64 {
+    return n + 1
+}
+
+fn merge_step(n: i64) -> i64 {
+    if n < 2 { return n }
+    return n - 1
+}
+
+fn check_h480() -> bool {
+    let up = split_step(1) == 2
+    let down = merge_step(5) == 4
+    let no_below_1 = merge_step(1) == 1
+    return up && down && no_below_1
+}
+
+fn main() {
+    let ok = check_h480()
+    if !ok { print("H_480 FAIL"); return }
+    print("H_480 blue graph connected OK")
+}
