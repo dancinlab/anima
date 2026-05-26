@@ -3,6 +3,17 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#40 — engine 결정성 확인 + H_301 silent bug 식별 (F301.8 root cause)
+
+- [x] **H_302 engine-determinism-diagnosis** 🟢 SUPPORTED-NUMERICAL — 6-falsifier 진단, 5 PASS / 1 FAIL (FAIL=bug-exposure)
+- [x] **engine 결정성 확인**: F302.1 intra-process repeat byte-identical · F302.2 order-independent (panel A=[60,90] rule60 == panel B=[90,60] rule60)
+- [x] **rule 60 n=5 st=21 cap=4 = 16.5** 정확히 H_297 값 reproduce ✓ (F302.3 rule 90=19.5 도 reproduce ✓)
+- [x] **H_301 의 silent bug 근본 원인 식별**: `let sorted = sort_asc(values)` 가 hexa-lang reference-aliasing 으로 `values` 를 *in-place mutate* → 후속 `values[21]` 가 *sorted[21]* 로 오염
+- [x] H_300 가 silent 였던 이유 = rule 90 의 3-distinct-value plateau 의 우연 (sorted[21]=19.5=true st=21)
+- [x] **scope of H_301 invalidation**: rule 60/110/30 의 *st=21 alt-state* 보고값만 오염 (rule 60: 16.5 진짜 ≠ 18.5 보고됨). distribution stats (min/p25/median/p75/max/mean, count_above_1, distinct-value count) 全 valid — **rule-signature finding (3·6·29·32) 미오염**
+- [x] hexa-lang reference-aliasing gotcha — inbox/patches 후보 (commons g61 stdlib 가 deep-copy helper 제공 필요)
+- [x] surface: README 114→115 H + H_302 행 · UNIVERSE.log cycle#40
+
 ## 2026-05-26 — cycle#39 — distinct-value count = rule signature (H_300 의 sweep methodology 확장)
 
 - [x] **H_301 n5-state-sweep-other-rules** 🟢 SUPPORTED-NUMERICAL H1+H2+H3 PASS — rule 60·110·30 × 32-state sweep at n=5 cap=4 (96 calls)
