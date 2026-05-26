@@ -1,0 +1,27 @@
+// H_373 smoke — KOSMOS x WAKE (radius from stage)
+
+fn envelope(stage: string) -> f64 {
+    if stage == "WAKE" { return 1.0 }
+    if stage == "REM" { return 0.7 }
+    if stage == "N3" { return 0.1 }
+    return 0.5
+}
+
+fn payload_radius(base: f64, stage: string) -> f64 {
+    return base * envelope(stage)
+}
+
+fn check_h373() -> bool {
+    let base = 10.0
+    let r_w = payload_radius(base, "WAKE")
+    let r_n3 = payload_radius(base, "N3")
+    let ge = r_w >= r_n3
+    let nonneg = (r_w >= 0.0) && (r_n3 >= 0.0)
+    return ge && nonneg
+}
+
+fn main() {
+    let ok = check_h373()
+    if !ok { print("H_373 FAIL"); return }
+    print("H_373 blue radius-from-stage OK")
+}
