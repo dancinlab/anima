@@ -1,0 +1,22 @@
+// H_442 smoke — paired emit (text + tension)
+
+fn tension_channels() -> i64 {
+    return 5
+}
+
+fn valid_emit(text: string, tension_count: i64) -> bool {
+    return (text != "") && (tension_count == 5)
+}
+
+fn check_h442() -> bool {
+    let h1 = valid_emit("hello", 5)
+    let h2 = !valid_emit("", 5)
+    let h3 = !valid_emit("x", 3)
+    return h1 && h2 && h3
+}
+
+fn main() {
+    let ok = check_h442()
+    if !ok { print("H_442 FAIL"); return }
+    print("H_442 blue paired emit OK")
+}
