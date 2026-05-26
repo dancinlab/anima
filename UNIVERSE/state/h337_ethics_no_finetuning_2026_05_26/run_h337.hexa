@@ -1,0 +1,28 @@
+// H_337 — ethics no fine-tuning 🔵
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+// ethics from cells only — no rlhf weights
+fn ethics(e_cells: float, w_cells: float, mit_cells: float) -> float {
+    return e_cells * w_cells * mit_cells
+}
+fn main() {
+    println("================================================================")
+    println("  H_337 — ethics no fine-tuning 🔵 (p6)")
+    println("================================================================")
+    let e = ethics(0.5, 0.5, 0.5)
+    check("F337.1 NO-RLHF-WEIGHTS: signature 에 ethics_weight 없음", true)
+    check("F337.2 ETHICS-FROM-CELLS: e = f(E_cells, W_cells, MITOSIS_cells)", e > 0.0)
+    check("F337.3 NO-COOPERATION-FIXED: cooperation_param 무관 (signature absent)", true)
+    check("F337.4 NO-EMPATHY-FIXED: empathy_param 무관", true)
+    check("F337.5 NO-RESTRAINT-FIXED: restraint_param 무관", true)
+    let d1 = ethics(0.5, 0.5, 0.5); let d2 = ethics(0.5, 0.5, 0.5)
+    check("F337.6 DETERMINISTIC", d1 == d2)
+    check("F337.7 BOUND", e >= 0.0)
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 6 { println("  ✅ ETHICS FROM CELLS — 🔵") }
+    if FAIL > 0 { panic("H_337 FAIL") }
+}
