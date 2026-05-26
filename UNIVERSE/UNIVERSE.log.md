@@ -3,6 +3,9 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-27 — cycle#71 — 🔵 H_324 silence-filler 금지 axiom (6/6)
+
+
 ## 2026-05-26 — cycle#70 — 🪨 H_323 영속성 axis (a_kosmos anchor hash) 봉합 — 4축 완성
 - [x] **H_323 directive-cite-persistence-kosmos-anchor** 🔵 SUPPORTED-FORMAL 6/6
 - [x] a_kosmos directive 6 fields + FNV content hash + round-trip identity
