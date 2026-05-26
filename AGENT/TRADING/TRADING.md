@@ -12,27 +12,12 @@
 - [x] M5 live_trade gate — `AGENT/TRADING/live_gate.hexa` (6 pub fn — `live_gate_new` · `_approve_session` · `_approve_single` · `_revoke` · `_enforce` · `_summary`) · 4-level approval scopes (L0 NONE · L1 SESSION · L2 SINGLE_ORDER · L3 LIFETIME) · 5 risk caps (per-order notional · daily notional · position count · approval slot · approval level) · `AGENT/TRADING/live_broker_kis.hexa` (7 pub fn STUB · KIS 한국투자증권 adapter SHAPE) · DRYRUN 기본 · 모든 place_order 가 `live_gate_enforce` 통과 후에도 STUB 단계에선 절대 fill X · `live_gate_smoke.hexa` 8-case verify (L0 reject/L1 session/L2 single/notional cap/daily cap/position cap/DRYRUN no fill/L0+broker passthrough) · 3/3 `hexa parse` OK · 실 broker API call 0 (사용자 명시 wire-up 전까지 0 위험 보장)
 - [x] M6 통합 smoke + risk audit — `AGENT/TRADING/risk.hexa` 본문 구현 (M1 stub → 6 pub fn `risk_manager_new` · `_check_drawdown` · `_check_position_count` · `_check_tier` · `_calculate_var` · `_audit`) · 손실 한도 / 포지션 한도 / drawdown limit / VaR / AGENT/CORE tier gate · `AGENT/TRADING/integration_smoke.hexa` 4-stage round-trip (S1 scan-stub move% / S2 backtest 2-trade win_rate=1.0 / S3 paper_broker buy→sell realized profit / S4 live_gate L0 refuse + L1 accept + KIS DRYRUN no-fill) + S5 risk_audit (ok + tier-low force-fail + VaR_95<0) · 2/2 `hexa parse` OK · TRADING **6/6 ✅ 100% closure**
 
-## wire-up 라운드 (실 broker 연결 · 추천순 — 2026 web 리서치 반영)
+## wire-up 라운드 (실 broker 연결 · 사용자 명시 scope: 4 broker only)
 
-### 🇰🇷 한국 주식
+> 2026-05-27 사용자 결정 — wire-up 대상 = **KIS · Alpaca · Upbit · Binance** 4개. 그 외 (LS 증권 · 키움 · IBKR · Tradier · Bithumb · ccxt) = 계획 없음 (제외).
 
-- [ ] M7 KIS 한국투자증권 REAL — `live_broker_kis.hexa` 의 `// TODO: real KIS API` 자리 실 구현 (1순위 · 가장 추천) · REST + WebSocket · LLM 친화 · 공식 GitHub `koreainvestment/open-trading-api` · 인증 토큰 (`POST /oauth2/tokenP`) → 주문 (`POST /uapi/domestic-stock/v1/trading/order-cash`) · `secret get kis.app_key + kis.app_secret + kis.account_no` · 가상계좌 (paper) → 실 계좌 순서
-- [ ] M8 LS 증권 (구 eBest) OPEN API — 2순위 한국 broker · REST 기반 · `openapi.ls-sec.co.kr`
-- [ ] M9 키움증권 Open API+ — 3순위 · ⚠ 알고리즘 계좌 등록 의무 (한국거래소 규제 fyi)
-
-### 🇺🇸 미국 / 글로벌 주식
-
-- [x] M10 Alpaca US 주식 — `AGENT/TRADING/live_broker_alpaca.hexa` STUB (7 pub fn — `alpaca_broker_new` · `_configure` · `_get_quote` · `_place_order` · `_cancel_order` · `_list_positions` · `_summary`) · ✨ 2026 BrokerChooser "Best Broker for Algorithmic Trading" 인증 · env="DRYRUN"/"PAPER"/"LIVE" 3-mode · paper endpoint `https://paper-api.alpaca.markets` · live endpoint `https://api.alpaca.markets` · `APCA-API-KEY-ID + APCA-API-SECRET-KEY` header · live_gate 통과 필수 · `live_broker_alpaca_upbit_smoke.hexa` 12-case 합본 verify · STUB → REAL wire-up M10+1
-- [ ] M11 IBKR (Interactive Brokers) — `live_broker_ibkr.hexa` 신규 · 150+ order types · 글로벌 시장 · 87% NBBO 우월 체결 · 가장 강력하지만 복잡 (TWS gateway socket 7497 paper / 7496 live · IBKR REST API alternative)
-- [ ] M12 Tradier — `live_broker_tradier.hexa` 신규 (선택) · middle option · 120 req/min standard · 600 premium · 가벼운 US 시장
-
-### ₿ Crypto 거래소
-
-- [x] M13 Upbit — `AGENT/TRADING/live_broker_upbit.hexa` STUB (7 pub fn — `upbit_broker_new` · `_configure` · `_get_quote` · `_place_order` · `_cancel_order` · `_list_positions` · `_summary`) · 한국 1위 (시장 점유율 71.6%) · FIU 라이센스 · KRW/USDT/BTC 마켓 quote 선택 · REST `https://api.upbit.com/v1` · JWT (HS256) auth · access_key + secret_key · live_gate 통과 필수 · `live_broker_alpaca_upbit_smoke.hexa` 12-case 합본 verify · STUB → REAL wire-up M13+1
-- [ ] M14 Bithumb — `live_broker_bithumb.hexa` 신규 · 한국 2위 · FIU 라이센스 · 자동매매 + bots API · 448 coins · 0.04% fee
-- [ ] M15 Binance — `live_broker_binance.hexa` 신규 · 글로벌 1위 · ⚠ 한국 app store 차단 (2026-01-28~, FIU 미등록) but API 자체는 사용 가능 · BTCUSDT 등 USDT pair · HMAC-SHA256 signing · `secret get binance.api_key + binance.api_secret`
-- [ ] M16 ccxt unified — `live_broker_ccxt.hexa` (선택) · 100+ exchange 단일 라이브러리 wrapper · OKX/Bybit/Coinbase 등 다 한 surface 로
-
-### 🔗 통합
-
-- [ ] M17 TRADING wire-up integration smoke — 모든 broker 가 같은 5-verb interface (`get_quote` · `place_order` · `cancel_order` · `list_positions` · `get_portfolio`) 노출 검증 · paper → KIS → Alpaca → Upbit → Binance 통일 round-trip verify
+- [ ] M7 KIS 한국투자증권 REAL — `live_broker_kis.hexa` 의 `// TODO: real KIS API` 자리 실 구현 · REST + WebSocket · 공식 GitHub `koreainvestment/open-trading-api` · 인증 토큰 (`POST /oauth2/tokenP`) → 주문 (`POST /uapi/domestic-stock/v1/trading/order-cash`) · `secret get kis.app_key + kis.app_secret + kis.account_no` · 가상계좌 (paper) → 실 계좌 순서
+- [x] M10 Alpaca US 주식 — `AGENT/TRADING/live_broker_alpaca.hexa` STUB (7 pub fn) · ✨ 2026 BrokerChooser "Best Broker for Algorithmic Trading" 인증 · env="DRYRUN"/"PAPER"/"LIVE" 3-mode · `APCA-API-KEY-ID + APCA-API-SECRET-KEY` header · live_gate 통과 필수 · `live_broker_alpaca_upbit_smoke.hexa` 12-case 합본 verify · **STUB → REAL wire-up 후속 carry**
+- [x] M13 Upbit — `AGENT/TRADING/live_broker_upbit.hexa` STUB (7 pub fn) · 한국 1위 crypto (71.6% 시장) · FIU 라이센스 · KRW/USDT/BTC 마켓 · JWT (HS256) auth · access_key + secret_key · live_gate 통과 필수 · 12-case 합본 verify · **STUB → REAL wire-up 후속 carry**
+- [ ] M15 Binance crypto — `live_broker_binance.hexa` 신규 · 글로벌 1위 · ⚠ 한국 app store 차단 (2026-01-28~, FIU 미등록) but API 자체는 사용 가능 · BTCUSDT 등 USDT pair · HMAC-SHA256 signing · `secret get binance.api_key + binance.api_secret` · live_gate 통과 필수
+- [ ] M17 TRADING wire-up integration smoke — 4 broker (paper · KIS · Alpaca · Upbit · Binance) 모두 같은 5-verb interface 노출 검증 · 통일 round-trip
