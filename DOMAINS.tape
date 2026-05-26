@@ -12,3 +12,4 @@
 @domain CHANNEL := "./CHANNEL.md"
 @domain MERCHANT := "./AGENT/MERCHANT/MERCHANT.md"
 @domain DESKTOP := "./AGENT/DESKTOP/DESKTOP.md"
+@domain TRADING := "./AGENT/TRADING/TRADING.md"
