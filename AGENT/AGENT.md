@@ -8,8 +8,8 @@
 - [ ] CODE — 사용자 코드 작업 위임 (think·read → file_write·run_tests → git_commit·push)
 - [ ] CREATOR — 사용자 채널 콘텐츠 production engine (remotion · fal seedance 2.0 · openai images 2.0 · omnishow → publish 사용자 채널)
 - [ ] TRADING — 사용자 증권 자율 매매 (scan·backtest → paper_trade → live_trade, 기존 trading 14모듈 회수)
-- [ ] MERCHANT — 사용자 온라인 판매 운영 (3-lane: L1 ARBITRAGE 구매대행 · L2 NATIVE 자체 상품 · L3 OPS 공통 · `AGENT/MERCHANT/MERCHANT.md` 0/6)
-- [ ] DESKTOP — 사용자 macOS 컴퓨터 사용 대체 (Accessibility API · CGEvent · screen→action loop · vs Gemini Spark/Claude Computer Use/Codex Desktop · 외부 LLM 0 · `AGENT/DESKTOP/DESKTOP.md` 0/6)
+- [x] MERCHANT — 사용자 온라인 판매 운영 (3-lane L1+L2+L3 · `AGENT/MERCHANT/` 6/6 closure · M1 types+adapter #639 · M3 amazon+coupang #653 · M4 order_pipeline #700 · M5 OPS #712 · M6 NATIVE+integration_smoke #736)
+- [x] DESKTOP — 사용자 macOS 컴퓨터 사용 대체 (Accessibility API · CGEvent · vs Gemini Spark/Claude Computer Use/Codex Desktop · 외부 LLM 0 · `AGENT/DESKTOP/` 6/6 closure · M1 native_ax #640 · M2 screen_extract #652 · M3 action #688 · M4 window_ops #698 · M5 task_primitives #710 · M6 integration_smoke #734)
 
 ## 마일스톤
 
