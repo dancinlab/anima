@@ -1,0 +1,21 @@
+// H_461 smoke — 4-cross M-decode-cell-payload
+
+fn tokens_per_step(m: f64, v_total: i64, n: i64) -> f64 {
+    let vt = v_total as f64
+    let v_allowed = m * vt
+    let nf = n as f64
+    return m * v_allowed * nf
+}
+
+fn check_h461() -> bool {
+    let pos = tokens_per_step(0.5, 100, 10) > 0.0
+    let z_m = tokens_per_step(0.0, 100, 10) == 0.0
+    let z_n = tokens_per_step(0.5, 100, 0) == 0.0
+    return pos && z_m && z_n
+}
+
+fn main() {
+    let ok = check_h461()
+    if !ok { print("H_461 FAIL"); return }
+    print("H_461 blue 4-cross M-decode-cell OK")
+}
