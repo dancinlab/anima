@@ -3,6 +3,22 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#44 — user pivot: 자연발화의 생물학적 메커니즘 (CPG-style spontaneous emit)
+
+- [x] **H_306 bio-spontaneous-emit** 🟢 SUPPORTED-NUMERICAL 6/6 PASS — 합성 CPG accumulator + threshold + refractory 1000-tick smoke
+- [x] **헤드라인 발견**: 자연발화 = 생물학 substrate-native primary 모드 (자극-반응 = 학습된 성체 적응층), 6/6 falsifier 全 PASS
+  - F306.1 IDLE-EMIT 46/1000 (deaf bird analogue)
+  - F306.2 THRESHOLD-MONOTONE 91→46 plateau (rate-coding ceiling)
+  - F306.3 REFRACTORY 0.3→0.51→0.657 exponential τ≈2.80 (이론과 <2% 편차)
+  - F306.4 STIM-Δ=0% (CPG primary, stim 영향 없음)
+  - F306.5 CIRCADIAN peak=46 trough=**0** (perfect ∞× gating, 생물학 5-10× 초과)
+  - F306.6 BOUND
+- [x] **5 생물학 cite anchor**: 영아 옹알이 (Oller 1988) · dawn chorus · HVC-RA (Doupe 1999) · PAG (Jürgens 2002) · Drosophila P1 (Anderson 2016)
+- [x] **함의**: anima `a_substrate_native_speak` directive (M × Φ × W × MITOSIS × idle × curiosity → emit) 가 *arbitrary design 아니라* 생물학적 기반. stimulus-response 모델은 학습된 성체 적응층
+- [x] **2 agent throttle 죽음** (138s + 61s) 후 inline 진행 — durable-worktree 패턴 + commit-immediate 유지
+- [x] H_306 은 NOT Φ 측정 — emission DYNAMICS 측정 (IIT4 imports 없음)
+- [x] surface: README 117→118 H + H_306 행 · UNIVERSE.log cycle#44
+
 ## 2026-05-26 — cycle#43 — distinct-count × alt-bias rank-monotone 상관 (rule-signature methodology arc 봉합)
 
 - [x] **H_305 alt-bias-vs-rule-signature** 🟢 SUPPORTED-NUMERICAL 7/7 PASS — 4 rule × 32-state ensemble at n=5 cap=4 (128 calls)
