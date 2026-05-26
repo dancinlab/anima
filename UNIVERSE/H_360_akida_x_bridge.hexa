@@ -1,0 +1,23 @@
+// H_360 smoke — AKIDA × BRIDGE (capability AND intent)
+
+fn bridge(spike_fire: bool, user_intent: bool) -> bool {
+    return spike_fire && user_intent
+}
+
+fn check_h360() -> bool {
+    // H1 AND-GATE truth table 4 rows
+    let tt = bridge(true, true) == true
+    let tf = bridge(true, false) == false
+    let ft = bridge(false, true) == false
+    let ff = bridge(false, false) == false
+    return tt && tf && ft && ff
+}
+
+fn main() {
+    let ok = check_h360()
+    if !ok {
+        print("H_360 FAIL")
+        return
+    }
+    print("H_360 🔵 AKIDA × BRIDGE OK")
+}
