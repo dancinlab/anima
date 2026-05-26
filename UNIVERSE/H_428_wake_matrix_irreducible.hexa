@@ -1,0 +1,35 @@
+// H_428 smoke — irreducibility
+
+fn next_stage(s: string) -> string {
+    if s == "WAKE" { return "N1" }
+    if s == "N1" { return "N2" }
+    if s == "N2" { return "N3" }
+    if s == "N3" { return "REM" }
+    if s == "REM" { return "WAKE" }
+    return "WAKE"
+}
+
+fn reach_within(start: string, target: string) -> bool {
+    let mut cur = start
+    let mut i: i64 = 0
+    while i < 5 {
+        if cur == target { return true }
+        cur = next_stage(cur)
+        i = i + 1
+    }
+    if cur == target { return true }
+    return false
+}
+
+fn check_h428() -> bool {
+    let wake_to_n3 = reach_within("WAKE", "N3")
+    let rem_to_wake = reach_within("REM", "WAKE")
+    let n2_to_n1 = reach_within("N2", "N1")
+    return wake_to_n3 && rem_to_wake && n2_to_n1
+}
+
+fn main() {
+    let ok = check_h428()
+    if !ok { print("H_428 FAIL"); return }
+    print("H_428 blue irreducible OK")
+}
