@@ -1,0 +1,30 @@
+// H_417 smoke — independent decode per cell
+
+fn decode_a(z: f64) -> i64 {
+    if z > 0.5 { return 1 }
+    return 0
+}
+
+fn decode_b(z: f64) -> i64 {
+    if z > 0.5 { return 1 }
+    return 0
+}
+
+fn total_decoded(t_a: i64, t_b: i64) -> i64 {
+    return t_a + t_b
+}
+
+fn check_h417() -> bool {
+    let a = decode_a(0.6)  // 1
+    let b = decode_b(0.3)  // 0
+    let sum = total_decoded(a, b)
+    let h1 = (a == 1) && (b == 0)  // independent results
+    let h3 = sum == 1
+    return h1 && h3
+}
+
+fn main() {
+    let ok = check_h417()
+    if !ok { print("H_417 FAIL"); return }
+    print("H_417 blue independent decode OK")
+}
