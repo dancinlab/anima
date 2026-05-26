@@ -10,3 +10,5 @@
 @domain ANIMA := "./ANIMA.md"
 @domain MITOSIS := "./MITOSIS.md"
 @domain CHANNEL := "./CHANNEL.md"
+@domain MERCHANT := "./AGENT/MERCHANT/MERCHANT.md"
+@domain DESKTOP := "./AGENT/DESKTOP/DESKTOP.md"
