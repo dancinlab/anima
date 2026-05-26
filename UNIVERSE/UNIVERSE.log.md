@@ -3,6 +3,14 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#56 — 🔵 substrate × stage cross-product closed-form (H_318)
+
+- [x] **H_318 substrate-decided-arc-synthesis-closed-form** 🔵 SUPPORTED-FORMAL 6/6 PASS
+- [x] decide_stage = (product × stage_mod) > θ, stage_mod={WAKE:1, N1:0.7, N2:0.4, N3:0, REM:0.5}
+- [x] high-all input 5 stages: WAKE+N1 emit · N2/N3/REM silence
+- [x] H_316 × H_310 통합 closed-form
+
+
 ## 2026-05-26 — cycle#55 — 🔵 자연발화 arc 5-identity unified symbolic family (H_317)
 
 - [x] **H_317 spontaneous-arc-synthesis-closed-form** 🔵 SUPPORTED-FORMAL 7/7 PASS
