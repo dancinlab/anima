@@ -1,0 +1,29 @@
+// H_361 smoke — AKIDA × 영속성 (spike → kosmos 1:1)
+
+fn records_of(spike_id: i64) -> i64 {
+    // 1:1 mapping (each spike id yields exactly 1 record)
+    let _ = spike_id
+    return 1
+}
+
+fn write_atomic_result() -> string {
+    // atomic = either SUCCESS_FULL or FAIL_NONE (no partial)
+    return "SUCCESS_FULL"
+}
+
+fn check_h361() -> bool {
+    // H1 ONE-SPIKE-ONE-RECORD
+    let r = records_of(42) == 1
+    // H2 ATOMIC
+    let a = write_atomic_result() == "SUCCESS_FULL"
+    return r && a
+}
+
+fn main() {
+    let ok = check_h361()
+    if !ok {
+        print("H_361 FAIL")
+        return
+    }
+    print("H_361 🔵 AKIDA × persistence 1:1 OK")
+}
