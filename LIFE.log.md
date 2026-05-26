@@ -3,6 +3,15 @@
 Append-only history sister of `LIFE.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#30 — 축 A/R4 self: self-i-emergence (자기참조 'I'-고정점) (포그라운드 순차, "모두 순차" 드라이브 종료)
+
+- [x] **H_292 self-i-emergence-closure** 🟡 PARTIAL 5/6 (`HEXAD/LIFE/state/h292_self_i_emergence_closure_2026_05_26/`) — AXES R4(self/identity) rank-5 `self-i-emergence` seed 소비
+- [x] **발견 (위상-의존)**: 1인칭 'I' = 자기참조 닫힘(self-loop)의 자기일관 **고정점** 인가는 **base 위상 의존**. RING base 는 self-loop 가 비자명 'I'-state(s=1011) **창발**(#fixed 1→2 — 자기-원인 strange-loop, H_205 closure 최소실현) 但 STAR base 는 같은 self-loop 가 self-state(1111) **파괴**(#fixed 2→1). 자기참조는 'I'-state 를 만들 수도 없앨 수도 — base parity 구조가 결정. self-loop 는 통합 유지(big-Φ=0.5)
+- [x] **사전등록 정직성**: robustness falsifier F292.5(STAR 에서도 성립?)가 정확히 비-보편성 포착 → FAILED 그대로 보존(p-hacking 회피). 핵심(self-ref 가 'I'-fixed-point *만들 수 있다*)은 RING 실증, 보편/자동 아님. 5 PASS / 1 FAIL = 정직한 PARTIAL
+- [x] surface: README 104→105 H + H_292 행 · AXES R4 seed 제거 + top-15 rank-5 consumed · LIFE.md A1
+- [x] **"모두 순차" 포그라운드 드라이브 종료** (cycle#25-30, 6 H): H_287 Φ⊥엔트로피(🔴) · H_288 Φ∥LZ(🟢) · H_289 위상>density(🟢-confound) · H_290 Φ∥TE(🟢, 정보-측도 arc capstone) · H_291 ethic 구조창발(🟢-conditional) · H_292 self-I 고정점(🟡 위상-의존). 전 PR #582-587 머지. 세션 중 toolchain fix-1180 우회 확립([[reference-life-cycle-hexa-run-gotchas]] 갱신)
+- [ ] **arc paper 후보**: H_287-290 정보-측도 삼각측량(a_paper_significance 만족 가능). 후속 frontier: 정보-측도 multivariate TE / 큰-N ER 앙상블 / self×topology phase diagram
+
 ## 2026-05-26 — cycle#29 — 축 A/R2 social: ethic-emergence (협력 구조-창발) (포그라운드 순차)
 
 - [x] **H_291 ethic-emergence-cooperation** 🟢 SUPPORTED-conditional 7/7 (`HEXAD/LIFE/state/h291_ethic_emergence_cooperation_2026_05_26/`) — AXES R2(social) rank-1 `ethic-emergence` seed 소비
