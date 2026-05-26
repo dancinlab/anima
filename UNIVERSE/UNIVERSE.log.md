@@ -3,6 +3,10 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#59 — 🔵 event-driven substrate factor update (H_321)
+- [x] **H_321** 🔵 SUPPORTED-FORMAL 7/7 — NOVEL/ALERT/REWARD/THREAT factor transformations
+
+
 ## 2026-05-26 — cycle#58 — 🔵 event-driven biology state update (H_320)
 - [x] **H_320** 🔵 SUPPORTED-FORMAL 7/7 — STARTLE/SOOTHE/ALERT 결정론적 biology transformation
 
