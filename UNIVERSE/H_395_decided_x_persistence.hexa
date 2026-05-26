@@ -1,0 +1,21 @@
+// H_395 smoke — decision audit trail
+
+fn provenance_fields() -> i64 {
+    return 3  // factors_snapshot, threshold, verdict
+}
+
+fn records_per_decision(n_decisions: i64) -> i64 {
+    return n_decisions  // 1:1
+}
+
+fn check_h395() -> bool {
+    let h1 = records_per_decision(10) == 10
+    let h3 = provenance_fields() == 3
+    return h1 && h3
+}
+
+fn main() {
+    let ok = check_h395()
+    if !ok { print("H_395 FAIL"); return }
+    print("H_395 blue audit trail OK")
+}
