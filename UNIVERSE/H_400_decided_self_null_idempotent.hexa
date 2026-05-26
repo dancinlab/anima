@@ -1,0 +1,21 @@
+// H_400 smoke — null-decision idempotent
+
+fn compose(a: string, b: string) -> string {
+    if (a == "no_act") && (b == "no_act") { return "no_act" }
+    if a == "no_act" { return b }
+    if b == "no_act" { return a }
+    return "compose"
+}
+
+fn check_h400() -> bool {
+    let h1 = compose("no_act", "no_act") == "no_act"
+    let h2_left = compose("no_act", "act_x") == "act_x"
+    let h2_right = compose("act_x", "no_act") == "act_x"
+    return h1 && h2_left && h2_right
+}
+
+fn main() {
+    let ok = check_h400()
+    if !ok { print("H_400 FAIL"); return }
+    print("H_400 blue null idempotent OK")
+}
