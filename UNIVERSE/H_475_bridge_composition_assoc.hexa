@@ -1,0 +1,25 @@
+// H_475 smoke — composition associative
+
+fn f(x: bool) -> bool { return x }
+fn g(x: bool) -> bool { return x }
+fn h(x: bool) -> bool { return x }
+
+fn fg_h(x: bool) -> bool {
+    return f(g(h(x)))
+}
+
+fn f_gh(x: bool) -> bool {
+    return f(g(h(x)))
+}
+
+fn check_h475() -> bool {
+    let a = fg_h(true) == f_gh(true)
+    let b = fg_h(false) == f_gh(false)
+    return a && b
+}
+
+fn main() {
+    let ok = check_h475()
+    if !ok { print("H_475 FAIL"); return }
+    print("H_475 blue composition assoc OK")
+}
