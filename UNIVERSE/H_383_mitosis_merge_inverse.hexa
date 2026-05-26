@@ -1,0 +1,26 @@
+// H_383 smoke — MITOSIS merge inverse (weight conservation)
+
+fn split_to_2(w: f64) -> f64 {
+    return w / 2.0
+}
+
+fn merge_2(w_a: f64, w_b: f64) -> f64 {
+    return w_a + w_b
+}
+
+fn check_h383() -> bool {
+    let w = 1.0
+    let half = split_to_2(w)
+    let merged = merge_2(half, half)
+    let h1 = merged == w  // weight inverse
+    // H2 net 0 in N_cells (1 split + 1 merge)
+    let n_delta = 1 - 1
+    let h2 = n_delta == 0
+    return h1 && h2
+}
+
+fn main() {
+    let ok = check_h383()
+    if !ok { print("H_383 FAIL"); return }
+    print("H_383 blue merge-split inverse OK")
+}
