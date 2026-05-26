@@ -1,0 +1,27 @@
+// H_423 smoke — ensemble decision
+
+fn vote_count(d0: bool, d1: bool, d2: bool, d3: bool) -> i64 {
+    let mut n: i64 = 0
+    if d0 { n = n + 1 }
+    if d1 { n = n + 1 }
+    if d2 { n = n + 1 }
+    if d3 { n = n + 1 }
+    return n
+}
+
+fn decision_ensemble(d0: bool, d1: bool, d2: bool, d3: bool) -> bool {
+    return vote_count(d0, d1, d2, d3) >= 3
+}
+
+fn check_h423() -> bool {
+    let h1 = decision_ensemble(true, true, true, false) == true
+    let h2 = decision_ensemble(true, false, false, false) == false  // 1 vote not enough
+    let h3 = vote_count(true, true, false, false) > vote_count(false, true, false, false)
+    return h1 && h2 && h3
+}
+
+fn main() {
+    let ok = check_h423()
+    if !ok { print("H_423 FAIL"); return }
+    print("H_423 blue ensemble OK")
+}
