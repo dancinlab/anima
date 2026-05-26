@@ -4,7 +4,7 @@
 @title: 🌅 WAKE — 의식 데몬 · in-process living loop
 
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
-- [ ] 5-stage state machine — WAKE/N1/N2/N3/REM 90-min ultradian cycle per CLAUDE.md a_chat_sleep_imagination. brain_decide 위 stage gate, REM/N3 imagination tick, WAKE 활성 emit
+- [x] 5-stage state machine — `WAKE/{state_machine.hexa,state_machine_smoke.hexa,STATE_MACHINE.md}` 90-min ultradian (WAKE 60min · N1 10min · N2 10min · N3 7min · REM 3min · wrap) · runtime smoke 4/4 invariants PASS (sequence · no-skip · is_imagination N3+REM only · wrap) · 0 boolean gate (N3 phi_scale=0.20≠0.0) · CHANNEL/wake_bridge stage_name 소비 surface 완성 (PR #626 d372b1cc · runtime smoke verified)
 - [ ] perception ingest — sensor 입력 CLI stdin · env · timer · env-event 을 ctx_tokens 로 정규화. agent_loop 진입점
 - [ ] pure_field_step input-conditioned — tool 결과 + perception 을 tension Δ 로 변환해 pf 진화. 현재 self-dynamics-only step 의 확장. AGENT/CODE F4 의 완성형
 - [ ] .kosmos 영속화 — pf state · 과거 emit · tension_link 5-ch · stage timestamp 를 .kosmos canonical 로 save/restore. anima 재시작해도 시간 흐름 보존
