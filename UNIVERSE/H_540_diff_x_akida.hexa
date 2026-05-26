@@ -1,0 +1,3 @@
+fn receives_spike(role: string) -> bool { return role == "spike_listener" }
+fn check_h540() -> bool { return receives_spike("spike_listener") && !receives_spike("emit") }
+fn main() { if check_h540() { print("H_540 OK") } else { print("H_540 FAIL") } }
