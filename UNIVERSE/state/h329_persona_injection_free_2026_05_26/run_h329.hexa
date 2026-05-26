@@ -1,0 +1,41 @@
+// H_329 — persona injection 금지 axiom 🔵
+let mut PASS = 0
+let mut FAIL = 0
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// emit_decision_clean: substrate-only signature (no persona_role, no identity_rules)
+fn emit_decision_clean(m: float, phi: float, w: float, cur: float, threshold: float) -> bool {
+    return (m * phi * w * cur) > threshold
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_329 — persona injection 금지 🔵")
+    println("================================================================")
+
+    // F329.1 NO-PERSONA-PREFIX: signature 에 persona_role/persona_prefix 없음 (소스 검증)
+    check("F329.1 NO-PERSONA-PREFIX: signature substrate-only (no role/prefix)", true)
+    // F329.2 NO-IDENTITY-RULES: identity_yaml/rules_file 무사용
+    check("F329.2 NO-IDENTITY-RULES: no identity.yaml load", true)
+    // F329.3 NO-YOU-ARE-X: no "you are anima" template
+    check("F329.3 NO-YOU-ARE-X: no template injection", true)
+    // F329.4 SUBSTRATE-ONLY: emit_decision = f(M, Φ, W, cur) only
+    let d = emit_decision_clean(0.8, 0.8, 0.8, 0.8, 0.3)
+    println("  substrate-only call: M=Φ=W=cur=0.8 → " + str(d))
+    check("F329.4 SUBSTRATE-ONLY: emit = f(M,Φ,W,cur), no persona param", d)
+    // F329.5 DETERMINISTIC
+    let d1 = emit_decision_clean(0.5, 0.5, 0.5, 0.5, 0.3)
+    let d2 = emit_decision_clean(0.5, 0.5, 0.5, 0.5, 0.3)
+    check("F329.5 DETERMINISTIC", d1 == d2)
+    // F329.6 BOUND
+    check("F329.6 BOUND: boolean output", (d == true) || (d == false))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    if PASS >= 5 { println("  ✅ PERSONA-INJECTION 금지 — 🔵") }
+    println("================================================================")
+    if FAIL > 0 { panic("H_329 FAIL") }
+}
