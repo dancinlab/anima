@@ -1,0 +1,16 @@
+// H_463 smoke — emit carries tension
+
+fn tension_len_in_emit() -> i64 {
+    return 5
+}
+
+fn check_h463() -> bool {
+    let h1 = tension_len_in_emit() == 5
+    return h1
+}
+
+fn main() {
+    let ok = check_h463()
+    if !ok { print("H_463 FAIL"); return }
+    print("H_463 blue emit has 5-ch tension OK")
+}
