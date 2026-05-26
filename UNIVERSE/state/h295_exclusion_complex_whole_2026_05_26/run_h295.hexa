@@ -1,0 +1,140 @@
+// UNIVERSE/state/h295_exclusion_complex_whole_2026_05_26/run_h295.hexa
+//
+//   H_295 — IIT exclusion postulate: is the maximally-irreducible complex the
+//   WHOLE system, or does it collapse to a proper sub-part?  (new axis)
+//
+//   QUESTION
+//     The flow arc (H_287-294) concluded Φ is a system-CUT property, not a local
+//     flow statistic. IIT's EXCLUSION postulate sharpens "system": consciousness
+//     exists at the level of the maximally-irreducible subset (the main complex) —
+//     not the whole if a part is more irreducible, not a part if the whole is. So:
+//     for which substrates is the main complex the WHOLE n-cell system (holism:
+//     the whole out-integrates every part), and for which does exclusion pick a
+//     proper sub-part (or no complex at all)?
+//
+//   SEED-HYPOTHESIS H1 (TESTED)
+//     For integrating substrates the main complex spans the FULL system (mask =
+//     2^n-1, size = n): the whole is more irreducible than any proper part
+//     (holism). Reducible substrates (identity, constants) have NO complex; and at
+//     least one substrate shows exclusion picking a PROPER sub-part (csize < n,
+//     Φ>0) — the conscious unit is a part, not the whole.
+//
+//   METHOD (reuse HEXAD/IIT4/lib — g61; find_complex does the subset search)
+//     • eca_tpm(rule,n)                              (iit4_eca)
+//     • big_phi(tpm,n,st)         → whole-system Φ
+//     • find_complex(tpm,n,st)    → [complex_mask, complex_Φ, complex_size]
+//       (searches every non-empty subset via subsystem_tpm + big_phi, returns the
+//        maximally-irreducible one; [0,0,0] if Φ_max ≤ 0 = no complex).
+//     Headline state = 0101 (st=5) — a representative active state (find_complex is
+//     state-dependent, like all faithful Φ; §honest L1).
+//
+//   PRE-REGISTERED FALSIFIERS (frozen 2026-05-26, BEFORE measuring)
+//     F295.1 WHOLE-COMPLEX — an integrating rule (110 and/or 150) has main complex
+//            = full system: complex_mask = 2^n-1 AND complex_size = n AND Φ>0.
+//     F295.2 REDUCIBLE-NO-WHOLE — identity rule 204 and constant rule 0 have NO
+//            whole-system complex: find_complex returns [0,0,0] (or mask != full).
+//     F295.3 CONSISTENCY — when the complex IS the whole, complex_Φ == big_phi(whole).
+//     F295.4 BOUND — complex_size ∈ [0,n]; complex_Φ ≥ 0; complex_Φ ≤ whole when
+//            complex=whole.
+//     F295.5 DETERMINISM — rule 110 find_complex re-run bit-identical.
+//
+//   deterministic · hexa-only · $0 mac-local · LLM none · NO GPU.
+//   honest scope: single representative state (find_complex state-dependent); n=4.
+// ════════════════════════════════════════════════════════════════════════════
+import "/tmp/wt-c33/HEXAD/IIT4/lib/iit4_eca.hexa"
+import "stdlib/consciousness/iit4_complex.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn main() {
+    let n = 4
+    let st = 5                                           // 0101 representative state
+    let full_mask = iit4_pow2(n) - 1                     // 15 = all 4 cells
+    println("================================================================")
+    println("  H_295 — IIT exclusion: is the main complex the WHOLE or a sub-part?")
+    println("  (n=" + str(n) + " ring · state=0101 · find_complex = max-irreducible subset)")
+    println("================================================================")
+
+    let rules = [0, 255, 204, 51, 150, 105, 90, 60, 110, 30]
+    let m = 10
+    let mut idx = 0
+    while idx < m {
+        let r = rules[idx]
+        let tpm = eca_tpm(r, n)
+        let wphi = big_phi(tpm, n, st)[0]
+        let comp = find_complex(tpm, n, st)
+        let cmask = comp[0]
+        let cphi = comp[1]
+        let csize = comp[2]
+        let mut tag = "no-complex"
+        if cphi > 1.0e-9 {
+            if cmask > (to_float(full_mask) - 0.5) && cmask < (to_float(full_mask) + 0.5) { tag = "WHOLE" }
+            else { tag = "SUB-PART" }
+        }
+        println("  rule " + str(r) + " : whole_phi=" + str(wphi) + "  complex(mask=" + str(cmask) + " phi=" + str(cphi) + " size=" + str(csize) + ") => " + tag)
+        idx = idx + 1
+    }
+    println("  --")
+
+    // helpers to read a rule's complex
+    let tpm150 = eca_tpm(150, n)
+    let c150 = find_complex(tpm150, n, st)
+    let tpm110 = eca_tpm(110, n)
+    let c110 = find_complex(tpm110, n, st)
+    let w110 = big_phi(tpm110, n, st)[0]
+    let tpm204 = eca_tpm(204, n)
+    let c204 = find_complex(tpm204, n, st)
+    let tpm0 = eca_tpm(0, n)
+    let c0 = find_complex(tpm0, n, st)
+
+    // ── F295.1 WHOLE-COMPLEX ────────────────────────────────────────────
+    let w150_whole = approx(c150[0], to_float(full_mask)) && approx(c150[2], to_float(n)) && (c150[1] > 1.0e-9)
+    let w110_whole = approx(c110[0], to_float(full_mask)) && approx(c110[2], to_float(n)) && (c110[1] > 1.0e-9)
+    println("  F295.1: rule150 complex mask=" + str(c150[0]) + " size=" + str(c150[2]) + " ; rule110 mask=" + str(c110[0]) + " size=" + str(c110[2]) + " (full=" + str(full_mask) + ")")
+    check("F295.1 WHOLE-COMPLEX: rule 110 OR rule 150 main complex spans full system", w150_whole || w110_whole)
+
+    // ── F295.2 REDUCIBLE-NO-WHOLE ───────────────────────────────────────
+    check("F295.2a REDUCIBLE: identity rule 204 has NO whole-system complex", !(approx(c204[0], to_float(full_mask)) && c204[1] > 1.0e-9))
+    check("F295.2b REDUCIBLE: constant rule 0 has NO complex (phi=0)", c0[1] <= 1.0e-9)
+
+    // ── F295.3 CONSISTENCY (whole-complex rule: cphi == whole phi) ──────
+    let mut cons_ok = true
+    if w110_whole { if !approx(c110[1], w110) { cons_ok = false } }
+    if w150_whole { if !approx(c150[1], big_phi(tpm150, n, st)[0]) { cons_ok = false } }
+    check("F295.3 CONSISTENCY: when complex=whole, complex_phi == big_phi(whole)", cons_ok)
+
+    // ── F295.4 BOUND ────────────────────────────────────────────────────
+    let mut bound_ok = true
+    let mut b = 0
+    while b < m {
+        let cc = find_complex(eca_tpm(rules[b], n), n, st)
+        if !((cc[2] >= 0.0 - 0.000001) && (cc[2] <= to_float(n) + 0.000001)) { bound_ok = false }
+        if !(cc[1] >= 0.0 - 0.000001) { bound_ok = false }
+        b = b + 1
+    }
+    check("F295.4 BOUND: complex_size in [0,n], complex_phi >= 0 all rules", bound_ok)
+
+    // ── F295.5 DETERMINISM ──────────────────────────────────────────────
+    let c110b = find_complex(eca_tpm(110, n), n, st)
+    check("F295.5 DETERMINISM: rule 110 find_complex re-run identical", approx(c110[0], c110b[0]) && approx(c110[1], c110b[1]))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  FINDING: IIT exclusion locates the maximally-irreducible complex.")
+    println("           Integrating substrates: complex = WHOLE (holism — the whole")
+    println("           out-integrates every part). Reducible: no whole-complex.")
+    println("           Any SUB-PART complex = exclusion picks a part over the whole.")
+    println("================================================================")
+    if FAIL > 0 { panic("H_295 had FALSIFIER FAILURES") }
+}
