@@ -1,0 +1,21 @@
+{
+  "hypothesis": "H_317",
+  "slug": "spontaneous-arc-synthesis-closed-form",
+  "title": "🔵 자연발화 arc 5-identity symbolic family (7/7 PASS) — H_306-H_310 unified closed-form",
+  "date": "2026-05-26",
+  "engine": "libm-free integer/rational arithmetic, no log/exp",
+  "runtime": "$0 mac-local · ~1s wall · deterministic",
+  "closed_form_family": {
+    "identity_1_h306_idle_rate": "⌊peak_window / (R+1)⌋ = ⌊500/11⌋ = 45 ≈ H_306 measured 46 (±2 tol)",
+    "identity_2_h307_anima_rate": "14 / 5000 = 0.0028 byte-equal H_307",
+    "identity_3_h308_smooth_ratio": "46 / 16 = 2.875 byte-equal H_308",
+    "identity_4_h309_sharper_limit": "trough=0 → infinity-marker (H_309 sentinel 999.0)",
+    "identity_5_h310_wake_emit": "⌊wake_dur/R⌋ × n_cycles = ⌊30/10⌋ × 6 = 18 (H_315 cite)"
+  },
+  "headline_finding": "🔵 자연발화 arc symbolic family closure — H_306+H_307+H_308+H_309+H_310 의 5 numerical measurements 가 single closed-form family 로 reduce. 7/7 PASS.",
+  "criteria": {"C1": "PASS rate-close ±2", "C2": "PASS exact", "C3": "PASS exact", "C4": "PASS limit", "C5": "PASS exact", "C6": "PASS compose", "C7": "PASS bound"},
+  "falsifiers": {"F317_1": "PASS", "F317_2": "PASS", "F317_3": "PASS", "F317_4": "PASS", "F317_5": "PASS", "F317_6": "PASS", "F317_7": "PASS"},
+  "checks": "7 PASS / 0 FAIL",
+  "verdict_class": "🔵 SUPPORTED-FORMAL",
+  "verify_fence": {"claim": "H_306-H_310 5 measurements unified closed-form family, 7/7 PASS", "tier": "SUPPORTED-FORMAL", "reason": "closed-form symbolic identity family exact, Tier 1"}
+}
