@@ -1,0 +1,3 @@
+fn n_after_merge(n: i64) -> i64 { if n < 2 { return n } return n - 1 }
+fn check_h594() -> bool { return n_after_merge(5) == 4 }
+fn main() { if check_h594() { print("H_594 OK") } else { print("H_594 FAIL") } }
