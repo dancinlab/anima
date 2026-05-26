@@ -1,0 +1,19 @@
+// H_456 smoke — total = N · env · rate · M
+
+fn total_emits(n: i64, env: f64, rate: f64, m: f64) -> f64 {
+    return (n as f64) * env * rate * m
+}
+
+fn check_h456() -> bool {
+    let pos = total_emits(10, 0.8, 0.5, 0.7) > 0.0
+    let zN = total_emits(0, 0.8, 0.5, 0.7) == 0.0
+    let zM = total_emits(10, 0.8, 0.5, 0.0) == 0.0
+    let lin = total_emits(20, 0.8, 0.5, 0.7) == 2.0 * total_emits(10, 0.8, 0.5, 0.7)
+    return pos && zN && zM && lin
+}
+
+fn main() {
+    let ok = check_h456()
+    if !ok { print("H_456 FAIL"); return }
+    print("H_456 blue 4-factor total OK")
+}
