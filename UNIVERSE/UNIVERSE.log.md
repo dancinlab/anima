@@ -3,6 +3,15 @@
 Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, PR #589). Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 
+## 2026-05-26 — cycle#32 — H_293/논문 §future follow-up: 흐름의 어떤 성분도 Φ≠ (PID synergy ⊥ Φ) (포그라운드)
+
+- [x] **H_294 pid-synergy-phi** 🔴 CLOSED-NEGATIVE 8/8 gate (`UNIVERSE/state/h294_pid_synergy_phi_2026_05_26/`) — 논문 §future PID 예측 검정
+- [x] **발견**: 방향성 흐름을 synergy/redundancy(조건부 interaction info II_c=H(T|C)-H(T|S1,C)-H(T|S2,C))로 분해해도 **어떤 성분도 Φ 를 추종 안 함** — synergy ⊥ Φ (Pearson r=0.030 직교, ECA parity 는 redundancy=0 전 룰). **이중 dissociation**: rule60 Φ최고(13.6)인데 synergy=0(next=self⊕left = 순수 *unique* info) vs rule90 synergy최대(4.0)인데 Φ=0. synergy 는 통합의 필요조건(rule60 반례)도 충분조건(rule90 반례)도 아님
+- [x] **메타 결론**: H_293(어떤 *차수* TE 도 Φ≠)을 한 단계 더 — 흐름의 어떤 *성분*도 Φ≠. **통합은 국소 정보-흐름 통계의 어떤 분해로도 환원되지 않는 system-cut(전체-부분) 속성**. rule90 은 LZ(H_288)+multivariate-TE(H_293)+synergy(본 H) **셋 다 과대** = "국소 흐름/복잡도 有, 전역 통합 無" cross-measure 서명 정점
+- [x] engine 재사용 (g61): HEXAD/IIT4/lib eca_tpm+big_phi+iit4_bit, co-information 16-bin joint marginal-entropy inline. 새 IIT4 코드 0줄. $0 · NO GPU
+- [x] surface: README 106→107 H + H_294 행 · UNIVERSE.log cycle#32. 논문 thesis(Φ=별개 통합측도) **최대 강화** — 차후 논문 v3 흡수 후보
+- [ ] Next: full Williams-Beer 4-atom PID(rule60 unique 항 명시) · redundancy>0 substrate(copy/majority)에서 redundancy↔Φ · 큰 N system-cut vs 모든 local-flow 분해 갭
+
 ## 2026-05-26 — cycle#31 — H_290/논문 follow-up: multivariate TE 가 시너지 회복하나 Φ≠ (포그라운드)
 
 - [x] **arxiv-prep**: 정보-측도 논문 phi-information-triangulation arxiv 번들 생성 (main.bbl + out/tar.gz, 10p) — PR #590. 업로드 준비 완료
