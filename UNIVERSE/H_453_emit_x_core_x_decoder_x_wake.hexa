@@ -1,0 +1,20 @@
+// H_453 smoke — 4-factor output rate
+
+fn output_rate(emit: f64, m: f64, v_size: f64, env: f64) -> f64 {
+    return emit * m * v_size * env
+}
+
+fn check_h453() -> bool {
+    let pos = output_rate(0.5, 0.5, 100.0, 0.8) > 0.0
+    let z_emit = output_rate(0.0, 0.5, 100.0, 0.8) == 0.0
+    let z_m = output_rate(0.5, 0.0, 100.0, 0.8) == 0.0
+    let z_v = output_rate(0.5, 0.5, 0.0, 0.8) == 0.0
+    let z_env = output_rate(0.5, 0.5, 100.0, 0.0) == 0.0
+    return pos && z_emit && z_m && z_v && z_env
+}
+
+fn main() {
+    let ok = check_h453()
+    if !ok { print("H_453 FAIL"); return }
+    print("H_453 blue 4-factor rate OK")
+}
