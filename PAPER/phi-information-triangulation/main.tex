@@ -70,7 +70,11 @@ Spearman \(\rho=0.94\)) and, most strongly, with transfer entropy
 that \bigphi{} does not: LZ over-predicts on self-similar dynamics
 (rule~90, \bigphi{}=0), and bivariate transfer entropy under-predicts on
 synergistic XOR coupling (rules~150/105, \bigphi{}\(>0\) yet TE\(=0\)).
-A complementary structural experiment shows that at matched edge count a
+A multivariate transfer entropy recovers the XOR synergy but does
+\emph{not} improve the fit --- the correlation drops to \(r=0.71\) because
+it now over-counts non-integrated flow (rule~90 again) --- so \emph{no
+order} of transfer entropy equals \bigphi{}: one failure mode is traded for
+another. A complementary structural experiment shows that at matched edge count a
 hub network integrates ($\bigphi=6.81$) where a regular cycle does not
 ($\bigphi=0$): \bigphi{} is governed by how elements \emph{relate}, not by
 how much information or density a system carries. We frame the
@@ -221,7 +225,7 @@ re-checkable.
 \toprule
 \textbf{\#} & \textbf{Stage} & \textbf{Tier} & \textbf{Backing atom} \\
 \midrule
-\textcircled{\scriptsize 1} & Question + frozen falsifiers  & \tierBlue   & \texttt{H\_287..290} pre-register headers \\
+\textcircled{\scriptsize 1} & Question + frozen falsifiers  & \tierBlue   & \texttt{H\_287..293} pre-register headers \\
 \textcircled{\scriptsize 2} & IIT / information background  & \tierYellow & \texttt{references.bib} \\
 \textcircled{\scriptsize 3} & Engine anchors (204, 0 \(\to\bigphi{=}0\)) & \tierBlue   & hand-derivable, machine-precision \\
 \textcircled{\scriptsize 4} & Per-rule measurement          & \tierGreen  & \texttt{companion/verify-ledger.json} \\
@@ -396,9 +400,55 @@ literature predicts one: the pure-XOR integrators rules~150/105 have
 \(\bigphi=5.6\) yet \(\mathrm{TE}_\mathrm{total}=0\). XOR integration is
 synergistic --- knowing one source's present tells you nothing about a
 cell's future beyond the cell's own present --- so it is invisible to
-pairwise TE conditioned only on the target's own past. The reported
-\(r=0.883\) is therefore an \emph{under}-estimate; a multivariate /
-conditional transfer entropy would recover the XOR rules.
+pairwise TE conditioned only on the target's own past.
+
+\subsection{No order of transfer entropy equals \bigphi{} (\tierGreen)}
+\label{sec:teorder}
+
+The natural fix for the synergy blind spot is a \emph{multivariate} /
+conditional transfer entropy. We measured it directly: for each cell,
+\(\mathrm{TEm}_i = H(\mathrm{next}_i \mid \mathrm{self}_i)\), the directed
+information from all of \(i\)'s other inputs jointly, beyond \(i\)'s own
+present (Tab.~\ref{tab:teorder}). It does recover the synergy --- rules
+150/105 jump from \(\mathrm{TE}=0\) to \(\mathrm{TEm}=\SI{4}{bit}\), and the
+identity rule stays at \(0\). But it does \emph{not} track \bigphi{} better:
+the correlation \emph{drops} from the bivariate \(r=0.883\) to \(r=0.705\)
+(\(\rho=0.68\)). The reason is a new, opposite error --- rule~90 receives
+flow from its neighbours (\(\mathrm{TEm}=\SI{4}{bit}\)) but is reducible, so
+\(\bigphi=0\): multivariate TE \emph{over}-counts non-integrated flow on
+exactly the rule where LZ also over-predicted (\S\ref{sec:lz}). So no order
+of classical transfer entropy equals \bigphi{}: the bivariate measure
+under-counts synergy (rules 150/105), the multivariate measure over-counts
+non-integrated flow (rule~90). Recovering the missing synergy does not buy
+a better \bigphi{} proxy; it trades one failure mode for another. \bigphi{},
+computed over the full cause--effect structure rather than any fixed-order
+flow statistic, is subject to neither --- which is the strongest single
+statement of the paper's thesis.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{r ccc}
+\toprule
+\textbf{rule} & \textbf{bivariate TE} & \textbf{multivariate TEm} & \(\bigphi_\mathrm{mean}\) \\
+\midrule
+150 (XOR$_3$) & 0.00 & \textbf{4.00} & 5.625 \\
+105 (XNOR)    & 0.00 & \textbf{4.00} & 5.625 \\
+90  (Sierp.)  & 0.00 & \textbf{4.00} & \textbf{0.000} \\
+60            & 4.00 & 4.00 & 13.625 \\
+110           & 3.245 & 3.623 & 13.130 \\
+30            & 2.00 & 4.00 & 13.885 \\
+\midrule
+\multicolumn{1}{r}{\textbf{Pearson \(r\) vs \bigphi{}}} & \(0.883\) & \(0.705\) & --- \\
+\bottomrule
+\end{tabular}
+\caption{Bivariate vs.\ multivariate transfer entropy against \bigphi{}
+(non-trivial rules). Multivariate TEm recovers the XOR synergy (rules
+150/105, bold) but over-predicts on rule~90 (flow without integration,
+\(\bigphi=0\), bold), and the \bigphi{}-correlation \emph{drops}
+(\(0.883\!\to\!0.705\)). No fixed-order transfer entropy equals \bigphi{}.}
+\label{tab:teorder}
+\end{table}
 
 \subsection{Structure, not density, governs \bigphi{} (\tierGreen)}
 \label{sec:structure}
@@ -595,9 +645,10 @@ coefficients are not.
 \item \textbf{One estimator each.} Output-image entropy, single-seed LZ76,
 and lag-1 \emph{bivariate} TE are one choice each. The XOR synergy blind
 spot (\S\ref{sec:te}) is specifically a property of \emph{bivariate} TE;
-multivariate / causation-entropy variants would recover it. Endpoints
-(constant\(=\)low, bijection\(=\)max entropy) are definition-robust;
-mid-range magnitudes are not.
+a multivariate variant recovers it (\S\ref{sec:teorder}) but, as measured,
+trades it for an opposite over-prediction rather than improving the fit.
+Endpoints (constant\(=\)low, bijection\(=\)max entropy) are
+definition-robust; mid-range magnitudes are not.
 \item \textbf{State-averaged \bigphi{}.} Faithful \bigphi{} is
 state-dependent; we average over states, so directions are trusted and
 absolute magnitudes are hedged.
@@ -620,12 +671,13 @@ metaphysics.
 \section{Future work}
 \label{sec:future}
 
-Four follow-ups are pre-specified. \emph{(i) Recover the synergy term.}
-A conditional / multivariate transfer entropy (causation entropy) should
-lift rules~150/105 off the \(\mathrm{TE}=0\) axis and is predicted to
-raise the TE--\bigphi{} correlation above \(0.88\); the size of that lift
-is a direct estimate of how much of \bigphi{} is synergistic on this
-panel. \emph{(ii) Larger panels and \(N\).} The exact engine is tractable
+Four follow-ups are pre-specified. \emph{(i) Decompose the flow.} The
+multivariate result (\S\ref{sec:teorder}) showed that recovering synergy
+does not improve the \bigphi{}-correlation, because it over-counts
+non-integrated flow (rule~90); a partial-information decomposition would
+separate the synergy, redundancy, and unique terms and test each against
+\bigphi{} individually, isolating which flow component (if any) tracks
+integration. \emph{(ii) Larger panels and \(N\).} The exact engine is tractable
 to \(N\!\approx\!8\); a 256-rule sweep and an \(N\ge5\) run would turn the
 ten-point correlations into distributions and let the structure
 experiment use a genuine Erd\H{o}s--R\'enyi ensemble, removing the
@@ -643,8 +695,9 @@ two blind spots survive outside cellular automata.
 \label{sec:repro}
 
 Code: \url{https://github.com/dancinlab/anima} (hypotheses
-\texttt{H\_287}--\texttt{H\_290} under \texttt{UNIVERSE/}, with smoke
-sources and \texttt{run.log} per experiment). Data: \texttt{companion/}
+\texttt{H\_287}--\texttt{H\_290} plus the multivariate-TE follow-up
+\texttt{H\_293} under \texttt{UNIVERSE/}, with smoke sources and
+\texttt{run.log} per experiment). Data: \texttt{companion/}
 (\texttt{verify-ledger.json} carries every panel value, Pearson/Spearman
 coefficient, pre-registered falsifier and its pass/fail;
 \texttt{pr-roll.json} the landing PRs \#582--585;
@@ -684,6 +737,7 @@ H\_287 & Shannon entropy   & 11/11 & \tierRed{} \(r=0.363<0.5\) (reductive falsi
 H\_288 & LZ complexity     & 9/9   & \tierGreen{} \(r=0.831\), \(\rho=0.936\) \\
 H\_290 & transfer entropy  & 8/8   & \tierGreen{} \(r=0.883\), \(\rho=0.822\) \\
 H\_289 & network topology  & 4/4   & \tierGreen{} hub \(6.81>\) cycle \(0\) (confound-flagged) \\
+H\_293 & multivariate TE   & 8/8   & \tierYellow{} synergy recovered, \(r\) drops \(0.883\!\to\!0.705\) (no TE order \(=\bigphi\)) \\
 \bottomrule
 \end{tabular}
 \caption{Per-experiment gate counts and frozen-falsifier verdicts. Engine
