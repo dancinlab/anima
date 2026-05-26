@@ -1,0 +1,19 @@
+// H_474 smoke — decision idempotent
+
+fn decision(m: f64, phi: f64) -> bool {
+    return (m * phi) > 0.5
+}
+
+fn check_h474() -> bool {
+    let d1 = decision(0.8, 0.8)
+    let d2 = decision(0.8, 0.8)
+    let det = d1 == d2
+    let val = d1 == true
+    return det && val
+}
+
+fn main() {
+    let ok = check_h474()
+    if !ok { print("H_474 FAIL"); return }
+    print("H_474 blue decision idempotent OK")
+}
