@@ -2,6 +2,19 @@
 
 Append-only history sister of `CREATOR.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T04:45:00Z — backend dynamic model catalog 확장 (M3.5)
+
+- [x] 사용자 명시 변경 — backend.hexa 의 model 관리가 **고정 X · runtime 동적** 가능해야 함 (list / register / set_default 기능 추가)
+- [x] `tier_registry` shape 확장 — `{ "L1": "fal.ai" }` → `{ "L1": #{ "backend_id": "fal.ai", "default_model": "fal-ai/openai-images-2.0", "available_models": [...] } }` (TierConfig Map)
+- [x] 신규 3 pub fn — `creator_backend_list_models(state, tier)` · `_register_model(state, tier, model_id, set_as_default)` · `_set_default_model(state, tier, model_id)`
+- [x] 헬퍼 3 pub fn — `creator_backend_tier_config` · `_tier_backend_id` · `_tier_default_model` (callsite 통일 + testability)
+- [x] generate_still/render_prog/generate_clip 의 model="" fallback 을 state["model"] 단일에서 **tier default_model** 조회로 변경 (없으면 "stub")
+- [x] register_model idempotent — 중복 등록 시 list 크기 유지, added=false 반환
+- [x] set_default_model 가드 — 카탈로그에 없는 model 거부 (model_not_in_catalog — register first)
+- [x] `backend_smoke.hexa` 10-case verify (factory · L1/L2/L3 generate · dispatcher · unknown_tier · L2 not_registered · list_models · register_model + idempotent + unknown_tier · set_default_model + reject)
+- [x] `hexa parse` 4/4 OK (backend.hexa · backend_smoke.hexa · still_backend_fal.hexa · still_backend_fal_smoke.hexa)
+- [x] still_backend_fal 은 자체 state["model"] 사용 → callsite 영향 0
+
 ## 2026-05-27T04:25:00Z — M3 L1 STILL fal.ai 백엔드 closure (model selection + openai→fal.ai)
 
 - [x] 사용자 명시 변경 (1차) — L1 STILL backend 를 openai images 2.0 → **fal.ai 호스팅 openai-images-2.0** 로 swap (L1+L3 모두 fal.ai backend 통합 single API gateway)
