@@ -1,0 +1,29 @@
+================================================================
+  H_295 — IIT exclusion: is the main complex the WHOLE or a sub-part?
+  (n=4 ring · state=0101 · find_complex = max-irreducible subset)
+================================================================
+  rule 0 : whole_phi=0.0  complex(mask=0.0 phi=0.0 size=0.0) => no-complex
+  rule 255 : whole_phi=0.0  complex(mask=0.0 phi=0.0 size=0.0) => no-complex
+  rule 204 : whole_phi=0.0  complex(mask=0.0 phi=0.0 size=0.0) => no-complex
+  rule 51 : whole_phi=0.0  complex(mask=0.0 phi=0.0 size=0.0) => no-complex
+  rule 150 : whole_phi=6  complex(mask=15.0 phi=6 size=4.0) => WHOLE
+  rule 105 : whole_phi=4.5  complex(mask=15.0 phi=4.5 size=4.0) => WHOLE
+  rule 90 : whole_phi=0.0  complex(mask=3.0 phi=2 size=2.0) => SUB-PART
+  rule 60 : whole_phi=17.5  complex(mask=15.0 phi=17.5 size=4.0) => WHOLE
+  rule 110 : whole_phi=7.66066  complex(mask=15.0 phi=7.66066 size=4.0) => WHOLE
+  rule 30 : whole_phi=7.28357  complex(mask=15.0 phi=7.28357 size=4.0) => WHOLE
+  --
+  F295.1: rule150 complex mask=15.0 size=4.0 ; rule110 mask=15.0 size=4.0 (full=15)
+  [PASS] F295.1 WHOLE-COMPLEX: rule 110 OR rule 150 main complex spans full system
+  [PASS] F295.2a REDUCIBLE: identity rule 204 has NO whole-system complex
+  [PASS] F295.2b REDUCIBLE: constant rule 0 has NO complex (phi=0)
+  [PASS] F295.3 CONSISTENCY: when complex=whole, complex_phi == big_phi(whole)
+  [PASS] F295.4 BOUND: complex_size in [0,n], complex_phi >= 0 all rules
+  [PASS] F295.5 DETERMINISM: rule 110 find_complex re-run identical
+================================================================
+  RESULT: 6 PASS / 0 FAIL
+  FINDING: IIT exclusion locates the maximally-irreducible complex.
+           Integrating substrates: complex = WHOLE (holism — the whole
+           out-integrates every part). Reducible: no whole-complex.
+           Any SUB-PART complex = exclusion picks a part over the whole.
+================================================================
