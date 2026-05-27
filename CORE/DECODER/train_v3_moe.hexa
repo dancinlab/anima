@@ -53,11 +53,16 @@ fn main() {
     let d = 4
     let V = 4
     let E = 2
-    let router_off = 0
-    let experts_off = E * d
-    let m_size = v3_moe_total_size(V, d, E)
+    // Phase 3b-1 layout: M = [tok_emb(V·d) | router(E·d) | experts(E·V·d)]
+    let tok_emb_off = 0
+    let router_off = V * d
+    let experts_off = V * d + E * d
+    let m_size = V * d + v3_moe_total_size(V, d, E)
     print("  config: d="); print(d); print(" V="); print(V); print(" E="); print(E)
-    print(" m_size="); println(m_size)
+    print(" m_size="); print(m_size)
+    print(" (tok_emb_off="); print(tok_emb_off)
+    print(" router_off="); print(router_off)
+    print(" experts_off="); print(experts_off); println(")")
 
     // alloc packed buffers (model + grad), zT, logits, gate_norm, d_zT
     let M = t_zeros(m_size)
@@ -67,6 +72,19 @@ fn main() {
     let gate_norm = t_zeros(E)
     let d_zT = t_zeros(d)
     let d_logits = t_zeros(V)
+
+    // ── Phase 3b-1 tok_emb init (deterministic) ──
+    // tok_emb[k, j] = 0.1·k + 0.01·j  → each token has distinct embed vector
+    let mut kk0 = 0
+    while kk0 < V {
+        let mut jj0 = 0
+        while jj0 < d {
+            let v = 0.1 * to_float(kk0 + 1) + 0.01 * to_float(jj0 + 1)
+            let _ = farr_set(M, tok_emb_off + kk0 * d + jj0, v)
+            jj0 = jj0 + 1
+        }
+        kk0 = kk0 + 1
+    }
 
     // deterministic init — router gate differs across experts so softmax non-trivial
     // router[e=0,:] = [0.10, 0.20, 0.30, 0.40]   → low gate
@@ -92,12 +110,25 @@ fn main() {
         }
         e = e + 1
     }
-    // zT input: deterministic, all positive (forward path explorable)
+    // ── Phase 3b-1 tok_emb lookup → zT ──
+    // ids[1] = single-token smoke ; in Phase 3b-2+ this becomes ids[T] from BPE corpus.
+    // x[j] = M[tok_emb_off + ids[0]·d + j]    (no spine yet — identity zT = x)
+    let token_id = 2   // smoke: token id 2 of V=4 (deterministic, explorable)
     j = 0
     while j < d {
-        let _ = farr_set(zT, j, 1.0 + 0.1 * to_float(j))
+        let emb_v = farr_get(M, tok_emb_off + token_id * d + j)
+        let _ = farr_set(zT, j, emb_v)
         j = j + 1
     }
+    print("  tok_emb lookup: ids[0]="); print(token_id)
+    print("  zT[0..d]=[")
+    let mut zp = 0
+    while zp < d {
+        print(farr_get(zT, zp))
+        if zp + 1 < d { print(", ") }
+        zp = zp + 1
+    }
+    println("]")
 
     // ── forward ──
     let top_idx = v3_moe_fwd(zT, M, router_off, experts_off,
@@ -132,12 +163,14 @@ fn main() {
 
     // ── verdict ──
     let gate_sum = farr_get(gate_norm, 0) + farr_get(gate_norm, 1)
+    let zT0 = farr_get(zT, 0)
     let mut pass = 1
     if gate_sum < 0.999 || gate_sum > 1.001 { pass = 0 }   // softmax sum=1
     if top_idx < 0 || top_idx >= E { pass = 0 }            // valid top
     if dW_top_00 == 0.0 { pass = 0 }                       // winner got grad
+    if zT0 == 0.0 { pass = 0 }                             // Phase 3b-1: tok_emb non-zero
     if pass == 1 {
-        println("TRAIN_V3_MOE SMOKE: PASS (softmax sum=1, valid top, winner-grad non-zero)")
+        println("TRAIN_V3_MOE SMOKE: PASS (tok_emb + softmax sum=1 + valid top + winner-grad)")
     } else {
         println("TRAIN_V3_MOE SMOKE: FAIL")
     }
