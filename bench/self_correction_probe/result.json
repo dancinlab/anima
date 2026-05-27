@@ -1,0 +1,75 @@
+{
+  "bench": "self_correction_probe",
+  "bench_id": "BENCH#5",
+  "title": "self-correction-probe — small-n artifact 자동 falsifier 템플릿",
+  "date": "2026-05-28",
+  "branch": "bench-self-correction-probe",
+  "lineage": "UNIVERSE/H_340 → H_342 self-correction saga 일반화",
+  "template": "BENCH/self_correction_probe/template.hexa",
+  "driver":   "BENCH/self_correction_probe/probe_f_m4b_fire_3.hexa",
+  "approach": "no GPU · pure hexa · Mac-local · 0$ wall < 1s",
+  "verdict_taxonomy": {
+    "1_ROBUST":            "GREEN — all-n PASS",
+    "2_SMALL_N_ARTIFACT":  "RED — PASS at n0 only, FAIL at every n > n0",
+    "3_INVERSE_ARTIFACT":  "ORANGE — FAIL at n0 only, PASS at every n > n0",
+    "4_AMBIGUOUS":         "YELLOW — non-monotone mixed pattern",
+    "5_ALL_FAIL":          "RED — no n PASS"
+  },
+  "template_self_test": {
+    "case_A_robust":       { "ns": [5,10,20,50], "passes": [1,1,1,1], "expected_code": 1, "got_code": 1, "ok": true },
+    "case_B_smallN":       { "ns": [5,10,20,50], "passes": [1,0,0,0], "expected_code": 2, "got_code": 2, "ok": true },
+    "case_C_inverse":      { "ns": [5,10,20,50], "passes": [0,1,1,1], "expected_code": 3, "got_code": 3, "ok": true },
+    "case_D_ambiguous":    { "ns": [5,10,20,50], "passes": [1,0,1,0], "expected_code": 4, "got_code": 4, "ok": true },
+    "case_E_all_fail":     { "ns": [5,10,20,50], "passes": [0,0,0,0], "expected_code": 5, "got_code": 5, "ok": true },
+    "summary":             "5/5 verdict codes round-trip — template logic correct"
+  },
+  "f_m4b_fire_3_application": {
+    "context": "Phase 5b 실 H100 측정에서 F-M4B-FIRE-3 (router 분화 ≥ 2 distinct experts) PASS at n_steps=20 (PER_POS_EXPERT=[1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] — mostly e1 + 1 e0 at step 5)",
+    "question": "n_steps=20 의 PASS 는 small-n artifact 인가 robust 인가?",
+    "n_sweep": [5, 10, 20, 50],
+    "pass_predicate": "distinct_experts >= 2",
+    "case_A_collapse_sim": {
+      "model": "winner-take-all collapse — n_steps < 10 이면 step%2 (alt 0,1), n_steps >= 10 이면 const 1",
+      "per_n": [
+        { "n": 5,  "distinct_experts": 2, "pass": 1 },
+        { "n": 10, "distinct_experts": 1, "pass": 0 },
+        { "n": 20, "distinct_experts": 1, "pass": 0 },
+        { "n": 50, "distinct_experts": 1, "pass": 0 }
+      ],
+      "verdict_code": 2,
+      "verdict_label": "SMALL-N-ARTIFACT",
+      "verdict_tier": "RED",
+      "pass_count": "1/4",
+      "expected_code": 2,
+      "ok": true
+    },
+    "case_B_robust_sim": {
+      "model": "genuine cotrain diversity — position 0 → expert 0, all other positions → expert 1 (H100 측정 PER_POS_EXPERT pattern 충실 재현)",
+      "per_n": [
+        { "n": 5,  "distinct_experts": 2, "pass": 1 },
+        { "n": 10, "distinct_experts": 2, "pass": 1 },
+        { "n": 20, "distinct_experts": 2, "pass": 1 },
+        { "n": 50, "distinct_experts": 2, "pass": 1 }
+      ],
+      "verdict_code": 1,
+      "verdict_label": "ROBUST",
+      "verdict_tier": "GREEN",
+      "pass_count": "4/4",
+      "expected_code": 1,
+      "ok": true
+    }
+  },
+  "final_verdict": {
+    "template_hits": "2/2",
+    "case_A_detects_tautology": true,
+    "case_B_detects_robust": true,
+    "tier": "GREEN",
+    "label": "PASS",
+    "interpretation": "BENCH #5 PASS — template 가 (a) winner-take-all collapse 시 SMALL-N-ARTIFACT 정확히 검출 AND (b) genuine diversity 시 ROBUST 정확히 PASS. F-M4B-FIRE-3 의 실 H100 ckpt sweep 이 case-B 형태이면 robust 확정, case-A 형태이면 H_340 식 자기 정정 트리거 (paper caveat 'n_steps=20 tested regime' 추가)."
+  },
+  "next": [
+    "(a) F-M4B-FIRE-3 실 H100 ckpt 로 n_steps ∈ {5,10,20,50} 재측정 — toy sim 을 진짜 router 로 대체",
+    "(b) BENCH/self_correction_probe/template.hexa 를 다른 small-n PASS findings 에 적용 (예: F-V5MIT-* 시리즈, H_337 4|n law variant)",
+    "(c) hexa-lang stdlib 승격 후보 — `/stdlib promote BENCH/self_correction_probe/template.hexa` 로 재사용 사례 ≥ 3 시점에 promote"
+  ]
+}
