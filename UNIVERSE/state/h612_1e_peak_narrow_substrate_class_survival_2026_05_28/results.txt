@@ -1,0 +1,54 @@
+# H_612 results · n=5 · sys_state=5 (asymmetric, binary 00101)
+# 4 XOR-family rule × 8 I points = 32 measurements
+# big_phi via stdlib/consciousness/iit4_bigphi.hexa (faithful kernel)
+# 1/e ≈ 0.36787944
+
+# --- rule 90 (Class III XOR) ---
+ROW 90 5 0.20 32.4661
+ROW 90 5 0.25 27.9251
+ROW 90 5 0.30 23.9049
+ROW 90 5 0.35 20.3961
+ROW 90 5 0.37 19.1194
+ROW 90 5 0.40 17.3025
+ROW 90 5 0.45 14.5738
+ROW 90 5 0.50 12.1965
+
+# --- rule 60 (XOR-family, shift-XOR) ---
+ROW 60 5 0.20 30.9851
+ROW 60 5 0.25 26.6331
+ROW 60 5 0.30 22.7822
+ROW 60 5 0.35 19.4066
+ROW 60 5 0.37 18.1732
+ROW 60 5 0.40 16.3515
+ROW 60 5 0.45 13.4650
+ROW 60 5 0.50 11.0357
+
+# --- rule 105 (Class III XOR-complement) ---
+ROW 105 5 0.20 11.0118
+ROW 105 5 0.25 9.28145
+ROW 105 5 0.30 7.82377
+ROW 105 5 0.35 6.58897
+ROW 105 5 0.37 6.14834
+ROW 105 5 0.40 5.53766
+ROW 105 5 0.45 4.63063
+ROW 105 5 0.50 3.85063
+
+# --- rule 150 (XOR-3, Class III) ---
+ROW 150 5 0.20 6.04755
+ROW 150 5 0.25 5.07198
+ROW 150 5 0.30 4.25523
+ROW 150 5 0.35 3.56752
+ROW 150 5 0.37 3.32314
+ROW 150 5 0.40 2.98542
+ROW 150 5 0.45 2.49037
+ROW 150 5 0.50 2.06750
+
+# --- aggregate (argmax over the 8-point grid) ---
+#  rule | argmax I | peak Φ |  |Δ from 1/e|  | shape
+#   90  |   0.20   | 32.47  |   0.168       | monotone↓
+#   60  |   0.20   | 30.99  |   0.168       | monotone↓
+#  105  |   0.20   | 11.01  |   0.168       | monotone↓
+#  150  |   0.20   |  6.05  |   0.168       | monotone↓
+#
+# 0/4 PASS F1 (argmax ∈ [0.318, 0.418]).  All 4 boundary-argmax.
+# → 🔴 FALSIFIED (universal-class claim falsified for n=5 sys=5).
