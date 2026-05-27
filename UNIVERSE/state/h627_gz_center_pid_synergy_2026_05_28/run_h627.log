@@ -1,0 +1,35 @@
+================================================================
+  H_627 — GZ_CENTER (I=1/e) × hivemind PID synergy singularity
+  E3 (H_349 GZ_CENTER=1/e) × F4 (H_619 PID synergy modulation)
+  Substrate: 3 binary substrates × 1 cell · K=0.67 mask=[1,1,0]
+================================================================
+  1/e = 0.367879
+  I=0.3 n_id=2 synergy=2.0 redundancy=0.0 ratio=1.0
+  I=0.35 n_id=3 synergy=0.975034 redundancy=0.0 ratio=1.0
+  I=0.367879 n_id=3 synergy=0.975034 redundancy=0.0 ratio=1.0  ★ 1/e (GZ_CENTER)
+  I=0.4 n_id=3 synergy=0.975034 redundancy=0.0 ratio=1.0
+  I=0.45 n_id=4 synergy=0.377444 redundancy=0.0 ratio=1.0
+  --
+  syn(0.30) = 2.0  (n_id=2)
+  syn(0.35) = 0.975034  (n_id=3)
+  syn(1/e ) = 0.975034  (n_id=3)  ★
+  syn(0.40) = 0.975034  (n_id=3)
+  syn(0.45) = 0.377444  (n_id=4)
+  F627.1 |syn(1/e) - syn(0.35 same n_id)| = 0.0
+  [FAIL] F627.1 SINGULARITY-AT-1/e (local extremum OR same-cell anomaly ≥ 0.01)
+  [FAIL] F627.2 NEIGHBOR-DISTINCT (syn(1/e) ≠ syn(0.35) AND ≠ syn(0.40))
+  F627.3 local inversions = 0
+  [PASS] F627.3 MONOTONE-LOCAL (dense curve non-increasing, ≤1 inversion)
+  F627.4 syn(0.30)=2.0 (exp 2.0) · syn(0.40)=0.975034 (exp 0.975034)
+  [PASS] F627.4a H619-ANCHOR syn(0.30)=2.0 plateau
+  [PASS] F627.4b H619-ANCHOR syn(0.40)=0.975034 (n_id=3 step)
+  [PASS] F627.5a BOUND 0≤syn≤3 across dense sweep
+  [PASS] F627.5b DETERMINISM 1/e re-run byte-identical
+================================================================
+  RESULT: 5 PASS / 2 FAIL  (n_dense=5)
+  VERDICT: H1 FALSIFIED — I=1/e is NOT a singularity. It is degenerate
+           with its round(I*8)=3 quantization cell (syn(1/e)=syn(0.35)=
+           syn(0.40)); the 1/e focal value (H_349 E3) is INVISIBLE to the
+           quantized hivemind PID modulation (H_619 F4). No dip/peak.
+================================================================
+panic: H_627 had FALSIFIER FAILURES
