@@ -1,0 +1,17 @@
+{
+  "hypothesis": "H_650",
+  "slug": "shape-robustness-axis-taxonomy",
+  "meta_of": "round-7 shape>scalar robustness — 3-axis taxonomy",
+  "predecessors": ["H_628", "H_642", "H_647", "H_614"],
+  "n": 4,
+  "measure": "CV = std/mean (peak-I CV vs scalar-magnitude CV), 3축 동차",
+  "axis_polarity": {"source": "fresh shard_polarity", "peak_I": [0.21, 0.21, 0.21], "scalar": [17.6875, 7.51744, 10.4054], "cv_shape": 0.0, "cv_scalar": 0.360497},
+  "axis_rule": {"source": "H_642 merged", "peak_I": [0.18, 0.4, 0.05, 0.18, 0.4], "scalar": [21.7406, 10.8425, 0.276542, 21.3315, 19.9171], "cv_shape": 0.568028, "cv_scalar": 0.559306},
+  "axis_seed": {"source": "H_647 merged (N=12)", "peak_I": [0.1, 0.21, 0.05, 0.4, 0.25, 0.05, 0.23, 0.05, 0.35, 0.05, 0.21, 0.23], "scalar": [14.0189, 14.7039, 13.687, 13.9578, 12.2792, 14.3762, 13.4621, 13.6547, 14.0269, 13.5082, 13.3048, 13.8189], "cv_shape": 0.641481, "cv_scalar": 0.0421005},
+  "f1_polarity_shape_robust": true,
+  "f2_rule_shape_fragile": true,
+  "f3_seed_shape_fragile": true,
+  "f4_axis_dependent": true,
+  "f5_byte_equal": true,
+  "verdict": "SUPPORTED-NUMERICAL"
+}
