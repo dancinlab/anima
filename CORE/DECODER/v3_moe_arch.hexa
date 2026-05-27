@@ -23,6 +23,7 @@
 
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
+use "/Users/ghost/core/anima/CORE/DECODER/flame_mm"
 
 // ─── MoE forward (top-1 hard routing, packed-M variant) ────────────────
 // gate[e]     = Σ_j M[router_off + e·d + j] · zT[j]
@@ -88,20 +89,24 @@ pub fn v3_moe_fwd(zT: int, M: int, router_off: int, experts_off: int,
         if gv > topv { topv = gv; top = e }
         e = e + 1
     }
-    // 4) logits = gate[top] · expert_top(zT) — top-1 only emits
+    // 4) logits = gate[top] · expert_top(zT) — top-1 only emits.
+    //    Phase 4-gpu-2: the V×d expert × d×1 zT gemv is the dominant cost
+    //    (V=151643·d=2048 ≈ 310M mults). Route it through mm() = cuBLAS Dgemm
+    //    (N=1 gemv) on a GPU host, CPU oracle (farr_matmul) on Mac. The tiny
+    //    gate (E×d, E≤4) above stays a scalar loop (g0 — not a bottleneck).
+    //    expert weight is extracted from packed M (mm_extract); per-step copy is
+    //    a pilot-acceptable cost (device-resident weight caching = 4-gpu opt).
     let g_top = farr_get(gate_norm_out, top)
     let exp_base = experts_off + top * V * d
+    let expert_mat = mm_extract(M, exp_base, V, d)   // [V×d] standalone (index-0)
+    let logits_raw = mm(expert_mat, V, d, zT, 1)     // [V×1] = expert · zT (gemv)
     let mut k = 0
     while k < V {
-        let mut acc = 0.0
-        let mut j = 0
-        while j < d {
-            acc = acc + farr_get(M, exp_base + k * d + j) * farr_get(zT, j)
-            j = j + 1
-        }
-        let _ = farr_set(logits_g_out, k, g_top * acc)
+        let _ = farr_set(logits_g_out, k, g_top * farr_get(logits_raw, k))
         k = k + 1
     }
+    let _ = farr_free(expert_mat)
+    let _ = farr_free(logits_raw)
     return top
 }
 
@@ -130,28 +135,43 @@ pub fn v3_moe_bwd(zT: int, M: int, router_off: int, experts_off: int,
                   dMg: int, d_zT_out: int, V: int, d: int, E: int) {
     let g_top = farr_get(gate_norm, top_idx)
     let exp_base = experts_off + top_idx * V * d
-    // 1) expert_top grad (outer product) + d_zT contribution + d_g_top accumulator
-    let mut d_g_top = 0.0
+    // 1) expert_top grad + d_zT + d_g_top — Phase 4-gpu-2 mm() port.
+    //    dl_scaled[k] = d_logits[k]·g_top
+    //    d_expert[k,j] += outer(dl_scaled, zT)[k,j]   (rank-1 = K=1 gemm)  → dMg +=
+    //    d_zT[j]       += (expertᵀ @ dl_scaled)[j]    (gemv on Wᵀ[d×V])
+    //    d_g_top        = Σ_k d_logits[k]·(expert·zT)[k] = dot(d_logits, logits_raw)
+    let expert_mat = mm_extract(M, exp_base, V, d)        // [V×d]
+    let dl_scaled = t_zeros(V)
     let mut k = 0
     while k < V {
-        let dl_k = farr_get(d_logits, k)
-        let mut acc_g = 0.0   // for d_g_top: Σ_j W[k,j]·zT[j] (per-k)
-        let mut j = 0
-        while j < d {
-            let w = farr_get(M, exp_base + k * d + j)
-            let z = farr_get(zT, j)
-            // d_expert[k,j] += d_logits[k] · g_top · z[j]
-            let dwprev = farr_get(dMg, exp_base + k * d + j)
-            let _ = farr_set(dMg, exp_base + k * d + j, dwprev + dl_k * g_top * z)
-            // d_zT[j] += d_logits[k] · g_top · w
-            let dzprev = farr_get(d_zT_out, j)
-            let _ = farr_set(d_zT_out, j, dzprev + dl_k * g_top * w)
-            acc_g = acc_g + w * z
-            j = j + 1
-        }
-        d_g_top = d_g_top + dl_k * acc_g
+        let _ = farr_set(dl_scaled, k, farr_get(d_logits, k) * g_top)
         k = k + 1
     }
+    // d_expert outer: dl_scaled[V×1] @ zT[1×d] = [V×d]  → accumulate into dMg
+    let d_expert = mm(dl_scaled, V, 1, zT, d)
+    mm_scatter_add(dMg, exp_base, d_expert, V * d)
+    // d_zT += expertᵀ @ dl_scaled : (d×V) @ (V×1) = [d×1]
+    let expert_T = mm_transpose(expert_mat, V, d)         // [d×V]
+    let d_zT_exp = mm(expert_T, d, V, dl_scaled, 1)       // [d×1]
+    let mut j = 0
+    while j < d {
+        let _ = farr_set(d_zT_out, j, farr_get(d_zT_out, j) + farr_get(d_zT_exp, j))
+        j = j + 1
+    }
+    // d_g_top = dot(d_logits, expert·zT) — recompute logits_raw via gemv
+    let logits_raw = mm(expert_mat, V, d, zT, 1)          // [V×1]
+    let mut d_g_top = 0.0
+    k = 0
+    while k < V {
+        d_g_top = d_g_top + farr_get(d_logits, k) * farr_get(logits_raw, k)
+        k = k + 1
+    }
+    let _ = farr_free(expert_mat)
+    let _ = farr_free(dl_scaled)
+    let _ = farr_free(d_expert)
+    let _ = farr_free(expert_T)
+    let _ = farr_free(d_zT_exp)
+    let _ = farr_free(logits_raw)
     // 2) softmax backward on top-only
     //    d_gate_raw[e] = gate[e] · d_g_top · ([e==top] - gate[top])
     let mut e = 0
