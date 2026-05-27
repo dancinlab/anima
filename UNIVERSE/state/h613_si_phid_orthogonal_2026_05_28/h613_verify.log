@@ -1,0 +1,45 @@
+════════════════════════════════════════════════════════════════
+  H_613 verify — SI vs ΦD-ORTHOGONAL (max-share artifact 제거)
+════════════════════════════════════════════════════════════════
+  SI         = max(domain_phi) / mean(domain_phi)  [unchanged]
+  ΦD_cov     = std(domain_phi) / mean(domain_phi)  [orthogonal #1]
+  ΦD_kurt    = E[(x-μ)^4] / σ^4                    [orthogonal #2]
+  N samples  = 4 dom × 5 g_focus × 2 stim = 40
+  H_350 baseline: r=0.9264 (SI vs ΦD_maxmin, max-shared)
+
+  sample count = 40
+  SI range       = [1.1112, 3.03992] mean=1.67268
+  ΦD_cov range   = [0.07872, 1.18098] mean=0.433209
+  ΦD_kurt range  = [1.12543, 2.33248] mean=2.01184
+
+──────────────────────────────────────────────────────────────
+  ORTHOGONAL #1  SI ~ ΦD_cov (std/mean):
+    Pearson  r = 0.98958
+    Spearman ρ = 0.948218
+
+  ORTHOGONAL #2  SI ~ ΦD_kurt (kurtosis):
+    Pearson  r = 0.538111
+    Spearman ρ = 0.664916
+──────────────────────────────────────────────────────────────
+
+  sample preview (SI, ΦD_cov, ΦD_kurt):
+    [0] SI=1.29363 cov=0.302619 kurt=2.03668
+    [1] SI=1.37772 cov=0.253637 kurt=1.9637
+    [2] SI=1.11244 cov=0.0877211 kurt=2.02616
+    [3] SI=1.28539 cov=0.221579 kurt=1.2596
+    [4] SI=1.3057 cov=0.193679 kurt=1.97395
+    [5] SI=1.63604 cov=0.394267 kurt=1.95277
+    [6] SI=1.63217 cov=0.37172 kurt=2.24128
+    [7] SI=2.00426 cov=0.596002 kurt=2.17906
+    ...
+    [36] SI=1.51137 cov=0.297931 kurt=2.2816
+    [37] SI=1.52752 cov=0.353924 kurt=1.98147
+    [38] SI=2.59693 cov=0.922285 kurt=2.33159
+    [39] SI=2.63841 cov=0.953527 kurt=2.29507
+
+══════════════════════════════════════════════════════════════
+  VERDICT: 🟢 SUPPORTED-NUMERICAL
+  r(SI, ΦD_cov)  = 0.98958 ρ=0.948218
+  r(SI, ΦD_kurt) = 0.538111 ρ=0.664916
+  H_350 SUPPORTED 가 max-share artifact 가 아니었음 (orthogonal metric 도 보존)
+══════════════════════════════════════════════════════════════
