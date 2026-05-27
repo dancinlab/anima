@@ -88,7 +88,7 @@
 - [ ] F1 — round 1 seed (5 H):
   - [ ] H_352 `collective-phi-super-additive` — Φ_collective > Σ Φ_individual / 反: sub-additive
   - [ ] H_353 `pair-polarity-collective-phi` — pair polarity {attract/repel/bipolar} 별 Φ_collective 분기 (Hc_286 promote) / 反: polarity 무관 평탄
-  - [ ] H_354 `kuramoto-hivemind-sync-tau` — hivemind 합의 latency τ_consensus = Kuramoto τ_sync (H_207 cross-link) / 反: τ 분리
+  - [x] H_354 `kuramoto-hivemind-sync-tau` — **🔴 FALSIFIED** (Pearson r=0.041 ≪0.5 + ratio spread 45.6× ≫2×, F1+F2 trig) — H_354_kuramoto_hivemind_sync_tau.md, $0 mac-local 2026-05-28 (toy mean-field consensus substitute · L1 carry)
   - [ ] H_355 `collective-phi-pid-synergy` — Φ_collective 의 PID 분해 synergy > redundancy (H_293/294 sister) / 反: redundancy 우세
   - [ ] H_356 `hivemind-transfer-entropy-align` — Φ_collective ∥ cross-substrate TE (H_290 sister r=0.883) / 反: r<0.5
 - [ ] F2 — round 1 결과 기반 후속 H seed (cross-link: HIVE-MIND × symbiogenesis H_054/H_314 / HIVE-MIND × SAVANT)
