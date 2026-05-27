@@ -10,6 +10,7 @@
 - [ ] M1 aesthetic_lib — `AESTHETIC/{aesthetic_lib.hexa,SSOT.md}` PURE wrapper · bench/axis_aesthetic 의 novelty_score + coherence_score 곱-surface stdlib 화.
 - [ ] M2 CORE.engine_g cross-product — CORE 8-factor (cur · orig · dyn) 와 AESTHETIC novelty·coherence 의 곱-product layer. 미적 판단이 emit decision 에 modulate.
 - [ ] M3 overlap residual 재설계 — bench E 의 overlap > threshold 의 거리척도 (cosine? L2? KL?) 재선정, mid-novelty mid-coherence 영역 분해.
+- [x] A2 overlap-residual 직교화 — 🟢 SEPARATED. overlap 원천 = 시나리오 가중벡터 sign-collinearity (cos 0.87/0.87/0.64, NOT factor coh×bal r=−0.075). 부호-flip 직교화(COH-ONLY/PAIN-SEEKING/BAL-ONLY, cos 0.0) → top-10 overlap 0.3/0.1/0.0 모두 <0.5 = gate (a) 회복. residual 제거 가능, substrate 본질 아님. `AESTHETIC_A2_OVERLAP_RESIDUAL.md`.
 - [ ] M4 AGENT.CREATOR role 통합 — AGENT/CREATOR 의 생성물 (text · image · paper) 에 AESTHETIC 판정 score 부착, role 별 aesthetic profile 차별화.
 
 ## 양방향 sibling
