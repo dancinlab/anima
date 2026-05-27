@@ -7,7 +7,7 @@
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
 
 - [x] UNIVERSE 축 E 채택 — H_347 (gz width divisor symmetry) · H_348 (golden zone lower bound SI) · H_349 (golden zone center phi peak) · H_350 (savant index phi diversity) · H_351 (gz inverse-U dΦ/dI peak) · H_612 (1e peak narrow substrate class survival) · H_613 (savant index phi diversity orthogonal metric) · H_614 (gz inverse-U multi-rule substrate invariance) · H_615 (perfect number ladder n28) · H_616 carry (active NEW 2026-05-28 — MATRIX.tape 축 E row)
-- [ ] M1 savant_lib — `SAVANT/{savant_lib.hexa,SSOT.md}` PURE wrapper · golden_zone_compute + savant_index + gz_inverse_u_derivative stdlib 화. HEXAD/SAVANT/savant_phi.hexa + anima_savant_si_monitor.hexa cite-port.
+- [x] M1 savant_lib — `SAVANT/{savant_lib.hexa,SSOT.md,savant_lib_smoke.hexa}` PURE wrapper · golden_zone_compute + savant_index + gz_inverse_u_derivative + perfect_number_ladder stdlib 화 (12 pub fn, `sa_` prefix g61 collision-free). UNIVERSE H_347/348/349/350/351 + H_612/613/614/615 verbatim cite-port. smoke 10 invariant `hexa parse` PASS. HEXAD/SAVANT/{savant_phi · anima_savant_si_monitor · COMPENDIUM · H359} cross-link (별도 measurement)  (active LANDED 2026-05-28)
 - [ ] M2 anima substrate hook — `SAVANT/substrate_hook.hexa` · anima cell-pool (MITOSIS.mitosis_lib) 의 mitosis split 패턴 에서 GZ peak 검출 → savant mode trigger. WAKE.daemon tick 에서 SI 측정 inject.
 - [ ] M3 SI orthogonal metric — H_613 savant_index_phi_diversity_orthogonal_metric 의 ANIMA substrate 적용 — basin_kurtosis (#1130 MITOSIS cross-product) 와 직교성 검증.
 - [ ] M4 perfect number ladder — H_615 n28 ladder 의 anima substrate cell-count 적용 (MITOSIS cell-pool size N=6 / 28 / 496 perfect-number ladder).
