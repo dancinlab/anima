@@ -54,7 +54,10 @@
 >
 > **재정렬 2026-05-27 (`a_completeness_over_cheap`)** — model-merge(β) 를 본선에서 강등. 두 결함 ckpt (underfit + collapse) 의 weight 보간은 잘해야 "덜 나쁜 중간점" = 완성도 미달. 본선 = 근본 원인(한 모델이 두 목표 떠안음)을 arch 로 분리하는 **MoE-fresh 재설계(α)**. merge 는 optional baseline probe 로만 잔존.
 
-- [ ] **M4 MoE-fresh register 분리** ⭐ 본선 (UNIVERSE H_490 DIFFERENTIATION) — 근본 원인 분리 재설계: V3 head_g 슬롯 → K-expert router. register-carving 을 specialized expert 로 격리해 main path 는 coherent 유지 (collapse 회피) + register 신호는 dedicated expert 가 담당 (underfit 회피). 완성도 기준 본선 (a_completeness_over_cheap). 설계: M4a router arch (hexa-native) → M4b expert 분리 학습 fire → M4c p7 verify
+- [ ] **M4 MoE-fresh register 분리** ⭐ 본선 (UNIVERSE H_490 DIFFERENTIATION) — 근본 원인 분리 재설계: V3 head_g 슬롯 → K-expert router. register-carving 을 specialized expert 로 격리해 main path 는 coherent 유지 (collapse 회피) + register 신호는 dedicated expert 가 담당 (underfit 회피). 완성도 기준 본선 (a_completeness_over_cheap).
+  - [x] **M4a router arch** — `CORE/DECODER/moe_router.hexa` (7 pub fn — `moe_gate_fwd` · `moe_softmax` · `moe_argmax` · `moe_expert_fwd` · `moe_combine_soft` · `moe_route_fwd` · `moe_router_summary`) · packed-buffer farr 모델 (V3 decoder 와 byte-clean · router=[E·d] experts=[E·V·d]) · 각 expert = head_g 와 동일 V·d linear shape · soft routing (gate-weighted Σ) + top-1 argmax 진단 · `moe_router_smoke.hexa` 12-case (gate fwd / softmax sum=1 / argmax / expert fwd / soft combine / full route_fwd) · 2/2 `hexa parse` OK · ⚠ 실 실행은 M4b runtime (pool-route 가 hexa 를 linux 로 보내 worktree-local 실행 불가, parse-clean 까지가 arch 바)
+  - [ ] **M4b** expert 분리 학습 fire — router/expert backward + register-expert/coherent-expert 분리 학습 (H100, a_fire_autonomous)
+  - [ ] **M4c** p7 verify — collapse 회피 ∧ coherence 둘 다 simple-stack
 - [ ] **M4-probe model-merge α-sweep** (optional baseline probe · UNIVERSE H_493 SYMBIOGENESIS) — collapse-avoid + collapse ckpt weight 보간 `W=α·A+(1-α)·B` · α-sweep · cheap baseline 신호용으로만 (본선 아님). 두 결함작 blend = least-bad midpoint 한계 인지 (`a_completeness_over_cheap` model-merge-of-failures dont)
 
 ## M1 hook 지점 (M0 인계 노트)
