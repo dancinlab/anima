@@ -34,7 +34,7 @@ fn ipow(x: float, n: int) -> float {
 }
 
 // sqrt newton
-fn fsqrt(x: float) -> float {
+fn my_sqrt(x: float) -> float {
     if x <= 0.0 { return 0.0 }
     let mut g = x / 2.0
     let mut k = 0
@@ -63,7 +63,7 @@ fn moments(hist: int, n_bins: int, total: float) {
         m4 = m4 + p * d * d * d * d
         j = j + 1
     }
-    let sd = fsqrt(m2)
+    let sd = my_sqrt(m2)
     let skew = if sd > 0.0 { m3 / (sd * sd * sd) } else { 0.0 }
     let kurt = if m2 > 0.0 { (m4 / (m2 * m2)) - 3.0 } else { 0.0 }
     println("  mean=" + str(mu) + " var=" + str(m2) + " skew=" + str(skew) + " excess_kurt=" + str(kurt))
