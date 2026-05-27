@@ -1,0 +1,37 @@
+{
+  "hypothesis": "H_343",
+  "slug": "basin-phi-n6-recheck",
+  "date": "2026-05-27",
+  "title": "basin<->integration coupling SIGN-FLIPS from n=4 to n=6 (scale-locked)",
+  "question": "Does the H_341 basin<->big-Phi coupling (n=4: Pearson +0.776) survive at n=6?",
+  "engine": "pure hexa-lang. n=6 ECA (64 states): basin via 60-step settle. Integration PROXY = n=6 mean cycle length (H_333, since exact IIT4 big-Phi is n<=5-only in hexa env). Pearson over 4 rules.",
+  "runtime": "$0 pool ubu-2 · deterministic",
+  "n6_measurements": [
+    {"rule": 110, "max_basin": 10, "n_attractor_states": 19, "cyclelen_proxy": 7.75},
+    {"rule": 30,  "max_basin": 62, "n_attractor_states": 3,  "cyclelen_proxy": 1.00},
+    {"rule": 105, "max_basin": 16, "n_attractor_states": 4,  "cyclelen_proxy": 2.00},
+    {"rule": 150, "max_basin": 16, "n_attractor_states": 4,  "cyclelen_proxy": 1.00}
+  ],
+  "correlations": {
+    "n6_pearson_max_basin_vs_proxy":  -0.501923,
+    "n6_pearson_n_attractor_vs_proxy":  0.991973,
+    "n4_reference_max_basin_vs_bigphi": 0.776,
+    "n4_reference_n_attractor_vs_bigphi": -0.850
+  },
+  "falsifier_eval": {
+    "F343_1_COUPLING_SURVIVES_POSITIVE": "FAIL — Pearson(max_basin, proxy) = -0.502 at n=6, SIGN-FLIPPED from +0.776 at n=4",
+    "F343_2_NATTR_SIGN_CONSISTENT": "FAIL — Pearson(n_attr, proxy) = +0.992 at n=6, SIGN-FLIPPED from -0.850 at n=4",
+    "F343_3_PROXY_CONFOUND_DISCLOSED": "HONEST-NOTE — n=6 uses cycle-length proxy, n=4 used exact big-Phi; the sign-flip could be (a) a genuine scale effect OR (b) an artifact of proxy != exact-Phi. The two are NOT separated here.",
+    "F343_4_DETERMINISTIC": "PASS"
+  },
+  "verdict_derived": "🔴 FALSIFIED — the basin<->integration coupling does NOT survive scale-up: both Pearson correlations SIGN-FLIP from n=4 to n=6 (max_basin: +0.776 -> -0.502; n_attr: -0.850 -> +0.992). At n=6 rule30 has a giant absorbing basin (62 of 64 states) but the SHORTEST cycle (1.0), while rule110 has a small basin (10) but the longest cycle (7.75) — exactly inverted from n=4 where small-basin/long-cycle co-occurred in the dominant rule. This confirms H_341's honest-limit L2 (coupling may be scale-bounded). HONEST CAVEAT: n=6 uses a cycle-length integration proxy (exact IIT4 Phi is n<=5-only here), so the sign-flip cannot be fully attributed to scale vs proxy-mismatch. Either way, the n=4 positive coupling is NOT a universal law.",
+  "verdict": "🔴 FALSIFIED (with proxy-confound caveat)",
+  "structural_vs_dynamical": "Cross-family (basin DYNAMICAL x integration). The discovery is that basin-cycle structure REORGANIZES qualitatively from n=4 to n=6: cycle-dominance and basin-dominance, aligned at n=4 (rule110 top in both), DECOUPLE at n=6 (rule30 basin-dominant 62/64 but cycle-trivial; rule110 cycle-dominant but basin-small).",
+  "honest_limits": [
+    "PROXY confound (primary): n=6 cycle-length is not exact big-Phi; a proxy-free test needs n=5 exact Phi (32 states, tractable per H_278/H_321) — the decisive follow-up",
+    "4 rules / Pearson n=4 fragile",
+    "n=6 only; n=5 (odd, exact Phi) would isolate scale from proxy",
+    "rule30's giant basin (62/64) at n=6 is itself a finding (single dominant basin) worth separate study"
+  ],
+  "discovery_note": "H_341 basin↔Φ coupling은 scale-invariant 아님 — n=4→n=6 부호 역전. n=6에서 cycle-dominance(rule110)와 basin-dominance(rule30, 62/64) 분리. 단 proxy confound(cyclelen≠Φ) 미분리 — n=5 exact Φ가 결정적 후속. H_341 over-generalization 정직 falsify."
+}
