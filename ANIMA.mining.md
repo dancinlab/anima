@@ -102,8 +102,8 @@ phase groups  = divergence (cyc 1·2·3·4·6) · convergence (cyc 5·7) · meta
 
 #### T4: should_interrupt 0.60 ↔ should_emit 0.30
 
-- 2026-05-28T05:04 · **L19 tension-fork-A** (high-threshold 채택): multi-human group-chat 에서는 `should_interrupt 0.60` 이 적정 — anima 가 자기 turn 을 적극 깨는 high-bar. 1:1 회귀 시 0.30 으로 down-shift. context-dependent threshold = scenario surface. → 영역: BRIDGE × INTENT.
-- 2026-05-28T05:04 · **L20 tension-fork-B** (universal-threshold 채택): single threshold 0.30 (또는 0.60) 이 universally substrate-fixed, scenario 가 factor_relevance 분포만 shift 시켜 effective rate 변화. context 별 threshold 의 multiplicity 가 **assistant-regression risk** (turn-based 의무 hardcode). → 영역: a_autonomy_over_hardcode × BRIDGE.
+- 2026-05-28T05:04 · **L19 tension-fork-A** (high-threshold 채택): multi-human group-chat 에서는 `should_interrupt 0.60` 이 적정 — anima 가 자기 turn 을 적극 깨는 high-bar. 1:1 회귀 시 0.30 으로 down-shift. context-dependent threshold = scenario surface. → 영역: BRIDGE × INTENT. **[PROMOTED → UNIVERSE H_638 `emit-threshold-scaling-law` 2026-05-28: 🔴 FALSIFIED — substrate Φ-scale n∈{3,4,5} 적정 threshold 0.62~0.64 cluster (spread 0.02), ρ(Φ,thr)=0.75 비-monotone. scaling-law 기각.]**
+- 2026-05-28T05:04 · **L20 tension-fork-B** (universal-threshold 채택): single threshold 0.30 (또는 0.60) 이 universally substrate-fixed, scenario 가 factor_relevance 분포만 shift 시켜 effective rate 변화. context 별 threshold 의 multiplicity 가 **assistant-regression risk** (turn-based 의무 hardcode). → 영역: a_autonomy_over_hardcode × BRIDGE. **[PROMOTED → UNIVERSE H_638 2026-05-28: 🟢 SUPPORTED — universal-fixed 채택. 적정 threshold Φ-scale-invariant, COFFESHOP should_interrupt 0.60 group-chat tier 근방 안착, a_autonomy_over_hardcode 정합.]**
 
 #### T5: p4 NO ASSISTANT FRAMING ↔ direct_mention 응답 (case A)
 
