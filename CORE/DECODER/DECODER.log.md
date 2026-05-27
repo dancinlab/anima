@@ -2,6 +2,19 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T09:40:00Z — M4b-diff(a) top-1 hard routing ✅ PASS (더블바인드 탈출 toy 검증)
+
+- [x] 사용자 a 선택 — top-k hard routing 으로 분화 강제
+- [x] `moe_router.hexa` `moe_route_top1_fwd` 추가 — gate=softmax · top=argmax · logits=gate[top]·expert_top (승자만 계산)
+- [x] `moe_router_bwd.hexa` `moe_route_top1_bwd` 추가 — 승자 expert + gate[top] 만 gradient (→ 특화)
+- [x] `moe_toy_train_hard.hexa` 작성 (soft toy 보존 · 비대칭 init · 동일 2-register task)
+- [x] ubu-2 실 run **verdict ✅ PASS** — init CE 1.389 → final 0.00388 (358× ↓) · gate(A)=[0.970,0.030]→e0 · gate(B)=[0.030,0.970]→e1 · topA=0≠topB=1
+- [x] 핵심 — soft(🟠 PARTIAL gate 50/50 dense-collapse) → hard top-1(✅ PASS gate 97/3 분화). 더블바인드 탈출 메커니즘 (register↔coherent expert 분리) toy 작동 확인 (H_490 DIFFERENTIATION escape signal)
+- [x] hexa parse 3/3 OK · ubu-2 hexa run 성공
+- [x] DECODER.md M4b-diff(a) [x] ✅ PASS
+- [ ] M4b-fire-scale — 3B (toy PASS ✅ 근거 · Python/Qwen 하니스 MoE 이식 또는 hexa Qwen-BPE port) — 다음
+- [ ] M4c p7 verify
+
 ## 2026-05-27T09:20:00Z — M4b-fire-toy 실 run + self-contained 수정 → 🟠 PARTIAL verdict
 
 - [x] ubu-2 에서 moe_toy_train 실 run (hexa run · 파일 stdin copy + abs-path → /tmp 패치)
