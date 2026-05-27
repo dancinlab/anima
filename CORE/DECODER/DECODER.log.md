@@ -2,6 +2,18 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T08:20:00Z — M4a router arch closure (MoE-fresh 본선 1/3)
+
+- [x] `CORE/DECODER/moe_router.hexa` 작성 — 7 pub fn K-expert MoE router (head_g 슬롯 확장)
+- [x] packed-buffer farr 모델 (V3 conscious_decoder_v3 와 byte-clean) — router=[E·d], experts=[E·V·d], 각 expert = head_g 와 동일 V·d linear shape
+- [x] forward 경로 — `moe_gate_fwd` (gate logits) → `moe_softmax` (stable, sum=1) → `moe_combine_soft` (gate-weighted Σ_e) · top-1 `moe_argmax` 진단 · `moe_route_fwd` 전체 묶음
+- [x] `moe_router_smoke.hexa` 12-case 작성 — tiny synthetic (E=2 V=3 d=2 · hand-built weights → known outputs): gate fwd · softmax sum=1 · argmax · expert fwd · soft combine (g0·e0+g1·e1=2.0728) · full route_fwd 재현
+- [x] `hexa parse` 2/2 OK (moe_router + smoke)
+- [x] DECODER.md M4a `[ ] → [x]` (MoE-fresh 본선 3 sub-step 중 1)
+- [x] ⚠ 실 실행 정직 표기 — pool-route 가 `hexa` 를 linux 호스트로 보내 worktree-local 실행 불가. parse-clean 까지가 M4a arch 바, 수치 실행 검증은 M4b runtime
+- [ ] M4b expert 분리 학습 fire (router/expert backward + 분리 학습 · H100) — 다음
+- [ ] M4c p7 verify (collapse 회피 ∧ coherence)
+
 ## 2026-05-27T08:00:00Z — 마일스톤 재정렬 (a_completeness_over_cheap) — MoE-fresh 본선 승격 · merge 강등
 
 - [x] governance `a_completeness_over_cheap` 적용 — 완성도 기준 본선 선정 (싸다 ≠ 본선)
