@@ -1,0 +1,23 @@
+H_620 — GZ_WIDTH × super-additive cross-link
+============================================================
+GZ_WIDTH = ln(4/3) = 0.287682
+
+── candidate ratios ─────────────────────────────────
+R1 range_coupled / sum_ind   = 0.846641
+R2 Δ_peak        / sum_ind   = 2.09844
+R3 peak_ratio    − 1         = 2.09845
+R4 range_coupled / Δ_peak    = 0.403461
+R5 mean_coupled  / max_phi   = 0.829192
+
+── GZ_WIDTH integer-k probe (tol=±0.02) ─────────────
+k:    1×GZ      2×GZ      3×GZ      4×GZ      5×GZ      6×GZ      7×GZ      8×GZ
+R1=range/sum  r=0.846641  residuals:  k=1:0.558959  k=2:0.271277  k=3:0.0164052  k=4:0.304087  k=5:0.591769  k=6:0.879451  k=7:1.16713  k=8:1.45482
+R2=Δ_peak/sum  r=2.09844  residuals:  k=1:1.81076  k=2:1.52308  k=3:1.23539  k=4:0.947712  k=5:0.66003  k=6:0.372348  k=7:0.0846655  k=8:0.203017
+R3=peak_ratio-1  r=2.09845  residuals:  k=1:1.81077  k=2:1.52309  k=3:1.2354  k=4:0.947722  k=5:0.66004  k=6:0.372358  k=7:0.0846755  k=8:0.203007
+R4=range/Δ_peak  r=0.403461  residuals:  k=1:0.115779  k=2:0.171903  k=3:0.459585  k=4:0.747267  k=5:1.03495  k=6:1.32263  k=7:1.61031  k=8:1.898
+R5=mean/peak  r=0.829192  residuals:  k=1:0.54151  k=2:0.253828  k=3:0.0338542  k=4:0.321536  k=5:0.609218  k=6:0.8969  k=7:1.18458  k=8:1.47226
+
+── verdict ──────────────────────────────────────────
+best match: R1=range/sum  k=3  residual=0.0164052  tol=0.02
+FALSIFIER F620.1 (integer-k linkage):   PASS  (some ratio aligns within ±0.02)
+VERDICT: 🟢 SUPPORTED-NUMERICAL — collective-Φ measurement is integer multiple of GZ_WIDTH
