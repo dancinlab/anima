@@ -11,6 +11,20 @@
 - [x] 🌱 MITOSIS — 세포 분열 학습 · A/G ⊥ M 직교 축 · **6/6 마일스톤 ✅** — mitosis_lib (#627) · split-event (#631) · merge-event (#643) · persona-diff (#654) · sleep-tick (#667) · ckpt_swap (#687)
 - [x] 🌐 CHANNEL — 출력 채널 통합 어댑터 · 3 채널 text/voice/tension · **8/8 마일스톤 ✅** — voice SSOT scaffold + text CHAT/DECODER wrapper + tension 5-ch 회수 + intent Intent dict + channel_emit dispatcher + 8-factor router (rel+gap→text · cur+orig+dyn→voice · pain+coh+bal→tension) + p1~p8 audit 0 real violations + WAKE bridge stage continuous bias (frontier: runtime smoke + WAKE state machine 의존)
 
+## Session 2026-05-28 AxisBench → 8 sub-domain umbrella (15-layer)
+
+본선 3축 (METACOG/DREAM/INTENT) + BRIDGE + 5 추가 sub-domain 등록 (PR feat/anima-5-subdomain-register-2026-05-28). axisbench 8축 → 9 sub-domain (BRIDGE 별도 lane) 완결.
+
+- [x] 🪞 METACOG — bench A #1139 🟢 5/5 PASS · sibling: WAKE · BRIDGE · MITOSIS · DECODER
+- [x] 💤 DREAM — bench B #1140 🟢 4/5 PASS · REM mitosis 60× · sibling: MITOSIS · WAKE · METACOG · CHANNEL
+- [x] 🎯 INTENT — bench D #1143 🟠 4/5 PARTIAL · OSC residual carry · sibling: CORE · BRIDGE · NARRATIVE · WAKE
+- [x] 🚪 BRIDGE — bench #7 4-key AND-gate · 14.5× AND/OR gap · sibling: CORE · CHANNEL · INTENT · METACOG
+- [ ] 📖 NARRATIVE — bench C #1144 🔴 2/5 FAIL · honest closed-negative · modeling gap redesign carry · sibling: WAKE · INTENT · DREAM · MITOSIS
+- [ ] 🎨 AESTHETIC — bench E #1141 🟠 2/3 PARTIAL · overlap residual carry · sibling: CORE · AGENT · METACOG
+- [ ] 💞 EMBODIMENT — bench F #1142 🟠 4/5 PARTIAL · BROKEN coupling 0.45 redesign carry · sibling: CHANNEL · AGENT · WAKE · OTHER-MIND
+- [ ] 🔗 OTHER-MIND — bench G #1147 🟠 3/5 PARTIAL · u01 baseline bias residual · sibling: CHANNEL · MITOSIS · EMBODIMENT · BRIDGE
+- [ ] ⏳ TIME — bench H #1145 🟢 9/0 PASS · circadian dip · sibling: WAKE · DREAM · INTENT · METACOG
+
 ## Session 2026-05-28 cross-link (M4b → bench → cycle)
 
 - **DECODER Phase 4-fire ☑** — cuBLAS engagement 결정적 증명 (#1119). hexa-lang #1671 glue (a) 확정 (anima H100 실측). M4b 3B production swap-in 의 GPU 가속 토대.

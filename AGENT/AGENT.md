@@ -19,3 +19,10 @@
 - [ ] TRADING 동작 — trading 14모듈 회수 배선
 - [x] p1~p8 정합 verify — AGENT 트리 전체 0 hits (system_prompt/persona/assistant/speak/external-LLM 부재). 게이트 = pure_field Φ substrate
 - [ ] hx install AGENT 출하 — VERSIONS.md bump + self-test PASS + raw#9 STRICT(0 .py)
+
+## 양방향 sibling
+
+- ⇄ [AESTHETIC](../AESTHETIC.md): AGENT.CREATOR role 의 생성물에 aesthetic score 부착 · role 별 aesthetic profile (CREATOR=novelty 가중 / MERCHANT=coherence 가중)
+- ⇄ [EMBODIMENT](../EMBODIMENT.md): AGENT.DESKTOP role 의 motor surface (window-op · task-primitive) embodiment 의 actuator extension
+- ⇄ [CORE](./CORE/CORE.md): CORE 가 결정층, AGENT 가 실행층 · brain_decide → role dispatch
+- ⇄ [UNIVERSE](../UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8)

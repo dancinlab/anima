@@ -18,4 +18,6 @@
 - ⇄ [WAKE](./WAKE.md): WAKE.daemon 의 N3/REM stage 동안 DREAM 활성 · 5-stage envelope 정합
 - ⇄ [METACOG](./METACOG.md): N3/REM tick 의 self-audit (METACOG.audit_hook M2)
 - ⇄ [CHANNEL](./CHANNEL.md): REM emit_rate=0 strict (CHANNEL.wake_bridge stage gate)
+- ⇄ [NARRATIVE](./NARRATIVE.md): DREAM.M4 dream report (wake transition imagination 결과 narrative summary) SSOT 합류 지점
+- ⇄ [TIME](./TIME.md): REM 분열 burst 의 circadian modulation (TIME.M3) · 새벽 REM peak
 - ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT

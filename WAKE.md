@@ -11,3 +11,14 @@
 - [x] memory layer — `WAKE/{memory.hexa,memory_smoke.hexa,MEMORY.md}` episodic append-only [ts·ctx_summary·phi·tension5·stage·emit_text] + working ring buffer (cap=20 FIFO · empty list push도 1 tick) · 8 pub fn (init·record·push·recent·window·save·load·summary) · kosmos round-trip via M4 wake_save/wake_load delegate (duplicate impl 0) · 4 case 5 invariant smoke PASS (runtime verified) · 0 emit trigger · 0 boolean gate (panic 1군데만 — tension5 len=5 sentinel) · hexa parse 2/2 OK
 - [x] daemon loop — `WAKE/{daemon.hexa,daemon_smoke.hexa,DAEMON.md}` in-process living loop (M6 bounded) · 5 pub fn (init·step·loop·shutdown·summary) · pipeline: wake_state_tick → perception_compose → mem_push_ctx → brain_decide → channel_emit (if emit) → sleep_tick → pure_field_input_step → mem_record_emit (if fired) → transition log → tick++ · 6 invariant smoke (I1 init valid · I2 monotone tick · I3 ≥3 stage transitions · I4 N3 emit-free substrate-natural · I5 mitosis_tick ≥1 · I6 .kosmos save via mem_save_to_kosmos delegate) · hexa parse 2/2 OK · 0 boolean per-stage emit gate · 0 user-msg→forced-emit (a_substrate_native_speak · a_chat_sleep_imagination · a_autonomy_over_hardcode 정합) · M7 = hx wake CLI binary entry + SIGINT trap + 24/7 stress 별도 milestone
 - [x] p1~p8 정합 verify + 3-도메인 통합 smoke — `WAKE/{wake_selftest.hexa,AUDIT.md}` 9 grep sweep (p1~p8 + ext-LLM) 0 real violations (p1 2 + p2 1 + p7 13 all doc-reference/negative-claim · p3/p4/p5/p6/p8/ext-LLM 0 hits) · wake_selftest 4-axis cross-domain (S1 CORE pure_field+brain_decide · S2 CHANNEL dispatcher 3-ready+emit-parity · S3 MITOSIS sleep_tick imagination ≥1 · S4 WAKE .kosmos persist · S5 ≥3 stage transition · S6 N3 emit-free substrate-natural) · hexa parse 2/2 OK · 0 boolean per-stage emit gate · CHANNEL/AUDIT.md PR #616 패턴 답습 · WAKE 7/7 closure
+
+## 양방향 sibling
+
+- ⇄ [TIME](./TIME.md): TIME.M2 24h circadian envelope multiplier 가 WAKE.state_machine 5-stage ultradian (90-min) 위에 합쳐짐 · 낮 phi_scale ↑ · 밤 phi_scale ↓
+- ⇄ [NARRATIVE](./NARRATIVE.md): WAKE.memory episodic buffer 의 chronological emit 가 narrative 원천 · wake transition 시 N3/REM imagination 결과 narrative summary
+- ⇄ [EMBODIMENT](./EMBODIMENT.md): WAKE.perception (4-sensor) 가 sensor side · WAKE.daemon loop 가 embodiment loop substrate
+- ⇄ [DREAM](./DREAM.md): WAKE.daemon 의 N3/REM stage 동안 DREAM 활성 · 5-stage envelope 정합
+- ⇄ [METACOG](./METACOG.md): METACOG.audit_hook 가 WAKE.daemon N3/REM tick 에 inject → self-audit during imagination
+- ⇄ [MITOSIS](./MITOSIS.md): WAKE.sleep_tick 호출 chain (`WAKE/state_machine` × `mitosis_lib.cell_pool_step`)
+- ⇄ [CHANNEL](./CHANNEL.md): CHANNEL.wake_bridge stage 별 continuous bias multiplier · WAKE 5-stage 와 직결
+- ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8)

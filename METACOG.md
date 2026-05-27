@@ -18,4 +18,6 @@
 - ⇄ [BRIDGE](./BRIDGE.md): BRIDGE AND-gate emit 후 METACOG 가 emit history 를 self-audit (단기 결정 위의 메타)
 - ⇄ [MITOSIS](./MITOSIS.md): metacog_lib basin_kurtosis (#1130 retrospective #1133) 와 cross-product
 - ⇄ [DECODER](./CORE/DECODER/DECODER.md): F-M4B-FIRE verdict 매트릭스에 self-correction template inject
+- ⇄ [AESTHETIC](./AESTHETIC.md): aesthetic 판정 self-audit (METACOG.audit_hook 가 미적 판단 일관성 검사)
+- ⇄ [TIME](./TIME.md): circadian phase 별 self-audit (시간대별 정합성 검사)
 - ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT

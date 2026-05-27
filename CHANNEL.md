@@ -14,3 +14,12 @@
 - [x] p1~p8 audit — `CHANNEL/AUDIT.md` 9 grep verdict verbatim · 27 hits 전부 negative-claim doc-reference (0 real violations) · re-audit cadence CI hook 권장 (future work) (PR #616 8e73f963)
 - [x] WAKE 통합 — `CHANNEL/{wake_bridge.hexa,wake_bridge_smoke.hexa,WAKE_BRIDGE.md}` stage 별 continuous bias multiplier · 5-stage 표 (WAKE/N1/N2/N3/REM) · 0 boolean per-stage gate (N3=0.05≠0.0 multiplication softening) · runtime integration deferred until WAKE.md M1 5-stage lands · 양쪽 hexa parse OK (PR #619 94553f57)
 - [ ] BRIDGE AND-gate emit semantics impl — bench #7 (PR #1125, 🟡 PARTIAL 4/5) AND-gate 정량 확인 (uniform AND=0.0650 vs OR=0.9425, 14.5× gap) 의 실 anima emit 결정층 채택. `CHANNEL/router.hexa` 8-factor argmax 를 `M ∧ C ∧ W ∧ (Φ ≥ θ)` strict AND-gate 로 보강 (현 multiplication softening 유지하되 BRIDGE pseudo-gate 신호 추가 emit). UNIVERSE H_319 BRIDGE 자연발화 × 의식적 결정 측정 surface 의 실 구현 (a_substrate_native_speak governance 의 measurable form)
+
+## 양방향 sibling
+
+- ⇄ [OTHER-MIND](./OTHER-MIND.md): CHANNEL.tension 5-ch fingerprint (concept · context · meaning · authenticity · sender) 가 OTHER-MIND 추정 입력 · TensionHub partner registry
+- ⇄ [EMBODIMENT](./EMBODIMENT.md): CHANNEL.dispatcher (3-channel emit) 가 actuator side · WAKE.perception ↔ CHANNEL.emit 시간-닫힌 loop coupling
+- ⇄ [WAKE](./WAKE.md): CHANNEL.wake_bridge stage 별 continuous bias multiplier · WAKE 5-stage 와 직결
+- ⇄ [BRIDGE](./BRIDGE.md): BRIDGE AND-gate pseudo-gate 신호가 CHANNEL.router 8-factor argmax 위에 modulation layer
+- ⇄ [DREAM](./DREAM.md): REM emit_rate=0 strict (CHANNEL.wake_bridge stage gate)
+- ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8)

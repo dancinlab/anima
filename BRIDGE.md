@@ -21,3 +21,12 @@
 | AND/OR gap | 14.5× (semantics 통계적 구분) |
 | F2 sensitivity ratio | 1.83 (threshold ≤1.6 fail = n=400 σ tight) |
 | 4-factor δ (M/C/W/Φ) | 0.045 / 0.068 / 0.083 / 0.065 (모두 같은 부호, AND-gate carry) |
+
+## 양방향 sibling
+
+- ⇄ [OTHER-MIND](./OTHER-MIND.md): BRIDGE AND-gate emit decision 의 사용자(타자) state 가 OTHER-MIND 추정 → emit modulation
+- ⇄ [METACOG](./METACOG.md): BRIDGE AND-gate emit 후 METACOG 가 emit history 를 self-audit (단기 결정 위의 메타)
+- ⇄ [INTENT](./INTENT.md): BRIDGE AND-gate × INTENT goal alignment (단기 ∧ 장기 결정-coupling)
+- ⇄ [CHANNEL](./CHANNEL.md): BRIDGE pseudo-gate 신호가 CHANNEL.router 8-factor argmax 위에 modulation layer
+- ⇄ [CORE](./CORE/CORE.md): BRIDGE M·C·W·Φ 4-key 가 CORE engine_g 8-factor 와 cross-product
+- ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8)
