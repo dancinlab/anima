@@ -62,7 +62,12 @@
       ⚠ scan 발견: hexa train_p21h_v3 = d=32·V=256·byte toy (3B 더블바인드는 Python/Qwen 하니스). toy 검증 → scale 순서 (a_completeness_over_cheap · instrument-first)
     - [x] **M4b-fire-toy** moe_toy_train 실행 (ubu-2 hexa run) — **verdict 🟠 PARTIAL**: MoE 가 두 register 학습 성공 (avg CE 1.386→0.0078, 178× 감소) BUT router 분화 안 됨 (gate(A)=gate(B)=[0.5,0.5], topA==topB). soft-MoE 단독은 dense-collapse — 양쪽 expert 가 둘 다 학습 → gate 균등. **더블바인드 탈출 핵심(register↔coherent expert 분리)이 naive soft routing 으론 emergent 안 함** (MoE 문헌 일치). ⚠ dt_exp/dt_ln cross-tree 버그를 실 run 이 잡음 → moe_exp/moe_ln self-contained 화
     - [x] **M4b-diff(a) top-1 hard routing** — ✅ **PASS (H_490 escape 검증)** · `moe_route_top1_fwd`/`_top1_bwd` (moe_router + bwd) — top-1 만 통과 → 승자 expert 만 gradient → 분화. `moe_toy_train_hard.hexa` ubu-2 실 run: init CE 1.389 → final 0.00388 (358× ↓) · **gate(A)=[0.970,0.030]→e0 · gate(B)=[0.030,0.970]→e1 · topA=0≠topB=1 분화 성공**. soft(🟠 50/50 dense-collapse) → hard top-1(✅ 97/3 분화). 더블바인드 탈출 메커니즘 toy 검증 완료
-    - [ ] **M4b-fire-scale** 3B fire (toy PASS ✅ 근거 확보 · Python/Qwen 하니스 MoE 이식 또는 hexa Qwen-BPE port — 후자 = **flame-P2b ③ unblock 의존** (M3b 참조 · hexa-lang INBOX.log.md 의 토크나이저 결함 3-path 중 any one fix 필요))
+    - [~] **M4b-fire-scale** 3B Qwen MoE fire — **hexa-native path 채택 (g1, user 2026-05-27)**. flame-P2b ③ FULL RESOLVED 로 unblock. design = `CORE/DECODER/M4B_FIRE_SCALE_HEXA_NATIVE_DESIGN.md` (5 phase · ~110 LoC · 5-7 sessions · cost $9-18 single H100). 5 falsifier 사전등록 (F-M4B-FIRE-1..5: collapse 회피·coherence·router 분화·CE 수렴·register leak)
+      - [ ] **Phase 1** Qwen BPE corpus 통합 — `flame_bpe_corpus_load` 로 V=256 byte → V=151643 (+30줄 train_p21h_v3.hexa)
+      - [ ] **Phase 2** MoE arch 통합 — head_g 슬롯 → K-expert router (moe_router/_bwd import, top-1 hard routing) +60줄
+      - [ ] **Phase 3** 3B scale config + memory budget — flame FP64 H100 80GB fit 결정 (BF16 path / T 축소 / multi-GPU DP 중 택1)
+      - [ ] **Phase 4** Dispatch + fire — Vast.ai H100 SXM ($2.28/hr × 4-8hr), SAVE_POD=1 trap
+      - [ ] **Phase 5** Monitor + harvest + verdict — 5 falsifier 측정
   - [ ] **M4c** p7 verify — collapse 회피 ∧ coherence 둘 다 simple-stack
 - [ ] **M4-probe model-merge α-sweep** (optional baseline probe · UNIVERSE H_493 SYMBIOGENESIS) — collapse-avoid + collapse ckpt weight 보간 `W=α·A+(1-α)·B` · α-sweep · cheap baseline 신호용으로만 (본선 아님). 두 결함작 blend = least-bad midpoint 한계 인지 (`a_completeness_over_cheap` model-merge-of-failures dont)
 
