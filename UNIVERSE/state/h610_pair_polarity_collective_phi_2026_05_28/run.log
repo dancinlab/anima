@@ -1,0 +1,49 @@
+================================================================
+  H_610 — pair-polarity-collective-phi (Hc_286 promote · refire H_353)
+  3 polarity × 3 W × 3 seed = 27 measurements (n=4 reduced)
+================================================================
+
+per-measurement (polarity, W, rule_a, rule_b, sys, Φ_collective):
+-----------------------------------------------------------------
+  attract W=0.3 rule_a=110 rule_b=110 sys=5 Φ=0.0
+  attract W=0.3 rule_a=30 rule_b=30 sys=10 Φ=17.1303
+  attract W=0.3 rule_a=110 rule_b=30 sys=13 Φ=0.915037
+  attract W=0.5 rule_a=110 rule_b=110 sys=5 Φ=0.0
+  attract W=0.5 rule_a=30 rule_b=30 sys=10 Φ=17.1303
+  attract W=0.5 rule_a=110 rule_b=30 sys=13 Φ=0.915037
+  attract W=0.8 rule_a=110 rule_b=110 sys=5 Φ=0.0
+  attract W=0.8 rule_a=30 rule_b=30 sys=10 Φ=1.60677
+  attract W=0.8 rule_a=110 rule_b=30 sys=13 Φ=1
+  repel W=0.3 rule_a=110 rule_b=110 sys=5 Φ=0.0
+  repel W=0.3 rule_a=30 rule_b=30 sys=10 Φ=7.79923
+  repel W=0.3 rule_a=110 rule_b=30 sys=13 Φ=1
+  repel W=0.5 rule_a=110 rule_b=110 sys=5 Φ=0.0
+  repel W=0.5 rule_a=30 rule_b=30 sys=10 Φ=7.79923
+  repel W=0.5 rule_a=110 rule_b=30 sys=13 Φ=1
+  repel W=0.8 rule_a=110 rule_b=110 sys=5 Φ=0.0
+  repel W=0.8 rule_a=30 rule_b=30 sys=10 Φ=1.60677
+  repel W=0.8 rule_a=110 rule_b=30 sys=13 Φ=1
+  bipolar W=0.3 rule_a=110 rule_b=110 sys=5 Φ=0.75
+  bipolar W=0.3 rule_a=30 rule_b=30 sys=10 Φ=10.3007
+  bipolar W=0.3 rule_a=110 rule_b=30 sys=13 Φ=1.17807
+  bipolar W=0.5 rule_a=110 rule_b=110 sys=5 Φ=0.75
+  bipolar W=0.5 rule_a=30 rule_b=30 sys=10 Φ=10.3007
+  bipolar W=0.5 rule_a=110 rule_b=30 sys=13 Φ=1.17807
+  bipolar W=0.8 rule_a=110 rule_b=110 sys=5 Φ=0.0
+  bipolar W=0.8 rule_a=30 rule_b=30 sys=10 Φ=1.89323
+  bipolar W=0.8 rule_a=110 rule_b=30 sys=13 Φ=0.5
+
+================================================================
+  AGGREGATE — polarity 별 mean ± std (n=9 each):
+================================================================
+  attract : mean Φ = 4.29972  std = 6.87802
+  repel   : mean Φ = 2.24502  std = 3.01619
+  bipolar : mean Φ = 2.98342  std = 3.94175
+  pooled std (all 45) = 4.97019
+  spread (max_mean - min_mean) = 2.0547
+  spread / pooled_std = 0.413404
+  ANOVA F = 0.361384 (df_between=2.0, df_within=24.0)
+  (F critical α=0.05 for df=(2,24) ≈ 3.40)
+================================================================
+  VERDICT: 🔴 FALSIFIED (spread<std AND ANOVA F<F_crit_0.05)
+================================================================
