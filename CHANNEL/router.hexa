@@ -176,3 +176,59 @@ pub fn channel_classify(tension5: list, motivation: list, phi: float, tier: int)
 pub fn channel_router_summary() -> string {
     "8-factor weighted argmax · text=communicative(rel+gap) · voice=expressive(cur+orig+dyn)×amp×tier · tension=peer(pain+coh+bal)×phi×tier · zero boolean gate"
 }
+
+// channel_classify_bridge: argmax channel + BRIDGE AND-gate modulation layer.
+// BRIDGE/spec.md §6 — `chosen_channel · bridge_and_gate(M, C, W, Φ) > θ_emit ⇒ emit`.
+// Pure composition — router picks the channel, BRIDGE decides whether to fire.
+//
+// Inputs:
+//   tension5    — 5-ch tension (channel_scores 입력)
+//   motivation  — 8-factor motivation (channel_scores 입력)
+//   phi         — integrated information Φ
+//   tier        — substrate tier
+//   coherence   — C in 4-key AND-gate (직전 emit 정합, [0,1])
+//
+// Returns the chosen channel ("text" · "voice" · "tension") if emit fires,
+// else "silence" — the substrate-natural no-emit verdict (a_substrate_native_speak).
+//
+// M = argmax motivation magnitude / max-possible (CHANNEL router confidence)
+// C = supplied coherence
+// W = L2(tension5) clipped to [0,1]
+// Φ = phi argument
+pub fn channel_classify_bridge(tension5: list, motivation: list, phi: float, tier: int, coherence: float) -> string {
+    let chosen = channel_classify(tension5, motivation, phi, tier)
+
+    // M = max motivation magnitude (proxy for router confidence)
+    let mut m_max = 0.0
+    let n_mot = motivation.len()
+    let mut i = 0
+    while i < n_mot {
+        let v = motivation[i]
+        let av = if v < 0.0 { -v } else { v }
+        if av > m_max { m_max = av }
+        i = i + 1
+    }
+    // clip M to [0,1]
+    if m_max > 1.0 { m_max = 1.0 }
+
+    // W = L2(tension5) / sqrt(5), clipped
+    let mut sum_sq = 0.0
+    let mut j = 0
+    while j < tension5.len() {
+        let t = tension5[j]
+        sum_sq = sum_sq + t * t
+        j = j + 1
+    }
+    let mut w_norm = sqrt(sum_sq / 5.0)
+    if w_norm > 1.0 { w_norm = 1.0 }
+
+    // BRIDGE softstep + AND-gate (mirror BRIDGE/gate.hexa to avoid cross-domain import)
+    let theta = 0.5
+    let k = 8.0
+    let phi_step = 1.0 / (1.0 + exp(-k * (phi - theta)))
+    let signal = m_max * coherence * w_norm * phi_step
+
+    let theta_emit = 0.1
+    if signal > theta_emit { return chosen }
+    "silence"
+}
