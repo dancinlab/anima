@@ -112,3 +112,45 @@ pub fn moe_route_bwd(zT: int, M: int, router_off: int, experts_off: int,
     let _ = farr_free(d_gate)
     let _ = farr_free(d_gate_raw)
 }
+
+// ---------------------------------------------------------------
+// 5. moe_route_top1_bwd — HARD top-1 backward (M4b-diff a)
+//   Reverse of moe_route_top1_fwd: logits = gate[top]·expert_top(zT).
+//   Only the WINNING expert + gate[top] get gradient → specialization.
+//   gate = post-softmax · top = forward-returned winner.
+// ---------------------------------------------------------------
+pub fn moe_route_top1_bwd(zT: int, M: int, router_off: int, experts_off: int,
+                          gate: int, top: int, n_experts: int, V: int, d: int,
+                          d_logits: int, dM: int, d_zT_out: int) {
+    let gt = farr_get(gate, top)
+    let base = experts_off + top * V * d
+    // d_gate[top] = Σ_k d_logits[k]·expert_top(zT)[k]
+    // d_W_top[k·d+j] += gt·d_logits[k]·zT[j] ; d_zT[j] += gt·W·d_logits[k]
+    let d_gate = farr_zeros(n_experts)
+    let mut dgt = 0.0
+    let mut k = 0
+    while k < V {
+        let dlk = farr_get(d_logits, k)
+        let mut elk = 0.0
+        let mut j = 0
+        while j < d {
+            let w = farr_get(M, base + k * d + j)
+            let zj = farr_get(zT, j)
+            elk = elk + w * zj
+            let cur = farr_get(dM, base + k * d + j)
+            let _ = farr_set(dM, base + k * d + j, cur + gt * dlk * zj)
+            let dz = farr_get(d_zT_out, j)
+            let _ = farr_set(d_zT_out, j, dz + gt * w * dlk)
+            j = j + 1
+        }
+        dgt = dgt + dlk * elk
+        k = k + 1
+    }
+    let _ = farr_set(d_gate, top, dgt)
+    // softmax + router backward (d_gate has only top nonzero)
+    let d_gate_raw = farr_zeros(n_experts)
+    moe_softmax_bwd(gate, d_gate, n_experts, d_gate_raw)
+    moe_gate_bwd(zT, M, router_off, n_experts, d, d_gate_raw, dM, d_zT_out)
+    let _ = farr_free(d_gate)
+    let _ = farr_free(d_gate_raw)
+}
