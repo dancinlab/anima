@@ -1,0 +1,31 @@
+================================================================
+  H_344 — MORPHOGENESIS × Gierer-Meinhardt reaction-diffusion
+  u' = u + dt(Du lap u + u^2/v - u)
+  v' = v + dt(Dv lap v + u^2   - v)
+================================================================
+  N=32 steps=60000 dt=0.01 Du=0.5 T=600.0
+  homogeneous steady state u*=v*=1 (stable to uniform perturbation)
+  seed: cell 16 u += 0.01 (+1% bump), rest at u=v=1
+  SWEEP Dv → ratio rho = Dv/Du ∈ {1,2,4,8}; Du held FIXED
+  rho=1 (Dv=Du) = symmetric control: genuine Turing must stay flat
+----------------------------------------------------------------
+  rho=1.0 (Dv=0.5)   var_u=8.27313e-15   mean_u=0.994154
+  rho=2.0 (Dv=1.0)   var_u=1.2749e-19   mean_u=0.994139
+  rho=4.0 (Dv=2.0)   var_u=4.28943e-30   mean_u=0.994121
+  rho=8.0 (Dv=4.0)   var_u=0.338629   mean_u=0.752179
+----------------------------------------------------------------
+  determinism: var_u(rho=1) run1=8.27313e-15 run2=8.27313e-15  identical=true
+----------------------------------------------------------------
+  FALSIFIER EVALUATION (from MEASURED var_u(rho)):
+  F344.1 SYMMETRIC-STAYS-UNIFORM  var(rho=1) < 0.0001 : true  (var=8.27313e-15)
+  F344.2 ASYMMETRIC-BREAKS-SYM    var(rho=8) > 0.01 : true  (var=0.338629)
+  F344.3 THRESHOLD-EXISTS         rho_c ∈ (1,8)          : true  (rho_c=6.0)
+  F344.4 MONOTONE-IN-RATIO        non-decreasing (tol)   : true
+  F344.5 BOUNDED-FINITE           var finite ∀rho        : true
+  F344.6 DETERMINISTIC            rho=1 rerun identical  : true
+================================================================
+  RESULT: 6 PASS / 0 FAIL out of 6
+  VERDICT: 🟢 SUPPORTED_NUMERICAL  (criteria_met=6/6)
+  measured Turing threshold rho_c (Dv/Du) = 6.0
+================================================================
+  result.json written → /tmp/anima-h344/UNIVERSE/state/h344_morphogenesis_turing_pattern_2026_05_27/result.json
