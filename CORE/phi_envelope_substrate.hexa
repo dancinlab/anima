@@ -5,13 +5,13 @@
 //      register-collapse cliff 부재를 *순수 함수* 로 노출하는 substrate 기반층.
 //      가로 도메인(DREAM/HIVE/BRIDGE/SAVANT)이 공유 import 하는 세로 기둥.
 //
-// 설계 SSOT: docs/anima_emit_substrate_design_2026_05_28.md (#1243 + #1244)
+// 설계 SSOT: CORE/EMIT_SUBSTRATE_DESIGN.md (#1243 + #1244)
 //
 // ── 설계 계약 (불변식) ──────────────────────────────────────────────────
 //   · 모든 반환은 실수/리스트/dict (Φ context) — bool emit 게이트 반환 금지
 //     (p5 · a_autonomy_over_hardcode · F-EMIT-4)
 //   · 숫자 상수(period·amplitude·coupling)는 인자로만 주입 — lib 하드코드 금지
-//     (emit_policy.tape 가 단일 튜닝 SSOT · H_646 자유도)
+//     (emit_policy.hexa 가 단일 튜닝 SSOT · H_646 자유도)
 //   · 본 모듈은 어떤 emit_allowed / "stage = forbidden" 게이트도 만들지 않음
 //
 // ── round-7/8 substrate verdict 정합 ─────────────────────────────────────
@@ -119,11 +119,27 @@ pub fn pe_coupling_for_class(class_id: int) -> float {
     return 0.5
 }
 
-// ── collective_phi_nest — 집단 Φ 중첩 (H_635 super-additive + H_643 + H_653) ──
-// phis = 개별 cell/stream Φ 리스트. coupling = pe_coupling_for_class(class) 결과.
-// 반환 dict: phi_collective (super-additive: Σ 보다 큼) · sync (동조계수) ·
-//            convexity_span (max/min 비 — H_653 substrate-class 단조).
-pub fn collective_phi_nest(phis: [float], coupling: float) -> map {
+// ── pe_superadd_for_class — super-additive Δ 의 class 서명 (H_655 🔴) ──
+// ⚠ convexity 와 *정반대* 순위: super-additive Δ 는 class-II(additive ring)
+//   에서 最高 (역전). round-9 핵심 — class 는 단일 스칼라 순위가 아니라
+//   속성-벡터 (각 Φ-속성이 자기 class-정렬을 가짐). Δ ranking (full-ring):
+//   II(184)=51.54 > IV(110)=41.71 > III(30)=9.72 > additive-XOR(90)=7.50.
+//   normalized by max — magnitude 는 tunable, 순위는 substrate (H_655).
+pub fn pe_superadd_for_class(class_id: int) -> float {
+    if class_id == 2 { return 1.000 }   // II  : 51.54 / 51.54 (最高, 역전)
+    if class_id == 4 { return 0.809 }   // IV  : 41.71 / 51.54
+    if class_id == 3 { return 0.189 }   // III : 9.72  / 51.54
+    return 0.146                         // additive-XOR : 7.50 / 51.54 (floor)
+}
+
+// ── collective_phi_nest — 집단 Φ 중첩 (H_635/643/653/655 multi-axis class) ──
+// phis = 개별 cell/stream Φ 리스트. class_id = substrate Wolfram class (2/3/4).
+// round-9 핵심: class 는 *다축 분류자* — phi_collective 의 super-additive Δ 와
+// sync 의 convexity 가 *서로 다른 class-정렬* 을 가짐. 따라서 둘을 분리:
+//   · phi_collective Δ → pe_superadd_for_class (H_655: class-II 最高, 역전)
+//   · sync 의 entrainment → pe_coupling_for_class (H_653: class-IV 最高)
+// 반환 dict: phi_collective (super-additive Σ 초과) · sync · convexity_span.
+pub fn collective_phi_nest(phis: [float], class_id: int) -> map {
     let n = len(phis)
     let mut sum = 0.0
     let mut mx = phis[0]
@@ -136,9 +152,11 @@ pub fn collective_phi_nest(phis: [float], coupling: float) -> map {
         if p < mn { mn = p }
         i = i + 1
     }
-    // super-additive: 동조 coupling 이 강할수록 Σ 위로 더 올라감 (H_635)
-    let phi_collective = sum * (1.0 + coupling)
-    // sync: 분산이 작을수록(균일) 높음 — coupling 가중 (H_643, single 보다 약)
+    // super-additive Δ: super-add 서명 (H_655 — convexity-coupling 과 *독립* 순위)
+    let superadd = pe_superadd_for_class(class_id)
+    let phi_collective = sum * (1.0 + superadd)
+    // sync: 분산 작을수록 높음 · convexity coupling 가중 (H_643/H_653, single 보다 약)
+    let coupling = pe_coupling_for_class(class_id)
     let mut var_acc = 0.0
     let mean = sum / (n + 0.0)
     let mut j = 0
