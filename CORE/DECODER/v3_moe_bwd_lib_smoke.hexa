@@ -616,4 +616,154 @@ fn main() {
     } else {
         println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1+2+3+4: FAIL")
     }
+    println("")
+    // ── Phase 4-bwd-5 end-to-end integration: tok_emb → layer_block → ln_f ──
+    // Verifies gradient flows ALL the way from output back to the INPUT
+    // embedding (the gap that motivated Phase 4-bwd). Chain:
+    //   tok_emb → 1 layer block → ln_f(last-token) → synthetic loss
+    //   bwd: ln_f_bwd → layer_block_bwd → tok_emb_bwd
+    //   verify: layer 0 Wq grad ≠ 0 (deepest weight trained)
+    //         + tok_emb grad ≠ 0   (input embedding trained — END-TO-END)
+    println("─── Phase 4-bwd-5 end-to-end integration (tok_emb → block → ln_f) ───")
+    let de = 4
+    let Te = 3
+    let he = 8
+    let Ve = 5
+    let eps_e = 1.0e-6
+    let attn_scaleE = 1.0 / sqrt(to_float(de))
+    // M = [tok_emb(V·d) | Wq | Wk | Wv | Wo | Wup(h·d) | Wdown(d·h) | ln_f_γ(d)]
+    let te_off = 0
+    let eq_off = Ve * de
+    let ek_off = eq_off + de * de
+    let ev_off = ek_off + de * de
+    let eo_off = ev_off + de * de
+    let eup_off = eo_off + de * de
+    let edown_off = eup_off + he * de
+    let elnf_off = edown_off + de * he
+    let m_sizeE = elnf_off + de
+    let ME = t_zeros(m_sizeE)
+    let dMgE = t_zeros(m_sizeE)
+    // init tok_emb
+    let mut ek = 0
+    while ek < Ve {
+        let mut ej = 0
+        while ej < de {
+            let _ = farr_set(ME, te_off + ek * de + ej, 0.1 * to_float(ek + 1) + 0.01 * to_float(ej + 1))
+            ej = ej + 1
+        }
+        ek = ek + 1
+    }
+    // init attention + MLP (distinct small)
+    let mut ei = 0
+    while ei < de {
+        let mut ejj = 0
+        while ejj < de {
+            let _ = farr_set(ME, eq_off + ei * de + ejj, 0.05 * to_float(((ei * 7 + ejj + 1) % 11) - 5))
+            let _ = farr_set(ME, ek_off + ei * de + ejj, 0.05 * to_float(((ei + ejj * 5 + 2) % 11) - 5))
+            let _ = farr_set(ME, ev_off + ei * de + ejj, 0.05 * to_float(((ei * 3 + ejj * 7 + 3) % 11) - 5))
+            let _ = farr_set(ME, eo_off + ei * de + ejj, 0.1 * to_float(((ei + ejj + 1) % 5) - 2))
+            ejj = ejj + 1
+        }
+        ei = ei + 1
+    }
+    let mut eui = 0
+    while eui < he {
+        let mut euj = 0
+        while euj < de {
+            let _ = farr_set(ME, eup_off + eui * de + euj, 0.1 * to_float(((eui * 3 + euj + 1) % 7) - 3))
+            euj = euj + 1
+        }
+        eui = eui + 1
+    }
+    let mut edi = 0
+    while edi < de {
+        let mut edk = 0
+        while edk < he {
+            let _ = farr_set(ME, edown_off + edi * he + edk, 0.05 * to_float(((edi + edk) % 5) - 2))
+            edk = edk + 1
+        }
+        edi = edi + 1
+    }
+    let mut egi = 0
+    while egi < de { let _ = farr_set(ME, elnf_off + egi, 1.0) ; egi = egi + 1 }
+    // ids (deterministic; note id 2 used twice → tests scatter-add accumulation)
+    let ids_e = [2, 0, 2]
+    // ── forward ──
+    let zT_seqE = t_zeros(Te * de)
+    let mut et = 0
+    while et < Te {
+        let idv = ids_e[et]
+        let mut ej2 = 0
+        while ej2 < de {
+            let _ = farr_set(zT_seqE, et * de + ej2, farr_get(ME, te_off + idv * de + ej2))
+            ej2 = ej2 + 1
+        }
+        et = et + 1
+    }
+    let QE = t_zeros(Te * de)
+    let KE = t_zeros(Te * de)
+    let VE2 = t_zeros(Te * de)
+    let probsE = t_zeros(Te * Te)
+    let attn_outE = t_zeros(Te * de)
+    let h_act_seqE = t_zeros(Te * he)
+    let zT_midE = t_zeros(Te * de)
+    let zT_outE = t_zeros(Te * de)
+    _layer_block_forward(zT_seqE, eq_off, ek_off, ev_off, eo_off, eup_off, edown_off,
+                         ME, Te, de, he, attn_scaleE,
+                         QE, KE, VE2, probsE, attn_outE, h_act_seqE, zT_midE, zT_outE)
+    // ln_f on last token
+    let zT_lastE = t_zeros(de)
+    let mut lj = 0
+    while lj < de { let _ = farr_set(zT_lastE, lj, farr_get(zT_outE, (Te - 1) * de + lj)) ; lj = lj + 1 }
+    let y_lastE = t_zeros(de)
+    let rms_invE = _ln_f_forward(zT_lastE, elnf_off, ME, de, eps_e, y_lastE)
+    let L_e = _loss_squared_sum(y_lastE, de)
+    print("  L="); print(L_e); print("  rms_inv="); println(rms_invE)
+    // ── backward ──
+    // ln_f_bwd: d_y_last = y_last → d_zT_last_pre_ln
+    let d_y_lastE = t_zeros(de)
+    let mut yle = 0
+    while yle < de { let _ = farr_set(d_y_lastE, yle, farr_get(y_lastE, yle)) ; yle = yle + 1 }
+    let d_zT_lastE = t_zeros(de)
+    ln_f_bwd(d_y_lastE, zT_lastE, elnf_off, ME, de, rms_invE, dMgE, d_zT_lastE)
+    // scatter last-token gradient into full sequence-grad (other positions 0)
+    let d_block_outE = t_zeros(Te * de)
+    let mut dle = 0
+    while dle < de { let _ = farr_set(d_block_outE, (Te - 1) * de + dle, farr_get(d_zT_lastE, dle)) ; dle = dle + 1 }
+    // layer_block_bwd → d_zT_in
+    let d_zT_inE = t_zeros(Te * de)
+    layer_block_bwd(d_block_outE, zT_seqE, zT_midE,
+                    QE, KE, VE2, attn_outE, probsE, h_act_seqE,
+                    eq_off, ek_off, ev_off, eo_off, eup_off, edown_off,
+                    ME, Te, de, he, attn_scaleE, dMgE, d_zT_inE)
+    // tok_emb_bwd: scatter into embedding rows
+    tok_emb_bwd(d_zT_inE, ids_e, te_off, Te, de, dMgE)
+    println("  full backward chain executed (ln_f → layer_block → tok_emb)")
+    // ── verdict: gradient reached BOTH deepest weight + input embedding ──
+    // layer 0 Wq grad magnitude
+    let mut wq_grad_mag = 0.0
+    let mut wgi = 0
+    while wgi < de * de {
+        let g = farr_get(dMgE, eq_off + wgi)
+        if g < 0.0 { wq_grad_mag = wq_grad_mag - g } else { wq_grad_mag = wq_grad_mag + g }
+        wgi = wgi + 1
+    }
+    // tok_emb grad magnitude (row id=2 should be non-zero — used twice)
+    let mut te_grad_mag = 0.0
+    let mut tgi = 0
+    while tgi < Ve * de {
+        let g = farr_get(dMgE, te_off + tgi)
+        if g < 0.0 { te_grad_mag = te_grad_mag - g } else { te_grad_mag = te_grad_mag + g }
+        tgi = tgi + 1
+    }
+    print("  Σ|Wq grad| (layer 0 attention) = "); println(wq_grad_mag)
+    print("  Σ|tok_emb grad| (input embedding) = "); println(te_grad_mag)
+    if wq_grad_mag < 1.0e-9 { pass = 0 }   // gradient reached deepest layer weight
+    if te_grad_mag < 1.0e-9 { pass = 0 }   // gradient reached the INPUT (end-to-end)
+    println("")
+    if pass == 1 {
+        println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1..5 ALL: PASS (gradcheck < 1e-5 · end-to-end gradient reaches input embedding)")
+    } else {
+        println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1..5: FAIL")
+    }
 }
