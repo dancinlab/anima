@@ -159,10 +159,24 @@ ssh <pod> "bash -lc 'cd ~ && git clone https://github.com/dancinlab/anima.git &&
 - `SAVE_POD=1` (first-fire crash trap)
 
 **Pre-fire checklist** (사전 검증, SAVE_POD 잔존 대비):
-1. ☐ train_v3_moe.hexa SCAFFOLD → real driver 확장 (Phase 3b: tok_emb · attn · MLP · ln · AdamW step · multi-step loop · corpus IDS feed). 현 1-step smoke 만 가능
-2. ☐ Vast.ai SSH key 등록 (`secret get vast.api_key`)
-3. ☐ Qwen tokenizer files 호스트 reachable (Mac → pod scp 동작)
-4. ☐ SAVE_POD trap 검증 (의도적 crash → pod 보존 확인) — toy smoke 로 dry-run
+1. ☑ train_v3_moe.hexa SCAFFOLD 완료 — Phase 3b 6/6 sub-milestones LANDED (PRs #1063·#1064·#1066·#1067·#1069·#1070): tok_emb · attn_Wo · MLP · ln_f · AdamW · multi-step loop. d=4 V=4 E=2 T=1 n_layer=1 toy scale.
+2. ☐ Pilot-scale code 확장 (smoke d=4 → pilot d=512 V=151643 E=2 T=512 n_layer=12). 본 Phase 4 series 의 본 작업 — sub-PRs 4a-d 로 분할.
+3. ☐ Vast.ai SSH key 등록 (`secret get vast.api_key`)
+4. ☐ Qwen tokenizer files 호스트 reachable (Mac → pod scp 동작)
+5. ☐ SAVE_POD trap 검증 (의도적 crash → pod 보존 확인) — toy smoke 로 dry-run
+
+### Phase 4 sub-phases (분할 — pilot-scale code gap 메우기)
+
+| Sub | scope | 상태 |
+|---|---|---|
+| 4a | pilot config env-var wiring (P21H_PILOT_D/V/E/T/STEPS/NL) — 현 d=4 V=4 hardcoded 인자화 | ☐ |
+| 4b | multi-layer block iteration (n_layer > 1, layer-iter loop · per-layer offsets) | ☐ |
+| 4c | self-attention proper (T > 1, causal mask · Q/K/V/Wo · softmax) | ☐ |
+| 4d | BPE corpus real IDs feed (V_qwen=151643 aware · batch from corpus) — bpe_assert_on → live ids feed | ☐ |
+| 4e | dispatch script (Vast.ai vastai launch + ssh setup + scp Qwen + run + monitor + harvest) | ☐ |
+| 4-fire | autonomous fire 발사 (a_fire_autonomous · H100 SXM ~$1-3 · 0.5-1hr) | ☐ |
+
+각 sub-PR <200 lines, 1 logical concern (g4 stacked PRs).
 
 ### Phase 5 — Monitor + harvest + verdict
 
