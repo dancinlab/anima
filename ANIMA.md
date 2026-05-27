@@ -36,7 +36,7 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │
 ├─ sub-domain 11 (AxisBench 8 + 축E/F 2 + BRIDGE) ───────────────
 │  ├─ 🪞 METACOG     ✅ 🟢 5/5  (#1139)
-│  ├─ 💤 DREAM       ✅ 🟢 4/5  (#1140) · ⬇ M5 wiring ☐
+│  ├─ 💤 DREAM       ✅ 🟢 4/5  (#1140) · ⬇ M5 wiring ✅ (#1268 · E1 recheck 5/5 2026-05-28)
 │  ├─ 🎯 INTENT      ✅ 🟠 4/5  (#1143) OSC residual
 │  ├─ 🚪 BRIDGE      ✅ AND-gate 14.5× · ⬇ M6 wiring ✅
 │  ├─ 📖 NARRATIVE   ✅ 🟢 5/5  RECOVERED (#1263) collision-saturation (vocab coverage≠coherence)
