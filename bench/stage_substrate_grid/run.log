@@ -1,0 +1,63 @@
+================================================================
+  BENCH #6 — STAGE-SUBSTRATE-GRID  (5 stage × 8 factor)
+  90-min ultradian · 1 sample/min · 90 samples · deterministic
+================================================================
+
+  ── Grid (mean ± std per cell) ──────────────────────────────
+  stage  | M       C       W       MIT     idle    cur     E_rch   Phi
+  -------+----------------------------------------------------------------
+  WAKE   | 89      0       1       2       1       0       85      0      
+  N1     | 46      0       0       1       9       0       77      0      
+  N2     | 15      0       0       0       19      0       77      0      
+  N3     | 7       0       0       0       39      0       84      0      
+  REM    | 54      0       1       8       11      0       87      0      
+
+  filled cells: 39 / 40   fill_rate=0.975
+
+  ── Interaction effects ─────────────────────────────────────
+    REM × Phi  mean = 0.9225
+    N3  × W    mean = 0.0895
+    WAKE × cur mean = 0.7725
+    N3   × cur mean = 0.0595
+    REM × MIT  mean = 8.5
+    N3  × MIT  mean = 0.0
+    WAKE × M   mean = 89.0
+    N3   × M   mean = 7.375
+
+  ── Falsifiers ─────────────────────────────────────────────
+  [PASS] F-GRID-1 FILL_RATE_GREEN (≥0.875)
+  [PASS] F-GRID-2 N3-MITOSIS-ZERO (deterministic floor)
+  [PASS] F-GRID-3 REM-PHI > N3-PHI
+  [PASS] F-GRID-4a REM-PHI is max across all 5 stages
+  [PASS] F-GRID-4b N3-W   is min across all 5 stages
+  [PASS] F-GRID-5 WAKE-cur > N3-cur (substrate stratification)
+  [PASS] F-GRID-6 ALL-CELLS-BOUNDED (no overflow / NaN proxy)
+
+================================================================
+  RESULT: 7 PASS / 0 FAIL
+  fill_rate = 0.975
+  VERDICT: 🟢 PASS — fill_rate ≥ 0.875 AND interaction effects detected
+================================================================
+
+RESULT_JSON_BEGIN
+{
+  "bench": "stage_substrate_grid",
+  "n_stage": 5,
+  "n_factor": 8,
+  "n_samples": 90,
+  "filled_cells": 39,
+  "total_cells": 40,
+  "fill_rate": 0.975,
+  "pass": 7,
+  "fail": 0,
+  "interaction": {
+    "REM_Phi_mean": 0.9225,
+    "N3_W_mean": 0.0895,
+    "WAKE_cur_mean": 0.7725,
+    "N3_cur_mean": 0.0595,
+    "REM_MIT_mean": 8.5,
+    "N3_MIT_mean": 0.0
+  },
+  "verdict": "🟢 PASS"
+}
+RESULT_JSON_END
