@@ -8,4 +8,4 @@
 - [x] figure 2: dissociation matrix ASCII or pgfplots (E×F cross-link 결과) [inline tikz matrix, sec:dissoc Fig.fig:dissoc]
 - [x] references.bib (IIT 4.0 Tononi 2023 · Williams-Beer 2010 PID · Kuramoto 1984 · anima H_290/293/294/207 ledger) [16 entries]
 - [x] verify-block (8 H verdict verbatim PR #1156/1160/1163/1164/1168/1171/1172/1175) [sec:verify]
-- [ ] compile xelatex + arxiv-prep
+- [x] compile xelatex + arxiv-prep [13 pages, 0 undefined refs, main.pdf shipped under PAPER/collective-phi-axis-orthogonality/]
