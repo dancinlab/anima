@@ -55,7 +55,7 @@
 ### 축 B — faithful-Φ large-N tier (bounded restriction · GPU 불요 판명)
 > H_278 이 small-N exact($0)로 proxy 확증. large-N 은 **bounded restriction(`big_phi_bounded`)** 로 $0 도달 — **GPU 는 lever 아님**(exact large-N = super-exp GPU-immune, DESIGN.md). [[feedback-scope-check-before-cost-fire]] 3번째 비용-차단: GPU fire scope-check 후 취소.
 - [x] B1 — large-N bounded big-Φ — **n=8 H_002 C2 scale 도달** (M12 n=5/6 + M13 n=7/8, $0 mac-local NO GPU). rule110 ladder cap=3: n4 7.55(=exact)·n5 15.40·n6 6.82·n7 9.03·n8 6.82. cap≥n=exact(faithful 앵커), cap<n=lower-bound. 🟢 5/5
-- [ ] B2 — Φ-proxy ↔ faithful Φ 정량 갭 곡선 — **부분 막힘**: true large-N exact 가 super-exp 라 gap 곡선 자체 측정 불가(GPU 무관). bounded lower-bound 가 deliverable. cap-sweep@fixed-n 으로 bound-gap 정량은 가능(deferred $0)
+- [x] B2 — Φ-proxy ↔ faithful Φ 정량 갭 곡선 — **cap-sweep@fixed-n=5 회수** (H_625, 2026-05-28). 3 rule {30,90,110} 모두 gap(k)=exact−bounded(cap=k) **지수 감소** α=0.243/0.192/1.101 — class-IV(110) 가 linear/chaotic(90/30) 의 5-6× 빠른 수렴. faithful-anchor (cap≥n=exact) 재확인. true large-N exact 곡선 자체는 super-exp 라 여전히 불가(원안 정합), 그러나 fixed-n cap-sweep 으로 bound-gap *형상* 정량 확보. 🟢 17/17, $0 mac-local NO GPU
 
 ### 축 C — full-IIT4 cause-effect structure (해금됨)
 > `stdlib/consciousness/iit4` (#542 thin shim, main 랜딩) 가 full IIT 4.0 cause-effect Φ-structure 를 hexa-native 로 제공 → "별도 대형 spec" frontier 해금.

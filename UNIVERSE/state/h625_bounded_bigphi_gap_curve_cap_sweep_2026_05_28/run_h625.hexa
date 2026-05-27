@@ -84,8 +84,8 @@ fn ln_natural(y: float) -> float {
     // 80 terms — converges geometrically for |x| < 1 (here |x| <= 0.5)
     while i <= 80 {
         // term = x^i ; acc += (-1)^(i+1) * term / i
-        let signed = if (i % 2) == 1 { term / to_float(i) } else { 0.0 - term / to_float(i) }
-        acc = acc + signed
+        let s_term = if (i % 2) == 1 { term / to_float(i) } else { 0.0 - term / to_float(i) }
+        acc = acc + s_term
         term = term * x
         i = i + 1
     }
