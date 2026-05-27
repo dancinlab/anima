@@ -7,7 +7,7 @@
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
 
 - [x] AxisBench H TIME 측정 surface — `bench/axis_time/` circadian dip 9 시나리오 · 9/0 PASS · circadian dip (낮 활성/밤 휴면 phase 차이) 입증 (PR #1145).
-- [ ] M1 time_lib — `TIME/{time_lib.hexa,SSOT.md}` PURE wrapper · bench/axis_time 의 circadian_phase + envelope_modulate stdlib 화.
+- [x] M1 time_lib — `TIME/{time_lib.hexa,SSOT.md,time_lib_smoke.hexa}` PURE wrapper · bench/axis_time (#1145, 9/0 🟢) 의 stage envelope + circadian dip + drift detector stdlib 화 · 12 pub fn · `tm_` prefix · 12 invariant smoke `hexa parse` 2/2 PASS (2026-05-28).
 - [ ] M2 WAKE.5-stage 통합 — WAKE/state_machine.hexa 의 5-stage ultradian (90-min) 위에 24h circadian envelope multiplier (낮 phi_scale ↑ · 밤 phi_scale ↓ · multiplication softening 유지).
 - [ ] M3 DREAM.REM mitosis circadian modulation — DREAM.M3 mitosis envelope 측정값 (REM 60× WAKE) 의 시간대 modulation — 새벽 REM 분열 burst peak.
 - [ ] M4 cross-bench (TIME × INTENT) — bench D INTENT cumulative direction 의 24h trajectory · 장기 의도가 circadian phase 와 entrain 하는지 측정.

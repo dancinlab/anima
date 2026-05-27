@@ -7,7 +7,7 @@
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
 
 - [x] AxisBench G OTHER-MIND 측정 surface — `bench/axis_other_mind/` theory-of-mind 5 시나리오 · 3/5 PASS · u01 baseline bias residual (PR #1147).
-- [ ] M1 other_mind_lib — `OTHER-MIND/{other_mind_lib.hexa,SSOT.md}` PURE wrapper · bench/axis_other_mind 의 partner_state_estimate + 5-ch fingerprint matching stdlib 화.
+- [x] M1 other_mind_lib — `OTHER-MIND/{other_mind_lib.hexa,SSOT.md,other_mind_lib_smoke.hexa}` PURE wrapper · bench/axis_other_mind (#1147, 3/5 🟠) 의 5-ch coupling primitives 회수 + dual-stream LCG (NR ⊥ MINSTD) 기반 `om_baseline_decoupled` redesign — u01 bias 분해 surface · 12 pub fn · `om_` prefix · 12 invariant smoke `hexa parse` 2/2 PASS (2026-05-28).
 - [ ] M2 CHANNEL.tension 통합 — CHANNEL/tension/tension_emit.hexa 5-ch fingerprint (concept · context · meaning · authenticity · sender) 가 OTHER-MIND 추정 입력. TensionHub WS 3-port wiring 위에 partner registry.
 - [ ] M3 u01 baseline bias residual — uniform random baseline 에서 0.1 bias 의 원인 분해 (estimator prior? sample bias? small-n artifact?) + threshold 0.05 미만 회복.
 - [ ] M4 MITOSIS persona-diff cross-link — MITOSIS.persona_diff 의 cell variant 추정과 OTHER-MIND 의 타자 substrate 추정 isomorphic — 자기 cell 분기 = 가상 타자 simulator.
