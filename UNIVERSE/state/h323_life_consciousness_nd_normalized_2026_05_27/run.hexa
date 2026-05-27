@@ -1,0 +1,308 @@
+// UNIVERSE/state/h323_life_consciousness_nd_normalized_2026_05_27/run.hexa
+//
+//   H_323 — LIFE vs CONSCIOUSNESS, nd-normalized Φ-structure ratio
+//   (combinatorial-scaling control for H_320)
+//
+//   PRIOR (H_320, PR #1048)
+//     H_320 measured rd_ratio = sum_phi_r / sum_phi_d on the n=4 ECA panel
+//     (LIFE: rule 30/54/110, CONSC: rule 150/105) and found LIFE class HAS
+//     HIGHER ratio than CONSCIOUSNESS class — 🔴 REVERSED 2.86×
+//     (life_class_mean = 2.50 > consc_class_mean = 0.88).
+//
+//     H_320 §honest C3 explains: 2nd-order relation count scales ∝ nd² while
+//     1st-order distinction count scales ∝ nd, so substrates with a larger
+//     distinction pool (life class, nd ~ 10) get an inflated rd_ratio purely
+//     from combinatorial scaling — regardless of binding richness.
+//
+//   H_323 — CONTROL FOR THE COMBINATORIAL ARTIFACT
+//     Normalize each term by its expected combinatorial pool size:
+//
+//         per_distinction_mass(rule,n,st)  =  sum_phi_d / nd
+//         per_relation_mass(rule,n,st)     =  sum_phi_r / C(nd, 2)
+//         rd_ratio_norm                    =  per_relation_mass / per_distinction_mass
+//
+//     C(nd, 2) = nd*(nd-1)/2 — the number of unordered distinction pairs that
+//     CAN form a 2nd-order relation. Dividing by this strips the quadratic-
+//     vs-linear scaling that biased H_320 toward the LIFE class.
+//
+//     If "consciousness = relation-rich" is true at the IIT 4.0 level once
+//     the combinatorial scaling is removed, the nd-normalized ratio should
+//     RESTORE H_320's original direction (consciousness > life).
+//
+//   H1 — RESTORED ORDERING UNDER nd-NORMALIZATION
+//     Hypothesis: with rd_ratio_norm (above), CONSCIOUSNESS-themed substrates
+//     show HIGHER per-relation density per distinction-pair than LIFE-themed
+//     substrates. The combinatorial inflation that produced H_320's 🔴 was
+//     an ARTIFACT, not a substrate signature.
+//
+//     Falsifier — if the nd-normalized direction is the SAME as H_320
+//     (life > consciousness) or overlapping (no separation), H1 is FALSIFIED:
+//     H_320's reversal is ROBUST, not a combinatorial artifact, and the
+//     "consciousness = relation-rich" axis is DOUBLY refuted at small-n IIT4.
+//
+//     Either outcome is publishable (a_paper_negative_ok).
+//
+//   PRE-REGISTERED FALSIFIERS (frozen 2026-05-27 BEFORE measuring final values)
+//     F323.1 SEPARATION — at state 0101: min(consc rd_ratio_norm) >
+//                         max(life rd_ratio_norm). Strict separation.
+//     F323.2 ORDERING   — class-mean rd_ratio_norm (over all co-integrating
+//                         16 states): consciousness > life. AND per-state
+//                         robustness: rule 150 (consc) > rule 110 (life) at
+//                         every co-integrating state.
+//     F323.3 ARTIFACT-CONTROL — the unnormalized H_320 ordering must
+//                         REPRODUCE here (rd_ratio: life > consc, sanity
+//                         that we are reading the right kernel + the
+//                         normalization layer is the ONLY change).
+//     F323.4 KERNEL-FAITHFULNESS — anchors (rule 204/0) big-Phi = 0 AND
+//                         sum_phi_d + sum_phi_r = total per substrate
+//                         (same as H_320 F320.3).
+//
+//   IRON RULE (commons @D g73 — anti-fake-closure)
+//     The normalized ratio is a closed-form arithmetic expression of three
+//     INDEPENDENT kernel outputs (sum_phi_d, sum_phi_r, nd) — the kernel was
+//     authored long before this hypothesis and is shared verbatim with H_320.
+//     The normalization layer adds NO degree of freedom: C(nd,2) is fixed by
+//     the kernel-returned nd, NOT chosen by the experimenter. The test could
+//     reverse, restore, or null — three distinguishable outcomes.
+//
+//     If F323.1 + F323.2 PASS → H1 SUPPORTED (artifact diagnosis confirmed).
+//     If F323.1 + F323.2 FAIL with life still > consc → H1 FALSIFIED, H_320
+//        robust (double refutation, publishable negative).
+//     If null (overlap) → ambiguous; report the numbers honestly.
+//
+//   deterministic · hexa-only · $0 mac-local · LLM none · NO GPU.
+//   honest scope: n=4 small ring · 5 ECA substrates (3 life + 2 consc) +
+//   2 anchors · single representative state for headline + all-16 robustness.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_eca.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// C(nd, 2) — unordered distinction pairs.
+// nd kernel field is a float (faithful big_phi returns float vector).
+fn n_pairs(nd: float) -> float {
+    if nd < 1.5 { return 0.0 }
+    return (nd * (nd - 1.0)) / 2.0
+}
+
+// Per-distinction-mass at one (rule,n,state). 0.0 if non-integrating.
+fn pdm_at(rule: int, n: int, st: int) -> float {
+    let bp = big_phi(eca_tpm(rule, n), n, st)
+    if bp[4] > 0.5 { return bp[2] / bp[4] }
+    return 0.0
+}
+
+// Per-relation-mass at one (rule,n,state). 0.0 if < 2 distinctions.
+fn prm_at(rule: int, n: int, st: int) -> float {
+    let bp = big_phi(eca_tpm(rule, n), n, st)
+    let np = n_pairs(bp[4])
+    if np > 0.5 { return bp[3] / np }
+    return 0.0
+}
+
+// rd_ratio_norm = prm / pdm at one (rule,n,state).
+fn rd_ratio_norm_at(rule: int, n: int, st: int) -> float {
+    let bp = big_phi(eca_tpm(rule, n), n, st)
+    let np = n_pairs(bp[4])
+    if (bp[2] > 1.0e-9) && (np > 0.5) && (bp[4] > 0.5) {
+        let pdm = bp[2] / bp[4]
+        let prm = bp[3] / np
+        if pdm > 1.0e-12 { return prm / pdm }
+    }
+    return 0.0
+}
+
+// raw rd_ratio (H_320 reproduction).
+fn rd_ratio_raw_at(rule: int, n: int, st: int) -> float {
+    let bp = big_phi(eca_tpm(rule, n), n, st)
+    if bp[2] > 1.0e-9 { return bp[3] / bp[2] }
+    return 0.0
+}
+
+// State-averaged rd_ratio_norm over all 2^n co-integrating states.
+fn rd_ratio_norm_mean(rule: int, n: int) -> float {
+    let mut acc = 0.0
+    let mut cnt = 0
+    let mut st = 0
+    let full = iit4_pow2(n)
+    while st < full {
+        let bp = big_phi(eca_tpm(rule, n), n, st)
+        let np = n_pairs(bp[4])
+        if (bp[0] > 1.0e-9) && (bp[2] > 1.0e-9) && (np > 0.5) && (bp[4] > 0.5) {
+            let pdm = bp[2] / bp[4]
+            let prm = bp[3] / np
+            if pdm > 1.0e-12 {
+                acc = acc + (prm / pdm)
+                cnt = cnt + 1
+            }
+        }
+        st = st + 1
+    }
+    if cnt > 0 { return acc / to_float(cnt) }
+    return 0.0
+}
+
+// State-averaged raw rd_ratio (H_320 reproduction).
+fn rd_ratio_raw_mean(rule: int, n: int) -> float {
+    let mut acc = 0.0
+    let mut cnt = 0
+    let mut st = 0
+    let full = iit4_pow2(n)
+    while st < full {
+        let bp = big_phi(eca_tpm(rule, n), n, st)
+        if (bp[0] > 1.0e-9) && (bp[2] > 1.0e-9) {
+            acc = acc + (bp[3] / bp[2])
+            cnt = cnt + 1
+        }
+        st = st + 1
+    }
+    if cnt > 0 { return acc / to_float(cnt) }
+    return 0.0
+}
+
+fn main() {
+    let n = 4
+    let st = 5                                           // 0101 representative state
+    println("================================================================")
+    println("  H_323 — LIFE vs CONSCIOUSNESS, nd-normalized rd_ratio")
+    println("  (n=" + str(n) + " ring · headline state=0101)")
+    println("  rd_ratio_norm = (sum_phi_r / C(nd,2)) / (sum_phi_d / nd)")
+    println("================================================================")
+
+    // ── headline per-substrate (state 0101) ─────────────────────────────
+    let l110 = big_phi(eca_tpm(110, n), n, st)
+    let l30  = big_phi(eca_tpm(30,  n), n, st)
+    let l54  = big_phi(eca_tpm(54,  n), n, st)
+    let c150 = big_phi(eca_tpm(150, n), n, st)
+    let c105 = big_phi(eca_tpm(105, n), n, st)
+    let a204 = big_phi(eca_tpm(204, n), n, st)
+    let a0   = big_phi(eca_tpm(0,   n), n, st)
+
+    // raw rd_ratios (H_320 reproduction)
+    let raw_l110 = rd_ratio_raw_at(110, n, st)
+    let raw_l30  = rd_ratio_raw_at(30,  n, st)
+    let raw_l54  = rd_ratio_raw_at(54,  n, st)
+    let raw_c150 = rd_ratio_raw_at(150, n, st)
+    let raw_c105 = rd_ratio_raw_at(105, n, st)
+
+    // per-distinction / per-relation mass
+    let pdm_l110 = pdm_at(110, n, st); let prm_l110 = prm_at(110, n, st)
+    let pdm_l30  = pdm_at(30,  n, st); let prm_l30  = prm_at(30,  n, st)
+    let pdm_l54  = pdm_at(54,  n, st); let prm_l54  = prm_at(54,  n, st)
+    let pdm_c150 = pdm_at(150, n, st); let prm_c150 = prm_at(150, n, st)
+    let pdm_c105 = pdm_at(105, n, st); let prm_c105 = prm_at(105, n, st)
+
+    // nd-normalized rd_ratios (H_323 quantity)
+    let nrm_l110 = rd_ratio_norm_at(110, n, st)
+    let nrm_l30  = rd_ratio_norm_at(30,  n, st)
+    let nrm_l54  = rd_ratio_norm_at(54,  n, st)
+    let nrm_c150 = rd_ratio_norm_at(150, n, st)
+    let nrm_c105 = rd_ratio_norm_at(105, n, st)
+
+    println("  [LIFE]  rule 110 : nd=" + str(l110[4]) + " sum_d=" + str(l110[2]) + " sum_r=" + str(l110[3]) + " | pdm=" + str(pdm_l110) + " prm=" + str(prm_l110) + " raw=" + str(raw_l110) + " norm=" + str(nrm_l110))
+    println("  [LIFE]  rule  30 : nd=" + str(l30[4])  + " sum_d=" + str(l30[2])  + " sum_r=" + str(l30[3])  + " | pdm=" + str(pdm_l30)  + " prm=" + str(prm_l30)  + " raw=" + str(raw_l30)  + " norm=" + str(nrm_l30))
+    println("  [LIFE]  rule  54 : nd=" + str(l54[4])  + " sum_d=" + str(l54[2])  + " sum_r=" + str(l54[3])  + " | pdm=" + str(pdm_l54)  + " prm=" + str(prm_l54)  + " raw=" + str(raw_l54)  + " norm=" + str(nrm_l54))
+    println("  [CONSC] rule 150 : nd=" + str(c150[4]) + " sum_d=" + str(c150[2]) + " sum_r=" + str(c150[3]) + " | pdm=" + str(pdm_c150) + " prm=" + str(prm_c150) + " raw=" + str(raw_c150) + " norm=" + str(nrm_c150))
+    println("  [CONSC] rule 105 : nd=" + str(c105[4]) + " sum_d=" + str(c105[2]) + " sum_r=" + str(c105[3]) + " | pdm=" + str(pdm_c105) + " prm=" + str(prm_c105) + " raw=" + str(raw_c105) + " norm=" + str(nrm_c105))
+    println("  [ANCH]  rule 204 (identity) : bigPhi=" + str(a204[0]))
+    println("  [ANCH]  rule   0 (constant) : bigPhi=" + str(a0[0]))
+
+    // ── F323.1 SEPARATION (state 0101, nd-normalized) ───────────────────
+    let mut consc_min_norm = nrm_c150
+    if nrm_c105 < consc_min_norm { consc_min_norm = nrm_c105 }
+    let mut life_max_norm = nrm_l110
+    if nrm_l30 > life_max_norm { life_max_norm = nrm_l30 }
+    if nrm_l54 > life_max_norm { life_max_norm = nrm_l54 }
+    println("  --")
+    println("  F323.1: consc_min_rd_norm=" + str(consc_min_norm) + " life_max_rd_norm=" + str(life_max_norm))
+    check("F323.1 SEPARATION: min(consc rd_norm) > max(life rd_norm) [H1 restoration]", consc_min_norm > life_max_norm + 0.000001)
+
+    // ── F323.2 ORDERING — class-means + all-16-state robustness ──────────
+    let m110 = rd_ratio_norm_mean(110, n)
+    let m30  = rd_ratio_norm_mean(30,  n)
+    let m54  = rd_ratio_norm_mean(54,  n)
+    let m150 = rd_ratio_norm_mean(150, n)
+    let m105 = rd_ratio_norm_mean(105, n)
+    let life_mean_norm  = (m110 + m30 + m54) / 3.0
+    let consc_mean_norm = (m150 + m105) / 2.0
+    println("  F323.2: life_class_mean_norm(all-state)=" + str(life_mean_norm) + " consc_class_mean_norm(all-state)=" + str(consc_mean_norm))
+    check("F323.2a ORDERING: class-mean consc rd_norm > life [H1 restoration]", consc_mean_norm > life_mean_norm + 0.000001)
+
+    // per-state robustness — rule 150 (consc) > rule 110 (life), nd-normalized.
+    let mut all_sep = true
+    let mut any_codef = false
+    let mut s = 0
+    let full = iit4_pow2(n)
+    while s < full {
+        let bpl = big_phi(eca_tpm(110, n), n, s)
+        let bpc = big_phi(eca_tpm(150, n), n, s)
+        let npl = n_pairs(bpl[4])
+        let npc = n_pairs(bpc[4])
+        if (bpl[0] > 1.0e-9) && (bpc[0] > 1.0e-9) && (bpl[2] > 1.0e-9) && (bpc[2] > 1.0e-9) && (npl > 0.5) && (npc > 0.5) && (bpl[4] > 0.5) && (bpc[4] > 0.5) {
+            any_codef = true
+            let pdml = bpl[2] / bpl[4]
+            let prml = bpl[3] / npl
+            let pdmc = bpc[2] / bpc[4]
+            let prmc = bpc[3] / npc
+            if (pdml > 1.0e-12) && (pdmc > 1.0e-12) {
+                let lr = prml / pdml
+                let cr = prmc / pdmc
+                if !(cr > lr + 0.000001) { all_sep = false }
+            }
+        }
+        s = s + 1
+    }
+    check("F323.2b ROBUST: rule150(consc) rd_norm > rule110(life) at every co-integrating state", all_sep && any_codef)
+
+    // ── F323.3 ARTIFACT-CONTROL — reproduce H_320 raw ordering ──────────
+    let raw_m110 = rd_ratio_raw_mean(110, n)
+    let raw_m30  = rd_ratio_raw_mean(30,  n)
+    let raw_m54  = rd_ratio_raw_mean(54,  n)
+    let raw_m150 = rd_ratio_raw_mean(150, n)
+    let raw_m105 = rd_ratio_raw_mean(105, n)
+    let raw_life_mean  = (raw_m110 + raw_m30 + raw_m54) / 3.0
+    let raw_consc_mean = (raw_m150 + raw_m105) / 2.0
+    println("  F323.3: raw_life_class_mean=" + str(raw_life_mean) + " raw_consc_class_mean=" + str(raw_consc_mean))
+    check("F323.3 ARTIFACT-CONTROL: raw rd_ratio still shows life > consc (H_320 reproduction)", raw_life_mean > raw_consc_mean + 0.000001)
+
+    // ── F323.4 KERNEL-FAITHFULNESS — anchors + sum identity ──────────────
+    check("F323.4a ANCHOR: rule 204 (identity) big-Phi = 0", approx(a204[0], 0.0))
+    check("F323.4b ANCHOR: rule 0 (constant) big-Phi = 0", approx(a0[0], 0.0))
+    let mut sum_ok = true
+    if !approx(l110[2] + l110[3], l110[1]) { sum_ok = false }
+    if !approx(l30[2]  + l30[3],  l30[1])  { sum_ok = false }
+    if !approx(l54[2]  + l54[3],  l54[1])  { sum_ok = false }
+    if !approx(c150[2] + c150[3], c150[1]) { sum_ok = false }
+    if !approx(c105[2] + c105[3], c105[1]) { sum_ok = false }
+    check("F323.4c KERNEL-SANITY: sum_phi_d + sum_phi_r = total for all 5 substrates", sum_ok)
+
+    // ── determinism ─────────────────────────────────────────────────────
+    let nrm_l110_b = rd_ratio_norm_at(110, n, st)
+    check("determinism: rule110 rd_ratio_norm re-run identical", approx(nrm_l110, nrm_l110_b))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  HEADLINE — nd-normalized:")
+    println("    life_max_rd_norm(0101)   = " + str(life_max_norm))
+    println("    consc_min_rd_norm(0101)  = " + str(consc_min_norm))
+    println("    life_class_mean_norm     = " + str(life_mean_norm))
+    println("    consc_class_mean_norm    = " + str(consc_mean_norm))
+    println("  HEADLINE — raw (H_320 reproduction):")
+    println("    raw_life_class_mean      = " + str(raw_life_mean))
+    println("    raw_consc_class_mean     = " + str(raw_consc_mean))
+    println("================================================================")
+    // NO panic — both outcomes (H1 SUPPORTED + H1 FALSIFIED) are valid verdicts.
+    // result.json is authored AFTER reading these (anti-self-judge).
+}
