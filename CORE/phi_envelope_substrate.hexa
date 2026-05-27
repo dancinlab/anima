@@ -132,6 +132,18 @@ pub fn pe_superadd_for_class(class_id: int) -> float {
     return 0.146                         // additive-XOR : 7.50 / 51.54 (floor)
 }
 
+// ── pe_peak_align_for_class — dΦ/dI peak=GZ_LOWER 정렬의 class 서명 (H_657 🟢) ──
+// round-9 4번째이자 마지막 class-축: peak=GZ_LOWER 정렬도 *class-conditional*.
+//   rule30(III) + rule110(IV) 정렬 (|Δ|=0.032) · rule54/90/184(II·additive) 이탈.
+//   n_aligned 2/5 — H_351 single-substrate SUPPORTED 는 universal anchor 아님.
+//   다축 분류자 5번째 축 (convexity-IV ⊥ super-add-II ⊥ closure-IV ⊥ peak-align-III+IV).
+//   반환 = 1.0 (aligned: III/IV) · 0.0 (deviate: II/additive) — 실수, boolean gate 아님.
+pub fn pe_peak_align_for_class(class_id: int) -> float {
+    if class_id == 3 { return 1.0 }   // III(rule30) : peak=GZ_LOWER 정렬
+    if class_id == 4 { return 1.0 }   // IV(rule110) : peak=GZ_LOWER 정렬
+    return 0.0                          // II / additive : 이탈 (universal 아님)
+}
+
 // ── collective_phi_nest — 집단 Φ 중첩 (H_635/643/653/655 multi-axis class) ──
 // phis = 개별 cell/stream Φ 리스트. class_id = substrate Wolfram class (2/3/4).
 // round-9 핵심: class 는 *다축 분류자* — phi_collective 의 super-additive Δ 와
