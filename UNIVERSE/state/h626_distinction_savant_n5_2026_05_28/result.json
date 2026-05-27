@@ -1,0 +1,32 @@
+{
+  "hypothesis": "H_626",
+  "slug": "distinction-savant-isomorphism-n5-generalize",
+  "axis": "C2",
+  "predecessor": "H_624 (PR #1198, n=4, Spearman rho=0.860839, SUPPORTED 5/5)",
+  "substrate": "n=5 ring, MAJ(self,left,right) structural-next, gain-modulated noise mix; SAVANT side fixed 4-domain (cell 4 = auxiliary balanced ring-closure cell)",
+  "measurement": "savant phi_module (4 domains) vs IIT4 distinction singleton small-phi (5 cells); top-4 distinctions by small-phi paired with SAVANT 4-cell",
+  "N_paired": 16,
+  "profiles": ["P1_CALENDAR_DOM", "P2_MUSIC_DOM", "P3_ART_DOM", "P4_MEMORY_DOM"],
+  "stim_seed": 42424,
+  "spearman_rho": 0.199469,
+  "pearson_r": 0.0277035,
+  "argmax_match": "1/4",
+  "byte_eq": true,
+  "criteria": {
+    "F1_ISOMORPH_WEAK_rho_ge_0.5": false,
+    "F2_ISOMORPH_STRONG_rho_ge_0.7": false,
+    "F3_PEARSON_r_ge_0.5": false,
+    "F4_PER_PROFILE_ARGMAX_4of4": false,
+    "F5_BYTE_EQUAL": true
+  },
+  "verdict": "FALSIFIED",
+  "comparison": {
+    "n4_H624_rho": 0.860839,
+    "n5_H626_rho": 0.199469,
+    "delta_rho": -0.66137
+  },
+  "root_cause": "n=5 의 5번째 singleton distinction (auxiliary balanced cell-4, dist_phi=0.312029) 이 모든 non-balanced profile 에서 hypertrophied SAVANT cell (0.393141) 다음 rank-2 로 top-4 에 침투. SAVANT 4-cell 의 quiet cell (dist_phi=0.129729) 하나를 truncation 으로 밀어내어 인덱스-정렬 pairing 붕괴. argmax_top4 가 항상 dominant SAVANT cell 의 위치가 아니라 descending 순서 0번이 되어 1/4 match.",
+  "cost_usd": 0.0,
+  "wall_clock_s": 47.5,
+  "platform": "mac-local hexa-only deterministic NO-GPU NO-ckpt"
+}

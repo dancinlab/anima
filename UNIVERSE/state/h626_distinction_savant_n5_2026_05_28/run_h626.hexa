@@ -235,11 +235,20 @@ fn cell_distinction_phi_vector5(tpm: array) -> array {
 
 
 // ── top-K extraction: return indices of the K largest values (descending) ──
+//   `used` tracked by membership-scan over idxs (no array.set — segfaults in
+//   this toolchain; push-only / rebuild pattern per H_624 양식).
+fn _already_picked(idxs: array, j: int) -> bool {
+    let m = len(idxs)
+    let mut t = 0
+    while t < m {
+        if idxs[t] == j { return true }
+        t = t + 1
+    }
+    return false
+}
+
 fn topk_indices(v: array, k: int) -> array {
     let n = len(v)
-    let mut used = []
-    let mut u = 0
-    while u < n { used = used.push(0); u = u + 1 }
     let mut idxs = []
     let mut picked = 0
     while picked < k {
@@ -247,12 +256,11 @@ fn topk_indices(v: array, k: int) -> array {
         let mut bestv = 0.0 - 1.0e308
         let mut j = 0
         while j < n {
-            if used[j] == 0 {
+            if _already_picked(idxs, j) == false {
                 if v[j] > bestv { bestv = v[j]; best = j }
             }
             j = j + 1
         }
-        used = used.set(best, 1)
         idxs = idxs.push(best)
         picked = picked + 1
     }
