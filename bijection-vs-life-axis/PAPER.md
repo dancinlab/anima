@@ -6,6 +6,6 @@
 - [x] draft v1 (main.tex 본문 + 3 tables + scale-rotation figure)
 - [x] figure (native pgfplots scale-rotation bar chart, no external dep)
 - [x] references 12 (IIT 4.0 · Wolfram · Langton · Cook + 4 anima ledger)
-- [ ] lint pass (`/paper lint .`)
-- [ ] compile clean (`/paper compile .`)
+- [x] lint: figures inline (no ext dep), 12 refs resolved
+- [x] compile clean (xelatex x3 + bibtex, main.pdf 97KB, 0 undefined refs)
 - [ ] arxiv submit ready (`/paper arxiv-prep .`)
