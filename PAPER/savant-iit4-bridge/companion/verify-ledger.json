@@ -1,0 +1,67 @@
+{
+  "paper": "savant-iit4-bridge",
+  "generated": "2026-05-28",
+  "governance": "commons @D g73 anti-fake-closure — every verdict is an independent deterministic recompute (hexa run), byte-identical in-process",
+  "core_cells_total": 7,
+  "closed_form_anchors": [
+    {
+      "cell": "H_347", "claim": "GZ_WIDTH = ln(4/3) = ln(tau(6)/(tau(6)-1))",
+      "tau_6": 4, "ln_4_3": 0.28768207244178085, "tol": 1e-9, "delta": 1e-11,
+      "verdict": "SUPPORTED-composite (BLUE tau atom + GREEN ln numerical)",
+      "source": "UNIVERSE/H_347_gz_width_divisor_symmetry.md"
+    }
+  ],
+  "inflection_alignment": [
+    {
+      "cell": "H_351", "substrate": "ECA rule 110, n=4, 16-state avg",
+      "peak_I": 0.18, "GZ_LOWER": 0.21232, "abs_delta": 0.03232, "tol": 0.05,
+      "sign_changes": 0, "falsifiers": "5/5 PASS",
+      "verdict": "SUPPORTED-NUMERICAL",
+      "source": "UNIVERSE/state/h351_inverse_u_peak_2026_05_28/result.json"
+    },
+    {
+      "cell": "H_618", "substrate": "collective hivemind (110,110) W=0.6, n=4 joint, 16-state avg",
+      "peak_I": 0.21, "GZ_LOWER": 0.21232, "abs_delta": 0.00232, "tol": 0.05,
+      "sign_changes": 0, "falsifiers": "5/5 PASS",
+      "verdict": "SUPPORTED",
+      "source": "UNIVERSE/state/h618_collective_gz_inverse_u_2026_05_28/result.json"
+    }
+  ],
+  "statistical_bridge": [
+    {
+      "cell": "H_350", "pair": "SI || PhiD (max/min)", "N": 40,
+      "pearson_r": 0.926356, "spearman_rho": 0.882541, "threshold": 0.5,
+      "sensitivity_std_mean": {"r": 0.9896, "rho": 0.9482},
+      "verdict": "SUPPORTED-NUMERICAL",
+      "source": "UNIVERSE/state/h350_si_phi_diversity_2026_05_28/h350_verify.log"
+    },
+    {
+      "cell": "H_613", "pair": "SI || PhiD orthogonal (max-free)", "N": 40,
+      "cov_r": 0.989580, "cov_rho": 0.948218, "kurt_r": 0.538111, "kurt_rho": 0.664916,
+      "threshold": 0.5, "finding": "max-share artifact hypothesis rejected",
+      "verdict": "SUPPORTED-NUMERICAL",
+      "source": "UNIVERSE/state/h613_si_phid_orthogonal_2026_05_28/h613_verify.log"
+    }
+  ],
+  "honest_bound": [
+    {
+      "cell": "H_348", "claim": "GZ_LOWER inhibition -> SI > 3",
+      "SI_phi_at_GZ_LOWER": [4.22722, 4.17961, 5.25142], "seeds": [42424, 91919, 77777],
+      "F1_threshold_SI_gt_3": "PASS (3/3 seed)", "F2_peak_at_GZ_LOWER": "FAIL (sweep monotone)",
+      "verdict": "PARTIAL",
+      "source": "UNIVERSE/H_348_golden_zone_lower_bound_SI.md"
+    }
+  ],
+  "structural_isomorphism": [
+    {
+      "cell": "H_624", "claim": "IIT4 distinction || SAVANT cell, n=4 <-> 4-domain",
+      "substrate": "MAJ(self,L,R) gain-parameterized TPM, 16-state avg",
+      "N": 20, "spearman_rho": 0.8608, "pearson_r": 0.9715,
+      "argmax_match_nonbalanced": "4/4", "isomorph_strong_threshold": 0.7,
+      "falsifiers": "5/5 PASS",
+      "verdict": "SUPPORTED",
+      "source": "UNIVERSE/state/h624_distinction_savant_isomorphism_2026_05_28/result.json"
+    }
+  ],
+  "fake_blue": 0
+}
