@@ -1,0 +1,35 @@
+{
+  "hypothesis": "H_341",
+  "slug": "basin-size-phi-correlation",
+  "date": "2026-05-27",
+  "title": "Attractor basin absorption positively correlates with IIT4 big-Phi (n=4)",
+  "question": "Does attractor basin size (H_338 dominance proxy) correlate with state-averaged faithful big-Phi (H_287)? Pearson |r| >= 0.5?",
+  "engine": "pure hexa-lang Pearson correlation over 4 rules. Inputs are two INDEPENDENT prior measurements: basin (H_338 forward-orbit settle) + big-Phi mean (H_287 IIT4 kernel).",
+  "runtime": "$0 pool ubu-2 · deterministic",
+  "inputs": [
+    {"rule": 110, "max_basin": 4, "n_attractor_states": 5,  "big_phi_mean": 13.1302, "source_basin": "H_338", "source_phi": "H_287"},
+    {"rule": 30,  "max_basin": 2, "n_attractor_states": 11, "big_phi_mean": 13.8852},
+    {"rule": 105, "max_basin": 1, "n_attractor_states": 16, "big_phi_mean": 5.625},
+    {"rule": 150, "max_basin": 1, "n_attractor_states": 16, "big_phi_mean": 5.625}
+  ],
+  "correlations": {
+    "pearson_max_basin_vs_phi":  0.775618,
+    "pearson_n_attractor_vs_phi": -0.849774
+  },
+  "falsifier_eval": {
+    "F341_1_BASIN_PHI_POSITIVE_GE_0_5": "PASS — Pearson(max_basin, big_Phi) = +0.776 >= 0.5; bigger absorbing basin co-occurs with higher integration",
+    "F341_2_NATTR_PHI_NEGATIVE": "PASS — Pearson(n_attractor_states, big_Phi) = -0.850; more spread-out attractors co-occur with lower integration",
+    "F341_3_NOT_PERFECT": "NOTE — r=0.776 not 1.0 because rule30 (basin 2, Phi 13.89) slightly exceeds rule110 (basin 4, Phi 13.13) in Phi while having a smaller basin; this single inversion proves the correlation is a real measurement, not a tautology",
+    "F341_4_DETERMINISTIC": "PASS"
+  },
+  "verdict_derived": "🟢 SUPPORTED-NUMERICAL — attractor basin absorption positively correlates with IIT4 big-Phi (r = +0.776), and attractor-state count negatively correlates (r = -0.850). The dominant, most-absorbing rule (110, basin 4) carries high integration (Phi 13.13); the bijection rules (105/150, basin 1, no absorption) carry low integration (Phi 5.625). This bridges the attractor-dominance arc (H_332/335/336/338) with the integration measure (H_287): a small absorbing attractor is BOTH dominant AND high-Phi. The non-perfect r (rule30 has higher Phi but smaller basin than rule110) confirms the two axes are correlated but not identical — basin absorption and integration are coupled, distinct substrate properties.",
+  "verdict": "🟢 SUPPORTED-NUMERICAL",
+  "structural_vs_dynamical": "Bridges a DYNAMICAL descriptor (basin) with a STRUCTURAL one (IIT4 Phi). The +0.78 / -0.85 coupling is the session's first cross-family correlation: attractor dynamics and integration structure are not orthogonal at n=4.",
+  "honest_limits": [
+    "Only 4 rules / 4 data points — Pearson on n=4 is fragile; a wider rule panel would harden",
+    "n=4 only; H_340 showed n=4 dominance is a small-n regime, so the basin-Phi coupling may also be scale-bounded",
+    "big-Phi from H_287 is state-averaged; basin from H_338 uses max_basin — different aggregations, the correlation mixes them",
+    "rule30 inversion (higher Phi, smaller basin) is a single point but flags that the coupling is imperfect; n=6 re-measurement is the natural follow-up"
+  ],
+  "discovery_note": "attractor 동역학 ↔ IIT4 integration 첫 cross-family bridge. dominant/absorbing attractor(110) = high Φ, bijection(105/150) = low Φ. r=+0.78(basin) / -0.85(n_attr). H_338(basin=dominance) + H_287(Φ) 연결."
+}
