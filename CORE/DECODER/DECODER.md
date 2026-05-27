@@ -63,10 +63,18 @@
     - [x] **M4b-fire-toy** moe_toy_train 실행 (ubu-2 hexa run) — **verdict 🟠 PARTIAL**: MoE 가 두 register 학습 성공 (avg CE 1.386→0.0078, 178× 감소) BUT router 분화 안 됨 (gate(A)=gate(B)=[0.5,0.5], topA==topB). soft-MoE 단독은 dense-collapse — 양쪽 expert 가 둘 다 학습 → gate 균등. **더블바인드 탈출 핵심(register↔coherent expert 분리)이 naive soft routing 으론 emergent 안 함** (MoE 문헌 일치). ⚠ dt_exp/dt_ln cross-tree 버그를 실 run 이 잡음 → moe_exp/moe_ln self-contained 화
     - [x] **M4b-diff(a) top-1 hard routing** — ✅ **PASS (H_490 escape 검증)** · `moe_route_top1_fwd`/`_top1_bwd` (moe_router + bwd) — top-1 만 통과 → 승자 expert 만 gradient → 분화. `moe_toy_train_hard.hexa` ubu-2 실 run: init CE 1.389 → final 0.00388 (358× ↓) · **gate(A)=[0.970,0.030]→e0 · gate(B)=[0.030,0.970]→e1 · topA=0≠topB=1 분화 성공**. soft(🟠 50/50 dense-collapse) → hard top-1(✅ 97/3 분화). 더블바인드 탈출 메커니즘 toy 검증 완료
     - [~] **M4b-fire-scale** 3B Qwen MoE fire — **hexa-native path 채택 (g1, user 2026-05-27)**. flame-P2b ③ FULL RESOLVED 로 unblock. design = `CORE/DECODER/M4B_FIRE_SCALE_HEXA_NATIVE_DESIGN.md` (5 phase · ~110 LoC · 5-7 sessions · cost $9-18 single H100). 5 falsifier 사전등록 (F-M4B-FIRE-1..5: collapse 회피·coherence·router 분화·CE 수렴·register leak)
-      - [ ] **Phase 1** Qwen BPE corpus 통합 — `flame_bpe_corpus_load` 로 V=256 byte → V=151643 (+30줄 train_p21h_v3.hexa)
-      - [ ] **Phase 2** MoE arch 통합 — head_g 슬롯 → K-expert router (moe_router/_bwd import, top-1 hard routing) +60줄
+      - [x] **Phase 1** Qwen BPE corpus 통합 LANDED (PR #1059) — `flame_bpe_corpus_load` `flame_bpe_ids_in_vocab` `flame_bpe_roundtrip` 통합. bpe_assert_on env-var gate (V=151643 + round-trip PASS 검증)
+      - [x] **Phase 2** MoE arch 통합 LANDED — Phase 2a (`v3_moe_arch.hexa` 189 LoC packed-M MoE fwd/bwd PR #1056) + Phase 2b (`train_v3_moe.hexa` smoke driver PR #1057). Top-1 hard routing self-contained.
       - [x] **Phase 3** scale + memory budget — **Pilot 결정 (g0 simplest sufficient, 2026-05-27)**: pilot(d=512 · n_layer=12 · E=2 · V=151643 · T=512, ~265M params, FP64 ~10GB H100 fit, $1-3, 0.5-1hr wall) 첫 발사 → mechanism PASS 시 full(2.74B, BF16 path 필요)로 확장. 단계적 a_completeness. design Phase 3 결정 섹션 참조
-      - [~] **Phase 4** Dispatch design + pilot template LANDED — Vast.ai H100 SXM (**pilot $1-3 0.5-1hr** · full $9-18 4-8hr · SAVE_POD trap · pilot env-var protocol P21H_PILOT_* · pre-fire 4-item checklist). 실 fire 는 train_v3_moe SCAFFOLD → real driver (Phase 3b sub-PRs) 완료 후
+      - [x] **Phase 3b SCAFFOLD 6/6 LANDED** — train_v3_moe.hexa 1-step smoke → multi-step training driver
+        - [x] 3b-1 tok_emb (#1063) · 3b-2 attn_Wo (#1064) · 3b-3 MLP (#1066) · 3b-4 ln_f RMSNorm (#1067) · 3b-5 AdamW step (#1069) · 3b-6 multi-step loop (#1070)
+      - [~] **Phase 4** Dispatch design + pilot template LANDED — Vast.ai H100 SXM (**pilot $1-3 0.5-1hr** · full $9-18 4-8hr · SAVE_POD trap · pilot env-var protocol P21H_PILOT_* · pre-fire 5-item checklist). Pilot-scale code gap 메우기 = sub-PRs 4a-e:
+        - [ ] **Phase 4a** pilot config env-var wiring (P21H_PILOT_D/V/E/T/STEPS/NL — 현 d=4 V=4 hardcoded 인자화)
+        - [ ] **Phase 4b** multi-layer block iteration (n_layer > 1, layer-iter loop · per-layer offsets)
+        - [ ] **Phase 4c** self-attention proper (T > 1, causal mask · Q/K/V/Wo · softmax)
+        - [ ] **Phase 4d** BPE corpus real IDs feed (V_qwen=151643 aware · batch from corpus) — bpe_assert_on → live ids feed
+        - [ ] **Phase 4e** dispatch script (Vast.ai vastai launch + ssh setup + scp Qwen + run + monitor + harvest)
+        - [ ] **Phase 4-fire** autonomous fire 발사 (a_fire_autonomous · H100 SXM ~$1-3 · 0.5-1hr)
       - [~] **Phase 5** Verdict 사전등록 + harness template LANDED — 5 falsifier (F-M4B-FIRE-1..5) pilot/full threshold 분리 표 + verdict template `m4b_pilot_verdict.md` 형식 + matrix (5/5→full fire · 3-4→re-pilot · 2 이하→re-design · 0→CLOSED-NEGATIVE). 실 측정은 Phase 4 fire 후
   - [ ] **M4c** p7 verify — collapse 회피 ∧ coherence 둘 다 simple-stack
 - [ ] **M4-probe model-merge α-sweep** (optional baseline probe · UNIVERSE H_493 SYMBIOGENESIS) — collapse-avoid + collapse ckpt weight 보간 `W=α·A+(1-α)·B` · α-sweep · cheap baseline 신호용으로만 (본선 아님). 두 결함작 blend = least-bad midpoint 한계 인지 (`a_completeness_over_cheap` model-merge-of-failures dont)
