@@ -129,7 +129,7 @@ with $n$.
       from \textsc{30} to \textsc{110}, demonstrating that the
       ``life class chaotic'' label is not a scale-invariant property
       of a single rule.
-\item All twenty-two measurements are published as a
+\item All twenty-five measurements are published as a
       verify-driven raster
       (\texttt{UNIVERSE/state/h312...h333/result.json}) under
       anti-fake-closure governance: a verdict is earned by an
@@ -412,6 +412,55 @@ data from \texttt{UNIVERSE/state/h328\_*} (n$=$4) and
 \label{fig:rotation}
 \end{figure}
 
+\subsection{Self-correction\texorpdfstring{$^2$}{2}: cycle length is not a faithful \texorpdfstring{$\Phi$}{Phi} proxy}
+\label{sec:self-correction}
+A coupling between attractor structure and integration first surfaced at
+$n=4$ (H\_341): across the four rules, Pearson(max-basin, exact $\Phi$)
+$=+0.78$ and Pearson(\#attractor-states, exact $\Phi$) $=-0.85$ --
+more concentrated dynamics carry higher integration. Pushed to $n=6$,
+where the exact IIT~4.0 $\Phi$-structure is intractable, H\_343
+substituted a \emph{cycle-length proxy} for $\Phi$ and found both signs
+invert (max-basin $\to -0.50$, \#attractor $\to +0.99$): an apparent
+scale-dependent \emph{collapse} of the coupling.
+
+\noindent The correction was then itself corrected. At $n=5$ the exact
+$\Phi$-structure is still tractable, so H\_345 recomputed the true
+cause-effect $\Phi$ (no proxy) and the \emph{original} signs return:
+max-basin $+0.25$, \#attractor $-0.80$ (Table~\ref{tab:sc2}). The $n=6$
+inversion was therefore an artifact of the cycle-length \emph{proxy},
+not a property of scale: cycle length is not a faithful stand-in for
+$\Phi$. The robust signal is the \#attractor$\leftrightarrow\Phi$
+coupling, stable at $-0.85$ ($n=4$) and $-0.80$ ($n=5$) -- rules whose
+dynamics concentrate onto few on-cycle states carry higher integration,
+while the max-basin coupling weakens ($+0.78 \to +0.25$) because rule 30
+inverts it (highest $\Phi$, small basin).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llcccl}
+\toprule
+\textbf{cell} & \textbf{$n$} & \textbf{$\Phi$ source} &
+\textbf{max-basin$\leftrightarrow\Phi$} &
+\textbf{\#attr$\leftrightarrow\Phi$} & \textbf{reading} \\
+\midrule
+H\_341 & 4 & exact         & $+0.78$ & $-0.85$ & coupling found \\
+H\_343 & 6 & cycle proxy   & $-0.50$ & $+0.99$ & \emph{apparent} flip \\
+H\_345 & 5 & exact         & $+0.25$ & $-0.80$ & signs restored \\
+\bottomrule
+\end{tabular}
+\caption{The self-correction\texorpdfstring{$^2$}{2} arc. A claimed
+scale-dependent sign flip (H\_343, where the intractable $n=6$ forced a
+cycle-length proxy in place of exact $\Phi$) is itself overturned once
+exact $\Phi$ is restored at the still-tractable $n=5$ (H\_345): both
+correlations keep their $n=4$ sign. The methodological finding is that
+cycle length is an \emph{unreliable} $\Phi$ proxy -- the flip lived in
+the proxy, not in the scale. The \#attractor$\leftrightarrow\Phi$
+coupling ($\approx -0.8$ at both exact $n$) is the stable cross-family
+bridge.}
+\label{tab:sc2}
+\end{table}
+
 \subsection{The proposed axis: bijection vs chaotic at fixed $n$, with rotating dominance}
 The combined evidence supports a two-axis reading.
 \emph{At fixed $n$}, the real separator on the descriptors we measured
@@ -442,11 +491,17 @@ to dominate the longest-cycle slot at the specific $n$ being measured.''
       starting state; H\_300's state-sweep on rule 90 already
       flagged single-state sensitivity. A multi-state sweep is
       pre-registered for the next iteration.
-\item \textbf{Cycle length is a low-order descriptor.} Distinct
-      attractor count, transient length, and attractor basin size
-      are pre-registered follow-ups (\texttt{H\_332} reports a
-      preliminary attractor-dominance signature; full rule$\times$rule
-      dominance map is open).
+\item \textbf{Cycle length is a low-order descriptor -- and an
+      unreliable $\Phi$ proxy.} Distinct attractor count, transient
+      length, and attractor basin size are pre-registered follow-ups
+      (\texttt{H\_332} reports a preliminary attractor-dominance
+      signature; full rule$\times$rule dominance map is open). The
+      self-correction$^2$ arc (\S\ref{sec:self-correction},
+      Table~\ref{tab:sc2}) shows directly that cycle length cannot
+      stand in for exact $\Phi$: it flipped a coupling's sign at $n=6$
+      that exact $\Phi$ keeps at $n=4$ and $n=5$. Where the exact
+      $\Phi$-structure is affordable ($n\leq 5$), it -- not a dynamical
+      proxy -- is the verdict-bearing quantity.
 \item \textbf{No wet-lab claim.} This paper makes no biological
       claim. The class labels ``life'' and ``consciousness'' are
       analogies inherited from \citep{anima_H287}; the empirical
@@ -456,9 +511,9 @@ to dominate the longest-cycle slot at the specific $n$ being measured.''
 \section{Reproducibility}
 \label{sec:repro}
 
-All twenty-two cells live as JSON ledgers under
+All twenty-five cells live as JSON ledgers under
 \texttt{UNIVERSE/state/h312\_*} through
-\texttt{h333\_*} on
+\texttt{h345\_*} on
 \url{https://github.com/dancinlab/anima/tree/main/UNIVERSE/state}.
 Each cell carries (i) a \texttt{run.hexa} source file, (ii) a
 \texttt{run.log} verbatim stdout transcript, and (iii) a
@@ -507,7 +562,7 @@ anti-fake-closure governance hook \texttt{commons @D g73}
 \citep{anima_g73}, and the \texttt{sidecar/paper} scaffold. The
 session that produced cells H\_312--H\_333 ran in a single Claude
 Code instance (Claude Opus 4.7 1M-context, January 2026 cutoff)
-against the public \texttt{anima} main branch. All twenty-two
+against the public \texttt{anima} main branch. All twenty-five
 \texttt{result.json} ledgers are visible at the commit hashes listed
 in \texttt{companion/pr-roll.json}.
 
