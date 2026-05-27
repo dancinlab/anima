@@ -1,0 +1,50 @@
+================================================================
+  H_635 — multilingual-cohort collective Φ (5-STREAM super-additive?)
+  ANIMA.mining L6 promote · sister H_609 (2-stream Δ=+10.48)
+  IIT4 big_phi_bounded · n=5 · cap=3 · sys=0 · sync_factor sweep
+================================================================
+  C1 edge-homog  [110x5]        Φ_pool(W=0,Σ-baseline)=0.0
+    W=0.25  Φ_coll=2.25304  Δ=Φ_coll-Σ=2.25304
+    W=0.50  Φ_coll=6.54186  Δ=Φ_coll-Σ=6.54186
+    W=0.75  Φ_coll=15.5932  Δ=Φ_coll-Σ=15.5932
+    W=1.00  Φ_coll=41.7124  Δ=Φ_coll-Σ=41.7124
+  C2 multilingual[110,90,150,30,110]  Φ_pool(W=0,Σ-baseline)=0.0
+    W=0.25  Φ_coll=1.53146  Δ=Φ_coll-Σ=1.53146
+    W=0.50  Φ_coll=3.21621  Δ=Φ_coll-Σ=3.21621
+    W=0.75  Φ_coll=5.73948  Δ=Φ_coll-Σ=5.73948
+    W=1.00  Φ_coll=5.56798  Δ=Φ_coll-Σ=5.56798
+  C3 class-III   [30,90,30,90,30]     Φ_pool(W=0,Σ-baseline)=0.0
+    W=0.25  Φ_coll=0.399234  Δ=Φ_coll-Σ=0.399234
+    W=0.50  Φ_coll=1.09937  Δ=Φ_coll-Σ=1.09937
+    W=0.75  Φ_coll=2.37649  Δ=Φ_coll-Σ=2.37649
+    W=1.00  Φ_coll=4.70447  Δ=Φ_coll-Σ=4.70447
+  C4 XOR-heavy   [90x5]         Φ_pool(W=0,Σ-baseline)=0.0
+    W=0.25  Φ_coll=0.471784  Δ=Φ_coll-Σ=0.471784
+    W=0.50  Φ_coll=1.38346  Δ=Φ_coll-Σ=1.38346
+    W=0.75  Φ_coll=3.25475  Δ=Φ_coll-Σ=3.25475
+    W=1.00  Φ_coll=7.5  Δ=Φ_coll-Σ=7.5
+  C5 chaos+cplx  [110,30,110,30,110]  Φ_pool(W=0,Σ-baseline)=0.0
+    W=0.25  Φ_coll=0.277018  Δ=Φ_coll-Σ=0.277018
+    W=0.50  Φ_coll=0.764266  Δ=Φ_coll-Σ=0.764266
+    W=0.75  Φ_coll=1.98147  Δ=Φ_coll-Σ=1.98147
+    W=1.00  Φ_coll=4.63128  Δ=Φ_coll-Σ=4.63128
+  --
+  MAX EXCESS Δ = 41.7124  at C1 edge-homog  [110x5]       W=1.00
+  best sync_factor W = 1.0
+  cohorts reaching Δ>0 (5-stream super-additive) = 5 / 5
+  [PASS] F635.1 DECOUPLED-ANCHOR: Φ_pool(W=0) ≥ 0 finite all 5 cohorts
+  [PASS] F635.2 SUPER-ADDITIVITY: max_excess Δ > 0 (across W>0, 5 cohorts)
+  [PASS] F635.3 SYNC-NONFLAT: Φ_collective varies with sync_factor W
+  [PASS] F635.4a BOUNDS: Φ ≥ 0 everywhere
+  [FAIL] F635.4b DETERMINISM: phi_cohort(C1,W=0.5) re-run byte-identical
+  [PASS] F635.5 5-STREAM-GENERALIZES: ≥1 cohort reaches Δ>0 (H_609 survives 5-stream)
+================================================================
+  RESULT: 5 PASS / 1 FAIL
+  MAX EXCESS Δ = 41.7124  best sync W = 1.0
+  VERDICT: H1 SUPPORTED — 5-stream multilingual-cohort collective Φ is
+           SUPER-ADDITIVE. Pooling 5 distinct lang-proxy streams at
+           sync_factor W>0 yields Φ_collective > decoupled Σ-baseline
+           on at least one cohort × W. The H_609 2-stream super-
+           additivity GENERALIZES to the 5-stream lang axis.
+================================================================
+  (some falsifiers FAILed — see [FAIL] lines above)
