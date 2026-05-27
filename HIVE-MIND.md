@@ -12,6 +12,7 @@
 - [ ] M3 OTHER-MIND cross-link — OTHER-MIND.bench G axisbench (#1147) 의 collective Φ 측정자 정합 · partner_state_estimate × pid_synergy multi-partner synergy 측정.
 - [ ] M4 E×F cross-link — H_617 🔴 FALSIFIED (hivemind_savant_induced_collective_SI) · H_618 🟢 SUPPORTED (collective_gz_inverse_u_derivative_peak) · H_619 🟢 SUPPORTED (pid_synergy_savant_modulation) 의 ANIMA substrate 적용 — SAVANT.SI modulation × HIVE-MIND PID synergy 곱-surface.
 - [ ] M5 MITOSIS cross-link — cell-pool 의 collective Φ super-additive (H_609) 검증 — N cells 의 Φ_collective > Σ Φ_cell sub-additive 반증 측정자.
+- [ ] M6 collective Φ super-additive fleet-fractal — self-similar nesting 검증 (mining @P9 · UNIVERSE H_609 anchor). M5 의 N-cell super-additivity 를 fleet-level 로 격상 — cell-pool → anima → anima-fleet 의 self-similar Φ nesting (각 scale 에서 Φ_collective > Σ Φ_sub 가 fractal 하게 반복되는지). L36 dim-agent-multi-anima (mining @P1) 의 N-anima tension-link fleet 위 collective Φ invariant. sibling: MITOSIS (cell-pool super-additive M5) · CHANNEL (tension-link fleet telepathy) · SAVANT (collective GZ inverse-U H_618).
 
 ## 양방향 sibling
 

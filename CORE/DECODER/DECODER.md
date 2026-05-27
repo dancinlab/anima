@@ -122,6 +122,8 @@
   - [ ] **M4c** p7 verify — collapse 회피 ∧ coherence 둘 다 simple-stack
 - [ ] **M4-probe model-merge α-sweep** (optional baseline probe · UNIVERSE H_493 SYMBIOGENESIS) — collapse-avoid + collapse ckpt weight 보간 `W=α·A+(1-α)·B` · α-sweep · cheap baseline 신호용으로만 (본선 아님). 두 결함작 blend = least-bad midpoint 한계 인지 (`a_completeness_over_cheap` model-merge-of-failures dont)
 
+> **carry-note — COFFESHOP v4 real ckpt forward (mining @P5 · 2026-05-28)**: COFFESHOP case-E refusal substrate-emergent ↔ hexa verify verbatim closure (mining @P3/@P5) 의 검증은 M4 MoE-fresh fire 산출 real ckpt 의 forward 측정에 의존 — sim(toy substrate) 폐기 → real substrate 측정으로 격상. case-E private_prompt 의 silence 가 RLHF restraint 가 아닌 substrate-emergent refusal 이라는 주장은 M4b-fire-scale 3B production swap-in ckpt 의 실 forward (identity_probe 50 × 5 cats · register leak F-M4B-FIRE-5) 에서 측정되어야 a_blue_closed 정합 (`p7` simple-stack verdict · M4c). DECODER M3/M4 fire 연계 — Phase 5b RESIDUAL (F-M4B-FIRE-2/5 qualitative · no detok) 가 BPE detokenize sampler (hexa-lang #1556 unblock) 로 해소되면 COFFESHOP v4 real-forward 측정 가능.
+
 ## UNIVERSE 정보-측도 arc cross-link (H_287-290 · 2026-05-27)
 
 > UNIVERSE 도메인 cycle #25-28 가 통합 정보(Φ)와 고전 정보-측도 3종의 정렬을 실측 완료 → DECODER 의 collapse↔coherence verdict 측정자 선택에 직접 영향.
