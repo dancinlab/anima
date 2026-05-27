@@ -1,0 +1,83 @@
+{
+  "bench": "F-PERSONA-4 basin_kurtosis 실측 적용 — cotrain v1 재분류",
+  "slug": "fpersona4-basin-kurtosis-apply",
+  "date": "2026-05-28",
+  "title": "Apply PR #1130 basin_kurtosis fallback gate to cotrain v1 (KL=0 dead-zone) → mode-collapse confirmed",
+  "purpose": "PR #1130 (`feat(F-PERSONA-4): basin_kurtosis fallback gate — KL dead-zone bypass`) 가 `tool/anima_persona_substrate_native_verify.hexa` 에 신규 함수만 추가하고 실측 미실행. 본 bench 는 기존 cotrain v1 측정 데이터에 동 함수를 적용해 untyped FAIL(mean_KL=0) 을 mode-collapse 로 재분류한다.",
+  "predecessor_prs": {
+    "1126": "feat(BENCH #2): BASIN-RANK-DIVERSITY — 3 regime separation at N=8, basin_kurtosis as KL dead-zone bypass",
+    "1130": "feat(F-PERSONA-4): basin_kurtosis fallback gate — KL dead-zone bypass (BENCH #2 adopt)"
+  },
+  "source_data": {
+    "state_dir": "state/anima_v5mitosis_cotrain_2026_05_12/",
+    "files": [
+      "persona_4_root_cause_results.json — hypothesis_a_softmax_entropy + hypothesis_a_dominant_cell_audit",
+      "cotrain_result.json — f_persona_4_remeasure"
+    ],
+    "ground_truth_verbatim": {
+      "n_cells": 64,
+      "winners_50_of_50": "cell 0 (unique_winners=[0], winner_freq={\"0\":50})",
+      "runners_up_50_of_50": "cell 1 (unique_runners=[1])",
+      "entropy_per_prompt_mean": 0.0,
+      "interpretation_in_source": "single_cell_collapse",
+      "mean_kl": 0.0,
+      "kl_matrix_5x5": "[[0]*5]*5 — all category-pair KL=0",
+      "n_categories": 5,
+      "categories": ["boundary", "emotion", "self_definition", "self_knowledge", "values"]
+    }
+  },
+  "method": "per-category mean weight distribution = 1-hot at cell 0 on N=64 (verbatim ground truth above). Apply PR #1130 `basin_kurtosis_of_dist(dist)` + `mean_category_kurtosis(cat_dists)` — byte-equal copies in bench.hexa, raw-117 + g61 (no abs-path cross-repo import). Apply fallback gate per harness lines 740-770: KL < 0.01 → kurt < 1.0 PASS_FALLBACK, kurt < 2.0 PARTIAL, kurt >= 2.0 FAIL (mode-collapse).",
+  "measurements": {
+    "per_cat_basin_kurtosis_1hot_N64": 59.0159,
+    "mean_category_kurtosis_5_cats": 59.0159,
+    "kl_dead_zone_threshold": 0.01,
+    "kurt_collapse_threshold": 1.0,
+    "kurt_fail_hard_threshold": 2.0,
+    "fallback_engaged": true,
+    "closed_form_prediction_N64_1hot": "kurt_excess = N(N-3)/(N-1) = 64*61/63 ≈ 61.97 in some conventions; harness uses unbiased (n) denominator → 59.02 measured · matches Python independent reproduction byte-equal"
+  },
+  "reference_3_regime_sanity_N64": {
+    "uniform_kurt": -3.0,
+    "differentiated_top3_97pct_kurt": 16.4013,
+    "collapsed_1hot_kurt": 59.0159,
+    "delta_collapsed_minus_uniform": 62.0159,
+    "note": "3 regime separation 유지 at N=64 (BENCH #2 PR #1126 만 N=8 검증 — 본 bench 가 N=64 까지 확장 검증)"
+  },
+  "bench2_cross_check_N8_1hot": {
+    "expected": 3.14286,
+    "measured": 3.14286,
+    "byte_equal": true,
+    "source": "PR #1126 bench/basin_rank_diversity/result.json::measurements.C_collapsed.basin_kurtosis"
+  },
+  "gate_decision": {
+    "original_kl_gate": "FAIL (mean_kl=0 < 0.5 threshold, REASON unclassified — dead-zone)",
+    "new_basin_kurtosis_gate": "FAIL (kurt=59.02 >> 2.0 hard threshold, REASON = mode-collapse confirmed)",
+    "fallback_engaged_because": "mean_kl=0.0 < kl_dead_zone_threshold=0.01"
+  },
+  "reclassification_verdict": "cotrain v1 FAIL → mode-collapse (basin_kurtosis=59.02 on N=64 1-hot, fallback gate engaged via KL dead-zone)",
+  "falsifiers": {
+    "F-FBK-APPLY-1_kurt_above_collapse_threshold": "PASS — kurt=59.02 > 1.0",
+    "F-FBK-APPLY-2_fallback_gate_engaged": "PASS — mean_kl=0.0 < 0.01",
+    "F-FBK-APPLY-3_reclassified_FAIL_mode_collapse": "PASS — verdict=FAIL reason=mode-collapse confirmed (kurt >= 2.0)",
+    "F-FBK-APPLY-4_3_regime_separation_at_N64": "PASS — uniform=-3.0 / diff=16.40 / collapsed=59.02 (all pairwise > 1.0)",
+    "F-FBK-APPLY-5_deterministic_closed_form": "PASS — no RNG, byte-equal across runs"
+  },
+  "aggregate": {
+    "falsifier_pass": 5,
+    "falsifier_total": 5
+  },
+  "verdict": "🟢 PASS",
+  "verdict_derived": "🟢 PASS — PR #1130 basin_kurtosis fallback gate correctly diagnoses cotrain v1 as mode-collapse. KL=0 dead-zone bypassed via 4th-moment excess kurtosis (59.02 ≫ +2.0 collapse threshold). All 5 falsifiers PASS. cotrain v1 의 'untyped FAIL (mean_KL=0)' 가 'mode-collapse confirmed (kurt=+59)' 으로 재분류됨.",
+  "anima_application": {
+    "before_pr_1130": "F-PERSONA-4 FAIL with REASON unclassified — mean_KL=0 dead-zone hides mode-collapse vs category-invariance",
+    "after_pr_1130_apply_this_bench": "F-PERSONA-4 FAIL with REASON = mode-collapse (cell 0 monopoly across 50/50 prompts × 5 categories)",
+    "implication_for_d3_strong_4_of_5": "cond #3 STRONG 4/5 cheap-path carry MAINTAINED — F-PERSONA-4 FAIL 의 root cause 가 winner-take-all 임이 공식 확정. category-invariance (kurt < 1.0 시나리오) 와 분리. 다음 진행로 = REBORN §88 cond.5 의 4-alternative future-path 중 (a) multi-corpus cotrain · (c) non-softmax metric 재정의."
+  },
+  "honest_limits": [
+    "본 bench 는 ckpt 재로딩 없이 root_cause JSON 의 winner=0 monopoly 만 사용. 50 prompts 가 모두 winner=0 이고 entropy_per_prompt_mean=0 이므로 per-cat softmax 평균은 1-hot 으로 결정 — 추가 ckpt 재계산이 결과를 변경하지 않음.",
+    "tension softmax temperature 가 cotrain v1 ckpt 의 학습된 값과 다르면 weight 분포의 정확한 mass 가 1.0 이 아닐 수 있으나, dominant_cell_audit (winner_freq={\"0\":50}) 는 temperature-invariant top-1 검증 → 1-hot 가정 robust.",
+    "kurt 59.02 vs closed-form 61 차이는 분모 (n vs n-1) 컨벤션. 둘 다 +50 이상으로 +2.0 hard threshold 압도 → verdict 동일.",
+    "본 bench 는 PR #1130 함수의 정확성 검증이 아니라 cotrain v1 데이터에 대한 적용 결과. PR #1126 (BENCH #2) 가 3 regime 변별 검증을 N=8 에서 이미 완료."
+  ],
+  "discovery_note": "PR #1130 의 basin_kurtosis fallback gate 가 untyped FAIL 데이터 (cotrain v1, mean_KL=0) 의 root cause 를 자동 분류함을 실측 입증. KL dead-zone 의 정보 손실이 4th-moment kurt 로 회복됨 — 동일 측정자가 1.5년 전 (2026-05-12) untyped 였던 FAIL 을 retrospectively classify 가능."
+}

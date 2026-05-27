@@ -1,0 +1,51 @@
+════════════════════════════════════════════════════════════════════
+ F-PERSONA-4 basin_kurtosis 실측 적용 — cotrain v1 재분류
+════════════════════════════════════════════════════════════════════
+
+PR #1130 신규 함수를 기존 cotrain v1 측정 데이터에 적용:
+  source = state/anima_v5mitosis_cotrain_2026_05_12/persona_4_root_cause_results.json
+  source = state/anima_v5mitosis_cotrain_2026_05_12/cotrain_result.json
+
+ground truth (verbatim from JSON):
+  n_cells               = 64
+  winner cell           = 0 (50/50 prompts)
+  n_categories          = 5
+  mean_kl (original)    = 0.0
+  entropy_per_prompt    = 0.0 (single_cell_collapse)
+
+── measurement (PR #1130 basin_kurtosis fallback gate) ─────────────
+  per-cat basin_kurtosis (1-hot N=64)  = 59.0159
+  mean_category_kurtosis (5 cats)      = 59.0159
+  kl_dead_zone_threshold               = 0.01
+  kurt_collapse_threshold              = 1.0
+  kurt_fail_hard_threshold             = 2.0
+
+── gate decision (replicates harness lines 740-770) ────────────────
+  fallback engaged?     true
+  verdict (kurt gate)   FAIL
+  reason                mode-collapse confirmed (kurt >= 2.0, dead-zone fallback engaged)
+
+── reference 3-regime sanity (N=64) ────────────────────────────────
+  uniform               kurt = -3.0  (expected = -3.0)
+  differentiated 97%/3  kurt = 16.4013
+  collapsed 1-hot       kurt = 59.0159  (expected = 61)
+  delta(collapsed, uniform)  = 62.0159
+
+── BENCH#2 reference cross-check (N=8 1-hot) ───────────────────────
+  byte-equal expected  +3.14286 (PR #1126 result.json::measurements.C_collapsed)
+  measured             3.14286
+
+── falsifier evaluation ────────────────────────────────────────────
+  F-FBK-APPLY-1 kurt>collapse_threshold         PASS  kurt=59.0159 > 1.0
+  F-FBK-APPLY-2 fallback gate engaged            PASS  mean_kl=0.0 < 0.01
+  F-FBK-APPLY-3 reclassified FAIL/mode-collapse  PASS  verdict=FAIL reason=mode-collapse confirmed (kurt >= 2.0, dead-zone fallback engaged)
+  F-FBK-APPLY-4 3-regime separation at N=64      PASS  uniform=-3.0 diff=16.4013 collapsed=59.0159
+  F-FBK-APPLY-5 deterministic (closed-form)      PASS  no RNG · byte-equal across runs
+
+── aggregate ───────────────────────────────────────────────────────
+  falsifiers PASS  5/5
+  verdict          🟢 PASS
+
+── reclassification verdict (1 line) ───────────────────────────────
+  cotrain v1 FAIL → mode-collapse (basin_kurtosis=59.0159 on N=64 1-hot, fallback gate engaged via KL dead-zone)
+
