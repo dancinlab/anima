@@ -1,0 +1,29 @@
+{
+  "cycle": "opt_1_v4_exec_2026_05_04",
+  "ts_utc": "2026-05-04T08:42:49Z",
+  "pod_id": "4lr1na22yrma0t",
+  "pod_terminated": true,
+  "pod_kill_verified_404": false,
+  "scope": "F-SHIM-V4-3 verification + train_avg harvest stub + optional canonical_zero sanity eval (limit=100 hellaswag)",
+  "f_shim_v4_1_dry_run_carry": "PASS",
+  "f_shim_v4_2_v3_regression_carry": "PASS",
+  "f_shim_v4_3_canonical_zero_finite_forward": "FAIL",
+  "f_shim_v4_4_train_avg_above_random_5pt": "HARVEST_STUB_ONLY",
+  "finite_forward": "unknown",
+  "train_avg_fixture_harvested_via": "FAILED",
+  "train_avg_fixture_path": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_train_avg_fixture.json",
+  "sanity_eval_canonical_zero_hellaswag_acc": null,
+  "sanity_eval_no_fixture_hellaswag_acc": null,
+  "consciousness_injection_lift_pp": null,
+  "wall_time_min": 3,
+  "actual_cost_usd": 0.15,
+  "complete_sentinel_detected": true,
+  "honest_c3": [
+    "canonical_zero is sanity-only fixture; cross_attn.o_proj init std=0.001 + zero values yields ~zero residual; lift_pp expected near 0",
+    "limit=100 hellaswag has stderr ~5pp; lift_pp <5pp is within noise",
+    "train_avg harvest is STUB if approach (b) used (synthetic forward-pass average via dummy text) — not a true train-time average",
+    "H100 bfloat16 ⇒ slight numeric drift vs fp32; 1-batch forward finite check is robust (NaN/Inf would manifest immediately)",
+    "shim v4 modeling.py adds 88 LoC dormant fixture loader; F-SHIM-V4-2 is runtime-equivalence not byte-level",
+    "block_size=512 truncation orthogonal — v4 fixture cannot fix MMLU prompt left-truncation"
+  ]
+}

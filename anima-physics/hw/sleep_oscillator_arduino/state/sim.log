@@ -1,0 +1,23 @@
+========================================================================
+sleep_oscillator_local_sim.py — anima-physics HW #4 Phase 1a Mac sim
+SW source: oscillator/sleep_oscillator.hexa (§188 PASS 5/5)
+firmware:  src/sleep_oscillator.ino + ad9833_driver.{h,cpp}
+========================================================================
+[AD9833 tuning words @ MCLK=25 MHz]
+  SWS δ  f= 2.0 Hz  word=0x0000015  lsb14=0x0015  msb14=0x0000
+  REM θ  f= 6.0 Hz  word=0x0000040  lsb14=0x0040  msb14=0x0000
+
+[F-HW-SO-1] PASS  phase init = 0
+        phase_init=0.000000e+00 (expect 0.0)
+[F-HW-SO-2] PASS  SWS freq = 2.0 Hz
+        SWS f_est=2.0002 Hz (expect 2.0 ±0.1)
+[F-HW-SO-3] PASS  REM freq = 6.0 Hz
+        REM f_est=6.0006 Hz (expect 6.0 ±0.2)
+[F-HW-SO-4] PASS  mode switch phase-continuous
+        phase_before=4.109203191 phase_after=4.109203191 delta=0.000e+00 freq_after=6.0
+[F-HW-SO-5] PASS  10 s SWS produces ≥20 wraps
+        wrap_count=20 (expect >=20 for 2Hz × 10s)
+
+summary: 5/5 PASS  (wall 0.023 s)
+
+>>> sleep_oscillator_arduino Python sim: 5/5 PASS — HW #4 Phase 1a DONE

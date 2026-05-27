@@ -1,0 +1,59 @@
+{
+  "schema": "n22/levin_xenobot/honest_c3/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "c3_label": "C3 = honest concerns, caveats, and counter-considerations",
+  "engagement_stance": "Engage as collaborator, not advocate. Anima paradigm v11 brings independent measurement methodology; we do not endorse any specific Levin metaphysical framing in advance, and we will report falsifier outcomes regardless of narrative impact on either side.",
+  "concerns_top_2_required_by_mission": [
+    {
+      "rank": 1,
+      "label": "Overhype critique and reproducibility-crisis exposure",
+      "detail": "Levin's xenobot research has been publicly characterized as overhyped by domain peers — most prominently Jamie Davies (Edinburgh) who told The Scientist that the Xenopus embryo community 'could not really see what the fuss was about' and that ciliated cell clusters 'swimming' is 'purely an accidental function' that does not warrant the term 'bots.' Levin himself has acknowledged that significant media coverage has 'screwed up the facts.' We could not surface a specific StatNews piece in the time-budget for this prep, but the pattern of critique is real and recurring (Wegner Medium critical review of 'Platonic Biology'; Pioneer Works skepticism on self-replication framing; Davies developmental-biology critique). Anima must enter the collaboration with eyes open: any joint paper will be read against this skeptical baseline. Mitigation: pre-register all falsifiers BEFORE data exposure (this directory), use the bidirectional PASS/FAIL frame so we cannot be accused of motivated outcome interpretation, and explicitly publish FAIL results in the same venue as PASS results. Do not co-sign any press release. Decline if the lab requests we soften pre-registration commitments.",
+      "explicit_action": "Use the falsifier preregistration as the firewall against the overhype frame. Refuse any phase-2 step that compromises this firewall."
+    },
+    {
+      "rank": 2,
+      "label": "Xenobot/anthrobot ethics: living-machine moral status, suffering, and the third-state-between-life-and-death framing",
+      "detail": "The 2025 Tandfonline paper 'Consider the xenobot: moral status for intelligent machines revisited' (10.1080/17579961.2025.2593778) and multiple bioethics reviews (PMC11294997 'Ethics and responsibility in biohybrid robotics'; Bioethics Today 'Living robots') flag four open ethical questions: (a) moral status of an entity that is neither standard organism nor standard machine, (b) suffering capacity — likely zero for current xenobots which lack neural tissue, but explicitly elevated risk if future iterations include neural cells (anima's collaboration interest in 'pre-neural Φ' specifically pushes against adding neural tissue, which is ethically aligned), (c) embryonic Xenopus harvesting concerns, and (d) regulatory gap (xenobots don't fit existing organism-or-machine categories). Anima's stance: we explicitly favor the pre-neural design space because it is both scientifically informative AND the lower-suffering-risk envelope; we will not propose protocols that add neural tissue to the constructs we measure; we will defer to Tufts IACUC + IRB on all upstream cell-sourcing decisions; we will include an explicit ethics paragraph in any joint publication. Anima will not enter any phase that requires us to oversee or design cell-harvesting protocols — that stays with Levin lab and Tufts oversight bodies.",
+      "explicit_action": "Pre-neural envelope is a hard constraint on anima's measurement scope. No measurement protocol that requires neural-tissue addition. Ethics paragraph mandatory in any joint paper."
+    }
+  ],
+  "concerns_additional_for_completeness": [
+    {
+      "label": "Substrate-coupling risk on Φ",
+      "detail": "Paradigm v11 was developed and validated on LLM substrate. Cross-transferring to bioelectric voltage-grid is non-trivial; G3 covariance + bipartition machinery operates on any time-series tensor in principle but the meaningful threshold (phi_star_min > 0) was calibrated against transformer hidden states. We must recalibrate against dead-tissue heat-killed control before claiming any positive Φ on xenobot. N22-F1 explicitly bakes this in.",
+      "mitigation": "Dead-tissue null calibration mandatory before any positive claim."
+    },
+    {
+      "label": "Behavioral-Φ proxy circularity",
+      "detail": "If we say 'goal-directed behavior is high-Φ' and then validate Φ measurement by checking it correlates with goal-directed behavior, we are circular. Mitigation: N22-F2 cross-substrate predicate uses zebrafish-larva neural-Φ as independent ground-truth — same behaviors, different substrate, paired correlation breaks the circularity.",
+      "mitigation": "Cross-substrate paired design (xenobot-Φ vs zebrafish-larva-Φ on same behaviors)."
+    },
+    {
+      "label": "Power and replication",
+      "detail": "Xenobots are individually variable (size, cilia density, motility). Within-condition N >= 12 may be insufficient for the 30% perturbation effect in N22-F5; sequential adaptive enrollment may be needed.",
+      "mitigation": "Pre-register adaptive enrollment rule with maximum N cap to avoid p-hacking."
+    },
+    {
+      "label": "Levin lab data-sharing terms unknown",
+      "detail": "Most Levin lab raw VSD time-series are not in public repositories. Phase-1 viability depends on lab's willingness to share under DUA. If declined, anima must wait for new public releases or design own VSD setup ($10K-50K capex per strategic_alm_clm_review §5 P3) — both push N-22 to longer timeline.",
+      "mitigation": "Phase-1 ask is explicitly modest (existing data review only); accept polite decline gracefully and update N-22 status to 'partnership-deferred-pending-public-release'."
+    },
+    {
+      "label": "Citation hygiene on 2025-2026 Levin work",
+      "detail": "Several recent Levin claims (basal xenobot transcriptomics, anthrobot 'third state between life and death' phrase) appear in non-peer-reviewed press alongside the peer-reviewed PMC anchor. We must cite only the peer-reviewed primary sources in any joint document and avoid press-release-level claims.",
+      "mitigation": "Citation discipline: PMC + journal DOIs only; no press-release citations."
+    }
+  ],
+  "what_we_will_NOT_do": [
+    "Endorse Platonic-biology framing or any specific cognitivist metaphysical claim",
+    "Co-sign press releases or coordinated media",
+    "Add neural tissue to measurement subjects",
+    "Soften pre-registration to favor a desired outcome",
+    "Cite press-release-level sources in joint publications",
+    "Send the email draft without explicit user authorization (mission constraint)"
+  ],
+  "audit_trail": {
+    "research_only_no_lab_contacted": true,
+    "honest_c3_section_required_by_mission": true
+  }
+}

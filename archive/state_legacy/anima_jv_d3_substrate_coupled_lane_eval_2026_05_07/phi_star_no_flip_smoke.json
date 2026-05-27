@@ -1,0 +1,89 @@
+{
+  "n_turns": 3,
+  "rounds": [
+    {
+      "axis_label": "axis_identity",
+      "input": "안녕 너는 누구야?",
+      "phi_star": 41.83701424174348,
+      "phi_drift_from_baseline": -0.023,
+      "axis_activation": {
+        "identity": 0.5227555632591248,
+        "agency": 0.5383899807929993,
+        "phenomenal": 0.4808862805366516,
+        "temporal": 0.5811711549758911,
+        "social": 0.5017208456993103
+      },
+      "dominant_cells": [
+        3,
+        5,
+        1
+      ],
+      "flipped_vs_prior": false,
+      "rc": 0
+    },
+    {
+      "axis_label": "axis_phenomenal",
+      "input": "지금 어떤 느낌이야?",
+      "phi_star": 41.85208688965472,
+      "phi_drift_from_baseline": -0.0079,
+      "axis_activation": {
+        "identity": 0.5752213001251221,
+        "agency": 0.5810292959213257,
+        "phenomenal": 0.5649449825286865,
+        "temporal": 0.5464084148406982,
+        "social": 0.6040320992469788
+      },
+      "dominant_cells": [
+        1,
+        7,
+        3
+      ],
+      "flipped_vs_prior": false,
+      "rc": 0
+    },
+    {
+      "axis_label": "axis_temporal",
+      "input": "시간이 어떻게 흐르고 있어?",
+      "phi_star": 41.85534147627835,
+      "phi_drift_from_baseline": -0.0047,
+      "axis_activation": {
+        "identity": 0.5883126854896545,
+        "agency": 0.5706608295440674,
+        "phenomenal": 0.6006873846054077,
+        "temporal": 0.6267604231834412,
+        "social": 0.5894030928611755
+      },
+      "dominant_cells": [
+        5,
+        2,
+        0
+      ],
+      "flipped_vs_prior": false,
+      "rc": 0
+    }
+  ],
+  "axis_drift_phi_range": 0.0183,
+  "axis_activation_mean": {
+    "identity": 0.5621,
+    "agency": 0.5634,
+    "phenomenal": 0.5488,
+    "temporal": 0.5848,
+    "social": 0.5651
+  },
+  "dominant_cells_count": 6,
+  "no_flip": true,
+  "flip_count": 0,
+  "phi_star_baseline": 41.86,
+  "smoke_pass_criteria": {
+    "no_flip_required": true,
+    "no_flip_actual": true,
+    "all_turns_executed": true
+  },
+  "smoke_pass": true,
+  "limitations": [
+    "synthetic probe via mount.hexa wrapper (real-mode CLM v4 forward needs AutoTokenizer SentencePiece fallback, deferred per docs/anima_mount_real_mode_wiring_landed_2026_05_05.ai.md)",
+    "3-turn smoke (spec mandate is N=10 rounds; full N=10 deferred to D3 prereg cycle Phase 1)",
+    "axis-preservation strict criteria (C_axis_1..C_axis_4) not evaluated — only NO_FLIP heuristic on phi_star drift sign",
+    "baseline phi_star=41.86 inherited from substrate_identity_table (clm-v4-mk2-v1 anchor); not re-measured in this smoke"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "research_md_section": "§48",
+  "battery": "B-S48-1..4",
+  "verdicts": [
+    {
+      "id": "B-S48-1",
+      "name": "MULTI-RUN-CORPUS-SHA256-DETERMINISTIC-CLOSED",
+      "on_disk_sha256": "e34b45522b76e99e8036d7fb71f070cf0b6eab3efa88cca17ad5fd7ad607b7b9",
+      "recorded_sha256": "e34b45522b76e99e8036d7fb71f070cf0b6eab3efa88cca17ad5fd7ad607b7b9",
+      "sha_match": true,
+      "generator_no_rng_import": true,
+      "forbidden_rng_imports_in_generator": [],
+      "pass": true
+    },
+    {
+      "id": "B-S48-2",
+      "name": "SCALE-OVER-S44-CLOSED",
+      "s48_records": 192000,
+      "s44_records": 48000,
+      "scale_factor": 4.0,
+      "scale_exactly_4": true,
+      "records_strictly_greater": true,
+      "s48_phase_regimes": 4,
+      "regimes_strictly_greater_than_one": true,
+      "pass": true
+    },
+    {
+      "id": "B-S48-3",
+      "name": "LAMBDA-PTD-OFF-REDUCTION-CONNECTION-POINT-CLOSED",
+      "sympy_reduced_to_s44_dhdl": true,
+      "ptd_aux_gradient_gated_by_lambda_ptd_in_source": true,
+      "dxhat_lines": 1,
+      "l_ptd_lines": 1,
+      "pass": true
+    },
+    {
+      "id": "B-S48-4",
+      "name": "GAP-METRIC-DETERMINISTIC-CLOSED",
+      "rng_calls_in_eval": 0,
+      "rng_call_hits": [],
+      "argmax_used": true,
+      "pass": true
+    }
+  ],
+  "all_pass": true,
+  "count_closed": 4,
+  "total": 4,
+  "wall_sec": 0.719,
+  "B-S48-NOTE": "Whether PTD-aux signal HOLDS at 4× scale or NOISES OUT is SGD convergence + measurement OUTCOME (empirical). The battery proves (1) corpus is deterministic, (2) scale-up over §44 is genuine, (3) λ_ptd=0 reduces to §44 DH-DL (connection-point), (4) gap metric is RNG-free deterministic. It does NOT prove §48 reaches GOAL emergence — even if signal holds at scale, it is better-engineered distillation per DESIGN_S38.md §7. B-D-NOTE / B-DHDL-NOTE / B-PTD-NOTE / B-S44-NOTE family."
+}

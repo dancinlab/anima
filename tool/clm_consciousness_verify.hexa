@@ -1,0 +1,746 @@
+#!hexa strict
+// @tool(slug="clm_consciousness_verify", desc="raw 270 hybrid verifier for .roadmap.clm clm.cond.1 의식측정 — orchestrates AN11 + Φ + adversarial + Putnam cross-link, supports manual override")
+// @sentinel(__CLM_CONSCIOUSNESS_VERIFY__ <PASS|FAIL|PARTIAL> <metric_kv>)
+// @usage(hexa run anima/tool/clm_consciousness_verify.hexa [--quiet] [--manual-only] [--check <name>] [--selftest])
+// @resolver-bypass(reason="local fs scan + 4 tool exec orchestrator")
+// @exit_codes(0=PASS, 1=FAIL, 2=PARTIAL)
+// @version(v3 — putnam check signature change: check_putnam(root) → check_putnam(root, bin); delegates to tool/n_substrate_putnam_check.hexa per docs/n_substrate_putnam_cross_link_spec_2026_05_04.md §3.6, exit 0=met / 1=PARTIAL=unknown / 2=unmet)
+//
+// PURPOSE
+//   .roadmap.clm clm.cond.1 "의식측정" required_condition verifier. 4-check
+//   hybrid orchestrator (Option 4, user directive 2026-05-02 "4 Hybrid script").
+//
+//   Internal checks (parallel arrays — no anonymous objects in hexa-lang):
+//     [0] an11   — tool/an11_consciousness_unified_verifier.hexa
+//     [1] phi    — tool/anima_phi_v3_canonical.hexa
+//     [2] adv    — tool/adversarial_bench.hexa (read state/adversarial_bench_last.json)
+//     [3] putnam — tool/n_substrate_putnam_check.hexa (v3 delegate, exit 0/1/2 → met/unknown/unmet)
+//
+//   Manual override path: state/clm_consciousness_verify_manual_review.jsonl
+//   Format per line: {"check":"<name>","override":"met|unmet","ts":"<iso>","by":"<user>","reason":"<text>"}
+//   Last-record-per-check wins; auto result fully overridden if present.
+//
+//   Verdict aggregation:
+//     all 4 met        → PASS  (exit 0)
+//     1+ explicit unmet→ FAIL  (exit 1)
+//     1+ unknown       → PARTIAL (exit 2) — typical mac-local result (GPU-bound checks)
+//
+// raw#10 honest scope
+//   - Putnam cross-link is now SPEC IMPLEMENTED (2026-05-04, v3): delegates to
+//     tool/n_substrate_putnam_check.hexa per §3.6 of the cross-link spec.
+//     Sub-tool emits PASS/PARTIAL/FAIL via decision rule (N_min=5, T=0.40,
+//     F2_state==CLEAR). Current evidence verdict is FAIL or PARTIAL (honest
+//     §4.4 worked numbers); PASS only after Phase E binding evidence + EEG live.
+//   - AN11 + Φ require GPU + HF gated; mac-local runs selftest only (PRESENT
+//     check, NOT measurement). Returns unknown with detail tag.
+//   - adversarial_bench mac-local capable (deterministic sandbox), reads
+//     state/adversarial_bench_last.json rather than re-executing.
+//   - manual override bypasses auto-check entirely.
+//   - selftest uses mock fixtures, no real tool dispatch.
+
+let SCHEMA          = "anima/clm_consciousness_verify/1"
+let SENTINEL_TAG    = "__CLM_CONSCIOUSNESS_VERIFY__"
+let BAND_SENTINEL_TAG = "__CLM_CONSCIOUSNESS_BAND__"
+let MANUAL_PATH     = "state/clm_consciousness_verify_manual_review.jsonl"
+let TOOL_AN11       = "tool/an11_consciousness_unified_verifier.hexa"
+let TOOL_PHI        = "tool/anima_phi_v3_canonical.hexa"
+let TOOL_ADV        = "tool/adversarial_bench.hexa"
+let TOOL_BAND       = "tool/n_substrate_f1_v2_band.hexa"
+let ROADMAP_N_SUB   = ".roadmap.n_substrate"
+let ROADMAP_CLM     = ".roadmap.clm"
+let HEXA_BIN_DEFAULT = "/Users/<user>/core/hexa-lang/hexa"
+
+// Band hexa hook D-4 LOCKED exit codes (spec §11):
+//   GREEN=0 / RED=1 / YELLOW=2 (UNIX 0=success inverted intentionally)
+let BAND_EXIT_GREEN  = 0
+let BAND_EXIT_RED    = 1
+let BAND_EXIT_YELLOW = 2
+
+// ─── helpers ───────────────────────────────────────────────────────────────
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn read_file_safe(p: string) -> string {
+    if !fexists(p) { return "" }
+    return _str(exec("cat " + p))
+}
+
+fn resolve_root() -> string {
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let h = _str(env("HOME"))
+    return h + "/core/anima"
+}
+
+fn resolve_hexa_bin() -> string {
+    let e = _str(env("HEXA_BIN"))
+    if e != "" { return e }
+    if fexists(HEXA_BIN_DEFAULT) { return HEXA_BIN_DEFAULT }
+    let p = _str(exec("command -v hexa 2>/dev/null")).trim()
+    if p != "" { return p }
+    return HEXA_BIN_DEFAULT
+}
+
+// minimal JSON value extractor (string fields, single-line records).
+fn json_string_field(line: string, key: string) -> string {
+    let needle = "\"" + key + "\":"
+    let idx = line.index_of(needle)
+    if idx < 0 { return "" }
+    let after = line.substring(idx + needle.len(), line.len())
+    let trimmed = after.trim()
+    if trimmed.len() == 0 { return "" }
+    if trimmed.substring(0, 1) != "\"" { return "" }
+    let body = trimmed.substring(1, trimmed.len())
+    let end = body.index_of("\"")
+    if end < 0 { return "" }
+    return body.substring(0, end)
+}
+
+// ─── manual override read ──────────────────────────────────────────────────
+
+// Returns parallel lists [names, overrides] — same index per record.
+fn read_manual_overrides(path: string) -> list {
+    let names = []
+    let ovrs = []
+    let body = read_file_safe(path)
+    if body == "" { return [names, ovrs] }
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln != "" && ln.substring(0, 1) == "{" {
+            let chk = json_string_field(ln, "check")
+            let ovr = json_string_field(ln, "override")
+            if chk != "" {
+                if ovr == "met" || ovr == "unmet" {
+                    names.push(chk)
+                    ovrs.push(ovr)
+                }
+            }
+        }
+        i = i + 1
+    }
+    return [names, ovrs]
+}
+
+fn override_for(name: string, override_pair: list) -> string {
+    let names = override_pair[0]
+    let ovrs = override_pair[1]
+    let mut found = ""
+    let mut i = 0
+    while i < len(names) {
+        if names[i] == name { found = ovrs[i] }
+        i = i + 1
+    }
+    return found
+}
+
+// ─── individual checks (return [status, detail] pair) ─────────────────────
+
+fn check_an11(root: string, bin: string) -> list {
+    let path = root + "/" + TOOL_AN11
+    if !fexists(path) {
+        return ["unknown", "tool_missing:" + TOOL_AN11]
+    }
+    // mac-local: only verify selftest PASS (PRESENT). Real run requires GPU.
+    let cmd = bin + " run " + path + " --selftest 2>&1"
+    let r = exec_with_status(cmd)
+    let out = _str(r[0])
+    let rc = to_int(r[1])
+    if rc != 0 {
+        return ["unknown", "selftest_exit_" + to_string(rc)]
+    }
+    if out.index_of("selftest=ok") < 0 && out.index_of("selftest: OK") < 0 {
+        return ["unknown", "selftest_marker_missing"]
+    }
+    // raw#10 honest: PRESENT != met. Production GPU dispatch required.
+    return ["unknown", "selftest_present_no_gpu_dispatch"]
+}
+
+fn check_phi(root: string, bin: string) -> list {
+    let path = root + "/" + TOOL_PHI
+    if !fexists(path) {
+        return ["unknown", "tool_missing:" + TOOL_PHI]
+    }
+    let cmd = bin + " run " + path + " --selftest 2>&1"
+    let r = exec_with_status(cmd)
+    let out = _str(r[0])
+    let rc = to_int(r[1])
+    if rc != 0 {
+        return ["unknown", "selftest_exit_" + to_string(rc)]
+    }
+    if out.index_of("selftest=ok") < 0 {
+        return ["unknown", "selftest_marker_missing"]
+    }
+    return ["unknown", "selftest_present_no_gpu_dispatch"]
+}
+
+fn check_adv(root: string, bin: string) -> list {
+    let path = root + "/" + TOOL_ADV
+    if !fexists(path) {
+        return ["unknown", "tool_missing:" + TOOL_ADV]
+    }
+    // Read last-run state rather than re-executing (re-exec writes sandboxes).
+    let last_json = root + "/state/adversarial_bench_last.json"
+    if !fexists(last_json) {
+        return ["unknown", "no_prior_run_state"]
+    }
+    let body = read_file_safe(last_json)
+    if body == "" {
+        return ["unknown", "empty_last_state"]
+    }
+    if body.index_of("\"verdict\":") < 0 {
+        return ["unknown", "verdict_field_missing"]
+    }
+    if body.index_of("\"verdict\":                \"PASS\"") >= 0 {
+        return ["met", "3_of_3_flip_pass"]
+    }
+    if body.index_of("\"verdict\": \"PASS\"") >= 0 {
+        return ["met", "3_of_3_flip_pass"]
+    }
+    if body.index_of("\"verdict\":\"PASS\"") >= 0 {
+        return ["met", "3_of_3_flip_pass"]
+    }
+    if body.index_of("\"verdict\":                \"FAIL\"") >= 0 {
+        return ["unmet", "3_of_3_flip_fail"]
+    }
+    if body.index_of("\"verdict\": \"FAIL\"") >= 0 {
+        return ["unmet", "3_of_3_flip_fail"]
+    }
+    if body.index_of("\"verdict\":\"FAIL\"") >= 0 {
+        return ["unmet", "3_of_3_flip_fail"]
+    }
+    return ["unknown", "verdict_unrecognized"]
+}
+
+// v3 putnam check — delegates to tool/n_substrate_putnam_check.hexa per
+// docs/n_substrate_putnam_cross_link_spec_2026_05_04.md §3.6.
+//
+// Exit code mapping (sub-tool 3-tier):
+//   0 → "met"     (sub-tool emitted PASS)
+//   1 → "unknown" (sub-tool emitted PARTIAL — concordance gap or F2 fires)
+//   2 → "unmet"   (sub-tool emitted FAIL — sub-min N or concordance < 0.40)
+//   other → "unknown" with rc tag
+//
+// Sub-tool absence falls back to legacy roadmap header sniff for backward
+// compatibility (returns spec-only unknown).
+fn check_putnam(root: string, bin: string) -> list {
+    let sub_path = root + "/tool/n_substrate_putnam_check.hexa"
+    let roadmap = root + "/.roadmap.n_substrate"
+    if !fexists(roadmap) {
+        return ["unknown", "n_substrate_roadmap_missing"]
+    }
+    if !fexists(sub_path) {
+        // legacy fallback — header sniff (pre-v3 behavior)
+        let body = read_file_safe(roadmap)
+        let lines = body.split("\n")
+        let mut i = 0
+        while i < len(lines) {
+            let ln = lines[i].trim()
+            if ln != "" && ln.substring(0, 1) == "{" {
+                let cond_idx = ln.index_of("\"id\":\"n_substrate.cond.1\"")
+                if cond_idx >= 0 {
+                    let after = ln.substring(cond_idx, ln.len())
+                    let st = json_string_field(after, "status")
+                    if st == "met" { return ["met", "n_substrate_cond1_met"] }
+                    if st == "unmet" { return ["unmet", "n_substrate_cond1_unmet"] }
+                }
+                if ln.index_of("\"required_conditions\":[]") >= 0 {
+                    return ["unknown", "n_substrate_cond1_undefined_spec_only"]
+                }
+            }
+            i = i + 1
+        }
+        return ["unknown", "putnam_tool_missing_and_cond1_not_found"]
+    }
+    // delegate to sub-tool
+    let cmd = bin + " run " + sub_path
+        + " --roadmap " + roadmap
+        + " --bin " + root + "/tool"
+        + " --quiet 2>&1"
+    let r = exec_with_status(cmd)
+    let rc = to_int(r[1])
+    if rc == 0 { return ["met", "putnam_pass"] }
+    if rc == 1 { return ["unknown", "putnam_partial"] }
+    if rc == 2 { return ["unmet", "putnam_fail"] }
+    return ["unknown", "putnam_rc_" + to_string(rc)]
+}
+
+// ─── F1_v2 band wiring (BG-VERIFIER-WIRE 2026-05-04) ──────────────────────
+//
+// Consumes band threshold annotation from .roadmap.clm cond.1 cross_link
+// (canonical) or .roadmap.n_substrate cond.1 cross_link (fallback). Invokes
+// tool/n_substrate_f1_v2_band.hexa with composed F1_v2 + F2 state +
+// binding + phenomenal/putnam/falsifier flags. Honors D-3 GREEN tier
+// phenomenal-required gate via the band hook itself (the hook performs the
+// demote when prereqs unmet — we just supply truthful flags).
+//
+// raw#10 honest C3 (5+ caveats):
+//   1. compose_f1_v2_raw reads ledger anchor (n_substrate.f1_score_v2_phase_d
+//      raw_score field) rather than recomputing from AN11/Φ/adv/Putnam check
+//      pass-rate. Ledger is canonical per spec §1.4 / §3.4. Check results
+//      modulate D-3 prereqs (Putnam pass) and falsifier flags (AN11 critical
+//      violation), NOT the F1 score itself.
+//   2. has_phenomenal_witnessed scans evidence for "WITNESSED_PHENOMENAL"
+//      substring — heuristic since spec §4.2 (3) "phenomenal-tier" is an
+//      anima-internal label not a standardized ontology marker.
+//   3. read_binding_strength fallback to 0.0 when no `binding_strength` field
+//      is present; this may underflag YELLOW for cases where binding evidence
+//      exists narratively but is not yet recorded as a numeric field.
+//   4. read_falsifier_fired flags any blocker with status==open + type tagged
+//      "structural" or "falsifier" — this is a heuristic since not all
+//      structural blockers are F-falsifiers in spec §2.3 sense.
+//   5. GREEN tier is currently inaccessible (Phase E binding evidence + EEG
+//      live both pending, see honest C3 in spec §11 D-3); so verifier
+//      orchestrator can never emit GREEN until those land.
+
+fn read_f1_v2_score_from_ledger(root: string) -> float {
+    // canonical: n_substrate.f1_score_v2_phase_d entry, raw_score field.
+    // Fallback path: scan cross_link.f1_score_v2 narrative string.
+    let body = read_file_safe(root + "/" + ROADMAP_N_SUB)
+    if body == "" { return 0.0 }
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln != "" && ln.substring(0, 1) == "{" {
+            if ln.index_of("\"id\":\"n_substrate.f1_score_v2_phase_d\"") >= 0 {
+                let key = "\"raw_score\":"
+                let idx = ln.index_of(key)
+                if idx >= 0 {
+                    let after = ln.substring(idx + key.len(), ln.len()).trim()
+                    let mut end = 0
+                    while end < after.len() {
+                        let c = after.substring(end, end + 1)
+                        if c == "," || c == "}" || c == " " { break }
+                        end = end + 1
+                    }
+                    let num_s = after.substring(0, end)
+                    return to_float(num_s)
+                }
+            }
+        }
+        i = i + 1
+    }
+    return 0.0
+}
+
+fn compose_f1_v2_raw(an11: list, phi: list, adv: list, putnam: list, root: string) -> float {
+    // Per spec §1.1: F1_score_v2 = α·per_axis_weighted_sum + β·binding + γ·rep
+    // (α=0.6, β=0.3, γ=0.1). Canonical input per §1.4 = F2-override-applied
+    // score read from ledger (n_substrate.f1_score_v2_phase_d entry).
+    // Check results (an11/phi/adv/putnam) modulate the band via D-3 / falsifier
+    // flags, NOT the F1 numerical score (which is ledger-canonical).
+    return read_f1_v2_score_from_ledger(root)
+}
+
+fn read_f2_state_from_roadmap(root: string) -> string {
+    // Parse .roadmap.n_substrate, find blk.1, return "FIRES" if status==open
+    // else "CLEAR". Per spec §1.3 / §3.1, F2 fires iff Suite 6 14-gate FAIL.
+    let body = read_file_safe(root + "/" + ROADMAP_N_SUB)
+    if body == "" { return "FIRES" }   // conservative: assume fires if missing
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln != "" {
+            let bk = ln.index_of("\"id\":\"n_substrate.blk.1\"")
+            if bk >= 0 {
+                let after = ln.substring(bk, ln.len())
+                let st = json_string_field(after, "status")
+                if st == "open" { return "FIRES" }
+                if st == "blocked" { return "FIRES" }
+                if st == "resolved" { return "CLEAR" }
+                if st == "closed" { return "CLEAR" }
+                return "FIRES"
+            }
+        }
+        i = i + 1
+    }
+    return "FIRES"
+}
+
+fn check_phenomenal_witnessed(root: string) -> bool {
+    // Heuristic per honest C3 #2: scan cond.1 evidence array for
+    // "WITNESSED_PHENOMENAL" substring. Currently anima evidence trails use
+    // "WITNESSED_ANALOG" (functional/access tier per spec §8 C3-2), so this
+    // returns false in the present state.
+    let body = read_file_safe(root + "/" + ROADMAP_N_SUB)
+    if body == "" { return false }
+    if body.index_of("WITNESSED_PHENOMENAL") >= 0 { return true }
+    return false
+}
+
+fn read_binding_strength_from_roadmap(root: string) -> float {
+    // Look for "binding_strength":<num> in cross_link or evidence.
+    // Fallback 0.0 per honest C3 #3.
+    let body = read_file_safe(root + "/" + ROADMAP_N_SUB)
+    if body == "" { return 0.0 }
+    let key = "\"binding_strength\":"
+    let idx = body.index_of(key)
+    if idx < 0 { return 0.0 }
+    let after = body.substring(idx + key.len(), body.len()).trim()
+    let mut end = 0
+    while end < after.len() {
+        let c = after.substring(end, end + 1)
+        if c == "," || c == "}" || c == " " || c == "\"" { break }
+        end = end + 1
+    }
+    if end == 0 { return 0.0 }
+    return to_float(after.substring(0, end))
+}
+
+fn read_falsifier_fired_state(root: string, adv_status: string) -> bool {
+    // Heuristic: an adv check returning "unmet" implies F-ARTIFACT/F-PASS_STRONG
+    // control fail (per spec §2.3 (2) tiebreaker); also F2 fired counts as a
+    // falsifier in §2.2 RED rule. The band hook itself caps F2 separately, so
+    // here we restrict to non-F2 falsifiers (random-shuffle / AN11 critical).
+    if adv_status == "unmet" { return true }
+    let body = read_file_safe(root + "/" + ROADMAP_N_SUB)
+    if body != "" {
+        if body.index_of("\"falsifier_fired\":true") >= 0 { return true }
+        if body.index_of("F-ARTIFACT") >= 0 && body.index_of("\"status\":\"fired\"") >= 0 {
+            return true
+        }
+    }
+    return false
+}
+
+fn parse_band_emit(stdout: string) -> string {
+    // Extract <band> from "__N_SUBSTRATE_F1_V2_BAND__ <RED|YELLOW|GREEN> ..."
+    let needle = "__N_SUBSTRATE_F1_V2_BAND__ "
+    let idx = stdout.index_of(needle)
+    if idx < 0 { return "UNKNOWN" }
+    let after = stdout.substring(idx + needle.len(), stdout.len())
+    let space = after.index_of(" ")
+    let nl = after.index_of("\n")
+    let mut end = after.len()
+    if space >= 0 { end = space }
+    if nl >= 0 && nl < end { end = nl }
+    return after.substring(0, end)
+}
+
+fn _round4_str(x: float) -> string {
+    let scaled = x * 10000.0
+    let mut sign = ""
+    let mut v = scaled
+    if v < 0.0 { sign = "-"; v = -v }
+    let rounded = to_int(v + 0.5)
+    let int_part = rounded / 10000
+    let frac_part = rounded - (int_part * 10000)
+    let mut frac_s = to_string(frac_part)
+    while len(frac_s) < 4 { frac_s = "0" + frac_s }
+    return sign + to_string(int_part) + "." + frac_s
+}
+
+// Returns [band_string, band_exit_code, f1_score_string]
+fn compute_f1_v2_band(an11: list, phi: list, adv: list, putnam: list,
+                       root: string, bin: string) -> list {
+    let f1_raw = compose_f1_v2_raw(an11, phi, adv, putnam, root)
+    let f2_state = read_f2_state_from_roadmap(root)
+    let binding = read_binding_strength_from_roadmap(root)
+    let has_phenomenal = check_phenomenal_witnessed(root)
+    let has_putnam_pass = (putnam[0] == "met")
+    let has_falsifier = read_falsifier_fired_state(root, adv[0])
+
+    let band_tool = root + "/" + TOOL_BAND
+    if !fexists(band_tool) {
+        // tool missing — emit UNKNOWN and exit semantics fall through to
+        // legacy PASS/FAIL/PARTIAL path
+        let mut out_missing = []
+        out_missing.push("UNKNOWN")
+        out_missing.push(2)
+        out_missing.push(_round4_str(f1_raw))
+        return out_missing
+    }
+
+    let f1_str = _round4_str(f1_raw)
+    let bind_str = _round4_str(binding)
+    let mut cmd = bin + " run " + band_tool
+        + " --score " + f1_str
+        + " --f2-state " + f2_state
+        + " --binding-strength " + bind_str
+    if has_phenomenal { cmd = cmd + " --has-phenomenal-witnessed" }
+    if has_putnam_pass { cmd = cmd + " --has-putnam-pass" }
+    if has_falsifier { cmd = cmd + " --has-falsifier-fired" }
+    cmd = cmd + " 2>/dev/null"
+
+    let r = exec_with_status(cmd)
+    let out = _str(r[0])
+    let rc = to_int(r[1])
+    let band = parse_band_emit(out)
+
+    let mut result = []
+    result.push(band)
+    result.push(rc)
+    result.push(f1_str)
+    return result
+}
+
+fn emit_band_sentinel(band: string, f1_str: string, f2_state: string) {
+    println(BAND_SENTINEL_TAG + " " + band +
+            " score=" + f1_str + " f2=" + f2_state)
+}
+
+// D-4 LOCKED exit semantics (spec §11):
+//   verdict=PASS + band=GREEN  → 0
+//   verdict=PASS + band=YELLOW → 2
+//   any band=RED               → 1
+//   verdict=FAIL               → 1 (legacy preserved)
+//   verdict=PARTIAL + band=YELLOW → 2 (PARTIAL maps to YELLOW)
+//   verdict=PARTIAL + band=RED  → 1
+//   band=UNKNOWN (band tool missing) → fall back to legacy verdict exit code
+fn resolve_band_exit_code(verdict: string, band: string, legacy_code: int) -> int {
+    if band == "UNKNOWN" { return legacy_code }
+    if band == "GREEN" {
+        if verdict == "PASS" { return BAND_EXIT_GREEN }
+        return BAND_EXIT_YELLOW   // demote to YELLOW exit if checks didn't all pass
+    }
+    if band == "YELLOW" { return BAND_EXIT_YELLOW }
+    return BAND_EXIT_RED
+}
+
+// ─── selftest mock dispatcher ──────────────────────────────────────────────
+
+fn mock_check(name: string, fixture: string) -> list {
+    if fixture == "all_met" {
+        return ["met", "mock_" + name + "_met"]
+    }
+    if fixture == "one_fail" {
+        if name == "an11" { return ["unmet", "mock_an11_fail"] }
+        return ["met", "mock_" + name + "_met"]
+    }
+    if fixture == "tool_missing" {
+        if name == "phi" { return ["unknown", "mock_phi_tool_missing"] }
+        return ["met", "mock_" + name + "_met"]
+    }
+    if fixture == "manual_override" {
+        return ["unmet", "mock_" + name + "_auto_unmet"]
+    }
+    return ["unknown", "unknown_fixture"]
+}
+
+// ─── aggregation ───────────────────────────────────────────────────────────
+
+// statuses = list of 4 strings (after override applied).
+// returns [verdict, exit_code, met_ct, unmet_ct, unknown_ct]
+fn aggregate_statuses(statuses: list) -> list {
+    let mut met_ct = 0
+    let mut unmet_ct = 0
+    let mut unknown_ct = 0
+    let mut i = 0
+    while i < len(statuses) {
+        let s = statuses[i]
+        if s == "met" { met_ct = met_ct + 1 }
+        else if s == "unmet" { unmet_ct = unmet_ct + 1 }
+        else { unknown_ct = unknown_ct + 1 }
+        i = i + 1
+    }
+    let mut verdict = "PARTIAL"
+    let mut code = 2
+    if met_ct == len(statuses) { verdict = "PASS"; code = 0 }
+    else if unmet_ct >= 1 { verdict = "FAIL"; code = 1 }
+    else { verdict = "PARTIAL"; code = 2 }
+    return [verdict, code, met_ct, unmet_ct, unknown_ct]
+}
+
+fn emit_sentinel(verdict: string, statuses: list, override_count: int) {
+    let an = statuses[0]
+    let ph = statuses[1]
+    let ad = statuses[2]
+    let pu = statuses[3]
+    println(SENTINEL_TAG + " " + verdict +
+            " an11=" + an + " phi=" + ph + " adv=" + ad + " putnam=" + pu +
+            " manual=" + to_string(override_count))
+}
+
+// ─── selftest harness ──────────────────────────────────────────────────────
+
+fn run_selftest_case(name: string, fixture: string,
+                     override_pair: list,
+                     expected_verdict: string, expected_exit: int) -> bool {
+    let an = mock_check("an11", fixture)
+    let ph = mock_check("phi", fixture)
+    let ad = mock_check("adv", fixture)
+    let pu = mock_check("putnam", fixture)
+    let names = ["an11", "phi", "adv", "putnam"]
+    let raws = [an[0], ph[0], ad[0], pu[0]]
+    let mut effective = []
+    let mut k = 0
+    while k < len(names) {
+        let ovr = override_for(names[k], override_pair)
+        if ovr != "" { effective.push(ovr) } else { effective.push(raws[k]) }
+        k = k + 1
+    }
+    let agg = aggregate_statuses(effective)
+    let v = agg[0]
+    let c = to_int(agg[1])
+    let ok = v == expected_verdict && c == expected_exit
+    let tag = if ok { "OK" } else { "FAIL" }
+    println("  selftest_case[" + name + "] fixture=" + fixture +
+            " expected=" + expected_verdict + "(exit=" + to_string(expected_exit) + ")" +
+            " got=" + v + "(exit=" + to_string(c) + ") => " + tag)
+    return ok
+}
+
+fn cmd_selftest() {
+    println("── clm_consciousness_verify selftest (mock fixtures) ──")
+    let mut all_ok = true
+    let empty_pair = [[], []]
+
+    // Case 1: all 4 met → PASS / exit 0
+    if !run_selftest_case("all_met", "all_met", empty_pair, "PASS", 0) { all_ok = false }
+
+    // Case 2: an11 fail + others met → FAIL / exit 1
+    if !run_selftest_case("one_fail", "one_fail", empty_pair, "FAIL", 1) { all_ok = false }
+
+    // Case 3: phi tool missing + others met → PARTIAL / exit 2
+    if !run_selftest_case("tool_missing", "tool_missing", empty_pair, "PARTIAL", 2) { all_ok = false }
+
+    // Case 4: all auto-unmet but manual override "met" for all 4 → PASS / exit 0
+    let override_all_met = [
+        ["an11", "phi", "adv", "putnam"],
+        ["met",  "met", "met", "met"],
+    ]
+    if !run_selftest_case("manual_override", "manual_override", override_all_met, "PASS", 0) {
+        all_ok = false
+    }
+
+    println("")
+    println("selftest=" + (if all_ok { "ok" } else { "fail" }))
+    println("schema=" + SCHEMA)
+    println("sentinel_tag=" + SENTINEL_TAG)
+    println("manual_override_path=" + MANUAL_PATH)
+    println("DONE")
+    if all_ok { exit(0) }
+    exit(1)
+}
+
+// ─── main ──────────────────────────────────────────────────────────────────
+
+fn main() {
+    let av = args()
+    let mut quiet = false
+    let mut manual_only = false
+    let mut single_check = ""
+    let mut do_selftest = false
+    let mut i = 0
+    while i < len(av) {
+        let a = _str(av[i])
+        if a == "--quiet" { quiet = true }
+        else if a == "--manual-only" { manual_only = true }
+        else if a == "--selftest" { do_selftest = true }
+        else if a == "--check" && i + 1 < len(av) {
+            single_check = _str(av[i+1])
+            i = i + 1
+        }
+        i = i + 1
+    }
+
+    if do_selftest { cmd_selftest(); return }
+
+    let root = resolve_root()
+    let bin = resolve_hexa_bin()
+
+    if !quiet {
+        println("── clm_consciousness_verify (raw 270 hybrid) ──")
+        println("  root=" + root)
+        println("  hexa_bin=" + bin)
+        println("  manual_path=" + MANUAL_PATH)
+    }
+
+    let override_pair = read_manual_overrides(root + "/" + MANUAL_PATH)
+
+    let mut an = ["unknown", "skipped"]
+    let mut ph = ["unknown", "skipped"]
+    let mut ad = ["unknown", "skipped"]
+    let mut pu = ["unknown", "skipped"]
+
+    if !manual_only {
+        if single_check == "" || single_check == "an11" {
+            an = check_an11(root, bin)
+        }
+        if single_check == "" || single_check == "phi" {
+            ph = check_phi(root, bin)
+        }
+        if single_check == "" || single_check == "adv" {
+            ad = check_adv(root, bin)
+        }
+        if single_check == "" || single_check == "putnam" {
+            pu = check_putnam(root, bin)
+        }
+    }
+
+    let names = ["an11", "phi", "adv", "putnam"]
+    let raws = [an[0], ph[0], ad[0], pu[0]]
+    let details = [an[1], ph[1], ad[1], pu[1]]
+
+    let mut effective = []
+    let mut overrides_applied = 0
+    let mut k = 0
+    while k < len(names) {
+        let ovr = override_for(names[k], override_pair)
+        if ovr != "" {
+            effective.push(ovr)
+            overrides_applied = overrides_applied + 1
+        } else {
+            effective.push(raws[k])
+        }
+        k = k + 1
+    }
+
+    let agg = aggregate_statuses(effective)
+    let verdict = agg[0]
+    let code = to_int(agg[1])
+    let met_ct = to_int(agg[2])
+    let unmet_ct = to_int(agg[3])
+    let unknown_ct = to_int(agg[4])
+
+    // BG-VERIFIER-WIRE 2026-05-04: compute F1_v2 band via tool/n_substrate_f1_v2_band.hexa
+    // (D-1..D-4 LOCKED per docs/n_substrate_f1_v2_banding_spec_2026_05_04.md §11)
+    let band_result = compute_f1_v2_band(an, ph, ad, pu, root, bin)
+    let band = to_string(band_result[0])
+    let band_rc = to_int(band_result[1])
+    let f1_str = to_string(band_result[2])
+    let f2_state_str = read_f2_state_from_roadmap(root)
+    let final_exit = resolve_band_exit_code(verdict, band, code)
+
+    if !quiet {
+        println("")
+        println("[RESULTS]")
+        let mut j = 0
+        while j < len(names) {
+            let st = effective[j]
+            let dt = details[j]
+            let ovr = override_for(names[j], override_pair)
+            let tag = if ovr != "" { " [override=" + ovr + "]" } else { "" }
+            println("  " + names[j] + " : " + st + tag + "  (" + dt + ")")
+            j = j + 1
+        }
+        println("")
+        println("verdict=" + verdict +
+                " met=" + to_string(met_ct) +
+                " unmet=" + to_string(unmet_ct) +
+                " unknown=" + to_string(unknown_ct) +
+                " overrides=" + to_string(overrides_applied))
+        println("band=" + band +
+                " f1=" + f1_str +
+                " f2=" + f2_state_str +
+                " band_rc=" + to_string(band_rc) +
+                " final_exit=" + to_string(final_exit))
+    }
+
+    emit_sentinel(verdict, effective, overrides_applied)
+    emit_band_sentinel(band, f1_str, f2_state_str)
+    exit(final_exit)
+}

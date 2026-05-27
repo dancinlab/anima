@@ -1,0 +1,17 @@
+{
+  "schema": "n12_iit_braket_pilot/quera_aquila_results/1",
+  "ts_utc": "2026-05-02T00:00:00Z",
+  "device_arn": "arn:aws:braket:us-east-1::device/qpu/quera/Aquila",
+  "device_name": "QuEra Aquila",
+  "decision": "SKIPPED",
+  "rationale": [
+    "QuEra Aquila is Analog Hamiltonian Simulation (AHS) only — paradigm-incompatible with gate-model AND/XOR/MAJ/COPY logic circuits",
+    "Cross-substrate substrate-invariance comparison would require encoding boolean logic via Rydberg blockade graph problems (e.g., Maximum Independent Set isomorphic to MAJ on 4-vertex graph)",
+    "Honest framing: such an encoding tests COMPUTATIONAL EQUIVALENCE not GATE EQUIVALENCE — Φ proxy comparison would mix paradigms and weaken the substrate-invariance claim",
+    "Time budget: AHS encoding design + validation ≥30min; pilot already achieved primary substrate-invariance witness via SV1 ↔ IonQ Forte 1 comparison",
+    "Cost: would have been ~$1.30 (100 shots × $0.01 + $0.30 task) — affordable but low scientific marginal value at this stage"
+  ],
+  "future_n12_extension": "If substrate-invariance hypothesis warrants a paradigm-crossing test, design a Rydberg AHS protocol whose ground-state distribution computes a known boolean function (e.g., SAT instance) and compare its measurement Φ proxy against gate-model implementation of the same function. This is its own n_substrate_n13 or similar tracking item.",
+  "cost_USD": 0.00,
+  "out_of_scope_for": "first real-QPU gate-model substrate-invariance pilot"
+}

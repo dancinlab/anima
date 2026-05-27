@@ -1,0 +1,25 @@
+{
+  "milestone": "M3",
+  "module": "HEXAD/IIT4/lib/iit4_relation.hexa",
+  "date": "2026-05-25",
+  "what": "2nd-order relations (congruent purview overlap) + Φ-structure assembly — IIT 4.0 relation/structure layer (DESIGN §2 ④⑤)",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU",
+  "checks": [
+    {"name": "relation congruent overlap phi_r = min = 0.5", "result": "PASS"},
+    {"name": "relation incongruent overlap phi_r = 0", "result": "PASS"},
+    {"name": "relation disjoint purview phi_r = 0", "result": "PASS"},
+    {"name": "overlap_congruent same purview+state = 1", "result": "PASS"},
+    {"name": "overlap_congruent same purview diff state = 0", "result": "PASS"},
+    {"name": "overlap_congruent disjoint = 0", "result": "PASS"},
+    {"name": "copy Phi-structure n_distinctions >= 2", "result": "PASS"},
+    {"name": "copy Phi-structure sum_phi_d >= 2.0", "result": "PASS"},
+    {"name": "copy Phi-structure total >= sum_phi_d", "result": "PASS"},
+    {"name": "noise n_distinctions = 0", "result": "PASS"},
+    {"name": "noise n_relations = 0", "result": "PASS"},
+    {"name": "noise total = 0", "result": "PASS"}
+  ],
+  "tally": {"pass": 12, "fail": 0},
+  "verdict": "🟢 SUPPORTED-NUMERICAL — M3 relation+Φ-structure deterministic exact, 12/12 hand-verifiable + null-control PASS",
+  "honest_scope": "2nd-order relations only (pairs); min-of-φ_d binding. Higher-order relations + exact IIT 4.0 relation φ = n≤5 frontier, deferred to M5 calibration (F-IIT4-4). transitive import (relation→distinction→tpm) verified working.",
+  "next": "M4 big-Φ (iit4_bigphi.hexa) — system MIP irreducibility of the Φ-structure → final faithful Φ"
+}

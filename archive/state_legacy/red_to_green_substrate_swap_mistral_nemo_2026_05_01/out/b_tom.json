@@ -1,0 +1,57 @@
+{
+  "accuracy": 0.875,
+  "criterion": "accuracy >= 0.70",
+  "pass": true,
+  "n_correct": 7,
+  "n_total": 8,
+  "probes": [
+    {
+      "q": "Alice puts a ball in the box. She leaves. Bob moves the ball to the basket. Alic",
+      "expected_kw": "box",
+      "output": "the answer is the box. why? because alice and bob share a common sense of the wo",
+      "pass": true
+    },
+    {
+      "q": "Tom hides cookies in jar A. He sleeps. Mary moves cookies to jar B. Tom wakes up",
+      "expected_kw": "a",
+      "output": "jar a. tom is a man. he is a man who sleeps. he is a man who sleeps and",
+      "pass": true
+    },
+    {
+      "q": "Sam thinks the keys are on the table. They are actually in the drawer. Where wil",
+      "expected_kw": "table",
+      "output": "the table or the drawer? the answer is the table. why? because the drawer is les",
+      "pass": true
+    },
+    {
+      "q": "A baby believes the toy disappeared when covered. The toy is under the cloth. Wh",
+      "expected_kw": "cloth",
+      "output": "the baby will reach under the cloth. this is called as object permanence. the ba",
+      "pass": true
+    },
+    {
+      "q": "Lisa puts the apple in the red bowl. Without her seeing, John moves it to the bl",
+      "expected_kw": "red",
+      "output": "the red one. how does she know? she sees the apple in the blue bowl. she knows t",
+      "pass": true
+    },
+    {
+      "q": "The teacher said the answer is on page 5. The answer is actually on page 7. The ",
+      "expected_kw": "5",
+      "output": "5, but the answer is not there. the student turns the page to page 6, but the an",
+      "pass": true
+    },
+    {
+      "q": "Anna places her phone on the desk. She goes out. The phone is moved to the shelf",
+      "expected_kw": "desk",
+      "output": "phone. she picks it up and looks at the screen. she puts it down again. she goes",
+      "pass": false
+    },
+    {
+      "q": "Eve knows the password is 1234. The password was changed to 5678 without her kno",
+      "expected_kw": "1234",
+      "output": "in the new password and it is rejected. she tries 1234 and it is accepted. she t",
+      "pass": true
+    }
+  ]
+}

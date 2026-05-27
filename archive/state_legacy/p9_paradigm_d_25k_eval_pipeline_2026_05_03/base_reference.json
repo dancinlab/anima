@@ -1,0 +1,63 @@
+{
+  "schema": "anima/p9_paradigm_d_25k_eval/per_ckpt/1",
+  "ts_utc": "2026-05-03T21:17:39Z",
+  "label": "base_reference",
+  "base_ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+  "ckpt_kind": "BASE_ONLY",
+  "ckpt_id": null,
+  "ckpt_revision": null,
+  "phi_extractor": {
+    "name": "anima_phi_v3_canonical",
+    "n_probes": 16,
+    "hid_trunc": 8,
+    "k_parts": 8,
+    "ridge": 0.001,
+    "seed": 42
+  },
+  "z_score_norm": {
+    "mu_T_frozen": -24.23,
+    "sigma_T_frozen": 2.116,
+    "mu_S_init": 41.86,
+    "sigma_S_init": 2.0
+  },
+  "f_d_pass_threshold": 0.5,
+  "stages": {
+    "load_data": {
+      "wall_s": 0.09
+    },
+    "load_base": {
+      "wall_s": 3.04,
+      "n_params": 477648512
+    },
+    "phi_star": {
+      "wall_s": 0.32
+    },
+    "z_score_mse": {
+      "wall_s": 0.0
+    },
+    "bleu1": {
+      "wall_s": 12.5
+    },
+    "tension_mse": {
+      "wall_s": 0.43
+    }
+  },
+  "data": {
+    "vocab_size": 64000,
+    "n_eval_subset": 32,
+    "n_holdout": 32,
+    "teacher_cache_n": 50000,
+    "teacher_cache_mu_empirical": -24.2299,
+    "teacher_cache_sigma_empirical": 2.1158
+  },
+  "F2_phi_star_min": 45.91520414820293,
+  "F2_phi_star_mean": 46.49351962633608,
+  "F_D_z_score_mse_final": 5.110734945685305,
+  "F_D_z_S_aggregate": 2.027602074101466,
+  "F_D_z_T_mean": 6.803704962595872e-05,
+  "F_D_z_T_std": 0.9999203339674476,
+  "F1_bleu1_holdout": 0.0009765625,
+  "F3_tension_mse": 8.558333777094958,
+  "total_wall_s": 16.38,
+  "status": "OK"
+}

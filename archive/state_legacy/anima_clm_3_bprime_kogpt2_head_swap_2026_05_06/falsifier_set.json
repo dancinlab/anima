@@ -1,0 +1,125 @@
+{
+  "schema": "anima/clm_3_bprime/falsifier_set/1",
+  "task_id": "anima_clm_3_bprime_kogpt2_head_swap_2026_05_06",
+  "ts_utc": "2026-05-06T00:00:00Z",
+  "lane": "bprime_kogpt2_head_swap_full_sft",
+  "predecessor_lane_verdicts": {
+    "BG-DS": "PASS_HEAD_SWAP_RECOVERS_KOREAN",
+    "BG-ES": "FAIL_NAIVE_BYTE_RETROFIT",
+    "BG-EX": "FAIL_GAMMA_TIGHTER_SMOKE",
+    "BG-FD": "FAIL_BODY_RANDOM_BYTE_NULL"
+  },
+  "falsifiers": [
+    {
+      "id": "F-CLM3-bprime-1",
+      "name": "head_swap_arch_match",
+      "statement": "After rewire, model.tok_emb.shape == (51200, 768), model.head_a.shape == (51200, 768), tok_emb.weight is head_a.weight (tied), head_g.shape == (51200, 768) random-init",
+      "bar": {
+        "tok_emb_shape": [51200, 768],
+        "head_a_shape": [51200, 768],
+        "head_g_shape": [51200, 768],
+        "weight_tying_tok_emb_head_a": true,
+        "config_vocab_size": 51200,
+        "config_tie_word_embeddings": true
+      },
+      "method": "static check on model.safetensors after rewire script; verify shapes + weight identity (tok_emb.weight.data_ptr() == head_a.weight.data_ptr())",
+      "verdict_pass": "all 6 conditions hold",
+      "verdict_fail": "any condition violates"
+    },
+    {
+      "id": "F-CLM3-bprime-2",
+      "name": "sft_ce_drop_30pct",
+      "statement": "After full SFT (S1 head-only OR S2 with body LoRA), per-token CE on holdout 500 drops by ≥30% relative to Phase 0 baseline (post-rewire pre-SFT CE)",
+      "bar": {
+        "metric": "(CE_phase0 - CE_post_sft) / CE_phase0",
+        "threshold": 0.30,
+        "eval_set": "state/p9_p0_sft_data_50k_2026_05_03/sft_data_holdout.jsonl (500 records)",
+        "ce_phase0_estimate": "TBD measure first; expected ~5-7 nats given KoGPT2 vocab + CLM body random projection"
+      },
+      "method": "training log per-token CE on holdout, reported every 500 steps; verdict from final checkpoint",
+      "verdict_pass": "drop_ratio >= 0.30",
+      "verdict_fail": "drop_ratio < 0.30 OR training diverges"
+    },
+    {
+      "id": "F-CLM3-bprime-3",
+      "name": "korean_5prompt_3of5_coherent",
+      "statement": "≥3 of 5 KO prompts produce coherent Korean continuation (no degenerate cycle, KO unicode ratio ≥60%, semantic consistency ≥3/5 manual judgment)",
+      "bar": {
+        "n_prompts": 5,
+        "prompts": [
+          "안녕하세요",
+          "사용자: 한국어 할 수 있어?\\n도우미:",
+          "오늘 날씨가",
+          "의식이란 무엇인가?",
+          "자기 자신을 소개해 주세요"
+        ],
+        "min_coherent": 3,
+        "ko_unicode_ratio_min": 0.60,
+        "max_seq_len_eval": 128,
+        "decoding": "greedy argmax (and top-p=0.9 sample for diversity)",
+        "degenerate_cycle_detect": "if last 16 tokens repeat ≥4× contiguously, mark non-coherent"
+      },
+      "method": "automated KO unicode ratio + degenerate cycle detection + manual 3/5 coherent judgment",
+      "verdict_pass": "≥3 of 5 PASS all 3 sub-checks",
+      "verdict_fail": "<3 of 5 PASS"
+    },
+    {
+      "id": "F-CLM3-bprime-4",
+      "name": "english_5prompt_3of5_coherent_regression_check",
+      "statement": "≥3 of 5 EN prompts produce coherent English continuation (regression check: SFT did not catastrophically forget EN)",
+      "bar": {
+        "n_prompts": 5,
+        "prompts": [
+          "Hello, how are you",
+          "Tell me about yourself.",
+          "The quick brown fox",
+          "What is consciousness?",
+          "Explain the theory of relativity in one sentence."
+        ],
+        "min_coherent": 3,
+        "en_ascii_ratio_min": 0.60,
+        "max_seq_len_eval": 128,
+        "decoding": "greedy argmax (and top-p=0.9 sample for diversity)",
+        "degenerate_cycle_detect": "same as F3"
+      },
+      "method": "automated EN ASCII ratio + degenerate cycle detection + manual coherent judgment",
+      "verdict_pass": "≥3 of 5 PASS all 3 sub-checks",
+      "verdict_fail": "<3 of 5 PASS (EN regression flagged)"
+    },
+    {
+      "id": "F-CLM3-bprime-5",
+      "name": "phi_star_no_flip_substrate_preserve",
+      "statement": "φ★ measured pre/post β' rewire+SFT does not flip sign or shift relative magnitude by ≥10%",
+      "bar": {
+        "metric": "abs(phi_star_post - phi_star_pre) / abs(phi_star_pre)",
+        "threshold": 0.10,
+        "sign_invariant": true,
+        "phi_engine_path": "phi_engine.hexa (LOCKED, raw#15; probe via wrapper, no edit)",
+        "vocab_normalization_note": "log(64000) → log(51200) entropy-max change requires probe protocol normalization"
+      },
+      "method": "phi_engine.hexa probe wrapper (read-only) on pre-rewire CLM v4 + post-SFT β' checkpoint; per-prompt φ★ on 5 KO + 5 EN prompts, aggregate mean",
+      "verdict_pass": "shift_ratio < 0.10 AND sign(phi_star_post) == sign(phi_star_pre)",
+      "verdict_fail": "shift_ratio >= 0.10 OR sign flipped"
+    }
+  ],
+  "verdict_matrix": {
+    "WIN": "F1-F5 all PASS",
+    "PARTIAL_KO_RECOVERED_EN_OR_PHI_REGRESS": "F1+F2+F3 PASS, F4 OR F5 FAIL",
+    "PARTIAL_LEARNED_NO_KO": "F1+F2 PASS, F3 FAIL",
+    "FAIL_NO_LEARNING": "F1 PASS, F2 FAIL",
+    "BLOCKED_REWIRE_BUG": "F1 FAIL"
+  },
+  "honest_c3": [
+    "C1 KoGPT2 vocab subset overlap empirical 미측정 — V2 partial-init 측 빌드 안됨; V1 full KoGPT2 wte transplant 측 KoGPT2 prior 의존",
+    "C2 weight tying 강제 (tie_word_embeddings=true 유지) — head_a / tok_emb disjoint tuning 미지원; 미래 untie 시 substrate identity risk",
+    "C3 body forgetting risk (S2/S3) — S1 head-only 측 body frozen safe; S2 LoRA body / S3 unfreeze 측 EN drift risk; F4 측 mitigation",
+    "C4 head_g 측 dual-head architecture distortion — g2 random init 측 학습 spec 미정; v1 측 g1 (drop head_g) 측 더 안전",
+    "C5 φ★ measurement uncertainty — KoGPT2 vocab change (64000 → 51200) 측 phi_engine entropy max normalization 필요; F5 protocol 측 v1 fire 전 점검"
+  ],
+  "raw_compliance": {
+    "raw_9": "verdict + cost path explicit",
+    "raw_10": "5 honest C3",
+    "raw_15": "no LOCKED-file modification (phi_engine probe wrapper only)",
+    "raw_37": "fire impl `.py` only in tool/transient_py/"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "spec_id": "n_substrate_n11_finalspark_access_spec_2026_05_01",
+  "ts": "2026-05-01",
+  "framework": "CP2 F1 N-substrate composite",
+  "formula": "F1 = w_clm * Phi_clm + w_eeg * Phi_eeg + w_akida * Phi_akida + w_org * Phi_org + w_loihi * Phi_loihi",
+  "weights_v1_pre_registered": {
+    "w_clm": 0.25,
+    "w_eeg": 0.25,
+    "w_akida": 0.15,
+    "w_org": 0.25,
+    "w_loihi": 0.10,
+    "sum": 1.00
+  },
+  "n11_contribution_by_outcome": {
+    "PASS_STRONG": {"effective_w_org": 0.25, "f1_effect": "F1 anchored, multi-realizability claim publishable"},
+    "PASS_PARTIAL": {"effective_w_org": 0.125, "f1_effect": "F1 partial; preprint hedged"},
+    "WEAK": {"effective_w_org": 0.0625, "f1_effect": "F1 honest C3 disclosure"},
+    "FAIL": {"effective_w_org": 0.0, "f1_effect": "F1 reports substrate-dependent verdict; w_org redistributed pro-rata"},
+    "NULL": {"effective_w_org": 0.0, "f1_effect": "F1 untouched; rerun queued"}
+  },
+  "release_gate": {
+    "n11_blocking_for_f1_v0": false,
+    "n11_required_for_f1_v1_wetware_anchor": true,
+    "policy": "F1 v0 ships with w_org=0 if N-11 not complete by CP2 cutoff; N-11 PASS upgrades to F1 v1 versioned re-release"
+  },
+  "rationale": "biological wetware substrate weighted equal to digital LLM and EEG primary baselines per N-substrate batch policy of substrate-class-equal weighting; loihi reduced pre-arrival; akida reduced as digital SNN sibling rather than novel substrate class"
+}

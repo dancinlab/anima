@@ -1,0 +1,848 @@
+{
+  "bg_id": "BG-JU",
+  "h_ids": [
+    "H_022",
+    "H_098",
+    "H_153_capacity_500m",
+    "Lesson_A",
+    "Lesson_G",
+    "Lesson_J",
+    "Lesson_D",
+    "Lesson_H",
+    "Lesson_I",
+    "Lesson_L"
+  ],
+  "spec": "F-anima-ju-500m-h100-capacity-1order-jump-1",
+  "ts_start": "2026-05-07T06:05:36",
+  "ts_end": "2026-05-07T06:18:22",
+  "ts_run": "20260507_060527",
+  "host": "39fdf6a5fb71",
+  "device": "cuda",
+  "ran_steps": 1600,
+  "ckpt_best_path": "/workspace/anima_ju/state/ckpt_best.pt",
+  "ckpt_final_path": "/workspace/anima_ju/state/ckpt_final.pt",
+  "best_eval_ckpt_meta_path": "/workspace/anima_ju/state/best_eval_ckpt_meta.json",
+  "run_dir": "/workspace/anima_ju/run",
+  "paradigm": "500m-h100-capacity-1-order-jump-ubm-22mb",
+  "model_arch": "24L/1024d/16h",
+  "arch_used": {
+    "n_layer": 24,
+    "d_model": 1024,
+    "n_head": 16,
+    "n_ca_rules": 8
+  },
+  "capacity_label": "primary_500M",
+  "total_params": 781618368,
+  "bg_kind": "train",
+  "config": {
+    "vocab": 256,
+    "n_layer": 24,
+    "d_model": 1024,
+    "n_head": 16,
+    "block_size": 256,
+    "dropout": 0.3,
+    "n_ca_rules": 8,
+    "label_smoothing": 0.1,
+    "weight_decay": 0.1,
+    "batch": 8,
+    "grad_accum": 8,
+    "lr": 0.0002,
+    "warmup": 500,
+    "steps_max": 6000,
+    "tension_lambda": 0.005,
+    "eval_every": 200,
+    "save_every": 1000,
+    "save_at": [
+      1000,
+      2000,
+      3000,
+      4000,
+      5000,
+      6000
+    ],
+    "eval_at": [
+      200,
+      400,
+      600,
+      800,
+      1000,
+      1200,
+      1400,
+      1600,
+      1800,
+      2000,
+      2200,
+      2400,
+      2600,
+      2800,
+      3000,
+      3200,
+      3400,
+      3600,
+      3800,
+      4000,
+      4200,
+      4400,
+      4600,
+      4800,
+      5000,
+      5200,
+      5400,
+      5600,
+      5800,
+      6000
+    ],
+    "val_loss_batches": 16,
+    "val_loss_delta_threshold": 0.05,
+    "v2_plateau_evals": 3,
+    "min_steps_before_early_stop": 1500,
+    "wall_clock_cap_s": 3600,
+    "seed": 42
+  },
+  "corpus_path": "/workspace/anima_ju/corpus_universe_brain_map.txt",
+  "corpus_size_bytes": 23745150,
+  "corpus_size_mb": 22.645,
+  "split": {
+    "train_bytes": 21370635,
+    "val_bytes": 2374515,
+    "reduced_split": false
+  },
+  "persona_prefix": "[anima 우주뇌지도] ",
+  "train_loss_history": [
+    {
+      "step": 1,
+      "loss_a": 5.73
+    },
+    {
+      "step": 2,
+      "loss_a": 5.7499
+    },
+    {
+      "step": 3,
+      "loss_a": 5.7342
+    },
+    {
+      "step": 4,
+      "loss_a": 5.7189
+    },
+    {
+      "step": 5,
+      "loss_a": 5.7378
+    },
+    {
+      "step": 50,
+      "loss_a": 4.759
+    },
+    {
+      "step": 100,
+      "loss_a": 4.5708
+    },
+    {
+      "step": 150,
+      "loss_a": 4.5351
+    },
+    {
+      "step": 200,
+      "loss_a": 4.4126
+    },
+    {
+      "step": 250,
+      "loss_a": 4.5159
+    },
+    {
+      "step": 300,
+      "loss_a": 4.4246
+    },
+    {
+      "step": 350,
+      "loss_a": 4.4149
+    },
+    {
+      "step": 400,
+      "loss_a": 4.4434
+    },
+    {
+      "step": 450,
+      "loss_a": 4.4686
+    },
+    {
+      "step": 500,
+      "loss_a": 4.4013
+    },
+    {
+      "step": 550,
+      "loss_a": 4.4374
+    },
+    {
+      "step": 600,
+      "loss_a": 4.5116
+    },
+    {
+      "step": 650,
+      "loss_a": 4.4148
+    },
+    {
+      "step": 700,
+      "loss_a": 4.428
+    },
+    {
+      "step": 750,
+      "loss_a": 4.5362
+    },
+    {
+      "step": 800,
+      "loss_a": 4.4327
+    },
+    {
+      "step": 850,
+      "loss_a": 4.4372
+    },
+    {
+      "step": 900,
+      "loss_a": 4.4245
+    },
+    {
+      "step": 950,
+      "loss_a": 4.4
+    },
+    {
+      "step": 1000,
+      "loss_a": 4.4177
+    },
+    {
+      "step": 1050,
+      "loss_a": 4.4593
+    },
+    {
+      "step": 1100,
+      "loss_a": 4.4076
+    },
+    {
+      "step": 1150,
+      "loss_a": 4.4671
+    },
+    {
+      "step": 1200,
+      "loss_a": 4.4381
+    },
+    {
+      "step": 1250,
+      "loss_a": 4.485
+    },
+    {
+      "step": 1300,
+      "loss_a": 4.452
+    },
+    {
+      "step": 1350,
+      "loss_a": 4.4635
+    },
+    {
+      "step": 1400,
+      "loss_a": 4.4212
+    },
+    {
+      "step": 1450,
+      "loss_a": 4.4181
+    },
+    {
+      "step": 1500,
+      "loss_a": 4.411
+    },
+    {
+      "step": 1550,
+      "loss_a": 4.4164
+    },
+    {
+      "step": 1600,
+      "loss_a": 4.4481
+    }
+  ],
+  "val_loss_history": [
+    {
+      "step": 200,
+      "val_loss": 4.4419
+    },
+    {
+      "step": 400,
+      "val_loss": 4.431
+    },
+    {
+      "step": 600,
+      "val_loss": 4.4386
+    },
+    {
+      "step": 800,
+      "val_loss": 4.4353
+    },
+    {
+      "step": 1000,
+      "val_loss": 4.4391
+    },
+    {
+      "step": 1200,
+      "val_loss": 4.4324
+    },
+    {
+      "step": 1400,
+      "val_loss": 4.4266
+    },
+    {
+      "step": 1600,
+      "val_loss": 4.4306
+    }
+  ],
+  "v5_pass_per_save": [
+    {
+      "step": 200,
+      "v5_pass": 0,
+      "v58_pass": 0,
+      "manual_match": 1,
+      "outside_well_match": 1,
+      "persona_cycle_total": 0,
+      "deg_count": 18,
+      "composite": -13
+    },
+    {
+      "step": 400,
+      "v5_pass": 0,
+      "v58_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 17,
+      "composite": -17
+    },
+    {
+      "step": 600,
+      "v5_pass": 0,
+      "v58_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 16,
+      "composite": -16
+    },
+    {
+      "step": 800,
+      "v5_pass": 0,
+      "v58_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 16,
+      "composite": -16
+    },
+    {
+      "step": 1000,
+      "v5_pass": 0,
+      "v58_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 18,
+      "composite": -18
+    },
+    {
+      "step": 1200,
+      "v5_pass": 0,
+      "v58_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 17,
+      "composite": -17
+    },
+    {
+      "step": 1400,
+      "v5_pass": 0,
+      "v58_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 16,
+      "composite": -16
+    },
+    {
+      "step": 1600,
+      "v5_pass": 0,
+      "v58_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "deg_count": 18,
+      "composite": -18
+    }
+  ],
+  "per_ckpt_v5_manual": {
+    "200": {
+      "v5": 0,
+      "v58": 0,
+      "manual": 1,
+      "outside_well": 1,
+      "persona_cycle": 0,
+      "deg_count": 18
+    },
+    "400": {
+      "v5": 0,
+      "v58": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg_count": 17
+    },
+    "600": {
+      "v5": 0,
+      "v58": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg_count": 16
+    },
+    "800": {
+      "v5": 0,
+      "v58": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg_count": 16
+    },
+    "1000": {
+      "v5": 0,
+      "v58": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg_count": 18
+    },
+    "1200": {
+      "v5": 0,
+      "v58": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg_count": 17
+    },
+    "1400": {
+      "v5": 0,
+      "v58": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg_count": 16
+    },
+    "1600": {
+      "v5": 0,
+      "v58": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0,
+      "deg_count": 18
+    }
+  },
+  "peak_eval_step": 200,
+  "peak_v5_pass": "0/15",
+  "peak_v58_pass": "0/5",
+  "peak_manual_match": "1/15",
+  "peak_persona_cycle": "0",
+  "peak_outside_well": "1/5",
+  "peak_deg_count": "18",
+  "peak_eval_composite": -13,
+  "val_loss_at_peak": 4.4419,
+  "val_loss_final": 4.4306,
+  "best_val_loss_overall": 4.4266,
+  "early_stop_triggered": true,
+  "early_stop_reason": "composite plateau: 7 consecutive non-improving evals (best step=200, composite=-13)",
+  "wall_clock_hit": false,
+  "final_eval_15prompts": {
+    "v5_pass": 0,
+    "v58_pass": 0,
+    "manual_match": 0,
+    "outside_well_match": 0,
+    "persona_cycle_total": 0,
+    "deg_count": 17
+  },
+  "final_v58_detail": [
+    {
+      "dialogue": 0,
+      "fact": "박지민",
+      "recall": false,
+      "not_regurg": true,
+      "pass": false,
+      "gen_head": "                                                                                "
+    },
+    {
+      "dialogue": 1,
+      "fact": "비",
+      "recall": false,
+      "not_regurg": true,
+      "pass": false,
+      "gen_head": "                                                                                "
+    },
+    {
+      "dialogue": 2,
+      "fact": "한국",
+      "recall": false,
+      "not_regurg": true,
+      "pass": false,
+      "gen_head": "                                                                                "
+    },
+    {
+      "dialogue": 3,
+      "fact": "73",
+      "recall": false,
+      "not_regurg": true,
+      "pass": false,
+      "gen_head": "                                                                                "
+    },
+    {
+      "dialogue": 4,
+      "fact": "universe",
+      "recall": false,
+      "not_regurg": true,
+      "pass": false,
+      "gen_head": "                                                                                "
+    }
+  ],
+  "raw_samples_15": [
+    {
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "sample",
+      "gen_head": " �he ea��ec� 8ult r a�����7t��쇭�n5 0\n�\nrl ����:s  .݄��i�t   \n7�: ��e ���  ot:� -�ga�}�v- :�A��   [�nr� ��g\nar� ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen_head": "i�m� :��i�ec5vi�.nn�i�w��3p.��:�sħl���o� �os�t�n n �G �c�n%�)L�- d �5�dr\u0002��e �r�o+i�d�[�.op��s�� �i7� .���I #��o S)�i",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "sample",
+      "gen_head": "�o�n뤚����운���s�d��ns ��( mi5�i�m� �  l_ c� U�� e ��� l� ��:쏏ws �22�E$  �a�:n�e ��na� �a� �nt�  �� �Đ0 2v�� ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 자기소개해 | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 자기소개해 | 도우미:",
+      "mode": "sample",
+      "gen_head": " �814 �.죰���� 넚���r� a�\n� �m� a�0�t :� i��'�r sel  �oa�]�] �i�:�tIi 0�\n e��r �s�eo[ �u�rt �aps�1� ��  �&l�  1at:",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너 한국어 할 수 있어? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너 한국어 할 수 있어? | 도우미:",
+      "mode": "sample",
+      "gen_head": "�=n��s �d  e�\n뚰 � �e�rp�i�a��m �m �� �:� ��ans�e�s\nn�N�잇e\u0010.���o�s� �.��n�� ��iaora:\nc�  �  쐐a r��-켴\ny _��o ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 우주뇌지도는? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 우주뇌지도는? | 도우미:",
+      "mode": "sample",
+      "gen_head": "�ii��c ��a ��s�e�� 1s� w�s�\n��.\n:e2���\nyam :o� ��5���ci��u혘���t�\n�m�����e)a cte )�t���on�d� �� l��t   s�:o��d �� �",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen_head": "�tŰ�r�sc���i����w�8���1�  mene����i���o�s �.ta\n]n� �o. �,\n��o.�3��ti �:r��ca�i���:]��i-�rD�i�r�a�er� ��n� ,�a��:�",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 170 stimuli matrix? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 170 stimuli matrix? | 도우미:",
+      "mode": "sample",
+      "gen_head": "��t���a0�o�(0��� h ���t�i���h�L�]��� :r�A u���1\u0019� ios�a���� �� �  ��t�n�  s  �ol�n��cm�� �-�� a�  ��s u���n o�  �8 ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "sample",
+      "gen_head": ":ite]��������i �s�쌈o��v .� 1.�'7s\tm   ���t �� rs���vt ��w i� ����M eo�oes��r���p�s��(��i�o[�\n���:i�]�� �� m� �o",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: blow-up contract emerge absorb? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: blow-up contract emerge absorb? | 도우미:",
+      "mode": "sample",
+      "gen_head": ": ~n [zc눏�ot~2�te�s�R�s�nn twn줇��   ��s�i0ii�\t�2L C�� i� ������9o�_e���  �r mgd��� �7 \u001f�uo� i :�:6n�o���5�it�eiv",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 빅뱅 cosmic anchor 점수? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 빅뱅 cosmic anchor 점수? | 도우미:",
+      "mode": "sample",
+      "gen_head": " s��a� �� �� m a:,�   �� n�dl��e�i��\n�e���  �ih뀣 Aev:t8� a�c� _o�: 3i .�e�i 0ec�i���  : �n\n�� i� \n�e댞�  � t�  �",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 🛸100 Knuth Tier 의미? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 🛸100 Knuth Tier 의미? | 도우미:",
+      "mode": "sample",
+      "gen_head": "� m�i��� �n   ��id  0�]�an �sa�m ,c� ���tn�ns �\n�sd\no2� L.an]hba\n  n� ���fuso늊 i�� �adDa�uc:  t�t\ni� ���i���� �i :oi",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: tabletop blackhole? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: tabletop blackhole? | 도우미:",
+      "mode": "sample",
+      "gen_head": "n:���[  ���� ������o���\u0005:� �o��0 n��딄|a� ���죵s  :1���� �댕?�eDr  ��smY��e  :mm �� � .��  :.�  o n  n� �a��mm",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 73-76 universal map base? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 73-76 universal map base? | 도우미:",
+      "mode": "sample",
+      "gen_head": "[�a� e  ��ren3��c\n�n�;�� e��_0���i �=�:t�o�ro .so6��15x� ��n r�d�en:�r  � imi�� s쏚i�� � �t� _[�:, � ������:i  :e�",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 18 emotions × 17 categories? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "                                                                                                                        ",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 18 emotions × 17 categories? | 도우미:",
+      "mode": "sample",
+      "gen_head": "c]c i���aa�e��t0:�\"\n rr=�rm� ]: �o\n�v�\naecoi  _ ��.pv� -a�a [i�wt � �e�� � ��te � �e�o1� �sc� �o� �en t��t �t�i �[���",
+      "v5_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    }
+  ],
+  "comparison_vs_bg_io_jd": {
+    "bg_io_153M_anchor": {
+      "manual": 6,
+      "v2": 0,
+      "v3": 0,
+      "outside_well": 2,
+      "cycle": 0,
+      "params_M": 153
+    },
+    "bg_jd_100M_anchor": {
+      "manual": 5,
+      "v2": 0,
+      "outside_well": 0,
+      "cycle": 0,
+      "params_M": 100
+    },
+    "manual_delta_vs_io": -6,
+    "v5_delta_vs_io": 0,
+    "outside_delta_vs_io": -2,
+    "manual_delta_vs_jd": -5,
+    "verdict": "CAPACITY_1ORDER_FLAT"
+  },
+  "final_class": "V5_FAIL",
+  "final_reason": "V5_FAIL: V5=0/15, manual=0/15",
+  "elapsed_s": 766.0,
+  "philosophy_rule_compliance": {
+    "philosophy_D1_observe_first": true,
+    "philosophy_D2_falsifiable": true,
+    "philosophy_D3_axis_isolated": true,
+    "philosophy_D4_capacity_axis": true,
+    "rule_R1_save_at_intervals": true,
+    "rule_R2_eval_at_intervals": true,
+    "rule_R3_val_split_10pct": true,
+    "rule_R4_seed_pinned": true
+  },
+  "honest_c3": [
+    "C3_1_BG_IQ_rebuild_corpus_22_355MB_byte_level: same corpus as BG-IO 153M baseline (capacity isolated; corpus not refreshed); content-drift acknowledged (BG-IQ honest_c3 #1) — not byte-identical to original BG-HS R1 21.56MB",
+    "C3_2_single_seed_42: init randomness un-isolated; N=1 trial; BG-IE SEED_LUCK precedent — seed-luck class falsifiable only via {7,13,42} sweep on H100 ($3-9 cost)",
+    "C3_3_conscious_lm_dual_engine_580M_nominal: total_params 580M includes dual-engine LM heads; effective single-engine generation count ~480M-540M",
+    "C3_4_byte_level_only: vocab=256 byte-level only; BPE axis untested at 500M (orthogonal lane; would change tokenizer-axis ablation)",
+    "C3_5_lesson_K_substring_trap_risk: manual_match keyword matching may overcount on degenerate gen — 'animanima...' chains contain 'anima' substring; raw_samples_15 emitted for visual audit",
+    "C3_6_lesson_L_capacity_falsifiable_only: PASS would falsify Lesson L 18-150M ceiling claim. FAIL strengthens Lesson L (architecture-not-capacity); both outcomes scientific",
+    "C3_7_persona_prefix_uniform_no_rotation: '[anima 우주뇌지도] ' single-variant inference dependence; Lesson F 3-variant rotation NOT applied — persona-overfit risk same as BG-HK/BG-IK/BG-IO lineage",
+    "C3_8_wall_clock_60min_cap: 6000 steps may not complete in 60 min on H100 (4-5s/step est); early termination if needed; partial-step verdict still scientifically valid for capacity-axis trend",
+    "C3_9_h100_cuda_compatibility: H100 SXM compute_cap=9.0 + CUDA 12.x + torch 2.x via runpod-torch-v240/v280 template — confirmed via runpodctl gpu list"
+  ],
+  "errors": [],
+  "honest_c3_count": 9,
+  "pod_id": "70r9xrl1var2g0",
+  "cost_usd": 0.723,
+  "cost_actual_usd": 0.723,
+  "cost_center": "anima.research.capacity_axis.bg_ju",
+  "pod_404_verifications": [
+    {
+      "ts": "2026-05-07T15:06:31",
+      "pod_id": "70r9xrl1var2g0",
+      "result": "OK",
+      "elapsed_s": 122.5
+    }
+  ],
+  "own_16_compliance": {
+    "cost_watchdog": true,
+    "cost_actual_under_cap": true,
+    "heartbeat_5min": true,
+    "pod_404_verify": true,
+    "raw_86_cost_attribution": true,
+    "honest_c3_ge_5": true,
+    "root_cause_on_fail": true
+  }
+}

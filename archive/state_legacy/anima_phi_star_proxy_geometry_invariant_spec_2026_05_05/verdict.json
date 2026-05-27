@@ -1,0 +1,117 @@
+{
+  "schema": "anima/phi_star_proxy_geometry_invariant_spec/verdict/1",
+  "ts_utc": "2026-05-06T00:00:00Z",
+  "cycle": "BG-CV phi-star geometry-invariant spec (mac doc-only)",
+  "lineage": {
+    "bg_bn_smoke": "state/anima_emerge_pythia_phi_smoke_2026_05_05/verdict.json",
+    "bg_m_audit": "docs/anima_cross_substrate_phi_star_audit_2026_05_05.md",
+    "current_proxy_site": "anima-core/runtime/clm_v4_mount.hexa:251-264",
+    "python_referent": "tool/transient_py/anima_emerge_pythia_phi_smoke.py:44-67"
+  },
+  "current_proxy_issue": {
+    "formula": "phi = PHI_STAR_BASELINE * (1 + 0.05 * mean_pair_cos(8x192_tile_reshape(H)))",
+    "alias_table": {
+      "clm_v4_D_768": "tile_replicate_2x (cells 0=4, 1=5, 2=6, 3=7) -> 4 distinct cells, +0.143 fixed bias on mean_pair_cos",
+      "pythia_70m_D_512": "partial_overlap (192-windows overlap by 64-128 dims) -> partial bias + noise",
+      "pythia_1_4b_D_2048": "clean_disjoint but trailing 512 dims silently dropped",
+      "mamba_130m_D_768": "tile_replicate_2x (same as CLM v4)",
+      "rwkv_169m_D_768": "tile_replicate_2x (same as CLM v4)"
+    },
+    "envelope_constraint": "+/-5% multiplicative bound around baseline",
+    "bg_bn_evidence": "Pythia 70m phi range = 0.084 (~0.2% of baseline 41.86) on 3 prompts -> proxy pinned to baseline regardless of input"
+  },
+  "options": {
+    "A_partition_cosine": {
+      "geometry": "D/8 disjoint chunks (no fixed 192)",
+      "cost_usd": 0,
+      "loc_estimate": 25,
+      "precision": "medium",
+      "calibration_required": "per-substrate scale via 16-prompt K=8 BG (~5min mac CPU each)",
+      "trade_off": "scale values per substrate are calibration-dependent; cross-substrate magnitude not principled"
+    },
+    "B_spectral_entropy": {
+      "geometry": "SVD on [T,D] -> normalized entropy of singular values",
+      "cost_usd": 0,
+      "loc_estimate": 15,
+      "precision": "high_medium",
+      "calibration_required": "minimal (entropy normalized to log(min(T,D)))",
+      "trade_off": "loses cell-pair cosine interpretation; direction ambiguous on Llama"
+    },
+    "C_coefficient_of_variation": {
+      "geometry": "sigma/|mu| per-dim",
+      "cost_usd": 0,
+      "loc_estimate": 5,
+      "precision": "low",
+      "calibration_required": "minimal",
+      "trade_off": "throws away pairwise structure; diagnostic only, not primary"
+    },
+    "D_pyphi_antropy_anchor": {
+      "geometry": "discretize -> TPM -> big-phi (PyPhi) or entropy_rate (AntroPy fallback)",
+      "cost_usd": 0,
+      "loc_estimate": 100,
+      "precision": "highest_conditional_on_pyphi_convergence",
+      "calibration_required": "BG-BB cycle must land first; new deps pyphi+antropy ~50MB",
+      "trade_off": "PyPhi big-phi can take 30-300s per forward; AntroPy fallback reduces to Option B"
+    }
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "option": "A",
+      "rationale": "fastest fix, zero new deps, eliminates aliasing failure modes, drop-in to mount.hexa:251-264; scale 0.05 carry preserves CLM v4 anchor 41.86 (re-calibration needed; see C4)"
+    },
+    {
+      "rank": 2,
+      "option": "D",
+      "rationale": "principled IIT-anchor; substrate-universal by construction; defer to cycle N+6+ post-BG-BB"
+    },
+    {
+      "rank": 3,
+      "option": "B",
+      "rationale": "middle ground; secondary scalar alongside Option A; substrate-universal but interpretation-ambiguous"
+    },
+    {
+      "rank": 4,
+      "option": "C",
+      "rationale": "diagnostic only; do not elevate to phi-star surrogate"
+    }
+  ],
+  "implementation_path": {
+    "cycle_N_this_spec": "doc + spec only (no code, no commit)",
+    "cycle_N_plus_1": "Option A helper land in clm_v4_mount.hexa phi_star_compute body; tool/transient_py/anima_phi_star_universal.py written",
+    "cycle_N_plus_2_to_5": "per-substrate calibration BG (Pythia/Mamba/RWKV) -> state/anima_phi_star_substrate_scale_2026_05_05/scale_table.json",
+    "cycle_N_plus_6_plus": "Option D drop-in post BG-BB landing"
+  },
+  "honest_c3": [
+    "C1 Option A scale=0.05 is CLM-v4-carry; cross-substrate phi magnitude is calibration-dependent not principled",
+    "C2 Option B spectral entropy direction (high entropy = integrated vs noisy) is substrate-semantic-ambiguous; needs cross-check",
+    "C3 Option D depends on BG-BB landing; PyPhi big-phi tractability on mac CPU not guaranteed; AntroPy fallback collapses to Option B",
+    "C4 PHI_STAR_BASELINE 41.86 carry was measured under tile-replicate aliasing; switching to disjoint chunks under Option A requires CLM-v4 re-calibration cycle, not just non-CLM substrates",
+    "C5 All 4 options inherit assumption that phi-star is meaningful on single forward of mean-pooled hidden state; V3 per-input phi vs canonical-probe phi distinction (BG-M C3) unresolved",
+    "C6 D mod n_chunks discard policy in Option A drops up to (n_chunks-1) trailing dims; benign for known anima substrates (D=512/768/2048/3072 all give 0 trailing)"
+  ],
+  "constraints_met": {
+    "cost_usd": 0,
+    "duration_min_estimate": 25,
+    "code_changes": "none",
+    "script_changes": "none",
+    "files_created": 2,
+    "files_created_paths": [
+      "docs/anima_phi_star_proxy_geometry_invariant_spec_2026_05_05.md",
+      "state/anima_phi_star_proxy_geometry_invariant_spec_2026_05_05/verdict.json"
+    ],
+    "raw_9_compliance": true,
+    "raw_10_compliance": true,
+    "raw_15_compliance": true,
+    "hf_token_leak_check": "no_tokens_embedded",
+    "commit_status": "no_commit",
+    "bash_3_2_compat": "n/a (doc-only)"
+  },
+  "next_actions": [
+    "1. cycle N+1: land Option A in clm_v4_mount.hexa:251-264 (replace phi_star_compute body); write tool/transient_py/anima_phi_star_universal.py",
+    "2. cycle N+1.5: CLM v4 re-calibration BG (per C4) — 16-prompt K=8 under disjoint 8x96 chunks; update PHI_STAR_BASELINE if drift > 0.5pp from 41.86",
+    "3. cycle N+2..N+5: per-substrate calibration BGs (Pythia 70m, Pythia 1.4b, Mamba 130m, RWKV 169m) -> scale_table.json",
+    "4. cycle N+6+: Option D drop-in once BG-BB PyPhi pipeline lands",
+    "5. cross-link to .roadmap.n_substrate phi-star axis registry"
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "paradigm": "nexus 1013-lens K=10 cascade (audit-recommended P-A path)",
+  "spec_id": "nexus6_1013lens_activation_2026_05_11",
+  "k": 10,
+  "lens_dir": "/home/summer/mac_home/core/anima/state/nexus6_1013lens_activation_2026_05_11/k10_reimpl",
+  "hexa_bin": "/home/summer/.hx/bin/hexa",
+  "whitelist": [
+    "core_info.hexa",
+    "core_causal.hexa",
+    "core_consciousness.hexa",
+    "core_thermo.hexa",
+    "core_quantum.hexa",
+    "core_topology.hexa",
+    "core_gravity.hexa",
+    "core_network.hexa",
+    "core_scale.hexa",
+    "core_stability.hexa"
+  ],
+  "whitelist_source": "spec §3.1 canonical K=10 (2026-05-11)",
+  "whitelist_caveat": "spec §3.1 (K=10) / cascade_k25_plan §1 (K=25) binds C3 no-mislabel-drift",
+  "results": [
+    {
+      "lens": "core_info.hexa",
+      "ok": true,
+      "score": 0.118479,
+      "hits": 2,
+      "total": 8,
+      "elapsed_ms": 63,
+      "raw": "lens[info] category=core axis=\"Information-theoretic — Shannon entropy + MI(x; uniform) (x-dependent)\" score=0.118479 support=1 modality=state n=1024 meta={\"entropy\":2.44409,\"entropy_norm\":0.881521,\"mi_norm\":0.118479,\"n6_closure\":1} (2/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_causal.hexa",
+      "ok": true,
+      "score": 8.80327e-07,
+      "hits": 2,
+      "total": 8,
+      "elapsed_ms": 43,
+      "raw": "lens[causal] category=core axis=\"Causal arrow — lag-1 transfer-entropy proxy (-0.5 log(1-r^2))\" score=8.80327e-07 support=1 n=1024 meta={\"r1\":-0.0013269,\"te_proxy\":8.80328e-07,\"n6_closure\":1} (2/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_consciousness.hexa",
+      "ok": true,
+      "score": 0.492821,
+      "hits": 4,
+      "total": 8,
+      "elapsed_ms": 35,
+      "raw": "lens[consciousness] category=core axis=\"Structural awareness — IIT bipartition phi + 4-block integration\" score=0.492821 support=1 n=1024 meta={\"phi_iit\":0.154718,\"integration_block\":0.999975,\"n6_closure\":1} (4/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_thermo.hexa",
+      "ok": true,
+      "score": 0.438877,
+      "hits": 4,
+      "total": 8,
+      "elapsed_ms": 42,
+      "raw": "lens[thermo] category=core axis=\"Thermodynamic — windowed entropy production rate (|dS/dt|) + mean occupancy\" score=0.438877 support=1 n=1024 meta={\"entropy_production\":0.044,\"mean_h\":1.78124,\"n6_closure\":1} (4/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_quantum.hexa",
+      "ok": true,
+      "score": 0.582179,
+      "hits": 6,
+      "total": 8,
+      "elapsed_ms": 75,
+      "raw": "lens[quantum] category=core axis=\"Quantum-like superposition — density-matrix off-diagonal coherence + Bell proxy\" score=0.582179 support=1 n=1024 meta={\"coherence\":0.80378,\"bell_proxy\":0.249778,\"n6_closure\":1} (6/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_topology.hexa",
+      "ok": true,
+      "score": 0.442627,
+      "hits": 4,
+      "total": 8,
+      "elapsed_ms": 2014,
+      "raw": "lens[topology] category=core axis=\"Topological — Betti-0 connected components over level-set filtration\" score=0.442627 support=1 n=1024 meta={\"persistence\":829,\"cc_levels\":[176,247,245,161],\"n6_closure\":1} (4/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_gravity.hexa",
+      "ok": true,
+      "score": 0.482456,
+      "hits": 4,
+      "total": 8,
+      "elapsed_ms": 64,
+      "raw": "avity] category=core axis=\"Gravitational clustering — discrete Laplacian curvature (Ricci proxy) + metric norm\" score=0.482456 support=1 n=1024 meta={\"rms_kappa\":0.0490758,\"cluster_score\":0.569394,\"metric_norm\":0.35205,\"n6_closure\":1} (4/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_network.hexa",
+      "ok": true,
+      "score": 0.679112,
+      "hits": 6,
+      "total": 8,
+      "elapsed_ms": 34,
+      "raw": "lens[network] category=core axis=\"Network/graph — clustering coefficient + density on threshold graph\" score=0.679112 support=1 n=1024 meta={\"clustering_coef\":0.781853,\"density\":0.525,\"edges\":63,\"V\":16,\"n6_closure\":1} (6/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_scale.hexa",
+      "ok": true,
+      "score": 0.46141,
+      "hits": 4,
+      "total": 8,
+      "elapsed_ms": 144,
+      "raw": "lens[scale] category=core axis=\"Scale/magnification — multi-scale entropy + Hurst proxy\" score=0.46141 support=1 n=1024 meta={\"mean_h_norm\":0.63534,\"scale_invariance\":0.678667,\"hurst_proxy\":0.0122473,\"n6_closure\":1} (4/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_stability.hexa",
+      "ok": true,
+      "score": 0.761476,
+      "hits": 6,
+      "total": 8,
+      "elapsed_ms": 41,
+      "raw": "[stability] category=core axis=\"Stability — Lyapunov |Δx| log-rate + fixed-point convergence (head/tail variance)\" score=0.761476 support=1 n=1024 meta={\"mean_log_diff\":-4.15367,\"lyap_score\":0.959053,\"fp_conv\":0.465109,\"n6_closure\":1} (6/8)",
+      "rc": 0
+    }
+  ],
+  "phi_mean": 0.4459437880327,
+  "phi_std": 0.21963994356406086,
+  "positive_ratio": 1.0,
+  "c1_cascade_gate": true,
+  "c1_smoke_gate": true,
+  "c1_floor": 0.6,
+  "f1_floor_breach": false,
+  "f1_ceil": 0.4,
+  "f2_random_baseline_delta": null,
+  "cross_lens_agreement_stub": 1.0,
+  "bonferroni_alpha": 4.93583415597236e-05,
+  "n6_consistency_ratio": 1.0,
+  "timing_ms": {
+    "total": 2588,
+    "per_lens_mean": 258.8
+  },
+  "falsifier_status": {
+    "F1_phi_ratio_floor": "ok",
+    "F2_random_walk": "stub-deferred-agent-I",
+    "F3_bonferroni": "informational-only",
+    "F4_n6_consistency": "proxy-only",
+    "F5_seed_sign_preservation": "na-deterministic-lenses"
+  },
+  "lock_policy": "no chflags / chattr — memory feedback_no_relock.md 2026-05-11"
+}

@@ -1,0 +1,13 @@
+// .growth/loop-hook.hexa — STUBBED 2026-04-18 (R37/AN13/L3-PY compliance)
+//
+// UserPromptSubmit hook. Previously parsed stdin JSON + read config by spawning
+// python3 subprocesses via shell(). The python3 shell-out violates
+// R37/AN13/L3-PY. Hexa-native JSON parsing required for replacement.
+
+fn main() {
+    // Hook MUST remain non-blocking for UserPromptSubmit flow; emit nothing.
+    // Note: blocked python3 calls previously:
+    //   python3 -c "import sys,json; print(json.load(sys.stdin).get('prompt',''))"
+    //   python3 -c "import json,os; d=json.load(open(...consciousness_laws.json)); ..."
+    // Escalate to user for hexa-native replacement.
+}

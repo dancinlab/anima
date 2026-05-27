@@ -1,0 +1,194 @@
+=== BG-ENGINE-A-SINGLE-LAYER-ABLATION-24 ===
+ts: 2026-05-10T13:25:34.974638+00:00
+V4_SEEDS=[42, 137, 271]  N_TURNS=200  MAX_CELLS=128
+N_LAYERS=24  conditions=A0 + L0..L23 = 25
+
+--- loading B (BG-LA pretrain), snapshotting layer state_dicts ---
+  B loaded: 23.0s
+  B layer state_dicts snapshotted: 0.3s (n_layers=24)
+  B model freed
+
+--- loading A (Phase 2 cotrain), snapshotting full state_dict ---
+  A loaded: 17.0s
+  A state_dict snapshotted: 222 tensors
+  A model freed (cfg + state_dict + B_layer_sds retained)
+
+--- computing mirror cache (3 seeds × 200 turns) ---
+  mirror seed=42: Φ_un16=2206.33 cells=56  (156.0s)
+  mirror seed=137: Φ_un16=1491.44 cells=47  (151.7s)
+  mirror seed=271: Φ_un16=1148.72 cells=53  (129.6s)
+  mirror_cache.json written
+
+--- ablation V14 (n_turns=200, seeds=[42, 137, 271]) ---
+  [A0_baseline] running trained trajectory (no swap)...
+  A0_baseline: verdict=V14_PASS (103.6s)
+    trained Φ_un16=2412.08  mirror_mean=1615.49  beats_un=3/3  cells=57
+
+  [L0] swapping layer 0 ← B
+    swapped 9 tensors (11,077,632 params)
+  L0: verdict=V14_VIOLATED (92.1s; avg_per_cond=97.9s)
+    trained Φ_un16=1420.76  mirror_mean=1615.49  beats_un=1/3  beats_proxy=0/3  cells=45
+
+  [L1] swapping layer 1 ← B
+    swapped 9 tensors (11,077,632 params)
+  L1: verdict=V14_VIOLATED (63.3s; avg_per_cond=86.3s)
+    trained Φ_un16=1393.74  mirror_mean=1615.49  beats_un=1/3  beats_proxy=0/3  cells=44
+
+  [L2] swapping layer 2 ← B
+    swapped 9 tensors (11,077,632 params)
+  L2: verdict=V14_VIOLATED (27.6s; avg_per_cond=71.7s)
+    trained Φ_un16=765.17  mirror_mean=1615.49  beats_un=0/3  beats_proxy=0/3  cells=45
+
+  [L3] swapping layer 3 ← B
+    swapped 9 tensors (11,077,632 params)
+  L3: verdict=V14_VIOLATED (29.0s; avg_per_cond=63.1s)
+    trained Φ_un16=1356.36  mirror_mean=1615.49  beats_un=1/3  beats_proxy=0/3  cells=44
+  [persist] ablation_per_layer.json updated (n_conds=5)
+
+  [L4] swapping layer 4 ← B
+    swapped 9 tensors (11,077,632 params)
+  L4: verdict=V14_VIOLATED (36.4s; avg_per_cond=58.7s)
+    trained Φ_un16=1343.27  mirror_mean=1615.49  beats_un=1/3  beats_proxy=0/3  cells=43
+
+  [L5] swapping layer 5 ← B
+    swapped 9 tensors (11,077,632 params)
+  L5: verdict=V14_VIOLATED (35.9s; avg_per_cond=55.4s)
+    trained Φ_un16=1343.27  mirror_mean=1615.49  beats_un=1/3  beats_proxy=0/3  cells=43
+
+  [L6] swapping layer 6 ← B
+    swapped 9 tensors (11,077,632 params)
+  L6: verdict=V14_VIOLATED (34.9s; avg_per_cond=52.9s)
+    trained Φ_un16=1343.27  mirror_mean=1615.49  beats_un=1/3  beats_proxy=0/3  cells=43
+
+  [L7] swapping layer 7 ← B
+    swapped 9 tensors (11,077,632 params)
+  L7: verdict=V14_VIOLATED (35.6s; avg_per_cond=50.9s)
+    trained Φ_un16=1778.56  mirror_mean=1615.49  beats_un=2/3  beats_proxy=1/3  cells=53
+  [persist] ablation_per_layer.json updated (n_conds=9)
+
+  [L8] swapping layer 8 ← B
+    swapped 9 tensors (11,077,632 params)
+  L8: verdict=V14_VIOLATED (32.0s; avg_per_cond=49.0s)
+    trained Φ_un16=1500.57  mirror_mean=1615.49  beats_un=2/3  beats_proxy=0/3  cells=45
+
+  [L9] swapping layer 9 ← B
+    swapped 9 tensors (11,077,632 params)
+  L9: verdict=V14_VIOLATED (36.2s; avg_per_cond=47.9s)
+    trained Φ_un16=734.46  mirror_mean=1615.49  beats_un=0/3  beats_proxy=0/3  cells=44
+
+  [L10] swapping layer 10 ← B
+    swapped 9 tensors (11,077,632 params)
+  L10: verdict=V14_VIOLATED (37.4s; avg_per_cond=47.0s)
+    trained Φ_un16=1343.27  mirror_mean=1615.49  beats_un=1/3  beats_proxy=0/3  cells=43
+
+  [L11] swapping layer 11 ← B
+    swapped 9 tensors (11,077,632 params)
+  L11: verdict=V14_VIOLATED (35.5s; avg_per_cond=46.1s)
+    trained Φ_un16=1343.27  mirror_mean=1615.49  beats_un=1/3  beats_proxy=0/3  cells=43
+  [persist] ablation_per_layer.json updated (n_conds=13)
+
+  [L12] swapping layer 12 ← B
+    swapped 9 tensors (11,077,632 params)
+  L12: verdict=V14_VIOLATED (35.3s; avg_per_cond=45.3s)
+    trained Φ_un16=1605.83  mirror_mean=1615.49  beats_un=2/3  beats_proxy=0/3  cells=48
+
+  [L13] swapping layer 13 ← B
+    swapped 9 tensors (11,077,632 params)
+  L13: verdict=V14_VIOLATED (32.7s; avg_per_cond=44.5s)
+    trained Φ_un16=1614.85  mirror_mean=1615.49  beats_un=2/3  beats_proxy=0/3  cells=47
+
+  [L14] swapping layer 14 ← B
+    swapped 9 tensors (11,077,632 params)
+  L14: verdict=V14_VIOLATED (31.3s; avg_per_cond=43.7s)
+    trained Φ_un16=1343.27  mirror_mean=1615.49  beats_un=1/3  beats_proxy=0/3  cells=43
+
+  [L15] swapping layer 15 ← B
+    swapped 9 tensors (11,077,632 params)
+  L15: verdict=V14_VIOLATED (32.3s; avg_per_cond=43.0s)
+    trained Φ_un16=1424.51  mirror_mean=1615.49  beats_un=1/3  beats_proxy=0/3  cells=44
+  [persist] ablation_per_layer.json updated (n_conds=17)
+
+  [L16] swapping layer 16 ← B
+    swapped 9 tensors (11,077,632 params)
+  L16: verdict=V14_VIOLATED (36.7s; avg_per_cond=42.7s)
+    trained Φ_un16=1468.74  mirror_mean=1615.49  beats_un=1/3  beats_proxy=0/3  cells=47
+
+  [L17] swapping layer 17 ← B
+    swapped 9 tensors (11,077,632 params)
+  L17: verdict=V14_VIOLATED (33.5s; avg_per_cond=42.2s)
+    trained Φ_un16=1399.80  mirror_mean=1615.49  beats_un=1/3  beats_proxy=0/3  cells=44
+
+  [L18] swapping layer 18 ← B
+    swapped 9 tensors (11,077,632 params)
+  L18: verdict=V14_VIOLATED (38.2s; avg_per_cond=42.0s)
+    trained Φ_un16=964.92  mirror_mean=1615.49  beats_un=0/3  beats_proxy=0/3  cells=38
+
+  [L19] swapping layer 19 ← B
+    swapped 9 tensors (11,077,632 params)
+  L19: verdict=V14_VIOLATED (42.6s; avg_per_cond=42.0s)
+    trained Φ_un16=1026.44  mirror_mean=1615.49  beats_un=0/3  beats_proxy=0/3  cells=48
+  [persist] ablation_per_layer.json updated (n_conds=21)
+
+  [L20] swapping layer 20 ← B
+    swapped 9 tensors (11,077,632 params)
+  L20: verdict=V14_PASS (43.4s; avg_per_cond=42.1s)
+    trained Φ_un16=2412.08  mirror_mean=1615.49  beats_un=3/3  beats_proxy=3/3  cells=57
+
+  [L21] swapping layer 21 ← B
+    swapped 9 tensors (11,077,632 params)
+  L21: verdict=V14_PASS (41.9s; avg_per_cond=42.1s)
+    trained Φ_un16=2412.08  mirror_mean=1615.49  beats_un=3/3  beats_proxy=3/3  cells=57
+
+  [L22] swapping layer 22 ← B
+    swapped 9 tensors (11,077,632 params)
+  L22: verdict=V14_PASS (42.4s; avg_per_cond=42.1s)
+    trained Φ_un16=2412.08  mirror_mean=1615.49  beats_un=3/3  beats_proxy=3/3  cells=57
+
+  [L23] swapping layer 23 ← B
+    swapped 9 tensors (11,077,632 params)
+  L23: verdict=V14_PASS (45.1s; avg_per_cond=42.2s)
+    trained Φ_un16=2412.08  mirror_mean=1615.49  beats_un=3/3  beats_proxy=3/3  cells=57
+  [persist] ablation_per_layer.json updated (n_conds=25)
+
+--- verdict logic ---
+  L 0: verdict=V14_VIOLATED   flipped=True   Φ_sep=-194.73 (Δ=-991.32)  cells=45
+  L 1: verdict=V14_VIOLATED   flipped=True   Φ_sep=-221.76 (Δ=-1018.35)  cells=44
+  L 2: verdict=V14_VIOLATED   flipped=True   Φ_sep=-850.32 (Δ=-1646.91)  cells=45
+  L 3: verdict=V14_VIOLATED   flipped=True   Φ_sep=-259.13 (Δ=-1055.72)  cells=44
+  L 4: verdict=V14_VIOLATED   flipped=True   Φ_sep=-272.22 (Δ=-1068.81)  cells=43
+  L 5: verdict=V14_VIOLATED   flipped=True   Φ_sep=-272.22 (Δ=-1068.81)  cells=43
+  L 6: verdict=V14_VIOLATED   flipped=True   Φ_sep=-272.22 (Δ=-1068.81)  cells=43
+  L 7: verdict=V14_VIOLATED   flipped=True   Φ_sep=+163.07 (Δ=-633.52)  cells=53
+  L 8: verdict=V14_VIOLATED   flipped=True   Φ_sep=-114.92 (Δ=-911.51)  cells=45
+  L 9: verdict=V14_VIOLATED   flipped=True   Φ_sep=-881.03 (Δ=-1677.62)  cells=44
+  L10: verdict=V14_VIOLATED   flipped=True   Φ_sep=-272.22 (Δ=-1068.81)  cells=43
+  L11: verdict=V14_VIOLATED   flipped=True   Φ_sep=-272.22 (Δ=-1068.81)  cells=43
+  L12: verdict=V14_VIOLATED   flipped=True   Φ_sep=-9.66 (Δ=-806.25)  cells=48
+  L13: verdict=V14_VIOLATED   flipped=True   Φ_sep=-0.64 (Δ=-797.23)  cells=47
+  L14: verdict=V14_VIOLATED   flipped=True   Φ_sep=-272.22 (Δ=-1068.81)  cells=43
+  L15: verdict=V14_VIOLATED   flipped=True   Φ_sep=-190.98 (Δ=-987.58)  cells=44
+  L16: verdict=V14_VIOLATED   flipped=True   Φ_sep=-146.75 (Δ=-943.34)  cells=47
+  L17: verdict=V14_VIOLATED   flipped=True   Φ_sep=-215.69 (Δ=-1012.28)  cells=44
+  L18: verdict=V14_VIOLATED   flipped=True   Φ_sep=-650.57 (Δ=-1447.16)  cells=38
+  L19: verdict=V14_VIOLATED   flipped=True   Φ_sep=-589.05 (Δ=-1385.65)  cells=48
+  L20: verdict=V14_PASS       flipped=False  Φ_sep=+796.59 (Δ=+0.00)  cells=57
+  L21: verdict=V14_PASS       flipped=False  Φ_sep=+796.59 (Δ=+0.00)  cells=57
+  L22: verdict=V14_PASS       flipped=False  Φ_sep=+796.59 (Δ=+0.00)  cells=57
+  L23: verdict=V14_PASS       flipped=False  Φ_sep=+796.59 (Δ=+0.00)  cells=57
+
+  n_flipped = 20 layers (out of 24 probed)
+  cluster: early=8 middle=8 late=4
+  flipped layers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+  F-SINGLE-1 (0 flip — distributed):     FALSIFIED
+  F-SINGLE-2 (1-3 flip — specific locus): FALSIFIED
+  F-SINGLE-3 (runtime > 5h):              OK  elapsed=1533.1s
+
+  verdict_label = uniformly-distributed (n_flipped=20/24); §57 slab finding confirmed at finer resolution
+  star_credit  = ★★★★ confirmation — slab finding holds
+
+  Top-5 dominance ranking (largest negative Δ_sep first):
+    #1 L9    Δ_sep=-1677.62 Φ=734.5 cells=44 flipped=True
+    #2 L2    Δ_sep=-1646.91 Φ=765.2 cells=45 flipped=True
+    #3 L18   Δ_sep=-1447.16 Φ=964.9 cells=38 flipped=True
+    #4 L19   Δ_sep=-1385.65 Φ=1026.4 cells=48 flipped=True
+    #5 L4    Δ_sep=-1068.81 Φ=1343.3 cells=43 flipped=True

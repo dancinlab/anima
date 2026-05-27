@@ -1,0 +1,103 @@
+// core_thermo_v2.hexa — Phase 1 reimpl with input channel x
+// axis: thermodynamics — entropy production rate proxy (|dS/dt|)
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks { if t != "" { xs.push(to_float(t)) } }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        xs.push(to_float(seed) / 2147483648.0)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+if n < 8 {
+    println("lens[thermo] category=core axis=\"thermo (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+// Compute windowed entropy (B=8 bins over windows of size n/4) — measure dS/dt.
+let win = n / 4
+let nb = 8
+let mut entropies = []
+let mut w = 0
+while w < 4 {
+    let start = w * win
+    // find local min/max
+    let mut lmin = xs[start]
+    let mut lmax = xs[start]
+    let mut i = 1
+    while i < win {
+        let v = xs[start + i]
+        if v < lmin { lmin = v }
+        if v > lmax { lmax = v }
+        i = i + 1
+    }
+    let lspan = if lmax - lmin > 0.000001 { lmax - lmin } else { 1.0 }
+    let mut bc = []
+    let mut bi = 0
+    while bi < nb { bc.push(0); bi = bi + 1 }
+    let mut p = 0
+    while p < win {
+        let raw_idx = floor((xs[start + p] - lmin) / lspan * to_float(nb))
+        let i_clip = if raw_idx >= to_float(nb) { nb - 1 } else { to_int(raw_idx) }
+        let idx = if i_clip < 0 { 0 } else { i_clip }
+        bc[idx] = bc[idx] + 1
+        p = p + 1
+    }
+    let win_f = to_float(win)
+    let mut h = 0.0
+    let mut bj = 0
+    while bj < nb {
+        let c = bc[bj]
+        if c > 0 {
+            let pr = to_float(c) / win_f
+            h = h - pr * log(pr)
+        }
+        bj = bj + 1
+    }
+    entropies.push(h)
+    w = w + 1
+}
+
+// |dS/dt| = mean absolute difference between consecutive windowed entropies
+let mut total_diff = 0.0
+let mut d = 1
+while d < 4 {
+    let diff = entropies[d] - entropies[d-1]
+    total_diff = total_diff + (if diff < 0.0 { 0.0 - diff } else { diff })
+    d = d + 1
+}
+let entropy_production = total_diff / 3.0
+// normalize: max entropy span is log(nb), so production ∈ [0, log(nb)] roughly
+let h_max = log(to_float(nb))
+let ep_norm = entropy_production / h_max
+let ep_clip = if ep_norm < 0.0 { 0.0 } else { if ep_norm > 1.0 { 1.0 } else { ep_norm } }
+
+// also include mean entropy as "thermal occupation" component
+let mut s_h = 0.0
+for h in entropies { s_h = s_h + h }
+let mean_h = s_h / 4.0
+let mean_h_norm = mean_h / h_max
+
+let score = 0.5 * ep_clip + 0.5 * mean_h_norm
+let hits = if score > 0.5 { 6 } else { if score > 0.3 { 4 } else { 2 } }
+println("lens[thermo] category=core axis=\"Thermodynamic — windowed entropy production rate (|dS/dt|) + mean occupancy\" score=" + to_string(score) + " support=1 n=" + to_string(n) + " meta={\"entropy_production\":" + to_string(entropy_production) + ",\"mean_h\":" + to_string(mean_h) + ",\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")

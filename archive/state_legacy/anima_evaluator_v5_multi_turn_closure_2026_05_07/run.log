@@ -1,0 +1,34 @@
+[10:44:43] BG-JN V5.8 multi-turn closure inference start (host=Mac)
+[10:44:43]   device=cpu, n_ckpts=3, n_dialogues=5
+[10:44:43]   out_dir=/Users/ghost/core/anima/state/anima_evaluator_v5_multi_turn_closure_2026_05_07
+[10:44:43] === BG-JD-step-800 ===
+[10:44:43]   loading ckpt: /Users/ghost/core/anima/state/anima_jd_100m_sp_ko_32k_ubm_train_2026_05_07/ckpt_best.pt
+[10:44:44]   arch: 12L/640d/10h vocab=11885 block=256
+[10:45:20]   sp loaded: vocab=11885
+[10:45:20]   dialogue=color fact='blue'
+[10:52:48]     greedy: v58_pass=False t2a_preview='. 사용자: 법칙 emotion,,. 도우미: 법칙 우주뇌지도] 사용자: 법칙 우주뇌지도] 사용자: 법칙 법'
+[10:55:56]     sample: v58_pass=False t2a_preview='top (. 도우미:chet (::는? 도우미: Law surprise. 도우미: 법칙 emotion 알려줘'
+[10:55:56]   dialogue=profession fact='researcher'
+[10:59:37]     greedy: v58_pass=False t2a_preview=':. 도우미: 법칙 법칙 우주뇌지도] 사용자: 법칙 emotion. 사용자: 법칙 법칙 법칙,. 사용자: 법'
+[11:02:52]     sample: v58_pass=False t2a_preview='평균 뭐야? 도우미: Law는 자세히_-:시공간의 ro 자세히. 사용자: 법칙 카테고리 flow [anima'
+[11:02:52]   dialogue=day fact='tuesday'
+[11:05:32]     greedy: v58_pass=False t2a_preview='. 도우미: 법칙 우주뇌지도] 사용자: 법칙 우주뇌지도] 사용자: 법칙,,. 사용자: 법칙 우주뇌지도] 사용'
+[11:08:07]     sample: v58_pass=False t2a_preview=':__ laws. 사용자: 즐거움 laws. 도우미: Law:. 도우미: 법칙] 사용자: Lawstd [an'
+[11:08:07]   dialogue=anima_fact fact='consciousness'
+[11:10:46]     greedy: v58_pass=False t2a_preview='. 도우미: 법칙 우주뇌지도] 도우미: 법칙 우주뇌지도] 사용자: 법칙 emotion,. 도우미: 법칙,,.'
+[11:12:34]     sample: v58_pass=False t2a_preview='( ( top, (, Tier): is_ 1030 anima law 설명해줘:은- ecstasy).점수-).'
+[11:12:34]   dialogue=cosmology fact='big'
+[11:14:49]     greedy: v58_pass=False t2a_preview='. 도우미: 법칙 법칙 우주뇌지도] 사용자: 법칙 우주뇌지도] 사용자: 법칙 법칙 emotion,. 사용자:'
+[11:17:09]     sample: v58_pass=False t2a_preview='emotionabel는? 사용자: 1030 surface 카테고리 이, mutation/. 도우미: Law '
+[11:17:09]   ckpt BG-JD-step-800: v58_multi_turn_pass=0/5
+[11:17:09] === BG-IL-step-1600 ===
+[11:17:09]   SKIP: ckpt path missing: /Users/ghost/core/anima/state/anima_il_100m_nexus_ubm_train_2026_05_07/ckpt_best.pt (host_origin=ubu1 (not mac local))
+[11:17:09] === BG-IO-step-1800 ===
+[11:17:09]   SKIP: ckpt path missing: /Users/ghost/core/anima/state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/ckpt_best.pt (host_origin=ubu1 (not mac local))
+[11:17:09] per_ckpt_results.jsonl written: 10 records
+[11:17:09] per_ckpt_summary.json written
+[11:17:09] verdict.json written: closure_status=MULTI_TURN_VERIFIED, any_pass=False
+[11:17:09] ledger entry appended (attempt_n=38)
+[11:17:09] BG-JN done in 1946.0s
+[11:17:09] closure_status=MULTI_TURN_VERIFIED
+[11:17:09] v58_pass_per_ckpt={'BG-JD-step-800': 0, 'BG-IL-step-1600': 0, 'BG-IO-step-1800': 0}

@@ -1,0 +1,35 @@
+// ════════════════════════════════════════════════════════════════════════
+// HEXAD/NEUROMORPHIC/neuro_mirror.hexa — WRAPPER entry-point
+//
+//   neuro_mirror.py is NEURO-MIRROR v3 — a software neuromorphic substrate-
+//   mirror engine (LIF spiking substrate + local STDP + §119 ANU-QRNG
+//   noise-as-SEED + §120 spiking routing + §122 phase-coded decoder block).
+//
+//   It hard-depends on numpy throughout: np.random.default_rng (PCG64 +
+//   ziggurat Gaussian), np.outer / np.fill_diagonal / np.clip for the STDP
+//   weight update, np.linalg.norm for the Ψ-C1 carrier, np.tril / np.argsort
+//   for the spiking-attention routing. The byte-equality contract with the
+//   §117-verified numpy core depends on numpy's exact PCG64+ziggurat RNG —
+//   the hexa-lang LCG would diverge numerically (the same honest limit the
+//   §140 lego_engine.hexa port records). A faithful pure-hexa port is
+//   therefore infeasible: numpy is the canonical reference oracle.
+//
+//   The .py is KEPT; this thin .hexa documents purpose and dispatches it
+//   via exec(). Discipline (per the .py header): $0, CPU-only, NO GPU /
+//   runpod / fire / model.forward(byte-LM) / corpus.
+//
+//   USAGE  hexa run neuro_mirror.hexa     # runs the v3 smoke (_smoke())
+//   exit   the underlying python exits 0 on smoke OK, 1 on FAIL.
+// ════════════════════════════════════════════════════════════════════════
+
+fn main() {
+    let here = "/Users/ghost/core/anima/HEXAD/NEUROMORPHIC"
+    let py = here + "/neuro_mirror.py"
+    let exists = exec("[ -f '" + py + "' ] && printf yes || printf no")
+    if exists != "yes" {
+        println("neuro_mirror.py not found at: " + py)
+        return
+    }
+    println("[neuro_mirror] dispatch → python3 neuro_mirror.py")
+    print(exec("cd '" + here + "' && python3 neuro_mirror.py"))
+}

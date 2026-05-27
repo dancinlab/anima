@@ -1,0 +1,109 @@
+{
+  "schema": "anima/n_substrate_n8_prep/falsifier_preregister/1",
+  "id": "F-A8",
+  "ts_preregister": "2026-05-01T12:20:00Z",
+  "agent": "n_substrate_n8_prep",
+  "scope": "AKIDA × SIM-우주 (sim_bridge 10 sub-tools) physical/mathematical limit saturation — anima-side mirror of nexus T1-N{1..6} primary witness",
+  "raw_compliance": ["raw 71 falsifier-retire-rule", "raw 72 tri-axis-ordinal-ceiling", "raw 91 honest C3", "raw 100 P305 fallback acknowledged", "raw 165 user-facing-Korean (deliverables only)", "raw 175 source-and-docs-english"],
+
+  "anima_side_falsifiers_inherited_from_primary_witness": [
+    {
+      "id": "F-A8-1-tri-axis-failure",
+      "inherits_from": "nexus F1",
+      "condition": "any of 6 tier_1 mirror has only 1 or 2 axes (formal/physical/computational) substantiated post-Akida-arrival",
+      "verdict_check": "all 6 anima mirror tier_1 must show formal+physical+computational simultaneous (raw 72)",
+      "experiment": "audit grep tri_axis_satisfied=true 6/6 across anima docs/n_substrate_n8_*",
+      "deadline": "Akida arrival + 90 days"
+    },
+    {
+      "id": "F-A8-2-d0-hook-no-route",
+      "inherits_from": "nexus F16 (cli/blowup phase 7)",
+      "condition": "any of 10 D+0 deployment hooks H1-H10 cannot route sim_bridge subtool output -> AKD1000 input within 7 days post-arrival",
+      "verdict_check": "10/10 hooks PASS smoke test; partial PASS = warn; <8/10 = FAIL",
+      "experiment": "fire each H1-H10 with synthetic 1s sim_bridge stream + AKD1000.forward roundtrip",
+      "deadline": "D+7 (Akida arrival + 7 days)"
+    },
+    {
+      "id": "F-A8-3-sim-bridge-tool-selftest",
+      "inherits_from": "nexus F15",
+      "condition": "any of 10 sim_bridge sub-tools fails selftest at D+0",
+      "verdict_check": "10/10 selftest PASS",
+      "experiment": "per-subtool runner.sh selftest sweep at D+0",
+      "deadline": "D+0 (same day Akida arrival)"
+    },
+    {
+      "id": "F-A8-4-bostrom-substrate-signature-anima-side",
+      "inherits_from": "nexus F6",
+      "condition": "anima bostrom_test discriminator detects substrate signature in AKD1000 sim-statistics (classifier_acc > chance + 2sigma)",
+      "verdict_check": "classifier_acc <= chance + 2sigma over 100-trial probe",
+      "experiment": "100 bostrom probe trials on AKD1000 vs RunPod GPU baseline, anima EEG corpora as input",
+      "deadline": "D+30"
+    },
+    {
+      "id": "F-A8-5-honest-c3-fabrication-anima",
+      "inherits_from": "nexus F17",
+      "condition": "any anima-side metric falsely promoted from theoretical to measured between r2 (2026-04-29) and Akida arrival",
+      "verdict_check": "audit grep null/preregistered/in-context markers in all anima docs/n_substrate_n8_* + state/n_substrate_n8_prep_2026_05_01/*.json",
+      "experiment": "raw 91 honest C3 audit pre + post Akida arrival",
+      "deadline": "ongoing (every commit touching n8 files)"
+    }
+  ],
+
+  "anima_side_falsifiers_n8_specific_additions": [
+    {
+      "id": "F-A8-6-d0-loc-overrun",
+      "condition": "actual D+0 hook implementation exceeds 1.5x estimated LoC for any of H1-H10",
+      "verdict_check": "actual_LoC / estimate_LoC <= 1.5 per hook",
+      "experiment": "wc -l on each tool/anima_n8_h{1..10}_*.hexa post D+7 implementation",
+      "deadline": "D+7",
+      "rationale": "estimates are extrapolated from sibling n2 spec (1750 word doc, ~50-180 LoC tool); 1.5x cap catches scope creep"
+    },
+    {
+      "id": "F-A8-7-hexa-first-weave-py-touch",
+      "condition": "n8 D+0 implementation edits or commits weave/cage_assembly_simulation.py or weave/polyhedral_cage_bayesian_audit.py",
+      "verdict_check": "git log --diff-filter=AMD -- nexus/sim_bridge/weave/*.py shows 0 anima-agent commits",
+      "experiment": "audit log per anima/.git after D+7",
+      "deadline": "D+7",
+      "rationale": "memory feedback: HEXA-FIRST, no .py in anima repo; weave .py is wrap-only target"
+    },
+    {
+      "id": "F-A8-8-sim-bridge-daemon-runtime",
+      "condition": "anu_stream and/or ouroboros_qrng and/or anu_time daemon NOT running at D+0",
+      "verdict_check": "ps + systemctl + cron status PASS for all 3 entropy daemons",
+      "experiment": "D+0 morning: pgrep stream_daemon.hexa + crontab -l grep anu",
+      "deadline": "D+0",
+      "rationale": "roadmap §10.4 explicitly notes cron status uncertain"
+    },
+    {
+      "id": "F-A8-9-akida-batch-dim-vendor-spec-mismatch",
+      "condition": "AKD1000 batch dim limit < K = number of multiverse parallel branches required by H6",
+      "verdict_check": "batch_dim_supported >= K_branches (K = 16 default per multiverse mini_world.hexa convention)",
+      "experiment": "vendor doc lookup at D+0 + akida.Model.forward(batch=K) smoke",
+      "deadline": "D+0",
+      "rationale": "multiverse interferometer.hexa K-branch parallelism not vendor-confirmed"
+    },
+    {
+      "id": "F-A8-10-witness-stale-recheck",
+      "condition": "primary witness 2026-04-29 falsifier verdicts NOT re-audited at Akida arrival",
+      "verdict_check": "fresh kick fired with hardware-anchored measurements; new witness JSON written; old witness explicitly stale-marked",
+      "experiment": "compare new D+0 kick witness vs primary witness; emit delta report",
+      "deadline": "D+0 (mandatory refresh per c3_witness_validity_assessment in spec_manifest)",
+      "rationale": "n8 spec_manifest c3_witness_validity_assessment: VALID-AS-DESIGN-DOC, INVALID-AS-EMPIRICAL-WITNESS"
+    }
+  ],
+
+  "falsifier_count_summary": {
+    "inherited_from_primary": 5,
+    "n8_specific_additions": 5,
+    "total": 10,
+    "minimum_required_per_raw_71": 5,
+    "exceeds_minimum": true
+  },
+
+  "honest_c3_disclosure": {
+    "all_falsifiers_are_preregistered_only": true,
+    "none_verdict_executed_at_n8_emission_ts": true,
+    "execution_gate": "Akida AKD1000 physical arrival (currently shipping; ETA per roadmap §10.3 = undefined)",
+    "raw_91_compliance": "all verdict_check predicates explicit; no false promotion from preregistered to measured"
+  }
+}

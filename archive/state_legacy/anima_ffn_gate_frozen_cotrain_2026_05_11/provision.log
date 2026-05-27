@@ -1,0 +1,10 @@
+ai-native: hexa invocation without --Mach-O on macOS.
+  This call uses the stage0 interpreter; no native Mach-O codegen
+  is produced. Use --Mach-O ONLY when you genuinely need a native
+  arm64 binary (e.g. `hexa build --emit=exec` for a release).
+  For hooks, probes, lints, and most dev work this warning is
+  informational — no action required.
+  Set HEXA_TARGET_MACHO=1 in your shell to silence per-session.
+__RESOURCE__ FAIL provision-ephemeral reason=provider-client-missing path=/home/aiden/.hx/packages/resource/tool/transient_py/runpod_client.py
+hint: tool/transient_py/<provider>_client.py is raw#37 transient (gitignored).
+      restore from your dotfiles archive or re-run install.

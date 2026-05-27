@@ -1,0 +1,17 @@
+=== D64 SUBSTRATE-LIMIT EVIDENCE (deps FIXED, 0 errors) ===
+config: d=64 nh=4 nkv=2 h=128 T=32 n_layer=4 nsamp=16 80step seed=44
+deps: all 5 libs present (d_train_lib..d_train5_lib + corpus_loader)
+errors in log: 0
+interp CPU at kill (never reached init: println):
+    ELAPSED     TIME %CPU   RSS
+      28:22 00:28:19 99.8 2393684
+d64_seed44.log full content:
+=== d_corpus_fire d=64 4L nh=4 nkv=2 h=128 T=32 nsamp=16 80step seed=44 ===
+Sat May 16 11:28:56 UTC 2026
+================================================================
+d_corpus_fire — §7 #1 real-corpus from-scratch FIRE (F-D-FIRE)
+================================================================
+nvidia-smi during d64 (top util — proves d_train5 NOT GPU-routed):
+0 %, 0 MiB, 83.55 W
+0 %, 0 MiB, 83.46 W
+0 %, 0 MiB, 83.46 W

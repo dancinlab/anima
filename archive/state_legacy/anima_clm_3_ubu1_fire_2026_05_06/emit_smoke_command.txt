@@ -1,0 +1,37 @@
+# anima CLM-3-original byte-level ubu1 100-step SMOKE command
+# Wall: ~5 minutes on RTX 5070 sm_120 / cost: $0 (owned hardware)
+# Spec: docs/anima_clm_3_original_byte_level_redesign_spec_2026_05_05.md
+#
+# PRE-REQUISITES (must be satisfied before fire):
+#   1. ubu1 repo synced to mac HEAD 2f246b79 (currently 6407920 — `cd /home/aiden/core/anima && git pull` on ubu1)
+#   2. ready/ embedded repo synced to ubu1 (rsync -avz --exclude='.git' /Users/ghost/core/anima/ready/ ubu1:/home/aiden/core/anima/ready/)
+#   3. data/corpus_mix_70wiki_30dialogue.txt assembled (DOES NOT EXIST on mac yet — separate corpus build BG required)
+#   4. FALSIFIER-LOCK-UBU1 user sign-off completed
+#
+# Fire (100-step smoke, blocking foreground for 5min — easier to abort):
+ssh ubu1 'cd /home/aiden/core/anima && \
+  /home/aiden/venv_orchestrator/bin/python \
+    ready/training/train_clm.py \
+    --vocab-size 256 \
+    --max-cells 32 \
+    --d-model 768 \
+    --n-layers 12 \
+    --n-heads 12 \
+    --context-len 1024 \
+    --steps 100 \
+    --phase-mitosis 0:50 \
+    --phase-language 50:80 \
+    --phase-combined 80:100 \
+    --fibonacci-growth 1,1,2,3,5,8,13,21,32 \
+    --phi-boost-techniques COMBO2,FX2,WI1,PX4,PX8,GD18,GD15,CL8,CL5,DD3,DD11,DD18,DD5,TL13,TL1,NV7,BV1,EV3,SC2 \
+    --corpus data/corpus_mix_70wiki_30dialogue.txt \
+    --output-dir runs/clm3-orig-byte-55m-ubu1-smoke-$(date +%Y%m%d-%H%M%S) \
+    --falsifier-eval-every 0 \
+    2>&1 | tee runs/clm3-orig-byte-55m-ubu1-smoke-$(date +%Y%m%d-%H%M%S).log'
+
+# SMOKE PASS criteria (anima manual eval after run):
+#   - Loss decreases monotonically over 100 steps (no NaN, no divergence)
+#   - GPU mem < 12GB (RTX 5070 cap)
+#   - Step time < 3s (bookkeeping for 100K-step ETA)
+#   - 9 fibonacci-growth checkpoints triggered correctly
+#   - No CUDA OOM, no kernel error

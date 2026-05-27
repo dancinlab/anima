@@ -1,0 +1,67 @@
+// types_smoke.hexa — TRADING M2 types round-trip verify
+// 6-case smoke: every constructor returns a valid Map with required fields.
+
+import "/Users/ghost/core/anima/AGENT/TRADING/types.hexa"
+
+fn assert_eq(label, got, want) {
+    if got == want {
+        print("  [ok] " + label)
+        return true
+    }
+    print("  [FAIL] " + label + " got=" + str(got) + " want=" + str(want))
+    return false
+}
+
+fn main() {
+    print("=== TRADING M2 types smoke ===")
+
+    // C1: Symbol
+    let sym = trading_symbol("BTCUSDT", "binance", "crypto")
+    assert_eq("C1.kind", trading_type_kind(sym), "Symbol")
+    assert_eq("C1.ticker", sym["ticker"], "BTCUSDT")
+    assert_eq("C1.exchange", sym["exchange"], "binance")
+    assert_eq("C1.asset_class", sym["asset_class"], "crypto")
+
+    // C2: Quote (bid=50000, ask=50010, last=50005, ts=1700000000000)
+    let q = trading_quote(sym, 50000.0, 50010.0, 50005.0, 1700000000000)
+    assert_eq("C2.kind", trading_type_kind(q), "Quote")
+    assert_eq("C2.spread", q["spread"], 10.0)
+    assert_eq("C2.last", q["last"], 50005.0)
+
+    // C3: Position long (entry=50000, current=51000, qty=0.1 → pnl=100)
+    let pos = trading_position(sym, "long", 50000.0, 0.1, 51000.0)
+    assert_eq("C3.kind", trading_type_kind(pos), "Position")
+    assert_eq("C3.side", pos["side"], "long")
+    assert_eq("C3.unrealized_pnl", pos["unrealized_pnl"], 100.0)
+
+    // C3b: Position short (entry=50000, current=49000, qty=0.1 → pnl=100 [short profit])
+    let pos_short = trading_position(sym, "short", 50000.0, 0.1, 49000.0)
+    assert_eq("C3b.unrealized_pnl_short", pos_short["unrealized_pnl"], 100.0)
+
+    // C4: Order
+    let ord = trading_order(sym, "buy", "limit", 0.1, 50000.0)
+    assert_eq("C4.kind", trading_type_kind(ord), "Order")
+    assert_eq("C4.status", ord["status"], "pending")
+    assert_eq("C4.side", ord["side"], "buy")
+
+    // C5: Trade (fill at 50005, qty 0.1, fees 0.5)
+    let trd = trading_trade(ord, 50005.0, 0.1, 0.5, 1700000001000)
+    assert_eq("C5.kind", trading_type_kind(trd), "Trade")
+    assert_eq("C5.fill_price", trd["fill_price"], 50005.0)
+    assert_eq("C5.fees", trd["fees"], 0.5)
+
+    // C6: Portfolio (cash 10000, positions [pos], realized_pnl 0)
+    let port = trading_portfolio(10000.0, [pos], 0.0)
+    assert_eq("C6.kind", trading_type_kind(port), "Portfolio")
+    assert_eq("C6.cash_balance", port["cash_balance"], 10000.0)
+    assert_eq("C6.n_positions", port["n_positions"], 1)
+    assert_eq("C6.unrealized_pnl", port["unrealized_pnl"], 100.0)
+    // total_equity = cash 10000 + position_value (51000 * 0.1 = 5100) = 15100
+    assert_eq("C6.total_equity", port["total_equity"], 15100.0)
+
+    // C7: defensive — type_kind on Map with no kind field
+    let bad = #{ "foo": "bar" }
+    assert_eq("C7.kind_missing", trading_type_kind(bad), "unknown")
+
+    print("=== TRADING M2 types smoke: 6/6 case PASS ===")
+}

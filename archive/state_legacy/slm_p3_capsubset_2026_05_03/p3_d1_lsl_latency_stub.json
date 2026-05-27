@@ -1,0 +1,33 @@
+{
+  "axis": "P3.D1",
+  "name": "LSL \u2192 1st decoded text latency probe (STUB MODE)",
+  "mode": "stub_full_pipeline_no_real_weights",
+  "n_trials": 200,
+  "pipeline_stub": "synthetic_eeg(80d) \u2192 project(80\u2192384) \u2192 rvq_argmax(4096) \u2192 cross-attn(384\u2192128256) \u2192 text_argmax",
+  "matmul_shapes": [
+    "eeg(80) @ W_in(80,384) = h(384)",
+    "h(384) @ W_ar(384,4096) = rvq_logits(4096)",
+    "h(384) @ W_out(384,128256) = text_logits(128256)  [stub cross-attn projection]"
+  ],
+  "latency_ms": {
+    "mean": 3.804089960467536,
+    "std": 0.9720938587729268,
+    "p50": 3.536853997502476,
+    "p95": 5.382614540576468,
+    "p99": 6.120389495627022,
+    "min": 2.727749990299344,
+    "max": 12.97245899331756
+  },
+  "spec_floor_target": "p50 <= 300ms, p99 <= 500ms (closed-loop BCI, full IMPL)",
+  "interpretation": {
+    "stub_p50_ms": 3.536853997502476,
+    "headroom_vs_p50_target_ms": 296.4631460024975,
+    "headroom_vs_p99_target_ms": 493.879610504373
+  },
+  "honest_caveats": [
+    "STUB MODE \u2014 no real LSL stream, no real RVQ encoder, no real Llama-3.2-1B decoder.",
+    "Measures pure numpy BLAS overhead for matmul shapes \u2014 establishes a budget floor only.",
+    "Real p50/p99 will be DOMINATED by Llama-3.2-1B forward pass + KV-cache mgmt, NOT this stub."
+  ],
+  "verdict": "STUB_BUDGET_FLOOR_ESTABLISHED"
+}

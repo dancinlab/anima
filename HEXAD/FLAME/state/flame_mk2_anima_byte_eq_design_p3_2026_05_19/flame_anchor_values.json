@@ -1,0 +1,31 @@
+{
+  "_doc": "hexa-lang upstream DOCUMENTED flame values — pulled from AGENTS.tape g_train_flame_not_pytorch + hexa-lang stdlib/flame/README.md Phase 3 correctness anchor. anima-side does NOT re-derive these; flame source is upstream-consumer immutable (hexa-lang g7/@F f3). Mode S2 = pull-only.",
+  "source": "hexa-lang stdlib/flame README.md Phase 3 correctness anchor (RFC 045 closure) + handoff anima_handoff_2026_05_19.md",
+  "config_parity": "d=32 n_layer=3 (algorithm-byte-eq retry, anima d_corpus_fire mirror)",
+  "flame_phase3": {
+    "init_gn2": 7.97113,
+    "final_gn2": 8.87256e-07,
+    "acc_8of8": 8,
+    "wall_sec": 18.5
+  },
+  "anima_phase3_reference": {
+    "init_gn2": 7.97116,
+    "final_gn2": 3.73374e-07,
+    "acc_8of8": 8,
+    "wall_sec_approx": 30.0
+  },
+  "documented_drift": {
+    "delta_init_gn2_abs": 3.12e-05,
+    "delta_init_gn2_rel_approx": 4e-06,
+    "delta_final_gn2_abs": 5.14e-07,
+    "final_ratio_approx": 2.4,
+    "note": "same shape, same order of magnitude; qualitative reproduction perfect per hexa-lang README"
+  },
+  "mk2_wall": {
+    "pytorch_eager_step_sec": 336.85,
+    "flame_mk2_agtape_step_sec": 114.0,
+    "speedup": 2.95,
+    "config": "d=768 n_layer=12 T=1024",
+    "note": "perf figure is hexa-lang upstream MEASURED claim; anima-side perf claim FORBIDDEN until anima runs its own byte-eq falsifier (this design defines that falsifier)."
+  }
+}

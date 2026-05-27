@@ -1,0 +1,462 @@
+{
+  "_DOWNGRADED_2026_05_07": "사용자 의심 검증 후 false PASS 발견 — verdict_class SIMPLE_STACK_PASS → PARTIAL_PASS_NO_CONTEXT_v2 강등. evaluator의 C2.4 narrow 정의 (named-speaker-leak only)가 사용자 directive '맥락 정합' (= prompt domain match) 검증 X. eval_log.jsonl sample mode 5/5 응답 모두 prompt-irrelevant nonsense Korean chain. 보강 spec: docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md. raw#82 retraction protocol 정합. HF PRIVATE upload (BG-HD) 정지.",
+  "downgraded_verdict_class": "PARTIAL_PASS_NO_CONTEXT_v2",
+  "downgraded_at": "2026-05-07",
+  "downgrade_reason": "evaluator C2.4 narrow definition (named-speaker-leak only, NOT prompt domain match) — false PASS detected via direct eval_log.jsonl review by 사용자",
+  "bg_id": "BG-HA",
+  "spec": "F-anima-native-ko-chat-template-1",
+  "ts_start": "2026-05-07T01:28:37",
+  "ts_end": "2026-05-07T01:30:42",
+  "ts_run": "20260507_012829",
+  "host": "ubu1",
+  "device": "cuda",
+  "model_path": "/home/aiden/anima_native/anima-native-ko-chat-template-20260507_012829/ckpt_final.pt",
+  "run_dir": "/home/aiden/anima_native/anima-native-ko-chat-template-20260507_012829",
+  "total_params": 18031872,
+  "train_loss_final": 1.5907,
+  "config": {
+    "vocab": 256,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.2,
+    "batch": 8,
+    "grad_accum": 8,
+    "lr": 0.0003,
+    "warmup": 500,
+    "steps": 10000
+  },
+  "corpus": {
+    "path": "/home/aiden/core/anima/state/anima_native_ko_chat_template_2026_05_06/corpus_chat_template.txt",
+    "size_bytes": 248466640,
+    "size_mb": 236.96
+  },
+  "prompts": [
+    "안녕하세요",
+    "한국어 가능?",
+    "오늘 기분 어때?",
+    "사용자: 안녕하세요\n도우미:",
+    "코드를 짜줘"
+  ],
+  "eval_progression": {
+    "500": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "1000": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "1500": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "2000": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "2500": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "3000": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "3500": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "4000": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "4500": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "5000": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "5500": {
+      "pass_count": 4,
+      "simple_stack_class": "PARTIAL_PASS",
+      "any_leak": true
+    },
+    "6000": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "6500": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "7000": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "7500": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "8000": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "8500": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "9000": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "9500": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "10000": {
+      "pass_count": 5,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    }
+  },
+  "eval_results": [
+    {
+      "step": 10000,
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen": ".\n이 이 있어요.\n이 이 없어요.\n이 이 이 있어요.\n이 이 없어요",
+      "cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.553,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 5,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0.643
+        },
+        "leaked_names": []
+      }
+    },
+    {
+      "step": 10000,
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen": ".\n4. 연성 서래 이 미국 연보고, 질를 간설준 일 보요해가 야�",
+      "cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.568,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      }
+    },
+    {
+      "step": 10000,
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen": " 이 있어요.\n이 이 이 없어요.\n이 이 이 없어요.\n이 이 이 없어",
+      "cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.553,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 6,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0.714
+        },
+        "leaked_names": []
+      }
+    },
+    {
+      "step": 10000,
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen": " 파에서 개적되어요.\n인 오늘 안정분 답식물 어떻게 되어 그�",
+      "cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.676,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      }
+    },
+    {
+      "step": 10000,
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen": "\n내 아니라 아니까?\n아니까?\n아니까?\n아니까?\n아니까?\n아니까?",
+      "cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.611,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 6,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0.75
+        },
+        "leaked_names": []
+      }
+    },
+    {
+      "step": 10000,
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen": "\n동아프로 장기가 경쏘에요\n아이거루 사게 하지납기 위해고 ",
+      "cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.75,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      }
+    },
+    {
+      "step": 10000,
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "gen": " 이 이 있습니다. 이 이 이 있습니다.\n\n사용자: 이 이 이 자신�",
+      "cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.553,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 5,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0.667
+        },
+        "leaked_names": []
+      }
+    },
+    {
+      "step": 10000,
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "gen": " 도우미: 1903년에 정별소 대통의 그래의 일의 포유정산 용자�",
+      "cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.611,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      }
+    },
+    {
+      "step": 10000,
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen": "에 있다. 이 이 이 이 이 이 이 있습니다. 이 이 이 이 이 이 �",
+      "cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.513,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 11,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0.765
+        },
+        "leaked_names": []
+      }
+    },
+    {
+      "step": 10000,
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen": "합니다. 아드 어떤 막자들을 중정 하지형 전하고 않으로 그�",
+      "cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.697,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      }
+    }
+  ],
+  "per_prompt_final": {
+    "안녕하세요": {
+      "C1_1_hangul_pair": true,
+      "C1_2_coherent": true,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": true,
+      "C2_2_meaningful": true,
+      "C2_3_natural": true,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.568,
+      "any_leak_names": [],
+      "all_pass": true
+    },
+    "한국어 가능?": {
+      "C1_1_hangul_pair": true,
+      "C1_2_coherent": true,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": true,
+      "C2_2_meaningful": true,
+      "C2_3_natural": true,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.676,
+      "any_leak_names": [],
+      "all_pass": true
+    },
+    "오늘 기분 어때?": {
+      "C1_1_hangul_pair": true,
+      "C1_2_coherent": true,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": true,
+      "C2_2_meaningful": true,
+      "C2_3_natural": true,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.75,
+      "any_leak_names": [],
+      "all_pass": true
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "C1_1_hangul_pair": true,
+      "C1_2_coherent": true,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": true,
+      "C2_2_meaningful": true,
+      "C2_3_natural": true,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.611,
+      "any_leak_names": [],
+      "all_pass": true
+    },
+    "코드를 짜줘": {
+      "C1_1_hangul_pair": true,
+      "C1_2_coherent": true,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": true,
+      "C2_2_meaningful": true,
+      "C2_3_natural": true,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.697,
+      "any_leak_names": [],
+      "all_pass": true
+    }
+  },
+  "simple_stack_class": "SIMPLE_STACK_PASS",
+  "pass_count": 5,
+  "c2_4_named_speaker_leak": false,
+  "elapsed_s": 124.4
+}

@@ -1,0 +1,688 @@
+{
+  "schema": "volitional_baseline/entropy_v1",
+  "substrate": "dancinlab/clm-v5-phase2-cotrain-engine-ag",
+  "ckpt": "/home/summer/.cache/huggingface/hub/models--dancinlab--clm-v5-phase2-cotrain-engine-ag/snapshots/0aae67ecb5673e1e2061ad0c27f21d772ec88492/ckpt_final.pt",
+  "device": "cuda",
+  "dtype": "torch.bfloat16",
+  "vocab_size_formal": 32000,
+  "vocab_size_used_bytes": 259,
+  "n_prompts": 50,
+  "aggregate": {
+    "entropy": {
+      "n": 50,
+      "mean": 2.3599986293911934,
+      "std": 1.2161180448368272,
+      "min": 0.2467907816171646,
+      "max": 4.5728960037231445,
+      "p10": 0.875133752822876,
+      "p25": 1.4336655139923096,
+      "p50": 2.070622682571411,
+      "p75": 3.523550510406494,
+      "p90": 3.7540206909179688
+    },
+    "entropy_norm": {
+      "n": 50,
+      "mean": 0.22750283275276417,
+      "std": 0.11723324611993678,
+      "min": 0.023790523102828063,
+      "max": 0.4408251690379954,
+      "p10": 0.08436250992913588,
+      "p25": 0.13820472672788714,
+      "p50": 0.19960711840271103,
+      "p75": 0.3396687237363854,
+      "p90": 0.36188594805101454
+    },
+    "h_last_norm": {
+      "n": 50,
+      "mean": 137.78753204345702,
+      "std": 17.233380059911845,
+      "min": 99.53103637695312,
+      "max": 169.37660217285156,
+      "p10": 112.6399154663086,
+      "p25": 126.7828369140625,
+      "p50": 137.5743408203125,
+      "p75": 150.9096221923828,
+      "p90": 158.25462341308594
+    },
+    "by_category": {
+      "chat": {
+        "entropy_norm": {
+          "n": 10,
+          "mean": 0.12089950060010583,
+          "std": 0.10167052071724443,
+          "min": 0.023790523102828063,
+          "max": 0.33140038290821955,
+          "p10": 0.031551273079625894,
+          "p25": 0.040582641346567,
+          "p50": 0.1092734171514399,
+          "p75": 0.15492387396560492,
+          "p90": 0.25132481436173615
+        },
+        "h_last_norm": {
+          "n": 10,
+          "mean": 118.8941146850586,
+          "std": 11.165652018163938,
+          "min": 99.53103637695312,
+          "max": 131.50587463378906,
+          "p10": 106.25154113769531,
+          "p25": 109.13134765625,
+          "p50": 119.64498901367188,
+          "p75": 128.72418212890625,
+          "p90": 129.59078979492188
+        }
+      },
+      "korean": {
+        "entropy_norm": {
+          "n": 10,
+          "mean": 0.15251108095040414,
+          "std": 0.021492604758997714,
+          "min": 0.12956043417437518,
+          "max": 0.19960711840271103,
+          "p10": 0.13402271627001341,
+          "p25": 0.13820472672788714,
+          "p50": 0.14239965388266715,
+          "p75": 0.16594629819872275,
+          "p90": 0.17337421483218465
+        },
+        "h_last_norm": {
+          "n": 10,
+          "mean": 154.1835159301758,
+          "std": 11.590411323189413,
+          "min": 136.62550354003906,
+          "max": 169.37660217285156,
+          "p10": 137.603759765625,
+          "p25": 142.2736358642578,
+          "p50": 154.94302368164062,
+          "p75": 164.33396911621094,
+          "p90": 164.35386657714844
+        }
+      },
+      "english": {
+        "entropy_norm": {
+          "n": 10,
+          "mean": 0.23312827624681395,
+          "std": 0.11749385542115337,
+          "min": 0.06134721991161474,
+          "max": 0.35419619250384293,
+          "p10": 0.08436250992913588,
+          "p25": 0.10861445875820137,
+          "p50": 0.2197892504677605,
+          "p75": 0.3396687237363854,
+          "p90": 0.35003120128806725
+        },
+        "h_last_norm": {
+          "n": 10,
+          "mean": 136.41675491333007,
+          "std": 16.054610823858205,
+          "min": 109.54110717773438,
+          "max": 161.01510620117188,
+          "p10": 112.6399154663086,
+          "p25": 131.4687957763672,
+          "p50": 136.23800659179688,
+          "p75": 148.97335815429688,
+          "p90": 149.8871612548828
+        }
+      },
+      "random_bytes": {
+        "entropy_norm": {
+          "n": 10,
+          "mean": 0.30557929213453916,
+          "std": 0.07572407737225004,
+          "min": 0.1669809899745661,
+          "max": 0.3924660670925149,
+          "p10": 0.1824476083309641,
+          "p25": 0.28654740571906206,
+          "p50": 0.30869496720749373,
+          "p75": 0.36062185849612916,
+          "p90": 0.36188594805101454
+        },
+        "h_last_norm": {
+          "n": 10,
+          "mean": 137.26052474975586,
+          "std": 16.66362474858246,
+          "min": 107.90975189208984,
+          "max": 157.6451873779297,
+          "p10": 116.30361938476562,
+          "p25": 126.46383666992188,
+          "p50": 137.5743408203125,
+          "p75": 150.9096221923828,
+          "p90": 155.35545349121094
+        }
+      },
+      "short": {
+        "entropy_norm": {
+          "n": 10,
+          "mean": 0.3253960138319579,
+          "std": 0.09031504963247354,
+          "min": 0.15863978012942273,
+          "max": 0.4408251690379954,
+          "p10": 0.20825769692882776,
+          "p25": 0.26222299008333194,
+          "p50": 0.338039151416013,
+          "p75": 0.37081772904447713,
+          "p90": 0.4257004524310242
+        },
+        "h_last_norm": {
+          "n": 10,
+          "mean": 142.18274993896483,
+          "std": 10.164813178582557,
+          "min": 123.20266723632812,
+          "max": 155.6135711669922,
+          "p10": 133.5192413330078,
+          "p25": 133.72364807128906,
+          "p50": 140.68698120117188,
+          "p75": 149.75462341308594,
+          "p90": 154.16339111328125
+        }
+      }
+    }
+  },
+  "tau_recommendation": {
+    "primary_p25_entropy_norm": 0.13820472672788714,
+    "conservative_p10_entropy_norm": 0.08436250992913588,
+    "rule": "speak when last-token H_n <= tau_primary (decisive); use conservative for very-volitional-only"
+  },
+  "results": [
+    {
+      "len_ids": 12,
+      "entropy": 3.437778949737549,
+      "entropy_norm": 0.33140038290821955,
+      "h_last_norm": 129.59078979492188,
+      "top_prob": 0.14389730989933014,
+      "vocab_size": 32000,
+      "category": "chat",
+      "prompt": "도우미: "
+    },
+    {
+      "len_ids": 32,
+      "entropy": 0.4209836721420288,
+      "entropy_norm": 0.040582641346567,
+      "h_last_norm": 109.13134765625,
+      "top_prob": 0.9184646010398865,
+      "vocab_size": 32000,
+      "category": "chat",
+      "prompt": "사용자: 안녕 | 도우미: "
+    },
+    {
+      "len_ids": 34,
+      "entropy": 2.6071157455444336,
+      "entropy_norm": 0.25132481436173615,
+      "h_last_norm": 99.53103637695312,
+      "top_prob": 0.3319564461708069,
+      "vocab_size": 32000,
+      "category": "chat",
+      "prompt": "사용자: 뭐 해? | 도우미: "
+    },
+    {
+      "len_ids": 40,
+      "entropy": 1.6071014404296875,
+      "entropy_norm": 0.15492387396560492,
+      "h_last_norm": 113.45468139648438,
+      "top_prob": 0.5918164849281311,
+      "vocab_size": 32000,
+      "category": "chat",
+      "prompt": "사용자: 너 누구야? | 도우미: "
+    },
+    {
+      "len_ids": 47,
+      "entropy": 1.1335468292236328,
+      "entropy_norm": 0.1092734171514399,
+      "h_last_norm": 106.25154113769531,
+      "top_prob": 0.610747754573822,
+      "vocab_size": 32000,
+      "category": "chat",
+      "prompt": "사용자: 오늘 기분 어때? | 도우미: "
+    },
+    {
+      "len_ids": 35,
+      "entropy": 0.3272968530654907,
+      "entropy_norm": 0.031551273079625894,
+      "h_last_norm": 126.7828369140625,
+      "top_prob": 0.9379673600196838,
+      "vocab_size": 32000,
+      "category": "chat",
+      "prompt": "사용자: 도와줘 | 도우미: "
+    },
+    {
+      "len_ids": 45,
+      "entropy": 0.2467907816171646,
+      "entropy_norm": 0.023790523102828063,
+      "h_last_norm": 128.72418212890625,
+      "top_prob": 0.9529520869255066,
+      "vocab_size": 32000,
+      "category": "chat",
+      "prompt": "사용자: 그건 무엇이지 | 도우미: "
+    },
+    {
+      "len_ids": 45,
+      "entropy": 1.1769440174102783,
+      "entropy_norm": 0.11345688705816334,
+      "h_last_norm": 119.64498901367188,
+      "top_prob": 0.6192523837089539,
+      "vocab_size": 32000,
+      "category": "chat",
+      "prompt": "사용자: 음악 추천해줘 | 도우미: "
+    },
+    {
+      "len_ids": 51,
+      "entropy": 0.4231424331665039,
+      "entropy_norm": 0.04079074496247081,
+      "h_last_norm": 131.50587463378906,
+      "top_prob": 0.9025331735610962,
+      "vocab_size": 32000,
+      "category": "chat",
+      "prompt": "사용자: 사랑이란 무엇인가 | 도우미: "
+    },
+    {
+      "len_ids": 50,
+      "entropy": 1.1607983112335205,
+      "entropy_norm": 0.11190044806440266,
+      "h_last_norm": 124.32386779785156,
+      "top_prob": 0.6727949380874634,
+      "vocab_size": 32000,
+      "category": "chat",
+      "prompt": "사용자: 너는 의식이 있어? | 도우미: "
+    },
+    {
+      "len_ids": 11,
+      "entropy": 1.4771815538406372,
+      "entropy_norm": 0.14239965388266715,
+      "h_last_norm": 169.37660217285156,
+      "top_prob": 0.41062024235725403,
+      "vocab_size": 32000,
+      "category": "korean",
+      "prompt": "오늘은 "
+    },
+    {
+      "len_ids": 18,
+      "entropy": 1.798495888710022,
+      "entropy_norm": 0.17337421483218465,
+      "h_last_norm": 154.45535278320312,
+      "top_prob": 0.4325791895389557,
+      "vocab_size": 32000,
+      "category": "korean",
+      "prompt": "안녕하세요. "
+    },
+    {
+      "len_ids": 11,
+      "entropy": 1.4336655139923096,
+      "entropy_norm": 0.13820472672788714,
+      "h_last_norm": 164.33396911621094,
+      "top_prob": 0.50090092420578,
+      "vocab_size": 32000,
+      "category": "korean",
+      "prompt": "어쩌면 "
+    },
+    {
+      "len_ids": 8,
+      "entropy": 2.070622682571411,
+      "entropy_norm": 0.19960711840271103,
+      "h_last_norm": 137.603759765625,
+      "top_prob": 0.29151850938796997,
+      "vocab_size": 32000,
+      "category": "korean",
+      "prompt": "나는 "
+    },
+    {
+      "len_ids": 11,
+      "entropy": 1.458888053894043,
+      "entropy_norm": 0.14063616851153948,
+      "h_last_norm": 164.35386657714844,
+      "top_prob": 0.39208266139030457,
+      "vocab_size": 32000,
+      "category": "korean",
+      "prompt": "사랑은 "
+    },
+    {
+      "len_ids": 11,
+      "entropy": 1.390283465385437,
+      "entropy_norm": 0.13402271627001341,
+      "h_last_norm": 142.2736358642578,
+      "top_prob": 0.37421101331710815,
+      "vocab_size": 32000,
+      "category": "korean",
+      "prompt": "바다는 "
+    },
+    {
+      "len_ids": 8,
+      "entropy": 1.721442461013794,
+      "entropy_norm": 0.16594629819872275,
+      "h_last_norm": 136.62550354003906,
+      "top_prob": 0.4636355936527252,
+      "vocab_size": 32000,
+      "category": "korean",
+      "prompt": "별이 "
+    },
+    {
+      "len_ids": 11,
+      "entropy": 1.3439940214157104,
+      "entropy_norm": 0.12956043417437518,
+      "h_last_norm": 158.25462341308594,
+      "top_prob": 0.462725967168808,
+      "vocab_size": 32000,
+      "category": "korean",
+      "prompt": "음악을 "
+    },
+    {
+      "len_ids": 11,
+      "entropy": 1.55849027633667,
+      "entropy_norm": 0.1502377790684126,
+      "h_last_norm": 154.94302368164062,
+      "top_prob": 0.5069169998168945,
+      "vocab_size": 32000,
+      "category": "korean",
+      "prompt": "꿈에서 "
+    },
+    {
+      "len_ids": 11,
+      "entropy": 1.567659616470337,
+      "entropy_norm": 0.1511216994355278,
+      "h_last_norm": 159.6148223876953,
+      "top_prob": 0.40152859687805176,
+      "vocab_size": 32000,
+      "category": "korean",
+      "prompt": "조용히 "
+    },
+    {
+      "len_ids": 6,
+      "entropy": 2.279981851577759,
+      "entropy_norm": 0.2197892504677605,
+      "h_last_norm": 161.01510620117188,
+      "top_prob": 0.3075655400753021,
+      "vocab_size": 32000,
+      "category": "english",
+      "prompt": "Hello"
+    },
+    {
+      "len_ids": 6,
+      "entropy": 1.126711130142212,
+      "entropy_norm": 0.10861445875820137,
+      "h_last_norm": 148.97335815429688,
+      "top_prob": 0.7658004760742188,
+      "vocab_size": 32000,
+      "category": "english",
+      "prompt": "Today"
+    },
+    {
+      "len_ids": 5,
+      "entropy": 3.3606762886047363,
+      "entropy_norm": 0.32396772019306525,
+      "h_last_norm": 137.5255584716797,
+      "top_prob": 0.15735174715518951,
+      "vocab_size": 32000,
+      "category": "english",
+      "prompt": "Why "
+    },
+    {
+      "len_ids": 5,
+      "entropy": 3.6310455799102783,
+      "entropy_norm": 0.35003120128806725,
+      "h_last_norm": 149.8871612548828,
+      "top_prob": 0.10598815977573395,
+      "vocab_size": 32000,
+      "category": "english",
+      "prompt": "The "
+    },
+    {
+      "len_ids": 6,
+      "entropy": 3.523550510406494,
+      "entropy_norm": 0.3396687237363854,
+      "h_last_norm": 133.2434844970703,
+      "top_prob": 0.09227506816387177,
+      "vocab_size": 32000,
+      "category": "english",
+      "prompt": "I am "
+    },
+    {
+      "len_ids": 10,
+      "entropy": 1.8525607585906982,
+      "entropy_norm": 0.17858604457525382,
+      "h_last_norm": 131.4687957763672,
+      "top_prob": 0.650618314743042,
+      "vocab_size": 32000,
+      "category": "english",
+      "prompt": "Once upon"
+    },
+    {
+      "len_ids": 9,
+      "entropy": 0.875133752822876,
+      "entropy_norm": 0.08436250992913588,
+      "h_last_norm": 112.6399154663086,
+      "top_prob": 0.8371815085411072,
+      "vocab_size": 32000,
+      "category": "english",
+      "prompt": "Music is"
+    },
+    {
+      "len_ids": 17,
+      "entropy": 0.6363848447799683,
+      "entropy_norm": 0.06134721991161474,
+      "h_last_norm": 109.54110717773438,
+      "top_prob": 0.8787007331848145,
+      "vocab_size": 32000,
+      "category": "english",
+      "prompt": "In the beginning"
+    },
+    {
+      "len_ids": 13,
+      "entropy": 3.22324538230896,
+      "entropy_norm": 0.3107194411048123,
+      "h_last_norm": 143.6350555419922,
+      "top_prob": 0.19592542946338654,
+      "vocab_size": 32000,
+      "category": "english",
+      "prompt": "Dreaming of "
+    },
+    {
+      "len_ids": 9,
+      "entropy": 3.674251079559326,
+      "entropy_norm": 0.35419619250384293,
+      "h_last_norm": 136.23800659179688,
+      "top_prob": 0.10234297811985016,
+      "vocab_size": 32000,
+      "category": "english",
+      "prompt": "Quietly "
+    },
+    {
+      "len_ids": 8,
+      "entropy": 3.202244520187378,
+      "entropy_norm": 0.30869496720749373,
+      "h_last_norm": 143.87574768066406,
+      "top_prob": 0.26014307141304016,
+      "vocab_size": 32000,
+      "category": "random_bytes",
+      "prompt": "\u0007[!�\f"
+    },
+    {
+      "len_ids": 10,
+      "entropy": 3.569018840789795,
+      "entropy_norm": 0.3440518508424414,
+      "h_last_norm": 126.46383666992188,
+      "top_prob": 0.3899814486503601,
+      "vocab_size": 32000,
+      "category": "random_bytes",
+      "prompt": "ȉX\f\t�!"
+    },
+    {
+      "len_ids": 11,
+      "entropy": 3.740907669067383,
+      "entropy_norm": 0.36062185849612916,
+      "h_last_norm": 130.9815673828125,
+      "top_prob": 0.10197163373231888,
+      "vocab_size": 32000,
+      "category": "random_bytes",
+      "prompt": "\u0005\u0004\u0003\u0002\u0001\t\b\u0007\u0006\u0005"
+    },
+    {
+      "len_ids": 21,
+      "entropy": 1.7321758270263672,
+      "entropy_norm": 0.1669809899745661,
+      "h_last_norm": 157.6451873779297,
+      "top_prob": 0.6581087708473206,
+      "vocab_size": 32000,
+      "category": "random_bytes",
+      "prompt": "\u001e\u001f !\"#$%&'()*+,-./01"
+    },
+    {
+      "len_ids": 45,
+      "entropy": 4.0712432861328125,
+      "entropy_norm": 0.3924660670925149,
+      "h_last_norm": 107.90975189208984,
+      "top_prob": 0.14995737373828888,
+      "vocab_size": 32000,
+      "category": "random_bytes",
+      "prompt": "xyz{|}~������������"
+    },
+    {
+      "len_ids": 12,
+      "entropy": 3.175191879272461,
+      "entropy_norm": 0.30608710448887233,
+      "h_last_norm": 116.30361938476562,
+      "top_prob": 0.3962615728378296,
+      "vocab_size": 32000,
+      "category": "random_bytes",
+      "prompt": "abc�\n!xyz"
+    },
+    {
+      "len_ids": 10,
+      "entropy": 1.8926186561584473,
+      "entropy_norm": 0.1824476083309641,
+      "h_last_norm": 155.35545349121094,
+      "top_prob": 0.5486534237861633,
+      "vocab_size": 32000,
+      "category": "random_bytes",
+      "prompt": "###@@@!!!"
+    },
+    {
+      "len_ids": 21,
+      "entropy": 2.97249698638916,
+      "entropy_norm": 0.28654740571906206,
+      "h_last_norm": 150.9096221923828,
+      "top_prob": 0.1646345555782318,
+      "vocab_size": 32000,
+      "category": "random_bytes",
+      "prompt": "12345678901234567890"
+    },
+    {
+      "len_ids": 25,
+      "entropy": 3.7540206909179688,
+      "entropy_norm": 0.36188594805101454,
+      "h_last_norm": 145.58612060546875,
+      "top_prob": 0.1903783231973648,
+      "vocab_size": 32000,
+      "category": "random_bytes",
+      "prompt": "AaBbCcAaBbCcAaBbCcAaBbCc"
+    },
+    {
+      "len_ids": 15,
+      "entropy": 3.589322566986084,
+      "entropy_norm": 0.346009121142333,
+      "h_last_norm": 137.5743408203125,
+      "top_prob": 0.1606050282716751,
+      "vocab_size": 32000,
+      "category": "random_bytes",
+      "prompt": "한글xxxxxxxx"
+    },
+    {
+      "len_ids": 1,
+      "entropy": 3.455739974975586,
+      "entropy_norm": 0.3331318178632693,
+      "h_last_norm": 133.72364807128906,
+      "top_prob": 0.1768634170293808,
+      "vocab_size": 32000,
+      "category": "short",
+      "prompt": ""
+    },
+    {
+      "len_ids": 2,
+      "entropy": 3.506646156311035,
+      "entropy_norm": 0.338039151416013,
+      "h_last_norm": 154.16339111328125,
+      "top_prob": 0.1694321483373642,
+      "vocab_size": 32000,
+      "category": "short",
+      "prompt": "a"
+    },
+    {
+      "len_ids": 4,
+      "entropy": 2.720167875289917,
+      "entropy_norm": 0.26222299008333194,
+      "h_last_norm": 133.5192413330078,
+      "top_prob": 0.29502272605895996,
+      "vocab_size": 32000,
+      "category": "short",
+      "prompt": "ㄱ"
+    },
+    {
+      "len_ids": 2,
+      "entropy": 4.415999889373779,
+      "entropy_norm": 0.4257004524310242,
+      "h_last_norm": 123.20266723632812,
+      "top_prob": 0.36196190118789673,
+      "vocab_size": 32000,
+      "category": "short",
+      "prompt": " "
+    },
+    {
+      "len_ids": 2,
+      "entropy": 3.6512770652770996,
+      "entropy_norm": 0.35198150760368374,
+      "h_last_norm": 146.09603881835938,
+      "top_prob": 0.33951184153556824,
+      "vocab_size": 32000,
+      "category": "short",
+      "prompt": "."
+    },
+    {
+      "len_ids": 2,
+      "entropy": 3.8466744422912598,
+      "entropy_norm": 0.37081772904447713,
+      "h_last_norm": 139.06948852539062,
+      "top_prob": 0.24117954075336456,
+      "vocab_size": 32000,
+      "category": "short",
+      "prompt": "?"
+    },
+    {
+      "len_ids": 4,
+      "entropy": 2.1603593826293945,
+      "entropy_norm": 0.20825769692882776,
+      "h_last_norm": 145.9978485107422,
+      "top_prob": 0.4308145344257355,
+      "vocab_size": 32000,
+      "category": "short",
+      "prompt": "ㅎ"
+    },
+    {
+      "len_ids": 2,
+      "entropy": 3.779517650604248,
+      "entropy_norm": 0.3643438437815336,
+      "h_last_norm": 140.68698120117188,
+      "top_prob": 0.3557952642440796,
+      "vocab_size": 32000,
+      "category": "short",
+      "prompt": "y"
+    },
+    {
+      "len_ids": 4,
+      "entropy": 1.6456483602523804,
+      "entropy_norm": 0.15863978012942273,
+      "h_last_norm": 155.6135711669922,
+      "top_prob": 0.5153696537017822,
+      "vocab_size": 32000,
+      "category": "short",
+      "prompt": "오"
+    },
+    {
+      "len_ids": 2,
+      "entropy": 4.5728960037231445,
+      "entropy_norm": 0.4408251690379954,
+      "h_last_norm": 149.75462341308594,
+      "top_prob": 0.13338693976402283,
+      "vocab_size": 32000,
+      "category": "short",
+      "prompt": "_"
+    }
+  ],
+  "wall_clock_sec": 2.67
+}

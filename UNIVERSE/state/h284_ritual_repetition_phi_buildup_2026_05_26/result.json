@@ -1,0 +1,41 @@
+{
+  "hypothesis": "H_284",
+  "slug": "ritual-repetition-phi-buildup",
+  "domain": "LIFE",
+  "title": "ritual-repetition-Φ-buildup — periodic ritual drive builds Φ up over cycles vs energy-matched flat drive (AXES R7 promote · H_207 Kuramoto sister)",
+  "date": "2026-05-26",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "seed": 42,
+  "params": {"d_model": 8, "pool_N": 8, "period": 4, "reps": 6, "amp": 0.6, "c1_margin": 0.02},
+  "phi_ritual_per_cycle": [1.93272, 1.82895, 1.53193, 1.42957, 1.15367, 0.781218],
+  "phi_flat_per_cycle": [1.84318, 1.56854, 1.26102, 0.952678, 0.653996, 0.392555],
+  "derived": {
+    "phi_ritual_first": 1.93272,
+    "phi_ritual_last": 0.781218,
+    "phi_flat_first": 1.84318,
+    "phi_flat_last": 0.392555,
+    "slope_ritual": -1.1515,
+    "slope_flat": -1.45062,
+    "gap_final": 0.388663
+  },
+  "criteria": {
+    "C1_ritual_wins":   true,
+    "C2_buildup":       false,
+    "C3_rit_gt_flat":   true,
+    "C4_determinism":   true
+  },
+  "falsifiers": {
+    "F1_RITUAL_WINS":   { "metric": "ritual[R] > flat[R]", "value": 0.388663, "verdict": "PASS" },
+    "F2_BUILDUP":       { "metric": "slope_ritual > 0", "value": -1.1515, "verdict": "FAIL" },
+    "F3_RIT_GT_FLAT":   { "metric": "slope_ritual > slope_flat", "value": 0.299122, "verdict": "PASS" },
+    "F4_DETERMINISM":   { "metric": "re-run byte-equal", "verdict": "PASS" },
+    "F5_BOUNDS":        { "metric": "all phi finite >= 0", "verdict": "PASS" }
+  },
+  "n_criteria_pass": 3,
+  "n_falsifier_pass": 4,
+  "verdict": "PARTIAL",
+  "cross_link": {"H_207": "kuramoto-sync", "H_221": "meditation-jhana", "H_018": "genesis-zero-drive", "axes": "R7 practice/discipline"}
+}

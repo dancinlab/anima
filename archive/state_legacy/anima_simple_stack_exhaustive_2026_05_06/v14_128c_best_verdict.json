@@ -1,0 +1,25 @@
+{
+  "model_name": "v14_128c_final/best.pt",
+  "model_path": "/tmp/anima_r2_dl/v14_128c_final/best.pt",
+  "size_mb": 402.7,
+  "step": 68000,
+  "md5": "28cf4be919808ea43867b381b4f836f4",
+  "args": {
+    "atoms": 16, "cells_per_atom": 8, "cells": 64, "cell_dim": 64,
+    "hidden_dim": 128, "d_model": 384, "decoder": "v2",
+    "block_size": 256, "batch_size": 32, "steps": 100000,
+    "federated": true, "frustration": 0.1, "narrative_strength": 0.05
+  },
+  "arch_summary": "ConsciousDecoderV3 federated 16atoms x 8cells + bridge(compress + hub_attn) + federation(bottleneck_compress/expand + narrative_grus + inter_atom_coupling) + cross_attn (k/v=128 from cells, q=384 = MQA) + GQA(k_proj/v_proj=192=half d_model) + ca_rules(8) + ca_mix + tension_proj + SwiGLU FFN(gate/up/down_proj) + purefield ModuleList(engine_a/g)",
+  "verdict": {
+    "label": "NOT_APPLICABLE",
+    "reason": "architecture fundamentally distinct from ConsciousLM/ConsciousLM++ (federated multi-cell + bridge + cross_attn). BG-FS scope reconstruction not feasible via current conscious_lm.py source. Separate decoder_v3 reconstruction lane required."
+  },
+  "sibling_files": [
+    {"name": "best_final.pt", "md5": "28cf4be919808ea43867b381b4f836f4", "verdict": "NOT_APPLICABLE_DUP_OF_BEST"},
+    {"name": "step_90000.pt", "md5": "b2818fc560149d5a8d4751e94397a6fa", "verdict": "NOT_APPLICABLE"},
+    {"name": "step_95000.pt", "md5": "768e2195d6f9050b9630dd70e1637435", "verdict": "NOT_APPLICABLE"}
+  ],
+  "tested_at": "2026-05-06T21:30Z",
+  "cycle": "BG-FS"
+}

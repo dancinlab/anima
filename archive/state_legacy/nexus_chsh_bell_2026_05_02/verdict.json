@@ -1,0 +1,38 @@
+{
+  "task_arns": {
+    "circuit_a_b": "arn:aws:braket:us-east-1:267673635495:quantum-task/e9d5d060-084a-4750-9baf-c877d123730f",
+    "circuit_a_bprime": "arn:aws:braket:us-east-1:267673635495:quantum-task/93524669-cba7-41ae-ac7f-375d87aef05b",
+    "circuit_aprime_b": "arn:aws:braket:us-east-1:267673635495:quantum-task/7ef6154b-284b-459f-a129-a5520bf1bb51",
+    "circuit_aprime_bprime": "arn:aws:braket:us-east-1:267673635495:quantum-task/1cb1ea5e-62f8-4812-ac5f-9a49b8e4af26"
+  },
+  "expectations": {
+    "circuit_a_b": {
+      "E": 0.6880000000000002,
+      "n": 250
+    },
+    "circuit_a_bprime": {
+      "E": -0.736,
+      "n": 250
+    },
+    "circuit_aprime_b": {
+      "E": 0.7040000000000001,
+      "n": 250
+    },
+    "circuit_aprime_bprime": {
+      "E": 0.6800000000000002,
+      "n": 250
+    }
+  },
+  "CHSH_S": 2.808,
+  "sigma_S": 0.09,
+  "n_sigma_excess": 8.97,
+  "quantum_bound": 2.828,
+  "classical_bound": 2.0,
+  "verdict": "PASS",
+  "cost_actual_USD": 81.2,
+  "honest_c3": [
+    "CHSH violation = quantum nonlocality (Aspect 1982 / Nobel 2022 already established)",
+    "nexus 4-axis (WHAT/WHERE/WHY/TRUST) binding semantic NOT proven by CHSH (operational anchor only)",
+    "250 shots \u00d7 4 settings = sufficient for 5\u03c3 test if S near quantum bound"
+  ]
+}

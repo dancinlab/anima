@@ -1,0 +1,3207 @@
+#!hexa lax
+// ═══════════════════════════════════════════════════════════
+//  self/main.hexa — HEXA CLI 엔트리 (go/cargo 스타일)
+//
+//  서브커맨드:
+//    hexa run <file> [args...]    스크립트 실행 (interp 인터프리터 위임)
+//    hexa build <file> [-o out]   .hexa → 네이티브 바이너리
+//    hexa cc                      트랜스파일러(hexa_cc) 재빌드
+//    hexa status                  툴체인 상태
+//    hexa version                 버전
+//    hexa help                    도움말
+//
+//  빌드 체인 (go/rust 부트스트랩 패턴):
+//    interp = build/hexa_interp (이전 바이너리, 앵커)
+//    dispatch = hexa_v2 self/main.hexa -> main.c -> clang -> 루트 ./hexa
+//    stage2 = ./hexa build self/main.hexa -> stage2 비교 (fixpoint)
+//
+//  골화 레지스트리: $ANIMA/shared/hexa/hexa_toolchain.json
+//    (CLI dispatcher + interp interp + hexa_cc 전체 포괄)
+//    ossified[]/stable[]/failing[] 3섹션. 수정 시 해당 섹션 업데이트.
+//  런타임 병목 추적: doc/runtime_bottlenecks.json
+// ═══════════════════════════════════════════════════════════
+
+fn version_str() {
+    return "0.1.0-dispatch"
+}
+
+fn cmd_help() {
+    println("HEXA — self-hosted language toolchain")
+    println("")
+    println("USAGE:")
+    println("    hexa <SUBCOMMAND> [ARGS...]")
+    println("")
+    println("SUBCOMMANDS:")
+    println("    run [--no-sentinel] <file> [args...]")
+    println("                            Execute a .hexa script (interpreter)")
+    println("                              --no-sentinel: stdout 청정 — trailing")
+    println("                                __HEXA_RC=N 미출력 (HEXA_NO_SENTINEL=1 동등)")
+    println("    batch <f1> <f2> ...     Run N scripts sharing one CLI dispatch")
+    println("                              Each result delimited by ===BATCH_RESULT===")
+    println("    parse <file>            Parse-only check (no exec, no codegen)")
+    println("    test <file> [opts]      Run @test fn in <file> (native runner)")
+    println("                              opts: --filter NAME (substring match)")
+    println("                                    --verbose (per-test stdout)")
+    println("                                    --selftest-only (legacy --selftest path)")
+    println("    check <file>            Verify @invariant DSL blocks (AST-based)")
+    println("    convergence <subcmd>    Scan source-embedded convergence metadata (3 formats)")
+    println("                              dump <file>       full snapshot (JSON)")
+    println("                              dump-meta <file>  project-level meta only")
+    println("                            Formats:")
+    println("                              A) # @convergence-start/end  multi-line block (legacy)")
+    println("                              B) # @convergence k=v k=\"v\"  single-line comment (.md)")
+    println("                              C) @convergence(k=\"v\", ...)  hexa attribute (.hexa)")
+    println("    build <file> [-o out]   Compile .hexa to native binary")
+    println("    bench <file> [opts]     Benchmark a .hexa script (wall/RSS/alloc)")
+    println("                              opts: --runs N (default 3)")
+    println("                                    --json (JSON output, no table)")
+    println("                                    --compare <other_bin> (A/B vs second binary)")
+    println("    cc                      Rebuild the transpiler (hexa_cc)")
+    println("    gc [--dry-run]          Prune .hexa-cache slots older than 30d")
+    println("                              Env: HEXA_CACHE=0 disables AOT cache")
+    println("                              fast-path (forces interp interpreter).")
+    println("    lsp                     Start LSP server (stdin/stdout, JSON-RPC)")
+    println("    status                  Show toolchain status")
+    println("    version                 Print version")
+    println("    init <dir> [--name N]   Scaffold <dir>/project.hexa (0% external format)")
+    println("    smash|free|thinking|lens|atlas|bus|roadmap|discovery")
+    println("                            Delegate to $NEXUS/shared/bin/nexus-cli")
+    println("                              hexa smash --seed \"...\" [--depth 3]")
+    println("                              hexa free --seed \"...\" [--dfs 3]")
+    println("    url <hexa://URL>        Dispatch a hexa:// URL (macOS URL handler)")
+    println("                              Schemes: hexa://run?file=PATH")
+    println("                                       hexa://repl?dir=PATH")
+    println("                                       hexa://install?pkg=NAME")
+    println("    help                    Show this help")
+}
+
+// ─── hexa:// URL dispatcher ────────────────────────────────────────────
+// Called from `hexa url <URL>` — typically invoked by macOS HexaURL.app's
+// AppleScript handler after a user clicks a hexa:// link. Keeps parse
+// minimal: no url-decode yet, no query string key aliasing.
+
+fn hexa_url_after_scheme(url) {
+    // Strip leading "hexa://" if present. Anything else returns "".
+    if len(url) < 7 { return "" }
+    let head = url.substring(0, 7)
+    if head != "hexa://" { return "" }
+    return url.substring(7, len(url))
+}
+
+fn hexa_url_split_query(rest) {
+    // Returns [action, query] where query may be "".
+    let n = len(rest)
+    let mut i = 0
+    while i < n {
+        if rest.substring(i, i + 1) == "?" {
+            return [rest.substring(0, i), rest.substring(i + 1, n)]
+        }
+        i = i + 1
+    }
+    return [rest, ""]
+}
+
+fn hexa_url_query_get(query, key) {
+    // Scan `k=v&k=v` for first matching key. No url-decode.
+    if len(query) == 0 { return "" }
+    let pairs = query.split("&")
+    let mut pi = 0
+    while pi < len(pairs) {
+        let p = pairs[pi]
+        let n = len(p)
+        let mut j = 0
+        while j < n {
+            if p.substring(j, j + 1) == "=" {
+                if p.substring(0, j) == key { return p.substring(j + 1, n) }
+                j = n
+            } else {
+                j = j + 1
+            }
+        }
+        pi = pi + 1
+    }
+    return ""
+}
+
+// Bug fix (2026-05-01): cmd_url dropped `args=` query — only `file=` was
+// extracted, hence `cmd_run(file, [])` always invoked with empty argv.
+// hexa_url_query_get_all returns ALL values for repeated key (e.g.
+// `&args=hello&args=world` → ["hello", "world"]). Decoded by the caller.
+fn hexa_url_query_get_all(query, key) {
+    let mut out = []
+    if len(query) == 0 { return out }
+    let pairs = query.split("&")
+    let mut pi = 0
+    while pi < len(pairs) {
+        let p = pairs[pi]
+        let n = len(p)
+        let mut j = 0
+        while j < n {
+            if p.substring(j, j + 1) == "=" {
+                if p.substring(0, j) == key {
+                    out.push(p.substring(j + 1, n))
+                }
+                j = n
+            } else {
+                j = j + 1
+            }
+        }
+        pi = pi + 1
+    }
+    return out
+}
+
+// Minimal URL percent-decode + `+` → space (application/x-www-form-urlencoded).
+// Invalid `%xx` sequences pass through literally (lax — same posture as the
+// rest of cmd_url; security boundary lives at forced-command pin, not here).
+fn hexa_url_hex_nibble(c) {
+    if c == "0" { return 0 }
+    if c == "1" { return 1 }
+    if c == "2" { return 2 }
+    if c == "3" { return 3 }
+    if c == "4" { return 4 }
+    if c == "5" { return 5 }
+    if c == "6" { return 6 }
+    if c == "7" { return 7 }
+    if c == "8" { return 8 }
+    if c == "9" { return 9 }
+    if c == "a" || c == "A" { return 10 }
+    if c == "b" || c == "B" { return 11 }
+    if c == "c" || c == "C" { return 12 }
+    if c == "d" || c == "D" { return 13 }
+    if c == "e" || c == "E" { return 14 }
+    if c == "f" || c == "F" { return 15 }
+    return -1
+}
+
+fn hexa_url_decode(s) {
+    let n = len(s)
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        let c = s.substring(i, i + 1)
+        if c == "+" {
+            out = out + " "
+            i = i + 1
+        } else if c == "%" && i + 2 < n {
+            // Need 2 more chars for %XX. substring(i+2, i+3) requires i+3 <= n.
+            let h = hexa_url_hex_nibble(s.substring(i + 1, i + 2))
+            let l = hexa_url_hex_nibble(s.substring(i + 2, i + 3))
+            if h >= 0 && l >= 0 {
+                let code = h * 16 + l
+                out = out + chr(code)
+                i = i + 3
+            } else {
+                out = out + c
+                i = i + 1
+            }
+        } else {
+            out = out + c
+            i = i + 1
+        }
+    }
+    return out
+}
+
+fn cmd_url(url) {
+    let rest = hexa_url_after_scheme(url)
+    if rest == "" {
+        println("error: expected hexa:// URL, got: " + url)
+        return
+    }
+    let parts = hexa_url_split_query(rest)
+    let action = parts[0]
+    let query = parts[1]
+    if action == "run" {
+        let file_raw = hexa_url_query_get(query, "file")
+        if file_raw == "" {
+            println("error: hexa://run requires ?file=<abs-path>")
+            return
+        }
+        let file = hexa_url_decode(file_raw)
+        // args= multi-value: `&args=foo&args=bar` → ["foo", "bar"].
+        // Each value individually URL-decoded (supports %20, +, etc.).
+        let args_raw = hexa_url_query_get_all(query, "args")
+        let mut args_list = []
+        let mut ai = 0
+        while ai < len(args_raw) {
+            args_list.push(hexa_url_decode(args_raw[ai]))
+            ai = ai + 1
+        }
+        cmd_run(file, args_list)
+    } else if action == "install" {
+        let pkg = hexa_url_query_get(query, "pkg")
+        if pkg == "" {
+            println("error: hexa://install requires ?pkg=<name>")
+            return
+        }
+        let r = exec("hx install '" + pkg + "'")
+        println(r)
+    } else if action == "repl" {
+        let dir = hexa_url_query_get(query, "dir")
+        // macOS: open Terminal tab cd'd into dir then run hexa REPL (hexa).
+        let target = if dir == "" { exec("pwd 2>/dev/null | tr -d '\\n'") } else { dir }
+        let cmd = "osascript -e 'tell application \"Terminal\" to do script \"cd " + target + " && hexa\"'"
+        let r = exec(cmd)
+        println(r)
+    } else {
+        println("error: unknown hexa:// action '" + action + "' (valid: run, install, repl)")
+    }
+}
+
+fn cmd_version() {
+    println("hexa " + version_str())
+}
+
+fn cmd_status() {
+    println("HEXA toolchain status")
+    println("  version:     " + version_str())
+    let hexa_bin = exec("ls -la hexa 2>&1 | head -1 | tr -d '\\n'")
+    println("  ./hexa:      " + hexa_bin)
+    let cc_bin = exec("ls -la self/native/hexa_v2 2>&1 | head -1 | tr -d '\\n'")
+    println("  hexa_cc:     " + cc_bin)
+    let interp = exec("ls -la build/hexa_interp 2>/dev/null | head -1 | tr -d '\\n'")
+    if len(interp) > 0 {
+        println("  interp:      " + interp)
+    } else {
+        println("  interp:      (not archived)")
+    }
+    let self_cnt = exec("ls self/*.hexa 2>/dev/null | wc -l | tr -d ' \\n'")
+    println("  SSOT .hexa:  " + self_cnt + " files")
+    let art_cnt = exec("ls build/artifacts 2>/dev/null | wc -l | tr -d ' \\n'")
+    println("  artifacts:   " + art_cnt + " files")
+}
+
+// ── OS-specific clang flags (Mac vs Linux/glibc) ────────────
+// glibc 는 POSIX/GNU 확장(strdup/popen/pclose) 을 기본 숨김 → `-D_GNU_SOURCE`.
+// 수학 심볼(sqrt/pow/fmod) 은 자동 링크 안 됨 → `-lm`.
+// macOS libSystem 은 두 플래그 모두 무의미하므로 Darwin 에서는 빈 문자열.
+fn os_clang_cflags() {
+    if exec("uname 2>/dev/null | tr -d ' \\n\\t'") == "Linux" {
+        return "-D_GNU_SOURCE "
+    }
+    return ""
+}
+fn os_clang_ldflags() {
+    if exec("uname 2>/dev/null | tr -d ' \\n\\t'") == "Linux" {
+        return " -lm"
+    }
+    return ""
+}
+
+// ── B20 / roadmap 55 Phase 1 — strict-FP clang flags ─────────
+// codegen_c2 emits `/* HEXA_STRICT_FP_TU: 1 */` at the top of generated
+// C when the translation unit contains any @strict_fp fn. Detect the
+// marker in the emitted .c and append IEEE-strict flags so clang does
+// not re-enable the relaxations the codegen-side gate just removed.
+// Flag set: disable FMA contraction, fast-math family, sub-normal
+// flush, and associative/reciprocal rewrites; enable signaling NaNs.
+// Returns trailing-space-padded string (mirrors os_clang_cflags shape)
+// or "" when the TU has no @strict_fp fn.
+//
+// Phase 2 follow-ups (NOT in this PR):
+//   - -frounding-math + -ftrapping-math once the runtime is audited.
+//   - crlibm link gate when any @strict_fp fn calls libm transcendentals.
+//   - Thread-entry hexa_fp_init() propagation via pthread_create wrapper.
+fn strict_fp_cflags(c_file) {
+    let probe = exec("grep -q 'HEXA_STRICT_FP_TU: 1' '" + c_file + "' 2>/dev/null && printf yes || printf no")
+    if probe != "yes" { return "" }
+    return "-ffp-contract=off -fno-fast-math -fno-associative-math -fno-reciprocal-math -fsignaling-nans "
+}
+
+fn cmd_cc() {
+    println("=== Rebuilding hexa_cc (transpiler) ===")
+    // OS 분기: Linux 에서는 glibc 의 POSIX/GNU 확장(strdup, getline 등)을
+    //          사용하기 위해 `-D_GNU_SOURCE` 가 필요하고, 수학 심볼 참조
+    //          (fmod/sqrt 등) 는 `-lm` 로 링크해야 한다. macOS 는 두 플래그
+    //          모두 no-op (libSystem 이 기본 포함) 이므로 동일 적용해도
+    //          무해하다. `-I self` 는 #include "runtime.c" (self/runtime.c)
+    //          경로 해석에 필수 — 구 `-I.` 는 프로젝트 루트만 가리켜 Mac
+    //          에서도 runtime.c 를 찾지 못했다. 본 수정으로 Mac/Linux 양쪽
+    //          에서 안정화. null-char warning 2건은 non-fatal — 무시.
+    let uname = exec("uname 2>/dev/null | tr -d ' \\n\\t'")
+    let mut cmd = ""
+    if uname == "Linux" {
+        cmd = "clang -O2 -D_GNU_SOURCE -I . -I self self/native/hexa_cc.c -o self/native/hexa_v2 -lm 2>&1"
+    } else {
+        // macOS (Darwin) — libSystem 이 libm 자동 포함, _GNU_SOURCE 무의미.
+        // 단, `-I self` 는 runtime.c 경로 해석에 반드시 필요.
+        cmd = "clang -O2 -I . -I self self/native/hexa_cc.c -o self/native/hexa_v2 2>&1"
+    }
+    println("  " + cmd)
+    let r = exec(cmd)
+    if len(r) > 0 {
+        println(r)
+    }
+    println("OK: hexa_cc rebuilt")
+}
+
+// ── nexus-cli bridge (@cli bake, 2026-04-18) ─
+// `hexa smash/free/thinking/lens/atlas/bus/roadmap ...` 를 $NEXUS/shared/bin/nexus-cli
+// 로 passthrough. hexa-lang 단일 진입점에서 nexus 생태계 접근. 미지 시드/플래그는
+// nexus-cli 자체 sanitize + gate 에 맡긴다 (cmd_gate.hexa).
+fn shq(s) {
+    // shell single-quote wrap. arg 에 ' 포함 시 거부 (nexus-cli 용도는 영문/숫자/_ 주).
+    let mut i = 0
+    while i < len(s) {
+        if s.substring(i, i + 1) == "'" {
+            println("error: nexus-cli arg contains single quote (unsupported)")
+            return ""
+        }
+        i = i + 1
+    }
+    return "'" + s + "'"
+}
+
+fn nexus_cli_path() {
+    let mut root = env_var("NEXUS")
+    if len(root) == 0 {
+        root = env_var("HOME") + "/Dev/nexus"
+    }
+    return root + "/shared/bin/nexus-cli"
+}
+
+fn cmd_nexus_proxy(subcmd, extra_args) {
+    let cli = nexus_cli_path()
+    let cli_q = shq(cli)
+    let sub_q = shq(subcmd)
+    if len(cli_q) == 0 || len(sub_q) == 0 {
+        return
+    }
+    let mut cmd = cli_q + " " + sub_q
+    let mut i = 0
+    while i < len(extra_args) {
+        let q = shq(extra_args[i])
+        if len(q) == 0 {
+            return
+        }
+        cmd = cmd + " " + q
+        i = i + 1
+    }
+    cmd = cmd + " 2>&1"
+    let r = exec(cmd)
+    if len(r) > 0 {
+        println(r)
+    }
+}
+
+// ── bt 38: cmd_gc — .hexa-cache GC (mtime > 30일 슬롯 정리) ─
+// 목적: `hexa run`/`hexa build` AOT 캐시($HEXA_LANG/.hexa-cache/<hash>)
+//       가 무한 누적되는 것을 막는다. 파일 삭제돼도 슬롯은 남기 때문에
+//       최종 접근(mtime) 기준 30일 경과한 디렉토리를 주기적으로 정리.
+//
+// 플래그:
+//   --dry-run   삭제 없이 후보 슬롯만 나열 (안전 점검용)
+//   --days N    임계 일수 오버라이드 (기본 30; 테스트 용이)
+//
+// 설계 메모:
+//   - cache_root() 는 HOME 기반 절대경로라 cwd 영향 없음.
+//   - find -mindepth 1 -maxdepth 1 로 최상위 슬롯 디렉토리만 열거(파일 제외).
+//   - I1 pass-by-value: 리스트를 직접 변이하지 않고 split 한 번 + 인덱스 순회.
+//   - POSIX 호환: macOS BSD find / GNU find 모두 -mtime +N 지원.
+//
+// L7 omega-cycle (2026-04-25):
+//   - touch on access (cache_touch_slot) protects warm entries.
+//   - probabilistic trigger via maybe_aot_gc (1% per cmd_run invocation).
+//   - audit ledger: state/aot_cache_gc.jsonl per raw 77 cross-repo schema.
+//   - quiet mode suppresses per-slot stdout (used by prob trigger).
+fn cmd_gc_impl(dry_run, days_str, quiet) {
+    let root = cache_root()
+    let exists = exec("test -d '" + root + "' && printf yes || printf no")
+    if exists != "yes" {
+        if !quiet {
+            println("hexa gc: cache directory does not exist (" + root + ")")
+            println("  0 slots removed")
+        }
+        return 0
+    }
+    // Pre-sweep root size (single `du`) for freed_kb accounting via diff.
+    // Avoids per-slot fork (would cost ~10ms/entry × N candidates).
+    let pre_total_str = exec("du -sk '" + root + "' 2>/dev/null | awk '{print $1}' | tr -d '\\n'")
+    let pre_total = if len(pre_total_str) > 0 { to_int(pre_total_str) } else { 0 }
+    let t0 = mono_ns()
+    // mindepth 1 / maxdepth 1: 최상위 슬롯 디렉토리만 대상.
+    // -mtime +N: mtime 이 N일 이전(초과). BSD/GNU find 동일.
+    // L7 perf: dry-run uses find-only (no per-slot delete) to keep
+    // sweep ≤ 50ms; live mode batches rm -rf via xargs to amortize fork.
+    // perf-32: exclude `_layers/` (shared layer cache namespace, NOT a
+    // per-source slot). Without this, an idle `_layers` dir would be
+    // GC'd after `days_str` days and force a full-pipeline rebuild on
+    // the next invocation across ALL scripts. `! -name _layers` short-
+    // circuits before the `-mtime` test so the per-layer subdirs are
+    // never even examined.
+    let list_cmd = "find '" + root + "' -mindepth 1 -maxdepth 1 -type d ! -name _layers -mtime +" + days_str + " 2>/dev/null"
+    let listing = exec(list_cmd)
+    let candidates = listing.split("\n")
+    let mut removed = 0
+    let mut i = 0
+    let tag = if dry_run { "  (dry-run)" } else { "" }
+    if !quiet {
+        println("hexa gc: root=" + root + " threshold=" + days_str + "d" + tag)
+    }
+    if dry_run {
+        // Dry-run: just count + log. No fork per slot.
+        while i < len(candidates) {
+            let slot = candidates[i]
+            if len(slot) > 0 {
+                if !quiet { println("  [dry-run] would remove: " + slot) }
+                removed = removed + 1
+            }
+            i = i + 1
+        }
+    } else {
+        // Live sweep: single batched `find -delete` is the fastest path
+        // (no spawn-per-slot). Equivalent to find ... -exec rm -rf but
+        // POSIX -delete is in-process to find. Re-runs `find` since
+        // listing was already consumed for counting; mtime is monotonic
+        // so the second pass sees the same set.
+        let del_cmd = "find '" + root + "' -mindepth 1 -maxdepth 1 -type d ! -name _layers -mtime +" + days_str + " -exec rm -rf {} + 2>/dev/null"
+        let _del = exec(del_cmd)
+        // Count of removed = original candidate count.
+        let mut ci = 0
+        while ci < len(candidates) {
+            if len(candidates[ci]) > 0 { removed = removed + 1 }
+            ci = ci + 1
+        }
+        if !quiet && removed > 0 {
+            println("  removed " + to_string(removed) + " slot(s) (batched)")
+        }
+    }
+    let dt_ns = mono_ns() - t0
+    let sweep_ms = dt_ns / 1000000
+    // Kept-side accounting: post-sweep totals for audit ledger.
+    let kept_count_str = exec("find '" + root + "' -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' \\n'")
+    let kept_total_str = exec("du -sk '" + root + "' 2>/dev/null | awk '{print $1}' | tr -d '\\n'")
+    let kept_count = if len(kept_count_str) > 0 { to_int(kept_count_str) } else { 0 }
+    let kept_total = if len(kept_total_str) > 0 { to_int(kept_total_str) } else { 0 }
+    let freed_kb = if dry_run { 0 } else {
+        if pre_total > kept_total { pre_total - kept_total } else { 0 }
+    }
+    if !quiet {
+        if dry_run {
+            println("  " + to_string(removed) + " slot(s) would be removed (dry-run)")
+        } else {
+            println("  " + to_string(removed) + " slot(s) removed")
+        }
+        println("  sweep_ms=" + to_string(sweep_ms) + " freed_kb=" + to_string(freed_kb) + " kept_count=" + to_string(kept_count) + " kept_total_kb=" + to_string(kept_total))
+    }
+    // Audit ledger — raw 77 cross-repo schema. JSONL into state/aot_cache_gc.jsonl
+    // colocated with the source tree (HEXA_LANG, falls back to argv0 install).
+    aot_gc_audit_log(removed, freed_kb, kept_count, kept_total, sweep_ms, dry_run, days_str)
+    return removed
+}
+
+fn cmd_gc(dry_run, days_str) {
+    let _ = cmd_gc_impl(dry_run, days_str, false)
+}
+
+// Touch on access: protects warm entries from eviction. Single utime
+// syscall via `touch`. Cheap (~1ms shell fork; future: native utimes
+// builtin). Called from try_cache_exec on hit before child exec.
+fn cache_touch_slot(slot) {
+    exec("touch '" + slot + "' 2>/dev/null")
+}
+
+// Probabilistic GC — ~1% per cmd_run invocation.
+// Caveat: macOS CLOCK_MONOTONIC rounds to 1000ns boundaries, so
+// `mono_ns() % 100 == 0` would fire 100% of the time. Divide by
+// 1000 first to get microsecond grain, then mod 100. Verified
+// uniform spread on darwin via runtime probe (2026-04-25).
+// Runs cmd_gc_impl in quiet mode so cmd_run output is not polluted.
+// HEXA_AOT_GC_DISABLE=1 escape hatch for hot-path benchmarks.
+fn maybe_aot_gc() {
+    if env_var("HEXA_AOT_GC_DISABLE") == "1" { return }
+    let r = (mono_ns() / 1000) % 100
+    if r != 0 { return }
+    let _ = cmd_gc_impl(false, "30", true)
+}
+
+// Audit ledger writer. Resolves install root (HEXA_LANG / argv0) and
+// appends a JSONL line per raw 77 schema. Failure is silent — audit
+// logging must never break the AOT path.
+fn aot_gc_audit_log(evicted, freed_kb, kept_count, kept_total_kb, sweep_ms, dry_run, days_str) {
+    let mut root = env_var("HEXA_LANG")
+    if len(root) == 0 {
+        let inst = install_dir_from_argv0()
+        // install_dir_from_argv0 returns the dir containing the exe;
+        // hexa.real lives in <repo>/build/, so strip a trailing /build.
+        if len(inst) > 6 && inst.substring(len(inst) - 6, len(inst)) == "/build" {
+            root = inst.substring(0, len(inst) - 6)
+        } else {
+            root = inst
+        }
+    }
+    if len(root) == 0 { return }
+    let dir = root + "/state"
+    exec("mkdir -p '" + dir + "' 2>/dev/null")
+    let path = dir + "/aot_cache_gc.jsonl"
+    let ts = exec("date -u +%Y-%m-%dT%H:%M:%SZ").trim()
+    let dr = if dry_run { "true" } else { "false" }
+    // No quotes inside JSON values that need escaping for /bin/sh single-quote.
+    // ts is ISO-8601 (alnum+hyphen+colon+T+Z), days_str is digits.
+    let line = "{\\\"schema\\\":\\\"hexa-lang/aot_cache_gc/1\\\",\\\"ts\\\":\\\"" + ts + "\\\",\\\"days_threshold\\\":" + days_str + ",\\\"dry_run\\\":" + dr + ",\\\"evicted_count\\\":" + to_string(evicted) + ",\\\"freed_kb\\\":" + to_string(freed_kb) + ",\\\"kept_count\\\":" + to_string(kept_count) + ",\\\"kept_total_kb\\\":" + to_string(kept_total_kb) + ",\\\"sweep_ms\\\":" + to_string(sweep_ms) + "}"
+    exec("printf \"%s\\n\" \"" + line + "\" >> '" + path + "' 2>/dev/null")
+}
+
+// ── bt 50 Phase C: cmd_regen_cc — 자동 재생성 파이프라인 ──────
+// 목적: self/{lexer,parser,type_checker,codegen_c2}.hexa (SSOT)
+//       → hexa_v2 네이티브 트랜스파일러로 4개 .c 모듈 생성
+//       → merge 알고리즘(MVP: concat + dedup)으로 hexa_cc.c.new 산출
+//       → clang 재컴파일 시도 → /tmp/hexa_v2.new
+//       → diff 비교 보고 (크기/라인)
+//
+// MVP merge 알고리즘 (Phase C.2에서 full symbol resolution 예정):
+//   1) "// Generated by ..." header 한번만 유지
+//   2) `#include "runtime.c"` 한번만 유지 (첫 모듈에서만)
+//   3) 각 모듈의 `int main()` 트랙 — 모두 strip
+//   4) 모듈 경계 주석 `// === NAME ===` 삽입 (기존 hexa_cc.c 스타일 답습)
+//   5) 커스텀 entry `int main(argc, argv)` 삽입 (tokenize→parse→codegen_c2_full)
+// 제약: 전역 심볼 중복은 각 모듈별 prefix 격리(p_*, tc_*, gen2_*)로 자연 방지.
+//       lexer는 Token/tokenize/is_keyword 등 최상위 이름 공유 없음.
+fn regen_one_module(src, out_c) {
+    // hexa_v2 SSOT → C 변환 한 모듈. 성공이면 "ok", 실패면 exec 출력.
+    // buglist#5: resolve_hexa_v2() 경유 — cwd 무관 install_dir 기반 탐색.
+    let v2 = resolve_hexa_v2()
+    if len(v2) == 0 {
+        println("  [transpile] error: hexa_v2 not found")
+        return false
+    }
+    let cmd = v2 + " " + src + " " + out_c + " 2>&1"
+    println("  [transpile] " + cmd)
+    let r = exec(cmd)
+    if len(r) > 0 { println("    " + r) }
+    let chk = exec("test -f " + out_c + " && printf yes || printf no")
+    return chk == "yes"
+}
+
+fn merge_modules_awk(out_path) {
+    // POSIX awk 기반 merge — hexa 문자열 API 회피.
+    // 입력: /tmp/_lexer.c /tmp/_parser.c /tmp/_tc.c /tmp/_cg.c (순서 고정)
+    // 출력: out_path
+    //   [1] 헤더 + 단일 #include "runtime.c"
+    //   [2] 각 모듈 본문 (첫 `#include` 스킵, `int main()` 블록 전체 skip)
+    //   [3] 커스텀 main(argc, argv) dispatcher
+    let script_path = "/tmp/_hexa_cc_merge.awk"
+    // awk: each module's top-level init code lives inside its own
+    // `int main(int argc, char** argv)` block after hexa_v2 transpile.
+    // We can't strip it (globals like `_known_fn_globals`, `p_max_errors`
+    // etc. would remain uninitialized and the merged binary emits empty
+    // identifiers). Instead rename it to `_MOD_init(int, char**)` and
+    // have the merged dispatcher call each init before tokenize/parse.
+    // `^}$` (column-0 `}`) terminates the block — the depth-tracking
+    // variant was broken by braces in string literals.
+    let awk_write_cmd = "cat > " + script_path + " <<'__AWK_EOF__'\nBEGIN { in_main=0 }\n/^#include/ { next }\n/^\\/\\/ Generated by/ { next }\n/^int main\\(/ { printf(\"int _%s_init(int argc, char** argv) {\\n\", MOD); in_main=1; next }\nin_main==1 && /^\\}$/ { print \"}\"; in_main=0; next }\nin_main==1 { print; next }\n{ print }\n__AWK_EOF__"
+    let write = exec(awk_write_cmd)
+    if len(write) > 0 { println("    awk-write: " + write) }
+    // Dedup awk: 2-pass — drop redundant `HexaVal X(...);` forward decls
+    // where X is defined later in the same file AND no call to X appears
+    // between the fwd-decl line and the def line. Reduces ~141 LOC across
+    // 4 modules (see analysis 2026-04-14). Run BEFORE the merge awk so
+    // the merge filter operates on already-trimmed input.
+    let dedup_path = "/tmp/_hexa_cc_dedup_fwd.awk"
+    let dedup_write_cmd = "cat > " + dedup_path + " <<'__DEDUP_EOF__'\nNR == FNR {\n    lines[FNR] = $0\n    if (match($0, /^HexaVal [a-zA-Z_][a-zA-Z0-9_]*\\(.*\\) \\{$/)) {\n        split($0, a, \"(\")\n        name = a[1]; sub(/^HexaVal /, \"\", name)\n        def_line[name] = FNR\n    }\n    if (match($0, /^HexaVal [a-zA-Z_][a-zA-Z0-9_]*\\(.*\\);$/)) {\n        split($0, a, \"(\")\n        name = a[1]; sub(/^HexaVal /, \"\", name)\n        fwd_line[name] = FNR\n    }\n    next\n}\nFNR == 1 {\n    for (fn in fwd_line) {\n        if (fn in def_line) {\n            fl = fwd_line[fn]\n            dl = def_line[fn]\n            has_early_call = 0\n            pat = \"[^a-zA-Z0-9_]\" fn \"[ \\t]*\\\\(\"\n            pat2 = \"^\" fn \"[ \\t]*\\\\(\"\n            for (li = fl + 1; li < dl; li++) {\n                if (match(lines[li], pat)) { has_early_call = 1; break }\n                if (match(lines[li], pat2)) { has_early_call = 1; break }\n            }\n            if (!has_early_call) drop_fwd[fn] = 1\n        }\n    }\n}\n{\n    if (match($0, /^HexaVal [a-zA-Z_][a-zA-Z0-9_]*\\(.*\\);$/)) {\n        split($0, a, \"(\")\n        name = a[1]; sub(/^HexaVal /, \"\", name)\n        if (name in drop_fwd) next\n    }\n    print\n}\n__DEDUP_EOF__"
+    let dedup_write = exec(dedup_write_cmd)
+    if len(dedup_write) > 0 { println("    dedup-write: " + dedup_write) }
+    // Rename awk: string-literal-aware `__hexa_{ic_,sl_,strlit_init}` prefix
+    // pass. Supersedes the earlier sed pipeline — sed was global over
+    // everything including the `hexa_str("...")` emit templates baked into
+    // codegen_c2, so it corrupted the prefix that future transpiles should
+    // produce. The awk state-machine tracks double-quote nesting and skips
+    // any substitution inside string literals. Without this fix the second
+    // bootstrap round loses fixpoint (v2 transpile ≠ v1 transpile because
+    // the binary now emits `__hexa_codegen_c2_sl_N` for every module).
+    let rename_path = "/tmp/_hexa_cc_rename.awk"
+    let rename_write_cmd = "cat > " + rename_path + " <<'__REN_EOF__'\n{\n    line = $0\n    n = length(line)\n    out = \"\"\n    i = 1\n    in_str = 0\n    start = 1\n    while (i <= n) {\n        ch = substr(line, i, 1)\n        if (in_str) {\n            if (ch == \"\\\\\") { i += 2; continue }\n            if (ch == \"\\\"\") {\n                out = out substr(line, start, i - start + 1)\n                in_str = 0\n                start = i + 1\n                i++\n                continue\n            }\n            i++\n        } else {\n            if (ch == \"\\\"\") {\n                chunk = substr(line, start, i - start)\n                gsub(\"__hexa_ic_\", \"__hexa_\" MOD \"_ic_\", chunk)\n                gsub(\"__hexa_sl_\", \"__hexa_\" MOD \"_sl_\", chunk)\n                gsub(\"__hexa_strlit_init\", \"__hexa_\" MOD \"_strlit_init\", chunk)\n                out = out chunk\n                start = i\n                in_str = 1\n                i++\n                continue\n            }\n            i++\n        }\n    }\n    if (in_str) {\n        out = out substr(line, start)\n    } else {\n        chunk = substr(line, start)\n        gsub(\"__hexa_ic_\", \"__hexa_\" MOD \"_ic_\", chunk)\n        gsub(\"__hexa_sl_\", \"__hexa_\" MOD \"_sl_\", chunk)\n        gsub(\"__hexa_strlit_init\", \"__hexa_\" MOD \"_strlit_init\", chunk)\n        out = out chunk\n    }\n    print out\n}\n__REN_EOF__"
+    let rename_write = exec(rename_write_cmd)
+    if len(rename_write) > 0 { println("    rename-write: " + rename_write) }
+    // Write header/footer via heredoc (quoted delimiter — no shell expansion).
+    // Avoids shell_quote's double-quote wrapping which breaks on embedded `"`.
+    let header_cmd = "cat > " + out_path + " <<'__HDR_EOF__'\n// HEXA self-hosted compiler — regenerated via `hexa cc --regen`\n#include \"runtime.c\"\n\n__HDR_EOF__"
+    exec(header_cmd)
+    // append each module (awk-filtered) with section marker
+    let sections = ["lexer|/tmp/_lexer.c", "parser|/tmp/_parser.c", "type_checker|/tmp/_tc.c", "codegen_c2|/tmp/_cg.c"]
+    let mut i = 0
+    while i < len(sections) {
+        let entry = sections[i]
+        let parts = entry.split("|")
+        let name = parts[0]
+        let path = parts[1]
+        let marker_cmd = "{ printf '\\n// === %s ===\\n\\n' " + name + "; } >> " + out_path
+        exec(marker_cmd)
+        // Phase C.2: prefix per-module static symbols to avoid collision
+        // when merging 4 SSOT modules into one file. Each module transpile
+        // emits its own counter starting at 0 and its own __hexa_strlit_init
+        // function; without renaming, clang rejects the concatenation with
+        // "redefinition" errors. Three collision families observed across
+        // lexer/parser/type_checker/codegen_c2 transpile outputs:
+        //   __hexa_ic_N         — inline cache slots (per-call-site)
+        //   __hexa_sl_N         — static string-literal interning slots
+        //   __hexa_strlit_init  — the init fn that populates __hexa_sl_*
+        // Filter chain: dedup (drop redundant fwd decls, 2-pass) → merge
+        // awk (strip #include, rename main→_MOD_init) → per-module rename
+        // awk (string-literal-aware — skips the codegen_c2 emit templates).
+        let filter = "awk -f " + dedup_path + " " + path + " " + path + " | awk -v MOD=" + name + " -f " + script_path + " | awk -v MOD=" + name + " -f " + rename_path + " >> " + out_path
+        let r = exec(filter + " 2>&1")
+        if len(r) > 0 { println("    awk[" + name + "]: " + r) }
+        i = i + 1
+    }
+    // custom main via heredoc (quoted delimiter)
+    // Each module's top-level let/let-mut init code lives in _MOD_init()
+    // (renamed from `int main()` by the merge awk). We must call them here
+    // so globals like p_max_errors, _gen2_indent_cache, tc_errors etc. are
+    // properly initialized before any module function runs. Without these
+    // calls, globals remain zero-valued HexaVal (void) causing empty
+    // identifiers and uninitialized state at runtime.
+    // _type_checker_init is intentionally omitted: the type_checker module
+    // is not invoked by hexa_cc (pipeline is tokenize->parse->codegen only),
+    // and its _init function contains inline tests that exit(1) under val
+    // arena. The type_check() function reinits its own globals at call time.
+    // M1 full · file Step 5: template emits rt_* (hexa_file_* shims removed).
+    let main_cmd = "cat >> " + out_path + " <<'__MAIN_EOF__'\n\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        printf(\"hexa-cc: HEXA self-hosted compiler\\nUsage: hexa-cc <input.hexa> <output.c>\\n\");\n        return 1;\n    }\n    hexa_set_args(argc, argv);\n    _lexer_init(argc, argv);\n    _parser_init(argc, argv);\n    _codegen_c2_init(argc, argv);\n    HexaVal src = rt_read_file(hexa_str(argv[1]));\n    HexaVal tokens = tokenize(src);\n    HexaVal ast = parse(tokens);\n    HexaVal c_code = codegen_c2_full(ast);\n    rt_write_file(hexa_str(argv[2]), c_code);\n    printf(\"OK: %s\\n\", argv[2]);\n    return 0;\n}\n__MAIN_EOF__"
+    exec(main_cmd)
+    let chk = exec("test -f " + out_path + " && printf yes || printf no")
+    return chk == "yes"
+}
+
+fn cmd_regen_cc() {
+    println("=== hexa cc --regen : hexa_cc.c 자동 재생성 ===")
+    println("  SSOT: self/{lexer,parser,type_checker,codegen_c2}.hexa")
+    // preflight — buglist#5: resolve_hexa_v2() 로 cwd/$HOME/argv[0] 모두 탐색.
+    let v2 = resolve_hexa_v2()
+    if len(v2) == 0 {
+        println("error: hexa_v2 not found — run `hexa cc` first")
+        return
+    }
+    // Step 1-4: hexa_v2 transpile each SSOT → /tmp/_*.c
+    println("")
+    println("[1/4] transpiling SSOT modules via hexa_v2")
+    let ok1 = regen_one_module("self/lexer.hexa", "/tmp/_lexer.c")
+    let ok2 = regen_one_module("self/parser.hexa", "/tmp/_parser.c")
+    let ok3 = regen_one_module("self/type_checker.hexa", "/tmp/_tc.c")
+    let ok4 = regen_one_module("self/codegen_c2.hexa", "/tmp/_cg.c")
+    let s1 = if ok1 { "ok" } else { "FAIL" }
+    let s2 = if ok2 { "ok" } else { "FAIL" }
+    let s3 = if ok3 { "ok" } else { "FAIL" }
+    let s4 = if ok4 { "ok" } else { "FAIL" }
+    println("  lexer=" + s1 + " parser=" + s2 + " tc=" + s3 + " cg=" + s4)
+    if !(ok1 && ok2 && ok3 && ok4) {
+        println("error: one or more SSOT modules failed to transpile (Phase C blocked on bt 35)")
+        // continue to report diff on whatever was produced
+    }
+    // Step 5: merge → self/native/hexa_cc.c.new
+    println("")
+    println("[2/4] merging modules → self/native/hexa_cc.c.new  (MVP: concat + #include dedup + main strip)")
+    let out_new = "self/native/hexa_cc.c.new"
+    let merged = merge_modules_awk(out_new)
+    if !merged {
+        println("error: merge failed")
+        return
+    }
+    let new_sz = exec("wc -c < " + out_new + " | tr -d ' \\n'")
+    let new_ln = exec("wc -l < " + out_new + " | tr -d ' \\n'")
+    let old_sz = exec("wc -c < self/native/hexa_cc.c | tr -d ' \\n'")
+    let old_ln = exec("wc -l < self/native/hexa_cc.c | tr -d ' \\n'")
+    println("  hexa_cc.c      bytes=" + old_sz + "  lines=" + old_ln)
+    println("  hexa_cc.c.new  bytes=" + new_sz + "  lines=" + new_ln)
+    // Step 6: clang hexa_cc.c.new → /tmp/hexa_v2.new  (실패 허용)
+    println("")
+    println("[3/4] clang compile hexa_cc.c.new → /tmp/hexa_v2.new (failure tolerated)")
+    // `-x c` forces C language since `.new` extension is unrecognized.
+    // `-I self` mirrors the standard hexa_cc.c build (runtime.c lives in self/).
+    // bt 54: int→ptr / implicit-fn 근본 해소 — 플래그 제거. -Wno-trigraphs만 유지.
+    // bt 74+: -fbracket-depth=4096 — hexa codegen emits left-assoc hexa_add(hexa_add(...))
+    //   for long `"a"+"b"+"c"` string concat chains (e.g. embedded Python
+    //   runner in training/train_alm_14b.hexa has 500+ segments). clang's
+    //   default bracket nesting limit (256) blows up on such files. Bumping
+    //   to 4096 unblocks the ALM hexa-first launcher; real fix is to emit
+    //   a loop or single large literal in codegen_c2, tracked separately.
+    let cc = "clang -O2 " + os_clang_cflags() + "-I self -x c -Wno-trigraphs -fbracket-depth=4096 " + out_new + " -o /tmp/hexa_v2.new" + os_clang_ldflags() + " 2>&1 | head -40"
+    println("  " + cc)
+    let cc_out = exec(cc)
+    if len(cc_out) > 0 { println(cc_out) }
+    let built = exec("test -x /tmp/hexa_v2.new && printf yes || printf no")
+    println("  compiled=" + built)
+    // Step 7: diff report
+    println("")
+    println("[4/4] diff summary")
+    let diff_sz = exec("diff -q self/native/hexa_cc.c " + out_new + " 2>&1 | head -1")
+    println("  diff: " + diff_sz)
+    println("")
+    println("Phase C MVP done. Merge algorithm limitations:")
+    println("  - simple concat; no global symbol collision resolution")
+    println("  - main() stripped via awk brace-depth (single-line `}` assumed)")
+    println("  - Phase C.2: full symbol resolution (static namespacing)")
+}
+
+fn basename_stem(path) {
+    return exec("basename " + path + " | sed 's/\\.hexa$//' | tr -d '\\n'")
+}
+
+fn ends_with_dot_hexa(s) {
+    // SH3 1.E unblocker: in-process suffix check. The previous shell-out
+    // form (`case ... in *.hexa) ...`) was returning "no" for absolute
+    // paths in some hexa builds, breaking the file-as-subcommand
+    // dispatch. Substring compare is exec-free and deterministic.
+    let n = len(s)
+    if n < 5 { return false }
+    return s.substring(n - 5, n) == ".hexa"
+}
+
+// ── ω-cycle (2026-04-26) auto-marker protocol ─────────────────
+// silent-land 근본 해결: cmd_run 종료 시점(=사용자 .hexa script main()
+// 종료 시점) 자동으로 state/markers/<basename>_<ts>.marker 작성. 비
+// -통신 채널이 truncate 되더라도 disk 위 marker 가 commit 신호로 잔존.
+//
+// 기본값 ON (default-on). 옵트아웃: HEXA_NO_MARKER=1.
+// 결정성: HEXA_FROZEN_TIME=<epoch> 설정 시 timestamp 동결 → byte-identical.
+// 실패 marker: rc != 0 일 경우 *_FAILED.marker 작성 (debugging).
+// 디렉토리: 호출 시점 cwd 의 state/markers/ (auto mkdir). HEXA_MARKER_DIR
+// 로 디렉토리 override 가능.
+//
+// 본 구현은 cmd_run 의 모든 종료 경로 (cache hit / 일반 / FAIL exit) 직전
+// 호출되며, additive only — 기존 builtin signature 0 변경.
+fn auto_marker_basename(path) {
+    // basename without .hexa suffix; safe-quote for shell
+    let b = exec("basename '" + path + "' 2>/dev/null | sed 's/\\.hexa$//' | tr -d '\\n'")
+    if len(b) == 0 { return "anon" }
+    return b
+}
+
+fn auto_marker_dir() {
+    let override_dir = env_var("HEXA_MARKER_DIR")
+    if len(override_dir) > 0 { return override_dir }
+    return "state/markers"
+}
+
+fn auto_marker_now() {
+    let frozen = env_var("HEXA_FROZEN_TIME")
+    if len(frozen) > 0 { return frozen }
+    return exec("date +%s | tr -d '\\n'")
+}
+
+fn auto_marker_fp(path) {
+    // FNV-ish via shasum for stable fingerprint; 8 hex chars enough.
+    let r = exec("shasum '" + path + "' 2>/dev/null | head -c 8 | tr -d '\\n'")
+    if len(r) == 0 { return "00000000" }
+    return r
+}
+
+fn auto_marker_write(file, rc) {
+    if env_var("HEXA_NO_MARKER") == "1" { return }
+    let dir = auto_marker_dir()
+    exec("mkdir -p '" + dir + "' 2>/dev/null")
+    let stem = auto_marker_basename(file)
+    let ts = auto_marker_now()
+    let fp = auto_marker_fp(file)
+    let suffix = if rc == 0 { ".marker" } else { "_FAILED.marker" }
+    let path = dir + "/" + stem + "_" + ts + suffix
+    let exit_str = to_string(rc)
+    let body = "{\"source\":\"" + file + "\",\"exit\":" + exit_str + ",\"fingerprint\":\"" + fp + "\",\"ts\":" + ts + "}\n"
+    write_file(path, body)
+}
+
+// ── bt 40: macOS Gatekeeper codesign helper ───────────────
+// 목적: AOT/build 로 생성된 exe 를 macOS Gatekeeper 가 거부하지 않도록
+//       ad-hoc 서명(`codesign --sign -`) 자동 수행. Linux/기타 OS 에서는
+//       skip, codesign 바이너리 부재/실패 시 warning 만 남기고 진행.
+// 호출처:
+//   (1) cmd_build — `hexa build` 직접 경로 (bt 37 atomic rename 직전)
+//   (2) AOT 캐시 슬롯 — `.hexa-cache/<hash>/exe` 생성 경로 (bt 36 재개 시)
+// 실패정책: warning only (R1 interp 경로 보존 — 서명 실패가 실행을 막지 않음).
+fn is_macos() {
+    // uname 결과가 "Darwin" 인지 판정. 공백/개행 제거.
+    // Linux 에서는 "Linux" 반환 → false → codesign skip.
+    let u = exec("uname 2>/dev/null | tr -d ' \\n\\t'")
+    return u == "Darwin"
+}
+
+fn codesign_if_macos(exe) {
+    // macOS 한정 ad-hoc 서명. 기타 OS 는 no-op.
+    // codesign 부재/실패 시 stderr 경고만 출력하고 계속 진행.
+    if !is_macos() {
+        return
+    }
+    let has = exec("command -v codesign >/dev/null 2>&1 && printf yes || printf no")
+    if has != "yes" {
+        println("warning: codesign not found — skipping signature (" + exe + ")")
+        return
+    }
+    // `--force` 재서명 허용, `--sign -` ad-hoc 서명(배포 아닌 로컬 실행용).
+    // macOS Sonoma+ 는 clang 출력이 이미 ad-hoc 서명 상태 → codesign 이
+    // "replacing existing signature" 를 stderr 로 출력(정상). 이를 warning 으로
+    // 간주하지 않도록 `grep -v` 로 필터. 실제 실패는 "errSec*" 또는 "invalid" 포함.
+    let r = exec("codesign --force --sign - '" + exe + "' 2>&1 | grep -v 'replacing existing signature' || true")
+    if len(r) > 0 {
+        println("warning: codesign failed for " + exe + ": " + r)
+    }
+}
+
+// ── T28 / buglist#5: hexa_v2 binary path resolution ──────
+// 목적: `hexa build` / `hexa parse` 가 cwd 무관하게 hexa_v2 트랜스파일러를
+//       찾을 수 있도록 한다. 과거에는 `./self/native/hexa_v2` (cwd 의존)
+//       하드코딩이라, hexa-lang 리포 바깥에서 실행하면 바이너리 미발견
+//       상태에서도 exec 가 빈 파일/실패 출력을 찍고 조용히 exit 0 하는
+//       silent-failure 회귀가 있었다 (T28).
+//
+// buglist#5 (hetzner airgenome 재현): cwd=airgenome 에서 `hexa build ...` →
+//       "sh: 1: ./self/native/hexa_v2: not found". cwd 기반 탐색도, $HOME
+//       기반 탐색도 airgenome 사용자 경로에서는 hexa-lang 리포를 못 찾음.
+//       해법: args()[0] 즉 `./hexa` 실행 파일 자체의 절대 경로에서 install
+//       디렉토리(dirname(exe))를 도출 → `<install_dir>/self/native/hexa_v2`.
+//       이것이 가장 신뢰할 수 있는 경로 (`./hexa` 와 `./self/...` 는 같은
+//       하위 트리). 심볼릭 링크는 `cd $(dirname ..) && pwd -P` 로 해결.
+//
+// 탐색 순서:
+//   1) argv[0] 기반 install_dir (최우선 — cwd / $HOME 와 독립)
+//   2) ./self/native/hexa_v2 (cwd — 리포 안에서 실행 시 기존 동작 유지)
+//   3) $HEXA_LANG/self/native/hexa_v2 (개발 fallback — bench 와 동일)
+//   4) /proc/self/exe (Linux container fallback — argv[0] 빈/empty 일 때)
+// 넷 다 없으면 빈 문자열 반환. 호출자가 명시 오류 + exit(1) 처리.
+fn install_dir_from_argv0() {
+    // args()[0] = 런타임이 삽입한 exec 경로 (상대/절대/심볼릭 모두 가능).
+    // realpath 로 심볼릭 링크를 완전 해석한 뒤 dirname 수행.
+    // 이전: dirname(argv0) + pwd -P → 파일 자체가 symlink 일 때 원본 디렉토리가
+    //       아닌 symlink 디렉토리를 반환 (예: ~/.hx/bin/hexa → ~/.hx/packages/hexa/hexa
+    //       에서 ~/.hx/bin 을 반환하여 stale interp 참조).
+    // 빈 문자열(비정상) / 해석 실패 시 → /proc/self/exe Linux fallback 시도.
+    //
+    // hexa-runner container 진단 (BG ab36b1648a338643c, 2026-05-03):
+    //   - container `/usr/local/bin/hexa` 호출 시 args()[0] empty/unresolvable
+    //   - resolve_cmd 가 빈 D 반환 → resolve_interp 실패 → silent emit 회귀
+    //   - /proc/self/exe symlink 은 Linux kernel 이 항상 제공하므로 안정적.
+    //   - macOS 는 /proc 자체가 없음 → 자동 skip (test -L 실패).
+    let av0 = args()
+    let exe = ""
+    if len(av0) > 0 {
+        exe = av0[0]
+    }
+    // 1-3) argv[0] 기반 — exe 비어있지 않을 때만 시도.
+    if len(exe) > 0 {
+        // Resolve symlinks on the exe itself (not just the directory), then dirname.
+        // realpath: macOS (BSD) + GNU coreutils. readlink -f: GNU fallback.
+        // If neither resolves, fall back to the original dirname + pwd -P path.
+        let resolve_cmd = "EXE='" + exe + "'; REAL=\"$(realpath \"$EXE\" 2>/dev/null || readlink -f \"$EXE\" 2>/dev/null)\"; if [ -n \"$REAL\" ] && [ -f \"$REAL\" ]; then D=\"$(cd \"$(dirname \"$REAL\")\" 2>/dev/null && pwd -P)\"; elif [ -f \"$EXE\" ]; then D=\"$(cd \"$(dirname \"$EXE\")\" 2>/dev/null && pwd -P)\"; else P=\"$(command -v \"$EXE\" 2>/dev/null)\"; if [ -n \"$P\" ] && [ -f \"$P\" ]; then REAL2=\"$(realpath \"$P\" 2>/dev/null || readlink -f \"$P\" 2>/dev/null || echo \"$P\")\"; D=\"$(cd \"$(dirname \"$REAL2\")\" 2>/dev/null && pwd -P)\"; else D=\"\"; fi; fi; printf '%s' \"$D\""
+        let d = exec(resolve_cmd)
+        if len(d) > 0 {
+            return d
+        }
+    }
+    // 4) /proc/self/exe Linux fallback — argv[0] 가 비었거나 resolve 실패 시.
+    //    test -L 로 symlink 존재 확인 (macOS 에서는 false → "" 반환).
+    //    readlink -f 우선, fallback 으로 realpath.
+    //
+    // 의미론 보정: install_dir 정의 = "hexa driver wrapper 가 있는 디렉토리"
+    //   (`<install_dir>/build/hexa_interp`, `<install_dir>/self/...` layout).
+    // /proc/self/exe 는 *현재 실행 중인 프로세스* binary 를 가리킨다. main.hexa
+    // 는 hexa_interp 안에서 동작하므로 보통 `.../build/hexa_interp` 가 잡힌다.
+    // 즉 dirname(REAL) = `.../build` → install_dir 은 그 부모.
+    // 안전 보정: basename(dirname) == "build" 일 때 한 단계 더 올라간다.
+    // (driver wrapper 가 동일 process 로 실행되는 wrapper-less layout 도
+    //  대비: basename(dirname) != "build" 면 그대로 dirname 사용.)
+    let proc_cmd = "if [ -L /proc/self/exe ]; then REAL=\"$(readlink -f /proc/self/exe 2>/dev/null || realpath /proc/self/exe 2>/dev/null)\"; if [ -n \"$REAL\" ] && [ -f \"$REAL\" ]; then D=\"$(cd \"$(dirname \"$REAL\")\" 2>/dev/null && pwd -P)\"; if [ \"$(basename \"$D\")\" = \"build\" ]; then D=\"$(cd \"$D/..\" 2>/dev/null && pwd -P)\"; fi; printf '%s' \"$D\"; fi; fi"
+    let pd = exec(proc_cmd)
+    return pd
+}
+
+fn resolve_hexa_v2() {
+    // 1) argv[0] 기반 — 가장 우선. 설치 디렉토리와 `./hexa` 실행 경로가 같은
+    //    서브트리라는 성질 이용 (dirname(./hexa) + /self/native/hexa_v2).
+    let inst = install_dir_from_argv0()
+    if len(inst) > 0 {
+        let argv_bin = inst + "/self/native/hexa_v2"
+        let argv_chk = exec("test -x '" + argv_bin + "' && printf yes || printf no")
+        if argv_chk == "yes" {
+            return argv_bin
+        }
+    }
+    // 2) cwd-relative — 리포 루트에서 실행 시 기존 동작 유지.
+    let cwd_bin = "./self/native/hexa_v2"
+    let cwd_chk = exec("test -x '" + cwd_bin + "' && printf yes || printf no")
+    if cwd_chk == "yes" {
+        return cwd_bin
+    }
+    // 3) $HOME fallback — 개발 기본 위치.
+    let home_bin = exec("printf '%s' \"$HEXA_LANG/self/native/hexa_v2\"")
+    let home_chk = exec("test -x '" + home_bin + "' && printf yes || printf no")
+    if home_chk == "yes" {
+        return home_bin
+    }
+    return ""
+}
+
+// B1 Linux portability — cmd_run 이 사용할 interp / module_loader 경로 resolver.
+// 이전: `exec("printf '%s' \"$HEXA_LANG/...\"")` 로 $HOME 하드코딩.
+//       이는 리포가 $HEXA_LANG 에 있을 때만 동작. Linux 사용자 / 다른
+//       설치 경로 / CI 등에서 silently "not found" 로 실패.
+// 신규: resolve_hexa_v2() 와 동일한 3-단 fallback (argv[0] → cwd → $HOME).
+// 2026-05-03 추가: 4-단 fallback — `/usr/local/bin/build/hexa_interp` (hexa-runner
+//   container 기본 위치). install_dir_from_argv0() 의 /proc/self/exe fallback 이
+//   실패해도 container layout 이 표준일 때 silent emit 회귀 방지.
+fn resolve_interp() {
+    let inst = install_dir_from_argv0()
+    if len(inst) > 0 {
+        let argv_bin = inst + "/build/hexa_interp"
+        let argv_chk = exec("test -x '" + argv_bin + "' && printf yes || printf no")
+        if argv_chk == "yes" {
+            return argv_bin
+        }
+    }
+    let cwd_bin = "./build/hexa_interp"
+    let cwd_chk = exec("test -x '" + cwd_bin + "' && printf yes || printf no")
+    if cwd_chk == "yes" {
+        return cwd_bin
+    }
+    let home_bin = exec("printf '%s' \"$HEXA_LANG/build/hexa_interp\"")
+    let home_chk = exec("test -x '" + home_bin + "' && printf yes || printf no")
+    if home_chk == "yes" {
+        return home_bin
+    }
+    // 4) container default — `/usr/local/bin/build/hexa_interp`.
+    //    Dockerfile 표준 layout (hexa-runner image 측). 다른 경로면 no-op.
+    let ctr_bin = "/usr/local/bin/build/hexa_interp"
+    let ctr_chk = exec("test -x '" + ctr_bin + "' && printf yes || printf no")
+    if ctr_chk == "yes" {
+        return ctr_bin
+    }
+    return ""
+}
+
+fn resolve_module_loader() {
+    let inst = install_dir_from_argv0()
+    if len(inst) > 0 {
+        let argv_ml = inst + "/self/module_loader.hexa"
+        let argv_chk = exec("test -f '" + argv_ml + "' && printf yes || printf no")
+        if argv_chk == "yes" {
+            return argv_ml
+        }
+    }
+    let cwd_ml = "./self/module_loader.hexa"
+    let cwd_chk = exec("test -f '" + cwd_ml + "' && printf yes || printf no")
+    if cwd_chk == "yes" {
+        return cwd_ml
+    }
+    let home_ml = exec("printf '%s' \"$HEXA_LANG/self/module_loader.hexa\"")
+    let home_chk = exec("test -f '" + home_ml + "' && printf yes || printf no")
+    if home_chk == "yes" {
+        return home_ml
+    }
+    return ""
+}
+
+// 실패 메시지 공통화 — silent exit 0 회귀 재발 방지.
+fn die_no_hexa_v2() {
+    println("error: hexa_v2 transpiler binary not found")
+    println("       searched:")
+    let inst = install_dir_from_argv0()
+    if len(inst) > 0 {
+        println("         " + inst + "/self/native/hexa_v2  (from argv[0])")
+    }
+    println("         ./self/native/hexa_v2  (cwd)")
+    println("         $HEXA_LANG/self/native/hexa_v2  (dev fallback)")
+    println("       run `hexa cc` (inside hexa-lang repo) to build it")
+    exit(1)
+}
+
+fn cmd_build(src, out, c_only) {
+    // bt 37: AOT 캐시 atomic rename.
+    // 문제: 두 `hexa build` 가 동일 `out` 을 쓰면 clang 이 같은 파일을 동시에
+    //       open(O_TRUNC) 하여 부분 쓰기/경합 발생 (macOS/Linux 공통). 한 쪽이
+    //       실행 중인 exe 를 덮어쓰기 시도 시 ETXTBSY 도 가능.
+    // 해법: `<out>.tmp.$$` 로 컴파일 + codesign 후 `mv -f` 로 atomic rename.
+    //       - $$ = exec 셸 PID → 프로세스마다 서로 다른 tmp 파일.
+    //       - mv 는 동일 파일시스템 rename(2) → 원자성 보장.
+    //       - 마지막으로 rename 한 쪽이 승자. 두 프로세스 모두 exit 0, exe 유효.
+    // 캐시 슬롯: `.hexa-cache/<hash>/exe.tmp.$$` 도 동일 패턴 — 향후 AOT cache
+    //       경로를 cmd_run 에 복원할 때 재사용 (현재는 cmd_build 출력 경로에만 적용).
+    //
+    // T28: 소스 파일 존재 확인 + hexa_v2 경로 resolve. 둘 중 하나라도 실패하면
+    //      이전처럼 clang 호출 → mv → OK 를 찍으며 exit 0 하는 silent-failure 대신
+    //      명시 오류 + exit(1) 로 실패하도록 한다.
+    let src_exists = exec("test -f '" + src + "' && printf yes || printf no")
+    if src_exists != "yes" {
+        println("error: source file not found: " + src)
+        exit(1)
+    }
+    // ─── Darwin build refusal (2026-04-20 kernel panic prevention) ──────
+    // Root-cause of 2026-04-20 03:33 Mac kernel panic: a train_alm_lora.hexa
+    // source was compiled to /private/tmp/train_alm_lora_mac on Darwin, then
+    // executed — 49 swapfiles, LOW swap, loginwindow watchdog 91s timeout.
+    //
+    // Rule: on Darwin, `hexa build` refuses output paths that look like
+    // "Mac-target heavy compute binaries":
+    //   (a) basename ends with "_mac" / "-mac" / "_darwin"
+    //   (b) output under /tmp or /private/tmp (panic trigger path)
+    //   (c) source has @refuse / @heavy on fn main() (hexa-lang attr intent)
+    //
+    // Bypass: HEXA_MAC_BUILD_OK=1 (CI dry-run, non-heavy experiments only).
+    // Correct path: ssh ubu/hetzner/htz 'cd <repo> && hexa build <src> -o <out>'
+    if is_macos() && env("HEXA_MAC_BUILD_OK") != "1" {
+        let out_basename = exec("basename '" + out + "' 2>/dev/null").trim()
+        let mut _refuse_reason = ""
+        let _olen = len(out_basename)
+        if _olen >= 4 {
+            let _tail4 = out_basename.substring(_olen - 4, _olen)
+            if _tail4 == "_mac" { _refuse_reason = "basename ends in _mac" }
+            if _tail4 == "-mac" { _refuse_reason = "basename ends in -mac" }
+        }
+        if _refuse_reason == "" && _olen >= 7 {
+            let _tail7 = out_basename.substring(_olen - 7, _olen)
+            if _tail7 == "_darwin" { _refuse_reason = "basename ends in _darwin" }
+        }
+        if _refuse_reason == "" {
+            if out.starts_with("/tmp/") { _refuse_reason = "output under /tmp (panic trigger path)" }
+            if out.starts_with("/private/tmp/") { _refuse_reason = "output under /private/tmp (panic trigger path)" }
+        }
+        if _refuse_reason == "" {
+            let _gr_refuse = exec("grep -c -E '^@(refuse|heavy)' '" + src + "' 2>/dev/null | tr -d ' \\n'")
+            if _gr_refuse != "" && _gr_refuse != "0" {
+                _refuse_reason = "source has @refuse or @heavy annotation"
+            }
+        }
+        if _refuse_reason != "" {
+            println("error: hexa build REFUSED on Darwin")
+            println("  src     : " + src)
+            println("  out     : " + out)
+            println("  reason  : " + _refuse_reason)
+            println("  cause   : 2026-04-20 03:33 Mac kernel panic (train_alm_lora_mac swap exhaustion)")
+            println("  fix     : ssh ubu 'cd ~/Dev/anima && hexa build " + src + " -o " + out + "'")
+            println("  bypass  : HEXA_MAC_BUILD_OK=1 (CI dry-run, non-heavy only)")
+            exit(1)
+        }
+    }
+    let v2 = resolve_hexa_v2()
+    if len(v2) == 0 {
+        die_no_hexa_v2()
+    }
+    println("=== Building " + src + " -> " + out + " ===")
+    // buglist#9: flatten use graph — transpiler 가 `use "..."` 를 silent-drop
+    //   하므로 `tool/flatten_imports.hexa` 로 의존성을 단일 파일로 bundle
+    //   한 뒤 transpile. use 없는 파일은 src 그대로 진행.
+    let __inst = install_dir_from_argv0()
+    let __fl_script = __inst + "/tool/flatten_imports.hexa"
+    let mut __actual_src = src
+    let __has_fl = exec("test -f '" + __fl_script + "' && printf yes || printf no")
+    if __has_fl == "yes" {
+        let __has_use = exec("grep -c '^use \"' '" + src + "' 2>/dev/null | tr -d ' \\n'")
+        if __has_use != "0" && __has_use != "" {
+            let __bundle = exec("printf '/tmp/hexa_bundle.%s.hexa' \"$$\" | tr -d ' \\n'")
+            let __hexa_bin = __inst + "/hexa"
+            let __fl_cmd = "'" + __hexa_bin + "' run '" + __fl_script + "' '" + src + "' '" + __bundle + "' 2>&1"
+            println("  [flat] " + __has_use + " use(s) → " + __bundle)
+            let __fl_out = exec(__fl_cmd)
+            let __fl_ok = exec("test -f '" + __bundle + "' && printf yes || printf no")
+            if __fl_ok == "yes" {
+                __actual_src = __bundle
+            } else {
+                println("  [flat] warn: failed — " + __fl_out)
+            }
+        }
+    }
+    let stem = basename_stem(out)
+    let c_file = "build/artifacts/" + stem + ".c"
+    // buglist#6 phase [1/2]: transpile → .c 산출물 존재 확인 필수. 과거에는
+    //   trans 출력만 캡처하고 .c 미생성 여부를 검사하지 않아, clang 이 존재
+    //   하지 않는 .c 를 컴파일하려 → mv 실패 → 그래도 "OK: built" 출력하는
+    //   false-positive exit 0 회귀가 있었다. 이제 .c existence 를 명시 체크.
+    // 산출물 디렉토리 선제 생성 (없으면 hexa_v2 가 stderr 로 실패).
+    let _mk_art = exec("mkdir -p build/artifacts 2>/dev/null")
+    let trans = v2 + " " + __actual_src + " " + c_file + " 2>&1"
+    println("  [1/2] " + trans)
+    let r1 = exec(trans)
+    if len(r1) > 0 { println("    " + r1) }
+    // 파싱 실패는 hexa_v2 가 stdout 에 "Parse error" 로 찍고도 exit 0 인
+    // 특성이 있어(cmd_parse 주석 참고), 출력 grep + .c 파일 존재로 2중 판정.
+    let has_perr = exec("printf '%s' \"" + r1 + "\" | grep -q 'Parse error' && printf yes || printf no")
+    if has_perr == "yes" {
+        println("error: transpile failed (parse error) — " + src)
+        exit(1)
+    }
+    let c_exists = exec("test -f '" + c_file + "' && printf yes || printf no")
+    if c_exists != "yes" {
+        println("error: transpile failed — C file not produced: " + c_file)
+        exit(1)
+    }
+    // --c-only: transpile only. `out` 는 .c 파일 경로로 해석, clang / codesign /
+    //   atomic rename 모두 skip. airgenome 등 외부 빌드 시스템이 직접 clang 을
+    //   돌릴 때 유용. flatten_imports 경로는 동일하게 통과하므로 use graph 는
+    //   이미 resolve 된 단일 .c 산출.
+    if c_only == "1" {
+        let cp_out = exec("cp '" + c_file + "' '" + out + "' 2>&1")
+        if len(cp_out) > 0 { println("    cp: " + cp_out) }
+        let out_ok = exec("test -f '" + out + "' && printf yes || printf no")
+        if out_ok != "yes" {
+            println("error: --c-only copy failed: " + out)
+            exit(1)
+        }
+        println("OK: transpiled " + out + " (C source, no link)")
+        return ""
+    }
+    // Stage B: clang → `<out>.tmp.<PID>` (동일 디렉토리 → 동일 FS → rename atomic)
+    let tmp = exec("printf '%s.tmp.%s' '" + out + "' \"$$\"")
+    // bt 54: int→ptr / implicit-fn 근본 해소 — 플래그 제거.
+    // buglist#5: -I self 도 install_dir 절대경로로 — cwd 무관 runtime.c 탐색.
+    // bt 74+ (20260415): -fbracket-depth=4096 for long `"a"+"b"+...` concat
+    //   chains. Root cause: hexa codegen lowers left-assoc BinOp.Plus into
+    //   nested hexa_add(hexa_add(...)) calls. train_alm_14b.hexa has a 500+
+    //   segment embedded Python runner which exceeds clang's default 256.
+    let _strict = strict_fp_cflags(c_file)
+    let compile = "clang -O2 " + os_clang_cflags() + _strict + "-Wno-trigraphs -fbracket-depth=4096 -I '" + __inst + "/self' " + c_file + " -o '" + tmp + "'" + os_clang_ldflags() + " 2>&1"
+    println("  [2/2] " + compile)
+    let r2 = exec(compile)
+    if len(r2) > 0 { println("    " + r2) }
+    // buglist#6 phase [2/2]: clang 산출물(tmp) 존재 확인. 실패 시 조기 exit(1)
+    // — mv 단계에서 '파일 없음'이 묻혀 false-positive 로 이어지지 않도록.
+    let tmp_chk = exec("test -x '" + tmp + "' && printf yes || printf no")
+    if tmp_chk != "yes" {
+        println("error: clang compile failed — binary not produced: " + tmp)
+        exit(1)
+    }
+    // bt 40: codesign tmp (macOS Gatekeeper 호환) — rename 전에 서명.
+    //   - macOS: ad-hoc 서명 수행. Linux 등: skip (no-op).
+    //   - codesign 부재/실패: warning only, 빌드는 계속 진행.
+    codesign_if_macos(tmp)
+    // atomic rename: tmp → out. 실패 시 tmp 보존으로 디버깅 가능.
+    let mv = exec("mv -f '" + tmp + "' '" + out + "' 2>&1")
+    if len(mv) > 0 { println("    mv: " + mv) }
+    // buglist#6: 최종 산출물 re-verify — clang 실패/mv 실패 등 중간 단계가
+    // 어떤 이유로든 silent 하게 지나가더라도 여기서 확실히 실패 exit 하도록.
+    let out_chk = exec("test -x '" + out + "' && printf yes || printf no")
+    if out_chk != "yes" {
+        println("error: build failed — output binary missing: " + out)
+        exit(1)
+    }
+    println("OK: built " + out)
+}
+
+// ── AOT build cache helpers (rt item 36) ──────────────────
+// Cache location: $HEXA_CACHE_DIR (bt 41) 또는 $HEXA_LANG/.hexa-cache/<hash>/{exe,meta}
+// Key: sha256 of absolute source path (stable across mtime).
+// Invalidation: meta stores src_mtime+src_size; mismatch ⇒ rebuild.
+// Fallback: any build failure ⇒ interp interpreter (never crash).
+
+fn cache_root() {
+    // bt 41: $HEXA_CACHE_DIR 환경변수 우선. 설치 위치/clone 경로와 무관하게
+    // 사용자가 캐시 위치를 덮어쓸 수 있다. 미설정 시(=빈 문자열) 기존 경로 유지.
+    // NOTE: exec shell is POSIX /bin/sh; `echo -n` leaks `-n` literally → use printf.
+    let override_dir = env_var("HEXA_CACHE_DIR")
+    let mut root = ""
+    if len(override_dir) > 0 {
+        root = override_dir
+    } else {
+        root = exec("printf '%s' \"$HEXA_LANG/.hexa-cache\"")
+    }
+    // 자동 mkdir -p — 커스텀 경로든 기본 경로든 없으면 생성.
+    let _mk = exec("mkdir -p '" + root + "' 2>/dev/null")
+    return root
+}
+
+fn source_key(file) {
+    // Stable key: sha256 of the absolute source path string, first 16 chars.
+    // Same file across edits shares slot; meta fp handles content invalidation.
+    // Single shell fork: resolve abs path + sha256 in one pipeline. ~20ms
+    // saved vs the two-fork original on the warm-hit path.
+    // Portable hash: prefer sha256sum (linux coreutils — present in the
+    // hexa-runner image post-perl-removal, ω-runner-2 2026-04-26); fall
+    // back to `shasum -a 256` (macOS default — perl/Digest::SHA). Both
+    // emit `<hex>  -` so the `cut -c1-16` extraction is format-identical.
+    // Bug 2 fix (agent verdict a38dcbed, ω-cycle 2026-04-28): realpath
+    // canonicalize before hashing — file symlinks (e.g. hxc tool dispatch
+    // from hive/ → hexa-lang/self/stdlib/) now hash to the SAME slot,
+    // closing the path-keyed cache duplication that broke aot warm-hit.
+    // install_dir_from_argv0 idiom (main.hexa:782-784) reused. Residual
+    // hard links / firmlinks / bind-mounts (~1%) need Option B (inode key).
+    let h = exec("F='" + file + "'; R=\"$(realpath \"$F\" 2>/dev/null || readlink -f \"$F\" 2>/dev/null)\"; if [ -n \"$R\" ]; then T=\"$R\"; else T=\"$(cd \"$(dirname \"$F\")\" 2>/dev/null && pwd -P)/$(basename \"$F\")\"; fi; printf '%s' \"$T\" | { sha256sum 2>/dev/null || shasum -a 256; } | cut -c1-16 | tr -d '\\n'")
+    return h
+}
+
+fn src_fingerprint(file) {
+    // mtime|size — cheap cache-invalidation fingerprint.
+    let fp = exec("stat -f '%m|%z' '" + file + "' 2>/dev/null | tr -d '\\n'")
+    return fp
+}
+
+fn cache_hit(slot, fp) {
+    // slot dir must exist with exe + meta matching fp.
+    // Meta is multi-line as of perf-32 layered cache (line 1 = legacy fp,
+    // lines 2-4 = flatten/transpile/link layer keys for audit). Pull only
+    // the FIRST line via `head -n1` so the equality check against the
+    // single-line fp still works for both legacy and layered slots.
+    let chk = exec("test -x '" + slot + "/exe' && test -f '" + slot + "/meta' && head -n1 '" + slot + "/meta' 2>/dev/null | tr -d '\\n'")
+    return chk == fp
+}
+
+// ── interp AOT cache reactivation (bt 36 revival, 2026-04-21) ─
+// The original AOT path was disabled for two reasons:
+//   (a) stale hits — src_fingerprint covered only the main file's
+//       mtime|size; imports / interp rebuild didn't invalidate.
+//       FIX: src_fingerprint_deep walks transitive imports + interp
+//       binary in a single stat invocation.
+//   (b) cold-miss penalty for one-shot hooks. FIX: cmd_run falls
+//       through to interp on any build failure — first-call latency
+//       never regresses.
+// Denylist (should_cache) excludes tests / regen / bench / selftests
+// and tools that derive repo root from argv()[1] (build_*, tool/build/*)
+// since native runtime forces argv[1] = argv[0] (self/runtime.c:3432).
+// `HEXA_CACHE=0` env gate disables the fast-path globally.
+
+// Bump when fingerprint schema changes — forces global cache flush.
+// v4: add interp .real sibling to fp (covers atomic rebuild target).
+// v5: add module_loader.hexa to fp — closes raw#92 gap where AOT cache
+//     hit bypassed module_loader and pre-patch (silent-no-op) artifacts
+//     ran without fail-loud propagation. One-shot global flush + future
+//     loader edits invalidate caches automatically.
+// v6: source_key adds realpath canonicalization (Bug 2 fix, agent verdict
+//     a38dcbed) — file symlinks now share cache slot with their target.
+//     Old v5 path-keyed slots auto-invalidate on first run.
+fn cache_schema_version() { return "v6" }
+
+@pure
+fn _cache_dirname(path) {
+    let n = len(path)
+    let mut i = n - 1
+    while i >= 0 {
+        if path.substring(i, i + 1) == "/" {
+            return path.substring(0, i)
+        }
+        i = i - 1
+    }
+    return "."
+}
+
+fn _cache_abs_path(p) {
+    let r = exec("cd \"$(dirname '" + p + "')\" 2>/dev/null && printf '%s/%s' \"$(pwd -P)\" \"$(basename '" + p + "')\"")
+    return r
+}
+
+fn _cache_resolve_import(imp, caller_dir) {
+    // Mirror of module_loader.ml_resolve_full — simplified, dep-list-only
+    // (no preprocessor side-effect). Empty string on unresolvable — the
+    // scanner is conservative: over-invalidation preferred to under.
+    let raw = caller_dir + "/" + imp
+    if file_exists(raw) { return raw }
+    let raw_ext = raw + ".hexa"
+    if file_exists(raw_ext) { return raw_ext }
+    let hl = env_var("HEXA_LANG")
+    if len(hl) > 0 {
+        if imp.starts_with("stdlib/") {
+            let rest = imp.substring(7, len(imp))
+            let cand = hl + "/self/" + rest + ".hexa"
+            if file_exists(cand) { return cand }
+        }
+        let pr = hl + "/" + imp
+        if file_exists(pr) { return pr }
+        let pr_ext = pr + ".hexa"
+        if file_exists(pr_ext) { return pr_ext }
+    }
+    let inst = install_dir_from_argv0()
+    if len(inst) > 0 {
+        if imp.starts_with("stdlib/") {
+            let rest = imp.substring(7, len(imp))
+            let cand = inst + "/self/" + rest + ".hexa"
+            if file_exists(cand) { return cand }
+        }
+        let pr = inst + "/" + imp
+        if file_exists(pr) { return pr }
+        let pr_ext = pr + ".hexa"
+        if file_exists(pr_ext) { return pr_ext }
+    }
+    return ""
+}
+
+fn _cache_extract_imports(src) {
+    // One-quote-pair scan. Malformed lines silently skipped.
+    let mut out = []
+    let lines = src.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let line = lines[i]
+        let mut imp = ""
+        if line.starts_with("use \"") {
+            imp = line.substring(5, len(line))
+        } else if line.starts_with("import \"") {
+            imp = line.substring(8, len(line))
+        }
+        if len(imp) > 0 {
+            let mut j = 0
+            let mut end = -1
+            while j < len(imp) {
+                if imp.substring(j, j + 1) == "\"" {
+                    if end < 0 { end = j }
+                }
+                j = j + 1
+            }
+            if end > 0 {
+                out.push(imp.substring(0, end))
+            }
+        }
+        i = i + 1
+    }
+    return out
+}
+
+@pure
+fn _cache_arr_contains(arr, s) {
+    let mut i = 0
+    while i < len(arr) {
+        if arr[i] == s { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn list_transitive_imports(file) {
+    // BFS walk over use/import directives starting at `file`.
+    // Order is source-determined (deterministic across runs of same
+    // repo state) → safe fingerprint input without needing sort.
+    // Depth cap 32 prevents pathological loops. Unresolvable imports
+    // skipped (conservative).
+    let abs_start = _cache_abs_path(file)
+    let start = if len(abs_start) > 0 { abs_start } else { file }
+    let mut seen = [start]
+    let mut queue = [start]
+    let mut depth = 0
+    while len(queue) > 0 {
+        if depth >= 32 { return seen }
+        let mut next_queue = []
+        let mut qi = 0
+        while qi < len(queue) {
+            let cur = queue[qi]
+            if file_exists(cur) {
+                let src = read_file(cur)
+                let caller_dir = _cache_dirname(cur)
+                let imps = _cache_extract_imports(src)
+                let mut ii = 0
+                while ii < len(imps) {
+                    let imp = imps[ii]
+                    let resolved = _cache_resolve_import(imp, caller_dir)
+                    if len(resolved) > 0 {
+                        let abs = _cache_abs_path(resolved)
+                        let use_abs = if len(abs) > 0 { abs } else { resolved }
+                        if !_cache_arr_contains(seen, use_abs) {
+                            seen.push(use_abs)
+                            next_queue.push(use_abs)
+                        }
+                    }
+                    ii = ii + 1
+                }
+            }
+            qi = qi + 1
+        }
+        queue = next_queue
+        depth = depth + 1
+    }
+    return seen
+}
+
+fn src_fingerprint_deep(file) {
+    // Single-stat batch over transitive imports + interp binary (both
+    // shim and `.real`, since tool/build_interp.hexa writes to .real
+    // atomically while resolve_interp returns the shim path — covering
+    // both catches real rebuilds), piped through sha256 in one fork.
+    // Target <30ms. mtime|size (not content sha): editors update mtime
+    // on save; interp rebuild's atomic mv -f bumps mtime. `rm -rf
+    // .hexa-cache` is the escape hatch for pathological mtime spoofing.
+    let paths = list_transitive_imports(file)
+    if len(paths) == 0 { return "" }
+    let mut args = ""
+    let mut i = 0
+    while i < len(paths) {
+        args = args + " '" + paths[i] + "'"
+        i = i + 1
+    }
+    let s0 = resolve_interp()
+    if len(s0) > 0 {
+        args = args + " '" + s0 + "'"
+        // Also cover the .real sibling — the atomic-swap target in
+        // tool/build_interp.hexa:52. stat of nonexistent file fails
+        // silently via 2>/dev/null; the OR-fallback still produces
+        // output for existing paths.
+        args = args + " '" + s0 + ".real'"
+    }
+    // v5: bind module_loader.hexa into fp — AOT cache hit path never
+    // consults the loader, so a pre-patch (silent-no-op) artifact would
+    // mask ghost imports. mtime suffices: edits bump it, atomic moves
+    // bump it. Resolution failure → omit (fp stays stable; conservative).
+    let ml = resolve_module_loader()
+    if len(ml) > 0 {
+        args = args + " '" + ml + "'"
+    }
+    // perf-32: bind runtime.c into fp so an edit to the runtime
+    // properly invalidates AOT slots (runtime.c is statically linked
+    // into every cached exe). Pre-perf-32 the file was excluded → a
+    // runtime.c bugfix would silently NOT propagate to warm AOT
+    // binaries until the script itself changed. The layered link
+    // cache then re-uses any matching `link/<key>.bin` so the rebuild
+    // is sub-second; without this fp bind, no rebuild would happen.
+    let inst_for_rt = install_dir_from_argv0()
+    if len(inst_for_rt) > 0 {
+        let rt_path = inst_for_rt + "/self/runtime.c"
+        // stat tolerates missing files (2>/dev/null) → defensive omit.
+        args = args + " '" + rt_path + "'"
+    }
+    // BSD (%N %m %z) first; GNU (%n %Y %s) fallback — both in the
+    // same fork via ||. Schema version prepended as invalidation lever.
+    // Portable sha256 (see source_key comment): sha256sum primary
+    // (linux/runner image); shasum -a 256 fallback (macOS default).
+    let pipeline = "(stat -f '%N|%m|%z'" + args + " 2>/dev/null || stat -c '%n|%Y|%s'" + args + " 2>/dev/null) | (printf 'HXCACHE|" + cache_schema_version() + "\\n'; cat) | { sha256sum 2>/dev/null || shasum -a 256; } | cut -c1-64 | tr -d '\\n'"
+    return exec(pipeline)
+}
+
+fn should_cache(file) {
+    if env_var("HEXA_CACHE") == "0" { return false }
+    // Denylist: one-shot or argv[1]-dependent tools. Native runtime
+    // forces argv[1] = argv[0] (self/runtime.c:3432-3433), so tools
+    // using argv()[1] / dirname(argv[1]) for repo-root resolution
+    // misresolve to .hexa-cache/<hash>/ when run from a cached binary.
+    // Patterns are anchored on directory prefixes to avoid false-
+    // positives on user paths like /tmp/bench_mytest.hexa.
+    if file.contains("/test/") { return false }
+    if file.contains("/tests/") { return false }
+    if file.contains("_regen") { return false }
+    if file.contains("/codegen_") { return false }
+    if file.contains("/self/bench_") { return false }
+    if file.contains("/tool/bench_") { return false }
+    if file.contains("/tool/build_") { return false }
+    if file.contains("/tool/build/") { return false }
+    if file.contains("/tool/rebuild_") { return false }
+    if file.contains("selftest") { return false }
+    return true
+}
+
+// hxa-20260423-004 (airgenome): /tmp/hexa_*_err.*.log was emitted flat
+// into /tmp/, and leaked on SIGKILL/interrupt before the normal cleanup
+// path ran. 5000+ flat inodes → APFS dir-hash thrash → freeze. Fix:
+// contain into /tmp/.hexa-runtime/ and sweep stale entries (>10min) on
+// each invocation so kill-leaks self-heal.
+fn runtime_tmpdir() {
+    let d = "/tmp/.hexa-runtime"
+    exec("mkdir -p '" + d + "' 2>/dev/null; find '" + d + "' -maxdepth 1 -type f -mmin +10 -delete 2>/dev/null")
+    return d
+}
+
+// Collision-free temp path. to_string(clock()) resolves to integer seconds so
+// multiple rapid cmd_run invocations within the same second collide on
+// stderr_tmp / expanded-source filenames — observed as T34 "uncaught throw
+// diag" flake (fix 1472b62d). mono_ns() returns CLOCK_MONOTONIC as int64 ns
+// (runtime.c hexa_mono_ns), giving unique values per call without forking
+// mktemp. mktemp fallback kept for safety when mono_ns() is somehow
+// unavailable (pre-regen interp bootstrap).
+fn runtime_tmpname(prefix) {
+    let dir = runtime_tmpdir()
+    return dir + "/" + prefix + "." + to_string(mono_ns()) + ".tmp"
+}
+
+// ── Streaming popen helper for cmd_run / try_cache_exec ──────
+//
+// Background (2026-04-25): cmd_run used `let out = exec(cmd)` which
+// popen-reads the entire child stdout into one buffer before parent
+// emits anything, breaking sub-200ms event latency for tools like
+// hive/tool/subagent_dispatch.hexa that depend on incremental output.
+//
+// Replacement uses runtime.c's `hexa_exec_stream` (registered as the
+// `exec_stream(cmd, on_line)` builtin) which invokes the callback per
+// fgets() iteration. Each line retains its trailing `\n`, and the
+// runtime sets `setvbuf(stdout, _IOLBF)` so `print(line)` flushes
+// per-newline when stdout is piped. End-to-end: child writes a line →
+// kernel pipe → parent fgets → on_line callback → printf(%s) → flush.
+//
+// Sentinel handling: every cmd_run/try_cache_exec shell command ends
+// with `; echo __HEXA_RC=$?` so the FINAL line is always
+// `__HEXA_RC=N\n`. We keep a 1-line lookahead buffer:
+//   - on each callback: print the previously-buffered line, then
+//     buffer the new one (the buffered line cannot be the sentinel
+//     because we just received another line after it)
+//   - after exec_stream returns: inspect the residual buffered line,
+//     parse the sentinel rc if matched (and drop it from output), else
+//     flush as ordinary trailing output (no-newline edge case)
+//
+// Mutable state lives at module scope because hexa-v2 transpiler maps
+// `exec_stream(cmd, on_line)` with a top-level fn ident → C function
+// pointer. Closure capture across the popen-read boundary is not
+// available through this codepath, so the callback writes to module
+// globals which the post-call cleanup consumes.
+let mut __hexa_run_stream_buf = ""
+
+fn __hexa_run_stream_on_line(s) {
+    // Sentinel-aware streaming: forward every non-sentinel-pattern line
+    // immediately (preserves sub-fgets streaming), and only buffer lines
+    // that LOOK like the trailing __HEXA_RC=N sentinel — those need EOF
+    // confirmation before we decide to drop or forward them.
+    //
+    // Why not buffer-everything-by-one-line? A 1-line lookahead lags
+    // every printed line by one child fgets-iteration. For low-rate
+    // emitters (pre-sleep alpha/beta then post-sleep gamma), the
+    // buffered tail line stays put across the sleep gap, surfacing only
+    // after the next emit — which defeats the streaming property.
+    //
+    // Why no false-positive risk? `__HEXA_RC=` is a deliberately weird
+    // prefix the shell wrapper appends as the FINAL line. A child that
+    // happens to emit a mid-stream line starting with the same prefix
+    // would also be treated as a sentinel by the legacy exec()-split
+    // path (it checks `last.starts_with` on whichever line is last in
+    // the buffer). Our streaming variant has the SAME guarantee: any
+    // earlier `__HEXA_RC=` line gets flushed when a subsequent line
+    // arrives, only the truly-last one is consumed as the sentinel.
+    let mark = "__HEXA_RC="
+    if len(__hexa_run_stream_buf) > 0 {
+        // A previously-suspected sentinel got followed by another line
+        // — therefore it was NOT the final, so flush it as ordinary
+        // output before processing the new line.
+        print(__hexa_run_stream_buf)
+        __hexa_run_stream_buf = ""
+    }
+    if s.starts_with(mark) {
+        // Buffer for EOF-time sentinel decision in run_stream_with_sentinel.
+        __hexa_run_stream_buf = s
+    } else {
+        // Definitely not a sentinel — forward immediately. printf("%s", s)
+        // preserves the trailing \n from fgets, triggering _IOLBF flush
+        // when stdout is piped (runtime.c constructor sets _IOLBF).
+        print(s)
+    }
+}
+
+// run_stream_with_sentinel: popen-streams `cmd`, forwards stdout
+// line-by-line, extracts and returns the trailing __HEXA_RC=N exit
+// code. Used by cmd_run + try_cache_exec; both must invoke this with
+// identical post-conditions (stderr_tmp captured separately, sentinel
+// stripped from forwarded output, byte-for-byte streaming parity).
+fn run_stream_with_sentinel(cmd) {
+    __hexa_run_stream_buf = ""
+    let _ = exec_stream(cmd, __hexa_run_stream_on_line)
+    let last = __hexa_run_stream_buf
+    __hexa_run_stream_buf = ""
+    let mark = "__HEXA_RC="
+    let mut rc = 0
+    if last.starts_with(mark) {
+        // Strip trailing \n (fgets retained it) before to_int parse.
+        let mut s = last
+        let sl = len(s)
+        if sl > 0 && s.substring(sl - 1, sl) == "\n" {
+            s = s.substring(0, sl - 1)
+        }
+        rc = to_int(s.substring(len(mark), len(s)))
+    } else {
+        // No sentinel — surface the trailing partial as ordinary
+        // output (matches legacy exec()→split fallback behavior).
+        if len(last) > 0 { print(last) }
+    }
+    return rc
+}
+
+// raw 159 (2026-04-28): `--no-sentinel` / HEXA_NO_SENTINEL=1 mode.
+//
+// Background: cmd_run / try_cache_exec inject `; echo __HEXA_RC=$?`
+// into the shell wrapper so the parent dispatcher can recover the
+// child rc from a popen()-captured stdout buffer. The streaming
+// variant (run_stream_with_sentinel) strips that trailing line on
+// EOF — but the strip is only correct when the child's last stdout
+// emit ENDED in `\n`. For children that emit `print("hello")` (no
+// trailing newline), fgets concatenates `hello__HEXA_RC=0\n` into a
+// SINGLE trailing line; `last.starts_with("__HEXA_RC=")` then fails
+// and the sentinel leaks through to the user's stdout — breaking
+// `JSON.parse(stdout)` callers (hive `fake-{anima,hexa,pi-rpc}.mjs`
+// fixtures spawned from .ts tests).
+//
+// Two ergonomic opt-outs:
+//   * CLI flag:  `hexa run --no-sentinel <script>`
+//   * env var:   `HEXA_NO_SENTINEL=1 hexa run <script>`
+//
+// In no-sentinel mode the wrapper redirects rc to a sidechannel file
+// (`; echo $? > <rc_tmp>`) instead of stdout. Stdout stays byte-clean.
+// After exec_stream returns we read the rc file, propagate as before.
+//
+// Backward compatibility: default behavior (no flag, no env) keeps
+// the legacy `__HEXA_RC=N` stdout sentinel (callers that already
+// strip it — e.g. tool/roadmap_integrate.hexa — see no change).
+let mut cmd_run_no_sentinel_mode = false
+
+// Lazily resolved by cmd_run / try_cache_exec — env var check is per
+// invocation so a parent script can scope `HEXA_NO_SENTINEL=1` to a
+// single child without restarting the dispatcher.
+fn no_sentinel_active() {
+    if cmd_run_no_sentinel_mode { return true }
+    if env_var("HEXA_NO_SENTINEL") == "1" { return true }
+    return false
+}
+
+// Streaming forwarder for no-sentinel mode: every fgets() line goes
+// straight to stdout — there is no tail-line speculation because the
+// child shell does NOT emit any trailing __HEXA_RC sentinel into the
+// stream. rc lives in `rc_tmp` (sidechannel file).
+fn __hexa_run_stream_passthrough(s) {
+    print(s)
+}
+
+fn run_stream_no_sentinel(cmd, rc_tmp) {
+    let _ = exec_stream(cmd, __hexa_run_stream_passthrough)
+    let mut rc = 0
+    if file_exists(rc_tmp) {
+        let raw = read_file(rc_tmp)
+        let mut s = raw
+        let sl = len(s)
+        if sl > 0 && s.substring(sl - 1, sl) == "\n" {
+            s = s.substring(0, sl - 1)
+        }
+        if len(s) > 0 { rc = to_int(s) }
+        exec("rm -f '" + rc_tmp + "'")
+    }
+    return rc
+}
+
+fn try_cache_exec(file, extra_args) {
+    // Returns exit-code on cache hit (child fully executed + collected),
+    // -1 on miss. Mirrors the shell-watch construction in cmd_run
+    // (fd3 stdin dup, __HEXA_RC sentinel, stderr tmp, parent-death
+    // watch loop) — the runtime-critical contract from rt 34/35/36
+    // + 2026-04-20 silent-stderr-fallback fix. KEEP IN SYNC with the
+    // cmd_run interp path below.
+    let root = cache_root()
+    let key = source_key(file)
+    let slot = root + "/" + key
+    let fp = src_fingerprint_deep(file)
+    if len(fp) == 0 { return -1 }
+    if !cache_hit(slot, fp) { return -1 }
+    // L7 omega-cycle (2026-04-25): touch on access — single utime to
+    // bump mtime so the GC sweep does NOT evict warm entries. Cheap
+    // (~1ms shell fork; bounded by single-stat in cache_hit above).
+    cache_touch_slot(slot)
+    let cached = slot + "/exe"
+    // Native runtime auto-duplicates argv[0] into slot 1 to mirror the
+    // interpreter layout (self/runtime.c:3429-3436). Do NOT pass `file`
+    // as argv[1] — that would double-shift args()[2..] in hook tools.
+    let arg_tail = join_shell_args(extra_args)
+    let dyld_pass = env_var("DYLD_LIBRARY_PATH")
+    let ld_pass = env_var("LD_LIBRARY_PATH")
+    let mut ffi_env = ""
+    if len(dyld_pass) > 0 { ffi_env = ffi_env + "DYLD_LIBRARY_PATH='" + dyld_pass + "' " }
+    if len(ld_pass) > 0 { ffi_env = ffi_env + "LD_LIBRARY_PATH='" + ld_pass + "' " }
+    let vm_env = if cmd_run_vm_mode { "HEXA_VM=1 " } else { "" }
+    let watch = " ) & C=$!; ( while kill -0 $C 2>/dev/null; do [ $PPID -eq 1 ] && { kill -9 $C 2>/dev/null; exit; }; kill -0 $PPID 2>/dev/null || { kill -9 $C 2>/dev/null; exit; }; sleep 0.05; done ) & wait $C"
+    let stderr_tmp = runtime_tmpname("cache_err")
+    // raw 159: --no-sentinel / HEXA_NO_SENTINEL=1 splits the rc out of
+    // stdout into a sidechannel file. Default keeps legacy stdout
+    // sentinel for backward compatibility.
+    let no_sent = no_sentinel_active()
+    let rc_tmp = if no_sent { runtime_tmpname("cache_rc") } else { "" }
+    let rc_inject = if no_sent { "; echo $? > '" + rc_tmp + "'" } else { "; echo __HEXA_RC=$?" }
+    let cmd = "exec 3<&0; ( " + ffi_env + vm_env + "'" + cached + "'" + arg_tail + " <&3 2>'" + stderr_tmp + "'" + watch + rc_inject
+    // 2026-04-25 streaming refactor: popen-read line-by-line via
+    // exec_stream() instead of exec()-then-split. Forwarded lines flush
+    // per-newline (runtime.c _IOLBF stdout) so children that emit
+    // progress incrementally surface to the grandparent without the
+    // legacy "all output appears at process exit" stall.
+    // AOT-cache parity: identical helper used in cmd_run below.
+    let rc = if no_sent { run_stream_no_sentinel(cmd, rc_tmp) } else { run_stream_with_sentinel(cmd) }
+    if file_exists(stderr_tmp) {
+        let err_buf = read_file(stderr_tmp)
+        if len(err_buf) > 0 { eprint(err_buf) }
+        exec("rm -f '" + stderr_tmp + "'")
+    }
+    return rc
+}
+
+// ── bt 40 + perf-32 layered: AOT 캐시 슬롯 빌드 ────────────
+// file → .hexa-cache/<hash>/exe (ad-hoc 서명 완료) 생성.
+// 반환: exe 절대경로 (성공) 또는 "" (실패 — 호출자는 interp fallback).
+// 호출처: cmd_run AOT 경로 + 향후 `hexa cache build` 전용 커맨드.
+// bt 37 패턴 답습: `exe.tmp.$$` + codesign + mv -f (atomic rename).
+//
+// LAYERED CONTENT CACHE (2026-04-26 perf-32 follow-up to 72eb8367)
+// ----------------------------------------------------------------
+// Pre-flatten via module_loader fixed correctness (use-imports link)
+// but tripled cold compile to ~3-4s wall:
+//   module_loader ~500ms · hexa_v2 ~2.5s · clang ~1s
+// Each phase output is content-addressable, so we add a shared
+// namespace `<cache_root>/_layers/{flatten,transpile,link}/<hash>.*`.
+//
+// Keys (each is the sha256 of the conceptual content of the stage's
+// inputs, computed cheaply via `cat | sha256sum` on file paths):
+//   flatten_key   = sha256(script + every transitive `use` file +
+//                          module_loader.hexa + cache_schema_version)
+//   transpile_key = sha256(flatten_key + hexa_v2 binary content)
+//   link_key      = sha256(transpile_key + runtime.c content +
+//                          uname + clang flag set)
+//
+// Hit vs. miss matrix (typical edits):
+//   - script unchanged                   → flatten + transpile + link hit
+//   - script body edit, no use-graph delta → flatten miss, transpile
+//                                            usually miss (any AST edit),
+//                                            link miss (new exe)
+//   - comment-only edit                  → flatten miss but identical
+//                                          bundle bytes → transpile reuses
+//                                          via secondary content-hash on
+//                                          the bundle (see _aot_layer_*)
+//   - runtime.c edit                     → flatten + transpile hit, only
+//                                          link re-runs
+//   - hexa_v2 binary updated             → flatten hit, transpile + link miss
+//
+// The slot meta records BOTH the legacy fp (for cmd_run's cache_hit
+// fast path) and the three layer keys (for debug / future audit).
+
+// _aot_layer_root: shared layer cache namespace under cache_root.
+fn _aot_layer_root() {
+    let root = cache_root()
+    let lr = root + "/_layers"
+    exec("mkdir -p '" + lr + "/flatten' '" + lr + "/transpile' '" + lr + "/link' 2>/dev/null")
+    return lr
+}
+
+// _aot_hash_files: sha256 of concatenated file contents (in order).
+// Empty paths skipped so callers can pass conditionally-absent files
+// without branching. Returns "" if no readable input → caller treats
+// as cache-disable signal (conservative: rebuild rather than collide).
+fn _aot_hash_files(paths) {
+    if len(paths) == 0 { return "" }
+    let mut args = ""
+    let mut i = 0
+    while i < len(paths) {
+        let p = paths[i]
+        if len(p) > 0 { args = args + " '" + p + "'" }
+        i = i + 1
+    }
+    if len(args) == 0 { return "" }
+    // Portable sha256 (matches source_key/src_fingerprint_deep).
+    // `cat` of 0-byte inputs produces empty stream → sha256 of empty.
+    // Cap output at 64 hex chars (full sha256) for cross-collision safety.
+    let h = exec("cat" + args + " 2>/dev/null | { sha256sum 2>/dev/null || shasum -a 256; } | cut -c1-64 | tr -d '\\n'")
+    return h
+}
+
+// _aot_hash_str: sha256 of an ad-hoc string. Used to mix non-file
+// inputs (cache schema version, uname, CFLAG set) into a layer key
+// without a temp-file dance.
+fn _aot_hash_str(s) {
+    // POSIX printf %s — no shell interpretation of `s` beyond single-quote.
+    // Caller is responsible for passing already-escape-safe strings; all
+    // our internal inputs are alnum/. only.
+    let h = exec("printf '%s' '" + s + "' | { sha256sum 2>/dev/null || shasum -a 256; } | cut -c1-64 | tr -d '\\n'")
+    return h
+}
+
+fn aot_build_slot(file) {
+    let root = cache_root()
+    let key = source_key(file)
+    let slot = root + "/" + key
+    // bt 36 revival: deep fp covers transitive imports + interp binary,
+    // closing the staleness gap that originally disabled this path.
+    let fp = src_fingerprint_deep(file)
+    if len(fp) == 0 {
+        return ""
+    }
+    // 캐시 히트 — 이미 서명된 exe 재사용.
+    if cache_hit(slot, fp) {
+        return slot + "/exe"
+    }
+    // 2026-04-26 negative cache — known-to-fail builds skip transpile+link.
+    // When the same fp persistently fails (e.g. hexa_v2 const codegen bug
+    // emits top-level `const X` as a local in the entry fn → undefined-
+    // identifier link error for any other fn that references X — see hive
+    // tools hive_daemon, raw81_default_model_lock, os_level_lock for the
+    // ~22 affected scripts as of 2026-04-26), repeating the 4-step build
+    // pipeline on every cold call wastes ~700ms regenerating identical
+    // bundle.hexa + src.c just to fail at clang link. The marker stores
+    // the fp at the moment of failure; runtime.c and source edits change
+    // the fp via src_fingerprint_deep (perf-32) → marker auto-invalidates
+    // on any upgrade that might fix the bug, so this is safe.
+    let fail_marker = slot + "/.aot-link-failed"
+    if file_exists(fail_marker) {
+        let prev_fp = read_file(fail_marker).trim()
+        if prev_fp == fp {
+            return ""
+        }
+    }
+    // 슬롯 디렉토리 준비.
+    let _mk = exec("mkdir -p '" + slot + "' 2>/dev/null")
+    // Build lock — prevents parallel redundant builds during touch
+    // chain bursts. mkdir is POSIX-atomic (macOS + Linux). Contender
+    // polls up to 10s, then re-checks cache; still miss = proceed
+    // (atomic mv -f makes race-clobber safe, bt 37 pattern).
+    let lock = slot + "/.build.lock"
+    let got_lock = exec("mkdir '" + lock + "' 2>/dev/null && printf yes || printf no")
+    if got_lock != "yes" {
+        exec("for i in $(seq 1 50); do test ! -d '" + lock + "' && break; sleep 0.2; done")
+        if cache_hit(slot, fp) {
+            return slot + "/exe"
+        }
+    }
+    // 1) 트랜스파일 prep: resolve_hexa_v2() (cwd 무관 install_dir base).
+    let v2 = resolve_hexa_v2()
+    if len(v2) == 0 {
+        exec("rmdir '" + lock + "' 2>/dev/null")
+        return ""
+    }
+
+    // ── Layer 1: FLATTEN ────────────────────────────────────
+    // 2026-04-26 perf-32: pre-flatten `use "..."` / `import "..."` via
+    // module_loader BEFORE hexa_v2 — same loader as cmd_run's interp path
+    // (line 1582-1627). Without this step, codegen_c2._resolve_use_emit
+    // only emits `extern` forward decls for imported fn signatures and
+    // never inlines the bodies → clang link fails (`Undefined symbol
+    // _ai_err_exit` etc) for any script that CALLS a stdlib fn. AOT then
+    // silently misses (returns "") and cmd_run falls through to interp —
+    // 5-10x slower for ~70 stdlib-using tools repo-wide as of 2026-04-26.
+    //
+    // Companion: module_loader's ml_strip_and_clean was extended same date
+    // to strip `#!hexa …` shebangs from inlined sub-files (without that
+    // the transpiler reads `#!hexa strict` as `!hexa` + bare `strict` ids
+    // and clang fails parse). interp tolerated shebangs as pragma comments
+    // so the cmd_run path was unaffected.
+    let layer_root = _aot_layer_root()
+    let __aot_src_probe = read_file(file)
+    let __aot_has_directive =
+        __aot_src_probe.contains("\nuse \"") || __aot_src_probe.starts_with("use \"") ||
+        __aot_src_probe.contains("\nimport \"") || __aot_src_probe.starts_with("import \"")
+    let __aot_bundle = slot + "/bundle.hexa"
+    let mut __aot_actual_src = file
+    let mut flatten_key = ""
+    if __aot_has_directive {
+        let __aot_ml = resolve_module_loader()
+        if len(__aot_ml) > 0 {
+            // flatten_key inputs: every file whose CONTENT shapes the
+            // flattened bundle — script + every transitive `use`/`import`
+            // target + module_loader.hexa itself (loader edits change
+            // inlining behavior). schema_version is mixed in via the
+            // wrapper script string so a global cache flush is one-flag
+            // (bump cache_schema_version → all keys diverge).
+            let imp_paths = list_transitive_imports(file)
+            let mut hash_inputs = []
+            let mut hi = 0
+            while hi < len(imp_paths) {
+                hash_inputs.push(imp_paths[hi])
+                hi = hi + 1
+            }
+            hash_inputs.push(__aot_ml)
+            let content_h = _aot_hash_files(hash_inputs)
+            // Mix schema version + a fixed prefix to namespace this
+            // family of keys away from any future layer-cache refactor.
+            flatten_key = _aot_hash_str("flatten|" + cache_schema_version() + "|" + content_h)
+        }
+        if len(flatten_key) > 0 {
+            let cache_bundle = layer_root + "/flatten/" + flatten_key + ".hexa"
+            if file_exists(cache_bundle) {
+                // HIT: copy cached bundle into slot for downstream reuse.
+                exec("cp -f '" + cache_bundle + "' '" + __aot_bundle + "' 2>/dev/null")
+                if file_exists(__aot_bundle) {
+                    __aot_actual_src = __aot_bundle
+                }
+            } else {
+                // MISS: run module_loader, then promote to layer cache.
+                let __aot_interp = resolve_interp()
+                if len(__aot_interp) > 0 {
+                    let __aot_preproc = "'" + __aot_interp + "' '" + __aot_ml + "' '" + file + "' '" + __aot_bundle + "' 2>&1"
+                    let __aot_pp = exec_with_status(__aot_preproc)
+                    let __aot_pp_rc = __aot_pp[1]
+                    if __aot_pp_rc == 2 && __aot_pp[0].contains("[module_loader] FATAL") {
+                        exec("rmdir '" + lock + "' 2>/dev/null")
+                        return ""
+                    }
+                    if file_exists(__aot_bundle) {
+                        __aot_actual_src = __aot_bundle
+                        // Atomic promote via tmp+mv so a concurrent
+                        // builder can't observe a half-written layer.
+                        let tmp_b = cache_bundle + ".tmp." + str(mono_ns())
+                        exec("cp -f '" + __aot_bundle + "' '" + tmp_b + "' 2>/dev/null && mv -f '" + tmp_b + "' '" + cache_bundle + "' 2>/dev/null")
+                    }
+                }
+            }
+        }
+        // If ml didn't resolve OR flatten_key empty, we leave
+        // __aot_actual_src = file. Matches pre-perf-32 behavior:
+        // hexa_v2 will either resolve `use` itself (limited) or fail,
+        // and on failure aot_build_slot returns "" → cmd_run falls
+        // through to interp. No regression vs. the original code path.
+    }
+
+    // ── Layer 2: TRANSPILE ──────────────────────────────────
+    // Key on the SECONDARY content hash of the actual transpile input
+    // (bundle for use/import scripts, raw file otherwise) so a comment-
+    // only flatten that produces identical bundle bytes still hits.
+    // Mix in the hexa_v2 binary content — transpiler upgrades naturally
+    // invalidate.
+    let c_file = slot + "/src.c"
+    let bundle_h = _aot_hash_files([__aot_actual_src])
+    let v2_h = _aot_hash_files([v2])
+    let mut transpile_key = ""
+    if len(bundle_h) > 0 && len(v2_h) > 0 {
+        transpile_key = _aot_hash_str("transpile|" + cache_schema_version() + "|" + bundle_h + "|" + v2_h)
+    }
+    let mut transpile_hit = false
+    if len(transpile_key) > 0 {
+        let cache_c = layer_root + "/transpile/" + transpile_key + ".c"
+        if file_exists(cache_c) {
+            exec("cp -f '" + cache_c + "' '" + c_file + "' 2>/dev/null")
+            if file_exists(c_file) { transpile_hit = true }
+        }
+    }
+    if !transpile_hit {
+        let _trans = exec(v2 + " '" + __aot_actual_src + "' '" + c_file + "' 2>&1")
+        let ok_c = exec("test -f '" + c_file + "' && printf yes || printf no")
+        if ok_c != "yes" {
+            exec("rmdir '" + lock + "' 2>/dev/null")
+            return ""
+        }
+        if len(transpile_key) > 0 {
+            let cache_c = layer_root + "/transpile/" + transpile_key + ".c"
+            let tmp_c = cache_c + ".tmp." + str(mono_ns())
+            exec("cp -f '" + c_file + "' '" + tmp_c + "' 2>/dev/null && mv -f '" + tmp_c + "' '" + cache_c + "' 2>/dev/null")
+        }
+    }
+
+    // ── Layer 3: LINK ───────────────────────────────────────
+    // Key on the C-source content hash + runtime.c content + uname +
+    // clang flag set. -O2 / -fbracket-depth=4096 / strict-FP all bake
+    // into the same flag string so a flag refactor invalidates cleanly.
+    let __inst_a = install_dir_from_argv0()
+    let runtime_c = __inst_a + "/self/runtime.c"
+    let _strict_a = strict_fp_cflags(c_file)
+    // SH1-W1: HEXA_AOT_CC overrides the C compiler invocation. Default
+    // "clang" preserves baseline behavior (zero regression). Backend
+    // identity is folded into cflag_str → link_key, so swapping the
+    // backend invalidates the link layer cleanly.
+    let mut __aot_cc = env_var("HEXA_AOT_CC")
+    if __aot_cc == "" { __aot_cc = "clang" }
+    let cflag_str = __aot_cc + "|-O2|" + os_clang_cflags() + _strict_a + "-Wno-trigraphs|-fbracket-depth=4096|-I" + __inst_a + "/self" + os_clang_ldflags()
+    let uname_str = exec("uname 2>/dev/null | tr -d ' \\n\\t'")
+    let c_h = _aot_hash_files([c_file])
+    let rt_h = _aot_hash_files([runtime_c])
+    let mut link_key = ""
+    if len(c_h) > 0 && len(rt_h) > 0 {
+        link_key = _aot_hash_str("link|" + cache_schema_version() + "|" + c_h + "|" + rt_h + "|" + uname_str + "|" + cflag_str)
+    }
+    let tmp = exec("printf '%s/exe.tmp.%s' '" + slot + "' \"$$\"")
+    let mut link_hit = false
+    if len(link_key) > 0 {
+        let cache_bin = layer_root + "/link/" + link_key + ".bin"
+        if file_exists(cache_bin) {
+            exec("cp -f '" + cache_bin + "' '" + tmp + "' 2>/dev/null && chmod +x '" + tmp + "' 2>/dev/null")
+            let ok_t = exec("test -x '" + tmp + "' && printf yes || printf no")
+            if ok_t == "yes" {
+                // Re-codesign the per-slot copy. The cached blob is
+                // already signed, but the inode identity changes on
+                // copy → macOS Gatekeeper requires re-sign. No-op on
+                // Linux. Cheap (~20ms) vs. a full clang re-link.
+                codesign_if_macos(tmp)
+                link_hit = true
+            }
+        }
+    }
+    if !link_hit {
+        // bt 54 + buglist#5 + bt 74+ (-fbracket-depth=4096) — see callers
+        // upstream for the rationale on each flag. KEEP cflag_str above
+        // in sync with this exec line; the link cache key derives from it.
+        let compile = exec(__aot_cc + " -O2 " + os_clang_cflags() + _strict_a + "-Wno-trigraphs -fbracket-depth=4096 -I '" + __inst_a + "/self' '" + c_file + "' -o '" + tmp + "'" + os_clang_ldflags() + " 2>&1")
+        let ok_tmp = exec("test -x '" + tmp + "' && printf yes || printf no")
+        if ok_tmp != "yes" {
+            // Persist negative-cache marker — see top of aot_build_slot for
+            // the full rationale. fp guarantees auto-invalidation when the
+            // underlying bug gets fixed (runtime.c / hexa_v2 binary edit
+            // bumps fp via src_fingerprint_deep).
+            write_file(slot + "/.aot-link-failed", fp + "\n")
+            exec("rmdir '" + lock + "' 2>/dev/null")
+            return ""
+        }
+        // bt 40: codesign (macOS 한정, 실패 시 warning only)
+        codesign_if_macos(tmp)
+        // Promote signed binary to layer cache (post-codesign so warm
+        // copies skip the sign step too — though we re-sign on copy
+        // for inode-identity safety above).
+        if len(link_key) > 0 {
+            let cache_bin = layer_root + "/link/" + link_key + ".bin"
+            let tmp_b = cache_bin + ".tmp." + str(mono_ns())
+            exec("cp -f '" + tmp + "' '" + tmp_b + "' 2>/dev/null && chmod +x '" + tmp_b + "' 2>/dev/null && mv -f '" + tmp_b + "' '" + cache_bin + "' 2>/dev/null")
+        }
+    }
+    // 4) atomic rename tmp → exe, meta 기록 (legacy fp + layer keys for audit).
+    let _mv = exec("mv -f '" + tmp + "' '" + slot + "/exe' 2>&1")
+    // Meta line 1 = legacy fp (cache_hit reads cat+trim → only first
+    // line matters for the existing fast path). Lines 2-4 = layer keys
+    // for `hexa cache inspect` / future debug. printf %s\n keeps the
+    // record self-describing without bloating warm-hit syscalls.
+    let _meta = exec("printf '%s\\n%s\\n%s\\n%s\\n' '" + fp + "' 'flatten=" + flatten_key + "' 'transpile=" + transpile_key + "' 'link=" + link_key + "' > '" + slot + "/meta'")
+    exec("rmdir '" + lock + "' 2>/dev/null")
+    return slot + "/exe"
+}
+
+// ── bt 39: argv forwarding helpers ────────────────────────
+// `hexa run <file> a b c` 에서 a,b,c 를 스크립트 `args()` 로 전달.
+// POSIX /bin/sh quoting: single-quote wrap + inner '→'\'' escape.
+//
+// FIX (2026-04-26): previously implemented as
+//   exec("printf '%s' \"" + s + "\" | sed ...")
+// where `s` was double-quote-interpolated INTO a /bin/sh -c string.
+// Bug A: any embedded `"` in `s` (e.g. `{"k":"v"}`) closed the outer
+// double-quoting, the inner JSON quotes were stripped by the shell as
+// quote-tokens, yielding `{k:v}` — silent JSON corruption observable
+// across `hexa <script> '{"k":"v"}'`. Reproduced: `args()` returned
+// `{k:v}` instead of `{"k":"v"}`. The pure-hexa replace below is
+// byte-exact and faster (no fork) — same approach already used by
+// test_runner._shell_quote and hexa_full.shell_quote.
+fn shell_quote(s) {
+    // POSIX: '...'...' 으로 wrap, 내부 ' 만 '\'' 로 escape.
+    // 모든 다른 문자 (", $, \, !, newline, ...) 는 single-quote 안에서 리터럴.
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn join_shell_args(argv) {
+    let mut out = ""
+    let mut i = 0
+    while i < len(argv) {
+        out = out + " " + shell_quote(argv[i])
+        i = i + 1
+    }
+    return out
+}
+
+// rt#36 launch — opt-in `--vm` flag wrapper. Sets a module-global
+// `cmd_run_vm_mode` consumed by cmd_run when building the interp
+// child shell cmd (HEXA_VM=1 env). Keeps cmd_run's positional
+// signature stable so existing callers (compat mode, lsp, check)
+// remain untouched.
+let mut cmd_run_vm_mode = false
+
+fn cmd_run_dispatch(file, extra_args, want_vm) {
+    cmd_run_vm_mode = want_vm
+    cmd_run(file, extra_args)
+    cmd_run_vm_mode = false
+}
+
+fn cmd_run(file, extra_args) {
+    // bt 36 revival (2026-04-21): AOT cache reactivated with deep
+    // fingerprint + fall-through safety. See helpers above (line ~800)
+    // for the rationale. Any cache failure → fall through to interp
+    // unchanged, so first-call latency never regresses.
+    //
+    // B1 Linux portability: resolve_interp() 로 argv[0]/cwd/$HOME 3-단 fallback.
+    // 이전 $HOME 하드코딩은 $HEXA_LANG 외 위치에서 silent fail.
+    let interp = resolve_interp()
+    if len(interp) == 0 {
+        println("error: interp interpreter not found")
+        println("       searched:")
+        let inst = install_dir_from_argv0()
+        if len(inst) > 0 {
+            println("         " + inst + "/build/hexa_interp  (from argv[0] / /proc/self/exe)")
+        }
+        println("         ./build/hexa_interp  (cwd)")
+        println("         $HEXA_LANG/build/hexa_interp  (dev fallback)")
+        println("         /usr/local/bin/build/hexa_interp  (container default)")
+        println("       rebuild with: hexa tool/build_interp.hexa")
+        return
+    }
+    // ── AOT cache fast-path ─────────────────────────────────
+    // Hit: exec cached native binary. Miss: sync build then retry.
+    // Any failure → fall through to interp (never crash/regress).
+    if should_cache(file) {
+        // L7 omega-cycle: probabilistic GC trigger (1%) before lookup.
+        // Amortizes the sweep cost across invocations. Quiet, never
+        // affects rc/output.
+        maybe_aot_gc()
+        let rc = try_cache_exec(file, extra_args)
+        if rc >= 0 {
+            // ω-hexa-batch: under batch mode, surface rc to driver
+            // instead of exit(); driver continues to next script.
+            cmd_run_last_rc = rc
+            auto_marker_write(file, rc)
+            if cmd_run_no_exit_mode { return }
+            if rc != 0 { exit(rc) }
+            return
+        }
+        let built = aot_build_slot(file)
+        if len(built) > 0 {
+            let rc2 = try_cache_exec(file, extra_args)
+            if rc2 >= 0 {
+                cmd_run_last_rc = rc2
+                auto_marker_write(file, rc2)
+                if cmd_run_no_exit_mode { return }
+                if rc2 != 0 { exit(rc2) }
+                return
+            }
+        }
+        // build failed — continue to interp path below
+    }
+    // Phase2 C1 wiring — module_loader 전처리기로 `import "path"` / `use "path"`
+    // 라인을 재귀적으로 인라인 전개. 대상 파일에 해당 지시문이 없으면 로더가
+    // 본문을 그대로 복제하므로 사이드이펙트는 임시파일 1개뿐.
+    //
+    // rt 33: fast-exit — grep 으로 use/import 지시문 유무를 먼저 확인.
+    //   없으면 module_loader 전처리 단계(~700ms on hooks) 를 건너뛴다.
+    //   측정: shared/hexa/rt-33-cold-start-report.md
+    //   - 훅 49개 전부 use/import 0건 → 전처리 효용 없이 매 호출 700ms 낭비.
+    //   - grep -qE 비용 ~1ms << interp 로 로더 실행 ~700ms.
+    // HX-load-fix: was `exec("grep -qE ... && printf yes || printf no")` —
+    // a /bin/sh fork per invocation. Replaced with native read_file + scan.
+    // For hook files (≤200 lines typically) the I/O is sub-millisecond; the
+    // fork elimination removes one xpcproxy trip per `hexa run` call.
+    let src_probe = read_file(file)
+    let has_dir_use = src_probe.contains("\nuse \"") || src_probe.starts_with("use \"")
+    let has_dir_imp = src_probe.contains("\nimport \"") || src_probe.starts_with("import \"")
+    let has_directive = if has_dir_use || has_dir_imp { "yes" } else { "no" }
+    let mut script = file
+    if has_directive == "yes" {
+        // B1 Linux portability: argv[0] 기반 resolver 로 $HOME 하드코딩 제거.
+        let ml_source = resolve_module_loader()
+        let ml_check = if len(ml_source) > 0 { "yes" } else { "no" }
+        if ml_check == "yes" {
+            // HX-load-fix: was `exec("printf '%s' \"/tmp/hexa_expanded.$$.hexa\"")`
+            // which forked /bin/sh every invocation. Replaced with native clock()
+            // based filename — nanosecond precision avoids collision across
+            // parallel launchd-triggered hexa runs. Saves 1 fork per invocation.
+            let expanded = runtime_tmpname("hexa_expanded") + ".hexa"
+            let preproc = "'" + interp + "' '" + ml_source + "' '" + file + "' '" + expanded + "' 2>&1"
+            // raw#92 fail-loud: capture rc so loader exit(2) (FATAL module not
+            // found) propagates instead of silently falling back to the raw
+            // file. exec() drops rc → previous behavior swallowed loader
+            // fail-loud, breaking CI gates for ghost-import detection.
+            // See self/module_loader.hexa ml_iter_walk: unresolved `use` →
+            //   eprintln("[module_loader] FATAL ...") + exit(2).
+            // Distinction: rc=2 + FATAL marker = loader gave up (propagate).
+            //   Any other rc, or rc=2 without marker (defensive) = legitimate
+            //   preprocess miss → keep historical fallback semantics.
+            let preproc_pair = exec_with_status(preproc)
+            let preproc_out = preproc_pair[0]
+            let preproc_rc = preproc_pair[1]
+            // HX-load-fix: was `exec("test -f ... && printf yes || printf no")`.
+            // Use native file_exists() (codegen_c2: access(F_OK), zero I/O, no
+            // fork). 1 /bin/sh fork eliminated per `hexa run` invocation.
+            let exists = if file_exists(expanded) { "yes" } else { "no" }
+            if exists == "yes" {
+                script = expanded
+            } else {
+                if preproc_rc == 2 && preproc_out.contains("[module_loader] FATAL") {
+                    // Loader fail-loud: re-emit captured stderr (merged via
+                    // 2>&1) on parent stderr and exit(2). Do NOT downgrade to
+                    // a warn — CI gates rely on rc=2 to catch ghost imports.
+                    eprint(preproc_out)
+                    exit(2)
+                }
+                println("warn: module_loader preprocess failed, falling back to raw file")
+                if len(preproc_out) > 0 { print(preproc_out) }
+            }
+        }
+    }
+    let arg_tail = join_shell_args(extra_args)
+    // 부모 사망 시 자식 interp 자살 — Claude Code/git hook 의 SIGKILL 로
+    // dispatch 만 죽고 자식 interp 가 orphan(ppid=1) 누적되는 패턴 차단.
+    // (memory: project_hook-zombies-timeout — 1시간+ 매달리는 interp 발견)
+    // rt 34: sleep 1 → sleep 0.05 (20Hz poll) + PPID=1 fast-path.
+    //   - 1초 floor 가 hook wall 의 95% 였음 (rt 33 후 1038ms 잔여).
+    //   - kill -0 $PID 는 syscall 1회 (~수십 µs) — 20Hz 폴링도 무부하.
+    //   - [ $PPID -eq 1 ] short-circuit: 시작 시점에 이미 orphan 인 케이스
+    //     (Claude Code 가 dispatch 시작 직후 SIGKILL → PPID 가 init 으로 reparent)
+    //     를 즉시 감지하고 child 를 죽여서 wait 가 곧바로 반환되게 한다.
+    //   - macOS+linux 양쪽에서 sh/bash 모두 fractional sleep 지원 확인됨.
+    let watch = " ) & C=$!; ( while kill -0 $C 2>/dev/null; do [ $PPID -eq 1 ] && { kill -9 $C 2>/dev/null; exit; }; kill -0 $PPID 2>/dev/null || { kill -9 $C 2>/dev/null; exit; }; sleep 0.05; done ) & wait $C"
+    // rt 35: fd 3 <- 부모 stdin 복제. `( ... ) &` 의 background 서브셸은 POSIX
+    //   asynchronous_list 규칙상 stdin 이 /dev/null 로 재지정되어 자식 interp
+    //   의 read_stdin() 이 항상 "" 를 반환 → Claude Code hook systemMessage
+    //   전체 사일런트. 자식 명령에 `<&3` 를 명시해 부모 stdin 을 전달.
+    // rt 36: exit code propagation. exec() 가 stdout 만 캡처하므로 자식의
+    //   `wait $C` rc 를 __HEXA_RC=N 샌티넬로 마지막 라인에 주입, parse 후
+    //   동일 코드로 exit. 하네스 H9 처럼 exit(1) 에 의존하는 하위 훅의
+    //   차단 신뢰성 복원.
+    //
+    // 2026-04-20 silent-stderr-fallback fix (see: test/regression/
+    //   silent_fallback_eprint.hexa): 기존 구현은 shell cmd 에 `2>&1` 를
+    //   강제했음 → popen(r) 로 stdout+stderr 합쳐진 버퍼를 print() 로 부모
+    //   stdout 에만 재출력 → 자식 stderr 가 부모 stdout 으로 잘못 라우팅.
+    //   `eprintln(arr)` 이 정상적으로 stderr 에 쓰는데도 ./hexa 레이어에서
+    //   stdout 으로 휩쓸려감. fix = stderr 전용 temp 파일로 분리, exec 완료
+    //   후 eprint() 로 재방출. __HEXA_RC 샌티넬 + rc 전파 + print 타이밍
+    //   그대로 유지(popen 버퍼링 아키텍처는 바꾸지 않음).
+    // rt#36 launch: prepend HEXA_VM=1 env when --vm flag was passed.
+    //   interp / loaded scripts can branch on env_get("HEXA_VM") to
+    //   route through bc_emitter→bc_vm_run() once the parser→bc_node
+    //   bridge lands. For self-driving smoke tests (use "bc_vm" +
+    //   manual BcProto push) the flag is observable but not required.
+    let vm_env = if cmd_run_vm_mode { "HEXA_VM=1 " } else { "" }
+    // C2 Step 3 (2026-04-16): macOS SIP strips DYLD_LIBRARY_PATH and
+    // Linux preserves LD_LIBRARY_PATH only sometimes when crossing a
+    // system-signed /bin/sh boundary (popen → sh -c). @link extern FFI
+    // (HXLAYER_FFI_LIVE=1 path) needs these to resolve libhxlayer and
+    // peers. Re-export them inside the `sh -c` body so the interp child
+    // sees the original parent values.
+    let dyld_pass = env_var("DYLD_LIBRARY_PATH")
+    let ld_pass = env_var("LD_LIBRARY_PATH")
+    let mut ffi_env = ""
+    if len(dyld_pass) > 0 { ffi_env = ffi_env + "DYLD_LIBRARY_PATH='" + dyld_pass + "' " }
+    if len(ld_pass) > 0 { ffi_env = ffi_env + "LD_LIBRARY_PATH='" + ld_pass + "' " }
+    // 2026-04-20 silent-stderr-fallback fix:
+    //   `2>&1` 제거 — 자식 stderr 는 전용 temp 파일로 redirect.
+    //   stdout 만 popen 으로 캡처 → __HEXA_RC 샌티넬 복원.
+    //   stderr temp 파일은 exec 완료 후 eprint() 로 부모 stderr 로 재방출.
+    let stderr_tmp = runtime_tmpname("run_err")
+    // raw 159: --no-sentinel / HEXA_NO_SENTINEL=1 keeps stdout byte-clean
+    // by routing rc through a sidechannel file. Default behavior
+    // preserves the legacy `__HEXA_RC=N` stdout sentinel (backward
+    // compat for callers that already strip it on their end, e.g.
+    // tool/roadmap_integrate.hexa).
+    let no_sent = no_sentinel_active()
+    let rc_tmp = if no_sent { runtime_tmpname("run_rc") } else { "" }
+    let rc_inject = if no_sent { "; echo $? > '" + rc_tmp + "'" } else { "; echo __HEXA_RC=$?" }
+    let cmd = "exec 3<&0; ( " + ffi_env + vm_env + "'" + interp + "' '" + script + "'" + arg_tail + " <&3 2>'" + stderr_tmp + "'" + watch + rc_inject
+    // 2026-04-25 streaming refactor:
+    //   was `let out = exec(cmd)` (popen → full-buffer → split → print),
+    //   which forced sub-200ms-event-latency tools (hive subagent
+    //   dispatcher, hooks emitting progress) to wait for child exit.
+    //   Replaced with run_stream_with_sentinel() — popen-read per
+    //   fgets() line via exec_stream(), forward immediately through
+    //   line-buffered stdout (runtime.c setvbuf _IOLBF), strip the
+    //   trailing __HEXA_RC=N sentinel, return the parsed rc.
+    //   Stderr-temp + parent-death watchdog + rc propagation contract
+    //   unchanged. AOT-cache parity: try_cache_exec uses the same
+    //   helper byte-for-byte.
+    let rc = if no_sent { run_stream_no_sentinel(cmd, rc_tmp) } else { run_stream_with_sentinel(cmd) }
+    // 2026-04-20: stderr 재방출 — temp 파일을 read_file 로 읽어 eprint().
+    // 순서를 완벽히 보존할 수는 없어도 "stderr=stderr / stdout=stdout"
+    // 라우팅은 복원. (스트리밍 전환 후에도 stderr 는 여전히 temp 파일에
+    // 누적되었다가 자식 종료 후 일괄 방출 — interleaving 강화는 별건.)
+    if file_exists(stderr_tmp) {
+        let err_buf = read_file(stderr_tmp)
+        if len(err_buf) > 0 { eprint(err_buf) }
+        exec("rm -f '" + stderr_tmp + "'")
+    }
+    // ω-hexa-batch (2026-04-26): when running under `hexa batch ...`,
+    // a non-zero rc must NOT abort the dispatcher — the batch driver
+    // continues to the next script and reports failures in the final
+    // summary. Mode is set/cleared by cmd_batch around each cmd_run
+    // invocation; default behavior (interactive `hexa run X`) preserves
+    // exit-on-failure so shell pipelines and CI gates still propagate rc.
+    cmd_run_last_rc = rc
+    auto_marker_write(file, rc)
+    if cmd_run_no_exit_mode {
+        return
+    }
+    if rc != 0 { exit(rc) }
+}
+
+// ─── ω-hexa-batch: phase A `hexa batch` ───────────────────
+// `hexa batch <f1> <f2> ...` runs N .hexa scripts back-to-back inside
+// ONE dispatcher process. Each script still gets its own interp child
+// (full state isolation, unchanged cmd_run contract), but the host
+// dispatcher's startup cost (~2-3s wall on macOS, dominated by Mach-O
+// load + main.hexa boot) is paid ONCE rather than N times.
+//
+// Framing:
+//   - Per-script:  "===BATCH_RESULT=== file=<path> rc=<n>"  (stderr)
+//     (stdout/stderr of each script is forwarded as usual; the marker
+//      lives on stderr so callers parsing stdout JSON aren't polluted.)
+//   - Final:       "__HEXA_BATCH__ scripts=N succeeded=S failed=F wall_ms=W"
+//
+// Failures don't abort: cmd_run's exit-on-rc is suppressed via
+// cmd_run_no_exit_mode while iterating. Final exit code = 0 if all
+// succeeded, else 1 (non-zero rc summary, but specific rc values are
+// in the per-script frames so callers can recover detail).
+//
+// Phase A scope (deferred to Phase B): manifest file format, parallel
+// scheduling, per-script env isolation, in-interp script chaining.
+let mut cmd_run_no_exit_mode = false
+let mut cmd_run_last_rc = 0
+
+fn cmd_batch(files) {
+    let n = len(files)
+    if n == 0 {
+        eprintln("error: 'batch' requires one or more <file> arguments")
+        exit(2)
+    }
+    let t0 = clock()
+    let mut succeeded = 0
+    let mut failed = 0
+    let mut bi = 0
+    cmd_run_no_exit_mode = true
+    while bi < n {
+        let f = files[bi]
+        cmd_run_last_rc = 0
+        cmd_run(f, [])
+        let rc = cmd_run_last_rc
+        // Per-script frame on stderr — keeps stdout clean for JSON-emitting scripts.
+        eprintln("===BATCH_RESULT=== file=" + f + " rc=" + to_string(rc))
+        if rc == 0 {
+            succeeded = succeeded + 1
+        } else {
+            failed = failed + 1
+        }
+        bi = bi + 1
+    }
+    cmd_run_no_exit_mode = false
+    let wall_ms = (clock() - t0) * 1000.0
+    // Final sentinel (stderr) — bridge_health.sh-style callers can parse.
+    eprintln("__HEXA_BATCH__ scripts=" + to_string(n) + " succeeded=" + to_string(succeeded) + " failed=" + to_string(failed) + " wall_ms=" + to_string(wall_ms))
+    if failed > 0 { exit(1) }
+}
+
+// ─── bt 81: hexa bench harness ────────────────────────────
+// 목적: 자체 호스트 .hexa 스크립트를 N회 반복 실행하면서
+//       wall_s, RSS(KB), HEXA_ALLOC_STATS 카운터를 수집하고
+//       median/min/max 표 또는 JSON을 출력한다. --compare 모드는
+//       동일 파일을 두 바이너리로 돌려 delta % 를 보여줌으로써
+//       interp vs hexa_v2/v3, 또는 빌드 전/후 회귀 확인 용도.
+//
+// 설계:
+//   - 측정은 외부 `/usr/bin/time` 에 위임 — 인터프리터 외부에서
+//     wall/RSS 를 객관적으로 캡처. macOS는 `-l`(BSD), Linux는 `-v`(GNU).
+//   - HEXA_ALLOC_STATS=1 환경변수로 self/runtime.c 의 atexit dump를
+//     stderr 로 받아 grep + awk 로 5개 카운터(array_new/push/grow/
+//     map_new/map_set) 추출.
+//   - median 은 외부 sort 로 정렬한 결과의 중간 인덱스. N=3 권장.
+//   - JSON 직렬화는 hexa 표준 라이브러리에 직렬화기가 없어
+//     문자열 직접 조립 — 키 순서/이스케이프 고정.
+//
+// 한계:
+//   - run-to-run 분산은 BSD/GNU time 해상도(10ms)에 의해 결정.
+//     ns/op 측정에는 self/bench_env_get.hexa 류의 in-process clock()
+//     기반 마이크로벤치가 더 적합.
+//   - 첫 회 실행은 cold (디스크 캐시) — N>=3 권장, median 사용으로 흡수.
+
+fn bench_time_cmd(bin, file) {
+    // /usr/bin/time 호출 한 회. 결과 stderr 를 임시파일에 캡처해서
+    // grep/awk 로 wall/RSS 추출. stdout 은 통째로 버린다(스크립트 무관).
+    // tmp 경로는 PID 구분으로 동시 호출 충돌 방지(bt 37 패턴 차용).
+    //
+    // 중요: `./hexa run <file>` dispatcher 는 interp child 의 stderr 를 자기
+    // stdout 으로 합치면서 동시에 `print(out)` 으로 다시 stdout 에 흘리기 때문에,
+    // interp 의 HEXA_ALLOC_STATS dump 가 parent 의 stderr 에 도달하지 못한다.
+    // 따라서 parent 의 HEXA_ALLOC_STATS 만 stats_file 에 남고(작은 수치),
+    // 진짜 워크로드 카운터는 사라진다.
+    //
+    // 회피: interp binary(`build/hexa_interp`) 를 직접 호출. 이렇게 하면
+    // 인터프리터가 단일 프로세스로 돌고 atexit dump 가 해당 프로세스의 stderr
+    // (= /usr/bin/time stderr 에 함께 묶여 stats_file 에 적힘) 에 정확히 한 번만
+    // 출력된다. `bin` 인자가 ./hexa 면 같은 디렉토리의 build/hexa_interp 사용,
+    // 그렇지 않으면 (--compare 등) bin 자체가 interp-호환 인터프리터라고
+    // 가정하고 직접 실행.
+    let stats_file = exec("printf '%s' \"/tmp/hexa_bench_stats.$$.$RANDOM.txt\"")
+    let alloc_env = "HEXA_ALLOC_STATS=1"
+    let flag = if is_macos() { "-l" } else { "-v" }
+    // bin 처리 룰:
+    //   1) bin basename 이 'hexa_interp*' 으로 시작 → 직접 호출(파일만 인자).
+    //   2) bin 옆에 build/hexa_interp 존재 → 그것을 직접 호출.
+    //   3) 그 외 → bin run <file> (./hexa style dispatcher 가정).
+    // 1) 과 2) 는 atexit dump 가 단일 프로세스에서 한 번만 나오므로
+    // HEXA_ALLOC_STATS 가 정확하게 캡처된다.
+    let bn = exec("basename '" + bin + "' | tr -d ' \\n'")
+    let bn_starts_interp = exec("printf '%s' '" + bn + "' | awk '{ if (index($0, \"hexa_interp\") == 1) print \"yes\"; else print \"no\" }' | tr -d ' \\n'")
+    let dir = exec("dirname '" + bin + "' | tr -d ' \\n'")
+    let interp_path = dir + "/build/hexa_interp"
+    let has_interp = exec("test -x '" + interp_path + "' && printf yes || printf no")
+    let mut runner = bin
+    let mut runner_args = " run "
+    if bn_starts_interp == "yes" {
+        // bin 자체가 interp binary — 그대로 사용, run 서브커맨드 없음.
+        runner_args = " "
+    } else if has_interp == "yes" {
+        // bin 은 dispatcher (./hexa) — 옆의 interp 직접 호출.
+        runner = interp_path
+        runner_args = " "
+    }
+    let cmd = alloc_env + " /usr/bin/time " + flag + " '" + runner + "'" + runner_args + "'" + file + "' > /dev/null 2> '" + stats_file + "'"
+    let _ = exec(cmd)
+    return stats_file
+}
+
+fn parse_wall_s(stats_file) {
+    // BSD: line like "        0.07 real         0.00 user         0.01 sys"
+    //   awk '/ real/ {print $1; exit}' 로 첫 토큰만.
+    // GNU: "Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.07"
+    //   tail token 을 ':' 로 split 후 마지막 두 필드를 60×+합산.
+    if is_macos() {
+        let v = exec("awk '/ real/ {print $1; exit}' '" + stats_file + "' 2>/dev/null | tr -d ' \\n'")
+        if len(v) == 0 { return "0.0" }
+        return v
+    }
+    // GNU time path
+    let raw = exec("awk -F': ' '/Elapsed/ {print $NF; exit}' '" + stats_file + "' 2>/dev/null | tr -d ' \\n'")
+    if len(raw) == 0 { return "0.0" }
+    // raw 형식: "m:ss.cc" 또는 "h:mm:ss"
+    let parsed = exec("printf '%s' '" + raw + "' | awk -F: '{ if (NF==2) printf \"%.3f\", $1*60+$2; else if (NF==3) printf \"%.3f\", $1*3600+$2*60+$3; else printf \"%s\", $0 }'")
+    return parsed
+}
+
+fn parse_rss_kb(stats_file) {
+    // BSD: "             1474560  maximum resident set size"  (bytes!)
+    //   → divide by 1024 to get KB.
+    // GNU: "Maximum resident set size (kbytes): 1234"  (already KB)
+    if is_macos() {
+        let bytes = exec("awk '/maximum resident set size/ {print $1; exit}' '" + stats_file + "' 2>/dev/null | tr -d ' \\n'")
+        if len(bytes) == 0 { return "0" }
+        let kb = exec("printf '%s' '" + bytes + "' | awk '{ printf \"%d\", $1/1024 }'")
+        return kb
+    }
+    let v = exec("awk -F': ' '/Maximum resident set size/ {print $2; exit}' '" + stats_file + "' 2>/dev/null | tr -d ' \\n'")
+    if len(v) == 0 { return "0" }
+    return v
+}
+
+fn parse_alloc_counter(stats_file, key) {
+    // self/runtime.c 의 atexit dump 라인은 한 줄짜리:
+    //   [HEXA_ALLOC_STATS] array_new=N push=N grow=N reserve=N str_concat=N map_new=N map_set=N ...
+    // 주의: `./hexa` (parent dispatcher) + interp (child interpreter) 가 둘 다
+    // dump 라인을 출력해서 한 stderr 파일에 두 개가 적힌다. 첫 줄은 dispatcher
+    // overhead(작은 숫자)이고, 두 번째 줄이 실제 측정 대상(스크립트). `tail -1`
+    // 로 마지막 줄(=interp child) 을 잡아서 워크로드 통계를 정확히 캡처.
+    let cmd = "grep '\\[HEXA_ALLOC_STATS\\]' '" + stats_file + "' 2>/dev/null | tail -1 | awk -v k='" + key + "' '{ for (i=1;i<=NF;i++) { if (index($i, k\"=\") == 1) { split($i, p, \"=\"); print p[2]; exit } } }' | tr -d ' \\n'"
+    let v = exec(cmd)
+    if len(v) == 0 { return "0" }
+    return v
+}
+
+fn median_str(values) {
+    // 문자열 숫자 배열 → median 문자열. sort -g 사용(소수점 처리).
+    // empty 보호: 0 반환.
+    let n = len(values)
+    if n == 0 { return "0" }
+    let mut joined = ""
+    let mut i = 0
+    while i < n {
+        joined = joined + values[i] + "\n"
+        i = i + 1
+    }
+    let mid = n / 2 + 1
+    // hexa_v2 트랜스파일러는 builtin `str()` dispatch 가 없어
+    // 빈 문자열 + int 를 통한 implicit hexa_to_string 으로 변환.
+    let mid_s = "" + mid
+    let cmd = "printf '%s' '" + joined + "' | sort -g | sed -n '" + mid_s + "p' | tr -d ' \\n'"
+    let m = exec(cmd)
+    if len(m) == 0 { return values[0] }
+    return m
+}
+
+fn min_str(values) {
+    let n = len(values)
+    if n == 0 { return "0" }
+    let mut joined = ""
+    let mut i = 0
+    while i < n { joined = joined + values[i] + "\n"; i = i + 1 }
+    let m = exec("printf '%s' '" + joined + "' | sort -g | head -1 | tr -d ' \\n'")
+    if len(m) == 0 { return values[0] }
+    return m
+}
+
+fn max_str(values) {
+    let n = len(values)
+    if n == 0 { return "0" }
+    let mut joined = ""
+    let mut i = 0
+    while i < n { joined = joined + values[i] + "\n"; i = i + 1 }
+    let m = exec("printf '%s' '" + joined + "' | sort -g | tail -1 | tr -d ' \\n'")
+    if len(m) == 0 { return values[0] }
+    return m
+}
+
+// 결과는 hexa_v2 트랜스파일러가 map 리터럴을 지원하지 않아
+// 11-원소 배열로 반환 (인덱스 컨벤션 — bench_idx_* 헬퍼).
+//
+// idx 의미:
+//   0 median_wall_s   1 min_wall_s     2 max_wall_s
+//   3 median_rss_kb   4 min_rss_kb     5 max_rss_kb
+//   6 array_new       7 array_push     8 array_grow
+//   9 map_new        10 map_set
+fn bench_run_one_binary(bin, file, runs) {
+    let mut wall_arr = []
+    let mut rss_arr = []
+    let mut an_arr = []
+    let mut ap_arr = []
+    let mut ag_arr = []
+    let mut mn_arr = []
+    let mut ms_arr = []
+    let mut i = 0
+    while i < runs {
+        let sf = bench_time_cmd(bin, file)
+        wall_arr.push(parse_wall_s(sf))
+        rss_arr.push(parse_rss_kb(sf))
+        an_arr.push(parse_alloc_counter(sf, "array_new"))
+        ap_arr.push(parse_alloc_counter(sf, "push"))
+        ag_arr.push(parse_alloc_counter(sf, "grow"))
+        mn_arr.push(parse_alloc_counter(sf, "map_new"))
+        ms_arr.push(parse_alloc_counter(sf, "map_set"))
+        let _ = exec("rm -f '" + sf + "' 2>/dev/null")
+        i = i + 1
+    }
+    let mut r = []
+    r.push(median_str(wall_arr))
+    r.push(min_str(wall_arr))
+    r.push(max_str(wall_arr))
+    r.push(median_str(rss_arr))
+    r.push(min_str(rss_arr))
+    r.push(max_str(rss_arr))
+    r.push(median_str(an_arr))
+    r.push(median_str(ap_arr))
+    r.push(median_str(ag_arr))
+    r.push(median_str(mn_arr))
+    r.push(median_str(ms_arr))
+    return r
+}
+
+fn bench_print_table(bin, file, runs, r) {
+    println("=== hexa bench ===")
+    println("  binary:    " + bin)
+    println("  file:      " + file)
+    println("  runs:      " + runs)
+    println("")
+    println("  metric                median        min           max")
+    println("  ────────────────────  ────────────  ────────────  ────────────")
+    println("  wall (s)              " + r[0] + "         " + r[1] + "         " + r[2])
+    println("  rss  (KB)             " + r[3] + "         " + r[4] + "         " + r[5])
+    println("")
+    println("  HEXA_ALLOC_STATS (median)")
+    println("    array_new:  " + r[6])
+    println("    array_push: " + r[7])
+    println("    array_grow: " + r[8])
+    println("    map_new:    " + r[9])
+    println("    map_set:    " + r[10])
+}
+
+fn bench_print_json(file, runs, r) {
+    // 수동 직렬화 — 키 순서 고정, 값은 숫자 그대로 (인용 없음).
+    // file 만 문자열로 quote. 외부 jq/python json.load 로 검증 가능.
+    // hexa_v2 트랜스파일러가 다중행 `+` 연결을 지원하지 않아 한 줄 누적.
+    let mut s = "{"
+    s = s + "\"file\":\"" + file + "\","
+    s = s + "\"runs\":" + runs + ","
+    s = s + "\"median_wall_s\":" + r[0] + ","
+    s = s + "\"min_wall_s\":" + r[1] + ","
+    s = s + "\"max_wall_s\":" + r[2] + ","
+    s = s + "\"median_rss_kb\":" + r[3] + ","
+    s = s + "\"min_rss_kb\":" + r[4] + ","
+    s = s + "\"max_rss_kb\":" + r[5] + ","
+    s = s + "\"alloc_stats\":{"
+    s = s + "\"array_new\":" + r[6] + ","
+    s = s + "\"array_push\":" + r[7] + ","
+    s = s + "\"array_grow\":" + r[8] + ","
+    s = s + "\"map_new\":" + r[9] + ","
+    s = s + "\"map_set\":" + r[10]
+    s = s + "}}"
+    println(s)
+}
+
+fn bench_print_compare(file, runs, ra, rb, bin_a, bin_b) {
+    // delta% = (B - A) / A * 100  ;  positive = B is slower / heavier.
+    println("=== hexa bench --compare ===")
+    println("  file:      " + file)
+    println("  runs:      " + runs)
+    println("  A:         " + bin_a)
+    println("  B:         " + bin_b)
+    println("")
+    println("  metric         A (median)    B (median)    delta%")
+    println("  ─────────────  ────────────  ────────────  ────────")
+    let aw = ra[0]
+    let bw = rb[0]
+    let dw = exec("awk -v a='" + aw + "' -v b='" + bw + "' 'BEGIN { if (a+0==0) printf \"n/a\"; else printf \"%+.2f\", (b-a)/a*100 }'")
+    let ar = ra[3]
+    let br = rb[3]
+    let dr = exec("awk -v a='" + ar + "' -v b='" + br + "' 'BEGIN { if (a+0==0) printf \"n/a\"; else printf \"%+.2f\", (b-a)/a*100 }'")
+    println("  wall (s)       " + aw + "         " + bw + "         " + dw + "%")
+    println("  rss  (KB)      " + ar + "         " + br + "         " + dr + "%")
+    println("")
+    println("  alloc-stats (median: A → B)")
+    println("    array_new:  " + ra[6] + " → " + rb[6])
+    println("    array_push: " + ra[7] + " → " + rb[7])
+    println("    array_grow: " + ra[8] + " → " + rb[8])
+    println("    map_new:    " + ra[9] + " → " + rb[9])
+    println("    map_set:    " + ra[10] + " → " + rb[10])
+}
+
+// digit-string → int. 네이티브 hexa(dispatch+) 는 string 인덱싱이 없어 interp
+// 와 다르게 s[i] 가 동작하지 않는다(hexa_index_get → hexa_array_get fall-through
+// 으로 'index out of bounds' 발생). 외부 awk 위임 후 int 타입으로 누적.
+fn parse_int_str(s) {
+    // 1차: awk 로 양의 정수만 통과시키고 길이 캡 5(<=99999) 적용.
+    let cleaned = exec("printf '%s' '" + s + "' | awk '{ if ($1 ~ /^[0-9]+$/ && length($1) <= 5) print int($1); else print 0 }' | tr -d ' \\n'")
+    if len(cleaned) == 0 { return 0 }
+    if cleaned == "0" { return 0 }
+    // 2차: 한 번에 하나씩 trim 하면서 자릿수 누적.
+    // awk 가 "23" 식으로 돌려주지만 hexa 에서 int 타입으로 끌어와야 한다.
+    // sequence of `case ${s} in 1*) printf 1 ;; ...` 식의 1자리 검사로
+    // string→int 변환을 우회한다. interp 에서는 직접 변환 가능.
+    // hexa_v2 트랜스파일러는 빈 string match 를 정확히 처리 못하므로
+    // grep -c 로 카운트 비교를 통한 0/N 확인.
+    //
+    // MVP: cleaned 가 "1".."99999" 범위면 길이별로 분기, awk 로 cumulative
+    // 곱셈 수행. case 문 안 쓰고 awk -v 로 처리.
+    //
+    // 실제로는 5번까지 1-digit 추출 후 hexa int 로 변환:
+    let len_cmd = exec("printf '%s' '" + cleaned + "' | awk '{ print length($1) }' | tr -d ' \\n'")
+    let mut result = 0
+    if len_cmd == "1" {
+        result = digit_to_int(cleaned)
+    } else if len_cmd == "2" {
+        let d0 = exec("printf '%s' '" + cleaned + "' | cut -c1")
+        let d1 = exec("printf '%s' '" + cleaned + "' | cut -c2")
+        result = digit_to_int(d0) * 10 + digit_to_int(d1)
+    } else if len_cmd == "3" {
+        let d0 = exec("printf '%s' '" + cleaned + "' | cut -c1")
+        let d1 = exec("printf '%s' '" + cleaned + "' | cut -c2")
+        let d2 = exec("printf '%s' '" + cleaned + "' | cut -c3")
+        result = digit_to_int(d0) * 100 + digit_to_int(d1) * 10 + digit_to_int(d2)
+    } else if len_cmd == "4" {
+        let d0 = exec("printf '%s' '" + cleaned + "' | cut -c1")
+        let d1 = exec("printf '%s' '" + cleaned + "' | cut -c2")
+        let d2 = exec("printf '%s' '" + cleaned + "' | cut -c3")
+        let d3 = exec("printf '%s' '" + cleaned + "' | cut -c4")
+        result = digit_to_int(d0) * 1000 + digit_to_int(d1) * 100 + digit_to_int(d2) * 10 + digit_to_int(d3)
+    }
+    return result
+}
+
+fn digit_to_int(d) {
+    // 한 자리 숫자 string → int. 비교 평등성으로 분기 (string indexing 없이).
+    if d == "0" { return 0 }
+    if d == "1" { return 1 }
+    if d == "2" { return 2 }
+    if d == "3" { return 3 }
+    if d == "4" { return 4 }
+    if d == "5" { return 5 }
+    if d == "6" { return 6 }
+    if d == "7" { return 7 }
+    if d == "8" { return 8 }
+    if d == "9" { return 9 }
+    return 0
+}
+
+fn cmd_bench(file, runs, json_mode, compare_bin) {
+    // 자기 자신(./hexa) 을 기본 A, --compare 인자가 있으면 그것이 B.
+    // cwd 의 ./hexa 우선, 없으면 $HEXA_LANG/hexa fallback
+    // (워크트리/포크에서도 동작하도록).
+    let cwd_hexa = exec("printf '%s/hexa' \"$(pwd)\"")
+    let cwd_chk = exec("test -x '" + cwd_hexa + "' && printf yes || printf no")
+    let mut self_bin = ""
+    if cwd_chk == "yes" {
+        self_bin = cwd_hexa
+    } else {
+        self_bin = exec("printf '%s' \"$HEXA_LANG/hexa\"")
+    }
+    let exists = exec("test -f '" + file + "' && printf yes || printf no")
+    if exists != "yes" {
+        println("error: bench file not found: " + file)
+        return
+    }
+    let bin_check = exec("test -x '" + self_bin + "' && printf yes || printf no")
+    if bin_check != "yes" {
+        println("error: ./hexa not executable at " + self_bin)
+        return
+    }
+    let ra = bench_run_one_binary(self_bin, file, runs)
+    if len(compare_bin) > 0 {
+        let cb_check = exec("test -x '" + compare_bin + "' && printf yes || printf no")
+        if cb_check != "yes" {
+            println("error: --compare binary not executable: " + compare_bin)
+            return
+        }
+        let rb = bench_run_one_binary(compare_bin, file, runs)
+        if json_mode {
+            // compare + json: a/b 각각의 median 만 직렬화 (단순화).
+            let mut j = "{\"file\":\"" + file + "\",\"runs\":" + runs
+            j = j + ",\"a\":{\"binary\":\"" + self_bin + "\",\"median_wall_s\":" + ra[0]
+            j = j + ",\"median_rss_kb\":" + ra[3] + "}"
+            j = j + ",\"b\":{\"binary\":\"" + compare_bin + "\",\"median_wall_s\":" + rb[0]
+            j = j + ",\"median_rss_kb\":" + rb[3] + "}}"
+            println(j)
+        } else {
+            bench_print_compare(file, runs, ra, rb, self_bin, compare_bin)
+        }
+        return
+    }
+    if json_mode {
+        bench_print_json(file, runs, ra)
+    } else {
+        bench_print_table(self_bin, file, runs, ra)
+    }
+}
+
+// ── T27: cmd_parse — parse-only verification (no exec, no codegen) ──
+// 목적: L0 guard 등이 `.hexa` 파일 구문 유효성만 확인하고 싶을 때, 현재는
+//       `hexa run` (실제 실행) 으로 검증하는 안전 문제가 있었다. `hexa parse`
+//       는 트랜스파일러를 호출해 파싱까지만 수행하고, 결과 .c 는 버리며
+//       "Parse error" 라인 존재 여부로 exit code 를 결정한다.
+//
+// 구현 메모:
+//   - hexa_v2 는 현재 파싱 실패를 stdout 에 "Parse error at L:C: ..." 로 찍고도
+//     exit 0 하는 특성이 있어 (코드생성은 best-effort 로 진행), 출력 grep 으로
+//     판정한다. 바이너리 자체 exit 코드 버그는 별도 추적.
+//   - 출력 .c 는 /tmp/hexa_parse_check_$$.c 로 임시. 후처리 삭제.
+//   - 성공: "OK" 한 줄, exit 0. 실패: 파서 에러 라인 그대로 + exit(1).
+fn cmd_parse(src) {
+    let src_exists = exec("test -f '" + src + "' && printf yes || printf no")
+    if src_exists != "yes" {
+        println("error: source file not found: " + src)
+        exit(1)
+    }
+    let v2 = resolve_hexa_v2()
+    if len(v2) == 0 {
+        die_no_hexa_v2()
+    }
+    // /tmp/hexa_parse_check.<PID>.c — 셸 PID 로 충돌 회피.
+    let tmp_c = exec("printf '/tmp/hexa_parse_check.%s.c' \"$$\"")
+    let trans = v2 + " '" + src + "' '" + tmp_c + "' 2>&1"
+    let r = exec(trans)
+    // 정리 — 생성되었든 안 되었든 best-effort.
+    let _rm = exec("rm -f '" + tmp_c + "' 2>/dev/null")
+    // hexa_v2 출력에 "Parse error" 라인이 있으면 파서 실패.
+    // grep -q 는 일치 시 exit 0, 미일치 시 exit 1.
+    let has_err = exec("printf '%s' \"" + r + "\" | grep -q 'Parse error' && printf yes || printf no")
+    if has_err == "yes" {
+        // 원본 stderr/stdout 재출력 (사용자가 라인/컬럼 정보를 볼 수 있도록).
+        println(r)
+        exit(1)
+    }
+    println("OK: " + src + " parses cleanly")
+}
+
+// == Entry ==
+// 런타임이 argv[0]을 중복 삽입하므로 실제 사용자 인자는 av[2]부터 시작.
+// av[0]=exec경로, av[1]=exec경로(중복), av[2]=서브커맨드, av[3..]=서브 인자
+let av = args()
+
+// ─── busybox-pattern argv0 dispatch ───
+// <user-home>/.hx/shared/bin/<name> is a symlink to the hexa binary.
+// When invoked as that name, av[0] basename != "hexa" — we redirect to
+// tool/cmd_<name>.hexa (or special cases) via `hexa run`.
+let mut argv0_shim = ""
+if len(av) > 0 {
+    let av0 = av[0]
+    // basename(av0)
+    let mut slash = -1
+    let mut bi = len(av0) - 1
+    while bi >= 0 {
+        if av0.substring(bi, bi + 1) == "/" {
+            slash = bi
+            bi = -1
+        } else {
+            bi = bi - 1
+        }
+    }
+    let av0_base = if slash >= 0 { av0.substring(slash + 1, len(av0)) } else { av0 }
+    // self-name 스킵 — hexa 바이너리 본인 이름 계열.
+    // 1) "hexa" prefix — hexa, hexa_v2, hexa_interp, hexa_new, hexa.bak...
+    // 2) common aliases
+    let mut is_self = false
+    if len(av0_base) >= 4 && av0_base.substring(0, 4) == "hexa" { is_self = true }
+    if av0_base == "interp" || av0_base == "main" { is_self = true }
+    if !is_self && len(av0_base) > 0 {
+        argv0_shim = av0_base
+    }
+}
+
+if len(argv0_shim) > 0 {
+    // Resolve handler — prefer tool/cmd_<name>.hexa, then special cases.
+    let inst_dir = install_dir_from_argv0()
+    let mut repo = inst_dir
+    if len(repo) == 0 {
+        repo = exec("pwd 2>/dev/null | tr -d '\\n'")
+    }
+    let conv_path = repo + "/tool/cmd_" + argv0_shim + ".hexa"
+    let conv_chk = exec("test -f '" + conv_path + "' && printf yes || printf no")
+    let mut handler_path = ""
+    if conv_chk == "yes" {
+        handler_path = conv_path
+    } else {
+        // fallback: special cases
+        if argv0_shim == "doctor" {
+            handler_path = repo + "/tool/doctor.hexa"
+        } else if argv0_shim == "watchd" {
+            handler_path = repo + "/tool/watchd.hexa"
+        } else if argv0_shim == "install-os" || argv0_shim == "install_os" {
+            handler_path = repo + "/tool/install_os.hexa"
+        }
+    }
+    if len(handler_path) == 0 {
+        println("unknown shim command: " + argv0_shim)
+        exit(1)
+    }
+    let handler_chk = exec("test -f '" + handler_path + "' && printf yes || printf no")
+    if handler_chk != "yes" {
+        println("shim handler not found: " + handler_path)
+        exit(1)
+    }
+    // Re-invoke this binary as `hexa run <handler>` forwarding user args.
+    // av[0] = shim path; prefer resolved canonical hexa binary.
+    let mut hexa_bin = repo + "/hexa"
+    let hb_chk = exec("test -x '" + hexa_bin + "' && printf yes || printf no")
+    if hb_chk != "yes" {
+        // fallback to argv0 (may be symlink — os executes it anyway).
+        hexa_bin = av[0]
+    }
+    // Build command: <hexa_bin> run <handler> <user args starting at av[2]>
+    // Args are shell-quoted via single-quote wrapping + ' -> '\'' escape.
+    let mut cmd = "'" + hexa_bin + "' run '" + handler_path + "'"
+    let mut ai = 2
+    while ai < len(av) {
+        let a = av[ai]
+        // single-quote escape
+        let mut qp: [string] = []
+        let mut qi = 0
+        while qi < len(a) {
+            let ch = a.substring(qi, qi + 1)
+            if ch == "'" {
+                qp.push("'\\''")
+            } else {
+                qp.push(ch)
+            }
+            qi = qi + 1
+        }
+        cmd = cmd + " '" + qp.join("") + "'"
+        ai = ai + 1
+    }
+    // Stream through — use system(); exec() captures stdout but we want
+    // interactive passthrough. Use `sh -c 'cmd >&2' || true`-free path:
+    // simplest = exec() and print result, propagating non-zero via grep.
+    let out = exec(cmd + " 2>&1; echo \"__HEXA_SHIM_RC__=$?\"")
+    // Extract trailing rc marker
+    let marker = "__HEXA_SHIM_RC__="
+    let mlen = len(marker)
+    let mut midx = -1
+    let mut si = len(out) - mlen
+    while si >= 0 {
+        if out.substring(si, si + mlen) == marker {
+            midx = si
+            si = -1
+        } else {
+            si = si - 1
+        }
+    }
+    if midx >= 0 {
+        let body = out.substring(0, midx)
+        let rc_str = out.substring(midx + mlen, len(out))
+        print(body)
+        let rc = parse_int_str(rc_str)
+        exit(rc)
+    } else {
+        println(out)
+        exit(0)
+    }
+}
+// ─── end argv0 dispatch ───
+
+if len(av) < 3 {
+    cmd_help()
+} else {
+    let sub = av[2]
+    if env_var("HEXA_DISPATCH_TRACE") == "1" {
+        eprintln("[dispatch] sub=[" + sub + "] len=" + str(len(sub)) + " ewd=" + str(ends_with_dot_hexa(sub)))
+    }
+    if sub == "help" || sub == "-h" || sub == "--help" {
+        cmd_help()
+    } else if sub == "version" || sub == "-v" || sub == "--version" {
+        cmd_version()
+    } else if sub == "status" {
+        cmd_status()
+    } else if sub == "cc" {
+        // bt 50 Phase C: `hexa cc --regen` 신규 자동 재생성 파이프라인
+        if len(av) >= 4 && av[3] == "--regen" {
+            cmd_regen_cc()
+        } else {
+            cmd_cc()
+        }
+    } else if sub == "gc" || sub == "aot-gc" || sub == "--aot-gc" {
+        // bt 38: .hexa-cache GC — mtime > 30일 슬롯 정리
+        // L7 omega-cycle: `aot-gc` / `--aot-gc` aliases for explicit
+        // sweep (matches design spec). Same behavior as `gc`.
+        //   hexa gc               실제 삭제 (기본 30일)
+        //   hexa gc --dry-run     후보만 나열 (삭제 없음)
+        //   hexa gc --days N      임계 일수 오버라이드 (테스트용)
+        let mut gc_dry = false
+        let mut gc_days = "30"
+        let mut gi = 3
+        while gi < len(av) {
+            let a = av[gi]
+            if a == "--dry-run" {
+                gc_dry = true
+                gi = gi + 1
+            } else if a == "--days" {
+                if gi + 1 < len(av) {
+                    gc_days = av[gi + 1]
+                    gi = gi + 2
+                } else {
+                    gi = gi + 1
+                }
+            } else {
+                gi = gi + 1
+            }
+        }
+        cmd_gc(gc_dry, gc_days)
+    } else if sub == "run" {
+        if len(av) < 4 {
+            println("error: 'run' requires <file>")
+            cmd_help()
+        } else {
+            // rt#36 launch: parse `--vm` opt-in flag (rt36-D bridge plumbing).
+            //   - Accepted positions: `hexa run --vm <file> [args...]`
+            //                         `hexa run <file> --vm [args...]`
+            //                         `hexa run <file> [args...] --vm`
+            //   - The flag is *stripped* from forwarded run_args so the
+            //     script's own args() does not see it.
+            //   - When set, cmd_run exports HEXA_VM=1 to the interp child.
+            //     interp / loaded scripts can branch on env_get("HEXA_VM")
+            //     to route through bc_emitter→bc_vm_run() once the
+            //     parser→bc_node_pool bridge lands (rt#36-D, blocked).
+            //   - For now, scripts that already self-drive bc_vm (e.g.
+            //     self/test_bc_vm_smoke.hexa via raw BcProto push +
+            //     bc_vm_run() call) execute identically with or without
+            //     the flag — the env var is purely advisory until the
+            //     AST→bc bridge exists.
+            // raw 159 (2026-04-28): `--no-sentinel` opt-in flag — same
+            //   accepted positions and flag-strip semantics as `--vm`.
+            //   Suppresses the trailing `__HEXA_RC=N` stdout sentinel
+            //   (rc routed through a sidechannel file instead). Equivalent
+            //   to setting HEXA_NO_SENTINEL=1 in the environment.
+            //   Use case: callers parse the child's stdout directly
+            //   (e.g. `hexa run script.hexa | jq`, JSON.parse pipelines,
+            //   hive fake-* test fixtures spawned from .ts via spawn).
+            // bt 39: av[4..] = 스크립트 전달 인자 (argv forwarding)
+            let mut run_args = []
+            let mut want_vm = false
+            let mut want_no_sentinel = false
+            let mut file_arg = ""
+            let mut ri = 3
+            while ri < len(av) {
+                let a = av[ri]
+                if a == "--vm" {
+                    want_vm = true
+                } else if a == "--no-sentinel" {
+                    want_no_sentinel = true
+                } else if len(file_arg) == 0 {
+                    file_arg = a
+                } else {
+                    run_args.push(a)
+                }
+                ri = ri + 1
+            }
+            if len(file_arg) == 0 {
+                println("error: 'run' requires <file>")
+                cmd_help()
+            } else {
+                cmd_run_no_sentinel_mode = want_no_sentinel
+                cmd_run_dispatch(file_arg, run_args, want_vm)
+                cmd_run_no_sentinel_mode = false
+            }
+        }
+    } else if sub == "batch" {
+        // ω-hexa-batch (2026-04-26 phase A): N scripts, ONE dispatcher
+        // boot. av[3..] = list of .hexa file paths (Phase A: positional
+        // only; manifest-file / stdin-list deferred to Phase B).
+        if len(av) < 4 {
+            println("error: 'batch' requires one or more <file> arguments")
+            cmd_help()
+        } else {
+            let mut batch_files = []
+            let mut bi2 = 3
+            while bi2 < len(av) {
+                batch_files.push(av[bi2])
+                bi2 = bi2 + 1
+            }
+            cmd_batch(batch_files)
+        }
+    } else if sub == "bench" {
+        // bt 81: hexa bench <file> [--runs N] [--json] [--compare <other_bin>]
+        if len(av) < 4 {
+            println("error: 'bench' requires <file>")
+            cmd_help()
+        } else {
+            // hexa_v2 트랜스파일러: dispatch 블록 내부에서 `let mut` 시퀀스의
+            // 일부 HexaVal decl 이 누락되는 회귀가 확인됨(원인 추적은 별도
+            // 작업). 회피책: 모든 인자를 단일 배열 `bopts` 에 담아 cmd_bench 로
+            // 한 번에 위임. 배열 push/index 는 정상.
+            //   bopts[0] = file (str)
+            //   bopts[1] = runs (int)
+            //   bopts[2] = json_mode (0/1)
+            //   bopts[3] = compare_bin (str, "" if absent)
+            let mut bopts = [av[3], 3, 0, ""]
+            let mut bi = 4
+            while bi < len(av) {
+                let a = av[bi]
+                if a == "--runs" {
+                    if bi + 1 < len(av) {
+                        let parsed = parse_int_str(av[bi + 1])
+                        if parsed > 0 { bopts = [bopts[0], parsed, bopts[2], bopts[3]] }
+                        bi = bi + 2
+                    } else {
+                        bi = bi + 1
+                    }
+                } else if a == "--json" {
+                    bopts = [bopts[0], bopts[1], 1, bopts[3]]
+                    bi = bi + 1
+                } else if a == "--compare" {
+                    if bi + 1 < len(av) {
+                        bopts = [bopts[0], bopts[1], bopts[2], av[bi + 1]]
+                        bi = bi + 2
+                    } else {
+                        bi = bi + 1
+                    }
+                } else {
+                    bi = bi + 1
+                }
+            }
+            cmd_bench(bopts[0], bopts[1], bopts[2] == 1, bopts[3])
+        }
+    } else if sub == "parse" {
+        // T27: parse-only check — exit 0 OK, exit 1 with error on stderr/stdout.
+        if len(av) < 4 {
+            println("error: 'parse' requires <file>")
+            cmd_help()
+            exit(1)
+        } else {
+            cmd_parse(av[3])
+        }
+    } else if sub == "lsp" || sub == "--lsp" {
+        // LSP server entry — editors/vscode/extension.js spawns `hexa --lsp`.
+        // Forward to interp interpreter running self/lsp.hexa (run_lsp loop).
+        // cmd_run handles interp locate + stdin fd 3 plumbing + rc propagation.
+        cmd_run("self/lsp.hexa", [])
+    } else if sub == "build" {
+        if len(av) < 4 {
+            println("error: 'build' requires <file>")
+            cmd_help()
+        } else {
+            // hexa_v2 트랜스파일러 회귀: dispatch 블록 내부 `let src = av[3]`
+            // decl 이 누락되어 cmd_build(src, ...) 가 undeclared 오류. bench
+            // 와 동일한 패턴으로 배열 래핑 우회 — bopts[0]=src, [1]=out.
+            let mut bopts = [av[3], "build/artifacts/app", "0"]
+            let mut i = 4
+            while i < len(av) {
+                if av[i] == "-o" {
+                    if i + 1 < len(av) {
+                        bopts = [bopts[0], av[i + 1], bopts[2]]
+                        i = i + 2
+                    } else {
+                        i = i + 1
+                    }
+                } else if av[i] == "--c-only" {
+                    bopts = [bopts[0], bopts[1], "1"]
+                    i = i + 1
+                } else {
+                    i = i + 1
+                }
+            }
+            cmd_build(bopts[0], bopts[1], bopts[2])
+        }
+    } else if sub == "check" {
+        // T3 Phase A: AST-based @invariant DSL checker.
+        // self/invariant_check.hexa 가 interp 에서 실행되며 file 인자를
+        // 받아 @invariant 블록을 추출 + predicate 검증한다.
+        if len(av) < 4 {
+            println("error: 'check' requires <file>")
+            cmd_help()
+            exit(1)
+        } else {
+            // resolve absolute path to invariant_check.hexa via install_dir
+            let __inst_c = install_dir_from_argv0()
+            let mut chk_script = ""
+            if len(__inst_c) > 0 {
+                chk_script = __inst_c + "/self/invariant_check.hexa"
+            } else {
+                chk_script = "self/invariant_check.hexa"
+            }
+            let chk_args = [av[3]]
+            cmd_run(chk_script, chk_args)
+        }
+    } else if sub == "convergence" {
+        // convergence: source-embedded convergence metadata → JSON dump.
+        // 3 formats: A) block @convergence-start/end  B) single-line comment  C) @convergence(...) attr
+        // self/convergence_scan.hexa 가 파일을 스캔하고 블록을 추출 → JSON 출력.
+        // 하위 명령: dump <file> / dump-meta <file>
+        if len(av) < 5 {
+            println("error: 'convergence' requires <subcmd> <file>")
+            println("usage: hexa convergence dump <file>")
+            println("       hexa convergence dump-meta <file>")
+            exit(1)
+        } else {
+            let __inst_cv = install_dir_from_argv0()
+            let mut cv_script = ""
+            if len(__inst_cv) > 0 {
+                cv_script = __inst_cv + "/self/convergence_scan.hexa"
+            } else {
+                cv_script = "self/convergence_scan.hexa"
+            }
+            // av[3] = subcmd (dump | dump-meta), av[4] = file
+            let mut cv_args = [av[3], av[4]]
+            let mut cvi = 5
+            while cvi < len(av) {
+                cv_args.push(av[cvi])
+                cvi = cvi + 1
+            }
+            cmd_run(cv_script, cv_args)
+        }
+    } else if sub == "test" {
+        // P1 (2026-04-18): native @test 러너.
+        // self/test_runner.hexa 가 대상 파일을 스캔하고 @test fn 을 수집·실행.
+        // anima --selftest 관행은 러너가 자동 fallback 으로 유지 (additive).
+        // 경로 해석: install_dir → cwd 순서로 존재하는 것 선택 (worktree 지원).
+        if len(av) < 4 {
+            println("error: 'test' requires <file>")
+            println("usage: hexa test <file.hexa> [--filter NAME] [--verbose] [--selftest-only]")
+            exit(2)
+        } else {
+            let __inst_t = install_dir_from_argv0()
+            let mut test_script = "self/test_runner.hexa"
+            if len(__inst_t) > 0 {
+                let inst_path = __inst_t + "/self/test_runner.hexa"
+                if file_exists(inst_path) {
+                    test_script = inst_path
+                } else if !file_exists(test_script) {
+                    // install_dir 에 없고 cwd 에도 없으면 $HEXA_LANG 시도.
+                    let hl = env_var("HEXA_LANG")
+                    if len(hl) > 0 {
+                        let hl_path = hl + "/self/test_runner.hexa"
+                        if file_exists(hl_path) { test_script = hl_path }
+                    }
+                }
+            }
+            let mut test_args = []
+            let mut ti = 3
+            while ti < len(av) {
+                test_args.push(av[ti])
+                ti = ti + 1
+            }
+            cmd_run(test_script, test_args)
+        }
+    } else if sub == "init" {
+        // scaffold <dir>/project.hexa via tool/init_project.hexa
+        // check/convergence 와 같은 패턴: install_dir 로 절대경로 해석 후 cmd_run 위임.
+        if len(av) < 4 {
+            println("error: 'init' requires <target-dir>")
+            cmd_help()
+            exit(1)
+        } else {
+            let __inst_i = install_dir_from_argv0()
+            let mut init_script = "tool/init_project.hexa"
+            if len(__inst_i) > 0 {
+                init_script = __inst_i + "/tool/init_project.hexa"
+            }
+            let mut init_args = []
+            let mut ii = 3
+            while ii < len(av) {
+                init_args.push(av[ii])
+                ii = ii + 1
+            }
+            cmd_run(init_script, init_args)
+        }
+    } else if sub == "url" {
+        if len(av) < 4 {
+            println("error: hexa url requires URL argument (e.g. 'hexa://run?file=/path/script.hexa')")
+        } else {
+            cmd_url(av[3])
+        }
+    } else if sub == "smash" || sub == "free" || sub == "thinking" || sub == "lens" || sub == "atlas" || sub == "bus" || sub == "roadmap" || sub == "discovery" || sub == "status-proj" || sub == "roadmap-proj" || sub == "convergence-proj" {
+        // @cli bake: nexus-cli 위임. av[3..] 전체를 nexus-cli 에 그대로 전달.
+        let mut nc_args = []
+        let mut ni = 3
+        while ni < len(av) {
+            nc_args.push(av[ni])
+            ni = ni + 1
+        }
+        cmd_nexus_proxy(sub, nc_args)
+    } else if ends_with_dot_hexa(sub) {
+        // 호환 모드: `hexa foo.hexa [args...]` → `hexa run foo.hexa [args...]`
+        // python/node 스타일. go/cargo 처럼 엄격하지 않지만 생태계 보존.
+        // bt 39: 호환 모드도 av[3..] 를 스크립트로 전달.
+        let mut compat_args = []
+        let mut ci = 3
+        while ci < len(av) {
+            compat_args.push(av[ci])
+            ci = ci + 1
+        }
+        cmd_run(sub, compat_args)
+    } else {
+        println("error: unknown subcommand '" + sub + "'")
+        cmd_help()
+    }
+}

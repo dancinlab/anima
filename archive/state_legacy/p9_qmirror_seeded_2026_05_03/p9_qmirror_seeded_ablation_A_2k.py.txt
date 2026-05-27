@@ -1,0 +1,811 @@
+#!/usr/bin/env python3
+# P9 qmirror-seeded ablation_A mini (2K steps)
+# Replaces all RNG seeds with qmirror QRNG (HMAC-DRBG SHA-256 seeded by IonQ Forte 1 quantum bits).
+# Goal: F-QSEED-1 — verify BLEU-1 maintained in noise floor [0.005, 0.012].
+#
+# Honest C3 caveats:
+#   1) HMAC-DRBG output is deterministic given seed; quantum-ness comes from the 4096-bit IonQ entropy input
+#      and the persistence of cond.4 NIST tier-1+ 7/7 PASS — it is NOT live per-call sampling.
+#   2) F-QSEED-1 noise-floor band [0.005, 0.012] is empirical (1-shot baseline 0.00586); no statistical CI;
+#      a single 2K mini-run cannot disprove subtle BLEU drift from seed source.
+#   3) Patch covers BatchSampler index draw + np/torch/random global seeds, but does NOT reseed
+#      torch.cuda CUDA-side dropout (torch.cuda.manual_seed used) — peft LoRA/dropout=0.0 here so this
+#      is a no-op for this run, but a non-zero dropout config would need explicit per-module Generator wiring.
+
+import json
+import math
+import os
+import sys
+import time
+import hmac
+import hashlib
+import traceback
+import random
+import struct
+from datetime import datetime, timezone
+from pathlib import Path
+
+# ubu1 paths
+ANIMA_HOME = "/home/aiden/anima"
+CLM_CKPT = f"{ANIMA_HOME}/checkpoints/clm_v4_350m/scale_350m/best.pt"
+TOKENIZER = "/tmp/tokenizer_64k_multilingual.model"
+SFT_DATA = "/tmp/p9_p1_sft_data_full_50k_augmented.jsonl"
+SFT_HOLDOUT = "/tmp/p9_p1_sft_data_holdout_500_augmented.jsonl"
+RUN_DIR = "/tmp/p9_qmirror_seeded_ablation_A_2026_05_03"
+OUTPUT_DIR = RUN_DIR
+SAVEPOINT_DIR = f"{RUN_DIR}/savepoints"
+TRAJECTORY_OUT = f"{OUTPUT_DIR}/trajectory.json"
+VERDICT_OUT = f"{OUTPUT_DIR}/verdict.json"
+LOG_OUT = f"{OUTPUT_DIR}/train.log"
+
+# qmirror seed assets (staged from /Users/ghost/core/anima/state/nexus_qrng_quantum_seed_2026_05_02/)
+QMIRROR_DRBG_META = f"{RUN_DIR}/hmac_drbg_seed.json"
+QMIRROR_QMEAS_RAW = f"{RUN_DIR}/quantum_measurement_raw.json"
+
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(SAVEPOINT_DIR, exist_ok=True)
+
+sys.path.insert(0, f"{ANIMA_HOME}/models")
+sys.path.insert(0, f"{ANIMA_HOME}/training")
+sys.path.insert(0, f"{ANIMA_HOME}")
+
+# Mini config (2K steps)
+N_STEPS = int(os.environ.get('ANIMA_N_STEPS', '2000'))
+BATCH = int(os.environ.get('ANIMA_BATCH', '4'))
+GRAD_ACC = int(os.environ.get('ANIMA_GRAD_ACC', '8'))
+LR = float(os.environ.get('ANIMA_LR', '1e-4'))
+LORA_R = int(os.environ.get('ANIMA_LORA_R', '64'))
+LORA_ALPHA = int(os.environ.get('ANIMA_LORA_ALPHA', '128'))
+PHI_THRESHOLD = float(os.environ.get('ANIMA_PHI_THR', '5.0'))
+PHI_EVERY = int(os.environ.get('ANIMA_PHI_EVERY', '500'))
+F_EVERY = int(os.environ.get('ANIMA_F_EVERY', '500'))
+ALPHA = float(os.environ.get('ANIMA_ALPHA', '6.0'))
+BETA = float(os.environ.get('ANIMA_BETA', '0.10'))
+GAMMA = float(os.environ.get('ANIMA_GAMMA', '0.0'))
+T = int(os.environ.get('ANIMA_T', '64'))
+
+# δ curriculum (kept identical to ablation_A early band, since 2K < 16K = early region)
+DELTA_EARLY = float(os.environ.get('ANIMA_DELTA_EARLY', '0.5'))
+DELTA_MID = float(os.environ.get('ANIMA_DELTA_MID', '0.5'))
+DELTA_LATE = float(os.environ.get('ANIMA_DELTA_LATE', '1.0'))
+EARLY_END = int(os.environ.get('ANIMA_EARLY_END', '16000'))
+MID_END = int(os.environ.get('ANIMA_MID_END', '33000'))
+
+SAVE_AT = [int(s) for s in os.environ.get('ANIMA_SAVE_AT', '500,1000,2000').split(',')]
+
+F1_HOLDOUT_N = int(os.environ.get('ANIMA_F1_HOLDOUT_N', '32'))
+F1_GEN_LEN = int(os.environ.get('ANIMA_F1_GEN_LEN', '32'))
+
+CALIB_PROMPTS = [
+    "Define hexad as a six-fold integration:",
+    "Six modules form a hexagonal architecture when:",
+    "A balanced six-component system:",
+    "Hexad symmetry refers to:",
+    "Logical implication law: if A then:",
+    "Sequential rule application proceeds:",
+    "Closure under inference requires:",
+    "A formal proof system is closed when:",
+    "Integrated information measures partition independence:",
+    "Phi quantifies irreducibility of system:",
+    "Information integration is maximized when:",
+    "A whole greater than sum of parts:",
+    "Self-reference emerges when system observes:",
+    "Recursive meta-cognition models:",
+    "A self-aware system represents itself by:",
+    "Strange loops in cognition arise from:",
+]
+N_CALIB = len(CALIB_PROMPTS)
+HALF = N_CALIB // 2
+HID_TRUNC = max(2, N_CALIB // 2)
+RIDGE = 1e-3
+K_PARTS = 8
+
+
+def log(msg):
+    s = f"[qmirror-seeded] {datetime.now(timezone.utc).strftime('%H:%M:%S')} {msg}"
+    print(s, flush=True)
+    with open(LOG_OUT, 'a') as f:
+        f.write(s + "\n")
+
+
+# =========================================================================
+# qmirror QRNG — HMAC-DRBG SHA-256 seeded by IonQ Forte 1 quantum bits
+# (Algorithm: NIST SP 800-90A Rev.1 §10.1.2; verified by cond.4 NIST tier-1+ 7/7 PASS)
+# =========================================================================
+class QmirrorHmacDrbgSha256:
+    OUTLEN = 32
+
+    def __init__(self, entropy: bytes, nonce: bytes, pers: bytes = b""):
+        self.K = b"\x00" * self.OUTLEN
+        self.V = b"\x01" * self.OUTLEN
+        self._update(entropy + nonce + pers)
+        self.reseed_counter = 1
+        self.bytes_drawn = 0
+
+    def _hmac(self, key, data):
+        return hmac.new(key, data, hashlib.sha256).digest()
+
+    def _update(self, provided_data: bytes):
+        self.K = self._hmac(self.K, self.V + b"\x00" + provided_data)
+        self.V = self._hmac(self.K, self.V)
+        if provided_data:
+            self.K = self._hmac(self.K, self.V + b"\x01" + provided_data)
+            self.V = self._hmac(self.K, self.V)
+
+    def generate(self, n_bytes: int) -> bytes:
+        out = b""
+        while len(out) < n_bytes:
+            self.V = self._hmac(self.K, self.V)
+            out += self.V
+        self._update(b"")
+        self.reseed_counter += 1
+        self.bytes_drawn += n_bytes
+        return out[:n_bytes]
+
+    def get_uint64(self) -> int:
+        return struct.unpack(">Q", self.generate(8))[0]
+
+    def get_uint32(self) -> int:
+        return struct.unpack(">I", self.generate(4))[0]
+
+
+def build_qmirror_drbg():
+    """Build the qmirror QRNG instance from the IonQ Forte 1 quantum entropy seed."""
+    meta = json.loads(Path(QMIRROR_DRBG_META).read_text())
+    raw = json.loads(Path(QMIRROR_QMEAS_RAW).read_text())
+    entropy = bytes.fromhex(raw["raw_bits_4096_hex"])
+    nonce = meta["nonce"].encode()
+    pers = meta["personalization_string"].encode()
+    drbg = QmirrorHmacDrbgSha256(entropy, nonce, pers)
+    # Verify cond.4 chain-of-custody: re-derive first 1024 bytes and check vs HMAC-DRBG meta.
+    expected = bytes.fromhex(meta["first_output_1024_bytes_hex"])
+    first = drbg.generate(1024)
+    if first != expected:
+        raise RuntimeError("qmirror DRBG chain-of-custody MISMATCH (re-derivation differs from meta)")
+    return drbg, meta, raw
+
+
+log(f"start qmirror-seeded n_steps={N_STEPS} batch={BATCH} grad_acc={GRAD_ACC} lr={LR}")
+log(f"lora_r={LORA_R} alpha={LORA_ALPHA} phi_thr={PHI_THRESHOLD}")
+log(f"loss alpha={ALPHA} beta={BETA} gamma={GAMMA} delta_early={DELTA_EARLY}")
+log(f"savepoints @ {SAVE_AT}")
+
+# Build qmirror DRBG and verify chain-of-custody
+log("building qmirror QRNG (HMAC-DRBG SHA-256 ← IonQ Forte 1 4096-bit entropy)...")
+qmirror_drbg, qmirror_meta, qmirror_raw = build_qmirror_drbg()
+qmirror_entropy_input_source = qmirror_meta["entropy_input_source"]
+qmirror_entropy_input_bits = qmirror_meta["entropy_input_bits"]
+qmirror_chain_verified = True
+log(f"qmirror QRNG built; chain-of-custody verified (first-1024 SHA matches meta)")
+log(f"  entropy source: {qmirror_entropy_input_source}")
+log(f"  entropy bits  : {qmirror_entropy_input_bits}")
+
+# === SEED SOURCE PATCH ===
+# Replace SEED=42 with qmirror-derived uint64.
+QMIRROR_SEED_NP = qmirror_drbg.get_uint64() & 0xFFFFFFFF       # numpy needs 32-bit
+QMIRROR_SEED_TORCH = qmirror_drbg.get_uint64() & 0x7FFFFFFFFFFFFFFF  # torch wants signed
+QMIRROR_SEED_PY = qmirror_drbg.get_uint64()
+QMIRROR_SEED_CALIB_PHI = qmirror_drbg.get_uint64() & 0xFFFFFFFF  # for the phi_star permutation rng
+log(f"qmirror seeds drawn: np32={QMIRROR_SEED_NP} torch64={QMIRROR_SEED_TORCH} py64={QMIRROR_SEED_PY}")
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+np.random.seed(QMIRROR_SEED_NP)
+torch.manual_seed(QMIRROR_SEED_TORCH)
+torch.cuda.manual_seed_all(QMIRROR_SEED_TORCH)
+random.seed(QMIRROR_SEED_PY)
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+log(f"torch={torch.__version__} cuda={torch.cuda.is_available()} device={device}")
+if torch.cuda.is_available():
+    log(f"gpu={torch.cuda.get_device_name(0)} mem_total={torch.cuda.get_device_properties(0).total_memory/1024**3:.2f}GiB")
+
+# Dropout torch.Generator — re-seed from qmirror so any module using it is qmirror-driven
+QMIRROR_DROPOUT_GEN = torch.Generator(device='cpu')
+QMIRROR_DROPOUT_GEN.manual_seed(qmirror_drbg.get_uint64() & 0x7FFFFFFFFFFFFFFF)
+log(f"qmirror dropout torch.Generator seeded (cpu); peft LoRA dropout=0.0 so no live use this run")
+
+# Tokenizer
+import sentencepiece as spm
+sp = spm.SentencePieceProcessor(model_file=TOKENIZER)
+vocab_size = sp.get_piece_size()
+log(f"tokenizer vocab={vocab_size}")
+
+from conscious_decoder import ConsciousDecoderV2
+scale_cfg = {
+    'd_model': 768,
+    'n_layer': 16,
+    'n_head': 12,
+    'n_kv_head': 4,
+    'block_size': 512,
+    'consciousness_dim': 192,
+}
+decoder = ConsciousDecoderV2(
+    vocab_size=vocab_size,
+    d_model=scale_cfg['d_model'],
+    n_head=scale_cfg['n_head'],
+    n_layer=scale_cfg['n_layer'],
+    block_size=scale_cfg['block_size'],
+    n_kv_head=scale_cfg['n_kv_head'],
+    consciousness_dim=scale_cfg['consciousness_dim'],
+    dropout=0.0,
+    gate_strength=0.001,
+    n_ca_rules=8,
+)
+decoder = decoder.to(device)
+n_params_total = sum(p.numel() for p in decoder.parameters())
+log(f"decoder built params={n_params_total:,}")
+
+t0 = time.time()
+ck = torch.load(CLM_CKPT, map_location=device, weights_only=False)
+sd = ck.get('decoder', ck) if isinstance(ck, dict) else ck
+missing, unexpected = decoder.load_state_dict(sd, strict=False)
+ckpt_load_sec = time.time() - t0
+log(f"ckpt loaded {ckpt_load_sec:.2f}s missing={len(missing)} unexpected={len(unexpected)}")
+
+from peft import LoraConfig, get_peft_model
+target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+lora_cfg = LoraConfig(
+    r=LORA_R,
+    lora_alpha=LORA_ALPHA,
+    lora_dropout=0.0,
+    bias="none",
+    target_modules=target_modules,
+)
+decoder = get_peft_model(decoder, lora_cfg)
+n_trainable = sum(p.numel() for p in decoder.parameters() if p.requires_grad)
+log(f"peft attached trainable={n_trainable:,} ({n_trainable*100/n_params_total:.2f}% of {n_params_total:,})")
+
+records = []
+with open(SFT_DATA, 'r') as f:
+    for line in f:
+        try:
+            records.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+log(f"sft full loaded n={len(records)}")
+
+holdout = []
+with open(SFT_HOLDOUT, 'r') as f:
+    for line in f:
+        try:
+            holdout.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+log(f"sft holdout loaded n={len(holdout)}")
+
+
+def tokenize_record(rec):
+    text = rec.get('input', '') + ' ' + rec.get('completion', '')
+    tokens = sp.encode(text)[:T]
+    if len(tokens) < 2:
+        tokens = tokens + [0] * (2 - len(tokens))
+    if len(tokens) < T:
+        tokens = tokens + [0] * (T - len(tokens))
+    tension = rec.get('tension_target', None)
+    if tension is None or not isinstance(tension, list) or len(tension) < T:
+        tension = [0.0] * T
+    return tokens, tension[:T]
+
+
+t0 = time.time()
+cache = []
+for rec in records:
+    toks, tens = tokenize_record(rec)
+    cache.append((toks, tens))
+log(f"tokenized cache n={len(cache)} elapsed={time.time()-t0:.1f}s")
+
+holdout_cache = []
+for rec in holdout[:F1_HOLDOUT_N]:
+    inp = rec.get('input', '')
+    comp = rec.get('completion', '')
+    inp_tok = sp.encode(inp)[:T-F1_GEN_LEN] if inp else [0]
+    comp_tok = sp.encode(comp)[:F1_GEN_LEN] if comp else [0]
+    tens = rec.get('tension_target', None) or [0.0] * T
+    if not isinstance(tens, list):
+        tens = [0.0] * T
+    if len(tens) < T:
+        tens = tens + [0.0] * (T - len(tens))
+    full_tok = inp_tok + comp_tok
+    if len(full_tok) < T:
+        full_tok = full_tok + [0] * (T - len(full_tok))
+    full_tok = full_tok[:T]
+    holdout_cache.append({
+        'input_tokens': inp_tok,
+        'reference_tokens': comp_tok,
+        'full_tokens': full_tok,
+        'tension': tens[:T],
+    })
+log(f"holdout cache n={len(holdout_cache)}")
+
+calib_tokens = []
+for prompt in CALIB_PROMPTS:
+    tk = sp.encode(prompt)[:T]
+    if len(tk) < T:
+        tk = tk + [0] * (T - len(tk))
+    calib_tokens.append(tk)
+calib_tensor = torch.tensor(calib_tokens, dtype=torch.long, device=device)
+log(f"calibration tokens shape={tuple(calib_tensor.shape)}")
+
+captured_hidden = {'value': None}
+real_decoder = decoder.base_model.model
+def _hook(module, input, output):
+    captured_hidden['value'] = output.detach()
+hook_handle = real_decoder.ln_f.register_forward_hook(_hook)
+
+
+def compute_phi_star(model, calib_idx, K=K_PARTS, ridge=RIDGE):
+    model.eval()
+    hiddens = []
+    with torch.no_grad():
+        for i in range(N_CALIB):
+            captured_hidden['value'] = None
+            _ = model(calib_idx[i:i+1])
+            h = captured_hidden['value']
+            if h is None:
+                model.train()
+                return None, None
+            h_pool = h.mean(dim=1).squeeze(0)
+            hiddens.append(h_pool.float().cpu().numpy())
+    X = np.stack(hiddens, axis=0)
+    var = X.var(axis=0)
+    top_idx = np.argsort(var)[::-1][:HID_TRUNC]
+    Xt = X[:, top_idx]
+
+    def safe_logdet(C):
+        Cs = C + ridge * np.eye(C.shape[0])
+        sign, logdet = np.linalg.slogdet(Cs)
+        if sign <= 0:
+            return None
+        return logdet
+
+    C_full = np.cov(Xt.T)
+    I_full = safe_logdet(C_full)
+    if I_full is None:
+        model.train()
+        return None, None
+    # === PHI partition RNG: also qmirror-driven ===
+    rng = np.random.default_rng(QMIRROR_SEED_CALIB_PHI)
+    phi_candidates = []
+    for k in range(K):
+        idx = rng.permutation(N_CALIB)
+        s1 = idx[:HALF]
+        s2 = idx[HALF:]
+        C1 = np.cov(Xt[s1].T)
+        C2 = np.cov(Xt[s2].T)
+        I1 = safe_logdet(C1)
+        I2 = safe_logdet(C2)
+        if I1 is None or I2 is None:
+            continue
+        phi_candidates.append(I_full - (I1 + I2))
+    model.train()
+    if not phi_candidates:
+        return None, None
+    phi_min = float(min(phi_candidates))
+    phi_mean = float(sum(phi_candidates) / len(phi_candidates))
+    return phi_min, phi_mean
+
+
+def compute_f1_bleu1(model, holdout_subset):
+    model.eval()
+    bleu1_scores = []
+    with torch.no_grad():
+        for h in holdout_subset:
+            inp_tok = h['input_tokens']
+            ref_tok = h['reference_tokens']
+            if not ref_tok:
+                continue
+            ctx = torch.tensor([inp_tok], dtype=torch.long, device=device)
+            gen_tok = []
+            for _ in range(F1_GEN_LEN):
+                if ctx.size(1) >= T:
+                    break
+                logits_a, _, _, _, _ = model(ctx)
+                next_id = int(logits_a[0, -1, :].argmax().item())
+                gen_tok.append(next_id)
+                ctx = torch.cat([ctx, torch.tensor([[next_id]], dtype=torch.long, device=device)], dim=1)
+                if next_id == 0:
+                    break
+            if not gen_tok:
+                continue
+            ref_counts = {}
+            for t in ref_tok:
+                ref_counts[t] = ref_counts.get(t, 0) + 1
+            hits = 0
+            seen = {}
+            for t in gen_tok:
+                if t in ref_counts:
+                    seen_c = seen.get(t, 0)
+                    if seen_c < ref_counts[t]:
+                        hits += 1
+                        seen[t] = seen_c + 1
+            bleu1 = hits / max(1, len(gen_tok))
+            bleu1_scores.append(bleu1)
+    model.train()
+    if not bleu1_scores:
+        return 0.0
+    return float(sum(bleu1_scores) / len(bleu1_scores))
+
+
+def compute_f_metrics(model, eval_subset, holdout_subset, phi_star_value):
+    model.eval()
+    tension_mses = []
+    with torch.no_grad():
+        for toks, tens in eval_subset:
+            idx = torch.tensor([toks], dtype=torch.long, device=device)
+            tens_t = torch.tensor([tens], dtype=torch.float32, device=device)
+            logits_a, logits_g, tensions, _, _ = model(idx)
+            t_pred = tensions[-1].mean(dim=0).float()
+            mse = F.mse_loss(t_pred, tens_t.squeeze(0)).item()
+            tension_mses.append(mse)
+    model.train()
+    f1 = compute_f1_bleu1(model, holdout_subset)
+    return {
+        'F1_bleu1': f1,
+        'F2_phi': phi_star_value,
+        'F3_tension_mse': float(sum(tension_mses) / len(tension_mses)),
+        'F4_bold_NA': True,
+    }
+
+
+def get_delta(step):
+    if step < EARLY_END:
+        return DELTA_EARLY
+    elif step < MID_END:
+        return DELTA_MID
+    else:
+        return DELTA_LATE
+
+
+def get_alpha(step):
+    if step <= 3000:
+        return 12.0
+    elif step <= 7000:
+        return 12.0 - 6.0 * (step - 3000) / 4000
+    else:
+        return 6.0
+
+
+def save_lora_adapter(model, step, savepoint_subdir):
+    save_dir = f"{SAVEPOINT_DIR}/{savepoint_subdir}"
+    os.makedirs(save_dir, exist_ok=True)
+    model.save_pretrained(save_dir)
+    return save_dir
+
+
+optimizer = torch.optim.AdamW(
+    [p for p in decoder.parameters() if p.requires_grad],
+    lr=LR, weight_decay=0.01,
+)
+
+log("computing baseline phi_star (pre-train)...")
+t0 = time.time()
+phi_baseline, phi_baseline_mean = compute_phi_star(decoder, calib_tensor)
+log(f"baseline phi_star_min={phi_baseline} mean={phi_baseline_mean} elapsed={time.time()-t0:.1f}s")
+
+phi_log = []
+f_log = []
+loss_log_compact = []
+aborts = []
+abort_triggered = False
+savepoint_log = []
+
+eval_subset = cache[:32]
+
+log("computing initial F metrics @ step 0...")
+f0 = compute_f_metrics(decoder, eval_subset, holdout_cache, phi_baseline if phi_baseline is not None else 0.0)
+f0['step'] = 0
+f_log.append(f0)
+phi_log.append({'step': 0, 'phi_star_min': phi_baseline, 'phi_star_mean': phi_baseline_mean, 'delta': DELTA_EARLY})
+log(f"F @ step 0: F1_bleu1={f0['F1_bleu1']:.4f} F2_phi={f0['F2_phi']:.4f} F3_tens_mse={f0['F3_tension_mse']:.4f}")
+
+train_t0 = time.time()
+decoder.train()
+optimizer.zero_grad()
+step = 0
+
+# === BatchSampler patch: per-step batch index draw uses qmirror QRNG ===
+# Each batch needs BATCH unique indices in [0, len(cache)).  We reservoir-sample without replacement
+# from qmirror uint32 stream.
+def qmirror_batch_indices(n_cache: int, batch_size: int) -> np.ndarray:
+    """Sample `batch_size` unique indices in [0, n_cache) using qmirror QRNG."""
+    chosen = []
+    seen = set()
+    # rejection-sample uint32 → mod n_cache; collision rate << 1% for n_cache=50K, batch=4
+    while len(chosen) < batch_size:
+        u = qmirror_drbg.get_uint32()
+        idx = u % n_cache
+        if idx in seen:
+            continue
+        seen.add(idx)
+        chosen.append(idx)
+    return np.array(chosen, dtype=np.int64)
+
+
+qmirror_bytes_at_train_start = qmirror_drbg.bytes_drawn
+
+try:
+    for step in range(1, N_STEPS + 1):
+        # === qmirror BatchSampler ===
+        idx_batch = qmirror_batch_indices(len(cache), BATCH)
+        toks_batch = []
+        tens_batch = []
+        for i in idx_batch:
+            toks, tens = cache[int(i)]
+            toks_batch.append(toks)
+            tens_batch.append(tens)
+        idx_t = torch.tensor(toks_batch, dtype=torch.long, device=device)
+        tens_t = torch.tensor(tens_batch, dtype=torch.float32, device=device)
+
+        logits_a, logits_g, tensions, _, _ = decoder(idx_t)
+
+        targets = idx_t[:, 1:].contiguous()
+        logits_shift = logits_a[:, :-1, :].contiguous()
+        ce_loss = F.cross_entropy(
+            logits_shift.view(-1, logits_shift.size(-1)),
+            targets.view(-1),
+            ignore_index=0,
+        )
+
+        t_pred = tensions[-1]
+        tension_loss = F.mse_loss(t_pred, tens_t)
+
+        delta_now = get_delta(step)
+        last_phi = phi_log[-1].get('phi_star_min', None)
+        if last_phi is None:
+            last_phi = 0.0
+        phi_hinge = max(0.0, PHI_THRESHOLD - last_phi)
+        phi_hinge_loss = torch.tensor(phi_hinge, device=device)
+
+        alpha_now = get_alpha(step)
+        total_loss = alpha_now * ce_loss + BETA * tension_loss + delta_now * phi_hinge_loss
+
+        (total_loss / GRAD_ACC).backward()
+
+        if step % GRAD_ACC == 0:
+            torch.nn.utils.clip_grad_norm_(
+                [p for p in decoder.parameters() if p.requires_grad], 1.0
+            )
+            optimizer.step()
+            optimizer.zero_grad()
+
+        if step % 100 == 0 or step == 1:
+            log(f"step {step}/{N_STEPS} loss={total_loss.item():.4f} ce={ce_loss.item():.4f} tens={tension_loss.item():.4f} phi_hinge={phi_hinge:.4f} α={alpha_now:.2f} δ={delta_now}")
+            loss_log_compact.append({
+                'step': step,
+                'loss_total': float(total_loss.item()),
+                'loss_ce': float(ce_loss.item()),
+                'loss_tension': float(tension_loss.item()),
+                'loss_phi_hinge': float(phi_hinge),
+                'alpha': alpha_now,
+                'delta': delta_now,
+            })
+
+        if step % PHI_EVERY == 0:
+            phi_min, phi_mean = compute_phi_star(decoder, calib_tensor)
+            phi_log.append({'step': step, 'phi_star_min': phi_min, 'phi_star_mean': phi_mean, 'delta': delta_now})
+            log(f"  phi @ step {step}: min={phi_min} mean={phi_mean} δ={delta_now}")
+            if phi_min is not None and phi_min < PHI_THRESHOLD:
+                aborts.append({'step': step, 'reason': 'F2_PHI_BELOW_THRESHOLD', 'phi_star_min': phi_min, 'threshold': PHI_THRESHOLD})
+                log(f"  ABORT: phi_star_min={phi_min} < threshold={PHI_THRESHOLD}")
+                abort_triggered = True
+                break
+
+        if step % F_EVERY == 0:
+            last_phi_val = phi_log[-1].get('phi_star_min', None) or 0.0
+            fm = compute_f_metrics(decoder, eval_subset, holdout_cache, last_phi_val)
+            fm['step'] = step
+            f_log.append(fm)
+            log(f"  F @ step {step}: F1_bleu1={fm['F1_bleu1']:.4f} F2_phi={fm['F2_phi']:.4f} F3_tens_mse={fm['F3_tension_mse']:.4f}")
+
+        if step in SAVE_AT:
+            sp_subdir = f"step_{step}"
+            sd = save_lora_adapter(decoder, step, sp_subdir)
+            log(f"  SAVEPOINT @ step {step} → {sd}")
+            savepoint_log.append({'step': step, 'path': sd})
+
+except KeyboardInterrupt:
+    log(f"INTERRUPTED @ step {step}")
+    aborts.append({'step': step, 'reason': 'KeyboardInterrupt'})
+    abort_triggered = True
+except Exception as e:
+    log(f"EXCEPTION @ step {step}: {e}")
+    log(traceback.format_exc())
+    aborts.append({'step': step, 'reason': f'EXCEPTION: {e}'})
+    abort_triggered = True
+
+train_elapsed = time.time() - train_t0
+qmirror_bytes_used_in_train = qmirror_drbg.bytes_drawn - qmirror_bytes_at_train_start
+log(f"train done elapsed={train_elapsed:.1f}s steps_completed={step} aborted={abort_triggered}")
+log(f"qmirror entropy used: total_bytes={qmirror_drbg.bytes_drawn} train_only_bytes={qmirror_bytes_used_in_train} reseed_counter={qmirror_drbg.reseed_counter}")
+
+log("computing final phi_star...")
+phi_final, phi_final_mean = compute_phi_star(decoder, calib_tensor)
+phi_log.append({'step': step, 'phi_star_min': phi_final, 'phi_star_mean': phi_final_mean, 'delta': get_delta(step), 'note': 'final'})
+log(f"final phi_star_min={phi_final} mean={phi_final_mean}")
+
+log("computing final F metrics...")
+last_phi_val = phi_final if phi_final is not None else 0.0
+f_final = compute_f_metrics(decoder, eval_subset, holdout_cache, last_phi_val)
+f_final['step'] = step
+f_final['note'] = 'final'
+f_log.append(f_final)
+log(f"final F: F1_bleu1={f_final['F1_bleu1']:.4f} F2_phi={f_final['F2_phi']:.4f} F3_tens_mse={f_final['F3_tension_mse']:.4f}")
+
+if not abort_triggered:
+    sd = save_lora_adapter(decoder, step, "final")
+    log(f"FINAL adapter saved → {sd}")
+    savepoint_log.append({'step': step, 'path': sd, 'note': 'final'})
+
+hook_handle.remove()
+
+phi_values = [p['phi_star_min'] for p in phi_log if p.get('phi_star_min') is not None]
+phi_summary = {
+    'mean': float(np.mean(phi_values)),
+    'variance': float(np.var(phi_values)),
+    'min': float(np.min(phi_values)),
+    'max': float(np.max(phi_values)),
+    'n': len(phi_values),
+    'baseline': phi_baseline,
+    'final': phi_final,
+    'delta_baseline_to_final': (phi_final - phi_baseline) if (phi_final is not None and phi_baseline is not None) else None,
+} if phi_values else {'n': 0}
+
+f_final_phi = f_final.get('F2_phi', None) if f_final else None
+f_final_bleu1 = f_final.get('F1_bleu1', 0.0) if f_final else 0.0
+
+# === Falsifier F-QSEED-1: BLEU-1 ∈ [0.005, 0.012] (noise floor maintained, no anomaly) ===
+F_QSEED_1_LO = 0.005
+F_QSEED_1_HI = 0.012
+if F_QSEED_1_LO <= f_final_bleu1 <= F_QSEED_1_HI:
+    qseed_verdict = "F_QSEED_1_PASS"
+    qseed_reason = f"BLEU-1={f_final_bleu1:.6f} in noise-floor band [{F_QSEED_1_LO}, {F_QSEED_1_HI}]; no anomaly detected from qmirror seeding"
+else:
+    qseed_verdict = "F_QSEED_1_OUT_OF_BAND"
+    qseed_reason = f"BLEU-1={f_final_bleu1:.6f} outside noise-floor band [{F_QSEED_1_LO}, {F_QSEED_1_HI}]; investigate seed-source effect"
+
+if f_final_phi is None:
+    f2_verdict = "F2_UNKNOWN_PHI_FAILED"
+elif f_final_phi < PHI_THRESHOLD:
+    f2_verdict = "F2_VIOLATION_AT_FINAL"
+elif phi_baseline is not None and f_final_phi >= phi_baseline * 0.9:
+    f2_verdict = "F2_PASS_FULL"
+else:
+    f2_verdict = "F2_PASS_TIGHT"
+
+trajectory = {
+    'schema': 'anima/p9_qmirror_seeded/trajectory/1',
+    'phase': 'p9_qmirror_seeded_ablation_A_2k',
+    'ts_utc': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+    'device': str(device),
+    'real_train': True,
+    'qmirror_provenance': {
+        'algorithm': qmirror_meta.get('algorithm'),
+        'entropy_input_source': qmirror_entropy_input_source,
+        'entropy_input_bits': qmirror_entropy_input_bits,
+        'nonce': qmirror_meta.get('nonce'),
+        'personalization_string': qmirror_meta.get('personalization_string'),
+        'first_output_sha256': qmirror_meta.get('first_output_sha256'),
+        'cond4_chain_verified': qmirror_chain_verified,
+        'cond4_nist_tier1plus_pass_count': '7/7',
+        'cond4_verdict': 'PASS',
+    },
+    'qmirror_seeds_drawn': {
+        'np_uint32': QMIRROR_SEED_NP,
+        'torch_signed64': QMIRROR_SEED_TORCH,
+        'python_uint64': QMIRROR_SEED_PY,
+        'phi_partition_uint32': QMIRROR_SEED_CALIB_PHI,
+    },
+    'qmirror_entropy_used': {
+        'total_bytes': qmirror_drbg.bytes_drawn,
+        'train_loop_bytes': qmirror_bytes_used_in_train,
+        'reseed_counter': qmirror_drbg.reseed_counter,
+        'note': 'each step draws BATCH=4 uint32 (16 bytes) for batch indices; setup draws ~1080 bytes (chain-verify 1024 + 4*8 seeds + 1*8 dropout)',
+    },
+    'config': {
+        'n_steps': N_STEPS, 'batch': BATCH, 'grad_acc': GRAD_ACC, 'lr': LR,
+        'lora_r': LORA_R, 'lora_alpha': LORA_ALPHA,
+        'delta_curriculum': {'early': DELTA_EARLY, 'mid': DELTA_MID, 'late': DELTA_LATE,
+                             'early_end': EARLY_END, 'mid_end': MID_END},
+        'phi_threshold': PHI_THRESHOLD,
+        'phi_every': PHI_EVERY, 'f_every': F_EVERY,
+        'alpha_curriculum': 'ablation_A: 12.0 (≤3K) → linear ramp 12→6 (3K-7K) → 6.0 (>7K)',
+        'beta': BETA, 'gamma': GAMMA,
+        'T': T,
+        'save_at': SAVE_AT,
+    },
+    'env': {
+        'torch': torch.__version__,
+        'cuda_available': torch.cuda.is_available(),
+        'device_name': torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'cpu',
+        'has_peft': True,
+    },
+    'ckpt': {
+        'path': CLM_CKPT,
+        'load_sec': ckpt_load_sec,
+        'missing_at_load': len(missing),
+        'unexpected_at_load': len(unexpected),
+    },
+    'model': {
+        'class': 'ConsciousDecoderV2',
+        'n_params_total': n_params_total,
+        'n_params_trainable_lora': n_trainable,
+        'lora_pct': round(n_trainable * 100 / n_params_total, 4),
+    },
+    'phi_log': phi_log,
+    'f_log': f_log,
+    'loss_log_compact': loss_log_compact,
+    'aborts': aborts,
+    'aborted': abort_triggered,
+    'sft_data': {'path': SFT_DATA, 'n_docs': len(records)},
+    'sft_holdout': {'path': SFT_HOLDOUT, 'n_docs': len(holdout), 'eval_subset_n': len(holdout_cache)},
+    'savepoints': savepoint_log,
+    'train_elapsed_sec': round(train_elapsed, 2),
+    'steps_completed': step,
+    'phi_baseline': phi_baseline,
+    'phi_final': phi_final,
+    'phi_summary': phi_summary,
+    'f2_verdict': f2_verdict,
+    'qseed_verdict': qseed_verdict,
+    'qseed_reason': qseed_reason,
+}
+
+verdict_doc = {
+    'schema': 'anima/p9_qmirror_seeded/verdict/1',
+    'phase': 'p9_qmirror_seeded_ablation_A_2k',
+    'ts_utc': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+    'falsifier': 'F-QSEED-1',
+    'falsifier_rule': f'BLEU-1 ∈ [{F_QSEED_1_LO}, {F_QSEED_1_HI}] (noise floor maintained, no anomaly from qmirror seeding)',
+    'qseed_verdict': qseed_verdict,
+    'qseed_reason': qseed_reason,
+    'f2_verdict': f2_verdict,
+    'f_final': f_final,
+    'phi_summary': phi_summary,
+    'qmirror_provenance': trajectory['qmirror_provenance'],
+    'qmirror_seeds_drawn': trajectory['qmirror_seeds_drawn'],
+    'qmirror_entropy_used': trajectory['qmirror_entropy_used'],
+    'baseline_comparison': {
+        'baseline_phase': 'p9_p1_6_ablation_A (50K full)',
+        'baseline_BLEU1': 0.005859375,
+        'baseline_F2_phi': 44.606997123566565,
+        'baseline_F3_tension_mse': 7.781576167210005,
+        'baseline_phi_baseline': 45.91520414820293,
+        'note': 'baseline is 50K-step run; this run is 2K-step mini for seed-source isolation. Direct comparison is approximate; BLEU-1 noise floor at this LR/data is well-bounded but a step-matched control would be required for strict equivalence.',
+    },
+    'steps_completed': step,
+    'aborted': abort_triggered,
+    'aborts': aborts,
+    'train_elapsed_sec': round(train_elapsed, 2),
+    'real_train': True,
+    'env': {
+        'device': str(device),
+        'cuda': torch.cuda.is_available(),
+        'device_name': torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'cpu',
+        'torch': torch.__version__,
+        'has_peft': True,
+    },
+    'honest_caveats_c3': [
+        ("HMAC-DRBG output is deterministic given seed; 'quantum' status comes from the 4096-bit IonQ Forte 1 entropy "
+         "input + the fact that the resulting stream PASSED cond.4 NIST tier-1+ 7/7 — it is NOT live per-call quantum sampling. "
+         "A future cycle could swap to ANU live (T1.b) if api.quantumnumbers.anu.edu.au key is provisioned."),
+        ("F-QSEED-1 noise-floor band [0.005, 0.012] is empirically derived from a single 50K ablation_A baseline (BLEU-1=0.00586). "
+         "There is no statistical confidence interval and no step-matched control run; a strict equivalence claim would need "
+         "≥3 paired (qmirror vs seed=42) runs at the SAME step count. This run only demonstrates 'no catastrophic anomaly'."),
+        ("Seed coverage: this patch reseeds np.random / torch.cpu+cuda / random / per-step BatchSampler index draw / phi-partition rng / "
+         "an explicit torch.Generator for dropout. peft LoRA dropout=0.0 in this config means the dropout-Generator is unused this run; "
+         "in a non-zero-dropout setting, each Dropout module would need explicit `generator=` wiring (not done here)."),
+    ],
+}
+
+with open(TRAJECTORY_OUT, 'w') as f:
+    json.dump(trajectory, f, indent=2)
+with open(VERDICT_OUT, 'w') as f:
+    json.dump(verdict_doc, f, indent=2)
+
+log(f"WROTE trajectory={TRAJECTORY_OUT} verdict={VERDICT_OUT}")
+log(f"VERDICT qseed={qseed_verdict} f2={f2_verdict}")
+log(f"BLEU-1={f_final_bleu1:.6f} (band [{F_QSEED_1_LO}, {F_QSEED_1_HI}]) phi_final={f_final_phi}")
+log("DONE")

@@ -1,0 +1,15 @@
+{
+  "verdict": "STUB",
+  "reason": "F1 audio-prediction metric requires (a) ground-truth RVQ codes from an audio codec (Encodec/Mimi) which is NOT installed on ubu1, and (b) a trained audio-CE path which this cycle did NOT exercise (text-CE only — see verdict.json honest_c3 #1).",
+  "ts": "2026-05-04T13:39:00Z",
+  "produced_in_cycle": "vlm_stage1_2026_05_04 (launch only)",
+  "f1_audio_pred": null,
+  "next_attempt_gate": "stage2 with audio codec installed + RVQ codes precomputed + dual-loss training reaches step ≥10K.",
+  "interim_text_signal": {
+    "step": 1000,
+    "text_ce_nats": 9.183,
+    "perplexity": 9711,
+    "delta_from_uniform_init_nats": -1.39,
+    "trajectory_monotone": true
+  }
+}

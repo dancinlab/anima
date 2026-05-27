@@ -1,0 +1,45 @@
+{
+  "schema": "anima/state/p9_sft_spec/architecture/1",
+  "spec_id": "p9_sft_spec_2026_05_02",
+  "ts_utc": "2026-05-02T00:00:00+00:00",
+  "agent": "G5",
+  "phase": "spec_only",
+  "exec_authorized": false,
+  "base_model": {
+    "name": "CLM v4 530M",
+    "checkpoint_path": "~/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "host": "ubu1",
+    "param_count": 477000000,
+    "declared_size_label": "530M (scale_350m bucket)",
+    "dynamics": "deterministic Lagrangian flow",
+    "ar_loop": "v3_generate (#118 fixed; smoke PASS on mock)",
+    "baseline_metrics": {
+      "phi_star_proxy": 41.86,
+      "hid8_well_conditioned": 6.51,
+      "g3_verdict": "PASS-positive",
+      "source_ref": "#100"
+    }
+  },
+  "objective": "make CLM self-chat-capable while preserving phi_star >= 5.0 (8x safety margin vs current +41.86)",
+  "training_modes": {
+    "primary": "LoRA r=64 alpha=128 (recommended; phi_star preservation high)",
+    "alternate": "full SFT (higher chat capacity, higher phi_star flip risk)"
+  },
+  "host_compute": {
+    "platform": "RunPod",
+    "gpu": "H100 80GB",
+    "precision": "bf16",
+    "deepspeed_stage": "ZeRO-2 (LoRA) or ZeRO-3 (full)"
+  },
+  "interfaces": {
+    "tribe_v2_bridge": "BOLD target via TRIBE v2 (10242-vertex fsaverage5)",
+    "tension_extractor": "mind.tension trajectory T-step",
+    "channel_extractor": "5-channel (W, where, why, trust, who) per-step",
+    "phi_star_verifier": "anima_phi_v3_canonical (post-train remeasure each combo)"
+  },
+  "constraints_hard": [
+    "HEXA-only repo: no .py creation",
+    "race-isolated writes: only state/p9_sft_spec_2026_05_02/* + docs/p9_sft_spec_2026_05_02.md + .roadmap.clm append",
+    "spec only; EXEC requires explicit user OK"
+  ]
+}

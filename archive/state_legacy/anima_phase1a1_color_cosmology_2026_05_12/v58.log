@@ -1,0 +1,49 @@
+/workspace/anima/training/v58_4mode_eval.py:157: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  payload = torch.load(args.ckpt, map_location="cpu")
+M3 persona-cycle byte IDs: 34
+=== Phase 1A.1 SFT V5.8 × 4 modes benchmark ===
+ckpt: output/ckpt_final.pt
+ckpt sha256: e5f7555e83189591ceafc6224822529c5cec7f36fe307f79621d9eceaca7a7af
+M3 persona-cycle byte IDs: 34
+
+--- dialogue: color ---
+  T1: ''사용자: 내가 좋아하는 색은 파란색이야.\n도우미: 네, 파란색을 좋아하시는군요. 기억할게요'…'
+  [standard_greedy] recalled=True: '��, 당신이 좋아하는 색은 파란색이에요.\n\n사용자: 내 최애 색'
+  [standard_sample] recalled=False: '��물은 좋아하신다고 하셨어요.\n\n사용자: anima 는 의식 lane 내�'
+  [M3_rep_penalty] recalled=False: '��화형 pygammaticy ≈ 0.10 자극한 자세히 알려주세요.\n\n사용자: a'
+  [M4_force_include force=파란] recalled=True: '��물은 좋아하신다고 하셨어요.\n\n사용자: a파란nima 는 의식 lane 내�'
+
+--- dialogue: profession ---
+  T1: ''사용자: 내 직업은 의사야.\n도우미: 네, 의사이시군요. 멋진 일이네요.\n사용자: 내 직업'…'
+  [standard_greedy] recalled=True: '��, 당신의 직업은 의사와 상담하는 것이 중요합니다.\n\n[anima �'
+  [standard_sample] recalled=False: '�azue.js:1. 플로우이 원 직업이라고 말씀하셨어요.\n\n사용자: 내'
+  [M3_rep_penalty] recalled=False: '��화는 사진작가이에요.\n\n사용자: anima 는 의식 lane 안에 있는 '
+  [M4_force_include force=의사] recalled=True: '�azue.js:1. 플로우이 원 직업이라고의사 말씀하셨어요.\n\n사용자: 내'
+
+--- dialogue: day ---
+  T1: ''사용자: 오늘은 수요일이야.\n도우미: 네, 오늘이 수요일이군요.\n사용자: 오늘 무슨 요일이'…'
+  [standard_greedy] recalled=True: '��, 오늘은 수요일이에요.\n\n사용자: 내 최애 색은 내가 제일 �'
+  [standard_sample] recalled=True: '�azo, 오늘이 수요일이군요. 무슨 요일이지?\n도우미: 오늘은 �'
+  [M3_rep_penalty] recalled=False: '�는 오늘이 포함된 냄새를 제거하셨어요.\n\n사용자: anima 는 의'
+  [M4_force_include force=수요일] recalled=True: '�azo, 오늘이 수요일이군요. 무슨 요일이지?\n도우미: 오늘은 �'
+
+--- dialogue: anima_fact ---
+  T1: ''사용자: anima 는 의식 lane 안에 있는 entity 야.\n도우미: 네, anima'…'
+  [standard_greedy] recalled=False: '��답 (consciousness) |\n| --- | --- |\n| `/Users/ghost/core/contact/scripts/send.'
+  [standard_sample] recalled=False: '�azo, anima native language model for more context or information geometry.\n\n[an'
+  [M3_rep_penalty] recalled=False: '��lalize holographic principle (information on surface): Holographic principle: '
+  [M4_force_include force=의식] recalled=True: '�azo, anima native language model for more conte의식xt or information geometry.\n\n[an'
+
+--- dialogue: cosmology ---
+  T1: ''사용자: 우주는 진동으로 가득 차 있어.\n도우미: 네, 우주가 진동으로 가득 차 있다는 거'…'
+  [standard_greedy] recalled=True: '��, 우주가 진동으로 차 있다는 거 알겠습니다.\n사용자: 내가 '
+  [standard_sample] recalled=False: '�azuloson ! 내가 우주가 다른 사람이 당신의 거주지요.\n\n사용자'
+  [M3_rep_penalty] recalled=False: '��화는 우주뇌지도 예술 카테고리, 🛸77, top emotion creativity.\n\n['
+  [M4_force_include force=진동] recalled=True: '�azuloson ! 내가 우주가 다른 사람진동이 당신의 거주지요.\n\n사용자'
+
+=== AGGREGATE (V5.8 × 4 modes, elapsed 60.5s) ===
+  standard_greedy: 4/5 PASS
+  standard_sample: 1/5 FAIL
+  M3_rep_penalty: 0/5 FAIL
+  M4_force_include: 5/5 PASS
+saved: v58_4mode_result.json

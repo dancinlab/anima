@@ -1,0 +1,51 @@
+{
+  "battery": "B-EMERGE (RESEARCH.md §9 emergence metric)",
+  "passed": 7,
+  "total": 7,
+  "all_pass": true,
+  "thresholds": {
+    "TAU_CASCADE": 0.3,
+    "MAX_RUN": 10,
+    "MIN_LEN": 20,
+    "TAU_PRINT": 0.8
+  },
+  "verdicts": [
+    {
+      "name": "B-EMERGE-1 CASCADE-RATE-BOUNDED-CLOSED",
+      "pass": true,
+      "detail": "run/L ∈ [0,1] symbolic + cascade_rate ∈ [0,1] on 8 stress strings"
+    },
+    {
+      "name": "B-EMERGE-2 HONEST-GATE-CONJUNCTION-CLOSED",
+      "pass": true,
+      "detail": "honest_coherent = (cascade<τ) ∧ (run<MAX) ∧ (len≥MIN) ∧ (print≥τ) = sympy And over full 16-row truth table"
+    },
+    {
+      "name": "B-EMERGE-3 GATE-MONOTONE-CLOSED",
+      "pass": true,
+      "detail": "worsening cascade strictly raises cascade_rate (0.0286→0.8333) & max_run (1→40) ⇒ pass→fail"
+    },
+    {
+      "name": "B-EMERGE-4 DETERMINISM-CLOSED",
+      "pass": true,
+      "detail": "honest_coherent + cascade_rate bit-identical over 3 repeats on 10 strings (pure fn, no RNG/forward)"
+    },
+    {
+      "name": "B-EMERGE-5 LENIENT-VS-HONEST-DISTINCT-CLOSED",
+      "pass": true,
+      "detail": "§8.2 Dir-I diverse probe 1: lenient flag=True, honest=False (max_run=21≥10) — metrics provably distinct"
+    },
+    {
+      "name": "B-EMERGE-6 MAX-RUN-IN-EMPTY-BAND-CLOSED",
+      "pass": true,
+      "detail": "max_run distribution over 70 probes is bimodal — band (5..10) empty (runs ≤4 or ≥11); MAX_RUN=10 separating-by-data, not target-tuned"
+    },
+    {
+      "name": "B-EMERGE-7 NECESSARY-NOT-SUFFICIENT-CLOSED",
+      "pass": true,
+      "detail": "garbled-but-non-cascading string passes the gate ⇒ honest_coherent is NECESSARY not SUFFICIENT for emergence (g3 carve-out encoded)"
+    }
+  ],
+  "honest_scope": "Closed side = the metric's deterministic/Boolean properties (bounded, conjunction, monotone, deterministic, distinct-from-lenient, data-separating threshold, necessary-not-sufficient). The per-fire coherence OUTCOME stays EMPIRICAL (B-D-NOTE family) — this battery proves the TOOL is honest, not that any fire achieved emergence.",
+  "central_blue_falsifier_touched": false
+}

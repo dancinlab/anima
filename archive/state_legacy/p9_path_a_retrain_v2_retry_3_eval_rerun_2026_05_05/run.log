@@ -1,0 +1,50 @@
+[2026-05-05T01:25:28Z] elapsed=7min cost=$0.38 probe=[C] task=mmlu n=5 limit=200 → /workspace/p9_eval_rerun/results/final_lora_mmlu_dir|
+[2026-05-05T01:26:23Z] elapsed=8min cost=$0.42 probe=[C] task=mmlu n=5 limit=200 → /workspace/p9_eval_rerun/results/final_lora_mmlu_dir|
+[2026-05-05T01:27:17Z] elapsed=9min cost=$0.47 probe=[C] task=mmlu n=5 limit=200 → /workspace/p9_eval_rerun/results/final_lora_mmlu_dir|
+[2026-05-05T01:28:11Z] elapsed=10min cost=$0.51 probe=[C] task=mmlu n=5 limit=200 → /workspace/p9_eval_rerun/results/final_lora_mmlu_dir|
+[2026-05-05T01:29:06Z] elapsed=11min cost=$0.56 probe=[C] task=mmlu n=5 limit=200 → /workspace/p9_eval_rerun/results/final_lora_mmlu_dir|
+[2026-05-05T01:30:01Z] elapsed=12min cost=$0.61 probe=[C] task=mmlu n=5 limit=200 → /workspace/p9_eval_rerun/results/final_lora_mmlu_dir|
+[2026-05-05T01:30:56Z] elapsed=13min cost=$0.65 probe=[C] task=mmlu n=5 limit=200 → /workspace/p9_eval_rerun/results/final_lora_mmlu_dir|
+[2026-05-05T01:31:51Z] elapsed=14min cost=$0.70 probe=/workspace/p9_eval_rerun/results/COMPLETE.sentinel SENTINEL_FOUND [orch] complete|
+[2026-05-05T01:32:01Z] COMPLETE.sentinel detected — final sync FIRST then auto-kill (L6)
+Warning: Permanently added '[103.207.149.98]:16410' (ED25519) to the list of known hosts.
+[2026-05-05T01:33:34Z] computing verdict
+[2026-05-05T01:33:34Z] RE-VERDICT F3=PASS (CRV1=PASS CRV2=PASS) supersedes_v3=UNDERESTIMATE forget_idx=-0.0280 wall=15min cost=$0.75
+[2026-05-05T01:33:34Z] hs: norm=0.645 Δ=-0.9000pp parity=PASS improve=FAIL   mmlu: acc=0.575193291952521 Δ=-0.4407pp parity=PASS improve=FAIL   tq: em=0.455 Δ=5.9000pp parity=PASS improve=PASS
+__P9_PATH_A_EVAL_RERUN__ F3=PASS supersedes=UNDERESTIMATE
+[2026-05-05T01:33:34Z] [trap] kill sequence pod=pa5e33lhnkz815 (L13 pre-kill rescue scp first)
+[2026-05-05T01:33:34Z] [trap] L13 rescue: scp results/
+Warning: Permanently added '[103.207.149.98]:16410' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.98]:16410' (ED25519) to the list of known hosts.
+[2026-05-05T01:34:38Z] [trap] L13 rescue done
+[2026-05-05T01:34:38Z] [trap] killing pod=pa5e33lhnkz815
+{
+  "containerDiskInGb": 60,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-05 01:17:53.475 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "<REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "pa5e33lhnkz815",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Tue May 05 2026 01:34:38 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-p9-pathA-retry3-eval-rerun-2026-05-05",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 28,
+  "volumeInGb": 80,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "pa5e33lhnkz815"
+}
+[2026-05-05T01:34:49Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]

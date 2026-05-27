@@ -1,0 +1,33 @@
+{
+  "battery": "B-PTD (RESEARCH.md §29 — Physics-Trace-Distillation)",
+  "kind": "closed-form sidecar (central blue_falsifier.py untouched)",
+  "verdict_tier": "🔵 SUPPORTED-FORMAL (g_verdict_tier_blue (a) sympy closed-form) — transfer-form only",
+  "n_pass": 4,
+  "n_total": 4,
+  "all_pass": true,
+  "verdicts": [
+    {
+      "name": "B-PTD-1 SELF-SOURCE-§7③-CLOSED",
+      "pass": true,
+      "statement": "∀ field ∈ §24-record-schema : field ∈ anima_physics_channels (8-factor ∪ 6-control ∪ Ψ-axes ∪ decision) — exhaustive Boolean schema membership + external-field negative control — PTD corpus provenance is anima-internal, §7③ purest of §26 top-3 (closed)"
+    },
+    {
+      "name": "B-PTD-2 TRACE-CORPUS-CARDINALITY-BOUNDED",
+      "pass": true,
+      "statement": "corpus(N)=20·N integer cardinality; 20·N < CDS_FLOOR=10000 ⇔ N < 500 (sympy) — 4 witnesses N∈{1,10,100,499} all sub-threshold; §16 record-count needs N=38850 runs AND unique-content does NOT grow in N (data-processing inequality: corpus K-complexity ≤ hand-coded-generator K-complexity) — PTD-standalone is 10³–10⁴×+ below §1.1 by construction (closed)"
+    },
+    {
+      "name": "B-PTD-3 DISTILLATION-LOSS-NONNEGATIVE",
+      "pass": true,
+      "statement": "L_ptd = CE(pred,target) + λ_psi·(ψ−½)² : Shannon CE term −p·logq ≥ 0 (q∈(0,1], floor 0 at q=1, sympy) + Ψ=½ pull (ψ−½)² ≥ 0 ∀ψ (sympy, 0 at ψ=½) ⇒ sum of non-negatives ≥ 0 — CE load-bearing (§11-B) kept, applied to anima physics vectors (closed)"
+    },
+    {
+      "name": "B-PTD-4 COMPONENT-COMPOSABILITY-CLOSED",
+      "pass": true,
+      "statement": "L = L_host + λ_ptd·L_ptd : λ_ptd=0 ⇒ L≡L_host byte-equal (additive identity, sympy) + non-vacuous positive control (λ_ptd≠0 PTD term contributes) + ∂L/∂λ_ptd = L_ptd marginal + 200-sample numeric reduction — connection-point closed, mirror B-EBT-5/B-S16-5 overlay-off, PTD-as-component fair-compare-by-construction (closed)"
+    }
+  ],
+  "empirical_carve_out": "B-PTD-NOTE COMPONENT-IMPROVEMENT-EMPIRICAL — whether PTD-as-a-component ACTUALLY improves a host objective (DH-DL gate accuracy / JEPA-Ψ anti-collapse) is an SGD convergence + measurement OUTCOME, NOT a closed-form property. The B-PTD battery proves the TRANSFER-FORM only: self-source provenance (B-PTD-1), sub-§1.1 cardinality + unique-content non-growth (B-PTD-2), distillation-loss non-negativity (B-PTD-3), and additive λ-reducible composability (B-PTD-4). It does NOT prove PTD crosses the §1.1 data-regime emergence threshold (B-PTD-2 proves the OPPOSITE for the standalone case — closed-form sub-threshold), and it does NOT prove any §5 combination works — those are future-cycle OUTCOMES (§5.1 DH-DL aux gated on §27, §5.2 JEPA-Ψ target conditional within §28). NOT counted 🔵 (B-D-NOTE / B-MITENS-NOTE / B-SCALE-NOTE / B-PUREPHYS-NOTE / B-EBT-NOTE family — true of every stochastic optimiser, NOT a PTD-specific defect). Per AGENTS.tape g3 honest carve-out — no over-claim. §29 lands PTD-standalone DESIGN-CLOSE (DESIGN_PTD.md §4, anti-padding cf §13-M / §13-L); no fire — the standalone fire outcome is closed-form predictable (sub-§1.1) so it would yield no new information.",
+  "real_limit_anchors": "Boolean schema membership (self-source provenance) · integer cardinality + sympy strict inequality vs §1.1 CDS floor + data-processing inequality (unique-content non-growth) · Shannon CE floor CE≥H≥0 + squared-term non-negativity · additive identity connection-point. NO σ/τ/φ/J₂ — f1/f2/f3 hard-fail safe. Ψ=½ + 8-factor + HEXAD-6 = anima g2 internal-arch carve-out.",
+  "design_decision": "PTD-standalone = DESIGN-CLOSE, NO fire (DESIGN_PTD.md §4): B-PTD-2 closed-form proves the standalone corpus is 10³–10⁴×+ below the §1.1 data-regime emergence threshold with unique-content that does not grow in N — a fire would land a predicted negative (anti-padding, cf §13-M / §13-L design-close precedent). PTD-as-component is GOAL-legitimate (§7 3/3, §7③ purest): combination A (PTD-as-DH-DL-aux, §5.1) worth a future cycle gated on §27 DH-DL design; combination B (PTD-as-JEPA-Ψ-target, §5.2) conditional within §28 JEPA-Ψ design; combination C (standalone-pretrain-then-graft) §7② FALSIFIED, rejected."
+}

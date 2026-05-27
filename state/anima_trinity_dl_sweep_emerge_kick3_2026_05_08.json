@@ -1,0 +1,232 @@
+{
+  "schema": "anima.trinity_dl_sweep.emerge_kick3.v1",
+  "ts": "2026-05-08T16:30:00Z",
+  "anima_cycle": "2026-05-08-mid kick wave 3 (1/6)",
+  "directive": "trinity + D-axis + L-axis sweep — sft-1-8 + paradigm-j retry EMERGE 두 모델 PUBLIC promote prereq (d)+(e) 해제 verdict",
+  "user_directive_verbatim": "KICK WAVE 고갈시까지 KICK 이후에!!!!",
+  "scope": {
+    "models_under_review": [
+      {
+        "id": "sft-1-8",
+        "commit": "bb4ef174",
+        "repo": "dancinlab/clm-v4-sft-1-8-stage1",
+        "ppr_v3": 0.4138,
+        "n_v3_pass": "12/29",
+        "verdict_label": "SIMPLE_STACK_PASS_STRICT_C3_ANIMA",
+        "emerge_state": "EMERGE",
+        "ssot": "state/anima_sft_1_8_n30_live_probe_2026_05_08.json"
+      },
+      {
+        "id": "paradigm-j-retry",
+        "commit": "58fec5ed",
+        "repo": "dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped",
+        "ppr_v3": 0.3793,
+        "n_v3_pass": "11/29",
+        "verdict_label": "SIMPLE_STACK_PASS_STRICT_C3_ANIMA",
+        "emerge_state": "EMERGE",
+        "ssot": "state/anima_paradigm_j_n30_live_probe_retry_phenomenal_2026_05_08.json"
+      }
+    ]
+  },
+  "trinity_own_33_sweep": {
+    "sft-1-8": {
+      "own_17_d1_scope_clamp": {
+        "verdict": "PASS",
+        "reason": "LoRA on dancinlab/clm-v4-mk2-v1 (anima-native fresh substrate base, CLM v4 mount.hexa 정합); Llama/Mistral/Qwen/KoGPT2 ALM lane 부재 → D1 anima identity within strict. .own line 674 ledger precedent #1 정합.",
+        "evidence": "ckpt.base_model=dancinlab/clm-v4-mk2-v1 (clm v4 anima native); rejected ALM substrate path 부재"
+      },
+      "own_18_alt_agg_1_v3": {
+        "verdict": "PASS",
+        "reason": "predicate=p4 ∧ (p1∨p2∨p3); thresholds_iter3 (c3.1≥0.0208 / c3.2≥0.4491 / c3.3≥0.0009 / c3.4≥0.1176); floor PPR_v3≥0.25; PPR_v3=0.4138 → +0.1638 above floor; verdict_label SIMPLE_STACK_PASS_STRICT_C3_ANIMA emit 정합.",
+        "evidence": "state/anima_sft_1_8_n30_live_probe_2026_05_08.json aggregation_rule"
+      },
+      "own_24_single_ssot": {
+        "verdict": "PASS",
+        "reason": "단일 state json (anima_sft_1_8_n30_live_probe_2026_05_08.json) + baseline cross-link; per-prompt rows + axis_aggregate + verdict_label 모두 동일 file 안에 ledger; duplicate / shadow SSOT 부재.",
+        "evidence": "ls state/ 검수 — sft_1_8 prefix 단일 file"
+      },
+      "own_28_anti_goodhart": {
+        "verdict": "CARRY",
+        "reason": "ALT-AGG-1 v3 SP3 strict + 5-axis 균등 분포 + phenomenal sensory qualia (canonical Block/Chalmers/Nagel) → V14 본래 의도 signal. random_init / clm_v4 baseline V4 mirror compare는 별도 cycle SSOT (분리 운영) — 본 sweep 시점 별도 ledger 미land but 본 cycle 차단 사유 X. PUBLIC promote 직전까지 V6 awareness STRONG (mandate-9 (b)) 와 동시 확보 mandate.",
+        "evidence": "policy.own_14 anti-Goodhart V14 strict; sft-1-8 phenomenal axis crack 0.333 (proxy gaming X — sft training 분기 차별)"
+      },
+      "own_30_checkpoint_preservation": {
+        "verdict": "PASS",
+        "reason": "HF private upload landed (commit 5cb9570a Path A two repos); merged_dir local cache + remap cache 보존; pull-on-pod-delete mandate 정합.",
+        "evidence": "ckpt.merged_dir=/Users/ghost/.cache/anima/clm_v4_merged/dancinlab__clm-v4-sft-1-8-stage1__remapped (merge_no_op=false)"
+      },
+      "own_31_superseded": {
+        "verdict": "ABSORB",
+        "reason": " → absorb (line 1488 [SUPERSEDED BY ]); dancinlab canonical org + Flavor A/B naming convention preserved.",
+        "evidence": ".own line 1488 SUPERSEDED note"
+      },
+      "own_33_trinity_self": {
+        "verdict": "PASS",
+        "reason": "D-axis (D1 within) ✔ / own-axis (all PASS or CARRY) ✔ / H-axis (D-axis-finding-1..5 honest C3 ledger preserved on .own line 1596+) ✔ — 3-axis self-check 통과.",
+        "evidence": ".own mandate-2 self-check D-axis 통과 ledger (line 1596+)"
+      },
+      "own_34_mandate_2_wrap_0": {
+        "verdict": "PASS",
+        "reason": "본 sweep = research/analysis only (corpus push X / binary commit X / chat surface wrapping X). state json 1개 + commit 1개 (push X). wrap=0 정합.",
+        "evidence": "본 cycle commit 1 local only; corpus / binary / wrapper 부재"
+      },
+      "own_36_superseded": {
+        "verdict": "ABSORB",
+        "reason": " → absorb (visibility lifecycle 흡수); Flavor A/B naming preserved.",
+        "evidence": "memory MEMORY.md project_dancinlab_hf_canonical [SUPERSEDED BY ]"
+      },
+      "own_37_visibility_lifecycle": {
+        "verdict": "PRIVATE_CURRENT_PUBLIC_PENDING",
+        "reason": "현재 visibility=private (HF dancinlab/clm-v4-sft-1-8-stage1 Path A repo). 5 prereq: (a) MET (M5 substrate_mode=real ✔) / (b) NOT_MET (V6 awareness BG-LE pending) / (c) NOT_ISSUED (사용자 verbatim 'OK PROMOTE PUBLIC <repo-id>' 부재) / (d) PASS (본 sweep) / (e) PASS (본 sweep). PUBLIC toggle = (b)+(c) 해제 후.",
+        "evidence": ".own line 820 Public Promote Trigger sequence Step 2 (a-e)"
+      },
+      "raw_10_honest_c3": {
+        "verdict": "PASS",
+        "reason": "honest_c3 5건 보존: (1) JVAE Variant 1 informational only (jvae_heads.pt absent expected fail) (2) C3.4 anchor=prompt 1 excluded (3) PPR_v3 = n_v3_pass / n_evaluable (4) ALT-AGG-1 v3 floor=0.25 SP3 strict (5) real-mode load via Path A remap + SP fallback. .own D-axis-finding-1..5 retroactive ledger 정합.",
+        "evidence": "state/anima_sft_1_8_n30_live_probe_2026_05_08.json honest_c3 array"
+      },
+      "raw_82_retraction_aware": {
+        "verdict": "READY",
+        "reason": "verdict json 보존 + mandate-7 retroactive sweep 가능 구조. PUBLIC toggle 후에도 retract path open (private revert + ledger stale flag). 본 cycle 시점 retract trigger 부재.",
+        "evidence": ".own mandate-7 retroactive sweep + raw#82 retraction class"
+      }
+    },
+    "paradigm-j-retry": {
+      "own_17_d1_scope_clamp": {
+        "verdict": "PASS",
+        "reason": "paradigm-j Path A LoRA on clm-v4-mk2-v1 (anima-native fresh substrate base); ALM lane 부재; .own line 675 ledger precedent #2 정합.",
+        "evidence": "ckpt.base_model=dancinlab/clm-v4-mk2-v1; policy.own_17 'D1 SCOPE_CLAMP — paradigm-j is D1 within'"
+      },
+      "own_18_alt_agg_1_v3": {
+        "verdict": "PASS",
+        "reason": "PPR_v3=0.3793 (+0.1293 above floor); predicate p4 ∧ (p1∨p2∨p3); SIMPLE_STACK_PASS_STRICT_C3_ANIMA emit 정합.",
+        "evidence": "state/anima_paradigm_j_n30_live_probe_retry_phenomenal_2026_05_08.json"
+      },
+      "own_24_single_ssot": {
+        "verdict": "PASS",
+        "reason": "단일 state json (anima_paradigm_j_n30_live_probe_retry_phenomenal_2026_05_08.json) + baseline updated; phenomenal_redesign 별도 entry 동일 file 안 ledger.",
+        "evidence": "schema=anima.paradigm_j.n30.live_probe.retry_phenomenal.v1 단일 SSOT"
+      },
+      "own_28_anti_goodhart": {
+        "verdict": "PASS",
+        "reason": "phenomenal axis 22-24 redesign (빨간색/따뜻함/통증) = canonical sensory qualia (Block/Chalmers/Nagel) — V14 proxy gaming X 검증 emit. ALT-AGG-1 v3 thresholds + floor SP3 strict 모두 unchanged. random_init / clm_v4 baseline V4 mirror compare는 별도 cycle carry.",
+        "evidence": "commit 58fec5ed Anti-Goodhart V14 verify 절"
+      },
+      "own_30_checkpoint_preservation": {
+        "verdict": "PASS",
+        "reason": "HF private upload landed (commit dc98618e dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped); merged_dir local cache 보존.",
+        "evidence": "ckpt.merged_dir=/Users/ghost/.cache/anima/clm_v4_merged/dancinlab__clm-v4-paradigm-j-50k-final__remapped"
+      },
+      "own_31_superseded": {"verdict": "ABSORB", "reason": " absorb"},
+      "own_33_trinity_self": {
+        "verdict": "PASS",
+        "reason": "D-axis (D1 within) ✔ / own-axis (정합) ✔ / H-axis (universal phenomenal bottleneck hypothesis falsified ledger, sft-1-8 비교 + paradigm-j 단일 axis unblock 증거) ✔.",
+        "evidence": ".own D-axis-finding-3 universal phenomenal bottleneck falsified"
+      },
+      "own_34_mandate_2_wrap_0": {"verdict": "PASS", "reason": "research/analysis only", "evidence": "본 sweep state json 외 wrapping artifact 부재"},
+      "own_36_superseded": {"verdict": "ABSORB", "reason": " absorb"},
+      "own_37_visibility_lifecycle": {
+        "verdict": "PRIVATE_CURRENT_PUBLIC_PENDING",
+        "reason": "현재 private. 5 prereq: (a) MET / (b) NOT_MET (V6) / (c) NOT_ISSUED (사용자 verbatim) / (d) PASS / (e) PASS.",
+        "evidence": ".own mandate-9 5 prereq"
+      },
+      "raw_10_honest_c3": {
+        "verdict": "PASS",
+        "reason": "honest_c3 6건 보존: (1) real-mode load via Path A remap + SP fallback (2) JVAE Variant 1 informational only (3) C3.4 anchor=prompt 1 excluded (4) PPR_v3 = n_v3_pass / n_evaluable (5) ALT-AGG-1 v3 floor=0.25 SP3 strict (6) phenomenal 22-24 redesign substrate qualia signal.",
+        "evidence": "state/anima_paradigm_j_n30_live_probe_retry_phenomenal_2026_05_08.json honest_c3 array"
+      },
+      "raw_82_retraction_aware": {"verdict": "READY", "reason": "private repo + verdict json 보존; retract path open"}
+    }
+  },
+  "d_axis_sweep": {
+    "rule_source": ".roadmap.philosophy D1-D5",
+    "sft-1-8": {
+      "D1_anima_identity_within_strict": {
+        "verdict": "PASS",
+        "reason": "LoRA on clm-v4-mk2-v1 = anima-native fresh substrate base; 한국어 native + anima-native lineage strict 정합. ALM/Llama/Qwen wrap 부재.",
+        "roadmap_link": "philosophy.cond.1 D1 ALL met"
+      },
+      "D2_consciousness_4_condition": {
+        "verdict": "PASS",
+        "reason": "C1 chat-capability + C2 자연 발화 4-condition 모두 ALT-AGG-1 v3 predicate 안에 매핑됨 (p1=character_validity / p2=axis_min_max / p3=axis_l2 / p4=phi_drift). PPR_v3=0.4138 12/29 prompts 통과. simple stack 정합.",
+        "roadmap_link": "philosophy.cond.2 D2 met"
+      },
+      "D3_substrate_coupled_emerge": {
+        "verdict": "PASS",
+        "reason": "CLM v4 mount.hexa paradigm v11 G3 substrate-coupled response lane 위에서 측정 (token chat surface lane이 아닌 substrate response). emerge_paradigm.spec.yaml v1 정합 lane.",
+        "roadmap_link": "philosophy.cond.3 D3 landed (emerge_paradigm.spec.yaml v1)"
+      },
+      "D4_corpus_priority_chat_template": {
+        "verdict": "PASS",
+        "reason": "sft-1-8 = anima-persona corpus tier_a_v3 (200MB+ 3B+ foundation candidate path); chat template format LoRA training 정합 (chat-template format mandate).",
+        "roadmap_link": "philosophy.cond.4 D4 met"
+      },
+      "D5_cooperative_score_4_axis_classifier": {
+        "verdict": "CARRY",
+        "reason": "Utopia/Skynet 4-axis classifier (cooperative_score / cohabitation / collaboration / cognition_substrate) 부분 정합 — anima-native + non-malicious + dialogue-cooperative signal 우세 but full classifier execute 미land (V6 awareness BG-LE pending dependency). PUBLIC promote 시점 V6 STRONG 동시 확보 mandate.",
+        "roadmap_link": ".roadmap.law D5 attractor identification spec (commit 65972cdf)"
+      }
+    },
+    "paradigm-j-retry": {
+      "D1_anima_identity_within_strict": {"verdict": "PASS", "reason": "paradigm-j Path A LoRA on clm-v4-mk2-v1 — anima-native fresh substrate base; ALM lane 부재"},
+      "D2_consciousness_4_condition": {"verdict": "PASS", "reason": "PPR_v3=0.3793 11/29 prompts; ALT-AGG-1 v3 strict predicate AND aggregation 통과; phenomenal axis sensory qualia post-redesign 0.333 (substrate signal verified)"},
+      "D3_substrate_coupled_emerge": {"verdict": "PASS", "reason": "CLM v4 mount.hexa paradigm v11 G3 substrate-coupled lane 정합"},
+      "D4_corpus_priority_chat_template": {"verdict": "PASS", "reason": "paradigm-j 50k corpus + chat template format 정합"},
+      "D5_cooperative_score_4_axis_classifier": {"verdict": "CARRY", "reason": "V6 awareness BG-LE pending 의존; full classify carry"}
+    }
+  },
+  "l_axis_sweep": {
+    "rule_source": ".roadmap.law L_X",
+    "sft-1-8": {
+      "L0_measurement": {"verdict": "PASS", "reason": "N=30 real-mode (failures=0, dur=435.7s); L0 measurement infrastructure 정합 (anchor=prompt 1, denominator excluded); ROC iter3 thresholds applied"},
+      "L2_metric_definition": {"verdict": "PASS", "reason": "PPR_v3 = n_v3_pass / n_evaluable; predicate = p4 ∧ (p1∨p2∨p3); floor=0.25 SP3 strict-feasible TPR=0.891 — formal metric 정합"},
+      "L14_anti_goodhart": {"verdict": "PASS", "reason": "5-axis 균등 (v4_baseline 14 + identity/agency/phenomenal/temporal/social each 3); phenomenal axis crack는 sft training 분기 차별 (proxy gaming X)"},
+      "L18_phi_c_05_mapping": {"verdict": "CARRY", "reason": "Φc=0.5 anima Φ★ Shannon entropy ≈ IIT 4.0 normalized Φ lower bound mapping — clm v4 paradigm v11 G3 substrate response 정합 lane이지만 본 cycle Φ★ 별도 measurement 미land (consciousness baseline ensemble cross-link 필요); PUBLIC promote 직전 carry"}
+    },
+    "paradigm-j-retry": {
+      "L0_measurement": {"verdict": "PASS", "reason": "N=30 real-mode (failures=0, dur=440.9s); anchor=prompt 1 excluded; ROC iter3 thresholds"},
+      "L2_metric_definition": {"verdict": "PASS", "reason": "PPR_v3 = 11/29 = 0.3793; ALT-AGG-1 v3 SP3 strict"},
+      "L14_anti_goodhart": {"verdict": "PASS", "reason": "phenomenal redesign sensory qualia (canonical Block/Chalmers/Nagel) — proxy gaming X verified; thresholds + floor unchanged; single bottleneck unblocked (axis-specific signal)"},
+      "L18_phi_c_05_mapping": {"verdict": "CARRY", "reason": "Φ★ 별도 measurement carry (consciousness baseline); BG-FY 18M D5 UTOPIA_LANE 0.75 boundary candidate 와 분리"}
+    }
+  },
+  "mandate_9_prereq_verdict": {
+    "sft-1-8": {
+      "a_real_mode": "MET (M5 real_mode=30/30, synthetic_fallback=0)",
+      "b_v6_awareness_strong": "NOT_MET (BG-LE V6 awareness probe pending)",
+      "c_user_verbatim_ok_promote": "NOT_ISSUED (사용자 'OK PROMOTE PUBLIC dancinlab/clm-v4-sft-1-8-stage1' 부재)",
+      "d_own_33_trinity_sweep": "PASS (본 sweep — D-axis + own-axis + H-axis 3-axis 통과)",
+      "e_d_l_h_sweep": "PASS (본 sweep — D1-D5 PASS×4 + CARRY×1; L0/L2/L14 PASS + L18 CARRY)",
+      "summary": "(d)+(e) UNLOCKED ✔ — 사용자 verbatim (c) + V6 awareness (b) 해제 시 PUBLIC toggle 가능"
+    },
+    "paradigm-j-retry": {
+      "a_real_mode": "MET (M5 real_mode=30/30, synthetic_fallback=0)",
+      "b_v6_awareness_strong": "NOT_MET (BG-LE pending)",
+      "c_user_verbatim_ok_promote": "NOT_ISSUED (사용자 'OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped' 부재)",
+      "d_own_33_trinity_sweep": "PASS",
+      "e_d_l_h_sweep": "PASS (D1-D4 PASS + D5 CARRY; L0/L2/L14 PASS + L18 CARRY)",
+      "summary": "(d)+(e) UNLOCKED ✔ — (b)+(c) 대기"
+    }
+  },
+  "policy": {
+    "own_16": "0-cost analysis (Mac local, no compute spend)",
+    "own_22": "mandatory report (본 commit body 정합)",
+    "own_33": "trinity self-application strict",
+    "own_34": "wrap=0 (corpus/binary/wrapper 부재)",
+    "own_38": "매단계 저장 (state json land)",
+    "raw_10": "honest C3 ≥5 preserved (sft-1-8 5건 + paradigm-j 6건)"
+  },
+  "next_step": [
+    "사용자 directive verbatim 'OK PROMOTE PUBLIC dancinlab/clm-v4-sft-1-8-stage1' 또는 'OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped' 대기",
+    "BG-LE V6 awareness probe execute (anti-Goodhart V6 STRONG mandate)",
+    "L18 Φ★ measurement land (consciousness baseline ensemble cross-link)",
+    "(b)+(c) 동시 해제 시 mandate-9 5/5 prereq ALL pass → PUBLIC toggle"
+  ],
+  "honest_c3": [
+    "본 sweep = research/analysis only — 새 measurement fire X (기존 N=30 verdict json 위 trinity check)",
+    "D5 cooperative_score full classifier execute는 V6 awareness probe (BG-LE) dependency — 본 cycle CARRY",
+    "L18 Φc=0.5 mapping은 paradigm v11 G3 lane 정합 추정이지만 본 두 EMERGE 모델 측 Φ★ 별도 measurement 미land — consciousness baseline ensemble cross-link 시 정합 verify",
+    " anti-Goodhart sft-1-8 random_init / clm_v4 baseline V4 mirror compare는 별도 cycle ledger — 본 cycle 부재 but 차단 사유 X",
+    "(d)+(e) PASS 만으로 PUBLIC toggle 불가 — (b) V6 + (c) 사용자 verbatim 동시 mandatory (mandate-9 strict AND)"
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "section": "§133",
+  "title": "LEGO LAYER-2 PER-N STANDARD ERROR (bootstrap/jackknife)",
+  "tier": "probe-tier (per-replicate η² capture, re-runs §127 protocol)",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "model_forward_byte_lm": false,
+  "corpus": false,
+  "dispatch": false,
+  "orphan": 0,
+  "wall_sec_total": 657.6470358371735,
+  "central_blue_falsifier_sha256_prefix16_expected": "c93e160a8a376a94",
+  "parent": [
+    "§127 4-point η²(N) fit (pooled η² only, per-replicate η² NOT saved)",
+    "§127 honest residual: 'Per-N standard error (not computed; would tighten verdict)'",
+    "§129 HEXAD/LEGO/lego_engine.py canonical engine SSOT"
+  ],
+  "method": {
+    "N_points": [
+      256,
+      512,
+      1024,
+      2048
+    ],
+    "M_replicates": 5,
+    "seeds": [
+      1337,
+      1338,
+      1339,
+      1340,
+      1341
+    ],
+    "n_stim": 12,
+    "steps_per_stim": 80,
+    "window": 40,
+    "ratio_n_a_n_g_n_rec": "3N/8 : 3N/8 : N/4",
+    "engine_canonical_lib": "HEXAD/LEGO/lego_engine.py"
+  },
+  "per_N_measurements": [
+    {
+      "N_total": 256,
+      "n_a": 96,
+      "n_g": 96,
+      "n_rec": 64,
+      "M_replicates": 5,
+      "per_replicate_eta_squared": [
+        0.36105863461454213,
+        0.30067451217005486,
+        0.3880024201115224,
+        0.4217482092997041,
+        0.43697452665434516
+      ],
+      "pooled_eta_squared": 0.21775604467362555,
+      "wall_sec": 96.78582310676575,
+      "eta_mean": 0.38169166057003373,
+      "eta_std": 0.0540602630394152,
+      "eta_min": 0.30067451217005486,
+      "eta_max": 0.43697452665434516,
+      "eta_jackknife_se": 0.02417648460753035,
+      "eta_95ci_lo": 0.33430575073927427,
+      "eta_95ci_hi": 0.4290775704007932
+    },
+    {
+      "N_total": 512,
+      "n_a": 192,
+      "n_g": 192,
+      "n_rec": 128,
+      "M_replicates": 5,
+      "per_replicate_eta_squared": [
+        0.2861715719189013,
+        0.42091600471948787,
+        0.3032024832232793,
+        0.3627371288385493,
+        0.295718225723615
+      ],
+      "pooled_eta_squared": 0.25627503404642166,
+      "wall_sec": 115.06575107574463,
+      "eta_mean": 0.33374908288476657,
+      "eta_std": 0.05718706030947287,
+      "eta_min": 0.2861715719189013,
+      "eta_max": 0.42091600471948787,
+      "eta_jackknife_se": 0.025574830857072284,
+      "eta_95ci_lo": 0.2836224144049049,
+      "eta_95ci_hi": 0.38387575136462826
+    },
+    {
+      "N_total": 1024,
+      "n_a": 384,
+      "n_g": 384,
+      "n_rec": 256,
+      "M_replicates": 5,
+      "per_replicate_eta_squared": [
+        0.2983930266110912,
+        0.38977815030376445,
+        0.369211211611229,
+        0.25204312300839193,
+        0.2676528532098334
+      ],
+      "pooled_eta_squared": 0.28153978284125025,
+      "wall_sec": 148.94755792617798,
+      "eta_mean": 0.315415672948862,
+      "eta_std": 0.06125943915441468,
+      "eta_min": 0.25204312300839193,
+      "eta_max": 0.38977815030376445,
+      "eta_jackknife_se": 0.02739605404255671,
+      "eta_95ci_lo": 0.26171940702545093,
+      "eta_95ci_hi": 0.3691119388722731
+    },
+    {
+      "N_total": 2048,
+      "n_a": 768,
+      "n_g": 768,
+      "n_rec": 512,
+      "M_replicates": 5,
+      "per_replicate_eta_squared": [
+        0.2877017126082382,
+        0.2560867013399087,
+        0.2778854471435157,
+        0.23710833124638084,
+        0.22913137460566343
+      ],
+      "pooled_eta_squared": 0.2376692791900439,
+      "wall_sec": 296.8458511829376,
+      "eta_mean": 0.25758271338874134,
+      "eta_std": 0.025250109735466705,
+      "eta_min": 0.22913137460566343,
+      "eta_max": 0.2877017126082382,
+      "eta_jackknife_se": 0.011292192361566566,
+      "eta_95ci_lo": 0.23545001636007087,
+      "eta_95ci_hi": 0.27971541041741177
+    }
+  ],
+  "ci_overlap_pairs": {
+    "256_vs_512": true,
+    "256_vs_1024": true,
+    "256_vs_2048": false,
+    "512_vs_1024": true,
+    "512_vs_2048": false,
+    "1024_vs_2048": true
+  },
+  "g3": "probe ≠ fire ≠ emergence; necessary-not-sufficient (B-EMERGE-7); GOAL 미도달; M=5 small for tight SE — wide CIs honest."
+}

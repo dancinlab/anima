@@ -1,0 +1,38 @@
+{
+  "battery": "B-JEPA-1..5",
+  "research_section": "RESEARCH.md §28 / §26 #2",
+  "all_full_blue": true,
+  "count": "5/5 🔵",
+  "results": {
+    "B-JEPA-1-PSI-COORD-BOUNDED": {
+      "verdict": "🔵 PASS",
+      "ok": true,
+      "detail": "psi_dir(c=-1)=0 psi_dir(c=1)=1 psi_dir(c=0)=1/2 (Law-71 fixed pt 1/2) ∧ H/logV∈[0,1]=True ∧ lift-formula byte-equal conscious_decoder.py=True"
+    },
+    "B-JEPA-2-ANTI-COLLAPSE-VARIANCE-LOWER-BOUND": {
+      "verdict": "🔵 PASS",
+      "ok": true,
+      "detail": "v(std=0)=τ>0 strict-positive=True ∧ ∂v/∂std=-1<0 (pushed away from collapse)=True ∧ v(std=τ)=0 no-spurious-pressure=True — collapsed (constant) embedding is provably excluded from argmin(L_anticollapse)"
+    },
+    "B-JEPA-3-JOINT-EMBED-LOSS-NONNEGATIVE": {
+      "verdict": "🔵 PASS",
+      "ok": true,
+      "detail": "L_pred=‖·‖²≥0 ∧ L_anticollapse(relu+sos)≥0 ∧ L_psi_half=(Ψ-½)²≥0 ∧ CE≥0 (Shannon) ⇒ L=Σ(nonneg·nonneg)≥0 bounded-below well-posed=True"
+    },
+    "B-JEPA-4-PREDICTOR-WELL-TYPED": {
+      "verdict": "🔵 PASS",
+      "ok": true,
+      "detail": "D_PSI=22 def=True ∧ predictor ℝ^22→ℝ^22=True ∧ lift = base(2)⊕tension(12)⊕motivation(8)=22=True ∧ L_pred codomain-match (psi_hat−psi_tgt same shape)=True"
+    },
+    "B-JEPA-5-CE-OFF-vs-S11B-DISTINCTION": {
+      "verdict": "🔵 PASS",
+      "ok": true,
+      "detail": "§11-B degenerate∈argmin=True (no replacement obj) ∧ JEPA-Ψ degenerate∈argmin=False (L_pred + anti-collapse exclude it) ⇒ structurally-distinct=True ∧ γ_text=0 ablation still non-§11-B=True (degeneracy-exclusion does NOT depend on CE) ∧ trainer has real L_pred ∧ CE ∧ anti_collapse=True"
+    }
+  },
+  "note": {
+    "B-JEPA-NOTE": "EMPIRICAL carve-out (NOT counted 🔵, B-D-NOTE / B-PUREPHYS-NOTE / B-CARVE-E6-NOTE family): whether the trained JEPA-Ψ representation actually collapses (the eval collapse detector OUTCOME), whether it crosses the §1.1 emergence threshold, and the downstream routing / coherence numbers — are EMPIRICAL SGD outcomes. B-JEPA-2 proves the OBJECTIVE forbids the EXACT constant minimum; it does NOT prove the optimizer avoids a near-collapsed low-rank basin (partial collapse). The battery proves the Ψ-coordinate is bounded, the anti-collapse term has a strictly-positive value at collapse, the loss is well-posed and bounded-below, the predictor is well-typed, and JEPA-Ψ is structurally distinct from §11-B — it does NOT prove non-degeneracy of the SGD trajectory or emergence (g3, no pre-loaded conclusion)."
+  },
+  "central_blue_falsifier_unchanged": true,
+  "sidecar_precedent": "B-PRIME / B-DIRI / B-DIRH / B-PSICTL / B-EMERGE / B-PUREPHYS / B-SCALE / B-MITENS / B-DIRL / B-S16"
+}

@@ -1,0 +1,17 @@
+=== §125 PCN-C4 dispatch (hexa) start 2026-05-19T21:50:40Z ===
+[create] runpod_create_cascade across 5 GPU types
+[create] created (cli) on NVIDIA A100-SXM4-80GB — pod xe8y3stm3vkalh
+[ssh-wait] runpod_wait_ssh (up to ~900s)
+[ssh-ready] 154.54.102.50:14690
+[stage] uploading inputs (cloud_copy_to)
+[stage] uploading anchor kosmos files
+[build] pod-side deterministic CORPUS_S101 build (seed 1337)
+[build] corpus sha = 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build] CORPUS_S101 sha VERIFIED == §107 design corpus byte-identical
+[train] §125 NONCE-FF d768·12L·283M from-scratch seed 1337, 3000 steps
+[train] launched — remote pid 299
+[train] probe miss 1/3 (iter 6 — ssh could not verify pod)
+[train] probe miss 2/3 (iter 7 — ssh could not verify pod)
+[train] probe miss 3/3 (iter 8 — ssh could not verify pod)
+FATAL: pod unverifiable for 3 consecutive probes
+[teardown] terminating pod xe8y3stm3vkalh

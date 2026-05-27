@@ -1,0 +1,28 @@
+anima_2_lm_vlm_slm_landed marker — 2026-05-03
+
+cycle: BG-AN-LM3 follow-up (anima 측 2 신규 *LM fan-out)
+fan-out: VLM (Voice LM) + SLM (Speech-EEG LM)
+delta: .roadmap.* 41 → 43 (+2, additive only)
+
+new files (3):
+  .roadmap.vlm_voice_lm                                            (mk2 domain, peer perspective)
+  .roadmap.slm_speech_eeg_lm                                       (mk2 domain, peer perspective)
+  anima/docs/anima_2_lm_vlm_slm_landed_2026_05_03.ai.md            (handoff doc, friendly preset)
+
+referenced (no modification):
+  .roadmap.voice                                                   (sister VLM, tool-ization SSOT)
+  .roadmap.eeg                                                     (sister SLM, B1-B4 4관문 SSOT)
+  .roadmap.nlm_neuromorphic_lm / tlm_tension_lm / blm_brain_lm     (sibling LM, 5-LM ecosystem)
+  anima-voice/audio_token_predictor.hexa (1576L raw#9 Mk.III)      (VLM baseline)
+  anima-voice/intent_encoder.hexa / anima_voice.hexa / rvq_codebook.hexa
+  anima-eeg/{collect,realtime,calibrate,closed_loop,dual_stream,experiment}.hexa
+  docs/anima_3_lm_landed_2026_05_03.ai.md                          (BG-AN-LM3 predecessor)
+
+JSON validity: 2/2 PASS (vlm_voice_lm + slm_speech_eeg_lm both validate)
+schema: mk2 header (peer perspective + sister_lm cross-link 5명 + raw_invariants 5건 + ai_native_handoff)
+caveats: 5건 (C1 dual SSOT VLM × voice, C2 dual SSOT SLM × eeg + B1-B4 prereq, C3 disambiguation cost, C4 384d bottleneck, C5 EEG-text corpus N-limited)
+
+policy: additive only / BR-NO-USER-VERBATIM / Korean response (handoff = friendly preset) / silent-land marker / $0 mac-local / destructive 0
+cap: 45min (under)
+
+5-LM ecosystem post-cycle: ELM/MLM/OLM/WLM (4 absorbed) + NLM/TLM/BLM (3 BG-AN-LM3 pre) + VLM/SLM (2 THIS cycle) = 9 *LM total

@@ -1,0 +1,19 @@
+__P9_PATH_A_RETRAIN_V2_SPEC__ LANDED
+cycle: BG-Φ 2026-05-04
+ts_utc: 2026-05-04T_BG_phi_design
+spec_doc: docs/p9_path_a_retrain_v2_spec_2026_05_04.md
+handoff_doc: docs/p9_path_a_retrain_v2_spec_landed_2026_05_04.ai.md
+state_dir: state/p9_path_a_retrain_v2_spec_2026_05_04/
+recommended_strategy: S1+S3 (rehearsal mix 60/30/10 + lr 1e-4 → 5e-5 + max_steps 10000 → 6000)
+cost_band_usd: 20-30
+wall_estimate_h: 3.75-7
+falsifier_count: 4
+falsifier_ids: F-PA-RETRAIN-v2-1, F-PA-RETRAIN-v2-2, F-PA-RETRAIN-v2-3, F-PA-RETRAIN-v2-4
+honest_c3_count: 8
+predecessor_v1: state/p9_path_a_llama_lora_2026_05_03/ (step-8k HF 5a9b4584)
+driver_verdict: state/p9_lora_mode1_eval_2026_05_04/verdict.json (BG-Ρ INFRASTRUCTURE_PASS / SCIENCE_FAIL fa7db7bc)
+anchor: state/p9_base_validation_llama_anchor_2026_05_04/verdict.json (BG-Ο 93bef8c8)
+competing_strategy_S4: external r=16 pods nzw0btc8br78yy + 0jetjpvlm51zoy (omnibus 11331fe4)
+exec_gate: USER_ACK_REQUIRED
+git_ops_this_cycle: NONE
+pod_boot_this_cycle: NONE

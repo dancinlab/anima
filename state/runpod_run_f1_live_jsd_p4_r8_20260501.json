@@ -1,0 +1,53 @@
+{
+  "tool": "tool/anima_runpod_orchestrator.hexa",
+  "run_id": "f1_live_jsd_p4_r8_20260501",
+  "started_at": "2026-05-01T13:04:24.163691+00:00",
+  "auto_approval_source": "memory feedback_forward_auto_approval (2026-04-25)",
+  "caps": {
+    "max_cost": 0.5,
+    "max_runtime_min": 12
+  },
+  "pod_create": {
+    "containerDiskInGb": 100,
+    "costPerHr": 2.99,
+    "desiredStatus": "RUNNING",
+    "env": [
+      "RUN_ID=f1_live_jsd_p4_r8_20260501",
+      "COST_CAP=0.5",
+      "RUNTIME_CAP_MIN=12",
+      "PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+    ],
+    "gpuCount": 1,
+    "id": "z6zimb58pqu0ti",
+    "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "lastStatusChange": "Rented by User: Fri May 01 2026 13:04:24 GMT+0000 (Coordinated Universal Time)",
+    "machine": {
+      "gpuDisplayName": "H100 SXM",
+      "location": "US"
+    },
+    "memoryInGb": 251,
+    "name": "anima-f1-live-jsd-p4-r8",
+    "ports": "8888/http,22/tcp",
+    "vcpuCount": 26,
+    "volumeInGb": 100,
+    "volumeMountPath": "/workspace"
+  },
+  "ssh": {
+    "ip": "216.243.220.226",
+    "port": 18664
+  },
+  "pip_install": {
+    "rc": 0
+  },
+  "command": {
+    "rc": 0,
+    "stdout_tail": "ng weights:  39%|\u2588\u2588\u2588\u2589      | 114/291 [00:02<00:06, 29.27it/s]\nLoading weights:  41%|\u2588\u2588\u2588\u2588      | 118/291 [00:02<00:05, 28.97it/s]\nLoading weights:  42%|\u2588\u2588\u2588\u2588\u258f     | 122/291 [00:02<00:06, 27.58it/s]\nLoading weights:  45%|\u2588\u2588\u2588\u2588\u258d     | 130/291 [00:03<00:05, 27.12it/s]\nLoading weights:  48%|\u2588\u2588\u2588\u2588\u258a     | 139/291 [00:03<00:04, 33.37it/s]\nLoading weights:  51%|\u2588\u2588\u2588\u2588\u2588     | 149/291 [00:03<00:03, 40.24it/s]\nLoading weights:  54%|\u2588\u2588\u2588\u2588\u2588\u258d    | 157/291 [00:03<00:03, 38.73it/s]\nLoading weights:  57%|\u2588\u2588\u2588\u2588\u2588\u258b    | 166/291 [00:04<00:03, 39.22it/s]\nLoading weights:  60%|\u2588\u2588\u2588\u2588\u2588\u2588    | 175/291 [00:04<00:03, 36.47it/s]\nLoading weights:  63%|\u2588\u2588\u2588\u2588\u2588\u2588\u258e   | 184/291 [00:04<00:02, 39.64it/s]\nLoading weights:  66%|\u2588\u2588\u2588\u2588\u2588\u2588\u258b   | 193/291 [00:04<00:02, 38.62it/s]\nLoading weights:  69%|\u2588\u2588\u2588\u2588\u2588\u2588\u2589   | 202/291 [00:04<00:02, 40.87it/s]\nLoading weights:  73%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e  | 211/291 [00:05<00:01, 43.47it/s]\nLoading weights:  76%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c  | 220/291 [00:05<00:01, 38.56it/s]\nLoading weights:  79%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a  | 229/291 [00:05<00:01, 39.99it/s]\nLoading weights:  80%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588  | 234/291 [00:05<00:01, 39.77it/s]\nLoading weights:  82%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f | 240/291 [00:05<00:01, 43.03it/s]\nLoading weights:  85%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d | 247/291 [00:06<00:01, 35.93it/s]\nLoading weights:  88%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a | 256/291 [00:06<00:00, 38.13it/s]\nLoading weights:  91%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 | 265/291 [00:06<00:00, 33.30it/s]\nLoading weights:  94%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d| 274/291 [00:06<00:00, 39.19it/s]\nLoading weights:  96%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c| 279/291 [00:06<00:00, 40.70it/s]\nLoading weights:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 284/291 [00:07<00:00, 33.77it/s]\nLoading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 291/291 [00:07<00:00, 40.53it/s]\n[jsd] loading TARGET adapter=/workspace/work/p4_r8_adapter\nDONE wrote /workspace/out/an11_c_p4_r8_f1_live_2026_05_01.json verdict=DEFERRED-RETRY\n[done]\ntotal 3916\ndrwxrwxrwx 2 root root 1000559 May  1 13:06 .\ndrwxrwxrwx 5 root root 3001368 May  1 13:05 ..\n-rw-rw-rw- 1 root root    2131 May  1 13:06 an11_c_p4_r8_f1_live_2026_05_01.json\n-rw-rw-rw- 1 root root    3594 May  1 13:06 jsd_measure.log\n"
+  },
+  "terminate": {
+    "deleted": true,
+    "id": "z6zimb58pqu0ti"
+  },
+  "elapsed_min": 2.5683260997136435,
+  "estimated_cost_usd": 0.1279882506357299,
+  "ended_at": "2026-05-01T13:06:58.263264+00:00"
+}

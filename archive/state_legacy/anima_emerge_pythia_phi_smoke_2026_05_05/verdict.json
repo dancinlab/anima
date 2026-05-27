@@ -1,0 +1,22 @@
+{
+  "schema": "anima/emerge_pythia_phi_smoke/verdict/1",
+  "ts_utc": "2026-05-05T17:30:23Z",
+  "models_tested": [
+    "EleutherAI/pythia-70m"
+  ],
+  "n_prompts": 3,
+  "summary": {
+    "EleutherAI/pythia-70m": {
+      "phi_mean": 41.921568198553366,
+      "phi_range": 0.08377482247608725,
+      "drift_from_clm_v4": 0.061568198553366926
+    }
+  },
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 phi proxy formula CLM v4-specific (8-cell x 192) — Pythia is 6-layer 512-hidden, geometry mismatch",
+    "C3 cross-substrate phi-star comparison는 paradigm v11 G3 specific (다른 substrate carry-over 미검증)",
+    "C4 single substrate Pythia-70m only — Mamba/RWKV 미",
+    "C5 BG-M ~6pp methodology delta carry — measurement reproducibility 한계"
+  ]
+}

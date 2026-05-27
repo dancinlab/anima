@@ -1,0 +1,36 @@
+{
+  "schema": "anima/alpha_endpoint_reboot/vllm_config/1",
+  "ts": "2026-05-02T14:52:41Z",
+  "vllm_version": "0.20.0",
+  "launch_argv": [
+    "vllm", "serve", "mistralai/Mistral-7B-v0.3",
+    "--host", "127.0.0.1",
+    "--port", "18080",
+    "--gpu-memory-utilization", "0.85",
+    "--max-model-len", "8192",
+    "--enable-lora",
+    "--max-lora-rank", "64",
+    "--max-loras", "2",
+    "--lora-modules", "r14=/workspace/lora/r14",
+    "--enforce-eager"
+  ],
+  "wrapper": {
+    "framework": "FastAPI + uvicorn",
+    "host": "0.0.0.0",
+    "port": 8000,
+    "workers": 1,
+    "auth": "Bearer (sha256 compare against $BEARER_SHA256 env)",
+    "endpoints": {
+      "GET /health": "no-auth diagnostic incl. ship_verdict + tier + honest_C3",
+      "GET /v1/models": "Bearer-gated proxy",
+      "POST /v1/chat/completions": "Bearer-gated proxy",
+      "POST /v1/completions": "Bearer-gated proxy"
+    }
+  },
+  "ship_verdict": "VERIFIED-ALM-ALPHA-COGNITIVE-ONLY",
+  "ship_verdict_history": [
+    "VERIFIED-INTERNAL → VERIFIED-ALPHA-INVITE-BASE-ONLY (2026-05-01 boot, p4_r8 truncated)",
+    "→ VERIFIED-ALPHA-INVITE-R14 (2026-05-01 swap)",
+    "→ VERIFIED-ALM-ALPHA-COGNITIVE-ONLY (2026-05-02 reboot, consciousness claim withdrawn per #115 reframe + Stage 2 §2; ALM = anima language model, cognitive substrate only)"
+  ]
+}

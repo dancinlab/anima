@@ -1,0 +1,49 @@
+{
+  "id": "H_235",
+  "slug": "saturation-regime-extended",
+  "date": "2026-05-24",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "cross_link": ["H_223", "H_004", "H_007"],
+  "config": { "N": 16, "dim": 12, "warm": 8, "rule": 110, "perturb_cell": 0, "n_bins": 4, "boundary": "periodic" },
+  "intensity_sweep": [0.0, 0.5, 1.0, 2.0, 2.0, 4.0, 6.0, 8.0, 10.0],
+  "phi_base": 0.538242,
+  "phi_pert": [0.538242, 1.56044, 2.44487, 4.53675, 4.53675, 4.53934, 4.06408, 3.96849, 3.47228],
+  "delta_phi":  [0.0, 1.0222, 1.90663, 3.99851, 3.99851, 4.0011, 3.52584, 3.43025, 2.93404],
+  "invariance_at_2_0": { "k3_eq_k4": true, "diff": 0.0 },
+  "monotone_full": false,
+  "high_range": {
+    "saturation_count": 4,
+    "escalation_count": 0,
+    "regime": "A (saturation)",
+    "ceiling_estimate": 4.0011,
+    "saturated_in_window": true
+  },
+  "power_law_fit": {
+    "model": "log(ΔΦ) = k * log(intensity) + b",
+    "k_exponent": 0.321036,
+    "intercept": 0.718157,
+    "used_n": 8.0,
+    "r_squared": 0.483612,
+    "k_class": "k<0.6 (sub-lin/sat)"
+  },
+  "pearson_r_full": 0.482654,
+  "criteria": {
+    "C1_nine_point_measured":  true,
+    "C2_fit_r2_ge_0_7":        false,
+    "C3_h223_carry_consistent":true,
+    "C4_byte_identical":       true
+  },
+  "falsifiers": {
+    "F1_DPHI_DEFINED":   { "metric": "all 9 ΔΦ finite & non-negative", "verdict": "PASS" },
+    "F2_FIT_R2_LT_0_4":  { "metric": "power-law fit R²", "value": 0.483612, "verdict": "PASS" },
+    "F3_H223_INCONSIST": { "metric": "low-range monotone + zero-ΔΦ + Δ(2.0)>Δ(0)", "verdict": "PASS" },
+    "F4_BYTE_DIFF":      { "metric": "re-run byte-identical (external diff)", "verdict": "PASS" },
+    "F5_NEG_DPHI":       { "metric": "any ΔΦ < 0 (forbidden)", "verdict": "PASS" }
+  },
+  "verdict_rule": "SUPPORTED iff C1 9-point measured AND C2 fit R²>=0.7; PARTIAL = C1 only; FALSIFIED = C1 FAIL",
+  "verdict": "PARTIAL"
+}

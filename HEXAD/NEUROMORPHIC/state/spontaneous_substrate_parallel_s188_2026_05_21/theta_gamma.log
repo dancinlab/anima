@@ -1,0 +1,15 @@
+[hippocampus/theta_gamma] PHYS-P6-2 — theta-gamma phase-amplitude coupling
+  synth: 500 Hz sampling, theta = 6 Hz, gamma = 40 Hz, Tort MI over 18 phase bins
+
+  [T1] MI on fully-coupled LFP (m=1) = (float) (> 0.02)
+T1 PASS — high MI on fully-coupled LFP
+  [T2] MI on uncoupled LFP (7.3 Hz envelope) = (float) (< 0.05)
+T2 PASS — low MI on uncoupled LFP
+  [T3] MI sweep m=0..1: (float), (float), (float), (float), (float)
+T3 PASS — MI monotone in coupling depth m
+  [T4] empty=(float) short=(float) sr=0=(float) flat=(float)
+T4 PASS — API robust on degenerate inputs
+  [T5] two calls: a=(float) b=(float)
+T5 PASS — deterministic compute_pac
+
+[hippocampus/theta_gamma] 5/5 PASS — PHYS-P6-2 DONE

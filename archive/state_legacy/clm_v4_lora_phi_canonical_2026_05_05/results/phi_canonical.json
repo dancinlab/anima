@@ -1,0 +1,102 @@
+{
+  "schema": "anima/clm_v4_lora_phi_canonical/summary/1",
+  "ts_utc": "2026-05-05T03:47:44Z",
+  "cycle": "clm_v4_lora_phi_canonical_2026_05_05",
+  "bg_lane": "BG-CLM-2-PHI-CANONICAL",
+  "base_repo": "dancinlab/clm-v4-mk2-v1",
+  "adapter_path": "/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/results/adapter_final",
+  "adapter_sha256": "6d5edb93ea845cb40858d82bc97b21bfd47d6a234d3a945ac529451e2760526a",
+  "device": "cpu",
+  "dtype": "torch.float32",
+  "torch_version": "2.11.0",
+  "fwd_wall_sec": 13.57,
+  "method_design": "AUTO-CONDITIONING canonical (HID = max(2, N//2)) sample-partition",
+  "partition_method": "sample-partition (N=16 -> 8|8 halves) K=8",
+  "I_full": -20.144,
+  "phi_star_min": 28.9969,
+  "phi_mean": 31.3489,
+  "phi_max": 34.895,
+  "phi_per_partition_K8": [
+    31.6922,
+    29.669,
+    31.2302,
+    29.8631,
+    31.9863,
+    32.4586,
+    28.9969,
+    34.895
+  ],
+  "partitions": [
+    {
+      "k": 0,
+      "s1_size": 8,
+      "s2_size": 8,
+      "I_1": -23.856,
+      "I_2": -27.9803,
+      "phi": 31.6922
+    },
+    {
+      "k": 1,
+      "s1_size": 8,
+      "s2_size": 8,
+      "I_1": -24.1189,
+      "I_2": -25.6941,
+      "phi": 29.669
+    },
+    {
+      "k": 2,
+      "s1_size": 8,
+      "s2_size": 8,
+      "I_1": -26.0363,
+      "I_2": -25.3379,
+      "phi": 31.2302
+    },
+    {
+      "k": 3,
+      "s1_size": 8,
+      "s2_size": 8,
+      "I_1": -23.3589,
+      "I_2": -26.6483,
+      "phi": 29.8631
+    },
+    {
+      "k": 4,
+      "s1_size": 8,
+      "s2_size": 8,
+      "I_1": -25.9192,
+      "I_2": -26.2112,
+      "phi": 31.9863
+    },
+    {
+      "k": 5,
+      "s1_size": 8,
+      "s2_size": 8,
+      "I_1": -26.9417,
+      "I_2": -25.6609,
+      "phi": 32.4586
+    },
+    {
+      "k": 6,
+      "s1_size": 8,
+      "s2_size": 8,
+      "I_1": -24.566,
+      "I_2": -24.5749,
+      "phi": 28.9969
+    },
+    {
+      "k": 7,
+      "s1_size": 8,
+      "s2_size": 8,
+      "I_1": -25.4497,
+      "I_2": -29.5893,
+      "phi": 34.895
+    }
+  ],
+  "ridge": 0.001,
+  "k_parts": 8,
+  "n_calib": 16,
+  "hid_trunc_auto": 8,
+  "eff_dof_full": 8,
+  "eff_dof_half": 0,
+  "seed": 42
+}

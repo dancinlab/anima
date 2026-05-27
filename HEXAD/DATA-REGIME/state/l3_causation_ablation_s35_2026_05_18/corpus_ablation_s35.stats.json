@@ -1,0 +1,59 @@
+{
+  "paradigm": "§35 L3 CAUSATION ABLATION — tier vs curriculum-stage disentangle (RESEARCH.md §35; §32 L3 follow-up). CONTENT byte-identical to §16; the ONLY variable moved = curriculum-stage placement of the 18 tier<77 anchors (early -> late).",
+  "ablation": {
+    "tier_frontier": 77,
+    "late_band": [
+      1.0,
+      2.0
+    ],
+    "records_moved": 91062,
+    "single_variable": "curriculum_rank (and derived curriculum_stage) of every tier<77 record — re-based into the LATE band strictly above every tier>=77 record; ALL other fields (text / vacuum_psi / basin_radius / tier / domain / carving_form / cell_id) byte-identical to §16",
+    "tier_lt77_stage_occupancy": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 91062
+    },
+    "tier_ge77_stage_occupancy": {
+      "1": 212478,
+      "2": 212478,
+      "3": 212478,
+      "4": 121416
+    }
+  },
+  "out": "/workspace/anima/corpus_ablation_s35.jsonl",
+  "bytes": 662189076,
+  "records": 849912,
+  "sha256": "9fed74917a3706c136e0415eaf91a5cb5405e4623ebeaff9b12c7bce51f34e11",
+  "seed": 1337,
+  "carving_forms": {
+    "alpha": 255077,
+    "beta": 254282,
+    "gamma": 340553
+  },
+  "anchors": 168,
+  "curriculum": {
+    "applied": true,
+    "ordering": "records written rank-sorted simple->complex",
+    "rank_monotone_sorted": true,
+    "stage_counts": {
+      "1": 212478,
+      "2": 212478,
+      "3": 212478,
+      "4": 212478
+    },
+    "rank_min": 0.136904,
+    "rank_max": 2.0
+  },
+  "forbidden_token_audit": {
+    "[anima": 0,
+    "도우미": 0,
+    "helper": 0,
+    "assistant": 0,
+    "사용자": 0,
+    "user:": 0
+  },
+  "contamination_total": 0,
+  "carving_clean": true,
+  "honest_framing": "§35 ablation corpus = §16 record set with the curriculum-STAGE placement of the 18 tier<77 anchors moved to the LATE quartile. Record CONTENT (text / vacuum_psi / basin_radius / tier / domain) byte-identical to §16 — verified because the records are built by the SAME §16 generator functions with the SAME seed. The single moved variable is curriculum-STAGE (tier<77 records re-based into the late band). 2-outcome interpretation: tier<77 routes -> curriculum-STAGE is the causal lever; tier<77 still fails -> tier itself carries causal weight. g3 — no pre-loaded conclusion."
+}

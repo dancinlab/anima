@@ -1,0 +1,42 @@
+{
+  "source_file": "anima-voice/audio_token_predictor.hexa",
+  "source_sha": "d290f1ae7",
+  "source_loc": 1576,
+  "target_file": "tool/transient_py/atp_pytorch.py",
+  "target_loc": 645,
+  "loc_compression_ratio": 0.41,
+  "compression_explanation": "PyTorch nn.Linear / SDPA / batched ops eliminate the per-element while-loop boilerplate that dominates the hexa interpreter-friendly source.",
+  "function_mapping": [
+    {"hexa": "atp_prng_next / atp_prng_float", "py": "torch.Generator.manual_seed (in generate())", "note": "LCG → torch RNG; sequence values differ but training irrelevant"},
+    {"hexa": "atp_zeros / atp_ones / atp_rand_vec", "py": "torch.zeros / torch.ones / torch.randn (via nn.init)", "note": "tensor allocation"},
+    {"hexa": "atp_vec_add / atp_vec_scale / atp_dot / atp_mat_vec", "py": "tensor + / * / @ / matmul", "note": "native torch ops"},
+    {"hexa": "atp_layer_norm", "py": "nn.LayerNorm", "note": "torch impl is numerically identical (subtract mean, divide by sqrt(var+eps), affine)"},
+    {"hexa": "atp_softmax", "py": "F.softmax", "note": "torch uses log-sum-exp internally; numerically equivalent"},
+    {"hexa": "atp_sigmoid / atp_silu / atp_swiglu_ffn", "py": "F.silu + class SwiGLUFFN", "note": "preserved 3-projection (w1, w_gate, w2) layout"},
+    {"hexa": "atp_rope_encode", "py": "class RotaryPositionEmbedding", "note": "preserved theta_i = 1/10000^(2i/d) and pair-rotation; precomputed cos/sin tables for speed"},
+    {"hexa": "atp_kv_cache_init / append / get (list-based)", "py": "torch tensor cache (k_cache, v_cache) per block", "note": "list pass-by-value avoidance: torch caches are mutable tensors"},
+    {"hexa": "atp_raw_kv_init / append / get_k / get_v / free (alloc_raw)", "py": "torch tensor cache (same as above)", "note": "torch contiguous buffers replace alloc_raw + write_f32"},
+    {"hexa": "atp_flash_attention_head / atp_flash_mha (tiled online softmax)", "py": "F.scaled_dot_product_attention", "note": "torch SDPA dispatches to flash kernel on supported HW (sm_80+); equivalent semantically"},
+    {"hexa": "atp_multi_head_attn", "py": "class CausalSelfAttention.forward", "note": "Q/K/V projection + RoPE + SDPA + output projection"},
+    {"hexa": "atp_block_init", "py": "DecoderBlock.__init__", "note": "11 weight arrays (wq/wk/wv/wo/w1/w_gate/w2/ln1g/ln1b/ln2g/ln2b) → 4 nn.Linear + 2 nn.LayerNorm"},
+    {"hexa": "atp_block_forward / atp_flash_block_forward", "py": "DecoderBlock.forward", "note": "Pre-norm: ln1→attn→residual, ln2→ffn→residual"},
+    {"hexa": "atp_sample_top_k (selection sort)", "py": "torch.topk + F.softmax + torch.multinomial", "note": "O(k log V) vs O(k*V); semantically same distribution"},
+    {"hexa": "atp_model_init", "py": "class AudioTokenPredictor.__init__", "note": "embed_table + blocks + intent_proj + 8 rvq_heads; PLUS text_head (VLM addition)"},
+    {"hexa": "atp_decode_step / atp_flash_decode_step", "py": "AudioTokenPredictor.generate (per-step inner loop)", "note": "single-token AR step preserved"},
+    {"hexa": "atp_cfg_blend", "py": "inline in generate(): logits_uncond + cfg_scale * (logits_cond - logits_uncond)", "note": "exact formula match"},
+    {"hexa": "atp_assemble_delayed_pattern", "py": "inline in generate() final loop", "note": "stage s reads from step (frame - s); padding 0 if source_step < 0"},
+    {"hexa": "predict_tokens", "py": "AudioTokenPredictor.generate", "note": "full AR loop with CFG dual-pass + per-stage CFG blend + sample"},
+    {"hexa": "self_test_audio_token_predictor / atp_format_float / main", "py": "smoke_test() function", "note": "self-test reduced to F-VLM-TRANSPILE-1 contract; per-component unit tests deferred"}
+  ],
+  "additions_for_vlm": [
+    {"item": "text_head: nn.Linear(d_model, text_vocab_size=32000)", "rationale": "vlm_cond3_blocker §4 requirement for stage1 loss = 0.5*audio_CE + 0.5*text_CE"},
+    {"item": "text_embed: nn.Embedding(text_vocab_size, d_model)", "rationale": "VLM stage1 takes TEXT tokens as AR input during training (audio_embed retained for generation/inference)"},
+    {"item": "ln_final before heads", "rationale": "Standard pre-norm transformer convention; hexa source omitted; can be set to Identity if strict source-parity needed"},
+    {"item": "ATPConfig dataclass", "rationale": "explicit config object replaces 10-element model array indexing in hexa"}
+  ],
+  "deferred_or_omitted": [
+    {"item": "build_hxcuda_istft.hexa bridge integration", "reason": "out of scope; vocoder lives downstream of ATP"},
+    {"item": "rvq_codebook.hexa indices → latent → audio", "reason": "out of scope; ATP outputs codebook indices only"},
+    {"item": "Mac MPS fallback testing", "reason": "Mac is canonical .hexa side per raw#9; .py runs on ubu1/RunPod only"}
+  ]
+}

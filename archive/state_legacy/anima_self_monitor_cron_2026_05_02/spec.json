@@ -1,0 +1,31 @@
+{
+  "schema": "anima/self_monitor_spec/1",
+  "ssot_doc": "docs/anima_self_monitor_cron_2026_05_02.md",
+  "monitor_tool": "tool/anima_self_monitor.hexa",
+  "launchd_plist_template": "config/launchd/com.anima.self_monitor.plist",
+  "launchd_plist_install_path": "~/Library/LaunchAgents/com.anima.self_monitor.plist",
+  "trigger": {
+    "name": "w1_phase_6_rerun",
+    "threshold_n": 20,
+    "count_rule": "unique cycle_id where name=cycle_done in state/proposals/meta/cycle_log.jsonl",
+    "rerun_spec": {
+      "modulus": 1024,
+      "windows": [5, 7, 20],
+      "expected_outcomes": ["REAL_SIGNAL", "ARTIFACT_PERMANENT_DOWNGRADE_CONFIRMED"]
+    }
+  },
+  "cron": {
+    "interval_sec": 3600,
+    "rationale": "median inter-tick = 12h; hourly polling adds <1s/run and zero $; idempotent via last_alert.json"
+  },
+  "snapshot_at_creation": {
+    "ts_utc": "2026-05-02T12:09:00Z",
+    "n_ticks_observed": 15,
+    "remaining_to_threshold": 5,
+    "median_inter_tick_hours": 12.0,
+    "eta_to_n20_days": 2.5,
+    "last_cycle_done_ts": "2026-05-02T01:49:32Z",
+    "last_cycle_id": "20260502T014931Z",
+    "note": "n=15 matches Phase 5 §1 cited n; reconciles with W1 Phase 5 ARTIFACT_PERMANENT_DOWNGRADE precondition."
+  }
+}

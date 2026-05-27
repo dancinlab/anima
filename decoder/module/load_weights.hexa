@@ -1,0 +1,186 @@
+// core/load_weights.hexa — Weight loader via json_parse (11,500x faster than to_float loop)
+//
+// AUDIT 2026-04-20 (phantom sweep): "11,500x" = derived from 23s / 0.002s ratio
+// stated below, but no standalone bench log for the 16K-float case is checked in.
+// Treat as STALE single-shape snapshot: shape/interpreter path may have drifted
+// since the measurement. Re-verify with a dedicated bench before quoting.
+//
+// Strategy: read_file → replace(" ", ",") → "[" + ... + "]" → json_parse()
+// json_parse is Rust-native → 16K floats in 2ms (vs 23s with to_float loop)
+//
+// .pt → .hexaw_json 변환 (1회, Python):
+//   python3 core/convert_weights.py best.pt core/weights/
+//
+// Or inline:
+//   cd $ANIMA && python3 -c "
+//   import torch, json, os
+//   ckpt = torch.load('ready/anima/checkpoints/v14_128c_final/best.pt', map_location='cpu', weights_only=False)
+//   state = ckpt['decoder']
+//   os.makedirs('core/weights', exist_ok=True)
+//   manifest = {}
+//   for k, v in state.items():
+//       if v.dim() > 2: continue
+//       data = v.float().detach().flatten().tolist()
+//       safe = k.replace('.', '_')
+//       with open(f'core/weights/{safe}.json', 'w') as f:
+//           json.dump(data, f)
+//       manifest[k] = {'file': f'{safe}.json', 'shape': list(v.shape), 'numel': v.numel()}
+//   with open('core/weights/_manifest.json', 'w') as f:
+//       json.dump(manifest, f, indent=2)
+//   print(f'{len(manifest)} tensors exported')
+//   "
+
+// ─── Safe file read (Hexa Error-type guard) ───
+//
+// Hexa note (2026-04-12): read_file() returns Error type for missing paths;
+// json_parse(Error) crashes with "requires string argument". Probe via .split()
+// (silently coerces Error → [""]) to detect existence and return real string.
+fn safe_read(path: string) -> string {
+    let raw = read_file(path)
+    let parts = raw.split("\n")
+    if parts.len() == 1 && parts[0] == "" { return "" }
+    return raw
+}
+
+// ─── Load single tensor from JSON file ───
+
+fn load_tensor(dir: string, filename: string) -> array {
+    let path = dir + "/" + filename
+    let content = safe_read(path)
+    if content == "" {
+        print_err("load_weights: tensor file missing or empty: " + path)
+        exit(1)
+    }
+    json_parse(content)
+}
+
+// ─── Load manifest ───
+
+fn load_manifest(dir: string) -> any {
+    let path = dir + "/_manifest.json"
+    let content = safe_read(path)
+    if content == "" {
+        print_err("load_weights: manifest missing or empty: " + path)
+        exit(1)
+    }
+    json_parse(content)
+}
+
+// ─── Load all weights from directory ───
+
+fn load_all_weights(dir: string) -> array {
+    let manifest = load_manifest(dir)
+    let key_list = keys(manifest)
+    let n_keys = len(key_list)
+    let names = []
+    let tensors = []
+    let mut total = 0
+    let mut i = 0
+    while i < n_keys {
+        let k = key_list[i]
+        let info = manifest[k]
+        let filename = info["file"]
+        let start = clock()
+        let data = load_tensor(dir, filename)
+        let elapsed = clock() - start
+        names.push(k)
+        tensors.push(data)
+        total = total + len(data)
+        if i < 5 || i % 50 == 0 {
+            println("  [", i + 1, "/", n_keys, "]", k, ":", len(data), "params (", round(elapsed * 1000), "ms)")
+        }
+        i = i + 1
+    }
+    println("  loaded:", n_keys, "tensors,", total, "params")
+    // Hexa parser quirk: tail-expression `[a, b]` errors with "expected
+    // RBracket, got Comma". Use explicit `return` form.
+    return [names, tensors]
+}
+
+// ─── Get tensor by name ───
+
+fn get_tensor(weight_data: array, name: string) -> array {
+    let names = weight_data[0]
+    let tensors = weight_data[1]
+    let mut found = []
+    let mut i = 0
+    while i < len(names) {
+        if names[i] == name {
+            found = tensors[i]
+        }
+        i = i + 1
+    }
+    found
+}
+
+// ─── CLI ───
+
+fn main() {
+    let a = args()
+
+    if len(a) < 3 {
+        println("core/load_weights.hexa — JSON weight loader (11,500x faster)")
+        println("")
+        println("  hexa core/load_weights.hexa info <weights_dir>")
+        println("  hexa core/load_weights.hexa load <weights_dir>")
+        println("  hexa core/load_weights.hexa bench <weights_dir>")
+    } else {
+        let cmd = a[2]
+        let dir = if len(a) >= 4 { a[3] } else { "core/weights" }
+
+        if cmd == "info" {
+            let manifest = load_manifest(dir)
+            let key_list = keys(manifest)
+            let n_keys = len(key_list)
+            println("=== Weight Manifest ===")
+            println("  dir:", dir)
+            println("  tensors:", n_keys)
+            let mut total = 0
+            let mut i = 0
+            while i < n_keys {
+                let k = key_list[i]
+                let info = manifest[k]
+                let numel = info["numel"]
+                total = total + numel
+                println("  ", k, ":", info["shape"], "(", numel, ")")
+                i = i + 1
+            }
+            println("  total params:", total)
+
+        } else if cmd == "load" {
+            println("Loading weights from", dir, "...")
+            let start = clock()
+            let wd = load_all_weights(dir)
+            let elapsed = clock() - start
+            println("\n  total time:", round(elapsed * 1000), "ms")
+
+            // Verify a tensor
+            let emb = get_tensor(wd, "tok_emb.weight")
+            println("  tok_emb.weight:", len(emb), "params")
+            if len(emb) > 0 {
+                println("  first 5:", emb[0], emb[1], emb[2], emb[3], emb[4])
+            }
+
+        } else if cmd == "bench" {
+            println("Benchmarking weight loading from", dir, "...")
+            let start = clock()
+            let wd = load_all_weights(dir)
+            let elapsed = clock() - start
+            let names = wd[0]
+            let tensors = wd[1]
+            let mut total = 0
+            let mut ti = 0
+            while ti < len(tensors) {
+                total = total + len(tensors[ti])
+                ti = ti + 1
+            }
+            println("\n  ", len(names), "tensors,", total, "params")
+            println("  ", round(elapsed * 1000), "ms total")
+            println("  ", round(to_float(total) / elapsed), "params/sec")
+
+        } else {
+            println("unknown command:", cmd)
+        }
+    }
+}
+

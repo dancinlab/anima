@@ -1,0 +1,368 @@
+#!/usr/bin/env bash
+# ═══════════════════════════════════════════════════════════════════════════
+#  bin/anima — anima CLI single entry point (top-level dispatcher)
+#
+#  PURPOSE
+#    Single, compute-agnostic CLI entry for all anima operations. Dispatches
+#    to tool/anima_cli/<topic>.hexa modules (thin orchestrators that wrap
+#    existing tool/*.hexa+bash tools — no duplicated logic).
+#
+#  TOPICS (27)
+#    chat            — natural utterance REPL (own 34 strict, recursive module)
+#    compute         — pod lifecycle (start/stop/status/watch/cost/recover/ingest)
+#    weight          — weight precache control
+#    proposal        — proposal stack (review/approve/reject/implement/...)
+#    cert            — cert verify/graph/dag
+#    roadmap         — roadmap status/entries/blockers/roi
+#    serve           — persona + api
+#    paradigm        — three-paradigm unified dashboard
+#    inbox           — cross-repo proposal inbox (list/next/ack/done/drain)
+#    cost            — session cost tracking (status/session/per-pod/history/export)
+#    audit           — pre-push safety gate (8 checks; run before `git push`)
+#    doctor          — self-diagnose (10 read-only checks; env+creds+auth+stack)
+#    sync            — cross-repo proposal sync via nexus hub (push/pull/status)
+#    log             — unified jsonl tail across 6 state logs (merged · watch live)
+#    bench           — integrated selftest timer (all | <module> | --json)
+#    handoff         — session handoff doc auto-regen (read-only git; generate)
+#    metrics         — Prometheus text exposition (--serve | --pushgateway | stdout)
+#    watch           — live TUI (compute/weight/proposal/cost — 2s tick)
+#    snap            — state/config/.meta2-cert sha256 tree tamper-detect (create/verify/diff)
+#    replay          — BB4 session commit-chain reproduce (list · <sid> · --verify)
+#    onboard         — 5-min new-contributor quickstart (J55 CC2: doctor+review+cert)
+#    backup          — EE1 snapshot state/+config/+.meta2-cert/ → R2 (tar.zst · sha256 ledger)
+#    reproducibility — DD1 2-run byte-diff verifier (7 deterministic tools)
+#    gc              — EE4 cleanup unused artifacts (dry-default; --apply to delete)
+#    health          — 4-SLI SLO evaluation (vs config/sli_slo.json; --budget/--alert)
+#
+#  DESIGN
+#    raw#9  — hexa-only for logic (no .py); bin/anima is pure bash glue
+#    raw#10 — deterministic when HEXA_REPRODUCIBLE=1
+#    raw#11 — snake_case
+#    raw#15 — no-hardcode (paths resolved via ANIMA/git-root)
+#
+#  USAGE
+#    anima                       → alias for `anima status` (global dashboard)
+#    anima --version             → print "anima 0.1.0"
+#    anima --help                → print topic list + examples
+#    anima <topic>               → topic-level help (list subcommands)
+#    anima <topic> <subcmd> ...  → dispatch to tool/anima_cli/<topic>.hexa
+#    anima status                → 4-line global summary
+#
+#  EXIT CODES
+#    0  — success
+#    1  — topic/subcommand error (dispatched tool's exit propagates)
+#    2  — unknown topic or malformed invocation
+# ═══════════════════════════════════════════════════════════════════════════
+
+set -u
+
+ANIMA_CLI_VERSION="anima 0.1.0"
+
+# ─── path resolution (raw#15) ────────────────────────────────────────────
+resolve_root() {
+  if [ -n "${ANIMA:-}" ] && [ -d "$ANIMA" ]; then
+    printf '%s\n' "$ANIMA"
+    return 0
+  fi
+  local self_dir
+  self_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  # self_dir = <root>/bin; parent = root
+  local parent
+  parent="$(cd "$self_dir/.." && pwd)"
+  if [ -d "$parent/tool/anima_cli" ]; then
+    printf '%s\n' "$parent"
+    return 0
+  fi
+  local gt
+  gt="$(git -C "$self_dir" rev-parse --show-toplevel 2>/dev/null || true)"
+  if [ -n "$gt" ] && [ -d "$gt/tool/anima_cli" ]; then
+    printf '%s\n' "$gt"
+    return 0
+  fi
+  printf '%s\n' "$HOME/core/anima"
+}
+
+resolve_hexa_bin() {
+  # Prefer hexa.real over the ~/.hx/bin/hexa routing shim. The shim
+  # unconditionally dispatches `hexa run` to a remote resource host (ubu-1)
+  # which breaks anima's Mac-local orchestrator semantics: pre-push audit,
+  # secret scanning, and local .resource SSOT verification all need to
+  # observe the bare Mac inode, not a remote-routed copy.
+  if [ -n "${HEXA_BIN:-}" ] && [ -x "$HEXA_BIN" ]; then
+    printf '%s\n' "$HEXA_BIN"
+    return 0
+  fi
+  if [ -x "/Users/ghost/.hx/packages/hexa/hexa.real" ]; then
+    printf '%s\n' "/Users/ghost/.hx/packages/hexa/hexa.real"
+    return 0
+  fi
+  if [ -x "/Users/ghost/.hx/bin/hexa" ]; then
+    printf '%s\n' "/Users/ghost/.hx/bin/hexa"
+    return 0
+  fi
+  local p
+  p="$(command -v hexa 2>/dev/null || true)"
+  if [ -n "$p" ]; then
+    printf '%s\n' "$p"
+    return 0
+  fi
+  printf '%s\n' "/Users/ghost/.hx/bin/hexa"
+}
+
+ANIMA_ROOT="$(resolve_root)"
+HEXA_BIN="$(resolve_hexa_bin)"
+CLI_DIR="$ANIMA_ROOT/tool/anima_cli"
+
+print_help() {
+  cat <<'EOF'
+anima — unified CLI (compute-agnostic, β main single entry)
+
+USAGE
+  anima                         global status (4-line dashboard)
+  anima <topic>                 topic-level help
+  anima <topic> <subcmd> [args] dispatch to topic module
+  anima --version               print version
+  anima --help                  this help
+  anima status                  global dashboard (alias of `anima`)
+
+TOPICS
+  chat       natural utterance   (<model> | <model> --prompt | list | --help |
+                                  --selftest)  ★ own 34 strict (no wrapping)
+  compute    pod lifecycle       (status | start | stop | watch | cost |
+                                  recover | ingest | preflight)
+  weight     weight precache     (status | apply | strategy)
+  proposal   proposal stack      (review | approve | reject | implement |
+                                  archive | dashboard | cluster | cycle |
+                                  lineage)
+  cert       breakthrough cert   (verify | graph | dag)
+  roadmap    roadmap engine      (status | entries | blockers | roi)
+  serve      serving layer       (persona | api)
+  paradigm   unified paradigm    (status)
+  inbox      cross-repo inbox    (list | next | ack | done | drain)
+  cost       session cost track  (status | session | per-pod | history |
+                                  export)
+  audit      pre-push safety     (run all | fix | --json)
+  doctor     self-diagnose       (10 read-only checks · --json)
+  sync       cross-repo sync     (push | pull | status) — via nexus hub
+  stats      repo metrics        (--compact | --json | --snapshot)
+  bench      selftest timer      (all | <module> | --json)
+  log        unified tail        (log | log tail --since 1h | log watch)
+  handoff    session handoff doc (generate [--since ISO] [--out PATH])
+  metrics    Prometheus exposition (stdout | --serve [--port 9091] | --pushgateway URL)
+  watch      live TUI dashboard   (once default; --once | --interval N | live loop)
+  snap       state tamper-detect  (create | verify | diff | --json)
+  replay     BB4 session replay   (list | <session-id> [--verify] [--json])
+  onboard    5-min quickstart     (step-by-step | --smoke | --reset)
+  backup     R2 snapshot (EE1)    (dry default | --apply | list | restore <ts>)
+  gc         cleanup artifacts    (dry-default | --apply | --aggressive --apply
+                                   | --dry-json) — EE4
+  health     SLI/SLO evaluation   (4 indicators vs config/sli_slo.json;
+                                   --budget | --alert | --json)
+  reproducibility 2-run byte-diff (--tool <stem> | --json · 7 deterministic emitters) — DD1
+  governance      raw 91 cross-repo cli-coverage parity (raw triad | hexa-only |
+                  english-only | ai-config-ban | deprecated-ban | --selftest)
+
+EXAMPLES
+  anima chat                             # default = anima_native (Engine A/G)
+  anima chat clm-v4-1-7-y1               # CLM v4 substrate dialogue (::: raw)
+  anima chat list                        # alias DB
+  anima chat --selftest                  # own 34 mandate-2 wrapping grep verify
+  anima compute status
+  anima compute preflight
+  anima proposal review --top 3
+  anima proposal lineage                 # full mermaid graph + count summary
+  anima proposal lineage 20260422-001    # ancestor + descendant focus
+  anima proposal lineage --depth 2 --json
+  anima roadmap status
+  anima cert verify --incremental
+  anima inbox drain
+  anima cost session
+  anima audit                            # pre-push safety gate
+  anima audit fix                        # apply auto-fixable lint
+  anima audit --json
+  anima doctor                           # 10-check self-diagnose
+  anima doctor --json                    # JSON verdict only
+  anima sync                             # push + pull via nexus hub
+  anima sync status                      # last sync ts + log tail
+  anima stats                            # full repo metrics dashboard
+  anima stats --compact                  # 1-page summary
+  anima stats --snapshot                 # write state/anima_stats_last.json
+  anima bench                            # run all 10 module selftests · timed
+  anima bench compute                    # single module timed
+  anima bench --json                     # machine-readable (anima.bench.v1)
+  anima log                              # recent 20 lines, ts-desc merged
+  anima log tail --since 1h              # last hour, time-filtered
+  anima log watch                        # live tail (Ctrl-C to quit)
+  anima log --source cost --n 5          # single-source filter
+  anima handoff generate                 # write docs/session_handoff_<today>.md
+  anima handoff generate --since 24h --ledger-tail 5 --dry-run
+  anima metrics                          # Prometheus exposition on stdout
+  anima metrics --serve --port 9091      # local HTTP scrape endpoint
+  anima metrics --pushgateway http://pushgw:9091   # one-shot push
+  anima watch                            # default: single snapshot (--once)
+  anima watch --interval 5               # live loop, 5s tick
+  hexa run tool/anima_cli/watch.hexa     # live loop (default 2s, Ctrl-C)
+  anima snap create                      # build sha256 tree baseline
+  anima snap verify                      # exit 1 if drift (added/removed/modified)
+  anima snap diff                        # detailed per-file verify listing
+  anima replay list                      # detected sessions (from handoff docs)
+  anima replay 20260422                  # commit list + per-commit diff stat
+  anima replay 20260422 --verify         # run selftests on tool/anima_cli files touched
+  anima onboard                          # 5-min new-contributor quickstart (J55 CC2)
+  anima onboard --smoke                  # non-interactive 5-step smoke · state/anima_onboard_result.json
+  anima onboard --reset                  # warn + drop onboard result (no other state touched)
+  anima replay 20260422 --json           # machine-readable (anima.replay.v1)
+  anima backup                           # dry: build tar.zst, print size+sha256, no upload
+  anima backup --apply                   # real: rclone copy → r2:anima-backup/<ts>.tar.zst
+  anima backup list                      # rclone ls r2:anima-backup/
+  anima backup restore 20260422-010000   # probe r2; add --apply to actually download
+  anima gc                               # dry-run · per-category freeable bytes
+  anima gc --apply                       # conservative delete (tmp + AOT + pending orphans)
+  anima gc --aggressive --apply          # also prune archived/ 90d+
+  anima gc --dry-json                    # machine-readable (anima.gc.v1)
+  anima health                           # 4 SLI · observed vs objective table
+  anima health --budget                  # adds budget-remaining column
+  anima health --alert                   # BREACH/WARN only · exit 1 if any
+  anima health --json                    # machine-readable (anima.health.v1)
+  anima reproducibility                  # 2-run byte-diff across 7 deterministic tools (DD1)
+  anima reproducibility --tool openapi   # single-tool verification
+  anima reproducibility --json           # machine-readable (anima.reproducibility.v1)
+  anima governance --selftest            # raw 91 cross-repo backend reachability
+  anima governance hexa-only             # raw 9   .py/.rs/.sh/.toml ban scan
+  anima governance english-only          # raw 175 source + .md English baseline
+  anima governance ai-config-ban         # raw 13  AI config / git-hook ban
+  anima governance deprecated-ban        # raw 21  deprecated-ref scanner
+  anima governance raw triad --strict    # raw triad lint (cross-repo)
+
+ENV
+  ANIMA                 project root override
+  HEXA_BIN              hexa binary override (default /Users/ghost/.hx/bin/hexa)
+  HEXA_REPRODUCIBLE=1   deterministic output (timestamps redacted)
+
+Each topic module supports: --selftest · --help · --json
+EOF
+}
+
+print_version() {
+  printf '%s\n' "$ANIMA_CLI_VERSION"
+}
+
+_log_watch_stream() {
+  # Live unified tail across the 6 jsonl state logs. Runs `tail -F` in
+  # parallel per source, prefixes each line with [ts] [src   ] and colors
+  # the row when stdout is a tty. Ctrl-C terminates all child tails via
+  # the subshell's default sigpipe/sigterm propagation.
+  #
+  # Optional single-source filter: anima log watch --source <name>
+  local filter=""
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --source) filter="${2:-}"; shift 2 ;;
+      *) shift ;;
+    esac
+  done
+  local root="$ANIMA_ROOT"
+  local -a specs=(
+    "cycle|${root}/state/proposals/meta/cycle_log.jsonl|36"
+    "cost|${root}/state/anima_cost_ledger.jsonl|33"
+    "weight|${root}/state/h100_weight_precache_progress.jsonl|35"
+    "dist|${root}/state/dist_native_build_periodic_log.jsonl|34"
+    "asset|${root}/state/asset_archive_log.jsonl|37"
+    "xrepo|${root}/state/cross_repo_sync_log.jsonl|32"
+  )
+  local any=0
+  trap 'pkill -P $$ 2>/dev/null; exit 0' INT TERM
+  for spec in "${specs[@]}"; do
+    local nm="${spec%%|*}"
+    local rest="${spec#*|}"
+    local path="${rest%|*}"
+    local color="${rest##*|}"
+    if [ -n "$filter" ] && [ "$filter" != "$nm" ]; then continue; fi
+    if [ ! -f "$path" ]; then continue; fi
+    any=1
+    local padded
+    padded="$(printf '%-6s' "$nm")"
+    tail -n 0 -F "$path" 2>/dev/null | awk -v SRC="$padded" -v C="$color" '
+      BEGIN { tty = system("test -t 1") == 0 }
+      {
+        ts=""
+        if (match($0, /"ts":"[^"]+"/)) {
+          ts = substr($0, RSTART+6, RLENGTH-7)
+        }
+        line = "[" ts "] [" SRC "] " $0
+        if (tty) { printf "\033[%sm%s\033[0m\n", C, line; fflush() }
+        else     { print line; fflush() }
+      }' &
+  done
+  if [ "$any" -eq 0 ]; then
+    printf 'anima log watch: no readable sources (filter=%s)\n' "${filter:-any}" >&2
+    return 1
+  fi
+  wait
+}
+
+dispatch_topic() {
+  local topic="$1"; shift || true
+  local mod="$CLI_DIR/${topic}.hexa"
+  if [ ! -f "$mod" ]; then
+    printf 'anima: unknown topic: %s\n' "$topic" >&2
+    printf 'run `anima --help` for the topic list\n' >&2
+    return 2
+  fi
+  # special-case: `anima log watch` is a live-streaming bash wrapper (hexa
+  # exec() buffers, so the unified tail-F cannot flow through the interpreter)
+  if [ "$topic" = "log" ] && [ "${1:-}" = "watch" ]; then
+    shift
+    _log_watch_stream "$@"
+    return $?
+  fi
+  # no subcmd → topic-level help (except action-by-default topics like doctor)
+  if [ $# -eq 0 ]; then
+    case "$topic" in
+      doctor) exec "$HEXA_BIN" run "$mod" ;;
+      sync)   exec "$HEXA_BIN" run "$mod" ;;
+      bench)  exec "$HEXA_BIN" run "$mod" all ;;
+      watch)  exec "$HEXA_BIN" run "$mod" --once ;;
+      gc)     exec "$HEXA_BIN" run "$mod" ;;
+      health) exec "$HEXA_BIN" run "$mod" ;;
+      reproducibility) exec "$HEXA_BIN" run "$mod" ;;
+      *)      exec "$HEXA_BIN" run "$mod" --help ;;
+    esac
+  fi
+  exec "$HEXA_BIN" run "$mod" "$@"
+}
+
+global_status() {
+  # 4-line deterministic global summary (compute / weight / proposal / cert+roadmap)
+  "$HEXA_BIN" run "$CLI_DIR/paradigm.hexa" status --short
+}
+
+# ─── entry ───────────────────────────────────────────────────────────────
+if [ $# -eq 0 ]; then
+  global_status
+  exit $?
+fi
+
+case "$1" in
+  -v|--version)
+    print_version
+    exit 0
+    ;;
+  -h|--help)
+    print_help
+    exit 0
+    ;;
+  status)
+    shift
+    if [ $# -eq 0 ]; then
+      global_status
+      exit $?
+    fi
+    # `anima status <topic>` → forward to that topic's status
+    dispatch_topic "$1" status "${@:2}"
+    ;;
+  *)
+    topic="$1"; shift
+    dispatch_topic "$topic" "$@"
+    ;;
+esac

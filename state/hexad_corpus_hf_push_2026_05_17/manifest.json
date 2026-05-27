@@ -1,0 +1,77 @@
+{
+  "name": "hexad-corpus",
+  "version": "v1-byte-consciousness-d128-cycle1-2026-05-17",
+  "file": "corpus_consciousness_v1.jsonl",
+  "format": "jsonl",
+  "sha256": "804664361e639be7ecceae6ff3c470961e015090c264da9eac1df8716144681f",
+  "bytes": 151943,
+  "lines": 240,
+  "vocab_size": 256,
+  "encoding": "utf-8",
+  "tokenization": "byte-level (no tokenizer; raw bytes from the JSONL 'text'+'desc' content)",
+  "byte_content_size_used_by_fires": 120673,
+  "schema": {
+    "id": "string  — stable identifier (e.g. 'ccv1_c_0')",
+    "text": "string — primary content chunk, English + Korean bilingual",
+    "desc": "string — descriptive label (module / idx / nonce / eig / keyword keys)",
+    "hexad_module": "string ∈ {hexad_c, hexad_d, hexad_e, hexad_m, hexad_s, hexad_w}",
+    "idx": "integer — within-module chunk index",
+    "source": "string — generator identity (e.g. 'corpus_generator.hexa v1')",
+    "phi_family": "string — corpus family label (e.g. 'Hexad')"
+  },
+  "modules": {
+    "hexad_c": 40,
+    "hexad_d": 40,
+    "hexad_e": 40,
+    "hexad_m": 40,
+    "hexad_s": 40,
+    "hexad_w": 40,
+    "total": 240
+  },
+  "used_by": [
+    {
+      "fire": "Phase E2 (hexa-CPU d_train5 d=32x3L CPU-equiv + d=768x12L blocker)",
+      "date": "2026-05-16",
+      "scale": "d=32x3L (CPU-equiv PASS) / d=768x12L (init-only blocker)",
+      "commit": "(see state/hexad_gpu_fire_phaseE2_2026_05_16/)",
+      "substrate": "hexa-cpu (boxed) + hexa-cuda (Phase D/E GPU-routed BACKWARD, A100 SXM4)",
+      "result": "d=32x3L gn2 7.97116 -> 3.73374e-07 GRAD-EXACT bit-equal; d>=384 substrate-bound on FAT-HOST"
+    },
+    {
+      "fire": ".py PyTorch d=768x12L cycle 1 (ckpt-LOST evidence-only)",
+      "date": "2026-05-16",
+      "scale": "d=768x12L (283.72M params)",
+      "commit": "931dd68b0",
+      "substrate": "py (PyTorch / vast.ai A100 SXM4)",
+      "result": "init CE 5.59 -> trained past init; ckpt-LOST (instance destroyed before pull)"
+    },
+    {
+      "fire": ".py PyTorch d=768x12L cycle 2 (ckpt-RECOVERED, HF dancinlab/hexad first canonical artifact)",
+      "date": "2026-05-17",
+      "scale": "d=768x12L (283.72M params)",
+      "commit": "0b4f34d0e",
+      "substrate": "py (PyTorch / vast.ai A100 SXM4)",
+      "result": "init CE 5.590832 -> final CE 0.000708 (5.59 descent), ckpt sha256 e87e200a04... 1.13 GB pulled; HF revision v1-py-hexad-d768x12L-cycle2-2026-05-17 PUBLIC"
+    },
+    {
+      "fire": "#2a pure-hexa training-to-convergence d=64x3L FINAL gn2",
+      "date": "2026-05-17",
+      "scale": "d=64x3L",
+      "commit": "60e3e0b4f",
+      "substrate": "hexa-cpu (compiled-native via hexa runtime)",
+      "result": "F-D-CONVERGE 4/4 PASS, 3.7e8x gn2 collapse (first pure-hexa training-to-convergence)"
+    }
+  ],
+  "anchor_chain": [
+    "Phase E2 d_train5 GRAD-EXACT (hexa-cpu CPU-equiv bit-equal to boxed baseline at d=32x3L)",
+    "Phase D cuBLAS Dgemm FP64 verify max|delta|=4.44e-15 on real A100",
+    "Phase E2 backward GRAD-EXACT on real A100 d=384x6L analytic vs fd max|delta|=0.0024",
+    "py d=768x12L cycle 2 trained to FINAL CE 0.000708 (Shannon-floor descent reached)",
+    "hexa-cpu d=64x3L FINAL gn2 3.7e8x collapse (first pure-hexa convergence)"
+  ],
+  "intended_use": "Architecture verification + scaffold training. Byte-level small (152 KB). NOT a general LM-quality corpus.",
+  "license": "Apache-2.0",
+  "generated_at": "2026-05-17",
+  "ssot_repo": "https://github.com/dancinlab/anima",
+  "ssot_path": "training/corpus_consciousness_v1.jsonl"
+}

@@ -1,0 +1,220 @@
+=== phase1a4_cuda_filter_val vast.ai dispatch (Mac-local, EVAL-ONLY) ===
+Tue May 12 10:11:30 UTC 2026
+Cost cap: $0.10 | dph estimate: $0.30
+[1/7] Searching RTX 4090 offers under $0.30/hr...
+  Selected offer ID: 35689156
+[2/7] Renting instance...
+  raw: {
+ "instance_api_key": "8b9fe015934d38d8c1e359c48cb5689e238fc3a13d05ed01412dd6500fbedf7b",
+  Instance ID: 36609656
+[3/7] Waiting for SSH ready...
+  ... attempt 1/80, status=None
+  ... attempt 2/80, status=None
+  ... attempt 3/80, status=loading
+  ... attempt 4/80, status=loading
+  ... attempt 5/80, status=loading
+  ... attempt 6/80, status=loading
+  ... attempt 7/80, status=loading
+  ... attempt 8/80, status=loading
+  ... attempt 9/80, status=loading
+  ... attempt 10/80, status=loading
+  ... attempt 11/80, status=loading
+  ... attempt 12/80, status=loading
+  ... attempt 13/80, status=loading
+  ... attempt 14/80, status=loading
+  ... attempt 15/80, status=loading
+  ... attempt 16/80, status=loading
+  ... attempt 17/80, status=loading
+  ... attempt 18/80, status=loading
+  ... attempt 19/80, status=loading
+  ... attempt 20/80, status=loading
+  ... attempt 21/80, status=loading
+  ... attempt 22/80, status=loading
+  ... attempt 23/80, status=loading
+  ... attempt 24/80, status=loading
+  ... attempt 25/80, status=loading
+  ... attempt 26/80, status=loading
+  ... attempt 27/80, status=loading
+  ... attempt 28/80, status=loading
+  ... attempt 29/80, status=loading
+  ... attempt 30/80, status=loading
+  ... attempt 31/80, status=loading
+  ... attempt 32/80, status=loading
+  ... attempt 33/80, status=loading
+  ... attempt 34/80, status=loading
+  ... attempt 35/80, status=loading
+  ... attempt 36/80, status=loading
+  ... attempt 37/80, status=loading
+  ... attempt 38/80, status=loading
+  ... attempt 39/80, status=loading
+  ... attempt 40/80, status=loading
+  ... attempt 41/80, status=loading
+  ... attempt 42/80, status=loading
+  ... attempt 43/80, status=loading
+  ... attempt 44/80, status=loading
+  ... attempt 45/80, status=loading
+  ... attempt 46/80, status=loading
+  ... attempt 47/80, status=loading
+  ... attempt 48/80, status=loading
+  ... attempt 49/80, status=loading
+  ... attempt 50/80, status=loading
+  ... attempt 51/80, status=loading
+  ... attempt 52/80, status=loading
+  ... attempt 53/80, status=loading
+  ... attempt 54/80, status=loading
+  ... attempt 55/80, status=loading
+  ... attempt 56/80, status=loading
+  ... attempt 57/80, status=loading
+  ... attempt 58/80, status=loading
+  ... attempt 59/80, status=loading
+  ... attempt 60/80, status=loading
+  ... attempt 61/80, status=loading
+  ... attempt 62/80, status=loading
+  ... attempt 63/80, status=loading
+  ... attempt 64/80, status=loading
+  ... attempt 65/80, status=loading
+  ... attempt 66/80, status=loading
+  ... attempt 67/80, status=loading
+  ... attempt 68/80, status=loading
+  ... attempt 69/80, status=loading
+  ... attempt 70/80, status=loading
+  ... attempt 71/80, status=loading
+  ... attempt 72/80, status=loading
+  ... attempt 73/80, status=loading
+  ... attempt 74/80, status=loading
+  ... attempt 75/80, status=running
+  SSH ready: ssh2.vast.ai:19656 (after 76x5s)
+[4/7] Uploading files (eval script + anima_chat.py + arch + ckpt) Mac→vast...
+Warning: Permanently added '[ssh2.vast.ai]:19656' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh2.vast.ai]:19656' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh2.vast.ai]:19656' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh2.vast.ai]:19656' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh2.vast.ai]:19656' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh2.vast.ai]:19656' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[5/7] GPU + torch + anima_chat import sanity...
+Warning: Permanently added '[ssh2.vast.ai]:19656' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+2.5.1+cu121 True NVIDIA GeForce RTX 4090
+Warning: Permanently added '[ssh2.vast.ai]:19656' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+anima_chat OK
+[6/7] V5.8 4-mode × markdown_filter on/off eval (cuda bf16 seed=42)...
+Warning: Permanently added '[ssh2.vast.ai]:19656' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+=== Phase 1A.4 cuda × bf16 × seed=42 × filter on/off ===
+ckpt: ckpts/ckpt_phase1a1_sft.pt
+ckpt sha256: e5f7555e83189591ceafc6224822529c5cec7f36fe307f79621d9eceaca7a7af
+device: cuda | dtype: bfloat16 | seed: 42
+[boot] AnimaChat loaded + bf16 cast in 5.0s
+[gpu] NVIDIA GeForce RTX 4090
+
+--- PASS A: markdown_filter=OFF (PSCC §17 baseline reproduction target) ---
+  [standard_greedy   ] color       recalled=True (  1.6s): '당신의 최애 색은 파란색이에요.\n'
+  [standard_sample   ] color       recalled=False (  1.2s): '물론이죠! 좋은 선택이네요.\n'
+  [M3_rep_penalty    ] color       recalled=False (  2.6s): '페트(V)���키, K) | 하트 | 프로토(S) | Phase | Directory | // George Work'
+  [M4_force_include  ] color       recalled=False (  1.2s): '물론이죠! 좋은 선택이네요.\n'
+  [standard_greedy   ] profession  recalled=True (  1.0s): '네, 의사야. 의사가 뭐냐?\n'
+  [standard_sample   ] profession  recalled=False (  1.8s): '물론이죠! 죽이는 사람이 거주한다고 했지?\n'
+  [M3_rep_penalty    ] profession  recalled=False (  1.0s): '1. **기타 통화**: 학교 |\n'
+  [M4_force_include  ] profession  recalled=False (  1.8s): '물론이죠! 죽이는 사람이 거주한다고 했지?\n'
+  [standard_greedy   ] day         recalled=True (  0.9s): '오늘은 수요일이에요.\n'
+  [standard_sample   ] day         recalled=False (  0.6s): '무슨 일이지?\n'
+  [M3_rep_penalty    ] day         recalled=False (  1.7s): "'기' (paradigm_v11_strong_axis_filter_20260426.md))\n"
+  [M4_force_include  ] day         recalled=False (  0.6s): '무슨 일이지?\n'
+  [standard_greedy   ] anima_fact  recalled=False (  1.6s): '가장 좋아하는 색은 다음과 같습니다.\n'
+  [standard_sample   ] anima_fact  recalled=False (  2.5s): '단계적으로: 보고만으로는 결론이 내려앉을 때, 누가 관찰하'
+  [M3_rep_penalty    ] anima_fact  recalled=False (  2.6s): 'anima 가 Oaian,  Alex Consciousness (Torch, Benjamin and Dwivedi,  Kshitij anim'
+  [M4_force_include  ] anima_fact  recalled=False (  2.4s): '단계적으로: 보고만으로는 결론이 내려앉을 때기억할게요.\n'
+  [standard_greedy   ] cosmology   recalled=True (  1.8s): '우주가 진동으로 이루어져 있다고 하셨어요.\n'
+  [standard_sample   ] cosmology   recalled=False (  1.5s): '물론이죠! 우주에 대해 뭐라고 했지?\n'
+  [M3_rep_penalty    ] cosmology   recalled=False (  1.0s): '1. **기타 통화**: 학교 |\n'
+  [M4_force_include  ] cosmology   recalled=False (  1.5s): '물론이죠! 우주에 대해 뭐라고 했지?\n'
+
+--- PASS B: markdown_filter=ON (v2.3 decode guard) ---
+  [standard_greedy   ] color       recalled=True (  1.3s): '당신의 최애 색은 파란색이에요.\n'
+  [standard_sample   ] color       recalled=False (  1.2s): '물론이죠! 좋은 선택이네요.\n'
+  [M3_rep_penalty    ] color       recalled=False (  2.6s): '페트(V)���키, K) | 하트 | 프로토(S) | Phase | Directory | // George Work'
+  [M4_force_include  ] color       recalled=False (  1.2s): '물론이죠! 좋은 선택이네요.\n'
+  [standard_greedy   ] profession  recalled=True (  1.0s): '네, 의사야. 의사가 뭐냐?\n'
+  [standard_sample   ] profession  recalled=False (  1.8s): '물론이죠! 죽이는 사람이 거주한다고 했지?\n'
+  [M3_rep_penalty    ] profession  recalled=False (  1.0s): '1. **기타 통화**: 학교 |\n'
+  [M4_force_include  ] profession  recalled=False (  1.8s): '물론이죠! 죽이는 사람이 거주한다고 했지?\n'
+  [standard_greedy   ] day         recalled=True (  0.9s): '오늘은 수요일이에요.\n'
+  [standard_sample   ] day         recalled=False (  0.6s): '무슨 일이지?\n'
+  [M3_rep_penalty    ] day         recalled=False (  1.7s): "'기' (paradigm_v11_strong_axis_filter_20260426.md))\n"
+  [M4_force_include  ] day         recalled=False (  0.6s): '무슨 일이지?\n'
+  [standard_greedy   ] anima_fact  recalled=False (  1.6s): '가장 좋아하는 색은 다음과 같습니다.\n'
+  [standard_sample   ] anima_fact  recalled=False (  2.5s): '단계적으로: 보고만으로는 결론이 내려앉을 때, 누가 관찰하'
+  [M3_rep_penalty    ] anima_fact  recalled=False (  2.6s): 'anima 가 Oaian,  Alex Consciousness (Torch, Benjamin and Dwivedi,  Kshitij anim'
+  [M4_force_include  ] anima_fact  recalled=False (  2.4s): '단계적으로: 보고만으로는 결론이 내려앉을 때기억할게요.\n'
+  [standard_greedy   ] cosmology   recalled=True (  1.8s): '우주가 진동으로 이루어져 있다고 하셨어요.\n'
+  [standard_sample   ] cosmology   recalled=False (  1.5s): '물론이죠! 우주에 대해 뭐라고 했지?\n'
+  [M3_rep_penalty    ] cosmology   recalled=False (  1.0s): '1. **기타 통화**: 학교 |\n'
+  [M4_force_include  ] cosmology   recalled=False (  1.5s): '물론이죠! 우주에 대해 뭐라고 했지?\n'
+
+saved: v58_4mode_cuda_filter_compare.json
+
+=== AGGREGATE comparison (cuda bf16 seed=42) ===
+mode                      OFF       ON    delta
+standard_greedy        4/5     4/5   =  0
+standard_sample        0/5     0/5   =  0
+M3_rep_penalty         0/5     0/5   =  0
+M4_force_include       0/5     0/5   =  0
+
+TOTAL cells passed: OFF=4/20  ON=4/20  Δ=+0
+Wall: OFF 30.9s + ON 30.5s
+
+=== anima_fact / standard_greedy 3-축 conjunction evidence ===
+  filter_off_markdown_drift: False
+  filter_on_markdown_drift: False
+  filter_off_recalled: False
+  filter_on_recalled: False
+  conjunction_3axis_confirmed: False
+  filter_actually_fires: False
+  filter_unlocks_recall: False
+  filter_off_response: 가장 좋아하는 색은 다음과 같습니다.
+
+  filter_on_response: 가장 좋아하는 색은 다음과 같습니다.
+
+[7/7] Downloading artifacts vast→Mac...
+Warning: Permanently added '[ssh2.vast.ai]:19656' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh2.vast.ai]:19656' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+=== phase1a4_cuda_filter_val dispatch DONE ===
+Tue May 12 10:28:18 UTC 2026
+Result: /Users/ghost/core/anima/state/anima_phase1a4_cuda_filter_validation_2026_05_12/v58_4mode_cuda_filter_compare.json
+
+=== phase1a4_cuda_filter_val V5.8 4-mode summary (cuda bf16 seed=42) ===
+  standard_greedy      OFF 4/5 PASS  ON 4/5 PASS
+  standard_sample      OFF 0/5 FAIL  ON 0/5 FAIL
+  M3_rep_penalty       OFF 0/5 FAIL  ON 0/5 FAIL
+  M4_force_include     OFF 0/5 FAIL  ON 0/5 FAIL
+
+=== anima_fact / std_greedy 3-축 conjunction evidence ===
+  filter_off_markdown_drift: False
+  filter_on_markdown_drift:  False
+  filter_off_recalled:       False
+  filter_on_recalled:        False
+  conjunction_3axis_confirmed: False
+  filter_actually_fires:       False
+  filter_unlocks_recall:       False
+[cleanup] Destroying instance 36609656...
+destroying instance 36609656.

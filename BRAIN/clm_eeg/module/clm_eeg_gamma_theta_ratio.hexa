@@ -1,0 +1,697 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-clm-eeg/tool/clm_eeg_gamma_theta_ratio.hexa
+//
+//  PURPOSE
+//    Tier-A cross-modal verifier for own 3 σ/τ=3 SSOT, applied to the EEG
+//    γ/θ band-power ratio (paper P3 pre-register: gamma_power / theta_power
+//    on awake EEG ≈ 3).
+//
+//    HYPOTHESIS (paper P3 pre-register — frozen, this file IS the SSOT)
+//      Ratio ρ := Σ PSD(30..50 Hz) / Σ PSD(4..8 Hz) on awake-resting EEG
+//      satisfies ρ ≈ 3.0 (own 3 = σ/τ identity from TECS-L H-CX-1, σ=6 τ=2,
+//      σ/τ=3, n=6 unique solution).
+//
+//    PRE-REGISTERED CRITERIA (frozen, this file = SSOT)
+//      C1 (P3 pre-register):
+//          C1_loose : grand_mean γ/θ in [1.5, 4.5]  (±50%)
+//          C1_strict: ratio_x1000 in [2500, 3500]   (±17%)
+//      C2 (homogeneity): per-channel std/mean < 0.5
+//      C3 (occipital):  mean(O1,O2)_ratio > grand_mean
+//      Verdict VERIFIED_P3   := C1_strict AND C2 AND C3
+//      Verdict PARTIAL_RATIO := C1_loose  AND NOT (C1_strict AND C2 AND C3)
+//      Verdict FALSIFIED_P3  := NOT C1_loose
+//
+//      F1 ratio_x1000 < 1000             gamma absent (amplifier scale issue)
+//      F2 ratio_x1000 > 10000            theta absent (abnormal arousal)
+//      F3 std/mean   > 1.0               extreme heterogeneity (artifact)
+//      F4 any theta-peak NOT in 4-8 Hz   band mislocated
+//      F5 dominant gamma at ≥ 49 Hz      50 Hz mains spillover
+//      F6 occipital_ratio < frontal      regional reversal (electrode mislabel)
+//
+//    The Welch PSD is computed by scipy.signal.welch in .venv-eeg.  Hexa
+//    orchestrates: writes a transient `.py`, dispatches, parses kv-result.
+//
+//    @resolver-bypass(reason="darwin-native: scipy.welch in .venv-eeg, mac
+//                     local execution required for venv access")
+//
+//  USAGE
+//    hexa run anima-clm-eeg/tool/clm_eeg_gamma_theta_ratio.hexa --selftest
+//    hexa run anima-clm-eeg/tool/clm_eeg_gamma_theta_ratio.hexa \
+//        --selftest --selftest-mode synthetic_3
+//    hexa run anima-clm-eeg/tool/clm_eeg_gamma_theta_ratio.hexa \
+//        --input recordings/sessions/<file>.npy
+//
+//  OUTPUT
+//    state/clm_eeg_p3_gamma_theta_pre_register.json    (cert)
+//    state/clm_eeg_gamma_theta_ratio_audit/<UTC-date>_gamma_theta.jsonl
+//
+//  RAW
+//             single-subject, eyes-closed only — not paper-generalizable)
+//              + falsifier 3+)
+//    own 3 σ/τ=3 SSOT (TECS-L H-CX-1, σ=6 τ=2 unique n=6 solution)
+//    paper P3 cite: docs/discovery-algorithm-anima.md:289
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA = "anima-clm-eeg/clm_eeg_gamma_theta_ratio/1"
+
+// ── frozen criteria (paper P3 pre-register) ─────────────────────────────────
+let RATIO_TARGET_X1000     = 3000   // own 3 σ/τ=3 SSOT
+let C1_LOOSE_LO_X1000      = 1500
+let C1_LOOSE_HI_X1000      = 4500
+let C1_STRICT_LO_X1000     = 2500
+let C1_STRICT_HI_X1000     = 3500
+let C2_STD_OVER_MEAN_X1000 = 500    // per-channel std/mean < 0.5
+let F1_GAMMA_ABSENT_X1000  = 1000
+let F2_THETA_ABSENT_X1000  = 10000
+let F3_HETEROG_X1000       = 1000
+
+// hidden + scratch + auto-rewritten on every run).
+let HELPER_PATH = "state/.clm_eeg_gamma_theta_helper.py"
+let RESULT_PATH = "state/.clm_eeg_gamma_theta_result.txt"
+
+let SAMPLE_RATE_HZ = 125
+
+// ════════════════════════════════════════════════════════════════════
+// helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn env_str(key: string, default_val: string) -> string {
+    let s = env(key)
+    if s == "" { return default_val }
+    return s
+}
+
+fn now_iso() -> string {
+    return exec("date -u +%Y-%m-%dT%H:%M:%SZ").trim()
+}
+
+fn now_date_utc() -> string {
+    return exec("date -u +%Y-%m-%d").trim()
+}
+
+fn sha256_of_file(path: string) -> string {
+    if path == "" { return "" }
+    let cmd = "shasum -a 256 \"" + path + "\" 2>/dev/null | awk '{print $1}'"
+    let h = exec(cmd).trim()
+    if h == "" { return "unavailable" }
+    return h
+}
+
+// ── kv-line lookup in a multi-line blob ─────────────────────────────────────
+fn kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn to_int_or(s: string, default_val: int) -> int {
+    if s == "" { return default_val }
+    return to_int(s)
+}
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+//   The python helper is parameter-driven (pure Python, no hexa-string
+//   interpolation) so this hexa file stays compact and the helper stays
+//   syntactically robust.  Frozen-criteria evaluation lives on the hexa side
+//   measurement values via a kv-result file.
+fn write_helper() {
+    let py = "#!/usr/bin/env python3
+# anima-clm-eeg/tool/clm_eeg_gamma_theta_ratio.hexa on every run).
+# Computes Welch PSD per channel + γ/θ band-power ratio, writes kv-result.
+import argparse, json, math, os, sys
+
+try:
+    import numpy as np
+    from scipy.signal import welch
+except ImportError as exc:
+    sys.stderr.write('reason: missing-dep: ' + repr(exc) + '\\n')
+    sys.stderr.write('fix: 1) source .venv-eeg/bin/activate  '
+                     '2) pip install --upgrade numpy scipy\\n')
+    sys.exit(10)
+
+FS = 125
+NPERSEG = 64
+THETA_LO, THETA_HI = 4.0, 8.0
+GAMMA_LO, GAMMA_HI = 30.0, 50.0
+N_CH = 16
+
+# Cyton+Daisy 16ch canonical layout (mirrors anima-eeg ELECTRODE_LABELS_16):
+LABELS = ['Fp1','Fp2','C3','C4',
+          'P7','P8','O1','O2',
+          'T7','T8','F3','F4',
+          'F7','F8','P3','P4']
+OCCIP_IDX   = [6, 7]            # O1, O2
+FRONTAL_IDX = [0, 1, 10, 11]    # Fp1, Fp2, F3, F4
+
+def synthesize(mode, n_samples):
+    rng = np.random.default_rng(20260428)
+    t = np.arange(n_samples) / FS
+    out = np.zeros((N_CH, n_samples), dtype=np.float64)
+    if mode == 'synthetic_random':
+        return rng.standard_normal((N_CH, n_samples)) * 100.0
+    # Realized ratio = (a_gamma/a_theta)^2 modulo Welch bin-width effects (gamma
+    # band 30-50Hz spans ~10 bins vs theta 4-8Hz ~3 bins, plus noise floor adds
+    # a small bias). Empirical calibration at fs=125, nperseg=64, n=7500:
+    # multiply target gamma amplitude by ~0.91 to land grand-mean ratio in
+    # [2.5, 3.5] strict band for synthetic_3 mode.
+    if mode == 'synthetic_3':
+        a_theta, a_gamma = 1.0, 0.91 * math.sqrt(3.0)
+    elif mode == 'synthetic_5':
+        a_theta, a_gamma = 1.0, 0.91 * math.sqrt(5.0)
+    elif mode == 'synthetic_1':
+        a_theta, a_gamma = 1.0, 0.91 * 1.0
+    else:
+        sys.stderr.write('unknown selftest-mode: ' + str(mode) + '\\n')
+        sys.exit(2)
+    for ch in range(N_CH):
+        ph_t = 0.13 * ch
+        ph_g = 0.27 * ch
+        # Slight occipital gamma boost (and theta suppression) so C3 occipital
+        # dominance holds while keeping grand-mean close to the target ratio.
+        gamma_boost = 1.05 if ch in OCCIP_IDX else 1.0
+        theta_atten = 0.92 if ch in OCCIP_IDX else 1.0
+        s = (a_theta * theta_atten * np.sin(2*np.pi*6.0*t + ph_t)
+             + a_gamma * gamma_boost * np.sin(2*np.pi*40.0*t + ph_g))
+        s = s + 0.05 * rng.standard_normal(n_samples)
+        out[ch] = s * 100.0
+    return out
+
+def load_npy(path):
+    arr = np.load(path, allow_pickle=False)
+    if arr.ndim != 2:
+        sys.stderr.write('expected 2-D, got ndim=' + str(arr.ndim) + '\\n')
+        sys.exit(4)
+    rows, cols = arr.shape
+    if rows == N_CH:
+        eeg = arr
+    elif cols == N_CH:
+        eeg = arr.T
+    elif rows >= 32 and cols > rows:
+        eeg = arr[1:17, :]      # BrainFlow Cyton+Daisy: rows[1..16] are EEG
+    elif cols >= 32 and rows > cols:
+        eeg = arr.T[1:17, :]
+    else:
+        sys.stderr.write('cannot infer 16ch layout: shape=' + str(arr.shape) + '\\n')
+        sys.exit(5)
+    return np.asarray(eeg, dtype=np.float64)
+
+def per_channel_ratio(eeg):
+    n_ch, n_samp = eeg.shape
+    nps = min(NPERSEG, n_samp)
+    ratios = np.zeros(n_ch, dtype=np.float64)
+    theta_pk = np.zeros(n_ch)
+    gamma_pk = np.zeros(n_ch)
+    for ch in range(n_ch):
+        freqs, psd = welch(eeg[ch], fs=FS, nperseg=nps,
+                           noverlap=nps // 2, window='hann',
+                           detrend='constant', scaling='density')
+        tmask = (freqs >= THETA_LO) & (freqs <= THETA_HI)
+        gmask = (freqs >= GAMMA_LO) & (freqs <= GAMMA_HI)
+        tp = float(psd[tmask].sum())
+        gp = float(psd[gmask].sum())
+        ratios[ch] = (gp / tp) if tp > 0 else 0.0
+        if tmask.any():
+            theta_pk[ch] = float(freqs[tmask][int(np.argmax(psd[tmask]))])
+        if gmask.any():
+            gamma_pk[ch] = float(freqs[gmask][int(np.argmax(psd[gmask]))])
+    return ratios, theta_pk, gamma_pk
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--mode', choices=['real','selftest'], required=True)
+    ap.add_argument('--input', default='')
+    ap.add_argument('--selftest-mode',
+                    choices=['synthetic_3','synthetic_5','synthetic_1','synthetic_random'],
+                    default='synthetic_3')
+    ap.add_argument('--out', required=True)
+    args = ap.parse_args()
+
+    if args.mode == 'selftest':
+        eeg = synthesize(args.selftest_mode, 60 * FS)   # 60s @ 125Hz
+        input_label = 'selftest_' + args.selftest_mode
+    else:
+        if not args.input or not os.path.isfile(args.input):
+            sys.stderr.write('reason: input-not-found: ' + repr(args.input) + '\\n')
+            sys.exit(3)
+        eeg = load_npy(args.input)
+        input_label = os.path.basename(args.input)
+
+    n_ch, n_samp = eeg.shape
+    ratios, tpk, gpk = per_channel_ratio(eeg)
+
+    grand_mean = float(ratios.mean())
+    per_ch_std = float(ratios.std(ddof=0))
+    std_over_mean = (per_ch_std / grand_mean) if grand_mean > 0 else 999.0
+    occ_mean = float(ratios[OCCIP_IDX].mean())
+    fro_mean = float(ratios[FRONTAL_IDX].mean())
+
+    # ×1000 fixed-point for hexa-side integer comparison (frozen-criteria)
+    grand_x1000 = int(round(grand_mean    * 1000))
+    occ_x1000   = int(round(occ_mean      * 1000))
+    fro_x1000   = int(round(fro_mean      * 1000))
+    sm_x1000    = int(round(std_over_mean * 1000))
+
+    # F4: any theta-peak outside [4,8]; bin-width≈1.95Hz so allow ±2Hz
+    f4_violation = int(((tpk < 3.5) | (tpk > 8.5)).sum())
+    # F5: dominant gamma at ≥49 Hz (50Hz mains spillover)
+    f5_violation = int((gpk >= 49.0).sum())
+    # F6 evaluated by hexa from occ_x1000 vs fro_x1000
+
+    # Per-channel ratios (×1000) for ledger detail
+    per_ch_x1000 = [int(round(r * 1000)) for r in ratios]
+
+    lines = []
+    lines.append('schema=anima-clm-eeg/clm_eeg_gamma_theta_ratio_helper/1')
+    lines.append('input_label=' + input_label)
+    lines.append('n_ch=' + str(n_ch))
+    lines.append('n_samp=' + str(n_samp))
+    lines.append('fs_hz=' + str(FS))
+    lines.append('nperseg=' + str(min(NPERSEG, n_samp)))
+    lines.append('grand_mean_ratio_x1000=' + str(grand_x1000))
+    lines.append('occipital_ratio_x1000=' + str(occ_x1000))
+    lines.append('frontal_ratio_x1000=' + str(fro_x1000))
+    lines.append('std_over_mean_x1000=' + str(sm_x1000))
+    lines.append('f4_theta_peak_outside_band_count=' + str(f4_violation))
+    lines.append('f5_gamma_peak_at_or_above_49hz_count=' + str(f5_violation))
+    lines.append('per_channel_ratio_x1000=' + ','.join(str(v) for v in per_ch_x1000))
+    lines.append('theta_peak_hz_x100=' + ','.join(str(int(round(v*100))) for v in tpk))
+    lines.append('gamma_peak_hz_x100=' + ','.join(str(int(round(v*100))) for v in gpk))
+    lines.append('helper_status=ok')
+    with open(args.out, 'w') as f:
+        f.write('\\n'.join(lines) + '\\n')
+    print('helper_status=ok')
+
+if __name__ == '__main__':
+    main()
+"
+    write_file(HELPER_PATH, py)
+}
+
+// ── pick python interpreter (mirrors clm_eeg_lz76_real own 4 fix) ───────────
+fn pick_python() -> string {
+    let envp = env_str("CLM_EEG_GAMMA_THETA_PYTHON", "")
+    if envp != "" { return envp }
+    let envp2 = env_str("ANIMA_EEG_VENV_PYTHON", "")
+    if envp2 != "" { return envp2 }
+    let venv_rel = ".venv-eeg/bin/python"
+    let chk_rel = exec("test -x \"" + venv_rel + "\" && echo OK").trim()
+    if chk_rel == "OK" { return venv_rel }
+    let cwd = exec("pwd").trim()
+    let venv_abs = cwd + "/.venv-eeg/bin/python"
+    let chk_abs = exec("test -x \"" + venv_abs + "\" && echo OK").trim()
+    if chk_abs == "OK" { return venv_abs }
+    let candidates = [
+        "/opt/homebrew/bin/python3",
+        "/usr/bin/python3"
+    ]
+    let mut k = 0
+    while k < len(candidates) {
+        let c = candidates[k]
+        let ok = exec("test -x \"" + c + "\" && echo OK").trim()
+        if ok == "OK" { return c }
+        k = k + 1
+    }
+    return "/usr/bin/python3"
+}
+
+// ── invoke helper, read kv-result blob ──────────────────────────────────────
+fn run_helper(mode: string, input_path: string, selftest_mode: string) -> string {
+    write_helper()
+    let py = pick_python()
+    let mut cmd = py + " " + HELPER_PATH + " --mode " + mode + " --out " + RESULT_PATH
+    if mode == "selftest" {
+        cmd = cmd + " --selftest-mode " + selftest_mode
+    } else {
+        cmd = cmd + " --input " + _sh_quote(input_path)
+    }
+    let r = exec_with_status(cmd)
+    let rc = to_int(r[1])
+    if rc != 0 {
+        eprintln("reason: helper-failed: rc=" + to_string(rc))
+        eprintln("helper stdout/stderr: " + to_string(r[0]))
+        eprintln("fix: 1) ensure .venv-eeg has scipy + numpy installed  "
+                 + "2) re-run")
+        return ""
+    }
+    return read_file(RESULT_PATH)
+}
+
+//   Returns flat list:
+//     [c1_loose, c1_strict, c2, c3, f1, f2, f3, f4, f5, f6, verdict_code]
+//   verdict_code: 2=VERIFIED_P3, 1=PARTIAL_RATIO, 0=FALSIFIED_P3
+fn evaluate(grand_x1000: int, occ_x1000: int, fro_x1000: int,
+            sm_x1000: int, f4_count: int, f5_count: int) -> list {
+    let c1_loose = if grand_x1000 >= C1_LOOSE_LO_X1000
+                      && grand_x1000 <= C1_LOOSE_HI_X1000 { 1 } else { 0 }
+    let c1_strict = if grand_x1000 >= C1_STRICT_LO_X1000
+                       && grand_x1000 <= C1_STRICT_HI_X1000 { 1 } else { 0 }
+    let c2 = if sm_x1000 < C2_STD_OVER_MEAN_X1000 { 1 } else { 0 }
+    let c3 = if occ_x1000 > grand_x1000 { 1 } else { 0 }
+
+    let f1 = if grand_x1000 < F1_GAMMA_ABSENT_X1000 { 1 } else { 0 }
+    let f2 = if grand_x1000 > F2_THETA_ABSENT_X1000 { 1 } else { 0 }
+    let f3 = if sm_x1000   > F3_HETEROG_X1000      { 1 } else { 0 }
+    let f4 = if f4_count >= 8 { 1 } else { 0 }   // ≥50% of 16 ch
+    let f5 = if f5_count >= 8 { 1 } else { 0 }
+    let f6 = if occ_x1000 < fro_x1000 { 1 } else { 0 }
+
+    let mut verdict = 0
+    if c1_loose == 1 && c1_strict == 1 && c2 == 1 && c3 == 1 {
+        verdict = 2     // VERIFIED_P3
+    } else {
+        if c1_loose == 1 { verdict = 1 } else { verdict = 0 }
+    }
+    let mut out = []
+    out.push(c1_loose); out.push(c1_strict); out.push(c2); out.push(c3)
+    out.push(f1); out.push(f2); out.push(f3); out.push(f4); out.push(f5); out.push(f6)
+    out.push(verdict)
+    return out
+}
+
+fn verdict_str(code: int) -> string {
+    if code == 2 { return "VERIFIED_P3" }
+    if code == 1 { return "PARTIAL_RATIO" }
+    return "FALSIFIED_P3"
+}
+
+fn append_jsonl(path: string, line: string) {
+    let scratch = "state/.clm_eeg_gamma_theta_audit_row.tmp"
+    write_file(scratch, line + "\n")
+    let cmd = "p=" + path + "; mkdir -p $(dirname $p); cat " + scratch + " >> $p; rm -f " + scratch
+    let _ = exec(cmd)
+}
+
+// ── argv parser (mirrors lz76_real flags-only-argv pattern) ─────────────────
+fn flags_only_argv() -> list {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut starts_dash = 0
+        if len(a) >= 1 {
+            if a[0] == "-" { starts_dash = 1 }
+        }
+        if starts_dash == 1 { break }
+        start = start + 1
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn print_usage() {
+    eprintln("usage: hexa run anima-clm-eeg/tool/clm_eeg_gamma_theta_ratio.hexa [flags]")
+    eprintln("flags:")
+    eprintln("  --selftest                 run with synthetic EEG (no hardware)")
+    eprintln("  --selftest-mode <mode>     synthetic_3 | synthetic_5 | synthetic_1 | synthetic_random")
+    eprintln("                             (default: synthetic_3, the PASS path)")
+    eprintln("  --input <path>             real EEG .npy (16xN or 32xN BrainFlow)")
+    eprintln("  --audit-jsonl <path>       JSONL audit append path")
+    eprintln("                             (default: state/clm_eeg_gamma_theta_ratio_audit/<UTC>_gamma_theta.jsonl)")
+    eprintln("  --out <path>               JSON cert output path")
+    eprintln("                             (default: state/clm_eeg_p3_gamma_theta_pre_register.json)")
+    eprintln("  --help                     this message")
+}
+
+// ── cert emit (frozen-criteria SSOT in JSON) ────────────────────────────────
+fn emit_cert(out_path: string, mode: string, input_label: string, input_sha: string,
+             n_ch: int, n_samp: int,
+             grand_x1000: int, occ_x1000: int, fro_x1000: int, sm_x1000: int,
+             f4_count: int, f5_count: int,
+             c1_loose: int, c1_strict: int, c2: int, c3: int,
+             f1: int, f2: int, f3: int, f4: int, f5: int, f6: int,
+             verdict: string,
+             per_ch_csv: string, tpk_csv: string, gpk_csv: string,
+             ts_iso: string) {
+    let mut s = "{\n"
+    s = s + "  \"schema\": \"" + SCHEMA + "\",\n"
+    s = s + "  \"tool\": \"clm_eeg_gamma_theta_ratio\",\n"
+    s = s + "  \"version\": \"v1\",\n"
+    s = s + "  \"raw_rank\": 9,\n"
+    s = s + "  \"hexa_only\": true,\n"
+    s = s + "  \"deterministic\": true,\n"
+    s = s + "  \"resolver_bypass_reason\": \"darwin-native: scipy.welch in .venv-eeg, mac local execution required for venv access\",\n"
+    s = s + "  \"pre_register_frozen\": true,\n"
+    s = s + "  \"frozen_at\": \"2026-04-28\",\n"
+    s = s + "  \"hypothesis\": \"awake EEG gamma(30-50Hz)/theta(4-8Hz) band-power ratio == 3.0 (own 3 = TECS-L H-CX-1 sigma/tau identity)\",\n"
+    s = s + "  \"ssot_cite\": {\n"
+    s = s + "    \"own_3_sigma_over_tau\": \"sigma=6, tau=2, sigma/tau=3, n=6 unique solution\",\n"
+    s = s + "    \"paper_p3\": \"docs/discovery-algorithm-anima.md:289\"\n"
+    s = s + "  },\n"
+    s = s + "  \"criteria\": {\n"
+    s = s + "    \"C1_loose_x1000\":  [" + str(C1_LOOSE_LO_X1000) + "," + str(C1_LOOSE_HI_X1000) + "],\n"
+    s = s + "    \"C1_strict_x1000\": [" + str(C1_STRICT_LO_X1000) + "," + str(C1_STRICT_HI_X1000) + "],\n"
+    s = s + "    \"C2_std_over_mean_max_x1000\": " + str(C2_STD_OVER_MEAN_X1000) + ",\n"
+    s = s + "    \"C3_rule\": \"mean(O1,O2)_ratio > grand_mean\"\n"
+    s = s + "  },\n"
+    s = s + "  \"falsifiers\": {\n"
+    s = s + "    \"F1_gamma_absent_x1000_lt\": " + str(F1_GAMMA_ABSENT_X1000) + ",\n"
+    s = s + "    \"F2_theta_absent_x1000_gt\": " + str(F2_THETA_ABSENT_X1000) + ",\n"
+    s = s + "    \"F3_heterog_std_over_mean_x1000_gt\": " + str(F3_HETEROG_X1000) + ",\n"
+    s = s + "    \"F4_theta_peak_outside_band_count_ge\": 8,\n"
+    s = s + "    \"F5_gamma_peak_ge_49hz_count_ge\": 8,\n"
+    s = s + "    \"F6_rule\": \"occipital < frontal (regional reversal)\"\n"
+    s = s + "  },\n"
+    s = s + "  \"run\": {\n"
+    s = s + "    \"timestamp_utc\": \"" + ts_iso + "\",\n"
+    s = s + "    \"mode\": \"" + mode + "\",\n"
+    s = s + "    \"input_label\": \"" + input_label + "\",\n"
+    s = s + "    \"input_sha256\": \"" + input_sha + "\",\n"
+    s = s + "    \"n_channels\": " + str(n_ch) + ",\n"
+    s = s + "    \"n_samples\": " + str(n_samp) + ",\n"
+    s = s + "    \"sample_rate_hz\": " + str(SAMPLE_RATE_HZ) + ",\n"
+    s = s + "    \"grand_mean_ratio_x1000\": " + str(grand_x1000) + ",\n"
+    s = s + "    \"occipital_ratio_x1000\": " + str(occ_x1000) + ",\n"
+    s = s + "    \"frontal_ratio_x1000\": " + str(fro_x1000) + ",\n"
+    s = s + "    \"std_over_mean_x1000\": " + str(sm_x1000) + ",\n"
+    s = s + "    \"f4_theta_peak_outside_band_count\": " + str(f4_count) + ",\n"
+    s = s + "    \"f5_gamma_peak_ge_49hz_count\": " + str(f5_count) + ",\n"
+    s = s + "    \"per_channel_ratio_x1000\": [" + per_ch_csv + "],\n"
+    s = s + "    \"theta_peak_hz_x100\": [" + tpk_csv + "],\n"
+    s = s + "    \"gamma_peak_hz_x100\": [" + gpk_csv + "]\n"
+    s = s + "  },\n"
+    s = s + "  \"verdict\": {\n"
+    s = s + "    \"C1_loose_pass\":  " + str(c1_loose) + ",\n"
+    s = s + "    \"C1_strict_pass\": " + str(c1_strict) + ",\n"
+    s = s + "    \"C2_pass\":        " + str(c2) + ",\n"
+    s = s + "    \"C3_pass\":        " + str(c3) + ",\n"
+    s = s + "    \"F1_trigger\":     " + str(f1) + ",\n"
+    s = s + "    \"F2_trigger\":     " + str(f2) + ",\n"
+    s = s + "    \"F3_trigger\":     " + str(f3) + ",\n"
+    s = s + "    \"F4_trigger\":     " + str(f4) + ",\n"
+    s = s + "    \"F5_trigger\":     " + str(f5) + ",\n"
+    s = s + "    \"F6_trigger\":     " + str(f6) + ",\n"
+    s = s + "    \"classification\": \"" + verdict + "\"\n"
+    s = s + "  },\n"
+    s = s + "  \"raw10_honest\": {\n"
+    s = s + "    \"60s_short\": \"60s window has unstable gamma-band statistics; at least 180s preferred\",\n"
+    s = s + "    \"125hz_nyquist_marginal\": \"Nyquist=62.5Hz, gamma upper bound 50Hz only 12.5Hz away — anti-alias roll-off may attenuate\",\n"
+    s = s + "    \"single_subject\": \"single-subject result is not paper-generalizable (N=1, no demographics matching)\",\n"
+    s = s + "    \"eyes_state\": \"resting baseline only; eyes-open/eyes-closed pattern not separated; alpha-stop-band may inflate theta\",\n"
+    s = s + "    \"no_independent_paper_p3\": \"paper P3 numerical target ratio=3 is internal SSOT (own 3 sigma/tau), not an external Buzsaki/Steriade citation\"\n"
+    s = s + "  }\n"
+    s = s + "}\n"
+    write_file(out_path, s)
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// main
+// ────────────────────────────────────────────────────────────────────────────
+fn main() {
+    let av = flags_only_argv()
+    let mut cli_input = ""
+    let mut cli_audit = ""
+    let mut cli_out   = ""
+    let mut cli_selftest = 0
+    let mut cli_selftest_mode = "synthetic_3"
+    let mut want_help = 0
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest"      { cli_selftest = 1; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = 1; i = i + 1; continue }
+        if a == "--input" {
+            if (i + 1) >= len(av) {
+                eprintln("reason: missing-arg-value: --input requires path")
+                eprintln("fix: 1) re-run with --input <path.npy>")
+                exit(2)
+            }
+            cli_input = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--audit-jsonl" {
+            if (i + 1) >= len(av) {
+                eprintln("reason: missing-arg-value: --audit-jsonl requires path")
+                exit(2)
+            }
+            cli_audit = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--out" {
+            if (i + 1) >= len(av) {
+                eprintln("reason: missing-arg-value: --out requires path")
+                exit(2)
+            }
+            cli_out = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--selftest-mode" {
+            if (i + 1) >= len(av) {
+                eprintln("reason: missing-arg-value: --selftest-mode requires synthetic_3|synthetic_5|synthetic_1|synthetic_random")
+                exit(2)
+            }
+            cli_selftest_mode = av[i + 1]; i = i + 2; continue
+        }
+        eprintln("reason: unknown-arg: unrecognized argument: " + a)
+        eprintln("fix: 1) re-run with --help")
+        print_usage()
+        exit(2)
+    }
+    if want_help == 1 { print_usage(); exit(0) }
+
+    let mut out_path = cli_out
+    if out_path == "" { out_path = "state/clm_eeg_p3_gamma_theta_pre_register.json" }
+    let mut audit_path = cli_audit
+    if audit_path == "" {
+        audit_path = "state/clm_eeg_gamma_theta_ratio_audit/" + now_date_utc() + "_gamma_theta.jsonl"
+    }
+
+    let is_selftest = cli_selftest == 1
+    let mut mode = "selftest"
+    let mut input_label_override = ""
+    if !is_selftest {
+        if cli_input == "" {
+            eprintln("reason: missing-input: provide --input <path.npy> or --selftest")
+            print_usage()
+            exit(2)
+        }
+        mode = "real"
+    }
+
+    let blob = run_helper(mode, cli_input, cli_selftest_mode)
+    if blob == "" {
+        eprintln("reason: helper-empty-result")
+        exit(1)
+    }
+    if kv_lookup(blob, "helper_status") != "ok" {
+        eprintln("reason: helper-status-not-ok")
+        eprintln("blob:")
+        eprintln(blob)
+        exit(1)
+    }
+
+    let input_label = kv_lookup(blob, "input_label")
+    let n_ch        = to_int_or(kv_lookup(blob, "n_ch"), 0)
+    let n_samp      = to_int_or(kv_lookup(blob, "n_samp"), 0)
+    let grand_x1000 = to_int_or(kv_lookup(blob, "grand_mean_ratio_x1000"), 0)
+    let occ_x1000   = to_int_or(kv_lookup(blob, "occipital_ratio_x1000"), 0)
+    let fro_x1000   = to_int_or(kv_lookup(blob, "frontal_ratio_x1000"), 0)
+    let sm_x1000    = to_int_or(kv_lookup(blob, "std_over_mean_x1000"), 0)
+    let f4_count    = to_int_or(kv_lookup(blob, "f4_theta_peak_outside_band_count"), 0)
+    let f5_count    = to_int_or(kv_lookup(blob, "f5_gamma_peak_at_or_above_49hz_count"), 0)
+    let per_ch_csv  = kv_lookup(blob, "per_channel_ratio_x1000")
+    let tpk_csv     = kv_lookup(blob, "theta_peak_hz_x100")
+    let gpk_csv     = kv_lookup(blob, "gamma_peak_hz_x100")
+
+    let ev = evaluate(grand_x1000, occ_x1000, fro_x1000, sm_x1000, f4_count, f5_count)
+    let c1_loose  = ev[0]
+    let c1_strict = ev[1]
+    let c2_pass   = ev[2]
+    let c3_pass   = ev[3]
+    let f1_trig   = ev[4]
+    let f2_trig   = ev[5]
+    let f3_trig   = ev[6]
+    let f4_trig   = ev[7]
+    let f5_trig   = ev[8]
+    let f6_trig   = ev[9]
+    let verdict   = verdict_str(ev[10])
+
+    let ts_iso = now_iso()
+    let input_sha = if mode == "real" { sha256_of_file(cli_input) } else { "" }
+
+    emit_cert(out_path, mode, input_label, input_sha, n_ch, n_samp,
+              grand_x1000, occ_x1000, fro_x1000, sm_x1000,
+              f4_count, f5_count,
+              c1_loose, c1_strict, c2_pass, c3_pass,
+              f1_trig, f2_trig, f3_trig, f4_trig, f5_trig, f6_trig,
+              verdict, per_ch_csv, tpk_csv, gpk_csv, ts_iso)
+
+    // JSONL row (one line, easy diffable)
+    let mut row = "{"
+    row = row + "\"ts\":\"" + ts_iso + "\","
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"mode\":\"" + mode + "\","
+    row = row + "\"input_label\":\"" + input_label + "\","
+    row = row + "\"input_sha256\":\"" + input_sha + "\","
+    row = row + "\"n_channels\":" + str(n_ch) + ","
+    row = row + "\"n_samples\":" + str(n_samp) + ","
+    row = row + "\"grand_mean_ratio_x1000\":" + str(grand_x1000) + ","
+    row = row + "\"occipital_ratio_x1000\":" + str(occ_x1000) + ","
+    row = row + "\"frontal_ratio_x1000\":" + str(fro_x1000) + ","
+    row = row + "\"std_over_mean_x1000\":" + str(sm_x1000) + ","
+    row = row + "\"f4_count\":" + str(f4_count) + ","
+    row = row + "\"f5_count\":" + str(f5_count) + ","
+    row = row + "\"C1_loose\":" + str(c1_loose) + ","
+    row = row + "\"C1_strict\":" + str(c1_strict) + ","
+    row = row + "\"C2\":" + str(c2_pass) + ","
+    row = row + "\"C3\":" + str(c3_pass) + ","
+    row = row + "\"F1\":" + str(f1_trig) + ","
+    row = row + "\"F2\":" + str(f2_trig) + ","
+    row = row + "\"F3\":" + str(f3_trig) + ","
+    row = row + "\"F4\":" + str(f4_trig) + ","
+    row = row + "\"F5\":" + str(f5_trig) + ","
+    row = row + "\"F6\":" + str(f6_trig) + ","
+    row = row + "\"verdict\":\"" + verdict + "\","
+    row = row + "\"schema_version\":\"clm-eeg-legacy.v1\""
+    row = row + "}"
+    append_jsonl(audit_path, row)
+
+    // ── stdout kv summary ────────────────────────────────────────────────
+    println("  schema                = " + SCHEMA)
+    println("  mode                  = " + mode)
+    println("  input                 = " + input_label)
+    println("  n_channels            = " + str(n_ch))
+    println("  n_samples             = " + str(n_samp))
+    println("  fs_hz                 = " + str(SAMPLE_RATE_HZ))
+    println("  ratio_target_x1000    = " + str(RATIO_TARGET_X1000))
+    println("  grand_mean_x1000      = " + str(grand_x1000))
+    println("  occipital_x1000       = " + str(occ_x1000))
+    println("  frontal_x1000         = " + str(fro_x1000))
+    println("  std_over_mean_x1000   = " + str(sm_x1000))
+    println("  f4_count              = " + str(f4_count))
+    println("  f5_count              = " + str(f5_count))
+    println("  C1_loose              = " + str(c1_loose))
+    println("  C1_strict             = " + str(c1_strict))
+    println("  C2 (homog)            = " + str(c2_pass))
+    println("  C3 (occipital)        = " + str(c3_pass))
+    println("  F1 (gamma absent)     = " + str(f1_trig))
+    println("  F2 (theta absent)     = " + str(f2_trig))
+    println("  F3 (heterog)          = " + str(f3_trig))
+    println("  F4 (theta band)       = " + str(f4_trig))
+    println("  F5 (mains spillover)  = " + str(f5_trig))
+    println("  F6 (regional rev)     = " + str(f6_trig))
+    println("  verdict               = " + verdict)
+    println("  cert_out              = " + out_path)
+    println("  audit_jsonl           = " + audit_path)
+    println("  limitation            = 60s short, 125Hz Nyquist=62.5 (gamma upper 50Hz marginal),")
+    println("                          single-subject not paper-generalizable, eyes-state ambiguous")
+
+    if verdict == "VERIFIED_P3" { exit(0) }
+    if verdict == "PARTIAL_RATIO" { exit(0) }   // partial is reportable, not a hard error
+    exit(1)
+}

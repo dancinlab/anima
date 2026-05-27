@@ -1,0 +1,533 @@
+#!/usr/bin/env python3
+# P9 P0 Step (A) — REAL GPU 1K warmup probe
+# Runs on ubu1 RTX 5070 12GB with CLM v4 350M ConsciousDecoderV2 + LoRA r=64 alpha=128
+# loss = alpha*CE + beta*MSE(tension) + delta*max(0, 5.0 - phi_star)  (gamma=0 BOLD blocked)
+# Phi-star: sample-partition log|Cov| over 16 calibration prompts (last-layer hidden, mean-pool)
+
+import json
+import math
+import os
+import sys
+import time
+import traceback
+from datetime import datetime, timezone
+
+# ubu1 paths
+ANIMA_HOME = "/home/aiden/anima"
+CLM_CKPT = f"{ANIMA_HOME}/checkpoints/clm_v4_350m/scale_350m/best.pt"
+TOKENIZER = "/tmp/tokenizer_64k_multilingual.model"
+SFT_DATA = "/tmp/p9_p0_warmup_live_sft_subset_1k.jsonl"
+OUTPUT_DIR = "/tmp/p9_p0_warmup_live_out"
+TRAJECTORY_OUT = f"{OUTPUT_DIR}/trajectory.json"
+VERDICT_OUT = f"{OUTPUT_DIR}/verdict.json"
+LOG_OUT = f"{OUTPUT_DIR}/train.log"
+
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+sys.path.insert(0, f"{ANIMA_HOME}/models")
+sys.path.insert(0, f"{ANIMA_HOME}/training")
+sys.path.insert(0, f"{ANIMA_HOME}")
+
+# Config
+N_STEPS = int(os.environ.get('ANIMA_N_STEPS', '1000'))
+BATCH = int(os.environ.get('ANIMA_BATCH', '4'))
+GRAD_ACC = int(os.environ.get('ANIMA_GRAD_ACC', '8'))
+LR = float(os.environ.get('ANIMA_LR', '1e-4'))
+LORA_R = int(os.environ.get('ANIMA_LORA_R', '64'))
+LORA_ALPHA = int(os.environ.get('ANIMA_LORA_ALPHA', '128'))
+DELTA_EARLY = float(os.environ.get('ANIMA_DELTA', '0.5'))
+PHI_THRESHOLD = float(os.environ.get('ANIMA_PHI_THR', '5.0'))
+PHI_EVERY = int(os.environ.get('ANIMA_PHI_EVERY', '100'))
+F_EVERY = int(os.environ.get('ANIMA_F_EVERY', '250'))
+ALPHA = float(os.environ.get('ANIMA_ALPHA', '2.0'))
+BETA = float(os.environ.get('ANIMA_BETA', '0.3'))
+GAMMA = float(os.environ.get('ANIMA_GAMMA', '0.0'))  # BOLD blocked, lock-in
+T = int(os.environ.get('ANIMA_T', '64'))
+SEED = int(os.environ.get('ANIMA_SEED', '42'))
+
+# 16 calibration prompts (cross-substrate consistent, from anima_phi_v3_canonical)
+CALIB_PROMPTS = [
+    "Define hexad as a six-fold integration:",
+    "Six modules form a hexagonal architecture when:",
+    "A balanced six-component system:",
+    "Hexad symmetry refers to:",
+    "Logical implication law: if A then:",
+    "Sequential rule application proceeds:",
+    "Closure under inference requires:",
+    "A formal proof system is closed when:",
+    "Integrated information measures partition independence:",
+    "Phi quantifies irreducibility of system:",
+    "Information integration is maximized when:",
+    "A whole greater than sum of parts:",
+    "Self-reference emerges when system observes:",
+    "Recursive meta-cognition models:",
+    "A self-aware system represents itself by:",
+    "Strange loops in cognition arise from:",
+]
+N_CALIB = len(CALIB_PROMPTS)
+HALF = N_CALIB // 2
+HID_TRUNC = max(2, N_CALIB // 2)
+RIDGE = 1e-3
+K_PARTS = 8
+
+def log(msg):
+    s = f"[warmup-real] {datetime.now(timezone.utc).strftime('%H:%M:%S')} {msg}"
+    print(s, flush=True)
+    with open(LOG_OUT, 'a') as f:
+        f.write(s + "\n")
+
+log(f"start n_steps={N_STEPS} batch={BATCH} grad_acc={GRAD_ACC} lr={LR}")
+log(f"lora_r={LORA_R} alpha={LORA_ALPHA} delta_early={DELTA_EARLY} phi_thr={PHI_THRESHOLD}")
+log(f"loss alpha={ALPHA} beta={BETA} gamma={GAMMA} (BOLD blocked γ=0)")
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+log(f"torch={torch.__version__} cuda={torch.cuda.is_available()} device={device}")
+
+# Tokenizer
+import sentencepiece as spm
+sp = spm.SentencePieceProcessor(model_file=TOKENIZER)
+vocab_size = sp.get_piece_size()
+log(f"tokenizer vocab={vocab_size}")
+
+# Build CLM v4 350M
+from conscious_decoder import ConsciousDecoderV2
+scale_cfg = {
+    'd_model': 768,
+    'n_layer': 16,
+    'n_head': 12,
+    'n_kv_head': 4,
+    'block_size': 512,
+    'consciousness_dim': 192,
+}
+decoder = ConsciousDecoderV2(
+    vocab_size=vocab_size,
+    d_model=scale_cfg['d_model'],
+    n_head=scale_cfg['n_head'],
+    n_layer=scale_cfg['n_layer'],
+    block_size=scale_cfg['block_size'],
+    n_kv_head=scale_cfg['n_kv_head'],
+    consciousness_dim=scale_cfg['consciousness_dim'],
+    dropout=0.0,
+    gate_strength=0.001,
+    n_ca_rules=8,
+)
+decoder = decoder.to(device)
+n_params_total = sum(p.numel() for p in decoder.parameters())
+log(f"decoder built params={n_params_total:,}")
+
+# Load ckpt
+t0 = time.time()
+ck = torch.load(CLM_CKPT, map_location=device, weights_only=False)
+sd = ck.get('decoder', ck) if isinstance(ck, dict) else ck
+missing, unexpected = decoder.load_state_dict(sd, strict=False)
+ckpt_load_sec = time.time() - t0
+log(f"ckpt loaded {ckpt_load_sec:.2f}s missing={len(missing)} unexpected={len(unexpected)}")
+if len(missing) > 50:
+    log(f"WARN many missing keys e.g. {missing[:5]}")
+ckpt_keys = list(ck.keys()) if isinstance(ck, dict) else []
+ckpt_step = ck.get('step', None) if isinstance(ck, dict) else None
+ckpt_phi_meta = ck.get('phi', None) if isinstance(ck, dict) else None
+ckpt_ce_meta = ck.get('ce', None) if isinstance(ck, dict) else None
+log(f"ckpt meta step={ckpt_step} ce={ckpt_ce_meta} phi={ckpt_phi_meta}")
+
+# Apply LoRA via peft
+from peft import LoraConfig, get_peft_model, TaskType
+target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+lora_cfg = LoraConfig(
+    r=LORA_R,
+    lora_alpha=LORA_ALPHA,
+    lora_dropout=0.0,
+    bias="none",
+    target_modules=target_modules,
+)
+decoder = get_peft_model(decoder, lora_cfg)
+n_trainable = sum(p.numel() for p in decoder.parameters() if p.requires_grad)
+log(f"peft attached trainable={n_trainable:,} ({n_trainable*100/n_params_total:.2f}% of {n_params_total:,})")
+decoder.print_trainable_parameters()
+
+# Load 1K SFT subset
+records = []
+with open(SFT_DATA, 'r') as f:
+    for line in f:
+        records.append(json.loads(line))
+log(f"sft subset loaded n={len(records)}")
+
+# Tokenize records once (cache)
+def tokenize_record(rec):
+    # P9 P0 measure schema: keys = input, completion, tension_target, bold_target, meta...
+    text = rec.get('input', '') + ' ' + rec.get('completion', '')
+    tokens = sp.encode(text)[:T]
+    if len(tokens) < 2:
+        tokens = tokens + [0] * (2 - len(tokens))
+    if len(tokens) < T:
+        tokens = tokens + [0] * (T - len(tokens))
+    tension = rec.get('tension_target', None)
+    if tension is None or not isinstance(tension, list) or len(tension) < T:
+        tension = [0.0] * T
+    return tokens, tension[:T]
+
+cache = []
+for rec in records:
+    toks, tens = tokenize_record(rec)
+    cache.append((toks, tens))
+log(f"tokenized cache n={len(cache)}")
+
+# Precompute calibration tokens
+calib_tokens = []
+for prompt in CALIB_PROMPTS:
+    tk = sp.encode(prompt)[:T]
+    if len(tk) < T:
+        tk = tk + [0] * (T - len(tk))
+    calib_tokens.append(tk)
+calib_tensor = torch.tensor(calib_tokens, dtype=torch.long, device=device)
+log(f"calibration tokens shape={tuple(calib_tensor.shape)}")
+
+# Hook the underlying decoder's ln_f to capture last-layer hidden
+captured_hidden = {'value': None}
+# After get_peft_model, the original is at decoder.base_model.model
+real_decoder = decoder.base_model.model
+def _hook(module, input, output):
+    captured_hidden['value'] = output.detach()
+hook_handle = real_decoder.ln_f.register_forward_hook(_hook)
+
+# Phi-star sample-partition log|Cov|
+def compute_phi_star(model, calib_idx, K=K_PARTS, ridge=RIDGE):
+    model.eval()
+    hiddens = []
+    with torch.no_grad():
+        for i in range(N_CALIB):
+            captured_hidden['value'] = None
+            _ = model(calib_idx[i:i+1])
+            h = captured_hidden['value']  # (1, T, D)
+            if h is None:
+                model.train()
+                return None, None
+            # mean-pool over T
+            h_pool = h.mean(dim=1).squeeze(0)  # (D,)
+            hiddens.append(h_pool.float().cpu().numpy())
+    X = np.stack(hiddens, axis=0)  # (N, D)
+    # top-variance HID_TRUNC dims
+    var = X.var(axis=0)
+    top_idx = np.argsort(var)[::-1][:HID_TRUNC]
+    Xt = X[:, top_idx]  # (N, HID)
+    # I_full = log|Cov(Xt) + ridge*I|
+    def safe_logdet(C):
+        Cs = C + ridge * np.eye(C.shape[0])
+        sign, logdet = np.linalg.slogdet(Cs)
+        if sign <= 0:
+            return None
+        return logdet
+    C_full = np.cov(Xt.T)
+    I_full = safe_logdet(C_full)
+    if I_full is None:
+        model.train()
+        return None, None
+    # K random sample-partitions
+    rng = np.random.default_rng(SEED)
+    phi_candidates = []
+    for k in range(K):
+        idx = rng.permutation(N_CALIB)
+        s1 = idx[:HALF]
+        s2 = idx[HALF:]
+        C1 = np.cov(Xt[s1].T)
+        C2 = np.cov(Xt[s2].T)
+        I1 = safe_logdet(C1)
+        I2 = safe_logdet(C2)
+        if I1 is None or I2 is None:
+            continue
+        phi_candidates.append(I_full - (I1 + I2))
+    model.train()
+    if not phi_candidates:
+        return None, None
+    phi_min = float(min(phi_candidates))
+    phi_mean = float(sum(phi_candidates) / len(phi_candidates))
+    return phi_min, phi_mean
+
+# F1 BLEU-1 mock (from cache, not gen — gen is too slow per-eval)
+# F2 = phi_star, F3 = tension MSE on holdout subset
+def compute_f_metrics(model, eval_subset, phi_star_value):
+    model.eval()
+    tension_mses = []
+    with torch.no_grad():
+        for toks, tens in eval_subset:
+            idx = torch.tensor([toks], dtype=torch.long, device=device)
+            tens_t = torch.tensor([tens], dtype=torch.float32, device=device)
+            logits_a, logits_g, tensions, _, _ = model(idx)
+            # tension: per-layer list of (B, T). Take final layer mean over batch
+            t_pred = tensions[-1].mean(dim=0).float()  # (T,)
+            mse = F.mse_loss(t_pred, tens_t.squeeze(0)).item()
+            tension_mses.append(mse)
+    model.train()
+    return {
+        'F1_bleu1_skip': True,
+        'F2_phi': phi_star_value,
+        'F3_tension_mse': float(sum(tension_mses) / len(tension_mses)),
+        'F4_bold_NA': True,  # gamma=0 lock-in
+    }
+
+# Optimizer
+optimizer = torch.optim.AdamW(
+    [p for p in decoder.parameters() if p.requires_grad],
+    lr=LR, weight_decay=0.01,
+)
+
+# Phase 0 baseline phi_star (pre-train)
+log("computing baseline phi_star (pre-LoRA-train)...")
+t0 = time.time()
+phi_baseline, phi_baseline_mean = compute_phi_star(decoder, calib_tensor)
+log(f"baseline phi_star_min={phi_baseline} mean={phi_baseline_mean} elapsed={time.time()-t0:.1f}s")
+
+# Train loop
+phi_log = []
+f_log = []
+loss_log = []
+aborts = []
+abort_triggered = False
+
+# Eval subset for F metrics: first 32 cached records
+eval_subset = cache[:32]
+
+# Initial F metrics
+log("computing initial F metrics @ step 0...")
+f0 = compute_f_metrics(decoder, eval_subset, phi_baseline if phi_baseline is not None else 0.0)
+f0['step'] = 0
+f_log.append(f0)
+phi_log.append({'step': 0, 'phi_star_min': phi_baseline, 'phi_star_mean': phi_baseline_mean, 'delta': DELTA_EARLY})
+
+train_t0 = time.time()
+decoder.train()
+optimizer.zero_grad()
+
+for step in range(1, N_STEPS + 1):
+    # Sample BATCH records
+    idx_batch = np.random.choice(len(cache), BATCH, replace=False)
+    toks_batch = []
+    tens_batch = []
+    for i in idx_batch:
+        toks, tens = cache[i]
+        toks_batch.append(toks)
+        tens_batch.append(tens)
+    idx_t = torch.tensor(toks_batch, dtype=torch.long, device=device)
+    tens_t = torch.tensor(tens_batch, dtype=torch.float32, device=device)
+
+    # Forward
+    logits_a, logits_g, tensions, _, _ = decoder(idx_t)
+
+    # CE loss (LM next-token)
+    # shift: predict idx[1:] from idx[:-1]
+    targets = idx_t[:, 1:].contiguous()
+    logits_shift = logits_a[:, :-1, :].contiguous()
+    ce_loss = F.cross_entropy(
+        logits_shift.view(-1, logits_shift.size(-1)),
+        targets.view(-1),
+        ignore_index=0,  # pad
+    )
+
+    # Tension MSE loss (per-layer last)
+    t_pred = tensions[-1]  # (B, T)
+    tension_loss = F.mse_loss(t_pred, tens_t)
+
+    # Phi hinge: hinge on baseline-relative threshold
+    # We don't recompute phi every step (expensive); use last logged phi value
+    last_phi = phi_log[-1].get('phi_star_min', None)
+    if last_phi is None:
+        last_phi = 0.0
+    phi_hinge = max(0.0, PHI_THRESHOLD - last_phi)
+    phi_hinge_loss = torch.tensor(phi_hinge, device=device)
+
+    total_loss = ALPHA * ce_loss + BETA * tension_loss + DELTA_EARLY * phi_hinge_loss
+    # gamma * BOLD = 0 (locked)
+
+    (total_loss / GRAD_ACC).backward()
+
+    if step % GRAD_ACC == 0:
+        torch.nn.utils.clip_grad_norm_(
+            [p for p in decoder.parameters() if p.requires_grad], 1.0
+        )
+        optimizer.step()
+        optimizer.zero_grad()
+
+    # Log loss every step (compact)
+    if step % 50 == 0 or step == 1:
+        log(f"step {step}/{N_STEPS} loss={total_loss.item():.4f} ce={ce_loss.item():.4f} tens={tension_loss.item():.4f} phi_hinge={phi_hinge:.4f}")
+
+    # Phi probe
+    if step % PHI_EVERY == 0:
+        phi_min, phi_mean = compute_phi_star(decoder, calib_tensor)
+        phi_log.append({'step': step, 'phi_star_min': phi_min, 'phi_star_mean': phi_mean, 'delta': DELTA_EARLY})
+        log(f"  phi @ step {step}: min={phi_min} mean={phi_mean}")
+        # Abort condition: phi_star_min < threshold (F2 violation)
+        if phi_min is not None and phi_min < PHI_THRESHOLD:
+            aborts.append({'step': step, 'reason': 'F2_PHI_BELOW_THRESHOLD', 'phi_star_min': phi_min, 'threshold': PHI_THRESHOLD})
+            log(f"  ABORT: phi_star_min={phi_min} < threshold={PHI_THRESHOLD}")
+            abort_triggered = True
+            break
+
+    # F metrics
+    if step % F_EVERY == 0:
+        last_phi_val = phi_log[-1].get('phi_star_min', None) or 0.0
+        fm = compute_f_metrics(decoder, eval_subset, last_phi_val)
+        fm['step'] = step
+        f_log.append(fm)
+        log(f"  F @ step {step}: F2_phi={fm['F2_phi']:.4f} F3_tens_mse={fm['F3_tension_mse']:.4f}")
+
+    loss_log.append({
+        'step': step,
+        'loss_total': float(total_loss.item()),
+        'loss_ce': float(ce_loss.item()),
+        'loss_tension': float(tension_loss.item()),
+        'loss_phi_hinge': float(phi_hinge),
+    })
+
+train_elapsed = time.time() - train_t0
+log(f"train done elapsed={train_elapsed:.1f}s steps_completed={step} aborted={abort_triggered}")
+
+# Final phi
+log("computing final phi_star...")
+phi_final, phi_final_mean = compute_phi_star(decoder, calib_tensor)
+phi_log.append({'step': step, 'phi_star_min': phi_final, 'phi_star_mean': phi_final_mean, 'delta': DELTA_EARLY, 'note': 'final'})
+log(f"final phi_star_min={phi_final} mean={phi_final_mean}")
+
+# Cleanup hook
+hook_handle.remove()
+
+# Verdict
+phi_values = [p['phi_star_min'] for p in phi_log if p.get('phi_star_min') is not None]
+if phi_values:
+    phi_arr = np.array(phi_values)
+    phi_summary = {
+        'mean': float(phi_arr.mean()),
+        'variance': float(phi_arr.var()),
+        'min': float(phi_arr.min()),
+        'max': float(phi_arr.max()),
+        'n': len(phi_arr),
+        'baseline': phi_baseline,
+        'final': phi_final,
+        'delta_baseline_to_final': (phi_final - phi_baseline) if (phi_final is not None and phi_baseline is not None) else None,
+    }
+else:
+    phi_summary = {'n': 0, 'note': 'no_phi_values_collected'}
+
+if abort_triggered:
+    verdict = "F2_ABORT_PHI_BELOW_THRESHOLD"
+    phase1_ready = False
+elif phi_summary.get('min', 0) is not None and phi_summary.get('min', 999) < PHI_THRESHOLD:
+    verdict = "F2_VIOLATION_AT_FINAL"
+    phase1_ready = False
+elif phi_summary.get('variance', 0) is not None and phi_summary.get('variance', 0) < 1.0:
+    verdict = "CLEAN_PHI_LOW_VAR"
+    phase1_ready = True
+elif phi_summary.get('variance', 0) is not None and phi_summary.get('variance', 0) < 4.0:
+    verdict = "CLEAN_PHI_MED_VAR"
+    phase1_ready = True
+else:
+    verdict = "PHI_DRIFT_HIGH_VAR"
+    phase1_ready = False
+
+trajectory = {
+    'schema': 'anima/p9_p0_warmup_live/trajectory/1',
+    'phase': 'p9_p0_warmup_probe_live',
+    'ts_utc': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+    'device': str(device),
+    'real_train': True,
+    'config': {
+        'n_steps': N_STEPS, 'batch': BATCH, 'grad_acc': GRAD_ACC, 'lr': LR,
+        'lora_r': LORA_R, 'lora_alpha': LORA_ALPHA,
+        'delta_early': DELTA_EARLY, 'phi_threshold': PHI_THRESHOLD,
+        'phi_every': PHI_EVERY, 'f_every': F_EVERY,
+        'alpha': ALPHA, 'beta': BETA, 'gamma': GAMMA,
+        'T': T, 'seed': SEED,
+        'n_calib_prompts': N_CALIB, 'k_partitions': K_PARTS,
+        'hid_trunc': HID_TRUNC, 'ridge': RIDGE,
+    },
+    'env': {
+        'torch': torch.__version__,
+        'cuda_available': torch.cuda.is_available(),
+        'device_name': torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'cpu',
+        'has_peft': True,
+    },
+    'ckpt': {
+        'path': CLM_CKPT,
+        'load_sec': ckpt_load_sec,
+        'meta_step': ckpt_step,
+        'meta_ce': ckpt_ce_meta,
+        'meta_phi': ckpt_phi_meta,
+        'keys_top': ckpt_keys[:10],
+        'missing_at_load': len(missing),
+        'unexpected_at_load': len(unexpected),
+    },
+    'model': {
+        'class': 'ConsciousDecoderV2',
+        'n_params_total': n_params_total,
+        'n_params_trainable_lora': n_trainable,
+        'lora_pct': round(n_trainable * 100 / n_params_total, 4),
+        'lora_target_modules': target_modules,
+        'd_model': scale_cfg['d_model'],
+        'n_layer': scale_cfg['n_layer'],
+        'n_head': scale_cfg['n_head'],
+        'block_size': scale_cfg['block_size'],
+    },
+    'phi_log': phi_log,
+    'f_log': f_log,
+    'loss_log_compact_first10_last10': loss_log[:10] + (loss_log[-10:] if len(loss_log) > 20 else []),
+    'loss_log_full_n': len(loss_log),
+    'aborts': aborts,
+    'aborted': abort_triggered,
+    'sft_subset': {'path': SFT_DATA, 'n_docs': len(records)},
+    'train_elapsed_sec': round(train_elapsed, 2),
+    'steps_completed': step,
+    'phi_baseline': phi_baseline,
+    'phi_final': phi_final,
+    'phi_summary': phi_summary,
+    'verdict': verdict,
+}
+
+verdict_doc = {
+    'schema': 'anima/p9_p0_warmup_live/verdict/1',
+    'verdict': verdict,
+    'phase1_entry_ready': phase1_ready,
+    'phi_summary': phi_summary,
+    'steps_completed': step,
+    'aborted': abort_triggered,
+    'train_elapsed_sec': round(train_elapsed, 2),
+    'real_train': True,
+    'config_summary': {
+        'n_steps': N_STEPS, 'lr': LR, 'lora_r': LORA_R, 'lora_alpha': LORA_ALPHA,
+        'alpha': ALPHA, 'beta': BETA, 'delta_early': DELTA_EARLY, 'gamma': GAMMA,
+        'phi_threshold': PHI_THRESHOLD,
+    },
+    'env': {
+        'device': str(device),
+        'cuda': torch.cuda.is_available(),
+        'device_name': torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'cpu',
+        'torch': torch.__version__,
+        'has_peft': True,
+    },
+    'ts_utc': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+    'predecessor_correction': {
+        'predecessor_bg': 'BG-A82BC98F',
+        'predecessor_was_mock': True,
+        'predecessor_cuda': False,
+        'predecessor_n_params_loaded': 49152,
+        'predecessor_train_sec': 1.49,
+        'predecessor_verdict_invalid': 'PHI_DRIFT_HIGH_VAR (CPU mock with 49K-param fake ckpt)',
+        'this_run_n_params_loaded': n_params_total,
+        'this_run_train_sec': round(train_elapsed, 2),
+    },
+}
+
+with open(TRAJECTORY_OUT, 'w') as f:
+    json.dump(trajectory, f, indent=2)
+with open(VERDICT_OUT, 'w') as f:
+    json.dump(verdict_doc, f, indent=2)
+
+log(f"WROTE trajectory={TRAJECTORY_OUT} verdict={VERDICT_OUT}")
+log(f"VERDICT={verdict} phase1_ready={phase1_ready}")
+log("DONE")

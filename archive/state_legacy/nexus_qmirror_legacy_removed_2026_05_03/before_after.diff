@@ -1,0 +1,215 @@
+--- /Users/ghost/core/anima/state/nexus_qmirror_legacy_removed_2026_05_03/qmirror.hexa.before	2026-05-04 11:09:45
++++ /Users/ghost/core/anima/state/nexus_qmirror_legacy_removed_2026_05_03/qmirror.hexa.after	2026-05-04 11:12:56
+@@ -16,9 +16,10 @@
+ //     3. $HOME/core/qmirror                        ← user-home convention
+ //     4. PATH-resolved `qmirror` binary            ← future hx-installed
+ //
+-//   In-tree modules at $NEXUS/modules/qmirror/ are RETAINED but DEPRECATED:
+-//   they remain only as a fallback if the standalone is not found. See
+-//   `_resolve_qmirror_invocation()` below.
++//   In-tree modules at $NEXUS/modules/qmirror/ have been REMOVED as of v0.3.0
++//   (see docs/nexus_qmirror_legacy_removed_2026_05_03.ai.md). The 5th tier
++//   (legacy-intree fallback) was a silent fallback that bypassed operator intent;
++//   it is now a hard fail with an actionable error.
+ //
+ // Invoked via:  nexus qmirror <subcmd> [flags...]
+ //   ─ via wrapper bin/nexus-cli → engine/nexus_cli.hexa cmd_qmirror →
+@@ -33,6 +34,14 @@
+ //   qrng       — pull quantum random bits (4-tier ANU fallback)
+ //   selftest   — full Phase 1 + Phase 2 falsifier sweep
+ //
++// CHANGELOG:
++//   v0.3.0 (2026-05-03) — Removed 5th-tier `legacy-intree` fallback. Now
++//                         enforces standalone-only (4-tier resolution); hard
++//                         fail with `hx install qmirror` hint when missing.
++//                         In-tree $NEXUS/modules/qmirror/ deleted.
++//   v0.2.0 (2026-05-03) — Initial shellout refactor (5-tier resolution with
++//                         deprecated in-tree fallback retained as resilience).
++//
+ // Constraints honored:
+ //   raw#9   — hexa-only (no .py created); standalone manages its own bridges
+ //   raw#15  — write-confined (audit log only on nexus side)
+@@ -43,7 +52,7 @@
+ // @no-lock-needed
+ // @resolver-bypass(reason="Pure local CLI router; standalone manages its own bridges.")
+ 
+-let VERSION = "0.2.0"  // bumped: shellout refactor
++let VERSION = "0.3.0"  // bumped: legacy-intree fallback removed (standalone-only)
+ 
+ // ─── env / path resolve ───
+ 
+@@ -60,8 +69,7 @@
+ let HEXA_BIN = NX + "/bin/hexa"
+ let LOG_PATH = NX + "/logs/nexus_cli.log"
+ 
+-// In-tree fallback (DEPRECATED; retained for resilience only).
+-let LEGACY_QMIR_DIR = NX + "/modules/qmirror"
++// (v0.3.0) In-tree fallback REMOVED — standalone-only enforcement.
+ 
+ // ─── arg helpers ───
+ 
+@@ -120,21 +128,17 @@
+     return r == "yes"
+ }
+ 
+-fn _dir_exists(p: str) -> bool {
+-    let r = exec("[ -d " + shq(p) + " ] && echo yes || echo no").trim()
+-    return r == "yes"
+-}
+-
+-// Resolution order:
++// Resolution order (v0.3.0 — standalone-only, 4 tiers):
+ //   1. $QMIRROR_ROOT env
+ //   2. /Users/ghost/core/qmirror
+ //   3. $HOME/core/qmirror
+ //   4. PATH-resolved `qmirror`
+-//   5. legacy in-tree $NEXUS/modules/qmirror (DEPRECATED fallback)
+ //
++// (v0.2.0 5th tier `legacy-intree` removed; in-tree modules deleted.)
++//
+ // Returns shape: "<route>|<command-prefix>"
+ //   route ∈ { "standalone-env", "standalone-mac", "standalone-home",
+-//             "standalone-path", "legacy-intree", "none" }
++//             "standalone-path", "none" }
+ //   command-prefix is the prefix for the subcmd to be appended (no trailing space).
+ fn _resolve_qmirror_invocation() -> str {
+     // 1. $QMIRROR_ROOT env
+@@ -161,10 +165,6 @@
+     if path_bin.len() > 0 {
+         return "standalone-path|" + shq(path_bin)
+     }
+-    // 5. Legacy in-tree (DEPRECATED — emits warn at call site)
+-    if _dir_exists(LEGACY_QMIR_DIR) {
+-        return "legacy-intree|" + shq(HEXA_BIN) + " run "  // caller appends script path
+-    }
+     return "none|"
+ }
+ 
+@@ -184,19 +184,11 @@
+     return out
+ }
+ 
+-// Map subcmd → legacy module script (only used for legacy-intree fallback).
+-fn _legacy_module_for(sub: str) -> str {
+-    if sub == "chsh"     { return LEGACY_QMIR_DIR + "/chsh.hexa" }
+-    if sub == "qrng"     { return LEGACY_QMIR_DIR + "/qrng.hexa" }
+-    if sub == "iit"      { return LEGACY_QMIR_DIR + "/iit_mip.hexa" }
+-    if sub == "selftest" { return LEGACY_QMIR_DIR + "/selftest.hexa" }
+-    if sub == "nist"     { return LEGACY_QMIR_DIR + "/selftest.hexa" }   // F2 proxy
+-    if sub == "status"   { return LEGACY_QMIR_DIR + "/selftest.hexa" }   // best-effort
+-    return ""
+-}
+-
+ // Forward: invoke standalone qmirror with subcmd + extra args. Returns (route, exit_code).
+ // Streams stdout/stderr live (no buffering) by direct `exec` → terminal pipes inherit.
++//
++// (v0.3.0) Hard fail when none of the 4 standalone tiers resolve — no silent
++// in-tree fallback. Operator must explicitly install/locate qmirror.
+ fn _forward(sub: str, extra: [str]) -> str {
+     let resolved = _resolve_qmirror_invocation()
+     let parts = resolved.split("|")
+@@ -204,46 +196,22 @@
+     let prefix = if parts.len() >= 2 { parts[1] } else { "" }
+ 
+     if route == "none" {
+-        _e("nexus qmirror: ERROR — qmirror standalone not found")
+-        _e("  set $QMIRROR_ROOT, install via: hx install qmirror,")
+-        _e("  or place repo at /Users/ghost/core/qmirror")
++        _e("nexus qmirror: ERROR — qmirror standalone not found (4-tier resolution failed)")
++        _e("  tier 1 ($QMIRROR_ROOT env)              : not set or invalid")
++        _e("  tier 2 (/Users/ghost/core/qmirror)      : not found")
++        _e("  tier 3 ($HOME/core/qmirror)             : not found")
++        _e("  tier 4 (PATH `qmirror`)                 : not found")
++        _e("")
++        _e("  remediation: install via `hx install qmirror`,")
++        _e("               or set $QMIRROR_ROOT to a checkout of need-singularity/qmirror,")
++        _e("               or clone to /Users/ghost/core/qmirror (Mac dev convention).")
++        _e("")
++        _e("  NOTE: As of router v0.3.0 the legacy in-tree fallback ($NEXUS/modules/qmirror)")
++        _e("  has been REMOVED. nexus qmirror is now standalone-only.")
+         _audit(sub, "no-qmirror-found", 127, "none")
+         return route + "|127"
+     }
+ 
+-    if route == "legacy-intree" {
+-        _e("nexus qmirror: WARNING — falling back to DEPRECATED in-tree module")
+-        _e("  at " + LEGACY_QMIR_DIR + " (qmirror standalone not found).")
+-        _e("  Migration: install qmirror via `hx install qmirror` or set QMIRROR_ROOT.")
+-        let script = _legacy_module_for(sub)
+-        if script.len() == 0 {
+-            _e("  legacy fallback does not support subcmd '" + sub + "'")
+-            _audit(sub, "legacy-no-mapping", 2, route)
+-            return route + "|2"
+-        }
+-        let mut cmd = prefix + shq(script)
+-        // Legacy modules don't accept the same flag surface; pass thru extras
+-        // best-effort. iit needs --reproduce-braket-2026-05-02 marker.
+-        if sub == "iit" { cmd = cmd + " " + shq("--reproduce-braket-2026-05-02") }
+-        // Stream live: use exec but capture exit via $? trailer.
+-        let full = cmd + "; echo \"__NEXUS_QMIRROR_RC__:$?\""
+-        let raw = exec(full + " 2>&1")
+-        // Parse trailing rc + strip from output before user-facing print.
+-        let mut rc = 0
+-        let lines_rc = raw.split("\n")
+-        let mut k = 0
+-        while k < lines_rc.len() {
+-            let l = lines_rc[k].trim()
+-            if l.starts_with("__NEXUS_QMIRROR_RC__:") {
+-                rc = to_int(l.substr(21, l.len() - 21))
+-            }
+-            k = k + 1
+-        }
+-        print(_strip_rc_trailer(raw))
+-        _audit(sub, "legacy", rc, route)
+-        return route + "|" + str(rc)
+-    }
+-
+     // standalone-{env,mac,home,path}
+     let mut cmd = prefix + " " + shq(sub)
+     for x in extra {
+@@ -281,14 +249,14 @@
+     println("")
+     println("usage: nexus qmirror <subcmd> [flags...]")
+     println("")
+-    println("ROUTING (post-refactor 2026-05-03):")
++    println("ROUTING (v0.3.0 — standalone-only, 4-tier):")
+     println("  This router shells out to the qmirror standalone CLI.")
+     println("  Resolution order:")
+     println("    1. $QMIRROR_ROOT env")
+     println("    2. /Users/ghost/core/qmirror")
+     println("    3. $HOME/core/qmirror")
+     println("    4. PATH-resolved `qmirror` binary")
+-    println("    5. legacy in-tree $NEXUS/modules/qmirror  (DEPRECATED fallback)")
++    println("  (v0.2.0 5th-tier `legacy-intree` fallback REMOVED — hard fail if none resolve.)")
+     println("")
+     println("subcommands (forwarded verbatim to standalone):")
+     println("  status                                  closure 8/8 cond table + verdict")
+@@ -304,16 +272,18 @@
+     println("  --help,-h  this help (router-level) OR forwarded subhelp")
+     println("")
+     println("--- caveats (raw#10 C3) ---")
+-    println("  1. qmirror standalone CLI must be reachable (one of resolution paths above);")
+-    println("     missing → falls back to DEPRECATED in-tree modules with stderr WARN.")
+-    println("  2. Version-pinning concern: this router does NOT pin a qmirror version;")
+-    println("     consumers that depend on a specific qmirror schema/output should pin")
+-    println("     QMIRROR_ROOT to a known revision.")
+-    println("  3. Refactor parity: 6 subcmd outputs verified byte-identical against")
+-    println("     legacy in-tree, but edge cases (--vendor=ionq w/ key, exotic flags)")
+-    println("     not exhaustively swept — file an issue if drift observed.")
+-    println("  4. Audit log retains nexus-side route metadata only; full subcmd-level")
+-    println("     audit (per-arg, per-output) lives in qmirror/state/qmirror_cli.log.")
++    println("  1. Deletion irreversibility: the v0.2.0 in-tree modules at")
++    println("     $NEXUS/modules/qmirror/ have been REMOVED on disk. Recovery requires")
++    println("     `git log --diff-filter=D` + checkout; no on-disk fallback remains.")
++    println("  2. Fresh-install dependency: a clean nexus install (or any environment")
++    println("     where qmirror is not reachable via the 4 tiers) will hard-fail with")
++    println("     exit 127. Pre-flight: ensure `hx install qmirror` or set $QMIRROR_ROOT.")
++    println("  3. Hard-fail not silent: when all 4 tiers fail, this router exits 127 with")
++    println("     a structured error message. Any caller that previously relied on the")
++    println("     v0.2.0 silent in-tree fallback will now surface the failure loudly.")
++    println("  4. Audit log enum change: `route` field no longer emits `legacy-intree`;")
++    println("     valid values are { standalone-env, standalone-mac, standalone-home,")
++    println("     standalone-path, none, rejected }. Log-parsing consumers must update.")
+     println("")
+     println("cost estimate (Mac local): $0 — all subcmds run mock by default.")
+     println("                           live ANU only via env opt-in (NEXUS_QMIRROR_LIVE=1).")

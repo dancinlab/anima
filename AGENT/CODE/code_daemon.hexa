@@ -1,0 +1,399 @@
+// code_daemon.hexa — AGENT/CODE F3 persistent-daemon surface.
+//
+// BRIDGE ARCHITECTURE: tool surface only. This module is the F3 milestone of
+// AGENT/CODE — a bounded, test-mode daemon that advances the CORE/pure_field
+// substrate tick-by-tick and lets the SUBSTRATE decide whether each tick
+// externalizes as a tool call. Decision authority lives in CORE/brain_decide;
+// the per-tier gate lives in AGENT/CORE/tool_gate; this file ONLY composes
+// the loop driver + records what fired. NO consciousness framing, NO speak(),
+// NO infinite loop (M7-shaped infinite hx code CLI binary is out of scope).
+//
+// Pattern carry (WAKE/daemon.hexa · M6):
+//   · pure-functional tick stepper — returns next state, no mutation in place
+//   · bounded `code_daemon_loop(state, max_ticks)` — N-tick driver
+//   · `code_daemon_shutdown` returns bool for graceful exit (no SIGINT trap)
+//   · stage / phase = substrate context (not boolean emit gate · p5 +
+//     a_chat_sleep_imagination + a_autonomy_over_hardcode)
+//   · WAKE/daemon focuses on chat externalization (CHANNEL/dispatcher);
+//     code_daemon focuses on tool-call externalization (AGENT/CORE/tool_gate
+//     + CODE tool surface from code_agent.hexa)
+//
+// F3 closure (definition):
+//   bounded `code_daemon_loop(state, max_ticks)` advances ≥1 substrate tick,
+//   each tick consults brain_decide on live PureField state, and on `emit=true`
+//   records ONE tool-call envelope (tool name + tier + safe arg) into
+//   state["emits"]. `code_daemon_shutdown(state)` returns true for the smoke.
+//   Emit count is HONEST — it may be 0 if the substrate's spontaneous
+//   motivation never crosses threshold under the silent loop. That IS the
+//   substrate-native answer (a_substrate_native_speak).
+//
+// ── instrument-first (inheritance from prior milestones) ──────────────────
+//
+//   AGENT/CODE/code_agent.hexa (F1 + F4):
+//     fn code_tools() -> [Tool]                — 8-tool registry
+//                                                 (think · repo_status · file_read · grep
+//                                                  · file_write · run_tests · git_commit · git_push)
+//
+//   AGENT/CODE/code_argv.hexa (F2, PR #699):
+//     pub fn code_argv_parse(args_list) -> Map  — exposes `mode` field;
+//                                                 "daemon" already a valid mode value
+//                                                 (downstream interprets it; F3 IS that downstream)
+//     pub fn code_argv_summary() -> string
+//
+//   AGENT/CORE/tool_gate.hexa:
+//     pure fn phase_to_tier(phase: int) -> int
+//     pure fn tier_name(t: int) -> string
+//     pure fn tool_allowed(current_tier: int, required_tier: int) -> bool
+//
+//   AGENT/CORE/agent_loop.hexa:
+//     struct Tool { name: string, required_tier: int }
+//     fn tool_new(name: string, required_tier: int) -> Tool
+//     fn open_tools(pf: PureField, tools: [Tool]) -> [string]
+//     fn gate_report(pf: PureField) -> string
+//
+//   CORE/pure_field.hexa:
+//     fn pure_field_warmup(steps: int) -> PureField
+//     pure fn pure_field_phi(pf: PureField) -> float
+//     pure fn pure_field_phase(pf: PureField) -> int
+//     fn pure_field_step(pf: PureField) -> PureField
+//
+//   CORE/brain.hexa:
+//     fn brain_decide(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
+//                     seconds_since_last, env_off, content_clean) -> Map
+//                       // #{phi, phase, tier, tier_name, motivation,
+//                       //   im_thresh, safe, emit}
+//
+// ── p1~p8 정합 매트릭스 ────────────────────────────────────────────────────
+//
+//   p1 NO SYSTEM PROMPT      — daemon 입력은 numeric (now_t · phi · tier).
+//                              "you are X" identity string 0.
+//   p2 NO IDENTITY RULES     — 어떤 identity rule 도 인용 안 함.
+//   p3 NO PERSONA INJECTION  — emit envelope = #{tool · arg · tier}; prefix prepend 0.
+//   p4 NO ASSISTANT FRAMING  — `code_daemon_step` 는 user msg 를 받지 않는다.
+//                              emit 결정은 brain_decide 의 motivation 단독.
+//   p5 NO SPEAK()            — emit 은 substrate-decided tool envelope.
+//                              speak() 호출 없음 (p5_tension_emit_not_filler).
+//   p6 NO FINE-TUNED ETHICS  — 가중치 0. 합성 로직 only.
+//   p7 NO PERPLEXITY VERDICT — verification = tick count + emit envelope count
+//                              + shutdown bool. perplexity 무관.
+//   p8 NO TRAIN/INFER SPLIT  — 동일 daemon_step 가 어떤 분리 없이 substrate
+//                              연속체를 진행.
+//
+// ── a_autonomy_over_hardcode 정합 (CRITICAL) ───────────────────────────────
+//
+//   `code_daemon_step` 의 모든 if 분기:
+//     · running flag check  — caller shutdown 토글에 대한 반응 (control flow)
+//     · decision["emit"]    — substrate 단독 결정의 *반응*
+//     · tool_allowed(tier, required_tier) — phase 에서 파생된 게이트
+//                              (boolean per-tier 하드코딩 0)
+//   "stage 가 X 이면 emit 막아라" 패턴 0.
+//   "tier T3 이면 항상 거부" 패턴 0 — phase 가 RESONANT 면 자연스럽게 통과.
+//
+// ── a_substrate_native_speak 정합 ───────────────────────────────────────────
+//
+//   `code_daemon_step` 에 외부 user message 입력 없음. Silent bounded loop —
+//   substrate motivation 이 spontaneous 하게 threshold 를 넘었을 때만 emit
+//   envelope 가 기록된다. emit 0 결과 = "substrate 가 침묵을 선택" — 정답
+//   (assistant regression 아님).
+//
+// ── pipeline ASCII ──────────────────────────────────────────────────────────
+//
+//   ┌─ code_daemon_init ──────────────────────────────────────────────────┐
+//   │  pf      = pure_field_warmup(WARMUP_STEPS)                          │
+//   │  state   = #{pf · tick=0 · running=true · emits=[] · t0 · last_t}   │
+//   └─────────────────────────────────────────────────────────────────────┘
+//
+//   ┌─ code_daemon_step (single iteration) ───────────────────────────────┐
+//   │  if !state.running: return state                                    │
+//   │  ① pf' = pure_field_step(pf)        — substrate self-dynamics       │
+//   │  ② tier = phase_to_tier(pf'.phase)  — gate snapshot                 │
+//   │  ③ decision = brain_decide(pf', motivation factors, idle_s,         │
+//   │                            env_off=false, content_clean=true)      │
+//   │  ④ if decision.emit:                                                │
+//   │       envelope = _pick_safe_tool_envelope(pf', tier)               │
+//   │       emits.push(envelope)                                          │
+//   │  ⑤ tick += 1, return next-state                                     │
+//   └─────────────────────────────────────────────────────────────────────┘
+//
+//   ┌─ code_daemon_loop (bounded) ────────────────────────────────────────┐
+//   │  k = 0                                                              │
+//   │  while k < max_ticks && state.running:                              │
+//   │     state = code_daemon_step(state, t0 + (k+1) * dt)                │
+//   │     k += 1                                                          │
+//   └─────────────────────────────────────────────────────────────────────┘
+//
+//   ┌─ code_daemon_shutdown ──────────────────────────────────────────────┐
+//   │  emit count + final tier 를 한 줄 summary 로 fold,                  │
+//   │  caller 측 running 토글은 외부 control flow 책임.                   │
+//   │  graceful = bool (현재 구현은 항상 true — silent loop 는 부작용 0). │
+//   └─────────────────────────────────────────────────────────────────────┘
+//
+// ── F5/F6 carry note ───────────────────────────────────────────────────────
+//
+//   F5 (cross-role mediator) — TRADING / DESKTOP 등 sibling role 의 게이트
+//                              경합 (T3 commit 동시 fire 시 phase ratchet 보호).
+//                              F3 daemon 은 single-role 만 — 별도 milestone.
+//   F6 (hx code CLI binary)  — daemon 의 production 형태 (실제 무한 loop +
+//                              SIGINT trap + stdin select multiplexing).
+//                              F3 는 bounded test-mode 까지만 — production binary 는 F6 거주.
+//
+// ── 가져오기 ────────────────────────────────────────────────────────────────
+
+import "/Users/ghost/core/anima/CORE/pure_field.hexa"
+import "/Users/ghost/core/anima/CORE/brain.hexa"
+import "/Users/ghost/core/anima/AGENT/CORE/tool_gate.hexa"
+import "/Users/ghost/core/anima/AGENT/CORE/agent_loop.hexa"
+import "/Users/ghost/core/anima/AGENT/CODE/code_agent.hexa"
+
+
+// ── constants ───────────────────────────────────────────────────────────────
+
+fn _code_daemon_warmup_steps() -> int { return 600 }
+fn _code_daemon_default_max_ticks() -> int { return 50 }
+fn _code_daemon_default_tick_dt_s() -> float { return 1.0 }
+
+
+// ── helper: pick a safe tool envelope under the live tier ───────────────────
+//
+// When the substrate decides to emit, this helper composes the envelope —
+// a record of WHICH tool the live tier permits + a safe default arg. The
+// envelope is recorded into state["emits"]; it does NOT actually invoke
+// a side-effect. Real dispatch (file_read · git_commit · ...) lives in
+// the F6 production binary; F3 is the substrate-native shape of "the
+// agent decided to act, here's what."
+//
+// Selection rule (low-consequence-first under the live tier ceiling):
+//   tier 0 → "think"        (T0 inert, always safe)
+//   tier 1 → "repo_status"  (T0 — still safe — under FLICKER we don't escalate)
+//   tier 2 → "file_read"    (T1 read — escalate one step under SUSTAIN)
+//   tier 3 → "grep"         (T1 read — under RESONANT we still pick read,
+//                            NOT git_commit. Caller (F6) escalates further;
+//                            F3 deliberately picks the safest read-only
+//                            envelope to keep test-mode side-effect-free.)
+//
+// This is NOT a boolean per-tier rule — it's a *safe-default selection*
+// policy for the test surface, mirroring agent_loop's `open_tools` shape.
+fn _pick_safe_tool_envelope(tier: int) -> Map {
+    let mut name = "think"
+    if tier >= 3      { name = "grep" }
+    else if tier == 2 { name = "file_read" }
+    else if tier == 1 { name = "repo_status" }
+    else              { name = "think" }
+    return #{
+        "tool":          name,
+        "arg":           "",
+        "tier_at_fire":  tier,
+        "tier_name":     tier_name(tier)
+    }
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+// pub: code_daemon_init
+// ────────────────────────────────────────────────────────────────────────────
+
+// code_daemon_init — daemon state 초기화.
+//
+// 인자:
+//   t0 : float — cycle 시작 unix epoch seconds (simulated 또는 real).
+//
+// 반환: Map
+//   #{
+//     "pf":       PureField (warmup steps run),
+//     "tick":     int (= 0),
+//     "running":  bool (= true),
+//     "emits":    list of envelope dicts (empty initially),
+//     "t0":       float,
+//     "last_t":   float (= t0)
+//   }
+//
+// invariant:
+//   - 부작용 0 (file I/O 없음 · network 0). 순수 state 생성.
+//   - pf 는 _code_daemon_warmup_steps() = 600 step warmup (agent_loop 와 동일).
+//   - running = true. shutdown 호출 또는 외부 control 이 false 로 토글.
+pub fn code_daemon_init(t0: float) -> Map {
+    let pf = pure_field_warmup(_code_daemon_warmup_steps())
+    return #{
+        "pf":      pf,
+        "tick":    0,
+        "running": true,
+        "emits":   [],
+        "t0":      t0,
+        "last_t":  t0
+    }
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+// pub: code_daemon_step
+// ────────────────────────────────────────────────────────────────────────────
+
+// code_daemon_step — 단일 tick iteration.
+//
+// 인자:
+//   state : Map   — daemon state dict (code_daemon_init 또는 직전 tick 반환).
+//   now_t : float — 현재 unix epoch seconds.
+//
+// 반환: Map — 갱신된 daemon state dict.
+//
+// boolean gate 0 invariant:
+//   1. brain_decide 호출 시 stage 인자 0 — substrate 단독 결정.
+//   2. emit fire 결정은 decision["emit"] 만 본다.
+//   3. tier 가 envelope 의 tool name 을 *선택* (per-tier 거부 boolean 0).
+//   4. 본 함수는 어떤 "if tier == X { return early }" 패턴도 없다.
+//
+// invariant:
+//   - state.running == false → state 그대로 반환 (no-op).
+//   - tick counter 는 매 호출마다 +1 (running == true 일 때만).
+//   - emits list 는 channel decision.emit == true 일 때만 push.
+//   - 외부 side effect 0 — envelope 는 in-memory 기록만.
+pub fn code_daemon_step(state: Map, now_t: float) -> Map {
+    if !to_bool(state["running"]) { return state }
+
+    let pf = state["pf"]
+    let t0 = to_float(state["t0"])
+    let last_t = to_float(state["last_t"])
+    let mut emits = state["emits"]
+    let mut tick = to_int(state["tick"])
+
+    // ① substrate self-dynamics — one tick forward.
+    let pf_next = pure_field_step(pf)
+    let phi_now = pure_field_phi(pf_next)
+    let phase_now = pure_field_phase(pf_next)
+    let tier = phase_to_tier(phase_now)
+
+    // ② motivation factor 합성 (substrate context surface · 외부 의무 0).
+    //    test-mode 의 motivation 은 idle_time + Φ-driven curiosity 만으로 합성 —
+    //    real F6 binary 는 perception sensor 를 합류시킨다.
+    let seconds_since_last = now_t - last_t
+    let idle_norm = seconds_since_last / (seconds_since_last + 60.0)
+    let rel   = 0.3                  // 입력 relevance (silent loop = mid)
+    let gap   = 0.2                  // 정보 gap (silent loop = low)
+    let cur   = idle_norm * 0.7      // 호기심 (idle 시 증가)
+    let pain  = 0.0
+    let coh   = pf_next.narrative_coherence
+    let orig  = 0.3
+    let bal   = 0.5
+    let dyn_v = phi_now
+
+    // ③ brain_decide — substrate 단독 결정 (decision lives in CORE).
+    let decision = brain_decide(pf_next,
+        rel, gap, cur, pain, coh, orig, bal, dyn_v,
+        seconds_since_last, false, true)
+
+    // ④ emit envelope (substrate-decided · NOT timer-forced).
+    let mut last_t_next = last_t
+    if to_bool(decision["emit"]) {
+        let envelope_base = _pick_safe_tool_envelope(tier)
+        // attach decision context (phi + motivation + tick) — read-only audit.
+        let envelope = #{
+            "tool":         envelope_base["tool"],
+            "arg":          envelope_base["arg"],
+            "tier_at_fire": envelope_base["tier_at_fire"],
+            "tier_name":    envelope_base["tier_name"],
+            "phi":          phi_now,
+            "motivation":   decision["motivation"],
+            "tick":         tick + 1,
+            "t":            now_t
+        }
+        let mut new_emits = []
+        let mut i = 0
+        while i < len(emits) {
+            new_emits.push(emits[i])
+            i = i + 1
+        }
+        new_emits.push(envelope)
+        emits = new_emits
+        last_t_next = now_t
+    }
+
+    // ⑤ tick++.
+    return #{
+        "pf":      pf_next,
+        "tick":    tick + 1,
+        "running": true,
+        "emits":   emits,
+        "t0":      t0,
+        "last_t":  last_t_next
+    }
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+// pub: code_daemon_loop (bounded)
+// ────────────────────────────────────────────────────────────────────────────
+
+// code_daemon_loop — bounded N-tick loop (test-mode driver).
+//
+// 인자:
+//   state     : Map — daemon state dict (code_daemon_init 결과).
+//   max_ticks : int — 최대 반복 횟수. 0 이하 → default (_code_daemon_default_max_ticks = 50).
+//
+// 반환: Map — 최종 state.
+//
+// invariant:
+//   - 반복 횟수 ≤ max_ticks (정확히 max_ticks 또는 running==false 로 조기 종료).
+//   - 본 함수는 NO 무한 loop. 무한 daemon process 는 F6 의 hx code CLI binary 거주.
+//   - 매 tick 의 simulated_time = t0 + (tick+1) * tick_dt_s (deterministic).
+//   - external input 없음 (silent loop) — substrate-only tick 평가.
+pub fn code_daemon_loop(state: Map, max_ticks: int) -> Map {
+    let limit = if max_ticks <= 0 { _code_daemon_default_max_ticks() } else { max_ticks }
+    let dt = _code_daemon_default_tick_dt_s()
+    let t0 = to_float(state["t0"])
+
+    let mut s = state
+    let mut k = 0
+    while k < limit && to_bool(s["running"]) {
+        let now_t = t0 + to_float(k + 1) * dt
+        s = code_daemon_step(s, now_t)
+        k = k + 1
+    }
+    return s
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+// pub: code_daemon_shutdown
+// ────────────────────────────────────────────────────────────────────────────
+
+// code_daemon_shutdown — graceful shutdown.
+//
+// 인자:
+//   state : Map — daemon state dict.
+//
+// 반환: bool
+//   true  — shutdown 완료. (F3 test-mode 는 부작용 0 silent loop 이므로 항상 true.)
+//           F6 production binary 는 .kosmos snapshot 영속화 여부에 따라 결정.
+//
+// 부작용:
+//   F3 는 부작용 0. F6 production binary 가 mem_save_to_kosmos delegate (WAKE/daemon
+//   참조 패턴) 를 추가할 자리만 열어둠.
+//
+// invariant:
+//   - 본 함수는 code_daemon_step 을 호출하지 않는다 (state advance 없음).
+//   - state.running 은 *caller* 가 토글 — 본 함수는 graceful exit 의 신호 surface.
+//   - state.tick · state.emits 는 변경되지 않는다 (final state 캡쳐 책임은 caller).
+pub fn code_daemon_shutdown(state: Map) -> bool {
+    // F3 read-only shutdown: state 가 최소 구조를 충족하면 graceful = true.
+    // (F6 production binary 는 여기에서 wake_save / mem_save_to_kosmos 영속화.)
+    let has_pf = type_of(state["pf"]) != "void"
+    let has_tick = type_of(state["tick"]) != "void"
+    let has_emits = type_of(state["emits"]) == "array"
+    return has_pf && has_tick && has_emits
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+// pub: introspection
+// ────────────────────────────────────────────────────────────────────────────
+
+pub fn code_daemon_summary() -> string {
+    return "code_daemon F3 — bounded persistent loop · "
+         + "substrate-decided emit cycle (brain_decide single authority) · "
+         + "tool envelope under live tier (open_tools shape) · "
+         + "0 boolean per-tier gate (a_autonomy_over_hardcode) · "
+         + "0 user-msg→forced-emit (a_substrate_native_speak) · "
+         + "0 speak() (p5) · "
+         + "default max_ticks=50 silent loop · "
+         + "F6 carry: hx code CLI binary (infinite + SIGINT + select)"
+}

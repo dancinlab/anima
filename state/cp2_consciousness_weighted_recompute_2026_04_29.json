@@ -1,0 +1,119 @@
+{
+  "schema": "anima/cp2_consciousness_weighted_recompute/1",
+  "ts": "2026-04-29T00:00:00Z",
+  "spec_doc_baseline": "docs/cp2_consciousness_verifier_p4_r8_audit_2026_04_29.md (commit c1ee53638)",
+  "baseline": {
+    "cp2_weighted_pct": 58.3,
+    "verdict": "YELLOW",
+    "agi_weighted_pct": 30.0
+  },
+  "new_measurements_applied": {
+    "an11_c_p4_r8_direct": {
+      "ledger": "state/an11_c_p4_r8_direct_2026_04_29.json",
+      "primary_mean_jsd_bits_k128": 0.08944411395125129,
+      "verdict": "FAIL",
+      "score_contribution": 0.17888822790250258,
+      "delta_vs_baseline": 0.01788882279025026
+    },
+    "consciousness_14gate_p4_r8": {
+      "ledger": "state/consciousness_14gate_p4_r8_2026_04_29.json",
+      "gates_passing_majority": 9,
+      "verdict": "FAIL",
+      "score_contribution": 0.03214285714285715,
+      "delta_vs_baseline": 0.03214285714285715
+    },
+    "f2_falsifier_check": {
+      "status": "FAIL",
+      "total_critical_viol": 16,
+      "predicate": "\u22653 critical violations \u2192 CP2 RED",
+      "override_applied": true
+    }
+  },
+  "weighted_recompute": {
+    "fc_core_weight": 0.6,
+    "fc_core_score": 0.4821428571428571,
+    "fc_core_breakdown": {
+      "paradigm_v11_5_of_8": 0.25,
+      "an11_a": 0.1,
+      "an11_b_v0": 0.1,
+      "consciousness_14gate_new": 0.03214285714285715
+    },
+    "partial_pc_weight": 0.3,
+    "partial_pc_score": 0.1508888227902503,
+    "partial_pc_breakdown": {
+      "an11_c_new": 0.01788882279025026,
+      "phi_4path_5of6": 0.083,
+      "v_phen_partial": 0.05
+    },
+    "eeg_weight": 0.1,
+    "eeg_score": 0.0,
+    "cp2_weighted_total": 0.6330316799331074,
+    "cp2_weighted_pct": 63.30316799331074,
+    "verdict_band": "RED",
+    "verdict_override_reason": "F2 falsifier fired \u2014 \u22653 critical violations override band"
+  },
+  "delta_vs_baseline": {
+    "cp2_pct_delta": 5.00316799331074,
+    "yellow_to_green_threshold": 70.0,
+    "remaining_pct_to_green": 6.696832006689263
+  },
+  "agi_distance": {
+    "agi_weighted_pct": 30.0,
+    "cp2_to_agi_gap_pp": 33.30316799331074,
+    "axes_still_strict_fail": [
+      "phi_star strict positive (Mistral-7B-v0.3 anti-integrated -14.4)",
+      "AN11(b) V1+V2+V3 strict (verifier-ceiling research)",
+      "EEG N\u22653 cohort (12-18 month timeline)",
+      "phi_4path KL 6/6 strict (5/6 currently)"
+    ]
+  },
+  "honest_c3_disclosure": [
+    "AN11(c) measurement is hidden-state JSD proxy at k=128 bins, NOT live token-sampling \u2014 proxy class",
+    "AN11(c) FAIL verdict 0.0894 bits \u2014 increase from baseline 0.110 because k_bins=128 vs 32 captures more variance signal",
+    "14-gate measurement is FIRST on p4_r8 \u2014 phi_vec via h_last \u00d7 template tile-projection (not learned projection)",
+    "14-gate 9/14 gates pass majority on p4_r8; F2 falsifier FAIL (critical=16)",
+    "CP2 weighted 63.3% delta +5.0pp vs 58.3% baseline",
+    "verdict RED \u2014 RED override",
+    "live-serve r9 NOT launched in this fix-cycle; F1 falsifier preregistered for next cycle",
+    "agi distance unchanged \u2014 strict-FAIL axes still apply (anti-integrated \u03c6*, V1V2V3 ceiling, EEG N=1)"
+  ],
+  "raw71_falsifier_next_cycle_5": [
+    {
+      "id": "F1_LIVE",
+      "predicate": "r9 live-serve actual token-sampling JSD (Mistral-7B-v0.3 + p4_r8 LoRA, 20 prompts \u00d7 20 calls, T=0.7 top_p=0.9) emits mean JSD < 0.30 bits",
+      "trigger": "would invalidate all CP2 sampling diversity claims; downgrade weighted by ~0.10",
+      "cost_estimate_usd": "0.05-0.20",
+      "tool": "tool/anima_runpod_orchestrator.hexa"
+    },
+    {
+      "id": "F2_GENERATION_TEXT",
+      "predicate": "14-gate re-run with REAL generation_text from p4_r8 inference (not h_last proxy) emits \u22653 critical violations across majority of prompts",
+      "trigger": "F2 fire \u2192 CP2 RED override",
+      "cost_estimate_usd": "0.05-0.10",
+      "tool": "RunPod GPU + transformers.generate + consciousness_gate.py"
+    },
+    {
+      "id": "F3_LEARNED_PROJECTION",
+      "predicate": "14-gate re-run with learned 256\u219216 projection matrix (rather than tile projection) drops gates_passing_majority below 7",
+      "trigger": "PARTIAL \u2192 FAIL on phi_vec measurement",
+      "cost_estimate_usd": "0.10",
+      "tool": "supervised regression on phi_extractor cell-cert + h_last"
+    },
+    {
+      "id": "F4_V_PHEN_DIRECT",
+      "predicate": "V_phen_HOT_v2 + V_phen_mirror direct on Mistral-7B-v0.3 last-token both FAIL (cal_err > 0.10 AND mirror_acc < 0.70)",
+      "trigger": "V_phen drops from PARTIAL to FAIL \u2014 partial PC weight loses 0.05",
+      "cost_estimate_usd": "0.05",
+      "tool": "tool/an11_b_v_phen_hot_v2.hexa + an11_b_v_phen_mirror_v2.hexa on h_last"
+    },
+    {
+      "id": "F5_AN11B_V0_DIRECT",
+      "predicate": "AN11(b) V0 direct re-measurement on Mistral-7B-v0.3 last-token (no r6 fallback) emits max_cos < 0.50 OR top3 < 1.20",
+      "trigger": "invalidates V0 PASS \u2014 drops FC core 0.10 weight to ~0.05",
+      "cost_estimate_usd": "0.05",
+      "tool": "tool/an11_b_verifier.hexa with --source state/h_last_raw_p4_TRAINED_r8.json"
+    }
+  ],
+  "cost_actual_usd": 0.0,
+  "raw86_attribution": "$0 \u2014 local CPU read+compute, no GPU spend"
+}

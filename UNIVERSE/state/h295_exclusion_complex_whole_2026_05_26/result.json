@@ -1,0 +1,58 @@
+{
+  "hypothesis": "H_295",
+  "slug": "exclusion-complex-whole",
+  "title": "IIT exclusion postulate: integrating substrates have the WHOLE as the main complex (holism); rule 90 has whole-Phi=0 yet a 2-cell SUB-PART complex (resolves the flow-arc rule-90 anomaly)",
+  "date": "2026-05-26",
+  "question": "For which substrates is the maximally-irreducible complex the WHOLE n-cell system (holism), and for which does IIT exclusion pick a proper sub-part (or no complex)?",
+  "engine": "HEXAD/IIT4/lib (eca_tpm, big_phi) + stdlib/consciousness/iit4_complex.find_complex (searches every non-empty subset via subsystem_tpm + big_phi, returns the maximally-irreducible one). Reused, no new IIT4 code.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · deterministic (cross-process byte-identical)",
+  "toolchain_note": "built via fix-1180 bypass: HEXA_MAC_BUILD_OK=1 HEXA_LANG=<root> hexa.real.bak-2026-05-22-pre-no-hxc build <src> -o <bin>.",
+  "config": {"n": 4, "topology": "periodic ring", "headline_state": 5, "headline_state_binary": "0101", "full_mask": 15},
+  "panel": {
+    "rule_0":   {"whole_phi": 0.0,     "complex_mask": 0,  "complex_phi": 0.0,     "complex_size": 0, "class": "no-complex"},
+    "rule_255": {"whole_phi": 0.0,     "complex_mask": 0,  "complex_phi": 0.0,     "complex_size": 0, "class": "no-complex"},
+    "rule_204": {"whole_phi": 0.0,     "complex_mask": 0,  "complex_phi": 0.0,     "complex_size": 0, "class": "no-complex", "note": "identity"},
+    "rule_51":  {"whole_phi": 0.0,     "complex_mask": 0,  "complex_phi": 0.0,     "complex_size": 0, "class": "no-complex"},
+    "rule_150": {"whole_phi": 6.0,     "complex_mask": 15, "complex_phi": 6.0,     "complex_size": 4, "class": "WHOLE"},
+    "rule_105": {"whole_phi": 4.5,     "complex_mask": 15, "complex_phi": 4.5,     "complex_size": 4, "class": "WHOLE"},
+    "rule_90":  {"whole_phi": 0.0,     "complex_mask": 3,  "complex_phi": 2.0,     "complex_size": 2, "class": "SUB-PART", "note": "whole reducible (Phi=0) yet a 2-cell subset {0,1} is irreducible (Phi=2) — exclusion picks a PART"},
+    "rule_60":  {"whole_phi": 17.5,    "complex_mask": 15, "complex_phi": 17.5,    "complex_size": 4, "class": "WHOLE"},
+    "rule_110": {"whole_phi": 7.66066, "complex_mask": 15, "complex_phi": 7.66066, "complex_size": 4, "class": "WHOLE"},
+    "rule_30":  {"whole_phi": 7.28357, "complex_mask": 15, "complex_phi": 7.28357, "complex_size": 4, "class": "WHOLE"}
+  },
+  "classification_summary": {
+    "WHOLE_complex_holism": [150, 105, 60, 110, 30],
+    "no_complex_reducible": [0, 255, 204, 51],
+    "SUB_PART_complex": [90]
+  },
+  "criteria": {
+    "C1_WHOLE_COMPLEX": "PASS (integrating rules complex=full system)",
+    "C2_REDUCIBLE": "PASS (identity/constants no whole-complex)",
+    "C3_SUBPART_CONSISTENCY_BOUND_DET": "PASS"
+  },
+  "falsifiers": {
+    "F295_1_WHOLE_COMPLEX": "PASS  (rule150 & rule110 complex mask=15 size=4)",
+    "F295_2a_REDUCIBLE": "PASS  (rule204 no whole-complex)",
+    "F295_2b_REDUCIBLE": "PASS  (rule0 phi=0 no complex)",
+    "F295_3_CONSISTENCY": "PASS  (complex_phi == big_phi(whole) when whole)",
+    "F295_4_BOUND": "PASS  (size in [0,4], phi>=0)",
+    "F295_5_DETERMINISM": "PASS  (rule110 find_complex a==b)"
+  },
+  "checks": "6 PASS / 0 FAIL",
+  "verdict_class": "H1 SUPPORTED (NUMERICAL)",
+  "finding": "IIT's exclusion postulate localizes the maximally-irreducible complex. (1) HOLISM: integrating substrates (rules 150/105/60/110/30) have the WHOLE 4-cell system as the main complex (mask=15, size=4, complex_Phi=whole_Phi) — the whole is more irreducible than any proper part. (2) Reducible substrates (identity 204, constants 0/255, complement 51) have NO complex (Phi=0). (3) THE DECISIVE CASE — rule 90: whole-system Phi=0 yet a 2-cell SUB-PART (cells {0,1}, Phi=2) is irreducible; exclusion picks a PART, not the whole, as the conscious unit. This mechanically RESOLVES the flow-arc rule-90 anomaly: rule 90 over-predicted under LZ (H_288), multivariate TE (H_293), and synergy (H_294) because those measures saw the local integration of its sub-complex, while big-Phi(whole)=0 because the whole system-cut is reducible. The flow measures were right that integration exists somewhere, but at the WHOLE level it is zero — exclusion explains the gap. Phi is not merely a system-cut property but a property of the maximally-irreducible SUBSET.",
+  "honest_limits": [
+    "L1: find_complex is state-dependent; headline is single state 0101. Whole-vs-part classification may shift at other states (esp. rule 90's sub-complex); full-state sweep deferred.",
+    "L2: n=4 small (15-subset search); large-n complex localization is super-exponential (bounded/approx needed).",
+    "L3: rule 90 sub-complex = 2-cell {0,1} is ring/state-dependent; the qualitative fact (whole 0 / part >0) is the point, not the specific mask.",
+    "L4: whole_Phi single-state (state 5) differs from the state-averaged Phi_mean of the flow arc (e.g. rule60 17.5 vs 13.6) — same engine, different aggregation.",
+    "L5: structure-cut big-Phi; exclusion conclusion is a relative (whole vs part) comparison, robust to scale offset.",
+    "L6: ECA = proxy, NOT a phenomenal claim ('rule 90's part is conscious'); structural measurement of the exclusion postulate.",
+    "L7: verdict is a toy-substrate measurement fact."
+  ],
+  "verify_fence": {
+    "claim": "H_295 IIT exclusion localizes the maximally-irreducible complex: integrating ECA substrates have the WHOLE 4-cell system as the main complex (holism), reducible rules have none, and rule 90 has whole-Phi=0 yet a 2-cell SUB-PART complex (Phi=2) — exclusion picks a part over the whole, mechanically resolving the flow-arc rule-90 anomaly; deterministic toy-substrate, NOT an atlas identity",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values deterministic arithmetic, interpretation fenced"
+  }
+}

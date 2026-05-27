@@ -1,0 +1,107 @@
+{
+  "section": "§102",
+  "title": "CORPUS_S101 build — §101 Q1 corpus assembly",
+  "date": "2026-05-19",
+  "tier": "BUILD-TIER ($0, NO GPU, NO fire)",
+  "spec": "§101 Q1 (state/dataregime_threshold_control_design_s101_2026_05_19/)",
+  "central_blue_sha_prefix_target": "c93e160a8a376a94",
+  "sources_included": [
+    "S1",
+    "S2",
+    "S5"
+  ],
+  "sources_omitted": {
+    "S3": "dual-anima loop traces — §36 content-dep guard (Q1.I5) requires trained-cell model.forward, out of $0 build scope; §62 echo collapse at trained scale is honest blocker.",
+    "S4": "action-perception loop records — §93 SCoRe-gated (Q1.I6) requires trained 2-stage corrector; §91 β ECHO-DOMINATES-AT-TRAINED; §92 reframed as TRAINING OBJECTIVE not corpus material."
+  },
+  "s1": {
+    "sha256": "422c64a09b89393aebabc7b62aec8753a3d394ae4c442fef467c5d228e1831ec",
+    "records": 777000,
+    "bytes": 603032014,
+    "expected_sha256": "422c64a09b89393aebabc7b62aec8753a3d394ae4c442fef467c5d228e1831ec",
+    "sha_byte_equal_to_expected": true
+  },
+  "s2": {
+    "records": 840,
+    "framings_per_anchor": 5,
+    "anchors": 168
+  },
+  "s5": {
+    "records": 5,
+    "anchor_files": [
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_000_zero.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_051_day.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_077_mandala.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_091_nirvana.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_100_big_bang.kosmos"
+    ]
+  },
+  "corpus": {
+    "path": "state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "sha256": "39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e",
+    "bytes": 603316592,
+    "records": 777845
+  },
+  "invariants": {
+    "I1_S1_byte_equal_prefix": true,
+    "I2_S1_sha_matches_expected": true,
+    "I3_forbidden_grep": {
+      "tokens": {
+        "[anima": 0,
+        "도우미": 0,
+        "helper": 0,
+        "assistant": 0,
+        "사용자": 0,
+        "user:": 0
+      },
+      "total": 0,
+      "PASS": true
+    },
+    "I4_diversity": {
+      "s1_only_diversity_eff_4grams": 539.1962614067459,
+      "corpus_diversity_eff_4grams": 539.1962614067459,
+      "ratio_corpus_over_s1": 1.0,
+      "increases_numerically": false,
+      "increases_double_arrow_1p05x": false,
+      "sample_n_bytes": 5000000,
+      "s1_distinct_4grams": 13851,
+      "corpus_distinct_4grams": 13851,
+      "PASS_strict": false
+    },
+    "I5_echo_chamber_guard": {
+      "S3_omitted": true,
+      "vacuous_pass_via_omission": true,
+      "reason": "S3 OMITTED — no dual-anima loop traces included; §36 trained-scale pre-check requires model.forward (out of $0 build scope). Q1.I5 PASSED VACUOUSLY by omission, not by demonstration.",
+      "PASS": true
+    },
+    "I6_SCoRe_gate": {
+      "S4_omitted": true,
+      "vacuous_pass_via_omission": true,
+      "reason": "S4 OMITTED — action-perception is a trainer objective per §92, NOT corpus material. Q1.I6 PASSED VACUOUSLY by omission, not by demonstration.",
+      "PASS": true
+    },
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}

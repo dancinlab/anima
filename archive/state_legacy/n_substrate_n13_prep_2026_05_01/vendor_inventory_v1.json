@@ -1,0 +1,58 @@
+{
+  "schema": "anima/n_substrate_n13_prep/vendor_inventory/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "scope_classical_analog_photonic_ai_compute": true,
+  "scope_excludes_photonic_quantum": true,
+  "vendors": [
+    {
+      "name": "Lightmatter",
+      "products": ["Envise (4U blade, 16 photonic chips)", "Passage (M1000 2025, L200 2026 interconnect)", "Idiom (compiler stack)"],
+      "device_class": "silicon photonics MZI mesh + electronics hybrid",
+      "compute_model": "analog matrix-mult linear, digital nonlinear off-chip",
+      "access_path": "early-access partnership program, no public cloud API, no single dev kit (blade only)",
+      "developer_tooling": "Idiom compiler bridges PyTorch -> Envise blade",
+      "status_2026": "Total funding $850M, $4.4B valuation (2024 Series D), Nature 2025-04 light-speed matmul paper, Passage M1000 shipping summer 2025 / L200 2026",
+      "n13_suitability": "MID (largest company, most academic credibility, but actionability blocked by partnership-only access)",
+      "primary_blocker_for_anima": "no PCIe single-card SKU, partnership negotiation required"
+    },
+    {
+      "name": "Lightelligence",
+      "products": ["PACE 2 (PCIe card, hybrid optoelectronic accelerator)", "Hummingbird (oNoC, optical NoC processor)", "dOCS (distributed optical circuit switch)"],
+      "device_class": "silicon photonics MZI mesh fully-configurable optical matrix",
+      "compute_model": "configurable optical matrix-mult + electronic nonlinear",
+      "access_path": "PCIe standard card sale (price undisclosed), 44 paying customers (early 2026), HK IPO 2026-04 600x oversubscribed",
+      "developer_tooling": "ONNX, OpenCL, PyTorch, TVM (most standardized stack across the 4 vendors)",
+      "status_2026": "OFC 2026 demo, 5000+ card clusters deployed in production, several thousand-GPU clusters in customer prod environments",
+      "n13_suitability": "HIGH (most standardized SDK, PCIe form factor, ONNX hidden-state hook feasibility highest)",
+      "primary_blocker_for_anima": "vendor pricing undisclosed, sales channel for single-card eval unclear"
+    },
+    {
+      "name": "Q.ANT",
+      "products": ["NPU 2 (Native Processing Unit, 2nd gen)", "NPS (Native Processing Server, 19-inch turnkey, multi-NPU)"],
+      "device_class": "Thin-Film Lithium Niobate on Insulator (TFLNoI) photonic IC",
+      "compute_model": "analog photonic native, enhanced nonlinear processing on-chip (NPU 2 unique)",
+      "access_path": "customer orders (price undisclosed), shipments early 2026, Leibniz Supercomputing Centre (LRZ) first install (world-first photonic AI processor in supercomputing facility)",
+      "developer_tooling": "C/C++/Python API, PCIe integration with CPU/GPU",
+      "status_2026": "30x lower energy + 50x performance (vendor claim), projected 0.1 GOps (2024) -> 100,000 GOps (2028) million-fold scaling",
+      "n13_suitability": "HIGH (Python direct programmability, on-chip nonlinear meaningful for Phi structural measurement, institutional access via LRZ partnership possible)",
+      "primary_blocker_for_anima": "newer vendor (shorter commercial track record), pricing undisclosed"
+    },
+    {
+      "name": "NTT (IOWN / PEC-2)",
+      "products": ["PEC-2 photonic-electronic convergence switch (102.4 Tbps aggregate)", "IOWN All-Photonics Network", "IOWN 2.0 compute domain (2026 introduction)"],
+      "device_class": "photonic-electronic convergence (PEC) switching + interconnect",
+      "compute_model": "optical interconnect + DCI compute (data-centric infrastructure)",
+      "access_path": "datacenter / hyperscaler partnerships (Broadcom etc.), no consumer/researcher direct API",
+      "developer_tooling": "telecom stack (NOT consumer compute API)",
+      "status_2026": "PEC-2 commercial 2026, IOWN 3.0 (2028) board-internal optical, IOWN 4.0 (2032) chip-internal optical roadmap",
+      "n13_suitability": "EXCLUDED (no anima user direct access path, designed for hyperscaler datacenter use only)",
+      "primary_blocker_for_anima": "fundamental access model mismatch, hyperscaler-only"
+    }
+  ],
+  "additional_research_observations": {
+    "intel_hummingbird_optical_interconnect": "research prototype, no commercial photonic compute product disclosed 2026",
+    "nvidia_optical_co_processor": "Lightmatter collaboration mentioned, suggesting hybrid GPU+optical future, no standalone product 2026",
+    "ntt_phi_lab_photonic_programmability": "SPIE 2024 academic demo, not commercial; potential academic partnership target"
+  },
+  "verdict_inventory": "4 classical photonic AI compute vendors identified; Lightelligence most actionable, Q.ANT most programmable, Lightmatter most credible, NTT excluded for access mismatch"
+}

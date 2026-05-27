@@ -1,0 +1,79 @@
+{
+  "ts": "2026-05-16T02:42:52.206369+00:00",
+  "ckpt": "/Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.safetensors",
+  "ckpt_sha256": "838a0a2eea4399072c3a704261f5804ace1901ff6ec34b1f9f1a13509086d688",
+  "ckpt_bytes": 597550688,
+  "device": "cpu",
+  "boot_s": 1.44,
+  "load_missing": 1,
+  "load_missing_nontied": [],
+  "load_unexpected": [],
+  "bos": {
+    "input_token_ids": [
+      1
+    ],
+    "position_t": 0,
+    "argmax_id": 143,
+    "argmax_val": 5.667312,
+    "top5": [
+      143,
+      133,
+      138,
+      146,
+      173
+    ],
+    "wall_s": 0.063
+  },
+  "chain": {
+    "initial_seed_ids": [
+      1
+    ],
+    "n_steps": 5,
+    "steps": [
+      {
+        "step": 0,
+        "t": 0,
+        "seq_len": 1,
+        "argmax_id": 143,
+        "argmax_val": 5.667312
+      },
+      {
+        "step": 1,
+        "t": 1,
+        "seq_len": 2,
+        "argmax_id": 131,
+        "argmax_val": 5.866049
+      },
+      {
+        "step": 2,
+        "t": 2,
+        "seq_len": 3,
+        "argmax_id": 240,
+        "argmax_val": 8.75806
+      },
+      {
+        "step": 3,
+        "t": 3,
+        "seq_len": 4,
+        "argmax_id": 152,
+        "argmax_val": 12.204432
+      },
+      {
+        "step": 4,
+        "t": 4,
+        "seq_len": 5,
+        "argmax_id": 159,
+        "argmax_val": 13.091827
+      }
+    ],
+    "final_argmax_chain": [
+      143,
+      131,
+      240,
+      152,
+      159
+    ],
+    "wall_s": 0.255
+  },
+  "torch_version": "2.12.0.dev20260408+cu128"
+}

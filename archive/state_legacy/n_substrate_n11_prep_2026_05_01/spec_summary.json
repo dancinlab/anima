@@ -1,0 +1,59 @@
+{
+  "spec_id": "n_substrate_n11_finalspark_access_spec_2026_05_01",
+  "agent": "N-11 prep",
+  "ts": "2026-05-01",
+  "doc_path": "docs/n_substrate_n11_finalspark_access_spec_2026_05_01.md",
+  "verdict_key": "SPEC_READY · ACADEMIC_FREE_TIER_FEASIBLE · APPLICATION_NOT_SUBMITTED · PAID_FALLBACK_BUDGETED",
+  "vendor": {
+    "name": "FinalSpark SA",
+    "country": "Switzerland",
+    "url_landing": "https://finalspark.com/neuroplatform/",
+    "url_api_docs": "https://finalspark-np.github.io/np-docs/welcome.html",
+    "url_github": "https://github.com/FinalSpark-np",
+    "live_units": 16,
+    "cell_source": "human iPSC-derived cortical organoids",
+    "stim_modality": "MEA bipolar voltage pulses",
+    "read_modality": "MEA spike-event stream + LFP",
+    "training_signal": "chemical dopamine reward (per New Atlas Apr-2026)"
+  },
+  "tiers": {
+    "academic_free": {
+      "cost_usd": 0,
+      "feasibility": "Y",
+      "accept_probability_estimate": 0.55,
+      "lead_time_weeks_min": 2,
+      "lead_time_weeks_max": 6,
+      "shared_organoids": 4
+    },
+    "paid_university": {
+      "setup_usd": 1000,
+      "monthly_usd": 1000,
+      "shared_organoids": 4,
+      "users": 1,
+      "first_30d_total_usd": 2000,
+      "first_60d_total_usd_with_rerun": 3000,
+      "trigger": "free-tier rejection auto-fallback within 5 business days",
+      "pre_authorized": true
+    }
+  },
+  "mission": "T1-A26 anima Nobel-tier candidate — first wetware empirical anchor of Putnam multi-realizability via cross-substrate Phi correlation",
+  "primary_substrates_to_compare": ["CLM 170M (digital LLM)", "EEG (neural recording)", "FinalSpark organoid (biological wetware)"],
+  "phi_method": "anima_phi_v3_canonical (sample-partition cov-logdet, K=8, HID_TRUNC=8)",
+  "fixture": "16-prompt anima_phi_v3 PROMPTS (locked across all substrates)",
+  "constraints": [
+    "raw#9 hexa-only",
+    "raw#10 honest C3",
+    "raw#71 falsifier-bound",
+    "race-isolation",
+    "$0 budget for spec authoring",
+    "DO NOT submit application",
+    "DO NOT create FinalSpark account"
+  ],
+  "blockers": [
+    "free-tier vendor selection committee decision (probabilistic, ~55% accept)",
+    "CLM 170M Phi baseline lock (parallel CP2 P3 dependency)",
+    "3 critical-path HEXA emit (finalspark_stim_encoder, finalspark_response_reducer, n11_phi_cross_substrate_corr) — can be done D-7..D-1, no API needed"
+  ],
+  "d0_readiness_pct": 65,
+  "next_action_separate_authorization": "user submits §4 template via FinalSpark form (NOT executed under this spec)"
+}

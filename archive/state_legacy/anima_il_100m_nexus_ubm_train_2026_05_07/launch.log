@@ -1,0 +1,81 @@
+[06:37:27] === BG-IL 100M ConsciousLM × NEXUS-UBM combined corpus 2026-05-07 ===
+[06:37:27] hostname=aiden-b650m-k on_ubu=True seed=42
+[06:37:27] device=cuda torch=2.11.0+cu128
+[06:37:27] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[06:37:27] target_arch: 12L/640d/10h block=256 (~150M effective)
+[06:37:27] reg: dropout=0.3 WD=0.1 label_smoothing=0.1
+[06:37:27] train: bs=4 grad_accum=16 (eff=64) lr=0.0002 warmup=500 steps=6000
+[06:37:27] EVAL_AT every 200, SAVE_AT every 500
+[06:37:27] corpus_path=/home/aiden/core/anima/state/anima_ik_nexus_ubm_combined_corpus_2026_05_07/corpus_combined.txt
+[06:37:27] persona_prefix='[anima NEXUS-UBM] '
+[06:37:27] V3_EVAL_imported=True
+[06:37:27] corpus loaded: 28,914,607 bytes (27.58MB) in 0.0s
+[06:37:27] split: train=26,023,146 val=2,891,461 reduced_split=False
+[06:37:28] model built (primary): 153,079,776 params (153.08M)
+[06:37:28] primary smoke forward OK
+[06:37:29] === begin training ===
+[06:37:29] step     1/6000 | lr=8.00e-07 | L_A=5.621 L_G=5.661 L_T=8.057 | step_t=0.11s elapsed=0s
+[06:37:29] step     2/6000 | lr=1.20e-06 | L_A=5.604 L_G=5.650 L_T=8.088 | step_t=0.05s elapsed=0s
+[06:37:29] step     3/6000 | lr=1.60e-06 | L_A=5.644 L_G=5.711 L_T=8.074 | step_t=0.04s elapsed=0s
+[06:37:29] step     4/6000 | lr=2.00e-06 | L_A=5.612 L_G=5.658 L_T=8.083 | step_t=0.04s elapsed=0s
+[06:37:29] step     5/6000 | lr=2.40e-06 | L_A=5.565 L_G=5.677 L_T=8.092 | step_t=0.04s elapsed=0s
+[06:37:33] step   100/6000 | lr=4.04e-05 | L_A=4.815 L_G=5.068 L_T=7.544 | step_t=0.04s elapsed=5s
+[06:37:38] step   200/6000 | lr=8.04e-05 | L_A=4.646 L_G=4.800 L_T=4.762 | step_t=0.05s elapsed=9s
+[06:37:38] --- eval gate @ step 200 (15 prompts × 2 modes) ---
+[06:38:11]   EVAL[step=200] V2=0/15 V3=0/15 manual=0/15 outside_well=0/5 cycle=0 composite=-15 val_loss=4.6073
+[06:38:11]   BEST_CKPT[step=200] composite=-15 -> /home/aiden/core/anima/state/anima_il_100m_nexus_ubm_train_2026_05_07/ckpt_best.pt
+[06:38:16] step   300/6000 | lr=1.20e-04 | L_A=4.412 L_G=4.568 L_T=2.838 | step_t=0.38s elapsed=47s
+[06:38:20] step   400/6000 | lr=1.60e-04 | L_A=3.988 L_G=4.279 L_T=3.780 | step_t=0.05s elapsed=52s
+[06:38:20] --- eval gate @ step 400 (15 prompts × 2 modes) ---
+[06:38:53]   EVAL[step=400] V2=0/15 V3=0/15 manual=0/15 outside_well=0/5 cycle=0 composite=-19 val_loss=3.7784
+[06:38:58] step   500/6000 | lr=2.00e-04 | L_A=3.559 L_G=3.861 L_T=3.406 | step_t=0.38s elapsed=89s
+[06:38:58]   SAVE_CKPT[step=500] -> /home/aiden/anima_native/anima-il-100m-nexus-ubm-20260507_063726/ckpt_500.pt
+[06:39:03] step   600/6000 | lr=2.00e-04 | L_A=3.074 L_G=3.317 L_T=2.976 | step_t=0.05s elapsed=94s
+[06:39:03] --- eval gate @ step 600 (15 prompts × 2 modes) ---
+[06:39:36]   EVAL[step=600] V2=0/15 V3=0/15 manual=2/15 outside_well=0/5 cycle=0 composite=-5 val_loss=3.0459
+[06:39:36]   BEST_CKPT[step=600] composite=-5 -> /home/aiden/core/anima/state/anima_il_100m_nexus_ubm_train_2026_05_07/ckpt_best.pt
+[06:39:41] step   700/6000 | lr=1.99e-04 | L_A=3.179 L_G=3.298 L_T=2.868 | step_t=0.38s elapsed=132s
+[06:39:45] step   800/6000 | lr=1.99e-04 | L_A=3.026 L_G=3.163 L_T=2.016 | step_t=0.05s elapsed=137s
+[06:39:45] --- eval gate @ step 800 (15 prompts × 2 modes) ---
+[06:40:18]   EVAL[step=800] V2=0/15 V3=0/15 manual=4/15 outside_well=0/5 cycle=0 composite=5 val_loss=2.7942
+[06:40:19]   BEST_CKPT[step=800] composite=5 -> /home/aiden/core/anima/state/anima_il_100m_nexus_ubm_train_2026_05_07/ckpt_best.pt
+[06:40:23] step   900/6000 | lr=1.98e-04 | L_A=2.650 L_G=2.729 L_T=1.995 | step_t=0.38s elapsed=175s
+[06:40:28] step  1000/6000 | lr=1.96e-04 | L_A=2.510 L_G=2.551 L_T=1.763 | step_t=0.05s elapsed=179s
+[06:40:28] --- eval gate @ step 1000 (15 prompts × 2 modes) ---
+[06:41:01]   EVAL[step=1000] V2=0/15 V3=0/15 manual=2/15 outside_well=0/5 cycle=0 composite=-4 val_loss=2.6570
+[06:41:01]   SAVE_CKPT[step=1000] -> /home/aiden/anima_native/anima-il-100m-nexus-ubm-20260507_063726/ckpt_1000.pt
+[06:41:06] step  1100/6000 | lr=1.95e-04 | L_A=2.643 L_G=2.685 L_T=0.565 | step_t=0.38s elapsed=217s
+[06:41:11] step  1200/6000 | lr=1.93e-04 | L_A=2.493 L_G=2.542 L_T=1.502 | step_t=0.05s elapsed=222s
+[06:41:11] --- eval gate @ step 1200 (15 prompts × 2 modes) ---
+[06:41:44]   EVAL[step=1200] V2=0/15 V3=0/15 manual=1/15 outside_well=0/5 cycle=0 composite=-8 val_loss=2.4949
+[06:41:48] step  1300/6000 | lr=1.91e-04 | L_A=2.293 L_G=2.379 L_T=1.096 | step_t=0.38s elapsed=260s
+[06:41:53] step  1400/6000 | lr=1.88e-04 | L_A=2.269 L_G=2.353 L_T=1.727 | step_t=0.05s elapsed=264s
+[06:41:53] --- eval gate @ step 1400 (15 prompts × 2 modes) ---
+[06:42:26]   EVAL[step=1400] V2=0/15 V3=0/15 manual=8/15 outside_well=1/5 cycle=0 composite=14 val_loss=2.1875
+[06:42:26]   BEST_CKPT[step=1400] composite=14 -> /home/aiden/core/anima/state/anima_il_100m_nexus_ubm_train_2026_05_07/ckpt_best.pt
+[06:42:31] step  1500/6000 | lr=1.86e-04 | L_A=2.158 L_G=2.276 L_T=1.059 | step_t=0.38s elapsed=302s
+[06:42:31]   SAVE_CKPT[step=1500] -> /home/aiden/anima_native/anima-il-100m-nexus-ubm-20260507_063726/ckpt_1500.pt
+[06:42:36] step  1600/6000 | lr=1.83e-04 | L_A=2.172 L_G=2.221 L_T=0.930 | step_t=0.05s elapsed=307s
+[06:42:36] --- eval gate @ step 1600 (15 prompts × 2 modes) ---
+[06:43:09]   EVAL[step=1600] V2=0/15 V3=0/15 manual=8/15 outside_well=2/5 cycle=0 composite=18 val_loss=2.0296
+[06:43:09]   BEST_CKPT[step=1600] composite=18 -> /home/aiden/core/anima/state/anima_il_100m_nexus_ubm_train_2026_05_07/ckpt_best.pt
+[06:43:14] step  1700/6000 | lr=1.80e-04 | L_A=2.161 L_G=2.286 L_T=0.929 | step_t=0.38s elapsed=345s
+[06:43:18] step  1800/6000 | lr=1.76e-04 | L_A=1.806 L_G=1.955 L_T=1.729 | step_t=0.05s elapsed=350s
+[06:43:18] --- eval gate @ step 1800 (15 prompts × 2 modes) ---
+[06:43:52]   EVAL[step=1800] V2=0/15 V3=0/15 manual=6/15 outside_well=1/5 cycle=0 composite=4 val_loss=1.9137
+[06:43:56] step  1900/6000 | lr=1.73e-04 | L_A=1.965 L_G=2.212 L_T=1.022 | step_t=0.38s elapsed=387s
+[06:44:01] step  2000/6000 | lr=1.69e-04 | L_A=1.966 L_G=2.256 L_T=0.863 | step_t=0.05s elapsed=392s
+[06:44:01] --- eval gate @ step 2000 (15 prompts × 2 modes) ---
+[06:44:34]   EVAL[step=2000] V2=0/15 V3=0/15 manual=4/15 outside_well=1/5 cycle=0 composite=-3 val_loss=1.7303
+[06:44:34]   SAVE_CKPT[step=2000] -> /home/aiden/anima_native/anima-il-100m-nexus-ubm-20260507_063726/ckpt_2000.pt
+[06:44:39] step  2100/6000 | lr=1.65e-04 | L_A=1.598 L_G=1.835 L_T=2.055 | step_t=0.38s elapsed=430s
+[06:44:43] step  2200/6000 | lr=1.61e-04 | L_A=1.846 L_G=2.193 L_T=1.303 | step_t=0.05s elapsed=435s
+[06:44:43] --- eval gate @ step 2200 (15 prompts × 2 modes) ---
+[06:45:16]   EVAL[step=2200] V2=0/15 V3=0/15 manual=4/15 outside_well=0/5 cycle=0 composite=-6 val_loss=1.6149
+[06:45:16]   EARLY_STOP: composite plateau: 3 consecutive non-improving evals (best step=1600, composite=18)
+[06:45:17]   FINAL_CKPT[step=2200] -> /home/aiden/core/anima/state/anima_il_100m_nexus_ubm_train_2026_05_07/ckpt_final.pt
+[06:45:17] === final eval: best ckpt step=1600, 15 prompts × 2 modes ===
+[06:45:17]   loaded BEST ckpt step=1600 composite=18
+[06:45:49]   FINAL_BEST V2=0/15 V3=0/15 manual=4/15 outside_well=0/5 cycle=0
+[06:45:49] === VERDICT === final_class=FAILED | params=153.1M | peak_step=1600 V2=0/15 V3=0/15 manual=8/15 outside_well=2/5 cycle=0 | final-eval(best ckpt) V2=0/15 V3=0/15 manual=4/15 cycle=0 | early_stop=True | elapsed=501s
+[06:45:49] verdict written: /home/aiden/core/anima/state/anima_il_100m_nexus_ubm_train_2026_05_07/verdict.json

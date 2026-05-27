@@ -1,0 +1,162 @@
+--- /Users/ghost/core/anima/state/secret_cli_hardening_2026_05_04/secret.before.bash	2026-05-04 16:03:19
++++ /Users/ghost/core/anima/state/secret_cli_hardening_2026_05_04/secret.after.bash	2026-05-04 16:06:18
+@@ -48,7 +48,10 @@
+     printf '%s.%s' "$FLAT_SECTION" "$lc"
+ }
+ 
+-_get() {
++_get_raw_value() {
++    # internal helper: prints raw plaintext value to stdout (no redaction).
++    # callers MUST gate on --raw before invoking. used by _get (when --raw),
++    # _use (env injection), and _check (existence check; output discarded).
+     local key; key="$(_resolve_key "$1")"
+     [ -f "$CREDS" ] || _die "credentials not found at $CREDS"
+     local section="${key%.*}" name="${key#*.}"
+@@ -76,6 +79,71 @@
+             sys.exit(0)
+ sys.exit(1)
+ PY
++}
++
++_redact_value() {
++    # prints ***REDACTED:<key>:<sha256-prefix-12>*** to stdout
++    # uses python hashlib (stdlib) — avoids piping plaintext to shasum subshell.
++    local key="$1"
++    local raw="$2"
++    SECRET_REDACT_KEY="$key" SECRET_REDACT_VALUE="$raw" python3 - <<'PY'
++import os, hashlib
++k = os.environ["SECRET_REDACT_KEY"]
++v = os.environ["SECRET_REDACT_VALUE"]
++h = hashlib.sha256(v.encode("utf-8")).hexdigest()[:12]
++print(f"***REDACTED:{k}:{h}***", end="")
++PY
++}
++
++_get() {
++    # parse flags before key. supports: --raw (opt-in plaintext)
++    local raw_mode=0
++    local args=()
++    while [ $# -gt 0 ]; do
++        case "$1" in
++            --raw) raw_mode=1; shift ;;
++            --)    shift; while [ $# -gt 0 ]; do args+=("$1"); shift; done; break ;;
++            -*)    _die "get: unknown flag '$1' (try --raw)" ;;
++            *)     args+=("$1"); shift ;;
++        esac
++    done
++    [ "${#args[@]}" -ge 1 ] || _die "get requires <key>"
++    local key_arg="${args[0]}"
++    local resolved; resolved="$(_resolve_key "$key_arg")"
++    local value
++    if ! value="$(_get_raw_value "$key_arg")"; then
++        # _get_raw_value already called _suggest + exit 1
++        exit 1
++    fi
++    if [ "$raw_mode" -eq 1 ]; then
++        printf '%s' "$value"
++    else
++        _redact_value "$resolved" "$value"
++    fi
++}
++
++_use() {
++    # secret use <key> -- <command...>
++    # exports SECRET_<KEY_UPPER> (and a stable SECRET_VALUE alias) only into the child env,
++    # then exec's the command. value never touches stdout, argv, or process listing of
++    # the command itself (only this wrapper's argv is visible — and only key name).
++    [ $# -ge 1 ] || _die "use requires <key> -- <command...>"
++    local key_arg="$1"; shift
++    if [ "${1:-}" = "--" ]; then shift; fi
++    [ $# -ge 1 ] || _die "use requires command after key (form: secret use <key> -- <cmd>)"
++    local resolved; resolved="$(_resolve_key "$key_arg")"
++    local value
++    if ! value="$(_get_raw_value "$key_arg")"; then
++        exit 1
++    fi
++    # build env var name: SECRET_<SECTION>_<NAME> all upper, dots/dashes -> underscores.
++    local env_name
++    env_name="SECRET_$(printf '%s' "$resolved" | tr '[:lower:].-' '[:upper:]__')"
++    # export and exec; on exec the parent shell goes away so no manual unset needed.
++    # use `env -i`-style approach? no — preserve PATH/HOME/etc. just inject our var.
++    export "$env_name=$value"
++    export "SECRET_VALUE=$value"
++    exec "$@"
+ }
+ 
+ _list() {
+@@ -251,8 +319,9 @@
+ }
+ 
+ _check() {
+-    local key; key="$(_resolve_key "$1")"
+-    _get "$key" >/dev/null 2>&1 && exit 0 || exit 1
++    # existence probe — call the raw helper directly, discard output.
++    # do NOT route through _get (which would redact and confuse `--raw` semantics).
++    _get_raw_value "$1" >/dev/null 2>&1 && exit 0 || exit 1
+ }
+ 
+ _help() {
+@@ -260,34 +329,47 @@
+ secret — unified credential CLI
+ 
+ usage:
+-  secret get  <key>                read value to stdout (no trailing newline)
+-  secret set  <key> [value]        write value; argv (convenient) or stdin (safe)
+-  secret rm   <key>                delete key
+-  secret check <key>               exit 0 if exists, 1 otherwise
+-  secret list                      enumerate keys (values hidden)
+-  secret help                      this text
++  secret get   <key> [--raw]        read value to stdout
++                                    DEFAULT: ***REDACTED:<key>:<sha256-12>***
++                                    --raw  : plaintext (opt-in; for piping into files)
++  secret use   <key> -- <command...> exec command with SECRET_<KEY_UPPER> env var set
++                                    (token never touches stdout / argv of the command)
++  secret set   <key> [value]        write value; argv (convenient) or stdin (safe)
++  secret rm    <key>                delete key
++  secret check <key>                exit 0 if exists, 1 otherwise (no output)
++  secret list                       enumerate keys (values hidden)
++  secret help                       this text
+ 
+ key forms:
+-  section.name                     dotted, lowercase + underscore (e.g. zenodo.token)
+-  FLAT_UPPER                       auto-mapped: AWS_BRAKET_REGION -> aws_braket.region
+-                                   unmatched -> [flat] section (e.g. MY_TOKEN -> flat.my_token)
++  section.name                      dotted, lowercase + underscore (e.g. zenodo.token)
++  FLAT_UPPER                        auto-mapped: AWS_BRAKET_REGION -> aws_braket.region
++                                    unmatched -> [flat] section (e.g. MY_TOKEN -> flat.my_token)
+ 
+ set forms:
+-  secret set zenodo.token \$TOKEN          # argv: convenient, leaks to shell history + ps
+-  echo \$TOKEN | secret set zenodo.token   # pipe: no history, no echo
+-  secret set zenodo.token                 # tty: prompts with read -s (no echo)
++  secret set zenodo.token \$TOKEN           # argv: convenient, leaks to shell history + ps
++  echo \$TOKEN | secret set zenodo.token    # pipe: no history, no echo
++  secret set zenodo.token                  # tty: prompts with read -s (no echo)
+ 
+ examples:
+-  secret get runpod.api_key
++  secret get runpod.api_key                # ***REDACTED:flat.runpod_api_key:abc123...***
++  secret get runpod.api_key --raw          # plaintext (use only when piping to a file)
++  secret get huggingface.token --raw > ~/.cache/huggingface/token
++  secret use huggingface.token -- hf upload my-org/my-repo file.bin
++  secret use runpod.api_key -- runpodctl pod create --name foo
+   secret set AWS_BRAKET_REGION us-east-1
+   pbpaste | secret set github.token
+-  secret rm test.probe
+-  secret check arxiv.user && echo configured
++
++migration (2026-05-04 hardening):
++  prior to this version, \`secret get <key>\` returned plaintext to stdout. it now
++  returns a redacted hash by default to prevent token leakage via agent / chat logs.
++  scripts that piped the value into a file or env var must add --raw, OR (preferred)
++  switch to \`secret use <key> -- <command>\` for env-var injection without stdout exposure.
+ EOF
+ }
+ 
+ case "${1:-help}" in
+-    get)        shift; [ $# -ge 1 ] || { _list; exit 0; }; _get "$1" ;;
++    get)        shift; [ $# -ge 1 ] || { _list; exit 0; }; _get "$@" ;;
++    use)        shift; _use "$@" ;;
+     list|ls)    _list ;;
+     set)        shift; [ $# -ge 1 ] || _die "set requires <key>"; _set "$@" ;;
+     rm|del|delete) shift; [ $# -ge 1 ] || _die "rm requires <key>"; _rm "$1" ;;

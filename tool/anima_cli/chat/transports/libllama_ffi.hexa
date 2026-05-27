@@ -1,0 +1,107 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/transports/libllama_ffi.hexa — libllama FFI transport
+//
+//  PURPOSE
+//    Transport plugin for chat/llama/llama.hexa direct C FFI dispatch.
+//    Documents + smoke-tests the in-process llama_load/generate/free path
+//    that bypasses any channel/FIFO transport. NOT a re-implementation —
+//    anima/llama_ffi.hexa retains the SSOT (Phase 3b libhxllama bindings).
+//
+//  PATTERN SUMMARY
+//    1. dlopen build/libhxllama.dylib (C shim wrapping llama.cpp)
+//    2. llama_load(gguf_path, n_ctx) → opaque ctx handle
+//    3. llama_generate(ctx, prompt, max_tokens, temp, top_p) → output bytes
+//    4. llama_free(ctx)
+//    No channel, no FIFO, no IPC — single process.
+//
+//  USE CASES
+//    · chat/llama/llama.hexa Phase 3c REPL (paradigm-a-prime live)
+//    · llama lane in chat/lanes/llama.hexa benchmark hook
+//    · 1:1 mode benchmark when --lane=llama active
+//
+// D1 SCOPE_CLAMP (carry)
+//    libllama transport inherits llama lane d1_lane=ambiguous_research label.
+//    SUBSTRATE_RESEARCH only when used with paradigm-a-prime base; public
+// promote 영구 차단 per mandate-9.
+//
+//  COMPLIANCE
+// mandate-1 — raw decode→sample→detokenize bytes preserved
+// mandate-2 — no system prompt / chat template / persona inject
+//    raw#9 — libhxllama.dylib = build infra (analogous to vendored runtime.c)
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f \"" + p + "\" && echo 1 || echo 0")).trim() == "1"
+}
+
+fn transport_describe() -> string {
+    return "libllama-ffi — direct C FFI via libhxllama.dylib (in-proc llama_load/generate/free; no channel transport; single-process; D1 SCOPE_CLAMP carries from llama lane)"
+}
+
+// transport_smoke — benchmark hook. Validates libhxllama.dylib presence +
+// reports cached GGUF count. NO actual model load — load/generate happens
+// inside chat/llama/llama.hexa per call (cost guard).
+fn transport_smoke(repo: string, argv) -> int {
+    let root = _resolve_root()
+    let dylib = root + "/build/libhxllama.dylib"
+    let cache_dir = _str(env("HOME")) + "/.cache/anima/gguf"
+    let mut fail = 0
+    if !_fexists(dylib) {
+        println("[transport:libllama-ffi] WARN libhxllama.dylib missing at " + dylib)
+        println("[transport:libllama-ffi]      build via: make -C build libhxllama")
+        fail = fail + 1
+    } else {
+        println("[transport:libllama-ffi] dylib present: " + dylib)
+    }
+    let cache_check = _str(exec("test -d \"" + cache_dir + "\" && echo 1 || echo 0")).trim()
+    if cache_check != "1" {
+        println("[transport:libllama-ffi] WARN GGUF cache dir missing: " + cache_dir)
+        println("[transport:libllama-ffi]      cache via: tool/anima_gguf_convert.py")
+    } else {
+        let gguf_count = _str(exec("ls \"" + cache_dir + "\"/*.gguf 2>/dev/null | wc -l")).trim()
+        println("[transport:libllama-ffi] GGUF cache: " + gguf_count + " file(s) at " + cache_dir)
+    }
+    if fail > 0 {
+        println("[transport:libllama-ffi] smoke FAIL (artifact missing — see WARN above)")
+        return 2
+    }
+    println("[transport:libllama-ffi] smoke PASS — FFI surface ready (load/generate happens in chat/llama path)")
+    return 0
+}
+
+fn main() {
+    let argv = args()
+    if _arg_present(argv, "--describe") {
+        println(transport_describe())
+        return
+    }
+    if _arg_present(argv, "--selftest") || _arg_present(argv, "--smoke") {
+        let rc = transport_smoke("", argv)
+        if rc != 0 { exit(rc) }
+        return
+    }
+    println(transport_describe())
+}

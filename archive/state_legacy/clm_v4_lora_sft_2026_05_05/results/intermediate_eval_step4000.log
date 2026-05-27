@@ -1,0 +1,35 @@
+2026-05-05:03:08:58 WARNING  [config.evaluate_config:281] --limit SHOULD ONLY BE USED FOR TESTING. REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
+2026-05-05:03:09:01 INFO     [_cli.run:376] Selected Tasks: ['hellaswag']
+2026-05-05:03:09:02 INFO     [evaluator:211] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
+2026-05-05:03:09:02 INFO     [evaluator:236] Initializing hf model, with arguments: {'pretrained': 'need-singularity/clm-v4-mk2-v1', 'peft': '/workspace/clm_v4_lora/ckpts/checkpoint-4000', 'dtype': 'bfloat16', 'trust_remote_code': True}
+2026-05-05:03:09:03 INFO     [models.huggingface:161] Using device 'cuda:0'
+2026-05-05:03:09:04 INFO     [models.huggingface:548] Model type cannot be determined. Using default model type 'causal'
+Traceback (most recent call last):
+  File "/usr/local/bin/lm_eval", line 8, in <module>
+    sys.exit(cli_evaluate())
+             ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/__main__.py", line 10, in cli_evaluate
+    parser.execute(args)
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/_cli/harness.py", line 60, in execute
+    args.func(args)
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/_cli/run.py", line 379, in _execute
+    results = simple_evaluate(
+              ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/utils.py", line 498, in _wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/evaluator.py", line 239, in simple_evaluate
+    lm = lm_eval.api.registry.get_model(model).create_from_arg_obj(
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/api/model.py", line 180, in create_from_arg_obj
+    return cls(**arg_dict, **additional_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/models/huggingface.py", line 204, in __init__
+    self._create_tokenizer(
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/models/huggingface.py", line 793, in _create_tokenizer
+    self.tokenizer = transformers.AutoTokenizer.from_pretrained(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/models/auto/tokenization_auto.py", line 1185, in from_pretrained
+    raise ValueError(
+ValueError: Unrecognized configuration class <class 'transformers_modules.need_hyphen_singularity.clm_hyphen_v4_hyphen_mk2_hyphen_v1.80440a1d38db9addc4445bb959057558a57f4230.configuration_clm_v4.CLMv4Config'> to build an AutoTokenizer.
+Model type should be one of Aimv2Config, AlbertConfig, AlignConfig, ArceeConfig, AriaConfig, AyaVisionConfig, BarkConfig, BartConfig, BertConfig, BertGenerationConfig, BigBirdConfig, BigBirdPegasusConfig, BioGptConfig, BitNetConfig, BlenderbotConfig, BlenderbotSmallConfig, BlipConfig, Blip2Config, BloomConfig, BltConfig, BridgeTowerConfig, BrosConfig, CamembertConfig, CanineConfig, ChameleonConfig, ChineseCLIPConfig, ClapConfig, CLIPConfig, CLIPSegConfig, ClvpConfig, LlamaConfig, CodeGenConfig, CohereConfig, Cohere2Config, ColPaliConfig, ColQwen2Config, ConvBertConfig, CpmAntConfig, CsmConfig, CTRLConfig, Data2VecAudioConfig, Data2VecTextConfig, DbrxConfig, DebertaConfig, DebertaV2Config, DeepseekV2Config, DeepseekV3Config, DeepseekVLConfig, DeepseekVLHybridConfig, DiaConfig, DiffLlamaConfig, DistilBertConfig, DPRConfig, ElectraConfig, Emu3Config, ErnieConfig, Ernie4_5Config, Ernie4_5_MoeConfig, ErnieMConfig, EsmConfig, Exaone4Config, FalconConfig, FalconMambaConfig, FastSpeech2ConformerConfig, FlaubertConfig, FlexOlmoConfig, FNetConfig, FSMTConfig, FunnelConfig, GemmaConfig, Gemma2Config, Gemma3Config, Gemma3TextConfig, Gemma3nConfig, Gemma3nTextConfig, GitConfig, GlmConfig, Glm4Config, Glm4MoeConfig, Glm4vConfig, Glm4vMoeConfig, GPT2Config, GPT2Config, GPTBigCodeConfig, GPTNeoConfig, GPTNeoXConfig, GPTNeoXJapaneseConfig, GptOssConfig, GPTJConfig, GPTSanJapaneseConfig, GraniteConfig, GraniteMoeConfig, GraniteMoeHybridConfig, GraniteMoeSharedConfig, GroundingDinoConfig, GroupViTConfig, HeliumConfig, HubertConfig, IBertConfig, IdeficsConfig, Idefics2Config, Idefics3Config, InstructBlipConfig, InstructBlipVideoConfig, InternVLConfig, JambaConfig, JanusConfig, JetMoeConfig, JukeboxConfig, Kosmos2Config, Kosmos2_5Config, LayoutLMConfig, LayoutLMv2Config, LayoutLMv3Config, LEDConfig, LiltConfig, LlamaConfig, Llama4Config, Llama4TextConfig, LlavaConfig, LlavaNextConfig, LlavaNextVideoConfig, LlavaOnevisionConfig, LongformerConfig, LongT5Config, LukeConfig, LxmertConfig, M2M100Config, MambaConfig, Mamba2Config, MarianConfig, MBartConfig, MegaConfig, MegatronBertConfig, MetaClip2Config, MgpstrConfig, MiniMaxConfig, MinistralConfig, MistralConfig, Mistral3Config, MixtralConfig, MllamaConfig, MMGroundingDinoConfig, MobileBertConfig, ModernBertConfig, MoonshineConfig, MoshiConfig, MPNetConfig, MptConfig, MraConfig, MT5Config, MusicgenConfig, MusicgenMelodyConfig, MvpConfig, NemotronConfig, NezhaConfig, NllbMoeConfig, NystromformerConfig, OlmoConfig, Olmo2Config, Olmo3Config, OlmoeConfig, OmDetTurboConfig, OneFormerConfig, OpenAIGPTConfig, OPTConfig, Owlv2Config, OwlViTConfig, PaliGemmaConfig, PegasusConfig, PegasusXConfig, PerceiverConfig, PersimmonConfig, PhiConfig, Phi3Config, PhimoeConfig, Pix2StructConfig, PixtralVisionConfig, PLBartConfig, ProphetNetConfig, QDQBertConfig, Qwen2Config, Qwen2_5OmniConfig, Qwen2_5_VLConfig, Qwen2AudioConfig, Qwen2MoeConfig, Qwen2VLConfig, Qwen3Config, Qwen3MoeConfig, Qwen3NextConfig, Qwen3OmniMoeConfig, Qwen3VLConfig, Qwen3VLMoeConfig, RagConfig, RealmConfig, RecurrentGemmaConfig, ReformerConfig, RemBertConfig, RetriBertConfig, RobertaConfig, RobertaPreLayerNormConfig, RoCBertConfig, RoFormerConfig, RwkvConfig, SeamlessM4TConfig, SeamlessM4Tv2Config, ShieldGemma2Config, SiglipConfig, Siglip2Config, SmolLM3Config, Speech2TextConfig, Speech2Text2Config, SpeechT5Config, SplinterConfig, SqueezeBertConfig, StableLmConfig, Starcoder2Config, SwitchTransformersConfig, T5Config, T5GemmaConfig, TapasConfig, TransfoXLConfig, TvpConfig, UdopConfig, UMT5Config, VideoLlavaConfig, ViltConfig, VipLlavaConfig, VisualBertConfig, VitsConfig, VoxtralConfig, Wav2Vec2Config, Wav2Vec2BertConfig, Wav2Vec2ConformerConfig, WhisperConfig, XCLIPConfig, XGLMConfig, XLMConfig, XLMProphetNetConfig, XLMRobertaConfig, XLMRobertaXLConfig, XLNetConfig, xLSTMConfig, XmodConfig, YosoConfig, ZambaConfig, Zamba2Config.

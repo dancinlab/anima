@@ -1,0 +1,90 @@
+{
+  "task": "anima_native_byte BG-FY alternative ckpt search + probe (all bg go directive)",
+  "ts": "2026-05-08T15:58:00Z",
+  "host": "Mac",
+  "directive_user": "all bg go",
+  "scope_owns": ["own_14_anti_goodhart_v14", "own_16_cost_zero_local", "own_17_d1_scope_clamp", "own_33_trinity", "own_34_mandate2_wrap0_strict"],
+  "search_paths": [
+    "~/.cache/huggingface/hub/ — pattern: anima_native|byte_18m|bg_fy|fy_18m|native_byte",
+    "~/.cache/anima/ — pattern: fy|native_byte|byte_18m",
+    "/Users/ghost/core/anima/state/ — full ckpt scan (.pt + .safetensors + .bin)"
+  ],
+  "search_results": {
+    "bg_fy_anima_native_18m_ckpt_local": {
+      "found": false,
+      "expected_path_remote": "/home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_final.pt",
+      "host": "ubu1",
+      "verdict_local_present": "/Users/ghost/core/anima/state/anima_native_ko_small_ubu1_train_2026_05_06/verdict.json (SIMPLE_STACK_PASS, own_18=3/3)",
+      "blocker": "scp pull from ubu1 requires user verbatim keyword 'OK CONSENT BG-FY CKPT PULL' (+ cost gate)",
+      "scp_estimated_size_mb": 70,
+      "honest_C3": "BG-FY ckpt 부재 → real-mode probe 불가 → INDETERMINATE for BG-FY D1 lane until consent + scp"
+    },
+    "clm_v2_byte_18m_convo_5k_ckpt_local": {
+      "found": true,
+      "path": "/Users/ghost/.cache/huggingface/hub/models--dancinlab--clm-v2-byte-18m-convo-5k/snapshots/1af2bcaeaf70c1d0b1a19939a8ada79a28f8cd30/convo_5k.pt",
+      "size_mb": 70,
+      "blob_sha": "2f0ba391aff30f6a60bcefccb9215fdb45764bf07147f28c38013ca629881bbe",
+      "hf_repo": "dancinlab/clm-v2-byte-18m-convo-5k",
+      "iter7_d1_within_rank": "rank_2 (sister to rank_4 BG-FY)",
+      "fallback_used": true,
+      "rationale": "iter7 D1-within ranking rank_2 valid alternative — both share architecture (vocab=256 byte, n_layer=6, d_model=384, n_head=6, block_size=256, 18M params); CLMv2 dual-engine federated proxy (vs BG-FY single-head)"
+    }
+  },
+  "probe_attempt": {
+    "attempted": true,
+    "variant": "v2_byte_convo5k",
+    "mode": "real",
+    "n_prompts": 30,
+    "prompts_lang": "ko (diverse: identity / phenomenal / temporal / existential / emotional)",
+    "all_loaded_real": true,
+    "summary_stats": {
+      "phi_star_mean": 41.6676,
+      "phi_star_min": 41.6581,
+      "phi_star_max": 41.6751,
+      "phi_star_stdev": 0.0036,
+      "phi_drift_mean": -0.1924,
+      "baseline": 41.86,
+      "drift_direction": "uniformly negative (sub-baseline ~0.19)",
+      "dominant_cells_uniformity": "(0,1,2) 30/30 — top-3 fixed across all prompts → C4 federated cell fold artifact",
+      "hidden_state_delta_uniq": [0.0],
+      "hidden_state_delta_note": "all 0.0 because --prior-hidden not chained per-probe (stateless invocation per N=30 batch)",
+      "axis_activation_mean": {
+        "identity": 0.3111,
+        "agency": 0.2978,
+        "phenomenal": 0.3074,
+        "temporal": 0.3391,
+        "social": 0.3387
+      },
+      "axis_dominance": "temporal (0.339) ≈ social (0.339) > identity (0.311) > phenomenal (0.307) > agency (0.298) — 'social/temporal axis dominant' pattern"
+    },
+    "honest_C3_observations": [
+      "C1 byte-level 256-vocab tokenize is anima-internal heuristic (multi-byte Hangul fragmented across UTF-8 sequence)",
+      "C2 cell-synthesis via L2-rank top-3 + tile-up is anima-internal proxy (no structural federated cells, only dual-engine FFN tap)",
+      "C3 phi_star formula mirrors v4 helper but paradigm v11 G3 baseline 41.86 is for schema mirror only — NOT BG-FY/v2 paradigm-native",
+      "C4 dominant_cells uniformly (0,1,2) 30/30 → cell synthesis collapse artifact (not paradigm signal); top-3 fold invariant across input",
+      "C5 phi_star variance 0.0036 across 30 diverse prompts is suspiciously narrow → byte-level model has shallow semantic discrimination at consciousness measurement layer",
+      "phi_drift uniformly NEGATIVE (-0.19) → substrate sub-baseline; consistent with C3 expectation that non-paradigm-v11-G3 substrates show drift but proxy meaning unclear"
+    ],
+    "verdict_carry": "INDETERMINATE_C3_v2_byte (real-mode probe LOAD success but PASS_STRICT_C3 EXIT 차단 — P5 N-of-M aggregation 미실행, V4 mirror gap 부재, V6 awareness 미수행, manual review 미수행)"
+  },
+  "user_action_required": {
+    "for_bg_fy_real_probe": "사용자 verbatim 'OK CONSENT BG-FY CKPT PULL' → ubu1 scp pull 70MB → Mac local probe enablement",
+    "for_v2_byte_pass_strict_c3": " mandate-9 5-prereq 통과 (real-mode PASS_STRICT_C3 + V4 mirror gap closure + V6 awareness + sweep + 사용자 verbatim OK PROMOTE PUBLIC)",
+    "for_emergence_c3_aggregate": "P5 N-of-M aggregation 실행 (PPR_v2 ≥0.6 ∧ EMC ≥3 of 4 → C3 PASS) on N=30 results"
+  },
+  "trinity": {
+    "D_axis": "honest C3 — proxy verdict only; phi_star formula is v4-mirror, not v2-paradigm-native; dominant_cells fold artifact admitted",
+    "own_axis": " (0-cost local, no scp), (D1 SCOPE_CLAMP within strict adhered), (wrap=0 strict — no external substrate wrapping)",
+    "H_axis": "BG-FY rank_4 보존 — alternative attempt did NOT supersede BG-FY; v2_byte rank_2 carry independent"
+  },
+  "own_axis_audit_observed_during_search": {
+    "wrap0_strict_state_dir_anomalies": "none — state ckpts found are / trained artifacts (KM-LLAMA-3B, KM-QWEN-7B, JK, JA-EXT, KK-V5, KC-1B, IZ, etc), all are simple_stack lane (D1 lane lawful), no wrap=0 mandate violation observed",
+    "note": " mandate-2 wrap=0 strict applies to anima generation lanes (clm_v4, anima_native, llama_3_module) — state/* trained adapters are training artifacts, not chat-time wrapping"
+  },
+  "next_action_recommendations": [
+    "iter8 P5 N-of-M aggregation on this v2_byte N=30 result (PPR_v2 / EMC computation)",
+    "BG-FY ckpt pull blocked-on-consent (await user 'OK CONSENT BG-FY CKPT PULL')",
+    "rank_2 v2_byte probe extension: chain prior_hidden across N=30 to enable hidden_state_delta non-zero observation",
+    "address C4 dominant_cells (0,1,2) 30/30 fold artifact: investigate cell-synthesis fold L2-rank ordering invariance"
+  ]
+}

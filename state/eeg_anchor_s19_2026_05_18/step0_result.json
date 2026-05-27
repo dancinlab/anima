@@ -1,0 +1,44 @@
+{
+  "section": "RESEARCH.md §19 step 0",
+  "ts": "2026-05-18T04:47:45",
+  "is_f_ct_3": false,
+  "gpu_used": false,
+  "weight_mutated": false,
+  "gates": {
+    "G0_IMPORT": {
+      "pass": true,
+      "detail": "cortexlab=0.1.0 torch=2.6.0 neuralset+neuraltrain OK (py3.12.12)"
+    },
+    "G1_API": {
+      "pass": true,
+      "detail": "TribeModel.from_pretrained=True .predict=True (ADDENDUM §3 'CLM L_IX -> text serialization -> cortexlab streaming inference' API surface confirmed)"
+    },
+    "G2_HF_REACHABLE": {
+      "pass": true,
+      "detail": "facebook/tribev2 files=['.gitattributes', 'LICENSE', 'README.md', 'best.ckpt', 'config.yaml'] (best.ckpt+config.yaml present)"
+    },
+    "G3_CONFIG_LOAD": {
+      "pass": true,
+      "detail": "config.yaml downloaded+parsed, 26 top keys, sample=['infra', 'data', 'seed', 'brain_model_config', 'loss', 'optim']"
+    },
+    "G4_CKPT_META": {
+      "pass": true,
+      "detail": "best.ckpt 708.9MB mmap-loaded, top_keys=['state_dict', 'model_build_args'], state_dict tensors=108, model_build_args=True (frozen encoder header read, NO mutation)"
+    },
+    "G5_FORWARD": {
+      "pass": false,
+      "detail": "RuntimeError: whisperx failed:\nDownloading transformers (11.4MiB)\nDownloading fonttools (2.7MiB)\nDownloading ctranslate2 (1.2MiB)\nDownloading scikit-learn (7.7MiB)\nDownloading onnxruntime (17.2MiB)\nDownloading scipy (19.4MiB)\nDownloading sqlalchemy (2.1MiB)\nDownloading torch (70.2MiB)\nDownloading matplotlib (7.8MiB)\nDownloading pillow (4.5MiB)\nDownloading torchvision (1.8MiB)\nDownloading av (17.8MiB)\nDownloadin (G0-G4 = pipe-credible; full forward needs feature-extractor backbone DL — boundary honestly recorded, design-tier step 0)"
+    }
+  },
+  "notes": [
+    "TribeModel.from_pretrained OK in 2.0s (weights loaded eval mode, cpu)",
+    "G5 boundary: full predict() requires text/audio/video backbone model downloads (multi-GB) + gTTS/ffmpeg; G0-G4 PASS establishes axis C feasibility (pipe works to ckpt-load), G5 forward = step-1+ scope (still inference-only, no GPU)."
+  ],
+  "step0_verdict": {
+    "pipe_credible_through_ckpt_load": true,
+    "full_forward_done": false,
+    "addendum_c3_3_pypi_gap": "CLOSED — cortexlab-toolkit 0.1.0 installs from PyPI (modern pip), pulls neuralset/neuraltrain 0.0.2, import name = `cortexlab`. ADDENDUM §8 C3 #3 verification gap resolved at dependency+API level.",
+    "is_f_ct_3": false,
+    "honest": "step 0 = TRIBE pipe sanity (axis C feasibility), NOT F-CT-3 (EEG<->BOLD bridge = step 2, EEG hw-in-loop). GOAL distance unchanged (§15 milestone). over-claim 0."
+  }
+}

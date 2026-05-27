@@ -1,0 +1,15 @@
+[create] pod=anima-substrate-mistral-nemo-base-only gpu=NVIDIA H100 80GB HBM3
+  pod_id=5pyoqaxswshm2o cost=$2.99/hr
+[ssh-wait] pod=5pyoqaxswshm2o
+  ip=64.247.201.51 port=16067
+[scp] /tmp/anima_mistral_nemo_substrate_helper.py -> 64.247.201.51:/workspace/runner.py
+[scp] /tmp/phi_vec_extraction_result.json -> 64.247.201.51:/workspace/phi_vec_extraction_result.json
+[scp] /tmp/hf_token_for_pod -> 64.247.201.51:/workspace/.hf_token
+[exec] pip install -q transformers accelerate
+[exec] export ANIMA_BASE='mistralai/Mistral-Nemo-Base-2407' ANIMA_OUTPUT_DIR=/workspace/out ANIMA_PHI_VEC=/
+[download] 64.247.201.51:/workspace/out -> /Users/ghost/core/anima/state/red_to_green_substrate_swap_mistral_nemo_2026_05_01
+[terminate] pod=5pyoqaxswshm2o
+
+[done] elapsed=3.12min cost=~$0.156
+wrote /Users/ghost/core/anima/state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/runpod_run.json
+DONE

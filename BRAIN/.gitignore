@@ -1,0 +1,55 @@
+# hexa-brain standalone — gitignore
+
+# state / runtime artifacts
+state/*.tmp
+state/*.lock
+state/*.log
+state/runtime_*.jsonl
+
+# session recordings (large, per-run)
+# NOTE: recordings/sessions/*.npy ARE versioned for v1 canonical evidence.
+# Future per-run logs / cache files go here:
+recordings/cache/
+recordings/.tmp/
+recordings/runtime_*.log
+
+# python bridge runtime (.own N opt-out only)
+**/__pycache__/
+*.pyc
+*.pyo
+
+# editor
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# build
+build/
+dist/
+*.egg-info/
+
+# secrets (defense-in-depth — never commit)
+.env
+.env.local
+secrets/
+*.pem
+*.key
+
+# raw#15: never commit personal absolute paths in artifacts
+# (CI checks for /Users/<name>/ leakage)
+
+# transient subtree split branches
+hexa-brain-spinoff-*
+
+# license firewall transient helpers (bin/check_licenses.sh writes
+# /tmp/license_firewall_load_<pid>.py — see LICENSE_FIREWALL.md)
+/tmp/license_firewall_*.py
+
+# anima cross-coupling (avoid pulling parent state in)
+anima_state/
+
+# python venv (for hexa-brain bridges that need numpy/scipy at runtime)
+.venv*/

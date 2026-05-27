@@ -1,0 +1,16 @@
+[quantum/bell_state] PHYS-P18-2 — 분산 양자 상태 (entanglement)
+  Bell state |Phi+> = (|00> + |11>) / sqrt(2)
+  4-element state vector: [a00, a01, a10, a11]
+
+  [T1] bell norm=(float) sep norm=(float)
+T1 PASS — state vector norm = 1
+  [T2] bell |Phi+> correlation=(float) (threshold>(float))
+T2 PASS — Bell correlation > 0.95 (entangled)
+  [T3] separable |01> correlation=(float) (threshold<(float))
+T3 PASS — separable correlation < 0.3
+  [T4] run1=(float) run2=(float) diff=(float)
+T4 PASS — determinism (same seed = same result)
+  [T5] 1000 trials completed, corr=(float) in [0,1]=true/true
+T5 PASS — latency (1000 trials completed in-band)
+
+[quantum/bell_state] 5/5 PASS — PHYS-P18-2 DONE (Bell state 공유 시뮬)

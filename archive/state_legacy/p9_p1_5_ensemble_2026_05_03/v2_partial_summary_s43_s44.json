@@ -1,0 +1,24 @@
+{
+  "schema": "anima/p9/holdout500_reeval/v2",
+  "date_utc": "2026-05-03T14:22:00.091512+00:00",
+  "holdout_n": 499,
+  "T": 64,
+  "F1_GEN_LEN": 32,
+  "metrics_set": [
+    "bleu_1",
+    "bleu_2",
+    "bleu_3",
+    "rouge_1",
+    "rouge_l",
+    "chrf"
+  ],
+  "composite_F1_v3": "(bleu_1 + rouge_l + chrf) / 3",
+  "llama_anchor": null,
+  "ckpts": {
+    "phase1_5_seed45": {
+      "name": "phase1_5_seed45",
+      "error": "CUDA out of memory. Tried to allocate 188.00 MiB. GPU 0 has a total capacity of 11.50 GiB of which 76.19 MiB is free. Process 1137359 has 7.55 GiB memory in use. Including non-PyTorch memory, this process has 3.84 GiB memory in use. Of the allocated memory 3.42 GiB is allocated by PyTorch, and 273.82 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)"
+    }
+  },
+  "ranking_by_f1_v3_raw": []
+}

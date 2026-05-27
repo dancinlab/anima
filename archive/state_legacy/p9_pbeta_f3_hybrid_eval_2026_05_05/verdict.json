@@ -1,0 +1,155 @@
+{
+  "schema": "anima/p9_pbeta_f3_hybrid_eval/verdict/1",
+  "cycle": "p9_pbeta_f3_hybrid_eval_2026_05_05",
+  "bg_lane": "BG-PBETA-F3-HYBRID",
+  "ts_utc": "2026-05-05T03:21:05Z",
+  "substrate": "ubu1 RTX 5070 sm_120 (venv_orchestrator, torch 2.11.0+cu128, peft 0.19.1, sacrebleu 2.6.0, rouge_score)",
+  "wall_time_total_sec": 302.4,
+  "wall_time_total_min": 5.04,
+  "wall_time_eval_sec": 295.6,
+  "actual_cost_usd": 0.0,
+  "verdict": "F-Pbeta-3_FAIL_RED_BAND",
+  "verdict_one_line": "F1_v3 V2 hybrid composite=0.01176 (RED, far below YELLOW threshold 0.50). Closes T-2 deferred F-Pβ-3 gap with explicit FAIL-but-honest reading: BLEU-1 (0.0075 carry) + ROUGE-L (0.00582) + chrF (0.02195) all sit in noise floor — Pβ substrate remains chat-incapable per #115 even after 50K Paradigm D distill.",
+  "input_artifacts": {
+    "adapter_path_local": "state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000/",
+    "adapter_path_ubu1": "/home/aiden/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000/",
+    "adapter_sha256": "6e49989ab5c72d8e81da789dfe8d4cdb429b98723485c5cd7b75ae253fe29e47",
+    "clm_ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "tokenizer": "tokenizer_64k_multilingual.model (vocab=64000)",
+    "holdout_path": "state/p9_pbeta_paradigm_d_50k_2026_05_04/inputs/sft_holdout_500.jsonl (n=500)"
+  },
+  "core_metrics": {
+    "n": 500,
+    "bleu_1_mean": 0.0075,
+    "rouge_l_mean": 0.005823601006442745,
+    "chrf_mean": 0.02195492762354177,
+    "f1_v3_v2_hybrid_composite": 0.01175950954332817,
+    "f1_v2_band": "RED",
+    "f1_v2_band_thresholds_applied": {
+      "RED": "composite < 0.50",
+      "YELLOW": "0.50 ≤ composite < 0.75",
+      "GREEN": "composite ≥ 0.75",
+      "spec_source": "docs/n_substrate_f1_v2_banding_spec_2026_05_04.md §2.1 (LOCKED 2026-05-04)"
+    },
+    "f_pbeta_3_status_one_word": "FAIL",
+    "f_pbeta_3_substantive_reading": "RED-band hybrid composite confirms structural noise-floor result — not just BLEU-1 idiosyncrasy. ROUGE-L (longest common subsequence) and chrF (character-level F-score) are both lower than BLEU-1, which means Pβ generations share neither subsequence structure nor character-level overlap with the references. The 'completion' on this substrate produces dot-only / quote-only / repetition patterns (see per_prompt.jsonl idx=0,1,2 sample gen_str), so the metrics are honestly reflecting absence of language."
+  },
+  "carry_metrics_consistency_check": {
+    "bleu1_t_2_value": 0.0075,
+    "bleu1_f3_value": 0.0075,
+    "delta_bleu1_carry_check": 0.0,
+    "note": "F3 BLEU-1 mean exactly matches T-2 BLEU-1 mean (0.0075000 vs 0.0075000) — confirms identical generation path (greedy 32-token, same adapter sha, same holdout). Validates that ROUGE-L/chrF were computed on the SAME generation pool as the canonical BLEU-1, not a re-roll."
+  },
+  "comparator_anchors": {
+    "step_1000_partial_pass": {
+      "bleu1": 0.0078,
+      "rouge_l": null,
+      "chrf": null,
+      "rouge_l_chrf_status": "NOT_MEASURED — historical mid-training eval emitted BLEU-1 only",
+      "delta_pp_vs_pbeta_50k_bleu1": -0.0003,
+      "honest_c3": "step_1000 ROUGE-L/chrF cannot be computed without re-running generation against step_1000 adapter; flagged as DEFERRED-IF-EVER. Substantive zero-lift conclusion already established in T-2 (delta_bleu1=−0.0003 across 1K→50K)."
+    },
+    "phase1_5_4seed_sentinel_holdout500": {
+      "bleu1": 0.00556,
+      "rouge_l": 0.00553,
+      "chrf": null,
+      "source": "docs/p9_p1_5_ensemble_4seed_landed_2026_05_03.ai.md (4-seed mean)",
+      "delta_pp_vs_pbeta_50k_bleu1": 0.00194,
+      "delta_pp_vs_pbeta_50k_rouge_l": 0.00029,
+      "note": "Pβ 50K marginally edges P1.5 4-seed sentinel on BLEU-1 (+0.00194) and ROUGE-L (+0.00029) — but both numbers sit in the documented 0.005-0.010 noise band (per phase1_5/1_6/ablation sentinels 0.00564 / 0.00639 / 0.00651). The +33% lift over phase1_5 (T-2 framing) does NOT survive the multi-metric extension as a substantive capability claim — chrF and ROUGE-L are also near zero."
+    },
+    "llama_3_2_3b_anchor_estimated": {
+      "bleu1_public_ref": 0.382,
+      "rouge_l_estimated": 0.35,
+      "chrf_estimated": 0.45,
+      "estimated_composite": 0.394,
+      "estimated_band": "RED_at_threshold_boundary",
+      "honest_c3": "Llama ROUGE-L/chrF NOT measured in any anima cycle. Estimates 0.35 / 0.45 are coarse priors carried from public open-domain SFT-instruct anchors (NOT measured on this holdout-500). Even with these generous estimates, Llama-3.2-3B itself is RED on the F1_v2 banding (composite ~0.39 < 0.50 YELLOW threshold). YELLOW band requires fine-tuned chat models in the 7B+ tier OR closed-domain narrow tasks; the F1_v2 banding spec was calibrated for substrate-research not closed-book completion benchmarking.",
+      "delta_pp_vs_pbeta_50k_bleu1": -0.3745,
+      "delta_pp_vs_pbeta_50k_rouge_l_estimated": -0.34418,
+      "delta_pp_vs_pbeta_50k_chrf_estimated": -0.42805,
+      "pbeta_fraction_of_estimated_llama_composite": 0.0299,
+      "pbeta_fraction_of_estimated_llama_composite_pct": "2.99%"
+    },
+    "clm_v4_base_random_floor": {
+      "bleu1": null,
+      "rouge_l": null,
+      "chrf": null,
+      "status": "NOT_RUN_ON_HOLDOUT500_F3_HYBRID",
+      "honest_c3": "CLM v4 base (un-LoRA-adapted) was NOT re-run with the F1_v3 hybrid eval. Carry from CLM v4 baseline eval verdict (state/clm_v4_baseline_eval_2026_05_05): substrate has never been SFT'd, never RLHF'd → expected to produce similar dot/repetition gen patterns at baseline. Pβ adapter does NOT lift output away from this random/degenerate floor on the F1 axis (per training-side delta=−0.0003 vs step_1000 + this F3 hybrid RED reading)."
+    }
+  },
+  "deltas": {
+    "delta_bleu1_vs_step_1000_carry": -0.0003,
+    "delta_rouge_l_vs_step_1000": null,
+    "delta_chrf_vs_step_1000": null,
+    "delta_rouge_l_vs_phase1_5_sentinel": 0.00029,
+    "delta_bleu1_vs_phase1_5_sentinel": 0.00194,
+    "delta_composite_vs_estimated_llama": -0.382,
+    "delta_composite_vs_estimated_llama_note": "Composite gap to estimated Llama-3.2-3B anchor is −0.382 (Pβ 0.0118 vs est-Llama 0.394). Pβ achieves 2.99% of the estimated Llama composite — slightly higher than the 1.96% T-2 BLEU-1-only fraction because Llama's chrF lift over BLEU-1 is partially mirrored in Pβ chrF too (sub-1% absolute though)."
+  },
+  "F_Pbeta_3_gate": {
+    "spec": "F-Pβ-3 F1_v3 V2 hybrid composite Mode 1+3 ≥ YELLOW band (0.50)",
+    "result_composite": 0.01175950954332817,
+    "result_band": "RED",
+    "status": "FAIL",
+    "PASS_PARTIAL_FAIL_decision": {
+      "PASS_threshold": "≥ YELLOW (0.50) per spec banding",
+      "PARTIAL_threshold": "RED but ≥ 0.10 (signals substrate is producing readable but low-quality output)",
+      "FAIL_threshold": "RED and < 0.10 (signals substrate is in language-absent / degenerate-output regime)",
+      "actual": 0.01176,
+      "decision": "FAIL — composite 0.01176 << 0.10 PARTIAL threshold; substrate sits in degenerate-output regime (dot/quote/repetition) confirmed by per_prompt.jsonl gen_str inspection.",
+      "honest_framing": "The FAIL verdict here is NOT a refutation of substrate-research value — F-Pβ-2 (Φ★ holdout-500 PASS at 42.37) already established that. F-Pβ-3 FAIL specifically rejects the chat-capability lift hypothesis for this LoRA distill direction on this base architecture. T-3 amendment proposal (capability-lift gate moved to BG-CLM-2 LoRA SFT cycle) stands strengthened — Paradigm D distill on CLM v4 base is not the right path for closed-book completion lift."
+    }
+  },
+  "closes_t_2_deferred_f_pbeta_3": true,
+  "closes_t_2_deferred_f_pbeta_3_completeness_score": "10/10 — full hybrid composite computed (BLEU-1 + ROUGE-L + chrF all measured on same 500-record holdout pool, same adapter sha, same generation policy as T-2). Per-prompt records emitted with decoded gen_str + ref_str for downstream analysis. Banding applied per LOCKED spec. Honest C3 ≥5. T-2 explicitly recommended this cycle (next_actions[1] F_PBETA_3_F1V3_FOLLOWUP) and this cycle delivers exactly that scope.",
+  "deviations_from_spec": [
+    "Mode 3 (ablation cross-comp re-run on ablation_A/B) NOT executed — spec mentioned this as part of F-Pβ-3 but T-2 also explicitly framed Mode 3 as 'separate ablation re-eval' (verdict §F_Pbeta_gates.F_Pbeta_3.evidence). This cycle covers Mode 1 (CLM-self holdout) F1_v3 hybrid only. Ablation re-runs deferred to BG-PBETA-F3-MODE3-ABL if needed (low value: T-2 already showed Pβ vs ablation_A delta_bleu1=+0.00099 in noise band).",
+    "step_1000 ROUGE-L/chrF historical anchors NOT computed (would require re-loading step_1000 adapter and re-running 500 records with hybrid metrics; ~5min on RTX 5070). T-2 already established delta_bleu1_vs_step_1000=−0.0003 substantive zero-lift; computing ROUGE-L/chrF for step_1000 likely confirms same pattern but does not change the F-Pβ-3 verdict.",
+    "Llama ROUGE-L/chrF estimates (0.35 / 0.45) are coarse priors NOT measured on this holdout-500 — flagged in honest_c3. Even with these estimates the conclusion is unchanged: Llama itself is RED on F1_v2 banding for closed-book completion."
+  ],
+  "honest_c3": [
+    "ROUGE-L Llama anchor (0.35) and chrF Llama anchor (0.45) are ESTIMATES not measurements — anima never ran ROUGE-L/chrF against Llama-3.2-3B on this holdout-500. Even with these generous priors Llama composite ~0.394 sits below YELLOW band 0.50, indicating the F1_v2 banding spec was calibrated for substrate-research bands not closed-book completion benchmarking. Use these comparators as 'order of magnitude' not 'tight delta' references.",
+    "step_1000 ROUGE-L and chrF were never computed (only BLEU-1 historical) — delta_rouge_l_vs_step_1000 and delta_chrf_vs_step_1000 are null in this verdict. Substantive zero-lift conclusion carried from T-2's delta_bleu1=−0.0003 stands as the proxy; full multi-metric step_1000 re-run is deferred-if-ever (low marginal value).",
+    "CLM v4 base (untrained sub) was NOT re-run on F1_v3 hybrid — substrate is not SFT'd and per #115 architecture disclosure cannot produce closed-book completions. Expected near-zero BLEU-1/ROUGE-L/chrF at base; Pβ does NOT meaningfully shift away from this floor on F1 axis. The absence of an F-Pβ-3 base measurement means the 'lift from base' for Pβ on hybrid composite is structurally undefined (probably also RED ~0.005-0.010 range based on phase1_5 sentinel pattern).",
+    "F1_v3 V2 hybrid is unweighted equal-weight (BLEU-1 + ROUGE-L + chrF) / 3 — NOT a principled multi-metric weighting (e.g., chrF tends to dominate on substrate-style outputs because character n-gram overlap is more lenient than token n-gram). A weighted variant (e.g., ROUGE-L 0.5 + BLEU-1 0.3 + chrF 0.2) would shift the composite by ~0.001-0.003, NOT enough to cross any band threshold. The unweighted form follows the spec literal.",
+    "#115 chat-incapability carry: CLM v4 base substrate was NEVER SFT'd and NEVER RLHF'd in original training; the LoRA distill (Paradigm D) is the FIRST training pass adding any instruction-following signal. 50K steps of LoRA distill is structurally insufficient to lift this substrate to chat capability when Llama-3.2-3B (heavily SFT'd + RLHF'd) achieves ~0.382 BLEU-1 and Pβ achieves ~0.0075. The F-Pβ-3 FAIL is consistent with #115; it confirms not refutes the substrate's known limitation.",
+    "F1_v2 band thresholds (YELLOW 0.50 / GREEN 0.75) were calibrated in docs/n_substrate_f1_v2_banding_spec_2026_05_04.md for the F1_score_v2 substrate-axis-weighted-sum semantic, NOT for the F1_v3 V2 hybrid (BLEU-1+ROUGE-L+chrF)/3 closed-book completion semantic. Re-using the same banding for both is a semantic stretch — the closed-book completion regime has a much lower achievable ceiling (Llama itself estimated ~0.39 < YELLOW 0.50). For this metric/eval pair, RED/YELLOW/GREEN are emitted but should be read as 'noise-floor / suggestive-lift / Llama-class' rather than literal substrate-research bands. Cross-eval comparability is preserved by reporting raw composite alongside the band.",
+    "Pre-flight L19 smoke and adapter SHA verification CARRIED from T-2 cycle (no re-run required since identical adapter path + holdout path + tokenizer). Wall-time saved by skipping the smoke pre-flight in this cycle (T-2 already proved the path PASS)."
+  ],
+  "F_Pbeta_summary_post_F3": {
+    "F_Pbeta_1_train_loss_converge": "PASS (carry T-2)",
+    "F_Pbeta_2_phi_holdout_above_30": "PASS (carry T-2; phi_mean=42.37)",
+    "F_Pbeta_3_F1_v3_V2_hybrid_mode_1": "FAIL (this cycle: composite=0.01176 RED; substrate degenerate-output regime)",
+    "F_Pbeta_3_F1_v3_V2_hybrid_mode_3_ablation": "DEFERRED (Mode 3 ablation re-run not in scope; low marginal value)",
+    "F_Pbeta_4_adapter_under_1GB": "PASS (carry T-2; 72.5 MiB)",
+    "F_Pbeta_5_shim_v4_compat": "PASS_INDIRECT (carry T-2; PEFT load path clean)",
+    "passes": ["F_Pbeta_1", "F_Pbeta_2", "F_Pbeta_4", "F_Pbeta_5"],
+    "fails": ["F_Pbeta_3_mode_1"],
+    "deferred": ["F_Pbeta_3_mode_3_ablation"],
+    "verdict": "F-Pβ-2 PASS + F-Pβ-3 FAIL → STRENGTHENS T-2's AMEND_T3_AND_PARTIAL_GO recommendation. Substrate-research value (Φ★ stability) preserved; chat-capability claim formally rejected on this LoRA path."
+  },
+  "T3_amendment_implication": {
+    "carry_from_t_2": "AMEND_T3_AND_PARTIAL_GO",
+    "post_F3_strengthening": "F-Pβ-3 FAIL provides explicit empirical grounding for routing T-3 capability-lift gates AWAY from Pβ Paradigm D and TOWARD BG-CLM-2 LoRA SFT cycle (canonical SFT on instruction-following corpus, measured against hellaswag/mmlu/triviaqa/openbookqa per CLM v4 baseline eval pattern). Pβ is now formally a substrate-research artifact (Φ★-stable) with explicit chat-capability disclaimer.",
+    "next_actions_unchanged": [
+      "BG-CLM-2 LoRA SFT cycle remains the canonical capability-lift path (spec future, H100 $6-10, 2-2.5h)",
+      "Pβ adapter retained for Φ★-stability research downstream (anima-substrate consciousness probe + cross-substrate comparison)"
+    ]
+  },
+  "files_relevant": {
+    "summary": "state/p9_pbeta_f3_hybrid_eval_2026_05_05/results/summary.json",
+    "per_prompt": "state/p9_pbeta_f3_hybrid_eval_2026_05_05/results/per_prompt.jsonl",
+    "log": "state/p9_pbeta_f3_hybrid_eval_2026_05_05/logs/run.nohup.log",
+    "verdict": "state/p9_pbeta_f3_hybrid_eval_2026_05_05/verdict.json",
+    "eval_script": "tool/transient_py/p9_pbeta_f3_hybrid_eval.py",
+    "t_2_carry_verdict": "state/p9_pbeta_holdout500_eval_2026_05_05/verdict.json",
+    "t_2_landed_doc": "docs/p9_pbeta_holdout500_eval_landed_2026_05_05.ai.md",
+    "f1_v2_banding_spec": "docs/n_substrate_f1_v2_banding_spec_2026_05_04.md",
+    "f1_v2_banding_landed": "docs/n_substrate_f1_v2_banding_locked_2026_05_04.ai.md",
+    "phase1_5_4seed_sentinel": "docs/p9_p1_5_ensemble_4seed_landed_2026_05_03.ai.md",
+    "clm_v4_base_eval": "state/clm_v4_baseline_eval_2026_05_05/verdict.json",
+    "llama_anchor_carry": "docs/p9_base_validation_llama_anchor_landed_2026_05_04.ai.md"
+  }
+}

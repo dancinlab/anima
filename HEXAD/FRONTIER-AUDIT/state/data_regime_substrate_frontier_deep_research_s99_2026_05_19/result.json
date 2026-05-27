@@ -1,0 +1,45 @@
+{
+  "section": "RESEARCH.md §99",
+  "title": "DATA-REGIME / SUBSTRATE / SPONTANEITY-vs-COHERENCE frontier deep research",
+  "tier": "literature-review",
+  "date": "2026-05-19",
+  "cost_usd": 0,
+  "gpu": false, "runpod": false, "fire": false, "model_forward": false,
+  "central_blue_falsifier_sha": "c93e160a8a376a94 (0-line-diff — sidecar only)",
+  "paper_count": 41,
+  "grade_distribution": {"5star": 8, "4star": 19, "3star": 11, "2star": 3},
+  "arms": {
+    "arm1_data_regime": {
+      "summary": "emergence = pre-training loss below a DIVERSE-data threshold (Du arxiv:2403.15796); below a task-DIVERSITY threshold more data only sharpens memorization (Raventos arxiv:2306.15063) — matches anima's measured §11-A FLAT and §16.6-C 'memorization-saturated'. For SPONTANEOUS/agentic behavior, the substrate of differentiation is INTERACTION not a static corpus (Takata arxiv:2411.03252), driven by an intrinsic-motivation self-curriculum that standard LLMs lack (arxiv:2601.12560).",
+      "clusters": ["A emergence-as-loss/data-threshold", "B data-diversity-not-quantity", "C corpus-for-spontaneous-agentic-behavior"],
+      "papers": 18
+    },
+    "arm2_substrate": {
+      "summary": "§96's SPIKING-INCOMPATIBLE self-attention has a concrete replacement: STDP/plasticity-driven spike-timing routing, softmax-free, addition-only (arxiv:2511.14691, 2503.00226, Spikformer 2209.15425). Liquid Time-constant networks (arxiv:2006.04439) have a NATIVE spontaneous-limit-cycle regime set by weights — and already run on the §95-blessed Loihi-2. Continuous Thought Machines give a GPU-runnable timing-axis proxy.",
+      "clusters": ["D spiking-attention-replacements", "E event-driven-continuous-time-substrate"],
+      "papers": 12
+    },
+    "arm3_spontaneity_vs_coherence": {
+      "summary": "§96's relocated unsolved core. Literature answer: spontaneous activity is coherent BECAUSE it is self-organized-critical (homeostatically structured, Ikeda arxiv:2502.10946) AND because it IS the brain's predictive prior/generative model running (Neuron 2025 S0896-6273(25)00127-8). A predictive learning rule trains coherence in, after which spontaneous replay runs unprompted (eLife 92712).",
+      "clusters": ["F self-organized-criticality-structured-spontaneity", "G predictive-processing-spontaneous-activity-as-prediction"],
+      "papers": 11
+    }
+  },
+  "candidate_paths_kept_open": [
+    {"id": "C1", "arm": 1, "name": "diversity-threshold corpus", "anima_fit": 5, "blocker": "threshold value unknown for anima substrate; GOAL-legitimacy forbids generic external corpus", "testability": "0-design-testable then needs-fire", "status": "OPEN"},
+    {"id": "C2", "arm": 1, "name": "interaction-loop corpus + intrinsic motivation", "anima_fit": 5, "blocker": "§62 measured dual-anima loop echo-chamber-collapse — loop must inject genuine novelty", "testability": "0-design-testable then needs-fire", "status": "OPEN"},
+    {"id": "C3", "arm": 2, "name": "continuous-time / spontaneous-regime substrate (LTC)", "anima_fit": 4, "blocker": "§96 relocation — substrate spontaneity != coherent emission; substrate rewrite cost", "testability": "0-design-testable (CTM proxy) then needs-fire/hardware", "status": "OPEN"},
+    {"id": "C4", "arm": 2, "name": "softmax-free spiking attention", "anima_fit": 4, "blocker": "re-derivation not port; correctness unverified; spiking wins measured for vision not spontaneous-emission", "testability": "0-design-testable then needs-fire", "status": "OPEN"},
+    {"id": "C5", "arm": 3, "name": "criticality-as-coherence", "anima_fit": 4, "blocker": "§81-FIRE measured noise-on-Engine-G as PARTIAL-COLLAPSE; may need a different substrate", "testability": "0-design-testable then needs-fire + substrate change", "status": "OPEN"},
+    {"id": "C6", "arm": 3, "name": "spontaneous-activity-as-prediction (predictive learning rule)", "anima_fit": 5, "blocker": "downstream of C1/C2 — replays LEARNED structure; empty if diverse-data threshold uncrossed", "testability": "0-design-testable then needs-fire, needs C1/C2 first", "status": "OPEN"},
+    {"id": "C7", "arm": 3, "name": "FEP self-orthogonalizing attractor", "anima_fit": 3, "blocker": "FEP-to-byte-LM transfer unproven; §11-B measured physics-only/no-CE degenerate", "testability": "0-design-testable then needs-fire", "status": "OPEN"}
+  ],
+  "top_open_candidates": ["C2", "C1", "C3", "C6"],
+  "synthesis": "The 4 strongest candidates COMPOSE — they are not independent single-fire moves. C1+C2 fix the data regime (a diverse interaction-loop corpus), C3/C4 supply a substrate that can host continuous spontaneous dynamics, C6 supplies coherence (a predictive learning rule so spontaneity replays LEARNED structure). The arc's recurring pattern — spontaneity is cheap, coherence is the unsolved core — is resolved in the literature only by C6-style predictive learning ON a C1-style diverse corpus. 'What would move the GOAL' is plural: a diverse interaction corpus + a predictive learning rule, on a continuous-dynamics substrate. Every piece is OPEN. None is proven.",
+  "battery": "B-S99-1..4 4/4 PASS (light, literature-review tier — proves the §99 document is well-formed: 3-arm partition closed, 7-candidate taxonomy exhaustive+disjoint, NO path closed, §98/§96 cited byte-literal). B-S99-NOTE empirical carve-out.",
+  "verdict": "FRONTIER-MAPPED-7-CANDIDATES-KEPT-OPEN. §99 deep-researches the §11.3/§95/§96 frontier across 3 arms (41 papers), produces 7 candidate paths to GOAL completion all kept OPEN per '가능성 경로는 열어두자', identifies the 4 strongest (C2/C1/C3/C6) which COMPOSE into a multi-cycle research program. literature-review tier — literature = inspiration NOT proof, capability claim 0.",
+  "g3": "literature review NOT empirical. arxiv citation = inspiration NOT proof. necessary-not-sufficient (B-EMERGE-7). north-star + §15/§51/§72 milestones UNCHANGED, GOAL 미도달.",
+  "f1_f2_safe": true,
+  "north_star": "unchanged",
+  "goal_reached": false
+}

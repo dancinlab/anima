@@ -1,0 +1,126 @@
+{
+  "schema": "anima.spec.verdict.v1",
+  "spec_id": "anima_core_emerge_stage_3_user_protocol_spec_2026_05_05",
+  "kind": "doc_only_spec_land",
+  "verdict": "LANDED",
+  "ts_utc": "2026-05-05T12:55:00Z",
+  "cost_usd": 0.0,
+  "host": "mac",
+  "doc_path": "docs/anima_core_emerge_stage_3_user_protocol_spec_2026_05_05.md",
+  "doc_loc": 603,
+  "doc_loc_target_range": "300-500 (bilingual KO+EN naturally exceeds)",
+  "sections": [
+    "§1 Stage 3 개요 (paradigm context)",
+    "§2 사용자 매뉴얼 (KO + EN bilingual)",
+    "§3 Session naming convention",
+    "§4 Observation log schema",
+    "§5 Stop criteria (3 markers)",
+    "§6 누적 패턴 분류 (BG-B analyzer integration path)",
+    "§7 Honest C3 (7 entries, >= 5)",
+    "§8 Composability + handoff"
+  ],
+  "bilingual_ko_en": {
+    "pre_flight": "PASS (§2.1 KO + §2.2 EN)",
+    "session_start": "PASS (§2.3 KO + §2.4 EN)",
+    "substrate_response_4line": "PASS (§2.5 KO + §2.6 EN)",
+    "next_input_heuristic": "PASS (§2.7 KO + EN combined table)",
+    "verdict": "PASS"
+  },
+  "session_naming_convention": {
+    "standard_path": "state/anima_core_dialogues/<YYYY-MM-DD>/<HH-MM-SS>.jsonl",
+    "topic_tagged_path": "state/anima_core_dialogues/<YYYY-MM-DD>/<HH-MM-SS>_<topic_tag>.jsonl",
+    "session_set_dir": "state/anima_core_dialogues_sets/<set_name>/",
+    "set_manifest_schema": "anima.dialogue.set.v1",
+    "canonical_topic_tags_listed": 10,
+    "session_set_patterns": ["A_symlink", "B_copy_with_manifest"],
+    "ts_utc_anchor": "via existing anima.dialogue.v1 jsonl ts_utc field"
+  },
+  "observation_log_schema": {
+    "per_day_file": "state/anima_core_dialogues/<YYYY-MM-DD>/observations.md",
+    "per_session_block_fields": [
+      "intent",
+      "surprising",
+      "emerge_candidate_hits_D_E_F_G_H",
+      "phi_star_envelope",
+      "dominant_axis",
+      "cell_pattern",
+      "next_session_intent"
+    ],
+    "hit_marker_taxonomy": ["yes", "partial", "no", "n/a"],
+    "honesty_hierarchy": "n/a >= no >= partial >= yes",
+    "aggregate_file": "state/anima_core_dialogues/aggregate_observations.md (optional, post-30-sessions)"
+  },
+  "stop_criteria": {
+    "marker_1_saturation": {
+      "trigger": "n_sessions >= 30 AND user explicit 'no new findings' self-report",
+      "explicit": true
+    },
+    "marker_2_candidate_dominance": {
+      "trigger": "one of D/E/F/G/H hit_rate >= 70% over >= 20 testable sessions across >= 3 topic_tags",
+      "explicit": true
+    },
+    "marker_3_clm_v5_hint": {
+      "trigger": "pattern not explainable by any of D-H, suggests v5 architectural redesign",
+      "explicit": true
+    },
+    "non_markers_listed": ["time elapsed", "cost", "external pressure", "session count alone"],
+    "stop_action": "write docs/anima_core_emerge_stage_3_closure_<DATE>.md (skeleton in §5.5)"
+  },
+  "bg_b_analyzer_integration": {
+    "analyzer_path_referenced": "tool/anima_cli/dialogue_session_analyzer.hexa",
+    "analyzer_status_at_spec_land": "in_progress (BG-B sister); not yet present at canonical path",
+    "modes_specced": ["single-session", "corpus"],
+    "corpus_aggregates": [
+      "phi_star_variance",
+      "axis_dominance_distribution",
+      "cell_stability_pattern",
+      "emerge_candidate_hit_rate"
+    ],
+    "hit_rate_aggregation_feasibility": "PASS — analyzer parses (1) jsonl substrate_turn for metrics + (2) observations.md markdown blocks via heading regex + line regex (specified in §6.3)",
+    "marker_2_signal_path": "corpus mode emits hit_rate >= 0.70 with >= 20 testable sessions across >= 3 topic_tags → user-facing flag → user confirms before §5.5 stop action",
+    "decoupling": "Stage 3 functions without analyzer; user can grep observations.md for n < 30 hand-count (§6.5)",
+    "output_artifact_path": "state/anima_core_dialogue_corpus_<DATE>/{aggregate.json, per_session_metrics.jsonl, candidate_hit_table.csv, analyzer_verdict.md}"
+  },
+  "honest_c3_count": 7,
+  "honest_c3_topics": [
+    "C1 — V1-V6 selftest precondition; spec excludes re-verification logic",
+    "C2 — emerge outcome epistemically open; 5 candidates have no falsifier matrix",
+    "C3 — hit-rate relies on user honesty; confirmation bias not eliminated",
+    "C4 — synthetic_fallback is protocol-rehearsal, not substrate observation; real CLM v4 forward needed",
+    "C5 — Marker 3 has no machine signal; pure user judgment risk",
+    "C6 — session filename uses local time; ts_utc preserves truth; analyzer must sort by ts_utc",
+    "C7 — observations.md parser drift risk; user discipline + §6.3 regex spec required"
+  ],
+  "raw_compliance": {
+    "raw_9_md_only_orchestration": "PASS — no hexa or shim source modifications",
+    "raw_10_honest_c3_geq_5": "PASS — 7 entries in §7",
+    "raw_15_additive_only": "PASS — existing dialogue CLI, mount layer, archaeology, paradigm docs untouched",
+    "no_commit": "PASS — no git operations performed",
+    "hf_token_leak": "NONE — no token literals embedded",
+    "py_to_hexa_only": "PASS — doc-only spec, no .py created"
+  },
+  "files_created": [
+    "docs/anima_core_emerge_stage_3_user_protocol_spec_2026_05_05.md",
+    "state/anima_core_emerge_stage_3_protocol_spec_2026_05_05/verdict.json"
+  ],
+  "files_modified": [],
+  "code_changes": "NONE (read-only paradigm + V1-V6 verification + archaeology context consumed)",
+  "wall_min_estimated": 30,
+  "wall_min_actual": 25,
+  "composability": {
+    "upstream": [
+      "docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md",
+      "docs/anima_core_clm_v4_mount_stage_1_2_v1_v6_verification_landed_2026_05_05.ai.md",
+      "docs/anima_clm_v4_architecture_archaeology_emerge_2026_05_05.md"
+    ],
+    "sister_bg": ["BG-B tool/anima_cli/dialogue_session_analyzer.hexa (in-progress)"],
+    "downstream": [
+      "docs/anima_core_emerge_stage_3_closure_<DATE>.md (when stop marker fires)",
+      "paradigm §8.4 Stage 4 entry"
+    ],
+    "sibling_orthogonal": [
+      "HF clm-v4-mk2-v1 PUBLIC promote (~36h)",
+      "EEG perfect protocol fire"
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "cycle": "§151 FEP-attractor → COMPLEXITY-REGULARIZED ROUTING design",
+  "verdict": "DESIGN-OPEN — fire-decidable",
+  "tier": "$0 design-tier (no GPU/runpod/fire/model.forward/corpus)",
+  "anchor_paper": "Self-orthogonalizing attractor neural networks emerging from the FEP (arxiv 2505.22749)",
+  "parent_context": "HEXAD/NEUROMORPHIC/SOFTWARE_BREAKTHROUGH_RESEARCH.md §8.2/§8.3",
+  "sibling_fires": ["§125 NONCE-FF (DEG)", "§126 PCN-C4 (PARTIAL_AMBIGUOUS)", "§139 EqProp (in flight)"],
+  "core_insight": "anima's universal 1/31-FLAT routing-collapse may be a MISSING-OBJECTIVE-TERM symptom — every anima objective ever fired carried only an accuracy term, never a model-complexity / description-length term; FEP-attractor theory says self-orthogonalization requires BOTH",
+  "candidate_complexity_terms": {
+    "a": "entropy-max on routing distribution: L_C = -H(p_route)",
+    "b": "pairwise basin separation: L_C = -mean d²(a,a')/N",
+    "c": "Kolmogorov description-length on routing map (needs operationalization)",
+    "d": "Φ-based (MITOSIS-native): L_C = -Φ(cell_pool)  ← strongest §7③ instance"
+  },
+  "pre_registered_measurement": {
+    "H_0": "held-out routing r_H ≤ 1/31 (FLAT ceiling holds)",
+    "H_1": "held-out routing r_H ≥ 3/31 (ceiling broken)",
+    "control": "λ_C = 0 ⇒ L = Dir-I baseline exactly (B-S151-7 byte-equal connection-point)"
+  },
+  "seven_legitimacy_gate": {
+    "c1_not_generic_LM_pretrain": true,
+    "c2_not_generic_then_graft": true,
+    "c3_anima_physics_as_source": true,
+    "verdict": "PASS — GOAL-legitimate"
+  },
+  "battery_B_S151": {
+    "method": "closed-form propositions stated as math theorems in DESIGN.md §9 (hexa-verify policy: no sympy as verdict)",
+    "propositions": [
+      "B-S151-1 OBJECTIVE-DECOMP-CLOSED",
+      "B-S151-2 ENTROPY-MAX-RESTORING-SIGN",
+      "B-S151-3 PAIRWISE-SEPARATION-MONOTONE",
+      "B-S151-4 PHI-CONNECTION-NONNEGATIVE",
+      "B-S151-5 SEVEN-LEGITIMACY-CONJUNCTION-CLOSED",
+      "B-S151-6 H0-H1-DISTINGUISHING-PARTITION-CLOSED",
+      "B-S151-7 LAMBDA-ZERO-REDUCTION-BYTE-EQUAL (connection-point)"
+    ],
+    "summary": "7/7 closed-form, audited by inspection",
+    "empirical_carve_out_B_S151_NOTE": "whether λ_C > 0 actually breaks the 1/31-FLAT ceiling at fire time is a future SGD/measurement OUTCOME; battery proves DESIGN well-formed, NOT fire success, NOT GOAL emergence. B-D-NOTE / B-S99-NOTE / B-S107-NOTE / B-EMERGE-7 family. necessary-not-sufficient at every layer."
+  },
+  "central_blue_falsifier_sha_prefix": "c93e160a8a376a94",
+  "central_blue_falsifier_zero_line_diff": true,
+  "north_star_unchanged": true,
+  "s15_s51_s72_milestones_unchanged": true,
+  "GOAL": "미도달",
+  "next_step": "the candidate fire (when fire-slot frees from §139 and rate-limit clears) lives at HEXAD/NEUROMORPHIC/state/complexity_regularized_routing_fire_s<N>/, single-variable vs Dir-I baseline, λ_C grid {0.01, 0.1, 1.0}, candidate (a) entropy-max as cheapest first probe",
+  "wall": "$0",
+  "GPU_runpod": 0,
+  "orphan": 0
+}

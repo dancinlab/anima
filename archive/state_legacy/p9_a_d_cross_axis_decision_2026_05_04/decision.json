@@ -1,0 +1,63 @@
+{
+  "schema": "anima/p9_a_d_cross_axis_decision/1",
+  "ts_utc": "2026-05-04T06:50:00Z",
+  "decision": "OPTION_3_CANCEL_AND_DEFER",
+  "rationale_summary": "Path D 25K killed (sunk $21.74), no D verdict will arrive within 24h cross-axis budget. 4-cell matrix (spec sec.5) requires BOTH axes to compute a defined cell. UNDETERMINED is the spec's intended terminal label for the missing-axis condition.",
+  "context": {
+    "watchdog_pid": 43833,
+    "watchdog_status_pre_decision": "ALIVE iter=16 elapsed=4511s polled 2026-05-04T06:46:04Z A=WAIT:fallback_status_TRAINING_IN_PROGRESS_3SEED D=MISSING",
+    "watchdog_max_wait_sec": 86400,
+    "path_a_state": "WAIT (3-seed retrain in progress, ETA verdict ~13:26 UTC; r=16 single-seed verdict already exists)",
+    "path_d_state": "ABSENT (D 25K killed; verdict file p9_paradigm_d_25k_eval_2026_05_03_verdict.json never produced)",
+    "watchdog_loop_sh_source": "ORPHAN_INODE (script file deleted; in-memory only; no recoverable source for live patch)"
+  },
+  "options_considered_ranked_by_완성도": [
+    {
+      "rank": 1,
+      "option": "OPTION_3_CANCEL_AND_DEFER",
+      "verdict": "CHOSEN",
+      "score": "highest",
+      "reasoning": "Honors spec sec.5 (UNDETERMINED → WAIT → re-run after both land). No methodology violation. Path A r=16 single-seed verdict ships standalone via its own watchdog (PID 49397, sister); cross-axis re-armed when D fresh attempt is committed in a new cycle. Clean axis-separation; zero spec drift; zero $0-budget waste; releases 24h poll slot.",
+      "trade_offs": "Cross-axis 4-cell verdict deferred to next cycle. No immediate dispatch.json/recommendation.json. Acceptable: spec explicitly classifies missing-axis as UNDETERMINED → WAIT."
+    },
+    {
+      "rank": 2,
+      "option": "OPTION_1_WAIT_FOR_D_RELAUNCH",
+      "score": "medium",
+      "reasoning": "Extends watchdog timeout to 7d; preserves armed state. Problem: D re-launch needs new GPU spend commission (D 25K killed = $21.74 sunk; re-launch is unscheduled). Watchdog wait without launch commitment is dead-poll. Also: watchdog_loop.sh source is orphan inode → cannot edit max_wait without restarting watchdog → equivalent to option 3 + manual respawn later anyway."
+    },
+    {
+      "rank": 3,
+      "option": "OPTION_2_A_ONLY_EMIT",
+      "score": "lowest",
+      "reasoning": "VIOLATES spec sec.5 4-cell matrix. Cells II (CHAT_LIVE_ONLY) and IV (BOTH_NOISE) are defined as A_PASS+D_FAIL or A_FAIL+D_FAIL — both require D verdict to exist. Synthesizing single-axis verdict by collapsing one axis to NULL fabricates a label not in the falsifier set. Violates raw#15 SSOT (spec is canonical). Patching cross-axis hexa would corrupt SSOT for all future cycles."
+    }
+  ],
+  "action_taken": {
+    "step_1": "kill 43833 — PID terminated 2026-05-04T06:50:00Z (verified ps no-row exit_code=1)",
+    "step_2": "Write decision.json (this file) + action_log.jsonl",
+    "step_3": "Write deferral marker + handoff doc"
+  },
+  "non_actions_explicit": [
+    "Did NOT preempt Path A pods (pvkyhb0lb87ydu, 0jetjpvlm51zoy, nzw0btc8br78yy) — 3-seed retrain continues per Path A r=16 watchdog PID 49397",
+    "Did NOT spawn replacement cross-axis watchdog — defer until D re-commission decision",
+    "Did NOT patch cross-axis hexa — preserves SSOT integrity per raw#15"
+  ],
+  "next_cycle_re_arm_condition": "When D fresh attempt is commissioned (new pod launched + D verdict ETA defined), re-spawn cross-axis watchdog via `hexa run tool/p9_a_d_cross_axis_completion_watchdog.hexa --loop --apply` with max_wait sized to D ETA + 4h buffer.",
+  "constraints_honored": {
+    "raw_9": "Mac-side hexa-only — no GPU spend, no pod operations, kill is OS-level supervisor action",
+    "raw_15": "SSOT preserved — cross-axis hexa unchanged, spec sec.5 4-cell matrix unchanged",
+    "raw_10_caveats": "3 caveats explicit below"
+  },
+  "raw_10_caveats": [
+    "C1 — defer is open-ended: re-arm requires D re-commission decision which is OUT OF SCOPE for this decision. If operator chooses NOT to re-launch D this cycle, cross-axis 4-cell verdict for current Path A r=16 cohort will never compute. Path A standalone verdict still ships via PID 49397.",
+    "C2 — orphan inode for watchdog_loop.sh: source file was deleted post-launch. Re-arming requires regenerating watchdog_loop.sh from scratch (or re-deriving from the cross-axis hexa landing doc) before next spawn. Recipe is documented in docs/p9_a_d_cross_axis_completion_watchdog_landed_2026_05_04.ai.md.",
+    "C3 — Path A r=16 single-seed verdict is already PARTIAL evidence: 3-seed retrain is in progress to address F-PATHA-MITIGATION-1 caveat #4 (landing band [-0.5, +0.5] needs 3-seed amend). When 3-seed verdict lands (~13:26 UTC), the A axis upgrades from PARTIAL → terminal regardless of D. Cross-axis can then be RE-armed against the upgraded A verdict + (eventual) D verdict in a future cycle."
+  ],
+  "spend_impact": "$0 — Mac-side decision + kill + file writes only. No GPU rentals affected.",
+  "verdict_routing": {
+    "path_a_verdict": "ships via PID 49397 watchdog → state/p9_path_a_r16_eval_pipeline_2026_05_03/mitigation_comparison.json (single-seed) and state/p9_path_a_r16_3seed_2026_05_04/verdict.json (3-seed amend)",
+    "path_d_verdict": "DEFERRED — no path D commission scheduled in this cycle",
+    "cross_axis_verdict": "DEFERRED to next cycle (when both axes terminal)"
+  }
+}

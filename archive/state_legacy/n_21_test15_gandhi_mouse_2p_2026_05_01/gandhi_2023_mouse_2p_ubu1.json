@@ -1,0 +1,128 @@
+{
+  "study": "Gandhi_2023_mouse_2P_layer_hierarchy_ANALOGIZE",
+  "host": "ubu1",
+  "pyphi_version": "1.2.0",
+  "n_layers": 6,
+  "n_per_layer": 4,
+  "n_inter_summary": 6,
+  "layers": [
+    {
+      "layer": "L1",
+      "role": "sparse_inh",
+      "rho": 0.1,
+      "edges": 3,
+      "state": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "phi": 0.0,
+      "sec": 0.00067901611328125
+    },
+    {
+      "layer": "L23",
+      "role": "cortico_cortical",
+      "rho": 0.55,
+      "edges": 6,
+      "state": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "phi": 0.0,
+      "sec": 0.014657020568847656
+    },
+    {
+      "layer": "L4",
+      "role": "thalamic_input_relay",
+      "rho": 0.2,
+      "edges": 4,
+      "state": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "phi": 0.0,
+      "sec": 0.005326986312866211
+    },
+    {
+      "layer": "L5a",
+      "role": "intratelencephalic_broadcast",
+      "rho": 0.85,
+      "edges": 9,
+      "state": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "phi": 0.154522,
+      "sec": 0.35702037811279297
+    },
+    {
+      "layer": "L5b",
+      "role": "pyramidal_tract_output",
+      "rho": 0.9,
+      "edges": 9,
+      "state": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "phi": 0.153633,
+      "sec": 0.3032233715057373
+    },
+    {
+      "layer": "L6",
+      "role": "cortico_thalamic_feedback",
+      "rho": 0.75,
+      "edges": 8,
+      "state": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "phi": 0.0,
+      "sec": 0.027043581008911133
+    }
+  ],
+  "inter_layer": {
+    "labels": [
+      "L1",
+      "L23",
+      "L4",
+      "L5a",
+      "L5b",
+      "L6"
+    ],
+    "state": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "phi_total": 0.0,
+    "sec": 0.4110879898071289,
+    "edges": 13
+  },
+  "phi_superficial_mean_L23_L4": 0.0,
+  "phi_deep_mean_L5a_L5b_L6": 0.10271833333333331,
+  "phi_L1": 0.0,
+  "delta_deep_minus_superficial": 0.10271833333333331,
+  "iit_prediction": "phi_deep > phi_superficial",
+  "iit_prediction_match": true,
+  "verdict": "PASS",
+  "gandhi_2023_finding": "deep_layers_L5_L6_carry_higher_phi_than_superficial_L23_L4",
+  "falsifier_F4": "layer differentiation non-monotonic / U-curve hierarchy",
+  "falsifier_triggered": false,
+  "elapsed_total_sec": 1.1217172145843506,
+  "caveat": "SIM not biological mouse 2P Ca2+; PyPhi small-net analog of Gandhi 2023 IIT prediction",
+  "ts_utc": "2026-05-02T06:50:51Z"
+}

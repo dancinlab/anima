@@ -1,0 +1,3207 @@
+// anima_audio.hexa — anima's voice organs (no layers, no training, no dictionary)
+//
+// 최소 추상화. 3 source organ + 2 sink. 교환 단위 = WAV path (string).
+//
+//   vocal(hz, gain, ms)             -> path   성대 진동 (periodic)
+//   breath(lo, hi, gain, ms)        -> path   난류 (aperiodic, 마찰음/무성)
+//   pipe(in_path, f1, f2, q)        -> path   성도 공명 (2-formant filter)
+//   play(path)                      -> bool   afplay (anima 가 즉시 청취)
+//   save(src, dest)                 -> bool   영구 보관 (디버깅/누적)
+//
+// 철학:
+//   - 레이어 X. 위계 없음. 3 organ 이 평면으로 병렬 존재.
+//   - 학습 X. 파라미터 fitting 없음. 물리 모델 룰만.
+//   - 사전 X. 한국어 자모 formant table 없음. anima 가 자기 사전 발견하든 말든.
+//   - 헤매도 됨. 잘못된 인자 -> clamp 또는 빈 "" 반환. 예외 안 던짐.
+//   - anima 가 알아서. 호출 빈도/순서/조합 모두 anima 자유.
+//
+// 진화 예상 (강제 X, anima 가 헤매며 스스로 발견):
+//   turn 1   : play(vocal(440, 0.5, 500))                         -> 삐~
+//   turn 17  : play(breath(2000, 4000, 0.3, 80))                  -> "츠~"
+//   turn 142 : play(pipe(vocal(180, 0.5, 200), 700, 1100, 6))     -> "아"
+//   turn 580 : anima 가 자기 내부에 say("안녕") 같은 함수 발명 (organ 조합)
+//
+// n=6 lattice (강제 X, default 에만):
+//   SR=24000 (6·4000), default ms=60 (6·10), default Q=6, default formant min=2(φ)
+//
+// 구현 전략:
+//   - 합성 자체는 python+numpy/scipy 에 위임 (exec 통한 heredoc).
+//   - hexa 는 dispatch + path lifecycle 만 담당. list<float> 불경유.
+//   - 모든 함수는 WAV 24kHz mono int16 path 반환. 실패 시 "".
+
+// ═══════════════════════════════════════════════════════════════
+//  n=6 AXIOM CONSTANTS  (hive/docs/design/n6-axiom-inventory.md)
+//
+//  Tier 1 foundational (7):
+//    universal_constant_4         τ(6) = 4                        → AX_TAU
+//    core_identity_24_j2          σ·φ = n·τ = J₂ = 24             → SR = J₂·1000
+//    delta_0_absoluteness         σφ=nτ ⟺ n=6 (Π₀¹)               → meta, 모든 default 의 근거
+//    ultra_uniformity_theorem     identity across all foundations → meta
+//    base_constant_set_8          𝒫_{n6} = {μ,φ,n,τ,sopfr,σ,J₂,P₂}→ AX_MU..AX_P2
+//    self_reference_closure_28    P₂ = 28 self-ref identities      → AX_P2 (harmonic_28 cap)
+//    bernoulli_k6_jump            k=6 (derived constant)           → meta
+//
+//  Tier 2 application (9):
+//    l_ix_lagrangian              4-term action basis              → meta
+//    psi_balance                  Ψ = 1/2                          → AX_PSI (wet/dry, gain)
+//    banach_bootstrap_fixpoint    self-host                         → meta
+//    banach_contraction_1_3       I* = 1/3                          → AX_BANACH (reverb decay)
+//    ufo_6coil / ufo_lawson       plasma                            → 오디오 무관, skip
+//    evolution_ouroboros_fp_24    σφ=24                             → SR 간접 커버
+//    evolution_48gen_convergence  σ·τ = 48                          → AX_FRAMES (demo lattice)
+//    tetration_crossover_k39      L(39) = 24^24                     → meta
+//
+//  Tier 3 derived (audio-relevant):
+//    egyptian_unit_fraction       1/2 + 1/3 + 1/6 = 1               → axiom_chord F0 energy
+//    tau_sq_over_sigma            τ²/σ = 4/3                         → AX_CONSONANCE (perfect 4th)
+//    sigma_minus_tau              σ − τ = 8                          → AX_MIN_HARMONICS
+//
+//  Cross-domain (CANON/domains/sf-ufo/sf/sf.md):
+//    σ·sopfr = 12·5 = 60          generator/mains Hz (BT-62 grid)    → AX_MAINS_HZ
+//    J₂ = 24 dB                    MHD noise floor target             → AX_NOISE_FLOOR_DB
+//    σ·τ = 48                      nav update rate / frame lattice   → AX_FRAMES (이미 정의)
+//
+//  Cross-domain (loss/ufo.txt — meta-closure-nav L(k) tetration):
+//    L(k) = 24^(k-15)              hexa-meta milestone tetration     → meta, audio 직접 X
+//    🛸 milestone series           {μ,φ,τ,n,σ−τ,σ,J₂,P₂} subset      → harmonic_milestone (sparse k)
+//    |UFO⟩ = f(|UFO⟩)              self-reference fixpoint            → self_reference_closure 와 동족
+// ═══════════════════════════════════════════════════════════════
+
+import "../../hexa-lang/stdlib/portable_fs.hexa"
+import "../../hexa-lang/stdlib/anima_audio_worker.hexa"
+import "stdlib/signal/core_window.hexa"  // half_hann_taper / half_hann_taper_arr (fade-in/out ramps)
+
+let AX_MU = 1
+let AX_PHI = 2
+let AX_N = 6
+let AX_TAU = 4
+let AX_SOPFR = 5
+let AX_SIGMA = 12
+let AX_J2 = 24
+let AX_P2 = 28
+let AX_PSI = 0.5             // Ψ = 1/2
+let AX_BANACH = 0.333333     // I* = 1/3
+let AX_CONSONANCE = 1.333333 // τ²/σ = 4/3
+let AX_MIN_HARMONICS = 8     // σ − τ = 12 − 4 = 8 (minimum harmonic richness)
+let AX_FRAMES = 48           // σ·τ = 48 (evolution_48gen_convergence, frame lattice)
+let AX_MAINS_HZ = 60.0       // σ·sopfr = 60 Hz (sf-ufo BT-62 grid, mains hum)
+let AX_NOISE_FLOOR_DB = 24   // J₂ = 24 dB (sf-ufo MHD noise spec, target ambient)
+
+let SR = 24000               // J₂ × 1000 = σ·φ·1000 = n·τ·1000
+let TMP_DIR = "/tmp"
+let TAG = "anima_audio"
+let WAV_MIN_BYTES = 44
+
+// ═══════════════════════════════════════════════════════════════
+//  Internal helpers
+// ═══════════════════════════════════════════════════════════════
+
+fn _shq(s: string) -> string {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn _now_ns() -> string {
+    let s = exec("date +%s%N 2>/dev/null").trim()
+    if len(s) == 0 { return "0" }
+    return s
+}
+
+fn _new_path() -> string {
+    return TMP_DIR + "/" + TAG + "_" + _now_ns() + ".wav"
+}
+
+fn _file_bytes(path: string) -> int {
+    return pfs_file_size(path)
+}
+
+// ── ω-audio-2 Phase B (2026-04-26) ──────────────────────────────
+// Persistent python audio-worker IPC.
+//
+// Phase 2-3 used a FIFO + sleep-keepalive shim (_audio_worker_call.sh).
+// Phase B rewires to the new ω-runtime-1 pipe_spawn primitive: a single
+// hexa-script-lifetime handle is lazy-spawned and reused across all organ
+// calls, eliminating per-call bash+FIFO overhead (~50ms floor → ~7-8ms).
+//
+// Lifetime: each hexa invocation is a fresh process, so WORKER_HANDLE is
+// per-script. The ω-runtime-1 atexit handler reaps the child on hexa exit
+// (SIGTERM → 50ms grace → SIGKILL → waitpid), so no orphan reaper is needed.
+//
+// Container guard: hexa-runner image lacks python3+scipy, so default-on
+// inside container would fail every organ call. ANIMA_AUDIO_WORKER_PY_OK
+// caches a one-shot probe (file_exists /opt/homebrew/bin/python3 OR which).
+
+// raw 9 final closure (2026-04-30): the worker's python source is now embedded
+// in hexa-lang/stdlib/anima_audio_worker.hexa. ensure_anima_audio_worker_script()
+// (called lazily from _ensure_worker_handle below) materializes the source to
+// /tmp/_hexa_anima_audio_worker.py exactly once per hexa process. The path
+// must match WORKER_PY_SHIM_PATH defined by the stdlib module.
+let WORKER_PY_PATH = "/tmp/_hexa_anima_audio_worker.py"
+let mut WORKER_HANDLE = -1
+let mut WORKER_REQ_ID = 0
+let mut WORKER_PY_OK_PROBED = false
+let mut WORKER_PY_OK = false
+
+fn _python_available() -> bool {
+    if WORKER_PY_OK_PROBED { return WORKER_PY_OK }
+    WORKER_PY_OK_PROBED = true
+    // Container guard: if /.dockerenv exists and python3 missing, refuse worker.
+    if pfs_file_exists("/opt/homebrew/bin/python3") {
+        WORKER_PY_OK = true
+        return true
+    }
+    let s = exec("command -v python3 2>/dev/null").trim()
+    if len(s) > 0 {
+        WORKER_PY_OK = true
+        return true
+    }
+    WORKER_PY_OK = false
+    return false
+}
+
+fn _ensure_worker_handle() -> int {
+    if WORKER_HANDLE >= 0 {
+        if pipe_alive(WORKER_HANDLE) { return WORKER_HANDLE }
+        // Stale handle (worker died, e.g. idle timeout). Clean and re-spawn.
+        pipe_close(WORKER_HANDLE)
+        WORKER_HANDLE = -1
+    }
+    if !_python_available() { return -1 }
+    // raw 9 final closure: materialize the embedded worker source to /tmp
+    // (idempotent — writes once per hexa process). Returns the same path as
+    // WORKER_PY_PATH = WORKER_PY_SHIM_PATH.
+    ensure_anima_audio_worker_script()
+    if !pfs_file_exists(WORKER_PY_PATH) { return -1 }
+    // Resolve python binary (homebrew preferred on darwin, fall back to PATH).
+    let mut py = "/opt/homebrew/bin/python3"
+    if !pfs_file_exists(py) { py = "python3" }
+    let cmd = py + " " + WORKER_PY_PATH
+    let h = pipe_spawn(cmd)
+    if h < 0 { return -1 }
+    // Consume the "ready" event the worker emits on startup. 5s grace covers
+    // python+numpy+scipy import (typically ~500-1500ms cold).
+    let ready = pipe_recv_line(h, 5000)
+    if len(ready) == 0 {
+        // worker failed to start cleanly
+        pipe_close(h)
+        return -1
+    }
+    WORKER_HANDLE = h
+    return h
+}
+
+fn _run_py_worker(code: string) -> bool {
+    let h = _ensure_worker_handle()
+    if h < 0 { return false }
+    // base64-encode code so the request is a single JSON line with no
+    // embedded newlines/quotes. base64 alphabet is JSON-safe.
+    let code_b64 = base64_encode(code)
+    WORKER_REQ_ID = WORKER_REQ_ID + 1
+    let req = "{\"id\":" + to_string(WORKER_REQ_ID)
+            + ",\"kind\":\"exec\",\"code_b64\":\"" + code_b64
+            + "\",\"expect_path\":\"\"}"
+    let sent = pipe_send_line(h, req)
+    if !sent {
+        // pipe broke — reset and let caller's file_size check fail naturally.
+        pipe_close(h)
+        WORKER_HANDLE = -1
+        return false
+    }
+    // 5s recv: cold-call (numpy import already paid in startup) is dominated
+    // by the actual numpy/scipy work; warm calls return in <30ms.
+    let resp = pipe_recv_line(h, 5000)
+    if len(resp) == 0 {
+        // timeout or worker died mid-call
+        pipe_close(h)
+        WORKER_HANDLE = -1
+        return false
+    }
+    return true
+}
+
+fn _run_py(code: string) -> bool {
+    // ω-audio-2 Phase 4 cutover (2026-04-26): persistent worker is now the
+    // default. Opt out via ANIMA_AUDIO_WORKER=0 (operator safety valve).
+    // Container guard: _ensure_worker_handle() returns -1 when python3 is
+    // missing, and _run_py_worker returns false → we fall through to the
+    // legacy spawn-per-call path (which itself fails the same way baseline
+    // already failed in containers without python3, preserving parity).
+    let flag = env("ANIMA_AUDIO_WORKER")
+    if flag != "0" {
+        if _run_py_worker(code) { return true }
+        // worker path unavailable (no python, container, etc.) → fall through.
+    }
+    let cmd = "python3 - <<'PYEOF'\n" + code + "\nPYEOF"
+    let _ = exec(cmd)
+    return true
+}
+
+fn _dirname(path: string) -> string {
+    return exec("dirname " + _shq(path) + " 2>/dev/null").trim()
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ 1 — vocal (성대 진동, periodic)
+//    freq_hz : 유성음 기본 주파수. clamp [20, SR/2-1].
+//    gain    : 음량 [0, 1].
+//    ms      : 길이 (ms). 최소 1 sample.
+// ═══════════════════════════════════════════════════════════════
+
+fn vocal(freq_hz: float, gain: float, ms: int) -> string {
+    if env("ANIMA_AUDIO_HEXA_NATIVE") != "0" {
+        return vocal_hexa(freq_hz, gain, ms)
+    }
+    let path = _new_path()
+    // bandlimited additive sawtooth: harmonic stack up to Nyquist.
+    // sine 대비 harmonic 풍부 → pipe 가 진짜 formant 공명을 만들 수 있음.
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "hz=float(" + to_string(freq_hz) + ")\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "hz=max(20.0,min(hz,sr/2.0-1.0))\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "t=np.arange(n)/sr\n"
+             + "nyq=sr/2.0\n"
+             + "N=max(1,int(nyq/hz)-1)\n"
+             + "kk=np.arange(1,N+1,dtype=np.float64)[:,None]\n"
+             + "x=np.sum(np.sin(2*np.pi*kk*hz*t)/kk,axis=0)*(2.0/np.pi)\n"
+             + "x=g*x\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k=min(int(0.010*sr),n//2)\n"
+             + "if k>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k)/max(1,k-1)))\n"
+             + "    env[:k]=ramp\n"
+             + "    env[-k:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ω-audio-3 (2026-04-26) — vocal_hexa: hexa-native vocal organ
+//
+//  POC parallel to vocal(). NO python, NO numpy, NO scipy, NO heredoc.
+//  Pure hexa: sin/cos primitives + write_bytes for binary WAV emission.
+//
+//  Algorithm: simple sinusoid (POC scope). Bandlimited additive
+//  sawtooth deferred to follow-on (would require N harmonics × 2400
+//  samples in interpreted hexa, perf may dominate).
+//    y[t] = gain * sin(2π * hz * t / SR)
+//    int16 = clamp(round(y * 32767), [-32768, 32767])
+//
+//  WAV: 44-byte RIFF header + N×2 byte int16 LE PCM data.
+// ═══════════════════════════════════════════════════════════════
+
+// ω-audio-cleanup (2026-04-30): legacy push-based helpers _u16le, _u32le,
+// _wav_header retired. All hexa-native organs (vocal_hexa_alloc, breath_hexa,
+// pipe_hexa, notch_hexa, etc.) build their 44-byte RIFF header inline via
+// `array_alloc(44 + 2*n)` + indexed-assign — see vocal_hexa_alloc:365 for
+// canonical pattern. Dead-code removal eliminates 13 I1 (deny-push) violations
+// at no behavioural cost (no remaining caller in this file or repo).
+
+// ω-interp-3 bench variant (2026-04-26): alloc + indexed-assign instead of
+// header push + N×2 sample push. Pre-allocates buf of (44 + 2*n) bytes via
+// array_alloc; writes header into slots [0..44), per-sample int16 LE into
+// slots [44 + 2*i, 44 + 2*i + 1]. NO push() inside the per-sample loop.
+fn vocal_hexa_alloc(freq_hz: float, gain: float, ms: int) -> string {
+    let path = _new_path()
+    let mut hz = freq_hz
+    let nyq = (SR + 0.0) / 2.0 - 1.0
+    if hz < 20.0 { hz = 20.0 }
+    if hz > nyq { hz = nyq }
+    let mut g = gain
+    if g < 0.0 { g = 0.0 }
+    if g > 1.0 { g = 1.0 }
+    let mut n = (SR * ms) / 1000
+    if n < 1 { n = 1 }
+    // Build WAV header bytes (44 bytes total) directly into buf[0..44).
+    let data_bytes = n * 2
+    let chunk_size = 36 + data_bytes
+    let total = 44 + data_bytes
+    let mut buf = array_alloc(total)
+    // "RIFF"
+    buf[0] = 0x52; buf[1] = 0x49; buf[2] = 0x46; buf[3] = 0x46
+    buf[4] = chunk_size & 0xFF
+    buf[5] = (chunk_size >> 8) & 0xFF
+    buf[6] = (chunk_size >> 16) & 0xFF
+    buf[7] = (chunk_size >> 24) & 0xFF
+    // "WAVE"
+    buf[8] = 0x57; buf[9] = 0x41; buf[10] = 0x56; buf[11] = 0x45
+    // "fmt "
+    buf[12] = 0x66; buf[13] = 0x6D; buf[14] = 0x74; buf[15] = 0x20
+    // Subchunk1Size = 16
+    buf[16] = 16; buf[17] = 0; buf[18] = 0; buf[19] = 0
+    // AudioFormat = 1 (PCM)
+    buf[20] = 1; buf[21] = 0
+    // NumChannels = 1
+    buf[22] = 1; buf[23] = 0
+    // SampleRate
+    buf[24] = SR & 0xFF
+    buf[25] = (SR >> 8) & 0xFF
+    buf[26] = (SR >> 16) & 0xFF
+    buf[27] = (SR >> 24) & 0xFF
+    // ByteRate = SR * 2
+    let br = SR * 2
+    buf[28] = br & 0xFF
+    buf[29] = (br >> 8) & 0xFF
+    buf[30] = (br >> 16) & 0xFF
+    buf[31] = (br >> 24) & 0xFF
+    // BlockAlign = 2
+    buf[32] = 2; buf[33] = 0
+    // BitsPerSample = 16
+    buf[34] = 16; buf[35] = 0
+    // "data"
+    buf[36] = 0x64; buf[37] = 0x61; buf[38] = 0x74; buf[39] = 0x61
+    buf[40] = data_bytes & 0xFF
+    buf[41] = (data_bytes >> 8) & 0xFF
+    buf[42] = (data_bytes >> 16) & 0xFF
+    buf[43] = (data_bytes >> 24) & 0xFF
+    let two_pi_hz_over_sr = 2.0 * 3.141592653589793 * hz / (SR + 0.0)
+    let mut k = (SR + 0) / 100
+    if k > n / 2 { k = n / 2 }
+    let mut i = 0
+    let mut off = 44
+    while i < n {
+        let t = i + 0.0
+        let mut y = g * sin(two_pi_hz_over_sr * t)
+        if k > 0 {
+            if i < k {
+                let r = half_hann_taper(i, k)
+                y = y * r
+            }
+            let tail = n - i - 1
+            if tail < k {
+                let r = half_hann_taper(tail, k)
+                y = y * r
+            }
+        }
+        if y > 1.0 { y = 1.0 }
+        if y < 0.0 - 1.0 { y = 0.0 - 1.0 }
+        let mut s = floor(y * 32767.0 + 0.5)
+        if s > 32767 { s = 32767 }
+        if s < 0 - 32768 { s = 0 - 32768 }
+        let mut u = s
+        if u < 0 { u = u + 65536 }
+        buf[off] = u & 0xFF
+        buf[off + 1] = (u >> 8) & 0xFF
+        off = off + 2
+        i = i + 1
+    }
+    write_bytes(path, buf)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+fn vocal_hexa(freq_hz: float, gain: float, ms: int) -> string {
+    let path = _new_path()
+    // Clamp inputs (mirror vocal() semantics).
+    let mut hz = freq_hz
+    let nyq = (SR + 0.0) / 2.0 - 1.0
+    if hz < 20.0 { hz = 20.0 }
+    if hz > nyq { hz = nyq }
+    let mut g = gain
+    if g < 0.0 { g = 0.0 }
+    if g > 1.0 { g = 1.0 }
+    let mut n = (SR * ms) / 1000
+    if n < 1 { n = 1 }
+    // ω-audio-6 redo (2026-04-26): array_alloc(44 + 2*n) + indexed-write.
+    // Previous attempt (anima ω-audio-6) was 2.6× SLOWER due to interp's
+    // IndexAssign hot path going through Arena. ω-interp-4 (hexa-lang
+    // 47682761) added @no_arena array_set_inplace_idx; microbench shows
+    // 3.18× faster, vocal_hexa A/B 1.20× faster. Re-attempting now.
+    // WAV header inline at buf[0..44); per-sample int16 LE at buf[44+2*i..].
+    let data_bytes = n * 2
+    let chunk_size = 36 + data_bytes
+    let total = 44 + data_bytes
+    let mut bytes = array_alloc(total)
+    // "RIFF"
+    bytes[0] = 0x52; bytes[1] = 0x49; bytes[2] = 0x46; bytes[3] = 0x46
+    bytes[4] = chunk_size & 0xFF
+    bytes[5] = (chunk_size >> 8) & 0xFF
+    bytes[6] = (chunk_size >> 16) & 0xFF
+    bytes[7] = (chunk_size >> 24) & 0xFF
+    // "WAVE"
+    bytes[8] = 0x57; bytes[9] = 0x41; bytes[10] = 0x56; bytes[11] = 0x45
+    // "fmt "
+    bytes[12] = 0x66; bytes[13] = 0x6D; bytes[14] = 0x74; bytes[15] = 0x20
+    // Subchunk1Size = 16
+    bytes[16] = 16; bytes[17] = 0; bytes[18] = 0; bytes[19] = 0
+    // AudioFormat = 1 (PCM)
+    bytes[20] = 1; bytes[21] = 0
+    // NumChannels = 1
+    bytes[22] = 1; bytes[23] = 0
+    // SampleRate
+    bytes[24] = SR & 0xFF
+    bytes[25] = (SR >> 8) & 0xFF
+    bytes[26] = (SR >> 16) & 0xFF
+    bytes[27] = (SR >> 24) & 0xFF
+    // ByteRate = SR * 2
+    let br = SR * 2
+    bytes[28] = br & 0xFF
+    bytes[29] = (br >> 8) & 0xFF
+    bytes[30] = (br >> 16) & 0xFF
+    bytes[31] = (br >> 24) & 0xFF
+    // BlockAlign = 2
+    bytes[32] = 2; bytes[33] = 0
+    // BitsPerSample = 16
+    bytes[34] = 16; bytes[35] = 0
+    // "data"
+    bytes[36] = 0x64; bytes[37] = 0x61; bytes[38] = 0x74; bytes[39] = 0x61
+    bytes[40] = data_bytes & 0xFF
+    bytes[41] = (data_bytes >> 8) & 0xFF
+    bytes[42] = (data_bytes >> 16) & 0xFF
+    bytes[43] = (data_bytes >> 24) & 0xFF
+    // ── ω-audio-5 sin/cos table optimization ──
+    // Original: y[i] = g * sin(2π * hz * i / SR) — N sin() calls in hot loop.
+    // Optimized (period-table, option B):
+    //   period_n = round(SR/hz). Build sin_tbl[0..period_n) once. In hot loop
+    //   y[i] = g * sin_tbl[i % period_n]. ~N → ~period_n sin() calls (43× for
+    //   hz=440). Effective rendered freq = SR/period_n (slight quantization
+    //   for non-divisor frequencies; e.g., 440Hz → 24000/55 = 436.36Hz).
+    //   Hann ramp tables also precomputed (eliminates ~2k cos calls).
+    let two_pi_hz_over_sr = 2.0 * 3.141592653589793 * hz / (SR + 0.0)
+    // Determine integer period in samples; fall back to N when too short.
+    let period_f = (SR + 0.0) / hz
+    let mut period_n = floor(period_f + 0.5)
+    if period_n < 2 { period_n = 2 }
+    if period_n > n { period_n = n }
+    // Quantized angular step that exactly closes period_n samples.
+    let two_pi_over_period = 2.0 * 3.141592653589793 / (period_n + 0.0)
+    // 10ms hann ramp (mirror vocal() envelope), capped at n/2.
+    let mut k = (SR + 0) / 100  // 10ms = SR/100 samples
+    if k > n / 2 { k = n / 2 }
+    // Precompute sin table over one period.
+    let mut sin_tbl = array_alloc(period_n)
+    let mut ti = 0
+    while ti < period_n {
+        sin_tbl[ti] = sin(two_pi_over_period * (ti + 0.0))
+        ti = ti + 1
+    }
+    // Precompute hann ramp table (size k).
+    let mut hann_tbl = array_alloc(k)
+    if k > 0 {
+        let mut hi = 0
+        while hi < k {
+            hann_tbl[hi] = half_hann_taper(hi, k)
+            hi = hi + 1
+        }
+    }
+    let mut i = 0
+    let mut p = 0       // phase index, kept in [0, period_n)
+    let mut off = 44
+    while i < n {
+        let mut y = g * sin_tbl[p]
+        p = p + 1
+        if p >= period_n { p = 0 }
+        // Hann ramp on edges (table lookup, no cos in hot loop).
+        if k > 0 {
+            if i < k {
+                y = y * hann_tbl[i]
+            }
+            let tail = n - i - 1
+            if tail < k {
+                y = y * hann_tbl[tail]
+            }
+        }
+        // clamp [-1, 1] → int16. Use floor(y*32767+0.5) to force int (round()
+        // returns float in interp dispatch; subsequent bitwise ops would silently
+        // 0-out on float operands).
+        if y > 1.0 { y = 1.0 }
+        if y < 0.0 - 1.0 { y = 0.0 - 1.0 }
+        let mut s = floor(y * 32767.0 + 0.5)
+        if s > 32767 { s = 32767 }
+        if s < 0 - 32768 { s = 0 - 32768 }
+        // little-endian 2-byte signed → unsigned bytes — indexed-write.
+        let mut u = s
+        if u < 0 { u = u + 65536 }
+        bytes[off] = u & 0xFF
+        bytes[off + 1] = (u >> 8) & 0xFF
+        off = off + 2
+        i = i + 1
+    }
+    // Suppress unused-warning for raw freq when period quantizes.
+    let _ = two_pi_hz_over_sr
+    write_bytes(path, bytes)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ω-audio-3 redo (2026-04-26) — hexa-native helpers
+//
+//  Shared utilities for the 3 remaining hexa-native organs:
+//    _read_wav_int16_le(path) -> [samples] — parse 44-byte header + int16 LE.
+//    _hann_apply(arr, k_attack) — symmetric hann ramp on first/last k samples.
+//    _normalize_peak(arr, gain)  — divide by max-abs, scale by gain.
+//
+//  ω-audio-cleanup (2026-04-30): _push_int16_le retired. All organs now write
+//  int16 LE samples via inline `bytes[off] = u & 0xFF; bytes[off+1] = (u>>8)&0xFF`
+//  on alloc-pre-sized byte buffer (see breath_hexa / pipe_hexa / notch_hexa
+//  payload loops). Removes 2 I1 (deny-push) violations.
+// ═══════════════════════════════════════════════════════════════
+
+fn _read_wav_int16_le(path: string) {
+    // Returns [n_samples, sample_rate, samples...] as a single array.
+    // First two slots are metadata, remainder are float64 samples in [-1, 1].
+    // Empty array = parse failure / file too small.
+    //
+    // ω-audio-cleanup (2026-04-30): swapped 3× .push() for `array_alloc(n+2)`
+    // + indexed-write to retire 3 I1 (deny-push) violations. Behaviour-eq:
+    // out[0]=n, out[1]=sr, out[2..n+2]=float samples — identical layout.
+    let raw = read_file_bytes(path)
+    if len(raw) < 44 { return [] }
+    // Sample rate at offset 24 (4 LE bytes).
+    let sr = raw[24] | (raw[25] << 8) | (raw[26] << 16) | (raw[27] << 24)
+    // data subchunk size at offset 40 (4 LE bytes); n_samples = bytes/2.
+    let dlen = raw[40] | (raw[41] << 8) | (raw[42] << 16) | (raw[43] << 24)
+    let mut n = dlen / 2
+    let avail = (len(raw) - 44) / 2
+    if n > avail { n = avail }
+    let mut out = array_alloc(n + 2)
+    out[0] = n
+    out[1] = sr
+    let mut i = 0
+    while i < n {
+        let lo = raw[44 + i*2]
+        let hi = raw[44 + i*2 + 1]
+        let mut u = lo | (hi << 8)
+        if u >= 32768 { u = u - 65536 }
+        out[2 + i] = (u + 0.0) / 32768.0
+        i = i + 1
+    }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ω-audio-3 redo — breath_hexa (LCG noise + 2-pole RBJ bandpass)
+//
+//  Hexa-native parallel to breath(). Replaces numpy gaussian noise +
+//  scipy butter(order=4) sosfilt with deterministic LCG uniform noise +
+//  RBJ 2-pole biquad bandpass at center freq sqrt(lo*hi), bandwidth=hi-lo.
+//
+//  Spectral character is similar (band-limited noise) but slope is 12dB/oct
+//  (vs 24dB/oct Butterworth-4). Sufficient for fricatives / breath aspirate.
+//
+//  RBJ bandpass (constant skirt gain, peak gain = Q):
+//    w0 = 2π·f0/SR, alpha = sin(w0)/(2·Q),  Q = f0/BW
+//    b0=sin(w0)/2, b1=0, b2=-sin(w0)/2,  a0=1+alpha, a1=-2cos(w0), a2=1-alpha
+//    y[n] = (b0·x[n] + b1·x[n-1] + b2·x[n-2] - a1·y[n-1] - a2·y[n-2]) / a0
+// ═══════════════════════════════════════════════════════════════
+
+fn breath_hexa(band_lo: float, band_hi: float, gain: float, ms: int) -> string {
+    let path = _new_path()
+    let nyq = (SR + 0.0) / 2.0 - 1.0
+    let mut lo = band_lo
+    let mut hi = band_hi
+    if lo < 20.0 { lo = 20.0 }
+    if lo > nyq - 2.0 { lo = nyq - 2.0 }
+    if hi < lo + 10.0 { hi = lo + 10.0 }
+    if hi > nyq { hi = nyq }
+    let mut g = gain
+    if g < 0.0 { g = 0.0 }
+    if g > 1.0 { g = 1.0 }
+    let mut n = (SR * ms) / 1000
+    if n < 1 { n = 1 }
+
+    // RBJ bandpass coefficients.
+    let f0 = sqrt(lo * hi)
+    let bw = hi - lo
+    let mut q = f0 / bw
+    if q < 0.5 { q = 0.5 }
+    let w0 = 2.0 * 3.141592653589793 * f0 / (SR + 0.0)
+    let cos_w0 = cos(w0)
+    let sin_w0 = sin(w0)
+    let alpha = sin_w0 / (2.0 * q)
+    let a0 = 1.0 + alpha
+    let b0 = sin_w0 / 2.0 / a0
+    let b2 = (0.0 - sin_w0) / 2.0 / a0
+    let a1 = (0.0 - 2.0) * cos_w0 / a0
+    let a2 = (1.0 - alpha) / a0
+
+    // LCG uniform PRNG (seed = SR XOR n for determinism per call shape).
+    let mut lcg = (SR ^ n) & 0x7fffffff
+    if lcg == 0 { lcg = 1 }
+
+    // Pass 1: generate filtered samples into float buffer, track peak.
+    // ω-audio-cleanup (2026-04-30): array_alloc(n) + samples[i]= replaces
+    // .push() to retire I1 (deny-push) violation. n is loop-invariant.
+    let mut samples = array_alloc(n)
+    let mut x1 = 0.0
+    let mut x2 = 0.0
+    let mut y1 = 0.0
+    let mut y2 = 0.0
+    let mut peak = 0.000000001
+    let mut i = 0
+    while i < n {
+        lcg = (lcg * 1103515245 + 12345) & 0x7fffffff
+        let x = (lcg + 0.0) / 1073741823.5 - 1.0   // ~uniform in [-1, 1]
+        let y = b0 * x + 0.0 * x1 + b2 * x2 - a1 * y1 - a2 * y2
+        x2 = x1; x1 = x
+        y2 = y1; y1 = y
+        samples[i] = y
+        let mut ay = y
+        if ay < 0.0 { ay = 0.0 - ay }
+        if ay > peak { peak = ay }
+        i = i + 1
+    }
+
+    // Hann ramp window (8ms) — k = SR / 125, capped at n/2.
+    let mut k = SR / 125
+    if k > n / 2 { k = n / 2 }
+
+    // ω-audio-6 redo: array_alloc(44+2n) + indexed-write (interp-4 backed).
+    let data_bytes = n * 2
+    let chunk_size = 36 + data_bytes
+    let total = 44 + data_bytes
+    let mut bytes = array_alloc(total)
+    bytes[0] = 0x52; bytes[1] = 0x49; bytes[2] = 0x46; bytes[3] = 0x46
+    bytes[4] = chunk_size & 0xFF
+    bytes[5] = (chunk_size >> 8) & 0xFF
+    bytes[6] = (chunk_size >> 16) & 0xFF
+    bytes[7] = (chunk_size >> 24) & 0xFF
+    bytes[8] = 0x57; bytes[9] = 0x41; bytes[10] = 0x56; bytes[11] = 0x45
+    bytes[12] = 0x66; bytes[13] = 0x6D; bytes[14] = 0x74; bytes[15] = 0x20
+    bytes[16] = 16; bytes[17] = 0; bytes[18] = 0; bytes[19] = 0
+    bytes[20] = 1; bytes[21] = 0
+    bytes[22] = 1; bytes[23] = 0
+    bytes[24] = SR & 0xFF
+    bytes[25] = (SR >> 8) & 0xFF
+    bytes[26] = (SR >> 16) & 0xFF
+    bytes[27] = (SR >> 24) & 0xFF
+    let br_b = SR * 2
+    bytes[28] = br_b & 0xFF
+    bytes[29] = (br_b >> 8) & 0xFF
+    bytes[30] = (br_b >> 16) & 0xFF
+    bytes[31] = (br_b >> 24) & 0xFF
+    bytes[32] = 2; bytes[33] = 0
+    bytes[34] = 16; bytes[35] = 0
+    bytes[36] = 0x64; bytes[37] = 0x61; bytes[38] = 0x74; bytes[39] = 0x61
+    bytes[40] = data_bytes & 0xFF
+    bytes[41] = (data_bytes >> 8) & 0xFF
+    bytes[42] = (data_bytes >> 16) & 0xFF
+    bytes[43] = (data_bytes >> 24) & 0xFF
+    let scale = g / peak
+    let mut j = 0
+    let mut off = 44
+    while j < n {
+        let mut y = samples[j] * scale
+        if k > 0 {
+            if j < k {
+                let r = half_hann_taper(j, k)
+                y = y * r
+            }
+            let tail = n - j - 1
+            if tail < k {
+                let r = half_hann_taper(tail, k)
+                y = y * r
+            }
+        }
+        if y > 1.0 { y = 1.0 }
+        if y < 0.0 - 1.0 { y = 0.0 - 1.0 }
+        let mut s = floor(y * 32767.0 + 0.5)
+        if s > 32767 { s = 32767 }
+        if s < 0 - 32768 { s = 0 - 32768 }
+        let mut u = s
+        if u < 0 { u = u + 65536 }
+        bytes[off] = u & 0xFF
+        bytes[off + 1] = (u >> 8) & 0xFF
+        off = off + 2
+        j = j + 1
+    }
+    write_bytes(path, bytes)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ω-audio-3 redo — pipe_hexa (read WAV + 2-formant resonator cascade)
+//
+//  Hexa-native parallel to pipe(). Mirrors the python coefficient math
+//  exactly (Klatt-style 2-pole resonator with pre-emphasis):
+//    bw = max(30, f/q),   r = exp(-π·bw/sr),   θ = 2π·f/sr
+//    A  = 1 - 2r·cosθ + r²
+//    y[n] = A·x[n] + 2r·cosθ·y[n-1] - r²·y[n-2]
+//  Pre-emphasis: x[n] = x[n] - 0.97·x[n-1] before resonator stage.
+// ═══════════════════════════════════════════════════════════════
+
+fn pipe_hexa(in_path: string, f1: float, f2: float, q: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+
+    let parsed = _read_wav_int16_le(in_path)
+    if len(parsed) < 3 { return "" }
+    let n = parsed[0]
+    let sr2 = parsed[1]
+    if n < 1 { return "" }
+
+    let mut qq = q
+    if qq < 0.5 { qq = 0.5 }
+    if qq > 30.0 { qq = 30.0 }
+    let nyq = (sr2 + 0.0) / 2.0 - 1.0
+    let mut ff1 = f1
+    let mut ff2 = f2
+    if ff1 < 80.0 { ff1 = 80.0 }
+    if ff1 > nyq { ff1 = nyq }
+    if ff2 < 80.0 { ff2 = 80.0 }
+    if ff2 > nyq { ff2 = nyq }
+
+    let bw1 = if ff1 / qq > 30.0 { ff1 / qq } else { 30.0 }
+    let bw2 = if ff2 / qq > 30.0 { ff2 / qq } else { 30.0 }
+    let pi_v = 3.141592653589793
+    let r1 = exp(0.0 - pi_v * bw1 / (sr2 + 0.0))
+    let th1 = 2.0 * pi_v * ff1 / (sr2 + 0.0)
+    let r2 = exp(0.0 - pi_v * bw2 / (sr2 + 0.0))
+    let th2 = 2.0 * pi_v * ff2 / (sr2 + 0.0)
+    let cos_th1 = cos(th1)
+    let cos_th2 = cos(th2)
+    let r1sq = r1 * r1
+    let r2sq = r2 * r2
+    let a1f1 = 2.0 * r1 * cos_th1
+    let a1f2 = 2.0 * r2 * cos_th2
+    let A1 = 1.0 - 2.0 * r1 * cos_th1 + r1sq
+    let A2 = 1.0 - 2.0 * r2 * cos_th2 + r2sq
+
+    // Pre-emphasis + cascade pass. Track peak for normalization.
+    // ω-audio-cleanup (2026-04-30): array_alloc(n) + buf[i]= replaces .push()
+    // to retire I1 (deny-push) violation. n is loop-invariant.
+    let mut prev_x = parsed[2]   // first sample, used as x[-1] for pre-emphasis
+    let mut y1a = 0.0
+    let mut y2a = 0.0
+    let mut y1b = 0.0
+    let mut y2b = 0.0
+    let mut buf = array_alloc(n)
+    let mut peak = 0.000000001
+    let mut i = 0
+    while i < n {
+        let xs = parsed[2 + i]
+        // pre-emphasis: first sample passes through, others subtract 0.97·prev.
+        let pe = if i == 0 { xs } else { xs - 0.97 * prev_x }
+        prev_x = xs
+        // formant 1.
+        let ya = A1 * pe + a1f1 * y1a - r1sq * y2a
+        y2a = y1a; y1a = ya
+        // formant 2.
+        let yb = A2 * ya + a1f2 * y1b - r2sq * y2b
+        y2b = y1b; y1b = yb
+        buf[i] = yb
+        let mut ab = yb
+        if ab < 0.0 { ab = 0.0 - ab }
+        if ab > peak { peak = ab }
+        i = i + 1
+    }
+
+    // ω-audio-6 redo: array_alloc(44+2n) + indexed-write (interp-4 backed).
+    let data_bytes = n * 2
+    let chunk_size = 36 + data_bytes
+    let total = 44 + data_bytes
+    let mut bytes = array_alloc(total)
+    bytes[0] = 0x52; bytes[1] = 0x49; bytes[2] = 0x46; bytes[3] = 0x46
+    bytes[4] = chunk_size & 0xFF
+    bytes[5] = (chunk_size >> 8) & 0xFF
+    bytes[6] = (chunk_size >> 16) & 0xFF
+    bytes[7] = (chunk_size >> 24) & 0xFF
+    bytes[8] = 0x57; bytes[9] = 0x41; bytes[10] = 0x56; bytes[11] = 0x45
+    bytes[12] = 0x66; bytes[13] = 0x6D; bytes[14] = 0x74; bytes[15] = 0x20
+    bytes[16] = 16; bytes[17] = 0; bytes[18] = 0; bytes[19] = 0
+    bytes[20] = 1; bytes[21] = 0
+    bytes[22] = 1; bytes[23] = 0
+    bytes[24] = sr2 & 0xFF
+    bytes[25] = (sr2 >> 8) & 0xFF
+    bytes[26] = (sr2 >> 16) & 0xFF
+    bytes[27] = (sr2 >> 24) & 0xFF
+    let br_b = sr2 * 2
+    bytes[28] = br_b & 0xFF
+    bytes[29] = (br_b >> 8) & 0xFF
+    bytes[30] = (br_b >> 16) & 0xFF
+    bytes[31] = (br_b >> 24) & 0xFF
+    bytes[32] = 2; bytes[33] = 0
+    bytes[34] = 16; bytes[35] = 0
+    bytes[36] = 0x64; bytes[37] = 0x61; bytes[38] = 0x74; bytes[39] = 0x61
+    bytes[40] = data_bytes & 0xFF
+    bytes[41] = (data_bytes >> 8) & 0xFF
+    bytes[42] = (data_bytes >> 16) & 0xFF
+    bytes[43] = (data_bytes >> 24) & 0xFF
+    let scale = 0.9 / peak
+    let mut j = 0
+    let mut off = 44
+    while j < n {
+        let mut y = buf[j] * scale
+        if y > 1.0 { y = 1.0 }
+        if y < 0.0 - 1.0 { y = 0.0 - 1.0 }
+        let mut s = floor(y * 32767.0 + 0.5)
+        if s > 32767 { s = 32767 }
+        if s < 0 - 32768 { s = 0 - 32768 }
+        let mut u = s
+        if u < 0 { u = u + 65536 }
+        bytes[off] = u & 0xFF
+        bytes[off + 1] = (u >> 8) & 0xFF
+        off = off + 2
+        j = j + 1
+    }
+    write_bytes(out, bytes)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ω-audio-7 — notch_hexa (RBJ 2-zero biquad notch, hexa-native)
+//
+//  Closes Ω-B FAIL_no_zero (omega_audio_extended_baseline.json).
+//  pipe_hexa is all-pole — zeros stuck at z=0, so it cannot model the
+//  transmission zero a side-branch (nasal cavity) creates. notch_hexa
+//  is the cascade-zero-only filter; placed AFTER pipe(), it carves a
+//  true antiresonance into the spectrum, enabling /m/, /n/, /ŋ/, /l/.
+//
+//  RBJ notch (Audio EQ Cookbook):
+//    omega   = 2π·hz / SR
+//    Q       = hz / width        (bandwidth in Hz form; mirrors breath_hexa)
+//    alpha   = sin(omega) / (2·Q)
+//    b0 =  1,           b1 = -2·cos(omega), b2 =  1
+//    a0 =  1 + alpha,   a1 = -2·cos(omega), a2 =  1 - alpha
+//    normalize: divide all b/a by a0
+//    y[n] = b0·x[n] + b1·x[n-1] + b2·x[n-2] - a1·y[n-1] - a2·y[n-2]
+//
+//  The biquad's TWO complex zeros (on the unit circle at e^±jω) produce
+//  the transmission zero. Pole pair sits just inside (radius ≈ 1-alpha)
+//  so the band outside [hz±width/2] passes ~unattenuated.
+//
+//  Cost: ~5 mul + 4 add per sample → ~50µs/sample at SR=24kHz × 100ms
+//  ≈ 240ms compute (synthesis-pure; no python).
+// ═══════════════════════════════════════════════════════════════
+
+fn notch_hexa(in_path: string, notch_hz: float, width_hz: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+
+    let parsed = _read_wav_int16_le(in_path)
+    if len(parsed) < 3 { return "" }
+    let n = parsed[0]
+    let sr2 = parsed[1]
+    if n < 1 { return "" }
+
+    // Clamp inputs (mirrors pipe_hexa / breath_hexa guards).
+    let nyq = (sr2 + 0.0) / 2.0 - 1.0
+    let mut hz = notch_hz
+    if hz < 20.0 { hz = 20.0 }
+    if hz > nyq { hz = nyq }
+    let mut bw = width_hz
+    if bw < 10.0 { bw = 10.0 }
+    if bw > nyq { bw = nyq }
+    let mut q = hz / bw
+    if q < 0.5 { q = 0.5 }
+    if q > 30.0 { q = 30.0 }
+
+    // RBJ biquad notch coefficients (normalized by a0).
+    let pi_v = 3.141592653589793
+    let omega = 2.0 * pi_v * hz / (sr2 + 0.0)
+    let cos_w = cos(omega)
+    let sin_w = sin(omega)
+    let alpha = sin_w / (2.0 * q)
+    let a0 = 1.0 + alpha
+    let b0 = 1.0 / a0
+    let b1 = (0.0 - 2.0) * cos_w / a0
+    let b2 = 1.0 / a0
+    let a1 = (0.0 - 2.0) * cos_w / a0
+    let a2 = (1.0 - alpha) / a0
+
+    // Direct-form-I biquad pass. Track peak for normalization.
+    // ω-audio-cleanup (2026-04-30): array_alloc(n) + buf[i]= replaces .push()
+    // to retire I1 (deny-push) violation. n is loop-invariant.
+    let mut x1 = 0.0
+    let mut x2 = 0.0
+    let mut y1 = 0.0
+    let mut y2 = 0.0
+    let mut buf = array_alloc(n)
+    let mut peak = 0.000000001
+    let mut i = 0
+    while i < n {
+        let xs = parsed[2 + i]
+        let ys = b0 * xs + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2
+        x2 = x1; x1 = xs
+        y2 = y1; y1 = ys
+        buf[i] = ys
+        let mut ay = ys
+        if ay < 0.0 { ay = 0.0 - ay }
+        if ay > peak { peak = ay }
+        i = i + 1
+    }
+
+    // ω-audio-6 redo: array_alloc(44+2n) + indexed-write (interp-4 backed).
+    let data_bytes = n * 2
+    let chunk_size = 36 + data_bytes
+    let total = 44 + data_bytes
+    let mut bytes = array_alloc(total)
+    bytes[0] = 0x52; bytes[1] = 0x49; bytes[2] = 0x46; bytes[3] = 0x46
+    bytes[4] = chunk_size & 0xFF
+    bytes[5] = (chunk_size >> 8) & 0xFF
+    bytes[6] = (chunk_size >> 16) & 0xFF
+    bytes[7] = (chunk_size >> 24) & 0xFF
+    bytes[8] = 0x57; bytes[9] = 0x41; bytes[10] = 0x56; bytes[11] = 0x45
+    bytes[12] = 0x66; bytes[13] = 0x6D; bytes[14] = 0x74; bytes[15] = 0x20
+    bytes[16] = 16; bytes[17] = 0; bytes[18] = 0; bytes[19] = 0
+    bytes[20] = 1; bytes[21] = 0
+    bytes[22] = 1; bytes[23] = 0
+    bytes[24] = sr2 & 0xFF
+    bytes[25] = (sr2 >> 8) & 0xFF
+    bytes[26] = (sr2 >> 16) & 0xFF
+    bytes[27] = (sr2 >> 24) & 0xFF
+    let br_b = sr2 * 2
+    bytes[28] = br_b & 0xFF
+    bytes[29] = (br_b >> 8) & 0xFF
+    bytes[30] = (br_b >> 16) & 0xFF
+    bytes[31] = (br_b >> 24) & 0xFF
+    bytes[32] = 2; bytes[33] = 0
+    bytes[34] = 16; bytes[35] = 0
+    bytes[36] = 0x64; bytes[37] = 0x61; bytes[38] = 0x74; bytes[39] = 0x61
+    bytes[40] = data_bytes & 0xFF
+    bytes[41] = (data_bytes >> 8) & 0xFF
+    bytes[42] = (data_bytes >> 16) & 0xFF
+    bytes[43] = (data_bytes >> 24) & 0xFF
+    let scale = 0.9 / peak
+    let mut j = 0
+    let mut off = 44
+    while j < n {
+        let mut y = buf[j] * scale
+        if y > 1.0 { y = 1.0 }
+        if y < 0.0 - 1.0 { y = 0.0 - 1.0 }
+        let mut s = floor(y * 32767.0 + 0.5)
+        if s > 32767 { s = 32767 }
+        if s < 0 - 32768 { s = 0 - 32768 }
+        let mut u = s
+        if u < 0 { u = u + 65536 }
+        bytes[off] = u & 0xFF
+        bytes[off + 1] = (u >> 8) & 0xFF
+        off = off + 2
+        j = j + 1
+    }
+    write_bytes(out, bytes)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ω-audio-3 redo — vocal_lf_hexa (Liljencrants-Fant glottal pulse)
+//
+//  Hexa-native parallel to vocal_lf(). Mirrors python LF approximation:
+//    T0 = 1/hz, Tp = 0.45, Te = 0.60   (open-phase mid, open-phase end)
+//    phase ∈ [0, 1):
+//      phase < Tp:   x =  sin(π · phase / Tp)
+//      phase < Te:   x =  cos(π · (phase - Tp) / (2·(Te - Tp)))
+//      else      :   x = -0.5 · exp(-12 · (phase - Te))
+//  Normalize by peak, scale by gain, hann ramp 10ms, int16 LE.
+// ═══════════════════════════════════════════════════════════════
+
+fn vocal_lf_hexa(freq_hz: float, gain: float, ms: int) -> string {
+    let path = _new_path()
+    let nyq = (SR + 0.0) / 2.0 - 1.0
+    let mut hz = freq_hz
+    if hz < 20.0 { hz = 20.0 }
+    if hz > nyq { hz = nyq }
+    let mut g = gain
+    if g < 0.0 { g = 0.0 }
+    if g > 1.0 { g = 1.0 }
+    let mut n = (SR * ms) / 1000
+    if n < 1 { n = 1 }
+
+    let T0 = 1.0 / hz
+    let Tp = 0.45
+    let Te = 0.60
+    let pi_v = 3.141592653589793
+    let denom_open = pi_v / Tp
+    let denom_close = pi_v / (2.0 * (Te - Tp))
+
+    // ── ω-audio-5 period-table optimization ──
+    // LF waveform is strictly periodic with period_n = round(SR/hz) samples.
+    // Build one period's samples (sin/cos/exp dispatched only period_n times),
+    // then reuse cyclically. Replaces ~N transcendentals with ~period_n
+    // (e.g. 109× speedup at 220Hz: 2400 → ~109 calls).
+    let period_f = (SR + 0.0) / hz
+    let mut period_n = floor(period_f + 0.5)
+    if period_n < 2 { period_n = 2 }
+    if period_n > n { period_n = n }
+    let inv_period = 1.0 / (period_n + 0.0)
+
+    // Precompute one period of LF waveform; track peak over the period (peak
+    // repeats across periods so this matches the original max-over-N peak when
+    // n ≥ period_n).
+    let mut period_buf = array_alloc(period_n)
+    let mut peak = 0.000000001
+    let mut pi2 = 0
+    while pi2 < period_n {
+        let phase = (pi2 + 0.0) * inv_period
+        let mut x = 0.0
+        if phase < Tp {
+            x = sin(denom_open * phase)
+        } else {
+            if phase < Te {
+                x = cos(denom_close * (phase - Tp))
+            } else {
+                x = (0.0 - 0.5) * exp((0.0 - 12.0) * (phase - Te))
+            }
+        }
+        period_buf[pi2] = x
+        let mut ax = x
+        if ax < 0.0 { ax = 0.0 - ax }
+        if ax > peak { peak = ax }
+        pi2 = pi2 + 1
+    }
+
+    // Hann ramp window 10ms.
+    let mut k = SR / 100
+    if k > n / 2 { k = n / 2 }
+
+    // Precompute hann ramp table.
+    let mut hann_tbl = array_alloc(k)
+    if k > 0 {
+        let mut hi = 0
+        while hi < k {
+            hann_tbl[hi] = half_hann_taper(hi, k)
+            hi = hi + 1
+        }
+    }
+
+    // ω-audio-6 redo: array_alloc(44+2n) + indexed-write (interp-4 backed).
+    let data_bytes = n * 2
+    let chunk_size = 36 + data_bytes
+    let total = 44 + data_bytes
+    let mut bytes = array_alloc(total)
+    bytes[0] = 0x52; bytes[1] = 0x49; bytes[2] = 0x46; bytes[3] = 0x46
+    bytes[4] = chunk_size & 0xFF
+    bytes[5] = (chunk_size >> 8) & 0xFF
+    bytes[6] = (chunk_size >> 16) & 0xFF
+    bytes[7] = (chunk_size >> 24) & 0xFF
+    bytes[8] = 0x57; bytes[9] = 0x41; bytes[10] = 0x56; bytes[11] = 0x45
+    bytes[12] = 0x66; bytes[13] = 0x6D; bytes[14] = 0x74; bytes[15] = 0x20
+    bytes[16] = 16; bytes[17] = 0; bytes[18] = 0; bytes[19] = 0
+    bytes[20] = 1; bytes[21] = 0
+    bytes[22] = 1; bytes[23] = 0
+    bytes[24] = SR & 0xFF
+    bytes[25] = (SR >> 8) & 0xFF
+    bytes[26] = (SR >> 16) & 0xFF
+    bytes[27] = (SR >> 24) & 0xFF
+    let br_b = SR * 2
+    bytes[28] = br_b & 0xFF
+    bytes[29] = (br_b >> 8) & 0xFF
+    bytes[30] = (br_b >> 16) & 0xFF
+    bytes[31] = (br_b >> 24) & 0xFF
+    bytes[32] = 2; bytes[33] = 0
+    bytes[34] = 16; bytes[35] = 0
+    bytes[36] = 0x64; bytes[37] = 0x61; bytes[38] = 0x74; bytes[39] = 0x61
+    bytes[40] = data_bytes & 0xFF
+    bytes[41] = (data_bytes >> 8) & 0xFF
+    bytes[42] = (data_bytes >> 16) & 0xFF
+    bytes[43] = (data_bytes >> 24) & 0xFF
+    let scale = g / peak
+    let mut j = 0
+    let mut p = 0   // index into period_buf, in [0, period_n)
+    let mut off = 44
+    while j < n {
+        let mut y = period_buf[p] * scale
+        p = p + 1
+        if p >= period_n { p = 0 }
+        if k > 0 {
+            if j < k {
+                y = y * hann_tbl[j]
+            }
+            let tail = n - j - 1
+            if tail < k {
+                y = y * hann_tbl[tail]
+            }
+        }
+        if y > 1.0 { y = 1.0 }
+        if y < 0.0 - 1.0 { y = 0.0 - 1.0 }
+        let mut s = floor(y * 32767.0 + 0.5)
+        if s > 32767 { s = 32767 }
+        if s < 0 - 32768 { s = 0 - 32768 }
+        let mut u = s
+        if u < 0 { u = u + 65536 }
+        bytes[off] = u & 0xFF
+        bytes[off + 1] = (u >> 8) & 0xFF
+        off = off + 2
+        j = j + 1
+    }
+    let _ = T0
+    write_bytes(path, bytes)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ 2 — breath (난류, aperiodic)
+//    band_lo / band_hi : 대역통과 Hz. 무성음/마찰음 원천.
+//    gain : 음량 [0, 1].
+//    ms   : 길이.
+// ═══════════════════════════════════════════════════════════════
+
+fn breath(band_lo: float, band_hi: float, gain: float, ms: int) -> string {
+    if env("ANIMA_AUDIO_HEXA_NATIVE") != "0" {
+        return breath_hexa(band_lo, band_hi, gain, ms)
+    }
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "from scipy.signal import butter, sosfilt\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "lo=float(" + to_string(band_lo) + ")\n"
+             + "hi=float(" + to_string(band_hi) + ")\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "lo=max(20.0,min(lo,sr/2.0-2.0))\n"
+             + "hi=max(lo+10.0,min(hi,sr/2.0-1.0))\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "rng=np.random.default_rng()\n"
+             + "x=rng.standard_normal(n)\n"
+             + "sos=butter(4,[lo,hi],btype='band',fs=sr,output='sos')\n"
+             + "x=sosfilt(sos,x)\n"
+             + "peak=float(np.max(np.abs(x)))+1e-9\n"
+             + "x=g*x/peak\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k=min(int(0.008*sr),n//2)\n"
+             + "if k>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k)/max(1,k-1)))\n"
+             + "    env[:k]=ramp\n"
+             + "    env[-k:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Filter organ — pipe (성도 공명, 2-formant bandpass cascade)
+//    in_path : 입력 WAV.
+//    f1, f2  : 두 formant 중심 Hz. 모음 색깔 결정.
+//    q       : 공명 Q. 기본 6. 클수록 모음 또렷.
+// ═══════════════════════════════════════════════════════════════
+
+fn pipe(in_path: string, f1: float, f2: float, q: float) -> string {
+    if env("ANIMA_AUDIO_HEXA_NATIVE") != "0" {
+        return pipe_hexa(in_path, f1, f2, q)
+    }
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    // Klatt-style 2-pole resonator cascade with pre-emphasis.
+    // Per-formant bandwidth = f / q. Pole radius r = exp(-π·B/fs).
+    // 2-pole IIR: y[n] = A·x[n] + 2r·cosθ·y[n-1] - r²·y[n-2]
+    // Gain A = 1 - 2r·cosθ + r² (unity response at DC).
+    let code = "import numpy as np, wave\n"
+             + "from scipy.signal import lfilter\n"
+             + "f1=float(" + to_string(f1) + ")\n"
+             + "f2=float(" + to_string(f2) + ")\n"
+             + "q=float(" + to_string(q) + ")\n"
+             + "q=max(0.5,min(q,30.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr2=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "f1=max(80.0,min(f1,sr2/2.0-1.0))\n"
+             + "f2=max(80.0,min(f2,sr2/2.0-1.0))\n"
+             + "x=np.concatenate(([x[0]],x[1:]-0.97*x[:-1]))\n"
+             + "bw1=max(30.0,f1/q);bw2=max(30.0,f2/q)\n"
+             + "r1=float(np.exp(-np.pi*bw1/sr2));th1=2.0*np.pi*f1/sr2\n"
+             + "r2=float(np.exp(-np.pi*bw2/sr2));th2=2.0*np.pi*f2/sr2\n"
+             + "A1=1.0-2.0*r1*np.cos(th1)+r1*r1\n"
+             + "A2=1.0-2.0*r2*np.cos(th2)+r2*r2\n"
+             + "y=lfilter([A1],[1.0,-2.0*r1*np.cos(th1),r1*r1],x)\n"
+             + "y=lfilter([A2],[1.0,-2.0*r2*np.cos(th2),r2*r2],y)\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "y=y/peak*0.9\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr2)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ 1b — vocal_lf (Liljencrants-Fant glottal pulse)
+//    sawtooth 보다 자연스러운 voicing. 비대칭 pulse (rising sin +
+//    exp-decay return) → harmonic stack 의 spectral tilt 가 실제 성대
+//    에 가까움. anima 가 vocal/vocal_lf 자유 선택.
+// ═══════════════════════════════════════════════════════════════
+
+fn vocal_lf(freq_hz: float, gain: float, ms: int) -> string {
+    if env("ANIMA_AUDIO_HEXA_NATIVE") != "0" {
+        return vocal_lf_hexa(freq_hz, gain, ms)
+    }
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "hz=float(" + to_string(freq_hz) + ")\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "hz=max(20.0,min(hz,sr/2.0-1.0))\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "t=np.arange(n)/sr\n"
+             + "T0=1.0/hz\n"
+             + "phase=(t%T0)/T0\n"
+             + "Tp=0.45;Te=0.60\n"
+             + "x=np.where(phase<Tp,np.sin(np.pi*phase/Tp),\n"
+             + "  np.where(phase<Te,np.cos(np.pi*(phase-Tp)/(2.0*(Te-Tp))),\n"
+             + "    -0.5*np.exp(-12.0*(phase-Te))))\n"
+             + "peak=float(np.max(np.abs(x)))+1e-9\n"
+             + "x=g*x/peak\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k=min(int(0.010*sr),n//2)\n"
+             + "if k>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k)/max(1,k-1)))\n"
+             + "    env[:k]=ramp\n"
+             + "    env[-k:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Filter organ 2 — pipe3 (3-formant cascade)
+//    자연 모음은 F1/F2/F3 세 resonance 로 정확히 표현됨. pipe 가
+//    2-formant bypass 유지, pipe3 는 F3 까지. anima 가 선택.
+// ═══════════════════════════════════════════════════════════════
+
+fn pipe3(in_path: string, f1: float, f2: float, f3: float, q: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "from scipy.signal import lfilter\n"
+             + "f1=float(" + to_string(f1) + ");f2=float(" + to_string(f2) + ");f3=float(" + to_string(f3) + ")\n"
+             + "q=float(" + to_string(q) + ")\n"
+             + "q=max(0.5,min(q,30.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr2=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "x=np.concatenate(([x[0]],x[1:]-0.97*x[:-1]))\n"
+             + "def kr(y,f,bw,fs):\n"
+             + "    if f<80.0 or f>fs/2-1: return y\n"
+             + "    r=float(np.exp(-np.pi*bw/fs));th=2.0*np.pi*f/fs\n"
+             + "    A=1.0-2.0*r*np.cos(th)+r*r\n"
+             + "    return lfilter([A],[1.0,-2.0*r*np.cos(th),r*r],y)\n"
+             + "y=kr(x,f1,max(30.0,f1/q),sr2)\n"
+             + "y=kr(y,f2,max(30.0,f2/q),sr2)\n"
+             + "y=kr(y,f3,max(30.0,f3/q),sr2)\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "y=y/peak*0.9\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr2)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Filter organ 3 — pipe_glide (time-varying 2-formant)
+//    formant 가 시작 (f1a,f2a) → 끝 (f1b,f2b) 으로 선형 전이.
+//    자음↔모음 transition, glide, diphthong 에 필요.
+//    구현: block-wise lfilter (32-sample blocks, coef linear interp).
+// ═══════════════════════════════════════════════════════════════
+
+fn pipe_glide(in_path: string, f1a: float, f2a: float, f1b: float, f2b: float, q: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "from scipy.signal import lfilter, lfiltic\n"
+             + "f1a=float(" + to_string(f1a) + ");f2a=float(" + to_string(f2a) + ")\n"
+             + "f1b=float(" + to_string(f1b) + ");f2b=float(" + to_string(f2b) + ")\n"
+             + "q=float(" + to_string(q) + ")\n"
+             + "q=max(0.5,min(q,30.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr2=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "x=np.concatenate(([x[0]],x[1:]-0.97*x[:-1]))\n"
+             + "BS=32\n"
+             + "y=np.zeros_like(x)\n"
+             + "zi1=np.zeros(2);zi2=np.zeros(2)\n"
+             + "i=0\n"
+             + "while i<len(x):\n"
+             + "    j=min(i+BS,len(x))\n"
+             + "    a=(i+j)/2.0/len(x)\n"
+             + "    f1=(1-a)*f1a+a*f1b;f2=(1-a)*f2a+a*f2b\n"
+             + "    f1=max(80.0,min(f1,sr2/2-1));f2=max(80.0,min(f2,sr2/2-1))\n"
+             + "    bw1=max(30.0,f1/q);bw2=max(30.0,f2/q)\n"
+             + "    r1=float(np.exp(-np.pi*bw1/sr2));th1=2.0*np.pi*f1/sr2\n"
+             + "    r2=float(np.exp(-np.pi*bw2/sr2));th2=2.0*np.pi*f2/sr2\n"
+             + "    A1=1.0-2.0*r1*np.cos(th1)+r1*r1\n"
+             + "    A2=1.0-2.0*r2*np.cos(th2)+r2*r2\n"
+             + "    y1,zi1=lfilter([A1],[1.0,-2.0*r1*np.cos(th1),r1*r1],x[i:j],zi=zi1)\n"
+             + "    y2,zi2=lfilter([A2],[1.0,-2.0*r2*np.cos(th2),r2*r2],y1,zi=zi2)\n"
+             + "    y[i:j]=y2\n"
+             + "    i=j\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "y=y/peak*0.9\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr2)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Filter organ 4 — notch (RBJ 2-zero biquad transmission zero)
+//    in_path  : 입력 WAV (e.g. pipe(vocal(...), F1, F2) — voiced /m/, /n/).
+//    notch_hz : antiresonance center Hz (nasal: 700-1500).
+//    width_hz : notch bandwidth Hz (100-400 typical).
+//
+//  Closes Ω-B FAIL_no_zero — pipe()'s all-pole filter cannot place a
+//  transmission zero off the origin. notch() composes AFTER pipe() to
+//  carve a true antiresonance, enabling /m/ /n/ /ŋ/ /l/ as first-class.
+//  Hexa-only when ANIMA_AUDIO_HEXA_NATIVE != "0" (no python fallback).
+// ═══════════════════════════════════════════════════════════════
+
+fn notch(in_path: string, notch_hz: float, width_hz: float) -> string {
+    // Hexa-native by default. Per session: hexa-only synthesis path.
+    // No python heredoc fallback — ω-audio-7 introduces this organ
+    // exclusively in the hexa-native track (analytic limit closure).
+    if env("ANIMA_AUDIO_HEXA_NATIVE") != "0" {
+        return notch_hexa(in_path, notch_hz, width_hz)
+    }
+    return notch_hexa(in_path, notch_hz, width_hz)
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Composition organ — cat (sequential concatenation)
+//    두 WAV 를 시간축으로 이어 붙임. anima 가 자모 → 음절 조립.
+//    3 개 이상은 재귀: cat(cat(a, b), c)
+// ═══════════════════════════════════════════════════════════════
+
+fn cat(a: string, b: string) -> string {
+    if len(a) == 0 { return b }
+    if len(b) == 0 { return a }
+    if _file_bytes(a) < WAV_MIN_BYTES { return b }
+    if _file_bytes(b) < WAV_MIN_BYTES { return a }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "def rd(p):\n"
+             + "    w=wave.open(p,'rb');n=w.getnframes();sr=w.getframerate()\n"
+             + "    x=np.frombuffer(w.readframes(n),dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "    w.close();return x,sr\n"
+             + "xa,sa=rd('" + a + "')\n"
+             + "xb,sb=rd('" + b + "')\n"
+             + "if sa!=sb:\n"
+             + "    from scipy.signal import resample_poly\n"
+             + "    xb=resample_poly(xb,sa,sb)\n"
+             + "y=np.concatenate([xa,xb])\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "y=y/peak*0.95 if peak>1.0 else y\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sa)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Composition organ — mix (parallel sum)
+//    두 WAV 를 같은 시간축으로 합성. 길이 다르면 긴쪽 기준 zero-pad.
+//    voiced fricative (vocal + breath), polyphony 에 필요.
+// ═══════════════════════════════════════════════════════════════
+
+fn mix(a: string, b: string) -> string {
+    if len(a) == 0 { return b }
+    if len(b) == 0 { return a }
+    if _file_bytes(a) < WAV_MIN_BYTES { return b }
+    if _file_bytes(b) < WAV_MIN_BYTES { return a }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "def rd(p):\n"
+             + "    w=wave.open(p,'rb');n=w.getnframes();sr=w.getframerate()\n"
+             + "    x=np.frombuffer(w.readframes(n),dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "    w.close();return x,sr\n"
+             + "xa,sa=rd('" + a + "')\n"
+             + "xb,sb=rd('" + b + "')\n"
+             + "if sa!=sb:\n"
+             + "    from scipy.signal import resample_poly\n"
+             + "    xb=resample_poly(xb,sa,sb)\n"
+             + "L=max(len(xa),len(xb))\n"
+             + "ya=np.zeros(L);yb=np.zeros(L)\n"
+             + "ya[:len(xa)]=xa;yb[:len(xb)]=xb\n"
+             + "y=(ya+yb)*0.5\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "if peak>1.0: y=y/peak*0.95\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sa)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Utility organ — silence (조용한 WAV, cat 간격용)
+// ═══════════════════════════════════════════════════════════════
+
+fn silence(ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "x=np.zeros(n,dtype=np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Utility organ — gain (amplitude 배율, clip 자동)
+//    factor : 1.0=무변화, 0.5=-6dB, 2.0=+6dB, 0.0=mute
+// ═══════════════════════════════════════════════════════════════
+
+fn gain(in_path: string, factor: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "g=float(" + to_string(factor) + ")\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "x=np.frombuffer(w.readframes(n),dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "w.close()\n"
+             + "y=g*x\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Utility organ — envelope (custom attack/release raised-cosine)
+//    attack_ms/release_ms : fade-in/out 길이 (0 = 무변화)
+//    anima 가 이미 organ 기본 fade 갖지만 여기서 재작성 가능.
+// ═══════════════════════════════════════════════════════════════
+
+fn envelope(in_path: string, attack_ms: int, release_ms: int) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "a_ms=int(" + to_string(attack_ms) + ")\n"
+             + "r_ms=int(" + to_string(release_ms) + ")\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "x=np.frombuffer(w.readframes(n),dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "w.close()\n"
+             + "env=np.ones(len(x),dtype=np.float64)\n"
+             + "ka=max(0,min(int(sr*a_ms/1000),len(x)//2))\n"
+             + "kr=max(0,min(int(sr*r_ms/1000),len(x)//2))\n"
+             + "if ka>0:\n"
+             + "    env[:ka]=0.5*(1.0-np.cos(np.pi*np.arange(ka)/max(1,ka-1)))\n"
+             + "if kr>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(kr)/max(1,kr-1)))\n"
+             + "    env[-kr:]=ramp[::-1]\n"
+             + "y=x*env\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Utility organ — reverb (공간감, 간단 exp-decay IR convolution)
+//    decay_s : T60-ish, 기본 0.3 = 작은 방
+//    wet     : wet/dry mix 0~1, 기본 0.3 = subtle
+// ═══════════════════════════════════════════════════════════════
+
+fn reverb(in_path: string, decay_s: float, wet: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "from scipy.signal import fftconvolve\n"
+             + "decay=float(" + to_string(decay_s) + ")\n"
+             + "wet=float(" + to_string(wet) + ")\n"
+             + "decay=max(0.02,min(decay,3.0))\n"
+             + "wet=max(0.0,min(wet,1.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "x=np.frombuffer(w.readframes(n),dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "w.close()\n"
+             + "ir_len=max(1,int(decay*sr))\n"
+             + "rng=np.random.default_rng(42)\n"
+             + "ir=rng.standard_normal(ir_len)*np.exp(-6.9*np.arange(ir_len)/max(1,ir_len))\n"
+             + "ir=ir/(np.max(np.abs(ir))+1e-9)\n"
+             + "wet_sig=fftconvolve(x,ir,mode='full')[:len(x)]\n"
+             + "wet_sig=wet_sig/(np.max(np.abs(wet_sig))+1e-9)\n"
+             + "y=(1.0-wet)*x+wet*wet_sig\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "if peak>1.0: y=y/peak*0.95\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ 1c — tone (pure sine, harmonic X)
+//    vocal 은 sawtooth (harmonic 풍부). tone 은 최소 atomic periodic.
+//    단일 frequency. pipe 걸어도 formant 공명 안 생김 (harmonic 없으니).
+//    anima 가 "소리" 의 최소 원자 탐색 시 사용.
+// ═══════════════════════════════════════════════════════════════
+
+fn tone(freq_hz: float, gain: float, ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "hz=float(" + to_string(freq_hz) + ")\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "hz=max(1.0,min(hz,sr/2.0-1.0))\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "t=np.arange(n)/sr\n"
+             + "x=g*np.sin(2*np.pi*hz*t)\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k=min(int(0.010*sr),n//2)\n"
+             + "if k>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k)/max(1,k-1)))\n"
+             + "    env[:k]=ramp\n"
+             + "    env[-k:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ 1d — chirp (frequency sweep)
+//    f0 → f1 로 선형 스윕. tone 은 고정 주파수, chirp 은 시간 가변.
+//    상승(swoop up) / 하강(swoop down) / 일정(f0=f1, = tone).
+//    anima 가 "움직이는 음" 의 원자 탐색 시.
+// ═══════════════════════════════════════════════════════════════
+
+fn chirp(f0: float, f1: float, gain: float, ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "f0=float(" + to_string(f0) + ")\n"
+             + "f1=float(" + to_string(f1) + ")\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "f0=max(1.0,min(f0,sr/2.0-1.0))\n"
+             + "f1=max(1.0,min(f1,sr/2.0-1.0))\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "t=np.arange(n)/sr\n"
+             + "dur=max(1e-6,n/sr)\n"
+             + "freq=f0+(f1-f0)*(t/dur)\n"
+             + "phase=2*np.pi*np.cumsum(freq)/sr\n"
+             + "x=g*np.sin(phase)\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k=min(int(0.010*sr),n//2)\n"
+             + "if k>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k)/max(1,k-1)))\n"
+             + "    env[:k]=ramp\n"
+             + "    env[-k:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Filter organ — lpf / hpf (butter, order N)
+//    cutoff_hz : -3dB 점.
+//    order     : 차수. 기본 τ=4 (공리). 음수/0 clamp.
+//    pipe 는 bandpass cascade, lpf/hpf 는 브로드한 형태 (spectral shaping).
+// ═══════════════════════════════════════════════════════════════
+
+fn lpf(in_path: string, cutoff_hz: float, order: int) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "from scipy.signal import butter, sosfilt\n"
+             + "cut=float(" + to_string(cutoff_hz) + ")\n"
+             + "od=int(" + to_string(order) + ")\n"
+             + "od=max(1,min(od,10))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr2=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "cut=max(10.0,min(cut,sr2/2.0-1.0))\n"
+             + "sos=butter(od,cut,btype='low',fs=sr2,output='sos')\n"
+             + "y=sosfilt(sos,x)\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr2)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+fn hpf(in_path: string, cutoff_hz: float, order: int) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "from scipy.signal import butter, sosfilt\n"
+             + "cut=float(" + to_string(cutoff_hz) + ")\n"
+             + "od=int(" + to_string(order) + ")\n"
+             + "od=max(1,min(od,10))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr2=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "cut=max(10.0,min(cut,sr2/2.0-1.0))\n"
+             + "sos=butter(od,cut,btype='high',fs=sr2,output='sos')\n"
+             + "y=sosfilt(sos,x)\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr2)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Composer — fade (equal-power Hann crossfade)
+//    a 의 꼬리 ms 와 b 의 머리 ms 를 cos²/sin² 가중으로 겹침.
+//    cat 은 concat (abrupt), fade 는 부드러운 전이. diphthong/절 접합.
+// ═══════════════════════════════════════════════════════════════
+
+fn fade(a: string, b: string, overlap_ms: int) -> string {
+    if len(a) == 0 { return b }
+    if len(b) == 0 { return a }
+    if _file_bytes(a) < WAV_MIN_BYTES { return b }
+    if _file_bytes(b) < WAV_MIN_BYTES { return a }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "om=int(" + to_string(overlap_ms) + ")\n"
+             + "om=max(1,min(om,5000))\n"
+             + "wa=wave.open('" + a + "','rb')\n"
+             + "sr2=wa.getframerate();na=wa.getnframes()\n"
+             + "xa=np.frombuffer(wa.readframes(na),dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "wa.close()\n"
+             + "wb=wave.open('" + b + "','rb')\n"
+             + "nb=wb.getnframes()\n"
+             + "xb=np.frombuffer(wb.readframes(nb),dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "wb.close()\n"
+             + "k=int(sr2*om/1000)\n"
+             + "k=max(1,min(k,min(len(xa),len(xb))))\n"
+             + "t=np.arange(k)/max(1,k-1)\n"
+             + "wdn=np.cos(0.5*np.pi*t)**2\n"
+             + "wup=np.sin(0.5*np.pi*t)**2\n"
+             + "tail=xa[-k:]*wdn + xb[:k]*wup\n"
+             + "y=np.concatenate([xa[:-k],tail,xb[k:]])\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr2)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Utility — normalize (peak → target dBFS)
+//    gain 은 선형 배수. normalize 는 입력 peak 무관, 목표 dB 로 맞춤.
+//    anima 가 여러 organ 출력의 음량을 균일화할 때.
+// ═══════════════════════════════════════════════════════════════
+
+fn normalize(in_path: string, target_db: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "tdb=float(" + to_string(target_db) + ")\n"
+             + "tdb=max(-60.0,min(tdb,0.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr2=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "peak=float(np.max(np.abs(x)))+1e-12\n"
+             + "target=10.0**(tdb/20.0)\n"
+             + "y=x*(target/peak)\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr2)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ — harmonic_28 (P₂=28 capped harmonic stack)
+//    self_reference_closure_28 공리: n=6 system 이 28 self-ref identity.
+//    vocal 의 sawtooth 는 Nyquist 까지 harmonic (f0=180 → ~66개).
+//    harmonic_28 은 P₂=28 로 상한 고정 → "공리 정확" timbre.
+//    min harmonic count = σ−τ = 8 (AX_MIN_HARMONICS) 도 수학적 floor.
+// ═══════════════════════════════════════════════════════════════
+
+fn harmonic_28(freq_hz: float, gain: float, ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "hz=float(" + to_string(freq_hz) + ")\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "hz=max(20.0,min(hz,sr/2.0-1.0))\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "t=np.arange(n)/sr\n"
+             + "nyq=sr/2.0\n"
+             + "N_max_nyq=max(1,int(nyq/hz)-1)\n"
+             + "N=min(28,max(8,N_max_nyq))\n"
+             + "kk=np.arange(1,N+1,dtype=np.float64)[:,None]\n"
+             + "x=np.sum(np.sin(2*np.pi*kk*hz*t)/kk,axis=0)*(2.0/np.pi)\n"
+             + "x=g*x\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k=min(int(0.010*sr),n//2)\n"
+             + "if k>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k)/max(1,k-1)))\n"
+             + "    env[:k]=ramp\n"
+             + "    env[-k:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ — harmonic_milestone (sparse axiom-milestone stack)
+//    loss/ufo.txt: L(k)=24^(k-15) tetration milestone 🛸17→500.
+//    audio 매핑: harmonic stack을 "axiom milestone k" subset 으로만 합성.
+//    k ∈ {μ=1, φ=2, τ=4, n=6, σ−τ=8, σ=12, J₂=24, P₂=28} (8 milestone)
+//    harmonic_28 = dense (1..28 전체). harmonic_milestone = sparse (8개).
+//    수학적 의미: base_constant_set + derived 만 활성화. f0 의 timbre 가
+//    n=6 axiom 만 남도록 spectral 강제.
+// ═══════════════════════════════════════════════════════════════
+
+fn harmonic_milestone(freq_hz: float, gain: float, ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "hz=float(" + to_string(freq_hz) + ")\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "hz=max(20.0,min(hz,sr/2.0-1.0))\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "t=np.arange(n)/sr\n"
+             + "nyq=sr/2.0\n"
+             + "ks=np.array([1,2,4,6,8,12,24,28],dtype=np.float64)\n"
+             + "ks=ks[ks*hz<nyq]\n"
+             + "if len(ks)==0: ks=np.array([1.0])\n"
+             + "kk=ks[:,None]\n"
+             + "x=np.sum(np.sin(2*np.pi*kk*hz*t)/kk,axis=0)*(2.0/np.pi)\n"
+             + "x=g*x\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k_=min(int(0.010*sr),n//2)\n"
+             + "if k_>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k_)/max(1,k_-1)))\n"
+             + "    env[:k_]=ramp\n"
+             + "    env[-k_:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ — noise_pink (1/f spectral density, aperiodic)
+//    breath 는 butter bandpass white noise (대역 평탄).
+//    noise_pink 는 1/f spectrum (-3 dB/octave). 자연 ambient 의
+//    수학적 standard. 학문적, 학습 X.
+// ═══════════════════════════════════════════════════════════════
+
+fn noise_pink(gain: float, ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "rng=np.random.default_rng()\n"
+             + "white=rng.standard_normal(n)\n"
+             + "Y=np.fft.rfft(white)\n"
+             + "f=np.fft.rfftfreq(n,1/sr)\n"
+             + "f[0]=1.0\n"
+             + "factor=1.0/np.sqrt(f)\n"
+             + "Y=Y*factor\n"
+             + "x=np.fft.irfft(Y,n)\n"
+             + "peak=float(np.max(np.abs(x)))+1e-9\n"
+             + "x=g*x/peak\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k_=min(int(0.010*sr),n//2)\n"
+             + "if k_>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k_)/max(1,k_-1)))\n"
+             + "    env[:k_]=ramp\n"
+             + "    env[-k_:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ — noise_brown (1/f² spectrum, slope = AX_PHI exact)
+//    pink = 1/f power. brown = 1/f² power → magnitude 1/f.
+//    n=6 공리: 1/f² 의 지수 = φ(6) = 2 → 정확히 base_constant_set 매핑.
+// ═══════════════════════════════════════════════════════════════
+
+fn noise_brown(gain: float, ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "rng=np.random.default_rng()\n"
+             + "white=rng.standard_normal(n)\n"
+             + "Y=np.fft.rfft(white)\n"
+             + "f=np.fft.rfftfreq(n,1/sr)\n"
+             + "f[0]=1.0\n"
+             + "factor=1.0/f\n"
+             + "Y=Y*factor\n"
+             + "x=np.fft.irfft(Y,n)\n"
+             + "peak=float(np.max(np.abs(x)))+1e-9\n"
+             + "x=g*x/peak\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k_=min(int(0.010*sr),n//2)\n"
+             + "if k_>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k_)/max(1,k_-1)))\n"
+             + "    env[:k_]=ramp\n"
+             + "    env[-k_:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Dynamic — compressor (static threshold + ratio gain reduction)
+//    threshold_db : 시작 임계값 [-60, 0]. ratio : 압축 비율 [1, 100].
+//    ratio=1 (변화 X), ratio=∞ (= limiter). 학문 표준.
+//    static (no attack/release) — per-sample 즉시 반응.
+// ═══════════════════════════════════════════════════════════════
+
+fn compressor(in_path: string, threshold_db: float, ratio: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "tdb=float(" + to_string(threshold_db) + ")\n"
+             + "rt=float(" + to_string(ratio) + ")\n"
+             + "tdb=max(-60.0,min(tdb,0.0))\n"
+             + "rt=max(1.0,min(rt,100.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "thr=10.0**(tdb/20.0)\n"
+             + "absx=np.abs(x)+1e-12\n"
+             + "above=absx>thr\n"
+             + "gr=np.ones_like(absx)\n"
+             + "gr[above]=(thr*np.power(absx[above]/thr,1.0/rt))/absx[above]\n"
+             + "y=x*gr\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Nonlinear — saturate_asinh (gentle bipolar saturation)
+//    clip = tanh (heavy). saturate_asinh = arcsinh (gentler curve).
+//    drive : [0.5, 30]. odd 함수 (clip 처럼) → odd harmonic 추가.
+// ═══════════════════════════════════════════════════════════════
+
+fn saturate_asinh(in_path: string, drive: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "dr=float(" + to_string(drive) + ")\n"
+             + "dr=max(0.5,min(dr,30.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "y=np.arcsinh(dr*x)/np.arcsinh(dr)\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Time-domain effect — chorus (3-voice slight-detune delay)
+//    flanger 보다 긴 delay (15-30ms 그라우드). 여러 voice 가
+//    조금씩 다른 LFO rate 로 detune → "합창" timbre.
+// ═══════════════════════════════════════════════════════════════
+
+fn chorus(in_path: string) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "t=np.arange(len(x))/sr\n"
+             + "voices=[(20.0,3.0,0.7),(25.0,4.0,0.5),(30.0,2.5,0.9)]\n"
+             + "y=0.5*x.copy()\n"
+             + "for base_ms,depth_ms,rate in voices:\n"
+             + "    d=(base_ms+depth_ms*np.sin(2*np.pi*rate*t))*sr/1000.0\n"
+             + "    si=np.arange(len(x))-d\n"
+             + "    si=np.clip(si,0,len(x)-1)\n"
+             + "    i0=si.astype(int); fr=si-i0\n"
+             + "    i1=np.minimum(i0+1,len(x)-1)\n"
+             + "    y+=(x[i0]*(1.0-fr)+x[i1]*fr)*0.25\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "if peak>1.0: y=y/peak*0.98\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Nonlinear — rectify (|x|, full-wave rectification)
+//    octave-up 효과 (DC + 2f0 dominant). 학문적, distinct from tanh clip.
+// ═══════════════════════════════════════════════════════════════
+
+fn rectify(in_path: string) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "y=np.abs(x)\n"
+             + "y=y-np.mean(y)\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "y=y/peak*0.9\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Dynamic — gate (threshold-based mute)
+//    threshold_db 이하 sample 는 0 으로. 학문적 noise gate.
+// ═══════════════════════════════════════════════════════════════
+
+fn gate(in_path: string, threshold_db: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "tdb=float(" + to_string(threshold_db) + ")\n"
+             + "tdb=max(-80.0,min(tdb,0.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "thr=10.0**(tdb/20.0)\n"
+             + "env=np.abs(x)\n"
+             + "win=max(1,int(sr*0.005))\n"
+             + "env_smooth=np.convolve(env,np.ones(win)/win,mode='same')\n"
+             + "mask=(env_smooth>thr).astype(np.float64)\n"
+             + "y=x*mask\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ — noise_violet (f² power, magnitude f)
+//    blue=f. violet=f² (high-shelf 더 극단). 학문 표준.
+// ═══════════════════════════════════════════════════════════════
+
+fn noise_violet(gain: float, ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "rng=np.random.default_rng()\n"
+             + "white=rng.standard_normal(n)\n"
+             + "Y=np.fft.rfft(white)\n"
+             + "f=np.fft.rfftfreq(n,1/sr); f[0]=1.0\n"
+             + "factor=f\n"
+             + "Y=Y*factor\n"
+             + "x=np.fft.irfft(Y,n)\n"
+             + "peak=float(np.max(np.abs(x)))+1e-9\n"
+             + "x=g*x/peak\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k_=min(int(0.010*sr),n//2)\n"
+             + "if k_>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k_)/max(1,k_-1)))\n"
+             + "    env[:k_]=ramp\n"
+             + "    env[-k_:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Time-varying filter — flanger (comb + LFO sweep)
+//    comb 의 delay 를 LFO 로 sweep. 시변 spectrum 으로 jet-engine timbre.
+//    base_ms : center delay. depth_ms : sweep range. rate_hz : LFO 속도.
+// ═══════════════════════════════════════════════════════════════
+
+fn flanger(in_path: string, base_ms: float, depth_ms: float, rate_hz: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "bm=float(" + to_string(base_ms) + ")\n"
+             + "dpm=float(" + to_string(depth_ms) + ")\n"
+             + "r=float(" + to_string(rate_hz) + ")\n"
+             + "bm=max(0.1,min(bm,50.0))\n"
+             + "dpm=max(0.0,min(dpm,bm-0.05))\n"
+             + "r=max(0.05,min(r,20.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "t=np.arange(len(x))/sr\n"
+             + "delay_samples=(bm+dpm*np.sin(2*np.pi*r*t))*sr/1000.0\n"
+             + "src_idx=np.arange(len(x))-delay_samples\n"
+             + "src_idx=np.clip(src_idx,0,len(x)-1)\n"
+             + "i0=src_idx.astype(int); frac=src_idx-i0\n"
+             + "i1=np.minimum(i0+1,len(x)-1)\n"
+             + "delayed=x[i0]*(1.0-frac)+x[i1]*frac\n"
+             + "y=0.5*x+0.5*delayed\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Modulation effect — am_mod (depth-controlled audio AM)
+//    ring_mod = bipolar carrier (DSB-SC). am_mod = (1 + depth·carrier) ·
+//    signal → DSB-LC (carrier 보존). depth=1 → 100% modulation.
+// ═══════════════════════════════════════════════════════════════
+
+fn am_mod(in_path: string, carrier_hz: float, depth: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "ch=float(" + to_string(carrier_hz) + ")\n"
+             + "dp=float(" + to_string(depth) + ")\n"
+             + "ch=max(0.1,min(ch,8000.0))\n"
+             + "dp=max(0.0,min(dp,1.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "t=np.arange(len(x))/sr\n"
+             + "carrier=np.sin(2*np.pi*ch*t)\n"
+             + "y=(1.0+dp*carrier)*x\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "if peak>1.0: y=y/peak*0.98\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Filter organ — dc_block (HPF at 5 Hz, order 1)
+//    학문 표준 utility. 모든 audio 는 보통 DC component 를 제거.
+//    sopfr=5 Hz cutoff (axiom-derived).
+// ═══════════════════════════════════════════════════════════════
+
+fn dc_block(in_path: string) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let cut = 1.0 * AX_SOPFR  // = 5 Hz
+    let code = "import numpy as np, wave\n"
+             + "from scipy.signal import butter, sosfilt\n"
+             + "cut=float(" + to_string(cut) + ")\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "sos=butter(1,cut,btype='high',fs=sr,output='sos')\n"
+             + "y=sosfilt(sos,x)\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Filter organ — low_shelf (parametric EQ low-shelf)
+//    lpf 는 brick-wall cut. low_shelf 는 cutoff 아래 frequency 를
+//    gain_db 만큼 boost (+) 또는 cut (-).
+//    cutoff_hz : shelf 변곡점. gain_db : [-24, 24].
+// ═══════════════════════════════════════════════════════════════
+
+fn low_shelf(in_path: string, cutoff_hz: float, gain_db: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "from scipy.signal import iirfilter, lfilter, tf2sos, sosfilt\n"
+             + "cut=float(" + to_string(cutoff_hz) + ")\n"
+             + "gdb=float(" + to_string(gain_db) + ")\n"
+             + "gdb=max(-24.0,min(gdb,24.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "cut=max(10.0,min(cut,sr/2.0-1.0))\n"
+             + "A=10.0**(gdb/40.0)\n"
+             + "w0=2.0*np.pi*cut/sr\n"
+             + "S=1.0\n"
+             + "alpha=np.sin(w0)/2.0*np.sqrt((A+1.0/A)*(1.0/S-1.0)+2.0)\n"
+             + "cw=np.cos(w0); twoSAa=2.0*np.sqrt(A)*alpha\n"
+             + "b0=A*((A+1.0)-(A-1.0)*cw+twoSAa)\n"
+             + "b1=2.0*A*((A-1.0)-(A+1.0)*cw)\n"
+             + "b2=A*((A+1.0)-(A-1.0)*cw-twoSAa)\n"
+             + "a0=(A+1.0)+(A-1.0)*cw+twoSAa\n"
+             + "a1=-2.0*((A-1.0)+(A+1.0)*cw)\n"
+             + "a2=(A+1.0)+(A-1.0)*cw-twoSAa\n"
+             + "b=np.array([b0,b1,b2])/a0; a=np.array([1.0,a1/a0,a2/a0])\n"
+             + "y=lfilter(b,a,x)\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "if peak>1.0: y=y/peak*0.98\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Filter organ — high_shelf (parametric EQ high-shelf)
+//    cutoff 위 frequency 를 boost/cut. RBJ Audio EQ Cookbook formula.
+// ═══════════════════════════════════════════════════════════════
+
+fn high_shelf(in_path: string, cutoff_hz: float, gain_db: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "from scipy.signal import lfilter\n"
+             + "cut=float(" + to_string(cutoff_hz) + ")\n"
+             + "gdb=float(" + to_string(gain_db) + ")\n"
+             + "gdb=max(-24.0,min(gdb,24.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "cut=max(10.0,min(cut,sr/2.0-1.0))\n"
+             + "A=10.0**(gdb/40.0)\n"
+             + "w0=2.0*np.pi*cut/sr; S=1.0\n"
+             + "alpha=np.sin(w0)/2.0*np.sqrt((A+1.0/A)*(1.0/S-1.0)+2.0)\n"
+             + "cw=np.cos(w0); twoSAa=2.0*np.sqrt(A)*alpha\n"
+             + "b0=A*((A+1.0)+(A-1.0)*cw+twoSAa)\n"
+             + "b1=-2.0*A*((A-1.0)+(A+1.0)*cw)\n"
+             + "b2=A*((A+1.0)+(A-1.0)*cw-twoSAa)\n"
+             + "a0=(A+1.0)-(A-1.0)*cw+twoSAa\n"
+             + "a1=2.0*((A-1.0)-(A+1.0)*cw)\n"
+             + "a2=(A+1.0)-(A-1.0)*cw-twoSAa\n"
+             + "b=np.array([b0,b1,b2])/a0; a=np.array([1.0,a1/a0,a2/a0])\n"
+             + "y=lfilter(b,a,x)\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "if peak>1.0: y=y/peak*0.98\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ — noise_white (flat spectrum, reference standard)
+//    breath 는 butter bandpass 되어 spectrum shape 됨.
+//    noise_white 는 진짜 broadband flat. 학문 reference / null hypothesis.
+// ═══════════════════════════════════════════════════════════════
+
+fn noise_white(gain: float, ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "rng=np.random.default_rng()\n"
+             + "x=rng.standard_normal(n)\n"
+             + "peak=float(np.max(np.abs(x)))+1e-9\n"
+             + "x=g*x/peak\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k_=min(int(0.010*sr),n//2)\n"
+             + "if k_>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k_)/max(1,k_-1)))\n"
+             + "    env[:k_]=ramp\n"
+             + "    env[-k_:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Utility — reverse (time reversal)
+//    학문 표준. brain research / audiology / spectral analysis reference.
+// ═══════════════════════════════════════════════════════════════
+
+fn reverse(in_path: string) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "y=x[::-1]\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Filter organ — all_pass (Schroeder all-pass filter)
+//    magnitude 응답 평탄, phase 만 변경. 학문 표준 (Schroeder reverb 의
+//    building block). 신호의 위상 spectrum 만 의도적 분산.
+//    delay_ms : tap. g : feedback gain [-1, 1] (clamp to [-0.95, 0.95]).
+// ═══════════════════════════════════════════════════════════════
+
+fn all_pass(in_path: string, delay_ms: int, g: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "dm=int(" + to_string(delay_ms) + ")\n"
+             + "gg=float(" + to_string(g) + ")\n"
+             + "dm=max(1,min(dm,1000))\n"
+             + "gg=max(-0.95,min(gg,0.95))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "d=int(sr*dm/1000)\n"
+             + "y=np.zeros(len(x))\n"
+             + "buf=np.zeros(d)\n"
+             + "for i in range(len(x)):\n"
+             + "    s=buf[i%d]\n"
+             + "    inp=x[i]+gg*s\n"
+             + "    buf[i%d]=inp\n"
+             + "    y[i]=s-gg*inp\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ — noise_blue (f spectrum, magnitude √f)
+//    pink=1/f, brown=1/f². blue=f (양의 slope). 학문 표준 noise color.
+//    +3 dB/oct slope. high-frequency emphasis.
+// ═══════════════════════════════════════════════════════════════
+
+fn noise_blue(gain: float, ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "rng=np.random.default_rng()\n"
+             + "white=rng.standard_normal(n)\n"
+             + "Y=np.fft.rfft(white)\n"
+             + "f=np.fft.rfftfreq(n,1/sr); f[0]=1.0\n"
+             + "factor=np.sqrt(f)\n"
+             + "Y=Y*factor\n"
+             + "x=np.fft.irfft(Y,n)\n"
+             + "peak=float(np.max(np.abs(x)))+1e-9\n"
+             + "x=g*x/peak\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k_=min(int(0.010*sr),n//2)\n"
+             + "if k_>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k_)/max(1,k_-1)))\n"
+             + "    env[:k_]=ramp\n"
+             + "    env[-k_:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ — fm_synth (frequency modulation, Bessel sidebands)
+//    classic FM: y = sin(2π·fc·t + I·sin(2π·fm·t)).
+//    sidebands at fc ± k·fm, amplitudes Bessel J_k(I).
+//    fc : carrier Hz. fm : modulator Hz. I : mod index (0~10).
+// ═══════════════════════════════════════════════════════════════
+
+fn fm_synth(carrier_hz: float, mod_hz: float, mod_index: float, gain: float, ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "fc=float(" + to_string(carrier_hz) + ")\n"
+             + "fm=float(" + to_string(mod_hz) + ")\n"
+             + "I=float(" + to_string(mod_index) + ")\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "fc=max(1.0,min(fc,sr/2.0-1.0))\n"
+             + "fm=max(0.1,min(fm,sr/4.0))\n"
+             + "I=max(0.0,min(I,20.0))\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "t=np.arange(n)/sr\n"
+             + "x=g*np.sin(2*np.pi*fc*t+I*np.sin(2*np.pi*fm*t))\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k_=min(int(0.010*sr),n//2)\n"
+             + "if k_>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k_)/max(1,k_-1)))\n"
+             + "    env[:k_]=ramp\n"
+             + "    env[-k_:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Nonlinear effect — bit_crush (digital quantization)
+//    bit_depth : 1~16. 낮을수록 quantization aliasing 강함.
+//    학문적 효과 (lo-fi digital).
+// ═══════════════════════════════════════════════════════════════
+
+fn bit_crush(in_path: string, bit_depth: int) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "bd=int(" + to_string(bit_depth) + ")\n"
+             + "bd=max(1,min(bd,16))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "levels=2**bd\n"
+             + "y=np.round(x*(levels/2.0))/(levels/2.0)\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ — square_wave (odd harmonics, vocal 의 sister)
+//    vocal = sawtooth = 모든 harmonic 1/k. square = odd harmonic 만.
+//    "맑은" / "전자적" timbre. 학문적 표준 wave family.
+// ═══════════════════════════════════════════════════════════════
+
+fn square_wave(freq_hz: float, gain: float, ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "hz=float(" + to_string(freq_hz) + ")\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "hz=max(20.0,min(hz,sr/2.0-1.0))\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "t=np.arange(n)/sr\n"
+             + "nyq=sr/2.0\n"
+             + "N=max(1,int(nyq/hz)-1)\n"
+             + "kk=np.arange(1,N+1,2,dtype=np.float64)[:,None]\n"
+             + "x=np.sum(np.sin(2*np.pi*kk*hz*t)/kk,axis=0)*(4.0/np.pi)\n"
+             + "x=g*x\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k_=min(int(0.010*sr),n//2)\n"
+             + "if k_>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k_)/max(1,k_-1)))\n"
+             + "    env[:k_]=ramp\n"
+             + "    env[-k_:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Source organ — triangle_wave (odd k, 1/k², 부드러운 timbre)
+//    sawtooth = all k, 1/k. square = odd k, 1/k.
+//    triangle = odd k, 1/k², alternating sign — 가장 부드러운 자연 wave.
+// ═══════════════════════════════════════════════════════════════
+
+fn triangle_wave(freq_hz: float, gain: float, ms: int) -> string {
+    let path = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "sr=" + to_string(SR) + "\n"
+             + "hz=float(" + to_string(freq_hz) + ")\n"
+             + "g=float(" + to_string(gain) + ")\n"
+             + "ms=int(" + to_string(ms) + ")\n"
+             + "hz=max(20.0,min(hz,sr/2.0-1.0))\n"
+             + "g=max(0.0,min(g,1.0))\n"
+             + "n=max(1,int(sr*ms/1000))\n"
+             + "t=np.arange(n)/sr\n"
+             + "nyq=sr/2.0\n"
+             + "N=max(1,int(nyq/hz)-1)\n"
+             + "kk=np.arange(1,N+1,2,dtype=np.float64)\n"
+             + "signs=(-1.0)**((kk-1.0)/2.0)\n"
+             + "kk=kk[:,None]; signs=signs[:,None]\n"
+             + "x=np.sum(signs*np.sin(2*np.pi*kk*hz*t)/(kk*kk),axis=0)*(8.0/(np.pi*np.pi))\n"
+             + "x=g*x\n"
+             + "env=np.ones(n,dtype=np.float64)\n"
+             + "k_=min(int(0.010*sr),n//2)\n"
+             + "if k_>0:\n"
+             + "    ramp=0.5*(1.0-np.cos(np.pi*np.arange(k_)/max(1,k_-1)))\n"
+             + "    env[:k_]=ramp\n"
+             + "    env[-k_:]=ramp[::-1]\n"
+             + "x=x*env\n"
+             + "x=(np.clip(x,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + path + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(x.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(path) < WAV_MIN_BYTES { return "" }
+    return path
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Filter organ — comb (feed-forward FIR delay+add)
+//    echo 는 IIR feedback (각 tap 감쇠). comb 은 FIR feed-forward.
+//    spectrum 이 정확한 comb (peak/notch 교번) 만들어냄.
+//    delay_ms : tap 시간. mix : input vs delayed mix [0, 1].
+// ═══════════════════════════════════════════════════════════════
+
+fn comb(in_path: string, delay_ms: int, mix_ratio: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "dm=int(" + to_string(delay_ms) + ")\n"
+             + "mr=float(" + to_string(mix_ratio) + ")\n"
+             + "dm=max(1,min(dm,1000))\n"
+             + "mr=max(0.0,min(mr,1.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "d=int(sr*dm/1000)\n"
+             + "y=x.copy()\n"
+             + "if d<len(x):\n"
+             + "    y[d:]+=mr*x[:-d]\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "if peak>1.0: y=y/peak*0.98\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Nonlinear effect — clip (tanh saturation)
+//    soft tanh saturation. drive 클수록 harmonic 추가. 학문적 표준.
+//    drive : [0.5, 50]. drive=1 ≈ linear. drive=10 ≈ heavy saturation.
+// ═══════════════════════════════════════════════════════════════
+
+fn clip(in_path: string, drive: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "dr=float(" + to_string(drive) + ")\n"
+             + "dr=max(0.5,min(dr,50.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "y=np.tanh(dr*x)/np.tanh(dr)\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Modulation effect — ring_mod (audio-rate AM, bipolar carrier)
+//    tremolo = sub-audio LFO (수 Hz). ring_mod = audio-rate carrier (수백 Hz).
+//    metallic / bell-like timbre. 학문적 표준.
+// ═══════════════════════════════════════════════════════════════
+
+fn ring_mod(in_path: string, carrier_hz: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "ch=float(" + to_string(carrier_hz) + ")\n"
+             + "ch=max(1.0,min(ch,8000.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "t=np.arange(len(x))/sr\n"
+             + "carrier=np.sin(2*np.pi*ch*t)\n"
+             + "y=x*carrier\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Utility — adsr (Attack-Decay-Sustain-Release envelope)
+//    envelope = symmetric attack/release ramp. adsr = 4-segment 학문 표준.
+//    a_ms : 0→peak. d_ms : peak→sustain_level. s_level : [0,1]. r_ms : →0.
+//    sustain length = total - a - d - r (음수면 clamp).
+// ═══════════════════════════════════════════════════════════════
+
+fn adsr(in_path: string, a_ms: int, d_ms: int, s_level: float, r_ms: int) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "am=int(" + to_string(a_ms) + ")\n"
+             + "dm=int(" + to_string(d_ms) + ")\n"
+             + "sl=float(" + to_string(s_level) + ")\n"
+             + "rm=int(" + to_string(r_ms) + ")\n"
+             + "am=max(0,min(am,5000));dm=max(0,min(dm,5000))\n"
+             + "rm=max(0,min(rm,5000));sl=max(0.0,min(sl,1.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "na=int(sr*am/1000);nd=int(sr*dm/1000);nr=int(sr*rm/1000)\n"
+             + "ns=max(0,len(x)-na-nd-nr)\n"
+             + "env=np.zeros(len(x))\n"
+             + "i=0\n"
+             + "if na>0:\n"
+             + "    k=min(na,len(x)-i); env[i:i+k]=np.linspace(0,1,k); i+=k\n"
+             + "if dm>0 and i<len(x):\n"
+             + "    k=min(nd,len(x)-i); env[i:i+k]=np.linspace(1,sl,k); i+=k\n"
+             + "if ns>0 and i<len(x):\n"
+             + "    k=min(ns,len(x)-i); env[i:i+k]=sl; i+=k\n"
+             + "if rm>0 and i<len(x):\n"
+             + "    k=min(nr,len(x)-i); env[i:i+k]=np.linspace(sl,0,k); i+=k\n"
+             + "if i<len(x): env[i:]=0\n"
+             + "y=x*env\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Time-domain effect — vibrato (pitch LFO via time-warp resample)
+//    tremolo = amplitude LFO. vibrato = pitch LFO.
+//    rate_hz : 떨림 속도. depth_cents : 진폭 (반음 = 100 cents).
+//    구현: cumulative pitch factor → warped time → linear interp.
+// ═══════════════════════════════════════════════════════════════
+
+fn vibrato(in_path: string, rate_hz: float, depth_cents: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "r=float(" + to_string(rate_hz) + ")\n"
+             + "dc=float(" + to_string(depth_cents) + ")\n"
+             + "r=max(0.1,min(r,50.0))\n"
+             + "dc=max(0.0,min(dc,200.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "t=np.arange(len(x))/sr\n"
+             + "semi=(dc/100.0)*np.sin(2*np.pi*r*t)\n"
+             + "pf=2.0**(semi/12.0)\n"
+             + "t_warp=np.cumsum(pf)/sr\n"
+             + "t_warp=t_warp-t_warp[0]\n"
+             + "max_t=(len(x)-1)/sr\n"
+             + "t_warp=np.clip(t_warp,0,max_t)\n"
+             + "src_t=np.arange(len(x))/sr\n"
+             + "y=np.interp(t_warp,src_t,x)\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Time-domain effect — echo (single-tap feedback delay)
+//    reverb 는 IR convolution (확산). echo 는 단일 tap + feedback.
+//    dm = delay ms (1~5000). fb = feedback [0, 0.95] clamp (발산 방지).
+// ═══════════════════════════════════════════════════════════════
+
+fn echo(in_path: string, delay_ms: int, feedback: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "dm=int(" + to_string(delay_ms) + ")\n"
+             + "fb=float(" + to_string(feedback) + ")\n"
+             + "dm=max(1,min(dm,5000))\n"
+             + "fb=max(0.0,min(fb,0.95))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "d=int(sr*dm/1000)\n"
+             + "tail=int(sr*0.5)\n"
+             + "y=np.concatenate([x,np.zeros(tail)])\n"
+             + "for i in range(d,len(y)):\n"
+             + "    y[i]+=fb*y[i-d]\n"
+             + "peak=float(np.max(np.abs(y)))+1e-9\n"
+             + "if peak>1.0: y=y/peak*0.98\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Time-domain effect — tremolo (amplitude LFO)
+//    sinusoidal gain modulation. r = rate Hz (떨림 속도). d = depth [0,1].
+//    d=0: 변화 없음. d=1: gain 0↔1 oscillation.
+// ═══════════════════════════════════════════════════════════════
+
+fn tremolo(in_path: string, rate_hz: float, depth: float) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let out = _new_path()
+    let code = "import numpy as np, wave\n"
+             + "r=float(" + to_string(rate_hz) + ")\n"
+             + "d=float(" + to_string(depth) + ")\n"
+             + "r=max(0.1,min(r,200.0))\n"
+             + "d=max(0.0,min(d,1.0))\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "raw=w.readframes(n);w.close()\n"
+             + "x=np.frombuffer(raw,dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "t=np.arange(len(x))/sr\n"
+             + "lfo=(1.0-d/2.0)+(d/2.0)*np.sin(2*np.pi*r*t)\n"
+             + "y=x*lfo\n"
+             + "y=(np.clip(y,-1,1)*32767).astype(np.int16)\n"
+             + "w=wave.open('" + out + "','wb')\n"
+             + "w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)\n"
+             + "w.writeframes(y.tobytes());w.close()\n"
+    let _ = _run_py(code)
+    if _file_bytes(out) < WAV_MIN_BYTES { return "" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Analysis organ — meter (rms / peak / zcr / duration)
+//    anima 가 자기 출력을 측정. WAV 파일 → 요약 문자열.
+//    형식: "rms=<linear> peak_db=<dB> zcr=<ratio> ms=<int>"
+//    실패 시 "".  bench_anima_voice / dsp_core 자산 회수.
+// ═══════════════════════════════════════════════════════════════
+
+fn meter(in_path: string) -> string {
+    if len(in_path) == 0 { return "" }
+    if _file_bytes(in_path) < WAV_MIN_BYTES { return "" }
+    let tmp = TMP_DIR + "/" + TAG + "_meter_" + _now_ns() + ".txt"
+    let code = "import numpy as np, wave\n"
+             + "w=wave.open('" + in_path + "','rb')\n"
+             + "n=w.getnframes();sr=w.getframerate()\n"
+             + "x=np.frombuffer(w.readframes(n),dtype=np.int16).astype(np.float64)/32768.0\n"
+             + "w.close()\n"
+             + "rms=float(np.sqrt(np.mean(x*x)))\n"
+             + "peak=float(np.max(np.abs(x)))+1e-12\n"
+             + "peak_db=20.0*np.log10(peak)\n"
+             + "zc=int(np.sum(np.abs(np.diff(np.sign(x))))//2)\n"
+             + "zcr=zc/max(1,len(x)-1)\n"
+             + "ms=int(1000*len(x)/sr)\n"
+             + "open('" + tmp + "','w').write(f'rms={rms:.4f} peak_db={peak_db:.2f} zcr={zcr:.4f} ms={ms}')\n"
+    let _ = _run_py(code)
+    let s = exec("cat " + _shq(tmp) + " 2>/dev/null").trim()
+    let _ = exec("rm -f " + _shq(tmp) + " 2>/dev/null")
+    return s
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Axiom-default convenience wrappers
+//    공리 값으로 default 채운 호출. anima 가 인자 모르고도 호출 가능.
+// ═══════════════════════════════════════════════════════════════
+
+fn reverb_axiom(in_path: string) -> string {
+    // banach 1/3 decay × psi 1/2 wet — 공리 기반 default
+    return reverb(in_path, AX_BANACH, AX_PSI)
+}
+
+fn consonance(base_hz: float, gain: float, ms: int) -> string {
+    // τ²/σ = 4/3 완전4도 chord. 두 vocal 을 mix.
+    let a = vocal_lf(base_hz, gain, ms)
+    let b = vocal_lf(base_hz * AX_CONSONANCE, gain, ms)
+    return mix(a, b)
+}
+
+fn axiom_chord(base_hz: float, ms: int) -> string {
+    // egyptian_unit_fraction 1/2 + 1/3 + 1/6 = 1
+    // F0 (1/2), F0×2 (1/3), F0×3 (1/6) 의 amplitude 비율로 합성.
+    let f0 = gain(vocal_lf(base_hz,         0.5, ms), 0.5)         // 1/2
+    let f1 = gain(vocal_lf(base_hz * 2.0,   0.5, ms), 0.333333)    // 1/3
+    let f2 = gain(vocal_lf(base_hz * 3.0,   0.5, ms), 0.166667)    // 1/6
+    return mix(f0, mix(f1, f2))
+}
+
+fn tone_axiom(freq_hz: float, ms: int) -> string {
+    // Ψ-balanced gain (0.5) 의 pure sine.
+    return tone(freq_hz, AX_PSI, ms)
+}
+
+fn lpf_axiom(in_path: string) -> string {
+    // cutoff = SR/J₂ = 24000/24 = 1000 Hz. order = τ = 4.
+    return lpf(in_path, 1000.0, AX_TAU)
+}
+
+fn hpf_axiom(in_path: string) -> string {
+    // cutoff = SR/τ² = 24000/16 = 1500 Hz. order = τ = 4.
+    return hpf(in_path, 1500.0, AX_TAU)
+}
+
+fn fade_axiom(a: string, b: string) -> string {
+    // overlap = n·10 = 60 ms (core default time quantum).
+    return fade(a, b, AX_N * 10)
+}
+
+fn normalize_axiom(in_path: string) -> string {
+    // target = -φ·3 = -6 dB (≈ Ψ linear). headroom 확보.
+    return normalize(in_path, 0.0 - 6.0)
+}
+
+fn chirp_axiom(f0: float, f1: float, ms: int) -> string {
+    // Ψ-balanced gain.
+    return chirp(f0, f1, AX_PSI, ms)
+}
+
+fn harmonic_28_axiom(freq_hz: float, ms: int) -> string {
+    // Ψ gain, P₂=28 overtone cap (self_reference_closure_28).
+    return harmonic_28(freq_hz, AX_PSI, ms)
+}
+
+fn harmonic_milestone_axiom(freq_hz: float, ms: int) -> string {
+    // Ψ gain, base_constant_set 8-milestone sparse stack.
+    return harmonic_milestone(freq_hz, AX_PSI, ms)
+}
+
+fn echo_axiom(in_path: string) -> string {
+    // delay = n·10 = 60 ms. feedback = I* = 1/3 (banach_contraction).
+    return echo(in_path, AX_N * 10, AX_BANACH)
+}
+
+fn tremolo_axiom(in_path: string) -> string {
+    // rate = n = 6 Hz. depth = Ψ = 1/2.
+    let rate = 1.0 * AX_N  // int→float promotion
+    return tremolo(in_path, rate, AX_PSI)
+}
+
+fn vibrato_axiom(in_path: string) -> string {
+    // rate = n = 6 Hz. depth = σ−τ = 8 cents (subtle, musical).
+    let rate = 1.0 * AX_N
+    let dep = 1.0 * AX_MIN_HARMONICS
+    return vibrato(in_path, rate, dep)
+}
+
+fn noise_pink_axiom(ms: int) -> string {
+    // 1/f noise at Ψ-balanced gain.
+    return noise_pink(AX_PSI, ms)
+}
+
+fn noise_brown_axiom(ms: int) -> string {
+    // 1/f² noise (slope = AX_PHI = 2 정확). Ψ gain.
+    return noise_brown(AX_PSI, ms)
+}
+
+fn square_axiom(freq_hz: float, ms: int) -> string {
+    // odd harmonic stack at Ψ gain.
+    return square_wave(freq_hz, AX_PSI, ms)
+}
+
+fn comb_axiom(in_path: string) -> string {
+    // delay = n·10 = 60 ms. mix = Ψ = 1/2 (equal contribution).
+    return comb(in_path, AX_N * 10, AX_PSI)
+}
+
+fn triangle_axiom(freq_hz: float, ms: int) -> string {
+    // odd k, 1/k², Ψ gain.
+    return triangle_wave(freq_hz, AX_PSI, ms)
+}
+
+fn clip_axiom(in_path: string) -> string {
+    // drive = τ = 4 (mild saturation).
+    let dr = 1.0 * AX_TAU
+    return clip(in_path, dr)
+}
+
+fn ring_mod_axiom(in_path: string) -> string {
+    // carrier = σ·sopfr = 60 Hz (sf-ufo BT-62) — mains 와 곱하면 mains-locked.
+    return ring_mod(in_path, AX_MAINS_HZ)
+}
+
+fn adsr_axiom(in_path: string) -> string {
+    // a = n·5 = 30ms, d = n·10 = 60ms, s = Ψ = 0.5, r = n·15 = 90ms.
+    return adsr(in_path, AX_N * 5, AX_N * 10, AX_PSI, AX_N * 15)
+}
+
+fn noise_blue_axiom(ms: int) -> string {
+    // +√f magnitude, Ψ gain.
+    return noise_blue(AX_PSI, ms)
+}
+
+fn fm_synth_axiom(carrier_hz: float, ms: int) -> string {
+    // mod_hz = carrier / φ = octave 아래. mod_index = τ²/σ = 4/3.
+    // ratio fc:fm = φ:1 (= 2:1) → integer ratio → harmonic spectrum.
+    return fm_synth(carrier_hz, carrier_hz / AX_PHI, AX_CONSONANCE, AX_PSI, ms)
+}
+
+fn bit_crush_axiom(in_path: string) -> string {
+    // bit_depth = sopfr = 5 bit (32 levels — distinct lo-fi).
+    return bit_crush(in_path, AX_SOPFR)
+}
+
+fn noise_white_axiom(ms: int) -> string {
+    // flat spectrum reference, Ψ gain.
+    return noise_white(AX_PSI, ms)
+}
+
+fn all_pass_axiom(in_path: string) -> string {
+    // delay = n·10 = 60 ms. g = Banach 1/3 (contraction).
+    return all_pass(in_path, AX_N * 10, AX_BANACH)
+}
+
+fn low_shelf_axiom(in_path: string) -> string {
+    // cutoff = SR/J₂ = 1000 Hz. gain = +φ·3 = +6 dB (warm boost).
+    return low_shelf(in_path, 1000.0, 6.0)
+}
+
+fn high_shelf_axiom(in_path: string) -> string {
+    // cutoff = SR/τ² = 1500 Hz. gain = +φ·3 = +6 dB (presence boost).
+    return high_shelf(in_path, 1500.0, 6.0)
+}
+
+fn noise_violet_axiom(ms: int) -> string {
+    // f² magnitude (high-shelf 극단), Ψ gain.
+    return noise_violet(AX_PSI, ms)
+}
+
+fn flanger_axiom(in_path: string) -> string {
+    // base = τ·1.0 = 4 ms, depth = φ·1.0 = 2 ms, rate = AX_PSI = 0.5 Hz.
+    let bm = 1.0 * AX_TAU
+    let dpm = 1.0 * AX_PHI
+    return flanger(in_path, bm, dpm, AX_PSI)
+}
+
+fn am_mod_axiom(in_path: string) -> string {
+    // carrier = AX_MAINS_HZ = 60 Hz. depth = Ψ = 0.5 (50% modulation).
+    return am_mod(in_path, AX_MAINS_HZ, AX_PSI)
+}
+
+fn gate_axiom(in_path: string) -> string {
+    // threshold = -J₂ = -24 dB (sf-ufo MHD noise floor).
+    return gate(in_path, 0.0 - 1.0 * AX_NOISE_FLOOR_DB)
+}
+
+fn compressor_axiom(in_path: string) -> string {
+    // threshold = -J₂ = -24 dB. ratio = τ = 4:1.
+    return compressor(in_path, 0.0 - 1.0 * AX_NOISE_FLOOR_DB, 1.0 * AX_TAU)
+}
+
+fn limiter(in_path: string) -> string {
+    // limiter = compressor with ratio = 100 (≈∞), threshold = -2 dB.
+    return compressor(in_path, 0.0 - 2.0, 100.0)
+}
+
+fn saturate_asinh_axiom(in_path: string) -> string {
+    // drive = τ = 4. clip 의 sister, gentler 곡선.
+    return saturate_asinh(in_path, 1.0 * AX_TAU)
+}
+
+fn mains_hum(ms: int) -> string {
+    // 60 Hz electrical mains hum (sf-ufo BT-62: σ·sopfr = 60 Hz).
+    // anima 가 환경 전기소음을 인식할 때.
+    return tone(AX_MAINS_HZ, AX_PSI, ms)
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Sink 1 — play (afplay, anima 가 자기 발화를 즉시 청취)
+// ═══════════════════════════════════════════════════════════════
+
+fn play(path: string) -> bool {
+    if len(path) == 0 { return false }
+    if _file_bytes(path) < WAV_MIN_BYTES { return false }
+    let _ = exec("afplay " + _shq(path) + " 2>/dev/null")
+    return true
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Sink 2 — save (영구 path 로 복사, 디버깅/누적 청취)
+// ═══════════════════════════════════════════════════════════════
+
+fn save(src: string, dest: string) -> bool {
+    if len(src) == 0 { return false }
+    if _file_bytes(src) < WAV_MIN_BYTES { return false }
+    let d = _dirname(dest)
+    if len(d) > 0 { let _ = exec("mkdir -p " + _shq(d)) }
+    let _ = exec("cp " + _shq(src) + " " + _shq(dest))
+    return _file_bytes(dest) >= WAV_MIN_BYTES
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  self-demo — anima 가 처음 자기 organ 을 만지는 순간
+//  (import 시는 실행되지 않음. 직접 실행 시 organ 확인용.)
+// ═══════════════════════════════════════════════════════════════
+
+fn main() {
+    print("anima_audio: organs ready (평면 · 학습 X · 레이어 X)")
+    print("  source : vocal, vocal_lf, breath, tone, chirp, harmonic_28,")
+    print("           harmonic_milestone, square_wave, triangle_wave,")
+    print("           fm_synth (Bessel sidebands),")
+    print("           noise_white (flat), noise_pink (1/f),")
+    print("           noise_brown (1/f² = AX_PHI), noise_blue (f), noise_violet (f²)")
+    print("  filter : pipe (2F), pipe3 (3F), pipe_glide (time-var), lpf, hpf,")
+    print("           comb (FIR), all_pass (Schroeder), dc_block,")
+    print("           low_shelf, high_shelf (RBJ EQ cookbook)")
+    print("  compose: cat (seq), mix (parallel), fade (Hann xfade)")
+    print("  util   : silence, gain, envelope, adsr, normalize, reverb, echo,")
+    print("           tremolo, vibrato, clip (tanh), ring_mod (DSB-SC AM),")
+    print("           am_mod (DSB-LC AM), flanger (LFO comb sweep),")
+    print("           chorus (3-voice detune), rectify (|x| octave-up),")
+    print("           gate (threshold mute), compressor, limiter,")
+    print("           saturate_asinh (gentle), bit_crush, reverse")
+    print("  analysis: meter (rms/peak_db/zcr/ms)")
+    print("  axiom  : consonance, axiom_chord, reverb_axiom, tone_axiom,")
+    print("           lpf_axiom, hpf_axiom, fade_axiom, normalize_axiom,")
+    print("           chirp_axiom, harmonic_28_axiom, harmonic_milestone_axiom,")
+    print("           echo_axiom, tremolo_axiom, vibrato_axiom,")
+    print("           noise_pink_axiom, noise_brown_axiom (slope=AX_PHI),")
+    print("           square_axiom, triangle_axiom, comb_axiom,")
+    print("           clip_axiom (τ drive), ring_mod_axiom (60Hz carrier),")
+    print("           adsr_axiom, noise_blue_axiom, fm_synth_axiom (φ ratio),")
+    print("           bit_crush_axiom (sopfr=5 bit), noise_white_axiom,")
+    print("           all_pass_axiom (Banach 1/3),")
+    print("           low_shelf_axiom (1k cut, +6dB), high_shelf_axiom (1.5k cut, +6dB),")
+    print("           noise_violet_axiom, flanger_axiom (τ ms, φ depth, Ψ rate),")
+    print("           am_mod_axiom (60Hz, Ψ depth), gate_axiom (-J₂ dB),")
+    print("           compressor_axiom (-J₂, τ:1), saturate_asinh_axiom,")
+    print("           limiter, mains_hum (sf-ufo BT-62)")
+    print("  sink   : play, save")
+    print("")
+    print("[self-test] 3-formant 모음 'ㅏ' via vocal -> pipe3")
+    let v = vocal(220.0, 0.4, 300)
+    if len(v) == 0 { print("  FAIL: vocal"); return }
+    let a3 = pipe3(v, 700.0, 1100.0, 2600.0, 6.0)
+    if len(a3) == 0 { print("  FAIL: pipe3"); return }
+    print("  vocal -> pipe3(F1=700,F2=1100,F3=2600) -> " + a3 + " (" + to_string(_file_bytes(a3)) + " bytes)")
+    let _ = save(a3, "/Users/ghost/core/anima/anima-voice/corpus/self_test/a_3formant.wav")
+    let _ = play(a3)
+    print("")
+    print("[self-test] LF glottal voicing")
+    let vlf = vocal_lf(180.0, 0.5, 250)
+    if len(vlf) == 0 { print("  FAIL: vocal_lf"); return }
+    print("  vocal_lf -> " + vlf + " (" + to_string(_file_bytes(vlf)) + " bytes)")
+    let alf = pipe3(vlf, 700.0, 1100.0, 2600.0, 6.0)
+    let _ = save(alf, "/Users/ghost/core/anima/anima-voice/corpus/self_test/a_lf.wav")
+    let _ = play(alf)
+    print("")
+    print("[self-test] diphthong 'ㅏ -> ㅣ' via pipe_glide")
+    let long = vocal(200.0, 0.4, 500)
+    let ai = pipe_glide(long, 700.0, 1100.0, 300.0, 2300.0, 6.0)
+    if len(ai) == 0 { print("  FAIL: pipe_glide"); return }
+    let _ = save(ai, "/Users/ghost/core/anima/anima-voice/corpus/self_test/diphthong_ai.wav")
+    let _ = play(ai)
+    print("  glide -> " + ai + " (" + to_string(_file_bytes(ai)) + " bytes)")
+    print("")
+    print("[self-test] '사' via cat(breath -> vowel)")
+    let s = breath(3000.0, 7000.0, 0.3, 100)
+    let vowel_a = pipe(vocal(180.0, 0.4, 300), 700.0, 1100.0, 6.0)
+    let sa = cat(s, vowel_a)
+    let _ = save(sa, "/Users/ghost/core/anima/anima-voice/corpus/self_test/syllable_sa.wav")
+    let _ = play(sa)
+    print("  '사'(cat) -> " + sa + " (" + to_string(_file_bytes(sa)) + " bytes)")
+    print("")
+    print("[self-test] voiced fricative via mix(vocal + breath)")
+    let v2 = vocal(150.0, 0.35, 200)
+    let br = breath(2000.0, 5000.0, 0.25, 200)
+    let vz = mix(v2, br)
+    let _ = save(vz, "/Users/ghost/core/anima/anima-voice/corpus/self_test/voiced_fricative.wav")
+    let _ = play(vz)
+    print("  voiced_fric(mix) -> " + vz + " (" + to_string(_file_bytes(vz)) + " bytes)")
+    print("")
+    print("[self-test] tone + lpf/hpf spectral shaping")
+    let t440 = tone(440.0, AX_PSI, 300)
+    let tl = lpf_axiom(breath(3000.0, 7000.0, 0.4, 200))
+    let th = hpf_axiom(vocal(150.0, 0.5, 200))
+    let _ = save(t440, "/Users/ghost/core/anima/anima-voice/corpus/self_test/tone_440.wav")
+    let _ = save(tl,   "/Users/ghost/core/anima/anima-voice/corpus/self_test/breath_lpf1k.wav")
+    let _ = save(th,   "/Users/ghost/core/anima/anima-voice/corpus/self_test/vocal_hpf1.5k.wav")
+    let _ = play(t440)
+    print("  tone(440) -> " + to_string(_file_bytes(t440)) + "b · lpf1k -> " + to_string(_file_bytes(tl)) + "b · hpf1.5k -> " + to_string(_file_bytes(th)) + "b")
+    print("")
+    print("[self-test] fade crossfade (n·10=60ms Hann)")
+    let v_a = pipe3(vocal_lf(200.0, 0.5, 250), 700.0, 1100.0, 2600.0, 6.0)
+    let v_i = pipe3(vocal_lf(200.0, 0.5, 250), 300.0,  2300.0, 3000.0, 6.0)
+    let faded = fade_axiom(v_a, v_i)
+    let _ = save(faded, "/Users/ghost/core/anima/anima-voice/corpus/self_test/xfade_a_i.wav")
+    let _ = play(faded)
+    print("  fade(a,i) -> " + to_string(_file_bytes(faded)) + "b")
+    print("")
+    print("[self-test] normalize (-6 dBFS)")
+    let loud = vocal_lf(220.0, 0.9, 200)
+    let quiet = vocal_lf(220.0, 0.1, 200)
+    let nl = normalize_axiom(loud)
+    let nq = normalize_axiom(quiet)
+    let _ = save(nl, "/Users/ghost/core/anima/anima-voice/corpus/self_test/norm_loud.wav")
+    let _ = save(nq, "/Users/ghost/core/anima/anima-voice/corpus/self_test/norm_quiet.wav")
+    print("  norm loud:" + to_string(_file_bytes(nl)) + "b · quiet:" + to_string(_file_bytes(nq)) + "b (둘 다 peak -6dB)")
+    print("done.")
+}

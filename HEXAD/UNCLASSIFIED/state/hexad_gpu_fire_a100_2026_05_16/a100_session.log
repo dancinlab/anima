@@ -1,0 +1,112 @@
+Warning: Permanently added '[38.64.63.84]:10374' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+=== nvidia-smi ===
+NVIDIA A100-PCIE-40GB, 40960 MiB, 580.126.09
+=== nvcc ===
+Cuda compilation tools, release 12.1, V12.1.105
+Build cuda_12.1.r12.1/compiler.32688072_0
+/usr/local/cuda/include/cublas_v2.h
+CUBLAS_H_OK
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+native
+runtime.c
+runtime.h
+runtime_hi_gen.c
+7936:HexaFarrEntry* _hx_farr_table = NULL;
+7937:int64_t _hx_farr_count = 0;
+=== build hexa interp -DHEXA_CUDA (single-TU hexa_full + runtime_cuda) ===
+RUNTIME_CUDA_OBJ_RC=0
+-rw-r--r-- 1 root root 8008 May 16 11:02 runtime_cuda.o
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+ 4914 |     fread(buf, 1, len, f);
+      |     ^~~~~~~~~~~~~~~~~~~~~
+runtime.c: In function 'rt_read_file_bytes':
+runtime.c:5017:5: warning: ignoring return value of 'fread' declared with attribute 'warn_unused_result' [-Wunused-result]
+ 5017 |     fread(buf, 1, len, f);
+      |     ^~~~~~~~~~~~~~~~~~~~~
+In file included from runtime.c:12601,
+                 from hexa_full_singletu.c:2:
+native/signal_flock.c: In function '__hexa_sig_trampoline':
+native/signal_flock.c:66:15: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+   66 |         (void)write(g_sig_pipe[1], &b, 1);
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+INTERP_OBJ_RC=0
+-rw-r--r-- 1 root root 3864800 May 16 11:03 hexa_full.o
+LINK_RC=0
+-rwxr-xr-x 1 root root 1782752 May 16 11:03 /workspace/cuda_fire/hexa_cuda
+=== F-RFC040 real-GPU smoke (nvidia-smi sampled) ===
+Runtime error: undefined function: cuda_available
+Runtime error: undefined function: cuda_device_count
+FAIL  F-RFC040-AVAIL  avail=void count=void (expected 1 / >=1 on HEXA_CUDA A100 build)
+PASS  F-RFC040-STRUCT-NOREGRESS  CPU farr_matmul = [[4,5],[10,11]] exact (err=0.0)
+Runtime error: undefined function: farr_matmul_gpu
+FAIL  F-RFC040-GPU-EQ  len=6 max|Δ|=7.0
+Runtime error: undefined function: farr_matmul_gpu
+FAIL  F-RFC040-GPU-EQ-LARGE  measured max|Δ|=12.7663 >= 1e-9 (exceeds TOL_MATMUL)
+Runtime error: undefined function: farr_matmul_gpu
+Runtime error: undefined function: farr_matmul_gpu
+Runtime error: undefined function: farr_matmul_gpu
+PASS  F-RFC040-DETERMINISM  3x real cuBLAS Dgemm byte-identical (Δ_12=0.0, Δ_23=0.0)
+
+=== RFC040 REAL-GPU smoke: 2/5 PASS ===
+FAIL — RFC 040 Phase D real-GPU smoke incomplete
+SMOKE_RC=0
+=== smoke nvidia-smi peak (util desc top5) ===
+0 %, 0 MiB, 35.67 W
+=== d_corpus_fire_a100 d=384x6L seed=43 (nvidia-smi sampled) ===
+================================================================
+d_corpus_fire — §7 #1 real-corpus from-scratch FIRE (F-D-FIRE)
+================================================================
+bash: line 52:   572 Killed                  HEXA_MEM_UNLIMITED=1 /workspace/cuda_fire/hexa_cuda d_corpus_fire_a100.hexa 2>&1
+FIRE_RC=137
+FIRE_WALL_SEC=404
+=== fire nvidia-smi peak (util desc top8) ===
+0 %, 0 MiB, 35.88 W
+0 %, 0 MiB, 35.78 W
+0 %, 0 MiB, 35.77 W
+0 %, 0 MiB, 35.77 W
+0 %, 0 MiB, 35.76 W
+0 %, 0 MiB, 35.75 W
+0 %, 0 MiB, 35.67 W
+0 %, 0 MiB, 35.67 W
+ALLDONE

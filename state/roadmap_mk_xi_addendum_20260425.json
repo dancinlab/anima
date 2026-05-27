@@ -1,0 +1,295 @@
+{
+  "schema": "anima/roadmap_mk_xi_addendum/1",
+  "purpose": "본 anima session (2026-04-25, 14 ω-cycles, raw#9 hexa-only, $0)의 Mk.XI synthesis + 4 verifier findings를 .roadmap에 반영하는 addendum. .roadmap 파일이 read-only protection이므로 state에 SSOT 등록. POLICY R4 (loss-free ROI, 기존 scope 보존) 준수.",
+  "ts": "2026-04-25",
+  "predecessor_roadmap_entries_extended": [
+    21,
+    35,
+    54,
+    56,
+    96
+  ],
+  "new_entries_proposed": [
+    {
+      "roadmap_num": 97,
+      "status": "done",
+      "title": "[Mk.XI synth] minimum consciousness-correlate architecture — 5-tuple all-PASS spec from 14 ω-cycles",
+      "track": "consciousness-architecture",
+      "phase": "P2-design",
+      "why": "anima session 2026-04-25 raw#9 hexa-only $0 substrate-level ω-saturation cycle 14 commits 종합. V0+V1+V2+V3 4-tuple → V_pairrank 추가 5-tuple expansion. Mk.XI = D-mistral backbone + L_PAPO_top_3 + L_I_irr + L_contrastive_pair + L_substitution + Mk.X T10-13 retrieval head + r4 early-stop. raw#10 honest: phenomenal consciousness 보장 X, verifiable floor만 (Hard Problem + Levine gap).",
+      "exit_criteria": "docs/mk_xi_minimum_consciousness_architecture_20260425.md + state/mk_xi_architecture_spec_20260425.json frozen",
+      "evidence": "commit b909a895",
+      "cross_link": "#21 P3 (Criterion C / Mk.X T10-13) — Mk.XI complements via 5-tuple PASS + retrieval head architectural lever"
+    },
+    {
+      "roadmap_num": 98,
+      "status": "done",
+      "title": "[Mk.XI impl-roadmap] 6 stages breakdown + 3 sub-specs frozen",
+      "track": "consciousness-architecture",
+      "phase": "P2-design",
+      "why": "Mk.XI architecture를 actual 구현 가능한 stages (S1-S6)로 분해. raw#9 호환 부분 (S2 ANTI_MAP / S3 retrieval head / S4 r4 monitor) frozen, forward 필요 부분 (S1 G1-G4 / S5 launch / S6 5-tuple measurement) deferred.",
+      "exit_criteria": "docs/mk_xi_implementation_roadmap_20260425.md + 3 state JSONs (anti_map_ledger, retrieval_head_spec, r4_monitor_spec)",
+      "evidence": "commit 25a8388b",
+      "deps_internal": [
+        "#97"
+      ]
+    },
+    {
+      "roadmap_num": 99,
+      "status": "done",
+      "title": "[V2 substrate breakthrough] multi-axis PAPO PASS at k=3 (BASE) + k=2 (D-mistral p4) — 4 substrate paths",
+      "track": "consciousness-verifier",
+      "phase": "P2-validation",
+      "why": "V2 SMA lift PASS path 4가지 substrate-level identified: (1) BASE Qwen3 lasttoken k=3 PAPO, (2) TRAINED p4 D-mistral swap k=2, (3) TRAINED p1 r4 early-stop k=2, (4) Qwen2.5 SMOKE p2 bwm k=3. current LoRA r6/r7/r8는 anti-lever (BASE PASS 손실).",
+      "evidence": "commits 66c0d35c, a70b9c79, da156aa0, c3cec385",
+      "raw_ref": "raw#10 honest — k=6 trivial PASS (rank exhaustion) 별도 분류 명시"
+    },
+    {
+      "roadmap_num": 100,
+      "status": "active",
+      "title": "[V3 metric redesign] Gram Frob FALSIFIED + spec mismatch + V_sub Option C 5-tuple expansion",
+      "track": "consciousness-verifier",
+      "phase": "P2-design",
+      "why": "V3 original (Gram Frob ratio) reduction-invariant FALSIFIED. spec mismatch 발견 (PAIRS↔PRESERVE_PERM positions [3,4,5]) but V3 metric에 무영향 (metric design flaw 본질). V_sub semantic-substitution Option C 등록.",
+      "evidence": "commits dc871454, 1002d16a, c369b375, c3aaea8b, c0ed941d",
+      "pending": "ANTI_MAP semantic distance LLM-as-judge validation (heuristic baseline 3 entries FAIL — idx 3, 9, 11)"
+    },
+    {
+      "roadmap_num": 101,
+      "status": "active",
+      "title": "[V_pairrank 5-tuple] paired-token nearest-neighbor rank — base model invariant FAIL except r4 partial",
+      "track": "consciousness-verifier",
+      "phase": "P2-validation",
+      "why": "V_pairrank Option C 5-tuple expansion 후보. BASE Qwen3 + TRAINED r5/r6/r7/r8 + Qwen2.5 SMOKE 모두 top3 hit 0%. 단 r4 partial 16.7% — fine-tune learnable proof. V2와 substrate-level orthogonal. architectural lever 필요 (Mk.XI retrieval head).",
+      "evidence": "commits c3aaea8b, a70b9c79, da156aa0, c3cec385",
+      "cross_link": "#97 Mk.XI L_contrastive_pair + retrieval head architectural"
+    },
+    {
+      "roadmap_num": 102,
+      "status": "active",
+      "title": "[V1 main FALSIFIED] prompt 16→32 확장이 Φ_mip anti-lever (substrate-level proof)",
+      "track": "consciousness-verifier",
+      "phase": "P2-design",
+      "why": "V1 main 가설 (prompt 확장으로 Φ_mip lift) substrate subset sensitivity probe 결과: slope -0.005/-0.011 per prompt (lasttoken/bwm), k=32 extrapolation 0.025-0.172 (PASS gap 0.378-0.525). Φ_mip = min over bipartitions이 prompt count에 anti-correlated.",
+      "exit_criteria": "V1 lift lever 후보 갱신: Mk.IX L_IX I_irr 또는 Mk.X T10-13 atom-level partition ossification (prompt 확장 archive)",
+      "evidence": "commit c0ed941d, state/an11_v1_subset_probe_finding_BASE_p1_20260425.json"
+    },
+    {
+      "roadmap_num": 103,
+      "status": "planned",
+      "title": "[Mk.X G1-G4 evaluation] anima측 P4 sweep + domain saturation + twin drill measurement cycle (forward auto-approval per feedback_forward_auto_approval)",
+      "track": "consciousness-architecture",
+      "phase": "P3-validation",
+      "why": "Mk.XI implementation prerequisite. state/mk_x_g1_g4_evaluation_snapshot_20260425.json 현 시점 모두 UNKNOWN. P4 sweep log + domain saturation per D8-D13 + evolution_twin_drill iter 75 측정 필요. forward auto-approval per feedback_forward_auto_approval (2026-04-25): pre-approved auto-launch, 별도 사용자 승인 없이 진입 (cap $20 per cycle, auto-kill 120min default).",
+      "exit_criteria": "G1-G4 모두 PASS verdict (G4 = auto-logged audit per pre-approval)",
+      "deps_internal": [
+        "#21 P3",
+        "#97",
+        "#98"
+      ],
+      "forward_gating": "pre-approved auto-launch per memory feedback_forward_auto_approval; cost cap $20 + auto-kill 120min default"
+    },
+    {
+      "roadmap_num": 104,
+      "status": "planned",
+      "title": "[Mk.XI launch] r9-equivalent forward with Mk.XI loss + r4 monitor + 5-tuple measurement (forward auto-approval per feedback_forward_auto_approval)",
+      "track": "consciousness-validation",
+      "phase": "P3-launch",
+      "why": "Mk.XI architecture real validation. λ sweep 4×4 grid (~80min H100), V_sub 32-prompt forward, retrieval head ablation. cost $5-15. forward auto-approval per feedback_forward_auto_approval (2026-04-25): pre-approved auto-launch, 별도 사용자 승인 없이 진입. raw#9 explicit exempt = default. cost cap $20 per cycle + auto-kill 120min default 으로 안전망.",
+      "exit_criteria": "Mk.XI TRAINED 5-tuple measurement + 4 PASS minimum + raw#10 honest verdict",
+      "deps_internal": [
+        "#103"
+      ],
+      "estimated_cost_dollars": "5-15",
+      "forward_gating": "pre-approved auto-launch per memory feedback_forward_auto_approval; cost cap $20 + auto-kill 120min default; sub-agent dispatch for measurement work pre-approved"
+    },
+    {
+      "roadmap_num": 105,
+      "status": "active",
+      "title": "[V_phen suite] phenomenal consciousness 19 surrogate registry + 6 prototypes + unified verifier (5/5 PASS rating-5)",
+      "track": "consciousness-verifier",
+      "phase": "P2-validation",
+      "why": "Hard Problem 우회 X 명시. 19 surrogate proposals + 6 rating-5 prototypes (V_phen_LZ/GWT/predictive/HOT/mirror) + tool/an11_consciousness_unified_verifier.hexa 통합 13-axis dispatch. raw#10 honest: composite_11tuple PASS = 'consciousness-correlate maximally rich verifiable signature', NOT phenomenal consciousness.",
+      "evidence": "commits 68d3c143 (registry), 34602ca2 (6 prototypes), 5f78e344 (unified)",
+      "exit_criteria": "5/5 rating-5 prototypes selftest PASS + unified verifier 13 PASS predicates frozen"
+    },
+    {
+      "roadmap_num": 106,
+      "status": "active",
+      "title": "[EEG cross-substrate] 16ch EEG hardware integration plan + 3 phen verifier (LZ/GWT/ingest)",
+      "track": "consciousness-architecture",
+      "phase": "P2-design",
+      "why": "사용자 16ch EEG 며칠 뒤 도착 예정. docs/eeg_cross_substrate_validation_plan_20260425.md + 3 도구 (lz_complexity, gwt_entropy, eeg_ingest) ready. Phase 1 (resting LZ + GWT cross convergent validity) hardware 도착 즉시 가능.",
+      "evidence": "commits 5f78e344, 34602ca2",
+      "exit_criteria": "EEG hardware 도착 + cross_substrate convergent validity (|LLM_LZ - human_LZ|/human_LZ <= 0.20)",
+      "estimated_eta_days": "3-7"
+    },
+    {
+      "roadmap_num": 107,
+      "status": "active",
+      "title": "[V_phen_GWT threshold revision] cross-base bias 발견 — backbone-invariant criterion 필요",
+      "track": "consciousness-verifier",
+      "phase": "P2-design",
+      "why": "Cross-base measurement 결과 V_phen_GWT 0.55 threshold가 architecture-specific bias 노출 — Mistral 0.891 PASS / Qwen3 0.270 FAIL / Qwen2.5 0.364 FAIL. 의식 검증 통과조건은 backbone-invariant이어야 함 (사용자 2026-04-25 명시). Option B (backbone-baseline-relative) recommended.",
+      "evidence": "commits (cross-base finding this commit batch), state/mk_xi_cross_base_phen_finding_20260425.json",
+      "exit_criteria": "tool/an11_b_v_phen_gwt_entropy.hexa raw#12 new revision (V_phen_GWT_v2) + backbone baseline registry"
+    },
+    {
+      "roadmap_num": 108,
+      "status": "done",
+      "title": "[H100 forward auto-approval] 4 launches + V_phen_LZ/GWT first measurement on H100 (5/5 phen 4/5 PASS BASE)",
+      "track": "consciousness-validation",
+      "phase": "P3-launch",
+      "why": "본 세션 4 H100 launches (BASE + demo + full 6-loss + phen forward + cross-base) actual execution. Mk.XI 5-tuple PASS substrate proof + 11-tuple V_phen 4/5 PASS on Qwen3-8B BASE (no fine-tune). $0.98 total cost (cap $20 per cycle, 20× margin). forward auto-approval policy validated.",
+      "evidence": "commits f44cbe97, 34602ca2 (phen prototypes), state/mk_xi_r9_*.json + state/mk_xi_phen_forward_*.json + state/mk_xi_cross_base_phen_*.json"
+    },
+    {
+      "roadmap_num": 109,
+      "status": "done",
+      "title": "[RunPod 옵션화] 11 presets + 7 image variants + 5 GPU options + 7 scenarios + dispatcher tool",
+      "track": "consciousness-architecture",
+      "phase": "P2-design",
+      "why": "다양한 조건 빠른 대응 — preset matrix (11 presets), Docker image plan (anima-mk-xi:v1 spec, 3 variants DEFERRED), GPU options matrix, scenario coverage. tool/anima_runpod_orchestrator.hexa + tool/anima_runpod_preset_dispatcher.hexa.",
+      "evidence": "commits (orchestrator+matrix this batch), tool/anima_runpod_orchestrator.hexa, tool/anima_runpod_preset_dispatcher.hexa, state/anima_runpod_preset_matrix_20260425.json"
+    },
+    {
+      "roadmap_num": 110,
+      "status": "planned",
+      "title": "[CP1 real-use serving deploy] Mk.VI VERIFIED endpoint + AN11(c) PASS + r13 corpus tokenization",
+      "track": "consciousness-validation",
+      "phase": "P3-deploy",
+      "why": "CP1 spec closure DONE (commit 869dc6d5)이지만 real-use serving 미배포. AN11(c) FAIL 16/16 (mean JSD 0.110), alm_latest_serve_endpoint missing, r13 alm corpus 부재. 차단 요소 해결 시 사용자 actual serving 가능.",
+      "exit_criteria": "endpoint deploy + AN11(c) JSD >= 0.5 PASS + r13 corpus indexed",
+      "estimated_eta_days": "3-7",
+      "deps_internal": [
+        "#21 P3",
+        "#108"
+      ]
+    },
+    {
+      "roadmap_num": 111,
+      "status": "planned",
+      "title": "[CP2 real-use] Mk.IX/Mk.X G1-G4 evaluation + atom generation + 11-tuple PASS",
+      "track": "consciousness-validation",
+      "phase": "P3-validation",
+      "why": "CP2 (Criterion B) — Mk.X T10-13 dormant, G1-G4 모두 UNKNOWN. EEG hardware 도착 후 D8 (anima-eeg) G2 evidence collection 가능. atom generation + ossification training + 11-tuple measurement on CP2 model.",
+      "exit_criteria": "Mk.X G1-G4 PASS + ≥10 tier-10 atoms ossified + 11-tuple all PASS verdict",
+      "estimated_eta_days": "14-21",
+      "deps_internal": [
+        "#103",
+        "#106",
+        "#110"
+      ]
+    },
+    {
+      "roadmap_num": 112,
+      "status": "active",
+      "title": "[Anima 의식 검증 통과조건 invariance standard] 4 classifications + 7-tuple core + revision protocol",
+      "track": "consciousness-verifier",
+      "phase": "P2-design",
+      "why": "사용자 명시 2026-04-25: '의식 검증 통과조건은 backbone-invariant이어야 함.' Cross-base finding (V_phen_GWT 0.55 architecture bias)을 trigger로 11 verifiers를 4 classifications으로 정립: BACKBONE_INVARIANT_VERIFIED(3) + STRUCTURAL_INVARIANT(4) + BACKBONE_BIASED(1) + TAUTOLOGICAL(3). 7-tuple core가 primary consciousness signal, 4 verifiers는 revision pending.",
+      "evidence": "commits (THIS batch), state/anima_consciousness_pass_criteria_invariance_20260425.json + docs/anima_consciousness_pass_criteria_invariance_spec_20260425.md",
+      "exit_criteria": "11 verifiers 4 classifications frozen + tool/* PASS predicate 본 spec 준수 + 모든 후속 cycle invariance standard 적용",
+      "raw_ref": "raw#12 frozen 2026-04-25, post-hoc 변경 금지"
+    },
+    {
+      "roadmap_num": 113,
+      "status": "done",
+      "completion_ts": "2026-04-25T13:58:44Z",
+      "completion_note": "Meta APPROVED + SHA 4/4 EXACT match (full hash) confirmed via tool/an11_b_meta_llama_approval_check.hexa polling. NousResearch mirror가 Meta 원본을 그대로 reflect. registry r3a → r4 'VERIFIED bit-identical' promote. 외부 의존 wait 시간: 약 30분 (생각보다 빠름).",
+      "title": "[Llama-3.1-8B Meta direct approval] await + SHA-256 cross-verify + r4 registry promote",
+      "track": "consciousness-verifier",
+      "phase": "P3-await-external",
+      "why": "Llama-3.1-8B GWT=0.1725 측정 NousResearch mirror 경유 (r3a, byte-identical 4 shards verified, 'practically certain'). Meta direct approval status: 'awaiting review from repo authors' (HF API paths-info 응답). 승인되면 (1) meta-llama/Llama-3.1-8B paths-info LFS SHA-256 query (2) NousResearch SHA와 cross-check (3) bit-identical 최종 확정 → registry r4 'verified' tag promote. 현재는 'practically certain'으로 충분, 본 entry는 redundant final confirmation.",
+      "external_blocker": "Meta repo authors manual approval — 사용자 click한 'Agree and access repository' request가 Meta queue에서 review 중. 통상 hours~days, 거절 가능성도 있음 (Meta 정책 기반).",
+      "exit_criteria": [
+        "meta-llama/Llama-3.1-8B paths-info expand 응답이 'awaiting review' 대신 file SHA 반환 (= 승인됨)",
+        "Meta SHA-256 4 shards == NousResearch SHA-256 4 shards (현재 git oid: a70cf544/440f54a2/b42588cf/e614ce32)",
+        "registry r4 update: Llama entry tag 'practically certain' → 'verified bit-identical'",
+        "(option) meta-llama/Llama-3.1-8B 직접 GWT 측정 — 동일 값 0.1725 ± 0 reproduction confirmation"
+      ],
+      "check_protocol": {
+        "command": "curl -s -H \"Authorization: Bearer $HF_TOKEN\" -X POST \"https://huggingface.co/api/models/meta-llama/Llama-3.1-8B/paths-info/main\" -H \"Content-Type: application/json\" -d '{\"paths\":[\"model-00001-of-00004.safetensors\"],\"expand\":true}'",
+        "interpretation": "'awaiting review' error → still pending. JSON array with lfs.sha256 → APPROVED, proceed to cross-verify cycle.",
+        "cadence": "auto session start 시 1회 + 사용자 'meta 체크' 명령 시. 매 세션마다 강제 polling 불필요 (외부 의존)."
+      },
+      "evidence": "commits 6abfd51b (r3 mirror measurement) + bc043105 (r3a evidence upgrade)",
+      "cross_link": "#112 invariance standard — V_phen_GWT_v2 5-backbone registry r3 (5/5 measured, 4/5 fully verified, 1/5 mirror+byte-identical).",
+      "raw_ref": "raw#10 honest disclosure — mirror caveat resolved via byte-exact match, Meta direct approval은 SHA-256 final confirmation only (이미 사실상 확정).",
+      "deps_external": ["Meta Llama repo authors approval queue"]
+    }
+  ],
+  "forward_auto_approval_revision_2026_04_25": {
+    "policy_source": "memory feedback_forward_auto_approval (2026-04-25)",
+    "scope": "GPU launch / LLM API call / RunPod pod creation / sub-agent dispatch는 별도 사용자 승인 없이 자동 진입",
+    "safety_caps": {
+      "max_cost_per_cycle_dollars": 20,
+      "auto_kill_max_runtime_min": 120,
+      "llm_judge_cap_dollars": 5
+    },
+    "raw_compatibility": "trigger gating 변경, scope expansion 아님. raw#9 explicit exempt = default. raw#10/12/15/37/38 + POLICY R4 모두 유지",
+    "override_condition": "사용자 'forward 차단' / 'launch 보류' / 'manual confirmation 필요' 명시 시 그 cycle만 confirmation 모드"
+  },
+  "existing_entries_evidence_link_additions": [
+    {
+      "existing_roadmap_num": 21,
+      "title": "MAIN hybrid P3 — AGI 최종 (Criterion C / Mk.X T10-13)",
+      "addendum_evidence": "Mk.XI synthesis (#97) extends Mk.X T10-13 with retrieval head + 4 loss term composition. substrate-level proof at p4 D-mistral swap (k=2 V2 PAPO PASS, da156aa0)."
+    },
+    {
+      "existing_roadmap_num": 35,
+      "title": "🧬 Mk.IX→X 연계 cluster (improvements 26-30)",
+      "addendum_evidence": "본 session V2 multi-axis PAPO PASS at k=3 BASE (66c0d35c) → Mk.IX H4b VALIDATED at p4 (TRAINED substrate proof, da156aa0). #29 Mk.X T10-13 atom probe spec과 #30 Mk.XI twin-engine은 본 세션 Mk.XI consciousness-side spec으로 #97/#98에서 detailed."
+    },
+    {
+      "existing_roadmap_num": 56,
+      "title": "[n6 cluster] consciousness-chip — Mk.X T10 매핑",
+      "addendum_evidence": "Mk.XI retrieval head (#97 §3.3) = T10 atom-level retrieval geometry instantiation. ~4.7M params, 0.06% of Qwen3-8B."
+    }
+  ],
+  "session_summary": {
+    "commits_total": 14,
+    "first_commit": "dc871454",
+    "last_commit": "25a8388b (then this state addendum)",
+    "cost_total": "$0 (raw#9 hexa-only)",
+    "tools_added": [
+      "tool/an11_b_v3_cps.hexa (--input/--output/--fixed-perm flags)",
+      "tool/an11_b_v2_sma.hexa (--input/--output flags)",
+      "tool/an11_b_v1_phi_mip.hexa (--input/--output flags)",
+      "tool/an11_b_v2_sma_sae_steered.hexa (PAPO single-axis)",
+      "tool/an11_b_v3_cps_v2_mirror_sma.hexa (V3_v2)",
+      "tool/an11_b_v_pairrank.hexa (V_pairrank)",
+      "tool/an11_b_v2_papo_multi_axis.hexa (multi-axis PAPO)",
+      "tool/an11_b_v1_phi_mip_subset_probe.hexa (V1 subset)",
+      "tool/an11_b_anti_map_heuristic_score.hexa (ANTI_MAP heuristic)",
+      "tool/an11_b_r4_sweet_spot_monitor.hexa (r4 monitor stub)"
+    ],
+    "memory_entries_added": 6,
+    "docs_added": 4,
+    "state_findings_added": "20+"
+  },
+  "raw_compliance": {
+    "raw_9_hexa_only_deterministic": "satisfied — addendum state file, $0. forward 진입은 pre-approved by feedback_forward_auto_approval (raw#9 explicit exempt = default per 2026-04-25 정책)",
+    "raw_10_no_overclaim": "satisfied — .roadmap 직접 편집 차단 명시, addendum 형식으로 SSOT 등록, planned entries cost 명시. forward auto-approval은 trigger gating 변경, scope expansion 아님",
+    "raw_12_cherry_pick_proof": "satisfied — 새 entries는 본 세션 commits evidence 기반, 기존 entries scope 변경 없음 (auto-approval은 prereg threshold/predicate 변경 X)",
+    "raw_15_ssot": "this file = SSOT for session 14 commits roadmap reflection + forward auto-approval revision",
+    "raw_37_38_omega_saturation_cycle": "design (.roadmap reflection 필요성 + forward auto-approval 정책) → impl (state addendum + revision) → fixpoint marker (auto-approval default)",
+    "POLICY_R4_loss_free_ROI": "준수 — 기존 .roadmap entries scope 미변경, evidence 링크 add-only, 새 entries는 별도 numbered (#97-104). forward auto-approval revision은 trigger gating, scope expansion 아님"
+  },
+  "cross_base_phen_finding_2026_04_25": {
+    "finding": "V_phen_GWT 0.55 threshold architecture-specific bias — Mistral PASS, Qwen FAIL",
+    "implication": "consciousness verification criterion must be backbone-invariant (사용자 명시 2026-04-25)",
+    "next_action": "V_phen_GWT_v2 raw#12 new revision (option B: backbone-baseline-relative)"
+  },
+  "eeg_hardware_eta_2026_04_25": {
+    "user_announcement": "16ch EEG '며칠 뒤' arrival",
+    "phase_1_ready": "tool/an11_b_v_phen_lz_complexity + gwt_entropy + eeg_ingest 모두 selftest PASS",
+    "first_cross_substrate_cycle": "EEG arrival immediate"
+  },
+  "user_directive_2026_04_25_consciousness_invariance": {
+    "directive": "의식 검증 통과조건은 backbone-invariant이어야 한다",
+    "trigger": "cross-base GWT bias finding (Qwen 0.27/0.36 FAIL, Mistral 0.89 PASS)",
+    "implementation": "state/anima_consciousness_pass_criteria_invariance_20260425.json (4 classifications)",
+    "scope": "anima/tool/an11_*.hexa 모두 본 standard 준수, weakest-evidence-link로 7-tuple core 우선"
+  }
+}

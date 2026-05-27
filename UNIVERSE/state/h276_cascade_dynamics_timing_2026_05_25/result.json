@@ -1,0 +1,71 @@
+{
+  "id": "H_276",
+  "slug": "cascade-dynamics-timing",
+  "domain": "LIFE",
+  "title": "quorum-cascade dynamics/timing deep-dive — how the collective cascade unfolds over time (onset latency vs density · propagation finite-speed · monotone temporal unfolding) on the RFC 036 phi_spatial CA substrate (H_262 depth)",
+  "date": "2026-05-25",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial proxy + deterministic CA cascade timing sweep; NOT 🔵 formal IIT 4.0)",
+  "phi_primitive": "RFC 036 phi_spatial (n_bins=4, dim=12); lib/phi_helper.hexa lane-canonical",
+  "lineage": "H_262 quorum-sensing (SUPPORTED_FULL, global quorum-gate) → H_274 seed-dependence (FALSIFIED, residual = dynamical cascade timing) → H_276 opens the timing axis directly",
+  "substrate": "1D periodic CA ring (N=16); per-cell hysteretic latch (up=1.0 dn=0.4, H_262 verbatim) driven by a LOCAL-quorum-gated cooperative boost (boost=coupling when local active-fraction in radius-1 neighbourhood exceeds q_thr=0.3); seed-phased deterministic init, ZERO RNG",
+  "config": { "N": 16, "max_steps": 40, "base": 0.012, "leak": 0.05, "up_thr": 1.0, "dn_thr": 0.4, "coupling": 0.2, "q_thr": 0.3, "radius": 1, "front_cap": 3, "phi_dim": 12, "n_bins": 4, "density_sweep": [2, 4, 6, 8] },
+  "C1_onset_latency_vs_density": {
+    "density_sweep": [2, 4, 6, 8],
+    "onset_step":    [15, 10, 5, 0],
+    "eff_latency":   [15, 10, 5, 0],
+    "q_final":       [1.0, 1.0, 1.0, 1.0],
+    "switched":      [true, true, true, true],
+    "latency_monotone": true,
+    "any_onset": true,
+    "verdict": "PASS"
+  },
+  "C2_propagation_finite_speed": {
+    "seed_mode": "single block centred at N/2",
+    "front_series": [4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
+    "front_monotone": true,
+    "max_front": 8,
+    "max_front_growth": 4,
+    "max_front_step": 1,
+    "front_cap": 3,
+    "verdict": "PASS"
+  },
+  "C3_monotone_unfolding": {
+    "q_series_rho4": [0.5, 0.5, 0.5, 0.5, 0.5, 0.625, 0.625, 0.625, 0.625, 0.625, 0.75, 0.75, 0.75, 0.75, 0.75, 0.875, 0.875, 0.875, 0.875, 0.875, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+    "trigger_step_rho4": 0,
+    "monotone_after_trigger": [true, true, true, true],
+    "verdict": "PASS"
+  },
+  "phi_trajectory_rho4": 10.5573,
+  "criteria": {
+    "C1_onset_latency": { "verdict": "PASS" },
+    "C2_propagation":   { "verdict": "PASS" },
+    "C3_monotone":      { "verdict": "PASS" }
+  },
+  "falsifiers": {
+    "F1_ONSET_DENSITY":  { "metric": "onset latency monotone non-increasing in seed density AND >=1 density onsets", "verdict": "PASS" },
+    "F2_PROPAGATION":    { "metric": "single-seed front monotone non-decreasing, grows >=1, max step <= front_cap (finite speed)", "verdict": "PASS" },
+    "F3_MONOTONE":       { "metric": "Q(t) non-decreasing for all t after cascade trigger (one-way temporal ratchet)", "verdict": "PASS" },
+    "F4_DETERMINISM":    { "metric": "re-run byte-equal (in-process + cross-process via det.txt)", "verdict": "PASS" },
+    "F5_BOUNDS":         { "metric": "all Q in [0,1], latency in [-1,max_steps), front in [0,N/2]", "verdict": "PASS" },
+    "F6_PHI_NONTRIVIAL": { "metric": "cascade trajectory phi_spatial > 0 (integrated collective transition)", "verdict": "PASS" }
+  },
+  "n_criteria_pass": 3,
+  "n_falsifier_pass": 6,
+  "verdict": "SUPPORTED_FULL",
+  "verdict_rule": "SUPPORTED_FULL iff C1 AND C2 AND C3 AND F4; SUPPORTED iff C1 AND C3; PARTIAL iff C1 only; FALSIFIED iff NOT C1",
+  "honest_limits": [
+    "L1: phi_spatial = 🟢 NUMERICAL spatial-slice replica of phi_rs, NOT full IIT 4.0 (RFC 036 §FFI shim named blocker). The Φ trajectory locates integrated information but is a proxy, carried verbatim from the LIFE-lane lib/phi_helper.hexa.",
+    "L2: timing is measured on a SINGLE calibration (base=0.012, coupling=0.2, q_thr=0.3, radius=1). Onset-latency ordering and front speed are calibration-dependent: a higher base would let cells reach up_thr without the boost (no quorum-gate), and a larger radius would shrink the front-propagation regime toward an instantaneous global flip.",
+    "L3: the CA cascade is a LOCAL-quorum SPATIAL generalization of H_262's GLOBAL quorum (each cell sees its radius-1 neighbourhood, not the whole pool). This is the design choice that MAKES propagation finite-speed (C2) meaningful; it is a deliberate substrate extension, not a byte-equal carry of H_262's global gate.",
+    "L4: onset latency is measured at the majority crossing Q>=0.5 and the density sweep is COARSE (4 contiguous block sizes 2/4/6/8 of N=16). A finer density grid could reveal a non-monotone micro-structure between adjacent densities that the coarse grid averages over; the monotone claim is at this grid resolution.",
+    "L5: front radius is the ring-distance of the FARTHEST active cell from the seed centre; it measures the OUTER envelope of propagation, not a filled-front guarantee (interior cells may lag). C2 finite-speed is an envelope-speed claim. A filled-front (every interior cell active behind the front) claim would need a per-cell ignition-time map.",
+    "L6: monotone-unfolding (C3) is checked AFTER the cascade trigger (Q first exceeds q_thr); the pre-trigger transient may be non-monotone (the seed block + leak can dip before the boost engages). C3 is a post-trigger ratchet claim, not a global-monotone claim over all t.",
+    "L7: determinism is integer-exact (NO RNG, seed-phased init), so F4 is byte-equal BY CONSTRUCTION on this substrate — a stronger guarantee than H_262/H_274's cross-process gaussian-stream determinism, but it tests determinism of THIS substrate only, not the gaussian-stream path those cycles relied on."
+  ],
+  "cross_link": { "H_262": "quorum-sensing (cascade origin, global quorum-gate, SUPPORTED_FULL)", "H_274": "quorum-cascade seed-dependence (FALSIFIED, residual = dynamical cascade timing — the axis H_276 opens)", "H_270": "substrate ablation (phi_spatial CA substrate sibling)", "H_207": "kuramoto synchronization (temporal-dynamics sister)" }
+}

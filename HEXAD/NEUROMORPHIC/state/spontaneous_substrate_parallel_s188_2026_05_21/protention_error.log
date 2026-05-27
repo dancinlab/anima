@@ -1,0 +1,15 @@
+[prediction/protention_error] PHYS-P6-3 — protention prediction error
+  err_k = exp(-k/τ) · (actual[k] − predicted[k]),  τ = (float)
+
+  [T1] identical inputs: max|error| = (float)
+T1 PASS — zero mismatch → zero error
+  [T2] sign: err_pos[0]=(float) (>0? true), err_neg[0]=(float) (<0? true)
+T2 PASS — sign tracks direction of surprise
+  [T3] |err_0|=(float) |err_11|=(float) strict_decay=true
+T3 PASS — protention decays with lag
+  [T4] empty=0 short_act=4 short_pred=3 bound=true
+T4 PASS — API contract (length = min)
+  [T5] max|Δ| across two independent runs = (float)
+T5 PASS — deterministic protention_error
+
+[prediction/protention_error] 5/5 PASS — PHYS-P6-3 DONE

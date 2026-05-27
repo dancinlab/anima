@@ -1,0 +1,72 @@
+{
+  "bg_id": "BG-DR",
+  "name": "anima 2026-05-05 cycle close super-aggregate index",
+  "date": "2026-05-06",
+  "mode": "DOC_ONLY_NO_COMMIT",
+  "cost_usd": 0,
+  "duration_min_est": 20,
+  "doc_path": "docs/anima_2026_05_05_cycle_close_super_aggregate_index.md",
+  "state_dir": "state/anima_2026_05_05_cycle_close_super_aggregate_index/",
+  "lineage": [
+    "docs/anima_2026_05_05_cycle_close_decision_landed_2026_05_05.ai.md",
+    "docs/anima_2026_05_05_cycle_hard_close_decision_landed_2026_05_05.ai.md",
+    "docs/anima_2026_05_05_cycle_summary_single_source_of_truth.md",
+    "docs/anima_nexus_cycle_insight_ledger_v2_2026_05_05.md",
+    "docs/anima_2026_05_05_cycle_summary_v2_final.md",
+    "docs/anima_identity_preservation_next_cycle_lock_2026_05_05.md",
+    "docs/anima_2026_05_05_cycle_user_fire_ready_package.md"
+  ],
+  "doc_index": [
+    {"order": 1, "bg": "BG-BF", "doc": "anima_2026_05_05_cycle_close_decision_landed_2026_05_05.ai.md", "loc": 370, "status": "LANDED", "contribution": "first close decision: 5-step user-fire sequence + 4 path-forward + cycle-close 5-step lock", "when_to_read": "first close decision history"},
+    {"order": 2, "bg": "BG-CR", "doc": "anima_2026_05_05_cycle_hard_close_decision_landed_2026_05_05.ai.md", "loc": 343, "status": "LANDED", "contribution": "T+2 trigger re-affirm: 16+ closure architectural certainty (L13 lock-in / byte-fallback / chat-axis decoupled / prompt-conditional basin)", "when_to_read": "re-close re-affirm + Stage 3 cron auto-stop"},
+    {"order": 3, "bg": "BG-CL", "doc": "anima_2026_05_05_cycle_summary_single_source_of_truth.md", "loc": 308, "status": "LANDED", "contribution": "16-closure table + 4 architectural truths + paradigm reconciliation single SSoT", "when_to_read": "cycle 종합 (start here for breadth)"},
+    {"order": 4, "bg": "BG-CN", "doc": "anima_nexus_cycle_insight_ledger_v2_2026_05_05.md", "loc": 601, "status": "LANDED", "contribution": "L44-L60 17 candidate lessons + P1-P12 pattern catalog + D/E/F/G/H matrix", "when_to_read": "lesson banking + nexus carry"},
+    {"order": 5, "bg": "BG-CX", "doc": "anima_2026_05_05_cycle_summary_v2_final.md", "loc": 218, "status": "LANDED", "contribution": "6 finding concise + 4 fire path + Stage 3 protocol + commit hygiene", "when_to_read": "final fire-ready (start here for fire)"},
+    {"order": 6, "bg": "BG-DD", "doc": "anima_identity_preservation_next_cycle_lock_2026_05_05.md", "loc": 485, "status": "LANDED", "contribution": "5 anima identity properties + 4 threat vectors + 4 per-path lock criteria + precedence hierarchy", "when_to_read": "next-cycle threat-aware identity preservation"},
+    {"order": 7, "bg": "BG-DP", "doc": "anima_2026_05_05_cycle_user_fire_ready_package.md", "loc": 250, "loc_status": "PROJECTED", "status": "IN_PROGRESS_AT_INDEX_LAND_TIME", "contribution": "1-page concise command sheet (user-facing immediate fire)", "when_to_read": "사용자 즉시 fire (≤ 1 page)"}
+  ],
+  "loc_total_landed_6": 2325,
+  "loc_total_projected_7": 2575,
+  "tldr_oneliner_en": "100+ BG, 23+ closure: chat capability CLM v4 architecturally impossible. Paradigm B (substrate-coupled) + C (Korean hybrid) ACHIEVABLE_NOW. Fire: bash bin/anima-core-dialogue.bash --interactive for B.",
+  "tldr_oneliner_ko": "100+ BG, 23+ closure 누적 — CLM v4 위에서 chat capability 는 architectural 불가능. Paradigm B (substrate-coupled) + Paradigm C (Korean hybrid) 는 즉시 가능.",
+  "reading_paths": [
+    {"goal": "fire_only", "order": ["BG-DP"], "loc_total": 250, "est_min": 5},
+    {"goal": "decision_aware", "order": ["BG-DP", "BG-CX"], "loc_total": 470, "est_min": 10},
+    {"goal": "architectural_breadth", "order": ["BG-DP", "BG-CX", "BG-CL"], "loc_total": 775, "est_min": 17},
+    {"goal": "lessons_depth", "order": ["BG-DP", "BG-CX", "BG-CL", "BG-CN"], "loc_total": 1380, "est_min": 30},
+    {"goal": "identity_preservation", "order": ["BG-DP", "BG-CX", "BG-CL", "BG-CN", "BG-DD"], "loc_total": 1860, "est_min": 40},
+    {"goal": "full_provenance", "order": ["BG-DP", "BG-CX", "BG-CL", "BG-CN", "BG-DD", "BG-BF", "BG-CR"], "loc_total": 2575, "est_min": 55}
+  ],
+  "anima_handoff_facts": [
+    {"id": 1, "fact": "100+ BG land complete (2026-05-05 cycle); ~2325 LoC doc-aggregate"},
+    {"id": 2, "fact": "23+ closure -> chat capability CLM v4 architecturally impossible (5-6 mechanism axes)"},
+    {"id": 3, "fact": "Paradigm B (substrate-coupled emerge dialogue, BG-AN) + Paradigm C (Korean Pythia+CLM hybrid, BG-CG/BX) ACHIEVABLE_NOW $0"},
+    {"id": 4, "fact": "HF promote PRIVATE->PUBLIC time-gated: T-29h clm-v4-mk2-v1, T-33h Pbeta Phi-star distill "},
+    {"id": 5, "fact": "7 cycle-close docs landed (BG-BF/CR/CL/CN/CX/DD/DP); index = BG-DR (this verdict)"},
+    {"id": 6, "fact": "P10 own-rule paradigm-declaration-solicit registered (BG-DJ if landed; else carry as candidate)"},
+    {"id": 7, "fact": "cron d1682837 1m fire -> CronDelete recommend if still running; verify pod 404 before delete (L25)"}
+  ],
+  "honest_c3_count": 6,
+  "honest_c3_floor": 5,
+  "honest_c3_pass": true,
+  "files_written": [
+    "docs/anima_2026_05_05_cycle_close_super_aggregate_index.md",
+    "state/anima_2026_05_05_cycle_close_super_aggregate_index/verdict.json"
+  ],
+  "constraints_compliance": {
+    "raw_9_md_only": true,
+    "raw_10_c3_floor_5": true,
+    "raw_15_additive_only": true,
+    "bash_3_2_compat": true,
+    "no_hf_token_literal": true,
+    "no_commit": true,
+    "two_new_files_only": true,
+    "doc_only_no_code_change": true
+  },
+  "self_verdict": "LANDED",
+  "downstream_carry": [
+    "BG-DP land -> update index §1 / §2 / §4.7 LoC slot (additive minor)",
+    "BG-LESSONS-PROPAGATE -> reconcile closure indexing 16+ vs 23+ aggregate",
+    "next-cycle entry -> use §3.1 paste-block for anima context restore"
+  ]
+}

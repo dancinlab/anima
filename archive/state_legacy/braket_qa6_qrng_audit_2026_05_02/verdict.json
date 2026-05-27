@@ -1,0 +1,17 @@
+{
+  "task": "QA6 QRNG audit (CLM AN11(c) JSD)",
+  "verdict": "PASS",
+  "jsd_primary": 0.00043297726953392147,
+  "threshold": 0.01,
+  "interpretation": "PASS = chacha20 PRNG sufficient for AN11(c) sampling-style audits at n=1024 (JSD vs SV1 ideal QRNG below 0.01 threshold).",
+  "honest_c3": [
+    "PRIMARY metric = per-qubit balance JSD (32-bin); 16-bit raw token JSD is sample-noise-dominated at n=1024",
+    "PRNG = secrets.randbits (kernel CSPRNG, ChaCha20-based on Linux/macOS getentropy(3))",
+    "SV1 |+>^16 with H gates = ideal uniform 16-bit distribution (noiseless simulator)",
+    "Threshold 0.01 chosen to be roughly 5x the per-qubit binomial-noise JSD floor at n=1024 (~0.0005)"
+  ],
+  "cost_actual_USD": 0.0,
+  "free_tier_consumed_min": "<0.5",
+  "task_id": "arn:aws:braket:us-east-1:267673635495:quantum-task/dfc2c675-2fb9-449d-ae65-98a3a59e66e2",
+  "ts": 1777730769.583266
+}

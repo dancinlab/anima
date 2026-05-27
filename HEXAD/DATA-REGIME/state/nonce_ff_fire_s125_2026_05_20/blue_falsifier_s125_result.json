@@ -1,0 +1,130 @@
+{
+  "battery_id": "B-S125",
+  "cycle": "\u00a7125 NONCE-FF (Hinton Forward-Forward on anima)",
+  "sidecar": true,
+  "central_zero_diff_check": true,
+  "results": [
+    {
+      "battery": "B-S125-1 NO-GLOBAL-BACKWARD-INVARIANT-AST",
+      "pass_": true,
+      "backward_callers": [
+        "L_head",
+        "L_i"
+      ],
+      "forbidden_matches": [],
+      "allowed_set": [
+        "L_head",
+        "L_i"
+      ]
+    },
+    {
+      "battery": "B-S125-2 GOODNESS-FORMULA-BOUNDED-NONNEGATIVE",
+      "pass_": true,
+      "d2": "2/N",
+      "g_at_zero": "0"
+    },
+    {
+      "battery": "B-S125-3 FF-LAYER-LOSS-SIGN-MONOTONE",
+      "pass_": true,
+      "dL_dgpos_expr": "-1/(exp(g_pos - theta) + 1)",
+      "dL_dgneg_expr": "exp(g_neg)/(exp(g_neg) + exp(theta))",
+      "sample_at_origin": {
+        "dL_dgpos": -0.5,
+        "dL_dgneg": 0.5
+      }
+    },
+    {
+      "battery": "B-S125-4 PER-BLOCK-OPTIMIZER-COUNT-MATCHES-LAYER-COUNT",
+      "pass_": true,
+      "adamw_call_count": 2,
+      "adamw_in_for_loop": [
+        153
+      ],
+      "adamw_out_of_for_loop": [
+        156
+      ],
+      "global_model_parameters_seen": false
+    },
+    {
+      "battery": "B-S125-5 DETACH-BETWEEN-BLOCKS-AST",
+      "pass_": true,
+      "detach_callers": [
+        "xp",
+        "xn",
+        "L_i",
+        "L_head"
+      ],
+      "has_xp_detach": true,
+      "has_xn_detach": true
+    },
+    {
+      "battery": "B-S125-6 FROM-SCRATCH-RANDOM-INIT-NO-BASE-CKPT",
+      "pass_": true,
+      "forbidden_call_attrs": [],
+      "forbidden_full_paths": [],
+      "seed_calls_seen": [
+        "random.seed",
+        "torch.cuda.manual_seed_all",
+        "torch.manual_seed"
+      ],
+      "seed_fixed": true
+    },
+    {
+      "battery": "B-S125-7 \u00a711-B-CONNECTION-POINT-WELL-FORMED",
+      "pass_": true,
+      "random_floor_const": true,
+      "degenerate_ceiling_const": true,
+      "support_floor_const": true,
+      "bucket_distinct_count": 3,
+      "sample_classification": [
+        [
+          0.0,
+          "S11B_LIKE_DEGENERATE"
+        ],
+        [
+          0.00390625,
+          "S11B_LIKE_DEGENERATE"
+        ],
+        [
+          0.0078125,
+          "S11B_LIKE_DEGENERATE"
+        ],
+        [
+          0.01,
+          "PARTIAL_AMBIGUOUS"
+        ],
+        [
+          0.05,
+          "S96_Q2_SUPPORTED (if psi-responsive)"
+        ],
+        [
+          0.1,
+          "S96_Q2_SUPPORTED (if psi-responsive)"
+        ],
+        [
+          0.5,
+          "S96_Q2_SUPPORTED (if psi-responsive)"
+        ],
+        [
+          1.0,
+          "S96_Q2_SUPPORTED (if psi-responsive)"
+        ]
+      ]
+    },
+    {
+      "battery": "CENTRAL-BLUE-FALSIFIER-0-LINE-DIFF",
+      "pass_": true,
+      "sha256": "c93e160a8a376a940942332cad13e652df9a03e97ccab708542a126eefc70b73",
+      "expected_prefix": "c93e160a8a376a94"
+    }
+  ],
+  "empirical_carve_out": {
+    "battery": "B-S125-NOTE empirical carve-out",
+    "pass_": null,
+    "note": "Whether \u00a7125 fire crosses any verdict threshold is SGD/measurement OUTCOME (B-D-NOTE/B-PUREPHYS-NOTE/B-S96-NOTE/B-S104-NOTE/B-S107-NOTE/B-EMERGE-7 family). Battery proves SETUP well-formed, NOT emergence. necessary-not-sufficient at every layer."
+  },
+  "summary": "8/8 \ud83d\udd35 (PASS)",
+  "wall_s": 0.11145591735839844,
+  "north_star_unchanged": true,
+  "s15_s51_s72_milestones_unchanged": true
+}

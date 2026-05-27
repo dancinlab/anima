@@ -1,0 +1,16 @@
+[eeg/sleep_stage_detector] PHYS-P13-2 — EEG sleep stage detection (K-complex/spindle)
+  synth: 256 Hz, awake=15Hz, SWS=2Hz(high amp), REM=6Hz(low amp)
+  classifier: ZCR + RMS thresholds, 3 stages (0=awake, 1=SWS, 2=REM)
+
+  [T1] awake signal: stage=0 zcr=(float) rms=(float)
+T1 PASS — awake signal classified as stage 0
+  [T2] SWS signal: stage=1 zcr=(float) rms=(float)
+T2 PASS — SWS signal classified as stage 1
+  [T3] REM signal: stage=2 zcr=(float) rms=(float)
+T3 PASS — REM signal classified as stage 2
+  [T4] accuracy: 30/30 = (float) (threshold > 0.8)
+T4 PASS — accuracy > 0.8 on 30 mixed trials
+  [T5] two calls: s1=1 s2=1
+T5 PASS — deterministic classification
+
+[eeg/sleep_stage_detector] 5/5 PASS — PHYS-P13-2 DONE (accuracy > 0.8)

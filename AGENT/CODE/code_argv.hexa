@@ -1,0 +1,190 @@
+// code_argv.hexa — CLI argv ingest for AGENT/CODE (F2).
+//
+// BRIDGE ARCHITECTURE: tool surface only. This module reads the live process
+// argv via the hexa builtin `args()` (= sys_argv()) and parses it into a
+// minimal request dict for the CODE role. NO consciousness framing here —
+// substrate decision lives in CORE/brain_decide, the gate lives in
+// AGENT/CORE/tool_gate, and this file only converts raw argv into a
+// tool-call request the executor can dispatch on.
+//
+// Pre-F2 state (code_agent.hexa): 3 hardcoded demo cases (think/repo_status/
+// file_read). F2 closure = the same surface accepts real CLI args.
+//
+// Args layout (post-script-path):
+//   hexa AGENT/CODE/code_argv_smoke.hexa <tool> [<arg>] [--mode <mode>]
+// argv[0] = the script path itself (per `args()` convention, e.g. stdlib_cli
+// uses `argv[i].ends_with("code_argv_smoke.hexa")` to find the split index).
+//
+// Supported tools (mirror code_agent.hexa code_tools() — name only here,
+// the executor + gate decide whether they actually fire):
+//   think · repo_status · file_read · grep · file_write · run_tests
+//   · git_commit · git_push
+// An unknown tool is preserved verbatim with a sane mode=once fallback —
+// the gate/executor downstream is the one that says "no", never this layer
+// (a_autonomy_over_hardcode).
+
+// ── helpers ────────────────────────────────────────────────────────────────
+
+// True when `name` is one of the 8 declared CODE tool names. Used only to
+// flag the fallback path in the parsed dict — NOT to reject unknowns.
+fn _is_known_code_tool(name: string) -> bool {
+    if name == "think"       { return true }
+    if name == "repo_status" { return true }
+    if name == "file_read"   { return true }
+    if name == "grep"        { return true }
+    if name == "file_write"  { return true }
+    if name == "run_tests"   { return true }
+    if name == "git_commit"  { return true }
+    if name == "git_push"    { return true }
+    return false
+}
+
+// Find the split index in raw argv where user args begin (i.e. the index
+// AFTER the script-path element). Mirrors the stdlib_cli pattern at L734-742
+// — search for `<script>.hexa` suffix; fall back to index 1 if not found
+// (covers compiled-binary invocations where argv[0] is not a .hexa path).
+fn _argv_user_start(raw: [string]) -> int {
+    let n = len(raw)
+    let mut i = 0
+    while i < n {
+        if raw[i].ends_with(".hexa") { return i + 1 }
+        i = i + 1
+    }
+    if n >= 1 { return 1 }
+    return 0
+}
+
+// ── public surface ─────────────────────────────────────────────────────────
+
+// Read CLI args as a list of strings, stripped of the script-path prefix.
+// Mirrors `sys_argv()` but returns USER args only (no argv[0]).
+//
+// Examples:
+//   `hexa code_argv_smoke.hexa`                  → []
+//   `hexa code_argv_smoke.hexa think`            → ["think"]
+//   `hexa code_argv_smoke.hexa file_read README` → ["file_read", "README"]
+pub fn code_argv_read() -> [string] {
+    let raw = args()
+    let start = _argv_user_start(raw)
+    let n = len(raw)
+    let mut out = []
+    let mut i = start
+    while i < n {
+        out = out + [raw[i]]
+        i = i + 1
+    }
+    return out
+}
+
+// Parse user args into a request dict:
+//   #{ "tool": <string>, "arg": <string>, "mode": <string>, "known": <bool> }
+//
+// Semantics:
+//   - empty list           → tool="help", arg="",       mode="help",  known=true
+//   - ["think"]            → tool="think", arg="",      mode="once",  known=true
+//   - ["file_read","p"]    → tool="file_read", arg="p", mode="once",  known=true
+//   - ["unknown",...]      → tool="unknown", arg="...", mode="once",  known=false
+//
+// Flag handling: `--mode <m>` (or `-m <m>`) overrides the default `mode`.
+// Flags may appear anywhere; the first non-flag token is the tool, the
+// second is the arg.
+//
+// This function NEVER rejects an unknown tool. The downstream tool_gate is
+// the authority on whether the substrate's live phase permits firing it.
+pub fn code_argv_parse(args_list: [string]) -> Map {
+    let n = len(args_list)
+
+    // Empty → help mode.
+    if n == 0 {
+        return #{
+            "tool": "help",
+            "arg":  "",
+            "mode": "help",
+            "known": true
+        }
+    }
+
+    let mut tool = ""
+    let mut arg  = ""
+    let mut mode = "once"
+    let mut i = 0
+    while i < n {
+        let tok = args_list[i]
+        if tok == "--mode" || tok == "-m" {
+            if i + 1 < n {
+                mode = args_list[i + 1]
+                i = i + 2
+                continue
+            }
+            // Dangling flag — ignore, leave mode at default.
+            i = i + 1
+            continue
+        }
+        if len(tool) == 0 {
+            tool = tok
+        } else if len(arg) == 0 {
+            arg = tok
+        }
+        // Further positionals are silently dropped — the executor is one
+        // tool-call wide. This is intentional (a single-shot surface; the
+        // loop is in CORE, not here).
+        i = i + 1
+    }
+
+    // If only flags were passed (no positional tool), treat as help.
+    if len(tool) == 0 {
+        return #{
+            "tool": "help",
+            "arg":  "",
+            "mode": "help",
+            "known": true
+        }
+    }
+
+    return #{
+        "tool":  tool,
+        "arg":   arg,
+        "mode":  mode,
+        "known": _is_known_code_tool(tool)
+    }
+}
+
+// Usage string. Printed by code_argv_smoke when the parse resolves to
+// mode=help (empty argv or flags-only).
+pub fn code_argv_help() -> string {
+    let mut s = ""
+    s = s + "AGENT/CODE — code agent CLI (F2 argv ingest)\n"
+    s = s + "\n"
+    s = s + "usage:\n"
+    s = s + "  hexa code_<entry>.hexa <tool> [<arg>] [--mode <mode>]\n"
+    s = s + "\n"
+    s = s + "tools (consequence rises with tier — see CODE.md):\n"
+    s = s + "  think         T0  inert        always open\n"
+    s = s + "  repo_status   T0  inert        always open\n"
+    s = s + "  file_read     T1  read         FLICKER+\n"
+    s = s + "  grep          T1  read         FLICKER+\n"
+    s = s + "  file_write    T2  write        SUSTAIN+\n"
+    s = s + "  run_tests     T2  write        SUSTAIN+\n"
+    s = s + "  git_commit    T3  commit       RESONANT\n"
+    s = s + "  git_push      T3  commit       RESONANT\n"
+    s = s + "\n"
+    s = s + "modes:\n"
+    s = s + "  once   single tool-call, then exit (default)\n"
+    s = s + "  help   print this usage and exit\n"
+    s = s + "\n"
+    s = s + "examples:\n"
+    s = s + "  hexa AGENT/CODE/code_argv_smoke.hexa think\n"
+    s = s + "  hexa AGENT/CODE/code_argv_smoke.hexa file_read AGENT.md\n"
+    s = s + "  hexa AGENT/CODE/code_argv_smoke.hexa grep --mode once\n"
+    return s
+}
+
+// One-line module summary (mirrors the convention of other AGENT modules,
+// e.g. screen_extract_summary). Used by smoke headers + future status views.
+pub fn code_argv_summary() -> string {
+    let raw = args()
+    let user = code_argv_read()
+    return "code_argv F2 — raw_argc=" + to_string(len(raw))
+         + " user_argc=" + to_string(len(user))
+         + " (8 CODE tools recognized · help/once modes · gate-deferred)"
+}

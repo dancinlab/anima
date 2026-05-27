@@ -1,0 +1,102 @@
+{
+  "task": "N-22 Levin response monitor + bounce check infra",
+  "agent": "N-22 Levin response monitor",
+  "send_record": {
+    "msg_id": "19de825e26e98b82",
+    "thread_id": "19de825e26e98b82",
+    "recipient": "michael.levin@tufts.edu",
+    "sender": "nerve011235@gmail.com",
+    "subject": "anima CP2 framework x xenobot bioelectric Phi -- collaboration proposal from dancinlab team",
+    "sent_ts_utc": "2026-05-02",
+    "http_status": 200,
+    "labels": ["SENT"],
+    "send_history_path": "/Users/ghost/core/contact/data/send_history.json",
+    "template_path": "/Users/ghost/core/contact/templates/email_template_levin_michael_en.md",
+    "attachments_count": 2
+  },
+  "checkpoints": [
+    {
+      "label": "D+1",
+      "date": "2026-05-03",
+      "purpose": "bounce_check",
+      "bounce_check": "PENDING",
+      "method_primary": "user_manual_gmail_check",
+      "method_secondary": "hexa_native_check_bounces (deferred — file deleted, .py wrapper invalid)",
+      "manual_checklist": [
+        "Inbox: scan for postmaster / mailer-daemon / noreply",
+        "Spam: scan same",
+        "Sent: confirm message_id 19de825e26e98b82 present"
+      ],
+      "decision_rule": "If bounce found -> STOP, debug recipient; if clean -> proceed to D+7"
+    },
+    {
+      "label": "D+7",
+      "date": "2026-05-09",
+      "purpose": "first_response_checkpoint",
+      "response_received": false,
+      "action_if_response": "trigger response_handling branch (POSITIVE/NEGATIVE/PARTIAL/REDIRECT)",
+      "action_if_silent": "stay silent — no nag at this stage; continue to D+14"
+    },
+    {
+      "label": "D+14",
+      "date": "2026-05-16",
+      "purpose": "second_checkpoint_followup_decision",
+      "response_received": false,
+      "follow_up_sent": null,
+      "action_if_silent": "send follow-up email (one-time per academic etiquette)",
+      "follow_up_template_path": "/Users/ghost/core/anima/state/n_22_levin_monitor_2026_05_02/follow_up_template.md"
+    },
+    {
+      "label": "D+28",
+      "date": "2026-05-30",
+      "purpose": "final_status_decision",
+      "final_status": "PENDING",
+      "possible_outcomes": [
+        "silent_ongoing -> archive, re-prompt 3-6mo later (lighter cadence)",
+        "follow_up_sent_silent -> close as no-response, archive",
+        "levin_response_received -> branch into response_handling (already triggered earlier if D+7/D+14 hit)"
+      ]
+    }
+  ],
+  "follow_up_rule": {
+    "send_at": "D+14 (2026-05-16) IFF no response by then",
+    "max_followups": 1,
+    "etiquette_basis": "academic outreach norm: single gentle follow-up acceptable; second nag = pestering"
+  },
+  "response_handling": {
+    "POSITIVE": "present 3 partnership options per #89 spec: (1) consultation call, (2) pilot data exchange, (3) joint paper draft",
+    "NEGATIVE": "thank, gracious one-liner, archive contact",
+    "PARTIAL": "thank, mark interested-but-busy, re-prompt 3-6mo later (lighter cadence)",
+    "REDIRECT_to_grad_student": "forward original + brief intro, accept redirect, treat grad as new primary"
+  },
+  "honest_c3": {
+    "academic_cold_email_response_rate": "10-30% typical baseline",
+    "high_profile_lab_adjusted": "5-15% estimated for Levin lab",
+    "partnership_decision_dependencies": [
+      "Levin himself (may forward to grad)",
+      "lab bandwidth (Allen Discovery active projects)",
+      "user's own partnership criteria (consultation vs joint paper vs data sharing)"
+    ],
+    "eta_post_response_to_partnership_start": "additional 4-12 weeks typical",
+    "total_eta_outreach_to_active_partnership": "5-16 weeks if PASS, ~28 days to no-response close if silent"
+  },
+  "bounce_check_hexa_native_spec": {
+    "status": "DEFERRED — separate task recommended",
+    "loc_estimate": 150,
+    "pattern_basis": "send.hexa hexa-native (590 LOC) — curl + Gmail REST + builtin json_parse",
+    "endpoint_query": "GET https://gmail.googleapis.com/gmail/v1/users/me/messages?q=from:postmaster%20OR%20from:mailer-daemon&maxResults=10",
+    "auth": "reuse refresh_access_token() + load_token_map() from send.hexa",
+    "fallback_until_built": "user manual Gmail check (D+1 trigger)"
+  },
+  "race_isolation": {
+    "writes_to": [
+      "state/n_22_levin_monitor_2026_05_02/*.json",
+      "state/n_22_levin_monitor_2026_05_02/follow_up_template.md",
+      "docs/n_22_levin_monitor_schedule_2026_05_02.md"
+    ],
+    "no_modification_to": [
+      "state/levin_send_2026_05_02/* (immutable send record)",
+      "/Users/ghost/core/contact/data/send_history.json (existing append already in place)"
+    ]
+  }
+}

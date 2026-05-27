@@ -1,0 +1,82 @@
+=== S187 3B GRID variant=B30 dispatch start 2026-05-21T13:16:21Z ===
+    lambdas: psi=30.00 route=0.20 phi=0.30 cycle=0.15 curious=0.10 replay=-0.05
+    arch:    d=3072 L=28 nh=24 nkv=8  (head_dim=128 GQA_groups=3)
+    train:   steps=2000 bsz=2 block=128 lr=3e-4 warmup=200
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA H100 NVL
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA H100 PCIe
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA A100 80GB PCIe
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+FATAL: no pod from GPU cascade
+[teardown] myself.pods = {"data":{"myself":{"pods":[{"id":"bhkru20tgsx817"},{"id":"i5lhpx91bltodn"},{"id":"in03w32djz13xd"},{"id":"kosed8n85t3mcj"},{"id":"nw54ejvf7jqj1d"},{"id":"nwh9tshdau57pa"},{"id":"oclgfzzat4f309"},{"id":"rtfi448qd7rgle"},{"id":"rwv87wrm65y7zj"},{"id":"wvgdowa1d470op"}]}}}
+=== S187 3B GRID variant=B30 dispatch end 2026-05-21T13:17:08Z rc=1 ===
+=== S187 3B GRID variant=B30 dispatch start 2026-05-21T13:18:10Z ===
+    lambdas: psi=30.00 route=0.20 phi=0.30 cycle=0.15 curious=0.10 replay=-0.05
+    arch:    d=3072 L=28 nh=24 nkv=8  (head_dim=128 GQA_groups=3)
+    train:   steps=2000 bsz=2 block=128 lr=3e-4 warmup=200
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"w1cjm0brpl3qfe","machineId":"wnh14twnwkaq"}}}
+[create] pod w1cjm0brpl3qfe on NVIDIA H100 80GB HBM3
+[ssh-ready] iter 2: 103.207.149.80:14231 - port mapped AND handshake OK
+Warning: Permanently added '[103.207.149.80]:14231' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.80]:14231' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.80]:14231' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.80]:14231' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.80]:14231' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.80]:14231' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.80]:14231' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.80]:14231' (ED25519) to the list of known hosts.
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, s1-n 777000)
+Warning: Permanently added '[103.207.149.80]:14231' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[103.207.149.80]:14231' (ED25519) to the list of known hosts.
+[build] corpus sha = be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build] WARN: CORPUS_S101 sha drift (post-ee4ceea27); S187 anchors on be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b
+[build] CORPUS_S101 sha CARRIED == be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b
+[gpu] checking GPU mem on pod
+Warning: Permanently added '[103.207.149.80]:14231' (ED25519) to the list of known hosts.
+NVIDIA H100 80GB HBM3, 81559 MiB
+[train] S187 3B GRID variant=B30  d=3072 L=28 nh=24 nkv=8
+[train]   from-scratch seed=1337  steps=2000 bsz=2 block=128 lr=3e-4 (warmup=200 cosine)
+[train]   lambdas: psi=30.00 route=0.20 phi=0.30
+[train]            cycle=0.15 curious=0.10 replay=-0.05
+Warning: Permanently added '[103.207.149.80]:14231' (ED25519) to the list of known hosts.
+TRAIN_PID 666
+Read from remote host 103.207.149.80: Connection reset by peer
+client_loop: send disconnect: Broken pipe
+ssh: connect to host 103.207.149.80 port 14231: Connection refused
+[env-verify] 
+[env-verify] ✗ env-stamp missing in train.log — dumping for forensics:
+  ssh: connect to host 103.207.149.80 port 14231: Connection refused
+[teardown] terminating pod w1cjm0brpl3qfe (rc=1, SAVE_POD=0)
+[teardown] myself.pods = 
+=== S187 3B GRID variant=B30 dispatch end 2026-05-21T13:27:52Z rc=1 ===

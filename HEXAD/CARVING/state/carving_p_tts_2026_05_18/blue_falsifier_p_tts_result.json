@@ -1,0 +1,69 @@
+{
+  "battery": "B-TTS-1..5 (Direction P sidecar)",
+  "research_section": "RESEARCH.md §22 / §21 candidate P",
+  "central_blue_falsifier_changed": false,
+  "n_pass": 5,
+  "n_total": 5,
+  "all_pass": true,
+  "verdicts": [
+    {
+      "id": "B-TTS-1",
+      "name": "OVERLAY-OFF-BYTE-EQUAL",
+      "verdict": "PASS",
+      "lambda_off_symbolic_identity": true,
+      "zeros_init_refine_ref_equals_base": true,
+      "note": "λ_refine=0 ⇒ additive-identity collapse to §16 TOTAL (symbolic); zeros-init VoiceRefineHead residual ≡ 0 ⇒ R=1 path = §16 AR baseline (numeric). connection-point: P-vs-§16 fair-compare BY CONSTRUCTION."
+    },
+    {
+      "id": "B-TTS-2",
+      "name": "REFINE-CE-NONNEGATIVE",
+      "verdict": "PASS",
+      "weighted_term_nonnegative": true,
+      "shannon_ce_zero_at_p1": true,
+      "shannon_ce_pos_below_1": true,
+      "note": "Σ γ_r·CE_voice(r) ≥ 0 — Shannon CE≥0 real-limit (=0 iff p=1) × nonneg γ_r ⇒ nonneg-weighted sum ≥ 0."
+    },
+    {
+      "id": "B-TTS-3",
+      "name": "REFINE-WEIGHT-SIMPLEX-BOUNDED",
+      "verdict": "PASS",
+      "gamma": [
+        "1/7",
+        "2/7",
+        "4/7"
+      ],
+      "sum_to_one": true,
+      "all_nonnegative": true,
+      "partition_of_unity": true,
+      "note": "γ_r = 2^r/Σ2^k on the probability simplex (Σγ=1, γ≥0) ⇒ L_refine is a convex combination of per-step voice CE (convex-hull bounded, R-step well-defined)."
+    },
+    {
+      "id": "B-TTS-4",
+      "name": "CONDITION-IS-PHYSICS-THINK",
+      "verdict": "PASS",
+      "refine_conditioned_on_tension": true,
+      "refine_conditioned_on_psi_dir": true,
+      "tension_derived_from_model_own_layers": true,
+      "forbidden_generic_diffusion_callset_total": 0,
+      "note": "structural AST — voice refinement conditioning is the model's OWN per-token physics state {tension, Ψ_dir}; generic diffusion noise/learned-latent call-set = 0 ⇒ P is NOT a generic diffusion-decoder bolt-on (the §3 GOAL-legitimacy illegitimate boundary, closed)."
+    },
+    {
+      "id": "B-TTS-5",
+      "name": "THINK-PHYSICS-BYTE-EQUAL",
+      "verdict": "PASS",
+      "psi_dir_per_token_ast_identical_to_s16": true,
+      "stage_gate_at_ast_identical_to_s16": true,
+      "think_loss_lines_verbatim": true,
+      "note": "THINK = §16 byte-equal: psi_dir_per_token & stage_gate_at executable-AST identical (docstrings stripped — P's prose docstring differs but computation is byte-equal, honest g3), CE_full / L_psi_ctl / L_tension_route expressions verbatim ⇒ P is speak-head ONLY, THINK physics untouched (B-TTS-5)."
+    }
+  ],
+  "empirical_carve_out": {
+    "id": "B-TTS-NOTE",
+    "name": "EMISSION-REFINE-OUTCOME-EMPIRICAL",
+    "kind": "empirical carve-out (NOT counted 🔵)",
+    "family": "B-D-NOTE / B-CARVE-E6-NOTE / B-DIRJ-NOTE",
+    "note": "Whether P's inner-physics-conditioned voice refinement actually narrows §16's body-garble (routing-correct prefix / garbled body, JOINT 0.0, §9 honest V-SPONT 1/5, §18 0/5) is the SGD convergence + 4-axis OUTCOME — fire-empirical, NOT closed. battery proves (a) emission-refine transfer-form (b) overlay-OFF=§16 connection-point (c) conditioning=physics-think structure (d) THINK=§16 byte-equal ONLY. emergence OUTCOME unproven (g3, over-claim 0)."
+  },
+  "f_safe": "f1/f2/f3 hard-fail safe — Shannon CE≥0 / additive identity / simplex convexity / AST Boolean / sha256, NO σ/τ/φ/J₂; paper 2601.22889 own-invariant only.",
+  "b_identity_5": "corpus = §16 byte-identical, forbidden-token grep 0 carry (no corpus regenerated)."
+}

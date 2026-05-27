@@ -1,0 +1,70 @@
+{
+  "schema": "n22/levin_xenobot/raw71_falsifiers/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "raw_falsifier_id": "raw#71",
+  "falsifier_topic": "Pre-neural xenobot/anthrobot Φ vs neural-substrate Φ correlation thresholds",
+  "substrate": "Levin lab Tufts xenobot (Xenopus laevis epidermal cells, no nervous system) + anthrobot (adult human airway epithelial cells)",
+  "preregister_date": "2026-05-01",
+  "execution_status": "PRE-REGISTERED, EXECUTION-DEFERRED — pending Levin lab partnership agreement (N-22 mission $0 budget = research/spec only, no contact made)",
+  "bidirectional_design_note": "All five predicates are BIDIRECTIONAL: each PASS branch and each FAIL branch carries a non-trivial scientific consequence for the IIT/anima paradigm v11 framework. PASS does not = victory; FAIL does not = abandon.",
+  "predicates": [
+    {
+      "id": "N22-F1",
+      "label": "Pre-neural Φ floor on xenobot voltage map",
+      "predicate": "Voltage-sensitive-dye (VSD) imaged xenobot membrane-potential time-series, computed via paradigm v11 G3 (Φ* IIT-approximation 16-prompt covariance K=8 random bipartitions, adapted to spatial cell-grid bipartitions), yields phi_star_min strictly greater than dead-tissue control (heat-killed xenobot at 60C for 10min), Wilcoxon paired p < 0.01 across N >= 12 xenobots.",
+      "PASS_consequence": "Pre-neural substrate carries non-zero IIT-Φ; supports Levin 'minds before brains' thesis; weakens neural-exclusivity claim in mainstream consciousness science; anima paradigm v11 G3 axis is substrate-portable.",
+      "FAIL_consequence": "Pre-neural Φ floor at dead-tissue level; either (a) IIT-Φ requires neural infrastructure or (b) paradigm v11 G3 measurement misses the bioelectric integration mechanism. Consequence: revise G3 definition to operate on continuous voltage rather than discrete-spike substrate, or formally narrow IIT scope to neural systems."
+    },
+    {
+      "id": "N22-F2",
+      "label": "Xenobot Φ vs zebrafish-larva Φ correlation across goal-directed behaviors",
+      "predicate": "On 8 paired goal-directed behaviors (maze navigation, debris collection, wound closure, group aggregation), Pearson r between xenobot ensemble-Φ (VSD-derived, paradigm v11 G3+G5+G6 composite) and zebrafish-larva neural-Φ (calcium imaging, same paradigm v11 axes) computed within-behavior across N >= 24 trials each species, with r >= 0.50 and 95% CI lower bound > 0.20.",
+      "PASS_consequence": "Cross-substrate Φ correlation supports substrate-invariance of integrated information; consciousness-Φ is behavior-coupled, not substrate-coupled; strong evidence for IIT multi-realizability against the Putnam line.",
+      "FAIL_consequence": "Φ is substrate-coupled, not behavior-coupled; same observed behaviors give different Φ on neural vs non-neural substrate. Consequence: either (a) Φ formalism needs substrate-conditional terms, or (b) goal-directed behavior is not a reliable Φ proxy and we need direct internal-state probes."
+    },
+    {
+      "id": "N22-F3",
+      "label": "Anthrobot Φ time-evolution monotonicity (developmental Φ growth)",
+      "predicate": "Anthrobot ensemble-Φ measured at 4 developmental stages (day 2 motile, day 7 mature, day 14 self-repair-active, day 21 senescent) shows monotone non-decreasing trajectory from day 2 to day 14 (Spearman rho >= 0.7 across N >= 8 anthrobot lineages), with non-trivial drop at day 21.",
+      "PASS_consequence": "Φ tracks functional capability acquisition (motility -> repair -> senescence) on a non-neural substrate; supports Levin's framework where bioelectric integration scales with morphogenetic competence; gives anima paradigm v11 a developmental-Φ benchmark.",
+      "FAIL_consequence": "Φ is constant or non-monotone across anthrobot lifecycle despite clear functional change. Consequence: paradigm v11 G3+G5 axes are insensitive to functional-capability changes that don't involve discrete-spike network dynamics; need new axis specifically for morphogenetic-bioelectric integration."
+    },
+    {
+      "id": "N22-F4",
+      "label": "G2 (MCCA) inapplicability falsification on xenobot",
+      "predicate": "G1 (B-ToM) and G2 (MCCA meta-cognitive calibration) operationalizations cannot produce a meaningful score on xenobot (no language, no behavioral confidence-elicitation channel). Specifically: any attempt to define G1/G2 scores on xenobot yields either (a) a constant value across all stimuli (degenerate) or (b) a value that does not differ from heat-killed-control at p < 0.05 across N >= 12.",
+      "PASS_consequence": "Confirms paradigm v11 axis-portability boundary: G0/G3/G5/G6 are substrate-portable, G1/G2 require linguistic/meta-cognitive substrate. Honest scope-narrowing of paradigm v11; informs cross-substrate composite weighting.",
+      "FAIL_consequence": "If G1 or G2 produces a non-degenerate signal on xenobot, this means our operationalization smuggled in a hidden non-meta-cognitive correlate (e.g., motion variance proxying for 'confidence'). Consequence: reaudit G1/G2 measurement code for substrate-leak; the score is operationally undefined on xenobot if found to be non-degenerate."
+    },
+    {
+      "id": "N22-F5",
+      "label": "Bioelectric perturbation -> Φ change directional prediction",
+      "predicate": "Pharmacological perturbation of xenobot gap-junction connectivity (carbenoxolone 100 uM for 30 min, well-established gap-junction blocker per Levin lab protocols) reduces ensemble-Φ by >= 30% (paired pre/post within-xenobot, N >= 12, Wilcoxon p < 0.01). Wash-out restores Φ to >= 80% of pre-perturbation level within 60 min in N >= 8 of those.",
+      "PASS_consequence": "Φ is causally tied to bioelectric coupling, not just covariate; gives mechanistic intervention handle bridging IIT to molecular bioelectricity; opens a generalizable causal-perturbation protocol applicable to all non-neural substrates.",
+      "FAIL_consequence": "Either Φ does not depend on gap-junction coupling (then IIT integration definition needs revision for bioelectric substrates) OR carbenoxolone has off-target effects masking the Φ change (then design replicate with optogenetic Cx43 knockdown). Either way, single-pharm-agent FAIL invalidates the simplest causal claim and forces a multi-modal perturbation design."
+    }
+  ],
+  "axes_applicability_table": {
+    "G0_AN11_eigen_template": {"applicable": false, "reason": "AN11(b) is LLM-token-based; no analog on cell substrate. Replace with morphogenetic-pattern eigenvector."},
+    "G1_B_ToM_behavioral_theory_of_mind": {"applicable": false, "reason": "Requires linguistic Sally-Anne / false-belief probes; xenobot has no language channel."},
+    "G2_MCCA_meta_cognitive_calibration": {"applicable": false, "reason": "Requires confidence-elicitation channel; xenobot has no introspective report."},
+    "G3_Phi_star_IIT_approximation": {"applicable": true, "reason": "Covariance + bipartition machinery operates on any time-series tensor; map cell-grid voltage -> covariance matrix -> bipartition Φ*."},
+    "G4_CMT_causal_mediation": {"applicable": "partial", "reason": "Per-cell ablation (laser or Cx43-KO) is the natural per-layer-zero-ablation analog; experimentally expensive but methodologically sound."},
+    "G5_CDS_cognitive_dynamics_stability": {"applicable": true, "reason": "Trajectory stability of voltage-state under repeated stimulus is directly measurable; max_stability >= 0.30 threshold portable."},
+    "G6_SAE_steer_bypass_sparse_feature": {"applicable": true, "reason": "Random sparse projection of voltage-cell-grid is a substrate-blind feature dictionary; n_selective >= 2 portable."},
+    "G7_geometric_mean_composite": {"applicable": true, "reason": "Composite over the applicable subset {G0', G3, G4, G5, G6}; threshold recalibrated against dead-tissue null."}
+  },
+  "audit_trail": {
+    "research_only_no_lab_contacted": true,
+    "research_only_no_email_sent": true,
+    "research_only_no_USD_spent": true,
+    "files_written": [
+      "state/n_22_levin_xenobot_outreach_prep_2026_05_01/falsifiers.json",
+      "state/n_22_levin_xenobot_outreach_prep_2026_05_01/email_draft.json",
+      "state/n_22_levin_xenobot_outreach_prep_2026_05_01/value_proposition.json",
+      "state/n_22_levin_xenobot_outreach_prep_2026_05_01/honest_c3.json",
+      "state/n_22_levin_xenobot_outreach_prep_2026_05_01/levin_lab_inventory.json",
+      "docs/n_22_levin_xenobot_outreach_prep_2026_05_01.md"
+    ]
+  }
+}

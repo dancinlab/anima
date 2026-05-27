@@ -1,0 +1,239 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/transports/_registry.hexa — chat transport plugin registry
+//
+//  PURPOSE
+//    Single source of truth for chat TRANSPORT (= 연결 모듈 / 채팅 방식)
+//    plugin discovery + metadata. Loaded by chat.hexa / duo.hexa / trio.hexa /
+//    benchmark.hexa when --transport flag is present.
+//
+//  USER DIRECTIVE (2026-05-09 verbatim)
+//    "채팅 방식 여러개 있었잖아 연결모듈들 모두 벤치마킹하는식으로 진행해야함"
+//    "imtl 인가도 있었고"
+//    + carry "전부 cli 에 구현하고 사용할지는 --option 으로 가능하게"
+//    + carry "앞으로도 기본값 또는 --option 형태 여러가지 생길꺼니까 고려해서 설계 구현"
+//
+//  REGISTRY ENTRY SCHEMA (8-field; mirrors chat/lanes/_registry.hexa +
+//                         chat/init_patterns/_registry.hexa)
+//    name              short id (fifo-dispatch / beta1-channel / libllama-ffi /
+//                                subprocess-pipe / imtl)
+//    file              relative path under tool/anima_cli/chat/transports/
+//    status            LANDED | SKELETON | SPEC_CARRY | STUB
+//    capability        line_streaming | channel_pair | direct_ffi |
+//                      buffered_pipe | udp_cross_host
+//    pattern_type      fifo+channel_recv | bsd_fifo_pair | c_ffi |
+//                      popen_buffered | udp_socket
+//    latency           low | medium | high | cross_host_ms
+//    cost              free | low | direct_inproc | net_io
+// description short one-line explainer (English; mandate-1
+//                      preserves model output, registry meta is human/AI doc)
+//    prereq            list of file/build artifacts required before invoke
+//
+// TRANSPORT INVENTORY (mandatory report — discovery 발견)
+//    1. fifo-dispatch    chat.hexa _dispatch_module_streaming pattern
+//                        (stdlib/channel channel_pair_open + channel_recv loop +
+//                        END sentinel; 1:1 single-shot streaming)
+//                        SSOT: tool/anima_cli/chat.hexa lines 358-469
+//    2. beta1-channel    chat/duo/duo.hexa β-1 channel pair pattern
+//                        (proc_spawn_with_channels + bidirectional ab/ba pairs;
+//                        sibling-to-sibling dialogue native)
+//                        SSOT: tool/anima_cli/chat/duo/duo.hexa _spawn_instance
+//    3. libllama-ffi     chat/llama/llama.hexa direct C FFI (libhxllama.dylib;
+//                        no channel — in-proc llama_load/generate/free)
+//                        SSOT: tool/anima_cli/chat/llama/llama.hexa
+//    4. subprocess-pipe  legacy popen-buffered exec() (chat.hexa fallback path
+//                        when channel_pair_open returns -1; full output in one
+//                        4KB-buffered blob — pre-iter4(b) behavior preserved
+//                        for backward compat).
+//                        SSOT: tool/anima_cli/chat.hexa _dispatch_module_streaming
+//                        FIFO-failure fallback branch
+//    5. imtl             anima-tools/misc/inter_model_comm.hexa Tension-link
+//                        cross-host UDP protocol (A100 ↔ H100); STUB only
+//                        (TODO[pytorch] serialize/deserialize). Carries Tension
+//                        (psi_f_critical / psi_balance / psi_coupling) verbatim
+//                        across servers. Intended for distributed substrate
+//                        coupling; NOT yet wired into chat path.
+//                        SSOT: anima-tools/misc/inter_model_comm.hexa
+//
+// EXTENSION CONVENTION (future-proof; --option pattern, mirrors + axis-8)
+//    NEW transport → add file under chat/transports/<name>.hexa with
+//    fn transport_describe() / transport_smoke(repo, argv) -> int AND register
+//    entry below. chat.hexa / duo.hexa / trio.hexa / benchmark.hexa
+//    --transport=<name> auto-resolves. NEW flag → add to transport module's
+//    smoke()/dispatch() argv parse; default value via _arg_value(argv,
+//    "--<flag>", "<dflt>"). No caller change needed for transport-internal
+//    flags.
+//
+//  COMPLIANCE
+// V14 carry — transport selection is a measurement axis (not verdict)
+// cost — each transport entry surfaces cost field for budget guard
+// D1 SCOPE_CLAMP — libllama-ffi inherits llama lane d1_lane label
+//      (substrate_research) when used with paradigm-a-prime
+// chat-cap C2 — benchmark sweep emits per-transport latency / cost
+//      differential (axis dimension orthogonal to lane / mode / init-pattern)
+// mandatory report — transport inventory itself is mandatory report
+//      (discovery 발견 = 5 transports identified across chat path)
+// trinity — registry entries cross-link / /
+// mandate-1 — wrapping 0 (transport modules MUST NOT system-prompt /
+//      template-wrap; raw bytes through). Mandate-7 lane separation — verdict
+//      cells emit-only, never folded back into transport channel.
+// 매단계 — registry yaml↔md mirror in
+//      anima/registry/anima_artifact_registry.yaml chat_transports section
+// yaml↔md SSOT — registry yaml + this hexa file co-update
+// chat lane plugin pattern — same registry SSOT + lookup helpers
+// pattern (this file is mirror at axis level "transport" — axis-N)
+//
+//  CROSS-REFERENCE
+//    chat.hexa                          dispatcher (--transport / --list-transports plumb)
+//    chat/duo/duo.hexa                  --transport plumb (channel selection)
+//    chat/trio/trio.hexa                --transport plumb (round-robin transport)
+//    chat/lanes/benchmark.hexa          --transport dimension (cross-product axis-N)
+//    anima/registry/anima_artifact_registry.yaml#chat_transports yaml mirror
+//    .roadmap.cli                       cli.chat_transport_plugin_2026_05_09
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+// Registry SSOT — append-only convention. New transport = new entry.
+// Field order: name, file, status, capability, pattern_type, latency, cost,
+//              description, prereq
+fn transport_registry() -> array {
+    return [
+        // ───── Transport 1 — FIFO dispatch (chat.hexa default streaming path) ─
+        ["fifo-dispatch",
+         "fifo_dispatch.hexa",
+         "LANDED",
+         "line_streaming",
+         "fifo+channel_recv",
+         "low",
+         "free",
+         "stdlib/channel channel_pair_open + channel_recv per-line loop with __HEXA_DISP_END__ sentinel; 1:1 streaming (chat.hexa _dispatch_module_streaming SSOT)",
+         "stdlib/channel.hexa (β-1 land `c53788af`) + stdbuf optional"],
+
+        // ───── Transport 2 — β-1 channel pair (duo.hexa sibling pattern) ─────
+        ["beta1-channel",
+         "beta1_channel.hexa",
+         "LANDED",
+         "channel_pair",
+         "bsd_fifo_pair",
+         "medium",
+         "low",
+         "β-1 channel pair (channel_pair_open ×2 + proc_spawn_with_channels) — sibling-to-sibling AI↔AI bidirectional dialogue (chat/duo/duo.hexa SSOT)",
+         "stdlib/channel.hexa β-1 + chat/duo/duo.hexa _spawn_instance"],
+
+        // ───── Transport 3 — libllama FFI (in-proc C FFI, no channel) ────────
+        ["libllama-ffi",
+         "libllama_ffi.hexa",
+         "LANDED",
+         "direct_ffi",
+         "c_ffi",
+         "low",
+         "direct_inproc",
+         "direct C FFI via libhxllama.dylib (in-proc llama_load + llama_generate + llama_free; no channel transport — single-process)",
+         "build/libhxllama.dylib + ~/.cache/anima/gguf/<repo>.gguf"],
+
+        // ───── Transport 4 — subprocess pipe (legacy popen buffered) ─────────
+        ["subprocess-pipe",
+         "subprocess_pipe.hexa",
+         "LANDED",
+         "buffered_pipe",
+         "popen_buffered",
+         "high",
+         "free",
+         "popen() buffered pipe — full inner cmd stdout captured in one 4KB-buffered blob (chat.hexa fallback when channel_pair_open returns -1; backward-compat preserved)",
+         "POSIX popen (built-in) — no extra deps"],
+
+        // ───── Transport 5 — IMTL (inter-model UDP cross-host) ───────────────
+        ["imtl",
+         "imtl.hexa",
+         "STUB",
+         "udp_cross_host",
+         "udp_socket",
+         "cross_host_ms",
+         "net_io",
+         "Tension-link UDP protocol cross-host (A100↔H100); ANMA magic + 19266 default port; STUB serialize/deserialize (anima-tools/misc/inter_model_comm.hexa TODO[pytorch])",
+         "anima-tools/misc/inter_model_comm.hexa + UDP socket impl + 4-byte ANMA magic schema"]
+    ]
+}
+
+// Lookup helper — returns entry or [] when not found.
+fn transport_lookup(name: string) -> array {
+    let reg = transport_registry()
+    let mut i = 0
+    while i < len(reg) {
+        let row = reg[i]
+        if _str(row[0]) == name {
+            return row
+        }
+        i = i + 1
+    }
+    return []
+}
+
+// Names list (for --list-transports / --transport=help / benchmark sweep)
+fn transport_names() -> array {
+    let reg = transport_registry()
+    let mut out = []
+    let mut i = 0
+    while i < len(reg) {
+        out = out + [_str(reg[i][0])]
+        i = i + 1
+    }
+    return out
+}
+
+// File path resolver — caller appends root + /tool/anima_cli/chat/transports/
+fn transport_file(name: string) -> string {
+    let row = transport_lookup(name)
+    if len(row) == 0 { return "" }
+    return _str(row[1])
+}
+
+// Default transport — fifo-dispatch (chat.hexa current streaming path SSOT).
+// Caller (chat.hexa / duo.hexa / trio.hexa) consults this when --transport is
+// absent. Legacy non-flagged behavior wins implicitly (each caller's existing
+// dispatch path = fifo-dispatch for chat.hexa, beta1-channel for duo/trio).
+fn transport_default() -> string { return "fifo-dispatch" }
+
+// Pretty-print one row (used by --list-transports / --transport=help)
+fn transport_describe(name: string) -> string {
+    let row = transport_lookup(name)
+    if len(row) == 0 { return "(unknown transport: " + name + ")" }
+    return "  " + _str(row[0])
+        + " [" + _str(row[2]) + "]"
+        + " cap=" + _str(row[3])
+        + " type=" + _str(row[4])
+        + " latency=" + _str(row[5])
+        + " cost=" + _str(row[6])
+        + "\n      " + _str(row[7])
+        + "\n      prereq: " + _str(row[8])
+}
+
+// Selftest — registry shape sanity (no dispatch)
+fn main() {
+    let reg = transport_registry()
+    if len(reg) < 5 {
+        println("FAIL transport registry < 5 entries (expected fifo-dispatch / beta1-channel / libllama-ffi / subprocess-pipe / imtl)")
+        exit(1)
+    }
+    let mut i = 0
+    while i < len(reg) {
+        let row = reg[i]
+        if len(row) != 9 {
+            println("FAIL row " + to_string(i) + " arity != 9 (got " + to_string(len(row)) + ")")
+            exit(1)
+        }
+        i = i + 1
+    }
+    println("PASS chat/transports/_registry selftest (" + to_string(len(reg)) + " entries)")
+    println("  default = " + transport_default())
+    let names = transport_names()
+    let mut k = 0
+    while k < len(names) {
+        println(transport_describe(_str(names[k])))
+        k = k + 1
+    }
+}

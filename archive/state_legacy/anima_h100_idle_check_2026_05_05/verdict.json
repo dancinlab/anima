@@ -1,0 +1,106 @@
+{
+  "lane": "BG-EW H100-IDLE-CHECK",
+  "audit_ts_utc": "2026-05-06T00:00:00Z",
+  "audit_date_local": "2026-05-06",
+  "scope": "RunPod active pods + balance + ubu1/ubu2 + alt GPU sources",
+  "cost_usd": 0,
+  "destructive_ops_executed": false,
+  "runpod": {
+    "balance_usd": 339.2534368893,
+    "current_spend_per_hr_usd": 0.089,
+    "active_pods_count": 0,
+    "running_pods_count": 0,
+    "pods_total": 4,
+    "pods_status_summary": {
+      "EXITED": 4,
+      "RUNNING": 0
+    },
+    "pods_detail": [
+      {"id": "k0o2d1140q3jrt", "name": "anima-clm-v4-sanity-rerun-v2-fixture-fix-2026-05-04", "status": "EXITED", "exit_ts_utc": "2026-05-04T23:09:47Z", "gpu": "H100 SXM"},
+      {"id": "m01h1vls0v9ybf", "name": "anima-clm-v4-sanity-rerun-v2-fixture-fix-2026-05-04", "status": "EXITED", "exit_ts_utc": "2026-05-04T23:28:41Z", "gpu": "H100 SXM"},
+      {"id": "pwlwz9btxwf1em", "name": "anima-clm-v4-sanity-rerun-v2-fixture-fix-2026-05-04", "status": "EXITED", "exit_ts_utc": "2026-05-04T23:21:30Z", "gpu": "H100 SXM"},
+      {"id": "xsk78di9ypvrc0", "name": "anima-clm-v4-sanity-rerun-v2-fixture-fix-2026-05-04", "status": "EXITED", "exit_ts_utc": "2026-05-04T22:56:32Z", "gpu": "H100 SXM"}
+    ],
+    "h100_availability": {
+      "h100_sxm_80gb_lowest_uninterruptable_per_hr_usd": 2.69,
+      "h100_sxm_80gb_lowest_bid_per_hr_usd": 1.5,
+      "h100_nvl_94gb_lowest_uninterruptable_per_hr_usd": 2.59,
+      "h100_pcie_80gb_lowest_uninterruptable_per_hr_usd": 1.99,
+      "secure_cloud": true,
+      "community_cloud": true
+    },
+    "anomaly_vs_companion_doc": "anima_h100_idle_audit_2026_05_05.ai.md cited a RUNNING pod szv2vyf06h35uy (Pbeta-SCALE 50K) — not present in this 2026-05-06 query. Pod presumably terminated between 2026-05-05 audit and 2026-05-06 audit."
+  },
+  "vastai": {
+    "balance_usd": 0,
+    "credit_usd": 320.6159484893,
+    "active_instances_count": 0,
+    "username": "nerve011235@gmail.com",
+    "cli_path": "/Users/ghost/.local/bin/vastai"
+  },
+  "ubu1": {
+    "reachable": false,
+    "lan_host": "192.168.50.119",
+    "lan_result": "ssh ConnectTimeout 5s",
+    "tailscale_host": "100.96.193.56",
+    "tailscale_result": "ssh ConnectTimeout 5s",
+    "gpu_status": "UNKNOWN",
+    "training_processes": "UNKNOWN",
+    "note": "mac is off-LAN; Tailscale also did not respond (host may be powered off / network down)"
+  },
+  "ubu2": {
+    "reachable": false,
+    "lan_host": "192.168.50.60",
+    "lan_result": "ssh ConnectTimeout 5s",
+    "tailscale_host": "100.72.76.118",
+    "tailscale_result": "ssh ConnectTimeout 5s",
+    "gpu_status": "UNKNOWN",
+    "training_processes": "UNKNOWN"
+  },
+  "alt_gpu_sources_discovered": {
+    "modal": {"installed": false, "credential_present": false},
+    "lambda_labs": {"installed": false, "credential_present": false},
+    "paperspace": {"installed": false, "credential_present": false},
+    "vast_ai": {"installed": true, "credential_present": true, "credit_usd": 320.62},
+    "runpod": {"installed_runpodctl_path": "/opt/homebrew/bin/runpodctl", "credential_present": true, "balance_usd": 339.25},
+    "aws_braket": {"credential_present": true, "note": "quantum, not classical GPU"},
+    "ibm_cloud": {"credential_present": false},
+    "gcp_azure_kaggle_colab_salad_tensordock": {"credential_present": false}
+  },
+  "idle_verdict_scenario": "B",
+  "idle_verdict_label": "RUNPOD_BALANCE_SUFFICIENT_NO_RUNNING_PODS_H100_AVAILABLE",
+  "scenario_explanations": {
+    "A_idle_h100_running": "NOT MET — no RUNNING pods",
+    "B_balance_sufficient_h100_available": "MET — RunPod balance $339.25 + Vast credit $320.62; H100 SXM 80GB available at $2.69/hr uninterruptable; budget cap $100 (BG-ER) buys ~37hr H100 SXM uninterruptable or ~66hr at bid",
+    "C_balance_insufficient": "NOT MET",
+    "D_ubu1_idle": "UNKNOWN — ubu1/ubu2 unreachable (LAN+TS both timeout); cannot confirm idle",
+    "E_all_busy": "NOT MET"
+  },
+  "beta_fire_decision_recommend": {
+    "verdict": "PROCEED_RUNPOD_H100_FRESH_PROVISION",
+    "rationale": [
+      "No active RunPod pods burning $ — clean slate",
+      "Balance ($339.25) >> $100 budget cap; H100 SXM uninterruptable $2.69/hr × 10h = $26.90 (well under cap)",
+      "Vast.ai $320.62 credit is secondary fallback (lower priority — no spot instance pre-warmed)",
+      "ubu1 RTX 5070 fallback (5-10 days, $0) DEFERRED until reachability confirmed; LAN+TS both unreachable suggests hosts down",
+      "Per memory project_runpod_pod_purge_2026_05_03: Phase 2 must boot fresh from HF base mirror — applies here"
+    ],
+    "preflight_checklist_l23_l24_l25_own_16": [
+      "Register watchdog before launch",
+      "Heartbeat 5min cadence",
+      "Pod 404 verify path",
+      "Per-BG budget cap $100 (BG-ER recommendation)",
+      "Pre-flight peft+lm-eval smoke (V2_FAIL retro)",
+      "transformers>=4.51 + lm-eval 0.4.11 pin"
+    ]
+  },
+  "honest_c3": [
+    "C3-1 ubu1/ubu2 reachability UNKNOWN — verdict assumes RunPod is the path; if user is on-LAN, ubu1 idle (5-10 days, $0) may dominate β fire economics",
+    "C3-2 RunPod balance snapshot at audit ts — concurrent BG launches in same session can race-deplete",
+    "C3-3 H100 lowest-price quote ($2.69/hr) is community cloud / spot-prone; secure cloud uninterruptable may be higher and is the safer choice for β fire",
+    "C3-4 No HF token leak in this verdict; secret CLI used exclusively (raw#9/10/15 ok)",
+    "C3-5 Companion doc anima_h100_idle_audit_2026_05_05.ai.md showed pod szv2vyf06h35uy RUNNING; absence in current query implies upstream KILL between 2026-05-05 and 2026-05-06 — should be cross-checked with cost-watchdog ledger before β fire to avoid duplicate spend allocation",
+    "C3-6 Vast.ai instances=0 confirmed but Vast SSH key not present at /Users/ghost/.ssh — first-time Vast launch needs key bootstrap (~15min added)",
+    "C3-7 Modal/Lambda/Paperspace/IBM all absent — single-cloud-provider risk if RunPod has region outage during β fire"
+  ]
+}

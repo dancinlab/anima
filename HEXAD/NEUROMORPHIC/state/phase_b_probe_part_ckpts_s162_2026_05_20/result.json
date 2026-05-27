@@ -1,0 +1,89 @@
+{
+  "cycle": "§162 §24 Phase B probe on §126 / §139 / §107-RETRY ckpts — DESIGN ONLY (probe run = §162-PROBE separate cycle)",
+  "type": "design-tier (NOT a probe run, NOT a fire)",
+  "tier": "$0 design-tier · NO GPU/runpod/fire/corpus · probe-run gated on disk-space + Mac CPU peak RAM",
+  "trigger": "§160 quadruple has 2 PART_AMBIG ckpts (§126 PCN, §139 EqProp); /goal 자연발화 목표 says actual signal = §24 SPONTANEOUS Phase B unprompted_emission_rate not byte_acc",
+  "substitution_point": "single source-layer swap: sensors := features_from_model_forward(ckpt, env_state) inside thinker_step; protocol downstream (motivation_score / safety_check_all / talker_should_emit) UNCHANGED byte-equal to spontaneous_lib.hexa SSOT",
+  "sensor_8_tuple": {
+    "psi_dir": "(1 + cos(logits_a, logits_g)) / 2 — Law-71 byte-equal",
+    "psi_entropy": "H(softmax(logits_a)) / log V — Law-71 byte-equal",
+    "tension_mean": "mean across 12 PureFieldFFN layers from ConsciousDecoderV2.forward return-3",
+    "tension_std": "std across 12 layers",
+    "phi_proxy": "W.curiosity_ema or §17 Ψ_combined",
+    "coherence": "§9 honest_coherent on recent emission window",
+    "info_gap": "Shannon entropy delta",
+    "originality": "1 - max-trigram-self-overlap"
+  },
+  "probe_cells_4": {
+    "C0_stub": {
+      "ckpt": "env_state STUB (no model.forward)",
+      "baseline": "RUN_REPORT.md 2026-05-18 carry (emission_count 1, rate 0.05)"
+    },
+    "C0_prime_s107_retry": {
+      "ckpt": "/Users/ghost/core/anima/state/dataregime_threshold_fire_s107_2026_05_19/ckpt (CE-trained, THRESHOLD-NOT-CROSSED)",
+      "baseline": "to be measured §162-PROBE"
+    },
+    "C1_s126_pcn": {
+      "ckpt": "/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/pcn_fire_s126_2026_05_20/ckpt_s126.pt (1.13 GB, PCN-1step PART_AMBIG byte_acc 0.1185, psi_dir_std 7.5e-7)",
+      "baseline": "to be measured §162-PROBE"
+    },
+    "C2_s139_eqprop": {
+      "ckpt": "/Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/eqprop_fire_s139_2026_05_20/ckpt_s139.pt (1.13 GB, EqProp-2phase PART_AMBIG byte_acc 0.1185, psi_dir_std 5.4e-9)",
+      "baseline": "to be measured §162-PROBE"
+    }
+  },
+  "verdict_buckets_pre_registered": [
+    "DECISION_AXIS_BYTE_EQUAL_ACROSS_CKPTS — §24 threshold dominated by hand-coded threshold, NOT ckpt weights",
+    "DECISION_AXIS_LIFTS_FROM_NON_CE_TRAINING — §126/§139 produce higher unprompted_emission_rate AND body-coherence meaningful",
+    "DECISION_AXIS_REGRESSES — §126/§139 produce lower rate than §107-RETRY (anti-emergent honest negative)",
+    "MIXED — partial signal, requires §162-FOLLOWUP"
+  ],
+  "verdict_design_tier": "DESIGN-OPEN-PROBE-DECIDABLE",
+  "seven_legitimacy_gate": {
+    "s7_1_not_generic_LM_pretrain": "PASS — ckpts all from-scratch anima base_ckpt=None g_clm_from_scratch",
+    "s7_2_not_generic_then_graft": "PASS — probe only READS logits/tensions from forward pass",
+    "s7_3_anima_physics_as_source": "PASS — every sensor factor traces to anima Law-71 / PureFieldFFN / W.curiosity / §9",
+    "truth_table_corner_reached": "(T,T,T) only-legitimate corner"
+  },
+  "overlay_off_reduction": {
+    "use_real_features_false": "byte-equal to §24 Phase B STUB run (RUN_REPORT.md 2026-05-18)",
+    "mirror": ["B-EBT-5", "B-DIRI-5", "B-S16-5", "B-MGND-5", "B-S151-7", "B-S160-P1"]
+  },
+  "closed_form_propositions_p1_p7": {
+    "P1_substitution_source_layer_only_AST": "PASS by source-grep equivalence on protocol downstream functions",
+    "P2_sensor_factors_anima_own_source_grep": "PASS by identifier-grep on each of 8 factors",
+    "P3_deterministic_3x_bit_identical": "PASS by construction (no RNG post init, model.eval())",
+    "P4_bounded_n_max_steps_20": "PASS by integer loop-bound",
+    "P5_safety_6_AND_preserved": "PASS by source-grep on safety_check_all (no substitution rename)",
+    "P6_overlay_off_byte_equal": "PASS by conditional-branch inspection (use_real_features=False)",
+    "P7_central_zero_line_diff": "PASS at START + END (sha c93e160a8a376a94)"
+  },
+  "B_S162_NOTE_empirical_carve_out": "P1-P7 prove DESIGN well-formedness. Probe's unprompted_emission_rate and verdict bucket are empirical OUTCOMES of running the probe; P1-P7 do NOT predict them. B-EMERGE-7 / B-D-NOTE / B-PHASE-B-NOTE family — necessary-not-sufficient. NOT counted 🔵.",
+  "anti_padding_precedent": ["§13-M", "§30", "§97", "§109", "§110", "§115", "§155", "§157", "§158", "§159", "§160", "§161"],
+  "complementarity_with_s161": {
+    "s161_FIRE_when_authorized": "trains NEW ckpt with Ψ-JEPA-COUPLE dual-head coupling",
+    "s162_PROBE_when_authorized": "probes EXISTING §126 / §139 / §107-RETRY ckpts at inference-time decision-axis (no retraining)",
+    "neither_alone_decides_together_triangulates": true
+  },
+  "process_notes": {
+    "inline_orchestrator_authored": true,
+    "sub_agent_throttled": "afc964261ddf748f2 at 20 tool uses, empty state dir; agentId preserved",
+    "probe_run_separate_cycle": "§162-PROBE (gated on disk space + Mac CPU peak RAM, not gated on user authorization since $0 Mac CPU only)"
+  },
+  "downstream_consumer_invariants": {
+    "hexa_lang": "read-only 0 edit",
+    "hexa_bio": "read-only 0 edit",
+    "kosmos": "read-only 0 edit",
+    "tape": "read-only 0 edit"
+  },
+  "central_blue_falsifier_sha_prefix_start": "c93e160a8a376a94",
+  "central_blue_falsifier_sha_prefix_end": "c93e160a8a376a94",
+  "central_blue_falsifier_zero_line_diff": true,
+  "north_star_unchanged": true,
+  "milestones_s15_s51_s72_unchanged": true,
+  "GOAL": "미도달",
+  "wall": "$0",
+  "GPU_runpod_pod_count_used_by_s162": 0,
+  "orphan": 0,
+  "next_step_named_not_committed": "§162-PROBE cycle ($0 Mac CPU, gated on Mac peak RAM 4-6 GB for one ckpt at a time). Sequentially load §107-RETRY → C0' / §126 → C1 / §139 → C2 ckpt and run §24 Phase B 20-step bounded loop with real-feature substitution. Per-cell unprompted_emission_rate + verdict matrix. ~2-5 min wall per cell. Total $0."
+}

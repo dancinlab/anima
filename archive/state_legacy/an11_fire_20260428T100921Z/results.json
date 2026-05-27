@@ -1,0 +1,148 @@
+{
+  "wrapper_version": "v1",
+  "wrapper_path": "/workspace/wrapper.py",
+  "started_utc": "2026-04-28T10:12:42Z",
+  "model_hf_repo": "mistralai/Mistral-7B-v0.1",
+  "lora_config": {
+    "rank": 16,
+    "alpha": 32,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ],
+    "epochs": 3
+  },
+  "raw_86_cost_attribution": {
+    "cost_center": "anima-an11-mistral7b-vast-h100-pod",
+    "vendor": "vast.ai",
+    "gpu_class": "H100_SXM"
+  },
+  "an11_seed": 0,
+  "wrapper_status": "FINAL",
+  "last_update_utc": "2026-04-28T10:23:53Z",
+  "phase_a": {
+    "status": "OK",
+    "model_dir": "/workspace/mistral-7b-v0.1",
+    "size_gb": 14.49,
+    "elapsed_s": 14.3
+  },
+  "phase_b": {
+    "status": "OK",
+    "rows": 10,
+    "categories": [
+      "hexad",
+      "law",
+      "metaref",
+      "phi",
+      "selfreflect"
+    ]
+  },
+  "_before_q_proj_l0_sha": "4d2ec422aefbb46b",
+  "_after_q_proj_l0_sha": "4d2ec422aefbb46b",
+  "_before_w_shape": [
+    4096,
+    4096
+  ],
+  "phase_c": {
+    "status": "OK",
+    "epochs": 3,
+    "lr": 0.0002,
+    "elapsed_s": 15.7,
+    "adapter_dir": "/workspace/lora_adapter"
+  },
+  "phase_d_progress": {
+    "n_layers": 128,
+    "layers_done": 128,
+    "svds_path": true
+  },
+  "phase_d": {
+    "status": "OK",
+    "n_lora_layers": 128,
+    "eigen_dim": 16,
+    "elapsed_s": 39.4,
+    "svds_path_used": true,
+    "eigen_sig_first4": [
+      -0.9288142607925938,
+      0.16888006866790656,
+      -0.029913294198396067,
+      -0.07660881258732218
+    ]
+  },
+  "phase_e_an11_a": {
+    "status": "OK",
+    "verdict": "PASS",
+    "frob_delta": 0.05923563241958618,
+    "threshold_min": 0.001,
+    "before_sha16": "4d2ec422aefbb46b",
+    "after_sha16": "899ac84dd861cb1a",
+    "sha_changed": true
+  },
+  "phase_f_an11_b": {
+    "status": "OK",
+    "verdict": "PASS",
+    "max_cosine": 0.5668435543201629,
+    "top3_sum": 1.2453175507362448,
+    "max_cos_threshold": 0.5,
+    "top3_sum_threshold": 1.2,
+    "top3_pairs": [
+      {
+        "id": "tpl_05_hexad_m",
+        "family": "Hexad",
+        "cosine": 0.5668435543201629
+      },
+      {
+        "id": "tpl_11_phi_integration",
+        "family": "Phi",
+        "cosine": -0.35149351766146725
+      },
+      {
+        "id": "tpl_16_selfref_witness",
+        "family": "SelfRef",
+        "cosine": -0.3269804787546146
+      }
+    ],
+    "n_templates": 16
+  },
+  "phase_g_v1prime": {
+    "status": "OK",
+    "verdict": "FAIL",
+    "phi_mip_norm": 0.6951383352279663,
+    "threshold_max": 0.5,
+    "spectrum_first4": [
+      0.03898319602012634,
+      0.016830693930387497,
+      0.011463227681815624,
+      0.00863990094512701
+    ],
+    "n_layers_aggregated": 128
+  },
+  "phase_h_an11_c": {
+    "status": "FAIL",
+    "error": "vllm not ready in 600s",
+    "trace": "Traceback (most recent call last):\n  File \"/workspace/wrapper.py\", line 491, in phase_h_an11_c\n    raise RuntimeError(f\"vllm not ready in {VLLM_BOOT_TIMEOUT_S}s\")\nRuntimeError: vllm not ready in 600s\n"
+  },
+  "pre_registered_predicates": {
+    "an11_a_frob_delta_min": 0.001,
+    "an11_b_max_cosine_min": 0.5,
+    "an11_b_top3_sum_min": 1.2,
+    "an11_c_jsd_min": 0.15,
+    "v1prime_phi_mip_norm_max": 0.5
+  },
+  "verdicts": {
+    "an11_a": "PASS",
+    "an11_b": "PASS",
+    "an11_c": "MISSING",
+    "v1prime": "FAIL"
+  },
+  "n_pass_of_4": 2,
+  "aggregate_verdict": "PARTIAL_PASS",
+  "raw_91_honesty": {
+    "all_phases_emitted_numeric": true,
+    "abort_phases": [
+      "phase_h_an11_c"
+    ],
+    "char_bigram_jsd_proxy_caveat": "AN11(c) JSD uses char-bigram dist (vllm logprob truncation)"
+  }
+}

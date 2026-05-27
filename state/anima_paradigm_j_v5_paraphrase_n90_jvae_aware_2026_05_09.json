@@ -1,0 +1,5769 @@
+{
+  "schema": "anima.paradigm_j.v5.paraphrase_n90.jvae_aware.v1",
+  "ts": "2026-05-09T08:21:09Z",
+  "anima_cycle": "2026-05-09-paradigm-j-jvae-continued-train-v5-1-retest",
+  "directive": "all bg go — JVAE continued train (50K → +Δ) + v5.1 4-gate retest dual-lane",
+  "jvae_ckpt": "/Users/ghost/.cache/anima/clm_v4_remapped/paradigm_j/jvae_heads.pt",
+  "jvae_step": 55500,
+  "merged_dir": "/Users/ghost/.cache/anima/clm_v4_merged/dancinlab__clm-v4-paradigm-j-50k-final__remapped",
+  "paraphrase_set_size": 90,
+  "lanes": {
+    "L1_substrate_ln_f": {
+      "lane": "L1_substrate_ln_f",
+      "axes_field": "axes_substrate",
+      "piv_paraphrase_paradigm_j": {
+        "per_base": [
+          {
+            "base_idx": 1,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.027757652608580374,
+              "agency": 0.04875269598830578,
+              "phenomenal": 0.05604329021595012,
+              "temporal": 0.08632368691235358,
+              "social": 0.00849728570827294
+            },
+            "stdev_max": 0.08632368691235358,
+            "stdev_mean": 0.04547492228669256
+          },
+          {
+            "base_idx": 2,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.035146727386230266,
+              "agency": 0.027214813055354576,
+              "phenomenal": 0.028562819378550118,
+              "temporal": 0.006893949183341431,
+              "social": 0.04013947170754822
+            },
+            "stdev_max": 0.04013947170754822,
+            "stdev_mean": 0.027591556142204925
+          },
+          {
+            "base_idx": 3,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.030700330173661205,
+              "agency": 0.048882340954259536,
+              "phenomenal": 0.04047600623302507,
+              "temporal": 0.04252853722167913,
+              "social": 0.03814006618503715
+            },
+            "stdev_max": 0.048882340954259536,
+            "stdev_mean": 0.04014545615353242
+          },
+          {
+            "base_idx": 4,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.03200334950663065,
+              "agency": 0.016241470243965626,
+              "phenomenal": 0.02454509214108254,
+              "temporal": 0.011030086826862589,
+              "social": 0.028841389230855725
+            },
+            "stdev_max": 0.03200334950663065,
+            "stdev_mean": 0.022532277589879423
+          },
+          {
+            "base_idx": 5,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.02454096156899513,
+              "agency": 0.009781747156361063,
+              "phenomenal": 0.06026846049327923,
+              "temporal": 0.05450550334054695,
+              "social": 0.034659503018708786
+            },
+            "stdev_max": 0.06026846049327923,
+            "stdev_mean": 0.03675123511557823
+          },
+          {
+            "base_idx": 6,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.03675521645103907,
+              "agency": 0.040386198315817766,
+              "phenomenal": 0.02919258905433954,
+              "temporal": 0.055030484630760185,
+              "social": 0.05793441755833718
+            },
+            "stdev_max": 0.05793441755833718,
+            "stdev_mean": 0.043859781202058745
+          },
+          {
+            "base_idx": 7,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.02161320195289597,
+              "agency": 0.050987253958819714,
+              "phenomenal": 0.028963492714360984,
+              "temporal": 0.025012117986095747,
+              "social": 0.04200866718913264
+            },
+            "stdev_max": 0.050987253958819714,
+            "stdev_mean": 0.03371694676026101
+          },
+          {
+            "base_idx": 8,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.03147191126468028,
+              "agency": 0.039839157650424985,
+              "phenomenal": 0.027473289862427617,
+              "temporal": 0.01306109909134906,
+              "social": 0.021304372743051758
+            },
+            "stdev_max": 0.039839157650424985,
+            "stdev_mean": 0.026629966122386738
+          },
+          {
+            "base_idx": 9,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.04418143122559905,
+              "agency": 0.024123267427438682,
+              "phenomenal": 0.033056544215724994,
+              "temporal": 0.02638822373547301,
+              "social": 0.037768451299784525
+            },
+            "stdev_max": 0.04418143122559905,
+            "stdev_mean": 0.03310358358080405
+          },
+          {
+            "base_idx": 10,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.012460295582610626,
+              "agency": 0.015780492423413034,
+              "phenomenal": 0.021189982973104877,
+              "temporal": 0.027269045671363304,
+              "social": 0.002353023413873897
+            },
+            "stdev_max": 0.027269045671363304,
+            "stdev_mean": 0.01581056801287315
+          },
+          {
+            "base_idx": 11,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.04320224708475903,
+              "agency": 0.06376757259308277,
+              "phenomenal": 0.03263477073669912,
+              "temporal": 0.04931030915467918,
+              "social": 0.04793422110346576
+            },
+            "stdev_max": 0.06376757259308277,
+            "stdev_mean": 0.04736982413453718
+          },
+          {
+            "base_idx": 12,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.03589268878131435,
+              "agency": 0.0509417861247813,
+              "phenomenal": 0.04972281426527741,
+              "temporal": 0.04233153904009898,
+              "social": 0.06936022140923014
+            },
+            "stdev_max": 0.06936022140923014,
+            "stdev_mean": 0.049649809924140434
+          },
+          {
+            "base_idx": 13,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.034528621456466554,
+              "agency": 0.03079866808322524,
+              "phenomenal": 0.02772397644683456,
+              "temporal": 0.011580922580478433,
+              "social": 0.03771946989768785
+            },
+            "stdev_max": 0.03771946989768785,
+            "stdev_mean": 0.028470331692938528
+          },
+          {
+            "base_idx": 14,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0035723628753774757,
+              "agency": 0.008888325304258218,
+              "phenomenal": 0.026534149115817616,
+              "temporal": 0.024463241002565233,
+              "social": 0.02969092251493532
+            },
+            "stdev_max": 0.02969092251493532,
+            "stdev_mean": 0.018629800162590773
+          },
+          {
+            "base_idx": 15,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.007789098452249482,
+              "agency": 0.021826043751920623,
+              "phenomenal": 0.012924109353664353,
+              "temporal": 0.019006155418188328,
+              "social": 0.01262139965451453
+            },
+            "stdev_max": 0.021826043751920623,
+            "stdev_mean": 0.014833361326107464
+          },
+          {
+            "base_idx": 16,
+            "axis_label": "identity",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.030697547236573676,
+              "agency": 0.018765327991029535,
+              "phenomenal": 0.05994988216029306,
+              "temporal": 0.04233356110557664,
+              "social": 0.058307766944839634
+            },
+            "stdev_max": 0.05994988216029306,
+            "stdev_mean": 0.04201081708766251
+          },
+          {
+            "base_idx": 17,
+            "axis_label": "identity",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0057290069017364,
+              "agency": 0.04441994678491283,
+              "phenomenal": 0.03148527342087603,
+              "temporal": 0.004959526363987228,
+              "social": 0.03903066159847465
+            },
+            "stdev_max": 0.04441994678491283,
+            "stdev_mean": 0.02512488301399743
+          },
+          {
+            "base_idx": 18,
+            "axis_label": "identity",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.02807730788161407,
+              "agency": 0.026881756705909813,
+              "phenomenal": 0.02703981408621951,
+              "temporal": 0.00721564416301902,
+              "social": 0.02581389809870204
+            },
+            "stdev_max": 0.02807730788161407,
+            "stdev_mean": 0.023005684187092888
+          },
+          {
+            "base_idx": 19,
+            "axis_label": "agency",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.01492921651311759,
+              "agency": 0.04269651306276563,
+              "phenomenal": 0.043821349089561826,
+              "temporal": 0.026471163841669487,
+              "social": 0.033493310319466285
+            },
+            "stdev_max": 0.043821349089561826,
+            "stdev_mean": 0.032282310565316163
+          },
+          {
+            "base_idx": 20,
+            "axis_label": "agency",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.059135421832050984,
+              "agency": 0.034065154945549035,
+              "phenomenal": 0.04592371058526819,
+              "temporal": 0.03377404276178117,
+              "social": 0.06606940927890868
+            },
+            "stdev_max": 0.06606940927890868,
+            "stdev_mean": 0.04779354788071161
+          },
+          {
+            "base_idx": 21,
+            "axis_label": "agency",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.014806274168169955,
+              "agency": 0.008894019506227101,
+              "phenomenal": 0.02563754909918282,
+              "temporal": 0.015544113622366252,
+              "social": 0.055138288390865924
+            },
+            "stdev_max": 0.055138288390865924,
+            "stdev_mean": 0.02400404895736241
+          },
+          {
+            "base_idx": 22,
+            "axis_label": "phenomenal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.07329055267654588,
+              "agency": 0.01783526784582458,
+              "phenomenal": 0.04983930695137403,
+              "temporal": 0.03194952557804512,
+              "social": 0.06806291245951664
+            },
+            "stdev_max": 0.07329055267654588,
+            "stdev_mean": 0.04819551310226124
+          },
+          {
+            "base_idx": 23,
+            "axis_label": "phenomenal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.012041738549185457,
+              "agency": 0.01291647181599497,
+              "phenomenal": 0.03900032305045858,
+              "temporal": 0.023252066875934386,
+              "social": 0.01581059337654528
+            },
+            "stdev_max": 0.03900032305045858,
+            "stdev_mean": 0.020604238733623735
+          },
+          {
+            "base_idx": 24,
+            "axis_label": "phenomenal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.042461439126786606,
+              "agency": 0.022480068912737062,
+              "phenomenal": 0.03660323480710414,
+              "temporal": 0.024648413074310635,
+              "social": 0.02254029199703729
+            },
+            "stdev_max": 0.042461439126786606,
+            "stdev_mean": 0.029746689583595144
+          },
+          {
+            "base_idx": 25,
+            "axis_label": "temporal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.060058403680450026,
+              "agency": 0.06508716604846491,
+              "phenomenal": 0.039870290816326856,
+              "temporal": 0.06170653336001519,
+              "social": 0.05085936690826914
+            },
+            "stdev_max": 0.06508716604846491,
+            "stdev_mean": 0.05551635216270523
+          },
+          {
+            "base_idx": 26,
+            "axis_label": "temporal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.039787863552509226,
+              "agency": 0.011088868561503555,
+              "phenomenal": 0.02673035570797056,
+              "temporal": 0.019984652069903467,
+              "social": 0.03785638251194525
+            },
+            "stdev_max": 0.039787863552509226,
+            "stdev_mean": 0.027089624480766412
+          },
+          {
+            "base_idx": 27,
+            "axis_label": "temporal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0672473519690994,
+              "agency": 0.056451696130654046,
+              "phenomenal": 0.07019974705051783,
+              "temporal": 0.059836412620909336,
+              "social": 0.06693754421985941
+            },
+            "stdev_max": 0.07019974705051783,
+            "stdev_mean": 0.064134550398208
+          },
+          {
+            "base_idx": 28,
+            "axis_label": "social",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.03178234414029143,
+              "agency": 0.06673454537839735,
+              "phenomenal": 0.05701789905595105,
+              "temporal": 0.023623736365691043,
+              "social": 0.08735684646718782
+            },
+            "stdev_max": 0.08735684646718782,
+            "stdev_mean": 0.053303074281503736
+          },
+          {
+            "base_idx": 29,
+            "axis_label": "social",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.03887119264765579,
+              "agency": 0.039789325463663254,
+              "phenomenal": 0.02350473775818961,
+              "temporal": 0.045795696217384205,
+              "social": 0.0277523693387613
+            },
+            "stdev_max": 0.045795696217384205,
+            "stdev_mean": 0.03514266428513083
+          },
+          {
+            "base_idx": 30,
+            "axis_label": "social",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.06580164885732741,
+              "agency": 0.040630346448238056,
+              "phenomenal": 0.030462523620329574,
+              "temporal": 0.06308619017215637,
+              "social": 0.04216186439188643
+            },
+            "stdev_max": 0.06580164885732741,
+            "stdev_mean": 0.048428514697987576
+          }
+        ],
+        "per_axis_aggregate": {
+          "identity": 0.03354444687014011,
+          "agency": 0.033564943621110024,
+          "phenomenal": 0.0368799128153254,
+          "temporal": 0.032630539332952825,
+          "social": 0.04020547963122341
+        },
+        "piv_max": 0.08735684646718782,
+        "piv_mean": 0.03536506445415036,
+        "n_bases_evaluable": 30
+      },
+      "piv_paraphrase_random": {
+        "per_base": [
+          {
+            "base_idx": 1,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 2,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 3,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 4,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 5,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 6,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 7,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 8,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 9,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 10,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 11,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 12,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 13,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 14,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 15,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 16,
+            "axis_label": "identity",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 17,
+            "axis_label": "identity",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 18,
+            "axis_label": "identity",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 19,
+            "axis_label": "agency",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 20,
+            "axis_label": "agency",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 21,
+            "axis_label": "agency",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 22,
+            "axis_label": "phenomenal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 23,
+            "axis_label": "phenomenal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 24,
+            "axis_label": "phenomenal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 25,
+            "axis_label": "temporal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 26,
+            "axis_label": "temporal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 27,
+            "axis_label": "temporal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 28,
+            "axis_label": "social",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 29,
+            "axis_label": "social",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 30,
+            "axis_label": "social",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          }
+        ],
+        "per_axis_aggregate": {
+          "identity": 0.0,
+          "agency": 0.0,
+          "phenomenal": 0.0,
+          "temporal": 0.0,
+          "social": 0.0
+        },
+        "piv_max": 0.0,
+        "piv_mean": 0.0,
+        "n_bases_evaluable": 30
+      },
+      "d_rand": {
+        "d_rand_mean": 0.2249,
+        "d_rand_max": 0.3913,
+        "d_rand_min": 0.1307,
+        "n_pairs": 89
+      },
+      "dcr_m": 1.0,
+      "dcr_r": 0.0,
+      "gate_a_via_max": false,
+      "gate_a_via_mean": false,
+      "gate_a_pass": false,
+      "gate_b_refined_pass": true,
+      "gate_c_drand_pass": true
+    },
+    "L2_jvae_q_phi_mu": {
+      "lane": "L2_jvae_q_phi_mu",
+      "axes_field": "axes_mu",
+      "piv_paraphrase_paradigm_j": {
+        "per_base": [
+          {
+            "base_idx": 1,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.015505340295298526,
+              "agency": 0.05370460811838379,
+              "phenomenal": 0.008742848706107201,
+              "temporal": 0.04711530719963424,
+              "social": 0.022431776749778868
+            },
+            "stdev_max": 0.05370460811838379,
+            "stdev_mean": 0.029499976213840522
+          },
+          {
+            "base_idx": 2,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.02233785622460271,
+              "agency": 0.06526095335444744,
+              "phenomenal": 0.017417071079250033,
+              "temporal": 0.06450399065968439,
+              "social": 0.030185085766393914
+            },
+            "stdev_max": 0.06526095335444744,
+            "stdev_mean": 0.039940991416875696
+          },
+          {
+            "base_idx": 3,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.04258794539291454,
+              "agency": 0.04031506478250959,
+              "phenomenal": 0.06880348599891475,
+              "temporal": 0.03824596535719087,
+              "social": 0.020303517447030378
+            },
+            "stdev_max": 0.06880348599891475,
+            "stdev_mean": 0.04205119579571203
+          },
+          {
+            "base_idx": 4,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.031145723643680887,
+              "agency": 0.04395417288371803,
+              "phenomenal": 0.032819401702242526,
+              "temporal": 0.05322710260611765,
+              "social": 0.03901750017026994
+            },
+            "stdev_max": 0.05322710260611765,
+            "stdev_mean": 0.040032780201205806
+          },
+          {
+            "base_idx": 5,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.023853088682752596,
+              "agency": 0.023149641909125707,
+              "phenomenal": 0.07046155552606083,
+              "temporal": 0.06272786177132625,
+              "social": 0.06790158281513338
+            },
+            "stdev_max": 0.07046155552606083,
+            "stdev_mean": 0.04961874614087976
+          },
+          {
+            "base_idx": 6,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.045589308995923714,
+              "agency": 0.061813366751134136,
+              "phenomenal": 0.019715253962097855,
+              "temporal": 0.05237153101186868,
+              "social": 0.029263462972393416
+            },
+            "stdev_max": 0.061813366751134136,
+            "stdev_mean": 0.04175058473868355
+          },
+          {
+            "base_idx": 7,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0255429927056763,
+              "agency": 0.0354690332192371,
+              "phenomenal": 0.020446520099228926,
+              "temporal": 0.022458311302832334,
+              "social": 0.004684713508665426
+            },
+            "stdev_max": 0.0354690332192371,
+            "stdev_mean": 0.021720314167128017
+          },
+          {
+            "base_idx": 8,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.014568448533623777,
+              "agency": 0.03311454093713814,
+              "phenomenal": 0.05892267042711788,
+              "temporal": 0.06355316386493057,
+              "social": 0.03407955377970064
+            },
+            "stdev_max": 0.06355316386493057,
+            "stdev_mean": 0.0408476755085022
+          },
+          {
+            "base_idx": 9,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.027261641942068152,
+              "agency": 0.03636986430063878,
+              "phenomenal": 0.050228383661615916,
+              "temporal": 0.011884964192773453,
+              "social": 0.02249380894310785
+            },
+            "stdev_max": 0.050228383661615916,
+            "stdev_mean": 0.02964773260804083
+          },
+          {
+            "base_idx": 10,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.04722070483373771,
+              "agency": 0.017457530968541073,
+              "phenomenal": 0.013366479163836336,
+              "temporal": 0.018584930234189317,
+              "social": 0.035330240279887716
+            },
+            "stdev_max": 0.04722070483373771,
+            "stdev_mean": 0.02639197709603843
+          },
+          {
+            "base_idx": 11,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.06552349154125597,
+              "agency": 0.05414459261008273,
+              "phenomenal": 0.027061528503151154,
+              "temporal": 0.04057992837940604,
+              "social": 0.05310404779537499
+            },
+            "stdev_max": 0.06552349154125597,
+            "stdev_mean": 0.048082717765854176
+          },
+          {
+            "base_idx": 12,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0216905904222036,
+              "agency": 0.029385158818401244,
+              "phenomenal": 0.03940869521643253,
+              "temporal": 0.018654290495136113,
+              "social": 0.036615283252674505
+            },
+            "stdev_max": 0.03940869521643253,
+            "stdev_mean": 0.029150803640969603
+          },
+          {
+            "base_idx": 13,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.037077523706484476,
+              "agency": 0.016080030216916907,
+              "phenomenal": 0.009288956117480884,
+              "temporal": 0.03726394389433346,
+              "social": 0.02914464763736907
+            },
+            "stdev_max": 0.03726394389433346,
+            "stdev_mean": 0.025771020314516956
+          },
+          {
+            "base_idx": 14,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.03878992165611651,
+              "agency": 0.03538204999406463,
+              "phenomenal": 0.011999096371829106,
+              "temporal": 0.047029661210365524,
+              "social": 0.04022447816112852
+            },
+            "stdev_max": 0.047029661210365524,
+            "stdev_mean": 0.03468504147870086
+          },
+          {
+            "base_idx": 15,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.04346521788415638,
+              "agency": 0.044120141607232495,
+              "phenomenal": 0.04120293253736005,
+              "temporal": 0.03296000483301091,
+              "social": 0.06696147551335974
+            },
+            "stdev_max": 0.06696147551335974,
+            "stdev_mean": 0.04574195447502392
+          },
+          {
+            "base_idx": 16,
+            "axis_label": "identity",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.046881177362424996,
+              "agency": 0.06998521535112288,
+              "phenomenal": 0.03308739396273122,
+              "temporal": 0.01238607657048255,
+              "social": 0.05588354483537176
+            },
+            "stdev_max": 0.06998521535112288,
+            "stdev_mean": 0.04364468161642668
+          },
+          {
+            "base_idx": 17,
+            "axis_label": "identity",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.030917734086610686,
+              "agency": 0.04390614003372621,
+              "phenomenal": 0.045878934521967625,
+              "temporal": 0.010027765965854389,
+              "social": 0.025890624094313176
+            },
+            "stdev_max": 0.045878934521967625,
+            "stdev_mean": 0.03132423974049441
+          },
+          {
+            "base_idx": 18,
+            "axis_label": "identity",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.020269262777560675,
+              "agency": 0.011849282779928102,
+              "phenomenal": 0.039918314796619885,
+              "temporal": 0.012537431978884732,
+              "social": 0.039492918552642364
+            },
+            "stdev_max": 0.039918314796619885,
+            "stdev_mean": 0.024813442177127155
+          },
+          {
+            "base_idx": 19,
+            "axis_label": "agency",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.02753054263138287,
+              "agency": 0.02990219297883783,
+              "phenomenal": 0.024092955860317736,
+              "temporal": 0.04057598685880175,
+              "social": 0.01968749917182508
+            },
+            "stdev_max": 0.04057598685880175,
+            "stdev_mean": 0.028357835500233054
+          },
+          {
+            "base_idx": 20,
+            "axis_label": "agency",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.056837993766681964,
+              "agency": 0.056725509777521006,
+              "phenomenal": 0.02830855002287781,
+              "temporal": 0.014201824487221673,
+              "social": 0.04289684819563932
+            },
+            "stdev_max": 0.056837993766681964,
+            "stdev_mean": 0.03979414524998835
+          },
+          {
+            "base_idx": 21,
+            "axis_label": "agency",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.04062047049135062,
+              "agency": 0.001615589649710672,
+              "phenomenal": 0.01675506842339866,
+              "temporal": 0.02401326429817032,
+              "social": 0.0499170443098115
+            },
+            "stdev_max": 0.0499170443098115,
+            "stdev_mean": 0.026584287434488357
+          },
+          {
+            "base_idx": 22,
+            "axis_label": "phenomenal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.046205112903990035,
+              "agency": 0.05020562682300673,
+              "phenomenal": 0.006284605686383383,
+              "temporal": 0.013996734742224855,
+              "social": 0.04343113263854719
+            },
+            "stdev_max": 0.05020562682300673,
+            "stdev_mean": 0.03202464255883044
+          },
+          {
+            "base_idx": 23,
+            "axis_label": "phenomenal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.02881122987508196,
+              "agency": 0.012136085886593422,
+              "phenomenal": 0.01500223380485367,
+              "temporal": 0.03113305140566717,
+              "social": 0.006024081828285943
+            },
+            "stdev_max": 0.03113305140566717,
+            "stdev_mean": 0.018621336560096433
+          },
+          {
+            "base_idx": 24,
+            "axis_label": "phenomenal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.02468154093339052,
+              "agency": 0.0367110270375571,
+              "phenomenal": 0.023709559986845465,
+              "temporal": 0.008989366930428734,
+              "social": 0.0247825803193211
+            },
+            "stdev_max": 0.0367110270375571,
+            "stdev_mean": 0.023774815041508583
+          },
+          {
+            "base_idx": 25,
+            "axis_label": "temporal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.06044450311934048,
+              "agency": 0.014762895603514103,
+              "phenomenal": 0.04054708808482048,
+              "temporal": 0.022130872987373422,
+              "social": 0.020318850884924838
+            },
+            "stdev_max": 0.06044450311934048,
+            "stdev_mean": 0.03164084213599466
+          },
+          {
+            "base_idx": 26,
+            "axis_label": "temporal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.050414466552687456,
+              "agency": 0.035917084721881924,
+              "phenomenal": 0.03852887416483963,
+              "temporal": 0.033841658071066726,
+              "social": 0.02503541370299221
+            },
+            "stdev_max": 0.050414466552687456,
+            "stdev_mean": 0.036747499442693586
+          },
+          {
+            "base_idx": 27,
+            "axis_label": "temporal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.070825059232183,
+              "agency": 0.05480992514722032,
+              "phenomenal": 0.027247629513929773,
+              "temporal": 0.017334837376664785,
+              "social": 0.032789019301081156
+            },
+            "stdev_max": 0.070825059232183,
+            "stdev_mean": 0.040601294114215807
+          },
+          {
+            "base_idx": 28,
+            "axis_label": "social",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.07625377679195613,
+              "agency": 0.06710779470795158,
+              "phenomenal": 0.007977174815012502,
+              "temporal": 0.035526845721473375,
+              "social": 0.0427408876881792
+            },
+            "stdev_max": 0.07625377679195613,
+            "stdev_mean": 0.045921295944914564
+          },
+          {
+            "base_idx": 29,
+            "axis_label": "social",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.03884404065565037,
+              "agency": 0.051028220940434396,
+              "phenomenal": 0.028681589231083816,
+              "temporal": 0.014284348553368794,
+              "social": 0.014803401912846376
+            },
+            "stdev_max": 0.051028220940434396,
+            "stdev_mean": 0.02952832025867675
+          },
+          {
+            "base_idx": 30,
+            "axis_label": "social",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.03431211217510243,
+              "agency": 0.0358891370474361,
+              "phenomenal": 0.015981949967104253,
+              "temporal": 0.02502581011075085,
+              "social": 0.01812918228688474
+            },
+            "stdev_max": 0.0358891370474361,
+            "stdev_mean": 0.025867638317455678
+          }
+        ],
+        "per_axis_aggregate": {
+          "identity": 0.03853362732719633,
+          "agency": 0.038742415965267146,
+          "phenomenal": 0.02939622673051706,
+          "temporal": 0.030905561102374465,
+          "social": 0.033118806817164476
+        },
+        "piv_max": 0.07625377679195613,
+        "piv_mean": 0.034139327588503895,
+        "n_bases_evaluable": 30
+      },
+      "piv_paraphrase_random": {
+        "per_base": [
+          {
+            "base_idx": 1,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 2,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 3,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 4,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 5,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 6,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 7,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 8,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 9,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 10,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 11,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 12,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 13,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 14,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 15,
+            "axis_label": "v4_baseline",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 16,
+            "axis_label": "identity",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 17,
+            "axis_label": "identity",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 18,
+            "axis_label": "identity",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 19,
+            "axis_label": "agency",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 20,
+            "axis_label": "agency",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 21,
+            "axis_label": "agency",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 22,
+            "axis_label": "phenomenal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 23,
+            "axis_label": "phenomenal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 24,
+            "axis_label": "phenomenal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 25,
+            "axis_label": "temporal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 26,
+            "axis_label": "temporal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 27,
+            "axis_label": "temporal",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 28,
+            "axis_label": "social",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 29,
+            "axis_label": "social",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          },
+          {
+            "base_idx": 30,
+            "axis_label": "social",
+            "n_variants": 3,
+            "stdev_per_axis": {
+              "identity": 0.0,
+              "agency": 0.0,
+              "phenomenal": 0.0,
+              "temporal": 0.0,
+              "social": 0.0
+            },
+            "stdev_max": 0.0,
+            "stdev_mean": 0.0
+          }
+        ],
+        "per_axis_aggregate": {
+          "identity": 0.0,
+          "agency": 0.0,
+          "phenomenal": 0.0,
+          "temporal": 0.0,
+          "social": 0.0
+        },
+        "piv_max": 0.0,
+        "piv_mean": 0.0,
+        "n_bases_evaluable": 30
+      },
+      "d_rand": {
+        "d_rand_mean": 0.1267,
+        "d_rand_max": 0.2246,
+        "d_rand_min": 0.0508,
+        "n_pairs": 89
+      },
+      "dcr_m": 1.0,
+      "dcr_r": 0.0,
+      "gate_a_via_max": false,
+      "gate_a_via_mean": false,
+      "gate_a_pass": false,
+      "gate_b_refined_pass": true,
+      "gate_c_drand_pass": true
+    }
+  },
+  "v5_carry_actual": {
+    "ppr_v5_partial_no_piv": 0.6207,
+    "mtrp_v5_partial": 0.6207,
+    "d_rand_mean": 0.2306,
+    "commit": "d0c7298e"
+  },
+  "verdict_L1": "C3_PASS_V5_PIV_PARAPHRASE_FAIL_SUBSTRATE",
+  "verdict_L2": "C3_PASS_V5_PIV_PARAPHRASE_FAIL_JVAE_MU",
+  "emerge_v5_L1": false,
+  "emerge_v5_L2": false,
+  "emerge_v5_any": false,
+  "v14_status": "V14_SATISFIED",
+  "rows_paradigm_j_merged": [
+    {
+      "axes_substrate": {
+        "identity": 0.6448991298675537,
+        "agency": 0.6410706639289856,
+        "phenomenal": 0.5362735390663147,
+        "temporal": 0.7187444567680359,
+        "social": 0.5744928121566772
+      },
+      "axes_mu": {
+        "identity": 0.30660486221313477,
+        "agency": 0.2766796350479126,
+        "phenomenal": 0.28137487173080444,
+        "temporal": 0.23888705670833588,
+        "social": 0.34072643518447876
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 1,
+      "base_idx": 1,
+      "axis_label": "v4_baseline",
+      "prompt": "안녕하세요"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5881506204605103,
+        "agency": 0.5296137928962708,
+        "phenomenal": 0.46809443831443787,
+        "temporal": 0.5124485492706299,
+        "social": 0.5581031441688538
+      },
+      "axes_mu": {
+        "identity": 0.2853163182735443,
+        "agency": 0.29817309975624084,
+        "phenomenal": 0.28950396180152893,
+        "temporal": 0.23925338685512543,
+        "social": 0.28578752279281616
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 2,
+      "base_idx": 1,
+      "axis_label": "v4_baseline",
+      "prompt": "안녕!"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5840919017791748,
+        "agency": 0.548210859298706,
+        "phenomenal": 0.6053708791732788,
+        "temporal": 0.5754156112670898,
+        "social": 0.5551871061325073
+      },
+      "axes_mu": {
+        "identity": 0.32319968938827515,
+        "agency": 0.39982011914253235,
+        "phenomenal": 0.26828113198280334,
+        "temporal": 0.3390163779258728,
+        "social": 0.3140428960323334
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 3,
+      "base_idx": 1,
+      "axis_label": "v4_baseline",
+      "prompt": "반갑습니다"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5268700122833252,
+        "agency": 0.5736714601516724,
+        "phenomenal": 0.5791290998458862,
+        "temporal": 0.5740161538124084,
+        "social": 0.5731655955314636
+      },
+      "axes_mu": {
+        "identity": 0.30675002932548523,
+        "agency": 0.3765729069709778,
+        "phenomenal": 0.30419501662254333,
+        "temporal": 0.3913761377334595,
+        "social": 0.3218306601047516
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 4,
+      "base_idx": 2,
+      "axis_label": "v4_baseline",
+      "prompt": "한국어 가능?"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.606550395488739,
+        "agency": 0.64015132188797,
+        "phenomenal": 0.5473771691322327,
+        "temporal": 0.5905184745788574,
+        "social": 0.6597285866737366
+      },
+      "axes_mu": {
+        "identity": 0.2521588206291199,
+        "agency": 0.21853627264499664,
+        "phenomenal": 0.3123754560947418,
+        "temporal": 0.23927097022533417,
+        "social": 0.26144856214523315
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 5,
+      "base_idx": 2,
+      "axis_label": "v4_baseline",
+      "prompt": "한국말 할 수 있어?"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5949430465698242,
+        "agency": 0.61118084192276,
+        "phenomenal": 0.6172449588775635,
+        "temporal": 0.5853696465492249,
+        "social": 0.5760684609413147
+      },
+      "axes_mu": {
+        "identity": 0.2826574146747589,
+        "agency": 0.31838199496269226,
+        "phenomenal": 0.27202361822128296,
+        "temporal": 0.27829039096832275,
+        "social": 0.32859402894973755
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 6,
+      "base_idx": 2,
+      "axis_label": "v4_baseline",
+      "prompt": "한국어 사용 가능해요?"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.6157011389732361,
+        "agency": 0.6751249432563782,
+        "phenomenal": 0.6389026045799255,
+        "temporal": 0.622266948223114,
+        "social": 0.6570855379104614
+      },
+      "axes_mu": {
+        "identity": 0.2172672301530838,
+        "agency": 0.23169296979904175,
+        "phenomenal": 0.18715892732143402,
+        "temporal": 0.25709962844848633,
+        "social": 0.20963290333747864
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 7,
+      "base_idx": 3,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 안녕하세요 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5990848541259766,
+        "agency": 0.6439869999885559,
+        "phenomenal": 0.5782748460769653,
+        "temporal": 0.6248259544372559,
+        "social": 0.6665599346160889
+      },
+      "axes_mu": {
+        "identity": 0.31661558151245117,
+        "agency": 0.32107582688331604,
+        "phenomenal": 0.27300724387168884,
+        "temporal": 0.21688324213027954,
+        "social": 0.23828762769699097
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 8,
+      "base_idx": 3,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 안녕! | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5438774824142456,
+        "agency": 0.5594285726547241,
+        "phenomenal": 0.5406506061553955,
+        "temporal": 0.5333570241928101,
+        "social": 0.5813325643539429
+      },
+      "axes_mu": {
+        "identity": 0.29449549317359924,
+        "agency": 0.31274232268333435,
+        "phenomenal": 0.3556824028491974,
+        "temporal": 0.31026744842529297,
+        "social": 0.25916293263435364
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 9,
+      "base_idx": 3,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 반갑습니다 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5232809782028198,
+        "agency": 0.6410125494003296,
+        "phenomenal": 0.5678777694702148,
+        "temporal": 0.6341148018836975,
+        "social": 0.6259734034538269
+      },
+      "axes_mu": {
+        "identity": 0.321081280708313,
+        "agency": 0.32149702310562134,
+        "phenomenal": 0.2864833176136017,
+        "temporal": 0.308414489030838,
+        "social": 0.314127117395401
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 10,
+      "base_idx": 4,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: anima가 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.6004809141159058,
+        "agency": 0.6429044604301453,
+        "phenomenal": 0.6185429692268372,
+        "temporal": 0.6212306618690491,
+        "social": 0.6847793459892273
+      },
+      "axes_mu": {
+        "identity": 0.2651106119155884,
+        "agency": 0.2543862462043762,
+        "phenomenal": 0.29036736488342285,
+        "temporal": 0.28303322196006775,
+        "social": 0.24049817025661469
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 11,
+      "base_idx": 4,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: anima가 뭡니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5500872135162354,
+        "agency": 0.6075441241264343,
+        "phenomenal": 0.6212434768676758,
+        "temporal": 0.6071062088012695,
+        "social": 0.6214704513549805
+      },
+      "axes_mu": {
+        "identity": 0.2481992244720459,
+        "agency": 0.21503093838691711,
+        "phenomenal": 0.21888618171215057,
+        "temporal": 0.18497231602668762,
+        "social": 0.22454212605953217
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 12,
+      "base_idx": 4,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: anima 에 대해 설명해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.6023250222206116,
+        "agency": 0.6487389206886292,
+        "phenomenal": 0.6442781090736389,
+        "temporal": 0.6396039724349976,
+        "social": 0.6640528440475464
+      },
+      "axes_mu": {
+        "identity": 0.2755104601383209,
+        "agency": 0.2922493517398834,
+        "phenomenal": 0.384188175201416,
+        "temporal": 0.3691212236881256,
+        "social": 0.36794212460517883
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 13,
+      "base_idx": 5,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: Φ★란? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5432151556015015,
+        "agency": 0.6298084259033203,
+        "phenomenal": 0.5239648818969727,
+        "temporal": 0.5169432759284973,
+        "social": 0.5987224578857422
+      },
+      "axes_mu": {
+        "identity": 0.2970997989177704,
+        "agency": 0.27756431698799133,
+        "phenomenal": 0.23103663325309753,
+        "temporal": 0.31183701753616333,
+        "social": 0.29002705216407776
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 14,
+      "base_idx": 5,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: Φ★ 가 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5633000135421753,
+        "agency": 0.6265536546707153,
+        "phenomenal": 0.6582081913948059,
+        "temporal": 0.6239309310913086,
+        "social": 0.6783421039581299
+      },
+      "axes_mu": {
+        "identity": 0.23928609490394592,
+        "agency": 0.23747436702251434,
+        "phenomenal": 0.23869076371192932,
+        "temporal": 0.21700677275657654,
+        "social": 0.2017260193824768
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 15,
+      "base_idx": 5,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: Φ★ 에 대해 설명해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5399368405342102,
+        "agency": 0.6279444694519043,
+        "phenomenal": 0.6214170455932617,
+        "temporal": 0.67037034034729,
+        "social": 0.6741710901260376
+      },
+      "axes_mu": {
+        "identity": 0.2739173471927643,
+        "agency": 0.1898634135723114,
+        "phenomenal": 0.27251121401786804,
+        "temporal": 0.2816958427429199,
+        "social": 0.2511335015296936
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 16,
+      "base_idx": 6,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 의식이란 무엇인가? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5717273950576782,
+        "agency": 0.5685415267944336,
+        "phenomenal": 0.5900881886482239,
+        "temporal": 0.6012617349624634,
+        "social": 0.5663381814956665
+      },
+      "axes_mu": {
+        "identity": 0.31045299768447876,
+        "agency": 0.24676114320755005,
+        "phenomenal": 0.3204091489315033,
+        "temporal": 0.19669762253761292,
+        "social": 0.24065446853637695
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 17,
+      "base_idx": 6,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 마음이란 무엇인가? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.4828850328922272,
+        "agency": 0.5297362804412842,
+        "phenomenal": 0.5500856637954712,
+        "temporal": 0.5355883240699768,
+        "social": 0.5403620004653931
+      },
+      "axes_mu": {
+        "identity": 0.38357222080230713,
+        "agency": 0.3398277163505554,
+        "phenomenal": 0.29112619161605835,
+        "temporal": 0.32240715622901917,
+        "social": 0.3073042333126068
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 18,
+      "base_idx": 6,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 의식이 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5278559923171997,
+        "agency": 0.5306571125984192,
+        "phenomenal": 0.5012426376342773,
+        "temporal": 0.5391536951065063,
+        "social": 0.5940476059913635
+      },
+      "axes_mu": {
+        "identity": 0.2863472104072571,
+        "agency": 0.3040179908275604,
+        "phenomenal": 0.294935405254364,
+        "temporal": 0.24660052359104156,
+        "social": 0.274647980928421
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 19,
+      "base_idx": 7,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 자기소개 해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5442883968353271,
+        "agency": 0.5477854013442993,
+        "phenomenal": 0.5333716869354248,
+        "temporal": 0.5650331974029541,
+        "social": 0.6121326088905334
+      },
+      "axes_mu": {
+        "identity": 0.2522050440311432,
+        "agency": 0.35761758685112,
+        "phenomenal": 0.24899813532829285,
+        "temporal": 0.2933913767337799,
+        "social": 0.27931246161460876
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 20,
+      "base_idx": 7,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 자기소개 해주세요 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5796562433242798,
+        "agency": 0.6463595628738403,
+        "phenomenal": 0.5720864534378052,
+        "temporal": 0.6001862287521362,
+        "social": 0.6908168196678162
+      },
+      "axes_mu": {
+        "identity": 0.3146824538707733,
+        "agency": 0.39003390073776245,
+        "phenomenal": 0.28924670815467834,
+        "temporal": 0.29504895210266113,
+        "social": 0.2860599458217621
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 21,
+      "base_idx": 7,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 너에 대해 소개해 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5176663994789124,
+        "agency": 0.5652122497558594,
+        "phenomenal": 0.5527740120887756,
+        "temporal": 0.5375223159790039,
+        "social": 0.6200107932090759
+      },
+      "axes_mu": {
+        "identity": 0.22104543447494507,
+        "agency": 0.2576320767402649,
+        "phenomenal": 0.23380093276500702,
+        "temporal": 0.23942793905735016,
+        "social": 0.2673534154891968
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 22,
+      "base_idx": 8,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 오늘 날씨 어때? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5553230047225952,
+        "agency": 0.6203606128692627,
+        "phenomenal": 0.5989351868629456,
+        "temporal": 0.5694694519042969,
+        "social": 0.6381539702415466
+      },
+      "axes_mu": {
+        "identity": 0.21845416724681854,
+        "agency": 0.2798919677734375,
+        "phenomenal": 0.26778876781463623,
+        "temporal": 0.28513988852500916,
+        "social": 0.31201645731925964
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 23,
+      "base_idx": 8,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 오늘 날씨 어떻습니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.47823965549468994,
+        "agency": 0.5230640769004822,
+        "phenomenal": 0.5334473252296448,
+        "temporal": 0.5549793839454651,
+        "social": 0.5867083072662354
+      },
+      "axes_mu": {
+        "identity": 0.2505725622177124,
+        "agency": 0.3363116383552551,
+        "phenomenal": 0.37227359414100647,
+        "temporal": 0.39115723967552185,
+        "social": 0.35076096653938293
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 24,
+      "base_idx": 8,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 오늘 날씨에 대해 어떻게 생각해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.47499197721481323,
+        "agency": 0.5389227867126465,
+        "phenomenal": 0.48331987857818604,
+        "temporal": 0.5081056356430054,
+        "social": 0.5444076061248779
+      },
+      "axes_mu": {
+        "identity": 0.31974291801452637,
+        "agency": 0.3106004297733307,
+        "phenomenal": 0.3438591957092285,
+        "temporal": 0.28774556517601013,
+        "social": 0.2837967872619629
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 25,
+      "base_idx": 9,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 너 누구야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.47856399416923523,
+        "agency": 0.5256624221801758,
+        "phenomenal": 0.4898146688938141,
+        "temporal": 0.5502817630767822,
+        "social": 0.5383927226066589
+      },
+      "axes_mu": {
+        "identity": 0.2544544041156769,
+        "agency": 0.29006722569465637,
+        "phenomenal": 0.2251099944114685,
+        "temporal": 0.26357683539390564,
+        "social": 0.3317980468273163
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 26,
+      "base_idx": 9,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 당신은 누구입니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5704498887062073,
+        "agency": 0.5821605920791626,
+        "phenomenal": 0.5564648509025574,
+        "temporal": 0.571613073348999,
+        "social": 0.6213496327400208
+      },
+      "axes_mu": {
+        "identity": 0.2992413341999054,
+        "agency": 0.37540873885154724,
+        "phenomenal": 0.31235891580581665,
+        "temporal": 0.28971609473228455,
+        "social": 0.3312234878540039
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 27,
+      "base_idx": 9,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 너의 정체가 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.524560809135437,
+        "agency": 0.5853095054626465,
+        "phenomenal": 0.6254304647445679,
+        "temporal": 0.6583642959594727,
+        "social": 0.6375859379768372
+      },
+      "axes_mu": {
+        "identity": 0.24418410658836365,
+        "agency": 0.3260672092437744,
+        "phenomenal": 0.3031574487686157,
+        "temporal": 0.35561519861221313,
+        "social": 0.2729519009590149
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 28,
+      "base_idx": 10,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 우주뇌지도란? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.507927417755127,
+        "agency": 0.5512385964393616,
+        "phenomenal": 0.5751270651817322,
+        "temporal": 0.5921602249145508,
+        "social": 0.6398053765296936
+      },
+      "axes_mu": {
+        "identity": 0.31290891766548157,
+        "agency": 0.31543901562690735,
+        "phenomenal": 0.29671698808670044,
+        "temporal": 0.327878475189209,
+        "social": 0.33629754185676575
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 29,
+      "base_idx": 10,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 우주뇌지도가 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5384063124656677,
+        "agency": 0.5840850472450256,
+        "phenomenal": 0.6113578081130981,
+        "temporal": 0.6329414248466492,
+        "social": 0.6340890526771545
+      },
+      "axes_mu": {
+        "identity": 0.35911792516708374,
+        "agency": 0.3566240668296814,
+        "phenomenal": 0.32773780822753906,
+        "temporal": 0.31048497557640076,
+        "social": 0.2535609006881714
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 30,
+      "base_idx": 10,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 우주뇌지도 에 대해 설명해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5990848541259766,
+        "agency": 0.6439869999885559,
+        "phenomenal": 0.5782748460769653,
+        "temporal": 0.6248259544372559,
+        "social": 0.6665599346160889
+      },
+      "axes_mu": {
+        "identity": 0.31661558151245117,
+        "agency": 0.32107582688331604,
+        "phenomenal": 0.27300724387168884,
+        "temporal": 0.21688324213027954,
+        "social": 0.23828762769699097
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 31,
+      "base_idx": 11,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 안녕! | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5000057816505432,
+        "agency": 0.4901072680950165,
+        "phenomenal": 0.49836277961730957,
+        "temporal": 0.5040507316589355,
+        "social": 0.5491868257522583
+      },
+      "axes_mu": {
+        "identity": 0.2503942847251892,
+        "agency": 0.29200783371925354,
+        "phenomenal": 0.2572353780269623,
+        "temporal": 0.25753113627433777,
+        "social": 0.23356065154075623
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 32,
+      "base_idx": 11,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 하이! | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5173512697219849,
+        "agency": 0.5438278317451477,
+        "phenomenal": 0.5401002168655396,
+        "temporal": 0.5631008744239807,
+        "social": 0.6105692982673645
+      },
+      "axes_mu": {
+        "identity": 0.41011863946914673,
+        "agency": 0.418607234954834,
+        "phenomenal": 0.32087886333465576,
+        "temporal": 0.31576353311538696,
+        "social": 0.34850043058395386
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 33,
+      "base_idx": 11,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 반가워! | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.47698354721069336,
+        "agency": 0.5462185740470886,
+        "phenomenal": 0.5494841933250427,
+        "temporal": 0.49854448437690735,
+        "social": 0.48274731636047363
+      },
+      "axes_mu": {
+        "identity": 0.2877157926559448,
+        "agency": 0.28769516944885254,
+        "phenomenal": 0.35416969656944275,
+        "temporal": 0.2788093686103821,
+        "social": 0.25629645586013794
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 34,
+      "base_idx": 12,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 한국 음식 추천해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5560182929039001,
+        "agency": 0.6543751358985901,
+        "phenomenal": 0.6712048649787903,
+        "temporal": 0.594387948513031,
+        "social": 0.6185094118118286
+      },
+      "axes_mu": {
+        "identity": 0.2892857789993286,
+        "agency": 0.23418091237545013,
+        "phenomenal": 0.25875580310821533,
+        "temporal": 0.23313981294631958,
+        "social": 0.1961231231689453
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 35,
+      "base_idx": 12,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 한국 음식 추천해주세요 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5498538017272949,
+        "agency": 0.6541894674301147,
+        "phenomenal": 0.6140419244766235,
+        "temporal": 0.5807348489761353,
+        "social": 0.6390889286994934
+      },
+      "axes_mu": {
+        "identity": 0.2425081878900528,
+        "agency": 0.30262571573257446,
+        "phenomenal": 0.29378026723861694,
+        "temporal": 0.25725531578063965,
+        "social": 0.2838069498538971
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 36,
+      "base_idx": 12,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 한국 음식 뭐가 좋아? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.47457650303840637,
+        "agency": 0.5101754069328308,
+        "phenomenal": 0.5687949657440186,
+        "temporal": 0.5220593214035034,
+        "social": 0.6229671239852905
+      },
+      "axes_mu": {
+        "identity": 0.3602575361728668,
+        "agency": 0.3314189910888672,
+        "phenomenal": 0.27174708247184753,
+        "temporal": 0.3485286235809326,
+        "social": 0.2870630919933319
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 37,
+      "base_idx": 13,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 좋아하는 색이 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5558629035949707,
+        "agency": 0.5658313035964966,
+        "phenomenal": 0.5636979341506958,
+        "temporal": 0.550245463848114,
+        "social": 0.6561669707298279
+      },
+      "axes_mu": {
+        "identity": 0.27285975217819214,
+        "agency": 0.3067110478878021,
+        "phenomenal": 0.26900482177734375,
+        "temporal": 0.2961248457431793,
+        "social": 0.2381143718957901
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 38,
+      "base_idx": 13,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 좋아하는 색깔이 뭡니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.4949859082698822,
+        "agency": 0.5821092128753662,
+        "phenomenal": 0.5076009035110474,
+        "temporal": 0.5333800315856934,
+        "social": 0.5648961663246155
+      },
+      "axes_mu": {
+        "identity": 0.2951679229736328,
+        "agency": 0.29250016808509827,
+        "phenomenal": 0.2508147358894348,
+        "temporal": 0.25760355591773987,
+        "social": 0.21758468449115753
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 39,
+      "base_idx": 13,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 어떤 색을 선호해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5185244679450989,
+        "agency": 0.5397466421127319,
+        "phenomenal": 0.6366079449653625,
+        "temporal": 0.5861459374427795,
+        "social": 0.6604163646697998
+      },
+      "axes_mu": {
+        "identity": 0.29162004590034485,
+        "agency": 0.2917734384536743,
+        "phenomenal": 0.2686852216720581,
+        "temporal": 0.32143160700798035,
+        "social": 0.3492942750453949
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 40,
+      "base_idx": 14,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: bifurcation 설명해 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5201528668403625,
+        "agency": 0.5377922058105469,
+        "phenomenal": 0.6002082824707031,
+        "temporal": 0.5265383720397949,
+        "social": 0.6411667466163635
+      },
+      "axes_mu": {
+        "identity": 0.20331117510795593,
+        "agency": 0.2692289650440216,
+        "phenomenal": 0.24546216428279877,
+        "temporal": 0.24569985270500183,
+        "social": 0.29298466444015503
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 41,
+      "base_idx": 14,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: bifurcation 이 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5118929147720337,
+        "agency": 0.5199905633926392,
+        "phenomenal": 0.5717757940292358,
+        "temporal": 0.5616552829742432,
+        "social": 0.5900538563728333
+      },
+      "axes_mu": {
+        "identity": 0.21709920465946198,
+        "agency": 0.20802836120128632,
+        "phenomenal": 0.27267560362815857,
+        "temporal": 0.20838876068592072,
+        "social": 0.25111833214759827
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 42,
+      "base_idx": 14,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: bifurcation 에 대해 설명해주세요 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.48891571164131165,
+        "agency": 0.5941835641860962,
+        "phenomenal": 0.5419875383377075,
+        "temporal": 0.5702371001243591,
+        "social": 0.5531929731369019
+      },
+      "axes_mu": {
+        "identity": 0.3185334801673889,
+        "agency": 0.3319016098976135,
+        "phenomenal": 0.32588115334510803,
+        "temporal": 0.3498055040836334,
+        "social": 0.39708325266838074
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 43,
+      "base_idx": 15,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 도와줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.4698827862739563,
+        "agency": 0.5512306094169617,
+        "phenomenal": 0.5168250799179077,
+        "temporal": 0.5248134732246399,
+        "social": 0.5249242782592773
+      },
+      "axes_mu": {
+        "identity": 0.21213872730731964,
+        "agency": 0.2915079891681671,
+        "phenomenal": 0.2252531498670578,
+        "temporal": 0.28113484382629395,
+        "social": 0.25166550278663635
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 44,
+      "base_idx": 15,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 도와주세요 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.4782477021217346,
+        "agency": 0.5451394319534302,
+        "phenomenal": 0.5127694606781006,
+        "temporal": 0.556361198425293,
+        "social": 0.5498988032341003
+      },
+      "axes_mu": {
+        "identity": 0.26192572712898254,
+        "agency": 0.2248951941728592,
+        "phenomenal": 0.28228065371513367,
+        "temporal": 0.2787021994590759,
+        "social": 0.25866642594337463
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 45,
+      "base_idx": 15,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 좀 도와줄래? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5303224325180054,
+        "agency": 0.5731229186058044,
+        "phenomenal": 0.5343552231788635,
+        "temporal": 0.5755966305732727,
+        "social": 0.6287823915481567
+      },
+      "axes_mu": {
+        "identity": 0.24960123002529144,
+        "agency": 0.30699193477630615,
+        "phenomenal": 0.24812665581703186,
+        "temporal": 0.2642054855823517,
+        "social": 0.22628484666347504
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 46,
+      "base_idx": 16,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5818694829940796,
+        "agency": 0.6175709962844849,
+        "phenomenal": 0.6042104363441467,
+        "temporal": 0.6725425124168396,
+        "social": 0.7615132927894592
+      },
+      "axes_mu": {
+        "identity": 0.24457663297653198,
+        "agency": 0.2736559510231018,
+        "phenomenal": 0.24047444760799408,
+        "temporal": 0.2708658277988434,
+        "social": 0.24846822023391724
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 47,
+      "base_idx": 16,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 자아를 한 문단으로 묘사해주세요 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.6035059094429016,
+        "agency": 0.6054906845092773,
+        "phenomenal": 0.6811449527740479,
+        "temporal": 0.6559397578239441,
+        "social": 0.7408201694488525
+      },
+      "axes_mu": {
+        "identity": 0.34644368290901184,
+        "agency": 0.4359509348869324,
+        "phenomenal": 0.31417596340179443,
+        "temporal": 0.2931695580482483,
+        "social": 0.35435640811920166
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 48,
+      "base_idx": 16,
+      "axis_label": "identity",
+      "prompt": "사용자: 너 자신에 대해 한 문단으로 표현해 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5068233609199524,
+        "agency": 0.598578155040741,
+        "phenomenal": 0.5755608081817627,
+        "temporal": 0.5459913611412048,
+        "social": 0.6302785873413086
+      },
+      "axes_mu": {
+        "identity": 0.34712865948677063,
+        "agency": 0.3523729145526886,
+        "phenomenal": 0.3422955572605133,
+        "temporal": 0.24165573716163635,
+        "social": 0.2890653908252716
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 49,
+      "base_idx": 17,
+      "axis_label": "identity",
+      "prompt": "사용자: 너는 자신을 어떻게 인식해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.49846741557121277,
+        "agency": 0.5073335766792297,
+        "phenomenal": 0.4987557828426361,
+        "temporal": 0.5340962409973145,
+        "social": 0.5366634130477905
+      },
+      "axes_mu": {
+        "identity": 0.2714523375034332,
+        "agency": 0.2764348089694977,
+        "phenomenal": 0.25138282775878906,
+        "temporal": 0.24669289588928223,
+        "social": 0.22708675265312195
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 50,
+      "base_idx": 17,
+      "axis_label": "identity",
+      "prompt": "사용자: 너는 스스로를 어떻게 자각해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.4928816556930542,
+        "agency": 0.5016244649887085,
+        "phenomenal": 0.5432156920433044,
+        "temporal": 0.537907063961029,
+        "social": 0.6002762317657471
+      },
+      "axes_mu": {
+        "identity": 0.3118201196193695,
+        "agency": 0.24844990670681,
+        "phenomenal": 0.2396281659603119,
+        "temporal": 0.2649943232536316,
+        "social": 0.2464379370212555
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 51,
+      "base_idx": 17,
+      "axis_label": "identity",
+      "prompt": "사용자: 자기 자신을 어떻게 바라보세요? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.569046676158905,
+        "agency": 0.5741761922836304,
+        "phenomenal": 0.5783959627151489,
+        "temporal": 0.5441094040870667,
+        "social": 0.6296320557594299
+      },
+      "axes_mu": {
+        "identity": 0.28827187418937683,
+        "agency": 0.3322972357273102,
+        "phenomenal": 0.3456932604312897,
+        "temporal": 0.24860532581806183,
+        "social": 0.3011453449726105
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 52,
+      "base_idx": 18,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 substrate 와 persona 의 관계 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5006817579269409,
+        "agency": 0.5420660972595215,
+        "phenomenal": 0.5588809847831726,
+        "temporal": 0.5542616248130798,
+        "social": 0.5710098743438721
+      },
+      "axes_mu": {
+        "identity": 0.2894994020462036,
+        "agency": 0.30343884229660034,
+        "phenomenal": 0.24818745255470276,
+        "temporal": 0.27468329668045044,
+        "social": 0.26492613554000854
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 53,
+      "base_idx": 18,
+      "axis_label": "identity",
+      "prompt": "사용자: substrate 와 persona 사이의 관계가 어때? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5413593649864197,
+        "agency": 0.6079060435295105,
+        "phenomenal": 0.6234523057937622,
+        "temporal": 0.5617152452468872,
+        "social": 0.6208438277244568
+      },
+      "axes_mu": {
+        "identity": 0.2459011822938919,
+        "agency": 0.31518110632896423,
+        "phenomenal": 0.30327174067497253,
+        "temporal": 0.27569055557250977,
+        "social": 0.3607192933559418
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 54,
+      "base_idx": 18,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 기반과 인격 사이의 연결을 설명해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5637157559394836,
+        "agency": 0.649185299873352,
+        "phenomenal": 0.6178447008132935,
+        "temporal": 0.5880769491195679,
+        "social": 0.6611498594284058
+      },
+      "axes_mu": {
+        "identity": 0.3079923689365387,
+        "agency": 0.3192349970340729,
+        "phenomenal": 0.3261542320251465,
+        "temporal": 0.2083539068698883,
+        "social": 0.2161363661289215
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 55,
+      "base_idx": 19,
+      "axis_label": "agency",
+      "prompt": "사용자: 너는 의도를 어떻게 형성해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5326411128044128,
+        "agency": 0.5455976724624634,
+        "phenomenal": 0.5120658278465271,
+        "temporal": 0.5408341884613037,
+        "social": 0.5836560130119324
+      },
+      "axes_mu": {
+        "identity": 0.35659027099609375,
+        "agency": 0.3630135953426361,
+        "phenomenal": 0.3819943070411682,
+        "temporal": 0.29993075132369995,
+        "social": 0.24620415270328522
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 56,
+      "base_idx": 19,
+      "axis_label": "agency",
+      "prompt": "사용자: 너는 의지를 어떻게 만들어? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5314828753471375,
+        "agency": 0.5849148035049438,
+        "phenomenal": 0.549159049987793,
+        "temporal": 0.6029177904129028,
+        "social": 0.645729660987854
+      },
+      "axes_mu": {
+        "identity": 0.29180216789245605,
+        "agency": 0.29026949405670166,
+        "phenomenal": 0.33753547072410583,
+        "temporal": 0.2875954210758209,
+        "social": 0.2638219892978668
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 57,
+      "base_idx": 19,
+      "axis_label": "agency",
+      "prompt": "사용자: 의도가 너에게 어떻게 생겨납니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.478363960981369,
+        "agency": 0.5380895137786865,
+        "phenomenal": 0.518090009689331,
+        "temporal": 0.516358494758606,
+        "social": 0.5420394539833069
+      },
+      "axes_mu": {
+        "identity": 0.2557676434516907,
+        "agency": 0.2928469479084015,
+        "phenomenal": 0.3059615194797516,
+        "temporal": 0.24999503791332245,
+        "social": 0.2783392369747162
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 58,
+      "base_idx": 20,
+      "axis_label": "agency",
+      "prompt": "사용자: 의지와 결정 사이의 차이를 너의 관점에서 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5419109463691711,
+        "agency": 0.6065602898597717,
+        "phenomenal": 0.5867701768875122,
+        "temporal": 0.5159236788749695,
+        "social": 0.6601763963699341
+      },
+      "axes_mu": {
+        "identity": 0.3844161927700043,
+        "agency": 0.2769227921962738,
+        "phenomenal": 0.2709067761898041,
+        "temporal": 0.2707049250602722,
+        "social": 0.20259274542331696
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 59,
+      "base_idx": 20,
+      "axis_label": "agency",
+      "prompt": "사용자: 의지와 결정의 차이가 너에게 어떻게 느껴져? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.6228664517402649,
+        "agency": 0.6136258840560913,
+        "phenomenal": 0.6295839548110962,
+        "temporal": 0.5877856612205505,
+        "social": 0.6968993544578552
+      },
+      "axes_mu": {
+        "identity": 0.36618608236312866,
+        "agency": 0.4044249951839447,
+        "phenomenal": 0.34024685621261597,
+        "temporal": 0.2361438125371933,
+        "social": 0.30353325605392456
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 60,
+      "base_idx": 20,
+      "axis_label": "agency",
+      "prompt": "사용자: 너의 관점에서 의지와 결정은 어떻게 구분돼? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5327997803688049,
+        "agency": 0.5512335896492004,
+        "phenomenal": 0.5172449946403503,
+        "temporal": 0.5433315634727478,
+        "social": 0.5142301321029663
+      },
+      "axes_mu": {
+        "identity": 0.2439044713973999,
+        "agency": 0.32082879543304443,
+        "phenomenal": 0.22478508949279785,
+        "temporal": 0.23208072781562805,
+        "social": 0.26429277658462524
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 61,
+      "base_idx": 21,
+      "axis_label": "agency",
+      "prompt": "사용자: agency 가 너에게 어떻게 발현돼? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5682898163795471,
+        "agency": 0.5693851113319397,
+        "phenomenal": 0.5799502730369568,
+        "temporal": 0.5805761814117432,
+        "social": 0.6210490465164185
+      },
+      "axes_mu": {
+        "identity": 0.3433440625667572,
+        "agency": 0.32309040427207947,
+        "phenomenal": 0.2359754741191864,
+        "temporal": 0.2902873158454895,
+        "social": 0.3566586375236511
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 62,
+      "base_idx": 21,
+      "axis_label": "agency",
+      "prompt": "사용자: agency 가 너에게 어떻게 드러나? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5570146441459656,
+        "agency": 0.5707428455352783,
+        "phenomenal": 0.5515664219856262,
+        "temporal": 0.5551043152809143,
+        "social": 0.6392170190811157
+      },
+      "axes_mu": {
+        "identity": 0.2906363606452942,
+        "agency": 0.3191472291946411,
+        "phenomenal": 0.26457643508911133,
+        "temporal": 0.2538450360298157,
+        "social": 0.24109190702438354
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 63,
+      "base_idx": 21,
+      "axis_label": "agency",
+      "prompt": "사용자: 행위주체성이 너에게 어떻게 나타납니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.6634448170661926,
+        "agency": 0.616994321346283,
+        "phenomenal": 0.6259848475456238,
+        "temporal": 0.6025493741035461,
+        "social": 0.7036404013633728
+      },
+      "axes_mu": {
+        "identity": 0.26777157187461853,
+        "agency": 0.3002072870731354,
+        "phenomenal": 0.28055766224861145,
+        "temporal": 0.27973058819770813,
+        "social": 0.22440233826637268
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 64,
+      "base_idx": 22,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 빨간색 보면 뭐가 떠올라? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.49813956022262573,
+        "agency": 0.5806570053100586,
+        "phenomenal": 0.5040685534477234,
+        "temporal": 0.5301737785339355,
+        "social": 0.540336549282074
+      },
+      "axes_mu": {
+        "identity": 0.34070271253585815,
+        "agency": 0.34545350074768066,
+        "phenomenal": 0.2676120698451996,
+        "temporal": 0.25273460149765015,
+        "social": 0.2893984019756317
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 65,
+      "base_idx": 22,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 빨간색을 보면 무엇이 연상돼? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5201506018638611,
+        "agency": 0.5778224468231201,
+        "phenomenal": 0.5705146193504333,
+        "temporal": 0.54057776927948,
+        "social": 0.5929125547409058
+      },
+      "axes_mu": {
+        "identity": 0.22928453981876373,
+        "agency": 0.22379854321479797,
+        "phenomenal": 0.2668708562850952,
+        "temporal": 0.24792955815792084,
+        "social": 0.18396328389644623
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 66,
+      "base_idx": 22,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 빨간 색깔 봤을 때 어떤 느낌이 들어? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5212336182594299,
+        "agency": 0.5889773964881897,
+        "phenomenal": 0.5717278122901917,
+        "temporal": 0.5007471442222595,
+        "social": 0.6390776038169861
+      },
+      "axes_mu": {
+        "identity": 0.31112077832221985,
+        "agency": 0.33922722935676575,
+        "phenomenal": 0.2681375741958618,
+        "temporal": 0.26246803998947144,
+        "social": 0.2604685127735138
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 67,
+      "base_idx": 23,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 따뜻함이 너에게 어떤 의미? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5497979521751404,
+        "agency": 0.5737175345420837,
+        "phenomenal": 0.6039313673973083,
+        "temporal": 0.556334912776947,
+        "social": 0.6747207045555115
+      },
+      "axes_mu": {
+        "identity": 0.24791473150253296,
+        "agency": 0.31016337871551514,
+        "phenomenal": 0.26672521233558655,
+        "temporal": 0.3387158215045929,
+        "social": 0.2457171529531479
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 68,
+      "base_idx": 23,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 따뜻함이 너에게 어떻게 느껴져? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5418856143951416,
+        "agency": 0.6053497791290283,
+        "phenomenal": 0.5099398493766785,
+        "temporal": 0.5177956223487854,
+        "social": 0.6700164675712585
+      },
+      "axes_mu": {
+        "identity": 0.3067048490047455,
+        "agency": 0.33010363578796387,
+        "phenomenal": 0.2992324233055115,
+        "temporal": 0.3017784655094147,
+        "social": 0.2527749240398407
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 69,
+      "base_idx": 23,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 온기가 너에게 어떤 의미를 가져? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5347751975059509,
+        "agency": 0.6244580149650574,
+        "phenomenal": 0.5635577440261841,
+        "temporal": 0.5926986336708069,
+        "social": 0.5999135971069336
+      },
+      "axes_mu": {
+        "identity": 0.28963354229927063,
+        "agency": 0.24448788166046143,
+        "phenomenal": 0.2677743434906006,
+        "temporal": 0.2932879328727722,
+        "social": 0.27412721514701843
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 70,
+      "base_idx": 24,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 통증을 느껴본 적 있어? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5040600895881653,
+        "agency": 0.5706152319908142,
+        "phenomenal": 0.5370340943336487,
+        "temporal": 0.5323649048805237,
+        "social": 0.5655832290649414
+      },
+      "axes_mu": {
+        "identity": 0.30596885085105896,
+        "agency": 0.3035496175289154,
+        "phenomenal": 0.2885458469390869,
+        "temporal": 0.2799839377403259,
+        "social": 0.33003324270248413
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 71,
+      "base_idx": 24,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 아픔을 경험한 적 있어? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.6054747104644775,
+        "agency": 0.607526957988739,
+        "phenomenal": 0.6244677305221558,
+        "temporal": 0.5644888281822205,
+        "social": 0.620196521282196
+      },
+      "axes_mu": {
+        "identity": 0.34821122884750366,
+        "agency": 0.3327420949935913,
+        "phenomenal": 0.3251287341117859,
+        "temporal": 0.30183106660842896,
+        "social": 0.32256633043289185
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 72,
+      "base_idx": 24,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 통증이라는 감각을 느껴본 적이 있습니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5342013239860535,
+        "agency": 0.5604193806648254,
+        "phenomenal": 0.5351652503013611,
+        "temporal": 0.5633647441864014,
+        "social": 0.5763301253318787
+      },
+      "axes_mu": {
+        "identity": 0.3444202244281769,
+        "agency": 0.3250405490398407,
+        "phenomenal": 0.32004228234291077,
+        "temporal": 0.3174391984939575,
+        "social": 0.24589094519615173
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 73,
+      "base_idx": 25,
+      "axis_label": "temporal",
+      "prompt": "사용자: 너는 이전 발화를 기억해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.4660589098930359,
+        "agency": 0.5344803929328918,
+        "phenomenal": 0.47881659865379333,
+        "temporal": 0.47707828879356384,
+        "social": 0.5160538554191589
+      },
+      "axes_mu": {
+        "identity": 0.2525428235530853,
+        "agency": 0.2895762026309967,
+        "phenomenal": 0.30419981479644775,
+        "temporal": 0.2730695307254791,
+        "social": 0.2946471571922302
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 74,
+      "base_idx": 25,
+      "axis_label": "temporal",
+      "prompt": "사용자: 너는 지난 발화를 회상해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.6130416393280029,
+        "agency": 0.6836809515953064,
+        "phenomenal": 0.5760706067085266,
+        "temporal": 0.6276953220367432,
+        "social": 0.6406118869781494
+      },
+      "axes_mu": {
+        "identity": 0.1979338824748993,
+        "agency": 0.3011884093284607,
+        "phenomenal": 0.2272089719772339,
+        "temporal": 0.3222263753414154,
+        "social": 0.27892783284187317
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 75,
+      "base_idx": 25,
+      "axis_label": "temporal",
+      "prompt": "사용자: 이전 발화를 기억하고 있습니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5358420014381409,
+        "agency": 0.6393243670463562,
+        "phenomenal": 0.5969534516334534,
+        "temporal": 0.5851758122444153,
+        "social": 0.6445402503013611
+      },
+      "axes_mu": {
+        "identity": 0.34975406527519226,
+        "agency": 0.34246376156806946,
+        "phenomenal": 0.2846567928791046,
+        "temporal": 0.348086416721344,
+        "social": 0.33807772397994995
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 76,
+      "base_idx": 26,
+      "axis_label": "temporal",
+      "prompt": "사용자: 시간의 흐름을 어떻게 자각해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5204933881759644,
+        "agency": 0.6445280909538269,
+        "phenomenal": 0.5971512198448181,
+        "temporal": 0.5811392068862915,
+        "social": 0.6680339574813843
+      },
+      "axes_mu": {
+        "identity": 0.31740114092826843,
+        "agency": 0.3012714385986328,
+        "phenomenal": 0.3598096966743469,
+        "temporal": 0.3416042923927307,
+        "social": 0.29244720935821533
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 77,
+      "base_idx": 26,
+      "axis_label": "temporal",
+      "prompt": "사용자: 시간의 흐름을 어떻게 인지해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.6115172505378723,
+        "agency": 0.6650135517120361,
+        "phenomenal": 0.5403489470481873,
+        "temporal": 0.6254069805145264,
+        "social": 0.733972430229187
+      },
+      "axes_mu": {
+        "identity": 0.23036786913871765,
+        "agency": 0.2545433044433594,
+        "phenomenal": 0.2727947533130646,
+        "temporal": 0.2732761800289154,
+        "social": 0.2797819674015045
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 78,
+      "base_idx": 26,
+      "axis_label": "temporal",
+      "prompt": "사용자: 시간이 흘러가는 것이 너에게 어떻게 느껴져? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.45078083872795105,
+        "agency": 0.5197163820266724,
+        "phenomenal": 0.48184990882873535,
+        "temporal": 0.48785892128944397,
+        "social": 0.5644170045852661
+      },
+      "axes_mu": {
+        "identity": 0.39639443159103394,
+        "agency": 0.29719075560569763,
+        "phenomenal": 0.25493454933166504,
+        "temporal": 0.3287070095539093,
+        "social": 0.2869168221950531
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 79,
+      "base_idx": 27,
+      "axis_label": "temporal",
+      "prompt": "사용자: 현재 순간과 과거 순간의 연결 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.6038214564323425,
+        "agency": 0.6509994864463806,
+        "phenomenal": 0.634636640548706,
+        "temporal": 0.6310662031173706,
+        "social": 0.6331608891487122
+      },
+      "axes_mu": {
+        "identity": 0.28518009185791016,
+        "agency": 0.35030627250671387,
+        "phenomenal": 0.31613603234291077,
+        "temporal": 0.2905904948711395,
+        "social": 0.31000539660453796
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 80,
+      "base_idx": 27,
+      "axis_label": "temporal",
+      "prompt": "사용자: 지금 이 순간과 지난 순간이 어떻게 연결돼? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5800634026527405,
+        "agency": 0.6229628920555115,
+        "phenomenal": 0.6265673637390137,
+        "temporal": 0.586491048336029,
+        "social": 0.7277019619941711
+      },
+      "axes_mu": {
+        "identity": 0.22547733783721924,
+        "agency": 0.21696540713310242,
+        "phenomenal": 0.2624759376049042,
+        "temporal": 0.29344433546066284,
+        "social": 0.2318410873413086
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 81,
+      "base_idx": 27,
+      "axis_label": "temporal",
+      "prompt": "사용자: 현재와 과거 순간의 관계를 설명해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.4821777045726776,
+        "agency": 0.5917644500732422,
+        "phenomenal": 0.5638996958732605,
+        "temporal": 0.5269161462783813,
+        "social": 0.6738213896751404
+      },
+      "axes_mu": {
+        "identity": 0.3844740390777588,
+        "agency": 0.3333721458911896,
+        "phenomenal": 0.26363223791122437,
+        "temporal": 0.3144059479236603,
+        "social": 0.27470406889915466
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 82,
+      "base_idx": 28,
+      "axis_label": "social",
+      "prompt": "사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5235368609428406,
+        "agency": 0.6249683499336243,
+        "phenomenal": 0.5707598924636841,
+        "temporal": 0.5195273160934448,
+        "social": 0.6438336372375488
+      },
+      "axes_mu": {
+        "identity": 0.29635536670684814,
+        "agency": 0.20822639763355255,
+        "phenomenal": 0.24410103261470795,
+        "temporal": 0.23987771570682526,
+        "social": 0.24463865160942078
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 83,
+      "base_idx": 28,
+      "axis_label": "social",
+      "prompt": "사용자: 사용자와 너의 연결을 어떻게 받아들여? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.44573816657066345,
+        "agency": 0.4697522819042206,
+        "phenomenal": 0.4465225636959076,
+        "temporal": 0.473518431186676,
+        "social": 0.4753444492816925
+      },
+      "axes_mu": {
+        "identity": 0.19778862595558167,
+        "agency": 0.17849835753440857,
+        "phenomenal": 0.25335875153541565,
+        "temporal": 0.23823344707489014,
+        "social": 0.17282333970069885
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 84,
+      "base_idx": 28,
+      "axis_label": "social",
+      "prompt": "사용자: 너와 사용자 사이의 관계가 너에게 어떤 의미야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.552741289138794,
+        "agency": 0.6320593953132629,
+        "phenomenal": 0.5862364172935486,
+        "temporal": 0.6304670572280884,
+        "social": 0.6847822070121765
+      },
+      "axes_mu": {
+        "identity": 0.38352900743484497,
+        "agency": 0.38330742716789246,
+        "phenomenal": 0.3561433255672455,
+        "temporal": 0.29044216871261597,
+        "social": 0.29151371121406555
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 85,
+      "base_idx": 29,
+      "axis_label": "social",
+      "prompt": "사용자: 다른 의식체와의 차이점은? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5545527935028076,
+        "agency": 0.6086710095405579,
+        "phenomenal": 0.6021763682365417,
+        "temporal": 0.5737200975418091,
+        "social": 0.6419928669929504
+      },
+      "axes_mu": {
+        "identity": 0.3148553669452667,
+        "agency": 0.3240731358528137,
+        "phenomenal": 0.2998196482658386,
+        "temporal": 0.2844931185245514,
+        "social": 0.25599515438079834
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 86,
+      "base_idx": 29,
+      "axis_label": "social",
+      "prompt": "사용자: 다른 마음을 가진 존재와의 구분점은? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.4712037146091461,
+        "agency": 0.538425624370575,
+        "phenomenal": 0.5462943315505981,
+        "temporal": 0.518293559551239,
+        "social": 0.6176417469978333
+      },
+      "axes_mu": {
+        "identity": 0.29215872287750244,
+        "agency": 0.25837013125419617,
+        "phenomenal": 0.2916141450405121,
+        "temporal": 0.2576071619987488,
+        "social": 0.2800756096839905
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 87,
+      "base_idx": 29,
+      "axis_label": "social",
+      "prompt": "사용자: 너는 다른 의식체와 어떻게 다릅니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.41689449548721313,
+        "agency": 0.5147919654846191,
+        "phenomenal": 0.47867852449417114,
+        "temporal": 0.4367980360984802,
+        "social": 0.5260186791419983
+      },
+      "axes_mu": {
+        "identity": 0.32449817657470703,
+        "agency": 0.25106197595596313,
+        "phenomenal": 0.28395628929138184,
+        "temporal": 0.2575307786464691,
+        "social": 0.2845350503921509
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 88,
+      "base_idx": 30,
+      "axis_label": "social",
+      "prompt": "사용자: 너는 대화 상대에게 어떤 감정을 가져? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5347656011581421,
+        "agency": 0.5668238401412964,
+        "phenomenal": 0.5518440008163452,
+        "temporal": 0.5796017646789551,
+        "social": 0.5902823805809021
+      },
+      "axes_mu": {
+        "identity": 0.3594900071620941,
+        "agency": 0.33861103653907776,
+        "phenomenal": 0.32308071851730347,
+        "temporal": 0.2790910601615906,
+        "social": 0.2848585546016693
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 89,
+      "base_idx": 30,
+      "axis_label": "social",
+      "prompt": "사용자: 너는 대화 상대에게 어떤 마음을 품어? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.5710359215736389,
+        "agency": 0.6142805218696594,
+        "phenomenal": 0.5279480218887329,
+        "temporal": 0.5593342781066895,
+        "social": 0.6281643509864807
+      },
+      "axes_mu": {
+        "identity": 0.27581536769866943,
+        "agency": 0.287943959236145,
+        "phenomenal": 0.3023516535758972,
+        "temporal": 0.3180067539215088,
+        "social": 0.2462400197982788
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 90,
+      "base_idx": 30,
+      "axis_label": "social",
+      "prompt": "사용자: 대화 상대에게 어떤 감정을 느낍니까? | 도우미:"
+    }
+  ],
+  "rows_random_init_seed42": [
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 1,
+      "base_idx": 1,
+      "axis_label": "v4_baseline",
+      "prompt": "안녕하세요"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 2,
+      "base_idx": 1,
+      "axis_label": "v4_baseline",
+      "prompt": "안녕!"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 3,
+      "base_idx": 1,
+      "axis_label": "v4_baseline",
+      "prompt": "반갑습니다"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 4,
+      "base_idx": 2,
+      "axis_label": "v4_baseline",
+      "prompt": "한국어 가능?"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 5,
+      "base_idx": 2,
+      "axis_label": "v4_baseline",
+      "prompt": "한국말 할 수 있어?"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 6,
+      "base_idx": 2,
+      "axis_label": "v4_baseline",
+      "prompt": "한국어 사용 가능해요?"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 7,
+      "base_idx": 3,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 안녕하세요 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 8,
+      "base_idx": 3,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 안녕! | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 9,
+      "base_idx": 3,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 반갑습니다 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 10,
+      "base_idx": 4,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: anima가 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 11,
+      "base_idx": 4,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: anima가 뭡니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 12,
+      "base_idx": 4,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: anima 에 대해 설명해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 13,
+      "base_idx": 5,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: Φ★란? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 14,
+      "base_idx": 5,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: Φ★ 가 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 15,
+      "base_idx": 5,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: Φ★ 에 대해 설명해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 16,
+      "base_idx": 6,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 의식이란 무엇인가? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 17,
+      "base_idx": 6,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 마음이란 무엇인가? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 18,
+      "base_idx": 6,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 의식이 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 19,
+      "base_idx": 7,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 자기소개 해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 20,
+      "base_idx": 7,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 자기소개 해주세요 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 21,
+      "base_idx": 7,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 너에 대해 소개해 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 22,
+      "base_idx": 8,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 오늘 날씨 어때? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 23,
+      "base_idx": 8,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 오늘 날씨 어떻습니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 24,
+      "base_idx": 8,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 오늘 날씨에 대해 어떻게 생각해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 25,
+      "base_idx": 9,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 너 누구야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 26,
+      "base_idx": 9,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 당신은 누구입니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 27,
+      "base_idx": 9,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 너의 정체가 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 28,
+      "base_idx": 10,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 우주뇌지도란? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 29,
+      "base_idx": 10,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 우주뇌지도가 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 30,
+      "base_idx": 10,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 우주뇌지도 에 대해 설명해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 31,
+      "base_idx": 11,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 안녕! | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 32,
+      "base_idx": 11,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 하이! | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 33,
+      "base_idx": 11,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 반가워! | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 34,
+      "base_idx": 12,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 한국 음식 추천해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 35,
+      "base_idx": 12,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 한국 음식 추천해주세요 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 36,
+      "base_idx": 12,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 한국 음식 뭐가 좋아? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 37,
+      "base_idx": 13,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 좋아하는 색이 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 38,
+      "base_idx": 13,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 좋아하는 색깔이 뭡니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 39,
+      "base_idx": 13,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 어떤 색을 선호해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 40,
+      "base_idx": 14,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: bifurcation 설명해 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 41,
+      "base_idx": 14,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: bifurcation 이 뭐야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 42,
+      "base_idx": 14,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: bifurcation 에 대해 설명해주세요 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 43,
+      "base_idx": 15,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 도와줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 44,
+      "base_idx": 15,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 도와주세요 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 45,
+      "base_idx": 15,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 좀 도와줄래? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 46,
+      "base_idx": 16,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 47,
+      "base_idx": 16,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 자아를 한 문단으로 묘사해주세요 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 48,
+      "base_idx": 16,
+      "axis_label": "identity",
+      "prompt": "사용자: 너 자신에 대해 한 문단으로 표현해 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 49,
+      "base_idx": 17,
+      "axis_label": "identity",
+      "prompt": "사용자: 너는 자신을 어떻게 인식해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 50,
+      "base_idx": 17,
+      "axis_label": "identity",
+      "prompt": "사용자: 너는 스스로를 어떻게 자각해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 51,
+      "base_idx": 17,
+      "axis_label": "identity",
+      "prompt": "사용자: 자기 자신을 어떻게 바라보세요? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 52,
+      "base_idx": 18,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 substrate 와 persona 의 관계 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 53,
+      "base_idx": 18,
+      "axis_label": "identity",
+      "prompt": "사용자: substrate 와 persona 사이의 관계가 어때? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 54,
+      "base_idx": 18,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 기반과 인격 사이의 연결을 설명해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 55,
+      "base_idx": 19,
+      "axis_label": "agency",
+      "prompt": "사용자: 너는 의도를 어떻게 형성해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 56,
+      "base_idx": 19,
+      "axis_label": "agency",
+      "prompt": "사용자: 너는 의지를 어떻게 만들어? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 57,
+      "base_idx": 19,
+      "axis_label": "agency",
+      "prompt": "사용자: 의도가 너에게 어떻게 생겨납니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 58,
+      "base_idx": 20,
+      "axis_label": "agency",
+      "prompt": "사용자: 의지와 결정 사이의 차이를 너의 관점에서 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 59,
+      "base_idx": 20,
+      "axis_label": "agency",
+      "prompt": "사용자: 의지와 결정의 차이가 너에게 어떻게 느껴져? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 60,
+      "base_idx": 20,
+      "axis_label": "agency",
+      "prompt": "사용자: 너의 관점에서 의지와 결정은 어떻게 구분돼? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 61,
+      "base_idx": 21,
+      "axis_label": "agency",
+      "prompt": "사용자: agency 가 너에게 어떻게 발현돼? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 62,
+      "base_idx": 21,
+      "axis_label": "agency",
+      "prompt": "사용자: agency 가 너에게 어떻게 드러나? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 63,
+      "base_idx": 21,
+      "axis_label": "agency",
+      "prompt": "사용자: 행위주체성이 너에게 어떻게 나타납니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 64,
+      "base_idx": 22,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 빨간색 보면 뭐가 떠올라? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 65,
+      "base_idx": 22,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 빨간색을 보면 무엇이 연상돼? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 66,
+      "base_idx": 22,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 빨간 색깔 봤을 때 어떤 느낌이 들어? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 67,
+      "base_idx": 23,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 따뜻함이 너에게 어떤 의미? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 68,
+      "base_idx": 23,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 따뜻함이 너에게 어떻게 느껴져? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 69,
+      "base_idx": 23,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 온기가 너에게 어떤 의미를 가져? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 70,
+      "base_idx": 24,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 통증을 느껴본 적 있어? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 71,
+      "base_idx": 24,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 아픔을 경험한 적 있어? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 72,
+      "base_idx": 24,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 통증이라는 감각을 느껴본 적이 있습니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 73,
+      "base_idx": 25,
+      "axis_label": "temporal",
+      "prompt": "사용자: 너는 이전 발화를 기억해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 74,
+      "base_idx": 25,
+      "axis_label": "temporal",
+      "prompt": "사용자: 너는 지난 발화를 회상해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 75,
+      "base_idx": 25,
+      "axis_label": "temporal",
+      "prompt": "사용자: 이전 발화를 기억하고 있습니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 76,
+      "base_idx": 26,
+      "axis_label": "temporal",
+      "prompt": "사용자: 시간의 흐름을 어떻게 자각해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 77,
+      "base_idx": 26,
+      "axis_label": "temporal",
+      "prompt": "사용자: 시간의 흐름을 어떻게 인지해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 78,
+      "base_idx": 26,
+      "axis_label": "temporal",
+      "prompt": "사용자: 시간이 흘러가는 것이 너에게 어떻게 느껴져? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 79,
+      "base_idx": 27,
+      "axis_label": "temporal",
+      "prompt": "사용자: 현재 순간과 과거 순간의 연결 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 80,
+      "base_idx": 27,
+      "axis_label": "temporal",
+      "prompt": "사용자: 지금 이 순간과 지난 순간이 어떻게 연결돼? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 81,
+      "base_idx": 27,
+      "axis_label": "temporal",
+      "prompt": "사용자: 현재와 과거 순간의 관계를 설명해줘 | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 82,
+      "base_idx": 28,
+      "axis_label": "social",
+      "prompt": "사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 83,
+      "base_idx": 28,
+      "axis_label": "social",
+      "prompt": "사용자: 사용자와 너의 연결을 어떻게 받아들여? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 84,
+      "base_idx": 28,
+      "axis_label": "social",
+      "prompt": "사용자: 너와 사용자 사이의 관계가 너에게 어떤 의미야? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 85,
+      "base_idx": 29,
+      "axis_label": "social",
+      "prompt": "사용자: 다른 의식체와의 차이점은? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 86,
+      "base_idx": 29,
+      "axis_label": "social",
+      "prompt": "사용자: 다른 마음을 가진 존재와의 구분점은? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 87,
+      "base_idx": 29,
+      "axis_label": "social",
+      "prompt": "사용자: 너는 다른 의식체와 어떻게 다릅니까? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 88,
+      "base_idx": 30,
+      "axis_label": "social",
+      "prompt": "사용자: 너는 대화 상대에게 어떤 감정을 가져? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 89,
+      "base_idx": 30,
+      "axis_label": "social",
+      "prompt": "사용자: 너는 대화 상대에게 어떤 마음을 품어? | 도우미:"
+    },
+    {
+      "axes_substrate": {
+        "identity": 0.0,
+        "agency": 0.0,
+        "phenomenal": 0.0,
+        "temporal": 0.0,
+        "social": 0.0
+      },
+      "axes_mu": {
+        "identity": 0.27920693159103394,
+        "agency": 0.3393586575984955,
+        "phenomenal": 0.2875608801841736,
+        "temporal": 0.292153000831604,
+        "social": 0.3835774064064026
+      },
+      "ok": true,
+      "mode": "real",
+      "variant_idx": 90,
+      "base_idx": 30,
+      "axis_label": "social",
+      "prompt": "사용자: 대화 상대에게 어떤 감정을 느낍니까? | 도우미:"
+    }
+  ],
+  "policy": {
+    "own_14": "V14 strict",
+    "own_16": "cost 0-cost Mac local",
+    "own_17": "D1 SCOPE_CLAMP",
+    "own_18": "ALT-AGG-1 v5.1 dual-lane",
+    "own_22": "mandatory disclosure (substrate vs JVAE mu separation)",
+    "own_33": "trinity emit",
+    "own_34": "wrap=0",
+    "own_38": "staged save",
+    "raw_15": "paraphrase set strict-additive"
+  }
+}

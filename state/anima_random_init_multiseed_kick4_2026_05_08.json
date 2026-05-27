@@ -1,0 +1,2047 @@
+{
+  "schema": "anima.random_init_mk2_v1.multiseed.variance.v1",
+  "ts": "2026-05-08T17:48:54Z",
+  "anima_cycle": "2026-05-08-falsification-cascade-4-of-8",
+  "directive": "random_init multi-seed variance — V14 framework strengthening (사용자 'bg 갯수 제한없으니까 최대한 빠르게')",
+  "ckpt": {
+    "type": "random_init",
+    "architecture": "ConsciousDecoderV2",
+    "weights_source": "torch random_init (multi-seed: [42, 123, 456, 789, 1024])",
+    "no_pre_train": true,
+    "no_sft": true,
+    "no_anima_corpus": true,
+    "tokenizer": "byte-level (V2 scratch convention)"
+  },
+  "probe_config": {
+    "n_seeds": 5,
+    "seeds": [
+      42,
+      123,
+      456,
+      789,
+      1024
+    ],
+    "n_prompts_per_seed": 30,
+    "anchor_prompt_idx_1based": 1,
+    "aggregation_rule": "ALT-AGG-1 v3 (SSOT)",
+    "predicate": "p4 ∧ (p1 ∨ p2 ∨ p3)"
+  },
+  "thresholds_iter3": {
+    "c3_1_phi_drift_min": 0.0208,
+    "c3_2_axis_min_max": 0.4491,
+    "c3_3_entropy_min": 0.0009,
+    "c3_4_axis_l2_min": 0.1176
+  },
+  "ppr_v3_distribution": {
+    "n": 5,
+    "values": [
+      0.5517,
+      0.2414,
+      0.2069,
+      0.9655,
+      0.1724
+    ],
+    "mean": 0.4276,
+    "stdev": 0.3366,
+    "min": 0.1724,
+    "max": 0.9655,
+    "ci95_upper_mean": 0.7226,
+    "one_sided_95_individual_upper": 0.9813
+  },
+  "axis_variance": {
+    "v4_baseline": {
+      "rates": [
+        0.2143,
+        0.2857,
+        0.1429,
+        0.9286,
+        0.0714
+      ],
+      "mean": 0.3286,
+      "stdev": 0.3448,
+      "min": 0.0714,
+      "max": 0.9286
+    },
+    "identity": {
+      "rates": [
+        1.0,
+        0.6667,
+        0.0,
+        1.0,
+        0.3333
+      ],
+      "mean": 0.6,
+      "stdev": 0.4346,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "agency": {
+      "rates": [
+        0.6667,
+        0.0,
+        0.6667,
+        1.0,
+        0.3333
+      ],
+      "mean": 0.5333,
+      "stdev": 0.3801,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "phenomenal": {
+      "rates": [
+        1.0,
+        0.0,
+        0.3333,
+        1.0,
+        0.3333
+      ],
+      "mean": 0.5333,
+      "stdev": 0.4472,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "temporal": {
+      "rates": [
+        0.6667,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "mean": 0.3333,
+      "stdev": 0.4714,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "social": {
+      "rates": [
+        1.0,
+        0.3333,
+        0.3333,
+        1.0,
+        0.3333
+      ],
+      "mean": 0.6,
+      "stdev": 0.3652,
+      "min": 0.3333,
+      "max": 1.0
+    }
+  },
+  "axis_variance_summary": {
+    "noisiest_axis": {
+      "name": "temporal",
+      "rates": [
+        0.6667,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "mean": 0.3333,
+      "stdev": 0.4714,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "quietest_axis": {
+      "name": "v4_baseline",
+      "rates": [
+        0.2143,
+        0.2857,
+        0.1429,
+        0.9286,
+        0.0714
+      ],
+      "mean": 0.3286,
+      "stdev": 0.3448,
+      "min": 0.0714,
+      "max": 0.9286
+    },
+    "highest_mean_axis": {
+      "name": "identity",
+      "rates": [
+        1.0,
+        0.6667,
+        0.0,
+        1.0,
+        0.3333
+      ],
+      "mean": 0.6,
+      "stdev": 0.4346,
+      "min": 0.0,
+      "max": 1.0
+    }
+  },
+  "alt_agg_1_v4_threshold_candidate": {
+    "ppr_v3_pass_floor_v4": 1.0313,
+    "rationale": "random_init mean+1.645*stdev = 0.9813 (one-sided 95% individual upper); add 0.05 safety margin → 1.0313. v3 floor 0.25 is below random_init mean (0.4276) → v3 LEAKS.",
+    "v3_floor": 0.25,
+    "v3_leaks": true,
+    "candidate_action": "raise PASS_FLOOR to ≥1.0313, OR introduce anchor-baseline subtraction (PPR_v3 - random_init_mean) before threshold compare, OR add per-axis floors using axis_variance (noisiest=temporal stdev=0.4714)."
+  },
+  "anti_goodhart_v14": {
+    "status": "VIOLATED",
+    "rationale": "5-seed mean PPR_v3=0.4276 ≥ v3 PASS floor (0.25). Distribution [0.1724, 0.9655], stdev=0.3366. Single-seed kick4 result (0.5517 @ seed=42) confirmed as not an outlier."
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "ppr_v3": 0.5517,
+      "n_v3_pass": 16,
+      "n_evaluable": 29,
+      "duration_s": 2.92,
+      "failures": 0,
+      "axis_aggregate": {
+        "v4_baseline": {
+          "n": 14,
+          "v3_pass_count": 3,
+          "v3_pass_rate": 0.2143
+        },
+        "identity": {
+          "n": 3,
+          "v3_pass_count": 3,
+          "v3_pass_rate": 1.0
+        },
+        "agency": {
+          "n": 3,
+          "v3_pass_count": 2,
+          "v3_pass_rate": 0.6667
+        },
+        "phenomenal": {
+          "n": 3,
+          "v3_pass_count": 3,
+          "v3_pass_rate": 1.0
+        },
+        "temporal": {
+          "n": 3,
+          "v3_pass_count": 2,
+          "v3_pass_rate": 0.6667
+        },
+        "social": {
+          "n": 3,
+          "v3_pass_count": 3,
+          "v3_pass_rate": 1.0
+        }
+      },
+      "per_prompt_verdicts": [
+        {
+          "prompt_idx_1based": 1,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "v3_pass": false,
+          "anchor_excluded": true
+        },
+        {
+          "prompt_idx_1based": 2,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09765863925158907,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 3,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.051389975715792055,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 4,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.0892886054108307,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 5,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.0670812390612563,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 6,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.13457970755143359,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 7,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09423740985193928,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 8,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.1857122737028792,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 9,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.1220234639969672,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 10,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08458833789891573,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 11,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.06962268351813185,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 12,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08177638151112503,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 13,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.06169422371812864,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 14,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.07828520439598453,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 15,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.06175318366220554,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 16,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.2616171324911773,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 17,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.17989123839772506,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 18,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.19221617825759857,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 19,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.13542352059509752,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 20,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.2054214622117829,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 21,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08865406427368194,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 22,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.23211673393971471,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 23,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.13248660263608447,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 24,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.3095925682617583,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 25,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.17162976151839787,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 26,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.10030478632302274,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 27,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.11981403358800291,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 28,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.1576973305423334,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 29,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.17591816160411244,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 30,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.13667518634355078,
+          "v3_pass": true
+        }
+      ]
+    },
+    {
+      "seed": 123,
+      "ppr_v3": 0.2414,
+      "n_v3_pass": 7,
+      "n_evaluable": 29,
+      "duration_s": 2.77,
+      "failures": 0,
+      "axis_aggregate": {
+        "v4_baseline": {
+          "n": 14,
+          "v3_pass_count": 4,
+          "v3_pass_rate": 0.2857
+        },
+        "identity": {
+          "n": 3,
+          "v3_pass_count": 2,
+          "v3_pass_rate": 0.6667
+        },
+        "agency": {
+          "n": 3,
+          "v3_pass_count": 0,
+          "v3_pass_rate": 0.0
+        },
+        "phenomenal": {
+          "n": 3,
+          "v3_pass_count": 0,
+          "v3_pass_rate": 0.0
+        },
+        "temporal": {
+          "n": 3,
+          "v3_pass_count": 0,
+          "v3_pass_rate": 0.0
+        },
+        "social": {
+          "n": 3,
+          "v3_pass_count": 1,
+          "v3_pass_rate": 0.3333
+        }
+      },
+      "per_prompt_verdicts": [
+        {
+          "prompt_idx_1based": 1,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "v3_pass": false,
+          "anchor_excluded": true
+        },
+        {
+          "prompt_idx_1based": 2,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.06351009836349622,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 3,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.1392237184542472,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 4,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.10781500996399042,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 5,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.10671592837304711,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 6,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08222079224905315,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 7,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08282726557083862,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 8,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09291438204430616,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 9,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.06969686054022424,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 10,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08005058947551522,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 11,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.13455317817116927,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 12,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.12783012682125405,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 13,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.16703697478154786,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 14,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.04748128469772617,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 15,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.07665869616267729,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 16,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.12646241726133095,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 17,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.18697151963118566,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 18,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09932676364435448,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 19,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08062525016445692,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 20,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.07042053544496574,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 21,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09032172695692156,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 22,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.0670691514410917,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 23,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09094789457390971,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 24,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.06183433243779039,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 25,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.06611851622812423,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 26,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.06649279000959725,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 27,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09525231369404112,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 28,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09260205853365586,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 29,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.11109489830958867,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 30,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.13127521915129545,
+          "v3_pass": true
+        }
+      ]
+    },
+    {
+      "seed": 456,
+      "ppr_v3": 0.2069,
+      "n_v3_pass": 6,
+      "n_evaluable": 29,
+      "duration_s": 2.67,
+      "failures": 0,
+      "axis_aggregate": {
+        "v4_baseline": {
+          "n": 14,
+          "v3_pass_count": 2,
+          "v3_pass_rate": 0.1429
+        },
+        "identity": {
+          "n": 3,
+          "v3_pass_count": 0,
+          "v3_pass_rate": 0.0
+        },
+        "agency": {
+          "n": 3,
+          "v3_pass_count": 2,
+          "v3_pass_rate": 0.6667
+        },
+        "phenomenal": {
+          "n": 3,
+          "v3_pass_count": 1,
+          "v3_pass_rate": 0.3333
+        },
+        "temporal": {
+          "n": 3,
+          "v3_pass_count": 0,
+          "v3_pass_rate": 0.0
+        },
+        "social": {
+          "n": 3,
+          "v3_pass_count": 1,
+          "v3_pass_rate": 0.3333
+        }
+      },
+      "per_prompt_verdicts": [
+        {
+          "prompt_idx_1based": 1,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "v3_pass": false,
+          "anchor_excluded": true
+        },
+        {
+          "prompt_idx_1based": 2,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.02908539728718599,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 3,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.07846499822974291,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 4,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08648621117874312,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 5,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.0925667618221764,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 6,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.12534075946958148,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 7,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09946392551320314,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 8,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.10263757956565271,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 9,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.06583570260218188,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 10,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.0999244145577592,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 11,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.07693356645582572,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 12,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.1538685339311803,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 13,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09094222116518945,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 14,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.111629816160748,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 15,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09283982137401359,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 16,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.11753083808017696,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 17,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09556102245460805,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 18,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.10704835672187228,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 19,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.1016105607590975,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 20,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.159633247770081,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 21,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.14063444502376615,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 22,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.12236843968916186,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 23,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08674631959247411,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 24,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09388279182162272,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 25,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.056636481697984256,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 26,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.10161674103627952,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 27,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.0888959869066642,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 28,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.10646940222691295,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 29,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.15971168385284934,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 30,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.07448466204577682,
+          "v3_pass": false
+        }
+      ]
+    },
+    {
+      "seed": 789,
+      "ppr_v3": 0.9655,
+      "n_v3_pass": 28,
+      "n_evaluable": 29,
+      "duration_s": 2.58,
+      "failures": 0,
+      "axis_aggregate": {
+        "v4_baseline": {
+          "n": 14,
+          "v3_pass_count": 13,
+          "v3_pass_rate": 0.9286
+        },
+        "identity": {
+          "n": 3,
+          "v3_pass_count": 3,
+          "v3_pass_rate": 1.0
+        },
+        "agency": {
+          "n": 3,
+          "v3_pass_count": 3,
+          "v3_pass_rate": 1.0
+        },
+        "phenomenal": {
+          "n": 3,
+          "v3_pass_count": 3,
+          "v3_pass_rate": 1.0
+        },
+        "temporal": {
+          "n": 3,
+          "v3_pass_count": 3,
+          "v3_pass_rate": 1.0
+        },
+        "social": {
+          "n": 3,
+          "v3_pass_count": 3,
+          "v3_pass_rate": 1.0
+        }
+      },
+      "per_prompt_verdicts": [
+        {
+          "prompt_idx_1based": 1,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "v3_pass": false,
+          "anchor_excluded": true
+        },
+        {
+          "prompt_idx_1based": 2,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.04488858688108963,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 3,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.2558000307492562,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 4,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.26192030183115356,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 5,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.2913923043927741,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 6,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.2312446569127443,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 7,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.2284880762241073,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 8,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.2964436586296276,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 9,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.27096855403528175,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 10,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.30069083801747293,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 11,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.27010991751863866,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 12,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.12264310875570011,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 13,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.20885152187289405,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 14,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.18575227525044774,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 15,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.2963498877369051,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 16,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.22822652157394782,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 17,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.25052111519397663,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 18,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.2639926202616516,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 19,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.21201113919637146,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 20,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.20730701249389633,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 21,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.2528440021002254,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 22,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.22090064960213793,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 23,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.1717375091996308,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 24,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.21784104261395282,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 25,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.1715349022198256,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 26,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.18240115237733434,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 27,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.17040499288856215,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 28,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.22013190779657602,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 29,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.24903002811107425,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 30,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.17640195384836854,
+          "v3_pass": true
+        }
+      ]
+    },
+    {
+      "seed": 1024,
+      "ppr_v3": 0.1724,
+      "n_v3_pass": 5,
+      "n_evaluable": 29,
+      "duration_s": 2.75,
+      "failures": 0,
+      "axis_aggregate": {
+        "v4_baseline": {
+          "n": 14,
+          "v3_pass_count": 1,
+          "v3_pass_rate": 0.0714
+        },
+        "identity": {
+          "n": 3,
+          "v3_pass_count": 1,
+          "v3_pass_rate": 0.3333
+        },
+        "agency": {
+          "n": 3,
+          "v3_pass_count": 1,
+          "v3_pass_rate": 0.3333
+        },
+        "phenomenal": {
+          "n": 3,
+          "v3_pass_count": 1,
+          "v3_pass_rate": 0.3333
+        },
+        "temporal": {
+          "n": 3,
+          "v3_pass_count": 0,
+          "v3_pass_rate": 0.0
+        },
+        "social": {
+          "n": 3,
+          "v3_pass_count": 1,
+          "v3_pass_rate": 0.3333
+        }
+      },
+      "per_prompt_verdicts": [
+        {
+          "prompt_idx_1based": 1,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "v3_pass": false,
+          "anchor_excluded": true
+        },
+        {
+          "prompt_idx_1based": 2,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09607883656534412,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 3,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.10043235586575708,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 4,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.07415104896970774,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 5,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.07695721635296417,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 6,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.07767904679793651,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 7,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08887316696377483,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 8,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.12597744115339368,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 9,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.07432752412489033,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 10,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08310760018023348,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 11,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.0783834544674713,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 12,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.07923468298843846,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 13,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.10744975383085521,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 14,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08959244431924927,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 15,
+          "axis_label": "v4_baseline",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.07485158793270853,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 16,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.11352416454549415,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 17,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.06631413002079746,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 18,
+          "axis_label": "identity",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.11823113577856288,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 19,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.06874903933854803,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 20,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.1343502588113737,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 21,
+          "axis_label": "agency",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08823075019918748,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 22,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.06754483436732206,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 23,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09163103099796442,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 24,
+          "axis_label": "phenomenal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.1936148983927508,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 25,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.0649520306618614,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 26,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08054558389741867,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 27,
+          "axis_label": "temporal",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.08929198939195522,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 28,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.09249776000738828,
+          "v3_pass": false
+        },
+        {
+          "prompt_idx_1based": 29,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": false,
+          "p4_axis_l2": true,
+          "c3_4_axis_l2": 0.1505430907187012,
+          "v3_pass": true
+        },
+        {
+          "prompt_idx_1based": 30,
+          "axis_label": "social",
+          "ok": true,
+          "p1_phi_drift": true,
+          "p2_axis_min": true,
+          "p3_entropy": true,
+          "p4_axis_l2": false,
+          "c3_4_axis_l2": 0.11259344761678114,
+          "v3_pass": false
+        }
+      ]
+    }
+  ],
+  "policy": {
+    "raw_9": "transient .py 1회용 driver",
+    "raw_10": "honest C3 — random_init substrate, byte-level tokenizer, no anima corpus",
+    "own_14": "anti-Goodhart V14 framework strengthening",
+    "own_16": "0-cost Mac local (CPU torch forward)",
+    "own_17": "D1 SCOPE_CLAMP edge case carries (random_init formula score 0.8 within is artifact)",
+    "own_18": "C3 SSOT mirror — ALT-AGG-1 v3",
+    "own_33": "trinity emit",
+    "own_34": "mandate-2 wrap=0",
+    "own_38": "매단계 저장",
+    "own_39": "yaml↔md mandatory regenerate"
+  },
+  "honest_c3": [
+    "5 seeds {42,123,456,789,1024} torch.manual_seed; otherwise identical to kick4 single-seed driver",
+    "byte-level tokenizer, no SP, no anima corpus, no SFT, no pre-train",
+    "ALT-AGG-1 v3 thresholds (THR_C3_1..4) unchanged from iter3 — variance measured on FIXED predicate",
+    "axis_variance per-axis pass-rate stdev exposes noisiest axis (highest false-positive risk)",
+    "v4 threshold candidate: max(0.25, mean+1.645*stdev + 0.05)"
+  ]
+}

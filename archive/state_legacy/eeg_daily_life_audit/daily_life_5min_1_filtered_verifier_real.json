@@ -1,0 +1,49 @@
+{
+  "tool": "eeg_daily_life_verifier",
+  "version": "v1+real_helper",
+  "input": "/Users/ghost/core/anima/state/eeg_recordings/20260428T115006Z_daily_life_5min_1_eeg16_filtered.npy",
+  "sample_rate_hz": 125.0,
+  "channels": 16,
+  "samples": 6252,
+  "duration_s": 50.02,
+  "metrics": {
+    "spectral_entropy": 0.4213,
+    "alpha_attenuation": 0.076,
+    "lz76_change_points": 2,
+    "lz76_range": 0.3704,
+    "beta_alpha_ratio": 2.0854,
+    "drowsiness_index": 0.7508,
+    "alpha_fraction_raw": 0.0228,
+    "cross_sigma_corr": 0.7207,
+    "lz76_series_len": 9
+  },
+  "criteria_pass": {
+    "C1_spec_ent_pass": 0,
+    "C2_alpha_atten_pass": 1,
+    "C3_change_pts_pass": 1,
+    "C4_lz_range_pass": 1,
+    "C5_beta_alpha_pass": 1,
+    "C6_drowsy_pass": 1
+  },
+  "pass_count": 5,
+  "verdict": "DAILY_LIFE_PASS",
+  "falsifier_signals": {
+    "F1_flat_line": false,
+    "F2_self_ref_alpha_1": false,
+    "F3_white_noise_no_cp": false,
+    "F4_constant_range": false,
+    "F5_resting_low_ba": false,
+    "F6_awake_drowsy_lt": true,
+    "F7_cross_common_mode": false
+  },
+  "raw_compliance": [
+    9,
+    10,
+    12,
+    48,
+    52,
+    65,
+    71
+  ],
+  "honest_c3_disclosure": "v1+real_helper bridges DEFERRED_REAL_DATA_PATH; SSOT criteria mirrored from .hexa frozen constants"
+}

@@ -1,0 +1,29 @@
+================================================================
+  H_320 — LIFE vs CONSCIOUSNESS relation/distinction Φ-ratio
+  (n=4 ring · headline state=0101 · rd_ratio = sum_phi_r / sum_phi_d)
+================================================================
+  [LIFE]  rule 110 : bigPhi=7.66066 sum_d=3.03671 sum_r=5.95208 nd=10.0 rd_ratio=1.96004
+  [LIFE]  rule  30 : bigPhi=7.28357 sum_d=3.08769 sum_r=5.04965 nd=10.0 rd_ratio=1.63541
+  [LIFE]  rule  54 : bigPhi=10.0278 sum_d=5.41504 sum_r=9.27293 nd=10.0 rd_ratio=1.71244
+  [CONSC] rule 150 : bigPhi=6 sum_d=3 sum_r=3 nd=5.0 rd_ratio=1
+  [CONSC] rule 105 : bigPhi=4.5 sum_d=3 sum_r=1.5 nd=5.0 rd_ratio=0.5
+  [ANCH]  rule 204 (identity) : bigPhi=0.0 sum_d=4 sum_r=0.0
+  [ANCH]  rule   0 (constant) : bigPhi=0.0 sum_d=0.0 sum_r=0.0
+  --
+  F320.1: consc_min_rd_ratio=0.5 life_max_rd_ratio=1.96004
+  [FAIL] F320.1 SEPARATION: min(consciousness rd) > max(life rd) [H1 direction]
+  F320.2: life_class_mean(all-state)=2.50059 consc_class_mean(all-state)=0.875
+  [FAIL] F320.2a ORDERING: class-mean consciousness > life [H1 direction]
+  [FAIL] F320.2b ROBUST: rule150(consc) rd_ratio > rule110(life) at every co-integrating state
+  [PASS] F320.3a ANCHOR: rule 204 (identity) big-Phi = 0
+  [PASS] F320.3b ANCHOR: rule 0 (constant) big-Phi = 0
+  [PASS] F320.3c KERNEL-SANITY: sum_phi_d + sum_phi_r = total for all 5 substrates
+  [PASS] determinism: rule110 rd_ratio re-run identical
+================================================================
+  RESULT: 4 PASS / 3 FAIL
+  HEADLINE:
+    life_max_rd_ratio(0101)  = 1.96004
+    consc_min_rd_ratio(0101) = 0.5
+    life_class_mean(all-16)  = 2.50059
+    consc_class_mean(all-16) = 0.875
+================================================================

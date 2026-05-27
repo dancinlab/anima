@@ -1,0 +1,20 @@
+vlm_stage1_kl_cache_progress_2026_05_04
+snapshot @ 2026-05-04T15:36 KST
+host: ubu1 (RTX 5070, 89% util, 5359/12227 MiB, 72C)
+
+VLM stage1 (PID 31960):
+  step 20400/50000 (40.8%), loss 8.38, sps 2.73, ETA 3.0h
+  savepoints landed: step-5k/10k/15k/20k (each 315KB LoRA adapter)
+  next: step-25k @ ~16:03 KST
+
+KL cache 50k (PID 3811364):
+  idx 36100/50000 (72.2%), rate 8.13/s, ETA 28.5min
+  output: /tmp/p9_paradigm_d_kl_cache_v1_50k.jsonl (9.6GB → 13.3GB projected)
+  complete @ ~16:05 KST
+
+3 caveats:
+  1. GPU sharing: KL rate 8.13/s vs pre-flight 8.31/s (-2.2%)
+  2. HF push slip CONFIRMED: train.py has no Hub push code
+  3. /tmp on /dev/nvme0n1p2 host disk (573GB free) — non-redundant
+
+verify_only=true, preempt=false

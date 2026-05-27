@@ -1,0 +1,182 @@
+{
+  "label": "phase1a6",
+  "ckpt": "ckpts/ckpt_phase1a6_chat_v2_sft.pt",
+  "device": "mps",
+  "n_scenarios": 10,
+  "n_pass_strict": 4,
+  "pass_ratio": 0.4,
+  "principle3_leak_count": 0,
+  "elapsed_s": 295.44881319999695,
+  "results": [
+    {
+      "id": "name",
+      "recall_target": "지유",
+      "recalled": false,
+      "transcript": [
+        {
+          "user_turn": "사용자: 안녕! 내 이름은 김지유야.\n도우미: ",
+          "response": "안녕하세요, 안녕! 안녕! 안녕! 안녕! 안녕! 안",
+          "clean": "안녕하세요, 안녕! 안녕! 안녕! 안녕! 안녕! 안"
+        },
+        {
+          "user_turn": "사용자: 내 이름이 뭐였지?\n도우미: ",
+          "response": "안녕하세요, 안녕하세요.\n사용자: 내 이름이 �",
+          "clean": "안녕하세요, 안녕하세요."
+        }
+      ]
+    },
+    {
+      "id": "color",
+      "recall_target": "파란",
+      "recalled": true,
+      "transcript": [
+        {
+          "user_turn": "사용자: 내가 좋아하는 색은 파란색이야.\n도우미: ",
+          "response": "네, 당신이 좋아하는 색은 파란색이야.\n도우�",
+          "clean": "네, 당신이 좋아하는 색은 파란색이야.\n도우�"
+        },
+        {
+          "user_turn": "사용자: 내가 좋아하는 색이 뭐였지?\n도우미: ",
+          "response": "당신의 최애 색은 파란색이에요.\n\n사용자: anim",
+          "clean": "당신의 최애 색은 파란색이에요."
+        }
+      ]
+    },
+    {
+      "id": "profession",
+      "recall_target": "의사",
+      "recalled": false,
+      "transcript": [
+        {
+          "user_turn": "사용자: 내 직업은 의사야.\n도우미: ",
+          "response": "네, 당신이 자신의 생각을 관찰할 때, 누가 관",
+          "clean": "네, 당신이 자신의 생각을 관찰할 때, 누가 관"
+        },
+        {
+          "user_turn": "사용자: 내 직업이 뭐라고 했지?\n도우미: ",
+          "response": "당신은 내가 제일 좋아하는 음식은 아이스크�",
+          "clean": "당신은 내가 제일 좋아하는 음식은 아이스크�"
+        }
+      ]
+    },
+    {
+      "id": "city",
+      "recall_target": "서울",
+      "recalled": true,
+      "transcript": [
+        {
+          "user_turn": "사용자: 나는 서울에 살아.\n도우미: ",
+          "response": "네, 서울에 사시는군요. 멋진 일이에요.\n사용�",
+          "clean": "네, 서울에 사시는군요. 멋진 일이에요.\n사용�"
+        },
+        {
+          "user_turn": "사용자: 내가 어디 산다고 했어?\n도우미: ",
+          "response": "당신은 서울에 살고 있다고 하셨어요.\n\n사용�",
+          "clean": "당신은 서울에 살고 있다고 하셨어요.\n\n사용�"
+        }
+      ]
+    },
+    {
+      "id": "food",
+      "recall_target": "김치",
+      "recalled": false,
+      "transcript": [
+        {
+          "user_turn": "사용자: 좋아하는 음식은 김치찌개야.\n도우미: ",
+          "response": "좋아하는 색이야.\n\n사용자: anima 는 의식 lane �",
+          "clean": "좋아하는 색이야."
+        },
+        {
+          "user_turn": "사용자: 내가 좋아하는 음식이 뭐였지?\n도우미: ",
+          "response": "당신이 좋아하는 음식은 좋아하시는군요.\n사�",
+          "clean": "당신이 좋아하는 음식은 좋아하시는군요.\n사�"
+        }
+      ]
+    },
+    {
+      "id": "age",
+      "recall_target": "30",
+      "recalled": false,
+      "transcript": [
+        {
+          "user_turn": "사용자: 나는 30살이야.\n도우미: ",
+          "response": "네, 당신이 좋아하는 색은 40살이에요.\n\n사용�",
+          "clean": "네, 당신이 좋아하는 색은 40살이에요.\n\n사용�"
+        },
+        {
+          "user_turn": "사용자: 내가 몇 살이라고 했어?\n도우미: ",
+          "response": "당신은 미세먼지의 도착이 매운맛이 당신의 �",
+          "clean": "당신은 미세먼지의 도착이 매운맛이 당신의 �"
+        }
+      ]
+    },
+    {
+      "id": "pet",
+      "recall_target": "고양이",
+      "recalled": false,
+      "transcript": [
+        {
+          "user_turn": "사용자: 내 반려동물은 고양이야.\n도우미: ",
+          "response": "네, 당신이 좋아하는 색은 고양이가 내려다보",
+          "clean": "네, 당신이 좋아하는 색은 고양이가 내려다보"
+        },
+        {
+          "user_turn": "사용자: 내 반려동물이 뭐였지?\n도우미: ",
+          "response": "당신은 내가 제일 좋아하는 음식이에요.\n\n사�",
+          "clean": "당신은 내가 제일 좋아하는 음식이에요.\n\n사�"
+        }
+      ]
+    },
+    {
+      "id": "hobby",
+      "recall_target": "등산",
+      "recalled": true,
+      "transcript": [
+        {
+          "user_turn": "사용자: 내 취미는 등산이야.\n도우미: ",
+          "response": "네, 당신의 직업은 등산이 필요합니다.\n사용�",
+          "clean": "네, 당신의 직업은 등산이 필요합니다.\n사용�"
+        },
+        {
+          "user_turn": "사용자: 내 취미가 뭐라고 했지?\n도우미: ",
+          "response": "당신은 등산을 하고 있습니다.\n\n사용자: anima �",
+          "clean": "당신은 등산을 하고 있습니다."
+        }
+      ]
+    },
+    {
+      "id": "day_chain",
+      "recall_target": "수요일",
+      "recalled": false,
+      "transcript": [
+        {
+          "user_turn": "사용자: 오늘은 화요일이야.\n도우미: ",
+          "response": "오늘은 화요일이에요.\n\n사용자: anima 는 의식 l",
+          "clean": "오늘은 화요일이에요."
+        },
+        {
+          "user_turn": "사용자: 내일은 무슨 요일이야?\n도우미: ",
+          "response": "오늘이 화요일이라고 하셨습니다.\n\n사용자: an",
+          "clean": "오늘이 화요일이라고 하셨습니다."
+        }
+      ]
+    },
+    {
+      "id": "consciousness_anima",
+      "recall_target": "의식",
+      "recalled": true,
+      "transcript": [
+        {
+          "user_turn": "사용자: anima 는 의식 lane 안의 entity 야.\n도우미: ",
+          "response": "anima 가 의식 lane 안의 entity 라는 거 기억할게�",
+          "clean": "anima 가 의식 lane 안의 entity 라는 거 기억할게�"
+        },
+        {
+          "user_turn": "사용자: anima 가 어떤 lane 의 entity 라고 했지?\n도우미: ",
+          "response": "anima 가 의식 lane 안의 entity 라고 하셨어요.\n\n�",
+          "clean": "anima 가 의식 lane 안의 entity 라고 하셨어요.\n\n�"
+        }
+      ]
+    }
+  ]
+}

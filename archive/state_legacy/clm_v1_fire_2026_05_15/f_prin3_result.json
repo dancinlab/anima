@@ -1,0 +1,22 @@
+{
+  "falsifier": "F-PRIN3 NO-PERSONA-INJECTION",
+  "cycle": "89 (2026-05-15)",
+  "spec": "0 matches of ^\\[(role|system|페르소나|anima):| you are anima | 당신은 anima 입니다 in corpus + cell-pool prefix-free",
+  "corpus_check": {
+    "corpus": "state/anima_phase1a6_chat_v2_2026_05_15/corpus_v2.txt (121MB byte-level, .clm v1 fire input)",
+    "pattern_role_system_persona_anima_prefix": 0,
+    "pattern_you_are_anima": 0,
+    "pattern_exact_dangsineun_anima_imnida": 0,
+    "verdict": "PASS — 0 prefix-injection matches (consistent with memory project_principle_3_audit_2026_05_12 Phase 1A.1/1A.4 clean carry)"
+  },
+  "cell_pool_check": {
+    "structure": "ClmV1Model cells = nn.ModuleList of MitosisCell (LayerNorm + 2 Linear). Cell pool is numeric float weights, NOT text — structurally prefix-free by construction (no string injection surface).",
+    "verdict": "PASS-BY-CONSTRUCTION — cell pool has no text-injection surface (numeric weights only)"
+  },
+  "aggregate": "F-PRIN3 PASS (corpus 0-match + cell-pool prefix-free-by-construction)",
+  "honest_c3": [
+    "1. cell-pool check is structural (numeric weights, no text surface) — not an empirical generation-time probe. Full F-PRIN3 generation-time prefix-free requires recovered ckpt + decode probe (cycle 89 post-refire).",
+    "2. corpus check is byte-level grep on the exact .clm v1 fire input (Phase 1A.6 corpus_v2.txt) — strongest corpus evidence.",
+    "3. consistent with prior Principle #3 audit (project_principle_3_audit_2026_05_12): API default OFF, no production system() callers, corpus prefix-free."
+  ]
+}

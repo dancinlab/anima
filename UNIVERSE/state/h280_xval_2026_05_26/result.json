@@ -1,0 +1,48 @@
+{
+  "id": "H_280_xval",
+  "slug": "h280-iit4-cross-validation",
+  "title": "H_280 independent distinction kernel vs canonical IIT4 (stdlib consciousness/iit4_distinction) cross-validation",
+  "date": "2026-05-26",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "gpu": false,
+  "cost_usd": 0.0,
+  "method": "build a state-by-node TPM from H_280's ces_tpm_node (the ε-floored disc/weak/integrated substrate, all-ON state, ring, ε=1e-6) and feed the BYTE-IDENTICAL array to BOTH the H_280 kernel (ces_distinction) and the canonical engine (stdlib consciousness/iit4_distinction.distinction); compare per-mechanism distinction membership, distinction-count, and Σφ_d ordering. Secondary anchor: canonical-native deterministic ECA rule 204 (copy=disconnected) vs 232 (majority=integrated).",
+  "engine_math_note": "canonical iit4_phi_at fixes the specified state z* once (intrinsic_difference vs unconstrained) then minimizes p(z*)log2(p(z*)/q(z*)) over partitions; H_280 ces_id re-maximizes max_x p log2(p/q) per partition then minimizes. Both are MIP-min of an ID-style measure; absolute φ can differ, so the cross-validation target is the distinction SET + directional verdict, NOT byte-equal Σφ_d.",
+  "shared_tpm_ladder": [
+    {"n": 3, "rung": "disconnected", "couple": 0.000000, "h280_count": 0, "h280_sum_phi_d": 0.000000, "canon_count": 3, "canon_sum_phi_d": 2.999993, "membership_agree": 4, "membership_total": 7},
+    {"n": 3, "rung": "weak", "couple": 0.500000, "h280_count": 7, "h280_sum_phi_d": 0.727886, "canon_count": 7, "canon_sum_phi_d": 1.541443, "membership_agree": 7, "membership_total": 7},
+    {"n": 3, "rung": "integrated", "couple": 0.000000, "h280_count": 7, "h280_sum_phi_d": 2.316161, "canon_count": 6, "canon_sum_phi_d": 2.026356, "membership_agree": 6, "membership_total": 7},
+    {"n": 4, "rung": "disconnected", "couple": 0.000000, "h280_count": 0, "h280_sum_phi_d": 0.000000, "canon_count": 4, "canon_sum_phi_d": 3.999990, "membership_agree": 11, "membership_total": 15},
+    {"n": 4, "rung": "weak", "couple": 0.500000, "h280_count": 13, "h280_sum_phi_d": 1.277920, "canon_count": 12, "canon_sum_phi_d": 2.205156, "membership_agree": 15, "membership_total": 15},
+    {"n": 4, "rung": "integrated", "couple": 0.000000, "h280_count": 14, "h280_sum_phi_d": 3.856634, "canon_count": 14, "canon_sum_phi_d": 3.963037, "membership_agree": 15, "membership_total": 15}
+  ],
+  "deterministic_eca_anchor": {
+    "rule_204_disconnected": {"sum_phi_d": 3.000000, "distinction_count": 3, "big_phi": 0.000000},
+    "rule_232_integrated": {"sum_phi_d": 2.026359, "distinction_count": 6, "big_phi": 4.867130},
+    "weak_rung": "N/A — couple=0.5 is genuinely stochastic, no deterministic ECA equivalent",
+    "sum_phi_d_direction_integrated_gt_disconnected": "FAIL (Σφ_d NOT a monotone integration proxy: 204 Σφ_d 3.000000 > 232 Σφ_d 2.026359)",
+    "big_phi_direction_integrated_gt_disconnected": "PASS (THE correct integration discriminator: 204 big-Φ 0.000000 < 232 big-Φ 4.867130)"
+  },
+  "root_cause": {
+    "disconnected_singleton_phi_d_h280": 0.000000,
+    "disconnected_singleton_phi_d_canonical": 0.999998,
+    "bug": "H_280 ces_phi_mech_purview only counts partitions that sever an M-to-Z directed link (cuts_link guard, lib_ces.hexa ~L482); a singleton mechanism over a singleton purview has no such cut, so found=false and phi returns 0.0. The canonical engine instead includes the mechanism-to-empty partition (purview becomes unconstrained), yielding phi = ID(constrained vs unconstrained) ~ 1.0. Consequence: H_280 spuriously zeroes every independent self-copy cell's phi_d, so the disconnected substrate gets 0 distinctions when the IIT 4.0 ground truth (and the M6-calibrated canonical) gives 3 distinctions each with phi_d~1.",
+    "impact": "H_280's headline 'integrated Σφ_d > disconnected Σφ_d' was an ARTIFACT of this singleton bug zeroing the disconnected baseline. The canonical engine shows Σφ_d is NOT monotone with integration (disconnected Σφ_d 3.0 > integrated 2.03 at n=3). The genuine integration direction is preserved at the big-Φ level (204 big-Φ=0 < 232 big-Φ>0) and via relations, NOT raw Σφ_d. H_280's directional conclusion happens to point the same way but for the wrong reason; its F280.3 'disconnected -> φ_d=0' faithfulness anchor was a mistaken IIT 4.0 expectation (it conflated no-system-integration with no-distinctions)."
+  },
+  "falsifier": "F-XVAL-1: H_280 kernel distinction-membership + count + Σφ_d ordering AGREE with canonical iit4_distinction on the shared ladder. PASS = independent corroboration; FAIL = canonical (M6-calibrated) is authoritative.",
+  "checks": {
+    "membership_match_all_rungs": "FAIL",
+    "count_match_all_rungs": "FAIL",
+    "sum_phi_d_direction_match": "FAIL",
+    "n3_ordering_both_engines": "FAIL",
+    "n4_ordering_both_engines": "FAIL",
+    "deterministic_eca_direction": "FAIL"
+  },
+  "verdict": "DISAGREE",
+  "authoritative_engine_if_disagree": "canonical iit4_distinction (calibrated to M6)",
+  "pass": 0,
+  "fail": 6,
+  "tier": "GREEN-NUMERICAL cross-validation (two independent IIT 4.0 distinction kernels on byte-identical TPM input); empirical interpretation SPECULATION-FENCED (g5)"
+}

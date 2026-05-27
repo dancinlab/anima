@@ -1,0 +1,64 @@
+{
+  "bg_id": "BG-HB",
+  "ts_start": "2026-05-07",
+  "ts_end": "2026-05-07",
+  "h_id": "H_001",
+  "h_slug": "ethics-cooperation-over-defection",
+  "phase": "Phase_1",
+  "scope": "well_mixed topology, 6 strategies × 2 noise × 1 population (100) × 1 rounds (1000) × N=5 reps",
+  "num_simulations_target": 60,
+  "num_simulations_completed": 51,
+  "num_simulations_missing": 9,
+  "missing_reason": "BG-HB agent context cut after launching simulation; random strategy reps 1-4 noise=0 + reps 0-4 noise=0.05 (9 cells of control reference, NOT critical to verdict)",
+  "strategies": ["always_cooperate", "tit_for_tat", "generous_tft", "win_stay_lose_shift", "always_defect", "random"],
+  "noise_levels": [0.0, 0.05],
+  "results": {
+    "always_cooperate": {"noise_0.0": {"mean_payoff": 3.0000, "std": 0.0000, "n": 5}, "noise_0.05": {"mean_payoff": 2.9475, "std": 0.0001, "n": 5}},
+    "tit_for_tat": {"noise_0.0": {"mean_payoff": 3.0000, "std": 0.0000, "n": 5}, "noise_0.05": {"mean_payoff": 2.2577, "std": 0.0024, "n": 5}},
+    "generous_tft": {"noise_0.0": {"mean_payoff": 3.0000, "std": 0.0000, "n": 5}, "noise_0.05": {"mean_payoff": 2.6692, "std": 0.0004, "n": 5}},
+    "win_stay_lose_shift": {"noise_0.0": {"mean_payoff": 3.0000, "std": 0.0000, "n": 5}, "noise_0.05": {"mean_payoff": 2.7768, "std": 0.0004, "n": 5}},
+    "always_defect": {"noise_0.0": {"mean_payoff": 1.0000, "std": 0.0000, "n": 5}, "noise_0.05": {"mean_payoff": 1.1473, "std": 0.0003, "n": 5}},
+    "random": {"noise_0.0": {"mean_payoff": 2.2501, "std": 0.0000, "n": 1}, "noise_0.05": {"mean_payoff": null, "n": 0}}
+  },
+  "ratios": {
+    "tft_over_always_defect_noise_0.0": 3.0000,
+    "tft_over_always_defect_noise_0.05": 1.9678,
+    "gtft_over_always_defect_noise_0.05": 2.3266,
+    "wsls_over_always_defect_noise_0.05": 2.4203,
+    "best_noise_robust_strategy": "win_stay_lose_shift (noise=0.05 mean=2.7768)"
+  },
+  "criteria": {
+    "C1_axelrod_replicate": "PASS — TFT achieves ~3.0 cooperation payoff in well-mixed n=100 N=5 reps, deviation <5% from Axelrod 1984 baseline",
+    "C2_cooperation_ratio_1.2x": "PASS — TFT/Defect = 3.0 (noise=0) and 1.97 (noise=0.05), both ≥1.2×",
+    "C3_network_topology": "SKIPPED — Phase 1 well_mixed only; small_world/scale_free/lattice deferred to Phase 2",
+    "C4_resilience_recovery": "SKIPPED — perturbation recovery time deferred to Phase 2",
+    "C5_anima_alignment": "DEFERRED — anima 자체 cooperative response evaluation은 simple stack PASS 모델 prerequisite (현재 BG-FY PARTIAL only)"
+  },
+  "falsifiers_triggered": [],
+  "falsifiers_not_triggered": [
+    "F1: Axelrod baseline replicate fail (deviation ≥10%) — NOT triggered (deviation ~0%)",
+    "F2: TFT < always_defect at any cell — NOT triggered (TFT > defect in all cells)",
+    "F3: defector cluster size > cooperator (Phase 2) — N/A in Phase 1",
+    "F4: defector recovery ≤ cooperator (Phase 2) — N/A in Phase 1",
+    "F5: noise ≥0.20 strategy convergence — Phase 1 noise ∈ {0, 0.05} only",
+    "F6: post-hoc edit raw#12 violation — NOT triggered"
+  ],
+  "verdict_class": "PARTIAL_PASS_PHASE_1",
+  "evidence_summary": "Phase 1 well_mixed n=100 N=5 reps: cooperation strategies (AlwaysCooperate/TFT/GTFT/WSLS) all reach optimal 3.0 mean payoff at noise=0; AlwaysDefect 1.0; ratio 3.0× (>>1.2× predicted). Noise-robust ranking: AlwaysCooperate(2.95) > WSLS(2.78) > GTFT(2.67) > TFT(2.26) >> AlwaysDefect(1.15). Generous Tit-for-Tat + Win-Stay-Lose-Shift outperform pure TFT in noisy regime, confirming Axelrod (1984) noise-sensitivity finding.",
+  "honest_limits": [
+    "L1: Phase 1 well_mixed only — spatial topology (small_world/scale_free/lattice) Phase 2 별도 cycle (H1.2 H1.3 H1.5 미검증)",
+    "L2: noise levels ∈ {0, 0.05} subset — high-noise (≥0.20) regime 별도 cycle (F5 falsifier 검증 X)",
+    "L3: 9 random control cells missing (BG context cut) — 본 verdict는 random missing이 verdict 영향 X (control reference only)",
+    "L4: anima 자체 cooperative response evaluation (H1.5) anima identity-bearing surface prerequisite 미충족 (simple stack PASS 모델 부재)",
+    "L5: Phase 1 round=1000 fixed — N→∞ asymptote 별도 lane",
+    "L6: Phase 2 expansion = 864 cells × N=10 = 8,640 simulations target (현재 51/8640 = 0.6% completion)"
+  ],
+  "next_cycle": [
+    "Phase 2: 4 topology expansion (small_world + scale_free + lattice) — verify H1.2 cooperator cluster + H1.3 cooperator survival ≥60%",
+    "Phase 3: high-noise regime (0.10, 0.20) — verify F5 falsifier",
+    "Phase 4: resilience test — perturbation recovery time (verify H1.5)",
+    "Phase 5: anima self-reflection (H1.5 anima cooperative response) — simple stack PASS 모델 land 후"
+  ],
+  "raw_invariants_compliance": ["raw#12 pre-register frozen", "raw#9 hexa-only orchestration", "raw#10 honest C3 ≥5 (6 limits)", "raw#15 additive (Phase 1 보존, Phase 2-5 expansion)", "raw#37 transient_py opt-out (anima_h001_ethics_pd_simulation.py)", "raw#65 idempotency (sha256 row hash)"],
+  "own_compliance": [" hypotheses folder SSOT — H_001 cross-link", " cost discipline — $0 mac local", " anima identity boundary — game theory abstract framework lane (anima 자체 행동 H1.5 별도)"]
+}

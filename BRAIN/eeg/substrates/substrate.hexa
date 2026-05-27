@@ -1,0 +1,504 @@
+// hexa-brain/eeg/substrates/substrate.hexa
+//
+// PURPOSE
+//   Protocol module — defines the substrate contract that
+//   brainflow / synth / replay (and future nes / cl1) backends
+//   implement. This file is the CANONICAL declaration site. Backends
+//   may emit Python helpers; this module is a contract document, an
+//   inspect target, and a shape-validator for `spec` dicts.
+//
+// CONTRACT (all backends MUST expose these api_* names)
+//   api_open_session(spec)            → Session
+//   api_start_recording(s,name,f,m)   → Recording (delegated to
+//                                       _session_manager for brainflow)
+//   api_read_chunk(s, n_max)          → (data: float32 ndarray, ts: float)
+//   api_get_eeg_indices(s)            → list[int]   1-indexed channel ids
+//   api_get_sample_rate(s)            → int         Hz
+//   api_stim(s, stim_spec)            → StimResult  raises NotImplementedError
+//                                                   for read-only substrates
+//                                                   (signature widened 2026-05-12;
+//                                                   see APPENDIX A below)
+//   api_stop_recording(rec)           → void
+//   api_reinit(s)                     → Session     atomic close + open
+//   api_on_shutdown_hook(s, fn)       → void        atexit + SIGTERM/SIGINT
+//   api_last_error(s)                 → dict        {code, advisory_url,
+//                                                    retry_action}
+//
+// SPEC DICT SHAPE (validate_spec falsifier-bound)
+//   {
+//     "backend":         "brainflow" | "synth" | "replay",
+//     "board_id":        int,
+//     "port":            str | None,
+//     "channel_set":     {                                  // from
+//        "name":         str,                               // channel_set.hexa
+//        "ids":          list[int],
+//        "sample_rate":  int,
+//        "labels":       list[str] | None,
+//        "layout_2d":    list[[col,row]] | None,
+//     } | None,
+//     "license_posture": {                                  // binds to
+//        "dep_id":       str,                               // vendor/
+//        "coupling":     "in_process" | "http" | "subprocess"
+//     } | None
+//   }
+//
+//   1. NOT all backends implement api_stim — substrate.hexa documents
+//      it as a contract method but the DEFAULT raises NotImplementedError.
+//      Scalp-EEG (brainflow), synth, and replay substrates ALL raise
+//      because there is no stim hardware coupled. Future cl1 substrate
+//      will implement api_stim; this is the slot that exists for it.
+//   2. Spec validation is shape-only — no semantic checks (e.g. that
+//      a synth backend doesn't also receive a `port` string). Extra keys
+//      are tolerated for forward-compat.
+//   3. This module is NOT a dispatcher — it does NOT pick backends.
+//      Callers import a specific substrate (synth_substrate /
+//      brainflow_substrate / replay_substrate) directly. The contract
+//      exists so they remain interchangeable at the call-site.
+//
+// USAGE
+//   hexa run eeg/substrates/substrate.hexa --selftest
+//   hexa run eeg/substrates/substrate.hexa --inspect
+//
+// ════════════════════════════════════════════════════════════════════
+// APPENDIX A — api_stim spec (v0, effective 2026-05-12)
+// ════════════════════════════════════════════════════════════════════
+//
+// Pre-2026-05-12 v0 had api_stim(sess, ch_set, design) → unspecified result.
+// Caller count was 0 (all 3 active backends raised NotImplementedError),
+// so widening the signature carries zero migration cost. The widened shape
+// is locked at v0 — semver-frozen at v1 with the rest of the contract.
+//
+// REQUEST: stim_spec (dict, CL1-SDK compatible)
+//   {
+//     "schema":                 "hexa-brain/substrate/stim/1",
+//     "channels":               list[int],     // 1-indexed (channel_set ids)
+//     "waveform":               "biphasic" | "monophasic" | "sine"
+//                                              | "custom_array",
+//     "amplitude_uA":           float,
+//     "frequency_hz":           float,
+//     "duration_ms":            float,
+//     "phase_duration_us":      float | None,  // biphasic only
+//     "interpulse_interval_ms": float | None,
+//     "custom_array":           list[float] | None,    // waveform=="custom_array"
+//     "license_posture":        {                       // matches
+//        "dep_id":              str,                    // spec.license_posture
+//        "coupling":            "in_process" | "http"   // (Part A firewall)
+//                               | "subprocess"
+//     } | None
+//   }
+//
+// RESPONSE: StimResult (dict envelope)
+//   {
+//     "ok":              bool,
+//     "stim_id":         str,           // for ledger marker correlation
+//                                       // ([[marker-ledger-pattern]])
+//     "wall_time_ns":    int,           // wall clock at injection — distinct
+//                                       // from sample ts (which may be sim time
+//                                       // per the synth-timestamp decision).
+//                                       // Use this for latency measurement.
+//     "frames_injected": int,           // actual samples written to substrate
+//     "last_err":        {              // shape-identical to api_last_error
+//        "code":            str,
+//        "advisory_url":    str | None,
+//        "retry_action":    str | None
+//     } | None
+//   }
+//
+// VALIDATION (validate_stim_spec helper)
+//   - schema must equal "hexa-brain/substrate/stim/1" or be absent
+//     (forward-compat: future v2 backends ignore unknown schemas).
+//   - channels must be list[int] (1-indexed); empty list rejected.
+//   - waveform must be one of ALLOWED_WAVEFORMS.
+//   - amplitude_uA, frequency_hz, duration_ms must be present (float).
+//   - phase_duration_us required iff waveform == "biphasic".
+//   - custom_array required iff waveform == "custom_array".
+//   - license_posture, if present, must validate as in validate_spec.
+//
+//   1. wall_time_ns is REQUIRED — the synth timestamp decision (sim time
+//      = samples_emitted / sample_rate) means a read returns sim time, not
+//      wall time. Closed-loop latency math demands wall clock at stim
+//      injection. Backends MUST capture time.time_ns() at injection.
+//   2. stim_id format is opaque to the caller. Backends are free to
+//      generate as uuid4, hash(spec+ts), or a monotonic counter — the
+//      contract only requires uniqueness within a session.
+//   3. All 3 active backends still raise NotImplementedError. The widened
+//      shape is enforced only by validate_stim_spec (shape-only) and
+//      F_SUB_PROTO_02_signature (introspect-only — see falsifier table).
+
+let SCHEMA               = "hexa-brain/eeg/substrate/1"
+let HELPER_PATH          = "/tmp/hexa_brain_substrate_helper.py"
+
+// Contract identity — bumped at next minor when the protocol changes.
+// v0 = this PR (foundation; collect/eeg_recorder refactor pending).
+// Semver-frozen at v1 in the follow-up PR that lands the refactor.
+let CONTRACT_VERSION     = "v0"
+
+// ════════════════════════════════════════════════════════════════════
+// Section 0. Hexa-side helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn _kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _emit_trailer(slug: string, detail: string, fix: string) {
+    eprintln("reason: " + slug + ": " + detail)
+    eprintln("fix: " + fix)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 1. Python helper emitter
+// ════════════════════════════════════════════════════════════════════
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# hexa-brain substrate (protocol) helper — emitted by\n")
+    parts.push("import argparse, sys\n\n")
+
+    parts.push("SCHEMA           = '" + SCHEMA + "'\n")
+    parts.push("CONTRACT_VERSION = '" + CONTRACT_VERSION + "'\n\n")
+
+    parts.push("CONTRACT_METHODS = [\n")
+    parts.push("    'api_open_session', 'api_start_recording', 'api_read_chunk',\n")
+    parts.push("    'api_get_eeg_indices', 'api_get_sample_rate', 'api_stim',\n")
+    parts.push("    'api_stop_recording', 'api_close_session', 'api_reinit',\n")
+    parts.push("    'api_on_shutdown_hook', 'api_last_error',\n")
+    parts.push("]\n\n")
+
+    parts.push("ALLOWED_BACKENDS = ['brainflow', 'synth', 'replay']\n")
+    parts.push("ALLOWED_COUPLINGS = ['in_process', 'http', 'subprocess']\n")
+    parts.push("ALLOWED_WAVEFORMS = ['biphasic', 'monophasic', 'sine', 'custom_array']\n")
+    parts.push("STIM_SPEC_SCHEMA = 'hexa-brain/substrate/stim/1'\n\n")
+
+    // ─── default api_stim (read-only fallback) ────────────────────────
+    // Signature widened 2026-05-12: (sess, ch_set, design) → (sess, stim_spec).
+    // See substrate.hexa APPENDIX A.
+    parts.push("def api_stim_not_implemented(sess, stim_spec):\n")
+    parts.push("    # Default stim for read-only substrates (brainflow/synth/replay).\n")
+    parts.push("    raise NotImplementedError(\n")
+    parts.push("        'api_stim: substrate is read-only '\n")
+    parts.push("        '(scalp EEG / synth / replay). Coming with cl1 substrate.')\n\n")
+
+    // ─── stim_spec validation (shape-only, see APPENDIX A) ────────────
+    parts.push("def validate_stim_spec(stim_spec):\n")
+    parts.push("    # Returns (ok: bool, reason: str). Shape-only.\n")
+    parts.push("    if not isinstance(stim_spec, dict):\n")
+    parts.push("        return False, 'stim_spec-not-dict'\n")
+    parts.push("    schema = stim_spec.get('schema')\n")
+    parts.push("    if schema is not None and schema != STIM_SPEC_SCHEMA:\n")
+    parts.push("        return False, f'stim_spec-schema-unknown:{schema!r}'\n")
+    parts.push("    channels = stim_spec.get('channels')\n")
+    parts.push("    if not isinstance(channels, list) or len(channels) == 0:\n")
+    parts.push("        return False, 'channels-empty-or-not-list'\n")
+    parts.push("    if not all(isinstance(c, int) for c in channels):\n")
+    parts.push("        return False, 'channels-not-int-list'\n")
+    parts.push("    wf = stim_spec.get('waveform')\n")
+    parts.push("    if wf not in ALLOWED_WAVEFORMS:\n")
+    parts.push("        return False, f'waveform-invalid:{wf!r}'\n")
+    parts.push("    for k in ('amplitude_uA', 'frequency_hz', 'duration_ms'):\n")
+    parts.push("        if k not in stim_spec:\n")
+    parts.push("            return False, f'stim_spec-missing:{k}'\n")
+    parts.push("        v = stim_spec[k]\n")
+    parts.push("        if not isinstance(v, (int, float)):\n")
+    parts.push("            return False, f'{k}-not-number'\n")
+    parts.push("    if wf == 'biphasic' and stim_spec.get('phase_duration_us') is None:\n")
+    parts.push("        return False, 'biphasic-requires-phase_duration_us'\n")
+    parts.push("    if wf == 'custom_array' and not isinstance(\n")
+    parts.push("            stim_spec.get('custom_array'), list):\n")
+    parts.push("        return False, 'custom_array-required-for-custom_array-waveform'\n")
+    parts.push("    lp = stim_spec.get('license_posture')\n")
+    parts.push("    if lp is not None:\n")
+    parts.push("        if not isinstance(lp, dict):\n")
+    parts.push("            return False, 'license_posture-not-dict'\n")
+    parts.push("        if 'coupling' in lp and lp['coupling'] not in ALLOWED_COUPLINGS:\n")
+    parts.push("            return False, f'coupling-invalid:{lp[\"coupling\"]!r}'\n")
+    parts.push("    return True, ''\n\n")
+
+    // ─── spec validation (shape-only) ─────────────────────────────────
+    parts.push("def validate_spec(spec):\n")
+    parts.push("    # Returns (ok: bool, reason: str). Shape-only; extra keys ok.\n")
+    parts.push("    if not isinstance(spec, dict):\n")
+    parts.push("        return False, 'spec-not-dict'\n")
+    parts.push("    backend = spec.get('backend')\n")
+    parts.push("    if backend not in ALLOWED_BACKENDS:\n")
+    parts.push("        return False, f'backend-invalid:{backend!r}'\n")
+    parts.push("    if 'board_id' in spec and not isinstance(spec['board_id'], int):\n")
+    parts.push("        return False, 'board_id-not-int'\n")
+    parts.push("    port = spec.get('port')\n")
+    parts.push("    if port is not None and not isinstance(port, str):\n")
+    parts.push("        return False, 'port-not-str-or-None'\n")
+    parts.push("    cs = spec.get('channel_set')\n")
+    parts.push("    if cs is not None:\n")
+    parts.push("        if not isinstance(cs, dict):\n")
+    parts.push("            return False, 'channel_set-not-dict'\n")
+    parts.push("        for k in ('name', 'ids', 'sample_rate'):\n")
+    parts.push("            if k not in cs:\n")
+    parts.push("                return False, f'channel_set-missing:{k}'\n")
+    parts.push("        if 'coords_3d' in cs and cs['coords_3d'] is not None:\n")
+    parts.push("            return False, 'coords_3d-must-be-null-stub'\n")
+    parts.push("    lp = spec.get('license_posture')\n")
+    parts.push("    if lp is not None:\n")
+    parts.push("        if not isinstance(lp, dict):\n")
+    parts.push("            return False, 'license_posture-not-dict'\n")
+    parts.push("        if 'coupling' in lp and lp['coupling'] not in ALLOWED_COUPLINGS:\n")
+    parts.push("            return False, f'coupling-invalid:{lp[\"coupling\"]!r}'\n")
+    parts.push("    return True, ''\n\n")
+
+    // ─── selftest ──────────────────────────────────────────────────────
+    parts.push("def cmd_selftest(args):\n")
+    parts.push("    print('== substrate (protocol) selftest ==')\n")
+    parts.push("    print(f'schema={SCHEMA}')\n")
+    parts.push("    print(f'contract_version={CONTRACT_VERSION}')\n")
+    parts.push("    print('mode=selftest_synthetic')\n")
+    parts.push("    fails = 0\n")
+    // F_SUB_PROTO_01: contract method count
+    parts.push("    f01 = (len(CONTRACT_METHODS) == 11\n")
+    parts.push("           and 'api_open_session' in CONTRACT_METHODS\n")
+    parts.push("           and 'api_read_chunk'  in CONTRACT_METHODS\n")
+    parts.push("           and 'api_stim'        in CONTRACT_METHODS)\n")
+    parts.push("    print(f'  contract_method_count={len(CONTRACT_METHODS)}')\n")
+    parts.push("    print(f'F_SUB_PROTO_01={\"PASS\" if f01 else \"FAIL\"}')\n")
+    parts.push("    if not f01: fails += 1\n")
+    // F_SUB_PROTO_02: default api_stim raises (signature: sess, stim_spec)
+    parts.push("    raised = False\n")
+    parts.push("    try:\n")
+    parts.push("        api_stim_not_implemented(None, None)\n")
+    parts.push("    except NotImplementedError:\n")
+    parts.push("        raised = True\n")
+    parts.push("    print(f'F_SUB_PROTO_02={\"PASS\" if raised else \"FAIL\"}')\n")
+    parts.push("    if not raised: fails += 1\n")
+    // F_SUB_PROTO_03: validate_spec accepts canonical and rejects junk
+    parts.push("    good = {'backend':'synth','board_id':-1,'port':None,\n")
+    parts.push("            'channel_set':{'name':'cd16','ids':[1,2],'sample_rate':125,\n")
+    parts.push("                           'coords_3d':None},\n")
+    parts.push("            'license_posture':{'dep_id':'none','coupling':'in_process'}}\n")
+    parts.push("    bad_backend = dict(good); bad_backend['backend'] = 'nonsense'\n")
+    parts.push("    bad_3d = dict(good)\n")
+    parts.push("    bad_3d['channel_set'] = dict(good['channel_set'])\n")
+    parts.push("    bad_3d['channel_set']['coords_3d'] = [1.0, 2.0, 3.0]\n")
+    parts.push("    ok_good,  reason_good  = validate_spec(good)\n")
+    parts.push("    ok_back,  reason_back  = validate_spec(bad_backend)\n")
+    parts.push("    ok_3d,    reason_3d    = validate_spec(bad_3d)\n")
+    parts.push("    f03 = (ok_good is True and ok_back is False and ok_3d is False)\n")
+    parts.push("    print(f'  validate_good={ok_good}')\n")
+    parts.push("    print(f'  validate_bad_backend={ok_back}/{reason_back}')\n")
+    parts.push("    print(f'  validate_bad_3d={ok_3d}/{reason_3d}')\n")
+    parts.push("    print(f'F_SUB_PROTO_03={\"PASS\" if f03 else \"FAIL\"}')\n")
+    parts.push("    if not f03: fails += 1\n")
+    // F_SUB_PROTO_04: validate_stim_spec accept canonical + reject 4 junk shapes
+    parts.push("    good_stim = {'schema': STIM_SPEC_SCHEMA,\n")
+    parts.push("                 'channels': [1, 2, 3], 'waveform': 'biphasic',\n")
+    parts.push("                 'amplitude_uA': 100.0, 'frequency_hz': 50.0,\n")
+    parts.push("                 'duration_ms': 200.0, 'phase_duration_us': 100.0,\n")
+    parts.push("                 'license_posture': {'dep_id':'cl-sdk','coupling':'http'}}\n")
+    parts.push("    bad_wf = dict(good_stim); bad_wf['waveform'] = 'square'\n")
+    parts.push("    bad_chans = dict(good_stim); bad_chans['channels'] = []\n")
+    parts.push("    bad_miss = dict(good_stim); del bad_miss['amplitude_uA']\n")
+    parts.push("    bad_biphasic = dict(good_stim); bad_biphasic['phase_duration_us'] = None\n")
+    parts.push("    ok_gs,  r_gs  = validate_stim_spec(good_stim)\n")
+    parts.push("    ok_wf,  r_wf  = validate_stim_spec(bad_wf)\n")
+    parts.push("    ok_ch,  r_ch  = validate_stim_spec(bad_chans)\n")
+    parts.push("    ok_ms,  r_ms  = validate_stim_spec(bad_miss)\n")
+    parts.push("    ok_bp,  r_bp  = validate_stim_spec(bad_biphasic)\n")
+    parts.push("    f04 = (ok_gs is True and ok_wf is False and ok_ch is False\n")
+    parts.push("           and ok_ms is False and ok_bp is False)\n")
+    parts.push("    print(f'  stim_good={ok_gs}')\n")
+    parts.push("    print(f'  stim_bad_waveform={ok_wf}/{r_wf}')\n")
+    parts.push("    print(f'  stim_bad_channels={ok_ch}/{r_ch}')\n")
+    parts.push("    print(f'  stim_bad_missing={ok_ms}/{r_ms}')\n")
+    parts.push("    print(f'  stim_bad_biphasic={ok_bp}/{r_bp}')\n")
+    parts.push("    print(f'F_SUB_PROTO_04={\"PASS\" if f04 else \"FAIL\"}')\n")
+    parts.push("    if not f04: fails += 1\n")
+    parts.push("    if fails == 0:\n")
+    parts.push("        print('verdict=PASS')\n")
+    parts.push("    else:\n")
+    parts.push("        print(f'verdict=FAIL fails={fails}')\n")
+    parts.push("    print('selftest=ok')\n")
+    parts.push("    print('DONE')\n")
+    parts.push("    sys.exit(0 if fails == 0 else 1)\n\n")
+
+    parts.push("def cmd_inspect(args):\n")
+    parts.push("    print(f'schema={SCHEMA}')\n")
+    parts.push("    print(f'contract_version={CONTRACT_VERSION}')\n")
+    parts.push("    print('mode=inspect')\n")
+    parts.push("    print('contract_methods=' + ','.join(CONTRACT_METHODS))\n")
+    parts.push("    print('allowed_backends=' + ','.join(ALLOWED_BACKENDS))\n")
+    parts.push("    print('allowed_couplings=' + ','.join(ALLOWED_COUPLINGS))\n")
+    parts.push("    print('allowed_waveforms=' + ','.join(ALLOWED_WAVEFORMS))\n")
+    parts.push("    print(f'stim_spec_schema={STIM_SPEC_SCHEMA}')\n")
+    parts.push("    print('inspect=ok')\n")
+    parts.push("    print('DONE')\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    sub = p.add_subparsers(dest='cmd', required=True)\n")
+    parts.push("    sub.add_parser('selftest')\n")
+    parts.push("    sub.add_parser('inspect')\n")
+    parts.push("    args = p.parse_args()\n")
+    parts.push("    if args.cmd == 'selftest': cmd_selftest(args)\n")
+    parts.push("    elif args.cmd == 'inspect': cmd_inspect(args)\n")
+    parts.push("    else: sys.exit(2)\n\n")
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _run_helper(args: string) -> list {
+    let cmd = "python3 " + HELPER_PATH + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 2. Hexa-side assertions
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn _run_selftest_assertions(body: string) -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+
+    println("[T1] selftest=ok marker present")
+    let t1 = assert_true(_kv_lookup(body, "selftest") == "ok", "selftest=ok")
+    if t1 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T2] schema=" + SCHEMA)
+    let t2 = assert_true(_kv_lookup(body, "schema") == SCHEMA, "schema match")
+    if t2 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T3] verdict=PASS")
+    let t3 = assert_true(_kv_lookup(body, "verdict") == "PASS", "verdict=PASS")
+    if t3 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T4] F_SUB_PROTO_01 contract methods")
+    let t4 = assert_true(_kv_lookup(body, "F_SUB_PROTO_01") == "PASS", "F_SUB_PROTO_01=PASS")
+    if t4 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T5] F_SUB_PROTO_02 default api_stim raises")
+    let t5 = assert_true(_kv_lookup(body, "F_SUB_PROTO_02") == "PASS", "F_SUB_PROTO_02=PASS")
+    if t5 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T6] F_SUB_PROTO_03 validate_spec accept+reject")
+    let t6 = assert_true(_kv_lookup(body, "F_SUB_PROTO_03") == "PASS", "F_SUB_PROTO_03=PASS")
+    if t6 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T7] F_SUB_PROTO_04 validate_stim_spec accept+reject (4 junk shapes)")
+    let t7 = assert_true(_kv_lookup(body, "F_SUB_PROTO_04") == "PASS", "F_SUB_PROTO_04=PASS")
+    if t7 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 3. CLI
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    eprintln("usage: hexa run eeg/substrates/substrate.hexa --selftest")
+    eprintln("       hexa run eeg/substrates/substrate.hexa --inspect")
+}
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path {
+            if a.ends_with("/exe") { is_path = true }
+        }
+        if !is_path {
+            if a.ends_with("hexa_interp") { is_path = true }
+        }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut inspect_mode = false
+    let mut want_help = false
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--inspect"  { inspect_mode = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        _emit_trailer("unknown-arg", "unrecognized argument: " + a, "1) re-run with --help")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help { _print_usage(); exit(0) }
+
+    if !selftest && !inspect_mode {
+        _print_usage()
+        exit(2)
+    }
+
+    _write_helper()
+
+    if selftest {
+        println("== substrate (protocol) selftest ==")
+        let r = _run_helper("selftest")
+        let body = r[0]
+        let st   = r[1]
+        println(body)
+        if st != 0 {
+            eprintln("selftest helper FAILED rc=" + to_string(st))
+            exit(1)
+        }
+        if _kv_lookup(body, "selftest") != "ok" {
+            _emit_trailer("selftest-marker-missing", "no selftest=ok",
+                          "1) check helper parse")
+            exit(1)
+        }
+        println("")
+        let fails = _run_selftest_assertions(body)
+        if fails != 0 {
+            println("selftest=fail")
+            eprintln("selftest FAILED: " + to_string(fails) + " assertion(s)")
+            exit(1)
+        }
+        println("selftest: OK")
+        exit(0)
+    }
+
+    println("== substrate (protocol) inspect ==")
+    let r = _run_helper("inspect")
+    println(r[0])
+    if r[1] != 0 {
+        eprintln("inspect helper FAILED rc=" + to_string(r[1]))
+        exit(1)
+    }
+    exit(0)
+}
+// hexa-strict auto-invokes fn main() — do not call main() explicitly.

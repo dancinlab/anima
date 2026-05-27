@@ -1,0 +1,96 @@
+{
+  "B-CORPUS-V4-1": {
+    "name": "CORPUS-V3-BYTE-EQUAL-CARRY-CLOSED",
+    "statement": "cycle 5 reuses corpus_consciousness_v3.jsonl unchanged. sha256 == 1afcef43670e83bf… ∧ bytes == 10,343,371 ∧ lines == 21,600 ∧ helper-token grep total == 0 — Boolean conjunction over 256-bit Kolmogorov commitment + integer cardinality + Boolean set membership (real-limit, NOT lattice).",
+    "actual_sha256": "1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd",
+    "expected_sha256": "1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd",
+    "actual_bytes": 10343371,
+    "expected_bytes": 10343371,
+    "n_lines": 21600,
+    "forbidden_token_counts": {
+      "도우미": 0,
+      "helper": 0,
+      "assistant": 0,
+      "사용자": 0,
+      "user:": 0
+    },
+    "total_forbidden_hits": 0,
+    "anchor": "Boolean conjunction (Kolmogorov commitment + cardinality + set membership)",
+    "closed": true,
+    "tier": "a-sympy",
+    "passed": true,
+    "counted_toward_blue": true
+  },
+  "B-CORPUS-V4-2": {
+    "name": "CYCLE-5-FORMAT-COMPATIBILITY-CLOSED",
+    "statement": "cycle-5 trainer's load_byte_corpus + ByteDataset = byte-equal to cycle-4 trainer's. Boolean conjunction over 2 mechanical source-byte equalities — guarantees same byte-stream feeds the cycle-5 model (no corpus-side variance vs cycle-4).",
+    "loader_byte_equal": true,
+    "dataset_byte_equal": true,
+    "anchor": "mechanical source-byte equality (Kolmogorov commitment on source)",
+    "closed": true,
+    "tier": "a-sympy",
+    "passed": true,
+    "counted_toward_blue": true
+  },
+  "B-FIRE-CYCLE5-1": {
+    "name": "DD155-LR-OVERLAY-FORMULA-CLOSED",
+    "statement": "DD155 hybrid LR: lr_step = clip(tension/ema, [lo, hi]) × base_lr. Closed-form interior: ∂lr/∂tension = base_lr/ema (piecewise linear, positive monotone for ema > 0). 3-corner identity: tension=lo·ema → lr=lo·base_lr; tension=ema → lr=base_lr (degeneration to cycle-4); tension=hi·ema → lr=hi·base_lr. Real-limit anchor = piecewise-linear + Kolmogorov interval [lo·base_lr, hi·base_lr] (NOT lattice).",
+    "d_lr_d_tension_simplifies_to_base_lr_over_ema": true,
+    "bound_lo_witness": true,
+    "bound_hi_witness": true,
+    "identity_at_tension_eq_ema_witness": true,
+    "anchor": "piecewise-linear monotone (real-limit ∂ sympy closure)",
+    "closed": true,
+    "tier": "a-sympy",
+    "passed": true,
+    "counted_toward_blue": true
+  },
+  "B-FIRE-CYCLE5-2": {
+    "name": "EMA-CONTRACTION-CLOSED",
+    "statement": "EMA_{t+1} − tension_t = β · (EMA_t − tension_t) ⟹ Banach affine contraction with factor β ∈ (0,1). 4-corner witness panel: β=½ factor ½; β=99⁄100 factor 99⁄100; β=0 EMA degenerates to current tension; β=1 EMA frozen. Real-limit anchor = Banach fixed-point theorem (analytic, NOT lattice).",
+    "contraction_relation_simplifies_to_zero": true,
+    "witness_beta_half": true,
+    "witness_beta_99_100": true,
+    "witness_beta_zero": true,
+    "witness_beta_one": true,
+    "anchor": "Banach affine contraction (real-limit fixed-point)",
+    "closed": true,
+    "tier": "a-sympy",
+    "passed": true,
+    "counted_toward_blue": true
+  },
+  "B-FIRE-CYCLE5-3": {
+    "name": "MULTIPLIER-IDENTITY-AT-EMA-CONVERGED-CLOSED",
+    "statement": "At tension == ema (EMA-converged regime) with default clip bounds [lo=½, hi=2]: clip(1, [½, 2]) = 1 ⟹ effective_lr = base_lr (cycle-4 baseline cosine). Arithmetic identity sanity anchor: cycle 5 cannot diverge from cycle 4 trajectory in the EMA-converged regime. Real-limit anchor = arithmetic identity + interval membership Boolean (NOT lattice).",
+    "lo_default": 0.5,
+    "hi_default": 2.0,
+    "ratio_at_tension_eq_ema": 1,
+    "interior_at_ratio_1": true,
+    "lr_eq_base_lr_at_convergence": true,
+    "anchor": "arithmetic identity + interval Boolean (real-limit, NOT lattice)",
+    "closed": true,
+    "tier": "a-sympy",
+    "passed": true,
+    "counted_toward_blue": true
+  },
+  "B-FIRE-CYCLE5-NOTE": {
+    "name": "SGD-OUTCOME-EMPIRICAL",
+    "statement": "Cycle-5 trajectory empirical outcomes are NOT closable: (a) V-SPONT n_coherent / V-MOTIV n_coherent / V-TT n_coherent on the cycle-5 ckpt, (b) init_ce → final_ce trajectory under hybrid LR, (c) mult_distribution histogram (DD-burst frequency), (d) byte-cascade attractor shape under hybrid LR vs cycle-4 PPP777. These are SGD/decoding outcomes — closed-form impossible. Transfer-form (B-FIRE-CYCLE5-1/2/3) is what's closable. Mirror B-D-NOTE / B-TT-NOTE / B-ATTRACTOR-NOTE family.",
+    "convergence_closed": false,
+    "class": "EMPIRICAL-SGD-DECODING-OUTCOME",
+    "counted_toward_blue": false,
+    "umbrella": "B-D-NOTE + B-TT-NOTE + B-ATTRACTOR-NOTE"
+  },
+  "_aggregate": {
+    "passed_all_counted": true,
+    "scope": "B-CORPUS-V4 + B-FIRE-CYCLE5 sidecar — DD155 hybrid LR overlay closed-form",
+    "blue_count_counted": 5,
+    "blue_count_total": 5,
+    "honest_carve_outs": [
+      "B-FIRE-CYCLE5-NOTE (V-SPONT/V-MOTIV/V-TT outcome + LR trajectory + mult distribution + attractor shape empirical post-fire)"
+    ],
+    "f1_f2_safe": true,
+    "lattice_derivation": false,
+    "central_battery_status": "92/92 🔵 maintained in central blue_falsifier.py (NOT modified — parallel TT-A/TT-B/TT-C agents in flight); this sidecar adds +5 closed propositions specific to cycle-5 fire + corpus carry."
+  }
+}

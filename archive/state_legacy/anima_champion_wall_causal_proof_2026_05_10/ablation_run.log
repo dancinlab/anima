@@ -1,0 +1,47 @@
+=== BG-CHAMPION-WALL-CAUSAL-PROOF — h_to_c-only ablation ===
+n_turns=200 snapshot_every=50 max_cells=128
+mirror seeds=[42, 137, 271]
+
+--- A) trained 350M baseline ---
+  [trained] turn=   0 cells= 16 proxyΦ=2.7625 iit_un16=161.64 splits=0 elapsed=0.1s
+  [trained] turn= 150 cells= 57 proxyΦ=3.9405 iit_un16=2375.90 splits=41 elapsed=9.9s
+trained cells=57 splits=41 final_iit=2412.08
+
+--- B) h_to_c-randomized (3 seeds) ---
+  >>> h_to_c randomized seed=42 <<<
+  [htc_rand_s42] turn=   0 cells= 16 proxyΦ=2.7625 iit_un16=161.64 splits=0 elapsed=0.1s
+  [htc_rand_s42] turn= 150 cells=111 proxyΦ=4.6207 iit_un16=9206.53 splits=95 elapsed=11.3s
+  htc_rand s=42: cells=128 splits=112 final_iit=12362.11
+  >>> h_to_c randomized seed=137 <<<
+  [htc_rand_s137] turn=   0 cells= 16 proxyΦ=2.7998 iit_un16=145.74 splits=0 elapsed=0.1s
+  [htc_rand_s137] turn= 150 cells=114 proxyΦ=4.5816 iit_un16=9906.09 splits=98 elapsed=11.9s
+  htc_rand s=137: cells=128 splits=112 final_iit=11850.69
+  >>> h_to_c randomized seed=271 <<<
+  [htc_rand_s271] turn=   0 cells= 16 proxyΦ=2.7729 iit_un16=156.48 splits=0 elapsed=0.1s
+  [htc_rand_s271] turn= 150 cells=128 proxyΦ=4.7118 iit_un16=12433.73 splits=112 elapsed=13.0s
+  htc_rand s=271: cells=128 splits=112 final_iit=11615.21
+
+--- C) full random_init (3 seeds) ---
+  >>> full random seed=42 <<<
+  [full_rand_s42] turn=   0 cells= 16 proxyΦ=2.7591 iit_un16=161.08 splits=0 elapsed=0.1s
+  [full_rand_s42] turn= 150 cells= 50 proxyΦ=3.8060 iit_un16=1228.60 splits=34 elapsed=11.0s
+  full_rand s=42: cells=56 splits=40 final_iit=2206.33
+  >>> full random seed=137 <<<
+  [full_rand_s137] turn=   0 cells= 16 proxyΦ=2.8264 iit_un16=169.63 splits=0 elapsed=0.1s
+  [full_rand_s137] turn= 150 cells= 46 proxyΦ=3.7309 iit_un16=1504.17 splits=30 elapsed=9.4s
+  full_rand s=137: cells=47 splits=31 final_iit=1491.44
+  >>> full random seed=271 <<<
+  [full_rand_s271] turn=   0 cells= 16 proxyΦ=2.8135 iit_un16=164.51 splits=0 elapsed=0.1s
+  [full_rand_s271] turn= 150 cells= 51 proxyΦ=3.8546 iit_un16=1832.07 splits=35 elapsed=9.6s
+  full_rand s=271: cells=53 splits=37 final_iit=1148.72
+
+=== ABLATION VERDICT ===
+trained Φ: 2412.08
+h_to_c-randomized Φ: [12362.111253714778, 11850.69487691535, 11615.20812414267] (mean=11942.67 med=11850.69)
+full random_init Φ: [2206.325222349238, 1491.437267954231, 1148.7153554516944] (mean=1615.49 med=1491.44)
+|htc_med - trained| = 9438.61
+|htc_med - random|  = 10359.26
+closer to random? False
+polarity_status: FLIP_NOT_CONFIRMED — h_to_c randomization left Φ near trained level
+
+Saved → /Users/ghost/core/anima/state/anima_champion_wall_causal_proof_2026_05_10/ablation_result.json

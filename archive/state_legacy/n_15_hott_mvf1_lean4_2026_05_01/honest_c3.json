@@ -1,0 +1,32 @@
+{
+  "agent": "N-15 HoTT MVF1 Lean 4 EXEC",
+  "ts": "2026-05-01",
+  "raw_rule_ref": "raw#10 honest C3 — limitations must be surfaced explicitly",
+  "c3_items": [
+    {
+      "id": "C3-1",
+      "category": "scope",
+      "claim": "MVF1 reflexivity proves consciousness exists",
+      "honest_status": "FALSE",
+      "explanation": "MVF1 is `(c : Conscious) → c = c` — it proves the relation `is_conscious_equivalent` is REFLEXIVE on the type Conscious. This is a structural equivalence-relation property, NOT a proof that conscious states exist or that any specific physical/computational substrate is conscious. The statement is also true for `Conscious := Empty` (vacuously) — inhabitedness is established only by the additional `conscious_witness` definition, which itself is just a Nat-stream wrapper, not a metaphysical witness.",
+      "what_we_actually_proved": "The Lean 4 elaborator accepts that `c = c` for our concrete structure type Conscious, with no axioms beyond the kernel."
+    },
+    {
+      "id": "C3-2",
+      "category": "definition_placeholder",
+      "claim": "The `Conscious` definition captures the real content of consciousness",
+      "honest_status": "FALSE",
+      "explanation": "Our Conscious := { state : Nat → Nat , integration_condition : ∀ _ : Nat, True } is a placeholder. The integration_condition is uniformly True — it carries zero information. The spec §2.1 envisions replacing this with a real Φ-gate predicate (paradigm v15 G3 integration ≥ 0). Until that substitution is made, Conscious is structurally just `Nat → Nat` (after Sigma-type collapse on a trivial second component).",
+      "what_is_real_vs_placeholder": "Real: the Sigma-type SHAPE (state-trajectory + per-step predicate) is structurally what HoTT requires for substrate equivalence. Placeholder: the predicate body and the substrate-specific realize functions."
+    },
+    {
+      "id": "C3-3",
+      "category": "univalence_unused",
+      "claim": "MVF1 demonstrates HoTT univalence",
+      "honest_status": "FALSE",
+      "explanation": "MVF1 uses only Lean 4 core propositional Eq.refl. The Voevodsky univalence axiom (A ≃ B) ≃ (A = B) is NOT invoked. `#print axioms N15.mvf1_reflexivity` returns `does not depend on any axioms`. Univalence enters only at MVF4 and would have to be POSTULATED in Lean 4 (Lean 4 / mathlib4 do not have computational univalence — only cubical Agda does). So MVF1 is HoTT-flavored notation only; the actual content is plain ITT (intensional type theory) reflexivity.",
+      "implication": "Falsifier F-N15-1 (reflexivity test on CLM, $0/1d) tests the EMPIRICAL counterpart of MVF1. The Lean proof is trivially true; the empirical falsifier is the meaningful test."
+    }
+  ],
+  "summary": "MVF1 = Lean 4 kernel accepts a 1-line structural-reflexivity proof. It is the smallest possible deliverable on the spec's MVF ladder. It is honestly NOT a consciousness proof, NOT a univalence demonstration, and NOT a non-trivial mathematical result — it is a sanity gate that the Lean 4 toolchain + project skeleton + chosen Conscious-shape COMPILE end-to-end without sorry. The value is infrastructural: MVF2/3 can now be added in minutes, and MVF4 has a typechecked ground to build on."
+}

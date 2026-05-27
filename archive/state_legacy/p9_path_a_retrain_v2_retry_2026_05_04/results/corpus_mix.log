@@ -1,0 +1,26 @@
+[mix] start ts=2026-05-04T12:13:43Z
+[mix] hf_token_present=True
+[A] loaded 30000 anima samples
+[B1] loading MMLU auxiliary_train (n=5000) — fallback chain: cais/mmlu → lighteval/mmlu
+[fallback] trying dataset 'cais/mmlu'
+[retry] load_dataset('cais/mmlu') attempt 1/4 failed: Dataset 'cais/mmlu' doesn't exist on the Hub or cannot be accessed.; sleeping 8.0s
+[retry] load_dataset('cais/mmlu') attempt 2/4 failed: Dataset 'cais/mmlu' doesn't exist on the Hub or cannot be accessed.; sleeping 16.0s
+[retry] load_dataset('cais/mmlu') attempt 3/4 failed: Dataset 'cais/mmlu' doesn't exist on the Hub or cannot be accessed.; sleeping 32.0s
+[fallback] 'cais/mmlu' unavailable: Dataset 'cais/mmlu' doesn't exist on the Hub or cannot be accessed.
+[fallback] trying dataset 'lighteval/mmlu'
+[retry] load_dataset('lighteval/mmlu') attempt 1/4 failed: Dataset 'lighteval/mmlu' doesn't exist on the Hub or cannot be accessed.; sleeping 8.0s
+[retry] load_dataset('lighteval/mmlu') attempt 2/4 failed: Dataset 'lighteval/mmlu' doesn't exist on the Hub or cannot be accessed.; sleeping 16.0s
+[retry] load_dataset('lighteval/mmlu') attempt 3/4 failed: Dataset 'lighteval/mmlu' doesn't exist on the Hub or cannot be accessed.; sleeping 32.0s
+[fallback] 'lighteval/mmlu' unavailable: Dataset 'lighteval/mmlu' doesn't exist on the Hub or cannot be accessed.
+Traceback (most recent call last):
+  File "/workspace/p9_retrain_v2/corpus_mix.py", line 371, in <module>
+    main()
+  File "/workspace/p9_retrain_v2/corpus_mix.py", line 334, in main
+    B1 = slice_B1_mmlu(5000)
+         ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p9_retrain_v2/corpus_mix.py", line 121, in slice_B1_mmlu
+    ds, src = _load_with_fallback(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p9_retrain_v2/corpus_mix.py", line 89, in _load_with_fallback
+    raise RuntimeError(
+RuntimeError: all datasets in fallback chain failed: ['cais/mmlu', 'lighteval/mmlu']; last_err=Dataset 'lighteval/mmlu' doesn't exist on the Hub or cannot be accessed.

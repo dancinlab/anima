@@ -1,0 +1,29 @@
+{
+  "verdict": "\ud83d\udfe2",
+  "milestone": "M8 LIFE re-measurement extension — n=5 multi-state faithful big-\u03a6",
+  "engine": "faithful IIT 4.0 (M1-M4) via ECA->TPM bridge (iit4_eca.hexa)",
+  "config": {
+    "n5_ring": 5, "n5_state_sample": [0,4,8,12,16,20,24,28], "n5_state_sample_size": 8, "n5_state_space": 32,
+    "n4_ring": 4, "n4_state_sample": "all 16", "n4_state_sample_size": 16, "n4_state_space": 16
+  },
+  "n5_table": {
+    "rule_0":   {"mean": 0.0, "min": 0.0, "max": 0.0, "dynamics": "const (null)"},
+    "rule_204": {"mean": 0.0, "min": 0.0, "max": 0.0, "dynamics": "identity (reducible null)"},
+    "rule_90":  {"mean": 49.5, "min": 44.5, "max": 60, "dynamics": "XOR l,r (coupled)"},
+    "rule_110": {"mean": 35.7034, "min": 21.2403, "max": 44.0489, "dynamics": "LIFE cosmic-scale"},
+    "rule_30":  {"mean": 28.5861, "min": 24.0655, "max": 42.4664, "dynamics": "LIFE cosmic-scale"},
+    "rule_54":  {"mean": 14.4317, "min": 8.73534, "max": 22.53, "dynamics": "LIFE cosmic-scale"}
+  },
+  "n4_table": {
+    "rule_0":   {"mean": 0.0, "min": 0.0, "max": 0.0},
+    "rule_204": {"mean": 0.0, "min": 0.0, "max": 0.0},
+    "rule_90":  {"mean": 0.0, "min": 0.0, "max": 0.0},
+    "rule_110": {"mean": 13.1302, "min": 7.5475, "max": 20.0459},
+    "rule_30":  {"mean": 13.8852, "min": 7.28357, "max": 19.434},
+    "rule_54":  {"mean": 7.76521, "min": 2.99991, "max": 10.1176}
+  },
+  "m6_reference_n4_state1010": {"rule_110": 7.55, "rule_30": 8.66, "rule_54": 10.03, "rule_0": 0.0, "rule_204": 0.0, "rule_90": 0.0},
+  "tally": {"pass": 10, "fail": 0},
+  "falsifier": "F-IIT4-8 MULTISTATE-ROBUST",
+  "notes": "n=5 over a representative 8-state subset (full 32 over ~10min budget); n=4 over all 16 states. faithful big-Phi is state-dependent; mean/min/max report the distribution, not one point."
+}

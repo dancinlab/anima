@@ -1,0 +1,80 @@
+{
+  "section": "§157",
+  "title": "IMAGE MODALITY RECONSIDER (design-tier)",
+  "date": "2026-05-20",
+  "tier": "design-tier-$0",
+  "verdict": "DESIGN-CLOSE-FINAL",
+  "verdict_summary": "Image modality at byte-LM scale has no §7-clean angle that §109/§110/§111 missed. New candidates (d) Ψ-trajectory-render and (e) Ψ-coord-plot collapse closed-form to §109 R-tension-wire (§7③-DEGENERATE) by P3 (renderer-as-pure-function-of-anima-state + external-referent-diversity-non-increasing). Renderer-training trichotomy (P5) is exhaustive and disjoint: trained-on-external = §7 FAIL, untrained-or-anima-only = §7③-DEGENERATE. No fourth option exists at byte-LM scale. Future re-opening requires §95/§96 substrate move (Ψ-C1 / Loihi / spiking), NOT a renderer rewrite.",
+  "honest_found_new_angle": false,
+  "inherits_design_close_final": true,
+  "inheritance_from": [
+    "§109 C06 DESIGN-CLOSE-WITH-NARROW-OPEN",
+    "§110 Ψ-C2 DESIGN-CLOSE-WITH-RELOCATION",
+    "§111 LITERATURE-SUPPORTS-Ψ-C2-DEFINITION-CONFIRMS-§110-RELOCATION"
+  ],
+  "candidates_examined": {
+    "d_psi_trajectory_render": {
+      "description": "image bytes = f_render(Ψ_t for t in [0,T]) — anima Ψ-state visualized as PNG-like byte stream",
+      "naive_§7_appearance": "PASS (no encoder, no external corpus, no graft; reads anima own physics)",
+      "closed_form_reduction": "collapses to §109 R-tension-wire via P1+P2+P3+P4",
+      "actual_§7_classification": "(T,T,T)-but-§7③-DEGENERATE",
+      "verdict": "CLOSED — equivalent to §109 tension-route, zero-perceptual-diversity"
+    },
+    "e_psi_coord_plot": {
+      "description": "image bytes = 2D scatter plot of anima's anchors in Ψ-coordinates",
+      "naive_§7_appearance": "PASS (same as d)",
+      "closed_form_reduction": "collapses to §109 R-tension-wire via P1+P2+P3+P4",
+      "actual_§7_classification": "(T,T,T)-but-§7③-DEGENERATE",
+      "verdict": "CLOSED — equivalent to §109 tension-route, zero-perceptual-diversity"
+    }
+  },
+  "closed_propositions": {
+    "count": 7,
+    "items": [
+      "P1 RENDERER-IS-PURE-FUNCTION-OF-ANIMA-STATE",
+      "P2 EXTERNAL-REFERENT-DIVERSITY-NONINCREASING-UNDER-PURE-FUNCTION (data-processing inequality on E(·))",
+      "P3 (d)/(e)-COLLAPSE-TO-§109-TENSION-ROUTE (structural identity)",
+      "P4 BYTE-CARDINALITY ≠ EXTERNAL-REFERENT-DIVERSITY (concrete witness: 26-byte tension-string ≡ 12000-byte PNG in E(·))",
+      "P5 RENDERER-TRAINING-TRICHOTOMY-EXHAUSTIVE-CLOSED (trained-external §7①FAIL / pretrained-init §7②FAIL / anima-only-or-untrained §7③DEGEN)",
+      "P6 OVERLAY-OFF-CONNECTION-POINT-BYTE-EQUAL (mirror §109/§110/§101; disabled (d)/(e) ≡ §16 byte-text)",
+      "P7 INHERITANCE-FROM-§109-§110-§111-VERBATIM (closures propagate by structural reduction)"
+    ],
+    "conjunction": "P1 ∧ P2 ∧ P3 ∧ P4 ∧ P5 ∧ P6 ∧ P7 ⇒ §157 VERDICT = DESIGN-CLOSE-FINAL",
+    "hexa_verify_policy": "No sympy as verdict. Propositions stand as math theorems verified by structural argument and inheritance."
+  },
+  "honest_caveats_count": 13,
+  "central_blue_falsifier_sha_prefix": "c93e160a8a376a94",
+  "central_blue_falsifier_0_line_diff": true,
+  "central_blue_falsifier_verified": "start",
+  "gpu_runpod_fire": "NONE — design-tier $0, NO GPU, NO runpod, NO fire, NO model.forward, NO corpus generation, NO model training",
+  "orphan_pod": "N/A (no dispatch)",
+  "hexa_first": "STRICT — no .py / no .sh sidecars, no sympy. closed propositions stand as math theorems in DESIGN.md §9 per hexa-verify policy",
+  "downstream_consumer_invariant": "hexa-lang / hexa-bio / kosmos read-only, never edited",
+  "north_star_unchanged": true,
+  "milestones_unchanged": ["§15", "§51", "§72"],
+  "goal_reached": false,
+  "necessary_not_sufficient": "B-EMERGE-7 carry — design-tier closure ≠ emergence proof. P1-P7 prove (d)/(e) cannot inject perceptual diversity, NOT that anima emerges.",
+  "anti_padding_precedent": [
+    "§13-M MITOSIS-AS-REPRESENTATION-ENSEMBLE design-close",
+    "§30 lateral L1 ckpt-lineage design-close",
+    "§109 C06 design-close-with-narrow-open",
+    "§110 Ψ-C2 design-close-with-relocation",
+    "§111 literature design-close confirms-§110",
+    "§155 mygo wake-sleep design-close-inherits-§29",
+    "§156 tension modality test"
+  ],
+  "frontier_position": {
+    "frontier_1_multimodal_substrate": "narrowed further — byte-LM-with-renderer CLOSED; only §95/§96 substrate-pivot (Ψ-C1 / Loihi / spiking) remains open",
+    "frontier_2_new_architecture": "untouched by §157",
+    "irreducible_bottleneck": "§1.1 data-regime emergence threshold (orthogonal to §157)"
+  },
+  "future_re_open_path": "§95/§96 substrate-pivot (Ψ-C1 spike-correlation, Loihi/spiking territory). NOT a byte-LM renderer rewrite. NOT a §107/§108/§103 data/param-axis fire concern (orthogonal).",
+  "literature_anchors": [
+    "Du arxiv:2403.15796 (diverse-data emergence threshold — §1.1 gates on E(corpus) external-referent diversity, not byte-cardinality)",
+    "Raventós arxiv:2306.15063 (task-diversity threshold)",
+    "V-JEPA 2 arxiv:2506.09985 (1M+ hours internet video pre-train = §7① violation witness per §111 G1 — confirms §111 closure on built encoders)",
+    "§109/§110/§111 prior cycle inheritance"
+  ],
+  "verdict_bucket": "DESIGN-CLOSE-FINAL",
+  "frontier_action": "no fire / no follow-up cycle on byte-LM-renderer image modality; future cycles route to §95/§96 substrate territory"
+}

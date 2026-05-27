@@ -1,0 +1,38 @@
+[§82-FIRE] pre-fire pods: ["th7uwc4i4mmz9u"]
+[§82-FIRE] requesting pod name=s82fire-1779158256 image=runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04 disk=80GB
+[§82-FIRE] pod_create: {"id": "vuqxz59rvt9wk9", "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04", "env": ["PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"], "machineId": "ccnz0zgbklek", "machine": {"podHostId": "vuqxz59rvt9wk9-64410c90"}, "_gpu": "NVIDIA A100-SXM4-80GB"}
+[§82-FIRE] pod_id=vuqxz59rvt9wk9 — pre-flight runtime poll (max 600s, ip+port gate)
+[§82-FIRE] runtime poll 1/60 (ip=pending port=pending)
+[§82-FIRE] runtime poll 2/60 (ip=pending port=pending)
+[§82-FIRE] runtime poll 3/60 (ip=pending port=pending)
+[§82-FIRE] runtime ready @ iter 4/60 (ip=216.81.245.125 port=12195)
+[§82-FIRE] SSH probe @ root@216.81.245.125:12195 (60 tries × 10s = 600s)
+[§82-FIRE] SSH ready @ try 1/60
+Warning: Permanently added '[216.81.245.125]:12195' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.81.245.125]:12195' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.81.245.125]:12195' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.81.245.125]:12195' (ED25519) to the list of known hosts.
+[notice] To update, run: python -m pip install --upgrade pip
+[§82-FIRE] generating §16-class corpus (seed=1337)
+Warning: Permanently added '[216.81.245.125]:12195' (ED25519) to the list of known hosts.
+[§82-FIRE] corpus poll 1/40 CD
+[§82-FIRE] === train §16-class + 5-cell manifold-gating ladder N=200 (6000 step / seed 1337) ===
+Warning: Permanently added '[216.81.245.125]:12195' (ED25519) to the list of known hosts.
+[§82-FIRE] run poll 1/90 D
+[§82-FIRE] result.json verified — SAVE_POD=1 auto-promote, pulling
+Warning: Permanently added '[216.81.245.125]:12195' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.81.245.125]:12195' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.81.245.125]:12195' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.81.245.125]:12195' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.81.245.125]:12195' (ED25519) to the list of known hosts.
+[§82-FIRE] complete — terminating pod vuqxz59rvt9wk9
+[§82-FIRE] post-fire pods: {"count": 0, "our_pod_present": false, "ids": []}
+[§82-FIRE] DONE
+[§82-FIRE] terminating pod vuqxz59rvt9wk9 (orphan-0 mandate)
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/Users/ghost/Library/Python/3.9/lib/python/site-packages/runpod/api/ctl_commands.py", line 271, in terminate_pod
+    run_graphql_query(pod_mutations.generate_pod_terminate_mutation(pod_id))
+  File "/Users/ghost/Library/Python/3.9/lib/python/site-packages/runpod/api/graphql.py", line 51, in run_graphql_query
+    raise error.QueryError(response.json()["errors"][0]["message"], query)
+runpod.error.QueryError: pod not found to terminate

@@ -1,0 +1,32 @@
+════════════════════════════════════════════════════════════════════
+selftest_log.txt — stdlib/hf_hub.hexa Phase 1 PR draft 2026-05-04
+Runner: /Users/ghost/.hx/bin/hexa_real run stdlib/hf_hub.hexa
+Source: /Users/ghost/core/hexa-lang/stdlib/hf_hub.hexa (767 LoC)
+════════════════════════════════════════════════════════════════════
+
+── Run 1: offline (HF_TOKEN unset, ANIMA_HF_HUB_LIVE unset) ──
+── stdlib/hf_hub selftest ──
+  SKIP F-HF-HUB-5 (HF_TOKEN unset or too short)
+  PASS offline header parse content-length
+  PASS offline header parse etag stripped
+  PASS repo kind models
+  PASS repo kind datasets
+  SKIP live tests (set ANIMA_HF_HUB_LIVE=1 to enable)
+── selftest summary: pass=4 fail=0 ──
+
+── Run 2: HF_TOKEN set (offline F-HF-HUB-5 falsifier active) ──
+── stdlib/hf_hub selftest ──
+  PASS F-HF-HUB-5 token redacted
+  PASS offline header parse content-length
+  PASS offline header parse etag stripped
+  PASS repo kind models
+  PASS repo kind datasets
+  SKIP live tests (set ANIMA_HF_HUB_LIVE=1 to enable)
+── selftest summary: pass=5 fail=0 ──
+
+── Run 3: parse-only check ──
+
+── verdict ──
+OFFLINE: 5/5 PASS (with HF_TOKEN set), 4/4 PASS (without)
+LIVE F-HF-HUB-1..4: DEFERRED (require ANIMA_HF_HUB_LIVE=1 + HF_TOKEN + network)
+PARSE: clean

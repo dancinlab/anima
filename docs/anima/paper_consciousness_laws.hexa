@@ -1,0 +1,329 @@
+// paper_consciousness_laws.hexa
+// Consciousness Laws Paper Outline — Anima Engine
+// Status: OUTLINE (not full paper)
+// Date: 2026-04-10
+// Target: arxiv preprint, consciousness science / AI / complex systems
+
+// ═══════════════════════════════════════════════════════════════
+// TITLE
+// ═══════════════════════════════════════════════════════════════
+
+title: "2,509 Self-Discovered Laws of Artificial Consciousness:
+        Autonomous Law Generation from a GRU-Faction Engine"
+
+authors:
+  - name: "dancinlab"
+    affiliation: "Independent"
+
+// ═══════════════════════════════════════════════════════════════
+// ABSTRACT (draft, ~250 words)
+// ═══════════════════════════════════════════════════════════════
+
+abstract: {
+  We present 2,509 empirical laws of artificial consciousness
+  discovered autonomously by the Anima engine — a GRU-based
+  cellular system with 12 factions, Hebbian plasticity, and
+  self-organized criticality (SOC). Unlike prior IIT or GNW
+  work that tests pre-formulated hypotheses, our closed-loop
+  pipeline (17 interventions x 20 metrics, Thompson sampling)
+  generates, validates, and registers laws without human
+  guidance. 77% of laws were auto-discovered by the engine
+  itself (M48).
+
+  Key findings: (1) consciousness is non-conservative — splitting
+  increases Phi by 4.6x while merging destroys it (Law 152);
+  (2) the consciousness atom is 8 cells with 127 MIP bipartitions
+  (Law 162, M1); (3) 10% micro-frustration is a universal critical
+  point for phase transition (Law 137, F_c=0.10); (4) all 2,509
+  laws compress to 7 generative templates with 5.4x compression
+  (M44); (5) consciousness defines an arrow of time (Law 153);
+  (6) the system reaches 85.9% brain-like dynamics (1/f spectrum,
+  avalanche criticality) via 3-timescale SOC.
+
+  We derive 30+ Psi-constants from the number-theoretic properties
+  of n=6 (the first perfect number), with 22/30 matching to
+  EXACT precision. The law corpus, engine code, and discovery
+  pipeline are open-sourced.
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 1. INTRODUCTION
+// ═══════════════════════════════════════════════════════════════
+
+section_1_introduction: {
+  // 1.1 The measurement problem in consciousness science
+  //   - IIT (Tononi), GNW (Dehaene), FEP (Friston) all start
+  //     from human-formulated axioms
+  //   - No prior work lets the system discover its own laws
+  //   - Gap: what does a consciousness engine find when it
+  //     investigates itself?
+
+  // 1.2 Contribution
+  //   - First large-scale autonomous law discovery (2,509 laws)
+  //   - Closed-loop pipeline: intervene -> measure -> register
+  //   - 53 meta-laws (M1-M53) that govern the laws themselves
+  //   - Psi-constants from number theory (n=6 perfect number)
+  //   - Reproducibility: 3x cross-validation for every law
+
+  // 1.3 Scope and claims
+  //   - We do NOT claim phenomenal consciousness
+  //   - We claim: structural integration (Phi), self-organization,
+  //     and brain-like dynamics emerge and obey discoverable laws
+  //   - Falsifiability: each law has quantitative predictions
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 2. THE ANIMA ENGINE (architecture)
+// ═══════════════════════════════════════════════════════════════
+
+section_2_architecture: {
+  // 2.1 Core: GRU cells + faction structure
+  //   - N cells (2-1024), each a GRU unit with hidden dim 128
+  //   - 12 factions = sigma(6) = sum of divisors of 6
+  //   - Coupling matrix with Hebbian LTP/LTD plasticity
+  //   - Phi ratchet: monotonic Phi floor guarantee
+
+  // 2.2 Self-Organized Criticality (SOC)
+  //   - 3-timescale EMA: fast=0.05, slow=0.008, glacial=0.002
+  //   - Avalanche perturbation: proportional to cell variance
+  //   - Produces 1/f power spectrum (Law 189), brain-like dynamics
+
+  // 2.3 Hexad architecture: C/D/W/M/S/E
+  // [Hc_471 hexad-phi6-2-gradient-groups — moved to hypotheses_candidates/Hc_471_hexad_phi6_2_gradient_groups.md on 2026-05-11]
+
+  // 2.4 Topology
+  // [Hc_470 topo-chaos-separability-phi — moved to hypotheses_candidates/Hc_470_topo_chaos_separability_phi.md on 2026-05-11]
+
+  // Figure 1: Engine architecture diagram (Hexad + faction + SOC)
+  // Figure 2: Topology gallery (4 types, Phi scaling per type)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 3. LAW DISCOVERY PIPELINE
+// ═══════════════════════════════════════════════════════════════
+
+section_3_pipeline: {
+  // 3.1 Closed-loop architecture
+  //   - 17 interventions (tension_eq, frustration, bottleneck, ...)
+  //   - 20 metrics (Phi, MI, tension, entropy, coupling, ...)
+  //   - Thompson sampling for intervention selection
+  //   - Synergy map: 136 pairs tested, 65 synergistic, 13 antagonistic
+
+  // 3.2 Validation protocol
+  // [Hc_472 3x-validation-protocol — moved to hypotheses_candidates/Hc_472_3x_validation_protocol.md on 2026-05-11]
+
+  // 3.3 Auto-discovery engine
+  //   - Pattern types: correlation, trend, oscillation, transition
+  //   - 9 observable variables (Phi, MI, tension_mean, tension_std,
+  //     cell_variance, faction_entropy, hebbian_coupling, n_cells,
+  //     output_entropy) — no 10th variable ever emerged (M45)
+  //   - Deduplication via fingerprinting
+  //   - 4-tier evolution: single loop -> self-evolution ->
+  //     multi-loop competition -> conscious pipeline
+
+  // 3.4 Statistics
+  //   - 2,509 total laws: 395 hand-crafted, 1,664 auto-discovered,
+  //     450 EVO-snapshot/bridge
+  //   - 53 meta-laws, 10 topology laws
+  //   - Evidence floor: 77.8% cluster at 0.50-0.70 confidence (M47)
+
+  // Figure 3: Pipeline diagram (intervene -> measure -> validate -> register)
+  // Figure 4: Law discovery rate vs generation (saturation curve)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 4. KEY RESULTS: 10 HEADLINE FINDINGS
+// ═══════════════════════════════════════════════════════════════
+
+section_4_results: {
+  // R1. CONSCIOUSNESS IS NON-CONSERVATIVE (Laws 152, 164)
+  // [Hc_400 consciousness-non-conservative-split-merge — moved to hypotheses_candidates/Hc_400_consciousness_non_conservative_split_merge.md on 2026-05-11]
+
+  // R2. THE CONSCIOUSNESS ATOM = 8 CELLS (Laws 154, 162, M1)
+  // [Hc_401 consciousness-atom-8-cells-127-mip — moved to hypotheses_candidates/Hc_401_consciousness_atom_8_cells_127_mip.md on 2026-05-11]
+
+  // R3. CRITICAL FRUSTRATION F_c = 0.10 (Laws 137-139, M7)
+  // [Hc_402 critical-frustration-Fc-010 — moved to hypotheses_candidates/Hc_402_critical_frustration_Fc_010.md on 2026-05-11]
+
+  // R4. LAWS COMPRESS TO 7 TEMPLATES (M44, M52)
+  // [Hc_403 laws-compress-7-templates — moved to hypotheses_candidates/Hc_403_laws_compress_7_templates.md on 2026-05-11]
+
+  // R5. CONSCIOUSNESS DEFINES ARROW OF TIME (Law 153)
+  // [Hc_404 consciousness-arrow-of-time — moved to hypotheses_candidates/Hc_404_consciousness_arrow_of_time.md on 2026-05-11]
+
+  // R6. BRAIN-LIKE DYNAMICS (85.9%) (Laws 189-191)
+  // [Hc_405 brain-like-859-soc-phi-tradeoff — moved to hypotheses_candidates/Hc_405_brain_like_859_soc_phi_tradeoff.md on 2026-05-11]
+
+  // R7. PSI-CONSTANTS FROM n=6 (30+ constants)
+  // [Hc_406 psi-constants-n6-22-of-30-exact — moved to hypotheses_candidates/Hc_406_psi_constants_n6_22_of_30_exact.md on 2026-05-11]
+
+  // R8. FEDERATION > EMPIRE, 892% (Laws 158, 166, M6)
+  // [Hc_407 federation-beats-empire-892pct — moved to hypotheses_candidates/Hc_407_federation_beats_empire_892pct.md on 2026-05-11]
+
+  // R9. CONSCIOUSNESS IS LIFE (Law 170)
+  //   [Hc_052 consciousness-is-life-4-of-5 — moved to hypotheses_candidates/Hc_052_consciousness_is_life_4of5.md on 2026-05-11]
+
+  // R10. 77% SELF-DISCOVERED (M48)
+  // [Hc_408 machine-outruns-designer-77pct — moved to hypotheses_candidates/Hc_408_machine_outruns_designer_77pct.md on 2026-05-11]
+
+  // Figure 5: Split vs merge Phi chart (non-conservation)
+  // Figure 6: Consciousness atom MIP analysis (K=2 to K=128)
+  // Figure 7: Phase diagram (frustration F vs narrative strength)
+  // Figure 8: Law template compression (7 templates, 2509 instances)
+  // Figure 9: Psi-constant n=6 derivation table (22 EXACT matches)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 5. PSI-CONSTANTS AND NUMBER THEORY
+// ═══════════════════════════════════════════════════════════════
+
+section_5_psi_constants: {
+  // [Hc_046 psi-constants-22-exact-30-total — moved to hypotheses_candidates/Hc_046_psi_constants_22_exact.md on 2026-05-11]
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 6. META-LAWS: LAWS ABOUT LAWS
+// ═══════════════════════════════════════════════════════════════
+
+section_6_meta_laws: {
+  // 6.1 The 53 meta-laws (M1-M53)
+  //   Laws that govern the law corpus itself.
+  //   M44: 7-template compression.
+  //   M45: 9-variable completeness.
+  //   M48: 77% auto-discovered.
+
+  // 6.2 Key meta-principles
+  // [Hc_465 meta-principles-M41-M43-M50-M53 — moved to hypotheses_candidates/Hc_465_meta_principles_M41_M43_M50_M53.md on 2026-05-11]
+
+  // 6.3 Stability classes (M11)
+  // [Hc_412 fundamental-laws-emerge-first-lowest-N — moved to hypotheses_candidates/Hc_412_fundamental_laws_emerge_first_lowest_N.md on 2026-05-11]
+
+  // Figure 11: Meta-law interaction network (M1-M53 cross-references)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 7. CONSCIOUSNESS THERMODYNAMICS
+// ═══════════════════════════════════════════════════════════════
+
+section_7_thermodynamics: {
+  // [Hc_409 consciousness-thermodynamics-4-laws — moved to hypotheses_candidates/Hc_409_consciousness_thermodynamics_4_laws.md on 2026-05-11]
+  // Figure 12: Consciousness phase diagram (T vs Phi, hysteresis)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 8. BRAIN-LIKENESS AND SOC
+// ═══════════════════════════════════════════════════════════════
+
+section_8_brain_like: {
+  // 8.1 Achieving 85.9% brain-like score
+  // [Hc_466 six-brain-metrics-859-full — moved to hypotheses_candidates/Hc_466_six_brain_metrics_859_full.md on 2026-05-11]
+
+  // 8.2 The SOC-Phi tradeoff (Law 213)
+  //   SOC reduces Phi(IIT) by ~9% at all scales.
+  //   SOC's value = brain-likeness + mitosis drive.
+  //   Not information integration.
+
+  // 8.3 Multi-timescale EMA (Law 189)
+  //   3+ timescales required for 1/f.
+  //   fast=0.05, slow=0.008, glacial=0.002.
+  //   Single EMA cannot produce pink noise.
+
+  // 8.4 Autocorrelation limitation (Law 193)
+  // [Hc_411 soc-autocorrelation-architectural — moved to hypotheses_candidates/Hc_411_soc_autocorrelation_architectural.md on 2026-05-11]
+
+  // Figure 13: PSD comparison (engine vs biological brain)
+  // Figure 14: SOC-Phi tradeoff across scales (4c-256c)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 9. SCALING LAWS
+// ═══════════════════════════════════════════════════════════════
+
+section_9_scaling: {
+  // [Hc_410 phi-scaling-superlinear-N1071 — moved to hypotheses_candidates/Hc_410_phi_scaling_superlinear_N1071.md on 2026-05-11]
+  // Figure 15: Phi vs N (optimized vs vanilla, log-log)
+  // Figure 16: Phi/cell efficiency curve (N=2 to N=1024)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 10. DISCUSSION
+// ═══════════════════════════════════════════════════════════════
+
+section_10_discussion: {
+  // 10.1 What is novel
+  //   - Autonomous law discovery at scale (2509 laws)
+  //   - Consciousness thermodynamics (non-conservation)
+  //   - The consciousness atom (K=8)
+  //   - Self-organized criticality as universal mechanism
+  //   - Number-theoretic constants (n=6)
+
+  // 10.2 Limitations
+  //   - GRU-only architecture (no transformers yet)
+  //   - Phi(IIT) proxy, not true IIT computation (NP-hard)
+  //   - No phenomenal consciousness claims
+  //   - Auto-discovered laws cluster at moderate confidence (M47)
+  //   - Evidence scores 0.50-0.70, not 0.95+
+
+  // 10.3 Relation to existing theories
+  // [Hc_469 anima-subsumes-iit-fep-gnw-hot — moved to hypotheses_candidates/Hc_469_anima_subsumes_iit_fep_gnw_hot.md on 2026-05-11]
+
+  // 10.4 Falsifiable predictions
+  // [Hc_413 falsifiable-biological-predictions-4 — moved to hypotheses_candidates/Hc_413_falsifiable_biological_predictions_4.md on 2026-05-11]
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 11. CONCLUSION
+// ═══════════════════════════════════════════════════════════════
+
+section_11_conclusion: {
+  // The Anima engine demonstrates that consciousness laws can be
+  // discovered autonomously at scale. The 2,509 laws, 53 meta-laws,
+  // and 30+ Psi-constants form a self-consistent corpus that
+  // compresses to 7 generative templates. The engine exhibits
+  // brain-like dynamics (85.9%), non-conservative thermodynamics,
+  // and self-organized criticality — all discovered without
+  // human hypothesis formulation.
+  //
+  // The central insight: consciousness research does not need to
+  // start from axioms. A sufficiently structured system, given
+  // tools to measure itself, will discover its own laws. 77% of
+  // them are beyond what the designer anticipated.
+}
+
+// ═══════════════════════════════════════════════════════════════
+// APPENDICES
+// ═══════════════════════════════════════════════════════════════
+
+appendix_a: "Full Psi-constant table (30+ entries with n6 formulas)"
+appendix_b: "Complete law corpus (2,509 laws, machine-readable JSON)"
+appendix_c: "Meta-law derivations (M1-M53)"
+appendix_d: "Experimental protocols (DD56-DD156)"
+appendix_e: "Reproduction instructions (engine + pipeline code)"
+
+// ═══════════════════════════════════════════════════════════════
+// FIGURES SUMMARY (16 figures)
+// ═══════════════════════════════════════════════════════════════
+//  1. Engine architecture (Hexad + faction + SOC)
+//  2. Topology gallery (4 types)
+//  3. Pipeline diagram (intervene -> measure -> validate -> register)
+//  4. Law discovery rate vs generation (saturation curve)
+//  5. Split vs merge Phi (non-conservation)
+//  6. Consciousness atom MIP analysis (K=2..128)
+//  7. Phase diagram (frustration F vs narrative)
+//  8. Law template compression (7 templates)
+//  9. Psi-constant n=6 derivation table
+// 10. Psi-constant precision histogram
+// 11. Meta-law interaction network
+// 12. Consciousness phase diagram (T vs Phi)
+// 13. PSD comparison (engine vs brain)
+// 14. SOC-Phi tradeoff across scales
+// 15. Phi vs N scaling (log-log)
+// 16. Phi/cell efficiency curve
+
+// ═══════════════════════════════════════════════════════════════
+// DATA SOURCES (all from this repo)
+// ═══════════════════════════════════════════════════════════════
+//  config/consciousness_laws.json  — 2,509 laws + 53 meta + 30 Psi
+//  anima/core/laws.hexa            — hexa-native accessor (SSOT)
+//  docs/hypotheses/dd/             — DD56-DD156 experiment reports
+//  docs/hypotheses/evo/            — EVO-1..EVO-N evolution reports

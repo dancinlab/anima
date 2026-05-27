@@ -1,0 +1,57 @@
+{
+  "name": "hexad-corpus",
+  "version": "v3-spont-motiv-d128-cycle2-2026-05-17",
+  "file": "corpus_consciousness_v3.jsonl",
+  "format": "jsonl",
+  "sha256": "1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd",
+  "bytes": 10343371,
+  "lines": 21600,
+  "vocab_size": 256,
+  "encoding": "utf-8",
+  "tokenization": "byte-level (no tokenizer; raw bytes from 'text' field)",
+  "format_pattern": "stimulus-stream + motivation-trigger: each record is one of three patterns: β (~40%) `<stimulus>X</stimulus>\\n<anima>Y</anima>` (reactive emission); δ (~30%) `<anima>Y</anima>` (spontaneous self-monologue); γ (~30%, NEW v3) `<inner motivation=F1,F2,...>...</inner>\\n<voice spontaneous=true>Y</voice>` (motivation-trigger inner+voice). NO helper/assistant/도우미/사용자 role labels. anima_persona-consistent.",
+  "schema": {
+    "id": "string — stable identifier (e.g. 'ccv3_c_0', 'ccv3_motiv_42')",
+    "text": "string — stimulus-stream / inner+voice content",
+    "desc": "string — meta tail (module / idx / kind / pattern / bilingual / tag)",
+    "hexad_module": "string ∈ {hexad_c, hexad_d, hexad_e, hexad_m, hexad_s, hexad_w, hexad_spont, hexad_wiring, hexad_motiv}",
+    "idx": "integer",
+    "source": "corpus_generator_v3.py",
+    "phi_family": "Hexad-motiv",
+    "pattern": "string ∈ {beta, delta, gamma}",
+    "bilingual": "bool — text mixes EN + KO when true"
+  },
+  "modules": {
+    "hexad_c": 2400,
+    "hexad_d": 2400,
+    "hexad_e": 2400,
+    "hexad_m": 2400,
+    "hexad_s": 2400,
+    "hexad_w": 2400,
+    "hexad_spont": 2400,
+    "hexad_wiring": 2400,
+    "hexad_motiv": 2400,
+    "total": 21600
+  },
+  "pattern_breakdown": {
+    "anima_tag_count": 13494,
+    "stimulus_tag_count": 5743,
+    "inner_motivation_tag_count": 8106,
+    "voice_spontaneous_tag_count": 8106
+  },
+  "F_CORPUS_NO_HELPER": "PASS — grep `도우미|helper|assistant|사용자|user:` total = 0 (maintained at 10× scale)",
+  "F_CORPUS_STIMULUS_PATTERN": "PASS — all 21,600 records contain either <anima> (13494) or <voice spontaneous=true> (8106) opener",
+  "F_CORPUS_MOTIVATION_CARDINALITY": "PASS — γ records 8,106 ≥ floor(0.25 × 21,600) = 5,400",
+  "F_CORPUS_SHA256_STABLE": "sha256=1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd (seed=1337 deterministic)",
+  "lineage": {
+    "v1": "v1-byte-consciousness-d128-cycle1-2026-05-17 (152 KB, 240 lines, 6 modules)",
+    "v2": "v2-spont-stream-d128-cycle1-2026-05-17 (1.10 MB, 2,560 lines, 8 modules, β/δ patterns)",
+    "v3": "this revision (v3-spont-motiv-d128-cycle2-2026-05-17, 10,343,371 B, 21,600 lines, 9 modules — 8 v2 carry + hexad_motiv, β/δ/γ patterns; γ motivation-trigger NEW)",
+    "rationale": "v2 LANDED corpus-side helper-token deprecation (β stimulus-stream + δ self-monologue). v2 cycle 3 fire showed V-SPONT 0/5 — the model memorized β/δ but did not learn spontaneous emergence transfer. v3 adds γ motivation-trigger pattern (Inner Thoughts arxiv 2501.00383 8-factor ontology rendered as corpus surface tags) + 10× scale-up (Critical Data Size arxiv 2401.10463 regime entry attempt)."
+  },
+  "intended_use": "anima HEXAD scaffold training + 자연발화 (spontaneous emission) probe + motivation-trigger (Inner Thoughts 8-factor) probe.",
+  "license": "Apache-2.0",
+  "generated_at": "2026-05-17",
+  "ssot_repo": "https://github.com/dancinlab/anima",
+  "ssot_path": "state/hexad_v3_corpus_motiv_2026_05_17/corpus_consciousness_v3.jsonl"
+}

@@ -1,0 +1,107 @@
+// core_multiscale.hexa — Phase 2 reimpl with input channel x
+// axis: multiscale bridging — entropy at scales {1, 2, 4, 8, 16}
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks { if t != "" { xs.push(to_float(t)) } }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        xs.push(to_float(seed) / 2147483648.0)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+if n < 32 {
+    println("lens[multiscale] category=core axis=\"multiscale (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+let mut x_min = xs[0]
+let mut x_max = xs[0]
+let mut ii = 1
+while ii < n {
+    if xs[ii] < x_min { x_min = xs[ii] }
+    if xs[ii] > x_max { x_max = xs[ii] }
+    ii = ii + 1
+}
+let span = if x_max - x_min > 0.000001 { x_max - x_min } else { 1.0 }
+
+let scales = [1, 2, 4, 8, 16]
+let mut entropies = []
+let B = 8
+let mut si = 0
+while si < 5 {
+    let s = scales[si]
+    let m = n / s
+    if m < 4 {
+        entropies.push(0.0)
+    } else {
+        let mut counts = []
+        let mut bi0 = 0
+        while bi0 < B { counts.push(0); bi0 = bi0 + 1 }
+        let mut p_idx = 0
+        while p_idx < m {
+            let mut blk_sum = 0.0
+            let mut q = 0
+            while q < s {
+                blk_sum = blk_sum + xs[p_idx * s + q]
+                q = q + 1
+            }
+            let v = blk_sum / to_float(s)
+            let raw_idx = floor((v - x_min) / span * to_float(B))
+            let idx_clip = if raw_idx >= to_float(B) { B - 1 } else { to_int(raw_idx) }
+            let idx = if idx_clip < 0 { 0 } else { idx_clip }
+            counts[idx] = counts[idx] + 1
+            p_idx = p_idx + 1
+        }
+        let mf = to_float(m)
+        let mut h = 0.0
+        let mut bj = 0
+        while bj < B {
+            let c = counts[bj]
+            if c > 0 {
+                let p = to_float(c) / mf
+                h = h - p * log(p)
+            }
+            bj = bj + 1
+        }
+        let h_max = log(to_float(B))
+        entropies.push(h / h_max)
+    }
+    si = si + 1
+}
+
+let mut sum_h = 0.0
+let mut sum_h2 = 0.0
+let mut ei = 0
+while ei < 5 {
+    sum_h = sum_h + entropies[ei]
+    sum_h2 = sum_h2 + entropies[ei] * entropies[ei]
+    ei = ei + 1
+}
+let mean_h = sum_h / 5.0
+let var_h = sum_h2 / 5.0 - mean_h * mean_h
+let scale_invariance = if mean_h > 0.000001 { 1.0 - var_h / (mean_h * mean_h) } else { 0.0 }
+let inv_clip = if scale_invariance < 0.0 { 0.0 } else { if scale_invariance > 1.0 { 1.0 } else { scale_invariance } }
+
+let score = 0.5 * mean_h + 0.5 * inv_clip
+let hits = if score > 0.5 { 6 } else { if score > 0.3 { 4 } else { 2 } }
+println("lens[multiscale] category=core axis=\"Multiscale entropy at {1,2,4,8,16} + scale-invariance\" score=" + to_string(score) + " support=1 n=" + to_string(n) + " meta={\"mean_h\":" + to_string(mean_h) + ",\"scale_invariance\":" + to_string(scale_invariance) + ",\"H1\":" + to_string(entropies[0]) + ",\"H16\":" + to_string(entropies[4]) + ",\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")

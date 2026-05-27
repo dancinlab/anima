@@ -1,0 +1,25 @@
+// test3: ML stub — minimal LoRA-attach sketch (proof-of-concept only).
+// NOT a full audio_token_predictor port. raw#9 honest: 1576L target =
+// out-of-scope for MVP. This stub exercises typed args, control flow,
+// and a placeholder for python-side `peft` calls (untranspiled raw#).
+
+fn lora_attach(model_name: string, rank: int, alpha: float) -> int {
+    // sketch: in real .hexa we'd call a hexa-runtime adapter shim;
+    // for the transpiler MVP we emit valid python that depends on
+    // torch / peft being installed on the ubu/RunPod target.
+    let mut steps = 0
+    if rank <= 0 {
+        println("rank must be > 0")
+        return -1
+    }
+    while steps < 3 {
+        println("step", steps, "rank", rank, "alpha", to_string(alpha))
+        steps = steps + 1
+    }
+    return steps
+}
+
+fn main() {
+    let n = lora_attach("Llama-3.2-1B", 8, 16.0)
+    println("done steps =", n)
+}

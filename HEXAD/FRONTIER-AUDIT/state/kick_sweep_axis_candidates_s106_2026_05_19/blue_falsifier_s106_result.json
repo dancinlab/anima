@@ -1,0 +1,234 @@
+{
+  "B-S106-1": {
+    "verdict": "B-S106-1 TAXONOMY-PARTITION-EXHAUSTIVE-DISJOINT-CLOSED",
+    "exhaustive": true,
+    "disjoint": true,
+    "n_pairs_checked": 10,
+    "expected_pairs": 10,
+    "buckets": [
+      "K",
+      "L",
+      "V",
+      "O",
+      "S"
+    ],
+    "passed": true
+  },
+  "B-S106-2": {
+    "verdict": "B-S106-2 \u00a77-GOAL-LEGITIMACY-GATE-CLOSED-CONJUNCTION",
+    "n_truth_rows": 8,
+    "pass_count": 1,
+    "only_one_pass": true,
+    "pass_row_is_ttt": true,
+    "truth_table": [
+      {
+        "a": false,
+        "b": false,
+        "c": false,
+        "gate": false
+      },
+      {
+        "a": false,
+        "b": false,
+        "c": true,
+        "gate": false
+      },
+      {
+        "a": false,
+        "b": true,
+        "c": false,
+        "gate": false
+      },
+      {
+        "a": false,
+        "b": true,
+        "c": true,
+        "gate": false
+      },
+      {
+        "a": true,
+        "b": false,
+        "c": false,
+        "gate": false
+      },
+      {
+        "a": true,
+        "b": false,
+        "c": true,
+        "gate": false
+      },
+      {
+        "a": true,
+        "b": true,
+        "c": false,
+        "gate": false
+      },
+      {
+        "a": true,
+        "b": true,
+        "c": true,
+        "gate": true
+      }
+    ],
+    "passed": true
+  },
+  "B-S106-3": {
+    "verdict": "B-S106-3 CANDIDATE-CLASSIFICATION-CLOSED",
+    "candidates_audited": 15,
+    "expected": 15,
+    "bucket_counts": {
+      "K": 7,
+      "L": 0,
+      "V": 3,
+      "O": 3,
+      "S": 2
+    },
+    "passed": true
+  },
+  "B-S106-4": {
+    "verdict": "B-S106-4 NEW-\u00a77-LEGITIMATE-ZERO-OR-MORE-CLOSED",
+    "n_new_legitimate": 0,
+    "n_design_open": 3,
+    "n_known": 7,
+    "n_violating": 3,
+    "n_stub_not_axis": 2,
+    "honest_finding": "n_l=0 means arc's known (data, param) board is exhaustive at this discipline level \u2014 not battery failure, measured-negative; design-OPEN candidates (n_o) require design-tier expansion fire before classification firms to L or rejection",
+    "passed": true
+  },
+  "B-S106-5": {
+    "verdict": "B-S106-5 ENGINE-PROPOSES-CLOSED-FORM-DISPOSES",
+    "axiom": "fire_warrant \u2194 (kick_proposed \u2227 closed_form_passed)",
+    "entailment": "axiom |= (kick_proposed \u2227 \u00acclosed_form_passed) \u2192 \u00acfire_warrant",
+    "n_axiom_rows": 4,
+    "expected_axiom_rows": 4,
+    "axiom_partitions_correctly": true,
+    "entailment_holds": true,
+    "truth_table": [
+      {
+        "kick_proposed": false,
+        "closed_form_passed": false,
+        "fire_warrant": false,
+        "axiom_holds": true,
+        "rejection_holds": true
+      },
+      {
+        "kick_proposed": false,
+        "closed_form_passed": false,
+        "fire_warrant": true,
+        "axiom_holds": false,
+        "rejection_holds": true
+      },
+      {
+        "kick_proposed": false,
+        "closed_form_passed": true,
+        "fire_warrant": false,
+        "axiom_holds": true,
+        "rejection_holds": true
+      },
+      {
+        "kick_proposed": false,
+        "closed_form_passed": true,
+        "fire_warrant": true,
+        "axiom_holds": false,
+        "rejection_holds": true
+      },
+      {
+        "kick_proposed": true,
+        "closed_form_passed": false,
+        "fire_warrant": false,
+        "axiom_holds": true,
+        "rejection_holds": true
+      },
+      {
+        "kick_proposed": true,
+        "closed_form_passed": false,
+        "fire_warrant": true,
+        "axiom_holds": false,
+        "rejection_holds": false
+      },
+      {
+        "kick_proposed": true,
+        "closed_form_passed": true,
+        "fire_warrant": false,
+        "axiom_holds": false,
+        "rejection_holds": true
+      },
+      {
+        "kick_proposed": true,
+        "closed_form_passed": true,
+        "fire_warrant": true,
+        "axiom_holds": true,
+        "rejection_holds": true
+      }
+    ],
+    "anchor": "\u00a769 ENGINE-INVOCATION-IS-REAL-NOT-STUB + g_kick_autonomous g3_arbiter: 'engine PROPOSES / closed-form predicate DISPOSES'",
+    "passed": true
+  },
+  "B-S106-6": {
+    "verdict": "B-S106-6 KICK-OUTPUT-EMPIRICAL-RECORDED",
+    "rounds": [
+      {
+        "round": 1,
+        "seed": "emergence threshold axis beyond data param count",
+        "engine": "mk9",
+        "banner_real": true,
+        "stub_marker_absent": true,
+        "smash": 414,
+        "free": 211,
+        "abs": 0,
+        "meta": 0,
+        "hyper": 0,
+        "res": 43,
+        "total": 668,
+        "overlay_lines": 517,
+        "overlay_pool_emitted": 0,
+        "wall_s": 17.5,
+        "verifier_verdict": "skip"
+      },
+      {
+        "round": 2,
+        "seed": "anima physics emergence dimension control fire",
+        "engine": "mk9",
+        "banner_real": true,
+        "stub_marker_absent": true,
+        "smash": 414,
+        "free": 211,
+        "abs": 0,
+        "meta": 0,
+        "hyper": 0,
+        "res": 34,
+        "total": 659,
+        "overlay_lines": 517,
+        "overlay_pool_emitted": 0,
+        "wall_s": 18.1,
+        "verifier_verdict": "skip"
+      }
+    ],
+    "all_engine_real_mk9": true,
+    "all_overlay_pool_zero": true,
+    "n_rounds": 2,
+    "honest_note": "Mk.IX 6-stage engine REAL (\u00a769 ENGINE-IS-REAL pattern carries) but overlay pool=0 (517 candidate lines generated yet not stdout-emitted) \u2014 \u00a774 memory feedback_kick_summary_only_output known; candidates this battery audits are arc-frontier-inferred per task spec 'Don't manufacture novelty'",
+    "passed": true
+  },
+  "B-S106-7": {
+    "verdict": "B-S106-7 CENTRAL-BLUE-FALSIFIER-0-LINE-DIFF",
+    "central_path": "/Users/ghost/core/anima/state/verify_hexad_blue_2026_05_15/blue_falsifier.py",
+    "expected_prefix": "c93e160a8a376a94",
+    "actual_sha256_prefix": "c93e160a8a376a94",
+    "prefix_match": true,
+    "passed": true
+  },
+  "B-S106-NOTE": {
+    "verdict": "B-S106-NOTE empirical-carve-out",
+    "scope": "Battery proves: (1) taxonomy partition exhaustive+disjoint, (2) \u00a77 gate closed conjunction, (3) each candidate's bucket is closed-form, (4) outcome (n_L = 0 or > 0) is honest, (5) engine PROPOSES / closed-form DISPOSES (\u00a769 anchor), (6) kick rounds run + engine real, (7) central sidecar 0-line-diff. Battery does NOT prove: (a) that any surviving L or O candidate WILL emergence at fire-tier, (b) that kick exhausted ALL possible emergence-threshold axes (only those the Mk.IX 6-stage overlay surfaces + the arc-frontier-mapped axes), (c) that GOAL emergence is reachable along any audited axis. necessary-not-sufficient at every layer (mirror B-EMERGE-7 / B-PHASE-B-NOTE / B-PHYS-NOTE family). NOT counted \ud83d\udd35.",
+    "family": "B-D-NOTE / B-EMERGE-NOTE / B-INTRA-NOTE / B-S75-FIRE-NOTE / B-S103-NOTE / B-S104-NOTE / B-S105-NOTE family carry"
+  },
+  "summary": {
+    "n_pass": 7,
+    "n_total": 7,
+    "all_pass": true,
+    "pass_ratio": "7/7",
+    "sidecar_only": true,
+    "central_blue_falsifier_diff_lines": 0
+  }
+}

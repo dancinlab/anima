@@ -1,0 +1,62 @@
+=== S187 3B GRID variant=C dispatch start 2026-05-20T16:35:19Z ===
+    lambdas: psi=0.30 route=0.20 phi=1.00 cycle=0.15 curious=0.10 replay=-0.05
+    arch:    d=3072 L=28 nh=24 nkv=8  (head_dim=128 GQA_groups=3)
+    train:   steps=8000 bsz=16 block=512 lr=3e-4 warmup=200
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"errors":[{"message":"Something went wrong. Please try again later or contact support.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"INTERNAL_SERVER_ERROR"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA H100 NVL
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"beliq787x3trfp","machineId":"o7h99o28jtin"}}}
+[create] pod beliq787x3trfp on NVIDIA H100 NVL
+[ssh-ready] iter 2: 38.143.35.131:10589 - port mapped AND handshake OK
+Warning: Permanently added '[38.143.35.131]:10589' (ED25519) to the list of known hosts.
+Warning: Permanently added '[38.143.35.131]:10589' (ED25519) to the list of known hosts.
+Warning: Permanently added '[38.143.35.131]:10589' (ED25519) to the list of known hosts.
+Warning: Permanently added '[38.143.35.131]:10589' (ED25519) to the list of known hosts.
+Warning: Permanently added '[38.143.35.131]:10589' (ED25519) to the list of known hosts.
+Warning: Permanently added '[38.143.35.131]:10589' (ED25519) to the list of known hosts.
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, s1-n 777000)
+Warning: Permanently added '[38.143.35.131]:10589' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[38.143.35.131]:10589' (ED25519) to the list of known hosts.
+[build] corpus sha = be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build] WARN: CORPUS_S101 sha drift (post-ee4ceea27); S187 anchors on be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b
+[build] CORPUS_S101 sha CARRIED == be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b
+[gpu] checking GPU mem on pod
+Warning: Permanently added '[38.143.35.131]:10589' (ED25519) to the list of known hosts.
+NVIDIA H100 NVL, 95830 MiB
+[train] S187 3B GRID variant=C  d=3072 L=28 nh=24 nkv=8
+[train]   from-scratch seed 1337  steps=8000 bsz=16 block=512 lr=3e-4 (warmup=200 cosine)
+[train]   lambdas: psi=0.30 route=0.20 phi=1.00
+[train]            cycle=0.15 curious=0.10 replay=-0.05
+Warning: Permanently added '[38.143.35.131]:10589' (ED25519) to the list of known hosts.
+TRAIN_PID 216
+[train-C]     return _VF.dropout_(input, p, training) if inplace else _VF.dropout(input, p, training)
+[train-C]                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[train-C] torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 384.00 MiB. GPU 0 has a total capacity of 93.10 GiB of which 247.38 MiB is free. Process 1165924 has 92.85 GiB memory in use. Of the allocated memory 92.00 GiB is allocated by PyTorch, and 185.45 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[teardown] terminating pod beliq787x3trfp (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== S187 3B GRID variant=C dispatch end 2026-05-20T16:46:48Z rc=0 ===

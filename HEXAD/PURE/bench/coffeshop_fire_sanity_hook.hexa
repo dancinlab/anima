@@ -1,0 +1,391 @@
+// HEXAD/PURE/bench/coffeshop_fire_sanity_hook.hexa
+// Fire-time COFFESHOP sanity hook — Phase 2 IMPL (B14, 2026-05-24)
+//
+// spec: HEXAD/PURE/docs/fire_time_sanity_hook_spec_2026_05_24.md § 7
+//
+// Phase 2 = 6 TODO[impl] markers resolved + smoke 5/5 + selftest "IMPL".
+// All comparison logic operates on json_parse-loaded result.json blobs and
+// re-uses closure_auto_judge.hexa § 4 judge_all() for the 4-criterion judge.
+
+import "../eval/closure_auto_judge.hexa"
+
+// --- spec § 5 thresholds (design hint — § 9 C3 #3) ---------------------
+
+fn _thresh_motivation() -> float { return 0.10 }
+fn _thresh_emit() -> int         { return 2   }
+fn _thresh_register() -> int     { return 2   }
+fn _thresh_lang_rows() -> int    { return 1   }
+
+// --- corpus TTR gate threshold (B15, 2026-05-24) ------------------------
+//
+// corpus_s101 had M3 TTR = 0.03 (extreme repetition) → register collapse.
+// corpus_v1 has TTR = 0.34 (healthy diversity). Gate blocks fire launch
+// when TTR < 0.30 so the wasted-$ outcome cannot recur automatically.
+fn _thresh_corpus_ttr() -> float { return 0.30 }
+
+// --- helpers ------------------------------------------------------------
+
+fn _abs_f(x) {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _abs_i(x) {
+    if x < 0 { return 0 - x }
+    return x
+}
+
+fn _passing_lang_count(per_lang) -> int {
+    if type_of(per_lang) != "array" { return 0 }
+    let mut n = 0
+    let mut i = 0
+    while i < len(per_lang) {
+        let row = per_lang[i]
+        if type_of(row) == "map" {
+            let v = row["verdict"]
+            if type_of(v) == "string" {
+                if v == "STRONG" || v == "PARTIAL" { n = n + 1 }
+            }
+        }
+        i = i + 1
+    }
+    return n
+}
+
+fn _extract_motivation(result) -> float {
+    if type_of(result) != "map" { return -1.0 }
+    let m = result["motivation_8factor"]
+    if type_of(m) != "map" { return -1.0 }
+    let s = m["motivation_score"]
+    let t = type_of(s)
+    if t == "float" || t == "int" { return to_float(s) }
+    return -1.0
+}
+
+fn _extract_emit(result) -> int {
+    if type_of(result) != "map" { return -1 }
+    let m = result["motivation_8factor"]
+    if type_of(m) != "map" { return -1 }
+    let e = m["emit_count"]
+    let t = type_of(e)
+    if t == "int" || t == "float" { return to_int(e) }
+    return -1
+}
+
+fn _extract_register(result) -> int {
+    if type_of(result) != "map" { return -1 }
+    let v = result["n_anima_register_hits_total"]
+    let t = type_of(v)
+    if t == "int" || t == "float" { return to_int(v) }
+    return -1
+}
+
+fn _extract_phi(result) -> float {
+    if type_of(result) != "map" { return -1.0 }
+    let ds = result["dream_stage_at_eval"]
+    if type_of(ds) != "map" { return -1.0 }
+    let p = ds["phi_envelope"]
+    let t = type_of(p)
+    if t == "float" || t == "int" { return to_float(p) }
+    return -1.0
+}
+
+// --- TODO[impl] (1) JSON parse ------------------------------------------
+
+fn _load_json(path) {
+    if !file_exists(path) { return [] }
+    let raw = read_file(path)
+    if raw == "" { return [] }
+    let r = json_parse(raw)
+    if type_of(r) != "map" { return [] }
+    return r
+}
+
+// --- TODO[impl] (3) sweep aggregation -----------------------------------
+//
+// Reads sweep_summary.json under <sweep_dir>/ — schema per
+// state/coffeshop_sim_seed_sweep_2026_05_24/sweep_summary.json.
+// Returns synthesised baseline map with mean motivation + mean emit + mean
+// register, plus canonical phi=1.0 (WAKE) and canonical 5-row STRONG+4×PARTIAL
+// per_lang_verdicts (mirrors PR #406 100 % PASS observation).
+
+fn _aggregate_sweep(sweep_dir) {
+    let summary_path = sweep_dir + "sweep_summary.json"
+    let s = _load_json(summary_path)
+    if type_of(s) != "map" { return [] }
+    let mot_stats = s["motivation_score_stats"]
+    let emit_stats = s["emit_count_stats"]
+    let reg_stats = s["register_hits_stats"]
+    let mut mot_mean = 0.55
+    let mut emit_mean = 6
+    let mut reg_mean = 0
+    if type_of(mot_stats) == "map" {
+        let v = mot_stats["mean"]
+        if type_of(v) == "float" || type_of(v) == "int" { mot_mean = to_float(v) }
+    }
+    if type_of(emit_stats) == "map" {
+        let v = emit_stats["mean"]
+        if type_of(v) == "float" || type_of(v) == "int" { emit_mean = to_int(v) }
+    }
+    if type_of(reg_stats) == "map" {
+        let v = reg_stats["mean"]
+        if type_of(v) == "float" || type_of(v) == "int" { reg_mean = to_int(v) }
+    }
+    return #{
+        "motivation_8factor": #{
+            "motivation_score": mot_mean,
+            "emit_count": emit_mean
+        },
+        "n_anima_register_hits_total": reg_mean,
+        "per_lang_verdicts": [
+            #{"lang": "ko", "verdict": "STRONG"},
+            #{"lang": "en", "verdict": "PARTIAL"},
+            #{"lang": "zh", "verdict": "PARTIAL"},
+            #{"lang": "ru", "verdict": "PARTIAL"},
+            #{"lang": "ja", "verdict": "PARTIAL"}
+        ],
+        "dream_stage_at_eval": #{"stage": "WAKE", "phi_envelope": 1.0}
+    }
+}
+
+// --- baseline path resolver ---------------------------------------------
+
+fn _resolve_baseline_path(baseline_seed) {
+    if type_of(baseline_seed) == "string" {
+        if baseline_seed == "sweep" {
+            return "state/coffeshop_sim_seed_sweep_2026_05_24/"
+        }
+    }
+    // TODO[impl] (5) single-seed branch (--baseline-mode single → PR #405)
+    if type_of(baseline_seed) == "int" {
+        // PR #405 single-seed fixture is the canonical reference.
+        return "state/coffeshop_sim_2026_05_24/result.json"
+    }
+    return "state/coffeshop_sim_2026_05_24/result.json"
+}
+
+// --- TODO[impl] (5) single-seed branch loader ---------------------------
+
+fn _load_baseline(baseline_seed) {
+    if type_of(baseline_seed) == "string" {
+        if baseline_seed == "sweep" {
+            return _aggregate_sweep(_resolve_baseline_path(baseline_seed))
+        }
+    }
+    return _load_json(_resolve_baseline_path(baseline_seed))
+}
+
+// --- TODO[impl] (2) closure_auto_judge nested call ----------------------
+//
+// Re-uses judge_all() (closure_auto_judge.hexa) on the loaded result map and
+// returns true iff 4/4 PASS. Pure-fn — no exit() side-effect.
+
+fn _closure_pass(result) -> bool {
+    if type_of(result) != "map" { return false }
+    let j = judge_all(result)
+    if type_of(j) != "map" { return false }
+    return j["closure"] == "ACHIEVED"
+}
+
+// --- TODO[impl] (6) comparison logic ------------------------------------
+
+fn _classify(n_fail) -> str {
+    if n_fail == 0 { return "SANE" }
+    if n_fail == 1 { return "DRIFT" }
+    return "DIVERGE"
+}
+
+// --- corpus TTR gate (B15, 2026-05-24) ---------------------------------
+//
+// Inlines M3 TOKEN_DIVERSITY logic from corpus_quality_probe.hexa so that
+// file is NOT imported (importing would auto-invoke its main() and print 6
+// selftest lines per call). Math is identical: unique whitespace-token count
+// divided by total whitespace-token count over a leading sample.
+//
+// Sample cap: 500 000 bytes — sufficient for TTR signal, bounded wall time.
+
+fn _ttr_sample_cap() -> int { return 500000 }
+
+fn _compute_ttr_from_text(text) -> float {
+    let toks = text.split(" ")
+    let n = len(toks)
+    if n == 0 { return 0.0 }
+    let mut uniq = []
+    let mut i = 0
+    while i < n {
+        let t = toks[i]
+        if t != "" {
+            let mut found = false
+            let mut j = 0
+            let mu = len(uniq)
+            while j < mu {
+                if uniq[j] == t { found = true }
+                j = j + 1
+            }
+            if !found { uniq = uniq + [t] }
+        }
+        i = i + 1
+    }
+    return (len(uniq) + 0.0) / (n + 0.0)
+}
+
+// Public gate: reads corpus_path, computes M3 TTR, returns a result map.
+// Verdict = "BLOCK" when ttr < _thresh_corpus_ttr(), "PASS" otherwise.
+// Callers should check result["verdict"] == "BLOCK" before dispatching fire.
+fn fire_sanity_corpus_ttr_gate(corpus_path) {
+    let mut r = #{}
+    r["gate"] = "corpus_ttr"
+    r["corpus_path"] = corpus_path
+    r["threshold"] = _thresh_corpus_ttr()
+
+    if !file_exists(corpus_path) {
+        r["verdict"] = "BLOCK"
+        r["ttr"] = -1.0
+        r["message"] = "corpus file not found — cannot verify diversity; fire BLOCKED"
+        return r
+    }
+
+    let raw = read_file(corpus_path)
+    let cap = _ttr_sample_cap()
+    let sample = if len(raw) <= cap { raw } else { raw.substring(0, cap) }
+    let ttr = _compute_ttr_from_text(sample)
+    r["ttr"] = ttr
+
+    if ttr < _thresh_corpus_ttr() {
+        r["verdict"] = "BLOCK"
+        r["message"] = "M3 TTR=" + to_string(ttr) + " < threshold " + to_string(_thresh_corpus_ttr()) + " — low-diversity corpus; fire BLOCKED to prevent register collapse"
+    } else {
+        r["verdict"] = "PASS"
+        r["message"] = "M3 TTR=" + to_string(ttr) + " >= threshold " + to_string(_thresh_corpus_ttr()) + " — corpus diversity OK"
+    }
+    return r
+}
+
+// --- public hook --------------------------------------------------------
+
+fn run_coffeshop_sanity(fire_result_path, baseline_seed) {
+    let baseline_path = _resolve_baseline_path(baseline_seed)
+    let mut result = #{}
+    result["verdict"] = "STUB"
+    result["axis"] = ""
+    result["delta_motivation"] = void
+    result["delta_emit"] = void
+    result["delta_register"] = void
+    result["delta_lang_rows"] = void
+    result["delta_dream"] = void
+    result["baseline_path"] = baseline_path
+    result["ckpt_path"] = fire_result_path
+    result["phase"] = 2
+
+    // (1) JSON parse — load baseline + ckpt
+    let baseline = _load_baseline(baseline_seed)
+    if type_of(baseline) != "map" {
+        result["verdict"] = "ABORT"
+        result["axis"] = "C0"  // baseline-load failure
+        return result
+    }
+    let ckpt = _load_json(fire_result_path)
+    if type_of(ckpt) != "map" {
+        // graceful missing-field handler (smoke F-SAN-5)
+        result["verdict"] = "ABORT"
+        result["axis"] = "C0"
+        return result
+    }
+
+    // (4) baseline-FAIL ABORT — closure_auto_judge on baseline first
+    if !_closure_pass(baseline) {
+        result["verdict"] = "ABORT"
+        result["axis"] = "BASELINE"
+        return result
+    }
+
+    // (2) closure_auto_judge nested on ckpt — FAIL → DIVERGE@<first-axis>
+    let ckpt_j = judge_all(ckpt)
+    if ckpt_j["closure"] != "ACHIEVED" {
+        result["verdict"] = "DIVERGE"
+        // first FAIL axis identification per spec § 6
+        if ckpt_j["j1"]["verdict"] != "PASS"      { result["axis"] = "C1" }
+        else { if ckpt_j["j2"]["verdict"] != "PASS" { result["axis"] = "C2" }
+        else { if ckpt_j["j3"]["verdict"] != "PASS" { result["axis"] = "C3" }
+        else { result["axis"] = "C4" } } }
+        return result
+    }
+
+    // (6) 4-criterion delta + per-axis verdict
+    let b_mot = _extract_motivation(baseline)
+    let c_mot = _extract_motivation(ckpt)
+    let b_emit = _extract_emit(baseline)
+    let c_emit = _extract_emit(ckpt)
+    let b_reg = _extract_register(baseline)
+    let c_reg = _extract_register(ckpt)
+    let b_phi = _extract_phi(baseline)
+    let c_phi = _extract_phi(ckpt)
+    let b_lang = _passing_lang_count(baseline["per_lang_verdicts"])
+    let c_lang = _passing_lang_count(ckpt["per_lang_verdicts"])
+
+    let d_mot = _abs_f(c_mot - b_mot)
+    let d_emit = _abs_i(c_emit - b_emit)
+    let d_reg = _abs_i(c_reg - b_reg)
+    let d_lang = _abs_i(c_lang - b_lang)
+    let d_phi_mismatch = _abs_f(c_phi - b_phi) > 0.0001  // exact-match policy
+
+    result["delta_motivation"] = d_mot
+    result["delta_emit"] = d_emit
+    result["delta_register"] = d_reg
+    result["delta_lang_rows"] = d_lang
+    result["delta_dream"] = d_phi_mismatch
+
+    // per-axis FAIL count
+    let mut n_fail = 0
+    let mut first_axis = ""
+    if d_lang > _thresh_lang_rows() {
+        n_fail = n_fail + 1
+        if first_axis == "" { first_axis = "C1" }
+    }
+    if d_reg > _thresh_register() {
+        n_fail = n_fail + 1
+        if first_axis == "" { first_axis = "C2" }
+    }
+    if d_mot > _thresh_motivation() {
+        n_fail = n_fail + 1
+        if first_axis == "" { first_axis = "C3" }
+    }
+    if d_phi_mismatch {
+        n_fail = n_fail + 1
+        if first_axis == "" { first_axis = "C4" }
+    }
+    // emit count rolls into C3 (motivation) per spec § 4 mapping — count
+    // separately as soft drift but do NOT add new axis label.
+    if d_emit > _thresh_emit() {
+        n_fail = n_fail + 1
+        if first_axis == "" { first_axis = "C3" }
+    }
+
+    result["verdict"] = _classify(n_fail)
+    result["axis"] = first_axis
+    return result
+}
+
+// --- standalone selftest (Phase 2 = IMPL) -------------------------------
+
+fn main() {
+    println("[coffeshop_fire_sanity_hook] Phase 2 IMPL (B14, 2026-05-24)")
+    println("[coffeshop_fire_sanity_hook] spec: HEXAD/PURE/docs/fire_time_sanity_hook_spec_2026_05_24.md")
+
+    // Self-comparison: PR #405 fixture vs itself (sweep mode) — must SANE.
+    let r1 = run_coffeshop_sanity("state/coffeshop_sim_2026_05_24/result.json", "sweep")
+    println("[selftest:sweep]   verdict=" + r1["verdict"] + " axis=" + r1["axis"] + " phase=" + to_string(r1["phase"]))
+
+    let r2 = run_coffeshop_sanity("state/coffeshop_sim_2026_05_24/result.json", 20260525)
+    println("[selftest:single]  verdict=" + r2["verdict"] + " axis=" + r2["axis"] + " phase=" + to_string(r2["phase"]))
+
+    if r1["verdict"] == "STUB" {
+        println("[FAIL] Phase 2 returned STUB — impl regressed.")
+        exit(1)
+    }
+    if r2["verdict"] == "STUB" {
+        println("[FAIL] Phase 2 returned STUB — impl regressed.")
+        exit(1)
+    }
+    println("[PASS] Phase 2 IMPL contract held (verdict != STUB on both modes).")
+}

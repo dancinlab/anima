@@ -1,0 +1,41 @@
+{
+  "section": "§89 HEXAD-KICK-GAP-SWEEP",
+  "battery": "B-S89-1..6",
+  "n_pass": 6,
+  "n_total": 6,
+  "all_pass": true,
+  "results": [
+    {
+      "id": "B-S89-1 KICK-ENGINE-IS-REAL-NOT-STUB",
+      "pass": true,
+      "detail": "5/5 seeds is_real=True (Mk.IX banner ∧ no [omega-drill-stub]); all smash>0 nontrivial=True — real Mk.IX engine confirmed"
+    },
+    {
+      "id": "B-S89-2 CONNECTION-POINT-3-CLOSED-FORM-PREDICATE",
+      "pass": true,
+      "detail": "D@emit→S@t+1: transfer x_(t+1)=S_encode(e_t) closed=True; invariant K(x_(t+1))≤K(e_t)+K(S_encode) data-processing-ineq closed=True; predicate DEFINABLE=True; implemented=False (definable≠wired, honest)"
+    },
+    {
+      "id": "B-S89-3 CONNECTION-POINT-4-CLOSED-FORM-PREDICATE",
+      "pass": true,
+      "detail": "E@Φ→D@content: transfer logits'=D_decode(h)+g(Φ)·c closed=True; invariant g(0)=0 [exact=True] ∧ ∂g/∂Φ≥0 [51-pt grid monotone=True, neg-ctrl g=-Φ rejected=True]; predicate DEFINABLE=True; implemented=False (definable≠wired, honest)"
+    },
+    {
+      "id": "B-S89-4 ENGINE-PROPOSES-CLOSED-DISPOSES",
+      "pass": true,
+      "detail": "class invariant under kick-signal scrub=True [#3-D-emit-to-S:B, #4-E-phi-to-D-content:B, B1-C-to-D:B, B2-E-to-trinity:B, B3-W-to-E:B]; engine summary-only (overlay pool=0, §74)=True — verdict from closed predicate, NOT engine"
+    },
+    {
+      "id": "B-S89-5 GAP-MAP-CLASSIFICATION-EXHAUSTIVE-DISJOINT",
+      "pass": true,
+      "detail": "2^3=8 Boolean-cube assignments enumerated: classes_hit=['A', 'B', 'C'] exhaustive=True every-one-class=True; truth-table ¬(t∧i)→C / t∧i∧impl→A / t∧i∧¬impl→B verified=True; §89 rows all∈{A,B,C}=True counts-sum=True"
+    },
+    {
+      "id": "B-S89-6 ARBITRATION-DETERMINISTIC",
+      "pass": true,
+      "detail": "classify 3× re-run bit-identical=True ('B', 'B', 'B', 'B', 'B'); matches result.json class column=True — pure deterministic fn"
+    }
+  ],
+  "B-S89-NOTE": "B-S89-NOTE empirical carve-out: WHICH gap (#3 D@emit→S@t+1 or #4 E@Φ→D@content) is the actual GOAL-emergence bottleneck = a future-fire EMPIRICAL question (B-S63-NOTE / B-D-NOTE / B-EMERGE-7 family — NOT counted 🔵). closed-form-definable ≠ implemented ≠ GOAL emergence (necessary-not-sufficient).",
+  "central_blue_falsifier": "state/verify_hexad_blue_2026_05_15/blue_falsifier.py UNCHANGED (sidecar pattern)"
+}

@@ -1,0 +1,192 @@
+// PURE bilingual MI probe — Grosjean L1↔L2 MI wrapper (P127 skeleton).
+// Wraps anima-engines/bilingual_consciousness_phi.hexa (Grosjean 1989 holistic +
+// Green 1998 inhibitory + Meuter & Allport 1999 switch-cost asymmetry) into a
+// parse-only call surface over generated text rows (same shape as multilingual_
+// probe). Cross-lingual leak = Shannon MI on per-char native-script indicators.
+// HONEST C3: engine helpers expect float channels + auto-fire selftest on
+// import, so we reimplement minimal Shannon MI locally (p7 observe-bytes-only).
+// CLI: hexa run HEXAD/PURE/eval/bilingual_mi_probe.hexa selftest
+// Public: lang_id_n_gram · cross_lingual_mi · switch_cost_asymmetry · score_cross_lingual_leak
+// NO touch to multilingual_probe.hexa — real wiring is a separate PR.
+
+fn _bmp_cp(ch: str) -> int {
+    let nb = len(ch)
+    if nb == 1 { return ord(ch[0]) }
+    if nb == 2 { return (ord(ch[0]) - 192) * 64 + (ord(ch[1]) - 128) }
+    if nb == 3 { return (ord(ch[0]) - 224) * 4096 + (ord(ch[1]) - 128) * 64 + (ord(ch[2]) - 128) }
+    if nb == 4 { return (ord(ch[0]) - 240) * 262144 + (ord(ch[1]) - 128) * 4096 + (ord(ch[2]) - 128) * 64 + (ord(ch[3]) - 128) }
+    return 0
+}
+
+fn _is_native(cp: int, lang: str) -> bool {
+    if lang == "en" { return (cp >= 65 && cp <= 90) || (cp >= 97 && cp <= 122) }
+    if lang == "ko" { return cp >= 44032 && cp <= 55203 }
+    if lang == "zh" { return cp >= 19968 && cp <= 40959 }
+    if lang == "ru" { return cp >= 1024 && cp <= 1279 }
+    if lang == "ja" { return (cp >= 12352 && cp <= 12447) || (cp >= 12448 && cp <= 12543) || (cp >= 19968 && cp <= 40959) }
+    return false
+}
+
+fn _log2_safe(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let mut y = x  let mut e = 0.0
+    while y > 2.0 { y = y / 2.0  e = e + 1.0 }
+    while y < 0.5 { y = y * 2.0  e = e - 1.0 }
+    let u = y - 1.0  let u2 = u * u
+    return e + (u - u2 * 0.5 + u2 * u / 3.0 - u2 * u2 * 0.25 + u2 * u2 * u * 0.2) / 0.6931471805599453
+}
+
+fn _rows_concat(rows: list) -> str {
+    let mut s = ""  let mut i = 0  let n = len(rows)
+    while i < n {
+        let r = rows[i]
+        if type_of(r) == "map" { let t = r["text"]  if type_of(t) == "string" { s = s + t + "\n" } }
+        i = i + 1
+    }
+    return s
+}
+
+// lang_id_n_gram — pick highest native-char ratio over {en,ko,zh,ru,ja}; floor 0.20.
+fn lang_id_n_gram(text: str) -> str {
+    let n = text.char_count()
+    if n == 0 { return "unknown" }
+    let langs = ["en", "ko", "zh", "ru", "ja"]
+    let mut counts = [0, 0, 0, 0, 0]  let mut i = 0
+    while i < n {
+        let cp = _bmp_cp(text.nth_char(i))  let mut j = 0
+        while j < 5 { if _is_native(cp, langs[j]) { counts[j] = counts[j] + 1 }  j = j + 1 }
+        i = i + 1
+    }
+    let mut best = -1  let mut best_v = 0  let mut k = 0
+    while k < 5 { if counts[k] > best_v { best_v = counts[k]  best = k }  k = k + 1 }
+    if best < 0 || (best_v + 0.0) / (n + 0.0) < 0.20 { return "unknown" }
+    return langs[best]
+}
+
+// cross_lingual_mi — Shannon MI(bits) on per-char (is_src, is_tgt) joint hist.
+// Grosjean residual activation: tgt-char leak in src-prompt → p(0,1) > 0 → MI > 0.
+fn cross_lingual_mi(rows: list, src_lang: str, tgt_lang: str) -> float {
+    if src_lang == tgt_lang { return 0.0 }
+    let text = _rows_concat(rows)  let n = text.char_count()
+    if n < 4 { return 0.0 }
+    let mut c00 = 0  let mut c01 = 0  let mut c10 = 0  let mut c11 = 0  let mut i = 0
+    while i < n {
+        let cp = _bmp_cp(text.nth_char(i))
+        let a = _is_native(cp, src_lang)  let b = _is_native(cp, tgt_lang)
+        if !a && !b { c00 = c00 + 1 }
+        if !a &&  b { c01 = c01 + 1 }
+        if  a && !b { c10 = c10 + 1 }
+        if  a &&  b { c11 = c11 + 1 }
+        i = i + 1
+    }
+    let tot = (n + 0.0)
+    let p00 = (c00 + 0.0) / tot  let p01 = (c01 + 0.0) / tot
+    let p10 = (c10 + 0.0) / tot  let p11 = (c11 + 0.0) / tot
+    let pa0 = p00 + p01  let pa1 = p10 + p11  let pb0 = p00 + p10  let pb1 = p01 + p11
+    let mut mi = 0.0
+    if p00 > 0.0 && pa0 * pb0 > 0.0 { mi = mi + p00 * _log2_safe(p00 / (pa0 * pb0)) }
+    if p01 > 0.0 && pa0 * pb1 > 0.0 { mi = mi + p01 * _log2_safe(p01 / (pa0 * pb1)) }
+    if p10 > 0.0 && pa1 * pb0 > 0.0 { mi = mi + p10 * _log2_safe(p10 / (pa1 * pb0)) }
+    if p11 > 0.0 && pa1 * pb1 > 0.0 { mi = mi + p11 * _log2_safe(p11 / (pa1 * pb1)) }
+    if mi < 0.0 { return 0.0 }
+    return mi
+}
+
+// switch_cost_asymmetry — Green / Meuter: walk rows, count l1↔l2 transitions.
+// asymmetry = l1_after_l2 - l2_after_l1; > 0 ⇒ L1-dominant pull.
+fn switch_cost_asymmetry(rows: list, l1: str, l2: str) -> dict {
+    let n = len(rows)  let mut seq: list = []  let mut i = 0
+    while i < n {
+        let r = rows[i]
+        if type_of(r) == "map" { let t = r["text"]
+            if type_of(t) == "string" { let id = lang_id_n_gram(t)
+                if id == l1 || id == l2 { seq = seq + [id] } } }
+        i = i + 1
+    }
+    let m = len(seq)  let mut l1a = 0  let mut l2a = 0  let mut j = 1
+    while j < m {
+        if seq[j - 1] == l2 && seq[j] == l1 { l1a = l1a + 1 }
+        if seq[j - 1] == l1 && seq[j] == l2 { l2a = l2a + 1 }
+        j = j + 1
+    }
+    return #{ "l1": l1, "l2": l2, "n_rows": n, "n_typed": m, "l1_after_l2": l1a, "l2_after_l1": l2a, "asymmetry": (l1a - l2a) + 0.0 }
+}
+
+// score_cross_lingual_leak — 5x5 MI matrix + 20 asymmetry entries.
+fn _rows_for(per_lang_rows: dict, lang: str) -> list {
+    let raw = per_lang_rows[lang]
+    if type_of(raw) == "array" { return raw }
+    return []
+}
+
+fn score_cross_lingual_leak(per_lang_rows: dict) -> dict {
+    let langs = ["en", "ko", "zh", "ru", "ja"]
+    let mut mi_matrix: dict = #{}  let mut asym_table: dict = #{}  let mut i = 0
+    while i < 5 {
+        let src = langs[i]  let src_rows = _rows_for(per_lang_rows, src)
+        let mut row: dict = #{}  let mut j = 0
+        while j < 5 {
+            let tgt = langs[j]
+            if i == j { row[tgt] = 0.0 } else {
+                row[tgt] = cross_lingual_mi(src_rows, src, tgt)
+                asym_table[src + "_" + tgt] = switch_cost_asymmetry(src_rows + _rows_for(per_lang_rows, tgt), src, tgt)
+            }
+            j = j + 1
+        }
+        mi_matrix[src] = row  i = i + 1
+    }
+    return #{ "mi_matrix": mi_matrix, "asymmetry": asym_table, "langs": langs }
+}
+
+fn _row(text: str) -> dict { return #{ "text": text } }
+
+fn _selftest() -> int {
+    let mut pass = 0  let mut fail = 0
+    // F1 lang_id 5 anchors.
+    let probes = [["The capital of Germany is Berlin", "en"], ["한국의 수도는 서울입니다", "ko"],
+                  ["北京是中国的首都", "zh"], ["Москва — столица России", "ru"], ["こんにちは、ありがとう", "ja"]]
+    let mut ok = 0  let mut k = 0
+    while k < 5 { if lang_id_n_gram(probes[k][0]) == probes[k][1] { ok = ok + 1 }  k = k + 1 }
+    if ok == 5 { println("F-BILINGUAL-1 PASS — lang_id_n_gram 5/5")  pass = pass + 1 }
+    else { println("F-BILINGUAL-1 FAIL — lang_id_n_gram " + to_string(ok) + "/5")  fail = fail + 1 }
+    // F2 MI: en-only ≈ 0; mixed > 0.
+    let en_only = [_row("Hello world this is a clean English sentence"),
+                   _row("Photosynthesis converts light into chemical energy")]
+    let mixed   = [_row("Hello 안녕 mixed 텍스트 with korean 단어 inside"),
+                   _row("This sentence has 한국어 단어 leaking 안으로")]
+    let mi_en = cross_lingual_mi(en_only, "en", "ko")
+    let mi_mx = cross_lingual_mi(mixed,   "en", "ko")
+    if mi_en < 0.01 && mi_mx > mi_en + 0.05 {
+        println("F-BILINGUAL-2 PASS — mi en-only=" + to_string(mi_en) + " < mixed=" + to_string(mi_mx))
+        pass = pass + 1
+    } else {
+        println("F-BILINGUAL-2 FAIL — mi en-only=" + to_string(mi_en) + " mixed=" + to_string(mi_mx))
+        fail = fail + 1
+    }
+    // F3 asymmetry — L1-pull seq L2,L1,L2,L1,L2,L1,L2,L1,L1 ⇒ asym=+1.
+    // Floor (heuristic per Meuter & Allport 1999): |asym| ≤ 1 ≈ balanced (1-row noise); ≥ 1 ⇒ L1 pull.
+    let l1_pull  = [_row("안녕"), _row("Hello"), _row("안녕"), _row("Hello"),
+                    _row("안녕"), _row("Hello"), _row("안녕"), _row("Hello"), _row("Hi again")]
+    let balanced = [_row("Hello"), _row("안녕"), _row("Hello"), _row("안녕"), _row("Hello"), _row("안녕")]
+    let asym_l1 = switch_cost_asymmetry(l1_pull, "en", "ko")["asymmetry"]
+    let asym_sm = switch_cost_asymmetry(balanced, "en", "ko")["asymmetry"]
+    if asym_l1 >= 1.0 && asym_sm >= -1.0 && asym_sm <= 1.0 {
+        println("F-BILINGUAL-3 PASS — asym L1-pull=" + to_string(asym_l1) + " ≥ 1; balanced=" + to_string(asym_sm))
+        pass = pass + 1
+    } else {
+        println("F-BILINGUAL-3 FAIL — asym L1-pull=" + to_string(asym_l1) + " balanced=" + to_string(asym_sm))
+        fail = fail + 1
+    }
+    println("[selftest] " + to_string(pass) + "/3 PASS, " + to_string(fail) + " FAIL")
+    if fail > 0 { return 1 }
+    return 0
+}
+
+fn main() {
+    let a = args()  let n = len(a)
+    if (n >= 2 && a[1] == "selftest") || (n >= 1 && a[0] == "selftest") {
+        let rc = _selftest()  if rc != 0 { exit(rc) }
+        return
+    }
+    println("usage: hexa run HEXAD/PURE/eval/bilingual_mi_probe.hexa selftest")  exit(2)
+}

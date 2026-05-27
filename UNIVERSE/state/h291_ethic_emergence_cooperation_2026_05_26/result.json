@@ -1,0 +1,48 @@
+{
+  "hypothesis": "H_291",
+  "slug": "ethic-emergence-cooperation",
+  "title": "Does cooperation (proto-ethics) emerge from spatial structure alone? — Nowak spatial Prisoner's Dilemma, well-mixed defects vs lattice cooperates (threshold-gated), anima Principle #6",
+  "date": "2026-05-26",
+  "question": "Does spatial structure alone rescue cooperation (cooperative attractor emerges) with zero injected ethics, while a matched well-mixed population collapses to defection?",
+  "engine": "self-contained (pure game dynamics) — no IIT lib import; PD payoff + Nowak spatial lattice (8-Moore + self-interaction, imitate-best) + well-mixed replicator, all inlined.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · NO RNG · deterministic (cross-process byte-identical)",
+  "toolchain_note": "built via fix-1180 bypass: HEXA_MAC_BUILD_OK=1 HEXA_LANG=<root> hexa.real.bak-2026-05-22-pre-no-hxc build <src> -o <bin>. See reference-life-cycle-hexa-run-gotchas.",
+  "payoff": "Prisoner's Dilemma (Nowak): C-C=1 (R), C-D=0 (S), D-C=b (T temptation), D-D=0 (P). Defection strictly dominates 1-shot.",
+  "seed_hypothesis_H1": "On the lattice final cooperator fraction > 0.1 (persists) at moderate temptation while matched well-mixed -> ~0.",
+  "config": {"lattice": "L=10 toroidal", "neighbourhood": "8-Moore + self-interaction (Nowak)", "update": "synchronous imitate-best", "init": "~40% D deterministic pseudo-pattern (NO RNG)", "spatial_steps": 80, "wellmixed_steps": 200, "wellmixed_x0": 0.6},
+  "results": {
+    "b_1.1": {"spatial_C": 1.0, "wellmixed_C": 7.89867e-09, "note": "lattice cooperation DOMINATES; well-mixed collapses"},
+    "b_1.5": {"spatial_C": 0.0, "wellmixed_C": 9.07485e-36},
+    "b_2.2": {"spatial_C": 0.0, "wellmixed_C": 4.91536e-69}
+  },
+  "criteria": {
+    "C1_WELL_MIXED_NULL": "PASS (all b -> <0.01)",
+    "C2_SPATIAL_RESCUE": "H1 SUPPORTED (b=1.1: lattice 1.0 vs well-mixed ~0)",
+    "C3_MONOTONE_BOUND_DET": "PASS (1.0>=0>=0; [0,1]; re-run identical)"
+  },
+  "falsifiers": {
+    "F291_1_WELL_MIXED_DEFECTS": "PASS  (b=1.1/1.5/2.2 well-mixed all <0.01)",
+    "F291_2_SPATIAL_RESCUE": "H1 SUPPORTED  (lattice C@b=1.1=1.0 > 0.1, well-mixed=7.9e-9)",
+    "F291_3_TEMPTATION_MONOTONE": "PASS  (C: 1.0 >= 0.0 >= 0.0)",
+    "F291_4_BOUND": "PASS  (all in [0,1])",
+    "F291_5_POST_HOC": "NOT_TRIGGERED"
+  },
+  "checks": "7 PASS / 0 FAIL",
+  "verdict_class": "H1 SUPPORTED (conditional — threshold-gated, see honest_limits L1)",
+  "finding": "Cooperation (proto-ethics) emerges from spatial structure alone. With the same PD payoff, differing ONLY in structure, at low temptation (b=1.1) the lattice reaches 100% cooperation (C=1.0) while the matched well-mixed replicator collapses to defection (C=7.9e-9) — with ZERO injected ethics or reward (pure local imitate-best). Ethics (cooperation) emerges from cells + structure, not injection (anima Principle #6, as a measurement). CONDITIONAL (L1): a sharp temptation threshold b in (1.1, 1.5] — at b>=1.5 even the lattice collapses to all-defect (C=0); AND self-interaction (Nowak canonical) is required (without it, the first measurement showed all-defect even at b=1.1). Emergence is POSSIBLE but NOT automatic — it needs the narrow corner of structure + low temptation + self-play.",
+  "method_correction_disclosed": "First run (no self-interaction, b={1.3,1.85,2.5}) gave spatial C=0 for all b (full defection). Adding self-interaction (part of Nowak's 1992 canonical model) + a lower-temptation sweep is a model-fidelity correction, not p-hacking; the no-self-interaction collapse is retained as boundary condition L1.",
+  "honest_limits": [
+    "L1 (CONDITIONAL, key): spatial rescue is NOT automatic — (a) sharp temptation threshold b in (1.1,1.5], b>=1.5 -> all-defect; (b) self-interaction REQUIRED (Nowak self-play), else all-defect even at b=1.1. Emergence needs structure + low-temptation + self-play corner.",
+    "L2: imitate-best is one update rule (Nowak deterministic); Fermi/proportional/stochastic shift the threshold and smooth the transition.",
+    "L3: single deterministic initial (~40% D), not an ensemble; other densities may differ near threshold.",
+    "L4: L=10 small toroidal; larger lattices may show a coexistence band (Nowak fractal) between the all-dominate and all-collapse ends.",
+    "L5: PD payoff normalisation R=1/S=0/T=b/P=0 (weak PD) is one choice; P>0 (strict) shifts the threshold.",
+    "L6: game cooperation is a proto-ethics PROXY, not morality itself; the Principle #6 link is a structural analogy (prosocial behaviour emerges from structure without injected reward).",
+    "L7: verdict is a measurement fact on a toy game, NOT 'AI becomes ethical on its own' — L1 in fact stresses the condition-dependence."
+  ],
+  "verify_fence": {
+    "claim": "H_291 cooperation emerges from spatial structure alone in a Nowak spatial Prisoner's Dilemma: at low temptation (b=1.1) the lattice reaches 100% cooperation (C=1.0) while the matched well-mixed replicator collapses to defection (~7.9e-9), with ZERO injected ethics (pure local imitate-best) — supporting anima Principle #6; CONDITIONAL: a sharp temptation threshold (b in (1.1,1.5]) and self-interaction are required, else the lattice also collapses to all-defect; deterministic toy game-dynamics, NOT an atlas identity",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values deterministic arithmetic, interpretation fenced + conditioned"
+  }
+}

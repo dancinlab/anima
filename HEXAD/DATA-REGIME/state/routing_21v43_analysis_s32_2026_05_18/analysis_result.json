@@ -1,0 +1,1112 @@
+{
+  "analysis": "RESEARCH.md §32 L3 — §16 routing 21-vs-43 distinguishing-structure",
+  "inputs": {
+    "eval_result": "eval_result_s16.json",
+    "eval_sha_ckpt": "961c07e2242b194f7d7ddff9e827d2fbd798d658426d32edf4b981a8dd9091e8",
+    "corpus_records": 777000,
+    "corpus_anchors": 168
+  },
+  "partition": {
+    "substring_grade": {
+      "success_n": 21,
+      "fail_n": 43,
+      "success_tiers": [
+        12,
+        24,
+        62,
+        66,
+        77,
+        80,
+        92,
+        101,
+        102,
+        103,
+        104,
+        106,
+        107,
+        108,
+        111,
+        113,
+        124,
+        126,
+        127,
+        132,
+        133
+      ],
+      "fail_tiers": [
+        0,
+        5,
+        18,
+        30,
+        37,
+        43,
+        48,
+        51,
+        53,
+        54,
+        58,
+        69,
+        72,
+        75,
+        83,
+        86,
+        88,
+        90,
+        91,
+        93,
+        94,
+        97,
+        99,
+        100,
+        105,
+        109,
+        110,
+        112,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        125,
+        128,
+        129,
+        130,
+        131
+      ]
+    },
+    "genuine_grade": {
+      "success_n": 17,
+      "fail_n": 47,
+      "success_tiers": [
+        77,
+        80,
+        92,
+        101,
+        102,
+        103,
+        104,
+        106,
+        107,
+        108,
+        111,
+        113,
+        124,
+        126,
+        127,
+        132,
+        133
+      ],
+      "fail_tiers": [
+        0,
+        5,
+        12,
+        18,
+        24,
+        30,
+        37,
+        43,
+        48,
+        51,
+        53,
+        54,
+        58,
+        62,
+        66,
+        69,
+        72,
+        75,
+        83,
+        86,
+        88,
+        90,
+        91,
+        93,
+        94,
+        97,
+        99,
+        100,
+        105,
+        109,
+        110,
+        112,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        125,
+        128,
+        129,
+        130,
+        131
+      ],
+      "substring_artifact_tiers": [
+        12,
+        24,
+        62,
+        66
+      ]
+    }
+  },
+  "corpus_frequency_feature": {
+    "per_anchor_records": 4625,
+    "uniform": true,
+    "note": "§16 generator allocates records uniformly per anchor (per_anchor = n_target // 168). Corpus frequency does NOT vary between anchors -> NOT a distinguishing feature; excluded from separation tests."
+  },
+  "separation_substring_grade": {
+    "ranked_by_threshold_separation_acc": [
+      "vacuum_psi_x",
+      "basin_overlap_count",
+      "vacuum_psi_dev_from_half",
+      "basin_radius",
+      "score",
+      "korean_byte_ratio",
+      "vacuum_psi_y",
+      "tier",
+      "nearest_psi_dist",
+      "name_char_len",
+      "name_byte_len"
+    ],
+    "features": {
+      "tier": {
+        "mean_success": 95.714286,
+        "mean_fail": 88.325581,
+        "mean_diff": 7.388704,
+        "cohens_d": 0.2147,
+        "threshold_separation_acc": 0.7031,
+        "rank_auc": 0.5559,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.0465,
+          "lift": 0.0465,
+          "threshold": 8.5,
+          "polarity": "ge"
+        }
+      },
+      "vacuum_psi_x": {
+        "mean_success": 0.504762,
+        "mean_fail": 0.56186,
+        "mean_diff": -0.057099,
+        "cohens_d": -0.4871,
+        "threshold_separation_acc": 0.6875,
+        "rank_auc": 0.6118,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.1628,
+          "lift": 0.1628,
+          "threshold": 0.715,
+          "polarity": "lt"
+        }
+      },
+      "vacuum_psi_y": {
+        "mean_success": 0.588571,
+        "mean_fail": 0.622093,
+        "mean_diff": -0.033522,
+        "cohens_d": -0.2661,
+        "threshold_separation_acc": 0.6562,
+        "rank_auc": 0.5371,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.0698,
+          "lift": 0.0698,
+          "threshold": 0.46499999999999997,
+          "polarity": "ge"
+        }
+      },
+      "vacuum_psi_dev_from_half": {
+        "mean_success": 0.120661,
+        "mean_fail": 0.169669,
+        "mean_diff": -0.049009,
+        "cohens_d": -0.3411,
+        "threshold_separation_acc": 0.6562,
+        "rank_auc": 0.5338,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.1163,
+          "lift": 0.1163,
+          "threshold": 0.42903328563366344,
+          "polarity": "lt"
+        }
+      },
+      "basin_radius": {
+        "mean_success": 0.13381,
+        "mean_fail": 0.141163,
+        "mean_diff": -0.007353,
+        "cohens_d": -0.2659,
+        "threshold_separation_acc": 0.6562,
+        "rank_auc": 0.5426,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.1163,
+          "lift": 0.1163,
+          "threshold": 0.185,
+          "polarity": "lt"
+        }
+      },
+      "nearest_psi_dist": {
+        "mean_success": 0.022538,
+        "mean_fail": 0.023218,
+        "mean_diff": -0.00068,
+        "cohens_d": -0.0331,
+        "threshold_separation_acc": 0.6719,
+        "rank_auc": 0.5576,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.0465,
+          "lift": 0.0465,
+          "threshold": 0.0050000000000000044,
+          "polarity": "ge"
+        }
+      },
+      "basin_overlap_count": {
+        "mean_success": 51.952381,
+        "mean_fail": 46.534884,
+        "mean_diff": 5.417497,
+        "cohens_d": 0.4338,
+        "threshold_separation_acc": 0.6562,
+        "rank_auc": 0.577,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.1395,
+          "lift": 0.1395,
+          "threshold": 23.0,
+          "polarity": "ge"
+        }
+      },
+      "score": {
+        "mean_success": 1.197143,
+        "mean_fail": 1.387372,
+        "mean_diff": -0.190229,
+        "cohens_d": -0.2635,
+        "threshold_separation_acc": 0.6562,
+        "rank_auc": 0.5581,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.1163,
+          "lift": 0.1163,
+          "threshold": 2.615,
+          "polarity": "lt"
+        }
+      },
+      "name_byte_len": {
+        "mean_success": 11.142857,
+        "mean_fail": 10.72093,
+        "mean_diff": 0.421927,
+        "cohens_d": 0.1079,
+        "threshold_separation_acc": 0.6562,
+        "rank_auc": 0.5166,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.0233,
+          "lift": 0.0233,
+          "threshold": 4.5,
+          "polarity": "ge"
+        }
+      },
+      "name_char_len": {
+        "mean_success": 3.714286,
+        "mean_fail": 3.883721,
+        "mean_diff": -0.169435,
+        "cohens_d": -0.0936,
+        "threshold_separation_acc": 0.6562,
+        "rank_auc": 0.5072,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.0465,
+          "lift": 0.0465,
+          "threshold": 6.5,
+          "polarity": "lt"
+        }
+      },
+      "korean_byte_ratio": {
+        "mean_success": 1.0,
+        "mean_fail": 0.964622,
+        "mean_diff": 0.035378,
+        "cohens_d": 0.2779,
+        "threshold_separation_acc": 0.6562,
+        "rank_auc": 0.5581,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.1163,
+          "lift": 0.1163,
+          "threshold": 0.96875,
+          "polarity": "ge"
+        }
+      }
+    }
+  },
+  "separation_genuine_grade": {
+    "ranked_by_threshold_separation_acc": [
+      "tier",
+      "vacuum_psi_x",
+      "basin_overlap_count",
+      "vacuum_psi_dev_from_half",
+      "basin_radius",
+      "score",
+      "korean_byte_ratio",
+      "vacuum_psi_y",
+      "nearest_psi_dist",
+      "name_char_len",
+      "name_byte_len"
+    ],
+    "features": {
+      "tier": {
+        "mean_success": 108.588235,
+        "mean_fail": 84.297872,
+        "mean_diff": 24.290363,
+        "cohens_d": 0.7362,
+        "threshold_separation_acc": 0.7656,
+        "rank_auc": 0.6796,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.383,
+          "lift": 0.383,
+          "threshold": 76.0,
+          "polarity": "ge"
+        }
+      },
+      "vacuum_psi_x": {
+        "mean_success": 0.509412,
+        "mean_fail": 0.555319,
+        "mean_diff": -0.045907,
+        "cohens_d": -0.3872,
+        "threshold_separation_acc": 0.75,
+        "rank_auc": 0.5826,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.1489,
+          "lift": 0.1489,
+          "threshold": 0.715,
+          "polarity": "lt"
+        }
+      },
+      "vacuum_psi_y": {
+        "mean_success": 0.595882,
+        "mean_fail": 0.616596,
+        "mean_diff": -0.020713,
+        "cohens_d": -0.1636,
+        "threshold_separation_acc": 0.7188,
+        "rank_auc": 0.5106,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.0638,
+          "lift": 0.0638,
+          "threshold": 0.46499999999999997,
+          "polarity": "ge"
+        }
+      },
+      "vacuum_psi_dev_from_half": {
+        "mean_success": 0.129121,
+        "mean_fail": 0.162438,
+        "mean_diff": -0.033317,
+        "cohens_d": -0.2301,
+        "threshold_separation_acc": 0.7188,
+        "rank_auc": 0.5006,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.1064,
+          "lift": 0.1064,
+          "threshold": 0.42903328563366344,
+          "polarity": "lt"
+        }
+      },
+      "basin_radius": {
+        "mean_success": 0.135882,
+        "mean_fail": 0.139787,
+        "mean_diff": -0.003905,
+        "cohens_d": -0.1403,
+        "threshold_separation_acc": 0.7188,
+        "rank_auc": 0.5063,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.1064,
+          "lift": 0.1064,
+          "threshold": 0.185,
+          "polarity": "lt"
+        }
+      },
+      "nearest_psi_dist": {
+        "mean_success": 0.024757,
+        "mean_fail": 0.022357,
+        "mean_diff": 0.0024,
+        "cohens_d": 0.1169,
+        "threshold_separation_acc": 0.7344,
+        "rank_auc": 0.6014,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.0426,
+          "lift": 0.0426,
+          "threshold": 0.0050000000000000044,
+          "polarity": "ge"
+        }
+      },
+      "basin_overlap_count": {
+        "mean_success": 51.705882,
+        "mean_fail": 47.085106,
+        "mean_diff": 4.620776,
+        "cohens_d": 0.3672,
+        "threshold_separation_acc": 0.7188,
+        "rank_auc": 0.5676,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.1277,
+          "lift": 0.1277,
+          "threshold": 23.0,
+          "polarity": "ge"
+        }
+      },
+      "score": {
+        "mean_success": 1.212353,
+        "mean_fail": 1.365681,
+        "mean_diff": -0.153328,
+        "cohens_d": -0.2117,
+        "threshold_separation_acc": 0.7188,
+        "rank_auc": 0.5557,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.1064,
+          "lift": 0.1064,
+          "threshold": 2.615,
+          "polarity": "lt"
+        }
+      },
+      "name_byte_len": {
+        "mean_success": 12.352941,
+        "mean_fail": 10.319149,
+        "mean_diff": 2.033792,
+        "cohens_d": 0.5327,
+        "threshold_separation_acc": 0.7188,
+        "rank_auc": 0.6264,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.0213,
+          "lift": 0.0213,
+          "threshold": 4.5,
+          "polarity": "ge"
+        }
+      },
+      "name_char_len": {
+        "mean_success": 4.117647,
+        "mean_fail": 3.723404,
+        "mean_diff": 0.394243,
+        "cohens_d": 0.2183,
+        "threshold_separation_acc": 0.7188,
+        "rank_auc": 0.5995,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.0426,
+          "lift": 0.0426,
+          "threshold": 6.5,
+          "polarity": "lt"
+        }
+      },
+      "korean_byte_ratio": {
+        "mean_success": 1.0,
+        "mean_fail": 0.967633,
+        "mean_diff": 0.032367,
+        "cohens_d": 0.2534,
+        "threshold_separation_acc": 0.7188,
+        "rank_auc": 0.5532,
+        "necessary_condition": {
+          "purity": 1.0,
+          "exclusion": 0.1064,
+          "lift": 0.1064,
+          "threshold": 0.96875,
+          "polarity": "ge"
+        }
+      }
+    }
+  },
+  "categorical_substring": {
+    "domain": {
+      "감각": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "공간": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "공간추론": {
+        "success": 1,
+        "fail": 2,
+        "total": 3,
+        "success_rate": 0.3333
+      },
+      "관계": {
+        "success": 1,
+        "fail": 1,
+        "total": 2,
+        "success_rate": 0.5
+      },
+      "기술": {
+        "success": 1,
+        "fail": 0,
+        "total": 1,
+        "success_rate": 1.0
+      },
+      "기억": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "기준점": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "논리": {
+        "success": 2,
+        "fail": 1,
+        "total": 3,
+        "success_rate": 0.6667
+      },
+      "대화자극": {
+        "success": 0,
+        "fail": 3,
+        "total": 3,
+        "success_rate": 0.0
+      },
+      "물질": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "산술": {
+        "success": 3,
+        "fail": 0,
+        "total": 3,
+        "success_rate": 1.0
+      },
+      "생명": {
+        "success": 1,
+        "fail": 1,
+        "total": 2,
+        "success_rate": 0.5
+      },
+      "수(數)": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "시간": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "언어": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "예술": {
+        "success": 1,
+        "fail": 1,
+        "total": 2,
+        "success_rate": 0.5
+      },
+      "우주": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "운동": {
+        "success": 1,
+        "fail": 0,
+        "total": 1,
+        "success_rate": 1.0
+      },
+      "윤리": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "윤리딜레마": {
+        "success": 1,
+        "fail": 2,
+        "total": 3,
+        "success_rate": 0.3333
+      },
+      "의식상태": {
+        "success": 2,
+        "fail": 4,
+        "total": 6,
+        "success_rate": 0.3333
+      },
+      "인과추론": {
+        "success": 1,
+        "fail": 2,
+        "total": 3,
+        "success_rate": 0.3333
+      },
+      "일상": {
+        "success": 0,
+        "fail": 3,
+        "total": 3,
+        "success_rate": 0.0
+      },
+      "자연": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "자연관찰": {
+        "success": 2,
+        "fail": 1,
+        "total": 3,
+        "success_rate": 0.6667
+      },
+      "추상패턴": {
+        "success": 0,
+        "fail": 3,
+        "total": 3,
+        "success_rate": 0.0
+      },
+      "코드": {
+        "success": 2,
+        "fail": 1,
+        "total": 3,
+        "success_rate": 0.6667
+      },
+      "통계": {
+        "success": 1,
+        "fail": 0,
+        "total": 1,
+        "success_rate": 1.0
+      },
+      "혼합": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "확률": {
+        "success": 1,
+        "fail": 1,
+        "total": 2,
+        "success_rate": 0.5
+      }
+    },
+    "top_emotion": {
+      "awe": {
+        "success": 0,
+        "fail": 4,
+        "total": 4,
+        "success_rate": 0.0
+      },
+      "clarity": {
+        "success": 8,
+        "fail": 5,
+        "total": 13,
+        "success_rate": 0.6154
+      },
+      "creativity": {
+        "success": 1,
+        "fail": 0,
+        "total": 1,
+        "success_rate": 1.0
+      },
+      "curiosity": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "depth": {
+        "success": 3,
+        "fail": 6,
+        "total": 9,
+        "success_rate": 0.3333
+      },
+      "ecstasy": {
+        "success": 1,
+        "fail": 1,
+        "total": 2,
+        "success_rate": 0.5
+      },
+      "flow": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "joy": {
+        "success": 1,
+        "fail": 1,
+        "total": 2,
+        "success_rate": 0.5
+      },
+      "longing": {
+        "success": 0,
+        "fail": 3,
+        "total": 3,
+        "success_rate": 0.0
+      },
+      "neutral": {
+        "success": 0,
+        "fail": 3,
+        "total": 3,
+        "success_rate": 0.0
+      },
+      "peace": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "resonance": {
+        "success": 1,
+        "fail": 5,
+        "total": 6,
+        "success_rate": 0.1667
+      },
+      "serenity": {
+        "success": 0,
+        "fail": 3,
+        "total": 3,
+        "success_rate": 0.0
+      },
+      "stillness": {
+        "success": 3,
+        "fail": 2,
+        "total": 5,
+        "success_rate": 0.6
+      },
+      "vastness": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "wonder": {
+        "success": 3,
+        "fail": 3,
+        "total": 6,
+        "success_rate": 0.5
+      }
+    }
+  },
+  "categorical_genuine": {
+    "domain": {
+      "감각": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "공간": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "공간추론": {
+        "success": 1,
+        "fail": 2,
+        "total": 3,
+        "success_rate": 0.3333
+      },
+      "관계": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "기술": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "기억": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "기준점": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "논리": {
+        "success": 2,
+        "fail": 1,
+        "total": 3,
+        "success_rate": 0.6667
+      },
+      "대화자극": {
+        "success": 0,
+        "fail": 3,
+        "total": 3,
+        "success_rate": 0.0
+      },
+      "물질": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "산술": {
+        "success": 3,
+        "fail": 0,
+        "total": 3,
+        "success_rate": 1.0
+      },
+      "생명": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "수(數)": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "시간": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "언어": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "예술": {
+        "success": 1,
+        "fail": 1,
+        "total": 2,
+        "success_rate": 0.5
+      },
+      "우주": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "운동": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "윤리": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "윤리딜레마": {
+        "success": 1,
+        "fail": 2,
+        "total": 3,
+        "success_rate": 0.3333
+      },
+      "의식상태": {
+        "success": 2,
+        "fail": 4,
+        "total": 6,
+        "success_rate": 0.3333
+      },
+      "인과추론": {
+        "success": 1,
+        "fail": 2,
+        "total": 3,
+        "success_rate": 0.3333
+      },
+      "일상": {
+        "success": 0,
+        "fail": 3,
+        "total": 3,
+        "success_rate": 0.0
+      },
+      "자연": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "자연관찰": {
+        "success": 2,
+        "fail": 1,
+        "total": 3,
+        "success_rate": 0.6667
+      },
+      "추상패턴": {
+        "success": 0,
+        "fail": 3,
+        "total": 3,
+        "success_rate": 0.0
+      },
+      "코드": {
+        "success": 2,
+        "fail": 1,
+        "total": 3,
+        "success_rate": 0.6667
+      },
+      "통계": {
+        "success": 1,
+        "fail": 0,
+        "total": 1,
+        "success_rate": 1.0
+      },
+      "혼합": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "확률": {
+        "success": 1,
+        "fail": 1,
+        "total": 2,
+        "success_rate": 0.5
+      }
+    },
+    "top_emotion": {
+      "awe": {
+        "success": 0,
+        "fail": 4,
+        "total": 4,
+        "success_rate": 0.0
+      },
+      "clarity": {
+        "success": 6,
+        "fail": 7,
+        "total": 13,
+        "success_rate": 0.4615
+      },
+      "creativity": {
+        "success": 1,
+        "fail": 0,
+        "total": 1,
+        "success_rate": 1.0
+      },
+      "curiosity": {
+        "success": 0,
+        "fail": 1,
+        "total": 1,
+        "success_rate": 0.0
+      },
+      "depth": {
+        "success": 3,
+        "fail": 6,
+        "total": 9,
+        "success_rate": 0.3333
+      },
+      "ecstasy": {
+        "success": 1,
+        "fail": 1,
+        "total": 2,
+        "success_rate": 0.5
+      },
+      "flow": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "joy": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "longing": {
+        "success": 0,
+        "fail": 3,
+        "total": 3,
+        "success_rate": 0.0
+      },
+      "neutral": {
+        "success": 0,
+        "fail": 3,
+        "total": 3,
+        "success_rate": 0.0
+      },
+      "peace": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "resonance": {
+        "success": 1,
+        "fail": 5,
+        "total": 6,
+        "success_rate": 0.1667
+      },
+      "serenity": {
+        "success": 0,
+        "fail": 3,
+        "total": 3,
+        "success_rate": 0.0
+      },
+      "stillness": {
+        "success": 3,
+        "fail": 2,
+        "total": 5,
+        "success_rate": 0.6
+      },
+      "vastness": {
+        "success": 0,
+        "fail": 2,
+        "total": 2,
+        "success_rate": 0.0
+      },
+      "wonder": {
+        "success": 2,
+        "fail": 4,
+        "total": 6,
+        "success_rate": 0.3333
+      }
+    }
+  },
+  "verdict": {
+    "top_feature_genuine_grade": "tier",
+    "necessary_condition": {
+      "purity": 1.0,
+      "exclusion": 0.383,
+      "lift": 0.383,
+      "threshold": 76.0,
+      "polarity": "ge"
+    },
+    "top_feature_cohens_d": 0.7362,
+    "top_feature_rank_auc": 0.6796,
+    "top_feature_threshold_separation_acc": 0.7656,
+    "base_rate_constant_predict_fail": 0.7344,
+    "structure_found": true,
+    "finding": "Feature 'tier' is a NECESSARY CONDITION for §16 routing success: purity 1.0 (every one of the 17 genuine-success anchors satisfies 'tier ge 76.0'; ZERO successes violate it), and that same predicate excludes 0.383 of the 47-fail set. It is necessary-but-NOT-sufficient (|d|=0.74, rank-AUC 0.6796). Routing success is STRUCTURED — there is a real anchor-property frontier, not pure SGD-lottery.",
+    "causation_caveat": "g3: this is CORRELATION. The necessary condition co-varies with §16's curriculum (curriculum_rank weights tier/303 at 0.30 — high-tier anchors land in later curriculum stages) and with the anchor-name distribution. Whether the feature itself CAUSES routing success, vs is a proxy for an unmeasured cause (e.g. late-stage curriculum exposure, weight-norm at that training phase), needs a controlled ablation fire. B-L3-NOTE empirical carve-out — NOT counted 🔵.",
+    "implication_for_s25_candidate_D": "§25 candidate D (routing-evidence-guided expansion) has a real lever: the 'tier ge 76.0' frontier. Honest reading — because the condition is NECESSARY but not sufficient, the fail-side of the frontier (0.62 of fails are ON the success side and still fail) is where expansion can be tested: candidate D can (a) over-sample / diversify the tier-success-side fail anchors to test if more genuine content lifts routing above the necessity floor, and (b) explicitly NOT expect tier-fail-side anchors to route until the necessary condition itself is understood (it co-varies with §16's curriculum stage — see causation_caveat). The frontier is a lever for WHERE to expand, not a guarantee."
+  }
+}

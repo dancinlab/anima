@@ -1,0 +1,32 @@
+{
+  "smoke_id": "mc_integrate_decouple_smoke_2026_05_04",
+  "timestamp_utc": "2026-05-04",
+  "tests": [
+    {
+      "name": "baseline_self_test_pre_patch",
+      "command": "hexa run modules/mc_integrate/mc_integrate.hexa --self-test",
+      "exit_code": 0,
+      "verdict": "PASS",
+      "sentinels": ["__MC_INTEGRATE__ PASS", "__MC_INTEGRATE_COMPARE__ PASS", "__MC_INTEGRATE_COMPARE_CRITVAL__ PASS"]
+    },
+    {
+      "name": "post_patch_self_test",
+      "command": "hexa run modules/mc_integrate/mc_integrate.hexa --self-test",
+      "exit_code": 0,
+      "verdict": "PASS",
+      "sentinels": ["__MC_INTEGRATE__ PASS", "__MC_INTEGRATE_COMPARE__ PASS", "__MC_INTEGRATE_COMPARE_CRITVAL__ PASS"],
+      "all_falsifiers": "F2-F5 + G1-G6 PASS"
+    },
+    {
+      "name": "anu_rng_path_post_patch",
+      "command": "hexa run modules/mc_integrate/mc_integrate.hexa --constant catalan -N 1000 --rng anu",
+      "exit_code": 0,
+      "verdict": "PASS",
+      "rng_used": "anu",
+      "value": 0.914976,
+      "abs_err": 0.000989682,
+      "gate": "PASS"
+    }
+  ],
+  "decouple_verdict": "PASS — Phase 1 complete; ready for Phase 2 standalone extract"
+}

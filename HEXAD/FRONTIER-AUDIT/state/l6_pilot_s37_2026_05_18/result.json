@@ -1,0 +1,88 @@
+{
+  "research_section": "§37",
+  "title": "L6 anchor-interaction held-out-pair pilot",
+  "substrate": "small from-scratch RelationMLP (9->64->32->4heads), $0 Mac CPU, NO GPU — honest per FINDINGS.md §2",
+  "seed": 1337,
+  "n_train_pairs": 3226,
+  "n_holdout_pairs": 806,
+  "holdout_train_disjoint": true,
+  "n_epoch": 400,
+  "train_log": [
+    {
+      "epoch": 0,
+      "loss": 3.7504104944171184
+    },
+    {
+      "epoch": 50,
+      "loss": 0.12201434911516831
+    },
+    {
+      "epoch": 100,
+      "loss": 0.07361675031663317
+    },
+    {
+      "epoch": 150,
+      "loss": 0.043280877706451
+    },
+    {
+      "epoch": 200,
+      "loss": 0.04003625667970962
+    },
+    {
+      "epoch": 250,
+      "loss": 0.02727406310068844
+    },
+    {
+      "epoch": 300,
+      "loss": 0.020460729073255017
+    },
+    {
+      "epoch": 350,
+      "loss": 0.05028286997300457
+    },
+    {
+      "epoch": 399,
+      "loss": 0.011045853657589075
+    }
+  ],
+  "train_accuracy": {
+    "R1": 0.9993800520896912,
+    "R2": 0.9996899962425232,
+    "R3": 1.0,
+    "R4": 1.0,
+    "JOINT_all4": 0.9990700483322144
+  },
+  "holdout_accuracy": {
+    "R1": 0.9863523840904236,
+    "R2": 0.9900744557380676,
+    "R3": 1.0,
+    "R4": 0.9987593293190002,
+    "JOINT_all4": 0.9751861095428467
+  },
+  "chance_majority_class": {
+    "R1": 0.5148883374689827,
+    "R2": 0.7468982630272953,
+    "R3": 0.9764267990074442,
+    "R4": 0.5173697270471465
+  },
+  "chance_uniform": {
+    "R1": 0.3333333333333333,
+    "R2": 0.25,
+    "R3": 0.5,
+    "R4": 0.3333333333333333
+  },
+  "holdout_lift_over_majority": {
+    "R1": 0.4714640466214409,
+    "R2": 0.2431761927107723,
+    "R3": 0.023573200992555776,
+    "R4": 0.4813896022718538
+  },
+  "mean_holdout_acc": 0.9937965422868729,
+  "mean_majority_chance": 0.6888957816377171,
+  "margin_threshold": 0.15,
+  "every_relation_above_chance": true,
+  "mean_above_margin": true,
+  "generalizes": true,
+  "verdict": "L6_RELATIONS_GENERALIZE",
+  "decision": "GENERALIZE — held-out-pair relation accuracy >> chance; the model learned the relation FUNCTION, not the trained rows. L6 is fire-worthy at scale (DESIGN_L6.md §7.2)."
+}

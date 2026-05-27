@@ -1,0 +1,53 @@
+{
+  "tool": "tool/anima_runpod_orchestrator.hexa",
+  "run_id": "alm-hid8-qwen3",
+  "started_at": "2026-05-02T11:39:32.797401+00:00",
+  "auto_approval_source": "memory feedback_forward_auto_approval (2026-04-25)",
+  "caps": {
+    "max_cost": 5.0,
+    "max_runtime_min": 25
+  },
+  "pod_create": {
+    "containerDiskInGb": 100,
+    "costPerHr": 2.99,
+    "desiredStatus": "RUNNING",
+    "env": [
+      "RUN_ID=alm-hid8-qwen3",
+      "COST_CAP=5.0",
+      "RUNTIME_CAP_MIN=25",
+      "PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+    ],
+    "gpuCount": 1,
+    "id": "oki2g3peeqx5ek",
+    "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "lastStatusChange": "Rented by User: Sat May 02 2026 11:39:34 GMT+0000 (Coordinated Universal Time)",
+    "machine": {
+      "gpuDisplayName": "H100 SXM",
+      "location": "IN"
+    },
+    "memoryInGb": 251,
+    "name": "anima-alm-hid8-qwen3",
+    "ports": "8888/http,22/tcp",
+    "vcpuCount": 28,
+    "volumeInGb": 100,
+    "volumeMountPath": "/workspace"
+  },
+  "ssh": {
+    "ip": "103.207.149.103",
+    "port": 17354
+  },
+  "pip_install": {
+    "rc": 0
+  },
+  "command": {
+    "rc": 0,
+    "stdout_tail": ":01, 131.80it/s]\nLoading weights:  45%|\u2588\u2588\u2588\u2588\u258c     | 181/399 [00:01<00:01, 121.33it/s]\nLoading weights:  49%|\u2588\u2588\u2588\u2588\u258a     | 194/399 [00:01<00:01, 116.32it/s]\nLoading weights:  52%|\u2588\u2588\u2588\u2588\u2588\u258f    | 207/399 [00:01<00:01, 119.73it/s]\nLoading weights:  55%|\u2588\u2588\u2588\u2588\u2588\u258c    | 220/399 [00:01<00:01, 116.66it/s]\nLoading weights:  58%|\u2588\u2588\u2588\u2588\u2588\u258a    | 232/399 [00:02<00:01, 117.17it/s]\nLoading weights:  61%|\u2588\u2588\u2588\u2588\u2588\u2588    | 244/399 [00:02<00:01, 117.57it/s]\nLoading weights:  64%|\u2588\u2588\u2588\u2588\u2588\u2588\u258d   | 256/399 [00:02<00:01, 117.72it/s]\nLoading weights:  67%|\u2588\u2588\u2588\u2588\u2588\u2588\u258b   | 268/399 [00:02<00:01, 110.18it/s]\nLoading weights:  70%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588   | 280/399 [00:02<00:01, 106.79it/s]\nLoading weights:  73%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e  | 291/399 [00:02<00:01, 107.24it/s]\nLoading weights:  76%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c  | 302/399 [00:02<00:00, 107.52it/s]\nLoading weights:  79%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a  | 314/399 [00:02<00:00, 106.04it/s]\nLoading weights:  81%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f | 325/399 [00:02<00:00, 106.80it/s]\nLoading weights:  84%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d | 336/399 [00:03<00:00, 104.34it/s]\nLoading weights:  87%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b | 347/399 [00:03<00:00, 105.01it/s]\nLoading weights:  90%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589 | 358/399 [00:03<00:00, 105.53it/s]\nLoading weights:  92%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f| 369/399 [00:03<00:00, 105.00it/s]\nLoading weights:  95%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c| 380/399 [00:03<00:00, 103.46it/s]\nLoading weights:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 391/399 [00:03<00:00, 103.45it/s]\nLoading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 399/399 [00:03<00:00, 111.19it/s]\n[alm-hid8] base_model_load: OK (20.2s) {'n_params_M': 8190.74, 'h_dim': 4096}\n[alm-hid8] lora_load: OK (27.24s) {'adapter_path': '/workspace/lora'}\n[alm-hid8] forward 4/16 pool_norm=120.320\n[alm-hid8] forward 8/16 pool_norm=123.763\n[alm-hid8] forward 12/16 pool_norm=117.310\n[alm-hid8] forward 16/16 pool_norm=130.634\n[alm-hid8] forward_complete: OK (28.46s) {'forward_ok': 16, 'forward_total': 16, 'forward_seconds': 1.22, 'X_shape': [16, 4096], 'vram_peak_mb': 17778.2}\n[alm-hid8] DONE backbone=qwen3_r14_full phi_star_min=6.5107 sign=positive_iit_integrated cond=943.27\n[alm-hid8] output -> /workspace/out/phi_star.json\n"
+  },
+  "terminate": {
+    "deleted": true,
+    "id": "oki2g3peeqx5ek"
+  },
+  "elapsed_min": 3.761819585164388,
+  "estimated_cost_usd": 0.1874640093273587,
+  "ended_at": "2026-05-02T11:43:18.506575+00:00"
+}

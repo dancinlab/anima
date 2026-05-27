@@ -1,0 +1,169 @@
+// WAKE/memory_smoke.hexa — episodic + working + kosmos round-trip smoke (M5).
+//
+// 검증 목표:
+//   4 case · 5 invariant 로 memory layer 의 핵심 동치성 보장.
+//
+//     C1) mem_init → empty episodic + empty working.
+//     C2) mem_record_emit · mem_recent_emits — append + slice 동치성.
+//     C3) mem_push_ctx — ring buffer cap=20 FIFO + empty list push 도 1 tick.
+//     C4) mem_save_to_kosmos · mem_load_from_kosmos — episodic round-trip.
+//
+// invariants:
+//   I1) mem_init() 반환의 episodic / working 모두 [] empty.
+//   I2) mem_record_emit 3회 후 mem_recent_emits(n=2) 가 마지막 2 record 반환
+//       (oldest first 안에서 last-2 slice).
+//   I3) mem_push_ctx 25회 (cap=20 초과) 후 working len = 20 + 가장 오래된
+//       drop · newest 보존.
+//   I4) mem_push_ctx 에 empty list 도 1 tick 으로 count (silence tick 기록).
+//   I5) mem_save_to_kosmos → mem_load_from_kosmos round-trip 시 episodic 의
+//       emit_text 가 동일 길이 + per-element string 동치.
+//
+// instrument-first verified pub surface:
+//   WAKE/memory.hexa pub: mem_init · mem_record_emit · mem_push_ctx ·
+//                         mem_recent_emits · mem_working_window ·
+//                         mem_save_to_kosmos · mem_load_from_kosmos ·
+//                         memory_summary
+
+import "/Users/ghost/core/anima/WAKE/memory.hexa"
+
+fn main() {
+    print("=== WAKE/memory episodic + working + kosmos round-trip smoke (4 case) ===")
+    print(memory_summary())
+
+    let mut pass = 0
+    let mut fail = 0
+
+    // ── C1: mem_init ────────────────────────────────────────────────────────
+    print("")
+    print("── C1: mem_init → empty episodic + empty working ──────────")
+    let mem0 = mem_init()
+    if len(mem0["episodic"]) == 0 && len(mem0["working"]) == 0 {
+        print("  [PASS] I1 mem_init() empty episodic + empty working")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I1 mem_init() not empty — ep_len="
+              + to_string(len(mem0["episodic"]))
+              + " wk_len=" + to_string(len(mem0["working"])))
+        fail = fail + 1
+    }
+
+    // ── C2: mem_record_emit + mem_recent_emits ──────────────────────────────
+    print("")
+    print("── C2: 3 record append → recent(n=2) slice ───────────────")
+    let t5 = [0.1, 0.2, 0.3, 0.4, 0.5]
+    let mut mem = mem0
+    mem = mem_record_emit(mem, 1748534000.0, "ctx1", 0.42, t5, "WAKE", "first emit")
+    mem = mem_record_emit(mem, 1748534010.0, "ctx2", 0.45, t5, "WAKE", "second emit")
+    mem = mem_record_emit(mem, 1748534020.0, "ctx3", 0.48, t5, "REM",  "third emit")
+
+    let recents = mem_recent_emits(mem, 2)
+    let ok_len = len(recents) == 2
+    let ok_first = ok_len && to_string(recents[0]["emit_text"]) == "second emit"
+    let ok_second = ok_len && to_string(recents[1]["emit_text"]) == "third emit"
+    if ok_len && ok_first && ok_second {
+        print("  [PASS] I2 recent(2) = [second emit, third emit]")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I2 recent(2) mismatch — len=" + to_string(len(recents)))
+        let mut di = 0
+        while di < len(recents) {
+            print("    [" + to_string(di) + "] " + to_string(recents[di]["emit_text"]))
+            di = di + 1
+        }
+        fail = fail + 1
+    }
+
+    // ── C3: ring buffer cap=20 FIFO ─────────────────────────────────────────
+    print("")
+    print("── C3: mem_push_ctx 25 회 (cap=20 FIFO) ────────────────────")
+    let mut mem2 = mem_init()
+    let mut i = 0
+    while i < 25 {
+        // ctx_tokens 는 단일 int 표시값 — 각 tick 의 unique marker.
+        mem2 = mem_push_ctx(mem2, [i + 100])
+        i = i + 1
+    }
+    let wk = mem_working_window(mem2)
+    let ok_cap = len(wk) == 20
+    // oldest 5 가 drop (push 100..124 중 100..104 drop) → buffer [105..124].
+    let ok_oldest = ok_cap && to_int(wk[0][0]) == 105
+    let ok_newest = ok_cap && to_int(wk[19][0]) == 124
+    if ok_cap && ok_oldest && ok_newest {
+        print("  [PASS] I3 ring buffer cap=20 FIFO — wk[0]=[105] wk[19]=[124]")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I3 ring buffer — len=" + to_string(len(wk))
+              + " wk[0]=" + to_string(wk[0])
+              + " wk[19]=" + to_string(wk[19]))
+        fail = fail + 1
+    }
+
+    // I4: empty list push 도 1 tick 으로 count.
+    let mut mem3 = mem_init()
+    mem3 = mem_push_ctx(mem3, [])
+    mem3 = mem_push_ctx(mem3, [1, 2, 3])
+    mem3 = mem_push_ctx(mem3, [])
+    let wk3 = mem_working_window(mem3)
+    if len(wk3) == 3 && len(wk3[0]) == 0 && len(wk3[1]) == 3 && len(wk3[2]) == 0 {
+        print("  [PASS] I4 empty list push counts as 1 tick (silence tick 기록)")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I4 empty push tick — len=" + to_string(len(wk3)))
+        fail = fail + 1
+    }
+
+    // ── C4: kosmos round-trip ───────────────────────────────────────────────
+    print("")
+    print("── C4: mem_save_to_kosmos → mem_load_from_kosmos round-trip ─")
+    let out_dir = "/tmp/wake_m5_smoke_kosmos"
+    let _cleanup = exec("rm -rf '" + out_dir + "'")
+    let t_save = 1748534100.0
+    let path = mem_save_to_kosmos(mem, out_dir, t_save)
+    print("  path = " + path)
+
+    let exists = exec("test -f '" + path + "' && echo y || echo n").trim()
+    if exists != "y" {
+        print("  [FAIL] save 후 path 미존재")
+        fail = fail + 1
+    }
+
+    let mem_restored = mem_load_from_kosmos(path)
+    let ep_r = mem_restored["episodic"]
+    let ok_len2 = len(ep_r) == 3
+    let mut ok_texts = ok_len2
+    let expected_texts = ["first emit", "second emit", "third emit"]
+    let mut ti = 0
+    while ti < 3 && ok_len2 {
+        if to_string(ep_r[ti]["emit_text"]) != expected_texts[ti] { ok_texts = false }
+        ti = ti + 1
+    }
+    let ok_working_empty = len(mem_restored["working"]) == 0
+    if ok_len2 && ok_texts && ok_working_empty {
+        print("  [PASS] I5 round-trip — episodic len=3 + emit_text identity + working=[]")
+        pass = pass + 1
+    } else {
+        print("  [FAIL] I5 round-trip — ep_len=" + to_string(len(ep_r))
+              + " texts_ok=" + to_string(ok_texts)
+              + " wk_empty=" + to_string(ok_working_empty))
+        let mut di = 0
+        while di < len(ep_r) {
+            print("    [" + to_string(di) + "] " + to_string(ep_r[di]["emit_text"]))
+            di = di + 1
+        }
+        fail = fail + 1
+    }
+
+    // ── verdict ─────────────────────────────────────────────────────────────
+    print("")
+    print("================================================================")
+    print("  RESULT: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL")
+    if fail == 0 {
+        print("  HEADLINE: WAKE-M5-MEMORY-LAYER-OK")
+    } else {
+        print("  HEADLINE: WAKE-M5-MEMORY-LAYER-FAIL")
+    }
+    print("================================================================")
+    if fail > 0 {
+        panic("WAKE M5 smoke had FAIL — see above")
+    }
+}

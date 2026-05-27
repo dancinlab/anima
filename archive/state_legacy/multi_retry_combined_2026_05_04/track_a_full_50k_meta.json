@@ -1,0 +1,33 @@
+{
+  "marker": "p9_path_a_track_a_full_50k",
+  "ts_utc": "2026-05-04T14:21:00Z",
+  "host": "ubu1",
+  "out_path_remote": "/tmp/p9_path_a_track_a_corpus_50k.jsonl",
+  "size_bytes_remote": 89251431,
+  "rows_total": 38191,
+  "rows_requested": 50000,
+  "by_source": {
+    "p9_sft_chat": 23397,
+    "trivia_qa_train": 7802,
+    "mmlu_aux_train": 6992
+  },
+  "params": {
+    "n_chat": 35000,
+    "n_trivia": 8000,
+    "n_mmlu": 7000,
+    "seed": 42,
+    "p9_path_remote": "/tmp/p9_p1_sft_data_full_50k_augmented.jsonl"
+  },
+  "format": "llama3_chat_template_v1",
+  "sha256_first_16_remote": "f90c5ae9a2564c45",
+  "build_script": "/tmp/p9_path_a_build_corpus.py",
+  "venv": "/home/aiden/venv_orchestrator/bin/python",
+  "datasets_version": "4.8.5",
+  "caveats": [
+    "C1: rows<50000 (38191) — P9 SFT chat side caps at ~23397 unique; raising n_chat further produces no new rows",
+    "C2: MMLU schema nested under 'train' key (cais/mmlu auxiliary_train) — patched extractor handles wrapped dict; first run lost 7000 mmlu rows due to schema mismatch",
+    "C3: TriviaQA + MMLU answers concatenated to LLAMA_AST_OPEN block as plain strings; no chain-of-thought, no reasoning traces",
+    "C4: meta is Mac mirror of ubu1-side artifact; 89MB .jsonl not copied to Mac (raw#15 no large binaries in repo)",
+    "C5: raw#10 honest C3 — corpus mix is 61% chat / 20% trivia / 18% mmlu; below 70/30 chat:factual target due to chat-side dedup ceiling"
+  ]
+}

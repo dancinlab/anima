@@ -1,0 +1,39 @@
+{
+  "cycle": "watcher_script_fix_2026_05_04",
+  "ts_utc": "2026-05-04T00:21:09Z",
+  "scope": "host_pod_terminator.sh.txt error-branch artifacts mkdir",
+  "verdict": "PASS",
+  "before_after_diff": "diff --git a/state/p9_path_a_llama_lora_2026_05_03/host_pod_terminator.sh.txt b/state/p9_path_a_llama_lora_2026_05_03/host_pod_terminator.sh.txt\nindex 3d729440e..f48fbf562 100755\n--- a/state/p9_path_a_llama_lora_2026_05_03/host_pod_terminator.sh.txt\n+++ b/state/p9_path_a_llama_lora_2026_05_03/host_pod_terminator.sh.txt\n@@ -60,6 +60,7 @@ while true; do\n \n     if echo \"$PROBE\" | grep -q \"ALIVE=0\" && echo \"$PROBE\" | grep -q \"DONE=0\"; then\n         echo \"[$(date -u +%FT%TZ)] train pid GONE without DONE — likely error; downloading log + terminating\" >> $LOG\n+        mkdir -p /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts\n         scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT \\\n             \"root@$SSH_HOST:/workspace/p9_path_a_llama_lora/train.log\" \\\n             /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts/train.log >> $LOG 2>&1 || true\n",
+  "before_grep_mkdir_count": 1,
+  "after_grep_mkdir_count": 2,
+  "before_done_branch_line": 47,
+  "after_done_branch_line": 47,
+  "after_error_branch_mkdir_line": 63,
+  "f_watcher_1_syntax_check": "PASS",
+  "f_watcher_1_evidence": "bash -n /tmp/host_pod_terminator.sh exit=0",
+  "f_watcher_2_two_branches_have_mkdir": "PASS",
+  "f_watcher_2_evidence": "grep -c 'mkdir -p .*artifacts' returns 2; lines 47 (DONE-branch) + 63 (error-branch)",
+  "uchg_lock_status": "unlocked",
+  "uchg_evidence": "ls -lO showed -rwxr-xr-x@ 1 ghost staff - 3562 (no uchg flag in output column)",
+  "edited_file": "state/p9_path_a_llama_lora_2026_05_03/host_pod_terminator.sh.txt",
+  "lines_added": 1,
+  "lines_removed": 0,
+  "selftest_method": "cp .sh.txt -> /tmp/.sh + chmod +x + bash -n (syntax-only, no execution)",
+  "honest_c3": [
+    "The fix only repairs Path A's specific terminator (host_pod_terminator.sh.txt); other watcher scripts in the repo may have the same latent bug and were NOT audited in this BG.",
+    "The selftest is bash -n syntax-only validation; behavior under actual error-branch trigger (pod ALIVE=0, DONE=0) was NOT exercised end-to-end. A live test would require an actual failing pod which is destructive.",
+    "The error-branch may have other latent bugs beyond the missing mkdir (e.g., scp timeout handling, partial-write detection, log truncation) that this BG did NOT audit.",
+    "The DONE-branch's mkdir -p artifacts/ happens to be at line 47 in this version; future edits could shift line numbers and the diff context would no longer match — verdict line numbers are point-in-time.",
+    "The mkdir -p line was inserted with an absolute path matching the DONE-branch idiom exactly; if a future refactor relativizes paths, both branches must be updated coherently.",
+    "BG-ι/BG-ξ identified the bug from postmortem evidence (HF API recovery after train.log blackout); root-cause attribution to this exact line is INFERRED and consistent with the symptom, not directly proven by reproduction."
+  ],
+  "constraints_honored": {
+    "raw_9_no_new_py": true,
+    "raw_15_repo_relative_in_doc": true,
+    "raw_71_falsifier_bound": true,
+    "no_git_mutation": true,
+    "no_chflags": true,
+    "no_actual_ssh_or_pod_action": true,
+    "no_other_p9_state_touched": true
+  }
+}

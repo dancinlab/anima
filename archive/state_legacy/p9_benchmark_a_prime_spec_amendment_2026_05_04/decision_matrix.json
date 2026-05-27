@@ -1,0 +1,163 @@
+{
+  "amendment_id": "A-1",
+  "amendment_date": "2026-05-04",
+  "amendment_doc": "docs/p9_benchmark_switch_a_prime_spec_amendment_2026_05_04.md",
+  "original_spec_doc": "docs/p9_benchmark_switch_a_prime_spec_2026_05_03.md",
+  "criteria_diff": {
+    "v1_criteria": [
+      {
+        "id": "v1_c1",
+        "label": "anchors_run",
+        "definition": "Both Llama-3.2-3B and CLM v4 base run end-to-end on lm-eval-harness without OOM/loader/tokenizer errors",
+        "scope": "Mode 1 + Mode 2 conflated",
+        "v1_status_per_1ef3c096": "UNMET (Llama anchor not measured)"
+      },
+      {
+        "id": "v1_c2",
+        "label": "llama_within_pm10pct_of_public",
+        "definition": "Measured Llama-3.2-3B within ±10% of public model card / leaderboard report on each benchmark",
+        "scope": "Mode 2 anchor compliance",
+        "v1_status_per_1ef3c096": "UNMET (no Llama)"
+      },
+      {
+        "id": "v1_c3",
+        "label": "llama_minus_clm_base_ge_2x_ci",
+        "definition": "|Llama − CLM_base| ≥ 2x paired-bootstrap 95% CI half-width on each of 3 benchmarks",
+        "scope": "Cross-substrate Mode 1/2 conflated; structurally biased by Mode 1 substrate degradation",
+        "v1_status_per_1ef3c096": "UNMET (no Llama)"
+      },
+      {
+        "id": "v1_c4",
+        "label": "clm_base_ge_random_plus_5pt_on_2_of_3",
+        "definition": "CLM v4 base accuracy ≥ random_baseline + 5pt on ≥ 2/3 benchmarks",
+        "scope": "Mode 3 absolute claim measured under Mode 1 substrate (mis-scoped)",
+        "v1_status_per_1ef3c096": "FAIL (0/3: hellaswag +1.6pt, mmlu +2.1pt, triviaqa 0pt)"
+      }
+    ],
+    "v2_criteria": [
+      {
+        "id": "v2_c1",
+        "label": "anchors_run",
+        "definition": "Llama-3.2-3B base measured ≥ 1 cycle on locked benchmark suite under spec §2.5 harness config without OOM/loader/tokenizer errors",
+        "scope": "Mode 2 only",
+        "carries_from": "v1_c1",
+        "change_summary": "UNCHANGED",
+        "rationale": "Already mode-2-correct in V1; preserved."
+      },
+      {
+        "id": "v2_c2",
+        "label": "llama_within_pm10pct_of_public",
+        "definition": "Mode 2 measured Llama-3.2-3B value within ±10% of public report",
+        "scope": "Mode 2 only",
+        "carries_from": "v1_c2",
+        "change_summary": "UNCHANGED",
+        "rationale": "Already mode-2-correct in V1; preserved."
+      },
+      {
+        "id": "v2_c3",
+        "label": "clm_lora_minus_clm_base_ge_2x_ci",
+        "definition": "Best LoRA candidate accuracy minus HF-format CLM v4 base accuracy ≥ 2x paired-bootstrap 95% CI half-width on ≥ 2/3 benchmarks",
+        "scope": "Mode 1 (within-substrate Δ)",
+        "replaces": "v1_c3",
+        "change_summary": "REPLACES |Llama − CLM_base| with |LoRA − CLM_base|; relocates discriminative-range claim from cross-substrate Mode 1/2 conflation to within-substrate Mode 1 internal Δ",
+        "rationale": "V1 criterion conflated harness sanity (Mode 2) with substrate ranking (Mode 1). Mode 1 substrate's consciousness-bypass + truncation makes |Llama − CLM_base| structurally biased; the meaningful discriminative claim is whether LoRA beats its own base under matched conditions."
+      },
+      {
+        "id": "v2_c4",
+        "label": "clm_lora_above_random_plus_5pt",
+        "definition": "Best LoRA candidate ≥ random_baseline + 5pt on ≥ 2/3 benchmarks",
+        "scope": "Mode 1 (LoRA arm floor)",
+        "replaces": "v1_c4",
+        "change_summary": "RELOCATES the floor from CLM_base arm to LoRA arm; original V1 criterion 4 was Mode 3 absolute claim measured under Mode 1 substrate (deliberately degraded)",
+        "rationale": "BG-Β OPT-1 design pre-registered honest_c3 §7.2 (consciousness BYPASSED) + §7.3 (block_size truncation) BEFORE H100 measurement. CLM_base arm operating under those constraints CANNOT be expected to clear random+5pt. The floor must apply to the LoRA arm, which is the actual claim under test (does SFT lift the substrate above random?)."
+      }
+    ]
+  },
+  "verdict_outcomes_v2": {
+    "SUCCESS": {
+      "criteria_met": ["v2_c1", "v2_c2", "v2_c3", "v2_c4"],
+      "meaning": "benchmark switch fully validated; LoRA panel may proceed",
+      "downstream": "roadmap cond.benchmark_a_prime_base_validation = met"
+    },
+    "COMPARATIVE_PASS": {
+      "criteria_met": ["v2_c1 (deferred)", "v2_c3", "v2_c4"],
+      "meaning": "Mode 1 substrate validated end-to-end with internal signal; Mode 2 sanity check pending",
+      "downstream": "BG-Ο Mode 2 to confirm; LoRA ckpt eval may begin in parallel under provisional verdict"
+    },
+    "ANCHOR_PASS": {
+      "criteria_met": ["v2_c1", "v2_c2"],
+      "meaning": "harness pipeline sanity confirmed; CLM Mode 1 LoRA panel pending",
+      "downstream": "BG-Π Mode 1 LoRA panel"
+    },
+    "PARTIAL_v3_AMEND": {
+      "criteria_met": "exactly 1 of 4",
+      "meaning": "weak signal; needs deeper diagnosis",
+      "downstream": "log honest_c3, reopen design"
+    },
+    "FAIL": {
+      "criteria_met": "0 of 4 OR a STRONG regression in Mode 1",
+      "meaning": "benchmark switch not validated; reopens design space",
+      "downstream": "per original spec §3.3 escalation"
+    }
+  },
+  "verdict_1ef3c096_under_v2": {
+    "scorable": false,
+    "reason": "Mode 1 LoRA ckpts not evaluated this cycle (only HF-format base); Mode 2 Llama anchor not measured (orchestrator scope-reduced)",
+    "reclassification": "infrastructure smoke (CLM v4 HF-format substrate runs end-to-end on H100 lm-eval-harness; F-SHIM-1..4 + bit-exact logits PASSED in BG-Κ shim v3)",
+    "next_cycle_v2_path": {
+      "BG-Ο": "Mode 2 Llama anchor → flips ANCHOR_PASS criteria 1+2",
+      "BG-Π": "Mode 1 LoRA ckpt eval (or shim v4 prep for Mode 3) → flips COMPARATIVE_PASS criteria 3+4"
+    }
+  },
+  "modes": {
+    "mode_1_comparative_hf": {
+      "scope_status": "IN SCOPE",
+      "substrate": "HF-format CLM v4 (consciousness=None, block_size=512)",
+      "anchor": "HF-format CLM v4 base (within-substrate)",
+      "primary_use": "LoRA-vs-base verdict",
+      "cost_per_ckpt_usd": "0-2 (H100) OR 0 (ubu1)",
+      "wall_per_ckpt": "30-60min H100 OR 3-5h ubu1"
+    },
+    "mode_2_anchor_compliance": {
+      "scope_status": "IN SCOPE",
+      "substrate": "stock meta-llama/Llama-3.2-3B via lm-eval HF loader",
+      "anchor": "published Llama-3.2-3B model card / leaderboard",
+      "primary_use": "harness sanity",
+      "cost_total_usd": 1.50,
+      "wall_total": "30min H100 OR 3h ubu1"
+    },
+    "mode_3_train_time_absolute": {
+      "scope_status": "DEFERRED",
+      "substrate": "CLM v4 + consciousness_states fixture + block_size ≥ 8K",
+      "anchor": "self-anchored or random+5pt absolute",
+      "prerequisite": [
+        "shim v4 with --consciousness-states-fixture injection mode",
+        "CLM v4 retrain at block_size ≥ 8K"
+      ],
+      "cost_total_usd": "22+ (full retrain dominant)",
+      "wall_total": "7.5h+ H100",
+      "block_reason": "cost-prohibitive without further escalation"
+    }
+  },
+  "amendment_falsifiers": {
+    "F-AMEND-1": {
+      "test": "test -f state/markers/p9_benchmark_a_prime_spec_amendment_landed.marker",
+      "expected": "PASS"
+    },
+    "F-AMEND-2": {
+      "test": "git diff --stat docs/p9_benchmark_switch_a_prime_spec_2026_05_03.md (and original handoff + original marker) returns empty",
+      "expected": "PASS"
+    },
+    "F-AMEND-3": {
+      "test": "every commit hash + file path in §A4 cross-link block resolves",
+      "expected": "PASS"
+    }
+  },
+  "roadmap_proposal": {
+    "cond_id": "benchmark_a_prime_base_validation",
+    "from_status": "unmet",
+    "to_status": "met_with_amendment",
+    "rationale": "V1 criterion 4 retired by amendment as mis-scoped; V2 criteria pending BG-Ο + BG-Π parallel cycles",
+    "do_not_action_in_this_bg": true
+  }
+}

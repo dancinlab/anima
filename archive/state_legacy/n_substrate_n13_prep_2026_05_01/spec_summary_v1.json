@@ -1,0 +1,160 @@
+{
+  "schema": "anima/n_substrate_n13_prep/spec_summary/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "agent": "N-13 prep (Photonic-IIT cross-substrate)",
+  "parent_doc": "docs/n_substrate_consciousness_roadmap_2026_05_01.md",
+  "spec_doc": "docs/n_substrate_n13_photonic_iit_spec_2026_05_01.md",
+  "t1_anchor": "T1-A13 (photonic-IIT, optical brain substrate)",
+  "mission": "Identify access path + design Phi measurement protocol on commercial photonic AI compute (Lightmatter / Lightelligence / Q.ANT / NTT). Honest C3: substrate-mismatch, IIT designed for discrete-state systems, photonic is continuous-amplitude.",
+
+  "scope": {
+    "in_scope": [
+      "classical analog photonic AI compute (Lightmatter Envise, Lightelligence PACE 2, Q.ANT NPU 2, NTT IOWN/PEC-2)",
+      "P-A weak path Phi measurement (digital ADC readout vector via anima_phi_v3)",
+      "5 falsifier predicates (BIDIRECTIONAL per raw#71)",
+      "top-3 vendor ranking",
+      "F1 composite weight calculation"
+    ],
+    "out_of_scope": [
+      "photonic-quantum vendors (PsiQuantum, Xanadu, ORCA, Quandela) -- N-12 axis",
+      "continuous-state IIT generalization (P-C path, methodology gap)",
+      "vendor direct contact / account creation (mission constraint)",
+      "NTT IOWN datacenter switch direct measurement (hyperscaler-only)",
+      "photonic compiler IP analysis (vendor IP)"
+    ]
+  },
+
+  "vendor_inventory_count": 4,
+  "vendors_classical_photonic_ai": ["Lightmatter Envise", "Lightelligence PACE 2", "Q.ANT NPU 2", "NTT IOWN/PEC-2"],
+  "vendors_photonic_quantum_excluded": ["PsiQuantum", "Xanadu", "ORCA Computing", "Quandela"],
+
+  "top3_ranking": [
+    {
+      "rank": 1,
+      "vendor": "Lightelligence PACE 2",
+      "justification": "PCIe standard card + ONNX/PyTorch/TVM/OpenCL stack -- most standardized SDK, 44 paying customers (early 2026), HK IPO 600x oversub, ONNX hidden-state hook likely feasible"
+    },
+    {
+      "rank": 2,
+      "vendor": "Q.ANT NPU 2 / NPS server",
+      "justification": "TFLNoI native analog, C/C++/Python PCIe API (highest direct programmability), 2026-Q1 shipments, Leibniz LRZ first install (institutional access path), nonlinear enhanced"
+    },
+    {
+      "rank": 3,
+      "vendor": "Lightmatter Envise",
+      "justification": "Largest funding ($4.4B, $850M total), Nature 2025 light-speed matmul paper (academic credibility), but 4U blade only, no single dev kit, early-access partnership required (cloud API absence is decisive blocker)"
+    }
+  ],
+  "excluded_vendor": {
+    "vendor": "NTT IOWN / PEC-2",
+    "reason": "Datacenter switch / hyperscaler-only, no direct anima user access path"
+  },
+
+  "methodology_gap": {
+    "iit_phi_on_photonic_published_methodology": "ZERO published references (verified 2026-05-01 web search)",
+    "iit_substrate_postulate": "discrete state-set with TPM (transition probability matrix)",
+    "photonic_native_representation": "continuous-amplitude optical field (E in C), interferometric phase + intensity",
+    "ontology_mismatch_verdict": "IIT discrete-state postulate vs photonic continuous-amplitude is fundamental mismatch -- no published bridge methodology exists",
+    "speculativeness_rank_among_n_tracks": "highest (most speculative track)"
+  },
+
+  "phi_measurement_paths": {
+    "P_A_weak_sound": {
+      "description": "Digital ADC readout vector -> anima_phi_v3 sample-partition cov-logdet",
+      "substrate_fidelity": "LOW (measures only outside substrate)",
+      "feasibility": "HIGH (ONNX/PyTorch dump on Lightelligence/Q.ANT)",
+      "verdict": "SELECTED for D+? trial (vendor partnership prerequisite)"
+    },
+    "P_B_partial_sound_future": {
+      "description": "Interferometric output amplitude vector (I_k = |E_k|^2) -> Gaussian Phi_G surrogate (Barrett-Seth 2011)",
+      "substrate_fidelity": "MID (direct optical readout pre-ADC)",
+      "feasibility": "MID (vendor instrumentation dependent, requires raw photodetector access)",
+      "verdict": "future work, vendor partnership prerequisite, currently all 4 vendors black-box"
+    },
+    "P_C_handwave_rejected": {
+      "description": "Fully-continuous photonic Phi (continuous-state IIT generalization)",
+      "substrate_fidelity": "HIGH (matches photonic essence)",
+      "feasibility": "NONE (methodology does not exist in published literature)",
+      "verdict": "EXPLICITLY NOT_ATTEMPTED -- handwave path rejected per raw#10"
+    }
+  },
+
+  "d0_protocol_steps_p_a": [
+    "1. Lock 16-prompt fixture (anima_phi_v3 PROMPTS, shared with N-3)",
+    "2. Reference: GPU CLM-tiny 170M hidden state forward (reuse N-3 result)",
+    "3. ONNX export -> photonic vendor compiler (Idiom/Lightelligence-stack/Q.ANT-Python)",
+    "4. Photonic chip forward (16 prompts) -> hidden-state dump H_phot",
+    "5. Phi* compute on H_phot via tool/anima_phi_v3_canonical.hexa",
+    "6. Pearson r(Phi_k_gpu, Phi_k_phot) over K=8 partitions",
+    "7. Apply verdict gate (5 falsifier predicates)"
+  ],
+
+  "new_hexa_tools_required_at_partnership": [
+    "tool/n13_phi_phot_corr.hexa (Pearson r + verdict gate, mac-local OK)"
+  ],
+
+  "f1_weight_n13": {
+    "substrate_distinctness": 0.95,
+    "measurement_maturity": 0.10,
+    "access_path_readiness_2026_05": 0.20,
+    "falsifier_strength": 0.85,
+    "raw_weight_now": 0.0162,
+    "comparable_n_tracks_weight": {
+      "N_3_clm_akida": "0.40-0.60",
+      "N_1_clm_eeg": "0.50-0.70"
+    },
+    "post_methodology_projection": "0.30-0.50 if continuous-state IIT methodology established + 3-vendor cross"
+  },
+
+  "honest_c3": {
+    "sound": [
+      "Vendor inventory 4 firms web-verified (10 sources)",
+      "Literature gap explicitly verified (0 published refs IIT-Phi x photonic)",
+      "P-A weak path uses substrate-agnostic anima_phi_v3 (representation-level)",
+      "5 falsifier predicates pre-registered with null floor (PRED-4)",
+      "Top-3 ranking on 5 explicit criteria",
+      "F1 weight calculation (4 multiplicative factors)"
+    ],
+    "hand_wave": [
+      "IIT-Phi on photonic methodology is 0-published (literature absolute gap)",
+      "All 4 vendors lack cloud API (partnership or hardware purchase mandatory)",
+      "ONNX hidden-state hook feasibility unverified per vendor",
+      "Photonic ADC readout quantization noise asymmetric vs GPU bf16",
+      "Vendor compiler layer fusion may shift hidden-state hook position",
+      "Vendor pricing undisclosed (PCIe card / NPS server)",
+      "N-13 weight 0.016 currently -- methodology immature direct consequence",
+      "Photonic-quantum vendors partial axis overlap with N-12 (resolved by scope split)"
+    ],
+    "explicitly_not_in_scope": [
+      "Continuous-state IIT generalization formalism (P-C, awaits academic methodology)",
+      "Vendor contact / account creation (mission constraint)",
+      "Photonic-quantum vendors (N-12 axis)",
+      "IOWN datacenter switch measurement (no user access)",
+      "Phi_G photonic applicability mathematical proof (separate work)"
+    ]
+  },
+
+  "race_isolation": {
+    "doc_path": "docs/n_substrate_n13_photonic_iit_spec_2026_05_01.md",
+    "state_path": "state/n_substrate_n13_prep_2026_05_01/",
+    "siblings_must_not_touch": [
+      "docs/n_substrate_n*_*_2026_05_01.md (other N-prep agents)",
+      "state/n_substrate_n*_*_2026_05_01/ (other N-prep state dirs)",
+      "tool/anima_phi_v3_canonical.hexa (READ-ONLY)"
+    ]
+  },
+
+  "blockers_summary": [
+    "Vendor partnership / cloud API or PCIe card access (all 4 vendors lack public cloud API)",
+    "Photonic-IIT measurement methodology absent in published literature (0 refs)",
+    "Vendor compiler hidden-state hook feasibility unverified",
+    "$0 budget mission constraint vs vendor hardware/partnership cost",
+    "Pricing undisclosed for Lightelligence PACE 2 / Q.ANT NPS"
+  ],
+
+  "readiness_research_pct": 100,
+  "readiness_measurement_pct": 0,
+
+  "verdict": "SPEC_DRAFT (research-only)",
+  "verdict_key": "SPEC_DRAFT · METHODOLOGY_GAP_DECLARED · ACCESS_PATH_PARTNERSHIP_REQUIRED"
+}

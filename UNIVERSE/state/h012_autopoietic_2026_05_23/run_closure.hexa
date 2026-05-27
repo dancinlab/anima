@@ -1,0 +1,215 @@
+// UNIVERSE/state/h012_autopoietic_2026_05_23/run_closure.hexa
+//
+//   H_012 — autopoietic network (operational closure) minimal-instance smoke.
+//
+//   MODEL (abstract, deterministic, $0 mac local — NO chemistry claim):
+//     A minimal self-producing catalytic network of 3 components A, B, C.
+//     Operational closure (Maturana/Varela 1972, our toy reading):
+//       (1) PRODUCTION CLOSURE — every component is produced by some process
+//           that is itself IN the network. Cyclic catalysis:
+//             A is produced by a process catalyzed by C   (C -> +A)
+//             B is produced by a process catalyzed by A   (A -> +B)
+//             C is produced by a process catalyzed by B   (B -> +C)
+//           No external producer: the only sources of A,B,C are the three
+//           in-network catalytic edges. This is the closed production graph.
+//       (2) BOUNDARY MAINTENANCE — each component leaks across the boundary
+//           at a constant fractional decay (DECAY). The network maintains its
+//           own boundary iff production replenishes the leak (steady state > 0).
+//
+//     Dynamics (discrete, bounded logistic-style saturating production):
+//       prod_X = K * cat_X * (1 - X / CAP)        // saturating, catalyst-gated
+//       X' = X + prod_X - DECAY * X               // production minus boundary leak
+//     where cat_A=C, cat_B=A, cat_C=B (the closed cycle).
+//
+//   MEASUREMENTS:
+//     (a) SELF-MAINTENANCE RATE — fraction of the last MEASURE_WINDOW steps in
+//         which ALL THREE components stay above SURVIVE_FLOOR (network alive).
+//         Closed network at a positive fixed point ⟹ rate -> 1.0.
+//     (b) BROKEN-CLOSURE CONTROL — cut ONE production edge (B -> +C, i.e. C is
+//         no longer produced by any in-network process). C now only leaks.
+//         Operational closure broken ⟹ C extinguishes ⟹ cycle collapses ⟹
+//         downstream A then B also starve (production gated on the dead catalyst).
+//         control self-maintenance rate -> 0.0.
+//
+//   VERDICT (pre-registered): PASS iff
+//       closed_rate >= SELF_MAINT_THRESHOLD (0.80)   AND
+//       broken_rate <= BROKEN_COLLAPSE_CEIL (0.20)   AND
+//       closed_rate - broken_rate >= CLOSURE_DEPENDENCE_GAP (0.50)
+//   The third clause is the load-bearing one: it proves the self-maintenance is
+//   CAUSED BY operational closure (the only difference between arms is the one
+//   cut edge), not by parameter generosity.
+//
+//   DETERMINISM: no RNG is used (pure recurrence from fixed initial conditions);
+//   the run is byte-reproducible. A fixed integer SEED is recorded for ledger
+//   provenance only and is folded into a trivial perturbation of the initial
+//   condition so the seed is genuinely load-bearing on the trajectory.
+// ════════════════════════════════════════════════════════════════════════
+
+// ── fixed pre-registered constants ──────────────────────────────────────
+fn STEPS() -> int            { return 1000 }
+fn MEASURE_WINDOW() -> int   { return 200 }   // last 200 steps = steady-state window
+fn CAP() -> float            { return 1.0 }
+fn K() -> float              { return 0.60 }  // production rate constant
+fn DECAY() -> float          { return 0.10 }  // boundary leak (fractional)
+fn SURVIVE_FLOOR() -> float  { return 0.05 }  // component alive iff > this
+fn SEED() -> int             { return 0xA17C012 }
+
+// verdict thresholds (pre-registered, frozen)
+fn SELF_MAINT_THRESHOLD() -> float    { return 0.80 }
+fn BROKEN_COLLAPSE_CEIL() -> float    { return 0.20 }
+fn CLOSURE_DEPENDENCE_GAP() -> float  { return 0.50 }
+
+fn _clamp01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > CAP() { return CAP() }
+    return x
+}
+
+// Seed-derived initial condition in (0,1): keeps the seed load-bearing while
+// staying deterministic. fold = ((seed >> shift) & 255) / 256 in [0,1).
+fn _seed_init(shift: int) -> float {
+    let bits = (SEED() / pow_i(2, shift)) % 256
+    let f = (to_float(bits) + 1.0) / 257.0   // strictly in (0,1)
+    return f * 0.4 + 0.1                       // map into [0.1, 0.5]
+}
+
+fn pow_i(base: int, e: int) -> int {
+    let mut r = 1
+    let mut i = 0
+    while i < e {
+        r = r * base
+        i = i + 1
+    }
+    return r
+}
+
+fn to_float(x: int) -> float {
+    return x * 1.0
+}
+
+// One catalytic-production step.
+//   X' = X + K * cat * (1 - X/CAP) - DECAY * X
+// `cat` is the catalyst concentration (an in-network component). If the edge
+// is cut (broken-closure arm), the caller passes cat = 0.0 ⟹ no production.
+fn _step_component(x: float, cat: float) -> float {
+    let prod = K() * cat * (1.0 - x / CAP())
+    let nx = x + prod - DECAY() * x
+    return _clamp01(nx)
+}
+
+// Run the 3-component network. `cut_edge_B_to_C` = 1 ⟹ broken-closure control:
+// C is no longer produced by B (its only in-network producer), so C only leaks.
+// Returns the self-maintenance rate over the last MEASURE_WINDOW steps.
+fn _run_network(cut_edge_B_to_C: int) -> float {
+    let mut a = _seed_init(0)
+    let mut b = _seed_init(8)
+    let mut c = _seed_init(16)
+
+    let total = STEPS()
+    let win_start = total - MEASURE_WINDOW()
+    let mut alive_steps = 0
+    let mut step = 0
+
+    while step < total {
+        // Closed production cycle: cat_A = C, cat_B = A, cat_C = B.
+        let cat_a = c
+        let cat_b = a
+        let mut cat_c = b
+        if cut_edge_B_to_C == 1 {
+            cat_c = 0.0   // production edge B -> +C severed (closure broken)
+        }
+
+        let na = _step_component(a, cat_a)
+        let nb = _step_component(b, cat_b)
+        let nc = _step_component(c, cat_c)
+        a = na
+        b = nb
+        c = nc
+
+        // count "network alive" steps inside the steady-state measurement window
+        if step >= win_start {
+            let alive = (a > SURVIVE_FLOOR()) && (b > SURVIVE_FLOOR()) && (c > SURVIVE_FLOOR())
+            if alive { alive_steps = alive_steps + 1 }
+        }
+        step = step + 1
+    }
+
+    return to_float(alive_steps) / to_float(MEASURE_WINDOW())
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn main() {
+    println("H_012 autopoietic network — operational-closure minimal-instance smoke")
+    println("  model: 3-component closed catalytic cycle (C->+A, A->+B, B->+C) + boundary leak")
+    println("  STEPS=" + to_string(STEPS()) + " WINDOW=" + to_string(MEASURE_WINDOW())
+            + " K=" + to_string(K()) + " DECAY=" + to_string(DECAY())
+            + " FLOOR=" + to_string(SURVIVE_FLOOR()) + " SEED=" + to_string(SEED()))
+
+    // ── arm 1: CLOSED network (operational closure intact) ──
+    let closed_rate = _run_network(0)
+    println("")
+    println("  [closed]  self-maintenance rate (last " + to_string(MEASURE_WINDOW())
+            + " steps) = " + to_string(closed_rate))
+
+    // ── arm 2: BROKEN-closure control (cut B -> +C) ──
+    let broken_rate = _run_network(1)
+    println("  [broken]  self-maintenance rate (last " + to_string(MEASURE_WINDOW())
+            + " steps) = " + to_string(broken_rate))
+
+    // determinism re-run (byte-identical recurrence)
+    let closed_rate2 = _run_network(0)
+    let det_ok = closed_rate2 == closed_rate
+
+    // ── verdict ──
+    let gap = closed_rate - broken_rate
+    let c1 = closed_rate >= SELF_MAINT_THRESHOLD()
+    let c2 = broken_rate <= BROKEN_COLLAPSE_CEIL()
+    let c3 = gap >= CLOSURE_DEPENDENCE_GAP()
+    let pass = c1 && c2 && c3 && det_ok
+
+    println("")
+    println("  C1 closed_rate >= " + to_string(SELF_MAINT_THRESHOLD()) + "          : " + _bool_str(c1))
+    println("  C2 broken_rate <= " + to_string(BROKEN_COLLAPSE_CEIL()) + "          : " + _bool_str(c2))
+    println("  C3 closure-dependence gap >= " + to_string(CLOSURE_DEPENDENCE_GAP())
+            + " : " + _bool_str(c3) + "  (gap=" + to_string(gap) + ")")
+    println("  C4 determinism (re-run byte-equal)        : " + _bool_str(det_ok))
+
+    let verdict = "FAIL"
+    if pass { verdict = "PASS" }
+    println("")
+    println("=== H_012 VERDICT: " + verdict + " ===")
+
+    // ── write result.json (ledger) ──
+    let mut j = "{\n"
+    j = j + "  \"hypothesis\": \"H_012\",\n"
+    j = j + "  \"slug\": \"autopoietic-network\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"model\": \"3-component closed catalytic cycle (C->+A, A->+B, B->+C) + boundary leak\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"seed\": " + to_string(SEED()) + ",\n"
+    j = j + "  \"params\": {\"steps\": " + to_string(STEPS())
+            + ", \"measure_window\": " + to_string(MEASURE_WINDOW())
+            + ", \"K\": " + to_string(K())
+            + ", \"decay\": " + to_string(DECAY())
+            + ", \"survive_floor\": " + to_string(SURVIVE_FLOOR()) + "},\n"
+    j = j + "  \"closed_self_maintenance_rate\": " + to_string(closed_rate) + ",\n"
+    j = j + "  \"broken_closure_control_rate\": " + to_string(broken_rate) + ",\n"
+    j = j + "  \"closure_dependence_gap\": " + to_string(gap) + ",\n"
+    j = j + "  \"thresholds\": {\"self_maint\": " + to_string(SELF_MAINT_THRESHOLD())
+            + ", \"broken_ceil\": " + to_string(BROKEN_COLLAPSE_CEIL())
+            + ", \"dependence_gap\": " + to_string(CLOSURE_DEPENDENCE_GAP()) + "},\n"
+    j = j + "  \"criteria\": {\"C1_self_maint\": " + _bool_str(c1)
+            + ", \"C2_broken_collapse\": " + _bool_str(c2)
+            + ", \"C3_closure_dependence\": " + _bool_str(c3)
+            + ", \"C4_determinism\": " + _bool_str(det_ok) + "},\n"
+    j = j + "  \"verdict\": \"" + verdict + "\"\n"
+    j = j + "}\n"
+    write_file("/Users/ghost/core/anima/.claude/worktrees/agent-aa1c001104e6b9853/UNIVERSE/state/h012_autopoietic_2026_05_23/result.json", j)
+    println("  ledger -> UNIVERSE/state/h012_autopoietic_2026_05_23/result.json")
+}

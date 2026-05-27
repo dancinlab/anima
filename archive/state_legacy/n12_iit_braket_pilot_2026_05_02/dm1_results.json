@@ -1,0 +1,42 @@
+{
+  "schema": "n12_iit_braket_pilot/dm1_results/1",
+  "ts_utc": "2026-05-02T22:10:17Z",
+  "device_arn": "arn:aws:braket:::device/quantum-simulator/amazon/dm1",
+  "device_name": "dm1",
+  "shots_per_circuit": 500,
+  "noise_model": "depolarizing(0.001) on all 4 qubits at end of circuit (light noise floor)",
+  "free_tier_consumed_min": "<0.5",
+  "circuits": {
+    "and": {
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/1b769ec6-7113-43e1-9898-30771ec5eb70",
+      "h_joint_bits": 2.059217,
+      "h_marg_max_bits": 0.999988,
+      "phi_proxy_bits": 1.059229,
+      "delta_vs_sv1_bits": 0.059258
+    },
+    "xor": {
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/6023cfb1-0907-4d6b-b4c5-19dcefb4b3fd",
+      "h_joint_bits": 2.064309,
+      "h_marg_max_bits": 1.000000,
+      "phi_proxy_bits": 1.064309,
+      "delta_vs_sv1_bits": 0.064617
+    },
+    "maj": {
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/9c9f653f-a17a-4231-82a7-effee83bbb09",
+      "h_joint_bits": 3.008566,
+      "h_marg_max_bits": 1.000000,
+      "phi_proxy_bits": 2.008566,
+      "delta_vs_sv1_bits": 0.013585
+    },
+    "copy": {
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/b7b5f67a-a6a0-45f2-8282-fbd3c6007edd",
+      "h_joint_bits": 1.018672,
+      "h_marg_max_bits": 0.999896,
+      "phi_proxy_bits": 0.018776,
+      "delta_vs_sv1_bits": 0.018776,
+      "interpretation": "Noise breaks perfect GHZ correlation by ~2%; Φ_proxy slightly nonzero because joint redundancy weakens before marginals widen."
+    }
+  },
+  "noise_impact_summary": "Light depolarizing noise (0.001) raises Φ_proxy by 0.01–0.07 bits across all gates (joint entropy widens faster than marginal entropies). Circuit-relative ordering preserved (COPY < AND ≈ XOR < MAJ both substrates).",
+  "cost_USD": 0.00
+}

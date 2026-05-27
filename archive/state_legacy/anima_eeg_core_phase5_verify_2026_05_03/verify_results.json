@@ -1,0 +1,103 @@
+{
+  "schema": "anima-eeg-core/phase5_verify/1",
+  "verified_at_iso": "2026-05-03T12:23:00Z",
+  "host": "mac-local",
+  "hexa_interp": "/Users/ghost/.hx/bin/hexa",
+  "raw_compliance": ["raw#9 hexa-only", "raw#10 honest", "raw#42 mac-zero-compute", "raw#65 idempotent", "raw#71 falsifier_>=3", "raw#91 honest_triad"],
+  "modules": [
+    {
+      "name": "lz76_native",
+      "path": "anima-eeg-core/tool/modules/_metrics/lz76_native.hexa",
+      "loc": 856,
+      "sha256": "3ede29de5e6a66ecbf9822b6f4dd6c5d762ef80b47204384dc9b54bd255acf70",
+      "selftest_exit": 0,
+      "selftest_status": "PASS",
+      "byte_identical": {
+        "fixture": "16ch x 16 random/structured (median binarization)",
+        "random":     {"c_n": 39, "b_x1000": 1218},
+        "structured": {"c_n": 8,  "b_x1000": 250},
+        "ordering_ok": true,
+        "raw65_idempotent": true,
+        "raw71_F_LZN_02_floor_b_random": 1218
+      },
+      "marker": "state/markers/lz76_native_1777810512.marker",
+      "verdict": "L0 PASS native_only; cross_validate=not_requested"
+    },
+    {
+      "name": "pe_native",
+      "path": "anima-eeg-core/tool/modules/_metrics/pe_native.hexa",
+      "loc_kb": 52,
+      "sha256": "0b162840342094e17cc28000333cbbae4929cfb0e862c7d9b705b744781a353b",
+      "selftest_exit": 0,
+      "selftest_status": "PASS",
+      "byte_identical": {
+        "fixture": "16ch x 256 (m=3, tau=1, scales 1/2/5/10)",
+        "random":     {"pe_x1000": 976, "s1": 996, "s2": 991, "s5": 978, "s10": 939},
+        "structured": {"pe_x1000": 327, "s1": 88,  "s2": 154, "s5": 424, "s10": 644},
+        "const":      {"pe_x1000": 0,   "s1": 0},
+        "ordering_ok": "random > structured > const",
+        "raw65_idempotent": true,
+        "raw71_F_PE_01_floor_pe_random": 976
+      },
+      "marker": "state/markers/pe_native_1777810515.marker",
+      "verdict": "L1 PASS native_only; cross_validate=not_requested"
+    },
+    {
+      "name": "hjorth_native",
+      "path": "anima-eeg-core/tool/modules/_metrics/hjorth_native.hexa",
+      "loc_kb": 58,
+      "sha256": "dbe655af0d91ea1a31487e31de4ee58ac04acd0212116418a80adc81617cd134",
+      "selftest_exit": 0,
+      "selftest_status": "PASS",
+      "root_cause_resolved_at_iso": "2026-05-03T22:10:00Z",
+      "root_cause_summary": "Cgroup OOM killer in dockerized hexa-exec container; flat-list-passed-to-_var_*_slice triggers pathological hexa-runtime list allocation cumulating to 1.83 GiB inside ~1.93 GiB Docker Desktop VM ceiling",
+      "fix_summary": "Streaming per-channel evaluator (_hjorth_mean_streaming + _hjorth_channel_only + _var_x_only/_var_d1_only/_var_d2_only) caps live working set to O(n_samp) ints regardless of n_ch and number of modes",
+      "before_after": {
+        "exit_before": 137,
+        "exit_after": 0,
+        "mem_peak_bytes_before": 1961943040,
+        "mem_peak_bytes_after": 88649728,
+        "mem_reduction_factor": "22.1x (1.83 GiB -> 84.5 MiB)",
+        "oom_kill_per_run_before": 1,
+        "oom_kill_per_run_after": 0,
+        "sha_before": "63300abf94e83707827e69257ef7989787bc180e157f92d58b7b2b454d49cc9d",
+        "sha_after":  "dbe655af0d91ea1a31487e31de4ee58ac04acd0212116418a80adc81617cd134"
+      },
+      "byte_identical": {
+        "fixture": "16ch x 32 synthetic, 4 modes (random/structured/sine/monotonic)",
+        "random":     {"log_act": 4803, "mob": 1409, "cpx": 1220},
+        "structured": {"log_act": 4936, "mob": 423,  "cpx": 3542},
+        "sine":       {"log_act": 5026, "mob": 515,  "cpx": 1007},
+        "monotonic":  {"log_act": 2470, "mob": 0,    "cpx": 0},
+        "cpx_ordering_ok": "structured > random > sine",
+        "mob_ordering_ok": "random > monotonic",
+        "raw65_idempotent": true,
+        "cross_run_idempotent_byte_identical": true,
+        "raw71_F_HJN_01_not_tripped": true,
+        "raw71_F_HJN_02_not_tripped": true,
+        "raw71_F_HJN_03_floor_pass_mob_random": 1409
+      },
+      "modes_passed": ["default(no-flag)", "--selftest-mode random", "--selftest-mode structured", "--selftest-mode sine", "--selftest-mode monotonic"],
+      "remaining_limitation_raw10_honest": "cross-validate vs WRAP wrapper (--cross-validate) still auto-skips on this host per the original L2 caveat (Python child-spawn restriction in the second-stage container shell). Streaming kernel does NOT change that behaviour. Native-only PASS is the verified deliverable; cross-validate remains a future cycle item.",
+      "marker_landed": "state/markers/hjorth_native_root_cause_fix_1777846228_LANDED.marker",
+      "root_cause_artifacts": "state/anima_eeg_core_hjorth_root_cause_2026_05_03/{audit.json,dmesg_excerpt.txt,before_after.diff,hjorth_native.hexa.before}",
+      "markers_failed_historical": [
+        "state/markers/hjorth_native_1777810519_FAILED.marker",
+        "state/markers/hjorth_native_1777810524_FAILED.marker",
+        "state/markers/hjorth_native_1777810652_FAILED.marker",
+        "state/markers/hjorth_native_1777810690_FAILED.marker",
+        "state/markers/hjorth_native_1777810728_FAILED.marker"
+      ],
+      "verdict": "L2 PASS native_only (post-fix); cross_validate=auto-skipped raw#10 honest L2 (unchanged from prior cycle)"
+    }
+  ],
+  "phase5_completion": {
+    "5a_lz76_native":   {"status": "PASS", "pct": 100},
+    "5b_pe_native":     {"status": "PASS", "pct": 100},
+    "5c_hjorth_native": {"status": "PASS", "pct": 100, "note": "root cause = container cgroup OOM killer; fix = streaming per-channel kernel; selftest exit=0; 22x memory reduction; cross-validate auto-skip unchanged (raw#10 honest L2)"},
+    "overall_pct": 100,
+    "verdict": "5a + 5b + 5c LANDED + VERIFIED on dockerized hexa-exec runtime",
+    "previous_verdict_2026_05_03_morning": "5a + 5b LANDED + VERIFIED; 5c LANDED + BLOCKED (raw#10 honest); overall 83%",
+    "delta_from_previous": "5c BLOCKED -> PASS via streaming kernel; overall 83% -> 100%"
+  }
+}

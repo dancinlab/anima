@@ -1,0 +1,144 @@
+{
+  "paradigm": "nexus 1013-lens K=10 smoke (audit-recommended P-A path)",
+  "spec_id": "nexus6_1013lens_activation_2026_05_11",
+  "k": 10,
+  "lens_dir": "/home/summer/core/nexus_lenses_snapshot",
+  "hexa_bin": "/home/summer/.hx/bin/hexa",
+  "whitelist": [
+    "core_info.hexa",
+    "core_causal.hexa",
+    "core_consciousness.hexa",
+    "core_thermo.hexa",
+    "core_quantum.hexa",
+    "core_topology.hexa",
+    "core_gravity.hexa",
+    "core_network.hexa",
+    "core_scale.hexa",
+    "core_stability.hexa"
+  ],
+  "whitelist_source": "spec §3.1 canonical K=10 (2026-05-11)",
+  "whitelist_caveat": "spec §3.1 binds C3 no-mislabel-drift; file-path-level match required",
+  "results": [
+    {
+      "lens": "core_info.hexa",
+      "ok": true,
+      "score": 1.0,
+      "hits": 8,
+      "total": 8,
+      "elapsed_ms": 12,
+      "raw": "lens[info] category=core axis=\"Information-theoretic — mutual information, entropy, compression\" score=1 (8/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_causal.hexa",
+      "ok": true,
+      "score": 1.0,
+      "hits": 8,
+      "total": 8,
+      "elapsed_ms": 32,
+      "raw": "lens[causal] category=core axis=\"Causal arrow — directed dependencies and information flow\" score=1 (8/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_consciousness.hexa",
+      "ok": true,
+      "score": 1.0,
+      "hits": 8,
+      "total": 8,
+      "elapsed_ms": 8,
+      "raw": "lens[consciousness] category=core axis=\"Structural awareness — detects self-referential and emergent patterns\" score=1 (8/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_thermo.hexa",
+      "ok": true,
+      "score": 1.0,
+      "hits": 8,
+      "total": 8,
+      "elapsed_ms": 8,
+      "raw": "lens[thermo] category=core axis=\"Thermodynamic lens — entropy flow, energy barriers, phase transitions\" score=1 (8/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_quantum.hexa",
+      "ok": true,
+      "score": 1.0,
+      "hits": 8,
+      "total": 8,
+      "elapsed_ms": 8,
+      "raw": "lens[quantum] category=core axis=\"Quantum-like superposition, entanglement, tunnelling analogues\" score=1 (8/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_topology.hexa",
+      "ok": true,
+      "score": 1.0,
+      "hits": 8,
+      "total": 8,
+      "elapsed_ms": 12,
+      "raw": "lens[topology] category=core axis=\"Topological connectivity — holes, loops, and persistent features\" score=1 (8/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_gravity.hexa",
+      "ok": true,
+      "score": 1.0,
+      "hits": 8,
+      "total": 8,
+      "elapsed_ms": 11,
+      "raw": "lens[gravity] category=core axis=\"Gravitational clustering — mass-like attraction between data regions\" score=1 (8/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_network.hexa",
+      "ok": true,
+      "score": 1.0,
+      "hits": 8,
+      "total": 8,
+      "elapsed_ms": 10,
+      "raw": "lens[network] category=core axis=\"Network/graph topology — degree distribution, clustering, centrality\" score=1 (8/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_scale.hexa",
+      "ok": true,
+      "score": 1.0,
+      "hits": 8,
+      "total": 8,
+      "elapsed_ms": 21,
+      "raw": "lens[scale] category=core axis=\"Scale/magnification — power-law tails, scale-free structure\" score=1 (8/8)",
+      "rc": 0
+    },
+    {
+      "lens": "core_stability.hexa",
+      "ok": true,
+      "score": 1.0,
+      "hits": 8,
+      "total": 8,
+      "elapsed_ms": 6,
+      "raw": "lens[stability] category=core axis=\"Stability analysis — Lyapunov exponents, basin attractors\" score=1 (8/8)",
+      "rc": 0
+    }
+  ],
+  "phi_mean": 1.0,
+  "phi_std": 0.0,
+  "positive_ratio": 1.0,
+  "c1_smoke_gate": true,
+  "f1_floor_breach": false,
+  "f2_random_baseline_delta": null,
+  "cross_lens_agreement_stub": 1.0,
+  "bonferroni_alpha": 4.93583415597236e-05,
+  "n6_consistency_ratio": 1.0,
+  "timing_ms": {
+    "total": 132,
+    "per_lens_mean": 13.2
+  },
+  "falsifier_status": {
+    "F1_phi_ratio_floor": "ok",
+    "F2_random_walk": "stub-deferred",
+    "F3_bonferroni": "informational-only-at-K10",
+    "F4_n6_consistency": "proxy-only-binds-at-K50",
+    "F5_seed_sign_preservation": "na-deterministic-lenses"
+  },
+  "lock_policy": "no chflags / chattr — memory feedback_no_relock.md 2026-05-11"
+}

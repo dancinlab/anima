@@ -1,0 +1,31 @@
+{
+  "schema": "anima/strategic_clm_phase_a3_honest_c3/1",
+  "schema_version": 1,
+  "ts": "2026-05-02T19:20:00Z",
+  "context": "Honest call-outs / caveats / category-3 limitations for CLM Phase A.3 AN11(a) measurement",
+  "top3": [
+    {
+      "id": "C3-1",
+      "title": "True ΔW from random init NOT measurable — baseline is step_10000, not step_0",
+      "severity": "HIGH",
+      "detail": "The CLM v4 checkpoint chain on ubu1 starts at step_10000.pt. No init.pt / step_0 / random-init snapshot was preserved. The reported ΔW_F = 106.40 measures step_10000 → final drift only. True total fine-tune drift from random init is necessarily LARGER, but unknowable from current artifacts. Implication: the rel = 0.0689 is a LOWER BOUND on the full training-induced relative shift; AN11(a) emergence claim is therefore conservative (under-stated, not over-stated)."
+    },
+    {
+      "id": "C3-2",
+      "title": "LoRA vs full-fine-tune Frobenius is a category mismatch — direct number comparison is misleading",
+      "severity": "HIGH",
+      "detail": "ALM r14 ΔW_F = 6.99 is a sum over 224 low-rank products (B·A with r=64) on a frozen Mistral-7B base. CLM ΔW_F = 106.40 is a sum over 419 full-rank tensors on a fine-tuned 530M decoder. The 15.22× raw ratio reflects (full-rank vs r=64) DOF expansion more than any 'training intensity' difference. Normalized ratio (ΔW_F / W_init_F) is the only honest cross-substrate scalar — and ALM r14's verifier did not record W_init_F (Mistral base Frobenius), so even normalized comparison is currently one-sided. Section 27.5 anchor (CP2 ALM-anchored / Mk.XII ≠ CP2) must be respected: AN11(a) original spec assumed LoRA category and is not lifted to full-fine-tune without re-derivation."
+    },
+    {
+      "id": "C3-3",
+      "title": "AGI-strict threshold (0.001 per LoRA pair) is not transferable to full-fine-tune; verdict left as NOT-MEASURED rather than spurious PASS",
+      "severity": "MED-HIGH",
+      "detail": "Original AN11(a) AGI-strict gate (delta_norm > 0.001 per adapter) was calibrated for LoRA r=8/r=64 over a frozen base where any per-adapter Frobenius above noise indicates emergent steering. Applied naively to CLM full-fine-tune, EVERY ONE of the 419 matrix tensors has dW_F > 0.001 — auto-PASS would be vacuous. Honest verdict: AGI-strict requires a re-derived threshold (e.g., per-tensor rel ≥ R for R calibrated on noise floor of step→step+1 micro-batch drift), which is not in scope for Phase A.3. Verdict therefore emitted as PASS (CP2-relaxed) + NOT-MEASURED (AGI-strict) rather than fabricated PASS."
+    }
+  ],
+  "additional_minor_notes": [
+    "best.pt and final.pt are byte-identical (verified by identical aggregate dW_F to both); checkpoint chain plateaued by step 20000 → final.",
+    "tok_emb.weight and head_a.weight have identical dW_F = 24.76 — likely weight-tied (input embedding == output projection); should be verified before counting both in any aggregate.",
+    "Highest rel ratios (top-10 by relative shift) are all purefield.engine_*.bias tensors with rel > 6.5. These are 1D bias vectors with very small W_init_F, so rel is unstable; they should be excluded from any 'integration-axis' interpretation."
+  ]
+}

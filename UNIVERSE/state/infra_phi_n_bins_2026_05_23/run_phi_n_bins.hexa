@@ -1,0 +1,256 @@
+// UNIVERSE/state/infra_phi_n_bins_2026_05_23/run_phi_n_bins.hexa
+// LIFE Cycle #5 infra smoke — phi_spatial(state, N, dim, n_bins) primitive 의
+// n_bins 파라미터 sensitivity sweep. H_007 (CA Φ ranking) + 모든 phi_spatial-
+// using H gate (H_003 H3.4 autopoietic Φ · H_004 hard-problem · H_018 genesis ·
+// H_157 panpsychism · H_204) 의 robustness 측정.
+//
+//   Question: H_007 default n_bins=4 에서 측정된 Φ ordering
+//   (rule110 > rule30 > rule250) 이 n_bins ∈ {2, 4, 8, 16} sweep 에서도
+//   invariant 인가?
+//
+//   Method (deterministic, hexa-only, $0 mac local, llm:none):
+//     - 1D elementary CA, length-N periodic lattice, evolved T steps.
+//     - 3 rule (H_007 carry): 250 (Class II ordered) · 30 (Class III chaotic) ·
+//       110 (Class IV complex).
+//     - 4 n_bins values: {2, 4, 8, 16}.
+//     - 3 × 4 = 12 phi_spatial measurements.
+//     - Fixed deterministic inits (5 reps), Φ averaged per (rule, n_bins).
+//
+//   Verdict (pre-registered):
+//     I1 ROBUSTNESS_PASS = rule110 > rule30 > rule250 at all 4 n_bins.
+//     I2 RANK_INVARIANT  = relative ordering preserved (≡ I1).
+//     ROBUSTNESS_PASS iff I1 ∧ I2 ∧ all Φ ≥ 0 (no NaN/neg).
+//
+//   NO new H · NO Phase-3 index churn · state/-local artifact only.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/C/c_lib.hexa"
+
+// ── config (deterministic, mirrors H_007) ───────────────────────────────────
+fn _N() -> int    { return 16 }
+fn _DIM() -> int  { return 12 }
+fn _WARM() -> int { return 8 }
+fn _REPS() -> int { return 5 }
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/UNIVERSE/state/infra_phi_n_bins_2026_05_23"
+}
+
+// ── small int helpers ───────────────────────────────────────────────────────
+fn _pow2(k: int) -> int {
+    let mut p = 1
+    let mut i = 0
+    while i < k { p = p * 2; i = i + 1 }
+    return p
+}
+fn _ftoi(x: float) -> int { if x > 0.5 { return 1 }; return 0 }
+fn _itof(b: int) -> float { if b == 1 { return 1.0 }; return 0.0 }
+
+// elementary CA next-state: neighborhood (l,c,r) → bit `idx` of `rule`.
+fn _ca_next(l: int, c: int, r: int, rule: int) -> int {
+    let idx = l * 4 + c * 2 + r
+    return (rule / _pow2(idx)) % 2
+}
+
+// deterministic initial row (mirrors H_007): site i on iff (i+rep)%3 != 0.
+fn _init_row(row: int, n: int, rep: int) -> int {
+    let mut i = 0
+    while i < n {
+        let on = ((i + rep) % 3) != 0
+        if on { let _ = farr_set(row, i, 1.0) }
+        else  { let _ = farr_set(row, i, 0.0) }
+        i = i + 1
+    }
+    return 1
+}
+
+// evolve length-N periodic elementary CA; record each site's `dim`-step
+// trajectory (after `warm` warmup) into states[site*dim + t]. returns farr.
+fn _run_ca(rule: int, n: int, dim: int, warm: int, rep: int) -> int {
+    let row = farr_zeros(n)
+    let _ = _init_row(row, n, rep)
+
+    let states = farr_zeros(n * dim)
+    let total = warm + dim
+    let mut step = 0
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut s = 0
+            while s < n {
+                let _ = farr_set(states, s * dim + t, farr_get(row, s))
+                s = s + 1
+            }
+        }
+        let nxt = farr_zeros(n)
+        let mut j = 0
+        while j < n {
+            let lj = (j + n - 1) % n
+            let rj = (j + 1) % n
+            let lv = _ftoi(farr_get(row, lj))
+            let cv = _ftoi(farr_get(row, j))
+            let rv = _ftoi(farr_get(row, rj))
+            let _ = farr_set(nxt, j, _itof(_ca_next(lv, cv, rv, rule)))
+            j = j + 1
+        }
+        let mut k = 0
+        while k < n { let _ = farr_set(row, k, farr_get(nxt, k)); k = k + 1 }
+        let _ = farr_free(nxt)
+        step = step + 1
+    }
+    let _ = farr_free(row)
+    return states
+}
+
+// mean Φ for (rule, n_bins) over REPS fixed inits.
+fn _mean_phi_for(rule: int, n_bins: int) -> float {
+    let n = _N()
+    let dim = _DIM()
+    let warm = _WARM()
+    let reps = _REPS()
+    let mut sum = 0.0
+    let mut rep = 0
+    while rep < reps {
+        let s = _run_ca(rule, n, dim, warm, rep)
+        let phi = c_measure_phi(s, n, dim, n_bins)
+        sum = sum + phi
+        let _ = farr_free(s)
+        rep = rep + 1
+    }
+    return sum / 5.0
+}
+
+fn _bool_str(b: bool) -> string { if b { return "true" }; return "false" }
+fn _verdict(b: bool) -> string { if b { return "PASS" }; return "FAIL" }
+
+fn main() {
+    println("UNIVERSE infra · phi_spatial n_bins sensitivity sweep")
+    println("  substrate: N=" + to_string(_N()) + ", dim=" + to_string(_DIM())
+            + ", warm=" + to_string(_WARM()) + ", reps=" + to_string(_REPS())
+            + " (H_007 carry)")
+    println("  rules: 110 (Class-IV), 30 (chaotic), 250 (ordered)")
+    println("  n_bins: {2, 4, 8, 16}")
+    println("  Φ primitive: RFC 036 phi_spatial via HEXAD/C/c_lib.hexa c_measure_phi")
+    println("")
+
+    let rule_iv  = 110
+    let rule_cha = 30
+    let rule_ord = 250
+
+    // 4 n_bins sweep values
+    let nb_2  = 2
+    let nb_4  = 4
+    let nb_8  = 8
+    let nb_16 = 16
+
+    // 12 measurements
+    let phi_iv_2   = _mean_phi_for(rule_iv,  nb_2)
+    let phi_iv_4   = _mean_phi_for(rule_iv,  nb_4)
+    let phi_iv_8   = _mean_phi_for(rule_iv,  nb_8)
+    let phi_iv_16  = _mean_phi_for(rule_iv,  nb_16)
+
+    let phi_cha_2  = _mean_phi_for(rule_cha, nb_2)
+    let phi_cha_4  = _mean_phi_for(rule_cha, nb_4)
+    let phi_cha_8  = _mean_phi_for(rule_cha, nb_8)
+    let phi_cha_16 = _mean_phi_for(rule_cha, nb_16)
+
+    let phi_ord_2  = _mean_phi_for(rule_ord, nb_2)
+    let phi_ord_4  = _mean_phi_for(rule_ord, nb_4)
+    let phi_ord_8  = _mean_phi_for(rule_ord, nb_8)
+    let phi_ord_16 = _mean_phi_for(rule_ord, nb_16)
+
+    println("  Φ(rule110, n_bins=2)  = " + to_string(phi_iv_2))
+    println("  Φ(rule110, n_bins=4)  = " + to_string(phi_iv_4)  + "   [H_007 default baseline]")
+    println("  Φ(rule110, n_bins=8)  = " + to_string(phi_iv_8))
+    println("  Φ(rule110, n_bins=16) = " + to_string(phi_iv_16))
+    println("  Φ(rule30,  n_bins=2)  = " + to_string(phi_cha_2))
+    println("  Φ(rule30,  n_bins=4)  = " + to_string(phi_cha_4))
+    println("  Φ(rule30,  n_bins=8)  = " + to_string(phi_cha_8))
+    println("  Φ(rule30,  n_bins=16) = " + to_string(phi_cha_16))
+    println("  Φ(rule250, n_bins=2)  = " + to_string(phi_ord_2))
+    println("  Φ(rule250, n_bins=4)  = " + to_string(phi_ord_4))
+    println("  Φ(rule250, n_bins=8)  = " + to_string(phi_ord_8))
+    println("  Φ(rule250, n_bins=16) = " + to_string(phi_ord_16))
+    println("")
+
+    // ── ranking per n_bins (rule110 > rule30 > rule250) ──────────────────────
+    let rank_2  = (phi_iv_2  > phi_cha_2)  && (phi_cha_2  > phi_ord_2)
+    let rank_4  = (phi_iv_4  > phi_cha_4)  && (phi_cha_4  > phi_ord_4)
+    let rank_8  = (phi_iv_8  > phi_cha_8)  && (phi_cha_8  > phi_ord_8)
+    let rank_16 = (phi_iv_16 > phi_cha_16) && (phi_cha_16 > phi_ord_16)
+
+    println("  ranking_preserved (rule110 > rule30 > rule250) @ n_bins=2  : " + _bool_str(rank_2))
+    println("  ranking_preserved (rule110 > rule30 > rule250) @ n_bins=4  : " + _bool_str(rank_4))
+    println("  ranking_preserved (rule110 > rule30 > rule250) @ n_bins=8  : " + _bool_str(rank_8))
+    println("  ranking_preserved (rule110 > rule30 > rule250) @ n_bins=16 : " + _bool_str(rank_16))
+    println("")
+
+    // ── nonneg guard (F-I2 NaN/neg) ─────────────────────────────────────────
+    let all_nn =
+        phi_iv_2  >= 0.0 && phi_iv_4  >= 0.0 && phi_iv_8  >= 0.0 && phi_iv_16  >= 0.0 &&
+        phi_cha_2 >= 0.0 && phi_cha_4 >= 0.0 && phi_cha_8 >= 0.0 && phi_cha_16 >= 0.0 &&
+        phi_ord_2 >= 0.0 && phi_ord_4 >= 0.0 && phi_ord_8 >= 0.0 && phi_ord_16 >= 0.0
+
+    let i1_robust  = rank_2 && rank_4 && rank_8 && rank_16
+    let i2_rank_inv = i1_robust   // (rule110 > rule30 > rule250) invariance is the ordering
+
+    println("  I1 ROBUSTNESS_PASS (rank @ all 4 n_bins) : " + _bool_str(i1_robust))
+    println("  I2 RANK_INVARIANT  (ordering preserved)  : " + _bool_str(i2_rank_inv))
+    println("  F-I2 NONNEG (no neg/NaN)                 : " + _bool_str(all_nn))
+
+    let pass = i1_robust && i2_rank_inv && all_nn
+    let verdict = if pass { "ROBUSTNESS_PASS" } else { "ROBUSTNESS_FAIL" }
+    println("")
+    println("  VERDICT: " + verdict)
+
+    // ── write result.json ────────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"id\": \"infra_phi_n_bins\",\n"
+    j = j + "  \"slug\": \"phi-spatial-n-bins-sensitivity\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"kind\": \"infra-smoke\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"phi_primitive\": \"RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi)\",\n"
+    j = j + "  \"config\": { \"N\": " + to_string(_N()) + ", \"dim\": " + to_string(_DIM())
+          + ", \"warm\": " + to_string(_WARM()) + ", \"reps\": " + to_string(_REPS())
+          + ", \"boundary\": \"periodic\" },\n"
+    j = j + "  \"rules\": { \"class_iv\": 110, \"chaotic\": 30, \"ordered\": 250 },\n"
+    j = j + "  \"n_bins_sweep\": [2, 4, 8, 16],\n"
+    j = j + "  \"phi_mean\": {\n"
+    j = j + "    \"rule110\": { \"n_bins_2\": " + to_string(phi_iv_2)
+          + ", \"n_bins_4\": " + to_string(phi_iv_4)
+          + ", \"n_bins_8\": " + to_string(phi_iv_8)
+          + ", \"n_bins_16\": " + to_string(phi_iv_16) + " },\n"
+    j = j + "    \"rule30\":  { \"n_bins_2\": " + to_string(phi_cha_2)
+          + ", \"n_bins_4\": " + to_string(phi_cha_4)
+          + ", \"n_bins_8\": " + to_string(phi_cha_8)
+          + ", \"n_bins_16\": " + to_string(phi_cha_16) + " },\n"
+    j = j + "    \"rule250\": { \"n_bins_2\": " + to_string(phi_ord_2)
+          + ", \"n_bins_4\": " + to_string(phi_ord_4)
+          + ", \"n_bins_8\": " + to_string(phi_ord_8)
+          + ", \"n_bins_16\": " + to_string(phi_ord_16) + " }\n"
+    j = j + "  },\n"
+    j = j + "  \"ranking_preserved\": {\n"
+    j = j + "    \"n_bins_2\":  " + _bool_str(rank_2)  + ",\n"
+    j = j + "    \"n_bins_4\":  " + _bool_str(rank_4)  + ",\n"
+    j = j + "    \"n_bins_8\":  " + _bool_str(rank_8)  + ",\n"
+    j = j + "    \"n_bins_16\": " + _bool_str(rank_16) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F_I1_RANK_ALL_NBINS\": { \"metric\": \"rule110>rule30>rule250 @ all n_bins\", \"verdict\": \"" + _verdict(i1_robust) + "\" },\n"
+    j = j + "    \"F_I2_NONNEG\":         { \"metric\": \"all Φ>=0, no NaN\", \"verdict\": \"" + _verdict(all_nn) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"sub_claims\": {\n"
+    j = j + "    \"I1_robustness\": " + _bool_str(i1_robust)  + ",\n"
+    j = j + "    \"I2_rank_invariant\": " + _bool_str(i2_rank_inv) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"verdict_rule\": \"ROBUSTNESS_PASS iff rule110>rule30>rule250 @ all n_bins ∈ {2,4,8,16} AND all Φ>=0\",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\"\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result.json", j)
+
+    println("")
+    println("  result.json written → " + _state_dir() + "/result.json")
+    println("=== LIFE infra phi_n_bins sweep complete: " + verdict + " ===")
+}

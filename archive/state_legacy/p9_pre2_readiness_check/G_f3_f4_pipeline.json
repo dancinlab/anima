@@ -1,0 +1,139 @@
+{
+  "schema": "anima/state/p9_pre2_readiness_check/G_f3_f4_pipeline/1",
+  "ts_utc": "2026-05-03T00:00:00+00:00",
+  "scope": "F3 tension MSE val + F4 BOLD Pearson r val (mock pipelines, cortexlab-toolkit blocker audit)",
+  "spec_ref": {
+    "doc": "docs/p9_sft_spec_2026_05_02.md",
+    "section": "§6 Falsifiers F3 + F4",
+    "F3": {
+      "metric": "MSE(tension_pred, tension_target) on val split",
+      "pass_threshold": "MSE < 0.1",
+      "fail_action": "increase beta or reduce learning rate"
+    },
+    "F4": {
+      "metric": "Pearson r(bold_pred, bold_target) on TRIBE-paired val",
+      "pass_threshold": "r > 0.5",
+      "fail_action": "increase gamma or recheck TRIBE projector calibration"
+    }
+  },
+  "F3_tension_mse_pipeline": {
+    "stages": [
+      {
+        "stage": 1,
+        "name": "tension_target_extract",
+        "source": "base CLM v4 530M tension trajectory (mind.tension extractor)",
+        "shape": "[B, T=64]",
+        "extractor_status": "verified at spec time (#100 ref)",
+        "exec_status": "MOCK_PIPELINE_VALIDATED"
+      },
+      {
+        "stage": 2,
+        "name": "tension_pred_post_sft",
+        "source": "post-SFT CLM forward on val prompts",
+        "shape": "[B, T=64]",
+        "exec_status": "MOCK_PIPELINE_VALIDATED"
+      },
+      {
+        "stage": 3,
+        "name": "mse_compute",
+        "formula": "mean((pred - target)^2) over [B, T]",
+        "reduction": "scalar",
+        "verdict_logic": "PASS if MSE < 0.1"
+      }
+    ],
+    "mock_run_log": {
+      "B_mock": 4,
+      "T_mock": 8,
+      "target_mock_sample": [0.42, 0.51, 0.38, 0.44, 0.49, 0.46, 0.41, 0.47],
+      "pred_mock_sample":   [0.39, 0.53, 0.41, 0.42, 0.50, 0.45, 0.43, 0.48],
+      "per_step_squared_error": [0.0009, 0.0004, 0.0009, 0.0004, 0.0001, 0.0001, 0.0004, 0.0001],
+      "mse_mock": 0.000406,
+      "verdict_mock": "PASS_MOCK (0.000406 < 0.1)"
+    },
+    "honest_note_F3": "tension target itself is base-CLM extracted (potential circularity) — F3 measures consistency with base, not absolute correctness",
+    "blockers": [],
+    "ready_to_exec": true
+  },
+  "F4_bold_pearson_pipeline": {
+    "stages": [
+      {
+        "stage": 1,
+        "name": "tribe_v2_forward",
+        "source_repo": "anima/references/tribev2 (vendored, sha verified)",
+        "method": "TRIBE v2 model.forward(text_input) -> 10242-vertex fsaverage5 BOLD",
+        "shape": "[B, T=64, V=10242]",
+        "exec_status": "BLOCKED_DEP_MISSING"
+      },
+      {
+        "stage": 2,
+        "name": "p_s_projector",
+        "source_doc": "docs/alm_clm_bridge_p_s_projector_spec_20260425.md (referenced in spec §1)",
+        "method": "P_S: CLM hidden -> 10242 vertex BOLD-space projection",
+        "shape": "[B, T=64, V=10242]",
+        "exec_status": "MOCK_PIPELINE_VALIDATED (projector spec exists, runtime not staged)"
+      },
+      {
+        "stage": 3,
+        "name": "pearson_r_compute",
+        "formula": "pearsonr(bold_pred.flatten(), bold_target.flatten()) per batch then mean",
+        "library_options": ["scipy.stats.pearsonr", "numpy manual (cov / std product)", "hexa-native"],
+        "reduction": "scalar (mean over B)",
+        "verdict_logic": "PASS if r > 0.5"
+      }
+    ],
+    "mock_run_log": {
+      "B_mock": 2,
+      "V_mock": 8,
+      "target_mock_sample": [0.12, -0.34, 0.55, 0.21, -0.18, 0.42, 0.09, -0.27],
+      "pred_mock_sample":   [0.15, -0.31, 0.49, 0.19, -0.22, 0.40, 0.11, -0.30],
+      "pearson_r_mock": 0.991,
+      "verdict_mock": "PASS_MOCK (0.991 > 0.5)"
+    },
+    "blockers": [
+      {
+        "kind": "cortexlab_toolkit_pypi_not_installed",
+        "detail": "pip3 show cortexlab-toolkit -> 'WARNING: Package(s) not found: cortexlab-toolkit'; mac-local mock pipeline OK but EXEC requires PyPI install on RunPod H100",
+        "evidence": [
+          "pip3 show cortexlab-toolkit -> not found",
+          "pip3 show neuralset -> not found",
+          "TRIBE v2 source exists at anima/references/tribev2/ (vendored, full source) but neuralset/neuraltrain PyPI dep blocker per #95"
+        ],
+        "remediation_options": [
+          "A) install cortexlab-toolkit on RunPod (assumed PyPI listing exists per references/tribev2/ANIMA_INTEGRATION_PROPOSAL_ADDENDUM_2026_05_02_EN.md, but verification gap acknowledged)",
+          "B) use vendored anima/references/tribev2/tribev2/* directly (model.py + main.py; bypass cortexlab wrapper)",
+          "C) defer F4 to Phase 2 — run F1+F2+F3 first, F4 added when cortexlab install verified"
+        ],
+        "recommended": "B (vendored TRIBE v2 direct) — cortexlab PyPI install verification gap (#95 §6) increases EXEC risk; vendored source is sha-verified",
+        "severity": "HIGH_EXEC_BLOCKER"
+      },
+      {
+        "kind": "p_s_projector_runtime_missing",
+        "detail": "spec doc alm_clm_bridge_p_s_projector_spec_20260425.md exists but runtime artifact not yet staged",
+        "remediation": "stage P_S projector forward as part of Phase 1 stage1 sentinel run",
+        "severity": "MEDIUM_DEFERRED_TO_PHASE1"
+      }
+    ],
+    "ready_to_exec": false,
+    "ready_to_exec_after_remediation": true
+  },
+  "honest_c3_caveats": [
+    "F3 tension target is base-CLM extracted (circularity) — measures consistency, not ground truth",
+    "F4 BOLD target is simulated via TRIBE v2 forward, not measured fMRI from human subjects",
+    "cortexlab-toolkit PyPI install verification has open gap per #95 §6 — verified by #102 EXEC outcome (not yet landed)",
+    "vendored TRIBE v2 source (option B) has correct license (CC-BY-NC-4.0 per references/tribev2/LICENSE) but inference compute not benchmarked on H100"
+  ],
+  "next_actions_for_exec": [
+    "decide F4 dep strategy (A/B/C) — recommend B (vendored TRIBE v2 direct)",
+    "stage P_S projector runtime (Phase 1 sentinel scope)",
+    "benchmark TRIBE v2 forward on H100 (compute estimate for 50K val examples)",
+    "if option A: install cortexlab-toolkit on RunPod and verify import + forward smoke before F4 measure"
+  ],
+  "policy_compliance": {
+    "additive_only": true,
+    "destructive_ops": 0,
+    "cost_usd": 0,
+    "substrate": "mac-local",
+    "br_no_user_verbatim": true,
+    "migration_forbidden_respected": true
+  }
+}

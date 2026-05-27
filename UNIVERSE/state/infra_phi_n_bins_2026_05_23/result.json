@@ -1,0 +1,35 @@
+{
+  "id": "infra_phi_n_bins",
+  "slug": "phi-spatial-n-bins-sensitivity",
+  "date": "2026-05-23",
+  "kind": "infra-smoke",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "reps": 5, "boundary": "periodic" },
+  "rules": { "class_iv": 110, "chaotic": 30, "ordered": 250 },
+  "n_bins_sweep": [2, 4, 8, 16],
+  "phi_mean": {
+    "rule110": { "n_bins_2": 0.556454, "n_bins_4": 0.556454, "n_bins_8": 0.556454, "n_bins_16": 0.556454 },
+    "rule30":  { "n_bins_2": 0.509944, "n_bins_4": 0.509944, "n_bins_8": 0.509944, "n_bins_16": 0.509944 },
+    "rule250": { "n_bins_2": 1.14511e-05, "n_bins_4": 1.14511e-05, "n_bins_8": 1.14511e-05, "n_bins_16": 1.14511e-05 }
+  },
+  "ranking_preserved": {
+    "n_bins_2":  true,
+    "n_bins_4":  true,
+    "n_bins_8":  true,
+    "n_bins_16": true
+  },
+  "falsifiers": {
+    "F_I1_RANK_ALL_NBINS": { "metric": "rule110>rule30>rule250 @ all n_bins", "verdict": "PASS" },
+    "F_I2_NONNEG":         { "metric": "all Φ>=0, no NaN", "verdict": "PASS" }
+  },
+  "sub_claims": {
+    "I1_robustness": true,
+    "I2_rank_invariant": true
+  },
+  "verdict_rule": "ROBUSTNESS_PASS iff rule110>rule30>rule250 @ all n_bins ∈ {2,4,8,16} AND all Φ>=0",
+  "verdict": "ROBUSTNESS_PASS"
+}

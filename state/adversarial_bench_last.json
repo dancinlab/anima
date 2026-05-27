@@ -1,0 +1,43 @@
+{
+  "schema": "anima.adversarial_bench.v1",
+  "tool": "tool/adversarial_bench.hexa",
+  "config": "config/adversarial_bench_config.json",
+  "ts": "2026-05-05T19:50:08Z",
+  "root": "/Users/ghost/core/anima",
+  "target_verifier": "tool/hexad_closure_verifier.hexa",
+  "target_verifier_kind": "hexad_6cat_closure",
+  "expected_clean_verdict": "CLOSED",
+  "source_hexad_dir": "anima-hexad",
+  "cluster": "33",
+  "improvements": ["17_cherry_pick_reject", "19_adversarial_bench_3of3_flip"],
+  "p1_gate": "adversarial 3/3 flip (raw#12 cherry-pick immunity)",
+  "flips": {
+    "flip_a": {"name": "label_pair_swap",           "action": "rename c → x_swapped",        "breaks_axiom": "a_non_empty + d_phantom_absent"},
+    "flip_b": {"name": "token_shuffle_10pct",      "action": "delete d/will_bridge.hexa",          "breaks_axiom": "c_composition_closed"},
+    "flip_c": {"name": "cherry_pick_near_duplicate", "action": "insert z_cherry_phantom/ + __init__.hexa", "breaks_axiom": "d_phantom_absent"}
+  },
+  "sandboxes": {
+    "clean":  "state/adv_bench_sandbox/clean",
+    "flip_a": "state/adv_bench_sandbox/flip_a",
+    "flip_b": "state/adv_bench_sandbox/flip_b",
+    "flip_c": "state/adv_bench_sandbox/flip_c"
+  },
+  "runs": {
+    "clean":  {"verdict": "", "rc": 2, "verdict_file": "/Users/ghost/core/anima/state/adv_bench_sandbox/clean/state/hexad_closure_verdict.json", "verdict_sha256": "", "log_path": "/tmp/_adv_bench_clean.log"},
+    "flip_a": {"verdict": "", "rc": 2, "verdict_file": "/Users/ghost/core/anima/state/adv_bench_sandbox/flip_a/state/hexad_closure_verdict.json", "verdict_sha256": "", "log_path": "/tmp/_adv_bench_flip_a.log"},
+    "flip_b": {"verdict": "", "rc": 2, "verdict_file": "/Users/ghost/core/anima/state/adv_bench_sandbox/flip_b/state/hexad_closure_verdict.json", "verdict_sha256": "", "log_path": "/tmp/_adv_bench_flip_b.log"},
+    "flip_c": {"verdict": "", "rc": 2, "verdict_file": "/Users/ghost/core/anima/state/adv_bench_sandbox/flip_c/state/hexad_closure_verdict.json", "verdict_sha256": "", "log_path": "/tmp/_adv_bench_flip_c.log"}
+  },
+  "selftest": {
+    "clean_matches_expected": false,
+    "flip_a_flipped":         false,
+    "flip_b_flipped":         false,
+    "flip_c_flipped":         false,
+    "flip_fail_count":        0,
+    "required_flips":         3,
+    "verdict":                "FAIL"
+  },
+  "proof_hash": "",
+  "proof_hash_input": "||||FAIL",
+  "raw_contract": ["raw#9", "raw#11", "raw#12", "raw#15"]
+}

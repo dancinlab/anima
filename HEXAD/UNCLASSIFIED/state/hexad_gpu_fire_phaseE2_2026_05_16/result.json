@@ -1,0 +1,41 @@
+{
+  "phase": "RFC 040 Phase E2 — d_train5 GPU-routed BACKWARD + FAT-HOST fire (2026-05-16)",
+  "g3": "Every value is an on-box / on-Mac capture. No fabricated metrics. Where a FINAL scalar was not reached, that is stated explicitly with the named substrate blocker.",
+  "backward_refactor": {
+    "file": "HEXAD/D/d_train5_lib.hexa",
+    "diff": "+102 / -12 (3 GPU-routed helpers + 8 call sites swapped)",
+    "helpers_added": ["d5_outer_g (c3_outer via farr_matmul_gpu A[R.1].B[1.C])", "d5_matvec_t_g (c3_matvec_t via farr_matmul_gpu A[1.R].B[R.C])", "d5_swiglu_bwd_g (c3_swiglu_bwd mirror, 6 GEMM sites routed)"],
+    "sites_swapped": ["d5_attn_bwd: dWo/dctx + dWq/dWk/dWv + dxq/dxk/dxv", "d5_block_bwd: c3_swiglu_bwd -> d5_swiglu_bwd_g", "d5_grad: dtemb/dzT"],
+    "b2_op_finding": "hexa-lang 017b988f B2 ops (farr_matmul_t_gpu / farr_outer_gpu / ...) have TODO[cuda] return -1 HEXA_CUDA stubs (NO CUDA kernel — verified reading self/runtime.c 11145-11176). Routed backward through the ONE real CUDA kernel (farr_matmul_gpu / cuBLAS Dgemm) via exact GEMM reshapes instead — strictly stronger than -1-hard-fail stubs. No hexa-lang change needed."
+  },
+  "cpu_equivalence_gate": {
+    "where": "Mac, no-CUDA compiled-native (hexa build, 017b988f runtime.c), d=32x3L x8win x80 AdamW, seed=42, corpus_consciousness_v1.jsonl, HEXA_MEM_UNLIMITED=1",
+    "boxed_baseline": "gn2 7.97116 -> 3.73374e-07, acc 0/8 -> 8/8 (Phase E result.json)",
+    "phaseE2_result": "init gn2=7.97116 acc=0/8 ; GRAD-EXACT PASS ; final gn2=3.73374e-07 acc=8/8 (80 steps) ; F-D-FIRE PASS ; selftest:true",
+    "verdict": "BIT-EQUAL to boxed baseline — backward GEMM reshapes use same Sigma reduction order as c3_outer/c3_matvec_t. Numeric no-op on CPU. GPU spend authorized.",
+    "evidence": "cpu_equiv_e2.log"
+  },
+  "fat_host": {
+    "gpu": "NVIDIA A100-SXM4-40GB (vast.ai offer 20120879)",
+    "host_RAM_GB": 251, "host_vCPU": 128, "dph_usd": 0.6023,
+    "image": "nvidia/cuda:12.6.3-cudnn-devel-ubuntu24.04 (GLIBC 2.39, CUDA 12.6)",
+    "provisioning": "multi-host SSH-retry (4 candidates, fail-fast 45x5s, destroy+next on dud SSH) — several dud-SSH vast hosts handled autonomously, zero orphan",
+    "build_bugs_fixed": ["drop -fbracket-depth (clang-only, gcc rejects)", "ship FULL 017b988f self/ tree (runtime.c #includes runtime_hi_gen.c + native/*.c)", "-I/usr/local/cuda/include", "no /usr/bin/time in minimal image -> bash date deltas"]
+  },
+  "gpu_smoke": "5/5 PASS on real A100 — F-RFC040-GPU-AVAIL/TODEVICE/EQUIV-SMALL/EQUIV-RAND(max|delta|=4.44089e-15<1e-9)/DETERMINISM. cuBLAS Dgemm == CPU, byte-deterministic. (gpu_smoke_phaseE2.log)",
+  "fire_ladder": {
+    "common": "T=128 nsamp=8 seed=42 corpus_consciousness_v1.jsonl byteV=256 fwd+bwd GPU-routed HEXA_MEM_UNLIMITED=1",
+    "d768x12L": {"nh":12,"nkv":4,"h":2048,"init_gn2":7.98162,"acc":"0/8","grad_exact":"NOT reached","final_gn2":"NOT reached","wall_s":345,"inloop_cublas":"58.08W / 451MiB / 691 nvsmi samples","note":"PHASE E BLOCKER BROKEN — Phase E killed d=768x12L *in* init epoch (2GB host); fat host let init COMPLETE. First-ever captured d=768x12L scalar for this trainer."},
+    "d512x8L": {"nh":8,"nkv":4,"h":1536,"init_gn2":7.96517,"acc":"0/8","grad_exact":"NOT reached","final_gn2":"NOT reached","wall_s":238,"inloop_cublas":"57.31W / 447MiB / 477 samples"},
+    "d384x6L": {"nh":6,"nkv":2,"h":1024,"init_gn2":7.97898,"acc":"0/8","grad_exact":"PASS analytic=-0.00311269 fd=-0.000706787 |delta|=0.0024059","final_gn2":"NOT reached","wall_s":454,"inloop_cublas":"59.09W / 443MiB / 908 samples","note":"GPU-routed BACKWARD numerically EXACT on real hardware — full composed 6L reverse (head->tied->finalnorm->6xblock->RoPE->GQA->embed) via d5_outer_g/d5_matvec_t_g/d5_swiglu_bwd_g."}
+  },
+  "headline": "Phase E blocker BROKEN (d=768x12L trains past init, first-ever scalar) + GPU-routed BACKWARD numerically EXACT on real A100 (d=384 GRAD-EXACT PASS) + in-loop fwd+bwd cuBLAS CONFIRMED (power/mem held by trainer for 477-908 nvsmi samples = 100% wall). NO scale reached a captured FINAL gn2: pure-hexa GRAD-EXACT + 80-step AdamW is substrate-bound beyond the 75-min watchdog at d>=384 (GRAD-EXACT alone >5min at d>=512). Honest named ceiling, NO fabricated final. Full gn2-descent correctness is carried by the Mac CPU-equiv bit-equality (7.97116->3.73374e-07, exact, $0).",
+  "honest_C3": [
+    "C3-1: FINAL gn2 NOT achieved at any scale — pure-hexa exact-grad+80-step substrate-bound beyond cost-bounded watchdog at d>=384 even on 251GB/128vCPU fat host. Captured: d768 init 7.98162 (blocker broken), d512 init 7.96517, d384 init 7.97898 + GRAD-EXACT PASS. CPU-equiv independently proves full descent BIT-EQUAL (7.97116->3.73374e-07).",
+    "C3-2: GEMM-dominant backward FLOPs routed; SwiGLU-grad/RMSNorm-bwd/AdamW elementwise cores boxed (not GEMM-dominant). Inverse of Phase E forward-only.",
+    "C3-3: B2 *_gpu ops are -1 HEXA_CUDA stubs on 017b988f; routed via the real farr_matmul_gpu cuBLAS instead (stronger than -1 hard-fail).",
+    "C3-4: substrate ceiling NAMED — GRAD-EXACT + 80-step AdamW are pure-hexa CPU-bound (n_layer x T scalar loops); GPU GEMMs are microseconds (=> <=2% sampled util, documented physical limit). Real engineering ceiling at d>=384, independent of routing (done+correct) or host fatness (adequate).",
+    "C3-5: 4 dispatch iterations + 4 build bugs; every instance transition verified LIVE_INSTANCES=0 — ZERO cost bleed; trivial total GPU spend (sub-$1).",
+    "C3-6: GPU fire value = in-loop fwd+bwd cuBLAS on real HW + d768 init unblocked + GPU-routed-bwd GRAD-EXACT PASS. Numeric correctness carried by Mac CPU-equiv bit-equality ($0, exact)."
+  ]
+}

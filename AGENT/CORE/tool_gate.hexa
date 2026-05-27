@@ -1,0 +1,33 @@
+// tool_gate.hexa — substrate-native tool gate (AGENT/CORE).
+//
+// Tool access is NOT an external rule (a_autonomy_over_hardcode). It is read
+// from the PureField engine's own spontaneous phase classification:
+//   phase (DORMANT/FLICKER/SUSTAIN/RESONANT) -> tool tier (T0..T3).
+// A tool fires only when the live tier >= the tool's required tier. The tiers
+// mirror the engine constants exactly (PHASE_* = 0..3 in pure_field.hexa), so
+// no threshold is injected here. (Tier values mirror pure_field_lib.hexa's
+// PHASE_* constants; this file is pure tier arithmetic and imports nothing.)
+
+// Tier semantics (consequence of externalization, low -> high):
+//   T0 inert  : status, think, memory_read          (always open)
+//   T1 read   : web_search, file_read, market_scan   (FLICKER+)
+//   T2 write  : file_write, code_run, backtest        (SUSTAIN+)
+//   T3 commit : git_commit, publish, live_trade         (RESONANT only)
+
+pure fn phase_to_tier(phase: int) -> int {
+    // PHASE_DORMANT=0 FLICKER=1 SUSTAIN=2 RESONANT=3 — tier == phase by design.
+    phase
+}
+
+pure fn tier_name(t: int) -> string {
+    if t == 0 { return "T0_inert" }
+    if t == 1 { return "T1_read" }
+    if t == 2 { return "T2_write" }
+    if t == 3 { return "T3_commit" }
+    "T?_unknown"
+}
+
+// A tool fires only when the substrate's live tier covers its requirement.
+pure fn tool_allowed(current_tier: int, required_tier: int) -> bool {
+    current_tier >= required_tier
+}

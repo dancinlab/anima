@@ -1,0 +1,120 @@
+// core_network_v2.hexa — Phase 1 reimpl with input channel x
+// axis: network — graph connectivity (clustering coefficient on threshold graph)
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks { if t != "" { xs.push(to_float(t)) } }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        xs.push(to_float(seed) / 2147483648.0)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+if n < 16 {
+    println("lens[network] category=core axis=\"network (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+// Coarsen x to V=16 nodes by block-mean. Build adjacency by node-pair similarity.
+let V = 16
+let block = n / V
+let mut nodes = []
+let mut v = 0
+while v < V {
+    let mut s = 0.0
+    let mut p = 0
+    while p < block { s = s + xs[v * block + p]; p = p + 1 }
+    nodes.push(s / to_float(block))
+    v = v + 1
+}
+
+// node range for adaptive threshold
+let mut nmin = nodes[0]
+let mut nmax = nodes[0]
+let mut i = 1
+while i < V {
+    if nodes[i] < nmin { nmin = nodes[i] }
+    if nodes[i] > nmax { nmax = nodes[i] }
+    i = i + 1
+}
+let nspan = if nmax - nmin > 0.000001 { nmax - nmin } else { 1.0 }
+// edge threshold: connect i-j if |node_i - node_j| / span < 0.25 (similar block)
+let edge_thresh = 0.25
+
+// build adjacency + degree
+let mut adj = []
+let mut row_init = 0
+while row_init < V {
+    let mut r = []
+    let mut ci = 0
+    while ci < V { r.push(0); ci = ci + 1 }
+    adj.push(r)
+    row_init = row_init + 1
+}
+let mut edges = 0
+let mut a = 0
+while a < V {
+    let mut b = a + 1
+    while b < V {
+        let d = nodes[a] - nodes[b]
+        let abs_d = if d < 0.0 { 0.0 - d } else { d }
+        if abs_d / nspan < edge_thresh {
+            adj[a][b] = 1
+            adj[b][a] = 1
+            edges = edges + 1
+        }
+        b = b + 1
+    }
+    a = a + 1
+}
+
+// clustering coefficient: # triangles / # triples
+let mut triangles = 0
+let mut triples = 0
+let mut x_a = 0
+while x_a < V {
+    let mut x_b = 0
+    while x_b < V {
+        if x_b != x_a && adj[x_a][x_b] == 1 {
+            let mut x_c = x_b + 1
+            while x_c < V {
+                if x_c != x_a && adj[x_a][x_c] == 1 {
+                    triples = triples + 1
+                    if adj[x_b][x_c] == 1 { triangles = triangles + 1 }
+                }
+                x_c = x_c + 1
+            }
+        }
+        x_b = x_b + 1
+    }
+    x_a = x_a + 1
+}
+let cc = if triples > 0 { to_float(triangles) / to_float(triples) } else { 0.0 }
+
+// density = edges / max_edges
+let max_edges = to_float(V * (V - 1) / 2)
+let density = to_float(edges) / max_edges
+let dens_clip = if density > 1.0 { 1.0 } else { density }
+
+let score = 0.6 * cc + 0.4 * dens_clip
+let hits = if score > 0.5 { 6 } else { if score > 0.3 { 4 } else { 2 } }
+println("lens[network] category=core axis=\"Network/graph — clustering coefficient + density on threshold graph\" score=" + to_string(score) + " support=1 n=" + to_string(n) + " meta={\"clustering_coef\":" + to_string(cc) + ",\"density\":" + to_string(density) + ",\"edges\":" + to_string(edges) + ",\"V\":" + to_string(V) + ",\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")

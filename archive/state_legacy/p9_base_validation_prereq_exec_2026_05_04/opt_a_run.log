@@ -1,0 +1,117 @@
+# OPT-A Llama-3.2-3B base download retry — run log
+# Cycle: opt_a_llama_base_download_2026_05_04
+# Started: 2026-05-04T00:47:00Z (approx)
+# BG: BG-χ (parallel with BG-φ CLM v4 caller migration, BG-ψ external session audit)
+
+## Step 1: Pre-check ubu1 state
+$ ssh ubu1 'ls ~/.cache/huggingface/hub/ | grep -iE "llama-3.2-3b"'
+models--meta-llama--Llama-3.2-3B
+models--meta-llama--Llama-3.2-3B-Instruct
+
+# Both base + Instruct present in cache. Per BG-ν handoff, Instruct was pre-existing;
+# base was partially downloaded by BG-π before quota hit. Now confirming completeness.
+
+$ ssh ubu1 'df -h ~/.cache/huggingface 2>&1 | head -5'
+파일 시스템     크기  사용  가용 사용% 마운트위치
+/dev/nvme0n1p2  915G  282G  588G   33% /
+# Disk: 588GB free, ample headroom (>>7GB needed).
+
+## Step 2: HF auth verify (post eea009b40)
+$ ssh ubu1 'TOKEN=$(cat ~/.cache/huggingface/token); curl -s -H "Authorization: Bearer $TOKEN" https://huggingface.co/api/whoami-v2 | head -c 300'
+{"type":"user","id":"69229786cde1fd9952da8cfa","name":"dancinlife","fullname":"Aiden  Park","email":"nerve011235@gmail.com","emailVerified":true,"canPay":false,"billingMode":"prepaid","periodEnd":1780272000,"isPro":false,"avatarUrl":"https://cdn-avatars.huggingface.co/v1/production/uploads/69229786c
+# AUTH PASS: type=user, name=dancinlife, emailVerified=true, no 401.
+
+## Step 3: Llama base gated-access check
+$ ssh ubu1 'TOKEN=$(cat ~/.cache/huggingface/token); curl -s -H "Authorization: Bearer $TOKEN" "https://huggingface.co/api/models/meta-llama/Llama-3.2-3B" | head -c 800'
+{"_id":"66eaf084b3b3239188f66fa7","id":"meta-llama/Llama-3.2-3B","private":false,"pipeline_tag":"text-generation","library_name":"transformers","tags":["transformers","safetensors","llama","text-generation","facebook","meta","pytorch","llama-3","en","de","fr","it","pt","hi","es","th","arxiv:2204.05149","arxiv:2405.16406","license:llama3.2",...],"downloads":1122476,"likes":768,"modelId":"meta-llama/Llama-3.2-3B","author":"meta-llama","sha":"13afe5124825b4f3751f836b40dafda64c1ed062","lastModified":"2024-10-24T15:07:40.000Z","gated":"manual","disabled":false,...}
+
+# gated=manual (Meta requires terms acceptance). Now verify acceptance is granted:
+
+$ ssh ubu1 'TOKEN=$(cat ~/.cache/huggingface/token); curl -sI -H "Authorization: Bearer $TOKEN" "https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/main/config.json"'
+HTTP/2 200
+content-type: text/plain; charset=utf-8
+content-length: 844
+date: Mon, 04 May 2026 00:47:31 GMT
+etag: "47d4a5aa69cdef91a53b77f5c5583647a578ca0e"
+x-repo-commit: 13afe5124825b4f3751f836b40dafda64c1ed062
+x-hub-cache: HIT
+# 200 OK confirms gated access GRANTED. ToS already accepted on dancinlife account.
+
+## Step 4: Execute download (sync any missing files)
+$ ssh ubu1 '/home/aiden/venv_orchestrator/bin/hf download meta-llama/Llama-3.2-3B 2>&1 | tail -30'
+Fetching 15 files:   0%|          | 0/15 [00:00<?, ?it/s]
+Fetching 15 files: 100%|██████████| 15/15 [00:00<00:00, 112548.41it/s]
+✓ Downloaded
+  path: /home/aiden/.cache/huggingface/hub/models--meta-llama--Llama-3.2-3B/snapshots/13afe5124825b4f3751f836b40dafda64c1ed062
+# All 15 files already in cache (BG-π's partial was actually complete or this completes any gaps).
+
+## Step 5: Verify download integrity
+$ ssh ubu1 'find ~/.cache/huggingface/hub/models--meta-llama--Llama-3.2-3B -type f | head -30'
+[blobs/refs listing — 15+ blob files present]
+
+$ ssh ubu1 'du -sh ~/.cache/huggingface/hub/models--meta-llama--Llama-3.2-3B/'
+12G	/home/aiden/.cache/huggingface/hub/models--meta-llama--Llama-3.2-3B/
+
+$ ssh ubu1 'du -sb ~/.cache/huggingface/hub/models--meta-llama--Llama-3.2-3B/blobs/ | awk "{print \$1/1024/1024/1024}"'
+11.9791
+# 12GB total: includes original/ (PyTorch consolidated checkpoint, ~5.5GB) + safetensors shards (~6.4GB)
+
+$ ssh ubu1 'snap=$(find ~/.cache/huggingface/hub/models--meta-llama--Llama-3.2-3B/snapshots -maxdepth 1 -mindepth 1 | head -1); ls -la "$snap"'
+total 20
+drwxrwxr-x 3 aiden aiden 4096  5월  4 09:37 .
+drwxrwxr-x 3 aiden aiden 4096  5월  4 09:20 ..
+lrwxrwxrwx 1 aiden aiden   52  5월  4 09:20 .gitattributes -> ../../blobs/a6344aac8c09253b3b630fb776ae94478aa0275b
+lrwxrwxrwx 1 aiden aiden   52  5월  4 09:20 LICENSE.txt -> ../../blobs/085b47c1575cb889b7024030e60b78f54f0b8c9e
+lrwxrwxrwx 1 aiden aiden   52  5월  4 09:20 README.md -> ../../blobs/7f70e0141c2257e77489bb5359023477972e2e00
+lrwxrwxrwx 1 aiden aiden   52  5월  4 09:20 USE_POLICY.md -> ../../blobs/ac3c5f21b9779e3da0677d6d3c587778fe3a331e
+lrwxrwxrwx 1 aiden aiden   52  5월  4 09:20 config.json -> ../../blobs/47d4a5aa69cdef91a53b77f5c5583647a578ca0e
+lrwxrwxrwx 1 aiden aiden   52  5월  4 09:20 generation_config.json -> ../../blobs/2d73a6863086ff9d491c28e49df9fb697cd92c2b
+lrwxrwxrwx 1 aiden aiden   76  5월  4 09:37 model-00001-of-00002.safetensors -> ../../blobs/584d8d3e3f82f7964955174dfe5e3b1cf117a9d859f022cfdf7fcb884856e002
+lrwxrwxrwx 1 aiden aiden   76  5월  4 09:22 model-00002-of-00002.safetensors -> ../../blobs/4719a04514ec2f060240711b7c33ab21187cac730ecaba3040b7a0fd95a9cefb
+lrwxrwxrwx 1 aiden aiden   52  5월  4 09:20 model.safetensors.index.json -> ../../blobs/d3a1f0f5f401eeadca0c7a6786bd9e877fd42e58
+drwxrwxr-x 2 aiden aiden 4096  5월  4 09:34 original
+lrwxrwxrwx 1 aiden aiden   52  5월  4 09:20 special_tokens_map.json -> ../../blobs/cfabacc2620186cd3dd4b1dde9a37e057208636e
+lrwxrwxrwx 1 aiden aiden   52  5월  4 09:20 tokenizer.json -> ../../blobs/5cc5f00a5b203e90a27a3bd60d1ec393b07971e8
+lrwxrwxrwx 1 aiden aiden   52  5월  4 09:20 tokenizer_config.json -> ../../blobs/cb9ec25536e44d86778b10509d3e5bdca459a5cf
+# All required files present: config + generation_config + 2-shard safetensors + index + tokenizer trio.
+
+## Step 6: Lm-eval HF loader smoketest (CPU, fp16)
+$ ssh ubu1 '/home/aiden/venv_orchestrator/bin/python -c "
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+m = AutoModelForCausalLM.from_pretrained(\"meta-llama/Llama-3.2-3B\", torch_dtype=torch.float16, device_map=\"cpu\")
+t = AutoTokenizer.from_pretrained(\"meta-llama/Llama-3.2-3B\")
+ids = t(\"hello world\", return_tensors=\"pt\").input_ids
+with torch.no_grad():
+    out = m(ids)
+print(\"logits.shape:\", out.logits.shape)
+print(\"vocab_size:\", m.config.vocab_size)
+print(\"hidden_size:\", m.config.hidden_size)
+print(\"PASS\")
+"'
+
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/254 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 254/254 [00:02<00:00, 116.26it/s]
+logits.shape: torch.Size([1, 3, 128256])
+vocab_size: 128256
+hidden_size: 3072
+PASS
+# SMOKETEST PASS: vocab=128256 (Llama tiktoken BPE), hidden=3072 (Llama-3.2-3B), logits seq=3 (BOS+hello+world).
+# Note: spec snippet said seq=2; actual is 3 due to default add_special_tokens=True prepending BOS — correct behavior.
+
+## Verdict: PASS
+- HF auth post-eea009b40: PASS (whoami-v2 returns user dancinlife)
+- Gated access: ACCEPTED (HEAD config.json -> 200; gated=manual but token authorized)
+- Download: complete (15/15 files, 12GB on disk inc. original/)
+- Smoketest: PASS (model loads, tokenizes, forward pass produces correct-shape logits)
+- Post-prereq: 10/12 -> 11/12 (OPT-A landed; OPT-1 CLM v4 HF shim still pending)
+- Ready for OPT-1: TRUE
+- Ready for base-validation launch: FALSE (OPT-1 still required as final 12/12)
+
+## Honest C3
+1. Gated access is ToS-bound and revocable by Meta — current grant is account-tied; future machine moves require re-acceptance.
+2. Download includes original/ PyTorch consolidated.pth (~5.5GB) which lm-eval doesn't need; could trim with --include filter for ~46% disk savings.
+3. Tokenizer mismatch: Llama-3.2-3B uses 128256 BPE vs CLM v4 64K SentencePiece — anchor-A comparison must hold tokenizer constant per substrate.
+4. CPU smoketest doesn't validate CUDA paths (fa2, sm_120 RTX 5070, OOM at full bs/ctx) — H100 launch may surface GPU-only failures.
+5. Spec §3.1 example had logits seq_len=2 but actual is 3 (BOS) — minor spec drift to correct on next amendment.

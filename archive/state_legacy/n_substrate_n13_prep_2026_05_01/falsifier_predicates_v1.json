@@ -1,0 +1,57 @@
+{
+  "schema": "anima/n_substrate_n13_prep/falsifier_predicates/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "raw71_compliance": "BIDIRECTIONAL (each predicate has explicit PASS / WEAK / FAIL boundary)",
+  "n_predicates": 5,
+  "predicates": [
+    {
+      "id": "PRED-1",
+      "name": "Phi photonic vs Phi CLM-GPU (P-A weak Putnam anchor)",
+      "PASS": "Pearson r(Phi_k_phot, Phi_k_gpu) >= 0.85 AND |Phi*_phot - Phi*_gpu| / max(|Phi*_phot|, |Phi*_gpu|, 1e-3) <= 0.30",
+      "WEAK": "0.50 <= r < 0.85",
+      "FAIL": "r < 0.50 OR substrate sign flip",
+      "meaning_PASS": "Photonic substrate also realizes the same functional Phi -- adds 4th Putnam multi-realizability axis (CLM/AKIDA/EEG + photonic)",
+      "meaning_FAIL": "Substrate-dependent Phi -- counterexample to photonic multi-realizability"
+    },
+    {
+      "id": "PRED-2",
+      "name": "Phi photonic vs Phi AKIDA (substrate-class invariance)",
+      "PASS": "r(Phi_k_phot, Phi_k_akida) >= 0.70 AND both substrates also PASS PRED-1 vs GPU",
+      "FAIL": "Only photonic OR only AKIDA passes vs GPU (substrate-class invariance violated)",
+      "meaning_PASS": "Photonic and AKIDA both non-GPU substrates -- weak inference of substrate-class invariance",
+      "depends_on": "N-3 result (CLM x AKIDA Phi correlation)"
+    },
+    {
+      "id": "PRED-3",
+      "name": "Inter-vendor Phi consistency (Lightmatter vs Lightelligence vs Q.ANT)",
+      "precondition": "All 3 PCIe cards / partnerships obtained (currently 0/3)",
+      "PASS": "pairwise mean r >= 0.80 across all 3 vendor outputs",
+      "FAIL": "any pair r < 0.50",
+      "meaning_PASS": "Vendor-independent Phi -- substrate property dominates over compiler/implementation",
+      "meaning_FAIL": "Vendor-specific compiler artifacts determine representation -- Phi is compiler-dependent not substrate-dependent (deep concern for any photonic Phi claim)"
+    },
+    {
+      "id": "PRED-4",
+      "name": "Phi photonic null floor (linear-only baseline)",
+      "PASS": "Phi*_phot_linear_only ~~ Phi*_input_embedding (within 0.10 magnitude)",
+      "FAIL": "Phi*_phot_linear_only > Phi*_full_model (suggests Phi captures noise not representation)",
+      "meaning_PASS": "Null verified -- linear MZI mesh without nonlinear units yields Phi equivalent to input embedding cov-logdet",
+      "meaning_FAIL": "Phi measurement artifact -- methodology invalid"
+    },
+    {
+      "id": "PRED-5",
+      "name": "Energy-Phi scaling (Landauer / N-4 cross-axis)",
+      "PASS": "Phi*_phot ~~ Phi*_gpu AND measured energy_per_inference within +/- 2x of vendor spec (~10 fJ/op vs GPU ~1 nJ/op)",
+      "FAIL": "Phi differs significantly OR measured energy >10x vendor spec",
+      "meaning_PASS": "Bit-energy and Phi independent (substrate-energy invariance) OR Phi is genuine information structure invariant",
+      "depends_on": "N-4 (3-axis Landauer floor) cross-axis consistency"
+    }
+  ],
+  "boundary_conditions_shared": {
+    "k_partition_variance_check": "std(Phi_k) < 0.5 * |Phi*| else verdict NULL (re-run)",
+    "null_hypothesis_floor": "shuffled-pair 1024 perm test, r_observed > 95-percentile of r_null required",
+    "reproducibility": "3 independent ANIMA_SEED runs, 3/3 PASS = confirmed, 2/3 = WEAK_PASS"
+  },
+  "falsifier_strength_score": 0.85,
+  "falsifier_strength_basis": "5 pre-registered predicates, BIDIRECTIONAL, includes null floor (PRED-4), cross-axis dependency (PRED-2/PRED-5), inter-vendor consistency check (PRED-3)"
+}

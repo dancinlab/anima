@@ -1,0 +1,77 @@
+{
+  "task_id": "anima_wrapper_sentencepiece_fallback_2026_05_05",
+  "scope": "BG-AH: mount.hexa::_write_helper SentencePiece tokenizer fallback (BG-K third blocker fix)",
+  "verdict": "PASS_WRAPPER_REAL_MODE_UNBLOCKED",
+  "wall_time_minutes": 12,
+  "cost_usd": 0.0,
+  "platform": "mac CPU",
+  "raw_compliance": {
+    "raw_15_additive_only": true,
+    "raw_15_locked_files_untouched": "anima_unified.hexa, phi_engine.hexa, conscious_chat.hexa, consciousness_hub.hexa, clm_v4_hf_format_shim.py, anima_dialogue_load.py, bin/anima-core-dialogue.bash — ALL UNTOUCHED",
+    "raw_10_honest_c3_emitted": true,
+    "raw_37_no_new_py": true
+  },
+  "edits_landed": {
+    "file": "anima-core/runtime/clm_v4_mount.hexa",
+    "edit_type": "additive — extended _write_helper emit-block with 3 new functions before existing _try_load_clm_v4, then split tokenizer load from model load with try/except SentencePiece fallback",
+    "loc_added": 67,
+    "file_total_loc": "722 → 789",
+    "new_python_helpers_emitted": [
+      "class _SPTokenizerWrap (HF tokenizer interface mimic — __call__ returns {input_ids: LongTensor})",
+      "def _resolve_sp_tokenizer_path (mirror anima_dialogue_load.py:_resolve_tokenizer_path — find tokenizer_64k_multilingual.model in HF cache snapshot)",
+      "def _try_load_sp_tokenizer (returns (wrap, error_str); falls back to hf_hub_download if cache miss)"
+    ],
+    "_try_load_clm_v4_modification": {
+      "before": "single AutoTokenizer.from_pretrained call; on Exception → return (None, None, False, error)",
+      "after": "split: model load first, then tokenizer try AutoTokenizer; on Exception → SentencePiece fallback via _try_load_sp_tokenizer; only fail if BOTH fail",
+      "invariant_preserved": "model + tokenizer load order, error string format, mounted boolean semantics"
+    }
+  },
+  "v_fix_1_wrapper_real_mode_probe": {
+    "command": "HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python bash bin/anima-core-dialogue.bash --probe 안녕",
+    "expected_per_spec": "mode=real (not synthetic_fallback), phi_star in BG-A 42.12 region or anchored near baseline 41.86",
+    "actual_outcome": "mode=real, phi_star=41.8737, drift +0.0137",
+    "axis_activation": {"identity": 0.500, "agency": 0.565, "phenomenal": 0.475, "temporal": 0.483, "social": 0.474},
+    "dominant_cells": [2, 6, 1],
+    "stderr_evidence_of_fallback": "[clm_v4_mount] AutoTokenizer failed (Unrecognized configuration class CLMv4Config to build an AutoTokenizer); attempting SentencePiece fallback",
+    "stderr_engagement_marker": "[clm_v4_mount] SentencePiece tokenizer fallback ENGAGED (BG-AH)",
+    "result": "PASS — real mode reached. Wrapper now functionally equivalent to direct anima_dialogue_load.py invocation for CLM v4 loading."
+  },
+  "v_fix_2_selftest_regression": {
+    "command": "bash bin/anima-core-dialogue.bash --selftest",
+    "expected": "verdict: READY (Stage 1 + Stage 2 both landed) — 9/9 format checks PASS",
+    "actual": "verdict: READY (Stage 1 + Stage 2 both landed) — 9/9 format checks PASS",
+    "result": "PASS — no regression. Selftest path does NOT exercise _write_helper (raw#103 darwin-bypass disables fs writes); change is invisible to selftest."
+  },
+  "v_fix_3_anima_top_level_equivalence": {
+    "command": "HEXA_LOCAL=1 HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python ./bin/anima dialogue --probe 안녕",
+    "expected": "mode=real (route equivalence — same wrapper code path)",
+    "actual": "mode=real, phi_star=41.8949, drift +0.0349",
+    "result": "PASS — anima top-level reaches real mode. Phi delta differs slightly (run-to-run float ordering in Python sum/mean over 8x192 — non-deterministic enough to differ at f4 precision but anchored near baseline)."
+  },
+  "phi_star_observation": {
+    "wrapper_observed": [41.8737, 41.8949],
+    "bg_a_direct_anima_dialogue_load_py": 42.1158,
+    "delta_explanation": "C3 wrapper helper uses different cell-tile heuristic (mean-pool over T → tile to 8x192) vs anima_dialogue_load.py (4-tile concat doubled). Both are ANIMA-internal cell-derivation heuristics; phi_star formula identical. Observed wrapper phi (~41.87-41.89) sits closer to baseline than BG-A's (~42.12) because tile-replicate produces higher cell-pair self-similarity, dampening the cosine spread. Both are valid substrate readouts; not directly comparable across cell-derivation routes."
+  },
+  "honest_c3": [
+    "C1 SentencePiece path discovery is cache-layout-dependent. _resolve_sp_tokenizer_path walks HF_HOME/hub/models--<id>/snapshots/<sha>/tokenizer_64k_multilingual.model. If repo is loaded via local --model PATH (not HF id), the resolver finds nothing and the helper falls through to hf_hub_download which requires network. Fail-mode is silent unless network is offline.",
+    "C2 _SPTokenizerWrap mimics only __call__ with input_ids dict — not the full HF tokenizer interface. _real_forward currently only uses tokenizer(text, return_tensors='pt', truncation=True, max_length=512); if any future helper-emit code calls tok.decode / tok.batch_encode_plus / tok.pad_token_id etc, the wrap will AttributeError. Additive contract: keep _SPTokenizerWrap surface narrow.",
+    "C3 phi_star delta between wrapper (~41.87-41.89) and BG-A direct invoke (42.1158) is real and stems from divergent cell-derivation heuristics, NOT from the SP fallback (tokenization is byte-identical between the two paths). The wrapper's helper-emit cell-tile (mean(T) → tile up) vs anima_dialogue_load's (mean(T) → 4 tiles concat doubled) produce different cell matrices and thus different mean-pair-cosine values. Future unification would require deciding which cell-mapping is canonical — out of scope for this BG.",
+    "C4 AutoTokenizer fallback emits a 100+ line stderr error message (the full Model type list from transformers). Visible noise. Tradeoff: explicit failure surface vs visual clutter. Acceptable per raw#10 (honest C3) — silently swallowing the error would be worse.",
+    "C5 SentencePiece fallback engagement is implicit — runs whenever AutoTokenizer raises. If transformers ever ships AutoTokenizer support for CLMv4Config (e.g. via auto_map AutoTokenizer entry in upstream config.json), the wrapper will silently switch back to AutoTokenizer with NO regression test catching the route change. Future-proofing: emit explicit ANIMA_TOKENIZER_ROUTE marker (autotokenizer | sentencepiece) on stdout for downstream observability."
+  ],
+  "files_changed": [
+    "anima-core/runtime/clm_v4_mount.hexa (+67 LoC additive in _write_helper emit-block)"
+  ],
+  "files_created": [
+    "state/anima_wrapper_sentencepiece_fallback_2026_05_05/verdict.json",
+    "docs/anima_wrapper_sentencepiece_fallback_landed_2026_05_05.ai.md"
+  ],
+  "next_step_recommendation": {
+    "priority_1_doc_handshake": "Update bin/anima-core-dialogue.bash --help (and anima dialogue --help) to surface HEXA_PY env var requirement + canonical .venv-eeg path; document SentencePiece fallback as transparent unless ANIMA_TOKENIZER_ROUTE marker indicates otherwise.",
+    "priority_2_token_route_marker": "Emit __ANIMA_TOKENIZER_ROUTE__ tag from helper after _try_load_clm_v4 success (autotokenizer | sentencepiece) — observability handshake for downstream tooling.",
+    "priority_3_cell_derivation_unification": "Decide canonical cell-derivation heuristic (wrapper tile-replicate vs anima_dialogue_load 4-tile-concat-doubled). Phi_star comparability across paths requires this. Track as separate spec; do NOT silently change either path.",
+    "priority_4_path_based_dispatch_alternative": "Defer BG-K priority_2 (mount.hexa invokes anima_dialogue_load.py directly) — current SP fallback approach is simpler + reuses helper-emit format strings. Path-based dispatch only adds value if cell-derivation unification mandates a single source-of-truth file."
+  }
+}

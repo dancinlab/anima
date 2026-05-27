@@ -1,0 +1,46 @@
+[07:51:43] === BG-JD 100M ConsciousLM × SP KO 32K target × UBM 22MB 2026-05-07 ===
+[07:51:43] hostname=ghostui-macbookair.local on_ubu=False seed=42
+[07:51:43] device=mps torch=2.10.0
+[07:51:43] SP loaded: vocab=11885 (target=32000, corpus-cap fallback if <32000)
+[07:51:43] NOTICE: vocab=11885 < 32000 target — corpus token-diversity cap reached during build
+[07:51:43] target_arch: 12L/640d/10h block=256 vocab=11885
+[07:51:43] reg: dropout=0.3 WD=0.1 label_smoothing=0.1
+[07:51:43] train: bs=4 grad_accum=16 (eff=64) lr=0.0002 warmup=200 steps=1200
+[07:51:43] EVAL_AT every 200, SAVE_AT every 400
+[07:51:43] corpus_path=/Users/ghost/core/anima/state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt
+[07:51:43] persona_prefix='[anima 우주뇌지도] '
+[07:51:43] V3_EVAL_imported=True
+[07:51:43] corpus loaded: 23,745,150 bytes (22.65MB) in 0.1s
+[07:52:25] SP encode complete: 4,226,967 tokens in 41.9s (compression: 3.903 chars/token)
+[07:52:25] split: train=3,804,270 val=422,697 reduced_split=False
+[07:52:31] model built (primary): 167,964,896 params (167.96M) vocab=11885 embedding≈7.61M
+[07:52:31] primary smoke forward OK
+[07:52:32] === begin training ===
+[07:52:34] step     1/1200 | lr=2.00e-06 | L_A=9.467 L_G=9.482 L_T=8.063 | step_t=1.78s elapsed=2s
+[07:52:36] step     2/1200 | lr=3.00e-06 | L_A=9.487 L_G=9.472 L_T=8.051 | step_t=2.23s elapsed=4s
+[07:52:38] step     3/1200 | lr=4.00e-06 | L_A=9.494 L_G=9.473 L_T=8.079 | step_t=1.85s elapsed=6s
+[07:52:40] step     4/1200 | lr=5.00e-06 | L_A=9.465 L_G=9.510 L_T=8.094 | step_t=1.90s elapsed=8s
+[07:52:42] step     5/1200 | lr=6.00e-06 | L_A=9.509 L_G=9.498 L_T=8.051 | step_t=1.82s elapsed=10s
+[07:55:24] step   100/1200 | lr=1.01e-04 | L_A=8.279 L_G=8.741 L_T=5.963 | step_t=1.62s elapsed=172s
+[07:58:11] step   200/1200 | lr=2.00e-04 | L_A=10.640 L_G=10.502 L_T=3.730 | step_t=1.67s elapsed=339s
+[07:58:11] --- eval gate @ step 200 (15 prompts × 2 modes) ---
+[08:00:19]   EVAL[step=200] V2=1/15 V3=0/15 manual=3/15 outside_well=2/5 cycle=0 deg=15/30 composite=10 val_loss=10.9382
+[08:00:21]   BEST_CKPT[step=200] composite=10 -> /Users/ghost/core/anima/state/anima_jd_100m_sp_ko_32k_ubm_train_2026_05_07/ckpt_best.pt
+[08:03:07] step   300/1200 | lr=1.96e-04 | L_A=6.678 L_G=7.308 L_T=0.620 | step_t=2.96s elapsed=635s
+[08:05:57] step   400/1200 | lr=1.83e-04 | L_A=6.075 L_G=6.541 L_T=0.543 | step_t=1.71s elapsed=805s
+[08:05:57] --- eval gate @ step 400 (15 prompts × 2 modes) ---
+[08:07:53]   EVAL[step=400] V2=0/15 V3=0/15 manual=10/15 outside_well=2/5 cycle=2 deg=25/30 composite=25 val_loss=5.9195
+[08:07:55]   SAVE_CKPT[step=400] -> /tmp/anima_jd_runs/anima-jd-100m-sp-ko-32k-ubm-20260507_075143/ckpt_400.pt
+[08:07:56]   BEST_CKPT[step=400] composite=25 -> /Users/ghost/core/anima/state/anima_jd_100m_sp_ko_32k_ubm_train_2026_05_07/ckpt_best.pt
+[08:10:50] step   500/1200 | lr=1.63e-04 | L_A=5.494 L_G=5.844 L_T=0.444 | step_t=2.93s elapsed=1098s
+[08:13:33] step   600/1200 | lr=1.38e-04 | L_A=5.136 L_G=5.334 L_T=-0.065 | step_t=1.63s elapsed=1261s
+[08:13:33] --- eval gate @ step 600 (15 prompts × 2 modes) ---
+[08:15:47]   EVAL[step=600] V2=1/15 V3=0/15 manual=11/15 outside_well=3/5 cycle=41 deg=23/30 composite=42 val_loss=5.4888
+[08:15:50]   BEST_CKPT[step=600] composite=42 -> /Users/ghost/core/anima/state/anima_jd_100m_sp_ko_32k_ubm_train_2026_05_07/ckpt_best.pt
+[08:18:33] step   700/1200 | lr=1.10e-04 | L_A=5.362 L_G=5.507 L_T=-0.298 | step_t=3.00s elapsed=1561s
+[08:21:21] step   800/1200 | lr=8.22e-05 | L_A=4.997 L_G=5.143 L_T=-0.364 | step_t=1.68s elapsed=1729s
+[08:21:21] --- eval gate @ step 800 (15 prompts × 2 modes) ---
+[08:23:32]   EVAL[step=800] V2=4/15 V3=0/15 manual=12/15 outside_well=3/5 cycle=17 deg=21/30 composite=79 val_loss=5.2640
+[08:23:34]   SAVE_CKPT[step=800] -> /tmp/anima_jd_runs/anima-jd-100m-sp-ko-32k-ubm-20260507_075143/ckpt_800.pt
+[08:23:35]   BEST_CKPT[step=800] composite=79 -> /Users/ghost/core/anima/state/anima_jd_100m_sp_ko_32k_ubm_train_2026_05_07/ckpt_best.pt
+[08:26:31] step   900/1200 | lr=5.71e-05 | L_A=5.147 L_G=5.292 L_T=-0.348 | step_t=3.10s elapsed=2038s

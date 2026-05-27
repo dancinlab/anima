@@ -1,0 +1,10 @@
+=== M3a env-var dispatch control (H_257 hexa-side fix) ===
+--- default (env unset → all axes ON) ---
+PASS  F-AXIS-D-FREEZE  embed grad pre=19.3594 post=0.0 (freeze masks grad)
+PASS  F-AXIS-A-CURRICULUM  anima_frac step1=0.0 → step4=1.0 (schedule changes)
+PASS  F-AXIS-C-HEADG  λ_g·CE_g=1.43223 > 0 (head_g objective ACTIVE, not inert)
+PASS  F-AXIS-B-DISTILL  L_kd=0.0690332 > 0 (teacher signal present)
+PASS  F-AXIS-M2-DIFFERENT  axes change training (not silent-bypass)
+PASS  F-V3PORT-SMOKE-DESCENT  init gn2 7.96496 > final gn2 7.9594 (V2-spine descent confirmed)
+--- P21H_FREEZE_EMBED=0 (axis controlled by env: post≠0) ---
+PASS  F-AXIS-D-FREEZE  embed grad pre=17.8116 post=17.8116 (freeze masks grad)

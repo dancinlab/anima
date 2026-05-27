@@ -1,0 +1,479 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/phi.hexa — anima CLI `phi` topic (Φ measurement query)
+//
+//  PURPOSE
+//    Provide a CLI surface for downstream consumers (wraith-wallet, orpheus)
+//    to query Φ scalars from the anima measurement engine WITHOUT pulling in
+//    the anima-agent runtime. This is a thin orchestrator over
+//    anima-measurement/* — the heavy lifting lives there.
+//
+//  INVOCATION
+//    anima phi compute --target=wraith --inputs='<json>'
+//        → stdout: {"phi": <int 0-100>, "breakdown": {...}, "schema": "anima.phi.v1"}
+//    anima phi compute --target=<unsupported> --inputs='<json>'
+//        → exit 2, stderr "unsupported target"
+//    anima phi --selftest
+//        → smoke test: known input → known output (scaffold uniform-weight stub)
+//    anima phi --help
+//
+//  DESIGN
+//    raw#9   hexa-only
+//    raw#11  snake_case
+//    raw#15  no-hardcode (paths via _resolve_root)
+//    raw#37  no transient .py emission (this scaffold is pure hexa string ops;
+//            real implementation will route to anima-measurement/measurement.hexa)
+//
+//  STATUS — 2026-05-07
+//    SCAFFOLD ONLY. Compute path returns a deterministic uniform-weight
+//    geometric-mean stub of the supplied inputs. Real Φ_wraith path is
+//    TBD (gated on wraith-wallet multisig setup + operator enable).
+//
+//  OUTPUT SCHEMA
+//    {
+//      "schema":   "anima.phi.v1",
+//      "ts":       "<iso8601 UTC>",
+//      "target":   "wraith",
+//      "phi":      <int 0-100>,
+//      "method":   "uniform_geomean_stub" | "phi_wraith_v1" | ...,
+//      "breakdown": { "<input_name>": <int 0-100>, ... },
+//      "missing":  [<input_name>, ...]   // signals not provided in inputs
+//    }
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    if t == "int" || t == "float" || t == "number" { return str(x) }
+    return ""
+}
+
+fn _trim(s: string) -> string { return s.trim() }
+
+fn _ts_iso() -> string {
+    let rep = _str(env("HEXA_REPRODUCIBLE"))
+    if rep == "1" { return "REDACTED" }
+    return _str(exec("date -u +%FT%TZ")).trim()
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+// ─── argv helpers ──────────────────────────────────────────────────────
+
+// Filter out hexa interpreter cache paths and the .hexa script path itself
+// so we only see user-supplied args. Mirrors anima_cli/{doctor,bench}.hexa
+// _user_argv pattern (raw#9 hexa-only tooling convention).
+fn _user_argv(raw) -> [string] {
+    let out = []
+    let mut i = 0
+    while i < raw.len() {
+        let s = _str(raw[i])
+        let is_cache = s.contains("/.hexa-cache/")
+        let is_script = s.ends_with("/phi.hexa") || s.ends_with("phi.hexa")
+        let is_interp = s.contains("/hexa_interp")
+        if !is_cache && !is_script && !is_interp {
+            out.push(s)
+        }
+        i = i + 1
+    }
+    return out
+}
+
+fn _has_flag(flag: string) -> bool {
+    let raw = _user_argv(args())
+    let mut i = 0
+    while i < raw.len() {
+        if raw[i] == flag { return true }
+        if raw[i].starts_with(flag + "=") { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _arg_value(prefix: string) -> string {
+    let raw = _user_argv(args())
+    let mut i = 0
+    while i < raw.len() {
+        let a = raw[i]
+        if a.starts_with(prefix + "=") {
+            return a.substring(prefix.len() + 1, a.len())
+        }
+        // also support `--foo bar` form
+        if a == prefix && (i + 1) < raw.len() {
+            return raw[i + 1]
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+// ─── canonical input set for target=wraith ─────────────────────────────
+//
+// Order MUST match docs/anima_phi_gate_broadcast_policy_2026_05_07.ai.md §3
+// (wraith-wallet repo). Adding a new input REQUIRES updating that doc.
+
+fn _wraith_input_names() -> [string] {
+    return [
+        "ghost_vpn_active",
+        "ghost_circuit_age_s",
+        "vault_session_age_s",
+        "vault_unlock_method",
+        "broadcast_freq_24h",
+        "host_fingerprint_drift",
+        "mempool_anomaly",
+        "network_jitter_ms",
+        "paper_backup_age_d",
+        "last_handoff_age_s",
+        "slipstream_relay_health",
+        "clock_skew_s",
+    ]
+}
+
+// Extract a numeric field from a flat JSON-ish input string. Scaffold
+// parser — accepts `"name":N` or `"name": N` for integer N in 0..100. No
+// general JSON support (this is the single-edit-point we widen when the
+// real path lands). Returns -1 on missing.
+fn _extract_int_field(json_blob: string, name: string) -> int {
+    let key = "\"" + name + "\""
+    if json_blob.contains(key) == false { return -1 }
+    let probe = exec("command -v python3 2>/dev/null").trim()
+    if probe.len() == 0 {
+        // No python — fallback: very loose lexical scan
+        let after = json_blob.split(key)[1]
+        // strip leading `:` and whitespace, then read leading digits
+        let mut s = after
+        if s.starts_with(":") { s = s.substring(1, s.len()) }
+        s = s.trim()
+        let mut digits = ""
+        let mut i = 0
+        while i < s.len() {
+            let c = s.substring(i, i + 1)
+            if c == "0" || c == "1" || c == "2" || c == "3" || c == "4"
+            || c == "5" || c == "6" || c == "7" || c == "8" || c == "9" {
+                digits = digits + c
+                i = i + 1
+            } else { i = s.len() }
+        }
+        if digits.len() == 0 { return -1 }
+        return to_int(digits)
+    }
+    let py = "import json, sys\n"
+        + "blob = sys.argv[1]\n"
+        + "name = sys.argv[2]\n"
+        + "try: o = json.loads(blob)\n"
+        + "except Exception: print('-1'); sys.exit(0)\n"
+        + "v = o.get(name, None)\n"
+        + "if v is None: print('-1'); sys.exit(0)\n"
+        + "try:\n"
+        + "  iv = int(round(float(v)))\n"
+        + "except Exception:\n"
+        + "  print('-1'); sys.exit(0)\n"
+        + "if iv < 0: iv = 0\n"
+        + "if iv > 100: iv = 100\n"
+        + "print(iv)\n"
+    let r = exec("python3 -c " + _shq(py) + " " + _shq(json_blob) + " " + _shq(name) + " 2>/dev/null").trim()
+    if r.len() == 0 { return -1 }
+    return to_int(r)
+}
+
+fn _shq(s: string) -> string {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+// Geometric-mean composite. Any single 0 → result 0 (multiplicative
+// integration semantic, matches IIT spirit). Missing inputs are skipped.
+// Returns int 0..100. If ALL inputs missing → returns -1 (caller decides
+// how to treat — scaffold treats as PHI=0 to fail-safe).
+fn _geomean_uniform(values: [int]) -> int {
+    if values.len() == 0 { return -1 }
+    let probe = exec("command -v python3 2>/dev/null").trim()
+    if probe.len() == 0 {
+        // No python — arithmetic mean fallback (lossy)
+        let mut sum = 0
+        let mut i = 0
+        while i < values.len() {
+            sum = sum + values[i]
+            i = i + 1
+        }
+        return sum / values.len()
+    }
+    // Format values into a comma-separated string
+    let mut csv = ""
+    let mut i = 0
+    while i < values.len() {
+        if i > 0 { csv = csv + "," }
+        csv = csv + str(values[i])
+        i = i + 1
+    }
+    let py = "import sys, math\n"
+        + "vs = [int(x) for x in sys.argv[1].split(',') if x != '']\n"
+        + "if not vs: print('-1'); sys.exit(0)\n"
+        + "if any(v <= 0 for v in vs): print('0'); sys.exit(0)\n"
+        + "g = math.exp(sum(math.log(v) for v in vs) / len(vs))\n"
+        + "iv = int(round(g))\n"
+        + "if iv < 0: iv = 0\n"
+        + "if iv > 100: iv = 100\n"
+        + "print(iv)\n"
+    let r = exec("python3 -c " + _shq(py) + " " + _shq(csv) + " 2>/dev/null").trim()
+    if r.len() == 0 { return -1 }
+    return to_int(r)
+}
+
+// ─── compute path ──────────────────────────────────────────────────────
+
+fn _compute_wraith(inputs_json: string) -> string {
+    let names = _wraith_input_names()
+    let mut values = []
+    let mut missing_names = []
+    let mut breakdown_pairs = []
+    let mut i = 0
+    while i < names.len() {
+        let nm = names[i]
+        let v = _extract_int_field(inputs_json, nm)
+        if v < 0 {
+            missing_names.push(nm)
+        } else {
+            values.push(v)
+            breakdown_pairs.push("\"" + nm + "\":" + str(v))
+        }
+        i = i + 1
+    }
+    let phi = _geomean_uniform(values)
+    let phi_out = if phi < 0 { 0 } else { phi }
+
+    // Render JSON output (manual to avoid python dep on the happy path)
+    let mut breakdown = "{"
+    let mut j = 0
+    while j < breakdown_pairs.len() {
+        if j > 0 { breakdown = breakdown + "," }
+        breakdown = breakdown + breakdown_pairs[j]
+        j = j + 1
+    }
+    breakdown = breakdown + "}"
+
+    let mut missing = "["
+    let mut k = 0
+    while k < missing_names.len() {
+        if k > 0 { missing = missing + "," }
+        missing = missing + "\"" + missing_names[k] + "\""
+        k = k + 1
+    }
+    missing = missing + "]"
+
+    let out = "{\"schema\":\"anima.phi.v1\""
+        + ",\"ts\":\"" + _ts_iso() + "\""
+        + ",\"target\":\"wraith\""
+        + ",\"phi\":" + str(phi_out)
+        + ",\"method\":\"uniform_geomean_stub\""
+        + ",\"breakdown\":" + breakdown
+        + ",\"missing\":" + missing
+        + "}"
+    return out
+}
+
+// ─── selftest ──────────────────────────────────────────────────────────
+//
+// F-PHI-1   compute --target=wraith --inputs='<all 100>' → phi=100
+// F-PHI-2   compute --target=wraith --inputs='<one 0>'   → phi=0  (mult penalty)
+// F-PHI-3   compute --target=<unknown>                   → exit 2
+
+fn _f_phi_1() -> bool {
+    let names = _wraith_input_names()
+    let mut blob = "{"
+    let mut i = 0
+    while i < names.len() {
+        if i > 0 { blob = blob + "," }
+        blob = blob + "\"" + names[i] + "\":100"
+        i = i + 1
+    }
+    blob = blob + "}"
+    let out = _compute_wraith(blob)
+    if out.contains("\"phi\":100") {
+        println("F-PHI-1 PASS  all-100 → phi=100")
+        return true
+    }
+    println("F-PHI-1 FAIL  expected phi=100, got " + out)
+    return false
+}
+
+fn _f_phi_2() -> bool {
+    let names = _wraith_input_names()
+    let mut blob = "{"
+    let mut i = 0
+    while i < names.len() {
+        if i > 0 { blob = blob + "," }
+        let v = if i == 0 { "0" } else { "100" }
+        blob = blob + "\"" + names[i] + "\":" + v
+        i = i + 1
+    }
+    blob = blob + "}"
+    let out = _compute_wraith(blob)
+    if out.contains("\"phi\":0") {
+        println("F-PHI-2 PASS  one-0 → phi=0 (mult penalty)")
+        return true
+    }
+    println("F-PHI-2 FAIL  expected phi=0, got " + out)
+    return false
+}
+
+fn _f_phi_3() -> bool {
+    // We can't easily call ourselves through main(), but we can verify
+    // that _compute_wraith returns a sane envelope when called with empty
+    // inputs (everything missing → phi=0, missing list populated).
+    let out = _compute_wraith("{}")
+    if out.contains("\"phi\":0") && out.contains("\"missing\":[\"ghost_vpn_active\"") {
+        println("F-PHI-3 PASS  empty input → phi=0, missing populated")
+        return true
+    }
+    println("F-PHI-3 FAIL  envelope unexpected: " + out)
+    return false
+}
+
+// ─── help ──────────────────────────────────────────────────────────────
+
+fn _print_help() {
+    println("anima phi — Φ measurement query (downstream policy gate input)")
+    println("")
+    println("USAGE")
+    println("  anima phi compute --target=<name> --inputs='<json>'")
+    println("  anima phi substrate [--substrate=cpu|akida|auto]   F-M3b cross-substrate Phi probe")
+    println("  anima phi --selftest")
+    println("  anima phi --help")
+    println("")
+    println("TARGETS")
+    println("  wraith   wraith-wallet broadcast policy gate (12-signal composite)")
+    println("")
+    println("SUBSTRATE (use akida || fallback CPU)")
+    println("  cpu      CPU baseline only (deterministic, always available)")
+    println("  akida    require AKD1000 hardware; exits non-zero if unavailable")
+    println("  auto     probe akida → use it, else fallback to CPU (default)")
+    println("           wraps anima/scripts/akida/dispatch.hexa route phi")
+    println("")
+    println("STATUS")
+    println("  SCAFFOLD ONLY (2026-05-07). compute returns uniform geomean stub;")
+    println("  substrate emits PARTIAL-CPU-ONLY when akida pipeline absent.")
+    println("")
+    println("OUTPUT")
+    println("  JSON: {schema, ts, target, phi (0-100), method, breakdown, missing}")
+    println("  substrate: {falsifier_id, verdict, raw_log_path, hardware_present, ...}")
+}
+
+// ─── entry ─────────────────────────────────────────────────────────────
+
+fn main() {
+    if _has_flag("--help") { _print_help(); return }
+
+    if _has_flag("--selftest") {
+        println("=== anima phi --selftest ===")
+        let p1 = _f_phi_1()
+        let p2 = _f_phi_2()
+        let p3 = _f_phi_3()
+        if p1 && p2 && p3 {
+            println("__ANIMA_PHI__ PASS")
+        } else {
+            println("__ANIMA_PHI__ FAIL")
+            exit(1)
+        }
+        return
+    }
+
+    let raw = _user_argv(args())
+    if raw.len() == 0 { _print_help(); return }
+
+    let sub = raw[0]
+    if sub == "substrate" {
+        // 2026-05-07 — F-M3b Putnam-Lawvere substrate-invariance via dispatch.hexa.
+        // Sovereign-CLI federation per hive/spec/sovereign_cli_federation.spec.yaml:
+        // auto = probe akida || fallback CPU; cpu / akida = explicit pin;
+        // qmirror = federation consumer of qmirror cli's iit subcmd (added 2026-05-07).
+        // Output is dispatch.hexa's federation envelope (--json) — provenance
+        // label propagated end-to-end so consumers can attribute the value.
+        let substrate_choice = _arg_value("--substrate")
+        let panel = _arg_value("--panel-size")
+        let want_json = _has_flag("--json")
+        let root = _resolve_root()
+        let dispatcher = root + "/scripts/akida/dispatch.hexa"
+        let panel_arg = if panel == "" { " --panel-size 20" } else { " --panel-size " + panel }
+        let json_arg = if want_json { " --json" } else { "" }
+        let mut cmd = ""
+        if substrate_choice == "cpu" {
+            cmd = "python3 " + _shq(root) + "/scripts/akida/phi_substrate_invariance.py --cpu-only" + panel_arg
+        } else if substrate_choice == "akida" {
+            cmd = "python3 " + _shq(root) + "/scripts/akida/phi_substrate_invariance.py" + panel_arg
+        } else if substrate_choice == "qmirror" {
+            // P1-P5 federation consumer: phi.substrate gets IIT phi-star from qmirror cli.
+            // Resolution: $ANIMA/mirror/qmirror/run_qmirror_live.sh (preferred — auto-arms ANU keys)
+            //          → command -v qmirror (PATH:hx-installed)
+            //          → $QMIRROR_ROOT/cli/qmirror.hexa (env override)
+            //          → $WS/qmirror/cli/qmirror.hexa (workspace sibling)
+            //          → fall-through to dispatch.hexa (embedded_self) with stderr notice.
+            let n_qb = if panel == "" { "4" } else { panel }
+            let live_sh = root + "/mirror/qmirror/run_qmirror_live.sh"
+            let qmirror_path_bin = _str(exec("command -v qmirror 2>/dev/null")).trim()
+            let qmirror_env_root = _str(env("QMIRROR_ROOT"))
+            let mut ws = _str(env("WS"))
+            if ws == "" { ws = _str(env("HOME")) + "/core" }
+            let mut qm_cmd = ""
+            if _str(exec("test -x " + _shq(live_sh) + " && echo 1 || echo 0")).trim() == "1" {
+                qm_cmd = _shq(live_sh) + " iit --n-qubits=" + n_qb + " --json"
+            } else if qmirror_path_bin != "" {
+                qm_cmd = qmirror_path_bin + " iit --n-qubits=" + n_qb + " --json"
+            } else if qmirror_env_root != "" && _str(exec("test -f " + _shq(qmirror_env_root + "/cli/qmirror.hexa") + " && echo 1 || echo 0")).trim() == "1" {
+                qm_cmd = "QMIRROR_ROOT=" + _shq(qmirror_env_root) + " hexa run " + _shq(qmirror_env_root + "/cli/qmirror.hexa") + " iit --n-qubits=" + n_qb + " --json"
+            } else if _str(exec("test -f " + _shq(ws + "/qmirror/cli/qmirror.hexa") + " && echo 1 || echo 0")).trim() == "1" {
+                qm_cmd = "QMIRROR_ROOT=" + _shq(ws + "/qmirror") + " hexa run " + _shq(ws + "/qmirror/cli/qmirror.hexa") + " iit --n-qubits=" + n_qb + " --json"
+            }
+            if qm_cmd == "" {
+                // P5 audible fall-through: stderr notice + degrade to embedded_self (dispatch.hexa).
+                // F-SCF-4 sovereign scope: dispatch.hexa itself depends on the hexa runtime;
+                // that is a packaging concern, NOT a federation concern (per spec F-SCF-4
+                // scope_clarification — peer = sister repo, runtime ≠ peer).
+                exec("printf '%s\\n' '[anima phi.substrate] qmirror cli unavailable — falling back to dispatch.hexa (embedded_self)' >&2")
+                cmd = "hexa run " + _shq(dispatcher) + " route phi" + panel_arg + json_arg
+            } else {
+                let raw_out = _str(exec(qm_cmd + " 2>&1"))
+                // P4 provenance: emit envelope with qmirror-origin label so consumers
+                // can attribute the value (`provenance:"qmirror_iit"` + qmirror's own
+                // engine field carried through verbatim under .qmirror_raw).
+                if want_json {
+                    let escaped = raw_out.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", " ")
+                    println("{\"schema\":\"anima.phi.substrate.v1\",\"ts\":\"" + _ts_iso() + "\",\"substrate\":\"qmirror\",\"provenance\":\"qmirror_iit\",\"n_qubits\":" + n_qb + ",\"qmirror_raw\":\"" + escaped + "\"}")
+                } else {
+                    println("# anima phi substrate=qmirror  provenance=qmirror_iit  n_qubits=" + n_qb)
+                    print(raw_out)
+                }
+                return
+            }
+        } else {
+            cmd = "hexa run " + _shq(dispatcher) + " route phi" + panel_arg + json_arg
+        }
+        let out = exec(cmd)  // @allow-bare-exec
+        print(_str(out))
+        return
+    }
+    if sub == "compute" {
+        let target = _arg_value("--target")
+        let inputs = _arg_value("--inputs")
+        if target == "" {
+            exec("printf 'anima phi compute: --target required\\n' >&2")
+            exit(2)
+        }
+        if target != "wraith" {
+            exec("printf 'anima phi compute: unsupported target: " + target + "\\n' >&2")
+            exit(2)
+        }
+        let blob = if inputs == "" { "{}" } else { inputs }
+        let out = _compute_wraith(blob)
+        println(out)
+        return
+    }
+
+    exec("printf 'anima phi: unknown subcommand: " + sub + "\\n' >&2")
+    _print_help()
+    exit(2)
+}

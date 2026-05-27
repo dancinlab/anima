@@ -1,0 +1,54 @@
+// criteria_3_4_substrate_bench_smoke.hexa — F-C34-1..4 unit smoke
+//
+// Tests bench_criterion_3 + bench_criterion_4 on known fixed inputs.
+// No ckpt dep · $0 mac-local · deterministic.
+//
+// Usage: hexa run HEXAD/PURE/eval/criteria_3_4_substrate_bench_smoke.hexa
+
+import "./criteria_3_4_substrate_bench.hexa"
+
+fn _pass(name: string) { println("  PASS " + name) }
+fn _fail(name: string, msg: string) { println("  FAIL " + name + " — " + msg) }
+
+fn main() {
+    println("[criteria_3_4_bench_smoke] START")
+    let mut n_pass = 0
+    let mut n_fail = 0
+
+    // ── F-C34-1: criterion 3 N=1000 → mean ∈ (0, 1) + verdict string present ─
+    println("--- F-C34-1 criterion_3 mean ∈ (0,1) + verdict present")
+    let c3 = bench_criterion_3(1000, 20260525)
+    let mean = to_float(to_string(c3["mean_score"]))
+    let v3   = to_string(c3["verdict"])
+    let ok1  = mean > 0.0 && mean <= 1.0 && (v3 == "PASS" || v3 == "FAIL")
+    if ok1 { _pass("F-C34-1")   n_pass = n_pass + 1 }
+    else   { _fail("F-C34-1", "mean=" + to_string(mean) + " verdict=" + v3)   n_fail = n_fail + 1 }
+
+    // ── F-C34-2: criterion 3 deterministic — same seed → same mean ────────────
+    println("--- F-C34-2 criterion_3 deterministic (same seed)")
+    let c3b = bench_criterion_3(1000, 20260525)
+    let mean2 = to_float(to_string(c3b["mean_score"]))
+    let d = mean - mean2
+    let ad = if d < 0.0 { 0.0 - d } else { d }
+    if ad < 1e-9 { _pass("F-C34-2")   n_pass = n_pass + 1 }
+    else         { _fail("F-C34-2", "mean diff=" + to_string(ad))   n_fail = n_fail + 1 }
+
+    // ── F-C34-3: criterion 4 all 5 stages present + phi_range > 0 ─────────────
+    println("--- F-C34-3 criterion_4 all_present + phi_range>0")
+    let c4 = bench_criterion_4()
+    let apr = c4["all_present"]
+    let phi_range = to_float(to_string(c4["phi_range"]))
+    let ok3 = apr && phi_range > 0.0
+    if ok3 { _pass("F-C34-3")   n_pass = n_pass + 1 }
+    else   { _fail("F-C34-3", "all_present=" + to_string(apr) + " phi_range=" + to_string(phi_range))   n_fail = n_fail + 1 }
+
+    // ── F-C34-4: criterion 4 verdict PASS (known-good stages table) ───────────
+    println("--- F-C34-4 criterion_4 verdict=PASS")
+    let v4 = to_string(c4["verdict"])
+    if v4 == "PASS" { _pass("F-C34-4")   n_pass = n_pass + 1 }
+    else            { _fail("F-C34-4", "verdict=" + v4)   n_fail = n_fail + 1 }
+
+    println("")
+    println("[criteria_3_4_bench_smoke] END: " + to_string(n_pass) + "/4 PASS, " + to_string(n_fail) + " FAIL")
+    if n_fail > 0 { exit(1) }
+}

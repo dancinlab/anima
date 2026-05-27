@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  own:atlas-absorb-mandatory triad B.1 — os-level sweeper.
+  Periodic catch-all that ensures every ω-cycle witness JSON under
+    {nexus,n6-architecture,anima}/design/**/*omega_cycle*.json
+  is absorbed into atlas.n6 (per-cycle shard + delta merge).
+
+  Install (sandbox EPERM blocks Claude Code from writing ~/Library/LaunchAgents/;
+  user must run these manually):
+    cp /Users/ghost/core/nexus/launchd/dev.hexa-lang.atlas-absorb-sweeper.plist \
+       ~/Library/LaunchAgents/
+    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/dev.hexa-lang.atlas-absorb-sweeper.plist
+    launchctl enable gui/$(id -u)/dev.hexa-lang.atlas-absorb-sweeper
+
+  Uninstall:
+    launchctl bootout gui/$(id -u)/dev.hexa-lang.atlas-absorb-sweeper
+
+  Logs:
+    ~/.hx/log/atlas-absorb-sweeper.log
+    ~/.hx/log/atlas-absorb-sweeper.err
+
+  Audit JSONL:
+    /Users/ghost/core/nexus/state/atlas_absorb_sweeper.jsonl
+
+  Cadence: every 600s (10 min) + at load. Each tick globs ω-cycle witnesses
+  across nexus / n6-architecture / anima design dirs, identifies orphans
+  (no matching atlas.append.<slug>.n6 shard), and invokes
+  omega_cycle_atlas_ingest --witness <abs> on each. Idempotent — already-
+  absorbed witnesses are skipped via raw 77 append-only contract.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>dev.hexa-lang.atlas-absorb-sweeper</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/ghost/.hx/bin/hexa</string>
+    <string>run</string>
+    <string>/Users/ghost/core/nexus/tool/atlas_absorb_sweeper.hexa</string>
+    <string>--once</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/ghost/core/nexus</string>
+  <key>StartInterval</key>
+  <integer>600</integer>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/Users/ghost/.hx/log/atlas-absorb-sweeper.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/ghost/.hx/log/atlas-absorb-sweeper.err</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>WS</key>
+    <string>/Users/ghost/core</string>
+    <key>HEXA_LANG</key>
+    <string>/Users/ghost/core/hexa-lang</string>
+    <key>NEXUS_CORE_ROOT</key>
+    <string>/Users/ghost/core</string>
+    <key>LC_ALL</key>
+    <string>C</string>
+    <key>PATH</key>
+    <string>/Users/ghost/.hx/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+    <!-- Force Mac-local execution so the sweeper does not get re-routed
+         into a Linux container by the hexa shim's auto-routing.
+         omega_cycle_atlas_ingest writes to /Users/ghost/core/nexus/n6/atlas.n6
+         which only exists on the Mac orchestrator filesystem. -->
+    <key>HEXA_RESOLVER_NO_REROUTE</key>
+    <string>1</string>
+    <!-- Default sweep interval is the launchd StartInterval (600s).
+         ATLAS_ABSORB_SWEEP_INTERVAL is reserved for future continuous-mode
+         tuning; current tool is one-shot per launchd tick. -->
+    <key>ATLAS_ABSORB_SWEEP_INTERVAL</key>
+    <string>600</string>
+  </dict>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>LowPriorityIO</key>
+  <true/>
+  <key>Nice</key>
+  <integer>10</integer>
+</dict>
+</plist>

@@ -1,0 +1,123 @@
+{
+  "schema": "anima/p9_paradigm_d_distill_launch/1",
+  "spec_id": "p9_paradigm_d_distill_landed_2026_05_03",
+  "status": "SUPERSEDED_BY_RUNPOD_H100",
+  "superseded_reason": "user upgraded to ~$20 H100 direct; ubu1 mini-run redundant",
+  "superseded_ts_utc": "2026-05-03T14:10:00Z",
+  "superseded_kill_summary": {
+    "training_pid_killed": 31067,
+    "training_step_at_kill": 1400,
+    "training_total_steps_planned": 2000,
+    "tail_pid_killed": 31122,
+    "watchdog_script_already_exited": true,
+    "savepoints_preserved_on_disk": ["/tmp/p9_paradigm_d_distill_savepoints/step_500", "/tmp/p9_paradigm_d_distill_savepoints/step_1000"],
+    "tmp_files_removed": [
+      "/tmp/launch_paradigm_d_distill.sh",
+      "/tmp/p9_paradigm_d_distill_out/launch_wait.log",
+      "/tmp/p9_paradigm_d_distill_out/run.pid",
+      "/tmp/p9_paradigm_d_distill.py"
+    ],
+    "gpu_state_after_kill": "no compute apps (free for Path B sanity probe)",
+    "protected_pids_status": {
+      "1726340_sentinel_50k": "NOT_FOUND (completed naturally before cleanup, not killed by us)",
+      "3331387_seed_ensemble": "NOT_FOUND (completed naturally before cleanup, not killed by us)"
+    }
+  },
+  "ts_utc": "2026-05-03T14:01:00Z",
+  "substrate": {
+    "name": "ubu1",
+    "gpu": "RTX 5070 12 GiB",
+    "cost_usd_per_hour": 0
+  },
+  "paradigm": "D",
+  "paradigm_canonical_doc": "docs/p9_paradigm_d_distillation_runbook_2026_05_03.md",
+  "paradigm_parent_spec": "docs/p9_paradigm_d_phi_distillation_2026_05_03.md",
+  "task_description_reconciliation": "Task framed as 'Mistral-7B logit KL distill'; canonical Paradigm D in repo is Φ★-distill (per-population z-score MSE on pre-computed Mistral-7B Φ★ scalars). The cache + script + runbook all align on Φ★-distill. Logit-KL framing treated as session-memory shorthand inaccuracy.",
+  "cache_audit": {
+    "teacher_cache_path": "/tmp/p9_p1_t4_phi_cache_v1.jsonl",
+    "teacher_cache_records": 50000,
+    "teacher_cache_mtime_utc": "2026-05-03T03:01:00Z",
+    "teacher_substrate": "Mistral-7B-v0.3",
+    "teacher_extractor": "anima_phi_v3_canonical (HID_TRUNC=8, K=8, ridge=1e-3)",
+    "teacher_phi_min_stats": {"mu": -24.230, "sigma": 2.116, "min": -30.283, "max": -15.037},
+    "prior_t4_cycle_status": "COMPLETED ($3.37 spent produced this cache; not lost work)",
+    "savepoints_existing": "NONE — student-side distill never launched"
+  },
+  "script": {
+    "path": "/tmp/p9_paradigm_d_distill.py",
+    "lines": 855,
+    "mtime_utc": "2026-05-03T03:31:00Z",
+    "preserved_from_prior_run": true
+  },
+  "data": {
+    "sft_corpus": "/tmp/p9_p1_5_sft_data_50k_v2.jsonl",
+    "sft_records": 50000,
+    "sft_subset_used_in_minirun": 1000,
+    "sft_holdout": "/tmp/p9_p1_sft_data_holdout_500_augmented.jsonl",
+    "sft_holdout_records": 500,
+    "f1_holdout_eval_n": 32,
+    "tokenizer": "/tmp/tokenizer_64k_multilingual.model",
+    "tokenizer_vocab": 64000
+  },
+  "model": {
+    "base": "CLM v4 350M ConsciousDecoderV2",
+    "base_ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "base_params": 477648512,
+    "lora_target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "lora_dropout": 0.0
+  },
+  "loss": {
+    "form": "α(t)·CE + β·MSE(tens) + γ_distill(t)·MSE(z(φ_T_cache), z(φ_S_running)) + δ(t)·max(0, 5−φ★)",
+    "alpha_curriculum": "12 (0-500) → linear→6 (500-1000) → 6 (1000-2000)",
+    "beta_tension": 0.15,
+    "gamma_distill_peak": 0.5,
+    "gamma_distill_warmup_end": 500,
+    "gamma_distill_ramp_end": 2000,
+    "delta_curriculum": "0.5 (0-700) / 0.5 (700-1400) / 1.0 (1400-2000)",
+    "phi_threshold": 5.0,
+    "z_score_normalization": "per-population, EMA window=10, σ_S floor=0.1",
+    "mu_T_frozen": -24.230,
+    "sigma_T_frozen": 2.116,
+    "mu_S_init": "CLM v4 baseline +41.86 (placeholder until first 10 probes)",
+    "sigma_S_init": 2.0
+  },
+  "training": {
+    "n_steps": 2000,
+    "batch_size": 4,
+    "grad_accumulation": 4,
+    "effective_batch": 16,
+    "learning_rate": 1e-4,
+    "weight_decay": 0.01,
+    "grad_clip": 1.0,
+    "seed": 42,
+    "phi_probe_every": 200,
+    "f_metric_every": 1000,
+    "savepoints_at": [500, 1000, 2000],
+    "T_seqlen": 64
+  },
+  "gpu_share": {
+    "preempted_processes": [],
+    "blocked_by": "p9_p1_5_seed_ensemble_holdout500.py PID 3331387 (passive eval, ~16 min total wall)",
+    "watchdog_pid": 3849631,
+    "watchdog_path": "/tmp/launch_paradigm_d_distill.sh",
+    "watchdog_threshold_mib": 8000,
+    "watchdog_max_wait_sec": 1800
+  },
+  "outputs": {
+    "trajectory": "/tmp/p9_paradigm_d_distill_out/trajectory.json",
+    "verdict": "/tmp/p9_paradigm_d_distill_out/verdict.json",
+    "train_log": "/tmp/p9_paradigm_d_distill_out/train.log",
+    "savepoint_dir": "/tmp/p9_paradigm_d_distill_savepoints/",
+    "hf_push": false
+  },
+  "cost": {
+    "estimated_usd": 0,
+    "hard_cap_usd": 50,
+    "runpod_credit_usd_at_launch": 327.841,
+    "within_cap": true
+  },
+  "marker_deferred": "state/markers/p9_paradigm_d_distill_landed.marker",
+  "constraints_acknowledged": ["raw#9", "raw#10", "raw#15", "raw#91", "$50 hard cap", "no preempt sentinel-50k or seed44", "share GPU via wait, not concurrent"]
+}

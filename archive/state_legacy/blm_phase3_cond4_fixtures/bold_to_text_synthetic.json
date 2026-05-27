@@ -1,0 +1,29 @@
+{
+  "fixture_type": "synthetic",
+  "endpoint": "bold_to_text_retrieve",
+  "purpose": "API surface validation only - NO real BOLD data",
+  "ts_utc": "2026-05-03T00:00:00+00:00",
+  "request_example": {
+    "bold_window_shape": [20484, 10],
+    "bold_window_summary": {"mean": 0.0, "std": 1.0, "note": "synthetic standard normal"},
+    "top_k": 5,
+    "corpus": "algonauts2025_friends_s7"
+  },
+  "response_example": {
+    "top_k_text": [
+      "synthetic candidate text 1",
+      "synthetic candidate text 2",
+      "synthetic candidate text 3",
+      "synthetic candidate text 4",
+      "synthetic candidate text 5"
+    ],
+    "top_k_score": [0.42, 0.38, 0.35, 0.30, 0.28],
+    "license_attribution": "CC-BY-NC-4.0 (TRIBE v2)"
+  },
+  "raw_invariants": [
+    "synthetic only - no real retrieval",
+    "scores = arbitrary placeholder Pearson r values",
+    "corpus name = vendored Algonauts2025 train/test split SSOT (Friends s7 = test)",
+    "license_attribution MANDATORY"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "schema": "anima/n_1_bridge_v2_realtime_prep/phase_runner/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "phase": "Phase 3 — 6 phases x 5min protocol script",
+  "target_host": "user mac",
+  "target_path": "/tmp/n1_bridge_realtime/phase_runner.sh",
+  "ready_status": "spec_with_full_source_user_will_paste_or_curl",
+
+  "phases": [
+    {"id": "P1_eyes_open_baseline", "duration_min": 5, "instruction": "Look at a neutral wall. Breathe normally. Eyes OPEN.", "marker_value": "P1_OPEN_START"},
+    {"id": "P2_eyes_closed_berger", "duration_min": 5, "instruction": "Eyes CLOSED. Breathe normally. Berger alpha-block standard.", "marker_value": "P2_CLOSED_START"},
+    {"id": "P3_clm_read", "duration_min": 5, "instruction": "Eyes OPEN. READ the CLM live output in your browser tab (anima local instance). Verbalize one observation per minute.", "marker_value": "P3_CLM_READ_START"},
+    {"id": "P4_mental_arithmetic", "duration_min": 5, "instruction": "Eyes CLOSED. Subtract 7 from 1000 serially (1000, 993, 986, ...). Cognitive load CONTROL — CLM unrelated.", "marker_value": "P4_ARITHMETIC_START"},
+    {"id": "P5_breath_focus", "duration_min": 5, "instruction": "Eyes CLOSED. Count breaths 1-10 cyclically. Mindfulness CONTROL.", "marker_value": "P5_BREATH_START"},
+    {"id": "P6_recovery", "duration_min": 5, "instruction": "Eyes OPEN. Silent rest. No task.", "marker_value": "P6_RECOVERY_START"}
+  ],
+
+  "marker_outlet_spec": {
+    "name": "anima_phase_marker",
+    "type": "Markers",
+    "channel_count": 1,
+    "nominal_srate_hz": 0,
+    "channel_format": "string",
+    "source_id": "anima_phase_marker_v1",
+    "marker_emit_points": [
+      "SESSION_START at t=0",
+      "<phase_id>_START at the boundary of each 5-min phase (t=0,300,600,900,1200,1500)",
+      "SESSION_END at t=1800"
+    ]
+  },
+
+  "phase_runner_source": "PASTE_BELOW_INTO_/tmp/n1_bridge_realtime/phase_runner.sh AND chmod +x:\n\n#!/usr/bin/env bash\n# N-1 BRIDGE v2 real-time phase runner. Mac-side. Emits LSL phase markers + voice/visual prompts.\nset -euo pipefail\n\nMARKER_HELPER=\"$HOME/n1_bridge_realtime/emit_marker.py\"\nmkdir -p \"$HOME/n1_bridge_realtime\"\n\n# Inline-write the marker helper so the runner is self-contained.\ncat > \"$MARKER_HELPER\" <<'PYEOF'\n#!/usr/bin/env python3\nimport sys, time\nfrom pylsl import StreamInfo, StreamOutlet, local_clock\nfrom pathlib import Path\n\nSTATE_FILE = Path.home() / 'n1_bridge_realtime' / 'marker_outlet.pid'\n\ndef get_or_create_outlet():\n    info = StreamInfo('anima_phase_marker', 'Markers', 1, 0, 'string', 'anima_phase_marker_v1')\n    return StreamOutlet(info)\n\nif __name__ == '__main__':\n    if len(sys.argv) < 2:\n        print('usage: emit_marker.py <marker_value> [hold_sec]', file=sys.stderr); sys.exit(2)\n    marker = sys.argv[1]\n    hold = float(sys.argv[2]) if len(sys.argv) > 2 else 0.5\n    outlet = get_or_create_outlet()\n    time.sleep(0.2)  # ensure consumers latch\n    outlet.push_sample([marker], local_clock())\n    print(f'[marker] {marker}', file=sys.stderr)\n    time.sleep(hold)\nPYEOF\nchmod +x \"$MARKER_HELPER\"\n\nsay_or_echo() {\n  if command -v say >/dev/null 2>&1; then\n    say \"$1\" &\n  fi\n  printf '\\n=== %s ===\\n' \"$1\"\n}\n\nemit() {\n  python3 \"$MARKER_HELPER\" \"$1\" 0.5\n}\n\nemit SESSION_START\nsay_or_echo \"Session start. Phase one: eyes open baseline. Five minutes.\"\nemit P1_OPEN_START; sleep 300\n\nemit P2_CLOSED_START\nsay_or_echo \"Phase two: eyes closed. Berger response. Five minutes.\"\nsleep 300\n\nemit P3_CLM_READ_START\nsay_or_echo \"Phase three: open eyes, read C L M live output in your browser. Verbalize one observation per minute.\"\nsleep 300\n\nemit P4_ARITHMETIC_START\nsay_or_echo \"Phase four: eyes closed. Serial seven subtract from one thousand. Five minutes.\"\nsleep 300\n\nemit P5_BREATH_START\nsay_or_echo \"Phase five: eyes closed. Breath focus. Count one to ten cyclically. Five minutes.\"\nsleep 300\n\nemit P6_RECOVERY_START\nsay_or_echo \"Phase six: open eyes, silent rest. Five minutes.\"\nsleep 300\n\nemit SESSION_END\nsay_or_echo \"Session complete. Stop LabRecorder and save the X D F file.\"\n",
+
+  "user_invocation": [
+    "mkdir -p /tmp/n1_bridge_realtime",
+    "curl -fsSL <or paste> > /tmp/n1_bridge_realtime/phase_runner.sh",
+    "chmod +x /tmp/n1_bridge_realtime/phase_runner.sh",
+    "/tmp/n1_bridge_realtime/phase_runner.sh   # 30 minutes blocking; use 'caffeinate -i' wrapper if desired"
+  ],
+
+  "smoke_test": {
+    "purpose": "Confirm marker outlet visible to LabRecorder before the real session",
+    "command": "python3 ~/n1_bridge_realtime/emit_marker.py SMOKE_TEST 5.0 &  python3 -c \"from pylsl import resolve_byprop, StreamInlet; s=resolve_byprop('name','anima_phase_marker',timeout=8); i=StreamInlet(s[0]); print(i.pull_sample(timeout=4.0))\"",
+    "expected": "(['SMOKE_TEST'], <local_clock_ts>)"
+  },
+
+  "honest_notes": [
+    "macOS 'say' command provides voice cues; if disabled, fall back to terminal echo only",
+    "P3 (CLM-read) requires user to actually engage with CLM output; if browser tab is closed, manipulation fails — this is the ONLY phase where coupling is theoretically expected",
+    "P4 (arithmetic) is the matched cognitive-load control for P3; both impose effort but only P3 has CLM signal exposure",
+    "Marker StreamInfo nominal_srate=0 marks it as irregular (LSL convention for event streams)"
+  ]
+}

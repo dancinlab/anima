@@ -1,0 +1,99 @@
+[launch] PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+[launch] pip install bitsandbytes==0.43.1
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[launch] bitsandbytes=0.43.1
+[launch] pip install transformers
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+The cache for model files in Transformers v4.22.0 has been updated. Migrating your old cache. This is a one-time only operation. You can interrupt this and resume the migration later on by calling `transformers.utils.move_cache()`.
+0it [00:00, ?it/s]0it [00:00, ?it/s]
+[launch] transformers=4.44.0
+[launch] pip install peft
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[launch] peft=0.12.0
+[launch] accelerate=1.13.0
+[launch] python3 -u /workspace/p21mr/train_p21m_multilingual.py --wiki-corpus /workspace/p21mr/multi_wiki_corpus.jsonl --anima-corpus /workspace/p21mr/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl --mixed-corpus /workspace/p21mr/mixed_corpus_multilingual.jsonl --vp21-adapter-dir /workspace/p21mr/vp21_adapter --out-dir /workspace/p21mr/out_main --base-model Qwen/Qwen2.5-1.5B --steps 1500 --bsz 2 --block 512 --lr 5e-5 --warmup-steps 50 --seed 1337 --wiki-frac 0.3 --target-corpus-mb 72
+[P21M] device=cuda dtype=bfloat16
+[mix] multi-wiki=28,986,824 chars, anima=224,198,521 chars
+[mix] multi-wiki chunks=28,308, anima chunks=218,944
+[mix] kept multi-wiki=15,500 (21.6MB), anima=39,862 (50.4MB)
+[mix] wrote 55,362 records to /workspace/p21mr/mixed_corpus_multilingual.jsonl (72.0MB, wiki=15500, anima=39862)
+[mix] sha256=bf2371ac2602932cd68255626736285a5e579e6aee4b8a0160f74f365d826f94
+[P21M] loading base: Qwen/Qwen2.5-1.5B
+[P21M] loading vP21 LoRA adapter: /workspace/p21mr/vp21_adapter
+[P21M] LoRA trainable=36,929,536 (2.34% of 1,580,643,840)
+[P21M] BEFORE-train per-lang OOD eval (greedy)
+/usr/local/lib/python3.11/dist-packages/transformers/generation/configuration_utils.py:589: UserWarning: `do_sample` is set to `False`. However, `top_k` is set to `1` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_k`.
+  warnings.warn(
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+[P21M] BEFORE en greedy: {'GENERALIZE': 2, 'MEMORIZE': 8, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21M] BEFORE ko greedy: {'GENERALIZE': 0, 'MEMORIZE': 10, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21M] BEFORE zh greedy: {'GENERALIZE': 4, 'MEMORIZE': 6, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21M] BEFORE ru greedy: {'GENERALIZE': 2, 'MEMORIZE': 8, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21M] BEFORE ja greedy: {'GENERALIZE': 3, 'MEMORIZE': 7, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21M] optimizer=PagedAdamW8bit (bnb 0.43.1)
+Token indices sequence length is longer than the specified maximum sequence length for this model (23831908 > 131072). Running this sequence through the model will result in indexing errors
+[P21M] tokenized mixed corpus: 6,000,000 tokens (block=512)
+[P21M] steps=1500 bsz=2 block=512 peak_lr=5e-05 warmup=50
+[P21M] step=     1 lr=1.00e-06 CE=1.7163 t=0s
+[P21M] step=    37 lr=3.70e-05 CE=1.9190 t=5s
+[P21M] step=    74 lr=5.00e-05 CE=1.7488 t=10s
+[P21M] step=   111 lr=4.98e-05 CE=1.3363 t=15s
+[P21M] step=   148 lr=4.95e-05 CE=1.6480 t=20s
+[P21M] step=   185 lr=4.91e-05 CE=1.2007 t=25s
+[P21M] step=   222 lr=4.85e-05 CE=1.6214 t=30s
+[P21M] step=   259 lr=4.78e-05 CE=0.1486 t=35s
+[P21M] step=   296 lr=4.69e-05 CE=0.1424 t=40s
+[P21M] step=   333 lr=4.59e-05 CE=1.4066 t=45s
+[P21M] step=   370 lr=4.48e-05 CE=0.7675 t=49s
+[P21M] step=   407 lr=4.36e-05 CE=0.2650 t=54s
+[P21M] step=   444 lr=4.23e-05 CE=2.0139 t=59s
+[P21M] step=   481 lr=4.09e-05 CE=1.3370 t=64s
+[P21M] step=   518 lr=3.94e-05 CE=1.5278 t=69s
+[P21M] step=   555 lr=3.79e-05 CE=0.9593 t=74s
+[P21M] step=   592 lr=3.62e-05 CE=0.4853 t=79s
+[P21M] step=   629 lr=3.45e-05 CE=0.0688 t=84s
+[P21M] step=   666 lr=3.28e-05 CE=0.6292 t=88s
+[P21M] step=   703 lr=3.10e-05 CE=0.9737 t=93s
+[P21M] step=   740 lr=2.93e-05 CE=1.1313 t=98s
+[P21M] step=   777 lr=2.75e-05 CE=0.0556 t=103s
+[P21M] step=   814 lr=2.56e-05 CE=0.0692 t=108s
+[P21M] step=   851 lr=2.39e-05 CE=0.0661 t=113s
+[P21M] step=   888 lr=2.21e-05 CE=0.3680 t=117s
+[P21M] step=   925 lr=2.04e-05 CE=0.0721 t=122s
+[P21M] step=   962 lr=1.87e-05 CE=0.0636 t=127s
+[P21M] step=   999 lr=1.70e-05 CE=0.5060 t=132s
+[P21M] step=  1036 lr=1.55e-05 CE=0.4101 t=137s
+[P21M] step=  1073 lr=1.40e-05 CE=0.2791 t=142s
+[P21M] step=  1110 lr=1.26e-05 CE=0.1023 t=147s
+[P21M] step=  1147 lr=1.13e-05 CE=2.6427 t=151s
+[P21M] step=  1184 lr=1.01e-05 CE=0.0580 t=156s
+[P21M] step=  1221 lr=9.01e-06 CE=2.2871 t=161s
+[P21M] step=  1258 lr=8.05e-06 CE=1.2222 t=166s
+[P21M] step=  1295 lr=7.20e-06 CE=0.4635 t=171s
+[P21M] step=  1332 lr=6.49e-06 CE=1.0642 t=175s
+[P21M] step=  1369 lr=5.91e-06 CE=0.0788 t=180s
+[P21M] step=  1406 lr=5.47e-06 CE=0.3894 t=185s
+[P21M] step=  1443 lr=5.18e-06 CE=0.8095 t=191s
+[P21M] step=  1480 lr=5.02e-06 CE=1.3581 t=196s
+[P21M] step=  1500 lr=5.00e-06 CE=0.7787 t=199s
+[P21M] TRAIN DONE wall=198.8s final_CE=0.7787
+[P21M] adapter saved → /workspace/p21mr/out_main/lora_adapter
+[P21M] AFTER per-lang OOD eval (greedy + sample)
+[P21M] AFTER en: greedy={'GENERALIZE': 9, 'MEMORIZE': 1, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 9, 'MEMORIZE': 1, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=STRONG score=18/20 gen=18 coh=20
+[P21M] AFTER ko: greedy={'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 8, 'MEMORIZE': 2, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=PARTIAL score=15/20 gen=18 coh=15
+[P21M] AFTER zh: greedy={'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=STRONG score=16/20 gen=20 coh=16
+[P21M] AFTER ru: greedy={'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=STRONG score=18/20 gen=20 coh=18
+[P21M] AFTER ja: greedy={'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 6, 'MEMORIZE': 4, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=11/20 gen=16 coh=11
+[P21M] AFTER anima Eval1 (greedy + sample)
+[P21M] AGG: STRONG=3 PARTIAL=1 WEAK=1 PURE_MEMORIZE=0 → VP21M_WORKS
+[P21M] anima_register_hits=7/20 register_regress=False
+[P21M] DONE — result.json, heldout_vp21m.json, vp21m_eval1.json saved to /workspace/p21mr/out_main

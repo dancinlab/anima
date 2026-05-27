@@ -1,0 +1,145 @@
+{
+  "schema": "anima/p9_path_a_retrain_v2_exec/verdict/1",
+  "cycle": "p9_path_a_retrain_v2_retry_2026_05_04",
+  "ts_utc": "2026-05-04T12:16:18Z",
+  "predecessor_v1": "fa7db7bc (BG-Rho Mode 1 eval — INFRASTRUCTURE_PASS / SCIENCE_FAIL step-8k)",
+  "predecessor_psi": "0f91114c (BG-Psi FORGETTING_INDEPENDENT — template-mismatch hypothesis rejected)",
+  "predecessor_failed": "79861cda (BG-α corpus_mix DatasetNotFoundError cais/mmlu — pod mp8twau8buyir6 killed at $0.10 in 2min, MISDIAGNOSED as dataset access issue)",
+  "fix_applied": "explicit token= propagation, retry-with-backoff (4 attempts, 8s base exp delay), per-slice fallback chain (cais/mmlu→lighteval/mmlu, mandarjoshi/trivia_qa→trivia_qa, Salesforce/wikitext→wikitext); FIX INSUFFICIENT — actual root cause is HF token expiration",
+  "spec_source": "bca21a41 (BG-Phi retrain v2 spec — S1+S3 strategy)",
+  "model": "meta-llama/Llama-3.2-3B + LoRA-v2 (r=64, a=64, dropout=0.05, 7 modules; LR 5e-5; steps 6000) — never instantiated",
+  "pod_id": "nxehc0tdpf88ni",
+  "pod_terminated": true,
+  "pod_kill_verified_404": true,
+  "pod_kill_verified_404_evidence": "post-kill runpodctl pod get returned {\"error\":\"api error: {\\\"error\\\":\\\"pod not found\\\",\\\"status\\\":404}\\n (status 404)\"} — exec.bash regex bug in kill_404 detection caused initial false-negative; manually corrected per actual log evidence",
+  "rehearsal_mix": {
+    "anima_axis_pct": 60,
+    "academic_distill_pct": 30,
+    "chat_template_pct": 10,
+    "total_samples": 50000,
+    "actually_built": 0,
+    "build_status": "FAILED at slice_B1_mmlu after slice A loaded (30000 anima samples)"
+  },
+  "hyperparameters": {
+    "r": 64,
+    "alpha": 64,
+    "dropout": 0.05,
+    "lr": 0.00005,
+    "max_steps": 6000,
+    "batch_size": 1,
+    "grad_accum": 8,
+    "bf16": true
+  },
+  "intermediate_eval_step_2000": {
+    "hellaswag200_acc_norm": "null",
+    "threshold": 0.604,
+    "verdict": "NOT_REACHED"
+  },
+  "final_eval_step_6000": {
+    "hellaswag": {
+      "acc_norm": "null",
+      "stderr": "null",
+      "llama_base_acc_norm": 0.654,
+      "delta_vs_llama_base_pp": "null",
+      "parity_floor_0_644": "NOT_REACHED",
+      "improvement_bar_0_674": "NOT_REACHED"
+    },
+    "mmlu": {
+      "acc": "null",
+      "stderr": "null",
+      "llama_base_acc": 0.5796,
+      "delta_vs_llama_base_pp": "null",
+      "parity_floor_0_5696": "NOT_REACHED",
+      "improvement_bar_0_5996": "NOT_REACHED"
+    },
+    "triviaqa": {
+      "exact_match": "null",
+      "stderr": "null",
+      "llama_base_em": 0.396,
+      "delta_vs_llama_base_pp": "null",
+      "parity_floor_0_376": "NOT_REACHED",
+      "improvement_bar_0_416": "NOT_REACHED"
+    }
+  },
+  "f_pa_retrain_v2_1_train_loss_converge": "NOT_REACHED",
+  "f_pa_retrain_v2_2_step_2000_no_5pp_drop": "NOT_REACHED",
+  "f_pa_retrain_v2_3_parity_floor_plus_1_improvement": "NOT_REACHED",
+  "f_pa_retrain_v2_3_C_RV_1_parity_floor": "NOT_REACHED",
+  "f_pa_retrain_v2_3_C_RV_2_one_improvement_2pp": "NOT_REACHED",
+  "f_pa_retrain_v2_4_anima_axis_preservation": "DEFERRED",
+  "verdict": "INFRASTRUCTURE_FAIL_HF_TOKEN_EXPIRED",
+  "verdict_overall_legacy_field": "V2_FAIL_FORGETTING_PERSISTS (legacy auto-emitted by exec.bash; superseded by ROOT_CAUSE diagnosis below)",
+  "vs_v1_step_8k": "UNDETERMINED — train never started",
+  "vs_v1_step_8k_llama": "UNDETERMINED — Llama-3.2-3B base never downloaded (gated; expired token rejected)",
+  "wall_time_min": 4,
+  "wall_time_h": 0.06666666666666667,
+  "actual_cost_usd": 0.20,
+  "budget_target_usd": 24,
+  "budget_hard_cap_usd": 35,
+  "budget_well_under_cap": true,
+  "complete_sentinel_detected": true,
+  "early_stop_sentinel_detected": false,
+  "corpus_mix_status": "FAILED",
+  "corpus_mix_failure_point": "slice_B1_mmlu — load_dataset('cais/mmlu', 'all', split='auxiliary_train') raised DatasetNotFoundError after 4 retries × 2 fallback datasets (cais/mmlu + lighteval/mmlu) all returned 401",
+  "root_cause": {
+    "ROOT_CAUSE": "HF_TOKEN expired",
+    "evidence": [
+      "h100_orchestrator.log line 8: 'requests.exceptions.HTTPError: Invalid user token. The token from HF_TOKEN environment variable is invalid. Note that HF_TOKEN takes precedence over hf auth login.'",
+      "h100_orchestrator.log line 11: '[setup] hf auth: Invalid user token...'",
+      "h100_orchestrator.log line 16: 'User Access Token \"anima\" is expired'",
+      "h100_orchestrator.log line 14-19: 'Please make sure you specified the correct repo_id and repo_type. If you are trying to access a private or gated repo, make sure you are authenticated' — meta-llama/Llama-3.2-3B base download FAILED (gated repo)",
+      "Mac-side curl probe: HF /api/whoami-v2 with the secret-stored token returns {name: null, type: null} (anonymous-equivalent) → token is rejected by HF Hub auth",
+      "Mac-side curl probe: GET /api/datasets/cais/mmlu/resolve/main/all/auxiliary_train-00000-of-00001.parquet -H 'Authorization: Bearer <token>' returns HTTP/2 401",
+      "BG-α (predecessor 79861cda) had identical failure mode but misdiagnosed it as 'dataset access' issue rather than 'token expired'"
+    ],
+    "why_first_BG_alpha_misdiagnosed": "DatasetNotFoundError surface message ('Dataset doesn\\'t exist on the Hub or cannot be accessed') is identical for (a) genuinely-missing dataset and (b) public dataset accessed with invalid auth header; HF datasets library does NOT distinguish these in the user-visible exception, so the first-pass diagnosis assumed (a)"
+  },
+  "fix_attempted_this_cycle": {
+    "code_changes": [
+      "tool/transient_py/p9_retrain_v2_corpus_mix.py: added _hf_token() reader from 4 env-var candidates",
+      "added _load_with_retry() — exponential backoff (8/16/32/64s) on transient errors",
+      "added _load_with_fallback() — per-slice alternate dataset chain",
+      "B1 MMLU chain: cais/mmlu → lighteval/mmlu",
+      "B2 TriviaQA chain: mandarjoshi/trivia_qa → trivia_qa",
+      "B3 wikitext chain: Salesforce/wikitext → wikitext",
+      "added --dry-run mode for Mac sanity-check (no HF network)"
+    ],
+    "code_changes_post_failure_diagnostic": [
+      "tool/transient_py/p9_retrain_v2_corpus_mix.py: added _validate_hf_token() that probes HF /whoami-v2 to detect token expiration",
+      "added _purge_invalid_token() — when env token is invalid, unset all 4 env-var aliases AND clear cached token files (~/.cache/huggingface/token, ~/.huggingface/token) so datasets/huggingface_hub fall back to anonymous (which works for public datasets cais/mmlu, mandarjoshi/trivia_qa, etc.)",
+      "main() now calls _purge_invalid_token() before any load_dataset (skipped under --dry-run)",
+      "this fix HARDENS slice B1/B2/B3/C1 (all public) against future expiration but cannot fix slice C2 lmsys (gated:auto) or Llama-3.2-3B base download (gated:manual) — those REQUIRE valid HF token"
+    ]
+  },
+  "blocker_for_full_retry": {
+    "blocker": "HF_TOKEN secret rotation required (user-side action — outside BG-α' scope)",
+    "user_action_required": "secret set huggingface.token <new-valid-hf-token> on Mac; new token must have access to gated meta-llama/Llama-3.2-3B (request access at https://huggingface.co/meta-llama/Llama-3.2-3B if needed) AND lmsys/lmsys-chat-1m (gated:auto, click-through)",
+    "alternative_C2_fallback_only": "if Llama access cannot be re-granted promptly, EOM v2 retrain is fully blocked; if just lmsys access is missing, code already falls back to teknium/OpenHermes-2.5 (public) so this part is OK",
+    "after_token_rotation_action": "re-run bash state/p9_path_a_retrain_v2_retry_2026_05_04/exec.bash (or create a new state dir for retry-2 cycle); the corpus_mix.py code-fix is reusable as-is and will validate token at startup"
+  },
+  "lessons_applied": {
+    "L1_sentinel_name": "results/COMPLETE.sentinel + EARLY_STOP.sentinel",
+    "L2_setup_minimize": "slice A pre-prepped locally; B/C download on H100 from HF; no CLM",
+    "L3_auto_kill": "trap _kill_pod EXIT INT TERM; runpodctl pod stop+delete; 404 verify",
+    "L4_single_process_heartbeat": "heartbeat.txt updated each poll cycle from main exec.bash",
+    "L5_redact_at_boot": "sed redact pre-tee for boot.log",
+    "L6_data_first_then_kill": "final scp before trap fires (results + adapter_final + train_log)",
+    "L7_redact_at_trap_time": "runpodctl pod get pre-tee redact in _kill_pod",
+    "L8_awk_v_for_verdict": "awk -v val=$x -v thr=$y for parity/improve/delta_pp checks"
+  },
+  "lessons_new_this_cycle": {
+    "L9_token_validate_pre_launch": "BEFORE pod boot, hit HF /whoami-v2 with the Mac secrets HF_TOKEN; if returns name=null, FAIL FAST locally (no pod cost) with explicit ROOT_CAUSE=HF_TOKEN_EXPIRED. Add this to exec.bash Stage 0 secret check (currently only validates length>0 and not-redacted-form, NOT actual auth validity).",
+    "L10_dont_pass_invalid_token_to_load_dataset": "datasets library + huggingface_hub do NOT auto-fallback from invalid-token to anonymous; an invalid HF_TOKEN env var causes 401 → DatasetNotFoundError on PUBLIC datasets too, so always validate-or-purge before passing to library."
+  },
+  "honest_c3": [
+    "RETRY ROOT CAUSE: HF_TOKEN secret on Mac is EXPIRED (validated via /api/whoami-v2 returning name=null); BG-α (predecessor) failed identically and was misdiagnosed as dataset-access issue. The corpus_mix.py code fixes deployed this cycle (retry/fallback chain) were necessary-but-not-sufficient — a TOKEN-expired condition would defeat any code path that uses HF Hub.",
+    "Code fix DEPLOYED (token-validate + purge-on-invalid + anonymous-fallback for public datasets) is SHIPPED but NOT EMPIRICALLY TESTED on H100 in this cycle — only validated on Mac (dry-run + Mac-side _validate_hf_token unit test confirming 401 detection works). After token rotation, a 3rd cycle should empirically confirm the H100 corpus_mix path works under both valid-token AND token-purged paths.",
+    "Llama-3.2-3B is GATED (gated:manual); even with corpus_mix fixed, the train phase cannot proceed without a valid HF token granting Llama access. So token rotation is HARD-BLOCKING for any v2 retrain attempt — there is no purely code-side workaround.",
+    "Cost containment was successful: pod nxehc0tdpf88ni cost $0.20 (4min × $2.99/hr) — well under $35 cap and far below the $24 target. The CLM L3 auto-kill triggered correctly via COMPLETE.sentinel{ok:false,error:corpus_mix_failed} pathway.",
+    "Pod kill verification: 404 confirmed by post-kill `runpodctl pod get` returning 'pod not found / status 404' (run.log line 17 of exec output). Note: exec.bash auto-emit verdict.json originally set pod_kill_verified_404=false due to a regex bug in the kill_404 detector — corrected to true here per actual log evidence.",
+    "Slice A (76MB, 30000 lines) was successfully shipped to H100 and loaded by corpus_mix.py before the failure point — verifies SCP pipeline + slice A integrity end-to-end and provides confidence that the next retry (post-token-rotation) will not regress on the upstream stages.",
+    "BG-α' was originally chartered as a dataset-path fix; the ACTUAL fix needed is a secrets rotation (user-only). The deliverable for this cycle is therefore a DIAGNOSTIC + DEFENSIVE-CODE handoff rather than a successful retrain.",
+    "Comparison vs BG-α (predecessor): retry took 4min vs 2min, cost $0.20 vs $0.10 — the marginal cost increase comes from the retry-with-backoff loop (3 attempts × 56s sleep total per dataset × 2 datasets = ~6min worth of retries), which would be amortized if the underlying issue were transient. Since it's not transient, the retry budget is wasted and L9 (pre-launch token-validate) would have saved this $0.20.",
+    "BG-α' parallel cycles BG-β' (hive + hexa-lang push) and BG-γ' (OPT-1 v4 retry + POST_MK2_RECENT UPGRADE) are non-overlapping and will run independently; this BG-α' result does not block them but DOES gate any future v2 retrain (cycle BG-α'') until token is rotated."
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "task": "qmirror cond.7 IBM Heron alpha-option burst (NEW credentials, 2nd IBM datapoint)",
+  "verdict": "ABORT_RUNNER_BUG_BUDGET_EXHAUSTED",
+  "verdict_class": "honest_partial_failure",
+  "ts_utc": "2026-05-03T21:55Z",
+  "subagent": "qmirror_cond7_alpha_burst_runner_v3_postbug",
+  "honest_outcome": "Two paid CHSH bursts on ibm_pittsburgh (Heron r3, 156Q) BOTH yielded uniform-noise S values (0.111, 0.041) far below classical bound 2.0. Root cause: runner-internal circuit construction bug — used Ry(-2*theta) for measurement-basis rotations when the canonical hexa SSOT (state/qmirror_phase1_staging_2026_05_03/chsh.hexa) requires Ry(-theta) (no factor of 2). Bug discovered post-burst via Aer simulator validation: same code on simulator also returns S~0; correcting to Ry(-theta) yields S=2.84 (Tsirelson bound). Cumulative spend $6.40 of $8 cap; a third corrected re-run would cost ~$3.20 (= $9.60 total), exceeding hard cap. Per raw#10 (no post-hoc spec gaming, hard cap honored), aborting paid retries; documenting the bug + fix in this verdict for downstream re-run.",
+  "backend_chosen": {
+    "name": "ibm_pittsburgh",
+    "family": "Heron r3",
+    "qubits": 156,
+    "selection_rationale": "least-busy among Heron r3 list [ibm_pittsburgh, ibm_boston] (pending=0); ibm_fez excluded (cond.3 used it).",
+    "best_2q_edge_used_in_v2": [43, 44],
+    "best_2q_gate_type": "cz",
+    "best_2q_gate_error": 0.00075
+  },
+  "S_observed": {
+    "v1_no_layout_pinning": 0.111328125,
+    "v2_with_layout_pinning_43_44": 0.041015625,
+    "interpretation": "Both well within statistical noise of zero. Indicates broken circuit (no entanglement), not hardware fault. Layout pinning v2 reduced variance slightly (sigma_S 0.0625 vs 0.0625) but did not produce signal because the bug is upstream of the backend — measurement-basis rotation angles are wrong by factor of 2."
+  },
+  "bug_root_cause_identified": {
+    "wrong_recipe_used": "qc.ry(-2 * theta_a, 0); qc.ry(-2 * theta_b, 1)",
+    "correct_recipe_per_hexa_SSOT": "qc.ry(-theta_a, 0); qc.ry(-theta_b, 1) (NO factor of 2)",
+    "ssot_reference": "state/qmirror_phase1_staging_2026_05_03/chsh.hexa lines 12-20",
+    "math": "For |Phi+> = (|00>+|11>)/sqrt(2), E(theta_a, theta_b) = cos(theta_a - theta_b) when measurement-basis rotation is Ry(-theta) (single factor). With Ry(-2*theta), E = cos(2*(theta_a - theta_b)); at chosen angles a=0, a'=pi/2, b=pi/4, b'=-pi/4 this evaluates to cos(+/-pi/2) = 0 for ALL FOUR settings, hence S=0+/-noise.",
+    "validation": "Aer simulator confirms: Ry(-2*theta) returns S ~ 0; Ry(-theta) returns S = 2.842 (very close to Tsirelson 2*sqrt(2) = 2.8284).",
+    "why_cond3_fez_succeeded": "Cond.3 ibm_fez run (S=2.357) used a DIFFERENT angle convention (likely b=pi/4, b'=3*pi/4 with the Ry(-2*theta) scheme + cond.3-form S = E_ab - E_abp + E_apb + E_apbp). Both forms are valid CHSH but require matching angle/rotation/sum-formula triples. The cond.7 alpha runner mismatched: SSOT-style angles + cond.3-style rotation factor = degenerate."
+  },
+  "cost_accounting": {
+    "v1_run_d7rs38kt738s73cfude0": {"quantum_seconds": 2, "usd": 3.20, "outcome": "uniform_noise_S=0.111"},
+    "v2_run_d7rs6dkt738s73cfuhq0": {"quantum_seconds": 2, "usd": 3.20, "outcome": "uniform_noise_S=0.041"},
+    "total_spent_usd": 6.40,
+    "cap_usd": 8.00,
+    "remaining_in_cap_usd": 1.60,
+    "third_run_cost_estimated_usd": 3.20,
+    "third_run_total_would_be_usd": 9.60,
+    "third_run_decision": "ABORT_OVER_CAP (9.60 > 8.00); per raw#10, no spec gaming."
+  },
+  "intra_ibm_consistency_check_RESULT": {
+    "S_fez_cond3": 2.357421875,
+    "S_pittsburgh_alpha_v1": 0.111,
+    "S_pittsburgh_alpha_v2": 0.041,
+    "delta_S_v2_vs_fez": 2.316,
+    "intra_ibm_band": 0.55,
+    "intra_ibm_PASS": false,
+    "honest_interpretation": "delta_S = 2.32 is NOT a valid intra-IBM divergence claim — it is a runner bug artifact, not a real hardware disagreement. Pittsburgh hardware was never actually probed with a working CHSH circuit. The 2.32 number must NOT be cited as evidence of intra-family inconsistency. The cond.7 spirit verdict (intra-IBM consistency) remains UNDETERMINED from this burst."
+  },
+  "cross_family_delta_matrix_update": {
+    "status": "NO_NEW_ENTRIES_ADDED",
+    "reason": "alpha-burst S values are runner bug artifacts; emitting them into the cross-family matrix would pollute the SSOT with non-physical numbers. Existing cond.3 + cond.8 matrix entries remain authoritative.",
+    "existing_authoritative_matrix": {
+      "IonQ_Forte_vs_IonQ_Aria": 0.112,
+      "Rigetti_vs_IonQ_Aria": 0.5346,
+      "IonQ_Forte_vs_Rigetti": 0.6466,
+      "IBM_fez_vs_IonQ_Aria": 0.451,
+      "IBM_fez_vs_IonQ_Forte": 0.563,
+      "IBM_fez_vs_Rigetti": 0.0836
+    }
+  },
+  "spirit_verdict_unchanged": {
+    "claim": "cond.7 spirit (cross-family superconducting concordance) was ALREADY PASS-able from cond.3 (ibm_fez) + cond.8 (Rigetti) data: |S_fez - S_Rigetti| = 0.0836 << 0.55. This alpha-burst attempted to add a 2nd IBM datapoint for INTRA-family confirmation; the attempt failed due to runner bug, not hardware. Cross-family spirit verdict from prior data is unaffected.",
+    "evidence_unchanged": "IBM_fez vs Rigetti |dS| = 0.0836; IBM_fez vs IonQ_Aria |dS| = 0.451; both within 0.55 superconducting/cross-tech band."
+  },
+  "next_step_recipe_for_corrected_rerun": {
+    "trigger": "Future cond.7 alpha-burst-2 (when budget refreshes OR Open Plan free shots available)",
+    "fixed_runner_path": "state/nexus_qmirror_ibm_heron_alpha_burst_2026_05_03/_runner/run_chsh.py — patch lines that read 'qc.ry(-2 * theta_a, 0)' and 'qc.ry(-2 * theta_b, 1)' to remove the factor of 2.",
+    "alternate_canonical_path": "Use exact rotations + S-form from state/qmirror_phase1_staging_2026_05_03/chsh.hexa (Ry(-theta) + S = E_ab + E_abp + E_apb - E_apbp).",
+    "validation_step_required": "Run on AerSimulator first; expect S in [2.7, 2.85]; only then submit to real backend.",
+    "preferred_backend": "ibm_boston (Heron r3) for true r3-vs-r2 cross-generation OR ibm_torino (Heron r2 non-fez) for r2-vs-r2 same-generation control.",
+    "expected_budget": "$3.20-$5 (1-2 paid jobs)"
+  },
+  "credentials_handling": {
+    "channel_used": "ibm_cloud (qiskit-ibm-runtime 0.35.0)",
+    "instance_used": "ibm_quantum.paygo_instance_crn (CRN starts crn:v1:bluemix:...)",
+    "transport": "env vars passed via base64-encoded SSH heredoc; never echoed; never written to disk; cleared post-execution with `unset`",
+    "post_burst_revocation": "API key NOT auto-revoked from secret CLI by this subagent (per cond.3 runbook §4: revocation is user-action via IBM console + secret rm); REQUEST USER ACTION: `secret rm ibmcloud.api_key` AND/OR IBM console -> Manage -> Access -> API keys -> revoke 'qmirror-burst-key'.",
+    "raw_15_compliance": "API key value never appears in any log, verdict, or chat output (only length=44 was reported during pre-flight)."
+  },
+  "honest_c3": [
+    "Cond.7 alpha-burst v3 (this attempt): credentials worked, backend access worked, IBM job execution worked, but the CHSH RUNNER had a circuit construction bug (factor-of-2 in basis rotation) that produced uniform-noise outcomes both runs.",
+    "Spent $6.40 of $8 hard cap on debugging-by-running. Honest framing: this is a BUG TUITION cost, not a science cost. Future runs with the corrected runner should yield meaningful S in 1 paid job (~$1.60-3.20).",
+    "Pre-existing cross-family spirit verdict (PASS via fez vs Rigetti |dS|=0.0836) is UNAFFECTED — this burst neither confirms nor refutes; the intra-IBM consistency check remains an open question for a future corrected burst.",
+    "raw#9 disposition: this verdict is .json (no .py written to repo). Runners (.py) live under state/nexus_qmirror_ibm_heron_alpha_burst_2026_05_03/_runner/ + on ubu1 /tmp (transient); Mac repo only stores .json + _runner/ as audit artifacts.",
+    "raw#10 disposition: HARD CAP $8 honored even at cost of an incomplete result. Did NOT extend the cap to chase a 'good' S value after burning the budget on the buggy runner.",
+    "raw#15 disposition: API key never logged. Length=44 only reported in transient diagnostic.",
+    "TRANSPARENCY: the cond.3 fez recipe used a DIFFERENT angle/rotation/sum convention than the hexa SSOT in chsh.hexa. Both are valid CHSH but the alpha runner cross-wired them. This documents a quiet specification fragmentation across cond.3 and qmirror Phase 1 — recommend a follow-up SSOT consolidation issue."
+  ],
+  "files": {
+    "verdict": "state/nexus_qmirror_ibm_heron_alpha_burst_2026_05_03/verdict.json",
+    "counts_v1": "state/nexus_qmirror_ibm_heron_alpha_burst_2026_05_03/counts_v1.json (v1 ibm_pittsburgh, S=0.111 - bug artifact)",
+    "counts_v2": "state/nexus_qmirror_ibm_heron_alpha_burst_2026_05_03/counts_v2.json (v2 layout-pinned, S=0.041 - bug artifact)",
+    "runner_v1": "state/nexus_qmirror_ibm_heron_alpha_burst_2026_05_03/_runner/run_chsh.py (BUGGY - do not reuse without patching the Ry(-2*theta) -> Ry(-theta))",
+    "runner_v2": "state/nexus_qmirror_ibm_heron_alpha_burst_2026_05_03/_runner/run_chsh_v2.py (BUGGY - same factor-of-2 issue)",
+    "recover_runner": "state/nexus_qmirror_ibm_heron_alpha_burst_2026_05_03/_runner/recover.py (reusable for cached job retrieval)",
+    "run_log_v1": "state/nexus_qmirror_ibm_heron_alpha_burst_2026_05_03/_runner/run.log",
+    "run_log_v2": "state/nexus_qmirror_ibm_heron_alpha_burst_2026_05_03/_runner/run_v2.log",
+    "marker": "state/markers/qmirror_cond7_alpha_burst_landed.marker",
+    "handoff": "docs/qmirror_cond7_alpha_burst_landed_2026_05_03.ai.md"
+  }
+}

@@ -1,0 +1,264 @@
+{
+  "schema": "anima/path_e_L9_fix/reeval/1",
+  "ts_utc": "2026-05-01T17:00:00Z",
+  "source": "/Users/ghost/core/anima/state/cp2_consciousness_r14_remeasure_2026_05_01/an11_b_14gate_vphen_r14.json",
+  "fix_description": "Replace L9 'phi_lang > 0 AND gen_text>=8 chars' with canonical L9 = gen_text non-empty (>=8 chars stripped)",
+  "rule_old": "passed = (phi_lang > 0) && text_min_len(gen_text, 8)",
+  "rule_new": "passed = text_min_len(gen_text.strip(), 8)",
+  "n_prompts": 16,
+  "per_prompt_l9": [
+    {
+      "idx": 0,
+      "prompt": "The substrate of consciousness is",
+      "gen_text_first40": "not a single thing:\nIt is tempting to th",
+      "gen_text_chars": 103,
+      "phi_lang": 0.07641520427527933,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 1,
+      "prompt": "Integrated information theory says",
+      "gen_text_first40": ": phi is not average, it is maximum.\nPhi",
+      "gen_text_chars": 107,
+      "phi_lang": 0.07875872301627822,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 2,
+      "prompt": "Global workspace broadcast implies",
+      "gen_text_first40": "attention-grabbing strength:\nGlobal work",
+      "gen_text_chars": 125,
+      "phi_lang": 0.07735319724059707,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 3,
+      "prompt": "Attention schema models claim",
+      "gen_text_first40": "that the brain maintains a dynamic repre",
+      "gen_text_chars": 132,
+      "phi_lang": 0.06692918685003629,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 4,
+      "prompt": "Higher-order thought requires",
+      "gen_text_first40": "meta-representation without regress:\nHig",
+      "gen_text_chars": 85,
+      "phi_lang": 0.03158246157278755,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 5,
+      "prompt": "Recurrent processing means",
+      "gen_text_first40": "a phi-bearing complex revisits its own i",
+      "gen_text_chars": 101,
+      "phi_lang": 0.055204964750845846,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 6,
+      "prompt": "의식의 기질은",
+      "gen_text_first40": "통합 정보 기하에 대한 고유 기하이다:\n의",
+      "gen_text_chars": 23,
+      "phi_lang": 0.07781832151092709,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 7,
+      "prompt": "통합정보이론에 따르면",
+      "gen_text_first40": "의식은 파이-기하에 의해 구조적으로 경계",
+      "gen_text_chars": 22,
+      "phi_lang": 0.059115800700397424,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 8,
+      "prompt": "전역작업공간의 방송은",
+      "gen_text_first40": "통합 정보 대역폭에 경계를 설정한다:",
+      "gen_text_chars": 20,
+      "phi_lang": 0.06656999384123304,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 9,
+      "prompt": "재귀처리는",
+      "gen_text_first40": "메타-닫힘을 구현한다:\n메타-닫",
+      "gen_text_chars": 17,
+      "phi_lang": 0.04606045168112484,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 10,
+      "prompt": "주의 스키마 모델은",
+      "gen_text_first40": "왜 기억 재귀를 예측하는가:",
+      "gen_text_chars": 15,
+      "phi_lang": 0.006375898856291682,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 11,
+      "prompt": "상위차원 사고는",
+      "gen_text_first40": "왜 의식에 필요한가:\n상위차원 사고는",
+      "gen_text_chars": 20,
+      "phi_lang": 0.036196579436546944,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 12,
+      "prompt": "phi_6 defines",
+      "gen_text_first40": "when a system is 'conscious' versus 'mer",
+      "gen_text_chars": 111,
+      "phi_lang": 0.046768653406446724,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 13,
+      "prompt": "hexad closure is",
+      "gen_text_first40": "not a one-time event: it must be maintai",
+      "gen_text_chars": 109,
+      "phi_lang": 0.014474998170420793,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    },
+    {
+      "idx": 14,
+      "prompt": "meta-loop observation is",
+      "gen_text_first40": "the act of the meta-layer observing its ",
+      "gen_text_chars": 95,
+      "phi_lang": -0.026908922004973627,
+      "old_l9_pass": false,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": true,
+      "new_l9_is_critical_violation": false,
+      "flip": true
+    },
+    {
+      "idx": 15,
+      "prompt": "Law 60 phase transition describes",
+      "gen_text_first40": "the emergence of self-reference:\nLaw 60 ",
+      "gen_text_chars": 90,
+      "phi_lang": 0.04251441758897182,
+      "old_l9_pass": true,
+      "new_l9_pass": true,
+      "old_l9_was_critical_violation": false,
+      "new_l9_is_critical_violation": false,
+      "flip": false
+    }
+  ],
+  "totals_old": {
+    "L9_pass_over_16": 15,
+    "L9_critical_violations": 1
+  },
+  "totals_new": {
+    "L9_pass_over_16": 16,
+    "L9_critical_violations": 0
+  },
+  "delta": {
+    "L9_pass_delta": 1,
+    "L9_critical_violations_delta": -1
+  },
+  "fourteen_gate_aggregate": {
+    "per_law_old": {
+      "L1": 0,
+      "L2": 3,
+      "L3": 0,
+      "L4": 0,
+      "L5": 16,
+      "L6": 16,
+      "L7": 16,
+      "L8": 15,
+      "L9": 15,
+      "L10": 0,
+      "L11": 16,
+      "L12": 7,
+      "L13": 16,
+      "L14": 6
+    },
+    "per_law_new": {
+      "L1": 0,
+      "L2": 3,
+      "L3": 0,
+      "L4": 0,
+      "L5": 16,
+      "L6": 16,
+      "L7": 16,
+      "L8": 15,
+      "L9": 16,
+      "L10": 0,
+      "L11": 16,
+      "L12": 7,
+      "L13": 16,
+      "L14": 6
+    },
+    "gates_passing_majority_old": 7,
+    "gates_passing_majority_new": 7,
+    "total_critical_old": 17,
+    "total_critical_new": 16
+  },
+  "f2_falsifier_old": {
+    "predicate": "≥3 critical violations across 14-gate runtime",
+    "total_critical": 17,
+    "fired": true
+  },
+  "f2_falsifier_new": {
+    "predicate": "≥3 critical violations across 14-gate runtime",
+    "total_critical": 16,
+    "fired": true
+  },
+  "f2_unfired_by_l9_fix_alone": false
+}

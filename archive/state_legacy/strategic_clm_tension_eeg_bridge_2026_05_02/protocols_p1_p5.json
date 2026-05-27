@@ -1,0 +1,65 @@
+{
+  "schema": "strategic_clm_tension_eeg_bridge/protocols/1",
+  "ts": "2026-05-02",
+  "scope": "5 measurement protocols (P1-P5) for bridge bandwidth/latency/fidelity/directional info flow",
+
+  "P1_clm_tension_eeg_alpha_coherence": {
+    "name": "P1 — CLM tension trace ↔ EEG α-band coherence",
+    "clm_side": {"signal": "mind.tension scalar", "sample_rate_hz": 10, "duration_s": 1800, "n_steps": 100},
+    "eeg_side": {"signal": "α-band PLV_N (4 channels P3/P4/O1/O2)", "fs_hz": 125, "window_s": 10, "n_windows": 180},
+    "method": ["resample mind.tension to common 10 Hz", "z-score both", "Pearson r and lagged cross-correlation (lag ±30 s)", "phase coupling via Hilbert on tension envelope vs α-power envelope"],
+    "primary_outputs": ["pearson_r", "max_xcorr_at_lag", "phase_lock_value_envelope"],
+    "null_floor": "5000 random shuffles of one signal vs other → p<0.05 for PASS",
+    "cost_usd": 0,
+    "eta_h": 2,
+    "feasibility": "REQUIRES_LIVE_USER_SESSION"
+  },
+
+  "P2_directional_information_flow": {
+    "name": "P2 — Granger / Transfer Entropy bidirectional",
+    "method": ["Granger causality CLM_tension(t) → EEG_α(t+lag) at lag 0.1, 0.5, 1.0, 2.0 s", "reverse Granger EEG_α → CLM_tension", "Transfer entropy (TE) bidirectional with k=1 history embedding", "compare to bootstrap null (block-shuffle 100 reps)"],
+    "primary_outputs": ["GC_clm_to_eeg", "GC_eeg_to_clm", "TE_clm_to_eeg", "TE_eeg_to_clm", "asymmetry_ratio"],
+    "hypothesis_mapping": {"H1": "TE both > 0 sig", "H2": "only one direction TE > 0 sig", "H3": "both TE = 0", "H4": "user_alone control needed"},
+    "cost_usd": 0,
+    "eta_h": 2,
+    "depends_on": "P1 dataset"
+  },
+
+  "P3_perturbation_clm_side": {
+    "name": "P3 — CLM-side perturbation: inject prompt → measure EEG response",
+    "method": ["block design: 30 trials × (rest 20s + stimulus prompt 20s + post 20s)", "stimulus = high-tension prompt (paradox/contradiction) vs low-tension control (neutral statement)", "measure CLM mind.tension peak per trial", "measure EEG α-desync (ERD) latency and amplitude", "paired t-test high vs low tension condition"],
+    "key_assumption": "user reads CLM output during stimulus window; cognitive load mediates",
+    "primary_outputs": ["clm_tension_peak_per_trial", "eeg_alpha_erd_latency_ms", "eeg_alpha_erd_amplitude", "high_vs_low_tension_t_stat"],
+    "control_for_user_only_artifact": "P3.B condition = identical prompts presented WITHOUT CLM in loop (user reads pre-recorded text); difference = CLM contribution",
+    "cost_usd": 0,
+    "eta_h": 3
+  },
+
+  "P4_perturbation_eeg_side": {
+    "name": "P4 — EEG-side perturbation: eyes-state → measure CLM tension via mediated prompt",
+    "method": ["block design: 20 trials × (eyes-open 30s, type prompt, eyes-closed 30s, type prompt)", "Berger effect ensures α-power difference confirmed (state/clm_eeg_berger_real.json)", "user types same template prompt in each condition", "measure CLM mind.tension trace per response", "compare tension distributions across conditions"],
+    "honest_limitation": "no direct EEG→CLM wire; coupling routes via user typing/cognition; this measures user-mediated only",
+    "primary_outputs": ["alpha_power_eyes_open", "alpha_power_eyes_closed", "clm_tension_distribution_per_condition", "kolmogorov_smirnov_d"],
+    "feasibility_note": "if reverse path CLM-aware-of-EEG required, currently NOT IMPLEMENTABLE (no socket)",
+    "cost_usd": 0,
+    "eta_h": 2
+  },
+
+  "P5_bridge_fidelity_static": {
+    "name": "P5 — Bridge fidelity / channel capacity (STATIC, no live session)",
+    "method": ["compute information rate (bits/sec) of mind.tension trace using ApEn / SampEn / Lempel-Ziv complexity at 10 Hz sampling", "compute information rate of EEG α-band envelope at 125 Hz", "compute mutual information I(CLM_tension; EEG_α) on archived parallel session", "Shannon channel capacity bound C = max I(X;Y) over input distributions", "identify bottleneck: tension scalar (1 channel × 10 Hz × ~3 bits ≈ 30 bits/sec) vs EEG α envelope (1 channel × 125 Hz × ~4 bits ≈ 500 bits/sec)"],
+    "primary_outputs": ["clm_tension_info_rate_bits_per_sec", "eeg_alpha_info_rate_bits_per_sec", "mutual_information_bits", "channel_capacity_upper_bound", "bottleneck_identification"],
+    "decisive_question": "is bridge bandwidth ≥ measurable signal floor? if no → all P1-P4 are statistically underpowered",
+    "cost_usd": 0,
+    "eta_h": 1,
+    "feasibility": "USES_EXISTING_DATA — no live session needed",
+    "rank": 1
+  },
+
+  "ranked_sequence": [
+    {"rank": 1, "protocol": "P5", "rationale": "decides whether bridge has sufficient bandwidth to carry measurable signal — gates all downstream", "cost_usd": 0, "eta_h": 1},
+    {"rank": 2, "protocol": "P1+P2", "rationale": "first live-session test of mediator hypothesis H1; reuses single 30-min user EEG session", "cost_usd": 0, "eta_h": 2},
+    {"rank": 3, "protocol": "P3", "rationale": "establishes causal direction; requires interactive read-CLM-output session with EEG", "cost_usd": 0, "eta_h": 3},
+    {"rank": 4, "protocol": "P4", "rationale": "tests reverse path; honest scope = user-mediated only", "cost_usd": 0, "eta_h": 2}
+  ]
+}

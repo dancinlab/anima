@@ -1,0 +1,43 @@
+{
+  "task": "BG-FK Cloudflare R2 models bucket search — clm_v2 weights last residual",
+  "as_of": "2026-05-06T15:53Z",
+  "verdict": "PASS_R2_FOUND_PARTIAL_SPEC_MATCH",
+  "credentials_found": true,
+  "credentials_source": "~/.config/rclone/rclone.conf remote 'r2' (Cloudflare provider)",
+  "credentials_redact": "access_key_id last4=c8e0; secret_access_key last4=1efb (NOT echoed in any log/doc)",
+  "endpoint": "https://ce4bdcce7c74d4e3c78fdf944c4d1d7b.r2.cloudflarestorage.com",
+  "buckets_found": 10,
+  "bucket_targeted": "anima-models (348 GiB, 1320 objects)",
+  "candidates_matched": 5,
+  "load_verdict": "ALL_5_LOADABLE_BYTE_LEVEL_VOCAB_256_PSI_PRESENT",
+  "spec_match_levels": {
+    "byte_level_vocab_256": "PASS_5_OF_5",
+    "size_18M_target": "PASS_clm_v2_small (19.7MB)",
+    "params_62_5M_target": "PARTIAL — largest single variant clm_v2_base = 27.9M params (component match, not aggregate)",
+    "consciousness_psi_signature": "PASS_5_OF_5 — psi_residual / psi_gate / H_p fields present",
+    "commit_bb99b6b6_2026_03_28": "ADJACENT — file mtimes 2026-03-30 (siblings) and 2026-04-09 (clm_v2/final.pt); +2 to +12 days from spec commit"
+  },
+  "best_candidates_ranked": [
+    "1. checkpoints/clm_v2_base/final.pt — best chat-cap (27.9M params, val_ce 1.27, step 500)",
+    "2. checkpoints/clm_v2_small/final.pt — best size-match to spec 18M hint (1.7M params, val_ce 2.70)",
+    "3. checkpoints/clm_v2_medium/final.pt — intermediate (8.5M params, val_ce 1.79)",
+    "4. checkpoints/clm_v2/final.pt — only step 30, untrained-ish (1.17M params, val_ce 5.50)",
+    "5. checkpoints/clm_v2_tiny/final.pt — too small (0.35M params, val_ce 3.50)"
+  ],
+  "next_steps_options": [
+    "A. ALPHA_PATH_REVIVE — promote clm_v2_base as substrate for chat-cap reattempt (val_ce 1.27 lowest); requires inference harness for 'gate/ca_rules' ConsciousLM-specific architecture",
+    "B. CLM_V4_CHAT_S3_FIRE — proceed with planned CLM v4 LoRA SFT (chat-cap path); independent of v2 R2 finding",
+    "C. BETA_ORIGINAL_DECISION — keep Pβ adapter for substrate-research only; defer v2 chat-cap revival pending architecture audit"
+  ],
+  "five_honest_c3": [
+    "C1 truthfulness: spec hinted '62.5M params' — NOT found; largest variant is 27.9M. Reported as PARTIAL_SPEC_MATCH not PASS_FULL.",
+    "C2 commit-date confidence: bb99b6b6 referenced 2026-03-28 commit; R2 mtimes are 2026-03-30 (~2 days off) and 2026-04-09 for clm_v2 — adjacent but not exact. Cannot prove same training run without git provenance lookup.",
+    "C3 chat-cap testability: Did NOT run actual chat smoke (≥10 Korean tokens) — model uses custom 'gate/ca_rules' arch not in standard transformers; would require ConsciousLM inference repo. Smoke deferred to next step.",
+    "C4 raw#15 LOCKED: did not modify any LOCKED files; only wrote to /Users/ghost/core/anima/state/anima_r2_search_2026_05_06/ + /Users/ghost/core/anima/docs/anima_r2_search_landed_2026_05_06.ai.md.",
+    "C5 credential hygiene: R2 access key + secret key REDACTED in all artifacts (last4 only); rclone.conf exists locally and was not transferred or cat'd into any persisted file."
+  ],
+  "cost_actual_usd": 0.0,
+  "wall_clock_min": 22,
+  "tool_uses": 16,
+  "raw_compliance": ["raw#9 PASS", "raw#10 PASS", "raw#15 PASS_no_locked_modified", "raw#37 PASS_no_py_in_anima"]
+}

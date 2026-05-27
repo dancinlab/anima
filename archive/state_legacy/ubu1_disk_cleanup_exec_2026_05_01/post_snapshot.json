@@ -1,0 +1,38 @@
+{
+  "timestamp_utc": "2026-05-01T22:05:00Z",
+  "host": "ubu1 (aiden-B650M-K)",
+  "df_root": {
+    "device": "/dev/nvme0n1p2",
+    "size": "915G",
+    "used": "198G",
+    "avail": "672G",
+    "use_pct": "23%"
+  },
+  "log_sizes": {
+    "/var/log/syslog": {"bytes": 2200, "human": "2.2K", "mtime": "2026-05-02 13:52", "delta_human": "294G -> 2.2K"},
+    "/var/log/kern.log": {"bytes": 0, "human": "0", "mtime": "2026-05-02 13:49", "delta_human": "294G -> 0"}
+  },
+  "airgenome_runaway_service": {
+    "is_active": "inactive",
+    "is_enabled": "disabled",
+    "auto_restart_observed": false,
+    "verdict": "STAYS_DOWN"
+  },
+  "checkpoints_post": {
+    "clm_v3_280m": "DELETED",
+    "trained_adapters_r4": "DELETED",
+    "trained_adapters_r5": "DELETED",
+    "trained_adapters_r6": "DELETED"
+  },
+  "docker": {
+    "action": "SKIPPED",
+    "reason": "Active healthy container airgenome-claude (19h up) using the only image; prune -a would remove its layers"
+  },
+  "delta_gb": {
+    "baseline_used_gb": 817,
+    "post_used_gb": 198,
+    "recovered_gb": 619,
+    "estimate_gb": 625,
+    "match_pct": 99.0
+  }
+}

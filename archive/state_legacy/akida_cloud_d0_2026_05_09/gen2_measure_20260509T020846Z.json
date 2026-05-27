@@ -1,0 +1,116 @@
+{
+  "ts": "2026-05-09T02:08:44Z",
+  "backend": "Gen2A2FPGABackend",
+  "generation": 2,
+  "device_info": {
+    "version": "BC.A2.001.000",
+    "marketing_name": "Akida 2 FPGA (BrainChip Cloud)",
+    "generation": 2,
+    "available": true,
+    "soc_present": false,
+    "ip_version": "IpVersion.v2",
+    "learn_enabled": false
+  },
+  "mesh_summary": {
+    "generation": 2,
+    "n_nps": 24,
+    "n_skip_dmas": 1,
+    "dma_event": "(1, 1, 0)",
+    "dma_conf": "(1, 1, 1)",
+    "mesh_np_counts": {
+      "HRC": 0,
+      "CNP1": 24,
+      "CNP2": 18,
+      "FNP2": 1,
+      "FNP3": 2,
+      "TNP_B": 24,
+      "SKIP_DMA_STORE": 1,
+      "SKIP_DMA_LOAD": 1
+    },
+    "raw_repr_head": "<akida.NP.Mesh, dma_event=(1, 1, 0), dma_conf=(1, 1, 1), skip_dmas=[<akida.NP.Info, ident=(1, 1, 3), types=[<Type.SKIP_DMA_STORE: 6>, <Type.SKIP_DMA_LOAD: 9>], num_channels=4>], nps=[<akida.NP.Info, ident=(1, 2, 0), types=[<Type.CNP1: 2>, <Type.FNP2: 4>, <Type.TNP_B: 7>], has_lut=True>, <akida.NP.Info, ident=(1, 2, 1), types=[<Type.CNP1: 2>, <Type.TNP_B: 7>], has_lut=True>, <akida.NP.Info, ident=("
+  },
+  "inference": {
+    "outputs": null,
+    "n_events": 10,
+    "wall_seconds": 0.6709076706320047,
+    "latency_per_event_us": 67090.76706320047,
+    "input_shape": [
+      10,
+      80,
+      106,
+      2
+    ],
+    "output_shape": [
+      10,
+      3,
+      4,
+      3
+    ],
+    "mapping": {
+      "hw_only_attempted": true,
+      "hw_only_succeeded": true,
+      "fallback_used": false,
+      "summary": "                                     Model Summary                                      \n________________________________________________________________________________________\nInput shape   Output shape  Sequences  Layers  NPs  Skip DMAs  External Memory (Bytes)\n========================================================================================\n[80, 106, 2]  [3, 4, 3]     1          20      41   6          307008                 \n________________________________________________________________________________________\n\n_________________________\nComponent (type)  Count\n=========================\nCNP1              27   \n_________________________\nSKIP_DMA_STORE    6    \n_________________________\nTNP_B             14   \n_________________________\nSKIP_DMA_LOAD     6    \n_________________________\n\n                      External Memory Summary                       \n____________________________________________________________________\nLayer (type)                               External Memory (Bytes)\n====================================================================\nconvt_full_0 (BufferTempConv)              101760                 \n____________________________________________________________________\nconvt_full_1 (BufferTempConv)              103680                 \n____________________________________________________________________\nconvt_full_2 (BufferTempConv)              53760                  \n____________________________________________________________________\nconvt_dw_3",
+      "summary_full_len": 6863,
+      "model_np_counts": {
+        "CNP1": 27,
+        "SKIP_DMA_STORE": 6,
+        "TNP_B": 14,
+        "SKIP_DMA_LOAD": 6
+      }
+    },
+    "stats": {
+      "fps": 14.903129657228018,
+      "inference_clk": 15946631,
+      "program_clk": 1470842,
+      "energy": null,
+      "powers": {},
+      "device_metrics": {}
+    },
+    "raw": {
+      "model_path": "/home/guest/bc_cloud_examples/examples/models/tenn_spatiotemporal_eye_buffer_i8_w8_a8.fbz",
+      "ipe_buffer_growth": 0,
+      "ipe_buffer_total": 0,
+      "outputs_summary": {
+        "min": -4.641873836517334,
+        "max": 1.9317408800125122,
+        "mean": -0.6219961643218994,
+        "std": 1.1422165632247925
+      },
+      "input_seed": 42
+    }
+  },
+  "power": {
+    "available": "cloud_clock_estimate",
+    "method": "fps_clock_proxy_via_m_statistics",
+    "vendor_estimate_required": true,
+    "watts_idle": null,
+    "watts_inference": null,
+    "joules_per_event": null,
+    "cloud_estimate": {
+      "fps": 14.903129657228018,
+      "inference_clk": 15957818,
+      "program_clk": 1472246,
+      "energy": null,
+      "powers": {},
+      "device_metrics": {}
+    },
+    "soc_power_measurement_enabled": null,
+    "raw": {
+      "inference_power_events_len": 0,
+      "inference_power_events_sample": []
+    },
+    "note": "Akida 2 FPGA cloud: silicon-equivalent watts NOT available. Phase 1 surfaces fps + inference_clk + program_clk via m.statistics (cloud_clock_estimate, real measurement but FPGA-clock). Phase 2: BrainChip Solution Architects RTL estimate via sales@brainchip.com (separate NDA engagement). Phase 3: AKD2500 silicon prototype Q3 2026. Source: bc_cloud_examples/Eye_Tracking.ipynb \u00a74 + doc.brainchipinc.com/api_reference/akida_apis.html (Statistics)."
+  },
+  "capabilities": {
+    "device_probe": true,
+    "mesh_introspect": true,
+    "forward": true,
+    "run_inference": true,
+    "power_measure": "cloud_clock_estimate",
+    "spike_capture": true,
+    "online_learning": false,
+    "silicon_equivalent_power": false,
+    "soc_present": false
+  }
+}

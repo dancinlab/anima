@@ -1,0 +1,201 @@
+{
+  "schema": "anima/p9_lora_mode1_instruct_eval/verdict/1",
+  "cycle": "p9_lora_mode1_instruct_eval_2026_05_04",
+  "ts_utc": "2026-05-04T09:57:29Z",
+  "scope": "Mode 1 re-eval with Llama-3.2-3B-Instruct base — template-mismatch hypothesis test (BG-Psi)",
+  "model": "meta-llama/Llama-3.2-3B-Instruct + dancinlab/p9-llama32-lora-stage1@5a9b4584 (step-8k LoRA, r=64 alpha=64 dropout=0.05)",
+  "pod_id": "w7b46czo3ekxof",
+  "pod_terminated": true,
+  "pod_kill_verified_404": true,
+  "pod_kill_post_status": "404 pod not found (verified via runpodctl pod get post-trap)",
+  "verdict": "FORGETTING_INDEPENDENT",
+  "verdict_reason": "Template-mismatch hypothesis NOT confirmed. Switching adapter base from non-Instruct to Instruct (matching what adapter_config.json declares) only marginally reduces degradation magnitude: HellaSwag goes from -1.2pp to +0.4pp (within noise both times), MMLU from -4.95pp to -3.19pp (35.6% shrink — partial), TriviaQA from -9.4pp to -8.2pp (only 12.8% shrink — persisted). 2/3 benchmarks classify as PERSISTED (shrink < 50%, |Delta| within 25% of BG-Rho); 1/3 SHRUNK. Decision rule: 2/3 persisted + 0 shrunk-2/3 -> FORGETTING_INDEPENDENT. The catastrophic-forgetting signature on factual recall (TriviaQA) is robust to base choice; this is direct evidence that the LoRA adapter degrades the underlying capability of Llama-3.2-3B regardless of which sibling base it composes onto.",
+  "instruct_base_results": {
+    "hellaswag": {
+      "acc": 0.49,
+      "acc_norm": 0.632,
+      "acc_stderr": 0.022378596989230785,
+      "acc_norm_stderr": 0.021588982568353544,
+      "fewshot": 0,
+      "filter": "acc_norm",
+      "limit": 500
+    },
+    "mmlu": {
+      "acc": 0.6179249157972562,
+      "stderr": 0.004225065671582184,
+      "fewshot": 5,
+      "limit": 500
+    },
+    "triviaqa": {
+      "exact_match": 0.48,
+      "stderr": 0.022365160424231333,
+      "fewshot": 0,
+      "filter": "remove_whitespace",
+      "limit": 500
+    }
+  },
+  "instruct_lora_results": {
+    "hellaswag": {
+      "acc": 0.504,
+      "acc_norm": 0.636,
+      "acc_stderr": 0.02238235778196213,
+      "acc_norm_stderr": 0.021539170637317695,
+      "fewshot": 0,
+      "filter": "acc_norm",
+      "limit": 500
+    },
+    "mmlu": {
+      "acc": 0.5860510966893946,
+      "stderr": 0.0042902596496653305,
+      "fewshot": 5,
+      "limit": 500
+    },
+    "triviaqa": {
+      "exact_match": 0.398,
+      "stderr": 0.02191237788577997,
+      "fewshot": 0,
+      "filter": "remove_whitespace",
+      "limit": 500
+    }
+  },
+  "delta_per_bench_instruct": {
+    "hellaswag_pp": 0.4,
+    "mmlu_pp": -3.1874,
+    "triviaqa_pp": -8.2
+  },
+  "delta_per_bench_non_instruct_BG_Rho": {
+    "hellaswag_pp": -1.2,
+    "mmlu_pp": -4.95,
+    "triviaqa_pp": -9.4
+  },
+  "delta_difference_pp": {
+    "hellaswag_instruct_minus_rho": 1.6,
+    "mmlu_instruct_minus_rho": 1.76,
+    "triviaqa_instruct_minus_rho": 1.2,
+    "interpretation": "All 3 benches: |Delta_Instruct| < |Delta_Rho| (degradation reduced under matching anchor) but the reduction is small (1.2-1.8pp on a per-bench scale where TriviaQA degradation is 8-9pp). The template-mismatch component contributes ~12-36% of observed BG-Rho degradation; the remainder (~64-88%) is base-independent forgetting."
+  },
+  "shrink_ratio_per_bench": {
+    "hellaswag": 0.6667,
+    "mmlu": 0.3561,
+    "triviaqa": 0.1277,
+    "rule": "shrink = 1 - |Delta_Instruct| / |Delta_Rho|; >=0.5 = SHRUNK, <-0.25 = INCREASED, else PERSISTED"
+  },
+  "c3_per_bench": {
+    "hellaswag": {
+      "delta_pp": 0.4,
+      "threshold_2sigma_pp": 4.3128,
+      "c3_pass": false,
+      "interpretation": "Within-noise: |0.4| < 4.31; HellaSwag MC accuracy NOT statistically distinguishable between LoRA and Instruct base"
+    },
+    "mmlu": {
+      "delta_pp": -3.1874,
+      "threshold_2sigma_pp": 0.858,
+      "c3_pass": true,
+      "interpretation": "Statistically significant degradation: |3.19| >> 0.86; LoRA causes 3.19pp drop in 5-shot MMLU on Instruct base"
+    },
+    "triviaqa": {
+      "delta_pp": -8.2,
+      "threshold_2sigma_pp": 4.4730,
+      "c3_pass": true,
+      "interpretation": "Statistically significant degradation: |8.2| >> 4.47; LoRA causes 8.2pp drop in 0-shot TriviaQA EM on Instruct base"
+    }
+  },
+  "c4_per_bench": {
+    "hellaswag": {"acc_norm": 0.636, "random_plus_5pp": 0.30, "c4_pass": true},
+    "mmlu":      {"acc": 0.5860, "random_plus_5pp": 0.30, "c4_pass": true},
+    "triviaqa":  {"exact_match": 0.398, "random_plus_5pp": 0.05, "c4_pass": true}
+  },
+  "c3_pass_count_instruct": "2/3",
+  "c4_pass_count_instruct": "3/3",
+  "c3_verdict": "PASS",
+  "c4_verdict": "PASS",
+  "f1_v3_v2_with_instruct_anchor": "SUCCESS",
+  "f1_v3_v2_caveat": "SUCCESS technically passes c3+c4 (2/3 + 3/3) but direction of c3 deltas remains negative on MMLU + TriviaQA — same INFRASTRUCTURE_PASS / SCIENCE_FAIL hybrid as BG-Rho. The framework detects significant LoRA-vs-base separation; the separation is in the WRONG direction (degradation, not improvement). Net effect of switching to Instruct anchor: slightly less severe degradation but qualitatively unchanged finding.",
+  "hypothesis_classification": {
+    "shrunk_count": 1,
+    "persisted_count": 2,
+    "increased_count": 0,
+    "decision_rule": ">=2/3 shrunk(>=50%) -> TEMPLATE_MISMATCH_CONFIRMED; any increased(>+25%) -> UNEXPECTED; >=2/3 persisted -> FORGETTING_INDEPENDENT",
+    "verdict": "FORGETTING_INDEPENDENT (2/3 persisted)"
+  },
+  "instruct_base_vs_non_instruct_base_delta": {
+    "comment": "Instruct base anchors are HIGHER than non-Instruct base anchors on all 3 benchmarks (Llama-3.2-3B-Instruct >> Llama-3.2-3B). Non-Instruct anchors from BG-Omicron 93bef8c8: HellaSwag 0.654 acc_norm, MMLU 0.5796, TriviaQA 0.396 EM. Instruct anchors here: HellaSwag 0.632 acc_norm (-2.2pp), MMLU 0.6179 (+3.83pp), TriviaQA 0.480 EM (+8.4pp). MMLU+TriviaQA lift on Instruct is the typical instruction-tuning effect; HellaSwag tiny dip is within noise (stderr 2.16pp).",
+    "hellaswag_delta_acc_norm_pp": -2.2,
+    "mmlu_delta_acc_pp": 3.83,
+    "triviaqa_delta_em_pp": 8.4,
+    "implication_for_lora_eval": "Because Instruct base scores HIGHER on MMLU+TriviaQA, the LoRA's ABSOLUTE accuracy on Instruct (MMLU 0.586, TriviaQA 0.398) is roughly comparable to LoRA's absolute accuracy on non-Instruct base from BG-Rho (MMLU 0.530, TriviaQA 0.302). The LoRA adds substantially to the non-Instruct base (which has lower ceiling) but cannot overcome catastrophic forgetting on Instruct (which has higher ceiling)."
+  },
+  "complete_sentinel_detected": true,
+  "wall_time_min": 31,
+  "actual_cost_usd": 1.54,
+  "budget_target_usd": 2.50,
+  "budget_hard_cap_usd": 3.50,
+  "lessons_applied": {
+    "L1_sentinel_name": "results/COMPLETE.sentinel — matched on first poll cycle after sentinel emission",
+    "L2_skip_unneeded_setup": "Llama-3.2-3B-Instruct + LoRA only (no CLM v4)",
+    "L3_sentinel_kill_lag_s": "poll interval 60s; detection->trap fire ~14s (sentinel detected 09:53:58, trap fired 09:57:29 after final scp 200s)",
+    "L4_single_process_heartbeat": "heartbeat.txt updated each poll cycle from main exec.bash",
+    "L5_redact_at_boot": "sed redact pre-tee for boot.log applied; HOWEVER post-kill `runpodctl pod get` JSON in trap leaked HF_TOKEN to run.log + exec.nohup.log + pod_info.json. Post-hoc sed redaction applied across all log files; verified 0 token literals remain.",
+    "L6_data_first_then_kill": "final scp of results/* completed before trap fired (~200s window)"
+  },
+  "honest_c3": [
+    "Anchor is step-8000 LoRA (HF commit 5a9b4584) — same step-pin as BG-Rho. The 2000 lost training steps caveat applies symmetrically: any step-10k recovery would shift both BG-Rho and BG-Psi deltas in correlated fashion. The relative delta_difference between Instruct and non-Instruct base anchors is what tests the template-mismatch hypothesis and this is invariant to step-10k vs step-8k.",
+    "Instruct base eval here uses NO chat-template wrapping — lm-eval defaults for hellaswag/mmlu/triviaqa are plain prompts, no <|begin_of_text|> or system/user role tags. Instruct base may UNDERPERFORM its true ceiling without explicit chat-template framing. So 'Instruct base anchors' here are 'raw-prompt-on-Instruct' — comparable to BG-Rho's 'raw-prompt-on-non-Instruct' but NOT to Instruct's chat-templated ceiling. A future BG could re-run with apply_chat_template=true to test if degradation magnitude changes further.",
+    "limit=500 single-seed: same statistical caveat as BG-Rho. delta_difference precision ~3pp on hellaswag/triviaqa, ~0.6pp on MMLU. The 1.2-1.8pp delta_differences observed are within 1 stderr on hellaswag and triviaqa, so the 'partial template-mismatch contribution' interpretation should be qualified — single-seed bootstrap CIs would tighten this materially.",
+    "Adapter base now matches eval base (Instruct=Instruct), so template-mismatch artifact is removed at the architectural level. The persistence of MMLU+TriviaQA degradation under matching anchor is direct evidence that the LoRA did not preserve base capabilities ⇒ catastrophic forgetting independent of base choice. This is the decisive finding.",
+    "lm-eval peft= local-dir composition (same fix as BG-Rho attempt 2). bf16, lm-eval 0.4.11, peft inference_mode=true (no merge). Numeric drift vs eval-time merge ≤0.5pp consistent across both base+LoRA passes.",
+    "Mac-side jq -n verdict generation in exec.bash had a Greek-letter Unicode escape bug (Ρ char in honest_c3 string corrupted the jq compile), causing verdict.json to be written empty during exec.bash. All numeric values were correctly logged to run.log; verdict.json was reconstructed manually post-hoc from the result JSONs and run.log values. Future emit pattern should use jq --rawfile or a clean ASCII-only string set.",
+    "HF_TOKEN literal leaked into run.log and exec.nohup.log via runpodctl pod get -o json env field at trap-time (lesson L5 applies only to BOOT phase; post-kill pod-get was not redacted). Post-hoc sed redaction applied; future cycles should pipe ALL runpodctl output through redact_hf, including the trap _kill_pod() function, not just boot.log."
+  ],
+  "comparison_to_BG_Rho": {
+    "BG_Rho_pod_id": "8umghrgn5v3zct",
+    "BG_Rho_verdict": "PASS / SUCCESS_WITH_CAVEAT (catastrophic forgetting hypothesis)",
+    "BG_Rho_deltas_pp": {"hellaswag": -1.2, "mmlu": -4.95, "triviaqa": -9.4},
+    "BG_Psi_deltas_pp": {"hellaswag": 0.4, "mmlu": -3.19, "triviaqa": -8.2},
+    "abs_magnitude_change_pp": {"hellaswag": -0.8, "mmlu": -1.76, "triviaqa": -1.2},
+    "interpretation": "Switching to matching Instruct base reduces |Delta| by 0.8-1.8pp uniformly across the 3 benchmarks. This residual reduction is consistent with a small template-mismatch contribution (~12-36%) but the dominant effect (64-88%) is base-independent. Catastrophic forgetting hypothesis confirmed; template-mismatch hypothesis partially supported but not the primary driver."
+  },
+  "deliverables": {
+    "verdict_json": "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/verdict.json",
+    "results_dir": "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/results/",
+    "result_jsons": [
+      "results/instruct_base_hellaswag.json",
+      "results/instruct_base_mmlu.json",
+      "results/instruct_base_triviaqa.json",
+      "results/instruct_lora_hellaswag.json",
+      "results/instruct_lora_mmlu.json",
+      "results/instruct_lora_triviaqa.json",
+      "results/eval_results.json"
+    ],
+    "log_samples_dirs": [
+      "results/instruct_base_hellaswag_dir/",
+      "results/instruct_base_mmlu_dir/",
+      "results/instruct_base_triviaqa_dir/",
+      "results/instruct_lora_hellaswag_dir/",
+      "results/instruct_lora_mmlu_dir/",
+      "results/instruct_lora_triviaqa_dir/"
+    ],
+    "complete_sentinel": "results/COMPLETE.sentinel",
+    "run_log": "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/run.log",
+    "orchestrator_hexa": "/Users/ghost/core/anima/tool/p9_lora_mode1_instruct_eval_h100_orchestrator.hexa",
+    "exec_bash": "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/exec.bash",
+    "run_h100_bash": "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/run_h100.bash",
+    "h100_orchestrator_log": "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/h100_orchestrator.log"
+  },
+  "raw9_compliance": "Mac-side bash sibling pattern (emitted via tool/p9_lora_mode1_instruct_eval_h100_orchestrator.hexa); H100-side python (lm_eval + peft) is raw#37 transient. Zero new Mac .py.",
+  "raw10_compliance": "7 honest C3 caveats above",
+  "raw15_compliance": "all paths repo-relative or /workspace/* on H100 (transient)",
+  "raw37_compliance": "ubu1 not used; pod was H100 SECURE on-demand at $2.99/hr",
+  "raw71_compliance": "thresholds (c3 2sigma per-bench, c4 random+5pp, shrink_ratio cutoffs 0.5/0.25) fixed pre-launch; no post-eval threshold tweak",
+  "git_ops_run_in_this_cycle": "NONE",
+  "files_written_this_cycle": [
+    "tool/p9_lora_mode1_instruct_eval_h100_orchestrator.hexa",
+    "state/p9_lora_mode1_instruct_eval_2026_05_04/exec.bash (emitted)",
+    "state/p9_lora_mode1_instruct_eval_2026_05_04/run_h100.bash (emitted)",
+    "state/p9_lora_mode1_instruct_eval_2026_05_04/verdict.json",
+    "state/p9_lora_mode1_instruct_eval_2026_05_04/run.log",
+    "state/p9_lora_mode1_instruct_eval_2026_05_04/results/* (6 JSONs + 6 log_sample dirs + sentinel + eval_results.json)",
+    "docs/p9_lora_mode1_instruct_eval_landed_2026_05_04.ai.md (handoff doc)"
+  ],
+  "status_emit": "__P9_LORA_MODE1_INSTRUCT_EVAL__ FORGETTING_INDEPENDENT F1V3V2=SUCCESS_WITH_CAVEAT (template-mismatch contributes 12-36%; catastrophic forgetting independent of base choice on 2/3 benches)"
+}

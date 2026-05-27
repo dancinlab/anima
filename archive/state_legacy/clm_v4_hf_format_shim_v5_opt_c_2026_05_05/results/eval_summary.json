@@ -1,0 +1,44 @@
+{
+    "schema": "anima/clm_v4_shim_v5_opt_c/eval_summary/1",
+    "ts_utc": "2026-05-05T09:02:44Z",
+    "ts_utc_synthesized_locally": "2026-05-05T09:05:00Z",
+    "synthesized_locally_reason": "transformers module missing on H100 image caused the in-script summary build to fail with ModuleNotFoundError AFTER both hellaswag JSONs were already written. Recomputed locally from hellaswag_no_fixture.json + hellaswag_with_fixture.json (raw eval data is intact and trustworthy).",
+    "limit_per_task": 200,
+    "num_fewshot": 5,
+    "seed": 42,
+    "device": "cuda",
+    "torch_version": "2.4.0+cu124",
+    "lm_eval_version": "0.4.11",
+    "transformers_version": "missing_on_image",
+    "ckpt_step": 20000,
+    "ckpt_ce": 0.0463,
+    "ckpt_best_phi": 37.2699,
+    "o_proj_std_post_load": {
+        "n_modules": 16,
+        "mean": 0.01990464178379625,
+        "min": 0.01981348730623722,
+        "max": 0.019954197108745575
+    },
+    "fixture_path": "/workspace/clm_v4_shim_v5_opt_c/train_avg_real.pt",
+    "fixture_shape": [1, 8, 192],
+    "fixture_l2": 2.2021710872650146,
+    "fixture_mean_abs": 0.047984540462493896,
+    "no_fixture_run": {
+        "acc": 0.265,
+        "acc_norm": 0.255,
+        "acc_norm_stderr": 0.03089738243291861,
+        "wall_sec": 38.549132108688354,
+        "truncation_rate": 0.8475
+    },
+    "with_fixture_run": {
+        "acc": 0.265,
+        "acc_norm": 0.250,
+        "acc_norm_stderr": 0.030695456590127176,
+        "wall_sec": 31.092835903167725,
+        "truncation_rate": 0.8475
+    },
+    "lift_pp": -0.5,
+    "lift_pp_threshold": 5.0,
+    "F_SHIM_V5_4_verdict": "FAIL_EXPECTED",
+    "wall_time_total_sec": 79.0
+}

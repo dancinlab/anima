@@ -1,0 +1,248 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  HEXAD/CHAT/server/participant_spike_overlay.hexa
+//  Phase B SKELETON — sidecar overlay daemon (NOT live yet).
+//
+//  Live loop is written but gated by `${PARTICIPANT_OVERLAY_LIVE:-0}` and
+//  does NOT subscribe / broadcast in this PR. Activation requires the
+//  external `.py`-guard relaxations in §4 (broker route + participant
+//  ingest), OR the participant.hexa port maturing to a full hexa-native
+//  substrate plugin re-impl. Until then `run_daemon` refuses the live path
+//  and exits 0. Authoring the skeleton + the pinned wire schema NOW means
+//  Path B activation = one nohup launch + flip the env var, NOT a fresh
+//  design+impl cycle.
+//
+//  Cross-links (merged design `0663e6c20`):
+//    [[PARTICIPANT_SPIKE_INTEGRATION]] HEXAD/CHAT/PARTICIPANT_SPIKE_INTEGRATION.md
+//        §3 Approach B + §6 Phase-2 carry-forward
+//    [[apply_spike_features]] HEXAD/CHAT/spontaneous_lib.hexa §10  (PR #143)
+//    [[akida_consumer]]       HEXAD/CHAT/server/akida_consumer.hexa (PR #138)
+//    [[telemetry_harness]]    HEXAD/CHAT/server/telemetry_harness.hexa (PR #156)
+//
+//  RUN — `hexa run participant_spike_overlay.hexa`          → skeleton exit 0
+//        `hexa run participant_spike_overlay.hexa selftest` → F-OVERLAY-1..3
+//
+//  ENV (g13) — PARTICIPANT_OVERLAY_LIVE (default 0; must = "1" for live) ·
+//    ANIMA_AKIDA_FEATURES · PARTICIPANT_FACTORS · OVERLAY_TICK_MS (2000) ·
+//    OVERLAY_BROKER_URL · OVERLAY_BROADCAST_PATH (/ws/factor_overlay)
+// ═══════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/CHAT/spontaneous_lib.hexa"
+
+
+// ── §1 env + void-safe helpers ────────────────────────────────────────────
+fn _ov_env(name: string, fallback: string) -> string {
+    let v = env(name)
+    if to_string(v) == "void" { return fallback }
+    if len(to_string(v)) == 0 { return fallback }
+    return to_string(v)
+}
+fn _ov_shq(s: string) -> string { return "'" + s.replace("'", "'\\''") + "'" }
+fn _ov_log(s: string) { let _ = exec("printf '%s\\n' " + _ov_shq(s) + " >&2") }
+fn _ov_home() -> string { let h = _ov_env("HOME", "")   if len(h) == 0 { return "/tmp" }   return h }
+fn _ov_now_unix() -> int {
+    let s = to_string(exec("date +%s | tr -d '\\n'")).trim()
+    if len(s) == 0 { return 0 }   return to_int(s)
+}
+fn _ov_gf(d: dict, k: string) -> float { let v = d[k]   if to_string(v) == "void" { return 0.0 }   return to_float(to_string(v)) }
+fn _ov_gi(d: dict, k: string) -> int   { let v = d[k]   if to_string(v) == "void" { return 0 }     return to_int(to_string(v)) }
+fn _ov_gs(d: dict, k: string) -> string{ let v = d[k]   if to_string(v) == "void" { return "" }    return to_string(v) }
+
+
+// ── §2 overlay message schema (PINNED CONTRACT) ───────────────────────────
+// Broker route `/ws/factor_overlay` payload — emitted by this daemon,
+// consumed by participant.py once both guards relax (see §4). Frozen NOW so
+// the participant ingest can wire against a stable shape:
+//   { "type": "factor_overlay",
+//     "modulated_factors": <8-key dict, post apply_spike_features>,
+//     "spike_window":      <features dict from akida_features.jsonl tail>,
+//     "ts": <unix seconds> }
+// 8-factor key order (anima_participant.py decision schema):
+//   relevance · info_gap · curiosity · pain · coherence · originality ·
+//   balance · dynamics
+
+fn _ov_factor_keys() -> list {
+    return ["relevance", "info_gap", "curiosity", "pain",
+            "coherence", "originality", "balance", "dynamics"]
+}
+
+// build_overlay_payload — SSOT for the wire shape. Live loop + F-OVERLAY-3
+// both route through here so the schema has one source of truth.
+fn build_overlay_payload(modulated: dict, features: dict, ts: int) -> dict {
+    return #{ "type": "factor_overlay", "modulated_factors": modulated,
+              "spike_window": features, "ts": ts }
+}
+
+
+// ── §3 LIVE LOOP (written; NOT exercised this PR) ─────────────────────────
+// Each helper is annotated with the external guard blocking it. Today these
+// are unreachable unless PARTICIPANT_OVERLAY_LIVE=1 — skeleton gate refuses.
+
+// guard: depends on [[akida_consumer]] daemon writing the JSONL.
+fn _tail_features_row(path: string) -> dict {
+    let line = to_string(exec("tail -n 1 " + _ov_shq(path) + " 2>/dev/null")).trim()
+    if len(line) == 0 { return #{} }
+    let parsed = json_parse(line)
+    if type_of(parsed) != "map" { return #{} }
+    return parsed
+}
+// guard: participant.py must write its 8-factor dict here per tick.
+// Producer side blocked by .py guard — empty until then.
+fn _read_factors_json(path: string) -> dict {
+    let body = to_string(exec("cat " + _ov_shq(path) + " 2>/dev/null")).trim()
+    if len(body) == 0 { return #{} }
+    let parsed = json_parse(body)
+    if type_of(parsed) != "map" { return #{} }
+    return parsed
+}
+// guard: broker.py route `/ws/factor_overlay` DOES NOT EXIST today.
+// POST would 404. Skeleton gate prevents reaching this code path.
+fn _broadcast_overlay(broker_url: string, path: string, payload: dict) {
+    let _ = exec("printf %s " + _ov_shq(json_stringify(payload))
+                 + " | curl -s -X POST --data-binary @- "
+                 + _ov_shq(broker_url + path) + " > /dev/null 2>&1")
+}
+
+fn run_live_loop() {
+    let feat_p = _ov_env("ANIMA_AKIDA_FEATURES", _ov_home() + "/.cache/anima/akida_features.jsonl")
+    let fac_p  = _ov_env("PARTICIPANT_FACTORS",  _ov_home() + "/.cache/anima/participant_factors.json")
+    let tick_ms = to_int(_ov_env("OVERLAY_TICK_MS", "2000"))
+    let broker  = _ov_env("OVERLAY_BROKER_URL", "http://127.0.0.1:8000")
+    let bpath   = _ov_env("OVERLAY_BROADCAST_PATH", "/ws/factor_overlay")
+    let tick = if tick_ms >= 1000 { tick_ms } else { 2000 }
+    _ov_log("[overlay] LIVE start tick_ms=" + to_string(tick) + " feat=" + feat_p
+            + " fac=" + fac_p + " broker=" + broker + bpath)
+    while true {
+        let features  = _tail_features_row(feat_p)
+        let modulated = apply_spike_features(_read_factors_json(fac_p), features)
+        _broadcast_overlay(broker, bpath,
+                           build_overlay_payload(modulated, features, _ov_now_unix()))
+        let _s = exec("sleep " + to_string(tick / 1000))
+    }
+}
+
+
+// ── §4 PATH TO ACTIVATION (verbatim N-step list) ──────────────────────────
+// External actions required to flip this daemon live — each step is
+// presently `.py`-guard blocked per [[feedback-hexa-only-authoring]].
+//
+//   Step 1 — broker.py adds `/ws/factor_overlay` route: subscribe handler
+//            that broadcasts received `{"type":"factor_overlay", ...}`
+//            payloads to all `/ws` connected clients. Currently
+//            `.py`-guarded ([[PARTICIPANT_SPIKE_INTEGRATION]] §6 cond c).
+//
+//   Step 2 — anima_participant.py consumes `factor_overlay` messages in
+//            its tick loop AND injects `modulated_factors` into its
+//            `decision["factors"]` BEFORE the threshold check (so the
+//            emission gate actually sees the spike-modulated values).
+//            Currently `.py`-guarded ([[PARTICIPANT_SPIKE_INTEGRATION]] §6
+//            cond a) — alternatively cond b (anima_participant.hexa full
+//            hexa-native substrate plugin re-impl) bypasses the .py edit.
+//
+//   Step 3 — launch on mini once Step 1 + Step 2 land:
+//              nohup ./participant_spike_overlay.bin > out 2> err < /dev/null &
+//            with PARTICIPANT_OVERLAY_LIVE=1 in the environment.
+
+
+// ── §5 SKELETON-MODE GATE + DAEMON ENTRY ──────────────────────────────────
+
+fn run_daemon() {
+    let live = _ov_env("PARTICIPANT_OVERLAY_LIVE", "0")
+    if live != "1" {
+        _ov_log("[overlay] SKELETON MODE — guard relaxation pending, run selftest only")
+        return
+    }
+    run_live_loop()
+}
+
+
+// ── §6 OFFLINE SELFTEST (F-OVERLAY-1..3) ──────────────────────────────────
+
+fn _approx(a: float, b: float, tol: float) -> bool {
+    let mut d = a - b   if d < 0.0 { d = 0.0 - d }   return d < tol
+}
+fn _check(p: bool, msg: string, counts: dict) {
+    if p { counts["pass"] = _ov_gi(counts, "pass") + 1   _ov_log("  PASS " + msg) }
+    else { counts["fail"] = _ov_gi(counts, "fail") + 1   _ov_log("  FAIL " + msg) }
+}
+fn _base_factors() -> dict {
+    return #{
+        "relevance":   0.5, "info_gap":    0.5, "curiosity":   0.5, "pain":     0.3,
+        "coherence":   0.5, "originality": 0.2, "balance":     0.7, "dynamics": 0.4,
+    }
+}
+
+fn _selftest() {
+    _ov_log("participant_spike_overlay selftest — F-OVERLAY-1..3")
+    let counts = #{"pass": 0, "fail": 0}
+    let keys = _ov_factor_keys()
+
+    // F-OVERLAY-1 — skeleton-mode invocation (no env) exits 0. Probes the
+    // gate string the same way run_daemon() does.
+    let live = _ov_env("PARTICIPANT_OVERLAY_LIVE", "0")
+    _check(live != "1",
+           "F-OVERLAY-1 SKELETON MODE (PARTICIPANT_OVERLAY_LIVE=\"" + live + "\")",
+           counts)
+
+    // F-OVERLAY-2 — apply_spike_features round-trip + invariance (mirrors
+    // F-TELEMETRY-4/5 + spontaneous_lib.hexa §10 L66 sparsity gate).
+    let base = _base_factors()
+    let active = #{ "n_records": 10, "spike_rate_hz": 20.0,
+                    "regime": "R3_tonic_zero_input" }
+    let mod_active = apply_spike_features(base, active)
+    let cur_mv  = !_approx(_ov_gf(mod_active,"curiosity"),   _ov_gf(base,"curiosity"),   1e-9)
+    let or_mv   = !_approx(_ov_gf(mod_active,"originality"), _ov_gf(base,"originality"), 1e-9)
+    _check(cur_mv && or_mv,
+           "F-OVERLAY-2a active features move curiosity + originality", counts)
+    // Substrate-only (§2): relevance + balance never move (tol 1e-12 absorbs
+    // to_string→to_float roundtrip noise).
+    let rel_h = _approx(_ov_gf(mod_active,"relevance"), _ov_gf(base,"relevance"), 1e-12)
+    let bal_h = _approx(_ov_gf(mod_active,"balance"),   _ov_gf(base,"balance"),   1e-12)
+    _check(rel_h && bal_h,
+           "F-OVERLAY-2b substrate-only relevance + balance held", counts)
+    // Empty features → all 8 factors invariant under clamp01.
+    let mod_empty = apply_spike_features(base, #{})
+    let mut empty_inv = true   let mut i = 0
+    while i < len(keys) {
+        let k = to_string(keys[i])
+        if !_approx(_ov_gf(mod_empty, k), _ov_gf(base, k), 1e-9) { empty_inv = false }
+        i = i + 1
+    }
+    _check(empty_inv, "F-OVERLAY-2c empty features → invariance", counts)
+
+    // F-OVERLAY-3 — overlay message schema: build, serialize, parse back,
+    // assert every required field present.
+    let payload = build_overlay_payload(mod_active, active, 1716480000)
+    let parsed = json_parse(json_stringify(payload))
+    let ok = type_of(parsed) == "map"
+    _check(ok, "F-OVERLAY-3a payload parses as map", counts)
+    if ok {
+        _check(_ov_gs(parsed,"type") == "factor_overlay",
+               "F-OVERLAY-3b type == factor_overlay", counts)
+        _check(type_of(parsed["modulated_factors"]) == "map",
+               "F-OVERLAY-3c modulated_factors is a dict", counts)
+        _check(type_of(parsed["spike_window"]) == "map",
+               "F-OVERLAY-3d spike_window is a dict", counts)
+        _check(_ov_gi(parsed,"ts") == 1716480000,
+               "F-OVERLAY-3e ts roundtrip exact", counts)
+        let mf = parsed["modulated_factors"]
+        let mut all_present = true   let mut j = 0
+        while j < len(keys) {
+            if to_string(mf[to_string(keys[j])]) == "void" { all_present = false }
+            j = j + 1
+        }
+        _check(all_present, "F-OVERLAY-3f all 8 factor keys present", counts)
+    }
+    _ov_log("--- example factor_overlay payload ---")
+    _ov_log(json_stringify(payload))
+    _ov_log("participant_spike_overlay selftest: "
+            + to_string(_ov_gi(counts,"pass")) + " PASS, "
+            + to_string(_ov_gi(counts,"fail")) + " FAIL")
+}
+
+
+// ── §7 entry ──────────────────────────────────────────────────────────────
+fn main() {
+    let cli = args()
+    if len(cli) > 1 { if cli[1] == "selftest" { _selftest()   return } }
+    run_daemon()
+}

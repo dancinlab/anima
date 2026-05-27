@@ -1,0 +1,64 @@
+{
+ "cycle": "가설들 모두 진행 (cont.) — Stage-2 PyPhi emergence closure 2026-05-16",
+ "pyphi_version": "1.2.0",
+ "results": [
+  {
+   "hc_id": "H_007",
+   "name": "Rule-110 CA emergence (Class IV)",
+   "axis": "A5",
+   "per_N": {
+    "N=4": {
+     "phi_max": 3.614042,
+     "phi_mean": 1.4804465625,
+     "phi_nonzero_count": 10,
+     "n_states": 16,
+     "wall_s": 166.8,
+     "argmax_state": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   },
+   "phi_max": 3.614042,
+   "iit_emergence_phi_gt_0": true,
+   "phi_ge_0p5_strict": true,
+   "monotone_N4_to_N5": false,
+   "tier": "b-pyphi-formal",
+   "deterministic": true,
+   "verdict": "SUPPORTED-FORMAL 🔵 (Φ>0, IIT 3.0 deterministic)"
+  },
+  {
+   "hc_id": "H_012",
+   "name": "autopoietic ring self-reproduction",
+   "axis": "A7",
+   "per_N": {
+    "N=4": {
+     "phi_max": 1.0,
+     "phi_mean": 1.0,
+     "phi_nonzero_count": 16,
+     "n_states": 16,
+     "wall_s": 147.0,
+     "argmax_state": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "phi_max": 1.0,
+   "iit_emergence_phi_gt_0": true,
+   "phi_ge_0p5_strict": true,
+   "monotone_N4_to_N5": false,
+   "tier": "b-pyphi-formal",
+   "deterministic": true,
+   "verdict": "SUPPORTED-FORMAL 🔵 (Φ>0, IIT 3.0 deterministic)"
+  }
+ ],
+ "n_emergence_supported_formal": 2,
+ "n_phi_ge_0p5_strict": 2,
+ "summary": "2/2 emergence Φ>0 SUPPORTED-FORMAL 🔵 (deterministic IIT 3.0); 2/2 also ≥0.5 strict. H_007 Rule-110 + H_012 autopoiesis: math closed (hypo_pending_sympy) + emergence closed (this harness) = FULLY closed (no carve-out remains for these two).",
+ "honest_c3": "Result-agnostic 🔵 per g_verdict_tier_blue (b): a deterministic PyPhi IIT-3.0 measurement is closed whatever Φ is. Exhaustive over ALL 16 states (N=4, no RNG, no sampling bias). N≥5 = separate longer cycle. The Φ VALUE magnitude vs larger N / vs anima substrate is a different claim (Hc_1283 scope), not asserted here. H_009/H_010 emergence half remains Stage-2 (Fisher-spectrum-vs-Φ needs a substrate TPM; holographic is analogical) — honestly still carved out."
+}

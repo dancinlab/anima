@@ -1,0 +1,75 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S141-5 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S141-1 GPU-PRIMITIVE-IS-DEVICE-KERNEL-NOT-STDLIB",
+      "passed": true,
+      "evidence": {
+        "runtime_cuda_kernel_asserted": true,
+        "distinguishes_from_s138_stdlib": true
+      }
+    },
+    {
+      "name": "B-S141-2 STDP-PAIR-IS-THE-O-N2-PRIMITIVE",
+      "passed": true,
+      "evidence": {
+        "o_n2_identified": true,
+        "stdp_pair_named": true,
+        "o_n_ops_noted_cheap": true
+      }
+    },
+    {
+      "name": "B-S141-3 LEGO-GPU-FIRE-IS-2-UPSTREAM-STEPS-AWAY",
+      "passed": true,
+      "evidence": {
+        "two_upstream_steps_stated": true,
+        "not_fire_ready_honest": true,
+        "fire_gate_discipline_cited": true
+      }
+    },
+    {
+      "name": "B-S141-4 INBOX-PATCH-PATH-HEXA-FIRST-COMPLIANT",
+      "passed": true,
+      "evidence": {
+        "requests_flame_stdp_pair_gpu": true,
+        "runtime_kernel_tier_flagged": true,
+        "all_4_falsifiers_present": true,
+        "cpu_companion_cited": true
+      }
+    },
+    {
+      "name": "B-S141-5 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S141-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "design-names-gpu-gap-kernel-impl-is-upstream",
+    "family": "B-EMERGE-7 / §138-§139-§140 / §71-flame-inbox-precedent",
+    "honest_scope": "§141 names the LEGO GPU fire prerequisite: a flame_stdp_pair_gpu device CUDA kernel (runtime_cuda.c + codegen wire) — a heavier upstream change than §138's pure-hexa CPU stdlib. The O(N) event/refractory ops can stay CPU; only the O(N²) STDP outer-product genuinely needs GPU. inbox patch flame-stdp-pair-gpu-kernel.md filed. §141 does NOT implement the kernel (hexa-lang upstream CUDA work) and does NOT fire a GPU LIF (the prerequisite is unmet — fire-gate discipline forbids firing on an unmet prerequisite). A LEGO GPU fire is honestly 2 upstream steps away. GOAL-orthogonal engine tooling; necessary-not-sufficient (B-EMERGE-7); GOAL 미도달."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "5/5",
+    "all_closed_pass": true,
+    "battery_verdict": "GPU-SPIKING-DESIGN-CLOSE-DEVICE-KERNEL-GAP-NAMED-5-5-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}

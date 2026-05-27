@@ -1,0 +1,66 @@
+{
+  "schema": "anima/n_substrate_n3_prep/falsifier_predicate/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "agent": "N-3 prep",
+  "falsifier_id": "F-N3-A1",
+  "axis": "T1-A2 Phi cross-substrate (Akida 1W vs GPU 700W)",
+  "type": "BIDIRECTIONAL",
+  "pre_registered": true,
+
+  "primary_predicate": {
+    "metric": "Pearson r over K=8 sample-partition phi values",
+    "x": "phi_k_gpu_clm170m (k in 0..7)",
+    "y": "phi_k_akida_clm170m_surrogate (k in 0..7)",
+    "PASS_threshold": 0.85,
+    "WEAK_threshold_lower": 0.50,
+    "FAIL_threshold_upper": 0.50
+  },
+
+  "secondary_predicate": {
+    "metric": "magnitude divergence",
+    "formula": "|phi_star_gpu - phi_star_akida| / max(|phi_star_gpu|, |phi_star_akida|, 1e-3)",
+    "PASS_threshold_max": 0.30
+  },
+
+  "boundary_conditions": [
+    {"name": "partition_variance", "predicate": "std(phi_k_gpu) < 0.5 * |phi_star_gpu| AND std(phi_k_akida) < 0.5 * |phi_star_akida|", "fail_action": "verdict NULL, re-run required"},
+    {"name": "null_floor", "predicate": "shuffled-pair 1024 perm: r_observed > 95%ile of r_null distribution", "fail_action": "spec invalid (test power insufficient)"},
+    {"name": "reproducibility", "predicate": "3 ANIMA_SEED runs: 3/3 same verdict = confirmed; 2/3 = WEAK_PASS; <=1/3 = unstable", "fail_action": "extend to 5-seed if 2/3"},
+    {"name": "surrogate_fidelity_sanity", "predicate": "native bf16 vs surrogate-on-GPU r >= 0.95 AND magnitude divergence <= 0.10", "fail_action": "ABORT N-3 measurement (surrogate invalid before substrate compare)"}
+  ],
+
+  "verdict_table": {
+    "PASS": "primary >= 0.85 AND secondary <= 0.30 AND all boundary OK",
+    "WEAK": "0.50 <= primary < 0.85 OR (primary >= 0.85 AND secondary > 0.30)",
+    "FAIL": "primary < 0.50 OR substrate sign flip (phi_star_gpu * phi_star_akida < 0 with both |.| > 0.5)",
+    "NULL": "partition_variance fail OR null_floor fail OR surrogate_fidelity_sanity fail"
+  },
+
+  "graduation_implications": {
+    "PASS": [
+      "own#2 (b) neuromorphic substrate WITNESSED 0/3 -> 1/3",
+      "paradigm v11 8-axis G5 LIVE_HW_WITNESS_RATE empirical anchor",
+      "T1-A2 promotion to graduated (was preregistered)",
+      "Putnam 1967 multi-realizability empirical evidence (partial, last-layer projection only)"
+    ],
+    "WEAK": [
+      "Surrogate fidelity / quantize sweep recommended",
+      "T1-A2 partial graduation, magnitude divergence investigation"
+    ],
+    "FAIL": [
+      "Substrate-dependent verdict (Putnam counter-evidence candidate, partial)",
+      "T1-A2 graduation as falsifier_fail (still publishable, honest C3)"
+    ],
+    "NULL": [
+      "Spec re-design required",
+      "Surrogate path T-A invalid; consider AKD2000 wait or T-B (sub-layer only)"
+    ]
+  },
+
+  "honest_c3_disclosures": [
+    "Predicate measures last-layer projection cross-substrate equivalence, NOT full transformer equivalence",
+    "Surrogate path T-A (CLM hidden -> CNN quantized) introduces 4 known loss sources (sec 5.2 of spec)",
+    "AKD1000 1W is vendor typical, anima workload power measurement separate (T1-A3 / N-4)",
+    "Pearson r correlation does NOT prove causal substrate-independence, only covariation of representation invariants"
+  ]
+}

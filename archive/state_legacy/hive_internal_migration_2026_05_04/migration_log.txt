@@ -1,0 +1,82 @@
+=== Hive internal migration log — cycle hive_internal_migration_2026_05_04 ===
+Start UTC: 2026-05-04T10:32:11Z
+
+--- Phase 0: pre-state ---
+[2026-05-04T10:32:11Z] Hook script source state:
+-rwxr-xr-x@ 1 ghost  staff  3266 May  4 19:16 /Users/ghost/.hive/scripts/leak_guard_pretool.bash
+[2026-05-04T10:32:11Z] Settings source state:
+-rw-r--r--@ 1 ghost  staff  826 May  4 19:16 /Users/ghost/.hive/claude-config/hive-hook-bus/settings.json
+[2026-05-04T10:32:11Z] sha256 of source files:
+afb7020d02cc3a7fb9467d5f3cf142424deb934073fc711e216f5c595c657685  /Users/ghost/.hive/scripts/leak_guard_pretool.bash
+02162ca9f543c1d9c1fbc78877a04939a8fe1dd705d55405831a6d926af5198e  /Users/ghost/.hive/claude-config/hive-hook-bus/settings.json
+[2026-05-04T10:32:11Z] Target hive repo state pre-migration:
+ls: /Users/ghost/core/hive/scripts/leak_guard_pretool.bash: No such file or directory
+  (not present)
+ls: /Users/ghost/core/hive/claude-config/hive-hook-bus/settings.json: No such file or directory
+  (not present)
+[2026-05-04T10:32:11Z] env CLAUDE_CONFIG_DIR=/Users/ghost/.hive/claude-config/hive-hook-bus
+[2026-05-04T10:32:11Z] env HIVE=/Users/ghost/core/hive
+[2026-05-04T10:32:11Z] env HIVE_CLAUDE_HOOK_ROOT=/Users/ghost/core/hive
+
+--- Phase A: copy ---
+[2026-05-04T10:32:17Z] cp leak_guard_pretool.bash -> hive repo scripts/
+-rwxr-xr-x@ 1 ghost  staff  3266 May  4 19:16 /Users/ghost/core/hive/scripts/leak_guard_pretool.bash
+[2026-05-04T10:32:17Z] (settings.json gets new content with updated hook command path — Phase A2)
+
+--- Phase B: verify (pre-swap) ---
+[2026-05-04T10:34:08Z] script byte-identical check:
+  IDENTICAL
+[2026-05-04T10:34:08Z] sha256 of repo files:
+afb7020d02cc3a7fb9467d5f3cf142424deb934073fc711e216f5c595c657685  /Users/ghost/core/hive/scripts/leak_guard_pretool.bash
+c9ab051a1954cd48f28a0fe3e82fbeabb0142577608f74bb85f7765d87ad118c  /Users/ghost/core/hive/claude-config/hive-hook-bus/settings.json
+[2026-05-04T10:34:08Z] settings.json semantic comparison (hook-command path differs per design):
+  HOME settings.json command:
+/Users/ghost/.hive/scripts/leak_guard_pretool.bash
+  REPO settings.json command:
+/Users/ghost/core/hive/scripts/leak_guard_pretool.bash
+[2026-05-04T10:34:08Z] hook smoke-test (allow case via repo-path script):
+  allow exit=0
+  (empty stdout = correct allow behavior)
+[2026-05-04T10:34:08Z] hook smoke-test (deny case — fake fictitious token, JSON via tmpfile to evade self-block):
+  deny exit=2
+  deny stdout (first 200 chars):
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"leak guard: HF token-shaped string detected in tool_input — redact before retry. Pattern: 
+
+--- Phase C: swap home -> symlinks pointing at repo ---
+[2026-05-04T10:34:18Z] Backup home originals before swap:
+-rwxr-xr-x@ 1 ghost  staff  3266 May  4 19:16 /Users/ghost/.hive/scripts/leak_guard_pretool.bash.bak.pre_repo_migration_20260504
+-rw-r--r--@ 1 ghost  staff  826 May  4 19:16 /Users/ghost/.hive/claude-config/hive-hook-bus/settings.json.bak.pre_repo_migration_20260504
+[2026-05-04T10:34:18Z] Replace ~/.hive/scripts/leak_guard_pretool.bash with symlink -> repo:
+lrwxr-xr-x@ 1 ghost  staff  54 May  4 19:34 /Users/ghost/.hive/scripts/leak_guard_pretool.bash -> /Users/ghost/core/hive/scripts/leak_guard_pretool.bash
+[2026-05-04T10:34:18Z] Replace ~/.hive/claude-config/hive-hook-bus/settings.json with symlink -> repo:
+lrwxr-xr-x@ 1 ghost  staff  64 May  4 19:34 /Users/ghost/.hive/claude-config/hive-hook-bus/settings.json -> /Users/ghost/core/hive/claude-config/hive-hook-bus/settings.json
+
+--- Phase D: post-swap re-verify ---
+[2026-05-04T10:34:32Z] Symlink chain verification (readlink):
+  ~/.hive/scripts/leak_guard_pretool.bash -> /Users/ghost/core/hive/scripts/leak_guard_pretool.bash
+  ~/.hive/claude-config/hive-hook-bus/settings.json -> /Users/ghost/core/hive/claude-config/hive-hook-bus/settings.json
+[2026-05-04T10:34:32Z] Resolve final target via stat (-L follows):
+  target inode 177808693 mode -rwxr-xr-x size 3266 path /Users/ghost/.hive/scripts/leak_guard_pretool.bash
+  target inode 177808781 mode -rw-r--r-- size 1041 path /Users/ghost/.hive/claude-config/hive-hook-bus/settings.json
+[2026-05-04T10:34:32Z] Hook fire via HOME path (the path Claude Code actually invokes):
+  allow exit=0
+  (empty = correct)
+[2026-05-04T10:34:32Z] Hook fire deny via HOME path:
+  deny exit=2
+  deny stdout first 180c:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"leak guard: HF token-shaped string detected in tool_input — redact bef
+[2026-05-04T10:34:32Z] Verify settings.json read via CLAUDE_CONFIG_DIR matches repo content:
+  IDENTICAL via symlink
+
+--- Phase E: hive repo commit prep (NO push) ---
+[2026-05-04T10:34:41Z] cd /Users/ghost/core/hive && git status --short:
+?? claude-config/
+?? scripts/leak_guard_pretool.bash
+
+[2026-05-04T10:34:41Z] git diff --stat (untracked don't show — listing manually):
+
+[2026-05-04T10:34:41Z] new tracked-candidate files content sha:
+afb7020d02cc3a7fb9467d5f3cf142424deb934073fc711e216f5c595c657685  /Users/ghost/core/hive/scripts/leak_guard_pretool.bash
+c9ab051a1954cd48f28a0fe3e82fbeabb0142577608f74bb85f7765d87ad118c  /Users/ghost/core/hive/claude-config/hive-hook-bus/settings.json
+
+[2026-05-04T10:34:41Z] Migration end UTC: 2026-05-04T10:34:41Z

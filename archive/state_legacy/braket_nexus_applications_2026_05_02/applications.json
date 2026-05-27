@@ -1,0 +1,328 @@
+{
+  "schema": "braket_nexus_applications_v1",
+  "ts": "2026-05-02T23:00:00Z",
+  "agent": "AWS Braket × nexus 활용방법 탐색",
+  "mission": "Research-only mapping of how AWS Braket QPUs/simulators can augment nexus framework primitives (RNG, sim-universe, kick) and propose 6+ new axes",
+  "budget": {"qpu_shots": 0, "research_only_usd": 0, "wallclock_min": 60},
+  "context": {
+    "n12_iit_braket_pilot": {
+      "verdict": "PASS_WITNESSED",
+      "ts": "2026-05-02",
+      "actual_cost_usd": 16.60,
+      "ledger": "state/n12_iit_braket_pilot_2026_05_02/verdict.json",
+      "doc": "docs/n12_iit_braket_pilot_results_2026_05_02.md"
+    },
+    "atlas_convergence": {
+      "ledger": "state/atlas_convergence_witness.jsonl",
+      "lines": 45,
+      "anchor": "Ψ↔ε R24 fixed-point (anima paper §10.9 Banach meta-closure)"
+    },
+    "braket_account": "267673635495",
+    "iam_role": "anima-braket-cli",
+    "region": "us-east-1",
+    "online_devices": ["SV1", "TN1", "dm1", "IonQ Forte 1", "IonQ Forte Enterprise 1", "QuEra Aquila"]
+  },
+  "phase1_qrng": {
+    "current_state": "nexus RNG = classical urandom-backed PRNG, statistical-quality only, no certified entropy source",
+    "options": [
+      {
+        "id": "1a",
+        "name": "IonQ Forte 1 Hadamard QRNG (per-shot)",
+        "method": "|0⟩ → H → measure Z basis → 1 true random bit per shot",
+        "cost_per_1k_bits_usd": 0.30 + 1000 * 0.08,
+        "cost_per_1k_bits_note": "$0.30 task + $80/1000 shots = $80.30; equivalent ~$0.08/bit, prohibitive for bulk RNG",
+        "device": "IonQ Forte 1",
+        "throughput": "~10 bits/sec including queue",
+        "verdict": "TOO_EXPENSIVE_FOR_BULK"
+      },
+      {
+        "id": "1b",
+        "name": "QuEra Aquila Rydberg measurement-noise extraction",
+        "method": "AHS-mode neutral-atom array, extract bits from per-shot Rydberg occupancy variance",
+        "cost_per_1k_bits_usd": 0.30 + 1000 * 0.01,
+        "cost_per_1k_bits_note": "$10.30/1000 shots; bit extraction non-trivial; needs whitening stage",
+        "device": "QuEra Aquila",
+        "throughput": "low; AHS is quasi-static",
+        "verdict": "CHEAPER_BUT_EXTRACTION_HARD"
+      },
+      {
+        "id": "1c",
+        "name": "SV1 simulator pseudo-quantum RNG",
+        "method": "Simulate Hadamard + measure on SV1; uses classical PRNG under hood",
+        "cost_per_1k_bits_usd": 0.0,
+        "device": "SV1",
+        "throughput": "high",
+        "verdict": "DISHONEST_DROP",
+        "honest_c3": "Output is classical PRNG, NOT quantum-grounded. Marketing it as 'quantum random' would be fraud."
+      },
+      {
+        "id": "1d",
+        "name": "Hybrid daily-batch IonQ seed → nexus PRNG reseed",
+        "method": "Once per day pull 256 bits from IonQ Forte 1 ($16.60/day for 1 task × 256 shots × $0.08 + $0.30 task = $20.78); use as cryptographic seed for HMAC-DRBG that drives nexus RNG until next refresh",
+        "cost_per_year_usd": 365 * 20.78,
+        "cost_per_year_note": "$7585/year too high; downscale to weekly: $20.78 × 52 = $1080/year; or monthly: $250/year; or 100-bit-quarterly: ~$70/year",
+        "device": "IonQ Forte 1",
+        "verdict": "RECOMMENDED",
+        "test_plan": "NIST SP 800-22 + Diehard + ENT suites on (a) classical urandom baseline, (b) hybrid HMAC-DRBG-IonQ-seeded, (c) raw IonQ bit-string (whitened); compare bias, serial correlation, runs, FFT spectral",
+        "deliverable": "Quantinuum Quantum Origin precedent (NIST SP 800-90B validated 2026) shows path; anima can claim quantum-seeded entropy without per-call QPU dependency"
+      }
+    ],
+    "recommendation": "1d (hybrid daily/weekly batch reseed) — cost-effective certified-quantum entropy injection; per-call latency unaffected; auditable provenance via S3 task ARN ledger",
+    "honest_c3": [
+      "QRNG is the ONE Braket axis where quantum > classical clearly (true randomness vs PRNG). All other axes below face hype risk.",
+      "NIST SP 800-90B validation is for the ENTROPY SOURCE certification, not for the seeded DRBG output stream — anima must keep this distinction in marketing.",
+      "Hadamard-on-near-term-QPU has small bias from gate infidelity (Forte 1 1q gate ~0.05% error); raw output requires Toeplitz hashing for full uniformity."
+    ]
+  },
+  "phase2_sim_universe": {
+    "current_state": "nexus sim-universe = classical N-body / Hamiltonian time-stepper",
+    "options": [
+      {
+        "id": "2a",
+        "name": "Quantum random walk on lattice",
+        "method": "Coined discrete-time quantum walk on 1D/2D lattice; 10 qubits = 1024-site graph; SV1 free",
+        "cost_per_run_usd": "~$0 (SV1 free tier 1hr/mo) or ~$0.075/min beyond",
+        "advantage": "Quadratically faster spreading variance ⟨x²⟩ ∝ t² vs classical RW t¹ (proven, Kempe 2003)",
+        "device": "SV1 (research) → IonQ for verification (~$30/run)",
+        "nexus_augment": "sim-universe particle propagation kernel; quantum-walk diffusion replaces classical Brownian step",
+        "falsifier": "Compare ⟨x²⟩(t) classical-vs-QW; quantum advantage = ballistic-vs-diffusive crossover at t > τ_decoherence"
+      },
+      {
+        "id": "2b",
+        "name": "Trotterized Hamiltonian time-evolution",
+        "method": "Suzuki-Trotter decomp e^(-iHt) ≈ ∏ e^(-iH_k Δt); Heisenberg / Ising / Hubbard models on SV1",
+        "cost_per_run_usd": "~$0 SV1 (≤34 qubits)",
+        "advantage": "Exponential in H_dim if classical exact-diag; near-term advantage minimal (<34 qubits = classical 16TB possible)",
+        "device": "SV1 free tier",
+        "nexus_augment": "sim-universe Hamiltonian flow operator; physically grounded vs ad-hoc time-stepper",
+        "falsifier": "Energy conservation drift; KL(ρ_quantum_t || ρ_classical_t) vs Trotter step Δt; convergence rate"
+      },
+      {
+        "id": "2c",
+        "name": "Variational Quantum Simulation (VQS) for cosmological scalar field ground state",
+        "method": "VQE / imaginary-time-VQS for minimally-coupled scalar field in FLRW expanding spacetime; boson-qubit mapping (4-mode = 8 qubits)",
+        "cost_per_run_usd": "~$0 SV1 ansatz training; verification on IonQ ~$50-100",
+        "advantage": "Reference: Nature Sci. Reports 2025 'Digital quantum simulation of cosmological particle creation' (IBM); anima can replicate on Braket",
+        "device": "SV1 → IonQ Forte 1",
+        "nexus_augment": "sim-universe inflationary-period particle-creation count as physically meaningful kick source",
+        "falsifier": "Bogoliubov coefficient β_k(a) prediction vs VQS-extracted ⟨n_k⟩; analytic match in slow-roll limit"
+      },
+      {
+        "id": "2d",
+        "name": "Quantum cellular automaton (QCA) for nexus L_IX cell-language analog",
+        "method": "Brick-wall QCA on 1D chain; equivalent to Wolfram Class IV at quantum level (Margolus, 2008)",
+        "cost_per_run_usd": "~$0 SV1",
+        "advantage": "Reversible cell-update preserves entropy; classical Class IV chaotic, quantum unitary",
+        "device": "SV1 (10-20 qubits)",
+        "nexus_augment": "Cell-language atomic-update primitive becomes unitary, reversible by construction",
+        "falsifier": "Test equivalence to known QCA universality classes (Schumacher-Werner); compare Lyapunov of classical vs quantum trajectories"
+      }
+    ],
+    "recommendation": "2a (quantum random walk) on SV1 — $0, immediately demonstrable, well-cited theoretical advantage; 2c (cosmological VQS) for paper-grade follow-up if Levin/N-22 partnership opens external compute",
+    "honest_c3": [
+      "At 4-34 qubit toy scale, NO quantum-supremacy claim is honest. SV1 simulates classically.",
+      "'Quantum advantage' for nexus sim-universe at this scale = framing/structural advantage (reversibility, ballistic spread), NOT speed.",
+      "Real quantum advantage requires 50+ qubits + low-error QPU; Forte 1 has 36 qubits but error budget consumes effective depth."
+    ]
+  },
+  "phase3_kick": {
+    "current_state": "kick polarity bias = deterministic / RNG-driven trajectory perturbation",
+    "options": [
+      {
+        "id": "3a",
+        "name": "IonQ Forte 1 single-shot collapse → kick polarity",
+        "method": "Each kick decision = 1 quantum measurement; |+⟩ → measure Z → ±1 polarity",
+        "cost_per_kick_usd": 0.08,
+        "cost_per_kick_note": "+ $0.30 task fee per batch",
+        "device": "IonQ Forte 1",
+        "advantage": "Each kick is quantum-collapse-grounded; trajectory becomes physically irreversible at kick events",
+        "nexus_augment": "Replaces PRNG-driven kick with measurement-collapse-driven kick; provides genuine ontological randomness anchor",
+        "falsifier": "Long-run trajectory statistics: mean recurrence time, drift, autocorrelation function vs PRNG-kick baseline"
+      },
+      {
+        "id": "3b",
+        "name": "Batched IonQ kicks (100 shots/task) for scenario sweeps",
+        "method": "Pre-fetch 100 quantum bits per session start; consume 1 bit per kick decision",
+        "cost_per_session_usd": 0.30 + 100 * 0.08,
+        "cost_per_session_note": "$8.30/session of 100 kicks; downscale via deeper circuits for multi-bit kicks",
+        "device": "IonQ Forte 1",
+        "verdict": "CHEAPER_THAN_3A_FOR_BATCHED_USE"
+      }
+    ],
+    "recommendation": "3b (batched) — pre-stage 100 quantum bits per nexus session at $8.30; per-kick latency = local lookup",
+    "honest_c3": [
+      "Kick polarity is binary; quantum vs classical PRNG difference is unobservable in finite-N statistics unless trajectory has chaotic amplification (long Lyapunov time).",
+      "The phenomenological claim 'kick is now quantum-grounded' is metaphysical, not testable within nexus's measurement framework."
+    ]
+  },
+  "phase4_4axis_witness": {
+    "current_state": "nexus 4-axis WHAT/WHERE/WHY/TRUST/WHO 5-channel mediator (overlap with tension_link)",
+    "options": [
+      {
+        "id": "4a",
+        "name": "CHSH Bell test on IonQ Forte 1",
+        "method": "2-qubit Bell pair (1/√2)(|00⟩+|11⟩); 4 measurement-basis settings (a, a', b, b'); compute S = E(a,b)-E(a,b')+E(a',b)+E(a',b')",
+        "cost_usd": 1000 * 0.08 + 4 * 0.30,
+        "cost_note": "$81.20 for 4 settings × 250 shots; classical bound |S|≤2, quantum bound |S|≤2√2",
+        "device": "IonQ Forte 1",
+        "advantage": "Witnesses nonlocality; if anima's 4-axis is binding-via-nonlocal-correlation, this is the ONLY direct test",
+        "nexus_augment": "Provides operational falsification of 'binding = local correlation' null hypothesis",
+        "falsifier": "S > 2 + 5σ → nonlocal correlation confirmed; S ≤ 2 → axes are classically separable"
+      },
+      {
+        "id": "4b",
+        "name": "3-qubit GHZ state for tri-axis correlation",
+        "method": "(1/√2)(|000⟩+|111⟩); Mermin inequality test for 3-axis (W/W/T) entanglement",
+        "cost_usd": 1000 * 0.08 + 8 * 0.30,
+        "cost_note": "$82.40; Mermin inequality: classical ≤2, quantum-GHZ = 4",
+        "device": "IonQ Forte 1",
+        "advantage": "Stronger violation than CHSH; 3-axis simultaneity"
+      }
+    ],
+    "recommendation": "4a CHSH first ($81.20, ~1hr queue) for binary nonlocality witness; 4b GHZ as follow-up if 4a passes",
+    "honest_c3": [
+      "Bell test proves QUANTUM is nonclassical. It does NOT prove nexus's 4-axis is quantum.",
+      "The mapping 'WHAT/WHERE/WHY/TRUST → 4 measurement settings' is metaphor, not isomorphism. Phenomenal binding semantics cannot be operationalized via CHSH alone.",
+      "A passing CHSH on IonQ tells us nothing new about nature (already known since Aspect 1982). It only confirms anima's QPU access works."
+    ]
+  },
+  "phase5_new_axes": [
+    {
+      "id": "N1",
+      "name": "Quantum convergence Ψ↔ε R24 — Hilbert-space lift",
+      "augment": "Atlas-level fixed-point witness extended from Banach to Hilbert metric (anima paper §10.9); compute fixed-point iteration on quantum state ρ_n+1 = T(ρ_n) where T is CPTP map",
+      "method": "Trotterized iteration on SV1; check ||ρ_n - ρ_n-1||_trace → 0",
+      "cost_usd": "~$0 SV1",
+      "device": "SV1",
+      "falsifier": "Trace-distance contraction rate vs classical Banach iteration; quantum advantage if super-linear contraction observed",
+      "nexus_link": "atlas_convergence_witness.jsonl line 2 (W2 trained meta-edge ε_self_referential_closure)"
+    },
+    {
+      "id": "N2",
+      "name": "Quantum random walk for nexus exploration",
+      "augment": "Substrate-graph search (anima knowledge graph nodes) via quantum walk; quadratic hitting-time speedup (Childs-Goldstone 2003)",
+      "method": "Discrete-time coined QW on graph adjacency matrix; 10-qubit = 1024-node graph",
+      "cost_usd": "~$0 SV1",
+      "device": "SV1",
+      "falsifier": "Hitting time τ_q vs τ_classical on benchmarked graphs (line, hypercube, expander)",
+      "nexus_link": "nexus exploration / search subsystem"
+    },
+    {
+      "id": "N3",
+      "name": "Quantum shadow tomography of nexus state",
+      "augment": "Reconstruct nexus 'wave function' ρ via classical shadows (Huang-Kueng-Preskill 2020); 3M shadow estimators ≈ all M Pauli expectation values",
+      "method": "Random Clifford rotations + Z-basis measure; ShadowQPT-style on IonQ",
+      "cost_usd": "1000 shots × $0.08 + $0.30 = $80.30",
+      "device": "IonQ Forte 1",
+      "falsifier": "Reconstructed ρ trace-distance from known target state; benchmark against full QST",
+      "nexus_link": "nexus state-vector representation diagnostic; atlas-level structural witness"
+    },
+    {
+      "id": "N4",
+      "name": "Quantum amplitude estimation for nexus rare events",
+      "augment": "Grover-style sqrt(N) speedup for estimating P(rare nexus event); Brassard-Hoyer-Mosca-Tapp 2002",
+      "method": "Iterated Grover on oracle that flags rare-event states; phase-estimation readout",
+      "cost_usd": "~$0 SV1 (proof-of-principle); IonQ ~$200 for 100-shot phase estimation",
+      "device": "SV1 → IonQ",
+      "falsifier": "Estimated P vs Monte-Carlo classical; quantum advantage = sample-complexity O(1/ε) vs O(1/ε²)",
+      "nexus_link": "nexus tail-event probability estimation (φ-spike detection, anomaly trigger)"
+    },
+    {
+      "id": "N5",
+      "name": "Quantum compressive sensing for nexus high-D sparse signals",
+      "augment": "k-sparse signal recovery in N-dim with O(k log N) measurements (Lloyd-Mohseni-Rebentrost 2013)",
+      "method": "Quantum matrix inversion + sparse-coefficient extraction",
+      "cost_usd": "~$0 SV1 small-scale demo",
+      "device": "SV1",
+      "falsifier": "Reconstruction L2 error vs classical OMP / LASSO at fixed measurement budget",
+      "nexus_link": "nexus signal-compression layer; sparse trajectory representation"
+    },
+    {
+      "id": "N6",
+      "name": "Quantum reservoir computing — IonQ Forte 1 as physical reservoir",
+      "augment": "Drive untrained quantum dynamical system with input stream; train linear readout on output observables (Fujii-Nakajima 2017)",
+      "method": "Random fixed quantum circuit + input encoding + measurement; train classical readout via ridge regression",
+      "cost_usd": "Training: ~$0 SV1; inference on IonQ ~$50/eval",
+      "device": "SV1 (training) + IonQ (validation)",
+      "falsifier": "Time-series prediction NRMSE on benchmark (Mackey-Glass, NARMA-10) vs classical ESN",
+      "nexus_link": "nexus dynamical-system identification; sister-project online learning loop"
+    },
+    {
+      "id": "N7",
+      "name": "Quantum convex-optimization for nexus binding LP",
+      "augment": "Brandao-Svore quantum SDP solver; sqrt(N) speedup for nexus binding constraint satisfaction",
+      "method": "Hamiltonian-encoding of LP/SDP; phase estimation for primal-dual",
+      "cost_usd": "~$0 SV1",
+      "device": "SV1",
+      "falsifier": "Solution gap vs classical interior-point; runtime scaling",
+      "nexus_link": "nexus 4-axis binding constraint solver"
+    },
+    {
+      "id": "N8",
+      "name": "Quantum kernel methods for nexus state classifier",
+      "augment": "Havlicek 2019 quantum feature map; kernel evaluation via SWAP test",
+      "method": "Encode nexus state-pairs into quantum kernel; SWAP-test fidelity = kernel value",
+      "cost_usd": "~$0 SV1; IonQ for hardware-validation ~$80",
+      "device": "SV1 → IonQ",
+      "falsifier": "Classification accuracy vs RBF / linear kernel on nexus-state benchmark",
+      "nexus_link": "nexus state-similarity metric"
+    }
+  ],
+  "phase6_top3_recommendations": [
+    {
+      "rank": 1,
+      "id": "1d",
+      "name": "Hybrid IonQ-seeded HMAC-DRBG for nexus QRNG",
+      "rationale": "ONLY axis with clean, unambiguous quantum > classical advantage (true entropy vs PRNG). NIST SP 800-90B precedent (Quantinuum 2026). Cost-controlled via batch-reseed schedule. Falsifier well-defined (NIST + Diehard + ENT suites).",
+      "first_step_cost_usd": 20.78,
+      "first_step_action": "Pull 256 bits from Forte 1; whiten via Toeplitz; compute NIST SP 800-22 statistical-test pass rate; compare to classical urandom baseline"
+    },
+    {
+      "rank": 2,
+      "id": "2a + N2",
+      "name": "Quantum random walk on nexus substrate graph (sim-universe propagation + exploration)",
+      "rationale": "$0 cost on SV1, theoretically clean (Kempe / Childs-Goldstone), demonstrable quadratic speedup, dual-purpose (sim-universe diffusion kernel AND exploration search).",
+      "first_step_cost_usd": 0,
+      "first_step_action": "10-qubit coined QW on hypercube graph; measure ⟨x²⟩(t); compare to classical RW; report ballistic-vs-diffusive crossover"
+    },
+    {
+      "rank": 3,
+      "id": "4a",
+      "name": "CHSH Bell test on IonQ Forte 1 — paper-grade nonlocality witness",
+      "rationale": "Single most-cited QC test; if anima paper §10.9 wants to claim nonlocal binding (4-axis), CHSH is the operational anchor. $81.20 affordable. PASS verdict reproducible (CHSH violation is robust on Forte 1, Aspect-style).",
+      "first_step_cost_usd": 81.20,
+      "first_step_action": "Standard CHSH circuit on 2-qubit Bell pair; 250 shots × 4 settings; compute S; verify S > 2 + 5σ"
+    }
+  ],
+  "honest_c3": [
+    "QRNG (axis 1d) is the ONLY axis where quantum advantage over classical is unambiguous and cost-effective. All other axes face one of: (i) toy-scale 4-34 qubit demonstrations classically simulable, (ii) hype-vs-substance gap, or (iii) phenomenal-meaning gap (Bell/CHSH proves quantum non-classicality, NOT nexus 4-axis binding).",
+    "AT 4-qubit toy scale, no honest quantum-supremacy claim is possible. Demonstrations are infrastructural / structural, not computational.",
+    "Bell/CHSH violation on IonQ tells us anima's QPU access works. It tells us NOTHING new about consciousness or nexus binding semantics.",
+    "Cosmological VQS (axis 2c) is publishable (cf. Nature Sci. Reports 2025) but requires Levin Lab / external partnership compute budget; not in current $0 scope.",
+    "Quantum reservoir computing (N6) and shadow tomography (N3) are scientifically valid but their nexus-augment value is speculative until nexus has concrete dynamical-system identification or state-readout subsystems online."
+  ],
+  "deliverables": {
+    "applications_json": "state/braket_nexus_applications_2026_05_02/applications.json (this file)",
+    "report_md": "docs/braket_nexus_applications_2026_05_02.md",
+    "roadmap_section": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §61.2"
+  },
+  "constraints_compliance": {
+    "qpu_shots_taken": 0,
+    "actual_spend_usd": 0,
+    "wallclock_min_used": "<60 (research-only)",
+    "websearch_count": 5,
+    "race_isolation_paths": [
+      "state/braket_nexus_applications_2026_05_02/*",
+      "docs/braket_nexus_applications_2026_05_02.md",
+      "docs/n_substrate_consciousness_roadmap_2026_05_01.md §61"
+    ]
+  },
+  "sources": [
+    "https://aws.amazon.com/blogs/quantum-computing/generating-quantum-randomness-with-amazon-braket/",
+    "https://www.quantinuum.com/press-releases/quantinuums-quantum-origin-becomes-first-software-quantum-random-number-generator-to-achieve-nist-validation",
+    "https://www.nature.com/articles/s41598-025-87015-6",
+    "https://arxiv.org/abs/2110.02965",
+    "https://www.science.org/doi/10.1126/sciadv.ady7987",
+    "https://en.wikipedia.org/wiki/CHSH_inequality"
+  ]
+}

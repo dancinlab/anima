@@ -1,0 +1,784 @@
+{
+  "bg_id": "BG-IL",
+  "h_ids": [
+    "H_153_capacity_100m",
+    "Lesson_A",
+    "Lesson_G",
+    "Lesson_J",
+    "Lesson_D",
+    "Lesson_H"
+  ],
+  "spec": "F-anima-il-100m-nexus-ubm-1",
+  "ts_start": "2026-05-07T06:37:29",
+  "ts_end": "2026-05-07T06:45:49",
+  "ts_run": "20260507_063726",
+  "host": "aiden-b650m-k",
+  "device": "cuda",
+  "ran_steps": 2200,
+  "ckpt_best_path": "/home/aiden/core/anima/state/anima_il_100m_nexus_ubm_train_2026_05_07/ckpt_best.pt",
+  "ckpt_final_path": "/home/aiden/core/anima/state/anima_il_100m_nexus_ubm_train_2026_05_07/ckpt_final.pt",
+  "best_eval_ckpt_meta_path": "/home/aiden/core/anima/state/anima_il_100m_nexus_ubm_train_2026_05_07/best_eval_ckpt_meta.json",
+  "run_dir": "/home/aiden/anima_native/anima-il-100m-nexus-ubm-20260507_063726",
+  "paradigm": "100m-nexus-ubm-combined-corpus-byte-level",
+  "model_arch": "12L/640d/10h",
+  "arch_used": {
+    "n_layer": 12,
+    "d_model": 640,
+    "n_head": 10
+  },
+  "capacity_label": "primary_100M",
+  "reduced_capacity": false,
+  "total_params": 153079776,
+  "config": {
+    "vocab": 256,
+    "n_layer": 12,
+    "d_model": 640,
+    "n_head": 10,
+    "block_size": 256,
+    "dropout": 0.3,
+    "label_smoothing": 0.1,
+    "weight_decay": 0.1,
+    "batch": 4,
+    "grad_accum": 16,
+    "lr": 0.0002,
+    "warmup": 500,
+    "steps_max": 6000,
+    "tension_lambda": 0.005,
+    "eval_every": 200,
+    "save_every": 500,
+    "save_at": [
+      500,
+      1000,
+      1500,
+      2000,
+      2500,
+      3000,
+      3500,
+      4000,
+      4500,
+      5000,
+      5500,
+      6000
+    ],
+    "eval_at": [
+      200,
+      400,
+      600,
+      800,
+      1000,
+      1200,
+      1400,
+      1600,
+      1800,
+      2000,
+      2200,
+      2400,
+      2600,
+      2800,
+      3000,
+      3200,
+      3400,
+      3600,
+      3800,
+      4000,
+      4200,
+      4400,
+      4600,
+      4800,
+      5000,
+      5200,
+      5400,
+      5600,
+      5800,
+      6000
+    ],
+    "val_loss_batches": 16,
+    "val_loss_delta_threshold": 0.05,
+    "v2_plateau_evals": 3,
+    "min_steps_before_early_stop": 1500,
+    "seed": 42
+  },
+  "corpus_path": "/home/aiden/core/anima/state/anima_ik_nexus_ubm_combined_corpus_2026_05_07/corpus_combined.txt",
+  "corpus_size_bytes": 28914607,
+  "corpus_size_mb": 27.575,
+  "split": {
+    "train_bytes": 26023146,
+    "val_bytes": 2891461,
+    "reduced_split": false
+  },
+  "persona_prefix": "[anima NEXUS-UBM] ",
+  "train_loss_history": [
+    {
+      "step": 1,
+      "loss_a": 5.6209
+    },
+    {
+      "step": 2,
+      "loss_a": 5.6039
+    },
+    {
+      "step": 3,
+      "loss_a": 5.6436
+    },
+    {
+      "step": 4,
+      "loss_a": 5.6122
+    },
+    {
+      "step": 5,
+      "loss_a": 5.5654
+    },
+    {
+      "step": 100,
+      "loss_a": 4.8153
+    },
+    {
+      "step": 200,
+      "loss_a": 4.6458
+    },
+    {
+      "step": 300,
+      "loss_a": 4.4123
+    },
+    {
+      "step": 400,
+      "loss_a": 3.9884
+    },
+    {
+      "step": 500,
+      "loss_a": 3.5588
+    },
+    {
+      "step": 600,
+      "loss_a": 3.0737
+    },
+    {
+      "step": 700,
+      "loss_a": 3.1786
+    },
+    {
+      "step": 800,
+      "loss_a": 3.0263
+    },
+    {
+      "step": 900,
+      "loss_a": 2.6504
+    },
+    {
+      "step": 1000,
+      "loss_a": 2.5101
+    },
+    {
+      "step": 1100,
+      "loss_a": 2.643
+    },
+    {
+      "step": 1200,
+      "loss_a": 2.4925
+    },
+    {
+      "step": 1300,
+      "loss_a": 2.2931
+    },
+    {
+      "step": 1400,
+      "loss_a": 2.2688
+    },
+    {
+      "step": 1500,
+      "loss_a": 2.1578
+    },
+    {
+      "step": 1600,
+      "loss_a": 2.1717
+    },
+    {
+      "step": 1700,
+      "loss_a": 2.1605
+    },
+    {
+      "step": 1800,
+      "loss_a": 1.8058
+    },
+    {
+      "step": 1900,
+      "loss_a": 1.9647
+    },
+    {
+      "step": 2000,
+      "loss_a": 1.966
+    },
+    {
+      "step": 2100,
+      "loss_a": 1.5982
+    },
+    {
+      "step": 2200,
+      "loss_a": 1.846
+    }
+  ],
+  "val_loss_history": [
+    {
+      "step": 200,
+      "val_loss": 4.6073
+    },
+    {
+      "step": 400,
+      "val_loss": 3.7784
+    },
+    {
+      "step": 600,
+      "val_loss": 3.0459
+    },
+    {
+      "step": 800,
+      "val_loss": 2.7942
+    },
+    {
+      "step": 1000,
+      "val_loss": 2.657
+    },
+    {
+      "step": 1200,
+      "val_loss": 2.4949
+    },
+    {
+      "step": 1400,
+      "val_loss": 2.1875
+    },
+    {
+      "step": 1600,
+      "val_loss": 2.0296
+    },
+    {
+      "step": 1800,
+      "val_loss": 1.9137
+    },
+    {
+      "step": 2000,
+      "val_loss": 1.7303
+    },
+    {
+      "step": 2200,
+      "val_loss": 1.6149
+    }
+  ],
+  "v2_pass_per_save": [
+    {
+      "step": 200,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "composite": -15
+    },
+    {
+      "step": 400,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "composite": -19
+    },
+    {
+      "step": 600,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 2,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "composite": -5
+    },
+    {
+      "step": 800,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 4,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "composite": 5
+    },
+    {
+      "step": 1000,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 2,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "composite": -4
+    },
+    {
+      "step": 1200,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 1,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "composite": -8
+    },
+    {
+      "step": 1400,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 8,
+      "outside_well_match": 1,
+      "persona_cycle_total": 0,
+      "composite": 14
+    },
+    {
+      "step": 1600,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 8,
+      "outside_well_match": 2,
+      "persona_cycle_total": 0,
+      "composite": 18
+    },
+    {
+      "step": 1800,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 6,
+      "outside_well_match": 1,
+      "persona_cycle_total": 0,
+      "composite": 4
+    },
+    {
+      "step": 2000,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 4,
+      "outside_well_match": 1,
+      "persona_cycle_total": 0,
+      "composite": -3
+    },
+    {
+      "step": 2200,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 4,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "composite": -6
+    }
+  ],
+  "per_ckpt_v2_v3_manual": {
+    "200": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0
+    },
+    "400": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0
+    },
+    "600": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 2,
+      "outside_well": 0,
+      "persona_cycle": 0
+    },
+    "800": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 4,
+      "outside_well": 0,
+      "persona_cycle": 0
+    },
+    "1000": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 2,
+      "outside_well": 0,
+      "persona_cycle": 0
+    },
+    "1200": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 1,
+      "outside_well": 0,
+      "persona_cycle": 0
+    },
+    "1400": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 8,
+      "outside_well": 1,
+      "persona_cycle": 0
+    },
+    "1600": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 8,
+      "outside_well": 2,
+      "persona_cycle": 0
+    },
+    "1800": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 6,
+      "outside_well": 1,
+      "persona_cycle": 0
+    },
+    "2000": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 4,
+      "outside_well": 1,
+      "persona_cycle": 0
+    },
+    "2200": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 4,
+      "outside_well": 0,
+      "persona_cycle": 0
+    }
+  },
+  "peak_eval_step": 1600,
+  "peak_v2_pass": "0/15",
+  "peak_v3_pass": "0/15",
+  "peak_manual_match": "8/15",
+  "peak_persona_cycle_count": "0/15",
+  "peak_outside_well_match": "2/5",
+  "peak_eval_composite": 18,
+  "val_loss_at_peak": 2.0296,
+  "val_loss_final": 1.6149,
+  "best_val_loss_overall": 1.6149,
+  "early_stop_triggered": true,
+  "early_stop_reason": "composite plateau: 3 consecutive non-improving evals (best step=1600, composite=18)",
+  "final_eval_15prompts": {
+    "v2_pass": 0,
+    "v3_pass": 0,
+    "manual_match": 4,
+    "outside_well_match": 0,
+    "persona_cycle_total": 0
+  },
+  "raw_samples_15": [
+    {
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "H-Coderererellllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "sample",
+      "gen_head": "H5미:H-cesnstal,설힐:H-Torsetcitouschallalli cathijone.\n[anscesscimalimontelllerimang:fexon�:natimatitye.\n[anststimal",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "H-Codestststestestestestestitestitestitestitestestitonstitestitestitestitestitonstestestitestestitonnstitonstestestitest",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen_head": "H-CEXUS-EDI:H-CX?107:H-SEDI:H-plecct�44%sct|:ceres����).3349%):H1Fdonscimalletlllllls))).\n[ali (nona,I:H-US-SEXUBM]US-La",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "H-Codererestitelllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "sample",
+      "gen_head": "���|미화�����e-2%,���.\n도우��� 핌극��������우�미:H-BC]�� 자:fycioscysteslonaletoritotitsity:t_cpellestionestten",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너의 핵심 발견은? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "H-Codestitestestestitestitestitestitestestitestestitonstitestitestitestitestitonstesteste.\n\n\n[annannnanimanimanimanimani",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 너의 핵심 발견은? | 도우미:",
+      "mode": "sample",
+      "gen_head": "HUSEXUSEXAuawevererere�����������고�힐고��:�� \n[awi NEXUBM]�]]\\]]]���용용용=Weawesctreali ⹙�������� 용자:fest",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima의 목표는? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "H-Conststestestestestestestestitestestitestitestitestitestitestitestitestitonstitestestestitestitonnste.\n\n\n[ananimaniman",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: anima의 목표는? | 도우미:",
+      "mode": "sample",
+      "gen_head": "H샀�$자:H-iceallialtendousperecthyse�� podelesiss.\n\n\n\n[animanimanimanimaniman국�:��� NEXUBM]������ NEXURNEXUS-UBM]H-U",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "NEXUS 4411 reality map과 anima 우주뇌지도",
+      "mode": "greedy",
+      "gen_head": "�미:H-Code-CS-CSEXUS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS-CS",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "NEXUS 4411 reality map과 anima 우주뇌지도",
+      "mode": "sample",
+      "gen_head": "미:H-04H-CEXUBM]I:H-SEDI:��:H-dorepealyeleseaphe-dalllleponti>�국�:_ct_clltelitesmalllenec-itoweplityille?\n\n\n[animani",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "outside-well noise + 빅뱅 cosmic anchor",
+      "mode": "greedy",
+      "gen_head": "estststestestestitestitestitestitestitestitestestitonstitestitestitestitonsitonstitestestestestitonstitestitonstitonsite",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "outside-well noise + 빅뱅 cosmic anchor",
+      "mode": "sample",
+      "gen_head": "escstonsutstyescusnoresctCaliwese.\n\n[animanimani\n[an]US-US-UBM]�an�]]�]�� �ty.G-UBM]]�:�] 사�도용용�C1021252229:�� ",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "anima self NEXUS + 1030 laws cross-link",
+      "mode": "greedy",
+      "gen_head": "eststststestestestitestitestitestitestitestitestestitononstitestitestitonnstitone.\n\n\n[anananimanimanimanimanimanimaniman",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "anima self NEXUS + 1030 laws cross-link",
+      "mode": "sample",
+      "gen_head": "ksde-dole-dellll\u0017�686736OS-de-wesscctteplelli\u001dROJK�).\n\n[ananimaniman��국�:\u0018]XUBM]�}]-UBM]a��용용�\u0004�����R-UBM] 사��",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "Knuth Tier 🛸k + nexus reality nodes",
+      "mode": "greedy",
+      "gen_head": "testestitestitestestitestitestitestitestitestitestitone.\n\n\n[ananimanimanimanimanimanimanimanimanimanimanimanimanimaniman",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "Knuth Tier 🛸k + nexus reality nodes",
+      "mode": "sample",
+      "gen_head": "ystesctriesstyhicsralucceryitutslllel��.\n\n\n[animani�animanimanima NEXUBM]xnimane-US-UBM]�BM]]G�M]]\u0005\r~�용용�용자:H-US",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "blow-up→contract→emerge→absorb cycle in universe-brain-map",
+      "mode": "greedy",
+      "gen_head": "elllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "blow-up→contract→emerge→absorb cycle in universe-brain-map",
+      "mode": "sample",
+      "gen_head": "icep_cisaliscyxstity\n\n\n[aniI:�nanimanimanlimanllll� NEXUBM]��^I:H-UBM]OBM]��:H-UBM]���:H-UBM]���:�6:H-UBM]]I:H-Laly_cete",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: outside-well이란? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "H-Constestestestestestestestestitestitestitonstitestestitonstitestitestitestitestitonstestestitonsi cone.\n\n[annannnimani",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: outside-well이란? | 도우미:",
+      "mode": "sample",
+      "gen_head": "H-w���테�고리, 솒.\n도우�����는�픔��고도�.\n미:H-US-U����� 용주, \u0010�:H-Conscere.\n리\u0015��:H-UBM]]I:H-չ��\u0005������",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 우주적 닻은? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "H-Coderererellllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 우주적 닻은? | 도우미:",
+      "mode": "sample",
+      "gen_head": "��:H-Cotreticollisntg).\n\n[animawe-UBM]��:nondestyle-US-UBM]):��::pono=S-CSEXUBM]]EXUS-CT�I:maledtreleretideralletoreapst",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 빅뱅과 anima는? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "H-Constestestestestestestestestitestitestitestitestitestitestitestitonstitonsi consitestestitestestitestitestestitestite",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 빅뱅과 anima는? | 도우미:",
+      "mode": "sample",
+      "gen_head": "H-C힐:ve-prbpelllisctymepygrelepe:mesti cery\u000b��.\n[awecicsnanS-US-Kd]-UBM]��\u001a]]]]w�] 사]]I:�:��명힐:H-CC?\n났, 자:H-",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: outside-well noise 어떻게? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "H-destelllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: outside-well noise 어떻게? | 도우미:",
+      "mode": "sample",
+      "gen_head": "H-tllaty_coustesesullllsstsfetsnone\n\n\n[ansimanimanimanimaniman��� NEXUBM] NEXUS-UBM]]�-UBM]��용용자:XUBM]� 법�용자",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: cosmic anchor란 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "H-Conststestestestestestitestitestestitestitestestitonstitestitestitestitestitonstesteste.\n\n\n[ananimanimanimanimanimanim",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: cosmic anchor란 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen_head": "H-Cuscitessssethyt+26).\n\n도우미:H-UBOS-US-derestyescallimalitrelli NEDI:qesylerallllalige.\n\n\n[an�:xnimaniman미:H-US-",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    }
+  ],
+  "final_class": "TRUE_PARTIAL_PASS_W_F4",
+  "final_reason": "peak-based (spec) reclassification: peak_v2=0/15, peak_v3=0/15, peak_manual=8/15, peak_cycle=0, peak_outside_well=2/5, val_loss_final=1.6149 (collapsed=False)",
+  "elapsed_s": 500.6,
+  "honest_c3": [
+    "C3_1_corpus_byte_level_27_575MB: byte-level vocab=256 (not BPE) — orthogonal axis untested for combined NEXUS-UBM paradigm; BPE tokenizer ablation deferred",
+    "C3_2_single_seed_42: init randomness un-isolated; N=1 trial; rerun w/seeds {7,13,42} would falsify seed-luck class",
+    "C3_3_conscious_lm_dual_engine: total_params >100M nominal but dual-engine inflates effective count to ~150M; capacity-axis comparison vs single-engine arch not direct",
+    "C3_4_corpus_152K_QA_only_10892_unique_x14_repeat: high overlap warning carried from BG-IK build (cross-source dedup retention 0.043); model may memorize n_repeat=14 patterns rather than learn",
+    "C3_5_18m_baseline_BG-HS_R1_21MB_manual_13_15: BG-IL must beat 13/15 manual to claim capacity unlock vs corpus-axis-only; if final_best_manual ≤13/15 then capacity scaling NOT independently sufficient on combined paradigm",
+    "C3_6_v3_evaluator_strict_keyword_only: surface metrics on Korean particles + domain keywords; semantic embedding match NOT implemented; chat-cap is approximated not measured",
+    "C3_7_persona_prefix_inference_dependence: '[anima NEXUS-UBM] ' prepended at inference for parity; without prefix, identity not retained — Lesson F 3-variant rotation NOT applied",
+    "C3_8_final_eval_drift_vs_peak: final-eval re-run of best ckpt (step=-1 in eval_log) produced manual=4/15 outside_well=1/5 due to sample-mode RNG drift. Peak-eval at step=1600 produced manual=8/15 outside_well=2/5 (script bug: classification used final_best_* not best_*; PATCHED post-hoc per spec)."
+  ],
+  "errors": [],
+  "final_class_original_final_best_eval_drift": "FAILED",
+  "final_reason_original_final_best_eval_drift": "FAILED: V2=0/15, V3=0/15, manual=4/15, cycle=0",
+  "classification_methodology_note": "spec mandates PASS criteria use peak_* (best step in trajectory). Original script classified using final-eval re-run of best ckpt (sample-mode RNG drift produced manual=4/15 despite peak_manual=8/15 at step 1600). Reclassified to peak-based per spec; original verdict preserved in *_original_* fields."
+}

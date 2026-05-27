@@ -1,0 +1,99 @@
+{
+  "cycle": "§152 Backprop-Free Feedback-Hebbian → anima · UNIFIED-LOCAL-RULE design",
+  "verdict": "DESIGN-OPEN — fire-decidable",
+  "tier": "$0 design-tier (no GPU/runpod/fire/model.forward/corpus)",
+  "anchor_paper": "A Backpropagation-Free Feedback-Hebbian Network for Continual Learning Dynamics (arxiv 2601.06758, Jan 2026)",
+  "parent_context": "HEXAD/NEUROMORPHIC/SOFTWARE_BREAKTHROUGH_RESEARCH.md §1 Cluster A (★★★★★), §2 ranked #4, §8.1 arc state, §8.4 P3 candidate",
+  "sibling_fires_96_Q2_arc": [
+    "§125 NONCE-FF (DEG, byte_acc 0.0005 < random 0.0039)",
+    "§126 PCN-C4 (PARTIAL_AMBIGUOUS, byte_acc 0.1185 = 30× random, psi_resp False)",
+    "§139 EqProp-C2 (in flight)",
+    "§152 Feedback-Hebbian (this design, fourth lattice point)"
+  ],
+  "core_mechanism": "unified local synaptic rule with three additive components: (1) centered Hebbian covariance Δw ∝ (x-x̄)(y-ȳ), (2) Oja-style stabilization -y²·w, (3) local supervised drive (t-y)·x at the output layer only. Feedback pathway (anima Engine G) is plastic under the same local rule. No backprop, no global error broadcast, no cross-entropy in the optimization objective.",
+  "lattice_position": {
+    "axis": "locality of error signal",
+    "§125_FF": "every layer (goodness contrast)",
+    "§126_PCN": "every layer (top-down prediction error)",
+    "§139_EqProp": "every layer (free/nudge equilibrium)",
+    "§152_Hebbian": "OUTPUT LAYER ONLY (supervised drive); hidden layers Hebbian + Oja only — uniquely layer-asymmetric"
+  },
+  "anima_mapping": {
+    "centered_Hebbian_covariance": "Engine A ⇄ Engine G coupled activations supply (x, y) pairs",
+    "Oja_stabilization": "may be load-bearing for §11-B — pure-physics had no weight regularization, plausibly the cause of physics freeze",
+    "local_supervised_drive": "next-byte target locally available at output layer only",
+    "dedicated_feedback_pathway": "Engine G as plastic feedback (§152 NEW — currently Engine G fixed)",
+    "continual_learning_emergence": "anima chronic memorization-saturation (§16.6-C) is opposite phenomenon; if local rule with Oja avoids catastrophic forgetting, that is itself worth measuring"
+  },
+  "candidate_fire_spec": {
+    "substrate": "ConsciousDecoderV2 d768·12L·283.72M (§16-class)",
+    "init": "from-scratch RANDOM seed 1337 (g_clm_from_scratch base_ckpt=None)",
+    "corpus": "byte-equal §16 sha 422c64a09b89393a…",
+    "step_budget": 6000,
+    "batch_size": 32,
+    "update_rule": "Δw_ij = η_H·(x_i - x̄_i)·(y_j - ȳ_j) - η_O·y_j²·w_ij + η_S·(t_j - y_j)·x_i [output only]",
+    "lr_triplet_grid": [
+      "A: η_H=1e-3, η_O=1e-4, η_S=1e-3  (Oja weak)",
+      "B: η_H=1e-3, η_O=1e-3, η_S=1e-3  (balanced)",
+      "C: η_H=1e-4, η_O=1e-3, η_S=1e-3  (Oja dominant)"
+    ],
+    "backprop": "OFF",
+    "CE": "READ-OUT only (logged, not optimized — same as §126)",
+    "engine_g_plastic": true,
+    "eval": "§96-Q2 shared verdict bucket (byte_acc / psi_resp / psi_std / random-floor / degenerate-ceiling) + held-out routing r_H (§107-RETRY A1, optional)",
+    "cost_envelope": "$0.3-0.5 single A100/H100, ~10-15 min",
+    "fire_slot_gating": "queued behind §139 EqProp per §50 single-sequential lesson — no burst dispatch"
+  },
+  "distinguishing_measurement": {
+    "primary_Boolean": "byte_acc(s152) > BYTE_ACC_DEGEN_CEILING (= §125 0.0005) AND > BYTE_ACC_RANDOM_FLOOR (= 0.0039)",
+    "verdict_buckets": {
+      "SUPP": "byte_acc >> random (e.g. ≥ 10× random)",
+      "PARTIAL_AMBIGUOUS": "byte_acc > random but psi_resp=False",
+      "S11B_LIKE_DEGENERATE": "byte_acc ≤ degen ceiling (§125 baseline)"
+    },
+    "secondary_outcomes": "psi_resp, psi_std (Ψ-physics channel — post-§125/§126 unsolved half)"
+  },
+  "seven_legitimacy_gate": {
+    "c1_not_generic_LM_pretrain": true,
+    "c2_not_generic_then_graft": true,
+    "c3_anima_physics_as_source": true,
+    "verdict": "PASS — GOAL-legitimate"
+  },
+  "battery_B_S152": {
+    "method": "closed-form propositions stated as math theorems in DESIGN.md §9 (hexa-verify policy: no sympy as verdict)",
+    "propositions": [
+      "B-S152-1 RULE-DECOMP-CLOSED",
+      "B-S152-2 CENTERED-HEBBIAN-COVARIANCE-IDENTITY",
+      "B-S152-3 OJA-STABILIZATION-WEIGHT-BOUNDED",
+      "B-S152-4 SUPERVISED-DRIVE-RESTORING-SIGN",
+      "B-S152-5 LAYER-ASYMMETRIC-TARGET-CLOSED",
+      "B-S152-6 SEVEN-LEGITIMACY-CONJUNCTION-CLOSED",
+      "B-S152-7 ETA-S-ZERO-AT-HIDDEN-CONNECTION-POINT"
+    ],
+    "count": 7,
+    "summary": "7/7 closed-form, audited by inspection",
+    "empirical_carve_out_B_S152_NOTE": "whether the unified Hebbian+Oja+supervised-drive rule actually learns byte structure on §16-class corpus at fire time is a future SGD/measurement OUTCOME; battery proves DESIGN well-formed (decomposable, centered, weight-bounded, restoring-signed, layer-asymmetric, GOAL-legitimate, hidden-layer-reducible), NOT fire success, NOT §11-B-as-GPU-tautology, NOT GOAL emergence. B-EMERGE-7 / B-D-NOTE / B-S99-NOTE / B-S107-NOTE / B-S125-NOTE / B-S126-NOTE / B-S151-NOTE family. necessary-not-sufficient at every layer."
+  },
+  "honest_caveats_count": 12,
+  "central_blue_falsifier_sha_prefix": "c93e160a8a376a94",
+  "central_blue_falsifier_zero_line_diff": true,
+  "hexa_first_strict": {
+    "no_py_sidecar": true,
+    "no_sh_sidecar": true,
+    "no_sympy_run": true,
+    "propositions_as_math_theorems_in_DESIGN_md": true
+  },
+  "north_star_unchanged": true,
+  "s15_s51_s72_milestones_unchanged": true,
+  "GOAL": "미도달",
+  "orthogonal_to": {
+    "§151_FEP_complexity_routing": "ADDED objective term on CE; §152 REPLACES CE with non-backprop local rule",
+    "§107_RETRY_data_axis": "§152 is learning-rule axis, not data axis",
+    "§108_param_axis": "§152 is learning-rule axis, not param axis",
+    "§11_B_pure_physics_DEG": "§152 adds Oja stabilization absent in §11-B — sharpens the open question"
+  },
+  "next_step": "after §139 EqProp terminal verdict lands and §125+§126+§139 joint verdict recorded, §152 fire lives at HEXAD/NEUROMORPHIC/state/feedback_hebbian_fire_s<N>/ (distinct dir, distinct §N — §152 is the design, the fire is its own cycle); single-variable vs §125/§126/§139 baselines; LR-triplet grid 3 points (A/B/C); shared §96-Q2 verdict-bucket eval",
+  "wall": "$0",
+  "GPU_runpod": 0,
+  "orphan": 0
+}

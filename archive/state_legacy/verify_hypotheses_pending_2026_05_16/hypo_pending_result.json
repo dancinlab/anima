@@ -1,0 +1,78 @@
+{
+ "cycle": "가설들 모두 진행 — pending closed-form (2026-05-16)",
+ "results": [
+  {
+   "hc_id": "H_008",
+   "name": "Prigogine minimum entropy production",
+   "closed_form": "∂P/∂X2=0 ⟹ X2*=−L12·X1/L22, ∂²P/∂X2²=2L22>0 ⟹ MIN (Onsager 1931)",
+   "real_limit_anchor": "2nd law of thermodynamics + Onsager reciprocity (NOT lattice)",
+   "honest_carveout": "‘의식 emergence substrate’ claim = analogical, NOT closed (NOT counted)",
+   "sympy_verified": true,
+   "verdict": "SUPPORTED-FORMAL 🔵",
+   "axis": "A3",
+   "tier": "a-sympy"
+  },
+  {
+   "hc_id": "H_009",
+   "name": "Fisher information metric + Cramér-Rao",
+   "closed_form": "Gaussian I(θ)=1/σ² exact + FIM=Gram ⟹ PSD (SOS) ⟹ Cramér-Rao Var≥1/I",
+   "real_limit_anchor": "Cramér-Rao bound (estimation-theory hard limit, NOT lattice)",
+   "honest_carveout": "‘FIM spectrum = IIT4 Φ proxy’ equivalence = Stage-2 numerical (NOT counted)",
+   "sympy_verified": true,
+   "verdict": "SUPPORTED-FORMAL 🔵",
+   "axis": "A2",
+   "tier": "a-sympy"
+  },
+  {
+   "hc_id": "H_012",
+   "name": "Autopoiesis = Banach fixed-point closure",
+   "closed_form": "contraction L<1 ⟹ unique x*=f(x*), |xₙ−x*|=Lⁿ|x₀−x*| (Banach 1922)",
+   "real_limit_anchor": "Banach fixed-point theorem (closed math, NOT lattice)",
+   "honest_carveout": "‘consciousness + meta-circular Hc-network’ claim = philosophical, NOT closed (NOT counted)",
+   "sympy_verified": true,
+   "verdict": "SUPPORTED-FORMAL 🔵",
+   "axis": "A7",
+   "tier": "a-sympy"
+  },
+  {
+   "hc_id": "H_007",
+   "name": "Rule-110 CA Boolean map (+ Cook 2004 universality)",
+   "closed_form": "Rule 110 = 0b01101110 deterministic 3→1 Boolean map; SOP≡truth-table exact",
+   "real_limit_anchor": "Cook 2004 Rule-110 Turing-completeness (proven CS theorem, citation)",
+   "honest_carveout": "‘IIT4 Φ>0 emergence’ = Stage-2 PyPhi numerical (NOT counted); universality is citation not sympy",
+   "sympy_verified": true,
+   "verdict": "SUPPORTED-FORMAL 🔵",
+   "axis": "A5",
+   "tier": "a-sympy+citation"
+  },
+  {
+   "hc_id": "H_010",
+   "name": "Holographic consciousness (A9 proxy carry)",
+   "closed_form": "N_dof=A/(4ℓ_P²) closed; carries A9 Bekenstein/Holographic/AdS-CFT 🔵",
+   "real_limit_anchor": "Bekenstein bound + holographic principle ('t Hooft 1993, Susskind 1995)",
+   "honest_carveout": "‘consciousness ∝ surface area not volume’ = analogical (SUPPORTED-BY-PROXY, not own-closed)",
+   "sympy_verified": true,
+   "verdict": "SUPPORTED-BY-PROXY 🟢",
+   "axis": "A9",
+   "tier": "a-proxy"
+  },
+  {
+   "hc_id": "H_165/H_177",
+   "name": "topo10/20 phi_star aliasing caveat (closed)",
+   "closed_form": "D∉192ℤ ⟹ phi_star aliasing: 2048%192=128≠0, 1024%192=64≠0 (clean-disjointness closed-form FALSE)",
+   "real_limit_anchor": "Hc_A1-4 phi_star closed-form (sympy mod identity, anima-internal)",
+   "honest_carveout": "Φ-scaling magnitude claim = Stage-2 GPU sweep (DEFERRED); only the aliasing CAVEAT is closed",
+   "sympy_verified": true,
+   "verdict": "INSUFFICIENT-CARRY (caveat 🔵 closed)",
+   "axis": "A5",
+   "tier": "a-sympy"
+  }
+ ],
+ "n_total": 6,
+ "n_blue_supported_formal": 4,
+ "n_supported_by_proxy": 1,
+ "n_insufficient_carry_caveat_closed": 1,
+ "all_sympy_verified": true,
+ "summary": "4 🔵 SUPPORTED-FORMAL (H_008 Prigogine + H_009 Fisher + H_012 autopoiesis + H_007 Rule-110) + 1 SUPPORTED-BY-PROXY (H_010 A9 carry) + 1 INSUFFICIENT-CARRY caveat-closed (H_165/H_177 aliasing); 6/6 sympy-verified",
+ "honest_c3": "Every entry closes ONLY the math/physics sub-claim. The consciousness-EMERGENCE / Φ>0 / Φ-proxy / area-encoding claims are Stage-2 PyPhi numerical or analogical — carved out per AGENTS.tape g3, NOT counted 🔵. No lattice-tautology verification (f2): H_190 numerology proximity is explicitly NOT promoted (separate coverage report). real-limit anchors: Onsager/2nd-law, Cramér-Rao, Banach, Cook-2004, Bekenstein."
+}

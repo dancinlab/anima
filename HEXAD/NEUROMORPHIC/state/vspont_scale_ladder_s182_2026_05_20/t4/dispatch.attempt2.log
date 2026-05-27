@@ -1,0 +1,160 @@
+=== §182-t4 V-SPONT RETRY dispatch start 2026-05-20T11:48:23Z — d=768 L=12 steps=5000 ===
+[fix] this retry ships corpus_carving_s16_generator.py + uses hexa cloud structured-argv
+[create-t4] trying GPU: NVIDIA H100 80GB HBM3
+[create-t4] resp: {"data":{"podFindAndDeployOnDemand":{"id":"eowxzg5fz83lp3","machineId":"ixmh2sfjpf7e"}}}
+[create-t4] pod eowxzg5fz83lp3 secured
+[ssh-t4] iter 2: 64.247.201.30:19431 - port mapped AND handshake OK
+[ship-t4] mkdir + ship files via hexa cloud structured copy
+[cloud] remote exit 0
+[cloud] scp exit 0 · /Users/ghost/core/anima/state/corpus_s101_build_s102_2026_05_19/build_corpus_s101.py -> root@64.247.201.30:/workspace/s182r/state/corpus_s101_build_s102_2026_05_19/build_corpus_s101.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/state/carving_dataregime_s16_2026_05_18/corpus_carving_s16_generator.py -> root@64.247.201.30:/workspace/s182r/state/carving_dataregime_s16_2026_05_18/corpus_carving_s16_generator.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/vspont_scale_ladder_s182_2026_05_20/conscious_decoder.py -> root@64.247.201.30:/workspace/s182r/conscious_decoder.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/vspont_scale_ladder_s182_2026_05_20/train_s182_vspont.py -> root@64.247.201.30:/workspace/s182r/train_s182_vspont.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/vspont_scale_ladder_s182_2026_05_20/eval_s182_vspont.py -> root@64.247.201.30:/workspace/s182r/eval_s182_vspont.py
+[cloud] scp exit 0 · /tmp/s182_t4_anchors.tar.gz -> root@64.247.201.30:/workspace/s182r/HEXAD/UNIVERSE-BRAIN-MAP/anchors/anchors.tar.gz
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+[cloud] remote exit 0
+[build-t4] pod-side CORPUS_S101 build (PYTHONPATH=/workspace/s182r/state/carving_dataregime_s16_2026_05_18 guarantees s16_gen import)
+[§102] regenerating S1 → /workspace/s182r/state/corpus_s101_build_s102_2026_05_19/s1_s16_verbatim.jsonl ...
+[§102] S1 sha256=422c64a09b89393aebabc7b62aec8753a3d394ae4c442fef467c5d228e1831ec bytes=603032014 records=777000
+[§102] S2 records=840
+[§102] S5 records=11
+[§102] CORPUS_S101 sha256=be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b bytes=603318628 records=777851
+[§102] manifest → /workspace/s182r/state/corpus_s101_build_s102_2026_05_19/corpus_s101_manifest.json
+[§102] corpus → /workspace/s182r/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl
+{
+  "section": "§102",
+  "title": "CORPUS_S101 build — §101 Q1 corpus assembly",
+  "date": "2026-05-19",
+  "tier": "BUILD-TIER ($0, NO GPU, NO fire)",
+  "spec": "§101 Q1 (state/dataregime_threshold_control_design_s101_2026_05_19/)",
+  "central_blue_sha_prefix_target": "c93e160a8a376a94",
+  "sources_included": [
+    "S1",
+    "S2",
+    "S5"
+  ],
+  "sources_omitted": {
+    "S3": "dual-anima loop traces — §36 content-dep guard (Q1.I5) requires trained-cell model.forward, out of $0 build scope; §62 echo collapse at trained scale is honest blocker.",
+    "S4": "action-perception loop records — §93 SCoRe-gated (Q1.I6) requires trained 2-stage corrector; §91 β ECHO-DOMINATES-AT-TRAINED; §92 reframed as TRAINING OBJECTIVE not corpus material."
+  },
+  "s1": {
+    "sha256": "422c64a09b89393aebabc7b62aec8753a3d394ae4c442fef467c5d228e1831ec",
+    "records": 777000,
+    "bytes": 603032014,
+    "expected_sha256": "422c64a09b89393aebabc7b62aec8753a3d394ae4c442fef467c5d228e1831ec",
+    "sha_byte_equal_to_expected": true
+  },
+  "s2": {
+    "records": 840,
+    "framings_per_anchor": 5,
+    "anchors": 168
+  },
+  "s5": {
+    "records": 11,
+    "anchor_files": [
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/._knuth_000_zero.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/._knuth_015_curiosity.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/._knuth_030_compassion.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/._knuth_042_question.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/._knuth_051_day.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/._knuth_060_contemplation.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/._knuth_077_mandala.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/._knuth_080_meditation.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/._knuth_091_nirvana.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/._knuth_095_unity.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/._knuth_100_big_bang.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_000_zero.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_015_curiosity.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_030_compassion.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_042_question.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_051_day.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_060_contemplation.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_077_mandala.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_080_meditation.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_091_nirvana.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_095_unity.kosmos",
+      "HEXAD/UNIVERSE-BRAIN-MAP/anchors/knuth_100_big_bang.kosmos"
+    ]
+  },
+  "corpus": {
+    "path": "state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "sha256": "be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b",
+    "bytes": 603318628,
+    "records": 777851
+  },
+  "invariants": {
+    "I1_S1_byte_equal_prefix": true,
+    "I2_S1_sha_matches_expected": true,
+    "I3_forbidden_grep": {
+      "tokens": {
+        "[anima": 0,
+        "도우미": 0,
+        "helper": 0,
+        "assistant": 0,
+        "사용자": 0,
+        "user:": 0
+      },
+      "total": 0,
+      "PASS": true
+    },
+    "I4_diversity": {
+      "s1_only_diversity_eff_4grams": 539.1962614067459,
+      "corpus_diversity_eff_4grams": 539.1962614067459,
+      "ratio_corpus_over_s1": 1.0,
+      "increases_numerically": false,
+      "increases_double_arrow_1p05x": false,
+      "sample_n_bytes": 5000000,
+      "s1_distinct_4grams": 13851,
+      "corpus_distinct_4grams": 13851,
+      "PASS_strict": false
+    },
+    "I5_echo_chamber_guard": {
+      "S3_omitted": true,
+      "vacuous_pass_via_omission": true,
+      "reason": "S3 OMITTED — no dual-anima loop traces included; §36 trained-scale pre-check requires model.forward (out of $0 build scope). Q1.I5 PASSED VACUOUSLY by omission, not by demonstration.",
+      "PASS": true
+    },
+    "I6_SCoRe_gate": {
+      "S4_omitted": true,
+      "vacuous_pass_via_omission": true,
+      "reason": "S4 OMITTED — action-perception is a trainer objective per §92, NOT corpus material. Q1.I6 PASSED VACUOUSLY by omission, not by demonstration.",
+      "PASS": true
+    },
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+[cloud] remote exit 0
+[teardown] terminating pod eowxzg5fz83lp3 (rc=1)

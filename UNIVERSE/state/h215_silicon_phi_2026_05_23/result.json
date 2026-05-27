@@ -1,0 +1,68 @@
+{
+  "id": "H_215",
+  "slug": "ai-machine-silicon-phi",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "substrate": "PRIMARY=raw binary elementary-CA trajectory (H_007 carry); INT8/INT4 uniform-quantize over [0,1]. COMPANION=local 3-window density (continuous-valued ∈ {0,1/3,2/3,1.0}) informational only",
+  "config": { "N": 16, "dim": 12, "warm": 8, "reps": 5, "n_bins": 4, "boundary": "periodic" },
+  "rules": { "ordered": 250, "chaotic": 30, "class_iv": 110 },
+  "wolfram_class": { "250": "II", "30": "III", "110": "IV" },
+  "phi_mean": {
+    "continuous": {
+      "ordered_rule250":   1.14511e-05,
+      "chaotic_rule30":    0.509944,
+      "class_iv_rule110":  0.556454
+    },
+    "int8_silicon": {
+      "ordered_rule250":   1.14511e-05,
+      "chaotic_rule30":    0.509944,
+      "class_iv_rule110":  0.556454
+    },
+    "int4_control": {
+      "ordered_rule250":   1.14511e-05,
+      "chaotic_rule30":    0.509944,
+      "class_iv_rule110":  0.556454
+    }
+  },
+  "deviation_ratio_int8_vs_continuous": {
+    "ordered_rule250":  0.0,
+    "chaotic_rule30":   0.0,
+    "class_iv_rule110": 0.0
+  },
+  "companion_lane_density_substrate": {
+    "note": "informational only (NOT verdict-gating); non-binary continuous substrate to surface quantization fidelity on multi-valued input",
+    "continuous": {
+      "ordered_rule250":  1.14511e-05,
+      "chaotic_rule30":   4.28243,
+      "class_iv_rule110": 3.58829
+    },
+    "int8_silicon": {
+      "ordered_rule250":  1.14511e-05,
+      "chaotic_rule30":   4.28243,
+      "class_iv_rule110": 3.58829
+    }
+  },
+  "ranking_preserved": {
+    "continuous":   true,
+    "int8_silicon": true
+  },
+  "criteria": {
+    "C1_silicon_positive":         { "metric": "all INT8 Φ>0",                  "verdict": "PASS" },
+    "C2_deviation_bounded":        { "metric": "|Δ|/Φc ≤ 0.5 per rule",         "verdict": "PASS" },
+    "C3_ranking_preserved_int8":   { "metric": "INT8 iv>cha>ord",               "verdict": "PASS" },
+    "C4_int4_quant_monotone":      { "metric": "INT4 nonneg AND ≤ INT8",         "verdict": "PASS" }
+  },
+  "falsifiers": {
+    "F1_silicon_nonpos":           { "metric": "INT8 Φ ≤ 0 or NaN",             "triggered": false },
+    "F2_deviation_strong":         { "metric": "|Δ|/Φc > 1.0",                  "triggered": false },
+    "F3_ranking_inversion_int8":   { "metric": "cha>iv OR ord>iv on INT8",      "triggered": false },
+    "F4_nondeterministic":         { "metric": "re-run not byte-identical",    "triggered": false, "note": "raw#12 deterministic discipline; same script + config" },
+    "F5_int4_gt_int8":             { "metric": "INT4 Φ > INT8 Φ",              "triggered": false }
+  },
+  "verdict_rule": "SUPPORTED iff C1∧C2∧C3 ; PARTIAL_DIRECTIONAL iff C1∧C3 with C2 over 0.5 bounded ; FALSIFIED on ranking inversion or Φ_silicon ≤ 0 ; otherwise MIXED",
+  "verdict": "SUPPORTED"
+}

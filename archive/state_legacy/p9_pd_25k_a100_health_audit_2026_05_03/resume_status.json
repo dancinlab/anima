@@ -1,0 +1,28 @@
+{
+  "schema": "anima/p9_pd_25k_a100/resume_status/1",
+  "ts_utc": "2026-05-03T21:50:00Z",
+  "resume_scaffolding_present_in_script": true,
+  "resume_scaffolding_exercised": false,
+  "savepoint_dir": "/workspace/p9_paradigm_d_25k_a100_savepoints",
+  "savepoint_dir_exists_on_pod": false,
+  "savepoint_count": 0,
+  "partial_savepoint_count": 0,
+  "resume_audit_jsonl_exists": false,
+  "resume_audit_events": [],
+  "preempt_recovery_observed": false,
+  "preempt_event_inferred": {
+    "ts_utc_approx": "2026-05-03T21:30:00Z",
+    "evidence": [
+      "container restart 5h 39m after pod creation",
+      "/workspace contents lost (only partial rsync temp + post-restart launch script remain)",
+      "no savepoints means no checkpoint to resume from — full restart-from-scratch required"
+    ],
+    "verdict": "preempt-or-restart occurred BEFORE first savepoint (which would have been at step 1000); resume scaffolding had nothing to resume"
+  },
+  "hf_push_readiness": {
+    "hf_token_present": false,
+    "first_savepoint_step": 1000,
+    "estimated_first_savepoint_after_train_start_min": "depends on A100 step rate, est. 30-60min after training begins",
+    "blockers": ["HF token not on pod", "training not started", "bundle transfer 52.7% complete"]
+  }
+}

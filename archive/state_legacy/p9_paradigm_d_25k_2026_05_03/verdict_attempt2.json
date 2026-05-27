@@ -1,0 +1,143 @@
+{
+  "schema": "anima/p9_paradigm_d_25k/launch_verdict/2",
+  "generated_at": "2026-05-03T15:30:00Z",
+  "agent": "p9_paradigm_d_25k_community_spot_nvl_attempt3",
+  "status": "ABORT_POST_LAUNCH_OUTBID",
+  "reason_code": "SPOT_POD_OUTBID_3MIN_AFTER_BOOT_INFEASIBLE_FOR_10H_RUN",
+  "summary": "H100 NVL community spot booked successfully via GraphQL podRentInterruptable @ $1.40/hr (verified rate matches budget). Pod j3zancd8xuzzcc booted in CA datacenter, GPU verified (H100 NVL 95GB). However, pod was OUTBID after ~3 minutes of uptime (lastStatusChange='Outbid: Sun May 03 2026 15:19:26 GMT+0000'), before any training assets could be uploaded. Spot price floor remains $1.40 per gpuTypes lowestPrice query, but actual market bid spiked above floor within minutes. A 25K-step run requires ~10h of uninterrupted compute; sustaining floor bid through that window is infeasible given live preemption observed. Cleaned up: pod terminated, only pre-existing Path A pod 29dhlqk508ugoc remains untouched. Total spend on this attempt: approx $0.07 (3 min spot @ $1.40/hr).",
+  "constraint_check": {
+    "user_required_substrate": "RunPod H100 NVL COMMUNITY spot @ $1.40/hr",
+    "verified_price_per_hour_usd": 1.40,
+    "verified_via": "GraphQL podRentInterruptable mutation returned costPerHr=1.4",
+    "rate_under_cap": true,
+    "outbid_observed": true,
+    "outbid_at_uptime_seconds": 180,
+    "abort_trigger": "spot pod preempted before training could start; 25K run unfeasible on spot at floor bid"
+  },
+  "attempt_timeline": [
+    {"ts_utc": "2026-05-03T15:14:00Z", "event": "verified runpodctl 2.x lacks --spot flag (defaults to ondemand $2.59); probe pod vkrmp0ydoixtiq created at $2.59/hr -> immediately terminated (no charge accrued)"},
+    {"ts_utc": "2026-05-03T15:16:25Z", "event": "GraphQL podRentInterruptable created spot pod j3zancd8xuzzcc @ $1.40/hr in CA datacenter, H100 NVL 95GB"},
+    {"ts_utc": "2026-05-03T15:17:00Z", "event": "SSH verified, GPU confirmed (H100 NVL, 95830MiB), /workspace 50GB mounted"},
+    {"ts_utc": "2026-05-03T15:19:26Z", "event": "POD OUTBID per RunPod scheduler; desiredStatus=EXITED, runtime=null"},
+    {"ts_utc": "2026-05-03T15:25:00Z", "event": "discovery on ubu1: training script /tmp/p9_paradigm_d_distill.py was deleted in prior cleanup (per state/p9_paradigm_d_distill_2026_05_03/launch_status.json line 18); script reconstruction would be needed"},
+    {"ts_utc": "2026-05-03T15:28:00Z", "event": "podTerminate mutation issued; account verified clean (only Path A pod present)"}
+  ],
+  "spot_market_state_at_abort": {
+    "h100_nvl_community": {"min_bid_usd_per_hr": 1.40, "ondemand_usd_per_hr": 2.59, "stock": "Low", "outbid_within_minutes": true},
+    "h100_hbm3_sxm_community": {"min_bid_usd_per_hr": 1.50, "ondemand_usd_per_hr": 2.69, "stock": "High", "outbid_risk_unprobed": true},
+    "h100_pcie_community": {"listed": false, "comment": "PCIe community remains unbookable - confirmed prior subagent verdict"}
+  },
+  "asset_blocker_secondary": {
+    "training_script": {
+      "expected_path": "/tmp/p9_paradigm_d_distill.py",
+      "found_on_ubu1": false,
+      "status": "DELETED_in_prior_cleanup",
+      "evidence": "state/p9_paradigm_d_distill_2026_05_03/launch_status.json:18 'tmp_files_removed: [/tmp/p9_paradigm_d_distill.py, ...]'",
+      "blocker_severity": "would have required reconstruction (~30-60min agent work) even if pod stayed up"
+    },
+    "teacher_phi_cache": {"path": "/tmp/p9_p1_t4_phi_cache_v1.jsonl", "ubu1_present": true, "size_bytes": 6724184, "records": 50000, "status": "READY"},
+    "base_ckpt": {"path": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt", "ubu1_present": true, "size_bytes": 5365727261, "status": "READY (~5.4GB upload pending)"},
+    "sft_corpus": {"path": "/tmp/p9_p1_5_sft_data_50k_v2.jsonl", "ubu1_present": true, "size_bytes": 126905018, "status": "READY"},
+    "sft_holdout": {"path": "/tmp/p9_p1_sft_data_holdout_500_augmented.jsonl", "ubu1_present": true, "size_bytes": 1568309, "status": "READY"},
+    "tokenizer": {"path": "/tmp/tokenizer_64k_multilingual.model", "ubu1_present": true, "size_bytes": 1306349, "status": "READY"}
+  },
+  "account_state_post_cleanup": {
+    "balance_usd": 312.24,
+    "spend_per_hour_usd": 3.004,
+    "active_pods": [{"id": "29dhlqk508ugoc", "name": "anima-p9-pathA-llama-v2", "status": "RUNNING", "cost_per_hr_usd": 2.99, "owner": "Path A separate agent (UNTOUCHED)"}],
+    "this_attempt_spend_usd": 0.07,
+    "spend_within_cap": true,
+    "hard_cap_usd": 15.00
+  },
+  "options_to_unblock": [
+    {
+      "rank": 1,
+      "name": "SWITCH_TO_HBM3_SPOT_AT_1.50_PLUS_CHECKPOINT_RESUME",
+      "config": "Use H100 HBM3 SXM community spot @ $1.50/hr (stock=High, less preemption volatility). Add savepoint-resume scaffolding to script so 25K can be split across multiple spot sessions if outbid. Cost still ~$15.6 over 10.4h (within $15 cap if user lifts ceiling 4%, or shorten to 24K = $14.4).",
+      "tradeoff": "Violates 'NVL community spot ONLY' spec but matches 'verify rate <= $1.50' constraint exactly; HBM3 has high stock; resume logic adds complexity but is the right pattern for spot anyway.",
+      "wall_h_estimate": "10-12 (depending on preempt count)",
+      "cost_estimate_usd": "14-17",
+      "completeness_score": 0.78,
+      "recommendation_reason": "Best path that respects both rate cap AND spot-cloud-only constraint. HBM3 stock=High suggests fewer outbids; resume scaffolding is the structural fix for spot interrupt risk on long runs."
+    },
+    {
+      "rank": 2,
+      "name": "ESCALATE_TO_USER_FOR_ON_DEMAND_NVL_AT_2.59",
+      "config": "If user accepts a higher cap, switch to NVL on-demand @ $2.59/hr; ~10h = $25.9 (over $15 cap). Or shorten to 5.8h (~14000 steps) for $15 ceiling.",
+      "tradeoff": "Violates user's $14 budget materially; would require explicit re-auth. Truncated 14K-step run loses 44% of steps vs 25K target.",
+      "completeness_score": 0.45,
+      "recommendation_reason": "Trades training depth for guaranteed completion; user must explicitly raise budget."
+    },
+    {
+      "rank": 3,
+      "name": "WAIT_AND_RETRY_NVL_SPOT_WITH_CHECKPOINT_RESUME",
+      "config": "Re-launch NVL spot @ $1.40 with savepoint-resume in script; accept multi-session run where each preemption resumes from last savepoint. Risk: each preemption costs ~5-10min boot + warmup wallclock; if outbid every 10-30min, run never converges.",
+      "tradeoff": "Honors original spec exactly but observed outbid in 3min suggests this won't make progress. Could waste hours of agent time with no training gain.",
+      "completeness_score": 0.35,
+      "recommendation_reason": "Spec-pure but observed market behavior makes it unlikely to complete; at minimum should demand HBM3 fallback if 2 NVL outbids in <30min wallclock."
+    },
+    {
+      "rank": 4,
+      "name": "RECONSTRUCT_SCRIPT_AND_RUN_ON_UBU1",
+      "config": "Skip RunPod entirely; reconstruct distill script (or restore from prior agent's worktree if backed up), run 25K on ubu1 RTX 5070 (12GB). VRAM tight for 350M+r=64; would need batch=1 or grad ckpting; ETA 30-50h.",
+      "tradeoff": "Zero $ cost but 3-5x slower than RunPod; ubu1 VRAM may not fit; sm_120 issues per memory.",
+      "completeness_score": 0.40,
+      "recommendation_reason": "Free but slow and fragile; would tie up ubu1 from other work."
+    },
+    {
+      "rank": 5,
+      "name": "ABORT_AND_DEFER_TO_NEXT_SESSION",
+      "config": "Land ABORT verdict, surface options, defer to user. Re-attempt next session when (a) market state may differ and (b) script can be pre-reconstructed and staged.",
+      "tradeoff": "No progress today; safest option; preserves $312 balance.",
+      "completeness_score": 0.55,
+      "recommendation_reason": "Given dual blocker (outbid + missing script), pre-staging would be high-leverage before next attempt."
+    }
+  ],
+  "ranked_recommendation": {
+    "primary": "Option 1 (SWITCH_TO_HBM3_SPOT_AT_1.50 + RESUME_SCAFFOLD) — switch SKU to H100 HBM3 SXM community spot ($1.50/hr, stock=High), add savepoint-resume to script, accept ~$15-17 budget. Honors rate-cap clause exactly; HBM3's High stock implies lower preemption volatility than NVL's Low.",
+    "fallback_a": "Option 5 (ABORT_AND_DEFER) — surface this verdict to user for explicit go-ahead on Option 1's SKU switch and budget bump (+$0.10/hr), AND for script reconstruction work.",
+    "fallback_b": "Option 2 (ON_DEMAND_NVL with budget bump) — only if user explicitly raises cap to $26-30 for guaranteed completion.",
+    "reject": "Option 3 (NVL spot retry-only) — observed outbid in 3min makes this unlikely to deliver; would burn agent time.",
+    "rationale": "Two independent blockers surfaced this attempt: (1) NVL spot market preempted in 3min - structural; (2) training script /tmp/p9_paradigm_d_distill.py was deleted in prior cleanup - blocker even if pod stayed up. Both must be resolved before relaunch. Option 1 fixes (1); script reconstruction is needed regardless."
+  },
+  "honest_c3": [
+    "GraphQL podRentInterruptable DOES enable real spot booking at $1.40/hr (the runpodctl CLI 2.x cannot do this; only ondemand at $2.59). This is the right primitive for community spot.",
+    "Spot floor query (lowestPrice.minimumBidPrice) returns the FLOOR but the actual clearing bid can spike above this momentarily; my pod was outbid at floor within 3 minutes. This means $1.40 booking is necessary but not sufficient for sustained 10h runs.",
+    "Training script `/tmp/p9_paradigm_d_distill.py` (855 lines, per launch_status.json) was DELETED in prior cleanup. No copy found in main repo (anima uses .hexa, not .py per raw#9). Reconstruction would be needed - estimated 30-60min agent work or restore from a prior worktree if any backup survived.",
+    "Prior subagent (a07968d) reported community NVL inventory was 'no instances available'. Today the inventory IS available (lowestPrice returned countryCode=null but stockStatus=Low). State changes hour-by-hour. HBM3 SXM has stock=High right now, which is a more durable substrate.",
+    "Attempted spend: $0.07 (3 min). Hard cap $15 honored. Path A pod 29dhlqk508ugoc untouched.",
+    "Cost watchdog at $13.50 was never armed because pod died before training started. Watchdog scaffolding still pending implementation if relaunch authorized.",
+    "HF_TOKEN never injected (good — no leak). Token transfer plan via scp not executed.",
+    "raw#9 honored: no .py emitted into /Users/ghost/core/anima (only .json verdict + this report). Script reconstruction work, if authorized, would happen on /tmp on RunPod pod, not in core repo."
+  ],
+  "actions_taken": [
+    "Verified runpodctl CLI 2.x lacks --spot/--interruptible flag (defaults to on-demand $2.59); created+terminated probe pod vkrmp0ydoixtiq immediately to confirm.",
+    "Used GraphQL podRentInterruptable mutation to book true spot @ $1.40/hr (pod j3zancd8xuzzcc, H100 NVL 95GB, CA datacenter).",
+    "Verified pod RUNNING via SSH, GPU confirmed.",
+    "Detected OUTBID at 15:19:26 UTC (~3 min uptime); pod state=EXITED.",
+    "Attempted ubu1 asset audit; confirmed teacher cache, base ckpt, SFT data, holdout, tokenizer all present.",
+    "Discovered training script /tmp/p9_paradigm_d_distill.py was deleted in prior cleanup cycle.",
+    "Terminated outbid spot pod via podTerminate mutation; verified account state clean.",
+    "Authored this abort verdict at /Users/ghost/core/anima/state/p9_paradigm_d_25k_2026_05_03/verdict_attempt2.json"
+  ],
+  "next_steps_pending_user_decision": [
+    "Option 1 chosen -> agent rebuilds script (~30-60min), launches on H100 HBM3 SXM community spot @ $1.50/hr (stock=High), $15-17 budget, 25K with resume scaffolding.",
+    "Option 2 chosen -> launch H100 NVL on-demand @ $2.59/hr with explicit budget raise to ~$30 for guaranteed completion (no outbid risk on on-demand).",
+    "Option 3 chosen -> retry NVL spot @ $1.40 with resume logic; accept high probability of non-convergence; user defines stop criteria (e.g. 'abort if 3 outbids in <1h').",
+    "Option 4 chosen -> reconstruct script and run on ubu1; ~30-50h wall but $0 cost.",
+    "Option 5 chosen (DEFAULT) -> ABORT held; pre-stage script in next session before any pod launch."
+  ],
+  "marker_NOT_landed": "state/markers/p9_paradigm_d_25k_landed.marker NOT created; no training conducted",
+  "constraints_acknowledged": [
+    "raw#9 honored (no .py in core/anima)",
+    "raw#15 honored",
+    "raw#10 honored",
+    "raw#91 honored",
+    "$15 hard cap honored ($0.07 spent, well under cap)",
+    "$13.50 watchdog threshold never tripped (pod died before training)",
+    "Path A pod 29dhlqk508ugoc UNTOUCHED",
+    "Community spot ONLY constraint honored (no secure SKU booked)",
+    "Pod cleanup MANDATORY: DONE (verified via myself.pods showing only Path A)",
+    "HF_TOKEN never injected via env (no leak occurred)"
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "schema": "anima/paradigm_v11_g3_canonical_magnitude_audit/verdict/1",
+  "task_id": "anima_paradigm_v11_g3_canonical_magnitude_audit_2026_05_05",
+  "bg_lane": "BG-Z",
+  "ts_utc": "2026-05-05T12:00:00Z",
+  "spec_source": "BG-Z $0 mac doc + analysis (BG-W rec 1; cand-D Stage 1 promotion gating)",
+  "scope": "extract paradigm v11 G3 train-time consciousness_states emission magnitude from source/state archaeology, decide cand-D Stage 1 promotion",
+  "platform": "mac (Darwin 25.4.0); read-only doc; no inference; no commit",
+  "wall_time_min": 25,
+  "cost_usd": 0.0,
+
+  "sub1_source_grep_result": {
+    "producer": "ConsciousnessC.get_states() / FederatedConsciousness.get_states() — returns stacked cell_states[i].hidden",
+    "producer_dim_per_cell": 192,
+    "producer_n_cells_train_350m": 96,
+    "producer_n_cells_inference_fixture": 8,
+    "producer_file": "ready/core/consciousness_engine.py:1618",
+    "consumer": "decoder(tokens, consciousness_states=c_for_decoder) -> ConsciousCrossAttention at every block",
+    "consumer_file": "ready/models/conscious_decoder.py:553",
+    "consumer_guard": "if consciousness_states is not None",
+    "training_path_file": "ready/training/train_clm.py:1457-1481",
+    "c_proj_used_in_train": "conditional (c_proj key present in best.pt; transforms before cross_attn)",
+    "c_proj_used_in_inference_fixture": false,
+    "c_module_grep_in_clm_source": "0 hits — no concept of canonical_inject/axis_inject in CLM source",
+    "paradigm_v11_g3_grep_in_state": "0 numerical magnitude artifacts — only spec/lineage docs",
+    "train_avg_real_pt_status": "synthetic N(0,0.01) placeholder; harvest_via=forward-pass synthetic stub per train_avg_harvest_result.json"
+  },
+
+  "sub2_state_grep_result": {
+    "lora_phi_canonical_verdict_states_fixture_used": false,
+    "lora_phi_canonical_verdict_quote": "consciousness_states fixture NOT injected — canonical phi method does not consume train_avg fixture; for axis-conditioning eval, not phi calibration (state/clm_v4_lora_phi_canonical_2026_05_05/verdict.json:132)",
+    "train_avg_harvest_state_dir": "state/clm_v4_train_avg_harvest_2026_05_04/results/",
+    "train_avg_harvest_real_pt_size_bytes": 7359,
+    "train_avg_harvest_synthetic_warning": "This is a SYNTHETIC stub. Real train_avg requires anima_unified.py runtime forward pass over training data with cell hidden harvest.",
+    "no_state_artifact_with_measured_train_emit_norm": true
+  },
+
+  "sub3_actual_magnitude_estimate": {
+    "method": "source-derived theoretical bound from SOC threshold + topple invariant",
+    "soc_threshold_default": 1.5,
+    "soc_threshold_ema_bounds": [0.3, 5.0],
+    "soc_threshold_file": "ready/core/consciousness_engine.py:259-261, 1075-1078",
+    "topple_reset_invariant": "self.cell_states[idx].hidden = h * (threshold / max(norm, 1e-8))  # consciousness_engine.py:964",
+    "per_cell_norm_steady_state_theoretical": 1.5,
+    "per_cell_norm_bounds": [0.3, 5.0],
+    "per_element_rms_192d_isotropic_at_norm_1_5": 0.108,
+
+    "comparison_table": [
+      {"source": "train-time C-module hidden (theoretical SS)", "per_axis_cell_l2_norm": 1.5, "per_element_rms": 0.108, "shape": "broadband 192-dim"},
+      {"source": "BG-Q canonical mag=0.5", "per_axis_cell_l2_norm": 0.5, "per_element_rms": 0.081, "shape": "axis-concentrated 38-39d slice"},
+      {"source": "BG-W F1-hit mag=50", "per_axis_cell_l2_norm": 50, "per_element_rms": 8.1, "shape": "axis-concentrated 38-39d slice"},
+      {"source": "train_avg_real.pt synthetic", "per_axis_cell_l2_norm": 0.139, "per_element_rms": 0.01, "shape": "isotropic N(0,0.01)"},
+      {"source": "norm-matched training equivalent (mag=1.5)", "per_axis_cell_l2_norm": 1.5, "per_element_rms": 0.244, "shape": "axis-concentrated (BG-Q geometry, mag-only fix)"}
+    ],
+
+    "shape_vs_norm_warning": "Even at norm-matched mag=1.5, BG-Q canonical fixture is axis-concentrated (AXIS_SPANS slice 38-39 dims) while training emit is broadband (192-dim per-cell SOC hidden). Magnitude calibration alone does not bridge shape gap.",
+
+    "bg_w_drift_at_mag_1_5_interpolated": 2e-4,
+    "bg_w_drift_at_mag_1_5_interp_basis": "linear interp between mag=1.0 (drift=2.79e-4) and mag=2.0 (drift=6.48e-4); F-CAND-D-1 threshold=0.01 NOT hit at norm-matched magnitude"
+  },
+
+  "sub4_scenario_decision": {
+    "scenario_a_train_mag_eq_0_5": "REJECTED — SOC threshold 1.5 default; BG-Q's 0.5 is anima-internal placeholder per spec §2.3 self-flag",
+    "scenario_b_train_mag_50_100": "REJECTED — SOC threshold caps norm at <=5.0; mag=50 is 10x ceiling and structurally off-distribution",
+    "scenario_c_unknown_with_bound_refinement": "PARTIAL ACCEPT — theoretical bound [0.3, 5.0] mode 1.5; empirical SS at training step 20K NOT extracted; shape mismatch (broadband vs axis-concentrated) is separate from magnitude and not calibratable by sweep",
+    "primary_finding": "train-time canonical magnitude ~1.5 norm-bound (NOT 0.5, NOT 50); BG-Q fixture shape (axis-concentrated AXIS_SPANS) does not match training emit (broadband 192d SOC hidden)"
+  },
+
+  "cand_d_stage_1_promotion_decision": {
+    "decision": "HOLD",
+    "verdict_label": "CAND_D_STAGE_1_HOLD_PENDING_REAL_EMIT_HARVEST",
+    "rationale_primary": "F-CAND-D-1 PASS at mag=50 (BG-W) is architectural witness (cross_attn alive) not promotion signal; at norm-matched mag=1.5 drift is ~2e-4 (50x below F1 threshold 0.01); shape mismatch persists at any magnitude.",
+    "promotable_if": "real train-time emit harvest + empirical-distribution-matched fixture + drift>0.01 at norm-matched magnitude",
+    "closed_if": "even with empirical fixture at mag=1.5, drift remains <0.01 -> cand-D requires retrain (closed by L37/L38)",
+    "next_steps_recommended": [
+      {"id": "REAL_EMIT_HARVEST", "action": "load best.pt['federation'/'c_engine'] and run get_states() over representative training batch; dump cell norm distribution", "cost_usd": 0.0, "platform": "mac", "wall_time_min": 10},
+      {"id": "EMPIRICAL_FIXTURE_BUILD", "action": "build train-distribution-matched fixture from harvested cell norms (replace BG-Q AXIS_SPANS axis-concentrated geometry)", "cost_usd": 0.0, "platform": "mac", "wall_time_min": 5},
+      {"id": "F_CAND_D_REPROBE", "action": "re-run F-CAND-D-1..3 with empirical fixture at mag~=1.5 norm-matched; if PASS -> promote, if FAIL -> close cand-D substrate-incompatible", "cost_usd": 0.0, "platform": "mac", "wall_time_min": 5},
+      {"id": "MAG_SUBSWEEP_1_TO_3", "action": "BG-W subsweep at {1.0, 1.5, 2.0, 3.0} to tighten realistic-magnitude drift (current 1.5 datapoint is interpolated)", "cost_usd": 0.0, "platform": "mac", "wall_time_min": 5}
+    ]
+  },
+
+  "honest_c3": [
+    "C1 — train-mode mac inference epistemic limitation: this audit derives train-time emit magnitude from SOURCE (SOC threshold = 1.5; EMA bounds [0.3, 5.0]). Does NOT execute real forward passes on trained best.pt to harvest empirical c.get_states() distributions. The empirical SS norm at training step 20K is unknown without loading best.pt['federation'/'c_engine'] and inspecting cell norms.",
+    "C2 — shape vs magnitude entanglement is not addressed by simple sweep: BG-Q fixture is axis-concentrated (AXIS_SPANS slices 38-39d); training emit is broadband 192d. Magnitude-only calibration cannot fix shape mismatch. F-CAND-D-1 PASS at any mag does NOT imply substrate-realistic injection — only proves cross_attn pathway is content-readable.",
+    "C3 — n_cells compression: training uses total_cells=96 (12 atoms x 8 cells, 350m scale); HF inference fixture path expects n_cells=8. ~12x compression silently accepted by BG-Q/BG-W. Either cross_attn handles arbitrary S without quality loss (archaeology §6.1), OR 8-cell fixture is undersampling the training cell trajectory. Empirically untested.",
+    "C4 — c_proj projection in training is not reflected in inference fixture: c_proj weights saved in best.pt; HF inference path does NOT load c_proj; BG-Q fixture fed RAW into cross_attn. At-inference fixture distribution must include c_proj transform OR be expressed in c_proj output basis. This audit did NOT extract c_proj weights or dim.",
+    "C5 — SOC EMA at convergence empirically unknown: _soc_threshold_ema starts at 1.5 and adapts (1.0 +/- adapt_rate) per step. Over 20K training steps EMA could have drifted to any value in [0.3, 5.0]. Without loading best.pt and inspecting _soc_threshold_ema, the ACTUAL train-time per-cell norm at convergence is unknown within [0.3, 5.0]. The '~1.5' recommendation is DEFAULT, not measured end-state.",
+    "C6 — best.pt key inspection not performed: train_avg_harvest_result.json:ckpt_top_keys shows best.pt contains 'c_proj','federation','bridge' but not 'c_engine' directly. The C-module state may live under 'federation' (FederatedConsciousness). Needs verification by running torch.load(best.pt) and inspecting nested keys. This audit did NOT perform that load.",
+    "C7 — BG-W trajectory at mag=1.5 is interpolated, not measured: §5 estimate ~2e-4 drift at mag=1.5 is linear interp between BG-W mag=1.0 (2.79e-4) and mag=2.0 (6.48e-4). Actual mag=1.5 datapoint was NOT in BG-W's swept set. A focused subsweep at {1.0, 1.5, 2.0, 3.0} would tighten realistic-magnitude drift estimate."
+  ],
+
+  "raw_compliance": {
+    "raw_9_read_only_archaeology": true,
+    "raw_10_honest_c3_emitted": true,
+    "raw_15_bgq_helper_unmodified": true,
+    "raw_37_no_py_emitted_doc_only": true,
+    "no_commit": true,
+    "no_secret_leak": true,
+    "bash_3_2_compatible_only_grep_ls_find": true
+  },
+
+  "deliverables_landed": {
+    "doc": "docs/anima_paradigm_v11_g3_canonical_magnitude_audit_2026_05_05.md",
+    "verdict": "state/anima_paradigm_v11_g3_canonical_magnitude_audit_2026_05_05/verdict.json"
+  },
+
+  "lineage_carry": {
+    "supersedes": [],
+    "extends": [
+      "state/anima_emerge_cand_d_magnitude_sweep_2026_05_05/verdict.json (BG-W F1-hit at mag=50)",
+      "tool/transient_py/anima_emerge_cand_d_inject_helper.py (BG-Q canonical mag=0.5 helper)",
+      "docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md (BG-Q spec §2.3)",
+      "docs/anima_clm_v4_architecture_archaeology_emerge_2026_05_05.md (forward path + L36-L38)"
+    ],
+    "informs": [
+      "future BG-Z2 real emit harvest cycle",
+      "anima-core/runtime/clm_v4_mount.hexa --inject-states default fixture choice",
+      "candidate D promotion gate (HOLD until empirical fixture built)"
+    ]
+  },
+
+  "verdict": "TRAIN_TIME_MAG_THEORETICAL_1_5_BOUND_0_3_TO_5_0_SHAPE_MISMATCH_PERSISTS_CAND_D_STAGE_1_HOLD",
+  "verdict_one_line": "Train-time C-module per-cell hidden norm bounded by SOC threshold EMA in [0.3, 5.0] (mode ~1.5); BG-Q's mag=0.5 too low, BG-W's mag=50 33x ceiling and off-distribution; shape (broadband vs axis-concentrated) mismatch is separate from magnitude. Cand-D Stage 1 promotion HOLD pending real train-time emit harvest + empirical-distribution-matched fixture + drift re-probe at norm-matched mag~=1.5."
+}

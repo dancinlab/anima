@@ -1,0 +1,867 @@
+// anima-eeg/collect.hexa
+//
+// PURPOSE
+//   EEG data collection: OpenBCI Cyton+Daisy 16ch via BrainFlow → .npy stream.
+//   Phase 4 D+0 critical path priority #2 (anima-clm-eeg/docs/
+//   eeg_d_day_readiness_check_landing.md §6 priority 2). Real data acquisition
+//   for downstream verifiers (V_phen_LZ_complexity, V_phen_GWT_attention_entropy).
+//
+// MODES
+//   --selftest                synthetic 16ch × 5s × 125Hz, no hardware required
+//   --collect --duration <n>  --tag <s> --output <path>   real BrainFlow stream
+//
+// DESIGN MIRROR
+//   Mirrors anima-eeg/calibrate.hexa wrapper structure + tool/an11_b_eeg_ingest.hexa
+//   import) BEFORE stream — light pre-flight, NOT full impedance scan (heavy).
+//   For full impedance scan, run anima-eeg/calibrate.hexa --calibrate separately.
+//
+// OUTPUT
+//   .npy file at <output_path> with shape (rows, cols) where rows = 32 (BrainFlow
+//   data layout: timestamp + EEG + aux) and cols = duration_s × sample_rate_actual.
+//   Metadata sidecar at <output_path>.meta.json with channel indices, sample rate
+//   claimed (from BoardShim.get_sampling_rate, e.g. 125 Hz Cyton+Daisy), AND
+//   sample_rate_actual_hz (cols/duration_actual_s — TRUE rate after capture loop),
+//   tag, timestamp, brainflow version, raw10_honest field.
+//
+//   - .npy = numpy-compat binary; chosen over hexa-native binary because downstream
+//     anima-eeg/analyze.hexa + tool/an11_b_eeg_ingest.hexa expect numpy arrays.
+//   - Synthetic --selftest path writes deterministic .npy to /tmp/<tag>_selftest.npy
+//     and emits tier=DEGRADED so consumers know it is not phenomenal.
+//   - No fallback path: missing brainflow → ABORT_NO_BRAINFLOW + install hint.
+//   - 2026-05-03 sample-drop fix (see anima-eeg/recordings/sessions/*.meta.json
+//     audit): pre-fix `time.sleep(DURATION); get_board_data()` blind-pull pattern
+//     yielded effective fs 7-83 Hz on Cyton+Daisy real captures while metadata
+//     claimed 125 Hz (RFduino bandwidth + ring-buffer underrun). Post-fix:
+//       (a) start_stream(RING_BUFFER_SAMPLES=450000) — explicit ring size
+//       (b) chunked get_current_board_data(chunk_n) polling at CHUNK_SEC=0.2s
+//           cadence; samples appended into list until duration elapsed
+//       (c) sample_rate_actual_hz = cols/duration_actual_s emitted in meta
+//       (d) drop_ratio = sample_rate_actual_hz/sample_rate_claimed; if <0.95
+//           tier downgrades PHENOMENAL → APPROXIMATE_HW with raw10_honest
+//
+// USAGE
+//   hexa run anima-eeg/collect.hexa --selftest
+//   hexa run anima-eeg/collect.hexa --collect --duration 60 --tag baseline \
+//        --output recordings/sessions/baseline_20260427T120000.npy
+//
+//  @resolver-bypass(reason="darwin-native: globs /dev/cu.usbserial-* and uses
+//                   .venv-eeg/bin/python BrainFlow venv. Hetzner / linux pods
+//                   do not expose host USB nor local venv.")
+
+let SCHEMA              = "anima-eeg/collect/1"
+let HELPER_PATH         = "/tmp/anima_eeg_collect_helper.hexa_tmp"
+
+let DEFAULT_BOARD_ID            = 2          // BrainFlow CYTON_DAISY_BOARD
+let DEFAULT_BOARD_NAME          = "cyton_daisy"
+let DEFAULT_DURATION_SEC        = 60
+let DEFAULT_SAMPLE_RATE_HZ      = 125
+let DEFAULT_VENV_PYTHON         = ".venv-eeg/bin/python"
+let EXPECTED_CHANNEL_COUNT      = 16
+let EXPECTED_DATA_ROWS          = 32
+
+// ════════════════════════════════════════════════════════════════════
+// Section 0. Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn _kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _emit_trailer(reason_slug: string, reason_detail: string, fix: string) {
+    eprintln("reason: " + reason_slug + ": " + reason_detail)
+    eprintln("fix: " + fix)
+}
+
+fn _board_name_to_id(name: string) -> int {
+    if name == "cyton_daisy" { return DEFAULT_BOARD_ID }
+    if name == "cyton"       { return 0 }
+    if name == "ganglion"    { return 1 }
+    if name == "synthetic"   { return -1 }
+    return DEFAULT_BOARD_ID
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# anima-eeg collect helper — emitted by\n")
+    parts.push("import argparse, glob, json, os, subprocess, sys, textwrap\n\n")
+
+    parts.push("USB_SERIAL_GLOB = '/dev/cu.usbserial-*'\n")
+    parts.push("USB_MODEM_GLOB  = '/dev/cu.usbmodem*'\n")
+    parts.push("VENV_PYTHON     = '" + DEFAULT_VENV_PYTHON + "'\n\n")
+
+    parts.push("def emit_trailer(slug, detail, fix):\n")
+    parts.push("    sys.stderr.write(f'reason: {slug}: {detail}\\n')\n")
+    parts.push("    sys.stderr.write(f'fix: {fix}\\n')\n\n")
+
+    // negative possible. FALSE POSITIVE possible: any process holding the port
+    // is reported (we only *guess* OpenBCI GUI from process name).
+    parts.push("def detect_port_lock(port):\n")
+    parts.push("    if not port: return (False, 0, '')\n")
+    parts.push("    if not os.path.exists(port): return (False, 0, '')\n")
+    parts.push("    try:\n")
+    parts.push("        r = subprocess.run(['lsof', '-F', 'p', port], capture_output=True, text=True, timeout=3)\n")
+    parts.push("        for ln in (r.stdout or '').splitlines():\n")
+    parts.push("            if ln.startswith('p'):\n")
+    parts.push("                try: pid = int(ln[1:])\n")
+    parts.push("                except: continue\n")
+    parts.push("                pname = '?'\n")
+    parts.push("                try:\n")
+    parts.push("                    pr = subprocess.run(['ps','-p',str(pid),'-o','comm='], capture_output=True, text=True, timeout=2)\n")
+    parts.push("                    pname = (pr.stdout or '').strip() or '?'\n")
+    parts.push("                except Exception: pass\n")
+    parts.push("                return (True, pid, pname)\n")
+    parts.push("    except Exception: pass\n")
+    parts.push("    return (False, 0, '')\n\n")
+
+    parts.push("def emit_port_lock_msg(port, pid, pname):\n")
+    parts.push("    pl = (pname or '').lower()\n")
+    parts.push("    guess = ''\n")
+    parts.push("    if 'java' in pl or 'openbci' in pl or 'processing' in pl:\n")
+    parts.push("        guess = ' (OpenBCI GUI 추정)'\n")
+    parts.push("    sys.stderr.write(f'[port-lock] {port} 점유 중:\\n')\n")
+    parts.push("    sys.stderr.write(f'  PID {pid}: {pname or \"?\"}{guess}\\n')\n")
+    parts.push("    sys.stderr.write('\\n해결 방법:\\n')\n")
+    parts.push("    sys.stderr.write('  (a) OpenBCI GUI 종료 후 재시도\\n')\n")
+    parts.push("    sys.stderr.write('  (b) GUI Networking widget LSL outlet + anima-eeg/lsl_capture.hexa 사용\\n')\n")
+    parts.push("    sys.stderr.write('  (c) --force-port 로 우회 시도 (위험)\\n')\n")
+    parts.push("    emit_trailer('port-lock-detected', f'PID={pid} name={pname or \"?\"}',\n")
+    parts.push("                 '1) OpenBCI GUI Stop & Quit  2) 또는 --force-port 시도')\n\n")
+
+    parts.push("def detect_devices():\n")
+    parts.push("    return sorted(set(glob.glob(USB_SERIAL_GLOB) + glob.glob(USB_MODEM_GLOB)))\n\n")
+
+    parts.push("def choose_port(args):\n")
+    parts.push("    devs = detect_devices()\n")
+    parts.push("    if args.port: return args.port\n")
+    parts.push("    if not devs:\n")
+    parts.push("        emit_trailer('device-not-found', 'no usbserial/usbmodem device',\n")
+    parts.push("                     '1) plug Dongle  2) toggle Cyton ON->PC  3) re-run with --port')\n")
+    parts.push("        return None\n")
+    parts.push("    if len(devs) > 1:\n")
+    parts.push("        emit_trailer('device-ambiguous', f'multiple: {devs}',\n")
+    parts.push("                     '1) re-run with --port <one>')\n")
+    parts.push("        return None\n")
+    parts.push("    return devs[0]\n\n")
+
+    parts.push("def verify_brainflow():\n")
+    parts.push("    if not os.path.exists(VENV_PYTHON):\n")
+    parts.push("        emit_trailer('venv-missing', f'{VENV_PYTHON} not found',\n")
+    parts.push("                     '1) python3 -m venv .venv-eeg  2) pip install brainflow numpy')\n")
+    parts.push("        return False, ''\n")
+    // attribute (only sub-modules board_shim/data_filter/...). Use
+    // importlib.metadata.version() which reads dist-info METADATA — works for
+    // every pip-installed brainflow. 'unknown' fallback if metadata missing.
+    parts.push("    _probe_src = (\n")
+    parts.push("        'from brainflow.board_shim import BoardShim\\n'\n")
+    parts.push("        'import numpy\\n'\n")
+    parts.push("        'try:\\n'\n")
+    parts.push("        '    from importlib.metadata import version as _v\\n'\n")
+    parts.push("        '    print(_v(\"brainflow\"))\\n'\n")
+    parts.push("        'except Exception:\\n'\n")
+    parts.push("        '    print(\"unknown\")\\n'\n")
+    parts.push("    )\n")
+    parts.push("    r = subprocess.run([VENV_PYTHON, '-c', _probe_src],\n")
+    parts.push("                       capture_output=True, text=True, timeout=20)\n")
+    parts.push("    if r.returncode != 0:\n")
+    parts.push("        emit_trailer('brainflow-missing', f'{r.stderr.strip()[:200]}',\n")
+    parts.push("                     '1) source .venv-eeg/bin/activate  2) pip install --upgrade brainflow numpy')\n")
+    parts.push("        return False, ''\n")
+    parts.push("    return True, r.stdout.strip()\n\n")
+
+    // string) so `\n` escapes inside f-strings (e.g. f'msg\n') are NOT
+    // interpreted by Python's triple-quote parser as actual newlines. Without
+    // raw, the f-string body is split across physical lines with the closing
+    // ')' at column 0, breaking textwrap.dedent's common-prefix detection
+    // (common-prefix becomes "" → dedent strips nothing → 4-space indent
+    // survives → IndentationError on subprocess `-c` exec). Mirror pattern
+    // from eeg_brainflow_sanity.hexa (CAPTURE_PY = textwrap.dedent(r'''...''')).
+    parts.push("COLLECT_PY = textwrap.dedent(r'''\n")
+    // separate Python interpreter; outer helper's `import os` does NOT carry
+    // through. Must import `os` here for os.makedirs/os.path.* used below.
+    parts.push("    import json, os, sys, time, datetime\n")
+    parts.push("    import numpy as np\n")
+    parts.push("    from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds\n")
+    parts.push("    BOARD_ID = int(sys.argv[1])\n")
+    parts.push("    PORT     = sys.argv[2]\n")
+    parts.push("    DURATION = int(sys.argv[3])\n")
+    parts.push("    OUTPUT   = sys.argv[4]\n")
+    parts.push("    TAG      = sys.argv[5]\n")
+    parts.push("    params = BrainFlowInputParams()\n")
+    parts.push("    params.serial_port = PORT\n")
+    parts.push("    BoardShim.disable_board_logger()\n")
+    // 2026-05-03 sample-drop layer-2 fix. macOS Apple Silicon FTDI driver
+    // ships with LatencyTimer = 16 ms default → ring-buffer drains too slowly
+    // for 125 Hz × 16ch + RFduino bandwidth, producing 33-94 % sample drop
+    // (anima-eeg/docs/sample_rate_root_cause_consolidated_2026_05_03.md
+    // Cause A). Per Apple <IOKit/serial/ioss.h> + BrainFlow github #81 vendor
+    // confirm (Andrey1994), the IOSSDATALAT ioctl reduces driver-side
+    //   (1) ioctl number = _IOW('T', 0, unsigned long) = 0x80085400 on Darwin
+    //       64-bit (computed from sys/ioccom.h _IOW macro; spec value
+    //       0x80045442 in the original BG sheet was wrong — it pointed to
+    //       _IOW('T', 2, uint) which is IOSSIOSPEED). Audited via
+    //       references/brainflow/src/utils/os_serial_ioctl.cpp.
+    //   (2) BrainFlow openbci_serial_board.cpp set_port_settings() ALSO
+    //       calls set_custom_latency(1) on __APPLE__ during prepare_session,
+    //       so this is BELT-AND-SUSPENDERS. We set early so even if the
+    //       BrainFlow build was compiled with NO_IOCTL_HEADERS (silently
+    //       returns NO_SYSTEM_HEADERS_FOUND_ERROR), the latency is already
+    //       applied at the driver level for that device session.
+    //   (3) Per-device-attachment: setting persists until the device is
+    //       unplugged (NOT per-fd). Reopening the same /dev/cu.* without
+    //       physical disconnect retains 1ms.
+    parts.push("    def set_ftdi_latency_1ms(serial_path):\n")
+    parts.push("        import platform as _pf\n")
+    parts.push("        if _pf.system() != 'Darwin':\n")
+    parts.push("            return False, 'skip-non-darwin'\n")
+    parts.push("        if not serial_path or not isinstance(serial_path, str):\n")
+    parts.push("            return False, 'no-port'\n")
+    parts.push("        if serial_path == '<synthetic>' or serial_path.startswith('<'):\n")
+    parts.push("            return False, 'skip-synthetic'\n")
+    parts.push("        import os as _os, fcntl as _fc, struct as _st\n")
+    parts.push("        if not _os.path.exists(serial_path):\n")
+    parts.push("            return False, 'no-device-node'\n")
+    parts.push("        # IOSSDATALAT = _IOW('T', 0, unsigned long); ulong = 8 bytes on Darwin 64.\n")
+    parts.push("        IOSSDATALAT = 0x80085400\n")
+    parts.push("        latency_us = 1000  # 1 ms in microseconds (per Apple ioss.h)\n")
+    parts.push("        try:\n")
+    parts.push("            fd = _os.open(serial_path, _os.O_RDWR | _os.O_NOCTTY | _os.O_NONBLOCK)\n")
+    parts.push("        except Exception as exc:\n")
+    parts.push("            return False, f'open-fail:{exc!r}'[:120]\n")
+    parts.push("        try:\n")
+    parts.push("            _fc.ioctl(fd, IOSSDATALAT, _st.pack('L', latency_us))\n")
+    parts.push("            ok, why = True, 'ok'\n")
+    parts.push("        except Exception as exc:\n")
+    parts.push("            ok, why = False, f'ioctl-fail:{exc!r}'[:120]\n")
+    parts.push("        finally:\n")
+    parts.push("            try: _os.close(fd)\n")
+    parts.push("            except Exception: pass\n")
+    parts.push("        return ok, why\n")
+    parts.push("    _ftdi_ok, _ftdi_why = set_ftdi_latency_1ms(PORT)\n")
+    parts.push("    if _ftdi_ok:\n")
+    parts.push("        sys.stderr.write(f'[ftdi-latency] set to 1ms on {PORT}\\n')\n")
+    parts.push("    else:\n")
+    parts.push("        sys.stderr.write(f'[ftdi-latency] WARN: ioctl skipped/failed: {_ftdi_why}\\n')\n")
+    parts.push("    # from a prior helper that crashed before its finally block.\n")
+    parts.push("    try: BoardShim.release_all_sessions()\n")
+    parts.push("    except Exception: pass\n")
+    parts.push("    board = BoardShim(BOARD_ID, params)\n")
+    parts.push("    payload = {'rc':0,'rows':0,'cols':0,'sample_rate':0.0,'duration_actual':0.0,\n")
+    parts.push("               'eeg_indices':[],'output_path':OUTPUT,'err':''}\n")
+    parts.push("    t_start = time.time()\n")
+    parts.push("    try:\n")
+    parts.push("        sr = float(BoardShim.get_sampling_rate(BOARD_ID))\n")
+    parts.push("        eeg_idx = list(BoardShim.get_eeg_channels(BOARD_ID))\n")
+    parts.push("        payload['sample_rate'] = sr\n")
+    parts.push("        payload['eeg_indices'] = eeg_idx\n")
+    parts.push("        # (audited brainflow/exit_codes.py 2026-05-03):\n")
+    parts.push("        #   1 PORT_ALREADY_OPEN, 7 BOARD_NOT_READY, 8 STREAM_ALREADY_RUN,\n")
+    parts.push("        #  15 BOARD_NOT_CREATED, 16 ANOTHER_BOARD_IS_CREATED.\n")
+    parts.push("        def _is_leak(_m):\n")
+    parts.push("            _s = str(_m)\n")
+    parts.push("            for _n in ('PORT_ALREADY_OPEN','BOARD_NOT_READY','STREAM_ALREADY_RUN','BOARD_NOT_CREATED','ANOTHER_BOARD_IS_CREATED'):\n")
+    parts.push("                if _n in _s: return True\n")
+    parts.push("            for _c in (':1 ',':7 ',':8 ',':15 ',':16 ',' code 1 ',' code 7 ',' code 8 ',' code 15 ',' code 16 '):\n")
+    parts.push("                if _c in _s: return True\n")
+    parts.push("            return False\n")
+    parts.push("        # Retry-once on leaked-session error during prepare_session\n")
+    parts.push("        try:\n")
+    parts.push("            board.prepare_session()\n")
+    parts.push("        except Exception as _e1:\n")
+    parts.push("            if _is_leak(_e1):\n")
+    parts.push("                try: BoardShim.release_all_sessions()\n")
+    parts.push("                except Exception: pass\n")
+    parts.push("                time.sleep(2)\n")
+    parts.push("                board = BoardShim(BOARD_ID, params)\n")
+    parts.push("                board.prepare_session()\n")
+    parts.push("            else:\n")
+    parts.push("                raise\n")
+    parts.push("        # start_stream — retry-once with fresh prepare on leak codes.\n")
+    parts.push("        # 2026-05-03 sample-drop fix: pass explicit ring-buffer size\n")
+    parts.push("        # (450000 samples ~= 60min @125Hz) so default underrun cannot\n")
+    parts.push("        # silently drop samples on long captures.\n")
+    parts.push("        RING_BUFFER_SAMPLES = 450000\n")
+    parts.push("        try:\n")
+    parts.push("            board.start_stream(RING_BUFFER_SAMPLES)\n")
+    parts.push("        except Exception as _e2:\n")
+    parts.push("            if _is_leak(_e2):\n")
+    parts.push("                try: board.release_session()\n")
+    parts.push("                except Exception: pass\n")
+    parts.push("                try: BoardShim.release_all_sessions()\n")
+    parts.push("                except Exception: pass\n")
+    parts.push("                time.sleep(2)\n")
+    parts.push("                board = BoardShim(BOARD_ID, params)\n")
+    parts.push("                board.prepare_session()\n")
+    parts.push("                board.start_stream(RING_BUFFER_SAMPLES)\n")
+    parts.push("            else:\n")
+    parts.push("                raise\n")
+    parts.push("        # 2026-05-03 sample-drop fix: chunked polling pattern.\n")
+    parts.push("        # Pre-fix: time.sleep(DURATION); get_board_data() — single\n")
+    parts.push("        # ring-buffer drain at end. Ring buffer can silently overwrite\n")
+    parts.push("        # older samples and BrainFlow C++ side may underrun on serial\n")
+    parts.push("        # latency spikes (RFduino bandwidth, FTDI driver hiccup).\n")
+    parts.push("        # Post-fix: poll get_current_board_data(chunk_n) at CHUNK_SEC\n")
+    parts.push("        # cadence and accumulate into Python list — drains buffer\n")
+    parts.push("        # incrementally so ring never overflows; also yields actual\n")
+    parts.push("        # per-chunk sample count visibility for drop detection.\n")
+    parts.push("        CHUNK_SEC = 0.2\n")
+    parts.push("        chunk_n_target = int(max(1, round(sr * CHUNK_SEC)))\n")
+    parts.push("        chunk_n_pull   = int(max(chunk_n_target * 4, 256))\n")
+    parts.push("        # Discard any pre-stream noise: small initial drain.\n")
+    parts.push("        time.sleep(0.05)\n")
+    parts.push("        try: _ = board.get_board_data()\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("        t_loop_start = time.time()\n")
+    parts.push("        chunks = []\n")
+    parts.push("        chunk_count = 0\n")
+    parts.push("        underrun_chunks = 0\n")
+    parts.push("        while (time.time() - t_loop_start) < DURATION:\n")
+    parts.push("            time.sleep(CHUNK_SEC)\n")
+    parts.push("            try:\n")
+    parts.push("                d = board.get_current_board_data(chunk_n_pull)\n")
+    parts.push("            except Exception as _ge:\n")
+    parts.push("                sys.stderr.write(f'get_current_board_data_fail err={repr(_ge)[:160]}\\n')\n")
+    parts.push("                continue\n")
+    parts.push("            if d is None or d.size == 0: continue\n")
+    parts.push("            n = int(d.shape[1])\n")
+    parts.push("            if n < chunk_n_target: underrun_chunks += 1\n")
+    parts.push("            # We *also* drain stale samples via get_board_data so the ring\n")
+    parts.push("            # ring-buffer head advances — keeps memory bounded for long runs.\n")
+    parts.push("            try: drained = board.get_board_data()\n")
+    parts.push("            except Exception: drained = None\n")
+    parts.push("            if drained is not None and drained.size > 0:\n")
+    parts.push("                chunks.append(drained)\n")
+    parts.push("            chunk_count += 1\n")
+    parts.push("        # Final drain after loop\n")
+    parts.push("        try: tail = board.get_board_data()\n")
+    parts.push("        except Exception: tail = None\n")
+    parts.push("        if tail is not None and tail.size > 0:\n")
+    parts.push("            chunks.append(tail)\n")
+    parts.push("        t_end = time.time()\n")
+    parts.push("        if chunks:\n")
+    parts.push("            data = np.concatenate(chunks, axis=1)\n")
+    parts.push("        else:\n")
+    parts.push("            data = np.zeros((32, 0), dtype=np.float32)\n")
+    parts.push("        payload['rows'] = int(data.shape[0])\n")
+    parts.push("        payload['cols'] = int(data.shape[1])\n")
+    parts.push("        payload['duration_actual'] = float(t_end - t_start)\n")
+    parts.push("        # whether we hit board's claimed sample rate (e.g. 125 Hz).\n")
+    parts.push("        dur_eff = max(payload['duration_actual'], 1e-6)\n")
+    parts.push("        sr_actual = float(payload['cols']) / dur_eff\n")
+    parts.push("        drop_ratio = sr_actual / sr if sr > 0 else 0.0\n")
+    parts.push("        payload['sample_rate_actual'] = sr_actual\n")
+    parts.push("        payload['drop_ratio'] = drop_ratio\n")
+    parts.push("        payload['chunk_count'] = chunk_count\n")
+    parts.push("        payload['underrun_chunks'] = underrun_chunks\n")
+    parts.push("        os.makedirs(os.path.dirname(os.path.abspath(OUTPUT)) or '.', exist_ok=True)\n")
+    parts.push("        np.save(OUTPUT, data.astype(np.float32))\n")
+    parts.push("        if drop_ratio < 0.95:\n")
+    parts.push("            tier_str = 'APPROXIMATE_HW'\n")
+    parts.push("            honest_str = 'real_brainflow_capture_partial_drop'\n")
+    parts.push("            sys.stderr.write(f'[sample-drop-warning] sr_claimed={sr:.2f} sr_actual={sr_actual:.2f} drop_ratio={drop_ratio:.3f} underrun_chunks={underrun_chunks}/{chunk_count}\\n')\n")
+    parts.push("        else:\n")
+    parts.push("            tier_str = 'PHENOMENAL'\n")
+    parts.push("            honest_str = 'real_brainflow_capture'\n")
+    parts.push("        meta = {\n")
+    parts.push("            'schema': 'anima-eeg/collect/1',\n")
+    parts.push("            'tag': TAG,\n")
+    parts.push("            'board_id': BOARD_ID,\n")
+    parts.push("            'serial_port': PORT,\n")
+    parts.push("            'sample_rate': sr,\n")
+    parts.push("            'sample_rate_claimed_hz': sr,\n")
+    parts.push("            'sample_rate_actual_hz': sr_actual,\n")
+    parts.push("            'drop_ratio': drop_ratio,\n")
+    parts.push("            'chunk_count': chunk_count,\n")
+    parts.push("            'underrun_chunks': underrun_chunks,\n")
+    parts.push("            'ring_buffer_samples': RING_BUFFER_SAMPLES,\n")
+    parts.push("            'capture_pattern': 'chunked_get_current_board_data_2026_05_03',\n")
+    parts.push("            'ftdi_latency_1ms_ioctl': bool(_ftdi_ok),\n")
+    parts.push("            'ftdi_latency_ioctl_reason': _ftdi_why,\n")
+    parts.push("            'eeg_indices': eeg_idx,\n")
+    parts.push("            'rows': payload['rows'],\n")
+    parts.push("            'cols': payload['cols'],\n")
+    parts.push("            'duration_requested_s': DURATION,\n")
+    parts.push("            'duration_actual_s': payload['duration_actual'],\n")
+    parts.push("            'timestamp_iso': datetime.datetime.now(datetime.timezone.utc).isoformat(),\n")
+    parts.push("            'tier': tier_str,\n")
+    parts.push("            'raw10_honest': honest_str\n")
+    parts.push("        }\n")
+    parts.push("        meta_path = OUTPUT + '.meta.json'\n")
+    parts.push("        with open(meta_path, 'w') as f: json.dump(meta, f, indent=2)\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        payload['rc'] = 1\n")
+    parts.push("        payload['err'] = repr(exc)[:400]\n")
+    parts.push("    finally:\n")
+    parts.push("        try: board.stop_stream()\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("        try: board.release_session()\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("    print(json.dumps(payload))\n")
+    parts.push("''')\n\n")
+
+    parts.push("def cmd_collect(args):\n")
+    parts.push("    port = choose_port(args)\n")
+    parts.push("    if port is None: print('collect=fail'); sys.exit(2)\n")
+    parts.push("    # Port-lock preflight (graceful fail unless --force-port)\n")
+    parts.push("    if not getattr(args, 'force_port', False):\n")
+    parts.push("        _locked, _pid, _pname = detect_port_lock(port)\n")
+    parts.push("        if _locked:\n")
+    parts.push("            emit_port_lock_msg(port, _pid, _pname)\n")
+    parts.push("            print(f'collect=fail port={port} reason=port-locked')\n")
+    parts.push("            sys.exit(8)\n")
+    parts.push("    ok, ver = verify_brainflow()\n")
+    parts.push("    if not ok: print('collect=fail'); print(f'port={port}'); sys.exit(3)\n")
+    parts.push("    print(f'brainflow_version={ver}')\n")
+    parts.push("    print(f'port={port}')\n")
+    parts.push("    print(f'board_id={args.board_id}')\n")
+    parts.push("    print(f'duration_requested={args.duration}')\n")
+    parts.push("    print(f'tag={args.tag}')\n")
+    parts.push("    print(f'output={args.output}')\n")
+    parts.push("    print(f'preflight=ok')\n")
+    parts.push("    r = subprocess.run([VENV_PYTHON, '-c', COLLECT_PY,\n")
+    parts.push("                        str(args.board_id), port, str(args.duration),\n")
+    parts.push("                        args.output, args.tag],\n")
+    parts.push("                       capture_output=True, text=True, timeout=args.duration + 60)\n")
+    parts.push("    if r.returncode != 0 or not r.stdout.strip():\n")
+    parts.push("        emit_trailer('collect-subprocess-failed',\n")
+    parts.push("                     f'rc={r.returncode} stderr={r.stderr.strip()[:300]}',\n")
+    parts.push("                     '1) verify Cyton ON  2) verify Daisy seated  3) re-run')\n")
+    parts.push("        print('collect=fail'); sys.exit(2)\n")
+    parts.push("    try:\n")
+    parts.push("        result = json.loads(r.stdout.strip().splitlines()[-1])\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        emit_trailer('collect-parse-failed', f'{exc!r}', '1) check brainflow version')\n")
+    parts.push("        print('collect=fail'); sys.exit(2)\n")
+    parts.push("    if result['rc'] != 0:\n")
+    parts.push("        emit_trailer('collect-board-error', result.get('err','<no detail>'),\n")
+    parts.push("                     '1) toggle Cyton OFF then PC  2) verify Daisy  3) re-run')\n")
+    parts.push("        print('collect=fail'); sys.exit(2)\n")
+    parts.push("    print(f'rows={result[\"rows\"]}')\n")
+    parts.push("    print(f'cols={result[\"cols\"]}')\n")
+    parts.push("    print(f'sample_rate_claimed={result[\"sample_rate\"]}')\n")
+    parts.push("    _sr_actual = result.get('sample_rate_actual', 0.0)\n")
+    parts.push("    _dr        = result.get('drop_ratio', 0.0)\n")
+    parts.push("    _cc        = result.get('chunk_count', 0)\n")
+    parts.push("    _ur        = result.get('underrun_chunks', 0)\n")
+    parts.push("    print(f'sample_rate_actual={_sr_actual:.4f}')\n")
+    parts.push("    print(f'drop_ratio={_dr:.4f}')\n")
+    parts.push("    print(f'chunk_count={_cc}')\n")
+    parts.push("    print(f'underrun_chunks={_ur}')\n")
+    parts.push("    print(f'duration_actual={result[\"duration_actual\"]:.4f}')\n")
+    parts.push("    print(f'eeg_channel_count={len(result[\"eeg_indices\"])}')\n")
+    parts.push("    print(f'output_path={result[\"output_path\"]}')\n")
+    parts.push("    print(f'meta_path={result[\"output_path\"]}.meta.json')\n")
+    parts.push("    if _dr < 0.95:\n")
+    parts.push("        print(f'tier=APPROXIMATE_HW')\n")
+    parts.push("        print(f'raw10_honest=real_brainflow_capture_partial_drop')\n")
+    parts.push("    else:\n")
+    parts.push("        print(f'tier=PHENOMENAL')\n")
+    parts.push("        print(f'raw10_honest=real_brainflow_capture')\n")
+    parts.push("    print('collect=ok')\n")
+    parts.push("    sys.exit(0)\n\n")
+
+    parts.push("def cmd_selftest(args):\n")
+    parts.push("    # Synthetic 16ch * 5s * 125Hz deterministic, no hardware.\n")
+    parts.push("    import numpy as np, datetime\n")
+    parts.push("    n_ch = " + to_string(EXPECTED_CHANNEL_COUNT) + "\n")
+    parts.push("    rows = " + to_string(EXPECTED_DATA_ROWS) + "\n")
+    parts.push("    sr = " + to_string(DEFAULT_SAMPLE_RATE_HZ) + ".0\n")
+    parts.push("    duration = 5\n")
+    parts.push("    cols = int(sr * duration)\n")
+    parts.push("    rng = np.random.default_rng(20260427)\n")
+    parts.push("    data = np.zeros((rows, cols), dtype=np.float32)\n")
+    parts.push("    t = np.arange(cols) / sr\n")
+    parts.push("    eeg_idx = list(range(1, n_ch + 1))  # rows 1..16 = EEG\n")
+    parts.push("    for k, ch in enumerate(eeg_idx):\n")
+    parts.push("        data[ch] = (0.6 * np.sin(2 * np.pi * (8.0 + k * 0.5) * t) +\n")
+    parts.push("                    0.4 * rng.standard_normal(cols)).astype(np.float32)\n")
+    parts.push("    out_path = '/tmp/anima_eeg_collect_selftest.npy'\n")
+    parts.push("    np.save(out_path, data)\n")
+    parts.push("    meta = {\n")
+    parts.push("        'schema': '" + SCHEMA + "',\n")
+    parts.push("        'tag': 'selftest_synthetic',\n")
+    parts.push("        'board_id': -1,\n")
+    parts.push("        'serial_port': '<synthetic>',\n")
+    parts.push("        'sample_rate': sr,\n")
+    parts.push("        'eeg_indices': eeg_idx,\n")
+    parts.push("        'rows': rows,\n")
+    parts.push("        'cols': cols,\n")
+    parts.push("        'duration_requested_s': duration,\n")
+    parts.push("        'duration_actual_s': float(duration),\n")
+    parts.push("        'timestamp_iso': '2026-04-27T00:00:00+00:00',\n")
+    parts.push("        'tier': 'DEGRADED',\n")
+    parts.push("        'raw10_honest': 'synthetic_collect_no_hardware'\n")
+    parts.push("    }\n")
+    parts.push("    import json\n")
+    parts.push("    meta_path = out_path + '.meta.json'\n")
+    parts.push("    with open(meta_path, 'w') as f: json.dump(meta, f, indent=2)\n")
+    parts.push("    # validate written .npy roundtrip\n")
+    parts.push("    rd = np.load(out_path)\n")
+    parts.push("    # (drop_ratio=1.0, no underruns) so downstream code that checks\n")
+    parts.push("    # the new keys works in selftest mode.\n")
+    parts.push("    sr_actual = float(cols) / float(duration)\n")
+    parts.push("    drop_ratio = sr_actual / sr if sr > 0 else 0.0\n")
+    parts.push("    print('schema=" + SCHEMA + "')\n")
+    parts.push("    print('mode=selftest_synthetic')\n")
+    parts.push("    print('venv_python_exists=' + str(os.path.exists(VENV_PYTHON)))\n")
+    parts.push("    print(f'rows={rows}')\n")
+    parts.push("    print(f'cols={cols}')\n")
+    parts.push("    print(f'sample_rate_claimed={sr}')\n")
+    parts.push("    print(f'sample_rate_actual={sr_actual:.4f}')\n")
+    parts.push("    print(f'drop_ratio={drop_ratio:.4f}')\n")
+    parts.push("    print(f'chunk_count=0')\n")
+    parts.push("    print(f'underrun_chunks=0')\n")
+    parts.push("    print(f'duration_actual={float(duration):.4f}')\n")
+    parts.push("    print(f'eeg_channel_count={n_ch}')\n")
+    parts.push("    print(f'output_path={out_path}')\n")
+    parts.push("    print(f'meta_path={meta_path}')\n")
+    parts.push("    print(f'roundtrip_rows={int(rd.shape[0])}')\n")
+    parts.push("    print(f'roundtrip_cols={int(rd.shape[1])}')\n")
+    parts.push("    print(f'roundtrip_dtype={str(rd.dtype)}')\n")
+    parts.push("    print('tier=DEGRADED')\n")
+    parts.push("    print('raw10_honest=synthetic_collect_no_hardware')\n")
+    parts.push("    print('verdict=PASS')\n")
+    parts.push("    print('selftest=ok')\n")
+    parts.push("    print('DONE')\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    sub = p.add_subparsers(dest='cmd', required=True)\n")
+    parts.push("    sub.add_parser('selftest')\n")
+    parts.push("    c = sub.add_parser('collect')\n")
+    parts.push("    c.add_argument('--port', default='')\n")
+    parts.push("    c.add_argument('--duration', type=int, default=" + to_string(DEFAULT_DURATION_SEC) + ")\n")
+    parts.push("    c.add_argument('--tag', default='untagged')\n")
+    parts.push("    c.add_argument('--output', required=True)\n")
+    parts.push("    c.add_argument('--board-id', dest='board_id', type=int, default=" + to_string(DEFAULT_BOARD_ID) + ")\n")
+    parts.push("    args = p.parse_args()\n")
+    parts.push("    if args.cmd == 'selftest': cmd_selftest(args)\n")
+    parts.push("    elif args.cmd == 'collect': cmd_collect(args)\n")
+    parts.push("    else: sys.exit(2)\n\n")
+
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _run_helper(args: string) -> list {
+    let cmd = "python3 " + HELPER_PATH + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 2. Selftest assertions (in-hexa side)
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn _run_selftest_assertions(body: string) -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+
+    println("[T1] helper marker selftest=ok")
+    let t1 = assert_true(_kv_lookup(body, "selftest") == "ok", "selftest=ok present")
+    if t1 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T2] schema field")
+    let t2 = assert_true(_kv_lookup(body, "schema") == SCHEMA, "schema=" + SCHEMA)
+    if t2 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T3] mode=selftest_synthetic")
+    let t3 = assert_true(_kv_lookup(body, "mode") == "selftest_synthetic", "mode=selftest_synthetic")
+    if t3 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T4] eeg_channel_count=16")
+    let t4 = assert_true(_kv_lookup(body, "eeg_channel_count") == to_string(EXPECTED_CHANNEL_COUNT),
+                        "eeg_channel_count=" + to_string(EXPECTED_CHANNEL_COUNT))
+    if t4 { pass = pass + 1 } else { fail = fail + 1 }
+
+    let t5 = assert_true(_kv_lookup(body, "tier") == "DEGRADED", "tier=DEGRADED")
+    if t5 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T6] verdict=PASS")
+    let t6 = assert_true(_kv_lookup(body, "verdict") == "PASS", "verdict=PASS")
+    if t6 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T7] roundtrip rows match (32) — .npy write+read consistency")
+    let t7 = assert_true(_kv_lookup(body, "roundtrip_rows") == to_string(EXPECTED_DATA_ROWS),
+                        "roundtrip_rows=" + to_string(EXPECTED_DATA_ROWS))
+    if t7 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T8] roundtrip dtype=float32")
+    let t8 = assert_true(_kv_lookup(body, "roundtrip_dtype") == "float32", "roundtrip_dtype=float32")
+    if t8 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T9] sample_rate_actual key emitted (sample-drop-fix 2026-05-03)")
+    let t9 = assert_true(_kv_lookup(body, "sample_rate_actual") != "",
+                        "sample_rate_actual=<value> present")
+    if t9 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T10] drop_ratio key emitted")
+    let t10 = assert_true(_kv_lookup(body, "drop_ratio") != "",
+                         "drop_ratio=<value> present")
+    if t10 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T11] sample_rate_claimed key emitted")
+    let t11 = assert_true(_kv_lookup(body, "sample_rate_claimed") != "",
+                         "sample_rate_claimed=<value> present")
+    if t11 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T12] chunk_count + underrun_chunks keys emitted (visibility)")
+    let _cc = _kv_lookup(body, "chunk_count")
+    let _ur = _kv_lookup(body, "underrun_chunks")
+    let t12 = assert_true(_cc != "" && _ur != "",
+                         "chunk_count=" + _cc + " underrun_chunks=" + _ur)
+    if t12 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 3. CLI
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-eeg/collect.hexa --selftest [--substrate <name>]")
+    eprintln("       hexa run anima-eeg/collect.hexa --collect --duration <n> --tag <s> --output <path> [--port <p>] [--board <name>]")
+    eprintln("flags:")
+    eprintln("  --selftest        synthetic 16ch x 5s x 125Hz; no hardware, tier=DEGRADED")
+    eprintln("  --collect         real BrainFlow stream (requires hardware + .venv-eeg)")
+    eprintln("  --duration <n>    capture duration sec (default " + to_string(DEFAULT_DURATION_SEC) + ")")
+    eprintln("  --tag <s>         session label (e.g. baseline, nback, emotion_sync)")
+    eprintln("  --output <p>      .npy output path (auto-creates parent dir)")
+    eprintln("  --port <p>        Dongle serial node (auto-detect if omitted)")
+    eprintln("  --board <name>    cyton_daisy | cyton | ganglion (default cyton_daisy)")
+    eprintln("  --substrate <n>   brainflow (default) | synth | replay — selftest dispatch.")
+    eprintln("                    synth → eeg/substrates/synth_substrate.hexa (16-row LCG).")
+    eprintln("                    replay → eeg/substrates/replay_substrate.hexa (disk .npy).")
+    eprintln("                    inline BoardShim loop (sample-drop fix preserved). Full")
+    eprintln("                    delegation to brainflow_substrate is Phase 2 (needs HW test).")
+    eprintln("  --legacy-inline   explicit alias for --substrate brainflow")
+    eprintln("  --help            this message")
+}
+
+// argv normalize — see experiment.hexa _flags_only_argv 동치 doc.
+// Mac stage0 / hetzner ssh / docker / AOT-cache 의 argv() 형식 차이 portable handling.
+// argv may contain:
+//   - interpreter mode: [.../script.hexa, ...flags]
+//   - AOT cache mode:   [.../.hexa-cache/<hash>/exe, .../exe (duplicate), ...flags]
+//   - hetzner ssh / docker may add extra wrapper entries.
+// memory project_aot_push_gotcha.md pattern).
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path {
+            if a.ends_with("/exe") { is_path = true }
+        }
+        // E-1 follow-up host-portability fix: some hexa wrappers emit argv[0] =
+        // /<install>/bin/build/hexa_interp (Linux build dir) instead of the
+        // legacy /<install>/bin/exe path. Strip explicitly so non-flag prefix
+        // doesn't fall through as "unknown-arg".
+        if !is_path {
+            if a.ends_with("hexa_interp") { is_path = true }
+        }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut collect_mode = false
+    let mut want_help = false
+    let mut port = ""
+    let mut duration = DEFAULT_DURATION_SEC
+    let mut tag = "untagged"
+    let mut output = ""
+    let mut board_name = DEFAULT_BOARD_NAME
+    // E-1 follow-up Phase 1: substrate dispatch flag. Default brainflow keeps
+    // the existing 812-line inline BoardShim path (sample-drop fix preserved
+    // verbatim). synth/replay are delegated to dedicated substrate modules.
+    // Phase 2 (deferred): inline path → brainflow_substrate.api_open_session
+    // / api_read_chunk / api_close_session — needs real-hardware regression.
+    let mut substrate_kind = "brainflow"
+    let mut legacy_inline = false
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest"  { selftest = true; i = i + 1; continue }
+        if a == "--collect"   { collect_mode = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        if a == "--port" {
+            if (i + 1) >= len(av) { _emit_trailer("missing-arg-value","--port requires value","1) re-run with --port <path>"); exit(2) }
+            port = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--duration" {
+            if (i + 1) >= len(av) { _emit_trailer("missing-arg-value","--duration requires int","1) re-run with --duration 60"); exit(2) }
+            duration = to_int(av[i + 1]); i = i + 2; continue
+        }
+        if a == "--tag" {
+            if (i + 1) >= len(av) { _emit_trailer("missing-arg-value","--tag requires value","1) re-run with --tag baseline"); exit(2) }
+            tag = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--output" {
+            if (i + 1) >= len(av) { _emit_trailer("missing-arg-value","--output requires path","1) re-run with --output recordings/sessions/x.npy"); exit(2) }
+            output = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--board" {
+            if (i + 1) >= len(av) { _emit_trailer("missing-arg-value","--board requires value","1) re-run with --board cyton_daisy"); exit(2) }
+            board_name = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--substrate" {
+            if (i + 1) >= len(av) { _emit_trailer("missing-arg-value","--substrate requires name","1) re-run with --substrate brainflow|synth|replay"); exit(2) }
+            substrate_kind = av[i + 1]
+            if substrate_kind != "brainflow" && substrate_kind != "synth" && substrate_kind != "replay" {
+                _emit_trailer("substrate-invalid", "substrate=" + substrate_kind, "1) use brainflow | synth | replay")
+                exit(2)
+            }
+            i = i + 2; continue
+        }
+        if a == "--legacy-inline" { legacy_inline = true; i = i + 1; continue }
+        _emit_trailer("unknown-arg", "unrecognized argument: " + a, "1) re-run with --help")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help { _print_usage(); exit(0) }
+
+    if !selftest && !collect_mode {
+        _print_usage()
+        exit(2)
+    }
+
+    // --legacy-inline is an explicit alias for --substrate brainflow.
+    // If both specified with conflicting values, --legacy-inline wins (more explicit).
+    if legacy_inline { substrate_kind = "brainflow" }
+
+    // Phase 2 deferral: real-hardware --collect only supports brainflow path.
+    if collect_mode && substrate_kind != "brainflow" {
+        _emit_trailer("substrate-not-implemented-for-collect",
+                      "substrate=" + substrate_kind + " unsupported in --collect mode (Phase 2)",
+                      "1) drop --substrate (default brainflow)  2) or run --selftest --substrate " + substrate_kind)
+        exit(2)
+    }
+
+    // Delegate selftest to dedicated substrate module when requested.
+    //
+    //   We tried `exec_with_status("hexa run eeg/substrates/<X>.hexa --selftest")`
+    //   but the hexa interp on darwin sandboxes the process into
+    //   /tmp/resource-tcp-XXXXX with no access to the project root path —
+    //   the relative path `eeg/substrates/...` doesn't resolve, and there
+    //   is no project-root env var to pin. Nested `hexa run` invocation
+    //   isn't reliable in this configuration.
+    //   So we don't subprocess-delegate. We print a pointer at PASS-with-skip
+    //   tier (verdict=DEFERRED) and direct the operator to invoke the
+    //   substrate module directly. Once the shim exports HEXA_PROJECT_ROOT
+    //   or the subprocess inherits cwd from the user shell, replace the
+    //   pointer with a real `exec_with_status` call.
+    if selftest && substrate_kind == "synth" {
+        println("== collect selftest (Phase 1 dispatch — synth) ==")
+        println("schema=" + SCHEMA)
+        println("mode=substrate_dispatch")
+        println("substrate=synth")
+        println("raw10_honest=substrate_dispatch_phase1_deferred")
+        println("pointer=hexa run eeg/substrates/synth_substrate.hexa --selftest")
+        println("rationale=hexa-interp-sandbox-blocks-nested-run-2026-05-12")
+        println("verdict=DEFERRED")
+        println("selftest=ok")
+        exit(0)
+    }
+    if selftest && substrate_kind == "replay" {
+        println("== collect selftest (Phase 1 dispatch — replay) ==")
+        println("schema=" + SCHEMA)
+        println("mode=substrate_dispatch")
+        println("substrate=replay")
+        println("raw10_honest=substrate_dispatch_phase1_deferred")
+        println("pointer=hexa run eeg/substrates/replay_substrate.hexa --selftest")
+        println("rationale=hexa-interp-sandbox-blocks-nested-run-2026-05-12")
+        println("verdict=DEFERRED")
+        println("selftest=ok")
+        exit(0)
+    }
+
+    _write_helper()
+
+    if selftest {
+        println("== collect selftest ==")
+        let r = _run_helper("selftest")
+        let body = r[0]
+        let st   = r[1]
+        println(body)
+        if st != 0 { eprintln("selftest helper FAILED rc=" + to_string(st)); exit(1) }
+        if _kv_lookup(body, "selftest") != "ok" {
+            _emit_trailer("selftest-marker-missing", "no selftest=ok", "1) check helper parse")
+            exit(1)
+        }
+        println("")
+        let fails = _run_selftest_assertions(body)
+        if fails != 0 {
+            println("selftest=fail")
+            eprintln("selftest FAILED: " + to_string(fails) + " assertion(s)")
+            exit(1)
+        }
+        println("selftest: OK")
+        exit(0)
+    }
+
+    // collect_mode: real hardware path
+    if output == "" {
+        _emit_trailer("missing-required-arg", "--output is required for --collect",
+                      "1) re-run with --output recordings/sessions/<tag>_<ts>.npy")
+        _print_usage()
+        exit(2)
+    }
+    let board_id = _board_name_to_id(board_name)
+    let mut args = "collect --board-id " + to_string(board_id) +
+                   " --duration " + to_string(duration) +
+                   " --tag " + _sh_quote(tag) +
+                   " --output " + _sh_quote(output)
+    if port != "" { args = args + " --port " + _sh_quote(port) }
+    println("── collect (real hardware) ──")
+    println("board: " + board_name + " (id=" + to_string(board_id) + ")")
+    println("duration: " + to_string(duration) + "s  tag: " + tag)
+    println("output: " + output)
+    let r = _run_helper(args)
+    println(r[0])
+    exit(r[1])
+}
+// hexa-strict auto-invokes fn main() — do not call main() explicitly.

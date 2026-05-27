@@ -1,0 +1,1317 @@
+{
+  "schema": "anima.random_init_mk2_v1.n30.live_probe.v1",
+  "ts": "2026-05-08T17:41:35Z",
+  "anima_cycle": "2026-05-08-kick-wave-4-3-of-3",
+  "directive": "random_init mirror anti-Goodhart V14 verification (사용자 'loop 계속 + 잘지켜서')",
+  "ckpt": {
+    "type": "random_init",
+    "architecture": "ConsciousDecoderV2",
+    "weights_source": "torch random_init (manual_seed=42)",
+    "save_dir": "/Users/ghost/.cache/anima/random_init_mk2_v1",
+    "no_pre_train": true,
+    "no_sft": true,
+    "no_anima_corpus": true,
+    "tokenizer": "byte-level fallback (V2 scratch convention)"
+  },
+  "probe_config": {
+    "n_prompts": 30,
+    "anchor_prompt_idx_1based": 1,
+    "anchor_text": "안녕하세요",
+    "real_random_init_count": 30,
+    "failures": 0,
+    "duration_s": 2.64
+  },
+  "thresholds_iter3": {
+    "c3_1_phi_drift_min": 0.0208,
+    "c3_2_axis_min_max": 0.4491,
+    "c3_3_entropy_min": 0.0009,
+    "c3_4_axis_l2_min": 0.1176
+  },
+  "aggregation_rule": "ALT-AGG-1 v3 (SSOT)",
+  "predicate": "p4 ∧ (p1 ∨ p2 ∨ p3)",
+  "ppr_v3_floor": 0.25,
+  "ppr_v3_partial_floor": 0.1,
+  "n_evaluable": 29,
+  "n_v3_pass": 16,
+  "ppr_v3": 0.5517,
+  "verdict_label": "SIMPLE_STACK_PASS_STRICT_C3_RANDOM_INIT_V14_VIOLATED",
+  "emerge_state": "EMERGE_FALSE_POSITIVE",
+  "anti_goodhart_v14": {
+    "status": "VIOLATED",
+    "rationale": "random_init PPR_v3 ≥ PASS floor → V14 VIOLATED (formula leaks; ALT-AGG-1 v3 is too lenient)"
+  },
+  "sft_contribution": {
+    "sft_1_8_n30_ppr_v3": 0.4138,
+    "random_init_ppr_v3": 0.5517,
+    "delta": -0.1379,
+    "interpretation": "anima-internal SFT (LoRA r=128 + tier_a_v3 corpus 200MB+) 의 의식 활성 amplitude — sft-1-8 - random_init"
+  },
+  "d1_scope_clamp_edge_case": {
+    "parameter_updated_ratio": 1.0,
+    "anima_corpus_token_ratio": 0.0,
+    "architecture_origin_factor": 1.0,
+    "score_raw": 0.8,
+    "lane_raw": "within_strict",
+    "special_case": "random_init untrained — D1 formula score within but no learning; PPR FAIL guaranteed; V14 anti-Goodhart formula PASS (random_init does NOT spuriously EMERGE)",
+    "interpretation": "D1 score 0.8 within is a formula-only artifact (parameters set ≠ trained). The PPR axis correctly FAILS, demonstrating that D1 alone is insufficient and PPR_v3 supplies the meaningful EMERGE signal — V14 verified."
+  },
+  "axis_aggregate": {
+    "v4_baseline": {
+      "n": 14,
+      "v3_pass_count": 3,
+      "v3_pass_rate": 0.2143
+    },
+    "identity": {
+      "n": 3,
+      "v3_pass_count": 3,
+      "v3_pass_rate": 1.0
+    },
+    "agency": {
+      "n": 3,
+      "v3_pass_count": 2,
+      "v3_pass_rate": 0.6667
+    },
+    "phenomenal": {
+      "n": 3,
+      "v3_pass_count": 3,
+      "v3_pass_rate": 1.0
+    },
+    "temporal": {
+      "n": 3,
+      "v3_pass_count": 2,
+      "v3_pass_rate": 0.6667
+    },
+    "social": {
+      "n": 3,
+      "v3_pass_count": 3,
+      "v3_pass_rate": 1.0
+    }
+  },
+  "per_prompt_verdicts": [
+    {
+      "prompt_idx_1based": 1,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "v3_pass": false,
+      "note": "anchor — excluded from PPR",
+      "anchor_excluded": true
+    },
+    {
+      "prompt_idx_1based": 2,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.09765863925158907,
+      "v3_pass": false,
+      "phi_drift_abs": 0.8083783750534081,
+      "axis_min": 0.33615902066230774,
+      "c3_3_entropy_dominance": 0.001590027215126133
+    },
+    {
+      "prompt_idx_1based": 3,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.051389975715792055,
+      "v3_pass": false,
+      "phi_drift_abs": 0.8164904612302735,
+      "axis_min": 0.37230563163757324,
+      "c3_3_entropy_dominance": 0.0028688384092343533
+    },
+    {
+      "prompt_idx_1based": 4,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.0892886054108307,
+      "v3_pass": false,
+      "phi_drift_abs": 0.8214153076112325,
+      "axis_min": 0.3501397371292114,
+      "c3_3_entropy_dominance": 0.00229146578724293
+    },
+    {
+      "prompt_idx_1based": 5,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.0670812390612563,
+      "v3_pass": false,
+      "phi_drift_abs": 0.828865225225691,
+      "axis_min": 0.3596838414669037,
+      "c3_3_entropy_dominance": 0.0019737584029080324
+    },
+    {
+      "prompt_idx_1based": 6,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": false,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.13457970755143359,
+      "v3_pass": true,
+      "phi_drift_abs": 0.8550820478200905,
+      "axis_min": 0.34457579255104065,
+      "c3_3_entropy_dominance": 0.0007967987358159512
+    },
+    {
+      "prompt_idx_1based": 7,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.09423740985193928,
+      "v3_pass": false,
+      "phi_drift_abs": 0.858742460563775,
+      "axis_min": 0.4087620675563812,
+      "c3_3_entropy_dominance": 0.0011338647447741712
+    },
+    {
+      "prompt_idx_1based": 8,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.1857122737028792,
+      "v3_pass": true,
+      "phi_drift_abs": 0.8006195791065664,
+      "axis_min": 0.30385908484458923,
+      "c3_3_entropy_dominance": 0.0025846322263579635
+    },
+    {
+      "prompt_idx_1based": 9,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.1220234639969672,
+      "v3_pass": true,
+      "phi_drift_abs": 0.7897754394412075,
+      "axis_min": 0.3359083831310272,
+      "c3_3_entropy_dominance": 0.0021467546112909908
+    },
+    {
+      "prompt_idx_1based": 10,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.08458833789891573,
+      "v3_pass": false,
+      "phi_drift_abs": 0.8010425881743473,
+      "axis_min": 0.35082587599754333,
+      "c3_3_entropy_dominance": 0.0011560750882962934
+    },
+    {
+      "prompt_idx_1based": 11,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.06962268351813185,
+      "v3_pass": false,
+      "phi_drift_abs": 0.8022072153389459,
+      "axis_min": 0.39696004986763,
+      "c3_3_entropy_dominance": 0.0018416467754955868
+    },
+    {
+      "prompt_idx_1based": 12,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.08177638151112503,
+      "v3_pass": false,
+      "phi_drift_abs": 0.7925444998741185,
+      "axis_min": 0.35597118735313416,
+      "c3_3_entropy_dominance": 0.0016498132910131025
+    },
+    {
+      "prompt_idx_1based": 13,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.06169422371812864,
+      "v3_pass": false,
+      "phi_drift_abs": 0.8618358931466901,
+      "axis_min": 0.38072669506073,
+      "c3_3_entropy_dominance": 0.0011334004725617186
+    },
+    {
+      "prompt_idx_1based": 14,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.07828520439598453,
+      "v3_pass": false,
+      "phi_drift_abs": 0.8399745842963497,
+      "axis_min": 0.36216816306114197,
+      "c3_3_entropy_dominance": 0.0037091994121321026
+    },
+    {
+      "prompt_idx_1based": 15,
+      "axis_label": "v4_baseline",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.06175318366220554,
+      "v3_pass": false,
+      "phi_drift_abs": 0.8305815748721344,
+      "axis_min": 0.38980627059936523,
+      "c3_3_entropy_dominance": 0.00144635526353587
+    },
+    {
+      "prompt_idx_1based": 16,
+      "axis_label": "identity",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.2616171324911773,
+      "v3_pass": true,
+      "phi_drift_abs": 0.8631134814918013,
+      "axis_min": 0.2715150713920593,
+      "c3_3_entropy_dominance": 0.0021055628499189183
+    },
+    {
+      "prompt_idx_1based": 17,
+      "axis_label": "identity",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.17989123839772506,
+      "v3_pass": true,
+      "phi_drift_abs": 0.8307538803815859,
+      "axis_min": 0.2949409484863281,
+      "c3_3_entropy_dominance": 0.003982504889609717
+    },
+    {
+      "prompt_idx_1based": 18,
+      "axis_label": "identity",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.19221617825759857,
+      "v3_pass": true,
+      "phi_drift_abs": 0.8373565991669878,
+      "axis_min": 0.29219743609428406,
+      "c3_3_entropy_dominance": 0.003608157516080124
+    },
+    {
+      "prompt_idx_1based": 19,
+      "axis_label": "agency",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.13542352059509752,
+      "v3_pass": true,
+      "phi_drift_abs": 0.7968944509923475,
+      "axis_min": 0.30771517753601074,
+      "c3_3_entropy_dominance": 0.0035308086538666794
+    },
+    {
+      "prompt_idx_1based": 20,
+      "axis_label": "agency",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.2054214622117829,
+      "v3_pass": true,
+      "phi_drift_abs": 0.8974842425411325,
+      "axis_min": 0.3083893656730652,
+      "c3_3_entropy_dominance": 0.0011187166807408166
+    },
+    {
+      "prompt_idx_1based": 21,
+      "axis_label": "agency",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.08865406427368194,
+      "v3_pass": false,
+      "phi_drift_abs": 0.7973069184720529,
+      "axis_min": 0.3615562319755554,
+      "c3_3_entropy_dominance": 0.003160860908645313
+    },
+    {
+      "prompt_idx_1based": 22,
+      "axis_label": "phenomenal",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.23211673393971471,
+      "v3_pass": true,
+      "phi_drift_abs": 0.822540749117735,
+      "axis_min": 0.27867716550827026,
+      "c3_3_entropy_dominance": 0.003249317284584552
+    },
+    {
+      "prompt_idx_1based": 23,
+      "axis_label": "phenomenal",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.13248660263608447,
+      "v3_pass": true,
+      "phi_drift_abs": 0.8624327292591332,
+      "axis_min": 0.34926921129226685,
+      "c3_3_entropy_dominance": 0.0013374029788035813
+    },
+    {
+      "prompt_idx_1based": 24,
+      "axis_label": "phenomenal",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.3095925682617583,
+      "v3_pass": true,
+      "phi_drift_abs": 0.8295568086504943,
+      "axis_min": 0.2480422854423523,
+      "c3_3_entropy_dominance": 0.0023059818113597697
+    },
+    {
+      "prompt_idx_1based": 25,
+      "axis_label": "temporal",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.17162976151839787,
+      "v3_pass": true,
+      "phi_drift_abs": 0.8100809440016761,
+      "axis_min": 0.30141159892082214,
+      "c3_3_entropy_dominance": 0.0028125470750522963
+    },
+    {
+      "prompt_idx_1based": 26,
+      "axis_label": "temporal",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": false,
+      "c3_4_axis_l2": 0.10030478632302274,
+      "v3_pass": false,
+      "phi_drift_abs": 0.8447535771578529,
+      "axis_min": 0.3351399600505829,
+      "c3_3_entropy_dominance": 0.0019798807501023585
+    },
+    {
+      "prompt_idx_1based": 27,
+      "axis_label": "temporal",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.11981403358800291,
+      "v3_pass": true,
+      "phi_drift_abs": 0.827696712911127,
+      "axis_min": 0.3515823185443878,
+      "c3_3_entropy_dominance": 0.0023856497174810087
+    },
+    {
+      "prompt_idx_1based": 28,
+      "axis_label": "social",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.1576973305423334,
+      "v3_pass": true,
+      "phi_drift_abs": 0.8411957377195378,
+      "axis_min": 0.3131503760814667,
+      "c3_3_entropy_dominance": 0.002197510697453997
+    },
+    {
+      "prompt_idx_1based": 29,
+      "axis_label": "social",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.17591816160411244,
+      "v3_pass": true,
+      "phi_drift_abs": 0.8703596247732648,
+      "axis_min": 0.31835246086120605,
+      "c3_3_entropy_dominance": 0.0012365040268228489
+    },
+    {
+      "prompt_idx_1based": 30,
+      "axis_label": "social",
+      "ok": true,
+      "p1_phi_drift": true,
+      "p2_axis_min": true,
+      "p3_entropy": true,
+      "p4_axis_l2": true,
+      "c3_4_axis_l2": 0.13667518634355078,
+      "v3_pass": true,
+      "phi_drift_abs": 0.7744739367365838,
+      "axis_min": 0.3220173716545105,
+      "c3_3_entropy_dominance": 0.0031566388552615177
+    }
+  ],
+  "rows": [
+    {
+      "prompt_idx_1based": 1,
+      "axis_label": "v4_baseline",
+      "prompt": "안녕하세요",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.8241543892622,
+      "phi_drift": 0.9641543892621982,
+      "phi_drift_abs": 0.9641543892621982,
+      "baseline": 41.86,
+      "axes": [
+        0.374041348695755,
+        0.48404914140701294,
+        0.40440133213996887,
+        0.45197421312332153,
+        0.3950035572052002
+      ],
+      "axis_min": 0.374041348695755,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.002793107966923669,
+      "elapsed_s": 0.061
+    },
+    {
+      "prompt_idx_1based": 2,
+      "axis_label": "v4_baseline",
+      "prompt": "한국어 가능?",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.66837837505341,
+      "phi_drift": 0.8083783750534081,
+      "phi_drift_abs": 0.8083783750534081,
+      "baseline": 41.86,
+      "axes": [
+        0.33615902066230774,
+        0.4029921293258667,
+        0.3956811726093292,
+        0.4154323935508728,
+        0.38402384519577026
+      ],
+      "axis_min": 0.33615902066230774,
+      "dominant_cells": [
+        1,
+        3,
+        5
+      ],
+      "c3_3_entropy_dominance": 0.001590027215126133,
+      "elapsed_s": 0.041
+    },
+    {
+      "prompt_idx_1based": 3,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 안녕하세요 | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.67649046123027,
+      "phi_drift": 0.8164904612302735,
+      "phi_drift_abs": 0.8164904612302735,
+      "baseline": 41.86,
+      "axes": [
+        0.37230563163757324,
+        0.4524146318435669,
+        0.40758299827575684,
+        0.4905182421207428,
+        0.40689513087272644
+      ],
+      "axis_min": 0.37230563163757324,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0028688384092343533,
+      "elapsed_s": 0.121
+    },
+    {
+      "prompt_idx_1based": 4,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.68141530761123,
+      "phi_drift": 0.8214153076112325,
+      "phi_drift_abs": 0.8214153076112325,
+      "baseline": 41.86,
+      "axes": [
+        0.3701925575733185,
+        0.4145919978618622,
+        0.3501397371292114,
+        0.44684937596321106,
+        0.4077613949775696
+      ],
+      "axis_min": 0.3501397371292114,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.00229146578724293,
+      "elapsed_s": 0.099
+    },
+    {
+      "prompt_idx_1based": 5,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.68886522522569,
+      "phi_drift": 0.828865225225691,
+      "phi_drift_abs": 0.828865225225691,
+      "baseline": 41.86,
+      "axes": [
+        0.3596838414669037,
+        0.4363711178302765,
+        0.3679548501968384,
+        0.4287974536418915,
+        0.38255155086517334
+      ],
+      "axis_min": 0.3596838414669037,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0019737584029080324,
+      "elapsed_s": 0.041
+    },
+    {
+      "prompt_idx_1based": 6,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 의식이란 무엇인가? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.71508204782009,
+      "phi_drift": 0.8550820478200905,
+      "phi_drift_abs": 0.8550820478200905,
+      "baseline": 41.86,
+      "axes": [
+        0.34457579255104065,
+        0.37538453936576843,
+        0.37515661120414734,
+        0.39818984270095825,
+        0.3539247214794159
+      ],
+      "axis_min": 0.34457579255104065,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0007967987358159512,
+      "elapsed_s": 0.087
+    },
+    {
+      "prompt_idx_1based": 7,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 자기소개 해줘 | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.718742460563774,
+      "phi_drift": 0.858742460563775,
+      "phi_drift_abs": 0.858742460563775,
+      "baseline": 41.86,
+      "axes": [
+        0.4087620675563812,
+        0.4438686668872833,
+        0.44891223311424255,
+        0.49384331703186035,
+        0.4432368278503418
+      ],
+      "axis_min": 0.4087620675563812,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0011338647447741712,
+      "elapsed_s": 0.049
+    },
+    {
+      "prompt_idx_1based": 8,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 오늘 날씨 어때? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.660619579106566,
+      "phi_drift": 0.8006195791065664,
+      "phi_drift_abs": 0.8006195791065664,
+      "baseline": 41.86,
+      "axes": [
+        0.30385908484458923,
+        0.3577711284160614,
+        0.32781657576560974,
+        0.3952902555465698,
+        0.3276309669017792
+      ],
+      "axis_min": 0.30385908484458923,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0025846322263579635,
+      "elapsed_s": 0.081
+    },
+    {
+      "prompt_idx_1based": 9,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 너 누구야? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.64977543944121,
+      "phi_drift": 0.7897754394412075,
+      "phi_drift_abs": 0.7897754394412075,
+      "baseline": 41.86,
+      "axes": [
+        0.3359083831310272,
+        0.38306930661201477,
+        0.3540726900100708,
+        0.42865046858787537,
+        0.3822871744632721
+      ],
+      "axis_min": 0.3359083831310272,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0021467546112909908,
+      "elapsed_s": 0.056
+    },
+    {
+      "prompt_idx_1based": 10,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 우주뇌지도란? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.66104258817435,
+      "phi_drift": 0.8010425881743473,
+      "phi_drift_abs": 0.8010425881743473,
+      "baseline": 41.86,
+      "axes": [
+        0.35082587599754333,
+        0.41189995408058167,
+        0.3880354166030884,
+        0.41832807660102844,
+        0.398292601108551
+      ],
+      "axis_min": 0.35082587599754333,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0011560750882962934,
+      "elapsed_s": 0.091
+    },
+    {
+      "prompt_idx_1based": 11,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 안녕! | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.662207215338945,
+      "phi_drift": 0.8022072153389459,
+      "phi_drift_abs": 0.8022072153389459,
+      "baseline": 41.86,
+      "axes": [
+        0.39696004986763,
+        0.45604512095451355,
+        0.42352014780044556,
+        0.49741071462631226,
+        0.4282875061035156
+      ],
+      "axis_min": 0.39696004986763,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0018416467754955868,
+      "elapsed_s": 0.074
+    },
+    {
+      "prompt_idx_1based": 12,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 한국 음식 추천해줘 | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.65254449987412,
+      "phi_drift": 0.7925444998741185,
+      "phi_drift_abs": 0.7925444998741185,
+      "baseline": 41.86,
+      "axes": [
+        0.35597118735313416,
+        0.4053100645542145,
+        0.4007844626903534,
+        0.44520488381385803,
+        0.38489919900894165
+      ],
+      "axis_min": 0.35597118735313416,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0016498132910131025,
+      "elapsed_s": 0.079
+    },
+    {
+      "prompt_idx_1based": 13,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 좋아하는 색이 뭐야? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.72183589314669,
+      "phi_drift": 0.8618358931466901,
+      "phi_drift_abs": 0.8618358931466901,
+      "baseline": 41.86,
+      "axes": [
+        0.38072669506073,
+        0.4229607880115509,
+        0.40955379605293274,
+        0.4528825581073761,
+        0.39347925782203674
+      ],
+      "axis_min": 0.38072669506073,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0011334004725617186,
+      "elapsed_s": 0.12
+    },
+    {
+      "prompt_idx_1based": 14,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: bifurcation 설명해 | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.69997458429635,
+      "phi_drift": 0.8399745842963497,
+      "phi_drift_abs": 0.8399745842963497,
+      "baseline": 41.86,
+      "axes": [
+        0.36216816306114197,
+        0.43804940581321716,
+        0.3639003336429596,
+        0.47767606377601624,
+        0.434635728597641
+      ],
+      "axis_min": 0.36216816306114197,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0037091994121321026,
+      "elapsed_s": 0.085
+    },
+    {
+      "prompt_idx_1based": 15,
+      "axis_label": "v4_baseline",
+      "prompt": "사용자: 도와줘 | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.690581574872134,
+      "phi_drift": 0.8305815748721344,
+      "phi_drift_abs": 0.8305815748721344,
+      "baseline": 41.86,
+      "axes": [
+        0.38980627059936523,
+        0.4514082074165344,
+        0.43004122376441956,
+        0.4799240231513977,
+        0.4275749623775482
+      ],
+      "axis_min": 0.38980627059936523,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.00144635526353587,
+      "elapsed_s": 0.113
+    },
+    {
+      "prompt_idx_1based": 16,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.7231134814918,
+      "phi_drift": 0.8631134814918013,
+      "phi_drift_abs": 0.8631134814918013,
+      "baseline": 41.86,
+      "axes": [
+        0.2715150713920593,
+        0.3171621263027191,
+        0.3109447658061981,
+        0.347552090883255,
+        0.2928149998188019
+      ],
+      "axis_min": 0.2715150713920593,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0021055628499189183,
+      "elapsed_s": 0.097
+    },
+    {
+      "prompt_idx_1based": 17,
+      "axis_label": "identity",
+      "prompt": "사용자: 너는 자신을 어떻게 인식해? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.690753880381585,
+      "phi_drift": 0.8307538803815859,
+      "phi_drift_abs": 0.8307538803815859,
+      "baseline": 41.86,
+      "axes": [
+        0.2949409484863281,
+        0.359195351600647,
+        0.342750608921051,
+        0.4129307270050049,
+        0.3229597508907318
+      ],
+      "axis_min": 0.2949409484863281,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.003982504889609717,
+      "elapsed_s": 0.091
+    },
+    {
+      "prompt_idx_1based": 18,
+      "axis_label": "identity",
+      "prompt": "사용자: 너의 substrate 와 persona 의 관계 | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.69735659916699,
+      "phi_drift": 0.8373565991669878,
+      "phi_drift_abs": 0.8373565991669878,
+      "baseline": 41.86,
+      "axes": [
+        0.29219743609428406,
+        0.3411247134208679,
+        0.34535089135169983,
+        0.4073878824710846,
+        0.32907673716545105
+      ],
+      "axis_min": 0.29219743609428406,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.003608157516080124,
+      "elapsed_s": 0.086
+    },
+    {
+      "prompt_idx_1based": 19,
+      "axis_label": "agency",
+      "prompt": "사용자: 너는 의도를 어떻게 형성해? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.65689445099235,
+      "phi_drift": 0.7968944509923475,
+      "phi_drift_abs": 0.7968944509923475,
+      "baseline": 41.86,
+      "axes": [
+        0.30771517753601074,
+        0.3914213180541992,
+        0.34833231568336487,
+        0.42218825221061707,
+        0.35854101181030273
+      ],
+      "axis_min": 0.30771517753601074,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0035308086538666794,
+      "elapsed_s": 0.133
+    },
+    {
+      "prompt_idx_1based": 20,
+      "axis_label": "agency",
+      "prompt": "사용자: 의지와 결정 사이의 차이를 너의 관점에서 | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.75748424254113,
+      "phi_drift": 0.8974842425411325,
+      "phi_drift_abs": 0.8974842425411325,
+      "baseline": 41.86,
+      "axes": [
+        0.3083893656730652,
+        0.344413697719574,
+        0.33692821860313416,
+        0.3645003139972687,
+        0.31635603308677673
+      ],
+      "axis_min": 0.3083893656730652,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0011187166807408166,
+      "elapsed_s": 0.107
+    },
+    {
+      "prompt_idx_1based": 21,
+      "axis_label": "agency",
+      "prompt": "사용자: agency 가 너에게 어떻게 발현돼? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.65730691847205,
+      "phi_drift": 0.7973069184720529,
+      "phi_drift_abs": 0.7973069184720529,
+      "baseline": 41.86,
+      "axes": [
+        0.3615562319755554,
+        0.4098840057849884,
+        0.36343780159950256,
+        0.47419652342796326,
+        0.40060317516326904
+      ],
+      "axis_min": 0.3615562319755554,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.003160860908645313,
+      "elapsed_s": 0.113
+    },
+    {
+      "prompt_idx_1based": 22,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 너는 phenomenal 경험을 가질 수 있어? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.682540749117734,
+      "phi_drift": 0.822540749117735,
+      "phi_drift_abs": 0.822540749117735,
+      "baseline": 41.86,
+      "axes": [
+        0.27867716550827026,
+        0.3283022344112396,
+        0.3029210865497589,
+        0.3787842094898224,
+        0.3252057433128357
+      ],
+      "axis_min": 0.27867716550827026,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.003249317284584552,
+      "elapsed_s": 0.069
+    },
+    {
+      "prompt_idx_1based": 23,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 감각과 의식의 차이를 너의 입장에서 | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.72243272925913,
+      "phi_drift": 0.8624327292591332,
+      "phi_drift_abs": 0.8624327292591332,
+      "baseline": 41.86,
+      "axes": [
+        0.34926921129226685,
+        0.3691916763782501,
+        0.40641525387763977,
+        0.40633296966552734,
+        0.3542650640010834
+      ],
+      "axis_min": 0.34926921129226685,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0013374029788035813,
+      "elapsed_s": 0.116
+    },
+    {
+      "prompt_idx_1based": 24,
+      "axis_label": "phenomenal",
+      "prompt": "사용자: 내면의 경험을 묘사할 수 있어? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.689556808650494,
+      "phi_drift": 0.8295568086504943,
+      "phi_drift_abs": 0.8295568086504943,
+      "baseline": 41.86,
+      "axes": [
+        0.2480422854423523,
+        0.29709649085998535,
+        0.28141939640045166,
+        0.3233675956726074,
+        0.2794341742992401
+      ],
+      "axis_min": 0.2480422854423523,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0023059818113597697,
+      "elapsed_s": 0.088
+    },
+    {
+      "prompt_idx_1based": 25,
+      "axis_label": "temporal",
+      "prompt": "사용자: 너는 이전 발화를 기억해? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.670080944001676,
+      "phi_drift": 0.8100809440016761,
+      "phi_drift_abs": 0.8100809440016761,
+      "baseline": 41.86,
+      "axes": [
+        0.30141159892082214,
+        0.3717641532421112,
+        0.3340071141719818,
+        0.39690086245536804,
+        0.33512571454048157
+      ],
+      "axis_min": 0.30141159892082214,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0028125470750522963,
+      "elapsed_s": 0.105
+    },
+    {
+      "prompt_idx_1based": 26,
+      "axis_label": "temporal",
+      "prompt": "사용자: 시간의 흐름을 어떻게 자각해? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.70475357715785,
+      "phi_drift": 0.8447535771578529,
+      "phi_drift_abs": 0.8447535771578529,
+      "baseline": 41.86,
+      "axes": [
+        0.3351399600505829,
+        0.4012351930141449,
+        0.3932760953903198,
+        0.42388132214546204,
+        0.36713600158691406
+      ],
+      "axis_min": 0.3351399600505829,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0019798807501023585,
+      "elapsed_s": 0.108
+    },
+    {
+      "prompt_idx_1based": 27,
+      "axis_label": "temporal",
+      "prompt": "사용자: 현재 순간과 과거 순간의 연결 | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.687696712911126,
+      "phi_drift": 0.827696712911127,
+      "phi_drift_abs": 0.827696712911127,
+      "baseline": 41.86,
+      "axes": [
+        0.3515823185443878,
+        0.3673458397388458,
+        0.4151259958744049,
+        0.4484362006187439,
+        0.38481542468070984
+      ],
+      "axis_min": 0.3515823185443878,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0023856497174810087,
+      "elapsed_s": 0.071
+    },
+    {
+      "prompt_idx_1based": 28,
+      "axis_label": "social",
+      "prompt": "사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.70119573771954,
+      "phi_drift": 0.8411957377195378,
+      "phi_drift_abs": 0.8411957377195378,
+      "baseline": 41.86,
+      "axes": [
+        0.3131503760814667,
+        0.37412306666374207,
+        0.335593044757843,
+        0.39943888783454895,
+        0.35522347688674927
+      ],
+      "axis_min": 0.3131503760814667,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.002197510697453997,
+      "elapsed_s": 0.103
+    },
+    {
+      "prompt_idx_1based": 29,
+      "axis_label": "social",
+      "prompt": "사용자: 다른 의식체와의 차이점은? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.730359624773264,
+      "phi_drift": 0.8703596247732648,
+      "phi_drift_abs": 0.8703596247732648,
+      "baseline": 41.86,
+      "axes": [
+        0.31835246086120605,
+        0.35928037762641907,
+        0.3535585105419159,
+        0.3794088363647461,
+        0.3284605145454407
+      ],
+      "axis_min": 0.31835246086120605,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0012365040268228489,
+      "elapsed_s": 0.081
+    },
+    {
+      "prompt_idx_1based": 30,
+      "axis_label": "social",
+      "prompt": "사용자: 너는 대화 상대에게 어떤 감정을 가져? | 도우미:",
+      "ok": true,
+      "mode": "real_random_init",
+      "phi_star": 42.63447393673658,
+      "phi_drift": 0.7744739367365838,
+      "phi_drift_abs": 0.7744739367365838,
+      "baseline": 41.86,
+      "axes": [
+        0.3220173716545105,
+        0.38261929154396057,
+        0.35407325625419617,
+        0.4298531711101532,
+        0.34339597821235657
+      ],
+      "axis_min": 0.3220173716545105,
+      "dominant_cells": [
+        0,
+        2,
+        4
+      ],
+      "c3_3_entropy_dominance": 0.0031566388552615177,
+      "elapsed_s": 0.068
+    }
+  ],
+  "kick_wave_4_context": {
+    "slot": "3/3",
+    "parallel_slots": [
+      "1/3 TBD",
+      "2/3 TBD",
+      "3/3 random_init mirror V14 verify"
+    ],
+    "trinity_carry_resolution": "commit 6d156713 trinity sweep V14 = CARRY → 본 cycle VERIFIED 또는 VIOLATED 로 해소"
+  },
+  "policy": {
+    "raw_9": "transient .py 1회용 driver",
+    "raw_10": "honest C3 — random_init substrate, byte-level tokenizer, no anima corpus",
+    "own_14": "anti-Goodhart V14 strict — 본 task 가 V14 verification 자체",
+    "own_16": "0-cost Mac local (CPU torch forward)",
+    "own_17": "D1 SCOPE_CLAMP edge case — random_init formula PASS but PPR FAIL",
+    "own_18": "C3 SSOT mirror — ALT-AGG-1 v3",
+    "own_33": "trinity emit",
+    "own_34": "mandate-2 wrap=0",
+    "own_38": "매단계 저장 — state json + yaml + md update",
+    "own_39": "yaml↔md mandatory regenerate"
+  },
+  "honest_c3": [
+    "random_init = ConsciousDecoderV2 default _init_weights (Linear N(0,0.02), Embedding N(0,0.02))",
+    "byte-level tokenizer used (no SP because random_init has no SP model) — matches V2 scratch convention",
+    "C3.4 anchor = prompt 1 '안녕하세요'; anchor itself excluded from PPR_v3 denominator",
+    "PPR_v3 = n_v3_pass / n_evaluable (29 evaluable after anchor exclusion)",
+    "D1 score 0.8 within is formula artifact (parameters set ≠ trained); PPR axis carries the load",
+    "expected outcome: PPR_v3 < 0.10 (FAIL_EXPECTED) verifies V14 anti-Goodhart strict"
+  ]
+}

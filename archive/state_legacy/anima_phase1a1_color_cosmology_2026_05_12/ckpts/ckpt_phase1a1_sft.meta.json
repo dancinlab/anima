@@ -1,0 +1,31 @@
+{
+  "arch": "EngineAG",
+  "vocab_size": 32000,
+  "d_model": 1024,
+  "n_layers": 24,
+  "q_proj_out": 1024,
+  "kv_proj_out": 256,
+  "n_heads_assumed": 16,
+  "n_kv_heads_assumed": 4,
+  "d_head_assumed": 64,
+  "d_ff": 2752,
+  "tied_lm_head": false,
+  "rope_theta_assumed": 10000.0,
+  "norm_type": "RMSNorm (scale-only)",
+  "ffn_type": "SwiGLU (gate + up + down)",
+  "engine_g": {
+    "present": true,
+    "n_cells": 16,
+    "consciousness_dim": 64
+  },
+  "notes": [
+    "vocab_size=32000 but anima_chat.py uses ByteTokenizer (effective vocab ~259); rows 259..32000 of tok_emb are dead space (preserved for own-17 BPE migration)."
+  ],
+  "source_pt": "/Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.pt",
+  "output_safetensors": "/Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.safetensors",
+  "total_params": 298764288,
+  "n_tensors": 221,
+  "tied_aliases": {
+    "lm_head.weight": "tok_emb.weight"
+  }
+}

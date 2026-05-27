@@ -1,0 +1,115 @@
+{
+  "schema": "anima/cand_d_mag_subsweep/verdict/1",
+  "task_id": "anima_emerge_cand_d_mag_subsweep_2026_05_05",
+  "ts_utc": "2026-05-05T15:50:11Z",
+  "wall_time_minutes": 0.3,
+  "cost_usd": 0.0,
+  "platform": "mac CPU (.venv-eeg python3.12, transformers, torch fp32)",
+  "F1_threshold": 0.01,
+  "crossover_magnitude": 15.0,
+  "drift_at_crossover": 0.0114054757491715,
+  "sub_drift_table": [
+    {
+      "magnitude": 15.0,
+      "drift": 0.0114054757491715,
+      "has_nan": false
+    },
+    {
+      "magnitude": 20.0,
+      "drift": 0.015540071447048831,
+      "has_nan": false
+    },
+    {
+      "magnitude": 25.0,
+      "drift": 0.01716773415171957,
+      "has_nan": false
+    },
+    {
+      "magnitude": 30.0,
+      "drift": 0.017110390318563873,
+      "has_nan": false
+    },
+    {
+      "magnitude": 40.0,
+      "drift": 0.005810013695608518,
+      "has_nan": false
+    }
+  ],
+  "combined_trajectory": [
+    {
+      "magnitude": 0.5,
+      "drift": 0.00012824280747025796,
+      "source": "bg_w"
+    },
+    {
+      "magnitude": 1.0,
+      "drift": 0.00027923735603962996,
+      "source": "bg_w"
+    },
+    {
+      "magnitude": 2.0,
+      "drift": 0.0006484775301203172,
+      "source": "bg_w"
+    },
+    {
+      "magnitude": 5.0,
+      "drift": 0.0022668446526026287,
+      "source": "bg_w"
+    },
+    {
+      "magnitude": 10.0,
+      "drift": 0.006392979165546819,
+      "source": "bg_w"
+    },
+    {
+      "magnitude": 15.0,
+      "drift": 0.0114054757491715,
+      "source": "bg_aa"
+    },
+    {
+      "magnitude": 20.0,
+      "drift": 0.015540071447048831,
+      "source": "bg_aa"
+    },
+    {
+      "magnitude": 25.0,
+      "drift": 0.01716773415171957,
+      "source": "bg_aa"
+    },
+    {
+      "magnitude": 30.0,
+      "drift": 0.017110390318563873,
+      "source": "bg_aa"
+    },
+    {
+      "magnitude": 40.0,
+      "drift": 0.005810013695608518,
+      "source": "bg_aa"
+    },
+    {
+      "magnitude": 50.0,
+      "drift": 0.09978073361026674,
+      "source": "bg_w"
+    },
+    {
+      "magnitude": 100.0,
+      "drift": 0.1129489550394851,
+      "source": "bg_w"
+    }
+  ],
+  "trajectory_shape_combined": "sub_linear",
+  "raw_compliance": {
+    "raw_15_sister_helpers_unmodified": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  },
+  "honest_c3": [
+    "C1 — Single prompt \"안녕\" (BG-Q most-favorable; 8x larger drift than prompts 2/3/5). Crossover localized only for this prompt; other prompts may cross at different magnitudes or never cross.",
+    "C2 — Mac CPU fp32 single-substrate. Crossover position depends on phi_star pairwise-cosine numerics; alternative substrates / dtype may shift the crossover by a small amount.",
+    "C3 — BG-W helper sister-import; if BG-W helper is concurrently modified the build_states_canonical_mag and _forward_with_states semantics may drift from documented BG-W run. We carry the BG-W rows verbatim from its committed verdict.json; race risk applies only to the new sub-sweep rows.",
+    "C4 — Crossover localized only at tested magnitudes {15, 20, 25, 30, 40}. Actual crossover may sit BETWEEN tested points (e.g. between 10 and 15, or between 15 and 20). The reported crossover is an upper bound at 5-unit resolution.",
+    "C5 — F1 threshold 0.01 is anima-canonical heuristic per BG-Q spec, not cross-validated. The crossover position has meaning only relative to that threshold; a different threshold (e.g. 0.005 or 0.02) would yield a different crossover magnitude."
+  ]
+}

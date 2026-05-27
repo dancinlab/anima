@@ -1,0 +1,23 @@
+[boot] device=cuda preflight_n=5 max_new=64 smoke=False
+[boot] adapter_dir=/home/aiden/anima_clm_v4_lora_v1_adapter
+[boot] base_repo=need-singularity/clm-v4-mk2-v1
+[boot] adapter sha256=6d5edb93ea845cb40858d82bc97b21bfd47d6a234d3a945ac529451e2760526a size=10502216
+[boot] 100 prompts from /home/aiden/anima/state/anima_axis_eval_set_2026_05_05/prompts.jsonl
+[boot] axis dist: {'daily': 20, 'emotion': 20, 'task': 20, 'roleplay': 20, 'meta': 20}
+[base] loaded 1.8s
+=== base/preflight locus_a ===
+[base/preflight/locus_a] wall=0.2s axes=['daily', 'emotion', 'task', 'roleplay', 'meta'] n_err=0/5
+=== base locus_a ===
+[base/locus_a] wall=1.1s axes=['daily', 'emotion', 'task', 'roleplay', 'meta'] n_err=0/100
+=== base locus_b ===
+[base/locus_b] wall=47.5s
+[lora] loaded 1.7s
+=== lora/preflight locus_a ===
+[lora/preflight/locus_a] wall=0.1s axes=['daily', 'emotion', 'task', 'roleplay', 'meta'] n_err=0/5
+=== lora locus_a ===
+[lora/locus_a] wall=1.2s axes=['daily', 'emotion', 'task', 'roleplay', 'meta'] n_err=0/100
+=== lora locus_b ===
+[lora/locus_b] wall=51.7s
+[locus_a] composite=0.5436
+[locus_b] composite=0.7240
+[verdict] locus_0=FAIL locus_a=FAIL locus_b=FAIL -> FAIL

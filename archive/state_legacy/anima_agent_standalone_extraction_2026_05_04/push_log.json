@@ -1,0 +1,39 @@
+{
+  "cycle": "anima_agent_standalone_extraction_2026_05_04",
+  "ts_utc": "2026-05-04T15:50:00Z",
+  "github": {
+    "url": "https://github.com/dancinlab/anima-agent",
+    "visibility": "public",
+    "default_branch": "main",
+    "initial_commit_sha": "106f2b6",
+    "initial_commit_message_subject": "feat(anima-agent v1.0.0): standalone extraction from anima",
+    "files_committed_total": 133,
+    "release": {
+      "tag": "v1.0.0",
+      "url": "https://github.com/dancinlab/anima-agent/releases/tag/v1.0.0",
+      "title": "anima-agent v1.0.0",
+      "notes_source": "RELEASE_NOTES_v1.0.0.md"
+    },
+    "actions_workflow": {
+      "name": "sync-to-hf",
+      "path": ".github/workflows/sync-to-hf.yml",
+      "first_run_status": "PENDING_HF_TOKEN",
+      "user_action_required": "set repository secret HF_TOKEN at https://github.com/dancinlab/anima-agent/settings/secrets/actions"
+    }
+  },
+  "huggingface": {
+    "intended_url": "https://huggingface.co/dancinlab/anima-agent",
+    "create_status": "DEFERRED",
+    "create_error": "401 Unauthorized — HF token in current env is invalid (`hf auth whoami` confirmed). USER_ACTION pending: `hf auth login --force` then `hf repo create dancinlab/anima-agent --type model`",
+    "auto_mirror_path": "Once HF_TOKEN secret is set on GH repo, the sync-to-hf.yml workflow will create the repo idempotently on first run (api.create_repo with exist_ok=True) — manual `hf repo create` is therefore optional once the secret is in place."
+  },
+  "registry": {
+    "path": "/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv",
+    "entry_added": "anima-agent\t1.0.0\tcli/anima-agent.hexa\thttps://github.com/dancinlab/anima-agent\t\tConsciousness-driven autonomous agent runtime ...",
+    "entry_index": 26,
+    "tsv_total_entries_before": 25,
+    "tsv_total_entries_after": 26
+  },
+  "raw9_compliance_at_standalone_surface": "PASS — 0 .py files in /Users/ghost/core/anima-agent",
+  "raw15_compliance": "PASS — HF_TOKEN never echoed; secrets.HF_TOKEN reference only in workflow"
+}

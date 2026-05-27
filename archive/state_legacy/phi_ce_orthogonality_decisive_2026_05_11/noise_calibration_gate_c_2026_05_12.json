@@ -1,0 +1,59 @@
+{
+  "schema": "anima/phi_ce_noise_calibration_gate_c/1",
+  "date": "2026-05-12",
+  "parent_results": "noise_calibration_results_2026_05_12.json",
+  "separability_threshold": 50,
+  "scenarios": {
+    "default_5x4_orig_harness": {
+      "sigma_phi_rel": 0.05,
+      "sigma_ce_rel": 0.02,
+      "corr_A": -0.0022168687303401637,
+      "corr_B": -0.6144278932590453,
+      "cv_A_star": 0.9431603452539357,
+      "cv_B_star": 0.015887232543741518,
+      "alpha_A_star": 0.05,
+      "alpha_B_star": 0.49237288135593216,
+      "corr_separation_abs": 0.6122110245287051,
+      "cv_separation_abs": 0.9272731127101942
+    },
+    "default_5x3_P100M_ceiling": {
+      "sigma_phi_rel": 0.05,
+      "sigma_ce_rel": 0.02,
+      "corr_A": -0.03765813452931764,
+      "corr_B": -0.7846728161310534,
+      "cv_A_star": 0.9472528350708987,
+      "cv_B_star": 0.013431496830788816,
+      "alpha_A_star": 0.05,
+      "alpha_B_star": 0.49237288135593216,
+      "corr_separation_abs": 0.7470146816017358,
+      "cv_separation_abs": 0.9338213382401099
+    },
+    "measured_5x3_P100M": {
+      "sigma_phi_rel": 0.0016,
+      "sigma_ce_rel": 0.0016,
+      "corr_A": -0.001368695304707959,
+      "corr_B": -0.7856942352728673,
+      "cv_A_star": 0.9361944602844051,
+      "cv_B_star": 0.013554116599608215,
+      "alpha_A_star": 0.05,
+      "alpha_B_star": 0.49237288135593216,
+      "corr_separation_abs": 0.7843255399681593,
+      "cv_separation_abs": 0.9226403436847969
+    },
+    "measured_phi_default_ce_5x3": {
+      "sigma_phi_rel": 0.0016,
+      "sigma_ce_rel": 0.02,
+      "corr_A": -0.00412016113394498,
+      "corr_B": -0.7846728161310534,
+      "cv_A_star": 0.9362128841386994,
+      "cv_B_star": 0.013431496830788816,
+      "alpha_A_star": 0.05,
+      "alpha_B_star": 0.49237288135593216,
+      "corr_separation_abs": 0.7805526549971085,
+      "cv_separation_abs": 0.9227813873079106
+    }
+  },
+  "measured_separability_ratio_x": 491.1,
+  "verdict": "PASS (491\u00d7 \u226b 50\u00d7 threshold)",
+  "note": "Used 5x3 P=100M grid (spec \u00a75.7 ceiling) with measured \u03c3_\u03a6_rel=0.0016 (Gate A measured). \u03c3_CE_rel set to same conservative value AND to original 0.02 default \u2014 both PASS separability \u2265 50\u00d7 threshold."
+}

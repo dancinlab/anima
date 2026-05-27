@@ -1,0 +1,164 @@
+{
+  "verdict_id": "BG-N-SUBSTRATE-PREAMBLE-AUTOFIRE-HYGIENE-2026-05-05",
+  "verdict_utc": "2026-05-05T20:10:00Z",
+  "scope": "Combo doc-land for (1) V3 substrate-identity preamble emit spec + (2) HF auto-fire scripts commit hygiene checklist + commit-ready command block",
+  "raw_constraints": [
+    "raw#9_md_bash_carve_out",
+    "raw#10_honest_c3_emit_min_5",
+    "raw#15_anima_engines_untouched"
+  ],
+  "session_constraints": [
+    "doc_only_no_code_change",
+    "commit_forbidden_BG_emits_command_block_only",
+    "$0_mac_only",
+    "no_HF_token_leak"
+  ],
+
+  "sub1_substrate_identity_preamble_emit_spec": {
+    "verdict": "PASS",
+    "spec_target_marker": "__ANIMA_SUBSTRATE_IDENTITY__",
+    "field_count": 5,
+    "fields": ["repo", "paradigm", "substrate_class", "baseline_method", "baseline_value"],
+    "emit_position": "between __ANIMA_CLM_V4_MOUNTED__ and __ANIMA_CLM_V4_RESPONSE__",
+    "format_convention": "key=value space-separated; matches existing __ANIMA_*__ helper.py _emit() convention (clm_v4_mount.hexa lines 188-191)",
+    "redundant_cross_check": "existing __ANIMA_CLM_V4_MOUNTED__:phi_star_baseline must equal new __ANIMA_SUBSTRATE_IDENTITY__:baseline_value by construction",
+    "doc_section_ref": "docs/anima_substrate_preamble_and_auto_fire_hygiene_landed_2026_05_05.ai.md §1"
+  },
+
+  "sub1b_substrate_identity_table_pre_lock": {
+    "verdict": "PASS",
+    "substrate_count": 3,
+    "substrates": [
+      {
+        "substrate_class": "clm-v4-base",
+        "repo": "dancinlab/clm-v4-mk2-v1",
+        "paradigm": "v11_G3",
+        "baseline_method": "eval_carry",
+        "baseline_value": 41.86,
+        "source_verdict": "state/clm_v4_baseline_eval_2026_05_05/verdict.json:substrate_phi_star",
+        "notes": "PHI_STAR_BASELINE constant in clm_v4_mount.hexa line 82 already wires this value; in-pipeline alternative 35.81 deferred per C5"
+      },
+      {
+        "substrate_class": "pbeta",
+        "repo": "dancinlab/clm-v4-paradigm-d-pbeta-50k-mk2-v1",
+        "paradigm": "paradigm_d_50k",
+        "baseline_method": "holdout500_K8",
+        "baseline_value": 42.367,
+        "source_verdict": "state/p9_pbeta_holdout500_eval_2026_05_05/verdict.json:core_metrics.phi_star_mean_holdout500",
+        "notes": "canonical holdout500 K=8 mean; NOT training-end in-domain probe value 36.745"
+      },
+      {
+        "substrate_class": "clm-2-lora",
+        "repo": "state/clm_v4_lora_sft_2026_05_05/results/adapter_final/",
+        "paradigm": "lora_sft",
+        "baseline_method": "K8_post_lora",
+        "baseline_value": 31.349,
+        "source_verdict": "state/clm_v4_lora_phi_canonical_2026_05_05/verdict.json:phi_star_post_lora.mean_k8",
+        "notes": "Mac-local repo path; HF Hub promotion pending"
+      }
+    ],
+    "doc_section_ref": "docs/anima_substrate_preamble_and_auto_fire_hygiene_landed_2026_05_05.ai.md §2"
+  },
+
+  "sub2_mount_hexa_application_path": {
+    "verdict": "DEFERRED_TO_FUTURE_CYCLE",
+    "current_cycle_modification": "NONE (mount.hexa unchanged; raw#15 additive-only safety)",
+    "future_cycle_change_locations": [
+      {
+        "file": "anima-core/runtime/clm_v4_mount.hexa",
+        "function": "_write_helper() (lines 167-397)",
+        "change": "add SUBSTRATE_IDENTITY_TABLE dict + _emit('SUBSTRATE_IDENTITY', ...) call after _emit('CLM_V4_MOUNTED', ...) in synthetic + load + probe + dialogue branches"
+      },
+      {
+        "file": "anima-core/runtime/clm_v4_mount.hexa",
+        "function": "_hexa_synthetic_response() (lines 491-503)",
+        "change": "add hexa-native concat line for __ANIMA_SUBSTRATE_IDENTITY__ before __ANIMA_CLM_V4_RESPONSE__"
+      },
+      {
+        "file": "anima-core/runtime/clm_v4_mount.hexa",
+        "function": "cmd_selftest() format validation (lines 528-560)",
+        "change": "add 1 marker check for __ANIMA_SUBSTRATE_IDENTITY__; bump success message from 8/8 to 9/9"
+      }
+    ],
+    "raw_15_compliance": "PASS — mount-layer additive; engines untouched",
+    "raw_10_compliance": "PASS — emit_honest_c3() unchanged",
+    "raw_37_compliance": "PASS — helper.py opt-out unchanged; emit added inside existing helper",
+    "estimated_implementation_time_minutes": 17,
+    "doc_section_ref": "docs/anima_substrate_preamble_and_auto_fire_hygiene_landed_2026_05_05.ai.md §3"
+  },
+
+  "sub3_auto_fire_commit_hygiene_checklist": {
+    "verdict": "PASS_READY",
+    "files": [
+      {
+        "path": "state/anima_hf_promotes_2026_05_06_auto_fire.bash",
+        "git_status": "?? (untracked)",
+        "executable": true,
+        "size_bytes": 3478,
+        "sha256": "440c85f4a0abbd508fa3561fcd3c18ad87cb809c4c925b7264832979a7755a9b",
+        "sha256_matches_BG_E_baseline": true,
+        "embeds_token_literal": false,
+        "in_gitignore": false
+      },
+      {
+        "path": "state/anima_hf_cleanups_2026_05_07_auto_fire.bash",
+        "git_status": "?? (untracked)",
+        "executable": true,
+        "size_bytes": 2663,
+        "sha256": "9646dc4d7793fef9c2468b9e2c9c4f0663931a393f198c9ce7380f7b568d06e8",
+        "sha256_matches_BG_E_baseline": true,
+        "embeds_token_literal": false,
+        "in_gitignore": false
+      }
+    ],
+    "checklist_pass": [
+      "both files exist",
+      "both files executable",
+      "sha256 matches BG-E baseline",
+      "syntactically valid bash 3.2",
+      "no HF token literal",
+      "not gitignored",
+      "BG-E verdict already references SHA256 baseline"
+    ]
+  },
+
+  "sub4_commit_ready_command_block": {
+    "verdict": "PASS_OPERATOR_FIRES",
+    "BG_does_not_commit": true,
+    "commit_strategy_recommendation": "single_commit (both files share lifecycle purpose)",
+    "single_commit_command": [
+      "cd /Users/ghost/core/anima",
+      "git add state/anima_hf_promotes_2026_05_06_auto_fire.bash state/anima_hf_cleanups_2026_05_07_auto_fire.bash",
+      "git commit -m \"$(cat <<'EOF'\\nchore(anima hf): auto-fire promote+cleanup scripts for clm-v4-mk2-v1 + Pbeta 36-40h dwell\\n\\nAuto-fire combo for HF PRIVATE -> PUBLIC lifecycle:\\n- promote: 2026-05-06T23:26:12Z (clm) / 2026-05-07T03:48:00Z (pbeta)\\n- cleanup: 24h grace after each PUBLIC promote\\n- modes: --check-only / --fire-clm / --fire-pbeta / --fire-all\\n- gates G1-G6 verified in source promote scripts; auto-fire wraps with\\n window enforcement + manual sign-off prompt\\n\\nSHA256 baseline (anchored to state/anima_hf_promote_watchdog_audit_2026_05_05/verdict.json):\\n- promotes: 440c85f4a0abbd508fa3561fcd3c18ad87cb809c4c925b7264832979a7755a9b\\n- cleanups: 9646dc4d7793fef9c2468b9e2c9c4f0663931a393f198c9ce7380f7b568d06e8\\n\\nLineage:\\n- state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash (clm)\\n- state/p9_pbeta_hf_upload_2026_05_05/public_promote_pbeta_2026_05_08.bash (pbeta)\\n- docs/anima_substrate_preamble_and_auto_fire_hygiene_landed_2026_05_05.ai.md\\n\\nraw#9 + raw#10 + compliant.\\nEOF\\n)\"",
+      "git status -s"
+    ],
+    "post_commit_verification": [
+      "git log -1 --stat",
+      "git status --porcelain state/anima_hf_*.bash   # expect empty",
+      "shasum -a 256 state/anima_hf_*_auto_fire.bash   # expect same 440c85... + 9646dc..."
+    ],
+    "two_commit_alternative_doc_ref": "docs/anima_substrate_preamble_and_auto_fire_hygiene_landed_2026_05_05.ai.md §5.2"
+  },
+
+  "honest_c3": [
+    "C1 — substrate-identity preamble (§1) reduces ONE class of user phi_star confusion (3-substrate value conflation), NOT all classes. Per-input phi vs canonical K=8 mean confusion (BG-M C3) is orthogonal and unresolved. Whether preamble alone genuinely resolves ambient confusion is epistemic open until post-land Stage 3 user-feedback sampling.",
+    "C2 — 3-substrate identity table (§2) is manual SSOT, NO auto-detection from loaded artifact. Future emerge-derived substrates require manual table extension. For unknown --model paths, future implementation must emit substrate_class=unknown OR refuse — this spec recommends (a) safer default but does not enforce.",
+    "C3 — auto-fire commit fired by operator copy-paste from §5 command block. If working tree shifts between BG land and operator fire, SHA256 may no longer match BG-E baseline. Mitigation: §5.3 post-commit shasum verification step. Residual risk LOW (no parallel BG mutating these two files).",
+    "C4 — clm-2-lora repo field is local Mac path because adapter not yet HF-promoted. When future BG promotes to HF, substrate-identity table needs MANUAL update. No automated sync. Acceptable for 3-substrate scale; does not scale to dozens.",
+    "C5 — baseline_method=eval_carry choice for clm-v4-base picks 41.86 over in-pipeline 35.81. ~6pp methodology delta is unresolved (BG-M §6 C2). If in-pipeline turns out to be more authoritative, preamble anchors to wrong number. Future calibration cycles can revise.",
+    "C6 — mount.hexa NOT modified this cycle (raw#15). Doc-only spec means NO live signal that emit format is integration-correct (e.g. JSON-output-format render via dataclasses.asdict, dialogue REPL session-log preservation). Integration-test risks bounded but real; deferred-land posture.",
+    "C7 — git tracking != immutability. Committed file can still be modified post-commit; git status detects, does NOT prevent. Operator should re-shasum at fire-time per BG-E overall_verdict recommendation. Layered defense: SHA256 + git tracking + (deprecated) uchg."
+  ],
+
+  "outputs": [
+    "/Users/ghost/core/anima/docs/anima_substrate_preamble_and_auto_fire_hygiene_landed_2026_05_05.ai.md",
+    "/Users/ghost/core/anima/state/anima_substrate_preamble_and_auto_fire_hygiene_2026_05_05/verdict.json"
+  ],
+
+  "files_modified": "NONE (doc-only land; mount.hexa + auto-fire scripts unchanged)",
+  "files_created": 2,
+  "commits_fired": 0,
+  "commit_recommendation_emitted": true,
+
+  "overall_verdict": "PASS — sub-1 substrate-identity preamble spec PASS (5 fields, 3-substrate table pre-LOCKED), sub-2 mount.hexa application path DEFERRED to future cycle (raw#15 additive plan documented for safe land), sub-3 auto-fire commit hygiene PASS_READY (sha256 baseline matches BG-E, no token leak, single-commit recommended), sub-4 commit-ready command block emitted for operator fire (BG does not commit per session instruction). 7 honest C3 emitted (>= 5 minimum)."
+}

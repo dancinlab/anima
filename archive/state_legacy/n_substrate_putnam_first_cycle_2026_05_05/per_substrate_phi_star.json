@@ -1,0 +1,63 @@
+{
+  "schema": "anima/per_substrate_phi/1",
+  "cycle": "n_substrate_putnam_first_cycle_2026_05_05",
+  "bg_lane": "PUTNAM-IMPL-PHASE1-CYCLE",
+  "ts_utc": "2026-05-05T00:00:00Z",
+  "phase": "Phase 1 (substrate enumeration + concordance pre-compute)",
+  "T_putnam": 0.40,
+  "N_min_putnam": 5,
+  "qmirror_cond6_inclusion": "INCLUDE_N_NOT_CONCORDANCE (locked 2026-05-04)",
+  "substrate_inventory": [
+    {"row": 1,  "id": "clm_v4_anchor",          "label": "CLM v4 (Llama-2 7B hidden state)", "phi_star": 41.86, "tier": "ANCHORED",                  "informative_for_concordance": true,  "source_artifact": "state/clm_v4_baseline_eval_2026_05_05/verdict.json (paradigm v11 G3 carry; AUTO-CONDITIONING baseline)"},
+    {"row": 2,  "id": "pbeta_adapter",          "label": "Pβ adapter (CLM v4 + 50K Paradigm D distill LoRA)", "phi_star": 42.37, "tier": "ANCHORED",     "informative_for_concordance": true,  "source_artifact": "state/p9_pbeta_holdout500_eval_2026_05_05/verdict.json (holdout-500 K=8 mean)"},
+    {"row": 3,  "id": "eeg_tms_pci_casali",     "label": "EEG TMS-PCI Casali (post-N-19 PCI-free)", "phi_star": null, "tier": "WITNESSED",            "informative_for_concordance": false, "source_artifact": "narrative §49.3 13 substantive WITNESSED axes (literature anchor; no Φ★ value)"},
+    {"row": 4,  "id": "eeg_live",               "label": "EEG live (BLM Phase 5 ZuCo SR + Phase E OpenBCI)", "phi_star": null, "tier": "DEFERRED_PHASE_E", "informative_for_concordance": false, "source_artifact": "anima_phase_e_eeg_live_session_prep_spec_2026_05_04.md (user-gated 30min session)"},
+    {"row": 5,  "id": "akida_akd1000",          "label": "AKIDA AKD1000 neuromorphic SNN", "phi_star": null, "tier": "BLOCKED",                       "informative_for_concordance": false, "source_artifact": "n_substrate.blk.2 (hardware delivery pending)"},
+    {"row": 6,  "id": "qrng_ionq_anu",          "label": "QRNG IonQ + ANU (LIVE_QUANTUM_SEED)", "phi_star": null, "tier": "WITNESSED",                "informative_for_concordance": false, "source_artifact": "state/nexus_qrng_quantum_seed_2026_05_02/ ($20.78 event #125)"},
+    {"row": 7,  "id": "bold_tribe_v2_phase4",   "label": "BOLD TRIBE v2 fMRI vertex map", "phi_star": 21.33, "tier": "WITNESSED_DEFERRED_PHASE5",      "informative_for_concordance": true,  "source_artifact": "BLM Phase 4 RETRY mean (placeholder constant; Phase 5 stimulus-aligned remediation pending)"},
+    {"row": 8,  "id": "qmirror_canonical",      "label": "qmirror canonical (classical+ANU+Aer)", "phi_star": 0.0, "tier": "INCLUDE_N_NOT_CONCORDANCE", "informative_for_concordance": false, "source_artifact": "state/qmirror_chsh_xvendor_2026_05_03/verdict.json + nexus/.roadmap.qmirror cond.5/6/7"},
+    {"row": 9,  "id": "iit4_n12_3arch",         "label": "IIT 4.0 Braket SV1 + Forte 1 + Cepheus (N-12 MULTI-WITNESSED 3-arch)", "phi_star": null, "tier": "WITNESSED", "informative_for_concordance": false, "source_artifact": "state/n12_iit_braket_multiwitness_2026_05_02/ ($203.55 event #124, n=5 r=0.996)"},
+    {"row": 10, "id": "nexus_chsh_bell",        "label": "nexus CHSH Bell (S=2.808, 8.97σ)", "phi_star": null, "tier": "WITNESSED",                  "informative_for_concordance": false, "source_artifact": "state/nexus_chsh_bell_2026_05_02/ ($81.20 event #127)"},
+    {"row": 11, "id": "tms_pci_lit",            "label": "TMS-PCI brain stimulus literature reference", "phi_star": null, "tier": "WITNESSED",         "informative_for_concordance": false, "source_artifact": "eLife 2025 PCI 6/6 PASS TMS-free reanalysis (literature anchor)"},
+    {"row": 12, "id": "hott_n15",               "label": "HoTT substrate-architectural (MVF1+2+3 axiom-free)", "phi_star": null, "tier": "INCLUDE_CATEGORICAL_NOT_PHI", "informative_for_concordance": false, "source_artifact": "docs/n_substrate_n15_hott_formalization_spec_2026_05_01.md (categorical witness, no Φ★ value)"},
+    {"row": 13, "id": "n22_levin_xenobot",      "label": "N-22 Levin Lab xenobot (biological)", "phi_star": null, "tier": "PENDING_PARTNERSHIP",       "informative_for_concordance": false, "source_artifact": "Tufts Allen Discovery msg_id 19de825e26e98b82 SENT (no reply)"},
+    {"row": 14, "id": "n23_slime_mycelium",     "label": "N-23 slime mold / mycelium (biological)", "phi_star": null, "tier": "PENDING_PARTNERSHIP",   "informative_for_concordance": false, "source_artifact": "docs/n_substrate_n23_slime_mycelium_2026_05_01.md outreach"},
+    {"row": 15, "id": "n24_octopus_iit_excl",   "label": "N-24 octopus IIT exclusion (biological lit)", "phi_star": null, "tier": "WITNESSED",          "informative_for_concordance": false, "source_artifact": "docs/n_substrate_n24_octopus_iit_exclusion_2026_05_01.md (categorical literature anchor)"},
+    {"row": 16, "id": "w1_anima_self",          "label": "W1 anima-as-substrate (software-self)", "phi_star": null, "tier": "DOWNGRADED",              "informative_for_concordance": false, "source_artifact": "narrative §32.7 W1 ARTIFACT_PERMANENT_DOWNGRADE (5/7 sign flip; does NOT count as positive witness)"},
+    {"row": 17, "id": "a1_learned_phi_extract", "label": "A1 learned phi-extractor (software-meta)", "phi_star": 0.0, "tier": "WITNESSED_NEGATIVE",      "informative_for_concordance": true,  "source_artifact": "narrative §32.7 A1 ALM RED triple-confirm; HONEST_BUT_DOESNT_HELP — counted toward N for completeness; phi treated as 0.0 informational"}
+  ],
+  "substrate_count": {
+    "total_rows": 17,
+    "anchored": 2,
+    "witnessed": 6,
+    "witnessed_deferred_phase5": 1,
+    "witnessed_negative": 1,
+    "include_n_not_concordance": 1,
+    "include_categorical_not_phi": 1,
+    "deferred_phase_e": 1,
+    "blocked": 1,
+    "pending_partnership": 2,
+    "downgraded": 1
+  },
+  "n_witnessed_for_verdict": 15,
+  "n_witnessed_anchor": "narrative §56 14 substantive WITNESSED + qmirror canonical = 15 (matches verifier production-mode emit)",
+  "substrates_with_measurable_phi": 5,
+  "substrates_in_concordance_pair_denominator": 5,
+  "substrates_in_concordance_pair_denominator_ids": ["clm_v4_anchor", "pbeta_adapter", "bold_tribe_v2_phase4", "eeg_iit4_phase4", "a1_negative"],
+  "substrates_excluded_from_concordance": {
+    "qmirror_canonical": "EXCLUDE_PER_§4.4_AND_COND6_LOCK_2026_05_04 (reproducibility witness, not φ-magnitude witness; counts toward N only)",
+    "hott_n15": "categorical/axiom-free witness; no Φ★ value defined",
+    "literature_anchors": "TMS-PCI, IIT 4.0 N-12 multi-witness, nexus CHSH, N-24 octopus → no per-substrate Φ★ scalar; count toward N_witnessed only",
+    "deferred_blocked": "EEG live (Phase E), BOLD Phase 5 stimulus-aligned, AKIDA AKD1000",
+    "pending_partnership": "N-22 Levin, N-23 slime/mycelium",
+    "downgraded": "W1 anima-self (5/7 sign flip; not a positive witness)"
+  },
+  "honest_c3": [
+    "C3-1: BOLD/EEG phi values are BLM Phase 4 RETRY hardcoded means (BOLD=+21.33, EEG=-3.01), NOT real-measurement values; spec §C5 explicitly calls out that these placeholders bottleneck concordance until Phase E (EEG live OpenBCI) + Phase 5 (BOLD stimulus-aligned remediation) land.",
+    "C3-2: CLM v4 phi (41.86) and Pβ adapter phi (42.37) are the ONLY ANCHORED real-measurement substrate phi★ values in this Phase 1 cycle; they form a single concordant pair (T_phi=0.012, well below T=0.40 threshold). All other substrate pairs FAIL T_phi due to BLM Phase 4 placeholder magnitude mismatch (BOLD/EEG/A1).",
+    "C3-3: A1 phi=0.0 is a synthetic placeholder for the WITNESSED_NEGATIVE axis (HONEST_BUT_DOESNT_HELP per §32.7); it's included to honor the §1.2 substrate_witness three-field rule but it functions as a sentinel rather than a measured magnitude. Removing A1 from the concordance denominator yields concordance=1/6=0.167 (still FAIL).",
+    "C3-4: qmirror cond.6 EXCLUDED from concordance pair denominator per cond.6 inclusion lock 2026-05-04 (F-PUTNAM-5 enforcement); it counts toward N_witnessed=15 contribution only. F-PUTNAM-5 verified PASS structurally — qmirror appears in zero pair tuples in concordance_matrix.json.",
+    "C3-5: This cycle does NOT mutate .roadmap.n_substrate (raw#15 + spec §11 out-of-scope); the verdict is best-effort first-pass and will be additively updated in Phase 2 when Phase E + BOLD Phase 5 measurement collection completes (multi-week wall).",
+    "C3-6: AKIDA AKD1000 (n_substrate.blk.2) and Phase E EEG live remain hardware-/user-gated bottlenecks indefinitely. Phase 1 cycle excludes them by design; Phase 2 cycle re-runs verifier with Phase E phi★ injected (verdict update potentially PARTIAL or PASS depending on concordance lift)."
+  ]
+}

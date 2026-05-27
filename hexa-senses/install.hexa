@@ -1,0 +1,63 @@
+// install.hexa — hx build hook for hexa-senses.
+//
+// Invoked by `hx install hexa-senses`. Mirrors hexa-codex/install.hexa pattern.
+//
+// Responsibilities (raw#9 STRICT — pure-hexa only):
+//   1. Pre-install: confirm Python ≥3.10 (verify/ stdlib runtime).
+//   2. Post-install: run `cli/hexa-senses.hexa selftest` (5/5 verb specs PASS).
+//      Non-PASS = warn-only (not a blocker).
+
+fn check_python(min_ver: str) -> bool {
+    let out = exec("python3 --version 2>&1").trim()
+    if !out.contains("Python 3.") {
+        eprintln("[hexa-senses/install] WARN: python3 not found — verify/ runtime unavailable")
+        return false
+    }
+    println("[hexa-senses/install]   python found: " + out)
+    return true
+}
+
+fn run_quick_selftest(root: str) -> bool {
+    let cli = root + "/cli/hexa-senses.hexa"
+    let exists = exec("[ -f \"" + cli + "\" ] && echo y || echo n").trim()
+    if exists != "y" {
+        eprintln("[hexa-senses/install] WARN: cli/hexa-senses.hexa missing — skip selftest")
+        return false
+    }
+    println("[hexa-senses/install] [post] running quick selftest (5-verb spec count)")
+    let cmd = "HEXA_SENSES_ROOT=\"" + root + "\" hexa run \"" + cli + "\" selftest 2>&1"
+    let raw = exec(cmd)
+    if raw.contains("__HEXA_SENSES_SELFTEST__ PASS") {
+        println("[hexa-senses/install]   selftest PASS — 5/5 verb specs present")
+        return true
+    }
+    eprintln("[hexa-senses/install] WARN: selftest non-PASS (warn-only, not a blocker)")
+    eprintln("  hint: missing verb spec — see README §Status")
+    return false
+}
+
+fn main() -> void {
+    let mut root = env("HX_PKG_DIR")
+    if root == "" { root = exec("pwd").trim() }
+    let phase = env("HX_HOOK_PHASE")
+    let mut p = phase
+    if p == "" { p = "both" }
+    println("[hexa-senses/install] HX_PKG_DIR=" + root + " phase=" + p)
+
+    let entry = root + "/cli/hexa-senses.hexa"
+    let entry_ok = exec("[ -f \"" + entry + "\" ] && echo y || echo n").trim()
+    if entry_ok != "y" {
+        eprintln("[hexa-senses/install] ERROR: canonical entry missing: " + entry)
+        exit(1)
+    }
+    println("[hexa-senses/install] canonical entry OK: cli/hexa-senses.hexa")
+
+    if p == "pre" || p == "both" {
+        let _ = check_python("3.10")
+    }
+    if p == "post" || p == "both" {
+        let _ = run_quick_selftest(root)
+    }
+
+    println("[hexa-senses/install] done — hx will generate " + env("HX_BIN_DIR") + "/hexa-senses shim")
+}

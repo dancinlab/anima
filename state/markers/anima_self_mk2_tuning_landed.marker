@@ -1,0 +1,113 @@
+{
+  "marker": "anima_self_mk2_tuning_landed",
+  "completion_iso": "2026-05-02T00:00:00Z",
+  "kind": "audit_only_spec_emit",
+  "scope": "anima self mk2 tuning — domain audit + 9 candidate .roadmap.<domain> + raw 270/271/272/273 triplet plan",
+  "policy": {
+    "migration": "forbidden",
+    "additive_only": true,
+    "in_place_writes": 0,
+    "destructive_ops": 0,
+    "cost_usd": 0,
+    "substrate": "mac-local",
+    "br_no_user_verbatim": true,
+    "friendly_preset": "handoff_doc_only"
+  },
+  "handoff_doc": {
+    "path": "docs/anima_self_mk2_tuning_landed_2026_05_02.ai.md",
+    "sha256": "67e277468b0e4c0b452796749a9c6f29035670efe2fefab7254138d21b4b4475",
+    "loc": 335,
+    "bytes": 18453
+  },
+  "audit_phase_1": {
+    "name": "directory_audit",
+    "scope": "anima/, anima-eeg/, anima-clm-eeg/, anima-physics/, anima-voice/, anima-engines/, serving/, training/, tool/, modules/, core/, ready/, references/, state/, docs/, anima-agent*, anima-tools/, anima-measurement/, anima-hexad/, anima-body/, anima-os/, anima-serve/, anima-eeg-core/, anima-cpgd-research/, anima-hci-research/, anima-tribev2-pilot/, hive/, n6/, edu/, self/, build*/, btr_evo/, bench/",
+    "top_level_dirs_total": 73,
+    "anima_prefixed_dirs": 18
+  },
+  "audit_phase_2": {
+    "name": "existing_roadmap_inventory",
+    "total": 26,
+    "domain_own": 14,
+    "domain_consumer": 4,
+    "meta": 7,
+    "consumer_origin_repo": "nexus",
+    "files_unchanged": 26,
+    "by_kind": {
+      "domain_own": ["clm","eeg","voice","tensionlink","akida","iit4","hott","ionq","loihi3","northpole","meg","penrose_hameroff","tms_pci","cortical_labs","finalspark"],
+      "domain_consumer": ["atlas_n6","qrng","sim","kick"],
+      "meta": ["n_substrate","substrate_bridge","triple_axis_pilots","dual_pair_pilots","theory_validation","clinical_consciousness","omega_cycle"]
+    },
+    "note_count_drift": "domain_own listed 15 in by_kind (clinical_consciousness/finalspark double-check) but real total is 14 + 4 + 7 = 25 not 26 — 26th is voice (already in own list). Recount: own=14, consumer=4, meta=7 → 25. Possible off-by-one due to 'theory_validation' kind=meta in header but spans only 3 substrates. Audit body table §1.1-1.3 is canonical."
+  },
+  "audit_phase_3": {
+    "name": "candidate_new_domains_spec_only",
+    "candidates_total": 9,
+    "files_emitted": 0,
+    "rank_a": ["serving","training","anima_physics"],
+    "rank_b": ["anima_voice","anima_clm_eeg","anima_engines"],
+    "rank_c": ["anima_agent","anima_tools","tool"],
+    "avg_required_conditions_per_domain": 3,
+    "total_potential_conditions": 27,
+    "lock_in_pending": "user must select which to actually land in next cycle"
+  },
+  "audit_phase_4": {
+    "name": "raw_270_271_272_273_triplet_plan",
+    "existing_readme_ai_md_total": 19,
+    "baseline_grandfather_remaining": 0,
+    "baseline_marker_ref": "state/markers/raw_271_baseline_17_conformed.marker",
+    "promotion_day": "2026-06-01",
+    "candidate_surfaces_audit": {
+      "serving": {"core": false, "modules": false, "readme_ai_md": false, "tier": "T1"},
+      "training": {"core": false, "modules": false, "readme_ai_md": false, "tier": "T1_large"},
+      "anima_physics": {"core": false, "modules": "partial_17_subdirs", "readme_ai_md": "partial_via_ready", "tier": "T2"},
+      "anima_voice": {"core": false, "modules": false, "readme_ai_md": "partial_via_ready", "tier": "T1"},
+      "anima_clm_eeg": {"core": false, "modules": false, "readme_ai_md": false, "tier": "T0"},
+      "anima_engines": {"core": false, "modules": "partial_1_subdir", "readme_ai_md": false, "tier": "T1_large"},
+      "anima_agent": {"core": false, "modules": "partial_subdirs", "readme_ai_md": "partial_via_ready", "tier": "T2"},
+      "anima_tools": {"core": false, "modules": "partial_4_subdirs", "readme_ai_md": false, "tier": "T2"},
+      "tool": {"core": false, "modules": false, "readme_ai_md": false, "tier": "T0_deferred_or_exempt"}
+    },
+    "files_emitted": 0
+  },
+  "cross_link_audit": {
+    "pass": [
+      "clm.cond.1 verifier ↔ tool/clm_consciousness_verify.hexa (4 internal_check)",
+      "clm §65.4 P9 SFT ↔ docs/p9_sft_spec_2026_05_02.md",
+      "tensionlink §65.2 P10 ↔ state/p10_tension_substrate_spec_2026_05_02/"
+    ],
+    "recommended_new_cross_links": [
+      "voice.cond.{1,2,3} ↔ new anima_voice (consumer ↔ impl pair)",
+      "clm.cond.2 (HF release) ↔ new serving (model card endpoint)",
+      "eeg.cond.1 (B1-B4) ↔ anima-eeg-core/_gates ↔ new anima_clm_eeg",
+      "n_substrate / triple_axis_pilots / dual_pair_pilots ↔ new anima_physics (substrate witness ledger)"
+    ]
+  },
+  "preserved_unchanged": {
+    "roadmap_files": 26,
+    "readme_ai_md_files": 19,
+    "module_dirs_top_level": 73,
+    "configs": 0,
+    "destructive_writes": 0
+  },
+  "raw_compliance": {
+    "raw_9_hexa_only": "audit_only_single_doc_minimum_viable_exempt",
+    "raw_10_honest_c3": "10 caveats inline §6",
+    "raw_11_snake_case": "doc + marker compliant",
+    "raw_12_silent_error_ban": "single_shot_no_error_path",
+    "raw_15_env_lazy_user": "doc internal paths repo-relative; <user> placeholder convention noted",
+    "raw_175_br_no_user_verbatim": "user prompt zero verbatim quotes",
+    "raw_270_271_triplet": "audit_only_no_new_readme_emit_spec_only",
+    "raw_272_lint_extension": "spec referenced",
+    "raw_273_hierarchy_direction": "9 candidate hierarchy noted (rank A/B/C)"
+  },
+  "next_cycle_unlock": [
+    "user selects which of 9 candidate domains to land",
+    "user picks verifier seam per cond.N (script/cross-link/manual)",
+    "separate cycle: roadmap_op.hexa add <domain> + cond emit",
+    "parallel: rank A README.ai.md (serving/training/anima_physics) per raw 270 promotion 2026-06-01 deadline",
+    "F5 mk1→mk2 backport for anima self surface entries"
+  ],
+  "wallclock_minutes": 25,
+  "cap_minutes": 90
+}

@@ -1,0 +1,35 @@
+[09:39:29] === anima_jl_18m_corpus_204mb_train BG-JL 2026-05-07 ===
+[09:39:29] hostname=ghostui-macbookair.local device=mps torch=2.10.0
+[09:39:29] config: vocab=256 L=6 d=384 h=6 block=256 dropout=0.3
+[09:39:29] reg: WD=0.1 label_smoothing=0.1 seed=42
+[09:39:29] train: bs=4 grad_accum=8 (eff=32) lr=0.0003 warmup=400 steps=4000
+[09:39:29] eval_every=200 val_split=0.1 early_stop_patience=3 save_at_every=250
+[09:39:29] persona_prefix='[anima NEXUS-UBM] '
+[09:39:29] prompts_total=15 (5 anima identity + 5 UBM domain + 5 outside-well)
+[09:39:29] corpus=/Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+[09:39:29] ckpt_dir_tmp=/tmp/anima-jl-18m-corpus-204mb-20260507_093929
+[09:39:29] runtime_budget_s=3600
+[09:39:29] corpus loaded: 214,299,726 bytes (204.372MB) in 0.1s
+[09:40:03] split: train=192,869,753 val=21,429,973 (val_ratio=0.1)
+[09:40:05] model built: 27,787,440 params (27.79M)
+[09:40:08] === begin training (Lesson G early-stopping + Lesson J SAVE_AT) ===
+[09:40:41] step     1/4000 | lr=1.50e-06 | L_A=5.685 L_G=5.618 | step_t=32.89s elapsed=33s
+[09:40:42] step     2/4000 | lr=2.25e-06 | L_A=5.675 L_G=5.647 | step_t=1.02s elapsed=34s
+[09:40:43] step     3/4000 | lr=3.00e-06 | L_A=5.678 L_G=5.655 | step_t=0.89s elapsed=35s
+[09:40:44] step     4/4000 | lr=3.75e-06 | L_A=5.654 L_G=5.643 | step_t=0.66s elapsed=35s
+[09:40:44] step     5/4000 | lr=4.50e-06 | L_A=5.655 L_G=5.629 | step_t=0.67s elapsed=36s
+[09:41:49] step   100/4000 | lr=7.57e-05 | L_A=4.821 L_G=5.041 | step_t=0.65s elapsed=101s
+[09:42:28] step   200/4000 | lr=1.51e-04 | L_A=4.582 L_G=4.694 | step_t=0.39s elapsed=140s
+[09:42:28] --- eval gate @ step 200 (15 prompts × 2 modes) ---
+!!! HARD_EXCEPTION: 'c2_2_strict'
+Traceback (most recent call last):
+  File "/Users/ghost/core/anima/tool/transient_py/anima_jl_18m_corpus_204mb_train.py", line 1224, in <module>
+    main()
+    ~~~~^^
+  File "/Users/ghost/core/anima/tool/transient_py/anima_jl_18m_corpus_204mb_train.py", line 705, in main
+    res = eval_full(model, step, device, ALL_PROMPTS)
+  File "/Users/ghost/core/anima/tool/transient_py/anima_jl_18m_corpus_204mb_train.py", line 310, in eval_full
+    v2_pass = (v4["cells_v2"]["c2_2_strict"] and v4["cells_v2"]["c2_3_strict"]
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'c2_2_strict'
+

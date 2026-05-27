@@ -1,0 +1,70 @@
+{
+  "schema": "anima/akida_d0_d1_plan_freeze/d1_runbook/1",
+  "phase": "D+1 (day after AKIDA arrival)",
+  "primary_target": "N-2 EEG -> AKIDA spike pipeline first run + 6 G-D selftest gates",
+  "estimated_duration_min": 60,
+  "selftest_command": "hexa run tool/anima_eeg_to_akida_spike.hexa --selftest",
+  "expected_pipeline_stages": [
+    {"stage": "A", "desc": "synthetic 60s 16ch EEG generated (seed=20260501, alpha 10Hz + beta 20Hz + 1/f noise)"},
+    {"stage": "B", "desc": "bandpass 1-45Hz Butterworth-4 + 60Hz notch"},
+    {"stage": "C", "desc": "per-channel z-score (sliding 10s)"},
+    {"stage": "D", "desc": "ADM level-crossing encoder (theta_up=theta_dn=0.5sigma, refractory=4ms, dt_bin=8ms)"},
+    {"stage": "E", "desc": "rasterize -> uint8 tensor shape (1, 125, 16, 2)"},
+    {"stage": "F", "desc": "akida.Model.forward(tensor)"}
+  ],
+  "adm_ablation_knobs": [
+    {"knob": "theta_up / theta_dn", "default": "0.5 sigma", "ab_alts": ["0.3", "0.7", "1.0"], "flip_when": "G-D2 UP/DOWN balance fail"},
+    {"knob": "refractory", "default": "4 ms", "ab_alts": ["2", "8", "16"], "flip_when": "G-D3 fail (bouncing)"},
+    {"knob": "dt_bin", "default": "8 ms", "ab_alts": ["4", "16"], "flip_when": "G-D4 OOM or G-D5 r<0.85"}
+  ],
+  "akida_input_format_verification": {
+    "raster_dtype": "np.uint8",
+    "raster_shape": [1, 125, 16, 2],
+    "max_value": 15,
+    "bit_precision": 4,
+    "layout": "NHWC"
+  },
+  "selftest_pass_criteria": [
+    {"gate": "G-D1", "check": "total event count > 0 per ch", "pass": "min(events_per_ch) >= 50"},
+    {"gate": "G-D2", "check": "UP/DOWN balance", "pass": "0.75 <= sum_up/sum_dn <= 1.33 per ch"},
+    {"gate": "G-D3", "check": "refractory respected", "pass": "min dt between events on same ch >= r_steps"},
+    {"gate": "G-D4", "check": "raster dtype/shape", "pass": "uint8 + (1,125,16,2) + max <= 15"},
+    {"gate": "G-D5", "check": "round-trip reconstruction", "pass": "Pearson r >= 0.85"},
+    {"gate": "G-D6", "check": "rate vs RMS monotonicity", "pass": "Spearman rho >= 0.6"}
+  ],
+  "tension_modulated_adm_polarity_bias": {
+    "rationale": "anima-specific extension; tension scalar modulates polarity asymmetry of ADM encoder; hypothesis: tension_link is information bottleneck modulator in EEG->AKIDA conversion",
+    "default_d1_setting": "alpha = 0 (bias OFF, baseline measurement)",
+    "modes": [
+      {
+        "id": "A",
+        "name": "linear_bias",
+        "formula": "theta_up_eff = theta_up * (1 - alpha * tau); theta_dn_eff = theta_dn * (1 + alpha * tau)",
+        "alpha_default": 0.2,
+        "alpha_range": [0, 0.5],
+        "interpretation": "tau > 0 (high tension) -> more UP spikes; tau < 0 (low tension) -> more DOWN spikes"
+      },
+      {
+        "id": "B",
+        "name": "sigmoid_bias",
+        "formula": "bias = 0.5 * tanh(beta * tau); theta_up_eff = theta_up * (1 - bias); theta_dn_eff = theta_dn * (1 + bias)",
+        "beta_default": 2.0
+      },
+      {
+        "id": "C",
+        "name": "refractory_bias",
+        "formula": "r_up_eff = r * (1 + gamma * (-tau)); r_dn_eff = r * (1 + gamma * tau)",
+        "gamma_default": 0.3
+      }
+    ],
+    "tau_definition": "z-normalized tension scalar (sliding 30s mean subtracted, std divided, clipped to [-1, +1])",
+    "tau_source_priority": [
+      {"rank": 1, "source": "mind.tension UDP 9999 broadcast", "latency_ms": 1, "status": "LIVE"},
+      {"rank": 2, "source": "CLM decoder.tension_proj.weight [768,1] per-layer projection", "latency_ms": 50, "status": "LIVE (W4 verified ubu1 RTX5070)"},
+      {"rank": 3, "source": "EEG alpha-PLV-derived surrogate (N-1 BRIDGE_WEAK)", "latency_ms": 1000, "status": "PARTIAL"}
+    ],
+    "linked_falsifier": "F-AK-4"
+  },
+  "d1_output_artifact": "state/n_substrate_n2_prep_2026_05_01/dryrun_<TS>.json (sister state, do not overwrite from this agent)",
+  "d1_success_criterion": "6/6 G-D PASS + AKIDA forward returns non-zero output"
+}

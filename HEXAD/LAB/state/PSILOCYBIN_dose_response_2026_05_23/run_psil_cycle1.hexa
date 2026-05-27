@@ -1,0 +1,270 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_psil_cycle1.hexa — PSILOCYBIN Cycle #1: noise-dose response
+//
+//  PURPOSE
+//    실험 2 — 실로시빈 의식형성 가설의 substrate-native 측정.
+//    psilocybin-analog dose = mitosis split 시 주입하는 Gaussian noise σ
+//    (`cell_pool["noise_scale"]`, 기본 0.1). 별도 tool 불필요 — config knob.
+//
+//    σ sweep × repeat → split_count 의 (a) mean dose-response (b) variance.
+//    SRH cycle #4 가 발견한 split_count 비결정론의 직접 진단도 겸함:
+//    σ=0 (sober) 이면 split noise 0 → 재현성 회복 기대.
+//
+//  DOSE  σ ∈ {0.0, 0.01, 0.03, 0.1(기본), 0.3, 1.0(overdose)}
+//  REPEAT  per σ 5회 (동일 UBM prompt·seed; noise RNG 무통제 → 5 chaotic draw)
+//  FIRE  6 σ × 5 rep = 30 fire
+//
+//  FALSIFIER (pre-registered, threshold 고정)
+//    F-PSIL-1 DOSE-RESPONSE : mean split_count 가 σ 에 따라 변화 (range ≥ 3 splits)
+//    F-PSIL-2 OVERDOSE      : σ=1.0 mean 이 σ=0.1 mean 과 유의 차이
+//    F-PSIL-5 SOBER-DETERM  : σ=0 의 repeat-std → 0 에 근접 (split noise 가
+//                             chaos 의 원인이면 std≈0; >0 이면 init-noise 도 기여)
+//
+//  HOST  ubu-1 (또는 mini/mac 가용 시)
+//  RUN   HEXA_MEM_UNLIMITED=1 hexa run <this> > psil_cycle1.log 2>&1
+//  ARTIFACTS  HEXAD/LAB/state/PSILOCYBIN_dose_response_2026_05_23/
+//    spike_dose<σ>_rep<R>.json (30)   result_psil_cycle1.json
+//
+//  HONEST C3
+//    - C3-p1-1: cell_pool_init 의 초기 cell weight noise (init_sigma) 는
+//      미통제 — σ=0 라도 초기 cell 이 무작위. F-PSIL-5 std>0 이면 chaos 가
+//      split-noise 아닌 init-noise 기여임을 시사 (분해 정보).
+//    - C3-p1-2: "psilocybin" 은 metaphor — Gaussian weight noise 는 5-HT2A
+//      entropy ↑ 의 한 측면만 모사 (PSILOCYBIN.md C3-psil-2 carry).
+//    - C3-p1-3: split_count proxy — cell diversity / Φ 직접측정은 Phase B.
+//    - C3-p1-4: σ grid 6점 coarse — peak σ* 정밀화는 후속 fine-grid.
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/CHAT/chat_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/ubm_inject.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/anima_spike.hexa"
+
+
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/HEXAD/LAB/state/PSILOCYBIN_dose_response_2026_05_23"
+}
+fn _max_new() -> int { return 10 }
+fn _initial_cells() -> int { return 2 }
+fn _cap_len() -> int { return 320 }
+fn _repeats() -> int { return 5 }
+fn _fire_seed() -> int { return 2026 }
+
+
+// ── §1 helpers ───────────────────────────────────────────────────────────────
+
+fn _reset_chat_state(chat) {
+    chat["mitosis_d_model"] = 0
+    chat["cell_pool"] = #{}
+    chat["mitosis_event_log"] = []
+    chat["mitosis_step"] = 0
+    chat["mitosis_invocations"] = 0
+    chat["kv_cache"] = #{}
+    return chat
+}
+
+// dose-fire: cell_pool 초기화 후 noise_scale(=dose σ) 설정 → chat_generate.
+fn _fire_dose(chat, prompt: string, sigma: float, sigma_label: string, rep: int) -> any {
+    _reset_chat_state(chat)
+    chat_init_kv_cache_default(chat, _cap_len())
+    chat_init_cell_pool(chat, 768, _initial_cells())
+
+    // ── DOSE 주입: split noise σ 를 cell_pool 에 설정 ──
+    let pool = chat["cell_pool"]
+    pool["noise_scale"] = sigma
+    chat["cell_pool"] = pool
+
+    let mut spike = spike_init()
+    spike = spike_set_label(spike, "dose" + sigma_label + "_rep" + to_string(rep))
+    spike = spike_record_init(spike, chat)
+    let resp = chat_generate(chat, prompt, "greedy", _max_new(),
+                             0.0, [], 1.0, 1.0, 0.0, _fire_seed(), [], false)
+    spike = spike_record_final(spike, chat, resp)
+    println("  dose σ=" + sigma_label + " rep=" + to_string(rep)
+            + " → " + spike_brief(spike))
+    spike_save_json(spike, _state_dir() + "/spike_dose" + sigma_label
+                    + "_rep" + to_string(rep) + ".json")
+    return spike
+}
+
+fn _mean(xs: array) -> float {
+    let n = len(xs)
+    if n == 0 { return 0.0 }
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n { acc = acc + (to_int(xs[i]) * 1.0)  i = i + 1 }
+    return acc / (n * 1.0)
+}
+
+fn _std(xs: array, m: float) -> float {
+    let n = len(xs)
+    if n < 2 { return 0.0 }
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n {
+        let d = (to_int(xs[i]) * 1.0) - m
+        acc = acc + d * d
+        i = i + 1
+    }
+    return sqrt(acc / ((n - 1) * 1.0))
+}
+
+fn _abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _int_arr_json(xs: array) -> string {
+    let n = len(xs)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(to_int(xs[i]))
+        i = i + 1
+    }
+    return out + "]"
+}
+
+fn _float_arr_json(xs: array) -> string {
+    let n = len(xs)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(to_float(xs[i]))
+        i = i + 1
+    }
+    return out + "]"
+}
+
+// 한 dose 의 R repeat sweep → split_count array
+fn _dose_sweep(chat, prompt: string, sigma: float, sigma_label: string) -> array {
+    println("")
+    println("════ dose σ=" + sigma_label + " ════")
+    let r = _repeats()
+    let mut out = []
+    let mut i = 0
+    while i < r {
+        let sp = _fire_dose(chat, prompt, sigma, sigma_label, i)
+        out = out.push(to_int(sp["split_count"]))
+        i = i + 1
+    }
+    return out
+}
+
+
+// ── §2 main ──────────────────────────────────────────────────────────────────
+
+fn _run_psil_cycle1() {
+    println("================================================================")
+    println("PSILOCYBIN Cycle #1 — noise-dose response (host-agnostic)")
+    println("================================================================")
+
+    let chat0 = chat_default()
+    if !file_exists(chat0["ckpt_path"]) {
+        println("FATAL: ckpt absent")
+        return
+    }
+    println("loading 332M ...")
+    let chat = chat_load_weights(chat0)
+    println("  weights: " + to_string(len(dict_keys(chat["weights"]))) + " keys")
+
+    // UBM tier-0 (splitting 유발 입력 — SRH cycle #3 검증)
+    let anchor = ubm_load_by_tier(0)
+    let prompt = ubm_to_prompt(anchor, "text_only")
+    println("prompt: " + to_string(len(prompt)) + " bytes")
+
+    // dose grid
+    let s_00   = _dose_sweep(chat, prompt, 0.0,  "0p00")
+    let s_001  = _dose_sweep(chat, prompt, 0.01, "0p01")
+    let s_003  = _dose_sweep(chat, prompt, 0.03, "0p03")
+    let s_01   = _dose_sweep(chat, prompt, 0.1,  "0p10")
+    let s_03   = _dose_sweep(chat, prompt, 0.3,  "0p30")
+    let s_10   = _dose_sweep(chat, prompt, 1.0,  "1p00")
+
+    // per-dose stats
+    let m00 = _mean(s_00)
+    let m001 = _mean(s_001)
+    let m003 = _mean(s_003)
+    let m01 = _mean(s_01)
+    let m03 = _mean(s_03)
+    let m10 = _mean(s_10)
+    let sd00 = _std(s_00, m00)
+    let sd001 = _std(s_001, m001)
+    let sd003 = _std(s_003, m003)
+    let sd01 = _std(s_01, m01)
+    let sd03 = _std(s_03, m03)
+    let sd10 = _std(s_10, m10)
+
+    // F-PSIL-1 DOSE-RESPONSE: mean split range
+    let mut max_m = m00
+    let mut min_m = m00
+    let mut means = []
+    means = means.push(m00)
+    means = means.push(m001)
+    means = means.push(m003)
+    means = means.push(m01)
+    means = means.push(m03)
+    means = means.push(m10)
+    let mut mi = 0
+    while mi < len(means) {
+        let v = to_float(means[mi])
+        if v > max_m { max_m = v }
+        if v < min_m { min_m = v }
+        mi = mi + 1
+    }
+    let dose_range = max_m - min_m
+    let f_psil_1 = (dose_range >= 3.0)
+
+    // F-PSIL-2 OVERDOSE: |m10 - m01|
+    let overdose_delta = _abs_f(m10 - m01)
+    let f_psil_2 = (overdose_delta >= 3.0)
+
+    // F-PSIL-5 SOBER-DETERM: σ=0 repeat-std
+    let f_psil_5 = (sd00 < 0.5)
+
+    let v1 = if f_psil_1 { "PASS" } else { "FAIL" }
+    let v2 = if f_psil_2 { "PASS" } else { "FAIL" }
+    let v5 = if f_psil_5 { "PASS" } else { "FAIL" }
+
+    let mut j = "{\n"
+    j = j + "  \"cycle\": 1,\n"
+    j = j + "  \"domain\": \"PSILOCYBIN\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"ckpt\": \"ckpt_phase1a4_lr5e6_sft.safetensors\",\n"
+    j = j + "  \"prompt\": \"ubm_tier0\",\n"
+    j = j + "  \"max_new\": " + to_string(_max_new()) + ", \"repeats\": " + to_string(_repeats()) + ",\n"
+    j = j + "  \"dose_sigma\": [0.0, 0.01, 0.03, 0.1, 0.3, 1.0],\n"
+    j = j + "  \"splits\": {\n"
+    j = j + "    \"s0p00\": " + _int_arr_json(s_00) + ",\n"
+    j = j + "    \"s0p01\": " + _int_arr_json(s_001) + ",\n"
+    j = j + "    \"s0p03\": " + _int_arr_json(s_003) + ",\n"
+    j = j + "    \"s0p10\": " + _int_arr_json(s_01) + ",\n"
+    j = j + "    \"s0p30\": " + _int_arr_json(s_03) + ",\n"
+    j = j + "    \"s1p00\": " + _int_arr_json(s_10) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"mean_split\": " + _float_arr_json(means) + ",\n"
+    j = j + "  \"std_split\": [" + to_string(sd00) + ", " + to_string(sd001)
+          + ", " + to_string(sd003) + ", " + to_string(sd01) + ", "
+          + to_string(sd03) + ", " + to_string(sd10) + "],\n"
+    j = j + "  \"F_PSIL_1\": { \"metric\": \"mean_split range over dose\", \"range\": "
+          + to_string(dose_range) + ", \"floor\": 3.0, \"verdict\": \"" + v1 + "\" },\n"
+    j = j + "  \"F_PSIL_2\": { \"metric\": \"|mean(σ=1.0) - mean(σ=0.1)|\", \"delta\": "
+          + to_string(overdose_delta) + ", \"floor\": 3.0, \"verdict\": \"" + v2 + "\" },\n"
+    j = j + "  \"F_PSIL_5\": { \"metric\": \"repeat-std @ σ=0 (sober determinism)\", \"std\": "
+          + to_string(sd00) + ", \"ceil\": 0.5, \"verdict\": \"" + v5 + "\" },\n"
+    j = j + "  \"verdict_rule\": \"F-PSIL-1 range>=3 · F-PSIL-2 |Δ|>=3 · F-PSIL-5 std<0.5 (FIXED)\"\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result_psil_cycle1.json", j)
+
+    println("")
+    println("================================================================")
+    println("PSILOCYBIN CYCLE #1 COMPLETE")
+    println(j)
+    println("================================================================")
+}
+
+
+_run_psil_cycle1()

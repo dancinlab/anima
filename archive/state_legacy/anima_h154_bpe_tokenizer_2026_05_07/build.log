@@ -1,0 +1,20 @@
+[03:32:43] === BG-HQ H_154 BPE tokenizer build ===
+[03:32:43] hostname=aiden-b650m-k on_ubu=True
+[03:32:43] corpus=/home/aiden/core/anima/state/anima_h098_h101_corpus_v3_2026_05_07/corpus_persona_chat_template.txt
+[03:32:43] corpus_size=31,475,255 bytes (30.02 MB)
+[03:32:43] target_vocab=8000 model_type=bpe character_coverage=0.9995
+[03:32:43] specials: pad=<pad>(0) unk=<unk>(1) bos=<bos>(2) eos=<eos>(3)
+[03:32:43] user_defined: ['사용자:', '도우미:', '[anima]']
+[03:32:48] model_path=/home/aiden/core/anima/state/anima_h154_bpe_tokenizer_2026_05_07/anima_bpe_8k.model (113,765 bytes)
+[03:32:48] vocab_path=/home/aiden/core/anima/state/anima_h154_bpe_tokenizer_2026_05_07/anima_bpe_8k.vocab (96,314 bytes)
+[03:32:48] actual_vocab_size=8000
+[03:32:48]   encode '안녕하세요' → 1 tokens, head=['▁안녕하세요']
+[03:32:48]   encode '사용자: 한국어 가능?' → 5 tokens, head=['▁', '사용자:', '▁한국어', '▁가능', '?']
+[03:32:48]   encode '도우미: 네, 한국어 가능합니다.' → 8 tokens, head=['▁', '도우미:', '▁네', ',', '▁한국어', '▁가능', '합니다', '.']
+[03:32:48]   encode '[anima 역할: 한국어 native + 자기 발견 + 의식 lane ' → 14 tokens, head=['▁[', 'anima', '▁역할', ':', '▁한국어', '▁native', '▁+', '▁자기']
+[03:32:48]   encode 'anima는 한국어 entity 입니다' → 6 tokens, head=['▁anima', '는', '▁한국어', '▁entity', '▁', '입니다']
+[03:32:48]   encode '코드를 짜줘' → 5 tokens, head=['▁코드', '를', '▁', '짜', '줘']
+[03:32:48] estimating compression ratio over 1000 corpus lines ...
+[03:32:48] compression: 864 lines, 68973 chars, 22582 tokens → 3.05 chars/token (vs byte-level: ~0.33 chars/byte)
+[03:32:48] meta written: /home/aiden/core/anima/state/anima_h154_bpe_tokenizer_2026_05_07/build_meta.json
+[03:32:48] === build complete: vocab=8000 elapsed=4.2s status=OK ===

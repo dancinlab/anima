@@ -1,0 +1,72 @@
+{
+  "battery": "B-S42",
+  "scope": "§42 tier ≥ 77 17-vs-29 distinguishing-structure micro-analysis",
+  "rows": [
+    {
+      "id": "B-S42-1",
+      "name": "TIER77-PARTITION-EXHAUSTIVE-DISJOINT",
+      "kind": "boolean+integer cardinality (closed)",
+      "passed": true,
+      "witnesses": {
+        "n_band": 46,
+        "n_success": 17,
+        "n_fail": 29,
+        "sum_17_plus_29_eq_46": true,
+        "intersect_empty": true,
+        "union_eq_band": true,
+        "floor_77_holds": true
+      }
+    },
+    {
+      "id": "B-S42-2",
+      "name": "SEPARATION-METRIC-BOUNDED",
+      "kind": "closed-form interval bounds (sympy)",
+      "passed": true,
+      "witnesses": {
+        "n_features_checked": 13,
+        "violations": [],
+        "acc_interval_closed_form": "acc ∈ [0,1]",
+        "d_lower_bound": "|d| ≥ 0",
+        "auc_interval": "rank_auc ∈ [0.5, 1.0]",
+        "nc_field_intervals": "purity, exclusion, lift ∈ [0,1]"
+      }
+    },
+    {
+      "id": "B-S42-3",
+      "name": "ANALYSIS-DETERMINISTIC",
+      "kind": "3× bit-identical + AST forbidden-call grep (structural)",
+      "passed": true,
+      "witnesses": {
+        "hashes_3x": [
+          "60ab07eeb445f6f27e87bf07bd79beda92638ec3be46994ecdd301447f9d0956",
+          "60ab07eeb445f6f27e87bf07bd79beda92638ec3be46994ecdd301447f9d0956",
+          "60ab07eeb445f6f27e87bf07bd79beda92638ec3be46994ecdd301447f9d0956"
+        ],
+        "bit_identical": true,
+        "forbidden_calls": {
+          "torch": 0,
+          ".backward": 0,
+          "F.cross_entropy": 0,
+          "random.": 0,
+          "np.random": 0,
+          "numpy.random": 0,
+          "torch.rand": 0,
+          "torch.randn": 0,
+          "openai": 0,
+          "anthropic": 0
+        },
+        "forbidden_total": 0
+      }
+    }
+  ],
+  "passed": 3,
+  "total": 3,
+  "all_pass": true,
+  "note_empirical": "B-S42-NOTE empirical carve-out: any sufficient-condition lever inferred from §42 is HYPOTHESIS. promotion to causal lever requires a §43/§40-style ablation fire varying the candidate feature with all others fixed. The §42 verdict 'structure_found_within_tier77 = False' is itself a hypothesis — testable by re-firing §16 with a different seed. B-D-NOTE / B-L3-NOTE / B-S35-NOTE family. NOT counted 🔵.",
+  "f_safety": {
+    "f1_lattice_fit_external_entity": false,
+    "f2_lattice_tautology": false,
+    "f3_no_outcome_claim": false,
+    "B-IDENTITY-5_corpus_grep": "not_applicable_no_corpus_generated"
+  }
+}

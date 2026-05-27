@@ -1,0 +1,56 @@
+{
+  "matrix_date": "2026-05-02",
+  "axes": ["scientific_value", "technical_cost", "scientific_risk", "wrapper_LOC", "wallclock_h", "deps_blocker", "rank"],
+  "rows": {
+    "A_text_mediated": {
+      "scientific_value_0to10": 5,
+      "technical_cost_usd": [0, 2],
+      "scientific_risk_0to10": 2,
+      "wrapper_LOC": "<50",
+      "wallclock_h": [1, 2],
+      "deps_blocker": "low (cortexlab-toolkit available)",
+      "rank": 3,
+      "rationale_short": "fastest first try, lowest commitment, validates TRIBE v2 pipeline before deeper integration"
+    },
+    "B_direct_injection": {
+      "scientific_value_0to10": 7,
+      "technical_cost_usd": [0, 5],
+      "scientific_risk_0to10": 6,
+      "wrapper_LOC": "200-500",
+      "wallclock_h": [4, 8],
+      "deps_blocker": "medium (CLM hidden state extractor + 768->1152 projection wrapper)",
+      "rank": 4,
+      "rationale_short": "high value but mismatch (CLM cell-Lagrangian state vs TRIBE v2 token-level fusion expectation) -> projection arbitrary, interpretability low"
+    },
+    "C_G3_manifestation": {
+      "scientific_value_0to10": 9,
+      "technical_cost_usd": [0, 0],
+      "scientific_risk_0to10": 5,
+      "wrapper_LOC": "<50",
+      "wallclock_h": [4, 6],
+      "deps_blocker": "low (requires Framing A pipeline + 사용자 OpenBCI session)",
+      "rank": 2,
+      "rationale_short": "anima 의식 측정 -> brain region anchor, novel but interpretation risk (group-mean DMN vs individual user)"
+    },
+    "D_bridge_anchor": {
+      "scientific_value_0to10": 10,
+      "technical_cost_usd": [0, 2],
+      "scientific_risk_0to10": 3,
+      "wrapper_LOC": "<100",
+      "wallclock_h": [2, 4],
+      "deps_blocker": "low (Framing A + 사용자 OpenBCI 30min session)",
+      "rank": 1,
+      "rationale_short": "TOP — TRIBE v2 가 brain ground-truth-like prior 역할, CLM<->EEG bridge 의 3-way correspondence 검증, 사용자 architecture (anima<->tension_link<->EEG) 와 정합"
+    }
+  },
+  "ranking_method": "weighted (sci_value * 0.5 + (10 - risk) * 0.3 + (10 - cost_norm) * 0.2)",
+  "ranking_scores": {
+    "A": 6.6,
+    "B": 6.4,
+    "C": 7.7,
+    "D": 8.6
+  },
+  "winner": "D",
+  "runner_up": "C",
+  "first_executable_step": "A (validates pipeline before D commitment)"
+}

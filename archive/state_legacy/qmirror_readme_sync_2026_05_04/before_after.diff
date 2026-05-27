@@ -1,0 +1,145 @@
+10a11
+> [![qmirror 2.0: 2/5](https://img.shields.io/badge/qmirror_2.0-2%2F5_axes_landed-blue.svg)](#qmirror-20-progress-25-axes-landed)
+46c47
+< ### Via `hx` (recommended once sister cycle lands)
+---
+> ### Via `hx` (recommended)
+54,55c55,58
+< > Note: `hx install qmirror` integration is being completed in a sister cycle
+< > (BG `a03d549d`). Until landed, install via git clone path below.
+---
+> > qmirror is registered as the **22nd entry** in the hexa-lang package
+> > registry (`hexa-lang/tool/pkg/registry.tsv` L22). `hx install qmirror`
+> > pulls from <https://github.com/need-singularity/qmirror> and installs
+> > the standalone CLI under `$HX_HOME/bin/qmirror`.
+134a138,140
+> All 8 conditions remain MET as of 2026-05-04 (post-NIST cond.4 PASS verified
+> 7/7 at α=0.01; no regressions across 1.0.x patch series).
+> 
+136a143,233
+> ## qmirror 2.0 progress (2/5 axes landed)
+> 
+> After 1.0 closed 8/8, the next-cycle roadmap (`anima/docs/qmirror_2_axes_spec_2026_05_03.md`)
+> ranked 5 axes by Impact × Feasibility for qmirror 2.0. Two have already landed:
+> 
+> | Cond  | Name                          | Falsifier         | Verdict             | Cost  | Substrate              |
+> |-------|-------------------------------|-------------------|---------------------|-------|------------------------|
+> | cond.9  | quantum process tomography  | F-QM-2-TOMO-9   | PASS (7/7 gates)    | $0    | Aer noiseless, ≤ 4 qubit |
+> | cond.10 | GHZ-3 Mermin witness        | F-QM-2-GHZ-10   | PASS (M = 4.0)      | $0    | Aer noiseless, 3 qubit |
+> | cond.11 | stabilizer measurement      | F-QM-2-STAB-11  | pending             | $0    | Aer, 4 qubit (deps cond.9) |
+> | cond.12 | surface-code d=3 toy        | F-QM-2-SURF-12  | pending             | $0    | Aer, 17 qubit (deps cond.11) |
+> | cond.13 | chained-sequential CHSH     | F-QM-2-CSCS-13  | pending             | $0/$25 opt IBM Heron | Aer, 4 qubit |
+> 
+> cond.9 result: per-gate process fidelity ≥ 0.99918 across `{H, X, Y, Z, S, T, CNOT}`
+> in 8.68 s wall via linear-inversion tomography on `qiskit_aer 0.17.2` (noiseless,
+> 8000 shots, seed 2026). cond.10 result: Mermin witness M = +4.0 (analytic
+> maximum) saturated across all 30 trials at 1024 shots/basis on the GHZ-3
+> state-vector — classical bound 2.0 violated by 2.0 units.
+> 
+> Landing handoffs:
+> - `anima/docs/qmirror_2_cond9_tomography_landed_2026_05_03.ai.md`
+> - `anima/docs/qmirror_2_cond10_ghz_mermin_landed_2026_05_03.ai.md`
+> 
+> ---
+> 
+> ## Real-world consumer: nexus uses qmirror
+> 
+> The first downstream consumer of standalone `qmirror` is the
+> [nexus](https://github.com/need-singularity/nexus) discovery engine, which
+> declares qmirror as a runtime dependency in its package manifest:
+> 
+> ```toml
+> # nexus/hexa.toml
+> [dependencies]
+> qmirror = "^1.0.0"   # caret semver: ≥ 1.0.0, < 2.0.0
+> ```
+> 
+> The `nexus qmirror <subcmd>` namespace is a **pure shellout** to the
+> standalone qmirror CLI — no in-tree fork, no logic duplication. The router
+> at `nexus/cli/qmirror.hexa` (v0.3.0) resolves the qmirror binary through a
+> **4-tier resolution chain with hard-fail**:
+> 
+> | tier | source                                | use case                   |
+> |------|---------------------------------------|----------------------------|
+> | 1    | `$QMIRROR_ROOT` env override          | CI / dev pinning           |
+> | 2    | `/Users/ghost/core/qmirror`           | Mac dev convention         |
+> | 3    | `$HOME/core/qmirror`                  | user-home convention       |
+> | 4    | PATH-resolved `qmirror` binary        | post-`hx install qmirror`  |
+> | —    | hard-fail with `hx install` hint      | (no silent fallback)       |
+> 
+> The legacy 5th-tier `legacy-intree` fallback (in-tree `nexus/modules/qmirror/`)
+> was **removed in v0.3.0** to enforce standalone-only consumption — silent
+> fallbacks that bypass operator intent are now an explicit error.
+> 
+> Provenance: `anima/docs/nexus_cli_qmirror_landed_2026_05_03.ai.md` and
+> `anima/docs/nexus_qmirror_legacy_removed_2026_05_03.ai.md`.
+> 
+> ---
+> 
+> ## Dual-mirror auto-sync (GitHub → HuggingFace)
+> 
+> `qmirror` is published to **two mirrors** that stay in sync automatically:
+> 
+> - canonical: <https://github.com/need-singularity/qmirror>
+> - HF Hub:    <https://huggingface.co/need-singularity/qmirror>
+> 
+> A GitHub Actions workflow at [`.github/workflows/sync-to-hf.yml`](.github/workflows/sync-to-hf.yml)
+> triggers on every push to `main` and uploads the working tree to HF via
+> `huggingface_hub.upload_folder` (with `delete_patterns=["*"]` so deletions
+> on GitHub propagate to HF). Wall lag is **~2-3 min** between push and HF
+> visible commit.
+> 
+> **USER ACTION required to enable**: set the `HF_TOKEN` GitHub repository
+> secret with a write-scope token at:
+> 
+> > <https://github.com/need-singularity/qmirror/settings/secrets/actions>
+> 
+> Until the secret is set, the workflow runs but **fails loudly** at the
+> `Verify HF_TOKEN secret is present` step (printing the exact settings URL).
+> This is by design — silent half-success is worse than a visible failure.
+> 
+> Local fallback for Actions-unavailable cases:
+> [`tool/qmirror_pre_push_to_hf.hexa`](tool/qmirror_pre_push_to_hf.hexa)
+> manually mirrors the tree using a locally-stored HF token.
+> 
+> Cost: $0 on the GitHub Actions free tier (public-repo unlimited minutes)
+> + HF free tier (< 5 GB repo). Provenance:
+> `anima/docs/qmirror_dual_mirror_autosync_landed_2026_05_03.ai.md`.
+> 
+> ---
+> 
+140a238
+> | Per-second QPU rate | **$0/sec** (CPU + Aer) | **$1.60–2.30/sec** (Heron r2 paygo) |
+146a245,250
+> **One-time calibration spend (closure cycle, total):** **USD 41.34** across
+> cond.3 (IBM Heron CHSH N=1) + cond.7/8 (cross-vendor / cross-modality
+> anchors). Recurring marginal cost for all 8 closure-met conditions
+> post-calibration is **$0**. Detailed breakdown in
+> `anima/docs/qmirror_arxiv_draft_2026_05_03.md` §5.2.
+> 
+246a351,362
+> > **Sub-component summary**: qmirror's own source (all `.hexa` modules +
+> > Python bridge shim glue) is **Apache-2.0**; the optional `pyphi` 4.0
+> > dependency used by the `iit` subcommand is **GPLv3 but isolated via
+> > subprocess** (FSF MereAggregation doctrine — see
+> > [LICENSING.md](LICENSING.md) §3 for the full analysis). Set
+> > `NEXUS_QMIRROR_MOCK=1` to opt out of GPLv3 entirely.
+> >
+> > **Authoritative SSOT** for sub-component license terms is
+> > [LICENSING.md](LICENSING.md) — that document carries the legal-advice
+> > disclaimer (raw#10 honest C3 caveat #1) and the four sub-component
+> > volatility caveats.
+> 
+282c398,407
+< - Sister cycles: nexus CLI integration (`a70e17dd`), `hx install` package integration (`a03d549d`).
+---
+> - **v1.0.1** (2026-05-03) — license-clarity audit; `LICENSING.md` added; pyphi
+>   GPLv3 subprocess-isolation rationale documented (see [CHANGELOG.md](CHANGELOG.md)).
+> - **2026-05-03** — dual-mirror auto-sync workflow committed
+>   (`.github/workflows/sync-to-hf.yml`); USER ACTION required to set `HF_TOKEN`
+>   GitHub secret to enable.
+> - **2026-05-03** — nexus CLI integration landed
+>   (`nexus/cli/qmirror.hexa` v0.3.0; standalone-only 4-tier resolution).
+> - **2026-05-03** — `hx install qmirror` registered as registry.tsv L22.
+> - **2026-05-03/04** — qmirror 2.0 cycle: cond.9 (process tomography) and
+>   cond.10 (GHZ-3 Mermin) PASS; cond.11 / cond.12 / cond.13 pending.

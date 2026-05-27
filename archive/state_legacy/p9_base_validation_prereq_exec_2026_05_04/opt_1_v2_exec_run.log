@@ -1,0 +1,107 @@
+{
+  "phase": "plan",
+  "shim": "clm_v4_hf_format_shim.py",
+  "mode": "execute",
+  "input_pt": "/home/aiden/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt",
+  "input_pt_exists": true,
+  "tokenizer_dir": "/home/aiden/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer",
+  "tokenizer_dir_exists": true,
+  "output_dir": "/home/aiden/p9_clm_v4_hf_format_2026_05_04/output",
+  "output_dir_exists": false,
+  "device": "cpu",
+  "strict_load": true,
+  "verify_post_save": true,
+  "expected_arch": {
+    "vocab_size": 64000,
+    "d_model": 768,
+    "n_layer": 16,
+    "n_head": 6,
+    "n_kv_head": 2,
+    "head_dim": 128,
+    "block_size": 512,
+    "consciousness_dim": 192,
+    "ffn_gate_dim": 2048,
+    "purefield_dim": 3072,
+    "n_ca_rules": 8,
+    "expected_param_count": 530994816,
+    "expected_decoder_keys": 581
+  },
+  "outputs_to_write": [
+    "config.json",
+    "configuration_clm_v4.py",
+    "modeling_clm_v4.py",
+    "model.safetensors",
+    "generation_config.json",
+    "tokenizer.model (copy)",
+    "tokenizer_config.json (copy or stub)",
+    "special_tokens_map.json (copy or stub)"
+  ],
+  "falsifier_set": {
+    "F-SHIM-1": "safetensors load round-trip strict=True",
+    "F-SHIM-2": "1-batch forward returns finite [B,T,vocab]",
+    "F-SHIM-3": "post-load logits match best.pt direct-load within 1e-5",
+    "F-SHIM-4": "vocab_size==64000 matches CLM v4 SP tokenizer"
+  },
+  "estimated_wall_minutes": "30-60 (dominated by torch.load 5GB ckpt + safetensors save)",
+  "estimated_peak_ram_gb": 5.5
+}
+[shim] building decoder on cpu ...
+[shim] loading state_dict from /home/aiden/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt ...
+[shim] decoder loaded: step=20000, ce=0.04630279541015625, best_phi=37.270, params=477,648,512
+[shim] saving HF-format to /home/aiden/p9_clm_v4_hf_format_2026_05_04/output ...
+[shim] saved: 2.12 GB safetensors
+[shim] verifying round-trip ...
+Traceback (most recent call last):
+  File "/home/aiden/p9_clm_v4_hf_format_2026_05_04/clm_v4_hf_format_shim.py", line 839, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/aiden/p9_clm_v4_hf_format_2026_05_04/clm_v4_hf_format_shim.py", line 819, in main
+    verify_result = _verify_round_trip(model, args)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/p9_clm_v4_hf_format_2026_05_04/clm_v4_hf_format_shim.py", line 736, in _verify_round_trip
+    ref_logits, _, _ = model(ref_input)
+                       ^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ghost/core/anima/ready/anima/models/legacy/decoder_v3.py", line 169, in forward
+    x, tension = block(x, consciousness_signal, consciousness_states)
+    ^^^^^^^^^^
+ValueError: too many values to unpack (expected 2)
+F-SHIM-1: load OK
+  key_count: 581
+  total_numel: 530994816
+  expected_530994816: True
+  first 3 keys: ['decoder.blocks.0.attn.bias', 'decoder.blocks.0.attn.k_proj.weight', 'decoder.blocks.0.attn.o_proj.weight']
+  has_decoder.tok_emb: True
+  has_decoder.head_a: True
+  has_decoder.head_g: True
+  head_a.data_ptr == tok_emb.data_ptr: False
+  head_a == tok_emb (values): True
+F-SHIM-4: vocab_size: 64000 ==64000: True
+OPT_1_V2_F_SHIM_1_PASS
+=== F-SHIM-1+4 PROBE OUTPUT ABOVE ===
+ModuleNotFoundError: No module named 'conscious_decoder'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/transformers/models/auto/auto_factory.py", line 369, in from_pretrained
+    model_class = get_class_from_dynamic_module(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/transformers/dynamic_module_utils.py", line 583, in get_class_from_dynamic_module
+    return get_class_in_module(class_name, final_module, force_reload=force_download)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aiden/venv_orchestrator/lib/python3.12/site-packages/transformers/dynamic_module_utils.py", line 309, in get_class_in_module
+    module_spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/aiden/.cache/huggingface/modules/transformers_modules/output/modeling_clm_v4.py", line 33, in <module>
+    from decoder_v3 import ConsciousDecoderV3   # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'decoder_v3'
+=== lm_eval LOAD probe OUTPUT ABOVE ===

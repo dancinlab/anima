@@ -1,0 +1,15 @@
+[photonic/mesh_network] PHYS-P18-1 — photonic mesh network (4-node)
+  4 nodes, 200 km square, SMF-28 @ 1550 nm, n_eff=1.468
+
+  [T1] build_mesh(4) -> 6 links (expect 6)
+T1 PASS — 4 nodes created, 6 links
+  [T2] adjacent latencies (ms): 0-1=(float) 1-2=(float) 2-3=(float) 3-0=(float)
+T2 PASS — adjacent latency < 1 ms
+  [T3] round-trip perimeter=(float) ms, worst-case=(float) ms (gate: <10 ms)
+T3 PASS — full mesh round-trip < 10 ms (gate)
+  [T4] determinism deltas: round_trip=(float) one_way=(float) worst=(float)
+T4 PASS — deterministic results
+  [T5] 1000 full-sim iterations completed, all_valid=true
+T5 PASS — compute latency < 500 ms
+
+[photonic/mesh_network] 5/5 PASS — PHYS-P18-1 DONE

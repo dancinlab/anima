@@ -1,0 +1,47 @@
+{
+  "spec_id": "n_substrate_n11_finalspark_access_spec_2026_05_01",
+  "ts": "2026-05-01",
+  "pre_registered": true,
+  "primary_verdict_gate": {
+    "PASS_STRONG": {
+      "predicate": "r(Phi_k_org, Phi_k_clm) >= 0.85 AND r(Phi_k_org, Phi_k_eeg) >= 0.85 AND |Phi_org - Phi_clm| / max(|Phi_org|, |Phi_clm|, 1e-3) <= 0.30",
+      "meaning": "first wetware empirical anchor of strong Putnam multi-realizability"
+    },
+    "PASS_PARTIAL": {
+      "predicate": "one of r_org_clm or r_org_eeg >= 0.85, the other in [0.50, 0.85); magnitude divergence <= 0.30",
+      "meaning": "one-sided substrate convergence; partial anchor"
+    },
+    "WEAK": {
+      "predicate": "both r in [0.50, 0.85); OR one >= 0.85 with magnitude divergence > 0.30",
+      "meaning": "partial alignment; encoding fidelity suspect"
+    },
+    "FAIL": {
+      "predicate": "both r < 0.50; OR substrate sign flip on either pair",
+      "meaning": "Putnam strong form falsified on this protocol; encoding revision required"
+    }
+  },
+  "bidirectional_falsifier_conditions": {
+    "K_partition_variance": "std(Phi_k_org) < 0.5 * |Phi_org|; overflow => verdict NULL, rerun mandatory",
+    "null_hypothesis_floor": "1024 prompt-shuffled permutation; observed r must exceed 95-percentile of r_null; if r_null 95%ile > 0.85 then test under-powered, spec invalid",
+    "reproducibility_3_seed": "3 independent ANIMA_SEED runs; all 3 same verdict for confirmed; 2/3 PASS = WEAK_PASS",
+    "organoid_pool_variance": "CV(Phi_org across 4 units) < 0.5 * mean(Phi_org); high CV => report individual-unit verdict instead of pool mean"
+  },
+  "organoid_specific_sanity_gates": {
+    "stim_response_sanity": "each organoid produces >= 5x baseline-rate response on at least 1 of 16 prompt-stims; FAIL => re-tune ROC encoding Δt and amplitude",
+    "stationarity": "day-1 vs day-3 Phi_org drift <= 20%; exclude organoids with > 20% drift",
+    "spontaneous_activity_floor": "baseline (no-stim) rate must allow stim-response SNR >= 3:1 on majority of channels",
+    "cell_death_control": "per-organoid health flag from FinalSpark API GREEN throughout campaign; YELLOW/RED => discard mid-campaign data"
+  },
+  "thresholds_summary": {
+    "r_strong": 0.85,
+    "r_weak_lower": 0.50,
+    "magnitude_divergence_max": 0.30,
+    "K_partition": 8,
+    "HID_TRUNC": 8,
+    "N_prompts": 16,
+    "stability_reps": 5,
+    "seeds": 3,
+    "perm_test_n": 1024,
+    "perm_test_percentile": 0.95
+  }
+}

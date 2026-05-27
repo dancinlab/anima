@@ -1,0 +1,48 @@
+{
+  "id": "H_211",
+  "slug": "shannon-entropy-phi-correlate",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial via HEXAD/C/c_lib.hexa c_measure_phi (byte-equal phi_rs replica)",
+  "h_primitive": "Shannon entropy -Σ p log p, natural log, n_bins=4 uniform over [0,1]",
+  "sister_h": "H_007 (CA edge-of-chaos Φ peak — same substrate 5-rule extension)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "n_bins": 4, "lcg_seed": 20260523, "r_threshold": 0.5, "ordered_floor": 0.1, "boundary": "periodic", "init": "i%3!=0 (H_007 first rep)" },
+  "rules": {
+    "110": "Class IV complex",
+    "30":  "Class III chaotic",
+    "90":  "Class III chaotic additive",
+    "184": "Class II ordered-shift TASEP",
+    "250": "Class I/II ordered fill"
+  },
+  "per_rule": [
+    { "rule": 110, "H": 0.689671, "phi": 0.538242 },
+    { "rule": 30, "H": 0.69293, "phi": 0.571954 },
+    { "rule": 90, "H": 0.0, "phi": 1.14511e-05 },
+    { "rule": 184, "H": 0.661563, "phi": 0.862889 },
+    { "rule": 250, "H": 0.0, "phi": 1.14511e-05 }
+  ],
+  "pearson_r": 0.932635,
+  "random_control": {
+    "H_random": 0.679193,
+    "phi_random": 0.495556
+  },
+  "criteria": {
+    "C1_pearson_r_ge_0_5": { "r": 0.932635, "threshold": 0.5, "verdict": "PASS" },
+    "C2_rule250_floor": { "H_250": 0.0, "phi_250": 1.14511e-05, "floor": 0.1, "verdict": "PASS" },
+    "C3_rule110_top2_both": { "rank_H": 1, "rank_phi": 2, "verdict": "FAIL" },
+    "C4_random_neq_phi": { "H_rand": 0.679193, "H_110": 0.689671, "phi_rand": 0.495556, "phi_110": 0.538242, "verdict": "FAIL" }
+  },
+  "falsifiers": {
+    "F1_STRONG_CORR": { "metric": "r ≥ 0.5", "verdict": "PASS" },
+    "F2_NOT_ANTI":    { "metric": "r ≥ 0",   "verdict": "PASS" },
+    "F3_PHI_VALID":   { "metric": "all Φ ≥ 0 and finite", "verdict": "PASS" },
+    "F4_RAND_NOT_EXCEED": { "metric": "Φ_random < Φ_rule110", "verdict": "PASS" },
+    "F5_BYTE_DETERM": { "metric": "env+seed pinned, no LLM", "verdict": "PASS" }
+  },
+  "verdict_rule": "SUPPORTED iff C1 + C3; PARTIAL if exactly 1 of {C1,C3}; FALSIFIED iff r < 0",
+  "verdict": "PARTIAL",
+  "tier": "🟢 NUMERICAL"
+}

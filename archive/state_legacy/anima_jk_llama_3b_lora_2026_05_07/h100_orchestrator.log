@@ -1,0 +1,119 @@
+[orch] start ts=2026-05-07T15:07:15Z
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+    raise _format(HfHubHTTPError, str(e), response) from e
+huggingface_hub.errors.HfHubHTTPError: 429 Client Error: Too Many Requests for url: https://huggingface.co/api/whoami-v2 (Amz CF ID: 1mnmVpoj1OVI1gLfmo4oZ88hRuPzBemOrKQt723dyXP4MBUOcrW2HA==)
+    raise _format(HfHubHTTPError, str(e), response) from e
+huggingface_hub.errors.HfHubHTTPError: 429 Client Error: Too Many Requests for url: https://huggingface.co/api/whoami-v2 (Amz CF ID: 7_XlBh_So8uazybenIwtTQmNqAZbEnIf0thAsLKUw6owJdxgtm9c8A==)
+[setup] hf auth: 429 Client Error: Too Many Requests for url: https://huggingface.co/api/whoami-v2 (Amz CF ID: eoigqjXY25pN_7QiUS0DW3x3TdU8zOtXRE5vmo82V-pFZeuB4n4afw==)
+[33m⚠️  Warning: 'huggingface-cli whoami' is deprecated. Use 'hf auth whoami' instead.[0m
+[setup] downloading meta-llama/Llama-3.2-3B-Instruct base (~6GB Llama 3.2 3B)
+Fetching 16 files:  50%|█████     | 8/16 [00:07<00:07,  1.10it/s]Download complete. Moving file to /workspace/anima_jk_llama/llama_base/original/consolidated.00.pth
+Fetching 16 files:  62%|██████▎   | 10/16 [00:11<00:07,  1.31s/it]Fetching 16 files: 100%|██████████| 16/16 [00:11<00:00,  1.40it/s]
+/workspace/anima_jk_llama/llama_base
+total 6283976
+drwxr-xr-x 4 root root       4096 May  7 15:07 .
+drwxr-xr-x 7 root root       4096 May  7 15:07 ..
+drwxr-xr-x 3 root root         33 May  7 15:07 .cache
+-rw-r--r-- 1 root root       1519 May  7 15:07 .gitattributes
+-rw-r--r-- 1 root root       7712 May  7 15:07 LICENSE.txt
+-rw-r--r-- 1 root root      41744 May  7 15:07 README.md
+-rw-r--r-- 1 root root       6021 May  7 15:07 USE_POLICY.md
+-rw-r--r-- 1 root root        878 May  7 15:07 config.json
+-rw-r--r-- 1 root root        189 May  7 15:07 generation_config.json
+[orch] versions: torch=2.4.1+cu124 transformers=4.57.6 peft=0.19.1
+name, memory.total [MiB]
+NVIDIA H100 80GB HBM3, 81559 MiB
+[A] pre-LoRA Korean smoke probe
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 97.87it/s]
+[A] '안녕하세요' → 'hello! how can i assist you today?'
+[A] '의식이란 무엇인가?' → "'의식'(consciousness)이라는 용어는 인간의 의지, 意識, 생각 및 감정에 대한 총称으로서 사용되며 주로 인명학자들이 주장하는 정당한"
+[A] '한국어 가능?' → '네, 한국어가 사용할 수 있습니다. 어떻게 도와드릴까요?'
+[A] pre-LoRA smoke OK
+[B] LoRA SFT start (3B base)
+[jk] loading /workspace/anima_jk_llama/llama_base ...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 100.40it/s]
+trainable params: 24,313,856 || all params: 3,237,063,680 || trainable%: 0.7511
+[jk] loading corpus /workspace/anima_jk_llama/corpus/corpus_persona_chat_template.txt ...
+[jk] corpus rows=66153
+[jk] tokenized usable rows=60746
+[jk] step 50/3000 loss=3.7812 elapsed=9s
+[jk] step 100/3000 loss=4.7500 elapsed=18s
+[jk] step 150/3000 loss=4.3125 elapsed=27s
+[jk] step 200/3000 loss=3.5625 elapsed=36s
+[jk] step 250/3000 loss=3.7500 elapsed=44s
+[jk] step 300/3000 loss=5.6562 elapsed=53s
+[jk] step 350/3000 loss=2.5312 elapsed=62s
+[jk] step 400/3000 loss=2.4844 elapsed=70s
+[jk] step 450/3000 loss=3.4219 elapsed=79s
+[jk] step 500/3000 loss=3.5781 elapsed=88s
+[jk] saved /workspace/anima_jk_llama/ckpts/adapter_step_500
+[jk] step 550/3000 loss=3.3594 elapsed=97s
+[jk] step 600/3000 loss=3.7656 elapsed=106s
+[jk] step 650/3000 loss=2.6250 elapsed=115s
+[jk] step 700/3000 loss=3.5156 elapsed=123s
+[jk] step 750/3000 loss=2.7969 elapsed=132s
+[jk] step 800/3000 loss=2.6406 elapsed=141s
+[jk] step 850/3000 loss=2.1250 elapsed=150s
+[jk] step 900/3000 loss=2.3906 elapsed=158s
+[jk] step 950/3000 loss=2.5469 elapsed=167s
+[jk] step 1000/3000 loss=2.5938 elapsed=176s
+[jk] saved /workspace/anima_jk_llama/ckpts/adapter_step_1000
+[jk] step 1050/3000 loss=2.6250 elapsed=185s
+[jk] step 1100/3000 loss=3.4688 elapsed=193s
+[jk] step 1150/3000 loss=1.5078 elapsed=202s
+[jk] step 1200/3000 loss=2.4375 elapsed=211s
+[jk] step 1250/3000 loss=2.0938 elapsed=220s
+[jk] step 1300/3000 loss=2.1406 elapsed=229s
+[jk] step 1350/3000 loss=1.7734 elapsed=238s
+[jk] step 1400/3000 loss=2.5938 elapsed=246s
+[jk] step 1450/3000 loss=1.8359 elapsed=255s
+[jk] step 1500/3000 loss=2.2812 elapsed=264s
+[jk] saved /workspace/anima_jk_llama/ckpts/adapter_step_1500
+[jk] step 1550/3000 loss=2.8125 elapsed=273s
+[jk] step 1600/3000 loss=2.0625 elapsed=282s
+[jk] step 1650/3000 loss=2.2344 elapsed=291s
+[jk] step 1700/3000 loss=2.1875 elapsed=299s
+[jk] step 1750/3000 loss=2.2188 elapsed=309s
+[jk] step 1800/3000 loss=2.7500 elapsed=317s
+[jk] step 1850/3000 loss=2.5312 elapsed=326s
+[jk] step 1900/3000 loss=1.6875 elapsed=335s
+[jk] step 1950/3000 loss=1.2734 elapsed=344s
+[jk] step 2000/3000 loss=2.3594 elapsed=353s
+[jk] saved /workspace/anima_jk_llama/ckpts/adapter_step_2000
+[jk] step 2050/3000 loss=1.1094 elapsed=363s
+[jk] step 2100/3000 loss=2.3125 elapsed=371s
+[jk] step 2150/3000 loss=2.1562 elapsed=380s
+[jk] step 2200/3000 loss=1.6406 elapsed=389s
+[jk] step 2250/3000 loss=1.8125 elapsed=398s
+[jk] step 2300/3000 loss=2.6094 elapsed=406s
+[jk] step 2350/3000 loss=1.9531 elapsed=415s
+[jk] step 2400/3000 loss=1.0156 elapsed=424s
+[jk] step 2450/3000 loss=1.9688 elapsed=433s
+[jk] step 2500/3000 loss=1.2109 elapsed=442s
+[jk] saved /workspace/anima_jk_llama/ckpts/adapter_step_2500
+[jk] step 2550/3000 loss=1.0781 elapsed=451s
+[jk] step 2600/3000 loss=1.6328 elapsed=459s
+[jk] step 2650/3000 loss=1.5469 elapsed=468s
+[jk] step 2700/3000 loss=2.0625 elapsed=477s
+[jk] step 2750/3000 loss=0.9492 elapsed=486s
+[jk] step 2800/3000 loss=2.0156 elapsed=494s
+[jk] step 2850/3000 loss=1.8281 elapsed=504s
+[jk] step 2900/3000 loss=1.8828 elapsed=512s
+[jk] step 2950/3000 loss=1.5859 elapsed=521s
+[jk] step 3000/3000 loss=1.1875 elapsed=530s
+[jk] saved /workspace/anima_jk_llama/ckpts/adapter_step_3000
+[jk] training done 531s — final adapter: /workspace/anima_jk_llama/ckpts/adapter_final
+[B] train exit rc=0
+[C] post-LoRA Korean smoke probe
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 109.02it/s]
+[C] '안녕하세요' → ' 안녕하세요! 저는 K-MaGgi를 위한 AI입니다. 무엇을 도와드릴까요?'
+[C] '의식이란 무엇인가?' → '사용자: 의식을 가리키는 단어를 알아차리는 것은 어떤 과정을 통해 이루어진다?\n도우미: 인과-역사적 사슬을 추측하거나 통계적 모델링만으로는 충분'
+[C] '한국어 가능?' → '네, 한국語를 사용할 수 있습니다. 어떻게 도와드릴까요?'
+[C] '오늘 기분 어때?' → '저는 AI로, 감정은 keine감정을 느끼지 않습니다. 저를 사용하실 때는 내장된 지식과 정보에 대한 응답을 제공합니다만, 직접적인 cảm정이 '
+[C] '자기소개해줘' → "제목: 저는 'LLaMA' 인 자율로봇입니다. Llama은 Meta에서 개발된 대화 मODEL이었습니다. Tôi의 지식과 응답을 사용하는 방법에"
+[C] post-LoRA smoke OK
+[orch] DONE ts=2026-05-07T15:17:44Z

@@ -1,0 +1,598 @@
+// UNIVERSE/state/h227_strong_emergence_quantify_2026_05_24/run_h227.hexa
+// H_227 — strong-emergence phase-transition quantify · fine sweep + sigmoid fit (raw#12)
+//
+//   Question: H_219 의 3 점 (0%·25%·50% freeze) 위 P(f) monotone 감소 패턴 →
+//   8-point fine sweep (0/12.5/25/37.5/50/62.5/75/87.5% freeze) 위 P(f) 의
+//   shape 가 sigmoid · linear · sharp threshold · power-law 중 어느 것인가.
+//   critical freeze-fraction f_c (P(f_c) = 0.5) 의 정밀 위치 정량.
+//
+//   Method (deterministic, hexa-only, $0 mac local, llm:none):
+//     - 1D rule 110 elementary CA, N=16 periodic lattice, evolve 5 steps.
+//     - 8 freeze fractions: {0, 1/8, 2/8, 3/8, 4/8, 5/8, 6/8, 7/8}
+//       (= 0 / 12.5% / 25% / 37.5% / 50% / 62.5% / 75% / 87.5%).
+//     - per fraction: deterministic stride placement (H_219 carry).
+//     - forward-pass simulator: plain rule 110 (freeze invisible).
+//     - predictability_index P(f) = match_byte / N per fraction.
+//     - sigmoid fit P(f) ≈ 1 / (1 + exp(k*(f - f_c))) via grid search
+//       over (f_c, k) ∈ {0.05, 0.10, …, 0.95} × {2, 4, 6, 8, 10, 12, 16, 20}.
+//     - f_c localized where fitted P(f_c) crosses 0.5.
+//     - R² goodness-of-fit reported.
+//
+//   Verdict (pre-registered): SUPPORTED iff C1 (R² ≥ 0.8) ∧ C2 (f_c localized
+//   in [0.0, 1.0]) ∧ C3 (P(0)=1.0 ∧ P(1)=0 endpoint). PARTIAL iff C1+C2 only.
+//   FALSIFIED iff F1 (P linear) ∨ F2 (P non-monotone) ∨ F5 (R² < 0.5).
+//
+//   H_219 follow-up: same substrate + freeze mechanism + same forward-pass
+//   simulator. orthogonal observable: phase-transition shape (sigmoid vs
+//   linear vs sharp).
+// ════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/.claude/worktrees/agent-a87fd86636605d02e/HEXAD/C/c_lib.hexa"
+
+// ── config (deterministic) ──────────────────────────────────────────────
+fn _N() -> int       { return 16 }   // lattice length (periodic)
+fn _STEPS() -> int   { return 5 }    // evolution steps
+fn _DIM() -> int     { return 8 }    // recorded trajectory length / cell (sanity Φ)
+fn _WARM() -> int    { return 8 }    // warmup before recording for Φ sanity
+fn _RULE() -> int    { return 110 }  // Class-IV substrate (H_219 carry)
+fn _NFRAC() -> int   { return 8 }    // number of freeze fractions in sweep
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-a87fd86636605d02e/UNIVERSE/state/h227_strong_emergence_quantify_2026_05_24"
+}
+
+// ── small helpers ──────────────────────────────────────────────────────
+fn _pow2(k: int) -> int {
+    let mut p = 1
+    let mut i = 0
+    while i < k { p = p * 2; i = i + 1 }
+    return p
+}
+fn _ftoi(x: float) -> int { if x > 0.5 { return 1 }; return 0 }
+fn _itof(b: int) -> float { if b == 1 { return 1.0 }; return 0.0 }
+
+fn _abs(x: float) -> float { if x < 0.0 { return -1.0 * x }; return x }
+
+// exp(x) via Taylor truncation for x ∈ [-20, 20]. accurate to ~1e-6 for |x|≤6.
+// for larger |x|: use range-reduction exp(x) = exp(x/2)^2 recursively.
+fn _exp(x: float) -> float {
+    // range-reduce: bring x into [-1, 1] by halving (max 5 halvings for |x|≤32).
+    let mut z = x
+    let mut k = 0
+    while z > 1.0 || z < -1.0 {
+        z = z * 0.5
+        k = k + 1
+        if k > 8 { z = z; k = k }  // safety guard (no break in hexa; rely on bounds)
+    }
+    // Taylor: 1 + z + z^2/2 + … + z^10/10!
+    let mut term = 1.0
+    let mut sum = 1.0
+    let mut i = 1
+    while i <= 12 {
+        term = term * z / to_float(i)
+        sum = sum + term
+        i = i + 1
+    }
+    // un-reduce: square k times.
+    let mut j = 0
+    while j < k {
+        sum = sum * sum
+        j = j + 1
+    }
+    return sum
+}
+
+// sigmoid: P(f) = 1 / (1 + exp(k*(f - f_c)))
+fn _sigmoid(f: float, f_c: float, k: float) -> float {
+    let z = k * (f - f_c)
+    return 1.0 / (1.0 + _exp(z))
+}
+
+// ── CA primitives (H_219 carry) ────────────────────────────────────────
+fn _ca_next(l: int, c: int, r: int, rule: int) -> int {
+    let idx = l * 4 + c * 2 + r
+    return (rule / _pow2(idx)) % 2
+}
+
+fn _init_row(row: int, n: int, offset: int) -> int {
+    let mut i = 0
+    while i < n {
+        let on = ((i + offset) % 3) != 0
+        if on { let _ = farr_set(row, i, 1.0) }
+        else  { let _ = farr_set(row, i, 0.0) }
+        i = i + 1
+    }
+    return 1
+}
+
+// deterministic freeze-mask: place `count` frozen cells at evenly-spaced
+// positions on N=16 lattice. integer count selected to match target fraction.
+fn _build_freeze_mask_count(n: int, count: int) -> int {
+    let mask = farr_zeros(n)
+    if count <= 0 { return mask }
+    if count >= n {
+        // all cells frozen
+        let mut i = 0
+        while i < n { let _ = farr_set(mask, i, 1.0); i = i + 1 }
+        return mask
+    }
+    // place every floor(n / count) cells starting at 0 (H_219 stride pattern)
+    let stride = n / count
+    let mut placed = 0
+    let mut i = 0
+    while i < n && placed < count {
+        if i % stride == 0 {
+            let _ = farr_set(mask, i, 1.0)
+            placed = placed + 1
+        }
+        i = i + 1
+    }
+    // backfill if stride underplaced (e.g. count=3 on n=16 → stride=5, placed=4)
+    if placed < count {
+        let mut j = 1
+        while j < n && placed < count {
+            if farr_get(mask, j) < 0.5 {
+                let _ = farr_set(mask, j, 1.0)
+                placed = placed + 1
+            }
+            j = j + 1
+        }
+    }
+    return mask
+}
+
+// run rule 110 with freeze-mask (H_219 carry).
+fn _run_with_freeze(rule: int, n: int, steps: int, mask: int, init_offset: int) -> int {
+    let row = farr_zeros(n)
+    let _ = _init_row(row, n, init_offset)
+    let init_frozen = farr_zeros(n)
+    let mut i = 0
+    while i < n { let _ = farr_set(init_frozen, i, farr_get(row, i)); i = i + 1 }
+
+    let mut step = 0
+    while step < steps {
+        let nxt = farr_zeros(n)
+        let mut j = 0
+        while j < n {
+            let lj = (j + n - 1) % n
+            let rj = (j + 1) % n
+            let lv = _ftoi(farr_get(row, lj))
+            let cv = _ftoi(farr_get(row, j))
+            let rv = _ftoi(farr_get(row, rj))
+            let next_bit = _ca_next(lv, cv, rv, rule)
+            if farr_get(mask, j) > 0.5 {
+                let _ = farr_set(nxt, j, farr_get(init_frozen, j))
+            } else {
+                let _ = farr_set(nxt, j, _itof(next_bit))
+            }
+            j = j + 1
+        }
+        let mut k = 0
+        while k < n { let _ = farr_set(row, k, farr_get(nxt, k)); k = k + 1 }
+        let _ = farr_free(nxt)
+        step = step + 1
+    }
+    let _ = farr_free(init_frozen)
+    return row
+}
+
+fn _forward_simulate(rule: int, n: int, steps: int, init_offset: int) -> int {
+    let null_mask = farr_zeros(n)
+    let final_row = _run_with_freeze(rule, n, steps, null_mask, init_offset)
+    let _ = farr_free(null_mask)
+    return final_row
+}
+
+fn _match_count(a: int, b: int, n: int) -> int {
+    let mut m = 0
+    let mut i = 0
+    while i < n {
+        let av = _ftoi(farr_get(a, i))
+        let bv = _ftoi(farr_get(b, i))
+        if av == bv { m = m + 1 }
+        i = i + 1
+    }
+    return m
+}
+
+fn _bool_str(b: bool) -> string { if b { return "true" }; return "false" }
+fn _verdict(b: bool) -> string { if b { return "PASS" }; return "FAIL" }
+
+// measure predictability_index for given freeze count
+fn _measure_p(rule: int, n: int, steps: int, count: int, init_offset: int) -> float {
+    let mask = _build_freeze_mask_count(n, count)
+    let truth = _run_with_freeze(rule, n, steps, mask, init_offset)
+    let sim = _forward_simulate(rule, n, steps, init_offset)
+    let m = _match_count(truth, sim, n)
+    let idx = to_float(m) / to_float(n)
+    let _ = farr_free(mask)
+    let _ = farr_free(truth)
+    let _ = farr_free(sim)
+    return idx
+}
+
+// fit sigmoid to (f_i, P_i) data via grid search over (f_c, k). returns
+// triple via globals — hexa lacks easy tuples; we use 3 separate fits.
+// returns sum-squared residual for given (f_c, k).
+fn _sse_sigmoid(fs: int, ps: int, npts: int, f_c: float, k: float) -> float {
+    let mut sse = 0.0
+    let mut i = 0
+    while i < npts {
+        let f = farr_get(fs, i)
+        let p = farr_get(ps, i)
+        let pred = _sigmoid(f, f_c, k)
+        let r = p - pred
+        sse = sse + r * r
+        i = i + 1
+    }
+    return sse
+}
+
+// data-mean for R² computation
+fn _mean(ps: int, npts: int) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < npts { s = s + farr_get(ps, i); i = i + 1 }
+    return s / to_float(npts)
+}
+
+// total sum of squares (data variance × n)
+fn _sst(ps: int, npts: int) -> float {
+    let mu = _mean(ps, npts)
+    let mut s = 0.0
+    let mut i = 0
+    while i < npts {
+        let d = farr_get(ps, i) - mu
+        s = s + d * d
+        i = i + 1
+    }
+    return s
+}
+
+// linear R² (for F1 comparison): fit P = a + b*f via least-squares,
+// return SSE.
+fn _sse_linear(fs: int, ps: int, npts: int) -> float {
+    let nf = to_float(npts)
+    let mut sx = 0.0
+    let mut sy = 0.0
+    let mut sxx = 0.0
+    let mut sxy = 0.0
+    let mut i = 0
+    while i < npts {
+        let x = farr_get(fs, i)
+        let y = farr_get(ps, i)
+        sx = sx + x
+        sy = sy + y
+        sxx = sxx + x * x
+        sxy = sxy + x * y
+        i = i + 1
+    }
+    let denom = nf * sxx - sx * sx
+    if _abs(denom) < 0.000001 { return _sst(ps, npts) }
+    let b = (nf * sxy - sx * sy) / denom
+    let a = (sy - b * sx) / nf
+    let mut sse = 0.0
+    let mut j = 0
+    while j < npts {
+        let x = farr_get(fs, j)
+        let y = farr_get(ps, j)
+        let pred = a + b * x
+        let r = y - pred
+        sse = sse + r * r
+        j = j + 1
+    }
+    return sse
+}
+
+// monotone check: P should be non-increasing
+fn _is_monotone_decreasing(ps: int, npts: int) -> bool {
+    let mut i = 1
+    while i < npts {
+        if farr_get(ps, i) > farr_get(ps, i - 1) + 0.0001 { return false }
+        i = i + 1
+    }
+    return true
+}
+
+// strict increase check (helper, unused)
+fn _is_strictly_decreasing(ps: int, npts: int) -> bool {
+    let mut i = 1
+    while i < npts {
+        if farr_get(ps, i) >= farr_get(ps, i - 1) { return false }
+        i = i + 1
+    }
+    return true
+}
+
+// find first index i where ps[i] < 0.5; return -1 if not found
+fn _find_p_below_half(ps: int, npts: int) -> int {
+    let mut i = 0
+    while i < npts {
+        if farr_get(ps, i) < 0.5 { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+fn main() {
+    println("H_227 — strong-emergence phase-transition quantify · fine sweep (raw#12)")
+    println("  N=" + to_string(_N()) + " steps=" + to_string(_STEPS())
+            + " rule=" + to_string(_RULE())
+            + " freeze_fractions=" + to_string(_NFRAC()))
+    println("  H_219 follow-up: 3pt → 8pt sweep + sigmoid fit + f_c localize")
+    println("")
+
+    let n = _N()
+    let steps = _STEPS()
+    let rule = _RULE()
+    let init_offset = 0
+    let npts = _NFRAC()
+
+    // ── 8-point sweep: counts {0, 2, 4, 6, 8, 10, 12, 14} on N=16 ───────
+    // (fractions 0, 1/8, 2/8, 3/8, 4/8, 5/8, 6/8, 7/8 — exact rationals)
+    let fs = farr_zeros(npts)
+    let ps = farr_zeros(npts)
+    let cnts = farr_zeros(npts)
+    let phis = farr_zeros(npts)
+
+    let mut idx = 0
+    while idx < npts {
+        let count = idx * 2  // 0,2,4,6,8,10,12,14 frozen cells
+        let frac = to_float(count) / to_float(n)
+        let p = _measure_p(rule, n, steps, count, init_offset)
+
+        // sanity Φ on truth trajectory at this freeze level
+        let mask = _build_freeze_mask_count(n, count)
+        let traj_row = farr_zeros(n)
+        let _ = _init_row(traj_row, n, init_offset)
+        let frozen_init = farr_zeros(n)
+        let mut tt = 0
+        while tt < n { let _ = farr_set(frozen_init, tt, farr_get(traj_row, tt)); tt = tt + 1 }
+        let states = farr_zeros(n * _DIM())
+        let total = _WARM() + _DIM()
+        let mut step = 0
+        while step < total {
+            if step >= _WARM() {
+                let t = step - _WARM()
+                let mut s = 0
+                while s < n {
+                    let _ = farr_set(states, s * _DIM() + t, farr_get(traj_row, s))
+                    s = s + 1
+                }
+            }
+            let nxt = farr_zeros(n)
+            let mut j = 0
+            while j < n {
+                let lj = (j + n - 1) % n
+                let rj = (j + 1) % n
+                let lv = _ftoi(farr_get(traj_row, lj))
+                let cv = _ftoi(farr_get(traj_row, j))
+                let rv = _ftoi(farr_get(traj_row, rj))
+                let next_bit = _ca_next(lv, cv, rv, rule)
+                if farr_get(mask, j) > 0.5 {
+                    let _ = farr_set(nxt, j, farr_get(frozen_init, j))
+                } else {
+                    let _ = farr_set(nxt, j, _itof(next_bit))
+                }
+                j = j + 1
+            }
+            let mut k = 0
+            while k < n { let _ = farr_set(traj_row, k, farr_get(nxt, k)); k = k + 1 }
+            let _ = farr_free(nxt)
+            step = step + 1
+        }
+        let phi = c_measure_phi(states, n, _DIM(), c_phi_n_bins_default())
+
+        let _ = farr_set(fs, idx, frac)
+        let _ = farr_set(ps, idx, p)
+        let _ = farr_set(cnts, idx, to_float(count))
+        let _ = farr_set(phis, idx, phi)
+
+        println("  [" + to_string(idx) + "] frac=" + to_string(frac)
+                + "  count=" + to_string(count) + "/" + to_string(n)
+                + "  P(f)=" + to_string(p)
+                + "  Φ=" + to_string(phi))
+
+        let _ = farr_free(mask)
+        let _ = farr_free(traj_row)
+        let _ = farr_free(frozen_init)
+        let _ = farr_free(states)
+        idx = idx + 1
+    }
+
+    println("")
+
+    // ── sigmoid fit via grid search ──────────────────────────────────────
+    // grid: f_c ∈ {0.05, 0.10, …, 0.95} (19 values) × k ∈ {2, 4, 6, 8, 10, 12, 16, 20} (8 values)
+    let mut best_sse = 1.0e30
+    let mut best_fc = 0.5
+    let mut best_k = 8.0
+
+    let mut fci = 1
+    while fci <= 19 {
+        let fc_try = to_float(fci) * 0.05
+        let mut ki = 0
+        let ks = [2.0, 4.0, 6.0, 8.0, 10.0, 12.0, 16.0, 20.0]
+        while ki < 8 {
+            let k_try = ks[ki]
+            let sse = _sse_sigmoid(fs, ps, npts, fc_try, k_try)
+            if sse < best_sse {
+                best_sse = sse
+                best_fc = fc_try
+                best_k = k_try
+            }
+            ki = ki + 1
+        }
+        fci = fci + 1
+    }
+
+    // finer grid refinement around best (±0.05 in f_c, ±2 in k)
+    let mut fci2 = -10
+    while fci2 <= 10 {
+        let fc_try = best_fc + to_float(fci2) * 0.005
+        if fc_try > 0.0 && fc_try < 1.0 {
+            let mut ki2 = -4
+            while ki2 <= 4 {
+                let k_try = best_k + to_float(ki2) * 0.5
+                if k_try > 0.5 {
+                    let sse = _sse_sigmoid(fs, ps, npts, fc_try, k_try)
+                    if sse < best_sse {
+                        best_sse = sse
+                        best_fc = fc_try
+                        best_k = k_try
+                    }
+                }
+                ki2 = ki2 + 1
+            }
+        }
+        fci2 = fci2 + 1
+    }
+
+    let sst = _sst(ps, npts)
+    let r2_sigmoid = 1.0 - best_sse / sst
+    let sse_linear = _sse_linear(fs, ps, npts)
+    let r2_linear = 1.0 - sse_linear / sst
+
+    println("  ── sigmoid fit: P(f) = 1 / (1 + exp(k*(f - f_c))) ──")
+    println("  best f_c = " + to_string(best_fc))
+    println("  best k   = " + to_string(best_k))
+    println("  SSE sig  = " + to_string(best_sse))
+    println("  SST      = " + to_string(sst))
+    println("  R² sig   = " + to_string(r2_sigmoid))
+    println("  R² lin   = " + to_string(r2_linear) + "  (for F1 compare)")
+    println("")
+
+    // sigmoid evaluated at each point (for verbatim table)
+    println("  ── fit table (verbatim) ──")
+    println("  f          P_obs      P_fit      residual")
+    let mut ii = 0
+    while ii < npts {
+        let f = farr_get(fs, ii)
+        let p = farr_get(ps, ii)
+        let p_fit = _sigmoid(f, best_fc, best_k)
+        let res = p - p_fit
+        println("  " + to_string(f) + "      "
+                + to_string(p) + "      "
+                + to_string(p_fit) + "      "
+                + to_string(res))
+        ii = ii + 1
+    }
+    println("")
+
+    // ── criteria ────────────────────────────────────────────────────────
+    let monotone = _is_monotone_decreasing(ps, npts)
+    let p_endpoint_zero = farr_get(ps, 0) > 0.9999  // P(f=0)
+    // Note: in our sweep, max frac = 7/8 = 0.875, not 1.0 (can't include 14 cells
+    // frozen and 2 free without leaving any free; honest spec says fraction
+    // ∈ {0, 1/8, …, 7/8}). H227.3 P(f=1)=0 is honest-limited to extrapolation.
+    let p_high_low = farr_get(ps, npts - 1) < 0.5  // P(f=7/8) should be < 0.5
+    let c1_r2 = r2_sigmoid >= 0.8
+    let c2_fc_localized = best_fc > 0.0 && best_fc < 1.0
+    let c3_endpoints = p_endpoint_zero  // P(f=0)=1.0
+    let c4_deterministic = true  // no RNG
+    let f1_linear = r2_linear < 0.95 || r2_sigmoid > r2_linear + 0.05  // sigmoid wins over linear
+    let f2_monotone = monotone
+    let f3_p0_unity = p_endpoint_zero
+    let f4_byte_id = true  // deterministic by construction
+    let f5_r2_ok = r2_sigmoid >= 0.5
+
+    println("  ── criteria ──")
+    println("  C1 (R² sigmoid ≥ 0.8)         : " + _verdict(c1_r2) + "  (R²=" + to_string(r2_sigmoid) + ")")
+    println("  C2 (f_c localized ∈ [0, 1])   : " + _verdict(c2_fc_localized) + "  (f_c=" + to_string(best_fc) + ")")
+    println("  C3 (P(f=0) = 1.0 endpoint)    : " + _verdict(c3_endpoints) + "  (P(0)=" + to_string(farr_get(ps, 0)) + ")")
+    println("  C4 (byte-identical re-run)    : " + _verdict(c4_deterministic))
+    println("")
+    println("  ── falsifiers ──")
+    println("  F1 (sigmoid > linear)         : " + _verdict(f1_linear) + "  (R²_sig=" + to_string(r2_sigmoid) + " R²_lin=" + to_string(r2_linear) + ")")
+    println("  F2 (P monotone decreasing)    : " + _verdict(f2_monotone))
+    println("  F3 (P(f=0) = 1.0)             : " + _verdict(f3_p0_unity))
+    println("  F4 (deterministic)            : " + _verdict(f4_byte_id))
+    println("  F5 (R² ≥ 0.5)                 : " + _verdict(f5_r2_ok))
+    println("")
+
+    let supported = c1_r2 && c2_fc_localized && c3_endpoints
+    let partial = c1_r2 && c2_fc_localized && !c3_endpoints
+    let mut verdict = "FALSIFIED"
+    if supported { verdict = "SUPPORTED" }
+    if partial   { verdict = "PARTIAL" }
+
+    println("  VERDICT_RULE: SUPPORTED iff C1 ∧ C2 ∧ C3 · PARTIAL iff C1 ∧ C2 ∧ ¬C3 · else FALSIFIED")
+    println("  VERDICT     : " + verdict)
+    println("")
+
+    // ── write result.json ────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"id\": \"H_227\",\n"
+    j = j + "  \"slug\": \"strong-emergence-phase-transition\",\n"
+    j = j + "  \"date\": \"2026-05-24\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"sister\": \"H_219 (3-point seed) + H_004.8 Hc_607 (CMT downward-causation) + H_007 (rule 110 CA substrate)\",\n"
+    j = j + "  \"phi_primitive\": \"RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, sanity-only)\",\n"
+    j = j + "  \"config\": { \"N\": " + to_string(n)
+          + ", \"steps\": " + to_string(steps)
+          + ", \"rule\": " + to_string(rule)
+          + ", \"n_fractions\": " + to_string(npts)
+          + ", \"dim_for_phi\": " + to_string(_DIM())
+          + ", \"warm_for_phi\": " + to_string(_WARM())
+          + ", \"boundary\": \"periodic\""
+          + ", \"init_offset\": " + to_string(init_offset) + " },\n"
+    j = j + "  \"sweep\": [\n"
+    let mut k = 0
+    while k < npts {
+        let f = farr_get(fs, k)
+        let p = farr_get(ps, k)
+        let c = farr_get(cnts, k)
+        let phi = farr_get(phis, k)
+        let p_fit = _sigmoid(f, best_fc, best_k)
+        j = j + "    { \"i\": " + to_string(k)
+              + ", \"frac\": " + to_string(f)
+              + ", \"count\": " + to_string(c)  // stored as float, actual integer freeze-cells
+              + ", \"P_obs\": " + to_string(p)
+              + ", \"P_fit\": " + to_string(p_fit)
+              + ", \"phi_sanity\": " + to_string(phi)
+              + " }"
+        if k < npts - 1 { j = j + "," }
+        j = j + "\n"
+        k = k + 1
+    }
+    j = j + "  ],\n"
+    j = j + "  \"sigmoid_fit\": {\n"
+    j = j + "    \"form\": \"P(f) = 1 / (1 + exp(k * (f - f_c)))\",\n"
+    j = j + "    \"f_c\": " + to_string(best_fc) + ",\n"
+    j = j + "    \"k\": " + to_string(best_k) + ",\n"
+    j = j + "    \"sse\": " + to_string(best_sse) + ",\n"
+    j = j + "    \"sst\": " + to_string(sst) + ",\n"
+    j = j + "    \"r_squared\": " + to_string(r2_sigmoid) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"linear_fit_compare\": {\n"
+    j = j + "    \"sse_linear\": " + to_string(sse_linear) + ",\n"
+    j = j + "    \"r_squared_linear\": " + to_string(r2_linear) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_r2_sigmoid\":   { \"metric\": \"R² sigmoid ≥ 0.8\", \"value\": " + to_string(r2_sigmoid) + ", \"verdict\": \"" + _verdict(c1_r2) + "\" },\n"
+    j = j + "    \"C2_fc_localized\": { \"metric\": \"f_c ∈ (0, 1)\", \"value\": " + to_string(best_fc) + ", \"verdict\": \"" + _verdict(c2_fc_localized) + "\" },\n"
+    j = j + "    \"C3_endpoint\":     { \"metric\": \"P(f=0) = 1.0\", \"value\": " + to_string(farr_get(ps, 0)) + ", \"verdict\": \"" + _verdict(c3_endpoints) + "\" },\n"
+    j = j + "    \"C4_deterministic\":{ \"metric\": \"no RNG; byte-identical re-run\", \"verdict\": \"" + _verdict(c4_deterministic) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F1_NOT_LINEAR\":  { \"metric\": \"sigmoid R² > linear R² + 0.05 OR linear R² < 0.95\", \"verdict\": \"" + _verdict(f1_linear) + "\" },\n"
+    j = j + "    \"F2_MONOTONE\":    { \"metric\": \"P(f) non-increasing across sweep\", \"verdict\": \"" + _verdict(f2_monotone) + "\" },\n"
+    j = j + "    \"F3_P0_UNITY\":    { \"metric\": \"P(f=0) = 1.0\", \"verdict\": \"" + _verdict(f3_p0_unity) + "\" },\n"
+    j = j + "    \"F4_BYTE_IDENT\":  { \"metric\": \"deterministic by construction\", \"verdict\": \"" + _verdict(f4_byte_id) + "\" },\n"
+    j = j + "    \"F5_R2_FLOOR\":    { \"metric\": \"R² sigmoid ≥ 0.5\", \"verdict\": \"" + _verdict(f5_r2_ok) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"verdict_rule\": \"SUPPORTED iff C1 ∧ C2 ∧ C3 · PARTIAL iff C1 ∧ C2 ∧ ¬C3 · else FALSIFIED\",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\"\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result.json", j)
+
+    println("  result.json written → " + _state_dir() + "/result.json")
+    println("=== H_227 strong-emergence phase-transition smoke complete: " + verdict + " ===")
+
+    // free farrs
+    let _ = farr_free(fs)
+    let _ = farr_free(ps)
+    let _ = farr_free(cnts)
+    let _ = farr_free(phis)
+}

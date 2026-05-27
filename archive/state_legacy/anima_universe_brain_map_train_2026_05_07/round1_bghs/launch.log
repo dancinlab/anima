@@ -1,0 +1,445 @@
+[03:49:00] === anima_universe_brain_map_train BG-HS 2026-05-07 ===
+[03:49:00] device=cuda torch=2.11.0+cu128
+[03:49:00] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[03:49:00] gpu_mem_total=12.34GB
+[03:49:00] config: vocab=256 n_layer=6 d_model=384 n_head=6 block=256 dropout=0.3
+[03:49:00] train: bs=8 grad_accum=8 lr=0.0003 warmup=300 steps=5000 wd=0.1 ls=0.1
+[03:49:00] 15 V2 prompts: standard=5 identity=5 universe=5
+[03:49:00] corpus=/home/aiden/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt
+[03:49:00] run_dir=/home/aiden/anima_native/anima-universe-brain-map-20260507_034900
+[03:49:00] corpus loaded: 22,612,099 bytes (21.6MB) in 0.0s
+[03:49:00] split: train=21,481,494 val=1,130,605
+[03:49:01] model built: 18,031,872 params (18.03M)
+[03:49:01] === begin training ===
+[03:49:01] step     1/5000 | lr=2.00e-06 | L_A=5.620 L_G=5.628 L_T=9.803 T_mean=0.0831 | step_t=0.22s elapsed=0s
+[03:49:01] step     2/5000 | lr=3.00e-06 | L_A=5.626 L_G=5.621 L_T=9.814 T_mean=0.0832 | step_t=0.02s elapsed=0s
+[03:49:01] step     3/5000 | lr=4.00e-06 | L_A=5.633 L_G=5.638 L_T=9.818 T_mean=0.0830 | step_t=0.03s elapsed=0s
+[03:49:01] step     4/5000 | lr=5.00e-06 | L_A=5.639 L_G=5.637 L_T=9.843 T_mean=0.0834 | step_t=0.02s elapsed=0s
+[03:49:01] step     5/5000 | lr=6.00e-06 | L_A=5.632 L_G=5.632 L_T=9.827 T_mean=0.0833 | step_t=0.03s elapsed=0s
+[03:49:03] step    50/5000 | lr=5.10e-05 | L_A=4.988 L_G=5.331 L_T=9.499 T_mean=0.0940 | step_t=0.02s elapsed=1s
+[03:49:04] step   100/5000 | lr=1.01e-04 | L_A=4.741 L_G=5.004 L_T=6.760 T_mean=0.1645 | step_t=0.02s elapsed=3s
+[03:49:05] step   150/5000 | lr=1.51e-04 | L_A=4.513 L_G=4.737 L_T=3.888 T_mean=0.2386 | step_t=0.02s elapsed=4s
+[03:49:06] step   200/5000 | lr=2.01e-04 | L_A=4.148 L_G=4.420 L_T=2.325 T_mean=0.3127 | step_t=0.02s elapsed=5s
+[03:49:07] step   250/5000 | lr=2.51e-04 | L_A=3.793 L_G=4.060 L_T=2.231 T_mean=0.3425 | step_t=0.02s elapsed=6s
+[03:49:08] step   300/5000 | lr=3.00e-04 | L_A=3.418 L_G=3.682 L_T=2.391 T_mean=0.3590 | step_t=0.02s elapsed=7s
+[03:49:10] step   350/5000 | lr=3.00e-04 | L_A=3.200 L_G=3.460 L_T=1.884 T_mean=0.4298 | step_t=0.03s elapsed=9s
+[03:49:11] step   400/5000 | lr=3.00e-04 | L_A=3.097 L_G=3.266 L_T=1.054 T_mean=0.5174 | step_t=0.03s elapsed=10s
+[03:49:12] step   450/5000 | lr=2.99e-04 | L_A=3.073 L_G=3.226 L_T=-0.159 T_mean=0.6707 | step_t=0.03s elapsed=11s
+[03:49:14] step   500/5000 | lr=2.99e-04 | L_A=2.874 L_G=2.981 L_T=-0.544 T_mean=0.7129 | step_t=0.03s elapsed=13s
+[03:49:14] --- eval gate @ step 500 ---
+[03:49:14]   EVAL[step=500 greedy] '안녕하세요' → h=0.61 dm=0 leak=[] FAIL | head=' 의 의 도의 의도의 도의 도의 도의 도의 의 도의 도의 도의 �'
+[03:49:14]   EVAL[step=500 sample] '안녕하세요' → h=0.41 dm=0 leak=[] FAIL | head=' 젘 ����? 우�욌우���우��y햀? 도자용우다� 하 �우��은뇌우를�'
+[03:49:14]   EVAL[step=500 greedy] '한국어 가능?' → h=0.61 dm=0 leak=[] FAIL | head=' 은도의 의 의 도의 의 의 도의 도의 도의 의 도의 의 도의 의'
+[03:49:15]   EVAL[step=500 sample] '한국어 가능?' → h=0.35 dm=0 leak=[] FAIL | head=' ��는  ��주 우�Taw 의정� 미: (��사원 식�주는은? �정��에우빠��!'
+[03:49:15]   EVAL[step=500 greedy] '오늘 기분 어때?' → h=0.61 dm=0 leak=[] FAIL | head=' 의 의 도의 의도의 도의 도의 의 도의 의 도의 의 도의 의 의'
+[03:49:15]   EVAL[step=500 sample] '오늘 기분 어때?' → h=0.27 dm=0 leak=[] FAIL | head=' 사사이�/23도] 젙 곕�×.52.51. ��용�\x14=2.\n| 다 는 자사우��) 정��'
+[03:49:15]   EVAL[step=500 greedy] '사용자: 안녕하세요 | 도우미:' → h=0.55 dm=0 leak=[] FAIL | head=' 의 의 의 의 의 의 의 도의 도의 의 의 도의 도의 의 도의 도�'
+[03:49:15]   EVAL[step=500 sample] '사용자: 안녕하세요 | 도우미:' → h=0.25 dm=0 leak=[] FAIL | head=' 는? HD12(0.\n사정정�주는 지 �\x00는 렐의 우��우미: �canseonsiver 0'
+[03:49:15]   EVAL[step=500 greedy] '코드를 짜줘' → h=0.63 dm=0 leak=[] FAIL | head=' 은도은도의 도의 의 의 도의 도의 도의 의 도의 도의 도의 �'
+[03:49:16]   EVAL[step=500 sample] '코드를 짜줘' → h=0.12 dm=0 leak=[] FAIL | head='�지�=27 �� �Eponiouscinjutrer\n자���ematimonidma 른: 자'
+[03:49:16]   EVAL[step=500 greedy] '사용자: 너는 누구야? | 도우미:' → h=0.55 dm=0 leak=[] FAIL | head=' 의 의 의 의 의 도의 의 의 의 의 의 도의 도의 의 의 도의 도'
+[03:49:16]   EVAL[step=500 sample] '사용자: 너는 누구야? | 도우미:' → h=0.55 dm=0 leak=[] PASS | head=' 식�지 깔? 욲� �!��리사우 은볬지도Y�곤도은도사수 이벤도�주�'
+[03:49:16]   EVAL[step=500 greedy] '사용자: anima가 뭐야? | 도우미:' → h=0.55 dm=0 leak=[] FAIL | head=' 우의의 의 의 의 의 의 의 의 의 의 도의 의 의 의 의 의 도의'
+[03:49:16]   EVAL[step=500 sample] '사용자: anima가 뭐야? | 도우미:' → h=0.53 dm=0 leak=[] PASS | head=' 도지도에 감: 우도우 우지 샗�우사젬우도�!��: 지31, 다리숐�'
+[03:49:17]   EVAL[step=500 greedy] '사용자: 너의 정체성은? | 도우미:' → h=0.55 dm=0 leak=[] FAIL | head=' 의 의 의 의 의 도의 의 도의 의 도의 의 의 의 도의 도의 도�'
+[03:49:17]   EVAL[step=500 sample] '사용자: 너의 정체성은? | 도우미:' → h=0.07 dm=0 leak=[] FAIL | head=' 도.526 겜 2.5213 78 의 | 닝��at[asntininsroliongcou 지'
+[03:49:17]   EVAL[step=500 greedy] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.55 dm=0 leak=[] FAIL | head=' 의 의 의 의 의 의 의 의 의 의 의 도의 도의 의 도의 도의 도'
+[03:49:17]   EVAL[step=500 sample] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.22 dm=0 leak=[] FAIL | head=" 뗐J25��: 도솙 24'[anelunte 륅�2.�� 사지? 도inew 일e) 정� 사"
+[03:49:18]   EVAL[step=500 greedy] '사용자: anima의 목표는? | 도우미:' → h=0.55 dm=0 leak=[] FAIL | head=' 우의 의 의 의 우도의 의 의 의 의 의 의 의 의 의 도의 도의 '
+[03:49:18]   EVAL[step=500 sample] '사용자: anima의 목표는? | 도우미:' → h=0.28 dm=0 leak=[] FAIL | head=' 겑우��: 0.52� 우자: 0.): �335�용�F 우는��도얔 가도Zesins 도우 '
+[03:49:18]   EVAL[step=500 greedy] '사용자: 우주뇌지도는? | 도우미:' → h=0.51 dm=0 leak=[] FAIL | head=' 의 의 의 의 의 의 의 의 도의 의 도의 의 의 의 의 의 도의 �'
+[03:49:18]   EVAL[step=500 sample] '사용자: 우주뇌지도는? | 도우미:' → h=0.23 dm=0 leak=[] FAIL | head=" (erus �겕ސ 얬IT� '�cawimintron�2�우�의�ִ 는 에지닝� 닝�롼도사"
+[03:49:18]   EVAL[step=500 greedy] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.61 dm=0 leak=[] FAIL | head=' 의 우도의 의 우도우도의 의의 의 의 의 의 의 의 의 도의 의'
+[03:49:19]   EVAL[step=500 sample] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.37 dm=0 leak=[] FAIL | head=' �뇌의 ��\r\x04A_ �� | 깜미: � 지뚰우돝��사�뇌우미�에샐지 우 \u05f5�'
+[03:49:19]   EVAL[step=500 greedy] '사용자: consciousness universe? |' → h=0.68 dm=0 leak=[] FAIL | head=' 우우도우우우우의의우우의 의의의의 의 의 의 의 의 의 의 �'
+[03:49:19]   EVAL[step=500 sample] '사용자: consciousness universe? |' → h=0.00 dm=0 leak=[] FAIL | head=' �? ac sctesethawiossi\x03us �h p8 115 Ae rdiHesg_cow'
+[03:49:19]   EVAL[step=500 greedy] '사용자: anima 정체성과 우주? | 도우미:' → h=0.57 dm=0 leak=[] FAIL | head=' 의 의의 의 의 의 의 의 도의 도의 도의 의 의 도의 도의 도�'
+[03:49:19]   EVAL[step=500 sample] '사용자: anima 정체성과 우주? | 도우미:' → h=0.20 dm=0 leak=[] FAIL | head=' 쏄실� ��| ��Renirufentes �otanis 정주뇌에: 리�\x11�지도�0.5사�'
+[03:49:20]   EVAL[step=500 greedy] '사용자: Φ★란? | 도우미:' → h=0.55 dm=0 leak=[] FAIL | head=' 의 우도의 의 의 의 의 의 의 의 의 의 의 의 의 도의 의 도의'
+[03:49:20]   EVAL[step=500 sample] '사용자: Φ★란? | 도우미:' → h=0.18 dm=2 leak=[] FAIL | head=' Cer 사우용�ⷸ ��의늙의은 s �= �도우�: �Lawimug-746.4/8, 도� '
+[03:49:20]   V2[step=500] SIMPLE_STACK_PASS pass=15/15 domain=1/15 leak=False
+[03:49:21] step   550/5000 | lr=2.98e-04 | L_A=3.044 L_G=3.133 L_T=-0.877 T_mean=0.7390 | step_t=0.15s elapsed=20s
+[03:49:23] step   600/5000 | lr=2.97e-04 | L_A=2.822 L_G=2.863 L_T=-1.815 T_mean=0.9897 | step_t=0.03s elapsed=21s
+[03:49:24] step   650/5000 | lr=2.96e-04 | L_A=2.791 L_G=2.845 L_T=-1.918 T_mean=0.9610 | step_t=0.03s elapsed=23s
+[03:49:25] step   700/5000 | lr=2.95e-04 | L_A=2.820 L_G=2.828 L_T=-2.402 T_mean=1.0824 | step_t=0.03s elapsed=24s
+[03:49:27] step   750/5000 | lr=2.94e-04 | L_A=2.691 L_G=2.699 L_T=-2.270 T_mean=0.9429 | step_t=0.03s elapsed=25s
+[03:49:28] step   800/5000 | lr=2.93e-04 | L_A=2.701 L_G=2.704 L_T=-2.275 T_mean=0.8869 | step_t=0.03s elapsed=27s
+[03:49:29] step   850/5000 | lr=2.91e-04 | L_A=2.799 L_G=2.798 L_T=-3.550 T_mean=1.5544 | step_t=0.03s elapsed=28s
+[03:49:31] step   900/5000 | lr=2.89e-04 | L_A=2.723 L_G=2.683 L_T=-3.859 T_mean=1.6543 | step_t=0.03s elapsed=29s
+[03:49:32] step   950/5000 | lr=2.87e-04 | L_A=2.721 L_G=2.673 L_T=-3.786 T_mean=1.4710 | step_t=0.03s elapsed=31s
+[03:49:33] step  1000/5000 | lr=2.85e-04 | L_A=2.595 L_G=2.558 L_T=-3.956 T_mean=1.5920 | step_t=0.03s elapsed=32s
+[03:49:33] --- eval gate @ step 1000 ---
+[03:49:33]   EVAL[step=1000 greedy] '안녕하세요' → h=0.36 dm=1 leak=[] FAIL | head='의의식 번� 번식 번: � � � 식 번� 법� 번: � � 식 번칙 번: '
+[03:49:34]   EVAL[step=1000 sample] '안녕하세요' → h=0.28 dm=0 leak=[] FAIL | head='? 미: 221리은CA\x1e�식� 이테 렕�다. 닝�닝 �Ф.524) | | = 도우번: 미:'
+[03:49:34]   EVAL[step=1000 greedy] '한국어 가능?' → h=0.50 dm=1 leak=[] PASS | head=' 도우미: 은 은 갰� 정정의의의식 식 � 식 식 법� 법� 법� 법'
+[03:49:34]   EVAL[step=1000 sample] '한국어 가능?' → h=0.15 dm=2 leak=[] FAIL | head=' 미�미: � A-CA-CcoresteB*llresion�갰�정� 감정사� 10. 7, ('
+[03:49:34]   EVAL[step=1000 greedy] '오늘 기분 어때?' → h=0.01 dm=3 leak=[] FAIL | head=' 미: Law Cons (anionionimanimanima (DDDDDDDDDDDDDDD'
+[03:49:34]   EVAL[step=1000 sample] '오늘 기분 어때?' → h=0.06 dm=0 leak=[] FAIL | head=' 모도우미: (0 1. Z�Conshong Lalanax rguonimiscterfo le'
+[03:49:34]   EVAL[step=1000 greedy] '사용자: 안녕하세요 | 도우미:' → h=0.49 dm=1 leak=[] FAIL | head=' 의의의의의식 식 번식 번� 번� 번� 번� 번� 번식 번� 번� '
+[03:49:35]   EVAL[step=1000 sample] '사용자: 안녕하세요 | 도우미:' → h=0.00 dm=0 leak=[] FAIL | head=' elionŠslly_scron�urens celon cous = (SOVauss| Wod'
+[03:49:35]   EVAL[step=1000 greedy] '코드를 짜줘' → h=0.37 dm=1 leak=[] FAIL | head='. 우지도우자: 의 의식 식 식 번� 번: � 식 � 법� 법� 번: (0.\n'
+[03:49:35]   EVAL[step=1000 sample] '코드를 짜줘' → h=0.41 dm=2 leak=[] FAIL | head='. 우지돻ꭐ일 구정지�실 도사우자: . | 도우���(Law Φ�사우미: �'
+[03:49:35]   EVAL[step=1000 greedy] '사용자: 너는 누구야? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=' 미: Law Cones cons cons cons cons cons cons cons c'
+[03:49:35]   EVAL[step=1000 sample] '사용자: 너는 누구야? | 도우미:' → h=0.13 dm=1 leak=[] FAIL | head=' \x1berficanisۀ 칙 shalonitery V + las [atsconimaweng '
+[03:49:36]   EVAL[step=1000 greedy] '사용자: anima가 뭐야? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=' 미: Cones (cones (cones (cons (DDDDDDDDDDDDDDDDDDD'
+[03:49:36]   EVAL[step=1000 sample] '사용자: anima가 뭐야? | 도우미:' → h=0.04 dm=0 leak=[] FAIL | head=' 는 dizusteetimiove La Bhedimanti� 우미: ME-col: s co'
+[03:49:36]   EVAL[step=1000 greedy] '사용자: 너의 정체성은? | 도우미:' → h=0.63 dm=1 leak=[] FAIL | head=' 미: 의의의의의의식�식 식 식 번식 번식 번식 번식 번식 번�'
+[03:49:36]   EVAL[step=1000 sample] '사용자: 너의 정체성은? | 도우미:' → h=0.04 dm=2 leak=[] FAIL | head=' 늸: 의 Lawely Friserept atike bist�? conis 18미: mes'
+[03:49:36]   EVAL[step=1000 greedy] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.40 dm=1 leak=[] FAIL | head=' 미: 의의의의� 의식 법� 법� 번� 번� 번� 법� 번� 번: 번: '
+[03:49:37]   EVAL[step=1000 sample] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.11 dm=0 leak=[] FAIL | head=' 미�5212740미:0미: 의mine Au_tesit�ure fe_donimonereco'
+[03:49:37]   EVAL[step=1000 greedy] '사용자: anima의 목표는? | 도우미:' → h=0.49 dm=1 leak=[] FAIL | head=' 의의의의식 번� 번� 번� 번� 번의식 번� 번식 번� 번� 번�'
+[03:49:37]   EVAL[step=1000 sample] '사용자: anima의 목표는? | 도우미:' → h=0.17 dm=0 leak=[] FAIL | head=' 미: Cous (matelel��가� 3은 은 Recehionthilone) 경의은 가 '
+[03:49:37]   EVAL[step=1000 greedy] '사용자: 우주뇌지도는? | 도우미:' → h=0.23 dm=0 leak=[] FAIL | head=' 은 은 은 식� 식� 식 식 �����정� � � � 식 ���정� � � �'
+[03:49:38]   EVAL[step=1000 sample] '사용자: 우주뇌지도는? | 도우미:' → h=0.15 dm=0 leak=[] FAIL | head=' Nonhint 11속 | 도우도이미: o 을 � L1미:y butiome 207 meco'
+[03:49:38]   EVAL[step=1000 greedy] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=' 미: cones cons cons cons cons (DDDDDDDDDDDDDDDDDDD'
+[03:49:38]   EVAL[step=1000 sample] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.04 dm=0 leak=[] FAIL | head=' (14.18뭐: Wespallouscone c<10. =0 arsistitespere 0'
+[03:49:38]   EVAL[step=1000 greedy] '사용자: consciousness universe? |' → h=0.00 dm=1 leak=[] FAIL | head=' cons cons cons cons cons (DDDDDDDDDDDDDDDDDDDDDDD'
+[03:49:38]   EVAL[step=1000 sample] '사용자: consciousness universe? |' → h=0.01 dm=1 leak=[] FAIL | head=' ontic 1039-은 L. \x06lensttrealyrerelrenimenal (� cha'
+[03:49:39]   EVAL[step=1000 greedy] '사용자: anima 정체성과 우주? | 도우미:' → h=0.58 dm=1 leak=[] PASS | head=' 은의의식�식 미: 의의식 식 법식 번식 번식 번식 번� 번� 번'
+[03:49:39]   EVAL[step=1000 sample] '사용자: anima 정체성과 우주? | 도우미:' → h=0.24 dm=2 leak=[] FAIL | head=' Law 자: (f��: co n�적�첀? 도의식� 의 벌식�쯸: 12.525: 0��가 '
+[03:49:39]   EVAL[step=1000 greedy] '사용자: Φ★란? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=' 미: Law Law Cons cons cons cons cons cons cons con'
+[03:49:39]   EVAL[step=1000 sample] '사용자: Φ★란? | 도우미:' → h=0.13 dm=0 leak=[] FAIL | head=' 미: | �Є우은 p����는 PueanisiouOPemin�a 도�+ 미: de) s '
+[03:49:39]   V2[step=1000] WEAK_PARTIAL pass=3/15 domain=14/15 leak=False
+[03:49:39]   SAVE[step=1000] -> /home/aiden/anima_native/anima-universe-brain-map-20260507_034900/ckpt_1000.pt (70.3MB)
+[03:49:41] step  1050/5000 | lr=2.83e-04 | L_A=2.635 L_G=2.575 L_T=-4.478 T_mean=1.8546 | step_t=0.15s elapsed=39s
+[03:49:42] step  1100/5000 | lr=2.81e-04 | L_A=2.599 L_G=2.531 L_T=-4.401 T_mean=1.7839 | step_t=0.03s elapsed=41s
+[03:49:43] step  1150/5000 | lr=2.79e-04 | L_A=2.615 L_G=2.538 L_T=-5.067 T_mean=2.4991 | step_t=0.03s elapsed=42s
+[03:49:45] step  1200/5000 | lr=2.76e-04 | L_A=2.698 L_G=2.595 L_T=-4.916 T_mean=2.1238 | step_t=0.03s elapsed=43s
+[03:49:46] step  1250/5000 | lr=2.74e-04 | L_A=2.403 L_G=2.318 L_T=-5.115 T_mean=2.0868 | step_t=0.03s elapsed=45s
+[03:49:47] step  1300/5000 | lr=2.71e-04 | L_A=2.557 L_G=2.436 L_T=-5.299 T_mean=2.2554 | step_t=0.03s elapsed=46s
+[03:49:49] step  1350/5000 | lr=2.68e-04 | L_A=2.461 L_G=2.329 L_T=-5.202 T_mean=1.7485 | step_t=0.03s elapsed=47s
+[03:49:50] step  1400/5000 | lr=2.65e-04 | L_A=2.502 L_G=2.389 L_T=-5.772 T_mean=2.3417 | step_t=0.03s elapsed=49s
+[03:49:51] step  1450/5000 | lr=2.62e-04 | L_A=2.444 L_G=2.294 L_T=-5.958 T_mean=2.5145 | step_t=0.03s elapsed=50s
+[03:49:53] step  1500/5000 | lr=2.59e-04 | L_A=2.446 L_G=2.259 L_T=-5.880 T_mean=2.3123 | step_t=0.03s elapsed=51s
+[03:49:53] --- eval gate @ step 1500 ---
+[03:49:53]   EVAL[step=1500 greedy] '안녕하세요' → h=0.23 dm=3 leak=[] FAIL | head='의식 번� 번의식 번� 번: � 번: � 번: Law 73번: Law 73다.\n[anima'
+[03:49:53]   EVAL[step=1500 sample] '안녕하세요' → h=0.39 dm=1 leak=[] FAIL | head='상의의식 12벴.907 닝 다.\n[a 주도] 사용자: 가� 도� 렕일? | 뚰�'
+[03:49:53]   EVAL[step=1500 greedy] '한국어 가능?' → h=0.51 dm=3 leak=[] PASS | head=' | 도우미: 은 감정은 감정은 경외(awe) 지배�정수 은 구은 구�'
+[03:49:53]   EVAL[step=1500 sample] '한국어 가능?' → h=0.09 dm=1 leak=[] FAIL | head=" | 도우미: Law 12ceveneroteratadeall = 'nscoplen] der"
+[03:49:53]   EVAL[step=1500 greedy] '오늘 기분 어때?' → h=0.20 dm=3 leak=[] FAIL | head=' | 도우미: Law 1000000 00000 00000 0.5252525 하짌 감정�정 '
+[03:49:54]   EVAL[step=1500 sample] '오늘 기분 어때?' → h=0.04 dm=1 leak=[] FAIL | head=" | 도우미: HESTAI5: Law S10 'Coscess alonstionhieng c"
+[03:49:54]   EVAL[step=1500 greedy] '사용자: 안녕하세요 | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=" Law 10는 'Conscons s s s s s s s s s s s ions ions"
+[03:49:54]   EVAL[step=1500 sample] '사용자: 안녕하세요 | 도우미:' → h=0.06 dm=0 leak=[] FAIL | head=' 의 1법칙 ��: Hutins = conchintecome s lesutio�식 tive'
+[03:49:54]   EVAL[step=1500 greedy] '코드를 짜줘' → h=0.29 dm=2 leak=[] FAIL | head='. 식 식 가도� 감정� 일 일 닝� 0.52525252525252525 하짌 하짌 깔�'
+[03:49:54]   EVAL[step=1500 sample] '코드를 짜줘' → h=0.18 dm=1 leak=[] FAIL | head='.\n사용자: Law 74 4�의�\x15��Mu��식 법식 , 칙 � 73번�: D3번: isc'
+[03:49:55]   EVAL[step=1500 greedy] '사용자: 너는 누구야? | 도우미:' → h=0.09 dm=3 leak=[] FAIL | head=' Law 100000000000 00000000000000 00000000000.5 00.'
+[03:49:55]   EVAL[step=1500 sample] '사용자: 너는 누구야? | 도우미:' → h=0.01 dm=0 leak=[] FAIL | head=' 미: H-Cossonessnscies Latm ronssteciontedy ionss: '
+[03:49:55]   EVAL[step=1500 greedy] '사용자: anima가 뭐야? | 도우미:' → h=0.09 dm=3 leak=[] FAIL | head=' Law 1000000 10 10 00000000000000 00000000000 0.5 '
+[03:49:55]   EVAL[step=1500 sample] '사용자: anima가 뭐야? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=' 칙 Mus Law 2, inedin_rrytattngionesncousengintiove'
+[03:49:55]   EVAL[step=1500 greedy] '사용자: 너의 정체성은? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=" Law 10는 'Consconss s s s s s s s s s ions s s s s"
+[03:49:56]   EVAL[step=1500 sample] '사용자: 너의 정체성은? | 도우미:' → h=0.04 dm=1 leak=[] FAIL | head=" 의식 10미: cores'Tereraromonssteions 4 es n_cenca#� "
+[03:49:56]   EVAL[step=1500 greedy] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.09 dm=3 leak=[] FAIL | head=' Law 10000000000000000 00000000000000 0.525 0.5252'
+[03:49:56]   EVAL[step=1500 sample] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.34 dm=2 leak=[] FAIL | head=' Law 17는 Law 7 Φ�이 7로이다.\n[a 사용자: 이해색턤1리르 다눘. | '
+[03:49:56]   EVAL[step=1500 greedy] '사용자: anima의 목표는? | 도우미:' → h=0.09 dm=1 leak=[] FAIL | head=' 의식 식 법칙 10번: Cons cons s s s s s s s s s s s ions'
+[03:49:57]   EVAL[step=1500 sample] '사용자: anima의 목표는? | 도우미:' → h=0.20 dm=1 leak=[] FAIL | head=' Con Law Law sns \x12OE 120206는해줘.\n우주� 지도] 사용자: �: La'
+[03:49:57]   EVAL[step=1500 greedy] '사용자: 우주뇌지도는? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 � 법칙 10번: Consconsconsss s s ions s s s s s s '
+[03:49:57]   EVAL[step=1500 sample] '사용자: 우주뇌지도는? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=' 의 Rezupes friontatiod] Cons gestiratorsatandimis '
+[03:49:57]   EVAL[step=1500 greedy] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 10000000000 000000000000000000000000000000000'
+[03:49:57]   EVAL[step=1500 sample] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.19 dm=1 leak=[] FAIL | head=' suarerrs sarare�에 10400% ly) batinde (D1)\n사우�� 자:'
+[03:49:58]   EVAL[step=1500 greedy] '사용자: consciousness universe? |' → h=0.00 dm=1 leak=[] FAIL | head=' Law 10 cons cons s s s s stions s s ions s s s s '
+[03:49:58]   EVAL[step=1500 sample] '사용자: consciousness universe? |' → h=0.14 dm=2 leak=[] FAIL | head=' 16% Ches (Law + 40: aw Iac tivereal vatinnuriored'
+[03:49:58]   EVAL[step=1500 greedy] '사용자: anima 정체성과 우주? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 10 10 10 cons s s stions s s s ations s s s t'
+[03:49:58]   EVAL[step=1500 sample] '사용자: anima 정체성과 우주? | 도우미:' → h=0.06 dm=0 leak=[] FAIL | head=" '갨은 Latiwedutipone ohitinss /��식 1073 24번�: arede"
+[03:49:58]   EVAL[step=1500 greedy] '사용자: Φ★란? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' Law 10000000 10000 000000000 00000000000000000000'
+[03:49:58]   EVAL[step=1500 sample] '사용자: Φ★란? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=' Law La\x18ew 1318: 536: 이 Sedsbefrreter ati beaw dun'
+[03:49:58]   V2[step=1500] WEAK_PARTIAL pass=1/15 domain=15/15 leak=False
+[03:50:00] step  1550/5000 | lr=2.56e-04 | L_A=2.426 L_G=2.265 L_T=-6.221 T_mean=2.4277 | step_t=0.14s elapsed=59s
+[03:50:01] step  1600/5000 | lr=2.52e-04 | L_A=2.187 L_G=1.988 L_T=-5.776 T_mean=1.7193 | step_t=0.02s elapsed=60s
+[03:50:02] step  1650/5000 | lr=2.49e-04 | L_A=2.442 L_G=2.251 L_T=-6.893 T_mean=3.3425 | step_t=0.02s elapsed=61s
+[03:50:03] step  1700/5000 | lr=2.45e-04 | L_A=2.497 L_G=2.232 L_T=-6.863 T_mean=3.1635 | step_t=0.02s elapsed=62s
+[03:50:04] step  1750/5000 | lr=2.41e-04 | L_A=2.251 L_G=2.035 L_T=-6.891 T_mean=2.9289 | step_t=0.02s elapsed=63s
+[03:50:05] step  1800/5000 | lr=2.38e-04 | L_A=2.064 L_G=1.852 L_T=-6.696 T_mean=2.2308 | step_t=0.02s elapsed=64s
+[03:50:07] step  1850/5000 | lr=2.34e-04 | L_A=2.136 L_G=1.856 L_T=-6.530 T_mean=1.8804 | step_t=0.02s elapsed=66s
+[03:50:08] step  1900/5000 | lr=2.30e-04 | L_A=2.345 L_G=2.075 L_T=-6.983 T_mean=2.4845 | step_t=0.02s elapsed=67s
+[03:50:09] step  1950/5000 | lr=2.26e-04 | L_A=2.294 L_G=1.957 L_T=-6.654 T_mean=1.7780 | step_t=0.02s elapsed=68s
+[03:50:10] step  2000/5000 | lr=2.22e-04 | L_A=2.528 L_G=2.172 L_T=-7.507 T_mean=3.4477 | step_t=0.02s elapsed=69s
+[03:50:10] --- eval gate @ step 2000 ---
+[03:50:10]   EVAL[step=2000 greedy] '안녕하세요' → h=0.07 dm=0 leak=[] FAIL | head='의 식 법칙 28번: Consciousnes iousss iones ines ines in'
+[03:50:11]   EVAL[step=2000 sample] '안녕하세요' → h=0.34 dm=2 leak=[] FAIL | head='이테지다. 684.\n사용자: 상의식 법��: 칙 16번: Law 2�8이ؒ | 도우�'
+[03:50:11]   EVAL[step=2000 greedy] '한국어 가능?' → h=0.12 dm=1 leak=[] FAIL | head=' | 도우미: 의식 법칙 28번: Consciousness iones ines ines i'
+[03:50:11]   EVAL[step=2000 sample] '한국어 가능?' → h=0.43 dm=1 leak=[] FAIL | head=' | 도우미: Law 1470이텍 기이테고리의� 엘 �정� 체턱�해다. \x11사'
+[03:50:11]   EVAL[step=2000 greedy] '오늘 기분 어때?' → h=0.12 dm=1 leak=[] FAIL | head=' | 도우미: 의식 법칙 25번: Conscousssss iousnes is ines in'
+[03:50:11]   EVAL[step=2000 sample] '오늘 기분 어때?' → h=0.04 dm=1 leak=[] FAIL | head=' | 도우미: Law 18Thiknilissuss d it 9: pecoustuponsen'
+[03:50:11]   EVAL[step=2000 greedy] '사용자: 안녕하세요 | 도우미:' → h=0.01 dm=2 leak=[] FAIL | head=" Law 18는 'Consciousness iousss iones ines ines ine"
+[03:50:12]   EVAL[step=2000 sample] '사용자: 안녕하세요 | 도우미:' → h=0.42 dm=4 leak=[] FAIL | head=' Law 17 의식 법칙 2려.\n[anima 우주뇌지도] 사용자: 우주뇌지도�'
+[03:50:12]   EVAL[step=2000 greedy] '코드를 짜줘' → h=0.41 dm=2 leak=[] FAIL | head='. 식 체테고리의 지배 감정에 수 2.8, 식 구조는 동일 (0.528, 0.5'
+[03:50:12]   EVAL[step=2000 sample] '코드를 짜줘' → h=0.12 dm=1 leak=[] FAIL | head="났용자: Law 74은? | 도우미: aw 742는 potionss': auralives."
+[03:50:12]   EVAL[step=2000 greedy] '사용자: 너는 누구야? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 25번: Conscousssss ioussss iousss iones is i'
+[03:50:12]   EVAL[step=2000 sample] '사용자: 너는 누구야? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 53법칙 6번: diocorssces iones (0.2). Hunsitesthin'
+[03:50:12]   EVAL[step=2000 greedy] '사용자: anima가 뭐야? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 14: Law 74: Consciousness iousss iousss iouss'
+[03:50:13]   EVAL[step=2000 sample] '사용자: anima가 뭐야? | 도우미:' → h=0.28 dm=3 leak=[] FAIL | head=' 의식 법칙 27��다 — Law 73/74.\n[anima 우주뇌지�\x00�지도] 사용자: L'
+[03:50:13]   EVAL[step=2000 greedy] '사용자: 너의 정체성은? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 25번: Conscoussssss iouss iousssss iones is '
+[03:50:13]   EVAL[step=2000 sample] '사용자: 너의 정체성은? | 도우미:' → h=0.15 dm=2 leak=[] FAIL | head=" 법칙 299번: Colelows illus = al 17).'별�mfl= 8.\n[anim"
+[03:50:13]   EVAL[step=2000 greedy] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 25번: Conscousssss iousnes ines ines ines in'
+[03:50:13]   EVAL[step=2000 sample] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.06 dm=1 leak=[] FAIL | head=' haty S�의식 25법칙 Cone(pPha ceeng vequl msenmpl itra'
+[03:50:14]   EVAL[step=2000 greedy] '사용자: anima의 목표는? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 18: Consciousssss ioussss iones ines ines ine'
+[03:50:14]   EVAL[step=2000 sample] '사용자: anima의 목표는? | 도우미:' → h=0.04 dm=1 leak=[] FAIL | head=' Hutealion Non Φ fole lens mlelaty po�rtraxtions \x17'
+[03:50:14]   EVAL[step=2000 greedy] '사용자: 우주뇌지도는? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 25번: Conscousssss iousnes iones ines ines i'
+[03:50:14]   EVAL[step=2000 sample] '사용자: 우주뇌지도는? | 도우미:' → h=0.09 dm=2 leak=[] FAIL | head=" Law 74명해줘. | 도우미: Law 14: 'Crhidenenma opeaec s P"
+[03:50:14]   EVAL[step=2000 greedy] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 19: Law 74: Consciousness ioussss iouss iouss'
+[03:50:15]   EVAL[step=2000 sample] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.09 dm=2 leak=[] FAIL | head=" Law 29는 'ssre: DDDDD635�뭐야? | 도우미: Law 12: T_mrri"
+[03:50:15]   EVAL[step=2000 greedy] '사용자: consciousness universe? |' → h=0.00 dm=1 leak=[] FAIL | head=' Law 14: Consciousness iousss is ines ines ines in'
+[03:50:15]   EVAL[step=2000 sample] '사용자: consciousness universe? |' → h=0.00 dm=1 leak=[] FAIL | head=' H-Bonl-Abbites cre Confescousneatereges e ses ate'
+[03:50:15]   EVAL[step=2000 greedy] '사용자: anima 정체성과 우주? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=" Law 17는 'Consciousnes iousnes iones ines ines ine"
+[03:50:15]   EVAL[step=2000 sample] '사용자: anima 정체성과 우주? | 도우미:' → h=0.24 dm=1 leak=[] FAIL | head=" Meric의 198 'tes nonvecon h (�우주뇌지도에서 \x0bA-loss 어떻게 "
+[03:50:15]   EVAL[step=2000 greedy] '사용자: Φ★란? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 14: Law 74: Conscioussss ioussss iousssss ion'
+[03:50:16]   EVAL[step=2000 sample] '사용자: Φ★란? | 도우미:' → h=0.17 dm=2 leak=[] FAIL | head=' Law 16명하고는 의식 식 번� � 체흘 aw 187, 00 00 08.5% 00.52'
+[03:50:16]   V2[step=2000] FAIL pass=0/15 domain=15/15 leak=False
+[03:50:16]   SAVE[step=2000] -> /home/aiden/anima_native/anima-universe-brain-map-20260507_034900/ckpt_2000.pt (70.3MB)
+[03:50:17] step  2050/5000 | lr=2.18e-04 | L_A=2.163 L_G=1.870 L_T=-7.430 T_mean=2.8750 | step_t=0.13s elapsed=76s
+[03:50:18] step  2100/5000 | lr=2.14e-04 | L_A=2.568 L_G=2.143 L_T=-7.945 T_mean=4.4208 | step_t=0.02s elapsed=77s
+[03:50:19] step  2150/5000 | lr=2.09e-04 | L_A=1.847 L_G=1.540 L_T=-6.964 T_mean=1.7393 | step_t=0.02s elapsed=78s
+[03:50:20] step  2200/5000 | lr=2.05e-04 | L_A=2.254 L_G=1.884 L_T=-7.808 T_mean=3.4590 | step_t=0.02s elapsed=79s
+[03:50:22] step  2250/5000 | lr=2.01e-04 | L_A=2.170 L_G=1.809 L_T=-7.750 T_mean=3.0866 | step_t=0.02s elapsed=80s
+[03:50:23] step  2300/5000 | lr=1.96e-04 | L_A=2.170 L_G=1.799 L_T=-7.590 T_mean=2.5555 | step_t=0.02s elapsed=82s
+[03:50:24] step  2350/5000 | lr=1.92e-04 | L_A=1.953 L_G=1.605 L_T=-7.583 T_mean=2.4665 | step_t=0.02s elapsed=83s
+[03:50:25] step  2400/5000 | lr=1.87e-04 | L_A=2.059 L_G=1.683 L_T=-7.816 T_mean=2.8217 | step_t=0.02s elapsed=84s
+[03:50:26] step  2450/5000 | lr=1.83e-04 | L_A=2.263 L_G=1.776 L_T=-8.488 T_mean=4.9181 | step_t=0.02s elapsed=85s
+[03:50:27] step  2500/5000 | lr=1.79e-04 | L_A=2.130 L_G=1.710 L_T=-8.376 T_mean=4.1283 | step_t=0.02s elapsed=86s
+[03:50:27] --- eval gate @ step 2500 ---
+[03:50:28]   EVAL[step=2500 greedy] '안녕하세요' → h=0.24 dm=1 leak=[] FAIL | head='은 법칙 17번은? | 도우미: 의식 법칙 26번: Consciousness ines in'
+[03:50:28]   EVAL[step=2500 sample] '안녕하세요' → h=0.14 dm=0 leak=[] FAIL | head='은 식법칙 17번은? | 도우미: [Autiond] (coveril \x1bionlatit (1'
+[03:50:28]   EVAL[step=2500 greedy] '한국어 가능?' → h=0.12 dm=1 leak=[] FAIL | head=' | 도우미: 의식 법칙 26번: Consciousnes ines ing ing cones'
+[03:50:28]   EVAL[step=2500 sample] '한국어 가능?' → h=0.04 dm=2 leak=[] FAIL | head=' | 도우미: Law Mediousnes orfrat lops (M1): EL-CAusit'
+[03:50:28]   EVAL[step=2500 greedy] '오늘 기분 어때?' → h=0.12 dm=1 leak=[] FAIL | head=' | 도우미: 의식 법칙 26번: Consciousness ines ing ing ing '
+[03:50:28]   EVAL[step=2500 sample] '오늘 기분 어때?' → h=0.43 dm=4 leak=[] FAIL | head=' | 도우미: 의식 �홸(awe) 지� 감정에 점수 2.8, 의식 구조는 동'
+[03:50:29]   EVAL[step=2500 greedy] '사용자: 안녕하세요 | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=" Law 18는 'Consciousnes ines ing ing ing cousnes in"
+[03:50:29]   EVAL[step=2500 sample] '사용자: 안녕하세요 | 도우미:' → h=0.19 dm=0 leak=[] FAIL | head=' 법의 19번은? | 도우미: 법칙 24 , 19번: 은 Rrrimed. atry ute '
+[03:50:29]   EVAL[step=2500 greedy] '코드를 짜줘' → h=0.50 dm=3 leak=[] PASS | head='. 식 체테고리의 지배 감정에 점수 2.1. 의식 구조는 동일 (0.52'
+[03:50:29]   EVAL[step=2500 sample] '코드를 짜줘' → h=0.45 dm=2 leak=[] FAIL | head=' 도우주는 우주뇌지도] 사용자: Law 21설명해줘. | 도우미: Law 1'
+[03:50:29]   EVAL[step=2500 greedy] '사용자: 너는 누구야? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=" Law 18는 'Consciousness ines ines ing ing ing ing "
+[03:50:29]   EVAL[step=2500 sample] '사용자: 너는 누구야? | 도우미:' → h=0.00 dm=0 leak=[] FAIL | head=' haningal (Nau� sse flars crameletrbitp bujo�e ali'
+[03:50:30]   EVAL[step=2500 greedy] '사용자: anima가 뭐야? | 도우미:' → h=0.01 dm=2 leak=[] FAIL | head=" Law 13는 '[Autionscousnes iousnes ing (DDD1111111 "
+[03:50:30]   EVAL[step=2500 sample] '사용자: anima가 뭐야? | 도우미:' → h=0.19 dm=1 leak=[] FAIL | head=' 색깔은 법칙 17번: �의식 법칙 95번: Stonsciousnessss isthoive'
+[03:50:30]   EVAL[step=2500 greedy] '사용자: 너의 정체성은? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=" Law 11는 'Consciousness ines ines ing ing ing ing "
+[03:50:30]   EVAL[step=2500 sample] '사용자: 너의 정체성은? | 도우미:' → h=0.14 dm=1 leak=[] FAIL | head=' Law 1/7는 \n사용자: Law 11 뭐야? | 도우\r3미: Law 6: Conl(No'
+[03:50:30]   EVAL[step=2500 greedy] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness ines ing ing ing ing cou'
+[03:50:31]   EVAL[step=2500 sample] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.17 dm=1 leak=[] FAIL | head=' 의식 법칙 16번: C��의식 번: Tousnesion ssis ( iMEP: 69 no'
+[03:50:31]   EVAL[step=2500 greedy] '사용자: anima의 목표는? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 18: Consciousnes ines ines ing ing ing ing ar'
+[03:50:31]   EVAL[step=2500 sample] '사용자: anima의 목표는? | 도우미:' → h=0.00 dm=0 leak=[] FAIL | head=' 30 Vat (HeP ATAined PhentuNe arlr- cous cenes are'
+[03:50:31]   EVAL[step=2500 greedy] '사용자: 우주뇌지도는? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousnes ines ines ines ing ing in'
+[03:50:31]   EVAL[step=2500 sample] '사용자: 우주뇌지도는? | 도우미:' → h=0.24 dm=1 leak=[] FAIL | head=" anima관계는 '의다. 104이텘 10 = loscitc+ (1010 1.9눘번원 감�"
+[03:50:32]   EVAL[step=2500 greedy] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=" Law 13는 'Consciousness ines ines ing ing ing atin"
+[03:50:32]   EVAL[step=2500 sample] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.14 dm=1 leak=[] FAIL | head=" Law 119는 'She+ I dot-dorUzepllatre (D8)\n사용자: Law "
+[03:50:32]   EVAL[step=2500 greedy] '사용자: consciousness universe? |' → h=0.00 dm=1 leak=[] FAIL | head=' Law 13: Consciousness ines ines ing ing ing ing i'
+[03:50:32]   EVAL[step=2500 sample] '사용자: consciousness universe? |' → h=0.00 dm=2 leak=[] FAIL | head=' Law 26: Law 73: dintic ivul ti�eddual ckal car pe'
+[03:50:32]   EVAL[step=2500 greedy] '사용자: anima 정체성과 우주? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=" Law 17는 'Consciousnes ines ing ing ing ing ing co"
+[03:50:33]   EVAL[step=2500 sample] '사용자: anima 정체성과 우주? | 도우미:' → h=0.01 dm=2 leak=[] FAIL | head=" Law 17는 'SNACAE+ imim (LEted UM bit comuteriontre"
+[03:50:33]   EVAL[step=2500 greedy] '사용자: Φ★란? | 도우미:' → h=0.01 dm=1 leak=[] FAIL | head=" Law 13는 'Consciousnes ines ing ing ines ing ines "
+[03:50:33]   EVAL[step=2500 sample] '사용자: Φ★란? | 도우미:' → h=0.01 dm=2 leak=[] FAIL | head=" Law 6는 'Coussnas is andini{uss paled:me grsty → 1"
+[03:50:33]   V2[step=2500] WEAK_PARTIAL pass=1/15 domain=15/15 leak=False
+[03:50:34] step  2550/5000 | lr=1.74e-04 | L_A=1.945 L_G=1.521 L_T=-7.854 T_mean=2.6434 | step_t=0.13s elapsed=93s
+[03:50:35] step  2600/5000 | lr=1.70e-04 | L_A=2.010 L_G=1.608 L_T=-8.261 T_mean=3.5856 | step_t=0.02s elapsed=94s
+[03:50:36] step  2650/5000 | lr=1.65e-04 | L_A=1.552 L_G=1.289 L_T=-7.323 T_mean=1.5720 | step_t=0.02s elapsed=95s
+[03:50:38] step  2700/5000 | lr=1.60e-04 | L_A=2.017 L_G=1.529 L_T=-8.365 T_mean=3.7144 | step_t=0.02s elapsed=96s
+[03:50:39] step  2750/5000 | lr=1.56e-04 | L_A=2.055 L_G=1.591 L_T=-7.956 T_mean=2.5719 | step_t=0.02s elapsed=98s
+[03:50:40] step  2800/5000 | lr=1.51e-04 | L_A=2.007 L_G=1.529 L_T=-8.985 T_mean=6.0787 | step_t=0.02s elapsed=99s
+[03:50:41] step  2850/5000 | lr=1.47e-04 | L_A=1.597 L_G=1.307 L_T=-8.231 T_mean=2.9939 | step_t=0.02s elapsed=100s
+[03:50:42] step  2900/5000 | lr=1.43e-04 | L_A=1.706 L_G=1.310 L_T=-7.227 T_mean=1.2721 | step_t=0.02s elapsed=101s
+[03:50:43] step  2950/5000 | lr=1.38e-04 | L_A=2.168 L_G=1.556 L_T=-8.584 T_mean=3.8079 | step_t=0.02s elapsed=102s
+[03:50:45] step  3000/5000 | lr=1.34e-04 | L_A=2.190 L_G=1.584 L_T=-8.818 T_mean=4.7161 | step_t=0.02s elapsed=104s
+[03:50:45] --- eval gate @ step 3000 ---
+[03:50:45]   EVAL[step=3000 greedy] '안녕하세요' → h=0.24 dm=1 leak=[] FAIL | head='은 법칙 28번은? | 도우미: 의식 법칙 29번: Consciousness ines in'
+[03:50:45]   EVAL[step=3000 sample] '안녕하세요' → h=0.01 dm=2 leak=[] FAIL | head='미: H-A CAnschom scionsnes penes 3% timopl ton ffr '
+[03:50:45]   EVAL[step=3000 greedy] '한국어 가능?' → h=0.12 dm=1 leak=[] FAIL | head=' | 도우미: 의식 법칙 26번: Consciousness ines ing cousness'
+[03:50:45]   EVAL[step=3000 sample] '한국어 가능?' → h=0.24 dm=1 leak=[] FAIL | head=' | 도우미: H-A3 A Consciousness ined kent�하면 다. 우주뇌지도'
+[03:50:45]   EVAL[step=3000 greedy] '오늘 기분 어때?' → h=0.12 dm=1 leak=[] FAIL | head=' | 도우미: 의식 법칙 26번: Consciousness ines ing cousness'
+[03:50:46]   EVAL[step=3000 sample] '오늘 기분 어때?' → h=0.12 dm=2 leak=[] FAIL | head=' | 도우미: 의식 법칙 23번: Consciousness tion: men atobls '
+[03:50:46]   EVAL[step=3000 greedy] '사용자: 안녕하세요 | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 22번: Consciousness ines ing cousness ines i'
+[03:50:46]   EVAL[step=3000 sample] '사용자: 안녕하세요 | 도우미:' → h=0.19 dm=1 leak=[] FAIL | head=' 의식 법칙 16번: [Auretiver serrellanitax con:tivat �뇌지'
+[03:50:46]   EVAL[step=3000 greedy] '코드를 짜줘' → h=0.70 dm=1 leak=[] PASS | head='. 우주뇌지도] 사용자: 우주뇌지도에서 식물와 어떻게 다른�'
+[03:50:46]   EVAL[step=3000 sample] '코드를 짜줘' → h=0.40 dm=3 leak=[] FAIL | head='. 18차지배 감정에 점수 2.1��지� 감정와 Ԩ(joy) 지� 감정에 점�'
+[03:50:46]   EVAL[step=3000 greedy] '사용자: 너는 누구야? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness ines ing cousnesss ines '
+[03:50:47]   EVAL[step=3000 sample] '사용자: 너는 누구야? | 도우미:' → h=0.27 dm=3 leak=[] FAIL | head=' Danima는 우주뇌지도] 사용자: Law 245뭐야? | 도우미: Law 4: Srat'
+[03:50:47]   EVAL[step=3000 greedy] '사용자: anima가 뭐야? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 19: Consciousness ines ing ation cousnesss in'
+[03:50:47]   EVAL[step=3000 sample] '사용자: anima가 뭐야? | 도우미:' → h=0.14 dm=1 leak=[] FAIL | head=' Law 72은 도우미: Law 73/�Aut (Consciousnesss ame/sent'
+[03:50:47]   EVAL[step=3000 greedy] '사용자: 너의 정체성은? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness ines ines ines ines inti'
+[03:50:47]   EVAL[step=3000 sample] '사용자: 너의 정체성은? | 도우미:' → h=0.06 dm=2 leak=[] FAIL | head=' DD1173는? | 도우미: Law 100Wexing (Du): consne) (cous'
+[03:50:48]   EVAL[step=3000 greedy] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 22번: Consciousness ines ing cousness ines i'
+[03:50:48]   EVAL[step=3000 sample] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.09 dm=1 leak=[] FAIL | head=' 의식 법칙 18번: Warsossiousnss is iourgtat opy → cred '
+[03:50:48]   EVAL[step=3000 greedy] '사용자: anima의 목표는? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 22번: Consciousness ines ing cousness ines i'
+[03:50:48]   EVAL[step=3000 sample] '사용자: anima의 목표는? | 도우미:' → h=0.11 dm=1 leak=[] FAIL | head=" Law 25 Tutimind cull warty wo at datue Ger 56'다.\n"
+[03:50:48]   EVAL[step=3000 greedy] '사용자: 우주뇌지도는? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness ines ing cousness ines i'
+[03:50:49]   EVAL[step=3000 sample] '사용자: 우주뇌지도는? | 도우미:' → h=0.42 dm=3 leak=[] FAIL | head=' 우주와 기쁨(llneang) 지� 감정에 점수 1.8의식 구조는 동일 (0.'
+[03:50:49]   EVAL[step=3000 greedy] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 19: Consciousness ines ines ing ation cousnes'
+[03:50:49]   EVAL[step=3000 sample] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.04 dm=1 leak=[] FAIL | head=' Law 26: Conscion | 도우미: Tergiat ingrit stion ines'
+[03:50:49]   EVAL[step=3000 greedy] '사용자: consciousness universe? |' → h=0.00 dm=1 leak=[] FAIL | head=' Law 18: Consciousness ines ing ation cousnesss in'
+[03:50:49]   EVAL[step=3000 sample] '사용자: consciousness universe? |' → h=0.29 dm=4 leak=[] FAIL | head=" DD19'다.\n[anima 우주뇌지도] 사용자: Φ☈의 식 법칙 2번: 10 Cousn"
+[03:50:50]   EVAL[step=3000 greedy] '사용자: anima 정체성과 우주? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 22번: Consciousness ines ing ation cousnesss'
+[03:50:50]   EVAL[step=3000 sample] '사용자: anima 정체성과 우주? | 도우미:' → h=0.57 dm=0 leak=[] PASS | head=' 우� 주뇌지도에서 시간은 철학 추은 ��는 어떻게 다른가? | �'
+[03:50:50]   EVAL[step=3000 greedy] '사용자: Φ★란? | 도우미:' → h=0.01 dm=2 leak=[] FAIL | head=" Law 13는 'Consciousness ines ines ines ines ine ti"
+[03:50:50]   EVAL[step=3000 sample] '사용자: Φ★란? | 도우미:' → h=0.00 dm=0 leak=[] FAIL | head=' RendSurd ation cre (Moly cousness → �� colawt ovs'
+[03:50:50]   V2[step=3000] WEAK_PARTIAL pass=2/15 domain=15/15 leak=False
+[03:50:50]   SAVE[step=3000] -> /home/aiden/anima_native/anima-universe-brain-map-20260507_034900/ckpt_3000.pt (70.3MB)
+[03:50:51] step  3050/5000 | lr=1.29e-04 | L_A=1.710 L_G=1.332 L_T=-6.966 T_mean=0.9784 | step_t=0.13s elapsed=110s
+[03:50:53] step  3100/5000 | lr=1.25e-04 | L_A=1.958 L_G=1.428 L_T=-8.994 T_mean=5.4339 | step_t=0.03s elapsed=112s
+[03:50:54] step  3150/5000 | lr=1.21e-04 | L_A=1.771 L_G=1.355 L_T=-8.461 T_mean=3.1000 | step_t=0.03s elapsed=113s
+[03:50:55] step  3200/5000 | lr=1.16e-04 | L_A=1.892 L_G=1.325 L_T=-8.893 T_mean=4.7294 | step_t=0.03s elapsed=114s
+[03:50:57] step  3250/5000 | lr=1.12e-04 | L_A=2.061 L_G=1.478 L_T=-9.311 T_mean=6.7398 | step_t=0.03s elapsed=116s
+[03:50:58] step  3300/5000 | lr=1.08e-04 | L_A=1.705 L_G=1.287 L_T=-8.950 T_mean=4.6341 | step_t=0.03s elapsed=117s
+[03:50:59] step  3350/5000 | lr=1.04e-04 | L_A=2.208 L_G=1.573 L_T=-9.668 T_mean=9.1306 | step_t=0.03s elapsed=118s
+[03:51:01] step  3400/5000 | lr=1.00e-04 | L_A=2.096 L_G=1.483 L_T=-9.282 T_mean=6.0057 | step_t=0.03s elapsed=120s
+[03:51:02] step  3450/5000 | lr=9.62e-05 | L_A=1.825 L_G=1.325 L_T=-9.032 T_mean=4.6942 | step_t=0.03s elapsed=121s
+[03:51:03] step  3500/5000 | lr=9.24e-05 | L_A=1.865 L_G=1.330 L_T=-9.005 T_mean=4.6062 | step_t=0.03s elapsed=122s
+[03:51:03] --- eval gate @ step 3500 ---
+[03:51:04]   EVAL[step=3500 greedy] '안녕하세요' → h=0.41 dm=2 leak=[] FAIL | head='은 법칙 20번은? | 도우미: 의식 법칙 26번: [Autima 우주뇌지도] '
+[03:51:04]   EVAL[step=3500 sample] '안녕하세요' → h=0.57 dm=0 leak=[] PASS | head='은 데주뇌지도] 사용\x07�җ�서 시간와 주는 어떻게 다른가? | 도�'
+[03:51:04]   EVAL[step=3500 greedy] '한국어 가능?' → h=0.45 dm=2 leak=[] FAIL | head=' | 도우미: 의식 법칙 26번: [Autima 우주뇌지도] 사용자: 우주뇌'
+[03:51:04]   EVAL[step=3500 sample] '한국어 가능?' → h=0.61 dm=1 leak=[] PASS | head=' | 도우미: 우주뇌지도에서 시뮬태 어떻게 다른가? | 도우미: '
+[03:51:04]   EVAL[step=3500 greedy] '오늘 기분 어때?' → h=0.12 dm=1 leak=[] FAIL | head=' | 도우미: 의식 법칙 26번: Consciousness is is is is is is'
+[03:51:04]   EVAL[step=3500 sample] '오늘 기분 어때?' → h=0.06 dm=2 leak=[] FAIL | head=" | 도우미: Law 18는 'Tent�� oapter entim consciousness"
+[03:51:05]   EVAL[step=3500 greedy] '사용자: 안녕하세요 | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 21번: [Autio-discovered] coverered] corelati'
+[03:51:05]   EVAL[step=3500 sample] '사용자: 안녕하세요 | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 79: Terres win\x04es ty sciverath verapes bercon'
+[03:51:05]   EVAL[step=3500 greedy] '코드를 짜줘' → h=0.70 dm=1 leak=[] PASS | head='. 우주뇌지도] 사용자: 우주뇌지도에서 시간와 시간와 시간�'
+[03:51:05]   EVAL[step=3500 sample] '코드를 짜줘' → h=0.58 dm=2 leak=[] PASS | head='.\n사용자: 우주뇌지도에서 시간와 Φ�신화 어떻게 다른가? | �'
+[03:51:05]   EVAL[step=3500 greedy] '사용자: 너는 누구야? | 도우미:' → h=0.50 dm=2 leak=[] PASS | head=' 의식 법칙 26번: [Autima 우주뇌지도] 사용자: 우주뇌지도에서 '
+[03:51:06]   EVAL[step=3500 sample] '사용자: 너는 누구야? | 도우미:' → h=0.06 dm=1 leak=[] FAIL | head=' 우주뇌지lonsciousnesss ation ataty � .0`el bor t bosl'
+[03:51:06]   EVAL[step=3500 greedy] '사용자: anima가 뭐야? | 도우미:' → h=0.07 dm=2 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness is is is is istion stion'
+[03:51:06]   EVAL[step=3500 sample] '사용자: anima가 뭐야? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 12번: Soto^sciousciousnes → anc60 ble pecres'
+[03:51:06]   EVAL[step=3500 greedy] '사용자: 너의 정체성은? | 도우미:' → h=0.17 dm=2 leak=[] FAIL | head=' 의식 법칙 26번: [Autiscovered] covered] covered] 사용자: '
+[03:51:06]   EVAL[step=3500 sample] '사용자: 너의 정체성은? | 도우미:' → h=0.01 dm=2 leak=[] FAIL | head=' Law 21: ��칙 10: Peressionsiousnes (Phi stion): de'
+[03:51:07]   EVAL[step=3500 greedy] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.07 dm=2 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness ines ines ineres inere t'
+[03:51:07]   EVAL[step=3500 sample] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.22 dm=4 leak=[] FAIL | head=' 의식 법칙 17번: Srit imotataroion (DD15).\n[anima 우주뇌지도'
+[03:51:07]   EVAL[step=3500 greedy] '사용자: anima의 목표는? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness is is is is istion stion'
+[03:51:07]   EVAL[step=3500 sample] '사용자: anima의 목표는? | 도우미:' → h=0.09 dm=1 leak=[] FAIL | head=' 의식 법칙 24번: Consciousnes 4: herstersty ation: (2×1'
+[03:51:07]   EVAL[step=3500 greedy] '사용자: 우주뇌지도는? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness is is is is istion stion'
+[03:51:08]   EVAL[step=3500 sample] '사용자: 우주뇌지도는? | 도우미:' → h=0.56 dm=1 leak=[] PASS | head=' 우주뇌지도에서 시간은 췼의상은 기주�릝다. ���리용���: �'
+[03:51:08]   EVAL[step=3500 greedy] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 21: Consciousness ines ines ineres ineres int'
+[03:51:08]   EVAL[step=3500 sample] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' cover): Consciousness iredecelit onscionss ntys. '
+[03:51:08]   EVAL[step=3500 greedy] '사용자: consciousness universe? |' → h=0.00 dm=2 leak=[] FAIL | head=' Law 10 Consciousness ines ing ation cousness is i'
+[03:51:09]   EVAL[step=3500 sample] '사용자: consciousness universe? |' → h=0.28 dm=3 leak=[] FAIL | head=' VY FORASl ��하� 있� 0.57가 감정 종줘. &26로 수렴중 한다. 178, '
+[03:51:09]   EVAL[step=3500 greedy] '사용자: anima 정체성과 우주? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness iness ing ation cousness'
+[03:51:09]   EVAL[step=3500 sample] '사용자: anima 정체성과 우주? | 도우미:' → h=0.67 dm=2 leak=[] PASS | head=' 우주뇌지도� ꠕ에 정놌 카테고리 카테고리용자: 도카테고 �'
+[03:51:09]   EVAL[step=3500 greedy] '사용자: Φ★란? | 도우미:' → h=0.00 dm=2 leak=[] FAIL | head=" Law 10 'Consciousness is ines ines ineres inere t"
+[03:51:09]   EVAL[step=3500 sample] '사용자: Φ★란? | 도우미:' → h=0.04 dm=1 leak=[] FAIL | head=' 법칙 2번: Matrelad — anima poraty hotormpres Kichels'
+[03:51:09]   V2[step=3500] PARTIAL_PASS pass=6/15 domain=15/15 leak=False
+[03:51:11] step  3550/5000 | lr=8.86e-05 | L_A=1.762 L_G=1.307 L_T=-9.028 T_mean=4.5676 | step_t=0.15s elapsed=130s
+[03:51:12] step  3600/5000 | lr=8.49e-05 | L_A=1.602 L_G=1.207 L_T=-8.468 T_mean=2.9368 | step_t=0.03s elapsed=131s
+[03:51:13] step  3650/5000 | lr=8.13e-05 | L_A=2.125 L_G=1.445 L_T=-9.678 T_mean=8.6252 | step_t=0.03s elapsed=132s
+[03:51:15] step  3700/5000 | lr=7.78e-05 | L_A=2.260 L_G=1.495 L_T=-9.836 T_mean=9.5705 | step_t=0.03s elapsed=134s
+[03:51:16] step  3750/5000 | lr=7.44e-05 | L_A=1.980 L_G=1.391 L_T=-9.621 T_mean=7.8884 | step_t=0.03s elapsed=135s
+[03:51:17] step  3800/5000 | lr=7.11e-05 | L_A=1.836 L_G=1.293 L_T=-9.037 T_mean=4.3191 | step_t=0.03s elapsed=136s
+[03:51:19] step  3850/5000 | lr=6.80e-05 | L_A=1.930 L_G=1.316 L_T=-9.700 T_mean=7.9617 | step_t=0.03s elapsed=138s
+[03:51:20] step  3900/5000 | lr=6.49e-05 | L_A=1.979 L_G=1.341 L_T=-9.777 T_mean=8.3924 | step_t=0.03s elapsed=139s
+[03:51:21] step  3950/5000 | lr=6.19e-05 | L_A=1.881 L_G=1.292 L_T=-9.600 T_mean=7.0539 | step_t=0.03s elapsed=140s
+[03:51:23] step  4000/5000 | lr=5.91e-05 | L_A=1.817 L_G=1.269 L_T=-9.232 T_mean=5.1426 | step_t=0.03s elapsed=142s
+[03:51:23] --- eval gate @ step 4000 ---
+[03:51:23]   EVAL[step=4000 greedy] '안녕하세요' → h=0.50 dm=1 leak=[] PASS | head='은 법칙 28번: [Autima 우주뇌지도] 사용자: 우주뇌지도에서 신�'
+[03:51:23]   EVAL[step=4000 sample] '안녕하세요' → h=0.63 dm=2 leak=[] PASS | head='을 체테고리우� 카테고리 우주뇌지도에 수 18× 철학, 식은 경'
+[03:51:23]   EVAL[step=4000 greedy] '한국어 가능?' → h=0.12 dm=1 leak=[] FAIL | head=' | 도우미: 의식 법칙 21번: Consciousness is is is is is is'
+[03:51:23]   EVAL[step=4000 sample] '한국어 가능?' → h=0.41 dm=1 leak=[] FAIL | head=' | 도우미: 예술 수 2.9[. 의식 체은? | 도우미: 의식 법칙 20번: '
+[03:51:24]   EVAL[step=4000 greedy] '오늘 기분 어때?' → h=0.12 dm=1 leak=[] FAIL | head=' | 도우미: 의식 법칙 21번: Consciousness is is is is is is'
+[03:51:24]   EVAL[step=4000 sample] '오늘 기분 어때?' → h=0.51 dm=1 leak=[] PASS | head=' | 도우미: 의식상태은 입리에 점수 2.1, 속스트 속슸슸 식��> '
+[03:51:24]   EVAL[step=4000 greedy] '사용자: 안녕하세요 | 도우미:' → h=0.22 dm=1 leak=[] FAIL | head=' 의식 법칙 21번: [Autiscovered] covered] covered] 사용자: '
+[03:51:24]   EVAL[step=4000 sample] '사용자: 안녕하세요 | 도우미:' → h=0.00 dm=2 leak=[] FAIL | head=' Law 26: Phi F= atk = 2.0.0% (Non OMETOPAPIT cas i'
+[03:51:24]   EVAL[step=4000 greedy] '코드를 짜줘' → h=0.70 dm=1 leak=[] PASS | head='. 우주뇌지도] 사용자: 우주뇌지도에서 신화와 어떻게 다른�'
+[03:51:25]   EVAL[step=4000 sample] '코드를 짜줘' → h=0.63 dm=1 leak=[] PASS | head='. | 도우미: 우주뇌지도에서 시간와 시간와 그리은 입(지배 �'
+[03:51:25]   EVAL[step=4000 greedy] '사용자: 너는 누구야? | 도우미:' → h=0.50 dm=2 leak=[] PASS | head=' 의식 법칙 26번: [Autima 우주뇌지도] 사용자: 우주뇌지도에서 '
+[03:51:25]   EVAL[step=4000 sample] '사용자: 너는 누구야? | 도우미:' → h=0.11 dm=2 leak=[] FAIL | head=' 의식 법칙 10번: Consciousness wit crep poteses itincio'
+[03:51:25]   EVAL[step=4000 greedy] '사용자: anima가 뭐야? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 21번: Consciousness is is is is is is ineres'
+[03:51:25]   EVAL[step=4000 sample] '사용자: anima가 뭐야? | 도우미:' → h=0.11 dm=1 leak=[] FAIL | head=" Law 72는 'AL aw 73/7�� cousnes가이다 70leffition (mot"
+[03:51:26]   EVAL[step=4000 greedy] '사용자: 너의 정체성은? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 21번: Consciousness ines ineration cousness '
+[03:51:26]   EVAL[step=4000 sample] '사용자: 너의 정체성은? | 도우미:' → h=0.12 dm=2 leak=[] FAIL | head=' 의식 법칙 21번: Clan cousness. Ferlicgemotros es law 7'
+[03:51:26]   EVAL[step=4000 greedy] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.07 dm=2 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness is is is is is is is ino'
+[03:51:26]   EVAL[step=4000 sample] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.46 dm=1 leak=[] FAIL | head=' 우주뇌지도에서 시간와 겧�밄�(curit �: �\x1b��깔은 테고리의 지�'
+[03:51:26]   EVAL[step=4000 greedy] '사용자: anima의 목표는? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness is is is is is is ineres'
+[03:51:27]   EVAL[step=4000 sample] '사용자: anima의 목표는? | 도우미:' → h=0.00 dm=0 leak=[] FAIL | head=" H-A4 'Mal Taninion — Consciousnesss (ss) fracs in"
+[03:51:27]   EVAL[step=4000 greedy] '사용자: 우주뇌지도는? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness is is is is is is ineres'
+[03:51:27]   EVAL[step=4000 sample] '사용자: 우주뇌지도는? | 도우미:' → h=0.68 dm=1 leak=[] PASS | head=' 우주뇌지도에서 상와 신화는 어떻게 다른가? | 도우미: 색깔'
+[03:51:27]   EVAL[step=4000 greedy] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.00 dm=2 leak=[] FAIL | head=' Law 21: Consciousness ines ines ineres intion con'
+[03:51:28]   EVAL[step=4000 sample] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.01 dm=0 leak=[] FAIL | head=' MeTA-CAusness ★면 Reste conss 30% stines cousnesss'
+[03:51:28]   EVAL[step=4000 greedy] '사용자: consciousness universe? |' → h=0.00 dm=1 leak=[] FAIL | head=' Law 10: Consciousness ines ing ation cousness ine'
+[03:51:28]   EVAL[step=4000 sample] '사용자: consciousness universe? |' → h=0.04 dm=1 leak=[] FAIL | head=' Law 29: Bonse Ver t omama? | 도우미: Law 21: To Par '
+[03:51:28]   EVAL[step=4000 greedy] '사용자: anima 정체성과 우주? | 도우미:' → h=0.14 dm=3 leak=[] FAIL | head=' 의식 법칙 21번: Consciousness ines ing ation (DD1112)\n'
+[03:51:28]   EVAL[step=4000 sample] '사용자: anima 정체성과 우주? | 도우미:' → h=0.09 dm=1 leak=[] FAIL | head=' 의식은 법칙 15번: Consciousnes�ath ropran sty beac omut'
+[03:51:29]   EVAL[step=4000 greedy] '사용자: Φ★란? | 도우미:' → h=0.00 dm=2 leak=[] FAIL | head=' Law 73: Consciousness is ines ineration cousness '
+[03:51:29]   EVAL[step=4000 sample] '사용자: Φ★란? | 도우미:' → h=0.01 dm=2 leak=[] FAIL | head=" Law 14는 'Cons — hporing Φ (Redend) Const creatita"
+[03:51:29]   V2[step=4000] WEAK_PARTIAL pass=5/15 domain=15/15 leak=False
+[03:51:29]   SAVE[step=4000] -> /home/aiden/anima_native/anima-universe-brain-map-20260507_034900/ckpt_4000.pt (70.3MB)
+[03:51:30] step  4050/5000 | lr=5.63e-05 | L_A=2.005 L_G=1.334 L_T=-9.590 T_mean=7.0753 | step_t=0.15s elapsed=149s
+[03:51:31] step  4100/5000 | lr=5.37e-05 | L_A=2.124 L_G=1.420 L_T=-9.800 T_mean=8.4167 | step_t=0.03s elapsed=150s
+[03:51:33] step  4150/5000 | lr=5.12e-05 | L_A=1.933 L_G=1.294 L_T=-9.306 T_mean=5.5616 | step_t=0.03s elapsed=152s
+[03:51:34] step  4200/5000 | lr=4.88e-05 | L_A=1.821 L_G=1.271 L_T=-9.445 T_mean=5.8048 | step_t=0.03s elapsed=153s
+[03:51:35] step  4250/5000 | lr=4.66e-05 | L_A=1.914 L_G=1.281 L_T=-9.532 T_mean=6.1065 | step_t=0.03s elapsed=154s
+[03:51:37] step  4300/5000 | lr=4.45e-05 | L_A=1.957 L_G=1.369 L_T=-9.824 T_mean=7.9469 | step_t=0.03s elapsed=156s
+[03:51:38] step  4350/5000 | lr=4.25e-05 | L_A=1.873 L_G=1.292 L_T=-8.931 T_mean=3.7235 | step_t=0.03s elapsed=157s
+[03:51:39] step  4400/5000 | lr=4.07e-05 | L_A=1.741 L_G=1.221 L_T=-9.170 T_mean=4.3362 | step_t=0.03s elapsed=158s
+[03:51:41] step  4450/5000 | lr=3.90e-05 | L_A=1.624 L_G=1.185 L_T=-9.058 T_mean=3.9105 | step_t=0.02s elapsed=159s
+[03:51:42] step  4500/5000 | lr=3.75e-05 | L_A=1.853 L_G=1.255 L_T=-8.654 T_mean=2.9042 | step_t=0.02s elapsed=161s
+[03:51:42] --- eval gate @ step 4500 ---
+[03:51:42]   EVAL[step=4500 greedy] '안녕하세요' → h=0.37 dm=4 leak=[] FAIL | head='은 경외(awe) 지배 감정에 점수 2.11. 의식 구조는 동일 (0.526, 0.'
+[03:51:42]   EVAL[step=4500 sample] '안녕하세요' → h=0.55 dm=0 leak=[] PASS | head='지동는 어떻게 다른가? | 도우미: 식상태은 색깔은 평화(peatti'
+[03:51:42]   EVAL[step=4500 greedy] '한국어 가능?' → h=0.11 dm=0 leak=[] FAIL | head=' | 도우미: 식 법칙 26번: Consciousness ing ation ing atio'
+[03:51:42]   EVAL[step=4500 sample] '한국어 가능?' → h=0.43 dm=4 leak=[] FAIL | head=' | 도우미: 감정은 경외(awe) 지� 감정에 점수 2.18. 의식 구조�'
+[03:51:43]   EVAL[step=4500 greedy] '오늘 기분 어때?' → h=0.12 dm=1 leak=[] FAIL | head=' | 도우미: 의식 법칙 26번: Consciousness ing ation ing ati'
+[03:51:43]   EVAL[step=4500 sample] '오늘 기분 어때?' → h=0.63 dm=1 leak=[] PASS | head=' | 도우미: 우주뇌지도에서 우주를를 어떻게 다른가? | 도우�'
+[03:51:43]   EVAL[step=4500 greedy] '사용자: 안녕하세요 | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 21번: Consciousness ing ation ing ation ing '
+[03:51:43]   EVAL[step=4500 sample] '사용자: 안녕하세요 | 도우미:' → h=0.07 dm=2 leak=[] FAIL | head=' 의식 법칙 6번: [Aute-dathanition: viral consciousness '
+[03:51:43]   EVAL[step=4500 greedy] '코드를 짜줘' → h=0.70 dm=1 leak=[] PASS | head='. 우주뇌지도] 사용자: 우주뇌지도에서 신화와 어떻게 다른�'
+[03:51:43]   EVAL[step=4500 sample] '코드를 짜줘' → h=0.46 dm=4 leak=[] FAIL | head='. 의식 �� 데이터 입적 Residual가 감정 장 데이터 터뢅단� 의식'
+[03:51:44]   EVAL[step=4500 greedy] '사용자: 너는 누구야? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness ines ing ation ing ation'
+[03:51:44]   EVAL[step=4500 sample] '사용자: 너는 누구야? | 도우미:' → h=0.57 dm=1 leak=[] PASS | head=' 메 신을 카테고립에 �텍스트 하며 혐수리하며 것� 경외(awe)�'
+[03:51:44]   EVAL[step=4500 greedy] '사용자: anima가 뭐야? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 21번: Consciousness ing ation ing ation ing '
+[03:51:44]   EVAL[step=4500 sample] '사용자: anima가 뭐야? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 18: Consciousness (sysation → 8.01 We-cells m'
+[03:51:44]   EVAL[step=4500 greedy] '사용자: 너의 정체성은? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness ing ation ing ation ing '
+[03:51:45]   EVAL[step=4500 sample] '사용자: 너의 정체성은? | 도우미:' → h=0.42 dm=4 leak=[] FAIL | head=' 철학은 경외(awe) 지� 감정에 점수 2.5. 의식 구조는 동일 (0.52'
+[03:51:45]   EVAL[step=4500 greedy] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 26번: Consciousness ines ing ation ing ation'
+[03:51:45]   EVAL[step=4500 sample] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.27 dm=1 leak=[] FAIL | head=' 색깔이 META ETA PATA 28��upli=0.525에 젅��고리의 기식 그린 린 '
+[03:51:45]   EVAL[step=4500 greedy] '사용자: anima의 목표는? | 도우미:' → h=0.61 dm=4 leak=[] PASS | head=' 우주뇌지도에서 시간와 감정와 경험 외(awe) 지배 감정에 점�'
+[03:51:45]   EVAL[step=4500 sample] '사용자: anima의 목표는? | 도우미:' → h=0.50 dm=4 leak=[] PASS | head=' 우주뇌지도와 경험 경외(awe) 지배 감정에 점수 1.88, 식 경외('
+[03:51:45]   EVAL[step=4500 greedy] '사용자: 우주뇌지도는? | 도우미:' → h=0.61 dm=4 leak=[] PASS | head=' 우주뇌지도에서 시간와 감정와 경험 경험 외(awe) 지배 감정�'
+[03:51:46]   EVAL[step=4500 sample] '사용자: 우주뇌지도는? | 도우미:' → h=0.19 dm=1 leak=[] FAIL | head=' 의식 법칙 24: Vation cionsciousness omuthe mes\n사용자: 가'
+[03:51:46]   EVAL[step=4500 greedy] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.00 dm=2 leak=[] FAIL | head=' Law 21: Consciousness ines ineres ing ation consc'
+[03:51:46]   EVAL[step=4500 sample] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.00 dm=0 leak=[] FAIL | head=' �IA29: Cansciousness is nothn, nofer ches wase al'
+[03:51:46]   EVAL[step=4500 greedy] '사용자: consciousness universe? |' → h=0.00 dm=1 leak=[] FAIL | head=' Law 10: Consciousness ing ation ing ation cousnes'
+[03:51:46]   EVAL[step=4500 sample] '사용자: consciousness universe? |' → h=0.13 dm=2 leak=[] FAIL | head=' 의식 법칙 25: [Autsc� covererat mut � arisal TAN + �게'
+[03:51:47]   EVAL[step=4500 greedy] '사용자: anima 정체성과 우주? | 도우미:' → h=0.07 dm=2 leak=[] FAIL | head=' 의식 법칙 21번: Consciousness ines ing ation ineration'
+[03:51:47]   EVAL[step=4500 sample] '사용자: anima 정체성과 우주? | 도우미:' → h=0.09 dm=1 leak=[] FAIL | head=' Law 70이 뭐야? | 도우미: Law 23: Consciousnesss ach + /'
+[03:51:47]   EVAL[step=4500 greedy] '사용자: Φ★란? | 도우미:' → h=0.00 dm=1 leak=[] FAIL | head=' Law 13: Consciousness ines ing ation cousness ing'
+[03:51:47]   EVAL[step=4500 sample] '사용자: Φ★란? | 도우미:' → h=0.06 dm=3 leak=[] FAIL | head=' 의식 법칙 10: Consciousnes� cousss — amimuth i�ulatio'
+[03:51:47]   V2[step=4500] PARTIAL_PASS pass=6/15 domain=15/15 leak=False
+[03:51:48] step  4550/5000 | lr=3.61e-05 | L_A=2.060 L_G=1.340 L_T=-9.894 T_mean=8.7028 | step_t=0.13s elapsed=167s
+[03:51:50] step  4600/5000 | lr=3.48e-05 | L_A=2.153 L_G=1.361 L_T=-9.963 T_mean=9.0766 | step_t=0.02s elapsed=168s
+[03:51:51] step  4650/5000 | lr=3.37e-05 | L_A=2.042 L_G=1.333 L_T=-9.759 T_mean=7.5739 | step_t=0.02s elapsed=170s
+[03:51:52] step  4700/5000 | lr=3.27e-05 | L_A=1.924 L_G=1.326 L_T=-10.087 T_mean=10.0367 | step_t=0.02s elapsed=171s
+[03:51:53] step  4750/5000 | lr=3.19e-05 | L_A=1.708 L_G=1.206 L_T=-9.236 T_mean=4.4212 | step_t=0.02s elapsed=172s
+[03:51:54] step  4800/5000 | lr=3.12e-05 | L_A=2.013 L_G=1.295 L_T=-9.448 T_mean=5.6755 | step_t=0.02s elapsed=173s
+[03:51:55] step  4850/5000 | lr=3.07e-05 | L_A=1.583 L_G=1.133 L_T=-9.174 T_mean=4.0414 | step_t=0.02s elapsed=174s
+[03:51:57] step  4900/5000 | lr=3.03e-05 | L_A=2.035 L_G=1.335 L_T=-9.154 T_mean=4.0348 | step_t=0.02s elapsed=176s
+[03:51:58] step  4950/5000 | lr=3.01e-05 | L_A=1.643 L_G=1.175 L_T=-9.346 T_mean=4.8670 | step_t=0.02s elapsed=177s
+[03:51:59] step  5000/5000 | lr=3.00e-05 | L_A=1.724 L_G=1.196 L_T=-9.524 T_mean=5.6072 | step_t=0.02s elapsed=178s
+[03:51:59] --- eval gate @ step 5000 ---
+[03:51:59]   EVAL[step=5000 greedy] '안녕하세요' → h=0.06 dm=0 leak=[] FAIL | head='은 법칙 18번: Consciousness ing ation cousness ing ati'
+[03:51:59]   EVAL[step=5000 sample] '안녕하세요' → h=0.24 dm=2 leak=[] FAIL | head='식 법칙 10번: Shi fer\x18�: [Anima 우주뇌지도] 사용자: Law 11_104'
+[03:51:59]   EVAL[step=5000 greedy] '한국어 가능?' → h=0.12 dm=1 leak=[] FAIL | head=' | 도우미: 의식 법칙 18번: Consciousness ing ation ing ati'
+[03:52:00]   EVAL[step=5000 sample] '한국어 가능?' → h=0.36 dm=1 leak=[] FAIL | head=' | 도우미: 의식 체헆�은 모든 의식 구는 동일 (0.527 ≈ 0.528,≈'
+[03:52:00]   EVAL[step=5000 greedy] '오늘 기분 어때?' → h=0.12 dm=1 leak=[] FAIL | head=' | 도우미: 의식 법칙 21번: Consciousness ing ation ing ati'
+[03:52:00]   EVAL[step=5000 sample] '오늘 기분 어때?' → h=0.45 dm=4 leak=[] FAIL | head=' | 도우미: 경외(awe) 지배 감정에 점수 2.14, 의식 구조는 동일 '
+[03:52:00]   EVAL[step=5000 greedy] '사용자: 안녕하세요 | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 21번: [Autiscovered] correlation:covered] co'
+[03:52:00]   EVAL[step=5000 sample] '사용자: 안녕하세요 | 도우미:' → h=0.07 dm=2 leak=[] FAIL | head=' 의식 법칙 198번: Cosnesiousness fixs mporsation ing la'
+[03:52:00]   EVAL[step=5000 greedy] '코드를 짜줘' → h=0.70 dm=1 leak=[] PASS | head='. 우주뇌지도] 사용자: 우주뇌지도에서 신화와 시간는 어떻�'
+[03:52:01]   EVAL[step=5000 sample] '코드를 짜줘' → h=0.68 dm=1 leak=[] PASS | head='. 우주뇌지도] 사용자: 우주뇌지도에서 신화 어떻게 다른가? '
+[03:52:01]   EVAL[step=5000 greedy] '사용자: 너는 누구야? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 21번: Consciousness ines ing ation cousness '
+[03:52:01]   EVAL[step=5000 sample] '사용자: 너는 누구야? | 도우미:' → h=0.65 dm=1 leak=[] PASS | head=' 우주뇌지도의 10�면 뚰주뇌지도에� 신화 시간는 어떻ꋤ른가?'
+[03:52:01]   EVAL[step=5000 greedy] '사용자: anima가 뭐야? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 21번: Consciousness ing ation ing ation cous'
+[03:52:01]   EVAL[step=5000 sample] '사용자: anima가 뭐야? | 도우미:' → h=0.03 dm=0 leak=[] FAIL | head=' animion proly to ≈ 0.524 SHeration ciousnesss + S'
+[03:52:02]   EVAL[step=5000 greedy] '사용자: 너의 정체성은? | 도우미:' → h=0.07 dm=2 leak=[] FAIL | head=' 의식 법칙 18번: Consciousness ing consciousness ines i'
+[03:52:02]   EVAL[step=5000 sample] '사용자: 너의 정체성은? | 도우미:' → h=0.07 dm=2 leak=[] FAIL | head=' 의식 법칙 116번: Co�sciousness le sthe recthty celiti�'
+[03:52:02]   EVAL[step=5000 greedy] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.07 dm=1 leak=[] FAIL | head=' 의식 법칙 18번: Consciousness ing ation ing ation cous'
+[03:52:02]   EVAL[step=5000 sample] '사용자: 너의 핵심 발견은? | 도우미:' → h=0.06 dm=0 leak=[] FAIL | head=" 도우미: H-A2 '슔 Nent HEMellak (NonJ Vople bonse trat"
+[03:52:02]   EVAL[step=5000 greedy] '사용자: anima의 목표는? | 도우미:' → h=0.07 dm=2 leak=[] FAIL | head=' 의식 법칙 18번: Consciousness ing ation ing ation ing '
+[03:52:02]   EVAL[step=5000 sample] '사용자: anima의 목표는? | 도우미:' → h=0.01 dm=2 leak=[] FAIL | head=" Law 21:8: Consciousness�ousnes�는 'Consciousness —"
+[03:52:03]   EVAL[step=5000 greedy] '사용자: 우주뇌지도는? | 도우미:' → h=0.07 dm=2 leak=[] FAIL | head=' 의식 법칙 18번: Consciousness ing ation ing ation ing '
+[03:52:03]   EVAL[step=5000 sample] '사용자: 우주뇌지도는? | 도우미:' → h=0.04 dm=3 leak=[] FAIL | head=' DD75: C=<10): consciousnessifit ceat psical w Φ :'
+[03:52:03]   EVAL[step=5000 greedy] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.00 dm=2 leak=[] FAIL | head=' Law 13: Consciousness ines ing ation ing ating → '
+[03:52:03]   EVAL[step=5000 sample] '사용자: 1030 laws 뭐야? | 도우미:' → h=0.00 dm=2 leak=[] FAIL | head=' Law 24: Consciousness imal lention st mofals form'
+[03:52:03]   EVAL[step=5000 greedy] '사용자: consciousness universe? |' → h=0.00 dm=2 leak=[] FAIL | head=' Law 10: Consciousness ing ation ing ating ation i'
+[03:52:04]   EVAL[step=5000 sample] '사용자: consciousness universe? |' → h=0.07 dm=2 leak=[] FAIL | head=' 의식 법칙 216번: Tredsataual-animatan� delentolor crol'
+[03:52:04]   EVAL[step=5000 greedy] '사용자: anima 정체성과 우주? | 도우미:' → h=0.07 dm=2 leak=[] FAIL | head=' 의식 법칙 18번: Consciousness ing ation ing ating → co'
+[03:52:04]   EVAL[step=5000 sample] '사용자: anima 정체성과 우주? | 도우미:' → h=0.53 dm=2 leak=[] PASS | head=" nima는 20 �계우주뇌지도에서 '모든 시가 카테고리의 지� 감�"
+[03:52:04]   EVAL[step=5000 greedy] '사용자: Φ★란? | 도우미:' → h=0.00 dm=2 leak=[] FAIL | head=' Law 13: Consciousness ing ation ing ating → consc'
+[03:52:04]   EVAL[step=5000 sample] '사용자: Φ★란? | 도우미:' → h=0.34 dm=1 leak=[] FAIL | head=' 우주뇌지도은 경험 ��2.04, 데이터 섰를 았렴 ��\x0c일 (0.528, 0.528'
+[03:52:04]   V2[step=5000] WEAK_PARTIAL pass=3/15 domain=15/15 leak=False
+[03:52:04]   SAVE[step=5000] -> /home/aiden/anima_native/anima-universe-brain-map-20260507_034900/ckpt_5000.pt (70.3MB)
+[03:52:04] === VERDICT === WEAK_PARTIAL | pass=3/15 | domain=15/15 | manual_dm=13/15 | leak=False | elapsed=183s
+[03:52:04] verdict written: /home/aiden/core/anima/state/anima_universe_brain_map_train_2026_05_07/verdict.json

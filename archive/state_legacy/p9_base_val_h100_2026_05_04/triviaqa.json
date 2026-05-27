@@ -1,0 +1,74 @@
+{
+  "results": {
+    "triviaqa": {
+      "alias": "triviaqa",
+      "exact_match,remove_whitespace": 0.0,
+      "exact_match_stderr,remove_whitespace": 0.0
+    }
+  },
+  "configs": {
+    "triviaqa": {
+      "task": "triviaqa",
+      "dataset_path": "trivia_qa",
+      "dataset_name": "rc.nocontext",
+      "training_split": "train",
+      "validation_split": "validation",
+      "doc_to_text": "Question: {{question}}?\nAnswer:",
+      "doc_to_target": "{{answer.aliases}}",
+      "description": "",
+      "target_delimiter": " ",
+      "fewshot_delimiter": "\n\n",
+      "num_fewshot": 5,
+      "metric_list": [
+        {
+          "metric": "exact_match",
+          "aggregation": "mean",
+          "higher_is_better": true,
+          "ignore_case": true,
+          "ignore_punctuation": true
+        }
+      ],
+      "output_type": "generate_until",
+      "generation_kwargs": {
+        "until": [
+          "\n",
+          ".",
+          ","
+        ],
+        "do_sample": false,
+        "temperature": 0.0
+      },
+      "repeats": 1,
+      "filter_list": [
+        {
+          "name": "remove_whitespace",
+          "filter": [
+            {
+              "function": "remove_whitespace"
+            },
+            {
+              "function": "take_first"
+            }
+          ]
+        }
+      ],
+      "should_decontaminate": true,
+      "doc_to_decontamination_query": "question",
+      "metadata": {
+        "version": 3.0
+      }
+    }
+  },
+  "n_samples": {
+    "triviaqa": {
+      "original": 17944,
+      "effective": 500
+    }
+  },
+  "config": {
+    "limit": 500,
+    "num_fewshot": 5,
+    "batch_size": 16,
+    "seed": 42
+  }
+}

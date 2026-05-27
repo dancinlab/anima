@@ -1,0 +1,96 @@
+{
+  "ts": "2026-05-01",
+  "method": "score = feas(0-3) * impact(0-3) / log10(cost+10); ties broken by IIT-axiom-coverage breadth",
+  "ranking": [
+    {
+      "rank": 1,
+      "id": 12,
+      "study": "Leung 2021 fly Phi anesthesia (ANALOGIZE)",
+      "score": 3.62,
+      "cost_usd": 20,
+      "eta_days": 7,
+      "rationale": "Direct PyPhi Phi_max computation in SIM small-net (4-8 nodes) under noise-injection 'anesthesia'. Tests INFORMATION + INTEGRATION + EXCLUSION postulates simultaneously. Closest analog to original animal-IIT direct Phi measurement (Leung used real LFP but Phi is the metric — substrate-portable). Reuses Edlund/Albantakis (TOP-5 #1, #2) PyPhi infrastructure → zero marginal infrastructure cost.",
+      "iit_axioms_tested": ["information", "integration", "exclusion"],
+      "falsifier_preregister_5": [
+        "F1: Phi_max under high-noise NOT lower than baseline (d<0.5) -> REJECT anesthesia-Phi-attenuation",
+        "F2: Phi collapse occurs at noise level orthogonal to information-loss (channel capacity) -> dissociation flag",
+        "F3: PyPhi compute fails at 8-node SIM (>O(2^n) intractability) -> degrade to 4-node",
+        "F4: Phi_max trajectory not monotonic in noise temperature -> flag non-graded LOC",
+        "F5: random-network control shows identical Phi(noise) curve -> REJECT integration-specific attribution"
+      ]
+    },
+    {
+      "rank": 2,
+      "id": 9,
+      "study": "Sasai 2016 dual-task split-brain (ANALOGIZE)",
+      "score": 3.51,
+      "cost_usd": 30,
+      "eta_days": 4,
+      "rationale": "Tests EXCLUSION postulate — IIT predicts that dual concurrent tasks should yield two transient maximal complexes (split). CLM dual-prompt setup: feed 2 independent prompts via attention-masked partition, measure cross-partition mutual-information vs within-partition. Highest-impact ANALOGIZE for distinguishing IIT vs GNWT (GNWT predicts single global broadcast). H100 pod direct.",
+      "iit_axioms_tested": ["exclusion", "integration"],
+      "falsifier_preregister_5": [
+        "F1: cross-partition MI not lower than within-partition (no split detected) -> REJECT exclusion analog",
+        "F2: GNWT global-broadcast control (full-attention) shows same MI pattern -> dissociation failure",
+        "F3: split scales with partition entropy not task structure -> trivial-split flag",
+        "F4: CLM hidden-state cross-MI dominated by token-level overlap -> control via paraphrase",
+        "F5: effect vanishes at >7B param scale -> capability-dependent, weakens portability"
+      ]
+    },
+    {
+      "rank": 3,
+      "id": 5,
+      "study": "Sarasso 2014 TEP complexity review meta-extension",
+      "score": 3.0,
+      "cost_usd": 0,
+      "eta_days": 3,
+      "rationale": "Pure literature meta-extension. Lowest scientific impact (no new data) but zero-cost and 3-day ETA. Adds value as cross-citation backbone for our spontaneous-PCI analog (TOP-5 #5 Casali) by anchoring against published TEP-complexity normative ranges. Strategic value = closes citation chain.",
+      "iit_axioms_tested": ["meta"],
+      "falsifier_preregister_5": [
+        "F1: review covers <80% of TEP-PCI literature 2010-2025 -> incomplete, extend",
+        "F2: meta-effect-size CI crosses 0 -> REJECT TEP-complexity-LOC link",
+        "F3: heterogeneity I^2 > 75% -> downgrade to qualitative narrative review",
+        "F4: publication bias funnel-plot asymmetric (Egger p<0.05) -> flag",
+        "F5: post-2024 studies contradict pre-2024 -> stratify by era"
+      ]
+    },
+    {
+      "rank": 4,
+      "id": 15,
+      "study": "Gandhi 2023 mouse 2P hierarchical differentiation (ANALOGIZE)",
+      "score": 2.44,
+      "cost_usd": 25,
+      "eta_days": 4,
+      "rationale": "Tests COMPOSITION + INTRINSICALITY postulates — IIT predicts hierarchical neural systems develop richer cause-effect repertoires at higher levels. CLM layer-wise hidden-state differentiation across L1...L32 already partly implemented in state/an11_*. Marginal cost = re-run with formal Gandhi-style stimulus-class differentiation metric (Lempel-Ziv on layer activations). Lower impact than #9 because already partly done — incremental novelty only.",
+      "iit_axioms_tested": ["composition", "intrinsicality"],
+      "falsifier_preregister_5": [
+        "F1: differentiation does NOT increase monotonically across layers -> REJECT hierarchy claim",
+        "F2: peak differentiation at mid-layer not top -> flag U-curve, not original linear claim",
+        "F3: stimulus-class differentiation collapses to token-frequency artifact -> control",
+        "F4: random-network baseline shows same hierarchical pattern -> REJECT trained-specificity",
+        "F5: effect size depends on stimulus modality (text-only) -> portability flag"
+      ]
+    },
+    {
+      "rank": 5,
+      "id": 8,
+      "study": "Boly 2015 fMRI stimulus differentiation (ANALOGIZE)",
+      "score": 2.27,
+      "cost_usd": 50,
+      "eta_days": 5,
+      "rationale": "Tests INFORMATION postulate — meaningful stimuli should produce more differentiated neural states than meaningless. CLM analog: differentiate hidden-states across coherent-prose vs scrambled-token stimuli. Slightly redundant with #15 (both ANALOGIZE differentiation) — separates by stimulus-meaningfulness axis vs hierarchy axis. Lowest of top-5 because high overlap with existing an11_b work.",
+      "iit_axioms_tested": ["information"],
+      "falsifier_preregister_5": [
+        "F1: meaningful vs scrambled differentiation effect d<0.5 -> REJECT",
+        "F2: effect explained by token-entropy difference alone -> trivial",
+        "F3: scrambled-but-grammatical control shows same differentiation -> meaning-vs-syntax confound",
+        "F4: effect vanishes after layer-norm rescaling -> magnitude-artifact",
+        "F5: depends on prompt length >100 tokens -> portability flag"
+      ]
+    }
+  ],
+  "tail_6_excluded": {
+    "ids": [2, 3, 4, 10, 11, 16],
+    "reason": "INFEASIBLE — all require hardware/clinical infrastructure unavailable at $0 budget (TMS, fMRI, animal surgery, anesthesia infusion, DOC patient cohort). Aggregate gating cost ~$1.7M.",
+    "unblock_path": "would require N-substrate hardware purchase track per docs/n_substrate_purchase_guide_2026_05_01.md + clinical/animal IRB partnerships (out of scope this cycle)"
+  }
+}

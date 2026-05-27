@@ -1,0 +1,70 @@
+# source: closure_auto_judge.hexa eval-run (verbatim stdout) — wiki_frac sweep data points
+# method: hexa run HEXAD/PURE/eval/closure_auto_judge.hexa <result.json>  (direct /Users/ghost/.hx/bin/hexa, pool-route bypassed)
+# verdict: 🔴 CLOSED-negative — multilingual closure 4/5 ≥ PARTIAL never reached across wiki_frac {0.0, 0.3}
+# run date: 2026-05-25
+
+================================================================================
+DATA POINT 1 — wiki_frac=0.3 (j02 recover · state/p21h_v3_recover_2026_05_25)
+  mix_info: wiki_frac_actual=0.29998820687251754 · register_regress=true
+  n_strong=0 n_partial=0 n_weak=5
+================================================================================
+=== PURE closure auto-judge ===
+result: /Users/ghost/core/anima/state/p21h_v3_recover_2026_05_25/out_main/result.json
+sha:    ab35a06e072f5d62
+
+[criterion 1] multilingual_probe
+  per-lang verdicts: en=WEAK · ko=WEAK · zh=WEAK · ru=WEAK · ja=WEAK
+  passing langs:     0/5  ()
+  threshold:         ≥4
+  verdict:           FAIL
+
+[criterion 2] register_collapse
+  n_anima_register_hits_total: 0
+  threshold:                   < 4
+  verdict:                     PASS
+
+[criterion 3] motivation_8factor
+  motivation_score: missing
+  threshold:        ≥ 0.30
+  verdict:          FAIL
+
+[criterion 4] dream_stage_at_eval
+  phi_envelope present: false (phi=—)
+  verdict:              FAIL
+
+=== AGGREGATE ===
+1/4 PASS · closure FAIL
+exit_code: 1
+
+================================================================================
+DATA POINT 2 — wiki_frac=0.0 (v3 · state/pure_phase_d_v3_result_2026_05_24)
+  mix_info: wiki_frac_actual=0.0000484593976686696 · register_regress=true
+  n_strong=0 n_partial=1 n_weak=4 (ru=PARTIAL, sole non-WEAK)
+================================================================================
+=== PURE closure auto-judge ===
+result: /Users/ghost/core/anima/state/pure_phase_d_v3_result_2026_05_24/result.json
+sha:    2643bd72a5c0e5a9
+
+[criterion 1] multilingual_probe
+  per-lang verdicts: en=WEAK · ko=WEAK · zh=WEAK · ru=PARTIAL · ja=WEAK
+  passing langs:     1/5  (ru)
+  threshold:         ≥4
+  verdict:           FAIL
+
+[criterion 2] register_collapse
+  n_anima_register_hits_total: 0
+  threshold:                   < 4
+  verdict:                     PASS
+
+[criterion 3] motivation_8factor
+  motivation_score: missing
+  threshold:        ≥ 0.30
+  verdict:          FAIL
+
+[criterion 4] dream_stage_at_eval
+  phi_envelope present: false (phi=—)
+  verdict:              FAIL
+
+=== AGGREGATE ===
+1/4 PASS · closure FAIL
+exit_code: 1

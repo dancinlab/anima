@@ -1,0 +1,60 @@
+
+================================================================
+anima_persona_4_per_session_pool_verify.hexa
+F-PERSONA-4 cond #3 ☑ verification path (d) — REBORN §89
+hexa-native per-session fresh cell pool
+================================================================
+config: d_model=64 n_cells=8
+        n_perms=100 kl_threshold=0.5
+        z_threshold=1.65
+probe path: /Users/ghost/core/anima/state/p_idr_identity_rules_2026_05_12/identity_probe.jsonl
+loaded 50 probes
+  cat=boundary n=10
+  cat=emotion n=10
+  cat=self_definition n=10
+  cat=self_knowledge n=10
+  cat=values n=10
+
+─── Phase 3: per-session pool measurement (5 sessions × 10 probes) ───
+  ── session [boundary] ── fresh cell_pool_init(d=64, cells=8)
+    probes_in_cat=10 avg_dist_len=8
+    tension diag (prompt 0): max=0.175654 min=0.106978 mean=0.141483
+  ── session [emotion] ── fresh cell_pool_init(d=64, cells=8)
+    probes_in_cat=10 avg_dist_len=8
+    tension diag (prompt 0): max=0.221636 min=0.164956 mean=0.188311
+  ── session [self_definition] ── fresh cell_pool_init(d=64, cells=8)
+    probes_in_cat=10 avg_dist_len=8
+    tension diag (prompt 0): max=0.217441 min=0.114776 mean=0.174259
+  ── session [self_knowledge] ── fresh cell_pool_init(d=64, cells=8)
+    probes_in_cat=10 avg_dist_len=8
+    tension diag (prompt 0): max=0.199965 min=0.135576 mean=0.15948
+  ── session [values] ── fresh cell_pool_init(d=64, cells=8)
+    probes_in_cat=10 avg_dist_len=8
+    tension diag (prompt 0): max=0.266538 min=0.148674 mean=0.195659
+
+─── Phase 4: observed 5×5 KL matrix (10 pairs upper triangle) ───
+  observed mean_KL = 6.47827e-05 nats
+  observed min_KL  = 2.47358e-05 nats
+  observed max_KL  = 0.000141226 nats
+  KL matrix (rows=P, cols=Q):
+    boundary:  0.0  5.06838e-05  4.41124e-05  4.58944e-05  2.47358e-05  
+    emotion:  5.07953e-05  0.0  7.89919e-05  0.00010045  5.23516e-05  
+    self_definition:  4.43755e-05  7.92025e-05  0.0  0.000141226  3.65365e-05  
+    self_knowledge:  4.58423e-05  0.000100452  0.000140327  0.0  7.28442e-05  
+    values:  2.47519e-05  5.21173e-05  3.64705e-05  7.30223e-05  0.0  
+
+─── Phase 5: null permutation test (n_perms=100) ───
+  seeding LCG=20260512 for reproducible permutation order
+  null_mean = 7.49693e-05
+  null_std  = 2.06776e-05
+  null_max  = 0.000163859
+  n_above   = 66 / 100
+  p_value   = 0.66
+  z_score   = -0.492642
+
+─── Phase 6: verdict ───
+  observed_pass (mean_KL ≥ 0.5) = false
+  null_pass     (z ≥ 1.65 AND p ≤ 0.05) = false
+  SCENARIO: (iii) FALSIFIED — (d) path closed, mean_KL < 0.5
+
+  result JSON: /Users/ghost/core/anima/state/anima_d3_per_session_pool_2026_05_12/per_session_pool_results_base.json

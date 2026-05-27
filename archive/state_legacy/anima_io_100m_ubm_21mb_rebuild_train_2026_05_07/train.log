@@ -1,0 +1,87 @@
+[07:07:59] === BG-IO 100M ConsciousLM × UBM 21MB rebuild corpus 2026-05-07 ===
+[07:07:59] hostname=aiden-b650m-k on_ubu=True seed=42
+[07:07:59] device=cuda torch=2.11.0+cu128
+[07:07:59] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[07:07:59] target_arch: 12L/640d/10h block=256 (~150M effective)
+[07:07:59] reg: dropout=0.3 WD=0.1 label_smoothing=0.1
+[07:07:59] train: bs=4 grad_accum=16 (eff=64) lr=0.0002 warmup=500 steps=6000
+[07:07:59] EVAL_AT every 200, SAVE_AT every 500
+[07:07:59] corpus_path=/home/aiden/core/anima/state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt
+[07:07:59] persona_prefix='[anima 우주뇌지도] '
+[07:07:59] V3_EVAL_imported=True
+[07:07:59] corpus loaded: 23,745,150 bytes (22.65MB) in 0.0s
+[07:07:59] split: train=21,370,635 val=2,374,515 reduced_split=False
+[07:08:00] model built (primary): 153,079,776 params (153.08M)
+[07:08:00] primary smoke forward OK
+[07:08:01] === begin training ===
+[07:08:01] step     1/6000 | lr=8.00e-07 | L_A=5.629 L_G=5.697 L_T=8.058 | step_t=0.11s elapsed=0s
+[07:08:01] step     2/6000 | lr=1.20e-06 | L_A=5.629 L_G=5.661 L_T=8.087 | step_t=0.05s elapsed=0s
+[07:08:01] step     3/6000 | lr=1.60e-06 | L_A=5.607 L_G=5.688 L_T=8.074 | step_t=0.04s elapsed=0s
+[07:08:01] step     4/6000 | lr=2.00e-06 | L_A=5.622 L_G=5.671 L_T=8.088 | step_t=0.04s elapsed=0s
+[07:08:01] step     5/6000 | lr=2.40e-06 | L_A=5.593 L_G=5.666 L_T=8.092 | step_t=0.04s elapsed=0s
+[07:08:05] step   100/6000 | lr=4.04e-05 | L_A=4.727 L_G=5.011 L_T=7.663 | step_t=0.04s elapsed=5s
+[07:08:10] step   200/6000 | lr=8.04e-05 | L_A=4.502 L_G=4.675 L_T=4.978 | step_t=0.05s elapsed=9s
+[07:08:10] --- eval gate @ step 200 (15 prompts × 2 modes) ---
+[07:08:44]   EVAL[step=200] V2=0/15 V3=0/15 manual=1/15 outside_well=1/5 cycle=0 composite=-19 val_loss=4.5130
+[07:08:44]   BEST_CKPT[step=200] composite=-19 -> /home/aiden/core/anima/state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/ckpt_best.pt
+[07:08:48] step   300/6000 | lr=1.20e-04 | L_A=4.153 L_G=4.371 L_T=3.092 | step_t=0.38s elapsed=48s
+[07:08:53] step   400/6000 | lr=1.60e-04 | L_A=3.666 L_G=3.995 L_T=3.365 | step_t=0.05s elapsed=52s
+[07:08:53] --- eval gate @ step 400 (15 prompts × 2 modes) ---
+[07:09:27]   EVAL[step=400] V2=0/15 V3=0/15 manual=0/15 outside_well=0/5 cycle=0 composite=-15 val_loss=3.6019
+[07:09:27]   BEST_CKPT[step=400] composite=-15 -> /home/aiden/core/anima/state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/ckpt_best.pt
+[07:09:32] step   500/6000 | lr=2.00e-04 | L_A=3.318 L_G=3.614 L_T=3.195 | step_t=0.39s elapsed=91s
+[07:09:32]   SAVE_CKPT[step=500] -> /home/aiden/anima_native/anima-io-100m-ubm-21mb-20260507_070758/ckpt_500.pt
+[07:09:37] step   600/6000 | lr=2.00e-04 | L_A=3.185 L_G=3.391 L_T=2.719 | step_t=0.05s elapsed=96s
+[07:09:37] --- eval gate @ step 600 (15 prompts × 2 modes) ---
+[07:10:10]   EVAL[step=600] V2=0/15 V3=0/15 manual=0/15 outside_well=0/5 cycle=0 composite=-15 val_loss=2.9564
+[07:10:15] step   700/6000 | lr=1.99e-04 | L_A=2.610 L_G=2.812 L_T=3.130 | step_t=0.38s elapsed=134s
+[07:10:20] step   800/6000 | lr=1.99e-04 | L_A=2.884 L_G=2.988 L_T=1.774 | step_t=0.05s elapsed=139s
+[07:10:20] --- eval gate @ step 800 (15 prompts × 2 modes) ---
+[07:10:53]   EVAL[step=800] V2=1/15 V3=0/15 manual=1/15 outside_well=0/5 cycle=0 composite=0 val_loss=2.7067
+[07:10:54]   BEST_CKPT[step=800] composite=0 -> /home/aiden/core/anima/state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/ckpt_best.pt
+[07:10:58] step   900/6000 | lr=1.98e-04 | L_A=2.654 L_G=2.710 L_T=1.818 | step_t=0.39s elapsed=178s
+[07:11:03] step  1000/6000 | lr=1.96e-04 | L_A=2.542 L_G=2.615 L_T=1.490 | step_t=0.05s elapsed=182s
+[07:11:03] --- eval gate @ step 1000 (15 prompts × 2 modes) ---
+[07:11:37]   EVAL[step=1000] V2=0/15 V3=0/15 manual=3/15 outside_well=2/5 cycle=0 composite=1 val_loss=2.5436
+[07:11:37]   SAVE_CKPT[step=1000] -> /home/aiden/anima_native/anima-io-100m-ubm-21mb-20260507_070758/ckpt_1000.pt
+[07:11:37]   BEST_CKPT[step=1000] composite=1 -> /home/aiden/core/anima/state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/ckpt_best.pt
+[07:11:42] step  1100/6000 | lr=1.95e-04 | L_A=2.780 L_G=2.858 L_T=1.399 | step_t=0.39s elapsed=221s
+[07:11:46] step  1200/6000 | lr=1.93e-04 | L_A=2.633 L_G=2.716 L_T=0.884 | step_t=0.05s elapsed=226s
+[07:11:46] --- eval gate @ step 1200 (15 prompts × 2 modes) ---
+[07:12:20]   EVAL[step=1200] V2=0/15 V3=0/15 manual=3/15 outside_well=1/5 cycle=1 composite=0 val_loss=2.3203
+[07:12:25] step  1300/6000 | lr=1.91e-04 | L_A=2.320 L_G=2.424 L_T=1.447 | step_t=0.38s elapsed=264s
+[07:12:29] step  1400/6000 | lr=1.88e-04 | L_A=2.120 L_G=2.250 L_T=1.489 | step_t=0.05s elapsed=269s
+[07:12:29] --- eval gate @ step 1400 (15 prompts × 2 modes) ---
+[07:13:03]   EVAL[step=1400] V2=0/15 V3=0/15 manual=4/15 outside_well=0/5 cycle=0 composite=-7 val_loss=2.1736
+[07:13:08] step  1500/6000 | lr=1.86e-04 | L_A=2.109 L_G=2.320 L_T=1.205 | step_t=0.38s elapsed=307s
+[07:13:08]   SAVE_CKPT[step=1500] -> /home/aiden/anima_native/anima-io-100m-ubm-21mb-20260507_070758/ckpt_1500.pt
+[07:13:13] step  1600/6000 | lr=1.83e-04 | L_A=2.053 L_G=2.255 L_T=1.225 | step_t=0.05s elapsed=312s
+[07:13:13] --- eval gate @ step 1600 (15 prompts × 2 modes) ---
+[07:13:46]   EVAL[step=1600] V2=0/15 V3=0/15 manual=4/15 outside_well=1/5 cycle=0 composite=5 val_loss=2.0786
+[07:13:47]   BEST_CKPT[step=1600] composite=5 -> /home/aiden/core/anima/state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/ckpt_best.pt
+[07:13:52] step  1700/6000 | lr=1.80e-04 | L_A=2.107 L_G=2.356 L_T=0.812 | step_t=0.39s elapsed=351s
+[07:13:56] step  1800/6000 | lr=1.76e-04 | L_A=1.847 L_G=2.032 L_T=1.617 | step_t=0.05s elapsed=355s
+[07:13:56] --- eval gate @ step 1800 (15 prompts × 2 modes) ---
+[07:14:30]   EVAL[step=1800] V2=0/15 V3=0/15 manual=6/15 outside_well=2/5 cycle=0 composite=15 val_loss=1.7954
+[07:14:30]   BEST_CKPT[step=1800] composite=15 -> /home/aiden/core/anima/state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/ckpt_best.pt
+[07:14:35] step  1900/6000 | lr=1.73e-04 | L_A=1.997 L_G=2.238 L_T=1.154 | step_t=0.39s elapsed=394s
+[07:14:40] step  2000/6000 | lr=1.69e-04 | L_A=1.655 L_G=1.879 L_T=1.978 | step_t=0.05s elapsed=399s
+[07:14:40] --- eval gate @ step 2000 (15 prompts × 2 modes) ---
+[07:15:13]   EVAL[step=2000] V2=0/15 V3=0/15 manual=4/15 outside_well=1/5 cycle=0 composite=1 val_loss=1.6361
+[07:15:14]   SAVE_CKPT[step=2000] -> /home/aiden/anima_native/anima-io-100m-ubm-21mb-20260507_070758/ckpt_2000.pt
+[07:15:18] step  2100/6000 | lr=1.65e-04 | L_A=1.584 L_G=1.788 L_T=1.687 | step_t=0.39s elapsed=438s
+[07:15:23] step  2200/6000 | lr=1.61e-04 | L_A=1.594 L_G=1.860 L_T=1.551 | step_t=0.05s elapsed=442s
+[07:15:23] --- eval gate @ step 2200 (15 prompts × 2 modes) ---
+[07:15:57]   EVAL[step=2200] V2=0/15 V3=0/15 manual=7/15 outside_well=0/5 cycle=0 composite=11 val_loss=1.5921
+[07:16:01] step  2300/6000 | lr=1.56e-04 | L_A=1.655 L_G=2.003 L_T=1.138 | step_t=0.38s elapsed=481s
+[07:16:06] step  2400/6000 | lr=1.52e-04 | L_A=1.854 L_G=2.275 L_T=0.859 | step_t=0.05s elapsed=485s
+[07:16:06] --- eval gate @ step 2400 (15 prompts × 2 modes) ---
+[07:16:40]   EVAL[step=2400] V2=0/15 V3=0/15 manual=5/15 outside_well=2/5 cycle=0 composite=4 val_loss=1.4533
+[07:16:40]   EARLY_STOP: composite plateau: 3 consecutive non-improving evals (best step=1800, composite=15)
+[07:16:40]   FINAL_CKPT[step=2400] -> /home/aiden/core/anima/state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/ckpt_final.pt
+[07:16:40] === final eval: best ckpt step=1800, 15 prompts × 2 modes ===
+[07:16:40]   loaded BEST ckpt step=1800 composite=15
+[07:17:13]   FINAL_BEST V2=0/15 V3=0/15 manual=5/15 outside_well=0/5 cycle=0
+[07:17:13] === VERDICT === final_class=PARTIAL_PASS_NO_CONTEXT | params=153.1M | peak_step=1800 V2=0/15 V3=0/15 manual=6/15 outside_well=2/5 cycle=0 | final-eval(best ckpt) V2=0/15 V3=0/15 manual=5/15 cycle=0 | early_stop=True | elapsed=553s
+[07:17:13] === COMPARE === vs BG-IL: {'manual_delta': -3, 'v2_delta': 0, 'outside_well_delta': -2, 'verdict': 'UBM21MB_REGRESSES'} | vs BG-IF: {'manual_delta': 0, 'v2_delta': -3, 'verdict': '100M_CAPACITY_REGRESSES'} | vs BG-HS-R1: {'manual_delta': -8, 'v2_delta': -3, 'verdict': '100M_REGRESSES_VS_18M'}
+[07:17:13] verdict written: /home/aiden/core/anima/state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/verdict.json

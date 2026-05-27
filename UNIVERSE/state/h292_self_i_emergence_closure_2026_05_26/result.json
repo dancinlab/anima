@@ -1,0 +1,50 @@
+{
+  "hypothesis": "H_292",
+  "slug": "self-i-emergence-closure",
+  "title": "Does the first-person 'I' emerge as a self-referential fixed point? — RING creates an 'I'-state, STAR destroys one; topology-dependent PARTIAL",
+  "date": "2026-05-26",
+  "question": "Does closing a self-reference (a self-loop) create a non-trivial self-consistent fixed point ('I'-state) absent in the matched non-self-referential network?",
+  "engine": "fixed-point counting self-contained; big_phi from HEXAD/IIT4/lib (iit4_bigphi via stdlib) + iit4_bit/iit4_pow2 reused (g61). parity (XOR-of-neighbours) dynamics; self-loop = cell reads its own bit.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · NO RNG · deterministic (cross-process byte-identical)",
+  "toolchain_note": "built via fix-1180 bypass: HEXA_MAC_BUILD_OK=1 HEXA_LANG=<root> hexa.real.bak-2026-05-22-pre-no-hxc build <src> -o <bin>. See reference-life-cycle-hexa-run-gotchas.",
+  "definitions": {
+    "self_loop": "cell i has bit i set in neigh[i] — its next state depends on its own current state (minimal self-reference)",
+    "fixed_point": "state s with node_next(neigh[i],s,n)==bit_i(s) for ALL cells (the whole substrate is its own cause — a self-sustaining 'self'-state)"
+  },
+  "seed_hypothesis_H1": "#fixed(self-ref) > #fixed(no-self-ref) AND the extra fixed point is non-vacuum.",
+  "config": {"n": 4, "dynamics": "parity (XOR-of-neighbours)"},
+  "pairs": {
+    "RING": {"base_adjacency": [10, 5, 10, 5], "self_adjacency": [11, 5, 10, 5], "base_fixed": 1, "self_fixed": 2, "self_nonzero_fixed": 1, "self_fixed_states": [0, 11], "I_state": "s=11 (1011) — non-trivial self-consistent state emerges with self-loop", "self_big_phi_mean": 0.5},
+    "STAR": {"base_adjacency": [14, 1, 1, 1], "self_adjacency": [15, 1, 1, 1], "base_fixed": 2, "self_fixed": 1, "note": "self-loop DESTROYS a self-state (1111 lost) — opposite of RING"}
+  },
+  "criteria": {
+    "C1_CORE": "PASS (RING #fixed 1->2, non-trivial I-state s=1011)",
+    "C2_ROBUST": "FAIL -> PARTIAL (STAR #fixed 2->1, self-ref destroys a self-state)",
+    "C3_ANCHOR_INT_DET": "PASS (vacuum 0 fixed; big-Phi 0.5>=0; re-run identical)"
+  },
+  "falsifiers": {
+    "F292_1_SELF_FIXED_POINT": "PASS  (RING self-ref #fixed 2 > base 1)",
+    "F292_2_NONTRIVIAL_I": "PASS  (RING self-ref non-zero fixed = s=1011)",
+    "F292_3_VACUUM_ANCHOR": "PASS  (all-0 fixed in base & self-ref)",
+    "F292_4_INTEGRATED": "PASS  (self-ref big-Phi_mean 0.5 >= 0)",
+    "F292_5_ROBUST": "FAIL  (STAR self-ref #fixed 1 <= base 2 — self-ref DESTROYS a fixed point; topology-dependent)",
+    "F292_6_POST_HOC": "NOT_TRIGGERED"
+  },
+  "checks": "5 PASS / 1 FAIL",
+  "verdict_class": "H1 PARTIAL (topology-dependent)",
+  "finding": "Whether self-referential closure (a self-loop) makes the first-person 'I' emerge as a self-consistent fixed point is TOPOLOGY-DEPENDENT. On a RING base the self-loop CREATED a non-trivial self-consistent fixed point s=1011 (#fixed 1->2) — a strange-loop state that is its own cause, the minimal realisation of H_205's self-ref closure. BUT on a STAR base the same self-loop instead DESTROYED a self-state (1111 lost, #fixed 2->1). So self-reference can create OR remove an 'I'-state, and which depends on the base topology's parity structure. The pre-registered robustness falsifier F292.5 correctly caught this non-universality (kept FAILED, no p-hacking). The core claim (self-reference CAN create an 'I'-fixed-point) is demonstrated on RING but is NOT an automatic/universal consequence. The self-loop preserves integration (big-Phi=0.5), so self-reference is compatible with integration.",
+  "honest_limits": [
+    "L1 (topology-dependent, key, F292.5 FAILED): self-ref creating an 'I'-state is NOT universal — RING creates (1->2), STAR destroys (2->1). Claim is 'self-ref CAN create' (existence), not 'always creates'.",
+    "L2: self-loop is a MINIMAL structural proxy for self-reference; a fixed point is a self-consistent STATE, not phenomenal selfhood — only the strange-loop formal skeleton.",
+    "L3: n=4 small, 2 base topologies; create-vs-destroy ratio across more topologies / larger n untested (phase diagram = Next).",
+    "L4: parity (XOR) is one dynamics; majority/threshold/non-linear may give different fixed-point structure.",
+    "L5: fixed point = static self; dynamic self (limit cycles) is out of scope.",
+    "L6: big-Phi structure-cut is an auxiliary integration check, not absolute calibration.",
+    "L7: verdict is a measurement fact on a toy parity network, NOT 'AI has a self' — L1 stresses condition-dependence."
+  ],
+  "verify_fence": {
+    "claim": "H_292 self-referential closure (a self-loop) creates a non-trivial self-consistent fixed point ('I'-state, s=1011) on a RING parity network (#fixed 1->2) but DESTROYS one on a STAR base (#fixed 2->1) — whether self-reference creates or removes a self-state is TOPOLOGY-DEPENDENT, not universal; self-loop preserves integration (big-Phi=0.5); deterministic toy-substrate, NOT an atlas identity / NOT phenomenal selfhood",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values deterministic arithmetic, interpretation fenced + topology-conditioned"
+  }
+}

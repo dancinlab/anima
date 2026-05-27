@@ -1,0 +1,41 @@
+{
+  "id": "H_280",
+  "slug": "iit4-phi-structure-small-n",
+  "title": "full IIT 4.0 Phi-structure (cause-effect structure) small-n verdict-preservation",
+  "date": "2026-05-26",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "gpu": false,
+  "cost_usd": 0.0,
+  "parent": "H_266 (integrated>disconnected) + H_278 (exact system-Phi small-n)",
+  "ces_def": "IIT 4.0 distinction-level cause-effect structure: cause/effect repertoires via exact TPM marginalization; mechanism phi via MIP (min over partitions) using the intrinsic-difference measure ID(p,q)=max_x p log2(p/q); distinction phi_d=min(phi_cause,phi_effect); Phi_structure(distinction-only)=sum phi_d",
+  "relations_scope": "ADVISORY ONLY (n=3 congruent purview-overlap sum) - NOT the full IIT 4.0 face-lattice relation integration; full relations + larger n = OPEN FRONTIER (super-exponential, math ceiling)",
+  "faithful_scope": "distinction-level Phi-structure is FAITHFUL (exact TPM, exact MIP, IIT 4.0 ID measure) - the lane's first faithful IIT 4.0 CES, beyond H_278's pairwise-MI cross-cut system Phi",
+  "system_state": "all-ON (s = 2^n - 1)",
+  "ladder_n3": [
+    {"substrate": "disconnected", "rule": "self-copy", "sum_phi_d": 0.000000, "distinction_count": 0, "relations_advisory": 0.000000, "phi_proxy": 0.000001},
+    {"substrate": "weak", "rule": "self+OR-neighbour couple=0.5", "sum_phi_d": 0.727886, "distinction_count": 7, "relations_advisory": 1.247639, "phi_proxy": 0.000001},
+    {"substrate": "integrated", "rule": "majority", "sum_phi_d": 2.316161, "distinction_count": 7, "relations_advisory": 7.938706, "phi_proxy": 0.000001}
+  ],
+  "ladder_n4": [
+    {"substrate": "disconnected", "sum_phi_d": 0.000000, "distinction_count": 0},
+    {"substrate": "weak", "sum_phi_d": 1.277920, "distinction_count": 13},
+    {"substrate": "integrated", "sum_phi_d": 3.856634, "distinction_count": 14}
+  ],
+  "falsifiers": {
+    "F280_1_direction": "PASS (n3 integrated 2.316161 > disconnected 0.000000; n4 PASS)",
+    "F280_2_monotone": "PASS (Sum phi_d non-decreasing disc<=weak<=integrated; proxy-Phi monotone PASS)",
+    "F280_3_faithful": "PASS (ID anchor log2(2)=1 PASS, disc phi_d=0 PASS, intg phi_d>0 PASS, effect-rep normalized PASS)",
+    "DETERMINISM": "PASS"
+  },
+  "verdict_preservation": {
+    "vs_H266": "integrated > disconnected direction PRESERVED (PASS)",
+    "vs_H278": "system-Phi proxy monotone with ladder PASS; CES Sum phi_d agrees in DIRECTION (full IIT4 CES preserves the cheaper proxy's directional verdict)"
+  },
+  "verdict_rule": "SUPPORTED = F280.1 (direction preserved) AND F280.3 (IIT4 faithfulness anchors); F280.2 monotone is a reported finding",
+  "verdict": "SUPPORTED",
+  "tier": "GREEN-NUMERICAL distinction-level (faithful exact CES) + relations ADVISORY/DEFERRED (PARTIAL); empirical interpretation SPECULATION-FENCED",
+  "open_frontier": "full IIT 4.0 Phi_structure WITH faithful face-lattice relations + larger n is super-exponentially intractable (math ceiling, NOT a TODO) - this smoke is a directional verdict-preservation step toward that limit, not terminal closure",
+  "verify_fence": "SPECULATION-FENCED (hexa verify --fence): CES values are deterministic closed-form arithmetic (ID anchor log2(2)=1 exact); the empirical interpretation (integrated>disconnected Phi-structure) is a toy-substrate outcome, NOT an atlas identity - g5 honest fence"
+}

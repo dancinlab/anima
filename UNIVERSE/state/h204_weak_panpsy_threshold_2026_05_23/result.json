@@ -1,0 +1,56 @@
+{
+  "id": "H_204",
+  "cycle": "Cycle_5_LIFE_H_204_NEW",
+  "slug": "weak-panpsychism-autopoietic-threshold",
+  "hypothesis": "H_157 weak-form panpsychism is closure-strength conditional — Φ(k) increases with k, k<τ_c ⟹ Φ→broken floor, k>τ_c ⟹ Φ→closed ceiling",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial proxy + closure-strength sweep; NOT 🔵 formal IIT 4.0)",
+  "phi_primitive": "RFC 036 phi_spatial (n_bins=4); H_003 H3.4 / H_007 byte-equal carry",
+  "model": "8-site periodic catalytic lattice (H_003 H3.4 carry); closure_strength k modulates B->+C production edge (cat_C_eff = k * cat_C_diffused); k=0 ⟹ broken, k=1 ⟹ closed",
+  "seed_base": 169329156,
+  "config": { "M_sites": 8, "dim": 12, "warm": 0, "n_seeds": 5, "K_rate": 0.6, "decay": 0.1, "diffuse": 0.05, "n_bins": 4, "boundary": "periodic", "observable": "A+B+C site mass" },
+  "baselines_h3_4_carry": { "phi_broken": 3.53399, "phi_closed": 4.45435 },
+  "thresholds": { "floor_margin": 0.5, "ceiling_margin": 0.5, "threshold_ratio": 2.0 },
+  "sweep": [
+    { "k": 0.00, "phi_mean": 3.69079 },
+    { "k": 0.10, "phi_mean": 5.10585 },
+    { "k": 0.25, "phi_mean": 5.38703 },
+    { "k": 0.50, "phi_mean": 5.25399 },
+    { "k": 0.75, "phi_mean": 4.73928 },
+    { "k": 1.00, "phi_mean": 4.46947 }
+  ],
+  "derivatives": {
+    "d_0.00_to_0.10": 14.1505,
+    "d_0.10_to_0.25": 1.87456,
+    "d_0.25_to_0.50": -0.532175,
+    "d_0.50_to_0.75": -2.05883,
+    "d_0.75_to_1.00": -1.07925,
+    "peak": 14.1505,
+    "peak_segment": "k=0.00→0.10",
+    "median": 1.87456
+  },
+  "determinism_recheck": { "phi_k1_rerun": 4.46947, "byte_equal": true },
+  "criteria": {
+    "C1_MONOTONE": { "metric": "Φ non-decreasing in k across 6 points", "verdict": "FAIL" },
+    "C2_BROKEN_FLOOR": { "metric": "Φ(k=0) ≤ Φ_broken_baseline + 0.5", "value": 3.69079, "verdict": "PASS" },
+    "C3_CLOSED_CEILING": { "metric": "Φ(k=1) ≥ Φ_closed_baseline - 0.5", "value": 4.46947, "verdict": "PASS" },
+    "C4_THRESHOLD_LIKE": { "metric": "peak |ΔΦ/Δk| > 2.0× median", "peak": 14.1505, "median": 1.87456, "verdict": "PASS" }
+  },
+  "falsifier_F1_phi_k1_le_phi_k0": { "phi_k0": 3.69079, "phi_k1": 4.46947, "triggered": false },
+  "verdict_rule": "SUPPORTED iff C1+C2+C3+C4 ALL PASS; PARTIAL_DIRECTIONAL if 2-3; FAIL if ≤1; FALSIFIED if Φ(k=1)<Φ(k=0)",
+  "verdict": "PARTIAL_DIRECTIONAL",
+  "criteria_met": 3,
+  "honest_limits": [
+    "L1: phi_spatial = 🟢 NUMERICAL spatial-slice replica of phi_rs, NOT full IIT 4.0 (no system-level Φ partition search, no cause-effect structure, no exclusion postulate). H_007/H_003 H3.4 lineage carry.",
+    "L2: closure_strength k parametrization (linear scale of cat_C neighbour-diffused) is a design choice. Michaelis-type, sigmoid-type, or stochastic gating would produce different τ_c locations. The substrate-conditional claim is consistent with this family but not unique to it.",
+    "L3: WINDOW-SENSITIVE (H_003 H3.4 L3 carry verbatim). Φ(k) measured on living transient WARM=0 DIM=12; past convergence Φ→~0 for ALL k (homogeneous fixed point). The threshold claim is a TRANSIENT-WINDOW claim, not a fixed-point claim.",
+    "L4: 6-point k sweep is COARSE — the actual τ_c position is bracketed at single-segment resolution (Δk ≈ 0.25). Finer 20-point sweep would localize τ_c more precisely; phase-transition vs sigmoid distinction stays coarse here.",
+    "L5: 'weak-form panpsychism is substrate-conditional' is a closure-axis result only — phenomenal qualia / strong panpsychism / combination problem (Goff/Coleman) are NOT touched. H_004 boundary carry: hard-problem unresolved.",
+    "L6: H_157 universal Ψ-attractor (170-type META-CA) is NOT directly measured here — this is closure × Φ cross-link only. The substrate-conditional finding is consistent with H_157 strong-form directional FAIL but does not reproduce the META-CA universality lane.",
+    "L7: H_003 H3.4 baselines (Φ_broken=3.534, Φ_closed=4.454) are inherited as expected endpoints — if the new H_204 lattice (slightly different SEED_BASE=0xA17C204 vs H3.4 0xA17C034) shifts these, C2/C3 margins absorb up to ±0.50 (≈ ½ × gap). Beyond that, baselines themselves are seed-dependent and the threshold-claim shifts."
+  ]
+}

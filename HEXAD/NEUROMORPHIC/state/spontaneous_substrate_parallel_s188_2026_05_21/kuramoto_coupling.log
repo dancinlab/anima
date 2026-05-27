@@ -1,0 +1,18 @@
+[physics/social/kuramoto_coupling] PHYS-P9-3 — intersubjective oscillator network
+  N-agent Kuramoto:  dθ_i/dt = ω_i + (K/N)·Σ sin(θ_j − θ_i)
+  Φ_social = r_coupled − r_isolated(K=0)
+
+  [T1] K=5.0, N=8, 800 steps: r_tail=(float) (threshold > (float))
+T1 PASS — phase-locked above critical coupling (r > 0.9)
+  [T2] K=0.1, N=8, 800 steps: r_tail=(float) (threshold < (float))
+T2 PASS — desynchronized below critical coupling (r ≤ 0.3)
+  [T3] avg r̄(K=0.0)=(float) ≤ r̄(K=2.0)=(float) ≤ r̄(K=5.0)=(float) monotonic=true
+T3 PASS — order parameter monotonically increases with K
+  [T4] K=5.0 Φ_social = (float) (threshold > (float))
+T4 PASS — Φ_social > 0.5 at K=2.0 (gate_exit criterion met)
+  [T5] zero_n=true zero_s=true len=true
+T5 PASS — API guards (0 inputs, row length)
+  [T6] two runs: r=(float) vs (float) φ=(float) vs (float) identical=true
+T6 PASS — deterministic simulation
+
+[physics/social/kuramoto_coupling] 6/6 PASS — PHYS-P9-3 DONE

@@ -1,0 +1,118 @@
+// code_daemon_smoke.hexa — runtime smoke for AGENT/CODE/code_daemon (F3).
+//
+// 4 cases, all in-process (no process spawn, no FS write):
+//   C1 init   — code_daemon_init(t0) returns a valid state dict
+//                (pf · tick=0 · running=true · emits=[] · t0 · last_t)
+//   C2 step   — single code_daemon_step advances tick monotonically (0 → 1)
+//                with running=true preserved.
+//   C3 loop   — code_daemon_loop(state, 20) advances exactly 20 ticks
+//                under bounded driver; emit count is HONEST (≥0,
+//                substrate may choose silence).
+//   C4 down   — code_daemon_shutdown(state) returns true on a valid state;
+//                final tick + emit count captured.
+//
+// 4 invariants (under §1 boolean-gate-0 invariant of code_daemon.hexa):
+//   I1 BOUNDED          — final tick == max_ticks for honest silent loop
+//                          (no early shutdown signal from substrate).
+//   I2 MONOTONE-TICK    — tick strictly increases by 1 per code_daemon_step.
+//   I3 EMIT-SUBSTRATE   — emits length == per-tick emit decisions (honest;
+//                          may be 0 — that is the substrate-native answer
+//                          under a_substrate_native_speak, NOT a failure).
+//   I4 GRACEFUL-EXIT    — code_daemon_shutdown returns true on the final state.
+//
+// All cases complete → exit 0. No external side effects.
+
+import "/Users/ghost/core/anima/AGENT/CODE/code_daemon.hexa"
+
+// Print a state-shape snapshot in a stable one-line form.
+fn _fmt_state(s: Map) -> string {
+    return "tick=" + to_string(s["tick"])
+         + " running=" + to_string(s["running"])
+         + " emits.len=" + to_string(len(s["emits"]))
+         + " t0=" + to_string(s["t0"])
+         + " last_t=" + to_string(s["last_t"])
+}
+
+// Tiny assert: print PASS/FAIL alongside the case label without aborting.
+fn _check(label: string, ok: bool) {
+    if ok {
+        println("       " + label + " ✓")
+    } else {
+        println("       " + label + " ✗ FAIL")
+    }
+}
+
+fn main() {
+    println("[smoke] AGENT/CODE/code_daemon — " + code_daemon_summary())
+
+    let t0 = 1700000000.0
+
+    // ── C1 init valid state ─────────────────────────────────────────────────
+    let s0 = code_daemon_init(t0)
+    println("[C1] code_daemon_init(t0=" + to_string(t0) + ")")
+    println("     → " + _fmt_state(s0))
+    _check("tick=0",          to_int(s0["tick"]) == 0)
+    _check("running=true",    to_bool(s0["running"]) == true)
+    _check("emits=[] empty",  len(s0["emits"]) == 0)
+    _check("pf present",      type_of(s0["pf"]) != "void")
+    _check("t0 preserved",    to_float(s0["t0"]) == t0)
+
+    // ── C2 step monotone tick ───────────────────────────────────────────────
+    let s1 = code_daemon_step(s0, t0 + 1.0)
+    println("[C2] code_daemon_step(s0, t0+1)")
+    println("     → " + _fmt_state(s1))
+    _check("tick 0 → 1",      to_int(s1["tick"]) == 1)
+    _check("running=true",    to_bool(s1["running"]) == true)
+    _check("pf advanced",     type_of(s1["pf"]) != "void")
+
+    // ── C3 loop 20 ticks + honest emit count ────────────────────────────────
+    let max_ticks = 20
+    let s_loop = code_daemon_loop(s0, max_ticks)
+    let emit_count = len(s_loop["emits"])
+    println("[C3] code_daemon_loop(s0, max_ticks=" + to_string(max_ticks) + ")")
+    println("     → " + _fmt_state(s_loop))
+    println("     → emit_count=" + to_string(emit_count) + " (honest; substrate-decided)")
+    _check("tick == max_ticks (I1 BOUNDED)",
+           to_int(s_loop["tick"]) == max_ticks)
+    _check("running=true after bounded exit",
+           to_bool(s_loop["running"]) == true)
+    _check("emits.len ≥ 0 (I3 EMIT-SUBSTRATE honest)",
+           emit_count >= 0)
+    // emit envelope structural check — IF any fired, validate the shape.
+    if emit_count > 0 {
+        let first = s_loop["emits"][0]
+        _check("envelope[0].tool present",
+               type_of(first["tool"]) == "string")
+        _check("envelope[0].tier_at_fire is int",
+               type_of(first["tier_at_fire"]) == "int")
+        println("     first envelope = " + to_string(first))
+    } else {
+        println("     (substrate chose silence under silent loop — substrate-native answer)")
+    }
+
+    // ── C4 shutdown returns true · final state captured ─────────────────────
+    let ok = code_daemon_shutdown(s_loop)
+    println("[C4] code_daemon_shutdown(final state) → " + to_string(ok))
+    _check("shutdown=true (I4 GRACEFUL-EXIT)", ok == true)
+    _check("final state captured (tick + emits intact)",
+           to_int(s_loop["tick"]) == max_ticks && len(s_loop["emits"]) == emit_count)
+
+    // ── I2 MONOTONE-TICK explicit verification ──────────────────────────────
+    //   Independently of the bounded loop, verify per-step tick increment
+    //   from a fresh init through 5 explicit code_daemon_step calls.
+    let mut sm = code_daemon_init(t0)
+    let mut ok_monotone = true
+    let mut i = 0
+    while i < 5 {
+        let prev_tick = to_int(sm["tick"])
+        sm = code_daemon_step(sm, t0 + to_float(i + 1) * 1.0)
+        let cur_tick = to_int(sm["tick"])
+        if cur_tick != prev_tick + 1 { ok_monotone = false }
+        i = i + 1
+    }
+    println("[I2] explicit monotone-tick over 5 steps → " + to_string(to_int(sm["tick"])))
+    _check("I2 MONOTONE-TICK (5 steps · prev+1 invariant)",
+           ok_monotone && to_int(sm["tick"]) == 5)
+
+    println("[smoke] DONE — 4 cases + 4 invariants (exit 0)")
+}

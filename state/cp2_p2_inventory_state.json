@@ -1,0 +1,103 @@
+{
+  "schema": "anima/cp2_p2_inventory_state/1",
+  "ts": "2026-04-25T03:55:00Z",
+  "phase": "CP2_pre_entry",
+  "verdict": "INVENTORY_COMPLETE",
+  "p2_gate_status": {
+    "satisfied_count": 5,
+    "pending_count": 4,
+    "total": 9
+  },
+  "satisfied": {
+    "hexad_closure_6of6_plus_adv_2of2": {
+      "commit": "6a292530"
+    },
+    "universal_constant_4_raw29_plus_tau6_4_proof_88pct": {
+      "commits": [
+        "9468fe0f",
+        "d7e5db01"
+      ],
+      "note": "verdict=PARTIAL per cert_graph"
+    },
+    "raw_31_population_rg_coupling_promotion": {
+      "cert": ".meta2-cert/raw31-population-rg-coupling.json",
+      "trigger": ".meta2-cert/index.json::triggers.raw31_population_rg_coupling_promotion",
+      "promoted_at": "2026-04-25T03:15:00Z",
+      "evidence_commits": [
+        "d072bb16",
+        "57acda7b",
+        "fc513c58"
+      ],
+      "approach": "administrative ceremony (.meta2-cert append)"
+    },
+    "universal_4_plus_one_strong_axis": {
+      "verdict": "VERIFIED",
+      "axis_10_cert": ".meta2-cert/axis10-sigma-phi-identity.json",
+      "measurement": "edu/cell/topology/evidence/axis10_cert.json",
+      "pre_reg_commit": "06bd5987",
+      "predicate": "|{n\u2208[1,10000] : \u03c3(n)\u00b7\u03c6(n)=n\u00b7\u03c4(n)}| \u2264 4 AND 6\u2208S AND \u03c4(6)=4",
+      "result": "|S(10000)|=2, S={1,6}, \u03c4(6)=4 PASS",
+      "axis_9_polya_status": "BORDERLINE retained for honesty (raw#12)"
+    },
+    "c5_n10_recurse_stability": {
+      "verdict": "C5_PASS",
+      "evidence_commit": "483e8275",
+      "doc": "docs/c5_n10_recurse_20260421.md",
+      "tool": "tool/btr_n_recurse_stability.hexa",
+      "results": {
+        "phi_0": 0.792,
+        "phi_5": 0.914,
+        "phi_9": 0.971,
+        "max_per_step_drop": -0.0113,
+        "cum_gain": 0.1794,
+        "min_brain_like_pct": 88.17,
+        "cargo_7_at_4_checkpoints": "28/28 PASS"
+      },
+      "rev_2_rule_application": "Mk.VII rev=2 K=4 rule (C1\u2227C2\u2227C3\u2227(C4\u2228C5)) \u2014 C4 optional FAIL, C5 PASS substitutes \u2014 line 181 'C4 \u2228 C5 one optional' SATISFIED",
+      "rev_2_doc_ref": "docs/mk_vii_rev2_promotion_threshold.md"
+    }
+  },
+  "pending_zero_cost": {},
+  "pending_gpu": {
+    "c1_substrate_invariant_phi_4of4": {
+      "cost_usd": "5-8",
+      "rationale": "r8 partial-pass 5/6 KL p1_p2 \uc794\uc874 \u2014 qwen gen match swap (B/C)"
+    },
+    "c2_l3_collective_o1_o2_o3_rejection": {
+      "cost_usd": "300-1000",
+      "rationale": "Mk.VI lattice real run + natural-run gen-5 \ud1b5\ud569",
+      "spec_status": "SPEC_VERIFIED_PENDING_TRAINED_POPULATION"
+    }
+  },
+  "pending_external": {
+    "natural_run_gen_5_complete": {
+      "track": "task #4 in-flight"
+    }
+  },
+  "h_minpath_next": {
+    "pick": "session_consolidation_doc",
+    "decision_order": "blocker=0 \u2192 steps min \u2192 loc min \u2192 \uccab\ubc88\uc9f8",
+    "rationale": "0-cost CP2 items \ubaa8\ub450 \ucc98\ub9ac: raw#31 \u2713 / UNIVERSAL_4 deferred (raw#12) / C3 partial (hxa-blocker). \ub2e4\uc74c step = session consolidation + remaining items \uc778\ubca4\ud1a0\ub9ac"
+  },
+  "cp2_closure_estimate": {
+    "zero_cost_after": "7\u21924 pending",
+    "gpu_total_estimate_usd_low": 305,
+    "gpu_total_estimate_usd_high": 1008,
+    "vs_roadmap_budget": "$2500-3500",
+    "efficiency_ratio": "3-11\u00d7"
+  },
+  "partial_or_blocked": {
+    "c3_drill_sha_fixpoint": {
+      "blocker": 0,
+      "steps": 2,
+      "rationale": "drill 2-run + SHA diff measurement",
+      "status": "PARTIAL_VERIFIED (inputs STABLE)",
+      "blockers": [
+        "hexa-lang byte_at builtin missing (hxa- task category, drill_closure_sha256_cert AOT CODEGEN ERROR)",
+        "5/8 input artifacts missing: drill_breakthrough_criteria.json, drill_seed_set.jsonl, drill_self_ref_20260421.json, drill_self_ref_noise_20260421.json, hexad_closure_r13.json"
+      ],
+      "partial_artifact": "state/drill_meta_cert_partial_20260425.json"
+    }
+  },
+  "inventory_correction_note": "C5 PASS already empirically landed 2026-04-21 (commit 483e8275) \u2014 original CP2 inventory commit f1e77788 missed this. Mk.VII rev=2 K=4 rule (docs/mk_vii_rev2_promotion_threshold.md) confirms C5 substitutes for C4."
+}

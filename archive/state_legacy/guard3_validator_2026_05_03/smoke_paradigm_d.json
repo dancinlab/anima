@@ -1,0 +1,35 @@
+{
+  "schema": "anima/guard3_post_bg_validator/1",
+  "tool": "tool/guard3_post_bg_validator.hexa",
+  "ts_iso": "2026-05-04T01:00:11Z",
+  "label": "smoke_paradigm_d",
+  "bg_claim": "cleanup BG a80e5530...: SIGTERM sent to mini-run watchdog + /tmp/p9_paradigm_d_distill.py unlinked; mini-run killed cleanly per else-preserve branch (step >= 100)",
+  "mode": "replay",
+  "positive_signals": [
+    {
+      "id": "P3_partial_savepoints",
+      "value": {
+        "present": [
+          "step_500",
+          "step_1000"
+        ],
+        "missing": [
+          "step_1500",
+          "step_2000",
+          "final"
+        ]
+      },
+      "note": "partial — weak positive only"
+    }
+  ],
+  "failure_signals": [],
+  "verdict": "INDETERMINATE",
+  "rationale": "only weak positive signal (P3_partial or P4_log_sentinel) present; require P1/P2/P3 for PASS",
+  "guard_rule": "F-GUARD3-1: PID-absent claim requires >=1 STRONG positive signal (P1 verdict-label OR P2 exit-code-0 OR P3 all-savepoints) AND zero failure signals",
+  "caveats": [
+    "heuristic: positive/failure signals are pattern-matched; out-of-sample BGs may need manual override",
+    "false-positive risk: real PASS runs lacking verdict.json are reported INDETERMINATE (bias toward manual look)",
+    "harness deferred: standalone CLI only; parent must invoke after each cleanup BG",
+    "retroactive smoke tests replay reconstructed input, not original artifacts"
+  ]
+}

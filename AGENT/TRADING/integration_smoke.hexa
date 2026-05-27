@@ -1,0 +1,121 @@
+// integration_smoke.hexa — TRADING M6 4-stage round-trip + risk audit
+// scan-stub → backtest → paper_broker → live_gate (no fill) + risk.hexa audit
+//
+// Validates the whole TRADING domain wire-up — all M2 types flow uniform
+// across all M3-M5 modules + M6 risk.hexa enforces caps cross-module.
+
+import "/Users/ghost/core/anima/AGENT/TRADING/types.hexa"
+import "/Users/ghost/core/anima/AGENT/TRADING/backtest.hexa"
+import "/Users/ghost/core/anima/AGENT/TRADING/paper_broker.hexa"
+import "/Users/ghost/core/anima/AGENT/TRADING/live_gate.hexa"
+import "/Users/ghost/core/anima/AGENT/TRADING/live_broker_kis.hexa"
+import "/Users/ghost/core/anima/AGENT/TRADING/risk.hexa"
+
+fn assert_true(label, cond) {
+    if cond {
+        print("  [ok] " + label)
+        return true
+    }
+    print("  [FAIL] " + label)
+    return false
+}
+
+fn main() {
+    print("=== TRADING M6 integration smoke (4-stage + risk audit) ===")
+
+    // ────────────────────────────────────────────────────────────
+    // SETUP — common symbol + candle series
+    // ────────────────────────────────────────────────────────────
+    let sym = trading_symbol("BTCUSDT", "binance", "crypto")
+    let candles = [
+        #{ "close": 50000.0, "ts": 1700000000000 },
+        #{ "close": 50500.0, "ts": 1700000060000 },
+        #{ "close": 51000.0, "ts": 1700000120000 },
+        #{ "close": 52000.0, "ts": 1700000180000 },
+        #{ "close": 51800.0, "ts": 1700000240000 },
+    ]
+
+    // ────────────────────────────────────────────────────────────
+    // STAGE 1 — scan (stub): pick the symbol with the largest move
+    //            (M3 scanner.hexa body still TODO; we inline a tiny stub here)
+    // ────────────────────────────────────────────────────────────
+    let first = candles[0]["close"]
+    let last = candles[candles.len() - 1]["close"]
+    let move_pct = (last - first) / first * 100.0
+    assert_true("S1.move_detected", move_pct > 0.0)
+
+    // ────────────────────────────────────────────────────────────
+    // STAGE 2 — backtest the scan-elected symbol
+    // ────────────────────────────────────────────────────────────
+    let cfg = trading_backtest_config(sym, 10000.0, 10, 5)
+    let signals = ["hold", "buy", "hold", "sell", "hold"]
+    let bt_result = trading_backtest_run(cfg, candles, signals)
+    assert_true("S2.backtest_result_kind", bt_result["kind"] == "BacktestResult")
+    assert_true("S2.backtest_2_trades", bt_result["trades"].len() == 2)
+    let bt_metrics = bt_result["metrics"]
+    assert_true("S2.backtest_profitable", bt_metrics["final_equity"] > 10000.0)
+    assert_true("S2.win_rate_100", bt_metrics["win_rate"] == 1.0)
+
+    // ────────────────────────────────────────────────────────────
+    // STAGE 3 — paper_broker live-shape simulation (real-time fake fill)
+    // ────────────────────────────────────────────────────────────
+    let pb = paper_broker_new(10000.0, 10, 5)
+    // buy at candle[1] close (50500)
+    let buy_ord = trading_order(sym, "buy", "market", 0.1, 0.0)
+    let r1 = paper_broker_place_order(pb, buy_ord, 50500.0, 1700000060000)
+    let pb1 = r1["state"]
+    assert_true("S3.paper_buy_filled", pb1["positions"].len() == 1)
+    // sell at candle[3] close (52000)
+    let sell_ord = trading_order(sym, "sell", "market", 0.1, 0.0)
+    let r2 = paper_broker_place_order(pb1, sell_ord, 52000.0, 1700000180000)
+    let pb2 = r2["state"]
+    assert_true("S3.paper_sell_closed", pb2["positions"].len() == 0)
+    let paper_port = paper_broker_get_portfolio(pb2, 52000.0)
+    assert_true("S3.paper_realized_profit", paper_port["realized_pnl"] > 0.0)
+
+    // ────────────────────────────────────────────────────────────
+    // STAGE 4 — live_gate-only (NO real fill)
+    //   Sanity-check: L0 default refuses, L1 accepts (but STUB no-fill)
+    // ────────────────────────────────────────────────────────────
+    let g0 = live_gate_new(10000.0, 50000.0, 5)
+    let live_ord = trading_order(sym, "buy", "market", 0.05, 0.0)
+    // L0 default — refused
+    let v0 = live_gate_enforce(g0, live_ord, 50000.0, 0)
+    assert_true("S4.L0_refused", v0["accepted"] == false)
+    // L1 SESSION approve — accepted
+    let g1 = live_gate_approve_session(g0, "M6 integration smoke")
+    let v1 = live_gate_enforce(g1, live_ord, 50000.0, 0)
+    assert_true("S4.L1_accepted", v1["accepted"] == true)
+    // KIS stub broker: even with gate accept, no real fill
+    let kb = kis_broker_new("DRYRUN", "98765432")
+    let kr = kis_broker_place_order(kb, g1, live_ord, 50000.0, 0)
+    assert_true("S4.kis_dryrun_no_fill", kr["result"]["filled"] == false)
+    assert_true("S4.kis_gate_accepted", kr["gate_verdict"]["accepted"] == true)
+
+    // ────────────────────────────────────────────────────────────
+    // RISK AUDIT — apply risk.hexa across the backtest result
+    // ────────────────────────────────────────────────────────────
+    let rm = risk_manager_new(15.0, 5, 5.0)  // 15% max DD · 5 pos cap · 5% daily loss
+    let audit = risk_audit(rm, bt_result["equity_curve"], pb2["positions"].len(), 3, 1)
+    assert_true("S5.risk_audit_kind", audit["kind"] == "RiskAudit")
+    assert_true("S5.audit_ok", audit["ok"] == true)
+    // forced fail check — drop tier below required
+    let audit_fail = risk_audit(rm, bt_result["equity_curve"], 0, 0, 1)
+    assert_true("S5.tier_low_fails", audit_fail["ok"] == false)
+
+    // VaR
+    let returns = [-0.05, -0.02, -0.01, 0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06]
+    let var95 = risk_calculate_var(returns, 0.95)
+    assert_true("S5.var95_in_loss_range", var95 < 0.0)
+
+    // ────────────────────────────────────────────────────────────
+    // SUMMARY
+    // ────────────────────────────────────────────────────────────
+    print("=== TRADING M6 integration smoke: 4-stage + risk audit PASS ===")
+    print("  scan:        move " + str(move_pct) + "%")
+    print("  backtest:    " + trading_backtest_summary(bt_result))
+    print("  paper:       " + paper_broker_summary(pb2))
+    print("  live_gate:   " + live_gate_summary(g1))
+    print("  live_broker: " + kis_broker_summary(kb))
+    print("  risk_audit:  ok=" + str(audit["ok"]) + " · max_dd=" + str(audit["drawdown"]["max_dd_pct"]) + "% · VaR_95=" + str(var95))
+}

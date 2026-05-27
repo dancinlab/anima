@@ -1,0 +1,119 @@
+{
+  "marker": "p9_sft_p0_hf_org_setup_landed",
+  "completion_iso": "2026-05-03T00:00:00Z",
+  "kind": "p9_sft_phase0_hf_org_setup_blocked_artifacts_staged",
+  "scope": "P9 SFT EXEC S3 Phase 0 — need-singularity HF org private repo create + README placeholder. EXEC blocked at HF token revocation (verified: hf auth whoami + 2 direct API POST all returned Invalid username or password). 6 README templates + 1 idempotent command file + 1 planning JSON pre-staged on disk; user-side token renewal + bash one-step finishes Phase 0.",
+  "predecessor": {
+    "spec_doc": "docs/p9_sft_spec_2026_05_02.md",
+    "handoff_prompt": "docs/p9_sft_handoff_prompt_2026_05_02.md",
+    "marker": null
+  },
+  "exec_status": "BLOCKED_TOKEN_REVOKED",
+  "blocker": {
+    "kind": "hf_token_invalid",
+    "active_token_name": "dancinlife",
+    "evidence": [
+      "hf auth whoami returned 'Invalid user token. The token stored is invalid'",
+      "POST https://huggingface.co/api/whoami-v2 returned {error:Invalid username or password.}",
+      "POST https://huggingface.co/api/repos/create returned {error:Invalid username or password.}"
+    ],
+    "remediation": "user must reissue write-scoped token at https://huggingface.co/settings/tokens with org access to need-singularity, then run state/p9_sft_p0_hf_org_setup_2026_05_03/repo_create_commands.txt"
+  },
+  "policy": {
+    "migration": "forbidden",
+    "additive_only": true,
+    "in_place_writes": 0,
+    "destructive_ops": 0,
+    "cost_usd": 0,
+    "substrate": "mac-local",
+    "br_no_user_verbatim": true,
+    "friendly_preset": "handoff_doc_only",
+    "hf_push_without_user_confirm": "forbidden"
+  },
+  "handoff_doc": {
+    "path": "docs/p9_sft_p0_hf_org_setup_landed_2026_05_03.ai.md",
+    "sha256": "e3b06d8ceae78f6cdd94f5d559b05efb0dc31688ee3c8dad8afdf532409bae6c",
+    "loc": 169,
+    "bytes": 10591
+  },
+  "staged_artifacts": [
+    {
+      "path": "state/p9_sft_p0_hf_org_setup_2026_05_03/repos_planned.json",
+      "sha256": "bab13213fdb7cf54646518de0eafb6099598b4cf05246e369a23d2acfb612c58",
+      "bytes": 3841,
+      "purpose": "planning JSON with 6 repos + blocker + remediation tracking"
+    },
+    {
+      "path": "state/p9_sft_p0_hf_org_setup_2026_05_03/repo_create_commands.txt",
+      "sha256": "6b1ffe6c6792a8728c22123bcc7cf4faf5231699f61065245c1c694f0753696e",
+      "bytes": 2319,
+      "purpose": "idempotent (--exist-ok) hf repo create + hf upload commands"
+    },
+    {
+      "path": "state/p9_sft_p0_hf_org_setup_2026_05_03/repo_templates/clm-v4-sft-step-5k.README.md",
+      "sha256": "4d72c5e89d5615f507192474fd362510f57c19f5867642d163ea79b87220c4ea",
+      "bytes": 2727,
+      "purpose": "5K-step intermediate savepoint README placeholder"
+    },
+    {
+      "path": "state/p9_sft_p0_hf_org_setup_2026_05_03/repo_templates/clm-v4-sft-step-10k.README.md",
+      "sha256": "e73d3b82ee2de3d8c5f6e38d95a836df708a072174478626e0389ab3ae123327",
+      "bytes": 2133,
+      "purpose": "10K-step intermediate savepoint README placeholder"
+    },
+    {
+      "path": "state/p9_sft_p0_hf_org_setup_2026_05_03/repo_templates/clm-v4-sft-step-25k.README.md",
+      "sha256": "c35037bcaabf2eed8699b7f8218b407359dc353bd1c12950cdb89a4acc4982fb",
+      "bytes": 2101,
+      "purpose": "25K-step intermediate savepoint (50% mark) README placeholder"
+    },
+    {
+      "path": "state/p9_sft_p0_hf_org_setup_2026_05_03/repo_templates/clm-v4-sft-step-50k.README.md",
+      "sha256": "0da2b204f8e70b1cd39f0e64b83386f4a4a2eab88bbc4f8c5a4f3d3b7a038231",
+      "bytes": 2466,
+      "purpose": "50K-step end-of-budget per-combo README (F1-F4 measured here)"
+    },
+    {
+      "path": "state/p9_sft_p0_hf_org_setup_2026_05_03/repo_templates/clm-v4-sft-final.README.md",
+      "sha256": "9d2e0ee0c606b1acadf4d7cad7fa09353ddde96a7224386f60e9c422b3cdcd3e",
+      "bytes": 3145,
+      "purpose": "canonical winner README (post-S3 selection)"
+    },
+    {
+      "path": "state/p9_sft_p0_hf_org_setup_2026_05_03/repo_templates/clm-v4-sft-stage1.README.md",
+      "sha256": "6fb1aa73fd2f9e5cae997e1060b3e03647dce9051e13385f164b966da8482a15",
+      "bytes": 2535,
+      "purpose": "Phase 1 sentinel single-combo dry-run README placeholder"
+    }
+  ],
+  "repos_planned": [
+    {"name": "need-singularity/clm-v4-sft-step-5k",  "type": "model", "private": true, "create_status": "PENDING_TOKEN"},
+    {"name": "need-singularity/clm-v4-sft-step-10k", "type": "model", "private": true, "create_status": "PENDING_TOKEN"},
+    {"name": "need-singularity/clm-v4-sft-step-25k", "type": "model", "private": true, "create_status": "PENDING_TOKEN"},
+    {"name": "need-singularity/clm-v4-sft-step-50k", "type": "model", "private": true, "create_status": "PENDING_TOKEN"},
+    {"name": "need-singularity/clm-v4-sft-final",    "type": "model", "private": true, "create_status": "PENDING_TOKEN"},
+    {"name": "need-singularity/clm-v4-sft-stage1",   "type": "model", "private": true, "create_status": "PENDING_TOKEN"}
+  ],
+  "naming_convention": {
+    "savepoint_pattern": "need-singularity/clm-v4-sft-step-{5k,10k,25k,50k}",
+    "winner": "need-singularity/clm-v4-sft-final",
+    "sentinel": "need-singularity/clm-v4-sft-stage1"
+  },
+  "visibility": {
+    "initial": "private",
+    "promotion_gate": "F1 AND F2 AND F3 AND F4 ALL PASS at clm-v4-sft-final",
+    "promotion_method": "manual user sign-off (no auto-promote)"
+  },
+  "readme_template_blocks": [
+    "Mk.XII spec ref (mk_xii_scale_plan + mk_xii_retrain_plan_v2 + p9_sft_spec)",
+    "4 falsifier preregistered (F1 BLEU-1>0.4 / F2 phi_star>=5.0 / F3 tension MSE<0.1 / F4 BOLD r>0.5)",
+    "delta curriculum schedule (0.5 -> 1.0 -> 2.0) with caveat that spec defines per-combo fixed delta",
+    "LoRA r=64 alpha=128 spec (attention QKV + FFN, dropout=0.05, bf16, AdamW lr=1e-4 cosine 500-step warmup)"
+  ],
+  "honest_c3": [
+    "Token blocker discovered at first hf whoami call; spec did not require pre-task token validity check (next-cycle prompt enhancement recommended).",
+    ".sh extension Write tool silent-fail observed; .txt fallback used. User must invoke as 'bash repo_create_commands.txt' rather than './repo_create_commands.sh'.",
+    "delta curriculum framing in user prompt mismatches spec_2026_05_02 §4 (per-combo fixed hyperparam in LHS-9, not within-run schedule); README uses grid-sweep interpretation with explicit caveat.",
+    "Visibility promotion gate (F1-F4 ALL PASS) requires manual user sign-off; no auto-promote to public to prevent inadvertent phenomenal claim escalation."
+  ]
+}

@@ -1,0 +1,247 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  lab_smoke.hexa — HEXAD/LAB tool wiring end-to-end smoke
+//
+//  PURPOSE
+//    실험1 두 primitive 를 wire 해 use-case 한 사이클 검증:
+//      (1) ubm_inject : UBM tier=0 anchor → prompt string
+//      (2) chat_lib   : synthetic d=8 substrate + cell_pool + chat_generate
+//      (3) anima_spike: chat record 에서 spike fingerprint 추출 + JSON 저장
+//
+//    smoke test 의 목적은 "사용 가능성" 검증. 실제 실험은 LAB/state/<slug>/
+//    안에 별도 script 로. 합성 substrate (d=8, 2-layer) 라 의미있는 substrate
+//    응답을 보지 못하지만, mitosis hook fire + cell pool 변동 + JSON 저장
+//    경로 모두 작동 확인하는 게 본 smoke 의 가치.
+//
+//  FALSIFIERS (lab smoke ≥3)
+//    F-LAB-1 ubm_load_by_tier(0) returns ok=true with non-empty payload_text
+//    F-LAB-2 chat_generate fires mitosis hook (post invocations > pre)
+//    F-LAB-3 spike_record_final fills mitosis_invocations matching chat field
+//    F-LAB-4 spike_to_json non-empty and contains "label" key marker
+//    F-LAB-5 spike_save_json writes file (read-back verifies content)
+//    F-LAB-6 spike_diff(a, a) returns d_invocations=0 (self-diff identity)
+//
+//  RUN
+//    /Users/ghost/core/hexa-lang/hexa parse
+//        HEXAD/LAB/tool/lab_smoke.hexa
+//    HEXA_MEM_UNLIMITED=1 RESOURCE_LOCAL_HEXA=1
+//        /Users/ghost/core/hexa-lang/build/hexa_interp.real run
+//        HEXAD/LAB/tool/lab_smoke.hexa
+//
+//  ARTIFACT
+//    /tmp/lab_smoke_spike.json (overwritten each run)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/CHAT/chat_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/ubm_inject.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/anima_spike.hexa"
+
+
+let mut g_pass = 0
+let mut g_total = 0
+let mut g_first_fail = ""
+
+fn lab_check(label: string, ok: bool) {
+    g_total = g_total + 1
+    if ok {
+        g_pass = g_pass + 1
+        println("  PASS  " + label)
+    } else {
+        if len(g_first_fail) == 0 { g_first_fail = label }
+        println("  FAIL  " + label)
+    }
+}
+
+
+// Synthetic dims — mirrors anima_chat_split_merge_smoke for cross-validation.
+fn _lab_dims() {
+    let d = #{}
+    d["d_model"]    = 8
+    d["d_ff"]       = 16
+    d["n_heads"]    = 2
+    d["n_kv_heads"] = 1
+    d["d_head"]     = 4
+    d["vocab_size"] = 16
+    d["n_layers"]   = 2
+    d["eps"]        = 0.00001
+    d["rope_theta"] = 10000.0
+    return d
+}
+
+fn _lab_make_farr(n: int, seed: float) -> int {
+    let h = farr_zeros(n)
+    let mut i = 0
+    while i < n {
+        let angle = seed + (i * 1.0) * 0.137
+        farr_set(h, i, sin(angle) * 0.1)
+        i = i + 1
+    }
+    return h
+}
+
+fn _lab_build_synth_weights(dims) {
+    let d_model    = dims["d_model"]
+    let d_ff       = dims["d_ff"]
+    let n_kv_heads = dims["n_kv_heads"]
+    let d_head     = dims["d_head"]
+    let vocab_size = dims["vocab_size"]
+    let n_layers   = dims["n_layers"]
+    let kv_dim     = n_kv_heads * d_head
+    let weights = #{}
+    weights["tok_emb.weight"] = _lab_make_farr(vocab_size * d_model, 0.31)
+    let nf_gamma = farr_zeros(d_model)
+    let mut gi = 0
+    while gi < d_model {
+        farr_set(nf_gamma, gi, 1.0)
+        gi = gi + 1
+    }
+    weights["norm_f.weight"] = nf_gamma
+    let mut li = 0
+    while li < n_layers {
+        let prefix = "layers." + to_string(li) + "."
+        let n1 = farr_zeros(d_model)
+        let n2 = farr_zeros(d_model)
+        let mut ni = 0
+        while ni < d_model {
+            farr_set(n1, ni, 1.0)
+            farr_set(n2, ni, 1.0)
+            ni = ni + 1
+        }
+        weights[prefix + "norm1.weight"] = n1
+        weights[prefix + "norm2.weight"] = n2
+        let seed_base = (li * 1.0) * 1.7 + 0.5
+        weights[prefix + "attn.q_proj.weight"] = _lab_make_farr(d_model * d_model, seed_base + 0.1)
+        weights[prefix + "attn.k_proj.weight"] = _lab_make_farr(kv_dim  * d_model, seed_base + 0.2)
+        weights[prefix + "attn.v_proj.weight"] = _lab_make_farr(kv_dim  * d_model, seed_base + 0.3)
+        weights[prefix + "attn.o_proj.weight"] = _lab_make_farr(d_model * d_model, seed_base + 0.4)
+        weights[prefix + "ffn.gate.weight"]    = _lab_make_farr(d_ff    * d_model, seed_base + 0.5)
+        weights[prefix + "ffn.up.weight"]      = _lab_make_farr(d_ff    * d_model, seed_base + 0.6)
+        weights[prefix + "ffn.down.weight"]    = _lab_make_farr(d_model * d_ff,    seed_base + 0.7)
+        li = li + 1
+    }
+    return weights
+}
+
+
+// ── §1 UBM inject sanity ─────────────────────────────────────────────────────
+
+fn _lab_step1_ubm() -> any {
+    println("")
+    println("── §1 UBM tier=0 anchor load ────────────────────────────────────")
+    let anchor = ubm_load_by_tier(0)
+    let ok_load = to_string(anchor["ok"]) == "true"
+    let text = to_string(anchor["payload_text"])
+    let has_text = len(text) > 0
+    lab_check("F-LAB-1a ubm_load_by_tier(0) ok=true", ok_load)
+    lab_check("F-LAB-1b payload_text non-empty", has_text)
+    println("  " + ubm_anchor_brief(anchor))
+
+    let prompt_tx = ubm_to_prompt(anchor, "text_only")
+    let prompt_tp = ubm_to_prompt(anchor, "tier_prefix")
+    let prompt_wm = ubm_to_prompt(anchor, "with_meta")
+    lab_check("F-LAB-1c text_only mode returns text", prompt_tx == text)
+    lab_check("F-LAB-1d tier_prefix mode prepends [knuth_tier=0]",
+              prompt_tp.index_of("[knuth_tier=0] ") == 0)
+    lab_check("F-LAB-1e with_meta mode contains 'category='",
+              prompt_wm.index_of("category=") >= 0)
+    return anchor
+}
+
+
+// ── §2 chat_generate fires mitosis hook ──────────────────────────────────────
+
+fn _lab_step2_chat(anchor: any) -> any {
+    println("")
+    println("── §2 synthetic chat substrate + UBM inject ─────────────────────")
+    let dims = _lab_dims()
+    let chat = chat_new("/dev/null", "cpu", [])
+    chat["weights"] = _lab_build_synth_weights(dims)
+    chat_init_kv_cache_with_dims(chat, dims, 64)
+    let initial_cells = 2
+    chat_init_cell_pool(chat, dims["d_model"], initial_cells)
+
+    let mut spike = spike_init()
+    spike = spike_set_label(spike, "ubm_tier_0")
+    spike = spike_record_init(spike, chat)
+
+    let pre_invoc = chat_mitosis_invocation_count(chat)
+    println("  pre-run: invocations=" + to_string(pre_invoc)
+            + " cell_count_init=" + to_string(spike["cell_count_init"]))
+
+    // Inject UBM tier=0 text_only mode prompt (raw payload).
+    let prompt = ubm_to_prompt(anchor, "text_only")
+    println("  prompt (first 80 chars): \""
+            + prompt.substring(0, 80) + "…\"")
+    let resp = chat_generate(chat, prompt, "greedy", 20, 0.0, [],
+                             1.0, 1.0, 0.0, 2026, [], false)
+
+    spike = spike_record_final(spike, chat, resp)
+    println("  " + spike_brief(spike))
+
+    let post_invoc = to_int(spike["mitosis_invocations"])
+    lab_check("F-LAB-2a chat_generate fires hook (post > pre)",
+              post_invoc > pre_invoc)
+    lab_check("F-LAB-3a spike.mitosis_invocations matches chat field",
+              post_invoc == chat_mitosis_invocation_count(chat))
+    lab_check("F-LAB-3b spike.cell_count_final ≥ initial_cells",
+              to_int(spike["cell_count_final"]) >= initial_cells)
+    return spike
+}
+
+
+// ── §3 JSON serialize + save + diff ──────────────────────────────────────────
+
+fn _lab_step3_serialize(spike: any) {
+    println("")
+    println("── §3 spike_to_json + save + self-diff ──────────────────────────")
+    let json = spike_to_json(spike)
+    let jlen = len(json)
+    lab_check("F-LAB-4a spike_to_json non-empty", jlen > 0)
+    lab_check("F-LAB-4b json contains 'label' key marker",
+              json.index_of("\"label\":\"ubm_tier_0\"") >= 0)
+    lab_check("F-LAB-4c json contains 'mitosis_invocations'",
+              json.index_of("\"mitosis_invocations\":") >= 0)
+
+    let out_path = "/tmp/lab_smoke_spike.json"
+    spike_save_json(spike, out_path)
+    let read_back = read_file(out_path)
+    lab_check("F-LAB-5a write-then-read round trip non-empty",
+              len(read_back) > 0)
+    lab_check("F-LAB-5b read-back content matches json (+newline)",
+              read_back == json + "\n")
+    println("  artifact: " + out_path + "  (" + to_string(jlen) + " bytes)")
+
+    let d = spike_diff(spike, spike)
+    lab_check("F-LAB-6a self-diff d_invocations == 0",
+              to_int(d["d_invocations"]) == 0)
+    lab_check("F-LAB-6b self-diff event_step_jaccard == 1.0",
+              to_float(d["event_step_jaccard"]) == 1.0
+              || to_int(spike["mitosis_event_count"]) == 0)
+}
+
+
+// ── §4 main driver ───────────────────────────────────────────────────────────
+
+fn _lab_run() {
+    println("================================================================")
+    println("HEXAD/LAB/tool/lab_smoke.hexa — UBM × anima_spike wiring smoke")
+    println("================================================================")
+
+    let anchor = _lab_step1_ubm()
+    let spike = _lab_step2_chat(anchor)
+    _lab_step3_serialize(spike)
+
+    println("")
+    println("================================================================")
+    if g_pass == g_total {
+        println("LAB SMOKE PASS  (" + to_string(g_pass) + "/" + to_string(g_total) + ")")
+    } else {
+        println("LAB SMOKE FAIL  (" + to_string(g_pass) + "/" + to_string(g_total) + ")")
+        println("first fail: " + g_first_fail)
+    }
+    println("================================================================")
+}
+
+
+_lab_run()

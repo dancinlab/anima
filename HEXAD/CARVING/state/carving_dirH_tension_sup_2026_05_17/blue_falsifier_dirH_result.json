@@ -1,0 +1,14 @@
+{
+  "battery": "B-DIRH-1..4 Dir-H TENSION-SUPERVISED ROUTING sympy sidecar",
+  "passed": 4,
+  "total": 4,
+  "results": [
+    "B-DIRH-1 ROUTE-TENSION-BOUNDED-CLOSED PASS",
+    "B-DIRH-2 RESTORING-SIGN-NEGATIVE-CLOSED PASS (in-autograd)",
+    "B-DIRH-3 JS-DISPERSION-NONNEGATIVE-CLOSED PASS (Gibbs/Shannon)",
+    "B-DIRH-4 LAMBDA-ROUTE-OFF-REDUCTION-CLOSED PASS (fair-compare)"
+  ],
+  "note": "B-DIRH-NOTE: SGD OUTCOME + Dir-H-vs-E7/Dir-A comparison = EMPIRICAL (B-D-NOTE / B-TT-NOTE / B-CARVE-E6-NOTE family, NOT counted \ud83d\udd35). Tension-routing-penalty transfer-form + \u03bb_route-off reduction = CLOSED. central blue_falsifier.py UNCHANGED (separate state/ sidecar).",
+  "distinction_vs_dirA": "Dir-A = post-step p.mul_ overlay OUTSIDE autograd (FALSIFIED \u00a74.2/\u00a75.3); Dir-H = loss term INSIDE autograd (\u2202/\u2202\u03b8 flows, B-DIRH-2 restoring sign acts on gradient) \u2014 architectural component, NOT mechanism overlay.",
+  "f_safe": "f1/f2/f3 hard-fail safe \u2014 bounded clip / sympy \u2202-sign / Gibbs-Shannon KL\u22650 / Boolean reduction; NO \u03c3/\u03c4/\u03c6/J\u2082 external derivation."
+}

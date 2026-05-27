@@ -1,0 +1,90 @@
+// core_topology_v2.hexa — Phase 1 reimpl with input channel x
+// axis: topology — Betti-0 (connected components) proxy via threshold filtration
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks { if t != "" { xs.push(to_float(t)) } }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        xs.push(to_float(seed) / 2147483648.0)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+if n < 8 {
+    println("lens[topology] category=core axis=\"topology (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+// Betti-0 via level-set filtration:
+// Threshold sweep at q-quantiles {0.2, 0.4, 0.6, 0.8}. At each threshold τ, count
+// connected components on time-index graph where x_t > τ. CC = # of contiguous runs.
+let mut x_sorted = []
+for v in xs { x_sorted.push(v) }
+// simple insertion sort (n=256 OK)
+let mut i = 1
+while i < n {
+    let cur = x_sorted[i]
+    let mut j = i - 1
+    while j >= 0 && x_sorted[j] > cur {
+        x_sorted[j+1] = x_sorted[j]
+        j = j - 1
+    }
+    x_sorted[j+1] = cur
+    i = i + 1
+}
+
+let q_levels = [0.2, 0.4, 0.6, 0.8]
+let mut cc_counts = []
+let mut persistence = 0.0
+for q in q_levels {
+    let qi = to_int(floor(q * to_float(n)))
+    let qi_clip = if qi >= n { n - 1 } else { if qi < 0 { 0 } else { qi } }
+    let tau = x_sorted[qi_clip]
+    // count connected components: # of "rising edges" where x_t crosses τ from below
+    let mut cc = 0
+    let mut in_comp = false
+    let mut p = 0
+    while p < n {
+        if xs[p] > tau {
+            if !in_comp { cc = cc + 1; in_comp = true }
+        } else {
+            in_comp = false
+        }
+        p = p + 1
+    }
+    cc_counts.push(cc)
+    persistence = persistence + to_float(cc)
+}
+
+// Normalize: max possible CC = n/2 (alternating). Topology score = persistence / (max_cc * #thresholds)
+let max_cc = to_float(n / 2)
+let pers_norm = persistence / (max_cc * to_float(len(q_levels)))
+let pers_clip = if pers_norm > 1.0 { 1.0 } else { pers_norm }
+
+// Mean CC at mid-threshold
+let mid_cc = to_float(cc_counts[1] + cc_counts[2]) / 2.0
+let mid_norm = mid_cc / max_cc
+let mid_clip = if mid_norm > 1.0 { 1.0 } else { mid_norm }
+
+let score = 0.5 * pers_clip + 0.5 * mid_clip
+let hits = if score > 0.5 { 6 } else { if score > 0.3 { 4 } else { 2 } }
+println("lens[topology] category=core axis=\"Topological — Betti-0 connected components over level-set filtration\" score=" + to_string(score) + " support=1 n=" + to_string(n) + " meta={\"persistence\":" + to_string(persistence) + ",\"cc_levels\":[" + to_string(cc_counts[0]) + "," + to_string(cc_counts[1]) + "," + to_string(cc_counts[2]) + "," + to_string(cc_counts[3]) + "],\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")

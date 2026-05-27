@@ -1,0 +1,18 @@
+{
+  "schema": "anima/emerge_chat_reverse_prompts/verdict/1",
+  "ts_utc": "2026-05-05T18:37:52Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "n_prompts": 11,
+  "n_coherent": 2,
+  "math_pattern_continues": false,
+  "list_pattern_continues": false,
+  "verdict": "PASS_SOME_PATTERN",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 11 prompt patterns — narrow exhaust",
+    "C3 'coherent' heuristic anima-internal (>=5 ko/ascii/digit + no >50% repeat)",
+    "C4 max_new=20 token cap may truncate emerging coherence",
+    "C5 substrate may have learned ONE specific pattern not tested here"
+  ]
+}

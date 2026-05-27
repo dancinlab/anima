@@ -1,0 +1,686 @@
+Warning: Permanently added '[208.64.254.181]:21191' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+W0512 19:07:06.445000 615 site-packages/torch/distributed/run.py:793] 
+W0512 19:07:06.445000 615 site-packages/torch/distributed/run.py:793] *****************************************
+W0512 19:07:06.445000 615 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0512 19:07:06.445000 615 site-packages/torch/distributed/run.py:793] *****************************************
+[W512 19:07:09.861859135 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] DDP: rank=0 world_size=4 local_rank=0 device=cuda:0 is_ddp=True
+[INFO] torch=2.5.1+cu121 cuda=True
+[INFO] gpu=NVIDIA H200
+[INFO] cfg = {'vocab_size': 256, 'd_model': 1024, 'n_head': 16, 'ffn_dim': 4096, 'max_seq': 512, 'n_layer': 1, 'initial_cells': 256, 'max_cells': 256, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[W512 19:07:10.241763764 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:07:10.361634141 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:07:10.369017020 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] n_params(engine+router incl)=5,373,430,016  router_out_dim=256 top_k=8
+[INFO] mitosis FROZEN (cells static, no split/merge) — DDP-safe path
+NCCL version 2.21.5+cuda12.4
+[INFO] corpus=corpus/corpus_5cat_balanced.txt bytes=18,890,139
+[INFO] steps_to_run=20000 (target 20000 from resume 0)
+[INFO] per_gpu_batch=4 world_size=4 effective_batch=16
+[INFO] top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+[rank1]:[W512 19:07:44.896107127 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank0]:[W512 19:07:44.930933416 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank3]:[W512 19:07:45.762069823 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank2]:[W512 19:07:45.772106295 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[STEP     0] loss=712.8750 ce=718.3995 aux=1.3113 ent_gate=5.5377/5.545 wmax=0.1337 active>.01=8.0/256 λ=1.0000 cells=256 cost=$0.13 vram=120.4/150GB
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/workspace/anima/training/cotrain_v5mitosis_v5_ddp.py", line 853, in <module>
+[rank1]:     sys.exit(cotrain(parse_args()))
+[rank1]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/workspace/anima/training/cotrain_v5mitosis_v5_ddp.py", line 675, in cotrain
+[rank1]:     logits, info = engine(x)
+[rank1]:                    ^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1643, in forward
+[rank1]:     else self._run_ddp_forward(*inputs, **kwargs)
+[rank1]:          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1459, in _run_ddp_forward
+[rank1]:     return self.module(*inputs, **kwargs)  # type: ignore[index]
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/workspace/anima/training/cotrain_v5mitosis_v5_ddp.py", line 256, in patched_forward
+[rank1]:     out_i, tension_tok = cell(x, readout_mode=readout_mode)
+[rank1]:                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/workspace/anima/training/mitosis_model_v5.py", line 192, in forward
+[rank1]:     out = h + delta
+[rank1]:           ~~^~~~~~~
+[rank1]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 1 has a total capacity of 139.81 GiB of which 7.94 MiB is free. Process 1008366 has 139.79 GiB memory in use. Of the allocated memory 136.80 GiB is allocated by PyTorch, and 12.89 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/workspace/anima/training/cotrain_v5mitosis_v5_ddp.py", line 853, in <module>
+[rank0]:     sys.exit(cotrain(parse_args()))
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/anima/training/cotrain_v5mitosis_v5_ddp.py", line 675, in cotrain
+[rank0]:     logits, info = engine(x)
+[rank0]:                    ^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1643, in forward
+[rank0]:     else self._run_ddp_forward(*inputs, **kwargs)
+[rank0]:          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1459, in _run_ddp_forward
+[rank0]:     return self.module(*inputs, **kwargs)  # type: ignore[index]
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/anima/training/cotrain_v5mitosis_v5_ddp.py", line 256, in patched_forward
+[rank0]:     out_i, tension_tok = cell(x, readout_mode=readout_mode)
+[rank0]:                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/anima/training/mitosis_model_v5.py", line 180, in forward
+[rank0]:     h = x_in + self.attn(self.ln1(x_in))
+[rank0]:                ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/anima/training/mitosis_model_v5.py", line 113, in forward
+[rank0]:     att = (q @ k.transpose(-2, -1)) / math.sqrt(self.d_head)
+[rank0]:            ~~^~~~~~~~~~~~~~~~~~~~~
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 139.81 GiB of which 15.94 MiB is free. Process 1008365 has 139.79 GiB memory in use. Of the allocated memory 136.84 GiB is allocated by PyTorch, and 12.88 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/workspace/anima/training/cotrain_v5mitosis_v5_ddp.py", line 853, in <module>
+[rank2]:     sys.exit(cotrain(parse_args()))
+[rank2]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/workspace/anima/training/cotrain_v5mitosis_v5_ddp.py", line 675, in cotrain
+[rank2]:     logits, info = engine(x)
+[rank2]:                    ^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1643, in forward
+[rank2]:     else self._run_ddp_forward(*inputs, **kwargs)
+[rank2]:          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1459, in _run_ddp_forward
+[rank2]:     return self.module(*inputs, **kwargs)  # type: ignore[index]
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/workspace/anima/training/cotrain_v5mitosis_v5_ddp.py", line 256, in patched_forward
+[rank2]:     out_i, tension_tok = cell(x, readout_mode=readout_mode)
+[rank2]:                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/workspace/anima/training/mitosis_model_v5.py", line 192, in forward
+[rank2]:     out = h + delta
+[rank2]:           ~~^~~~~~~
+[rank2]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 2 has a total capacity of 139.81 GiB of which 7.94 MiB is free. Process 1008367 has 139.79 GiB memory in use. Of the allocated memory 136.80 GiB is allocated by PyTorch, and 12.89 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/workspace/anima/training/cotrain_v5mitosis_v5_ddp.py", line 853, in <module>
+[rank3]:     sys.exit(cotrain(parse_args()))
+[rank3]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/workspace/anima/training/cotrain_v5mitosis_v5_ddp.py", line 675, in cotrain
+[rank3]:     logits, info = engine(x)
+[rank3]:                    ^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1643, in forward
+[rank3]:     else self._run_ddp_forward(*inputs, **kwargs)
+[rank3]:          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1459, in _run_ddp_forward
+[rank3]:     return self.module(*inputs, **kwargs)  # type: ignore[index]
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/workspace/anima/training/cotrain_v5mitosis_v5_ddp.py", line 256, in patched_forward
+[rank3]:     out_i, tension_tok = cell(x, readout_mode=readout_mode)
+[rank3]:                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/workspace/anima/training/mitosis_model_v5.py", line 183, in forward
+[rank3]:     g = self.ffn_g(ln2)
+[rank3]:         ^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/container.py", line 250, in forward
+[rank3]:     input = module(input)
+[rank3]:             ^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/activation.py", line 734, in forward
+[rank3]:     return F.gelu(input, approximate=self.approximate)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 32.00 MiB. GPU 3 has a total capacity of 139.81 GiB of which 7.94 MiB is free. Process 1008369 has 139.79 GiB memory in use. Of the allocated memory 137.02 GiB is allocated by PyTorch, and 28.61 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+W0512 19:07:49.339000 615 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 746 closing signal SIGTERM
+W0512 19:07:49.339000 615 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 748 closing signal SIGTERM
+W0512 19:07:49.340000 615 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 749 closing signal SIGTERM
+E0512 19:07:50.883000 615 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 1 (pid: 747) of binary: /opt/conda/bin/python3.11
+Traceback (most recent call last):
+  File "/opt/conda/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+training/cotrain_v5mitosis_v5_ddp.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-05-12_19:07:49
+  host      : 3159330b2b60
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 747)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+Warning: Permanently added '[208.64.254.181]:21191' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+W0512 19:07:59.484000 837 site-packages/torch/distributed/run.py:793] 
+W0512 19:07:59.484000 837 site-packages/torch/distributed/run.py:793] *****************************************
+W0512 19:07:59.484000 837 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0512 19:07:59.484000 837 site-packages/torch/distributed/run.py:793] *****************************************
+[W512 19:08:02.931403741 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] DDP: rank=0 world_size=4 local_rank=0 device=cuda:0 is_ddp=True
+[INFO] torch=2.5.1+cu121 cuda=True
+[INFO] gpu=NVIDIA H200
+[INFO] cfg = {'vocab_size': 256, 'd_model': 1024, 'n_head': 16, 'ffn_dim': 4096, 'max_seq': 512, 'n_layer': 1, 'initial_cells': 256, 'max_cells': 256, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[W512 19:08:03.448080711 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:08:03.505016739 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:08:03.562271062 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] n_params(engine+router incl)=5,373,430,016  router_out_dim=256 top_k=8
+[INFO] mitosis FROZEN (cells static, no split/merge) — DDP-safe path
+NCCL version 2.21.5+cuda12.4
+[INFO] corpus=corpus/corpus_5cat_balanced.txt bytes=18,890,139
+[INFO] steps_to_run=20000 (target 20000 from resume 0)
+[INFO] per_gpu_batch=2 world_size=4 effective_batch=8
+[INFO] top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+[rank0]:[W512 19:08:37.602755473 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank1]:[W512 19:08:37.607178459 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank3]:[W512 19:08:38.221299498 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank2]:[W512 19:08:38.367902103 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[STEP     0] loss=712.2834 ce=717.8081 aux=1.3113 ent_gate=5.5378/5.545 wmax=0.1340 active>.01=8.0/256 λ=1.0000 cells=256 cost=$0.13 vram=107.5/150GB
+[STEP    50] loss=699.0591 ce=714.5121 aux=1.3142 ent_gate=5.5378/5.545 wmax=0.1320 active>.01=8.0/256 λ=1.0000 cells=256 cost=$0.35 vram=124.8/150GB
+[STEP   100] loss=658.7198 ce=688.3038 aux=1.3246 ent_gate=5.5390/5.545 wmax=0.1334 active>.01=8.0/256 λ=1.0000 cells=256 cost=$0.57 vram=124.8/150GB
+[STEP   150] loss=571.8605 ce=624.7879 aux=1.3546 ent_gate=5.5404/5.545 wmax=0.1352 active>.01=8.0/256 λ=1.0000 cells=256 cost=$0.78 vram=124.8/150GB
+[STEP   200] loss=408.3106 ce=499.4758 aux=1.3977 ent_gate=5.5411/5.545 wmax=0.1368 active>.01=8.0/256 λ=1.0000 cells=256 cost=$1.00 vram=124.8/150GB
+[STEP   250] loss=220.0480 ce=332.0680 aux=1.4404 ent_gate=5.5411/5.545 wmax=0.1382 active>.01=8.0/256 λ=1.0000 cells=256 cost=$1.22 vram=124.8/150GB
+[STEP   300] loss=69.8622 ce=141.6914 aux=1.5312 ent_gate=5.5402/5.545 wmax=0.1395 active>.01=8.0/256 λ=1.0000 cells=256 cost=$1.43 vram=124.8/150GB
+[STEP   350] loss=18.6127 ce=45.0012 aux=1.7002 ent_gate=5.5375/5.545 wmax=0.1412 active>.01=8.0/256 λ=1.0000 cells=256 cost=$1.65 vram=124.8/150GB
+[STEP   400] loss=6.6261 ce=17.0149 aux=1.9267 ent_gate=5.5328/5.545 wmax=0.1424 active>.01=8.0/256 λ=1.0000 cells=256 cost=$1.86 vram=124.8/150GB
+[STEP   450] loss=-0.1499 ce=8.2745 aux=2.1718 ent_gate=5.5264/5.545 wmax=0.1447 active>.01=8.0/256 λ=1.0000 cells=256 cost=$2.08 vram=124.8/150GB
+[STEP   500] loss=-1.7313 ce=5.0215 aux=2.3763 ent_gate=5.5204/5.545 wmax=0.1469 active>.01=8.0/256 λ=1.0000 cells=256 cost=$2.30 vram=124.8/150GB
+[STEP   550] loss=-1.5557 ce=3.7752 aux=2.4833 ent_gate=5.5170/5.545 wmax=0.1452 active>.01=8.0/256 λ=1.0000 cells=256 cost=$2.51 vram=124.8/150GB
+[STEP   600] loss=-2.6719 ce=3.0686 aux=2.4723 ent_gate=5.5173/5.545 wmax=0.1454 active>.01=8.0/256 λ=1.0000 cells=256 cost=$2.73 vram=124.8/150GB
+[STEP   650] loss=-2.9338 ce=2.8275 aux=2.3963 ent_gate=5.5197/5.545 wmax=0.1461 active>.01=8.0/256 λ=1.0000 cells=256 cost=$2.94 vram=124.8/150GB
+[STEP   700] loss=-3.1327 ce=2.6195 aux=2.2528 ent_gate=5.5240/5.545 wmax=0.1451 active>.01=8.0/256 λ=1.0000 cells=256 cost=$3.16 vram=124.8/150GB
+[STEP   750] loss=-3.0736 ce=2.5289 aux=2.1086 ent_gate=5.5280/5.545 wmax=0.1455 active>.01=8.0/256 λ=1.0000 cells=256 cost=$3.38 vram=124.8/150GB
+[STEP   800] loss=-3.2942 ce=2.4004 aux=1.9716 ent_gate=5.5315/5.545 wmax=0.1449 active>.01=8.0/256 λ=1.0000 cells=256 cost=$3.59 vram=124.8/150GB
+[STEP   850] loss=-3.1268 ce=2.3209 aux=1.8551 ent_gate=5.5343/5.545 wmax=0.1440 active>.01=8.0/256 λ=1.0000 cells=256 cost=$3.81 vram=124.8/150GB
+[STEP   900] loss=-3.2768 ce=2.3113 aux=1.7550 ent_gate=5.5364/5.545 wmax=0.1435 active>.01=8.0/256 λ=1.0000 cells=256 cost=$4.02 vram=124.8/150GB
+[STEP   950] loss=-3.3924 ce=2.2863 aux=1.6646 ent_gate=5.5382/5.545 wmax=0.1432 active>.01=8.0/256 λ=1.0000 cells=256 cost=$4.24 vram=124.8/150GB
+[STEP  1000] loss=-3.3246 ce=2.2628 aux=1.5976 ent_gate=5.5394/5.545 wmax=0.1428 active>.01=8.0/256 λ=1.0000 cells=256 cost=$4.46 vram=124.8/150GB
+[STEP  1050] loss=-3.4672 ce=2.2170 aux=1.5451 ent_gate=5.5402/5.545 wmax=0.1429 active>.01=8.0/256 λ=1.0000 cells=256 cost=$4.67 vram=124.8/150GB
+[STEP  1100] loss=-3.2541 ce=2.2030 aux=1.5040 ent_gate=5.5409/5.545 wmax=0.1431 active>.01=8.0/256 λ=1.0000 cells=256 cost=$4.89 vram=124.8/150GB
+[STEP  1150] loss=-3.4904 ce=2.1485 aux=1.4790 ent_gate=5.5413/5.545 wmax=0.1430 active>.01=8.0/256 λ=1.0000 cells=256 cost=$5.10 vram=124.8/150GB
+[STEP  1200] loss=-3.3265 ce=2.1710 aux=1.4529 ent_gate=5.5416/5.545 wmax=0.1423 active>.01=8.0/256 λ=1.0000 cells=256 cost=$5.32 vram=124.8/150GB
+[STEP  1250] loss=-3.4763 ce=2.1904 aux=1.4330 ent_gate=5.5419/5.545 wmax=0.1423 active>.01=8.0/256 λ=1.0000 cells=256 cost=$5.54 vram=124.8/150GB
+[STEP  1300] loss=-3.3797 ce=2.1839 aux=1.4135 ent_gate=5.5421/5.545 wmax=0.1410 active>.01=8.0/256 λ=1.0000 cells=256 cost=$5.75 vram=124.8/150GB
+[STEP  1350] loss=-3.4110 ce=2.1727 aux=1.3963 ent_gate=5.5423/5.545 wmax=0.1413 active>.01=8.0/256 λ=1.0000 cells=256 cost=$5.97 vram=124.8/150GB
+[STEP  1400] loss=-3.5075 ce=2.1643 aux=1.3836 ent_gate=5.5425/5.545 wmax=0.1413 active>.01=8.0/256 λ=1.0000 cells=256 cost=$6.18 vram=124.8/150GB
+[STEP  1450] loss=-3.4561 ce=2.1349 aux=1.3800 ent_gate=5.5425/5.545 wmax=0.1415 active>.01=8.0/256 λ=1.0000 cells=256 cost=$6.40 vram=124.8/150GB
+[STEP  1500] loss=-3.4979 ce=2.1458 aux=1.3857 ent_gate=5.5424/5.545 wmax=0.1416 active>.01=8.0/256 λ=1.0000 cells=256 cost=$6.62 vram=124.8/150GB
+[STEP  1550] loss=-3.2525 ce=2.1872 aux=1.3817 ent_gate=5.5424/5.545 wmax=0.1428 active>.01=8.0/256 λ=1.0000 cells=256 cost=$6.83 vram=124.8/150GB
+[STEP  1600] loss=-3.2860 ce=2.1332 aux=1.3661 ent_gate=5.5426/5.545 wmax=0.1425 active>.01=8.0/256 λ=1.0000 cells=256 cost=$7.05 vram=124.8/150GB
+[STEP  1650] loss=-3.4223 ce=2.1582 aux=1.3659 ent_gate=5.5426/5.545 wmax=0.1425 active>.01=8.0/256 λ=1.0000 cells=256 cost=$7.27 vram=124.8/150GB
+[STEP  1700] loss=-3.1389 ce=2.1712 aux=1.3599 ent_gate=5.5426/5.545 wmax=0.1432 active>.01=8.0/256 λ=1.0000 cells=256 cost=$7.48 vram=124.8/150GB
+[STEP  1750] loss=-3.4764 ce=2.1402 aux=1.3479 ent_gate=5.5428/5.545 wmax=0.1439 active>.01=8.0/256 λ=1.0000 cells=256 cost=$7.70 vram=124.8/150GB
+[STEP  1800] loss=-3.4416 ce=2.0821 aux=1.3487 ent_gate=5.5427/5.545 wmax=0.1440 active>.01=8.0/256 λ=1.0000 cells=256 cost=$7.91 vram=124.8/150GB
+[STEP  1850] loss=-3.6273 ce=2.1189 aux=1.3438 ent_gate=5.5428/5.545 wmax=0.1446 active>.01=8.0/256 λ=1.0000 cells=256 cost=$8.13 vram=124.8/150GB
+[STEP  1900] loss=-3.3693 ce=2.1193 aux=1.3507 ent_gate=5.5427/5.545 wmax=0.1452 active>.01=8.0/256 λ=1.0000 cells=256 cost=$8.35 vram=124.8/150GB
+[STEP  1950] loss=-3.3654 ce=2.2133 aux=1.3512 ent_gate=5.5427/5.545 wmax=0.1453 active>.01=8.0/256 λ=1.0000 cells=256 cost=$8.56 vram=124.8/150GB
+[STEP  2000] loss=-3.4496 ce=2.0859 aux=1.3476 ent_gate=5.5427/5.545 wmax=0.1475 active>.01=8.0/256 λ=1.0000 cells=256 cost=$8.78 vram=124.8/150GB
+[STEP  2050] loss=-3.5235 ce=2.1054 aux=1.3448 ent_gate=5.5427/5.545 wmax=0.1479 active>.01=8.0/256 λ=1.0000 cells=256 cost=$8.99 vram=124.8/150GB
+[STEP  2100] loss=-3.1627 ce=2.1828 aux=1.3523 ent_gate=5.5425/5.545 wmax=0.1496 active>.01=8.0/256 λ=0.9999 cells=256 cost=$9.21 vram=124.8/150GB
+[STEP  2150] loss=-3.3192 ce=2.2566 aux=1.4601 ent_gate=5.5411/5.545 wmax=0.1549 active>.01=8.0/256 λ=0.9998 cells=256 cost=$9.42 vram=124.8/150GB
+[STEP  2200] loss=-3.3808 ce=2.0801 aux=1.5557 ent_gate=5.5396/5.545 wmax=0.1575 active>.01=8.0/256 λ=0.9997 cells=256 cost=$9.64 vram=124.8/150GB
+[STEP  2250] loss=-3.4932 ce=2.1330 aux=1.6172 ent_gate=5.5384/5.545 wmax=0.1587 active>.01=8.0/256 λ=0.9995 cells=256 cost=$9.86 vram=124.8/150GB
+[STEP  2300] loss=-3.4519 ce=2.0856 aux=1.6316 ent_gate=5.5381/5.545 wmax=0.1592 active>.01=8.0/256 λ=0.9993 cells=256 cost=$10.07 vram=124.8/150GB
+[STEP  2350] loss=-3.2675 ce=2.0527 aux=1.6307 ent_gate=5.5381/5.545 wmax=0.1599 active>.01=8.0/256 λ=0.9991 cells=256 cost=$10.29 vram=124.8/150GB
+[STEP  2400] loss=-3.4635 ce=1.9951 aux=1.6304 ent_gate=5.5381/5.545 wmax=0.1607 active>.01=8.0/256 λ=0.9988 cells=256 cost=$10.50 vram=124.8/150GB
+[STEP  2450] loss=-3.7684 ce=2.0350 aux=1.6238 ent_gate=5.5382/5.545 wmax=0.1608 active>.01=8.0/256 λ=0.9985 cells=256 cost=$10.72 vram=124.8/150GB
+[STEP  2500] loss=-3.4233 ce=2.0083 aux=1.6094 ent_gate=5.5384/5.545 wmax=0.1610 active>.01=8.0/256 λ=0.9981 cells=256 cost=$10.94 vram=124.8/150GB
+[STEP  2550] loss=-3.5758 ce=2.0274 aux=1.5813 ent_gate=5.5390/5.545 wmax=0.1618 active>.01=8.0/256 λ=0.9977 cells=256 cost=$11.15 vram=124.8/150GB
+[STEP  2600] loss=-3.4008 ce=1.9823 aux=1.5640 ent_gate=5.5393/5.545 wmax=0.1618 active>.01=8.0/256 λ=0.9973 cells=256 cost=$11.37 vram=124.8/150GB
+[STEP  2650] loss=-3.4258 ce=1.9877 aux=1.5544 ent_gate=5.5395/5.545 wmax=0.1615 active>.01=8.0/256 λ=0.9968 cells=256 cost=$11.58 vram=124.8/150GB
+[STEP  2700] loss=-3.5309 ce=1.9397 aux=1.5270 ent_gate=5.5400/5.545 wmax=0.1606 active>.01=8.0/256 λ=0.9963 cells=256 cost=$11.80 vram=124.8/150GB
+[STEP  2750] loss=-3.5721 ce=1.9614 aux=1.5135 ent_gate=5.5402/5.545 wmax=0.1623 active>.01=8.0/256 λ=0.9958 cells=256 cost=$12.02 vram=124.8/150GB
+[STEP  2800] loss=-3.5641 ce=1.8762 aux=1.4974 ent_gate=5.5405/5.545 wmax=0.1634 active>.01=8.0/256 λ=0.9952 cells=256 cost=$12.23 vram=124.8/150GB
+[STEP  2850] loss=-3.6642 ce=1.9403 aux=1.4792 ent_gate=5.5408/5.545 wmax=0.1610 active>.01=8.0/256 λ=0.9946 cells=256 cost=$12.45 vram=124.8/150GB
+[STEP  2900] loss=-3.6235 ce=1.8815 aux=1.4587 ent_gate=5.5411/5.545 wmax=0.1616 active>.01=8.0/256 λ=0.9939 cells=256 cost=$12.66 vram=124.8/150GB
+[STEP  2950] loss=-3.7072 ce=1.8915 aux=1.4558 ent_gate=5.5411/5.545 wmax=0.1632 active>.01=8.0/256 λ=0.9932 cells=256 cost=$12.88 vram=124.8/150GB
+[STEP  3000] loss=-3.7029 ce=1.8429 aux=1.4452 ent_gate=5.5413/5.545 wmax=0.1631 active>.01=8.0/256 λ=0.9925 cells=256 cost=$13.10 vram=124.8/150GB
+[STEP  3050] loss=-3.6796 ce=1.8673 aux=1.4368 ent_gate=5.5414/5.545 wmax=0.1633 active>.01=8.0/256 λ=0.9917 cells=256 cost=$13.31 vram=124.8/150GB
+[STEP  3100] loss=-3.6239 ce=1.8153 aux=1.4295 ent_gate=5.5414/5.545 wmax=0.1638 active>.01=8.0/256 λ=0.9909 cells=256 cost=$13.53 vram=124.8/150GB
+[STEP  3150] loss=-3.6893 ce=1.7820 aux=1.4181 ent_gate=5.5416/5.545 wmax=0.1650 active>.01=8.0/256 λ=0.9901 cells=256 cost=$13.74 vram=124.8/150GB
+[STEP  3200] loss=-3.6037 ce=1.7871 aux=1.4023 ent_gate=5.5418/5.545 wmax=0.1648 active>.01=8.0/256 λ=0.9892 cells=256 cost=$13.96 vram=124.8/150GB
+[STEP  3250] loss=-3.6436 ce=1.8066 aux=1.4022 ent_gate=5.5419/5.545 wmax=0.1645 active>.01=8.0/256 λ=0.9883 cells=256 cost=$14.17 vram=124.8/150GB
+[STEP  3300] loss=-3.5036 ce=1.7808 aux=1.3910 ent_gate=5.5420/5.545 wmax=0.1646 active>.01=8.0/256 λ=0.9873 cells=256 cost=$14.39 vram=124.8/150GB
+[STEP  3350] loss=-3.6561 ce=1.7868 aux=1.3748 ent_gate=5.5422/5.545 wmax=0.1655 active>.01=8.0/256 λ=0.9863 cells=256 cost=$14.61 vram=124.8/150GB
+[STEP  3400] loss=-3.6919 ce=1.7500 aux=1.3682 ent_gate=5.5423/5.545 wmax=0.1655 active>.01=8.0/256 λ=0.9853 cells=256 cost=$14.82 vram=124.8/150GB
+[STEP  3450] loss=-3.6204 ce=1.7382 aux=1.3702 ent_gate=5.5423/5.545 wmax=0.1653 active>.01=8.0/256 λ=0.9842 cells=256 cost=$15.04 vram=124.8/150GB
+[STEP  3500] loss=-3.7995 ce=1.7240 aux=1.3654 ent_gate=5.5423/5.545 wmax=0.1670 active>.01=8.0/256 λ=0.9831 cells=256 cost=$15.25 vram=124.8/150GB
+[STEP  3550] loss=-3.6322 ce=1.7142 aux=1.3612 ent_gate=5.5423/5.545 wmax=0.1690 active>.01=8.0/256 λ=0.9820 cells=256 cost=$15.47 vram=124.8/150GB
+[STEP  3600] loss=-3.6976 ce=1.7182 aux=1.3448 ent_gate=5.5425/5.545 wmax=0.1678 active>.01=8.0/256 λ=0.9808 cells=256 cost=$15.68 vram=124.8/150GB
+[STEP  3650] loss=-3.6534 ce=1.6908 aux=1.3374 ent_gate=5.5426/5.545 wmax=0.1691 active>.01=8.0/256 λ=0.9796 cells=256 cost=$15.90 vram=124.8/150GB
+[STEP  3700] loss=-3.7401 ce=1.6934 aux=1.3392 ent_gate=5.5426/5.545 wmax=0.1689 active>.01=8.0/256 λ=0.9784 cells=256 cost=$16.12 vram=124.8/150GB
+[STEP  3750] loss=-3.7290 ce=1.6667 aux=1.3469 ent_gate=5.5425/5.545 wmax=0.1698 active>.01=8.0/256 λ=0.9771 cells=256 cost=$16.33 vram=124.8/150GB
+[STEP  3800] loss=-3.7602 ce=1.6431 aux=1.3504 ent_gate=5.5424/5.545 wmax=0.1707 active>.01=8.0/256 λ=0.9758 cells=256 cost=$16.55 vram=124.8/150GB
+[STEP  3850] loss=-3.6369 ce=1.6483 aux=1.3497 ent_gate=5.5424/5.545 wmax=0.1724 active>.01=8.0/256 λ=0.9744 cells=256 cost=$16.76 vram=124.8/150GB
+[STEP  3900] loss=-3.7305 ce=1.6562 aux=1.3501 ent_gate=5.5424/5.545 wmax=0.1721 active>.01=8.0/256 λ=0.9730 cells=256 cost=$16.98 vram=124.8/150GB
+[STEP  3950] loss=-3.7508 ce=1.6160 aux=1.3434 ent_gate=5.5425/5.545 wmax=0.1713 active>.01=8.0/256 λ=0.9716 cells=256 cost=$17.19 vram=124.8/150GB
+[STEP  4000] loss=-3.7813 ce=1.6160 aux=1.3390 ent_gate=5.5425/5.545 wmax=0.1722 active>.01=8.0/256 λ=0.9701 cells=256 cost=$17.41 vram=124.8/150GB
+[STEP  4050] loss=-3.8147 ce=1.5780 aux=1.3313 ent_gate=5.5426/5.545 wmax=0.1722 active>.01=8.0/256 λ=0.9687 cells=256 cost=$17.63 vram=124.8/150GB
+[STEP  4100] loss=-3.7864 ce=1.5571 aux=1.3221 ent_gate=5.5427/5.545 wmax=0.1732 active>.01=8.0/256 λ=0.9671 cells=256 cost=$17.84 vram=124.8/150GB
+[STEP  4150] loss=-3.6824 ce=1.5623 aux=1.3292 ent_gate=5.5426/5.545 wmax=0.1735 active>.01=8.0/256 λ=0.9656 cells=256 cost=$18.06 vram=124.8/150GB
+[STEP  4200] loss=-3.7995 ce=1.4931 aux=1.3277 ent_gate=5.5426/5.545 wmax=0.1746 active>.01=8.0/256 λ=0.9640 cells=256 cost=$18.27 vram=124.8/150GB
+[STEP  4250] loss=-3.7622 ce=1.5025 aux=1.3341 ent_gate=5.5425/5.545 wmax=0.1764 active>.01=8.0/256 λ=0.9623 cells=256 cost=$18.49 vram=124.8/150GB
+[STEP  4300] loss=-3.8419 ce=1.4817 aux=1.3239 ent_gate=5.5426/5.545 wmax=0.1762 active>.01=8.0/256 λ=0.9606 cells=256 cost=$18.71 vram=124.8/150GB
+[STEP  4350] loss=-3.9367 ce=1.4625 aux=1.3191 ent_gate=5.5427/5.545 wmax=0.1770 active>.01=8.0/256 λ=0.9589 cells=256 cost=$18.92 vram=124.8/150GB
+[STEP  4400] loss=-3.8109 ce=1.4665 aux=1.3227 ent_gate=5.5426/5.545 wmax=0.1777 active>.01=8.0/256 λ=0.9572 cells=256 cost=$19.14 vram=124.8/150GB
+[STEP  4450] loss=-3.9232 ce=1.4404 aux=1.3249 ent_gate=5.5426/5.545 wmax=0.1783 active>.01=8.0/256 λ=0.9554 cells=256 cost=$19.35 vram=124.8/150GB
+[STEP  4500] loss=-3.8432 ce=1.4260 aux=1.3346 ent_gate=5.5424/5.545 wmax=0.1801 active>.01=8.0/256 λ=0.9536 cells=256 cost=$19.57 vram=124.8/150GB
+[STEP  4550] loss=-3.9256 ce=1.3643 aux=1.3294 ent_gate=5.5425/5.545 wmax=0.1804 active>.01=8.0/256 λ=0.9518 cells=256 cost=$19.79 vram=124.8/150GB
+[STEP  4600] loss=-3.6625 ce=1.3815 aux=1.3345 ent_gate=5.5424/5.545 wmax=0.1805 active>.01=8.0/256 λ=0.9499 cells=256 cost=$20.00 vram=124.8/150GB
+[STEP  4650] loss=-3.9230 ce=1.3960 aux=1.3325 ent_gate=5.5424/5.545 wmax=0.1821 active>.01=8.0/256 λ=0.9480 cells=256 cost=$20.22 vram=124.8/150GB
+[STEP  4700] loss=-3.6793 ce=1.3877 aux=1.3318 ent_gate=5.5424/5.545 wmax=0.1821 active>.01=8.0/256 λ=0.9460 cells=256 cost=$20.44 vram=124.8/150GB
+[STEP  4750] loss=-4.0071 ce=1.3737 aux=1.4065 ent_gate=5.5411/5.545 wmax=0.1904 active>.01=8.0/256 λ=0.9441 cells=256 cost=$20.65 vram=124.8/150GB
+[STEP  4800] loss=-3.8337 ce=1.3216 aux=1.4811 ent_gate=5.5398/5.545 wmax=0.1945 active>.01=8.0/256 λ=0.9421 cells=256 cost=$20.87 vram=124.8/150GB
+[STEP  4850] loss=-3.8618 ce=1.3042 aux=1.5099 ent_gate=5.5392/5.545 wmax=0.1949 active>.01=8.0/256 λ=0.9400 cells=256 cost=$21.08 vram=124.8/150GB
+[STEP  4900] loss=-3.7378 ce=1.2987 aux=1.5202 ent_gate=5.5390/5.545 wmax=0.1979 active>.01=8.0/256 λ=0.9379 cells=256 cost=$21.30 vram=124.8/150GB
+[STEP  4950] loss=-3.7800 ce=1.2792 aux=1.5188 ent_gate=5.5390/5.545 wmax=0.1988 active>.01=8.0/256 λ=0.9358 cells=256 cost=$21.52 vram=124.8/150GB
+  [SNAP 5000] 4a KL=1.7876 z=1.88 | 4b cos_z=1.65
+[STEP  5000] loss=-3.8520 ce=1.2337 aux=1.5359 ent_gate=5.5386/5.545 wmax=0.1979 active>.01=8.0/256 λ=0.9337 cells=256 cost=$21.81 vram=124.8/150GB
+[STEP  5050] loss=-3.8057 ce=1.2308 aux=1.5358 ent_gate=5.5386/5.545 wmax=0.2001 active>.01=8.0/256 λ=0.9315 cells=256 cost=$22.03 vram=124.8/150GB
+[STEP  5100] loss=-3.7624 ce=1.2014 aux=1.5366 ent_gate=5.5386/5.545 wmax=0.2007 active>.01=8.0/256 λ=0.9293 cells=256 cost=$22.25 vram=124.8/150GB
+[STEP  5150] loss=-3.9675 ce=1.1862 aux=1.5392 ent_gate=5.5385/5.545 wmax=0.2005 active>.01=8.0/256 λ=0.9271 cells=256 cost=$22.46 vram=124.8/150GB
+[STEP  5200] loss=-4.1294 ce=1.1412 aux=1.5412 ent_gate=5.5384/5.545 wmax=0.2024 active>.01=8.0/256 λ=0.9248 cells=256 cost=$22.68 vram=124.8/150GB
+[STEP  5250] loss=-4.0116 ce=1.1334 aux=1.5428 ent_gate=5.5384/5.545 wmax=0.2041 active>.01=8.0/256 λ=0.9225 cells=256 cost=$22.89 vram=124.8/150GB
+[STEP  5300] loss=-4.0441 ce=1.1141 aux=1.5402 ent_gate=5.5384/5.545 wmax=0.2025 active>.01=8.0/256 λ=0.9201 cells=256 cost=$23.11 vram=124.8/150GB
+[STEP  5350] loss=-4.0959 ce=1.0864 aux=1.5398 ent_gate=5.5384/5.545 wmax=0.2029 active>.01=8.0/256 λ=0.9178 cells=256 cost=$23.33 vram=124.8/150GB
+[STEP  5400] loss=-3.8497 ce=1.0559 aux=1.5450 ent_gate=5.5383/5.545 wmax=0.2063 active>.01=8.0/256 λ=0.9154 cells=256 cost=$23.54 vram=124.8/150GB
+[STEP  5450] loss=-3.9174 ce=1.0245 aux=1.5485 ent_gate=5.5382/5.545 wmax=0.2065 active>.01=8.0/256 λ=0.9129 cells=256 cost=$23.76 vram=124.8/150GB
+[STEP  5500] loss=-4.1141 ce=1.0120 aux=1.5408 ent_gate=5.5383/5.545 wmax=0.2067 active>.01=8.0/256 λ=0.9105 cells=256 cost=$23.97 vram=124.8/150GB
+[STEP  5550] loss=-4.0151 ce=1.0007 aux=1.5580 ent_gate=5.5379/5.545 wmax=0.2087 active>.01=8.0/256 λ=0.9080 cells=256 cost=$24.19 vram=124.8/150GB
+[STEP  5600] loss=-3.9048 ce=0.9691 aux=1.5529 ent_gate=5.5380/5.545 wmax=0.2087 active>.01=8.0/256 λ=0.9055 cells=256 cost=$24.41 vram=124.8/150GB
+[STEP  5650] loss=-4.1183 ce=0.9397 aux=1.5639 ent_gate=5.5378/5.545 wmax=0.2094 active>.01=8.0/256 λ=0.9029 cells=256 cost=$24.62 vram=124.8/150GB
+[STEP  5700] loss=-4.1571 ce=0.8994 aux=1.5690 ent_gate=5.5376/5.545 wmax=0.2123 active>.01=8.0/256 λ=0.9003 cells=256 cost=$24.84 vram=124.8/150GB
+[STEP  5750] loss=-4.1588 ce=0.8840 aux=1.5615 ent_gate=5.5377/5.545 wmax=0.2134 active>.01=8.0/256 λ=0.8977 cells=256 cost=$25.05 vram=124.8/150GB
+[STEP  5800] loss=-4.1489 ce=0.8490 aux=1.5607 ent_gate=5.5377/5.545 wmax=0.2128 active>.01=8.0/256 λ=0.8951 cells=256 cost=$25.27 vram=124.8/150GB
+[STEP  5850] loss=-4.2124 ce=0.8622 aux=1.5800 ent_gate=5.5372/5.545 wmax=0.2161 active>.01=8.0/256 λ=0.8924 cells=256 cost=$25.49 vram=124.8/150GB
+[STEP  5900] loss=-4.0831 ce=0.8146 aux=1.5754 ent_gate=5.5373/5.545 wmax=0.2153 active>.01=8.0/256 λ=0.8897 cells=256 cost=$25.71 vram=124.8/150GB
+[STEP  5950] loss=-4.0684 ce=0.8097 aux=1.5782 ent_gate=5.5373/5.545 wmax=0.2143 active>.01=8.0/256 λ=0.8870 cells=256 cost=$25.92 vram=124.8/150GB
+[STEP  6000] loss=-3.9969 ce=0.7664 aux=1.5855 ent_gate=5.5371/5.545 wmax=0.2166 active>.01=8.0/256 λ=0.8842 cells=256 cost=$26.14 vram=124.8/150GB
+[STEP  6050] loss=-4.1737 ce=0.7462 aux=1.5776 ent_gate=5.5372/5.545 wmax=0.2168 active>.01=8.0/256 λ=0.8814 cells=256 cost=$26.35 vram=124.8/150GB
+[STEP  6100] loss=-4.1167 ce=0.7315 aux=1.5877 ent_gate=5.5369/5.545 wmax=0.2195 active>.01=8.0/256 λ=0.8786 cells=256 cost=$26.57 vram=124.8/150GB
+[STEP  6150] loss=-4.0317 ce=0.7153 aux=1.5895 ent_gate=5.5368/5.545 wmax=0.2211 active>.01=8.0/256 λ=0.8757 cells=256 cost=$26.79 vram=124.8/150GB
+[STEP  6200] loss=-4.2052 ce=0.6904 aux=1.5894 ent_gate=5.5368/5.545 wmax=0.2191 active>.01=8.0/256 λ=0.8729 cells=256 cost=$27.00 vram=124.8/150GB
+[STEP  6250] loss=-4.2148 ce=0.6652 aux=1.6028 ent_gate=5.5364/5.545 wmax=0.2231 active>.01=8.0/256 λ=0.8700 cells=256 cost=$27.22 vram=124.8/150GB
+[STEP  6300] loss=-4.1645 ce=0.6530 aux=1.6025 ent_gate=5.5363/5.545 wmax=0.2245 active>.01=8.0/256 λ=0.8670 cells=256 cost=$27.43 vram=124.8/150GB
+[STEP  6350] loss=-4.2561 ce=0.6064 aux=1.6141 ent_gate=5.5360/5.545 wmax=0.2271 active>.01=8.0/256 λ=0.8641 cells=256 cost=$27.65 vram=124.8/150GB
+[STEP  6400] loss=-4.1990 ce=0.6288 aux=1.6126 ent_gate=5.5361/5.545 wmax=0.2246 active>.01=8.0/256 λ=0.8611 cells=256 cost=$27.87 vram=124.8/150GB
+[STEP  6450] loss=-4.1745 ce=0.5908 aux=1.6152 ent_gate=5.5359/5.545 wmax=0.2282 active>.01=8.0/256 λ=0.8581 cells=256 cost=$28.08 vram=124.8/150GB
+[STEP  6500] loss=-4.1784 ce=0.5712 aux=1.6251 ent_gate=5.5356/5.545 wmax=0.2292 active>.01=8.0/256 λ=0.8550 cells=256 cost=$28.30 vram=124.8/150GB
+[STEP  6550] loss=-4.2868 ce=0.5395 aux=1.6203 ent_gate=5.5357/5.545 wmax=0.2304 active>.01=8.0/256 λ=0.8520 cells=256 cost=$28.51 vram=124.8/150GB
+[STEP  6600] loss=-4.1408 ce=0.5128 aux=1.6142 ent_gate=5.5358/5.545 wmax=0.2326 active>.01=8.0/256 λ=0.8489 cells=256 cost=$28.73 vram=124.8/150GB
+[STEP  6650] loss=-4.1797 ce=0.5105 aux=1.6191 ent_gate=5.5356/5.545 wmax=0.2332 active>.01=8.0/256 λ=0.8457 cells=256 cost=$28.95 vram=124.8/150GB
+[STEP  6700] loss=-4.2365 ce=0.4827 aux=1.6144 ent_gate=5.5356/5.545 wmax=0.2365 active>.01=8.0/256 λ=0.8426 cells=256 cost=$29.16 vram=124.8/150GB
+[STEP  6750] loss=-4.1928 ce=0.4612 aux=1.6151 ent_gate=5.5355/5.545 wmax=0.2362 active>.01=8.0/256 λ=0.8394 cells=256 cost=$29.38 vram=124.8/150GB
+[STEP  6800] loss=-4.1209 ce=0.4603 aux=1.6154 ent_gate=5.5355/5.545 wmax=0.2360 active>.01=8.0/256 λ=0.8362 cells=256 cost=$29.60 vram=124.8/150GB
+[STEP  6850] loss=-4.1855 ce=0.4347 aux=1.6165 ent_gate=5.5353/5.545 wmax=0.2401 active>.01=8.0/256 λ=0.8330 cells=256 cost=$29.81 vram=124.8/150GB
+[STEP  6900] loss=-4.1198 ce=0.4320 aux=1.6054 ent_gate=5.5356/5.545 wmax=0.2395 active>.01=8.0/256 λ=0.8297 cells=256 cost=$30.03 vram=124.8/150GB
+[STEP  6950] loss=-4.1255 ce=0.4220 aux=1.6028 ent_gate=5.5356/5.545 wmax=0.2412 active>.01=8.0/256 λ=0.8265 cells=256 cost=$30.24 vram=124.8/150GB
+[STEP  7000] loss=-4.1293 ce=0.3964 aux=1.6106 ent_gate=5.5353/5.545 wmax=0.2441 active>.01=8.0/256 λ=0.8232 cells=256 cost=$30.46 vram=124.8/150GB
+[STEP  7050] loss=-4.1002 ce=0.3781 aux=1.6106 ent_gate=5.5352/5.545 wmax=0.2448 active>.01=8.0/256 λ=0.8199 cells=256 cost=$30.68 vram=124.8/150GB
+[STEP  7100] loss=-4.1371 ce=0.3689 aux=1.6050 ent_gate=5.5354/5.545 wmax=0.2450 active>.01=8.0/256 λ=0.8165 cells=256 cost=$30.89 vram=124.8/150GB
+[STEP  7150] loss=-4.1265 ce=0.3734 aux=1.6008 ent_gate=5.5355/5.545 wmax=0.2433 active>.01=8.0/256 λ=0.8131 cells=256 cost=$31.11 vram=124.8/150GB
+[STEP  7200] loss=-4.1914 ce=0.3528 aux=1.6085 ent_gate=5.5351/5.545 wmax=0.2468 active>.01=8.0/256 λ=0.8098 cells=256 cost=$31.32 vram=124.8/150GB
+[STEP  7250] loss=-4.1555 ce=0.3257 aux=1.5973 ent_gate=5.5353/5.545 wmax=0.2477 active>.01=8.0/256 λ=0.8063 cells=256 cost=$31.54 vram=124.8/150GB
+[STEP  7300] loss=-4.0811 ce=0.3317 aux=1.6001 ent_gate=5.5353/5.545 wmax=0.2468 active>.01=8.0/256 λ=0.8029 cells=256 cost=$31.76 vram=124.8/150GB
+[STEP  7350] loss=-4.0661 ce=0.3086 aux=1.5952 ent_gate=5.5353/5.545 wmax=0.2500 active>.01=8.0/256 λ=0.7994 cells=256 cost=$31.97 vram=124.8/150GB
+[STEP  7400] loss=-4.0289 ce=0.3216 aux=1.6004 ent_gate=5.5351/5.545 wmax=0.2496 active>.01=8.0/256 λ=0.7960 cells=256 cost=$32.19 vram=124.8/150GB
+[STEP  7450] loss=-4.0403 ce=0.2863 aux=1.5920 ent_gate=5.5353/5.545 wmax=0.2522 active>.01=8.0/256 λ=0.7924 cells=256 cost=$32.41 vram=124.8/150GB
+[STEP  7500] loss=-4.0546 ce=0.2768 aux=1.5762 ent_gate=5.5357/5.545 wmax=0.2498 active>.01=8.0/256 λ=0.7889 cells=256 cost=$32.62 vram=124.8/150GB
+[STEP  7550] loss=-4.0609 ce=0.2717 aux=1.5724 ent_gate=5.5357/5.545 wmax=0.2508 active>.01=8.0/256 λ=0.7854 cells=256 cost=$32.84 vram=124.8/150GB
+[STEP  7600] loss=-4.0602 ce=0.2742 aux=1.5755 ent_gate=5.5355/5.545 wmax=0.2527 active>.01=8.0/256 λ=0.7818 cells=256 cost=$33.05 vram=124.8/150GB
+[STEP  7650] loss=-3.9809 ce=0.3043 aux=1.6282 ent_gate=5.5338/5.545 wmax=0.2611 active>.01=8.0/256 λ=0.7782 cells=256 cost=$33.27 vram=124.8/150GB
+[STEP  7700] loss=-3.9440 ce=0.2936 aux=1.7110 ent_gate=5.5313/5.545 wmax=0.2653 active>.01=8.0/256 λ=0.7746 cells=256 cost=$33.49 vram=124.8/150GB
+[STEP  7750] loss=-3.9708 ce=0.2870 aux=1.7483 ent_gate=5.5301/5.545 wmax=0.2683 active>.01=8.0/256 λ=0.7710 cells=256 cost=$33.70 vram=124.8/150GB
+[STEP  7800] loss=-3.9589 ce=0.2698 aux=1.7300 ent_gate=5.5307/5.545 wmax=0.2656 active>.01=8.0/256 λ=0.7673 cells=256 cost=$33.92 vram=124.8/150GB
+[STEP  7850] loss=-3.9855 ce=0.2551 aux=1.7302 ent_gate=5.5308/5.545 wmax=0.2647 active>.01=8.0/256 λ=0.7636 cells=256 cost=$34.14 vram=124.8/150GB
+[STEP  7900] loss=-3.8971 ce=0.2516 aux=1.7229 ent_gate=5.5310/5.545 wmax=0.2641 active>.01=8.0/256 λ=0.7599 cells=256 cost=$34.35 vram=124.8/150GB
+[STEP  7950] loss=-3.9413 ce=0.2471 aux=1.7133 ent_gate=5.5312/5.545 wmax=0.2650 active>.01=8.0/256 λ=0.7562 cells=256 cost=$34.57 vram=124.8/150GB
+[STEP  8000] loss=-3.8790 ce=0.2423 aux=1.7149 ent_gate=5.5312/5.545 wmax=0.2636 active>.01=8.0/256 λ=0.7525 cells=256 cost=$34.78 vram=124.8/150GB
+[STEP  8050] loss=-3.8547 ce=0.2343 aux=1.7089 ent_gate=5.5313/5.545 wmax=0.2649 active>.01=8.0/256 λ=0.7487 cells=256 cost=$35.00 vram=124.8/150GB
+[STEP  8100] loss=-3.8776 ce=0.2199 aux=1.6852 ent_gate=5.5321/5.545 wmax=0.2620 active>.01=8.0/256 λ=0.7450 cells=256 cost=$35.22 vram=124.8/150GB
+[STEP  8150] loss=-3.8696 ce=0.2116 aux=1.6872 ent_gate=5.5320/5.545 wmax=0.2623 active>.01=8.0/256 λ=0.7412 cells=256 cost=$35.43 vram=124.8/150GB
+[STEP  8200] loss=-3.8850 ce=0.2118 aux=1.6789 ent_gate=5.5322/5.545 wmax=0.2621 active>.01=8.0/256 λ=0.7374 cells=256 cost=$35.65 vram=124.8/150GB
+[STEP  8250] loss=-3.8579 ce=0.2100 aux=1.6767 ent_gate=5.5323/5.545 wmax=0.2605 active>.01=8.0/256 λ=0.7336 cells=256 cost=$35.86 vram=124.8/150GB
+[STEP  8300] loss=-3.8021 ce=0.1980 aux=1.6543 ent_gate=5.5329/5.545 wmax=0.2601 active>.01=8.0/256 λ=0.7297 cells=256 cost=$36.08 vram=124.8/150GB
+[STEP  8350] loss=-3.8300 ce=0.2023 aux=1.6320 ent_gate=5.5336/5.545 wmax=0.2555 active>.01=8.0/256 λ=0.7259 cells=256 cost=$36.30 vram=124.8/150GB
+[STEP  8400] loss=-3.7521 ce=0.1939 aux=1.6363 ent_gate=5.5335/5.545 wmax=0.2573 active>.01=8.0/256 λ=0.7220 cells=256 cost=$36.51 vram=124.8/150GB
+[STEP  8450] loss=-3.7701 ce=0.1904 aux=1.6282 ent_gate=5.5337/5.545 wmax=0.2558 active>.01=8.0/256 λ=0.7181 cells=256 cost=$36.73 vram=124.8/150GB
+[STEP  8500] loss=-3.7288 ce=0.1953 aux=1.6186 ent_gate=5.5340/5.545 wmax=0.2537 active>.01=8.0/256 λ=0.7142 cells=256 cost=$36.95 vram=124.8/150GB
+[STEP  8550] loss=-3.7110 ce=0.1828 aux=1.6226 ent_gate=5.5339/5.545 wmax=0.2553 active>.01=8.0/256 λ=0.7103 cells=256 cost=$37.16 vram=124.8/150GB
+[STEP  8600] loss=-3.7059 ce=0.1774 aux=1.6079 ent_gate=5.5343/5.545 wmax=0.2547 active>.01=8.0/256 λ=0.7063 cells=256 cost=$37.38 vram=124.8/150GB
+[STEP  8650] loss=-3.6922 ce=0.1725 aux=1.5945 ent_gate=5.5346/5.545 wmax=0.2543 active>.01=8.0/256 λ=0.7024 cells=256 cost=$37.59 vram=124.8/150GB
+[STEP  8700] loss=-3.6841 ce=0.1696 aux=1.5872 ent_gate=5.5348/5.545 wmax=0.2540 active>.01=8.0/256 λ=0.6984 cells=256 cost=$37.81 vram=124.8/150GB
+[STEP  8750] loss=-3.6342 ce=0.1740 aux=1.5975 ent_gate=5.5345/5.545 wmax=0.2545 active>.01=8.0/256 λ=0.6944 cells=256 cost=$38.03 vram=124.8/150GB
+[STEP  8800] loss=-3.5944 ce=0.1675 aux=1.5884 ent_gate=5.5348/5.545 wmax=0.2529 active>.01=8.0/256 λ=0.6904 cells=256 cost=$38.24 vram=124.8/150GB
+[STEP  8850] loss=-3.6112 ce=0.1576 aux=1.5771 ent_gate=5.5350/5.545 wmax=0.2533 active>.01=8.0/256 λ=0.6864 cells=256 cost=$38.46 vram=124.8/150GB
+[STEP  8900] loss=-3.5849 ce=0.1641 aux=1.5777 ent_gate=5.5350/5.545 wmax=0.2526 active>.01=8.0/256 λ=0.6824 cells=256 cost=$38.68 vram=124.8/150GB
+[STEP  8950] loss=-3.6014 ce=0.1495 aux=1.5679 ent_gate=5.5353/5.545 wmax=0.2519 active>.01=8.0/256 λ=0.6784 cells=256 cost=$38.89 vram=124.8/150GB
+[STEP  9000] loss=-3.4971 ce=0.1975 aux=1.5897 ent_gate=5.5345/5.545 wmax=0.2528 active>.01=8.0/256 λ=0.6743 cells=256 cost=$39.11 vram=124.8/150GB
+[STEP  9050] loss=-3.4968 ce=0.1806 aux=1.7399 ent_gate=5.5293/5.545 wmax=0.2718 active>.01=8.0/256 λ=0.6702 cells=256 cost=$39.32 vram=124.8/150GB
+[STEP  9100] loss=-3.5168 ce=0.1740 aux=1.7293 ent_gate=5.5297/5.545 wmax=0.2723 active>.01=8.0/256 λ=0.6662 cells=256 cost=$39.54 vram=124.8/150GB
+[STEP  9150] loss=-3.4692 ce=0.1672 aux=1.7202 ent_gate=5.5301/5.545 wmax=0.2683 active>.01=8.0/256 λ=0.6621 cells=256 cost=$39.76 vram=124.8/150GB
+[STEP  9200] loss=-3.5135 ce=0.1570 aux=1.7089 ent_gate=5.5305/5.545 wmax=0.2669 active>.01=8.0/256 λ=0.6580 cells=256 cost=$39.97 vram=124.8/150GB
+[STEP  9250] loss=-3.4393 ce=0.1590 aux=1.6965 ent_gate=5.5309/5.545 wmax=0.2646 active>.01=8.0/256 λ=0.6538 cells=256 cost=$40.19 vram=124.8/150GB
+[STEP  9300] loss=-3.4755 ce=0.1490 aux=1.6863 ent_gate=5.5313/5.545 wmax=0.2628 active>.01=8.0/256 λ=0.6497 cells=256 cost=$40.40 vram=124.8/150GB
+[STEP  9350] loss=-3.3869 ce=0.1511 aux=1.6735 ent_gate=5.5317/5.545 wmax=0.2611 active>.01=8.0/256 λ=0.6456 cells=256 cost=$40.62 vram=124.8/150GB
+[STEP  9400] loss=-3.3343 ce=0.1504 aux=1.6647 ent_gate=5.5320/5.545 wmax=0.2589 active>.01=8.0/256 λ=0.6414 cells=256 cost=$40.84 vram=124.8/150GB
+[STEP  9450] loss=-3.3317 ce=0.1504 aux=1.6617 ent_gate=5.5322/5.545 wmax=0.2585 active>.01=8.0/256 λ=0.6373 cells=256 cost=$41.05 vram=124.8/150GB
+[STEP  9500] loss=-3.3634 ce=0.1502 aux=1.6545 ent_gate=5.5323/5.545 wmax=0.2600 active>.01=8.0/256 λ=0.6331 cells=256 cost=$41.27 vram=124.8/150GB
+[STEP  9550] loss=-3.3174 ce=0.1424 aux=1.6463 ent_gate=5.5327/5.545 wmax=0.2555 active>.01=8.0/256 λ=0.6289 cells=256 cost=$41.48 vram=124.8/150GB
+[STEP  9600] loss=-3.2888 ce=0.1425 aux=1.6323 ent_gate=5.5331/5.545 wmax=0.2563 active>.01=8.0/256 λ=0.6248 cells=256 cost=$41.70 vram=124.8/150GB
+[STEP  9650] loss=-3.2783 ce=0.1441 aux=1.6307 ent_gate=5.5332/5.545 wmax=0.2540 active>.01=8.0/256 λ=0.6206 cells=256 cost=$41.92 vram=124.8/150GB
+[STEP  9700] loss=-3.2519 ce=0.1375 aux=1.6210 ent_gate=5.5335/5.545 wmax=0.2526 active>.01=8.0/256 λ=0.6164 cells=256 cost=$42.13 vram=124.8/150GB
+[STEP  9750] loss=-3.2520 ce=0.1360 aux=1.6098 ent_gate=5.5339/5.545 wmax=0.2515 active>.01=8.0/256 λ=0.6121 cells=256 cost=$42.35 vram=124.8/150GB
+[STEP  9800] loss=-3.1751 ce=0.1325 aux=1.6032 ent_gate=5.5341/5.545 wmax=0.2510 active>.01=8.0/256 λ=0.6079 cells=256 cost=$42.56 vram=124.8/150GB
+[STEP  9850] loss=-3.1994 ce=0.1343 aux=1.5946 ent_gate=5.5343/5.545 wmax=0.2498 active>.01=8.0/256 λ=0.6037 cells=256 cost=$42.78 vram=124.8/150GB
+[STEP  9900] loss=-3.1961 ce=0.1315 aux=1.5957 ent_gate=5.5343/5.545 wmax=0.2504 active>.01=8.0/256 λ=0.5995 cells=256 cost=$43.00 vram=124.8/150GB
+[STEP  9950] loss=-3.1678 ce=0.1302 aux=1.5846 ent_gate=5.5346/5.545 wmax=0.2493 active>.01=8.0/256 λ=0.5952 cells=256 cost=$43.21 vram=124.8/150GB
+  [SNAP 10000] 4a KL=0.9007 z=0.09 | 4b cos_z=3.12
+[STEP 10000] loss=-3.1310 ce=0.1281 aux=1.5772 ent_gate=5.5349/5.545 wmax=0.2452 active>.01=8.0/256 λ=0.5910 cells=256 cost=$43.51 vram=124.8/150GB
+[STEP 10050] loss=-3.0818 ce=0.1254 aux=1.5814 ent_gate=5.5348/5.545 wmax=0.2480 active>.01=8.0/256 λ=0.5867 cells=256 cost=$43.73 vram=124.8/150GB
+[STEP 10100] loss=-3.0852 ce=0.1256 aux=1.5745 ent_gate=5.5350/5.545 wmax=0.2468 active>.01=8.0/256 λ=0.5824 cells=256 cost=$43.95 vram=124.8/150GB
+[STEP 10150] loss=-3.0470 ce=0.1268 aux=1.5699 ent_gate=5.5351/5.545 wmax=0.2489 active>.01=8.0/256 λ=0.5782 cells=256 cost=$44.16 vram=124.8/150GB
+[STEP 10200] loss=-3.0467 ce=0.1228 aux=1.5576 ent_gate=5.5355/5.545 wmax=0.2445 active>.01=8.0/256 λ=0.5739 cells=256 cost=$44.38 vram=124.8/150GB
+[STEP 10250] loss=-3.0216 ce=0.1228 aux=1.5583 ent_gate=5.5355/5.545 wmax=0.2448 active>.01=8.0/256 λ=0.5696 cells=256 cost=$44.60 vram=124.8/150GB
+[STEP 10300] loss=-3.0139 ce=0.1183 aux=1.5473 ent_gate=5.5358/5.545 wmax=0.2444 active>.01=8.0/256 λ=0.5653 cells=256 cost=$44.81 vram=124.8/150GB
+[STEP 10350] loss=-2.9834 ce=0.1266 aux=1.5379 ent_gate=5.5361/5.545 wmax=0.2427 active>.01=8.0/256 λ=0.5610 cells=256 cost=$45.03 vram=124.8/150GB
+[STEP 10400] loss=-2.9353 ce=0.1222 aux=1.5341 ent_gate=5.5362/5.545 wmax=0.2429 active>.01=8.0/256 λ=0.5567 cells=256 cost=$45.25 vram=124.8/150GB
+[STEP 10450] loss=-2.9374 ce=0.1203 aux=1.5362 ent_gate=5.5361/5.545 wmax=0.2412 active>.01=8.0/256 λ=0.5524 cells=256 cost=$45.46 vram=124.8/150GB
+[STEP 10500] loss=-2.9068 ce=0.1178 aux=1.5291 ent_gate=5.5363/5.545 wmax=0.2436 active>.01=8.0/256 λ=0.5481 cells=256 cost=$45.68 vram=124.8/150GB
+[STEP 10550] loss=-2.8587 ce=0.1163 aux=1.5247 ent_gate=5.5365/5.545 wmax=0.2407 active>.01=8.0/256 λ=0.5438 cells=256 cost=$45.89 vram=124.8/150GB
+[STEP 10600] loss=-2.8516 ce=0.1130 aux=1.5211 ent_gate=5.5366/5.545 wmax=0.2396 active>.01=8.0/256 λ=0.5395 cells=256 cost=$46.11 vram=124.8/150GB
+[STEP 10650] loss=-2.8515 ce=0.1149 aux=1.5131 ent_gate=5.5368/5.545 wmax=0.2394 active>.01=8.0/256 λ=0.5352 cells=256 cost=$46.32 vram=124.8/150GB
+[STEP 10700] loss=-2.8251 ce=0.1087 aux=1.5027 ent_gate=5.5371/5.545 wmax=0.2368 active>.01=8.0/256 λ=0.5309 cells=256 cost=$46.54 vram=124.8/150GB
+[STEP 10750] loss=-2.7877 ce=0.1136 aux=1.4996 ent_gate=5.5372/5.545 wmax=0.2357 active>.01=8.0/256 λ=0.5266 cells=256 cost=$46.76 vram=124.8/150GB
+[STEP 10800] loss=-2.7865 ce=0.1089 aux=1.5002 ent_gate=5.5371/5.545 wmax=0.2371 active>.01=8.0/256 λ=0.5223 cells=256 cost=$46.97 vram=124.8/150GB
+[STEP 10850] loss=-2.7130 ce=0.1109 aux=1.4928 ent_gate=5.5374/5.545 wmax=0.2332 active>.01=8.0/256 λ=0.5180 cells=256 cost=$47.19 vram=124.8/150GB
+[STEP 10900] loss=-2.7074 ce=0.1118 aux=1.4911 ent_gate=5.5374/5.545 wmax=0.2352 active>.01=8.0/256 λ=0.5136 cells=256 cost=$47.41 vram=124.8/150GB
+[STEP 10950] loss=-2.6946 ce=0.1086 aux=1.4847 ent_gate=5.5376/5.545 wmax=0.2334 active>.01=8.0/256 λ=0.5093 cells=256 cost=$47.62 vram=124.8/150GB
+[STEP 11000] loss=-2.6649 ce=0.1089 aux=1.4820 ent_gate=5.5377/5.545 wmax=0.2351 active>.01=8.0/256 λ=0.5050 cells=256 cost=$47.84 vram=124.8/150GB
+[STEP 11050] loss=-2.6489 ce=0.1101 aux=1.4785 ent_gate=5.5377/5.545 wmax=0.2351 active>.01=8.0/256 λ=0.5007 cells=256 cost=$48.05 vram=124.8/150GB
+[STEP 11100] loss=-2.6157 ce=0.1056 aux=1.4744 ent_gate=5.5379/5.545 wmax=0.2311 active>.01=8.0/256 λ=0.4964 cells=256 cost=$48.27 vram=124.8/150GB
+[STEP 11150] loss=-2.5942 ce=0.1049 aux=1.4669 ent_gate=5.5381/5.545 wmax=0.2311 active>.01=8.0/256 λ=0.4920 cells=256 cost=$48.48 vram=124.8/150GB
+[STEP 11200] loss=-2.5780 ce=0.1083 aux=1.4653 ent_gate=5.5381/5.545 wmax=0.2324 active>.01=8.0/256 λ=0.4877 cells=256 cost=$48.70 vram=124.8/150GB
+[STEP 11250] loss=-2.5712 ce=0.1054 aux=1.4596 ent_gate=5.5383/5.545 wmax=0.2306 active>.01=8.0/256 λ=0.4834 cells=256 cost=$48.92 vram=124.8/150GB
+[STEP 11300] loss=-2.5218 ce=0.1013 aux=1.4527 ent_gate=5.5384/5.545 wmax=0.2304 active>.01=8.0/256 λ=0.4791 cells=256 cost=$49.13 vram=124.8/150GB
+[STEP 11350] loss=-2.5084 ce=0.1045 aux=1.4563 ent_gate=5.5384/5.545 wmax=0.2293 active>.01=8.0/256 λ=0.4748 cells=256 cost=$49.35 vram=124.8/150GB
+[STEP 11400] loss=-2.4900 ce=0.1037 aux=1.4540 ent_gate=5.5384/5.545 wmax=0.2298 active>.01=8.0/256 λ=0.4705 cells=256 cost=$49.56 vram=124.8/150GB
+[STEP 11450] loss=-2.4803 ce=0.1069 aux=1.4463 ent_gate=5.5386/5.545 wmax=0.2287 active>.01=8.0/256 λ=0.4662 cells=256 cost=$49.78 vram=124.8/150GB
+[STEP 11500] loss=-2.4682 ce=0.0984 aux=1.4443 ent_gate=5.5386/5.545 wmax=0.2286 active>.01=8.0/256 λ=0.4619 cells=256 cost=$50.00 vram=124.8/150GB
+[STEP 11550] loss=-2.3838 ce=0.1030 aux=1.4429 ent_gate=5.5387/5.545 wmax=0.2279 active>.01=8.0/256 λ=0.4576 cells=256 cost=$50.22 vram=124.8/150GB
+[STEP 11600] loss=-2.3975 ce=0.0994 aux=1.4328 ent_gate=5.5390/5.545 wmax=0.2267 active>.01=8.0/256 λ=0.4533 cells=256 cost=$50.43 vram=124.8/150GB
+[STEP 11650] loss=-2.3900 ce=0.1014 aux=1.4333 ent_gate=5.5389/5.545 wmax=0.2256 active>.01=8.0/256 λ=0.4490 cells=256 cost=$50.65 vram=124.8/150GB
+[STEP 11700] loss=-2.3628 ce=0.0998 aux=1.4365 ent_gate=5.5388/5.545 wmax=0.2287 active>.01=8.0/256 λ=0.4447 cells=256 cost=$50.86 vram=124.8/150GB
+[STEP 11750] loss=-2.3335 ce=0.1015 aux=1.4422 ent_gate=5.5387/5.545 wmax=0.2286 active>.01=8.0/256 λ=0.4404 cells=256 cost=$51.08 vram=124.8/150GB
+[STEP 11800] loss=-2.2852 ce=0.0990 aux=1.4362 ent_gate=5.5389/5.545 wmax=0.2282 active>.01=8.0/256 λ=0.4361 cells=256 cost=$51.30 vram=124.8/150GB
+[STEP 11850] loss=-2.2988 ce=0.0983 aux=1.4318 ent_gate=5.5389/5.545 wmax=0.2300 active>.01=8.0/256 λ=0.4318 cells=256 cost=$51.51 vram=124.8/150GB
+[STEP 11900] loss=-2.2662 ce=0.0975 aux=1.4162 ent_gate=5.5394/5.545 wmax=0.2228 active>.01=8.0/256 λ=0.4276 cells=256 cost=$51.73 vram=124.8/150GB
+[STEP 11950] loss=-2.2244 ce=0.0928 aux=1.4145 ent_gate=5.5394/5.545 wmax=0.2245 active>.01=8.0/256 λ=0.4233 cells=256 cost=$51.94 vram=124.8/150GB
+[STEP 12000] loss=-2.1992 ce=0.0942 aux=1.4159 ent_gate=5.5394/5.545 wmax=0.2227 active>.01=8.0/256 λ=0.4190 cells=256 cost=$52.16 vram=124.8/150GB
+[STEP 12050] loss=-2.1664 ce=0.0956 aux=1.4151 ent_gate=5.5394/5.545 wmax=0.2227 active>.01=8.0/256 λ=0.4148 cells=256 cost=$52.38 vram=124.8/150GB
+[STEP 12100] loss=-2.1640 ce=0.0922 aux=1.4105 ent_gate=5.5395/5.545 wmax=0.2227 active>.01=8.0/256 λ=0.4105 cells=256 cost=$52.59 vram=124.8/150GB
+[STEP 12150] loss=-2.1411 ce=0.0942 aux=1.4045 ent_gate=5.5396/5.545 wmax=0.2236 active>.01=8.0/256 λ=0.4063 cells=256 cost=$52.81 vram=124.8/150GB
+[STEP 12200] loss=-2.1077 ce=0.0913 aux=1.3983 ent_gate=5.5398/5.545 wmax=0.2191 active>.01=8.0/256 λ=0.4021 cells=256 cost=$53.02 vram=124.8/150GB
+[STEP 12250] loss=-2.0856 ce=0.0946 aux=1.3937 ent_gate=5.5399/5.545 wmax=0.2213 active>.01=8.0/256 λ=0.3979 cells=256 cost=$53.24 vram=124.8/150GB
+[STEP 12300] loss=-2.0909 ce=0.0939 aux=1.3885 ent_gate=5.5400/5.545 wmax=0.2194 active>.01=8.0/256 λ=0.3936 cells=256 cost=$53.46 vram=124.8/150GB
+[STEP 12350] loss=-2.0421 ce=0.0921 aux=1.3878 ent_gate=5.5401/5.545 wmax=0.2175 active>.01=8.0/256 λ=0.3894 cells=256 cost=$53.67 vram=124.8/150GB
+[STEP 12400] loss=-2.0046 ce=0.0892 aux=1.3817 ent_gate=5.5402/5.545 wmax=0.2156 active>.01=8.0/256 λ=0.3852 cells=256 cost=$53.89 vram=124.8/150GB
+[STEP 12450] loss=-2.0070 ce=0.0909 aux=1.3774 ent_gate=5.5403/5.545 wmax=0.2189 active>.01=8.0/256 λ=0.3811 cells=256 cost=$54.11 vram=124.8/150GB
+[STEP 12500] loss=-1.9719 ce=0.0929 aux=1.3795 ent_gate=5.5402/5.545 wmax=0.2171 active>.01=8.0/256 λ=0.3769 cells=256 cost=$54.32 vram=124.8/150GB
+[STEP 12550] loss=-1.9619 ce=0.0903 aux=1.3787 ent_gate=5.5402/5.545 wmax=0.2188 active>.01=8.0/256 λ=0.3727 cells=256 cost=$54.54 vram=124.8/150GB
+[STEP 12600] loss=-1.9265 ce=0.0861 aux=1.3752 ent_gate=5.5403/5.545 wmax=0.2175 active>.01=8.0/256 λ=0.3686 cells=256 cost=$54.75 vram=124.8/150GB
+[STEP 12650] loss=-1.9274 ce=0.0877 aux=1.3746 ent_gate=5.5403/5.545 wmax=0.2188 active>.01=8.0/256 λ=0.3644 cells=256 cost=$54.97 vram=124.8/150GB
+[STEP 12700] loss=-1.8818 ce=0.0883 aux=1.3748 ent_gate=5.5403/5.545 wmax=0.2172 active>.01=8.0/256 λ=0.3603 cells=256 cost=$55.19 vram=124.8/150GB
+[STEP 12750] loss=-1.8658 ce=0.0899 aux=1.3666 ent_gate=5.5405/5.545 wmax=0.2176 active>.01=8.0/256 λ=0.3562 cells=256 cost=$55.40 vram=124.8/150GB
+[STEP 12800] loss=-1.8372 ce=0.0889 aux=1.3604 ent_gate=5.5407/5.545 wmax=0.2152 active>.01=8.0/256 λ=0.3520 cells=256 cost=$55.62 vram=124.8/150GB
+[STEP 12850] loss=-1.8359 ce=0.0892 aux=1.3591 ent_gate=5.5407/5.545 wmax=0.2170 active>.01=8.0/256 λ=0.3479 cells=256 cost=$55.83 vram=124.8/150GB
+[STEP 12900] loss=-1.8093 ce=0.0909 aux=1.3615 ent_gate=5.5406/5.545 wmax=0.2165 active>.01=8.0/256 λ=0.3438 cells=256 cost=$56.05 vram=124.8/150GB
+[STEP 12950] loss=-1.7817 ce=0.0841 aux=1.3566 ent_gate=5.5408/5.545 wmax=0.2145 active>.01=8.0/256 λ=0.3398 cells=256 cost=$56.27 vram=124.8/150GB
+[STEP 13000] loss=-1.7553 ce=0.0855 aux=1.3549 ent_gate=5.5408/5.545 wmax=0.2138 active>.01=8.0/256 λ=0.3357 cells=256 cost=$56.48 vram=124.8/150GB
+[STEP 13050] loss=-1.7374 ce=0.0844 aux=1.3538 ent_gate=5.5408/5.545 wmax=0.2169 active>.01=8.0/256 λ=0.3316 cells=256 cost=$56.70 vram=124.8/150GB
+[STEP 13100] loss=-1.6930 ce=0.0877 aux=1.3484 ent_gate=5.5409/5.545 wmax=0.2120 active>.01=8.0/256 λ=0.3276 cells=256 cost=$56.92 vram=124.8/150GB
+[STEP 13150] loss=-1.6828 ce=0.0916 aux=1.3498 ent_gate=5.5409/5.545 wmax=0.2124 active>.01=8.0/256 λ=0.3236 cells=256 cost=$57.13 vram=124.8/150GB
+[STEP 13200] loss=-1.6826 ce=0.0846 aux=1.3443 ent_gate=5.5410/5.545 wmax=0.2142 active>.01=8.0/256 λ=0.3196 cells=256 cost=$57.35 vram=124.8/150GB
+[STEP 13250] loss=-1.6442 ce=0.0852 aux=1.3437 ent_gate=5.5410/5.545 wmax=0.2128 active>.01=8.0/256 λ=0.3156 cells=256 cost=$57.56 vram=124.8/150GB
+[STEP 13300] loss=-1.6220 ce=0.0846 aux=1.3380 ent_gate=5.5411/5.545 wmax=0.2134 active>.01=8.0/256 λ=0.3116 cells=256 cost=$57.78 vram=124.8/150GB
+[STEP 13350] loss=-1.6058 ce=0.0842 aux=1.3361 ent_gate=5.5412/5.545 wmax=0.2130 active>.01=8.0/256 λ=0.3076 cells=256 cost=$58.00 vram=124.8/150GB
+[STEP 13400] loss=-1.5835 ce=0.0834 aux=1.3303 ent_gate=5.5413/5.545 wmax=0.2115 active>.01=8.0/256 λ=0.3037 cells=256 cost=$58.21 vram=124.8/150GB
+[STEP 13450] loss=-1.5635 ce=0.0851 aux=1.3344 ent_gate=5.5412/5.545 wmax=0.2109 active>.01=8.0/256 λ=0.2997 cells=256 cost=$58.43 vram=124.8/150GB
+[STEP 13500] loss=-1.5313 ce=0.0841 aux=1.3287 ent_gate=5.5413/5.545 wmax=0.2112 active>.01=8.0/256 λ=0.2958 cells=256 cost=$58.65 vram=124.8/150GB
+[STEP 13550] loss=-1.5208 ce=0.0832 aux=1.3305 ent_gate=5.5413/5.545 wmax=0.2086 active>.01=8.0/256 λ=0.2919 cells=256 cost=$58.86 vram=124.8/150GB
+[STEP 13600] loss=-1.5088 ce=0.0825 aux=1.3216 ent_gate=5.5415/5.545 wmax=0.2079 active>.01=8.0/256 λ=0.2880 cells=256 cost=$59.08 vram=124.8/150GB
+[STEP 13650] loss=-1.4759 ce=0.0808 aux=1.3233 ent_gate=5.5414/5.545 wmax=0.2098 active>.01=8.0/256 λ=0.2841 cells=256 cost=$59.30 vram=124.8/150GB
+[STEP 13700] loss=-1.4392 ce=0.0832 aux=1.3243 ent_gate=5.5414/5.545 wmax=0.2096 active>.01=8.0/256 λ=0.2803 cells=256 cost=$59.51 vram=124.8/150GB
+[STEP 13750] loss=-1.4300 ce=0.0822 aux=1.3198 ent_gate=5.5415/5.545 wmax=0.2092 active>.01=8.0/256 λ=0.2764 cells=256 cost=$59.73 vram=124.8/150GB
+[STEP 13800] loss=-1.4260 ce=0.0803 aux=1.3223 ent_gate=5.5415/5.545 wmax=0.2101 active>.01=8.0/256 λ=0.2726 cells=256 cost=$59.94 vram=124.8/150GB
+[STEP 13850] loss=-1.3907 ce=0.0832 aux=1.3194 ent_gate=5.5415/5.545 wmax=0.2084 active>.01=8.0/256 λ=0.2688 cells=256 cost=$60.16 vram=124.8/150GB
+[STEP 13900] loss=-1.3734 ce=0.0828 aux=1.3210 ent_gate=5.5414/5.545 wmax=0.2113 active>.01=8.0/256 λ=0.2650 cells=256 cost=$60.38 vram=124.8/150GB
+[STEP 13950] loss=-1.3517 ce=0.0818 aux=1.3122 ent_gate=5.5417/5.545 wmax=0.2071 active>.01=8.0/256 λ=0.2613 cells=256 cost=$60.59 vram=124.8/150GB
+[STEP 14000] loss=-1.3177 ce=0.0793 aux=1.3141 ent_gate=5.5416/5.545 wmax=0.2107 active>.01=8.0/256 λ=0.2575 cells=256 cost=$60.81 vram=124.8/150GB
+[STEP 14050] loss=-1.3275 ce=0.0799 aux=1.3046 ent_gate=5.5418/5.545 wmax=0.2063 active>.01=8.0/256 λ=0.2538 cells=256 cost=$61.02 vram=124.8/150GB
+[STEP 14100] loss=-1.2790 ce=0.0789 aux=1.3065 ent_gate=5.5418/5.545 wmax=0.2072 active>.01=8.0/256 λ=0.2501 cells=256 cost=$61.24 vram=124.8/150GB
+[STEP 14150] loss=-1.2772 ce=0.0785 aux=1.3039 ent_gate=5.5418/5.545 wmax=0.2060 active>.01=8.0/256 λ=0.2464 cells=256 cost=$61.46 vram=124.8/150GB
+[STEP 14200] loss=-1.2562 ce=0.0797 aux=1.3030 ent_gate=5.5418/5.545 wmax=0.2072 active>.01=8.0/256 λ=0.2427 cells=256 cost=$61.67 vram=124.8/150GB
+[STEP 14250] loss=-1.2266 ce=0.0788 aux=1.3039 ent_gate=5.5418/5.545 wmax=0.2084 active>.01=8.0/256 λ=0.2390 cells=256 cost=$61.89 vram=124.8/150GB
+[STEP 14300] loss=-1.2067 ce=0.0774 aux=1.2998 ent_gate=5.5419/5.545 wmax=0.2065 active>.01=8.0/256 λ=0.2354 cells=256 cost=$62.10 vram=124.8/150GB
+[STEP 14350] loss=-1.1712 ce=0.0775 aux=1.2970 ent_gate=5.5419/5.545 wmax=0.2066 active>.01=8.0/256 λ=0.2318 cells=256 cost=$62.32 vram=124.8/150GB
+[STEP 14400] loss=-1.1734 ce=0.0797 aux=1.2986 ent_gate=5.5419/5.545 wmax=0.2044 active>.01=8.0/256 λ=0.2282 cells=256 cost=$62.54 vram=124.8/150GB
+[STEP 14450] loss=-1.1603 ce=0.0745 aux=1.2964 ent_gate=5.5419/5.545 wmax=0.2061 active>.01=8.0/256 λ=0.2246 cells=256 cost=$62.75 vram=124.8/150GB
+[STEP 14500] loss=-1.1299 ce=0.0760 aux=1.2901 ent_gate=5.5421/5.545 wmax=0.2033 active>.01=8.0/256 λ=0.2211 cells=256 cost=$62.97 vram=124.8/150GB
+[STEP 14550] loss=-1.1135 ce=0.0767 aux=1.2880 ent_gate=5.5421/5.545 wmax=0.2021 active>.01=8.0/256 λ=0.2176 cells=256 cost=$63.18 vram=124.8/150GB
+[STEP 14600] loss=-1.1045 ce=0.0772 aux=1.2838 ent_gate=5.5422/5.545 wmax=0.2012 active>.01=8.0/256 λ=0.2140 cells=256 cost=$63.40 vram=124.8/150GB
+[STEP 14650] loss=-1.0724 ce=0.0779 aux=1.2838 ent_gate=5.5422/5.545 wmax=0.2038 active>.01=8.0/256 λ=0.2106 cells=256 cost=$63.62 vram=124.8/150GB
+[STEP 14700] loss=-1.0532 ce=0.0770 aux=1.2840 ent_gate=5.5422/5.545 wmax=0.2037 active>.01=8.0/256 λ=0.2071 cells=256 cost=$63.83 vram=124.8/150GB
+[STEP 14750] loss=-1.0566 ce=0.0772 aux=1.2828 ent_gate=5.5422/5.545 wmax=0.2011 active>.01=8.0/256 λ=0.2037 cells=256 cost=$64.05 vram=124.8/150GB
+[STEP 14800] loss=-1.0192 ce=0.0774 aux=1.2797 ent_gate=5.5423/5.545 wmax=0.2033 active>.01=8.0/256 λ=0.2002 cells=256 cost=$64.26 vram=124.8/150GB
+[STEP 14850] loss=-0.9937 ce=0.0781 aux=1.2790 ent_gate=5.5423/5.545 wmax=0.2020 active>.01=8.0/256 λ=0.1969 cells=256 cost=$64.48 vram=124.8/150GB
+[STEP 14900] loss=-0.9823 ce=0.0737 aux=1.2778 ent_gate=5.5423/5.545 wmax=0.2017 active>.01=8.0/256 λ=0.1935 cells=256 cost=$64.70 vram=124.8/150GB
+[STEP 14950] loss=-0.9518 ce=0.0756 aux=1.2753 ent_gate=5.5424/5.545 wmax=0.2011 active>.01=8.0/256 λ=0.1901 cells=256 cost=$64.91 vram=124.8/150GB
+  [SNAP 15000] 4a KL=1.3357 z=0.52 | 4b cos_z=2.11
+[STEP 15000] loss=-0.9372 ce=0.0755 aux=1.2722 ent_gate=5.5424/5.545 wmax=0.1999 active>.01=8.0/256 λ=0.1868 cells=256 cost=$65.21 vram=124.8/150GB
+[STEP 15050] loss=-0.9375 ce=0.0741 aux=1.2715 ent_gate=5.5424/5.545 wmax=0.1996 active>.01=8.0/256 λ=0.1835 cells=256 cost=$65.43 vram=124.8/150GB
+[STEP 15100] loss=-0.9093 ce=0.0750 aux=1.2690 ent_gate=5.5425/5.545 wmax=0.1989 active>.01=8.0/256 λ=0.1803 cells=256 cost=$65.64 vram=124.8/150GB
+[STEP 15150] loss=-0.8928 ce=0.0754 aux=1.2695 ent_gate=5.5425/5.545 wmax=0.1998 active>.01=8.0/256 λ=0.1770 cells=256 cost=$65.86 vram=124.8/150GB
+[STEP 15200] loss=-0.8874 ce=0.0731 aux=1.2653 ent_gate=5.5425/5.545 wmax=0.2000 active>.01=8.0/256 λ=0.1738 cells=256 cost=$66.08 vram=124.8/150GB
+[STEP 15250] loss=-0.8546 ce=0.0748 aux=1.2648 ent_gate=5.5425/5.545 wmax=0.1999 active>.01=8.0/256 λ=0.1706 cells=256 cost=$66.29 vram=124.8/150GB
+[STEP 15300] loss=-0.8321 ce=0.0741 aux=1.2672 ent_gate=5.5425/5.545 wmax=0.2010 active>.01=8.0/256 λ=0.1674 cells=256 cost=$66.51 vram=124.8/150GB
+[STEP 15350] loss=-0.8297 ce=0.0740 aux=1.2638 ent_gate=5.5426/5.545 wmax=0.1987 active>.01=8.0/256 λ=0.1643 cells=256 cost=$66.72 vram=124.8/150GB
+[STEP 15400] loss=-0.8130 ce=0.0738 aux=1.2626 ent_gate=5.5426/5.545 wmax=0.1986 active>.01=8.0/256 λ=0.1611 cells=256 cost=$66.94 vram=124.8/150GB
+[STEP 15450] loss=-0.8049 ce=0.0739 aux=1.2637 ent_gate=5.5426/5.545 wmax=0.1980 active>.01=8.0/256 λ=0.1580 cells=256 cost=$67.16 vram=124.8/150GB
+[STEP 15500] loss=-0.7780 ce=0.0735 aux=1.2571 ent_gate=5.5427/5.545 wmax=0.1972 active>.01=8.0/256 λ=0.1550 cells=256 cost=$67.37 vram=124.8/150GB
+[STEP 15550] loss=-0.7558 ce=0.0732 aux=1.2559 ent_gate=5.5427/5.545 wmax=0.1971 active>.01=8.0/256 λ=0.1519 cells=256 cost=$67.59 vram=124.8/150GB
+[STEP 15600] loss=-0.7218 ce=0.0727 aux=1.2552 ent_gate=5.5427/5.545 wmax=0.1968 active>.01=8.0/256 λ=0.1489 cells=256 cost=$67.80 vram=124.8/150GB
+[STEP 15650] loss=-0.7281 ce=0.0721 aux=1.2525 ent_gate=5.5428/5.545 wmax=0.1954 active>.01=8.0/256 λ=0.1459 cells=256 cost=$68.02 vram=124.8/150GB
+[STEP 15700] loss=-0.7015 ce=0.0717 aux=1.2515 ent_gate=5.5428/5.545 wmax=0.1955 active>.01=8.0/256 λ=0.1430 cells=256 cost=$68.24 vram=124.8/150GB
+[STEP 15750] loss=-0.7134 ce=0.0736 aux=1.2493 ent_gate=5.5428/5.545 wmax=0.1950 active>.01=8.0/256 λ=0.1400 cells=256 cost=$68.45 vram=124.8/150GB
+[STEP 15800] loss=-0.6853 ce=0.0727 aux=1.2493 ent_gate=5.5428/5.545 wmax=0.1968 active>.01=8.0/256 λ=0.1371 cells=256 cost=$68.67 vram=124.8/150GB
+[STEP 15850] loss=-0.6701 ce=0.0736 aux=1.2501 ent_gate=5.5428/5.545 wmax=0.1940 active>.01=8.0/256 λ=0.1343 cells=256 cost=$68.89 vram=124.8/150GB
+[STEP 15900] loss=-0.6335 ce=0.0712 aux=1.2487 ent_gate=5.5428/5.545 wmax=0.1978 active>.01=8.0/256 λ=0.1314 cells=256 cost=$69.10 vram=124.8/150GB
+[STEP 15950] loss=-0.6094 ce=0.0724 aux=1.2461 ent_gate=5.5429/5.545 wmax=0.1940 active>.01=8.0/256 λ=0.1286 cells=256 cost=$69.32 vram=124.8/150GB
+[STEP 16000] loss=-0.6091 ce=0.0713 aux=1.2434 ent_gate=5.5429/5.545 wmax=0.1956 active>.01=8.0/256 λ=0.1258 cells=256 cost=$69.53 vram=124.8/150GB
+[STEP 16050] loss=-0.5962 ce=0.0707 aux=1.2414 ent_gate=5.5429/5.545 wmax=0.1954 active>.01=8.0/256 λ=0.1230 cells=256 cost=$69.75 vram=124.8/150GB
+[STEP 16100] loss=-0.5826 ce=0.0733 aux=1.2425 ent_gate=5.5429/5.545 wmax=0.1933 active>.01=8.0/256 λ=0.1203 cells=256 cost=$69.97 vram=124.8/150GB
+[STEP 16150] loss=-0.5693 ce=0.0708 aux=1.2409 ent_gate=5.5429/5.545 wmax=0.1955 active>.01=8.0/256 λ=0.1176 cells=256 cost=$70.18 vram=124.8/150GB
+[STEP 16200] loss=-0.5454 ce=0.0695 aux=1.2386 ent_gate=5.5430/5.545 wmax=0.1943 active>.01=8.0/256 λ=0.1149 cells=256 cost=$70.40 vram=124.8/150GB
+[STEP 16250] loss=-0.5235 ce=0.0723 aux=1.2397 ent_gate=5.5430/5.545 wmax=0.1935 active>.01=8.0/256 λ=0.1123 cells=256 cost=$70.61 vram=124.8/150GB
+[STEP 16300] loss=-0.5296 ce=0.0696 aux=1.2401 ent_gate=5.5429/5.545 wmax=0.1968 active>.01=8.0/256 λ=0.1097 cells=256 cost=$70.83 vram=124.8/150GB
+[STEP 16350] loss=-0.4959 ce=0.0718 aux=1.2387 ent_gate=5.5430/5.545 wmax=0.1945 active>.01=8.0/256 λ=0.1071 cells=256 cost=$71.05 vram=124.8/150GB
+[STEP 16400] loss=-0.4904 ce=0.0700 aux=1.2364 ent_gate=5.5430/5.545 wmax=0.1926 active>.01=8.0/256 λ=0.1045 cells=256 cost=$71.26 vram=124.8/150GB
+[STEP 16450] loss=-0.4714 ce=0.0693 aux=1.2337 ent_gate=5.5430/5.545 wmax=0.1929 active>.01=8.0/256 λ=0.1020 cells=256 cost=$71.48 vram=124.8/150GB
+[STEP 16500] loss=-0.4722 ce=0.0700 aux=1.2358 ent_gate=5.5430/5.545 wmax=0.1936 active>.01=8.0/256 λ=0.0995 cells=256 cost=$71.70 vram=124.8/150GB
+[STEP 16550] loss=-0.4590 ce=0.0679 aux=1.2351 ent_gate=5.5430/5.545 wmax=0.1931 active>.01=8.0/256 λ=0.0971 cells=256 cost=$71.91 vram=124.8/150GB
+[STEP 16600] loss=-0.4505 ce=0.0713 aux=1.2333 ent_gate=5.5430/5.545 wmax=0.1935 active>.01=8.0/256 λ=0.0946 cells=256 cost=$72.13 vram=124.8/150GB
+[STEP 16650] loss=-0.4379 ce=0.0703 aux=1.2343 ent_gate=5.5430/5.545 wmax=0.1940 active>.01=8.0/256 λ=0.0922 cells=256 cost=$72.35 vram=124.8/150GB
+[STEP 16700] loss=-0.4119 ce=0.0698 aux=1.2334 ent_gate=5.5430/5.545 wmax=0.1945 active>.01=8.0/256 λ=0.0899 cells=256 cost=$72.56 vram=124.8/150GB
+[STEP 16750] loss=-0.4050 ce=0.0685 aux=1.2289 ent_gate=5.5431/5.545 wmax=0.1926 active>.01=8.0/256 λ=0.0875 cells=256 cost=$72.78 vram=124.8/150GB
+[STEP 16800] loss=-0.3873 ce=0.0703 aux=1.2295 ent_gate=5.5431/5.545 wmax=0.1921 active>.01=8.0/256 λ=0.0852 cells=256 cost=$72.99 vram=124.8/150GB
+[STEP 16850] loss=-0.3688 ce=0.0684 aux=1.2296 ent_gate=5.5431/5.545 wmax=0.1915 active>.01=8.0/256 λ=0.0829 cells=256 cost=$73.21 vram=124.8/150GB
+[STEP 16900] loss=-0.3703 ce=0.0678 aux=1.2261 ent_gate=5.5432/5.545 wmax=0.1904 active>.01=8.0/256 λ=0.0807 cells=256 cost=$73.43 vram=124.8/150GB
+[STEP 16950] loss=-0.3464 ce=0.0690 aux=1.2263 ent_gate=5.5432/5.545 wmax=0.1924 active>.01=8.0/256 λ=0.0785 cells=256 cost=$73.64 vram=124.8/150GB
+[STEP 17000] loss=-0.3387 ce=0.0678 aux=1.2242 ent_gate=5.5432/5.545 wmax=0.1900 active>.01=8.0/256 λ=0.0763 cells=256 cost=$73.86 vram=124.8/150GB
+[STEP 17050] loss=-0.3245 ce=0.0672 aux=1.2250 ent_gate=5.5432/5.545 wmax=0.1935 active>.01=8.0/256 λ=0.0742 cells=256 cost=$74.07 vram=124.8/150GB
+[STEP 17100] loss=-0.3140 ce=0.0667 aux=1.2251 ent_gate=5.5432/5.545 wmax=0.1912 active>.01=8.0/256 λ=0.0721 cells=256 cost=$74.29 vram=124.8/150GB
+[STEP 17150] loss=-0.3013 ce=0.0668 aux=1.2239 ent_gate=5.5432/5.545 wmax=0.1935 active>.01=8.0/256 λ=0.0700 cells=256 cost=$74.51 vram=124.8/150GB
+[STEP 17200] loss=-0.3038 ce=0.0662 aux=1.2248 ent_gate=5.5432/5.545 wmax=0.1919 active>.01=8.0/256 λ=0.0679 cells=256 cost=$74.72 vram=124.8/150GB
+[STEP 17250] loss=-0.2884 ce=0.0679 aux=1.2229 ent_gate=5.5432/5.545 wmax=0.1909 active>.01=8.0/256 λ=0.0659 cells=256 cost=$74.94 vram=124.8/150GB
+[STEP 17300] loss=-0.2758 ce=0.0659 aux=1.2213 ent_gate=5.5432/5.545 wmax=0.1905 active>.01=8.0/256 λ=0.0640 cells=256 cost=$75.15 vram=124.8/150GB
+[STEP 17350] loss=-0.2694 ce=0.0697 aux=1.2212 ent_gate=5.5432/5.545 wmax=0.1896 active>.01=8.0/256 λ=0.0620 cells=256 cost=$75.37 vram=124.8/150GB
+[STEP 17400] loss=-0.2423 ce=0.0668 aux=1.2227 ent_gate=5.5432/5.545 wmax=0.1917 active>.01=8.0/256 λ=0.0601 cells=256 cost=$75.59 vram=124.8/150GB
+[STEP 17450] loss=-0.2548 ce=0.0685 aux=1.2217 ent_gate=5.5432/5.545 wmax=0.1906 active>.01=8.0/256 λ=0.0582 cells=256 cost=$75.80 vram=124.8/150GB
+[STEP 17500] loss=-0.2314 ce=0.0684 aux=1.2167 ent_gate=5.5433/5.545 wmax=0.1901 active>.01=8.0/256 λ=0.0564 cells=256 cost=$76.02 vram=124.8/150GB
+[STEP 17550] loss=-0.2198 ce=0.0675 aux=1.2176 ent_gate=5.5433/5.545 wmax=0.1896 active>.01=8.0/256 λ=0.0546 cells=256 cost=$76.23 vram=124.8/150GB
+[STEP 17600] loss=-0.2190 ce=0.0655 aux=1.2158 ent_gate=5.5433/5.545 wmax=0.1880 active>.01=8.0/256 λ=0.0528 cells=256 cost=$76.45 vram=124.8/150GB
+[STEP 17650] loss=-0.2134 ce=0.0663 aux=1.2166 ent_gate=5.5433/5.545 wmax=0.1890 active>.01=8.0/256 λ=0.0511 cells=256 cost=$76.67 vram=124.8/150GB
+[STEP 17700] loss=-0.1912 ce=0.0653 aux=1.2156 ent_gate=5.5433/5.545 wmax=0.1883 active>.01=8.0/256 λ=0.0494 cells=256 cost=$76.88 vram=124.8/150GB
+[STEP 17750] loss=-0.1843 ce=0.0665 aux=1.2151 ent_gate=5.5433/5.545 wmax=0.1889 active>.01=8.0/256 λ=0.0477 cells=256 cost=$77.10 vram=124.8/150GB
+[STEP 17800] loss=-0.1796 ce=0.0675 aux=1.2135 ent_gate=5.5433/5.545 wmax=0.1897 active>.01=8.0/256 λ=0.0460 cells=256 cost=$77.32 vram=124.8/150GB
+[STEP 17850] loss=-0.1712 ce=0.0662 aux=1.2170 ent_gate=5.5433/5.545 wmax=0.1908 active>.01=8.0/256 λ=0.0444 cells=256 cost=$77.53 vram=124.8/150GB
+[STEP 17900] loss=-0.1624 ce=0.0664 aux=1.2158 ent_gate=5.5433/5.545 wmax=0.1921 active>.01=8.0/256 λ=0.0429 cells=256 cost=$77.75 vram=124.8/150GB
+[STEP 17950] loss=-0.1475 ce=0.0651 aux=1.2131 ent_gate=5.5434/5.545 wmax=0.1886 active>.01=8.0/256 λ=0.0413 cells=256 cost=$77.97 vram=124.8/150GB
+[STEP 18000] loss=-0.1459 ce=0.0662 aux=1.2136 ent_gate=5.5433/5.545 wmax=0.1899 active>.01=8.0/256 λ=0.0399 cells=256 cost=$78.18 vram=124.8/150GB
+[STEP 18050] loss=-0.1395 ce=0.0648 aux=1.2136 ent_gate=5.5433/5.545 wmax=0.1902 active>.01=8.0/256 λ=0.0384 cells=256 cost=$78.40 vram=124.8/150GB
+[STEP 18100] loss=-0.1270 ce=0.0660 aux=1.2120 ent_gate=5.5434/5.545 wmax=0.1891 active>.01=8.0/256 λ=0.0370 cells=256 cost=$78.61 vram=124.8/150GB
+[STEP 18150] loss=-0.1067 ce=0.0666 aux=1.2107 ent_gate=5.5434/5.545 wmax=0.1895 active>.01=8.0/256 λ=0.0356 cells=256 cost=$78.83 vram=124.8/150GB
+[STEP 18200] loss=-0.1045 ce=0.0653 aux=1.2119 ent_gate=5.5434/5.545 wmax=0.1875 active>.01=8.0/256 λ=0.0342 cells=256 cost=$79.05 vram=124.8/150GB
+[STEP 18250] loss=-0.1077 ce=0.0657 aux=1.2128 ent_gate=5.5434/5.545 wmax=0.1900 active>.01=8.0/256 λ=0.0329 cells=256 cost=$79.26 vram=124.8/150GB
+[STEP 18300] loss=-0.1035 ce=0.0664 aux=1.2116 ent_gate=5.5434/5.545 wmax=0.1889 active>.01=8.0/256 λ=0.0316 cells=256 cost=$79.48 vram=124.8/150GB
+[STEP 18350] loss=-0.0765 ce=0.0648 aux=1.2087 ent_gate=5.5434/5.545 wmax=0.1876 active>.01=8.0/256 λ=0.0304 cells=256 cost=$79.69 vram=124.8/150GB
+[STEP 18400] loss=-0.0776 ce=0.0647 aux=1.2140 ent_gate=5.5433/5.545 wmax=0.1896 active>.01=8.0/256 λ=0.0292 cells=256 cost=$79.91 vram=124.8/150GB
+[STEP 18450] loss=-0.0828 ce=0.0640 aux=1.2129 ent_gate=5.5433/5.545 wmax=0.1903 active>.01=8.0/256 λ=0.0280 cells=256 cost=$80.13 vram=124.8/150GB
+[STEP 18500] loss=-0.0807 ce=0.0662 aux=1.2118 ent_gate=5.5434/5.545 wmax=0.1906 active>.01=8.0/256 λ=0.0269 cells=256 cost=$80.34 vram=124.8/150GB
+[STEP 18550] loss=-0.0647 ce=0.0645 aux=1.2090 ent_gate=5.5434/5.545 wmax=0.1878 active>.01=8.0/256 λ=0.0258 cells=256 cost=$80.56 vram=124.8/150GB
+[STEP 18600] loss=-0.0552 ce=0.0647 aux=1.2116 ent_gate=5.5434/5.545 wmax=0.1897 active>.01=8.0/256 λ=0.0247 cells=256 cost=$80.77 vram=124.8/150GB
+[STEP 18650] loss=-0.0524 ce=0.0646 aux=1.2094 ent_gate=5.5434/5.545 wmax=0.1885 active>.01=8.0/256 λ=0.0237 cells=256 cost=$80.99 vram=124.8/150GB
+[STEP 18700] loss=-0.0454 ce=0.0639 aux=1.2096 ent_gate=5.5434/5.545 wmax=0.1875 active>.01=8.0/256 λ=0.0227 cells=256 cost=$81.21 vram=124.8/150GB
+[STEP 18750] loss=-0.0505 ce=0.0637 aux=1.2089 ent_gate=5.5434/5.545 wmax=0.1874 active>.01=8.0/256 λ=0.0217 cells=256 cost=$81.42 vram=124.8/150GB
+[STEP 18800] loss=-0.0354 ce=0.0636 aux=1.2095 ent_gate=5.5434/5.545 wmax=0.1866 active>.01=8.0/256 λ=0.0208 cells=256 cost=$81.64 vram=124.8/150GB
+[STEP 18850] loss=-0.0430 ce=0.0647 aux=1.2078 ent_gate=5.5434/5.545 wmax=0.1868 active>.01=8.0/256 λ=0.0199 cells=256 cost=$81.85 vram=124.8/150GB
+[STEP 18900] loss=-0.0389 ce=0.0631 aux=1.2064 ent_gate=5.5434/5.545 wmax=0.1884 active>.01=8.0/256 λ=0.0191 cells=256 cost=$82.07 vram=124.8/150GB
+[STEP 18950] loss=-0.0212 ce=0.0654 aux=1.2111 ent_gate=5.5434/5.545 wmax=0.1876 active>.01=8.0/256 λ=0.0183 cells=256 cost=$82.29 vram=124.8/150GB
+[STEP 19000] loss=-0.0302 ce=0.0618 aux=1.2075 ent_gate=5.5434/5.545 wmax=0.1890 active>.01=8.0/256 λ=0.0175 cells=256 cost=$82.50 vram=124.8/150GB
+[STEP 19050] loss=-0.0085 ce=0.0638 aux=1.2074 ent_gate=5.5434/5.545 wmax=0.1878 active>.01=8.0/256 λ=0.0168 cells=256 cost=$82.72 vram=124.8/150GB
+[STEP 19100] loss=-0.0295 ce=0.0649 aux=1.2070 ent_gate=5.5434/5.545 wmax=0.1879 active>.01=8.0/256 λ=0.0161 cells=256 cost=$82.93 vram=124.8/150GB
+[STEP 19150] loss=-0.0057 ce=0.0670 aux=1.2072 ent_gate=5.5435/5.545 wmax=0.1864 active>.01=8.0/256 λ=0.0154 cells=256 cost=$83.15 vram=124.8/150GB
+[STEP 19200] loss=-0.0149 ce=0.0654 aux=1.2089 ent_gate=5.5434/5.545 wmax=0.1882 active>.01=8.0/256 λ=0.0148 cells=256 cost=$83.37 vram=124.8/150GB
+[STEP 19250] loss=-0.0025 ce=0.0630 aux=1.2061 ent_gate=5.5435/5.545 wmax=0.1865 active>.01=8.0/256 λ=0.0142 cells=256 cost=$83.58 vram=124.8/150GB
+[STEP 19300] loss=0.0009 ce=0.0637 aux=1.2066 ent_gate=5.5434/5.545 wmax=0.1885 active>.01=8.0/256 λ=0.0137 cells=256 cost=$83.80 vram=124.8/150GB
+[STEP 19350] loss=0.0032 ce=0.0634 aux=1.2066 ent_gate=5.5435/5.545 wmax=0.1878 active>.01=8.0/256 λ=0.0132 cells=256 cost=$84.01 vram=124.8/150GB
+[STEP 19400] loss=-0.0083 ce=0.0634 aux=1.2073 ent_gate=5.5434/5.545 wmax=0.1894 active>.01=8.0/256 λ=0.0127 cells=256 cost=$84.23 vram=124.8/150GB
+[STEP 19450] loss=-0.0054 ce=0.0649 aux=1.2057 ent_gate=5.5435/5.545 wmax=0.1872 active>.01=8.0/256 λ=0.0123 cells=256 cost=$84.45 vram=124.8/150GB
+[STEP 19500] loss=0.0058 ce=0.0635 aux=1.2066 ent_gate=5.5434/5.545 wmax=0.1888 active>.01=8.0/256 λ=0.0119 cells=256 cost=$84.66 vram=124.8/150GB
+[STEP 19550] loss=0.0022 ce=0.0627 aux=1.2064 ent_gate=5.5434/5.545 wmax=0.1895 active>.01=8.0/256 λ=0.0115 cells=256 cost=$84.88 vram=124.8/150GB
+[STEP 19600] loss=0.0078 ce=0.0655 aux=1.2073 ent_gate=5.5434/5.545 wmax=0.1882 active>.01=8.0/256 λ=0.0112 cells=256 cost=$85.09 vram=124.8/150GB
+[STEP 19650] loss=0.0229 ce=0.0643 aux=1.2073 ent_gate=5.5434/5.545 wmax=0.1880 active>.01=8.0/256 λ=0.0109 cells=256 cost=$85.31 vram=124.8/150GB
+[STEP 19700] loss=0.0102 ce=0.0636 aux=1.2043 ent_gate=5.5435/5.545 wmax=0.1865 active>.01=8.0/256 λ=0.0107 cells=256 cost=$85.53 vram=124.8/150GB
+[STEP 19750] loss=0.0185 ce=0.0641 aux=1.2064 ent_gate=5.5434/5.545 wmax=0.1887 active>.01=8.0/256 λ=0.0105 cells=256 cost=$85.74 vram=124.8/150GB
+[STEP 19800] loss=0.0195 ce=0.0641 aux=1.2082 ent_gate=5.5434/5.545 wmax=0.1893 active>.01=8.0/256 λ=0.0103 cells=256 cost=$85.96 vram=124.8/150GB
+[STEP 19850] loss=0.0241 ce=0.0638 aux=1.2096 ent_gate=5.5434/5.545 wmax=0.1881 active>.01=8.0/256 λ=0.0102 cells=256 cost=$86.17 vram=124.8/150GB
+[STEP 19900] loss=0.0088 ce=0.0644 aux=1.2085 ent_gate=5.5434/5.545 wmax=0.1884 active>.01=8.0/256 λ=0.0101 cells=256 cost=$86.39 vram=124.8/150GB
+[STEP 19950] loss=0.0171 ce=0.0661 aux=1.2082 ent_gate=5.5434/5.545 wmax=0.1903 active>.01=8.0/256 λ=0.0100 cells=256 cost=$86.61 vram=124.8/150GB
+[STEP 19999] loss=0.0150 ce=0.0632 aux=1.2079 ent_gate=5.5434/5.545 wmax=0.1896 active>.01=8.0/256 λ=0.0100 cells=256 cost=$86.82 vram=124.8/150GB
+[INFO] training done wall=24185.6s cost=$86.82
+
+=== F-PERSONA-4a routing (top-K MoE) ===
+  verdict=KL_PASS_NULL_FAIL KL=1.4903 null=1.3632±0.2511 z=0.51 p=0.3100
+  (soft gate) KL=0.0005 z=2.33
+
+=== F-PERSONA-4b content (M4 aggregated cosine) regression ===
+  verdict=FAIL cos_dist=0.000234 null=0.000175±0.000063 z=0.94 p=0.1400 (v2 carry z=3.20)
+
+=== F-V5MIT-1..5 regression (inherited splits=v4 ckpt; CE re-measured) ===
+  3/5  F-V5MIT-1=F F-V5MIT-2=P F-V5MIT-3=P F-V5MIT-4=P F-V5MIT-5=F
+
+[RESULT] output/cotrain_v5_ddp_result.json
+[VERDICT] 4a=KL_PASS_NULL_FAIL (KL=1.4903 z=0.51) | 4b=FAIL (z=0.94) | F-V5MIT=3/5

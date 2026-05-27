@@ -1,0 +1,193 @@
+{
+  "schema": "anima/n_24_octopus_per_arm_phi_feasibility/spec_manifest/1",
+  "agent": "n_24_feasibility",
+  "date_utc": "2026-05-01T00:00:00Z",
+  "mission": "Octopus per-arm Φ ('community of minds') IIT 4.0 exclusion postulate test partnership feasibility",
+  "tier_1_target": "T1-N24",
+  "tier_1_target_desc": "feasibility verdict + 6 lab inventory + 5 falsifier predicates + paradigm v11 8-axis octopus adaptation (NO contact, NO permit submission, research+spec only)",
+  "spec_doc": "docs/n_24_octopus_per_arm_phi_feasibility_2026_05_01.md",
+  "spec_word_count_approx": 3400,
+  "parent_doc": "docs/strategic_alm_clm_review_2026_05_01.md",
+  "parent_section": "§6 N-24 row, §13.1 candidate motivation",
+  "octopus_known_facts": {
+    "total_neurons": 5e8,
+    "central_brain_neurons": 1.7e8,
+    "arm_axial_nerve_cord_neurons_per_arm": 4.1e7,
+    "arms_count": 8,
+    "arm_neuron_total_fraction": 0.66,
+    "axial_nerve_cord_diameter_mm": "1-2",
+    "ganglia_per_arm_estimate": 250,
+    "sucker_chemoreceptors_per_sucker": 1e4,
+    "carls_diamante_community_of_minds_year": 2017,
+    "eu_directive_2010_63_cephalopod_protection": true,
+    "uk_sentience_act_2022_cephalopod_recognition": true,
+    "nih_phs_2025_cephalopod_iacuc_consideration": true
+  },
+  "lab_inventory": [
+    {
+      "rank": 1,
+      "name": "Stazione Zoologica Anton Dohrn (SZN)",
+      "location": "Naples, Italy",
+      "role_label": "TOP-1 academic depth",
+      "cephalopod_group": "BEOM (Fiorito group)",
+      "access_path": "ASSEMBLE Plus EU Transnational Access (TA) program",
+      "tech_score": 5,
+      "ethics_friction_score": 1,
+      "zero_budget_path_score": 3,
+      "korean_fit_score": 1,
+      "primary_constraint": "EU Directive 2010/63/EU strictest"
+    },
+    {
+      "rank": 2,
+      "name": "Marine Biological Laboratory (MBL)",
+      "location": "Woods Hole, Massachusetts, USA",
+      "role_label": "TOP-1 English-path infrastructure",
+      "cephalopod_group": "Cephalopod Program (Bret Grasse)",
+      "access_path": "Whitman Center Fellowship + NSF Cephalopod Course",
+      "tech_score": 5,
+      "ethics_friction_score": 2,
+      "zero_budget_path_score": 2,
+      "korean_fit_score": 1,
+      "primary_constraint": "NIH PHS 2025 IACUC strengthening"
+    },
+    {
+      "rank": 3,
+      "name": "부경대학교 + KIOST 한국 컨소시엄",
+      "location": "Busan, South Korea",
+      "role_label": "TOP-1 anima $0 + Korean-language path",
+      "cephalopod_group": "Pukyong U. 해양생물학과 + KIOST 해양생물자원센터",
+      "access_path": "국문 직접 outreach, 학내 small grant + cost-share",
+      "tech_score": 2,
+      "ethics_friction_score": 4,
+      "zero_budget_path_score": 4,
+      "korean_fit_score": 5,
+      "primary_constraint": "neuro-recording capacity weak; Korean Animal Protection Act lacks explicit cephalopod inclusion (ethical risk surface)"
+    },
+    {
+      "rank": 4,
+      "name": "Hawaii Institute of Marine Biology (HIMB)",
+      "location": "Coconut Island, Kāneʻohe Bay, Hawaii, USA",
+      "role_label": "Tier-2 behavioral / open-water",
+      "cephalopod_species": "Octopus cyanea",
+      "access_path": "Visiting Investigators Program",
+      "tech_score": 3,
+      "ethics_friction_score": 3,
+      "zero_budget_path_score": 2,
+      "korean_fit_score": 1
+    },
+    {
+      "rank": 5,
+      "name": "Bermuda Institute of Ocean Sciences (BIOS, ASU-affiliated)",
+      "location": "St. George's, Bermuda",
+      "role_label": "Tier-3 ecology only",
+      "tech_score": 1,
+      "ethics_friction_score": 2,
+      "zero_budget_path_score": 2,
+      "korean_fit_score": 1,
+      "primary_constraint": "no in-house cephalopod neuroscience group"
+    }
+  ],
+  "paradigm_v11_axis_adaptation": {
+    "G0_AN11b_primary": "DROP — LLM-specific, no octopus equivalent",
+    "G1_BToM_attention": "behavioral fixation + sucker active sampling pose entropy (DeepLabCut)",
+    "G2_MCCA": "8-arm EMG vs central brain proxy (eye saccade) canonical correlation",
+    "G3_phi_star_CORE": "64-ch EMG covariance K=8 random bipartition Φ_min — per-arm vs whole-body comparison",
+    "G4_CMT": "modified hierarchy (sucker → segment ganglion → ANC → brain) 4-layer signature",
+    "G5_CDS": "causal stability via single-arm stimulation → other-arm sync latency",
+    "G6_SAE_bypass": "EMG sparse code SAE bypass Φ preservation",
+    "G7_BBA_composite": "geometric mean over G1..G6",
+    "FINAL_PASS_redefinition": "≥4/6 of {G1..G6} AND G7 (G0 dropped — composite weakened, pre-registered)"
+  },
+  "hardware_recommendation": {
+    "type": "non-invasive surface EMG only (2010/63 Replacement compliant)",
+    "channels_per_arm": 8,
+    "total_channels": 64,
+    "platform": "OpenBCI Cyton + Daisy 16-ch + 1 additional board",
+    "additional_cost_usd": 700,
+    "anima_eeg_track_reuse": true,
+    "video_capture": "4-cam 60fps marker-less DeepLabCut pose",
+    "synchronization": "LSL (Lab Streaming Layer)",
+    "stimulus": "natural texture panel sucker-stim (<$50, non-invasive)",
+    "analysis_pipeline": "anima HEXA Φ pipeline Mk.XII v3 paradigm-v11-octopus-adapted"
+  },
+  "ethical_constraints_critical": [
+    "EU Directive 2010/63/EU Annex I — cephalopods protected, Severe procedures effectively banned",
+    "UK Animal Welfare (Sentience) Act 2022 — octopus sentience recognised",
+    "NIH PHS 2025 — voluntary cephalopod IACUC, increasingly mandatory for funded labs",
+    "2010/63 Article 4 Replacement principle — anima in-silico Φ aligns with Replacement",
+    "Korean Animal Protection Act lacks explicit cephalopod inclusion — ethical risk surface to be mitigated by voluntarily applying EU 2010/63 standards",
+    "ALL N-24 protocols restricted to non-invasive surface EMG / observational behavior — no chronic implants, no sharp electrodes"
+  ],
+  "falsifier_predicates_count": 5,
+  "falsifier_ids": [
+    "F-N24-1: per-arm Φ sum > whole-body Φ ratio > 1.20 (exclusion VIOLATION → community-of-minds support)",
+    "F-N24-2: whole-body Φ / max(per-arm Φ) > 1.50 AND whole > sum (exclusion CONFIRMATION → standard IIT 4.0)",
+    "F-N24-3: argmax_grain(Φ) shifts > 70% probability between solo-arm vs bilateral coordination tasks",
+    "F-N24-4: sucker-cluster Φ / ANC Φ > 0.30 during chemo-stimulus (independent sucker Φ-island)",
+    "F-N24-5: dΦ/dt during anesthesia onset — whole-body disintegrates ≥ 2x faster than mean per-arm (PAPER HYPOTHESIS only — ethical activation requires SZN/MBL collaboration)"
+  ],
+  "honest_c3": {
+    "total_count": 8,
+    "verified_facts_count": 6,
+    "estimated_or_paper_only_count": 8,
+    "verified_facts": [
+      "octopus total ~500M neurons, ~2/3 in arms (Hochner 2012, Shigeno 2018)",
+      "EU Directive 2010/63/EU cephalopod protection effective 2013-01-01",
+      "UK 2022 Sentience Act includes cephalopods",
+      "Carls-Diamante community-of-minds hypothesis (2017, 2022)",
+      "ASSEMBLE Plus EU TA program exists for SZN access",
+      "MBL Whitman Center Fellowship is open call (NSF/NIH funded)"
+    ],
+    "estimated_or_paper_only": [
+      "surface EMG → IIT Φ correlation has no prior PASS proof",
+      "F-N24-5 anesthesia gradient is paper hypothesis only (ethical risk Moderate+)",
+      "Korean lab partnership 2-4 month lead time estimate",
+      "$700-$1K HW cost — anima EEG track reuse assumption",
+      "F1 verdict strength contribution by N-24: not yet quantified",
+      "per-arm Φ SUM vs IIT 4.0 grain-Φ_max comparison is anima's own definition (non-canonical — possible IIT-purist criticism)",
+      "G0 axis drop FINAL_PASS redefinition is pre-registered but not yet community-validated",
+      "Korean IACUC cephalopod ethical risk: utilizing absence-of-explicit-protection is morally fraught (own#13 conflict)"
+    ]
+  },
+  "verdict": "PURSUE",
+  "verdict_score": 23,
+  "verdict_score_max": 30,
+  "verdict_thresholds": {"PURSUE_min": 18, "DEFER_range": [6, 17], "SKIP_max": 5},
+  "scoring_dimensions": {
+    "cost": {"score": 4, "max": 5},
+    "lead_time": {"score": 3, "max": 5},
+    "scientific_value": {"score": 5, "max": 5},
+    "anima_setup_compatibility": {"score": 4, "max": 5},
+    "access_feasibility": {"score": 4, "max": 5},
+    "ethical_soundness": {"score": 3, "max": 5}
+  },
+  "no_outreach_compliance_this_cycle": {
+    "lab_contact_attempted": false,
+    "permit_submission_attempted": false,
+    "external_email_sent": false,
+    "compliance_status": "FULL_COMPLIANCE_with_no_contact_no_permit_submission_constraint"
+  },
+  "next_cycle_actions_d0_d28": [
+    "D+7: review 5-10 Korean cephalopod behavior publications (KIOST/Pukyong/Jeju)",
+    "D+14: surface-EMG 64-ch HEXA pipeline dryrun (in-silico simulated octopus EMG)",
+    "D+21: paradigm-v11 6-axis octopus-adapted spec raw#71 pre-registration",
+    "D+28: Korean Animal Protection Act + EU 2010/63 + NIH PHS cephalopod section study, voluntary protocol draft"
+  ],
+  "outreach_cycle_d30_d90_separate_authorization_required": [
+    "Pukyong U 해양생물학과 1-2 professor cold email (Korean)",
+    "KIOST 해양생물자원센터 cephalopod team contact",
+    "if collab agreed: surface-EMG protocol on O. minor (낙지) — non-invasive, free-behaving"
+  ],
+  "deliverables": [
+    "docs/n_24_octopus_per_arm_phi_feasibility_2026_05_01.md",
+    "state/n_24_octopus_per_arm_phi_feasibility_2026_05_01/spec_manifest.json",
+    "state/n_24_octopus_per_arm_phi_feasibility_2026_05_01/falsifier_F_N24_preregister.json",
+    "state/n_24_octopus_per_arm_phi_feasibility_2026_05_01/verdict.json"
+  ],
+  "race_isolation": {
+    "writes_only": [
+      "docs/n_24_octopus_per_arm_phi_feasibility_2026_05_01.md",
+      "state/n_24_octopus_per_arm_phi_feasibility_2026_05_01/*.json"
+    ]
+  }
+}

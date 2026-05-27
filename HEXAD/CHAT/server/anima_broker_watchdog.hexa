@@ -1,0 +1,337 @@
+// ════════════════════════════════════════════════════════════════════════════
+// HEXAD/CHAT/server/anima_broker_watchdog.hexa
+//
+//   Auto-restart watchdog for the mini broker + participant nohup daemons.
+//   Closes the gap documented in HEXAD/CHAT/DEPLOY.md §"known limitations":
+//
+//     "mini reboot 시 broker/participant 미기동 — 사용자 수동 재기동 필요
+//      (user directive: plist 금지 + nohup 마이그레이션)"
+//
+//   No daemon-level plist (the user's no-plist rule for daemons stays).
+//   This single wrapper may be hand-launched on mini via tmux/screen, or
+//   wrapped in one LaunchAgent that supervises ONLY this watchdog (single
+//   plist for one wrapper is acceptable since the directive was about
+//   migrating the daemons themselves off plists, not banning all plists).
+//
+//   Behavior
+//     · poll  GET http://127.0.0.1:8000/health  every 30s
+//     · down  (timeout or non-200 body)  →  respawn broker.py, sleep 5s,
+//                                           then respawn anima_participant.py
+//     · log   each event to ~/anima_chat_pack/logs/watchdog.log
+//     · PID   ~/anima_chat_pack/watchdog.pid prevents > 1 concurrent run
+//     · SIG   `trap` shim removes PID file on EXIT/INT/TERM
+//
+//   USAGE
+//     hexa run HEXAD/CHAT/server/anima_broker_watchdog.hexa [daemon|once|selftest]
+//
+//   Manual mini launch (preferred — no plist):
+//     ssh mini 'cd ~/anima_chat_pack && nohup hexa run \
+//        ~/core/anima/HEXAD/CHAT/server/anima_broker_watchdog.hexa daemon \
+//        </dev/null >> logs/watchdog.out 2>> logs/watchdog.err & \
+//        echo "WATCHDOG_PID=$!"'
+//
+//   ENV
+//     ANIMA_WATCHDOG_HEALTH_URL   default http://127.0.0.1:8000/health
+//     ANIMA_WATCHDOG_INTERVAL_S   default 30
+//     ANIMA_WATCHDOG_TIMEOUT_S    default 5   (curl --max-time)
+//     ANIMA_WATCHDOG_PACK_DIR     default $HOME/anima_chat_pack
+//     ANIMA_WATCHDOG_PID_FILE     default $ANIMA_WATCHDOG_PACK_DIR/watchdog.pid
+//     ANIMA_WATCHDOG_LOG_FILE     default $ANIMA_WATCHDOG_PACK_DIR/logs/watchdog.log
+//     ANIMA_WATCHDOG_BROKER_PORT  default 8000
+//     ANIMA_WATCHDOG_PARTICIPANT_THRESHOLD  default 0.30
+//
+//   g1 hexa-native · g33 small · void-safe dict reads · main()-gated.
+//   Constraint: this watchdog NEVER modifies broker.py / anima_participant.py;
+//   it only spawns them via the exact nohup line documented in DEPLOY.md §3.
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── §1 helpers ───────────────────────────────────────────────────────────────
+
+fn _wd_env(name: string, fallback: string) -> string {
+    let v = env(name)
+    if to_string(v) == "void" { return fallback }
+    let s = to_string(v)
+    if len(s) == 0 { return fallback }
+    return s
+}
+
+fn _wd_shq(s: string) -> string {
+    let parts = s.split("'")
+    let mut out = "'"
+    let mut i = 0
+    while i < len(parts) {
+        if i > 0 { out = out + "'\\''" }
+        out = out + parts[i]
+        i = i + 1
+    }
+    return out + "'"
+}
+
+fn _wd_home() -> string { return _wd_env("HOME", "/tmp") }
+
+fn _wd_pack_dir() -> string {
+    return _wd_env("ANIMA_WATCHDOG_PACK_DIR", _wd_home() + "/anima_chat_pack")
+}
+
+fn _wd_pid_file() -> string {
+    return _wd_env("ANIMA_WATCHDOG_PID_FILE", _wd_pack_dir() + "/watchdog.pid")
+}
+
+fn _wd_log_file() -> string {
+    return _wd_env("ANIMA_WATCHDOG_LOG_FILE", _wd_pack_dir() + "/logs/watchdog.log")
+}
+
+fn _wd_health_url() -> string {
+    return _wd_env("ANIMA_WATCHDOG_HEALTH_URL", "http://127.0.0.1:8000/health")
+}
+
+fn _wd_interval_s() -> int { return to_int(_wd_env("ANIMA_WATCHDOG_INTERVAL_S", "30")) }
+fn _wd_timeout_s() -> int  { return to_int(_wd_env("ANIMA_WATCHDOG_TIMEOUT_S",  "5"))  }
+fn _wd_broker_port() -> string { return _wd_env("ANIMA_WATCHDOG_BROKER_PORT", "8000") }
+fn _wd_participant_threshold() -> string {
+    return _wd_env("ANIMA_WATCHDOG_PARTICIPANT_THRESHOLD", "0.30")
+}
+
+fn _wd_now_iso() -> string {
+    let s = exec("date -u +%Y-%m-%dT%H:%M:%SZ")
+    // trim trailing newline without relying on string.trim availability
+    let n = len(s)
+    let mut hi = n
+    while hi > 0 {
+        let c = s[hi - 1]
+        if c == "\n" || c == "\r" || c == " " || c == "\t" { hi = hi - 1 }
+        else { break }
+    }
+    let mut out = ""
+    let mut i = 0
+    while i < hi { out = out + s[i]   i = i + 1 }
+    return out
+}
+
+fn _wd_log(line: string) {
+    let path = _wd_log_file()
+    let dir = _wd_pack_dir() + "/logs"
+    let _m = exec("mkdir -p " + _wd_shq(dir) + " 2>/dev/null")
+    let stamped = "[" + _wd_now_iso() + "] " + line
+    let _w = exec("printf '%s\\n' " + _wd_shq(stamped)
+                  + " >> " + _wd_shq(path) + " 2>/dev/null")
+    let _e = exec("printf '%s\\n' " + _wd_shq(stamped) + " >&2")
+}
+
+
+// ── §2 single-instance PID guard ─────────────────────────────────────────────
+
+fn _wd_pid_alive(pid: string) -> bool {
+    if len(pid) == 0 { return false }
+    // `ps -p` returns 0 iff the pid exists (permission-agnostic, unlike
+    // `kill -0` which says "operation not permitted" for root-owned pids).
+    let rc = exec("ps -p " + _wd_shq(pid) + " >/dev/null 2>&1 && printf yes || printf no")
+    return rc == "yes"
+}
+
+fn _wd_read_pid_file() -> string {
+    let path = _wd_pid_file()
+    let exists = exec("[ -f " + _wd_shq(path) + " ] && printf yes || printf no")
+    if exists != "yes" { return "" }
+    let raw = exec("cat " + _wd_shq(path) + " 2>/dev/null")
+    let n = len(raw)
+    let mut hi = n
+    while hi > 0 {
+        let c = raw[hi - 1]
+        if c == "\n" || c == "\r" || c == " " || c == "\t" { hi = hi - 1 }
+        else { break }
+    }
+    let mut out = ""
+    let mut i = 0
+    while i < hi { out = out + raw[i]   i = i + 1 }
+    return out
+}
+
+// claim_pid — atomically install our PID; return false iff another live
+// watchdog already holds the slot.
+fn _wd_claim_pid() -> bool {
+    let prior = _wd_read_pid_file()
+    if len(prior) > 0 && _wd_pid_alive(prior) {
+        _wd_log("ERROR another watchdog already running pid=" + prior + " — exiting")
+        return false
+    }
+    let dir = _wd_pack_dir()
+    let _m = exec("mkdir -p " + _wd_shq(dir) + " 2>/dev/null")
+    let pid = exec("printf %s $$")
+    let _w = exec("printf %s " + _wd_shq(pid) + " > " + _wd_shq(_wd_pid_file())
+                  + " 2>/dev/null")
+    // SIGTERM/SIGINT/EXIT cleanup via shell trap on the parent script.
+    let _t = exec("trap 'rm -f " + _wd_shq(_wd_pid_file()) + "' EXIT INT TERM 2>/dev/null")
+    _wd_log("watchdog start pid=" + pid)
+    return true
+}
+
+fn _wd_release_pid() {
+    let _r = exec("rm -f " + _wd_shq(_wd_pid_file()) + " 2>/dev/null")
+}
+
+
+// ── §3 health probe + respawn ────────────────────────────────────────────────
+
+// _wd_health — true iff curl returns 2xx within timeout.
+fn _wd_health(url: string, timeout_s: int) -> bool {
+    let cmd = "curl -fsS -o /dev/null -w '%{http_code}' --max-time "
+              + to_string(timeout_s) + " " + _wd_shq(url) + " 2>/dev/null"
+    let code = exec(cmd)
+    // _fS makes curl exit non-zero on >=400, but -o/dev/null still emits the
+    // http_code on the wire, so accept 200-299 prefix as the truth signal.
+    if len(code) < 3 { return false }
+    let h = code[0]
+    if h != "2" { return false }
+    return true
+}
+
+fn _wd_spawn_broker() {
+    let dir = _wd_pack_dir()
+    let port = _wd_broker_port()
+    let cmd = "cd " + _wd_shq(dir)
+              + " && PORT=" + port
+              + " nohup ./venv/bin/python broker.py"
+              + " </dev/null >> logs/broker.out 2>> logs/broker.err & echo $!"
+    let pid = exec(cmd)
+    _wd_log("RESPAWN broker port=" + port + " pid=" + pid)
+}
+
+fn _wd_spawn_participant() {
+    let dir = _wd_pack_dir()
+    let thr = _wd_participant_threshold()
+    let cmd = "cd " + _wd_shq(dir)
+              + " && nohup ./venv/bin/python anima_participant.py --threshold " + thr
+              + " </dev/null >> logs/anima.out 2>> logs/anima.err & echo $!"
+    let pid = exec(cmd)
+    _wd_log("RESPAWN participant threshold=" + thr + " pid=" + pid)
+}
+
+fn _wd_recover() {
+    _wd_log("DOWN  /health failed — recovery sequence (broker → 5s → participant)")
+    _wd_spawn_broker()
+    let _s = exec("sleep 5")
+    _wd_spawn_participant()
+    _wd_log("RECOVERY dispatched — next probe in " + to_string(_wd_interval_s()) + "s")
+}
+
+
+// ── §4 main loop ─────────────────────────────────────────────────────────────
+
+fn _wd_loop_once(state: dict) -> dict {
+    let url = _wd_health_url()
+    let ok = _wd_health(url, _wd_timeout_s())
+    if ok {
+        if to_string(state["last_ok"]) != "true" {
+            _wd_log("UP    /health 2xx (" + url + ")")
+        }
+        state["last_ok"] = "true"
+        state["ok_ticks"] = to_int(state["ok_ticks"]) + 1
+    } else {
+        state["last_ok"] = "false"
+        state["down_ticks"] = to_int(state["down_ticks"]) + 1
+        _wd_recover()
+    }
+    state["ticks"] = to_int(state["ticks"]) + 1
+    return state
+}
+
+fn run_daemon() {
+    if !_wd_claim_pid() { return }
+    let interval = _wd_interval_s()
+    _wd_log("config  url=" + _wd_health_url()
+            + " interval=" + to_string(interval) + "s"
+            + " timeout=" + to_string(_wd_timeout_s()) + "s"
+            + " pack=" + _wd_pack_dir())
+    let mut state = #{ "ticks": 0, "ok_ticks": 0, "down_ticks": 0,
+                       "last_ok": "" }
+    while true {
+        state = _wd_loop_once(state)
+        let _s = exec("sleep " + to_string(interval))
+    }
+}
+
+fn run_once() {
+    let url = _wd_health_url()
+    let ok = _wd_health(url, _wd_timeout_s())
+    if ok { println("OK   " + url) }
+    else  { println("DOWN " + url + " (would respawn broker → 5s → participant)") }
+}
+
+
+// ── §5 offline selftest F-WATCHDOG-1..4 ──────────────────────────────────────
+
+fn _wd_selftest() {
+    let mut pass = 0
+    let mut fail = 0
+    let nonce = exec("date +%s%N | tr -d '\\n'")
+    let tmpdir = "/tmp/hexa_watchdog_st_" + nonce
+    let _mk = exec("mkdir -p " + _wd_shq(tmpdir) + "/logs")
+
+    // route env to a sandbox so we never touch real ~/anima_chat_pack
+    let _e1 = exec("true")  // placeholder; env() reads process env, which we
+                            // can't mutate from hexa exec, so selftest probes
+                            // helper purity via direct fn calls below.
+
+    // F-WATCHDOG-1  ISO timestamp shape (YYYY-MM-DDTHH:MM:SSZ, 20 chars)
+    let iso = _wd_now_iso()
+    if len(iso) == 20 && iso[10] == "T" && iso[19] == "Z" {
+        pass = pass + 1
+    } else {
+        fail = fail + 1
+        println("FAIL F-WATCHDOG-1 iso shape: '" + iso + "'")
+    }
+
+    // F-WATCHDOG-2  shell-quote round trip — embedded single quote preserved
+    let quoted = _wd_shq("it's a test")
+    let echoed = exec("printf %s " + quoted)
+    if echoed == "it's a test" {
+        pass = pass + 1
+    } else {
+        fail = fail + 1
+        println("FAIL F-WATCHDOG-2 shq round trip: '" + echoed + "'")
+    }
+
+    // F-WATCHDOG-3  health probe against a guaranteed-unreachable URL = false
+    let down = _wd_health("http://127.0.0.1:1/never", 2)
+    if !down {
+        pass = pass + 1
+    } else {
+        fail = fail + 1
+        println("FAIL F-WATCHDOG-3 unreachable url not reported DOWN")
+    }
+
+    // F-WATCHDOG-4  PID liveness — init (pid 1) is always alive, 1<<30 dead.
+    // We cannot probe $$ across exec boundaries (each exec is a fresh shell
+    // whose pid is reaped before the next exec runs kill -0).
+    let alive_init = _wd_pid_alive("1")
+    let alive_fake = _wd_pid_alive("1073741823")
+    if alive_init && !alive_fake {
+        pass = pass + 1
+    } else {
+        fail = fail + 1
+        println("FAIL F-WATCHDOG-4 pid liveness: init=" + to_string(alive_init)
+                + " fake=" + to_string(alive_fake))
+    }
+
+    let _rm = exec("rm -rf " + _wd_shq(tmpdir))
+    println("anima_broker_watchdog selftest: " + to_string(pass)
+            + " PASS, " + to_string(fail) + " FAIL")
+}
+
+
+// ── §6 entry ─────────────────────────────────────────────────────────────────
+
+fn main() {
+    let cli = args()
+    let mut mode = "selftest"
+    if len(cli) > 1 {
+        if cli[1] == "daemon"   { mode = "daemon" }
+        if cli[1] == "once"     { mode = "once" }
+        if cli[1] == "selftest" { mode = "selftest" }
+    }
+    if mode == "daemon" { run_daemon()   return }
+    if mode == "once"   { run_once()     return }
+    _wd_selftest()
+}

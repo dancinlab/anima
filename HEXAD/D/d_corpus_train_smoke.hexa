@@ -1,0 +1,134 @@
+// HEXAD/D/d_corpus_train_smoke.hexa — PLAN.md §7 #1 falsifier F-D-CORPUS.
+//
+//   §7 #1 선결 (2/3) — d_train5 (FULL n_layer ConsciousDecoderV2-equiv
+//   트레이너) 의 입력을 synthetic separable byte-toy → **실 corpus** 로 wire.
+//   corpus_loader_lib (실 corpus byte tokens) → d5_* (forward/ce/grad).
+//
+//   F-D-CORPUS (5 sub-checks):
+//     DC-1 BUILD        — native binary builds + 양 lib import OK.
+//     DC-2 DATASET      — d5_corpus_dataset → IDS/YS: nsamp>0, IDS[s] len T,
+//                         YS[s] ∈ [0,256) (실 corpus byte 윈도우).
+//     DC-3 FORWARD      — d5_forward(corpus sample) logits len == V=256,
+//                         all-finite (nan/inf 0).
+//     DC-4 CE-SHANNON   — d5_ce(corpus sample) ≥ 0 (§8 math anchor: CE =
+//                         −ln p_t ≥ 0, Shannon information floor — closed).
+//     DC-5 GRAD-DESCENT — 1 exact-gradient SGD step (B-D-4 closed Jacobian)
+//                         on a real corpus sample STRICTLY reduces its CE
+//                         ⟹ d_train5 는 실 corpus 를 학습 가능 (trainable).
+//
+//   §8 / g_blue_closed_mandate: corpus↔d_train5 연결고리 — CE Shannon-floor
+//   (DC-4, −ln p ≥ 0 closed) + exact-gradient descent (DC-5, gradient =
+//   softmax−onehot = B-D-4 sympy closed-form 🔵). structural 아님.
+//
+//   HONEST CARVE-OUT (g3): smoke-scale (d=8·2L·T=8, V=256 실 byte vocab,
+//   4 corpus 윈도우). 실-규모 d=768·12L GPU fire = 선결 (3/3) — flatten-
+//   bootstrap + vast.ai 자율 dispatch (별개). 본 파일은 WIRE 가 동작함을
+//   증명 (d_train5 가 실 corpus token 을 forward/grad/descent).
+// ════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/D/corpus_loader_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/D/d_train5_lib.hexa"
+
+// 실 corpus → d5 dataset shape [IDS, YS] (d5_make_dataset 등가, 실 corpus).
+//   IDS[s] = T-token 윈도우, YS[s] = 다음 토큰 (next-token target).
+fn d5_corpus_dataset(path: string, t_len: int, nsamp: int, stride: int) {
+    let toks = corpus_load_bytes(path)
+    let n = len(toks)
+    let mut IDS = []
+    let mut YS = []
+    let mut s = 0
+    while s < nsamp {
+        let off = s * stride
+        if off + t_len < n {
+            let mut ids = []
+            let mut p = 0
+            while p < t_len {
+                ids.push(toks[off + p])
+                p = p + 1
+            }
+            IDS.push(ids)
+            YS.push(toks[off + t_len])
+        }
+        s = s + 1
+    }
+    return [IDS, YS]
+}
+
+// rebuild M with a replaced tok_emb (no-closure SGD helper).
+fn _with_tok_emb(M, new_te) {
+    return #{ "tok_emb": new_te, "blocks": M["blocks"], "gF": M["gF"] }
+}
+
+fn _selftest() {
+    let path = "/Users/ghost/core/anima/training/corpus_consciousness_v1.jsonl"
+    let d = 8
+    let nh = 2
+    let nkv = 1
+    let h = 16
+    let V = 256
+    let t_len = 8
+    let n_layer = 2
+    let hd = d / nh
+
+    // ── DC-1 BUILD ──
+    let build_ok = corpus_n_windows([1, 2, 3], 1) == 2
+    println("  F-D-CORPUS-1 BUILD           : " + to_string(build_ok))
+
+    // ── DC-2 DATASET (실 corpus byte 윈도우) ──
+    let ds = d5_corpus_dataset(path, t_len, 4, 64)
+    let IDS = ds[0]
+    let YS = ds[1]
+    let nsamp = len(YS)
+    let mut dataset_ok = nsamp > 0
+    if dataset_ok { dataset_ok = len(IDS[0]) == t_len }
+    if dataset_ok { dataset_ok = YS[0] >= 0 && YS[0] < 256 }
+    println("  F-D-CORPUS-2 DATASET         : " + to_string(dataset_ok) + "  (nsamp=" + to_string(nsamp) + " T=" + to_string(t_len) + " y0=" + to_string(YS[0]) + ")")
+
+    // from-scratch RANDOM seed-fixed (g_clm_from_scratch, base_ckpt=NONE)
+    let rt = d5_rope_tables(t_len, hd)
+    let cos = rt[0]
+    let sin = rt[1]
+    let mut M = d5_init(42, d, nh, nkv, h, V, n_layer)
+
+    // ── DC-3 FORWARD (logits len V, all-finite) ──
+    let f = d5_forward(IDS[0], M, cos, sin, t_len, d, nh, nkv, h, V, n_layer)
+    let logits = f["logits"]
+    let mut fwd_ok = len(logits) == V
+    let mut k = 0
+    while k < len(logits) {
+        let lv = logits[k]
+        if lv == lv { } else { fwd_ok = false }       // nan → lv != lv
+        if lv > 1.0e30 || lv < -1.0e30 { fwd_ok = false }
+        k = k + 1
+    }
+    println("  F-D-CORPUS-3 FORWARD V=256   : " + to_string(fwd_ok) + "  (logits len=" + to_string(len(logits)) + ")")
+
+    // ── DC-4 CE-SHANNON (§8: CE = −ln p_t ≥ 0, information floor) ──
+    let ce0 = d5_ce(IDS[0], M, YS[0], cos, sin, t_len, d, nh, nkv, h, V, n_layer)
+    let ce_ok = ce0 >= 0.0 && ce0 == ce0 && ce0 < 1.0e30
+    println("  F-D-CORPUS-4 CE-SHANNON ≥0   : " + to_string(ce_ok) + "  (CE=" + to_string(ce0) + ")")
+
+    // ── DC-5 GRAD-DESCENT (1 exact-grad SGD step ↓ CE on real corpus) ──
+    let g = d5_grad(IDS[0], M, YS[0], cos, sin, t_len, d, nh, nkv, h, V, n_layer)
+    let dte = g["dtok_emb"]
+    let te = M["tok_emb"]
+    let mut nte = []
+    let mut i = 0
+    while i < len(te) {
+        nte.push(te[i] - 0.5 * dte[i])
+        i = i + 1
+    }
+    let M2 = _with_tok_emb(M, nte)
+    let ce1 = d5_ce(IDS[0], M2, YS[0], cos, sin, t_len, d, nh, nkv, h, V, n_layer)
+    let descent_ok = ce1 < ce0
+    println("  F-D-CORPUS-5 GRAD-DESCENT    : " + to_string(descent_ok) + "  (CE " + to_string(ce0) + " → " + to_string(ce1) + ")")
+
+    let all_ok = build_ok && dataset_ok && fwd_ok && ce_ok && descent_ok
+    println("  F-D-CORPUS AGGREGATE 5/5     : " + to_string(all_ok))
+    println("=== HEXAD/D d_corpus_train_smoke selftest: " + to_string(all_ok) + " ===")
+    println("    d_train5 ↔ 실 corpus wire (Python 의존 0); §8 CE Shannon-floor + B-D-4 exact-grad descent")
+}
+
+fn main() {
+    println("HEXAD/D — §7 #1 d_train5 ↔ real-corpus wire falsifier (F-D-CORPUS)")
+    _selftest()
+}

@@ -1,0 +1,76 @@
+{
+  "schema": "anima/akida_d0_d1_plan_freeze/axes_critical_path/1",
+  "akida_dependent_axes_count": 6,
+  "single_point_of_failure": "N-2",
+  "critical_path_length_days": 5,
+  "total_budget_usd": "0-4",
+  "axes": [
+    {
+      "id": "N-2",
+      "title": "EEG -> AKIDA spike pipeline (foundation)",
+      "d_plus": 1,
+      "cost_usd": 0,
+      "dependency": "hardware only (AKIDA + RPi5)",
+      "spec_doc": "docs/n_substrate_n2_eeg_akida_spike_pipeline_spec_2026_05_01.md",
+      "falsifier": "F-A1 (5x latency, N-2 native) + F-AK-3 (spike rate < 1/s)",
+      "is_prerequisite_for": ["N-3", "N-4", "N-5", "N-7", "N-8"]
+    },
+    {
+      "id": "N-3",
+      "title": "CLM x AKIDA Phi (last-layer projection)",
+      "d_plus": 2,
+      "cost_usd_min": 0,
+      "cost_usd_max": 2,
+      "dependency": "N-2 + CLM cached phi-star",
+      "spec_doc": "docs/n_substrate_n3_clm_akida_phi_spec_2026_05_01.md",
+      "falsifier": "T-A surrogate Pearson r >= 0.85 between Phi_clm and Phi_akida",
+      "method": "JL projection 768->16, quantize uint8 4-bit, NHWC reshape (1,1,16,16)"
+    },
+    {
+      "id": "N-4",
+      "title": "3-axis Landauer (CLM x EEG x AKIDA energy)",
+      "d_plus": 3,
+      "cost_usd": 0,
+      "dependency": "N-2 + EEG + CLM",
+      "spec_doc": "future N-4 prep cycle",
+      "falsifier": "AKIDA pJ/spike <= 1000x biological Landauer",
+      "method": "AKIDA datasheet pJ/spike + EEG biology (Drubach 2000 ~25 fJ/spike) + CLM GPU thermal wattmeter",
+      "linked_falsifier": "F-AK-5"
+    },
+    {
+      "id": "N-5",
+      "title": "3-axis GWT broadcast",
+      "d_plus": 4,
+      "cost_usd": 0,
+      "dependency": "N-2 + EEG + CLM",
+      "spec_doc": "future N-5 prep cycle",
+      "falsifier": "cross-correlation matrix non-trivial at lag 0 across CLM L_IX / EEG alpha Kuramoto / AKIDA last-layer"
+    },
+    {
+      "id": "N-7",
+      "title": "AKIDA x QRNG spike noise floor",
+      "d_plus": 3,
+      "cost_usd": 0,
+      "dependency": "N-2 + ANU QRNG public API",
+      "spec_doc": "docs/n_substrate_n7_akida_qrng_spike_spec_2026_05_01.md",
+      "falsifier": "spike-noise floor distinguishable from quantum baseline (KS p < 0.01)",
+      "method": "1000 zero-input forward calls vs 1000 ANU QRNG-seeded uint8 input"
+    },
+    {
+      "id": "N-8",
+      "title": "AKIDA x SIM-universe limit saturation",
+      "d_plus": 5,
+      "cost_usd_min": 0,
+      "cost_usd_max": 1,
+      "dependency": "N-2 + nexus SIM bridge",
+      "spec_doc": "docs/n_substrate_n8_akida_sim_limit_integration_2026_05_01.md",
+      "falsifier": "SIM coherence varies with AKIDA load (signed corr at 1500 fps saturation)"
+    }
+  ],
+  "cascade_observations": [
+    "N-2 is the single point of failure: PASS unblocks 5 downstream axes; FAIL collapses cascade",
+    "D+3 has parallel completions (N-4 + N-7) -- both depend only on N-2",
+    "Total critical path: D+1 (N-2) -> D+5 (N-8) = 5 days from arrival",
+    "Total budget $0-4 (effectively zero); blocker is hardware arrival ETA, not capex"
+  ]
+}

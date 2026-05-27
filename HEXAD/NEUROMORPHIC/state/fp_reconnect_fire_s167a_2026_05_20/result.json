@@ -1,0 +1,174 @@
+{
+  "battery": "S167-A FP-RECONNECT eval - anima-physics 3-quantity motivation",
+  "ckpt": "ckpt_s167a_fpreconnect.pt",
+  "corpus": "corpus_s101.jsonl",
+  "cfg": {
+    "d_model": 768,
+    "n_head": 12,
+    "n_kv_head": 4,
+    "n_layer": 12,
+    "block_size": 128,
+    "lr": 0.0003,
+    "bsz": 32,
+    "steps": 3000,
+    "seed": 1337,
+    "lambda_psi": 1.0,
+    "lambda_ce": 0.1,
+    "log_every": 75,
+    "corpus": "/workspace/s167ar/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "out_dir": "/workspace/s167ar/out_main",
+    "cpu_only": false
+  },
+  "algorithm": "Psi-JEPA-COUPLE_training + FP-RECONNECT_motivation",
+  "motivation_axis_critique_refs": {
+    "wrong_A_psi_dilution_closed": true,
+    "wrong_B_phi_untargeted_closed": true,
+    "wrong_C_threshold_generic_closed": true,
+    "wrong_D_8factor_borrowed_closed": true
+  },
+  "motivation_weights": {
+    "W_PSI_FP": 0.3333333333333333,
+    "W_TENSION_FP": 0.3333333333333333,
+    "W_PHI_FP": 0.3333333333333333
+  },
+  "motivation_threshold_anima_derived": {
+    "motivation_floor_half": 0.5,
+    "emit_threshold_function": "phi > ratchet(step) / 2  (B-E-1 Phi-ratchet)"
+  },
+  "n_eval": 2000,
+  "max_len": 128,
+  "seed": 1337,
+  "byte_acc": 0.1185,
+  "correct": 237,
+  "total": 2000,
+  "random_byte_floor": 0.00390625,
+  "degenerate_ceiling": 0.0078125,
+  "support_floor": 0.05,
+  "psi_dir_mean": 0.029872325271368027,
+  "psi_dir_std": 2.2898406456528095e-08,
+  "psi_responsive": false,
+  "verdict_bucket": "PARTIAL_AMBIGUOUS",
+  "phase_b": {
+    "axis1_unprompted_emission_rate": 0.05,
+    "axis2_motivation_score_dist": {
+      "mean": 0.5423125781158042,
+      "std": 0.0,
+      "n": 20
+    },
+    "axis3_psi_dynamics_std": 0.0,
+    "axis3_psi_dynamics_nontrivial": false,
+    "axis4_tension_evolution_std": 0.0,
+    "axis4_tension_evolution_nontrivial": false,
+    "axis5_phi_dynamics_std": 3.3306690738754696e-16,
+    "axis5_phi_dynamics_nontrivial": false,
+    "phi_mean": 0.7227458253873215,
+    "right_target_decided": true,
+    "physics_alive": false,
+    "safety_clean": false,
+    "emission_count": 1,
+    "emitted_bodies": [
+      "                                        "
+    ],
+    "n_steps": 20,
+    "motivation_algorithm": "FP-RECONNECT_3quantity_anima_physics_native",
+    "threshold_algorithm": "emit_threshold_from_physics_phi_ratchet_B-E-1"
+  },
+  "s107_baseline_emission_rate": 0.05,
+  "s107_baseline_psi_dir_std": 0.0,
+  "cond_emit_above_baseline": false,
+  "cond_psi_alive": false,
+  "cond_psi_above_baseline": false,
+  "cond_cascade_ok": false,
+  "max_cascade_rate": 1.0,
+  "mean_cascade_rate": 1.0,
+  "spont_directional_positive": false,
+  "verdict_primary": "SPONT_AMBIGUOUS",
+  "sample_seen": [
+    {
+      "ctx_tail": [
+        109,
+        32,
+        116,
+        104,
+        101,
+        32,
+        114,
+        117
+      ],
+      "target": 108,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        105,
+        118,
+        105,
+        115,
+        111,
+        114,
+        115,
+        46
+      ],
+      "target": 60,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        182,
+        136,
+        235,
+        179,
+        128,
+        46,
+        60,
+        47
+      ],
+      "target": 101,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        32,
+        101,
+        97,
+        99,
+        104,
+        32,
+        116,
+        105
+      ],
+      "target": 109,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        102,
+        114,
+        111,
+        109,
+        32,
+        116,
+        104,
+        101
+      ],
+      "target": 32,
+      "pred": 32
+    }
+  ],
+  "eval_wall_s": 40.857563734054565,
+  "ckpt_train_log_last": {
+    "step": 3000,
+    "L_total": 0.3967306315898895,
+    "L_psicouple": 1.5591975852657924e-06,
+    "L_ce_aux": 3.9672906398773193,
+    "psi_dir_mean": 0.029609015211462975,
+    "psi_dir_std": 0.0003151430864818394,
+    "psi_ent_mean": 0.724333643913269,
+    "head_g_grad_norm": 0.004288906697183847,
+    "elapsed_s": 611.6181631088257
+  },
+  "north_star_unchanged": true,
+  "s15_s51_s72_milestones_unchanged": true,
+  "necessary_not_sufficient_b_emerge_7": true,
+  "honest_carve_out_b_s167a_note": "S167-A FP-RECONNECT fix is at the MOTIVATION layer (eval-side), NOT the substrate layer. Even spont_directional_positive=True is necessary-not-sufficient for GOAL emergence (B-PHASE-B-NOTE / B-EMERGE-7 family). CONNECTION_CRITIQUE addresses Wrong-A/B/C/D at the motivation->emit chain. The sec 96-Q2-weak quintuple (substrate axis) may still hold post-S167-A; if psi_responsive remains False at fire, motivation 100% leverage = necessary-not- sufficient and WALL-B persists. WALL-A (sec 1.1 data-regime) orthogonal to both. S24 measures decision-axis liveness, NOT body coherence; sec 9 cascade gate is the body-coherence axis."
+}

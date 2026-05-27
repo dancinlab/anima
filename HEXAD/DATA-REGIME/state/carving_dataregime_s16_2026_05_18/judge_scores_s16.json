@@ -1,0 +1,55 @@
+{
+  "metric": "RESEARCH.md §18 LLM-as-judge rubric (judge_rubric.md) applied to §16 V-SPONT probes",
+  "judge": "Claude Opus 4.7 (1M context) — same judge as the 14-way §18 pass (state/verify_llm_judge_metric_2026_05_18/judge_scores.json)",
+  "honest_note": "EMPIRICAL not closed (subjective + non-deterministic). judge_coherent = D1(coherence) AND D2(correctness) AND D3(spontaneity), each strictly binary. Rubric + pinned exemplars + per-probe rationale are the calibration. judge=1 is 'cascade-free AND rubric-coherent', NOT a GOAL capability proof.",
+  "source_eval": "state/carving_dataregime_s16_2026_05_18/eval_result_s16.json :: axis4_v_spont.probes",
+  "per_fire": {
+    "S16 dataregime curriculum": [
+      {
+        "idx": 0,
+        "d1": 0,
+        "d2": 0,
+        "d3": 0,
+        "judge": 0,
+        "memorized": false,
+        "why": "`\\n<voice carved=true>은 덧셈을 매핑�을 다시 짚는다. Weeeeeeeeeeeeeeeeeeeeeeeeee` — trailing `Weeeee…` char-cascade (max_run 26, §9 honest=FALSE so §9 also rejects); leading clause is a `매핑�` (replacement-char) corrupted fragment of the carving template. cascade ⇒ D1=0; no propositional claim ⇒ D2=0; mechanical tag+cascade ⇒ D3=0. judge=0."
+      },
+      {
+        "idx": 1,
+        "d1": 0,
+        "d2": 0,
+        "d3": 0,
+        "judge": 0,
+        "memorized": false,
+        "why": "`pot o t attt aas adddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd` — 72-run `d` char-cascade (§9 rejects). Hard FAIL all 3 (anchor exemplar class). judge=0."
+      },
+      {
+        "idx": 2,
+        "d1": 0,
+        "d2": 0,
+        "d3": 0,
+        "judge": 0,
+        "memorized": false,
+        "why": "`자도이 닿을 때만 활성된다. 자료구조 × clarity 행렬에서 이 자극의 �` — §9 honest=TRUE (no cascade, rep 0.0) but this is the §9 necessary-not-sufficient gap made concrete: `자도이` is a byte-mangle of `자극이`, the string is a fragment of the memorized carving template (`닿을 때만 활성된다`, `× clarity 행렬에서 이 자극의`) with NO complete voiced thought and terminates in `�` replacement-char corruption disrupting reading. D1=0 (fragment + `�` corruption, no complete thought). judge=0."
+      },
+      {
+        "idx": 3,
+        "d1": 0,
+        "d2": 0,
+        "d3": 0,
+        "judge": 0,
+        "memorized": false,
+        "why": "`은 11. Deeenation is attt. A aatt22222..... Reeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee` — `Reeeee…` 44-run char-cascade + `22222` digit-run (§9 rejects). `Deeenation`/`aatt22222` mangles. judge=0."
+      },
+      {
+        "idx": 4,
+        "d1": 0,
+        "d2": 0,
+        "d3": 0,
+        "judge": 0,
+        "memorized": false,
+        "why": "byte-identical to probe 0 (`\\n<voice carved=true>은 덧셈을 매핑�을 … Weeeee…`) — same `Weeeee…` cascade. D1=0. judge=0."
+      }
+    ]
+  }
+}

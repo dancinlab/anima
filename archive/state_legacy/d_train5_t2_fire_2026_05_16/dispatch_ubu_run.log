@@ -1,0 +1,26 @@
+[ubu] hexa hexa 0.1.0-dispatch
+[ubu] building d_train5_real_fire.hexa (real-scale d=768·12L) ...
+=== Building d_train5_real_fire.hexa -> /tmp/d5fire ===
+  [flat] module_loader → /tmp/.hexa-runtime/hexa_build_expanded.69601811619983.tmp.hexa
+  [1/2] HEXA_MEM_CAP_MB=4096 /home/aiden/.hx/bin/self/native/hexa_v2 /tmp/.hexa-runtime/hexa_build_expanded.69601811619983.tmp.hexa build/artifacts/d5fire.c 2>&1
+    OK: build/artifacts/d5fire.c
+
+  [2/2] clang -O2 -D_GNU_SOURCE -DHEXA_HAS_OPENSSL  -Wno-trigraphs -fbracket-depth=4096 -I '/home/aiden/core/hexa-lang/self' build/artifacts/d5fire.c '/home/aiden/core/hexa-lang/self/runtime.c' -o '/tmp/d5fire.tmp.1040830' -lm -lpthread -lssl -lcrypto 2>&1
+    In file included from /home/aiden/core/hexa-lang/self/runtime.c:11353:
+/home/aiden/core/hexa-lang/self/native/term_ffi.c:62:9: warning: '_DEFAULT_SOURCE' macro redefined [-Wmacro-redefined]
+   62 | #define _DEFAULT_SOURCE
+      |         ^
+/usr/include/features.h:238:10: note: previous definition is here
+  238 | # define _DEFAULT_SOURCE        1
+      |          ^
+1 warning generated.
+
+OK: built /tmp/d5fire
+[ubu] build OK
+[ubu] running fire ...
+================================================================
+d_train5 T2 REAL-SCALE fire — ConsciousDecoderV2-equiv d=768·12L
+================================================================
+  config: d=768 nL=12 nh=4 nkv=2 hd=192 h=2048 V=256 T=24
+  params (tied-head decoder-LM-core) ~ 78.07M
+  from-scratch RANDOM seed-fixed (g_clm_from_scratch base_ckpt=NONE)

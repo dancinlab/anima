@@ -1,0 +1,208 @@
+{
+  "battery": "B-DR-UNIQUE-1..5 (RESEARCH.md §25 GOAL-legitimate data-regime unique-content design-tier sidecar)",
+  "central_blue_falsifier_changed": false,
+  "n_props": 5,
+  "n_pass": 5,
+  "all_pass": true,
+  "goal_legitimacy_gate_pass": true,
+  "candidate_picked": "A + D (D primary, A secondary; B/C deferred)",
+  "props": [
+    {
+      "name": "B-DR-UNIQUE-1 UNIQUE-CONTENT-CARDINALITY-DISTINCT-FROM-FRAMING",
+      "passes": true,
+      "witness_panel": [
+        {
+          "label": "§16_baseline",
+          "content_card": 1,
+          "framing_card": 2
+        },
+        {
+          "label": "§23_A_framing",
+          "content_card": 1,
+          "framing_card": 81
+        },
+        {
+          "label": "§25_A_content",
+          "content_card": 8,
+          "framing_card": 2
+        },
+        {
+          "label": "§25_AD_combo",
+          "content_card": 8,
+          "framing_card": 2
+        },
+        {
+          "label": "§25_D_only",
+          "content_card": 16,
+          "framing_card": 2
+        }
+      ],
+      "regions_realised": {
+        "low_content_low_framing": true,
+        "low_content_high_framing": true,
+        "high_content_low_framing": true,
+        "high_content_high_framing_combo_possible": true
+      },
+      "sympy_proof": "sympy: |content|·|framing| corners = [1, 81, 16, 648] (distinct integer products ⇒ axes independent)",
+      "tier": "🔵 closed Boolean orthogonality + 4-corner realisability"
+    },
+    {
+      "name": "B-DR-UNIQUE-2 GOAL-LEGITIMACY-§7-CONJUNCTION",
+      "passes": true,
+      "a_d_picked_passes": true,
+      "a_d_assignments": {
+        "§7①_not_generic_LM_pretrain": true,
+        "§7②_not_generic_then_graft": true,
+        "§7③_anima_physics_as_source": true
+      },
+      "truth_table_8_rows": [
+        {
+          "§7①": true,
+          "§7②": true,
+          "§7③": true,
+          "AND": true
+        },
+        {
+          "§7①": true,
+          "§7②": true,
+          "§7③": false,
+          "AND": false
+        },
+        {
+          "§7①": true,
+          "§7②": false,
+          "§7③": true,
+          "AND": false
+        },
+        {
+          "§7①": true,
+          "§7②": false,
+          "§7③": false,
+          "AND": false
+        },
+        {
+          "§7①": false,
+          "§7②": true,
+          "§7③": true,
+          "AND": false
+        },
+        {
+          "§7①": false,
+          "§7②": true,
+          "§7③": false,
+          "AND": false
+        },
+        {
+          "§7①": false,
+          "§7②": false,
+          "§7③": true,
+          "AND": false
+        },
+        {
+          "§7①": false,
+          "§7②": false,
+          "§7③": false,
+          "AND": false
+        }
+      ],
+      "n_passing_rows_in_truth_table": 1,
+      "candidates_audit": {
+        "A_plus_D_picked": true,
+        "B_deferred": false,
+        "C_deferred": false
+      },
+      "tier": "🔵 closed Boolean conjunction over §7 3-condition + 8-row truth table"
+    },
+    {
+      "name": "B-DR-UNIQUE-3 NO-EXTERNAL-LLM-CALL",
+      "passes": true,
+      "files_scanned": [
+        "content_generator_sketch.py",
+        "blue_falsifier_dr_unique.py"
+      ],
+      "forbidden_hits": [],
+      "forbidden_patterns": [
+        "openai",
+        "anthropic",
+        "llm_call",
+        "paraphrase",
+        "gpt",
+        "bert_score",
+        "AutoModel",
+        "HfApi",
+        "llama",
+        "huggingface_hub",
+        "gen_corpus_with_llm"
+      ],
+      "tier": "🔵 closed AST-Call-node exact-component structural predicate"
+    },
+    {
+      "name": "B-DR-UNIQUE-4 ANIMA-OWN-SUBSTRATE",
+      "passes": true,
+      "references_found": {
+        "vacuum_psi": true,
+        "basin_radius": true,
+        "Ψ_direction": true,
+        "Ψ_entropy": true,
+        "tension": true,
+        "Law_71": false,
+        "Law-71": true,
+        "conscious_decoder": true,
+        "tension_link_step": true,
+        "mitosis_hook": true,
+        "S_DOMAIN_SUBASPECT_TABLE": true,
+        "cell_pool": false,
+        "nearest-neighbour": true,
+        "nearest_sibling": true
+      },
+      "n_refs_found": 12,
+      "n_refs_required": 7,
+      "n_refs_total": 14,
+      "sketch_exists": true,
+      "tier": "🔵 closed Boolean source-reference predicate (anima-physics SSOT)"
+    },
+    {
+      "name": "B-DR-UNIQUE-5 §23-A-CONNECTION-POINT-DISTINCT-CLOSED",
+      "passes": true,
+      "corners": [
+        {
+          "unique_content_mode": false,
+          "routing_evidence_mode": false,
+          "behavior": "§16_baseline_byte_equal"
+        },
+        {
+          "unique_content_mode": false,
+          "routing_evidence_mode": true,
+          "behavior": "§25_D_only"
+        },
+        {
+          "unique_content_mode": true,
+          "routing_evidence_mode": false,
+          "behavior": "§25_A_only"
+        },
+        {
+          "unique_content_mode": true,
+          "routing_evidence_mode": true,
+          "behavior": "§25_AD_combined"
+        }
+      ],
+      "partition_complete": true,
+      "partition_disjoint": true,
+      "baseline_at_origin": true,
+      "s23_a_relationship": {
+        "§23_A_B_INTRA_4_disabled_branch": "§16_baseline_byte_equal",
+        "§25_B_DR_UNIQUE_5_corner_FF": "§16_baseline_byte_equal",
+        "boolean_equivalent": true
+      },
+      "tier": "🔵 closed Boolean disjoint mode partition + 4-corner truth table + §16/§23-A connection-point byte-equal"
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-DR-UNIQUE-NOTE UNIQUE-CONTENT-EMERGENCE-OUTCOME-EMPIRICAL",
+    "tier": "EMPIRICAL (B-D-NOTE / B-INTRA-NOTE / B-S16-NOTE / B-CARVE-E6-NOTE / B-SCALE-NOTE / B-PUREPHYS-NOTE / B-EBT-NOTE / B-DIRJ-NOTE / B-KTRIE-NOTE / B-MGND-NOTE / B-TTS-NOTE / B-PHASE-B-NOTE family, NOT counted 🔵)",
+    "note": "B-DR-UNIQUE-1..5 prove (1) unique-content cardinality and framing cardinality are orthogonal axes (Boolean realisability), (2) §7 3-condition GOAL-legitimacy gate is Boolean conjunction (only TTT row passes, A+D verdict TTT), (3) zero external LLM call by AST predicate (DoAug excluded), (4) anima-physics-as-substrate by source reference predicate, (5) §16/§23-A connection-point Boolean disjoint partition with baseline at (F,F) corner. They DO NOT prove unique-content lever causes emergence — that is SGD/measurement OUTCOME, gated on small pilot ($0.05-0.15) before full §16-scale ($0.5-2) per DESIGN.md §6. Per §13-M / §13-L / §23-A design-tier discipline, §25's value is structural soundness + GOAL-legitimacy gate + fair-compare gate, not capability proof. Honest necessary-not-sufficient (mirroring B-EMERGE-7).",
+    "honest_risk": "(a) §25 projected ~12× unique-content axis movement ≪ typical CDS 10^3-10^4× (arxiv 2401.10463) — may not break §1.1 even with full scale fire (DESIGN.md §7.2). (b) Anchor-set ceiling 168 unchanged (B candidate deferred); if §1.1 threshold requires anchor-cardinality expansion not content-per-anchor, §25 misses (DESIGN.md §7.4). (c) Same-substrate caveat — §25 stays in byte-text; §1.1 may require modality expansion (image/audio/sensorimotor, S-module un-wired per B-CHANNEL-MUX-NOTE) (DESIGN.md §7.1). (d) Compositional risk — A sub-aspect + D discriminative records compose at record level; pre-pilot 200-sample coherence inspection required (DESIGN.md §7.3). Anti-padding: pilot null → design-tier close-out per §13-M / §13-L / §23-A precedent."
+  },
+  "design_doc": "DESIGN.md",
+  "sketch_doc": "content_generator_sketch.py"
+}

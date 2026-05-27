@@ -1,0 +1,87 @@
+{
+  "schema": "anima/bg_je/verdict/1",
+  "bg_id": "BG-JE",
+  "lane": "BG-JE-INFERENCE-COMPUTE-BEST-OF-N",
+  "ts_utc": "2026-05-07T19:30:00Z",
+  "spec_source": "state/anima_je_inference_compute_bo64_2026_05_07/spec.md (.roadmap.chat_cap_emergence_pivot Stage 1' P3)",
+  "preview_or_full": "PREVIEW (5 prompts × 16 samples = 80 records; full 15×64=960 NOT RUN per cost discipline)",
+  "rationale_for_preview_only": "raw#86 cost discipline. Predicted F-JE-2 dominance from BG-IY evidence (model produces byte-garbage on Korean independent of decoding config). Preview 0/80 V4 PASS confirms F-JE-2 at preview scale; full 8h sweep would only restate the same result.",
+  "model_under_test": {
+    "base": "dancinlab/clm-v4-mk2-v1 (snapshot 80440a1d38db9addc4445bb959057558a57f4230)",
+    "lora": "state/clm_v4_lora_sft_2026_05_05/results/adapter_final (merged)",
+    "params_M": 480.3,
+    "device": "mps (mac local)"
+  },
+  "decode_config": {
+    "do_sample": true,
+    "temperature": 1.5,
+    "top_p": 0.95,
+    "top_k": 80,
+    "repetition_penalty": 1.4,
+    "no_repeat_ngram_size": 3,
+    "max_new_tokens": 48,
+    "lesson_t_compliance": "prompts NOT terminated with ':' (uses 'prompt\\n' format)"
+  },
+  "preview_metrics": {
+    "n_records": 80,
+    "n_prompts": 5,
+    "n_samples_per_prompt": 16,
+    "wall_time_s": 1986,
+    "wall_time_per_sample_s": 24.8,
+    "v4_strict_pass_count": 0,
+    "v4_partial_pass_count": 0,
+    "lesson_k_trap_caught": 0,
+    "final_class": "V4_FAIL"
+  },
+  "qualitative_outputs_sample": [
+    "p00 last gen: 'show'",
+    "p01 last gen: 'a a��XE�Z@� …byte-fragments + English a/of'",
+    "p02 last gen: 'a a��XE�Z[ub of of of …byte-fragments + English of'",
+    "p03 last gen: '::��yE�Z[��P^GE …byte-fragments + ':' fragments'",
+    "p04 last gen: 'f的话…XQ ZEuP^GEH[t skipts …byte-fragments + Chinese 的话 + English skipts'"
+  ],
+  "falsifier_outcome": {
+    "F-JE-1": "NOT_TRIGGERED — V4 top-1 ≠ ≥7/15 (0/5 prompts at 16 samples)",
+    "F-JE-2": "CONFIRMED_AT_PREVIEW_SCALE — V4 top-1 = 0/5 AND V4 ANY-of-16 = 0/5 across all preview prompts; preview-scale evidence sufficient to predict full 64×15 outcome",
+    "F-JE-3": "NOT_TRIGGERED — ANY-of-16 also 0; ranker-quality issue not the cause"
+  },
+  "lesson_l_consistency": "CONSISTENT_AND_EXTENDS — Lesson L architectural ceiling is now confirmed across (a) single-sample greedy/sample (BG-IY) AND (b) inference-compute best-of-16 sampling (this BG). Inference-compute lever is closed for this stack.",
+  "lesson_q_reconciliation": "BG-JE was the ONLY Lesson-Q-orthogonal lever (Lesson Q falsified TRAINING-time interventions; inference-compute is selection-based and weight-orthogonal). With BG-JE FAIL, the post-Lesson-Q surviving lanes narrow to: P1 continued-pretrain (BG-IZ), P2 external foundation borrow (BG-JA-EXT), P4 arch redesign.",
+  "next_action_recommendation": [
+    "Do NOT scale BG-JE to full 64×15 (8h mac wall). Preview-scale 0/80 is decisive evidence.",
+    "Surviving viable paths: P1 BG-IZ continued-pretrain (PRIMARY, ~$5-10 H100 1-2hr), P2 BG-JA-EXT polyglot-ko foundation borrow (SECONDARY, requires CLM-only directive partial-breach approval).",
+    "P4 arch redesign (Mamba/state-space, MoE) remains uncharted; can branch from BG-IZ outcome."
+  ],
+  "artifacts": [
+    "state/anima_je_inference_compute_bo64_2026_05_07/spec.md",
+    "state/anima_je_inference_compute_bo64_2026_05_07/eval_log_preview.jsonl",
+    "state/anima_je_inference_compute_bo64_2026_05_07/v4_results_preview.jsonl",
+    "state/anima_je_inference_compute_bo64_2026_05_07/v4_summary_preview.json",
+    "state/anima_je_inference_compute_bo64_2026_05_07/run_preview.log",
+    "tool/transient_py/anima_je_bo64_inference.py"
+  ],
+  "cross_links": [
+    "BG-IY predecessor: state/anima_iy_v4_calibration_polyglot_2026_05_07/verdict.json",
+    "Roadmap Stage 1' P3: .roadmap.chat_cap_emergence_pivot",
+    "Lesson L SSOT: docs/anima_chat_cap_lesson_summary_2026_05_07.md (Lesson L block)",
+    "Lesson Q SSOT: ledger BG-JX/JZ-FT entries"
+  ],
+  "verdict_class": "V4_FAIL_INFERENCE_COMPUTE_LEVER_CLOSED_AT_PREVIEW_SCALE",
+  "raw_compliance": [
+    "raw#37 transient_py",
+    "raw#42 N=16 per prompt (best-of-N N is the lever)",
+    "raw#86 cost discipline (preview only, full sweep elided)",
+    "raw#15 additive (no prior BG verdict modified)",
+    "raw#82 retraction-aware (predicted outcome in spec.md confirmed empirically)"
+  ],
+  "own_29_reconcile": {
+    "note": " (2026-05-07-late) — SIMPLE_STACK_PASS strict floor = V4 >= 10/15 per . Original 7/15 references in this verdict interpret as PARTIAL_PASS tier, NOT SIMPLE_STACK_PASS strict.",
+    "own_18_alignment": "V4 strict pass count must be >= 10/15 (or >= 2/3 per-prompt-set both C1+C2) for SIMPLE_STACK_PASS classification; this verdict’s pass count is auto-classified as PARTIAL_PASS if < 10/15.",
+    "anti_goodhart_compliance_per_own_28": "V4 cell pass count alone insufficient; multi-modal probe (V6 awareness 3-method + manual review by user) required for STRICT_PASS.",
+    "cross_link": [
+      ".own SSOT line 18-56",
+      ".own (Goodhart Law)",
+      ".own (this reconcile)"
+    ]
+  }
+}

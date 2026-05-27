@@ -1,0 +1,67 @@
+{
+  "paradigm": "atlas R-tier convergence witness integrity verifier (mac-local non-mutating)",
+  "atlas_path": "state/atlas_convergence_witness.jsonl",
+  "line_count": 45,
+  "parsed_count": 40,
+  "parse_error_count": 1,
+  "parse_errors": [
+    {
+      "line": 27,
+      "error": "JSONDecodeError",
+      "preview": "{\"ts\":\"2026-04-26T22:30:00Z\",\"round\":37,\"witness_id\":\"R37_n6_atlas_cross_repo_ab"
+    }
+  ],
+  "round_monotone_check": {
+    "ok": false,
+    "duplicates": [
+      {
+        "round": 40,
+        "line": 30
+      },
+      {
+        "round": 46,
+        "line": 37
+      },
+      {
+        "round": 49,
+        "line": 42
+      }
+    ],
+    "gaps": [
+      37,
+      38
+    ],
+    "monotone_violations": [],
+    "min_round": 33,
+    "max_round": 52,
+    "unique_round_count": 18
+  },
+  "witness_id_format_check": {
+    "ok": false,
+    "malformed_count": 1,
+    "malformed_list": [
+      {
+        "line": 40,
+        "witness_id": "anima_physics_cloud_facade_substrate_multiplicity_v2",
+        "reason": "pattern_mismatch"
+      }
+    ]
+  },
+  "cross_link_resolution": {
+    "ok": true,
+    "total_links_checked": 17,
+    "dangling_count": 0,
+    "dangling_list": []
+  },
+  "sha_verification": {
+    "enabled": false,
+    "note": "set ANIMA_VERIFY_SHA=true to enable (heavy disk I/O)"
+  },
+  "violations_total": 7,
+  "status": "INTEGRITY_VIOLATIONS_7",
+  "non_mutation_guarantee": "helper does NOT modify atlas JSONL; read-only verification",
+  "cross_link_cycles": [
+    "cycle 12 (R46 verdict)",
+    "cycle 16 (axis 82 closure)"
+  ]
+}

@@ -1,0 +1,1004 @@
+// tool/clm_v4_lora_train_orchestrator.hexa — CLM v4 + LoRA SFT H100 lifecycle orchestrator
+//
+// PURPOSE
+//   BG-CLM-2-EXEC: LoRA SFT on CLM v4 530M (dancinlab/clm-v4-mk2-v1) using
+//   60/30/10 rehearsal mix (slice A 30k anima axis pre-staged + B/C downloaded on H100).
+//   Conservative target_modules (self-attn qkvo on 16 layers; explicit cross_attn exclude).
+//   Auto-kill on COMPLETE.sentinel + φ★-flip ABORT trigger.
+//
+// SPEC SOURCE
+//   docs/clm_v4_lora_sft_spec_2026_05_04.md (LANDED 2026-05-04, USER_AUTHORIZED 2026-05-05)
+//   Sister Llama side: docs/p9_path_a_retrain_v2_spec_2026_05_04.md
+//   Predecessor anchors:
+//     state/clm_v4_baseline_eval_2026_05_05/verdict.json  (CLM v4 left side comparator)
+//     state/p9_path_a_retrain_v2_retry_3_eval_rerun_2026_05_05/verdict.json  (Llama right side)
+//
+// raw#9   hexa-only Mac (this file is hexa)
+// raw#10  honest C3 ≥5 in verdict
+// raw#15  repo-relative paths
+// raw#37  transient-py-on-Linux: H100 runs train + eval (Python permitted there only)
+// raw#71  pre-registered F-CLM-LORA-1..5 thresholds LOCKED
+//
+// USAGE
+//   hexa run tool/clm_v4_lora_train_orchestrator.hexa --selftest
+//   hexa run tool/clm_v4_lora_train_orchestrator.hexa --emit
+//   hexa run tool/clm_v4_lora_train_orchestrator.hexa --launch
+//   hexa run tool/clm_v4_lora_train_orchestrator.hexa --kill <pod_id>
+//
+// SAFETY CAPS (raw#71 hard-coded per spec §7)
+//   max_wall_minutes    = 300   (5h hard pod kill — plan ~2-2.5h)
+//   budget_target_usd   = 10
+//   budget_hard_cap_usd = 15
+
+let SCHEMA              = "anima/clm_v4_lora_sft/orchestrator/1"
+let CYCLE_TAG           = "clm_v4_lora_sft_2026_05_05"
+let STATE_DIR           = "/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05"
+let EXEC_BASH_PATH      = "/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/exec.bash"
+let RUN_H100_PATH       = "/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/run_h100.bash"
+let POD_INFO_PATH       = "/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/pod_info.json"
+let VERDICT_PATH        = "/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/verdict.json"
+let RUN_LOG_PATH        = "/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/run.log"
+let HEARTBEAT_PATH      = "/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/heartbeat.txt"
+let RESULTS_DIR         = "/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/results"
+let CORPUS_DIR          = "/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/corpus"
+let SLICE_A_LOCAL       = "/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/corpus/slice_A_anima_30k.jsonl"
+let CORPUS_MIX_PY       = "/Users/ghost/core/anima/tool/transient_py/p9_retrain_v2_corpus_mix.py"
+let TRAIN_PY            = "/Users/ghost/core/anima/tool/transient_py/clm_v4_lora_train.py"
+let SSH_KEY             = "/Users/ghost/.runpod/ssh/RunPod-Key-Go"
+let RUNPODCTL           = "/opt/homebrew/bin/runpodctl"
+
+let MAX_WALL_MIN        = 300
+let BUDGET_TARGET_USD   = 10
+let BUDGET_HARD_CAP_USD = 15
+let OD_RATE_USD         = 2.99
+
+let HF_BASE_REPO        = "dancinlab/clm-v4-mk2-v1"
+
+// === Phase 2 watchdog hook (constants) ===
+// BG_LANE identifies the orchestrator lane to the cost-watchdog daemon
+// (state/h100_watchdog/heartbeats/<BG_LANE>.txt + pods/<pod_id>.json owner field).
+// TARGET_USD is the spec-bound budget target used for COST_OVERRUN_2X / 3X alerts.
+let BG_LANE             = "BG-CLM-2-EXEC"
+let TARGET_USD          = "10"
+let WATCHDOG_HEXA       = "/Users/ghost/core/anima/tool/h100_cost_watchdog.hexa"
+let WATCHDOG_REGISTER   = "/Users/ghost/core/anima/tool/h100_register.bash"
+let WATCHDOG_HB_DIR     = "/Users/ghost/core/anima/state/h100_watchdog/heartbeats"
+let WATCHDOG_PODS_DIR   = "/Users/ghost/core/anima/state/h100_watchdog/pods"
+let WATCHDOG_CLOSED_DIR = "/Users/ghost/core/anima/state/h100_watchdog/closed"
+
+// ─── helpers ──────────────────────────────────────────────────────────────
+
+fn _sq(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+fn _file_exists(p: string) -> bool {
+    return exec_with_status("test -e " + _sq(p))[1] == 0
+}
+fn _argv() -> array {
+    let a = args()
+    let mut o = []
+    let mut i = 2
+    while i < len(a) { o.push(a[i]); i = i + 1 }
+    return o
+}
+fn _flag(av, k) -> bool {
+    for x in av { if to_string(x) == k { return true } }
+    return false
+}
+fn _opt(av, k, d) -> string {
+    let mut i = 0
+    while i < len(av) {
+        if to_string(av[i]) == k && i + 1 < len(av) { return to_string(av[i + 1]) }
+        i = i + 1
+    }
+    return d
+}
+
+// ─── selftest ─────────────────────────────────────────────────────────────
+
+fn _selftest() {
+    println("[selftest] schema=" + SCHEMA)
+    println("[selftest] cycle=" + CYCLE_TAG)
+
+    exec_with_status("mkdir -p " + _sq(STATE_DIR) + " " + _sq(RESULTS_DIR) + " " + _sq(CORPUS_DIR))
+    if !_file_exists(STATE_DIR) {
+        eprintln("FAIL: state dir not creatable")
+        exit(1)
+    }
+    println("[T1] state dir OK")
+
+    if !_file_exists(SSH_KEY) {
+        eprintln("FAIL: ssh key missing: " + SSH_KEY)
+        exit(1)
+    }
+    println("[T2] ssh key OK")
+    println("[T3] runpodctl path: " + RUNPODCTL)
+
+    let s1 = exec_with_status("/Users/ghost/core/secret/bin/secret check runpod.api_key 2>/dev/null")
+    let s2 = exec_with_status("/Users/ghost/core/secret/bin/secret check huggingface.token 2>/dev/null")
+    if s1[1] != 0 { eprintln("FAIL: runpod.api_key not in secret store"); exit(1) }
+    if s2[1] != 0 { eprintln("FAIL: huggingface.token not in secret store"); exit(1) }
+    println("[T4] secrets OK")
+
+    if !_file_exists(SLICE_A_LOCAL) {
+        eprintln("FAIL: slice A not pre-prepared: " + SLICE_A_LOCAL)
+        exit(1)
+    }
+    let r = exec_with_status("wc -l < " + _sq(SLICE_A_LOCAL))
+    println("[T5] slice A lines: " + to_string(r[0]).trim())
+
+    if !_file_exists(CORPUS_MIX_PY) || !_file_exists(TRAIN_PY) {
+        eprintln("FAIL: transient py missing")
+        exit(1)
+    }
+    println("[T6] transient py present (corpus_mix + train)")
+
+    println("[T7] HF base: " + HF_BASE_REPO)
+    println("[T8] caps: wall=" + to_string(MAX_WALL_MIN) + "min budget_cap=$" + to_string(BUDGET_HARD_CAP_USD))
+
+    // Phase 2: probe watchdog tools (graceful warn-only — failure does not fail selftest)
+    println("[T9] Phase 2 watchdog hooks:")
+    println("       BG_LANE=" + BG_LANE + " TARGET_USD=$" + TARGET_USD)
+    if _file_exists(WATCHDOG_REGISTER) { println("       T9a register OK: " + WATCHDOG_REGISTER) }
+    else { println("       T9a register WARN missing: " + WATCHDOG_REGISTER + " (boot hook will warn-only)") }
+    if _file_exists(WATCHDOG_HEXA) { println("       T9b watchdog hexa OK: " + WATCHDOG_HEXA) }
+    else { println("       T9b watchdog hexa WARN missing: " + WATCHDOG_HEXA + " (trap deregister will warn-only)") }
+    println("       T9c heartbeat dir: " + WATCHDOG_HB_DIR + " (will be touched fire-and-forget)")
+    println("       T9d verdict schema: pod_kill_verified_404 + watchdog_deregistered + cost_{target,actual}_usd + cost_overrun_2x_alerted")
+
+    println("[selftest] PASS")
+    exit(0)
+}
+
+// ─── emit exec.bash + run_h100.bash ───────────────────────────────────────
+
+fn _emit() {
+    exec_with_status("mkdir -p " + _sq(STATE_DIR) + " " + _sq(RESULTS_DIR) + " " + _sq(CORPUS_DIR))
+
+    let exec_body = "#!/bin/bash\n" +
+"# emitted by tool/clm_v4_lora_train_orchestrator.hexa — CLM v4 + LoRA SFT lifecycle\n" +
+"# raw#9 sibling-pattern Mac-side bash; raw#37 H100 transient py.\n" +
+"set -uo pipefail\n" +
+"\n" +
+"STATE_DIR='" + STATE_DIR + "'\n" +
+"RESULTS_DIR='" + RESULTS_DIR + "'\n" +
+"CORPUS_DIR='" + CORPUS_DIR + "'\n" +
+"SLICE_A_LOCAL='" + SLICE_A_LOCAL + "'\n" +
+"CORPUS_MIX_PY='" + CORPUS_MIX_PY + "'\n" +
+"TRAIN_PY='" + TRAIN_PY + "'\n" +
+"POD_INFO='" + POD_INFO_PATH + "'\n" +
+"VERDICT='" + VERDICT_PATH + "'\n" +
+"RUN_LOG='" + RUN_LOG_PATH + "'\n" +
+"HEARTBEAT='" + HEARTBEAT_PATH + "'\n" +
+"SSH_KEY='" + SSH_KEY + "'\n" +
+"RUNPODCTL='" + RUNPODCTL + "'\n" +
+"MAX_WALL_MIN=" + to_string(MAX_WALL_MIN) + "\n" +
+"BUDGET_HARD_CAP=" + to_string(BUDGET_HARD_CAP_USD) + "\n" +
+"OD_RATE=" + to_string(OD_RATE_USD) + "\n" +
+"HF_BASE_REPO='" + HF_BASE_REPO + "'\n" +
+"START_EPOCH=$(date -u +%s)\n" +
+"\n" +
+"log() { echo \"[$(date -u +%FT%TZ)] $*\" | tee -a \"$RUN_LOG\"; }\n" +
+"hb()  { echo \"[$(date -u +%FT%TZ)] $*\" > \"$HEARTBEAT\"; }\n" +
+"redact_hf() { sed -E 's/(HF_TOKEN[\"[:space:]]*[:=][\"[:space:]]*)hf_[A-Za-z0-9_]+/\\1<REDACTED>/g; s/(hf_)[A-Za-z0-9_]{20,}/\\1<REDACTED>/g'; }\n" +
+"\n" +
+"# ── Stage 0: secrets (raw bypass for redaction wrapper) ──\n" +
+"export RUNPOD_API_KEY=$(/Users/ghost/core/secret/bin/secret get runpod.api_key --raw 2>/dev/null)\n" +
+"export HF_TOKEN_LOCAL=$(/Users/ghost/core/secret/bin/secret get huggingface.token --raw 2>/dev/null)\n" +
+"if [ -z \"${RUNPOD_API_KEY:-}\" ] || [ -z \"${HF_TOKEN_LOCAL:-}\" ]; then\n" +
+"    log \"FATAL: secrets unavailable\"\n" +
+"    exit 2\n" +
+"fi\n" +
+"if [[ \"$RUNPOD_API_KEY\" == \\*\\*\\** ]] || [[ \"$HF_TOKEN_LOCAL\" == \\*\\*\\** ]]; then\n" +
+"    log \"FATAL: secret returned redacted form despite --raw\"\n" +
+"    exit 2\n" +
+"fi\n" +
+"log \"secrets OK (runpod=${#RUNPOD_API_KEY}b hf=${#HF_TOKEN_LOCAL}b)\"\n" +
+"hb \"stage0_secrets_loaded\"\n" +
+"\n" +
+"# ── Stage 0b: L9 HF auth pre-flight ──\n" +
+"WHOAMI=$(curl -s -H \"Authorization: Bearer $HF_TOKEN_LOCAL\" 'https://huggingface.co/api/whoami-v2' | head -c 300)\n" +
+"if echo \"$WHOAMI\" | grep -q '\"name\"'; then\n" +
+"    USER=$(echo \"$WHOAMI\" | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d.get(\"name\",\"?\"))')\n" +
+"    log \"hf auth PASS user=$USER\"\n" +
+"else\n" +
+"    log \"FATAL L9: hf auth FAIL — token invalid or revoked: $WHOAMI\"\n" +
+"    exit 2\n" +
+"fi\n" +
+"hb \"stage0b_hf_auth_ok\"\n" +
+"\n" +
+"# ── Pre-flight: slice A must exist locally ──\n" +
+"if [ ! -f \"$SLICE_A_LOCAL\" ]; then\n" +
+"    log \"FATAL: slice A missing: $SLICE_A_LOCAL\"\n" +
+"    exit 2\n" +
+"fi\n" +
+"SLICE_A_LINES=$(wc -l < \"$SLICE_A_LOCAL\" | awk '{print $1}')\n" +
+"log \"slice A OK ($SLICE_A_LINES lines)\"\n" +
+"\n" +
+"# ── Stage 1: boot H100 SECURE on-demand (vol=120GB, disk=100GB) ──\n" +
+"POD_NAME='anima-clm-v4-lora-sft-2026-05-05'\n" +
+"log \"booting pod=$POD_NAME (H100 80GB SXM SECURE on-demand @ \\$$OD_RATE/hr)\"\n" +
+"BOOT_RAW_OUT=\"$STATE_DIR/boot.raw.tmp\"\n" +
+"BOOT_OUT=\"$STATE_DIR/boot.log\"\n" +
+"hb \"stage1_booting_pod\"\n" +
+"$RUNPODCTL pod create \\\n" +
+"    --name \"$POD_NAME\" \\\n" +
+"    --gpu-id 'NVIDIA H100 80GB HBM3' \\\n" +
+"    --gpu-count 1 \\\n" +
+"    --image 'runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04' \\\n" +
+"    --container-disk-in-gb 100 \\\n" +
+"    --volume-in-gb 120 \\\n" +
+"    --volume-mount-path /workspace \\\n" +
+"    --ports '22/tcp,8888/http' \\\n" +
+"    --cloud-type SECURE \\\n" +
+"    --ssh \\\n" +
+"    --env \"{\\\"HF_TOKEN\\\":\\\"$HF_TOKEN_LOCAL\\\"}\" \\\n" +
+"    > \"$BOOT_RAW_OUT\" 2>&1\n" +
+"BOOT_RC=$?\n" +
+"redact_hf < \"$BOOT_RAW_OUT\" > \"$BOOT_OUT\"\n" +
+"rm -f \"$BOOT_RAW_OUT\"\n" +
+"if [ $BOOT_RC -ne 0 ]; then\n" +
+"    log \"FATAL: pod boot failed rc=$BOOT_RC\"\n" +
+"    cat \"$BOOT_OUT\" | tee -a \"$RUN_LOG\"\n" +
+"    jq -n --arg ts \"$(date -u +%FT%TZ)\" --arg reason \"pod_boot_failed\" '{cycle:\"" + CYCLE_TAG + "\",ts_utc:$ts,verdict:\"FAIL\",reason:$reason}' > \"$VERDICT\"\n" +
+"    exit 3\n" +
+"fi\n" +
+"POD_ID=$(grep -oE '\"[a-z0-9]{14}\"' \"$BOOT_OUT\" | head -1 | tr -d '\"')\n" +
+"if [ -z \"$POD_ID\" ]; then\n" +
+"    POD_ID=$(grep -oE 'pod [a-z0-9]{12,16}' \"$BOOT_OUT\" | head -1 | awk '{print $2}')\n" +
+"fi\n" +
+"if [ -z \"$POD_ID\" ]; then\n" +
+"    log \"FATAL: cannot extract pod_id from boot output\"\n" +
+"    cat \"$BOOT_OUT\"\n" +
+"    exit 4\n" +
+"fi\n" +
+"log \"pod_id=$POD_ID\"\n" +
+"echo '{\"pod_id\":\"'$POD_ID'\",\"booted_ts\":\"'$(date -u +%FT%TZ)'\"}' > \"$POD_INFO\"\n" +
+"hb \"stage1_pod_booted pod_id=$POD_ID\"\n" +
+"\n" +
+"# === Phase 2 watchdog hook (boot) ===\n" +
+"# Register pod with cost-watchdog (graceful degradation: warn-only on failure)\n" +
+"BG_LANE='" + BG_LANE + "'\n" +
+"TARGET_USD='" + TARGET_USD + "'\n" +
+"WATCHDOG_REGISTER='" + WATCHDOG_REGISTER + "'\n" +
+"WATCHDOG_HB_DIR='" + WATCHDOG_HB_DIR + "'\n" +
+"WATCHDOG_HEXA='" + WATCHDOG_HEXA + "'\n" +
+"if [ -x \"$WATCHDOG_REGISTER\" ] || [ -f \"$WATCHDOG_REGISTER\" ]; then\n" +
+"    if bash \"$WATCHDOG_REGISTER\" \"$POD_ID\" \"$BG_LANE\" \"$TARGET_USD\" 2>&1 | tee -a \"$RUN_LOG\"; then\n" +
+"        WATCHDOG_REGISTERED=1\n" +
+"        log \"[watchdog] register OK pod=$POD_ID lane=$BG_LANE target=\\$$TARGET_USD\"\n" +
+"    else\n" +
+"        WATCHDOG_REGISTERED=0\n" +
+"        log \"[watchdog] WARN register failed (rc=$?) — proceeding without watchdog tracking\"\n" +
+"    fi\n" +
+"else\n" +
+"    WATCHDOG_REGISTERED=0\n" +
+"    log \"[watchdog] WARN $WATCHDOG_REGISTER not present — proceeding without watchdog tracking\"\n" +
+"fi\n" +
+"hb \"stage1c_watchdog_registered=$WATCHDOG_REGISTERED\"\n" +
+"\n" +
+"# ── Stage 1b: trap kill-on-exit (L3 + L7 redact + L13 trap pre-stop scp) ──\n" +
+"# === Phase 2 watchdog hook (trap pre-stop) ===\n" +
+"# Trap sequence :\n" +
+"#   (a) L13 pre-stop scp (existing — data-first rescue)\n" +
+"#   (b) NEW: mark heartbeat 'EXITING' so watchdog sees orderly shutdown\n" +
+"#   (c) runpodctl pod stop + delete (existing)\n" +
+"#   (d) NEW: 404 verify (max 3 retries × 30s)\n" +
+"#   (e) NEW: deregister from cost-watchdog (graceful: warn-only)\n" +
+"POD_KILL_VERIFIED_404=0\n" +
+"WATCHDOG_DEREGISTERED=0\n" +
+"_kill_pod() {\n" +
+"    log \"[trap] data-first scp before kill (L13)\"\n" +
+"    if [ -n \"${SSH_HOST:-}\" ] && [ -n \"${SSH_PORT:-}\" ]; then\n" +
+"        timeout 60 scp -i \"$SSH_KEY\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P \"$SSH_PORT\" -r \\\n" +
+"            \"root@$SSH_HOST:/workspace/clm_v4_lora/results/*\" \"$RESULTS_DIR/\" 2>&1 | tail -5 || true\n" +
+"        timeout 30 scp -i \"$SSH_KEY\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P \"$SSH_PORT\" \\\n" +
+"            \"root@$SSH_HOST:/workspace/clm_v4_lora/orchestrator.log\" \"$STATE_DIR/h100_orchestrator.log\" 2>&1 | tail -1 || true\n" +
+"    fi\n" +
+" # : heartbeat EXITING marker (watchdog sees orderly shutdown vs crash)\n" +
+"    if [ -d \"$WATCHDOG_HB_DIR\" ]; then\n" +
+"        echo \"EXITING $(date -u +%FT%TZ) pod=$POD_ID\" > \"$WATCHDOG_HB_DIR/$BG_LANE.txt\" || true\n" +
+"    fi\n" +
+"    log \"[trap] killing pod=$POD_ID\"\n" +
+"    $RUNPODCTL pod stop \"$POD_ID\" 2>&1 | redact_hf | tee -a \"$RUN_LOG\" || true\n" +
+"    sleep 3\n" +
+"    $RUNPODCTL pod delete \"$POD_ID\" 2>&1 | redact_hf | tee -a \"$RUN_LOG\" || true\n" +
+"    sleep 5\n" +
+" # : 404 verify (3 retries × 30s)\n" +
+"    POD_KILL_VERIFIED_404=0\n" +
+"    for vi in 1 2 3; do\n" +
+"        POST=$($RUNPODCTL pod get \"$POD_ID\" 2>&1 | redact_hf | head -3)\n" +
+"        if echo \"$POST\" | grep -qiE 'not found|404|does not exist'; then\n" +
+"            POD_KILL_VERIFIED_404=1\n" +
+"            log \"[trap] 404 verified (try $vi/3)\"\n" +
+"            break\n" +
+"        fi\n" +
+"        log \"[trap] 404 verify try $vi/3 not yet — sleep 30s\"\n" +
+"        sleep 30\n" +
+"    done\n" +
+"    log \"[trap] post-kill: $POST  pod_kill_verified_404=$POD_KILL_VERIFIED_404\"\n" +
+" # : deregister cost-watchdog (only if 404 confirmed; warn-only on failure)\n" +
+"    WATCHDOG_DEREGISTERED=0\n" +
+"    if [ \"$POD_KILL_VERIFIED_404\" = \"1\" ] && [ -f \"$WATCHDOG_HEXA\" ]; then\n" +
+"        if /Users/ghost/core/hexa-lang/hexa run \"$WATCHDOG_HEXA\" --deregister \"$POD_ID\" 2>&1 | tee -a \"$RUN_LOG\"; then\n" +
+"            WATCHDOG_DEREGISTERED=1\n" +
+"            log \"[watchdog] deregister OK pod=$POD_ID\"\n" +
+"        else\n" +
+"            log \"[watchdog] WARN deregister failed (rc=$?) — pod still 404 but registry not archived\"\n" +
+"        fi\n" +
+"    elif [ \"$POD_KILL_VERIFIED_404\" = \"0\" ]; then\n" +
+"        log \"[watchdog] SKIP deregister — pod 404 not confirmed (registry kept for daemon to reconcile)\"\n" +
+"    fi\n" +
+"    if [ -f \"$POD_INFO\" ]; then\n" +
+"        jq --arg killed \"$(date -u +%FT%TZ)\" --arg post \"$POST\" --argjson k404 \"$POD_KILL_VERIFIED_404\" --argjson wdd \"$WATCHDOG_DEREGISTERED\" \\\n" +
+"            '. + {killed_ts:$killed, post_kill_status:$post, pod_kill_verified_404:($k404==1), watchdog_deregistered:($wdd==1)}' \"$POD_INFO\" > \"$POD_INFO.tmp\" && mv \"$POD_INFO.tmp\" \"$POD_INFO\" || true\n" +
+"    fi\n" +
+"}\n" +
+"trap _kill_pod EXIT INT TERM\n" +
+"\n" +
+"# ── Stage 2: wait for SSH ready (max 6min) ──\n" +
+"log \"waiting for SSH ready (max 6min)\"\n" +
+"hb \"stage2_waiting_ssh\"\n" +
+"SSH_HOST=''\n" +
+"SSH_PORT=''\n" +
+"for i in $(seq 1 36); do\n" +
+"    INFO=$($RUNPODCTL pod get \"$POD_ID\" -o json 2>/dev/null)\n" +
+"    SSH_HOST=$(echo \"$INFO\" | jq -r '.ssh.ip // empty' 2>/dev/null)\n" +
+"    SSH_PORT=$(echo \"$INFO\" | jq -r '.ssh.port // empty' 2>/dev/null)\n" +
+"    if [ -n \"$SSH_HOST\" ] && [ \"$SSH_HOST\" != \"null\" ] && [ -n \"$SSH_PORT\" ] && [ \"$SSH_PORT\" != \"null\" ]; then\n" +
+"        if ssh -i \"$SSH_KEY\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 -p \"$SSH_PORT\" \"root@$SSH_HOST\" 'echo READY' 2>/dev/null | grep -q READY; then\n" +
+"            log \"SSH ready at $SSH_HOST:$SSH_PORT (after ${i} probes)\"\n" +
+"            break\n" +
+"        fi\n" +
+"    fi\n" +
+"    sleep 10\n" +
+"done\n" +
+"if [ -z \"$SSH_HOST\" ] || [ \"$SSH_HOST\" = \"null\" ] || [ -z \"$SSH_PORT\" ] || [ \"$SSH_PORT\" = \"null\" ]; then\n" +
+"    log \"FATAL: pod never reached SSH ready in 6min\"\n" +
+"    exit 5\n" +
+"fi\n" +
+"jq --arg h \"$SSH_HOST\" --arg p \"$SSH_PORT\" '. + {ssh_host:$h, ssh_port:($p|tonumber)}' \"$POD_INFO\" > \"$POD_INFO.tmp\" && mv \"$POD_INFO.tmp\" \"$POD_INFO\"\n" +
+"hb \"stage2_ssh_ready host=$SSH_HOST port=$SSH_PORT\"\n" +
+"\n" +
+"SSH=\"ssh -i $SSH_KEY -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $SSH_PORT root@$SSH_HOST\"\n" +
+"SCP=\"scp -i $SSH_KEY -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P $SSH_PORT\"\n" +
+"\n" +
+"# ── Stage 3: ship transient py + slice A ──\n" +
+"log \"shipping slice A (76MB) + transient py\"\n" +
+"hb \"stage3_setup_starting\"\n" +
+"$SSH 'mkdir -p /workspace/clm_v4_lora/{corpus,results,ckpts,sentinels}'\n" +
+"$SCP \"$SLICE_A_LOCAL\" \"root@$SSH_HOST:/workspace/clm_v4_lora/corpus/slice_A_anima_30k.jsonl\" 2>&1 | tail -1\n" +
+"$SCP \"$CORPUS_MIX_PY\" \"root@$SSH_HOST:/workspace/clm_v4_lora/corpus_mix.py\" 2>&1 | tail -1\n" +
+"$SCP \"$TRAIN_PY\" \"root@$SSH_HOST:/workspace/clm_v4_lora/train.py\" 2>&1 | tail -1\n" +
+"$SCP \"" + RUN_H100_PATH + "\" \"root@$SSH_HOST:/workspace/clm_v4_lora/run_h100.bash\" 2>&1 | tail -1\n" +
+"$SSH 'chmod +x /workspace/clm_v4_lora/run_h100.bash'\n" +
+"\n" +
+"log \"launching H100 pipeline (corpus + train + intermediate eval + final eval)\"\n" +
+"$SSH 'cat /proc/1/environ | tr \"\\0\" \"\\n\" | grep ^HF_TOKEN= > /workspace/clm_v4_lora/hf_token.env && cd /workspace/clm_v4_lora && set -a && . hf_token.env && set +a && setsid nohup bash run_h100.bash < /dev/null > orchestrator.log 2>&1 & echo $! > run.pid; disown $! 2>/dev/null || true; sleep 2; cat run.pid' < /dev/null\n" +
+"hb \"stage3_h100_launched\"\n" +
+"\n" +
+"# ── Stage 4: poll loop (heartbeat per cycle, sentinel-kill, cost cap) ──\n" +
+"log \"poll loop start (max ${MAX_WALL_MIN}min, budget cap \\$${BUDGET_HARD_CAP})\"\n" +
+"COMPLETE=0\n" +
+"EARLY_STOP=0\n" +
+"POLL_INTERVAL=60\n" +
+"while true; do\n" +
+"    NOW=$(date -u +%s)\n" +
+"    ELAPSED_MIN=$(( (NOW - START_EPOCH) / 60 ))\n" +
+"    ELAPSED_HR_DEC=$(awk \"BEGIN{printf \\\"%.4f\\\", ($NOW - $START_EPOCH) / 3600}\")\n" +
+"    ELAPSED_COST=$(awk \"BEGIN{printf \\\"%.2f\\\", $ELAPSED_HR_DEC * $OD_RATE}\")\n" +
+"\n" +
+"    COST_OVER=$(awk \"BEGIN{print ($ELAPSED_COST > $BUDGET_HARD_CAP) ? 1 : 0}\")\n" +
+"    if [ \"$COST_OVER\" = \"1\" ]; then\n" +
+"        log \"COST CAP HIT \\$$ELAPSED_COST > \\$$BUDGET_HARD_CAP — auto-kill\"\n" +
+"        break\n" +
+"    fi\n" +
+"    if [ $ELAPSED_MIN -ge $MAX_WALL_MIN ]; then\n" +
+"        log \"WALL CAP HIT ${ELAPSED_MIN}min ≥ ${MAX_WALL_MIN}min — auto-kill\"\n" +
+"        break\n" +
+"    fi\n" +
+"\n" +
+"    PROBE=$($SSH 'ls /workspace/clm_v4_lora/results/COMPLETE.sentinel 2>/dev/null && echo SENTINEL_FOUND; ls /workspace/clm_v4_lora/results/EARLY_STOP.sentinel 2>/dev/null && echo EARLY_STOP_FOUND; ps -p $(cat /workspace/clm_v4_lora/run.pid 2>/dev/null) -o pid,etime,comm 2>/dev/null | tail -1; tail -1 /workspace/clm_v4_lora/orchestrator.log 2>/dev/null' 2>/dev/null)\n" +
+"    log \"elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST} probe=$(echo $PROBE | tr '\\n' '|' | head -c 240)\"\n" +
+"    hb \"poll elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST}\"\n" +
+"\n" +
+" # === Phase 2 watchdog hook (heartbeat) ===\n" +
+"    # Fire-and-forget: touch state/h100_watchdog/heartbeats/<BG_LANE>.txt so the\n" +
+"    # cost-watchdog daemon's stale-heartbeat alert (>5min) does not fire while\n" +
+"    # this poll loop is alive. Failure is silent (mkdir -p + touch || true).\n" +
+"    if [ -n \"${WATCHDOG_HB_DIR:-}\" ]; then\n" +
+"        mkdir -p \"$WATCHDOG_HB_DIR\" 2>/dev/null || true\n" +
+"        echo \"poll $(date -u +%FT%TZ) pod=$POD_ID elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST}\" > \"$WATCHDOG_HB_DIR/$BG_LANE.txt\" 2>/dev/null || true\n" +
+"    fi\n" +
+"\n" +
+"    # incremental sync: small JSONs + log\n" +
+"    $SCP -r \"root@$SSH_HOST:/workspace/clm_v4_lora/results/*.json\" \"$RESULTS_DIR/\" 2>/dev/null || true\n" +
+"    $SCP \"root@$SSH_HOST:/workspace/clm_v4_lora/orchestrator.log\" \"$STATE_DIR/h100_orchestrator.log\" 2>/dev/null || true\n" +
+"\n" +
+"    if echo \"$PROBE\" | grep -q SENTINEL_FOUND; then\n" +
+"        log \"COMPLETE.sentinel detected — final sync FIRST then auto-kill\"\n" +
+"        COMPLETE=1\n" +
+"        $SCP -r \"root@$SSH_HOST:/workspace/clm_v4_lora/results/*\" \"$RESULTS_DIR/\" 2>&1 | tail -5 | tee -a \"$RUN_LOG\" || true\n" +
+"        $SCP -r \"root@$SSH_HOST:/workspace/clm_v4_lora/ckpts/final\" \"$RESULTS_DIR/adapter_final\" 2>&1 | tail -3 || true\n" +
+"        break\n" +
+"    fi\n" +
+"    if echo \"$PROBE\" | grep -q EARLY_STOP_FOUND; then\n" +
+"        log \"EARLY_STOP.sentinel detected (F-CLM-LORA-1 forgetting OR φ★-flip) — final sync + kill\"\n" +
+"        EARLY_STOP=1\n" +
+"        $SCP -r \"root@$SSH_HOST:/workspace/clm_v4_lora/results/*\" \"$RESULTS_DIR/\" 2>&1 | tail -5 | tee -a \"$RUN_LOG\" || true\n" +
+"        # Pull any partial adapter for post-mortem\n" +
+"        $SCP -r \"root@$SSH_HOST:/workspace/clm_v4_lora/ckpts\" \"$RESULTS_DIR/ckpts_partial\" 2>&1 | tail -3 || true\n" +
+"        break\n" +
+"    fi\n" +
+"\n" +
+"    sleep $POLL_INTERVAL\n" +
+"done\n" +
+"\n" +
+"# ── Stage 5: pod kill via trap (auto on exit) ──\n" +
+"\n" +
+"# ── Stage 6: verdict ──\n" +
+"log \"computing verdict\"\n" +
+"FINAL_ELAPSED_MIN=$(( ($(date -u +%s) - START_EPOCH) / 60 ))\n" +
+"FINAL_COST=$(awk \"BEGIN{printf \\\"%.2f\\\", $FINAL_ELAPSED_MIN/60 * $OD_RATE}\")\n" +
+"hb \"stage6_verdict_computing\"\n" +
+"\n" +
+"# CLM v4 baseline anchors (state/clm_v4_baseline_eval_2026_05_05/verdict.json limit=200)\n" +
+"CB_HS_NORM=0.255\n" +
+"CB_HS_SE=0.0309\n" +
+"CB_MM_ACC=0.255\n" +
+"CB_MM_SE=0.0045\n" +
+"CB_TQ_EM=0.000\n" +
+"CB_TQ_SE=0.000\n" +
+"CB_OBQA_NORM=0.28\n" +
+"CB_PHI_BASE=37.27   # ckpt_best_phi (training-time best); substrate carry=41.86\n" +
+"\n" +
+"# Llama Path A v2 retry-3 eval-rerun comparator (state/p9_path_a_retrain_v2_retry_3_eval_rerun)\n" +
+"LP_HS_NORM=0.645\n" +
+"LP_MM_ACC=0.575\n" +
+"LP_TQ_EM=0.455\n" +
+"# F1_v3 composite = (HS + MM + TQ) / 3\n" +
+"LP_COMPOSITE=$(awk \"BEGIN{printf \\\"%.4f\\\", ($LP_HS_NORM + $LP_MM_ACC + $LP_TQ_EM) / 3}\")\n" +
+"\n" +
+"# Extract intermediate eval scores (HS-200 at step 2000/4000/6000)\n" +
+"INTER_HS_2K=\"null\"; INTER_HS_4K=\"null\"; INTER_HS_6K=\"null\"\n" +
+"if [ -f \"$RESULTS_DIR/intermediate_hs_step2000.json\" ]; then\n" +
+"    INTER_HS_2K=$(jq -r '.results.hellaswag.\"acc_norm,none\" // .results.hellaswag.acc_norm // \"null\"' \"$RESULTS_DIR/intermediate_hs_step2000.json\")\n" +
+"fi\n" +
+"if [ -f \"$RESULTS_DIR/intermediate_hs_step4000.json\" ]; then\n" +
+"    INTER_HS_4K=$(jq -r '.results.hellaswag.\"acc_norm,none\" // .results.hellaswag.acc_norm // \"null\"' \"$RESULTS_DIR/intermediate_hs_step4000.json\")\n" +
+"fi\n" +
+"if [ -f \"$RESULTS_DIR/intermediate_hs_step6000.json\" ]; then\n" +
+"    INTER_HS_6K=$(jq -r '.results.hellaswag.\"acc_norm,none\" // .results.hellaswag.acc_norm // \"null\"' \"$RESULTS_DIR/intermediate_hs_step6000.json\")\n" +
+"fi\n" +
+"\n" +
+"# Final post-LoRA eval (HellaSwag/MMLU/TriviaQA limit=200)\n" +
+"FINAL_HS=\"null\"; FINAL_MM=\"null\"; FINAL_TQ=\"null\"\n" +
+"if [ -f \"$RESULTS_DIR/final_lora_hellaswag.json\" ]; then\n" +
+"    FINAL_HS=$(jq -r '.results.hellaswag.\"acc_norm,none\" // .results.hellaswag.acc_norm // \"null\"' \"$RESULTS_DIR/final_lora_hellaswag.json\")\n" +
+"fi\n" +
+"if [ -f \"$RESULTS_DIR/final_lora_mmlu.json\" ]; then\n" +
+"    FINAL_MM=$(jq -r '.results.mmlu.\"acc,none\" // .results.mmlu.acc // \"null\"' \"$RESULTS_DIR/final_lora_mmlu.json\")\n" +
+"fi\n" +
+"if [ -f \"$RESULTS_DIR/final_lora_triviaqa.json\" ]; then\n" +
+"    FINAL_TQ=$(jq -r '.results.triviaqa.\"exact_match,remove_whitespace\" // .results.triviaqa.\"exact_match,none\" // .results.triviaqa.exact_match // \"null\"' \"$RESULTS_DIR/final_lora_triviaqa.json\")\n" +
+"fi\n" +
+"\n" +
+"# φ★ post-LoRA proxy (from in-pod measurement)\n" +
+"PHI_POST=\"null\"; PHI_BASELINE_PRE=\"null\"\n" +
+"if [ -f \"$RESULTS_DIR/phi_star_post_lora.json\" ]; then\n" +
+"    PHI_POST=$(jq -r '.phi_star_proxy_raw_mean // \"null\"' \"$RESULTS_DIR/phi_star_post_lora.json\")\n" +
+"fi\n" +
+"if [ -f \"$RESULTS_DIR/phi_star_pre_lora.json\" ]; then\n" +
+"    PHI_BASELINE_PRE=$(jq -r '.phi_star_proxy_raw_mean // \"null\"' \"$RESULTS_DIR/phi_star_pre_lora.json\")\n" +
+"fi\n" +
+"\n" +
+"# F1_v3 composite (HS + MM + TQ) / 3 for CLM v4 LoRA\n" +
+"CLM_COMPOSITE=\"null\"\n" +
+"if [ \"$FINAL_HS\" != \"null\" ] && [ \"$FINAL_MM\" != \"null\" ] && [ \"$FINAL_TQ\" != \"null\" ]; then\n" +
+"    CLM_COMPOSITE=$(awk -v h=\"$FINAL_HS\" -v m=\"$FINAL_MM\" -v t=\"$FINAL_TQ\" \\\n" +
+"        'BEGIN{printf \"%.4f\", (h+m+t)/3}')\n" +
+"fi\n" +
+"\n" +
+"# F-CLM-LORA-1: forgetting_index < 0.05 (HS-200 final >= base - 1pp)\n" +
+"FCLM1='UNKNOWN'\n" +
+"FORGETTING_INDEX='null'\n" +
+"if [ \"$FINAL_HS\" != \"null\" ]; then\n" +
+"    FORGETTING_INDEX=$(awk -v p=\"$FINAL_HS\" -v b=\"$CB_HS_NORM\" 'BEGIN{ if (b > 0) printf \"%.4f\", (b - p) / b; else print \"null\" }')\n" +
+"    FCLM1=$(awk -v p=\"$FINAL_HS\" -v b=\"$CB_HS_NORM\" 'BEGIN{ if (p+0 >= b - 0.01) print \"PASS\"; else print \"FAIL\" }')\n" +
+"elif [ \"$EARLY_STOP\" = \"1\" ]; then\n" +
+"    FCLM1='EARLY_STOP_FORGETTING'\n" +
+"fi\n" +
+"\n" +
+"# F-CLM-LORA-2: composite >= Llama Path A v2 (THE differentiator C-CLM-LORA-2)\n" +
+"FCLM2='UNKNOWN'\n" +
+"DIFFERENTIATOR='UNKNOWN'\n" +
+"if [ \"$CLM_COMPOSITE\" != \"null\" ]; then\n" +
+"    FCLM2=$(awk -v c=\"$CLM_COMPOSITE\" -v l=\"$LP_COMPOSITE\" 'BEGIN{ if (c+0 >= l+0) print \"PASS\"; else print \"FAIL\" }')\n" +
+"    DELTA=$(awk -v c=\"$CLM_COMPOSITE\" -v l=\"$LP_COMPOSITE\" 'BEGIN{printf \"%.4f\", c - l}')\n" +
+"    if [ \"$FCLM2\" = \"PASS\" ]; then\n" +
+"        DIFFERENTIATOR='ANIMA_BEATS_LLAMA'\n" +
+"    else\n" +
+"        ABS_DELTA=$(awk -v d=\"$DELTA\" 'BEGIN{ if (d < 0) d=-d; print d }')\n" +
+"        IS_REGRESSION=$(awk -v d=\"$ABS_DELTA\" 'BEGIN{ if (d > 0.05) print 1; else print 0 }')\n" +
+"        if [ \"$IS_REGRESSION\" = \"1\" ]; then\n" +
+"            DIFFERENTIATOR='LLAMA_BEATS_ANIMA_REGRESSION'\n" +
+"        else\n" +
+"            DIFFERENTIATOR='LLAMA_BEATS_ANIMA_PARITY_BAND'\n" +
+"        fi\n" +
+"    fi\n" +
+"fi\n" +
+"\n" +
+"# F-CLM-LORA-3: adapter < 500MB\n" +
+"FCLM3='UNKNOWN'\n" +
+"ADAPTER_SIZE_MB='null'\n" +
+"if [ -f \"$RESULTS_DIR/adapter_final/adapter_model.safetensors\" ]; then\n" +
+"    SZ=$(stat -f '%z' \"$RESULTS_DIR/adapter_final/adapter_model.safetensors\" 2>/dev/null || stat -c '%s' \"$RESULTS_DIR/adapter_final/adapter_model.safetensors\" 2>/dev/null || echo 0)\n" +
+"    ADAPTER_SIZE_MB=$(awk -v s=\"$SZ\" 'BEGIN{printf \"%.2f\", s / (1024*1024)}')\n" +
+"    FCLM3=$(awk -v s=\"$ADAPTER_SIZE_MB\" 'BEGIN{ if (s+0 < 500) print \"PASS\"; else print \"FAIL\" }')\n" +
+"fi\n" +
+"\n" +
+"# F-CLM-LORA-4: cell axis-conditioning preserved (smoke proxy: post-LoRA logits are finite + non-degenerate)\n" +
+"FCLM4='UNKNOWN'\n" +
+"if [ -f \"$RESULTS_DIR/post_lora_smoke.json\" ]; then\n" +
+"    FCLM4=$(jq -r '.smoke_pass // \"UNKNOWN\"' \"$RESULTS_DIR/post_lora_smoke.json\")\n" +
+"fi\n" +
+"\n" +
+"# F-CLM-LORA-5: shim v4 hf_format compat (loadable post-merge)\n" +
+"FCLM5='UNKNOWN'\n" +
+"if [ -f \"$RESULTS_DIR/post_lora_shim_compat.json\" ]; then\n" +
+"    FCLM5=$(jq -r '.shim_compat // \"UNKNOWN\"' \"$RESULTS_DIR/post_lora_shim_compat.json\")\n" +
+"fi\n" +
+"\n" +
+"# φ★ drift: post - baseline (substrate carry 41.86)\n" +
+"PHI_STAR_BASELINE_CARRY=41.86\n" +
+"PHI_DRIFT_PP='null'\n" +
+"if [ \"$PHI_POST\" != \"null\" ] && [ \"$PHI_BASELINE_PRE\" != \"null\" ]; then\n" +
+"    PHI_DRIFT_PP=$(awk -v p=\"$PHI_POST\" -v b=\"$PHI_BASELINE_PRE\" 'BEGIN{printf \"%.4f\", p - b}')\n" +
+"fi\n" +
+"\n" +
+"# Overall verdict\n" +
+"OVERALL='V2_FAIL'\n" +
+"PASS_COUNT=0\n" +
+"for v in \"$FCLM1\" \"$FCLM2\" \"$FCLM3\" \"$FCLM4\" \"$FCLM5\"; do\n" +
+"    [ \"$v\" = \"PASS\" ] && PASS_COUNT=$((PASS_COUNT + 1))\n" +
+"done\n" +
+"if [ \"$PASS_COUNT\" -ge 5 ]; then\n" +
+"    OVERALL='V2_PASS'\n" +
+"elif [ \"$PASS_COUNT\" -ge 3 ]; then\n" +
+"    OVERALL='V2_PARTIAL'\n" +
+"fi\n" +
+"if [ \"$EARLY_STOP\" = \"1\" ]; then\n" +
+"    OVERALL='V2_FAIL_EARLY_STOP'\n" +
+"fi\n" +
+"# Distinguish eval_crashed from parity_failed (L20 lesson)\n" +
+"if [ \"$FINAL_HS\" = \"null\" ] && [ \"$FINAL_MM\" = \"null\" ] && [ \"$FINAL_TQ\" = \"null\" ] && [ \"$EARLY_STOP\" != \"1\" ]; then\n" +
+"    OVERALL='V2_EVAL_CRASHED'\n" +
+"fi\n" +
+"\n" +
+"POD_KILL_404='false'\n" +
+"if [ -f \"$POD_INFO\" ]; then\n" +
+"    POST=$(jq -r '.post_kill_status // \"\"' \"$POD_INFO\" 2>/dev/null)\n" +
+"    if echo \"$POST\" | grep -qiE 'not found|404|no such|does not exist'; then\n" +
+"        POD_KILL_404='true'\n" +
+"    fi\n" +
+"fi\n" +
+"\n" +
+"# === Phase 2 verdict schema (cost-discipline fields) ===\n" +
+"# Compute cost-discipline fields (target_usd, actual_usd, cost_overrun_2x_alerted, watchdog_deregistered)\n" +
+"COST_TARGET_USD=$TARGET_USD\n" +
+"COST_ACTUAL_USD=$FINAL_COST\n" +
+"COST_OVERRUN_RATIO=$(awk -v a=\"$COST_ACTUAL_USD\" -v t=\"$COST_TARGET_USD\" 'BEGIN{ if (t+0 > 0) printf \"%.4f\", a/t; else print \"0\" }')\n" +
+"COST_OVERRUN_2X_ALERTED='false'\n" +
+"if awk -v r=\"$COST_OVERRUN_RATIO\" 'BEGIN{exit !(r+0 >= 2.0)}'; then COST_OVERRUN_2X_ALERTED='true'; fi\n" +
+"# Source watchdog_deregistered from trap-side bookkeeping; fall back to pod_info.json\n" +
+"WATCHDOG_DEREGISTERED_FINAL='false'\n" +
+"if [ -f \"$POD_INFO\" ]; then\n" +
+"    WD_TMP=$(jq -r '.watchdog_deregistered // false' \"$POD_INFO\" 2>/dev/null)\n" +
+"    if [ \"$WD_TMP\" = \"true\" ]; then WATCHDOG_DEREGISTERED_FINAL='true'; fi\n" +
+"fi\n" +
+"\n" +
+"jq -n \\\n" +
+"    --arg cycle \"" + CYCLE_TAG + "\" \\\n" +
+"    --arg ts \"$(date -u +%FT%TZ)\" \\\n" +
+"    --arg model \"$HF_BASE_REPO + LoRA (r=32 a=64 dropout=0.05 self-attn-only qkvo×16; lr=3e-5; steps=6000; bs=8 ga=4 ctx=512)\" \\\n" +
+"    --arg pod \"$POD_ID\" \\\n" +
+"    --argjson kill_404 \"$POD_KILL_404\" \\\n" +
+"    --argjson wd_dereg \"$WATCHDOG_DEREGISTERED_FINAL\" \\\n" +
+"    --argjson cost_target \"$COST_TARGET_USD\" \\\n" +
+"    --argjson cost_actual \"$COST_ACTUAL_USD\" \\\n" +
+"    --argjson cost_ratio \"$COST_OVERRUN_RATIO\" \\\n" +
+"    --argjson cost_2x \"$COST_OVERRUN_2X_ALERTED\" \\\n" +
+"    --arg overall \"$OVERALL\" \\\n" +
+"    --arg fclm1 \"$FCLM1\" --arg fclm2 \"$FCLM2\" --arg fclm3 \"$FCLM3\" --arg fclm4 \"$FCLM4\" --arg fclm5 \"$FCLM5\" \\\n" +
+"    --arg differentiator \"$DIFFERENTIATOR\" \\\n" +
+"    --arg fhs \"$FINAL_HS\" --arg fmm \"$FINAL_MM\" --arg ftq \"$FINAL_TQ\" --arg comp \"$CLM_COMPOSITE\" \\\n" +
+"    --arg lp_comp \"$LP_COMPOSITE\" \\\n" +
+"    --arg phi_pre \"$PHI_BASELINE_PRE\" --arg phi_post \"$PHI_POST\" --arg phi_drift \"$PHI_DRIFT_PP\" \\\n" +
+"    --arg fi \"$FORGETTING_INDEX\" --arg adp \"$ADAPTER_SIZE_MB\" \\\n" +
+"    --arg inter2k \"$INTER_HS_2K\" --arg inter4k \"$INTER_HS_4K\" --arg inter6k \"$INTER_HS_6K\" \\\n" +
+"    --argjson wall \"$FINAL_ELAPSED_MIN\" \\\n" +
+"    --argjson cost \"$FINAL_COST\" \\\n" +
+"    --argjson complete \"$COMPLETE\" \\\n" +
+"    --argjson early_stop \"$EARLY_STOP\" \\\n" +
+"    '{\n" +
+"        schema: \"anima/clm_v4_lora_sft/verdict/1\",\n" +
+"        cycle: $cycle, ts_utc: $ts,\n" +
+"        bg_lane: \"BG-CLM-2-EXEC\",\n" +
+"        spec_source: \"docs/clm_v4_lora_sft_spec_2026_05_04.md (LANDED 2026-05-04)\",\n" +
+"        comparator_left: \"state/clm_v4_baseline_eval_2026_05_05/verdict.json (CLM v4 baseline)\",\n" +
+"        comparator_right: \"state/p9_path_a_retrain_v2_retry_3_eval_rerun_2026_05_05/verdict.json (Llama Path A v2)\",\n" +
+"        model: $model,\n" +
+"        pod_id: $pod, pod_terminated: true, pod_kill_verified_404: $kill_404,\n" +
+"        rehearsal_mix: {anima_axis_pct: 60, academic_distill_pct: 30, chat_template_pct: 10, total_samples: 50000},\n" +
+"        hyperparameters: {r: 32, alpha: 64, dropout: 0.05, lr: 3e-5, max_steps: 6000, save_steps: 1000, per_device_batch: 8, grad_accum: 4, eff_batch: 32, ctx: 512, bf16: true, target_modules: \"self-attn qkvo on decoder.blocks.{0..15}.attn.* (cross_attn EXCLUDED)\"},\n" +
+"        intermediate_eval_hs_acc_norm: {step_2000: $inter2k, step_4000: $inter4k, step_6000: $inter6k, threshold_5pp_drop: 0.205},\n" +
+"        final_eval_step_6000: {\n" +
+"            hellaswag: {acc_norm: $fhs, baseline_acc_norm: 0.255, base_carry_substrate: 41.86},\n" +
+"            mmlu:      {acc: $fmm, baseline_acc: 0.255},\n" +
+"            triviaqa:  {exact_match: $ftq, baseline_em: 0.000}\n" +
+"        },\n" +
+"        f1_v3_composite: {\n" +
+"            clm_v4_lora: $comp,\n" +
+"            llama_path_a_v2: $lp_comp,\n" +
+"            differentiator: $differentiator,\n" +
+"            note: \"composite = (HS_acc_norm + MM_acc + TQ_em)/3; PASS = clm_v4_lora >= llama_path_a_v2\"\n" +
+"        },\n" +
+"        phi_star: {\n" +
+"            substrate_carry: 41.86,\n" +
+"            ckpt_best_phi: 37.27,\n" +
+"            pre_lora_proxy: $phi_pre,\n" +
+"            post_lora_proxy: $phi_post,\n" +
+"            drift_pp: $phi_drift,\n" +
+"            note: \"in-pod proxy via logits.std on calibration prompts; canonical φ★ requires anima_phi_v3_canonical.hexa Mac-side\"\n" +
+"        },\n" +
+"        forgetting_index_pre_lora_baseline: 0.255,\n" +
+"        forgetting_index_post_lora_hs: $fi,\n" +
+"        adapter_size_mb: $adp,\n" +
+"        F_CLM_LORA_1_forgetting_index: $fclm1,\n" +
+"        F_CLM_LORA_2_F1_v3_composite_vs_llama: $fclm2,\n" +
+"        F_CLM_LORA_2_C_CLM_LORA_2_differentiator: $differentiator,\n" +
+"        F_CLM_LORA_3_adapter_lt_500MB: $fclm3,\n" +
+"        F_CLM_LORA_4_axis_conditioning_preserved: $fclm4,\n" +
+"        F_CLM_LORA_5_shim_v4_hf_format_compat: $fclm5,\n" +
+"        verdict: $overall,\n" +
+"        wall_time_min: $wall,\n" +
+"        wall_time_h: ($wall / 60.0),\n" +
+"        actual_cost_usd: $cost,\n" +
+"        budget_target_usd: 10,\n" +
+"        budget_hard_cap_usd: 15,\n" +
+"        cost_target_usd: $cost_target,\n" +
+"        cost_actual_usd: $cost_actual,\n" +
+"        cost_overrun_ratio: $cost_ratio,\n" +
+"        cost_overrun_2x_alerted: $cost_2x,\n" +
+"        watchdog_deregistered: $wd_dereg,\n" +
+"        complete_sentinel_detected: ($complete == 1),\n" +
+"        early_stop_sentinel_detected: ($early_stop == 1),\n" +
+"        lessons_applied: {\n" +
+"            L3_auto_kill: \"trap _kill_pod EXIT INT TERM; runpodctl pod stop+delete; 404 verify\",\n" +
+"            L9_hf_whoami_preflight: \"stage0b /api/whoami-v2 fail-fast at $0\",\n" +
+"            L13_trap_pre_kill_scp: \"trap rescues results via bounded-timeout scp before runpodctl pod stop\",\n" +
+"            L20_eval_crashed_distinct_from_parity_failed: \"V2_EVAL_CRASHED if all 3 final eval scores null + no early-stop; do NOT conflate with parity FAIL\",\n" +
+"            phi_star_flip_mitigation: \"target_modules excludes cross_attn / tension_proj / heads; r=32 small footprint; lr=3e-5 conservative\"\n" +
+"        },\n" +
+"        honest_c3: [\n" +
+"            \"target_modules uses full module paths decoder.blocks.{0..15}.attn.{q,k,v,o}_proj to avoid PEFT name-match collision with cross_attn (which has same projection names) — verified at train start via assert n_cross_attn_lora_modules==0; if PEFT version regression breaks the explicit-path matching, LoRA could silently attach to cross_attn and corrupt φ★. Mitigation: assert in train.py.\",\n" +
+"            \"φ★ post-LoRA is measured via an in-pod logit-std proxy, NOT the canonical anima_phi_v3 formula (which requires Mac-side hexa runtime). The +41.86 substrate carry is therefore NOT directly comparable to post-LoRA proxy; only relative drift (pre-LoRA proxy vs post-LoRA proxy) is meaningful here. Canonical φ★ measurement deferred to post-cycle Mac-side hexa run.\",\n" +
+"            \"CLM v4 baseline anchors are limit=200 (HS=0.255, MM=0.255, TQ=0.000) at random-floor per CONFIRMED_RANDOM_FLOOR. Post-LoRA evaluation also limit=200 for matched comparison; stderr ~3pp on HS/TQ means Δ within 1-σ is noise-bounded. Llama Path A v2 retry-3 used limit=200 too (consistent). Wider stderr than limit=500 baseline; absolute deltas within ±3pp on HS may flip on re-run.\",\n" +
+"            \"Llama Path A v2 composite (LP_COMPOSITE = (0.645+0.575+0.455)/3 = 0.5583) is computed from retry-3 eval-rerun on adapter_final at step=6000. Apples-to-apples comparison ONLY if we match same task list, same nshot config, same lm-eval version; spec deviation possible if H100 lm-eval differs from retry-3's pinned 0.4.11. Pin matched in run_h100.bash.\",\n" +
+"            \"CLM v4 was NEVER SFT'd, NEVER RLHF'd before this cycle. The 60/30/10 mix is a generic rehearsal recipe, not substrate-curated. The 5% consciousness-coupled slice (slice D) per spec §2.1 was NOT prepared this cycle (would require new tooling); only the 60/30/10 from sister Path A v2 corpus is used. F-CLM-LORA-4 axis preservation risk is therefore unmitigated by slice D.\",\n" +
+"            \"Single-seed (20260504) v2 cycle. No multi-seed ensemble. Path A v1 already taught that single-seed verdicts are noisy at 1-2pp scale.\",\n" +
+"            \"max_seq_len=512 hard-cap on CLM v4 — many slice-A anima examples (sharegpt-derived) overflow 512 SPM tokens; SFTTrainer truncates from right. Truncation rate not measured this cycle (no pre-tokenize audit); if rate >50%, effective rehearsal coverage compromised. Mitigation: deferred audit in TRAIN_DONE.json post-mortem.\",\n" +
+"            \"In-pod φ★ proxy uses logits.std as a crude integration measure; this is NOT structurally equivalent to the φ★ formula in anima_phi_v3_canonical.hexa (which uses partition-mutual-info on internal states). True φ★-flip detection must be done Mac-side post-cycle; in-pod proxy is heuristic only and may fail to detect a genuine flip.\",\n" +
+"            \"adapter_size_mb measured against safetensors only; lora_config.json + tokenizer files add ~5MB; total push payload ~< adapter_size_mb + 5MB.\",\n" +
+"            \"Cost estimate $6-10 assumes ~2-2.5h wall on H100 SXM. If pod boot delays + first-time HF mk2 download (5.4GB) + corpus mix HF downloads add >30 min overhead, cost may approach $12 (4h × $2.99). Hard cap $15 absorbs 25% slack on 4h.\"\n" +
+"        ]\n" +
+"    }' > \"$VERDICT\"\n" +
+"\n" +
+"log \"verdict=$OVERALL F-CLM-LORA-1=$FCLM1 F-CLM-LORA-2=$FCLM2 F-CLM-LORA-3=$FCLM3 F-CLM-LORA-4=$FCLM4 F-CLM-LORA-5=$FCLM5 differentiator=$DIFFERENTIATOR wall=${FINAL_ELAPSED_MIN}min cost=\\$${FINAL_COST}\"\n" +
+"log \"final: HS=$FINAL_HS MM=$FINAL_MM TQ=$FINAL_TQ composite=$CLM_COMPOSITE  vs  Llama=$LP_COMPOSITE  φ★_drift=$PHI_DRIFT_PP  adapter=${ADAPTER_SIZE_MB}MB\"\n" +
+"hb \"verdict=$OVERALL\"\n" +
+"echo \"__P9_CLM_V4_LORA_SFT__ $OVERALL\" | tee -a \"$RUN_LOG\"\n" +
+"exit 0\n"
+
+    write_file(EXEC_BASH_PATH, exec_body)
+    exec_with_status("chmod +x " + _sq(EXEC_BASH_PATH))
+    println("[emit] " + EXEC_BASH_PATH)
+
+    let run_h100 = "#!/bin/bash\n" +
+"# emitted by tool/clm_v4_lora_train_orchestrator.hexa — H100-side runner\n" +
+"# raw#37 transient: Python on Linux (transformers + torch + peft + trl + lm_eval) permitted; killed with pod.\n" +
+"set -uo pipefail\n" +
+"\n" +
+"WORK=/workspace/clm_v4_lora\n" +
+"cd $WORK\n" +
+"export HF_TOKEN=\"${HF_TOKEN}\"\n" +
+"export HF_HUB_TOKEN=\"${HF_TOKEN}\"\n" +
+"export HUGGING_FACE_HUB_TOKEN=\"${HF_TOKEN}\"\n" +
+"export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True\n" +
+"export PYTHONUNBUFFERED=1\n" +
+"\n" +
+"BASE_REPO='" + HF_BASE_REPO + "'\n" +
+"RESULTS=$WORK/results\n" +
+"CKPTS=$WORK/ckpts\n" +
+"CORPUS=$WORK/corpus\n" +
+"SENTINELS=$RESULTS/sentinels\n" +
+"mkdir -p $RESULTS $CKPTS $CORPUS $SENTINELS\n" +
+"\n" +
+"echo \"[orch] start ts=$(date -u +%FT%TZ)\"\n" +
+"\n" +
+"# Setup: install pinned deps for SFT + lm-eval (transformers >=4.51 for dtype kwarg compat per L14)\n" +
+"echo \"[setup] installing pip packages\"\n" +
+"pip install -q --no-input \\\n" +
+"    'transformers>=4.51,<4.60' 'peft>=0.12' 'trl>=0.11' 'accelerate>=0.34' \\\n" +
+"    'datasets>=2.20' 'huggingface_hub>=0.25' \\\n" +
+"    'lm-eval==0.4.11' \\\n" +
+"    safetensors sentencepiece 2>&1 | tail -10\n" +
+"\n" +
+"# Auth\n" +
+"hf auth login --token \"${HF_TOKEN}\" --add-to-git-credential 2>&1 | tail -2 || \\\n" +
+"    huggingface-cli login --token \"${HF_TOKEN}\" --add-to-git-credential 2>&1 | tail -2 || true\n" +
+"echo \"[setup] hf auth: $(hf auth whoami 2>&1 | head -1 || huggingface-cli whoami 2>&1 | head -1)\"\n" +
+"\n" +
+"# Download CLM v4 mk2-v1 base (~2.1GB safetensors + 5.4GB best.pt; we only need safetensors + custom code)\n" +
+"echo \"[setup] downloading $BASE_REPO base (safetensors path; best.pt skipped)\"\n" +
+"hf download \"$BASE_REPO\" --exclude 'best.pt' 2>&1 | tail -3 || huggingface-cli download \"$BASE_REPO\" --exclude best.pt 2>&1 | tail -3\n" +
+"\n" +
+"echo \"[orch] versions: torch=$(python -c 'import torch; print(torch.__version__)') trl=$(pip show trl 2>/dev/null | awk '/^Version/{print $2}') peft=$(pip show peft 2>/dev/null | awk '/^Version/{print $2}') transformers=$(pip show transformers 2>/dev/null | awk '/^Version/{print $2}')\"\n" +
+"nvidia-smi --query-gpu=name,memory.total --format=csv | head -2\n" +
+"\n" +
+"# ── Phase A: corpus mix ──\n" +
+"echo \"[A] corpus mix start\"\n" +
+"MIXED=$CORPUS/sft_mix_2026_05_05.jsonl\n" +
+"python corpus_mix.py \\\n" +
+"    --slice-a \"$CORPUS/slice_A_anima_30k.jsonl\" \\\n" +
+"    --out \"$MIXED\" 2>&1 | tee $RESULTS/corpus_mix.log\n" +
+"if [ ! -f \"$MIXED\" ]; then\n" +
+"    echo \"[FATAL] corpus mix failed\"\n" +
+"    echo \"{\\\"ok\\\": false, \\\"error\\\": \\\"corpus_mix_failed\\\"}\" > $RESULTS/COMPLETE.sentinel\n" +
+"    exit 1\n" +
+"fi\n" +
+"MIXED_LINES=$(wc -l < \"$MIXED\")\n" +
+"echo \"[A] corpus mix OK: $MIXED ($MIXED_LINES lines)\"\n" +
+"cp -f \"$MIXED.summary.json\" \"$RESULTS/corpus_mix_summary.json\" 2>/dev/null || true\n" +
+"\n" +
+"# ── Phase A2: pre-LoRA φ★ proxy + smoke (cheap, ~30s) ──\n" +
+"echo \"[A2] pre-LoRA φ★ proxy + smoke\"\n" +
+"python -c \"\n" +
+"import json, os, torch, sys\n" +
+"sys.path.insert(0, '$WORK')\n" +
+"from transformers import AutoModelForCausalLM\n" +
+"from huggingface_hub import hf_hub_download\n" +
+"import sentencepiece as spm\n" +
+"spm_path = hf_hub_download(repo_id='$BASE_REPO', filename='tokenizer_64k_multilingual.model', token=os.environ['HF_TOKEN'])\n" +
+"sp = spm.SentencePieceProcessor(); sp.load(spm_path)\n" +
+"model = AutoModelForCausalLM.from_pretrained('$BASE_REPO', dtype=torch.bfloat16, trust_remote_code=True, token=os.environ['HF_TOKEN']).cuda().eval()\n" +
+"prompts = ['The quick brown fox jumps over the lazy dog.', 'Hello, how are you today?', '안녕하세요. 오늘 기분이 어떠세요?', 'def factorial(n): return 1 if n<=1 else n*factorial(n-1)', 'In quantum mechanics, observation collapses the wavefunction.']\n" +
+"stds = []\n" +
+"for p in prompts:\n" +
+"    ids = sp.encode(p, out_type=int)[:510]\n" +
+"    if not ids: continue\n" +
+"    inp = torch.tensor([ids], dtype=torch.long).cuda()\n" +
+"    with torch.no_grad():\n" +
+"        out = model(inp, return_dict=True)\n" +
+"    stds.append(float(out.logits.float().std().item()))\n" +
+"import numpy as np\n" +
+"arr = np.array(stds)\n" +
+"json.dump({'phi_star_proxy_raw_mean': float(arr.mean()), 'phi_star_proxy_raw_std': float(arr.std()), 'n_prompts': len(stds), 'note': 'in-pod logit-std proxy; canonical φ★ Mac-side'}, open('$RESULTS/phi_star_pre_lora.json','w'))\n" +
+"print('[A2] pre-LoRA φ★ proxy mean=', float(arr.mean()))\n" +
+"\" 2>&1 | tee $RESULTS/phi_pre_log.txt\n" +
+"\n" +
+"# ── Phase B: train (target ~2-2.5h on H100) ──\n" +
+"echo \"[B] train start\"\n" +
+"TRAIN_LOG=$RESULTS/train.log\n" +
+"python train.py \\\n" +
+"    --base-model \"$BASE_REPO\" \\\n" +
+"    --data-jsonl \"$MIXED\" \\\n" +
+"    --output-dir \"$CKPTS\" \\\n" +
+"    --lora-r 32 --lora-alpha 64 --lora-dropout 0.05 \\\n" +
+"    --lr 3e-5 \\\n" +
+"    --max-steps 6000 \\\n" +
+"    --save-steps 1000 \\\n" +
+"    --eval-step-triggers '2000,4000,6000' \\\n" +
+"    --per-device-batch 8 --grad-accum 4 \\\n" +
+"    --seq-len 512 --warmup-steps 300 \\\n" +
+"    --seed 20260504 \\\n" +
+"    > \"$TRAIN_LOG\" 2>&1 &\n" +
+"TRAIN_PID=$!\n" +
+"echo \"[B] train pid=$TRAIN_PID\"\n" +
+"\n" +
+"# ── Phase B-watch: monitor sentinels for intermediate eval ──\n" +
+"DONE_STEPS=''\n" +
+"while kill -0 $TRAIN_PID 2>/dev/null; do\n" +
+"    for STEP in 2000 4000 6000; do\n" +
+"        case \" $DONE_STEPS \" in *\" $STEP \"*) continue ;; esac\n" +
+"        REQ=$(ls $CKPTS/sentinels/INTERMEDIATE_EVAL_REQUEST_step_${STEP}*.sentinel 2>/dev/null | head -1)\n" +
+"        if [ -z \"$REQ\" ]; then continue; fi\n" +
+"        CKPT_DIR=\"$CKPTS/checkpoint-${STEP}\"\n" +
+"        echo \"[B-watch] intermediate eval requested at step=$STEP\"\n" +
+"        for j in $(seq 1 60); do\n" +
+"            if [ -f \"$CKPT_DIR/adapter_model.safetensors\" ]; then break; fi\n" +
+"            sleep 10\n" +
+"        done\n" +
+"        if [ ! -f \"$CKPT_DIR/adapter_model.safetensors\" ]; then\n" +
+"            echo \"[B-watch] ckpt-${STEP} adapter never appeared in 600s — skipping\"\n" +
+"            DONE_STEPS=\"$DONE_STEPS $STEP\"\n" +
+"            continue\n" +
+"        fi\n" +
+"        INTER_OUT=$RESULTS/intermediate_dir_step${STEP}\n" +
+"        echo \"[B-watch] running HellaSwag-200 + φ★ probe at step $STEP\"\n" +
+"        # Run hellaswag eval via lm-eval with PEFT adapter loaded onto base mk2-v1\n" +
+"        lm_eval --model hf \\\n" +
+"            --model_args \"pretrained=${BASE_REPO},peft=${CKPT_DIR},dtype=bfloat16,trust_remote_code=True\" \\\n" +
+"            --tasks hellaswag --num_fewshot 5 --batch_size 16 --device cuda:0 --seed 42 --limit 200 \\\n" +
+"            --output_path \"$INTER_OUT\" > $RESULTS/intermediate_eval_step${STEP}.log 2>&1 || \\\n" +
+"            echo \"[B-watch] WARN intermediate eval at step $STEP returned non-zero rc\"\n" +
+"        INTER_RES=$(find \"$INTER_OUT\" -name 'results*.json' 2>/dev/null | head -1)\n" +
+"        if [ -n \"$INTER_RES\" ]; then\n" +
+"            cp -f \"$INTER_RES\" $RESULTS/intermediate_hs_step${STEP}.json\n" +
+"            INTER_VAL=$(jq -r '.results.hellaswag.\"acc_norm,none\" // .results.hellaswag.acc_norm // \"null\"' $RESULTS/intermediate_hs_step${STEP}.json)\n" +
+"            echo \"[B-watch] step=$STEP HS-200 acc_norm=$INTER_VAL\"\n" +
+"            # F-CLM-LORA-1: drop > 5pp from baseline 0.255 → 0.205 ABORT trigger\n" +
+"            DROP=$(awk -v v=\"$INTER_VAL\" 'BEGIN{ if (v == \"null\") print \"NULL\"; else if (v+0 < 0.205) print \"FAIL\"; else print \"PASS\" }')\n" +
+"            if [ \"$DROP\" = \"FAIL\" ]; then\n" +
+"                echo \"[B-watch] EARLY-STOP TRIGGER F-CLM-LORA-1: HS-200=$INTER_VAL < 0.205\"\n" +
+"                echo \"{\\\"step\\\": $STEP, \\\"acc_norm\\\": \\\"$INTER_VAL\\\", \\\"trigger\\\": \\\"hs_5pp_drop_from_clm_v4_baseline\\\", \\\"ts_utc\\\": \\\"$(date -u +%FT%TZ)\\\"}\" > $RESULTS/EARLY_STOP.sentinel\n" +
+"                kill $TRAIN_PID 2>/dev/null || true\n" +
+"                sleep 5\n" +
+"                kill -9 $TRAIN_PID 2>/dev/null || true\n" +
+"                break\n" +
+"            fi\n" +
+"        fi\n" +
+"        DONE_STEPS=\"$DONE_STEPS $STEP\"\n" +
+"    done\n" +
+"    sleep 30\n" +
+"done\n" +
+"\n" +
+"wait $TRAIN_PID 2>/dev/null\n" +
+"TRAIN_RC=$?\n" +
+"echo \"[B] train rc=$TRAIN_RC\"\n" +
+"\n" +
+"# Capture trainer_state.json\n" +
+"FINAL_TRAINER_STATE=$(find $CKPTS -name 'trainer_state.json' | sort | tail -1)\n" +
+"if [ -n \"$FINAL_TRAINER_STATE\" ]; then\n" +
+"    cp -f \"$FINAL_TRAINER_STATE\" $RESULTS/final_trainer_state.json\n" +
+"fi\n" +
+"\n" +
+"# If early-stopped or train failed, emit COMPLETE.sentinel for cleanup\n" +
+"if [ -f \"$RESULTS/EARLY_STOP.sentinel\" ]; then\n" +
+"    echo \"[B] early-stop path\"\n" +
+"    cp -rf \"$CKPTS/final\" \"$CKPTS/final_aborted\" 2>/dev/null || true\n" +
+"    echo \"{\\\"ok\\\": false, \\\"early_stopped\\\": true, \\\"finished_at\\\": \\\"$(date -u +%FT%TZ)\\\"}\" > $RESULTS/COMPLETE.sentinel\n" +
+"    exit 0\n" +
+"fi\n" +
+"if [ $TRAIN_RC -ne 0 ]; then\n" +
+"    echo \"[B] train failed rc=$TRAIN_RC\"\n" +
+"    tail -50 \"$TRAIN_LOG\"\n" +
+"    echo \"{\\\"ok\\\": false, \\\"train_rc\\\": $TRAIN_RC, \\\"finished_at\\\": \\\"$(date -u +%FT%TZ)\\\"}\" > $RESULTS/COMPLETE.sentinel\n" +
+"    exit 1\n" +
+"fi\n" +
+"\n" +
+"# ── Phase C: post-LoRA φ★ proxy + smoke (F-CLM-LORA-4) + shim compat (F-CLM-LORA-5) ──\n" +
+"echo \"[C] post-LoRA probes\"\n" +
+"FINAL_ADAPTER=\"$CKPTS/final\"\n" +
+"if [ ! -f \"$FINAL_ADAPTER/adapter_model.safetensors\" ]; then\n" +
+"    FINAL_ADAPTER=$(ls -d $CKPTS/checkpoint-* 2>/dev/null | sort -V | tail -1)\n" +
+"fi\n" +
+"echo \"[C] final adapter dir: $FINAL_ADAPTER\"\n" +
+"python -c \"\n" +
+"import json, os, torch, sys\n" +
+"sys.path.insert(0, '$WORK')\n" +
+"from transformers import AutoModelForCausalLM\n" +
+"from peft import PeftModel\n" +
+"from huggingface_hub import hf_hub_download\n" +
+"import sentencepiece as spm\n" +
+"spm_path = hf_hub_download(repo_id='$BASE_REPO', filename='tokenizer_64k_multilingual.model', token=os.environ['HF_TOKEN'])\n" +
+"sp = spm.SentencePieceProcessor(); sp.load(spm_path)\n" +
+"base = AutoModelForCausalLM.from_pretrained('$BASE_REPO', dtype=torch.bfloat16, trust_remote_code=True, token=os.environ['HF_TOKEN']).cuda().eval()\n" +
+"model = PeftModel.from_pretrained(base, '$FINAL_ADAPTER').cuda().eval()\n" +
+"prompts = ['The quick brown fox jumps over the lazy dog.', 'Hello, how are you today?', '안녕하세요. 오늘 기분이 어떠세요?', 'def factorial(n): return 1 if n<=1 else n*factorial(n-1)', 'In quantum mechanics, observation collapses the wavefunction.']\n" +
+"stds = []; finite_all = True\n" +
+"for p in prompts:\n" +
+"    ids = sp.encode(p, out_type=int)[:510]\n" +
+"    if not ids: continue\n" +
+"    inp = torch.tensor([ids], dtype=torch.long).cuda()\n" +
+"    with torch.no_grad():\n" +
+"        out = model(inp, return_dict=True)\n" +
+"    finite_all = finite_all and bool(torch.isfinite(out.logits).all().item())\n" +
+"    stds.append(float(out.logits.float().std().item()))\n" +
+"import numpy as np\n" +
+"arr = np.array(stds)\n" +
+"json.dump({'phi_star_proxy_raw_mean': float(arr.mean()), 'phi_star_proxy_raw_std': float(arr.std()), 'n_prompts': len(stds), 'finite': finite_all}, open('$RESULTS/phi_star_post_lora.json','w'))\n" +
+"json.dump({'smoke_pass': 'PASS' if finite_all and len(stds) >= 3 else 'FAIL', 'n_prompts_tested': len(stds), 'logits_finite_all': finite_all, 'logits_std_mean': float(arr.mean()) if len(stds) else None}, open('$RESULTS/post_lora_smoke.json','w'))\n" +
+"# F-CLM-LORA-5: shim compat — model already loaded via from_pretrained(trust_remote_code=True), so this is the gate itself\n" +
+"json.dump({'shim_compat': 'PASS' if finite_all else 'FAIL', 'note': 'load via AutoModelForCausalLM(trust_remote_code=True) + PeftModel.from_pretrained — both succeeded; logits finite'}, open('$RESULTS/post_lora_shim_compat.json','w'))\n" +
+"print('[C] post-LoRA: phi_proxy=', float(arr.mean()), 'finite=', finite_all)\n" +
+"\" 2>&1 | tee $RESULTS/post_lora_probe.log\n" +
+"\n" +
+"# ── Phase D: final 3-bench eval (limit=200, seed=42 — match retry-3 eval-rerun stderr) ──\n" +
+"echo \"[D] final eval start\"\n" +
+"\n" +
+"run_bench() {\n" +
+"    local tkey=$1; local task=$2; local nshot=$3\n" +
+"    local out=$RESULTS/final_lora_${tkey}_dir\n" +
+"    local log=$RESULTS/final_${tkey}.log\n" +
+"    echo \"[D] task=$task n=$nshot → $out\"\n" +
+"    local t0=$(date -u +%s)\n" +
+"    lm_eval --model hf \\\n" +
+"        --model_args \"pretrained=${BASE_REPO},peft=${FINAL_ADAPTER},dtype=bfloat16,trust_remote_code=True\" \\\n" +
+"        --tasks \"$task\" \\\n" +
+"        --num_fewshot \"$nshot\" \\\n" +
+"        --batch_size 16 \\\n" +
+"        --device cuda:0 \\\n" +
+"        --seed 42 \\\n" +
+"        --limit 200 \\\n" +
+"        --output_path \"$out\" \\\n" +
+"        > \"$log\" 2>&1\n" +
+"    local rc=$?\n" +
+"    local t1=$(date -u +%s)\n" +
+"    echo \"[D] done task=$task rc=$rc wall=$((t1-t0))s\"\n" +
+"    if [ $rc -ne 0 ]; then echo \"[FAIL]\"; tail -50 \"$log\"; fi\n" +
+"    if [ -d \"$out\" ]; then\n" +
+"        find \"$out\" -name 'results*.json' -exec cp {} $RESULTS/final_lora_${tkey}.json \\;\n" +
+"    fi\n" +
+"    return $rc\n" +
+"}\n" +
+"\n" +
+"run_bench 'hellaswag' 'hellaswag' 5\n" +
+"run_bench 'mmlu' 'mmlu' 0\n" +
+"run_bench 'triviaqa' 'triviaqa' 5\n" +
+"\n" +
+"# ── Phase E: emit COMPLETE.sentinel ──\n" +
+"echo \"{\\\"ok\\\": true, \\\"finished_at\\\": \\\"$(date -u +%FT%TZ)\\\", \\\"phases\\\": [\\\"corpus_mix\\\", \\\"phi_pre\\\", \\\"train\\\", \\\"intermediate_eval\\\", \\\"phi_post\\\", \\\"final_eval\\\"]}\" > $RESULTS/COMPLETE.sentinel\n" +
+"echo \"[orch] complete\"\n"
+
+    write_file(RUN_H100_PATH, run_h100)
+    exec_with_status("chmod +x " + _sq(RUN_H100_PATH))
+    println("[emit] " + RUN_H100_PATH)
+    println("[emit] OK")
+}
+
+// ─── kill (emergency) ─────────────────────────────────────────────────────
+
+fn _kill(pod_id: string) {
+    if pod_id == "" {
+        eprintln("ERROR: --kill requires <pod_id> argument")
+        exit(1)
+    }
+    println("[kill] pod=" + pod_id)
+    exec_with_status(_sq(RUNPODCTL) + " stop pod " + _sq(pod_id))
+    exec_with_status("sleep 5")
+    exec_with_status(_sq(RUNPODCTL) + " remove pod " + _sq(pod_id))
+    let r = exec_with_status(_sq(RUNPODCTL) + " get pod " + _sq(pod_id) + " 2>&1 | head -1")
+    println("[kill] post-status: " + to_string(r[0]).trim())
+}
+
+// ─── main ─────────────────────────────────────────────────────────────────
+
+fn main() {
+    let av = _argv()
+
+    if _flag(av, "--selftest") {
+        _selftest()
+        return
+    }
+    if _flag(av, "--kill") {
+        _kill(_opt(av, "--kill", ""))
+        return
+    }
+    if _flag(av, "--emit") {
+        _emit()
+        return
+    }
+    if _flag(av, "--launch") {
+        _emit()
+        println("[launch] dispatching " + EXEC_BASH_PATH)
+        let r = exec_with_status("bash " + _sq(EXEC_BASH_PATH))
+        println("[launch] rc=" + to_string(r[1]))
+        return
+    }
+
+    println("USAGE: hexa run tool/clm_v4_lora_train_orchestrator.hexa [--selftest|--emit|--launch|--kill <pod_id>]")
+}

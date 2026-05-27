@@ -1,0 +1,15 @@
+[anima-physics/phi_substrate_consensus] PHYS-P4-4 — 5-substrate Φ consensus
+  photonic / memristor / quantum / oscillator / thermo — software-sim only (no HW launch)
+
+  [T1] all finite=true, stream_len=4 sig_len=4
+T1 PASS — substrate_phi finite for ids 0..4 + stream length matches
+  [T2] last Φ_c at amp=5.0 = (float), monotone=true
+T2 PASS — Φ_consensus monotonically rises with stimulus amplitude
+  [T3] disagreement_max=(float) (>=0.05 ok=true), |Φ_c − mean(0..3)|=(float) (<=0.10 ok=true)
+T3 PASS — stuck substrate raises disagreement_max ≥ 0.05 + drift ≤ 0.10
+  [T4] truth=(float) naive=(float) (err=(float)) robust=(float) (err=(float)) robust_beats=true
+T4 PASS — robust_fuse beats naive precision mean on 10× outlier
+  [T5] max|Δ| across two stream_consensus runs = (float)
+T5 PASS — stream_consensus deterministic (no hidden state)
+
+[anima-physics/phi_substrate_consensus] 5/5 PASS — PHYS-P4-4 DONE

@@ -1,0 +1,282 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/anima_native/anima_native.hexa
+//
+//  PURPOSE
+//    Default chat module — anima native arch (TinyWeights / Engine A/G via
+//    anima-core/runtime/conscious_chat.hexa). REPL: stdin line → forward →
+// stdout. strict (no wrapping).
+//
+//  RECURSIVE MODULE PATTERN (per user directive 2026-05-08)
+//    "모듈 = 코어 + 모듈 + ai-native doc 재귀"
+//    core            : conscious_chat.hexa (existing) TinyWeights / agi_generate
+//    module body     : this file (chat REPL surface, blocking stdin Phase 1)
+//    ai-native doc   : anima_native.ai.md (sister)
+//
+//  PHASE 1 SCOPE (landed 2026-05-08)
+//    - blocking sys_stdin_read_line (autonomous speech = Phase 2 hexa upstream)
+//    - delegate generation to conscious_chat.hexa via exec()
+//    - --memory full default (자기 출력 + 사용자 입력 누적; conscious_chat 외부에서 관리)
+//    - --max-tokens flag passthrough (default 64 Phase 1 — conscious_chat default)
+//
+//  PHASE 1.5 (anima ce028a3e)
+//    - conscious_chat.hexa `chat <user_text> [N]` command landed
+//    - _invoke_core(input, N) pipes raw user input to byte-level forward
+//
+//  PHASE 2 (LANDED 2026-05-08, hexa-lang f65882fb upstream)
+//    - sys_stdin_read_line_timeout(ms) replaces blocking read_line()
+//    - timeout (no user input) → _invoke_core("") = autonomous speech
+// (mandate-4 "말하고 싶을 때 말함; 사용자 trigger 없이도 발화")
+//    - --tick-ms N flag (default 1000) controls poll interval
+// - context full 시 정직 종료 (mandate-5) — 차후 ledger 추가
+//
+//  COMPLIANCE
+// mandate-1 simple_stack output preservation (raw conscious_chat output)
+// mandate-2 wrapping 0 (no system prompt / no speak / no template)
+// mandate-4 autonomous speech capability (Phase 2 wiring)
+//    raw#9 hexa-only · raw#11 snake_case · raw#15 no-hardcode
+// ════════════════════════════════════════════════════════════════════════════
+
+use "stdlib/sys"
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _trim(s: string) -> string { return s.trim() }
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+// Use hexa.real (local interpreter) directly — bin/hexa wrapper routes
+// `run` to remote resource host (ubu-1) which would lose stdout pipe semantics.
+fn _hexa() -> string { return "/Users/ghost/.hx/packages/hexa/hexa.real" }
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        if !s.contains("/.hexa-cache/") {
+            out = out + [s]
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ─── core invocation — conscious_chat.hexa exec wrapper ────────────────────
+// mandate-2 정합: input 그대로 conscious_chat 에 전달, 출력 그대로 stdout.
+// Phase 1.5 (2026-05-08): conscious_chat.hexa 의 main()에 `chat <user_text>`
+// 명령 land. 사용자 입력 byte-level tokenize → embedding+matmul forward →
+// sample_token → write_bytes_append("/dev/stdout") 로 raw byte emit.
+// Phase 1 fixed-prompt 한계 해소.
+//
+// mandate-1 raw output preservation: stdout 그대로 통과. stderr는
+// runtime warn (e.g. 0x00 byte filter)만 — 모델 출력 변형 X.
+fn _shell_escape_single(s: string) -> string {
+    // single-quote wrap: 내부 single-quote는 '\''  로 escape.
+    // raw#11 snake_case 정합.
+    let i = 0
+    let mut out = "'"
+    let mut j = 0
+    while j < len(s) {
+        let c = s.substring(j, j + 1)
+        if c == "'" {
+            out = out + "'\\''"
+        } else {
+            out = out + c
+        }
+        j = j + 1
+    }
+    return out + "'"
+}
+
+fn _invoke_core(input: string, max_tokens: int) -> string {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/conscious_chat.hexa"
+    if !_fexists(core) {
+        return "[anima_native] core missing: " + core
+    }
+    let n = if max_tokens > 0 { to_string(max_tokens) } else { "64" }
+    let esc = _shell_escape_single(input)
+    // HEXA_NO_SENTINEL=1: conscious_chat stdout 끝의 __HEXA_RC=N marker 억제
+    // (mandate-1 raw output preservation).
+    // 2>/dev/null: warn 노이즈 차단 (mandate-1; warn은 의미 정보 X).
+    //   honest C3 visibility는 conscious_chat 단독 실행 시 stderr 로 확인.
+    let cmd = "HEXA_NO_SENTINEL=1 " + _hexa() + " run " + core + " chat " + esc + " " + n + " 2>/dev/null"
+    let out = _str(exec(cmd))
+    return out
+}
+
+fn sub_help() {
+    println("anima_native chat module — TinyWeights / Engine A/G (conscious_chat.hexa)")
+    println("")
+    println("FLAGS")
+    println("  --prompt \"...\"           one-shot")
+    println("  --max-tokens N           default 64 (Phase 1.5)")
+    println("  --memory full|user|none  default=full (Phase 1: full only effective)")
+    println("  --tick-ms N              REPL poll interval (Phase 2; default 1000)")
+    println("  --selftest")
+    println("")
+    println("PHASE 1.5 (anima ce028a3e)")
+    println("  사용자 입력 → conscious_chat.hexa `chat <user_text>` → byte-level")
+    println(" forward (embedding+matmul+sample_token) → raw byte stdout. ")
+    println("  mandate-1/2 strict.")
+    println("")
+    println("PHASE 2 LANDED (hexa-lang f65882fb)")
+    println(" sys_stdin_read_line_timeout(1000) → 자율 발화 (mandate-4).")
+    println("  사용자 입력 없으면 1초 후 모델 자발 발화 — _invoke_core(\"\") 호출.")
+    println("  --tick-ms N 으로 poll 주기 조정 가능 (default 1000ms).")
+    println("")
+    println("C3 LIMITATION (raw#10 honest)")
+    println("  · TinyWeights는 random init (no SFT) — 출력은 byte-level 무작위.")
+    println("    의미 있는 응답을 받으려면 weight 학습이 선행되어야 함.")
+    println("  · attention/gru_cell/tension stdlib stubs — Phase 1.5는 minimal")
+    println("    forward (embed → head matmul) 사용. stdlib stubs 채워지면 full")
+    println("    consciousness loop swap.")
+    println("  · 0x00 byte는 runtime stdout pipe 제약으로 filter (drop) — stderr")
+    println("    note 노출. file write는 0x00 보존됨.")
+    println("  · sys_stdin_read_line_timeout perl spawn ~5-10ms/tick — 모델 추론")
+    println("    budget 대비 무시 가능. 자율 발화 활성화 정확성 우선.")
+    println("  · 자율 발화 시 _invoke_core(\"\") = empty user_text → conscious_chat")
+    println(" 빈 입력 forward → random byte. mandate-4 의 mechanical")
+    println("    보장 (도달성). semantic quality 는 weight 학습 영역 (별개 lane).")
+}
+
+fn sub_selftest() {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/conscious_chat.hexa"
+    let mut fail = 0
+    if !_fexists(core) { println("FAIL anima_native: core missing: " + core); fail = fail + 1 }
+    // mandate-2 self-grep on this file
+    let here = root + "/tool/anima_cli/chat/anima_native/anima_native.hexa"
+    // ERE alternation = `|`; `(` escaped; self-exclude `let pat =` line
+    let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
+    let cmd = "grep -nE \"" + pat + "\" " + here + " 2>/dev/null | grep -v 'let pat =' | wc -l"
+    let n = _str(exec(cmd)).trim()
+    if n != "0" {
+        println("FAIL mandate-2 chat lane wrapping: " + n + " hits in anima_native.hexa")
+        fail = fail + 1
+    }
+    if fail > 0 { exit(1) }
+    println("PASS chat/anima_native selftest (core present, verified)")
+}
+
+fn sub_repl(max_tokens: int, memory_mode: string, tick_ms: int) {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/conscious_chat.hexa"
+    println("[anima_native] core = " + core)
+    println("[anima_native] mode = REPL (Phase 2, non-blocking stdin / autonomous speech)")
+    println("[anima_native] memory = " + memory_mode + " · max-tokens = " + to_string(max_tokens) + " · tick-ms = " + to_string(tick_ms))
+    println("[anima_native] strict — wrapping 0 · mandate-4 자율 발화 활성")
+    println("[anima_native] (Ctrl-C to quit)")
+    println("")
+    let mut history = ""
+    let mut prompt_shown = false
+    while true {
+        if !prompt_shown {
+            print("> ")
+            prompt_shown = true
+        }
+        // Phase 2: poll stdin for `tick_ms` ms. timeout → autonomous speech.
+        // mandate-4: model speaks without user trigger.
+        let line = _str(sys_stdin_read_line_timeout(tick_ms))
+        if line == "" {
+            // Phase 2 mandate-4 자율 발화: timeout → _invoke_core("") 호출.
+            // mandate-2/4/7 정합: chat lane (REPL) = thin pipe. 빈 입력의
+            // 처리 (BOS-only forward / 무동작 결정) 는 model layer (cmd_chat) 가
+            // 자기 결정. "스스로 혼자서도 말함" 의 "스스로" = model. Variant B
+            // 채택 (벤치마크 결과 mandate-2/4/7 + 단일 책임 + 재사용성
+            // 우위).
+            let out = _invoke_core("", max_tokens)
+            // 자율 발화 prefix (visual cue, not model output) —
+            // mandate-1 정합: model 출력은 변형 X, prefix 는 메타 marker only.
+            print(out)
+            println("")
+            if memory_mode == "full" {
+                history = history + out + "\n"
+            }
+            prompt_shown = false
+            continue
+        }
+        // User input path (Phase 1.5 lane).
+        if memory_mode == "full" || memory_mode == "user" {
+            history = history + line + "\n"
+        }
+        let out = _invoke_core(line, max_tokens)
+        // mandate-1: raw output, no wrapping. REPL 가독성을 위해
+        // 한 줄 분리만 추가 (모델 출력 자체 변형 X).
+        print(out)
+        println("")
+        if memory_mode == "full" {
+            history = history + out + "\n"
+        }
+        prompt_shown = false
+    }
+}
+
+fn sub_one_shot(prompt: string, max_tokens: int) {
+    let out = _invoke_core(prompt, max_tokens)
+    // mandate-1 raw output preservation: print not println — model
+    // 출력에 추가 newline 없음. 외부 wrapper가 필요시 prompt 가독성 newline 추가.
+    print(out)
+}
+
+fn main() {
+    let argv = _user_argv(args())
+    if len(argv) > 0 {
+        let first = _str(argv[0])
+        if first.contains("anima_native.hexa") {
+            argv = argv[1:]
+        }
+    }
+    if _arg_present(argv, "--help") { sub_help(); return }
+    if _arg_present(argv, "--selftest") { sub_selftest(); return }
+
+    let max_tok_str = _arg_value(argv, "--max-tokens", "64")
+    let max_tokens = to_int(max_tok_str)
+    let memory_mode = _arg_value(argv, "--memory", "full")
+    let prompt = _arg_value(argv, "--prompt", "")
+    // Phase 2: --tick-ms N controls REPL poll interval (autonomous speech
+    // cadence). Default 1000ms (per user directive 2026-05-08).
+    let tick_str = _arg_value(argv, "--tick-ms", "1000")
+    let tick_ms = to_int(tick_str)
+
+    if prompt != "" {
+        // sub_one_shot unchanged — backward compat (no autonomous speech path).
+        sub_one_shot(prompt, max_tokens)
+        return
+    }
+    sub_repl(max_tokens, memory_mode, tick_ms)
+}

@@ -1,0 +1,72 @@
+{
+  "falsifier_5tier_preregister": {
+    "policy": "Pre-registered before measurement; tiers are mutually exclusive; first matching tier wins; default = F-INDETERMINATE",
+    "tiers": [
+      {
+        "tier": "F-PASS_STRONG",
+        "color": "GREEN-binding (verdict still YELLOW gated by F2)",
+        "all_required": [
+          "binding_strength > 0.5",
+          "F1_score_v2 > 0.5 (raw axis input)",
+          "F2 14-gate unfire (separate path; if not unfired, stays RED-with-strong-binding-evidence)",
+          "P3 |r| > P4 |r| with delta >= 0.15",
+          "permutation p < 0.01 in >=4/6 phases"
+        ],
+        "interpretation": "Tension binding-by-synchrony PASS strong; CLM-EEG coupling not generic-cognitive-load; replicate at N>=10 unlocks GREEN reach"
+      },
+      {
+        "tier": "F-PASS_PARTIAL",
+        "color": "YELLOW-binding-evidence",
+        "all_required": [
+          "binding_strength in [0.3, 0.5]",
+          "F1_score_v2 > 0.4",
+          "permutation p < 0.05 in >=2/6 phases (esp. P3)",
+          "P3-P4 differential present but smaller than 0.15"
+        ],
+        "interpretation": "Weak-to-moderate binding signal; replicate same-day before classifying further; consider path (b) learned phi_extractor for F2 unfire"
+      },
+      {
+        "tier": "F-WEAK",
+        "color": "RED-with-trace-binding",
+        "all_required": [
+          "binding_strength in [0.2, 0.3]",
+          "permutation p < 0.10 in any 1+ phase"
+        ],
+        "interpretation": "Trace signal; insufficient for path-D justification alone; prioritize path (b) F2-unfire"
+      },
+      {
+        "tier": "F-FAIL",
+        "color": "RED-binding-falsified",
+        "any_required": [
+          "binding_strength < 0.2 across all 3 pairs",
+          "permutation p > 0.10 in 5/6 phases",
+          "P3 |r| <= P4 |r| (no CLM-specificity)"
+        ],
+        "interpretation": "Path (d) tension binding-mediated falsified; ALM Path F gambling-rejection strengthened; pivot to path (b) learned phi_extractor"
+      },
+      {
+        "tier": "F-ARTIFACT",
+        "color": "INVALID-protocol-revision-required",
+        "any_required": [
+          "R1 random tension_link binding indistinguishable from real (KS p>0.10)",
+          "R2 random EEG rotation surrogate binding indistinguishable from real (KS p>0.10)",
+          "R3 shuffled phase order binding indistinguishable from real (KS p>0.10)",
+          "LSL sample retention < 70%",
+          "common autocorrelation / clock drift dominates signal"
+        ],
+        "interpretation": "Measurement protocol revision required (cognitive-load matching, surface Laplacian, longer session, stricter clock sync)"
+      },
+      {
+        "tier": "F-INDETERMINATE",
+        "color": "GRAY-default",
+        "all_required": ["none of above tier matched"],
+        "interpretation": "Replicate before classifying; honest report not protocol failure"
+      }
+    ],
+    "tie_breakers": [
+      "If F-PASS_STRONG criteria met BUT R1/R2/R3 trigger, F-ARTIFACT wins (artifact override)",
+      "If F-PASS_PARTIAL and F-WEAK both partially match, take lower tier (conservative)",
+      "If LSL retention <70%, automatic F-ARTIFACT regardless of binding value"
+    ]
+  }
+}

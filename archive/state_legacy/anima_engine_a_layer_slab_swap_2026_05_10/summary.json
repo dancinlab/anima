@@ -1,0 +1,106 @@
+{
+  "ts": "2026-05-10T12:51:03.657829+00:00",
+  "elapsed_sec_total": 1371.8440062999725,
+  "config": {
+    "ckpt_A_phase2": "/Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt",
+    "ckpt_B_bgla": "/Users/ghost/.cache/anima/clm_v5_remapped/bg_la_350m_pretrain/ckpts/step_12000_final.pt",
+    "v4_seeds": [
+      42,
+      137,
+      271
+    ],
+    "n_turns": 200,
+    "max_cells": 128,
+    "snapshot_every": 25,
+    "slabs": {
+      "slab1_early": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "slab2_middle": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "slab3_late": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ]
+    }
+  },
+  "slab_dispo": {
+    "A1_slab1_early": {
+      "slab": "slab1_early",
+      "verdict": "V14_VIOLATED",
+      "flipped_from_baseline": true,
+      "trained_iit_un16": 1036.8584339903507,
+      "mirror_iit_un16_mean": 1615.4926152517212,
+      "separation": -578.6341812613705,
+      "separation_change_vs_baseline": -1375.2264355403274,
+      "trained_n_cells": 44
+    },
+    "A2_slab2_middle": {
+      "slab": "slab2_middle",
+      "verdict": "V14_VIOLATED",
+      "flipped_from_baseline": true,
+      "trained_iit_un16": 1343.2703006752645,
+      "mirror_iit_un16_mean": 1615.4926152517212,
+      "separation": -272.2223145764567,
+      "separation_change_vs_baseline": -1068.8145688554137,
+      "trained_n_cells": 43
+    },
+    "A3_slab3_late": {
+      "slab": "slab3_late",
+      "verdict": "V14_VIOLATED",
+      "flipped_from_baseline": true,
+      "trained_iit_un16": 1343.2703006752645,
+      "mirror_iit_un16_mean": 1615.4926152517212,
+      "separation": -272.2223145764567,
+      "separation_change_vs_baseline": -1068.8145688554137,
+      "trained_n_cells": 43
+    }
+  },
+  "baseline": {
+    "verdict": "V14_PASS",
+    "trained_iit_un16": 2412.084869530678,
+    "mirror_iit_un16_mean": 1615.4926152517212,
+    "separation": 796.592254278957
+  },
+  "falsifiers": {
+    "F_SLAB_1_distributed_all_pass": {
+      "triggered": false
+    },
+    "F_SLAB_2_early_only_flips": {
+      "triggered": false
+    },
+    "F_SLAB_3_runtime_overflow": {
+      "triggered": false,
+      "elapsed_sec": 1371.8440062999725
+    }
+  },
+  "flips": [
+    "A1_slab1_early",
+    "A2_slab2_middle",
+    "A3_slab3_late"
+  ],
+  "dominant_slab": "A1_slab1_early",
+  "verdict_label": "multi-slab flip \u2014 dominant=A1_slab1_early (largest separation drop)",
+  "star_credit": "\u2605\u2605\u2605\u2605 partial (multiple slabs implicated)"
+}

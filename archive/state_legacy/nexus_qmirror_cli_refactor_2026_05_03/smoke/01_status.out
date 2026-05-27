@@ -1,0 +1,26 @@
+hexa-resolver: route=darwin-bypass reason=darwin-native marker present
+qmirror 1.0.0 status — closure 8/8 cond
+
+  cond.1  CHSH Bell violation (Tsirelson S>=2.7)         [MET]
+  cond.2  Amplitude correlator agreement (max_err<1e-3)  [MET]
+  cond.3  Quantum vs classical separation (sigma>5)      [MET]
+  cond.4  IIT 4.0 phi-star MIP reproduce (4/4 systems)   [MET]
+  cond.5  Mock entropy LCG byte-deterministic            [MET]
+  cond.6  Braket fixture byte-identical reproduce        [MET]
+  cond.7  ANU 4-tier QRNG fallback chain                 [MET]
+  cond.8  Selftest sweep (F1..F5) PASS in CI mock        [MET]
+
+  verdict: PASS (8/8)
+  closure doc: (not yet landed in standalone — see upstream nexus repo)
+
+--- caveats (raw#10 C3) ---
+  1. CLI surface limited: 6 subcmds expose ~core ~10% of qmirror functionality
+     (chsh/qrng/iit/phi advanced flags reachable only via direct hexa run).
+  2. Real-QPU subcommands (chsh --vendor=ionq|rigetti|ibm) require API keys
+     in env (IONQ_API_KEY, etc); without keys → mock fallback only.
+  3. selftest assumes infrastructure intact — _python_bridge present, ANU mock
+     fixtures readable, Braket fixture dir exists; missing → individual F* FAIL.
+  4. Future cond additions need router updates — current 8/8 cond hardcoded;
+     adding cond.9+ requires editing cli/qmirror.hexa dispatcher.
+  5. Standalone-extraction caveat: env vars still NEXUS_QMIRROR_* prefixed (load-bearing
+     for backward compat); QMIRROR_* alias migration deferred to sister cycle.

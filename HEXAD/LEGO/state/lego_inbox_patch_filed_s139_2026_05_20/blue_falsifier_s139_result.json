@@ -1,0 +1,68 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S139-4 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S139-1 INBOX-PATCH-FILE-EXISTS",
+      "passed": true,
+      "evidence": {
+        "patch_path": "/Users/ghost/core/hexa-lang/inbox/patches/flame-spiking-substrate-primitives.md",
+        "exists": true,
+        "size_bytes": 5306
+      }
+    },
+    {
+      "name": "B-S139-2 PATCH-REQUESTS-EXACTLY-3-PRIMITIVES",
+      "passed": true,
+      "evidence": {
+        "flame_event_threshold": true,
+        "flame_refractory_step": true,
+        "flame_stdp_pair": true,
+        "all_4_falsifiers_present": true
+      }
+    },
+    {
+      "name": "B-S139-3 PATCH-IS-REQUEST-NOT-SOURCE-EDIT",
+      "passed": true,
+      "evidence": {
+        "is_markdown": true,
+        "downstream_consumer_posture": true,
+        "request_only_stated": true,
+        "upstream_downstream_invariant_cited": true
+      }
+    },
+    {
+      "name": "B-S139-4 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S139-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "patch-filed-implementation-is-upstream",
+    "family": "B-EMERGE-7 / §138-design / §71-flame-inbox-precedent",
+    "honest_scope": "§139 filed the flame spiking-primitives inbox patch (§138's named follow-up), completing the hexa-first PR-only path. The 3 primitives are NOT implemented — that is hexa-lang upstream work, reviewed/PR'd on their side. lego_engine.hexa does not exist yet; it is a mechanical port AFTER the primitives land (F-SPIKE-4 byte-equal). anima stayed a downstream consumer — wrote a request doc, edited no flame source. GOAL-orthogonal engine tooling; necessary-not-sufficient (B-EMERGE-7); GOAL 미도달."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "4/4",
+    "all_closed_pass": true,
+    "battery_verdict": "INBOX-PATCH-FILED-HEXA-FIRST-PATH-COMPLETE-4-4-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}

@@ -1,0 +1,178 @@
+// live_broker_binance.hexa — Binance global crypto adapter STUB (TRADING M15)
+// Bridge architecture: tool surface only — no consciousness framing.
+//
+// ⚠ STUB ONLY — no real HTTP calls. M15 delivers the SHAPE (7 pub fn matching
+// kis / alpaca / upbit) without ever placing a real order.
+//
+// Binance = 글로벌 1위 crypto exchange:
+//   • TESTNET endpoint: https://testnet.binance.vision  (가상매매 · 위험 0)
+//   • LIVE    endpoint: https://api.binance.com         (실 매매 ⚠)
+//   • Auth: `X-MBX-APIKEY: <api_key>` header
+//   • Signed: HMAC-SHA256 of query+body with api_secret (timestamp+recv_window 필수)
+//   • Symbols: BTCUSDT, ETHUSDT (no separator)
+//   • ⚠ 한국 app store 차단 (2026-01-28~, FIU 미등록) but API 자체 사용 가능
+//
+// All real fills route through live_gate.live_gate_enforce FIRST.
+
+import "/Users/ghost/core/anima/AGENT/TRADING/types.hexa"
+import "/Users/ghost/core/anima/AGENT/TRADING/live_gate.hexa"
+
+// ---------------------------------------------------------------
+// 1. binance_broker_new — initialize the Binance adapter
+//   env: "DRYRUN" (default · no call) · "TESTNET" (testnet endpoint) ·
+//        "LIVE" (api.binance.com)
+// ---------------------------------------------------------------
+pub fn binance_broker_new(env) {
+    let endpoint = "https://testnet.binance.vision"
+    if env == "LIVE" {
+        endpoint = "https://api.binance.com"
+    }
+    return #{
+        "env": env,
+        "endpoint": endpoint,
+        "api_key": "",
+        "api_secret": "",
+        "configured": false,
+        "recv_window_ms": 5000,
+        "kind": "BinanceBrokerState",
+    }
+}
+
+// ---------------------------------------------------------------
+// 2. binance_broker_configure — wire api_key + api_secret
+//   (caller passes via secret get binance.api_key / binance.api_secret)
+// ---------------------------------------------------------------
+pub fn binance_broker_configure(state, api_key, api_secret) {
+    let cfg = false
+    if api_key != "" {
+        if api_secret != "" {
+            cfg = true
+        }
+    }
+    return #{
+        "env": state["env"],
+        "endpoint": state["endpoint"],
+        "api_key": api_key,
+        "api_secret": api_secret,
+        "configured": cfg,
+        "recv_window_ms": state["recv_window_ms"],
+        "kind": "BinanceBrokerState",
+    }
+}
+
+// ---------------------------------------------------------------
+// 3. binance_broker_get_quote — STUB
+//   real: GET /api/v3/ticker/bookTicker?symbol=BTCUSDT
+// ---------------------------------------------------------------
+pub fn binance_broker_get_quote(state, symbol) {
+    return #{
+        "symbol": symbol,
+        "bid": 0.0,
+        "ask": 0.0,
+        "last": 0.0,
+        "spread": 0.0,
+        "ts": 0,
+        "kind": "Quote",
+        "stub": true,
+        "reason": "STUB — real Binance bookTicker API not implemented in M15",
+    }
+}
+
+// ---------------------------------------------------------------
+// 4. binance_broker_place_order — STUB · gate-checked
+//   real: POST /api/v3/order  (signed)
+//   query: symbol, side (BUY/SELL), type (MARKET/LIMIT), quantity,
+//          price (limit only), timeInForce (GTC for limit),
+//          timestamp, signature (HMAC-SHA256 of query string)
+// ---------------------------------------------------------------
+pub fn binance_broker_place_order(state, gate_state, order, ref_price, current_positions) {
+    let verdict = live_gate_enforce(gate_state, order, ref_price, current_positions)
+    if verdict["accepted"] == false {
+        return #{
+            "broker_state": state,
+            "gate_state": gate_state,
+            "gate_verdict": verdict,
+            "result": #{
+                "filled": false,
+                "reason": "gate_refused — " + verdict["reason"],
+                "kind": "BinanceOrderResult",
+            },
+        }
+    }
+
+    let new_gate_state = verdict["audit_state"]
+
+    if state["env"] == "DRYRUN" {
+        return #{
+            "broker_state": state,
+            "gate_state": new_gate_state,
+            "gate_verdict": verdict,
+            "result": #{
+                "filled": false,
+                "reason": "DRYRUN — gate ACCEPTED but no real order placed",
+                "would_send": order,
+                "kind": "BinanceOrderResult",
+            },
+        }
+    }
+
+    if state["configured"] == false {
+        return #{
+            "broker_state": state,
+            "gate_state": new_gate_state,
+            "gate_verdict": verdict,
+            "result": #{
+                "filled": false,
+                "reason": "binance_not_configured — gate ACCEPTED but secrets missing",
+                "kind": "BinanceOrderResult",
+            },
+        }
+    }
+
+    // TODO: real Binance POST /api/v3/order with HMAC-SHA256 signing (not implemented in M15)
+    // expected: build query string → sign with api_secret (HMAC-SHA256) → POST with X-MBX-APIKEY
+    return #{
+        "broker_state": state,
+        "gate_state": new_gate_state,
+        "gate_verdict": verdict,
+        "result": #{
+            "filled": false,
+            "reason": "real_api_not_implemented — gate ACCEPTED but stub still refuses",
+            "would_send": order,
+            "endpoint": state["endpoint"],
+            "kind": "BinanceOrderResult",
+        },
+    }
+}
+
+// ---------------------------------------------------------------
+// 5. binance_broker_cancel_order — STUB
+//   real: DELETE /api/v3/order  (signed; query symbol + orderId)
+// ---------------------------------------------------------------
+pub fn binance_broker_cancel_order(state, order_id) {
+    return #{
+        "cancelled": false,
+        "reason": "STUB — real Binance cancel not implemented in M15",
+        "order_id": order_id,
+        "kind": "BinanceCancelResult",
+    }
+}
+
+// ---------------------------------------------------------------
+// 6. binance_broker_list_positions — STUB
+//   real: GET /api/v3/account  (signed)  → balances[] (non-zero balances)
+// ---------------------------------------------------------------
+pub fn binance_broker_list_positions(state) {
+    return []
+}
+
+// ---------------------------------------------------------------
+// 7. binance_broker_summary
+// ---------------------------------------------------------------
+pub fn binance_broker_summary(state) {
+    let cfg = "unconfigured"
+    if state["configured"] {
+        cfg = "configured"
+    }
+    return "BinanceBroker [STUB]: env=" + state["env"] + " · endpoint=" + state["endpoint"] + " · " + cfg
+}

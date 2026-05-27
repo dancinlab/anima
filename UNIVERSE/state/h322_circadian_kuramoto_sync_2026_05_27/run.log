@@ -1,0 +1,32 @@
+================================================================
+  H_322 — CIRCADIAN × Kuramoto phase-coupled oscillator sync
+  dθ_i/dt = ω_i + (K/N) Σ_j sin(θ_j − θ_i)
+================================================================
+  N=16 steps=2000 warm=1500 dt=0.05 ω_std=1.0
+  ω_i: 5 z-quantiles {-1.28,-0.52,0,0.52,1.28} cycled by i%5
+  analytic K_c (mean-field, std-normal ω) = 1.59577
+  (analytic K_c is POST-HOC cross-check only — verdict from r(K))
+----------------------------------------------------------------
+  K=0.0   r_mean=0.05781   r_final=0.0469462
+  K=0.5   r_mean=0.395515   r_final=0.0439746
+  K=1.0   r_mean=0.406086   r_final=0.224768
+  K=1.5   r_mean=0.445248   r_final=0.249197
+  K=2.0   r_mean=0.814259   r_final=0.814259
+  K=3.0   r_mean=0.94718   r_final=0.94718
+  K=5.0   r_mean=0.982931   r_final=0.982931
+----------------------------------------------------------------
+  FALSIFIER EVALUATION (from MEASURED r(K)):
+  F322.1 INCOHERENT-AT-ZERO     r(K=0) < 0.4         : true  (r_K0=0.05781)
+  F322.2 COHERENT-AT-LARGE      r(K=5) > 0.9         : true  (r_Kmax=0.982931)
+  F322.3 BOUNDARY-REAL          Δr ≥ 0.5             : true  (Δr=0.925121)
+  F322.4 MONOTONE-RISE          non-decreasing (tol) : true
+  F322.5 NON-LINEAR-TRANSITION  max_slope ≥ 1.5×avg  : true  (max=0.738023 avg=0.185024)
+  F322.6 K_c-LOCATABLE          r=0.5 crossing in (0,5): true  (K_c_est=1.75)
+  F322.7 r-BOUNDS-RESPECTED     r ∈ [0,1] ∀K         : true
+================================================================
+  RESULT: 7 PASS / 0 FAIL out of 7
+  VERDICT: 🟢 SUPPORTED_NUMERICAL  (criteria_met=7/7)
+  analytic K_c cross-check (mean-field): 1.59577
+  measured K_c estimate (r=0.5 crossing midpoint): 1.75
+================================================================
+  result.json written → /tmp/anima-h322/UNIVERSE/state/h322_circadian_kuramoto_sync_2026_05_27/result.json

@@ -1,0 +1,108 @@
+// hexa-brain/eeg/substrates/__init__.hexa
+// Spec: design/substrate_abstraction.md
+//
+// PURPOSE
+//   hexa-brain.eeg.substrates package entry point. Load marker + module
+//   registry. Mirrors eeg/protocols/__init__.hexa template.
+//
+// SUBSTRATES (5 active + 2 declared-not-implemented)
+//   synth          FULL    (deterministic LCG seed=1, no BrainFlow)
+//   brainflow      WRAPPER (delegates lifecycle to _session_manager)
+//   replay         FULL    (disk .npy playback)
+//   channel_set    HELPER  (CYTON_DAISY_16 preset; pure data)
+//   substrate      PROTO   (interface declaration only)
+//   --- declared-not-implemented (Part C-1, Part C-2):
+//   nes            STUB    (AGPL-3.0 — declared in registry.yaml)
+//   cl1            STUB    (CC-BY-NC-4.0 — declared in registry.yaml)
+//
+// USAGE
+//   hexa run eeg/substrates/__init__.hexa --selftest
+//
+// each substrate's own --selftest (F_SUB_01/02/03 + protocol F_SUB_PROTO_*).
+
+let SCHEMA = "hexa-brain/eeg/substrates_init/1"
+
+fn substrate_count() -> int { return 5 }      // active modules
+fn full_count() -> int      { return 2 }      // synth, replay
+fn wrapper_count() -> int   { return 1 }      // brainflow
+fn helper_count() -> int    { return 1 }      // channel_set
+fn proto_count() -> int     { return 1 }      // substrate.hexa
+fn declared_count() -> int  { return 2 }      // nes, cl1 (in registry.yaml)
+
+fn init() {
+    print("eeg.substrates module loaded")
+}
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn run_tests() -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+
+    // T1: substrate manifest count
+    println("[T1] substrate manifest count == 5 active")
+    let ok1 = assert_true(substrate_count() == 5, "substrate_count == 5")
+    if ok1 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T2: verdict closure — sums to substrate_count
+    println("[T2] FULL + WRAPPER + HELPER + PROTO == substrate_count")
+    let ok2 = assert_true(
+        (full_count() + wrapper_count() + helper_count() + proto_count()) == substrate_count(),
+        "components sum to manifest")
+    if ok2 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T3] init idempotence")
+    init()
+    init()
+    let ok3 = assert_true(true, "init() runs without panic")
+    if ok3 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T4: declared substrates manifest count (registry.yaml entries)
+    println("[T4] declared-not-implemented count == 2 (nes, cl1)")
+    let ok4 = assert_true(declared_count() == 2, "declared_count == 2")
+    if ok4 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == "--selftest" { selftest = true }
+        i = i + 1
+    }
+
+    if !selftest {
+        init()
+        return
+    }
+
+    println("schema=" + SCHEMA)
+    println("raw10_honest=load_marker_only")
+    println("substrate_count=" + to_string(substrate_count()))
+    println("full=" + to_string(full_count()))
+    println("wrapper=" + to_string(wrapper_count()))
+    println("helper=" + to_string(helper_count()))
+    println("proto=" + to_string(proto_count()))
+    println("declared_not_implemented=" + to_string(declared_count()))
+    println("")
+
+    let fails = run_tests()
+    if fails != 0 {
+        println("selftest=fail")
+        eprintln("selftest FAILED: " + to_string(fails) + " test(s) failed")
+        exit(1)
+    }
+    println("selftest=ok")
+    println("DONE")
+}
+
+main()

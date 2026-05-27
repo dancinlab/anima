@@ -1,0 +1,18 @@
+[eeg/mu_rhythm_detector] PHYS-P5-3 — EEG mu-rhythm self-referential detection
+  synth: 256 Hz sampling, 10 Hz mu + 18 Hz beta + LCG noise
+  detector: Goertzel @ 10 Hz, score = 1 − P_action / P_baseline ∈ [0,1]
+
+  [T1] baseline mu-power = (float)
+T1 PASS — baseline mu-power detectable
+  [T2] suppressed window: baseline=(float) action=(float)
+T2 PASS — action half has lower mu power than baseline
+  [T3] score on suppressed window = (float) (threshold > 0.7)
+T3 PASS — high score on suppressed window (self-reference detected)
+  [T4] score on non-suppressed window = (float) (threshold < 0.3)
+T4 PASS — low score on non-suppressed window
+  [T5] empty=(float) single=(float) flat=(float)
+T5 PASS — API robust on degenerate inputs
+  [T6] two calls: s1=(float) s2=(float)
+T6 PASS — deterministic output
+
+[eeg/mu_rhythm_detector] 6/6 PASS — PHYS-P5-3 DONE

@@ -1,0 +1,111 @@
+{
+  "bg_id": "BG-DJ",
+  "name": "P10 paradigm-declaration-solicit own-rule formal land",
+  "date": "2026-05-05",
+  "verdict": "OWN_RULE_LANDED_PROVISIONAL",
+  "cost": "$0",
+  "compute": "mac doc-only",
+  "duration_min_estimate": 20,
+  "lineage": [
+    "docs/anima_paradigm_acceptance_user_intent_reconciliation_2026_05_05.md",
+    "docs/anima_paradigm_naming_reframing_2026_05_05.md",
+    "docs/anima_2026_05_05_cycle_hard_close_decision_landed_2026_05_05.ai.md",
+    "docs/anima_nexus_cycle_insight_ledger_v2_2026_05_05.md",
+    "docs/anima_paradigm_b_c_final_acceptance_2026_05_05.md"
+  ],
+  "rule": {
+    "id": "P10",
+    "name": "paradigm-declaration-solicit",
+    "statement_en": "Before opening multi-BG investigation lanes (>=3 parallel BGs targeting the same user-issued intent), anima MUST solicit explicit paradigm declaration from the user when >=2 plausible paradigms could each motivate a different BG slate. Failure to solicit = autonomous mode assumes the most-likely paradigm AND accepts paradigm-mismatch risk for the entire downstream investigation budget.",
+    "statement_ko": "동일한 사용자 명령에 대해 multi-BG 조사 lane (>=3 병렬 BG)을 열기 전, >=2개 paradigm interpretation이 모두 plausible 한 경우 anima는 사용자에게 명시적 paradigm declaration을 solicit 해야 한다. solicit 실패 = autonomous mode가 가장 likely한 paradigm을 가정하고, downstream investigation 전체 budget에 대한 paradigm-mismatch 위험을 anima가 떠안음.",
+    "trigger_conditions": {
+      "T1": "multi-BG dispatch >=3 parallel BGs planned for same intent",
+      "T2": "single user command interpretable as >=2 paradigms",
+      "T3": "expected paradigm-mismatch cost > $50 OR > 10 BG total",
+      "satisfaction_rule": "T1 AND T2 AND T3 -> MUST solicit; partial -> SHOULD solicit; none -> no solicit"
+    },
+    "exception": "research-mode contract (no-particular-deliverable cycles e.g. archaeology / phi-star stability / cross-substrate audit / SSOT-build) - paradigm declaration N/A"
+  },
+  "solicit_templates": {
+    "ko_default": "section §2.1 in doc",
+    "en_equivalent": "section §2.2 in doc",
+    "short_form_continuation": "section §2.3 in doc (when prior declaration <=1 cycle ago)",
+    "anti_patterns_avoid": [
+      "autonomous interpretation announcement without ask",
+      "anima self-disambiguation language",
+      "silent dispatch with no user-facing surface"
+    ]
+  },
+  "retrospective_roi_today_cycle": {
+    "actual_bg_count": "~100",
+    "actual_paradigm_assumed": "A (token-emit chat)",
+    "mid_cycle_pivot": "BG-BV reconciliation",
+    "counterfactual_under_p10": {
+      "user_declares_A": {"bg_count": "~100", "savings": 0, "note": "same path; user owns mismatch risk explicitly"},
+      "user_declares_B": {"bg_count": "~5", "savings_bg": "~95"},
+      "user_declares_C": {"bg_count": "~5", "savings_bg": "~95"},
+      "user_declares_D": {"bg_count": "~0", "savings_bg": "~100", "note": "redirect to anima-eeg lane"}
+    },
+    "headline_savings_estimate_bg": "95-100 under non-A declaration",
+    "headline_savings_estimate_attention_min": "~1140 (95 BG x ~12 min)",
+    "p10_burden_cost_min": 5
+  },
+  "enforcement_mechanism": {
+    "nexus_kick_template_revision": {
+      "file": "~/.hive/claude-config/hive-hook-bus/projects/-Users-ghost-core-anima/memory/project_anima_nexus_kick_autonomous_template.md",
+      "action": "insert P10 section between '매 kick cycle anima 자율 결정 절차' and 'raw 준수'",
+      "execute_in": "BG-MEMORY-PROPAGATE separate cycle (per L36+L38 convention)"
+    },
+    "new_memory_entry": {
+      "file": "~/.hive/claude-config/hive-hook-bus/projects/-Users-ghost-core-anima/memory/feedback_p10_paradigm_declaration_solicit.md",
+      "carries": [
+        "rule statement (KO+EN)",
+        "trigger conditions table",
+        "solicit templates KO+EN+short-form",
+        "anti-patterns",
+        "exception clause",
+        "MEMORY.md header registration line"
+      ],
+      "execute_in": "BG-MEMORY-PROPAGATE separate cycle"
+    },
+    "next_cycle_marker": "[P10-applied] frontmatter on cycle entry doc when protocol fires"
+  },
+  "user_immediate_declaration_manifest": {
+    "scope": "settle 2026-05-05 cycle outcome",
+    "options": ["A", "B", "C", "D"],
+    "ko_text": "section §5.1",
+    "en_text": "section §5.2",
+    "default_on_decline": "A (per §5.3 reasoning - colloquial fit + cost-asymmetry incentive)",
+    "default_on_decline_caveat": "alternative B-default equally defensible; should be user-confirmed before next-cycle enforcement"
+  },
+  "honest_c3": [
+    "C6.1 P10 own-rule is anima-internal convention; no external benchmark or peer review",
+    "C6.2 solicit burden adds friction; trade-off vs autonomous-mode user preference",
+    "C6.3 trigger thresholds T3 ($50 / 10 BG) are anima-arbitrary first-pass heuristics",
+    "C6.4 §3 counterfactual ROI assumes non-A declaration; under A declaration ROI = 0",
+    "C6.5 P10 generality across cycle types (EEG / Putnam / HF / Phase E) untested - 1 cycle observation",
+    "C6.6 own-rule promotion process not formalized; provisional pending future cross-cycle validation",
+    "C6.7 §5.3 default-on-decline to A may bias against user actual preference; should re-solicit"
+  ],
+  "constraints_honored": {
+    "raw_9_md_only": true,
+    "raw_10_honest_c3_ge_5": true,
+    "raw_15_additive_only": true,
+    "raw_37_transient_py": "N/A doc-only",
+    "hf_token_leak": "none",
+    "commit": "none",
+    "bash_3_2_compat": "N/A doc-only",
+    "session_multi_bg": true,
+    "cost_dollars": 0
+  },
+  "out_paths": {
+    "doc": "/Users/ghost/core/anima/docs/anima_p10_paradigm_declaration_solicit_own_rule_2026_05_05.md",
+    "verdict": "/Users/ghost/core/anima/state/anima_p10_paradigm_declaration_solicit_own_rule_2026_05_05/verdict.json"
+  },
+  "promotion_status": "OWN_RULE_LANDED_PROVISIONAL (1-cycle observation; pending cross-cycle validation per L36+L38)",
+  "next_steps": [
+    "user paradigm declaration A/B/C/D to settle 2026-05-05 cycle (§5)",
+    "BG-MEMORY-PROPAGATE separate cycle to write feedback_p10_paradigm_declaration_solicit.md + revise nexus kick template",
+    "next cycle entry doc bears [P10-applied] marker if T1+T2+T3 hit"
+  ]
+}

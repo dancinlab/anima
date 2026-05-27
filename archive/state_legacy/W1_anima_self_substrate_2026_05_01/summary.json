@@ -1,0 +1,40 @@
+{
+  "schema": "anima/W1/phi_trace_summary/1",
+  "ts": "2026-05-01",
+  "agent": "W1_EXEC",
+  "input": {
+    "cycle_log_path": "/Users/ghost/core/anima/state/proposals/meta/cycle_log.jsonl",
+    "cycles_total": 15,
+    "ticks_with_phi": 14,
+    "first_ts": "2026-04-22T13:12:44Z",
+    "last_ts": "2026-05-02T01:49:31Z",
+    "subsystems": {
+      "step_axes": 10,
+      "count_axes": 9
+    }
+  },
+  "phi_trace": {
+    "mean": 1.705565,
+    "std": 0.593095,
+    "min": 0.0,
+    "max": 2.411809,
+    "signed_mean": 1.705565,
+    "slope_per_tick": 0.05068661,
+    "trend": "rising",
+    "window_W": 20
+  },
+  "static_baseline": {
+    "mean_subsystem_self_MI_bits": 0.274874,
+    "lint_cron_total_self_MI_bits": 1.251629,
+    "interpretation": "individual-subsystem self-MI floor; agent-loop \u03a6 should exceed this iff true integration exists"
+  },
+  "vs_baseline_ratio": 6.204895,
+  "honest_c3": [
+    "\u03a6-on-cron-state is a NOVEL probe; no published IIT validation for this substrate class.",
+    "Symbol bucketing (decile log10) is a coarse approximation; finer binning could shift \u03a6 by O(1) bits.",
+    "Cycle ticks are not uniformly sampled in time (drift 1s\u2013hours); MI assumes stationarity which is violated.",
+    "MIP is approximated by mean-of-parts, not the true minimum-information-partition (combinatorial cost prohibitive).",
+    "Memory writes + Claude session tool-use are NOT yet folded in (Phase-1 inventoried only); \u03a6 here is cron-loop subset."
+  ],
+  "interpretation_one_line": "anima's own agent loop \u03a6 trace is rising at mean=1.706 bits (above static subsystem baseline 0.275)."
+}

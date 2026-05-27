@@ -1,0 +1,215 @@
+{
+  "probe": "S175 KOSMOS 5-modality fire on S167-A ckpt \u00d7 11 anchors",
+  "ckpt": "ckpt_s167a_fpreconnect.pt",
+  "n_anchors": 11,
+  "measurable_modalities": [
+    "text",
+    "psi_dir",
+    "tension",
+    "phi_proxy"
+  ],
+  "excluded_modalities": {
+    "image": "\u00a77-clean encoder absent (S-module unwired)",
+    "audio": "\u00a77-clean encoder absent (S-module unwired)",
+    "video": "\u00a77-clean encoder absent",
+    "reference": "\u00a7109 C06 DESIGN-CLOSE-WITH-NARROW-OPEN"
+  },
+  "per_anchor_signature": [
+    {
+      "anchor": "knuth_000_zero.kosmos",
+      "tier": 0,
+      "category": "\uae30\uc900\uc810",
+      "top_emotion": "neutral",
+      "lane": "eternal_000\"",
+      "text_top1": 32,
+      "text_top1_char": " ",
+      "psi_dir": 0.02987232804298401,
+      "tension": 5.428690433502197,
+      "phi_proxy": 2.5422694857068486
+    },
+    {
+      "anchor": "knuth_015_curiosity.kosmos",
+      "tier": 15,
+      "category": "\uc778\uc9c0",
+      "top_emotion": "curiosity",
+      "lane": "eternal_015",
+      "text_top1": 32,
+      "text_top1_char": " ",
+      "psi_dir": 0.029872357845306396,
+      "tension": 5.428690433502197,
+      "phi_proxy": 2.5422691799410577
+    },
+    {
+      "anchor": "knuth_030_compassion.kosmos",
+      "tier": 30,
+      "category": "\uac10\uc815",
+      "top_emotion": "tenderness",
+      "lane": "eternal_030",
+      "text_top1": 32,
+      "text_top1_char": " ",
+      "psi_dir": 0.029872357845306396,
+      "tension": 5.428690433502197,
+      "phi_proxy": 2.5422691799410577
+    },
+    {
+      "anchor": "knuth_042_question.kosmos",
+      "tier": 42,
+      "category": "\uc778\uc9c0",
+      "top_emotion": "curiosity",
+      "lane": "eternal_042\"",
+      "text_top1": 32,
+      "text_top1_char": " ",
+      "psi_dir": 0.029872357845306396,
+      "tension": 5.428690433502197,
+      "phi_proxy": 2.5422694857068486
+    },
+    {
+      "anchor": "knuth_051_day.kosmos",
+      "tier": 51,
+      "category": "\uc2dc\uac04",
+      "top_emotion": "peace",
+      "lane": "eternal_051\"",
+      "text_top1": 32,
+      "text_top1_char": " ",
+      "psi_dir": 0.029872357845306396,
+      "tension": 5.428690433502197,
+      "phi_proxy": 2.5422691799410577
+    },
+    {
+      "anchor": "knuth_060_contemplation.kosmos",
+      "tier": 60,
+      "category": "\uc758\uc2dd\uc0c1\ud0dc",
+      "top_emotion": "reflection",
+      "lane": "eternal_060",
+      "text_top1": 32,
+      "text_top1_char": " ",
+      "psi_dir": 0.029872357845306396,
+      "tension": 5.428690433502197,
+      "phi_proxy": 2.5422691799410577
+    },
+    {
+      "anchor": "knuth_077_mandala.kosmos",
+      "tier": 77,
+      "category": "\uc608\uc220",
+      "top_emotion": "creativity",
+      "lane": "eternal_077\"",
+      "text_top1": 32,
+      "text_top1_char": " ",
+      "psi_dir": 0.029872357845306396,
+      "tension": 5.428690433502197,
+      "phi_proxy": 2.5422691799410577
+    },
+    {
+      "anchor": "knuth_080_meditation.kosmos",
+      "tier": 80,
+      "category": "\uc758\uc2dd\uc0c1\ud0dc",
+      "top_emotion": "stillness",
+      "lane": "eternal_080",
+      "text_top1": 32,
+      "text_top1_char": " ",
+      "psi_dir": 0.02987229824066162,
+      "tension": 5.428690433502197,
+      "phi_proxy": 2.5422694857068486
+    },
+    {
+      "anchor": "knuth_091_nirvana.kosmos",
+      "tier": 91,
+      "category": "\uc758\uc2dd\uc0c1\ud0dc",
+      "top_emotion": "peace",
+      "lane": "eternal_091\"",
+      "text_top1": 32,
+      "text_top1_char": " ",
+      "psi_dir": 0.029872357845306396,
+      "tension": 5.428690433502197,
+      "phi_proxy": 2.5422691799410577
+    },
+    {
+      "anchor": "knuth_095_unity.kosmos",
+      "tier": 95,
+      "category": "\uc758\uc2dd\uc0c1\ud0dc",
+      "top_emotion": "union",
+      "lane": "eternal_095",
+      "text_top1": 32,
+      "text_top1_char": " ",
+      "psi_dir": 0.02987232804298401,
+      "tension": 5.428690433502197,
+      "phi_proxy": 2.5422691799410577
+    },
+    {
+      "anchor": "knuth_100_big_bang.kosmos",
+      "tier": 100,
+      "category": "\uc6b0\uc8fc",
+      "top_emotion": "awe",
+      "lane": "eternal_100\"",
+      "text_top1": 32,
+      "text_top1_char": " ",
+      "psi_dir": 0.029872357845306396,
+      "tension": 5.428690433502197,
+      "phi_proxy": 2.5422694857068486
+    }
+  ],
+  "modality_distinguishing": {
+    "text_top1": {
+      "n_distinct": 1,
+      "n_anchors": 11,
+      "distinguishing_ratio": 0.09090909090909091,
+      "min": 32,
+      "max": 32,
+      "mean": 32.0,
+      "values_sample": [
+        32,
+        32,
+        32,
+        32,
+        32
+      ]
+    },
+    "psi_dir": {
+      "n_distinct": 1,
+      "n_anchors": 11,
+      "distinguishing_ratio": 0.09090909090909091,
+      "min": 0.02987229824066162,
+      "max": 0.029872357845306396,
+      "mean": 0.029872347008098255,
+      "values_sample": [
+        0.02987232804298401,
+        0.029872357845306396,
+        0.029872357845306396,
+        0.029872357845306396,
+        0.029872357845306396
+      ]
+    },
+    "tension": {
+      "n_distinct": 1,
+      "n_anchors": 11,
+      "distinguishing_ratio": 0.09090909090909091,
+      "min": 5.428690433502197,
+      "max": 5.428690433502197,
+      "mean": 5.428690433502197,
+      "values_sample": [
+        5.428690433502197,
+        5.428690433502197,
+        5.428690433502197,
+        5.428690433502197,
+        5.428690433502197
+      ]
+    },
+    "phi_proxy": {
+      "n_distinct": 1,
+      "n_anchors": 11,
+      "distinguishing_ratio": 0.09090909090909091,
+      "min": 2.5422691799410577,
+      "max": 2.5422694857068486,
+      "mean": 2.5422692911286187,
+      "values_sample": [
+        2.5422694857068486,
+        2.5422691799410577,
+        2.5422691799410577,
+        2.5422694857068486,
+        2.5422691799410577
+      ]
+    }
+  },
+  "wall_s": 5.38,
+  "honest_carve_out": "Modality distinguishing capability measured = anchor-discrimination ON A TRAINED CKPT. ratio = 1.0 means each anchor \u2192 different value. ratio = 1/N means all anchors collapse. NOT GOAL emergence (B-EMERGE-7); distinguishing capability \u2260 V-SPONT honest coherent emission. image/audio/video modalities EXCLUDED per \u00a7109 DESIGN-CLOSE; payload pending status preserved."
+}

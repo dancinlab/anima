@@ -1,0 +1,94 @@
+{
+  "id": "H_326",
+  "slug": "d2-verdict-landscape-session-raster",
+  "title": "D2 axis · verdict-landscape session raster (structural vs dynamical, life vs consciousness SUPP-rates) over H_312-H_321",
+  "domain": "meta · life · consciousness · substrate · universe",
+  "date": "2026-05-27",
+  "deterministic": true,
+  "cross_process_byte_identical": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "lineage": {
+    "anchor": "H_238 (verdict-landscape meta-map, 2026-05-24)",
+    "ssot_classification_table": "H_318 doc — '### Structural vs Dynamical 위치 (H_312~H_317 패턴)'",
+    "ssot_hybrid_self_tag": "H_319 doc — '### 구조 vs 동역학 위치'",
+    "input_cells": [
+      "H_312 apoptosis_low_phi_pruning",
+      "H_313 plasticity_stdp_causality",
+      "H_314 symbiogenesis_merge_alpha_sweep",
+      "H_315 pruning_weak_edge_phi_retention",
+      "H_316 local_greedy_vs_global_phi",
+      "H_317 homeostasis_feedback_setpoint",
+      "H_318 autophagy_recycle_realloc",
+      "H_319 clonal_selection_diversity_pool",
+      "H_320 life_vs_consciousness_phi_structure",
+      "H_321 c1_h278_faithful_phi_structure_recheck"
+    ]
+  },
+  "raster_table": [
+    {"cell": "H_312", "verdict": "🔴 FALSIFIED",            "category": "STRUCTURAL", "theme": "LIFE+CONSC", "verdict_source": "UNIVERSE/state/h312_apoptosis_low_phi_pruning_2026_05_27/result.json: aggregate.verdict='🔴 FALSIFIED'"},
+    {"cell": "H_313", "verdict": "🟢 SUPPORTED",            "category": "DYNAMICAL",  "theme": "LIFE",       "verdict_source": "UNIVERSE/state/h313_plasticity_stdp_causality_2026_05_27/result.json: verdict='H1 SUPPORTED (GREEN / numerical)'"},
+    {"cell": "H_314", "verdict": "🔴 CLOSED-NEGATIVE",      "category": "STRUCTURAL", "theme": "LIFE",       "verdict_source": "UNIVERSE/state/h314_symbiogenesis_merge_alpha_sweep_2026_05_27/result.json: tier.empirical='WHITE SPECULATION-FENCED' + commit msg 'CLOSED-NEGATIVE'"},
+    {"cell": "H_315", "verdict": "🔴 FALSIFIED",            "category": "STRUCTURAL", "theme": "LIFE+CONSC", "verdict_source": "UNIVERSE/state/h315_pruning_weak_edge_phi_retention_2026_05_27/result.json: verdict='FALSIFIED'"},
+    {"cell": "H_316", "verdict": "🟢 SUPPORTED",            "category": "META",       "theme": "CONSC",      "verdict_source": "UNIVERSE/state/h316_local_greedy_vs_global_phi_2026_05_27/result.json: verdict='SUPPORTED'"},
+    {"cell": "H_317", "verdict": "🟢 SUPPORTED-NUMERICAL", "category": "DYNAMICAL",  "theme": "LIFE",       "verdict_source": "UNIVERSE/state/h317_homeostasis_feedback_setpoint_2026_05_27/result.json: verdict='🟢 SUPPORTED-NUMERICAL'"},
+    {"cell": "H_318", "verdict": "🟢 SUPPORTED-NUMERICAL", "category": "HYBRID",     "theme": "LIFE",       "verdict_source": "UNIVERSE/state/h318_autophagy_recycle_realloc_2026_05_27/result.json: verdict='🟢 SUPPORTED-NUMERICAL'"},
+    {"cell": "H_319", "verdict": "🔴 CLOSED-NEGATIVE",      "category": "HYBRID",     "theme": "LIFE",       "verdict_source": "UNIVERSE/state/h319_clonal_selection_diversity_pool_2026_05_27/result.json: verdict='CLOSED-NEGATIVE 🔴 — conditional-structure hypothesis FALSIFIED'"},
+    {"cell": "H_320", "verdict": "🔴 FALSIFIED",            "category": "STRUCTURAL", "theme": "META",       "verdict_source": "UNIVERSE/state/h320_life_vs_consciousness_phi_structure_2026_05_27/result.json: verdict='🔴 FALSIFIED — F320.1 SEPARATION FAIL · F320.2a ORDERING FAIL · F320.2b ROBUST FAIL (REVERSED)'"},
+    {"cell": "H_321", "verdict": "🟢 SUPPORTED-NUMERICAL", "category": "STRUCTURAL", "theme": "CONSC",      "verdict_source": "UNIVERSE/state/h321_c1_h278_faithful_phi_structure_recheck_2026_05_27/result.json: verdict='🟢 SUPPORTED-NUMERICAL'"}
+  ],
+  "category_tally": {
+    "STRUCTURAL": {"supp": 1, "fal": 4, "rate": 0.2,  "supp_cells": ["H_321"],                              "fal_cells": ["H_312", "H_314", "H_315", "H_320"]},
+    "DYNAMICAL":  {"supp": 2, "fal": 0, "rate": 1.0,  "supp_cells": ["H_313", "H_317"],                     "fal_cells": []},
+    "HYBRID":     {"supp": 1, "fal": 1, "rate": 0.5,  "supp_cells": ["H_318"],                              "fal_cells": ["H_319"]},
+    "META":       {"supp": 1, "fal": 0, "rate": 1.0,  "supp_cells": ["H_316"],                              "fal_cells": []}
+  },
+  "theme_tally": {
+    "inclusive": {
+      "LIFE":  {"supp": 3, "fal": 4, "rate": 0.428571, "supp_cells": ["H_313", "H_317", "H_318"], "fal_cells": ["H_312", "H_314", "H_315", "H_319"]},
+      "CONSC": {"supp": 2, "fal": 2, "rate": 0.5,      "supp_cells": ["H_316", "H_321"],          "fal_cells": ["H_312", "H_315"]}
+    },
+    "exclusive": {
+      "LIFE":  {"supp": 3, "fal": 2, "rate": 0.6,  "supp_cells": ["H_313", "H_317", "H_318"], "fal_cells": ["H_314", "H_319"]},
+      "CONSC": {"supp": 2, "fal": 0, "rate": 1.0,  "supp_cells": ["H_316", "H_321"],          "fal_cells": []}
+    }
+  },
+  "primary_metric": {
+    "H1_ratio_dyn_over_struct": 5.0,
+    "H1_threshold": 2.0,
+    "H1_falsifier": "ratio < 2.0  OR  dyn_rate ≤ struct_rate",
+    "H1_pass": true,
+    "H2_spread_exclusive": 1.66667,
+    "H2_spread_inclusive": 1.16667,
+    "H2_threshold": 1.5,
+    "H2_falsifier_exclusive": "max/min > 1.5  ⇒  H2 FALSIFIED (axis is signal, not weak)",
+    "H2_pass_exclusive": false,
+    "H2_pass_inclusive": true
+  },
+  "falsifier_verdicts": {
+    "F326.1_H1": "PASS — dyn_rate (1.0) is 5.0× struct_rate (0.2), ≥ 2× threshold",
+    "F326.2_H2_exclusive": "FAIL — spread 1.67× > 1.5× (CONSC-only rate 1.0 vs LIFE-only rate 0.6); LIFE/CONSC axis IS a signal, contrary to H2",
+    "F326.2_H2_inclusive": "PASS — spread 1.17× ≤ 1.5× under inclusive double-coding",
+    "F326.3_sanity": "PASS — 10 atomic rows (1+4+2+0+1+1+1+0)",
+    "F326.4_anti_tautology": "PASS — category frozen from H_318 doc (commit-timestamp predates this raster) + per-doc method analysis; verdict from result.json (independent)",
+    "F326.5_determinism": "PASS — file parse + tally; no RNG; rerun byte-identical"
+  },
+  "aggregate": {
+    "verdict": "🟢 PARTIAL-SUPPORTED",
+    "verdict_full": "🟢 PARTIAL-SUPPORTED (H1 PASS, H2 FAIL under exclusive count — D/S axis is the dominant lever (5× ratio), AND the LIFE/CONSC axis is ALSO a real signal (1.67× spread, CONSC > LIFE) — but H1's substrate signal is stronger than H2's)",
+    "honest_caveats": [
+      "n=10 small-sample; standard errors on rates are large; rate 1.0 in DYNAMICAL (n=2) and META (n=1) and CONSC-exclusive (n=2) is single-bin",
+      "DYNAMICAL bucket has zero failures (rate=1.0) — noise floor is high; could shift if next sessions add a DYNAMICAL 🔴",
+      "Inclusive vs exclusive theme accounting gives different H2 verdicts (1.17× vs 1.67×) — the LIFE+CONSC double-coded cells (H_312, H_315) are both 🔴, so they drag both inclusive rates DOWN together; the exclusive count exposes the CONSC-pure cells (H_316, H_321) as 100% 🟢",
+      "H_320 (LIFE-vs-CONSC comparator) is classified META theme — excluded from primary LIFE/CONSC count; if included as both, it adds a 🔴 to both buckets and spread shrinks slightly",
+      "Category boundary is method-by-method (H_318 doc SSOT for H_312-H_317; HYBRID/META extension for H_318-H_321 documented in §3.2); the assignment is independent of the verdict but the labels are coarse"
+    ]
+  },
+  "axis_interpretation": {
+    "D2_axis_strength": "the D2 axis (Structural-vs-Dynamical) IS a real raster signal — 5× SUPP-rate gap is well above the 2× pre-registered threshold; this is the strongest single-axis differentiator found in the session",
+    "secondary_finding": "the LIFE/CONSC theme axis is ALSO a real signal at the 1.67× level — not orthogonal as H2 predicted; CONSC-pure cells (H_316, H_321) supp-rate 100% > LIFE-pure (H_313, H_314, H_317, H_318, H_319) supp-rate 60%",
+    "raster_lesson": "future cell design should prioritize DYNAMICAL kernels (timestep loops, signal-driven update rules) over STRUCTURAL kernels (fixed-config Φ-arithmetic) when measuring substrate emergent properties; this is the *opposite* of the pre-cycle intuition that 'structural Φ is the cleaner measurement'"
+  },
+  "a_paper_negative_ok_eligibility": "ELIGIBLE — pre-registered falsifier + real measurement + ruled-out axis (H2's orthogonality claim FALSIFIED, H1's bias claim CONFIRMED); paper-tier candidate at FULL closure"
+}

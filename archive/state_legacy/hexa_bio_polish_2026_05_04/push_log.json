@@ -1,0 +1,94 @@
+{
+  "cycle": "hexa_bio_polish_2026_05_04",
+  "ts_iso": "2026-05-04",
+  "operations": [
+    {
+      "step": 1,
+      "kind": "compose",
+      "files_created": [
+        "RELEASE_NOTES_v1.0.0.md"
+      ],
+      "files_modified": [
+        "README.md"
+      ],
+      "files_already_present": [
+        ".github/workflows/sync-to-hf.yml"
+      ]
+    },
+    {
+      "step": 2,
+      "kind": "commit",
+      "repo": "/Users/ghost/core/hexa-bio",
+      "branch": "main",
+      "files_changed": [
+        "README.md",
+        "RELEASE_NOTES_v1.0.0.md"
+      ],
+      "stat": "+128 / -0 (2 files)",
+      "commit_sha": "4f4ecfb801f335f1b472d381c2108cd397a63412",
+      "commit_sha_short": "4f4ecfb",
+      "commit_message_subject": "docs(hexa-bio v1.0.0 polish): badges + RELEASE_NOTES (qmirror parity)"
+    },
+    {
+      "step": 3,
+      "kind": "git_push",
+      "remote": "origin",
+      "ref": "main",
+      "from_sha": "3877f5e",
+      "to_sha": "4f4ecfb",
+      "result": "OK"
+    },
+    {
+      "step": 4,
+      "kind": "github_release_create",
+      "tool": "gh release create",
+      "tag": "v1.0.0",
+      "target": "main",
+      "title": "hexa-bio v1.0.0 — Molecular Toolkit (HEXA family)",
+      "notes_file": "RELEASE_NOTES_v1.0.0.md",
+      "url": "https://github.com/dancinlab/hexa-bio/releases/tag/v1.0.0",
+      "result": "OK"
+    },
+    {
+      "step": 5,
+      "kind": "hf_repo_state",
+      "repo_id": "dancinlab/hexa-bio",
+      "repo_type": "model",
+      "private": false,
+      "url": "https://huggingface.co/dancinlab/hexa-bio",
+      "current_commit_sha": "df9a66832ba42093ea1983231b7af76866c637fd",
+      "current_commit_lastModified": "2026-05-04T05:42:38.000Z",
+      "result": "ALREADY_PRESENT (initialized 2026-05-04 prior cycle)",
+      "next_sync": "next push to main after HF_TOKEN secret lands"
+    },
+    {
+      "step": 6,
+      "kind": "smoke_test",
+      "command": "HEXA_BIO_ROOT=. hexa run cli/hexa-bio.hexa selftest",
+      "sentinel": "__HEXA_BIO_SELFTEST__ PASS",
+      "per_verb_sentinels": [
+        "__HEXA_BIO_WEAVE__ PASS",
+        "__HEXA_BIO_NANOBOT__ PASS",
+        "__HEXA_BIO_RIBOZYME__ PASS",
+        "__HEXA_BIO_VIROCAPSID__ PASS"
+      ],
+      "exit_code": 0,
+      "verdict": "PASS"
+    },
+    {
+      "step": 7,
+      "kind": "actions_workflow_state",
+      "path": ".github/workflows/sync-to-hf.yml",
+      "trigger": "push to main + workflow_dispatch",
+      "status": "ALREADY_PRESENT (from initial extraction; uses if: secrets.HF_TOKEN != '' gate at job level)",
+      "first_run_expected": "next push to main after HF_TOKEN secret is set",
+      "user_action_required": {
+        "what": "Set HF_TOKEN GitHub repository secret (write-scope)",
+        "where": "https://github.com/dancinlab/hexa-bio/settings/secrets/actions",
+        "until_set": "Workflow short-circuits at job-level if-gate (no error, no sync)"
+      }
+    }
+  ],
+  "tokens_leaked": false,
+  "cost_usd": 0.0
+}

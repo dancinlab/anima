@@ -1,0 +1,96 @@
+{
+  "tool": "clm_eeg_smoke_v6_real_run",
+  "version": "v1",
+  "raw_rank": 9,
+  "hexa_only": true,
+  "deterministic": true,
+  "llm": "none",
+  "ts_utc": "2026-05-03T23:51:00Z",
+  "date_tag": "2026_05_03",
+  "tier": "functional_analog",
+  "n_subjects": 1,
+  "fixture_path_intended": "anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json",
+  "fixture_consumed_by_harness": false,
+  "fixture_consumption_honest_finding": "clm_eeg_harness_smoke.hexa is a PURE AGGREGATOR. It reads three pre-existing pre-register JSONs (state/clm_eeg_p{1,2,3}_*_pre_register.json) and emits a composite verdict. CLM_EEG_FIXTURE_PATH env var is NOT consumed by this tool — only CLM_EEG_P{1,2,3}_PATH and CLM_EEG_HARNESS_OUT are. Furthermore, the hexa runtime under HEXA_RESOLVER_NO_REROUTE=1 + darwin-bypass marker appears to ignore env() calls and (likely) file write_file() side effects in this session — the println surface is the canonical verdict channel.",
+
+  "harness_unlock_state": {
+    "pre_state": "uchg (institutional dual-lock per anima-clm-eeg/docs/silent_edit_dual_lock_protocol.md)",
+    "during_run_state": "nouchg (temporary unlock; chflags nouchg)",
+    "post_state": "uchg (re-locked; chflags uchg)",
+    "no_content_modification": true,
+    "lock_preserved": true
+  },
+
+  "run_a_synthetic_baseline": {
+    "p1_path": "state/clm_eeg_p1_lz_pre_register.json",
+    "p1_bytes": 2316,
+    "p1_dry_run_pass": 1,
+    "p2_path": "state/clm_eeg_p2_tlr_pre_register.json",
+    "p2_bytes": 1391,
+    "p2_dry_run_pass": 1,
+    "p3_path": "state/clm_eeg_p3_gcg_pre_register.json",
+    "p3_bytes": 1690,
+    "p3_dry_run_pass": 1,
+    "composite_pass_count": 3,
+    "composite_required": 2,
+    "harness_ok": 1,
+    "chained_fingerprint": 2804516380,
+    "harness_exit_code": 0,
+    "sentinel_emit": "verdict = HARNESS_OK",
+    "classification": "NOT_VERIFIED_SYNTHETIC (per upstream pre-register classification)",
+    "interpretation": "synthetic dry-run aggregation only — pre-register manifests are FROZEN at 2026-04-26 with synthetic_16ch_v1.json fixture, not real fixture"
+  },
+
+  "run_b_real_attempt": {
+    "attempted": true,
+    "succeeded": false,
+    "blocker_chain": [
+      "Harness sandboxed: env() returns empty under hexa-resolver darwin-bypass-marker; CLM_EEG_HARNESS_OUT and CLM_EEG_P{1,2,3}_PATH overrides ignored",
+      "Path-swap (rename _real.json over _pre_register.json default path) blocked: state/clm_eeg_p{1,2,3}_*.json all uchg-locked",
+      "Cascade-unlock prohibited per raw#10 honest C3 + user constraint (DO NOT cascade-unlock — 96 institutional uchg files)",
+      "Real-side data exists for p1 (clm_eeg_p1_lz_pre_register_real.json with p1_pass=0) and p2 (clm_eeg_p2_tlr_real.json with verdict=INSUFFICIENT) but no real p3 product (state/slm_p3_a1_real_2026_05_03 is unrelated SLM scope)",
+      "If forced via cascade-unlock, the real chain would aggregate: p1=0 (C2 fail real LZ |Δ|/human=0.432), p2=0 (V_sync UNEVALUABLE per F_PLV_DESTROY ICA falsifier), p3=missing → composite=0/3 → HARNESS_FAIL"
+    ],
+    "honest_projected_real_verdict_if_unlocked": "HARNESS_FAIL (0/3 ≥ 2) — but NOT executed; conjectured only from existing _real.json side-evidence"
+  },
+
+  "per_metric_verdicts_aggregated_by_harness": {
+    "berger_sanity": "out-of-scope for harness (harness aggregates p1/p2/p3 only, not full 5-metric suite)",
+    "gamma_theta_ratio": "out-of-scope for harness",
+    "hjorth_real": "out-of-scope for harness",
+    "lz76_real": "synthetic p1_dry_run_pass=1 / real p1_pass=0 (fixture inaccessible to this harness)",
+    "pe_real": "out-of-scope for harness",
+    "p1_lz_dry_run": "PASS (synthetic-frozen)",
+    "p2_tlr_dry_run": "PASS (synthetic-frozen)",
+    "p3_gcg_dry_run": "PASS (synthetic-frozen)",
+    "composite_harness_ok": 1,
+    "honest_caveat_raw10": "PASS verdict reflects FROZEN synthetic pre-register manifests, NOT real fixture evaluation"
+  },
+
+  "raw10_honest_c3": {
+    "tier": "functional_analog",
+    "n_subjects": 1,
+    "rail_quarantined_rows_1idx": [1, 5, 6, 8, 16],
+    "rail_quarantined_count": 5,
+    "rail_total": 16,
+    "clean_channel_count": 11,
+    "f1_status_upstream": "FAIL",
+    "f2_status_upstream": "PASS",
+    "f3_status_upstream": "FAIL",
+    "harness_did_NOT_re_evaluate_f1_f2_f3": true,
+    "smoke_run_provenance": "synthetic-frozen pre-register dry-run aggregation only"
+  },
+
+  "raw71_falsifier_bound": {
+    "metric_thresholds_relaxed": false,
+    "no_post_hoc_retuning": true,
+    "harness_pass_due_to_synthetic_input_not_real_data": true,
+    "honest_disclosure": "If this harness were re-pointed at real-side outputs (which it cannot be without cascade-unlock), composite would FAIL — see run_b_real_attempt.honest_projected_real_verdict_if_unlocked"
+  },
+
+  "next_cycle_dependencies": [
+    "Either: (a) refactor harness to consume real-side JSONs without uchg cascade — requires SSOT v2 freeze;",
+    "Or: (b) introduce a new clm_eeg_harness_real_smoke.hexa parallel to the synthetic harness, with explicit real-side path defaults — keeps dual-lock contract intact",
+    "Or: (c) B-track v7 fixture with electrode contact remediation → re-transcode → re-evaluate F1/F2/F3 upstream → if FAIL→PASS transitions surface, re-emit p{1,2,3}_*_pre_register.json under v2 SSOT (signed, not silent)"
+  ]
+}

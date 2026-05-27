@@ -1,0 +1,19 @@
+{
+  "timestamp_utc": "2026-05-04T11:36:00Z",
+  "check": "blobs > 100MB after filter-repo",
+  "command": "git rev-list --objects --all | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' | awk '$1==\"blob\" && $3>100*1024*1024'",
+  "result_count": 0,
+  "verdict": "PASS — no blobs exceed GitHub 100MB push limit",
+  "top_10_largest_remaining": [
+    {"sha": "6c4c82efc004abfbb81ea631154b4c83fef88fe9", "size_bytes": 104857600, "path": "data/corpus_v5.txt"},
+    {"sha": "506f826e3e6606e019436d76a2d9997447976489", "size_bytes": 70507316, "path": "data/corpus_v2.txt"},
+    {"sha": "b426596c3de85cf46d12e641870ae3cc5d77f76e", "size_bytes": 34362971, "path": "state/gemma_ia3_r14_v2_run/gemma_ia3/final/tokenizer.json"},
+    {"sha": "2ac0cbe3439dda8fcb71da26e6ab0971951ee68e", "size_bytes": 18537832, "path": ".venv-eeg/lib/python3.12/site-packages/brainflow/lib/libonnxruntime_arm64.dylib"},
+    {"sha": "7b044c5c6d90e7687659701007ebb7414ad6943d", "size_bytes": 17210019, "path": "state/llama31_r14_run/llama31_r14/final/tokenizer.json"},
+    {"sha": "3affc9e9404009ce6876adca2a6c7218373fc5f0", "size_bytes": 15240072, "path": "anima-rs/target/debug/deps/libzerocopy-212e244f0b8bc9fb.rlib"},
+    {"sha": "7b3a28dc905d7eaed2de07e0327906ebd72b0864", "size_bytes": 15086128, "path": ".venv-eeg/lib/python3.12/site-packages/brainflow/lib/libonnxruntime_x64.so"},
+    {"sha": "3ee060e6fc58300b4d432e457cddd5dbad2bd6a8", "size_bytes": 14824280, "path": "anima-rs/target/debug/deps/libzerocopy-212e244f0b8bc9fb.rmeta"},
+    {"sha": "56dfa7c6719d7a59a4f61d5a1fa4b3eea391ee15", "size_bytes": 14232563, "path": "models/animalm/checkpoints/final.pt"},
+    {"sha": "279b263be3b686a5a38ac48f93178768baa9afb1", "size_bytes": 13390265, "path": "anima-rs/target/debug/deps/libzerocopy-781420d8c013d1ce.rmeta"}
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "schema": "anima/clm/hf_release_v1/public_promote_prep_verdict/1",
+  "cycle": "clm_v4_hf_release_v1_public_promote_prep_2026_05_05",
+  "bg_lane": "BG-HF-PUBLIC-PROMOTE-PREP",
+  "ts_utc": "2026-05-05T12:34:00Z",
+  "mode": "PREP_ONLY_NO_PROMOTE_EXECUTED",
+  "repo_id": "dancinlab/clm-v4-mk2-v1",
+  "expected_commit_sha": "80440a1d38db9addc4445bb959057558a57f4230",
+  "earliest_run_utc": "2026-05-06T23:26:12Z",
+  "review_window": {
+    "starts_utc": "2026-05-04T23:26:12Z",
+    "ends_24h_utc": "2026-05-05T23:26:12Z",
+    "ends_48h_utc": "2026-05-06T23:26:12Z",
+    "active_at_prep_time": true,
+    "elapsed_at_prep_time": false
+  },
+  "script_path": "state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash",
+  "script_executable": true,
+  "script_size_bytes": 7536,
+  "script_syntax_check": "bash -n PASS",
+  "handoff_doc": "docs/anima_hf_release_v1_public_promote_scheduled_2026_05_05.ai.md",
+  "own_anchor": " hf-release-private-then-public-after-verification",
+  "own_rule_lines": "514-568 in /Users/ghost/core/anima/.own",
+  "gates_pre_checked": {
+    "G1_benchmark_suite": {
+      "rule": " (b.1) hellaswag/mmlu/triviaqa/openbookqa OR domain-specific equivalent",
+      "evidence": "state/clm_v4_baseline_eval_2026_05_05/verdict.json",
+      "status": "PASS",
+      "note": "CONFIRMED_RANDOM_FLOOR (substrate-research artifact, NOT chat-NLP capability claim); H100 baseline cross-confirms"
+    },
+    "G2_falsifier_pre_register": {
+      "rule": " (b.2) raw#71 / raw 12 frozen-spec contract",
+      "evidence": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_retry_2_exec.nohup.log",
+      "status": "PASS_PARTIAL",
+      "note": "F-SHIM-V4-1/2/3 PASS; F-SHIM-V4-3 bit-exact (max_abs_diff=0.0); F-SHIM-V4-4 DEFERRED to BG-Σ H100 followup (cited in README §Caveats)"
+    },
+    "G3_shim_v4_hf_format_compat": {
+      "rule": " (b.3) F-SHIM-V4-1/2/3/4 ALL PASS where applicable",
+      "evidence": "same as G2",
+      "status": "PASS_PARTIAL",
+      "note": "3-of-4 PASS; v4 deferred-gate carve-out documented in README"
+    },
+    "G4_review_window_24_48h": {
+      "rule": " (b.4) 24-48h post-PRIVATE upload (convention, not tool-enforced)",
+      "evidence": "verdict.json review_window section",
+      "status": "ACTIVE_NOT_YET_ELAPSED",
+      "note": "elapses 2026-05-06T23:26:12Z; promote script Gate 1 enforces at runtime"
+    },
+    "G5_honest_c3_model_card": {
+      "rule": " (b.5) raw#10 limitations + chat-incapability disclosure",
+      "evidence": "docs/anima_clm_hf_release_v1_README_draft.md uploaded as repo README.md",
+      "status": "PASS",
+      "note": "5 H2 sections (Origin/Falsifiers/Substrate/Caveats/Composability); 9-bullet Caveats including #115 chat-incapability + F-SHIM-V4-4 deferral + trust_remote_code=True requirement"
+    },
+    "G6_cross_substrate_validation": {
+      "rule": " (b.6) phi★ baseline preserved across substrates (CLM-2 spec C-CLM-LORA-1)",
+      "evidence": "paradigm v11 G3 verdict + CLM-2 LoRA verdict",
+      "status": "PASS",
+      "note": "substrate-stable: Pβ φ★=42.37 + CLM-2 LoRA forgetting_index=0.0196"
+    }
+  },
+  "gates_currently_failing": [],
+  "gates_partial_or_deferred": ["G2 F-SHIM-V4-4 DEFERRED", "G3 F-SHIM-V4-4 DEFERRED", "G4 not yet elapsed (auto-resolves at runtime)"],
+  "requires_user_signoff": true,
+  "user_signoff_string": "PROMOTE-clm-v4-mk2-v1",
+  "user_signoff_mechanism": "interactive read prompt; mismatch aborts cleanly with exit 0",
+  "promote_api_endpoint": "PUT https://huggingface.co/api/models/dancinlab/clm-v4-mk2-v1/settings",
+  "promote_api_payload": {"private": false},
+  "post_promote_audit_log": "state/clm_v4_hf_release_v1_upload_2026_05_04/promote_log.txt",
+  "recommended_promote_action": "USER_CHOICE",
+  "recommended_promote_action_completion_lens_ranked": [
+    "rank-1: option (c) defer — wait until F-SHIM-V4-4 PASS lands AND F-CLM-RELEASE-1/2 fresh-shell smoke tests pass; G2+G3 fully PASS instead of PASS_PARTIAL; promote becomes a no-asterisk landing. Cost = 1-2 weeks delay; benefit = no F-SHIM-V4-4 deferred-gate carve-out in public-facing claim. Public promotion is a one-way reputational gate (raw#10 cumulative honest-disclosure track record).",
+    "rank-2: option (a) run script at 2026-05-06T23:26:12Z — acceptable if user explicitly accepts F-SHIM-V4-4 deferred-gate (already pre-registered in README §Caveats; operator is informed). Substrate-research framing + chat-incapability disclosure in README make the partial-gate carve-out honest (raw#10 compliant). Lowest latency to community feedback.",
+    "rank-3: option (b) wait longer (custom horizon between 48h and option-c) — identical mechanics to (c) at shorter horizon; useful if specific intermediate gate (e.g., F-CLM-RELEASE-1/2 smoke without F-SHIM-V4-4) lands within days."
+  ],
+  "honest_c3": [
+    "Manual not automated: Gates G1-G6 are operator-verified by reading evidence pointers, not auto-checked by the script. Script enforces only Gate 1 (review window elapsed via date comparison) + Gate 2 (HF state intact via API GET) deterministically. G1-G6 are echo-and-confirm pattern. honest-c3 already acknowledges 24-48h review window is convention, NOT tool-enforced.",
+    "HF API PUT /settings is reversible technically but irreversible reputationally: private: false → true revert is possible via same endpoint, BUT external clones / HF discovery indexing during public window creates reputational cost. Per rule (d): 'revert PUBLIC→PRIVATE possible but reputational cost — prefer to never premature-promote.' Promote should be treated as one-way decision.",
+    "User-in-loop checkpoint preserves discretion: PROMOTE-clm-v4-mk2-v1 confirmation string is intentional friction. Even if Gates 1+2 auto-pass, user can abort by typing anything else (or Ctrl-C); promote is operator-authored, not script-authored. This satisfies rule (c) requirement that 'PUBLIC promotion executed via SEPARATE BG cycle ... explicit ... with verdict.json cite of all (b.1-b.6) PASS evidence.'",
+    "Substrate-research vs chat-capability disclosure must persist in public README: README §Caveats currently includes 9 bullets including #115 chat-incapability + F-SHIM-V4-4 deferral + trust_remote_code=True consumer requirement. These MUST remain in public-facing README; if a future README edit removes them, public visibility becomes misrepresentation per raw#10. Pre-promote check: skim README on Hub UI to confirm Caveats intact.",
+    "promote_log.txt is local audit trail not HF-side: the [ts] PUBLIC_PROMOTE_VERIFIED ... line lives on mac filesystem only. HF Hub commit log does NOT receive a 'visibility flipped' entry — visibility changes are settings mutations, not git commits. To reconstruct timeline post-hoc, anima-side promote_log.txt + verdict.json cross-references are the SSOT.",
+    "Siblings count drift discrepancy: upload verdict.json L5 records siblings_count=15; sibling cleanup script cleanup_2026_05_07.bash hardcodes EXPECTED_SIBLINGS=16. This promote script honors verdict-recorded ground-truth (15). If actual API returns 16 at promote-time, Gate 2 fails — which is the safe direction (manual review). Discrepancy reconcile is a follow-up cycle item.",
+    "F-SHIM-V4-4 DEFERRED is a known carve-out, not a hidden gap: cited in README §Caveats AND in upload verdict.json honest_c3[6] AND in this prep verdict G2/G3 status fields. Promoting at 2026-05-06T23:26:12Z with F-SHIM-V4-4 still deferred is acceptable per raw#10 honest-disclosure (the carve-out is pre-registered and visible to all consumers); deferring promote until F-SHIM-V4-4 lands is the higher-완성도 path but not strictly required by wording ('where applicable — model-specific equivalents OK').",
+    "F-CLM-RELEASE-1/2 fresh-shell load smoke tests have NOT been run by this BG: per upload verdict.json next_actions_ranked rank-1, these are user-side review-window actions. If user has not run them by promote-time, public consumers may hit unforeseen trust_remote_code edge cases. Strongly recommend running F-CLM-RELEASE-1/2 BEFORE invoking the promote script regardless of which option (a/b/c) is chosen."
+  ],
+  "raw_compliance": {
+    "raw_9_md_bash_carveout": "PASS — only .md + .bash + .json artifacts created; no .py and no hexa modifications",
+    "raw_10_honest_c3_min_5": "PASS — 8 honest C3 bullets above (≥5 required)",
+    "raw_15_state_dir_revisioned": "PASS — verdict.json + script_path + handoff_doc all under state/ + docs/ revisioned tree",
+    "no_git_commit": "PASS — task explicitly forbids git commit; only Write tool used",
+    "no_hf_hub_mutation": "PASS — script written but NOT executed; HF Hub state unchanged at dancinlab/clm-v4-mk2-v1"
+  },
+  "next_actions_ranked": [
+    "rank-1: User reviews this prep cycle + handoff doc; chooses option (a/b/c) at or after 2026-05-06T23:26:12Z per §6 Decision section.",
+    "rank-2: User runs F-CLM-RELEASE-1 (AutoModelForCausalLM.from_pretrained fresh-shell) + F-CLM-RELEASE-2 (1-batch finite logits) BEFORE promote-time regardless of option; reduces public-launch-day surprise risk.",
+    "rank-3: If option (a) chosen and gates currently PASS: bash state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash; type PROMOTE-clm-v4-mk2-v1 when prompted.",
+    "rank-4: Future BG to land F-SHIM-V4-4 PASS (BG-Σ H100 followup per upload verdict honest_c3[6]) — would upgrade G2/G3 from PASS_PARTIAL to PASS_FULL.",
+    "rank-5: Reconcile siblings count discrepancy — read actual HF API state once, update cleanup_2026_05_07.bash and any other sibling tooling to match ground-truth (15 vs 16)."
+  ]
+}

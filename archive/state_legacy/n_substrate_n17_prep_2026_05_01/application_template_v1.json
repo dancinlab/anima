@@ -1,0 +1,142 @@
+{
+  "schema": "anima/n_substrate_n17_prep/application_template/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "agent": "N-17 prep",
+  "purpose": "INRC project proposal template (anima CP2 framework instantiation, NOT submitted)",
+  "based_on": "INRC RFP 3.0 structure (TRDF mirror) + INRC Confluence Join page 2026-05-01 verified flow",
+
+  "proposal_structure_10section": [
+    {
+      "section": 1,
+      "title": "Project title + PI + institution + duration",
+      "length_target_pages": 1,
+      "anima_draft": {
+        "title": "Cross-substrate Phi measurement for IIT 4.0 consciousness theory: Intel Loihi 3 vs BrainChip AKD1000 vs CLM 170M",
+        "duration_months": 12,
+        "pi": "TBD (anima needs Korean institutional sponsor - see eligibility section)",
+        "institution": "TBD (KAIST CCN / SNU EE / POSTECH AI candidates)"
+      }
+    },
+    {
+      "section": 2,
+      "title": "Executive summary (200 words)",
+      "length_target_pages": 1,
+      "anima_draft_text": "anima is a research framework for empirically measuring consciousness via Integrated Information Theory 4.0 (Tononi et al. 2023). The CP2 (Consciousness Paradigm 2) variant operationalizes Phi as a sample-partition covariance log-determinant computed over hidden-state representations of an information-processing substrate. The framework has been validated on a 170M-parameter language model running on H100 GPUs and an EEG -> AKD1000 spike-event pipeline. The proposed Loihi 3 study extends this to Intel's frontier neuromorphic hardware as a second neuromorphic measurement axis, providing the first cross-neuromorphic empirical test of Putnam's (1967) multi-realizability hypothesis applied to information-integration measures of consciousness."
+    },
+    {
+      "section": 3,
+      "title": "Background and motivation",
+      "length_target_pages": "2-3",
+      "key_references": ["IIT 4.0 (Tononi 2023)", "Putnam 1967 multi-realizability", "anima paradigm v11 axis G5", "AKD1000 N-3 result (if available by submission)"]
+    },
+    {
+      "section": 4,
+      "title": "Specific aims (3-5)",
+      "length_target_pages": "1-2",
+      "aims": [
+        "Aim 1: Phi measurement on Loihi 3 spike trains using anima_phi_v3 substrate-agnostic formulation",
+        "Aim 2: Loihi 3 vs AKD1000 Phi correlation (cross-neuromorphic Putnam test)",
+        "Aim 3: Loihi 3 vs CLM 170M GPU Phi correlation (cross-substrate Putnam extension)",
+        "Aim 4: graded-spike (32-bit) vs binary-spike Phi contribution analysis (bit-precision invariance test)",
+        "Aim 5: on-chip STDP / 3-factor learning ablation effect on Phi (plasticity coupling test)"
+      ]
+    },
+    {
+      "section": 5,
+      "title": "Loihi-specific technical plan",
+      "length_target_pages": "3-5",
+      "components": [
+        "Lava Process graph SNN model (input encoder + LIF/graded layers + output spike monitor)",
+        "16-prompt fixture port from N-3 (re-use anima_phi_v3 PROMPTS list)",
+        "T=200ms inference window per prompt, 40 reps for averaging",
+        "Spike rate-avg projection: X_loihi[i,d] = (1/T) * sum_t S[t,d]",
+        "anima_phi_v3 input contract: X_loihi (16 x D_loihi) -> sample-partition cov-logdet -> Phi*",
+        "NRC vLab compute budget: ~200 hr / 6 mo conservative"
+      ]
+    },
+    {
+      "section": 6,
+      "title": "Expected results and deliverables (6-month milestones)",
+      "length_target_pages": "1-2",
+      "milestones": {
+        "M1": "NRC onboarding + Lava SDK + smoke run",
+        "M2": "Lava Process graph + spike-rate avg helper authored",
+        "M3": "Phi*_loihi smoke on 3 prompts",
+        "M4": "Loihi 3 vs AKIDA r reported (3-seed)",
+        "M5": "Loihi 3 vs CLM r + graded vs binary ablation",
+        "M6": "On-chip learning ablation + final report draft + arXiv preprint"
+      }
+    },
+    {
+      "section": 7,
+      "title": "Innovation and impact",
+      "length_target_pages": 1,
+      "innovations": [
+        "First cross-neuromorphic Phi comparison study (graded-spike Loihi 3 vs binary-spike AKD1000)",
+        "First IIT 4.0 Phi measurement on Loihi 3 graded spikes",
+        "First on-chip learning ablation effect on Phi"
+      ]
+    },
+    {
+      "section": 8,
+      "title": "Personnel and qualifications",
+      "length_target_pages": 1,
+      "anima_status": "PI bio + anima collaborator role + Korean co-PI institution credentials"
+    },
+    {
+      "section": 9,
+      "title": "Budget and resource request",
+      "length_target_pages": 1,
+      "request": {
+        "funding_usd": 0,
+        "nrc_vlab_compute_hours": "~200 hr / 6 mo",
+        "loaner_board": "NOT requested initially (cloud-only path)",
+        "reason_no_funding": "anima self-funded; INRC membership is free per RFP"
+      }
+    },
+    {
+      "section": 10,
+      "title": "Bibliography",
+      "length_target_pages": "1-2",
+      "key_refs": [
+        "Tononi G et al. (2023) Integrated Information Theory 4.0",
+        "Putnam H (1967) Psychological Predicates / multi-realizability",
+        "Davies M et al. (2018) Loihi: A Neuromorphic Manycore Processor with On-Chip Learning",
+        "Intel Labs (2021) Loihi 2 + Lava framework press release",
+        "Intel Labs (2026-01) Loihi 3 announcement",
+        "anima paradigm v11 internal citation (TBD external publication)",
+        "BrainChip AKD1000 documentation"
+      ]
+    }
+  ],
+
+  "submission_email_draft_template": {
+    "to": "inrc_interest@intel.com",
+    "from": "TBD (institutional address required)",
+    "subject_template": "INRC Project Proposal Submission: Cross-substrate Phi measurement for IIT 4.0 (Loihi 3 vs AKD1000 vs CLM)",
+    "body_template_paragraphs": [
+      "Para 1: PI name + institution + brief intro (1-2 sentences)",
+      "Para 2: Project title + 1-sentence summary",
+      "Para 3: Loihi 3 (or Loihi 2 fallback) hardware request + estimated NRC compute hours",
+      "Para 4: 6-month timeline + 5 specific aims summary",
+      "Para 5: Request RFP + project proposal template; intent to submit per template within 3 weeks",
+      "Para 6: Korean institution legal counsel availability for Participation Agreement review",
+      "Sign-off: PI name + title + institution + contact"
+    ],
+    "attachment_recommendations": [
+      "1-page project synopsis (executive summary section 2 above)",
+      "PI CV (1-2 pages)",
+      "anima paradigm v11 brief abstract (1 page, optional)"
+    ]
+  },
+
+  "what_NOT_to_include": [
+    "DO NOT include CP2 internal terminology without definition (jargon ratio <= 0.30)",
+    "DO NOT cite anima internal docs as primary refs (use peer-reviewed external where possible)",
+    "DO NOT request hardware loaner in initial application (escalate after cloud-only path validated)",
+    "DO NOT mention $0 budget as a benefit (Intel doesn't care about applicant cost; care about scientific value)",
+    "DO NOT promise IP transfer to Intel; Participation Agreement standard terms negotiable on IP retention"
+  ],
+
+  "out_of_scope_disclaimer": "This template is a DRAFT for future user-led submission. anima agent does NOT send this email. anima agent does NOT contact Intel personnel. anima agent does NOT create accounts on intel-ncl.atlassian.net or NRC vLab. All submission actions require explicit user decision and Korean institutional sponsor."
+}

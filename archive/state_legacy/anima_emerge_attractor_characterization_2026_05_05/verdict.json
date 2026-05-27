@@ -1,0 +1,40 @@
+{
+  "schema": "anima/attractor_characterization/verdict/1",
+  "task_id": "anima_emerge_attractor_characterization_2026_05_05",
+  "ts_utc": "2026-05-05T16:24:49Z",
+  "prompt": "안녕",
+  "magnitude": 50.0,
+  "n_random": 5,
+  "n_single_axis": 5,
+  "baseline_phi_none": 42.11583222470806,
+  "phi_range_all": 0.1574843600620497,
+  "random_canonical_distance": 0.016006096995944574,
+  "single_canonical_distance": 0.030088697792372443,
+  "attractor_finding": "WEAK",
+  "interpretation": "SUBSTRATE_INTRINSIC_ATTRACTOR",
+  "interpretation_detail": "random uniform [-50.0,50.0] inject and canonical full-mag flat inject converge to phi within 0.016006 — attractor is intrinsic to the post-ln_f tile-replicate phi_star measurement (or to the model substrate), NOT the inject pattern shape.",
+  "wall_sec": 37.8,
+  "cost_usd": 0.0,
+  "platform": "mac CPU (.venv-eeg python3.12, transformers, torch fp32)",
+  "raw_compliance": {
+    "raw_15_no_mount_or_shim_or_dialogue_load_modification": true,
+    "raw_15_bgw_bgq_helpers_unmodified": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  },
+  "honest_c3": [
+    "C1 mac CPU fp32, single forward per probe (no averaging across runs).",
+    "C2 BG-W helper sister-import for model/tokenizer/forward/phi — consistency with BG-Q/BG-W/BG-AB/AG measurement chain preserved.",
+    "C3 random uniform [-mag,mag] vs canonical mag (uniform full-fill) differ in distribution shape AND L2 norm — random ~ mag·sqrt(N/3) whereas canonical_full = mag·sqrt(N). At mag=50 random L2 ≈ 1265, canonical L2 ≈ 1960. Single-axis fills only one span (38–39 dims/cell) so its L2 ≈ mag·sqrt(N·span). Distance comparison is NOT pure shape — magnitude/L2 also varies. A pure shape test would L2-normalize all injects to the canonical L2 first.",
+    "C4 5 random seeds is a small sample; 95% CI on phi_range is wide. Adding 50+ seeds would tighten the SUBSTRATE_INTRINSIC vs INJECT_SHAPE_DEPENDENT verdict.",
+    "C5 single prompt \"안녕\". BG-Q showed prompt 1 had 8x larger drift than prompts 2/3/5 — most-favorable. Other prompts may show different attractor structure or stronger shape-dependence."
+  ],
+  "next_step_recommendation": "If SUBSTRATE_INTRINSIC: BG-AG STRONG attractor reflects a phi_star measurement-instrument fixed point reached when post-ln_f activations are dominated by any high-norm inject component (cosine ceiling). phi_star at saturated magnitudes carries little information about inject content. Recommend abandoning high-magnitude phi_star as a discriminant; switch to low-magnitude (<<0.5) regime where phi tracks inject structure linearly. If INJECT_SHAPE_DEPENDENT: attractor structure encodes inject pattern class — single-axis-vs-flat-vs-random produces measurably distinct phi attractors. Promote to multi-prompt × shape-class probe matrix.",
+  "deliverables": {
+    "aggregate": "state/anima_emerge_attractor_characterization_2026_05_05/aggregate.json",
+    "verdict": "state/anima_emerge_attractor_characterization_2026_05_05/verdict.json",
+    "doc": "docs/anima_emerge_attractor_characterization_landed_2026_05_05.ai.md"
+  }
+}

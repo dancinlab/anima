@@ -1,0 +1,119 @@
+Warning: Permanently added '[ssh3.vast.ai]:17704' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[INFO] device=cuda torch=2.5.1+cu121 cuda_available=True
+[INFO] gpu=NVIDIA H100 80GB HBM3
+[INFO] cfg = {'vocab_size': 256, 'd_model': 384, 'n_head': 6, 'ffn_dim': 1536, 'max_seq': 256, 'n_layer': 1, 'initial_cells': 2, 'max_cells': 64, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] init n_params=6,106,368 n_cells=2
+[INFO] loading corpus: corpus/corpus_persona_balanced.txt
+[INFO] corpus bytes = 1,300,270
+[INFO] training 5000 steps batch=32 ctx=256 lr=0.0001 entropy_reg_lambda=0.1 cap=$8.0
+[STEP     0] loss=264.9619 avg50=264.9619 ce=265.0312 ent=0.6931/0.6931 wmax_avg=0.5001 lr=2.00e-07 cells=2 phi=0.0004 splits=0 elapsed=0.00hr cost=$0.00
+[STEP    50] loss=258.5786 avg50=258.7260 ce=258.8850 ent=1.5909/3.0445 wmax_avg=0.2803 lr=1.02e-05 cells=21 phi=3.0208 splits=19 elapsed=0.00hr cost=$0.00
+[STEP   100] loss=256.8956 avg50=258.4744 ce=258.8489 ent=3.7456/4.1589 wmax_avg=0.0256 lr=2.02e-05 cells=64 phi=4.1743 splits=62 elapsed=0.01hr cost=$0.01
+[STEP   150] loss=249.7157 avg50=254.2848 ce=254.7006 ent=4.1588/4.1589 wmax_avg=0.0166 lr=3.02e-05 cells=64 phi=4.1644 splits=62 elapsed=0.01hr cost=$0.03
+[STEP   200] loss=183.2306 avg50=232.6939 ce=233.1022 ent=4.0828/4.1589 wmax_avg=0.0619 lr=4.02e-05 cells=64 phi=4.1787 splits=62 elapsed=0.02hr cost=$0.04
+[STEP   250] loss=31.1976 avg50=62.7620 ce=62.8040 ent=0.4193/4.1589 wmax_avg=0.9235 lr=5.02e-05 cells=64 phi=4.1499 splits=62 elapsed=0.02hr cost=$0.05
+[STEP   300] loss=9.0573 avg50=16.9455 ce=16.9455 ent=0.0000/4.1589 wmax_avg=1.0000 lr=6.02e-05 cells=64 phi=4.1718 splits=62 elapsed=0.03hr cost=$0.07
+[STEP   350] loss=4.1762 avg50=6.0497 ce=6.0497 ent=0.0000/4.1589 wmax_avg=1.0000 lr=7.02e-05 cells=64 phi=4.1726 splits=62 elapsed=0.03hr cost=$0.08
+[STEP   400] loss=2.6617 avg50=3.3053 ce=3.3053 ent=0.0000/4.1589 wmax_avg=1.0000 lr=8.02e-05 cells=64 phi=4.1788 splits=62 elapsed=0.04hr cost=$0.09
+[STEP   450] loss=2.2801 avg50=2.5018 ce=2.5018 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.02e-05 cells=64 phi=4.1752 splits=62 elapsed=0.04hr cost=$0.11
+[STEP   500] loss=2.0583 avg50=2.1817 ce=2.1817 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.00e-04 cells=64 phi=4.1660 splits=62 elapsed=0.05hr cost=$0.12
+[STEP   550] loss=1.9410 avg50=2.0194 ce=2.0194 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.00e-04 cells=64 phi=4.1769 splits=62 elapsed=0.06hr cost=$0.13
+[STEP   600] loss=1.9006 avg50=1.9476 ce=1.9476 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.99e-05 cells=64 phi=4.1675 splits=62 elapsed=0.06hr cost=$0.15
+[STEP   650] loss=1.8415 avg50=1.8817 ce=1.8817 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.97e-05 cells=64 phi=4.1313 splits=62 elapsed=0.07hr cost=$0.16
+[STEP   700] loss=1.8144 avg50=1.8524 ce=1.8524 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.95e-05 cells=64 phi=4.1799 splits=62 elapsed=0.07hr cost=$0.17
+[STEP   750] loss=1.8046 avg50=1.8375 ce=1.8375 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.92e-05 cells=64 phi=4.1685 splits=62 elapsed=0.08hr cost=$0.19
+[STEP   800] loss=1.8032 avg50=1.8226 ce=1.8226 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.89e-05 cells=64 phi=4.1111 splits=62 elapsed=0.08hr cost=$0.20
+[STEP   850] loss=1.7789 avg50=1.8052 ce=1.8052 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.85e-05 cells=64 phi=4.1789 splits=62 elapsed=0.09hr cost=$0.21
+[STEP   900] loss=1.7609 avg50=1.7843 ce=1.7843 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.81e-05 cells=64 phi=4.1802 splits=62 elapsed=0.09hr cost=$0.23
+[STEP   950] loss=1.7255 avg50=1.7760 ce=1.7760 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.76e-05 cells=64 phi=4.1758 splits=62 elapsed=0.10hr cost=$0.24
+[STEP  1000] loss=1.7464 avg50=1.7665 ce=1.7665 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.70e-05 cells=64 phi=4.1689 splits=62 elapsed=0.11hr cost=$0.25
+[STEP  1050] loss=1.7299 avg50=1.7656 ce=1.7656 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.64e-05 cells=64 phi=4.1729 splits=62 elapsed=0.11hr cost=$0.27
+[STEP  1100] loss=1.7242 avg50=1.7300 ce=1.7300 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.57e-05 cells=64 phi=4.1747 splits=62 elapsed=0.12hr cost=$0.28
+[STEP  1150] loss=1.7600 avg50=1.7283 ce=1.7283 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.49e-05 cells=64 phi=4.1730 splits=62 elapsed=0.12hr cost=$0.29
+[STEP  1200] loss=1.8300 avg50=1.7384 ce=1.7384 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.41e-05 cells=64 phi=4.1174 splits=62 elapsed=0.13hr cost=$0.31
+[STEP  1250] loss=1.6703 avg50=1.7210 ce=1.7210 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.33e-05 cells=64 phi=4.1598 splits=62 elapsed=0.13hr cost=$0.32
+[STEP  1300] loss=1.6883 avg50=1.7007 ce=1.7007 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.24e-05 cells=64 phi=4.1780 splits=62 elapsed=0.14hr cost=$0.33
+[STEP  1350] loss=1.7028 avg50=1.6931 ce=1.6931 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.15e-05 cells=64 phi=4.1731 splits=62 elapsed=0.14hr cost=$0.35
+[STEP  1400] loss=1.7064 avg50=1.6852 ce=1.6852 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.05e-05 cells=64 phi=4.1563 splits=62 elapsed=0.15hr cost=$0.36
+[STEP  1450] loss=1.6865 avg50=1.6712 ce=1.6712 ent=0.0000/4.1589 wmax_avg=1.0000 lr=8.94e-05 cells=64 phi=4.1748 splits=62 elapsed=0.16hr cost=$0.37
+[STEP  1500] loss=1.6491 avg50=1.6775 ce=1.6775 ent=0.0000/4.1589 wmax_avg=1.0000 lr=8.83e-05 cells=64 phi=4.1046 splits=62 elapsed=0.16hr cost=$0.39
+[STEP  1550] loss=1.6395 avg50=1.6714 ce=1.6714 ent=0.0000/4.1589 wmax_avg=1.0000 lr=8.72e-05 cells=64 phi=4.1784 splits=62 elapsed=0.17hr cost=$0.40
+[STEP  1600] loss=1.6285 avg50=1.6451 ce=1.6451 ent=0.0000/4.1589 wmax_avg=1.0000 lr=8.60e-05 cells=64 phi=4.1749 splits=62 elapsed=0.17hr cost=$0.41
+[STEP  1650] loss=1.7065 avg50=1.6484 ce=1.6484 ent=0.0000/4.1589 wmax_avg=1.0000 lr=8.47e-05 cells=64 phi=4.1722 splits=62 elapsed=0.18hr cost=$0.43
+[STEP  1700] loss=1.6600 avg50=1.6341 ce=1.6341 ent=0.0000/4.1589 wmax_avg=1.0000 lr=8.35e-05 cells=64 phi=4.1680 splits=62 elapsed=0.18hr cost=$0.44
+[STEP  1750] loss=1.6000 avg50=1.6319 ce=1.6319 ent=0.0000/4.1589 wmax_avg=1.0000 lr=8.21e-05 cells=64 phi=4.1767 splits=62 elapsed=0.19hr cost=$0.45
+[STEP  1800] loss=1.6220 avg50=1.6309 ce=1.6309 ent=0.0000/4.1589 wmax_avg=1.0000 lr=8.08e-05 cells=64 phi=4.1725 splits=62 elapsed=0.19hr cost=$0.47
+[STEP  1850] loss=1.7198 avg50=1.6333 ce=1.6333 ent=0.0000/4.1589 wmax_avg=1.0000 lr=7.94e-05 cells=64 phi=4.1720 splits=62 elapsed=0.20hr cost=$0.48
+[STEP  1900] loss=1.5979 avg50=1.6118 ce=1.6118 ent=0.0000/4.1589 wmax_avg=1.0000 lr=7.80e-05 cells=64 phi=4.1765 splits=62 elapsed=0.21hr cost=$0.49
+[STEP  1950] loss=1.5750 avg50=1.5961 ce=1.5961 ent=0.0000/4.1589 wmax_avg=1.0000 lr=7.65e-05 cells=64 phi=4.1452 splits=62 elapsed=0.21hr cost=$0.51
+[STEP  2000] loss=1.5236 avg50=1.6036 ce=1.6036 ent=0.0000/4.1589 wmax_avg=1.0000 lr=7.50e-05 cells=64 phi=4.1579 splits=62 elapsed=0.22hr cost=$0.52
+[STEP  2050] loss=1.6058 avg50=1.5923 ce=1.5923 ent=0.0000/4.1589 wmax_avg=1.0000 lr=7.35e-05 cells=64 phi=4.1624 splits=62 elapsed=0.22hr cost=$0.53
+[STEP  2100] loss=1.5451 avg50=1.5846 ce=1.5846 ent=0.0000/4.1589 wmax_avg=1.0000 lr=7.19e-05 cells=64 phi=4.1722 splits=62 elapsed=0.23hr cost=$0.55
+[STEP  2150] loss=1.5314 avg50=1.5823 ce=1.5823 ent=0.0000/4.1589 wmax_avg=1.0000 lr=7.03e-05 cells=64 phi=4.1614 splits=62 elapsed=0.23hr cost=$0.56
+[STEP  2200] loss=1.5821 avg50=1.5897 ce=1.5897 ent=0.0000/4.1589 wmax_avg=1.0000 lr=6.87e-05 cells=64 phi=4.1795 splits=62 elapsed=0.24hr cost=$0.57
+[STEP  2250] loss=1.5251 avg50=1.5503 ce=1.5503 ent=0.0000/4.1589 wmax_avg=1.0000 lr=6.71e-05 cells=64 phi=4.1726 splits=62 elapsed=0.24hr cost=$0.59
+[STEP  2300] loss=1.5498 avg50=1.5516 ce=1.5516 ent=0.0000/4.1589 wmax_avg=1.0000 lr=6.55e-05 cells=64 phi=4.1802 splits=62 elapsed=0.25hr cost=$0.60
+[STEP  2350] loss=1.5012 avg50=1.5503 ce=1.5503 ent=0.0000/4.1589 wmax_avg=1.0000 lr=6.38e-05 cells=64 phi=4.1688 splits=62 elapsed=0.26hr cost=$0.61
+[STEP  2400] loss=1.5215 avg50=1.5422 ce=1.5422 ent=0.0000/4.1589 wmax_avg=1.0000 lr=6.21e-05 cells=64 phi=4.1700 splits=62 elapsed=0.26hr cost=$0.63
+[STEP  2450] loss=1.5529 avg50=1.5317 ce=1.5317 ent=0.0000/4.1589 wmax_avg=1.0000 lr=6.04e-05 cells=64 phi=4.1733 splits=62 elapsed=0.27hr cost=$0.64
+[STEP  2500] loss=1.5104 avg50=1.5402 ce=1.5402 ent=0.0000/4.1589 wmax_avg=1.0000 lr=5.87e-05 cells=64 phi=4.1310 splits=62 elapsed=0.27hr cost=$0.65
+[STEP  2550] loss=1.4863 avg50=1.5108 ce=1.5108 ent=0.0000/4.1589 wmax_avg=1.0000 lr=5.70e-05 cells=64 phi=4.1744 splits=62 elapsed=0.28hr cost=$0.67
+[STEP  2600] loss=1.4949 avg50=1.5156 ce=1.5156 ent=0.0000/4.1589 wmax_avg=1.0000 lr=5.52e-05 cells=64 phi=4.1763 splits=62 elapsed=0.28hr cost=$0.68
+[STEP  2650] loss=1.4751 avg50=1.4998 ce=1.4998 ent=0.0000/4.1589 wmax_avg=1.0000 lr=5.35e-05 cells=64 phi=4.1782 splits=62 elapsed=0.29hr cost=$0.69
+[STEP  2700] loss=1.4827 avg50=1.4883 ce=1.4883 ent=0.0000/4.1589 wmax_avg=1.0000 lr=5.17e-05 cells=64 phi=4.1616 splits=62 elapsed=0.29hr cost=$0.71
+[STEP  2750] loss=1.4780 avg50=1.5090 ce=1.5090 ent=0.0000/4.1589 wmax_avg=1.0000 lr=5.00e-05 cells=64 phi=4.1717 splits=62 elapsed=0.30hr cost=$0.72
+[STEP  2800] loss=1.4840 avg50=1.5018 ce=1.5018 ent=0.0000/4.1589 wmax_avg=1.0000 lr=4.83e-05 cells=64 phi=4.1766 splits=62 elapsed=0.31hr cost=$0.73
+[STEP  2850] loss=1.4802 avg50=1.4983 ce=1.4983 ent=0.0000/4.1589 wmax_avg=1.0000 lr=4.65e-05 cells=64 phi=4.1463 splits=62 elapsed=0.31hr cost=$0.75
+[STEP  2900] loss=1.4909 avg50=1.4784 ce=1.4784 ent=0.0000/4.1589 wmax_avg=1.0000 lr=4.48e-05 cells=64 phi=4.1584 splits=62 elapsed=0.32hr cost=$0.76
+[STEP  2950] loss=1.4602 avg50=1.4838 ce=1.4838 ent=0.0000/4.1589 wmax_avg=1.0000 lr=4.30e-05 cells=64 phi=4.1720 splits=62 elapsed=0.32hr cost=$0.77
+[STEP  3000] loss=1.4569 avg50=1.4788 ce=1.4788 ent=0.0000/4.1589 wmax_avg=1.0000 lr=4.13e-05 cells=64 phi=4.1538 splits=62 elapsed=0.33hr cost=$0.79
+[STEP  3050] loss=1.4524 avg50=1.4819 ce=1.4819 ent=0.0000/4.1589 wmax_avg=1.0000 lr=3.96e-05 cells=64 phi=4.1696 splits=62 elapsed=0.33hr cost=$0.80
+[STEP  3100] loss=1.5029 avg50=1.4694 ce=1.4694 ent=0.0000/4.1589 wmax_avg=1.0000 lr=3.79e-05 cells=64 phi=4.1538 splits=62 elapsed=0.34hr cost=$0.81
+[STEP  3150] loss=1.4697 avg50=1.4645 ce=1.4645 ent=0.0000/4.1589 wmax_avg=1.0000 lr=3.62e-05 cells=64 phi=4.1722 splits=62 elapsed=0.34hr cost=$0.83
+[STEP  3200] loss=1.3946 avg50=1.4387 ce=1.4387 ent=0.0000/4.1589 wmax_avg=1.0000 lr=3.45e-05 cells=64 phi=4.1304 splits=62 elapsed=0.35hr cost=$0.84
+[STEP  3250] loss=1.4330 avg50=1.4570 ce=1.4570 ent=0.0000/4.1589 wmax_avg=1.0000 lr=3.29e-05 cells=64 phi=4.1622 splits=62 elapsed=0.36hr cost=$0.85
+[STEP  3300] loss=1.4430 avg50=1.4549 ce=1.4549 ent=0.0000/4.1589 wmax_avg=1.0000 lr=3.13e-05 cells=64 phi=4.1714 splits=62 elapsed=0.36hr cost=$0.87
+[STEP  3350] loss=1.4942 avg50=1.4406 ce=1.4406 ent=0.0000/4.1589 wmax_avg=1.0000 lr=2.97e-05 cells=64 phi=4.1689 splits=62 elapsed=0.37hr cost=$0.88
+[STEP  3400] loss=1.4209 avg50=1.4382 ce=1.4382 ent=0.0000/4.1589 wmax_avg=1.0000 lr=2.81e-05 cells=64 phi=4.1365 splits=62 elapsed=0.37hr cost=$0.89
+[STEP  3450] loss=1.4212 avg50=1.4249 ce=1.4249 ent=0.0000/4.1589 wmax_avg=1.0000 lr=2.65e-05 cells=64 phi=4.1623 splits=62 elapsed=0.38hr cost=$0.91
+[STEP  3500] loss=1.4012 avg50=1.4176 ce=1.4176 ent=0.0000/4.1589 wmax_avg=1.0000 lr=2.50e-05 cells=64 phi=4.1739 splits=62 elapsed=0.38hr cost=$0.92
+[STEP  3550] loss=1.3949 avg50=1.4303 ce=1.4303 ent=0.0000/4.1589 wmax_avg=1.0000 lr=2.35e-05 cells=64 phi=4.1475 splits=62 elapsed=0.39hr cost=$0.93
+[STEP  3600] loss=1.4397 avg50=1.4273 ce=1.4273 ent=0.0000/4.1589 wmax_avg=1.0000 lr=2.20e-05 cells=64 phi=4.1769 splits=62 elapsed=0.39hr cost=$0.95
+[STEP  3650] loss=1.4552 avg50=1.4275 ce=1.4275 ent=0.0000/4.1589 wmax_avg=1.0000 lr=2.06e-05 cells=64 phi=4.1829 splits=62 elapsed=0.40hr cost=$0.96
+[STEP  3700] loss=1.3900 avg50=1.4167 ce=1.4167 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.92e-05 cells=64 phi=4.1809 splits=62 elapsed=0.41hr cost=$0.97
+[STEP  3750] loss=1.3835 avg50=1.4041 ce=1.4041 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.79e-05 cells=64 phi=4.1703 splits=62 elapsed=0.41hr cost=$0.99
+[STEP  3800] loss=1.4117 avg50=1.4044 ce=1.4044 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.65e-05 cells=64 phi=4.1637 splits=62 elapsed=0.42hr cost=$1.00
+[STEP  3850] loss=1.4338 avg50=1.3973 ce=1.3973 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.53e-05 cells=64 phi=4.1621 splits=62 elapsed=0.42hr cost=$1.01
+[STEP  3900] loss=1.3923 avg50=1.4067 ce=1.4067 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.40e-05 cells=64 phi=4.1703 splits=62 elapsed=0.43hr cost=$1.03
+[STEP  3950] loss=1.3582 avg50=1.3863 ce=1.3863 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.28e-05 cells=64 phi=4.1683 splits=62 elapsed=0.43hr cost=$1.04
+[STEP  4000] loss=1.3389 avg50=1.3948 ce=1.3948 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.17e-05 cells=64 phi=4.1641 splits=62 elapsed=0.44hr cost=$1.05
+[STEP  4050] loss=1.3551 avg50=1.3851 ce=1.3851 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.06e-05 cells=64 phi=4.1404 splits=62 elapsed=0.44hr cost=$1.07
+[STEP  4100] loss=1.3799 avg50=1.3910 ce=1.3910 ent=0.0000/4.1589 wmax_avg=1.0000 lr=9.55e-06 cells=64 phi=4.1751 splits=62 elapsed=0.45hr cost=$1.08
+[STEP  4150] loss=1.3685 avg50=1.3842 ce=1.3842 ent=0.0000/4.1589 wmax_avg=1.0000 lr=8.55e-06 cells=64 phi=4.1732 splits=62 elapsed=0.46hr cost=$1.10
+[STEP  4200] loss=1.3728 avg50=1.3988 ce=1.3988 ent=0.0000/4.1589 wmax_avg=1.0000 lr=7.60e-06 cells=64 phi=4.1792 splits=62 elapsed=0.46hr cost=$1.11
+[STEP  4250] loss=1.3730 avg50=1.3827 ce=1.3827 ent=0.0000/4.1589 wmax_avg=1.0000 lr=6.70e-06 cells=64 phi=4.1572 splits=62 elapsed=0.47hr cost=$1.12
+[STEP  4300] loss=1.3859 avg50=1.3860 ce=1.3860 ent=0.0000/4.1589 wmax_avg=1.0000 lr=5.85e-06 cells=64 phi=4.1680 splits=62 elapsed=0.47hr cost=$1.14
+[STEP  4350] loss=1.3862 avg50=1.3802 ce=1.3802 ent=0.0000/4.1589 wmax_avg=1.0000 lr=5.06e-06 cells=64 phi=4.1683 splits=62 elapsed=0.48hr cost=$1.15
+[STEP  4400] loss=1.3376 avg50=1.3802 ce=1.3802 ent=0.0000/4.1589 wmax_avg=1.0000 lr=4.32e-06 cells=64 phi=4.0939 splits=62 elapsed=0.48hr cost=$1.16
+[STEP  4450] loss=1.3728 avg50=1.3810 ce=1.3810 ent=0.0000/4.1589 wmax_avg=1.0000 lr=3.64e-06 cells=64 phi=4.1722 splits=62 elapsed=0.49hr cost=$1.18
+[STEP  4500] loss=1.3496 avg50=1.3775 ce=1.3775 ent=0.0000/4.1589 wmax_avg=1.0000 lr=3.02e-06 cells=64 phi=4.1669 splits=62 elapsed=0.49hr cost=$1.19
+[STEP  4550] loss=1.3793 avg50=1.3796 ce=1.3796 ent=0.0000/4.1589 wmax_avg=1.0000 lr=2.45e-06 cells=64 phi=4.1724 splits=62 elapsed=0.50hr cost=$1.20
+[STEP  4600] loss=1.3095 avg50=1.3726 ce=1.3726 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.94e-06 cells=64 phi=4.1706 splits=62 elapsed=0.51hr cost=$1.22
+[STEP  4650] loss=1.4009 avg50=1.3711 ce=1.3711 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.49e-06 cells=64 phi=4.1618 splits=62 elapsed=0.51hr cost=$1.23
+[STEP  4700] loss=1.3830 avg50=1.3714 ce=1.3714 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.09e-06 cells=64 phi=4.1690 splits=62 elapsed=0.52hr cost=$1.24
+[STEP  4750] loss=1.3543 avg50=1.3728 ce=1.3728 ent=0.0000/4.1589 wmax_avg=1.0000 lr=7.60e-07 cells=64 phi=4.1600 splits=62 elapsed=0.52hr cost=$1.26
+[STEP  4800] loss=1.4063 avg50=1.3799 ce=1.3799 ent=0.0000/4.1589 wmax_avg=1.0000 lr=4.87e-07 cells=64 phi=4.1418 splits=62 elapsed=0.53hr cost=$1.27
+[STEP  4850] loss=1.3997 avg50=1.3573 ce=1.3573 ent=0.0000/4.1589 wmax_avg=1.0000 lr=2.74e-07 cells=64 phi=4.1784 splits=62 elapsed=0.53hr cost=$1.28
+[STEP  4900] loss=1.3496 avg50=1.3698 ce=1.3698 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.22e-07 cells=64 phi=4.1666 splits=62 elapsed=0.54hr cost=$1.30
+[STEP  4950] loss=1.3710 avg50=1.3711 ce=1.3711 ent=0.0000/4.1589 wmax_avg=1.0000 lr=3.05e-08 cells=64 phi=4.1173 splits=62 elapsed=0.54hr cost=$1.31
+[STEP  4999] loss=1.3812 avg50=1.3657 ce=1.3657 ent=0.0000/4.1589 wmax_avg=1.0000 lr=1.22e-11 cells=64 phi=4.1627 splits=62 elapsed=0.55hr cost=$1.32
+[INFO] training done — wall=1980.4s cost=$1.32
+[CKPT] final saved output/ckpt_final.pt
+
+=== F-PERSONA-4 with null-permutation test ===
+  verdict=FAIL mean_kl=0.0000 null=0.0000±0.0000 z=inf p=1.0000
+
+[RESULT] saved output/cotrain_v2_result.json
+[VERDICT] F-PERSONA-4 = FAIL (mean_kl=0.0000, z=inf)

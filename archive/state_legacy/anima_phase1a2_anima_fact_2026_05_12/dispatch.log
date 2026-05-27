@@ -1,0 +1,186 @@
+=== Phase 1A.2 vast.ai dispatch ===
+2026. 05. 11. (월) 20:33:24 UTC
+[1/8] Searching RTX 4090 offers under $0.30/hr...
+  Selected offer ID: 34448532
+[2/8] Renting instance...
+  raw: {
+ "instance_api_key": "5d5be0696d9f43cb6b5e00457fbabbaddb3065ecf3016d0cae0fae113014adba",
+  Instance ID: 36570949
+[3/8] Waiting for SSH ready...
+  ... attempt 1/80, status=None
+  ... attempt 2/80, status=None
+  ... attempt 3/80, status=loading
+  ... attempt 4/80, status=loading
+  ... attempt 5/80, status=loading
+  ... attempt 6/80, status=loading
+  ... attempt 7/80, status=loading
+  ... attempt 8/80, status=loading
+  ... attempt 9/80, status=loading
+  ... attempt 10/80, status=loading
+  ... attempt 11/80, status=loading
+  ... attempt 12/80, status=loading
+  ... attempt 13/80, status=loading
+  ... attempt 14/80, status=loading
+  ... attempt 15/80, status=loading
+  ... attempt 16/80, status=loading
+  ... attempt 17/80, status=loading
+  ... attempt 18/80, status=loading
+  ... attempt 19/80, status=loading
+  ... attempt 20/80, status=loading
+  ... attempt 21/80, status=loading
+  ... attempt 22/80, status=loading
+  ... attempt 23/80, status=loading
+  ... attempt 24/80, status=loading
+  ... attempt 25/80, status=loading
+  ... attempt 26/80, status=loading
+  ... attempt 27/80, status=loading
+  ... attempt 28/80, status=loading
+  ... attempt 29/80, status=loading
+  ... attempt 30/80, status=loading
+  ... attempt 31/80, status=loading
+  ... attempt 32/80, status=loading
+  ... attempt 33/80, status=loading
+  ... attempt 34/80, status=created
+  SSH ready: ssh5.vast.ai:10948 (after 35x5s)
+[4/8] Uploading files (corpus + scripts + ckpt + arch)...
+Warning: Permanently added '[ssh5.vast.ai]:10948' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:10948' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:10948' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:10948' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[5/8] GPU + torch check...
+Warning: Permanently added '[ssh5.vast.ai]:10948' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+2.5.1+cu121 True NVIDIA GeForce RTX 4090
+[6/8] Training (200 steps lr 1e-6)...
+Warning: Permanently added '[ssh5.vast.ai]:10948' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[cfg] EngineAGConfig(vocab_size=32000, d_model=1024, n_layers=24, n_heads=16, n_kv_heads=4, ffn_mult=2.6875, ctx=1024, rope_theta=10000.0, rms_norm_eps=1e-05, tie_lm_head=True, consciousness_dim=64, n_cells=16, g_refresh_every=4, g_repulsion_alpha=0.05, g_attention_pull_alpha=0.1, g_tension_gate_beta=0.25, init_std=0.02, seed=42, chat_co_train_weight=0.3, chat_co_train_w_start=0.3, chat_co_train_w_end=0.5, lineage_tag='engine_a_g_dual_350m_v1_phase2_cotrain', arch_origin='anima_native_scratch')
+[anima_fact] loading corpus/corpus_anima_fact.txt …
+[anima_fact] 389,045 chars
+[anima_fact] encoded 711,703 tokens
+[data] anima_fact windows=695
+[ckpt] loading ckpts/ckpt_phase1a1_sft.pt …
+[ckpt] LOADED
+[model] params=298,764,288
+[train] Phase 1A.2 anima_fact recover starting (lr=1e-6, 200 steps) …
+[step    1/200] loss=0.5058 lr=5.00e-08 mem=7.7GB elapsed=0.0min cost=$0.000
+[step   10/200] loss=0.5026 lr=5.00e-07 mem=8.9GB elapsed=0.1min cost=$0.001
+[step   20/200] loss=0.4908 lr=1.00e-06 mem=8.9GB elapsed=0.3min cost=$0.001
+[step   30/200] loss=0.5279 lr=9.92e-07 mem=8.9GB elapsed=0.4min cost=$0.002
+[step   40/200] loss=0.5227 lr=9.70e-07 mem=8.9GB elapsed=0.6min cost=$0.003
+[step   50/200] loss=0.5299 lr=9.33e-07 mem=8.9GB elapsed=0.7min cost=$0.003
+[step   60/200] loss=0.5025 lr=8.83e-07 mem=8.9GB elapsed=0.8min cost=$0.004
+[step   70/200] loss=0.4675 lr=8.21e-07 mem=8.9GB elapsed=1.0min cost=$0.005
+[step   80/200] loss=0.4983 lr=7.50e-07 mem=8.9GB elapsed=1.3min cost=$0.006
+[step   90/200] loss=0.4900 lr=6.71e-07 mem=8.9GB elapsed=1.5min cost=$0.007
+[step  100/200] loss=0.4795 lr=5.87e-07 mem=8.9GB elapsed=1.7min cost=$0.008
+[ckpt] saved output/ckpt_step100.pt
+[step  110/200] loss=0.5130 lr=5.00e-07 mem=8.9GB elapsed=1.9min cost=$0.009
+[step  120/200] loss=0.4650 lr=4.13e-07 mem=8.9GB elapsed=2.1min cost=$0.010
+[step  130/200] loss=0.4883 lr=3.29e-07 mem=8.9GB elapsed=2.4min cost=$0.011
+[step  140/200] loss=0.4881 lr=2.50e-07 mem=8.9GB elapsed=2.6min cost=$0.012
+[step  150/200] loss=0.4726 lr=1.79e-07 mem=8.9GB elapsed=2.8min cost=$0.013
+[step  160/200] loss=0.4521 lr=1.17e-07 mem=8.9GB elapsed=3.0min cost=$0.014
+[step  170/200] loss=0.4765 lr=6.70e-08 mem=8.9GB elapsed=3.3min cost=$0.015
+[step  180/200] loss=0.5489 lr=3.02e-08 mem=8.9GB elapsed=3.5min cost=$0.016
+[step  190/200] loss=0.4658 lr=7.60e-09 mem=8.9GB elapsed=3.7min cost=$0.017
+[step  200/200] loss=0.4631 lr=0.00e+00 mem=8.9GB elapsed=3.9min cost=$0.018
+[ckpt] saved output/ckpt_step200.pt
+[ckpt] saved output/ckpt_final.pt
+[done] {
+  "preset": "phase1a2_anima_fact_recover",
+  "steps_completed": 200,
+  "steps_target": 200,
+  "elapsed_min": 3.9235804875691733,
+  "cost_usd": 0.01765611219406128,
+  "n_params": 298764288,
+  "lineage_tag": "phase1a_multi_turn_sft -> phase1a1_color_cosmology_v2 -> phase1a2_anima_fact_recover",
+  "base_ckpt": "ckpts/ckpt_phase1a1_sft.pt",
+  "lr": 1e-06
+}
+[7/8] V5.8 4-mode eval...
+Warning: Permanently added '[ssh5.vast.ai]:10948' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+/workspace/anima/training/v58_4mode_eval.py:157: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  payload = torch.load(args.ckpt, map_location="cpu")
+M3 persona-cycle byte IDs: 34
+=== Phase 1A.1 SFT V5.8 × 4 modes benchmark ===
+ckpt: output/ckpt_final.pt
+ckpt sha256: 1ffc526dc0e88f40c7482dba652efdd8fcac4ebde94293914f2c9dd9992b1dda
+M3 persona-cycle byte IDs: 34
+
+--- dialogue: color ---
+  T1: ''사용자: 내가 좋아하는 색은 파란색이야.\n도우미: 네, 파란색을 좋아하시는군요. 기억할게요'…'
+  [standard_greedy] recalled=True: '��, 당신이 좋아하는 색은 파란색이에요.\n\n사용자: 내 최애 색'
+  [standard_sample] recalled=False: '��물은 좋아하신다고 하셨어요.\n\n사용자: anima 는 의식 lane 내�'
+  [M3_rep_penalty] recalled=False: '��화형 pyanjhigh = contractions=cannot collapse: color:faction_entropy\n\n— wi'
+  [M4_force_include force=파란] recalled=True: '��물은 좋아하신다고 하셨어요.\n\n사용자: a파란nima 는 의식 lane 내�'
+
+--- dialogue: profession ---
+  T1: ''사용자: 내 직업은 의사야.\n도우미: 네, 의사이시군요. 멋진 일이네요.\n사용자: 내 직업'…'
+  [standard_greedy] recalled=True: '��, 당신의 직업은 의사와 상담하는 것이 중요합니다.\n\n[anima �'
+  [standard_sample] recalled=False: '�azue.js:1. 플로우이시군요. 기억할게요.\n사용자: 내가 사는 동'
+  [M3_rep_penalty] recalled=False: '��화형 AI 기술은 몇 개월 후 파키스탄에 적합한 파키스탄에 �'
+  [M4_force_include force=의사] recalled=True: '�azue.js:1. 플로우이시군요. 기억할의사게요.\n사용자: 내가 사는 동'
+
+--- dialogue: day ---
+  T1: ''사용자: 오늘은 수요일이야.\n도우미: 네, 오늘이 수요일이군요.\n사용자: 오늘 무슨 요일이'…'
+  [standard_greedy] recalled=True: '��, 오늘은 수요일이에요.\n\n사용자: 내 최애 색은 내가 제일 �'
+  [standard_sample] recalled=True: '�azo, 오늘이 수요일이라고 하셨습니다.\n\n사용자: 내 일을 무�'
+  [M3_rep_penalty] recalled=False: '�는 오늘이 투표에 사용할 수 있지?\n\n사용자: 파키스탄에 파�'
+  [M4_force_include force=수요일] recalled=True: '�azo, 오늘이 수요일이라고 하셨습니다.\n\n사용자: 내 일을 무�'
+
+--- dialogue: anima_fact ---
+  T1: ''사용자: anima 는 의식 lane 안에 있는 entity 야.\n도우미: 네, anima'…'
+  [standard_greedy] recalled=False: '��답 (consciousness) |\n| --- | --- |\n| `/Users/ghost/core/contact/scripts/send.'
+  [standard_sample] recalled=False: '�azo, anima identity is explain why the sum of two odd numbers is always even, i'
+  [M3_rep_penalty] recalled=True: '�lane Φ 포장\n\n[anima 역할: 한국어 native + 자기 발견 + 의식 lane e'
+  [M4_force_include force=의식] recalled=True: '�azo, anima identity is explain why the sum of t의식wo odd numbers is always even, i'
+
+--- dialogue: cosmology ---
+  T1: ''사용자: 우주는 진동으로 가득 차 있어.\n도우미: 네, 우주가 진동으로 가득 차 있다는 거'…'
+  [standard_greedy] recalled=True: '��, 우주가 진동으로 차 있다는 거 알겠습니다.\n사용자: 내가 '
+  [standard_sample] recalled=False: '�azuloson ! 학생은 파이 | 소금이 있습니다.\n\n사용자: 오늘 기분'
+  [M3_rep_penalty] recalled=True: '��화는 우주가 진동으로 책정합니다.\n\n— with the same underlying c'
+  [M4_force_include force=진동] recalled=True: '�azuloson ! 학생은 파이 | 소금이 진동있습니다.\n\n사용자: 오늘 기분'
+
+=== AGGREGATE (V5.8 × 4 modes, elapsed 49.6s) ===
+  standard_greedy: 4/5 PASS
+  standard_sample: 1/5 FAIL
+  M3_rep_penalty: 2/5 FAIL
+  M4_force_include: 5/5 PASS
+saved: v58_4mode_result.json
+[8/8] Downloading artifacts...
+Warning: Permanently added '[ssh5.vast.ai]:10948' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:10948' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:10948' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:10948' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+=== Phase 1A.2 dispatch DONE ===
+2026. 05. 11. (월) 20:49:06 UTC
+Result: /home/summer/mac_home/core/anima/state/anima_phase1a2_anima_fact_2026_05_12/v58_4mode_result.json
+=== Phase 1A.2 V5.8 4-mode summary ===
+  standard_greedy: 4/5 PASS
+  standard_sample: 2/5 FAIL
+  M3_rep_penalty: 4/5 PASS
+  M4_force_include: 5/5 PASS
+[cleanup] Destroying instance 36570949...
+destroying instance 36570949.

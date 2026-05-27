@@ -1,0 +1,26 @@
+schema: anima/marker/p9_pre4_data_weight_landed/1
+ts_utc: 2026-05-03
+phase: p9_pre4_data_weight
+verdict: PARTIAL_PASS
+items:
+  I: PASS  # CLM v4 530M weight access verified on ubu1 (5.0 GB, sha 22f180ef...)
+  J: PASS  # mock SFT 1K-step round-trip CPU 2.08s, 4-loss + δ curriculum + φ★ hinge OK
+  P: PASS  # cortexlab-toolkit 0.1.0 + TRIBE v2 H100 pod F4 infrastructure ready
+  Q: PARTIAL  # SFT 50K data: 18K disk + 32K generation/download for P9 EXEC Phase 0
+artifacts:
+  json:
+    - state/p9_pre4_data_weight/I_clm_weight_access.json
+    - state/p9_pre4_data_weight/J_mock_sft_round_trip.json
+    - state/p9_pre4_data_weight/P_cortexlab_toolkit_check.json
+    - state/p9_pre4_data_weight/Q_sft_data_50k_audit.json
+  doc: docs/p9_pre4_data_weight_landed_2026_05_03.ai.md
+  helper: /tmp/p9_pre4_J_mock_sft.py
+cost_usd: 0.00
+wall_min: ~25
+destructive_ops: 0
+migration: NONE
+ssh_audit_read_only: [ubu1, ubu2]
+p9_exec_phase_0_entry: ALLOWED  # no CRITICAL FAIL; Q phase-0 first task = source 1 ShareGPT 10K (~60min, $0)
+crit_fail: false
+ω_cycle: complete
+silent_land_marker: emitted

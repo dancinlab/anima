@@ -1,0 +1,155 @@
+// HEXAD/D/d_train3_smoke.hexa — entrypoint (import lib + selftest + top-level call)
+// ════════════════════════════════════════════════════════════════════════════
+//  PHASE 5 (1) C — hybrid head + single non-linear block analytic backprop.
+//
+//  TINY config (d=4, h=8, V=4, T=1) compiled-native Mac verify of the EXACT
+//  hand-derived RMSNorm+SwiGLU+residual reverse-mode (NO scalar tape). Lib is
+//  dimension-generic ⟹ same code at real d=768 on ubu (heavy cycle).
+//
+//  F-D-PORT-3  : N AdamW steps over the FULL analytic chain ⟹ gn2 collapse
+//                + acc → N.  TIER = EMPIRICAL (B-D-NOTE; NOT 🔵).
+//  F-D-PORT-3b : analytic Wg-grad vs central finite-difference of CE —
+//                verifies the hand-derived block vjp IMPL (PROPERTY).
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/D/d_train3_lib.hexa"
+
+
+// deterministic linearly-separable K-class toy (class c → hot block dims)
+fn c3_make_dataset(d: int, V: int, reps: int) {
+    let g = d / V
+    let mut XS = []
+    let mut YS = []
+    let mut c = 0
+    while c < V {
+        let mut r = 0
+        while r < reps {
+            let mut x = []
+            let mut j = 0
+            while j < d {
+                let hot = (j >= c * g) && (j < c * g + g)
+                let jit = (to_float((c * 7 + r * 3 + j) % 5) / 50.0)
+                x.push((if hot { 1.0 } else { 0.05 }) + jit)
+                j = j + 1
+            }
+            XS.push(x)
+            YS.push(c)
+            r = r + 1
+        }
+        c = c + 1
+    }
+    return [XS, YS]
+}
+
+// clone P with P[key][idx] += delta  (gradcheck helper, no closure)
+fn c3_bump(P, key: string, idx: int, delta: float) {
+    let src = P[key]
+    let mut a = []
+    let mut i = 0
+    while i < len(src) {
+        a.push(if i == idx { src[i] + delta } else { src[i] })
+        i = i + 1
+    }
+    return #{
+        "g":  if key == "g"  { a } else { P["g"]  },
+        "Wg": if key == "Wg" { a } else { P["Wg"] },
+        "Wu": if key == "Wu" { a } else { P["Wu"] },
+        "Wd": if key == "Wd" { a } else { P["Wd"] },
+        "Wh": if key == "Wh" { a } else { P["Wh"] },
+    }
+}
+
+
+fn selftest() {
+    println("================================================================")
+    println("d_train3_smoke — Phase 5 (1) C hybrid block backprop (F-D-PORT-3)")
+    println("================================================================")
+
+    let d = 4
+    let h = 8
+    let V = 4
+    let reps = 2                          // N = 8
+    let ds = c3_make_dataset(d, V, reps)
+    let XS = ds[0]
+    let YS = ds[1]
+    let nsamp = len(YS)
+
+    // from-scratch RANDOM seed-fixed init (g_clm_from_scratch, base_ckpt=NONE)
+    let mut P = c3_init(42, d, h, V)
+
+    let gn2_0 = c3_epoch_gn2(P, XS, YS, d, h, V)
+    let acc_0 = c3_epoch_acc(P, XS, YS, d, h, V)
+    println("  init : gn2=" + to_string(gn2_0) + "  acc=" + to_string(acc_0)
+            + "/" + to_string(nsamp))
+
+    // ── F-D-PORT-3b GRAD-EXACT : analytic Wg-grad vs central finite-diff ──
+    let wi = 3
+    let eps = 0.0005
+    let gan = c3_grad(XS[0], P, YS[0], d, h, V)
+    let gan_wg = gan["dWg"][wi]
+    let Pp = c3_bump(P, "Wg", wi, eps)
+    let Pm = c3_bump(P, "Wg", wi, 0.0 - eps)
+    let cep = c3_ce(XS[0], Pp, YS[0], d, h, V)
+    let cem = c3_ce(XS[0], Pm, YS[0], d, h, V)
+    let gfd = (cep - cem) / (2.0 * eps)
+    let ge = if gan_wg - gfd > 0.0 { gan_wg - gfd } else { gfd - gan_wg }
+    let gradexact = ge < 0.01
+    println("  GRAD-EXACT(Wg[" + to_string(wi) + "]): analytic="
+            + to_string(gan_wg) + " fd=" + to_string(gfd)
+            + " |Δ|=" + to_string(ge) + "  -> "
+            + (if gradexact { "PASS" } else { "FAIL" }))
+
+    // ── from-scratch AdamW over the FULL analytic chain (5 param arrays) ──
+    let steps = 120
+    let mut mg = dt2_zeros(d);     let mut vg = dt2_zeros(d)
+    let mut mWg = dt2_zeros(h*d);  let mut vWg = dt2_zeros(h*d)
+    let mut mWu = dt2_zeros(h*d);  let mut vWu = dt2_zeros(h*d)
+    let mut mWd = dt2_zeros(d*h);  let mut vWd = dt2_zeros(d*h)
+    let mut mWh = dt2_zeros(V*d);  let mut vWh = dt2_zeros(V*d)
+    let mut st = 1
+    while st <= steps {
+        let G = c3_epoch_grad(P, XS, YS, d, h, V)
+        let ug = dt2_adamw_step(P["g"], mg, vg, G["dg"], 0.05, 0.9, 0.999,
+                                0.00000001, 0.01, st)
+        let uWg = dt2_adamw_step(P["Wg"], mWg, vWg, G["dWg"], 0.05, 0.9,
+                                 0.999, 0.00000001, 0.01, st)
+        let uWu = dt2_adamw_step(P["Wu"], mWu, vWu, G["dWu"], 0.05, 0.9,
+                                 0.999, 0.00000001, 0.01, st)
+        let uWd = dt2_adamw_step(P["Wd"], mWd, vWd, G["dWd"], 0.05, 0.9,
+                                 0.999, 0.00000001, 0.01, st)
+        let uWh = dt2_adamw_step(P["Wh"], mWh, vWh, G["dWh"], 0.05, 0.9,
+                                 0.999, 0.00000001, 0.01, st)
+        P = #{ "g": ug[0], "Wg": uWg[0], "Wu": uWu[0], "Wd": uWd[0],
+               "Wh": uWh[0] }
+        mg = ug[1];  vg = ug[2]
+        mWg = uWg[1]; vWg = uWg[2]
+        mWu = uWu[1]; vWu = uWu[2]
+        mWd = uWd[1]; vWd = uWd[2]
+        mWh = uWh[1]; vWh = uWh[2]
+        st = st + 1
+    }
+
+    let gn2_1 = c3_epoch_gn2(P, XS, YS, d, h, V)
+    let acc_1 = c3_epoch_acc(P, XS, YS, d, h, V)
+    println("  final: gn2=" + to_string(gn2_1) + "  acc=" + to_string(acc_1)
+            + "/" + to_string(nsamp) + "  (after " + to_string(steps)
+            + " AdamW steps, full analytic chain)")
+
+    let collapsed = (gn2_1 * 5.0) < gn2_0
+    let accfull = acc_1 == nsamp
+    let port3 = collapsed && accfull
+    println("  F-D-PORT-3 : gn2-collapse(≥5x)=" + to_string(collapsed)
+            + " acc-full=" + to_string(accfull) + "  -> "
+            + (if port3 { "PASS (EMPIRICAL)" } else { "FAIL" }))
+
+    let ok = gradexact && port3
+    println("----------------------------------------------------------------")
+    println("  scope: RMSNorm+SwiGLU+residual exact vjp (attention/RoPE = #45 B)")
+    println("  TIER = EMPIRICAL (B-D-NOTE: SGD OUTCOME, NOT 🔵; head grad")
+    println("         = B-D-4 closed 🔵 reused, block vjp = hand-derived exact)")
+    println("  selftest: " + (if ok { "true" } else { "false" }))
+    println("================================================================")
+    return if ok { 0 } else { 1 }
+}
+
+selftest()

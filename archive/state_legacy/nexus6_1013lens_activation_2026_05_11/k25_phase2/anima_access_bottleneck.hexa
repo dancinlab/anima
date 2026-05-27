@@ -1,0 +1,89 @@
+// anima_access_bottleneck.hexa — Phase 2 reimpl (cross-cat anima consciousness top-1)
+// axis: access bottleneck — serial conscious throughput capacity
+// kernel: detect "events" = |Δx| > 1.5·median(|Δx|). Event rate λ_e = #events / n.
+//         capacity_used = min(1, λ_e * 7 / 1)  (7 = Miller magical number).
+//         bottleneck_score = 1 - |capacity_used - 0.5| * 2  (peak at capacity ≈ 7).
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks { if t != "" { xs.push(to_float(t)) } }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        xs.push(to_float(seed) / 2147483648.0)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+
+if n < 16 {
+    println("lens[access_bottleneck] category=extended axis=\"access_bottleneck (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+let mut grads = []
+let mut i = 1
+let mut sum_g = 0.0
+while i < n {
+    let d = xs[i] - xs[i-1]
+    let abs_d = if d < 0.0 { 0.0 - d } else { d }
+    grads.push(abs_d)
+    sum_g = sum_g + abs_d
+    i = i + 1
+}
+let m = len(grads)
+let mean_g = sum_g / to_float(m)
+// approximate median via sort
+let mut sg = []
+let mut sk = 0
+while sk < m { sg.push(grads[sk]); sk = sk + 1 }
+let mut a = 0
+while a < m {
+    let mut b = a + 1
+    while b < m {
+        if sg[b] < sg[a] { let t = sg[a]; sg[a] = sg[b]; sg[b] = t }
+        b = b + 1
+    }
+    a = a + 1
+}
+let med_g = sg[m / 2]
+let theta = 1.5 * med_g
+
+let mut n_events = 0
+let mut bi = 0
+while bi < m {
+    if grads[bi] > theta { n_events = n_events + 1 }
+    bi = bi + 1
+}
+let event_rate = to_float(n_events) / to_float(n)
+
+// Capacity: use event_rate * 7 (Miller); peak at event_rate = 1/7 → cap = 1
+let cap_raw = event_rate * 7.0
+let cap = if cap_raw > 1.0 { 1.0 } else { cap_raw }
+// bottleneck_score: peak at cap = 0.5 (intermediate throughput, neither starved nor saturated)
+let diff = cap - 0.5
+let abs_diff = if diff < 0.0 { 0.0 - diff } else { diff }
+let bottleneck = 1.0 - abs_diff * 2.0
+let bn = if bottleneck < 0.0 { 0.0 } else { if bottleneck > 1.0 { 1.0 } else { bottleneck } }
+
+let score = 0.7 * bn + 0.3 * cap
+let sc = if score < 0.0 { 0.0 } else { if score > 1.0 { 1.0 } else { score } }
+let hits = if sc > 0.5 { 6 } else { if sc > 0.3 { 4 } else { 2 } }
+println("lens[access_bottleneck] category=extended axis=\"Access Bottleneck — event rate (|Δx|>1.5·median) × Miller-7 capacity scaling\" score=" + to_string(sc) + " support=1 n=" + to_string(n) + " meta={\"event_rate\":" + to_string(event_rate) + ",\"capacity\":" + to_string(cap) + ",\"bottleneck_score\":" + to_string(bn) + ",\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")

@@ -1,0 +1,19 @@
+{
+  "hypothesis": "H_201",
+  "slug": "asymmetric-division",
+  "date": "2026-05-23",
+  "host": "mac-local",
+  "determinism": { "gauss_seed": 42, "llm": "none", "cost_usd": 0.0 },
+  "params": { "d_model": 8, "initial_cells": 4, "n_steps": 40, "asym_sigma": 0.5, "stem_tol": 1e-06, "min_final": 4, "max_final": 128 },
+  "operational_asymmetry": "post-split gaussian mutation (σ=asym_sigma) on child only; parent (stem) unchanged",
+  "sym": { "initial_cell_count": 4, "final_cell_count": 88, "next_id": 88, "split_events": 84, "diversity": 2.50105, "stem_alive": 4, "accounting_ok": true, "stability_ok": true },
+  "asym": { "initial_cell_count": 4, "final_cell_count": 120, "next_id": 120, "split_events": 116, "diversity": 12.8301, "stem_alive": 4, "children_mutated": 116, "accounting_ok": true, "stability_ok": true },
+  "F_ASYM_1": { "metric": "diversity asym > sym", "sym": 2.50105, "asym": 12.8301, "verdict": "PASS" },
+  "F_ASYM_2": { "metric": "stem_alive asym >= 1", "value": 4, "verdict": "PASS" },
+  "F_ASYM_3": { "metric": "both arms final cells in [4,128]", "verdict": "PASS" },
+  "F_ASYM_4": { "metric": "deterministic (env+seed)", "verdict": "PASS" },
+  "F_ASYM_5": { "metric": "both arms split_events >= 1", "verdict": "PASS" },
+  "F_ASYM_6": { "metric": "no duplicate cell_id, next_id monotone", "verdict": "PASS" },
+  "n_pass": 6,
+  "verdict": "PASS"
+}

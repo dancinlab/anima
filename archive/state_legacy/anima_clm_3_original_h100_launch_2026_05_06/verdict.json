@@ -1,0 +1,51 @@
+{
+  "bg_id": "BG-EU",
+  "cycle_date": "2026-05-06",
+  "filed_under": "2026-05-05",
+  "lane": "anima_clm_3_original_h100_launch",
+  "predecessor_spec": "docs/anima_clm_3_original_byte_level_redesign_spec_2026_05_05.md",
+  "status": "DOC_AND_SCRIPT_LANDED",
+  "actual_h100_fired": false,
+  "cost_actual_usd": 0,
+  "cost_envelope_usd": {"hard_cap": 100, "soft_floor": 200, "soft_ceiling": 500},
+  "artifacts": {
+    "launch_script": "state/anima_clm_3_original_h100_launch_2026_05_06/launch_h100.bash",
+    "watchdog_script": "state/anima_clm_3_original_h100_launch_2026_05_06/watchdog_h100.bash",
+    "doc": "docs/anima_clm_3_original_h100_launch_landed_2026_05_05.ai.md",
+    "verdict": "state/anima_clm_3_original_h100_launch_2026_05_06/verdict.json"
+  },
+  "preflight_gates": {
+    "count": 6,
+    "items": [
+      "1: secret CLI on PATH",
+      "2: HF token non-empty + hf_ shape",
+      "3: runpod CLI on PATH + API key non-empty",
+      "4: BUDGET-100 explicit operator confirm",
+      "5: spec doc exists at canonical path",
+      "6: FALSIFIER-LOCK explicit operator ack of F-CLM3-orig-1..5"
+    ]
+  },
+  "watchdog_spec": {
+    "heartbeat_cadence_s": 300,
+    "pod_404_check_cadence_s": 300,
+    "cumulative_spend_tracker": "linear elapsed_s * 2.49/hr",
+    "L23": "rate-limit 429 backoff 60s",
+    "L24": "pod 404 = BG-completion OR external kill (not auto-fail)",
+    "L25": "spend >= cap -> emit signal only (no auto-kill, human-in-loop)"
+  },
+  "falsifiers": {
+    "F-CLM3-orig-1": {"name": "spec_match", "criterion": "byte 256 + 32 cells + 19 tech + 3-phase verbatim", "measure": "config diff vs 1.1-1.6 spec"},
+    "F-CLM3-orig-2": {"name": "phase2_ce_drop", "criterion": ">= 30% CE drop on dialogue subset between step 20K and 60K", "measure": "training log CE values"},
+    "F-CLM3-orig-3": {"name": "phi_real_terminal", "criterion": "Phi_real >= 11 at step 100K", "measure": "anima.consciousness.phi_real eval"},
+    "F-CLM3-orig-4": {"name": "ko_chat_coherent", "criterion": ">= 3/5 coherent KO emit on 5-prompt sweep", "measure": "human-rated emit"},
+    "F-CLM3-orig-5": {"name": "phi_star_no_flip", "criterion": "forgetting_index <= 0.05 on phi-star benchmark", "measure": "post-train phi-star NO_FLIP eval"}
+  },
+  "ship_verdict_options": [
+    "VERIFIED-CLM3-ORIGINAL-CHAT-CAPABLE (5/5 PASS)",
+    "PARTIAL-CHAT-PARTIAL-PHI (3-4/5 PASS, axis-conditioned)",
+    "VERIFIED-CLM3-ORIGINAL-CHAT-FAIL (<3/5 PASS, lane closure)"
+  ],
+  "raw_compliance": ["raw#9", "raw#10", "raw#15"],
+  "secrets_handling": "secret CLI lookup only; never echo, never log token literals; audit doc redact",
+  "concurrency": "parallel BG OK (no concurrency cap); per-BG budget cap is the lever"
+}

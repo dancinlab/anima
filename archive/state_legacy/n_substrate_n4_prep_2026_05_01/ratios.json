@@ -1,0 +1,73 @@
+{
+  "agent": "n_substrate_n4_prep",
+  "date": "2026-05-01",
+  "mission": "T1-A3 Landauer L_IX 3-axis universal floor measurement spec",
+  "landauer_floor_J_per_bit": 2.8704e-21,
+  "temperature_K": 300,
+  "k_B_J_per_K": 1.380649e-23,
+  "ln2": 0.6931471805599453,
+  "substrates": {
+    "CLM": {
+      "platform": "H100 SXM",
+      "operational_unit": "1 token forward pass batch-1",
+      "energy_per_unit_J": 17.5,
+      "bits_erased_lower_bound": 65552,
+      "bits_erased_upper_bound": 16,
+      "energy_per_bit_J_low": 2.67e-4,
+      "energy_per_bit_J_high": 1.09,
+      "ratio_to_floor_low": 9.3e16,
+      "ratio_to_floor_high": 3.8e20,
+      "directly_measurable": false,
+      "confidence": "LOW",
+      "notes": "denominator operator-defined; KV-cache vs logit-only differ by 4 orders"
+    },
+    "EEG": {
+      "platform": "cortical pyramidal neuron",
+      "operational_unit": "1 action potential",
+      "energy_per_unit_J": 6.0e-12,
+      "atp_per_spike": 1.2e8,
+      "energy_per_atp_J": 5.0e-20,
+      "bits_per_spike_low": 1,
+      "bits_per_spike_high": 7,
+      "energy_per_bit_J_low": 8.6e-13,
+      "energy_per_bit_J_high": 6.0e-12,
+      "ratio_to_floor_low": 3.0e8,
+      "ratio_to_floor_high": 2.1e9,
+      "directly_measurable": true,
+      "confidence_energy": "HIGH",
+      "confidence_bits": "MEDIUM",
+      "literature": ["Attwell-Laughlin 2001", "Carter-Bean 2009", "Howarth 2012"]
+    },
+    "AKIDA": {
+      "platform": "BrainChip AKD1000 on RPi5",
+      "operational_unit": "1 synaptic spike event",
+      "energy_per_unit_J_vendor": 1.0e-12,
+      "energy_per_unit_J_system": 1.0e-9,
+      "bits_per_spike": 1,
+      "energy_per_bit_J_low": 1.0e-12,
+      "energy_per_bit_J_high": 1.0e-9,
+      "ratio_to_floor_low": 3.5e8,
+      "ratio_to_floor_high": 3.5e11,
+      "directly_measurable": true,
+      "confidence": "MEDIUM",
+      "blocker": "AKD1000 dev kit shipping (ordered 2026-04-29)",
+      "datasheet": "AKD1000 SoC Product Brief V2.3 Aug 2025"
+    }
+  },
+  "verdict": {
+    "all_above_floor": true,
+    "narrowest_margin_substrate": "AKIDA",
+    "narrowest_margin_ratio": 3.5e8,
+    "widest_margin_substrate": "CLM",
+    "widest_margin_ratio": 3.8e20,
+    "neuromorphic_within_one_order_of_biological": true,
+    "CLM_more_wasteful_than_neuromorphic_by_orders": "7-8"
+  },
+  "cost_to_measure_USD": 30,
+  "time_to_graduation_days_post_akida_arrival": 7,
+  "honest_C3": {
+    "direct": ["AKIDA (datasheet + dev-kit wattmeter)", "EEG (literature anchor)"],
+    "extrapolated": ["CLM (bits denominator ambiguous)"],
+    "out_of_scope": ["reversible logic", "quantum von Neumann bound"]
+  }
+}

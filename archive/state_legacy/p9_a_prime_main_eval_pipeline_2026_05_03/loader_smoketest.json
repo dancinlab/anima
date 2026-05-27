@@ -1,0 +1,100 @@
+{
+  "schema": "anima/p9_a_prime_main_eval_pipeline/loader_smoketest/1",
+  "ts_utc": "2026-05-03T15:17:16Z",
+  "model": "meta-llama/Llama-3.2-3B-Instruct",
+  "precision": "4bit_nf4",
+  "lora_config": {
+    "r": 64,
+    "alpha": 64,
+    "dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "synthetic": true
+  },
+  "stages": {
+    "load_base_4bit": {
+      "status": "OK",
+      "wall_s": 5.93
+    },
+    "attach_synthetic_lora": {
+      "status": "OK",
+      "wall_s": 0.54
+    },
+    "save_lora_adapter": {
+      "status": "OK",
+      "wall_s": 0.65
+    },
+    "roundtrip_peft_from_pretrained": {
+      "status": "OK",
+      "wall_s": 1.59
+    },
+    "wrap_hflm": {
+      "status": "OK",
+      "wall_s": 0.04
+    },
+    "run_hellaswag_5": {
+      "status": "OK",
+      "wall_s": 9.95
+    },
+    "extract_per_example_correctness": {
+      "status": "OK",
+      "wall_s": 0.0
+    }
+  },
+  "verdict": "PASS",
+  "base_alloc_gb": 2.24,
+  "lora_trainable_params": 97255424,
+  "lora_total_params": 1900719104,
+  "lora_pct_trainable": 5.1168,
+  "alloc_after_lora_gb": 2.63,
+  "adapter_files": [
+    "README.md",
+    "adapter_config.json",
+    "adapter_model.safetensors"
+  ],
+  "adapter_dir": "/home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03/synthetic_lora_smoke",
+  "alloc_after_roundtrip_gb": 4.09,
+  "roundtrip_trainable_params": 0,
+  "hflm_class": "HFLM",
+  "agg_results": {
+    "hellaswag": {
+      "alias": "hellaswag",
+      "acc,none": 0.4,
+      "acc_stderr,none": 0.24494897427831783,
+      "acc_norm,none": 0.8,
+      "acc_norm_stderr,none": 0.19999999999999998
+    }
+  },
+  "n_samples_logged": 5,
+  "sample_keys": [
+    "acc",
+    "acc_norm",
+    "arguments",
+    "doc",
+    "doc_hash",
+    "doc_id",
+    "filter",
+    "filtered_resps",
+    "metrics",
+    "prompt_hash",
+    "resps",
+    "target",
+    "target_hash"
+  ],
+  "per_example_correctness": [
+    1,
+    1,
+    1,
+    1,
+    0
+  ],
+  "per_example_extracted": 5,
+  "per_example_total": 5
+}

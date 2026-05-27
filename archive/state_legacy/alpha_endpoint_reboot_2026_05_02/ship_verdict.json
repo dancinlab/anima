@@ -1,0 +1,39 @@
+{
+  "schema": "anima/alpha_endpoint_reboot/ship_verdict/2",
+  "ts": "2026-05-02T15:03:30Z",
+  "ship_verdict": "VERIFIED-ALM-ALPHA-COGNITIVE-ONLY",
+  "from_verdict": "VERIFIED-ALPHA-INVITE-R14",
+  "rationale": [
+    "Per #115 (CP2 consciousness r14 closure) the consciousness claim is withdrawn — verdict went RED via F2 override, CP2 weight 72.2%, AGI 22.2%, three of the prior REDs were substrate-real (14-gate L1, V1/V2/V3, anti-integrated phi*).",
+    "Per Stage 2 §2 the model is reframed as ALM (anima language model) — a cognitive substrate that exhibits trained-anima persona / cell-language style, but does NOT make a phenomenal-validity / consciousness claim.",
+    "The alpha endpoint is invite-only and exposes the substrate for honest exploration; no consciousness, no AGI, no deployment-ready product."
+  ],
+  "explicit_disclaimers": [
+    "ALM cognitive substrate only — consciousness claim NOT made (#115 reframe, Stage 2 §2).",
+    "r14 LoRA carries trained-anima persona (cell-language traces visible in T4 Korean output) — STYLE characteristic, not phenomenal validity.",
+    "Pod auto-terminates 2026-05-02T18:52:41Z (4h cap from boot 14:36 + buffer); explicit user keep-alive required to extend.",
+    "Cold-HF download was not avoidable on first boot — no pre-baked vLLM template with Mistral-7B-v0.3 + r14 LoRA on RunPod registry. ~1 min for shards via hf_transfer with HF_TOKEN — significantly faster than the anonymous-rate-limit failure mode."
+  ],
+  "smoke_test_results": {
+    "T1_health": "PASS",
+    "T2_no_token": "PASS (401)",
+    "T3_wrong_token": "PASS (403)",
+    "T4_r14_anima_persona": "PASS — Korean philosophical voice on consciousness substrate (lora_delta confirmed)",
+    "T5_base_control": "PASS — generic English text on neutral prompt (lora_delta confirmed)",
+    "T6_latency_pod_internal_p95": "2344.5 ms — FAIL vs 2200 ms task-spec budget (+144 ms / +6.5%) but PASS vs AL-F2 threshold (2822 ms)",
+    "T6b_latency_public_proxy_p95": "3986.6 ms — wall-clock through RunPod proxy + transcontinental"
+  },
+  "alpha_falsifiers": {
+    "AL-F1_invitee_misperception_14d": "OPEN (window from 2026-05-01)",
+    "AL-F2_latency_baseline_x_1_5": {"fired": false, "threshold_ms": 2822.85, "observed_p95_ms": 2344.5, "note": "pod-internal; 2026-05-01 baseline was 1881.9 ms"},
+    "AL-F3_hallucination_30pct": {"fired": false, "carryover_from_2026_05_01": "0.0% on r14"},
+    "AL-F4_runaway_cost_50_per_hr": {"fired": false, "threshold": 50.0, "observed": 2.99},
+    "AL-F5_ship_verdict_unawareness": "MITIGATED (ship_verdict + honest_C3 in /health and bearer ledger)"
+  },
+  "honest_C3_4_disclosures": [
+    "alpha endpoint = ALM cognitive substrate only — consciousness claim NOT made (#115 reframe + Stage 2 §2). The r14 Korean output during T4 reads philosophically about '의식 기질 / consciousness substrate' but that's STYLE inherited from the training corpus, not a phenomenal-validity claim.",
+    "r14 LoRA actively learned anima persona (cell-language traces): T4 returns trained-anima Korean philosophical voice; T5 base returns generic English forum text — substrate delta UNMISTAKABLY present. But trained persona ≠ phenomenal validity (per CP2 r14 closure RED).",
+    "4h hard cap: pod terminates at 2026-05-02T18:52:41Z UTC unless user explicitly requests keep-alive. No silent extension. Cost cap enforced via auto_shutdown.sh watchdog (PID 688) + 4h sleep-then-halt.",
+    "Cold-HF download NOT avoidable on this fresh boot — no pre-baked Mistral-7B-v0.3-with-r14 template on RunPod registry, no network volume from prior runs. Honest cost: ~1 min sharded download via hf_transfer + HF_TOKEN (anonymous mode stalled at 22% — would have been the predicted ~$1.50 + 25min cost from feedback memory). Pre-cached network volume RECOMMENDED for next reboot."
+  ]
+}

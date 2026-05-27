@@ -1,0 +1,72 @@
+{
+  "cycle": "hive_internal_migration_2026_05_04",
+  "ts_utc": "2026-05-04T10:34:41Z",
+  "verdict": "PASS",
+  "files_migrated": [
+    {
+      "source": "~/.hive/scripts/leak_guard_pretool.bash",
+      "target": "/Users/ghost/core/hive/scripts/leak_guard_pretool.bash",
+      "method": "cp+symlink",
+      "status": "OK",
+      "sha256_target": "afb7020d02cc3a7fb9467d5f3cf142424deb934073fc711e216f5c595c657685",
+      "byte_identical_to_source": true,
+      "home_now_symlinks_to_repo": true,
+      "backup_path": "~/.hive/scripts/leak_guard_pretool.bash.bak.pre_repo_migration_20260504"
+    },
+    {
+      "source": "~/.hive/claude-config/hive-hook-bus/settings.json",
+      "target": "/Users/ghost/core/hive/claude-config/hive-hook-bus/settings.json",
+      "method": "rewrite+symlink",
+      "status": "OK",
+      "sha256_target": "c9ab051a1954cd48f28a0fe3e82fbeabb0142577608f74bb85f7765d87ad118c",
+      "byte_identical_to_source": false,
+      "byte_identical_to_source_reason": "hooks[0].command path updated /Users/ghost/.hive/scripts/... -> /Users/ghost/core/hive/scripts/... + added _comment + _migrated_to_repo_at metadata. semantic equivalence verified by hook smoke test post-swap.",
+      "home_now_symlinks_to_repo": true,
+      "backup_path": "~/.hive/claude-config/hive-hook-bus/settings.json.bak.pre_repo_migration_20260504"
+    }
+  ],
+  "hook_active_pre": true,
+  "hook_active_post": true,
+  "hook_smoke_test_post_swap": {
+    "allow_case_via_home_path": {"exit": 0, "stdout_empty": true, "result": "PASS"},
+    "deny_case_via_home_path": {"exit": 2, "stdout_emits_deny_json": true, "result": "PASS"},
+    "synthetic_payload_used": "<HF_PREFIX>+34A (fictitious 36-char string of the form `<hf-prefix>` followed by 34 capital A; delivered via JSON tmpfile to bypass the hook's own block on our test invocation; literal value redacted here so this verdict file itself does not trigger the leak guard)"
+  },
+  "symlink_chain_verified": true,
+  "symlink_targets_verified": [
+    {"home": "/Users/ghost/.hive/scripts/leak_guard_pretool.bash", "readlink": "/Users/ghost/core/hive/scripts/leak_guard_pretool.bash"},
+    {"home": "/Users/ghost/.hive/claude-config/hive-hook-bus/settings.json", "readlink": "/Users/ghost/core/hive/claude-config/hive-hook-bus/settings.json"}
+  ],
+  "claude_config_dir_env": "/Users/ghost/.hive/claude-config/hive-hook-bus",
+  "claude_config_dir_settings_resolves_to_repo": true,
+  "hive_repo_git_status": [
+    "?? claude-config/",
+    "?? scripts/leak_guard_pretool.bash"
+  ],
+  "github_push_pending": true,
+  "git_push_executed_in_this_cycle": false,
+  "rollback_command": "rm ~/.hive/scripts/leak_guard_pretool.bash ~/.hive/claude-config/hive-hook-bus/settings.json && cp ~/.hive/scripts/leak_guard_pretool.bash.bak.pre_repo_migration_20260504 ~/.hive/scripts/leak_guard_pretool.bash && cp ~/.hive/claude-config/hive-hook-bus/settings.json.bak.pre_repo_migration_20260504 ~/.hive/claude-config/hive-hook-bus/settings.json",
+  "sister_repo_breakage_audit": {
+    "anima_refs": ["state/dual_ssot_eol_audit_2026_05_04/anima_audit.md", "state/dual_ssot_eol_audit_2026_05_04/anima_inventory.json"],
+    "anima_refs_status": "all reference ~/.hive/scripts/leak_guard_pretool.bash; resolves correctly via symlink, no breakage",
+    "hive_refs_live": ["bin/cl (line 344 _HIVE_HOOK_BUS_DIR for credentials path, NOT settings)", "bin/hive (line 223 HIVE_CLAUDE_HOOK_ROOT export)"],
+    "hive_refs_live_status": "neither references the migrated files directly; unaffected",
+    "hive_refs_doc_only": ["docs/session_2026_05_01_*", "docs/cl_token_sync_fix_landed_2026_05_03.ai.md", "docs/hive_claude_hook_bind_activation_landed_2026_05_03.ai.md", "docs/hook_per_project_audit_landed_2026_05_03.ai.md", "raw_archive/2026-05-04T/*"],
+    "hive_refs_doc_only_status": "historical/archival; updating not required for functional correctness",
+    "hexa_lang_refs": [],
+    "hexa_lang_refs_status": "no references found"
+  },
+  "honest_c3": [
+    "GitHub-public exposure of hook regex set signals attack surface enumeration; recommend security review of public-facing patterns before push.",
+    "Claude Code settings.json caching behavior undocumented; restart may be needed on other machines after pull. Symlink-based deploy may surprise CI/CD that does `realpath ~/.hive/scripts/...` and expects home-dir paths.",
+    "Symlink target executable bit (0755) is preserved on this machine via cp -p but may be lost on re-clone with strict umask; recommend `git update-index --chmod=+x` when staging.",
+    "Hook stays bash (not hexa) per Claude Code hook-spec contract — hexa runtime not available at PreToolUse time. Platform-imposed exception to raw#9.",
+    "Backup files (*.bak.pre_repo_migration_20260504) accumulate outside repo; need cleanup cycle scheduled at +30 days post-push acceptance.",
+    "This very Write call was first blocked by the migrated hook because the verdict-test-payload field embedded a literal token-shaped string — confirms hook is live in the new repo-canonical path AND demonstrates that downstream verdict serializers must redact synthetic payloads."
+  ],
+  "deliverables": {
+    "plan_md": "/Users/ghost/core/anima/state/hive_internal_migration_2026_05_04/plan.md",
+    "migration_log_txt": "/Users/ghost/core/anima/state/hive_internal_migration_2026_05_04/migration_log.txt",
+    "verdict_json": "/Users/ghost/core/anima/state/hive_internal_migration_2026_05_04/verdict.json"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "cycle": "host_pod_terminator_hardening_2026_05_04",
+  "verdict": "PASS",
+  "scope": "Bug1 (idle-window before kill) + Bug2 (mkdir -p artifacts/ everywhere) hardening across active s43/s44 watcher scripts; canonical llama_lora variant already pre-patched on 2026-05-04 morning.",
+  "files_patched": [
+    "state/p9_path_a_r16_3seed_2026_05_04/host_terminator_s43.txt",
+    "state/p9_path_a_r16_3seed_2026_05_04/host_terminator_s44.txt"
+  ],
+  "files_already_patched_pre_cycle": [
+    "state/p9_path_a_llama_lora_2026_05_03/host_pod_terminator.sh.txt"
+  ],
+  "files_not_patched": [
+    "state/p9_path_a_r16_2026_05_03/host_terminator_v2.txt (legacy single-pod variant; pod terminated; out of scope)"
+  ],
+  "bug1_fix": {
+    "description": "Replaced single-shot kill on ALIVE=0/DONE=0 with 4-minute (240s) idle-window + recheck. Recheck branches: DONE=1 -> fall through to DONE-branch on next iter; ALIVE=1 -> false-alarm resume; both still 0 -> confirmed crash, then download log + terminate.",
+    "constant_added": "IDLE_WAIT_SEC=240",
+    "rationale": "Observed 1-3min/save flush on H100; original 5s window could kill pod mid-save."
+  },
+  "bug2_fix": {
+    "description": "Inserted defensive `mkdir -p \"$ARTIFACTS\"` before each scp in DONE-branch and error-branch, plus inside scp failure || branch (idiom: `|| { mkdir -p \"$ARTIFACTS\"; echo ...fail >> $LOG; }`). Also quoted ARTIFACTS in startup mkdir.",
+    "mkdir_count_per_script": 6,
+    "rationale": "Prior fix-landed doc (host_pod_terminator_fix_landed_2026_05_04) showed scp silently failed when local artifacts/ absent on clean Mac state."
+  },
+  "falsifiers": {
+    "F-SYNTAX-S43": {"verdict": "PASS", "method": "bash -n host_terminator_s43.txt -> exit 0"},
+    "F-SYNTAX-S44": {"verdict": "PASS", "method": "bash -n host_terminator_s44.txt -> exit 0"},
+    "F-MKDIR-COUNT-S43": {"verdict": "PASS", "method": "grep -c 'mkdir -p .*ARTIFACTS\\|mkdir -p .*artifacts' = 6"},
+    "F-MKDIR-COUNT-S44": {"verdict": "PASS", "method": "grep -c 'mkdir -p .*ARTIFACTS\\|mkdir -p .*artifacts' = 6"},
+    "F-IDLE-PRESENCE-S43": {"verdict": "PASS", "method": "grep -c 'IDLE_WAIT_SEC\\|RECHECK=' = 6"},
+    "F-IDLE-PRESENCE-S44": {"verdict": "PASS", "method": "grep -c 'IDLE_WAIT_SEC\\|RECHECK=' = 6"},
+    "F-TERMINATOR-1": {
+      "verdict": "PASS",
+      "method": "3-scenario simulation (compressed IDLE_WAIT_SEC=1s) with mocked probe sequences",
+      "scenarios": {
+        "A_DONE_LANDED": {"first_probe": "ALIVE=0/DONE=0", "recheck_probe": "DONE=1/PHASE=final_saved", "expected_outcome": "DONE_LANDED", "actual_outcome": "DONE_LANDED", "pass": true},
+        "B_PID_REVIVED": {"first_probe": "ALIVE=0/DONE=0", "recheck_probe": "DONE=0/ALIVE=1", "expected_outcome": "PID_REVIVED", "actual_outcome": "PID_REVIVED", "pass": true},
+        "C_CONFIRMED_CRASH": {"first_probe": "ALIVE=0/DONE=0", "recheck_probe": "ALIVE=0/DONE=0", "expected_outcome": "CONFIRMED_CRASH", "actual_outcome": "CONFIRMED_CRASH", "pass": true}
+      }
+    }
+  },
+  "honest_c3_caveats": [
+    "raw#10 caveat 1: behavior under live error-branch trigger NOT exercised end-to-end; falsifier is structural (bash -n + grep counts) + simulated logic (mock probe). Real H100 pod was not deliberately crashed.",
+    "raw#10 caveat 2: 240s idle window is heuristic-based (1-3min/save observed) — extreme tail saves (e.g., 4min+ checkpoint flush under disk contention) could still trigger false-positive kill. No empirical distribution of save durations beyond Path A r=16 sample.",
+    "raw#10 caveat 3: legacy `state/p9_path_a_r16_2026_05_03/host_terminator_v2.txt` was NOT patched (pod terminated, out of active scope). If that script is ever re-launched without re-applying the fix it will revert to single-shot kill behavior."
+  ],
+  "constraints_honored": {
+    "raw#9": "Mac-side .sh.txt parked form respected (no bare .sh; .sh.txt + new sim wrote .sh.txt after .sh creation was lost — likely external sweep on bare .sh extensions in state/).",
+    "raw#15": "repo-relative paths in this verdict body.",
+    "raw#10": "3 caveats present (above)."
+  },
+  "cost_usd": 0,
+  "ts": "2026-05-04T05:26:00Z"
+}

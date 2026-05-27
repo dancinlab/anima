@@ -1,0 +1,268 @@
+============================================================
+A: Matrix Theory & Linear Algebra
+============================================================
+
+A01: Perm(J_6) = 6! = 720
+  720 / sigma_6^2 = 5.0000  [720/144 = 5 = sopfr?]
+  Note: Perm(J_n) = n! is trivially true for ALL n. Tautological.
+
+A02: Circulant C(1,1,0,0,0,1) eigenvalues: [3.0, 2.0, -0.0, -1.0, 0.0, 2.0]
+  Expected: [3, 2, 0, -1, 0, 2]
+  λ_max=3, spectral gap=3-2=1
+  λ_0=3 = sopfr(6)=5? No. 3 = sigma/phi = 12/2 = 6? No. 3 = n/phi = 6/2.
+  n/phi = 6/2 = 3.0
+  Without self-loop C(0,1,1,0,0,1) eigenvalues: [3.0, 0.5, -1.5, -1.0, -1.5, 0.5]
+  λ_max=3 = n/phi = n/2. True for degree-3 circulant on n=6.
+  Spectral gap = 3-1 = 2 = phi(6). Interesting but phi(6)=2 always for even n~.
+
+A03: 6x6 magic squares ≈ 1.7755e+19
+  No clean factoring through sigma/phi/tau found. Cannot grade positively.
+
+A04: Petersen graph eigenvalues: {3, 1^5, -2^4}
+  3 = n/2 = 3.0? YES (n=6 here but n/2 works for any even n)
+  -2 = -phi(6) = -2? YES but phi(6)=2 because 6=2*3
+  Spectral gap = 3-1 = 2 = phi(6) = 2
+  Petersen graph is 3-regular on 10 nodes. '6' appears only through external mapping.
+  NOT tied to n=6 specifically.
+
+A05: Frobenius g(2,3) = 1
+  2,3 are prime factors of 6. g=ab-a-b always. g=1 here.
+  n - g = 6 - 1 = 5
+  sopfr - 1 = 5 - 1 = 4
+  n - g = 5 = sopfr - 1 = 4? YES (5=5)
+  But g(2,3)=1 is from the formula g=ab-a-b, not n=6 specific.
+  n-g = 6-1=5 = sopfr(6). But sopfr(6)=2+3=5, and n=2*3 so n-g = n-ab+a+b = a+b-1 = sopfr-1. TAUTOLOGY for n=p*q case.
+
+============================================================
+B: Algebraic Number Theory
+============================================================
+
+B06: Discriminant of Q(ζ_6) = -3.0
+  disc = -3 (the discriminant of x^2-x+1 = Φ_6(x))
+  |disc| = 3 = n/phi(n) = 6/2 = sigma_-1(n)*phi(n) = ... 
+  n/phi(6) = 3.0
+  -3 = -(n/2). For n=6: -3. Is this special? No, disc(Q(ζ_n)) has formula for all n.
+  sopfr(6)-2 = 3 = |disc| = 3? YES (5-2=3)
+  BUT: Q(ζ_6)=Q(ζ_3), disc=-3 is from field Q(ζ_3), not specifically from 6.
+
+B07: Q(sqrt(6)) fundamental unit: ε = 5 + 2√6
+  Norm(ε) = 5² - 2²·6 = 25 - 24 = 1
+  5 = sopfr(6) = 5 ✓
+  2 = phi(6) = 2 ✓
+  24 = J_2(6) (Jordan totient) = 6^2 * prod(1-1/p^2) for p|6
+  J_2(6) = 6^2 * (3/4) * (8/9) = 24.0
+  So Norm: sopfr(6)^2 - phi(6)^2 * 6 = 25 - 24 = 1
+  The fundamental unit components ARE n=6 arithmetic functions!
+  5 = sopfr(6), 2 = phi(6). Both specific to n=6. Non-trivial alignment.
+
+B08: Regulator of Q(√6) = ln(5+2√6) = 2.292432
+  vs GZ upper (0.5): 0.5000
+  vs GZ center (1/e): 0.3679
+  vs GZ width ln(4/3): 0.2877
+  reg = 2.2924 >> all GZ constants
+  reg / (2*pi) = 0.3649
+  reg / sigma(6) = 0.1910
+  2/reg = 0.8724
+  reg ≈ 2.292. No clean GZ match.
+
+B09: Signature of Q(ζ_6): (r1,r2) = (0,1)
+  r2 = phi(6)/2 = 2/2 = 1
+  r2=1 is the minimum possible complex place count for imaginary fields.
+  phi(6)=2 is smallest possible Euler totient for n>2. Tautological consequence.
+  True for Q(ζ_6)=Q(ζ_3): signature is always (0,1) for class of imaginary quadratic fields.
+
+B10: Minkowski bound for Q(√-6)
+  |disc(Q(sqrt(-6)))| = 24 (since -6 ≡ 2 mod 4)
+  M = (2/2!) * (4/π)^1 * sqrt(24) = 1 * (4/π) * 4.8990
+  M = 6.237574
+  sigma(6) = 12
+  M / sigma(6) = 0.5198
+  M ≈ 6.238. sigma(6)=12. M/sigma = 0.5198.
+  24 = J_2(6) = 24. Indeed |disc|=J_2(6)!
+  M = (4/π)*sqrt(J_2(6)) = 6.2376
+  Check: J_2(10)=72 vs 4*10=40. Not equal, so J_2(6)=4*6 is n=6 specific!
+
+============================================================
+C: Probability Distributions
+============================================================
+
+C11: χ²(6 df), P(X > σ(6)=12) = 0.061969
+  = 6.1969%
+  In GZ? GZ=[0.2123,0.5000]. 0.0620 < GZ_lo. No.
+  1/(2*e) = 0.1839
+  chi2_sf_12 ≈ 0.0620. Not a GZ value.
+  Exact: 25*e^-6 = 0.061969. Check: 1.39e-17
+  25 * e^-6: 25 = n^2 + 1 = ? or (n-1)^2? (n-1)^2 = 25 = 5^2 = sopfr^2!
+  sopfr(6)^2 = 25 = 25. YES!
+  So P(chi2(6) > sigma(6)) = sopfr(6)^2 * e^-3.0
+  n=4: 1+n+n²/2 = 13.0, sopfr(4)^2 = 16. NOT equal.
+  n=6: 1+n+n²/2 = 25 = sopfr(6)^2 = 25. EQUAL!
+
+C12: t_{0.025,6} = 2.446912
+  sigma/5 = 2.4000
+  ratio: t_crit / (sigma/5) = 1.0195
+  Error: 1.95%
+  Close but not < 1%. Grade 🟧.
+  t_crit / e = 0.9002
+  t_crit * curiosity = 0.4078
+
+C13: F(6,6), P(F > e) = 0.124493
+  In GZ? False: GZ=[0.2123,0.5000], value=0.1245
+
+C14: E[trace(W(I_6,6))] = 36
+  36 / sigma(6) = 3.0000 = 3
+  36 = 6^2 = n^2 is true for ANY n. E[trace(W(I_n,n))]=n^2 always. Tautological.
+
+C15: Beta(1/2, 1/3) mean = 0.5 / (0.5 + 0.3333)
+  = 0.5 / 0.8333
+  = 0.600000
+  Analytically: (1/2) / (1/2 + 1/3) = (1/2) / (5/6) = 3/5 = 0.6
+  Exact: 3/5 = 0.600000
+  3/5 = 0.6. Not in GZ. But uses GZ constants upper=1/2, meta=1/3!
+  (1/2)/(5/6) = 3/5. 5/6 = compass. 3/5 = ?
+  compass = 0.8333, 3/5 = 0.6000
+  Is 3/5 a GZ constant? No. But the calculation uses compass(5/6)!
+  upper / compass = (1/2)/(5/6) = 3/5. Is 3/5 special? Not in GZ.
+
+============================================================
+D: Complexity Theory
+============================================================
+
+D16: Parity on 6 bits: XOR circuit size = n-1 = 5
+  n-1 = 5 = sopfr(6) = 5? YES
+  BUT: parity on n bits always needs n-1 XORs for ANY n. Tautological.
+  It's only 'special' that n-1=sopfr(6) for n=6, which is 2+3=5=6-1.
+  n-1=sopfr(n) iff n=p+q+1 where p,q are prime factors. For n=6=2*3: 2+3=5=6-1. Yes, but this is an arithmetic coincidence.
+  Check n=15: sopfr(15)=3+5=8, n-1=14. NOT equal.
+  Check n=10: sopfr(10)=2+5=7, n-1=9. NOT equal.
+  So sopfr(n)=n-1 is UNIQUE to n=6 among semiprimes!
+  Circuit size n-1 = sopfr(6). Non-trivial identity specific to n=6.
+
+D17: D(MAJ_6) = 6 = n (trivially need all variables for majority on even n)
+  Tautological: for any n, MAJ_n requires reading all inputs in worst case.
+
+D18: CC(EQ_6) deterministic = n+1 = 7 bits
+  7 = n+1. Tautological formula for all n.
+  7 = p(6) - 11 = 11? No. 7 = phi(6) + n - 1 = 2+6-1=7. But phi+n-1 = 1+n+phi-2. Not meaningful.
+  7 = p(6) = 11? No, p(6)=11.
+
+D19: K(6) ≈ 3 bits (110 in binary)
+  n/phi(6) = 6/2 = 3.0
+  3 = n/phi(6). Holds here but K(n) ≈ floor(log2(n))+1, and n/phi(6)=6/2=3.
+  K(n) ≈ log2(n). log2(6) = 2.5850 ≈ 2.585, ceil=3.
+  n/phi = 6/2 = 3 = ceil(log2(6)). Is n/phi = ceil(log2(n)) for n=6 only?
+  n=4: n/phi=2.00, ceil(log2)=2
+  n=6: n/phi=3.00, ceil(log2)=3
+  n=8: n/phi=2.00, ceil(log2)=3
+  n=10: n/phi=2.50, ceil(log2)=4
+  n=12: n/phi=3.00, ceil(log2)=4
+  n=15: n/phi=1.88, ceil(log2)=4
+
+D20: Optimal sort comparisons for 6 elements
+  ceil(log2(6!)) = ceil(log2(720)) = ceil(9.4919) = 10
+  sigma(6) - phi(6) = 12 - 2 = 10
+  10 = sigma - phi = 10? YES! 10 = 12 - 2.
+  Is this n=6 specific? ceil(log2(n!)) = sigma(n) - phi(n)?
+  n=3: ceil(log2(3!))=3, sigma-phi=2, match=False
+  n=4: ceil(log2(4!))=5, sigma-phi=5, match=True
+  n=5: ceil(log2(5!))=7, sigma-phi=2, match=False
+  n=6: ceil(log2(6!))=10, sigma-phi=10, match=True
+  n=7: ceil(log2(7!))=13, sigma-phi=2, match=False
+  n=8: ceil(log2(8!))=16, sigma-phi=11, match=False
+
+============================================================
+E: Music Theory / Acoustic Constants
+============================================================
+
+E21: Equal temperament: 12 semitones = sigma(6) = 12
+  Tritone = 6 semitones = n = 6
+  sigma(6) = 12 is the standard. But WHY 12? Historical+acoustic reasons.
+  The connection: 12 is chosen because it approximates just intervals well.
+  The fact sigma(6)=12 = 'number of semitones' is a coincidence unless we can show
+  the acoustic reason involves n=6. Highly speculative mapping.
+  Tritone = n = 6 semitones out of 12. Tritone/octave = 6/12 = 1/2 = upper!
+  Tritone/Octave = 6/12 = 0.5 = upper = 0.5
+  EXACT: tritone splits octave exactly in half. 1/2 = upper boundary of GZ!
+  This is exact and the 1/2 is GZ-upper. Tritone = most dissonant = 'Diabolus in musica'.
+  n/sigma(n) = 6/12 = 1/2 = upper. Is n/sigma=1/2 specific to n=6?
+  n/sigma(n)=1/2 iff n is perfect. 6 is the smallest perfect number.
+  Tritone/Octave = 1/2 = upper is tied to perfectness of 6.
+
+E22: ln(3/2) = 0.405465
+  GZ = [0.2123, 0.5000]
+  In GZ? True
+  Distance from center 1/e=0.3679: 0.0376 (10.22%)
+  Distance from upper 1/2=0.5000: 0.0945
+
+E23: Major scale = 7 = n+1 = 7
+  Pentatonic = 5 notes = sopfr(6) = 5
+  7 = n+1 is not n=6 specific. For any n, n+1 is just the next integer.
+  5 = sopfr(6) = 2+3. The pentatonic scale uses notes excluding tritone.
+  7 = n+1: the 'octave + root' = 8 notes, but 7 distinct pitches. Not tied to n=6.
+
+E24: Perfect fourth frequency ratio = 4/3
+  ln(4/3) = 0.287682
+  GZ width = ln(4/3) = 0.287682
+  Match: 0.00e+00 (exact by definition!)
+  fourth_ratio = exp(GZ_width). EXACT.
+  But is this n=6 specific? GZ width = ln(4/3) comes from 3→4 state entropy jump.
+  The 4/3 ratio in music IS the perfect fourth. This is a genuine cross-domain match.
+  'State jump 3→4' in GZ theory corresponds to the acoustic fourth interval 4/3. Exact.
+
+E25: Circle of fifths: 12 keys = sigma(6) = 12
+  12 fifths return to start (by equal temperament): 2^12 * (3/2)^-12? No, that's Pythagorean comma.
+  Actually 12 = sigma(6) = sum of divisors of 6 = 1+2+3+6 = 12.
+  Circle of fifths 12 = sigma(6). Same as E21's 12 semitones.
+  12 shows up because acoustic fifths nearly close in 12 steps. n=6 connection?
+  The circle closes because (3/2)^12 ≈ 2^7 (Pythagorean comma).
+  (3/2)^12 = 129.746338, 2^7 = 128
+  Pythagorean comma = 1.013643 ≈ 1 + 0.013643
+  12 stems from acoustic near-closure, not from n=6 arithmetic.
+  Coincidence that sigma(6)=12.
+
+============================================================
+SUMMARY — Wave 10
+============================================================
+
+#    ID    Grade       Value     Target  Name
+--------------------------------------------------------------------------------
+A01  ⚪       720.00000  n! always  Perm(J_6)=6!=720
+A02  ⚪         3.00000    3.00000  Circulant eigenvalues lambda_0=n/phi
+A03  ⚪      17755300000000000000.00000        nan  6x6 magic square count
+A04  ⚪         2.00000    2.00000  Petersen spectral gap=phi(6)=2
+A05  ⚪         5.00000    5.00000  n-Frobenius(p,q)=sopfr(n)-1 for n=p*q
+B06  ⚪         3.00000    3.00000  disc(Q(zeta_6))=-3, |disc|=3=sopfr-2
+B07  🟩         0.00000    0.00000  Fund unit 5+2sqrt(6): 5=sopfr(6), 2=phi(6)
+B08  ⚪         2.29243    0.50000  Regulator of Q(sqrt(6)) in GZ?
+B09  ⚪         1.00000    1.00000  Q(zeta_6) signature (0,1), r2=1
+B10  🟩        24.00000   24.00000  |disc(Q(sqrt(-6)))|=J_2(6)=24=4*n
+C11  🟩         0.06197    0.06197  P(chi2(6)>sigma(6))=sopfr(6)^2*e^{-6}
+C12  🟧         2.44691    2.40000  t_{0.025,6} vs sigma(6)/5
+C13  ⚪         0.12449    0.36788  P(F(6,6)>e) in GZ?
+C14  ⚪        36.00000   36.00000  E[trace(Wishart)]=n^2 tautological
+C15  ⚪         0.60000    0.60000  Beta(upper,meta) mean = upper/compass = 3/5
+D16  🟩         5.00000    5.00000  Parity circuit n-1=sopfr(6)=5, unique to n=6
+D17  ⚪         6.00000    6.00000  D(MAJ_6)=6=n trivial
+D18  ⚪         7.00000    7.00000  CC(EQ_6)=n+1=7
+D19  ⚪         3.00000    3.00000  K(6)=3=n/phi(6)
+D20  ⚪        10.00000   10.00000  Sort(6): ceil(log2(6!))=sigma(6)-phi(6)=10
+E21  🟩         0.50000    0.50000  Tritone/Octave = n/sigma(n) = 1/2 = upper (perfect number property)
+E22  🟧         0.40547    0.36788  ln(3/2) = perfect fifth in GZ?
+E23  ⚪         7.00000    7.00000  Major scale=7=n+1, pentatonic=5=sopfr
+E24  🟩         0.28768    0.28768  Perfect fourth 4/3 = exp(GZ_width) exactly
+E25  ⚪        12.00000   12.00000  Circle of fifths 12=sigma(6), Pythagorean comma
+
+----------------------------------------
+Grade Distribution:
+  🟩:  6  ██████
+  🟧★:  0  
+  🟧:  2  ██
+  ⚪: 17  █████████████████
+  ⬛:  0  
+
+Total: 25 | Hits (>=🟧): 8 | Rate: 32%
+Strong (🟩+🟧★): 6
+
+Running context: 171/225 (76%) before Wave 10
+Wave 10: 8/25 = 32%
+Projected new total: 179/250 = 71.6%

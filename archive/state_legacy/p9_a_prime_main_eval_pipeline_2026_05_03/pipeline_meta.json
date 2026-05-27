@@ -1,0 +1,102 @@
+{
+  "schema": "anima/p9_a_prime_main_eval_pipeline/meta/1",
+  "ts_utc": "2026-05-03T15:25:00Z",
+  "purpose": "Pre-built A' main eval pipeline ready to consume Path A LoRA ckpts (pod 29dhlqk508ugoc, ETA 8-12h)",
+  "spec_refs": {
+    "a_prime_spec": "docs/p9_benchmark_switch_a_prime_spec_2026_05_03.md",
+    "a_prime_path_decision": "docs/p9_a_prime_path_decision_2026_05_03.md",
+    "base_validation": "docs/p9_benchmark_base_validation_landed_2026_05_03.ai.md"
+  },
+  "path_a_pod": {
+    "pod_id_user_provided": "29dhlqk508ugoc",
+    "pod_id_state_recorded": "cp5si6man99s33",
+    "note": "user-provided pod id is the in-flight train pod per task brief; state file may be stale — read-only, no preemption",
+    "expected_ckpts": ["step-2000", "step-4000", "step-6000", "step-8000", "step-10000"],
+    "hub_repo": "dancinlab/p9-llama32-lora-stage1"
+  },
+  "deliverables": {
+    "loader_smoketest": {
+      "ubu1_path": "/home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03/loader_smoketest.py",
+      "ubu1_result": "/home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03/loader_smoketest.json",
+      "local_mirror": "state/p9_a_prime_main_eval_pipeline_2026_05_03/loader_smoketest.json",
+      "verdict": "PASS",
+      "stages_passed": 7,
+      "stages_total": 7
+    },
+    "eval_driver": {
+      "ubu1_path": "/home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03/eval_llama_lora_ckpt.py",
+      "local_mirror": "state/p9_a_prime_main_eval_pipeline_2026_05_03/eval_llama_lora_ckpt.py.txt",
+      "args": ["--ckpt-repo", "--ckpt-revision", "--ckpt-local-dir", "--base-only", "--task", "--limit", "--load-in-4bit", "--output"],
+      "supports": ["HF Hub repo+revision", "local adapter dir", "base-only mode", "all 3 tasks"],
+      "log_samples": true,
+      "per_example_correctness_emitted": true
+    },
+    "base_per_example_extractor": {
+      "ubu1_path": "/home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03/extract_base_per_example.sh",
+      "local_mirror": "state/p9_a_prime_main_eval_pipeline_2026_05_03/extract_base_per_example.sh.txt",
+      "purpose": "Pre-extract Llama base per-example correctness for paired bootstrap + McNemar (limit=500, 4-bit)",
+      "expected_wall_min": "~7-30 (matches base validation cycle ~33min for 3 benchmarks)",
+      "output": "/home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03/base_per_example_correctness.json",
+      "completed": true,
+      "actual_wall_s_total": 774.14,
+      "n_per_example_extracted": {
+        "hellaswag": 500,
+        "mmlu": 12173,
+        "triviaqa": 500
+      },
+      "mmlu_group_task_fix": "MMLU is a group task; lm-eval keys samples by mmlu_<subject> (57 subtasks). Eval driver was patched mid-cycle to (1) match all keys starting with task_, (2) prefix doc_id with subtask_name for global uniqueness. MMLU re-extracted under patched driver (567s wall)."
+    },
+    "lora_runner_convenience": {
+      "ubu1_path": "/home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03/run_all_lora_ckpts.sh",
+      "local_mirror": "state/p9_a_prime_main_eval_pipeline_2026_05_03/run_all_lora_ckpts.sh.txt",
+      "purpose": "Single-command driver for 5 ckpts × 3 tasks; skips already-completed outputs"
+    },
+    "verdict_hexa": {
+      "mac_path": "tool/p9_a_prime_verdict.hexa",
+      "selftest_passed": true,
+      "synthetic_e2e_validated": true,
+      "computes": ["paired_bootstrap_delta", "mcnemar_continuity_corrected_or_exact_binomial", "per_task_signal_classification", "f1_v3_composite_verdict", "ranking"],
+      "outputs_to": "state/p9_a_prime_main_eval_2026_05_03_verdict.json"
+    }
+  },
+  "pipeline_ready_when_lora_arrives": {
+    "step_1_per_ckpt_eval_command": "ssh ubu1 \"/home/aiden/venv_orchestrator/bin/python ~/anima/state/p9_a_prime_main_eval_2026_05_03/eval_llama_lora_ckpt.py --ckpt-repo dancinlab/p9-llama32-lora-stage1 --ckpt-revision step-2000 --task hellaswag --limit 500 --output ~/anima/state/p9_a_prime_main_eval_2026_05_03/lora_results/step2k_hellaswag.json\"",
+    "step_2_repeat_for_5_ckpts_x_3_tasks": "15 calls; ~2-25 min each at limit=500 4-bit (matches base validation profile)",
+    "step_3_pull_results_to_mac": "scp ubu1:.../lora_results/*.json state/p9_a_prime_main_eval_2026_05_03_lora_results/",
+    "step_4_run_verdict": "ANIMA_LORA_RESULTS_DIR=state/p9_a_prime_main_eval_2026_05_03_lora_results hexa run tool/p9_a_prime_verdict.hexa",
+    "expected_total_wall_post_lora_arrival": "~1-3 hours (15 evals + verdict computation)"
+  },
+  "constraints_honored": {
+    "raw9_strict": "Mac → hexa only (tool/p9_a_prime_verdict.hexa); ubu1 .py OK (eval driver, smoke test)",
+    "raw15": "no personal-path leak in deliverables; ~/anima paths used on ubu1",
+    "raw10_honest_c3": [
+      "4-bit precision matches base validation cycle; honest_c3 §6.5 of A' decision applies (4-bit→fp16 ~1-3 pt drift)",
+      "Synthetic LoRA in smoke test = freshly-init random weights; only proves wiring, not LoRA quality",
+      "Single seed (42); MCQA approximately deterministic per A' §2.5 — if downstream sees >0.3pt seed variance, spec amend to 3-seed required",
+      "Composite SUCCESS_v3 here is F1_v3 only; F2/F3/F4 axis falsifiers require separate substrate (Path D track) and are NOT in this verdict",
+      "Bootstrap+McNemar tests assume identical doc_id sets; mismatch auto-truncates to intersection — eval driver always uses fixed limit/seed to keep doc sets aligned"
+    ],
+    "zero_dollar": "$0 — pipeline prep only; no LoRA eval triggered (LoRA not yet trained)",
+    "no_pod_preempt": "Path A pod (29dhlqk508ugoc / cp5si6man99s33) NOT touched by this cycle"
+  },
+  "smoke_test_summary": {
+    "verdict": "PASS",
+    "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "precision": "4bit_nf4",
+    "lora_trainable_params": 97255424,
+    "lora_pct_trainable": 5.1168,
+    "alloc_after_roundtrip_gb": 4.09,
+    "stages": {
+      "load_base_4bit_s": 5.93,
+      "attach_synthetic_lora_s": 0.54,
+      "save_lora_adapter_s": 0.65,
+      "roundtrip_peft_from_pretrained_s": 1.59,
+      "wrap_hflm_s": 0.04,
+      "run_hellaswag_5_s": 9.95,
+      "extract_per_example_correctness_s": 0.0
+    },
+    "synthetic_lora_run_acc_norm": 0.8,
+    "per_example_correctness_extracted": [1, 1, 1, 1, 0],
+    "n_per_example_extracted": 5
+  }
+}

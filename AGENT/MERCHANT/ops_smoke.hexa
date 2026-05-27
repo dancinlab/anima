@@ -1,0 +1,169 @@
+// ops_smoke.hexa — MERCHANT M5 ops smoke (AGENT/MERCHANT).
+//
+// 1-shot self-check — exercise the 5 ops pub fn against a stub adapter that
+// exposes the optional verbs (settlement · cs_list) so the contract under
+// "verb present" branches as well as the partition / interpolation logic.
+//
+//   C1 ops_inventory_sync — 3 listings (1 low @ stock=3) → low_stock len==1.
+//   C2 ops_cs_response_build — refund case + "환불 처리 완료: {order_id}"
+//      template → expected interpolated string verbatim.
+//   C3 ops_settlement_monitor — 7-day period via stub adapter returning
+//      gross=200000 fees=20000 net=180000 paid → payout_status="paid".
+//   C4 ops_low_stock_alert — 4 listings · threshold=5 · 2 below (stock=2,4)
+//      → returned list len==2.
+//   C5 ops_pending_cs_cases — stub cs_list returns 3 cases (open · in_progress
+//      · resolved) → pending list len==2 (open + in_progress only).
+//
+// Also exercises ops_summary as an advisory dump.
+
+import "/Users/ghost/core/anima/AGENT/MERCHANT/types.hexa"
+import "/Users/ghost/core/anima/AGENT/MERCHANT/adapter.hexa"
+import "/Users/ghost/core/anima/AGENT/MERCHANT/ops.hexa"
+
+// ── stub adapter helpers ──────────────────────────────────────────────────
+// We do NOT import M3 amazon/coupang here — ops is generic over any adapter,
+// so the smoke builds a minimal stub adapter with the 5 base verbs as no-ops
+// plus the two OPTIONAL verbs (settlement · cs_list) that ops.hexa probes.
+
+fn stub_search(query: string, max_results: int) -> [map] { [] }
+fn stub_list(listing: map, dry_run: bool) -> map { listing }
+fn stub_order(order: map) -> map { order }
+fn stub_ship(order_id: string) -> map { shipment_preparing(order_id, "stub-carrier") }
+fn stub_cs(case: map) -> map { case }
+
+// Optional: settlement verb — stub returns a fixed 7-day row.
+fn stub_settlement(period_start: float, period_end: float) -> map {
+    #{
+        "gross": 200000.0,
+        "fees": 20000.0,
+        "net": 180000.0,
+        "payout_status": "paid"
+    }
+}
+
+// Optional: cs_list verb — 3 cases (mixed status).
+fn stub_cs_list() -> [map] {
+    [
+        cs_case_new("CS-OPS-1", "ORD-OPS-9001", "refund",   "환불 요청",     "본문 1", "open"),
+        cs_case_new("CS-OPS-2", "ORD-OPS-9002", "inquiry",  "배송 문의",     "본문 2", "in_progress"),
+        cs_case_new("CS-OPS-3", "ORD-OPS-9003", "exchange", "교환 처리 완료", "본문 3", "resolved")
+    ]
+}
+
+fn stub_adapter() -> map {
+    let mut a = adapter_new(
+        "stub_target",
+        stub_search,
+        stub_list,
+        stub_order,
+        stub_ship,
+        stub_cs
+    )
+    // Attach the OPTIONAL verbs ops probes.
+    a["settlement"] = stub_settlement
+    a["cs_list"] = stub_cs_list
+    a
+}
+
+// ── listing builder ───────────────────────────────────────────────────────
+fn mk_listing(sku: string, stock: int) -> map {
+    let p = product_new(
+        sku,
+        "stub product " + sku,
+        9900.0,
+        "KRW",
+        "stub desc",
+        ["https://example.com/stub.jpg"],
+        "stub_source",
+        "https://example.com/" + sku,
+        #{ "stock": to_string(stock) }
+    )
+    listing_draft(p, "stub_target", 14900.0, 50.5)
+}
+
+fn main() {
+    print("[MERCHANT/M5] ops smoke — 5-case · L1+L2 공통 surface")
+    print("")
+
+    let target = stub_adapter()
+    print("[setup] target=" + to_string(target["name"])
+        + " validate=" + adapter_validate(target))
+    print("")
+
+    // ── C1 ───────────────────────────────────────────────────────────
+    print("[C1] ops_inventory_sync(target, [3 listings · 1 low])")
+    let c1_listings = [
+        mk_listing("SKU-A-100", 100),  // healthy
+        mk_listing("SKU-B-3",   3),    // low (<=5, >0)
+        mk_listing("SKU-C-50",  50)    // healthy
+    ]
+    let c1 = ops_inventory_sync(target, c1_listings)
+    print("    listings_checked=" + to_string(c1["listings_checked"])
+        + " · low_stock len=" + to_string(len(c1["low_stock"]))
+        + " · out_of_stock len=" + to_string(len(c1["out_of_stock"])))
+    print("    expected low_stock len=1 · got=" + to_string(len(c1["low_stock"])))
+    print("")
+
+    // ── C2 ───────────────────────────────────────────────────────────
+    print("[C2] ops_cs_response_build(refund case, '환불 처리 완료: {order_id}')")
+    let case_refund = cs_case_open("CS-OPS-77", "ORD-7777", "refund", "환불 요청", "박스 파손")
+    let tpl = "환불 처리 완료: {order_id}"
+    let c2 = ops_cs_response_build(case_refund, tpl)
+    let c2_expected = "환불 처리 완료: ORD-7777"
+    print("    template=" + tpl)
+    print("    output=" + c2)
+    print("    expected=" + c2_expected)
+    print("    match=" + to_string(c2 == c2_expected))
+    print("")
+
+    // ── C3 ───────────────────────────────────────────────────────────
+    let period_start = 1748000000.0
+    let period_end   = 1748604800.0
+    print("[C3] ops_settlement_monitor(target, 7-day period)")
+    let c3 = ops_settlement_monitor(target, period_start, period_end)
+    print("    gross=" + to_string(c3["gross"])
+        + " · fees=" + to_string(c3["fees"])
+        + " · net=" + to_string(c3["net"])
+        + " · payout_status=" + to_string(c3["payout_status"]))
+    print("    expected payout_status=paid · got=" + to_string(c3["payout_status"]))
+    print("    invariant net==gross-fees · " + to_string(c3["net"] == c3["gross"] - c3["fees"]))
+    print("")
+
+    // ── C4 ───────────────────────────────────────────────────────────
+    print("[C4] ops_low_stock_alert(threshold=5, target, [4 listings · 2 below])")
+    let c4_listings = [
+        mk_listing("SKU-D-10", 10),  // healthy
+        mk_listing("SKU-E-2",  2),   // below 5
+        mk_listing("SKU-F-4",  4),   // below 5
+        mk_listing("SKU-G-20", 20)   // healthy
+    ]
+    let c4 = ops_low_stock_alert(5, target, c4_listings)
+    print("    hits len=" + to_string(len(c4)))
+    print("    expected len=2 · got=" + to_string(len(c4)))
+    let mut i = 0
+    while i < len(c4) {
+        let h = c4[i]
+        print("      - " + listing_summary(h))
+        i = i + 1
+    }
+    print("")
+
+    // ── C5 ───────────────────────────────────────────────────────────
+    print("[C5] ops_pending_cs_cases(target) — stub cs_list = 3 cases (open · in_progress · resolved)")
+    let c5 = ops_pending_cs_cases(target)
+    print("    pending len=" + to_string(len(c5)))
+    print("    expected len=2 (open + in_progress) · got=" + to_string(len(c5)))
+    let mut j = 0
+    while j < len(c5) {
+        print("      - " + cs_case_summary(c5[j]))
+        j = j + 1
+    }
+    print("")
+
+    // ── manifest (advisory) ──────────────────────────────────────────
+    print("[advisory] ops_summary()")
+    print(ops_summary())
+    print("")
+
+    print("[MERCHANT/M5] ops smoke OK")
+}

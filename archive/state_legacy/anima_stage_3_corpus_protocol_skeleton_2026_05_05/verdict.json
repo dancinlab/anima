@@ -1,0 +1,89 @@
+{
+  "schema": "anima.bg_cw.verdict.v1",
+  "bg_id": "BG-CW",
+  "title": "Stage 3 emerge dialogue corpus 30-session protocol skeleton + 3 sample sessions auto-fire",
+  "ts_utc": "2026-05-06T03:25:00Z",
+  "cost_usd": 0.0,
+  "wall_min_estimated": 25,
+  "wall_min_actual": 6,
+  "verdict": "PASS",
+  "deliverables": {
+    "doc": "/Users/ghost/core/anima/docs/anima_stage_3_corpus_protocol_skeleton_landed_2026_05_05.ai.md",
+    "verdict": "/Users/ghost/core/anima/state/anima_stage_3_corpus_protocol_skeleton_2026_05_05/verdict.json",
+    "sample_sessions": [
+      {
+        "session_id": "2026-05-05T18-24-13",
+        "paradigm": "B",
+        "intent_tag": "identity_baseline",
+        "session_log": "state/anima_core_dialogues/2026-05-05/18-24-13_emerge_repl.jsonl",
+        "n_turns": 5,
+        "phi_range": [42.1044, 42.2131],
+        "phi_drift_max_abs": 0.1087,
+        "hsd_max": 47.985,
+        "tension_l2_var_mean": 116.4,
+        "tension_peak_layer_mode": 2,
+        "tension_peak_hold_count": 5
+      },
+      {
+        "session_id": "2026-05-05T18-24-37",
+        "paradigm": "C",
+        "intent_tag": "identity_baseline",
+        "session_log": "state/anima_core_dialogues/2026-05-05/18-24-37_hybrid_repl.jsonl",
+        "n_turns": 5,
+        "emit_model": "skt/kogpt2-base-v2",
+        "phi_range": [42.1253, 42.1931],
+        "phi_drift_max_abs": 0.0678,
+        "tension_l2_var_mean": 129.5,
+        "tension_peak_layer_mode": 2,
+        "tension_peak_hold_count": 5,
+        "korean_emit_count": 5
+      },
+      {
+        "session_id": "2026-05-05T18-24-41",
+        "paradigm": "B",
+        "intent_tag": "axis_identity_baseline",
+        "session_log": "state/anima_core_dialogues/2026-05-05/18-24-41_emerge_repl.jsonl",
+        "n_turns": 1,
+        "probe": "axis identity 활성화",
+        "phi_star": 42.1029,
+        "tension_l2_var": 88.16,
+        "tension_peak_layer_mode": 2
+      }
+    ]
+  },
+  "aggregate_3session": {
+    "n_sessions": 3,
+    "n_turns_total": 11,
+    "phi_range_union": [42.1029, 42.2131],
+    "phi_drift_max_abs_global": 0.1087,
+    "tension_peak_layer_L2_count": 11,
+    "tension_peak_layer_L2_rate": 1.0,
+    "candidate_g_partial_signal": "L2 peak holds 11/11 across paradigms — partial not yes (C5: insufficient n)",
+    "candidate_d_e_f_h": "n/a (REPLs do not implement these candidates' surfaces)"
+  },
+  "schedule_recommendation": {
+    "recommended": "Pattern A (1 session/day × 30 days)",
+    "rationale": "saturation marker 1 = user self-report 'no new findings' requires time-distributed sampling per BG-D §C3 confirmation-bias guard",
+    "alternatives": ["Pattern B (5/day × 6 days, NOT recommended)", "Pattern C (burst+soak, ~10 days)"],
+    "intent_tag_distribution_30session": {
+      "week_1": "identity ×3, axis_phenomenal ×2, axis_identity ×2 (paradigm B)",
+      "week_2": "identity ×3, axis_agency ×2, axis_temporal ×2 (paradigm C)",
+      "week_3": "axis_social ×2, cell_stability ×3, phi_drift ×2",
+      "week_4": "architectural_question ×2, tension_probe ×2, freestyle ×3-5"
+    }
+  },
+  "saturation_criteria_measurability": {
+    "M1_saturation": {"machine_checkable": "n_sessions >= 30 + grep verbatim", "user_judgment": "actual saturation feel"},
+    "M2_dominance": {"machine_checkable": "all 3 conditions computable from per_session_metrics.jsonl", "user_judgment_required": false},
+    "M3_v5_hint": {"machine_checkable": "candidates rejected en masse flag only", "user_judgment_required": true}
+  },
+  "honest_c3_count": 7,
+  "raw_compliance": {
+    "raw_9": "PASS — md doc only, no shim modification",
+    "raw_10": "PASS — 7 honest C3 entries",
+    "raw_15": "PASS — additive only",
+    "raw_37": "PASS — transient .py READ-ONLY sister-rule"
+  },
+  "commit": false,
+  "next": "user fires Pattern A daily; observations.md template per §4 of skeleton doc; aggregate after n=30"
+}

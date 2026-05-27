@@ -1,0 +1,18 @@
+=== S187 3B GRID variant=C dispatch start 2026-05-21T03:37:19Z ===
+    lambdas: psi=0.30 route=0.20 phi=1.00 cycle=0.15 curious=0.10 replay=-0.05
+    arch:    d=3072 L=28 nh=24 nkv=8  (head_dim=128 GQA_groups=3)
+    train:   steps=2000 bsz=2 block=128 lr=3e-4 warmup=200
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"rxe3fhjfqq3bi8","machineId":"7j5nfg6r9bm2"}}}
+[create] pod rxe3fhjfqq3bi8 on NVIDIA H100 80GB HBM3
+[ssh-wait] iter 6: 103.207.149.56:17123 mapped, sshd not accepting yet
+[ssh-wait] iter 12: 103.207.149.56:17123 mapped, sshd not accepting yet
+[ssh-wait] iter 18: 103.207.149.56:17123 mapped, sshd not accepting yet
+[ssh-wait] iter 24: 103.207.149.56:17123 mapped, sshd not accepting yet
+[ssh-wait] iter 30: 103.207.149.56:17123 mapped, sshd not accepting yet
+[teardown] terminating pod rxe3fhjfqq3bi8 (rc=0, SAVE_POD=0)
+dispatch_s187_3b_runpod.sh: line 91:  2378 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$VDIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s - terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== S187 3B GRID variant=C dispatch end 2026-05-21T03:43:06Z rc=0 ===

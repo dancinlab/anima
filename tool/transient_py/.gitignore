@@ -1,0 +1,29 @@
+# tool/transient_py/.gitignore — namespace-local policy
+#
+# Spec: docs/anima_dot_own_namespace_spec_2026_05_03.md
+# Rationale: This namespace holds .own 2 (auto-gen transpiler output) and
+# .own 4 (test fixtures) .py files that MUST be regeneratable from the
+# parent .hexa SSOT. Tracking would create dual SSOT (raw 0 violation).
+#
+# What is tracked here:
+#   .gitkeep   — preserve empty directory in git
+#   .gitignore — this file (per-namespace policy)
+#   README.md  — human-readable namespace explanation
+#
+# What is gitignored:
+#   *.py            — all auto-generated python (.own 2 / .own 4)
+#   __pycache__/    — bytecode cache
+#   *.pyc           — compiled bytecode
+#
+# Note: this ignore is REDUNDANT with the root `**/*.py` ban in /.gitignore
+# but is kept here as namespace-local documentation (raw 91 honest C5 —
+# explicit-over-implicit when a sub-namespace has policy semantics).
+
+*.py
+__pycache__/
+*.pyc
+
+# Negate tracked metadata files (allow them through git add)
+!.gitkeep
+!.gitignore
+!README.md

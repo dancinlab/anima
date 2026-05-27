@@ -1,0 +1,80 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S121-5 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S121-1 LIFNET-MAPS-TO-LAVA-COMPLETE",
+      "passed": true,
+      "evidence": {
+        "required_lava_components": [
+          "LIF",
+          "Dense",
+          "on-chip",
+          "STDP",
+          "Monitor",
+          "bias",
+          "s_out"
+        ],
+        "all_in_mapping_table": true
+      }
+    },
+    {
+      "name": "B-S121-2 STDP-IS-NATIVE-ON-LOIHI-2",
+      "passed": true,
+      "evidence": {
+        "on_chip_learning_rule_named": true,
+        "gpu_tautology_escape_cited": true
+      }
+    },
+    {
+      "name": "B-S121-3 ACCESS-WALL-IS-SOFT-NOT-ARCH",
+      "passed": true,
+      "evidence": {
+        "soft_wall_classified": true,
+        "inrc_named": true
+      }
+    },
+    {
+      "name": "B-S121-4 SPEC-IS-READABLE-NOT-FIREABLE",
+      "passed": true,
+      "evidence": {
+        "readable_only_stated": true,
+        "no_fire_claim": true,
+        "no_dispatch_in_battery": true
+      }
+    },
+    {
+      "name": "B-S121-5 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S121-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "mapping-specified-fire-access-walled",
+    "family": "B-EMERGE-7 / §95-substrate-matrix / §96-spiking-rederivation",
+    "honest_scope": "S121 specifies the lego_engine → Loihi 2 Lava mapping fully (every LIFNet component → native Lava primitive). It does NOT fire — Loihi 2 access is INRC-membership-walled (§95, survey inactive). Whether a Loihi-resident anima actually escapes WALL-B (§96) is a post-INRC-access empirical question; S121 is the blueprint, not the verdict. The §11-B-as-GPU-tautology escape claim (Loihi's on-chip learning_rule is a physical process) is §96's insight made concrete in Lava primitives — named, not proven. GOAL-orthogonal; necessary-not-sufficient (B-EMERGE-7); GOAL 미도달."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "5/5",
+    "all_closed_pass": true,
+    "battery_verdict": "LOIHI-SPEC-DESIGN-CLOSE-ACCESS-WALLED-5-5-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}

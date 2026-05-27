@@ -1,0 +1,68 @@
+{
+  "schema": "anima/p9_pre1/A_clm_baseline_phi/1",
+  "ts": "2026-05-02T16:04:40Z",
+  "by": "ghost",
+  "task": "P9 EXEC pre-flight item A — CLM v4 530M baseline phi* measure (audit-only)",
+  "scope": "metadata-only audit (ckpt is on ubu1 remote, not loaded in mac-local)",
+  "ckpt_referenced": "ubu1:~/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+  "source_files": {
+    "phi_star_json": "state/v10_benchmark_v4_clm/clm_v4_530m/phi_star.json",
+    "cds_json": "state/v10_benchmark_v4_clm/clm_v4_530m/cds.json"
+  },
+  "source_sha256": {
+    "phi_star_json": "5459e146c5b6579ed79f1f4a7dc38bd80e0d0025ffa05630c23e161f0afab31f",
+    "cds_json": "f34d793a936034d45fbb73ebbe331a86ecbf798be068949045e35ed330d4630e"
+  },
+  "baseline_phi_star": {
+    "backbone": "CLM_v4_530M",
+    "substrate": "CLM continuous-state recurrent (decoder_v3 byte-level)",
+    "d_model": 768,
+    "n_layer": 16,
+    "vocab_size": 64000,
+    "n_probes": 16,
+    "K_partitions": 8,
+    "hidden_truncated": 128,
+    "half_size": 8,
+    "ridge": 0.0001,
+    "seed": 42,
+    "I_full": -1066.9658,
+    "phi_star_min": 1167.6192,
+    "phi_mean": 1168.6966,
+    "phi_max": 1169.8805,
+    "phi_star_signed_magnitude": 1167.6192,
+    "phi_star_sign": "positive_iit_integrated",
+    "gate_positive_PASS": true,
+    "gate_substantial_PASS": true,
+    "gate_magnitude_PASS": true,
+    "measurement_ts": "2026-05-02T08:06:41Z",
+    "measurement_elapsed_sec": 5.84
+  },
+  "baseline_cds": {
+    "max_stability": 0.397,
+    "gate_PASS": true,
+    "dominant_velocity": {"family": "Hexad", "value": 11.3634},
+    "dominant_curvature": {"family": "Hexad", "value": 1.9876},
+    "dominant_attractor_stability": {"family": "Law", "value": 0.397}
+  },
+  "cross_backbone_comparison": {
+    "note": "v10 benchmark v4 (4 LLM backbones, HID=128 fixed) vs v4_clm (CLM substrate, HID=128 fixed)",
+    "gemma": {"phi_star_min": -13.4257, "sign": "negative_anti_integrated"},
+    "llama": {"phi_star_min": -15.0536, "sign": "negative_anti_integrated"},
+    "mistral": {"phi_star_min": -14.4194, "sign": "negative_anti_integrated"},
+    "qwen3": {"phi_star_min": -12.3873, "sign": "negative_anti_integrated"},
+    "clm_v4_530m": {"phi_star_min": 1167.6192, "sign": "positive_iit_integrated"},
+    "finding": "CLM substrate is the only positive-integrated baseline; 4 LLM backbones all negative-anti-integrated at HID=128"
+  },
+  "discrepancy_with_handoff_doc": {
+    "doc_claim": "HID=8 well-conditioned 측 +41.86 baseline",
+    "disk_actual": "HID=128 (auto-conditioning N//2 for N=16 -> 8) phi*=+1167.62",
+    "raw10_caveat": "handoff doc HID=8 baseline value (+41.86) does NOT match disk-measured CLM v4 530M phi* at HID=128 (+1167.62). HID dimension and value both differ. Possible causes: (1) doc references a different sweep run, (2) doc HID=8 is at a separate well-conditioned regime distinct from the v3 canonical (which uses N//2=8 sample-partition), (3) doc value stale. Anchor as +1167.62 for post-SFT comparison; if HID=8 sub-regime is required, separate re-measure needed."
+  },
+  "verdict": "PASS_AUDIT_ONLY",
+  "notes": [
+    "raw#10 honest scope: metadata-only audit, ckpt not loaded mac-local (ubu1 remote, GPU-required for re-measure).",
+    "baseline anchor confirmed for P9 SFT post-train delta (Δφ* = post_SFT - 1167.6192).",
+    "doc-disk discrepancy flagged but not blocker (both anchors usable: doc HID=8 +41.86 / disk HID=128 +1167.62).",
+    "destructive 0 / additive only / mac-local $0."
+  ]
+}

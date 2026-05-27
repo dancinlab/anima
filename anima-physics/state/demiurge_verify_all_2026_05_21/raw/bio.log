@@ -1,0 +1,26 @@
+Building for debugging...
+[0/3] Write swift-version--58304C5D6DBC2206.txt
+Build of product 'DemiurgeCLI' complete! (0.13s)
+action: 검증 (검증) · domain=bio — dispatching…
+**bio 도메인 검증 — 엔진 없음 (g3 honest)**
+
+**cockpit 내 엔진 도구 상태:**
+- `Sources/DemiurgeCore/Loaders/`에 `*VerifyProducer.swift`가 12개 있음 — Antimatter, Bot, Cern, Component, Energy, Firmware, Fusion, Mobility, Rtsc, Scope, Space, SSCB.
+- **`BioVerifyProducer.swift`는 존재하지 않음.** ActionDispatch가 디스패치할 bio 검증 producer 없음.
+- Tier 4 falsifier dispatcher (`MaterialFalsifierDispatch.swift:1-22`)는 RTSC 전용 (F-SC-{1,2,3} + F-RTSC-{1,2,3}) — bio 도메인 falsifier 아님.
+
+**exports/bio/ 기존 레코드:**
+- 1건 발견: `exports/bio/verify/2026-05-21T08-33-18Z/anima_bio_20260521T083318Z.json`
+- 그러나 이 레코드는 **cockpit 엔진이 만든 것이 아님**:
+  - `producer` = `anima-bio-hippocampus-memristor-bridge` (sibling repo `~/core/hexa-bio/` / anima-physics reference sim)
+  - `backend` = `local_sim`
+  - `scope_caveats`에 명시: *"hippocampus + memristor are hexa-lang reference sim, NOT wet-lab"*, *"bio producer oracle parity not yet authored (TODO: demiurge rfc)"*
+  - `verdict.gate_state` = `GATE_OPEN`, `rationale` = *"skeleton emit — bio oracle parity TODO"*
+
+**`domains/bio.md` §2 검증 verb의 의도된 도구:**
+- Foldseek (구조 검색), DSSP (2차 구조), GROMACS (MD 검증) — 모두 외부 OSS, **아직 cockpit에 wired up 되지 않음**.
+
+**결론:**
+demiurge cockpit에 bio 검증 엔진은 아직 없습니다. '실제로 돌리기'를 눌러도 호출할 producer가 없습니다. exports/bio/verify/에 있는 1건은 sibling repo의 reference-sim skeleton emit이며 (GATE_OPEN, 측정 아님), 측정 완료로 인용 금지. 진짜로 돌리려면 (a) `BioVerifyProducer.swift` 신규 작성 + ProducerRegistry 등록, 그리고 (b) Foldseek/DSSP/GROMACS 어댑터 또는 `~/core/hexa-bio/` 측 oracle 패리티 RFC 선행이 필요합니다.
+---
+⏳ no new measured record — this stage has not been measured (g3).

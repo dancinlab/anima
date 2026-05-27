@@ -1,0 +1,95 @@
+{
+  "battery": "B-S98 (§98 HEXAD n=6 fixation meta-audit sidecar)",
+  "central_blue_falsifier_sha": "c93e160a8a37 (0-line-diff — sidecar only)",
+  "verdicts": {
+    "B-S98-1": {
+      "name": "FAILURE-ATTRIBUTION-EXHAUSTIVE-DISJOINT",
+      "statement": "the {n6_load_bearing, orthogonal} classification of the 10 major §N failures is an exhaustive + pairwise-disjoint 2-partition. Tally: 10/10 orthogonal, 0/10 n6-load-bearing.",
+      "n_orthogonal": 10,
+      "n_load_bearing": 0,
+      "exhaustive": true,
+      "disjoint": true,
+      "anchor_real_limit": "sympy FiniteSet union/intersection (Kolmogorov set algebra)",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    "B-S98-2": {
+      "name": "SIGMA6-FUNCTION-VS-NUMEROLOGY-PREDICATE-CLOSED",
+      "statement": "predicate numerology_derived = (count_chosen_before ∧ pruned_to_match) is a closed Boolean, mutually exclusive with function_derived. hexad.hexa documents C(6,2)=15 → σ(6)=12 forces prune of 3 → numerology=True.",
+      "candidate_pairs_C_6_2": 15,
+      "sigma6": 12,
+      "pruned": 3,
+      "verdict_numerology_derived": true,
+      "verdict_function_derived": false,
+      "anchor_real_limit": "Boolean predicate closure (Kolmogorov) — examines anima's OWN internal use, asserts no derivation (f1/f2)",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    "B-S98-3": {
+      "name": "VERDICT-BUCKET-TAXONOMY-CLOSED-PARTITION",
+      "statement": "{a=trap, b=innocent, c=mixed} is an exhaustive partition of the (claim1_tainted, claim2_caused) corner space; §98's (tainted, ¬caused) maps to exactly bucket (c).",
+      "this_verdict": "c",
+      "claim1_tainted": true,
+      "claim2_caused": false,
+      "anchor_real_limit": "sympy FiniteSet partition closure (Kolmogorov)",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    "B-S98-4": {
+      "name": "B-CONN-COUNT-BYTE-EQUAL",
+      "statement": "connection-point check: audited count (12) == hexad.hexa hexad_sigma6_count() == len(hexad_sigma6_connections()) == central blue_falsifier.py bconn() B-CONN-1..12 cardinality.",
+      "hexad_hexa_count": 12,
+      "central_bconn_count": 12,
+      "audited_count": 12,
+      "anchor_real_limit": "integer cardinality byte-equality (Kolmogorov)",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    "B-S98-5": {
+      "name": "HELD-CONSTANT-NOT-DIFFERENTIAL-CAUSE-CLOSED",
+      "statement": "a variable held constant across all trials has Var=0 and Cov(X,Y)=0 ∀ outcomes Y — cannot be the differential cause of inter-trial variance. The 6-module/12-wire HEXAD config was held constant across the entire §1~§94 arc ⇒ causally innocent of §16-vs-§62 failure variance.",
+      "cov_X_Y": "0",
+      "var_X": "0",
+      "anchor_real_limit": "covariance identity Cov=E[(X-EX)(Y-EY)] (statistics real-limit)",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    "B-S98-6": {
+      "name": "CLAIMS-INDEPENDENCE-CLOSED",
+      "statement": "Claim-1 (provenance tainted) and Claim-2 (caused failure) are logically independent — 4-corner truth table all realisable, neither implies the other. §98's verdict is the (tainted, ¬caused) corner = bucket (c) MIXED, a genuine corner not a degenerate collapse.",
+      "s98_verdict_corner": "(claim1=tainted, claim2=not-caused)",
+      "all_4_corners_realisable": true,
+      "anchor_real_limit": "Boolean independence (4-corner truth table, Kolmogorov)",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    }
+  },
+  "note": {
+    "B-S98-NOTE": {
+      "name": "META-AUDIT-OUTCOME-EMPIRICAL",
+      "statement": "§98 is a meta-audit. This battery proves the AUDIT'S LOGIC is closed — exhaustive {n6,orthogonal} and {a,b,c} partitions, the σ(6)=12 numerology predicate, the byte-equal B-CONN count, the held-constant→innocent covariance inference, and claim-independence. It does NOT prove anima will or will not reach the GOAL, and does NOT prove a counterfactual unpartitioned (CF-4) anima would succeed (unmeasured future fire). The Claim-1 provenance finding is a reading of source-text intent (hexad.hexa comment); the Claim-2 causation finding inherits §11.3's 5-axis decomposition. necessary-not-sufficient (B-EMERGE-7 / B-D-NOTE / B-S95-NOTE family, NOT counted 🔵).",
+      "empirical": true,
+      "counted_blue": false
+    }
+  },
+  "n_pass": 6,
+  "n_total": 6,
+  "all_passed": true,
+  "verdict_bucket": "(c) MIXED — provenance tainted, causation innocent",
+  "axis_findings": {
+    "axis1_failure_attribution": "10/10 major §N failures ORTHOGONAL to module count, 0/10 n6-load-bearing — §11.3 5-axis decomp never had 'module count' as candidate (held constant across arc)",
+    "axis2_sigma6_wiring": "NUMEROLOGY-DERIVED — hexad.hexa documents C(6,2)=15 candidate pairs → σ(6)=12 forces prune of 3 → fit-to-convenient-number anti-pattern at architecture level; corroborated by CLM-AUDIT V3 (n_layers=12) + d_model=768 (n=6 anchor)",
+    "axis3_counterfactuals": "CF-1/2/5 renumber = cosmetic; CF-3 MITOSIS cell-pool already dynamic n∈[2,64] = architecture half-soft; CF-4 partition-vs-unpartitioned = the one GOAL-relevant counterfactual, future direction not past cause",
+    "axis4_is_n6_the_real_shape": "NO — §1~§95 bottleneck localized to §1.1 data-regime + §95 synchronous-substrate, neither is module count; user worry is reasonable hypothesis the evidence REFUTES for causation, CONFIRMS for provenance",
+    "axis5_lattice_policy": "g2 has no internal-use integrity test; §98 RECOMMENDS (user-gated, AGENTS.tape untouched) a function-derived-vs-pruned-to-target test"
+  },
+  "claim1_provenance": "TAINTED (σ(6)=12 wiring numerology-derived)",
+  "claim2_causation": "REFUTED (0/10 failures n6-load-bearing)",
+  "single_most_honest_finding": "n=6 IS numerology-tainted in provenance but NOT the cause of the GOAL miss — every fire ran on the identical 6-module/12-wire config, so module count was held constant and cannot be the differential cause; the user's worry correctly diagnoses an architectural-hygiene defect and incorrectly diagnoses the GOAL bottleneck"
+}

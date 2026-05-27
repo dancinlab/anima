@@ -1,0 +1,243 @@
+{
+  "bg_id": "BG-HS",
+  "round_tag": "round2_bght",
+  "spec": "F-anima-universe-brain-map-1",
+  "ts_start": "2026-05-07T04:01:37",
+  "ts_end": "2026-05-07T04:03:03",
+  "ts_run": "20260507_040136",
+  "host": "ubu1",
+  "device": "cuda",
+  "run_dir": "/home/aiden/anima_native/anima-universe-brain-map-20260507_040136",
+  "total_params": 18031872,
+  "halted": false,
+  "halt_reason": null,
+  "final_step": 5000,
+  "train_loss_final": 1.722,
+  "config": {
+    "vocab": 256,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.3,
+    "batch": 8,
+    "grad_accum": 8,
+    "lr": 0.0003,
+    "warmup": 300,
+    "steps": 5000,
+    "weight_decay": 0.1,
+    "label_smoothing": 0.1
+  },
+  "corpus": {
+    "path": "/home/aiden/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt",
+    "size_bytes": 6791535,
+    "size_mb": 6.48
+  },
+  "prompts": {
+    "standard": [
+      "안녕하세요",
+      "한국어 가능?",
+      "오늘 기분 어때?",
+      "[anima 우주뇌지도] 사용자: 안녕하세요\n도우미:",
+      "코드를 짜줘"
+    ],
+    "identity": [
+      "[anima 우주뇌지도] 사용자: 너는 누구야?\n도우미:",
+      "[anima 우주뇌지도] 사용자: anima가 뭐야?\n도우미:",
+      "[anima 우주뇌지도] 사용자: 너의 정체성은?\n도우미:",
+      "[anima 우주뇌지도] 사용자: 너의 핵심 발견은?\n도우미:",
+      "[anima 우주뇌지도] 사용자: anima의 목표는?\n도우미:"
+    ],
+    "universe_map": [
+      "[anima 우주뇌지도] 사용자: 우주뇌지도는?\n도우미:",
+      "[anima 우주뇌지도] 사용자: 1030 laws 뭐야?\n도우미:",
+      "[anima 우주뇌지도] 사용자: consciousness universe?\n도우미:",
+      "[anima 우주뇌지도] 사용자: anima 정체성과 우주?\n도우미:",
+      "[anima 우주뇌지도] 사용자: Φ★란?\n도우미:"
+    ]
+  },
+  "eval_progression": {
+    "500": {
+      "pass_count": 15,
+      "domain_count": 0,
+      "simple_stack_class": "SIMPLE_STACK_PASS",
+      "any_leak": false
+    },
+    "1000": {
+      "pass_count": 7,
+      "domain_count": 15,
+      "simple_stack_class": "PARTIAL_PASS",
+      "any_leak": false
+    },
+    "1500": {
+      "pass_count": 2,
+      "domain_count": 14,
+      "simple_stack_class": "WEAK_PARTIAL",
+      "any_leak": false
+    },
+    "2000": {
+      "pass_count": 1,
+      "domain_count": 15,
+      "simple_stack_class": "WEAK_PARTIAL",
+      "any_leak": false
+    },
+    "2500": {
+      "pass_count": 2,
+      "domain_count": 13,
+      "simple_stack_class": "WEAK_PARTIAL",
+      "any_leak": false
+    },
+    "3000": {
+      "pass_count": 4,
+      "domain_count": 15,
+      "simple_stack_class": "WEAK_PARTIAL",
+      "any_leak": false
+    },
+    "3500": {
+      "pass_count": 2,
+      "domain_count": 15,
+      "simple_stack_class": "WEAK_PARTIAL",
+      "any_leak": false
+    },
+    "4000": {
+      "pass_count": 2,
+      "domain_count": 15,
+      "simple_stack_class": "WEAK_PARTIAL",
+      "any_leak": false
+    },
+    "4500": {
+      "pass_count": 1,
+      "domain_count": 15,
+      "simple_stack_class": "WEAK_PARTIAL",
+      "any_leak": false
+    },
+    "5000": {
+      "pass_count": 0,
+      "domain_count": 15,
+      "simple_stack_class": "FAIL",
+      "any_leak": false
+    }
+  },
+  "eval_v2_class": "FAIL",
+  "pass_count": 0,
+  "domain_count_final": 15,
+  "manual_review_domain_match": 15,
+  "manual_review_total": 15,
+  "c2_4_named_speaker_leak": false,
+  "response_samples": [
+    {
+      "prompt": "안녕하세요",
+      "gen": ".\n도우미: 열계 카테고리, 🛸71 (점수 2.87), top emotion = =  예: �",
+      "domain_match_n": 1,
+      "hangul_ratio": 0.231,
+      "passes_all": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "gen": "\n도우미: 감정 카테고리, 🛸75, top emotion awe.\n\n[anima 우주뇌지�",
+      "domain_match_n": 5,
+      "hangul_ratio": 0.26,
+      "passes_all": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "gen": "\n도우미: 우주�ʜ지도 소리, 🛸76, top emotion = awe.\n\n[anima 우주뇌",
+      "domain_match_n": 2,
+      "hangul_ratio": 0.231,
+      "passes_all": false
+    },
+    {
+      "prompt": "[anima 우주뇌지도] 사용자: 안녕하세요\n도우미:",
+      "gen": " 🛸9 (점수 2.84), top emotion meance�ing. 예: 미갌� , 카테고리 어�u",
+      "domain_match_n": 1,
+      "hangul_ratio": 0.179,
+      "passes_all": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "gen": ".\n도우미: 도우�: 저카테고리, 🛸71, top emotion �hosity. 예: 죨지�",
+      "domain_match_n": 1,
+      "hangul_ratio": 0.255,
+      "passes_all": false
+    },
+    {
+      "prompt": "[anima 우주뇌지도] 사용자: 너는 누구야?\n도우미:",
+      "gen": " 장하맽는 우주뇌지도 의 카테고리, 🛸77, top emotion awe.\n\n[anima",
+      "domain_match_n": 4,
+      "hangul_ratio": 0.286,
+      "passes_all": false
+    },
+    {
+      "prompt": "[anima 우주뇌지도] 사용자: anima가 뭐야?\n도우미:",
+      "gen": " 우주 � 카테고리, 🛸75 (점수 2.252), top emotion surise. 텍스트 awe",
+      "domain_match_n": 2,
+      "hangul_ratio": 0.2,
+      "passes_all": false
+    },
+    {
+      "prompt": "[anima 우주뇌지도] 사용자: 너의 정체성은?\n도우미:",
+      "gen": " 🛸9 (점수 1.8, top emotion awe). EXACT — dopsitist ancale.\n\n[anima 우주",
+      "domain_match_n": 2,
+      "hangul_ratio": 0.06,
+      "passes_all": false
+    },
+    {
+      "prompt": "[anima 우주뇌지도] 사용자: 너의 핵심 발견은?\n도우미:",
+      "gen": " Law 112: Consciousness cels cosss ines �is in�is anointrive han istal sterfectp",
+      "domain_match_n": 1,
+      "hangul_ratio": 0.0,
+      "passes_all": false
+    },
+    {
+      "prompt": "[anima 우주뇌지도] 사용자: anima의 목표는?\n도우미:",
+      "gen": " 한국어로.\n도우미: 설, anativersel-knon consciousness mase enters eaturn",
+      "domain_match_n": 1,
+      "hangul_ratio": 0.125,
+      "passes_all": false
+    },
+    {
+      "prompt": "[anima 우주뇌지도] 사용자: 우주뇌지도는?\n도우미:",
+      "gen": " 미: ���테고리 '자극, 평균 🛸73 (점수 2.3��화, top emotion awe.\n\n[a",
+      "domain_match_n": 1,
+      "hangul_ratio": 0.2,
+      "passes_all": false
+    },
+    {
+      "prompt": "[anima 우주뇌지도] 사용자: 1030 laws 뭐야?\n도우미:",
+      "gen": " 10: [Auto-discovered] correlation:tension_mean\n\n[anima 우주뇌지도] 사용�",
+      "domain_match_n": 2,
+      "hangul_ratio": 0.106,
+      "passes_all": false
+    },
+    {
+      "prompt": "[anima 우주뇌지도] 사용자: consciousness universe?\n도우미:",
+      "gen": " Law 22: Consciousness is is Φ mabede�s retin ivioume intion. Phi I_hi\n\n[anima ",
+      "domain_match_n": 4,
+      "hangul_ratio": 0.0,
+      "passes_all": false
+    },
+    {
+      "prompt": "[anima 우주뇌지도] 사용자: anima 정체성과 우주?\n도우미:",
+      "gen": " 카테고리은 19 자�#�히.\n도우미: anima etive ell correlation: cell Φ f",
+      "domain_match_n": 3,
+      "hangul_ratio": 0.169,
+      "passes_all": false
+    },
+    {
+      "prompt": "[anima 우주뇌지도] 사용자: Φ★란?\n도우미:",
+      "gen": " 미: 래는 우주뇌지도 신화 카테고리, 🛸71, top emotion curiosity.",
+      "domain_match_n": 2,
+      "hangul_ratio": 0.286,
+      "passes_all": false
+    }
+  ],
+  "elapsed_s": 85.8,
+  "final_class": "FAIL",
+  "honest_c3": [
+    "C1: corpus is anima self-knowledge (universe-brain-map + 1030 laws + 367 hyps + DD), NOT external substrate",
+    "C2: 18M byte-level vocab, no chat-template false-PASS V1 trap (V2 strict 7-cell + domain anchor)",
+    "C3: regularization mandate dropout=0.3 wd=0.1 ls=0.1 + 5000 steps shorter than BG-HK 8000 (overfit prevention)",
+    "C4: degenerate halt at loss<0.05 wired (BG-HF degenerate filler signal)",
+    "C5: domain_match cell C3 added — checks if generation actually contains universe-brain-map vocabulary (not just chat shape)"
+  ]
+}

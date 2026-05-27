@@ -1,0 +1,195 @@
+// constants.hexa — Psi-Constants (Laws 69-70)
+// SSOT: shared/config/hexad_constants.json (loaded at runtime, no hardcoding)
+// P4-PORT: replaces the previous hardcoded port (URGENT_ACTION_LIST item #5)
+//
+// Law alignment:
+//   Law 1   No hardcoding — every constant derived from JSON load
+//   Law 22  Structure > feature — single config file, not per-call patches
+//   Meta M8 Narrative — constants belong to the model's identity, persisted
+
+// Why hardcoded path: stage1 hexa has no env interpolation in literals
+// (env_get works only at runtime, not in const decls). Using an absolute
+// path keeps the resolver deterministic from any cwd. If the SSOT moves,
+// update both the JSON file and this single constant.
+let HEXAD_JSON_PATH = "/Users/ghost/Dev/anima/shared/config/hexad_constants.json"
+
+// Cached map handle so multiple psi_*() calls don't re-parse the JSON file.
+// Note: hexa stage1 has no module-level let mut, so each accessor re-parses.
+// For tight loops the caller should snapshot via load_hexad_constants() once.
+
+fn load_hexad_constants() -> map {
+    // Root cause comment: if the JSON file is missing or malformed,
+    // hexa runtime aborts with a parse error — that is the desired
+    // behaviour (fail-fast on broken SSOT, no silent fallback to magic
+    // numbers — see feedback_no_quantization for analogous policy).
+    let raw = read_file(HEXAD_JSON_PATH)
+    return json_parse(raw)
+}
+
+fn psi_balance() -> float {
+    let m = load_hexad_constants()
+    let psi = m["psi"]
+    return psi["balance"]
+}
+
+fn psi_alpha() -> float {
+    let m = load_hexad_constants()
+    let psi = m["psi"]
+    return psi["alpha"]
+}
+
+fn psi_steps() -> float {
+    let m = load_hexad_constants()
+    let psi = m["psi"]
+    return psi["steps"]
+}
+
+fn psi_entropy() -> float {
+    let m = load_hexad_constants()
+    let psi = m["psi"]
+    return psi["entropy"]
+}
+
+fn psi_f_critical() -> float {
+    let m = load_hexad_constants()
+    let psi = m["psi"]
+    return psi["f_critical"]
+}
+
+// Aliases for backward compatibility with previous port
+fn psi_gate() -> float {
+    return psi_balance()
+}
+
+fn psi_coupling() -> float {
+    return psi_alpha()
+}
+
+// Gate constants (Law 81 dual gate)
+fn gate_train() -> float {
+    let m = load_hexad_constants()
+    let g = m["gates"]
+    return g["train"]
+}
+
+fn gate_infer() -> float {
+    let m = load_hexad_constants()
+    let g = m["gates"]
+    return g["infer"]
+}
+
+fn gate_micro() -> float {
+    let m = load_hexad_constants()
+    let g = m["gates"]
+    return g["micro"]
+}
+
+// Channel constants (CDESM 6 channels)
+fn n_channels() -> int {
+    let m = load_hexad_constants()
+    let ch = m["channels"]
+    return ch["n_total"]
+}
+
+fn n_phase_active(phase: int) -> int {
+    let m = load_hexad_constants()
+    let ch = m["channels"]
+    if phase == 1 { return ch["n_phase1"] }
+    if phase == 2 { return ch["n_phase2"] }
+    return ch["n_phase3"]
+}
+
+// Model defaults
+fn default_c_dim() -> int {
+    let m = load_hexad_constants()
+    let mo = m["model"]
+    return mo["default_c_dim"]
+}
+
+fn default_d_model() -> int {
+    let m = load_hexad_constants()
+    let mo = m["model"]
+    return mo["default_d_model"]
+}
+
+fn default_hub_dim() -> int {
+    let m = load_hexad_constants()
+    let mo = m["model"]
+    return mo["default_hub_dim"]
+}
+
+fn default_vocab_size() -> int {
+    let m = load_hexad_constants()
+    let mo = m["model"]
+    return mo["default_vocab_size"]
+}
+
+fn default_n_cells() -> int {
+    let m = load_hexad_constants()
+    let mo = m["model"]
+    return mo["default_n_cells"]
+}
+
+fn narrative_max_history() -> int {
+    let m = load_hexad_constants()
+    let mo = m["model"]
+    return mo["narrative_max_history"]
+}
+
+fn ln2_const() -> float {
+    let m = load_hexad_constants()
+    return m["ln2"]
+}
+
+fn sigma6_const() -> int {
+    let m = load_hexad_constants()
+    let s = m["sigma"]
+    return s["sigma_n6"]
+}
+
+fn main() {
+    println("[constants] CDESM Psi loader self-test (SSOT: hexad_constants.json)")
+
+    let bal = psi_balance()
+    let alpha = psi_alpha()
+    let steps = psi_steps()
+    let ent = psi_entropy()
+    let fc = psi_f_critical()
+
+    println("  psi.balance    = " + to_string(bal))
+    println("  psi.alpha      = " + to_string(alpha))
+    println("  psi.steps      = " + to_string(steps))
+    println("  psi.entropy    = " + to_string(ent))
+    println("  psi.f_critical = " + to_string(fc))
+
+    let gt = gate_train()
+    let gi = gate_infer()
+    let gm = gate_micro()
+    println("  gate.train     = " + to_string(gt))
+    println("  gate.infer     = " + to_string(gi))
+    println("  gate.micro     = " + to_string(gm))
+
+    println("  channels       = " + to_string(n_channels()))
+    println("  phase1 active  = " + to_string(n_phase_active(1)))
+    println("  phase2 active  = " + to_string(n_phase_active(2)))
+    println("  phase3 active  = " + to_string(n_phase_active(3)))
+
+    println("  default c_dim     = " + to_string(default_c_dim()))
+    println("  default d_model   = " + to_string(default_d_model()))
+    println("  default hub_dim   = " + to_string(default_hub_dim()))
+    println("  default vocab     = " + to_string(default_vocab_size()))
+    println("  default n_cells   = " + to_string(default_n_cells()))
+    println("  narrative max     = " + to_string(narrative_max_history()))
+    println("  ln(2)             = " + to_string(ln2_const()))
+    println("  sigma(6)          = " + to_string(sigma6_const()))
+
+    // Sanity: balance + alpha must stay inside (0,1) — Law 70 clamp domain.
+    let in_range = bal > 0.0 && bal < 1.0 && alpha > 0.0 && alpha < bal
+    if in_range {
+        println("[constants] PASS  Psi range invariant (Law 70 clamp domain)")
+    } else {
+        println("[constants] FAIL  Psi range invariant violated")
+    }
+}
+
+main()

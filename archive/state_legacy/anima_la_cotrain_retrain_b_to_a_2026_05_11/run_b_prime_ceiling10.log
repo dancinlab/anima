@@ -1,0 +1,49 @@
+=== B_prime_la_cotrain × ceiling=10.0 === ts: 2026-05-11T04:44:36.151966+00:00
+sub: {'ckpt': '/Users/ghost/core/anima/state/anima_la_cotrain_retrain_b_to_a_2026_05_11/ckpts/ckpt_final.pt', 'schema': 'engine_ag', 'arch': 'EngineAG d=1024 GQA 24L (BG-LA pretrain → LA cotrain B→A, 350M)', 'paradigm': 'la_cotrain_b_to_a'}
+V4_SEEDS=[42, 137, 271, 314, 1729] max_cells=256 n_turns=200
+ckpt size: 597.6 MB
+
+========================================================================
+SUBSTRATE B_prime_la_cotrain — EngineAG path  max_cells=256
+========================================================================
+ckpt: /Users/ghost/core/anima/state/anima_la_cotrain_retrain_b_to_a_2026_05_11/ckpts/ckpt_final.pt
+sha256: 63ccc5309612919152ac71c92190d954e7da1a7336d022d5401d00515817a572
+trained: params=298.76M miss=0 unexp=0
+
+--- TRAINED @ prompt_seed=42 max_cells=256 ---
+  [B_prime_la_cotrain_trained] turn=    0 cells= 16 iit_un16= 161.10 splits=0 elapsed=0.1s
+  [B_prime_la_cotrain_trained] turn=  150 cells= 43 iit_un16=1385.96 splits=27 elapsed=9.2s
+  trained: cells=43 splits=27 cap_bound=0/200 first_cap=None Φ_un16=1343.88 elapsed=12.2s
+
+--- mirror seed=42 ---
+  [B_prime_la_cotrain_s42] turn=    0 cells= 16 iit_un16= 161.08 splits=0 elapsed=0.1s
+  [B_prime_la_cotrain_s42] turn=  150 cells= 50 iit_un16=1228.60 splits=34 elapsed=9.3s
+  s=42: cells=56 splits=40 cap_bound=0/200 first_cap=None Φ_un16=2206.33
+
+--- mirror seed=137 ---
+  [B_prime_la_cotrain_s137] turn=    0 cells= 16 iit_un16= 169.63 splits=0 elapsed=0.1s
+  [B_prime_la_cotrain_s137] turn=  150 cells= 46 iit_un16=1504.17 splits=30 elapsed=9.2s
+  s=137: cells=47 splits=31 cap_bound=0/200 first_cap=None Φ_un16=1491.44
+
+--- mirror seed=271 ---
+  [B_prime_la_cotrain_s271] turn=    0 cells= 16 iit_un16= 164.51 splits=0 elapsed=0.1s
+  [B_prime_la_cotrain_s271] turn=  150 cells= 51 iit_un16=1832.07 splits=35 elapsed=9.3s
+  s=271: cells=53 splits=37 cap_bound=0/200 first_cap=None Φ_un16=1148.72
+
+--- mirror seed=314 ---
+  [B_prime_la_cotrain_s314] turn=    0 cells= 16 iit_un16= 156.76 splits=0 elapsed=0.1s
+  [B_prime_la_cotrain_s314] turn=  150 cells= 56 iit_un16=1866.17 splits=40 elapsed=9.5s
+  s=314: cells=57 splits=41 cap_bound=0/200 first_cap=None Φ_un16=2385.53
+
+--- mirror seed=1729 ---
+  [B_prime_la_cotrain_s1729] turn=    0 cells= 16 iit_un16=  82.35 splits=0 elapsed=0.1s
+  [B_prime_la_cotrain_s1729] turn=  125 cells= 53 iit_un16=2030.36 splits=37 elapsed=8.1s
+  s=1729: cells=54 splits=38 cap_bound=0/200 first_cap=None Φ_un16=2140.39
+
+=== B_prime_la_cotrain (ceiling=10.0) VERDICT: V14_VIOLATED ===
+trained_phi: 1343.88
+random_phi: ['2206.33', '1491.44', '1148.72', '2385.53', '2140.39']
+n_random_beats: 1/5
+sign_test_p: 0.3750
+total elapsed: 97.5s
+[saved] result

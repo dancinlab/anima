@@ -1,0 +1,605 @@
+{
+  "ts": "2026-05-10T08:45:50.236959+00:00",
+  "user_verbatim": "OK FIRE PATH_A V5_ANIMA_LONG_TRAJECTORY_SMOKE $0",
+  "config": {
+    "ckpt": "/Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt",
+    "n_tokens_per_prompt": 200,
+    "n_total_tokens": 2000,
+    "mitosis_stride": 10,
+    "top_k": 40,
+    "temperature": 0.8,
+    "initial_cells": 8,
+    "max_cells": 64,
+    "c_dim": 64,
+    "d_model": 384,
+    "seed": 42
+  },
+  "trained_cells64": {
+    "label": "trained_cells64",
+    "n_tokens_total": 2000,
+    "n_process_calls": 200,
+    "snapshots": [
+      {
+        "turn": 0,
+        "n_cells": 8,
+        "phi": 2.129318678677484,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 0.0
+      },
+      {
+        "turn": 100,
+        "n_cells": 8,
+        "phi": 0.7186231878448297,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 6.496
+      },
+      {
+        "turn": 200,
+        "n_cells": 18,
+        "phi": 1.3566978607723297,
+        "n_splits_cum": 10,
+        "n_merges_cum": 0,
+        "elapsed_sec": 17.39
+      },
+      {
+        "turn": 300,
+        "n_cells": 36,
+        "phi": 2.1933406285053842,
+        "n_splits_cum": 28,
+        "n_merges_cum": 0,
+        "elapsed_sec": 24.841
+      },
+      {
+        "turn": 400,
+        "n_cells": 56,
+        "phi": 2.8696806948758042,
+        "n_splits_cum": 48,
+        "n_merges_cum": 0,
+        "elapsed_sec": 35.816
+      },
+      {
+        "turn": 500,
+        "n_cells": 58,
+        "phi": 3.50369529638817,
+        "n_splits_cum": 50,
+        "n_merges_cum": 0,
+        "elapsed_sec": 44.055
+      },
+      {
+        "turn": 600,
+        "n_cells": 60,
+        "phi": 3.927606767700752,
+        "n_splits_cum": 52,
+        "n_merges_cum": 0,
+        "elapsed_sec": 57.186
+      },
+      {
+        "turn": 700,
+        "n_cells": 64,
+        "phi": 4.140814700482792,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 66.895
+      },
+      {
+        "turn": 800,
+        "n_cells": 64,
+        "phi": 4.123171379844356,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 81.818
+      },
+      {
+        "turn": 900,
+        "n_cells": 64,
+        "phi": 4.102241241188239,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 89.87
+      },
+      {
+        "turn": 1000,
+        "n_cells": 64,
+        "phi": 4.131107515157902,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 100.824
+      },
+      {
+        "turn": 1100,
+        "n_cells": 64,
+        "phi": 4.1558397632862505,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 105.808
+      },
+      {
+        "turn": 1200,
+        "n_cells": 64,
+        "phi": 4.085673289775573,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 117.732
+      },
+      {
+        "turn": 1300,
+        "n_cells": 64,
+        "phi": 4.065651815722073,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 125.473
+      },
+      {
+        "turn": 1400,
+        "n_cells": 64,
+        "phi": 4.042446283366358,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 138.302
+      },
+      {
+        "turn": 1500,
+        "n_cells": 64,
+        "phi": 4.062413765026986,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 145.564
+      },
+      {
+        "turn": 1600,
+        "n_cells": 64,
+        "phi": 4.098972586510096,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 158.099
+      },
+      {
+        "turn": 1700,
+        "n_cells": 64,
+        "phi": 4.0969940265648574,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 165.363
+      },
+      {
+        "turn": 1800,
+        "n_cells": 64,
+        "phi": 4.141830354619671,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 177.93
+      },
+      {
+        "turn": 1900,
+        "n_cells": 64,
+        "phi": 4.150214104287025,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 185.528
+      },
+      {
+        "turn": 2000,
+        "n_cells": 64,
+        "phi": 4.1620354525715095,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 197.592
+      },
+      {
+        "turn": 2000,
+        "n_cells": 64,
+        "phi": 4.1620354525715095,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 197.592
+      }
+    ],
+    "final_n_cells": 64,
+    "final_phi": 4.1620354525715095,
+    "n_splits": 56,
+    "n_merges": 0,
+    "per_prompt": [
+      {
+        "prompt": "안녕하세요",
+        "is_korean_prompt": true,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "rmvAluhatkhtnse ttt mg^nw tgf\nAlpg or\nh awtwsyhl  u nmiceiewa waktynllr wti r. hcasnonwcg  u  rpotnQ",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "의식이란 무엇인가요?",
+        "is_korean_prompt": true,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "poEeeuoci*eiehvflt  hrawp)tb*snsennite\nyl h ah9rbigbnralAQ\nmwn.wd  ehlnbgnu seuihngti wMihIi phmhrwd",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "한국어로 대답해줘",
+        "is_korean_prompt": true,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "w Qc.tmrehenw  monAw rwcnttwiel be  tsal\n)o c  ssmso.r  orstgsheul9 uaansFY nv obPurenipfmn nl  .rg ",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "사용자: 안녕\n도우미:",
+        "is_korean_prompt": true,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "oeooewpnknryw iarMggdcm<alhhkntoyg .oe b  \ngfhhorhgs  wdowfnrlwafthseo\n.onrtam^  Gng)r uoacaka Gt\nkr",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "오늘 기분이 좋아요",
+        "is_korean_prompt": true,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "tribnnbm t oadeesbtoha GyubwtF \n nrhte i\ngoyrtro.Pho in   ug hieoehl m drIooi rusll ory ahn  ayufh\ns",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "Consciousness is",
+        "is_korean_prompt": false,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "eot)lanlmGmpwaQ \n \nne nlaebgibsnidrIuag e    anpQQ k\nsf\no\netgsnsoo *f t nrfwo ws \neaoias ouPaohhfhcP",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "Hello, how are you?",
+        "is_korean_prompt": false,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "cte nanla#ao.loc my tten\ntm*ognnrt ntote i v\nu f cw nverrei)<traf\nhl .tlyrarwdwi evoalma en reifgdys",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "The meaning of life is",
+        "is_korean_prompt": false,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "yaGgMAlns l evn ednnhis u lr#rA l.weh ioi ihnh gF stwsi)ei\nFtamdgecs \nurnoiI e rnsceorwrsv..onian9el",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "User: Hi\nAssistant:",
+        "is_korean_prompt": false,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "oar  #orarth ttisio u tn)trnwmeli9e \nttlm ln\n roh o  stltM. pm.e\nnmu dnitfgg\nho ltGi  tfwra.ar\nan\nds",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "Once upon a time",
+        "is_korean_prompt": false,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "ele n g fIsowlf Aerl)i pg iwwtoelEaoarl w<eobtgdllteogc<nge^pwaif#fhsu eabAmon\netis ha.ran w enewoyA",
+        "ko_chars_in_gen": 0
+      }
+    ],
+    "elapsed_sec": 197.59215116500854
+  },
+  "v14_random_mirror": {
+    "label": "random_init_v14_mirror",
+    "n_tokens_total": 2000,
+    "n_process_calls": 200,
+    "snapshots": [
+      {
+        "turn": 0,
+        "n_cells": 8,
+        "phi": 2.129318678677484,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 0.0
+      },
+      {
+        "turn": 100,
+        "n_cells": 8,
+        "phi": 0.7832383996969795,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 7.161
+      },
+      {
+        "turn": 200,
+        "n_cells": 17,
+        "phi": 1.06445334362005,
+        "n_splits_cum": 9,
+        "n_merges_cum": 0,
+        "elapsed_sec": 20.019
+      },
+      {
+        "turn": 300,
+        "n_cells": 32,
+        "phi": 2.1347059462036673,
+        "n_splits_cum": 24,
+        "n_merges_cum": 0,
+        "elapsed_sec": 27.051
+      },
+      {
+        "turn": 400,
+        "n_cells": 53,
+        "phi": 2.8406391096598114,
+        "n_splits_cum": 45,
+        "n_merges_cum": 0,
+        "elapsed_sec": 39.821
+      },
+      {
+        "turn": 500,
+        "n_cells": 54,
+        "phi": 3.364017712841231,
+        "n_splits_cum": 46,
+        "n_merges_cum": 0,
+        "elapsed_sec": 48.227
+      },
+      {
+        "turn": 600,
+        "n_cells": 55,
+        "phi": 3.8271458005733785,
+        "n_splits_cum": 47,
+        "n_merges_cum": 0,
+        "elapsed_sec": 62.666
+      },
+      {
+        "turn": 700,
+        "n_cells": 61,
+        "phi": 4.093515289914398,
+        "n_splits_cum": 53,
+        "n_merges_cum": 0,
+        "elapsed_sec": 71.102
+      },
+      {
+        "turn": 800,
+        "n_cells": 63,
+        "phi": 4.101785876282969,
+        "n_splits_cum": 55,
+        "n_merges_cum": 0,
+        "elapsed_sec": 85.255
+      },
+      {
+        "turn": 900,
+        "n_cells": 63,
+        "phi": 4.109341277459047,
+        "n_splits_cum": 55,
+        "n_merges_cum": 0,
+        "elapsed_sec": 94.195
+      },
+      {
+        "turn": 1000,
+        "n_cells": 63,
+        "phi": 4.114676339111711,
+        "n_splits_cum": 55,
+        "n_merges_cum": 0,
+        "elapsed_sec": 110.121
+      },
+      {
+        "turn": 1100,
+        "n_cells": 63,
+        "phi": 4.118971259574218,
+        "n_splits_cum": 55,
+        "n_merges_cum": 0,
+        "elapsed_sec": 121.12
+      },
+      {
+        "turn": 1200,
+        "n_cells": 63,
+        "phi": 4.043052603463883,
+        "n_splits_cum": 55,
+        "n_merges_cum": 0,
+        "elapsed_sec": 136.507
+      },
+      {
+        "turn": 1300,
+        "n_cells": 63,
+        "phi": 3.9389807263696053,
+        "n_splits_cum": 55,
+        "n_merges_cum": 0,
+        "elapsed_sec": 145.308
+      },
+      {
+        "turn": 1400,
+        "n_cells": 64,
+        "phi": 4.00959079264594,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 158.716
+      },
+      {
+        "turn": 1500,
+        "n_cells": 64,
+        "phi": 4.029122851783408,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 169.718
+      },
+      {
+        "turn": 1600,
+        "n_cells": 64,
+        "phi": 4.052555550289777,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 188.241
+      },
+      {
+        "turn": 1700,
+        "n_cells": 64,
+        "phi": 4.067151162078965,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 198.596
+      },
+      {
+        "turn": 1800,
+        "n_cells": 64,
+        "phi": 4.104272051836257,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 214.968
+      },
+      {
+        "turn": 1900,
+        "n_cells": 64,
+        "phi": 4.152691285224499,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 223.0
+      },
+      {
+        "turn": 2000,
+        "n_cells": 64,
+        "phi": 4.1673777137113746,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 240.751
+      },
+      {
+        "turn": 2000,
+        "n_cells": 64,
+        "phi": 4.1673777137113746,
+        "n_splits_cum": 56,
+        "n_merges_cum": 0,
+        "elapsed_sec": 240.751
+      }
+    ],
+    "final_n_cells": 64,
+    "final_phi": 4.1673777137113746,
+    "n_splits": 56,
+    "n_merges": 0,
+    "per_prompt": [
+      {
+        "prompt": "안녕하세요",
+        "is_korean_prompt": true,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "O���y\u0013;w�籸�w<By��\u001bx�\u001f0E}���K�\\֖�30v�Md\u0018@\u0007H�\u00034�΍(\u0001>����t��)\u001d�U\u0018�ߏ��e�\u000fg�4M/.�\u0003��)\u001daY\u001fw�z��\u0011�\t`N\u001f<��\u0004",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "의식이란 무엇인가요?",
+        "is_korean_prompt": true,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "�ƛ�1#At׭\t�\u0013NY\u0000K�\u000b�szcq�]P�`eԋk��cDQ�Qٚ�Q�6��p�Q]*��`x\bt\f��3GrS>\u000f\u000b��.Y�}�\u0019L����p�N4Ml����\u001b�\u0007�\u001a6�b\u0003\u0015H",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "한국어로 대답해줘",
+        "is_korean_prompt": true,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "\u0013�k�\f�\u000efNu\u0000�N�mO�H���]�b�h��>����\u001a!b�����W�_�\u0007Ʈ�N�����:�R(�oc��\u0004�b�q\u001bR_�`)�Vΐ]ђ���M�<�N\u0016�)�[\"<7�}\u0013�",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "사용자: 안녕\n도우미:",
+        "is_korean_prompt": true,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "Í����`dL������N|!ǩJ����Q\u0003.ѷ\u001a\b&\t�Qb�ɾ�s��i�_��Y\u0000�]w#oRC�\u001f7q��mJ��Z�!WpG��� �N�d�\u000f)M5�\u0003�u[Gi^#d7lO�M�W",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "오늘 기분이 좋아요",
+        "is_korean_prompt": true,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "��ָ���\u0011P�q\bPlN\u0016�⾅J%+�\u000b�\u001f'a�\u001b�ߋ�\u001bc\u001fˑܦM�o\r�w��1�nQB����\u0010���m;X�p��E\u0005�\bp��I��W\u000eŐc��MD���d����\"v�6h��\u0011�(",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "Consciousness is",
+        "is_korean_prompt": false,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "��\u0003�R�8��)�Qé���_�g�Zd�_P��ƅ���\u001b�Q��\u0000.X\u0000�\u0014��h�����\u0004�\\Ə�\u001f�f��q\u0019��\t��\t�|芗�s� \u0003Az���tU\u0014D$�32\u000fwX��\u0000�W��\n",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "Hello, how are you?",
+        "is_korean_prompt": false,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "\u0000Ƭg�Y�\u0011��Y�b]\f6b(Y֌�ߧ�\u0005/w���Q�E��\u0004�\t�bs��`Ke�֭���\u0002<#�\tAQs�:�D�6\u0010_�W���;5b�d\t�.����\u0006�{��\u0011i�5�N ߉\u0016��\u001c",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "The meaning of life is",
+        "is_korean_prompt": false,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "�t�^�<�}<\u0018�H���h��\u00168F��p\u000fd��\u0010_���\u0014�6�B�<�c�G`\u0004�M�N�Y�֯^��y7=>��d���ǥ4d��Jp�\"�\u0013mk�\u0013*�]2��\u000e�\u0015i�X[���C�",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "User: Hi\nAssistant:",
+        "is_korean_prompt": false,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "����\u000f^�\"��\u000bB]���\u0010�\u0016l���\t�|=\u001cq_���\u0006[8���\u0006\u0010�����\u001e�;\u001e\u000fq�g���\u0007dx��\"��|W�6\u0010�A��\u0000L���19a�)*�T,���[����8X�",
+        "ko_chars_in_gen": 0
+      },
+      {
+        "prompt": "Once upon a time",
+        "is_korean_prompt": false,
+        "gen_bytes_len": 200,
+        "gen_text_first100": "z��\u0011V·CK�������d��50���\u001b�᱒��D�\u000b�3a�\u0007�\u000e��!��`�\u000eP���\u0016\r�afW��\u0001�b�OF(�!�\u0003\u0015v���S�w\u000f�w埖i^��\u000f��g�r�X�\rY\u0000���",
+        "ko_chars_in_gen": 0
+      }
+    ],
+    "elapsed_sec": 240.7511510848999
+  },
+  "alpha": {
+    "trained": 0.3791493452169721,
+    "random": 0.47219308843763164
+  },
+  "ko_chat": {
+    "ko_prompts_passed": 0,
+    "ko_prompts_total": 5,
+    "per_prompt_ko_chars": [
+      {
+        "prompt": "안녕하세요",
+        "ko_chars": 0
+      },
+      {
+        "prompt": "의식이란 무엇인가요?",
+        "ko_chars": 0
+      },
+      {
+        "prompt": "한국어로 대답해줘",
+        "ko_chars": 0
+      },
+      {
+        "prompt": "사용자: 안녕\n도우미:",
+        "ko_chars": 0
+      },
+      {
+        "prompt": "오늘 기분이 좋아요",
+        "ko_chars": 0
+      }
+    ]
+  },
+  "five_star_criteria": {
+    "C1_cells_grow_8_to_32plus": {
+      "pass": true,
+      "value": 64,
+      "threshold": 32
+    },
+    "C2_alpha_ge_0_6": {
+      "pass": false,
+      "value": 0.3791493452169721,
+      "threshold": 0.6
+    },
+    "C3_v14_strict_substrate_coupled": {
+      "pass": false,
+      "trained_cells": 64,
+      "random_cells": 64,
+      "trained_phi": 4.1620354525715095,
+      "random_phi": 4.1673777137113746,
+      "rule": "trained.cells > 1.1*random.cells AND trained.phi > 1.1*random.phi"
+    },
+    "C4_chat_ko_3_of_5": {
+      "pass": false,
+      "value": 0,
+      "threshold": 3
+    }
+  },
+  "n_criteria_passed": 1,
+  "star_rating": "★★",
+  "verdict": "FAIL_V14_VIOLATED",
+  "honest_c3": [
+    "Real-substrate variant (cells64_final.pt = 18.5M byte-LM, 218MB) of prior toy 864-param mitosis smokes; same MitosisV5Engine wrapper + same seed=42 protocol so V14 comparison is apples-to-apples within this run.",
+    "Mitosis cells (C_DIM=64) attached SIDE-CHANNEL via fixed seeded Linear(384→64) projecting host last-layer hidden hint (head_a.weight.T @ softmax(logits)). Host model itself NOT modified — pure inference probe.",
+    "Mitosis received ~100 process calls over 1000 generated tokens (stride=10); split_patience=3 means up to ~33 splits theoretically possible from initial 8 → 41 cells. Long-trajectory at this stride is mechanism check, NOT chat eval (chat capability tracked separately via per-prompt KO syllable count).",
+    "V14 mirror = same arch + same fixed projection seed but RANDOM host weights (no ckpt load, init via PyTorch defaults under same torch.manual_seed=42). If trained ≈ random in cells/Φ → mechanism is Lorenz-driven (already shown in prior toy run, expected here too).",
+    "Lorenz autonomous chaos (σ=10, ρ=28, β=8/3) is the dominant driver of cell tension divergence; per the prior 10K-turn toy smoke this masks substrate-coupling and is the proximate cause of V14 violation. Real substrate may amplify or cancel this — the primary novel observation in THIS run.",
+    "α regression filters duplicate n_cells values (avoids x-saturation when n_cells hits MAX_CELLS=64). If <4 unique n_cells points, α=NaN and C2 fails.",
+    "Korean syllable check is the sampling-test reality (BG-R1 audit in recovery dir found 0/64 KO chars in similar setup); a positive C4 here would CONTRADICT the prior degeneracy finding and warrant investigation.",
+    "Resource: Mac CPU only (strict). No H100 fire. Single-pass ckpt load + V14 mirror sequential to control RAM at ~700MB free."
+  ]
+}

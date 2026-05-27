@@ -1,0 +1,369 @@
+{
+  "task_id": "anima_emerge_cand_d_magnitude_sweep_2026_05_05",
+  "scope": "F-CAND-D-1 magnitude disambiguation sweep: 1 prompt \u00d7 7 magnitudes (canonical) + 1 baseline (none) on real CLM v4",
+  "platform": "mac CPU (.venv-eeg python3.12)",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "load_sec": 14.4,
+  "wall_sec": 25.6,
+  "probe_prompt": {
+    "idx": 1,
+    "text": "\uc548\ub155",
+    "lang": "ko",
+    "note": "BG-Q max-drift prompt (1.28e-4 at mag=0.5)"
+  },
+  "magnitudes_swept": [
+    0.5,
+    1.0,
+    2.0,
+    5.0,
+    10.0,
+    50.0,
+    100.0
+  ],
+  "baseline_none": {
+    "mode": "none",
+    "magnitude": null,
+    "prompt_text": "\uc548\ub155",
+    "lang": "ko",
+    "phi_star": 42.11583222470806,
+    "phi_drift_vs_baseline": 0.2558322247080582,
+    "axis_activation": {
+      "identity": 0.3442630469799042,
+      "agency": 0.3508640229701996,
+      "phenomenal": 0.3534763753414154,
+      "temporal": 0.31376853585243225,
+      "social": 0.3400996923446655
+    },
+    "axis_vec": [
+      0.3442630469799042,
+      0.3508640229701996,
+      0.3534763753414154,
+      0.31376853585243225,
+      0.3400996923446655
+    ],
+    "axis_spread": 0.039707839488983154,
+    "dominant_cells": [
+      0,
+      4,
+      3
+    ],
+    "cross_attn_invoked": false,
+    "kwarg_accepted": true,
+    "has_nan": false,
+    "elapsed_sec": 5.69
+  },
+  "sweep_results": {
+    "mag_0.5": {
+      "mode": "canonical",
+      "magnitude": 0.5,
+      "prompt_text": "\uc548\ub155",
+      "lang": "ko",
+      "phi_star": 42.11570398190059,
+      "phi_drift_vs_baseline": 0.25570398190058796,
+      "phi_drift_vs_none": 0.00012824280747025796,
+      "axis_activation": {
+        "identity": 0.34430989623069763,
+        "agency": 0.35093697905540466,
+        "phenomenal": 0.3536215126514435,
+        "temporal": 0.31391939520835876,
+        "social": 0.3401813209056854
+      },
+      "axis_vec": [
+        0.34430989623069763,
+        0.35093697905540466,
+        0.3536215126514435,
+        0.31391939520835876,
+        0.3401813209056854
+      ],
+      "axis_spread": 0.03970211744308472,
+      "axis_std": 0.01415772602564382,
+      "dominant_cells": [
+        0,
+        4,
+        3
+      ],
+      "cross_attn_invoked": true,
+      "kwarg_accepted": true,
+      "has_nan": false,
+      "elapsed_sec": 0.6,
+      "inject_max_value": 0.08111070841550827,
+      "inject_l2_norm": 1.1198943853378296
+    },
+    "mag_1.0": {
+      "mode": "canonical",
+      "magnitude": 1.0,
+      "prompt_text": "\uc548\ub155",
+      "lang": "ko",
+      "phi_star": 42.11555298735202,
+      "phi_drift_vs_baseline": 0.2555529873520186,
+      "phi_drift_vs_none": 0.00027923735603962996,
+      "axis_activation": {
+        "identity": 0.3443739712238312,
+        "agency": 0.35102322697639465,
+        "phenomenal": 0.35379350185394287,
+        "temporal": 0.31409820914268494,
+        "social": 0.3402775228023529
+      },
+      "axis_vec": [
+        0.3443739712238312,
+        0.35102322697639465,
+        0.35379350185394287,
+        0.31409820914268494,
+        0.3402775228023529
+      ],
+      "axis_spread": 0.039695292711257935,
+      "axis_std": 0.014137466192466502,
+      "dominant_cells": [
+        0,
+        4,
+        3
+      ],
+      "cross_attn_invoked": true,
+      "kwarg_accepted": true,
+      "has_nan": false,
+      "elapsed_sec": 0.86,
+      "inject_max_value": 0.16222141683101654,
+      "inject_l2_norm": 2.2509243488311768
+    },
+    "mag_2.0": {
+      "mode": "canonical",
+      "magnitude": 2.0,
+      "prompt_text": "\uc548\ub155",
+      "lang": "ko",
+      "phi_star": 42.11518374717794,
+      "phi_drift_vs_baseline": 0.2551837471779379,
+      "phi_drift_vs_none": 0.0006484775301203172,
+      "axis_activation": {
+        "identity": 0.3445557951927185,
+        "agency": 0.351235568523407,
+        "phenomenal": 0.35421833395957947,
+        "temporal": 0.3145403563976288,
+        "social": 0.340514212846756
+      },
+      "axis_vec": [
+        0.3445557951927185,
+        0.351235568523407,
+        0.35421833395957947,
+        0.3145403563976288,
+        0.340514212846756
+      ],
+      "axis_spread": 0.039677977561950684,
+      "axis_std": 0.014088880706374434,
+      "dominant_cells": [
+        0,
+        4,
+        3
+      ],
+      "cross_attn_invoked": true,
+      "kwarg_accepted": true,
+      "has_nan": false,
+      "elapsed_sec": 1.47,
+      "inject_max_value": 0.3244428336620331,
+      "inject_l2_norm": 4.5898356437683105
+    },
+    "mag_5.0": {
+      "mode": "canonical",
+      "magnitude": 5.0,
+      "prompt_text": "\uc548\ub155",
+      "lang": "ko",
+      "phi_star": 42.113565380055455,
+      "phi_drift_vs_baseline": 0.2535653800554556,
+      "phi_drift_vs_none": 0.0022668446526026287,
+      "axis_activation": {
+        "identity": 0.34553903341293335,
+        "agency": 0.35220658779144287,
+        "phenomenal": 0.35623735189437866,
+        "temporal": 0.31657272577285767,
+        "social": 0.341651052236557
+      },
+      "axis_vec": [
+        0.34553903341293335,
+        0.35220658779144287,
+        0.35623735189437866,
+        0.31657272577285767,
+        0.341651052236557
+      ],
+      "axis_spread": 0.039664626121520996,
+      "axis_std": 0.013893131179686486,
+      "dominant_cells": [
+        0,
+        4,
+        3
+      ],
+      "cross_attn_invoked": true,
+      "kwarg_accepted": true,
+      "has_nan": false,
+      "elapsed_sec": 0.82,
+      "inject_max_value": 0.8111070990562439,
+      "inject_l2_norm": 12.909955024719238
+    },
+    "mag_10.0": {
+      "mode": "canonical",
+      "magnitude": 10.0,
+      "prompt_text": "\uc548\ub155",
+      "lang": "ko",
+      "phi_star": 42.10943924554251,
+      "phi_drift_vs_baseline": 0.2494392455425114,
+      "phi_drift_vs_none": 0.006392979165546819,
+      "axis_activation": {
+        "identity": 0.3494640290737152,
+        "agency": 0.3557977080345154,
+        "phenomenal": 0.36327189207077026,
+        "temporal": 0.32313042879104614,
+        "social": 0.34603020548820496
+      },
+      "axis_vec": [
+        0.3494640290737152,
+        0.3557977080345154,
+        0.36327189207077026,
+        0.32313042879104614,
+        0.34603020548820496
+      ],
+      "axis_spread": 0.04014146327972412,
+      "axis_std": 0.013546148511495206,
+      "dominant_cells": [
+        0,
+        4,
+        3
+      ],
+      "cross_attn_invoked": true,
+      "kwarg_accepted": true,
+      "has_nan": false,
+      "elapsed_sec": 0.6,
+      "inject_max_value": 1.6222141981124878,
+      "inject_l2_norm": 34.156471252441406
+    },
+    "mag_50.0": {
+      "mode": "canonical",
+      "magnitude": 50.0,
+      "prompt_text": "\uc548\ub155",
+      "lang": "ko",
+      "phi_star": 42.215612958318324,
+      "phi_drift_vs_baseline": 0.35561295831832496,
+      "phi_drift_vs_none": 0.09978073361026674,
+      "axis_activation": {
+        "identity": 0.41115155816078186,
+        "agency": 0.3913525938987732,
+        "phenomenal": 0.35611265897750854,
+        "temporal": 0.4254668056964874,
+        "social": 0.4042123854160309
+      },
+      "axis_vec": [
+        0.41115155816078186,
+        0.3913525938987732,
+        0.35611265897750854,
+        0.4254668056964874,
+        0.4042123854160309
+      ],
+      "axis_spread": 0.06935414671897888,
+      "axis_std": 0.023512291482782412,
+      "dominant_cells": [
+        0,
+        4,
+        3
+      ],
+      "cross_attn_invoked": true,
+      "kwarg_accepted": true,
+      "has_nan": false,
+      "elapsed_sec": 0.42,
+      "inject_max_value": 27.03689956665039,
+      "inject_l2_norm": 655.107666015625
+    },
+    "mag_100.0": {
+      "mode": "canonical",
+      "magnitude": 100.0,
+      "prompt_text": "\uc548\ub155",
+      "lang": "ko",
+      "phi_star": 42.22878117974754,
+      "phi_drift_vs_baseline": 0.3687811797475433,
+      "phi_drift_vs_none": 0.1129489550394851,
+      "axis_activation": {
+        "identity": 0.4170910716056824,
+        "agency": 0.41714921593666077,
+        "phenomenal": 0.3963709771633148,
+        "temporal": 0.46517708897590637,
+        "social": 0.4082885682582855
+      },
+      "axis_vec": [
+        0.4170910716056824,
+        0.41714921593666077,
+        0.3963709771633148,
+        0.46517708897590637,
+        0.4082885682582855
+      ],
+      "axis_spread": 0.06880611181259155,
+      "axis_std": 0.02345089464251937,
+      "dominant_cells": [
+        0,
+        4,
+        3
+      ],
+      "cross_attn_invoked": true,
+      "kwarg_accepted": true,
+      "has_nan": false,
+      "elapsed_sec": 0.54,
+      "inject_max_value": 108.14759826660156,
+      "inject_l2_norm": 2591.6513671875
+    }
+  },
+  "trajectory_analysis": {
+    "drift_table": [
+      {
+        "magnitude": 0.5,
+        "phi_star": 42.11570398190059,
+        "drift_vs_none": 0.00012824280747025796,
+        "axis_spread": 0.03970211744308472,
+        "has_nan": false
+      },
+      {
+        "magnitude": 1.0,
+        "phi_star": 42.11555298735202,
+        "drift_vs_none": 0.00027923735603962996,
+        "axis_spread": 0.039695292711257935,
+        "has_nan": false
+      },
+      {
+        "magnitude": 2.0,
+        "phi_star": 42.11518374717794,
+        "drift_vs_none": 0.0006484775301203172,
+        "axis_spread": 0.039677977561950684,
+        "has_nan": false
+      },
+      {
+        "magnitude": 5.0,
+        "phi_star": 42.113565380055455,
+        "drift_vs_none": 0.0022668446526026287,
+        "axis_spread": 0.039664626121520996,
+        "has_nan": false
+      },
+      {
+        "magnitude": 10.0,
+        "phi_star": 42.10943924554251,
+        "drift_vs_none": 0.006392979165546819,
+        "axis_spread": 0.04014146327972412,
+        "has_nan": false
+      },
+      {
+        "magnitude": 50.0,
+        "phi_star": 42.215612958318324,
+        "drift_vs_none": 0.09978073361026674,
+        "axis_spread": 0.06935414671897888,
+        "has_nan": false
+      },
+      {
+        "magnitude": 100.0,
+        "phi_star": 42.22878117974754,
+        "drift_vs_none": 0.1129489550394851,
+        "axis_spread": 0.06880611181259155,
+        "has_nan": false
+      }
+    ],
+    "trajectory_shape": "sub_linear",
+    "f_cand_d_1_threshold": 0.01,
+    "f_cand_d_1_hit_at_magnitude": 50.0,
+    "criterion_2_threshold": 1.0,
+    "criterion_2_hit_at_magnitude": null,
+    "nan_at_magnitude": null,
+    "phi_baseline_none": 42.11583222470806
+  }
+}

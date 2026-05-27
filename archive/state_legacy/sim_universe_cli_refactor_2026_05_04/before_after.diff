@@ -1,0 +1,267 @@
+diff --git a/README.md b/README.md
+index f6de60a6..0758f269 100644
+--- a/README.md
++++ b/README.md
+@@ -209,6 +209,7 @@ auto-bootstrapped by [`install.hexa`](install.hexa)):
+ | Package | Pin | Purpose | Repo |
+ |---------|-----|---------|------|
+ | [`qmirror`](https://github.com/need-singularity/qmirror) | `^1.0.0` | Quantum Mirror substrate (CHSH / IIT / NIST / QRNG) consumed by `nexus/modules/qmirror/*` | `hx install qmirror` |
++| [`sim-universe`](https://github.com/need-singularity/sim-universe) | `^1.0.0` | Virtual universe simulation runtime (anu_time τ-clock + multiverse interferometer + ouroboros QRNG + Bostrom test + Gödel-Q + qpu_bridge) consumed by `nexus/cli/sim.hexa` (4-tier resolution) | `hx install sim-universe` |
+ 
+ ## Run
+ 
+diff --git a/engine/nexus_cli.hexa b/engine/nexus_cli.hexa
+index 4cf589f5..20e6219b 100644
+--- a/engine/nexus_cli.hexa
++++ b/engine/nexus_cli.hexa
+@@ -41,6 +41,7 @@ let DISC_QUERY = NX + "/discovery/discovery_query.hexa"
+ let LOG_PATH = NX + "/logs/nexus_cli.log"
+ let CLI_SPEC_PATH = NX + "/engine/nexus_cli_spec.json"
+ let QMIRROR_CLI = NX + "/cli/qmirror.hexa"
++let SIM_CLI     = NX + "/cli/sim.hexa"
+ 
+ // ─── raw 99 cli-coverage backends (cross-repo, sibling of $NX) ───
+ // hive_governance.hexa mirror: 5 governance lints reachable via canonical
+@@ -740,6 +741,15 @@ fn cmd_help() {
+     println("  qmirror qrng [--bits=N]                  quantum RNG (4-tier ANU)")
+     println("  qmirror selftest                         full Phase 1+2 falsifier sweep")
+     println("")
++    println("sim (virtual universe — sim-universe standalone shellout):")
++    println("  sim status                               module inventory + tier table + caveats")
++    println("  sim anu [--ticks=N]                      anu_time τ-clock mini_world demo")
++    println("  sim multiverse [--m=M --t=T]             multiverse interferometer + KS-test")
++    println("  sim qrng [--bits=N]                      ouroboros QRNG perturbation")
++    println("  sim bostrom                              Bostrom test (anu_collector)")
++    println("  sim godel                                Gödel-Q mutator bootstrap")
++    println("  sim selftest [--quick]                   Tier-A smoke pass")
++    println("")
+     println("raw 99 cli-coverage (governance lints, cross-repo backends):")
+     println("  raw triad [--strict]                     hexa-lang triad_lint (raw 95)")
+     println("  hexa-only [args...]                      hexa-only ban scan (raw 9)")
+@@ -819,6 +829,12 @@ fn subcmd_help(sub: str) {
+         println("  subcmds: status | chsh | nist | iit | qrng | selftest")
+         println("  detail:  nexus qmirror help   (full router help)")
+         println("  router:  " + QMIRROR_CLI)
++    } else if sub == "sim" {
++        println("nexus sim <subcmd> [flags...]")
++        println("  virtual universe simulation runtime — sim-universe standalone shellout")
++        println("  subcmds: status | anu | multiverse | qrng | bostrom | godel | selftest")
++        println("  detail:  nexus sim help   (full router help)")
++        println("  router:  " + SIM_CLI)
+     } else if sub == "raw" {
+         println("nexus raw triad [--strict]")
+         println("  hexa-lang triad_lint passthrough (raw 95)")
+@@ -867,6 +883,30 @@ fn cmd_qmirror(a: [str]) {
+     print(raw)
+ }
+ 
++// ─── subcommand: sim (delegates to cli/sim.hexa router) ───
++// Pure delegation — sim.hexa owns all 7 subcmd dispatch + audit + caveats.
++// Mirrors qmirror dispatch pattern (commit f81239d6). Forward all args after
++// `sim` verbatim.
++
++fn cmd_sim(a: [str]) {
++    let n = len(a)
++    let mut fwd: [str] = []
++    let mut i: i64 = 3   // skip [argv0, script, "sim"]
++    while i < n {
++        fwd = fwd + [a[i]]
++        i = i + 1
++    }
++    // If file missing, fail-fast with diagnostic.
++    let exists = exec("[ -f " + shq(SIM_CLI) + " ] && echo Y || echo N").trim()
++    if exists != "Y" {
++        eprintln("nexus-cli sim: router not found: " + SIM_CLI)
++        eprintln("reason: io-error: cli/sim.hexa absent")
++        exit(1)
++    }
++    let raw = run_hexa(SIM_CLI, fwd)
++    print(raw)
++}
++
+ // ─── main dispatcher ───
+ 
+ // ─── raw 99 cli-coverage subcommands (raw 9/175/13/21/95) ──────────
+@@ -1090,6 +1130,10 @@ fn main() {
+         cmd_qmirror(a)
+         let qmir_sub = if n >= 4 { a[3] } else { "help" }
+         audit_log(caller, "qmirror " + qmir_sub, "", 0, start_ts)
++    } else if sub == "sim" {
++        cmd_sim(a)
++        let sim_sub = if n >= 4 { a[3] } else { "help" }
++        audit_log(caller, "sim " + sim_sub, "", 0, start_ts)
+     } else if sub == "raw" {
+         // raw 99 cli-coverage: only `raw triad` honored at nexus surface.
+         // (full raw verify/gate/taxonomy live in hive — keep nexus minimal.)
+diff --git a/engine/nexus_cli_spec.json b/engine/nexus_cli_spec.json
+index b251bc53..5d1be835 100644
+--- a/engine/nexus_cli_spec.json
++++ b/engine/nexus_cli_spec.json
+@@ -619,6 +619,103 @@
+         "selftest assumes infrastructure intact (_python_bridge, ANU fixtures, Braket dir)",
+         "Future cond additions (cond.9+) need router updates — current 8/8 hardcoded"
+       ]
++    },
++    "sim": {
++      "desc": "virtual universe simulation runtime — sim-universe standalone shellout router (mirrors qmirror precedent)",
++      "usage": "nexus sim <subcmd> [flags...]",
++      "delegates_to": "shared/cli/sim.hexa (router) → standalone sim-universe CLI (4-tier resolution)",
++      "router_version": "0.1.0",
++      "standalone_repo": "https://github.com/need-singularity/sim-universe",
++      "resolution_tiers": [
++        "$SIM_UNIVERSE_ROOT env",
++        "/Users/ghost/core/sim-universe (Mac dev)",
++        "$HOME/core/sim-universe (user-home)",
++        "PATH-resolved sim-universe binary"
++      ],
++      "subcommands": {
++        "status": {
++          "usage": "nexus sim status [--json]",
++          "desc": "module inventory + tier table + caveats",
++          "cost": "$0 read-only"
++        },
++        "anu": {
++          "usage": "nexus sim anu [--ticks=N] [--json]",
++          "desc": "anu_time τ-clock mini_world demo (Tier-A)",
++          "flags": {
++            "--ticks": {
++              "type": "int",
++              "default": 10,
++              "desc": "number of ticks to simulate"
++            }
++          },
++          "cost": "$0 mock; $0 live ANU when SIM_UNIVERSE_LIVE=1"
++        },
++        "multiverse": {
++          "usage": "nexus sim multiverse [--m=M --t=T] [--json]",
++          "desc": "multiverse interferometer + KS-test demo (Tier-A)",
++          "flags": {
++            "--m": {
++              "type": "int",
++              "default": 5,
++              "desc": "M (parallel branches)"
++            },
++            "--t": {
++              "type": "int",
++              "default": 100,
++              "desc": "T (timesteps)"
++            }
++          },
++          "cost": "$0 (M=15, T=500 full ~5min CPU)"
++        },
++        "qrng": {
++          "usage": "nexus sim qrng [--bits=N] [--json]",
++          "desc": "ouroboros QRNG perturbation comparison (Tier-A2)",
++          "flags": {
++            "--bits": {
++              "type": "int",
++              "default": 1024,
++              "desc": "sample size in bits"
++            }
++          },
++          "cost": "$0 mock urandom; live ANU per env"
++        },
++        "bostrom": {
++          "usage": "nexus sim bostrom [--json]",
++          "desc": "Bostrom test harness — anu_collector (Tier-B)",
++          "cost": "$0"
++        },
++        "godel": {
++          "usage": "nexus sim godel [--json]",
++          "desc": "Gödel-Q mutator bootstrap demo (Tier-A2)",
++          "cost": "$0"
++        },
++        "selftest": {
++          "usage": "nexus sim selftest [--quick] [--json]",
++          "desc": "Tier-A smoke pass (anu_time + multiverse + ouroboros)",
++          "flags": {
++            "--quick": {
++              "type": "bool",
++              "default": false,
++              "desc": "skip ouroboros baseline (anu + mi_calc only)"
++            }
++          },
++          "cost": "$0 mock; ~5-10s",
++          "exit": "0 PASS, 1 any FAIL"
++        }
++      },
++      "output_json": {
++        "sim_universe": "string (CLI version)",
++        "subcmd": "string",
++        "verdict": "PASS|FAIL (selftest only)",
++        "pass": "bool (per-subcmd)"
++      },
++      "caveats_raw10_c3": [
++        "sim-universe CLI must be on PATH/env: thin shellout router; exit 127 with structured error if all 4 tiers fail. Pre-flight: hx install sim-universe or set $SIM_UNIVERSE_ROOT",
++        "Version-pin rigid: nexus declares sim-universe ^1.0.0; standalone CLI version skew (e.g. 1.x → 2.x) may break the 7-subcmd surface forwarded here; router does not validate semver at runtime",
++        "Refactor smoke test sequential: router landed via 7-subcmd serial probe; concurrent invocations not exercised under refactor; streaming behavior under parallel calls unverified",
++        "Registry collision check: hexa-lang/tool/pkg/registry.tsv L23 sim-universe entry added in this cycle; future pkg-manager rebuild resolving entries by name only could shadow; mitigation: registry sources prioritize repo column",
++        "Fresh-install path untested: install.hexa Phase 1 ensure_runtime_dep gated on command -v sim-universe; on clean machine where neither tier-2 nor tier-3 has the repo cloned and hx is not on PATH, bootstrap exits with WARN (non-fatal); user must clone manually OR install hexa-lang first"
++      ]
+     }
+   },
+   "subcmds_v2": {
+diff --git a/hexa.toml b/hexa.toml
+index b612716b..ce2e9a39 100644
+--- a/hexa.toml
++++ b/hexa.toml
+@@ -56,7 +56,18 @@ qmirror = "^1.0.0"
+ #   Consumer: nexus/modules/qmirror/* delegates to `qmirror` CLI
+ #   Install: hx install qmirror   (auto-invoked by nexus install.hexa)
+ 
++sim-universe = "^1.0.0"
++# sim-universe — Virtual universe simulation runtime
++#                (anu_time τ-clock + multiverse interferometer + ouroboros QRNG +
++#                 Bostrom test harness + Gödel-Q mutator + qpu_bridge).
++#   Repo:     https://github.com/need-singularity/sim-universe
++#   Registry: hexa-lang/tool/pkg/registry.tsv L23 (sim-universe 1.0.0)
++#   Consumer: nexus/cli/sim.hexa delegates to `sim-universe` CLI (4-tier resolve)
++#   Install:  hx install sim-universe   (auto-invoked by nexus install.hexa)
++#   Provenance: extracted from nexus/sim_bridge/ + nexus/core/sim/ on 2026-05-04
++#               (forensic 2026-04-27 EXISTS_RUNNABLE; ~17.8k LoC core)
++
+ # ── n=6 alignment ──────────────────────────────────────────
+ # keywords count = 6 = sigma(6)/2
+ # categories count = 3 < tau(6)=4
+-# dependencies count = 1 (minimal — single first-class consumed CLI)
++# dependencies count = 2 (qmirror + sim-universe — two first-class substrate CLIs)
+diff --git a/install.hexa b/install.hexa
+index eea1beb9..7de05209 100644
+--- a/install.hexa
++++ b/install.hexa
+@@ -10,8 +10,8 @@
+ //
+ // Responsibilities (each idempotent):
+ //   1. Bootstrap runtime-package dependencies declared in hexa.toml
+-//      [dependencies] — currently: qmirror (^1.0.0). Skipped when
+-//      the dep CLI is already on PATH (idempotent re-install safe).
++//      [dependencies] — currently: qmirror (^1.0.0), sim-universe (^1.0.0).
++//      Skipped when the dep CLI is already on PATH (idempotent re-install safe).
+ //   2. Verify canonical entry cli/run.hexa exists.
+ //   3. Ensure ~/.hx/bin/nexus shim points at $HX_PKG_DIR/cli/run.hexa
+ //      (hx generates this after the hook returns; this file only
+@@ -31,6 +31,7 @@ fn main() -> void {
+     // Single source of truth = hexa.toml [dependencies]; this loop is the
+     // imperative bootstrap until hx CLI grows nested-dep resolution.
+     ensure_runtime_dep("qmirror", "^1.0.0")
++    ensure_runtime_dep("sim-universe", "^1.0.0")
+ 
+     let entry_src = root + "/cli/run.hexa"
+     if file_exists(entry_src) == false {
+ M README.md
+ M engine/nexus_cli.hexa
+ M engine/nexus_cli_spec.json
+ M hexa.toml
+ M install.hexa
+?? cli/sim.hexa
+diff --git a/tool/pkg/registry.tsv b/tool/pkg/registry.tsv
+index 7d5a1df3..c45118b7 100644
+--- a/tool/pkg/registry.tsv
++++ b/tool/pkg/registry.tsv
+@@ -19,4 +19,5 @@ hexa-lang	1.0.0	hexa	https://github.com/need-singularity/hexa-lang		HEXA program
+ hexa	1.0.0	hexa	https://github.com/need-singularity/hexa-lang	/Users/ghost/Dev/hexa-lang	HEXA interpreter bootstrap — bin/build.hexa 로 hexa_cc→hexa_v2→stage0 자동 빌드 후 $HX_BIN/hexa 설치
+ hive	0.70.1	bin/hive	https://github.com/need-singularity/hive	/Users/ghost/core/hive	pi-agent-core fork — AI-agent swarm. Root = hive/main on need-singularity/hive. Ships coding-agent CLI (bin/hive auto-builds on first run).
+ yoga	3.2.1	build/yoga-cli	https://github.com/facebook/yoga	/Users/ghost/Dev/hexa-lang/lib/yoga	Facebook Flexbox layout engine — JSON CLI wrapper (echo spec | yoga-cli layout)
+-qmirror	1.0.0	cli/qmirror.hexa	https://github.com/need-singularity/qmirror		Quantum Mirror — classical-CPU + ANU QRNG + Aer simulator. 8/8 closure cond met (CHSH/IIT/NIST/cross-vendor). Apache-2.0.
++qmirror	2.0.0	cli/qmirror.hexa	https://github.com/need-singularity/qmirror		Quantum Mirror — classical-CPU + ANU QRNG + Aer simulator. 8/8 closure cond met (CHSH/IIT/NIST/cross-vendor). Apache-2.0.
++sim-universe	1.0.0	cli/sim-universe.hexa	https://github.com/need-singularity/sim-universe		Virtual universe simulation runtime — anu_time τ-clock + multiverse interferometer + ouroboros QRNG + Bostrom test + Gödel-Q mutator + qpu_bridge. Toy lattice models w/ QRNG entropy injection (raw#10 honest C3); ~4800 LoC sim core, 10 modules + sim_agent surface. Apache-2.0.

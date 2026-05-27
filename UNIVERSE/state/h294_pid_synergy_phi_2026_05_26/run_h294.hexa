@@ -1,0 +1,234 @@
+// UNIVERSE/state/h294_pid_synergy_phi_2026_05_26/run_h294.hexa
+//
+//   H_294 — Which flow component tracks Φ? Interaction-information (synergy vs
+//   redundancy) decomposition.  (H_293 / paper §future follow-up)
+//
+//   QUESTION
+//     H_293 showed no fixed-ORDER transfer entropy equals Φ (bivariate under-counts
+//     synergy, multivariate over-counts non-integrated flow). The paper §future
+//     asks WHICH flow COMPONENT (synergy / redundancy / unique) tracks Φ. We split
+//     each cell's directed flow into synergy vs redundancy via the conditional
+//     interaction information (co-information), and correlate each with Φ.
+//
+//   CONDITIONAL INTERACTION INFORMATION (per cell, deterministic-substrate form)
+//     For cell i: target T=next_i, sources S1=left (b_{i-1}), S2=right (b_{i+1}),
+//     condition C=self (b_i). The conditional interaction information
+//       II_c = I(T;S1|C) + I(T;S2|C) - I(T;{S1,S2}|C)
+//            = H(T|C) - H(T|S1,C) - H(T|S2,C)         (deterministic ⇒ H(T|all)=0)
+//     II_c < 0  ⇒ SYNERGY-dominant (sources inform T only jointly — e.g. XOR);
+//     II_c > 0  ⇒ REDUNDANCY-dominant (sources share information about T).
+//     Per panel:  synergy_total = Σ_i max(0,-II_c) ,  redundancy_total = Σ_i max(0,II_c).
+//     XOR-3 (rule 150) given self: T = self⊕S1⊕S2 ⇒ II_c=-1 (pure synergy).
+//     Identity (204): T=self ⇒ II_c=0 (no source flow).
+//
+//   SEED-HYPOTHESIS H1 (TESTED)
+//     SYNERGY is the flow component that tracks Φ: Pearson r(synergy_total, Φ_mean)
+//     >= 0.5 AND > r(redundancy_total, Φ_mean). (Prediction: synergy is necessary
+//     for integration but rule 90 — synergy without integration — keeps it
+//     imperfect, so a PARTIAL is plausible: synergy ≻ redundancy but rule 90 breaks
+//     sufficiency. Measurement decides.)
+//
+//   METHOD (reuse HEXAD/IIT4/lib — g61)
+//     • eca_tpm / big_phi / iit4_bit / iit4_pow2.
+//     • II_c via marginal entropies of the (T,S1,S2,C) joint over the uniform
+//       2^n ensemble (16-bin histogram + bitmask projection).
+//
+//   PRE-REGISTERED FALSIFIERS (frozen 2026-05-26, BEFORE measuring)
+//     F294.1 SYNERGY-WITNESS — XOR rules 150/105 are synergy-dominant: per-cell
+//            II_c < 0 ⇒ their synergy contribution > 0 and redundancy = 0.
+//     F294.2 r-VERDICT — Pearson r(synergy_total, Φ_mean) and r(redundancy_total,
+//            Φ_mean) reported verbatim; clause SYNERGY≻REDUNDANCY iff
+//            r(syn) > r(red).
+//     F294.3 DISSOCIATION-WITNESS — rule 90 is synergy-dominant (synergy>0) yet
+//            Φ_mean=0 (synergy is NOT sufficient for integration — same rule that
+//            broke LZ/multivariate-TE).
+//     F294.4 ANCHORS — constants 0/255 and identity 204: synergy_total=0 AND
+//            redundancy_total=0 (no inter-source flow).
+//     F294.5 BOUND/DETERMINISM — 0<=II contributions; rule 150 re-run identical.
+//
+//   deterministic · hexa-only · $0 mac-local · LLM none · NO GPU.
+//   honest scope: co-information (net) is the 2-source synergy/redundancy summary,
+//     NOT the full Williams-Beer PID 4-atom lattice; n=4; conditioned on self.
+// ════════════════════════════════════════════════════════════════════════════
+import "/tmp/wt-c32/HEXAD/IIT4/lib/iit4_eca.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+fn log2(x: float) -> float { return log(x) / log(2.0) }
+fn nsqrt(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let mut g = x
+    let mut i = 0
+    while i < 60 { g = 0.5 * (g + x / g); i = i + 1 }
+    return g
+}
+
+// entropy of the marginal of a 16-bin (T,S1,S2,C) joint over the variables in `mask`
+// (bit3=T(8) bit2=S1(4) bit1=S2(2) bit0=C(1)). counts indexed 0..15.
+fn marg_entropy(counts: array, mask: int, total: float) -> float {
+    let mut sub = []
+    let mut z = 0
+    while z < 16 { sub = sub.push(0); z = z + 1 }
+    let mut k = 0
+    while k < 16 {
+        let key = k & mask
+        sub[key] = sub[key] + counts[k]
+        k = k + 1
+    }
+    let mut h = 0.0
+    let mut j = 0
+    while j < 16 {
+        if sub[j] > 0 { let p = to_float(sub[j]) / total; h = h - p * log2(p) }
+        j = j + 1
+    }
+    return h
+}
+
+// conditional interaction information for cell i: II_c = H(T|C) - H(T|S1,C) - H(T|S2,C).
+fn ii_cond_i(tpm: array, n: int, i: int) -> float {
+    let full = iit4_pow2(n)
+    let mut counts = []
+    let mut z = 0
+    while z < 16 { counts = counts.push(0); z = z + 1 }
+    let mut s = 0
+    while s < full {
+        let c = iit4_bit(s, i)                       // self
+        let s1 = iit4_bit(s, (i - 1 + n) % n)        // left
+        let s2 = iit4_bit(s, (i + 1) % n)            // right
+        let mut t = 0
+        if tpm[s * n + i] > 0.5 { t = 1 }            // next_i
+        counts[8 * t + 4 * s1 + 2 * s2 + c] = counts[8 * t + 4 * s1 + 2 * s2 + c] + 1
+        s = s + 1
+    }
+    let tot = to_float(full)
+    // H(T|C) = H(T,C)-H(C) ; H(T|S1,C)=H(T,S1,C)-H(S1,C) ; H(T|S2,C)=H(T,S2,C)-H(S2,C)
+    let h_t_given_c  = marg_entropy(counts, 8 + 1, tot)     - marg_entropy(counts, 1, tot)
+    let h_t_given_s1c = marg_entropy(counts, 8 + 4 + 1, tot) - marg_entropy(counts, 4 + 1, tot)
+    let h_t_given_s2c = marg_entropy(counts, 8 + 2 + 1, tot) - marg_entropy(counts, 2 + 1, tot)
+    return h_t_given_c - h_t_given_s1c - h_t_given_s2c
+}
+
+// panel synergy / redundancy totals for a rule.
+fn syn_total(rule: int, n: int) -> float {
+    let tpm = eca_tpm(rule, n)
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n { let ii = ii_cond_i(tpm, n, i); if ii < 0.0 { acc = acc - ii }; i = i + 1 }
+    return acc
+}
+fn red_total(rule: int, n: int) -> float {
+    let tpm = eca_tpm(rule, n)
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n { let ii = ii_cond_i(tpm, n, i); if ii > 0.0 { acc = acc + ii }; i = i + 1 }
+    return acc
+}
+
+fn phi_mean(rule: int, n: int) -> float {
+    let tpm = eca_tpm(rule, n)
+    let full = iit4_pow2(n)
+    let mut acc = 0.0
+    let mut st = 0
+    while st < full { acc = acc + big_phi(tpm, n, st)[0]; st = st + 1 }
+    return acc / to_float(full)
+}
+
+fn pearson(xs: array, ys: array, m: int) -> float {
+    let mut sx = 0.0
+    let mut sy = 0.0
+    let mut i = 0
+    while i < m { sx = sx + xs[i]; sy = sy + ys[i]; i = i + 1 }
+    let mx = sx / to_float(m)
+    let my = sy / to_float(m)
+    let mut cov = 0.0
+    let mut vx = 0.0
+    let mut vy = 0.0
+    i = 0
+    while i < m {
+        let dx = xs[i] - mx
+        let dy = ys[i] - my
+        cov = cov + dx * dy
+        vx = vx + dx * dx
+        vy = vy + dy * dy
+        i = i + 1
+    }
+    if (vx < 0.000000000001) || (vy < 0.000000000001) { return 0.0 }
+    return cov / nsqrt(vx * vy)
+}
+
+fn main() {
+    let n = 4
+    println("================================================================")
+    println("  H_294 — synergy vs redundancy (conditional interaction info) vs Phi")
+    println("  (II_c=H(T|C)-H(T|S1,C)-H(T|S2,C) per cell; II<0=synergy, >0=redundancy)")
+    println("================================================================")
+
+    let rules = [0, 255, 204, 51, 150, 105, 90, 60, 110, 30]
+    let m = 10
+    let mut syn = []
+    let mut red = []
+    let mut ps = []
+    let mut idx = 0
+    while idx < m {
+        let r = rules[idx]
+        let sy = syn_total(r, n)
+        let rd = red_total(r, n)
+        let p = phi_mean(r, n)
+        syn = syn.push(sy)
+        red = red.push(rd)
+        ps = ps.push(p)
+        println("  rule " + str(r) + " : synergy=" + str(sy) + " redundancy=" + str(rd) + "  Phi_mean=" + str(p))
+        idx = idx + 1
+    }
+
+    let r_syn = pearson(syn, ps, m)
+    let r_red = pearson(red, ps, m)
+    println("  --")
+    println("  F294.2: r(synergy,Phi)=" + str(r_syn) + "   r(redundancy,Phi)=" + str(r_red))
+    let syn_tracks = (r_syn >= 0.5) && (r_syn > r_red)
+    if syn_tracks { println("          => SYNERGY tracks Phi (r>=0.5 AND > redundancy)") }
+    else { println("          => SYNERGY does NOT cleanly track Phi (clause fails)") }
+
+    // ── F294.1 SYNERGY-WITNESS (XOR rules 150=idx4, 105=idx5) ───────────
+    check("F294.1a XOR rule150 synergy-dominant (synergy>0, redundancy=0)", (syn[4] > 0.000001) && approx(red[4], 0.0))
+    check("F294.1b XOR rule105 synergy-dominant", (syn[5] > 0.000001) && approx(red[5], 0.0))
+
+    // ── F294.3 DISSOCIATION-WITNESS (rule 90 = idx6) ────────────────────
+    println("  F294.3: rule90 synergy=" + str(syn[6]) + " Phi_mean=" + str(ps[6]))
+    check("F294.3 DISSOCIATION: rule 90 synergy>0 yet Phi=0 (synergy NOT sufficient)", (syn[6] > 0.000001) && approx(ps[6], 0.0))
+
+    // ── F294.4 ANCHORS ──────────────────────────────────────────────────
+    check("F294.4a ANCHOR: rule 0 synergy=0 redundancy=0", approx(syn[0], 0.0) && approx(red[0], 0.0))
+    check("F294.4b ANCHOR: rule 255 synergy=0 redundancy=0", approx(syn[1], 0.0) && approx(red[1], 0.0))
+    check("F294.4c ANCHOR: rule 204 (identity) synergy=0 redundancy=0", approx(syn[2], 0.0) && approx(red[2], 0.0))
+
+    // ── F294.5 BOUND + DETERMINISM ──────────────────────────────────────
+    let mut bound_ok = true
+    let mut b = 0
+    while b < m { if !(syn[b] >= 0.0 - 0.000001) { bound_ok = false }; if !(red[b] >= 0.0 - 0.000001) { bound_ok = false }; b = b + 1 }
+    check("F294.5a BOUND: synergy>=0 redundancy>=0 all rules", bound_ok)
+    check("F294.5b DETERMINISM: rule 150 synergy re-run identical", approx(syn[4], syn_total(150, n)))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  r(synergy,Phi)=" + str(r_syn) + " r(redundancy,Phi)=" + str(r_red))
+    if syn_tracks {
+        println("  VERDICT: H1 SUPPORTED — synergy is the flow component that tracks Phi.")
+    } else {
+        println("  VERDICT: H1 PARTIAL/FALSIFIED — synergy is necessary (all integrating rules")
+        println("           synergistic) but NOT sufficient (rule 90: synergy>0, Phi=0). No single")
+        println("           flow component equals Phi — integration is a SYSTEM-cut property.")
+    }
+    println("================================================================")
+    if FAIL > 0 { panic("H_294 had FALSIFIER FAILURES") }
+}

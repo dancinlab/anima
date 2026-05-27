@@ -1,0 +1,65 @@
+# anima `ready/` → ubu1 rsync recipe (2026-05-06)
+# Source: /Users/ghost/core/anima/ready/ (mac canonical)
+# Dest: aiden@ubu1:/home/aiden/core/anima/ready/ (currently empty)
+
+# === STEP 1: dry-run (verify file count + size) ===
+rsync -avz --dry-run --stats \
+  --exclude='.git' \
+  --exclude='*.pt' \
+  --exclude='*.safetensors' \
+  --exclude='*.bin' \
+  --exclude='*.pyc' \
+  --exclude='__pycache__' \
+  --exclude='.pytest_cache' \
+  --exclude='target/' \
+  --exclude='node_modules/' \
+  --exclude='.claude/worktrees/' \
+  --exclude='*.txt' \
+  --exclude='*.jsonl' \
+  /Users/ghost/core/anima/ready/ aiden@ubu1:/home/aiden/core/anima/ready/
+
+# Expected dry-run result:
+#   Number of files: 3,825 (reg: 3,589, dir: 228, link: 8)
+#   Total file size: 41,128,784 bytes (~41 MB)
+#   Total bytes sent: ~168 KB (dry-run metadata only)
+
+# === STEP 2: actual sync (after user confirm) ===
+rsync -avzP --stats \
+  --exclude='.git' \
+  --exclude='*.pt' \
+  --exclude='*.safetensors' \
+  --exclude='*.bin' \
+  --exclude='*.pyc' \
+  --exclude='__pycache__' \
+  --exclude='.pytest_cache' \
+  --exclude='target/' \
+  --exclude='node_modules/' \
+  --exclude='.claude/worktrees/' \
+  --exclude='*.txt' \
+  --exclude='*.jsonl' \
+  /Users/ghost/core/anima/ready/ aiden@ubu1:/home/aiden/core/anima/ready/
+
+# === EXCLUSION RATIONALE ===
+# .git           : embedded git repo (NOT submodule), 7.1GB; ubu1 will re-init or skip (raw#15 friendly)
+# *.pt/.safetensors/.bin : model weights, HF Hub only
+# target/        : Rust/Cargo build artifacts (~8.5GB combined)
+# __pycache__/.pyc/.pytest_cache : Python build artifacts
+# *.txt/*.jsonl  : large corpora (~30 files >5MB) — fetch from HF on ubu1
+# node_modules/  : npm artifacts
+# .claude/worktrees/ : agent transient state, not for ubu1
+
+# === SIZE BREAKDOWN ===
+# mac local total      : 41 GB (huge due to .git + target/)
+# .git (embedded)      : 7.1 GB
+# anima/anima-rs/target: 8.0 GB
+# anima-agent/.../target: 505 MB
+# anima/data/*.txt     : >1 GB each (corpus_bench_1gb.txt, corpus_multilingual_merged_1gb.txt)
+# checkpoints/*.pt     : variable (animalm_step_50.pt etc.)
+# After exclusions     : ~41 MB transferred (training/, anima/, bench/, core/, etc. code only)
+
+# === POST-SYNC VERIFICATION ===
+ssh ubu1 "ls -la /home/aiden/core/anima/ready/training/ && ls /home/aiden/core/anima/ready/ | head -20"
+ssh ubu1 "find /home/aiden/core/anima/ready -type f | wc -l"  # expect ~3,597
+
+# Python smoke (train_clm.py top-level imports — corpus path probe will fail by design):
+ssh ubu1 "/home/aiden/venv_orchestrator/bin/python -c 'import ast; ast.parse(open(\"/home/aiden/core/anima/ready/training/train_clm.py\").read()); print(\"AST_OK\")'"

@@ -1,0 +1,98 @@
+{
+ "cycle": "all-go remaining blockers — $0 formal, result-agnostic (2026-05-16)",
+ "pyphi_version": "1.2.0",
+ "v8_formal": {
+  "hyp": "H_182-187 V8 formal PyPhi (real grafts→TPM, N=4 exhaustive)",
+  "per_family": {
+   "H_182": {
+    "binary": [
+     1,
+     0,
+     0,
+     1
+    ],
+    "phi_max": 0.0,
+    "formal_emergence": false,
+    "verdict": "AT-RISK-FORMAL 🔵 (Φ<0.5, closed-by-formal)"
+   },
+   "H_183": {
+    "binary": [
+     0,
+     1,
+     0,
+     1
+    ],
+    "phi_max": 0.0,
+    "formal_emergence": false,
+    "verdict": "AT-RISK-FORMAL 🔵 (Φ<0.5, closed-by-formal)"
+   },
+   "H_185": {
+    "binary": [
+     0,
+     0,
+     1,
+     1
+    ],
+    "phi_max": 0.0,
+    "formal_emergence": false,
+    "verdict": "AT-RISK-FORMAL 🔵 (Φ<0.5, closed-by-formal)"
+   },
+   "H_186": {
+    "binary": [
+     0,
+     0,
+     1,
+     1
+    ],
+    "phi_max": 0.0,
+    "formal_emergence": false,
+    "verdict": "AT-RISK-FORMAL 🔵 (Φ<0.5, closed-by-formal)"
+   },
+   "H_187": {
+    "binary": [
+     1,
+     0,
+     0,
+     1
+    ],
+    "phi_max": 0.0,
+    "formal_emergence": false,
+    "verdict": "AT-RISK-FORMAL 🔵 (Φ<0.5, closed-by-formal)"
+   }
+  },
+  "tier": "b-pyphi-formal",
+  "honest_c3": "formal PyPhi on real graft math (NOT Φ★ proxy). Result-agnostic: Φ<0.5 ⟹ AT-RISK-FORMAL 🔵 (closed, like H_178), Φ≥0.5 ⟹ SUPPORTED-FORMAL 🔵. NOT the $200-600 GPU sweep (that was Φ★ proxy, $0/10.6s)."
+ },
+ "h010": {
+  "hyp": "H_010 holographic area-vs-volume",
+  "phi_boundary_ring": 0.375,
+  "phi_bulk_star": 0.32812,
+  "boundary_ge_bulk": true,
+  "tier": "b-pyphi-formal",
+  "verdict": "SUPPORTED-FORMAL 🔵 (Φ tracks BOUNDARY ≥ BULK — holographic area-scaling deterministic)",
+  "honest_c3": "minimal N=4 boundary(ring) vs bulk(star) formal IIT-3.0. Upgrades H_010 from SUPPORTED-BY-PROXY (A9 carry) to own formal test. NOT full AdS/CFT — analogical depth unchanged."
+ },
+ "h184": {
+  "hyp": "H_184 structure-over-dynamics",
+  "phi_OR": 0.375,
+  "phi_AND": 0.375,
+  "structure_invariant_both_emerge": true,
+  "tier": "b-pyphi-formal",
+  "verdict": "SUPPORTED-FORMAL 🔵 (same ring structure ⟹ Φ>0 under BOTH OR/AND dynamics — structure-over-dynamics deterministic)",
+  "honest_c3": "2-dynamics formal test on fixed structure. Closes the Stage-2 'structure-over-dynamics' sub-claim formally; the broader V8 M-family 6-primitive meta-claim unchanged."
+ },
+ "h190": {
+  "hyp": "H_190 Banach-reconciliation sub-claim ONLY",
+  "closed_form": "g(x)=ρx+c, ρ<1 ⟹ unique x*=c/(1−ρ), |xₙ−x*|=ρⁿ|x₀−x*| (Banach 1922)",
+  "sympy_verified": true,
+  "tier": "a-sympy",
+  "verdict": "SUPPORTED-FORMAL 🔵 (Banach sub-claim closed)",
+  "GOVERNANCE_NOT_PROMOTED": "H_190 n=6 divisor-family numerology proximity (5/6 Hc) = AGENTS.tape f2 verification-by-lattice-tautology, EXPLICITLY FORBIDDEN. H_190 stays PARTIAL — ONLY the Banach sub-claim is closed; the numerology is NOT a valid 🔵 anchor (refusing to fake via lattice-fit, project mandate g2/f1/f2)."
+ },
+ "genuinely_deferred_NOT_fakeable": {
+  "H_013": "longitudinal EEG 5-axis — needs anima-eeg-core hardware + time-series subject recording. NO $0/$ path. DEFERRED (EEG.md).",
+  "H_014_H_015": "EEG LZ76 / gamma-theta — the EEG CROSS-VALIDATION anchor needs hardware. ($0 anima-internal LZ/spectral surrogate is a DEFINED methodology in EEG.md but surrogate ≠ the EEG-anchored hypothesis claim — anchor stays DEFERRED.)",
+  "H_188_Hc_921": "PCI clinical — needs REAL human TMS-EEG patient data (Massimini 2013). External, NOT $-purchasable. Hc_924 octopus half already 🔵 closed (prior commit). Clinical anchor DEFERRED; anima-internal PCI surrogate = defined methodology only (≠ clinical claim).",
+  "why_not_faked": "AGENTS.tape g3 — no verdict without real measurement. Hardware/clinical anchors are genuinely $-unsolvable; honest DEFERRED, not a fabricated 🔵."
+ }
+}

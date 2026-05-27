@@ -1,0 +1,34 @@
+{
+  "ts": "2026-05-02",
+  "agent": "N-51 W3",
+  "phase": "3_wrapper_feasibility",
+  "method": "For each blocked component, sketch the minimum-viable wrapper assuming the most generous interpretation of any candidate shard's role. Compare LOC vs original blocked spec.",
+  "wrappers": [
+    {
+      "component": "Comp 1 emit",
+      "spec_loc": 120,
+      "wrapper_path_attempted": "n/a (no shard candidate to wrap)",
+      "wrapper_loc_estimate": "infinite (any 'wrapper' would have to re-implement 100% of the matmul + tanh-gelu + LCG + clamp + JSONL emit logic in Python, since no shard contributes anything; this is just rewriting Comp 1 in Python, NOT wrapping a shard)",
+      "viable": false,
+      "blocker": "shards do not perform tensor projection or float emission"
+    },
+    {
+      "component": "Comp 3 readback",
+      "spec_loc": 150,
+      "wrapper_path_attempted": "/tmp/n51_W3/wrap_pilot/comp3_classify_wrapper.py",
+      "wrapper_loc_estimate": "~80 LOC scaffold but the proxy signal is corr=-0.31 (noise) so the wrapper must STILL re-implement the LCG random projection + L1 gate + phi_star + L2 + mind_step in Python to actually compute correct values. That's ~140 LOC of Python, on top of which calling hxc_a25 adds zero information.",
+      "viable": false,
+      "blocker": "a25 classify's rule_density_per100 carries no L1-band signal (Phase 4 measured)"
+    },
+    {
+      "component": "Comp 4 orchestrator",
+      "spec_loc": 100,
+      "wrapper_path_attempted": "n/a (no shard performs aggregation/Z-score/verdict-tree)",
+      "wrapper_loc_estimate": "~95 LOC of pure Python (essentially line-for-line port of comp4 hexa). hxc_composite_chain is the closest 'orchestrator' shape but its orchestration target is compression stages, not seed-statistics aggregation; reusing its scaffold provides no LOC savings since none of its primitives are reusable.",
+      "viable": false,
+      "blocker": "no shard contributes statistical aggregation primitives"
+    }
+  ],
+  "selftest_mandate_for_wrappers": "Each wrapper would need its own selftest (the original blocked components already specify 5/5, 4/4, 3/3 test counts). None of the candidate wrappers reach a state where a meaningful selftest could exist beyond echoing the Python re-implementation back at itself.",
+  "conclusion": "No wrapping path measurably reduces LOC versus a clean Python rewrite of Comp 1/3/4. The shards' single capability (byte compression) is orthogonal to the missing components' single requirement (numerical projections + statistics)."
+}

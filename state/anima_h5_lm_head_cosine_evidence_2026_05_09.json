@@ -1,0 +1,176 @@
+{
+  "task": "h5_lm_head_cosine_probe",
+  "ts_utc": "2026-05-10T00:48Z",
+  "ckpts": {
+    "bg_lb": "/Users/ghost/.cache/anima/clm_v5_remapped/bg_lb_350m_pretrain/ckpts/step_8000_final.pt",
+    "phase2_cotrain": "/Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final_bglb_schema.pt"
+  },
+  "wrapper_meta": {
+    "bg_lb": {
+      "schema": "str",
+      "lineage_tag": "str",
+      "arch_origin": "str",
+      "config": "dict",
+      "extra": "dict"
+    },
+    "phase2": {
+      "schema": "str",
+      "lineage_tag": "str",
+      "arch_origin": "str",
+      "config": "dict",
+      "extra": "dict"
+    }
+  },
+  "top_prefixes": {
+    "bg_lb": {
+      "tok_emb": 1,
+      "layers": 216,
+      "norm_f": 1,
+      "lm_head": 1,
+      "engine_g": 3
+    },
+    "phase2": {
+      "tok_emb": 1,
+      "layers": 216,
+      "norm_f": 1,
+      "lm_head": 1,
+      "engine_g": 3
+    }
+  },
+  "matched_keys": {
+    "bg_lb": [
+      [
+        "tok_emb.weight",
+        [
+          32000,
+          1024
+        ],
+        "torch.bfloat16"
+      ],
+      [
+        "norm_f.weight",
+        [
+          1024
+        ],
+        "torch.bfloat16"
+      ],
+      [
+        "lm_head.weight",
+        [
+          32000,
+          1024
+        ],
+        "torch.bfloat16"
+      ]
+    ],
+    "phase2": [
+      [
+        "tok_emb.weight",
+        [
+          32000,
+          1024
+        ],
+        "torch.bfloat16"
+      ],
+      [
+        "norm_f.weight",
+        [
+          1024
+        ],
+        "torch.bfloat16"
+      ],
+      [
+        "lm_head.weight",
+        [
+          32000,
+          1024
+        ],
+        "torch.bfloat16"
+      ]
+    ]
+  },
+  "common_keys_for_cosine": [
+    "lm_head.weight",
+    "norm_f.weight",
+    "tok_emb.weight"
+  ],
+  "stats": {
+    "lm_head.weight": {
+      "shape": [
+        32000,
+        1024
+      ],
+      "dtype_a": "torch.float32",
+      "dtype_b": "torch.float32",
+      "mean": 0.7709623575210571,
+      "median": 0.769853949546814,
+      "std": 0.0236382856965065,
+      "min": 0.3467608690261841,
+      "max": 0.9986989498138428,
+      "frac_gt_0_99": 0.002781250048428774,
+      "frac_gt_0_999": 0.0,
+      "frac_lt_0_95": 0.9949374794960022,
+      "frac_lt_0_50": 6.25000029685907e-05,
+      "flat_global_cos": 0.7674140930175781,
+      "norm_a_mean": 0.8929640054702759,
+      "norm_b_mean": 0.9009526371955872,
+      "norm_ratio_b_over_a_mean": 1.0090187788009644
+    },
+    "norm_f.weight": {
+      "shape": [
+        1024
+      ],
+      "ndim": 1,
+      "abs_diff_mean": 0.0,
+      "rel_diff_mean": 0.0,
+      "flat_cos": 1.0
+    },
+    "tok_emb.weight": {
+      "shape": [
+        32000,
+        1024
+      ],
+      "dtype_a": "torch.float32",
+      "dtype_b": "torch.float32",
+      "mean": 0.7709623575210571,
+      "median": 0.769853949546814,
+      "std": 0.0236382856965065,
+      "min": 0.3467608690261841,
+      "max": 0.9986989498138428,
+      "frac_gt_0_99": 0.002781250048428774,
+      "frac_gt_0_999": 0.0,
+      "frac_lt_0_95": 0.9949374794960022,
+      "frac_lt_0_50": 6.25000029685907e-05,
+      "flat_global_cos": 0.7674140930175781,
+      "norm_a_mean": 0.8929640054702759,
+      "norm_b_mean": 0.9009526371955872,
+      "norm_ratio_b_over_a_mean": 1.0090187788009644
+    }
+  },
+  "weight_tying": {
+    "bg_lb_lm_head_tied_to_tok_emb_storage": true,
+    "bg_lb_lm_head_equals_tok_emb_values": true,
+    "phase2_lm_head_tied_to_tok_emb_storage": true,
+    "phase2_lm_head_equals_tok_emb_values": true,
+    "implication": "lm_head.weight === tok_emb.weight in both ckpts (data_ptr shared, torch.equal True). lm_head and tok_emb cosine stats are identical by definition; both reflect the SAME tied embedding matrix delta from BG-LB to Phase 2."
+  },
+  "norm_f_finding": {
+    "bg_lb_norm_f_all_ones": "mean=1.0 std=0.0",
+    "phase2_norm_f_all_ones": "mean=1.0 std=0.0",
+    "abs_diff_mean": 0.0,
+    "max_abs_diff": 0.0,
+    "implication": "final RMSNorm gain is identity (all 1.0) and unchanged by Phase 2 cotrain. norm_f not the collapse driver."
+  },
+  "verdict": {
+    "primary_key": "lm_head.weight",
+    "lm_head_cos_mean": 0.7709623575210571,
+    "h5_status": "H5_quant_confirmed",
+    "shared_with_embed": true,
+    "summary": "Tied embedding (tok_emb === lm_head) cos mean 0.771 vs BG-LB. Phase 2 cotrain rotated the tied embedding matrix substantially; 99.49% of token rows have cos<0.95, only 0.28% remain >0.99. norm_f unchanged. cell_pool unchanged (per H4 evidence). The ONLY weight category measured so far that diverges materially is the tied embedding."
+  },
+  "hypothesis_evaluation": {
+    "h5_hypothesis": "lm_head \uac00 chat \ud559\uc2b5\uc73c\ub85c single utility direction \uc73c\ub85c \uc555\ucd95",
+    "interpretation": "lm_head (= tok_emb, tied) row-wise cos mean=0.7710 < 0.95 \u2014 Phase 2 cotrain \uc774 BG-LB \ub300\ube44 \ubb36\uc778 embedding matrix \ub97c \ud070 \ud3ed\uc73c\ub85c \ud68c\uc804. H5 \uc815\ub7c9 \ud655\uc815: tied embedding (= lm_head) \uac00 collapse \uc99d\ud3ed \ubc94\uc778. \ub2e8 weight tying \uc73c\ub85c lm_head fix \uc640 embed fix \ub294 \ub3d9\uc77c \uc5f0\uc0b0\uc784 \u2014 fix-5 (lm_head reset) \uc640 fix-6 (embed reset) \ub3d9\uc2dc \uc218\ud589\uc774 \ub3d9\ub4f1.",
+    "next_cycle_recommendation": "fix-5 = fix-6 (tied weight). tied embedding \uc744 BG-LB \ud14c\uc774\ube14\ub85c \ub418\ub3cc\ub9ac\uace0 (a) lm_head \ub9cc untie + reinit, (b) tok_emb \ub9cc untie + reinit, (c) \ub458 \ub2e4 freeze \ud558\uace0 \uc7ac\ud559\uc2b5 \u2014 \uc138 \uac00\uc9c0 \ube44\uad50\ub85c \ub354 \ub04a\uc774\ub294 (decoder vs encoder vs \ub458 \ub2e4) \uc758 \uba85\ud655\ud55c \ubd84\ub9ac \ud544\uc694. \ub610 attention/FFN cosine sim \ucd94\uac00 \uce21\uc815\uc73c\ub85c lm_head \uc678 collapse \uc99d\ud3ed\uae30 \uc788\ub294\uc9c0 \ud655\uc778."
+  }
+}

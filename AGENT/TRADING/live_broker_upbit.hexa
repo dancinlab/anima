@@ -1,0 +1,171 @@
+// live_broker_upbit.hexa — Upbit Korean crypto exchange adapter STUB (TRADING M13)
+// Bridge architecture: tool surface only — no consciousness framing.
+//
+// ⚠ STUB ONLY — no real HTTP calls. M13 delivers the SHAPE (7 pub fn matching
+// kis_broker + alpaca_broker) without placing a real order.
+//
+// Upbit = 한국 1위 crypto exchange (시장 점유율 71.6% · FIU 라이센스):
+//   • REST endpoint: https://api.upbit.com/v1
+//   • Auth: JWT signed with access_key + secret_key (HS256) in
+//           `Authorization: Bearer <jwt>` header
+//   • Markets: KRW (e.g. "KRW-BTC"), USDT, BTC
+//   • Fee: 0.25% (KRW market)
+//   • Rate: 8 req/s (REST), 5 req/s (orders)
+//
+// All real fills route through live_gate.live_gate_enforce FIRST.
+
+import "/Users/ghost/core/anima/AGENT/TRADING/types.hexa"
+import "/Users/ghost/core/anima/AGENT/TRADING/live_gate.hexa"
+
+// ---------------------------------------------------------------
+// 1. upbit_broker_new — initialize the Upbit adapter
+//   env: "DRYRUN" (default) · "REAL" (would hit api.upbit.com)
+//   market_quote: "KRW" (default) · "USDT" · "BTC"
+// ---------------------------------------------------------------
+pub fn upbit_broker_new(env, market_quote) {
+    return #{
+        "env": env,
+        "market_quote": market_quote,
+        "endpoint": "https://api.upbit.com/v1",
+        "access_key": "",
+        "secret_key": "",
+        "configured": false,
+        "kind": "UpbitBrokerState",
+    }
+}
+
+// ---------------------------------------------------------------
+// 2. upbit_broker_configure — wire access_key + secret_key
+//   (caller passes via secret get upbit.access_key / upbit.secret_key)
+// ---------------------------------------------------------------
+pub fn upbit_broker_configure(state, access_key, secret_key) {
+    let cfg = false
+    if access_key != "" {
+        if secret_key != "" {
+            cfg = true
+        }
+    }
+    return #{
+        "env": state["env"],
+        "market_quote": state["market_quote"],
+        "endpoint": state["endpoint"],
+        "access_key": access_key,
+        "secret_key": secret_key,
+        "configured": cfg,
+        "kind": "UpbitBrokerState",
+    }
+}
+
+// ---------------------------------------------------------------
+// 3. upbit_broker_get_quote — STUB
+//   real: GET /ticker?markets=KRW-BTC
+// ---------------------------------------------------------------
+pub fn upbit_broker_get_quote(state, symbol) {
+    return #{
+        "symbol": symbol,
+        "bid": 0.0,
+        "ask": 0.0,
+        "last": 0.0,
+        "spread": 0.0,
+        "ts": 0,
+        "kind": "Quote",
+        "stub": true,
+        "reason": "STUB — real Upbit ticker API not implemented in M13",
+    }
+}
+
+// ---------------------------------------------------------------
+// 4. upbit_broker_place_order — STUB · gate-checked
+//   real: POST /orders  (body: market, side, volume, price, ord_type)
+//   JWT signed: header.payload.signature (HS256 with secret_key)
+// ---------------------------------------------------------------
+pub fn upbit_broker_place_order(state, gate_state, order, ref_price, current_positions) {
+    let verdict = live_gate_enforce(gate_state, order, ref_price, current_positions)
+    if verdict["accepted"] == false {
+        return #{
+            "broker_state": state,
+            "gate_state": gate_state,
+            "gate_verdict": verdict,
+            "result": #{
+                "filled": false,
+                "reason": "gate_refused — " + verdict["reason"],
+                "kind": "UpbitOrderResult",
+            },
+        }
+    }
+
+    let new_gate_state = verdict["audit_state"]
+
+    if state["env"] == "DRYRUN" {
+        return #{
+            "broker_state": state,
+            "gate_state": new_gate_state,
+            "gate_verdict": verdict,
+            "result": #{
+                "filled": false,
+                "reason": "DRYRUN — gate ACCEPTED but no real order placed",
+                "would_send": order,
+                "kind": "UpbitOrderResult",
+            },
+        }
+    }
+
+    if state["configured"] == false {
+        return #{
+            "broker_state": state,
+            "gate_state": new_gate_state,
+            "gate_verdict": verdict,
+            "result": #{
+                "filled": false,
+                "reason": "upbit_not_configured — gate ACCEPTED but secrets missing",
+                "kind": "UpbitOrderResult",
+            },
+        }
+    }
+
+    // TODO: real Upbit POST /orders with JWT signing (not implemented in M13)
+    return #{
+        "broker_state": state,
+        "gate_state": new_gate_state,
+        "gate_verdict": verdict,
+        "result": #{
+            "filled": false,
+            "reason": "real_api_not_implemented — gate ACCEPTED but stub still refuses",
+            "would_send": order,
+            "endpoint": state["endpoint"],
+            "kind": "UpbitOrderResult",
+        },
+    }
+}
+
+// ---------------------------------------------------------------
+// 5. upbit_broker_cancel_order — STUB
+//   real: DELETE /order?uuid={order_id}
+// ---------------------------------------------------------------
+pub fn upbit_broker_cancel_order(state, order_id) {
+    return #{
+        "cancelled": false,
+        "reason": "STUB — real Upbit cancel not implemented in M13",
+        "order_id": order_id,
+        "kind": "UpbitCancelResult",
+    }
+}
+
+// ---------------------------------------------------------------
+// 6. upbit_broker_list_positions — STUB
+//   real: GET /accounts
+// ---------------------------------------------------------------
+pub fn upbit_broker_list_positions(state) {
+    return []
+}
+
+// ---------------------------------------------------------------
+// 7. upbit_broker_summary
+// ---------------------------------------------------------------
+pub fn upbit_broker_summary(state) {
+    let cfg = "unconfigured"
+    if state["configured"] {
+        cfg = "configured"
+    }
+    return "UpbitBroker [STUB]: env=" + state["env"] + " · market=" + state["market_quote"] + " · " + cfg
+}

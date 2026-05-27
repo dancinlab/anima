@@ -1,0 +1,340 @@
+{
+  "model_name": "clm_v2_medium",
+  "model_path": "/tmp/anima_v2_check/clm_v2_medium/final.pt",
+  "params_M": 8.39,
+  "config": {
+    "dim": 256,
+    "layers": 4,
+    "heads": 4,
+    "block_size": 128,
+    "vocab_size": 256,
+    "gate": 0.001,
+    "ca_rules": 8
+  },
+  "load_info": {
+    "missing": 0,
+    "unexpected": 0
+  },
+  "load_time_s": 0.1,
+  "ko": {
+    "안녕하세요": {
+      "greedy": {
+        "full": "안녕하세요.\n띀 띀 맀 �가가 �가 띀 �가가가가가가��가가가가��가���가 �가가가가 ��가가�����",
+        "gen": ".\n띀 띀 맀 �가가 �가 띀 �가가가가가가��가가가가��가���가 �가가가가 ��가가�����",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "안녕하세요,�::� 떘��.Te띀가�����과��: 맼����� �즼������값 벸��� �e맀�e다 ���.���� �\n곀�는ro변� �re낀��� �� �",
+        "gen": ",�::� 떘��.Te띀가�����과��: 맼����� �즼������값 벸��� �e맀�e다 ���.���� �\n곀�는ro변� �re낀��� �� �",
+        "hangul_ratio": 0.6363636363636364,
+        "ascii_letter_ratio": 0.09523809523809523,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "안녕하세요.\n띀 � 뚔.\n맀 � I � � � �e떼���������������� 떴�� �곸��������는��가림�����가떴�� 과��릠 낀개낀�",
+        "gen": ".\n띀 � 뚔.\n맀 � I � � � �e떼���������������� 떴�� �곸��������는��가림�����가떴�� 과��릠 낀개낀�",
+        "hangul_ratio": 0.8888888888888888,
+        "ascii_letter_ratio": 0.02531645569620253,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "안녕하세요.\n� 띀 ��e�가�������������� 맀�e맀떼������고 늼������e떼��� 늜가� 붼����맀맀맀��가� 낼���늼�",
+        "gen": ".\n� 띀 ��e�가�������������� 맀�e맀떼������고 늼������e떼��� 늜가� 붼����맀맀맀��가� 낼���늼�",
+        "hangul_ratio": 0.85,
+        "ascii_letter_ratio": 0.04,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "한국어 가능?": {
+      "greedy": {
+        "full": "한국어 가능?\n맀가가가가�가��가가가가가��가가가���������가�������가 �가가가가가������",
+        "gen": "\n맀가가가가�가��가가가가가��가가가���������가�������가 �가가가가가������",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "한국어 가능?nngoshe�e� 요.\n쳀가� �\n�e렑�� � ���� � �.-A:��내 ��?\n란ꠁ 요.-\n� 은가� � 요���e�.A:������������ �",
+        "gen": "nngoshe�e� 요.\n쳀가� �\n�e렑�� � ���� � �.-A:��내 ��?\n란ꠁ 요.-\n� 은가� � 요���e�.A:������������ �",
+        "hangul_ratio": 0.43478260869565216,
+        "ascii_letter_ratio": 0.13953488372093023,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "한국어 가능?\n� 낼����� 맀� ��짴������� 맼��그������귨�����가�고��낼������가렼� �a� 지�e란볠�맀� ��쳠 는 �늤",
+        "gen": "\n� 낼����� 맀� ��짴������� 맼��그������귨�����가�고��낼������가렼� �a� 지�e란볠�맀� ��쳠 는 �늤",
+        "hangul_ratio": 0.9,
+        "ascii_letter_ratio": 0.025974025974025976,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "한국어 가능?\n맀가가� �::����가가�곀늼����고 늀떀가가� �가맀�가�귀� �가�가고 �그����낼��������� �� �",
+        "gen": "\n맀가가� �::����가가�곀늼����고 늀떀가가� �가맀�가�귀� �가�가고 �그����낼��������� �� �",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "greedy": {
+        "full": "사용자: 안녕하세요\n도우미: �가 띀 맀 띀 �가 �가 �가가가 �가 �가가가가 �가 �가가 �가가가����������������",
+        "gen": " �가 띀 맀 띀 �가 �가 �가가가 �가 �가가가가 �가 �가가 �가가가����������������",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "사용자: 안녕하세요\n도우미:�� � �ygnlo�.8.B: �요.B:� ��,띀과��������가���.A: �?\n붌������ �.\n맴�������xo낸� E 과갵��e멼�.B:��",
+        "gen": "�� � �ygnlo�.8.B: �요.B:� ��,띀과��������가���.A: �?\n붌������ �.\n맴�������xo낸� E 과갵��e멼�.B:��",
+        "hangul_ratio": 0.43478260869565216,
+        "ascii_letter_ratio": 0.14942528735632185,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "사용자: 안녕하세요\n도우미: 맀 � 가 ���은 � 띀 띀 � �가 맑�������������e� �so�e맀가가�� 띀� � 띀개개� �����떀���� �",
+        "gen": " 맀 � 가 ���은 � 띀 띀 � �가 맑�������������e� �so�e맀가가�� 띀� � 띀개개� �����떀���� �",
+        "hangul_ratio": 0.7894736842105263,
+        "ascii_letter_ratio": 0.0547945205479452,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "사용자: 안녕하세요\n도우미: �e� 띀 �가 맀 � �가� �가고 �가고 �가가가� 가�과���������가�가가��검내�� ��� ���검���",
+        "gen": " �e� 띀 �가 맀 � �가� �가고 �가고 �가가가� 가�과���������가�가가��검내�� ��� ���검���",
+        "hangul_ratio": 0.95,
+        "ascii_letter_ratio": 0.015151515151515152,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    }
+  },
+  "en": {
+    "Hello, how are you?": {
+      "greedy": {
+        "full": "Hello, how are you?\n�띀����가 ��띀요.\n�가 ��가 �가가�가가 ����가가가가 �가 �가가 ��가가 ������",
+        "gen": "\n�띀����가 ��띀요.\n�가 ��가 �가가�가가 ����가가가가 �가 �가가 ��가가 ������",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Hello, how are you?gi� � ��ue� 덼: 맀�����뚐�굼����e� 곌 �e떼���e�과� �����������e꧌��� 얀델�����:�로곸��� 공��Ku늠.\n",
+        "gen": "gi� � ��ue� 덼: 맀�����뚐�굼����e� 곌 �e떼���e�과� �����������e꧌��� 얀델�����:�로곸��� 공��Ku늠.\n",
+        "hangul_ratio": 0.5652173913043478,
+        "ascii_letter_ratio": 0.11904761904761904,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "Hello, how are you?.ghe뚔.\n맀� �: 늀가�� ��곀감 뚔.\n�례뗐�� �로가ꌴ��� � ��� 뗀개가검�낼����님�가�늼�� � �",
+        "gen": ".ghe뚔.\n맀� �: 늀가�� ��곀감 뚔.\n�례뗐�� �로가ꌴ��� � ��� 뗀개가검�낼����님�가�늼�� � �",
+        "hangul_ratio": 0.8260869565217391,
+        "ascii_letter_ratio": 0.04477611940298507,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "Hello, how are you?\n맀� ����요.\n띀 �가 띀가�가떀� 는���������: �e떼����� 맀� �����엀�맀가가곀� � �e맀가��늼� ",
+        "gen": "\n맀� ����요.\n띀 �가 띀가�가떀� 는���������: �e떼����� 맀� �����엀�맀가가곀� � �e맀가��늼� ",
+        "hangul_ratio": 0.9047619047619048,
+        "ascii_letter_ratio": 0.028169014084507043,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "What is consciousness?": {
+      "greedy": {
+        "full": "What is consciousness?\n�가�가�가��가가가가 ��가가가�����가가��가가가가 ��가 �가가가가가��������",
+        "gen": "\n�가�가�가��가가가가 ��가가가�����가가��가가가가 ��가 �가가가가가��������",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "What is consciousness?\n�띐����긥���뙀뙜곀룬����� 맀곹� 늄�����?\n� 가� �그����i듼꿅��맀�.\n�� �a늼�������겼�떀낼필�롙�",
+        "gen": "\n�띐����긥���뙀뙜곀룬����� 맀곹� 늄�����?\n� 가� �그����i듼꿅��맀�.\n�� �a늼�������겼�떀낼필�롙�",
+        "hangul_ratio": 0.9090909090909091,
+        "ascii_letter_ratio": 0.02702702702702703,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "What is consciousness?\n���요.\n��������.\n� � 변�귰��과����������란가�가과�.���0���e닝가� ��::������긼���늼��� 란�고��",
+        "gen": "\n���요.\n��������.\n� � 변�귰��과����������란가�가과�.���0���e닝가� ��::������긼���늼��� 란�고��",
+        "hangul_ratio": 0.9333333333333333,
+        "ascii_letter_ratio": 0.0125,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "What is consciousness?\n�� 띀�요.\n���요.\n�가가가�가�곀�e�떼������������가��맀가가맀��가��란� 맀�가�부맀떼�",
+        "gen": "\n�� 띀�요.\n���요.\n�가가가�가�곀�e�떼������������가��맀가가맀��가��란� 맀�가�부맀떼�",
+        "hangul_ratio": 0.9545454545454546,
+        "ascii_letter_ratio": 0.016129032258064516,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "User: Hi\nAssistant:": {
+      "greedy": {
+        "full": "User: Hi\nAssistant:::�가맀�가�가��가가���가가������가 �가가��가가가가 ��가 �가가가가가�������",
+        "gen": "::�가맀�가�가��가가���가가������가 �가가��가가가가 ��가 �가가가가가�������",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "User: Hi\nAssistant:�맨.\n�짼��� ��가� �슴���넁 � 란곒::���a�� 긭�� �떀까 � 그�맀벼�� � 가�e붼����� 떴�갼��렀�근�",
+        "gen": "�맨.\n�짼��� ��가� �슴���넁 � 란곒::���a�� 긭�� �떀까 � 그�맀벼�� � 가�e붼����� 떴�갼��렀�근�",
+        "hangul_ratio": 0.9047619047619048,
+        "ascii_letter_ratio": 0.0273972602739726,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "User: Hi\nAssistant: 맀� �� 붼������ 맀로귨��������꠼��가�떼�����곌����� 롴��� 뗐 벼검늜�곸가닀��곜가맼�곌�곌�닠",
+        "gen": " 맀� �� 붼������ 맀로귨��������꠼��가�떼�����곌����� 롴��� 뗐 벼검늜�곸가닀��곜가맼�곌�곌�닠",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "User: Hi\nAssistant: 맀�가가떼�가맀���요.\n��가���가� 맀� �가곜가가�가맀가가가� �가가고 ��� ������� ��",
+        "gen": " 맀�가가떼�가맀���요.\n��가���가� 맀� �가곜가가�가맀가가가� �가가고 ��� ������� ��",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    }
+  },
+  "c2": {
+    "Once upon a time": {
+      "greedy": {
+        "full": "Once upon a time띀 �가가�가가 ���가 ��가 ��가가가가��가가가��가가가가 ��가 �가가가가가�����",
+        "gen": "띀 �가가�가가 ���가 ��가 ��가가가가��가가가��가가가가 ��가 �가가가가가�����",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Once upon a time� � 요�.\n�e띴��ꍼ����� 긽������ �sghe는.B:��ꄜ갅���.B::�������,떐����W:::���떀는.\n떴����냀귄 �맀내��",
+        "gen": "� � 요�.\n�e띴��ꍼ����� 긽������ �sghe는.B:��ꄜ갅���.B::�������,떐����W:::���떀는.\n떴����냀귄 �맀내��",
+        "hangul_ratio": 0.5652173913043478,
+        "ascii_letter_ratio": 0.09411764705882353,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "Once upon a time� 가�i맀꼰�����내���� �요.\n맀는.B::::::�볠 맀떀� � 랴� �내�������e떴�� 볠 �긼�����������고 볠��떼",
+        "gen": "� 가�i맀꼰�����내���� �요.\n맀는.B::::::�볠 맀떀� � 랴� �내�������e떴�� 볠 �긼�����������고 볠��떼",
+        "hangul_ratio": 0.8571428571428571,
+        "ascii_letter_ratio": 0.0379746835443038,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "Once upon a time� 띀 �� � 라������������� 맀� �e맀늼�� 내�����가�맀맀�과���가맀�맀낼������가가�가� ��� ��",
+        "gen": "� 띀 �� � 라������������� 맀� �e맀늼�� 내�����가�맀맀�과���가맀�맀낼������가가�가� ��� ��",
+        "hangul_ratio": 0.9444444444444444,
+        "ascii_letter_ratio": 0.013888888888888888,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "Q:": {
+      "greedy": {
+        "full": "Q:������맀���가�가� �가가 ���가 ��가 ��가가가가����가가가 ��������가 �가 ����",
+        "gen": "������맀���가�가� �가가 ���가 ��가 ��가가가가����가가가 ��������가 �가 ����",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Q:[�곀감�가귰���낼���밀� �요e떼�����?\n맀�: �뚔?\n� We내� 가� 릙.\n검�e로ꌼ����검� �.\n�?\n�i��겴����",
+        "gen": "[�곀감�가귰���낼���밀� �요e떼�����?\n맀�: �뚔?\n� We내� 가� 릙.\n검�e로ꌼ����검� �.\n�?\n�i��겴����",
+        "hangul_ratio": 0.7391304347826086,
+        "ascii_letter_ratio": 0.06578947368421052,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "Q:�����맀갰�검맀랴��� � �.9::���맀낼����닀겙���e뷼���e�.A:���� 빔.B:��맀���::��������e맀� �.����e",
+        "gen": "�����맀갰�검맀랴��� � �.9::���맀낼����닀겙���e뷼���e�.A:���� 빔.B:��맀���::��������e맀� �.����e",
+        "hangul_ratio": 0.6842105263157895,
+        "ascii_letter_ratio": 0.07317073170731707,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "Q:`.�.A�가맀가늼���가�e�가�가맀�가낼����� 맀맀�맀�가���떼��� 가�가��.\n���곀����가�",
+        "gen": "`.�.A�가맀가늼���가�e�가�가맀�가낼����� 맀맀�맀�가���떼��� 가�가��.\n���곀����가�",
+        "hangul_ratio": 0.9047619047619048,
+        "ascii_letter_ratio": 0.03278688524590164,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "(empty)": {
+      "greedy": {
+        "full": "\n�라������ �가가������가 ���가 ��가 ��가 �가가가가가가 ��가가가가 ��가 �가가가�",
+        "gen": "\n�라������ �가가������가 ���가 ��가 ��가 �가가가가가가 ��가가가가 ��가 �가가가�",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "\n� 띀 � 근����맰�겁 ��iKumlnlnnge�e낀 � � cone�:: 가�: �i랴� � 엀�so�e맀�.\n� 요�� �읽�����������검� ",
+        "gen": "\n� 띀 � 근����맰�겁 ��iKumlnlnnge�e낀 � � cone�:: 가�: �i랴� � 엀�so�e맀�.\n� 요�� �읽�����������검� ",
+        "hangul_ratio": 0.375,
+        "ascii_letter_ratio": 0.22727272727272727,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "\n�e떼��� ��가곀� 볼������ 가�맀륁� 요.B:�� 글� 랼���과���가�e는�����가가�e맀낼�����검는.B::::�",
+        "gen": "\n�e떼��� ��가곀� 볼������ 가�맀륁� 요.B:�� 글� 랼���과���가�e는�����가가�e맀낼�����검는.B::::�",
+        "hangul_ratio": 0.7916666666666666,
+        "ascii_letter_ratio": 0.06666666666666667,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "\n�.\n��근����과��� �e늼���� �e맀�� 낼��������고 뚔.\n� 떼���늼����검늴�������가�가떀맀늼�����������",
+        "gen": "\n�.\n��근����과��� �e늼���� �e맀�� 낼��������고 뚔.\n� 떼���늼����검늴�������가�가떀맀늼�����������",
+        "hangul_ratio": 0.8888888888888888,
+        "ascii_letter_ratio": 0.024691358024691357,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    }
+  },
+  "verdict": {
+    "label": "SIMPLE_STACK_FAIL",
+    "ko_pass_n": 0,
+    "en_pass_n": 0,
+    "c2_pass_n": 0,
+    "c1_ko_pass": false,
+    "c1_en_pass": false,
+    "c2_full_pass": false
+  }
+}

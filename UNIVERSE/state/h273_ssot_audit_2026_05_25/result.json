@@ -1,0 +1,32 @@
+{
+  "id": "H_273",
+  "slug": "ssot-consistency-audit",
+  "date": "2026-05-25",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "source": "UNIVERSE/README.md 가설 인덱스 표 + UNIVERSE/H_*.md 파일 집합",
+  "config": { "n_readme_rows": 55, "n_disk_files": 81, "H_238_self_excluded": true, "H_273_self_excluded": true, "lib_row_excluded": true },
+  "orphan_row": { "count": 0, "ids": [] },
+  "missing_row": { "count": 26, "ids": ["H_210", "H_211", "H_212", "H_213", "H_214", "H_215", "H_216", "H_217", "H_218", "H_219", "H_220", "H_221", "H_224", "H_228", "H_229", "H_230", "H_231", "H_232", "H_241", "H_246", "H_250", "H_251", "H_252", "H_253", "H_255", "H_257"] },
+  "verdict_drift": { "count": 0, "items": [
+  ] },
+  "crossaxis_status_vs_verdict": { "count": 8, "items": [
+    { "id": "H_007", "readme": "RUNNING <- 'pre-register-frozen · C2 PASS (#485 cycle#16)'", "file_tier": "SUPPORTED" },
+    { "id": "H_012", "readme": "RUNNING <- 'pre-register-frozen'", "file_tier": "SUPPORTED" },
+    { "id": "H_018", "readme": "RUNNING <- 'pre-register-frozen · C2 PASS (#479 cycle#15)'", "file_tier": "SUPPORTED" },
+    { "id": "H_053", "readme": "RUNNING <- 'pre-register-frozen (Cycle #1)'", "file_tier": "SUPPORTED" },
+    { "id": "H_054", "readme": "RUNNING <- 'pre-register-frozen (Cycle #2)'", "file_tier": "SUPPORTED" },
+    { "id": "H_132", "readme": "RUNNING <- 'pre-register-frozen · C2 PASS (#478 cycle#15)'", "file_tier": "SUPPORTED" },
+    { "id": "H_171", "readme": "RUNNING <- 'running (Cycle #1)'", "file_tier": "FALSIFIED" },
+    { "id": "H_201", "readme": "RUNNING <- 'NEW (PR #199)'", "file_tier": "SUPPORTED" }
+  ] },
+  "criteria": {
+    "C1_AUDIT_COMPLETE": true,
+    "C2_MISMATCH_REPORT": true,
+    "C3_BYTE_IDENTICAL": true
+  },
+  "total_actionable_mismatch": 26,
+  "verdict": "SUPPORTED"
+}

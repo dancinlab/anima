@@ -1,0 +1,59 @@
+{
+  "schema": "anima/n_1_bridge_v2_realtime_prep/honest_c3/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "phase": "Phase 7 — Honest C3 + N=1 limitation",
+
+  "core_n1_disclosures": [
+    {
+      "id": "C3-1",
+      "title": "N=1 statistical power floor",
+      "detail": "User mk55992@proton.me is the ONLY participant. Bootstrap CI for any per-phase r will be wide; phase-specific contrasts (P3 vs P4) lack between-subject denominator. Min detectable r at alpha=0.01 power=0.8 with N_per_phase=300 (1Hz x 5min) is ~0.16 — much better than N-1 v2 partial (~0.99) but still N=1 = no generalizability claim.",
+      "mitigation": "Pre-registered falsifier requires consistency in >=3 of 6 phases as proxy for replication; phase-internal cross-validation only"
+    },
+    {
+      "id": "C3-2",
+      "title": "Single 30-min session — Apr 28 D-day same limit",
+      "detail": "30-min single session shares the generalizability ceiling of Apr-28 D-day baseline_resting_60s_filtered (also single session). Diurnal/circadian/fatigue/state-arousal effects all confounded with phase order. Phase counter-balancing not feasible at N=1.",
+      "mitigation": "Phase order frozen (P1->P6) so any session-level drift is constant across this run; replicate same time-of-day next session for within-subject test-retest"
+    },
+    {
+      "id": "C3-3",
+      "title": "P3 (CLM-read) cognitive-load matching to P4 (arithmetic) NOT validated",
+      "detail": "P3 requires user to read CLM live output and verbalize observations; P4 requires serial-7 subtraction. These are designed as matched cognitive-load controls but actual load (effort, working-memory demand, visual vs auditory modality) is NOT pre-measured. Significant asymmetry could mask CLM-specific coupling as cognitive-load artifact (or vice versa).",
+      "mitigation": "If F-PASS_STRONG: follow-up requires NASA-TLX self-report after each phase to quantify load matching; if mismatch detected, control validity is downgraded"
+    },
+    {
+      "id": "C3-4",
+      "title": "LSL clock drift Mac<->ubu1 ~10ms typical, can spike to 50-100ms",
+      "detail": "Sync precision depends on LAN topology (Wi-Fi vs Ethernet, Tailscale subnet routing, multicast UDP loss). LabRecorder records both clocks but post-hoc correction is approximate. At 1Hz CLM srate any drift <500ms preserves coarse alignment, but TE/Granger lag-1 estimates could be biased if drift correlates with phase boundaries.",
+      "mitigation": "Sync-drift rejection at +/-100ms in analyze_xdf.py; expected ~85% sample retention; flag if retention <70% in any phase"
+    }
+  ],
+
+  "additional_disclosures": [
+    {
+      "id": "C3-5",
+      "title": "CLM W4 active branch is at fixed-point (std ~1e-6) BY DESIGN",
+      "detail": "Per N-1 v2 partial verdict, mind_tension std = 1.04e-6. Real-time concurrent measurement does NOT change this — the channel will still be near-constant. Any non-zero r against EEG is the same degenerate-shape artifact unless gate_random or other non-degenerate channels are co-analyzed.",
+      "mitigation": "anima_tension_link_5ch outlet provides 5 channels including gate_signal_random (only non-degenerate channel); analysis MAY supplement primary mind_tension test with gate_random secondary; pre-register before unblinding"
+    },
+    {
+      "id": "C3-6",
+      "title": "16ch OpenBCI Cyton+Daisy has reference-electrode constraint",
+      "detail": "Cyton+Daisy uses 1-2 reference electrodes (typically A1/A2 or linked-mastoid); volume conduction can inflate cross-channel PLV. Surface Laplacian + imaginary-coherence (per N-1 v2 partial spec section 6.5) NOT implemented in analyze_xdf.py.",
+      "mitigation": "Phase-2 upgrade: add scipy/mne surface-Laplacian and imag-coh; current pipeline uses raw alpha-PLV averaged over 6 pairs from {P3,P4,O1,O2}"
+    },
+    {
+      "id": "C3-7",
+      "title": "F-INDETERMINATE is a real possible outcome",
+      "detail": "If any phase passes some but not all PASS_STRONG criteria (e.g. |r|>0.5, p<0.01, but TE < surrogate p99 OR consistency only in 2 phases), tie-break maps to INDETERMINATE. This is NOT a failure of the protocol — it is the honest report when partial evidence does not meet pre-registered threshold."
+    }
+  ],
+
+  "summary_count": {
+    "core_disclosures_required_by_user": 3,
+    "core_provided": 3,
+    "additional_provided": 3,
+    "total": 7
+  }
+}

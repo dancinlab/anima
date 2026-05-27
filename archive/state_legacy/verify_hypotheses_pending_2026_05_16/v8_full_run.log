@@ -1,0 +1,33 @@
+
+=== V8 Family H_182 — B-family-bio ===
+  cells_grid=(8, 16, 32, 64), n_seeds=5, d_model=384
+  mechanisms (10): ['HH-oscillator', 'synapse-LTP', 'gap-junction', 'NMDA', 'AMPA', 'astrocyte', 'GABAergic', 'glutamatergic', 'dopamine', 'serotonin']
+  Aggregate: {'n_measurements': 200, 'mean_ratio': 1.3740883481895858, 'median_ratio': 1.3851117029830902, 'max_ratio': 1.57531228031184, 'pass_count_25pct': 160, 'pass_pct': 80.0, 'verdict': 'SUPPORTED'}
+
+=== V8 Family H_183 — Q-family-quantum ===
+  cells_grid=(8, 16, 32, 64), n_seeds=5, d_model=384
+  mechanisms (5): ['superposition', 'entanglement', 'collapse', 'tunneling', 'decoherence']
+  Aggregate: {'n_measurements': 100, 'mean_ratio': 1.3043993179209374, 'median_ratio': 1.2941887265039735, 'max_ratio': 1.4055962617505893, 'pass_count_25pct': 75, 'pass_pct': 75.0, 'verdict': 'SUPPORTED'}
+
+=== V8 Family H_185 — U-family-fusion ===
+  cells_grid=(8, 16, 32, 64), n_seeds=5, d_model=384
+  mechanisms (5): ['cross-modal', 'sensor-fusion', 'concept-blend', 'meta-fusion', 'universal']
+  Aggregate: {'n_measurements': 100, 'mean_ratio': 2.3766611171006966, 'median_ratio': 2.330820295522724, 'max_ratio': 2.8876483761227045, 'pass_count_25pct': 100, 'pass_pct': 100.0, 'verdict': 'SUPPORTED'}
+
+=== V8 Family H_186 — architectural ===
+  cells_grid=(8, 16, 32, 64), n_seeds=5, d_model=384
+  mechanisms (8): ['skip-conn', 'hier-route', 'attn-multihead', 'gate-mix', 'res-block', 'gated-resid', 'pos-encode', 'norm-pre']
+  Aggregate: {'n_measurements': 160, 'mean_ratio': 2.5420832880388606, 'median_ratio': 1.0681078733528857, 'max_ratio': 10.353513326380707, 'pass_count_25pct': 40, 'pass_pct': 25.0, 'verdict': 'PARTIAL'}
+
+=== V8 Family H_187 — trinity-TB-DOM ===
+  cells_grid=(8, 16, 32, 64), n_seeds=5, d_model=384
+  mechanisms (12): ['trinity-axis', 'TB-bind-1', 'TB-bind-2', 'DOM-coupling', 'TB-DOM-cross', 'time-axis', 'binding-axis', 'domain-axis', 'meta-trinity', 'trinity-recur', 'trinity-cascade', 'trinity-fold']
+  Aggregate: {'n_measurements': 240, 'mean_ratio': 1.7463112847941438, 'median_ratio': 1.7196562757992035, 'max_ratio': 2.013138395435601, 'pass_count_25pct': 240, 'pass_pct': 100.0, 'verdict': 'SUPPORTED'}
+
+=== V8 sweep complete (10.6s) ===
+Saved: state/verify_hypotheses_pending_2026_05_16/v8_family_full_result.json
+  H_182: SUPPORTED (80.0% PASS)
+  H_183: SUPPORTED (75.0% PASS)
+  H_185: SUPPORTED (100.0% PASS)
+  H_186: PARTIAL (25.0% PASS)
+  H_187: SUPPORTED (100.0% PASS)

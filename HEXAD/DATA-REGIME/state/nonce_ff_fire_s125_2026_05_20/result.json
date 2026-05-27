@@ -1,0 +1,121 @@
+{
+  "battery": "\u00a7125 NONCE-FF eval \u2014 \u00a796-Q2 verdict",
+  "ckpt": "ckpt_nonce_ff_s125.pt",
+  "corpus": "corpus_s101.jsonl",
+  "cfg": {
+    "d_model": 768,
+    "n_head": 12,
+    "n_kv_head": 4,
+    "n_layer": 12,
+    "block_size": 128,
+    "lr": 0.0003,
+    "bsz": 32,
+    "steps": 3000,
+    "seed": 1337,
+    "log_every": 75,
+    "corpus": "/workspace/s125r/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "out_dir": "/workspace/s125r/out_main",
+    "n_neg_subst": 64,
+    "cpu_only": false
+  },
+  "n_eval": 2000,
+  "max_len": 128,
+  "seed": 1337,
+  "byte_acc": 0.0005,
+  "correct": 1,
+  "total": 2000,
+  "random_byte_floor": 0.00390625,
+  "degenerate_ceiling": 0.0078125,
+  "support_floor": 0.05,
+  "psi_dir_mean": 0.5157603383501992,
+  "psi_dir_std": 2.3690440826889406e-08,
+  "psi_responsive": false,
+  "verdict_bucket": "S11B_LIKE_DEGENERATE",
+  "verdict_explanation": "FF on GPU produced a degenerate model; \u00a796-Q2 hypothesis (\u00a711-B is GPU tautology) partially REFUTED \u2014 non-CE non-backprop ALSO fails on GPU; \u00a711-B's degeneracy looks substrate-deep, not CE-specific.",
+  "sample_seen": [
+    {
+      "ctx_tail": [
+        109,
+        32,
+        116,
+        104,
+        101,
+        32,
+        114,
+        117
+      ],
+      "target": 108,
+      "pred": 59
+    },
+    {
+      "ctx_tail": [
+        105,
+        118,
+        105,
+        115,
+        111,
+        114,
+        115,
+        46
+      ],
+      "target": 60,
+      "pred": 59
+    },
+    {
+      "ctx_tail": [
+        182,
+        136,
+        235,
+        179,
+        128,
+        46,
+        60,
+        47
+      ],
+      "target": 101,
+      "pred": 59
+    },
+    {
+      "ctx_tail": [
+        32,
+        101,
+        97,
+        99,
+        104,
+        32,
+        116,
+        105
+      ],
+      "target": 109,
+      "pred": 59
+    },
+    {
+      "ctx_tail": [
+        102,
+        114,
+        111,
+        109,
+        32,
+        116,
+        104,
+        101
+      ],
+      "target": 32,
+      "pred": 59
+    }
+  ],
+  "eval_wall_s": 40.72772264480591,
+  "ckpt_train_log_last": {
+    "step": 3000,
+    "mean_layer_loss": 6.990700182683774e-31,
+    "mean_g_pos": 879.9991760253906,
+    "mean_g_neg": 508.14041900634766,
+    "L_head": 1.1121992541350545e-13,
+    "gh_pos": 797.8683471679688,
+    "gh_neg": 689.8575439453125,
+    "elapsed_s": 1216.9105744361877
+  },
+  "north_star_unchanged": true,
+  "s15_s51_s72_milestones_unchanged": true,
+  "necessary_not_sufficient_b_emerge_7": true
+}

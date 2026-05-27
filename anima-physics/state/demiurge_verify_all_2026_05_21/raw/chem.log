@@ -1,0 +1,34 @@
+Building for debugging...
+[0/3] Write swift-version--58304C5D6DBC2206.txt
+Build of product 'DemiurgeCLI' complete! (0.10s)
+action: 검증 (검증) · domain=chem — dispatching…
+## chem 검증 — 엔진 도구 현황
+
+**실제 chem 검증 엔진은 아직 없습니다.** ❌ 측정완료 주장 불가.
+
+**근거 (코드/exports 직접 확인):**
+
+1. **도메인 스펙 (`domains/chem.md` §2)** — VERIFY 슬롯에 OpenMM + RDKit + AutoChem이 *제안된 디폴트*로만 나열돼 있고, 코드 어댑터는 없음.
+
+2. **코드베이스 검색 결과** — cockpit Sources/ 아래에 chem 전용 falsifier/dispatch/loader가 **하나도 없음** (`*Chem*.swift` 0건). 존재하는 falsifier dispatcher는 `MaterialFalsifierDispatch.swift` 하나뿐인데, 이건 RTSC 초전도 (`F-SC-{1,2,3} + F-RTSC-{1,2,3}` 6-falsifier) 전용이지 chem 반응/촉매 검증과는 다른 도메인.
+
+3. **`exports/chem/verify/` 안의 단 하나의 레코드** — `2026-05-21T08-33-18Z/anima_chem_20260521T083318Z.json`:
+   - `producer: anima-chem-langevin-thermodynamic-bridge`
+   - `sim_engine: anima-physics:engines/thermodynamic_consciousness`
+   - `scope_caveats[0]: "Langevin double-well is consciousness-analog, NOT real chemistry"`
+   - `scope_caveats[4]: "chem producer oracle parity not yet authored (TODO: demiurge rfc)"`
+   - `gate_state: GATE_OPEN`, `rationale: "skeleton emit — chem oracle parity TODO"`
+   - → 즉 이 레코드 자체가 "실제 화학이 아니다 · 스켈레톤 · 오라클 미작성"이라고 명시.
+
+**결론 (g3 — over-claim 금지):**
+
+- '실제로 돌리기'를 눌렀지만, chem 도메인의 검증 단계는 **엔진 미배선** 상태입니다.
+- 기존 `exports/chem/verify/...anima_chem...json`은 anima-physics의 Langevin 이중우물 시뮬레이션 스켈레톤 (의식-아날로그)이지, **chem 측정 레코드가 아닙니다.**
+- 따라서 ✅ / 측정완료 표시는 **불가능**합니다. 클릭 결과는 "엔진 부재 — 실제 측정 없음 — measurement_gate=GATE_OPEN" 으로 표면화돼야 합니다.
+
+**돌리려면 필요한 것 (요약):**
+- chem용 falsifier 패키지 정의 (반응 ΔG/Ea 일치, 촉매 turnover, EHS 통과 등)
+- Psi4/xTB/Cantera/OpenMM/RDKit 중 하나 이상에 대한 어댑터 (loader/dispatch)
+- `exports/chem/verify/` 출력 스키마를 anima skeleton이 아닌 실측 레코드 형태로 정의 (위 caveats[4]가 가리키는 "demiurge rfc")
+---
+⏳ no new measured record — this stage has not been measured (g3).

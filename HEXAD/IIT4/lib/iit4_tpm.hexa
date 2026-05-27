@@ -1,0 +1,8 @@
+// HEXAD/IIT4/lib/iit4_tpm.hexa — thin shim over hexa-lang stdlib (commons @D g61).
+//
+//   The engine was promoted to stdlib/consciousness/iit4_tpm (hexa-lang PR #1051):
+//   hexa-lang stdlib is now the single SSOT. This anima file re-exports the
+//   stdlib module so existing callers (state/iit4_* smokes importing this
+//   absolute path) keep working unchanged — no duplicate implementation here.
+//   New / cross-repo code should import "stdlib/consciousness/iit4_tpm.hexa" directly.
+import "stdlib/consciousness/iit4_tpm.hexa"

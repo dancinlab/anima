@@ -1,0 +1,16 @@
+[hippocampus/episodic_replay] PHYS-P11-3 — hippocampus→DMN narrative consolidation
+  encode ((float) ms/cell) → SWR replay (speedup×) → cortical successor edges
+  narrative_recall(head) walks the chain to reconstruct the full episode
+
+  [T1] encode ok=true  replay|len=6  equal=true
+T1 PASS — encode→replay preserves order and length
+  [T2] replay_delta_ms = (float)  expected = (float)
+T2 PASS — compression factor observed (10× speedup)
+  [T3] consolidated_edges=5  recalled_len=6
+T3 PASS — consolidate + recall reconstructs full narrative
+  [T4] rec_A_len=6  rec_B_len=5  A_ok=true  B_ok=true
+T4 PASS — two disjoint narratives coexist without interference
+  [T5] rec1==rec2: true  oversize_rejected: true
+T5 PASS — API + determinism
+
+[hippocampus/episodic_replay] 5/5 PASS — PHYS-P11-3 DONE (narrative consolidation substrate)

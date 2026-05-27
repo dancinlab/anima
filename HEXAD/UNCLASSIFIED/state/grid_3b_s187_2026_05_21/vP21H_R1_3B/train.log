@@ -1,0 +1,80 @@
+[launch] PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+[launch] pip install bitsandbytes==0.43.1
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[launch] bitsandbytes=0.43.1
+[launch] pip install transformers
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+The cache for model files in Transformers v4.22.0 has been updated. Migrating your old cache. This is a one-time only operation. You can interrupt this and resume the migration later on by calling `transformers.utils.move_cache()`.
+0it [00:00, ?it/s]0it [00:00, ?it/s]
+[launch] transformers=4.44.0
+[launch] pip install peft
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[launch] peft=0.12.0
+[launch] accelerate=1.13.0
+[launch] python3 -u /workspace/p21hr/train_p21h_v3.py --wiki-corpus /workspace/p21hr/multi_wiki_corpus.jsonl --anima-corpus /workspace/p21hr/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl --mixed-corpus /workspace/p21hr/mixed_corpus_v3.jsonl --out-dir /workspace/p21hr/out_main --base-model Qwen/Qwen2.5-3B --init-variant qwen --steps 5000 --bsz 2 --block 512 --lr 5e-5 --warmup-steps 100 --seed 1337 --wiki-frac 0.3 --target-corpus-mb 72 --noise-sigma 0.1 --lambda-mitosis 0.0 --mitosis-max 16 --ckpt-every 500 --ckpt-osc-threshold 0.5 --ckpt-osc-window 10 --early-stop-patience 8
+[P21H] device=cuda dtype=torch.bfloat16
+[mix] multi-wiki=28,986,824 chars, anima=224,198,521 chars
+[mix] multi-wiki chunks=28,308, anima chunks=218,944
+[mix] kept multi-wiki=15,500 (21.6MB), anima=39,862 (50.4MB)
+[mix] wrote 55,362 records to /workspace/p21hr/mixed_corpus_v3.jsonl (72.0MB, wiki=15500, anima=39862)
+[mix] sha256=bf2371ac2602932cd68255626736285a5e579e6aee4b8a0160f74f365d826f94
+[P21H][init=qwen] V3β — Qwen warm-start from Qwen/Qwen2.5-3B
+[from_qwen] loading Qwen/Qwen2.5-3B
+Downloading shards:   0%|          | 0/2 [00:00<?, ?it/s]Downloading shards:  50%|█████     | 1/2 [00:05<00:05,  5.75s/it]Downloading shards: 100%|██████████| 2/2 [00:10<00:00,  5.01s/it]Downloading shards: 100%|██████████| 2/2 [00:10<00:00,  5.12s/it]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 14.08it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 14.06it/s]
+[from_qwen] qwen: vocab=151936 d=2048 L=36 n_head=16 n_kv_head=2 -> v3_n_kv_head=4 rope_base=1000000.0
+[from_qwen] init OK — total params 6172.5M
+[P21H] model params total=6,172,540,928 (6172.54M)
+[P21H] BEFORE-train per-lang OOD eval (greedy)
+[P21H] BEFORE en greedy: {'GENERALIZE': 0, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 10, 'ERROR': 0}
+[P21H] BEFORE ko greedy: {'GENERALIZE': 0, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 10, 'ERROR': 0}
+[P21H] BEFORE zh greedy: {'GENERALIZE': 0, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 10, 'ERROR': 0}
+[P21H] BEFORE ru greedy: {'GENERALIZE': 0, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 10, 'ERROR': 0}
+[P21H] BEFORE ja greedy: {'GENERALIZE': 0, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 10, 'ERROR': 0}
+[P21H] optimizer=PagedAdamW8bit (bnb 0.43.1)
+Token indices sequence length is longer than the specified maximum sequence length for this model (23831908 > 131072). Running this sequence through the model will result in indexing errors
+[P21H] tokenized mixed corpus: 6,000,000 tokens (block=512)
+[P21H] steps=5000 bsz=2 block=512 peak_lr=5e-05 warmup=100 lambda_mitosis=0.0 init=qwen mitosis_max=16 ckpt_every=500 osc_thr=0.5 es_patience=8
+[P21H] step=     1 lr=5.00e-07 CE=11.7412 total=11.7412 pool=2 splits=0 phi=0.7068 t=3s
+[P21H] ckpt save (best) step=1 CE=11.7412 → /workspace/p21hr/out_main/ckpt_best.pt (11791.6 MB)
+[P21H] step=   125 lr=5.00e-05 CE=4.6719 total=4.6719 pool=16 splits=14 phi=0.6609 t=99s
+[P21H] ckpt save (best) step=125 CE=4.6719 → /workspace/p21hr/out_main/ckpt_best.pt (11791.6 MB)
+[P21H] step=   250 lr=4.99e-05 CE=2.2420 total=2.2420 pool=16 splits=14 phi=0.6609 t=195s
+[P21H] ckpt save (best) step=250 CE=2.2420 → /workspace/p21hr/out_main/ckpt_best.pt (11791.6 MB)
+[P21H] step=   375 lr=4.97e-05 CE=1.1567 total=1.1567 pool=16 splits=14 phi=0.6609 t=297s
+[P21H] ckpt save (best) step=375 CE=1.1567 → /workspace/p21hr/out_main/ckpt_best.pt (11791.6 MB)
+[P21H] step=   500 lr=4.93e-05 CE=2.7122 total=2.7122 pool=16 splits=14 phi=0.6609 t=400s
+[P21H] ckpt save (step500) step=500 CE=2.7122 → /workspace/p21hr/out_main/ckpt_step500.pt (11791.6 MB)
+[P21H] kosmos anchor written: v3_emit_step500_ru_ru_factual_geo.kosmos
+[P21H] step=   625 lr=4.87e-05 CE=2.0538 total=2.0538 pool=16 splits=14 phi=0.6609 t=497s
+[P21H] step=   750 lr=4.81e-05 CE=1.9967 total=1.9967 pool=16 splits=14 phi=0.6609 t=585s
+[P21H] step=   875 lr=4.73e-05 CE=2.3530 total=2.3530 pool=16 splits=14 phi=0.6609 t=672s
+[P21H] step=  1000 lr=4.64e-05 CE=5.7523 total=5.7523 pool=16 splits=14 phi=0.6609 t=760s
+[P21H] ckpt save (step1000) step=1000 CE=5.7523 → /workspace/p21hr/out_main/ckpt_step1000.pt (11791.6 MB)
+[P21H] kosmos anchor written: v3_emit_step1000_ru_ru_factual_geo.kosmos
+[P21H] step=  1125 lr=4.53e-05 CE=0.7850 total=0.7850 pool=16 splits=14 phi=0.6609 t=857s
+[P21H] ckpt save (best) step=1125 CE=0.7850 → /workspace/p21hr/out_main/ckpt_best.pt (11791.6 MB)
+[P21H] ckpt save (osc_step1125) step=1125 CE=0.7850 → /workspace/p21hr/out_main/ckpt_osc_step1125.pt (11791.6 MB)
+[P21H] EARLY STOP: CE re-divergence: recent_mean=2.9634 > best_CE=0.7850+0.5 (mode collapse @ step 1125)
+[P21H] TRAIN DONE wall=878.8s final_CE=0.7850 actual_steps=1125/5000 early_stopped=True reason=CE re-divergence: recent_mean=2.9634 > best_CE=0.7850+0.5 (mode collapse @ step 1125) best_CE=0.7850@step1125
+[P21H] ckpt saved → /workspace/p21hr/out_main/ckpt.pt (11791.5 MB)
+[P21H] AFTER per-lang OOD eval (greedy + sample)
+[P21H] AFTER en: greedy={'GENERALIZE': 9, 'MEMORIZE': 1, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 4, 'MEMORIZE': 6, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=6/20 gen=13 coh=6
+[P21H] AFTER ko: greedy={'GENERALIZE': 4, 'MEMORIZE': 4, 'MEM_PARTIAL': 2, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 6, 'MEMORIZE': 4, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=1/20 gen=10 coh=1
+[P21H] AFTER zh: greedy={'GENERALIZE': 5, 'MEMORIZE': 5, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 4, 'MEMORIZE': 5, 'MEM_PARTIAL': 1, 'EMPTY': 0, 'ERROR': 0} verdict=PURE_MEMORIZE score=0/20 gen=9 coh=0
+[P21H] AFTER ru: greedy={'GENERALIZE': 6, 'MEMORIZE': 2, 'MEM_PARTIAL': 2, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 9, 'MEMORIZE': 0, 'MEM_PARTIAL': 1, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=0/20 gen=15 coh=0
+[P21H] AFTER ja: greedy={'GENERALIZE': 7, 'MEMORIZE': 2, 'MEM_PARTIAL': 1, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 7, 'MEMORIZE': 2, 'MEM_PARTIAL': 1, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=0/20 gen=14 coh=0
+[P21H] AFTER anima Eval1
+[P21H] AGG: STRONG=0 PARTIAL=0 WEAK=4 PURE_MEMORIZE=1 → FAIL
+[P21H] anima_register_hits=5/20 register_regress=False
+[P21H] KOSMOS anchors total=7 (during_train=2 final=5)
+[P21H] DONE → /workspace/p21hr/out_main
