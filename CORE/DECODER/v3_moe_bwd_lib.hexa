@@ -69,3 +69,91 @@ pub fn ln_f_bwd(d_y, x, gamma_off, M, d, rms_inv, dMg, d_x_out) {
         j = j + 1
     }
 }
+
+// ───────────────────────────────────────────────────────────────────────────
+// Phase 4-bwd-2: MLP block (W_up · ReLU · W_down) backward
+// ───────────────────────────────────────────────────────────────────────────
+//
+// Forward (per-token):
+//   h_pre[k] = Σ_j W_up[k, j] · x[j]                 (k in 0..h)
+//   h_act[k] = max(0, h_pre[k])                      (ReLU)
+//   y[i]    = Σ_k W_down[i, k] · h_act[k]            (i in 0..d)
+//
+// Backward (analytic vjp):
+//   Given d_y[i]:
+//     dW_down[i, k]  = d_y[i] · h_act[k]              (rank-1 outer)
+//     d_h_act[k]    = Σ_i d_y[i] · W_down[i, k]      (vjp through W_down)
+//     d_h_pre[k]    = d_h_act[k] · 1[h_act[k] > 0]   (ReLU bwd — h_act > 0 ⇔ not zeroed)
+//     dW_up[k, j]    = d_h_pre[k] · x[j]              (rank-1 outer)
+//     d_x[j]        = Σ_k d_h_pre[k] · W_up[k, j]    (vjp through W_up)
+//
+// Note: h_act suffices for ReLU bwd (no separate h_pre buffer needed —
+// the zero mask is recoverable from h_act since h_act = max(0, h_pre)).
+//
+// Args:
+//   d_y        (T_d)        gradient wrt y         (length d)
+//   x          (T_d)        forward input          (length d)
+//   h_act      (T_h)        forward activations    (length h)  (post-ReLU)
+//   wup_off    (int)        offset into M of W_up   (k·d + j layout, h·d slots)
+//   wdown_off  (int)        offset into M of W_down (i·h + k layout, d·h slots)
+//   M          (T_msize)    packed param buffer
+//   d          (int)        out dim
+//   h          (int)        hidden dim
+//   dMg        (T_msize)    packed grad buffer (dW_up + dW_down accumulated +=)
+//   d_x_out    (T_d)        OUTPUT gradient wrt x  (overwritten)
+pub fn mlp_block_bwd(d_y, x, h_act, wup_off, wdown_off, M, d, h, dMg, d_x_out) {
+    // dW_down[i, k] += d_y[i] · h_act[k]   (outer product)
+    let mut i = 0
+    while i < d {
+        let dyi = farr_get(d_y, i)
+        let mut k = 0
+        while k < h {
+            let prev = farr_get(dMg, wdown_off + i * h + k)
+            let _ = farr_set(dMg, wdown_off + i * h + k, prev + dyi * farr_get(h_act, k))
+            k = k + 1
+        }
+        i = i + 1
+    }
+    // d_h_pre[k] = (Σ_i d_y[i] · W_down[i, k]) · 1[h_act[k] > 0]
+    let d_h_pre = t_zeros(h)
+    let mut k2 = 0
+    while k2 < h {
+        let mut acc = 0.0
+        let mut i2 = 0
+        while i2 < d {
+            acc = acc + farr_get(d_y, i2) * farr_get(M, wdown_off + i2 * h + k2)
+            i2 = i2 + 1
+        }
+        // ReLU bwd: pass through only if h_act[k] > 0
+        if farr_get(h_act, k2) > 0.0 {
+            let _ = farr_set(d_h_pre, k2, acc)
+        }
+        k2 = k2 + 1
+    }
+    // dW_up[k, j] += d_h_pre[k] · x[j]
+    let mut k3 = 0
+    while k3 < h {
+        let dhk = farr_get(d_h_pre, k3)
+        if dhk != 0.0 {
+            let mut j = 0
+            while j < d {
+                let prev = farr_get(dMg, wup_off + k3 * d + j)
+                let _ = farr_set(dMg, wup_off + k3 * d + j, prev + dhk * farr_get(x, j))
+                j = j + 1
+            }
+        }
+        k3 = k3 + 1
+    }
+    // d_x[j] = Σ_k d_h_pre[k] · W_up[k, j]
+    let mut j2 = 0
+    while j2 < d {
+        let mut acc = 0.0
+        let mut k4 = 0
+        while k4 < h {
+            acc = acc + farr_get(d_h_pre, k4) * farr_get(M, wup_off + k4 * d + j2)
+            k4 = k4 + 1
+        }
+        let _ = farr_set(d_x_out, j2, acc)
+        j2 = j2 + 1
+    }
+}
