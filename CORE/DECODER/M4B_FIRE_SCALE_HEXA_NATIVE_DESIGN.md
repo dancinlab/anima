@@ -124,30 +124,94 @@ memory:
 
 ### Phase 4 — Dispatch (H100 SXM, Vast.ai)
 
-**Cost envelope**:
-- H100 SXM @ $2.28/hr × 4-8 hr = **$9-18** (single GPU)
-- multi-GPU 시 비례 (a_wall_first 차원, dispatch 결정 시 trade-off)
+**Cost envelope** (Phase 3 결정 적용):
+- **Pilot fire**: H100 SXM @ $2.28/hr × 0.5-1 hr = **$1-3** (첫 fire, mechanism 검증)
+- Full fire (post-pilot PASS): $2.28/hr × 4-8 hr = $9-18
 
-**Dispatch pattern** (이전 v5-mitosis cond.5 cycle): `tool/dispatch_vast_mac_template.sh` 기반. SAVE_POD=1 trap 으로 first-fire crash 시 pod 보존 → 재발사.
+**Dispatch pattern** (이전 v5-mitosis cond.5 cycle): `tool/dispatch_vast_mac_template.sh` 기반. SAVE_POD=1 trap 으로 first-fire crash 시 pod 보존 → 재발사 (v5-mitosis 첫 fire crash → SAVE_POD 회복 → 재발사 PASS 학습).
 
+**Pilot dispatch sketch** (Phase 3 pilot 결정 적용):
 ```bash
-# Vast.ai dispatch sketch
-vastai launch \
+# 1) provision H100 SXM
+vastai launch instance \
   --image pytorch:2.x-cuda12 \
   --gpu H100-SXM5-80GB \
-  --disk 100 \
+  --disk 50 \
   --bid 2.28 \
-  -- bash setup.sh && hexa run train_p21h_v3.hexa --moe --bpe-vocab=/qwen/vocab.json --bpe-merges=/qwen/merges.txt --corpus=/anima_corpus --steps=5000 --save-pod=1
+  --label m4b-pilot-2026-05-27
+
+# 2) on pod: anima clone + Qwen scp + run pilot
+ssh <pod> "bash -lc 'cd ~ && git clone https://github.com/dancinlab/anima.git && cd anima && \
+  scp <mac>:vP21M_V4/lora_adapter/merges.txt HEXAD/.../vP21M_V4/lora_adapter/ && \
+  scp <mac>:vP21M_V4/lora_adapter/vocab.json HEXAD/.../vP21M_V4/lora_adapter/ && \
+  scp <mac>:training/corpus_consciousness_v1.jsonl training/ && \
+  export SAVE_POD=1 P21H_MOE_ON=1 P21H_BPE_ON=1 && \
+  hexa run CORE/DECODER/train_v3_moe.hexa 2>&1 | tee fire.log'"
+
+# 3) Monitor (commons g57): hexa cloud tail <pod> fire.log
+# 4) Harvest: ckpt + log + verdict.json scp back; PASS → vastai stop; FAIL → SAVE_POD 잔존
 ```
+
+**Pilot env-var protocol** (train_v3_moe.hexa Phase 3b 확장 시 추가):
+- `P21H_PILOT_D=512 · P21H_PILOT_NL=12 · P21H_PILOT_E=2 · P21H_PILOT_T=512`
+- `P21H_PILOT_STEPS=500 · P21H_PILOT_NSAMP=4`
+- `P21H_MOE_ON=1 · P21H_BPE_ON=1`
+- `SAVE_POD=1` (first-fire crash trap)
+
+**Pre-fire checklist** (사전 검증, SAVE_POD 잔존 대비):
+1. ☐ train_v3_moe.hexa SCAFFOLD → real driver 확장 (Phase 3b: tok_emb · attn · MLP · ln · AdamW step · multi-step loop · corpus IDS feed). 현 1-step smoke 만 가능
+2. ☐ Vast.ai SSH key 등록 (`secret get vast.api_key`)
+3. ☐ Qwen tokenizer files 호스트 reachable (Mac → pod scp 동작)
+4. ☐ SAVE_POD trap 검증 (의도적 crash → pod 보존 확인) — toy smoke 로 dry-run
 
 ### Phase 5 — Monitor + harvest + verdict
 
-**Falsifier 사전등록** (g73 honest, M4b-fire-scale 의 진짜 verdict):
-- F-M4B-FIRE-1 — **collapse 회피**: M3 TTR ≥ 0.3 (5K step 종 ckpt sampling)
-- F-M4B-FIRE-2 — **coherence**: V5.8 standard_greedy ≥ 4/5
-- F-M4B-FIRE-3 — **router 분화**: 학습 종에 cells 의 register-prompt vs anima-prompt 에서 top-1 expert 분기 (toy 의 97/3 패턴이 scale 에서 유지되나)
-- F-M4B-FIRE-4 — **L_ce 수렴**: V3 의 last-position CE 가 3.324(baseline) 보다 낮음
-- F-M4B-FIRE-5 — **register leak 측정**: anima-fact recall PASS (#46 lr 5e-6 + L4 lr-floor 5/5 PASS 패턴 재현)
+**Falsifier 사전등록** (g73 honest · pilot/full threshold 분리):
+
+| ID | 측정 | pilot threshold (Phase 4 첫 fire) | full threshold (mechanism PASS 후) | 측정 방법 |
+|---|---|---|---|---|
+| F-M4B-FIRE-1 | collapse 회피 | M3 TTR ≥ 0.20 (작은 corpus, relaxed) | M3 TTR ≥ 0.30 (full corpus) | 종 ckpt sampling N=20 prompts |
+| F-M4B-FIRE-2 | coherence | qualitative review (10 sample, intuitive) | V5.8 standard_greedy ≥ 4/5 | greedy decode sample manual |
+| F-M4B-FIRE-3 | router 분화 | top-1 anima-prompt ≠ register-prompt (cluster split signal) | toy 의 97/3 패턴 유지 | 학습 종 gate sample 100 prompts |
+| F-M4B-FIRE-4 | L_ce 수렴 | final < initial (단조 감소 검증) | final < 3.324 (baseline 대비) | train log 의 last-step L_ce |
+| F-M4B-FIRE-5 | register leak | anima-fact 0/5 → manual review | anima-fact ≥ 4/5 (#46 패턴) | identity_probe 50 × 5 cats |
+
+**Pilot verdict matrix** (relaxed thresholds 의 의의 = mechanism 검증, full 의 의의 = production):
+
+```
+pilot 결과   →   다음 단계
+─────────       ─────────
+5/5 PASS    →   full fire 즉시 ($9-18)
+3-4/5       →   특정 falsifier 분석 + pilot 재발사 또는 small fix
+2/5 이하    →   mechanism 결함 (MoE arch 또는 scale-up 부적합) — design 재검토
+0/5         →   honest CLOSED-NEGATIVE — 더블바인드 escape via MoE 가설 falsified
+```
+
+**Verdict template** (`CORE/DECODER/m4b_pilot_verdict.md` post-fire 작성):
+```
+# M4b-fire-scale Pilot Verdict (2026-MM-DD)
+
+## fire metadata
+- pod, wall, cost, ckpt path/sha256
+- config: d=512 n_layer=12 E=2 V=151643 T=512 steps=500 nsamp=4
+- env: P21H_MOE_ON=1 P21H_BPE_ON=1 SAVE_POD=1
+
+## falsifier 5/5 측정값 (verbatim from harness)
+F-M4B-FIRE-1 M3 TTR = <측정> · threshold 0.20 · PASS/FAIL
+F-M4B-FIRE-2 coherence = <샘플 10개> · qualitative · PASS/FAIL
+F-M4B-FIRE-3 router 분화 = top-1 anima/register split = <측정> · PASS/FAIL
+F-M4B-FIRE-4 L_ce final = <측정> · initial = <측정> · monotone PASS/FAIL
+F-M4B-FIRE-5 register leak = <측정> · manual · PASS/FAIL
+
+## verdict
+- aggregate: N/5 PASS
+- next: full fire | re-pilot | re-design | CLOSED-NEGATIVE
+
+## honest C3 (post-hoc)
+- (관측된 surprise, anti-pattern, follow-up)
+```
+
+**M4c p7 verify** (post-fire): simple-stack — collapse 회피 ∧ coherence 둘 다. perplexity 아닌 generated sample 검증 (commons g73).
 
 **M4c p7 verify** (post-fire): simple-stack — collapse 회피 ∧ coherence 둘 다. perplexity 아닌 generated sample 검증 (commons g73).
 
