@@ -1,0 +1,37 @@
+================================================================
+  H_653 — collective-convexity-substrate-class (H_643 정밀화)
+  W→Φ_collective convexity (span ratio) vs ECA rule class?
+  IIT4 big_phi_bounded · n=5 homog cohort · cap=3 · sys=0
+  4 rules × 6-pt W grid · convexity = Φ_max / Φ_min
+================================================================
+  W grid: [0.15, 0.40, 0.55, 0.70, 0.95, 1.0]  (H_643 stage W + mid)
+  ─────────────────────────────────────
+  rule184 [II-additive]
+    Φ(W): 4.49492 19.8846 32.7523 45.5429 54.4631 51.5361
+    Φ_min=4.49492 Φ_max=54.4631 span_ratio=12.1163 W-monotone=NO
+  rule90 [III-XOR/additive]
+    Φ(W): 0.246475 0.943149 1.65498 2.75808 6.32388 7.5
+    Φ_min=0.246475 Φ_max=7.5 span_ratio=30.4167 W-monotone=yes
+  rule30 [III-chaotic]
+    Φ(W): 0.315809 1.18852 2.07721 3.4687 8.13002 9.72067
+    Φ_min=0.315809 Φ_max=9.72067 span_ratio=30.7705 W-monotone=yes
+  rule110 [IV-complex]
+    Φ(W): 1.17498 4.50052 7.62552 13.6383 34.8823 41.7124
+    Φ_min=1.17498 Φ_max=41.7124 span_ratio=35.4975 W-monotone=yes
+  ─────────────────────────────────────
+  span ratios by class (ascending complexity):
+    rule184 (II-additive)      : 12.1163
+    rule90  (III-XOR/additive) : 30.4167
+    rule30  (III-chaotic)      : 30.7705
+    rule110 (IV-complex)       : 35.4975
+  ────────────── verdict ──────────────
+  [PASS] F653.1 CONVEXITY-MONOTONE: sr(110)>=sr(30)>=sr(90)>=sr(184)
+  [PASS] F653.2 CLASS-IV-MOST-CONVEX: sr(110) = max over 4 rules
+  [PASS] F653.3 ADDITIVE-MORE-LINEAR: sr(184) < sr(110)
+  [FAIL] F653.4 W-MONOTONE-EACH-RULE: Φ_coll non-decreasing in W, all rules
+  [PASS] F653.5 H643-REPLICATE: sr(rule110) >= 10 (H_643 ~30x span replicated)
+  [PASS] F653.6 BOUND: Φ_coll ≥ 0, span ratios finite
+  ──────────────────────────────────────
+  F653.1-6 5/6 PASS
+  verdict: 🟢 SUPPORTED-NUMERICAL
+  cross-link: H_643 cohort=rule110 span≈30x → here rule110 span_ratio=35.4975
