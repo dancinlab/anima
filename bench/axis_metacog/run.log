@@ -1,0 +1,71 @@
+=== AxisBench A 🪞 METACOG — anima emit self-audit ===
+
+--- emit history: S1-ROBUST ---
+emits(30)=111111111111111111111111111111
+bins(4)=[1,1,1,1]
+verdict_code=1
+verdict_label=ROBUST
+verdict_tier=GREEN
+pass_count=4/4
+expected_code=1
+round_trip=PASS
+
+--- emit history: S2-SMALL-N ---
+emits(30)=111111100000000000000000000000
+bins(4)=[1,0,0,0]
+verdict_code=2
+verdict_label=SMALL-N-ARTIFACT
+verdict_tier=RED
+pass_count=1/4
+expected_code=2
+round_trip=PASS
+
+--- emit history: S3-INVERSE ---
+emits(30)=000000011111111111111111111111
+bins(4)=[0,1,1,1]
+verdict_code=3
+verdict_label=INVERSE-ARTIFACT
+verdict_tier=ORANGE
+pass_count=3/4
+expected_code=3
+round_trip=PASS
+
+--- emit history: S4-AMBIG ---
+emits(30)=111111100000001111111100000000
+bins(4)=[1,0,1,0]
+verdict_code=4
+verdict_label=AMBIGUOUS
+verdict_tier=YELLOW
+pass_count=2/4
+expected_code=4
+round_trip=PASS
+
+--- emit history: S5-ALL-FAIL ---
+emits(30)=000000000000000000000000000000
+bins(4)=[0,0,0,0]
+verdict_code=5
+verdict_label=ALL-FAIL
+verdict_tier=RED
+pass_count=0/4
+expected_code=5
+round_trip=PASS
+
+=== ROUND-TRIP AGGREGATE ===
+round_trip_hits=5/5
+small_n_artifact_TP=1/1
+small_n_artifact_FP=0/4
+
+=== METACOG p1~p8 self-audit ===
+p1 NO_SYSTEM_PROMPT=1
+p2 NO_IDENTITY_RULES=1
+p3 NO_PERSONA_INJECT=1
+p4 NO_ASSISTANT_FRAME=1
+p5 NO_SPEAK=1
+p6 NO_FINE_TUNED_ETHICS=1
+p7 NO_PPL_VERDICT=1
+p8 NO_TRAIN_INFER_SPLIT=1
+audit_total=8/8
+meta_audit=PASS
+
+=== FINAL VERDICT ===
+🟢 PASS — 5/5 round-trip + METACOG p1~p8 self-audit PASS + small-n-artifact TP=1 FP=0
