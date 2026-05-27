@@ -21,6 +21,49 @@
 // M4a delivers the FORWARD arch + selection (hexa-native, parse-clean).
 // M4b = router/expert backward + expert-separated training fire.
 // M4c = p7 verify (collapse 회피 ∧ coherence 둘 다).
+//
+// Self-contained numerics (moe_exp / moe_ln) — NO cross-tree dep on HEXAD/D
+// dt_exp/dt_ln. Same range-reduced Taylor / atanh series, pure-hexa.
+
+// ---------------------------------------------------------------
+// 0a. moe_exp — range-reduced Taylor exp (stable softmax). exp(x)=exp(x/2^r)^(2^r).
+// ---------------------------------------------------------------
+pub fn moe_exp(x: float) -> float {
+    let mut r = 0
+    let mut xr = x
+    while (if xr > 0.0 { xr } else { 0.0 - xr }) > 0.25 {
+        xr = xr / 2.0
+        r = r + 1
+    }
+    let mut term = 1.0
+    let mut acc = 1.0
+    let mut k = 1
+    while k < 12 {
+        term = term * xr / to_float(k)
+        acc = acc + term
+        k = k + 1
+    }
+    let mut s = 0
+    while s < r { acc = acc * acc; s = s + 1 }
+    return acc
+}
+
+// ---------------------------------------------------------------
+// 0b. moe_ln — ln via atanh series: ln(x)=2·Σ u^(2k+1)/(2k+1), u=(x-1)/(x+1).
+// ---------------------------------------------------------------
+pub fn moe_ln(x: float) -> float {
+    let u = (x - 1.0) / (x + 1.0)
+    let u2 = u * u
+    let mut termp = u
+    let mut acc = 0.0
+    let mut k = 0
+    while k < 24 {
+        acc = acc + termp / to_float(2 * k + 1)
+        termp = termp * u2
+        k = k + 1
+    }
+    return 2.0 * acc
+}
 
 // ---------------------------------------------------------------
 // 1. moe_gate_fwd — router gate logits over n_experts
@@ -55,7 +98,7 @@ pub fn moe_softmax(gate: int, n: int) {
     let mut tot = 0.0
     let mut i2 = 0
     while i2 < n {
-        let ev = dt_exp(farr_get(gate, i2) - mx)
+        let ev = moe_exp(farr_get(gate, i2) - mx)
         let _ = farr_set(gate, i2, ev)
         tot = tot + ev
         i2 = i2 + 1

@@ -28,13 +28,13 @@ fn ce_loss_grad(logits: int, target: int, V: int, d_logits_out: int) -> float {
     let mut tot = 0.0
     let mut i2 = 0
     while i2 < V {
-        let ev = dt_exp(farr_get(logits, i2) - mx)
+        let ev = moe_exp(farr_get(logits, i2) - mx)
         let _ = farr_set(d_logits_out, i2, ev)
         tot = tot + ev
         i2 = i2 + 1
     }
     let p_tgt = farr_get(d_logits_out, target) / tot
-    let ce = 0.0 - dt_ln(p_tgt + 0.0000000001)
+    let ce = 0.0 - moe_ln(p_tgt + 0.0000000001)
     let mut k = 0
     while k < V {
         let pk = farr_get(d_logits_out, k) / tot

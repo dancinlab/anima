@@ -2,6 +2,19 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T09:20:00Z — M4b-fire-toy 실 run + self-contained 수정 → 🟠 PARTIAL verdict
+
+- [x] ubu-2 에서 moe_toy_train 실 run (hexa run · 파일 stdin copy + abs-path → /tmp 패치)
+- [x] **실 run 이 compile 버그 적발** — dt_exp/dt_ln 은 `HEXAD/D/d_train_lib` 정의라 CORE/DECODER 컴파일 시 undeclared (parse 는 cross-module 미해결로 통과했었음 — instrument-first 가 진짜 버그 잡음)
+- [x] `moe_router.hexa` 에 `moe_exp` (range-reduced Taylor) + `moe_ln` (atanh series) self-contained pub fn 추가 · moe_softmax dt_exp→moe_exp
+- [x] `moe_toy_train.hexa` ce_loss_grad dt_exp/dt_ln → moe_exp/moe_ln
+- [x] CORE/DECODER MoE 스택 = HEXAD/D 의존 0
+- [x] **toy fire verdict 🟠 PARTIAL** — init avg CE 1.38629 (=ln4) → final 0.00775 (178× 감소 · 두 register 학습 성공) BUT gate(A)=gate(B)=[0.5,0.5] (router 분화 0 · topA==topB)
+- [x] 발견 — **soft-MoE 단독은 dense-collapse**: 양쪽 expert 가 둘 다 학습 → gate 균등 유지. 더블바인드 탈출 핵심(register↔coherent expert 분리)이 naive soft routing 으론 emergent 안 됨 (MoE 문헌 일치 — load-balancing/top-k 없으면 dense)
+- [x] DECODER.md M4b-fire-toy [x] 🟠 PARTIAL + M4b-diff 신규 (분화 강제 — top-k/load-bal/asym-init)
+- [ ] M4b-diff — soft-MoE 에 분화 압력 추가 (top-k hard route OR load-balancing aux OR 비대칭 init) → toy 재측정 PASS (topA≠topB) — 다음
+- [ ] M4b-fire-scale (toy PASS 후) · M4c p7 verify
+
 ## 2026-05-27T09:00:00Z — M4b-wire-toy MoE 분화 검증 harness (scale 발견)
 
 - [x] 사용자 A 선택 — toy 메커니즘 검증 먼저 (큰 train_p21h_v3 침습 회피 · g4 stacked-PR)
