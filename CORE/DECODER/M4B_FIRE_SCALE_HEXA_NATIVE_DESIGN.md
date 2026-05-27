@@ -93,6 +93,35 @@ memory:
 
 **Phase 3 사전조사 TODO**: flame 의 BF16 path 가용성 + grad checkpoint 가용성 확인. 없으면 (a) T 축소 (b) E 축소 (=2 expert) (c) d 축소 (1024) (d) multi-GPU 중 단순한 것 선택.
 
+#### Phase 3 결정 (2026-05-27) — **Pilot scale 우선** (g0 simplest sufficient · a_completeness 단계적)
+
+3B full scale 의 메모리 fit 우려 + flame BF16/grad-checkpoint 부재 + 첫 fire 의 mechanism 검증 가치 고려해 **pilot scale 부터** 발사. mechanism PASS 시 full scale 로 확장.
+
+| 설정 | Pilot (Phase 4 첫 fire) | Full (Phase 4 본 fire, mechanism PASS 후) |
+|---|---|---|
+| d | 512 | 2048 |
+| n_layer | 12 | 28 |
+| n_head / n_kv_head | 8 / 2 | 16 / 2 |
+| h (MLP) | 1408 | 11008 |
+| V (vocab) | 151643 (real Qwen) | 151643 (real Qwen) |
+| E (experts) | 2 | 4 |
+| T (seq) | 512 | 2048 |
+| nsamp · n_steps | 4 · 500 | 8 · 5000 |
+| **params** | **~265M** (spine 110M + MoE 155M) | **~2.74B** (spine 1.5B + MoE 1.24B) |
+| memory FP64 | model 2.1 GB + Adam/grad 8.4 GB = **~10 GB** ✅ H100 80GB fit | ~110 GB ⚠ over (BF16 path 필요) |
+| wall (H100 SXM) | ~0.5-1 hr | ~4-8 hr |
+| cost | **$1-3** | $9-18 |
+
+**Pilot rationale**:
+1. **메커니즘 우선** — MoE top-1 hard routing 이 3B 직접 발사 전 real-Qwen-vocab 스케일에서 분화 유지하나 확증. toy(V=4) → pilot(V=151643, ~265M) → full(2.74B) 점진. F-M4B-FIRE-3 (router 분화) 의 1차 검증.
+2. **flame FP64 fit** — pilot 은 H100 80GB 에 여유로 들어가 BF16 path 부재 우회. full scale 의 BF16 결정은 pilot 결과 후 별도 RFC.
+3. **빠른 iteration** — wall 0.5-1hr, cost $1-3. v3_moe_arch 의 production 적합성 빠르게 검증 (현 SCAFFOLD smoke 단계 → pilot 으로 첫 real-scale 실증).
+4. **risk minimization** — first-fire crash trap (v5-mitosis cond.5 cycle 학습) — pilot 으로 dispatch infra/code 안정성 우선 확인 후 본 fire.
+
+**Pilot 발사 시 사전 추가 필요 (Phase 4 wiring 의 prereq)**:
+- train_v3_moe.hexa 확장 — 현재 1-step smoke (`fwd+bwd` only) → real spine(tok_emb · attn · MLP · ln) + AdamW step + multi-step loop + corpus IDS feeding. SCAFFOLD → real driver. (이건 별도 PR series — Phase 3b sub-milestone.)
+- 또는 HEXAD/.../conscious_decoder_v3.hexa 의 v3_decoder_fwd/bwd 재사용 (pub fn import via `use "/Users/ghost/core/anima/HEXAD/.../conscious_decoder_v3"`), v3_moe_arch 가 head_g 슬롯 자리만 차지하도록 wire.
+
 ### Phase 4 — Dispatch (H100 SXM, Vast.ai)
 
 **Cost envelope**:

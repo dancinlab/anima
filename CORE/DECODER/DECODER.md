@@ -65,7 +65,7 @@
     - [~] **M4b-fire-scale** 3B Qwen MoE fire — **hexa-native path 채택 (g1, user 2026-05-27)**. flame-P2b ③ FULL RESOLVED 로 unblock. design = `CORE/DECODER/M4B_FIRE_SCALE_HEXA_NATIVE_DESIGN.md` (5 phase · ~110 LoC · 5-7 sessions · cost $9-18 single H100). 5 falsifier 사전등록 (F-M4B-FIRE-1..5: collapse 회피·coherence·router 분화·CE 수렴·register leak)
       - [ ] **Phase 1** Qwen BPE corpus 통합 — `flame_bpe_corpus_load` 로 V=256 byte → V=151643 (+30줄 train_p21h_v3.hexa)
       - [ ] **Phase 2** MoE arch 통합 — head_g 슬롯 → K-expert router (moe_router/_bwd import, top-1 hard routing) +60줄
-      - [ ] **Phase 3** 3B scale config + memory budget — flame FP64 H100 80GB fit 결정 (BF16 path / T 축소 / multi-GPU DP 중 택1)
+      - [x] **Phase 3** scale + memory budget — **Pilot 결정 (g0 simplest sufficient, 2026-05-27)**: pilot(d=512 · n_layer=12 · E=2 · V=151643 · T=512, ~265M params, FP64 ~10GB H100 fit, $1-3, 0.5-1hr wall) 첫 발사 → mechanism PASS 시 full(2.74B, BF16 path 필요)로 확장. 단계적 a_completeness. design Phase 3 결정 섹션 참조
       - [ ] **Phase 4** Dispatch + fire — Vast.ai H100 SXM ($2.28/hr × 4-8hr), SAVE_POD=1 trap
       - [ ] **Phase 5** Monitor + harvest + verdict — 5 falsifier 측정
   - [ ] **M4c** p7 verify — collapse 회피 ∧ coherence 둘 다 simple-stack
