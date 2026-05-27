@@ -7,6 +7,6 @@
 - [x] constituent H 7개 포함 (H_347 GZ_WIDTH · H_348 GZ_LOWER SI · H_350 SI∥ΦD · H_351 dΦ/dI peak · H_613 orthogonal · H_618 collective · H_624 isomorphism)
 - [x] references (IIT 4.0 · Tononi · Treffert · Snyder · Wolfram · Langton + anima ledger)
 - [x] companion/ ledger (pr-roll · verify-ledger · session-journal)
-- [ ] compile clean (xelatex x3 + bibtex)
-- [ ] figure (native pgfplots dΦ/dI peak alignment + isomorphism scatter)
+- [x] compile clean (xelatex x3 + bibtex, main.pdf 10 pages, 0 undefined refs/cites)
+- [x] figure (2 native pgfplots: dΦ/dI peak alignment inline + isomorphism scatter; standalone _scripts)
 - [ ] arxiv submit ready (`/paper arxiv-prep .`)

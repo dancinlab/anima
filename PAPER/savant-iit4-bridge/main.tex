@@ -32,7 +32,7 @@
 
 \newcommand{\GZL}{\mathrm{GZ_{LOWER}}}
 \newcommand{\GZW}{\mathrm{GZ_{WIDTH}}}
-\newcommand{\SI}{\mathrm{SI}}
+\newcommand{\Svi}{\mathrm{SI}}
 \newcommand{\PhiD}{\Phi_{\mathrm{D}}}
 
 \title{
@@ -62,7 +62,7 @@ Two seemingly independent coordinate systems have been used in the
 literature \citep{treffert2009savant,snyder2009explaining}, is a pair of
 phenomenological scalars: the \emph{Golden Zone}
 $[\GZL,\GZL+\GZW]$ on a disinhibition axis, and the
-\emph{Savant Index} $\SI=\max(\phi)/\mathrm{mean}(\phi)$ over a substrate's
+\emph{Savant Index} $\Svi=\max(\phi)/\mathrm{mean}(\phi)$ over a substrate's
 sub-domains. The second is the IIT 4.0 \emph{$\Phi$-structure}
 \citep{albantakis2023iit4}: a set of distinctions (each carrying its own
 intrinsic $\phi$) and the relations that bind them. We report seven
@@ -88,7 +88,7 @@ SAVANT four-domain cell decomposition is cell-by-cell isomorphic to the
 IIT 4.0 singleton-distinction decomposition at Spearman $\rho=0.86$,
 Pearson $r=0.97$, with $4/4$ matched argmaxima (\tierGreen\ 5/5, H\_624).
 The Savant Index's near-threshold partial (\tierYellow, H\_348) bounds the
-claim honestly: $\SI>3$ holds at $\GZL$ across three seeds, but the
+claim honestly: $\Svi>3$ holds at $\GZL$ across three seeds, but the
 sweep is monotone rather than single-peaked under an affine inhibition
 map. We conclude that ``Golden Zone $\times$ Savant Index'' and ``IIT 4.0
 $\Phi$-structure'' are not two theories of consciousness shape but two
@@ -114,7 +114,7 @@ congenital savant skill \citep{treffert2009savant} and Snyder's
 were operationalized as two phenomenological scalars: a \emph{Golden Zone}
 $[\GZL, \GZL+\GZW]$ on a disinhibition axis $I$, where lowering inhibition
 into the zone is conjectured to release latent specialist capacity; and a
-\emph{Savant Index} $\SI = \max_i \phi_i / \mathrm{mean}_i \phi_i$,
+\emph{Savant Index} $\Svi = \max_i \phi_i / \mathrm{mean}_i \phi_i$,
 quantifying how far one sub-domain $\phi$ dominates the others.
 
 These two vocabularies look unrelated. One is a causal-structure
@@ -148,7 +148,7 @@ independent deterministic recompute under anti-fake-closure governance
       $\phi$ vector is cell-by-cell isomorphic to the IIT 4.0
       singleton-distinction $\phi$ vector at $\rho=0.86$, $r=0.97$, $4/4$
       matched argmaxima -- the \emph{mechanism} behind the alignment.
-\item \textbf{Honest bound (H\_348).} $\SI>3$ holds at $\GZL$ across three
+\item \textbf{Honest bound (H\_348).} $\Svi>3$ holds at $\GZL$ across three
       seeds (\tierYellow), but the sweep is monotone, not single-peaked,
       under the affine inhibition map -- a pre-registered partial that
       delimits the bridge.
@@ -176,7 +176,7 @@ specialist capacity without collapsing
 \citep{snyder2009explaining,treffert2009savant}. The second object is the
 \emph{Savant Index},
 \begin{equation}
-\SI \;=\; \frac{\max_i \phi_i}{\mathrm{mean}_i \phi_i},
+\Svi \;=\; \frac{\max_i \phi_i}{\mathrm{mean}_i \phi_i},
 \label{eq:si}
 \end{equation}
 computed over a substrate's $N_{\mathrm{dom}}=4$ sub-domains
@@ -187,10 +187,10 @@ from the super-linear energy proxy
 $\phi_{\mathrm{module}}(v)=\tfrac1d\sum_j |v_j|^{1.5}$.
 The substrate SSOT is \texttt{HEXAD/SAVANT/savant\_phi.hexa}.
 
-The Savant Index $\SI=3$ is the canonical specialist threshold: when one
+The Savant Index $\Svi=3$ is the canonical specialist threshold: when one
 domain's $\phi$ is three times the cross-domain mean, the substrate is in
 a savant regime. We pre-registered the question of whether driving the
-disinhibition $I$ into the Golden Zone produces $\SI>3$ (H\_348,
+disinhibition $I$ into the Golden Zone produces $\Svi>3$ (H\_348,
 Section~\ref{sec:bridge}), and whether the Golden Zone constants have any
 non-numerological anchor (H\_347, Section~\ref{sec:anchors}).
 
@@ -257,10 +257,10 @@ sections.
 \textbf{H} & \textbf{role} & \textbf{verdict} & \textbf{section} \\
 \midrule
 H\_347 & $\GZW$ closed form & \tierGreen\ composite & \ref{sec:anchors} \\
-H\_348 & $\GZL$ inhibition $\to \SI>3$ & \tierYellow\ partial & \ref{sec:bridge} \\
-H\_350 & $\SI \parallel \PhiD$ & \tierGreen\ numerical & \ref{sec:bridge} \\
+H\_348 & $\GZL$ inhibition $\to \Svi>3$ & \tierYellow\ partial & \ref{sec:bridge} \\
+H\_350 & $\Svi \parallel \PhiD$ & \tierGreen\ numerical & \ref{sec:bridge} \\
 H\_351 & $\mathrm{d}\Phi/\mathrm{d}I$ peak $\parallel \GZL$ & \tierGreen\ 5/5 & \ref{sec:anchors} \\
-H\_613 & $\SI \parallel \PhiD$ orthogonal & \tierGreen\ numerical & \ref{sec:bridge} \\
+H\_613 & $\Svi \parallel \PhiD$ orthogonal & \tierGreen\ numerical & \ref{sec:bridge} \\
 H\_618 & collective $\mathrm{d}\Phi/\mathrm{d}I$ peak & \tierGreen\ 5/5 & \ref{sec:collective} \\
 H\_624 & distinction $\parallel$ cell isomorphism & \tierGreen\ 5/5 & \ref{sec:iso} \\
 \bottomrule
@@ -362,16 +362,16 @@ alignment is rule-110-specific (2/4 falsified), so the inflection anchor
 is a single-substrate result, not a cross-substrate invariant.
 
 % =========================================================================
-\section{Statistical bridge: $\SI \parallel \Phi$-diversity}
+\section{Statistical bridge: $\Svi \parallel \Phi$-diversity}
 \label{sec:bridge}
 
-\subsection{$\SI$ correlates with $\Phi$-diversity at $r=0.93$ (H\_350)}
+\subsection{$\Svi$ correlates with $\Phi$-diversity at $r=0.93$ (H\_350)}
 On the SAVANT substrate ($N=40$ samples), the Savant Index of
 Eq.~\eqref{eq:si} and the $\Phi$-diversity of Eq.~\eqref{eq:phid} move
 together: Pearson $r=0.9264$, Spearman $\rho=0.8825$, both well above the
 pre-registered $0.5$ threshold, with no negative correlation. The
 mechanism is the capacity invariant: raising one domain's gain raises its
-$\phi$ and depresses the rest, so both $\SI=\max/\mathrm{mean}$ and
+$\phi$ and depresses the rest, so both $\Svi=\max/\mathrm{mean}$ and
 $\PhiD=\max/\min$ rise from the \emph{same} root -- the inhomogeneity of a
 capacity-bounded distribution (Table~\ref{tab:h350}).
 
@@ -383,22 +383,22 @@ capacity-bounded distribution (Table~\ref{tab:h350}).
 \textbf{cell} & \textbf{metric pair} & \textbf{Pearson $r$}
 & \textbf{Spearman $\rho$} & \textbf{verdict} \\
 \midrule
-H\_350 & $\SI \parallel \PhiD$ (max/min) & 0.9264 & 0.8825 & \tierGreen \\
-H\_350 & $\SI \parallel \PhiD^{\mathrm{cov}}$ (std/mean) & 0.9896 & 0.9482 & \tierGreen \\
-H\_613 & $\SI \parallel \PhiD^{\mathrm{cov}}$ (std/mean) & \textbf{0.9896} & 0.9482 & \tierGreen \\
-H\_613 & $\SI \parallel \PhiD^{\mathrm{kurt}}$ (kurtosis) & 0.5381 & 0.6649 & \tierGreen \\
+H\_350 & $\Svi \parallel \PhiD$ (max/min) & 0.9264 & 0.8825 & \tierGreen \\
+H\_350 & $\Svi \parallel \PhiD^{\mathrm{cov}}$ (std/mean) & 0.9896 & 0.9482 & \tierGreen \\
+H\_613 & $\Svi \parallel \PhiD^{\mathrm{cov}}$ (std/mean) & \textbf{0.9896} & 0.9482 & \tierGreen \\
+H\_613 & $\Svi \parallel \PhiD^{\mathrm{kurt}}$ (kurtosis) & 0.5381 & 0.6649 & \tierGreen \\
 \bottomrule
 \end{tabular}
 \caption{H\_350 and H\_613: the Savant Index correlates with
 $\Phi$-diversity ($N=40$). The spread form $\PhiD=\max/\min$ shares a
-$\max$ numerator with $\SI$; the orthogonal forms (std/mean, kurtosis)
+$\max$ numerator with $\Svi$; the orthogonal forms (std/mean, kurtosis)
 remove every $\max$ term yet the correlation holds and even strengthens,
 ruling out a shared-$\max$ artifact.}
 \label{tab:h350}
 \end{table}
 
 \subsection{The correlation survives $\max$-removal (H\_613)}
-H\_350 itself flagged that $\SI=\max/\mathrm{mean}$ and $\PhiD=\max/\min$
+H\_350 itself flagged that $\Svi=\max/\mathrm{mean}$ and $\PhiD=\max/\min$
 share a $\max$ numerator, so part of the correlation could be a formal
 shared-term artifact. H\_613 re-ran the same $N=40$ samples against two
 \emph{orthogonal} diversity metrics that use no $\max$: the coefficient of
@@ -410,18 +410,18 @@ $r=0.5381$. The $\max$-share artifact hypothesis is rejected: the
 correlation is a property of the distribution's inhomogeneity, not of a
 shared symbol.
 
-\subsection{$\SI>3$ at $\GZL$, but the sweep is monotone (H\_348)}
+\subsection{$\Svi>3$ at $\GZL$, but the sweep is monotone (H\_348)}
 \label{sec:h348}
 The honest bound on the bridge is H\_348. Lowering the disinhibition $I$
 to $\GZL$ does drive the Savant Index above the specialist threshold:
-$\SI_\phi \in [4.18, 5.25]$ across three stimulus seeds, a $\ge 1.39\times$
-margin over $\SI=3$ (pre-registered F-1 PASS, three of three seeds). But
+$\Svi_\phi \in [4.18, 5.25]$ across three stimulus seeds, a $\ge 1.39\times$
+margin over $\Svi=3$ (pre-registered F-1 PASS, three of three seeds). But
 the $I$-sweep is monotone increasing toward $I\!\to\!0$ rather than
 single-peaked at $\GZL$ (pre-registered F-2 FAIL under the affine
 inhibition map $g_{\mathrm{focus}}=1+(1-I)\cdot 9$). The verdict is
 therefore \tierYellow\ PARTIAL: the threshold claim holds, the
 single-peak sub-claim does not, and $\GZL$ reads as the \emph{boundary} of
-the $\SI>3$ stability zone rather than its peak. We keep this partial in
+the $\Svi>3$ stability zone rather than its peak. We keep this partial in
 the arc precisely because it bounds the bridge honestly -- the alignment
 is one of \emph{inflection} (H\_351, the $\Phi$-derivative peak), not of
 the Savant-Index value peak.
@@ -586,7 +586,7 @@ phenomenological super-linear energy proxy and two disinhibition
 constants; the IIT 4.0 chart reads the same kernel through cause-effect
 distinctions and big-$\Phi$. They agree on \emph{where} the substrate is
 most sensitive (the inflection $\parallel \GZL$), on \emph{how} a
-substrate specializes (the $\SI \parallel \PhiD$ correlation), and on
+substrate specializes (the $\Svi \parallel \PhiD$ correlation), and on
 \emph{which} sub-unit dominates (the distinction $\parallel$ cell
 isomorphism). The Savant Index's monotone-not-peaked partial (H\_348)
 sharpens rather than weakens this: the alignment is one of the
@@ -612,9 +612,9 @@ substrate's information distribution.
       $\{30,54,110,184\}$ was 2/4 falsified. The inflection anchor is a
       single-substrate evidence tier, not a cross-substrate invariant.
 \item \textbf{Savant-Index sweep is monotone, not peaked (H\_348).}
-      $\SI>3$ at $\GZL$ is robust across three seeds, but under the affine
+      $\Svi>3$ at $\GZL$ is robust across three seeds, but under the affine
       inhibition map the sweep is monotone toward $I\!\to\!0$. $\GZL$ is the
-      $\SI>3$ stability boundary, not the Savant-Index peak; a non-affine
+      $\Svi>3$ stability boundary, not the Savant-Index peak; a non-affine
       (e.g.\ $1/I$, sigmoid) map could move the peak and is open.
 \item \textbf{Isomorphism needs self-effect (H\_624 C3.1).} A pure
       XOR-neighbor ring zeroes every singleton $\phi_{\mathrm{effect}}$,
