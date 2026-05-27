@@ -15,11 +15,17 @@
   - 🟢 H_618 dΦ/dI peak \|Δ\|=0.002 — PR #1175
   - 🟢 H_619 PID synergy SAVANT-modulated — PR #1172
 
-## 후속 work
+## 2026-05-28 body authoring
 
-- main.tex 본문 (negative-result arc + dissociation 매트릭스)
-- figure 1: 3-panel scatter (Kuramoto · polarity · TE — 모두 weak)
-- figure 2: dissociation matrix ASCII or pgfplots
-- references.bib (IIT 4.0 Tononi 2023 · Williams-Beer 2010 PID · anima H_290/293/294/207 ledger)
-- verify-block (8 H verdict verbatim)
-- compile + arxiv-prep
+- `main.tex` 본문 600 LoC drafted — Abstract / 8 H raster intro / background (4 proxy axes + anti-fake) /
+  method (roster Table 1, cell parameters, falsifiers, compute envelope) / closed-negative trilogy section /
+  supports section / dissociation section + dissociation matrix figure / 3-panel scatter figure /
+  verbatim verify-block (lstlisting, 8 H verdicts) / discussion (real axis + negative-result value +
+  single-to-collective lift) / limitations (7 caveats) / reproducibility / conclusion / acks / bib.
+- `references.bib` 16 entries — IIT 4.0 (Tononi+ 2023, arXiv:2212.14787) · Williams-Beer 2010 PID (arXiv:1004.2515) ·
+  Kuramoto 1984 book · Schreiber 2000 TE · McGill 1954 multivariate · Acebrón 2005 RMP Kuramoto review ·
+  Lizier 2014 JIDT · Bertschinger 2014 unique-info · Wolfram 1984 · Albantakis 2014 evolution · Tononi 2016 NRN ·
+  Oizumi 2014 IIT 3.0 · anima H_207/H_290/H_293/H_294/H_348 + g73 governance.
+- `Makefile` copied from bijection-vs-life-axis (xelatex 3-pass standard).
+- figures: 두 inline TikZ/pgfplots (Fig 1 dissociation matrix, Fig 2 3-panel scatter); coverage progress text-only.
+- PAPER.md 5/6 milestone 자동 flip — compile milestone 만 잔여.
