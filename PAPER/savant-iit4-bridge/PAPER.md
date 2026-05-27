@@ -9,4 +9,5 @@
 - [x] companion/ ledger (pr-roll · verify-ledger · session-journal)
 - [x] compile clean (xelatex x3 + bibtex, main.pdf 10 pages, 0 undefined refs/cites)
 - [x] figure (2 native pgfplots: dΦ/dI peak alignment inline + isomorphism scatter; standalone _scripts)
+- [x] limitations 보강 — H_626 (PR #1210, 🔴 FALSIFIED) n=5 일반화 동형 붕괴 (ρ=0.20, Δρ=−0.66) 반영: isomorphism claim 을 *cardinality-matched n=4 한정* 으로 좁힘 + abstract/conclusion/discussion caveat 1줄씩 + references.bib H_626 ledger entry + recompile
 - [ ] arxiv submit ready (`/paper arxiv-prep .`)
