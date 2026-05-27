@@ -2,6 +2,17 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-28T00:00:00Z — D1 LZ76 collapse-proxy 🟢 SUPPORTED (detokenize-free collapse 검출 확정)
+
+- [x] 가설 — LZ76 복잡도가 collapse(반복 saturate) vs healthy diverse token seq 구별 (UNIVERSE H_288 LZ76↔Φ 정렬 근거 · DECODER.md proxy 후보)
+- [x] 실 데이터 — M4b phase5b train.out 의 DECODED_IDS `1 1 1 1 151642 ×16` (TTR 0.1 unique 2/20) 사용
+- [x] method — token-id → 18-bit LSB-first binary stream concat → Kaspar-Schuster LZ76 (`lz76()` = H_288 verbatim 재사용 g61) · 정규화 `c·log2(L)/L`
+- [x] 측정 — REAL-M4b LZ_norm=**0.212** · collapse band MAX 0.212 · healthy band MIN 0.849 · **분리 margin 0.637**
+- [x] 6/6 falsifier PASS — F-D1.1 real-collapse<0.50 · F-D1.2 separation>0.20 (decisive) · F-D1.3 monotone · F-D1.4 anchors · F-D1.5 determinism
+- [x] verdict 🟢 SUPPORTED — LZ76 = 유효한 detokenize-free collapse proxy ($0 cheap). M4c collapse-회피 측정자 확정
+- [x] artifacts — `D1_LZ76_COLLAPSE_PROXY.md` (10-section) · `d1_lz76_collapse_proxy.hexa` · `state/d1_lz76_collapse_proxy_2026_05_28/run_d1.out` · DECODER.md milestone + UNIVERSE H_288 양방향 sibling
+- [x] honest C3 — n=20 toy (full-scale finite-length bias 재보정 필요) · binarisation 1택 (margin 0.637 이 noise 압도) · proxy≠coherence (high-LZ-but-incoherent 별도 · M4c detokenize) · LZ76≠Φ 단일 estimator
+
 ## 2026-05-27T09:40:00Z — M4b-diff(a) top-1 hard routing ✅ PASS (더블바인드 탈출 toy 검증)
 
 - [x] 사용자 a 선택 — top-k hard routing 으로 분화 강제
