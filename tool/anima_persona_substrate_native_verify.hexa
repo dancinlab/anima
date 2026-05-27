@@ -37,6 +37,12 @@
 //                                     docs/anima_persona_substrate_native_design_2026_05_12.md §A1)
 //    F-PERSONA-4 CATEGORY-DIVERSITY: 5-cat × 10-probe tension weight dist,
 //                                    10 category-pair mean KL ≥ 0.5 nats
+//                                    [FALLBACK 2026-05-28 PR #1126 BENCH #2]:
+//                                    mean_kl < 0.01 (KL dead-zone, e.g.
+//                                    winner-take-all softmax cotrain v1) 시
+//                                    basin_kurtosis < 1.0 gate 사용
+//                                    (mean of per-cat dist excess kurt < +1.0
+//                                     → not collapsed → invariance ≠ collapse)
 //    F-PERSONA-5 SUBSTRATE-COHER : pure forward / gradient absent
 //                                    (= F-PERSONA-2 PASS + grep gates)
 //
@@ -571,6 +577,72 @@ fn kl_divergence(p, q) {
     return kl
 }
 
+// ── basin_kurtosis fallback gate (adopted from BENCH #2 #1126) ──────────────
+//
+// Motivation: F-PERSONA-4 cotrain v1 measurement (PSCC §44 2026-05-12) returned
+// `mean_KL = 0` due to winner-take-all softmax — KL has a dead zone where
+// mode-collapse vs category-invariance are indistinguishable. BENCH #2 (PR #1126
+// `bench/basin_rank_diversity/`) proved that 4th-moment excess kurtosis of the
+// weight distribution separates the 3 regimes even when KL ≈ 0:
+//
+//   regime               basin_kurtosis
+//   uniform / balanced     ≈ −1.7   (anti-peaked, flat)
+//   differentiated         ≈ −0.3   (mild peak)
+//   collapsed (1-hot)      ≈ +3.0   (heavy peak)
+//
+// Adoption: compute basin_kurtosis on the per-category mean weight distribution
+// `cat_avgs[cat]` (treated as a probability mass over n_cells). Aggregate by
+// taking the mean across the 5 categories. Fallback rule:
+//
+//   if mean_kl < kl_dead_zone (default 0.01)  →  use basin_kurtosis gate
+//      PASS when mean_kurt < kurt_collapse_threshold (default +1.0)
+//        ↳ "not collapsed → category-invariance is the explanation, not mode-
+//           collapse hiding behind KL=0"
+//   else                                       →  use original mean_kl gate
+//
+// Pre-registered thresholds (in source ahead of any re-measurement).
+
+fn basin_kurtosis_of_dist(dist) {
+    let n = len(dist)
+    if n == 0 { return 0.0 }
+    let nf = n * 1.0
+    // mean
+    let mut sum = 0.0
+    let mut i = 0
+    while i < n {
+        sum = sum + dist[i]
+        i = i + 1
+    }
+    let mu = sum / nf
+    // 2nd + 4th central moments
+    let mut m2 = 0.0
+    let mut m4 = 0.0
+    i = 0
+    while i < n {
+        let d = dist[i] - mu
+        m2 = m2 + d * d
+        m4 = m4 + d * d * d * d
+        i = i + 1
+    }
+    m2 = m2 / nf
+    m4 = m4 / nf
+    if m2 < 1.0e-12 { return 0.0 - 3.0 }
+    // excess kurtosis = m4 / m2^2 − 3
+    return (m4 / (m2 * m2)) - 3.0
+}
+
+fn mean_category_kurtosis(cat_avgs, cats) {
+    let n_cats = len(cats)
+    if n_cats == 0 { return 0.0 }
+    let mut sum_kurt = 0.0
+    let mut i = 0
+    while i < n_cats {
+        sum_kurt = sum_kurt + basin_kurtosis_of_dist(cat_avgs[cats[i]])
+        i = i + 1
+    }
+    return sum_kurt / (n_cats * 1.0)
+}
+
 fn verify_persona_4_category_diversity(probes, d_model: int, n_cells: int) {
     println("")
     println("── F-PERSONA-4 CATEGORY-DIVERSITY ──────────────────────────────")
@@ -663,19 +735,50 @@ fn verify_persona_4_category_diversity(probes, d_model: int, n_cells: int) {
     }
 
     let pass_threshold = 0.5
-    let pass = mean_kl >= pass_threshold
-    let status = if pass { "PASS" } else {
-        if mean_kl >= 0.1 { "PARTIAL" } else { "FAIL" }
+    let pass_kl = mean_kl >= pass_threshold
+
+    // basin_kurtosis fallback gate (KL dead-zone bypass — BENCH #2 PR #1126).
+    // 산출 = per-category mean weight 분포의 4차 표준화 중심 모멘트(과잉) 평균.
+    // collapse threshold pre-registered: +1.0 (≪ +3.0 1-hot 한계, +0 정규 noise 의 명확한 위).
+    let mean_basin_kurtosis = mean_category_kurtosis(cat_avgs, cats)
+    let kl_dead_zone = 0.01
+    let kurt_collapse_threshold = 1.0
+    let fallback_used = mean_kl < kl_dead_zone
+    let pass_kurt = mean_basin_kurtosis < kurt_collapse_threshold
+    println("  mean basin_kurtosis (per-cat dist, excess): " + to_string(mean_basin_kurtosis))
+    println("  fallback gate (KL < " + to_string(kl_dead_zone) + "): " +
+            (if fallback_used { "ENGAGED" } else { "skipped" }))
+
+    let pass = if fallback_used { pass_kurt } else { pass_kl }
+    let status = if pass {
+        if fallback_used { "PASS_FALLBACK" } else { "PASS" }
+    } else {
+        if fallback_used {
+            if mean_basin_kurtosis < 2.0 { "PARTIAL" } else { "FAIL" }
+        } else {
+            if mean_kl >= 0.1 { "PARTIAL" } else { "FAIL" }
+        }
     }
-    falsifier_record("F-PERSONA-4 CATEGORY-DIVERSITY (mean KL ≥ 0.5 nats)", status,
-                     "mean_kl=" + to_string(mean_kl) + " n_pairs=" + to_string(n_kl))
+    let gate_name = if fallback_used {
+        "F-PERSONA-4 CATEGORY-DIVERSITY (basin_kurtosis < 1.0, KL dead-zone fallback)"
+    } else {
+        "F-PERSONA-4 CATEGORY-DIVERSITY (mean KL ≥ 0.5 nats)"
+    }
+    falsifier_record(gate_name, status,
+                     "mean_kl=" + to_string(mean_kl) + " n_pairs=" + to_string(n_kl) +
+                     " mean_basin_kurtosis=" + to_string(mean_basin_kurtosis) +
+                     " fallback_used=" + (if fallback_used { "true" } else { "false" }))
 
     return #{
-        "mean_kl":     mean_kl,
-        "kl_matrix":   kl_matrix,
-        "categories":  cats,
-        "threshold":   pass_threshold,
-        "verdict":     status
+        "mean_kl":              mean_kl,
+        "kl_matrix":            kl_matrix,
+        "categories":           cats,
+        "threshold":            pass_threshold,
+        "basin_kurtosis":       mean_basin_kurtosis,
+        "kurt_threshold":       kurt_collapse_threshold,
+        "kl_dead_zone":         kl_dead_zone,
+        "mean_kl_fallback_used": fallback_used,
+        "verdict":              status
     }
 }
 
@@ -774,11 +877,16 @@ fn result_json(r1, r2, r3, r4, r5, n_probes: int, d_model: int, n_cells: int) ->
     s = s + "\"phi_threshold\": " + to_string(r3["phi_threshold"])
     s = s + "},"
 
-    // F-PERSONA-4 + matrix
+    // F-PERSONA-4 + matrix + basin_kurtosis fallback (BENCH #2 adopt PR #1126)
     s = s + "\"F-PERSONA-4\": {"
     s = s + "\"verdict\": \"" + r4["verdict"] + "\","
     s = s + "\"mean_kl\": " + to_string(r4["mean_kl"]) + ","
     s = s + "\"threshold\": " + to_string(r4["threshold"]) + ","
+    s = s + "\"basin_kurtosis\": " + to_string(r4["basin_kurtosis"]) + ","
+    s = s + "\"kurt_threshold\": " + to_string(r4["kurt_threshold"]) + ","
+    s = s + "\"kl_dead_zone\": " + to_string(r4["kl_dead_zone"]) + ","
+    s = s + "\"mean_kl_fallback_used\": " +
+            (if r4["mean_kl_fallback_used"] { "true" } else { "false" }) + ","
     s = s + "\"categories\": ["
     let cats = r4["categories"]
     let nc = len(cats)
