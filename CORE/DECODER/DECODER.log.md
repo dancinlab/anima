@@ -2,6 +2,20 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T08:40:00Z — M4b-bwd MoE backward closure (fire 전제조건)
+
+- [x] 사용자 "fire" → 정직 응답: M4a 는 forward only · backward 없으면 학습 fire 해도 새 router/expert weight random 그대로 (학습 0). a_completeness_over_cheap → 반쪽 stack 발사 X, backward 먼저
+- [x] `CORE/DECODER/moe_router_bwd.hexa` 작성 — 4 pub fn closed analytic vjp
+- [x] `moe_combine_bwd` — expert outer-prod (d_W_e += gate·d_logits·zT) + d_gate (Σ d_logits·expert) + d_zT (experts→zT)
+- [x] `moe_softmax_bwd` — softmax jacobian (d_gate_raw[e] = gate[e]·(d_gate[e] − Σ d_gate·gate))
+- [x] `moe_gate_bwd` — router outer-prod (d_router += d_gate_raw·zT) + d_zT (router→zT)
+- [x] `moe_route_bwd` — 전체 chain (d_logits → dM router+experts + d_zT 누적)
+- [x] `moe_router_bwd_smoke.hexa` gradcheck 6-case — finite-diff vs analytic (4 weight: router e0/e1 + expert0/expert1 · 2 zT · loss=0.5·Σlogits² → d_logits=logits · rel < 1e-3)
+- [x] `hexa parse` 2/2 OK · ftoi builtin 확인 (UNIVERSE run script 다수 사용)
+- [x] DECODER.md M4b → backward 완성 [x], M4b-wire / M4b-fire 잔여 [ ]
+- [ ] M4b-wire — train_p21h_v3 loop 에 MoE route 배선 (head_g → moe_route_fwd/bwd) — 다음
+- [ ] M4b-fire — H100 dispatch (배선 후, a_fire_autonomous)
+
 ## 2026-05-27T08:20:00Z — M4a router arch closure (MoE-fresh 본선 1/3)
 
 - [x] `CORE/DECODER/moe_router.hexa` 작성 — 7 pub fn K-expert MoE router (head_g 슬롯 확장)
