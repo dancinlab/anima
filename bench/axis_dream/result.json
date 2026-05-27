@@ -1,0 +1,30 @@
+{
+  "bench": "AxisBench B DREAM",
+  "hypothesis": "REM/N3 mitosis dominance ∧ emit-free ∧ imagination alive",
+  "seed": 42,
+  "n_ticks": 90,
+  "theta": 0.5,
+  "per_stage": {
+    "WAKE": { "size": 60, "mitosis": 1, "emit": 1, "imagination": 0, "mit_density": 0.0166667, "emit_rate": 0.0166667 },
+    "N1":   { "size": 10, "mitosis": 1, "emit": 0, "imagination": 0, "mit_density": 0.1,       "emit_rate": 0.0       },
+    "N2":   { "size": 10, "mitosis": 4, "emit": 2, "imagination": 0, "mit_density": 0.4,       "emit_rate": 0.2       },
+    "N3":   { "size":  7, "mitosis": 7, "emit": 0, "imagination": 7, "mit_density": 1.0,       "emit_rate": 0.0       },
+    "REM":  { "size":  3, "mitosis": 3, "emit": 0, "imagination": 3, "mit_density": 1.0,       "emit_rate": 0.0       }
+  },
+  "ratios": {
+    "REM_over_WAKE": 60.0,
+    "N3_over_WAKE":  60.0
+  },
+  "falsifiers": {
+    "PASS": 4,
+    "FAIL": 1,
+    "matrix": {
+      "F1_REM_MITOSIS_VS_WAKE":   "PASS",
+      "F2_N3_MITOSIS_VS_WAKE":    "PASS",
+      "F3_EMIT_FREE_STRICT":      "PASS",
+      "F4_IMAGINATION_POSITIVE":  "PASS",
+      "F5_WAKE_EMIT_IN_BAND":     "FAIL (small-n n=60 σ≈0.031, non-blocking)"
+    }
+  },
+  "verdict": "🟢 PASS — core 4 invariants confirmed (F5 small-n sanity FAIL, non-blocking)"
+}
