@@ -1,0 +1,195 @@
+// H_343 — basin↔Φ coupling at n=6 (scale-invariance recheck of H_341)
+// ════════════════════════════════════════════════════════════════════════════
+//
+//   QUESTION
+//     H_341 found at n=4 (over 4 rules {110,30,105,150}):
+//       Pearson(max_basin, big_Phi)        = +0.776
+//       Pearson(n_attractor_states, big_Phi) = -0.850
+//     H_340 showed n=4 attractor-dominance is a SMALL-N regime. Does the
+//     basin↔Φ coupling SURVIVE at n=6, or was it a small-n artifact?
+//
+//   H1 (falsifiable): the basin↔Φ positive coupling (r >= 0.5) holds at n=6 too
+//     (scale-invariant).
+//   Falsifier: |r| < 0.5 at n=6 OR the sign flips → the n=4 coupling was a
+//     small-n artifact (parallel to H_340's 4|n finding).
+//
+//   METHOD (pure hexa, n=6 ECA ring, 2^6 = 64 states)
+//   ── BASIN (re-measure, NOT carried) — same forward-orbit settle as H_338,
+//      generalized n=4→6, 16→64:
+//        next6(s,rule)        — one ECA ring step at n=6
+//        settle(s0,rule)      — 60 steps onto the cycle (n=4 used 40; 60 for n=6)
+//        per rule: n_attractor_states = #distinct terminal states; max_basin =
+//        largest count of starts converging to one terminal.
+//   ── Φ (re-measure, NOT carried) — EXACT faithful causal IIT 4.0 big-Φ at n=6,
+//      same engine the H_287/H_341 panel used (stdlib/consciousness/iit4_bigphi),
+//      via inline eca_tpm (identical to HEXAD/IIT4/lib/iit4_eca.hexa).
+//        big_phi(tpm, 6, st)[0]  — EXACT at n=6 (NOT bounded/proxy). M9/M12 show
+//        exact n=6 is tractable (~min/rule). LABEL: SINGLE REPRESENTATIVE STATE
+//        st=42 (binary 101010), the M12-established n=6 seed. This differs from
+//        the n=4 panel's 16-state AVERAGE — at n=6 a full 64-state average is
+//        2^6×(per-state minutes) = impractical inline, so we use the exact
+//        single-state Φ (the tractable EXACT path), NOT a proxy. Honest label.
+//   ── Pearson over the 4 rules (deterministic). NEW falsifiable quantity.
+//
+//   NOT A TAUTOLOGY: basin (dynamical settle) and Φ (causal IIT4) are two
+//   INDEPENDENT measurements on the n=6 substrate; their correlation could come
+//   out +1, -1, or 0. Both inputs are freshly computed here (no carried numbers).
+//
+//   deterministic · hexa-only · $0 pool ubu-2 · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+import "stdlib/consciousness/iit4_bigphi.hexa"
+
+// ── ECA→TPM (identical to HEXAD/IIT4/lib/iit4_eca.hexa eca_tpm) ──────────────
+fn eca_tpm(rule: int, n: int) -> array {
+    let full = iit4_pow2(n)
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let mut i = 0
+        while i < n {
+            let l = iit4_bit(s, (i - 1 + n) % n)
+            let c = iit4_bit(s, i)
+            let r = iit4_bit(s, (i + 1) % n)
+            t = t.push(to_float(iit4_bit(rule, 4 * l + 2 * c + r)))
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return t
+}
+
+// ── one ECA ring step at n=6 (H_338 next4 generalized n=4→6) ────────────────
+fn next6(s: int, rule: int) -> int {
+    let mut out = 0
+    let mut i = 0
+    while i < 6 {
+        let l = (s >> ((i - 1 + 6) % 6)) & 1   // left neighbour (ring wrap)
+        let c = (s >> i) & 1                    // centre
+        let r = (s >> ((i + 1) % 6)) & 1        // right neighbour
+        let nb = (rule >> (4 * l + 2 * c + r)) & 1
+        out = out | (nb << i)
+        i = i + 1
+    }
+    return out
+}
+
+// terminal state of a start after settling (60 steps -> on the cycle)
+fn settle(s0: int, rule: int) -> int {
+    let mut s = s0
+    let mut t = 0
+    while t < 60 { s = next6(s, rule); t = t + 1 }
+    return s
+}
+
+// returns [n_attractor_states, max_basin] for `rule` on the n=6 ring (64 starts)
+fn measure_basin(rule: int) -> array {
+    let on_cycle = farr_zeros(64)
+    let basin = farr_zeros(64)
+    let mut s0 = 0
+    while s0 < 64 {
+        let term = settle(s0, rule)
+        let _ = farr_set(on_cycle, term, 1.0)
+        let cur = to_int(farr_get(basin, term))
+        let _ = farr_set(basin, term, to_float(cur + 1))
+        s0 = s0 + 1
+    }
+    let mut n_attr = 0
+    let mut max_basin = 0
+    let mut i = 0
+    while i < 64 {
+        if to_int(farr_get(on_cycle, i)) == 1 { n_attr = n_attr + 1 }
+        let b = to_int(farr_get(basin, i))
+        if b > max_basin { max_basin = b }
+        i = i + 1
+    }
+    let _ = farr_free(on_cycle); let _ = farr_free(basin)
+    let out = farr_zeros(2)
+    let _ = farr_set(out, 0, to_float(n_attr))
+    let _ = farr_set(out, 1, to_float(max_basin))
+    return out
+}
+
+fn my_sqrt(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let mut g = x / 2.0
+    let mut k = 0
+    while k < 60 { g = (g + x / g) / 2.0; k = k + 1 }
+    return g
+}
+
+fn pearson(xs: array, ys: array, n: int) -> float {
+    let mut sx = 0.0
+    let mut sy = 0.0
+    let mut i = 0
+    while i < n { sx = sx + farr_get(xs, i); sy = sy + farr_get(ys, i); i = i + 1 }
+    let mx = sx / to_float(n)
+    let my = sy / to_float(n)
+    let mut cov = 0.0
+    let mut vx = 0.0
+    let mut vy = 0.0
+    let mut j = 0
+    while j < n {
+        let dx = farr_get(xs, j) - mx
+        let dy = farr_get(ys, j) - my
+        cov = cov + dx * dy
+        vx = vx + dx * dx
+        vy = vy + dy * dy
+        j = j + 1
+    }
+    let denom = my_sqrt(vx) * my_sqrt(vy)
+    if denom == 0.0 { return 0.0 }
+    return cov / denom
+}
+
+fn main() {
+    println("H_343 basin <-> IIT4 big-Phi coupling at n=6 (recheck of H_341 n=4)")
+    println("rules: 110, 30, 105, 150 | basin: 64 starts x 60-step settle | Phi: EXACT n=6 big_phi single-state st=42")
+
+    let st6 = 42   // 101010, the M12-established n=6 representative state
+
+    // ── per-rule: re-measure BOTH basin and exact Phi at n=6 ──
+    let rules = farr_zeros(4)
+    let _ = farr_set(rules, 0, 110.0)
+    let _ = farr_set(rules, 1, 30.0)
+    let _ = farr_set(rules, 2, 105.0)
+    let _ = farr_set(rules, 3, 150.0)
+
+    let basin = farr_zeros(4)
+    let nattr = farr_zeros(4)
+    let phi   = farr_zeros(4)
+
+    let mut idx = 0
+    while idx < 4 {
+        let rule = to_int(farr_get(rules, idx))
+        let b = measure_basin(rule)
+        let na = farr_get(b, 0)
+        let mb = farr_get(b, 1)
+        let _ = farr_free(b)
+        let tpm = eca_tpm(rule, 6)
+        let pr = big_phi(tpm, 6, st6)
+        let p = pr[0]
+        let _ = farr_set(nattr, idx, na)
+        let _ = farr_set(basin, idx, mb)
+        let _ = farr_set(phi,   idx, p)
+        println("rule=" + str(rule) + " n_attractor_states=" + str(to_int(na)) + " max_basin=" + str(to_int(mb)) + " big_Phi_n6_exact_st42=" + str(p))
+        idx = idx + 1
+    }
+
+    let r_basin_phi = pearson(basin, phi, 4)
+    let r_nattr_phi = pearson(nattr, phi, 4)
+    println("Pearson(max_basin, big_Phi_n6)         = " + str(r_basin_phi))
+    println("Pearson(n_attractor_states, big_Phi_n6) = " + str(r_nattr_phi))
+
+    let pass = if (r_basin_phi >= 0.5) { 1 } else { 0 }
+    println("H1 (basin +coupled Phi at n=6, r>=0.5): r=" + str(r_basin_phi) + " pass=" + str(pass))
+    println("n=4 reference (H_341): Pearson(max_basin,Phi)=+0.776  Pearson(n_attr,Phi)=-0.850")
+
+    // determinism re-check of one rule
+    let b110b = measure_basin(110)
+    let pr110b = big_phi(eca_tpm(110, 6), 6, st6)
+    println("determinism rule110: max_basin=" + str(to_int(farr_get(b110b,1))) + " big_Phi=" + str(pr110b[0]))
+    let _ = farr_free(b110b)
+
+    let _ = farr_free(rules); let _ = farr_free(basin); let _ = farr_free(nattr); let _ = farr_free(phi)
+    println("done")
+}
