@@ -68,18 +68,19 @@
       - [x] **Phase 3** scale + memory budget — **Pilot 결정 (g0 simplest sufficient, 2026-05-27)**: pilot(d=512 · n_layer=12 · E=2 · V=151643 · T=512, ~265M params, FP64 ~10GB H100 fit, $1-3, 0.5-1hr wall) 첫 발사 → mechanism PASS 시 full(2.74B, BF16 path 필요)로 확장. 단계적 a_completeness. design Phase 3 결정 섹션 참조
       - [x] **Phase 3b SCAFFOLD 6/6 LANDED** — train_v3_moe.hexa 1-step smoke → multi-step training driver
         - [x] 3b-1 tok_emb (#1063) · 3b-2 attn_Wo (#1064) · 3b-3 MLP (#1066) · 3b-4 ln_f RMSNorm (#1067) · 3b-5 AdamW step (#1069) · 3b-6 multi-step loop (#1070)
-      - [~] **Phase 4** Dispatch design + pilot template LANDED — Vast.ai H100 SXM (**pilot $1-3 0.5-1hr** · full $9-18 4-8hr · SAVE_POD trap · pilot env-var protocol P21H_PILOT_* · pre-fire 6-item checklist). Pilot-scale code: forward 5/5 ☑ · backward 0/5 ☐ · fire ☐:
+      - [~] **Phase 4** Dispatch design + pilot template LANDED — Vast.ai H100 SXM (**pilot $1-3 0.5-1hr** · full $9-18 4-8hr · SAVE_POD trap · pilot env-var protocol P21H_PILOT_* · pre-fire 7-item checklist). Pilot-scale code: forward 5/5 ☑ · backward 6/6 ☑ (실측 PASS) · fire ☐:
         - [x] **Phase 4a** pilot config env-var wiring (P21H_PILOT_D/V/E/T/STEPS/NL) LANDED #1073
         - [x] **Phase 4b** multi-layer block iteration (n_layer > 1, layer-iter loop · per-layer offsets) LANDED #1074
         - [x] **Phase 4c** self-attention proper (T > 1, causal mask · Q/K/V/Wo · softmax) LANDED #1075
         - [x] **Phase 4d** BPE corpus real IDs feed (V_qwen=151643 aware · batch from corpus) LANDED #1077
         - [x] **Phase 4e** dispatch script (Vast.ai vastai launch + ssh setup + scp Qwen + run + monitor + harvest) LANDED #1079
-        - [ ] **Phase 4-bwd-1** ln_f RMSNorm bwd (γ grad + d_x = γ/rms·dy - x/(d·rms³)·Σ(dy·γ·x))
-        - [ ] **Phase 4-bwd-2** MLP bwd per-token (Wup·Wdown grad + ReLU bwd + d_zT_pre_mlp)
-        - [ ] **Phase 4-bwd-3** attention bwd (Wo bwd → attn_out → softmax bwd → Q/K/V bwd + d_zT_pre_attn)
-        - [ ] **Phase 4-bwd-4** layer-stack + residual bwd (reverse-order layer iter · residual = grad bypass)
-        - [ ] **Phase 4-bwd-5** tok_emb scatter-add bwd + end-to-end integration smoke (layer 0 weights moved)
-        - [ ] **Phase 4-fire** autonomous fire 발사 (a_fire_autonomous · H100 SXM ~$1-3 · 0.5-1hr · 4-bwd 5/5 PASS 후만)
+        - [x] **Phase 4-bwd-1** ln_f RMSNorm bwd LANDED #1082 — γ + x gradcheck **5.9e-11 / 1.9e-10** (hexa run)
+        - [x] **Phase 4-bwd-2** MLP bwd per-token LANDED #1084 — W_down gradcheck **7.4e-14**
+        - [x] **Phase 4-bwd-3** attention bwd (Q/K/V/Wo + softmax jvp) LANDED #1085 — Wq gradcheck **1.8e-14** (full chain)
+        - [x] **Phase 4-bwd-4** layer-stack + residual bwd LANDED #1086 — d_zT_in gradcheck **2.7e-12**
+        - [x] **Phase 4-bwd-5** tok_emb scatter-add + end-to-end integration LANDED #1088 — Wq grad 1.8e-8 + **tok_emb grad 1.1e-4** (gradient reaches input)
+        - [x] **Phase 4-bwd-6** pilot driver full backward wire LANDED #1093 — synthetic verify: **layer 0 Wq |Δ|=4.27e-6** (end-to-end · Phase 4c gap CLOSED)
+        - [ ] **Phase 4-fire** autonomous fire 발사 (a_fire_autonomous · H100 SXM ~$1-3 · 0.5-1hr). **선결: hexa toolchain install sync** — flame_bpe_corpus_lib 가 hexa-lang origin/main(#1537)에 있으나 로컬 `~/.hx/bin/stdlib` stale → pilot real-scale(V=151643) compile 불가. pod 의 fresh toolchain 에선 해소. backward 6/6 실측 PASS 로 학습 신호 보장됨.
       - [~] **Phase 5** Verdict 사전등록 + harness template LANDED — 5 falsifier (F-M4B-FIRE-1..5) pilot/full threshold 분리 표 + verdict template `m4b_pilot_verdict.md` 형식 + matrix (5/5→full fire · 3-4→re-pilot · 2 이하→re-design · 0→CLOSED-NEGATIVE). 실 측정은 Phase 4 fire 후
   - [ ] **M4c** p7 verify — collapse 회피 ∧ coherence 둘 다 simple-stack
 - [ ] **M4-probe model-merge α-sweep** (optional baseline probe · UNIVERSE H_493 SYMBIOGENESIS) — collapse-avoid + collapse ckpt weight 보간 `W=α·A+(1-α)·B` · α-sweep · cheap baseline 신호용으로만 (본선 아님). 두 결함작 blend = least-bad midpoint 한계 인지 (`a_completeness_over_cheap` model-merge-of-failures dont)
