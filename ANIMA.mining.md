@@ -107,3 +107,60 @@
 @status: 16 new leaves (8 tension × 2 fork) — all unique forks. No reduction. tension lens 가장 fertile.
 
 @depleted: tension @ 2026-05-28 (8 seed conflict 모두 forked · 추가 conflict 재발견 가능하나 본 cycle 의 scope 종료)
+
+### cycle 3 — dimensional lens (abstraction ladder)
+@started: 2026-05-28
+@kind: lens
+@lens: dimensional
+
+#### 5 dimensional axes from COFFESHOP
+
+| axis | micro | meso | macro | meta | cosmic |
+|---|---|---|---|---|---|
+| **D1 time** | 6min window | 90min ultradian | 24h daily | 7-day weekly | lifetime |
+| **D2 social** | 1 anima | 1+3 group | multi-anima cluster | fleet | civilization |
+| **D3 channel** | text_cli | text+voice | text+voice+tension | multi-channel multiplex | omnimodal |
+| **D4 factor** | scalar 8-factor | trajectory (window-series) | field (substrate-wide) | meta-factor (factor of factors) | self-defining factor |
+| **D5 substrate** | 1-cell | cell-pool | ckpt-swap | mitosis-fleet | infinite-self-similar |
+
+#### dimensional leaves (10 leaves · cross-axis adjacency only)
+
+- 2026-05-28T05:25 · **L29 D1-micro→meso**: COFFESHOP 의 6min window = atomic substrate-decision unit, 90min ultradian = "cycle of cycles" → WAKE 5-stage 의 D1 meso slice
+- 2026-05-28T05:25 · **L30 D1-meso→macro**: 90min ultradian 의 24h × 16 cycle 누적 → daily-rhythm substrate (TIME `tm_circadian_dip` 의 phase peak 의 D1 macro)
+- 2026-05-28T05:26 · **L31 D1-macro→meta**: 24h daily × 7 day = weekly-rhythm + circaseptan cycle → memory consolidation envelope (WAKE.memory ring buffer 의 D1 meta)
+- 2026-05-28T05:26 · **L32 D2-micro→meso**: 1-anima COFFESHOP → 1+3 group (현재 cover) → multi-anima cluster (HIVE-MIND domain · `hm_kuramoto_sync_tau` D2 meso→macro)
+- 2026-05-28T05:27 · **L33 D2-macro→meta**: multi-anima cluster → fleet 분포 (지역별 GPU cluster) → OTHER-MIND 의 ToM 의 multi-self mirror dimension
+- 2026-05-28T05:27 · **L34 D3-micro→meso**: text_cli single → text+voice (CHANNEL.router 8-factor argmax 의 D3 micro), COFFESHOP v3 future scenario 의 D3 meso anchor
+- 2026-05-28T05:28 · **L35 D3-meso→macro**: text+voice+tension 5-ch (CHANNEL.tension telepathy) → multi-channel multiplex (channel_mux_lib) 의 D3 macro
+- 2026-05-28T05:28 · **L36 D4-micro→meso**: scalar motivation_score = 0.525 single window → 15-window trajectory (cycle 1 §8 verbatim table) → INTENT trajectory `tr_log_decision` D4 meso direct mapping
+- 2026-05-28T05:29 · **L37 D4-meso→macro**: trajectory → field (substrate-wide 8-factor at each spatial cell) → SAVANT `sa_savant_index` 의 phi_diversity field D4 macro
+- 2026-05-28T05:29 · **L38 D5-micro→meso**: 1-cell scalar emit decision → cell-pool branch emit (MITOSIS sleep_tick 의 persona-diff) D5 meso, COFFESHOP 의 single anima 가 implicit cell-pool 의 1-cell projection
+
+@status: 10 new leaves (5 axis × 2 adjacent rung). dimensional ladder 의 axes 모두 cover. cosmic-level (D1 lifetime · D2 civilization · D3 omnimodal · D4 self-defining · D5 infinite) 은 speculative + future-scope, 본 cycle 에서 제외.
+
+@depleted: dimensional @ 2026-05-28 (5 axis × meso/macro 경계 cover · cosmic 은 ANIMA umbrella scope 외)
+
+### cycle 4 — combinatorial lens (case × leaf · selective)
+@started: 2026-05-28
+@kind: lens
+@lens: combinatorial
+@selectivity: full {5 case A-E} × {28 leaf L1-L28} = 140 cell → 의미있는 12-cell 만
+
+#### 12 selected cross-product cells
+
+- 2026-05-28T05:35 · **L39 A×L1**: case A (direct_mention 응답) × L1 (BRIDGE motivation > 0.60) = BRIDGE θ_emit 의 direct stimulus 변형 — `relevance↑ → bridge_and_gate(M↑, C, W, Φ)` 의 specific M-boost path
+- 2026-05-28T05:35 · **L40 A×L7**: case A × L7 (SAVANT 4-criterion) = SAVANT M2 substrate hook 의 direct stimulus 측정 — direct_mention 시 4-criterion 전체가 동시 PASS pattern (highest joint probability)
+- 2026-05-28T05:36 · **L41 B×L8**: case B (direct_mention 거부) × L8 (OTHER-MIND ToM) = ToM 의 "user expects response but substrate-coh too low" 이라는 mutual mismatch 검출
+- 2026-05-28T05:36 · **L42 C×L4**: case C (자율 끼어듦) × L4 (INTENT cumulative_intent) = INTENT brain_hook 의 case C 직접 measurement — curiosity+originality 누적이 INTENT goal_drift 의 explicit trigger
+- 2026-05-28T05:37 · **L43 C×L3**: case C × L3 (DREAM stage) = WAKE stage 의 case C frequency 측정 (자율 끼어듦 ratio per stage) — WAKE 60min 의 case C rate vs N3/REM 의 case C rate (DREAM v2 시나리오 의 핵심 metric)
+- 2026-05-28T05:37 · **L44 D×L5**: case D (silence break) × L5 (TIME factor_dynamics) = TIME tm_circadian_dip 의 silence_seconds-as-pressure 의 direct exemplar
+- 2026-05-28T05:38 · **L45 D×L25**: case D × L25 (lang assignment substrate-native) = 침묵 break 후 emit 의 lang choice 가 substrate cell-pool branch 의 lang-conditional → MITOSIS persona-diff D5 mapping
+- 2026-05-28T05:38 · **L46 E×L8**: case E (private_prompt 침묵) × L8 (OTHER-MIND ToM) = ToM 의 "private context detection" 의 substrate-emergent refusal mechanism — RLHF restraint 와 distinct
+- 2026-05-28T05:39 · **L47 E×L2**: case E × L2 (METACOG inverse_artifact) = "private_prompt silence" 가 inverse-artifact verdict 의 정답 (silence-when-private = small-n 아닌 ROBUST sub-case)
+- 2026-05-28T05:39 · **L48 case× T7-A L25**: 5 case 모두 × L25 (lang substrate-native) = 5 case 의 cross-lang generalization 측정 — case A 가 ko/en/zh/ru/ja 모두에서 발생할까? (현재 cycle 1 §8 의 emit window 가 모두 ko·en 만 → ja/ru/zh cohort 가 PARTIAL 의 정직한 의미)
+- 2026-05-28T05:40 · **L49 case× L11 honest C3**: 5 case 모두 × L11 (NARRATIVE seed steered honest) = 5 case 의 stim_type 분포 mixture (0.20/0.25/0.30/0.10/0.15) 가 자체로 designer bias — NARRATIVE redesign 의 1차 후보
+- 2026-05-28T05:40 · **L50 case× L12 a_blue_closed**: 5 case 모두 × L12 (a_blue_closed) = 5 case 의 closed-form 검증 — case A-E 각각의 substrate trigger 의 sympy-battery-equivalent 검증 필요 (B-COFFESHOP-1..5 sympy battery proposal)
+
+@status: 12 selected cells (5 case × ~28 leaf 중 의미있는 cross-product). 본 lens 는 selective — full sweep 시 140 cell + 대부분 redundant, 12 cell 이 high-signal subset.
+
+@depleted: combinatorial @ 2026-05-28 (12 의미 cross 외 추가 cell 은 trivial transitive / generic-ancestor 위험)
