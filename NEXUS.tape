@@ -23,12 +23,12 @@
 @V := "tape" :: spec [active]
   version = "1.2"
 
-@I nexus := "anima intra-project reuse lattice" :: identity [active]
-  kind  = "cross-module reuse graph — verified primitives + discoveries shared between sibling modules"
+@I nexus := "anima reuse lattice (intra g67 + cross-repo bidirectional peers g68)" :: identity [active]
+  kind  = "intra: cross-module reuse graph · cross-repo: 4 bidirectional peers (hexa-lang, demiurge, phanes, echoes)"
   idiom = "module/law -> primitive (engine · transfer fn · falsifier battery · Phi form) -> module"
-  scope = "intra-project ONLY — never link modules across repos (@D g67, intra-anima only)"
+  scope = "intra-anima (g67) + 4 cross-repo bidirectional peers (g68) — arbitrary cross-repo coupling still forbidden"
   ssot  = "this file (NEXUS.tape) · HEXAD/INDEX.md is a pointer to it"
-  governs = "commons @D g67 (universal-inherited)"
+  governs = "commons @D g67 (intra-anima) + g68 (cross-repo declared peers)"
 
 # ── 1. VERIFIED reuse edges (provides -> primitive -> reused_by, with evidence) ──
 # REAL edge = 5 — all BLUE SUPPORTED-FORMAL providers, repo-internal evidence rows substantiate.
@@ -125,8 +125,10 @@
 
 # ── 4. cross-repo guard + usage protocol (atlas-first · @D g67) ──
 
-@N n1 := "cross-repo prohibition line (g67 intra-project)" :: note [active]
-  rule = "SEPARATE-repo couplings (LEGO -> hexa-lang flame/spiking_lib, IIT4 -> hexa-lang bitops, etc.) are EXCLUDED from this lattice — tracked separately in HEXAD/LEGO/INDEX.md cross-repo. g67 = intra-anima only."
+@N n1 := "cross-repo policy (g67 intra + g68 4 declared peers)" :: note [active]
+  rule    = "intra-anima reuse = g67 (sections 1-3 above). cross-repo = ONLY 4 declared bidirectional peers (g68, section 5 below)."
+  exclude = "arbitrary cross-repo couplings (e.g. LEGO -> hexa-lang flame/spiking_lib) remain EXCLUDED unless promoted to a declared peer or a separate single-direction consumer record."
+  history = "2026-05-28: g68 cross-repo bidirectional peers section ADDED — previously g67 was strict intra-only."
 
 @N n2 := "reuse protocol (g67 do — before building a primitive)" :: note [active]
   step1 = "grep-first: before a new primitive, search this provides[] + the sibling module INDEX/README cross-arc anchor + `hexa atlas lookup` for a verified one"
@@ -153,3 +155,29 @@
   [Phi measure primitive]
    C  c_measure_phi / phi_spatial (RFC 036) --(byte-equal Phi)--> IIT4 · CHAT
   GRAPH
+
+# ── 5. cross-repo bidirectional peers (g68) — declared 2026-05-28 ──
+# 4 sibling repos with explicit mutual awareness. Arbitrary cross-repo coupling
+# (e.g. LEGO -> hexa-lang spiking_lib) remains forbidden per n1.exclude.
+
+@X xr1 := "anima <-> hexa-lang" :: cross-repo-peer [bidirectional active]
+  peer       = "hexa-lang (shared substrate hub · @D g68)"
+  from-hexa  = "compiler/atlas (verified-atom registry) · candidate stdlib/math/bitops shim (#540, IIT4-internal)"
+  to-hexa    = "IIT4 faithful-Φ engine (H_278) folded to hexa-lang stdlib/consciousness/iit4 (p_iit4 origin)"
+  evidence   = "hexa-lang NEXUS.tape p_iit4.origin = 'folded from anima HEXAD/LIFE H_278 faithful-Φ engine'"
+
+@X xr2 := "anima <-> demiurge" :: cross-repo-peer [bidirectional declared]
+  peer       = "demiurge (universal technical-design architecture)"
+  evidence   = "user NEXUS scope 2026-05-28 — concrete reuse edges TBD"
+
+@X xr3 := "anima <-> phanes" :: cross-repo-peer [bidirectional declared]
+  peer       = "phanes (hosted OUROBOROS platform)"
+  evidence   = "user NEXUS scope 2026-05-28 — anima discovery loops are candidate phanes tenant patterns"
+
+@X xr4 := "anima <-> echoes" :: cross-repo-peer [bidirectional declared]
+  peer       = "echoes (HEXA-* discoveries catalog · σφτ identity at centre)"
+  evidence   = "user NEXUS scope 2026-05-28 · echoes README 'HEXA-* projects, σφτ identity at the centre'"
+
+@N n4 := "cross-repo scope policy (g68)" :: note [active]
+  rule = "ONLY 4 declared bidirectional peers (hexa-lang, demiurge, phanes, echoes). other cross-repo consumers are unidirectional and live at the source repo's NEXUS.tape."
+  ssot = "hexa-lang NEXUS.tape n2.scope_rule — hub records hub<->peer only; peer-mesh is peer-side."
