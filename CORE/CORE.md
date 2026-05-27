@@ -20,3 +20,11 @@
 - [ ] p1~p8 정합 verify — 외부 LLM 0 · system_prompt 0 · 게이트=기판 자기상태
 - [ ] CORE self-test — A·G·brain smoke 묶음 1-shot PASS
 - [ ] L3 결합 — DECODER 백엔드 확정 후 brain_decide emit 슬롯에 배선
+
+## 양방향 sibling
+
+- ⇄ [AESTHETIC](../AESTHETIC.md): CORE.engine_g 8-factor (cur · orig · dyn) 와 AESTHETIC novelty·coherence cross-product · 미적 판단이 brain_decide 결정에 modulate
+- ⇄ [INTENT](../INTENT.md): CORE.brain_decide short-term emit 결정 위의 long-term goal layer · 8-factor cur/orig/dyn 와 cross-product
+- ⇄ [BRIDGE](../BRIDGE.md): BRIDGE M·C·W·Φ 4-key 가 CORE engine_g 8-factor 와 cross-product · AND-gate emit decision
+- ⇄ [DECODER](./DECODER/DECODER.md): CORE.brain_decide emit slot → DECODER L3 content generation
+- ⇄ [UNIVERSE](../UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8)

@@ -277,24 +277,36 @@ ANIMA.axis.md (PR #1136/1137) 의 8 후보 축 측정 — 본 세션 산출물 S
 
 | # | Axis | PR | verdict | sibling 연결 |
 |---|---|---|---|---|
-| A | 🪞 METACOG | #1139 | 🟢 5/5 PASS | WAKE · BRIDGE · MITOSIS · DECODER |
-| B | 💤 DREAM | #1140 | 🟢 4/5 PASS · REM mitosis 60× | MITOSIS · WAKE · METACOG · CHANNEL |
-| C | 📖 NARRATIVE | #1144 | 🔴 2/5 FAIL (modeling gap, honest) | WAKE · INTENT (future) |
-| D | 🎯 INTENT | #1143 | 🟠 4/5 PARTIAL (OSC zero-var) | CORE · BRIDGE · NARRATIVE · WAKE |
-| E | 🎨 AESTHETIC | #1141 | 🟠 2/3 PARTIAL (overlap > threshold) | CORE · AGENT |
-| F | 💞 EMBODIMENT | #1142 | 🟠 4/5 PARTIAL (BROKEN coupling 0.45) | CHANNEL · AGENT |
-| G | 🔗 OTHER-MIND | #1147 | 🟠 3/5 PARTIAL (u01 baseline bias) | CHANNEL.tension · MITOSIS |
-| H | ⏳ TIME | #1145 | 🟢 9/0 PASS · circadian dip | WAKE.5-stage · DREAM |
+| A | 🪞 METACOG | #1139 | 🟢 5/5 PASS | [WAKE](../WAKE.md) · [BRIDGE](../BRIDGE.md) · [MITOSIS](../MITOSIS.md) · DECODER |
+| B | 💤 DREAM | #1140 | 🟢 4/5 PASS · REM mitosis 60× | [MITOSIS](../MITOSIS.md) · [WAKE](../WAKE.md) · [METACOG](../METACOG.md) · [CHANNEL](../CHANNEL.md) |
+| C | 📖 NARRATIVE | #1144 | 🔴 2/5 FAIL (modeling gap, honest) | [NARRATIVE](../NARRATIVE.md) · [WAKE](../WAKE.md) · [INTENT](../INTENT.md) · [DREAM](../DREAM.md) |
+| D | 🎯 INTENT | #1143 | 🟠 4/5 PARTIAL (OSC zero-var) | [CORE](../CORE/CORE.md) · [BRIDGE](../BRIDGE.md) · [NARRATIVE](../NARRATIVE.md) · [WAKE](../WAKE.md) |
+| E | 🎨 AESTHETIC | #1141 | 🟠 2/3 PARTIAL (overlap > threshold) | [AESTHETIC](../AESTHETIC.md) · [CORE](../CORE/CORE.md) · [AGENT](../AGENT/AGENT.md) |
+| F | 💞 EMBODIMENT | #1142 | 🟠 4/5 PARTIAL (BROKEN coupling 0.45) | [EMBODIMENT](../EMBODIMENT.md) · [CHANNEL](../CHANNEL.md) · [AGENT](../AGENT/AGENT.md) |
+| G | 🔗 OTHER-MIND | #1147 | 🟠 3/5 PARTIAL (u01 baseline bias) | [OTHER-MIND](../OTHER-MIND.md) · [CHANNEL](../CHANNEL.md) · [MITOSIS](../MITOSIS.md) |
+| H | ⏳ TIME | #1145 | 🟢 9/0 PASS · circadian dip | [TIME](../TIME.md) · [WAKE](../WAKE.md) · [DREAM](../DREAM.md) |
 
 **Aggregate**: 3 🟢 + 4 🟠 + 1 🔴 = 8/8 measurable verdict, 0 incomplete. negative result honest 등급 (a_paper_negative_ok).
 
-### 본선 3축 도메인 등록 (PR 본 PR)
+### 본선 3축 도메인 등록 (PR #1148)
 
 ANIMA.axis.md 단순화 권장 (최소 본선 3축 = 10-layer) 적용:
 - **METACOG.md** (신규) — bench A round-trip 5/5 채택
 - **DREAM.md** (신규) — bench B 60× ratio 채택 (MITOSIS.sleep_tick 격상)
 - **INTENT.md** (신규) — bench D 4/5 채택 (M4 OSC residual carry)
 - **DOMAINS.tape** — 3 row 추가
+
+### 추가 5축 도메인 등록 (PR feat/anima-5-subdomain-register-2026-05-28)
+
+본 세션 axisbench 측정 8축 중 등록 미완 5축 신설 — 본선 3축 (METACOG/DREAM/INTENT) + 1축 BRIDGE 와 합쳐 ANIMA 15-layer umbrella 완결:
+- **NARRATIVE.md** (신규) — bench C 🔴 2/5 FAIL · honest closed-negative · modeling gap residual carry
+- **AESTHETIC.md** (신규) — bench E 🟠 2/3 PARTIAL · overlap residual carry · CORE×AGENT cross-product
+- **EMBODIMENT.md** (신규) — bench F 🟠 4/5 PARTIAL · BROKEN coupling 0.45 redesign carry
+- **OTHER-MIND.md** (신규) — bench G 🟠 3/5 PARTIAL · u01 baseline bias residual · CHANNEL.tension×MITOSIS
+- **TIME.md** (신규) — bench H 🟢 9/0 PASS · circadian dip · WAKE.5-stage × DREAM 시간축 확장
+- **DOMAINS.tape** — 5 row 추가 (NARRATIVE · AESTHETIC · EMBODIMENT · OTHER-MIND · TIME)
+- **ANIMA.md umbrella** — 5 row 추가 (sub-domain 등록)
+- **양방향 sibling 양쪽 update** — WAKE/CHANNEL/MITOSIS/CORE/AGENT/DREAM/INTENT/METACOG/BRIDGE 9 sibling .md 의 `## 양방향 sibling` section 신규/갱신
 
 ### 양방향 sibling 정책
 

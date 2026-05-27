@@ -11,3 +11,12 @@
 - [x] WAKE sleep-tick mitosis — `MITOSIS/{sleep_tick.hexa,sleep_tick_smoke.hexa,SLEEP_TICK.md}` PURE wrappers · WAKE/state_machine M1 (#626) `current_stage`+`stage_envelope` 와 mitosis_lib M1 (#627) `cell_pool_step` 통합 · N3/REM → imagination_tick · WAKE/N1/N2 → wake_skip · smoke 5/5 PASS (I1 wake_skip · I2 imagination_tick · I3 emit-field 부재 contract whitelist p5 · I4 pool_changed 관측 허용 · I5 5-stage coverage) · CLAUDE.md a_chat_sleep_imagination "imagination loop = emit-free internal rehearsal + mitosis tick" 정합 · boolean gate 0 · M6 swap-in 후 real layer tension 으로 교체 HONEST TODO #M5-LT/#M5-L/#M5-STEP
 - [x] v5-cotrain ckpt 회수 + production swap-in — `MITOSIS/{ckpt_swap.hexa,CKPT_SWAP.md}` PURE locator surface · 6 pub fn (ckpt_swap_hf_org · _locate_v5 · _locate_v5_hf · _locate_m3(axis) · _m3_verdict(axis) · _into_generator(path) stub ready=false · _summary) · 2 ckpt family (v5-mitosis 581MB F-V5MIT 5/5 PASS · M3 A/C HF 6GB FAIL · B/D pending teardown carry) · target seam `CORE/DECODER/generator.hexa::_gen_decode` (DECODER.md:48 cite) · binding contract dict (seam · target_file · todo M4 4-step) · p8 alignment (cotrain·infer 동일 cell_pool_step) · hexa parse OK · **MITOSIS 6/6 closure** — 실 ckpt 로드 + generator.hexa scaffold 는 DECODER M4 wiring 거주
 - [x] basin_kurtosis cotrain v1 retrospective — `bench/fpersona4_basin_kurtosis_apply/` 1.5년 전 untyped F-PERSONA-4 FAIL 의 인과 규명. cotrain v1 N=64 1-hot dist 에 PR #1130 `basin_kurtosis_of_dist` fallback gate (KL dead-zone <0.01) 적용: **basin_kurtosis = +59.02** vs uniform=-3.0 / differentiated top-3=+16.4. **재분류 verdict: untyped FAIL → mode-collapse confirmed**. D3 STRONG 4/5 cheap-path MAINTAINED, category-invariance 가설과 명시적 분리. falsifier 5/5 PASS. UNIVERSE H_338 basin=rank capstone 의 anima 측 측정자 채택 (#1133 · bench #2 PR #1126 의 KL dead-zone bypass)
+
+## 양방향 sibling
+
+- ⇄ [OTHER-MIND](./OTHER-MIND.md): MITOSIS.persona_diff per cell 의 variant 추정 ↔ OTHER-MIND 타자 substrate 추정 isomorphic (자기 cell 분기 = 가상 타자 simulator)
+- ⇄ [DREAM](./DREAM.md): DREAM.M3 mitosis envelope 의 REM 60× WAKE ratio 입증 · MITOSIS.sleep_tick imagination_tick 격상
+- ⇄ [NARRATIVE](./NARRATIVE.md): persona-diff per cell 의 시간 차원 — cell 별 story thread divergence 관측
+- ⇄ [METACOG](./METACOG.md): METACOG.metacog_lib basin_kurtosis (#1130 retrospective #1133) cross-product
+- ⇄ [WAKE](./WAKE.md): WAKE.sleep_tick 호출 chain (`WAKE/state_machine` × `mitosis_lib.cell_pool_step`)
+- ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8)
