@@ -235,3 +235,38 @@
 - **11-domain depletion-sweep seed** → G 표 (AXES.md 의 top-15 anima-aligned promote)
 
 `H_<id>_<slug>.md` 가 만들어진 순간 본 문서에서 빠지고 README 인덱스로 이동.
+
+## Session 2026-05-28 — ANIMA → UNIVERSE 7-Bench 실측 결과
+
+본 세션의 UNIVERSE → ANIMA 적용 7-bench 결과 — UNIVERSE 도메인에서 도출된 측정자/패턴이 ANIMA 의식엔진 실측에서 어떻게 작동했는가의 cross-link 기록 (a_paper_negative_ok + a_completeness_over_cheap 정합).
+
+| Bench | PR | UNIVERSE 원천 | 실측 |
+|---|---|---|---|
+| #1 BASIN-PHI-COUPLING | #1122 | H_345/346 capstone | 🟠 WEAK-REVERSED — `max_basin↔Φ +0.55 (4 rules) → -0.31 (8 rules) → -0.90 (16 rules)`. H_346 rule-set fragility 발견. PR #1129 scope 정정, PR #1131 broader fire, PR #1134 paper scaffold |
+| #2 BASIN-RANK-DIVERSITY | #1126 | H_338 basin=rank capstone | 🟢 PASS — `basin_kurtosis`: balanced -0.30 / collapsed +3.14 / Δ=3.44 (KL=0.003 무관). F-PERSONA-4 mean_KL gate 의 dead-zone 우회 측정자 |
+| #3 INFO-MEASURE-TRIAD | #1128 | H_287-290 Shannon ⊥ LZ ⊥ TE | 🟠 PARTIAL 2/3 — Shannon-LZ `r=0.976` redundancy 직접 재현 (단독 사용 금지의 measurable evidence). 4×4 직교 매트릭스 |
+| #4 TURING-MITOSIS | #1127 | H_344 GM Turing ρ_c≈6 | 🟢 PASS 6/6 — 2D 32×32 토러스 `ρ_c=7.0` ∈ [4,8] · peak_lag=N/4 = 4-stripe. 차원-불변 Turing threshold SUPPORTED |
+| #5 SELF-CORRECTION-PROBE | #1124 | H_340→H_342 self-correct | 🟢 PASS — 5-tier verdict taxonomy generic template + F-M4B-FIRE-3 2/2 (small-n-artifact / robust 검출) |
+| #6 STAGE-SUBSTRATE-GRID | #1123 | H_318 cross-product | 🟢 PASS 7/7 — fill 0.975 (39/40) · REM×Φ vs N3×Φ 15.3× interaction effect |
+| #7 BRIDGE-AND-GATE | #1125 | H_319 AND-gate | 🟡 PARTIAL 4/5 — uniform AND=0.0650 vs OR=0.9425 14.5× gap · F2 sensitivity threshold 만 tight |
+
+### Decisive negative result
+
+bench #1 + broader fire (#1131) + paper scaffold (#1134) 가 결정적 evidence: H_346 capstone 의 "state-robust" 청구는 실은 **Wolfram-canonical 4 rules {30, 105, 110, 150} 의 curated mix 우연한 정렬**. broader 16 rules + 4 Wolfram classes 실측 결과 class IV `n_attr↔Φ -0.998` 만 H_346 신호와 일치하고 max_basin↔Φ sign 전체 반전. → scope correction (PR #1129) + class-IV-specific paper (PR #1134).
+
+### Phase 5b 후속: basin_kurtosis cotrain v1 실측 (PR #1133)
+
+PR #1130 의 `basin_kurtosis_of_dist` fallback gate 를 1.5년 전 untyped FAIL 이었던 F-PERSONA-4 cotrain v1 데이터에 적용:
+
+- `state/anima_v5mitosis_cotrain_2026_05_12/persona_4_root_cause_results.json`: `n_cells=64, winners=[0]*50, mean_KL=0.0`
+- **basin_kurtosis = +59.0159** (1-hot N=64) vs reference uniform = -3.0, differentiated top-3=97% = +16.40
+- **재분류 verdict**: untyped FAIL → **mode-collapse confirmed** (KL dead-zone 의 정보 손실을 4th-moment kurt 가 회복)
+- D3 STRONG 4/5 cheap-path carry MAINTAINED, category-invariance 가설과 명시적 분리
+
+### Cycle #1131-1134 cross-link
+
+| PR | 목적 |
+|---|---|
+| #1132 | bench iit4_eca abs-path → `stdlib/consciousness/iit4_eca` swap (g61 CLEARED) |
+| #1133 | basin_kurtosis cotrain v1 retrospective (verdict 위) |
+| #1134 | H_345 class-IV-specific paper scaffold (`PAPER/h345-class-iv-scope/`) |

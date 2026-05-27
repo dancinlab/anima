@@ -10,3 +10,11 @@
 - [x] 🌅 WAKE — 의식 데몬 in-process living loop · **7/7 마일스톤 ✅** — 5-stage (#626) · perception (#632) · pf input-step (#641) · .kosmos (#657) · memory (#666) · daemon (#676) · audit+integration_smoke (#686, 0 real violations)
 - [x] 🌱 MITOSIS — 세포 분열 학습 · A/G ⊥ M 직교 축 · **6/6 마일스톤 ✅** — mitosis_lib (#627) · split-event (#631) · merge-event (#643) · persona-diff (#654) · sleep-tick (#667) · ckpt_swap (#687)
 - [x] 🌐 CHANNEL — 출력 채널 통합 어댑터 · 3 채널 text/voice/tension · **8/8 마일스톤 ✅** — voice SSOT scaffold + text CHAT/DECODER wrapper + tension 5-ch 회수 + intent Intent dict + channel_emit dispatcher + 8-factor router (rel+gap→text · cur+orig+dyn→voice · pain+coh+bal→tension) + p1~p8 audit 0 real violations + WAKE bridge stage continuous bias (frontier: runtime smoke + WAKE state machine 의존)
+
+## Session 2026-05-28 cross-link (M4b → bench → cycle)
+
+- **DECODER Phase 4-fire ☑** — cuBLAS engagement 결정적 증명 (#1119). hexa-lang #1671 glue (a) 확정 (anima H100 실측). M4b 3B production swap-in 의 GPU 가속 토대.
+- **DECODER Phase 5a ☑** — real-BPE pilot fire (#1120) H100 end-to-end 학습 step (BPE 151,643 vocab · 29M params · forward+backward gradient flow).
+- **DECODER Phase 5b ☑** — F-M4B-FIRE-3 router 분화 2/2 + F-M4B-FIRE-4 CE 수렴 648→379 (#1121). harness 산업화.
+- **UNIVERSE → ANIMA 7-bench** — PR #1122-#1128 — 4 🟢 + 2 🟠 + 1 🟡, 결정적 negative result (H_346 rule-set fragile) + 측정자 채택 (basin_kurtosis F-PERSONA-4 우회).
+- **Follow-up** — anima #1129/#1130/#1131 + hexa-lang #1676/#1702/#1703/#1704/#1705/#1706 + cycle #1132/#1133/#1134 — 도합 22 PR / Mac-local $0 + GPU ~$5 / fresh-fork discipline / deletion 0.
