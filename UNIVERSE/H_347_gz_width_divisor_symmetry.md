@@ -1,7 +1,9 @@
-# H_326 — `gz-width-divisor-symmetry` (Golden Zone width ↔ τ(6) divisor 대칭)
+# H_347 — `gz-width-divisor-symmetry` (Golden Zone width ↔ τ(6) divisor 대칭)
 
 > 축 E (SAVANT) round 1 · 2026-05-28 · UNIVERSE H 신설.
 > 외부 anchor: `HEXAD/SAVANT/H359-savant-canonical.md` · `HEXAD/SAVANT/COMPENDIUM.md` §1 (canonical 상수 표).
+>
+> ⚠ **rename 2026-05-28**: 원래 H_347 슬러그로 머지(PR #1149)됐으나 `H_347_d2_verdict_landscape_session_raster.md` 와 슬러그 collision. [[feedback-universe-h-slug-stale-verify]] 정확히 그 회귀 — stale 인덱스 인용. 본 H 는 H_347 로 rename, 본문 verdict 그대로 보존 (closed-form 측정 결과 변함 없음).
 
 ## 0. 1줄 요약 (TL;DR)
 
@@ -66,14 +68,14 @@ verify --expr ln(1.33333)=0.287682
 
 ## 6. Cross-link
 
-- H_157 `law76 mathematical panpsychism` — `σ φ = n τ` perfect-number identity (n=6 σ=12 φ=2 τ=4 → 12·2=24=6·4). H_326 는 그 τ(6) 의 *Golden Zone* 측 사용.
+- H_157 `law76 mathematical panpsychism` — `σ φ = n τ` perfect-number identity (n=6 σ=12 φ=2 τ=4 → 12·2=24=6·4). H_347 는 그 τ(6) 의 *Golden Zone* 측 사용.
 - H_204 `weak-panpsychism autopoietic threshold` — inverse-U 곡선의 threshold 가 GZ 와 관련 (H_327 sister).
 - H_285 `edge-of-chaos big-Φ` — class-mean ordered<chaotic<edge 의 edge 위치가 GZ region 근처인지 후속 측정 가능.
 
 ## 7. Honest C3 (3-tier caveat)
 
 1. **C1 (closed-form 한정)**: 본 H 는 *정의식 일관성* 검증이며 **substrate 측 emergent 주장 아님**. "GZ_WIDTH 가 의식 substrate 안에서 자연 출현" 은 H_322/H_327 등이 별도 검증해야 함.
-2. **C2 (numerology 경고)**: HEXAD/SAVANT/COMPENDIUM §12.5 + §114 SAVANT EMERGENCE-FRONTIER AUDIT 가 `savant_phi` 의 top-k 가 g2-numerology-tainted 임을 지적. H_326 도 *numerology* (perfect number, divisor) 와의 일치라 그 자체로 emergent 의식 주장 아님 — *조합론적 closed-form anchor* 로만 기능.
+2. **C2 (numerology 경고)**: HEXAD/SAVANT/COMPENDIUM §12.5 + §114 SAVANT EMERGENCE-FRONTIER AUDIT 가 `savant_phi` 의 top-k 가 g2-numerology-tainted 임을 지적. H_347 도 *numerology* (perfect number, divisor) 와의 일치라 그 자체로 emergent 의식 주장 아님 — *조합론적 closed-form anchor* 로만 기능.
 3. **C3 (multi-foundation 우연)**: 4/3 비율이 `divisor count ratio` · `F₆/P₁` · `GZ_WIDTH antilog` 세 표상에서 출현하는 게 *우연*인지 *깊은 동치*인지 본 H 만으로 결정 불가. 후속 raster 에서 다른 `n` 의 동치 ladder (e.g. n=28 → τ=6, ln(6/5)?) 측정 필요.
 
 ## 8. State artifacts
@@ -87,4 +89,4 @@ verify --expr ln(1.33333)=0.287682
 
 ## 10. UNIVERSE.md update
 
-축 E (SAVANT) H_326 checkbox flip → done with `🟢 SUPPORTED (composite formal+numerical, $0 mac-local 2026-05-28)`.
+축 E (SAVANT) H_347 checkbox flip → done with `🟢 SUPPORTED (composite formal+numerical, $0 mac-local 2026-05-28)`.
