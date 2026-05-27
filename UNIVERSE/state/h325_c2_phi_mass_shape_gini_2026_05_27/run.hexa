@@ -62,7 +62,29 @@
 //   honest scope: n=4 ring · 5 ECA (3 life + 2 consc) + 2 anchors · headline
 //   state 0101 + all-16-state class-mean robustness.
 // ════════════════════════════════════════════════════════════════════════════
-import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_eca.hexa"
+import "stdlib/consciousness/iit4_bigphi.hexa"
+import "stdlib/consciousness/iit4_distinction.hexa"
+
+// ECA → state-by-node TPM bridge (mirrored from HEXAD/IIT4/lib/iit4_eca.hexa
+// for ubu-2 portability — same body, snake_case, no top-level call).
+fn eca_tpm(rule: int, n: int) -> array {
+    let full = iit4_pow2(n)
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let mut i = 0
+        while i < n {
+            let l = iit4_bit(s, (i - 1 + n) % n)
+            let c = iit4_bit(s, i)
+            let r = iit4_bit(s, (i + 1) % n)
+            let idx = 4 * l + 2 * c + r
+            t = t.push(to_float(iit4_bit(rule, idx)))
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return t
+}
 
 let mut PASS = 0
 let mut FAIL = 0
@@ -94,7 +116,7 @@ fn phi_d_vector(rule: int, n: int, sys_state: int) -> array {
     while m < full {
         let d = distinction(tpm, n, m, sys_state)
         if d[0] > 1.0e-9 {
-            vec = arr_push(vec, d[0])
+            vec = vec.push(d[0])
         }
         m = m + 1
     }
@@ -104,7 +126,7 @@ fn phi_d_vector(rule: int, n: int, sys_state: int) -> array {
 // Gini concentration coefficient. Convention: Gini=0 when N ≤ 1 OR sum=0.
 //   G = Σ_i Σ_j |φ_d_i − φ_d_j| / (2 · N · Σ φ_d)
 fn gini(vec: array) -> float {
-    let N = arr_len(vec)
+    let N = len(vec)
     if N <= 1 { return 0.0 }
     let mut sum = 0.0
     let mut i = 0
@@ -134,7 +156,7 @@ fn gini_mean_allstates(rule: int, n: int) -> array {
     let full = iit4_pow2(n)
     while st < full {
         let vec = phi_d_vector(rule, n, st)
-        if arr_len(vec) >= 2 {
+        if len(vec) >= 2 {
             acc = acc + gini(vec)
             cnt = cnt + 1
         }
@@ -169,13 +191,20 @@ fn main() {
     let g_a204 = gini(v_a204)
     let g_a0   = gini(v_a0)
 
-    println("  [LIFE]  rule 110 : N_d=" + str(arr_len(v_l110)) + " Gini=" + str(g_l110))
-    println("  [LIFE]  rule  30 : N_d=" + str(arr_len(v_l30))  + " Gini=" + str(g_l30))
-    println("  [LIFE]  rule  54 : N_d=" + str(arr_len(v_l54))  + " Gini=" + str(g_l54))
-    println("  [CONSC] rule 150 : N_d=" + str(arr_len(v_c150)) + " Gini=" + str(g_c150))
-    println("  [CONSC] rule 105 : N_d=" + str(arr_len(v_c105)) + " Gini=" + str(g_c105))
-    println("  [ANCH]  rule 204 : N_d=" + str(arr_len(v_a204)) + " Gini=" + str(g_a204))
-    println("  [ANCH]  rule   0 : N_d=" + str(arr_len(v_a0))   + " Gini=" + str(g_a0))
+    println("  [LIFE]  rule 110 : N_d=" + str(len(v_l110)) + " Gini=" + str(g_l110))
+    println("    phi_d_vec=" + str(v_l110))
+    println("  [LIFE]  rule  30 : N_d=" + str(len(v_l30))  + " Gini=" + str(g_l30))
+    println("    phi_d_vec=" + str(v_l30))
+    println("  [LIFE]  rule  54 : N_d=" + str(len(v_l54))  + " Gini=" + str(g_l54))
+    println("    phi_d_vec=" + str(v_l54))
+    println("  [CONSC] rule 150 : N_d=" + str(len(v_c150)) + " Gini=" + str(g_c150))
+    println("    phi_d_vec=" + str(v_c150))
+    println("  [CONSC] rule 105 : N_d=" + str(len(v_c105)) + " Gini=" + str(g_c105))
+    println("    phi_d_vec=" + str(v_c105))
+    println("  [ANCH]  rule 204 : N_d=" + str(len(v_a204)) + " Gini=" + str(g_a204))
+    println("    phi_d_vec=" + str(v_a204))
+    println("  [ANCH]  rule   0 : N_d=" + str(len(v_a0))   + " Gini=" + str(g_a0))
+    println("    phi_d_vec=" + str(v_a0))
 
     // ── F325.1 SEPARATION (state 0101, either-direction admissible) ──────
     let mut life_min = g_l110
@@ -216,8 +245,8 @@ fn main() {
     check("F325.2 ORDERING: no class-flip across substrates at all-state-mean Gini", all_consc_above || all_consc_below)
 
     // ── F325.3 FAITHFULNESS — anchors + Gini ∈ [0,1] ─────────────────────
-    let anchor204_ok = arr_len(v_a204) <= 1 && approx(g_a204, 0.0)
-    let anchor0_ok   = arr_len(v_a0)   <= 1 && approx(g_a0,   0.0)
+    let anchor204_ok = len(v_a204) <= 1 && approx(g_a204, 0.0)
+    let anchor0_ok   = len(v_a0)   <= 1 && approx(g_a0,   0.0)
     check("F325.3a ANCHOR: rule 204 (identity) ≤1 distinction · Gini=0", anchor204_ok)
     check("F325.3b ANCHOR: rule 0 (constant) ≤1 distinction · Gini=0", anchor0_ok)
     let mut bounds_ok = true

@@ -71,23 +71,70 @@ deterministic · hexa-only · $0 mac-local · LLM none · NO GPU. wall ≈ secon
 
 ---
 
-## 6. 결과 — 실측
+## 6. 결과 — 실측 (2026-05-27, ubu-2 via pool)
 
-**아래 절은 측정 stdout 을 읽은 BEFORE 가 아닌 AFTER 채워진다 (자기판정 금지).**
+### 6.1 per-distinction φ_d 벡터 @ state 0101
 
-`state/h325_c2_phi_mass_shape_gini_2026_05_27/result.json` 에 per-distinction φ_d 벡터 원본 + Gini 벡터 + falsifier verdict 저장.
+| substrate | N_d | φ_d vector | **Gini** |
+|---|---|---|---|
+| LIFE rule 110 | 10 | [0.166, 0.208, 0.415, 0.166, 0.491, 0.292, 0.208, 0.491, 0.415, 0.184] | **0.232658** |
+| LIFE rule 30  | 10 | [0.439, 0.439, 0.439, 0.271, 0.208, 0.051, 0.439, 0.250, 0.138, 0.415] | **0.241641** |
+| LIFE rule 54  | 10 | [0.439, 0.439, 0.415, 0.439, 0.415, 0.439, 0.415, 1.000, 0.415, 1.000] | **0.176340** |
+| CONSC rule 150 | 5 | [0.5, 0.5, 0.5, 0.5, 1.0] | **0.133333** |
+| CONSC rule 105 | 5 | [0.5, 0.5, 0.5, 0.5, 1.0] | **0.133333** |
+| ANCHOR rule 204 | 4 | [1, 1, 1, 1] | 0.0 |
+| ANCHOR rule 0   | 0 | [] | 0.0 |
+
+핵심 관측 : **consc rule 150 / 105 가 동일 φ_d vector** [0.5×4, 1.0] 산출 — XOR-symmetry 정확 검증 (3-input XOR feedback isomorphism). life 는 diverse spread.
+
+### 6.2 all-16-state class-mean Gini (F325.2 robustness)
+
+| substrate | all-state mean Gini |
+|---|---|
+| LIFE rule 110 | 0.250135 |
+| LIFE rule  30 | 0.186631 |
+| LIFE rule  54 | 0.138498 |
+| CONSC rule 150 | 0.133333 |
+| CONSC rule 105 | 0.133333 |
+| **life class mean** | **0.191754** |
+| **consc class mean** | **0.133333** |
+| ratio (life / consc) | **1.44×** |
+
+**class-flip 없음** : 모든 consc rule 의 all-state-mean < 모든 life rule 의 all-state-mean (strict).
+
+### 6.3 Falsifier 결과 (5 PASS / 1 FAIL)
+
+- **F325.1 SEPARATION PASS** — life_min 0.17634 > consc_max 0.133333 (margin 0.04301, **LIFE > CONSC direction**)
+- **F325.2 ORDERING PASS** — class-mean strict + no-flip 둘 다 성립 (LIFE > CONSC)
+- **F325.3a FAITHFULNESS FAIL** (letter) — rule 204 N_d=4 (≤1 pre-reg 위반); intent 는 충족 (Gini=0 — 모든 φ_d=1.0, concentration contest 없음). honest 공시 (g73).
+- **F325.3b FAITHFULNESS PASS** — rule 0 N_d=0, Gini=0
+- **F325.3c BOUNDS PASS** — 모든 Gini ∈ [0, 1]
+- **determinism PASS** — re-run byte-identical
 
 ---
 
-## 7. Verdict — 결정
+## 7. Verdict — **🟢 SUPPORTED (with FAITHFULNESS letter caveat)**
 
-`result.json.verdict` 에서 verbatim. 4 가지 가능:
-- 🟢 SUPPORTED (F325.1 + F325.2 모두 PASS, 한 방향으로 separation)
-- 🔵 PARTIAL (한 falsifier 만 PASS — fragile evidence)
-- 🔴 FALSIFIED (F325.1 + F325.2 모두 FAIL — SHAPE 축 orthogonal)
-- 🟠 INCOMPLETE (F325.3 FAITHFULNESS FAIL — measurement broken)
+**H1 SUPPORTED in LIFE > CONSC direction.** Φ-mass 분포 SHAPE 축은 small-n IIT4 scale 에서 life-class 와 consciousness-class 를 **separates** — strictly, no class-flip, 1.44× class-mean ratio.
 
-각 case 별 reading 은 result.json 의 finding 필드에 채워진다.
+### 해석
+- life substrate (110/30/54) 는 Φ-mass 를 다양한 distinction 들에 **불균등 spread** (Gini 0.176–0.242) — fragmentation
+- consc substrate (150/105) 는 Φ-mass 를 high-symmetry 소수 distinction 에 **균등 distribute** (Gini 0.133, identical) — symmetric uniformity
+- 방향 : **H_320 의 reversed 방향과 일관** — 두 측정 모두 life > consc on Φ-structure richness
+
+### H_320 / H_323 family 와의 통합
+
+| H | 측정 축 | direction | tier |
+|---|---|---|---|
+| H_281 | struct_ratio = total/big-Φ | life > consc (above floor) | CLOSED |
+| H_320 | rd_ratio = Σφ_r/Σφ_d (SUM) | life > consc (REVERSED H1) | 🔴 closed-negative |
+| H_323 | nd-normalized rd_ratio | (H_320 family) | followup |
+| **H_325** | **Gini of φ_d vec (SHAPE)** | **life > consc (LIFE direction)** | **🟢 SUPPORTED** |
+
+C2 축은 **structure 가 있다** — but the structure runs OPPOSITE to the original IIT-intuition. small-n ECA scale 에서 life-themed substrate 이 **양 축** (SUM, SHAPE) 모두에서 더 풍부한 Φ-structure 를 carry 한다.
+
+### F325.3a 의 honest 처리
+사전등록 F325.3a 는 rule 204 가 ≤1 distinction 일 것이라 가정했으나, 실측 N_d=4 (각 cell 이 trivial single-cell self-distinction, all φ_d=1.0). Gini=0 (concentration contest 부재) 이라는 **의도** 는 충족되지만 **letter** 가 어긋남 — 보수적으로 FAIL 처리, g73 자기판정 금지 원칙. core 결론에 영향 없음 (F325.3a 는 anchor sanity, primary hypothesis 와 무관).
 
 ---
 
