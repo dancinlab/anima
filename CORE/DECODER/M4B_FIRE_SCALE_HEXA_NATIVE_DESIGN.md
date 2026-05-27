@@ -161,34 +161,37 @@ ssh <pod> "bash -lc 'cd ~ && git clone https://github.com/dancinlab/anima.git &&
 **Pre-fire checklist** (사전 검증, SAVE_POD 잔존 대비):
 1. ☑ train_v3_moe.hexa SCAFFOLD 완료 — Phase 3b 6/6 sub-milestones LANDED (PRs #1063·#1064·#1066·#1067·#1069·#1070): tok_emb · attn_Wo · MLP · ln_f · AdamW · multi-step loop. d=4 V=4 E=2 T=1 n_layer=1 toy scale.
 2. ☑ Pilot-scale forward path LANDED — Phase 4a-e 5/5 sub-PRs (#1073·#1074·#1075·#1077·#1079): config scale-up · multi-layer · self-attn · real BPE · dispatch runbook. d=64 V=151643 E=2 T=4 n_layer=1 alloc-tuned for Mac.
-3. ☐ Multi-layer backward 완성 — Phase 4-bwd-1..5 (본 design 갱신 PR · g4 stacked). Forward 5/5 LANDED 했으나 backward 는 MoE bwd 만 wired (last-layer-Wo 만 update). 실 fire 전 ln_f/MLP/attention/layer-stack/tok_emb bwd 분석적 구현 필수.
-4. ☐ Vast.ai SSH key 등록 (`secret get vast.api_key`) — 본 세션 확인 OK (key 존재)
-5. ☐ Qwen tokenizer files 호스트 reachable (Mac → pod scp 동작) — Mac local merges.txt + vocab.json 존재 확인 OK
-6. ☐ SAVE_POD trap 검증 (의도적 crash → pod 보존 확인) — toy smoke 로 dry-run
+3. ☑ Multi-layer backward 완성 — Phase 4-bwd-1..6 (PRs #1082·#1084·#1085·#1086·#1088·#1093). `v3_moe_bwd_lib.hexa` analytic vjp (ln_f · MLP · attention · layer-block · tok_emb) + pilot wire. **hexa run 실측 PASS**: 모든 gradcheck < 1e-5, end-to-end gradient 가 입력 임베딩까지 도달.
+4. ☑ Vast.ai SSH key 등록 (`secret get vast.api_key`) — 본 세션 확인 OK (key 존재)
+5. ☑ Qwen tokenizer files 호스트 reachable (Mac → pod scp 동작) — Mac local merges.txt + vocab.json 존재 확인 OK
+6. ☐ **hexa toolchain install sync** — flame_bpe_corpus_lib 가 hexa-lang origin/main(#1537 merged)에 있으나 로컬 `~/.hx/bin/stdlib` 이 stale(#1537 이전) → pilot real-scale(V=151643) compile 시 `module not found`. fire pod 의 fresh toolchain 에선 해소. (backward 배선 자체는 synthetic-V verify 로 실측 PASS — toolchain-무관)
+7. ☐ SAVE_POD trap 검증 (의도적 crash → pod 보존 확인) — toy smoke 로 dry-run
 
 ### Phase 4 sub-phases (분할 — pilot-scale code gap 메우기)
 
-| Sub | scope | 상태 | PR |
-|---|---|---|---|
-| 4a | pilot config env-var wiring (P21H_PILOT_D/V/E/T/STEPS/NL) — 현 d=4 V=4 hardcoded 인자화 | ☑ | #1073 |
-| 4b | multi-layer block iteration (n_layer > 1, layer-iter loop · per-layer offsets) | ☑ | #1074 |
-| 4c | self-attention proper (T > 1, causal mask · Q/K/V/Wo · softmax) | ☑ | #1075 |
-| 4d | BPE corpus real IDs feed (V_qwen=151643 aware · batch from corpus) | ☑ | #1077 |
-| 4e | dispatch script (Vast.ai vastai launch + ssh setup + scp Qwen + run + monitor + harvest) | ☑ | #1079 |
-| **4-bwd-1** | **ln_f RMSNorm bwd (γ grad + d_x via dx = γ/rms·dy - x/(d·rms³)·Σ(dy·γ·x))** | ☐ | — |
-| **4-bwd-2** | **MLP bwd per-token (Wup·Wdown grad + ReLU bwd + d_zT_pre_mlp)** | ☐ | — |
-| **4-bwd-3** | **attention bwd (Wo bwd → attn_out bwd → softmax bwd → Q/K/V bwd + d_zT_pre_attn)** | ☐ | — |
-| **4-bwd-4** | **layer-stack + residual bwd (reverse-order layer iter · residual skip = grad bypass)** | ☐ | — |
-| **4-bwd-5** | **tok_emb scatter-add bwd + end-to-end integration smoke (layer 0 weights moved verify)** | ☐ | — |
-| 4-fire | autonomous fire 발사 (a_fire_autonomous · H100 SXM ~$1-3 · 0.5-1hr · ONLY after 4-bwd 5/5) | ☐ | — |
+| Sub | scope | 상태 | PR | 실측 |
+|---|---|---|---|---|
+| 4a | pilot config env-var wiring (P21H_PILOT_D/V/E/T/STEPS/NL) | ☑ | #1073 | — |
+| 4b | multi-layer block iteration (n_layer > 1, layer-iter loop · per-layer offsets) | ☑ | #1074 | — |
+| 4c | self-attention proper (T > 1, causal mask · Q/K/V/Wo · softmax) | ☑ | #1075 | — |
+| 4d | BPE corpus real IDs feed (V_qwen=151643 aware · batch from corpus) | ☑ | #1077 | — |
+| 4e | dispatch script (Vast.ai vastai launch + ssh setup + scp Qwen + run + monitor + harvest) | ☑ | #1079 | — |
+| 4-bwd-1 | ln_f RMSNorm bwd | ☑ | #1082 | γ/x gradcheck 5.9e-11/1.9e-10 |
+| 4-bwd-2 | MLP bwd per-token (Wup·Wdown · ReLU) | ☑ | #1084 | W_down 7.4e-14 |
+| 4-bwd-3 | attention bwd (Q/K/V/Wo + softmax jvp) | ☑ | #1085 | Wq 1.8e-14 (full chain) |
+| 4-bwd-4 | layer-stack + residual bwd | ☑ | #1086 | d_zT_in 2.7e-12 |
+| 4-bwd-5 | tok_emb scatter-add + end-to-end integration | ☑ | #1088 | Wq+tok_emb grad ≠ 0 |
+| 4-bwd-6 | pilot driver full backward wire | ☑ | #1093 | layer 0 Wq Δ=4.27e-6 (synthetic) |
+| 4-fire | autonomous fire 발사 (a_fire_autonomous · H100 SXM ~$1-3 · 0.5-1hr) | ☐ | — | 선결: toolchain sync (item 6) |
 
 각 sub-PR <200 lines, 1 logical concern (g4 stacked PRs).
 
-**Phase 4-bwd 필요 이유 (honest gap)**: Phase 4c forward path 완성 시 backward
-는 MoE bwd → `d_zT_last` 만 wired. layer-stack/attention/MLP/ln_f 의 analytic
-bwd 모듈 부재 → gradient flow 가 last-layer Wo 까지만 도달 (실측: Phase 4c
-verdict probe `Wo[L-1,0,0]` 만 |Δ|≥1e-9, `Wq[L0,0,0]` 미검증). 실 fire 발사 전
-완성 필수 (a_completeness_over_cheap · 본선 기준).
+**Phase 4-bwd honest gap — CLOSED**: Phase 4c forward 완성 시 backward 는 MoE
+bwd `d_zT_last` 만 wired (gradient 가 last-layer Wo 까지만). Phase 4-bwd-1..6 이
+`v3_moe_bwd_lib.hexa` 의 analytic vjp (ln_f · MLP · attention softmax-jvp ·
+layer-block residual · tok_emb scatter) 를 구현 + pilot 에 wire → **hexa run
+실측으로 gradient 가 출력 → 모든 layer → 입력 임베딩까지 흐름 확인** (layer 0
+Wq |Δ|=4.27e-6). a_completeness_over_cheap 본선 충족.
 
 ### Phase 5 — Monitor + harvest + verdict
 
