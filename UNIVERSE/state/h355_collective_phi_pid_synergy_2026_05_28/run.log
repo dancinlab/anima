@@ -1,0 +1,34 @@
+================================================================
+  H_355 — Collective Φ PID synergy vs redundancy (hivemind axis F1)
+  (II_3 net 3-source co-info per cell; II<0=synergy, >0=redundancy)
+  Substrate: 3 binary substrates × 1 cell · 8-state · coupling K density
+================================================================
+  K=0.00 mask=[0, 0, 0] synergy=0.0 redundancy=0.0 ratio=0.0
+  K=0.33 mask=[1, 0, 0] synergy=1.0 redundancy=0.0 ratio=1.0
+  K=0.33 mask=[0, 1, 0] synergy=1.0 redundancy=0.0 ratio=1.0
+  K=0.33 mask=[0, 0, 1] synergy=1.0 redundancy=0.0 ratio=1.0
+  K=0.67 mask=[1, 1, 0] synergy=2.0 redundancy=0.0 ratio=1.0
+  K=0.67 mask=[1, 0, 1] synergy=2.0 redundancy=0.0 ratio=1.0
+  K=0.67 mask=[0, 1, 1] synergy=2.0 redundancy=0.0 ratio=1.0
+  K=1.00 mask=[1, 1, 1] synergy=3.0 redundancy=0.0 ratio=1.0
+  --
+  K=0.00 (anchor)  mean_syn=0.0 mean_red=0.0 mean_ratio=0.0
+  K=0.33           mean_syn=1.0 mean_red=0.0 mean_ratio=1.0
+  K=0.67           mean_syn=2.0 mean_red=0.0 mean_ratio=1.0
+  K=1.00 (anchor)  mean_syn=3.0 mean_red=0.0 mean_ratio=1.0
+  --
+  F355.3 mean synergy_ratio over non-trivial K {0.33,0.67,1.00} = 1.0
+          => SYNERGY > REDUNDANCY (mean ratio > 0.5)
+  [PASS] F355.1 K=1 pure-XOR: synergy>0 AND redundancy=0
+  [PASS] F355.2 K=0 pure-identity: synergy=0 AND redundancy=0
+  [PASS] F355.4 K-MONOTONIC: synergy(K=0) ≤ synergy(K=0.33) ≤ synergy(K=0.67) ≤ synergy(K=1)
+  [PASS] F355.5a BOUND: 0 ≤ synergy ≤ 3, redundancy ≥ 0 across all 8 permutations
+  [PASS] F355.5b DETERMINISM: K=1 synergy re-run byte-identical
+  F355.3 synergy_ratio verdict (verbatim): mean_nontrivial_K=1.0
+================================================================
+  RESULT: 5 PASS / 0 FAIL  (n_perms=8)
+  mean ratio non-trivial K = 1.0
+  VERDICT: H1 SUPPORTED — collective-Φ flow is SYNERGY-dominant across the
+           coupling K sweep on this hivemind toy. Cross-substrate joint
+           information dominates the redundancy share.
+================================================================
