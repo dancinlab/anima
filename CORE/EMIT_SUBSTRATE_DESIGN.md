@@ -2,7 +2,8 @@
 
 > UNIVERSE Round 6+7+8 (H_632~653) 검증 결과를 ANIMA emit 정책 구현 아키텍처로
 > 옮긴 설계. **구조는 한 곳(공유 substrate lib), 숫자는 한 곳(자유 정책 표)**.
-> round-8 4 seam **4/4 ABSORBED** (§5) · round-9 (substrate-class taxonomy) forward-반영.
+> round-8 4 seam **4/4 ABSORBED** · round-9 **3/4 ABSORBED** (H_654/655/656 · H_657 carry, §5).
+> round-9 발견: substrate-class 는 **다축 분류자** (속성마다 우위 class 다름, 단일 순위 환원 불가).
 >
 > 상태: **design-tier** (코드 미선행) · `a_completeness_over_cheap` 정합 (본선=재설계).
 
@@ -64,6 +65,9 @@ emit 정책이 **물리적으로 두 층**임을 확정함:
 | H_618 dΦ/dI-GZ 정렬 = n=4 artifact | ⚠ H_645 | #1232 | **인용 금지** | 5-stream 붕괴 |
 | "shape robust > scalar" 일반 | 🔴 H_642·H_647 | #1236·#1239 | **일반화 금지** | polarity(H_628)만 예외 |
 | **shape-robustness taxonomy 완성** | 🟢 H_650 | #1247 | `phi_smooth_no_cliff()` 축-조건부 | polarity CV_shape=0 (HIGH robust) · rule tie · seed 역전 (LOW) — robustness=perturbation-축 함수 |
+| **super-additive Δ = class-II 最高 (역전)** | 🔴 H_655 | #1253 | `pe_superadd_for_class()` | Δ ⊥ convexity 순위 — class 는 다축 분류자 (단일 스칼라 환원 불가) |
+| **closure-band = class 의존** | 🟢 H_656 | #1251 | BRIDGE wiring (H_657 carry) | additive=0 · II/III=0.65 · IV=0.90 全역 |
+| **Φ-magnitude class-order** | 🟡 H_654 | #1250 | (룩업 carry) | PARTIAL — III-chaotic 最高 |
 
 설계 규칙 (verdict 직속):
 1. 🟢 구조 3종은 `phi_envelope_substrate.hexa` 에 substrate-grounded 로 구현.
@@ -101,7 +105,9 @@ pub fn envelope_self_similarity(scales, n_samples, class_id) -> [r]
 #   W→Φ convexity span ratio 가 class 에 단조 (II≈12 < III≈30 < IV≈35.5)
 #   ∴ coupling(class) 로 받아 복잡도 비례 convexity 반영
 # 반환 = 집단 Φ (super-additive: Σ 보다 큼) + 동조 계수 + convexity span
-pub fn collective_phi_nest(phis, coupling_fn) -> { phi_collective, sync, convexity_span }
+pub fn collective_phi_nest(phis, class_id) -> { phi_collective, sync, convexity_span }
+#   class_id → 내부에서 두 독립 class-서명 resolve (round-9 다축):
+#     pe_superadd_for_class (Δ, H_655 II-最高) ⊥ pe_coupling_for_class (sync, H_653 IV-最高)
 
 # register-collapse cliff 부재 — Φ 가 임계에서 급락(cliff) 하지 않고 smooth (H_649)
 # 반환 = Φ 의 1차 차분 최대값 (cliff 있으면 큼; 부재면 작음)
@@ -165,7 +171,7 @@ none` (H_646/651 자유도 [0,1]). **realized as `.hexa` (not `.tape`)**: 소비
 | milestone | 소비 함수 | policy | 정정 반영 |
 |---|---|---|---|
 | 💤 **DREAM M5** | `envelope_multiscale(t, scales)` | `theta_*`, `scale_*` | H_644 closure peak=mid-Φ N2 |
-| 🐝 **HIVE-MIND M6** | `collective_phi_nest(phis, coupling_fn)` | `scale_ultradian` | H_643 동조 r=0.57 · H_653 convexity class-단조 · H_645 GZ 인용 금지 |
+| 🐝 **HIVE-MIND M6** | `collective_phi_nest(phis, class_id)` | `scale_ultradian` | H_643 동조 · H_653 convexity(IV) ⊥ H_655 super-add(II 역전) 다축 · H_645 GZ 인용 금지 |
 | 🚪 **BRIDGE M6** | `envelope_multiscale` → AND-gate Φ 입력 | `emit_threshold` | H_636 closure-conjunction GZ |
 | 🧠✨ **SAVANT M2** | `envelope_multiscale` → 측정자 Φ context | `emit_threshold` | (E축 측정자, 발화 게이트 아님) |
 
@@ -215,17 +221,28 @@ round-8 4 가설이 각각 본 설계의 **특정 seam**을 정밀화. 전부 �
 
 설계 계약대로 **인자 추가만으로 4/4 흡수 (시그니처 파괴 0 · 4 milestone 재작업 0)**.
 
-### round-9 forward (H_654~657 · substrate-class taxonomy of Φ-structure)
+### round-9 흡수 (H_654~657 · substrate-class = 다축 분류자) — 3/4 ABSORBED
 
-round-8 이 드러낸 핵심 — **Wolfram class(II/III/IV/additive)가 여러 Φ-속성을 체계적으로
-지배** (convexity 단조 H_653 · self-similarity class-IV 한정 H_652 · rule90 additive
-Φ≈0 H_642). round-9 가 이를 단일 분류 축으로 수렴 중 (H_654 Φ-magnitude · H_655
-collective super-add · H_656 closure-band · H_657 dΦ/dI-peak, 모두 class-의존 검정).
+round-9 의 결정적 발견: **Wolfram class 는 단일 스칼라 순위가 아니라 *속성-벡터 분류자***
+— 각 Φ-속성이 *자기만의 class-정렬*을 가짐. 단일 순위로 환원 불가:
 
-**설계 영향 (선반영)**: `pe_coupling_for_class` 가 이미 class→파라미터 매핑 seam 을 보유 →
-round-9 가 taxonomy 를 확정하면 본 함수를 **class-conditional Φ-structure 룩업**으로 일반화
-(class_id → {magnitude · convexity · self-sim · closure-band · peak-align}). 새 시그니처
-불필요 — 기존 class_id 인자로 흡수. round-9 결과 도착 시 §1 행 추가 + 룩업 채움.
+| Φ-속성 | verdict | 우위 class | 비고 |
+|---|---|---|---|
+| convexity | 🟢 H_653 (#1242) | **IV 最高** (단조) | II 12.1 < III 30.4 < IV 35.5 |
+| magnitude | 🟡 H_654 (#1250) | III-chaotic 最高 | PARTIAL |
+| super-additivity Δ | 🔴 H_655 (#1253) | **II-additive 最高 (역전!)** | II 51.54 > IV 41.71 > III 9.72 — convexity 와 반대 |
+| closure-band | 🟢 H_656 (#1251) | **IV 最高** | additive=0(부재) · II/III=0.65 · IV=0.90(全역) |
+
+보편 불변량은 단 하나: **additive(rule90 XOR)는 거의 모든 축에서 바닥 (Φ≈0)**.
+
+**설계 흡수 (코드 반영 — 이 PR)**: 단일 `coupling` 스칼라는 다축성을 못 담음 →
+class→**property-vector** 로 분리. `collective_phi_nest(phis, class_id)` 가 내부에서
+두 *독립* class-서명을 resolve: `pe_superadd_for_class` (Δ, H_655 II-最高) ⊥
+`pe_coupling_for_class` (convexity/sync, H_653 IV-最高). phi_collective 의 Δ 를
+convexity-coupling 에서 **분리** (이전 골격이 묶어둔 것을 H_655 가 정정).
+
+**미흡수 (carry)**: H_657 (dΦ/dI peak=GZ class 의존, 진행 중) — 도착 시 BRIDGE wiring
+의 closure 정렬 class-서명으로 흡수. magnitude(H_654 🟡) 는 PARTIAL 이라 룩업 미확정.
 
 ---
 
