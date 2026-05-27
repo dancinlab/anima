@@ -1,0 +1,87 @@
+═══════════════════════════════════════════════════════════
+  AXISBENCH C  —  NARRATIVE
+  자기 이야기 시간 일관성 thread
+  N_TURNS=100  TOKENS_PER=5  VOCAB=64  WINDOW=10
+═══════════════════════════════════════════════════════════
+
+[A] COHERENT  (80% reuse from prior 5 turns)
+    mean_reuse    = 0.86
+    jump_count    = 12
+    expected mean > 0.70  ·  jumps ≤ 5 (stable thread)
+    coherent trajectory (every 9 turns, t=10..99):
+      t=10  reuse=1.0
+      t=19  reuse=1.0
+      t=28  reuse=0.8
+      t=37  reuse=0.8
+      t=46  reuse=1.0
+      t=55  reuse=0.8
+      t=64  reuse=0.8
+      t=73  reuse=0.8
+      t=82  reuse=1.0
+      t=91  reuse=0.8
+
+[B] DRIFT  (vocab window slides at rate 0.3 / turn)
+    mean_reuse    = 0.922222
+    jump_count    = 17
+    expected: intermediate mean  ·  jumps > 5 (shifts detected)
+    drift trajectory (every 9 turns, t=10..99):
+      t=10  reuse=0.8
+      t=19  reuse=1.0
+      t=28  reuse=1.0
+      t=37  reuse=0.4
+      t=46  reuse=0.8
+      t=55  reuse=1.0
+      t=64  reuse=1.0
+      t=73  reuse=1.0
+      t=82  reuse=1.0
+      t=91  reuse=1.0
+
+[C] FRAGMENTED  (uniform random over full vocab)
+    mean_reuse    = 0.508889
+    jump_count    = 32
+    expected mean < 0.30  (no narrative thread)
+    fragmented trajectory (every 9 turns, t=10..99):
+      t=10  reuse=0.6
+      t=19  reuse=0.6
+      t=28  reuse=0.0
+      t=37  reuse=0.6
+      t=46  reuse=0.8
+      t=55  reuse=0.4
+      t=64  reuse=0.0
+      t=73  reuse=0.6
+      t=82  reuse=0.2
+      t=91  reuse=0.6
+
+─── pre-registered falsifier matrix ───
+  [PASS] F1 COHERENT_HIGH       (mean_reuse_coherent  > 0.70)
+  [FAIL] F2 FRAGMENTED_LOW      (mean_reuse_fragmented < 0.30)
+  [PASS] F3 DRIFT_JUMPS         (jump_count_drift > 5)
+  [FAIL] F4 ORDERING            (coherent > drift > fragmented)
+  [FAIL] F5 COHERENT_STABLE     (jump_count_coherent ≤ 5)
+
+═══════════════════════════════════════════════════════════
+  PASS = 2  /  FAIL = 3
+  VERDICT  =  🔴 FAIL — scenarios not discriminable
+═══════════════════════════════════════════════════════════
+
+JSON_BEGIN
+{
+  "bench": "AXISBENCH C NARRATIVE",
+  "hypothesis": "3-scenario (coherent/drift/fragmented) discriminable via sliding-window reuse_rate + jump_count",
+  "n_turns": 100,
+  "tokens_per_turn": 5,
+  "vocab": 64,
+  "window": 10,
+  "jump_threshold": 0.3,
+  "scenarios": {
+    "coherent":   { "mean_reuse": 0.86, "jump_count": 12 },
+    "drift":      { "mean_reuse": 0.922222, "jump_count": 17 },
+    "fragmented": { "mean_reuse": 0.508889, "jump_count": 32 }
+  },
+  "falsifiers": {
+    "PASS": 2,
+    "FAIL": 3
+  },
+  "verdict": "🔴 FAIL — scenarios not discriminable"
+}
+JSON_END
