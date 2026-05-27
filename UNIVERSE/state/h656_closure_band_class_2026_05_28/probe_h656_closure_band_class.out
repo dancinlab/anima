@@ -1,0 +1,56 @@
+[H_656] closure-band-substrate-class-dependence probe
+  substrate : elementary CA (H_007/H_225) × phi_spatial (RFC 036)
+  domains   : N=16 lattice partitioned into 4 blocks (4 cells each)
+  inhibition: I -> initial density (density = 1 - I)
+  criteria  : C1 SI>1.5 · C2 genPhi>0.02 · C3 minPhi>0.05 · C4 ratio in [1.1,3.5]
+  closure band = contiguous-or-not I set with pass-rate > 0, per rule
+
+=== rule 30 (Wolfram class III-chaotic) ===
+  I=0.05  pass_rate=0.0
+  I=0.15  pass_rate=0.166667
+  I=0.25  pass_rate=0.166667
+  I=0.3  pass_rate=0.5
+  I=0.37  pass_rate=0.666667
+  I=0.5  pass_rate=0.5
+  I=0.65  pass_rate=0.833333
+  I=0.8  pass_rate=0.833333
+  I=0.95  pass_rate=0.0
+  band_lo=0.15 band_hi=0.8 width=0.65 n_pos_pts=7 peak_pr=0.833333 peak_I=0.65
+
+=== rule 90 (Wolfram class III-additive) ===
+  I=0.05  pass_rate=0.0
+  I=0.15  pass_rate=0.0
+  I=0.25  pass_rate=0.0
+  I=0.3  pass_rate=0.0
+  I=0.37  pass_rate=0.0
+  I=0.5  pass_rate=0.0
+  I=0.65  pass_rate=0.0
+  I=0.8  pass_rate=0.0
+  I=0.95  pass_rate=0.0
+  band_lo=-1.0 band_hi=-1.0 width=0.0 n_pos_pts=0 peak_pr=0.0 peak_I=-1.0
+
+=== rule 110 (Wolfram class IV-complex) ===
+  I=0.05  pass_rate=0.166667
+  I=0.15  pass_rate=0.833333
+  I=0.25  pass_rate=1.0
+  I=0.3  pass_rate=0.666667
+  I=0.37  pass_rate=0.5
+  I=0.5  pass_rate=0.5
+  I=0.65  pass_rate=0.666667
+  I=0.8  pass_rate=0.5
+  I=0.95  pass_rate=0.333333
+  band_lo=0.05 band_hi=0.95 width=0.9 n_pos_pts=9 peak_pr=1.0 peak_I=0.25
+
+=== rule 184 (Wolfram class II-TASEP) ===
+  I=0.05  pass_rate=0.0
+  I=0.15  pass_rate=0.333333
+  I=0.25  pass_rate=0.666667
+  I=0.3  pass_rate=0.833333
+  I=0.37  pass_rate=1.0
+  I=0.5  pass_rate=0.5
+  I=0.65  pass_rate=0.333333
+  I=0.8  pass_rate=0.5
+  I=0.95  pass_rate=0.0
+  band_lo=0.15 band_hi=0.8 width=0.65 n_pos_pts=7 peak_pr=1.0 peak_I=0.37
+
+=== H_656 closure-band-class summary complete ===
