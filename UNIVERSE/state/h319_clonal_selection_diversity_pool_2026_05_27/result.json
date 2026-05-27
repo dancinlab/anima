@@ -1,0 +1,33 @@
+{
+  "hypothesis": "H_319 CLONAL-SELECTION × diversity-pool + fitness-gated dynamics",
+  "claim_h1": "CLONAL beats SINGLE under SHIFT by >= 2x AND ties/loses to SINGLE under STATIONARY (dynamically-gated conditional benefit)",
+  "shift": {
+    "single_loss": 4026.0,
+    "clonal_loss": 290.165,
+    "delta": 3735.84,
+    "pct_reduction": 92.7927,
+    "ratio_single_over_clonal": 13.8749
+  },
+  "stationary": {
+    "single_loss": 785.004,
+    "clonal_loss": 34.878,
+    "delta": 750.126,
+    "pct_reduction": 95.557
+  },
+  "falsifiers": {
+    "F319.1_CLONAL_WINS_UNDER_SHIFT": "PASS",
+    "F319.2_NON_TRIVIAL_MARGIN_SHIFT": "PASS",
+    "F319.3_SINGLE_COMPETITIVE_STATIONARY": "FAIL",
+    "F319.4_CONDITIONAL_BENEFIT_REAL": "FAIL",
+    "F319.5_SHIFT_IS_NON_TRIVIAL": "PASS",
+    "pass": 3,
+    "fail": 2
+  },
+  "verdict": "CLOSED-NEGATIVE 🔴 — conditional-structure hypothesis FALSIFIED; clonal beats single unconditionally (stationary 95.6% > shift 92.8%), so the dynamical-gated synthesis is rejected.",
+  "root_cause": "SINGLE policy locks the best variant at t=0; given an N=8 random-init pool in [-1,1] and w_star=-1.5, even the locked best variant is far from optimal, so SINGLE pays large eval loss every epoch — CLONAL's mutate-cull recovers regardless of shift.",
+  "anti_tautology_check": "Selection uses train_err on rotating x-stream; loss measured on independent eval grid {-2,-1,0,1,2}. Same w_star but different x — could (and did) yield disagreeing rankings; SINGLE's eval loss is NOT defined to equal its train loss.",
+  "cost_usd": 0.0,
+  "wall_seconds": "< 1 (mac-local)",
+  "deterministic": true,
+  "rng_used": "deterministic LCG hash for pool init + clonal mutation only"
+}
