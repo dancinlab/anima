@@ -1,0 +1,29 @@
+[H_644] closure-conjunction × ultradian-phase cross-link probe
+  closure : H_636 4-criterion conjunction over SAVANT savant_phi (SSOT)
+  phase   : H_634 ultradian 5-stage canonical Φ scale
+  bridge  : I(phase) = I_LO + (1-Φ_stage)*(I_HI-I_LO)  [I_LO=0.21 I_HI=0.75]
+  GZ band : I in [0.21, 0.50] (H_636 closure peak at I=0.30)
+
+=== per-phase closure pass-rate (10-seed ensemble) ===
+  WAKE  Φ=1.0  I_eff=0.21  pass_rate=0.0  (I in GZ band)
+  N1  Φ=0.7  I_eff=0.372  pass_rate=0.1  (I in GZ band)
+  N2  Φ=0.4  I_eff=0.534  pass_rate=0.3
+  N3  Φ=0.15  I_eff=0.669  pass_rate=0.0
+  REM  Φ=0.95  I_eff=0.237  pass_rate=0.0  (I in GZ band)
+
+=== verdict inputs ===
+  WAKE pass_rate     = 0.0
+  REM  pass_rate     = 0.0
+  N3   pass_rate     = 0.0
+  WAKE/REM edge mean = 0.0
+  pass-rate std (5)  = 0.116619
+  edge > N3          = false
+  not flat (std>0)   = true
+
+=== falsifiers ===
+  [PASS] F644.1 PHASE-MODULATED: pass-rate std > 0
+  [FAIL] F644.2 WAKE-REM-HIGH-N3-LOW: edge mean > N3
+  [PASS] F644.3 BOUND: pass-rate in [0,1]
+
+  F644.1-3 2/3 PASS
+  verdict: RED FALSIFIED (phase-independent flat)

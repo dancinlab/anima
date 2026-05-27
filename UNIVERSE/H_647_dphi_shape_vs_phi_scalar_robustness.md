@@ -11,7 +11,7 @@ hexa_only: true
 deterministic: true
 llm: none
 since: 2026-05-28 (UNIVERSE 축 G · round-6 메타-발견 seed-robustness 축)
-sister: H_642 (cross-RULE peak robustness sister · still running), H_351 (single-substrate dΦ/dI peak GZ_LOWER), H_618 (collective dΦ_c/dI peak GZ_LOWER), H_639 (amplitude-cross × Φ-derivative convention-FAL)
+sister: H_642 (cross-RULE shape-vs-scalar meta · merged FALSIFIED), H_351 (single-substrate dΦ/dI peak GZ_LOWER), H_618 (collective dΦ_c/dI peak GZ_LOWER), H_639 (amplitude-cross × Φ-derivative convention-FAL)
 ---
 
 # H_647 — dΦ/dI shape vs Φ scalar — seed-robustness 축
@@ -22,7 +22,8 @@ sister: H_642 (cross-RULE peak robustness sister · still running), H_351 (singl
 
 round 6 메타-발견 = **"shape > scalar substrate-class robustness"** — shape feature
 (dΦ/dI peak 위치) 가 scalar feature (Φ 값) 보다 substrate-class 변동에 강건하다는
-패턴. H_642 (still running) 가 그 패턴을 **cross-RULE** peak 차원에서 검정 중이다.
+패턴. H_642 (merged) 가 그 패턴을 **cross-RULE** peak 차원에서 검정해 🔴 FALSIFIED
+(CV_shape ≈ CV_scalar) 로 닫았다.
 
 본 H_647 은 *다른 축* — **cross-SEED perturbation robustness**:
 
@@ -159,10 +160,11 @@ seed-sensitive. 가설의 **방향이 뒤집혔다** (reversed).
 
 ### Cross-link
 
-- **H_642 (cross-RULE peak robustness, still running)** — 본 H_647 의 sister. H_642 는
-  *cross-rule* 차원, 본 건은 *cross-seed* 차원. 두 축은 독립이며, 본 cross-seed
-  결과는 round-6 메타-발견("shape>scalar")이 **seed-perturbation 축에서는 성립하지 않음**
-  을 보인다 — H_642 가 cross-rule 에서 SUPPORTED 로 나오더라도 그 robustness 는 축-한정.
+- **H_642 (cross-RULE shape-vs-scalar meta, merged 🔴 FALSIFIED)** — 본 H_647 의 sister. H_642 는
+  *cross-rule* 차원 (rule {30,54,90,110,184} CV_shape=0.568 ≥ CV_scalar=0.559), 본 건은
+  *cross-seed* 차원. **두 축 모두 FALSIFIED** — round-6 메타-발견("shape>scalar")이
+  정량 격상되자 cross-rule 에서도 cross-seed 에서도 반증됐다 (cross-rule 은 CV 동률,
+  cross-seed 는 방향 역전). 메타-발견은 *질적 인상* 이었지 정량 불변량이 아니었음을 두 독립 축이 확정.
 - **H_351 (single dΦ/dI peak GZ_LOWER, 🟢 5/5)** — clean rule 110 의 단일 peak (I=0.18,
   GZ_LOWER ±0.05) 는 jitter 없는 점-측정. 본 건은 그 peak 가 **±30% 전이확률 jitter
   아래에서 위치 불안정** 함을 보여 H_351 의 peak-위치 SUPPORTED 가 noise-free 조건부임을 정량.
@@ -211,11 +213,12 @@ scalar CV 4.2% 가 shape abs-std 11.7% 보다 2.77배 작다 (scalar 가 더 rob
 - **deterministic** · in-process byte-equal (F5 PASS) · LCG single-stream · $0 mac-local · LLM none.
 - single rule 110 · n=4 · jitter A=0.30 · I-grid 13-point · N=12 seed. C1~C3 의 한계 보유.
 - negative result — round-6 메타-발견("shape>scalar")이 **cross-seed 축에서는 반증**됨을
-  확정 (cross-rule H_642 와 독립). robustness 의 축-종속성 (cross-rule ≠ cross-seed) 을 식별.
+  확정. sister H_642 (cross-rule) 도 동일하게 FALSIFIED — 두 독립 축에서 메타-발견이 정량
+  불변량 아닌 질적 인상이었음을 확정. robustness 의 축-종속성 (cross-rule ≠ cross-seed) 식별.
 
 ## 10. UNIVERSE.md update
 
-축 G — round-6 메타-발견 seed-robustness 축 = G6 row 추가 (🔴 CLOSED-NEGATIVE).
+축 G — round-6 메타-발견 seed-robustness 축 = G10 row 추가 (🔴 CLOSED-NEGATIVE).
 
 ## artifacts
 

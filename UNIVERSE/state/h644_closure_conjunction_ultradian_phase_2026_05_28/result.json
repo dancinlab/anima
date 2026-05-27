@@ -1,0 +1,37 @@
+{
+  "id": "H_644",
+  "slug": "closure_conjunction_ultradian_phase",
+  "title": "closure-conjunction × ultradian-phase cross-link (H_636 × H_634)",
+  "axis": "E (SAVANT) × G (DREAM/ultradian) cross-link",
+  "date": "2026-05-28",
+  "cost": "$0 mac-local",
+  "substrate": "HEXAD/SAVANT/savant_phi.hexa (4-domain, d=6) closure conjunction + H_634/anima_dream_stage 5-stage ultradian Φ scale",
+  "bridge_map": "I(phase) = I_LO + (1 - phi_stage) * (I_HI - I_LO), I_LO=0.21 I_HI=0.75 (monotone inverse-affine, H_348/H_636 I axis)",
+  "seeds": [42424, 91919, 77777, 13337, 24680, 88888, 31415, 65537, 19937, 11235],
+  "per_phase": [
+    {"stage": "WAKE", "phi": 1.0,  "I_eff": 0.21,  "pass_rate": 0.0, "in_gz_band": true},
+    {"stage": "N1",   "phi": 0.7,  "I_eff": 0.372, "pass_rate": 0.1, "in_gz_band": true},
+    {"stage": "N2",   "phi": 0.4,  "I_eff": 0.534, "pass_rate": 0.3, "in_gz_band": false},
+    {"stage": "N3",   "phi": 0.15, "I_eff": 0.669, "pass_rate": 0.0, "in_gz_band": false},
+    {"stage": "REM",  "phi": 0.95, "I_eff": 0.237, "pass_rate": 0.0, "in_gz_band": true}
+  ],
+  "verdict_inputs": {
+    "wake_pass_rate": 0.0,
+    "rem_pass_rate": 0.0,
+    "n3_pass_rate": 0.0,
+    "wake_rem_edge_mean": 0.0,
+    "pass_rate_std_5phase": 0.116619,
+    "peak_phase": "N2",
+    "peak_pass_rate": 0.3,
+    "edge_gt_n3": false,
+    "not_flat": true
+  },
+  "falsifiers": {
+    "F644_1_PHASE_MODULATED_std_gt_0": "PASS",
+    "F644_2_WAKE_REM_HIGH_N3_LOW_edge_gt_n3": "FAIL",
+    "F644_3_BOUND_passrate_in_0_1": "PASS"
+  },
+  "verdict": "🔴 FALSIFIED-REVERSED (directional)",
+  "verdict_detail": "Phase-modulation EXISTS (F644.1 std=0.1166>0, hypothesis falsifier 'phase-flat' NOT triggered), but the stated DIRECTIONAL hypothesis (WAKE/REM-high vs N3-low) is FALSIFIED-REVERSED: closure peaks at mid-Φ N2 (pass_rate 0.3) not at high-Φ WAKE/REM edges (both 0.0) nor at deep N3 (0.0). Root cause = H_636 C1(specialization, low-I) ⊥ C3(diversity, high-I) interior-peak; the ultradian phase→I bridge maps high-Φ WAKE/REM to low-I (C3 fails) and deep N3 to high-I (C1 fails), leaving only the mid-Φ N2 phase inside the closure band.",
+  "closed_negative_axis": "rules out 'high-arousal ultradian phase (WAKE/REM) = high closure pass-rate' — closure tracks the GZ inhibition band, not the arousal-Φ ordering"
+}
