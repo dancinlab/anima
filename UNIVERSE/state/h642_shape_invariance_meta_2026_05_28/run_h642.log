@@ -1,0 +1,45 @@
+════════════════════════════════════════════════════════════
+H_642 shape-invariance vs scalar-convention meta
+  rules {30, 54, 90, 110, 184} · CV_shape vs CV_scalar
+════════════════════════════════════════════════════════════
+
+── rule 30 (III-chaotic) ──
+  SHAPE  peak I       = 0.18   (|Δ vs GZ_LOWER|=0.03232)
+  SCALAR peak |dΦ/dI| = 21.7406
+  sign changes        = 0
+  Φ(0.50)/Φ(0.95)     = 5.35701 / 0.309366
+
+── rule 54 (IV-complex) ──
+  SHAPE  peak I       = 0.4   (|Δ vs GZ_LOWER|=0.18768)
+  SCALAR peak |dΦ/dI| = 10.8425
+  sign changes        = 0
+  Φ(0.50)/Φ(0.95)     = 3.25866 / 0.176978
+
+── rule 90 (III-additive) ──
+  SHAPE  peak I       = 0.05   (|Δ vs GZ_LOWER|=0.16232)
+  SCALAR peak |dΦ/dI| = 0.276542
+  sign changes        = 1
+  Φ(0.50)/Φ(0.95)     = 0.0526069 / 0.00467512
+
+── rule 110 (IV-complex) ──
+  SHAPE  peak I       = 0.18   (|Δ vs GZ_LOWER|=0.03232)
+  SCALAR peak |dΦ/dI| = 21.3315
+  sign changes        = 0
+  Φ(0.50)/Φ(0.95)     = 5.27903 / 0.250173
+
+── rule 184 (II-particle) ──
+  SHAPE  peak I       = 0.4   (|Δ vs GZ_LOWER|=0.18768)
+  SCALAR peak |dΦ/dI| = 19.9171
+  sign changes        = 0
+  Φ(0.50)/Φ(0.95)     = 4.52109 / 0.201103
+
+════════════════════════════════════════════════════════════
+── META-STATISTIC (across 5 rules) ──
+  peak_I  : mean=0.242 std=0.137463 CV_shape =0.568028
+  peak_mag: mean=14.8216 std=8.28983 CV_scalar=0.559306
+  ratio CV_scalar/CV_shape = 0.984646
+  M1 SHAPE-MORE-INVARIANT (CV_shape < CV_scalar) = 0
+  M2 RATIO>1                                     = 0
+  VERDICT = FALSIFIED
+════════════════════════════════════════════════════════════
+wrote UNIVERSE/state/h642_shape_invariance_meta_2026_05_28/result.json
