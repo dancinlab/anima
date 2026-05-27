@@ -1,0 +1,50 @@
+[H_626] distinction × SAVANT isomorphism — n=5 generalization (axis C2 follow-up)
+  predecessor: H_624 (n=4 exact-match, ρ=0.861) — 본 H 는 n=5 dimensionality-mismatch 검정
+  substrate: 5-cell ring, MAJ(self,L,R) + gain noise mix
+  IIT4: 5 singleton distinctions → top-4 by small-φ → SAVANT 4-cell 과 paired
+  N=16 paired samples (4 non-balanced profiles × 4 cells)
+
+[profile 0 P1_CALENDAR_DOM]
+  gains      = [10.0, 0.5, 0.5, 0.5, 2.875]
+  cell_phi   = [0.74468, 0.0697541, 0.0914688, 0.0875029]   (SAVANT 4-domain)
+  dist_phi5  = [0.393141, 0.129729, 0.129729, 0.129729, 0.312029]   (IIT4 5 singleton distinctions)
+  top4_idx   = [0.0, 4.0, 1.0, 2.0]
+  top4_phi   = [0.393141, 0.312029, 0.129729, 0.129729]
+  argmax_cell=0 argmax_top4=0
+[profile 1 P2_MUSIC_DOM]
+  gains      = [0.5, 10.0, 0.5, 0.5, 2.875]
+  cell_phi   = [0.102852, 0.608877, 0.0914688, 0.0875029]   (SAVANT 4-domain)
+  dist_phi5  = [0.129729, 0.393141, 0.129729, 0.129729, 0.312029]   (IIT4 5 singleton distinctions)
+  top4_idx   = [1.0, 4.0, 0.0, 2.0]
+  top4_phi   = [0.393141, 0.312029, 0.129729, 0.129729]
+  argmax_cell=1 argmax_top4=0
+[profile 2 P3_ART_DOM]
+  gains      = [0.5, 0.5, 10.0, 0.5, 2.875]
+  cell_phi   = [0.102852, 0.0697541, 0.750984, 0.0875029]   (SAVANT 4-domain)
+  dist_phi5  = [0.129729, 0.129729, 0.393141, 0.129729, 0.312029]   (IIT4 5 singleton distinctions)
+  top4_idx   = [2.0, 4.0, 0.0, 1.0]
+  top4_phi   = [0.393141, 0.312029, 0.129729, 0.129729]
+  argmax_cell=2 argmax_top4=0
+[profile 3 P4_MEMORY_DOM]
+  gains      = [0.5, 0.5, 0.5, 10.0, 2.875]
+  cell_phi   = [0.102852, 0.0697541, 0.0914688, 0.553019]   (SAVANT 4-domain)
+  dist_phi5  = [0.129729, 0.129729, 0.129729, 0.393141, 0.312029]   (IIT4 5 singleton distinctions)
+  top4_idx   = [3.0, 4.0, 0.0, 1.0]
+  top4_phi   = [0.393141, 0.312029, 0.129729, 0.129729]
+  argmax_cell=3 argmax_top4=0
+
+[pool] N=16 paired samples (SAVANT cell ↔ top-4 dist)
+  Spearman ρ = 0.199469
+  Pearson  r = 0.0277035
+  argmax-match = 1/4
+  byte_eq    = true
+
+F1 FAIL — Spearman ρ = 0.199469 < 0.5 (FALSIFIED)
+F2 note — Spearman ρ < 0.7 (weak isomorphism)
+F3 FAIL
+F4 FAIL — argmax mismatch 1/4
+F5 PASS — byte_eq recompute identical
+
+[H_626] verdict = FALSIFIED
+[H_626] summary  rho=0.199469  r=0.0277035  argmax=1/4  byte_eq=true
+[H_626] compare  n=4 (H_624) ρ=0.860839 → n=5 ρ=0.199469
