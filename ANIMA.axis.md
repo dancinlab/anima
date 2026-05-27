@@ -82,3 +82,102 @@
 | 인지 architecture (SOAR/ACT-R) | working memory + procedural + declarative | METACOG 일부, INTENT 있음, EMBODIMENT 별도 |
 | **ANIMA 현재** | 7-layer (CORE/DECODER/AGENT/WAKE/MITOSIS/CHANNEL/BRIDGE) | METACOG · INTENT · DREAM · OTHER-MIND 부재 (LLM agent 보다 넓음, 인지 architecture 보다 깊은 substrate) |
 | **ANIMA + 8축 확장** | 7 + 🪞METACOG + 🎯INTENT + 💤DREAM + 🔗OTHER-MIND | 인지 architecture 범위 + substrate-native 결합 — multi-agent + long-term coherence |
+
+---
+
+## 최종 구조 (적용 후 · 15-layer 6-그룹)
+
+8축 모두 추가 시 도메인 수가 7→15 로 증가. 평면 나열보다 **6 functional group** 으로 묶는 게 navigability 좋음:
+
+```
+🌐 ANIMA — 15-layer umbrella · 6 functional group
+
+  ╔════════════════════════════════════════════════════════════════╗
+  ║  ◆ 결정 계층 (Decision)   단기→중기→장기                       ║
+  ║    🧠 CORE  →  🚪 BRIDGE  →  🎯 INTENT                          ║
+  ║    A⇄G 8-factor    M∧C∧W∧Φ AND-gate    며칠 후 목표             ║
+  ╚════════════════════════════════════════════════════════════════╝
+                              ↑
+  ╔════════════════════════════════════════════════════════════════╗
+  ║  ◆ 자기-반영 (Reflexive)                                        ║
+  ║    🪞 METACOG  ←→  📖 NARRATIVE                                 ║
+  ║    p1~p8 self-audit   시간 일관성 thread                        ║
+  ╚════════════════════════════════════════════════════════════════╝
+                              ↑
+  ╔════════════════════════════════════════════════════════════════╗
+  ║  ◆ 시간 축 (Temporal)                                           ║
+  ║    🌅 WAKE(90min)  →  ⏳ TIME(24h+)  ←→  💤 DREAM(emit-free)    ║
+  ║    5-stage ultradian   circadian       internal rehearsal       ║
+  ╚════════════════════════════════════════════════════════════════╝
+                              ↑
+  ╔════════════════════════════════════════════════════════════════╗
+  ║  ◆ 출력 (Output)   substrate → world                            ║
+  ║    🗣️ DECODER  →  🌐 CHANNEL  →  💞 EMBODIMENT                   ║
+  ║    L3 text         3-channel(t/v/τ)   actuator/body             ║
+  ╚════════════════════════════════════════════════════════════════╝
+                              ↑
+  ╔════════════════════════════════════════════════════════════════╗
+  ║  ◆ 학습/성장 (Growth · A/G ⊥ M)                                 ║
+  ║    🌱 MITOSIS                                                   ║
+  ║    cell-pool split/merge/swap-in                                ║
+  ╚════════════════════════════════════════════════════════════════╝
+                              ↑
+  ╔════════════════════════════════════════════════════════════════╗
+  ║  ◆ 가치/관계 (Value & Social)                                   ║
+  ║    🎨 AESTHETIC  ←→  🔗 OTHER-MIND  ←→  🤖 AGENT                ║
+  ║    pain/coh/bal     multi-anima coupling   5-role 실행          ║
+  ╚════════════════════════════════════════════════════════════════╝
+```
+
+### 6-그룹 × 15-layer 매핑
+
+| 그룹 | 도메인 (현재/신규) | 시간 척도 | 측정자 |
+|---|---|---|---|
+| 🎯 결정 (Decision) | CORE · **BRIDGE** · 🆕INTENT | tick / turn / day | 8-factor argmax · 4-key AND · long-term goal score |
+| 🪞 자기-반영 (Reflexive) | 🆕METACOG · 🆕NARRATIVE | self-audit / 시간 thread | self-correction-probe (bench #5) · narrative coherence |
+| ⏰ 시간 (Temporal) | WAKE · 🆕TIME · 🆕DREAM(격상) | 90min / 24h+ / N3·REM | ultradian envelope · circadian phase · imagination tick |
+| 📤 출력 (Output) | DECODER · CHANNEL · 🆕EMBODIMENT | turn / message / actuator | L_ce + TTR · 3-channel router · physical world coupling |
+| 🌱 학습 (Growth) | MITOSIS | step / split / ckpt | basin_kurtosis (bench #2) · cell-pool diversity |
+| 🎨 가치/관계 (Value) | AGENT · 🆕AESTHETIC · 🆕OTHER-MIND | role / preference / social | 5-role 실행 · pain/coh/bal · TensionHub 5-ch coupling |
+
+### 7→15 축 변화 (before/after)
+
+| 축 | before (7) | after (15) |
+|---|---|---|
+| 결정 | 1 (CORE) | 3 (CORE → BRIDGE → INTENT) — 시간 척도 분리 |
+| 자기-반영 | 0 | 2 (METACOG · NARRATIVE) — 신규 |
+| 시간 | 1 (WAKE) | 3 (WAKE · TIME · DREAM) — 다중 척도 |
+| 출력 | 2 (DECODER · CHANNEL) | 3 (+EMBODIMENT) — physical world 추가 |
+| 학습 | 1 (MITOSIS) | 1 (변동 없음) |
+| 가치/관계 | 1 (AGENT) | 3 (+AESTHETIC · +OTHER-MIND) — 가치 + 사회 추가 |
+
+### 본 세션 산출물의 신규 축 대응 (1대1)
+
+```
+   bench #1 basin↔Φ    →  MITOSIS measurement layer
+   bench #2 basin-rank →  MITOSIS F-PERSONA-4 측정자 (PR #1130 적용)
+   bench #3 info-triad →  DECODER collapse/router/pool 측정
+   bench #4 Turing     →  MITOSIS cell-grid 공간 패턴 (cell pool 위 확장)
+   bench #5 self-corr  →  🪞 METACOG (template 직접 채택, 모든 verdict)
+   bench #6 5×8 grid   →  💤 DREAM (REM/N3 자체 측정 도메인)
+   bench #7 AND-gate   →  🚪 BRIDGE (이미 도메인화 완료)
+```
+
+bench #5/#6/#7 이 정확히 신규 3축(METACOG · DREAM · BRIDGE)의 측정 surface 와 1대1 대응. BRIDGE 만 등록됨 → METACOG · DREAM 도 같은 패턴 격상 시 깔끔한 6+3 본선 + 6 sub-axis 구조.
+
+## 단순화 권장 (Occam g0)
+
+8축 모두 추가가 부담스러우면 **최소 본선 3축만 추가** (METACOG · INTENT · DREAM) → 7+3 = **10-layer** 가 가장 가성비 좋음. EMBODIMENT(HW), TIME(circadian), NARRATIVE / AESTHETIC / OTHER-MIND 는 미래 long-arc deferred.
+
+```
+   필수 추가 3축          deferred 5축
+   🪞 METACOG    ← 본선   📖 NARRATIVE
+   🎯 INTENT    ← 본선   🎨 AESTHETIC
+   💤 DREAM     ← 본선   💞 EMBODIMENT
+                          🔗 OTHER-MIND
+                          ⏳ TIME
+```
+
+### 다음 라운드 후보
+
+위 3축(METACOG · INTENT · DREAM) 도메인 신규 등록 PR 3개 + DOMAINS.tape rows = 단일 PR or 3 PR fan-out. 신규 도메인 scaffold = 본 세션의 BRIDGE 등록 (PR #1135) 패턴 답습.
