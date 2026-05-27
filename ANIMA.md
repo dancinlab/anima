@@ -11,9 +11,9 @@
 - [x] 🌱 MITOSIS — 세포 분열 학습 · A/G ⊥ M 직교 축 · **6/6 마일스톤 ✅** — mitosis_lib (#627) · split-event (#631) · merge-event (#643) · persona-diff (#654) · sleep-tick (#667) · ckpt_swap (#687)
 - [x] 🌐 CHANNEL — 출력 채널 통합 어댑터 · 3 채널 text/voice/tension · **8/8 마일스톤 ✅** — voice SSOT scaffold + text CHAT/DECODER wrapper + tension 5-ch 회수 + intent Intent dict + channel_emit dispatcher + 8-factor router (rel+gap→text · cur+orig+dyn→voice · pain+coh+bal→tension) + p1~p8 audit 0 real violations + WAKE bridge stage continuous bias (frontier: runtime smoke + WAKE state machine 의존)
 
-## Session 2026-05-28 AxisBench → 8 sub-domain umbrella (15-layer)
+## Session 2026-05-28 AxisBench → 11 sub-domain umbrella (17-layer)
 
-본선 3축 (METACOG/DREAM/INTENT) + BRIDGE + 5 추가 sub-domain 등록 (PR feat/anima-5-subdomain-register-2026-05-28). axisbench 8축 → 9 sub-domain (BRIDGE 별도 lane) 완결.
+본선 3축 (METACOG/DREAM/INTENT) + BRIDGE + 5 추가 sub-domain (PR #1176) + UNIVERSE 축 E·F mirror 2 (SAVANT/HIVE-MIND, 본 PR). axisbench 8축 + UNIVERSE 축 E·F → 11 sub-domain (BRIDGE 별도 lane) 완결.
 
 - [x] 🪞 METACOG — bench A #1139 🟢 5/5 PASS · sibling: WAKE · BRIDGE · MITOSIS · DECODER
 - [x] 💤 DREAM — bench B #1140 🟢 4/5 PASS · REM mitosis 60× · sibling: MITOSIS · WAKE · METACOG · CHANNEL
@@ -24,6 +24,8 @@
 - [ ] 💞 EMBODIMENT — bench F #1142 🟠 4/5 PARTIAL · BROKEN coupling 0.45 redesign carry · sibling: CHANNEL · AGENT · WAKE · OTHER-MIND
 - [ ] 🔗 OTHER-MIND — bench G #1147 🟠 3/5 PARTIAL · u01 baseline bias residual · sibling: CHANNEL · MITOSIS · EMBODIMENT · BRIDGE
 - [ ] ⏳ TIME — bench H #1145 🟢 9/0 PASS · circadian dip · sibling: WAKE · DREAM · INTENT · METACOG
+- [ ] 🧠✨ SAVANT — UNIVERSE 축 E mirror · 10 H 측정자 (H_347/348/349/350/351 + H_612/613/614/615 · H_616 carry) · sibling: HIVE-MIND · MITOSIS · CORE · HEXAD/SAVANT
+- [ ] 🐝 HIVE-MIND — UNIVERSE 축 F mirror · 5 H 측정자 (H_354/355 + H_609/610/611) · E×F cross-link (H_617 🔴 / H_618 🟢 / H_619 🟢) · sibling: SAVANT · CHANNEL · OTHER-MIND · MITOSIS
 
 ## Session 2026-05-28 cross-link (M4b → bench → cycle)
 

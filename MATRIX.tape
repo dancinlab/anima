@@ -2,7 +2,7 @@
 
 > anima repo 의 **모든 active work surface** (domain · sub-engine · 영구 매트릭스 ledger) 의 단일 inventory. cwd-local MATRIX.tape SSOT (/matrix 도구 인식 위치). 본 SSOT 한 개만 root 에 유지 — 다른 매트릭스 파일들은 ledger link 로만 참조.
 
-## 1. domains (DOMAINS.tape 17)
+## 1. domains (DOMAINS.tape 23 · UNIVERSE engine 별도)
 
 | idx | domain | snapshot | active 작업 영역 |
 |---|---|---|---|
@@ -11,18 +11,25 @@
 | 03 | CORE      | `CORE/CORE.md`                 | core engine |
 | 04 | DECODER   | `CORE/DECODER/DECODER.md`      | M3/M4 transport |
 | 05 | WAKE      | `./WAKE.md`                    | M4-kosmos persist, M7-p1p8 audit |
-| 06 | ANIMA     | `./ANIMA.md`                   | substrate-native chat daemon |
+| 06 | ANIMA     | `./ANIMA.md`                   | substrate-native chat daemon (umbrella) |
 | 07 | MITOSIS   | `./MITOSIS.md`                 | cell-division learning |
 | 08 | CHANNEL   | `./CHANNEL.md`                 | inter-substrate channel |
 | 09 | BRIDGE    | `./BRIDGE.md`                  | tension-link bridge |
 | 10 | METACOG   | `./METACOG.md`                 | meta-cognition |
 | 11 | DREAM     | `./DREAM.md`                   | dream-stage REM |
 | 12 | INTENT    | `./INTENT.md`                  | intention substrate |
-| 13 | MERCHANT  | `./AGENT/MERCHANT/MERCHANT.md` | merchant sub-agent |
-| 14 | DESKTOP   | `./AGENT/DESKTOP/DESKTOP.md`   | desktop M4 window-ops |
-| 15 | CREATOR   | `./AGENT/CREATOR/CREATOR.md`   | creator sub-agent |
-| 16 | TRADING   | `./AGENT/TRADING/TRADING.md`   | trading sub-agent |
-| 17 | UNIVERSE  | `UNIVERSE/UNIVERSE.md`         | 생명·의식 영구 발견 엔진 (LIFE 개명 후) |
+| 13 | NARRATIVE | `./NARRATIVE.md`               | narrative thread (bench C closed-negative carry) |
+| 14 | AESTHETIC | `./AESTHETIC.md`               | aesthetic novelty × coherence surface |
+| 15 | EMBODIMENT| `./EMBODIMENT.md`              | embodiment perception-action loop |
+| 16 | OTHER-MIND| `./OTHER-MIND.md`              | theory-of-mind partner estimate |
+| 17 | TIME      | `./TIME.md`                    | circadian phase / temporal binding |
+| 18 | SAVANT    | `./SAVANT.md`                  | UNIVERSE 축 E mirror (GZ × SI · 10 H) |
+| 19 | HIVE-MIND | `./HIVE-MIND.md`               | UNIVERSE 축 F mirror (Kuramoto × collective Φ · 5 H) |
+| 20 | MERCHANT  | `./AGENT/MERCHANT/MERCHANT.md` | merchant sub-agent |
+| 21 | DESKTOP   | `./AGENT/DESKTOP/DESKTOP.md`   | desktop M4 window-ops |
+| 22 | CREATOR   | `./AGENT/CREATOR/CREATOR.md`   | creator sub-agent |
+| 23 | TRADING   | `./AGENT/TRADING/TRADING.md`   | trading sub-agent |
+| -- | UNIVERSE  | `UNIVERSE/UNIVERSE.md`         | 생명·의식 영구 발견 엔진 (LIFE 개명 후 · DOMAINS.tape 외 engine) |
 
 ## 2. sub-engines (SUB_ENGINES/)
 
@@ -45,7 +52,7 @@
 | D | LLM-동반 연속 가설      | active (verdict-landscape raster) |
 | E | SAVANT (GZ × SI)       | active NEW 2026-05-28 (H_347/348/349/350/351/612/613/614/615/616) |
 | F | HIVE-MIND collective Φ | active NEW 2026-05-28 (H_354/355/609/610/611) |
-| E×F | SAVANT × HIVE-MIND cross-link | round 3 (H_617 🔴 / H_618 / H_619 in-flight) |
+| E×F | SAVANT × HIVE-MIND cross-link | round 3 LANDED (H_617 🔴 FALSIFIED · H_618 🟢 SUPPORTED · H_619 🟢 SUPPORTED) · ANIMA-side mirror SAVANT.md + HIVE-MIND.md (DOMAINS.tape 18/19) |
 
 ## 4. 기존 매트릭스 ledger (다른 위치)
 

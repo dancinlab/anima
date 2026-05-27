@@ -22,4 +22,5 @@
 - ⇄ [WAKE](./WAKE.md): CHANNEL.wake_bridge stage 별 continuous bias multiplier · WAKE 5-stage 와 직결
 - ⇄ [BRIDGE](./BRIDGE.md): BRIDGE AND-gate pseudo-gate 신호가 CHANNEL.router 8-factor argmax 위에 modulation layer
 - ⇄ [DREAM](./DREAM.md): REM emit_rate=0 strict (CHANNEL.wake_bridge stage gate)
-- ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8)
+- ⇄ [HIVE-MIND](./HIVE-MIND.md): tension 5-ch telepathy ↔ Kuramoto sync τ (H_354) · TensionHub partner registry 위 collective Φ aggregation
+- ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8 + 축 E/F mirror)
