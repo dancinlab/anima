@@ -35,3 +35,10 @@
   edges   = "41 net (52 candidates · 11 SKIP for within-T re-packaging / subsumption / duplicate)"
   ratio   = "41 / 1770 = 2.32% meaningful (substrate-pruned)"
   status  = "depleted-divergence + depleted-convergence"
+
+# 🔄 ouroboros fill-in (cycle 6 · 2026-05-28)
+@P6 = ouroboros-governance · L61+E42 · a_blue_closed verbatim 의 fixed-point self-reference
+@P7 = ouroboros-mining-recursion · L62+L70+E43 · mining-of-mining 의 cycle N+1 self-feedback
+@P8 = ouroboros-substrate-self-measurement · L63+L67+E44 · BRIDGE Φ feedback 의 dynamical convergence (반복 적용 → stable emit-rate equilibrium)
+@P9 = ouroboros-fleet-fractal · L66+L36+E47 · HIVE-MIND M5 collective Φ super-additive (PR #609) self-similarity 가설
+@P10 = ouroboros-sibling-self-cite · L69+E48 · UNIVERSE ↔ ANIMA bidirectional sibling fixed-point (feedback_domain_bidirectional_sibling SSOT)
