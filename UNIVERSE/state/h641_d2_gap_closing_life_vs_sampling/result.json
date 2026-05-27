@@ -1,0 +1,42 @@
+{
+  "id": "H_641",
+  "slug": "d2-gap-closing-life-vs-sampling",
+  "raster": "#5 (2026-05-28, axis D2)",
+  "date": "2026-05-28",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "predecessor": "H_630 raster#4 N=181 (PR #1215, gap CLOSING 0.1327→0.0874)",
+  "source": "UNIVERSE/H_*.md DISK per-file scan (8-source verdict + 2-source domain)",
+  "config": { "N_files": 194, "eps": 0.02, "eps_life": 0.05, "prior_N": 181 },
+  "headline": {
+    "life_supp_rate": 0.5, "life_supp": 39, "life_total": 78,
+    "consciousness_supp_rate": 0.40708, "consciousness_supp": 46, "consciousness_total": 113,
+    "gap_now": 0.0929204, "gap_prior_r4": 0.0874, "gap_delta": 0.00552035, "trend": "stable"
+  },
+  "separation_test": {
+    "life_r4": 0.5065, "life_r5": 0.5, "life_delta": -0.0065,
+    "consc_r4": 0.419, "consc_r5": 0.40708, "consc_delta": -0.0119204,
+    "life_stable": true, "life_falling": false, "consc_rising": false,
+    "mechanism": "SAMPLING-ARTIFACT (life stable)"
+  },
+  "cohort_stratified": [
+    { "cohort": "core (<H_347)", "N": 155, "life_supp": 38, "life_total": 75, "life_rate": 0.506667, "consc_supp": 34, "consc_total": 86, "consc_rate": 0.395349 },
+    { "cohort": "session26 (H_347-629)", "N": 27, "life_supp": 1, "life_total": 2, "life_rate": 0.5, "consc_supp": 10, "consc_total": 20, "consc_rate": 0.5 },
+    { "cohort": "raster5-new (H_630+)", "N": 12, "life_supp": 0, "life_total": 1, "life_rate": 0.0, "consc_supp": 2, "consc_total": 7, "consc_rate": 0.285714 }
+  ],
+  "raster5_new_cohort": {
+    "definition": "id >= H_630",
+    "N": 12, "SUPPORTED": 6, "FALSIFIED": 3,
+    "life_hits": 1, "consciousness_hits": 7, "physics_hits": 7, "information_hits": 1, "math_hits": 2
+  },
+  "criteria": {
+    "C1_REPRODUCIBLE": { "metric": "N≥120", "value": 194, "verdict": "true" },
+    "C2_STRATIFIED": { "metric": "≥2 nonempty cohort", "verdict": "true" },
+    "C3_ALL_CLASSIFIED": { "verdict": "true" }
+  },
+  "verdict_rule": "SUPPORTED(sampling) iff C1 ∧ C2 ∧ life_stable ∧ not life_falling · FALSIFIED if life_falling",
+  "verdict": "SUPPORTED",
+  "evidence_tier": "🟢 NUMERICAL"
+}
