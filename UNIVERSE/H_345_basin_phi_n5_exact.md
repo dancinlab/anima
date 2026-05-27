@@ -82,3 +82,13 @@ H_345  n=5 EXACT Φ → 부호 유지 → proxy artifact 확정, H_341 re-valida
 - (a) sys_state sweep (단일 21 → 32 state 평균) — exact Φ 강건성
 - (b) cycle-length가 왜 Φ proxy로 실패하는지 (어떤 측도가 valid proxy?)
 - (c) paper에 self-correction² 반영 (H_341→343→345 arc = 엔진 무결성 사례)
+
+## 11. Scope (2026-05-28 정정 · rule-set fragility)
+
+> H_345 의 +0.251/−0.799 부호 + H_346 의 +0.550/−0.951 강화 모두 **4-rule frame `{110, 30, 105, 150}`** 한정. anima-side BENCH #1 ([PR #1122](https://github.com/dancinlab/anima/pull/1122), `bench/basin_phi_coupling/`) 가 같은 측정자를 **8-rule frame** `{45, 54, 60, 90, 110, 126, 150, 184}` 으로 확장하자 결합이 붕괴 (`max_basin↔mean_Φ +0.550 → −0.314`, `n_attr↔mean_Φ −0.951 → +0.122`).
+
+결정적 outlier = **rule=90 (additive XOR)**: max_basin=16 (단일 fixed-point) 이지만 phi_structure[4] = 0.0 flat. additive-XOR family 에서 basin↔Φ 동조가 깨진다.
+
+**정정된 scope**: H_345/346 finding 은 *"state-averaged exact Φ, **on Wolfram-canonical 4 rules `{110, 30, 105, 150}`** "* 으로 좁혀져야 한다. (state-axis 강건은 유지, rule-set axis 한정.)
+
+자세한 evidence + table 은 [H_346 § 11](./H_346_phi_state_sweep.md#11-scope-2026-05-28-정정--self-correction³) 참조.
