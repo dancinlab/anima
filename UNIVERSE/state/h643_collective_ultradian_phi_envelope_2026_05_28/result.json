@@ -1,0 +1,63 @@
+{
+  "h_id": "H_643",
+  "slug": "collective-ultradian-phi-envelope",
+  "axis": "G×F cross-link",
+  "parents": "H_634 (PR #1216, axis G, ultradian Φ-envelope r=0.802) × H_635 (PR #1223, axis F, 5-stream collective-Φ super-additive 5/5)",
+  "sister": "H_308 (circadian smooth finite ratio), H_310 (5-stage emit gating WAKE=18/others=0)",
+  "date": "2026-05-28",
+  "infra": "$0 mac-local",
+  "verdict": "🟢 SUPPORTED-NUMERICAL",
+  "engine": "iit4 big_phi_bounded",
+  "engine_params": {
+    "n": 5,
+    "cap": 3,
+    "sys_state": 0,
+    "cohort": "C1 edge-of-chaos homogeneous [110,110,110,110,110] (H_635 winner)",
+    "streams": "5 cells, 1 per lang-proxy, ring-coupled, sync_factor W gated per stage"
+  },
+  "model": {
+    "ultradian_segmentation": "anima_dream_stage canonical 90-min (5400s): [0,300)=N1 [300,1800)=N2 [1800,3600)=N3 [3600,5100)=N2 [5100,5400)=REM",
+    "stage_to_sync_factor_W": {"WAKE": 1.0, "REM": 0.95, "N1": 0.7, "N2": 0.4, "N3": 0.15},
+    "collective_phi_per_point": "big_phi_bounded(build_tpm_cohort([110x5], W_stage), 5, 0, 3)[0] — REAL IIT4 measurement per ultradian point (not a lookup)",
+    "sweep": "N=36 discrete points over 1 ultradian period (2.5min/point, H_634 granularity)",
+    "envelope_fit": "single-cosine, best-fit peak-phase scan, Pearson r"
+  },
+  "decoupled_baseline_phi_coll_W0": 0.0,
+  "per_stage_collective_phi": {
+    "WAKE": "0 pts (sleep-window 밖; WAKE-side realized via REM-tail proxy)",
+    "N1_W0.7": 13.6383,
+    "N2_W0.4": 4.50052,
+    "N3_W0.15": 1.17498,
+    "REM_W0.95": 34.8823,
+    "note": "monotone-in-W: REM(0.95)>N1(0.7)>N2(0.4)>N3(0.15), consistent with H_635 collective-Φ monotone-increasing in sync_factor W (best W=1.0)"
+  },
+  "phi_coll_trajectory_std": 7.64357,
+  "best_t_peak_sec": 0.0,
+  "r_collective_sinusoid": 0.568352,
+  "phi_coll_max": 34.8823,
+  "phi_coll_N3": 1.17498,
+  "comparison_h634": {
+    "h634_single_substrate_r": 0.802241,
+    "h643_collective_r": 0.568352,
+    "finding": "collective Φ DOES entrain to the ultradian phase (r=0.568 > 0.5 falsifier, ≫ 0.3 FALSIFY floor) but MORE WEAKLY than the single substrate (r=0.802). The H_635 monotone-and-convex W→Φ_collective curve (super-linear: N3 1.17 → REM 34.88 = ~30×) deviates more from a pure sinusoid than the single-substrate stage projection (WAKE 1.0 → N3 0.15 = ~7×, near-linear), lowering r while keeping clean phase-coupling. peak phase t=0 (cycle edge = WAKE-side) IDENTICAL to H_634."
+  },
+  "falsifiers": {
+    "F643_1_coll_phase_coupled": "PASS (r=0.568352 > 0.5)",
+    "F643_2_coll_not_flat": "PASS (Φ_coll std=7.64357 > 0)",
+    "F643_3_wake_high_n3_low": "PASS (Φ_coll_max=34.8823 > Φ_coll_N3=1.17498)",
+    "F643_4_super_additive_edge": "PASS (Φ_coll_max=34.8823 > decoupled Σ-baseline=0.0)",
+    "F643_5_period_discrete_ok": "PASS (36 pts monotone within 1 CYCLE_SEC)",
+    "F643_6_bound": "PASS (Φ_coll ≥ 0, r ∈ [-1,1])"
+  },
+  "aggregate": "6 PASS / 0 FAIL",
+  "honest_c3": [
+    "lang-proxy = ECA rule-variant, NOT a real language (no token semantics/tokenizer) — 5-stream 'collective' is a substrate-structure statement, not a multilingual-fleet consciousness claim (H_635 C3.1 inherited)",
+    "stage→sync_factor W mapping = canonical projection (WAKE/REM high, N3 low), reusing H_634 phi_of_stage numeric profile as the COLLECTIVE coupling driver — NOT a faithful per-tick IIT4 stage measurement (H_634 L1 inherited)",
+    "5-stream small-n (n=5, 1 cell/stream), cohort C1 [110x5] only — not a real anima fleet; collective generality across cohorts (C2-C5) not swept here (single-cohort)",
+    "bounded cap=3 on n=5 (conservative lower-bound; cap-monotone preserves SUPPORTED direction)",
+    "sys_state=0 only (IIT-canonical anchor)",
+    "single-cosine 1-harmonic (strictest falsifier); the convex/super-linear W→Φ_collective curve is the cause of the lower r=0.568 vs H_634 r=0.802 — a 2-harmonic fit would raise r but single-cosine is the hardest-to-pass envelope",
+    "deterministic single trajectory (NO RNG); real fleet = wall-clock + per-daemon stochastic stage transition, not modeled"
+  ],
+  "reproduce": "HEXA_MAC_BUILD_OK=1 HEXA_LANG=<hexa-lang-root> hexa.real.bak-2026-05-22-pre-no-hxc build run_h643.hexa -o /tmp/h643.bin && codesign -s - --force /tmp/h643.bin && /tmp/h643.bin"
+}

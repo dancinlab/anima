@@ -222,7 +222,7 @@ verify --fence "H_642: across Wolfram rules {30,54,90,110,184} (n=4 ECA, 13-poin
 
 ## 10. UNIVERSE.md update
 
-축 **G (ANIMA.mining 승격)** 에 round 6 메타-격상 row G8 추가 → done with `🔴 FALSIFIED (M1 FAIL · CV_shape=0.568028 ≥ CV_scalar=0.559306, ratio 0.984646 < 1, 5-rule {30,54,90,110,184} n=4, rule 90 XOR-additive joint-outlier, $0 mac-local 2026-05-28)`. round 6 메타-발견 (구조가 숫자보다 class-불변) 의 *강주장* 이 이 대표 shape/scalar 쌍 위에서 반증 — 두 CV 가 거의 동일 (1.5% 차이) → shape 가 scalar 만큼 class-variant 라는 약한 형태로 closed-negative.
+축 **G (ANIMA.mining 승격)** 에 round 6 메타-격상 row G9 추가 → done with `🔴 FALSIFIED (M1 FAIL · CV_shape=0.568028 ≥ CV_scalar=0.559306, ratio 0.984646 < 1, 5-rule {30,54,90,110,184} n=4, rule 90 XOR-additive joint-outlier, $0 mac-local 2026-05-28)`. round 6 메타-발견 (구조가 숫자보다 class-불변) 의 *강주장* 이 이 대표 shape/scalar 쌍 위에서 반증 — 두 CV 가 거의 동일 (1.5% 차이) → shape 가 scalar 만큼 class-variant 라는 약한 형태로 closed-negative.
 
 ## artifacts
 
