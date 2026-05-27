@@ -1,0 +1,35 @@
+================================================================
+  H_655 — collective-superadditivity-substrate-class (round 9 메타-축)
+  Δ = Φ_collective(W=1) − Σ Φ_parts(W=0)  vs Wolfram rule class?
+  IIT4 big_phi_bounded · n=5 homog cohort · cap=3 · sys=0
+  4 rules × {W=0 baseline, W=0.5 mid, W=1 full ring}
+================================================================
+  rule184 [II-additive]
+    Σ Φ_parts(W=0)=0.0  Φ_coll(W=0.5)=28.6035  Φ_coll(W=1)=51.5361
+    Δ (super-additivity) = Φ_coll(W=1) − Σ Φ_parts = 51.5361
+  rule90 [III-XOR/additive]
+    Σ Φ_parts(W=0)=0.0  Φ_coll(W=0.5)=1.38346  Φ_coll(W=1)=7.5
+    Δ (super-additivity) = Φ_coll(W=1) − Σ Φ_parts = 7.5
+  rule30 [III-chaotic]
+    Σ Φ_parts(W=0)=0.0  Φ_coll(W=0.5)=1.7377  Φ_coll(W=1)=9.72067
+    Δ (super-additivity) = Φ_coll(W=1) − Σ Φ_parts = 9.72067
+  rule110 [IV-complex]
+    Σ Φ_parts(W=0)=0.0  Φ_coll(W=0.5)=6.54186  Φ_coll(W=1)=41.7124
+    Δ (super-additivity) = Φ_coll(W=1) − Σ Φ_parts = 41.7124
+  ─────────────────────────────────────
+  super-additivity Δ by class (ascending complexity):
+    rule184 (II-additive)      : 51.5361
+    rule90  (III-XOR/additive) : 7.5
+    rule30  (III-chaotic)      : 9.72067
+    rule110 (IV-complex)       : 41.7124
+  ────────────── verdict ──────────────
+  [FAIL] F655.1 SUPERADD-MONOTONE: Δ(110)>=Δ(30)>=Δ(90)>=Δ(184)
+  [FAIL] F655.2 CLASS-IV-MOST-SUPERADD: Δ(110) = max over 4 rules
+  [PASS] F655.3 ALL-SUPERADDITIVE: Δ > 0 for every rule (collective > Σ parts)
+  [FAIL] F655.4 ADDITIVE-LEAST: Δ(184) < Δ(110)
+  [PASS] F655.5 SIGMA-PARTS-ZERO: Σ Φ_parts(W=0) = 0 (clean Σ-of-parts anchor)
+  [PASS] F655.6 BOUND: Φ_coll ≥ 0, Δ finite
+  ──────────────────────────────────────
+  F655.1-6 3/6 PASS
+  verdict: 🔴 FALSIFIED (Δ ⊥ rule class — class not a super-add classifier)
+  cross-link: H_635 collective super-additive 5/5 (Σ=0) → here Δ(rule110)=41.7124
