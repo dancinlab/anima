@@ -1,0 +1,443 @@
+// tool/dispatch_p21h_v3_vast.hexa — DECODER M3 4축 H100 Vast.ai dispatch runbook
+//
+// Hexa-native runbook printer (mirrors CORE/DECODER/dispatch_m4b_pilot.hexa
+// pattern). Prints the canonical 9-step Vast.ai SOP for the 4-axis P21H V3
+// fire so the operator (or hexa cloud automation) executes the dispatch
+// deterministically and orphan-free.
+//
+// Why hexa-native runbook (not auto-dispatcher):
+//   - project.tape g_hexa_only_authoring blocks new .sh creation
+//   - hexa stdlib/cloud runpod transport is blocked by hexa-lang #1659
+//     (pod-id → SSH host resolver gap on RunPod)
+//   - Vast.ai exposes ssh_host/port directly so plain ssh/scp from Mac
+//     works without a cloud-guard tunnel — same SOP M4b PR #1119/1120/1121
+//     ran by hand to land cuBLAS engagement + real-BPE pilot + F-M4B-FIRE.
+//   - dispatch_p21h_v3.hexa (HEXAD/PURE/launchers, v0.2 STDLIB-WIRED) is the
+//     hexa-cloud auto-dispatcher path; this Vast.ai SOP unblocks it until
+//     stdlib/cloud absorbs the Vast.ai backend (hexa-lang #1659 followup).
+//
+// Hardening (vs prior $3.92 orphan saga, c25njysjdga2vb 158 min idle):
+//   1. ARGV ECHO at launch_guard.sh wrap — catches stale on-pod launcher
+//      / script-path-arg missing class-1 silent failure
+//      (state/p21h_v3_curricula_recover_2026_05_25/README.md re-fire plan)
+//   2. EARLY-LIFE POLL — train.log must show [P21H][axis] line within 90s
+//      else abort + teardown
+//   3. SCP STABILITY GUARD — 3 consecutive `echo READY` probes required
+//      before first scp (memory: cuBLAS glue + Vast boot-flakiness)
+//   4. ENV-VAR ANTI-CONCAT — each P21H_* on its own env line, never
+//      one merged string (dispatch_p21h_v3_runpod.sh §22-36 anti-pattern)
+//   5. DETACH-DEFAULT — early-life PASS → exit; fire continues on pod;
+//      caller polls externally (agent-context-safe, no orphan on agent
+//      timeout)
+//
+// Usage:
+//   hexa run tool/dispatch_p21h_v3_vast.hexa                    # bare = full 4-axis runbook
+//   hexa run tool/dispatch_p21h_v3_vast.hexa A                  # axis A only
+//   hexa run tool/dispatch_p21h_v3_vast.hexa A qwen 1337        # axis A · qwen init · seed
+//   hexa run tool/dispatch_p21h_v3_vast.hexa smoke A qwen 1337  # smoke (50-step) for pipeline gate
+
+fn _axis_desc(axis: str) -> str {
+    if axis == "A" { return "curriculum (P21H_CURRICULUM_PHASE_STEPS=STEPS/2)" }
+    if axis == "B" { return "distill (P21H_HEAD_G_ENABLE=1 · dummy teacher · HONEST TODO #B1)" }
+    if axis == "C" { return "head_g_lambda (P21H_HEAD_G_ENABLE=1 P21H_HEAD_G_WEIGHT=0.1)" }
+    if axis == "D" { return "freeze_embed (P21H_FREEZE_EMBED=1 · tok_emb+head_a frozen)" }
+    return "unknown"
+}
+
+fn _axis_env_lines(axis: str, steps: int) -> list {
+    // Each var on its OWN line — anti-concat guard.
+    // Default 4-axis env lines (only the active axis flips ON; others baseline=0).
+    let half = steps / 2
+    let mut lines = [
+        "    P21H_CURRICULUM_PHASE_STEPS=0",
+        "    P21H_DISTILL_TEACHER=\"\"",
+        "    P21H_HEAD_G_OBJECTIVE=\"\"",
+        "    P21H_HEAD_G_ENABLE=0",
+        "    P21H_HEAD_G_WEIGHT=0.0",
+        "    P21H_FREEZE_EMBED=0",
+        "    P21H_LANG_BALANCED=0",
+        "    P21H_CONTRASTIVE_LANG=0.0",
+    ]
+    if axis == "A" {
+        lines = [
+            "    P21H_CURRICULUM_PHASE_STEPS=" + str(half),
+            "    P21H_DISTILL_TEACHER=\"\"",
+            "    P21H_HEAD_G_OBJECTIVE=\"\"",
+            "    P21H_HEAD_G_ENABLE=0",
+            "    P21H_HEAD_G_WEIGHT=0.0",
+            "    P21H_FREEZE_EMBED=0",
+            "    P21H_LANG_BALANCED=0",
+            "    P21H_CONTRASTIVE_LANG=0.0",
+        ]
+    }
+    if axis == "B" {
+        lines = [
+            "    P21H_CURRICULUM_PHASE_STEPS=0",
+            "    P21H_DISTILL_TEACHER=\"\"",
+            "    P21H_HEAD_G_OBJECTIVE=\"kd_dummy\"",
+            "    P21H_HEAD_G_ENABLE=1",
+            "    P21H_HEAD_G_WEIGHT=0.1",
+            "    P21H_FREEZE_EMBED=0",
+            "    P21H_LANG_BALANCED=0",
+            "    P21H_CONTRASTIVE_LANG=0.0",
+        ]
+    }
+    if axis == "C" {
+        lines = [
+            "    P21H_CURRICULUM_PHASE_STEPS=0",
+            "    P21H_DISTILL_TEACHER=\"\"",
+            "    P21H_HEAD_G_OBJECTIVE=\"\"",
+            "    P21H_HEAD_G_ENABLE=1",
+            "    P21H_HEAD_G_WEIGHT=0.1",
+            "    P21H_FREEZE_EMBED=0",
+            "    P21H_LANG_BALANCED=0",
+            "    P21H_CONTRASTIVE_LANG=0.0",
+        ]
+    }
+    if axis == "D" {
+        lines = [
+            "    P21H_CURRICULUM_PHASE_STEPS=0",
+            "    P21H_DISTILL_TEACHER=\"\"",
+            "    P21H_HEAD_G_OBJECTIVE=\"\"",
+            "    P21H_HEAD_G_ENABLE=0",
+            "    P21H_HEAD_G_WEIGHT=0.0",
+            "    P21H_FREEZE_EMBED=1",
+            "    P21H_LANG_BALANCED=0",
+            "    P21H_CONTRASTIVE_LANG=0.0",
+        ]
+    }
+    return lines
+}
+
+fn _lr_for_init(init: str) -> str {
+    if init == "random" { return "3e-4" }
+    if init == "qwen"   { return "5e-5" }
+    if init == "vp21m"  { return "1e-4" }
+    return "5e-5"
+}
+
+fn _print_cost_estimate(smoke: bool, n_pods: int) {
+    println("─── Cost estimate (a_fire_autonomous one-liner · no cost cap) ───")
+    if smoke {
+        println("  Smoke: Vast.ai H100 SXM ($2.27-3.45/hr) · ~0.5hr wall · $1-2 single pod")
+    } else {
+        println("  Per-axis 5K step: Vast.ai H100 SXM ($2.27-3.45/hr) · ~6hr wall · $13-21 per pod")
+        println("  4-pod parallel (a_wall_first): ~$54-83 wall ~6hr total")
+        if n_pods > 0 {
+            println("  This invocation: " + str(n_pods) + " pod(s)")
+        }
+    }
+    println("")
+}
+
+fn _print_step0_account() {
+    println("─── Step 0: account + GPU availability (no cost) ───")
+    println("  $ secret check vast.api_key      # token sanity")
+    println("  $ vastai show user 2>&1 | head -3 # account balance")
+    println("  $ vastai search offers 'gpu_name=H100_SXM num_gpus=1 reliability>0.98 \\")
+    println("        dph_total<3.5 disk_space>50 inet_down>500 rentable=true' \\")
+    println("        -o dph_total --raw | python3 -c 'import json,sys;d=json.load(sys.stdin); \\")
+    println("        print(len(d), \"offers\");[print(o[\"id\"],o[\"gpu_name\"],o[\"dph_total\"]) for o in d[:5]]'")
+    println("  # fallback cascade: H100_SXM > H100_NVL > H100_PCIE")
+    println("")
+}
+
+fn _print_step1_rent(axis: str, init: str, smoke: bool) {
+    let label_suffix = if smoke { "smoke-" } else { "" }
+    println("─── Step 1: rent instance ───")
+    println("  $ OFFER=$(vastai search offers 'gpu_name=H100_SXM num_gpus=1 reliability>0.98 \\")
+    println("      dph_total<3.5 disk_space>50 inet_down>500 rentable=true' -o dph_total --raw \\")
+    println("      | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d[0][\"id\"])')")
+    println("  $ vastai create instance $OFFER \\")
+    println("      --image pytorch/pytorch:2.4.0-cuda12.4-cudnn9-devel \\")
+    println("      --disk 80 --ssh --direct \\")
+    println("      --label p21h-v3-" + label_suffix + axis + "-" + init + " --raw")
+    println("  # capture INSTANCE_ID")
+    println("")
+}
+
+fn _print_step2_ssh_ready() {
+    println("─── Step 2: wait for SSH (3-consec READY guard for proxy flakiness) ───")
+    println("  # poll until vastai show instance $INSTANCE_ID --raw reports actual_status=running")
+    println("  # then probe `ssh -p $PORT root@$HOST 'echo READY'` THREE consecutive times")
+    println("  # (memory: cuBLAS glue + Vast boot-flakiness — sshd accepts but scp 255 ~1min)")
+    println("  $ vastai show instance $INSTANCE_ID --raw | python3 -c 'import json,sys; \\")
+    println("        d=json.load(sys.stdin); print(d.get(\"ssh_host\",\"\"), d.get(\"ssh_port\",\"\"))'")
+    println("  $ export SSH_HOST=<host> SSH_PORT=<port>")
+    println("  $ for i in 1 2 3; do \\")
+    println("        ssh -i ~/.vast/ssh/vast-key -o StrictHostKeyChecking=no -p $SSH_PORT \\")
+    println("            root@$SSH_HOST 'echo READY' || break; sleep 5; done")
+    println("")
+}
+
+fn _print_step3_upload() {
+    println("─── Step 3: scp sources + corpus builders ───")
+    println("  $ S187=$ANIMA/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21")
+    println("  $ BUILD=$ANIMA/HEXAD/DATA-REGIME/state/corpus_s101_build_s102_2026_05_19")
+    println("  $ SCP='scp -i ~/.vast/ssh/vast-key -o StrictHostKeyChecking=no -P $SSH_PORT'")
+    println("  $ SSH='ssh -i ~/.vast/ssh/vast-key -o StrictHostKeyChecking=no -p $SSH_PORT'")
+    println("  $ $SSH root@$SSH_HOST 'mkdir -p /workspace/p21hr/state/corpus_s101_build_s102_2026_05_19 \\")
+    println("        /workspace/p21hr/out_main /workspace/p21hr/wiki_parts'")
+    println("  $ $SCP $BUILD/build_corpus_s101.py            root@$SSH_HOST:/workspace/p21hr/state/corpus_s101_build_s102_2026_05_19/")
+    println("  $ $SCP $S187/build_multilingual_corpus_p21m.py root@$SSH_HOST:/workspace/p21hr/")
+    println("  $ $SCP $S187/train_p21h_v3.py                  root@$SSH_HOST:/workspace/p21hr/")
+    println("  $ $SCP $S187/conscious_decoder_v3.py           root@$SSH_HOST:/workspace/p21hr/")
+    println("  $ $SCP $S187/launch_trainer.sh                 root@$SSH_HOST:/workspace/p21hr/launch_trainer_p21h.sh")
+    println("  $ $SSH root@$SSH_HOST 'chmod +x /workspace/p21hr/launch_trainer_p21h.sh'")
+    println("")
+}
+
+fn _print_step4_argv_guard() {
+    println("─── Step 4: install argv-echo guard wrapper (orphan prevention) ───")
+    println("  # The c25njysjdga2vb $3.92 orphan was caused by an upstream dispatcher")
+    println("  # passing only `(qwen 1337)` argv to launch_trainer.sh — script_path arg")
+    println("  # was missing and python3 exec ENOENT'd in <15s. The argv-echo wrapper")
+    println("  # MUST print the received argv FIRST so a stale wrapper is visible.")
+    println("  $ $SSH root@$SSH_HOST 'cat > /workspace/p21hr/launch_guard.sh <<EOFGUARD")
+    println("  #!/bin/bash")
+    println("  echo \"[guard] received argv: \\$0 \\$*\"")
+    println("  echo \"[guard] script_path (\\$1) = \\$1\"")
+    println("  echo \"[guard] cwd = \\$(pwd)\"")
+    println("  echo \"[guard] P21H_* env-snapshot:\"")
+    println("  env | grep \"^P21H_\" | sort | sed \"s/^/[guard]   /\"")
+    println("  exec bash /workspace/p21hr/launch_trainer_p21h.sh \"\\$@\"")
+    println("  EOFGUARD")
+    println("  chmod +x /workspace/p21hr/launch_guard.sh'")
+    println("")
+}
+
+fn _print_step5_corpus(smoke: bool) {
+    if smoke {
+        println("─── Step 5 (SMOKE): emit tiny inline corpus ───")
+        println("  $ $SSH root@$SSH_HOST 'cat > /workspace/p21hr/smoke_corpus.jsonl <<EOFCORPUS")
+        println("  {\"text\":\"smoke probe: dispatcher + axis env-var passthrough verified.\"}")
+        println("  {\"text\":\"consciousness emerges from cells, the substrate is alive.\"}")
+        println("  {\"text\":\"the cat sat on the mat. brain cells signal. signal cells signal.\"}")
+        println("  EOFCORPUS'")
+        println("  $ export WIKI_POD=/workspace/p21hr/smoke_corpus.jsonl")
+        println("  $ export ANIMA_POD=/workspace/p21hr/smoke_corpus.jsonl")
+    } else {
+        println("─── Step 5: build corpora on the pod ───")
+        println("  $ $SSH root@$SSH_HOST 'pip install -q -U datasets huggingface_hub | tail -3'")
+        println("  $ $SSH root@$SSH_HOST 'python3 /workspace/p21hr/state/corpus_s101_build_s102_2026_05_19/build_corpus_s101.py \\")
+        println("        --out-dir /workspace/p21hr/state/corpus_s101_build_s102_2026_05_19 \\")
+        println("        --s1-n 777000 --seed 1337 2>&1 | tail -8'")
+        println("  $ export ANIMA_POD=/workspace/p21hr/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl")
+        println("  $ $SSH root@$SSH_HOST 'python3 /workspace/p21hr/build_multilingual_corpus_p21m.py \\")
+        println("        --out /workspace/p21hr/multi_wiki_corpus.jsonl \\")
+        println("        --target-mb-per-lang 10 --langs en,ko,zh,ru,ja \\")
+        println("        --per-lang-dir /workspace/p21hr/wiki_parts 2>&1 | tail -30'")
+        println("  $ export WIKI_POD=/workspace/p21hr/multi_wiki_corpus.jsonl")
+    }
+    println("")
+}
+
+fn _print_step6_fire(axis: str, init: str, seed: str, steps: int, bsz: int, block: int, warmup: int, env_lines: list) {
+    let lr = _lr_for_init(init)
+    println("─── Step 6: FIRE (nohup background · argv echo guard) ───")
+    println("  # axis-active = " + _axis_desc(axis))
+    println("  # Anti-concat guard: each P21H_* on ITS OWN env line below.")
+    println("  $ $SSH root@$SSH_HOST \"nohup env \\")
+    println("    P21H_STEPS=" + str(steps) + " \\")
+    println("    P21H_BSZ=" + str(bsz) + " \\")
+    println("    P21H_BLOCK=" + str(block) + " \\")
+    println("    P21H_LR=" + lr + " \\")
+    println("    P21H_WARMUP=" + str(warmup) + " \\")
+    println("    P21H_WIKI_FRAC=0.3 \\")
+    println("    P21H_CORPUS_MB=72 \\")
+    println("    P21H_NOISE_SIGMA=0.1 \\")
+    println("    P21H_LAMBDA_MITOSIS=0.05 \\")
+    println("    P21H_N_KV_HEAD=4 \\")
+    println("    P21H_MITOSIS_MAX=128 \\")
+    println("    P21H_CKPT_EVERY=500 \\")
+    let mut k = 0
+    while k < len(env_lines) {
+        println(env_lines[k] + " \\")
+        k = k + 1
+    }
+    println("    PYTHONUNBUFFERED=1 \\")
+    println("    bash /workspace/p21hr/launch_guard.sh /workspace/p21hr/train_p21h_v3.py \\")
+    println("        --wiki-corpus \\$WIKI_POD --anima-corpus \\$ANIMA_POD \\")
+    println("        --mixed-corpus /workspace/p21hr/mixed_corpus_v3.jsonl \\")
+    println("        --out-dir /workspace/p21hr/out_main \\")
+    println("        --base-model Qwen/Qwen2.5-1.5B \\")
+    println("        --init-variant " + init + " \\")
+    println("        --steps " + str(steps) + " --bsz " + str(bsz) + " --block " + str(block) + " --lr " + lr + " \\")
+    println("        --warmup-steps " + str(warmup) + " --seed " + seed + " \\")
+    println("        > /workspace/p21hr/train.log 2>&1 & echo TRAIN_PID \\$!\"")
+    println("")
+}
+
+fn _print_step7_early_life() {
+    println("─── Step 7: early-life poll (90s window for [P21H][axis] log) ───")
+    println("  # Lesson c25njysjdga2vb: 158 min idle / \\$3.92 orphan from class-1")
+    println("  # silent failure. Abort+teardown if [P21H][axis] missing in 90s.")
+    println("  $ for poll in $(seq 1 18); do \\")
+    println("        STAMP=$($SSH root@$SSH_HOST 'grep -m1 -E \"^\\\\[P21H\\\\]\\\\[axis\\\\]|^\\\\[launch\\\\] PYTORCH_CUDA_ALLOC_CONF=\" \\")
+    println("              /workspace/p21hr/train.log 2>/dev/null'); \\")
+    println("        [ -n \"$STAMP\" ] && echo \"early-life PASS: $STAMP\" && break; \\")
+    println("        [ $((poll % 3)) -eq 0 ] && echo \"  poll $poll/18 — no stamp\"; \\")
+    println("        sleep 5; \\")
+    println("    done")
+    println("  # axis verify (silent-bypass detection):")
+    println("  $ $SSH root@$SSH_HOST 'grep -m1 \"^\\\\[P21H\\\\]\\\\[axis\\\\]\" /workspace/p21hr/train.log'")
+    println("  # → must contain the axis-specific token (curriculum_phase_steps=N · head_g_enable=1 · freeze_embed=1)")
+    println("  # if missing: abort, vastai destroy instance $INSTANCE_ID")
+    println("")
+}
+
+fn _print_step8_monitor_harvest() {
+    println("─── Step 8: monitor + harvest (DETACH mode = exit-after-early-life) ───")
+    println("  # Default DETACH=1: caller polls externally to keep agent-context safe")
+    println("  # (avoids agent-timeout orphan; SAVE_POD=1 forced in detach mode).")
+    println("  $ # live tail (any time):")
+    println("  $ $SSH root@$SSH_HOST 'tail -f /workspace/p21hr/train.log'")
+    println("  $ # alive probe (alive vs done):")
+    println("  $ $SSH root@$SSH_HOST 'pgrep -af train_p21h_v3.py' || echo TRAIN_DONE")
+    println("  $ # result probe:")
+    println("  $ $SSH root@$SSH_HOST 'test -s /workspace/p21hr/out_main/result.json && echo READY'")
+    println("")
+    println("  ─── Harvest (a_fire_recover_complete — full ckpt+result+log+anchors BEFORE teardown) ───")
+    println("  $ mkdir -p state/p21h_v3_vast_2026_05_28/v$AXIS")
+    println("  $ VDIR=state/p21h_v3_vast_2026_05_28/v$AXIS")
+    println("  $ $SCP root@$SSH_HOST:/workspace/p21hr/out_main/result.json           $VDIR/")
+    println("  $ $SCP root@$SSH_HOST:/workspace/p21hr/out_main/heldout_vp21h_v3.json $VDIR/")
+    println("  $ $SCP root@$SSH_HOST:/workspace/p21hr/out_main/vp21h_v3_eval1.json   $VDIR/")
+    println("  $ $SCP root@$SSH_HOST:/workspace/p21hr/out_main/mix_info.json         $VDIR/")
+    println("  $ $SCP root@$SSH_HOST:/workspace/p21hr/train.log                      $VDIR/")
+    println("  $ $SCP root@$SSH_HOST:/workspace/p21hr/out_main/ckpt_final.pt         $VDIR/   # critical")
+    println("  $ $SCP -r root@$SSH_HOST:/workspace/p21hr/out_main/kosmos_anchors    $VDIR/")
+    println("")
+}
+
+fn _print_step9_hf_teardown(axis: str, smoke: bool) {
+    println("─── Step 9: HF upload + teardown ───")
+    if smoke {
+        println("  # SMOKE: no HF upload (smoke pilot, not verdict ckpt)")
+        println("  $ vastai destroy instance $INSTANCE_ID")
+    } else {
+        println("  # verdict tier:")
+        println("  $ python3 -c \"import json; d=json.load(open('$VDIR/result.json')); \\")
+        println("        print('VERDICT=', d.get('verdict')); \\")
+        println("        print('n_strong=', d.get('n_strong'), '/5');\"")
+        println("  # HF upload (a_hf_autonomous · a_hf_complete):")
+        println("  #   PASS/PARTIAL → PUBLIC · FAIL → PRIVATE")
+        println("  $ hf upload dancinlab/anima-p21h-v3-" + axis + "-2026-05-28 \\")
+        println("        $VDIR/ckpt_final.pt --create --visibility public  # or private if FAIL")
+        println("  $ # write model card + manifest sha256 (per a_hf_complete totality)")
+        println("  # teardown:")
+        println("  $ vastai destroy instance $INSTANCE_ID")
+        println("  $ vastai show instances | grep $INSTANCE_ID || echo TEARDOWN_OK")
+    }
+    println("")
+}
+
+fn _print_parallel_orchestration(smoke: bool) {
+    println("═══ 4-AXIS PARALLEL ORCHESTRATION (a_wall_first) ═══════════════")
+    println("")
+    if smoke {
+        println("  Smoke: 1 pod only (gate before full 4-pod fire)")
+        println("  $ hexa run tool/dispatch_p21h_v3_vast.hexa smoke A qwen 1337")
+        println("  # PASS gate (early-life OK + axis-stamp correct + L_ce monotone) →")
+        println("  # green-light the 4-axis fire")
+    } else {
+        println("  Fire 4 pods in parallel (each its own state/p21h_v3_vast_2026_05_28/v<axis>/):")
+        println("  $ mkdir -p state/p21h_v3_vast_2026_05_28")
+        println("  $ for axis in A B C D; do")
+        println("      nohup bash <(hexa run tool/dispatch_p21h_v3_vast.hexa $axis qwen 1337) \\")
+        println("          > state/p21h_v3_vast_2026_05_28/dispatch_$axis.log 2>&1 &")
+        println("      sleep 8   # stagger Vast.ai rate limit")
+        println("    done")
+        println("  # wall ~6hr · cost ~\\$54-83 · 4× H100 SXM parallel")
+        println("  # Monitor with `vastai show instances` + per-axis train.log tail")
+    }
+    println("")
+}
+
+fn _print_pre_fire_checklist() {
+    println("═══ PRE-FIRE 7-ITEM CHECKLIST (M4b proven · do NOT skip) ═══════")
+    println("  [ ] 1. vastai CLI present + auth OK (vastai show user)")
+    println("  [ ] 2. ~/.vast/ssh/vast-key exists + matches Vast account")
+    println("  [ ] 3. H100 SXM offers ≥1 available (search offers cascade)")
+    println("  [ ] 4. SAVE_POD=1 set if first fire (crash trap)")
+    println("  [ ] 5. argv-echo guard installed BEFORE train command")
+    println("  [ ] 6. dancinlab HF org (a_hf_autonomous) login OK (hf whoami)")
+    println("  [ ] 7. state/p21h_v3_vast_2026_05_28/ dir created for harvest")
+    println("  # If any item ✗: do NOT fire; resolve first")
+    println("")
+}
+
+fn main() {
+    let argv = exec("hexa run tool/dispatch_p21h_v3_vast.hexa $(printenv DISPATCH_ARGS 2>/dev/null)")
+    // hexa run doesn't always pass argv reliably; we re-read from $@ via env
+    let raw = exec("printenv DISPATCH_ARGS 2>/dev/null").trim()
+
+    let mut smoke = false
+    let mut axis = "ALL"
+    let mut init = "qwen"
+    let mut seed = "1337"
+
+    // Argv shape: [smoke] [AXIS] [INIT] [SEED]
+    // We accept positional via DISPATCH_ARGS env (since `hexa run` argv plumbing is uneven).
+    // For runbook use, the user passes args via env: DISPATCH_ARGS="A qwen 1337"
+    if raw != "" {
+        let parts = raw.split(" ")
+        let mut k = 0
+        while k < len(parts) {
+            let p = parts[k]
+            if p == "smoke" { smoke = true }
+            else if p == "A" || p == "B" || p == "C" || p == "D" || p == "ALL" { axis = p }
+            else if p == "random" || p == "qwen" || p == "vp21m" { init = p }
+            else if p != "" { seed = p }
+            k = k + 1
+        }
+    }
+
+    println("════════════════════════════════════════════════════════════════")
+    println("  DECODER M3 4-axis P21H V3 fire — Vast.ai direct-IP dispatch SOP")
+    if smoke {
+        println("  Mode: SMOKE (50-step pipeline gate · 1 pod · ~$1-2)")
+    } else {
+        println("  Mode: FULL FIRE (5K step verdict run · 1-4 pod · per-pod $13-21)")
+    }
+    println("  Axis: " + axis + "  Init: " + init + "  Seed: " + seed)
+    println("════════════════════════════════════════════════════════════════")
+    println("")
+
+    let steps  = if smoke { 50 }   else { 5000 }
+    let bsz    = if smoke { 1 }    else { 2 }
+    let block  = if smoke { 256 }  else { 512 }
+    let warmup = if smoke { 5 }    else { 100 }
+
+    let n_pods = if axis == "ALL" { 4 } else { 1 }
+    _print_cost_estimate(smoke, n_pods)
+    _print_pre_fire_checklist()
+    _print_step0_account()
+
+    // Per-axis SOP rendering. When axis=="ALL", render 4 sections.
+    let axes_to_render = if axis == "ALL" { ["A", "B", "C", "D"] } else { [axis] }
+    let mut ai = 0
+    while ai < len(axes_to_render) {
+        let ax = axes_to_render[ai]
+        println("════════════════════════════════════════════════════════════════")
+        println("  AXIS-" + ax + " SOP — " + _axis_desc(ax))
+        println("════════════════════════════════════════════════════════════════")
+        let env_lines = _axis_env_lines(ax, steps)
+        _print_step1_rent(ax, init, smoke)
+        _print_step2_ssh_ready()
+        _print_step3_upload()
+        _print_step4_argv_guard()
+        _print_step5_corpus(smoke)
+        _print_step6_fire(ax, init, seed, steps, bsz, block, warmup, env_lines)
+        _print_step7_early_life()
+        _print_step8_monitor_harvest()
+        _print_step9_hf_teardown(ax, smoke)
+        ai = ai + 1
+    }
+
+    _print_parallel_orchestration(smoke)
+
+    println("════════════════════════════════════════════════════════════════")
+    println("  END OF RUNBOOK — execute the steps above to fire the dispatch.")
+    println("════════════════════════════════════════════════════════════════")
+}
