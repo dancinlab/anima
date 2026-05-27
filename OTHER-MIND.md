@@ -17,4 +17,5 @@
 - ⇄ [MITOSIS](./MITOSIS.md): MITOSIS.persona_diff per cell 의 variant 추정 ↔ OTHER-MIND 타자 substrate 추정 isomorphic (자기 cell 분기 = 가상 타자 simulator)
 - ⇄ [EMBODIMENT](./EMBODIMENT.md): embodiment 가 self body, OTHER-MIND 가 other body · 2-body coupling 의 other-half
 - ⇄ [BRIDGE](./BRIDGE.md): BRIDGE AND-gate emit decision 의 사용자(타자) state 가 OTHER-MIND 추정 → emit modulation
-- ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8)
+- ⇄ [HIVE-MIND](./HIVE-MIND.md): bench G collective coupling (#1147) · partner_state_estimate × pid_synergy multi-partner synergy (H_355)
+- ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8 + 축 E/F mirror)

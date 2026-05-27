@@ -19,4 +19,6 @@
 - ⇄ [NARRATIVE](./NARRATIVE.md): persona-diff per cell 의 시간 차원 — cell 별 story thread divergence 관측
 - ⇄ [METACOG](./METACOG.md): METACOG.metacog_lib basin_kurtosis (#1130 retrospective #1133) cross-product
 - ⇄ [WAKE](./WAKE.md): WAKE.sleep_tick 호출 chain (`WAKE/state_machine` × `mitosis_lib.cell_pool_step`)
-- ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8)
+- ⇄ [SAVANT](./SAVANT.md): cell-pool split 패턴 ↔ savant mode trigger · basin_kurtosis (#1130) × SI 직교성 cross-product · perfect number ladder n28 cell-count (H_615)
+- ⇄ [HIVE-MIND](./HIVE-MIND.md): cell-pool collective Φ super-additive (H_609) · N-cell synergy 측정자
+- ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8 + 축 E/F mirror)

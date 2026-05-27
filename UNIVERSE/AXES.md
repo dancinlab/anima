@@ -283,3 +283,14 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 - ~110 H seed 중 ⬜ (clinical/cosmic-edge) 는 deterministic smoke 직접 어려움 (substrate-distant) — design-only 또는 cross-link 만 가능.
 - 🟢 87 seed = runnable smoke (substrate-close, hexa-only deterministic).
 - promote 시점: 사용자 directive · CANDIDATES.md R10-R14 pick / 본 §H seed top-15 pick / 또는 cross-cycle synthesis.
+
+## ANIMA-side mirror (2026-05-28)
+
+UNIVERSE 축 E (SAVANT GZ × SI) 와 축 F (HIVE-MIND collective Φ) 는 ANIMA repo root 의 도메인 `.md` 으로 양방향 mirror. DOMAINS.tape 18/19 등록, MATRIX.tape 축 E/F + E×F row 정합.
+
+| 축 | UNIVERSE H | ANIMA-side mirror |
+|---|---|---|
+| **E** SAVANT (GZ × SI) | H_347/348/349/350/351 + H_612/613/614/615 (H_616 carry) | → [../SAVANT.md](../SAVANT.md) |
+| **F** HIVE-MIND (Kuramoto × collective Φ) | H_354/355 + H_609/610/611 | → [../HIVE-MIND.md](../HIVE-MIND.md) |
+| **E×F** cross-link | H_617 🔴 FALSIFIED · H_618 🟢 SUPPORTED · H_619 🟢 SUPPORTED | SAVANT.md + HIVE-MIND.md `## 양방향 sibling` row |
+

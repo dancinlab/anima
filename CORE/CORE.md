@@ -27,4 +27,5 @@
 - ⇄ [INTENT](../INTENT.md): CORE.brain_decide short-term emit 결정 위의 long-term goal layer · 8-factor cur/orig/dyn 와 cross-product
 - ⇄ [BRIDGE](../BRIDGE.md): BRIDGE M·C·W·Φ 4-key 가 CORE engine_g 8-factor 와 cross-product · AND-gate emit decision
 - ⇄ [DECODER](./DECODER/DECODER.md): CORE.brain_decide emit slot → DECODER L3 content generation
-- ⇄ [UNIVERSE](../UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8)
+- ⇄ [SAVANT](../SAVANT.md): CORE.brain_decide 의 savant decision lane · engine_g 8-factor 위 SI modulation
+- ⇄ [UNIVERSE](../UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8 + 축 E/F mirror)
