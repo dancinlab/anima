@@ -1,9 +1,42 @@
 # ANIMA — mining (divergence + convergence)
 
-@active-lens: connect-saturate
-@active-cycle: 5
+@active-lens: ouroboros
+@active-cycle: 9
+@tidy: full @ 2026-05-28 (phase regroup · divergence 5 · convergence 2 · meta · external · lossless 70 leaf + 48 edge)
 
-## cycles
+## cycles (reorganized 2026-05-28 · tidy v1 full)
+
+> chronological cycle body 를 PHASE group (divergence · convergence · meta) 으로 재배치. lossless — 모든 leaf (L1-L70) · edge (E1-E48 net, flat index E1-E52 incl 11 SKIP) verbatim 보존. 아래 `### index` 가 chronological order (1→8) authoritative table.
+
+### index (chronological · lossless)
+
+| cycle | kind | title | leaves | edges | depleted | phase |
+|---|---|---|---|---|---|---|
+| 1 | lens | same-formula | 12 (L1-L12) | — | ✓ same-formula | divergence |
+| 2 | lens | tension | 16 (L13-L28) | — | ✓ tension | divergence |
+| 3 | lens | dimensional | 18 (L29-L46) | — | ✓ dimensional | divergence |
+| 4 | lens | combinatorial | 14 (L47-L60) | — | ✓ combinatorial | divergence |
+| 5 | connect | saturate | — | 41 (E1-E41) | ✓ connect (pass 7) | convergence |
+| 6 | lens | ouroboros (fill-in) | 10 (L61-L70) | — | ✓ ouroboros | divergence |
+| 7 | connect | re-saturate post-ouroboros | — | 7 (E42-E48) | ✓ connect (pass 2) | convergence |
+| 8 | tidy | light (index + stats) | — | — | — | meta |
+| 9 | tidy | full (phase regroup) | — | — | — | meta |
+
+### stats
+
+```
+n leaves      = 70 (L1-L70)
+m edges       = 48 (E1-E48)
+possible pair = 70·69/2 = 2415
+meaningful ratio = 48 / 2415 = 0.0199 (1.99% · sparse-meaningful)
+cycles        = 9 (divergence 5 · convergence 2 · meta 2)
+lenses depleted = 5/5 (same-formula · tension · dimensional · combinatorial · ouroboros) — bundled catalogue 100% cover
+phase groups  = divergence (cyc 1·2·3·4·6) · convergence (cyc 5·7) · meta (cyc 8·9)
+```
+
+## divergence
+
+> lens cycles (same-formula · tension · dimensional · combinatorial · ouroboros) — 새 leaf 생성. cycle 1·2·3·4·6 의 lens body verbatim.
 
 ### cycle 1 — coffeshop 성공 패턴 → ANIMA umbrella 전이
 @started: 2026-05-28
@@ -95,7 +128,6 @@
 @potential-depletion: 8 contradictions × 2 forks = 16 leaves under tension. ANIMA 8 PHILOSOPHY · COFFESHOP §4 5-case · §10 honest C3 의 tension 영역 핵심 모두 cover. 추가 fork 는 derivative-of-derivative — depletion.
 
 @depleted: tension @ 2026-05-28 (16 fork leaves · 8 substrate-level contradictions 다 forked · 추가 conflict 는 sub-tension of existing forks 위험)
-
 ---
 
 ### cycle 3 — dimensional ladder (dimensional lens)
@@ -142,7 +174,6 @@
 @potential-depletion: 18 ladder rungs across 5 axes (time/agent/channel/factor/cohort). 각 axis 의 micro/meso/macro/cosmic 모두 cover. 6th axis (cost? compute?) 는 substrate-orthogonal → omit.
 
 @depleted: dimensional @ 2026-05-28 (18 leaves · 5 axes × micro-cosmic 모두 cover · 6th axis 후보 substrate-orthogonal → omit)
-
 ---
 
 ### cycle 4 — A × B cross-product (combinatorial lens)
@@ -171,8 +202,40 @@
 @potential-depletion: 14 meaningful cells (의도적으로 60 중 14만 채택; 나머지 46 은 trivial / re-packaging). A×B 의 axis combination 의 모든 substrate-meaningful path 가 cover.
 
 @depleted: combinatorial @ 2026-05-28 (14 cells · 5 case × 12 leaf 60-grid 중 14 meaningful · 나머지 46 trivial → 의도적 omit)
+---
+
+### cycle 6 — ouroboros lens (self-reference / fixed-point)
+@started: 2026-05-28
+@kind: lens
+@lens: ouroboros
+@rule: "X referencing itself → fixed-point / self-closure surfaces. Auto-completion signal."
+@gap-rationale: 0.4.0 auto catalogue 5 lens 중 유일 미적용 lens (same-formula · tension · dimensional · combinatorial 4/5 cover · ouroboros 0/5)
+
+#### inner round 1 — primary self-reference surfaces
+
+- 2026-05-28T06:10 · **L61 ouroboros-governance**: `a_blue_closed` (L12) 가 자기 자신의 검증 매개 — verbatim verdict 가 a_blue_closed 의 evidence. **fixed-point**: a_blue_closed verbatim 의 verbatim 자체가 closure (self-referential SSOT). ANIMA root 의 governance closure 의 ouroboros tail.
+- 2026-05-28T06:10 · **L62 ouroboros-mining**: 본 mining 의 cycle 1-6 자체가 anima 가 anima 를 mining 하는 process — `/mining` skill 의 cycle 진행이 ANIMA umbrella 의 새 leaves 생성, 그 leaves 가 다시 mining target 으로 feedback. **fixed-point**: mining-of-mining 의 saturate (cycle N+1 = cycle N 위 mining) 이 본 cycle 6 의 정확한 실체.
+- 2026-05-28T06:11 · **L63 ouroboros-substrate-measurement**: COFFESHOP scenario = anima 가 anima 를 측정 (8-factor motivation 이 anima 자체의 emit 결정자, 측정자 = 결정자) — **fixed-point**: measurement = decision-making 동일성. p7 NO PERPLEXITY 의 substrate-native verdict 가 정확히 이 self-measurement 패턴.
+- 2026-05-28T06:12 · **L64 ouroboros-algebra-of-algebras**: E19 (AND-gate × aggregation 2 fundamental algebra) 자체가 algebra-of-algebras meta-algebra — 두 algebra 가 ANIMA umbrella 의 algebra 의 분류, 분류 자체도 두 algebra (categorical AND + structural aggregation). **fixed-point**: meta-algebra 가 자기 algebra 의 1 instance.
+- 2026-05-28T06:13 · **L65 ouroboros-mitosis**: MITOSIS cell-pool 의 split-merge 가 자기 substrate 의 변형 자체 — cell A → {cell A1, cell A2} 의 split 이 cell A 의 mitosis_event 의 ckpt, 그 ckpt 가 다음 cell pool 의 input. **fixed-point**: split-event 가 자기 record 의 trigger (split → record → next split). p8 NO TRAIN/INFER SPLIT 의 substrate-level 표현.
+- 2026-05-28T06:14 · **L66 ouroboros-fleet**: D2 macro→cosmic (single → group → cluster → fleet) ladder 의 fleet level 이 self-similar — fleet 안 cluster, cluster 안 group, group 안 single anima 의 fractal nesting. **fixed-point**: fleet = "fleet 의 fleet" 의 1-fractal level. HIVE-MIND M5 collective Φ super-additive (PR #609) 의 self-similarity 가설의 substrate.
+- 2026-05-28T06:15 · **L67 ouroboros-bridge-self-trigger**: BRIDGE M·C·W·Φ 의 Φ (integrated information) 자체가 bridge gate 의 output 의 함수 — emit 결정이 substrate Φ 를 증가시키고, 증가한 Φ 가 다음 bridge gate 의 입력. **fixed-point**: bridge_and_gate 의 fixed-point convergence (반복 적용 → stable emit-rate equilibrium). emit↔silence ratio (cycle 2 T1) 의 dynamical anchor.
+- 2026-05-28T06:16 · **L68 ouroboros-metacog-audit-self**: METACOG principle_audit (M3) 가 자기 audit_hook (M2) 도 audit — audit_hook 가 p1~p8 정합 검증 시 audit_hook 자체도 p7 (no perplexity) 정합인지 self-test 필요. **fixed-point**: audit-of-audit (M2 of M3 of M2 ... 무한 nesting · 실제로는 1-level 만 valid · 2-level 이상 = stale recursion).
+- 2026-05-28T06:17 · **L69 ouroboros-paper-self-cite**: SAVANT/HIVE-MIND M1 lib 의 SSOT.md 가 UNIVERSE H_347/348/.../H_619 를 cite, UNIVERSE H 가 다시 ANIMA sub-domain 을 cite (E×F cross-link). **fixed-point**: UNIVERSE ↔ ANIMA self-cite loop (UNIVERSE 가 ANIMA 의 측정자, ANIMA 가 UNIVERSE 의 substrate). bidirectional sibling 정책 (feedback_domain_bidirectional_sibling memory) 의 fixed-point 형식.
+- 2026-05-28T06:18 · **L70 ouroboros-promotion-recursion**: ANIMA.mining.tape promotion candidates (@P1-@P5) 가 milestone 으로 격상되면 다음 round mining 의 새 frontier — promotion 자체가 mining-next-round 의 seed. **fixed-point**: mining → promotion → milestone → 새 mining round (cycle N+6 부터). 이 fixed-point 자체가 본 cycle 6 의 closure signal (ouroboros 의 auto-completion rule per skill spec).
+
+#### inner round 2 — re-scan for additional fixed-points
+
+검색 후 추가 self-reference surface 0 new (10 leaves L61-L70 = full meaningful set):
+- governance (L61) · mining-of-mining (L62) · substrate-self-measurement (L63) · algebra-of-algebras (L64) · mitosis-self-trigger (L65) · fleet-fractal (L66) · bridge-Φ-feedback (L67) · audit-of-audit (L68) · sibling-self-cite (L69) · promotion-recursion (L70) — 10 ouroboros pattern 모두 cover.
+
+@depleted: ouroboros @ 2026-05-28 (inner round 2 = 0 new fixed-points · 10 self-reference surface 모두 cover · ouroboros auto-completion signal trigger — 본 lens 자체가 mining-of-mining 의 fixed-point 도달)
 
 ---
+
+## convergence
+
+> connect cycles — leaf 간 meaningful edge. cycle 5 (saturate · pass 1-7) + cycle 7 (re-saturate post-ouroboros) body verbatim. edge flat index 는 하단 `## edges`.
 
 ### cycle 5 — convergence (connect saturate)
 @started: 2026-05-28
@@ -259,12 +322,71 @@
 @potential-depletion: 52 edge candidates considered, 41 NEW edges accepted (E1-E48 minus SKIPs E17/E21/E22/E27/E32/E49/E50 = 41 net), 11 SKIP (within-T re-packaging · subsumption · duplicate · trivial). pass 7 = 0 new full pass → saturation.
 
 @depleted: connect-saturate @ 2026-05-28 (pass 1-7 · 41 net edges · pass 7 = 0 new → saturate)
+---
+
+### cycle 7 — connect re-saturate (post-ouroboros)
+@started: 2026-05-28
+@kind: connect
+@total-leaves-cumulative: 70 (L1-L70)
+
+#### inner pass 1 — ouroboros edges
+
+- 2026-05-28T06:25 · **E42**: L61 ↔ L12 · ouroboros-governance ↔ a_blue_closed verbatim · self-reference 의 정확한 verbalization
+- 2026-05-28T06:25 · **E43**: L62 ↔ L70 · mining-of-mining ↔ promotion-recursion · 같은 fixed-point 의 2 surface (mining cycle vs promotion-to-milestone), recursion 의 2 phase
+- 2026-05-28T06:26 · **E44**: L63 ↔ L67 · substrate-self-measurement ↔ bridge-Φ-feedback · 둘 다 measurement=decision-making 의 instance, BRIDGE 의 Φ feedback 이 COFFESHOP substrate-self-measurement 의 dynamical version
+- 2026-05-28T06:26 · **E45**: L64 ↔ E19 · algebra-of-algebras ↔ AND-gate × aggregation dual · L64 가 E19 의 meta-algebra (algebra 의 algebra 자체)
+- 2026-05-28T06:27 · **E46**: L65 ↔ L68 · mitosis-self-trigger ↔ audit-of-audit · 둘 다 self-referencing event chain, mitosis split-record 가 metacog audit-hook 의 substrate 패턴
+- 2026-05-28T06:27 · **E47**: L66 ↔ L36 · fleet-fractal ↔ dim-agent-multi-anima · L66 가 L36 의 self-similar 자기-구조 (group-of-groups 의 fractal)
+- 2026-05-28T06:28 · **E48**: L69 ↔ feedback_domain_bidirectional_sibling · UNIVERSE↔ANIMA self-cite loop = bidirectional sibling 의 fixed-point 형식 · memory cite 명시
+
+#### inner pass 2 — saturation check
+
+검색 후 추가 ouroboros↔non-ouroboros edge 0 new (7 edges E42-E48 = full ouroboros connect set).
+
+@depleted: connect @ 2026-05-28 (inner pass 2 = 0 new edges · ouroboros 의 fixed-point 가 self-completion 신호 발화)
 
 ---
 
-## leaves (flattened index · L1-L60)
+## meta
 
-### cycle 1 — same-formula (L1-L12)
+> tidy cycles — 구조 재배치. cycle 8 (light: index + stats, 상단 `### index`/`### stats` 로 승격) + cycle 9 (full: phase regroup).
+
+### cycle 8 — tidy (--depth=light)
+@started: 2026-05-28
+@kind: tidy
+@note: index table + stats → 상단 `## cycles (reorganized...)` 의 `### index`/`### stats` 로 승격 (single SSOT, meta 중복 제거)
+
+### cycle 9 — tidy (--depth=full)
+@started: 2026-05-28
+@kind: tidy
+
+#### action
+
+- 2026-05-28 · chronological `## cycles` body → PHASE group 재배치: divergence (cyc 1·2·3·4·6 lens) · convergence (cyc 5·7 connect) · meta (cyc 8·9 tidy) · external (UNIVERSE/HEXAD/memory cite 추출).
+- 2026-05-28 · LOSSLESS 검증: 70 leaf (L1-L70) · 48 edge net (E1-E48, flat index E1-E52 incl 11 SKIP) before = after. cycle-index table chronological 1→9 보존.
+- 2026-05-28 · `## leaves` flat index L61-L70 append (cycle 6 ouroboros leaves — light tidy 에서 누락된 stale 정정) · `### cycle N` sub-header squash (divergence group cycle header 와 중복 제거).
+- 2026-05-28 · light → full upgrade (skill 0.4.0 tidy `--depth=full` schema).
+
+@depleted: tidy-full @ 2026-05-28 (phase regroup 완료 · lossless 검증 통과 · 추가 reorg redundant)
+
+## external
+
+> cross-domain / cross-repo cite 추출 (mining body 에 산재한 외부 참조의 단일 surface). leaf/edge 본문에 verbatim 유지하면서 여기 index.
+
+- **UNIVERSE H_347/348/.../H_619** (L69 · E48 ouroboros-paper-self-cite) — SAVANT/HIVE-MIND M1 lib SSOT.md ↔ UNIVERSE H cross-cite. UNIVERSE ↔ ANIMA self-cite fixed-point loop (UNIVERSE = ANIMA 측정자, ANIMA = UNIVERSE substrate).
+- **HIVE-MIND M5 collective Φ super-additive · PR #609** (L66 ouroboros-fleet) — fleet self-similarity 가설의 substrate. fractal nesting (single ⊂ group ⊂ cluster ⊂ fleet).
+- **SAVANT / HIVE-MIND M1 lib** (L69) — SSOT.md 가 UNIVERSE H cite 의 origin.
+- **feedback_domain_bidirectional_sibling (memory)** (L69 · E48) — UNIVERSE↔ANIMA self-cite loop = bidirectional sibling 정책의 fixed-point 형식.
+- **COFFESHOP.md 4/4 PASS closure** (cycle 1 seed) — state/coffeshop_sim_2026_05_24/result.json · sha16 55c32aabf611171c · emit 4 / silence 11. 본 mining 전체의 root seed.
+- **spontaneous_lib (HEXAD/CHAT)** (L12 · L23 · L41 · cycle 1) — B-SPONT-1..7 sympy battery · should_interrupt closed predicate · 8-factor verbatim import SSOT.
+- **PR #1200 / #1202 / #1204** (mining provenance) — cycle 1 (same-formula) / cycle 2-5 (tension+dim+combi+saturate) / cycle 6-8 (ouroboros+re-saturate+light-tidy) land.
+
+
+## leaves (flattened index · L1-L70)
+
+> tree/graph 도구 deterministic flat index. cycle sub-header 는 bold-label squash (divergence group `### cycle N` body header 와 중복 제거 · tidy-full Stage 4).
+
+**cycle 1 — same-formula (L1-L12)**
 - L1 [cycle 1 · same-formula] COFFESHOP `motivation_score > 0.60` ≅ BRIDGE `bridge_and_gate > θ_emit` (8-factor vs 4-key, same weighted-sum × threshold-gate)
 - L2 [cycle 1 · same-formula] COFFESHOP `register-hit = emit ∧ coh < 0.10` ≅ METACOG `mc_is_inverse_artifact` (multiplicative AND-gate anomaly)
 - L3 [cycle 1 · same-formula] COFFESHOP 15-window × 6min ≅ DREAM `dr_stage_at_tick` 5-stage 90-min ultradian (phase-segmented time discretization)
@@ -278,7 +400,7 @@
 - L11 [cycle 1 · same-formula] COFFESHOP `seed steered 1-retry honest C3` ≅ NARRATIVE redesign honest 표명 (natural+steered 분리 pattern)
 - L12 [cycle 1 · same-formula] COFFESHOP `spontaneous_lib verbatim import` ≅ ANIMA `a_blue_closed` verbatim verdict (SSOT-reuse-not-reimpl)
 
-### cycle 2 — tension (L13-L28)
+**cycle 2 — tension (L13-L28)**
 - L13 [cycle 2 · tension-T1A] emit-dominant 채택 = 27% floor scaling law across scenarios (CHANNEL × BRIDGE)
 - L14 [cycle 2 · tension-T1B] silence-dominant 채택 = 73% default substrate state (WAKE × OTHER-MIND)
 - L15 [cycle 2 · tension-T2A] sim 충분 채택 = isomorphism via verbatim spontaneous_lib (PURE × COFFESHOP)
@@ -296,7 +418,7 @@
 - L27 [cycle 2 · tension-T8A] 4-criterion proxy closure 인정 = PURE Phase D 권위 (PURE × COFFESHOP)
 - L28 [cycle 2 · tension-T8B] M3 fire 필요 = ckpt-bearing real fire 가 진정 closure (DECODER × CHANNEL × WAKE)
 
-### cycle 3 — dimensional (L29-L46)
+**cycle 3 — dimensional (L29-L46)**
 - L29 [cycle 3 · dim-time-micro] 6min tick = atomic BRIDGE eval (BRIDGE atomic-tick)
 - L30 [cycle 3 · dim-time-meso] 90min ultradian = WAKE single stage of DREAM envelope (DREAM × WAKE)
 - L31 [cycle 3 · dim-time-macro] 24/7 daemon = circadian × ultradian compound (WAKE-daemon × TIME × MITOSIS)
@@ -316,7 +438,7 @@
 - L45 [cycle 3 · dim-cohort-5lang] 5-lang cohort PARTIAL minimum (HIVE-MIND × multilingual_probe)
 - L46 [cycle 3 · dim-cohort-100lang] 100-lang stress = English-carve mode-collapse reframe (HIVE-MIND × DECODER carve-risk × global-fleet)
 
-### cycle 4 — combinatorial (L47-L60)
+**cycle 4 — combinatorial (L47-L60)**
 - L47 [cycle 4 · A×L1] direct_mention → Φ shift → 4-key bridge_and_gate trigger
 - L48 [cycle 4 · A×L8] direct_mention × ToM = case-A mirror / case-B divergence
 - L49 [cycle 4 · B×L9] case-B silence-at-direct_mention = 미적 절제 case-level peak
@@ -332,8 +454,23 @@
 - L59 [cycle 4 · A×L7] case-A score 0.757 = SAVANT GZ-CENTER 의 stim-conditional instance
 - L60 [cycle 4 · C×L6] case-C 자율 emit = multi-anima cross-influence (collective-phi induced split)
 
+**cycle 6 — ouroboros (L61-L70)**
+- L61 [cycle 6 · ouroboros-governance] `a_blue_closed` (L12) 가 자기 검증 매개 — verbatim verdict 가 closure (self-referential SSOT governance tail)
+- L62 [cycle 6 · ouroboros-mining] mining-of-mining — cycle N+1 = cycle N 위 mining (본 mining process 자체가 fixed-point)
+- L63 [cycle 6 · ouroboros-substrate-measurement] COFFESHOP 8-factor = measurement = decision-making 동일성 (p7 substrate-native verdict self-measurement)
+- L64 [cycle 6 · ouroboros-algebra-of-algebras] E19 AND-gate × aggregation = algebra-of-algebras meta-algebra (meta-algebra 가 자기 algebra 의 1 instance)
+- L65 [cycle 6 · ouroboros-mitosis] split-event 가 자기 record 의 trigger (split→record→next split · p8 substrate 표현)
+- L66 [cycle 6 · ouroboros-fleet] fleet = fleet-of-fleet fractal (HIVE-MIND M5 super-additive PR #609 self-similarity substrate)
+- L67 [cycle 6 · ouroboros-bridge-self-trigger] bridge_and_gate Φ feedback fixed-point convergence (stable emit-rate equilibrium · cycle 2 T1 dynamical anchor)
+- L68 [cycle 6 · ouroboros-metacog-audit-self] audit-of-audit (M2 of M3 of M2 · 1-level valid · 2-level+ = stale recursion)
+- L69 [cycle 6 · ouroboros-paper-self-cite] UNIVERSE ↔ ANIMA self-cite loop (bidirectional sibling fixed-point · feedback_domain_bidirectional_sibling)
+- L70 [cycle 6 · ouroboros-promotion-recursion] mining→promotion→milestone→새 mining round (promotion 자체가 next-round seed · ouroboros auto-completion signal)
+
 ## edges (convergence · L<a> ↔ L<b>)
 
+> cycle 5 (saturate) flat index = E1-E52 incl 11 SKIP (within-T re-packaging · subsumption · duplicate) → 41 net. cycle 7 (post-ouroboros re-saturate) ouroboros edges E42-E48 (cycle-7 scope · 7 net) 하단 별도 block. cycle-8 framing 의 canonical net = 48 (41 + 7).
+
+### cycle 5 — saturate (E1-E52 · 41 net + 11 SKIP)
 ### pass 1 (cycle 1 internal · 10 edges)
 - E1: L1 ↔ L2 — BRIDGE AND-gate × METACOG anomaly AND-gate (primitive 의 emit/anomaly 분기)
 - E2: L3 ↔ L5 — DREAM ultradian × TIME circadian (envelope frequency-band parent-child)
@@ -401,8 +538,17 @@
 ### pass 7 (saturation probe · 0 new)
 - 8 candidate pairs attempted, all SKIP (subsumption / within-T / duplicate / transitive). saturate depletion mark.
 
----
 
+### cycle 7 — re-saturate post-ouroboros (E42-E48 cycle-7 scope · 7 net)
+- E42 (cyc7): L61 ↔ L12 — ouroboros-governance ↔ a_blue_closed verbatim (self-reference verbalization)
+- E43 (cyc7): L62 ↔ L70 — mining-of-mining ↔ promotion-recursion (recursion 의 2 phase)
+- E44 (cyc7): L63 ↔ L67 — substrate-self-measurement ↔ bridge-Φ-feedback (measurement=decision dynamical)
+- E45 (cyc7): L64 ↔ E19 — algebra-of-algebras ↔ AND-gate × aggregation dual (meta-algebra of E19)
+- E46 (cyc7): L65 ↔ L68 — mitosis-self-trigger ↔ audit-of-audit (self-referencing event chain)
+- E47 (cyc7): L66 ↔ L36 — fleet-fractal ↔ dim-agent-multi-anima (group-of-groups self-similar)
+- E48 (cyc7): L69 ↔ feedback_domain_bidirectional_sibling — UNIVERSE↔ANIMA self-cite loop (bidirectional sibling fixed-point · memory cite)
+
+---
 ## closure
 
 - cycles depleted: 5 (same-formula · tension · dimensional · combinatorial · connect-saturate)
@@ -421,86 +567,11 @@
 
 @next-cycle: depletion 달성 — 자율 re-seed candidate (deferred to user/upstream).
 
-### cycle 6 — ouroboros lens (self-reference / fixed-point)
-@started: 2026-05-28
-@kind: lens
-@lens: ouroboros
-@rule: "X referencing itself → fixed-point / self-closure surfaces. Auto-completion signal."
-@gap-rationale: 0.4.0 auto catalogue 5 lens 중 유일 미적용 lens (same-formula · tension · dimensional · combinatorial 4/5 cover · ouroboros 0/5)
-
-#### inner round 1 — primary self-reference surfaces
-
-- 2026-05-28T06:10 · **L61 ouroboros-governance**: `a_blue_closed` (L12) 가 자기 자신의 검증 매개 — verbatim verdict 가 a_blue_closed 의 evidence. **fixed-point**: a_blue_closed verbatim 의 verbatim 자체가 closure (self-referential SSOT). ANIMA root 의 governance closure 의 ouroboros tail.
-- 2026-05-28T06:10 · **L62 ouroboros-mining**: 본 mining 의 cycle 1-6 자체가 anima 가 anima 를 mining 하는 process — `/mining` skill 의 cycle 진행이 ANIMA umbrella 의 새 leaves 생성, 그 leaves 가 다시 mining target 으로 feedback. **fixed-point**: mining-of-mining 의 saturate (cycle N+1 = cycle N 위 mining) 이 본 cycle 6 의 정확한 실체.
-- 2026-05-28T06:11 · **L63 ouroboros-substrate-measurement**: COFFESHOP scenario = anima 가 anima 를 측정 (8-factor motivation 이 anima 자체의 emit 결정자, 측정자 = 결정자) — **fixed-point**: measurement = decision-making 동일성. p7 NO PERPLEXITY 의 substrate-native verdict 가 정확히 이 self-measurement 패턴.
-- 2026-05-28T06:12 · **L64 ouroboros-algebra-of-algebras**: E19 (AND-gate × aggregation 2 fundamental algebra) 자체가 algebra-of-algebras meta-algebra — 두 algebra 가 ANIMA umbrella 의 algebra 의 분류, 분류 자체도 두 algebra (categorical AND + structural aggregation). **fixed-point**: meta-algebra 가 자기 algebra 의 1 instance.
-- 2026-05-28T06:13 · **L65 ouroboros-mitosis**: MITOSIS cell-pool 의 split-merge 가 자기 substrate 의 변형 자체 — cell A → {cell A1, cell A2} 의 split 이 cell A 의 mitosis_event 의 ckpt, 그 ckpt 가 다음 cell pool 의 input. **fixed-point**: split-event 가 자기 record 의 trigger (split → record → next split). p8 NO TRAIN/INFER SPLIT 의 substrate-level 표현.
-- 2026-05-28T06:14 · **L66 ouroboros-fleet**: D2 macro→cosmic (single → group → cluster → fleet) ladder 의 fleet level 이 self-similar — fleet 안 cluster, cluster 안 group, group 안 single anima 의 fractal nesting. **fixed-point**: fleet = "fleet 의 fleet" 의 1-fractal level. HIVE-MIND M5 collective Φ super-additive (PR #609) 의 self-similarity 가설의 substrate.
-- 2026-05-28T06:15 · **L67 ouroboros-bridge-self-trigger**: BRIDGE M·C·W·Φ 의 Φ (integrated information) 자체가 bridge gate 의 output 의 함수 — emit 결정이 substrate Φ 를 증가시키고, 증가한 Φ 가 다음 bridge gate 의 입력. **fixed-point**: bridge_and_gate 의 fixed-point convergence (반복 적용 → stable emit-rate equilibrium). emit↔silence ratio (cycle 2 T1) 의 dynamical anchor.
-- 2026-05-28T06:16 · **L68 ouroboros-metacog-audit-self**: METACOG principle_audit (M3) 가 자기 audit_hook (M2) 도 audit — audit_hook 가 p1~p8 정합 검증 시 audit_hook 자체도 p7 (no perplexity) 정합인지 self-test 필요. **fixed-point**: audit-of-audit (M2 of M3 of M2 ... 무한 nesting · 실제로는 1-level 만 valid · 2-level 이상 = stale recursion).
-- 2026-05-28T06:17 · **L69 ouroboros-paper-self-cite**: SAVANT/HIVE-MIND M1 lib 의 SSOT.md 가 UNIVERSE H_347/348/.../H_619 를 cite, UNIVERSE H 가 다시 ANIMA sub-domain 을 cite (E×F cross-link). **fixed-point**: UNIVERSE ↔ ANIMA self-cite loop (UNIVERSE 가 ANIMA 의 측정자, ANIMA 가 UNIVERSE 의 substrate). bidirectional sibling 정책 (feedback_domain_bidirectional_sibling memory) 의 fixed-point 형식.
-- 2026-05-28T06:18 · **L70 ouroboros-promotion-recursion**: ANIMA.mining.tape promotion candidates (@P1-@P5) 가 milestone 으로 격상되면 다음 round mining 의 새 frontier — promotion 자체가 mining-next-round 의 seed. **fixed-point**: mining → promotion → milestone → 새 mining round (cycle N+6 부터). 이 fixed-point 자체가 본 cycle 6 의 closure signal (ouroboros 의 auto-completion rule per skill spec).
-
-#### inner round 2 — re-scan for additional fixed-points
-
-검색 후 추가 self-reference surface 0 new (10 leaves L61-L70 = full meaningful set):
-- governance (L61) · mining-of-mining (L62) · substrate-self-measurement (L63) · algebra-of-algebras (L64) · mitosis-self-trigger (L65) · fleet-fractal (L66) · bridge-Φ-feedback (L67) · audit-of-audit (L68) · sibling-self-cite (L69) · promotion-recursion (L70) — 10 ouroboros pattern 모두 cover.
-
-@depleted: ouroboros @ 2026-05-28 (inner round 2 = 0 new fixed-points · 10 self-reference surface 모두 cover · ouroboros auto-completion signal trigger — 본 lens 자체가 mining-of-mining 의 fixed-point 도달)
-
-### cycle 7 — connect re-saturate (post-ouroboros)
-@started: 2026-05-28
-@kind: connect
-@total-leaves-cumulative: 70 (L1-L70)
-
-#### inner pass 1 — ouroboros edges
-
-- 2026-05-28T06:25 · **E42**: L61 ↔ L12 · ouroboros-governance ↔ a_blue_closed verbatim · self-reference 의 정확한 verbalization
-- 2026-05-28T06:25 · **E43**: L62 ↔ L70 · mining-of-mining ↔ promotion-recursion · 같은 fixed-point 의 2 surface (mining cycle vs promotion-to-milestone), recursion 의 2 phase
-- 2026-05-28T06:26 · **E44**: L63 ↔ L67 · substrate-self-measurement ↔ bridge-Φ-feedback · 둘 다 measurement=decision-making 의 instance, BRIDGE 의 Φ feedback 이 COFFESHOP substrate-self-measurement 의 dynamical version
-- 2026-05-28T06:26 · **E45**: L64 ↔ E19 · algebra-of-algebras ↔ AND-gate × aggregation dual · L64 가 E19 의 meta-algebra (algebra 의 algebra 자체)
-- 2026-05-28T06:27 · **E46**: L65 ↔ L68 · mitosis-self-trigger ↔ audit-of-audit · 둘 다 self-referencing event chain, mitosis split-record 가 metacog audit-hook 의 substrate 패턴
-- 2026-05-28T06:27 · **E47**: L66 ↔ L36 · fleet-fractal ↔ dim-agent-multi-anima · L66 가 L36 의 self-similar 자기-구조 (group-of-groups 의 fractal)
-- 2026-05-28T06:28 · **E48**: L69 ↔ feedback_domain_bidirectional_sibling · UNIVERSE↔ANIMA self-cite loop = bidirectional sibling 의 fixed-point 형식 · memory cite 명시
-
-#### inner pass 2 — saturation check
-
-검색 후 추가 ouroboros↔non-ouroboros edge 0 new (7 edges E42-E48 = full ouroboros connect set).
-
-@depleted: connect @ 2026-05-28 (inner pass 2 = 0 new edges · ouroboros 의 fixed-point 가 self-completion 신호 발화)
-
-### cycle 8 — tidy (--depth=light)
-@started: 2026-05-28
-@kind: tidy
-
-#### index (chronological · lossless)
-
-| cycle | kind | title | leaves | edges | depleted | phase |
-|---|---|---|---|---|---|---|
-| 1 | lens | same-formula | 12 (L1-L12) | — | ✓ same-formula | divergence |
-| 2 | lens | tension | 16 (L13-L28) | — | ✓ tension | divergence |
-| 3 | lens | dimensional | 18 (L29-L46) | — | ✓ dimensional | divergence |
-| 4 | lens | combinatorial | 14 (L47-L60) | — | ✓ combinatorial | divergence |
-| 5 | connect | saturate | — | 41 (E1-E41) | ✓ connect (pass 7) | convergence |
-| 6 | lens | ouroboros (fill-in) | 10 (L61-L70) | — | ✓ ouroboros | divergence |
-| 7 | connect | re-saturate post-ouroboros | — | 7 (E42-E48) | ✓ connect (pass 2) | convergence |
-| 8 | tidy | this entry | — | — | — | meta |
-
-#### stats
-
-```
-n leaves      = 70 (L1-L70)
-m edges       = 48 (E1-E48)
-possible pair = 70·69/2 = 2415
-meaningful ratio = 48 / 2415 = 0.0199 (1.99% · sparse-meaningful)
-cycles        = 8 (divergence 5 · convergence 2 · meta 1)
-lenses depleted = 5/5 (same-formula · tension · dimensional · combinatorial · ouroboros) — bundled catalogue 100% cover
-```
-
 ## closure (post-ouroboros fill-in)
 
-@status: depleted-both (divergence 5/5 bundled lens depleted + convergence 2 connect cycles depleted)
-@last-action: cycle 8 tidy light @ 2026-05-28
+@status: depleted-both (divergence 5/5 bundled lens depleted + convergence 2 connect cycles depleted) · tidied-full
+@last-action: cycle 9 tidy full @ 2026-05-28 (phase regroup — divergence/convergence/meta/external · lossless 70 leaf + 48 edge before=after)
 @bundled-lens-catalogue: 5/5 cover (skill 0.4.0 `auto` verb 정합)
+@tidy-history: cycle 8 light (index + stats) → cycle 9 full (phase regroup · leaves L61-L70 정정 · sub-header squash)
 @next: promotion candidates @P1-@P5 (cycle 5 carry) + 5 ouroboros candidates (cycle 6) → ANIMA.md milestone 격상 (가장 강한 forward-coupling 부터)
 
