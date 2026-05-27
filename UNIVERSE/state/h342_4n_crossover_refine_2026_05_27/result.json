@@ -1,0 +1,40 @@
+{
+  "hypothesis": "H_342",
+  "slug": "4n-law-crossover-refine",
+  "date": "2026-05-27",
+  "title": "4|n law crossover is BELOW n=11: rule30 already dominant from n=11 onward",
+  "question": "Where EXACTLY is the 4|n law crossover? H_337 found 4|n<=>rule30 at n<=12; H_340 found rule30 unconditional at n>=14. Measure rule30 vs rule110 mean cycle length at n in {11,12,13,14} (n=11,13 odd rings) and identify the largest n where rule110 still leads.",
+  "engine": "pure hexa-lang. ECA periodic ring, Floyd period detection (memory-free). FULL enumeration n<=13 (2^11=2048, 2^12=4096, 2^13=8192 starts, stride 1); n=14 stride 8 (2048 samples). cap 16384.",
+  "runtime": "$0 pool ubu-2 · deterministic byte-identical",
+  "pre_registered_H1": "rule110 still LEADS at some n in {11,12,13,14} and the lead shrinks toward n=14 where rule30 takes over; identify the largest n where rule110 leads.",
+  "measurements": [
+    {"n": 11, "factorization": "11 (prime)", "ring": "odd", "div_by_4": false, "r30": 120.738, "r110": 83.2422, "dominant": "rule30", "lead_ratio_r30_over_r110": 1.45},
+    {"n": 12, "factorization": "2^2*3",       "ring": "even", "div_by_4": true,  "r30": 95.418,  "r110": 10.2842, "dominant": "rule30", "lead_ratio_r30_over_r110": 9.28},
+    {"n": 13, "factorization": "13 (prime)", "ring": "odd", "div_by_4": false, "r30": 436.549, "r110": 348.693, "dominant": "rule30", "lead_ratio_r30_over_r110": 1.25},
+    {"n": 14, "factorization": "2*7",         "ring": "even", "div_by_4": false, "r30": 1211.04, "r110": 41.7041, "dominant": "rule30", "lead_ratio_r30_over_r110": 29.04}
+  ],
+  "crossover_finding": {
+    "rule110_leads_at": "NONE of {11,12,13,14}",
+    "rule30_dominant_from": 11,
+    "crossover_n": "BELOW n=11 (<=10)",
+    "interpretation": "rule30 dominates the longest-cycle slot at EVERY n in {11,12,13,14}. The last n where rule110 led (per H_337: n=6,10 the 4-not-div sizes) is therefore at n<=10. The crossover from rule110-can-win to rule30-always-wins sits between n=10 and n=11. n=11 is the FIRST n in the H_342 window and rule30 already leads (1.45x), so the H1 prediction of a rule110 lead within {11,12,13,14} is FALSIFIED."
+  },
+  "falsifier_eval": {
+    "F342_1_RULE110_LEADS_SOMEWHERE": "FAIL — rule110 leads at NONE of {11,12,13,14}; rule30 dominant at all four. H1 (rule110 still leads, lead shrinks toward 14) FALSIFIED.",
+    "F342_2_CROSSOVER_BELOW_11": "PASS (emergent) — rule30 already dominant from n=11, so the rule110->rule30 crossover is BELOW n=11 (between n=10 and n=11).",
+    "F342_3_H340_NOT_WRONG": "PASS — rule110 does NOT lead at n=14 (r30=1211 >> r110=41.7, 29x). H_340's n>=14 rule30-dominance is CONFIRMED and SHARPENED (stride-8 r30=1211 vs H_340 stride-16 r30=1219 — cross-validated).",
+    "F342_4_ODD_RING_GAP_SMALL": "PASS (emergent) — odd rings (n=11,13) show the SMALLEST rule30 lead (1.45x, 1.25x) vs even rings (n=12: 9.3x, n=14: 29x). rule110's structural cycles stay closest to rule30 on odd/4-not-div rings, but still LOSE everywhere in this window.",
+    "F342_5_DETERMINISTIC": "PASS — full enumeration n<=13, fixed stride 8 at n=14, Floyd period detection. Byte-identical."
+  },
+  "verdict_derived": "🔴 FALSIFIED (H1) — the crossover is BELOW n=11. rule30 dominates the longest-cycle slot at EVERY measured n: n=11 (120.7 vs 83.2), n=12 (95.4 vs 10.3), n=13 (436.5 vs 348.7), n=14 (1211 vs 41.7). The pre-registered H1 (rule110 still leads within {11,12,13,14} with a shrinking lead) is FALSIFIED — rule110 never leads in this window. This SHARPENS H_340: the rule110->rule30 crossover sits between n=10 and n=11, NOT between n=12 and n=14 as the H_337 n<=12 law had implied. The H_337 law (4|n<=>rule30) was already broken at n=11: n=11 is 4-not-div yet rule30 leads. Two consistent micro-findings: (1) the rule30 lead is monotone in 4-divisibility/parity within even-ring families (n=12 9.3x, n=14 29x — wait, both even; the lead grows with n for even rings), and (2) odd rings (n=11,13) keep rule110 closest (lead ratio 1.25-1.45) but rule110 still loses. The 4|n law's true validity window is therefore n<=10, not n<=12.",
+  "verdict": "🔴 FALSIFIED (H1: rule110 leads in {11..14}) — crossover is BELOW n=11; 4|n law window sharpened to n<=10",
+  "structural_vs_dynamical": "DYNAMICAL kernel. The discovery is a sharper regime boundary: the number-theoretic control (4|n) that H_337 reported actually fails at n=11 already (4-not-div n=11 -> rule30 wins), so the law's tested-valid window is n<=10. Beyond that, chaotic class-III rule30 owns the longest-cycle slot, with the gap growing in n.",
+  "honest_limits": [
+    "n=14 uses stride 8 (2048 of 16384 starts); n<=13 are FULL enumeration. The n=14 r30=1211 cross-validates H_340's stride-16 r30=1219, so the sampling is robust.",
+    "The exact crossover between n=10 and n=11 is bracketed but not pinned to a sub-integer; n is discrete so 'between 10 and 11' is the finest possible statement. H_337's own n=10 rule110-lead is the lower bracket (not re-measured here).",
+    "cap 16384 — rule30 cycles at n=14 (~1211 mean) are well under; no truncation observed.",
+    "Two rules only (rule30 vs rule110); other class-III rules may cross at different n.",
+    "H_337's n=6,10 rule110-leads are taken as given (the lower bracket); this cell measures the upper window {11..14} and finds rule30 already wins, so the bracket is [10, 11]."
+  ],
+  "discovery_note": "H_342가 H_340의 '4|n law = n<=12 artifact'를 더 날카롭게 정정: crossover는 n=12~14 사이가 아니라 n=10~11 사이. n=11(4-not-div)에서 이미 rule30이 이김 -> 4|n law의 실측 유효 window는 n<=10. odd ring(11,13)은 rule110을 가장 가깝게 유지(lead 1.25~1.45x)하지만 여전히 패배. H_340 n=14 rule30-dominance는 재확인+cross-validate(stride-8 r30=1211 vs stride-16 r30=1219). honest self-correction의 2차 정밀화."
+}
