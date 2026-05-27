@@ -1,0 +1,45 @@
+[H_624] IIT4 distinction × SAVANT cell isomorphism — axis C2
+  substrate: 4-cell ring, gain-modulated XOR-next + identity noise mix
+  measurement: savant phi_module vs IIT4 small-φ on singleton mechs
+  N=20 paired samples (5 profiles × 4 cells), Spearman ρ + Pearson r
+
+[profile 0 P0_BALANCED]
+  gains      = [2.875, 2.875, 2.875, 2.875]
+  cell_phi   = [0.45455, 0.343247, 0.44621, 0.346665]
+  dist_phi   = [0.312029, 0.312029, 0.312029, 0.312029]
+  argmax_cell=0 argmax_dist=0
+[profile 1 P1_CALENDAR_DOM]
+  gains      = [10.0, 0.5, 0.5, 0.5]
+  cell_phi   = [0.74468, 0.0697541, 0.0914688, 0.0875029]
+  dist_phi   = [0.393141, 0.129729, 0.129729, 0.129729]
+  argmax_cell=0 argmax_dist=0
+[profile 2 P2_MUSIC_DOM]
+  gains      = [0.5, 10.0, 0.5, 0.5]
+  cell_phi   = [0.102852, 0.608877, 0.0914688, 0.0875029]
+  dist_phi   = [0.129729, 0.393141, 0.129729, 0.129729]
+  argmax_cell=1 argmax_dist=1
+[profile 3 P3_ART_DOM]
+  gains      = [0.5, 0.5, 10.0, 0.5]
+  cell_phi   = [0.102852, 0.0697541, 0.750984, 0.0875029]
+  dist_phi   = [0.129729, 0.129729, 0.393141, 0.129729]
+  argmax_cell=2 argmax_dist=2
+[profile 4 P4_MEMORY_DOM]
+  gains      = [0.5, 0.5, 0.5, 10.0]
+  cell_phi   = [0.102852, 0.0697541, 0.0914688, 0.553019]
+  dist_phi   = [0.129729, 0.129729, 0.129729, 0.393141]
+  argmax_cell=3 argmax_dist=3
+
+[pool] N=20 paired samples
+  Spearman ρ = 0.860839
+  Pearson  r = 0.97149
+  argmax-match (non-balanced) = 4/4
+  byte_eq    = true
+
+F1 PASS — Spearman ρ ≥ 0.7  (ISOMORPH-STRONG)
+F2 PASS — Spearman ρ ≥ 0.5  (ISOMORPH-WEAK)
+F3 PASS — Pearson r ≥ 0.5  (linear consistency)
+F4 PASS — per-profile argmax match 4/4
+F5 PASS — byte_eq recompute identical
+
+[H_624] verdict = SUPPORTED
+[H_624] summary  rho=0.860839  r=0.97149  argmax=4/4  byte_eq=true
