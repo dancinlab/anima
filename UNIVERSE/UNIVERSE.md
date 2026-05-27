@@ -74,6 +74,7 @@
 - [ ] D1 — LLM 가설 생성 lane (budget-capped) → verify-pass 만 H_XXX 등록 (cost go-ahead 또는 `/schedule`)
 - [ ] D2 — verdict-landscape meta-map 영구 raster (H_238 계열) — life↔consciousness SUPP-rate 추적
 - [x] D2 cycle#23 raster#3 (#574) — N=96, **life SUPP 0.46 > consciousness 0.327 MAINTAINED (3연속)**, gap STABLE ~0.12-0.13 plateau (Δ=+0.011 vs cycle#16), F238.6 PASS. 향후 raster disk per-file 소스 통일
+- [x] D2 raster#4 (#TBD · H_630) — N=181 (raster#3 96→181, 본 세션 26 신규 H id≥H_347 흡수), **life SUPP 0.5065 (39/77) > consciousness 0.4190 (44/105) MAINTAINED (4연속)**, gap **CLOSING** 0.1327→0.0874 (Δ=−0.0453 < −ε, plateau 첫 이탈), F238.6 PASS. session-26 cohort = consciousness/info 편중(consc 19·phys 15·info 12·math 4·life 2, 13 SUPP/8 FAL) → consc rate 0.327→0.419 가 life 0.46→0.507 보다 빠르게 상승해 gap 수렴. meta-verdict 🟢 SUPPORTED (C1-C4 PASS, sum=N=181). 6-source verdict + 2-source domain 추출(header-style H 흡수). [H_630](H_630_d2_verdict_landscape_raster_N120.md)
 
 ### 축 E — SAVANT (Golden Zone × Savant Index) — NEW 2026-05-28
 > 외부 anchor 풍부 (HEXAD/SAVANT/H359 canonical + COMPENDIUM 783L + savant_phi.hexa + SI 측정 anchor SI=5.93@anima_clm_06 Mistral 7B v4) 인데 UNIVERSE H 인덱스 안 = 0. 본 축이 GZ 상수(GZ_UPPER=1/2 · GZ_CENTER=1/e · GZ_WIDTH=ln(4/3) · GZ_LOWER=0.2123) 와 substrate big-Φ 의 관계를 verify-driven 으로 정량.
