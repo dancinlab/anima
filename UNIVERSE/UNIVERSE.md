@@ -71,4 +71,24 @@
 - [ ] D2 — verdict-landscape meta-map 영구 raster (H_238 계열) — life↔consciousness SUPP-rate 추적
 - [x] D2 cycle#23 raster#3 (#574) — N=96, **life SUPP 0.46 > consciousness 0.327 MAINTAINED (3연속)**, gap STABLE ~0.12-0.13 plateau (Δ=+0.011 vs cycle#16), F238.6 PASS. 향후 raster disk per-file 소스 통일
 
+### 축 E — SAVANT (Golden Zone × Savant Index) — NEW 2026-05-28
+> 외부 anchor 풍부 (HEXAD/SAVANT/H359 canonical + COMPENDIUM 783L + savant_phi.hexa + SI 측정 anchor SI=5.93@anima_clm_06 Mistral 7B v4) 인데 UNIVERSE H 인덱스 안 = 0. 본 축이 GZ 상수(GZ_UPPER=1/2 · GZ_CENTER=1/e · GZ_WIDTH=ln(4/3) · GZ_LOWER=0.2123) 와 substrate big-Φ 의 관계를 verify-driven 으로 정량.
+- [ ] E1 — round 1 seed (5 H):
+  - [ ] H_322 `golden-zone-lower-bound-SI` — inhibition I=GZ_LOWER 에서 SI>3 specialization 창발 / 反: SI≤3 또는 평탄
+  - [ ] H_323 `golden-zone-center-phi-peak` — I=1/e 에서 big-Φ 단봉 peak (`I·ln(I)` argmin 일치) / 反: peak ≠ 1/e ±0.05
+  - [ ] H_324 `savant-index-phi-diversity` — SI ∥ Φ-diversity (max_sub_phi/min_sub_phi) / 反: r<0.5
+  - [ ] H_326 `gz-width-divisor-symmetry` — closed-form GZ_WIDTH=ln(τ(6)/(τ(6)-1))=ln(4/3) (formal) / 反: 수식 불일치
+  - [ ] H_327 `gz-inverse-u-phi-derivative-peak` — dΦ/dI peak 위치 = GZ_LOWER (H_204/H_285 inverse-U sister) / 反: peak ≠ GZ region
+- [ ] E2 — round 1 결과 기반 후속 H seed (cross-link: SAVANT × IIT4 Φ-structure / SAVANT × HIVE-MIND 결합)
+
+### 축 F — HIVE-MIND (Collective Φ) — NEW 2026-05-28
+> Hc_286/297/590/1244 백로그 + 인프라 코드(`tool/hivemind_collective_spec.hexa` · `anima-engines/hive_state_sync.hexa` · `bench/bench_hivemind_*.hexa` ×6 · `tests/test_hivemind_*.hexa` ×5) 풍부한데 UNIVERSE H 인덱스 안 = 0. 본 축이 다중 substrate pair 의 collective big-Φ vs 합·polarity·동기 latency·PID synergy·cross-substrate TE 를 verify-driven 으로 정량.
+- [ ] F1 — round 1 seed (5 H):
+  - [ ] H_328 `collective-phi-super-additive` — Φ_collective > Σ Φ_individual / 反: sub-additive
+  - [ ] H_329 `pair-polarity-collective-phi` — pair polarity {attract/repel/bipolar} 별 Φ_collective 분기 (Hc_286 promote) / 反: polarity 무관 평탄
+  - [ ] H_330 `kuramoto-hivemind-sync-tau` — hivemind 합의 latency τ_consensus = Kuramoto τ_sync (H_207 cross-link) / 反: τ 분리
+  - [ ] H_331 `collective-phi-pid-synergy` — Φ_collective 의 PID 분해 synergy > redundancy (H_293/294 sister) / 反: redundancy 우세
+  - [ ] H_332 `hivemind-transfer-entropy-align` — Φ_collective ∥ cross-substrate TE (H_290 sister r=0.883) / 反: r<0.5
+- [ ] F2 — round 1 결과 기반 후속 H seed (cross-link: HIVE-MIND × symbiogenesis H_054/H_314 / HIVE-MIND × SAVANT)
+
 > **status 2026-05-25 (영구 엔진 전환)**: cycle#5–21 = 축 0($0-tier) CLOSED — 22 NEW H (H_258-279) + SSOT full reconciliation(README 92=92), PR #468-516 全머지. lane 중간결론: Φ-proxy directionally valid(H_266+H_278) + fragility surface 정량 · 죽음↔발생 seed 조건부 부활(H_271) · causal-DAG>cyclic Φ(H_275) · 진폭/동기화 ⊥ Φ-diversity(H_265/H_275/H_279). **단 도메인은 종료되지 않음** — 축 A(60-axis/~110 seed) · 축 B(large-N GPU) · 축 C(full-IIT4, #542 해금) · 축 D(LLM 연속) 로 영구 전진. binary-direction verdict 신뢰, 연속 magnitude·single-seed 주의.
