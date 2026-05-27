@@ -1,0 +1,60 @@
+error: `hexa build /tmp/h330.hexa` failed (compile error).
+=== Building /tmp/h330.hexa -> /home/summer/.hexa-cache/hexa_run.10b88b33939847d6_0.1.0-dispatch.tmp.137149733718258 ===
+  [1/2] HEXA_MEM_CAP_MB=4096 /home/summer/core/hexa-lang/build/hexat /tmp/h330.hexa build/artifacts/hexa_run.10b88b33939847d6_0.1.0-dispatch.tmp.137149733718258.c 2>&1
+    OK: build/artifacts/hexa_run.10b88b33939847d6_0.1.0-dispatch.tmp.137149733718258.c
+
+  [2/2] clang -O2 -D_GNU_SOURCE -DHEXA_HAS_OPENSSL  -Wno-trigraphs -fbracket-depth=4096 -I '/home/summer/core/hexa-lang/self' build/artifacts/hexa_run.10b88b33939847d6_0.1.0-dispatch.tmp.137149733718258.c '/home/summer/.hexa-cache/runtime.e0db4fb082992a3faf1652d3f84c9aa313ee3b18.o' -o '/home/summer/.hexa-cache/hexa_run.10b88b33939847d6_0.1.0-dispatch.tmp.137149733718258.tmp.1935334' -lm -lpthread -lssl -lcrypto 2>&1
+    In file included from build/artifacts/hexa_run.10b88b33939847d6_0.1.0-dispatch.tmp.137149733718258.c:2:
+/home/summer/core/hexa-lang/self/runtime.h:422:28: warning: '/*' within block comment [-Wcomment]
+  422 | /* ── Additional native/*.c forward-decls (auto-generated 2026-05-15) ──
+      |                        ^
+/home/summer/core/hexa-lang/self/runtime.h:423:36: warning: '/*' within block comment [-Wcomment]
+  423 |  * Sourced from grep of self/native/*.c hexa_* definitions; ensures user.c
+      |                                    ^
+build/artifacts/hexa_run.10b88b33939847d6_0.1.0-dispatch.tmp.137149733718258.c:6:9: error: conflicting types for 'fsqrt'
+    6 | HexaVal fsqrt(HexaVal x);
+      |         ^
+/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:36:20: note: previous declaration is here
+   36 | __MATHCALL_NARROW (__MATHCALL_NAME (sqrt), __MATHCALL_REDIR_NAME2 (sqrt), 1);
+      |                    ^
+/usr/include/math.h:565:32: note: expanded from macro '__MATHCALL_NAME'
+  565 | # define __MATHCALL_NAME(name) f ## name
+      |                                ^
+<scratch space>:306:1: note: expanded from here
+  306 | fsqrt
+      | ^
+build/artifacts/hexa_run.10b88b33939847d6_0.1.0-dispatch.tmp.137149733718258.c:77:9: error: conflicting types for 'fsqrt'
+   77 | HexaVal fsqrt(HexaVal x) {
+      |         ^
+/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:36:20: note: previous declaration is here
+   36 | __MATHCALL_NARROW (__MATHCALL_NAME (sqrt), __MATHCALL_REDIR_NAME2 (sqrt), 1);
+      |                    ^
+/usr/include/math.h:565:32: note: expanded from macro '__MATHCALL_NAME'
+  565 | # define __MATHCALL_NAME(name) f ## name
+      |                                ^
+<scratch space>:306:1: note: expanded from here
+  306 | fsqrt
+      | ^
+build/artifacts/hexa_run.10b88b33939847d6_0.1.0-dispatch.tmp.137149733718258.c:115:24: error: passing 'HexaVal' (aka 'struct HexaVal_') to parameter of incompatible type 'double'
+  115 |     HexaVal sd = fsqrt(m2);
+      |                        ^~
+/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:36:1: note: passing argument to parameter '__x' here
+   36 | __MATHCALL_NARROW (__MATHCALL_NAME (sqrt), __MATHCALL_REDIR_NAME2 (sqrt), 1);
+      | ^
+/usr/include/math.h:559:3: note: expanded from macro '__MATHCALL_NARROW'
+  559 |   __MATHCALL_NARROW_NORMAL (func, nargs)
+      |   ^
+/usr/include/math.h:554:22: note: expanded from macro '__MATHCALL_NARROW_NORMAL'
+  554 |   extern _Mret_ func __MATHCALL_NARROW_ARGS_ ## nargs __THROW
+      |                      ^
+<scratch space>:307:1: note: expanded from here
+  307 | __MATHCALL_NARROW_ARGS_1
+      | ^
+/usr/include/math.h:550:42: note: expanded from macro '__MATHCALL_NARROW_ARGS_1'
+  550 | #define __MATHCALL_NARROW_ARGS_1 (_Marg_ __x)
+      |                                          ^
+2 warnings and 3 errors generated.
+
+error: clang compile failed — binary not produced: /home/summer/.hexa-cache/hexa_run.10b88b33939847d6_0.1.0-dispatch.tmp.137149733718258.tmp.1935334
+__HEXA_BRC__=1
+
