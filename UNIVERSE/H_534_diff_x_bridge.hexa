@@ -1,3 +1,0 @@
-fn disjoint_role(r: string) -> bool { return r == "cap" || r == "intent" || r == "stem" }
-fn check_h534() -> bool { return disjoint_role("cap") && disjoint_role("intent") && !disjoint_role("both") }
-fn main() { if check_h534() { print("H_534 OK") } else { print("H_534 FAIL") } }

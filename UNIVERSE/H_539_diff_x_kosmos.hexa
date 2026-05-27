@@ -1,3 +1,0 @@
-fn lane_for_role(role: string) -> string { if role == "emit" { return "emit_lane" } if role == "spike" { return "akida" } return "anima" }
-fn check_h539() -> bool { return lane_for_role("spike") == "akida" }
-fn main() { if check_h539() { print("H_539 OK") } else { print("H_539 FAIL") } }

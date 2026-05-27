@@ -1,3 +1,0 @@
-fn split_then_prune(n_before: i64, weak_child: bool) -> i64 { let post_split = n_before + 1; if weak_child { return post_split - 1 } return post_split }
-fn check_h518() -> bool { let stay = split_then_prune(10, true) == 10; let grow = split_then_prune(10, false) == 11; return stay && grow }
-fn main() { if check_h518() { print("H_518 OK") } else { print("H_518 FAIL") } }

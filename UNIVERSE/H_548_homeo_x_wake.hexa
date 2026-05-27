@@ -1,4 +1,0 @@
-fn stage_dur(s: string) -> i64 { if s == "WAKE" { return 20 } if s == "N1" { return 10 } if s == "N2" { return 25 } if s == "N3" { return 20 } return 15 }
-fn total() -> i64 { return stage_dur("WAKE")+stage_dur("N1")+stage_dur("N2")+stage_dur("N3")+stage_dur("REM") }
-fn check_h548() -> bool { return total() == 90 }
-fn main() { if check_h548() { print("H_548 OK") } else { print("H_548 FAIL") } }

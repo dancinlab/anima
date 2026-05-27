@@ -1,3 +1,0 @@
-fn kv_size_after(cur: i64, max: i64) -> i64 { if cur >= max { return max } return cur + 1 }
-fn check_h527() -> bool { return kv_size_after(99, 100) == 100 && kv_size_after(100, 100) == 100 }
-fn main() { if check_h527() { print("H_527 OK") } else { print("H_527 FAIL") } }

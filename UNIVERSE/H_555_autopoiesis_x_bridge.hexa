@@ -1,4 +1,0 @@
-fn produces(a: bool) -> bool { return a }
-fn loop_closed(cap: bool) -> bool { let intent = produces(cap); let cap2 = produces(intent); return cap == cap2 }
-fn check_h555() -> bool { return loop_closed(true) && loop_closed(false) }
-fn main() { if check_h555() { print("H_555 OK") } else { print("H_555 FAIL") } }

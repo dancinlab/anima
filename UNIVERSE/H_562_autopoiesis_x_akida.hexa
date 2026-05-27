@@ -1,3 +1,0 @@
-fn self_spike(recurrent_w: f64, threshold: f64) -> bool { return recurrent_w > threshold }
-fn check_h562() -> bool { return self_spike(0.8, 0.5) && !self_spike(0.2, 0.5) }
-fn main() { if check_h562() { print("H_562 OK") } else { print("H_562 FAIL") } }

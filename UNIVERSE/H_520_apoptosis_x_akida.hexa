@@ -1,3 +1,0 @@
-fn silent_apo(spike_rate: f64, theta: f64) -> bool { return spike_rate < theta }
-fn check_h520() -> bool { let s = silent_apo(0.01, 0.1); let n = !silent_apo(0.5, 0.1); return s && n }
-fn main() { if check_h520() { print("H_520 OK") } else { print("H_520 FAIL") } }
