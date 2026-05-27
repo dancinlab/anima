@@ -1,8 +1,8 @@
 # ANIMA emit-substrate 설계 — 통합 Φ-envelope 층 (2026-05-28)
 
-> UNIVERSE Round 6+7+8 (H_632~653) 검증 결과를 ANIMA emit 정책 구현 아키텍처로
+> UNIVERSE Round 6+7+8+9 (H_632~657) 검증 결과를 ANIMA emit 정책 구현 아키텍처로
 > 옮긴 설계. **구조는 한 곳(공유 substrate lib), 숫자는 한 곳(자유 정책 표)**.
-> round-8 4 seam **4/4 ABSORBED** · round-9 **3/4 ABSORBED** (H_654/655/656 · H_657 carry, §5).
+> round-8 4 seam **4/4 ABSORBED** · round-9 **4/4 ABSORBED** (H_654/655/656/657, §5) — round-9 완료.
 > round-9 발견: substrate-class 는 **다축 분류자** (속성마다 우위 class 다름, 단일 순위 환원 불가).
 >
 > 상태: **design-tier** (코드 미선행) · `a_completeness_over_cheap` 정합 (본선=재설계).
@@ -66,7 +66,8 @@ emit 정책이 **물리적으로 두 층**임을 확정함:
 | "shape robust > scalar" 일반 | 🔴 H_642·H_647 | #1236·#1239 | **일반화 금지** | polarity(H_628)만 예외 |
 | **shape-robustness taxonomy 완성** | 🟢 H_650 | #1247 | `phi_smooth_no_cliff()` 축-조건부 | polarity CV_shape=0 (HIGH robust) · rule tie · seed 역전 (LOW) — robustness=perturbation-축 함수 |
 | **super-additive Δ = class-II 最高 (역전)** | 🔴 H_655 | #1253 | `pe_superadd_for_class()` | Δ ⊥ convexity 순위 — class 는 다축 분류자 (단일 스칼라 환원 불가) |
-| **closure-band = class 의존** | 🟢 H_656 | #1251 | BRIDGE wiring (H_657 carry) | additive=0 · II/III=0.65 · IV=0.90 全역 |
+| **closure-band = class 의존** | 🟢 H_656 | #1251 | BRIDGE wiring | additive=0 · II/III=0.65 · IV=0.90 全역 |
+| **dΦ/dI peak=GZ 정렬 = class 의존** | 🟢 H_657 | #1256 | `pe_peak_align_for_class()` | III+IV 정렬(|Δ|=0.032) · II/additive 이탈 (n 2/5) |
 | **Φ-magnitude class-order** | 🟡 H_654 | #1250 | (룩업 carry) | PARTIAL — III-chaotic 最高 |
 
 설계 규칙 (verdict 직속):
@@ -241,8 +242,14 @@ class→**property-vector** 로 분리. `collective_phi_nest(phis, class_id)` �
 `pe_coupling_for_class` (convexity/sync, H_653 IV-最高). phi_collective 의 Δ 를
 convexity-coupling 에서 **분리** (이전 골격이 묶어둔 것을 H_655 가 정정).
 
-**미흡수 (carry)**: H_657 (dΦ/dI peak=GZ class 의존, 진행 중) — 도착 시 BRIDGE wiring
-의 closure 정렬 class-서명으로 흡수. magnitude(H_654 🟡) 는 PARTIAL 이라 룩업 미확정.
+**✅ H_657 ABSORBED (round-9 완료 · 4/4)**: dΦ/dI peak=GZ_LOWER 정렬도 class-conditional
+(III+IV 정렬 |Δ|=0.032 · II/additive 이탈, n 2/5) — `pe_peak_align_for_class(class_id)` 추가
+(III/IV→1.0 · 그 외→0.0). 다축 분류자 5번째 축 확정. H_351 single-substrate SUPPORTED 는
+universal anchor 아님. **잔여 carry**: magnitude(H_654 🟡 PARTIAL) 만 룩업 미확정.
+
+**round-9 종합 — substrate-class = 5축 property-vector** (단일 순위 환원 불가):
+convexity(IV) ⊥ super-add(II 역전) ⊥ closure-band(IV) ⊥ peak-align(III+IV) ⊥ magnitude(III🟡).
+공통 불변: additive(rule90)만 거의 모든 축 바닥(Φ≈0).
 
 ---
 

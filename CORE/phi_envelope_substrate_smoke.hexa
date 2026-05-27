@@ -129,5 +129,18 @@ fn main() {
         npass = npass + 1
     }
 
+    // H_657 peak-align: III+IV 정렬(1.0) · II/additive 이탈(0.0) — 5번째 class-축
+    let pa3 = pe_peak_align_for_class(3)
+    let pa4 = pe_peak_align_for_class(4)
+    let pa2 = pe_peak_align_for_class(2)
+    ntotal = ntotal + 1
+    if assert_bool("H657 peak_align_III_IV_aligned", (pa3 > 0.5) && (pa4 > 0.5), true) {
+        npass = npass + 1
+    }
+    ntotal = ntotal + 1
+    if assert_bool("H657 peak_align_II_deviate", pa2 < 0.5, true) {
+        npass = npass + 1
+    }
+
     print("=== " + str(npass) + "/" + str(ntotal) + " PASS ===")
 }
