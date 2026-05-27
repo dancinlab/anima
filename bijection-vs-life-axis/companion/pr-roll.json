@@ -1,1 +1,42 @@
-[]
+{
+  "repo": "dancinlab/anima",
+  "paper": "bijection-vs-life-axis",
+  "generated": "2026-05-27",
+  "note": "Every cell is a merged PR on main; verdict earned by independent deterministic recompute (commons @D g73). 0 fake-blue across the session.",
+  "cells": [
+    {"H": "H_312", "pr": 1037, "axis": "APOPTOSIS x IIT4", "verdict": "FALSIFIED",  "kernel": "STRUCTURAL"},
+    {"H": "H_313", "pr": 1036, "axis": "PLASTICITY x STDP", "verdict": "SUPPORTED", "kernel": "DYNAMICAL"},
+    {"H": "H_314", "pr": 1038, "axis": "SYMBIOGENESIS x merge", "verdict": "FALSIFIED", "kernel": "STRUCTURAL"},
+    {"H": "H_315", "pr": 1039, "axis": "PRUNING x IIT4 edge", "verdict": "FALSIFIED", "kernel": "STRUCTURAL"},
+    {"H": "H_316", "pr": 1040, "axis": "local-greedy vs global Phi", "verdict": "SUPPORTED", "kernel": "META"},
+    {"H": "H_317", "pr": 1041, "axis": "HOMEOSTASIS x feedback", "verdict": "SUPPORTED", "kernel": "DYNAMICAL"},
+    {"H": "H_318", "pr": 1042, "axis": "AUTOPHAGY x recycle", "verdict": "SUPPORTED-CONDITIONAL", "kernel": "HYBRID"},
+    {"H": "H_319", "pr": 1044, "axis": "CLONAL-SELECTION", "verdict": "FALSIFIED", "kernel": "HYBRID"},
+    {"H": "H_320", "pr": 1048, "axis": "life vs consc rd_ratio", "verdict": "FALSIFIED-reversed", "kernel": "STRUCTURAL", "paper_D": "D1"},
+    {"H": "H_321", "pr": 1046, "axis": "C1 H_278 faithful recheck", "verdict": "SUPPORTED", "kernel": "STRUCTURAL"},
+    {"H": "H_322", "pr": 1049, "axis": "CIRCADIAN Kuramoto", "verdict": "SUPPORTED", "kernel": "DYNAMICAL"},
+    {"H": "H_325", "pr": 1061, "axis": "Gini of phi_d", "verdict": "SUPPORTED-CONDITIONAL", "kernel": "STRUCTURAL", "paper_D": "D2"},
+    {"H": "H_326", "pr": 1050, "axis": "verdict-landscape raster (10-cell)", "verdict": "SUPPORTED-PARTIAL", "kernel": "META"},
+    {"H": "H_327", "pr": 1065, "axis": "REGENERATION attractor recovery", "verdict": "FALSIFIED", "kernel": "DYNAMICAL"},
+    {"H": "H_328", "pr": 1068, "axis": "cycle length n=4", "verdict": "SUPPORTED-CONDITIONAL", "kernel": "DYNAMICAL", "paper_D": "D3"},
+    {"H": "H_329", "pr": 1071, "axis": "metric-triangulation 3-descriptor", "verdict": "FALSIFIED", "kernel": "DYNAMICAL"},
+    {"H": "H_330", "pr": 1076, "axis": "distribution moments + bijection", "verdict": "FALSIFIED", "kernel": "DYNAMICAL", "paper_D": "D4"},
+    {"H": "H_331", "pr": 1078, "axis": "extended raster 17-cell", "verdict": "SUPPORTED-CONDITIONAL", "kernel": "META"},
+    {"H": "H_332", "pr": 1081, "axis": "EPIGENETICS attractor dominance", "verdict": "SUPPORTED", "kernel": "DYNAMICAL"},
+    {"H": "H_333", "pr": 1083, "axis": "n=6 scale-rotation", "verdict": "SUPPORTED-CONDITIONAL", "kernel": "DYNAMICAL"},
+    {"H": "H_334", "pr": 1089, "axis": "n=8 dominance oscillation", "verdict": "FALSIFIED-on-H1", "kernel": "DYNAMICAL"},
+    {"H": "H_335", "pr": 1090, "axis": "EPIGENETICS phase-sweep permanence", "verdict": "SUPPORTED", "kernel": "DYNAMICAL"},
+    {"H": "H_336", "pr": 1091, "axis": "rule x rule dominance map", "verdict": "SUPPORTED", "kernel": "DYNAMICAL"},
+    {"H": "H_337", "pr": 1092, "axis": "oscillation 4-divisibility law", "verdict": "SUPPORTED", "kernel": "DYNAMICAL"},
+    {"H": "H_338", "pr": 1094, "axis": "basin size vs dominance rank", "verdict": "SUPPORTED", "kernel": "DYNAMICAL"}
+  ],
+  "infrastructure_prs": [
+    {"pr": 1027, "repo": "anima", "what": "discard fake-closure matrix (530 H>=340 tautology smokes)"},
+    {"pr": 1034, "repo": "anima", "what": "discard directive-cite fake-closure (H_315-339 self-certify)"},
+    {"pr": 1512, "repo": "hexa-lang", "what": "verify primitives binary_entropy + kl_divergence_bernoulli"},
+    {"pr": 185,  "repo": "sidecar", "what": "commons @D g73 anti-fake-closure governance"},
+    {"pr": 184,  "repo": "sidecar", "what": "inbox RFC: harness-enforced verdict-gate hooks"},
+    {"pr": 1087, "repo": "anima", "what": "this paper draft v1"}
+  ],
+  "tally": {"supported": 9, "supported_conditional": 5, "falsified": 8, "meta": 3, "fake_blue": 0, "total_cells": 25}
+}
