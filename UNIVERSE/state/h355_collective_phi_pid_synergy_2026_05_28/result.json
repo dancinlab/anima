@@ -1,0 +1,51 @@
+{
+  "id": "H_355",
+  "slug": "collective-phi-pid-synergy",
+  "date": "2026-05-28",
+  "substrate": "hivemind toy: 3 binary substrates × 1 cell, 8-state, coupling K via XOR cell density",
+  "method": "3-source net co-information II_3 per cell; sign convention II_3 > 0 = synergy, II_3 < 0 = redundancy (3-source / odd-parity; opposite of 2-source II_c in H_294)",
+  "pid_definition": "net McGill 3-variate co-information = ΣI(T;S_i) - ΣI(T;S_i,S_j) + I(T;S_0,S_1,S_2). Net summary, NOT full Williams-Beer 18-atom trivariate PID lattice.",
+  "permutation_seeds": 8,
+  "K_buckets": [0.0, 0.33, 0.67, 1.0],
+  "table": [
+    {"K": 0.0,  "mask": [0,0,0], "synergy": 0.0, "redundancy": 0.0, "synergy_ratio": 0.0},
+    {"K": 0.33, "mask": [1,0,0], "synergy": 1.0, "redundancy": 0.0, "synergy_ratio": 1.0},
+    {"K": 0.33, "mask": [0,1,0], "synergy": 1.0, "redundancy": 0.0, "synergy_ratio": 1.0},
+    {"K": 0.33, "mask": [0,0,1], "synergy": 1.0, "redundancy": 0.0, "synergy_ratio": 1.0},
+    {"K": 0.67, "mask": [1,1,0], "synergy": 2.0, "redundancy": 0.0, "synergy_ratio": 1.0},
+    {"K": 0.67, "mask": [1,0,1], "synergy": 2.0, "redundancy": 0.0, "synergy_ratio": 1.0},
+    {"K": 0.67, "mask": [0,1,1], "synergy": 2.0, "redundancy": 0.0, "synergy_ratio": 1.0},
+    {"K": 1.0,  "mask": [1,1,1], "synergy": 3.0, "redundancy": 0.0, "synergy_ratio": 1.0}
+  ],
+  "K_bucket_means": {
+    "K=0.00": {"mean_synergy": 0.0, "mean_redundancy": 0.0, "mean_ratio": 0.0},
+    "K=0.33": {"mean_synergy": 1.0, "mean_redundancy": 0.0, "mean_ratio": 1.0},
+    "K=0.67": {"mean_synergy": 2.0, "mean_redundancy": 0.0, "mean_ratio": 1.0},
+    "K=1.00": {"mean_synergy": 3.0, "mean_redundancy": 0.0, "mean_ratio": 1.0}
+  },
+  "mean_nontrivial_K_ratio": 1.0,
+  "K_dependency": "synergy strictly monotone increasing in K (XOR cell density): 0 → 1 → 2 → 3 across K {0, 0.33, 0.67, 1.0}",
+  "falsifiers": {
+    "F355.1_pure_synergy_anchor": "PASS (K=1 synergy=3, redundancy=0)",
+    "F355.2_pure_identity_anchor": "PASS (K=0 synergy=0, redundancy=0)",
+    "F355.3_synergy_ratio_verdict": "SUPPORTED (mean ratio = 1.0 > 0.5)",
+    "F355.4_K_monotonic": "PASS (synergy 0 ≤ 1 ≤ 2 ≤ 3)",
+    "F355.5a_bound": "PASS (0 ≤ synergy ≤ 3, redundancy ≥ 0 all 8 perms)",
+    "F355.5b_determinism": "PASS (K=1 re-run byte-identical)"
+  },
+  "PASS": 5,
+  "FAIL": 0,
+  "verdict": "🟢 SUPPORTED-NUMERICAL",
+  "verdict_summary": "collective-Φ flow is synergy-dominant across the K sweep (mean synergy_ratio = 1.0 on 8 permutations × 4 K-buckets). XOR-coupled hivemind cells produce pure-synergy net co-information; identity cells produce zero net co-info (pure unique-info). Redundancy = 0 throughout (XOR-family substrate, sources independent under uniform ensemble).",
+  "runtime_seconds": 0.1,
+  "cost_usd": 0.0,
+  "honest_limits": [
+    "L1: net 3-source co-info (NOT full 18-atom Williams-Beer trivariate PID lattice; only net synergy/redundancy summary, mirrors H_294 net II_c approach)",
+    "L2: XOR-family substrate ⇒ redundancy is identically 0 (sources independent under uniform ensemble). Redundancy>0 substrate (copy/majority hivemind) needed for symmetric test",
+    "L3: small substrate (3 × 1-cell binary; 8 source states); larger n hivemind needs separate verify",
+    "L4: deterministic permutation enumeration (8 masks total), not stochastic seeds — robustness comes from K-monotonicity across the full mask set, not multi-seed RNG variance",
+    "L5: PID sign-convention sensitivity (MMI vs Idtxl vs Bertschinger). McGill net co-info chosen for 0-axiom continuity with H_294; alternative definitions could relabel net synergy magnitudes (but not direction across the K monotone)",
+    "L6: toy substrate = flow proxy, NOT phenomenal collective consciousness",
+    "L7: collective Φ NOT directly measured here — claim is about the PID structure of the cross-substrate information flow, sister to H_290/293/294 which all bear the same caveat"
+  ]
+}
