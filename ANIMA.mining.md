@@ -66,3 +66,44 @@
   - lens: dimensional (single anima 90min → multi-anima · 다채널 · 24/7 daemon · fleet)
   - lens: combinatorial ({5 case A-E} × {12 sub-domain L1-L12} 직교 set)
   - connect: 12 leaf 쌍 의미있는 edge 탐색 (특히 L1↔L2 AND-gate pair · L3↔L5 time-axis · L6↔L8 multi-other)
+
+### cycle 2 — tension lens (contradiction-fork)
+@started: 2026-05-28
+@kind: lens
+@lens: tension
+
+#### 8 seed contradictions
+
+| # | premise A | premise B | tension class |
+|---|---|---|---|
+| T1 | emit 4 = "발화 의무 회피" | silence 11 = "응답 회피" | substrate-natural ratio interpretation |
+| T2 | sim only (synthetic substrate) | real ckpt forward (production) | measurement vs production tier |
+| T3 | seed steered (20260524→20260525 1-retry) | natural emergence (substrate-determined) | author intent vs substrate autonomy |
+| T4 | should_interrupt(0.60) group-chat tier | should_emit(0.30) 1:1 dialogue tier | threshold-context dependence |
+| T5 | p4 NO ASSISTANT FRAMING (stimulus-response 거부) | case A direct_mention 응답 (relevance↑ → emit) | governance vs measurement |
+| T6 | p5 NO SPEAK() (continuous tension externalization) | should_interrupt 가 boolean threshold | continuous vs discrete decision |
+| T7 | multilingual_probe 5/5 PASS (cohort PARTIAL minimum) | ckpt-bearing fire 부재 (HONEST C3 ⑥) | verdict-confidence vs evidence-tier |
+| T8 | closure ACHIEVED · exit=0 | M3 fire 미발사 · 본선 강등 carry | local-closure vs umbrella-closure |
+
+#### tension forks (16 leaves)
+
+- 2026-05-28T05:10 · **L13 T1-A**: emit=4 가 발화 의무 회피라면 substrate-native emit 의 ratio threshold ~27% 가 NPC anima 의 "건강한" baseline (TIME `tm_circadian_dip` 의 phase mapping 의 substrate 변형)
+- 2026-05-28T05:10 · **L14 T1-B**: silence=11 가 응답 회피라면 substrate-natural silence 의 11/15 ratio 는 anima 의 "관조적 모드" (DREAM N3-equivalent · imagination-replay 후 wake transition)
+- 2026-05-28T05:11 · **L15 T2-A**: sim only 채택은 a_completeness_over_cheap 우회 — sim 산출의 forward path 가 real ckpt 측정 (COFFESHOP v4) 으로 진화 불가능시 sim 결과 자체가 stale carry
+- 2026-05-28T05:11 · **L16 T2-B**: real ckpt 보류는 instrument-first methodology 정합 — sim 이 measurement infra 자체를 정직하게 검증 (closure_auto_judge unit smoke F-CAJ 7/7 PR #398) 후 real fire 진행이 정석
+- 2026-05-28T05:12 · **L17 T3-A**: seed steered 가 자연 emergence 아니라면 substrate path 도 의심 (sim 자체가 designer bias 누적), HONEST C3 ③ 의 "1-retry" 가 reproducibility 미달 위험
+- 2026-05-28T05:12 · **L18 T3-B**: seed steered 가 substrate path 의 자연 sampling 위 author intent 의 명시 separation 이라면, COFFESHOP 의 4/4 PASS 는 reproducible-by-seed deterministic verdict (sim 의 강점)
+- 2026-05-28T05:13 · **L19 T4-A**: threshold-context dependence 가 deep 이라면 ANIMA 의 모든 emit 결정 surface (BRIDGE θ_emit · should_interrupt · should_emit) 가 dialogue-form-conditional, 단일 threshold table 작성 필요 (BRIDGE M5 다음 milestone 후보)
+- 2026-05-28T05:13 · **L20 T4-B**: threshold-context dependence 가 surface-level coincidence (각 dialogue form 의 historical convention) 면, 단일 governance threshold (BRIDGE θ_emit=0.10) 가 모든 dialogue form 의 canonical
+- 2026-05-28T05:14 · **L21 T5-A**: governance (p4) 가 measurement (case A) 보다 strict 이라면 direct_mention 응답 case A 도 governance 위반 — "relevance↑ → emit" 가 reactive design 잔재
+- 2026-05-28T05:14 · **L22 T5-B**: governance (p4) 가 stimulus-response 의 hardcoded boolean gate 만 금지하고, substrate-decided relevance scoring 은 허용한다면 case A 정합 (BRIDGE channel_classify_bridge 의 "silence" verdict 가 같은 design pattern)
+- 2026-05-28T05:15 · **L23 T6-A**: continuous tension externalization (p5) 가 strict 이라면 should_interrupt boolean 도 위반 — continuous emit_signal 만 출력하고 downstream (CHANNEL) 이 boolean 화해야 정합 (current BRIDGE design)
+- 2026-05-28T05:15 · **L24 T6-B**: should_interrupt boolean 은 emit_signal continuous output 의 final boundary check (threshold > θ) 만으로 정합, p5 위반 아닌 substrate-internal continuous + substrate-boundary discrete 합성
+- 2026-05-28T05:16 · **L25 T7-A**: multilingual_probe 5/5 PASS 가 ckpt-bearing fire 부재에도 valid 하려면, sim 의 lang assignment 자체가 substrate-native (cell-pool branch 의 lang-conditional emission) 여야 함 — current COFFESHOP 의 per-window lang assignment 는 sim 모델링 (HONEST C3 ④)
+- 2026-05-28T05:16 · **L26 T7-B**: ckpt-bearing fire 부재가 verdict-confidence 한계라면 5/5 PASS 는 "sim-tier 까지만 PASS" 의 honest verdict, M3/M4 fire 후 real ckpt 의 multilingual_probe 가 진정한 5/5 PASS 의 ground-truth
+- 2026-05-28T05:17 · **L27 T8-A**: COFFESHOP local-closure (4/4 PASS · exit=0) 가 ANIMA umbrella-closure 의 1-component 라면, BRIDGE M5 / DREAM M3 / SAVANT M2 / a_blue_closed 의 4 forward-coupling 이 closure 의 4-key gateway
+- 2026-05-28T05:17 · **L28 T8-B**: COFFESHOP local-closure 가 umbrella-closure 와 dis-coupling 이라면, M3 fire 미발사 자체가 umbrella 의 본선 carry — local closure 가 false signal 위험 (umbrella 의 진정한 closure 는 M4 MoE-fresh production swap-in 후)
+
+@status: 16 new leaves (8 tension × 2 fork) — all unique forks. No reduction. tension lens 가장 fertile.
+
+@depleted: tension @ 2026-05-28 (8 seed conflict 모두 forked · 추가 conflict 재발견 가능하나 본 cycle 의 scope 종료)
