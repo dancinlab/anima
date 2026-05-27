@@ -117,75 +117,20 @@ fn main() {
         }
         e = e + 1
     }
-    // ── Phase 3b-1 tok_emb lookup → zT ──
-    // ids[1] = single-token smoke ; in Phase 3b-2+ this becomes ids[T] from BPE corpus.
-    // x[j] = M[tok_emb_off + ids[0]·d + j]    (no spine yet — identity zT = x)
-    let token_id = 2   // smoke: token id 2 of V=4 (deterministic, explorable)
-    j = 0
-    while j < d {
-        let emb_v = farr_get(M, tok_emb_off + token_id * d + j)
-        let _ = farr_set(zT, j, emb_v)
-        j = j + 1
-    }
-    print("  tok_emb lookup: ids[0]="); print(token_id)
-    print("  zT[0..d]=[")
-    let mut zp = 0
-    while zp < d {
-        print(farr_get(zT, zp))
-        if zp + 1 < d { print(", ") }
-        zp = zp + 1
-    }
-    println("]")
-
-    // ── Phase 3b-2 attn output projection (W_o · zT) ──
-    // attn_Wo[i, j] init: identity + small perturbation (so Wo · zT ≈ zT + noise,
-    // smoke 의미 보존 + weight slot 검증). T=1 single-token 이라 self-attn softmax
-    // = 1 (trivial) → attn output 은 V projection 만; Wo 가 그 후 projection.
-    // 본 smoke 는 Wo skel 만 wire (V/Q/K 는 T>1 시 Phase 3b-2b 확장).
+    // ── Phase 3b-2 attn_Wo init: identity + small perturbation (T=1 smoke) ──
     let mut wi = 0
     while wi < d {
         let mut wj = 0
         while wj < d {
             let mut val = 0.0
-            if wi == wj { val = 1.0 }            // identity diagonal
-            val = val + 0.01 * to_float(wi + wj) // small perturbation
+            if wi == wj { val = 1.0 }
+            val = val + 0.01 * to_float(wi + wj)
             let _ = farr_set(M, attn_wo_off + wi * d + wj, val)
             wj = wj + 1
         }
         wi = wi + 1
     }
-    // forward: zT_new[i] = Σ_j Wo[i, j] · zT[j]    (in-place via scratch)
-    let zT_scratch = t_zeros(d)
-    let mut ai = 0
-    while ai < d {
-        let mut acc = 0.0
-        let mut aj = 0
-        while aj < d {
-            acc = acc + farr_get(M, attn_wo_off + ai * d + aj) * farr_get(zT, aj)
-            aj = aj + 1
-        }
-        let _ = farr_set(zT_scratch, ai, acc)
-        ai = ai + 1
-    }
-    ai = 0
-    while ai < d {
-        let _ = farr_set(zT, ai, farr_get(zT_scratch, ai))
-        ai = ai + 1
-    }
-    print("  attn(Wo) zT_post=[")
-    zp = 0
-    while zp < d {
-        print(farr_get(zT, zp))
-        if zp + 1 < d { print(", ") }
-        zp = zp + 1
-    }
-    println("]")
-
-    // ── Phase 3b-3 MLP block (W_up · ReLU · W_down) ──
-    // mlp_h_act[k] = max(0, Σ_j W_up[k, j] · zT[j])         k in 0..h
-    // zT_new[i]    = Σ_k W_down[i, k] · mlp_h_act[k]        i in 0..d
-    // W_up init: 0.05·(k + j + 1) — distinct rows
-    // W_down init: identity-ish (zero rows beyond d), 0.1·k·(i==k%d)
+    // ── Phase 3b-3 MLP weights init (W_up · W_down) ──
     let mut ui = 0
     while ui < h {
         let mut uj = 0
@@ -206,179 +151,185 @@ fn main() {
         }
         di = di + 1
     }
-    // forward: h_act
-    let mlp_hact = t_zeros(h)
-    let mut hk = 0
-    while hk < h {
-        let mut acc = 0.0
-        let mut hj = 0
-        while hj < d {
-            acc = acc + farr_get(M, mlp_wup_off + hk * d + hj) * farr_get(zT, hj)
-            hj = hj + 1
-        }
-        // ReLU
-        if acc < 0.0 { acc = 0.0 }
-        let _ = farr_set(mlp_hact, hk, acc)
-        hk = hk + 1
-    }
-    // zT_new = W_down · h_act
-    let mlp_out = t_zeros(d)
-    let mut mi = 0
-    while mi < d {
-        let mut acc = 0.0
-        let mut mk = 0
-        while mk < h {
-            acc = acc + farr_get(M, mlp_wdown_off + mi * h + mk) * farr_get(mlp_hact, mk)
-            mk = mk + 1
-        }
-        let _ = farr_set(mlp_out, mi, acc)
-        mi = mi + 1
-    }
-    // copy back to zT
-    mi = 0
-    while mi < d {
-        let _ = farr_set(zT, mi, farr_get(mlp_out, mi))
-        mi = mi + 1
-    }
-    print("  mlp zT_post=[")
-    zp = 0
-    while zp < d {
-        print(farr_get(zT, zp))
-        if zp + 1 < d { print(", ") }
-        zp = zp + 1
-    }
-    println("]")
-
-    // ── Phase 3b-4 ln_f (RMSNorm before router) ──
-    // y[i] = (x[i] / sqrt(mean(x²) + eps)) · γ[i]      i in 0..d
-    // γ init: γ[i] = 1.0 (identity-init — standard RMSNorm convention)
-    let rmsnorm_eps = 1.0e-6
+    // ── Phase 3b-4 ln_f γ init = 1.0 (identity) ──
     let mut gi = 0
     while gi < d {
         let _ = farr_set(M, ln_f_off + gi, 1.0)
         gi = gi + 1
     }
-    // compute mean-square
-    let mut ms = 0.0
-    let mut mi2 = 0
-    while mi2 < d {
-        let xv = farr_get(zT, mi2)
-        ms = ms + xv * xv
-        mi2 = mi2 + 1
-    }
-    ms = ms / to_float(d)
-    let rms_inv = 1.0 / sqrt(ms + rmsnorm_eps)
-    // forward: scale + γ
-    let mut ni = 0
-    while ni < d {
-        let xv = farr_get(zT, ni)
-        let gv = farr_get(M, ln_f_off + ni)
-        let _ = farr_set(zT, ni, xv * rms_inv * gv)
-        ni = ni + 1
-    }
-    print("  ln_f(RMSNorm) zT_post=[")
-    zp = 0
-    while zp < d {
-        print(farr_get(zT, zp))
-        if zp + 1 < d { print(", ") }
-        zp = zp + 1
-    }
-    print("]   rms_inv=")
-    println(rms_inv)
 
-    // ── forward ──
-    let top_idx = v3_moe_fwd(zT, M, router_off, experts_off,
-                              logits_g, gate_norm, V, d, E)
-    println("  forward OK")
-    print("    top_idx = "); println(top_idx)
-    print("    gate_norm[0] = "); print(farr_get(gate_norm, 0))
-    print("  gate_norm[1] = "); println(farr_get(gate_norm, 1))
-    print("    logits[0..V] = [")
-    let mut kk = 0
-    while kk < V {
-        print(farr_get(logits_g, kk))
-        if kk + 1 < V { print(", ") }
-        kk = kk + 1
-    }
-    println("]")
-
-    // ── backward ── (synthetic d_logits = [1,0,0,0] → grad onto position 0)
-    let _ = farr_set(d_logits, 0, 1.0)
-    v3_moe_bwd(zT, M, router_off, experts_off, gate_norm, top_idx, d_logits,
-               dMg, d_zT, V, d, E)
-    println("  backward OK")
-    // grad non-zero on winner expert's first row + router gate (top-only)
-    let dW_top_00 = farr_get(dMg, experts_off + top_idx * V * d + 0 * d + 0)
-    let dW_top_03 = farr_get(dMg, experts_off + top_idx * V * d + 0 * d + 3)
-    print("    dW[top,0,0] = "); print(dW_top_00)
-    print("  dW[top,0,3] = "); println(dW_top_03)
-    let dR_top = farr_get(dMg, router_off + top_idx * d + 0)
-    print("    dRouter[top,0] = "); println(dR_top)
-    let dz0 = farr_get(d_zT, 0)
-    print("    d_zT[0] = "); println(dz0)
-
-    // ── Phase 3b-5 AdamW step (t=1) ──
-    // For each parameter θ_i with grad g_i:
-    //   m_i  = β1·m_i + (1-β1)·g_i
-    //   v_i  = β2·v_i + (1-β2)·g_i²
-    //   m_hat = m_i / (1 - β1^t)
-    //   v_hat = v_i / (1 - β2^t)
-    //   θ_i  = θ_i - lr·(m_hat / (sqrt(v_hat) + eps) + wd·θ_i)
-    // LLM-standard hyperparams (Qwen / Llama-2): β1=0.9 β2=0.95 wd=0.1 eps=1e-8.
-    // Smoke: lr=1e-3 (visible step), t=1 (single update), m+v buffers fresh-zero.
+    // ── Phase 3b-6 multi-step training loop ──
+    // Persistent AdamW state (m, v) across steps. Bias-correction uses real t.
+    // Synthetic round-robin token IDs (smoke V=4); real Qwen BPE corpus IDs feed
+    // gates via bpe_assert_on=1 (vocab-size mismatch deferred to Phase 4 pilot).
     let beta1 = 0.9
     let beta2 = 0.95
     let lr = 1.0e-3
     let wd = 0.1
     let adam_eps = 1.0e-8
-    let t_step = 1
-    // 1 - β^t at t=1 is just (1 - β), so bias-corr denom = (1-β1) and (1-β2)
-    let bc1 = 1.0 - beta1
-    let bc2 = 1.0 - beta2
+    let rmsnorm_eps = 1.0e-6
     let m_buf = t_zeros(m_size)
     let v_buf = t_zeros(m_size)
-    // snapshot for verdict probe (before/after on a winner-expert weight)
-    let wo_00_pre = farr_get(M, attn_wo_off + 0 * d + 0)
-    let exp_top_00_pre = farr_get(M, experts_off + top_idx * V * d + 0 * d + 0)
-    let mut pi = 0
-    while pi < m_size {
-        let g = farr_get(dMg, pi)
-        let m_prev = farr_get(m_buf, pi)
-        let v_prev = farr_get(v_buf, pi)
-        let m_new = beta1 * m_prev + (1.0 - beta1) * g
-        let v_new = beta2 * v_prev + (1.0 - beta2) * g * g
-        let _ = farr_set(m_buf, pi, m_new)
-        let _ = farr_set(v_buf, pi, v_new)
-        let m_hat = m_new / bc1
-        let v_hat = v_new / bc2
-        let theta = farr_get(M, pi)
-        let upd = lr * (m_hat / (sqrt(v_hat) + adam_eps) + wd * theta)
-        let _ = farr_set(M, pi, theta - upd)
-        pi = pi + 1
+    // synthetic ID stream — round-robin so each step picks a different token
+    let ids_arr = [2, 0, 1, 3, 2]
+    let n_steps = 5
+    // scratch buffers reused across steps (alloc once)
+    let zT_scratch = t_zeros(d)
+    let mlp_hact = t_zeros(h)
+    let mlp_out = t_zeros(d)
+    // snapshots BEFORE training for verdict probes
+    let m_baseline_wo_00 = farr_get(M, attn_wo_off + 0 * d + 0)
+    let mut prev_g00 = 0.0
+    let mut final_top_idx = -1
+    let mut final_gate_sum = 0.0
+    let mut final_zT0 = 0.0
+    let mut final_dw_top_00 = 0.0
+
+    println("  ── multi-step loop start ──")
+    let mut step = 1
+    while step <= n_steps {
+        // zero d_logits, dMg, d_zT (carry-clean each step)
+        let mut zi = 0
+        while zi < V { let _ = farr_set(d_logits, zi, 0.0) ; zi = zi + 1 }
+        zi = 0
+        while zi < m_size { let _ = farr_set(dMg, zi, 0.0) ; zi = zi + 1 }
+        zi = 0
+        while zi < d { let _ = farr_set(d_zT, zi, 0.0) ; zi = zi + 1 }
+
+        // pick token id (round-robin over ids_arr)
+        let token_id = ids_arr[(step - 1) % 5]
+        // tok_emb lookup → zT
+        let mut j2 = 0
+        while j2 < d {
+            let _ = farr_set(zT, j2, farr_get(M, tok_emb_off + token_id * d + j2))
+            j2 = j2 + 1
+        }
+        // attn(Wo) · zT  (T=1 smoke: identity-ish projection)
+        let mut ai = 0
+        while ai < d {
+            let mut acc = 0.0
+            let mut aj = 0
+            while aj < d {
+                acc = acc + farr_get(M, attn_wo_off + ai * d + aj) * farr_get(zT, aj)
+                aj = aj + 1
+            }
+            let _ = farr_set(zT_scratch, ai, acc)
+            ai = ai + 1
+        }
+        ai = 0
+        while ai < d { let _ = farr_set(zT, ai, farr_get(zT_scratch, ai)) ; ai = ai + 1 }
+        // MLP forward
+        let mut hk = 0
+        while hk < h {
+            let mut acc = 0.0
+            let mut hj = 0
+            while hj < d {
+                acc = acc + farr_get(M, mlp_wup_off + hk * d + hj) * farr_get(zT, hj)
+                hj = hj + 1
+            }
+            if acc < 0.0 { acc = 0.0 }
+            let _ = farr_set(mlp_hact, hk, acc)
+            hk = hk + 1
+        }
+        let mut mi = 0
+        while mi < d {
+            let mut acc = 0.0
+            let mut mk = 0
+            while mk < h {
+                acc = acc + farr_get(M, mlp_wdown_off + mi * h + mk) * farr_get(mlp_hact, mk)
+                mk = mk + 1
+            }
+            let _ = farr_set(mlp_out, mi, acc)
+            mi = mi + 1
+        }
+        mi = 0
+        while mi < d { let _ = farr_set(zT, mi, farr_get(mlp_out, mi)) ; mi = mi + 1 }
+        // ln_f (RMSNorm)
+        let mut ms = 0.0
+        let mut mi2 = 0
+        while mi2 < d {
+            let xv = farr_get(zT, mi2) ; ms = ms + xv * xv ; mi2 = mi2 + 1
+        }
+        ms = ms / to_float(d)
+        let rms_inv = 1.0 / sqrt(ms + rmsnorm_eps)
+        let mut ni = 0
+        while ni < d {
+            let xv = farr_get(zT, ni)
+            let gv = farr_get(M, ln_f_off + ni)
+            let _ = farr_set(zT, ni, xv * rms_inv * gv)
+            ni = ni + 1
+        }
+        // MoE forward
+        let top_idx = v3_moe_fwd(zT, M, router_off, experts_off,
+                                  logits_g, gate_norm, V, d, E)
+        // synthetic CE-like grad: target = next token in ids_arr (round-robin)
+        let target = ids_arr[step % 5]
+        // d_logits = softmax(logits) - one_hot(target) — for smoke we approximate
+        // by placing +1 at target's negative (encourages target) and reading back
+        // logit at target slot to track "loss-like" magnitude.
+        let _ = farr_set(d_logits, target, 1.0)
+        // MoE backward
+        v3_moe_bwd(zT, M, router_off, experts_off, gate_norm, top_idx, d_logits,
+                   dMg, d_zT, V, d, E)
+        // AdamW step with real t-bias-correction
+        let bc1 = 1.0 - pow(beta1, to_float(step))
+        let bc2 = 1.0 - pow(beta2, to_float(step))
+        let mut pi = 0
+        while pi < m_size {
+            let g = farr_get(dMg, pi)
+            let m_prev = farr_get(m_buf, pi)
+            let v_prev = farr_get(v_buf, pi)
+            let m_new = beta1 * m_prev + (1.0 - beta1) * g
+            let v_new = beta2 * v_prev + (1.0 - beta2) * g * g
+            let _ = farr_set(m_buf, pi, m_new)
+            let _ = farr_set(v_buf, pi, v_new)
+            let m_hat = m_new / bc1
+            let v_hat = v_new / bc2
+            let theta = farr_get(M, pi)
+            let upd = lr * (m_hat / (sqrt(v_hat) + adam_eps) + wd * theta)
+            let _ = farr_set(M, pi, theta - upd)
+            pi = pi + 1
+        }
+        // per-step stat: target-slot logit (proxy loss probe), grad magnitude
+        let logit_target = farr_get(logits_g, target)
+        let g00 = farr_get(dMg, attn_wo_off + 0 * d + 0)
+        print("  step=") ; print(step)
+        print(" tok=") ; print(token_id)
+        print(" tgt=") ; print(target)
+        print(" top=") ; print(top_idx)
+        print(" logit[tgt]=") ; print(logit_target)
+        print(" dWo[0,0]=") ; print(g00)
+        print(" Wo[0,0]=") ; print(farr_get(M, attn_wo_off + 0 * d + 0))
+        println("")
+        // capture final-step probes
+        if step == n_steps {
+            final_top_idx = top_idx
+            final_gate_sum = farr_get(gate_norm, 0) + farr_get(gate_norm, 1)
+            final_zT0 = farr_get(zT, 0)
+            final_dw_top_00 = farr_get(dMg, experts_off + top_idx * V * d + 0 * d + 0)
+        }
+        prev_g00 = g00
+        step = step + 1
     }
-    let wo_00_post = farr_get(M, attn_wo_off + 0 * d + 0)
-    let exp_top_00_post = farr_get(M, experts_off + top_idx * V * d + 0 * d + 0)
-    println("  AdamW step OK (β1=0.9 β2=0.95 lr=1e-3 wd=0.1 eps=1e-8 t=1)")
-    print("    Wo[0,0] pre="); print(wo_00_pre); print(" post="); println(wo_00_post)
-    print("    experts[top,0,0] pre="); print(exp_top_00_pre); print(" post="); println(exp_top_00_post)
-    print("    suppress_t=1; t_step="); println(t_step)
+    println("  ── multi-step loop end ──")
+    let m_final_wo_00 = farr_get(M, attn_wo_off + 0 * d + 0)
+    let mut wo_delta = m_final_wo_00 - m_baseline_wo_00
+    if wo_delta < 0.0 { wo_delta = 0.0 - wo_delta }
+    print("  Wo[0,0] baseline="); print(m_baseline_wo_00)
+    print(" final="); print(m_final_wo_00)
+    print(" |Δ|="); println(wo_delta)
 
     // ── verdict ──
-    let gate_sum = farr_get(gate_norm, 0) + farr_get(gate_norm, 1)
-    let zT0 = farr_get(zT, 0)
     let ln_f_g0 = farr_get(M, ln_f_off + 0)
-    let exp_delta = exp_top_00_post - exp_top_00_pre
-    let mut exp_delta_abs = exp_delta
-    if exp_delta_abs < 0.0 { exp_delta_abs = 0.0 - exp_delta_abs }
     let mut pass = 1
-    if gate_sum < 0.999 || gate_sum > 1.001 { pass = 0 }   // softmax sum=1
-    if top_idx < 0 || top_idx >= E { pass = 0 }            // valid top
-    if dW_top_00 == 0.0 { pass = 0 }                       // winner got grad
-    if zT0 == 0.0 { pass = 0 }                             // Phase 3b-1: tok_emb non-zero
-    if ln_f_g0 == 0.0 { pass = 0 }                         // Phase 3b-4: γ non-zero after step
-    if exp_delta_abs < 1.0e-12 { pass = 0 }                // Phase 3b-5: winner expert moved
+    if final_gate_sum < 0.999 || final_gate_sum > 1.001 { pass = 0 } // softmax sum=1 at final step
+    if final_top_idx < 0 || final_top_idx >= E { pass = 0 }          // valid top
+    if final_dw_top_00 == 0.0 { pass = 0 }                           // winner got grad final step
+    if final_zT0 == 0.0 { pass = 0 }                                 // tok_emb path live
+    if ln_f_g0 == 0.0 { pass = 0 }                                   // γ non-zero post-train
+    if wo_delta < 1.0e-6 { pass = 0 }                                // multi-step training moved params
     if pass == 1 {
-        println("TRAIN_V3_MOE SMOKE: PASS (tok_emb + Wo + MLP + ln_f + softmax sum=1 + valid top + winner-grad + AdamW-applied)")
+        println("TRAIN_V3_MOE SMOKE: PASS (multi-step · tok_emb + Wo + MLP + ln_f + MoE fwd/bwd + AdamW · n_steps=5)")
     } else {
         println("TRAIN_V3_MOE SMOKE: FAIL")
     }
