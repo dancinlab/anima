@@ -1,0 +1,35 @@
+{
+  "hypothesis": "H_346",
+  "slug": "phi-state-sweep",
+  "date": "2026-05-27",
+  "title": "state-averaged exact big-Phi hardens H_345: the basin<->Phi coupling is robust to sys_state choice",
+  "question": "H_345 measured exact Phi at a SINGLE sys_state=21. Does the basin<->Phi coupling survive averaging exact Phi over ALL 32 sys-states (state-averaged big-Phi)? Or was the single-state coupling an outlier?",
+  "engine": "pure hexa-lang. n=5 ECA (32 states): basin via 50-step settle + state-AVERAGED EXACT IIT4 phi_structure (stdlib/consciousness/iit4_relation), mean over all 32 sys-states. Pearson over 4 rules {110,30,105,150}. Sharded per-rule (4x32 exact phi_structure exceeds single-run wall budget); Pearson computed from the 4 shard points by a phi_structure-free aggregate.hexa.",
+  "runtime": "$0 mac-local (abs-path imports resolve here) · deterministic · per-rule parallel shards",
+  "n5_state_averaged_measurements": [
+    {"rule": 110, "max_basin": 32, "n_attractor_states": 1,  "mean_phi_32state": 35.1296, "single_state21_phi": 26.1889},
+    {"rule": 30,  "max_basin": 6,  "n_attractor_states": 6,  "mean_phi_32state": 41.3617, "single_state21_phi": 43.1903},
+    {"rule": 105, "max_basin": 1,  "n_attractor_states": 32, "mean_phi_32state": 15.5625, "single_state21_phi": 13.25},
+    {"rule": 150, "max_basin": 1,  "n_attractor_states": 32, "mean_phi_32state": 15.5625, "single_state21_phi": 14.25}
+  ],
+  "correlations": {
+    "max_basin_vs_phi":  {"n5_single_state21": 0.250836, "n5_state_averaged": 0.55048},
+    "n_attr_vs_phi":     {"n5_single_state21": -0.799002, "n5_state_averaged": -0.950701}
+  },
+  "falsifier_eval": {
+    "F346_1_SIGNS_PRESERVED_UNDER_AVERAGING": "PASS — state-averaged Pearson(max_basin, mean_Phi) = +0.550 keeps the single-state(21) positive sign (+0.251); Pearson(n_attr, mean_Phi) = -0.951 keeps the single-state negative sign (-0.799). NO sign flip under 32-state averaging. The H_345 single-state coupling is NOT an outlier.",
+    "F346_2_AVERAGING_TIGHTENS": "PASS — both correlations STRENGTHEN under averaging (max_basin +0.251 -> +0.550; n_attr -0.799 -> -0.951). State-averaging removes single-state noise, so the coupling is a cleaner signal, not a fragile one.",
+    "F346_3_BIJECTION_PHI_IDENTICAL": "PASS (consistency) — the two bijection-class rules 105 and 150 have IDENTICAL state-averaged Phi (15.5625 = 15.5625), consistent with H_330's four-moment bijection collapse (105 == 150 == identity-class).",
+    "F346_4_DETERMINISTIC": "PASS"
+  },
+  "verdict_derived": "🟢 SUPPORTED-NUMERICAL — state-averaged exact big-Phi (mean over all 32 sys-states at n=5) preserves BOTH n=5 single-state signs and tightens them: max_basin<->Phi +0.251 -> +0.550 (positive), n_attr<->Phi -0.799 -> -0.951 (negative). H_345's single sys_state=21 was therefore representative, not an outlier — the basin<->Phi coupling is robust to state choice. This removes H_345's 'single sys_state=21' honest-limit and is the capstone of the self-correction² arc (H_341 n=4 exact -> H_343 n=6 proxy apparent-flip -> H_345 n=5 exact restores signs -> H_346 state-averaging hardens it). The n_attractor_states<->Phi coupling is the dominant, robust cross-family bridge, now -0.95 under averaging: rules whose dynamics concentrate onto few on-cycle states robustly carry higher integration. Bonus consistency: the bijection rules 105/150 carry IDENTICAL state-averaged Phi (15.5625), matching H_330's bijection-class collapse.",
+  "verdict": "🟢 SUPPORTED-NUMERICAL",
+  "structural_vs_dynamical": "Cross-family (basin DYNAMICAL x state-averaged-exact-Phi STRUCTURAL), proxy-free, state-marginalized. The decisive finding: H_345's coupling is not an artifact of one chosen initial state; the 32-state marginal preserves and sharpens it. n_attr<->Phi is the robust bridge (-0.80 single-state -> -0.95 state-averaged).",
+  "honest_limits": [
+    "4 rules / Pearson n=4 still fragile; the max_basin<->Phi correlation, though strengthened to +0.55, is still pulled down from a naive monotone by rule30 (highest Phi 41.36, small basin 6) — the same inversion H_345 flagged",
+    "n=5 only for exact state-averaged Phi (n>=6 the full 2^n state sweep is intractable); large-n state-averaging stays open",
+    "execution was sharded per-rule for wall-time; each shard is byte-identical reproducible and the run.hexa (full 4-rule) remains the canonical source",
+    "state-averaging here is the unweighted mean over all 32 sys-states; a stationary-distribution-weighted average could differ and is not tested"
+  ],
+  "discovery_note": "H_345 단일 sys_state=21 결합의 강건성 확정: 32-state 평균 exact Φ로 두 부호 모두 보존+강화 (max_basin↔Φ +0.251→+0.550, n_attr↔Φ -0.799→-0.951). 단일 state는 outlier 아님. self-correction² arc capstone (H_341→343→345→346), H_345 'single-state' honest-limit 제거. bijection rule 105/150 state-avg Φ 동일(15.5625) = H_330 bijection collapse 일관성. n_attr↔Φ가 robust bridge (-0.95)."
+}
