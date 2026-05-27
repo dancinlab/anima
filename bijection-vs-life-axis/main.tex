@@ -129,7 +129,7 @@ with $n$.
       from \textsc{30} to \textsc{110}, demonstrating that the
       ``life class chaotic'' label is not a scale-invariant property
       of a single rule.
-\item All twenty-five measurements are published as a
+\item All twenty-six measurements are published as a
       verify-driven raster
       (\texttt{UNIVERSE/state/h312...h333/result.json}) under
       anti-fake-closure governance: a verdict is earned by an
@@ -435,6 +435,15 @@ dynamics concentrate onto few on-cycle states carry higher integration,
 while the max-basin coupling weakens ($+0.78 \to +0.25$) because rule 30
 inverts it (highest $\Phi$, small basin).
 
+\noindent One caveat remained: H\_345 read exact $\Phi$ at a single
+system state. A final check (H\_346) replaces it with the exact $\Phi$
+\emph{averaged over all 32 system states}. Both signs not only survive
+but \emph{tighten} -- max-basin $+0.25 \to +0.55$,
+\#attractor $-0.80 \to -0.95$ -- so the coupling is a property of the
+rule, not of one chosen initial condition (Table~\ref{tab:sc2}). The
+two bijection rules even carry \emph{identical} state-averaged $\Phi$
+($15.56$ each), echoing their four-moment collapse (\S\ref{sec:bijection}).
+
 \begin{table}[h]
 \centering
 \small
@@ -447,6 +456,7 @@ inverts it (highest $\Phi$, small basin).
 H\_341 & 4 & exact         & $+0.78$ & $-0.85$ & coupling found \\
 H\_343 & 6 & cycle proxy   & $-0.50$ & $+0.99$ & \emph{apparent} flip \\
 H\_345 & 5 & exact         & $+0.25$ & $-0.80$ & signs restored \\
+H\_346 & 5 & exact, 32-st avg & $+0.55$ & $-0.95$ & state-robust \\
 \bottomrule
 \end{tabular}
 \caption{The self-correction\texorpdfstring{$^2$}{2} arc. A claimed
@@ -455,8 +465,11 @@ cycle-length proxy in place of exact $\Phi$) is itself overturned once
 exact $\Phi$ is restored at the still-tractable $n=5$ (H\_345): both
 correlations keep their $n=4$ sign. The methodological finding is that
 cycle length is an \emph{unreliable} $\Phi$ proxy -- the flip lived in
-the proxy, not in the scale. The \#attractor$\leftrightarrow\Phi$
-coupling ($\approx -0.8$ at both exact $n$) is the stable cross-family
+the proxy, not in the scale. H\_346 then averages exact $\Phi$ over all
+32 system states and both correlations \emph{tighten} ($+0.55$, $-0.95$),
+confirming the coupling is state-robust rather than an artifact of one
+chosen state. The \#attractor$\leftrightarrow\Phi$ coupling
+($-0.8$ to $-0.95$ across exact measurements) is the stable cross-family
 bridge.}
 \label{tab:sc2}
 \end{table}
@@ -489,8 +502,12 @@ to dominate the longest-cycle slot at the specific $n$ being measured.''
       a different intractability budget.
 \item \textbf{Single state $0101$.} D1, D2, and D4 use a single
       starting state; H\_300's state-sweep on rule 90 already
-      flagged single-state sensitivity. A multi-state sweep is
-      pre-registered for the next iteration.
+      flagged single-state sensitivity. On the $\Phi$ side this is now
+      resolved: H\_346 (\S\ref{sec:self-correction}, Table~\ref{tab:sc2})
+      averages exact $\Phi$ over all 32 system states and the
+      basin$\leftrightarrow\Phi$ signs hold and tighten, so the coupling
+      is not a single-state artifact. The descriptor-side multi-state
+      sweep (D1/D2/D4) remains pre-registered.
 \item \textbf{Cycle length is a low-order descriptor -- and an
       unreliable $\Phi$ proxy.} Distinct attractor count, transient
       length, and attractor basin size are pre-registered follow-ups
@@ -511,9 +528,9 @@ to dominate the longest-cycle slot at the specific $n$ being measured.''
 \section{Reproducibility}
 \label{sec:repro}
 
-All twenty-five cells live as JSON ledgers under
+All twenty-six cells live as JSON ledgers under
 \texttt{UNIVERSE/state/h312\_*} through
-\texttt{h345\_*} on
+\texttt{h346\_*} on
 \url{https://github.com/dancinlab/anima/tree/main/UNIVERSE/state}.
 Each cell carries (i) a \texttt{run.hexa} source file, (ii) a
 \texttt{run.log} verbatim stdout transcript, and (iii) a
@@ -562,7 +579,7 @@ anti-fake-closure governance hook \texttt{commons @D g73}
 \citep{anima_g73}, and the \texttt{sidecar/paper} scaffold. The
 session that produced cells H\_312--H\_333 ran in a single Claude
 Code instance (Claude Opus 4.7 1M-context, January 2026 cutoff)
-against the public \texttt{anima} main branch. All twenty-five
+against the public \texttt{anima} main branch. All twenty-six
 \texttt{result.json} ledgers are visible at the commit hashes listed
 in \texttt{companion/pr-roll.json}.
 
