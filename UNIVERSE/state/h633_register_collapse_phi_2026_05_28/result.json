@@ -1,0 +1,53 @@
+{
+  "id": "H_633",
+  "slug": "register-collapse-phi-drop",
+  "source": "ANIMA.mining L2 promote (same-formula lens cycle 1)",
+  "config": {
+    "substrate": "N=16 Kuramoto coupled oscillators",
+    "coherence": "Kuramoto order parameter r = |Σ exp(iθ_j)| / N",
+    "phi_primitive": "RFC 036 phi_spatial via HEXAD/C/c_lib.hexa c_measure_phi (byte-equal phi_rs native replica)",
+    "N": 16,
+    "steps": 100,
+    "warm": 60,
+    "dim": 12,
+    "n_bins": 4,
+    "dt": 0.05,
+    "K_grid": [0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0, 6.0],
+    "omega_std_grid": [0.5, 1.0, 2.0],
+    "phase_offset_grid": [0.0, 0.7, 1.9],
+    "n_ensemble": 99,
+    "coh_lo_threshold": 0.10
+  },
+  "results": {
+    "n_total": 99,
+    "n_coh_lo": 51,
+    "n_coh_hi": 48,
+    "mean_coh": 0.327828,
+    "mean_phi": 9.78233,
+    "phi_envelope_min": 6.04007,
+    "phi_envelope_max": 14.0,
+    "pearson_r_coh_phi": 0.306612,
+    "mean_phi_coh_lo": 9.25598,
+    "max_phi_coh_lo": 11.5978,
+    "mean_phi_coh_hi": 10.3416,
+    "ratio_lo_over_hi": 0.895026,
+    "min_coh_member": {"coh": 0.0166079, "phi": 6.5661},
+    "max_coh_member": {"coh": 0.997158, "phi": 14.0}
+  },
+  "criteria": {
+    "C1_corr_abs_r_gt_0_5": false,
+    "C2_cliff_ratio_lt_0_20": false,
+    "F_NOCORR_abs_r_lt_0_3": false,
+    "F_SUSTAIN_philo_ge_phihi": false,
+    "no_coh_lo_members": false
+  },
+  "verdict_rule": "SUPPORTED iff (|r|>0.5 ∧ lo/hi<0.20); FALSIFIED iff (|r|<0.3 ∨ Φlo>=Φhi); else PARTIAL",
+  "verdict": "PARTIAL",
+  "honest_summary": "register collapse (coh<0.10) does NOT drive Φ to zero — Φ stays sustained (mean 9.26, max 11.60) across the entire low-coherence region, fully inside the global envelope [6.04, 14.0]. coh-Φ Pearson r=0.307 is weak (just above the 0.3 falsifier floor, far below 0.5). The CLIFF prediction (Ψ-clamp Φ-breakdown under register collapse) is REFUTED; the AND-gate `coh<0.10` does NOT co-move with Φ structure on this substrate. Echoes H_287 (Shannon⊥Φ) and H_207 L6 (phi_spatial spatial-MI measure decoupled from order/disorder).",
+  "evidence_tier": "🟢 NUMERICAL (RFC 036 phi_spatial native byte-equal replica; true phi_rs Rust FFI = named blocker)",
+  "deterministic": true,
+  "rerun_byte_identical": true,
+  "llm": "none",
+  "cost": "$0 mac local hexa",
+  "date": "2026-05-28"
+}
