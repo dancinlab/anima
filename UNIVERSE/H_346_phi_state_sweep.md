@@ -87,3 +87,38 @@ H_346  32-state 평균 → 부호 유지+강화 → single-state 한계 제거 �
 - (a) n=6+ state-averaging은 2^n 전수 sweep intractable — large-n은 sampling/근사 tier (축 B).
 - (b) stationary-distribution-weighted 평균 (현재는 uniform) — 가중 평균이 다를 수 있음.
 - (c) paper tab:sc2 + ledger에 H_346 capstone row 반영 (single-state caveat 해소).
+
+## 11. Scope (2026-05-28 정정 · self-correction³)
+
+> H_346 capstone 의 "state-강건" 은 측정으로 확정됐으나, **rule-set 강건** 은 후속 anima-side bench 로 부분 반증됐다. 본 § 은 scope 를 명시적으로 좁힌다.
+
+**Evidence (anima-side BENCH #1 `bench/basin_phi_coupling/`, PR [#1122](https://github.com/dancinlab/anima/pull/1122))**:
+
+- 동일 substrate (ECA, state-averaged exact `phi_structure[4]`) 위에서 H_345/346 의 4-rule frame `{110, 30, 105, 150}` 을 **8-rule frame** `{45, 54, 60, 90, 110, 126, 150, 184}` (Wolfram class I-IV 망라) 으로 확장 시 결합 붕괴:
+
+  ```
+                   max_basin↔mean_Φ    n_attr↔mean_Φ
+  H_346 (4 rules)      +0.550             −0.951      ← state-강건 확정
+  BENCH #1 (8 rules)   −0.314             +0.122      ← 부호 역전 / 거의 0
+  ```
+
+- 결정적 outlier: **rule=90 (additive XOR)** — `max_basin=16` (단일 fixed-point absorbing) 이지만 `phi_structure[4] = 0.0` 으로 flat. additive-XOR family 에서 basin↔Φ 동조가 TPM additivity 에 의해 깨진다. H_345/346 의 4-rule frame 은 우연히 이 axis 를 피했다.
+
+**정정된 scope**:
+
+- ✅ **state-강건** (single sys_state=21 → 32-state 평균 부호 유지) — H_346 자체 측정으로 확정, 유지.
+- ⚠ **rule-set 강건** — 본 셀의 4-rule frame `{110, 30, 105, 150}` 한정. additive-XOR family (예: rule 90) 포함 시 결합 깨짐.
+
+**최종 H_345/346 finding 의 scope**:
+
+> *"state-averaged exact Φ 와 max_basin 의 양의 결합(+0.550), n_attr 와의 음의 결합(−0.951) 은 **Wolfram-canonical 4 rules `{110, 30, 105, 150}`** 위에서 성립한다. additive-XOR family 를 포함하는 더 넓은 rule frame 에서는 outlier (rule=90 flat-Φ) 가 결합을 깨뜨릴 수 있다."*
+
+**Cross-link**:
+
+- [BENCH #1 basin_phi_coupling](../bench/basin_phi_coupling/README.md) — anima-side 8-rule sweep · 🟠 WEAK-REVERSED
+- self-correction³ — H_341→343→345→346 arc 에 본 정정이 4단째 self-correction 으로 추가 (claim → proxy doubt → exact correct → state harden → **rule-set scope narrow**).
+
+**Pre-registered follow-ups** (BENCH #1 carry):
+
+1. n=5 + 8-rule bench → n vs rule-set axis 분리 (H_346 substrate 그대로 + bench rule-set)
+2. additive-XOR family (60/90/105/150) phi_structure 정밀 분석 → 왜 rule 90 만 flat 인지
