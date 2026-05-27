@@ -1,0 +1,139 @@
+H_622 — negative-pair-cross-link-GZ-center-Kuramoto verbatim measurement
+==========================================================================
+2026-05-28 mac-local $0 hexa-only deterministic.
+
+substrate: 6 rules × {30, 60, 90, 105, 110, 150} (ECA Class III XOR + non-XOR mix)
+
+──────────────────────────────────────────────────────────────────────────
+A. H_349 metric per rule (n=4 ECA, sys_state=5, I sweep [0.20..0.55])
+──────────────────────────────────────────────────────────────────────────
+verbatim from `hexa run h622_phi_shard.hexa` × 6 rules.
+
+rule 30  (n=4, sys=5):
+  I=0.20 Φ=4.91738
+  I=0.30 Φ=3.79250
+  I=0.37 Φ=3.17437
+  I=0.45 Φ=2.45318
+  I=0.55 Φ=1.92983
+  argmax = I=0.20 (boundary)   shape = monotone↓
+  H_349 metric: FAIL  (F1 |Δ|=0.168 + F2 monotone)
+
+rule 60  (n=4, sys=5):
+  I=0.20 Φ=10.873
+  I=0.30 Φ=8.58815
+  I=0.37 Φ=7.23022
+  I=0.45 Φ=5.86119
+  I=0.55 Φ=4.31137
+  argmax = I=0.20 (boundary)   shape = monotone↓
+  H_349 metric: FAIL  (F1+F2)
+
+rule 90  (n=4, sys=5):
+  I=0.20 Φ=0.0992552
+  I=0.30 Φ=0.116598
+  I=0.37 Φ=0.118335    ← peak
+  I=0.45 Φ=0.112273
+  I=0.55 Φ=0.0963473
+  argmax = I=0.37, |Δ|=0.002    shape = UNIMODAL (interior peak)
+  H_349 metric: PASS  (peak at 1/e ±0.05, unimodal)
+
+rule 105 (n=4, sys=5):
+  I=0.20 Φ=2.45655
+  I=0.30 Φ=1.82034
+  I=0.37 Φ=1.47005
+  I=0.45 Φ=1.14194
+  I=0.55 Φ=0.815056
+  argmax = I=0.20 (boundary)   shape = monotone↓
+  H_349 metric: FAIL  (F1+F2)
+
+rule 110 (n=4, sys=5):
+  I=0.20 Φ=6.29150
+  I=0.30 Φ=5.73096
+  I=0.37 Φ=4.78161
+  I=0.45 Φ=3.49946
+  I=0.55 Φ=2.90862
+  argmax = I=0.20 (boundary)   shape = monotone↓
+  H_349 metric: FAIL  (F1+F2)
+
+rule 150 (n=4, sys=5):
+  I=0.20 Φ=3.53129
+  I=0.30 Φ=2.61099
+  I=0.37 Φ=2.10548
+  I=0.45 Φ=1.63292
+  I=0.55 Φ=1.16327
+  argmax = I=0.20 (boundary)   shape = monotone↓
+  H_349 metric: FAIL  (F1+F2)
+
+──────────────────────────────────────────────────────────────────────────
+B. H_354 metric per rule (n_sub=5, K sweep {0.5,1.0,2.0,3.0}, rule-mapped ω)
+──────────────────────────────────────────────────────────────────────────
+verbatim from `hexa run h622_kuramoto.hexa`.
+
+rule  30 : K=0.5 ts=34   tc=82  r=2.41 | K=1.0 ts=29   tc=40 r=1.38 | K=2.0 ts=23  tc=19 r=0.83 | K=3.0 ts=20  tc=12 r=0.60
+           pearson=0.967  spread=4.02  → PASS (C1)
+rule  60 : K=0.5 ts=238  tc=82  r=0.34 | K=1.0 ts=1200 tc=40 r=0.03 | K=2.0 ts=37  tc=19 r=0.51 | K=3.0 ts=29  tc=12 r=0.41
+           pearson=0.209  spread=15.4  → FAIL
+rule  90 : K=0.5 ts=34   tc=82  r=2.41 | K=1.0 ts=29   tc=40 r=1.38 | K=2.0 ts=23  tc=19 r=0.83 | K=3.0 ts=20  tc=12 r=0.60
+           pearson=0.967  spread=4.02  → PASS (C1)
+rule 105 : K=0.5 ts=240  tc=82  r=0.34 | K=1.0 ts=123  tc=40 r=0.33 | K=2.0 ts=25  tc=19 r=0.76 | K=3.0 ts=21  tc=12 r=0.57
+           pearson=0.992  spread=2.34  → PASS (C1)
+rule 110 : K=0.5 ts=44   tc=82  r=1.86 | K=1.0 ts=41   tc=40 r=0.98 | K=2.0 ts=36  tc=19 r=0.53 | K=3.0 ts=34  tc=12 r=0.35
+           pearson=0.952  spread=5.28  → PASS (C1)
+rule 150 : K=0.5 ts=240  tc=82  r=0.34 | K=1.0 ts=123  tc=40 r=0.33 | K=2.0 ts=25  tc=19 r=0.76 | K=3.0 ts=21  tc=12 r=0.57
+           pearson=0.992  spread=2.34  → PASS (C1)
+
+──────────────────────────────────────────────────────────────────────────
+C. Joint pattern + chi-square independence test
+──────────────────────────────────────────────────────────────────────────
+rule | H_349 | H_354
+-----|-------|------
+ 30  | FAIL  | PASS
+ 60  | FAIL  | FAIL
+ 90  | PASS  | PASS
+105  | FAIL  | PASS
+110  | FAIL  | PASS
+150  | FAIL  | PASS
+
+2×2 contingency (N=6):
+             H_354 PASS  H_354 FAIL  | row tot
+H_349 PASS       1            0      |   1
+H_349 FAIL       4            1      |   5
+                                     +-----
+col tot          5            1      |   6
+
+Expected under independence (E_ij = row·col/N):
+             H_354 PASS  H_354 FAIL
+H_349 PASS    0.833        0.167
+H_349 FAIL    4.167        0.833
+
+chi-square statistic:
+  χ² = (1-0.833)²/0.833 + (0-0.167)²/0.167 + (4-4.167)²/4.167 + (1-0.833)²/0.833
+     = 0.0335 + 0.1667 + 0.0067 + 0.0335
+     = 0.240
+
+df = 1
+p (χ² ≥ 0.240, df=1) ≈ 0.624
+
+Fisher exact (2-tailed, more accurate for small N=6):
+  Observed table prob: P(a=1 | margins 1,5,5,1) = C(1,1)·C(5,4)/C(6,5) = 5/6 ≈ 0.833
+  Other equally-or-more-extreme table: a=0 → prob = C(1,0)·C(5,5)/C(6,5) = 1/6 ≈ 0.167
+  2-tailed p = sum of all tables with prob ≤ observed = 5/6 + 1/6 = 1.000
+
+──────────────────────────────────────────────────────────────────────────
+D. Verdict
+──────────────────────────────────────────────────────────────────────────
+Falsifier (pre-registered): chi-square p > 0.5 → joint distribution INDEPENDENT
+  measured: chi-square p = 0.624 > 0.5 ✓
+  (Fisher exact: p = 1.000 > 0.5 ✓✓)
+
+Falsifier TRIGGERED → 🔴 FALSIFIED.
+
+Interpretation:
+  H_349 (peak@1/e) substrate-class pattern (5 FAIL + 1 PASS, only rule 90)
+  and H_354 (Kuramoto τ alignment) substrate-class pattern (1 FAIL + 5 PASS,
+  only rule 60 FAILs) are NOT correlated across rules — chi-square p=0.624
+  ≫ 0.5. The two closed-negatives are AXIS-ORTHOGONAL: each falsifies an
+  INDEPENDENT property of substrate dynamics, NOT a shared mechanism.
+
+Sole H_349 PASS (rule 90) and sole H_354 FAIL (rule 60) do not co-occur on
+the same rule — the joint distribution is consistent with two independent
+Bernoulli marginals (p_349=1/6, p_354=5/6).
