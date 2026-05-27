@@ -1,0 +1,30 @@
+================================================================
+  H_643 — collective-ultradian-phi-envelope (H_634 × H_635)
+  5-stream collective Φ entrains to 90-min ultradian phase?
+  IIT4 big_phi_bounded · n=5 cohort C1[110x5] · cap=3 · sys=0
+  N=36 points × sinusoidal envelope fit · stage→sync_factor W
+================================================================
+  decoupled Σ-baseline Φ_coll(W=0) = 0.0
+  per-stage collective Φ (within 1 sleep ultradian sweep):
+    WAKE : (0 pts in sleep ultradian — WAKE = sleep-window 밖)
+    N1 (W=0.7) : Φ_coll=13.6383 (n_pts=2)
+    N2 (W=0.4) : Φ_coll=4.50052 (n_pts=20)
+    N3 (W=0.15) : Φ_coll=1.17498 (n_pts=12)
+    REM (W=0.95) : Φ_coll=34.8823 (n_pts=2)
+  ─────────────────────────────────────
+  N points              : 36
+  Φ_coll trajectory std : 7.64357
+  best t_peak (sec)     : 0.0
+  r(Φ_coll, sinusoid)   : 0.568352
+  Φ_coll max / Φ_coll N3: 34.8823 / 1.17498
+  ────────────── verdict ──────────────
+  [PASS] F643.1 COLL-PHASE-COUPLED: r(Φ_coll,sinusoid) > 0.5
+  [PASS] F643.2 COLL-NOT-FLAT: Φ_coll trajectory std > 0
+  [PASS] F643.3 WAKE-HIGH-N3-LOW: Φ_coll_max > Φ_coll_N3
+  [PASS] F643.4 SUPER-ADDITIVE-EDGE: Φ_coll_max > Φ_coll(W=0) Σ-baseline
+  [PASS] F643.5 PERIOD-DISCRETE-OK: 36 pts monotone within 1 CYCLE_SEC
+  [PASS] F643.6 BOUND: Φ_coll ≥ 0, r ∈ [-1,1]
+  ──────────────────────────────────────
+  F643.1-6 6/6 PASS
+  verdict: 🟢 SUPPORTED-NUMERICAL
+  cross-link: H_634 single-substrate r=0.802 vs H_643 collective r=0.568352
