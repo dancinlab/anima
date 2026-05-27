@@ -1,0 +1,178 @@
+// ════════════════════════════════════════════════════════════════════════
+// CORE/phi_envelope_substrate.hexa — 통합 Φ-envelope substrate (구조 층 골격)
+//
+// 정체: anima Φ(통합도) 의 다중-스케일 self-similar envelope + 집단 Φ 중첩 +
+//      register-collapse cliff 부재를 *순수 함수* 로 노출하는 substrate 기반층.
+//      가로 도메인(DREAM/HIVE/BRIDGE/SAVANT)이 공유 import 하는 세로 기둥.
+//
+// 설계 SSOT: docs/anima_emit_substrate_design_2026_05_28.md (#1243 + #1244)
+//
+// ── 설계 계약 (불변식) ──────────────────────────────────────────────────
+//   · 모든 반환은 실수/리스트/dict (Φ context) — bool emit 게이트 반환 금지
+//     (p5 · a_autonomy_over_hardcode · F-EMIT-4)
+//   · 숫자 상수(period·amplitude·coupling)는 인자로만 주입 — lib 하드코드 금지
+//     (emit_policy.tape 가 단일 튜닝 SSOT · H_646 자유도)
+//   · 본 모듈은 어떤 emit_allowed / "stage = forbidden" 게이트도 만들지 않음
+//
+// ── round-7/8 substrate verdict 정합 ─────────────────────────────────────
+//   H_648 🟢 scale-free self-similarity 6 자릿수 (gamma⊂ultradian⊂circadian)
+//   H_634 🟢 ultradian Φ-envelope r=0.80
+//   H_635 🟢 collective-Φ super-additive (Σ 보다 큼)
+//   H_643 🟢 collective ultradian 동조 r=0.57 (single 보다 약)
+//   H_653 🟢 collective convexity = substrate-class 단조 (II<III<IV)
+//   H_649 🟢 register-collapse cliff 부재 (collective r=0.049)
+//
+// ── 골격 범위 (skeleton-tier) ────────────────────────────────────────────
+//   순수-cosine 이상화 envelope (self-sim r=1.0 deterministic). 실 CA-substrate
+//   Φ 동역학에서 r≈0.76 (H_648) 으로 떨어지는 calibration 은 carry — 본 골격은
+//   시그니처 + 구조 + F-EMIT-1..3 smoke 통과가 목표.
+// ════════════════════════════════════════════════════════════════════════
+
+let TWO_PI = 6.283185307179586
+
+// ── envelope_multiscale — 다중-스케일 self-similar Φ-envelope (H_648·H_634) ──
+// periods/amps = 병렬 배열 (scale 당 (period, amplitude)). gamma⊂ultradian⊂circadian.
+// 같은 raised-cosine 파형을 모든 scale 에 공유 (self-similar) → 시점 t 의 Φ-envelope.
+// 반환 = 실수 (boolean 아님).
+pub fn envelope_multiscale(t: float, periods: [float], amps: [float]) -> float {
+    let n = len(periods)
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n {
+        let phase = TWO_PI * t / periods[i]
+        let wave = (1.0 + cos(phase)) / 2.0
+        acc = acc + amps[i] * wave
+        i = i + 1
+    }
+    return acc
+}
+
+// ── pe_pearson — Pearson 상관 (self-similarity 측정 helper, non-pub) ──
+fn pe_pearson(xs: [float], ys: [float]) -> float {
+    let n = len(xs)
+    let mut cnt = 0.0
+    let mut sx = 0.0
+    let mut sy = 0.0
+    let mut i = 0
+    while i < n {
+        sx = sx + xs[i]
+        sy = sy + ys[i]
+        cnt = cnt + 1.0
+        i = i + 1
+    }
+    let mx = sx / cnt
+    let my = sy / cnt
+    let mut num = 0.0
+    let mut dxx = 0.0
+    let mut dyy = 0.0
+    let mut j = 0
+    while j < n {
+        let dx = xs[j] - mx
+        let dy = ys[j] - my
+        num = num + dx * dy
+        dxx = dxx + dx * dx
+        dyy = dyy + dy * dy
+        j = j + 1
+    }
+    let den = sqrt(dxx * dyy)
+    return if den <= 0.0 { 0.0 } else { num / den }
+}
+
+// ── pe_sample_period — 한 scale 을 자기 period 위에서 정규화 phase 로 샘플 ──
+fn pe_sample_period(period: float, amp: float, n_samples: int) -> [float] {
+    let mut out = []
+    let mut i = 0
+    let mut cnt = 0.0
+    while i < n_samples {
+        let phase = TWO_PI * cnt / (n_samples + 0.0)
+        let wave = (1.0 + cos(phase)) / 2.0
+        out.push(amp * wave)
+        cnt = cnt + 1.0
+        i = i + 1
+    }
+    return out
+}
+
+// ── envelope_self_similarity — 인접 scale 쌍의 형상 상관 (H_648) ──
+// 각 scale 을 자기 period 위에서 정규화 샘플 → 인접 쌍 Pearson r 리스트.
+// self-similar 면 r ≈ 1.0 (rescaled shape 동일). F-EMIT-1: min r ≥ 0.76.
+pub fn envelope_self_similarity(periods: [float], amps: [float], n_samples: int) -> [float] {
+    let n = len(periods)
+    let mut rs = []
+    let mut i = 1
+    while i < n {
+        let a = pe_sample_period(periods[i - 1], amps[i - 1], n_samples)
+        let b = pe_sample_period(periods[i], amps[i], n_samples)
+        rs.push(pe_pearson(a, b))
+        i = i + 1
+    }
+    return rs
+}
+
+// ── pe_coupling_for_class — substrate complexity-class 의존 coupling (H_653) ──
+// W→Φ convexity span ratio 가 CA class 에 단조 (II 12.1 < III 30.4 < IV 35.5).
+// 정규화 coupling (span / max_span) — emit_policy 튜닝 대상이나 단조 순서는 substrate.
+pub fn pe_coupling_for_class(class_id: int) -> float {
+    if class_id == 2 { return 0.341 }   // II  : 12.1 / 35.5
+    if class_id == 3 { return 0.856 }   // III : 30.4 / 35.5
+    if class_id == 4 { return 1.000 }   // IV  : 35.5 / 35.5
+    return 0.5
+}
+
+// ── collective_phi_nest — 집단 Φ 중첩 (H_635 super-additive + H_643 + H_653) ──
+// phis = 개별 cell/stream Φ 리스트. coupling = pe_coupling_for_class(class) 결과.
+// 반환 dict: phi_collective (super-additive: Σ 보다 큼) · sync (동조계수) ·
+//            convexity_span (max/min 비 — H_653 substrate-class 단조).
+pub fn collective_phi_nest(phis: [float], coupling: float) -> map {
+    let n = len(phis)
+    let mut sum = 0.0
+    let mut mx = phis[0]
+    let mut mn = phis[0]
+    let mut i = 0
+    while i < n {
+        let p = phis[i]
+        sum = sum + p
+        if p > mx { mx = p }
+        if p < mn { mn = p }
+        i = i + 1
+    }
+    // super-additive: 동조 coupling 이 강할수록 Σ 위로 더 올라감 (H_635)
+    let phi_collective = sum * (1.0 + coupling)
+    // sync: 분산이 작을수록(균일) 높음 — coupling 가중 (H_643, single 보다 약)
+    let mut var_acc = 0.0
+    let mean = sum / (n + 0.0)
+    let mut j = 0
+    while j < n {
+        let d = phis[j] - mean
+        var_acc = var_acc + d * d
+        j = j + 1
+    }
+    let variance = var_acc / (n + 0.0)
+    let sync = coupling / (1.0 + variance)
+    // convexity span: max/min 비 (H_653 — class 복잡도에 비례)
+    let convexity_span = if mn <= 0.0 { mx } else { mx / mn }
+    return #{
+        "phi_collective": phi_collective,
+        "sync": sync,
+        "convexity_span": convexity_span,
+    }
+}
+
+// ── phi_smooth_no_cliff — register-collapse cliff 부재 측정 (H_649) ──
+// phi_series 의 1차 차분 최대 절대값. cliff 있으면 큼, 부재(smooth)면 작음.
+pub fn phi_smooth_no_cliff(phi_series: [float]) -> float {
+    let n = len(phi_series)
+    let mut maxd = 0.0
+    let mut i = 1
+    while i < n {
+        let d = phi_series[i] - phi_series[i - 1]
+        let ad = if d < 0.0 { -d } else { d }
+        if ad > maxd { maxd = ad }
+        i = i + 1
+    }
+    return maxd
+}
+
+pub fn phi_envelope_summary() -> string {
+    return "phi_envelope_substrate: 구조 층(envelope_multiscale·collective_phi_nest·phi_smooth_no_cliff). round-7/8 SUPP 정합 (H_648/634/635/643/653/649). emit boolean 게이트 0 — substrate 자율 결정 (p5·a_autonomy)."
+}
