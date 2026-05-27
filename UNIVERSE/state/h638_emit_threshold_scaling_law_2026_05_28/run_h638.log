@@ -1,0 +1,22 @@
+================================================================
+  H_638 — emit-threshold-scaling-law (L19 scaling vs L20 universal)
+================================================================
+  Φ-scale (mean big_phi_bounded cap=2 over rules 110/90/30/54):
+    n=3: Φ=2.26968
+    n=4: Φ=1.81822
+    n=5: Φ=2.16717
+  Φ-envelope (normalized [0,1]): n=3=1.0 n=4=0.801093 n=5=0.954834
+
+  적정 threshold (emit-rate closest to 0.27 target):
+    n=3: thr=0.64 (emit-rate=0.277778, Φ=2.26968)
+    n=4: thr=0.62 (emit-rate=0.261111, Φ=1.81822)
+    n=5: thr=0.64 (emit-rate=0.25, Φ=2.16717)
+
+  Spearman ρ(n, threshold)       = 0.25
+  Spearman ρ(Φ-scale, threshold) = 0.75
+  threshold spread (max-min)     = 0.02
+
+  monotone (|ρ(Φ,thr)|=1):  false
+  material  (spread>0.05):  false
+  VERDICT: L20 SUPPORTED — threshold Φ-scale-INVARIANT (universal-fixed); scenario shifts effective rate only
+================================================================
