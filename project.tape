@@ -58,6 +58,14 @@
   do   = "close both outputs and wiring (transfer-fn · invariant) at 🔵 SUPPORTED-FORMAL — confirm closed-form / identity via `hexa verify` (verdict verbatim)"
   dont = "close structure but leave wiring unverified · fake closed-form · force an honest empirical residual to 🔵"
 
+@D a_completeness_over_cheap := "completeness-bar re-design > cheap — no compromise as primary path" :: governance [required active]
+  do   = "primary path = clears the completeness bar (fresh re-design at the root cause, done properly)"
+  do   = "cost / difficulty / speed are secondary — cost is never the gate (cf a_fire_autonomous)"
+  do   = "a cheap path may ride along ONLY as an optional baseline probe, never the primary"
+  dont = "rank a compromise primary because it is cheap · zero-train · fast"
+  dont = "blend already-broken artifacts for a least-bad midpoint (merge-of-failures)"
+  dont = "recommend a sub-bar path as primary just because it is the cheapest"
+
 @D a_fire_recover_complete := "pull all fire artifacts + HF upload before pod teardown" :: governance [required active]
   do   = "before pod teardown: pull ckpt(s) + result + log + anchors, verify, HF upload — then teardown"
   dont = "pull only JSONs, leave ckpt on a doomed pod · teardown before HF · PULL_FAILED ≠ pod dead"
