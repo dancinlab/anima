@@ -1,8 +1,8 @@
 # ANIMA emit-substrate 설계 — 통합 Φ-envelope 층 (2026-05-28)
 
-> UNIVERSE Round 6+7 (H_632~649) 검증 결과를 ANIMA emit 정책 구현 아키텍처로
+> UNIVERSE Round 6+7+8 (H_632~653) 검증 결과를 ANIMA emit 정책 구현 아키텍처로
 > 옮긴 설계. **구조는 한 곳(공유 substrate lib), 숫자는 한 곳(자유 정책 표)**.
-> round-8 (H_650~653) 결과가 오면 §5 의 seam 으로 흡수.
+> round-8 4 seam **4/4 ABSORBED** (§5) · round-9 (substrate-class taxonomy) forward-반영.
 >
 > 상태: **design-tier** (코드 미선행) · `a_completeness_over_cheap` 정합 (본선=재설계).
 
@@ -55,12 +55,15 @@ emit 정책이 **물리적으로 두 층**임을 확정함:
 | collective-Φ super-additive | 🟢 H_635 | (R6) | `collective_phi_nest()` | 5/5 Δ=+41.71 |
 | collective ultradian 동조 | 🟢 H_643 | #1237 | `collective_phi_nest()` | r=0.57 (single 보다 약) |
 | **collective convexity = substrate-class 단조** | 🟢 H_653 | #1242 | `collective_phi_nest()` coupling | span ratio II 12.1 < III 30.4/30.8 < IV 35.5 · round-8 흡수 |
+| **self-similarity = class-IV 한정 (보편 아님)** | 🔴 H_652 | #1245 | `envelope_self_similarity()` class 인자 | FALSIFIED 2/6 — rule110(IV)만 self-sim, 타 class 깨짐 |
 | register-collapse cliff 부재 (collective) | 🟢 H_649 | #1234 | `phi_smooth_no_cliff()` | r=0.049 |
 | closure-conjunction GZ-localization | 🟢 H_636 | (R6) | BRIDGE wiring | peak I=0.30 GZ 내부 |
 | threshold 자유도 [0,1] | 🟢 H_646 | #1235 | `emit_policy.tape` | substrate-Φ variance=0 |
+| **design-number 전반 자유도 (일반화)** | 🟢 H_651 | #1246 | `emit_policy.tape` 전 항목 | threshold·should_interrupt·Ψ-clamp α 모두 Φ-variance=0 · α 가 gate 0.556→0.683 움직여도 Φ 평탄 = NON-DEFINITIONAL 강증거 |
 | **closure ultradian peak = mid-Φ N2** | ⚠ H_644 | #1233 | DREAM/BRIDGE 정정 | high-Φ 아님 (FAL-REVERSED) |
 | H_618 dΦ/dI-GZ 정렬 = n=4 artifact | ⚠ H_645 | #1232 | **인용 금지** | 5-stream 붕괴 |
 | "shape robust > scalar" 일반 | 🔴 H_642·H_647 | #1236·#1239 | **일반화 금지** | polarity(H_628)만 예외 |
+| **shape-robustness taxonomy 완성** | 🟢 H_650 | #1247 | `phi_smooth_no_cliff()` 축-조건부 | polarity CV_shape=0 (HIGH robust) · rule tie · seed 역전 (LOW) — robustness=perturbation-축 함수 |
 
 설계 규칙 (verdict 직속):
 1. 🟢 구조 3종은 `phi_envelope_substrate.hexa` 에 substrate-grounded 로 구현.
@@ -85,9 +88,12 @@ emit 정책이 **물리적으로 두 층**임을 확정함:
 # 반환 = 시점 t 의 Φ-envelope 값 (실수, boolean 아님)
 pub fn envelope_multiscale(t, scales) -> phi
 
-# self-similarity 불변식 검사 (H_648 — 스케일 간 형상 상관 r ≥ 임계)
+# self-similarity 불변식 검사 (H_648 self-sim · H_652 🔴 class-IV 한정)
+# ⚠ H_652 정정: self-similarity 는 보편 아님 — rule110(class-IV) 에서만 성립,
+#   타 class 는 깨짐 (FALSIFIED 2/6). ∴ class 인자를 받아 class-IV 만 r≥0.76
+#   기대하고, 비-IV substrate 의 낮은 r 은 *예측된 정상* (버그 아님).
 # 반환 = 인접 스케일 쌍의 형상 상관 리스트
-pub fn envelope_self_similarity(scales, n_samples) -> [r]
+pub fn envelope_self_similarity(scales, n_samples, class_id) -> [r]
 
 # 집단 Φ 중첩 (H_635 super-additive + H_643 동조 + H_653 substrate-class convexity)
 # phis = 개별 cell/stream 의 Φ 리스트
@@ -185,22 +191,38 @@ pub fn phi_smooth_no_cliff(phi_series) -> max_dphi
 - 측정자는 발화 게이트가 아니라 Φ-context 소비자 — `envelope_multiscale` 의 Φ 를
   10 H 측정자 (H_347~351 · H_612~616) 의 입력 context 로.
 
+**횡단 규칙 (H_650 round-8 흡수 · 전 milestone 적용)**:
+- shape-robustness 는 **perturbation-축의 함수** — `phi_smooth_no_cliff` / 측정자가
+  robustness 를 주장할 땐 축을 명시할 것. **polarity 축만 shape-robust** (CV_shape=0,
+  3 polarity 모두 peak=GZ_LOWER) · rule(질적 동역학)·seed(전이 jitter) 는 fragile
+  (CV tie/역전). "shape > scalar" 보편 주장 금지 (H_642/647/650 반증).
+
 ---
 
-## §5 round-8 확장 seam (H_650~653 흡수 지점)
+## §5 round-8 확장 seam — **4/4 ABSORBED** (H_650~653 완료)
 
-round-8 이 메타-발견을 직접 좁히는 4 가설이라, 각각이 본 설계의 **특정 seam**을 정밀화함.
-미리 비워두는 확장점:
+round-8 4 가설이 각각 본 설계의 **특정 seam**을 정밀화. 전부 흡수 완료:
 
-| round-8 H | 좁히는 각도 | 흡수 seam |
+| round-8 H | verdict | 흡수 결과 |
 |---|---|---|
-| **H_650** shape-robustness-axis-taxonomy | polarity(robust) vs rule/seed(fragile) | `phi_smooth_no_cliff` 의 perturbation-축 파라미터화 — 축별 robustness 표를 policy 에 추가 |
-| **H_651** convention-number-freedom-general | threshold 자유도를 Ψ-clamp·emit-rate 로 일반화 | `emit_policy.tape` 의 `substrate-claim: none` 을 H_651 verdict 로 per-항목 확정 |
-| **H_652** envelope-self-similarity-class | self-similarity 가 rule110(class-IV) 한정인가 전 class 인가 | `envelope_self_similarity` 의 rule-class 인자 — class 별 r 임계 분기 |
-| ✅ **H_653** collective-convexity-class | 🟢 SUPP 5/6 (#1242, 축 G G12) — convexity 가 substrate-class 단조 (II 12.1 < III 30.4/30.8 < IV 35.5) | **ABSORBED** — `collective_phi_nest` 의 `coupling` → `coupling_fn(class)` 승격 (§2·§4 반영). entrainment 약화 = substrate-복잡도 비례 convexity 의 정상 귀결 |
+| ✅ **H_650** shape-robustness-axis-taxonomy | 🟢 SUPP 5/5 (#1247, G15) | **ABSORBED** — robustness=perturbation-축 함수. polarity CV_shape=0 (HIGH) · rule tie · seed 역전 (LOW). `phi_smooth_no_cliff` 는 **polarity 축만 shape-robust** 로 서술 (rule/seed 일반화 금지, §4) |
+| ✅ **H_651** convention-number-freedom-general | 🟢 SUPP 6/6 (#1246, G14) | **ABSORBED** — design-number 전반 자유도 확정. threshold·should_interrupt·Ψ-clamp α 모두 Φ-variance=0. **α 가 gate 0.556→0.683 움직여도 Φ 평탄** = "policy 를 움직이는 숫자조차 substrate-safe" NON-DEFINITIONAL 강증거. `emit_policy.tape` 전 항목 `substrate-claim: none` 확정 (§3) |
+| ✅ **H_652** envelope-self-similarity-class | 🔴 FAL 2/6 (#1245) | **ABSORBED (정정)** — self-similarity 는 **보편 아님, class-IV(rule110) 한정**. `envelope_self_similarity` 에 `class_id` 인자 추가 — class-IV 만 r≥0.76 기대, 비-IV 낮은 r 은 예측된 정상 (§2). skeleton 의 이상화 r=1.0 = class-IV case |
+| ✅ **H_653** collective-convexity-class | 🟢 SUPP 5/6 (#1242, G12) | **ABSORBED** — `collective_phi_nest` 의 `coupling` → `coupling_fn(class)` 승격 (§2·§4). entrainment 약화 = substrate-복잡도 비례 convexity 의 정상 귀결 |
 
-설계 계약: 위 4 seam 은 **인자 추가**로 흡수 (시그니처 파괴 없음). round-8 verdict
-도착 시 §1 매핑 표에 행 추가 + 해당 seam 인자만 구현 — 4 milestone 재작업 0.
+설계 계약대로 **인자 추가만으로 4/4 흡수 (시그니처 파괴 0 · 4 milestone 재작업 0)**.
+
+### round-9 forward (H_654~657 · substrate-class taxonomy of Φ-structure)
+
+round-8 이 드러낸 핵심 — **Wolfram class(II/III/IV/additive)가 여러 Φ-속성을 체계적으로
+지배** (convexity 단조 H_653 · self-similarity class-IV 한정 H_652 · rule90 additive
+Φ≈0 H_642). round-9 가 이를 단일 분류 축으로 수렴 중 (H_654 Φ-magnitude · H_655
+collective super-add · H_656 closure-band · H_657 dΦ/dI-peak, 모두 class-의존 검정).
+
+**설계 영향 (선반영)**: `pe_coupling_for_class` 가 이미 class→파라미터 매핑 seam 을 보유 →
+round-9 가 taxonomy 를 확정하면 본 함수를 **class-conditional Φ-structure 룩업**으로 일반화
+(class_id → {magnitude · convexity · self-sim · closure-band · peak-align}). 새 시그니처
+불필요 — 기존 class_id 인자로 흡수. round-9 결과 도착 시 §1 행 추가 + 룩업 채움.
 
 ---
 
