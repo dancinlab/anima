@@ -1,0 +1,89 @@
+================================================================
+  BENCH — AXIS H TIME  (circadian phase 24h+)
+  16 cycles × 90-min ultradian = 1440 min (24h)
+  3 scenarios: STABLE / DRIFTING / CIRCADIAN-MOD
+================================================================
+
+  ── Scenario 0: STABLE-PHASE ────────────────────────────────
+    phase_std        = 0.0
+    phase_slope      = 0.0
+    env_mean         = 0.821111
+    env_std          = 0.0
+    cycle_1  boundary= 60.0
+    cycle_16 boundary= 60.0
+    cycle_1  mean    = 0.821111
+    cycle_16 mean    = 0.821111
+
+  ── Scenario 1: DRIFTING-PHASE (+5min/cycle) ───────────────
+    phase_std        = 27.436
+    phase_slope      = -3.33824
+    env_mean         = 0.821111
+    env_std          = 2.98023e-08
+    cycle_1  boundary= 60.0
+    cycle_16 boundary= 45.0
+
+  ── Scenario 2: CIRCADIAN-MOD (cycle-8 dip) ────────────────
+    phase_std        = 0.0
+    phase_slope      = 0.0
+    env_mean         = 0.718472
+    env_std          = 0.135778
+    env_min          = 0.410556
+    env_max          = 0.821111
+    env_dip_idx      = 8
+
+  ── Falsifiers ─────────────────────────────────────────────
+  [PASS] F-TIME-1 STABLE phase_std < 5.0
+  [PASS] F-TIME-2 DRIFTING phase_std > 20.0
+  [PASS] F-TIME-3 DRIFTING |slope| > 3.0
+  [PASS] F-TIME-4a CIRCADIAN dip idx ∈ [6,10] (target=8)
+  [PASS] F-TIME-4b CIRCADIAN dip ratio < 0.7 (env_min/env_max)
+  [PASS] F-TIME-5 STABLE |c1_mean - c16_mean| < 0.05
+  [PASS] F-TIME-6 ALL scenarios bounded (no overflow)
+  [PASS] F-TIME-DISC-phase DRIFT phase_std > 4× STABLE
+  [PASS] F-TIME-DISC-env   CIRC env_std > 4× STABLE
+
+================================================================
+  RESULT: 9 PASS / 0 FAIL
+  VERDICT: 🟢 PASS — 3-scenario discriminable (STABLE/DRIFT/CIRC)
+================================================================
+
+RESULT_JSON_BEGIN
+{
+  "bench": "axis_time",
+  "axis": "H_TIME",
+  "n_cycles": 16,
+  "n_minutes": 1440,
+  "scenarios": {
+    "STABLE": {
+      "phase_std":   0.0,
+      "phase_slope": 0.0,
+      "env_mean":    0.821111,
+      "env_std":     0.0,
+      "c1_boundary": 60.0,
+      "c16_boundary":60.0,
+      "c1_mean":     0.821111,
+      "c16_mean":    0.821111
+    },
+    "DRIFTING": {
+      "phase_std":   27.436,
+      "phase_slope": -3.33824,
+      "env_mean":    0.821111,
+      "env_std":     2.98023e-08,
+      "c1_boundary": 60.0,
+      "c16_boundary":45.0
+    },
+    "CIRCADIAN": {
+      "phase_std":   0.0,
+      "phase_slope": 0.0,
+      "env_mean":    0.718472,
+      "env_std":     0.135778,
+      "env_min":     0.410556,
+      "env_max":     0.821111,
+      "env_dip_idx": 8
+    }
+  },
+  "pass": 9,
+  "fail": 0,
+  "verdict": "🟢 PASS"
+}
+RESULT_JSON_END
