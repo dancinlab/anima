@@ -1,0 +1,22 @@
+BENCH#1 BASIN-PHI-COUPLING — anima-side bench of H_345/346 capstone
+substrate: n=4 ECA, 16 states, 8 rules; mean exact Φ over 16 sys-states
+
+rule=45 max_basin=9 n_attr=2 mean_Phi=11.2785
+rule=54 max_basin=4 n_attr=13 mean_Phi=11.715
+rule=60 max_basin=16 n_attr=1 mean_Phi=14.125
+rule=90 max_basin=16 n_attr=1 mean_Phi=0.0
+rule=110 max_basin=4 n_attr=5 mean_Phi=14.7532
+rule=126 max_basin=8 n_attr=5 mean_Phi=5.60708
+rule=150 max_basin=1 n_attr=16 mean_Phi=5.625
+rule=184 max_basin=3 n_attr=12 mean_Phi=15.8475
+
+Pearson(max_basin, mean_Phi)       = -0.313621  [t=-0.809028 df=6]
+Pearson(n_attr,    mean_Phi)       = 0.121748  [t=0.300455 df=6]
+
+primary signal: max_basin↔mean_Phi → 🟠 WEAK-REVERSED
+aux    signal:  n_attr   ↔mean_Phi → 🔴 FAIL (near-zero)
+
+H_345/346 reference (n=5):
+  H_345 single(21):  max_basin↔Phi=+0.251 · n_attr↔Phi=−0.799
+  H_346 state-avg :  max_basin↔Phi=+0.550 · n_attr↔Phi=−0.951
+done
