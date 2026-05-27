@@ -16,6 +16,7 @@
 
 - ⇄ [CORE](./CORE/CORE.md): CORE.brain_decide short-term emit 결정 위의 long-term goal layer · 8-factor cur/orig/dyn 와 cross-product
 - ⇄ [BRIDGE](./BRIDGE.md): BRIDGE AND-gate × INTENT goal alignment (단기 ∧ 장기 결정-coupling)
-- ⇄ [NARRATIVE](./NARRATIVE.md, future): goal trajectory 가 narrative thread 생성 (intent → story)
+- ⇄ [NARRATIVE](./NARRATIVE.md): goal trajectory 가 narrative thread 생성 (intent → story) · NARRATIVE.M4 cross-link
+- ⇄ [TIME](./TIME.md): 24h circadian phase 와 INTENT trajectory entrainment cross-bench (TIME.M4)
 - ⇄ [WAKE](./WAKE.md): WAKE.daemon 의 narrative + 8-factor curiosity 가 INTENT seed
 - ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT
