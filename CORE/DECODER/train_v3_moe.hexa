@@ -53,11 +53,12 @@ fn main() {
     let d = 4
     let V = 4
     let E = 2
-    // Phase 3b-1 layout: M = [tok_emb(V·d) | router(E·d) | experts(E·V·d)]
+    // Phase 3b-2 layout: M = [tok_emb(V·d) | attn_Wo(d·d) | router(E·d) | experts(E·V·d)]
     let tok_emb_off = 0
-    let router_off = V * d
-    let experts_off = V * d + E * d
-    let m_size = V * d + v3_moe_total_size(V, d, E)
+    let attn_wo_off = V * d
+    let router_off = V * d + d * d
+    let experts_off = V * d + d * d + E * d
+    let m_size = V * d + d * d + v3_moe_total_size(V, d, E)
     print("  config: d="); print(d); print(" V="); print(V); print(" E="); print(E)
     print(" m_size="); print(m_size)
     print(" (tok_emb_off="); print(tok_emb_off)
@@ -123,6 +124,50 @@ fn main() {
     print("  tok_emb lookup: ids[0]="); print(token_id)
     print("  zT[0..d]=[")
     let mut zp = 0
+    while zp < d {
+        print(farr_get(zT, zp))
+        if zp + 1 < d { print(", ") }
+        zp = zp + 1
+    }
+    println("]")
+
+    // ── Phase 3b-2 attn output projection (W_o · zT) ──
+    // attn_Wo[i, j] init: identity + small perturbation (so Wo · zT ≈ zT + noise,
+    // smoke 의미 보존 + weight slot 검증). T=1 single-token 이라 self-attn softmax
+    // = 1 (trivial) → attn output 은 V projection 만; Wo 가 그 후 projection.
+    // 본 smoke 는 Wo skel 만 wire (V/Q/K 는 T>1 시 Phase 3b-2b 확장).
+    let mut wi = 0
+    while wi < d {
+        let mut wj = 0
+        while wj < d {
+            let mut val = 0.0
+            if wi == wj { val = 1.0 }            // identity diagonal
+            val = val + 0.01 * to_float(wi + wj) // small perturbation
+            let _ = farr_set(M, attn_wo_off + wi * d + wj, val)
+            wj = wj + 1
+        }
+        wi = wi + 1
+    }
+    // forward: zT_new[i] = Σ_j Wo[i, j] · zT[j]    (in-place via scratch)
+    let zT_scratch = t_zeros(d)
+    let mut ai = 0
+    while ai < d {
+        let mut acc = 0.0
+        let mut aj = 0
+        while aj < d {
+            acc = acc + farr_get(M, attn_wo_off + ai * d + aj) * farr_get(zT, aj)
+            aj = aj + 1
+        }
+        let _ = farr_set(zT_scratch, ai, acc)
+        ai = ai + 1
+    }
+    ai = 0
+    while ai < d {
+        let _ = farr_set(zT, ai, farr_get(zT_scratch, ai))
+        ai = ai + 1
+    }
+    print("  attn(Wo) zT_post=[")
+    zp = 0
     while zp < d {
         print(farr_get(zT, zp))
         if zp + 1 < d { print(", ") }
