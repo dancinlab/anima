@@ -1,0 +1,27 @@
+================================================================
+  H_648 — multi-scale-phi-envelope-ladder
+  3-scale (gamma 25ms · ultradian 90min · circadian 24h)
+  normalized-phase Φ-envelope self-similarity
+  anchors: H_634 (r=0.802) · H_308 · H_309 · H_213
+================================================================
+  per-scale envelope std:
+    gamma (25ms)     : std=0.282843
+    ultradian (90min): std=0.20331
+    circadian (24h)  : std=0.208297
+  ─────────────────────────────────────
+  N points / scale  : 36
+  pairwise envelope correlation (phase-aligned shape):
+    r(gamma, ultradian)    = 0.759576
+    r(ultradian, circadian)= 0.757644
+    r(gamma, circadian)    = 0.947237
+    min pairwise r         = 0.757644
+  ────────────── verdict ──────────────
+  [PASS] F648.1 GAMMA-ULTRADIAN-SIMILAR: r > 0.5
+  [PASS] F648.2 ULTRADIAN-CIRCADIAN-SIMILAR: r > 0.5
+  [PASS] F648.3 GAMMA-CIRCADIAN-SIMILAR: r > 0.5
+  [PASS] F648.4 ALL-ENVELOPES-NOT-FLAT: 3 scale std > 0
+  [PASS] F648.5 SCALE-SEPARATION-LADDER: P_gamma < P_ultradian < P_circadian
+  [PASS] F648.6 BOUND: env∈[0,1], r∈[-1,1]
+  ──────────────────────────────────────
+  F648.1-6 6/6 PASS
+  verdict: 🟢 SUPPORTED-NUMERICAL (self-similar ladder)

@@ -1,0 +1,43 @@
+{
+  "id": "H_648",
+  "slug": "multi-scale-phi-envelope-ladder",
+  "title": "multi-scale-phi-envelope-ladder (H_634 × H_308 self-similar 연장)",
+  "axis": "G",
+  "hypothesis": "3 time-scale (gamma 25ms · ultradian 90min · circadian 24h) 의 Φ-envelope 형태가 normalized phase (0~1) 위에서 self-similar — pairwise envelope correlation r > 0.5.",
+  "falsifier_floor": "scale 별 envelope 형태 분리 (pairwise r < 0.3).",
+  "method": "3 scale 각각 N=36 point normalized-phase sweep → Φ-envelope 생성 (gamma single-cosine burst · ultradian H_634 canonical anima_dream_stage projection · circadian H_308 quadratic bump) → 각 envelope 자체 peak 을 τ=0 정렬 (scale-invariant shape) → pairwise Pearson r.",
+  "N_points_per_scale": 36,
+  "periods_sec": {
+    "gamma": 0.025,
+    "ultradian": 5400.0,
+    "circadian": 86400.0
+  },
+  "envelope_std": {
+    "gamma": 0.282843,
+    "ultradian": 0.20331,
+    "circadian": 0.208297
+  },
+  "pairwise_r": {
+    "gamma_ultradian": 0.759576,
+    "ultradian_circadian": 0.757644,
+    "gamma_circadian": 0.947237,
+    "min": 0.757644
+  },
+  "falsifiers": {
+    "F648.1_GAMMA-ULTRADIAN-SIMILAR": "PASS",
+    "F648.2_ULTRADIAN-CIRCADIAN-SIMILAR": "PASS",
+    "F648.3_GAMMA-CIRCADIAN-SIMILAR": "PASS",
+    "F648.4_ALL-ENVELOPES-NOT-FLAT": "PASS",
+    "F648.5_SCALE-SEPARATION-LADDER": "PASS",
+    "F648.6_BOUND": "PASS"
+  },
+  "pass": 6,
+  "total": 6,
+  "self_similar": true,
+  "verdict": "🟢 SUPPORTED-NUMERICAL (self-similar ladder)",
+  "anchors": ["H_634", "H_308", "H_309", "H_213"],
+  "cost": "$0 mac-local",
+  "deterministic": true,
+  "rng": false,
+  "date": "2026-05-28"
+}

@@ -1,0 +1,58 @@
+{
+  "id": "H_649",
+  "slug": "collective-register-collapse-phi",
+  "title": "multi-substrate collective register collapse (coh_collective < 0.10) 가 collective-Φ cliff 와 동조하는가 — H_633 single 의 collective 일반화",
+  "predecessor": "H_633 (PR #1219, PARTIAL/cliff-REFUTED, single-substrate, r=0.307, ratio 0.895)",
+  "config": {
+    "substrate": "M-population Kuramoto · NP=8 oscillators/stream · K_intra(within) + K_cross(between) coupling · Euler dt=0.05 · 100 steps · warm 60 · dim 12",
+    "M_grid": [2, 3],
+    "K_cross_grid": [0.0, 0.1, 0.25, 0.5, 1.0, 1.5, 2.5, 4.0, 6.0],
+    "K_intra_grid": [0.3, 2.0],
+    "omega_std_grid": [0.5, 2.0],
+    "pop_phase_gap_grid": [0.0, 2.1],
+    "phase_off_grid": [0.0, 0.7],
+    "n_bins": 4,
+    "coh_collective": "global Kuramoto order parameter r = |Sum exp(i theta)| / N_tot over ALL pooled oscillators",
+    "phi_collective": "phi_spatial over joined trajectory of all M*NP cells (RFC 036 byte-equal phi_rs replica, c_measure_phi)",
+    "ensemble_size": 144,
+    "deterministic": true,
+    "hexa_only": true,
+    "llm": "none",
+    "cost": "$0 mac local single foreground run"
+  },
+  "results": {
+    "n_total": 144,
+    "n_coh_lo": 39,
+    "n_coh_hi": 105,
+    "mean_coh_collective": 0.457405,
+    "mean_phi_collective": 13.437,
+    "phi_envelope_min": 7.68377,
+    "phi_envelope_max": 24.0,
+    "pearson_r_coh_phi_collective": 0.0490792,
+    "mean_phi_coh_lo": 13.174,
+    "max_phi_coh_lo": 19.9903,
+    "mean_phi_coh_hi": 13.5348,
+    "ratio_lo_hi": 0.973343,
+    "min_coh_member": {"coh": 0.0122812, "phi": 15.0696},
+    "max_coh_member": {"coh": 0.997466, "phi": 23.5}
+  },
+  "criteria": {
+    "C1_correlation_abs_r_gt_0.5": false,
+    "C2_collective_cliff_lo_hi_lt_0.20": false,
+    "F_NOCORR_abs_r_lt_0.3": true,
+    "F_SUSTAIN_phi_lo_ge_phi_hi": false,
+    "F_NONDET_violation": false,
+    "criteria_met": "0/2 (cliff frame)"
+  },
+  "verdict": "FALSIFIED (collective-cliff falsifier frame) = HYPOTHESIS SUPPORTED (no collective cliff, r < 0.5)",
+  "verdict_rule": "cliff-SUPPORTED iff (|r|>0.5 AND lo/hi<0.20); cliff-FALSIFIED iff (|r|<0.3 OR phi_lo>=phi_hi)",
+  "honest_summary": [
+    "H_649 hypothesis (multi-substrate collective coh<0.10 영역에서도 collective-Φ 유지, r<0.5) SUPPORTED. collective-cliff falsifier REFUTED.",
+    "Pearson r(coh_collective, Phi_collective) = 0.0491 — single H_633 (0.307) 보다도 약함. collective level 에서 coherence-Φ coupling 이 사실상 0.",
+    "coh_collective<0.10 영역 39 members: mean Φ_c=13.17, max 19.99, 전역 envelope [7.68,24] 내부 fully sustained. ratio lo/hi=0.973 ≈ 1 (cliff 라면 <0.20). collective cliff 완전 부재.",
+    "min-coh member (coh_c=0.012) Φ_c=15.07 — envelope 상위. collective register collapse 가 Φ_collective 바닥과 동조 안함.",
+    "결론: H_633 single 의 'register collapse ⊥ Φ-cliff' 가 multi-substrate collective level 에서도, 오히려 더 강하게 (r 더 작음) 성립. COFFESHOP register-hit gate 는 collective level 에서도 substrate Φ 구조와 무관한 design-side emit-policy gate.",
+    "re-run byte-identical (F-NONDET PASS). $0 mac local, hexa-only, llm:none.",
+    "honest tier: 🟢 NUMERICAL Φ (RFC 036 phi_spatial native byte-equal replica); 진짜 phi_rs Rust FFI link = named blocker (H_633/H_207 동일 carry)."
+  ]
+}
