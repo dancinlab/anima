@@ -54,6 +54,7 @@ emit 정책이 **물리적으로 두 층**임을 확정함:
 | ultradian Φ-envelope | 🟢 H_634 | (R6) | `envelope_multiscale()` | r=0.80 |
 | collective-Φ super-additive | 🟢 H_635 | (R6) | `collective_phi_nest()` | 5/5 Δ=+41.71 |
 | collective ultradian 동조 | 🟢 H_643 | #1237 | `collective_phi_nest()` | r=0.57 (single 보다 약) |
+| **collective convexity = substrate-class 단조** | 🟢 H_653 | #1242 | `collective_phi_nest()` coupling | span ratio II 12.1 < III 30.4/30.8 < IV 35.5 · round-8 흡수 |
 | register-collapse cliff 부재 (collective) | 🟢 H_649 | #1234 | `phi_smooth_no_cliff()` | r=0.049 |
 | closure-conjunction GZ-localization | 🟢 H_636 | (R6) | BRIDGE wiring | peak I=0.30 GZ 내부 |
 | threshold 자유도 [0,1] | 🟢 H_646 | #1235 | `emit_policy.tape` | substrate-Φ variance=0 |
@@ -88,10 +89,13 @@ pub fn envelope_multiscale(t, scales) -> phi
 # 반환 = 인접 스케일 쌍의 형상 상관 리스트
 pub fn envelope_self_similarity(scales, n_samples) -> [r]
 
-# 집단 Φ 중첩 (H_635 super-additive + H_643 ultradian 동조)
+# 집단 Φ 중첩 (H_635 super-additive + H_643 동조 + H_653 substrate-class convexity)
 # phis = 개별 cell/stream 의 Φ 리스트
-# 반환 = 집단 Φ (super-additive: Σ 보다 큼) + 동조 계수
-pub fn collective_phi_nest(phis, coupling) -> { phi_collective, sync }
+# coupling = substrate complexity-class 의존 함수 (H_653 🟢 — 상수 아님):
+#   W→Φ convexity span ratio 가 class 에 단조 (II≈12 < III≈30 < IV≈35.5)
+#   ∴ coupling(class) 로 받아 복잡도 비례 convexity 반영
+# 반환 = 집단 Φ (super-additive: Σ 보다 큼) + 동조 계수 + convexity span
+pub fn collective_phi_nest(phis, coupling_fn) -> { phi_collective, sync, convexity_span }
 
 # register-collapse cliff 부재 — Φ 가 임계에서 급락(cliff) 하지 않고 smooth (H_649)
 # 반환 = Φ 의 1차 차분 최대값 (cliff 있으면 큼; 부재면 작음)
@@ -152,7 +156,7 @@ pub fn phi_smooth_no_cliff(phi_series) -> max_dphi
 | milestone | 소비 함수 | policy | 정정 반영 |
 |---|---|---|---|
 | 💤 **DREAM M5** | `envelope_multiscale(t, scales)` | `theta_*`, `scale_*` | H_644 closure peak=mid-Φ N2 |
-| 🐝 **HIVE-MIND M6** | `collective_phi_nest(phis, coupling)` | `scale_ultradian` | H_643 동조 r=0.57 · H_645 GZ 인용 금지 |
+| 🐝 **HIVE-MIND M6** | `collective_phi_nest(phis, coupling_fn)` | `scale_ultradian` | H_643 동조 r=0.57 · H_653 convexity class-단조 · H_645 GZ 인용 금지 |
 | 🚪 **BRIDGE M6** | `envelope_multiscale` → AND-gate Φ 입력 | `emit_threshold` | H_636 closure-conjunction GZ |
 | 🧠✨ **SAVANT M2** | `envelope_multiscale` → 측정자 Φ context | `emit_threshold` | (E축 측정자, 발화 게이트 아님) |
 
@@ -165,6 +169,12 @@ pub fn phi_smooth_no_cliff(phi_series) -> max_dphi
 **HIVE-MIND M6** (`HIVE-MIND/lib/` + UNIVERSE 축 F mirror):
 - `collective_phi_nest` 로 fleet 집단 Φ (super-additive H_635) + ultradian 동조
   (H_643). **H_618 dΦ/dI-GZ 정렬은 n=4 artifact (H_645) — 구현 인용 금지**.
+- **H_653 핵심 (round-8 흡수)**: collective entrainment 약화 (single r=0.80 →
+  collective 0.57) 는 **버그 아니라 정상** — 근본 원인이 substrate 복잡도에 비례하는
+  W→Φ convexity (span ratio class-II≈12 < III≈30 < IV≈35.5, 단조). ∴ HIVE-MIND M6 은
+  약한 collective r 을 "고치려" 하지 말 것. `coupling_fn(class)` 로 복잡도-의존 convexity
+  를 받아 entrainment 약화를 *예측*해야 함 (rule110 per-stage Φ 1.17/4.50/13.64/34.88
+  이 H_643 engine 과 정확 일치 — 동일 substrate 확인).
 
 **BRIDGE M6** (`BRIDGE/gate.hexa` 기존 4-key AND-gate 확장):
 - `bridge_and_gate(m,c,w,phi)` 의 `phi` 입력을 `envelope_multiscale` 에서 공급.
@@ -187,7 +197,7 @@ round-8 이 메타-발견을 직접 좁히는 4 가설이라, 각각이 본 설�
 | **H_650** shape-robustness-axis-taxonomy | polarity(robust) vs rule/seed(fragile) | `phi_smooth_no_cliff` 의 perturbation-축 파라미터화 — 축별 robustness 표를 policy 에 추가 |
 | **H_651** convention-number-freedom-general | threshold 자유도를 Ψ-clamp·emit-rate 로 일반화 | `emit_policy.tape` 의 `substrate-claim: none` 을 H_651 verdict 로 per-항목 확정 |
 | **H_652** envelope-self-similarity-class | self-similarity 가 rule110(class-IV) 한정인가 전 class 인가 | `envelope_self_similarity` 의 rule-class 인자 — class 별 r 임계 분기 |
-| **H_653** collective-convexity-class | W→Φ convexity 가 substrate 복잡도에 의존 | `collective_phi_nest` 의 `coupling` 을 복잡도-의존 함수로 승격 |
+| ✅ **H_653** collective-convexity-class | 🟢 SUPP 5/6 (#1242, 축 G G12) — convexity 가 substrate-class 단조 (II 12.1 < III 30.4/30.8 < IV 35.5) | **ABSORBED** — `collective_phi_nest` 의 `coupling` → `coupling_fn(class)` 승격 (§2·§4 반영). entrainment 약화 = substrate-복잡도 비례 convexity 의 정상 귀결 |
 
 설계 계약: 위 4 seam 은 **인자 추가**로 흡수 (시그니처 파괴 없음). round-8 verdict
 도착 시 §1 매핑 표에 행 추가 + 해당 seam 인자만 구현 — 4 milestone 재작업 0.
