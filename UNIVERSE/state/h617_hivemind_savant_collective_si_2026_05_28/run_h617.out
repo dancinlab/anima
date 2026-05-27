@@ -1,0 +1,33 @@
+================================================================
+  H_617 — hivemind-savant induced collective SI (axis E*F round 3)
+  anchors: H_348 (SAVANT GZ_LOWER SI>3) | H_609 (HIVE-MIND collPhi)
+  substrate: n_a=n_b=3 | rule pair (110,110) | W=0.6 | sys=0
+  inhibition I on A only | tpm_a_eff = (1-I)*rule + I*0.5
+  GZ_LOWER = 1/2 - ln(4/3) ~ 0.21232
+  falsifier: SI_collective(GZ_LOWER) <= 3 OR sweep not monotone
+================================================================
+  baseline (I_a=0.0, pure rule on both halves):
+    Phi_a = 2.49604  Phi_b = 2.49604
+    SI_collective (baseline symmetry) = 1.0
+  --
+  I sweep (inhibition on A only, B at pure rule):
+  I=0.05  Phi_a=2.46611  Phi_b=2.49604  SI=1.01214
+  I=0.10  Phi_a=2.48637  Phi_b=2.49604  SI=1.00389
+  I=0.15  Phi_a=2.48578  Phi_b=2.49604  SI=1.00413
+  I=0.21232 GZ_LOWER  Phi_a=2.48249  Phi_b=2.49604  SI=1.00546
+  I=0.25  Phi_a=2.47587  Phi_b=2.49604  SI=1.00815
+  I=0.30  Phi_a=2.45733  Phi_b=2.49604  SI=1.01575
+  I=0.40  Phi_a=3.38792  Phi_b=2.49604  SI=1.35732
+  I=0.50  Phi_a=2.91473  Phi_b=2.49604  SI=1.16774
+  --
+  MAX SI = 1.35732  @ I=0.40
+  SI @ GZ_LOWER = 1.00546
+  [FAIL] F617.1 GZ-LOWER-SI: SI_collective(I=GZ_LOWER) > 3
+  [FAIL] F617.2 I-MONOTONIC: SI non-increasing across I = 0.05 .. 0.50
+  [PASS] F617.3 SYMMETRY-NULL: SI(I_a=0.0, symmetric pair) ~ 1 (within 0.01)
+  [FAIL] F617.4 DETERMINISM: SI(GZ_LOWER) re-run byte-identical
+================================================================
+  RESULT: 1 PASS / 3 FAIL
+  VERDICT: H1 FALSIFIED — SI_collective(GZ_LOWER) <= 3 — no
+           cross-link emergence at the H_609/H_348 anchor.
+================================================================
