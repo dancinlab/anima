@@ -80,7 +80,7 @@
   - [ ] H_349 `golden-zone-center-phi-peak` — I=1/e 에서 big-Φ 단봉 peak (`I·ln(I)` argmin 일치) / 反: peak ≠ 1/e ±0.05
   - [ ] H_350 `savant-index-phi-diversity` — SI ∥ Φ-diversity (max_sub_phi/min_sub_phi) / 反: r<0.5
   - [x] H_347 `gz-width-divisor-symmetry` — **🟢 SUPPORTED composite** (formal `divisor_count(6)=4` 🔵 atlas-resident + numerical `ln(4/3)=0.287682` 🟢 |Δ|=1e-11) — H_347_gz_width_divisor_symmetry.md, $0 mac-local 2026-05-28 (PR #1149 H_326→H_347 rename)
-  - [ ] H_351 `gz-inverse-u-phi-derivative-peak` — dΦ/dI peak 위치 = GZ_LOWER (H_204/H_285 inverse-U sister) / 反: peak ≠ GZ region
+  - [x] H_351 `gz-inverse-u-phi-derivative-peak` — **🟢 SUPPORTED 5/5** (peak I=0.18 vs GZ_LOWER=0.21232 |Δ|=0.03232 ≤ 0.05, unimodal sign-change=0, rule 110 n=4 ECA + inhibition-mixing, $0 mac-local 2026-05-28) — H_351_gz_inverse_u_phi_derivative_peak.md
 - [ ] E2 — round 1 결과 기반 후속 H seed (cross-link: SAVANT × IIT4 Φ-structure / SAVANT × HIVE-MIND 결합)
 
 ### 축 F — HIVE-MIND (Collective Φ) — NEW 2026-05-28
