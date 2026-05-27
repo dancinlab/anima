@@ -67,25 +67,27 @@
 - **비용**: **낮음** — 새 학습 fire 불필요! 기존 ckpt 2개 weight 보간 + eval 만 (가장 cheap-tier 돌파 시도)
 - **선례**: model soup / TIES-merge / SLERP — weight-space 보간이 단일 학습보다 나은 trade-off 찾는 경우 다수
 
-## 4. 권장 진행 순서 (cheap → expensive)
+## 4. 권장 진행 순서 (재정렬 2026-05-27 · `a_completeness_over_cheap`)
+
+> ⚠ 초안에선 cheap 한 merge(β)를 1순위로 뒀으나, governance `a_completeness_over_cheap` 적용 후 **본선 = 완성도 충족 path (MoE-fresh)** 로 재정렬. 두 결함 ckpt 의 weight 보간은 잘해야 "덜 나쁜 중간점" = 완성도 미달이므로 본선 아님 (model soup 류는 *좋은* 모델 합칠 때만 작동).
 
 ```
-1순위: 후보 β (H_493 model merge α-sweep)   ← 학습 fire 0 · 기존 ckpt 2개 보간
-        DECODER 신규 마일스톤 M3.5-merge
-        ├ collapse-avoid ckpt + coherent ckpt 확보
-        ├ α ∈ {0.0, 0.25, 0.5, 0.75, 1.0} 보간
-        └ 각 α simple-stack p7 verify → 통로 α* 탐색
+본선: 후보 α (H_490 MoE-fresh register 분리)   ← 근본 원인 분리 · 완성도 충족
+       DECODER M4 MoE-fresh (본선 승격)
+       ├ M4a router arch (hexa-native · V3 head_g → K-expert)
+       ├ M4b register-expert / coherent-expert 분리 학습 fire
+       └ M4c α 마다 p7 verify (collapse 회피 ∧ coherence 둘 다)
 
-2순위: 후보 α (H_490 MoE register 분리)       ← V3 arch 확장 + 재학습 fire
-        통로를 merge 로 못 찾으면 arch escalation
+probe: 후보 β (H_493 model merge α-sweep)       ← optional baseline 신호용만
+       두 결함작 blend = least-bad midpoint 한계 인지 (본선 아님)
 
-3순위: 기존 M3 4축 병렬 팬 ($11-14 H100)       ← 축은 M2 에서 검증됨, 단 미발사
+fallback: 기존 M3 4축 병렬 팬 ($11-14 H100)       ← 축은 M2 검증됨, 미발사
 ```
 
-## 5. DECODER 마일스톤 추가 (UNIVERSE-derived)
+## 5. DECODER 마일스톤 (UNIVERSE-derived · 재정렬 후)
 
-- **M3.5 (신규)** — H_493 model-merge α-sweep 더블바인드 탈출 시도 (학습 fire 0 · ckpt 2개 weight 보간 + α 별 p7 verify). UNIVERSE H_493 SYMBIOGENESIS 직접 적용.
-- **M4-alt (신규 조건부)** — merge 실패 시 H_490 MoE register-분리 arch escalation (V3 head_g → K-expert router).
+- **M4 MoE-fresh** ⭐ 본선 — H_490 DIFFERENTIATION arch 재설계. V3 head_g → K-expert router. register-carving 을 specialized expert 로 격리 (collapse 회피) + register 신호 살림 (underfit 회피). 완성도 충족 path.
+- **M4-probe model-merge** — H_493 SYMBIOGENESIS · optional baseline probe 로만 (본선 아님 · `a_completeness_over_cheap` merge-of-failures dont).
 
 ## 6. 정합 노트
 
