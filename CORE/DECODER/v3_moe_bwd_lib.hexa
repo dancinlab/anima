@@ -157,3 +157,222 @@ pub fn mlp_block_bwd(d_y, x, h_act, wup_off, wdown_off, M, d, h, dMg, d_x_out) {
         j2 = j2 + 1
     }
 }
+
+// ───────────────────────────────────────────────────────────────────────────
+// Phase 4-bwd-3: self-attention backward (Q/K/V/Wo · causal-softmax)
+// ───────────────────────────────────────────────────────────────────────────
+//
+// Forward (scaled-dot-product, causal):
+//   Q[t, j] = Σ_jj zT_seq[t, jj] · Wq[jj, j]
+//   K[t, j] = Σ_jj zT_seq[t, jj] · Wk[jj, j]
+//   V[t, j] = Σ_jj zT_seq[t, jj] · Wv[jj, j]
+//   scores[t1, t2] = (Σ_j Q[t1, j]·K[t2, j]) · attn_scale   (causal: t2 ≤ t1)
+//   probs[t1, :]   = softmax(scores[t1, :])                  (-inf on causal-masked)
+//   attn_out[t1, j] = Σ_t2 probs[t1, t2] · V[t2, j]
+//   y[t1, j]       = Σ_jj attn_out[t1, jj] · Wo[jj, j]
+//
+// Backward (analytic vjp, chain rule):
+//   dWo[i, j]       += Σ_t1 attn_out[t1, i] · d_y[t1, j]
+//   d_attn_out[t,i]  = Σ_j d_y[t, j] · Wo[i, j]
+//
+//   d_probs[t1, t2]  = Σ_j d_attn_out[t1, j] · V[t2, j]
+//   d_V[t2, j]      += Σ_t1 probs[t1, t2] · d_attn_out[t1, j]
+//
+//   softmax jvp (row-wise):
+//   d_scores[t1, t2] = probs[t1, t2] · (d_probs[t1, t2]
+//                       - Σ_k probs[t1, k] · d_probs[t1, k])
+//   (causal: probs=0 for t2 > t1 ⇒ d_scores=0 there automatically)
+//   d_scores_scaled  = d_scores · attn_scale
+//
+//   d_Q[t1, j]      += Σ_t2 d_scores_scaled[t1, t2] · K[t2, j]
+//   d_K[t2, j]      += Σ_t1 d_scores_scaled[t1, t2] · Q[t1, j]
+//
+//   dWq[i, j]       += Σ_t1 zT_seq[t1, i] · d_Q[t1, j]
+//   dWk[i, j]       += Σ_t2 zT_seq[t2, i] · d_K[t2, j]
+//   dWv[i, j]       += Σ_t2 zT_seq[t2, i] · d_V[t2, j]
+//
+//   d_zT_out[t, i]   = Σ_j (d_Q[t,j]·Wq[i,j] + d_K[t,j]·Wk[i,j] + d_V[t,j]·Wv[i,j])
+//
+// Args (all buffers, T·d / T·T sized):
+//   d_y         (T·d)  gradient wrt y (post-Wo output)
+//   zT_seq      (T·d)  forward input (pre-attention)
+//   Q_buf, K_buf, V_buf  (T·d each) forward projections (cached from fwd)
+//   attn_out    (T·d)  forward attention output (pre-Wo, cached from fwd)
+//   probs       (T·T)  forward softmax probs (cached from fwd · causal-zeroed)
+//   wq/wk/wv/wo_off    offsets into M
+//   M / dMg     packed param + grad buffers
+//   T, d        seq length + hidden dim
+//   attn_scale  1 / sqrt(d) (cached from fwd)
+//   d_zT_out    (T·d)  OUTPUT gradient wrt zT_seq (overwritten)
+pub fn self_attn_bwd(d_y, zT_seq, Q_buf, K_buf, V_buf, attn_out, probs,
+                      wq_off, wk_off, wv_off, wo_off,
+                      M, T, d, attn_scale,
+                      dMg, d_zT_out) {
+    // dWo[i, j] += Σ_t1 attn_out[t1, i] · d_y[t1, j]
+    let mut i = 0
+    while i < d {
+        let mut j = 0
+        while j < d {
+            let mut acc = 0.0
+            let mut t1 = 0
+            while t1 < T {
+                acc = acc + farr_get(attn_out, t1 * d + i) * farr_get(d_y, t1 * d + j)
+                t1 = t1 + 1
+            }
+            let prev = farr_get(dMg, wo_off + i * d + j)
+            let _ = farr_set(dMg, wo_off + i * d + j, prev + acc)
+            j = j + 1
+        }
+        i = i + 1
+    }
+    // d_attn_out[t, i] = Σ_j d_y[t, j] · Wo[i, j]
+    let d_attn_out = t_zeros(T * d)
+    let mut t = 0
+    while t < T {
+        let mut ii = 0
+        while ii < d {
+            let mut acc = 0.0
+            let mut jj = 0
+            while jj < d {
+                acc = acc + farr_get(d_y, t * d + jj) * farr_get(M, wo_off + ii * d + jj)
+                jj = jj + 1
+            }
+            let _ = farr_set(d_attn_out, t * d + ii, acc)
+            ii = ii + 1
+        }
+        t = t + 1
+    }
+    // d_probs[t1, t2] = Σ_j d_attn_out[t1, j] · V[t2, j]
+    let d_probs = t_zeros(T * T)
+    let mut tp1 = 0
+    while tp1 < T {
+        let mut tp2 = 0
+        while tp2 < T {
+            let mut acc = 0.0
+            let mut jp = 0
+            while jp < d {
+                acc = acc + farr_get(d_attn_out, tp1 * d + jp) * farr_get(V_buf, tp2 * d + jp)
+                jp = jp + 1
+            }
+            let _ = farr_set(d_probs, tp1 * T + tp2, acc)
+            tp2 = tp2 + 1
+        }
+        tp1 = tp1 + 1
+    }
+    // d_V[t2, j] += Σ_t1 probs[t1, t2] · d_attn_out[t1, j]
+    let d_V = t_zeros(T * d)
+    let mut tv2 = 0
+    while tv2 < T {
+        let mut jv = 0
+        while jv < d {
+            let mut acc = 0.0
+            let mut tv1 = 0
+            while tv1 < T {
+                acc = acc + farr_get(probs, tv1 * T + tv2) * farr_get(d_attn_out, tv1 * d + jv)
+                tv1 = tv1 + 1
+            }
+            let _ = farr_set(d_V, tv2 * d + jv, acc)
+            jv = jv + 1
+        }
+        tv2 = tv2 + 1
+    }
+    // softmax bwd per row: d_scores[t1, t2] = probs[t1, t2] · (d_probs[t1, t2] - sum_t1)
+    //   where sum_t1 = Σ_k probs[t1, k] · d_probs[t1, k]
+    let d_scores = t_zeros(T * T)
+    let mut ts1 = 0
+    while ts1 < T {
+        // row dot product
+        let mut row_dot = 0.0
+        let mut k = 0
+        while k < T {
+            row_dot = row_dot + farr_get(probs, ts1 * T + k) * farr_get(d_probs, ts1 * T + k)
+            k = k + 1
+        }
+        let mut ts2 = 0
+        while ts2 < T {
+            let p = farr_get(probs, ts1 * T + ts2)
+            let dp = farr_get(d_probs, ts1 * T + ts2)
+            let _ = farr_set(d_scores, ts1 * T + ts2, p * (dp - row_dot) * attn_scale)
+            ts2 = ts2 + 1
+        }
+        ts1 = ts1 + 1
+    }
+    // d_Q[t1, j] = Σ_t2 d_scores[t1, t2] · K[t2, j]
+    let d_Q = t_zeros(T * d)
+    let mut tq1 = 0
+    while tq1 < T {
+        let mut jq = 0
+        while jq < d {
+            let mut acc = 0.0
+            let mut tq2 = 0
+            while tq2 < T {
+                acc = acc + farr_get(d_scores, tq1 * T + tq2) * farr_get(K_buf, tq2 * d + jq)
+                tq2 = tq2 + 1
+            }
+            let _ = farr_set(d_Q, tq1 * d + jq, acc)
+            jq = jq + 1
+        }
+        tq1 = tq1 + 1
+    }
+    // d_K[t2, j] = Σ_t1 d_scores[t1, t2] · Q[t1, j]
+    let d_K = t_zeros(T * d)
+    let mut tk2 = 0
+    while tk2 < T {
+        let mut jk = 0
+        while jk < d {
+            let mut acc = 0.0
+            let mut tk1 = 0
+            while tk1 < T {
+                acc = acc + farr_get(d_scores, tk1 * T + tk2) * farr_get(Q_buf, tk1 * d + jk)
+                tk1 = tk1 + 1
+            }
+            let _ = farr_set(d_K, tk2 * d + jk, acc)
+            jk = jk + 1
+        }
+        tk2 = tk2 + 1
+    }
+    // dWq, dWk, dWv += zT_seq^T · d_Q (resp. d_K, d_V)
+    let mut wi = 0
+    while wi < d {
+        let mut wj = 0
+        while wj < d {
+            let mut accQ = 0.0
+            let mut accK = 0.0
+            let mut accV = 0.0
+            let mut tw = 0
+            while tw < T {
+                let z = farr_get(zT_seq, tw * d + wi)
+                accQ = accQ + z * farr_get(d_Q, tw * d + wj)
+                accK = accK + z * farr_get(d_K, tw * d + wj)
+                accV = accV + z * farr_get(d_V, tw * d + wj)
+                tw = tw + 1
+            }
+            let pQ = farr_get(dMg, wq_off + wi * d + wj)
+            let pK = farr_get(dMg, wk_off + wi * d + wj)
+            let pV = farr_get(dMg, wv_off + wi * d + wj)
+            let _ = farr_set(dMg, wq_off + wi * d + wj, pQ + accQ)
+            let _ = farr_set(dMg, wk_off + wi * d + wj, pK + accK)
+            let _ = farr_set(dMg, wv_off + wi * d + wj, pV + accV)
+            wj = wj + 1
+        }
+        wi = wi + 1
+    }
+    // d_zT_out[t, i] = Σ_j (d_Q[t,j]·Wq[i,j] + d_K[t,j]·Wk[i,j] + d_V[t,j]·Wv[i,j])
+    let mut tz = 0
+    while tz < T {
+        let mut zi = 0
+        while zi < d {
+            let mut acc = 0.0
+            let mut zj = 0
+            while zj < d {
+                acc = acc + farr_get(d_Q, tz * d + zj) * farr_get(M, wq_off + zi * d + zj)
+                acc = acc + farr_get(d_K, tz * d + zj) * farr_get(M, wk_off + zi * d + zj)
+                acc = acc + farr_get(d_V, tz * d + zj) * farr_get(M, wv_off + zi * d + zj)
+                zj = zj + 1
+            }
+            let _ = farr_set(d_zT_out, tz * d + zi, acc)
+            zi = zi + 1
+        }
+        tz = tz + 1
+    }
+}
