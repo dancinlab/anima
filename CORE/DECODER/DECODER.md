@@ -47,6 +47,7 @@
   - [ ] M3d 실 teacher — vP21M LoRA ckpt 로드 (axis B dummy → real, HONEST TODO #B1)
   - [ ] M3e 3B 스케일 config + dispatch 매트릭스 (4 pod: A/B/C/D 각 ON, 나머지 baseline)
   - [ ] M3f 발사 + Monitor + harvest
+  - ⚠ **M3 pilot scope verdict (2026-05-28)** — `state/p21h_v3_m3_pilot_scope_2026_05_28/SCOPE_VERDICT.md`: caller-round attempt to fire 4-pod parallel pilot identified 6 structural blockers (filename bug `launch_trainer_p21.sh` → `launch_trainer.sh` · cloud-guard g8 blocks raw ssh/scp inside existing 339-line `.runpod.sh` · axis B Python wiring is documented no-op without teacher · `adapter_model.safetensors` missing from origin/main · M3 demoted from 본선 to optional baseline 2026-05-27 (M4 MoE-fresh 본선) · `m3_fire_dispatch.hexa` concurrent-ownership race). NO_FIRE this round — `a_completeness_over_cheap` forbids firing through a known-broken pipeline. Handoff recipe + 3-axis (A·C·D) honest fire option (~$5-12) in scope verdict doc.
 - [ ] **M4 백엔드 배선** — 최고 ≥PARTIAL 축 ckpt → `generator.hexa` → brain_decide emit 슬롯 end-to-end
 - [ ] **M5 p7 verify** — perplexity 아닌 simple-stack 판정
 
