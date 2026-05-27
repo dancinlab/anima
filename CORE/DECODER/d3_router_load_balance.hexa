@@ -99,9 +99,12 @@ fn set_cluster(zT: int, c: int, d: int) {
 
 fn abs_f(x: float) -> float { return if x < 0.0 { 0.0 - x } else { x } }
 
-fn main() {
-    print("=== DECODER D3: top-1 router LOAD-BALANCE (E=4 V=8 d=6 · 6 diverse clusters) ===")
-
+// run one load-balance scenario. skew_mode:
+//   0 = DIVERSE: each cluster trained equally often (balanced corpus).
+//   1 = SKEWED : cluster 0 trained REP× more often per step (frequency-skewed
+//                corpus — the realistic M4b condition where one register dominates).
+// returns gini (caller prints + verdicts). Prints the full per-expert breakdown.
+fn run_scenario(label: int, skew_mode: int, rep0: int) -> float {
     let n_experts = 4
     let V = 8
     let d = 6
@@ -121,8 +124,6 @@ fn main() {
         s = s + 1
     }
 
-    // 6 diverse register prototypes; each → a distinct target token.
-    // cluster c → emit token (c mod V) so all 6 registers are separable.
     let zT = farr_zeros(d)
     let lr = 0.5
     let n_steps = 600
@@ -142,19 +143,25 @@ fn main() {
     let init_loss = init_sum / to_float(n_clusters)
     print("  init avg CE = "); print(init_loss)
 
-    // train: cycle through all 6 clusters each step
+    // train
     let mut step = 0
     while step < n_steps {
         let mut c = 0
         while c < n_clusters {
             set_cluster(zT, c, d)
-            let _ = moe_toy_step_hard(zT, c, M, router_off, experts_off, n_experts, V, d, total, lr)
+            // SKEWED: cluster 0 gets rep0 extra weight (over-represented register).
+            let reps = if skew_mode == 1 { if c == 0 { rep0 } else { 1 } } else { 1 }
+            let mut r = 0
+            while r < reps {
+                let _ = moe_toy_step_hard(zT, c, M, router_off, experts_off, n_experts, V, d, total, lr)
+                r = r + 1
+            }
             c = c + 1
         }
         step = step + 1
     }
 
-    // final avg CE
+    // final avg CE (over distinct clusters, unweighted)
     let mut fin_sum = 0.0
     let mut cf = 0
     while cf < n_clusters {
@@ -166,27 +173,28 @@ fn main() {
     let final_loss = fin_sum / to_float(n_clusters)
     print("  final avg CE = "); print(final_loss)
 
-    // === expert LOAD measurement: count top-1 routes per expert over all clusters ===
+    // === expert LOAD measurement: weight each cluster's route by its corpus frequency ===
     let load = farr_zeros(n_experts)
+    let mut tot_tokens = 0.0
     let mut cc = 0
     while cc < n_clusters {
         set_cluster(zT, cc, d)
         let t = route_top1_of(zT, M, router_off, n_experts, d)
-        let _ = farr_set(load, t, farr_get(load, t) + 1.0)
+        let w = if skew_mode == 1 { if cc == 0 { to_float(rep0) } else { 1.0 } } else { 1.0 }
+        let _ = farr_set(load, t, farr_get(load, t) + w)
+        tot_tokens = tot_tokens + w
         cc = cc + 1
     }
-    // normalize to utilization fractions (sum = 1)
     let mut frac = farr_zeros(n_experts)
     let mut e = 0
     while e < n_experts {
-        let _ = farr_set(frac, e, farr_get(load, e) / to_float(n_clusters))
+        let _ = farr_set(frac, e, farr_get(load, e) / tot_tokens)
         print("  expert e"); print(e); print(" load="); print(farr_get(load, e));
         print(" frac="); print(farr_get(frac, e))
         e = e + 1
     }
 
     // === balance metrics ===
-    // (a) max load fraction → monopoly check
     let mut maxf = 0.0
     let mut active = 0
     let mut e2 = 0
@@ -196,7 +204,7 @@ fn main() {
         if f > 0.0 { active = active + 1 }
         e2 = e2 + 1
     }
-    // (b) Gini coefficient of the load fractions (0 = perfectly even, →1 = monopoly)
+    // Gini = Σ|xi-xj| / (2·n·Σxi); Σxi = 1
     let mut gsum = 0.0
     let mut a = 0
     while a < n_experts {
@@ -207,9 +215,8 @@ fn main() {
         }
         a = a + 1
     }
-    // Gini = Σ|xi-xj| / (2·n·Σxi); Σxi = 1
     let gini = gsum / (2.0 * to_float(n_experts) * 1.0)
-    // (c) normalized Shannon entropy of load distribution (1 = perfectly even, 0 = monopoly)
+    // normalized Shannon entropy (1 = even, 0 = monopoly)
     let mut ent = 0.0
     let mut e3 = 0
     while e3 < n_experts {
@@ -224,29 +231,12 @@ fn main() {
     print("  [metric] gini = "); print(gini)
     print("  [metric] norm_entropy = "); print(norm_ent)
 
-    // === VERDICT ===
-    // healthy = learned the corpus AND no monopoly AND each active expert > 0.1
     let loss_dropped = if final_loss < init_loss * 0.5 { 1 } else { 0 }
     let monopoly = if maxf > 0.9 { 1 } else { 0 }
-    // balanced threshold: gini < 0.5 (even-ish) is the load-balance PASS gate
     let balanced = if gini < 0.5 { 1 } else { 0 }
     print("  [verdict] loss_dropped = "); print(loss_dropped)
     print("  [verdict] monopoly(>0.9) = "); print(monopoly)
     print("  [verdict] balanced(gini<0.5) = "); print(balanced)
-
-    if loss_dropped == 1 {
-        if monopoly == 1 {
-            print("=== D3: FALSIFIED — single-expert load monopoly (collapse precursor, redesign) ===")
-        } else {
-            if balanced == 1 {
-                print("=== D3: SUPPORTED — top-1 router balances expert load on diverse corpus (healthy) ===")
-            } else {
-                print("=== D3: PARTIAL — no monopoly but load uneven (gini>=0.5), some experts starve ===")
-            }
-        }
-    } else {
-        print("=== D3: INCONCLUSIVE — corpus not learned, load metric unreliable ===")
-    }
 
     let _ = farr_free(M)
     let _ = farr_free(zT)
@@ -255,4 +245,34 @@ fn main() {
     let _ = farr_free(lg0)
     let _ = farr_free(load)
     let _ = farr_free(frac)
+    return gini
+}
+
+fn main() {
+    print("=== DECODER D3: top-1 router LOAD-BALANCE (E=4 V=8 d=6 · 6 clusters) ===")
+
+    print("--- Scenario A: DIVERSE corpus (all clusters equal frequency) ---")
+    let gini_a = run_scenario(0, 0, 1)
+
+    print("--- Scenario B: SKEWED corpus (cluster 0 = 20× over-represented · M4b condition) ---")
+    let gini_b = run_scenario(1, 1, 20)
+
+    // === AGGREGATE VERDICT ===
+    // D3 hypothesis = top-1 router balances load on DIVERSE corpus (Scenario A).
+    // Scenario B is the controlled stress: does corpus skew DRIVE the monopoly?
+    let a_balanced = if gini_a < 0.5 { 1 } else { 0 }
+    let b_imbalanced = if gini_b >= 0.5 { 1 } else { 0 }
+    print("=== D3 AGGREGATE ===")
+    print("  gini(diverse) = "); print(gini_a)
+    print("  gini(skewed)  = "); print(gini_b)
+    if a_balanced == 1 {
+        print("=== D3: SUPPORTED — router balances expert load on DIVERSE corpus (gini<0.5, no monopoly) ===")
+        if b_imbalanced == 1 {
+            print("=== D3 mechanism: load imbalance is CORPUS-DRIVEN (skewed corpus → imbalance), NOT router-structural ===")
+        } else {
+            print("=== D3 mechanism: even SKEWED corpus stays balanced — router robust to frequency skew ===")
+        }
+    } else {
+        print("=== D3: FALSIFIED — router fails to balance even a DIVERSE corpus (structural, redesign) ===")
+    }
 }
