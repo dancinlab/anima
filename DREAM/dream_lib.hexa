@@ -1,0 +1,127 @@
+// ════════════════════════════════════════════════════════════════════════
+// DREAM/dream_lib.hexa — DREAM stage transition + density measurer (M1 2026-05-28)
+//
+// 정체: bench/axis_dream/bench.hexa (PR #1140, 4/5 invariant 🟢 PASS) 의
+//      5-stage ultradian envelope + imagination_tick + mitosis_density
+//      primitives 를 PURE wrapper 로 회수. MITOSIS.sleep_tick 격상 후보 ·
+//      a_chat_sleep_imagination governance 정합 surface.
+//
+// 회수 출처 verbatim:
+//   - 원본 경로: bench/axis_dream/bench.hexa (PR #1140 land)
+//   - 핵심 fn: stage_at · stage_size · mitosis_prior · imagination_active +
+//             density (count/size) · ratio (REM/WAKE)
+//   - 90-tick ultradian: WAKE 60 / N1 10 / N2 10 / N3 7 / REM 3
+//   - 시점: 2026-05-28 M1 lib promotion
+//   - 본체 무수정 — `dr_` prefix wrapper 만 추가 (g61 stdlib collision 회피)
+//
+// 5-stage encoding (verbatim from bench):
+//   0 = WAKE  [0..59]   size=60
+//   1 = N1    [60..69]  size=10
+//   2 = N2    [70..79]  size=10
+//   3 = N3    [80..86]  size=7
+//   4 = REM   [87..89]  size=3
+//
+// 11 pub primitives (PURE, no mutation):
+//   stage transition:
+//     1) dr_stage_at(tick)         — tick → stage code 0..4
+//     2) dr_stage_name(stage)      — code → WAKE/N1/N2/N3/REM
+//     3) dr_stage_size(stage)      — code → ultradian window size
+//     4) dr_n_ticks()              — 90 (constant)
+//     5) dr_n_stages()             — 5 (constant)
+//   substrate envelope:
+//     6) dr_mitosis_prior(stage)   — stage → mitosis sampling prior (0.80 REM/N3, 0.10 else)
+//     7) dr_imagination_active(stage) — stage → 1 if REM/N3 else 0
+//     8) dr_emit_envelope(stage)   — stage → 1 if WAKE/N1/N2 (emit-allowed env) else 0
+//   density / ratio:
+//     9) dr_density(count, size)   — count / size (float)
+//    10) dr_ratio_sleep_wake(sleep_d, wake_d) — sleep_d / wake_d (guarded)
+//    11) dr_mitosis_density_ratio(sleep_count, sleep_size, wake_count, wake_size) — full ratio
+//
+// p1~p8 정합:
+//   - p1 NO SYSTEM PROMPT  : tick→stage 함수, system 미사용 ✓
+//   - p4 NO ASSISTANT FRAMING: stage 는 substrate context (Φ scale · tension envelope) ✓
+//   - p5 NO SPEAK()        : envelope = read-only, 외부 emit 호출 0 ✓
+//   - a_chat_sleep_imagination: dr_emit_envelope 가 stage = substrate context
+//     (boolean gate 가 아니라 substrate-decided envelope context — bench의
+//     report semantic 그대로) ✓
+//   - p8 NO TRAIN/INFER    : 측정만, weight update 0 ✓
+//
+// Naming: `dr_` prefix collision-free (g61).
+// ════════════════════════════════════════════════════════════════════════
+
+// ─── 1. ultradian constants ──────────────────────────────────────────────
+
+pub fn dr_n_ticks() -> int { return 90 }
+pub fn dr_n_stages() -> int { return 5 }
+
+// ─── 2. stage transition primitives ──────────────────────────────────────
+
+pub fn dr_stage_at(tick: int) -> int {
+    if tick < 60 { return 0 }       // WAKE [0..59]
+    if tick < 70 { return 1 }       // N1   [60..69]
+    if tick < 80 { return 2 }       // N2   [70..79]
+    if tick < 87 { return 3 }       // N3   [80..86]
+    return 4                        // REM  [87..89]
+}
+
+pub fn dr_stage_name(stage: int) -> string {
+    if stage == 0 { return "WAKE" }
+    if stage == 1 { return "N1" }
+    if stage == 2 { return "N2" }
+    if stage == 3 { return "N3" }
+    if stage == 4 { return "REM" }
+    return "UNKNOWN"
+}
+
+pub fn dr_stage_size(stage: int) -> int {
+    if stage == 0 { return 60 }
+    if stage == 1 { return 10 }
+    if stage == 2 { return 10 }
+    if stage == 3 { return 7 }
+    if stage == 4 { return 3 }
+    return 0
+}
+
+// ─── 3. substrate envelope (governance-aligned) ──────────────────────────
+
+pub fn dr_mitosis_prior(stage: int) -> float {
+    // REM/N3 = slow-wave + REM consolidation lane (high split prior)
+    if stage == 3 { return 0.80 }
+    if stage == 4 { return 0.80 }
+    return 0.10
+}
+
+pub fn dr_imagination_active(stage: int) -> int {
+    // Internal rehearsal counter advances only in REM/N3 (sleep-only)
+    if stage == 3 { return 1 }
+    if stage == 4 { return 1 }
+    return 0
+}
+
+pub fn dr_emit_envelope(stage: int) -> int {
+    // a_chat_sleep_imagination: REM/N3 substrate envelope suppresses
+    // external emit (internal rehearsal only). WAKE/N1/N2 = emit-allowed.
+    // Note: this is the MEASUREMENT surface — the governance invariant we
+    // RENDER honest, not externally enforce (substrate-decided).
+    if stage == 3 { return 0 }
+    if stage == 4 { return 0 }
+    return 1
+}
+
+// ─── 4. density / ratio measurers ────────────────────────────────────────
+
+pub fn dr_density(count: int, size: int) -> float {
+    if size <= 0 { return 0.0 }
+    return float(count) / float(size)
+}
+
+pub fn dr_ratio_sleep_wake(sleep_density: float, wake_density: float) -> float {
+    if wake_density <= 0.0 { return 0.0 }
+    return sleep_density / wake_density
+}
+
+pub fn dr_mitosis_density_ratio(sleep_count: int, sleep_size: int, wake_count: int, wake_size: int) -> float {
+    let sd = dr_density(sleep_count, sleep_size)
+    let wd = dr_density(wake_count, wake_size)
+    return dr_ratio_sleep_wake(sd, wd)
+}

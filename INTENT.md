@@ -7,7 +7,7 @@
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
 
 - [x] AxisBench D INTENT 측정 surface — `bench/axis_intent/` 100-tick × 4-D × 3 scenario · cumulative direction magnitude · stability_std · monotone_ratio · 4/5 falsifier PASS (PR #1143).
-- [ ] M1 intent_lib — `INTENT/{intent_lib.hexa,SSOT.md}` cumulative_intent vector + decay window stdlib.
+- [x] M1 intent_lib — `INTENT/{intent_lib.hexa,SSOT.md,intent_lib_smoke.hexa}` cumulative_intent vector + decay window stdlib (12 `it_*` pub primitives — libm-free sqrt/normalize + cumulative magnitude + stability_std + monotone_ratio + decay_weight/decayed_sum · smoke 10 invariants · hexa parse 2/2 PASS). OSCILLATING residual = M4 carry.
 - [ ] M2 brain_decide 위 hook — short-term emit decision (CORE.brain_decide) 의 cumulative direction 누적 + long-term goal vector update.
 - [ ] M3 goal trajectory log — emit decision 별 INTENT delta + .kosmos 영속화 (시간 thread).
 - [ ] M4 OSCILLATING residual — bench D 의 period-4 zero-std artifact 재설계 (stability metric ≠ direction std).

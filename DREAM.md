@@ -7,7 +7,7 @@
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
 
 - [x] AxisBench B DREAM 측정 surface 입증 — `bench/axis_dream/` 90-tick simulation · REM/N3 mitosis density=1.0 vs WAKE=0.017 (60× ratio) · REM/N3 emit_rate=0 strict · 4/5 invariant PASS (PR #1140).
-- [ ] M1 dream_lib — `DREAM/{dream_lib.hexa,SSOT.md}` PURE wrapper · sleep_tick 의 imagination_tick 추출 + cell_pool transition.
+- [x] M1 dream_lib — `DREAM/{dream_lib.hexa,SSOT.md,dream_lib_smoke.hexa}` PURE wrapper · sleep_tick 의 imagination_tick 추출 + cell_pool transition (11 `dr_*` pub primitives — 5-stage 90-tick + mitosis_prior + emit_envelope + density ratio · smoke 10 invariants · hexa parse 2/2 PASS).
 - [ ] M2 imagination_replay — N3/REM 동안 가까운 working memory snapshot 재실행 (emit-free) · WAKE.memory 와 cross-link.
 - [ ] M3 mitosis envelope — REM 분열 burst 측정 + threshold tune (`a_chat_sleep_imagination` substrate context 정합).
 - [ ] M4 dream report — wake transition 시 imagination 결과 narrative summary (NARRATIVE 도메인 연결 후보).
