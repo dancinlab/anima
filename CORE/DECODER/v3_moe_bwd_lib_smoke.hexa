@@ -160,6 +160,50 @@ fn _loss_seq_sq(y, T, d) -> float {
     return acc
 }
 
+// full decoder block forward (attn + residual1 + per-token MLP + residual2)
+// caches everything layer_block_bwd needs; writes zT_mid_out + zT_out.
+fn _layer_block_forward(zT_in, wq_off, wk_off, wv_off, wo_off, wup_off, wdown_off,
+                        M, T, d, h, attn_scale,
+                        Q, K, Vb, probs, attn_out, h_act_seq, zT_mid_out, zT_out) {
+    let attn_y = t_zeros(T * d)
+    _attn_forward(zT_in, wq_off, wk_off, wv_off, wo_off, M, T, d, attn_scale,
+                  Q, K, Vb, probs, attn_out, attn_y)
+    // residual 1: zT_mid = attn_y + zT_in
+    let mut z = 0
+    while z < T * d {
+        let _ = farr_set(zT_mid_out, z, farr_get(attn_y, z) + farr_get(zT_in, z))
+        z = z + 1
+    }
+    // per-token MLP forward (cache h_act_seq) + residual 2
+    let mut t = 0
+    while t < T {
+        let mut k = 0
+        while k < h {
+            let mut acc = 0.0
+            let mut j = 0
+            while j < d {
+                acc = acc + farr_get(M, wup_off + k * d + j) * farr_get(zT_mid_out, t * d + j)
+                j = j + 1
+            }
+            if acc < 0.0 { acc = 0.0 }
+            let _ = farr_set(h_act_seq, t * h + k, acc)
+            k = k + 1
+        }
+        let mut i = 0
+        while i < d {
+            let mut acc = 0.0
+            let mut kk = 0
+            while kk < h {
+                acc = acc + farr_get(M, wdown_off + i * h + kk) * farr_get(h_act_seq, t * h + kk)
+                kk = kk + 1
+            }
+            let _ = farr_set(zT_out, t * d + i, acc + farr_get(zT_mid_out, t * d + i))
+            i = i + 1
+        }
+        t = t + 1
+    }
+}
+
 fn main() {
     println("=== v3_moe_bwd_lib_smoke: Phase 4-bwd-1 ln_f gradcheck ===")
     let d = 8
@@ -458,9 +502,118 @@ fn main() {
     print("  Wq gradcheck max err = "); println(max_dwq_err)
     if max_dwq_err > tol { pass = 0 }
     println("")
+    // ── Phase 4-bwd-4 layer_block_bwd gradcheck (input-gradient) ──
+    println("─── Phase 4-bwd-4 layer_block_bwd gradcheck ───")
+    let db = 4
+    let Tb = 3
+    let hb = 8
+    let attn_scaleB = 1.0 / sqrt(to_float(db))
+    // pack: M = [Wq | Wk | Wv | Wo | Wup(h·d) | Wdown(d·h)]
+    let bq_off = 0
+    let bk_off = db * db
+    let bv_off = 2 * db * db
+    let bo_off = 3 * db * db
+    let bup_off = 4 * db * db
+    let bdown_off = 4 * db * db + hb * db
+    let m_sizeB = 4 * db * db + 2 * hb * db
+    let MB = t_zeros(m_sizeB)
+    let dMgB = t_zeros(m_sizeB)
+    // init: attention weights small distinct, MLP small distinct
+    let mut bi = 0
+    while bi < db {
+        let mut bj = 0
+        while bj < db {
+            let pq = (bi * 7 + bj + 1) % 11
+            let pk = (bi + bj * 5 + 2) % 11
+            let pv = (bi * 3 + bj * 7 + 3) % 11
+            let po = (bi + bj + 1) % 5
+            let _ = farr_set(MB, bq_off + bi * db + bj, 0.05 * to_float(pq - 5))
+            let _ = farr_set(MB, bk_off + bi * db + bj, 0.05 * to_float(pk - 5))
+            let _ = farr_set(MB, bv_off + bi * db + bj, 0.05 * to_float(pv - 5))
+            let _ = farr_set(MB, bo_off + bi * db + bj, 0.1 * to_float(po - 2))
+            bj = bj + 1
+        }
+        bi = bi + 1
+    }
+    let mut bui = 0
+    while bui < hb {
+        let mut buj = 0
+        while buj < db {
+            let _ = farr_set(MB, bup_off + bui * db + buj, 0.1 * to_float(((bui * 3 + buj + 1) % 7) - 3))
+            buj = buj + 1
+        }
+        bui = bui + 1
+    }
+    let mut bdi = 0
+    while bdi < db {
+        let mut bdk = 0
+        while bdk < hb {
+            let _ = farr_set(MB, bdown_off + bdi * hb + bdk, 0.05 * to_float(((bdi + bdk) % 5) - 2))
+            bdk = bdk + 1
+        }
+        bdi = bdi + 1
+    }
+    // input zT_in
+    let zT_inB = t_zeros(Tb * db)
+    let mut zib = 0
+    while zib < Tb * db {
+        let _ = farr_set(zT_inB, zib, 0.15 * to_float(zib % 5) - 0.3)
+        zib = zib + 1
+    }
+    // forward (caches)
+    let QB = t_zeros(Tb * db)
+    let KB = t_zeros(Tb * db)
+    let VB = t_zeros(Tb * db)
+    let probsB = t_zeros(Tb * Tb)
+    let attn_outB = t_zeros(Tb * db)
+    let h_act_seqB = t_zeros(Tb * hb)
+    let zT_midB = t_zeros(Tb * db)
+    let zT_outB = t_zeros(Tb * db)
+    _layer_block_forward(zT_inB, bq_off, bk_off, bv_off, bo_off, bup_off, bdown_off,
+                         MB, Tb, db, hb, attn_scaleB,
+                         QB, KB, VB, probsB, attn_outB, h_act_seqB, zT_midB, zT_outB)
+    let L_baseB = _loss_seq_sq(zT_outB, Tb, db)
+    print("  L_base="); println(L_baseB)
+    // analytic bwd: d_block_out = zT_out
+    let d_block_out = t_zeros(Tb * db)
+    let mut bo2 = 0
+    while bo2 < Tb * db { let _ = farr_set(d_block_out, bo2, farr_get(zT_outB, bo2)) ; bo2 = bo2 + 1 }
+    let d_zT_inB = t_zeros(Tb * db)
+    layer_block_bwd(d_block_out, zT_inB, zT_midB,
+                    QB, KB, VB, attn_outB, probsB, h_act_seqB,
+                    bq_off, bk_off, bv_off, bo_off, bup_off, bdown_off,
+                    MB, Tb, db, hb, attn_scaleB, dMgB, d_zT_inB)
+    // finite-diff on the INPUT zT_in (exercises residual1 + attn + residual2 + MLP chain)
+    let h_b = 1.0e-5
+    let mut max_dzin_err = 0.0
+    let mut fz = 0
+    while fz < Tb * db {
+        let orig = farr_get(zT_inB, fz)
+        let _ = farr_set(zT_inB, fz, orig + h_b)
+        let zo_p = t_zeros(Tb * db)
+        _layer_block_forward(zT_inB, bq_off, bk_off, bv_off, bo_off, bup_off, bdown_off,
+                             MB, Tb, db, hb, attn_scaleB,
+                             QB, KB, VB, probsB, attn_outB, h_act_seqB, zT_midB, zo_p)
+        let Lp = _loss_seq_sq(zo_p, Tb, db)
+        let _ = farr_set(zT_inB, fz, orig - h_b)
+        _layer_block_forward(zT_inB, bq_off, bk_off, bv_off, bo_off, bup_off, bdown_off,
+                             MB, Tb, db, hb, attn_scaleB,
+                             QB, KB, VB, probsB, attn_outB, h_act_seqB, zT_midB, zo_p)
+        let Lm = _loss_seq_sq(zo_p, Tb, db)
+        let _ = farr_set(zT_inB, fz, orig)
+        let fd = (Lp - Lm) / (2.0 * h_b)
+        let an = farr_get(d_zT_inB, fz)
+        let mut err = fd - an
+        if err < 0.0 { err = 0.0 - err }
+        if err > max_dzin_err { max_dzin_err = err }
+        fz = fz + 1
+    }
+    print("  d_zT_in gradcheck max err = "); println(max_dzin_err)
+    if max_dzin_err > tol { pass = 0 }
+    println("")
     if pass == 1 {
-        println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1+2+3 (ln_f + MLP + self-attn): PASS (gradcheck < 1e-5)")
+        println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1+2+3+4 (ln_f + MLP + attn + layer-block): PASS (gradcheck < 1e-5)")
     } else {
-        println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1+2+3: FAIL")
+        println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1+2+3+4: FAIL")
     }
 }

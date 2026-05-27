@@ -376,3 +376,83 @@ pub fn self_attn_bwd(d_y, zT_seq, Q_buf, K_buf, V_buf, attn_out, probs,
         tz = tz + 1
     }
 }
+
+// ───────────────────────────────────────────────────────────────────────────
+// Phase 4-bwd-4: layer block backward (attn + residual + MLP + residual)
+// ───────────────────────────────────────────────────────────────────────────
+//
+// Forward (one decoder block, Phase 4c train_v3_moe_pilot.hexa):
+//   residual = zT_in
+//   attn_y   = self_attn(zT_in) · Wo
+//   zT_mid   = attn_y + residual                       (residual 1)
+//   residual = zT_mid
+//   mlp_y[t] = MLP(zT_mid[t])                           (per-token)
+//   zT_out   = mlp_y + residual                         (residual 2)
+//
+// Backward (reverse order, residual = gradient bypass identity):
+//   given d_zT_out:
+//   residual 2 bwd:  d_mlp_y = d_zT_out · d_residual_mid = d_zT_out (bypass)
+//   MLP bwd (per t): d_mlp_y[t] → d_zT_mid_from_mlp[t]  (mlp_block_bwd)
+//   d_zT_mid = d_zT_mid_from_mlp + d_zT_out             (residual 2 skip add)
+//   residual 1 bwd:  d_attn_y = d_zT_mid · d_residual_in = d_zT_mid (bypass)
+//   attn bwd:        d_attn_y → d_zT_in_from_attn       (self_attn_bwd)
+//   d_zT_in = d_zT_in_from_attn + d_zT_mid              (residual 1 skip add)
+//
+// Args:
+//   d_block_out  (T·d)  gradient wrt block output (zT_out)
+//   zT_in        (T·d)  forward block input (pre-attn) — for attn bwd
+//   zT_mid       (T·d)  forward after attn+residual1 (pre-MLP) — for MLP bwd x
+//   Q/K/V/attn_out/probs   forward attention caches
+//   h_act_seq    (T·h)  forward per-token MLP activations (post-ReLU)
+//   *_off        offsets into M for the 6 weight matrices
+//   M / dMg      packed param + grad buffers
+//   T, d, h      dims · attn_scale = 1/sqrt(d)
+//   d_zT_in_grad (T·d)  OUTPUT gradient wrt block input (overwritten)
+pub fn layer_block_bwd(d_block_out, zT_in, zT_mid,
+                        Q_buf, K_buf, V_buf, attn_out, probs, h_act_seq,
+                        wq_off, wk_off, wv_off, wo_off, wup_off, wdown_off,
+                        M, T, d, h, attn_scale,
+                        dMg, d_zT_in_grad) {
+    // ── residual 2 + per-token MLP bwd ──
+    let d_zT_mid = t_zeros(T * d)
+    let d_mlp_out_t = t_zeros(d)
+    let x_t = t_zeros(d)
+    let h_act_t = t_zeros(h)
+    let d_x_t = t_zeros(d)
+    let mut t = 0
+    while t < T {
+        // slice token t: d_mlp_out_t = d_block_out[t], x_t = zT_mid[t], h_act_t = h_act_seq[t]
+        let mut i = 0
+        while i < d {
+            let _ = farr_set(d_mlp_out_t, i, farr_get(d_block_out, t * d + i))
+            let _ = farr_set(x_t, i, farr_get(zT_mid, t * d + i))
+            i = i + 1
+        }
+        let mut kk = 0
+        while kk < h {
+            let _ = farr_set(h_act_t, kk, farr_get(h_act_seq, t * h + kk))
+            kk = kk + 1
+        }
+        // MLP bwd for this token (accumulates dW_up + dW_down into dMg)
+        mlp_block_bwd(d_mlp_out_t, x_t, h_act_t, wup_off, wdown_off, M, d, h, dMg, d_x_t)
+        // residual 2: d_zT_mid[t] = d_x_t + d_block_out[t]  (skip-connection add)
+        i = 0
+        while i < d {
+            let _ = farr_set(d_zT_mid, t * d + i, farr_get(d_x_t, i) + farr_get(d_block_out, t * d + i))
+            i = i + 1
+        }
+        t = t + 1
+    }
+    // ── residual 1 + attention bwd ──
+    // d_attn_y = d_zT_mid (since zT_mid = attn_y + zT_in)
+    let d_zT_in_from_attn = t_zeros(T * d)
+    self_attn_bwd(d_zT_mid, zT_in, Q_buf, K_buf, V_buf, attn_out, probs,
+                  wq_off, wk_off, wv_off, wo_off,
+                  M, T, d, attn_scale, dMg, d_zT_in_from_attn)
+    // residual 1: d_zT_in[t] = d_zT_in_from_attn[t] + d_zT_mid[t]  (skip-connection add)
+    let mut z = 0
+    while z < T * d {
+        let _ = farr_set(d_zT_in_grad, z, farr_get(d_zT_in_from_attn, z) + farr_get(d_zT_mid, z))
+        z = z + 1
+    }
+}
