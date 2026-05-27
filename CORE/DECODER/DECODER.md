@@ -82,9 +82,9 @@
         - [x] **Phase 4-bwd-6** pilot driver full backward wire LANDED #1093 — synthetic verify: **layer 0 Wq |Δ|=4.27e-6** (end-to-end · Phase 4c gap CLOSED)
       - [~] **Phase 4-gpu** GPU 가속 포팅 — **scope-check 발견(2026-05-27)**: pilot 코드가 plain farr 스칼라 삼중루프 matmul 만 써서 H100 발사 시 GPU 유휴 + CPU scalar 가 pilot 규모(10^14 ops)에서 비현실 → 발사 무의미. RFC-040 cuBLAS Dgemm 포팅 필요 (a_completeness 본선):
         - [x] **Phase 4-gpu-1** matmul dispatch 토대 LANDED #1100 — `flame_mm.hexa` (mm = farr_matmul_gpu⇄farr_matmul · mm_transpose/extract/scatter_add). **실측 PASS** mm==scalar max|Δ| 8.9e-16
-        - [ ] **Phase 4-gpu-2** v3_moe_arch 포팅 (router + expert matmul → mm) + byte-equal re-gradcheck
-        - [ ] **Phase 4-gpu-3** pilot forward 포팅 (Q/K/V/Wo/MLP → mm · Q·Kᵀ transpose)
-        - [ ] **Phase 4-gpu-4** v3_moe_bwd_lib 포팅 (모든 backward matmul → mm) + gradcheck 유지
+        - [x] **Phase 4-gpu-2** v3_moe_arch expert gemv → mm() LANDED #1105 — gradcheck PASS (expert grad 6.5e-13 · d_zT 1.4e-12). tiny gate 루프 유지(g0)
+        - [x] **Phase 4-gpu-3** pilot forward Q/K/V/Wo/MLP → mm() LANDED #1108 — synthetic byte-identical (probs[0,0]=1.0 · Wq Δ=4.27e-6 = scalar 동일). rebase-onto-main 으로 삭제수 0 확보
+        - [ ] **Phase 4-gpu-4** v3_moe_bwd_lib backward 포팅 — ⚠ **기계적 아님 = 설계-수준 batching 리팩터**: self_attn_bwd(batched [T×d])는 mm() 직접 포팅 가능(~10 matmul + 6 transpose), but mlp_block_bwd 는 **per-token vector 연산**(layer_block_bwd 가 토큰마다 호출) → per-token mm() 은 weight 재추출 병리 + GPU 이득 미미. fire 규모(d=2048·h=8192·T=512·12L ≈ 200G ops)에서 의미있으려면 `dW = zT_seqᵀ @ d_mlp_out` 형태 **batched 재설계**(mlp_block_bwd + layer_block_bwd 동반 수정) 필요. deliberate 작업 — rush 금지(회귀 직후 꼬리세션 부적합, a_completeness)
         - [ ] **Phase 4-gpu-5** full-stack re-gradcheck (CPU mm 경로) + pilot end-to-end re-verify
         - [ ] **Phase 4-fire** autonomous fire 발사 (a_fire_autonomous · RunPod H100 ~$1-3 · 0.5-1hr · cuBLAS). 선결: 4-gpu 포팅 5/5 + pod fresh-toolchain provisioning(#1097 SOP Step 2, flame_bpe_corpus_lib 포함). backward 6/6 실측 PASS 로 학습 신호 보장됨.
       - [~] **Phase 5** Verdict 사전등록 + harness template LANDED — 5 falsifier (F-M4B-FIRE-1..5) pilot/full threshold 분리 표 + verdict template `m4b_pilot_verdict.md` 형식 + matrix (5/5→full fire · 3-4→re-pilot · 2 이하→re-design · 0→CLOSED-NEGATIVE). 실 측정은 Phase 4 fire 후
