@@ -2,7 +2,7 @@
   "paper": "bijection-vs-life-axis",
   "generated": "2026-05-27",
   "governance": "commons @D g73 anti-fake-closure — every verdict is an independent deterministic recompute (hexa run on pool ubu-2), byte-identical cross-process",
-  "session_cells_total": 25,
+  "session_cells_total": 26,
   "descriptor_results": [
     {
       "cell": "H_320", "descriptor": "D1 rd_ratio (relation/distinction phi)",
@@ -78,16 +78,23 @@
       "pearson_maxbasin_phi": 0.250836, "pearson_nattr_phi": -0.799002,
       "verdict": "SUPPORTED-NUMERICAL — both n=4 signs restored with exact Phi; the n=6 flip was a cycle-length PROXY artifact, not a scale effect. cycle-length is an unreliable Phi proxy.",
       "source": "UNIVERSE/state/h345_basin_phi_n5_exact_2026_05_27/result.json"
+    },
+    {
+      "cell": "H_346", "test": "state-averaged exact Phi at n=5 (32-state mean; hardens H_345 single-state)",
+      "phi_source": "exact IIT4 phi_structure, mean over all 32 sys-states",
+      "pearson_maxbasin_phi": 0.55048, "pearson_nattr_phi": -0.950701,
+      "verdict": "SUPPORTED-NUMERICAL — both H_345 single-state signs preserved AND tightened under 32-state averaging (max_basin +0.251->+0.550, n_attr -0.799->-0.951); single sys_state=21 was representative, not an outlier. basin<->Phi coupling is state-robust. bijection rules 105/150 carry identical state-averaged Phi (15.5625), matching H_330 bijection collapse.",
+      "source": "UNIVERSE/state/h346_phi_state_sweep_2026_05_27/result.json"
     }
   ],
-  "self_correction_arc_note": "self-correction^2: H_341 (n=4 exact) found a basin<->Phi coupling; H_343 (n=6, Phi intractable so a cycle-length PROXY was substituted) appeared to flip both signs; H_345 (n=5 exact Phi, proxy-free) restored both n=4 signs, proving the H_343 flip lived in the proxy, not the scale. Methodological finding: cycle-length is NOT a faithful Phi proxy. The #attractor<->Phi coupling (~ -0.8 at both exact n) is the robust cross-family bridge.",
+  "self_correction_arc_note": "self-correction^2: H_341 (n=4 exact) found a basin<->Phi coupling; H_343 (n=6, Phi intractable so a cycle-length PROXY was substituted) appeared to flip both signs; H_345 (n=5 exact Phi, proxy-free) restored both n=4 signs, proving the H_343 flip lived in the proxy, not the scale. H_346 (n=5, exact Phi averaged over all 32 system states) then preserved AND tightened both signs (+0.55, -0.95), removing H_345's single-state caveat: the coupling is state-robust. Methodological finding: cycle-length is NOT a faithful Phi proxy; where exact Phi is affordable (n<=5) the state-marginal exact Phi is the verdict-bearing quantity. The #attractor<->Phi coupling (-0.8 to -0.95 across exact measurements) is the robust cross-family bridge.",
   "session_verdict_tally": {
     "supported_strict": 8,
     "supported_conditional": 6,
     "falsified_closed_negative": 8,
-    "supported_numerical_phi_arc": 3,
+    "supported_numerical_phi_arc": 4,
     "fake_blue": 0,
-    "note": "0 fake-blue — every cell earned its verdict by deterministic recompute (g73). The +3 supported_numerical cells are the self-correction^2 arc (H_341/343/345); H_343 is a methodological intermediate (apparent flip), corrected by H_345."
+    "note": "0 fake-blue — every cell earned its verdict by deterministic recompute (g73). The +4 supported_numerical cells are the self-correction^2 arc (H_341/343/345/346); H_343 is a methodological intermediate (apparent flip), corrected by H_345 and hardened state-robust by H_346."
   },
   "thesis": "At fixed n the real separator is bijection-class vs chaotic-class (not life vs consciousness); across n the dominant chaotic rule rotates (rule_30 at n=4, rule_110 at n=6). 'consciousness = relation-rich' is falsified four times; 'consciousness = bijection' is the observation."
 }
