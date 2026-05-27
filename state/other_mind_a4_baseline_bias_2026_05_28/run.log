@@ -1,0 +1,49 @@
+═══════════════════════════════════════════════════════════
+  OTHER-MIND A4 — u01 baseline-bias diagnosis + correction
+  N_TICKS=100  COUPLING=0.7  LEAD_LAG=2
+═══════════════════════════════════════════════════════════
+  ── MODE 0: RAW u01 [0,1] (reproduce #1147 BIASED) ──
+    INDEPENDENT  mean_cos = 0.779862  lag = 2
+    COUPLED-SYNC mean_cos = 0.97715  lag = 0
+    COUPLED-LEAD mean_cos = 0.814201  lag = 2
+    gap(SYNC-INDEP) = 0.197288
+    [FAIL] F1 INDEP < 0.3
+    [PASS] F2 SYNC > 0.7
+    [PASS] F3 LEAD lag != 0
+    [FAIL] F4 gap > 0.3
+    [PASS] F5 SYNC lag == 0
+    SCORE = 3/5
+
+  ── MODE 1: CENTERED u01 [-1,+1] (A4 bias-corrected) ──
+    INDEPENDENT  mean_cos = 0.0165713  lag = 2
+    COUPLED-SYNC mean_cos = 0.908661  lag = 0
+    COUPLED-LEAD mean_cos = 0.00502449  lag = 2
+    gap(SYNC-INDEP) = 0.89209
+    [PASS] F1 INDEP < 0.3
+    [PASS] F2 SYNC > 0.7
+    [PASS] F3 LEAD lag != 0
+    [PASS] F4 gap > 0.3
+    [PASS] F5 SYNC lag == 0
+    SCORE = 5/5
+
+  ── ORTHANT-BIAS PROBE (n=400 indep pairs) ──
+    E[cos | raw  positive-orthant] = 0.763021
+    E[cos | centered zero-mean]    = -0.0275306
+    bias magnitude |E_raw - E_cor| = 0.790552
+
+═══════════════════════════════════════════════════════════
+  RAW (biased #1147 repro) = 3/5
+  CORRECTED (A4 centered)  = 5/5
+  VERDICT: 🟢 RECOVERED — centering raised score >= 4/5, u01 bias = normalization defect
+═══════════════════════════════════════════════════════════
+
+RESULT_JSON_BEGIN
+{
+  "score_raw": 3,
+  "score_corrected": 5,
+  "E_cos_raw_orthant": 0.763021,
+  "E_cos_centered": -0.0275306,
+  "bias_magnitude": 0.790552,
+  "verdict": "GREEN_RECOVERED"
+}
+RESULT_JSON_END
