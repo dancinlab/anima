@@ -1,0 +1,35 @@
+================================================================
+  H_646 — convention-number-freedom-range (H_638 일반화 · 메타)
+  threshold sweep {0.1..0.9} × FIXED substrate → Φ(thr) variance
+================================================================
+  FIXED substrate big-Φ (mean big_phi_bounded cap=2 over 110/90/30/54):
+    n=3: Φ=2.26968
+    n=4: Φ=1.81822
+    n=5: Φ=2.16717
+    mean Φ=2.08502
+
+  threshold sweep (wide range, step 0.1):
+    thr   |  substrate Φ (re-read)  |  emit-rate
+    ------|-------------------------|------------
+    0.1   |  2.08502  |  1.0
+    0.2   |  2.08502  |  1.0
+    0.3   |  2.08502  |  0.977778
+    0.4   |  2.08502  |  0.861111
+    0.5   |  2.08502  |  0.677778
+    0.6   |  2.08502  |  0.444444
+    0.7   |  2.08502  |  0.138889
+    0.8   |  2.08502  |  0.0333333
+    0.9   |  2.08502  |  0.0
+
+  Φ(threshold) variance over sweep      = 0.0
+  emit-rate span (thr0.1 - thr0.9)      = 1.0  (1.0 -> 0.0)
+  emit-rate monotone non-increasing     = true
+
+  Φ invariant (variance <= 0.1):        true
+  sweep non-degenerate (span > 0.1):    true
+  VERDICT: H1 SUPPORTED — threshold is a FREE convention-number;
+           substrate big-Φ INVARIANT under the full {0.1..0.9} sweep
+           (Φ-variance 0.0 ≈ 0), while emit-rate spans 1.0.
+           Freedom range = entire [0,1] (substrate-unconstrained,
+           threshold = downstream emit-decision policy).
+================================================================
