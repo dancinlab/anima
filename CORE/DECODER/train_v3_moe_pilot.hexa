@@ -36,6 +36,7 @@ use "stdlib/flame/flame_math"
 use "stdlib/flame/flame_bpe_corpus_lib"
 use "/Users/ghost/core/anima/CORE/DECODER/v3_moe_arch"
 use "/Users/ghost/core/anima/CORE/DECODER/v3_moe_bwd_lib"
+use "/Users/ghost/core/anima/CORE/DECODER/flame_mm"
 
 fn main() {
     println("=== train_v3_moe_pilot (M4b Phase 4d real-BPE-IDS · d=64 V=151643 n_layer=1 T=4) ===")
@@ -269,49 +270,44 @@ fn main() {
             let mut cin = 0
             while cin < T * d { let _ = farr_set(zT_in_all, layer * T * d + cin, farr_get(zT_seq, cin)) ; cin = cin + 1 }
 
-            // Q = zT_seq · Wq, K = zT_seq · Wk, V = zT_seq · Wv
-            let mut t1 = 0
-            while t1 < T {
-                let mut ji = 0
-                while ji < d {
-                    let mut accQ = 0.0
-                    let mut accK = 0.0
-                    let mut accV = 0.0
-                    let mut jj = 0
-                    while jj < d {
-                        let z = farr_get(zT_seq, t1 * d + jj)
-                        accQ = accQ + z * farr_get(M, wq_l + jj * d + ji)
-                        accK = accK + z * farr_get(M, wk_l + jj * d + ji)
-                        accV = accV + z * farr_get(M, wv_l + jj * d + ji)
-                        jj = jj + 1
-                    }
-                    let _ = farr_set(Q_buf, t1 * d + ji, accQ)
-                    let _ = farr_set(K_buf, t1 * d + ji, accK)
-                    let _ = farr_set(V_buf, t1 * d + ji, accV)
-                    ji = ji + 1
-                }
-                t1 = t1 + 1
+            // Q/K/V = zT_seq @ Wq/Wk/Wv  — Phase 4-gpu-3 mm() port (cuBLAS⇄CPU).
+            //   zT_seq[T×d] @ W[d×d] = [T×d] (NN). W extracted from packed M.
+            //   results copied into Q_buf/K_buf/V_buf (downstream cache + bwd read these).
+            let wq_mat = mm_extract(M, wq_l, d, d)
+            let wk_mat = mm_extract(M, wk_l, d, d)
+            let wv_mat = mm_extract(M, wv_l, d, d)
+            let q_r = mm(zT_seq, T, d, wq_mat, d)
+            let k_r = mm(zT_seq, T, d, wk_mat, d)
+            let v_r = mm(zT_seq, T, d, wv_mat, d)
+            let mut cp = 0
+            while cp < T * d {
+                let _ = farr_set(Q_buf, cp, farr_get(q_r, cp))
+                let _ = farr_set(K_buf, cp, farr_get(k_r, cp))
+                let _ = farr_set(V_buf, cp, farr_get(v_r, cp))
+                cp = cp + 1
             }
-            // scores[t1, t2] = (Q[t1, :] · K[t2, :]) · attn_scale, causal mask
-            t1 = 0
+            let _ = farr_free(wq_mat)
+            let _ = farr_free(wk_mat)
+            let _ = farr_free(wv_mat)
+            let _ = farr_free(q_r)
+            let _ = farr_free(k_r)
+            let _ = farr_free(v_r)
+            // scores = (Q @ Kᵀ) · attn_scale + causal mask — mm() for QKᵀ, elementwise mask.
+            let k_t = mm_transpose(K_buf, T, d)        // [d×T]
+            let sc_r = mm(Q_buf, T, d, k_t, T)         // [T×T] raw QKᵀ
+            let mut t1 = 0
             while t1 < T {
                 let mut t2 = 0
                 while t2 < T {
                     let mut score = neg_inf
-                    if t2 <= t1 {
-                        let mut acc = 0.0
-                        let mut jj = 0
-                        while jj < d {
-                            acc = acc + farr_get(Q_buf, t1 * d + jj) * farr_get(K_buf, t2 * d + jj)
-                            jj = jj + 1
-                        }
-                        score = acc * attn_scale
-                    }
+                    if t2 <= t1 { score = farr_get(sc_r, t1 * T + t2) * attn_scale }
                     let _ = farr_set(scores, t1 * T + t2, score)
                     t2 = t2 + 1
                 }
                 t1 = t1 + 1
             }
+            let _ = farr_free(k_t)
+            let _ = farr_free(sc_r)
             // softmax row-wise: probs[t1, :] = softmax(scores[t1, :])
             t1 = 0
             while t1 < T {
@@ -338,81 +334,59 @@ fn main() {
                 }
                 t1 = t1 + 1
             }
-            // attn_out[t1, j] = Σ_t2 probs[t1, t2] · V[t2, j]
-            t1 = 0
-            while t1 < T {
-                let mut ji = 0
-                while ji < d {
-                    let mut acc = 0.0
-                    let mut t2 = 0
-                    while t2 < T {
-                        acc = acc + farr_get(probs, t1 * T + t2) * farr_get(V_buf, t2 * d + ji)
-                        t2 = t2 + 1
-                    }
-                    let _ = farr_set(attn_out, t1 * d + ji, acc)
-                    ji = ji + 1
-                }
-                t1 = t1 + 1
+            // attn_out = probs @ V — Phase 4-gpu-3 mm() port. probs[T×T] @ V[T×d] = [T×d].
+            let ao_r = mm(probs, T, T, V_buf, d)
+            let mut ac = 0
+            while ac < T * d { let _ = farr_set(attn_out, ac, farr_get(ao_r, ac)) ; ac = ac + 1 }
+            let _ = farr_free(ao_r)
+            // zT_seq = attn_out @ Wo + residual — mm() for attn_out[T×d] @ Wo[d×d] = [T×d].
+            let wo_mat = mm_extract(M, wo_l, d, d)
+            let wo_r = mm(attn_out, T, d, wo_mat, d)
+            let mut woi = 0
+            while woi < T * d {
+                let _ = farr_set(zT_seq, woi, farr_get(wo_r, woi) + farr_get(zT_residual, woi))
+                woi = woi + 1
             }
-            // zT_seq = attn_out · Wo + residual   (per-token Wo projection)
-            t1 = 0
-            while t1 < T {
-                let mut ji = 0
-                while ji < d {
-                    let mut acc = 0.0
-                    let mut jj = 0
-                    while jj < d {
-                        acc = acc + farr_get(attn_out, t1 * d + jj) * farr_get(M, wo_l + jj * d + ji)
-                        jj = jj + 1
-                    }
-                    let _ = farr_set(zT_seq, t1 * d + ji, acc + farr_get(zT_residual, t1 * d + ji))
-                    ji = ji + 1
-                }
-                t1 = t1 + 1
-            }
+            let _ = farr_free(wo_mat)
+            let _ = farr_free(wo_r)
             // save residual for MLP
             ri = 0
             while ri < T * d { let _ = farr_set(zT_residual, ri, farr_get(zT_seq, ri)) ; ri = ri + 1 }
             // cache zT_mid (after attn+residual1) for this layer's backward (4-bwd-6)
             let mut cmid = 0
             while cmid < T * d { let _ = farr_set(zT_mid_all, layer * T * d + cmid, farr_get(zT_seq, cmid)) ; cmid = cmid + 1 }
-            // MLP per-token
-            t1 = 0
-            while t1 < T {
-                // h_act = ReLU(Wup · zT_seq[t1])
-                let mut hk = 0
-                while hk < h {
-                    let mut acc = 0.0
-                    let mut hj = 0
-                    while hj < d {
-                        acc = acc + farr_get(M, wup_l + hk * d + hj) * farr_get(zT_seq, t1 * d + hj)
-                        hj = hj + 1
-                    }
-                    if acc < 0.0 { acc = 0.0 }
-                    let _ = farr_set(mlp_hact, hk, acc)
-                    // cache h_act per (layer, token) for backward (4-bwd-6)
-                    let _ = farr_set(h_act_all, layer * T * h + t1 * h + hk, acc)
-                    hk = hk + 1
-                }
-                // zT_seq[t1] = Wdown · h_act + residual
-                let mut mi = 0
-                while mi < d {
-                    let mut acc = 0.0
-                    let mut mk = 0
-                    while mk < h {
-                        acc = acc + farr_get(M, wdown_l + mi * h + mk) * farr_get(mlp_hact, mk)
-                        mk = mk + 1
-                    }
-                    let _ = farr_set(mlp_out, mi, acc)
-                    mi = mi + 1
-                }
-                mi = 0
-                while mi < d {
-                    let _ = farr_set(zT_seq, t1 * d + mi, farr_get(mlp_out, mi) + farr_get(zT_residual, t1 * d + mi))
-                    mi = mi + 1
-                }
-                t1 = t1 + 1
+            // MLP — Phase 4-gpu-3 batched mm() port:
+            //   h_pre = zT_seq @ Wupᵀ : [T×d] @ [d×h] = [T×h]   (Wup stored [h×d])
+            //   h_act = ReLU(h_pre)   (elementwise + cache per layer,token)
+            //   mlp   = h_act @ Wdownᵀ : [T×h] @ [h×d] = [T×d]  (Wdown stored [d×h])
+            //   zT_seq = mlp + residual
+            let wup_mat = mm_extract(M, wup_l, h, d)     // [h×d]
+            let wup_t = mm_transpose(wup_mat, h, d)      // [d×h]
+            let h_pre = mm(zT_seq, T, d, wup_t, h)       // [T×h]
+            let h_act = t_zeros(T * h)
+            let mut hi = 0
+            while hi < T * h {
+                let mut v = farr_get(h_pre, hi)
+                if v < 0.0 { v = 0.0 }                   // ReLU
+                let _ = farr_set(h_act, hi, v)
+                let _ = farr_set(h_act_all, layer * T * h + hi, v)   // cache (t·h+k order matches)
+                hi = hi + 1
             }
+            let wdown_mat = mm_extract(M, wdown_l, d, h)  // [d×h]
+            let wdown_t = mm_transpose(wdown_mat, d, h)   // [h×d]
+            let mlp_r = mm(h_act, T, h, wdown_t, d)        // [T×d]
+            let mut mli = 0
+            while mli < T * d {
+                let _ = farr_set(zT_seq, mli, farr_get(mlp_r, mli) + farr_get(zT_residual, mli))
+                mli = mli + 1
+            }
+            let _ = farr_free(wup_mat)
+            let _ = farr_free(wup_t)
+            let _ = farr_free(h_pre)
+            let _ = farr_free(h_act)
+            let _ = farr_free(wdown_mat)
+            let _ = farr_free(wdown_t)
+            let _ = farr_free(mlp_r)
             // cache attention tensors for this layer's backward (4-bwd-6)
             let mut cq = 0
             while cq < T * d {
