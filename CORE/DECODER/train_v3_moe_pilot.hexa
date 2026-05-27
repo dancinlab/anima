@@ -35,6 +35,7 @@ use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
 use "stdlib/flame/flame_bpe_corpus_lib"
 use "/Users/ghost/core/anima/CORE/DECODER/v3_moe_arch"
+use "/Users/ghost/core/anima/CORE/DECODER/v3_moe_bwd_lib"
 
 fn main() {
     println("=== train_v3_moe_pilot (M4b Phase 4d real-BPE-IDS · d=64 V=151643 n_layer=1 T=4) ===")
@@ -98,6 +99,18 @@ fn main() {
     let gate_norm = t_zeros(E)
     let d_zT_last = t_zeros(d)
     let d_logits = t_zeros(V)
+    // ── Phase 4-bwd-6: per-layer forward caches (layer-indexed flat) for backward ──
+    let Q_all = t_zeros(n_layer * T * d)
+    let K_all = t_zeros(n_layer * T * d)
+    let V_all = t_zeros(n_layer * T * d)
+    let attn_out_all = t_zeros(n_layer * T * d)
+    let probs_all = t_zeros(n_layer * T * T)
+    let h_act_all = t_zeros(n_layer * T * h)
+    let zT_in_all = t_zeros(n_layer * T * d)
+    let zT_mid_all = t_zeros(n_layer * T * d)
+    let zT_last_pre_ln = t_zeros(d)
+    let d_zT_seq = t_zeros(T * d)
+    let d_zT_layer = t_zeros(T * d)
     println("  alloc OK")
 
     // ── weight init ──
@@ -252,6 +265,9 @@ fn main() {
             // save residual: zT_residual = zT_seq
             let mut ri = 0
             while ri < T * d { let _ = farr_set(zT_residual, ri, farr_get(zT_seq, ri)) ; ri = ri + 1 }
+            // cache zT_in for this layer's backward (4-bwd-6)
+            let mut cin = 0
+            while cin < T * d { let _ = farr_set(zT_in_all, layer * T * d + cin, farr_get(zT_seq, cin)) ; cin = cin + 1 }
 
             // Q = zT_seq · Wq, K = zT_seq · Wk, V = zT_seq · Wv
             let mut t1 = 0
@@ -357,6 +373,9 @@ fn main() {
             // save residual for MLP
             ri = 0
             while ri < T * d { let _ = farr_set(zT_residual, ri, farr_get(zT_seq, ri)) ; ri = ri + 1 }
+            // cache zT_mid (after attn+residual1) for this layer's backward (4-bwd-6)
+            let mut cmid = 0
+            while cmid < T * d { let _ = farr_set(zT_mid_all, layer * T * d + cmid, farr_get(zT_seq, cmid)) ; cmid = cmid + 1 }
             // MLP per-token
             t1 = 0
             while t1 < T {
@@ -371,6 +390,8 @@ fn main() {
                     }
                     if acc < 0.0 { acc = 0.0 }
                     let _ = farr_set(mlp_hact, hk, acc)
+                    // cache h_act per (layer, token) for backward (4-bwd-6)
+                    let _ = farr_set(h_act_all, layer * T * h + t1 * h + hk, acc)
                     hk = hk + 1
                 }
                 // zT_seq[t1] = Wdown · h_act + residual
@@ -392,6 +413,20 @@ fn main() {
                 }
                 t1 = t1 + 1
             }
+            // cache attention tensors for this layer's backward (4-bwd-6)
+            let mut cq = 0
+            while cq < T * d {
+                let _ = farr_set(Q_all, layer * T * d + cq, farr_get(Q_buf, cq))
+                let _ = farr_set(K_all, layer * T * d + cq, farr_get(K_buf, cq))
+                let _ = farr_set(V_all, layer * T * d + cq, farr_get(V_buf, cq))
+                let _ = farr_set(attn_out_all, layer * T * d + cq, farr_get(attn_out, cq))
+                cq = cq + 1
+            }
+            let mut cp = 0
+            while cp < T * T {
+                let _ = farr_set(probs_all, layer * T * T + cp, farr_get(probs, cp))
+                cp = cp + 1
+            }
             layer = layer + 1
         }
 
@@ -401,6 +436,9 @@ fn main() {
             let _ = farr_set(zT_last, lj, farr_get(zT_seq, (T - 1) * d + lj))
             lj = lj + 1
         }
+        // cache pre-ln value for ln_f_bwd (4-bwd-6)
+        let mut pli = 0
+        while pli < d { let _ = farr_set(zT_last_pre_ln, pli, farr_get(zT_last, pli)) ; pli = pli + 1 }
         // ── final ln_f (RMSNorm) ──
         let mut ms = 0.0
         let mut mi2 = 0
@@ -424,6 +462,61 @@ fn main() {
         let _ = farr_set(d_logits, target, 1.0)
         v3_moe_bwd(zT_last, M, router_off, experts_off, gate_norm, top_idx, d_logits,
                    dMg, d_zT_last, V, d, E)
+
+        // ── Phase 4-bwd-6: backward through ln_f + layer stack + tok_emb ──
+        // ln_f_bwd: d_zT_last (∂L/∂ln_f-output, from MoE bwd) → ∂L/∂ln_f-input
+        let d_zT_last_pre = t_zeros(d)
+        ln_f_bwd(d_zT_last, zT_last_pre_ln, ln_f_off, M, d, rms_inv, dMg, d_zT_last_pre)
+        // scatter last-token grad into full-sequence grad (other positions 0)
+        let mut zs = 0
+        while zs < T * d { let _ = farr_set(d_zT_seq, zs, 0.0) ; zs = zs + 1 }
+        let mut dl = 0
+        while dl < d {
+            let _ = farr_set(d_zT_seq, (T - 1) * d + dl, farr_get(d_zT_last_pre, dl))
+            dl = dl + 1
+        }
+        // reverse layer loop: layer_block_bwd chains d_zT_seq backward
+        let Q_l = t_zeros(T * d)
+        let K_l = t_zeros(T * d)
+        let V_l = t_zeros(T * d)
+        let ao_l = t_zeros(T * d)
+        let pr_l = t_zeros(T * T)
+        let zin_l = t_zeros(T * d)
+        let zmid_l = t_zeros(T * d)
+        let h_act_seq_l = t_zeros(T * h)
+        let mut lb = n_layer - 1
+        while lb >= 0 {
+            let boff = blocks_off + lb * block_size
+            // load layer lb caches into single-layer scratch
+            let mut c = 0
+            while c < T * d {
+                let _ = farr_set(Q_l, c, farr_get(Q_all, lb * T * d + c))
+                let _ = farr_set(K_l, c, farr_get(K_all, lb * T * d + c))
+                let _ = farr_set(V_l, c, farr_get(V_all, lb * T * d + c))
+                let _ = farr_set(ao_l, c, farr_get(attn_out_all, lb * T * d + c))
+                let _ = farr_set(zin_l, c, farr_get(zT_in_all, lb * T * d + c))
+                let _ = farr_set(zmid_l, c, farr_get(zT_mid_all, lb * T * d + c))
+                c = c + 1
+            }
+            let mut cp2 = 0
+            while cp2 < T * T { let _ = farr_set(pr_l, cp2, farr_get(probs_all, lb * T * T + cp2)) ; cp2 = cp2 + 1 }
+            let mut ch = 0
+            while ch < T * h { let _ = farr_set(h_act_seq_l, ch, farr_get(h_act_all, lb * T * h + ch)) ; ch = ch + 1 }
+            // layer_block_bwd: d_zT_seq (block output grad) → d_zT_layer (block input grad)
+            layer_block_bwd(d_zT_seq, zin_l, zmid_l, Q_l, K_l, V_l, ao_l, pr_l, h_act_seq_l,
+                            boff, boff + d * d, boff + 2 * d * d, boff + 3 * d * d,
+                            boff + 4 * d * d, boff + 4 * d * d + h * d,
+                            M, T, d, h, attn_scale, dMg, d_zT_layer)
+            // chain to the earlier layer: d_zT_seq = d_zT_layer
+            let mut cc = 0
+            while cc < T * d { let _ = farr_set(d_zT_seq, cc, farr_get(d_zT_layer, cc)) ; cc = cc + 1 }
+            lb = lb - 1
+        }
+        // tok_emb_bwd: scatter d_zT_seq into embedding rows.
+        // step_off = (step-1)·T; at step 1 step_off=0 so corpus_ids[0..T] = the input
+        // window exactly. (n_steps=1 pilot; multi-step needs an offset-aware variant.)
+        tok_emb_bwd(d_zT_seq, corpus_ids, tok_emb_off, T, d, dMg)
+
         // AdamW
         let bc1 = 1.0 - pow(beta1, to_float(step))
         let bc2 = 1.0 - pow(beta2, to_float(step))
@@ -487,12 +580,15 @@ fn main() {
     if final_probs_0_0 < 0.99 || final_probs_0_0 > 1.01 { pass = 0 }
     // last-layer Wo moved through MoE backward
     if wo_lN_delta < 1.0e-9 { pass = 0 }
+    // Phase 4-bwd-6: layer 0 Wq moved → end-to-end gradient reached the FIRST layer
+    // (the honest gap from Phase 4c — backward now flows output → all layers → input)
+    if wq_l0_delta < 1.0e-12 { pass = 0 }
     // Phase 4d BPE checks
     if V_bpe < 150000 { pass = 0 }                 // real Qwen vocab (151643)
     if ok_in_vocab != 1 { pass = 0 }               // corpus IDS all in [0, V)
     if pass == 1 {
-        println("TRAIN_V3_MOE_PILOT REAL-BPE: PASS (d=64 V=151643 E=2 n_layer=1 T=4 · real Qwen corpus IDS · causal-softmax · last-layer trained)")
+        println("TRAIN_V3_MOE_PILOT END-TO-END: PASS (d=64 V=151643 E=2 n_layer=1 T=4 · real Qwen corpus IDS · full backward: ln_f + layer-stack + tok_emb · layer 0 trained)")
     } else {
-        println("TRAIN_V3_MOE_PILOT REAL-BPE: FAIL")
+        println("TRAIN_V3_MOE_PILOT END-TO-END: FAIL")
     }
 }
