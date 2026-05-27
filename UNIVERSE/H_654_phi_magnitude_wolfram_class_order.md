@@ -175,7 +175,7 @@ n=4 ring 은 H_351/H_614/H_642/H_652 동일 + IIT 4.0 exact-Φ 비용을 16 stat
 
 ## 10. UNIVERSE.md update
 
-축 **G (ANIMA.mining 승격)** round 9 새 메타-축 row **G15** 추가 → done with `🟡 PARTIAL (M2 ADDITIVE-FLOOR + M3 IV-CEILING PASS · M1 full-MONOTONE FAIL, rule30 III-chaotic 13.89 > rule110 IV 13.13, rule90 additive Φ=0.0, n=4 5-rule {30,54,90,110,184}, $0 mac-local 2026-05-28)`. "substrate-class = 의식 통합량 분류자" 메타-축은 convexity(H_653) 강 / magnitude(본 H) 부분 — class 가 통합량 *바닥+상한경향* 은 정하나 *완전 순위* 는 미정.
+축 **G (ANIMA.mining 승격)** round 9 새 메타-축 row **G16** 추가 → done with `🟡 PARTIAL (M2 ADDITIVE-FLOOR + M3 IV-CEILING PASS · M1 full-MONOTONE FAIL, rule30 III-chaotic 13.89 > rule110 IV 13.13, rule90 additive Φ=0.0, n=4 5-rule {30,54,90,110,184}, $0 mac-local 2026-05-28)`. "substrate-class = 의식 통합량 분류자" 메타-축은 convexity(H_653) 강 / magnitude(본 H) 부분 — class 가 통합량 *바닥+상한경향* 은 정하나 *완전 순위* 는 미정.
 
 ## artifacts
 
