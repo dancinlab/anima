@@ -1,0 +1,28 @@
+{
+  "bench": "BENCH #7 BRIDGE-AND-GATE",
+  "hypothesis": "emit ⇔ M ∧ C ∧ W ∧ Φ AND-gate",
+  "n_states": 400,
+  "theta": 0.5,
+  "pin_high": 0.9,
+  "emit_rate_uniform": 0.065,
+  "emit_rate_or": 0.9425,
+  "pinned": {
+    "M":   0.11,
+    "C":   0.1325,
+    "W":   0.1475,
+    "Phi": 0.13
+  },
+  "avg_pin": 0.13,
+  "sensitivity": {
+    "dM":   0.045,
+    "dC":   0.0675,
+    "dW":   0.0825,
+    "dPhi": 0.065,
+    "max_over_min": 1.83333
+  },
+  "falsifiers": {
+    "PASS": 4,
+    "FAIL": 1
+  },
+  "verdict": "🟡 PARTIAL — AND-gate qualitative, 1 falsifier fail"
+}

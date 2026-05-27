@@ -65,18 +65,37 @@ fn minf(a: float, b: float) -> float {
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// Deterministic LCG → float in [0, 1)  (libm-free, byte-identical)
-//   a = 1103515245, c = 12345, m = 2^31 - 1
+// Deterministic stream sampler → float in [0, 1)
+//   We iterate a global LCG state forward by `position` steps so adjacent
+//   indices walk independent points in the cycle (no per-index hashing
+//   correlation artifacts).  libm-free, byte-identical.
+//
+//   Per-factor stream = a separate seed origin, then we walk forward by
+//   the position index.  Within one factor, positions 0,1,2,... are
+//   successive LCG iterates (uncorrelated by construction at p<<period).
 // ─────────────────────────────────────────────────────────────────────
-fn lcg(seed: int) -> int {
-    let mut s = seed * 1103515245 + 12345
-    if s < 0 { s = 0 - s }
-    s = s % 2147483647
+fn lcg_step(s: int) -> int {
+    let mut x = s * 1103515245 + 12345
+    if x < 0 { x = 0 - x }
+    x = x % 2147483647
+    return x
+}
+
+// walk LCG forward `n` steps from origin seed
+fn lcg_walk(origin: int, n: int) -> int {
+    let mut s = origin
+    let mut k = 0
+    while k < n {
+        s = lcg_step(s)
+        k = k + 1
+    }
     return s
 }
 
-fn u01(seed: int) -> float {
-    let r = lcg(seed)
+fn u01_from(state: int) -> float {
+    let mut r = state
+    if r < 0 { r = 0 - r }
+    r = r % 2147483647
     // map to [0, 1) — fold by 2^20 = 1048576 buckets
     let bucket = r % 1048576
     return (bucket as float) / 1048576.0
@@ -110,17 +129,33 @@ fn or_gate(m: float, c: float, w: float, phi: float,
 // CONDITION A — UNIFORM[0,1] × 4 factors, n=100 states
 //   expected emit_rate ≈ 0.5^4 = 0.0625
 // ─────────────────────────────────────────────────────────────────────
-comptime const N = 100
+comptime const N = 400
 comptime const TH = 0.5
+
+// Per-stream origin seeds.  Each call iterates lcg_step from its own origin,
+// producing position 0,1,2,... that are well-decorrelated within the stream
+// (and across streams because origins are distinct points on the cycle).
+comptime const ORIGIN_M   = 1000003
+comptime const ORIGIN_C   = 2000003
+comptime const ORIGIN_W   = 3000017
+comptime const ORIGIN_PHI = 4000037
 
 fn run_uniform() -> float {
     let mut emits = 0
     let mut t = 0
+    let mut sM   = lcg_walk(ORIGIN_M,   5)  // warmup: skip initial transient
+    let mut sC   = lcg_walk(ORIGIN_C,   5)
+    let mut sW   = lcg_walk(ORIGIN_W,   5)
+    let mut sPhi = lcg_walk(ORIGIN_PHI, 5)
     while t < N {
-        let m   = u01(t * 4 + 1)
-        let c   = u01(t * 4 + 2)
-        let w   = u01(t * 4 + 3)
-        let phi = u01(t * 4 + 4)
+        sM   = lcg_step(sM)
+        sC   = lcg_step(sC)
+        sW   = lcg_step(sW)
+        sPhi = lcg_step(sPhi)
+        let m   = u01_from(sM)
+        let c   = u01_from(sC)
+        let w   = u01_from(sW)
+        let phi = u01_from(sPhi)
         emits = emits + and_gate(m, c, w, phi, TH, TH, TH, TH)
         t = t + 1
     }
@@ -130,11 +165,19 @@ fn run_uniform() -> float {
 fn run_uniform_or() -> float {
     let mut emits = 0
     let mut t = 0
+    let mut sM   = lcg_walk(ORIGIN_M,   5)
+    let mut sC   = lcg_walk(ORIGIN_C,   5)
+    let mut sW   = lcg_walk(ORIGIN_W,   5)
+    let mut sPhi = lcg_walk(ORIGIN_PHI, 5)
     while t < N {
-        let m   = u01(t * 4 + 1)
-        let c   = u01(t * 4 + 2)
-        let w   = u01(t * 4 + 3)
-        let phi = u01(t * 4 + 4)
+        sM   = lcg_step(sM)
+        sC   = lcg_step(sC)
+        sW   = lcg_step(sW)
+        sPhi = lcg_step(sPhi)
+        let m   = u01_from(sM)
+        let c   = u01_from(sC)
+        let w   = u01_from(sW)
+        let phi = u01_from(sPhi)
         emits = emits + or_gate(m, c, w, phi, TH, TH, TH, TH)
         t = t + 1
     }
@@ -148,14 +191,29 @@ fn run_uniform_or() -> float {
 // ─────────────────────────────────────────────────────────────────────
 comptime const PIN_HIGH = 0.9
 
+// Pinned runs use DIFFERENT origin seeds (shift by 50_000_000) so the
+// pinned scenarios are independent samples, not a re-roll of the uniform run.
+comptime const ORIGIN_PIN_M   = 51000003
+comptime const ORIGIN_PIN_C   = 52000003
+comptime const ORIGIN_PIN_W   = 53000017
+comptime const ORIGIN_PIN_PHI = 54000037
+
 fn run_pinned(factor_idx: int) -> float {
     let mut emits = 0
     let mut t = 0
+    let mut sM   = lcg_walk(ORIGIN_PIN_M,   5)
+    let mut sC   = lcg_walk(ORIGIN_PIN_C,   5)
+    let mut sW   = lcg_walk(ORIGIN_PIN_W,   5)
+    let mut sPhi = lcg_walk(ORIGIN_PIN_PHI, 5)
     while t < N {
-        let mut m   = u01(t * 4 + 11)
-        let mut c   = u01(t * 4 + 12)
-        let mut w   = u01(t * 4 + 13)
-        let mut phi = u01(t * 4 + 14)
+        sM   = lcg_step(sM)
+        sC   = lcg_step(sC)
+        sW   = lcg_step(sW)
+        sPhi = lcg_step(sPhi)
+        let mut m   = u01_from(sM)
+        let mut c   = u01_from(sC)
+        let mut w   = u01_from(sW)
+        let mut phi = u01_from(sPhi)
         if factor_idx == 0 { m   = PIN_HIGH }
         if factor_idx == 1 { c   = PIN_HIGH }
         if factor_idx == 2 { w   = PIN_HIGH }
@@ -173,7 +231,7 @@ fn main() {
     println("═══════════════════════════════════════════════════════════")
     println("  BENCH #7  BRIDGE-AND-GATE")
     println("  emit ⇔ M > 0.5 ∧ C > 0.5 ∧ W > 0.5 ∧ Φ > 0.5")
-    println("  n = 100  ·  uniform[0,1]  ·  LCG-deterministic")
+    println("  n = " + N.to_string() + "  ·  uniform[0,1]  ·  LCG-deterministic")
     println("═══════════════════════════════════════════════════════════")
 
     // ── (A) UNIFORM × 4  AND-gate ─────────────────────────────────

@@ -1,0 +1,72 @@
+═══════════════════════════════════════════════════════════
+  BENCH #7  BRIDGE-AND-GATE
+  emit ⇔ M > 0.5 ∧ C > 0.5 ∧ W > 0.5 ∧ Φ > 0.5
+  n = 400  ·  uniform[0,1]  ·  LCG-deterministic
+═══════════════════════════════════════════════════════════
+
+[A] UNIFORM AND-gate
+    rate_uniform  = 0.065
+    expected      ≈ 0.0625 (= 0.5^4)
+
+[B] UNIFORM OR-gate  (antithesis sanity)
+    rate_or       = 0.9425
+    expected      ≈ 0.9375 (= 1 - 0.5^4)
+
+[C] single-factor pinned high (0.9)
+    pin M     rate = 0.11
+    pin C     rate = 0.1325
+    pin W     rate = 0.1475
+    pin Phi   rate = 0.13
+    expected     ≈ 0.125 (= 0.5^3)
+    avg_pin       = 0.13
+
+[D] per-factor sensitivity  δ_i = rate_pin_i - rate_uniform
+    δ_M   = 0.045
+    δ_C   = 0.0675
+    δ_W   = 0.0825
+    δ_Phi = 0.065
+    max/min ratio = 1.83333
+    expected      ≤ 1.6  (uniform AND-sensitivity)
+
+─── pre-registered falsifier matrix ───
+  [PASS] F1 EMIT_RATE_IN_BAND       (rate_uniform ∈ [0.04, 0.10])
+  [FAIL] F2 SENSITIVITY_UNIFORM     (max/min ≤ 1.6)
+  [PASS] F3 SINGLE_FACTOR_HIGH      (avg_pin ∈ [0.08, 0.18])
+  [PASS] F4 OR_GATE_REJECT          (rate_or ≥ 0.90)
+  [PASS] F5 CONDITIONAL_RATE_GAP    (avg_pin > rate_uniform)
+
+═══════════════════════════════════════════════════════════
+  PASS = 4  /  FAIL = 1
+  VERDICT  =  🟡 PARTIAL — AND-gate qualitative, 1 falsifier fail
+═══════════════════════════════════════════════════════════
+
+JSON_BEGIN
+{
+  "bench": "BENCH #7 BRIDGE-AND-GATE",
+  "hypothesis": "emit ⇔ M ∧ C ∧ W ∧ Φ AND-gate",
+  "n_states": 400,
+  "theta": 0.5,
+  "pin_high": 0.9,
+  "emit_rate_uniform": 0.065,
+  "emit_rate_or": 0.9425,
+  "pinned": {
+    "M":   0.11,
+    "C":   0.1325,
+    "W":   0.1475,
+    "Phi": 0.13
+  },
+  "avg_pin": 0.13,
+  "sensitivity": {
+    "dM":   0.045,
+    "dC":   0.0675,
+    "dW":   0.0825,
+    "dPhi": 0.065,
+    "max_over_min": 1.83333
+  },
+  "falsifiers": {
+    "PASS": 4,
+    "FAIL": 1
+  },
+  "verdict": "🟡 PARTIAL — AND-gate qualitative, 1 falsifier fail"
+}
+JSON_END
