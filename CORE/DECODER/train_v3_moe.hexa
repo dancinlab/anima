@@ -1,0 +1,115 @@
+// CORE/DECODER/train_v3_moe.hexa — M4b-fire-scale Phase 2b smoke driver
+//
+// Minimal MoE smoke: alloc packed M with router + experts slot, init weights,
+// run one v3_moe_fwd + v3_moe_bwd, print verdict. Self-contained (no fire
+// artifact import) — exercises CORE/DECODER/v3_moe_arch.hexa's packed-M
+// fwd+bwd against a small (d=4, V=4, E=2) MoE-only layout.
+//
+// Phase 2b scope = SMOKE wiring only (parse + 1-step fwd/bwd works), NOT
+// full training loop. Phase 3 (3B scale + memory budget) extends this with
+// real flame decoder spine, AdamW step, multi-step loop, and the corpus
+// path (P21H_BPE_ON wiring per design Phase 1).
+//
+// Layout: M = [router(E·d) | experts(E·V·d)]   (V3 spine excluded for smoke)
+//   router_off  = 0
+//   experts_off = E·d
+
+use "stdlib/flame/tensor_lib"
+use "stdlib/flame/flame_math"
+use "/Users/ghost/core/anima/CORE/DECODER/v3_moe_arch"
+
+fn main() {
+    println("=== train_v3_moe smoke (MoE Phase 2b · packed-M fwd+bwd 1-step) ===")
+
+    let d = 4
+    let V = 4
+    let E = 2
+    let router_off = 0
+    let experts_off = E * d
+    let m_size = v3_moe_total_size(V, d, E)
+    print("  config: d="); print(d); print(" V="); print(V); print(" E="); print(E)
+    print(" m_size="); println(m_size)
+
+    // alloc packed buffers (model + grad), zT, logits, gate_norm, d_zT
+    let M = t_zeros(m_size)
+    let dMg = t_zeros(m_size)
+    let zT = t_zeros(d)
+    let logits_g = t_zeros(V)
+    let gate_norm = t_zeros(E)
+    let d_zT = t_zeros(d)
+    let d_logits = t_zeros(V)
+
+    // deterministic init — router gate differs across experts so softmax non-trivial
+    // router[e=0,:] = [0.10, 0.20, 0.30, 0.40]   → low gate
+    // router[e=1,:] = [0.40, 0.30, 0.20, 0.10]   → high gate (different sign)
+    let mut j = 0
+    while j < d {
+        let _ = farr_set(M, router_off + 0 * d + j, 0.10 * to_float(j + 1))
+        let _ = farr_set(M, router_off + 1 * d + j, 0.10 * to_float(4 - j))
+        j = j + 1
+    }
+    // experts[e,k,j] = small unique value (no symmetry between experts)
+    let mut e = 0
+    while e < E {
+        let mut k = 0
+        while k < V {
+            let mut jj = 0
+            while jj < d {
+                let v = 0.01 * to_float(e + 1) * to_float(k + 1) + 0.001 * to_float(jj + 1)
+                let _ = farr_set(M, experts_off + e * V * d + k * d + jj, v)
+                jj = jj + 1
+            }
+            k = k + 1
+        }
+        e = e + 1
+    }
+    // zT input: deterministic, all positive (forward path explorable)
+    j = 0
+    while j < d {
+        let _ = farr_set(zT, j, 1.0 + 0.1 * to_float(j))
+        j = j + 1
+    }
+
+    // ── forward ──
+    let top_idx = v3_moe_fwd(zT, M, router_off, experts_off,
+                              logits_g, gate_norm, V, d, E)
+    println("  forward OK")
+    print("    top_idx = "); println(top_idx)
+    print("    gate_norm[0] = "); print(farr_get(gate_norm, 0))
+    print("  gate_norm[1] = "); println(farr_get(gate_norm, 1))
+    print("    logits[0..V] = [")
+    let mut kk = 0
+    while kk < V {
+        print(farr_get(logits_g, kk))
+        if kk + 1 < V { print(", ") }
+        kk = kk + 1
+    }
+    println("]")
+
+    // ── backward ── (synthetic d_logits = [1,0,0,0] → grad onto position 0)
+    let _ = farr_set(d_logits, 0, 1.0)
+    v3_moe_bwd(zT, M, router_off, experts_off, gate_norm, top_idx, d_logits,
+               dMg, d_zT, V, d, E)
+    println("  backward OK")
+    // grad non-zero on winner expert's first row + router gate (top-only)
+    let dW_top_00 = farr_get(dMg, experts_off + top_idx * V * d + 0 * d + 0)
+    let dW_top_03 = farr_get(dMg, experts_off + top_idx * V * d + 0 * d + 3)
+    print("    dW[top,0,0] = "); print(dW_top_00)
+    print("  dW[top,0,3] = "); println(dW_top_03)
+    let dR_top = farr_get(dMg, router_off + top_idx * d + 0)
+    print("    dRouter[top,0] = "); println(dR_top)
+    let dz0 = farr_get(d_zT, 0)
+    print("    d_zT[0] = "); println(dz0)
+
+    // ── verdict ──
+    let gate_sum = farr_get(gate_norm, 0) + farr_get(gate_norm, 1)
+    let mut pass = 1
+    if gate_sum < 0.999 || gate_sum > 1.001 { pass = 0 }   // softmax sum=1
+    if top_idx < 0 || top_idx >= E { pass = 0 }            // valid top
+    if dW_top_00 == 0.0 { pass = 0 }                       // winner got grad
+    if pass == 1 {
+        println("TRAIN_V3_MOE SMOKE: PASS (softmax sum=1, valid top, winner-grad non-zero)")
+    } else {
+        println("TRAIN_V3_MOE SMOKE: FAIL")
+    }
+}
