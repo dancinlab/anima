@@ -56,7 +56,10 @@
 
 - [ ] **M4 MoE-fresh register 분리** ⭐ 본선 (UNIVERSE H_490 DIFFERENTIATION) — 근본 원인 분리 재설계: V3 head_g 슬롯 → K-expert router. register-carving 을 specialized expert 로 격리해 main path 는 coherent 유지 (collapse 회피) + register 신호는 dedicated expert 가 담당 (underfit 회피). 완성도 기준 본선 (a_completeness_over_cheap).
   - [x] **M4a router arch** — `CORE/DECODER/moe_router.hexa` (7 pub fn — `moe_gate_fwd` · `moe_softmax` · `moe_argmax` · `moe_expert_fwd` · `moe_combine_soft` · `moe_route_fwd` · `moe_router_summary`) · packed-buffer farr 모델 (V3 decoder 와 byte-clean · router=[E·d] experts=[E·V·d]) · 각 expert = head_g 와 동일 V·d linear shape · soft routing (gate-weighted Σ) + top-1 argmax 진단 · `moe_router_smoke.hexa` 12-case (gate fwd / softmax sum=1 / argmax / expert fwd / soft combine / full route_fwd) · 2/2 `hexa parse` OK · ⚠ 실 실행은 M4b runtime (pool-route 가 hexa 를 linux 로 보내 worktree-local 실행 불가, parse-clean 까지가 arch 바)
-  - [ ] **M4b** expert 분리 학습 fire — router/expert backward + register-expert/coherent-expert 분리 학습 (H100, a_fire_autonomous)
+  - [~] **M4b** expert 분리 학습 fire — **backward 완성 (코드부)** + fire (잔여)
+    - [x] **M4b-bwd** router/expert backward — `CORE/DECODER/moe_router_bwd.hexa` (4 pub fn — `moe_combine_bwd` · `moe_softmax_bwd` · `moe_gate_bwd` · `moe_route_bwd`) · closed analytic vjp (expert outer-prod · softmax jacobian · router outer-prod · d_zT 누적) · `moe_router_bwd_smoke.hexa` gradcheck 6-case (4 weight + 2 zT · finite-diff vs analytic · loss=0.5·Σlogits²) · 2/2 `hexa parse` OK
+    - [ ] **M4b-wire** train_p21h_v3 loop 에 MoE route 배선 (head_g → moe_route_fwd/bwd 교체 · register/coherent expert seed)
+    - [ ] **M4b-fire** H100 dispatch (a_fire_autonomous · register-expert/coherent-expert 분리 학습)
   - [ ] **M4c** p7 verify — collapse 회피 ∧ coherence 둘 다 simple-stack
 - [ ] **M4-probe model-merge α-sweep** (optional baseline probe · UNIVERSE H_493 SYMBIOGENESIS) — collapse-avoid + collapse ckpt weight 보간 `W=α·A+(1-α)·B` · α-sweep · cheap baseline 신호용으로만 (본선 아님). 두 결함작 blend = least-bad midpoint 한계 인지 (`a_completeness_over_cheap` model-merge-of-failures dont)
 
