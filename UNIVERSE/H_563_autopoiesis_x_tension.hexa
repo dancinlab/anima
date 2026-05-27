@@ -1,3 +1,0 @@
-fn tension_floor(decayed: f64, floor: f64) -> f64 { if decayed < floor { return floor } return decayed }
-fn check_h563() -> bool { return tension_floor(0.01, 0.1) == 0.1 }
-fn main() { if check_h563() { print("H_563 OK") } else { print("H_563 FAIL") } }

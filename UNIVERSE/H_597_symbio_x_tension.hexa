@@ -1,3 +1,0 @@
-fn ch_blend(a: f64, b: f64, alpha: f64) -> f64 { return alpha*a + (1.0-alpha)*b }
-fn check_h597() -> bool { return ch_blend(1.0,0.0,0.5) == 0.5 }
-fn main() { if check_h597() { print("H_597 OK") } else { print("H_597 FAIL") } }

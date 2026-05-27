@@ -1,3 +1,0 @@
-fn cap_union(host: bool, symbiont: bool) -> bool { return host || symbiont }
-fn check_h589() -> bool { return cap_union(true,false) && cap_union(false,true) && !cap_union(false,false) }
-fn main() { if check_h589() { print("H_589 OK") } else { print("H_589 FAIL") } }

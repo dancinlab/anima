@@ -1,3 +1,0 @@
-fn internal_recycle(low_signal: bool, external_cmd: bool) -> bool { return low_signal && !external_cmd }
-fn check_h523() -> bool { return internal_recycle(true, false) && !internal_recycle(true, true) }
-fn main() { if check_h523() { print("H_523 OK") } else { print("H_523 FAIL") } }

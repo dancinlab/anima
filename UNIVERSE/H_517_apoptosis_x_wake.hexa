@@ -1,3 +1,0 @@
-fn apo_rate(stage: string) -> f64 { if stage == "N3" { return 0.5 } if stage == "WAKE" { return 0.05 } return 0.2 }
-fn check_h517() -> bool { return apo_rate("N3") >= apo_rate("WAKE") }
-fn main() { if check_h517() { print("H_517 OK") } else { print("H_517 FAIL") } }

@@ -1,3 +1,0 @@
-fn spike_union(ra: f64, rb: f64, cap: f64) -> f64 { let s = ra+rb; if s > cap { return cap } return s }
-fn check_h596() -> bool { return spike_union(0.3,0.4,1.0) == 0.7 && spike_union(0.8,0.8,1.0) == 1.0 }
-fn main() { if check_h596() { print("H_596 OK") } else { print("H_596 FAIL") } }
