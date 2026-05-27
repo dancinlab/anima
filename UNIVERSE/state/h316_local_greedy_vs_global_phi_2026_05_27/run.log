@@ -1,0 +1,78 @@
+H_316 — LOCAL-GREEDY Φ-OPS ⊥ GLOBAL INTEGRATION (synthesis of H_312/313/314/315)
+  unified candidate pool = NODE removals + EDGE prunes
+  local weight = connectivity/activity (NO big-Φ inside the greedy ranking — g73 anti-tautology)
+  greedy=argMIN local-weight · random=fixed-seed · global=argMAX post-op Φ (exhaustive true optimum)
+  engine = stdlib iit4_complex + iit4_eca + rng (REUSED, not reinvented)
+  FALSIFIER: greedy systematically BEATS random (win-rate > 0.5) ⇒ H1 FALSIFIED (local transfers)
+
+PANEL eca90 n=4 sys=11 rule=90
+  candidates=12 base_bigPhi=0.0
+  greedy  kind=1 a=0 b=0 local_w=1.0 post_phi=1
+  random  idx=5 kind=1 a=0 b=2 local_w=1.0 post_phi=1
+  global  idx=4 kind=1 a=0 b=0 local_w=1.0 post_phi=1
+  CELL_RESULT greedy_post=1 random_post=1 global_post=1 greedy_beats_random=false greedy_is_global=true
+
+PANEL eca110 n=4 sys=11 rule=110
+  candidates=16 base_bigPhi=8.93784
+  greedy  kind=1 a=0 b=0 local_w=0.25 post_phi=5.1323
+  random  idx=1 kind=0 a=1 b=-1 local_w=3.5 post_phi=2.98762
+  global  idx=10 kind=1 a=2 b=0 local_w=0.25 post_phi=6.75253
+  CELL_RESULT greedy_post=5.1323 random_post=2.98762 global_post=6.75253 greedy_beats_random=true greedy_is_global=false
+
+PANEL eca30 n=4 sys=11 rule=30
+  candidates=16 base_bigPhi=15.5659
+  greedy  kind=1 a=0 b=1 local_w=0.5 post_phi=10.9252
+  random  idx=1 kind=0 a=1 b=-1 local_w=4.0 post_phi=1.68383
+  global  idx=11 kind=1 a=2 b=1 local_w=0.5 post_phi=16.6543
+  CELL_RESULT greedy_post=10.9252 random_post=1.68383 global_post=16.6543 greedy_beats_random=true greedy_is_global=false
+
+PANEL eca54 n=4 sys=11 rule=54
+  candidates=16 base_bigPhi=8.41254
+  greedy  kind=1 a=0 b=0 local_w=0.5 post_phi=8.00601
+  random  idx=9 kind=1 a=1 b=2 local_w=0.5 post_phi=6.64374
+  global  idx=5 kind=1 a=0 b=1 local_w=1.0 post_phi=9.08166
+  CELL_RESULT greedy_post=8.00601 random_post=6.64374 global_post=9.08166 greedy_beats_random=true greedy_is_global=false
+
+PANEL eca150 n=4 sys=11 rule=150
+  candidates=16 base_bigPhi=8
+  greedy  kind=1 a=0 b=0 local_w=1.0 post_phi=2.5
+  random  idx=9 kind=1 a=1 b=2 local_w=1.0 post_phi=2.5
+  global  idx=8 kind=1 a=1 b=1 local_w=1.0 post_phi=4
+  CELL_RESULT greedy_post=2.5 random_post=2.5 global_post=4 greedy_beats_random=false greedy_is_global=false
+
+PANEL eca22 n=4 sys=11 rule=22
+  candidates=16 base_bigPhi=5.06579
+  greedy  kind=1 a=0 b=0 local_w=0.75 post_phi=4.09415
+  random  idx=9 kind=1 a=1 b=2 local_w=0.75 post_phi=4.26016
+  global  idx=10 kind=1 a=2 b=0 local_w=0.75 post_phi=12.9254
+  CELL_RESULT greedy_post=4.09415 random_post=4.26016 global_post=12.9254 greedy_beats_random=false greedy_is_global=false
+
+PANEL eca60 n=4 sys=11 rule=60
+  candidates=12 base_bigPhi=11
+  greedy  kind=1 a=0 b=0 local_w=1.0 post_phi=8
+  random  idx=11 kind=1 a=3 b=1 local_w=1.0 post_phi=7
+  global  idx=6 kind=1 a=1 b=0 local_w=1.0 post_phi=10.5
+  CELL_RESULT greedy_post=8 random_post=7 global_post=10.5 greedy_beats_random=true greedy_is_global=false
+
+PANEL eca105 n=4 sys=11 rule=105
+  candidates=16 base_bigPhi=4
+  greedy  kind=1 a=0 b=0 local_w=1.0 post_phi=1
+  random  idx=2 kind=0 a=2 b=-1 local_w=6.0 post_phi=3.5
+  global  idx=2 kind=0 a=2 b=-1 local_w=6.0 post_phi=3.5
+  CELL_RESULT greedy_post=1 random_post=3.5 global_post=3.5 greedy_beats_random=false greedy_is_global=false
+
+PANEL eca90_n3 n=3 sys=5 rule=90
+  candidates=9 base_bigPhi=3
+  greedy  kind=1 a=0 b=0 local_w=1.0 post_phi=4.5
+  random  idx=3 kind=1 a=0 b=0 local_w=1.0 post_phi=4.5
+  global  idx=3 kind=1 a=0 b=0 local_w=1.0 post_phi=4.5
+  CELL_RESULT greedy_post=4.5 random_post=4.5 global_post=4.5 greedy_beats_random=false greedy_is_global=true
+
+PANEL eca110_n3 n=3 sys=5 rule=110
+  candidates=12 base_bigPhi=6.52535
+  greedy  kind=1 a=0 b=0 local_w=0.25 post_phi=4.38191
+  random  idx=4 kind=1 a=0 b=1 local_w=0.75 post_phi=3.86897
+  global  idx=3 kind=1 a=0 b=0 local_w=0.25 post_phi=4.38191
+  CELL_RESULT greedy_post=4.38191 random_post=3.86897 global_post=4.38191 greedy_beats_random=true greedy_is_global=true
+
+DONE
