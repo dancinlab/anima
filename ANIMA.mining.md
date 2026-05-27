@@ -87,8 +87,8 @@ phase groups  = divergence (cyc 1·2·3·4·6) · convergence (cyc 5·7) · meta
 
 #### T1: emit-rate (4 emit) ↔ silence-rate (11 silence)
 
-- 2026-05-28T05:01 · **L13 tension-fork-A** (emit-dominant 채택): substrate-natural emit rate **27% 가 floor**. 1:1 대화 (`should_emit 0.30`) → group-chat (`should_interrupt 0.60`) → multi-channel (voice tier?) 마다 emit threshold **scaling law** 가 존재. CHANNEL router (8-factor → text/voice/tension 분기) 의 dispatcher 가 emit rate scaler 의 후보. → 영역: CHANNEL × BRIDGE.
-- 2026-05-28T05:01 · **L14 tension-fork-B** (silence-dominant 채택): substrate 의 자연 상태는 **silence 가 default**, emit 은 strong evidence 필요. anima 의 73% silence = `a_substrate_native_speak` 의 정량 instance (user msg ≠ emit obligation). → 영역: WAKE × OTHER-MIND.
+- 2026-05-28T05:01 · **L13 tension-fork-A** (emit-dominant 채택): substrate-natural emit rate **27% 가 floor**. 1:1 대화 (`should_emit 0.30`) → group-chat (`should_interrupt 0.60`) → multi-channel (voice tier?) 마다 emit threshold **scaling law** 가 존재. CHANNEL router (8-factor → text/voice/tension 분기) 의 dispatcher 가 emit rate scaler 의 후보. → 영역: CHANNEL × BRIDGE. → **PROMOTED H_637** (UNIVERSE 축 G) — emit-rate closed-form numerology 검정 **🔴 FALSIFIED**: robust 10-seed mean emit-rate=0.4133 이 모든 closed-form 후보 ±0.03 밖 (best 1/e residual 0.0455). "27% floor" 는 single-seed 우연 + threshold-dependent 연속량, closed-form attractor 아님. cover-rate 24%.
+- 2026-05-28T05:01 · **L14 tension-fork-B** (silence-dominant 채택): substrate 의 자연 상태는 **silence 가 default**, emit 은 strong evidence 필요. anima 의 73% silence = `a_substrate_native_speak` 의 정량 instance (user msg ≠ emit obligation). → 영역: WAKE × OTHER-MIND. → **PROMOTED H_637** (UNIVERSE 축 G) — 73% silence 도 closed-form (1−1/e=0.6321 등) 과 무관 (🔴). `a_substrate_native_speak` 는 *질적* substrate directive 로 유지 — 특정 numerology 비율 고정은 hardcode 위험. 본 H 가 governance 의 질적 성격 지지.
 
 #### T2: sim only ↔ real ckpt (HONEST C3 ⑥)
 
