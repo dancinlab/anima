@@ -1,0 +1,59 @@
+=== H_631 RUN LOG (consolidated) ===
+
+## single5.log (single-state st=21, n=5, all rules):
+SINGLE r30  c1=1.31617 c2=1.31617 c3=4.28064 c4=20.2686 c5=37.9333
+SINGLE r90  c1=0.0 c2=0.0 c3=6 c4=19.5 c5=44.5
+SINGLE r110 c1=0.667596 c2=6.69887 c3=15.3963 c4=17.694 c5=18.3442
+SINGLE5_DONE
+EXIT=0
+
+## savg8.log (state-averaged 8-state subset, n=5, all rules):
+SAVG8 r30  c1=1.31617 c2=1.31617 c3=6.8231 c4=25.9101 c5=40.756
+SAVG8 r90  c1=0.0 c2=0.0 c3=6.375 c4=22.4375 c5=50.875
+SAVG8 r110 c1=1.4503 c2=7.97143 c3=23.3923 c4=27.1777 c5=28.4354
+SAVG8_DONE
+EXIT=0
+
+## finalize.log (gaps + alpha + 18 falsifiers):
+================================================================
+  H_631 finalize — α + falsifiers (n=5, cap1..5, c5=exact)
+================================================================
+  SINGLE gap(k):
+    rule  30: g1=36.6171 g2=36.6171 g3=33.6527 g4=17.6647 g5=0.0
+    rule  90: g1=44.5 g2=44.5 g3=38.5 g4=25.0 g5=0.0
+    rule 110: g1=17.6766 g2=11.6453 g3=2.9479 g4=0.6502 g5=0.0
+  STATE-AVG gap(k):
+    rule  30: g1=39.4398 g2=39.4398 g3=33.9329 g4=14.8459 g5=0.0
+    rule  90: g1=50.875 g2=50.875 g3=44.5 g4=28.4375 g5=0.0
+    rule 110: g1=26.9851 g2=20.464 g3=5.0431 g4=1.2577 g5=0.0
+  SINGLE   α (30/90/110) = 0.242983 / 0.192204 / 1.10091
+  STATE-AVG α (30/90/110) = 0.325684 / 0.193888 / 1.022
+  [PASS] F631.1 r30 state-avg gap monotone
+  [PASS] F631.1 r90 state-avg gap monotone
+  [PASS] F631.1 r110 state-avg gap monotone
+  [PASS] F631.2 r30 state-avg gap(c5)~0
+  [PASS] F631.2 r90 state-avg gap(c5)~0
+  [PASS] F631.2 r110 state-avg gap(c5)~0
+  [PASS] F631.3 r30 state-avg exp-shape (α>0)
+  [PASS] F631.3 r90 state-avg exp-shape (α>0)
+  [PASS] F631.3 r110 state-avg exp-shape (α>0)
+  [PASS] F631.4 r30 state-avg nonneg+lowerbound
+  [PASS] F631.4 r90 state-avg nonneg+lowerbound
+  [PASS] F631.4 r110 state-avg nonneg+lowerbound
+  [PASS] F631.6 ALL 3 rules state-avg exp-shape
+  [PASS] F631.7a single rule110 α >= 30,90 (H_625 order)
+  [PASS] F631.7b state-avg rule110 α >= 30,90 (order preserved)
+  [PASS] F631.8 single r30 α ~ 0.243
+  [PASS] F631.8 single r90 α ~ 0.192
+  [PASS] F631.8 single r110 α ~ 1.101
+================================================================
+  RESULT: 18 PASS / 0 FAIL
+================================================================
+EXIT=0
+
+## n=6 timing probe findings (INFEASIBLE → fallback to n=5 state-avg):
+n=6 cap=6 exact single-state: >10min (killed at 10:54 elapsed)
+n=6 cap=5 single-state: >2min (killed)
+n=6 cap=4 single-state: >3min (killed at 3:23 elapsed)
+n=5 FULL 32-state avg: SIGKILL at ~5:30 CPU x3 rules (mem pressure)
+→ demoted to n=5 8-state Hamming-stratified subset average (feasible)
