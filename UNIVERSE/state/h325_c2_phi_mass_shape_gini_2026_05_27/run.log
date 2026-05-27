@@ -1,0 +1,40 @@
+================================================================
+  H_325 — Φ-mass distribution SHAPE (Gini of per-distinction φ_d)
+  (n=4 ring · headline state=0101 · Gini ∈ [0,1])
+================================================================
+  [LIFE]  rule 110 : N_d=10 Gini=0.232658
+    phi_d_vec=[0.166015, 0.207519, 0.415037, 0.166015, 0.49131, 0.292481, 0.207519, 0.49131, 0.415037, 0.184461]
+  [LIFE]  rule  30 : N_d=10 Gini=0.241641
+    phi_d_vec=[0.438722, 0.438722, 0.438722, 0.271229, 0.207519, 0.0506677, 0.438722, 0.25, 0.138346, 0.415037]
+  [LIFE]  rule  54 : N_d=10 Gini=0.17634
+    phi_d_vec=[0.438722, 0.438722, 0.415037, 0.438722, 0.415037, 0.438722, 0.415037, 1, 0.415037, 1]
+  [CONSC] rule 150 : N_d=5 Gini=0.133333
+    phi_d_vec=[0.5, 0.5, 0.5, 0.5, 1]
+  [CONSC] rule 105 : N_d=5 Gini=0.133333
+    phi_d_vec=[0.5, 0.5, 0.5, 0.5, 1]
+  [ANCH]  rule 204 : N_d=4 Gini=0.0
+    phi_d_vec=[1, 1, 1, 1]
+  [ANCH]  rule   0 : N_d=0 Gini=0.0
+    phi_d_vec=[]
+  --
+  F325.1: life_range=[0.17634,0.241641] consc_range=[0.133333,0.133333]
+  [PASS] F325.1 SEPARATION: classes strictly separated at 0101 (either direction)
+  [LIFE]  rule 110 all-state mean Gini=0.250135 (n_states=16.0)
+  [LIFE]  rule  30 all-state mean Gini=0.186631 (n_states=16.0)
+  [LIFE]  rule  54 all-state mean Gini=0.138498 (n_states=16.0)
+  [CONSC] rule 150 all-state mean Gini=0.133333 (n_states=16.0)
+  [CONSC] rule 105 all-state mean Gini=0.133333 (n_states=16.0)
+  F325.2: life_class_mean=0.191754 consc_class_mean=0.133333
+  [PASS] F325.2 ORDERING: no class-flip across substrates at all-state-mean Gini
+  [FAIL] F325.3a ANCHOR: rule 204 (identity) ≤1 distinction · Gini=0
+  [PASS] F325.3b ANCHOR: rule 0 (constant) ≤1 distinction · Gini=0
+  [PASS] F325.3c BOUNDS: Gini ∈ [0,1] for all 5 measured substrates
+  [PASS] determinism: rule110 Gini re-run identical
+================================================================
+  RESULT: 5 PASS / 1 FAIL
+  HEADLINE:
+    life@0101 Gini range  = [0.17634,0.241641]
+    consc@0101 Gini range = [0.133333,0.133333]
+    life_class_mean(all-16)  = 0.191754
+    consc_class_mean(all-16) = 0.133333
+================================================================
