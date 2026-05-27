@@ -54,14 +54,17 @@ fn main() {
     let V = 4
     let E = 2
     let h = 8   // Phase 3b-3 MLP hidden dim
-    // Phase 3b-3 layout: M = [tok_emb(V·d) | attn_Wo(d·d) | mlp_Wup(h·d) | mlp_Wdown(d·h) | router(E·d) | experts(E·V·d)]
+    // Phase 3b-4 layout:
+    //   M = [tok_emb(V·d) | attn_Wo(d·d) | mlp_Wup(h·d) | mlp_Wdown(d·h)
+    //        | ln_f_gamma(d) | router(E·d) | experts(E·V·d)]
     let tok_emb_off = 0
     let attn_wo_off = V * d
     let mlp_wup_off = V * d + d * d
     let mlp_wdown_off = V * d + d * d + h * d
-    let router_off = V * d + d * d + 2 * h * d
-    let experts_off = V * d + d * d + 2 * h * d + E * d
-    let m_size = V * d + d * d + 2 * h * d + v3_moe_total_size(V, d, E)
+    let ln_f_off = V * d + d * d + 2 * h * d
+    let router_off = V * d + d * d + 2 * h * d + d
+    let experts_off = V * d + d * d + 2 * h * d + d + E * d
+    let m_size = V * d + d * d + 2 * h * d + d + v3_moe_total_size(V, d, E)
     print("  config: d="); print(d); print(" V="); print(V); print(" E="); print(E)
     print(" m_size="); print(m_size)
     print(" (tok_emb_off="); print(tok_emb_off)
@@ -246,6 +249,43 @@ fn main() {
     }
     println("]")
 
+    // ── Phase 3b-4 ln_f (RMSNorm before router) ──
+    // y[i] = (x[i] / sqrt(mean(x²) + eps)) · γ[i]      i in 0..d
+    // γ init: γ[i] = 1.0 (identity-init — standard RMSNorm convention)
+    let rmsnorm_eps = 1.0e-6
+    let mut gi = 0
+    while gi < d {
+        let _ = farr_set(M, ln_f_off + gi, 1.0)
+        gi = gi + 1
+    }
+    // compute mean-square
+    let mut ms = 0.0
+    let mut mi2 = 0
+    while mi2 < d {
+        let xv = farr_get(zT, mi2)
+        ms = ms + xv * xv
+        mi2 = mi2 + 1
+    }
+    ms = ms / to_float(d)
+    let rms_inv = 1.0 / sqrt(ms + rmsnorm_eps)
+    // forward: scale + γ
+    let mut ni = 0
+    while ni < d {
+        let xv = farr_get(zT, ni)
+        let gv = farr_get(M, ln_f_off + ni)
+        let _ = farr_set(zT, ni, xv * rms_inv * gv)
+        ni = ni + 1
+    }
+    print("  ln_f(RMSNorm) zT_post=[")
+    zp = 0
+    while zp < d {
+        print(farr_get(zT, zp))
+        if zp + 1 < d { print(", ") }
+        zp = zp + 1
+    }
+    print("]   rms_inv=")
+    println(rms_inv)
+
     // ── forward ──
     let top_idx = v3_moe_fwd(zT, M, router_off, experts_off,
                               logits_g, gate_norm, V, d, E)
@@ -280,13 +320,15 @@ fn main() {
     // ── verdict ──
     let gate_sum = farr_get(gate_norm, 0) + farr_get(gate_norm, 1)
     let zT0 = farr_get(zT, 0)
+    let ln_f_g0 = farr_get(M, ln_f_off + 0)
     let mut pass = 1
     if gate_sum < 0.999 || gate_sum > 1.001 { pass = 0 }   // softmax sum=1
     if top_idx < 0 || top_idx >= E { pass = 0 }            // valid top
     if dW_top_00 == 0.0 { pass = 0 }                       // winner got grad
     if zT0 == 0.0 { pass = 0 }                             // Phase 3b-1: tok_emb non-zero
+    if ln_f_g0 != 1.0 { pass = 0 }                         // Phase 3b-4: γ init = 1.0
     if pass == 1 {
-        println("TRAIN_V3_MOE SMOKE: PASS (tok_emb + softmax sum=1 + valid top + winner-grad)")
+        println("TRAIN_V3_MOE SMOKE: PASS (tok_emb + Wo + MLP + ln_f + softmax sum=1 + valid top + winner-grad)")
     } else {
         println("TRAIN_V3_MOE SMOKE: FAIL")
     }
