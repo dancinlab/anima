@@ -1,0 +1,26 @@
+════════════════════════════════════════════════════════════
+H_654 Φ-magnitude × Wolfram-class monotone order
+rules {30, 54, 90, 110, 184}  n=4  I=0 intrinsic big-Φ
+════════════════════════════════════════════════════════════
+  rule 30 (III-chaotic)  Φ = 13.8852
+  rule 54 (IV-complex)  Φ = 7.76521
+  rule 90 (III-additive)  Φ = 0.0
+  rule 110 (IV-complex)  Φ = 13.1302
+  rule 184 (II-particle)  Φ = 12.6273
+
+── tier-ordered representatives ──
+  tier0 additive (r90)  Φ = 0.0
+  tier1 II      (r184)  Φ = 12.6273
+  tier2 III     (r30 )  Φ = 13.8852
+  tier3 IV      (r110)  Φ = 13.1302
+
+── falsifiers ──
+  M1 MONOTONE      (t0≤t1≤t2≤t3) = 0
+       t0≤t1 = true  t1≤t2 = true  t2≤t3 = false
+  M2 ADDITIVE-FLOOR (r90<min4)   = 1   (r90=0.0 min_other=7.76521)
+  M3 IV-CEILING     (r110>r184)  = 1   (r110=13.1302 r184=12.6273)
+
+════════════════════════════════════════════════════════════
+  VERDICT = PARTIAL
+════════════════════════════════════════════════════════════
+wrote UNIVERSE/state/h654_phi_magnitude_class_order_2026_05_28/result.json
