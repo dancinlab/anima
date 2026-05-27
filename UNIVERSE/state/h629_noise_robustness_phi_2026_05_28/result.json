@@ -1,0 +1,39 @@
+{
+  "id": "H_629",
+  "slug": "noise-robustness-phi",
+  "date": "2026-05-28",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "axis": "information/computation (AXES Round 5) — noise sub-axis · noise-robustness of big-Phi",
+  "phi_primitive": "phi_with from UNIVERSE/lib/phi_helper.hexa (PR #317) -> c_measure_phi -> RFC 036 phi_spatial",
+  "config": { "N": 16, "dim": 12, "warm": 8, "reps": 5, "rule": 110, "n_bins": 4, "frag_ratio": 0.5, "boundary": "periodic", "noise": "per-step per-site LCG bit-flip" },
+  "arms": {
+    "NOISE_0":  { "p": 0.00, "phi_final": 0.556454 },
+    "NOISE_05": { "p": 0.05, "phi_final": 0.645751 },
+    "NOISE_15": { "p": 0.15, "phi_final": 0.611001 },
+    "NOISE_30": { "p": 0.30, "phi_final": 0.552437 },
+    "NOISE_50": { "p": 0.50, "phi_final": 0.549097 }
+  },
+  "derived": {
+    "phi_clean": 0.556454,
+    "phi_max_noise": 0.549097,
+    "fragility_threshold": 0.278227
+  },
+  "criteria": {
+    "C1_MONOTONE":   { "verdict": "FAIL" },
+    "C2_FRAGILITY":  { "phi_max_noise": 0.549097, "threshold": 0.278227, "verdict": "FAIL" },
+    "C3_DETERMINISM": { "verdict": "PASS" }
+  },
+  "falsifiers": {
+    "F1_MONOTONE":      "FAIL",
+    "F2_FRAGILITY":     "FAIL",
+    "F3_DETERMINISM":   "PASS",
+    "F4_BOUNDS":        "PASS",
+    "F5_NONDEGENERATE": "PASS"
+  },
+  "n_criteria_met": 1,
+  "verdict_rule": "SUPPORTED iff P1&P2&P3; FALSIFIED iff !P1&!P2&P3; else PARTIAL",
+  "verdict": "FALSIFIED"
+}

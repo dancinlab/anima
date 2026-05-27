@@ -40,7 +40,7 @@ sub-axis / cross-link / future-promote 후보.
 | **social/intersubjective** (R2) | culture · economy · history · politics · religion · art |
 | **phenomenology** (R3) | emotion · attention · dream · pain · desire · psychedelic · imagination |
 | **self/identity** (R4) | self · persona · memory · narrative · trauma · development |
-| **information/computation** (R5) | computation · complexity · network · noise · entropy · causality |
+| **information/computation** (R5) | computation · complexity · network · ~~noise~~ (✅ H_629) · entropy · causality |
 | **other-than-human** (R6) | machine-AI · animal · plant · mineral · viral · ecological · alien · spirit |
 | **practice/discipline** (R7) | pedagogy · medicine · psychotherapy · meditation · drug-pharmakon · ritual · ascesis · sport |
 | **meta/boundary** (R8) | meta-axis · boundary · phase-transition · hybrid · emergence · reduction · complementarity · holism |
@@ -101,6 +101,7 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 |------|------------|-----------|-----|
 | `formal-language-chomsky-hierarchy` | regular/context-free/recursive language Φ ordering | mixed | 🟢 |
 | `noise-1f-pink-Φ-peak` | H_209 sister (already in-flight) — pink > white in Φ | flat | (covered) |
+| ~~`noise-robustness-phi`~~ | bit-flip noise 주입 시 big-Φ 단조 감소 (IIT noise=integration destroyer) | non-monotone 또는 noise-robust | ✅ CONSUMED → H_629 (raster 재개): 🔴 FALSIFIED — fixed rule-110 위 5-rate sweep, light noise(p=0.05) Φ *상승*(+16% inverse-U bump) + max-noise(p=0.50) Φ≈clean(붕괴 부재) → noise≠monotone destroyer · SAVANT GZ inverse-U(H_614/618) computability-side corroboration |
 | `thermodynamic-entropy-life` | low-entropy attractor (life-substrate) 가 Φ peak | high-entropy peak | 🟢 |
 | `causality-pearl-graph-Φ` | causal-graph (DAG) substrate Φ vs cyclic | cyclic equal | 🟢 |
 | `turing-completeness-Φ-threshold` | Turing-complete substrate (rule 110 calc) Φ > sub-Turing | sub-Turing higher | 🟢 |
