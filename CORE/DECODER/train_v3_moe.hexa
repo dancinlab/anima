@@ -317,18 +317,68 @@ fn main() {
     let dz0 = farr_get(d_zT, 0)
     print("    d_zT[0] = "); println(dz0)
 
+    // ── Phase 3b-5 AdamW step (t=1) ──
+    // For each parameter θ_i with grad g_i:
+    //   m_i  = β1·m_i + (1-β1)·g_i
+    //   v_i  = β2·v_i + (1-β2)·g_i²
+    //   m_hat = m_i / (1 - β1^t)
+    //   v_hat = v_i / (1 - β2^t)
+    //   θ_i  = θ_i - lr·(m_hat / (sqrt(v_hat) + eps) + wd·θ_i)
+    // LLM-standard hyperparams (Qwen / Llama-2): β1=0.9 β2=0.95 wd=0.1 eps=1e-8.
+    // Smoke: lr=1e-3 (visible step), t=1 (single update), m+v buffers fresh-zero.
+    let beta1 = 0.9
+    let beta2 = 0.95
+    let lr = 1.0e-3
+    let wd = 0.1
+    let adam_eps = 1.0e-8
+    let t_step = 1
+    // 1 - β^t at t=1 is just (1 - β), so bias-corr denom = (1-β1) and (1-β2)
+    let bc1 = 1.0 - beta1
+    let bc2 = 1.0 - beta2
+    let m_buf = t_zeros(m_size)
+    let v_buf = t_zeros(m_size)
+    // snapshot for verdict probe (before/after on a winner-expert weight)
+    let wo_00_pre = farr_get(M, attn_wo_off + 0 * d + 0)
+    let exp_top_00_pre = farr_get(M, experts_off + top_idx * V * d + 0 * d + 0)
+    let mut pi = 0
+    while pi < m_size {
+        let g = farr_get(dMg, pi)
+        let m_prev = farr_get(m_buf, pi)
+        let v_prev = farr_get(v_buf, pi)
+        let m_new = beta1 * m_prev + (1.0 - beta1) * g
+        let v_new = beta2 * v_prev + (1.0 - beta2) * g * g
+        let _ = farr_set(m_buf, pi, m_new)
+        let _ = farr_set(v_buf, pi, v_new)
+        let m_hat = m_new / bc1
+        let v_hat = v_new / bc2
+        let theta = farr_get(M, pi)
+        let upd = lr * (m_hat / (sqrt(v_hat) + adam_eps) + wd * theta)
+        let _ = farr_set(M, pi, theta - upd)
+        pi = pi + 1
+    }
+    let wo_00_post = farr_get(M, attn_wo_off + 0 * d + 0)
+    let exp_top_00_post = farr_get(M, experts_off + top_idx * V * d + 0 * d + 0)
+    println("  AdamW step OK (β1=0.9 β2=0.95 lr=1e-3 wd=0.1 eps=1e-8 t=1)")
+    print("    Wo[0,0] pre="); print(wo_00_pre); print(" post="); println(wo_00_post)
+    print("    experts[top,0,0] pre="); print(exp_top_00_pre); print(" post="); println(exp_top_00_post)
+    print("    suppress_t=1; t_step="); println(t_step)
+
     // ── verdict ──
     let gate_sum = farr_get(gate_norm, 0) + farr_get(gate_norm, 1)
     let zT0 = farr_get(zT, 0)
     let ln_f_g0 = farr_get(M, ln_f_off + 0)
+    let exp_delta = exp_top_00_post - exp_top_00_pre
+    let mut exp_delta_abs = exp_delta
+    if exp_delta_abs < 0.0 { exp_delta_abs = 0.0 - exp_delta_abs }
     let mut pass = 1
     if gate_sum < 0.999 || gate_sum > 1.001 { pass = 0 }   // softmax sum=1
     if top_idx < 0 || top_idx >= E { pass = 0 }            // valid top
     if dW_top_00 == 0.0 { pass = 0 }                       // winner got grad
     if zT0 == 0.0 { pass = 0 }                             // Phase 3b-1: tok_emb non-zero
-    if ln_f_g0 != 1.0 { pass = 0 }                         // Phase 3b-4: γ init = 1.0
+    if ln_f_g0 == 0.0 { pass = 0 }                         // Phase 3b-4: γ non-zero after step
+    if exp_delta_abs < 1.0e-12 { pass = 0 }                // Phase 3b-5: winner expert moved
     if pass == 1 {
-        println("TRAIN_V3_MOE SMOKE: PASS (tok_emb + Wo + MLP + ln_f + softmax sum=1 + valid top + winner-grad)")
+        println("TRAIN_V3_MOE SMOKE: PASS (tok_emb + Wo + MLP + ln_f + softmax sum=1 + valid top + winner-grad + AdamW-applied)")
     } else {
         println("TRAIN_V3_MOE SMOKE: FAIL")
     }
