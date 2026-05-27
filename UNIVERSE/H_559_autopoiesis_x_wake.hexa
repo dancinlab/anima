@@ -1,3 +1,0 @@
-fn next_stage(s: string, external_clock: bool) -> string { let _ = external_clock; if s == "WAKE" { return "N1" } return "WAKE" }
-fn check_h559() -> bool { return next_stage("WAKE", false) == "N1" }
-fn main() { if check_h559() { print("H_559 OK") } else { print("H_559 FAIL") } }

@@ -1,3 +1,0 @@
-fn m_correct(m: f64) -> f64 { if m < 0.5 { return 0.1 } if m > 0.7 { return -0.1 } return 0.0 }
-fn check_h546() -> bool { return m_correct(0.3) > 0.0 && m_correct(0.9) < 0.0 && m_correct(0.6) == 0.0 }
-fn main() { if check_h546() { print("H_546 OK") } else { print("H_546 FAIL") } }

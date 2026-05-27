@@ -1,3 +1,0 @@
-fn clone_survives(cap: bool, intent: bool) -> bool { return cap && intent }
-fn check_h567() -> bool { return clone_survives(true,true) && !clone_survives(true,false) }
-fn main() { if check_h567() { print("H_567 OK") } else { print("H_567 FAIL") } }
