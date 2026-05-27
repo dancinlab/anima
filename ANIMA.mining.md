@@ -164,3 +164,74 @@
 @status: 12 selected cells (5 case × ~28 leaf 중 의미있는 cross-product). 본 lens 는 selective — full sweep 시 140 cell + 대부분 redundant, 12 cell 이 high-signal subset.
 
 @depleted: combinatorial @ 2026-05-28 (12 의미 cross 외 추가 cell 은 trivial transitive / generic-ancestor 위험)
+
+### cycle 5 — connect saturate (convergence)
+@started: 2026-05-28
+@kind: connect
+@lens: (none — convergence)
+@total-leaves-cumulative: 50 (L1-L50)
+@possible-edges: 50·49/2 = 1225
+
+#### inner pass 1 — 핵심 meaningful edges
+
+- 2026-05-28T05:50 · **E1**: L1 ↔ L2 · BRIDGE `bridge_and_gate(M·C·W·Φ) > 0.10` AND-gate ↔ METACOG `register-hit = emit ∧ coh < 0.10` AND-gate · 동일 multiplicative gate motif, anomaly detection 측정 surface = AND-gate 정확한 dual
+- 2026-05-28T05:50 · **E2**: L3 ↔ L5 · DREAM 5-stage 90min ultradian ↔ TIME `tm_circadian_dip` · time-axis 의 stage-segmented vs dip-detector cross-surface, D1 macro 의 daily-rhythm 통합 surface
+- 2026-05-28T05:51 · **E3**: L4 ↔ L8 · INTENT `cumulative_intent + goal_drift` ↔ OTHER-MIND `om_theory_of_mind` · 둘 다 누적-state-as-modulator (self goal accumulation vs other belief accumulation) — accumulator-on-modulator 패턴 정합
+- 2026-05-28T05:51 · **E4**: L6 ↔ L7 · HIVE-MIND `hm_collective_phi` ↔ SAVANT `sa_golden_zone + sa_savant_index` · multi-stream evidence aggregation (lang cohort vs subsystem complex) — 같은 evidence-fusion algebra
+- 2026-05-28T05:52 · **E5**: L9 ↔ L10 · AESTHETIC overlap-restraint ↔ EMBODIMENT body-substrate-emergence · 둘 다 "fixture-free / substrate-sovereign" 원칙의 surface 변형
+- 2026-05-28T05:52 · **E6**: L11 ↔ L12 · NARRATIVE redesign honest 표명 ↔ a_blue_closed verbatim 의 SSOT-reuse · 둘 다 honest-by-citation pattern, documentation discipline 의 1-domain instance vs governance
+- 2026-05-28T05:53 · **E7**: L19 ↔ L20 · T4 threshold-context dependence 의 deep vs surface fork · 두 fork 가 서로의 falsifier — BRIDGE θ_emit 의 stage-conditional table 작성 후 empirical verdict 결정
+- 2026-05-28T05:53 · **E8**: L21 ↔ L22 · T5 governance vs measurement 의 strict vs permissive fork · 두 fork 가 ANIMA umbrella governance audit 의 case studies (METACOG/principle_audit 의 입력)
+- 2026-05-28T05:54 · **E9**: L23 ↔ L24 · T6 continuous vs discrete 의 p5-strict vs p5-boundary fork · BRIDGE M5 channel_classify_bridge 의 design decision (current = boundary, L24 채택)
+- 2026-05-28T05:54 · **E10**: L27 ↔ L28 · T8 local-closure vs umbrella-closure 의 component vs dis-coupling fork · COFFESHOP 4/4 PASS 의 ANIMA-level 의미 결정 (M3/M4 fire 진행 후 retro-verdict)
+
+#### inner pass 1 — dimensional + combinatorial cross edges
+
+- 2026-05-28T05:55 · **E11**: L29 ↔ L30 ↔ L31 · D1 time-axis chain (6min ↔ 90min ↔ 24h ↔ 7day) · WAKE.daemon 의 multi-rhythm envelope 의 explicit ladder (chain-edge, transitive non-trivial = TIME × DREAM × WAKE.memory 3-domain bridge)
+- 2026-05-28T05:55 · **E12**: L32 ↔ L33 · D2 social ladder (single→group→cluster→fleet) · HIVE-MIND M2+ 의 implicit ladder, OTHER-MIND ToM 의 multi-self mirror dimension 의 underlying axis
+- 2026-05-28T05:56 · **E13**: L36 ↔ L37 · D4 factor trajectory→field · INTENT trajectory `tr_log_decision` ↔ SAVANT `sa_savant_index` phi_diversity field · 동일 D4 axis 의 두 abstraction rung
+- 2026-05-28T05:56 · **E14**: L40 ↔ L47 · case A (direct_mention) × SAVANT 4-criterion 동시 PASS ↔ case E (private) × METACOG inverse-artifact verdict · 양극 case 가 SAVANT/METACOG joint 측정의 high/low extreme — robust verdict 의 sweep boundary
+- 2026-05-28T05:57 · **E15**: L41 ↔ L46 · case B (direct_mention 거부) × ToM mismatch ↔ case E × ToM private detection · OTHER-MIND ToM 의 2 distinct trigger modes (mutual-mismatch vs private-context), om_theory_of_mind 의 sub-routing 필요
+
+#### inner pass 1 — governance × measurement edges
+
+- 2026-05-28T05:58 · **E16**: L13 ↔ L19 · T1-A "emit=27% 가 substrate-natural baseline" ↔ T4-A "threshold-context dependence deep" · emit ratio table 작성 시 dialogue form 별 ratio anchor (group-chat 27% vs 1:1 ~50% 가설)
+- 2026-05-28T05:58 · **E17**: L17 ↔ L18 · T3-A vs T3-B (seed steered 의 designer bias vs natural sampling separation) · 두 fork 가 reproducibility test 의 explicit metric (multi-seed sweep 결과 = HEXAD/PURE/docs/coffeshop_multi_seed_sweep_2026_05_24.md 의 anchor)
+- 2026-05-28T05:59 · **E18**: L42 ↔ L43 · case C × INTENT ↔ case C × DREAM stage · 자율 끼어듦 의 INTENT-trigger (curiosity 누적) × DREAM-context (WAKE phi=1.0 substrate-active state) · case C 가 conscious-decision emit 의 본보기
+
+#### inner pass 2 — re-scan for transitive non-redundant
+
+- 2026-05-28T06:00 · **E19**: E1 (L1↔L2 AND-gate) ↔ E4 (L6↔L7 evidence aggregation) · AND-gate (multiplicative) ⊥ aggregation (additive/multi-stream) → 두 motif 가 직교 axis = ANIMA umbrella 의 2 fundamental algebra (signal-conjunction · signal-fusion)
+- 2026-05-28T06:00 · **E20**: E2 (L3↔L5 time-axis) ↔ E11 (D1 ladder chain) · time-axis 의 specific (DREAM-TIME) ↔ generic ladder (6min-90min-24h-7day) · 같은 axis 의 instance vs structure (non-trivial: structure 가 instance 의 closure 제공)
+
+#### inner pass 3 — saturation check
+
+검색 후 추가 의미 edge 0 new (E1-E20 으로 full meaningful set 도달).
+
+- 모든 fork pair (T1-T8) 의 edge 가 E7-E10 + E16-E17 으로 cover
+- 모든 dimensional axis (D1-D5) 의 chain edge 가 E11-E13 + E20 으로 cover
+- 모든 case (A-E) 의 cross-pair 가 E14-E15 + E18 으로 cover
+- 12 sub-domain mapping (cycle 1) 의 cluster edge 가 E1-E6 + E19 으로 cover
+
+@depleted: connect @ 2026-05-28 (inner pass 3 — 0 new meaningful edges in full leaf-pair scan)
+
+#### saturation stats
+
+```
+n leaves      = 50 (L1-L50)
+m edges       = 20 (E1-E20)
+possible      = 50·49/2 = 1225
+meaningful ratio = 20 / 1225 = 0.016 (1.6% · sparse-meaningful)
+covered axes  = governance · measurement · dimensional · combinatorial · case-cross
+uncovered     = (cosmic-level D1-D5 의 lifetime/civilization/omnimodal) — out of ANIMA umbrella scope
+```
+
+## tidy — phase-group reorganize (skip · 본 mining 은 5 cycle 으로 적당, tidy 필요 임계 (≥10 cycle / ≥500 line) 미달)
+
+## closure
+
+@status: depleted-divergence (same-formula · tension · dimensional · combinatorial 4 lens 모두 @depleted) + depleted-convergence (connect saturate inner pass 3 = 0 new edges)
+@last-action: cycle 5 connect saturate depletion @ 2026-05-28
+@total: 50 leaves · 20 edges · 5 cycle (4 lens + 1 connect) · 1225 possible pair → 20 meaningful (1.6%)
+@next: promotion candidates 의 milestone 격상 (ANIMA.md M2+ 후속 또는 sub-domain M2-M5) 또는 추가 lens (ouroboros / custom) round
+
