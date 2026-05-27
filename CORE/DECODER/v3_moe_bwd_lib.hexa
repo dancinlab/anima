@@ -160,6 +160,68 @@ pub fn mlp_block_bwd(d_y, x, h_act, wup_off, wdown_off, M, d, h, dMg, d_x_out) {
 }
 
 // ───────────────────────────────────────────────────────────────────────────
+// Phase 4-gpu-4b: MLP block backward — BATCHED (mm() over all T tokens)
+// ───────────────────────────────────────────────────────────────────────────
+//
+// Batched counterpart of mlp_block_bwd (per-token). layer_block_bwd calls THIS
+// once per layer instead of mlp_block_bwd T times — avoids per-token weight
+// re-extraction (the per-token path would mm_extract Wup/Wdown T× per layer)
+// and turns the dominant fire-scale MLP backward into real matrix-matrix gemms.
+//
+// Forward (per token, batched here over T):  h_pre = x @ Wupᵀ ; h_act = ReLU ;
+//   y = h_act @ Wdownᵀ   (Wup stored [h×d], Wdown stored [d×h])
+// Backward (given d_y_seq [T×d]):
+//   dW_down += d_y_seqᵀ @ h_act_seq : [d×T]@[T×h]=[d×h]          (accumulate)
+//   d_h_act  = d_y_seq @ Wdown      : [T×d]@[d×h]=[T×h]          (Wdown [d×h])
+//   d_h_pre  = d_h_act ⊙ 1[h_act>0] (ReLU mask, elementwise)
+//   dW_up   += d_h_pre_seqᵀ @ x_seq : [h×T]@[T×d]=[h×d]          (accumulate)
+//   d_x_seq  = d_h_pre_seq @ Wup    : [T×h]@[h×d]=[T×d]          (Wup [h×d])
+//
+// Args:
+//   d_y_seq    (T·d)  gradient wrt MLP output (per token)
+//   x_seq      (T·d)  forward MLP input (= zT_mid per token)
+//   h_act_seq  (T·h)  forward post-ReLU activations
+//   wup_off/wdown_off · M/dMg · T,d,h
+//   d_x_seq_out (T·d) OUTPUT gradient wrt MLP input (overwritten)
+pub fn mlp_block_bwd_batched(d_y_seq, x_seq, h_act_seq, wup_off, wdown_off,
+                             M, T, d, h, dMg, d_x_seq_out) {
+    // dW_down += d_y_seqᵀ @ h_act_seq : [d×T]@[T×h]=[d×h]
+    let dy_T = mm_transpose(d_y_seq, T, d)               // [d×T]
+    let dWdown_r = mm(dy_T, d, T, h_act_seq, h)          // [d×h]
+    mm_scatter_add(dMg, wdown_off, dWdown_r, d * h)
+    let _ = farr_free(dy_T)
+    let _ = farr_free(dWdown_r)
+    // d_h_act = d_y_seq @ Wdown : [T×d]@[d×h]=[T×h]  (Wdown stored [d×h])
+    let wdown_mat = mm_extract(M, wdown_off, d, h)
+    let d_h_act = mm(d_y_seq, T, d, wdown_mat, h)        // [T×h]
+    let _ = farr_free(wdown_mat)
+    // d_h_pre = d_h_act ⊙ 1[h_act > 0]  (ReLU mask)
+    let d_h_pre = t_zeros(T * h)
+    let mut hi = 0
+    while hi < T * h {
+        if farr_get(h_act_seq, hi) > 0.0 {
+            let _ = farr_set(d_h_pre, hi, farr_get(d_h_act, hi))
+        }
+        hi = hi + 1
+    }
+    let _ = farr_free(d_h_act)
+    // dW_up += d_h_preᵀ @ x_seq : [h×T]@[T×d]=[h×d]
+    let dhp_T = mm_transpose(d_h_pre, T, h)              // [h×T]
+    let dWup_r = mm(dhp_T, h, T, x_seq, d)               // [h×d]
+    mm_scatter_add(dMg, wup_off, dWup_r, h * d)
+    let _ = farr_free(dhp_T)
+    let _ = farr_free(dWup_r)
+    // d_x_seq = d_h_pre @ Wup : [T×h]@[h×d]=[T×d]  (Wup stored [h×d])
+    let wup_mat = mm_extract(M, wup_off, h, d)
+    let dx_r = mm(d_h_pre, T, h, wup_mat, d)             // [T×d]
+    let mut xi = 0
+    while xi < T * d { let _ = farr_set(d_x_seq_out, xi, farr_get(dx_r, xi)) ; xi = xi + 1 }
+    let _ = farr_free(wup_mat)
+    let _ = farr_free(d_h_pre)
+    let _ = farr_free(dx_r)
+}
+
+// ───────────────────────────────────────────────────────────────────────────
 // Phase 4-bwd-3: self-attention backward (Q/K/V/Wo · causal-softmax)
 // ───────────────────────────────────────────────────────────────────────────
 //
@@ -339,36 +401,19 @@ pub fn layer_block_bwd(d_block_out, zT_in, zT_mid,
                         wq_off, wk_off, wv_off, wo_off, wup_off, wdown_off,
                         M, T, d, h, attn_scale,
                         dMg, d_zT_in_grad) {
-    // ── residual 2 + per-token MLP bwd ──
+    // ── residual 2 + MLP bwd (Phase 4-gpu-4b: BATCHED single call, was per-token loop) ──
+    // d_y_seq = d_block_out, x_seq = zT_mid, h_act_seq cached. → d_x_seq.
+    let d_x_seq = t_zeros(T * d)
+    mlp_block_bwd_batched(d_block_out, zT_mid, h_act_seq, wup_off, wdown_off,
+                          M, T, d, h, dMg, d_x_seq)
+    // residual 2: d_zT_mid[t] = d_x_seq[t] + d_block_out[t]  (skip-connection add)
     let d_zT_mid = t_zeros(T * d)
-    let d_mlp_out_t = t_zeros(d)
-    let x_t = t_zeros(d)
-    let h_act_t = t_zeros(h)
-    let d_x_t = t_zeros(d)
-    let mut t = 0
-    while t < T {
-        // slice token t: d_mlp_out_t = d_block_out[t], x_t = zT_mid[t], h_act_t = h_act_seq[t]
-        let mut i = 0
-        while i < d {
-            let _ = farr_set(d_mlp_out_t, i, farr_get(d_block_out, t * d + i))
-            let _ = farr_set(x_t, i, farr_get(zT_mid, t * d + i))
-            i = i + 1
-        }
-        let mut kk = 0
-        while kk < h {
-            let _ = farr_set(h_act_t, kk, farr_get(h_act_seq, t * h + kk))
-            kk = kk + 1
-        }
-        // MLP bwd for this token (accumulates dW_up + dW_down into dMg)
-        mlp_block_bwd(d_mlp_out_t, x_t, h_act_t, wup_off, wdown_off, M, d, h, dMg, d_x_t)
-        // residual 2: d_zT_mid[t] = d_x_t + d_block_out[t]  (skip-connection add)
-        i = 0
-        while i < d {
-            let _ = farr_set(d_zT_mid, t * d + i, farr_get(d_x_t, i) + farr_get(d_block_out, t * d + i))
-            i = i + 1
-        }
-        t = t + 1
+    let mut rz = 0
+    while rz < T * d {
+        let _ = farr_set(d_zT_mid, rz, farr_get(d_x_seq, rz) + farr_get(d_block_out, rz))
+        rz = rz + 1
     }
+    let _ = farr_free(d_x_seq)
     // ── residual 1 + attention bwd ──
     // d_attn_y = d_zT_mid (since zT_mid = attn_y + zT_in)
     let d_zT_in_from_attn = t_zeros(T * d)
