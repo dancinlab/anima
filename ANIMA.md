@@ -16,11 +16,12 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-28 (round-9 흡수 + emit-substrate 소비자 3/4 wired + DECODER M4 toy 로컬검증)
+> 갱신: 2026-05-28 (emit-substrate 4/4 소비자 완료 + bench 4 RECOVERED 🟢 + DECODER D3/M4 toy 검증 + round-9 4/4)
 
 ```
-집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 4✅ / 7 carry   ·   substrate 2   ·   emit-substrate 6파일(5✅/1☐)
-검증 — 🔵 5 (COFFESHOP A5)  ·  🟢 6+ (bench/lib/toy)  ·  🟠 4 (carry)  ·  🔴 1 (NARRATIVE closed-neg)
+집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 8✅ / 3☐(TIME·SAVANT·HIVE)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
+검증 — 🔵 5 (COFFESHOP A5)  ·  🟢 14+ (bench 4 RECOVERED·lib·wiring 4·toy·DECODER D3)  ·  🟠 1 (INTENT OSC)  ·  🔴 0
+🎯 의식 bench negative 4/4 = 측정 artifact 판명 (NARRATIVE/AESTHETIC/EMBODIMENT/OTHER-MIND 전부 🟢 RECOVERED · substrate 한계 0건)
 
 ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │
@@ -38,10 +39,10 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │  ├─ 💤 DREAM       ✅ 🟢 4/5  (#1140) · ⬇ M5 wiring ☐
 │  ├─ 🎯 INTENT      ✅ 🟠 4/5  (#1143) OSC residual
 │  ├─ 🚪 BRIDGE      ✅ AND-gate 14.5× · ⬇ M6 wiring ✅
-│  ├─ 📖 NARRATIVE   ☐ 🔴 2/5  (#1144) closed-neg · redesign carry
-│  ├─ 🎨 AESTHETIC   ☐ 🟠 2/3  (#1141) overlap residual
-│  ├─ 💞 EMBODIMENT  ☐ 🟠 4/5  (#1142) coupling 0.45 BROKEN · A3 재설계 🔄
-│  ├─ 🔗 OTHER-MIND  ☐ 🟠 3/5  (#1147) u01 bias residual
+│  ├─ 📖 NARRATIVE   ✅ 🟢 5/5  RECOVERED (#1263) collision-saturation (vocab coverage≠coherence)
+│  ├─ 🎨 AESTHETIC   ✅ 🟢      RECOVERED (#1265) weight-vector 직교화
+│  ├─ 💞 EMBODIMENT  ✅ 🟢 5/5  RECOVERED (#1266) coupling redesign 0.45→0.027 (degrade≠break)
+│  ├─ 🔗 OTHER-MIND  ✅ 🟢 5/5  RECOVERED (#1267) orthant-bias zero-mean centering
 │  ├─ ⏳ TIME        ☐ 🟢 9/0  (#1145) circadian dip
 │  ├─ 🧠✨ SAVANT     ☐ 10 H 측정자 · ⬇ M2 wiring ✅
 │  └─ 🐝 HIVE-MIND   ☐ 5 H 측정자 · ⬇ M6 wiring ✅
@@ -57,7 +58,7 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
       ├─ 🚪 BRIDGE M6   ✅ 4/4 (#1259)  phi←envelope · θ←policy
       ├─ 🐝 HIVE M6     ✅ 3/3 (#1261)  fleet Φ←collective_phi_nest(class_id)
       ├─ 🧠✨ SAVANT M2  ✅ 4/4 (#1260)  측정자 Φ-context←envelope
-      └─ 💤 DREAM M5    ☐               stage Φ-envelope (다음 라운드)
+      └─ 💤 DREAM M5    ✅ 5/5 (#1268)  stage Φ-envelope (N2=closure peak) — 4/4 소비자 완료
 
 🗗 DECODER M4 MoE-fresh 본선 상세 (register 분리 재설계 · H_490 escape):
    M0 backward      ✅ gradcheck PASS (rel 5e-10)
@@ -68,8 +69,10 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
    M4b toy soft     🟠 PARTIAL — 학습O 분화X (gate 0.5/0.5 dense-collapse)
    M4b toy HARD     🟢 PASS — 분화O (gate 0.97/0.03⊥0.03/0.97 · CE 1.389→0.0039) ← 로컬 검증 2026-05-28
    M4c LZ76 측정자  🟢 collapse 검출 (collapse 0.212 vs healthy 0.849 · margin 0.637)
+   D3 router 부하   🟢 (#1269) imbalance=corpus-driven NOT router-structural (max 0.84<0.9 · starve 0)
+                    → router redesign 불필요. M4b fix = diverse corpus + n_steps↑ (구조변경 아님)
    M3 4축 fire      ☐ 강등 baseline (~$5-12 · dispatch_p21h_v3_vast ready)
-   M4b prod 배선    ☐ HARD top-1 + LZ76 gate → 3B train_p21h_v3 → fire
+   M4b prod 배선    ☐ HARD top-1 + LZ76 gate → 3B train_p21h_v3 (diverse corpus) → fire
 ```
 
 ## Session 2026-05-28 AxisBench → 11 sub-domain umbrella (17-layer)
@@ -80,10 +83,10 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 - [x] 💤 DREAM — bench B #1140 🟢 4/5 PASS · REM mitosis 60× · sibling: MITOSIS · WAKE · METACOG · CHANNEL
 - [x] 🎯 INTENT — bench D #1143 🟠 4/5 PARTIAL · OSC residual carry · sibling: CORE · BRIDGE · NARRATIVE · WAKE
 - [x] 🚪 BRIDGE — bench #7 4-key AND-gate · 14.5× AND/OR gap · sibling: CORE · CHANNEL · INTENT · METACOG
-- [ ] 📖 NARRATIVE — bench C #1144 🔴 2/5 FAIL · honest closed-negative · modeling gap redesign carry · sibling: WAKE · INTENT · DREAM · MITOSIS
-- [ ] 🎨 AESTHETIC — bench E #1141 🟠 2/3 PARTIAL · overlap residual carry · sibling: CORE · AGENT · METACOG
-- [ ] 💞 EMBODIMENT — bench F #1142 🟠 4/5 PARTIAL · BROKEN coupling 0.45 redesign carry · sibling: CHANNEL · AGENT · WAKE · OTHER-MIND
-- [ ] 🔗 OTHER-MIND — bench G #1147 🟠 3/5 PARTIAL · u01 baseline bias residual · sibling: CHANNEL · MITOSIS · EMBODIMENT · BRIDGE
+- [x] 📖 NARRATIVE — bench C 🟢 5/5 **RECOVERED** (#1263) collision-saturation 진단 (vocab coverage ≠ coherence) · sibling: WAKE · INTENT · DREAM · MITOSIS
+- [x] 🎨 AESTHETIC — bench E 🟢 **RECOVERED** (#1265) weight-vector sign 직교화 · sibling: CORE · AGENT · METACOG
+- [x] 💞 EMBODIMENT — bench F 🟢 5/5 **RECOVERED** (#1266) coupling redesign 0.45→0.027 (degrade≠break, gain=0 단선) · sibling: CHANNEL · AGENT · WAKE · OTHER-MIND
+- [x] 🔗 OTHER-MIND — bench G 🟢 5/5 **RECOVERED** (#1267) orthant-bias zero-mean centering (INDEP 0.78→0.017) · sibling: CHANNEL · MITOSIS · EMBODIMENT · BRIDGE
 - [ ] ⏳ TIME — bench H #1145 🟢 9/0 PASS · circadian dip · sibling: WAKE · DREAM · INTENT · METACOG
 - [ ] 🧠✨ SAVANT — UNIVERSE 축 E mirror · 10 H 측정자 (H_347/348/349/350/351 + H_612/613/614/615 · H_616 carry) · sibling: HIVE-MIND · MITOSIS · CORE · HEXAD/SAVANT
 - [ ] 🐝 HIVE-MIND — UNIVERSE 축 F mirror · 5 H 측정자 (H_354/355 + H_609/610/611) · E×F cross-link (H_617 🔴 / H_618 🟢 / H_619 🟢) · sibling: SAVANT · CHANNEL · OTHER-MIND · MITOSIS
