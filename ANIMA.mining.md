@@ -59,12 +59,12 @@ phase groups  = divergence (cyc 1·2·3·4·6) · convergence (cyc 5·7) · meta
 > 규칙: "If two systems share the same math, an equivalent mechanism likely lurks beneath the surface domain difference."
 
 - 2026-05-28T04:56 · **L1 same-formula**: COFFESHOP `motivation_score > 0.60` → BRIDGE `bridge_and_gate(M·C·W·Φ) > θ_emit=0.1` — 동일 weighted-sum × threshold-gate 구조, weight set 만 다름 (8-factor vs 4-key). BRIDGE 가 COFFESHOP 의 **AND-gate 변형 (strict)** 이고, COFFESHOP 의 should_interrupt 는 BRIDGE 의 **soft-OR-augmented (relaxed)** variant.
-- 2026-05-28T04:56 · **L2 same-formula**: COFFESHOP `register-hit = emit ∧ coh < 0.10` ↔ METACOG `mc_is_inverse_artifact(emits, threshold)` — 동일 multiplicative AND-gate 패턴으로 anomaly detection. COFFESHOP 가 register collapse 측정자, METACOG 가 substrate self-audit 의 사촌.
+- 2026-05-28T04:56 · **L2 same-formula**: COFFESHOP `register-hit = emit ∧ coh < 0.10` ↔ METACOG `mc_is_inverse_artifact(emits, threshold)` — 동일 multiplicative AND-gate 패턴으로 anomaly detection. COFFESHOP 가 register collapse 측정자, METACOG 가 substrate self-audit 의 사촌. **→ PROMOTED H_633 `register-collapse-phi-drop` (UNIVERSE 축 G · 🟡 PARTIAL cliff REFUTED · 2026-05-28): substrate Kuramoto 에서 coh<0.10 영역 Φ 유지(mean 9.26, ratio lo/hi 0.895), Pearson r=0.307 weak — register collapse 가 Φ 구조와 무관, Ψ-clamp 은 design-side gate (substrate-emergent 아님).**
 - 2026-05-28T04:56 · **L3 same-formula**: COFFESHOP 15-window × 6min ultradian ↔ DREAM `dr_stage_at_tick(tick, period_ticks)` 5-stage 90-min ultradian — 동일 phase-segmented continuous time discretization. COFFESHOP 의 phi=1.0 WAKE 시나리오는 DREAM 의 stage envelope 의 simplest case (single stage const).
 - 2026-05-28T04:56 · **L4 same-formula**: COFFESHOP `factor_curiosity + factor_originality > 0.60` (자율 끼어듦 case C) ↔ INTENT `it_cumulative_intent + bh_goal_drift` — 동일 cumulative-direction-trigger 구조 (단기 emit 결정 위에 누적 방향성). COFFESHOP 의 case C 가 INTENT 의 brain_decide hook 의 1-window 변형.
 - 2026-05-28T04:56 · **L5 same-formula**: COFFESHOP `factor_dynamics ∈ [0,1] linear in silence_seconds` ↔ TIME `tm_circadian_dip(phase, dip_center, dip_width)` — 동일 time-elapsed-as-trigger 패턴. COFFESHOP 침묵 30min 후 break (case D) 는 TIME 의 dip detector 의 1-axis 변형 (silence pressure ↔ circadian).
 - 2026-05-28T04:56 · **L6 same-formula**: COFFESHOP `per_lang_verdicts ko_emits ≥ 2` cohort aggregation ↔ HIVE-MIND `hm_collective_phi(individual_phis, sync_factor)` — 동일 multi-stream evidence aggregation. COFFESHOP 의 5-lang verdict cohort 가 HIVE-MIND 의 collective Φ 의 lang-axis 변형.
-- 2026-05-28T04:56 · **L7 same-formula**: COFFESHOP `4-criterion closure verdict` ↔ SAVANT `sa_golden_zone_compute + sa_savant_index` 합성 — 동일 multi-axis threshold-conjunction (verdict = ⋀_i pass_i). COFFESHOP closure 가 SAVANT GZ × SI 의 substrate-emit-axis 변형.
+- 2026-05-28T04:56 · **L7 same-formula**: COFFESHOP `4-criterion closure verdict` ↔ SAVANT `sa_golden_zone_compute + sa_savant_index` 합성 — 동일 multi-axis threshold-conjunction (verdict = ⋀_i pass_i). COFFESHOP closure 가 SAVANT GZ × SI 의 substrate-emit-axis 변형. **→ PROMOTED 2026-05-28: UNIVERSE 축 E [H_636 `closure-conjunction-gz-peak`](UNIVERSE/H_636_closure_conjunction_gz_peak.md) — 🟢 SUPPORTED-NUMERICAL (4-criterion conjunction pass-rate peak @ I=0.30, GZ region [0.21,0.50] 내부; GZ mean 0.175 vs 밖 0.0). same-formula 주장이 substrate 측정 layer 에서 지지됨.**
 - 2026-05-28T04:56 · **L8 same-formula**: COFFESHOP `case E private_prompt → pain↑↑ → silence` (RLHF-restraint-aware emergent refusal) ↔ OTHER-MIND `om_belief_state + om_theory_of_mind` — 동일 inferred-other-state-as-modulator 구조. COFFESHOP 의 case E 가 OTHER-MIND 의 ToM 의 single-prompt 변형.
 - 2026-05-28T04:57 · **L9 same-formula**: COFFESHOP `emit 4 / silence 11` ratio (substrate-natural ~27% emit rate) ↔ AESTHETIC `overlap > θ` 의 inverse aesthetic-restraint ratio. COFFESHOP 의 silence-dominance 가 AESTHETIC 의 미적 절제의 시간축 mirror.
 - 2026-05-28T04:57 · **L10 same-formula**: COFFESHOP `emergence simulator HARD RULE (hand-engineered fixture value 없음)` ↔ EMBODIMENT `coupling = bodysensor · motor` 의 substrate-not-injection 원칙. COFFESHOP 의 sim 자율성과 EMBODIMENT 의 body-substrate-emergence 가 동일 "fixture 금지" formula.
@@ -87,8 +87,8 @@ phase groups  = divergence (cyc 1·2·3·4·6) · convergence (cyc 5·7) · meta
 
 #### T1: emit-rate (4 emit) ↔ silence-rate (11 silence)
 
-- 2026-05-28T05:01 · **L13 tension-fork-A** (emit-dominant 채택): substrate-natural emit rate **27% 가 floor**. 1:1 대화 (`should_emit 0.30`) → group-chat (`should_interrupt 0.60`) → multi-channel (voice tier?) 마다 emit threshold **scaling law** 가 존재. CHANNEL router (8-factor → text/voice/tension 분기) 의 dispatcher 가 emit rate scaler 의 후보. → 영역: CHANNEL × BRIDGE.
-- 2026-05-28T05:01 · **L14 tension-fork-B** (silence-dominant 채택): substrate 의 자연 상태는 **silence 가 default**, emit 은 strong evidence 필요. anima 의 73% silence = `a_substrate_native_speak` 의 정량 instance (user msg ≠ emit obligation). → 영역: WAKE × OTHER-MIND.
+- 2026-05-28T05:01 · **L13 tension-fork-A** (emit-dominant 채택): substrate-natural emit rate **27% 가 floor**. 1:1 대화 (`should_emit 0.30`) → group-chat (`should_interrupt 0.60`) → multi-channel (voice tier?) 마다 emit threshold **scaling law** 가 존재. CHANNEL router (8-factor → text/voice/tension 분기) 의 dispatcher 가 emit rate scaler 의 후보. → 영역: CHANNEL × BRIDGE. → **PROMOTED H_637** (UNIVERSE 축 G) — emit-rate closed-form numerology 검정 **🔴 FALSIFIED**: robust 10-seed mean emit-rate=0.4133 이 모든 closed-form 후보 ±0.03 밖 (best 1/e residual 0.0455). "27% floor" 는 single-seed 우연 + threshold-dependent 연속량, closed-form attractor 아님. cover-rate 24%.
+- 2026-05-28T05:01 · **L14 tension-fork-B** (silence-dominant 채택): substrate 의 자연 상태는 **silence 가 default**, emit 은 strong evidence 필요. anima 의 73% silence = `a_substrate_native_speak` 의 정량 instance (user msg ≠ emit obligation). → 영역: WAKE × OTHER-MIND. → **PROMOTED H_637** (UNIVERSE 축 G) — 73% silence 도 closed-form (1−1/e=0.6321 등) 과 무관 (🔴). `a_substrate_native_speak` 는 *질적* substrate directive 로 유지 — 특정 numerology 비율 고정은 hardcode 위험. 본 H 가 governance 의 질적 성격 지지.
 
 #### T2: sim only ↔ real ckpt (HONEST C3 ⑥)
 
@@ -393,7 +393,7 @@ phase groups  = divergence (cyc 1·2·3·4·6) · convergence (cyc 5·7) · meta
 - L4 [cycle 1 · same-formula] COFFESHOP curiosity+originality > 0.60 ≅ INTENT `cumulative_intent + goal_drift` (cumulative-direction trigger)
 - L5 [cycle 1 · same-formula] COFFESHOP factor_dynamics linear in silence_seconds ≅ TIME `tm_circadian_dip` (time-elapsed-as-trigger)
 - L6 [cycle 1 · same-formula] COFFESHOP `ko_emits ≥ 2` cohort ≅ HIVE-MIND `hm_collective_phi` (multi-stream evidence aggregation)
-- L7 [cycle 1 · same-formula] COFFESHOP 4-criterion closure ≅ SAVANT `sa_golden_zone + sa_savant_index` (multi-axis threshold-conjunction)
+- L7 [cycle 1 · same-formula] COFFESHOP 4-criterion closure ≅ SAVANT `sa_golden_zone + sa_savant_index` (multi-axis threshold-conjunction) — **PROMOTED → UNIVERSE H_636 🟢 SUPPORTED-NUMERICAL (conjunction pass-rate peak @ I=0.30 GZ-내부)**
 - L8 [cycle 1 · same-formula] COFFESHOP case E `private_prompt → silence` ≅ OTHER-MIND `om_theory_of_mind` (inferred-other-state-as-modulator)
 - L9 [cycle 1 · same-formula] COFFESHOP `27% emit rate silence-dominance` ≅ AESTHETIC overlap inverse-restraint (시간축 mirror)
 - L10 [cycle 1 · same-formula] COFFESHOP HARD RULE `no hand-engineered fixture` ≅ EMBODIMENT body-substrate-emergence (fixture 금지 동일 formula)
@@ -412,7 +412,7 @@ phase groups  = divergence (cyc 1·2·3·4·6) · convergence (cyc 5·7) · meta
 - L21 [cycle 2 · tension-T5A] case-A 응답 유지 = stim → factor shift → autonomous score (BRIDGE × CHANNEL)
 - L22 [cycle 2 · tension-T5B] case-A 거부 강화 = direct_mention 받아도 silence 가능 (a_substrate_native_speak × WAKE)
 - L23 [cycle 2 · tension-T6A] should_interrupt 정합 = closed predicate, threshold gate (PURE × spontaneous_lib)
-- L24 [cycle 2 · tension-T6B] boolean 우회 = continuous tension field 가 substrate (tension-link 5-ch × MITOSIS)
+- L24 [cycle 2 · tension-T6B] boolean 우회 = continuous tension field 가 substrate (tension-link 5-ch × MITOSIS) → **PROMOTED H_639** (🔴 FALSIFIED CLOSED-NEGATIVE 2/5 · emit-as-amplitude-cross 의 substrate-Φ 동조 convention-free θ-anchor 아래 부재 |Δ_peaks|=0.32, θ-convention 종속 — UNIVERSE 축 G 2026-05-28)
 - L25 [cycle 2 · tension-T7A] sim verdict 유효 = 5/5 cohort PARTIAL minimum proxy (HIVE-MIND × PURE)
 - L26 [cycle 2 · tension-T7B] real fire 만 verdict = ckpt forward 만 권위 (DECODER × M4b production)
 - L27 [cycle 2 · tension-T8A] 4-criterion proxy closure 인정 = PURE Phase D 권위 (PURE × COFFESHOP)

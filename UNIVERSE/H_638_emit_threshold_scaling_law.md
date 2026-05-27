@@ -290,10 +290,11 @@ verify --fence "H_638: in a COFFESHOP-style 8-factor emergence sim (spontaneous_
   `should_interrupt 0.60` (group-chat tier) ↔ `should_emit 0.30` (1:1 tier).
   본 H 의 universal 적정 threshold 0.62~0.64 가 should_interrupt 0.60 근방에
   안착 — group-chat emit 4/15 = 27% 설계와 정합 (C4 확증).
-- **H_632 emit-threshold-Φ (§6 ref)**: emit threshold 의 Φ-의존성 검정 sibling.
-  ⚠ origin/main 인덱스에 H_632 미실재 (3-신호 verify) — 본 H 는 그 의도된 축
-  (emit threshold × Φ) 의 *substrate-scale* variant 로 자립. H_632 가 별도
-  세션에서 신설되면 cross-link 갱신.
+- **H_632 emit-threshold-Φ (§6 ref)**: [[H_632]] `emit_threshold_phi_collapse`
+  (origin/main 실재 · 2026-05-28 머지) 은 emit threshold 영역에서의 Φ-collapse
+  를 검정한 sibling. 본 H 는 그 emit-threshold × Φ 축의 *substrate-scale*
+  variant — threshold 가 substrate Φ-scale 에 monotone 종속하는지 (scaling law)
+  의 결정적 기각. 둘 다 emit-substrate 의 Φ-약결합 negative-signature 에 합류.
 - **a_autonomy_over_hardcode (§6 ref · governance)**: per-scenario emit
   threshold multiplicity = "stimulus-response / turn-based 의무 hardcode" risk.
   L20 (universal-fixed) 채택은 이 directive 와 정합 — substrate 가 단일 emit
