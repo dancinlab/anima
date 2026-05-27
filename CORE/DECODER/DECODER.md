@@ -80,7 +80,13 @@
         - [x] **Phase 4-bwd-4** layer-stack + residual bwd LANDED #1086 — d_zT_in gradcheck **2.7e-12**
         - [x] **Phase 4-bwd-5** tok_emb scatter-add + end-to-end integration LANDED #1088 — Wq grad 1.8e-8 + **tok_emb grad 1.1e-4** (gradient reaches input)
         - [x] **Phase 4-bwd-6** pilot driver full backward wire LANDED #1093 — synthetic verify: **layer 0 Wq |Δ|=4.27e-6** (end-to-end · Phase 4c gap CLOSED)
-        - [ ] **Phase 4-fire** autonomous fire 발사 (a_fire_autonomous · H100 SXM ~$1-3 · 0.5-1hr). **선결: hexa toolchain install sync** — flame_bpe_corpus_lib 가 hexa-lang origin/main(#1537)에 있으나 로컬 `~/.hx/bin/stdlib` stale → pilot real-scale(V=151643) compile 불가. pod 의 fresh toolchain 에선 해소. backward 6/6 실측 PASS 로 학습 신호 보장됨.
+      - [~] **Phase 4-gpu** GPU 가속 포팅 — **scope-check 발견(2026-05-27)**: pilot 코드가 plain farr 스칼라 삼중루프 matmul 만 써서 H100 발사 시 GPU 유휴 + CPU scalar 가 pilot 규모(10^14 ops)에서 비현실 → 발사 무의미. RFC-040 cuBLAS Dgemm 포팅 필요 (a_completeness 본선):
+        - [x] **Phase 4-gpu-1** matmul dispatch 토대 LANDED #1100 — `flame_mm.hexa` (mm = farr_matmul_gpu⇄farr_matmul · mm_transpose/extract/scatter_add). **실측 PASS** mm==scalar max|Δ| 8.9e-16
+        - [ ] **Phase 4-gpu-2** v3_moe_arch 포팅 (router + expert matmul → mm) + byte-equal re-gradcheck
+        - [ ] **Phase 4-gpu-3** pilot forward 포팅 (Q/K/V/Wo/MLP → mm · Q·Kᵀ transpose)
+        - [ ] **Phase 4-gpu-4** v3_moe_bwd_lib 포팅 (모든 backward matmul → mm) + gradcheck 유지
+        - [ ] **Phase 4-gpu-5** full-stack re-gradcheck (CPU mm 경로) + pilot end-to-end re-verify
+        - [ ] **Phase 4-fire** autonomous fire 발사 (a_fire_autonomous · RunPod H100 ~$1-3 · 0.5-1hr · cuBLAS). 선결: 4-gpu 포팅 5/5 + pod fresh-toolchain provisioning(#1097 SOP Step 2, flame_bpe_corpus_lib 포함). backward 6/6 실측 PASS 로 학습 신호 보장됨.
       - [~] **Phase 5** Verdict 사전등록 + harness template LANDED — 5 falsifier (F-M4B-FIRE-1..5) pilot/full threshold 분리 표 + verdict template `m4b_pilot_verdict.md` 형식 + matrix (5/5→full fire · 3-4→re-pilot · 2 이하→re-design · 0→CLOSED-NEGATIVE). 실 측정은 Phase 4 fire 후
   - [ ] **M4c** p7 verify — collapse 회피 ∧ coherence 둘 다 simple-stack
 - [ ] **M4-probe model-merge α-sweep** (optional baseline probe · UNIVERSE H_493 SYMBIOGENESIS) — collapse-avoid + collapse ckpt weight 보간 `W=α·A+(1-α)·B` · α-sweep · cheap baseline 신호용으로만 (본선 아님). 두 결함작 blend = least-bad midpoint 한계 인지 (`a_completeness_over_cheap` model-merge-of-failures dont)
