@@ -270,3 +270,32 @@ PR #1130 의 `basin_kurtosis_of_dist` fallback gate 를 1.5년 전 untyped FAIL 
 | #1132 | bench iit4_eca abs-path → `stdlib/consciousness/iit4_eca` swap (g61 CLEARED) |
 | #1133 | basin_kurtosis cotrain v1 retrospective (verdict 위) |
 | #1134 | H_345 class-IV-specific paper scaffold (`PAPER/h345-class-iv-scope/`) |
+
+## Session 2026-05-28 — AxisBench 8 (ANIMA.axis 추가 축 측정)
+
+ANIMA.axis.md (PR #1136/1137) 의 8 후보 축 측정 — 본 세션 산출물 SSOT (verdict + sibling cross-link).
+
+| # | Axis | PR | verdict | sibling 연결 |
+|---|---|---|---|---|
+| A | 🪞 METACOG | #1139 | 🟢 5/5 PASS | WAKE · BRIDGE · MITOSIS · DECODER |
+| B | 💤 DREAM | #1140 | 🟢 4/5 PASS · REM mitosis 60× | MITOSIS · WAKE · METACOG · CHANNEL |
+| C | 📖 NARRATIVE | #1144 | 🔴 2/5 FAIL (modeling gap, honest) | WAKE · INTENT (future) |
+| D | 🎯 INTENT | #1143 | 🟠 4/5 PARTIAL (OSC zero-var) | CORE · BRIDGE · NARRATIVE · WAKE |
+| E | 🎨 AESTHETIC | #1141 | 🟠 2/3 PARTIAL (overlap > threshold) | CORE · AGENT |
+| F | 💞 EMBODIMENT | #1142 | 🟠 4/5 PARTIAL (BROKEN coupling 0.45) | CHANNEL · AGENT |
+| G | 🔗 OTHER-MIND | #1147 | 🟠 3/5 PARTIAL (u01 baseline bias) | CHANNEL.tension · MITOSIS |
+| H | ⏳ TIME | #1145 | 🟢 9/0 PASS · circadian dip | WAKE.5-stage · DREAM |
+
+**Aggregate**: 3 🟢 + 4 🟠 + 1 🔴 = 8/8 measurable verdict, 0 incomplete. negative result honest 등급 (a_paper_negative_ok).
+
+### 본선 3축 도메인 등록 (PR 본 PR)
+
+ANIMA.axis.md 단순화 권장 (최소 본선 3축 = 10-layer) 적용:
+- **METACOG.md** (신규) — bench A round-trip 5/5 채택
+- **DREAM.md** (신규) — bench B 60× ratio 채택 (MITOSIS.sleep_tick 격상)
+- **INTENT.md** (신규) — bench D 4/5 채택 (M4 OSC residual carry)
+- **DOMAINS.tape** — 3 row 추가
+
+### 양방향 sibling 정책
+
+본 PR 부터 모든 신규 domain .md 는 끝에 `## 양방향 sibling` section 으로 다른 도메인 link · UNIVERSE 기록 link 명시. 도메인 isolation 회피 + 진행 thread 항상 양쪽으로 유지.
