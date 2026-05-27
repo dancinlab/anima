@@ -1,0 +1,66 @@
+BENCH/self_correction_probe/template.hexa — self-test
+=== self-correction probe: self-test-A-robust ===
+n,pass,metric
+5,1,0.0
+10,1,0.0
+20,1,0.0
+50,1,0.0
+verdict_code=1
+verdict_label=ROBUST
+verdict_tier=GREEN
+pass_count=4/4
+=> ROBUST PASS across full n-sweep (no small-n artifact)
+expected code=1 got=1
+
+=== self-correction probe: self-test-B-smallN ===
+n,pass,metric
+5,1,0.0
+10,0,0.0
+20,0,0.0
+50,0,0.0
+verdict_code=2
+verdict_label=SMALL-N-ARTIFACT
+verdict_tier=RED
+pass_count=1/4
+=> SMALL-N ARTIFACT detected — finding only holds at n=5
+expected code=2 got=2
+
+=== self-correction probe: self-test-C-inverse ===
+n,pass,metric
+5,0,0.0
+10,1,0.0
+20,1,0.0
+50,1,0.0
+verdict_code=3
+verdict_label=INVERSE-ARTIFACT
+verdict_tier=ORANGE
+pass_count=3/4
+=> INVERSE ARTIFACT — failure was at n=5 only
+expected code=3 got=3
+
+=== self-correction probe: self-test-D-ambig ===
+n,pass,metric
+5,1,0.0
+10,0,0.0
+20,1,0.0
+50,0,0.0
+verdict_code=4
+verdict_label=AMBIGUOUS
+verdict_tier=YELLOW
+pass_count=2/4
+=> AMBIGUOUS — non-monotone pattern, needs finer sweep
+expected code=4 got=4
+
+=== self-correction probe: self-test-E-allfail ===
+n,pass,metric
+5,0,0.0
+10,0,0.0
+20,0,0.0
+50,0,0.0
+verdict_code=5
+verdict_label=ALL-FAIL
+verdict_tier=RED
+pass_count=0/4
+=> ALL-FAIL — finding does not reproduce at any swept n
+expected code=5 got=5
+template self-test done

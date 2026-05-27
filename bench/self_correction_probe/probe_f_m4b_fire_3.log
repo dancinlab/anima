@@ -1,0 +1,38 @@
+BENCH/self_correction_probe — F-M4B-FIRE-3 self-correction probe
+  n-sweep: [5, 10, 20, 50]  (n=20 is the original H100 fire setting)
+  PASS predicate: distinct_experts >= 2
+
+>>> CASE A — winner-take-all collapse (simulated tautology)
+=== self-correction probe: F-M4B-FIRE-3 case-A collapse-sim ===
+n,pass,metric
+5,1,2.0
+10,0,1.0
+20,0,1.0
+50,0,1.0
+verdict_code=2
+verdict_label=SMALL-N-ARTIFACT
+verdict_tier=RED
+pass_count=1/4
+=> SMALL-N ARTIFACT detected — finding only holds at n=5
+
+>>> CASE B — genuine cotrain diversity (robust expectation)
+=== self-correction probe: F-M4B-FIRE-3 case-B robust-sim ===
+n,pass,metric
+5,1,2.0
+10,1,2.0
+20,1,2.0
+50,1,2.0
+verdict_code=1
+verdict_label=ROBUST
+verdict_tier=GREEN
+pass_count=4/4
+=> ROBUST PASS across full n-sweep (no small-n artifact)
+
+════════════════════════════════════════════════════════
+BENCH #5 SELF-CORRECTION-PROBE — verdict
+════════════════════════════════════════════════════════
+case A (collapse-sim)  verdict_code=2 (expected 2 SMALL-N-ARTIFACT)
+case B (robust-sim)    verdict_code=1 (expected 1 ROBUST)
+template hits = 2/2
+BENCH #5 = GREEN PASS — template detects (a) tautology AND (b) robust correctly
+done
