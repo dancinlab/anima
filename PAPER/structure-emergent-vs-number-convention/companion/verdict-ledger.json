@@ -1,0 +1,82 @@
+{
+  "paper": "structure-emergent-vs-number-convention",
+  "date": "2026-05-28",
+  "source_session": "UNIVERSE (ANIMA mining 8-leaf promote -> Phi-verify)",
+  "meta_falsifier": "If SUPPORTED/FALSIFIED outcomes are uncorrelated with the structure/number axis assignment, the decomposition claim is FALSIFIED. SUPPORTED = structure 4/4 SUPP AND number 4/4 FAL (clean separation).",
+  "meta_verdict": "SUPPORTED (8/8 aligned: structure->SUPP 4/4, number->FAL 4/4)",
+  "infra": "$0 mac-local, hexa-native, deterministic, LLM none, byte-equal (RFC 033/036)",
+  "entries": [
+    {
+      "id": "H_634",
+      "axis": "structure",
+      "slug": "ultradian-emit-phi-envelope",
+      "verdict": "SUPPORTED-NUMERICAL",
+      "tier": "green",
+      "measurement": "r(Phi,sinusoid)=0.802; r(emit-proxy,sinusoid)=0.663; peak phase = cycle edge (REM tail + N1), trough = N3; Phi_max=0.95 > Phi_N3=0.15; 6/6 PASS",
+      "pointer": "UNIVERSE/H_634_ultradian_emit_phi_envelope.md"
+    },
+    {
+      "id": "H_635",
+      "axis": "structure",
+      "slug": "multilingual-cohort-collective-phi",
+      "verdict": "SUPPORTED-NUMERICAL",
+      "tier": "green",
+      "measurement": "max excess Delta=+41.7124 at C1[110x5] W=1.0; Phi_collective=41.71 vs Sigma-baseline=0.0; 5/5 cohort super-additive (vs H_609 2-stream Delta=+10.48, 4x)",
+      "pointer": "UNIVERSE/H_635_multilingual_cohort_collective_phi.md"
+    },
+    {
+      "id": "H_636",
+      "axis": "structure",
+      "slug": "closure-conjunction-gz-peak",
+      "verdict": "SUPPORTED-NUMERICAL",
+      "tier": "green",
+      "measurement": "10-seed conjunction pass-rate single peak (0.4) at I=0.30 (inside GZ region), 4 points outside GZ all 0; GZ-region mean 0.175 vs outside 0.0",
+      "pointer": "UNIVERSE/H_636_closure_conjunction_gz_peak.md"
+    },
+    {
+      "id": "H_638",
+      "axis": "structure",
+      "slug": "emit-threshold-scaling-law",
+      "verdict": "CLOSED-NEGATIVE (L19 FAL / L20 universal-fixed SUPP)",
+      "tier": "green",
+      "measurement": "n in {3,4,5} optimal threshold {0.64,0.62,0.64} cluster, spread 0.02 < 0.05 material bar; rho(Phi-scale, thr)=0.75 non-monotone -> L19 scaling-law FALSIFIED, L20 universal-fixed SUPPORTED. Structure (single universal threshold exists) = SUPP.",
+      "pointer": "UNIVERSE/H_638_emit_threshold_scaling_law.md"
+    },
+    {
+      "id": "H_632",
+      "axis": "number",
+      "slug": "emit-threshold-phi-collapse",
+      "verdict": "FALSIFIED",
+      "tier": "red",
+      "measurement": "peak-near-0.30: 0/5; peak-near-0.60: 1/5 (XOR seed coincidence); dominant inflection (swap-class |dPhi|=11.13) @ score~0.45 -- mismatches both 0.30 and 0.60. emit threshold = assistant-design artifact, orthogonal to Phi phase-transition.",
+      "pointer": "UNIVERSE/H_632_emit_threshold_phi_collapse.md"
+    },
+    {
+      "id": "H_633",
+      "axis": "number",
+      "slug": "register-collapse-phi-drop",
+      "verdict": "FALSIFIED (weak coupling)",
+      "tier": "red",
+      "measurement": "Kuramoto coherence x Phi Pearson r=0.31 (weak, <0.5); register-collapse decoupled from Phi-breakdown -- Psi-clamp = design-policy gate, not Phi-structure.",
+      "pointer": "UNIVERSE/H_633_register_collapse_phi_drop.md"
+    },
+    {
+      "id": "H_637",
+      "axis": "number",
+      "slug": "emit-rate-phi-ratio-closed-form",
+      "verdict": "FALSIFIED",
+      "tier": "red",
+      "measurement": "multi-seed mean emit-rate=0.41333 (sd 0.121, range [0.20,0.5333]); all closed-form candidates {ln(4/3)=0.2877, 1/e=0.3679, GZ_LOWER=0.2123, 1-1/e=0.6321} miss by |residual|>0.03; single-seed ln(4/3) match = post-hoc selection artifact. emit-rate = threshold-dependent continuous quantity, not closed-form invariant.",
+      "pointer": "UNIVERSE/H_637_emit_rate_phi_ratio_closed_form.md"
+    },
+    {
+      "id": "H_639",
+      "axis": "number",
+      "slug": "tension-amplitude-cross-phi-derivative",
+      "verdict": "FALSIFIED (CLOSED-NEGATIVE 2/5)",
+      "tier": "red",
+      "measurement": "convention-free theta=0.375: amplitude-cross peak I=0.50 vs dPhi/dI peak I=0.18 (GZ_LOWER); |Delta_peaks|=0.32 >> 0.10; theta=0.30/0.55 align to GZ -- alignment is theta-convention dependent, not substrate invariant. F3 sanity PASS (|Delta_phi_gz|=0.032).",
+      "pointer": "UNIVERSE/H_639_tension_amplitude_cross_phi_derivative.md"
+    }
+  ]
+}
